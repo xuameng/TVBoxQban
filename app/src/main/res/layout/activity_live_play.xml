@@ -721,11 +721,11 @@
             android:layout_marginRight="@dimen/vs_5"
             android:text="测试频道"
             android:singleLine="true"
-            android:layout_toLeftOf="@+id/tv_right_top_tipnetspeed"
+            android:layout_toLeftOf="@+id/iv_circle_bg"
             android:layout_alignParentTop="true"
             android:marqueeRepeatLimit="marquee_forever"
             android:layout_marginEnd="@dimen/vs_5"
-            android:layout_toStartOf="@+id/tv_right_top_tipnetspeed"/>
+            android:layout_toStartOf="@+id/iv_circle_bg"/>
         <TextView
             android:textSize="@dimen/vs_30"
             android:textColor="#fffcffff"
@@ -737,7 +737,7 @@
             android:layout_height="wrap_content"
             android:layout_marginRight="@dimen/vs_5"
             android:text=""
-            android:layout_toLeftOf="@+id/iv_circle_bg"
+            android:layout_toLeftOf="@+id/tv_right_top_channel_name"
             android:layout_marginEnd="@dimen/vs_5"/>
     </RelativeLayout>
 </FrameLayout>
