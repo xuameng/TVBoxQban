@@ -58,7 +58,7 @@ public class SearchRemoteTvDialog extends BaseDialog{
             if (ModelSettingFragment.loadingSearchRemoteTvDialog != null) {
                 ModelSettingFragment.loadingSearchRemoteTvDialog.showEmpty();
             }
-            Toast.makeText(getContext(), "未找到附近TVBox", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "未找到附近聚汇影视", Toast.LENGTH_SHORT).show();
             return;
         }
         if (ModelSettingFragment.loadingSearchRemoteTvDialog != null) {
@@ -69,7 +69,7 @@ public class SearchRemoteTvDialog extends BaseDialog{
         }
         RemoteTVBox.setAvalible(ModelSettingFragment.remoteTvHostList.get(0));
         SelectDialog<String> dialog = new SelectDialog<>(getContext());
-        dialog.setTip("附近TVBox");
+        dialog.setTip("附近聚汇影视");
         int defaultPos = 0;
         dialog.setAdapter(new SelectDialogAdapter.SelectDialogInterface<String>() {
             @Override
