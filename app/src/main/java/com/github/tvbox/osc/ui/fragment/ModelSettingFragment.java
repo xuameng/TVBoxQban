@@ -608,7 +608,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
                 FastClickCheckUtil.check(view);
                 loadingSearchRemoteTvDialog = new SearchRemoteTvDialog(mActivity);
                 EventBus.getDefault().register(loadingSearchRemoteTvDialog);
-                loadingSearchRemoteTvDialog.setTip("搜索附近TVBox");
+                loadingSearchRemoteTvDialog.setTip("搜索附近聚汇影视");
                 loadingSearchRemoteTvDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                     @Override
                     public void onDismiss(DialogInterface dialogInterface) {
