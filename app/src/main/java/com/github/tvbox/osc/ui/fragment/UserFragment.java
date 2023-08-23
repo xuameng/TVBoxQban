@@ -24,7 +24,7 @@ import com.github.tvbox.osc.ui.activity.PushActivity;
 import com.github.tvbox.osc.ui.activity.SearchActivity;
 import com.github.tvbox.osc.ui.activity.SettingActivity;
 import com.github.tvbox.osc.ui.adapter.HomeHotVodAdapter;
-import com.github.tvbox.osc.ui.dialog.XuamengAboutDialog;
+import com.github.tvbox.osc.ui.dialog.xuamengAboutDialog;
 import com.github.tvbox.osc.util.FastClickCheckUtil;
 import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.util.UA;
@@ -172,7 +172,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
             @Override
             public void onClick(View v) {
                 FastClickCheckUtil.check(v);
-                XuamengAboutDialog dialog = new XuamengAboutDialog(mActivity);
+                xuamengAboutDialog dialog = new xuamengAboutDialog(mActivity);
                 dialog.show();
             }
         });
