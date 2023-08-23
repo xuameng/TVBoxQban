@@ -24,6 +24,7 @@ import com.github.tvbox.osc.ui.activity.PushActivity;
 import com.github.tvbox.osc.ui.activity.SearchActivity;
 import com.github.tvbox.osc.ui.activity.SettingActivity;
 import com.github.tvbox.osc.ui.adapter.HomeHotVodAdapter;
+import com.github.tvbox.osc.ui.dialog.XuamengAboutDialog;
 import com.github.tvbox.osc.util.FastClickCheckUtil;
 import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.util.UA;
@@ -166,7 +167,16 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
                 }
             }
         });
-        
+           //xuameng : Long press to trigger Delete Mode for VOD History on Home Page    
+                findViewById(R.id.llAbout).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FastClickCheckUtil.check(v);
+                XuamengAboutDialog dialog = new XuamengAboutDialog(mActivity);
+                dialog.show();
+            }
+        });
+        //xuameng : end
         // takagen99 : Long press to trigger Delete Mode for VOD History on Home Page       
         homeHotVodAdapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLongClickListener() {
             @Override
