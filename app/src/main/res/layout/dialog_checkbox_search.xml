@@ -1,61 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<FrameLayout
+    android:layout_width="@dimen/vs_720"
+    android:layout_height="fill_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <LinearLayout
-        android:id="@+id/root"
-        android:layout_width="@dimen/vs_420"
-        android:layout_height="match_parent"
         android:layout_gravity="center"
+        android:orientation="vertical"
+        android:id="@+id/root"
         android:background="@drawable/shape_dialog_pg_search_checkbox"
-        android:orientation="vertical">
-
-
+        android:layout_width="@dimen/vs_420"
+        android:layout_height="wrap_content">
         <LinearLayout
             android:orientation="horizontal"
-            android:weightSum="2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TextView
-                android:id="@+id/checkAll"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:background="@drawable/button_dialog_main"
-                android:clickable="true"
-                android:focusable="true"
-                android:padding="@dimen/vs_30"
-                android:textColor="@color/color_FFFFFF"
-                android:textSize="@dimen/ts_26"
-                android:text="全选" />
-
-            <TextView
-                android:id="@+id/clearAll"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/vs_10"
-                android:layout_weight="1"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:background="@drawable/button_dialog_main"
-                android:clickable="true"
-                android:focusable="true"
-                android:padding="@dimen/vs_30"
-                android:text="全不选"
-                android:textColor="@color/color_FFFFFF"
-                android:textSize="@dimen/ts_26" />
-        </LinearLayout>
-
-        <com.owen.tvrecyclerview.widget.TvRecyclerView
-            android:id="@+id/mGridView"
-            android:layout_width="match_parent"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"/>
-
+            android:weightSum="2">
+            <TextView
+                android:textSize="@dimen/vs_28"
+                android:textColor="@color/color_FFFFFF"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:id="@+id/checkAll"
+                android:background="@drawable/button_dialog_main"
+                android:padding="@dimen/vs_20"
+                android:focusable="true"
+                android:clickable="true"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="全选"
+                android:layout_marginLeft="@dimen/vs_150"
+                android:layout_marginTop="@dimen/vs_10"
+                android:layout_weight="1"/>
+            <TextView
+                android:textSize="@dimen/vs_28"
+                android:textColor="@color/color_FFFFFF"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:id="@+id/clearAll"
+                android:background="@drawable/button_dialog_main"
+                android:padding="@dimen/vs_20"
+                android:focusable="true"
+                android:clickable="true"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vs_10"
+                android:layout_marginLeft="@dimen/vs_10"
+                android:layout_marginRight="@dimen/vs_150"
+                android:text="全不选"/>
+        </LinearLayout>
+        <com.owen.tvrecyclerview.widget.TvRecyclerView
+            android:orientation="vertical"
+            android:layout_gravity="center"
+            android:id="@+id/mGridView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
     </LinearLayout>
-
 </FrameLayout>
