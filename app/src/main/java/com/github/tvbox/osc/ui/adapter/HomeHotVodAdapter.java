@@ -45,8 +45,6 @@ public class HomeHotVodAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHol
             tvRate.setText("聚汇热播");
         }else if(Hawk.get(HawkConfig.HOME_REC, 0) == 1){
             tvRate.setText("聚汇推荐");
-        }else if(Hawk.get(HawkConfig.HOME_REC, 0) == 2){
-            tvRate.setText("聚汇历史");
         }else {
             tvRate.setVisibility(View.GONE);
         }
