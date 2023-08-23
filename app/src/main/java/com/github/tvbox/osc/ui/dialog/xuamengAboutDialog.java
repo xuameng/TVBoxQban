@@ -8,9 +8,9 @@ import com.github.tvbox.osc.R;
 
 import org.jetbrains.annotations.NotNull;
 
-public class AboutDialog extends BaseDialog {
+public class xuamengAboutDialog extends BaseDialog {
 
-    public AboutDialog(@NonNull @NotNull Context context) {
+    public xuamengAboutDialog(@NonNull @NotNull Context context) {
         super(context);
         setContentView(R.layout.xuamengdialog_about);
     }
