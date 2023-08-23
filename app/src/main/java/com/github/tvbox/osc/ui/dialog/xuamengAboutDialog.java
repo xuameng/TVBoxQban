@@ -12,6 +12,6 @@ public class AboutDialog extends BaseDialog {
 
     public AboutDialog(@NonNull @NotNull Context context) {
         super(context);
-        setContentView(R.layout.Xuamengdialog_about);
+        setContentView(R.layout.xuamengdialog_about);
     }
 }
