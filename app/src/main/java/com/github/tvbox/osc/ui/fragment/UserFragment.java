@@ -168,7 +168,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
             }
         });
            //xuameng : Long press to trigger Delete Mode for VOD History on Home Page    
-                findViewById(R.id.llAbout).setOnClickListener(new View.OnClickListener() {
+                findViewById(R.id.tvxuameng).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 FastClickCheckUtil.check(v);
