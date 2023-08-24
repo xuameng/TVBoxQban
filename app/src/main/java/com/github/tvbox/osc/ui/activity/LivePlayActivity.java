@@ -257,8 +257,8 @@ public class LivePlayActivity extends BaseActivity {
         liveIconNullBg = findViewById(R.id.live_icon_null_bg);
         liveIconNullText = findViewById(R.id.live_icon_null_text);
         imgLiveIcon.setVisibility(View.INVISIBLE);
-        liveIconNullText.setVisibility(View.INVISIBLE);
-        liveIconNullBg.setVisibility(View.INVISIBLE);
+        liveIconNullText.setVisibility(View.VISIBLE);
+        liveIconNullBg.setVisibility(View.VISIBLE);
 
         sBar = (SeekBar) findViewById(R.id.pb_progressbar);
         tv_currentpos = (TextView) findViewById(R.id.tv_currentpos);
@@ -544,13 +544,13 @@ public class LivePlayActivity extends BaseActivity {
         if (StringUtils.isEmpty(logoUrl)) {
             liveIconNullBg.setVisibility(View.VISIBLE);
             liveIconNullText.setVisibility(View.VISIBLE);
-            imgLiveIcon.setVisibility(View.INVISIBLE);
-            liveIconNullText.setText("" + channel_Name.getChannelNum());
+            imgLiveIcon.setVisibility(View.VISIBLE);
+            liveIconNullText.setText("聚汇直播" + channel_Name.getChannelNum());
         } else {
             imgLiveIcon.setVisibility(View.VISIBLE);
             Picasso.get().load(logoUrl).placeholder(R.drawable.app_banner).into(imgLiveIcon);
-            liveIconNullBg.setVisibility(View.INVISIBLE);
-            liveIconNullText.setVisibility(View.INVISIBLE);
+            liveIconNullBg.setVisibility(View.VISIBLE);
+            liveIconNullText.setVisibility(View.VISIBLE);
         }
     }
 
