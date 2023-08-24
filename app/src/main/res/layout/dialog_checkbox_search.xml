@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
-    android:layout_width="@dimen/vs_710"
+    android:layout_width="@dimen/vs_680"
     android:layout_height="@dimen/vs_570"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
@@ -8,7 +8,7 @@
         android:layout_gravity="center"
         android:orientation="vertical"
         android:id="@+id/root"
-        android:background="@drawable/shape_dialog_pg_search_checkbox"
+        android:background="@drawable/shape_dialog_bg_main"
         android:layout_width="@dimen/vs_440"
         android:layout_height="@dimen/vs_570">
         <LinearLayout
@@ -30,7 +30,7 @@
                 android:layout_height="wrap_content"
                 android:text="全选"
                 android:layout_marginLeft="@dimen/vs_148"
-                android:layout_marginTop="@dimen/vs_10"
+                android:layout_marginTop="@dimen/vs_15"
                 android:layout_weight="1"/>
             <TextView
                 android:textSize="@dimen/vs_28"
@@ -45,7 +45,7 @@
                 android:clickable="true"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/vs_10"
+                android:layout_marginTop="@dimen/vs_15"
                 android:layout_marginLeft="@dimen/vs_15"
                 android:layout_marginRight="@dimen/vs_148"
                 android:text="全不选"/>
