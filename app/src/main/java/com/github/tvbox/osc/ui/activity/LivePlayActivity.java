@@ -557,8 +557,10 @@ public class LivePlayActivity extends BaseActivity {
         } else {
             imgLiveIcon.setVisibility(View.VISIBLE);
             Picasso.get().load(logoUrl).placeholder(R.drawable.app_banner).into(imgLiveIcon);
-            liveIconNullBg.setVisibility(View.INVISIBLE);
-            liveIconNullText.setVisibility(View.INVISIBLE);
+            liveIconNullBg.setVisibility(View.VISIBLE);
+	    Picasso.get().load(logoUrl).placeholder(R.drawable.app_banner).into(imgLiveIcon);
+            liveIconNullText.setVisibility(View.VISIBLE);
+	    Picasso.get().load(logoUrl).placeholder(R.drawable.app_banner).into(imgLiveIcon);
         }
     }
 
