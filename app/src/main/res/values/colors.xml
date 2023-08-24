@@ -21,6 +21,8 @@
     <color name="bright_foreground_material_light">@android:color/black</color>
     <color name="button_material_dark">#ff5a595b</color>
     <color name="button_material_light">#ffd6d7d7</color>
+    <color name="color_000000_30">#48000000</color>
+    <color name="color_000000_60">#99000000</color>
     <color name="color_00FF0A">#ff00ff0a</color>
     <color name="color_02F8E1">#ff02f8e1</color>
     <color name="color_03DAC5">#ff03dac5</color>
@@ -37,7 +39,11 @@
     <color name="color_6632364E">#6632364e</color>
     <color name="color_6C3D3D3D">#6c3d3d3d</color>
     <color name="color_6CFFFFFF">#6cffffff</color>
+    <color name="color_80000000">#cc000000</color>
     <color name="color_80FF0057">#ff1890ff</color>
+    <color name="color_85000000">#ff000000</color>
+    <color name="color_90000000">#00000000</color>
+    <color name="color_95000000">#ffffffff</color>
     <color name="color_99000000">#99000000</color>
     <color name="color_99FFFFFF">#4d000000</color>
     <color name="color_BBFFFFFF">#bbffffff</color>
@@ -45,13 +51,14 @@
     <color name="color_CBF46A">#ffcbf46a</color>
     <color name="color_CC000000">#cc000000</color>
     <color name="color_CC353744">#cc353744</color>
-    <color name="color_CCFFFFFF">#bbffffff</color>
+    <color name="color_CCFFFFFF">#ccffffff</color>
     <color name="color_FF0057">#ffff0057</color>
     <color name="color_FF5F00">#ffff5f00</color>
     <color name="color_FF90CA09">#ff90ca09</color>
     <color name="color_FFB6C1">#ffffb6c1</color>
     <color name="color_FFB800">#ffff6600</color>
     <color name="color_FFFFFF">#ffffffff</color>
+    <color name="color_FFFFFF_50">#80ffffff</color>
     <color name="color_picker_background_color">#ffffffff</color>
     <color name="color_picker_border_color">#ffb0b0b0</color>
     <color name="dim_foreground_disabled_material_dark">#80bebebe</color>
@@ -108,11 +115,4 @@
     <color name="title_fouse_n">#ffce7900</color>
     <color name="tooltip_background_dark">#e6616161</color>
     <color name="tooltip_background_light">#e6ffffff</color>
-    <color name="color_80000000">#cc000000</color>
-    <color name="color_85000000">#ff000000</color>
-    <color name="color_90000000">#00000000</color>
-    <color name="color_95000000">#ffffffff</color>
-	<color name="color_FFFFFF_50">#80FFFFFF</color>
-	<color name="color_000000_30">#48000000</color>
-	<color name="color_000000_60">#99000000</color>
 </resources>
