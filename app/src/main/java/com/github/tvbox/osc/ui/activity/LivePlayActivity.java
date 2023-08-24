@@ -241,7 +241,7 @@ public class LivePlayActivity extends BaseActivity {
         divEpg = (LinearLayout) findViewById(R.id.divEPG);
         //右上角图片旋转
         objectAnimator = ObjectAnimator.ofFloat(iv_circle_bg,"rotation", 360.0f);
-        objectAnimator.setDuration(5000);
+        objectAnimator.setDuration(10000);
         objectAnimator.setRepeatCount(-1);
         objectAnimator.start();
 
@@ -507,7 +507,7 @@ public class LivePlayActivity extends BaseActivity {
             }
             if(!tip_epg1.getText().equals("暂无信息")){
                 ll_epg.setVisibility(View.VISIBLE);
-                countDownTimer = new CountDownTimer(5000, 1000) {//底部epg隐藏时间设定
+                countDownTimer = new CountDownTimer(10000, 1000) {//底部epg隐藏时间设定
                     public void onTick(long j) {
                     }
                     public void onFinish() {
@@ -516,7 +516,15 @@ public class LivePlayActivity extends BaseActivity {
                 };
                 countDownTimer.start();
             }else {
-                ll_epg.setVisibility(View.GONE);
+                ll_epg.setVisibility(View.VISIBLE);    //XUAMENG  底部epg显示
+		countDownTimer = new CountDownTimer(10000, 1000) {//底部epg隐藏时间设定
+		public void onTick(long j) {
+                    }
+                    public void onFinish() {
+                        ll_epg.setVisibility(View.GONE);
+                    }
+                };
+                countDownTimer.start();
             }
             if (channel_Name == null || channel_Name.getSourceNum() <= 0) {
                 ((TextView) findViewById(R.id.tv_source)).setText("1/1");
@@ -536,7 +544,7 @@ public class LivePlayActivity extends BaseActivity {
                     ll_right_top_loading.setVisibility(View.GONE);
                     ll_right_top_huikan.setVisibility(View.GONE);
                 }
-            }, 5000);
+            }, 10000);
         }
     }
 
@@ -753,7 +761,7 @@ public class LivePlayActivity extends BaseActivity {
 
         tvChannelInfo.setVisibility(View.VISIBLE);
         mHandler.removeCallbacks(mHideChannelInfoRun);
-        mHandler.postDelayed(mHideChannelInfoRun, 5000);
+        mHandler.postDelayed(mHideChannelInfoRun, 3000);
     }
 
     private Runnable mHideChannelInfoRun = new Runnable() {
