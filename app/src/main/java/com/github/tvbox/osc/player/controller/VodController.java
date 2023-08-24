@@ -913,6 +913,8 @@ public class VodController extends BaseController {
             } else if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
                 if (isInPlayback) {
                     togglePlay();
+					showBottom();              //xuameng  暂停键弹出上下透明栏
+                    myHandle.postDelayed(myRunnable, myHandleSeconds);   //xuameng  暂停键弹出上下透明栏
                     return true;
                 }
 //            } else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {  return true;// 闲置开启计时关闭透明底栏
