@@ -551,16 +551,15 @@ public class LivePlayActivity extends BaseActivity {
     private void updateChannelIcon(String channelName, String logoUrl) {
         if (StringUtils.isEmpty(logoUrl)) {
             liveIconNullBg.setVisibility(View.VISIBLE);
-            // xuameng不显示频道号 liveIconNullText.setVisibility(View.VISIBLE);
+            liveIconNullText.setVisibility(View.VISIBLE);
             imgLiveIcon.setVisibility(View.INVISIBLE);
+	    Picasso.get().load(logoUrl).placeholder(R.drawable.app_banner).into(imgLiveIcon);	// xuameng内容空显示banner
             // xuameng不显示频道号 liveIconNullText.setVisibility(View.VISIBLE);liveIconNullText.setText("" + channel_Name.getChannelNum());
         } else {
             imgLiveIcon.setVisibility(View.VISIBLE);
-            Picasso.get().load(logoUrl).placeholder(R.drawable.app_banner).into(imgLiveIcon);
-            liveIconNullBg.setVisibility(View.VISIBLE);
-	    Picasso.get().load(logoUrl).placeholder(R.drawable.app_banner).into(imgLiveIcon);
-            liveIconNullText.setVisibility(View.VISIBLE);
-	    Picasso.get().load(logoUrl).placeholder(R.drawable.app_banner).into(imgLiveIcon);
+            Picasso.get().load(logoUrl).placeholder(R.drawable.app_banner).into(imgLiveIcon);	// xuameng内不空显示banner
+            liveIconNullBg.setVisibility(View.INVISIBLE);
+            liveIconNullText.setVisibility(View.INVISIBLE);
         }
     }
 
