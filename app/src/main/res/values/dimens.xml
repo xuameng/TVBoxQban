@@ -210,7 +210,10 @@
     <dimen name="ts_30">30.0mm</dimen>
     <dimen name="ts_34">34.0mm</dimen>
     <dimen name="ts_40">40.0mm</dimen>
+    <dimen name="ts_43">43.0mm</dimen>
     <dimen name="ts_50">50.0mm</dimen>
+    <dimen name="ts_60">60.0mm</dimen>
+    <dimen name="ts_xu">38.0mm</dimen>
     <dimen name="vs_0">0.0mm</dimen>
     <dimen name="vs_1">1.0mm</dimen>
     <dimen name="vs_10">10.0mm</dimen>
@@ -220,7 +223,9 @@
     <dimen name="vs_120">120.0mm</dimen>
     <dimen name="vs_128">128.0mm</dimen>
     <dimen name="vs_130">130.0mm</dimen>
+    <dimen name="vs_14">14.0mm</dimen>
     <dimen name="vs_140">140.0mm</dimen>
+    <dimen name="vs_148">148.0mm</dimen>
     <dimen name="vs_15">15.0mm</dimen>
     <dimen name="vs_150">150.0mm</dimen>
     <dimen name="vs_160">160.0mm</dimen>
@@ -273,15 +278,12 @@
     <dimen name="vs_640">640.0mm</dimen>
     <dimen name="vs_7">7.0mm</dimen>
     <dimen name="vs_70">70.0mm</dimen>
+    <dimen name="vs_710">710.0mm</dimen>
     <dimen name="vs_720">720.0mm</dimen>
     <dimen name="vs_76">76.0mm</dimen>
     <dimen name="vs_8">8.0mm</dimen>
     <dimen name="vs_80">80.0mm</dimen>
     <dimen name="vs_90">90.0mm</dimen>
     <dimen name="vs_960">960.0mm</dimen>
-    <dimen name="ts_xu">38.0mm</dimen>
-    <dimen name="ts_43">43.0mm</dimen>
-    <dimen name="ts_60">60.0mm</dimen>
-    <dimen name="vs_14">14.0mm</dimen>
     <dimen name="vs_xu">30.899994mm</dimen>
 </resources>
