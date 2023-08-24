@@ -698,7 +698,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
 
     String getHomeRecName(int type) {
         if (type == 1) {
-            return "站点推荐";
+            return "聚汇推荐";
         } else if (type == 2) {
             return "观看历史";
         } else {
