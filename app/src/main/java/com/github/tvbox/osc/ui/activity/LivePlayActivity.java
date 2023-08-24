@@ -759,7 +759,7 @@ public class LivePlayActivity extends BaseActivity {
     private Runnable mHideChannelInfoRun = new Runnable() {
         @Override
         public void run() {
-            tvChannelInfo.setVisibility(View.VISIBLE);
+            tvChannelInfo.setVisibility(View.INVISIBLE);
         }
     };
 
