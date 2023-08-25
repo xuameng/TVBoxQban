@@ -349,12 +349,12 @@ public class LivePlayActivity extends BaseActivity {
                             mVideoView.pause();
                             countDownTimer.cancel();
                             iv_play.setVisibility(View.VISIBLE);
-                            iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));   //xuameng关闭回放时暂停弹出菜单
+                            iv_playpause.setBackground(ContextCompat.getDrawable(R.drawable.icon_play));   //xuameng关闭回放时暂停弹出菜单
                         }else{
                             mVideoView.start();
                             iv_play.setVisibility(View.INVISIBLE);
                             countDownTimer.start();
-                            iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));   //xuameng关闭回放时暂停弹出菜单
+                            iv_playpause.setBackground(ContextCompat.getDrawable(R.drawable.vod_pause));   //xuameng关闭回放时暂停弹出菜单
                         }
                     }
                 }
