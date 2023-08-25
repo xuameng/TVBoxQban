@@ -542,7 +542,7 @@ public class LivePlayActivity extends BaseActivity {
                 @Override
                 public void run() {
                     ll_right_top_loading.setVisibility(View.GONE);
-                    ll_right_top_huikan.setVisibility(View.GONE);
+                    ll_right_top_huikan.setVisibility(View.VISIBLE);      //显示回看信息
                 }
             }, 10000);
         }
@@ -636,21 +636,21 @@ public class LivePlayActivity extends BaseActivity {
                             playNextSource();
                         }
                         break;
-                    case KeyEvent.KEYCODE_DPAD_CENTER:
+                    case KeyEvent.KEYCODE_DPAD_CENTER:          //xuameng 修复回看时不能暂停，弹出菜单问题
 						if(isBack){
                             showProgressBars(true);
                         }else{
                             showChannelList();
                         }
                         break;
-                    case KeyEvent.KEYCODE_ENTER:
+                    case KeyEvent.KEYCODE_ENTER:				//xuameng 修复回看时不能暂停，弹出菜单问题
 						if(isBack){
                             showProgressBars(true);
                         }else{
                             showChannelList();
                         }
                         break;
-                    case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
+                    case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:		//xuameng 修复回看时不能暂停，弹出菜单问题
 						if(isBack){
                             showProgressBars(true);
                         }else{
