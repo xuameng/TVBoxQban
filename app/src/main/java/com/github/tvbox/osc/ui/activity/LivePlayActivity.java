@@ -553,7 +553,7 @@ public class LivePlayActivity extends BaseActivity {
             liveIconNullBg.setVisibility(View.VISIBLE);
             liveIconNullText.setVisibility(View.VISIBLE);
             imgLiveIcon.setVisibility(View.VISIBLE);
-	    Picasso.get().load(logoUrl).placeholder(R.drawable.app_banner).into(imgLiveIcon);	// xuameng内容空显示banner
+		    Picasso.get().load(logoUrl).placeholder(R.drawable.app_banner).into(imgLiveIcon);	// xuameng内容空显示banner
             // xuameng不显示频道号 liveIconNullText.setVisibility(View.VISIBLE);liveIconNullText.setText("" + channel_Name.getChannelNum());
         } else {
             imgLiveIcon.setVisibility(View.VISIBLE);
@@ -626,7 +626,7 @@ public class LivePlayActivity extends BaseActivity {
                         if(isBack){
                             showProgressBars(true);         
                         }else{
-                            playNextSource();					//xuameng 直播时按左键把弹出菜单改为换源
+                            playPreSource();					//xuameng 直播时按左键把弹出菜单改为换源
                         }
                         break;
                     case KeyEvent.KEYCODE_DPAD_RIGHT:
