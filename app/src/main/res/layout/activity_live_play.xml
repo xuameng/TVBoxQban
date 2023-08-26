@@ -23,9 +23,9 @@
         <LinearLayout
             android:layout_gravity="center|left|top"
             android:orientation="horizontal"
-            android:id="@+id/ll_right_top_huikan"
             android:background="@drawable/shape_thumb_bottom_name"
             android:visibility="visible"
+            android:id="@+id/ll_right_top_huikan"
             android:layout_width="280.0px"
             android:layout_height="100.0px"
             android:layout_marginTop="0.0px"
@@ -55,7 +55,7 @@
                     android:paddingTop="5.0px"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="0.0dip"
+                    android:layout_marginLeft="5.0dip"
                     android:layout_marginRight="5.0dip"
                     android:text="测试频道"
                     android:singleLine="true"
@@ -697,7 +697,8 @@
         android:layout_height="100.0px"
         android:layout_marginTop="40.0px"
         android:layout_marginRight="50.0px"
-        android:minWidth="270.0px"/>
+        android:minWidth="270.0px">
+    </RelativeLayout>
     <RelativeLayout
         android:layout_gravity="center|right|top"
         android:orientation="horizontal"
