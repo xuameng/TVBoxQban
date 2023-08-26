@@ -349,12 +349,12 @@ public class LivePlayActivity extends BaseActivity {
                             mVideoView.pause();
                             countDownTimer.cancel();
                             iv_play.setVisibility(View.VISIBLE);
-                            iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play)); 
+                            iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));   
                         }else{
                             mVideoView.start();
                             iv_play.setVisibility(View.INVISIBLE);
                             countDownTimer.start();
-                            iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));  
+                            iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));    
                         }
                     }
                 }
@@ -542,7 +542,7 @@ public class LivePlayActivity extends BaseActivity {
                 @Override
                 public void run() {
                     ll_right_top_loading.setVisibility(View.GONE);
-                    ll_right_top_huikan.setVisibility(View.VISIBLE);      //显示回看信息
+                    ll_right_top_huikan.setVisibility(View.GONE);
                 }
             }, 10000);
         }
@@ -624,9 +624,9 @@ public class LivePlayActivity extends BaseActivity {
                         break;
                     case KeyEvent.KEYCODE_DPAD_LEFT:
                         if(isBack){
-                            showProgressBars(true);
+                            showProgressBars(true);         
                         }else{
-                            showSettingGroup();
+                            playNextSource();					//xuameng 直播时按左键把弹出菜单改为换源
                         }
                         break;
                     case KeyEvent.KEYCODE_DPAD_RIGHT:
