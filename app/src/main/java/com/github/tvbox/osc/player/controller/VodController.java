@@ -142,7 +142,7 @@ public class VodController extends BaseController {
     private boolean isLock = false;
     Handler myHandle;
     Runnable myRunnable;
-    int myHandleSeconds = 10000;//闲置多少毫秒秒关闭底栏  默认6秒
+    int myHandleSeconds = 10000;//闲置多少毫秒秒关闭底栏  默认10秒
 
     int videoPlayState = 0;
 
@@ -915,6 +915,12 @@ public class VodController extends BaseController {
                     togglePlay();
 					showBottom();              //xuameng  暂停键弹出上下透明栏
                     myHandle.postDelayed(myRunnable, myHandleSeconds);   //xuameng  暂停键弹出上下透明栏
+
+                if (isBottomVisible()) {		//xuameng  有上下透明栏时
+                    hideBottom();				//xuameng  按确定键隐藏
+					(isInPlayback) {			//xuameng  并继续播放
+                    togglePlay();
+                    
                     return true;
                 }
 //            } else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {  return true;// 闲置开启计时关闭透明底栏
