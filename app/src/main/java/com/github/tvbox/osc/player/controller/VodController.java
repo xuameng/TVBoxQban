@@ -642,9 +642,9 @@ public class VodController extends BaseController {
                 hideBottom();
             }
         });
-        mNextBtn.setNextFocusLeftId(R.id.mxuplay);      //底部菜单下一集左键是播放
-		mxuPlay.setNextFocusLeftId(R.id.audio_track_select);      //底部菜单播放左键是音轨
-		mAudioTrackBtn.setNextFocusRightId(R.id.mxuplay);   //底部菜音轨右键是播放
+        mNextBtn.setNextFocusLeftId(R.id.mxuplay);      //xuameng底部菜单下一集左键是播放
+		mxuPlay.setNextFocusLeftId(R.id.audio_track_select);      //xuameng底部菜单播放左键是音轨
+		mAudioTrackBtn.setNextFocusRightId(R.id.mxuplay);   //xuameng底部菜音轨右键是播放
     }
 
     private void hideLiveAboutBtn() {
@@ -654,14 +654,14 @@ public class VodController extends BaseController {
             mPlayerTimeStartBtn.setVisibility(GONE);
             mPlayerTimeSkipBtn.setVisibility(GONE);
             mPlayerTimeResetBtn.setVisibility(GONE);
-            mNextBtn.setNextFocusLeftId(R.id.zimu_select);
+            mNextBtn.setNextFocusLeftId(R.id.mxuplay);
         } else {
             mPlayerSpeedBtn.setVisibility(View.VISIBLE);
             mPlayerTimeStartEndText.setVisibility(View.VISIBLE);
             mPlayerTimeStartBtn.setVisibility(View.VISIBLE);
             mPlayerTimeSkipBtn.setVisibility(View.VISIBLE);
             mPlayerTimeResetBtn.setVisibility(View.VISIBLE);
-            mNextBtn.setNextFocusLeftId(R.id.play_time_start);
+            mNextBtn.setNextFocusLeftId(R.id.mxuplay);
         }
     }
 
