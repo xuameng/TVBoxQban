@@ -917,9 +917,8 @@ public class VodController extends BaseController {
                     myHandle.postDelayed(myRunnable, myHandleSeconds);   //xuameng  暂停键弹出上下透明栏
 
                 if (isBottomVisible()) {		//xuameng  有上下透明栏时
-                    hideBottom();				//xuameng  按确定键隐藏
-					(isInPlayback) {			//xuameng  并继续播放
-                    togglePlay();
+                    hideBottom();				//xuameng  按确定键隐藏			
+                    togglePlay();				//xuameng  并继续播放
                     
                     return true;
                 }
