@@ -918,10 +918,10 @@ public class VodController extends BaseController {
 
                 if (isBottomVisible()) {		//xuameng  有上下透明栏时
                     hideBottom();				//xuameng  按确定键隐藏			
-                    togglePlay();				//xuameng  并继续播放
-                    
-                    return true;
-                }
+                    togglePlay();				//xuameng  并继续播放                                       
+                 }
+				return true;
+			  }
 //            } else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {  return true;// 闲置开启计时关闭透明底栏
             } else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN || keyCode == KeyEvent.KEYCODE_DPAD_UP || keyCode== KeyEvent.KEYCODE_MENU) {
                 if (!isBottomVisible()) {
