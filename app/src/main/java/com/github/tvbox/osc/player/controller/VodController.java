@@ -71,7 +71,7 @@ public class VodController extends BaseController {
                         mTopRoot1.setVisibility(VISIBLE);
                         mTopRoot2.setVisibility(VISIBLE);
                         mPlayTitle.setVisibility(GONE);
-                        mNextBtn.requestFocus();
+                        mxuPlay.requestFocus();		// 底部菜单默认焦点为刷新
                         backBtn.setVisibility(ScreenUtils.isTv(context) ? INVISIBLE : VISIBLE);
                         showLockView();
                         break;
@@ -142,7 +142,7 @@ public class VodController extends BaseController {
     private boolean isLock = false;
     Handler myHandle;
     Runnable myRunnable;
-    int myHandleSeconds = 10000;//闲置多少毫秒秒关闭底栏  默认10秒
+    int myHandleSeconds = 10000;//闲置多少毫秒秒关闭底栏  默认6秒
 
     int videoPlayState = 0;
 
@@ -206,6 +206,7 @@ public class VodController extends BaseController {
         mAudioTrackBtn = findViewById(R.id.audio_track_select);
         mLandscapePortraitBtn = findViewById(R.id.landscape_portrait);
         backBtn = findViewById(R.id.tv_back);
+		mxuPlay = findViewById(R.id.mxuplay);		//xuameng  低菜单播放
         backBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -332,6 +333,15 @@ public class VodController extends BaseController {
                 hideBottom();
             }
         });
+
+		mxuPlay.setOnClickListener(new OnClickListener() {			//xuameng 低菜单播放监听
+            @Override												//xuameng 低菜单播放监听
+            public void onClick(View v) {							//xuameng 低菜单播放监听
+                togglePlay();										//xuameng 低菜单播放监听
+                hideBottom();
+            }
+        });
+
         mPreBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -915,13 +925,8 @@ public class VodController extends BaseController {
                     togglePlay();
 					showBottom();              //xuameng  暂停键弹出上下透明栏
                     myHandle.postDelayed(myRunnable, myHandleSeconds);   //xuameng  暂停键弹出上下透明栏
-
-                if (isBottomVisible()) {		//xuameng  有上下透明栏时
-                    hideBottom();				//xuameng  按确定键隐藏			
-                    togglePlay();				//xuameng  并继续播放                                       
-                 }
-				return true;
-			  }
+                    return true;
+                }
 //            } else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {  return true;// 闲置开启计时关闭透明底栏
             } else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN || keyCode == KeyEvent.KEYCODE_DPAD_UP || keyCode== KeyEvent.KEYCODE_MENU) {
                 if (!isBottomVisible()) {
