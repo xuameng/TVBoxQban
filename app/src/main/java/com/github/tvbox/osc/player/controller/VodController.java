@@ -124,7 +124,7 @@ public class VodController extends BaseController {
     TextView mPlayerIJKBtn;
     TextView mPlayerRetry;
     TextView mPlayrefresh;
-	TextView mxuPlay;
+	TextView mxuPlay;       //xuameng 底部播放ID
     public TextView mPlayerTimeStartEndText;
     public TextView mPlayerTimeStartBtn;
     public TextView mPlayerTimeSkipBtn;
@@ -642,7 +642,9 @@ public class VodController extends BaseController {
                 hideBottom();
             }
         });
-        mNextBtn.setNextFocusLeftId(R.id.play_time_start);
+        mNextBtn.setNextFocusLeftId(R.id.mxuplay);      //底部菜单下一集左键是播放
+		mxuPlay.setNextFocusLeftId(R.id.audio_track_select);      //底部菜单播放左键是音轨
+		mAudioTrackBtn.setNext.setNextFocusRightId(R.id.mxuplay);   //底部菜音轨右键是播放
     }
 
     private void hideLiveAboutBtn() {
