@@ -644,7 +644,7 @@ public class VodController extends BaseController {
         });
         mNextBtn.setNextFocusLeftId(R.id.mxuplay);      //底部菜单下一集左键是播放
 		mxuPlay.setNextFocusLeftId(R.id.audio_track_select);      //底部菜单播放左键是音轨
-		mAudioTrackBtn.setNext.setNextFocusRightId(R.id.mxuplay);   //底部菜音轨右键是播放
+		mAudioTrackBtn.setNextFocusRightId(R.id.mxuplay);   //底部菜音轨右键是播放
     }
 
     private void hideLiveAboutBtn() {
