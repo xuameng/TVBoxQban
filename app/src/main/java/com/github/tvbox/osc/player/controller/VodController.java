@@ -124,7 +124,7 @@ public class VodController extends BaseController {
     TextView mPlayerIJKBtn;
     TextView mPlayerRetry;
     TextView mPlayrefresh;
-	ImageView mxuPlay;       //xuameng 底部播放ID
+	TextView mxuPlay;       //xuameng 底部播放ID
     public TextView mPlayerTimeStartEndText;
     public TextView mPlayerTimeStartBtn;
     public TextView mPlayerTimeSkipBtn;
@@ -853,13 +853,17 @@ public class VodController extends BaseController {
             case VideoView.STATE_PLAYING:
                 initLandscapePortraitBtnInfo();
                 startProgress();
-				mxuPlay.setImageDrawable(getResources().getDrawable(R.drawable.xupause));
+		        mxuPlay.setVisibility(View.VISIBLE);
+                mxuPlay.setTextColor(Color.WHITE);
+                mxuPlay.setText("播放");
                 break;
             case VideoView.STATE_PAUSED:
                 mTopRoot1.setVisibility(GONE);
                 mTopRoot2.setVisibility(GONE);
                 mPlayTitle.setVisibility(VISIBLE);
-				mxuPlay.setImageDrawable(getResources().getDrawable(R.drawable.xuplay));
+			    mxuPlay.setVisibility(View.VISIBLE);
+                mxuPlay.setTextColor(Color.WHITE);
+                mxuPlay.setText("暂停");
                 break;
             case VideoView.STATE_ERROR:
                 listener.errReplay();
