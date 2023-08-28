@@ -335,28 +335,6 @@ public class VodController extends BaseController {
             }
         });
 
-		mxuPlay.setOnClickListener(new OnClickListener() {			//xuameng 低菜单播放监听
-            @Override												//xuameng 低菜单播放监听
-            public void onClick(View view) {
-				switch (playState) {
-		    case VideoView.STATE_PLAYING:
-				initLandscapePortraitBtnInfo();
-                startProgress();
-                F.setImageDrawable(getResources().getDrawable(R.drawable.xupause));
-                togglePlay();										//xuameng 低菜单播放监听
-                break;
-            case VideoView.STATE_PAUSED:
-				mTopRoot1.setVisibility(GONE);
-                mTopRoot2.setVisibility(GONE);
-                mPlayTitle.setVisibility(VISIBLE);
-                mPauseImg.setImageDrawable(getResources().getDrawable(R.drawable.xuplay));
-                togglePlay();										//xuameng 低菜单播放监听
-                hideBottom();
-				break;                                         //xuameng 低菜单播放监听
-            }
-			}
-        });
-
         mPreBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -875,11 +853,13 @@ public class VodController extends BaseController {
             case VideoView.STATE_PLAYING:
                 initLandscapePortraitBtnInfo();
                 startProgress();
+				mxuPlay.setImageDrawable(getResources().getDrawable(R.drawable.xupause));
                 break;
             case VideoView.STATE_PAUSED:
                 mTopRoot1.setVisibility(GONE);
                 mTopRoot2.setVisibility(GONE);
                 mPlayTitle.setVisibility(VISIBLE);
+				mxuPlay.setImageDrawable(getResources().getDrawable(R.drawable.xuplay));
                 break;
             case VideoView.STATE_ERROR:
                 listener.errReplay();
