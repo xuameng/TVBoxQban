@@ -1,5 +1,5 @@
 package com.github.tvbox.osc.player.controller;
-package xyz.doikki.videoplayer.controller;
+
 import android.app.Activity;
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -170,36 +170,6 @@ public class VodController extends BaseController {
         mHandler.removeCallbacks(lockRunnable);
         mHandler.postDelayed(lockRunnable, 3000);
     }
-//xuameng play
-    public class ControlWrapper implements MediaPlayerControl, IVideoController {
-
-    private MediaPlayerControl mPlayerControl;
-    private IVideoController mController;
-
-    public ControlWrapper(@NonNull MediaPlayerControl playerControl, @NonNull IVideoController controller) {
-        mPlayerControl = playerControl;
-        mController = controller;
-    }
-	@Override
-
-	    public boolean isPlaying() {
-        return mPlayerControl.isPlaying();
-    }
-	@Override
-	    public void pause() {
-        mPlayerControl.pause();
-    }
-	@Override
-		public void lilijuanPlay() {
-        if (isPlaying()) {
-            pause();
-        } else {
-            start();
-			hideBottom();
-        }
-    }
-	}
-	//xuameng playend
 
     @Override
     protected void initView() {
@@ -368,7 +338,7 @@ public class VodController extends BaseController {
 		mxuPlay.setOnClickListener(new OnClickListener() {			//xuameng 低菜单播放监听
             @Override												//xuameng 低菜单播放监听
             public void onClick(View v) {							//xuameng 低菜单播放监听
-                lilijuanPlay();										//xuameng 低菜单播放监听
+                togglePlay();										//xuameng 低菜单播放监听
             }
         });
         mPreBtn.setOnClickListener(new OnClickListener() {
