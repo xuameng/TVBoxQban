@@ -337,7 +337,8 @@ public class VodController extends BaseController {
 
 		mxuPlay.setOnClickListener(new OnClickListener() {			//xuameng 低菜单播放监听
             @Override												//xuameng 低菜单播放监听
-            public void onClick(View view) {	
+            public void onClick(View view) {
+				switch (playState) {
 		    case VideoView.STATE_PLAYING:
 				initLandscapePortraitBtnInfo();
                 startProgress();
@@ -353,6 +354,7 @@ public class VodController extends BaseController {
                 hideBottom();
 				break;                                         //xuameng 低菜单播放监听
             }
+			}
         });
 
         mPreBtn.setOnClickListener(new OnClickListener() {
