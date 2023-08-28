@@ -170,8 +170,13 @@ public class VodController extends BaseController {
         mHandler.removeCallbacks(lockRunnable);
         mHandler.postDelayed(lockRunnable, 3000);
     }
-
-	
+//xuameng play
+	    public boolean isPlaying() {
+        return mPlayerControl.isPlaying();
+    }
+	    public void pause() {
+        mPlayerControl.pause();
+    }
 		public void lilijuanPlay() {
         if (isPlaying()) {
             pause();
@@ -180,6 +185,7 @@ public class VodController extends BaseController {
 			hideBottom();
         }
     }
+	//xuameng playend
 
     @Override
     protected void initView() {
