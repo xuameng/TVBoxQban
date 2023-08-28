@@ -336,7 +336,7 @@ public class VodController extends BaseController {
             }
         });
 
-		public void xuPlay() {
+		public void lilijuanPlay() {
         if (isPlaying()) {
             pause();
         } else {
@@ -347,7 +347,7 @@ public class VodController extends BaseController {
 		mxuPlay.setOnClickListener(new OnClickListener() {			//xuameng 低菜单播放监听
             @Override												//xuameng 低菜单播放监听
             public void onClick(View v) {							//xuameng 低菜单播放监听
-                xuPlay();										//xuameng 低菜单播放监听
+                lilijuanPlay();										//xuameng 低菜单播放监听
             }
         });
         mPreBtn.setOnClickListener(new OnClickListener() {
