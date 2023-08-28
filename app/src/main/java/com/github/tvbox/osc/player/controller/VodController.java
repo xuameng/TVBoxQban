@@ -853,6 +853,7 @@ public class VodController extends BaseController {
     protected void onPlayStateChanged(int playState) {
         super.onPlayStateChanged(playState);
         videoPlayState = playState;
+		textview.setTextColor(Color.WHITE);
         switch (playState) {
             case VideoView.STATE_IDLE:
                 break;
