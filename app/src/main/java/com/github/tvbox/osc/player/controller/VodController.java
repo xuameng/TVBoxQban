@@ -171,23 +171,23 @@ public class VodController extends BaseController {
         mHandler.postDelayed(lockRunnable, 3000);
     }
 //xuameng play
-    public class ControlWrapper1 implements MediaPlayerControl, IVideoController {
+    public class ControlWrapper implements MediaPlayerControl, IVideoController {
 
-    private MediaPlayerControl mPlayerControl1;
-    private IVideoController mController1;
+    private MediaPlayerControl mPlayerControl;
+    private IVideoController mController;
 
-    public ControlWrapper1(@NonNull MediaPlayerControl playerControl, @NonNull IVideoController controller) {
-        mPlayerControl1 = playerControl;
-        mController11 = controller;
+    public ControlWrapper(@NonNull MediaPlayerControl playerControl, @NonNull IVideoController controller) {
+        mPlayerControl = playerControl;
+        mController = controller;
     }
 	@Override
 
 	    public boolean isPlaying() {
-        return mPlayerControl1.isPlaying();
+        return mPlayerControl.isPlaying();
     }
 	@Override
 	    public void pause() {
-        mPlayerControl1.pause();
+        mPlayerControl.pause();
     }
 	@Override
 		public void lilijuanPlay() {
