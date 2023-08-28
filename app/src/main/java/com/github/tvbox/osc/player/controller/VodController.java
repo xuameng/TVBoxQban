@@ -339,7 +339,6 @@ public class VodController extends BaseController {
             @Override												//xuameng 低菜单播放监听
             public void onClick(View v) {							//xuameng 低菜单播放监听
                 togglePlay();										//xuameng 低菜单播放监听
-                hideBottom();
             }
         });
         mPreBtn.setOnClickListener(new OnClickListener() {
@@ -863,8 +862,6 @@ public class VodController extends BaseController {
 		        mxuPlay.setVisibility(View.VISIBLE);
                 mxuPlay.setTextColor(Color.WHITE);
                 mxuPlay.setText("暂停");            //xuameng底部菜单显示播放
-				showBottom();						//xuameng显示上下菜单
-				myHandle.postDelayed(myRunnable, myHandleSeconds);		//xuameng显示上下菜单
                 break;
             case VideoView.STATE_PAUSED:
                 mTopRoot1.setVisibility(GONE);
