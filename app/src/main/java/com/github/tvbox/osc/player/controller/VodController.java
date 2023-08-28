@@ -1,5 +1,5 @@
 package com.github.tvbox.osc.player.controller;
-
+package xyz.doikki.videoplayer.controller;
 import android.app.Activity;
 import android.annotation.SuppressLint;
 import android.content.Context;
