@@ -171,14 +171,14 @@ public class VodController extends BaseController {
         mHandler.postDelayed(lockRunnable, 3000);
     }
 //xuameng play
-    public class ControlWrapper1 implements MediaPlayerControl1, IVideoController1 {
+    public class ControlWrapper1 implements MediaPlayerControl, IVideoController {
 
-    private MediaPlayerControl1 mPlayerControl1;
-    private IVideoController1 mController1;
+    private MediaPlayerControl mPlayerControl1;
+    private IVideoController mController1;
 
-    public ControlWrapper1(@NonNull MediaPlayerControl1 playerControl1, @NonNull IVideoController1 controller) {
-        mPlayerControl1 = playerControl1;
-        mController1 = controller;
+    public ControlWrapper1(@NonNull MediaPlayerControl playerControl, @NonNull IVideoController controller) {
+        mPlayerControl1 = playerControl;
+        mController11 = controller;
     }
 	@Override
 
