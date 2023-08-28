@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.graphics.Color;             //xuameng获取颜色值
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
@@ -853,7 +854,6 @@ public class VodController extends BaseController {
     protected void onPlayStateChanged(int playState) {
         super.onPlayStateChanged(playState);
         videoPlayState = playState;
-		textview.setTextColor(Color.WHITE);
         switch (playState) {
             case VideoView.STATE_IDLE:
                 break;
@@ -862,7 +862,7 @@ public class VodController extends BaseController {
                 startProgress();
 		        mxuPlay.setVisibility(View.VISIBLE);
                 mxuPlay.setTextColor(Color.WHITE);
-                mxuPlay.setText("播放");
+                mxuPlay.setText("播放");            //xuameng底部菜单显示播放
                 break;
             case VideoView.STATE_PAUSED:
                 mTopRoot1.setVisibility(GONE);
@@ -870,7 +870,7 @@ public class VodController extends BaseController {
                 mPlayTitle.setVisibility(VISIBLE);
 			    mxuPlay.setVisibility(View.VISIBLE);
                 mxuPlay.setTextColor(Color.WHITE);
-                mxuPlay.setText("暂停");
+                mxuPlay.setText("暂停");			//xuameng底部菜单显示播放
                 break;
             case VideoView.STATE_ERROR:
                 listener.errReplay();
