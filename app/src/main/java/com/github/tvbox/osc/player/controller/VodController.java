@@ -334,7 +334,13 @@ public class VodController extends BaseController {
                 hideBottom();
             }
         });
-
+		mxuPlay.setOnClickListener(new OnClickListener() {			//xuameng 低菜单播放监听
+            @Override												//xuameng 低菜单播放监听
+            public void onClick(View v) {							//xuameng 低菜单播放监听
+                togglePlay();										//xuameng 低菜单播放监听
+                hideBottom();
+            }
+        });
         mPreBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
