@@ -108,19 +108,19 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/vs_10">
-            <ImageView
-                
-               
-                android:id="@+id/mxuplay"
-                
-                android:src="@drawable/xupause"
+            <TextView
+                android:textSize="@dimen/ts_20"
+                android:textColor="@color/color_FFFFFF"
                 android:paddingRight="@dimen/vs_10"
-                android:focusable="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="@dimen/vs_5"
-                
-             
+                android:text="播放"
+                android:id="@+id/mxuplay"  
+                android:focusable="true" 
+                android:padding="@dimen/vs_10"   
+                android:background="@drawable/button_dialog_main_1"
+                android:singleLine="true"
                 android:layout_marginEnd="@dimen/vs_5" />
             <TextView
                 android:textSize="@dimen/ts_20"
