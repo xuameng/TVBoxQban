@@ -124,7 +124,7 @@ public class VodController extends BaseController {
     TextView mPlayerIJKBtn;
     TextView mPlayerRetry;
     TextView mPlayrefresh;
-	TextView mxuPlay;       //xuameng 底部播放ID
+	ImageView mxuPlay;       //xuameng 底部播放ID
     public TextView mPlayerTimeStartEndText;
     public TextView mPlayerTimeStartBtn;
     public TextView mPlayerTimeSkipBtn;
@@ -337,9 +337,18 @@ public class VodController extends BaseController {
 
 		mxuPlay.setOnClickListener(new OnClickListener() {			//xuameng 低菜单播放监听
             @Override												//xuameng 低菜单播放监听
-            public void onClick(View v) {							//xuameng 低菜单播放监听
+            public void onClick(View view) {	
+		    case VideoView.STATE_PLAYING:
+                isPaused = false;
+                F.setImageDrawable(getResources().getDrawable(R.drawable.xupause));
+                togglePlay();										//xuameng 低菜单播放监听
+                break;
+            case VideoView.STATE_PAUSED:
+                isPaused = true;
+                mPauseImg.setImageDrawable(getResources().getDrawable(R.drawable.xuplay));
                 togglePlay();										//xuameng 低菜单播放监听
                 hideBottom();
+				break;                                         //xuameng 低菜单播放监听
             }
         });
 
@@ -654,14 +663,14 @@ public class VodController extends BaseController {
             mPlayerTimeStartBtn.setVisibility(GONE);
             mPlayerTimeSkipBtn.setVisibility(GONE);
             mPlayerTimeResetBtn.setVisibility(GONE);
-            mNextBtn.setNextFocusLeftId(R.id.mxuplay);
+            mNextBtn.setNextFocusLeftId(R.id.mxuplay);		//xuameng底部菜单下一集左键是播放
         } else {
             mPlayerSpeedBtn.setVisibility(View.VISIBLE);
             mPlayerTimeStartEndText.setVisibility(View.VISIBLE);
             mPlayerTimeStartBtn.setVisibility(View.VISIBLE);
             mPlayerTimeSkipBtn.setVisibility(View.VISIBLE);
             mPlayerTimeResetBtn.setVisibility(View.VISIBLE);
-            mNextBtn.setNextFocusLeftId(R.id.mxuplay);
+            mNextBtn.setNextFocusLeftId(R.id.mxuplay);		//xuameng底部菜单下一集左键是播放
         }
     }
 
