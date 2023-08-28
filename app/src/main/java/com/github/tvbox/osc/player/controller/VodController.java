@@ -180,12 +180,16 @@ public class VodController extends BaseController {
         mPlayerControl1 = playerControl1;
         mController1 = controller;
     }
+	@Override
+
 	    public boolean isPlaying() {
         return mPlayerControl1.isPlaying();
     }
+	@Override
 	    public void pause() {
         mPlayerControl1.pause();
     }
+	@Override
 		public void lilijuanPlay() {
         if (isPlaying()) {
             pause();
@@ -194,6 +198,7 @@ public class VodController extends BaseController {
 			hideBottom();
         }
     }
+	}
 	//xuameng playend
 
     @Override
