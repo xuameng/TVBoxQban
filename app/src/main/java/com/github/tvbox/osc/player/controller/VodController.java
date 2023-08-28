@@ -339,12 +339,15 @@ public class VodController extends BaseController {
             @Override												//xuameng 低菜单播放监听
             public void onClick(View view) {	
 		    case VideoView.STATE_PLAYING:
-                isPaused = false;
+				initLandscapePortraitBtnInfo();
+                startProgress();
                 F.setImageDrawable(getResources().getDrawable(R.drawable.xupause));
                 togglePlay();										//xuameng 低菜单播放监听
                 break;
             case VideoView.STATE_PAUSED:
-                isPaused = true;
+				mTopRoot1.setVisibility(GONE);
+                mTopRoot2.setVisibility(GONE);
+                mPlayTitle.setVisibility(VISIBLE);
                 mPauseImg.setImageDrawable(getResources().getDrawable(R.drawable.xuplay));
                 togglePlay();										//xuameng 低菜单播放监听
                 hideBottom();
