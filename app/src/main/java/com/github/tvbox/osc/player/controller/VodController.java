@@ -18,7 +18,6 @@ import android.graphics.Color;             //xuameng获取颜色值
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
-import androidx.transition.TransitionManager;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.github.tvbox.osc.R;
@@ -70,17 +69,6 @@ public class VodController extends BaseController {
                     }
                     case 1002: { // 显示底部菜单
                         mBottomRoot.setVisibility(VISIBLE);
-
-						mBottomRoot.setAlpha(0.0f);
-                        mBottomRoot.setTranslationY(-mTopRoot.getHeight() / 2);
-                        mBottomRoot.animate()
-                                .translationY(0)
-                                .alpha(1.0f)
-                                .setDuration(250)
-                                .setInterpolator(new DecelerateInterpolator())
-                                .setListener(null);
-
-
                         mTopRoot1.setVisibility(VISIBLE);
                         mTopRoot2.setVisibility(VISIBLE);
                         mPlayTitle.setVisibility(GONE);
@@ -108,22 +96,6 @@ public class VodController extends BaseController {
                             mHandler.sendEmptyMessageDelayed(1004, 100);
                         break;
                     }
-				   case 1005: { 
-                        mBottomRoot.animate()
-                                .translationY(-mBottomRoot.getHeight() / 2)
-                                .alpha(0.0f)
-                                .setDuration(250)
-                                .setInterpolator(new DecelerateInterpolator())
-                                .setListener(new AnimatorListenerAdapter() {
-                                    @Override
-                                    public void onAnimationEnd(Animator animation) {
-                                        super.onAnimationEnd(animation);
-                                        mBottomRoot.setVisibility(View.GONE);
-                                        mBottomRoot.clearAnimation();
-                                    }
-                                });
-                        break;
-	              }
                 }
             }
         };
