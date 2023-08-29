@@ -71,7 +71,7 @@ public class VodController extends BaseController {
                         mBottomRoot.setVisibility(VISIBLE);
 
 						mBottomRoot.setAlpha(0.0f);
-                        mBottomRoot.setTranslationY(-mBottomRoot.getHeight() / 2);
+                        mBottomRoot.setTranslationY(-mTopRoot.getHeight() / 2);
                         mBottomRoot.animate()
                                 .translationY(0)
                                 .alpha(1.0f)
@@ -106,9 +106,8 @@ public class VodController extends BaseController {
                         } else
                             mHandler.sendEmptyMessageDelayed(1004, 100);
                         break;
-
-
-                   case 1005: { 
+                    }
+				   case 1005: { 
                         mBottomRoot.animate()
                                 .translationY(-mBottomRoot.getHeight() / 2)
                                 .alpha(0.0f)
@@ -123,9 +122,7 @@ public class VodController extends BaseController {
                                     }
                                 });
                         break;
-                      
-
-                    }
+	              }
                 }
             }
         };
