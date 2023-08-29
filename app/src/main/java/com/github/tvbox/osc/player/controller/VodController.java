@@ -71,7 +71,7 @@ public class VodController extends BaseController {
                         mBottomRoot.setVisibility(VISIBLE);
 
 						mBottomRoot.setAlpha(0.0f);
-                        mBottomRoot.setTranslationY(-mTopRoot.getHeight() / 2);
+                        mBottomRoot.setTranslationY(-mBottomRoot.getHeight() / 2);
                         mBottomRoot.animate()
                                 .translationY(0)
                                 .alpha(1.0f)
