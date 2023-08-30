@@ -1,5 +1,7 @@
 package com.github.tvbox.osc.player.controller;
-
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -209,6 +211,12 @@ public class VodController extends BaseController {
         mLandscapePortraitBtn = findViewById(R.id.landscape_portrait);
         backBtn = findViewById(R.id.tv_back);
 		mxuPlay = findViewById(R.id.mxuplay);		//xuameng  低菜单播放
+
+		ObjectAnimator animator = ObjectAnimator.ofFloat(mBottomRoot, "translationY", 0,200,-200,0);				//xuameng
+        animator.setDuration(2000);
+        animator.start();
+
+
         backBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1039,3 +1047,4 @@ public class VodController extends BaseController {
         mHandler.removeCallbacks(myRunnable2);
     }
 }
+
