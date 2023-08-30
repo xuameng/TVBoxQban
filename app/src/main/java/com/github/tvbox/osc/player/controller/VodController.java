@@ -884,7 +884,11 @@ public class VodController extends BaseController {
 		        mxuPlay.setVisibility(View.VISIBLE);
                 mxuPlay.setTextColor(Color.WHITE);
                 mxuPlay.setText("暂停");            //xuameng底部菜单显示暂停
-				Thread.sleep(2000);					//等待2秒
+				try {								//等待2秒
+                Thread.sleep(2000);                 //等待2秒
+                } catch(InterruptedException ex) {  //等待2秒
+                 Thread.currentThread().interrupt(); //等待2秒
+                }
 				hideBottom();						//xuameng隐藏菜单
                 break;
             case VideoView.STATE_PAUSED:
