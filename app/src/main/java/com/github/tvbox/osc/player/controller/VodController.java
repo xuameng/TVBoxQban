@@ -75,6 +75,9 @@ public class VodController extends BaseController {
                         animator.setDuration(2000);				//xuameng动画菜单
                         animator.start();						//xuameng动画菜单
                         mTopRoot1.setVisibility(VISIBLE);
+						ObjectAnimator animator1 = ObjectAnimator.ofFloat(mTopRoot1, "translationY", -250,0);				//xuameng动画菜单
+                        animator1.setDuration(2000);				//xuameng动画菜单
+                        animator1.start();						//xuameng动画菜单
                         mTopRoot2.setVisibility(VISIBLE);
                         mPlayTitle.setVisibility(GONE);
                         mxuPlay.requestFocus();		// 底部菜单默认焦点为播放
@@ -84,10 +87,14 @@ public class VodController extends BaseController {
                     }
                     case 1003: { // 隐藏底部菜单
                         mBottomRoot.setVisibility(GONE);
-						ObjectAnimator animator1 = ObjectAnimator.ofFloat(mBottomRoot, "translationY", -250,0);				//xuameng动画菜单
-                        animator.setDuration(2000);				//xuameng动画菜单
-                        animator.start();						//xuameng动画菜单
+					    ObjectAnimator animator2 = ObjectAnimator.ofFloat(mBottomRoot, "translationY", -250,0);				//xuameng动画菜单
+                        animator2.setDuration(2000);				//xuameng动画菜单
+                        animator2.start();
                         mTopRoot1.setVisibility(GONE);
+                        mBottomRoot.setVisibility(GONE);
+					    ObjectAnimator animator3 = ObjectAnimator.ofFloat(mBottomRoot, "translationY", 250,0);				//xuameng动画菜单
+                        animator3.setDuration(2000);				//xuameng动画菜单
+                        animator3.start();
                         mTopRoot2.setVisibility(GONE);
                         backBtn.setVisibility(INVISIBLE);
                         break;
@@ -883,9 +890,6 @@ public class VodController extends BaseController {
                 mxuPlay.setText("播放");			//xuameng底部菜单显示播放
 				showBottom();						//xuameng显示菜单
                 myHandle.postDelayed(myRunnable, myHandleSeconds);		//xuameng显示菜单
-                ObjectAnimator animator2 = ObjectAnimator.ofFloat(mTopRoot1, "translationY", -250,0);				//xuameng动画菜单
-                animator.setDuration(2000);				//xuameng动画菜单
-                animator.start();						//xuameng动画菜单
                 break;
             case VideoView.STATE_ERROR:
                 listener.errReplay();
@@ -1052,4 +1056,3 @@ public class VodController extends BaseController {
         mHandler.removeCallbacks(myRunnable2);
     }
 }
-
