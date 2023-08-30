@@ -1,7 +1,7 @@
 package com.github.tvbox.osc.player.controller;
 import android.animation.Animator;          //xuameng
-import android.animation.AnimatorListenerAdapter;       //xuameng
-import android.animation.ObjectAnimator;                //xuameng
+import android.animation.AnimatorListenerAdapter;       //xuameng动画
+import android.animation.ObjectAnimator;                //xuameng动画
 import android.app.Activity;
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -71,10 +71,13 @@ public class VodController extends BaseController {
                     }
                     case 1002: { // 显示底部菜单
                         mBottomRoot.setVisibility(VISIBLE);
-						ObjectAnimator animator = ObjectAnimator.ofFloat(mBottomRoot, "translationY", 0,-300,-200,0);				//xuameng
-                        animator.setDuration(2000);
-                        animator.start();
+						ObjectAnimator animator = ObjectAnimator.ofFloat(mBottomRoot, "translationY", 0,-300);				//xuameng动画菜单
+                        animator.setDuration(2000);				//xuameng动画菜单
+                        animator.start();						//xuameng动画菜单
                         mTopRoot1.setVisibility(VISIBLE);
+						ObjectAnimator animator = ObjectAnimator.ofFloat(mTopRoot1, "translationY", 0,-300);				//xuameng动画菜单
+                        animator.setDuration(2000);				//xuameng动画菜单
+                        animator.start();						//xuameng动画菜单
                         mTopRoot2.setVisibility(VISIBLE);
                         mPlayTitle.setVisibility(GONE);
                         mxuPlay.requestFocus();		// 底部菜单默认焦点为播放
