@@ -75,7 +75,7 @@ public class VodController extends BaseController {
                         animator.setDuration(3000);				//xuameng动画菜单
                         animator.start();						//xuameng动画菜单
                         mTopRoot1.setVisibility(VISIBLE);
-						ObjectAnimator animator = ObjectAnimator.ofFloat(mTopRoot1, "translationY", 0,-300);				//xuameng动画菜单
+						ObjectAnimator animator1 = ObjectAnimator.ofFloat(mTopRoot1, "translationY", 0,-300);				//xuameng动画菜单
                         animator.setDuration(3000);				//xuameng动画菜单
                         animator.start();						//xuameng动画菜单
                         mTopRoot2.setVisibility(VISIBLE);
