@@ -872,19 +872,20 @@ public class VodController extends BaseController {
             case VideoView.STATE_PLAYING:
                 initLandscapePortraitBtnInfo();
                 startProgress();
-		    ObjectAnimator animator2 = ObjectAnimator.ofFloat(mBottomRoot, "translationY", -250,0);				//xuameng动画菜单
-            animator2.setDuration(2000);				//xuameng动画菜单
-            animator2.start();
-			ObjectAnimator animator3 = ObjectAnimator.ofFloat(mTopRoot1, "translationY", 250,0);				//xuameng动画菜单
-            animator3.setDuration(2000);				//xuameng动画菜单
-            animator3.start();
-	        ObjectAnimator animator4 = ObjectAnimator.ofFloat(mTopRoot2, "translationY", 250,0);				//xuameng动画菜单
-            animator4.setDuration(2000);				//xuameng动画菜单
-            animator4.start();
+                        ObjectAnimator animator2 = ObjectAnimator.ofFloat(mBottomRoot, "translationY", 0,-300);				//xuameng动画菜单
+                        animator2.setDuration(2000);				//xuameng动画菜单
+                        animator2.start();
+			            ObjectAnimator animator3 = ObjectAnimator.ofFloat(mTopRoot1, "translationY", 0,300);				//xuameng动画菜单
+                        animator3.setDuration(2000);				//xuameng动画菜单
+                        animator3.start();
+	                    ObjectAnimator animator4 = ObjectAnimator.ofFloat(mTopRoot2, "translationY", 0,300);				//xuameng动画菜单
+                        animator4.setDuration(2000);				//xuameng动画菜单
+                        animator4.start();
 		        mxuPlay.setVisibility(View.VISIBLE);
                 mxuPlay.setTextColor(Color.WHITE);
                 mxuPlay.setText("暂停");            //xuameng底部菜单显示暂停
-				//xuameng隐藏菜单  hideBottom();						//xuameng隐藏菜单
+				Thread.sleep(2000);					//等待2秒
+				hideBottom();						//xuameng隐藏菜单
                 break;
             case VideoView.STATE_PAUSED:
                 mTopRoot1.setVisibility(GONE);
