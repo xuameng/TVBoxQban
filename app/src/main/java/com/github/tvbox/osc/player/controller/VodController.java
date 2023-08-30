@@ -71,15 +71,15 @@ public class VodController extends BaseController {
                     }
                     case 1002: { // 显示底部菜单
                         mBottomRoot.setVisibility(VISIBLE);
-						ObjectAnimator animator = ObjectAnimator.ofFloat(mBottomRoot, "translationY", 250,0);				//xuameng动画菜单
+						ObjectAnimator animator = ObjectAnimator.ofFloat(mBottomRoot, "translationY", 280,0);				//xuameng动画菜单
                         animator.setDuration(2000);				//xuameng动画菜单
                         animator.start();						//xuameng动画菜单
                         mTopRoot1.setVisibility(VISIBLE);
-						ObjectAnimator animator1 = ObjectAnimator.ofFloat(mTopRoot1, "translationY", -250,0);				//xuameng动画菜单
+						ObjectAnimator animator1 = ObjectAnimator.ofFloat(mTopRoot1, "translationY", -280,0);				//xuameng动画菜单
                         animator1.setDuration(2000);				//xuameng动画菜单
                         animator1.start();						//xuameng动画菜单
                         mTopRoot2.setVisibility(VISIBLE);
-						ObjectAnimator animator5 = ObjectAnimator.ofFloat(mTopRoot2, "translationY", -250,0);				//xuameng动画菜单
+						ObjectAnimator animator5 = ObjectAnimator.ofFloat(mTopRoot2, "translationY", -280,0);				//xuameng动画菜单
                         animator5.setDuration(2000);				//xuameng动画菜单
                         animator5.start();						//xuameng动画菜单
                         mPlayTitle.setVisibility(GONE);
@@ -872,19 +872,10 @@ public class VodController extends BaseController {
             case VideoView.STATE_PLAYING:
                 initLandscapePortraitBtnInfo();
                 startProgress();
-                        ObjectAnimator animator2 = ObjectAnimator.ofFloat(mBottomRoot, "translationY", -300,-300);				//xuameng动画菜单
-                        animator2.setDuration(2000);				//xuameng动画菜单
-                        animator2.start();
-			            ObjectAnimator animator3 = ObjectAnimator.ofFloat(mTopRoot1, "translationY", 300,300);				//xuameng动画菜单
-                        animator3.setDuration(2000);				//xuameng动画菜单
-                        animator3.start();
-	                    ObjectAnimator animator4 = ObjectAnimator.ofFloat(mTopRoot2, "translationY", 300,300);				//xuameng动画菜单
-                        animator4.setDuration(2000);				//xuameng动画菜单
-                        animator4.start();
 		        mxuPlay.setVisibility(View.VISIBLE);
                 mxuPlay.setTextColor(Color.WHITE);
                 mxuPlay.setText("暂停");            //xuameng底部菜单显示暂停
-				//xuameng隐藏菜单    hideBottom();						//xuameng隐藏菜单
+				hideBottom();						//xuameng隐藏菜单
                 break;
             case VideoView.STATE_PAUSED:
                 mTopRoot1.setVisibility(GONE);
