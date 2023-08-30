@@ -79,6 +79,9 @@ public class VodController extends BaseController {
                         animator1.setDuration(2000);				//xuameng动画菜单
                         animator1.start();						//xuameng动画菜单
                         mTopRoot2.setVisibility(VISIBLE);
+						ObjectAnimator animator5 = ObjectAnimator.ofFloat(mTopRoot2, "translationY", -250,0);				//xuameng动画菜单
+                        animator5.setDuration(2000);				//xuameng动画菜单
+                        animator5.start();						//xuameng动画菜单
                         mPlayTitle.setVisibility(GONE);
                         mxuPlay.requestFocus();		// 底部菜单默认焦点为播放
                         backBtn.setVisibility(ScreenUtils.isTv(context) ? INVISIBLE : VISIBLE);
@@ -86,15 +89,17 @@ public class VodController extends BaseController {
                         break;
                     }
                     case 1003: { // 隐藏底部菜单
-                        mBottomRoot.setVisibility(GONE);
 					    ObjectAnimator animator2 = ObjectAnimator.ofFloat(mBottomRoot, "translationY", -250,0);				//xuameng动画菜单
                         animator2.setDuration(2000);				//xuameng动画菜单
                         animator2.start();
-                        mTopRoot1.setVisibility(GONE);
-                        mBottomRoot.setVisibility(GONE);
-					    ObjectAnimator animator3 = ObjectAnimator.ofFloat(mBottomRoot, "translationY", 250,0);				//xuameng动画菜单
+						mBottomRoot.setVisibility(GONE);
+					    ObjectAnimator animator3 = ObjectAnimator.ofFloat(mTopRoot1, "translationY", 250,0);				//xuameng动画菜单
                         animator3.setDuration(2000);				//xuameng动画菜单
                         animator3.start();
+                        mTopRoot1.setVisibility(GONE);
+					    ObjectAnimator animator4 = ObjectAnimator.ofFloat(mTopRoot2, "translationY", 250,0);				//xuameng动画菜单
+                        animator4.setDuration(2000);				//xuameng动画菜单
+                        animator4.start();
                         mTopRoot2.setVisibility(GONE);
                         backBtn.setVisibility(INVISIBLE);
                         break;
