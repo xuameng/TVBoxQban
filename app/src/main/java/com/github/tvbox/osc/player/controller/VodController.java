@@ -89,17 +89,8 @@ public class VodController extends BaseController {
                         break;
                     }
                     case 1003: { // 隐藏底部菜单
-					    ObjectAnimator animator2 = ObjectAnimator.ofFloat(mBottomRoot, "translationY", -250,0);				//xuameng动画菜单
-                        animator2.setDuration(2000);				//xuameng动画菜单
-                        animator2.start();
 						mBottomRoot.setVisibility(GONE);
-					    ObjectAnimator animator3 = ObjectAnimator.ofFloat(mTopRoot1, "translationY", 250,0);				//xuameng动画菜单
-                        animator3.setDuration(2000);				//xuameng动画菜单
-                        animator3.start();
                         mTopRoot1.setVisibility(GONE);
-					    ObjectAnimator animator4 = ObjectAnimator.ofFloat(mTopRoot2, "translationY", 250,0);				//xuameng动画菜单
-                        animator4.setDuration(2000);				//xuameng动画菜单
-                        animator4.start();
                         mTopRoot2.setVisibility(GONE);
                         backBtn.setVisibility(INVISIBLE);
                         break;
@@ -164,7 +155,7 @@ public class VodController extends BaseController {
     private boolean isLock = false;
     Handler myHandle;
     Runnable myRunnable;
-    int myHandleSeconds = 10000;//闲置多少毫秒秒关闭底栏  默认6秒
+    int myHandleSeconds = 15000;//闲置多少毫秒秒关闭底栏  默认6秒
 
     int videoPlayState = 0;
 
@@ -273,7 +264,16 @@ public class VodController extends BaseController {
         myRunnable = new Runnable() {
             @Override
             public void run() {
-                hideBottom();
+            ObjectAnimator animator2 = ObjectAnimator.ofFloat(mBottomRoot, "translationY", -250,0);				//xuameng动画菜单
+            animator2.setDuration(2000);				//xuameng动画菜单
+            animator2.start();
+			ObjectAnimator animator3 = ObjectAnimator.ofFloat(mTopRoot1, "translationY", 250,0);				//xuameng动画菜单
+            animator3.setDuration(2000);				//xuameng动画菜单
+            animator3.start();
+	        ObjectAnimator animator4 = ObjectAnimator.ofFloat(mTopRoot2, "translationY", 250,0);				//xuameng动画菜单
+            animator4.setDuration(2000);				//xuameng动画菜单
+            animator4.start();
+            hideBottom();
             }
         };
 
