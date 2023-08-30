@@ -1,7 +1,7 @@
 package com.github.tvbox.osc.player.controller;
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ObjectAnimator;
+import android.animation.Animator;          //xuameng
+import android.animation.AnimatorListenerAdapter;       //xuameng
+import android.animation.ObjectAnimator;                //xuameng
 import android.app.Activity;
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -71,6 +71,9 @@ public class VodController extends BaseController {
                     }
                     case 1002: { // 显示底部菜单
                         mBottomRoot.setVisibility(VISIBLE);
+						ObjectAnimator animator = ObjectAnimator.ofFloat(mBottomRoot, "translationY", 0,-300,-200,0);				//xuameng
+                        animator.setDuration(2000);
+                        animator.start();
                         mTopRoot1.setVisibility(VISIBLE);
                         mTopRoot2.setVisibility(VISIBLE);
                         mPlayTitle.setVisibility(GONE);
@@ -211,10 +214,6 @@ public class VodController extends BaseController {
         mLandscapePortraitBtn = findViewById(R.id.landscape_portrait);
         backBtn = findViewById(R.id.tv_back);
 		mxuPlay = findViewById(R.id.mxuplay);		//xuameng  低菜单播放
-
-		ObjectAnimator animator = ObjectAnimator.ofFloat(mBottomRoot, "translationY", 0,200,-200,0);				//xuameng
-        animator.setDuration(2000);
-        animator.start();
 
 
         backBtn.setOnClickListener(new OnClickListener() {
