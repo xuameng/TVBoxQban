@@ -887,7 +887,6 @@ public class VodController extends BaseController {
 				    if (!isBottomVisible()) {
                     showBottom();					//xuameng显示菜单
                     myHandle.postDelayed(myRunnable, myHandleSeconds);
-                    return true;
 					}
 				showBottom();						
                 myHandle.postDelayed(myRunnable, myHandleSeconds);		//xuameng显示菜单
