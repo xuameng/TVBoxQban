@@ -151,15 +151,6 @@ public class ControlWrapper implements MediaPlayerControl, IVideoController {
         }
     }
 
-        public void xutogglePlay() {
-        if (isPlaying()) {
-            pause();
-            showBottom();
-        } else {
-            start();
-        }
-    }
-
     /**
      * 横竖屏切换，会旋转屏幕
      */
