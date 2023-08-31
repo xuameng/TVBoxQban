@@ -1,7 +1,5 @@
 package com.github.tvbox.osc.player.controller;
-import android.animation.Animator;          //xuameng
-import android.animation.AnimatorListenerAdapter;       //xuameng动画
-import android.animation.ObjectAnimator;                //xuameng动画
+
 import android.app.Activity;
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -71,17 +69,8 @@ public class VodController extends BaseController {
                     }
                     case 1002: { // 显示底部菜单
                         mBottomRoot.setVisibility(VISIBLE);
-						ObjectAnimator animator = ObjectAnimator.ofFloat(mBottomRoot, "translationY", 280,0);				//xuameng动画菜单
-                        animator.setDuration(2000);				//xuameng动画菜单
-                        animator.start();						//xuameng动画菜单
                         mTopRoot1.setVisibility(VISIBLE);
-						ObjectAnimator animator1 = ObjectAnimator.ofFloat(mTopRoot1, "translationY", -280,0);				//xuameng动画菜单
-                        animator1.setDuration(2000);				//xuameng动画菜单
-                        animator1.start();						//xuameng动画菜单
                         mTopRoot2.setVisibility(VISIBLE);
-						ObjectAnimator animator5 = ObjectAnimator.ofFloat(mTopRoot2, "translationY", -280,0);				//xuameng动画菜单
-                        animator5.setDuration(2000);				//xuameng动画菜单
-                        animator5.start();						//xuameng动画菜单
                         mPlayTitle.setVisibility(GONE);
                         mxuPlay.requestFocus();		// 底部菜单默认焦点为播放
                         backBtn.setVisibility(ScreenUtils.isTv(context) ? INVISIBLE : VISIBLE);
@@ -89,7 +78,7 @@ public class VodController extends BaseController {
                         break;
                     }
                     case 1003: { // 隐藏底部菜单
-						mBottomRoot.setVisibility(GONE);
+                        mBottomRoot.setVisibility(GONE);
                         mTopRoot1.setVisibility(GONE);
                         mTopRoot2.setVisibility(GONE);
                         backBtn.setVisibility(INVISIBLE);
@@ -155,7 +144,7 @@ public class VodController extends BaseController {
     private boolean isLock = false;
     Handler myHandle;
     Runnable myRunnable;
-    int myHandleSeconds = 15000;//闲置多少毫秒秒关闭底栏  默认6秒
+    int myHandleSeconds = 10000;//闲置多少毫秒秒关闭底栏  默认6秒
 
     int videoPlayState = 0;
 
@@ -220,8 +209,6 @@ public class VodController extends BaseController {
         mLandscapePortraitBtn = findViewById(R.id.landscape_portrait);
         backBtn = findViewById(R.id.tv_back);
 		mxuPlay = findViewById(R.id.mxuplay);		//xuameng  低菜单播放
-
-
         backBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -264,7 +251,7 @@ public class VodController extends BaseController {
         myRunnable = new Runnable() {
             @Override
             public void run() {
-            hideBottom();
+                hideBottom();
             }
         };
 
@@ -884,11 +871,7 @@ public class VodController extends BaseController {
 			    mxuPlay.setVisibility(View.VISIBLE);
                 mxuPlay.setTextColor(Color.WHITE);
                 mxuPlay.setText("播放");			//xuameng底部菜单显示播放
-				    if (!isBottomVisible()) {
-                    showBottom();					//xuameng显示菜单
-                    myHandle.postDelayed(myRunnable, myHandleSeconds);
-					}
-				showBottom();						
+				showBottom();						//xuameng显示菜单
                 myHandle.postDelayed(myRunnable, myHandleSeconds);		//xuameng显示菜单
                 break;
             case VideoView.STATE_ERROR:
