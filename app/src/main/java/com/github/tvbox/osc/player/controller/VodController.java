@@ -71,15 +71,15 @@ public class VodController extends BaseController {
                     }
                     case 1002: { // 显示底部菜单
                         mBottomRoot.setVisibility(VISIBLE);
-						ObjectAnimator animator = ObjectAnimator.ofFloat(mBottomRoot, "translationY", -0,280);				//xuameng动画菜单
+						ObjectAnimator animator = ObjectAnimator.ofFloat(mBottomRoot, "translationY", 280,0);				//xuameng动画菜单
                         animator.setDuration(2000);				//xuameng动画菜单
                         animator.start();						//xuameng动画菜单
                         mTopRoot1.setVisibility(VISIBLE);
-						ObjectAnimator animator1 = ObjectAnimator.ofFloat(mTopRoot1, "translationY", 0,-280);				//xuameng动画菜单
+						ObjectAnimator animator1 = ObjectAnimator.ofFloat(mTopRoot1, "translationY", -280,0);				//xuameng动画菜单
                         animator1.setDuration(2000);				//xuameng动画菜单
                         animator1.start();						//xuameng动画菜单
                         mTopRoot2.setVisibility(VISIBLE);
-						ObjectAnimator animator2 = ObjectAnimator.ofFloat(mTopRoot2, "translationY", 0,-280);				//xuameng动画菜单
+						ObjectAnimator animator2 = ObjectAnimator.ofFloat(mTopRoot2, "translationY", -280,0);				//xuameng动画菜单
                         animator2.setDuration(2000);				//xuameng动画菜单
                         animator2.start();						//xuameng动画菜单
                         mPlayTitle.setVisibility(GONE);
@@ -89,14 +89,26 @@ public class VodController extends BaseController {
                         break;
                     }
                     case 1003: { // 隐藏底部菜单
-                        mBottomRoot.setVisibility(GONE);
-                        mTopRoot1.setVisibility(GONE);
-                        mTopRoot2.setVisibility(GONE);
+                        mBottomRoot.setVisibility(VISIBLE);
+						ObjectAnimator animator3 = ObjectAnimator.ofFloat(mBottomRoot, "translationY", -0,280);				//xuameng向下划出屏外
+                        animator3.setDuration(2000);				//xuameng动画菜单
+                        animator3.start();
+                        mTopRoot1.setVisibility(VISIBLE);
+						ObjectAnimator animator4 = ObjectAnimator.ofFloat(mTopRoot1, "translationY", 0,-280);				//xuameng向上划出屏外
+                        animator4.setDuration(2000);				//xuameng动画菜单
+                        animator4.start();
+                        mTopRoot2.setVisibility(VISIBLE);
+						ObjectAnimator animator5 = ObjectAnimator.ofFloat(mTopRoot2, "translationY", 0,-280);				//xuameng向上划出屏外
+                        animator5.setDuration(2000);
+						animator5.start();
                         backBtn.setVisibility(INVISIBLE);
 						mPlayTitle.setVisibility(VISIBLE);    //xuameng显示上面菜单
 				        ObjectAnimator animator3 = ObjectAnimator.ofFloat(mPlayTitle, "translationY", -280,0);				//xuameng动画菜单
                         animator3.setDuration(2000);				//xuameng动画菜单
                         animator3.start();						//xuameng动画菜单
+						mBottomRoot.setVisibility(GONE);
+                        mTopRoot1.setVisibility(GONE);
+                        mTopRoot2.setVisibility(GONE);
                         break;
                     }
                     case 1004: { // 设置速度
