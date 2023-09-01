@@ -876,11 +876,12 @@ public class VodController extends BaseController {
 				hideBottom();						//xuameng隐藏菜单
                 break;
             case VideoView.STATE_PAUSED:
-                mTopRoot1.setVisibility(VISIBLE);
-                mTopRoot2.setVisibility(VISIBLE);
-               // mPlayTitle.setVisibility(VISIBLE);
+                //mTopRoot1.setVisibility(VISIBLE);     //xuameng显示上面菜单
+                //mTopRoot2.setVisibility(VISIBLE);     //xuameng显示上面菜单
+                //mPlayTitle.setVisibility(VISIBLE);
 			    mxuPlay.setVisibility(View.VISIBLE);
-                mxuPlay.setTextColor(Color.WHITE);
+                mxuPlay.setTextColor(Color.WHITE);	//xuameng底部菜单显示播放颜色
+                mxuPlay.setText("播放");			//xuameng底部菜单显示播放
 		        if (!isBottomVisible()) {
                     showBottom();
                     myHandle.postDelayed(myRunnable, myHandleSeconds);
