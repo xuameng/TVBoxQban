@@ -1,5 +1,7 @@
 package com.github.tvbox.osc.player.controller;
-
+import android.animation.Animator;          //xuameng
+import android.animation.AnimatorListenerAdapter;       //xuameng动画
+import android.animation.ObjectAnimator;                //xuameng动画
 import android.app.Activity;
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -69,8 +71,17 @@ public class VodController extends BaseController {
                     }
                     case 1002: { // 显示底部菜单
                         mBottomRoot.setVisibility(VISIBLE);
+						ObjectAnimator animator = ObjectAnimator.ofFloat(mBottomRoot, "translationY", 280,0);				//xuameng动画菜单
+                        animator.setDuration(2000);				//xuameng动画菜单
+                        animator.start();						//xuameng动画菜单
                         mTopRoot1.setVisibility(VISIBLE);
+						ObjectAnimator animator1 = ObjectAnimator.ofFloat(mTopRoot1, "translationY", -280,0);				//xuameng动画菜单
+                        animator1.setDuration(2000);				//xuameng动画菜单
+                        animator1.start();						//xuameng动画菜单
                         mTopRoot2.setVisibility(VISIBLE);
+						ObjectAnimator animator5 = ObjectAnimator.ofFloat(mTopRoot2, "translationY", -280,0);				//xuameng动画菜单
+                        animator5.setDuration(2000);				//xuameng动画菜单
+                        animator5.start();						//xuameng动画菜单
                         mPlayTitle.setVisibility(GONE);
                         mxuPlay.requestFocus();		// 底部菜单默认焦点为播放
                         backBtn.setVisibility(ScreenUtils.isTv(context) ? INVISIBLE : VISIBLE);
@@ -865,9 +876,9 @@ public class VodController extends BaseController {
 				hideBottom();						//xuameng隐藏菜单
                 break;
             case VideoView.STATE_PAUSED:
-                mTopRoot1.setVisibility(GONE);
-                mTopRoot2.setVisibility(GONE);
-                mPlayTitle.setVisibility(VISIBLE);
+                mTopRoot1.setVisibility(VISIBLE);
+                mTopRoot2.setVisibility(VISIBLE);
+               // mPlayTitle.setVisibility(VISIBLE);
 			    mxuPlay.setVisibility(View.VISIBLE);
                 mxuPlay.setTextColor(Color.WHITE);
 		        if (!isBottomVisible()) {
