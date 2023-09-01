@@ -71,15 +71,15 @@ public class VodController extends BaseController {
                     }
                     case 1002: { // 显示底部菜单
                         mBottomRoot.setVisibility(VISIBLE);
-						ObjectAnimator animator = ObjectAnimator.ofFloat(mBottomRoot, "translationY", -0,-280);				//xuameng动画菜单
+						ObjectAnimator animator = ObjectAnimator.ofFloat(mBottomRoot, "translationY", -0,280);				//xuameng动画菜单
                         animator.setDuration(2000);				//xuameng动画菜单
                         animator.start();						//xuameng动画菜单
                         mTopRoot1.setVisibility(VISIBLE);
-						ObjectAnimator animator1 = ObjectAnimator.ofFloat(mTopRoot1, "translationY", 0,280);				//xuameng动画菜单
+						ObjectAnimator animator1 = ObjectAnimator.ofFloat(mTopRoot1, "translationY", 0,-280);				//xuameng动画菜单
                         animator1.setDuration(2000);				//xuameng动画菜单
                         animator1.start();						//xuameng动画菜单
                         mTopRoot2.setVisibility(VISIBLE);
-						ObjectAnimator animator2 = ObjectAnimator.ofFloat(mTopRoot2, "translationY", 0,280);				//xuameng动画菜单
+						ObjectAnimator animator2 = ObjectAnimator.ofFloat(mTopRoot2, "translationY", 0,-280);				//xuameng动画菜单
                         animator2.setDuration(2000);				//xuameng动画菜单
                         animator2.start();						//xuameng动画菜单
                         mPlayTitle.setVisibility(GONE);
