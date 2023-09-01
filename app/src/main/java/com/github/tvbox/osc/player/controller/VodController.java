@@ -106,6 +106,11 @@ public class VodController extends BaseController {
 				        ObjectAnimator animator6 = ObjectAnimator.ofFloat(mPlayTitle, "translationY", -280,0);				//xuameng动画菜单
                         animator6.setDuration(2000);				//xuameng动画菜单
                         animator6.start();						//xuameng动画菜单
+                        try
+                        {
+	                    Thread.sleep(2000);//单位：毫秒
+                        } catch (Exception e) { 
+                        }
 						mBottomRoot.setVisibility(GONE);
                         mTopRoot1.setVisibility(GONE);
                         mTopRoot2.setVisibility(GONE);
