@@ -79,9 +79,9 @@ public class VodController extends BaseController {
                         animator1.setDuration(2000);				//xuameng动画菜单
                         animator1.start();						//xuameng动画菜单
                         mTopRoot2.setVisibility(VISIBLE);
-						ObjectAnimator animator5 = ObjectAnimator.ofFloat(mTopRoot2, "translationY", -280,0);				//xuameng动画菜单
-                        animator5.setDuration(2000);				//xuameng动画菜单
-                        animator5.start();						//xuameng动画菜单
+						ObjectAnimator animator2 = ObjectAnimator.ofFloat(mTopRoot2, "translationY", -280,0);				//xuameng动画菜单
+                        animator2.setDuration(2000);				//xuameng动画菜单
+                        animator2.start();						//xuameng动画菜单
                         mPlayTitle.setVisibility(GONE);
                         mxuPlay.requestFocus();		// 底部菜单默认焦点为播放
                         backBtn.setVisibility(ScreenUtils.isTv(context) ? INVISIBLE : VISIBLE);
@@ -93,6 +93,10 @@ public class VodController extends BaseController {
                         mTopRoot1.setVisibility(GONE);
                         mTopRoot2.setVisibility(GONE);
                         backBtn.setVisibility(INVISIBLE);
+						mPlayTitle.setVisibility(VISIBLE);    //xuameng显示上面菜单
+				        ObjectAnimator animator3 = ObjectAnimator.ofFloat(mPlayTitle, "translationY", -280,0);				//xuameng动画菜单
+                        animator3.setDuration(2000);				//xuameng动画菜单
+                        animator3.start();						//xuameng动画菜单
                         break;
                     }
                     case 1004: { // 设置速度
@@ -876,13 +880,13 @@ public class VodController extends BaseController {
 				hideBottom();						//xuameng隐藏菜单
                 break;
             case VideoView.STATE_PAUSED:
-                //mTopRoot1.setVisibility(VISIBLE);     //xuameng显示上面菜单
-                //mTopRoot2.setVisibility(VISIBLE);     //xuameng显示上面菜单
-                //mPlayTitle.setVisibility(VISIBLE);
+                //mTopRoot1.setVisibility(GONE);     //xuameng显示上面菜单
+                //mTopRoot2.setVisibility(GONE);     //xuameng显示上面菜单
+                //mPlayTitle.setVisibility(VISIBLE);    //xuameng显示上面菜单
 			    mxuPlay.setVisibility(View.VISIBLE);
                 mxuPlay.setTextColor(Color.WHITE);	//xuameng底部菜单显示播放颜色
                 mxuPlay.setText("播放");			//xuameng底部菜单显示播放
-		        if (!isBottomVisible()) {
+		        if (!isBottomVisible()) {           //xuameng如果没显示菜单就显示
                     showBottom();
                     myHandle.postDelayed(myRunnable, myHandleSeconds);
                 }
