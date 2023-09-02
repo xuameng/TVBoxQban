@@ -107,10 +107,11 @@ public class VodController extends BaseController {
                         break;
                     }
                     case 1003: { // 隐藏底部菜单
-                        
+                        private void animator3() {
 						ObjectAnimator animator3 = ObjectAnimator.ofFloat(mBottomRoot, "translationY", -0,280);				//xuameng向下划出屏外
                         animator3.setDuration(2000);				//xuameng动画菜单
                         animator3.start();
+						}
                         mTopRoot1.setVisibility(GONE);
 						ObjectAnimator animator4 = ObjectAnimator.ofFloat(mTopRoot1, "translationY", 0,-280);				//xuameng向上划出屏外
                         animator4.setDuration(2000);				//xuameng动画菜单
