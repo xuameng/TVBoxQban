@@ -112,17 +112,11 @@ public class VodController extends BaseController {
                         }
                         });				
 		                animator5.start();                          //XUAMENG隐藏上面菜单2结束
-                        backBtn.setVisibility(INVISIBLE);           //返回键隐藏菜单						
+                        backBtn.setVisibility(INVISIBLE);           //返回键隐藏菜单	
+						mPlayTitle.setVisibility(VISIBLE);    //xuameng显示上面节目名称
 				        ObjectAnimator animator6 = ObjectAnimator.ofFloat(mPlayTitle, "translationY", -600,0);				//xuameng动画菜单
                         animator6.setDuration(2500);				//xuameng动画菜单
-						animator6.addListener(new AnimatorListenerAdapter() {
-						@Override
-						public void onAnimationEnd(Animator animation) {                
-                        super.onAnimationEnd(animation);           //动画结束后隐藏菜单
-                        mPlayTitle.setVisibility(VISIBLE);    //xuameng显示上面节目名称
-                        }
-                        });	
-                        animator6.start();						//XUAMENG显示上面菜单结束
+						animator6.start();						//XUAMENG显示上面菜单结束
                         break;
                     }
                     case 1004: { // 设置速度
