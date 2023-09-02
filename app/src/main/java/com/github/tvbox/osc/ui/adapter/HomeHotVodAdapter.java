@@ -54,7 +54,7 @@ public class HomeHotVodAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHol
             tvNote.setVisibility(View.GONE);
         } else {
             tvNote.setText(item.note);
-            tvNote.setVisibility(View.VISIBLE);
+            tvNote.setVisibility(View.VISIBLE);     //xuameng显示主页聚汇热播左上小字
         }
         helper.setText(R.id.tvName, item.name);
         ImageView ivThumb = helper.getView(R.id.ivThumb);
