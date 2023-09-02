@@ -54,6 +54,24 @@ import xyz.doikki.videoplayer.util.PlayerUtils;
 
 import static xyz.doikki.videoplayer.util.PlayerUtils.stringForTime;
 
+animator3.addListener(new Animator.AnimatorListener() {
+//    @Override
+//    public void onAnimationStart(Animator animation) {
+        // 动画开始时执行的操作
+//    }
+
+    @Override
+    public void onAnimationEnd(Animator animation) {
+        // 动画结束时执行的操作
+        mBottomRoot.setVisibility(GONE);
+    }
+
+//    @Override
+//    public void onAnimationCancel(Animator animation) {
+        // 动画被取消时执行的操作
+//    }
+});
+
 public class VodController extends BaseController {
     public VodController(@NonNull @NotNull Context context) {
         super(context);
@@ -89,14 +107,23 @@ public class VodController extends BaseController {
                         break;
                     }
                     case 1003: { // 隐藏底部菜单
-                        mBottomRoot.setVisibility(GONE);
-                        mTopRoot1.setVisibility(GONE);
-                        mTopRoot2.setVisibility(GONE);
-                        backBtn.setVisibility(INVISIBLE);
-						mPlayTitle.setVisibility(VISIBLE);    //xuameng显示上面菜单
-				        ObjectAnimator animator3 = ObjectAnimator.ofFloat(mPlayTitle, "translationY", -280,0);				//xuameng动画菜单
+                        
+						ObjectAnimator animator3 = ObjectAnimator.ofFloat(mBottomRoot, "translationY", -0,280);				//xuameng向下划出屏外
                         animator3.setDuration(2000);				//xuameng动画菜单
-                        animator3.start();						//xuameng动画菜单
+                        animator3.start();
+                        mTopRoot1.setVisibility(GONE);
+						ObjectAnimator animator4 = ObjectAnimator.ofFloat(mTopRoot1, "translationY", 0,-280);				//xuameng向上划出屏外
+                        animator4.setDuration(2000);				//xuameng动画菜单
+                        animator4.start();
+                        mTopRoot2.setVisibility(GONE);
+						ObjectAnimator animator5 = ObjectAnimator.ofFloat(mTopRoot2, "translationY", 0,-280);				//xuameng向上划出屏外
+                        animator5.setDuration(2000);
+						animator5.start();
+                        backBtn.setVisibility(INVISIBLE);
+						mPlayTitle.setVisibility(VISIBLE);    //xuameng显示上面节目名称
+				        ObjectAnimator animator6 = ObjectAnimator.ofFloat(mPlayTitle, "translationY", -280,0);				//xuameng动画菜单
+                        animator6.setDuration(2000);				//xuameng动画菜单
+                        animator6.start();						//xuameng动画菜单
                         break;
                     }
                     case 1004: { // 设置速度
