@@ -54,6 +54,12 @@ import xyz.doikki.videoplayer.util.PlayerUtils;
 
 import static xyz.doikki.videoplayer.util.PlayerUtils.stringForTime;
 
+
+                        private void animator3() {
+						ObjectAnimator animator3 = ObjectAnimator.ofFloat(mBottomRoot, "translationY", -0,280);				//xuameng向下划出屏外
+                        animator3.setDuration(2000);				//xuameng动画菜单
+                        animator3.start();
+						}
 animator3.addListener(new Animator.AnimatorListener() {
 //    @Override
 //    public void onAnimationStart(Animator animation) {
@@ -107,11 +113,7 @@ public class VodController extends BaseController {
                         break;
                     }
                     case 1003: { // 隐藏底部菜单
-                        private void animator3() {
-						ObjectAnimator animator3 = ObjectAnimator.ofFloat(mBottomRoot, "translationY", -0,280);				//xuameng向下划出屏外
-                        animator3.setDuration(2000);				//xuameng动画菜单
-                        animator3.start();
-						}
+onAnimationEnd(animation)
                         mTopRoot1.setVisibility(GONE);
 						ObjectAnimator animator4 = ObjectAnimator.ofFloat(mTopRoot1, "translationY", 0,-280);				//xuameng向上划出屏外
                         animator4.setDuration(2000);				//xuameng动画菜单
@@ -181,6 +183,7 @@ public class VodController extends BaseController {
     TextView mAudioTrackBtn;
     public TextView mLandscapePortraitBtn;
     private View backBtn;//返回键
+	private View animator3;
     private boolean isClickBackBtn;
    
     LockRunnable lockRunnable = new LockRunnable();
