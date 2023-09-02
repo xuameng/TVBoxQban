@@ -54,12 +54,28 @@ import xyz.doikki.videoplayer.util.PlayerUtils;
 
 import static xyz.doikki.videoplayer.util.PlayerUtils.stringForTime;
 
-						private void animatorxu() {
-						ObjectAnimator animator3 = ObjectAnimator.ofFloat(mBottomRoot, "translationY", -0,280);				//xuameng向下划出屏外
-                        animator3.setDuration(2000);				//xuameng动画菜单
-                        animator3.start();
+ private void animation1() {
+        ObjectAnimator scaleXAnimation = ObjectAnimator.ofFloat(mLogo, "scaleX", 5.0F, 1.0F);
+        scaleXAnimation.setInterpolator(new AccelerateDecelerateInterpolator());
+        scaleXAnimation.setDuration(1200);
+        ObjectAnimator scaleYAnimation = ObjectAnimator.ofFloat(mLogo, "scaleY", 5.0F, 1.0F);
+        scaleYAnimation.setInterpolator(new AccelerateDecelerateInterpolator());
+        scaleYAnimation.setDuration(1200);
+        ObjectAnimator alphaAnimation = ObjectAnimator.ofFloat(mLogo, "alpha", 0.0F, 1.0F);
+        alphaAnimation.setInterpolator(new AccelerateDecelerateInterpolator());
+        alphaAnimation.setDuration(1200);
+        AnimatorSet animatorSet = new AnimatorSet();
+        animatorSet.play(scaleXAnimation).with(scaleYAnimation).with(alphaAnimation);
+        animatorSet.setStartDelay(500);
+        animatorSet.start();
+    }
+//						private void animatorxu() {
+//						ObjectAnimator animator3 = ObjectAnimator.ofFloat(mBottomRoot, "translationY", -0,280);				//xuameng向下划出屏外
+//                        animator3.setDuration(2000);				//xuameng动画菜单
+//                        animator3.start();
+//						}
 						//      监听动画
-animatorxu.addListener(new Animator.AnimatorListener() 
+animation1.addListener(new Animator.AnimatorListener() 
            @Override
             public void onAnimationStart(Animator animation) 
             @Override
@@ -103,7 +119,7 @@ public class VodController extends BaseController {
                         break;
                     }
                     case 1003: { // 隐藏底部菜单
-                        animatorxu();
+                        animation1();
 
                         mTopRoot1.setVisibility(GONE);
 						ObjectAnimator animator4 = ObjectAnimator.ofFloat(mTopRoot1, "translationY", 0,-280);				//xuameng向上划出屏外
