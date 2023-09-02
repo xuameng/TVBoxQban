@@ -54,29 +54,19 @@ import xyz.doikki.videoplayer.util.PlayerUtils;
 
 import static xyz.doikki.videoplayer.util.PlayerUtils.stringForTime;
 
-
-                        private void animator3() {
+						private void animatorxu() {
 						ObjectAnimator animator3 = ObjectAnimator.ofFloat(mBottomRoot, "translationY", -0,280);				//xuameng向下划出屏外
                         animator3.setDuration(2000);				//xuameng动画菜单
                         animator3.start();
-						}
-animator3.addListener(new Animator.AnimatorListener() {
-//    @Override
-//    public void onAnimationStart(Animator animation) {
-        // 动画开始时执行的操作
-//    }
+						//      监听动画
+animatorxu.addListener(new Animator.AnimatorListener() 
+           @Override
+            public void onAnimationStart(Animator animation) 
+            @Override
+            public void onAnimationEnd(Animator animation) 
+            mBottomRoot.setVisibility(VISIBLE);     
+        );
 
-    @Override
-    public void onAnimationEnd(Animator animation) {
-        // 动画结束时执行的操作
-        mBottomRoot.setVisibility(GONE);
-    }
-
-//    @Override
-//    public void onAnimationCancel(Animator animation) {
-        // 动画被取消时执行的操作
-//    }
-});
 
 public class VodController extends BaseController {
     public VodController(@NonNull @NotNull Context context) {
@@ -113,7 +103,8 @@ public class VodController extends BaseController {
                         break;
                     }
                     case 1003: { // 隐藏底部菜单
-onAnimationEnd(animation)
+                        animatorxu();
+
                         mTopRoot1.setVisibility(GONE);
 						ObjectAnimator animator4 = ObjectAnimator.ofFloat(mTopRoot1, "translationY", 0,-280);				//xuameng向上划出屏外
                         animator4.setDuration(2000);				//xuameng动画菜单
@@ -183,7 +174,6 @@ onAnimationEnd(animation)
     TextView mAudioTrackBtn;
     public TextView mLandscapePortraitBtn;
     private View backBtn;//返回键
-	private View animator3;
     private boolean isClickBackBtn;
    
     LockRunnable lockRunnable = new LockRunnable();
