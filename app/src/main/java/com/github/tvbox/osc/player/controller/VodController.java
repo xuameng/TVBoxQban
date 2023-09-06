@@ -195,13 +195,14 @@ public class VodController extends BaseController {
     };
 
 
-	public class DateXu {
-    public static void main(String[] args) {
-      Date dNow = new Date( );
-      SimpleDateFormat ft = new SimpleDateFormat ("HH:mm:ss");
-      mPlayPauseTimexu.setText(ft.format(dNow));		//XUAMENG获取系统时间
-   }
-   };
+   private Runnable xuRunnable = new Runnable() {
+        @Override
+        public void run() {
+            Date date1 = new Date();
+            SimpleDateFormat timeFormat1 = new SimpleDateFormat("HH:mm:ss");
+            mPlayPauseTimexu.setText(timeFormat1.format(date1));
+        }
+    };
 
 
     
@@ -300,6 +301,13 @@ public class VodController extends BaseController {
             @Override
             public void run() {
                 mHandler.post(myRunnable2);
+            }
+        });
+
+		mPlayPauseTimexu.post(new Runnable() {            //xuameng系统时间
+            @Override
+            public void run() {
+                mHandler.post(xuRunnable);
             }
         });
 
