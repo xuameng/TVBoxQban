@@ -304,7 +304,7 @@ public class VodController extends BaseController {
             }
         });
 
-		mPlayPauseTimexu.post(new Runnable() {            //xuameng系统时间
+		mPlayPauseTimexu.post(new Runnable() {            //xuameng显示系统时间
             @Override
             public void run() {
                 mHandler.post(xuRunnable);
