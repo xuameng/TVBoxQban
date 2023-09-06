@@ -415,7 +415,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/vs_20"
-            android:layout_marginTop="@dimen/vs_10"
+            android:layout_marginTop="@dimen/vs_0"
             android:layout_marginStart="@dimen/vs_20">
             <TextView
                 android:textSize="@dimen/ts_20"
@@ -436,7 +436,7 @@
             android:orientation="vertical"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/vs_10"
+            android:layout_marginTop="@dimen/vs_0"
             android:layout_marginRight="@dimen/vs_20">
             <TextView
                 android:textSize="@dimen/ts_40"
