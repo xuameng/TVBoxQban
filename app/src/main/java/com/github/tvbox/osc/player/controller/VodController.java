@@ -106,7 +106,6 @@ public class VodController extends BaseController {
 				        ObjectAnimator animator6 = ObjectAnimator.ofFloat(mPlayTitle, "translationY", -600,0);				//xuameng动画菜单
                         animator6.setDuration(2500);				//xuameng动画菜单
 						animator6.start();						    //XUAMENG显示上面菜单结束
-						mPlayPauseTimexu.setText(timeFormat.format(date));    //XUAMENG获取系统时间
 						mPlayPauseTimexu.setVisibility(VISIBLE);          //xuameng显示上面时间
 				        ObjectAnimator animator7 = ObjectAnimator.ofFloat(mPlayPauseTimexu, "translationY", -600,0);				//xuameng动画菜单
                         animator7.setDuration(2500);				//xuameng动画菜单
@@ -184,6 +183,23 @@ public class VodController extends BaseController {
             Date date = new Date();
             SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
             mPlayPauseTime.setText(timeFormat.format(date));
+            String speed = PlayerHelper.getDisplaySpeed(mControlWrapper.getTcpSpeed());
+            mPlayLoadNetSpeedRightTop.setText(speed);
+            mPlayLoadNetSpeed.setText(speed);
+            String width = Integer.toString(mControlWrapper.getVideoSize()[0]);
+            String height = Integer.toString(mControlWrapper.getVideoSize()[1]);
+            mVideoSize.setText("[ " + width + " X " + height +" ]");
+
+            mHandler.postDelayed(this, 1000);
+        }
+    };
+
+	    private Runnable xuRunnable = new Runnable() {
+        @Override
+        public void run() {
+            Date date = new Date();
+            SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+			mPlayPauseTimexu.setText(timeFormat.format(date));    //XUAMENG获取系统时间
             String speed = PlayerHelper.getDisplaySpeed(mControlWrapper.getTcpSpeed());
             mPlayLoadNetSpeedRightTop.setText(speed);
             mPlayLoadNetSpeed.setText(speed);
