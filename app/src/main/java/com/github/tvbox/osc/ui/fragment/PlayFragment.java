@@ -334,9 +334,8 @@ public class PlayFragment extends BaseLazyFragment {
                         .withChosenListener(new ChooserDialog.Result() {
                             @Override
                             public void onChoosePath(String path, File pathFile) {
-                                LOG.v("Local Subtitle Path: " + path);
+                                LOG.i("Local Subtitle Path: " + path);
                                 setSubtitle(path);//设置字幕
-								setBackgroundColor(Color.GREEN);
                             }
                         })
                         .build()
