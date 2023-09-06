@@ -290,11 +290,6 @@ public class VodController extends BaseController {
             public void run() {
                 mHandler.post(myRunnable2);
             }
-		mPlayPauseTimexu.post(new Runnable() {
-            @Override
-            public void run() {
-                mHandler.post(myRunnable2);
-            }
         });
 
         mGridView.setLayoutManager(new V7LinearLayoutManager(getContext(), 0, false));
