@@ -194,14 +194,16 @@ public class VodController extends BaseController {
         }
     };
 
-	    private Runnable xuRunnable = new Runnable() {
-        @Override
-        public void run() {
-            Date date1 = new Date();
-            SimpleDateFormat timeFormat1 = new SimpleDateFormat("HH:mm:ss");
-			mPlayPauseTimexu.setText(timeFormat1.format(date1));    //XUAMENG获取系统时间
-        }
-    };
+
+	public class DateXu {
+    public static void main(String[] args) {
+      Date dNow = new Date( );
+      SimpleDateFormat ft = new SimpleDateFormat ("HH:mm:ss");
+      mPlayPauseTimexu.setText(ft.format(dNow));		//XUAMENG获取系统时间
+   }
+   };
+
+
     
     private void showLockView() {
         mLockView.setVisibility(ScreenUtils.isTv(getContext()) ? INVISIBLE : VISIBLE);
