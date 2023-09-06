@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:text="http://"
             android:width="680.0dip"
-            android:singleLine="true" />
+            android:singleLine="true"/>
         <TextView
             android:textSize="@dimen/ts_20"
             android:textColor="@android:color/white"
@@ -40,7 +40,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="[ 1024 x 768 ]"
-            android:maxLines="1" />
+            android:maxLines="1"/>
     </LinearLayout>
     <LinearLayout
         android:layout_gravity="right"
@@ -64,7 +64,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="00:00:00"
-            android:maxLines="1" />
+            android:maxLines="1"/>
     </LinearLayout>
     <com.github.tvbox.osc.subtitle.widget.SimpleSubtitleView
         android:textSize="16.0sp"
@@ -79,7 +79,7 @@
         android:paddingBottom="@dimen/vs_15"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="" />
+        android:text=""/>
     <LinearLayout
         android:gravity="center_vertical"
         android:layout_gravity="bottom"
@@ -102,7 +102,7 @@
             android:layout_marginRight="@dimen/vs_5"
             android:text="许大师"
             android:singleLine="true"
-            android:layout_marginEnd="@dimen/vs_5" />
+            android:layout_marginEnd="@dimen/vs_5"/>
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="fill_parent"
@@ -121,7 +121,7 @@
                 android:layout_marginRight="@dimen/vs_5"
                 android:text="读取中"
                 android:singleLine="true"
-                android:layout_marginEnd="@dimen/vs_5" />
+                android:layout_marginEnd="@dimen/vs_5"/>
             <TextView
                 android:textSize="@dimen/ts_20"
                 android:textColor="@android:color/white"
@@ -134,7 +134,7 @@
                 android:layout_marginRight="@dimen/vs_5"
                 android:text="下一集"
                 android:singleLine="true"
-                android:layout_marginEnd="@dimen/vs_5" />
+                android:layout_marginEnd="@dimen/vs_5"/>
             <TextView
                 android:textSize="@dimen/ts_20"
                 android:textColor="@android:color/white"
@@ -147,7 +147,7 @@
                 android:layout_marginRight="@dimen/vs_5"
                 android:text="上一集"
                 android:singleLine="true"
-                android:layout_marginEnd="@dimen/vs_5" />
+                android:layout_marginEnd="@dimen/vs_5"/>
             <TextView
                 android:textSize="@dimen/ts_20"
                 android:textColor="@android:color/white"
@@ -160,7 +160,7 @@
                 android:layout_marginRight="@dimen/vs_5"
                 android:text="重播"
                 android:singleLine="true"
-                android:layout_marginEnd="@dimen/vs_5" />
+                android:layout_marginEnd="@dimen/vs_5"/>
             <TextView
                 android:textSize="@dimen/ts_20"
                 android:textColor="@android:color/white"
@@ -173,7 +173,7 @@
                 android:layout_marginRight="@dimen/vs_5"
                 android:text="刷新"
                 android:singleLine="true"
-                android:layout_marginEnd="@dimen/vs_5" />
+                android:layout_marginEnd="@dimen/vs_5"/>
             <TextView
                 android:textSize="@dimen/ts_20"
                 android:textColor="@android:color/white"
@@ -186,7 +186,7 @@
                 android:layout_marginRight="@dimen/vs_5"
                 android:text="16:9"
                 android:singleLine="true"
-                android:layout_marginEnd="@dimen/vs_5" />
+                android:layout_marginEnd="@dimen/vs_5"/>
             <TextView
                 android:textSize="@dimen/ts_20"
                 android:textColor="@android:color/white"
@@ -199,7 +199,7 @@
                 android:layout_marginRight="@dimen/vs_5"
                 android:text="x1.0"
                 android:singleLine="true"
-                android:layout_marginEnd="@dimen/vs_5" />
+                android:layout_marginEnd="@dimen/vs_5"/>
             <TextView
                 android:textSize="@dimen/ts_20"
                 android:textColor="@android:color/white"
@@ -212,7 +212,7 @@
                 android:layout_marginRight="@dimen/vs_5"
                 android:text="系统播放器"
                 android:singleLine="true"
-                android:layout_marginEnd="@dimen/vs_5" />
+                android:layout_marginEnd="@dimen/vs_5"/>
             <TextView
                 android:textSize="@dimen/ts_20"
                 android:textColor="@android:color/white"
@@ -225,7 +225,7 @@
                 android:layout_marginRight="@dimen/vs_5"
                 android:text="硬解码"
                 android:singleLine="true"
-                android:layout_marginEnd="@dimen/vs_5" />
+                android:layout_marginEnd="@dimen/vs_5"/>
             <TextView
                 android:textSize="@dimen/ts_20"
                 android:textColor="@color/color_FFFFFF"
@@ -237,7 +237,7 @@
                 android:layout_marginRight="@dimen/vs_5"
                 android:text="片头片尾"
                 android:singleLine="true"
-                android:layout_marginEnd="@dimen/vs_5" />
+                android:layout_marginEnd="@dimen/vs_5"/>
             <TextView
                 android:textSize="@dimen/ts_20"
                 android:textColor="@android:color/white"
@@ -250,7 +250,7 @@
                 android:layout_marginRight="@dimen/vs_5"
                 android:text="01:00"
                 android:singleLine="true"
-                android:layout_marginEnd="@dimen/vs_5" />
+                android:layout_marginEnd="@dimen/vs_5"/>
             <TextView
                 android:textSize="@dimen/ts_20"
                 android:textColor="@android:color/white"
@@ -263,7 +263,7 @@
                 android:layout_marginRight="@dimen/vs_5"
                 android:text="01:00"
                 android:singleLine="true"
-                android:layout_marginEnd="@dimen/vs_5" />
+                android:layout_marginEnd="@dimen/vs_5"/>
             <TextView
                 android:textSize="@dimen/ts_20"
                 android:textColor="@android:color/white"
@@ -276,7 +276,7 @@
                 android:layout_marginRight="@dimen/vs_5"
                 android:text="重置"
                 android:singleLine="true"
-                android:layout_marginEnd="@dimen/vs_5" />
+                android:layout_marginEnd="@dimen/vs_5"/>
             <TextView
                 android:textSize="@dimen/ts_20"
                 android:textColor="@android:color/white"
@@ -289,7 +289,7 @@
                 android:layout_marginRight="@dimen/vs_5"
                 android:text="字幕"
                 android:singleLine="true"
-                android:layout_marginEnd="@dimen/vs_5" />
+                android:layout_marginEnd="@dimen/vs_5"/>
             <TextView
                 android:textSize="@dimen/ts_20"
                 android:textColor="@android:color/white"
@@ -302,7 +302,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginRight="@dimen/vs_5"
                 android:text="音轨"
-                android:layout_marginEnd="@dimen/vs_5" />
+                android:layout_marginEnd="@dimen/vs_5"/>
             <TextView
                 android:textSize="@dimen/ts_20"
                 android:textColor="@android:color/white"
@@ -315,7 +315,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginRight="@dimen/vs_5"
                 android:text="横竖屏"
-                android:layout_marginEnd="@dimen/vs_5" />
+                android:layout_marginEnd="@dimen/vs_5"/>
             <TextView
                 android:textSize="@dimen/ts_20"
                 android:textColor="@android:color/white"
@@ -329,7 +329,7 @@
                 android:layout_height="wrap_content"
                 android:text="0Kb/s"
                 android:maxLines="1"
-                android:layout_marginEnd="@dimen/vs_0" />
+                android:layout_marginEnd="@dimen/vs_0"/>
         </LinearLayout>
         <LinearLayout
             android:orientation="horizontal"
@@ -348,7 +348,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginRight="@dimen/vs_5"
                 android:text="解析"
-                android:layout_marginEnd="@dimen/vs_5" />
+                android:layout_marginEnd="@dimen/vs_5"/>
             <com.owen.tvrecyclerview.widget.TvRecyclerView
                 android:id="@+id/mGridView"
                 android:paddingRight="@dimen/vs_10"
@@ -358,7 +358,7 @@
                 android:layout_height="wrap_content"
                 app:tv_horizontalSpacingWithMargins="@dimen/vs_5"
                 app:tv_selectedItemIsCentered="true"
-                app:tv_verticalSpacingWithMargins="@dimen/vs_5" />
+                app:tv_verticalSpacingWithMargins="@dimen/vs_5"/>
         </LinearLayout>
         <LinearLayout
             android:orientation="horizontal"
@@ -373,7 +373,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="00:00"
-                android:paddingEnd="@dimen/vs_10" />
+                android:paddingEnd="@dimen/vs_10"/>
             <SeekBar
                 android:layout_gravity="center"
                 android:id="@+id/seekBar"
@@ -391,7 +391,7 @@
                 android:thumbOffset="@dimen/vs_0"
                 android:layout_weight="1.0"
                 android:paddingStart="@dimen/vs_0"
-                android:paddingEnd="@dimen/vs_0" />
+                android:paddingEnd="@dimen/vs_0"/>
             <TextView
                 android:textSize="@dimen/ts_20"
                 android:textColor="@color/color_FFFFFF"
@@ -400,7 +400,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="00:00"
-                android:paddingStart="@dimen/vs_10" />
+                android:paddingStart="@dimen/vs_10"/>
         </LinearLayout>
     </LinearLayout>
     <FrameLayout
@@ -411,9 +411,9 @@
         android:layout_height="fill_parent">
         <LinearLayout
             android:layout_gravity="left"
-            android:orientation="horizontal"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/vs_20"
             android:layout_marginTop="@dimen/vs_10"
             android:layout_marginStart="@dimen/vs_20">
@@ -424,24 +424,31 @@
                 android:layout_gravity="left"
                 android:id="@+id/tv_info_name"
                 android:paddingLeft="@dimen/vs_20"
-                android:paddingTop="@dimen/vs_20"
+                android:paddingTop="@dimen/vs_30"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="http://"
-                android:maxLines="3" />
-           <TextView
+                android:maxLines="1"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_gravity="right"
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/vs_10"
+            android:layout_marginRight="@dimen/vs_20">
+            <TextView
                 android:textSize="@dimen/ts_40"
                 android:textColor="@android:color/white"
                 android:ellipsize="end"
                 android:layout_gravity="right"
                 android:id="@+id/tv_sys_time_xu"
-                android:tag="vod_control_pause_time"
                 android:paddingTop="@dimen/vs_30"
-                android:paddingRight="@dimen/vs_15"
+                android:paddingRight="@dimen/vs_20"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="00:00:00"
-                android:maxLines="1" />                
+                android:maxLines="1"/>
         </LinearLayout>
         <LinearLayout
             android:gravity="center"
@@ -458,7 +465,7 @@
                 android:focusableInTouchMode="false"
                 android:layout_width="@dimen/vs_60"
                 android:layout_height="@dimen/vs_60"
-                android:src="@drawable/icon_play" />
+                android:src="@drawable/icon_play"/>
             <TextView
                 android:textSize="@dimen/ts_30"
                 android:textColor="@android:color/white"
@@ -469,7 +476,7 @@
                 android:focusableInTouchMode="false"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/vs_20" />
+                android:layout_marginTop="@dimen/vs_20"/>
         </LinearLayout>
     </FrameLayout>
     <TextView
@@ -485,7 +492,7 @@
         android:visibility="gone"
         android:layout_width="@dimen/vs_200"
         android:layout_height="@dimen/vs_100"
-        android:textAlignment="gravity" />
+        android:textAlignment="gravity"/>
     <LinearLayout
         android:gravity="center"
         android:layout_gravity="center"
@@ -502,7 +509,7 @@
             android:focusable="false"
             android:focusableInTouchMode="false"
             android:layout_width="@dimen/vs_60"
-            android:layout_height="@dimen/vs_60" />
+            android:layout_height="@dimen/vs_60"/>
         <TextView
             android:textSize="@dimen/ts_30"
             android:textColor="@android:color/white"
@@ -512,7 +519,7 @@
             android:focusableInTouchMode="false"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/vs_20" />
+            android:layout_marginTop="@dimen/vs_20"/>
     </LinearLayout>
     <ProgressBar
         android:layout_gravity="center"
@@ -522,7 +529,7 @@
         android:layout_height="@dimen/vs_50"
         android:indeterminateOnly="true"
         android:indeterminateDrawable="@drawable/anim_loading"
-        android:indeterminateBehavior="repeat" />
+        android:indeterminateBehavior="repeat"/>
     <TextView
         android:textSize="@dimen/ts_20"
         android:textColor="@color/color_FFFFFF"
@@ -534,7 +541,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/vs_40"
-        android:text="0" />
+        android:text="0"/>
     <ImageView
         android:layout_gravity="center|left"
         android:id="@+id/tv_back"
@@ -546,7 +553,7 @@
         android:layout_width="@dimen/vs_80"
         android:layout_height="@dimen/vs_80"
         android:src="@drawable/icon_back"
-        android:paddingHorizontal="@dimen/vs_20" />
+        android:paddingHorizontal="@dimen/vs_20"/>
     <ImageView
         android:layout_gravity="center|right"
         android:id="@+id/tv_lock"
@@ -558,5 +565,5 @@
         android:layout_width="@dimen/vs_80"
         android:layout_height="@dimen/vs_80"
         android:src="@drawable/icon_unlock"
-        android:paddingHorizontal="@dimen/vs_20" />
+        android:paddingHorizontal="@dimen/vs_20"/>
 </FrameLayout>
