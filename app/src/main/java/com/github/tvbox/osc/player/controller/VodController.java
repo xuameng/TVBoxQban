@@ -197,9 +197,9 @@ public class VodController extends BaseController {
 	    private Runnable xuRunnable = new Runnable() {
         @Override
         public void run() {
-            Date date = new Date();
+            Date date1 = new Date();
             SimpleDateFormat timeFormat1 = new SimpleDateFormat("HH:mm:ss");
-			mPlayPauseTimexu.setText(timeFormat1.format(date));    //XUAMENG获取系统时间
+			mPlayPauseTimexu.setText(timeFormat1.format(date1));    //XUAMENG获取系统时间
         }
     };
     
