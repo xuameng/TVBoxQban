@@ -412,8 +412,8 @@
         <LinearLayout
             android:layout_gravity="left"
             android:orientation="horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
             android:layout_marginLeft="@dimen/vs_20"
             android:layout_marginTop="@dimen/vs_10"
             android:layout_marginStart="@dimen/vs_20">
@@ -429,19 +429,19 @@
                 android:layout_height="wrap_content"
                 android:text="http://"
                 android:maxLines="3" />
-       <TextView
-            android:textSize="@dimen/ts_40"
-            android:textColor="@android:color/white"
-            android:ellipsize="end"
-            android:layout_gravity="right"
-            android:id="@+id/tv_sys_time_xu"
-            android:tag="vod_control_pause_time"
-            android:paddingTop="@dimen/vs_30"
-            android:paddingRight="@dimen/vs_15"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="00:00:00"
-            android:maxLines="1" />                
+           <TextView
+                android:textSize="@dimen/ts_40"
+                android:textColor="@android:color/white"
+                android:ellipsize="end"
+                android:layout_gravity="right"
+                android:id="@+id/tv_sys_time_xu"
+                android:tag="vod_control_pause_time"
+                android:paddingTop="@dimen/vs_30"
+                android:paddingRight="@dimen/vs_15"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="00:00:00"
+                android:maxLines="1" />                
         </LinearLayout>
         <LinearLayout
             android:gravity="center"
