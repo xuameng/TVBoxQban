@@ -105,8 +105,8 @@ public class VodController extends BaseController {
 				        ObjectAnimator animator6 = ObjectAnimator.ofFloat(mPlayTitle, "translationY", -600,0);				//xuameng动画菜单
                         animator6.setDuration(2500);				//xuameng动画菜单
 						animator6.start();						    //XUAMENG显示上面菜单结束
-						mTopRoot2.setVisibility(VISIBLE);          //xuameng显示上面节目名称
-				        ObjectAnimator animator7 = ObjectAnimator.ofFloat(mTopRoot2, "translationY", -600,0);				//xuameng动画菜单
+						mPlayPauseTimexu.setVisibility(VISIBLE);          //xuameng显示上面节目名称
+				        ObjectAnimator animator7 = ObjectAnimator.ofFloat(mPlayPauseTimexu, "translationY", -600,0);				//xuameng动画菜单
                         animator7.setDuration(2500);				//xuameng动画菜单
 						animator7.start();						    //XUAMENG显示上面菜单的时间结束
                         break;
@@ -158,6 +158,7 @@ public class VodController extends BaseController {
     public TextView mPlayerTimeSkipBtn;
     public TextView mPlayerTimeResetBtn;
     TextView mPlayPauseTime;
+	TextView mPlayPauseTimexu;   //xuameng系统时间
     TextView mPlayLoadNetSpeed;
     TextView mVideoSize;
     public SimpleSubtitleView mSubtitleView;
@@ -181,6 +182,7 @@ public class VodController extends BaseController {
             Date date = new Date();
             SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
             mPlayPauseTime.setText(timeFormat.format(date));
+			mPlayPauseTimexu.setText(timeFormat.format(date));
             String speed = PlayerHelper.getDisplaySpeed(mControlWrapper.getTcpSpeed());
             mPlayLoadNetSpeedRightTop.setText(speed);
             mPlayLoadNetSpeed.setText(speed);
@@ -228,6 +230,7 @@ public class VodController extends BaseController {
         mPlayerTimeSkipBtn = findViewById(R.id.play_time_end);
         mPlayerTimeResetBtn = findViewById(R.id.play_time_reset);
         mPlayPauseTime = findViewById(R.id.tv_sys_time);
+        mPlayPauseTimexu = findViewById(R.id.tv_sys_time_xu);
         mPlayLoadNetSpeed = findViewById(R.id.tv_play_load_net_speed);
         mVideoSize = findViewById(R.id.tv_videosize);
         mSubtitleView = findViewById(R.id.subtitle_view);
@@ -283,6 +286,11 @@ public class VodController extends BaseController {
         };
 
         mPlayPauseTime.post(new Runnable() {
+            @Override
+            public void run() {
+                mHandler.post(myRunnable2);
+            }
+		mPlayPauseTimexu.post(new Runnable() {
             @Override
             public void run() {
                 mHandler.post(myRunnable2);
