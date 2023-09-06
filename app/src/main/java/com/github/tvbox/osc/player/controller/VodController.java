@@ -105,6 +105,10 @@ public class VodController extends BaseController {
 				        ObjectAnimator animator6 = ObjectAnimator.ofFloat(mPlayTitle, "translationY", -600,0);				//xuameng动画菜单
                         animator6.setDuration(2500);				//xuameng动画菜单
 						animator6.start();						    //XUAMENG显示上面菜单结束
+						mTopRoot2.setVisibility(VISIBLE);          //xuameng显示上面节目名称
+				        ObjectAnimator animator7 = ObjectAnimator.ofFloat(mTopRoot2, "translationY", -600,0);				//xuameng动画菜单
+                        animator7.setDuration(2500);				//xuameng动画菜单
+						animator7.start();						    //XUAMENG显示上面菜单的时间结束
                         break;
                     }
                     case 1004: { // 设置速度
