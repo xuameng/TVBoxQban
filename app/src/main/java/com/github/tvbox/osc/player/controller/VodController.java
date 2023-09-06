@@ -198,16 +198,8 @@ public class VodController extends BaseController {
         @Override
         public void run() {
             Date date = new Date();
-            SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
-			mPlayPauseTimexu.setText(timeFormat.format(date));    //XUAMENG获取系统时间
-            String speed = PlayerHelper.getDisplaySpeed(mControlWrapper.getTcpSpeed());
-            mPlayLoadNetSpeedRightTop.setText(speed);
-            mPlayLoadNetSpeed.setText(speed);
-            String width = Integer.toString(mControlWrapper.getVideoSize()[0]);
-            String height = Integer.toString(mControlWrapper.getVideoSize()[1]);
-            mVideoSize.setText("[ " + width + " X " + height +" ]");
-
-            mHandler.postDelayed(this, 1000);
+            SimpleDateFormat timeFormat1 = new SimpleDateFormat("HH:mm:ss");
+			mPlayPauseTimexu.setText(timeFormat1.format(date));    //XUAMENG获取系统时间
         }
     };
     
