@@ -201,6 +201,7 @@ public class VodController extends BaseController {
             Date date1 = new Date();
             SimpleDateFormat timeFormat1 = new SimpleDateFormat("HH:mm:ss");
             mPlayPauseTimexu.setText(timeFormat1.format(date1));
+			mHandler.postDelayed(this, 1000);
         }
     };
 
