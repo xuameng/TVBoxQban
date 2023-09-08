@@ -66,8 +66,8 @@ public class VodController extends BaseController {
                         mBottomRoot.setVisibility(VISIBLE);
 						ObjectAnimator animator = ObjectAnimator.ofFloat(mBottomRoot, "translationY", 600,0);				//xuameng动画菜单
                         animator.setDuration(2500);				//xuameng动画菜单
-                        @Override
-						animator.addListener(new AnimatorListenerAdapter() {											
+						animator.addListener(new AnimatorListenerAdapter() {
+						@Override
 						public void onAnimationStart(Animator animation){
                         super.onAnimationStart(animation);
                         xuamengall.setVisibility(VISIBLE);       //动画进行时防触碰
@@ -78,7 +78,6 @@ public class VodController extends BaseController {
                         xuamengall.setVisibility(GONE);			//动画结束时可触碰
                         }
                         });
-
                         animator.start();						//xuameng动画菜单
                         mTopRoot1.setVisibility(VISIBLE);
 						ObjectAnimator animator1 = ObjectAnimator.ofFloat(mTopRoot1, "translationY", -600,0);				//xuameng动画菜单
