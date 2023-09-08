@@ -992,6 +992,8 @@ public class VodController extends BaseController {
                 if (!isBottomVisible()) {
                     showBottom();
                     myHandle.postDelayed(myRunnable, myHandleSeconds);
+				    mPlayPauseTimexu.setVisibility(GONE);   //xuameng隐藏上面视频名称
+                    mPlayTitle.setVisibility(GONE);        //xuameng隐藏上面时间
                     return true;
                 }
             }
