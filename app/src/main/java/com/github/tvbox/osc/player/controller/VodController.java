@@ -78,6 +78,8 @@ public class VodController extends BaseController {
                         mxuPlay.requestFocus();				    //底部菜单默认焦点为播放
                         backBtn.setVisibility(ScreenUtils.isTv(context) ? INVISIBLE : VISIBLE);
                         showLockView();
+						mPlayPauseTimexu.setVisibility(GONE);   //xuameng隐藏上面视频名称
+                        mPlayTitle.setVisibility(GONE);        //xuameng隐藏上面时间
                         break;
                     }
                     case 1003: { // 隐藏底部菜单
@@ -916,8 +918,6 @@ public class VodController extends BaseController {
                 //mTopRoot1.setVisibility(GONE);     //xuameng隐藏上面菜单
                 //mTopRoot2.setVisibility(GONE);     //xuameng隐藏上面菜单
                 //mPlayTitle.setVisibility(VISIBLE); //xuameng显示上面菜单
-				mPlayPauseTimexu.setVisibility(GONE);   //xuameng隐藏上面视频名称
-                mPlayTitle.setVisibility(GONE);        //xuameng隐藏上面时间
 			    mxuPlay.setVisibility(View.VISIBLE);
                 mxuPlay.setTextColor(Color.WHITE);	 //xuameng底部菜单显示播放颜色
                 mxuPlay.setText("播放");			 //xuameng底部菜单显示播放
@@ -992,8 +992,6 @@ public class VodController extends BaseController {
                 if (!isBottomVisible()) {
                     showBottom();
                     myHandle.postDelayed(myRunnable, myHandleSeconds);
-				    mPlayPauseTimexu.setVisibility(GONE);   //xuameng隐藏上面视频名称
-                    mPlayTitle.setVisibility(GONE);        //xuameng隐藏上面时间
                     return true;
                 }
             }
