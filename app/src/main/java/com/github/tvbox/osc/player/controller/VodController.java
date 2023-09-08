@@ -63,22 +63,9 @@ public class VodController extends BaseController {
                         break;
                     }
                     case 1002: { // 显示底部菜单
-						isLock = isLock;
                         mBottomRoot.setVisibility(VISIBLE);
 						ObjectAnimator animator = ObjectAnimator.ofFloat(mBottomRoot, "translationY", 600,0);				//xuameng动画菜单
                         animator.setDuration(2500);				//xuameng动画菜单
-                        animator.addListener(new AnimatorListenerAdapter() {
-                        @Override
-						public void onAnimationStart(Animator animation) {
-                        super.onAnimationStart(animation);
-                        isLock = isLock;
-                        }
-						@Override
-                        public void onAnimationEnd(Animator animation) {
-                        super.onAnimationEnd(animation);
-                        isLock = !isLock;
-                        }
-                        });
                         animator.start();						//xuameng动画菜单
                         mTopRoot1.setVisibility(VISIBLE);
 						ObjectAnimator animator1 = ObjectAnimator.ofFloat(mTopRoot1, "translationY", -600,0);				//xuameng动画菜单
@@ -88,7 +75,6 @@ public class VodController extends BaseController {
 						ObjectAnimator animator2 = ObjectAnimator.ofFloat(mTopRoot2, "translationY", -600,0);				//xuameng动画菜单
                         animator2.setDuration(2500);			//xuameng动画菜单
                         animator2.start();						//xuameng动画菜单
-
                         mxuPlay.requestFocus();				    //底部菜单默认焦点为播放
                         backBtn.setVisibility(ScreenUtils.isTv(context) ? INVISIBLE : VISIBLE);
                         showLockView();
@@ -930,8 +916,8 @@ public class VodController extends BaseController {
                 //mTopRoot1.setVisibility(GONE);     //xuameng隐藏上面菜单
                 //mTopRoot2.setVisibility(GONE);     //xuameng隐藏上面菜单
                 //mPlayTitle.setVisibility(VISIBLE); //xuameng显示上面菜单
-				mPlayPauseTimexu.setVisibility(GONE); 
-                mPlayTitle.setVisibility(GONE);  
+				mPlayPauseTimexu.setVisibility(GONE);   //xuameng隐藏上面视频名称
+                mPlayTitle.setVisibility(GONE);        //xuameng隐藏上面时间
 			    mxuPlay.setVisibility(View.VISIBLE);
                 mxuPlay.setTextColor(Color.WHITE);	 //xuameng底部菜单显示播放颜色
                 mxuPlay.setText("播放");			 //xuameng底部菜单显示播放
