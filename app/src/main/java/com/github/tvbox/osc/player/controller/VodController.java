@@ -63,6 +63,13 @@ public class VodController extends BaseController {
                         break;
                     }
                     case 1002: { // 显示底部菜单
+						public abstract class NoDoubleClickListener implements View.OnClickListener {
+
+                        //两次点击效果间隔时间为1s，如果超过此时间再次点击会响应该点击事件，否者认为重复点击
+                        public static final int MIN_CLICK_DELAY_TIME = 2500;
+                        //默认上一次点击时间是0s
+                        private long lastClickTime = 0;
+
                         mBottomRoot.setVisibility(VISIBLE);
 						ObjectAnimator animator = ObjectAnimator.ofFloat(mBottomRoot, "translationY", 600,0);				//xuameng动画菜单
                         animator.setDuration(2500);				//xuameng动画菜单
