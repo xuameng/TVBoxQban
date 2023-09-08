@@ -66,18 +66,6 @@ public class VodController extends BaseController {
                         mBottomRoot.setVisibility(VISIBLE);
 						ObjectAnimator animator = ObjectAnimator.ofFloat(mBottomRoot, "translationY", 600,0);				//xuameng动画菜单
                         animator.setDuration(2500);				//xuameng动画菜单
-						animator.addListener(new AnimatorListenerAdapter() {
-						@Override
-						public void onAnimationStart(Animator animation){
-                        super.onAnimationStart(animation);
-                        xuamengall.setVisibility(VISIBLE);       //动画进行时防触碰
-						}
-                        @Override
-                        public void onAnimationEnd(Animator animation) {
-                        super.onAnimationEnd(animation);
-                        xuamengall.setVisibility(GONE);			//动画结束时可触碰
-                        }
-                        });
                         animator.start();						//xuameng动画菜单
                         mTopRoot1.setVisibility(VISIBLE);
 						ObjectAnimator animator1 = ObjectAnimator.ofFloat(mTopRoot1, "translationY", -600,0);				//xuameng动画菜单
@@ -97,17 +85,11 @@ public class VodController extends BaseController {
                         animator3.setDuration(2500);				   //xuameng动画菜单        
                         animator3.addListener(new AnimatorListenerAdapter() {
                         @Override
-						public void onAnimationStart(Animator animation){
-                        super.onAnimationStart(animation);
-                        xuamengall.setVisibility(VISIBLE);             //动画进行时防触碰
-						}
-                        @Override
                         public void onAnimationEnd(Animator animation) {
                         super.onAnimationEnd(animation);
                         mBottomRoot.setVisibility(GONE);			   //动画结束后隐藏下菜单
 						mTopRoot1.setVisibility(GONE);				   //动画结束后隐藏上菜单
 						mTopRoot2.setVisibility(GONE);                 //动画结束后隐藏上菜单
-						xuamengall.setVisibility(GONE);			       //动画结束时可触碰
                         }
                         });
                         animator3.start();                          //XUAMENG隐藏底部菜单结束                        
@@ -157,7 +139,6 @@ public class VodController extends BaseController {
     LinearLayout mTopRoot1;
     LinearLayout mTopRoot2;
     LinearLayout mParseRoot;
-	LinearLayout xuamengall;           //透明页面防电击
     TvRecyclerView mGridView;
     TextView mPlayTitle;
     TextView mPlayTitle1;
