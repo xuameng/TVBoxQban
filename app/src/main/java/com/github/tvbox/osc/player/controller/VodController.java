@@ -921,6 +921,8 @@ public class VodController extends BaseController {
 			    mxuPlay.setVisibility(View.VISIBLE);
                 mxuPlay.setTextColor(Color.WHITE);	 //xuameng底部菜单显示播放颜色
                 mxuPlay.setText("播放");			 //xuameng底部菜单显示播放
+				mPlayPauseTimexu.setVisibility(GONE);   //xuameng隐藏上面视频名称
+                mPlayTitle.setVisibility(GONE);        //xuameng隐藏上面时间
 		        if (!isBottomVisible()) {            //xuameng如果没显示菜单就显示
                     showBottom();
                     myHandle.postDelayed(myRunnable, myHandleSeconds);
