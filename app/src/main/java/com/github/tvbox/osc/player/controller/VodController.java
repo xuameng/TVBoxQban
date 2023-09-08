@@ -69,6 +69,11 @@ public class VodController extends BaseController {
                         animator.setDuration(2500);				//xuameng动画菜单
                         animator.addListener(new AnimatorListenerAdapter() {
                         @Override
+						public void onAnimationStart(Animation animation) {
+                        super.onAnimationStart(animation);
+                        isLock = isLock;
+                        }
+						@Override
                         public void onAnimationEnd(Animator animation) {
                         super.onAnimationEnd(animation);
                         isLock = !isLock;
@@ -99,14 +104,6 @@ public class VodController extends BaseController {
                         mBottomRoot.setVisibility(GONE);			   //动画结束后隐藏下菜单
 						mTopRoot1.setVisibility(GONE);				   //动画结束后隐藏上菜单
 						mTopRoot2.setVisibility(GONE);                 //动画结束后隐藏上菜单
-						mPlayTitle.setVisibility(VISIBLE);          //xuameng显示上面节目名称
-				        ObjectAnimator animator6 = ObjectAnimator.ofFloat(mPlayTitle, "translationY", -600,0);				//xuameng动画菜单
-                        animator6.setDuration(2500);				//xuameng动画菜单
-						animator6.start();						    //XUAMENG显示上面菜单结束
-						mPlayPauseTimexu.setVisibility(VISIBLE);          //xuameng显示上面时间
-				        ObjectAnimator animator7 = ObjectAnimator.ofFloat(mPlayPauseTimexu, "translationY", -600,0);				//xuameng动画菜单
-                        animator7.setDuration(2500);				//xuameng动画菜单
-						animator7.start();						    //XUAMENG显示上面菜单的时间结束
                         }
                         });
                         animator3.start();                          //XUAMENG隐藏底部菜单结束                        
@@ -116,7 +113,15 @@ public class VodController extends BaseController {
 						ObjectAnimator animator5 = ObjectAnimator.ofFloat(mTopRoot2, "translationY", 0,-600);				//xuameng向上划出屏外
                         animator5.setDuration(2500);			
 		                animator5.start();                          //XUAMENG隐藏上面菜单2结束
-                        backBtn.setVisibility(INVISIBLE);           //返回键隐藏菜单	
+                        backBtn.setVisibility(INVISIBLE);           //返回键隐藏菜单
+						mPlayTitle.setVisibility(VISIBLE);          //xuameng显示上面节目名称
+				        ObjectAnimator animator6 = ObjectAnimator.ofFloat(mPlayTitle, "translationY", -600,0);				//xuameng动画菜单
+                        animator6.setDuration(2500);				//xuameng动画菜单
+						animator6.start();						    //XUAMENG显示上面菜单结束
+						mPlayPauseTimexu.setVisibility(VISIBLE);          //xuameng显示上面时间
+				        ObjectAnimator animator7 = ObjectAnimator.ofFloat(mPlayPauseTimexu, "translationY", -600,0);				//xuameng动画菜单
+                        animator7.setDuration(2500);				//xuameng动画菜单
+						animator7.start();						    //XUAMENG显示上面菜单的时间结束
                         break;
                     }
                     case 1004: { // 设置速度
@@ -925,6 +930,8 @@ public class VodController extends BaseController {
                 //mTopRoot1.setVisibility(GONE);     //xuameng隐藏上面菜单
                 //mTopRoot2.setVisibility(GONE);     //xuameng隐藏上面菜单
                 //mPlayTitle.setVisibility(VISIBLE); //xuameng显示上面菜单
+				mPlayPauseTimexu.setVisibility(GONE); 
+                mPlayTitle.setVisibility(GONE);  
 			    mxuPlay.setVisibility(View.VISIBLE);
                 mxuPlay.setTextColor(Color.WHITE);	 //xuameng底部菜单显示播放颜色
                 mxuPlay.setText("播放");			 //xuameng底部菜单显示播放
