@@ -63,7 +63,7 @@ public class VodController extends BaseController {
                         break;
                     }
                     case 1002: { // 显示底部菜单
-						isLock;
+						isLock = isLock;
                         mBottomRoot.setVisibility(VISIBLE);
 						ObjectAnimator animator = ObjectAnimator.ofFloat(mBottomRoot, "translationY", 600,0);				//xuameng动画菜单
                         animator.setDuration(2500);				//xuameng动画菜单
