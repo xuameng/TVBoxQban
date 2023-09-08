@@ -568,12 +568,3 @@
         android:src="@drawable/icon_unlock"
         android:paddingHorizontal="@dimen/vs_20"/>
 </FrameLayout>
-<LinearLayout
-    android:orientation="horizontal"
-    android:id="@+id/xuamengall"
-    android:visibility="gone"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-	android:clickable="true"
-    android:background="@color/color_90000000">
-</LinearLayout>
