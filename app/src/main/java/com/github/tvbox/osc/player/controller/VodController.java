@@ -69,7 +69,7 @@ public class VodController extends BaseController {
                         animator.setDuration(2500);				//xuameng动画菜单
                         animator.addListener(new AnimatorListenerAdapter() {
                         @Override
-						public void onAnimationStart(Animation animation) {
+						public void onAnimationStart(Animator animation) {
                         super.onAnimationStart(animation);
                         isLock = isLock;
                         }
