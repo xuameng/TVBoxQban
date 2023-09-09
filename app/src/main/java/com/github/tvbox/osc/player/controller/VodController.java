@@ -71,7 +71,7 @@ public class VodController extends BaseController {
                         @Override
                         public void onAnimationStart(Animator animation) {
                         super.onAnimationStart(animation);
-                        isLock = isLock;			   //动画开始后防触碰
+                        
                          }
                         public void onAnimationEnd(Animator animation) {
                         super.onAnimationEnd(animation);
@@ -103,6 +103,7 @@ public class VodController extends BaseController {
                         mBottomRoot.setVisibility(GONE);			   //动画结束后隐藏下菜单
 						mTopRoot1.setVisibility(GONE);				   //动画结束后隐藏上菜单
 						mTopRoot2.setVisibility(GONE);                 //动画结束后隐藏上菜单
+						isLock = !isLock;			   //动画结束后可触碰
                         }
                         });
                         animator3.start();                          //XUAMENG隐藏底部菜单结束                        
@@ -276,7 +277,7 @@ public class VodController extends BaseController {
         mLockView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                
+                isLock = !isLock;
                 mLockView.setImageResource(isLock ? R.drawable.icon_lock : R.drawable.icon_unlock);
                 if (isLock) {
                     Message obtain = Message.obtain();
@@ -1064,10 +1065,12 @@ public class VodController extends BaseController {
         myHandle.removeCallbacks(myRunnable);
         if (!isBottomVisible()) {
             showBottom();
+			isLock = isLock;			   //动画开始后防触碰
             // 闲置计时关闭
             myHandle.postDelayed(myRunnable, myHandleSeconds);
         } else {
             hideBottom();
+		    isLock = isLock;			   //动画开始后防触碰
         }
         return true;
     }
