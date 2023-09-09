@@ -276,7 +276,7 @@ public class VodController extends BaseController {
         mLockView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                isLock = !isLock;
+                
                 mLockView.setImageResource(isLock ? R.drawable.icon_lock : R.drawable.icon_unlock);
                 if (isLock) {
                     Message obtain = Message.obtain();
