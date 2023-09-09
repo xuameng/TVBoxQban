@@ -67,17 +67,6 @@ public class VodController extends BaseController {
 						ObjectAnimator animator = ObjectAnimator.ofFloat(mBottomRoot, "translationY", 600,0);				//xuameng动画菜单
                         animator.setDuration(2500);				//xuameng动画菜单
                         animator.start();						//xuameng动画菜单
-						animator.addListener(new AnimatorListenerAdapter() {
-                        @Override
-                        public void onAnimationStart(Animator animation) {
-                        super.onAnimationStart(animation);
-                        mxuamengLock.setVisibility(VISIBLE);			   //动画开始后防触碰
-                         }
-                        public void onAnimationEnd(Animator animation) {
-                        super.onAnimationEnd(animation);
-                        mxuamengLock.setVisibility(GONE);			   //动画结束后可触碰
-                         }
-                        });
                         mTopRoot1.setVisibility(VISIBLE);
 						ObjectAnimator animator1 = ObjectAnimator.ofFloat(mTopRoot1, "translationY", -600,0);				//xuameng动画菜单
                         animator1.setDuration(2500);			//xuameng动画菜单
@@ -152,7 +141,6 @@ public class VodController extends BaseController {
     LinearLayout mTopRoot1;
     LinearLayout mTopRoot2;
     LinearLayout mParseRoot;
-    LinearLayout mxuamengLock;
     TvRecyclerView mGridView;
     TextView mPlayTitle;
     TextView mPlayTitle1;
@@ -256,7 +244,6 @@ public class VodController extends BaseController {
         mPlayerTimeResetBtn = findViewById(R.id.play_time_reset);
         mPlayPauseTime = findViewById(R.id.tv_sys_time);
         mPlayPauseTimexu = findViewById(R.id.tv_sys_time_xu);          //XUAMENG的系统时间
-		mxuamengLock = findViewById(R.id.mxuplay_lock);          //xuameng屏锁                 
         mPlayLoadNetSpeed = findViewById(R.id.tv_play_load_net_speed);
         mVideoSize = findViewById(R.id.tv_videosize);
         mSubtitleView = findViewById(R.id.subtitle_view);
