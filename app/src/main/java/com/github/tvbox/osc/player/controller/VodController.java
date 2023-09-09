@@ -71,11 +71,11 @@ public class VodController extends BaseController {
                         @Override
                         public void onAnimationStart(Animator animation) {
                         super.onAnimationStart(animation);
-                        xuamengLock.setVisibility(VISIBLE);			   //动画开始后防触碰
+                        mxuamengLock.setVisibility(VISIBLE);			   //动画开始后防触碰
                          }
                         public void onAnimationEnd(Animator animation) {
                         super.onAnimationEnd(animation);
-                        xuamengLock.setVisibility(GONE);			   //动画结束后可触碰
+                        mxuamengLock.setVisibility(GONE);			   //动画结束后可触碰
                          }
                         });
                         mTopRoot1.setVisibility(VISIBLE);
@@ -152,7 +152,7 @@ public class VodController extends BaseController {
     LinearLayout mTopRoot1;
     LinearLayout mTopRoot2;
     LinearLayout mParseRoot;
-    LinearLayout xuamengLock;
+    LinearLayout mxuamengLock;
     TvRecyclerView mGridView;
     TextView mPlayTitle;
     TextView mPlayTitle1;
@@ -256,7 +256,7 @@ public class VodController extends BaseController {
         mPlayerTimeResetBtn = findViewById(R.id.play_time_reset);
         mPlayPauseTime = findViewById(R.id.tv_sys_time);
         mPlayPauseTimexu = findViewById(R.id.tv_sys_time_xu);          //XUAMENG的系统时间
-		xuamengLock = findViewById(R.id.lock_xuameng);                  //xuameng屏锁
+		mxuamengLock = findViewById(R.id.tv_lock_xuameng);                  //xuameng屏锁
         mPlayLoadNetSpeed = findViewById(R.id.tv_play_load_net_speed);
         mVideoSize = findViewById(R.id.tv_videosize);
         mSubtitleView = findViewById(R.id.subtitle_view);
