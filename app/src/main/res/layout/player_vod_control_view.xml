@@ -570,7 +570,7 @@
 </FrameLayout>
     <LinearLayout
         android:orientation="vertical"
-        android:id="@+id/xuamenglock"
+        android:id="@+id/lockxuameng"
         android:background="@color/color_90000000"
         android:visibility="gone"
 		android:clickable="true"
