@@ -256,7 +256,7 @@ public class VodController extends BaseController {
         mPlayerTimeResetBtn = findViewById(R.id.play_time_reset);
         mPlayPauseTime = findViewById(R.id.tv_sys_time);
         mPlayPauseTimexu = findViewById(R.id.tv_sys_time_xu);          //XUAMENG的系统时间
-		mxuamengLock = findViewById(R.id.tv_lock_xuameng);                  //xuameng屏锁
+		mxuamengLock = findViewById(R.id.mxuplay_lock);          //xuameng屏锁                 
         mPlayLoadNetSpeed = findViewById(R.id.tv_play_load_net_speed);
         mVideoSize = findViewById(R.id.tv_videosize);
         mSubtitleView = findViewById(R.id.subtitle_view);
