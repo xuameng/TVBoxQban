@@ -1063,14 +1063,16 @@ public class VodController extends BaseController {
     @Override
     public boolean onSingleTapConfirmed(MotionEvent e) {
         myHandle.removeCallbacks(myRunnable);
+		isLock = isLock;			   //动画开始后防触碰
         if (!isBottomVisible()) {
             showBottom();
-			isLock = isLock;			   //动画开始后防触碰
+
             // 闲置计时关闭
             myHandle.postDelayed(myRunnable, myHandleSeconds);
         } else {
+		isLock = isLock;			   //动画开始后防触碰
             hideBottom();
-		    isLock = isLock;			   //动画开始后防触碰
+
         }
         return true;
     }
