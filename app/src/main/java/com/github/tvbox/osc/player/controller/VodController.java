@@ -63,23 +63,53 @@ public class VodController extends BaseController {
                         break;
                     }
                     case 1002: { // 显示底部菜单
-                        mBottomRoot.setVisibility(VISIBLE);						
-                        mTopRoot1.setVisibility(VISIBLE);						
-                        mTopRoot2.setVisibility(VISIBLE);						
+                        mBottomRoot.setVisibility(VISIBLE);
+						ObjectAnimator animator = ObjectAnimator.ofFloat(mBottomRoot, "translationY", 600,0);				//xuameng动画菜单
+                        animator.setDuration(2500);				//xuameng动画菜单
+                        animator.start();						//xuameng动画菜单
+                        mTopRoot1.setVisibility(VISIBLE);
+						ObjectAnimator animator1 = ObjectAnimator.ofFloat(mTopRoot1, "translationY", -600,0);				//xuameng动画菜单
+                        animator1.setDuration(2500);			//xuameng动画菜单
+                        animator1.start();						//xuameng动画菜单
+                        mTopRoot2.setVisibility(VISIBLE);
+						ObjectAnimator animator2 = ObjectAnimator.ofFloat(mTopRoot2, "translationY", -600,0);				//xuameng动画菜单
+                        animator2.setDuration(2500);			//xuameng动画菜单
+                        animator2.start();						//xuameng动画菜单
                         mxuPlay.requestFocus();				    //底部菜单默认焦点为播放
                         backBtn.setVisibility(ScreenUtils.isTv(context) ? INVISIBLE : VISIBLE);
                         showLockView();
 						mPlayPauseTimexu.setVisibility(GONE);   //xuameng隐藏上面视频名称
-                        mPlayTitle.setVisibility(GONE);         //xuameng隐藏上面时间
+                        mPlayTitle.setVisibility(GONE);        //xuameng隐藏上面时间
                         break;
                     }
                     case 1003: { // 隐藏底部菜单
+		                ObjectAnimator animator3 = ObjectAnimator.ofFloat(mBottomRoot, "translationY", -0,600);				//xuameng向下划出屏外
+                        animator3.setDuration(2500);				   //xuameng动画菜单        
+                        animator3.addListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
                         mBottomRoot.setVisibility(GONE);			   //动画结束后隐藏下菜单
 						mTopRoot1.setVisibility(GONE);				   //动画结束后隐藏上菜单
 						mTopRoot2.setVisibility(GONE);                 //动画结束后隐藏上菜单
-                        backBtn.setVisibility(INVISIBLE);              //返回键隐藏菜单
-						mPlayTitle.setVisibility(VISIBLE);             //xuameng显示上面节目名称
-						mPlayPauseTimexu.setVisibility(VISIBLE);       //xuameng显示上面时间
+                        }
+                        });
+                        animator3.start();                          //XUAMENG隐藏底部菜单结束                        
+				        ObjectAnimator animator4 = ObjectAnimator.ofFloat(mTopRoot1, "translationY", 0,-600);				//xuameng向上划出屏外
+                        animator4.setDuration(2500);				//xuameng动画菜单				
+		                animator4.start();                          //XUAMENG隐藏上面菜单1结束
+						ObjectAnimator animator5 = ObjectAnimator.ofFloat(mTopRoot2, "translationY", 0,-600);				//xuameng向上划出屏外
+                        animator5.setDuration(2500);			
+		                animator5.start();                          //XUAMENG隐藏上面菜单2结束
+                        backBtn.setVisibility(INVISIBLE);           //返回键隐藏菜单
+						mPlayTitle.setVisibility(VISIBLE);          //xuameng显示上面节目名称
+				        ObjectAnimator animator6 = ObjectAnimator.ofFloat(mPlayTitle, "translationY", -600,0);				//xuameng动画菜单
+                        animator6.setDuration(2500);				//xuameng动画菜单
+						animator6.start();						    //XUAMENG显示上面菜单结束
+						mPlayPauseTimexu.setVisibility(VISIBLE);          //xuameng显示上面时间
+				        ObjectAnimator animator7 = ObjectAnimator.ofFloat(mPlayPauseTimexu, "translationY", -600,0);				//xuameng动画菜单
+                        animator7.setDuration(2500);				//xuameng动画菜单
+						animator7.start();						    //XUAMENG显示上面菜单的时间结束
                         break;
                     }
                     case 1004: { // 设置速度
