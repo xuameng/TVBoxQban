@@ -970,6 +970,17 @@ public class VodController extends BaseController {
     boolean isBottomVisible() {
         return mBottomRoot.getVisibility() == VISIBLE;
     }
+	boolean MxuamengViewVisible() {                   //XUAMENG防反回键点击
+        return MxuamengView.getVisibility() == VISIBLE;
+    }
+	public boolean onRiggerBackPressed() {
+        if (MxuamengViewVisible()) {          //XUAMENG防反回键点击		   
+        return true;
+        }
+	    if (!MxuamengViewVisible()){          //XUAMENG防反回键点击	   
+        return false;
+        }
+	}
 
     void showBottom() {
         mHandler.removeMessages(1003);
