@@ -980,6 +980,9 @@ public class VodController extends BaseController {
 	    if (!MxuamengViewVisible()){          //XUAMENG防反回键点击	   
         return false;
         }
+		else {
+        return false;
+        }
 	}
 
     void showBottom() {
