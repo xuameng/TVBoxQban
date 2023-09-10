@@ -1011,7 +1011,7 @@ public class VodController extends BaseController {
                     togglePlay();
                     return true;
                 }
-                if (isInPlayback) && (MxuamengViewVisible()) {		//XUAMENG防遥控键终止动画
+                if (isInPlayback && MxuamengViewVisible()) {		//XUAMENG防遥控键终止动画
                     return true;
 				}
 //            } else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {  return true;// 闲置开启计时关闭透明底栏
