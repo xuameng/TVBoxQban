@@ -71,12 +71,10 @@ public class VodController extends BaseController {
 			            public void onAnimationStart(Animator animation) {
                         super.onAnimationStart(animation);
                         MxuamengView.setVisibility(VISIBLE);	//xuameng动画开始防点击
-						backBtn.setVisibility(GONE);			//xuameng动画开始防点击返回键
 			            }
                         public void onAnimationEnd(Animator animation) {
                         super.onAnimationEnd(animation);
 			            MxuamengView.setVisibility(GONE);		//xuameng动画结束可点击
-						backBtn.setVisibility(ScreenUtils.isTv(context) ? INVISIBLE : VISIBLE);			//xuameng动画结束可点击返回键
                         }
                         });
                         animator.start();						//xuameng动画菜单
@@ -103,7 +101,6 @@ public class VodController extends BaseController {
 						public void onAnimationStart(Animator animation) {
                         super.onAnimationStart(animation);
                         MxuamengView.setVisibility(VISIBLE);		   //xuameng动画开始防点击
-						backBtn.setVisibility(GONE);			//xuameng动画开始防点击返回键
 			            }
                         public void onAnimationEnd(Animator animation) {
                         super.onAnimationEnd(animation);
@@ -111,7 +108,6 @@ public class VodController extends BaseController {
 						mTopRoot1.setVisibility(GONE);				   //动画结束后隐藏上菜单
 						mTopRoot2.setVisibility(GONE);                 //动画结束后隐藏上菜单
 						MxuamengView.setVisibility(GONE);			   //xuameng动画结束可点击
-						backBtn.setVisibility(INVISIBLE);			   //xuameng动画结束可点击返回键
                         }
                         });
                         animator3.start();                          //XUAMENG隐藏底部菜单结束                        
@@ -127,7 +123,7 @@ public class VodController extends BaseController {
                         animator6.setDuration(2500);				//xuameng动画菜单
 						animator6.start();						    //XUAMENG显示上面菜单结束
 						mPlayPauseTimexu.setVisibility(VISIBLE);          //xuameng显示上面时间
-				        ObjectAnimator animator7 = ObjectAnimator.ofFloat(mPlayPauseTimexu, "translationY", -600,0);		//xuameng动画菜单
+				        ObjectAnimator animator7 = ObjectAnimator.ofFloat(mPlayPauseTimexu, "translationY", -600,0);				//xuameng动画菜单
                         animator7.setDuration(2500);				//xuameng动画菜单
 						animator7.start();						    //XUAMENG显示上面菜单的时间结束
                         break;
@@ -1094,16 +1090,16 @@ public class VodController extends BaseController {
     public boolean onBackPressed() {
         if (isClickBackBtn) {
             isClickBackBtn = false;
-            if (isBottomVisible()) {
-                hideBottom();
+            if (!isBottomVisible()) {
+                showBottom();
             }
             return false;
         }
         if (super.onBackPressed()) {
             return true;
         }
-        if (isBottomVisible()) {
-            hideBottom();
+        if (!isBottomVisible()) {
+            showBottom();
             return true;
         }
         return false;
