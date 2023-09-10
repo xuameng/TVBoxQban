@@ -66,6 +66,17 @@ public class VodController extends BaseController {
                         mBottomRoot.setVisibility(VISIBLE);
 						ObjectAnimator animator = ObjectAnimator.ofFloat(mBottomRoot, "translationY", 600,0);				//xuameng动画菜单
                         animator.setDuration(2500);				//xuameng动画菜单
+						animator.addListener(new AnimatorListenerAdapter() {
+                        @Override
+			            public void onAnimationStart(Animator animation) {
+                        super.onAnimationStart(animation);
+                        MxuamengView.setVisibility(VISIBLE);	//xuameng动画开始防点击
+			            }
+                        public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+			            MxuamengView.setVisibility(GONE);		//xuameng动画结束可点击
+                        }
+                        });
                         animator.start();						//xuameng动画菜单
                         mTopRoot1.setVisibility(VISIBLE);
 						ObjectAnimator animator1 = ObjectAnimator.ofFloat(mTopRoot1, "translationY", -600,0);				//xuameng动画菜单
@@ -87,11 +98,16 @@ public class VodController extends BaseController {
                         animator3.setDuration(2500);				   //xuameng动画菜单        
                         animator3.addListener(new AnimatorListenerAdapter() {
                         @Override
+						public void onAnimationStart(Animator animation) {
+                        super.onAnimationStart(animation);
+                        MxuamengView.setVisibility(VISIBLE);		   //xuameng动画开始防点击
+			            }
                         public void onAnimationEnd(Animator animation) {
                         super.onAnimationEnd(animation);
                         mBottomRoot.setVisibility(GONE);			   //动画结束后隐藏下菜单
 						mTopRoot1.setVisibility(GONE);				   //动画结束后隐藏上菜单
 						mTopRoot2.setVisibility(GONE);                 //动画结束后隐藏上菜单
+						MxuamengView.setVisibility(GONE);			   //xuameng动画结束可点击
                         }
                         });
                         animator3.start();                          //XUAMENG隐藏底部菜单结束                        
@@ -141,6 +157,7 @@ public class VodController extends BaseController {
     LinearLayout mTopRoot1;
     LinearLayout mTopRoot2;
     LinearLayout mParseRoot;
+	LinearLayout MxuamengView;			//xuameng防点击
     TvRecyclerView mGridView;
     TextView mPlayTitle;
     TextView mPlayTitle1;
@@ -244,6 +261,7 @@ public class VodController extends BaseController {
         mPlayerTimeResetBtn = findViewById(R.id.play_time_reset);
         mPlayPauseTime = findViewById(R.id.tv_sys_time);
         mPlayPauseTimexu = findViewById(R.id.tv_sys_time_xu);          //XUAMENG的系统时间
+		MxuamengView = findViewById(R.id.xuamengView);				   //XUAMENG防点击
         mPlayLoadNetSpeed = findViewById(R.id.tv_play_load_net_speed);
         mVideoSize = findViewById(R.id.tv_videosize);
         mSubtitleView = findViewById(R.id.subtitle_view);
