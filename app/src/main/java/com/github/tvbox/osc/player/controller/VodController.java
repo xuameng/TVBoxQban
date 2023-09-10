@@ -971,6 +971,10 @@ public class VodController extends BaseController {
         return mBottomRoot.getVisibility() == VISIBLE;
     }
 
+	boolean MxuamengViewVisible() {						//XUAMENG防遥控点击
+        return MxuamengView.getVisibility() == VISIBLE;
+    }
+
     void showBottom() {
         mHandler.removeMessages(1003);
         mHandler.sendEmptyMessage(1002);
@@ -1007,6 +1011,10 @@ public class VodController extends BaseController {
                     togglePlay();
                     return true;
                 }
+                if (MxuamengViewVisible()) {		//XUAMENG防遥控键终止动画
+                    processExit();
+                    return true;
+				}
 //            } else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {  return true;// 闲置开启计时关闭透明底栏
             } else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN || keyCode == KeyEvent.KEYCODE_DPAD_UP || keyCode== KeyEvent.KEYCODE_MENU) {
                 if (!isBottomVisible()) {
