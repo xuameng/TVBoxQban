@@ -1090,16 +1090,16 @@ public class VodController extends BaseController {
     public boolean onBackPressed() {
         if (isClickBackBtn) {
             isClickBackBtn = false;
-            if (!isBottomVisible()) {
-                showBottom();
+            if (!isBottomVisible()) {          //xuameng按手机返回键退出
+//                hideBottom();				   //xuameng多余没用
             }
             return false;
         }
         if (super.onBackPressed()) {
             return true;
         }
-        if (!isBottomVisible()) {
-            showBottom();
+        if (!isBottomVisible()) {			 //xuameng按手机返回键退出
+//            hideBottom();					 //xuameng多余没用
             return true;
         }
         return false;
