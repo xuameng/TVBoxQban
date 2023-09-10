@@ -212,7 +212,7 @@ public class VodController extends BaseController {
     };
 
 
-   private Runnable xuRunnable = new Runnable() {
+   private Runnable xuRunnable = new Runnable() {                     //xuameng显示系统时间
         @Override
         public void run() {
             Date date1 = new Date();
@@ -220,7 +220,7 @@ public class VodController extends BaseController {
             mPlayPauseTimexu.setText(timeFormat1.format(date1));
 			mHandler.postDelayed(this, 1000);
         }
-    };
+    };																  //xuameng显示系统时间
 
 
     
