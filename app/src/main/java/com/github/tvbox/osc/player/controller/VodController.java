@@ -1012,8 +1012,7 @@ public class VodController extends BaseController {
                     return true;
                 }
                 if (MxuamengViewVisible()) {		//XUAMENG防遥控键终止动画
-                    processExit();
-                    return true;
+                    return false;
 				}
 //            } else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {  return true;// 闲置开启计时关闭透明底栏
             } else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN || keyCode == KeyEvent.KEYCODE_DPAD_UP || keyCode== KeyEvent.KEYCODE_MENU) {
