@@ -983,7 +983,7 @@ public class VodController extends BaseController {
 
   public boolean dispatchKeyEvent1(KeyEvent event) {                //XUAMENG
         if (event.getAction() == KeyEvent.ACTION_UP) {
-	if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
+	if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
             long nowTime = SystemClock.elapsedRealtime();
             this.mTimeDelay = nowTime - this.mTimeLast;
             this.mTimeLast = nowTime;
