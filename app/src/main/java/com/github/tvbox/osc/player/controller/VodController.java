@@ -974,6 +974,8 @@ public class VodController extends BaseController {
     boolean isMxuamengView() {                //xuameng防遥控键
         return MxuamengView.getVisibility() == VISIBLE;
     }
+	private boolean isPaused = false;        //xuameng判断暂停
+
     void showBottom() {
         mHandler.removeMessages(1003);
         mHandler.sendEmptyMessage(1002);
@@ -1013,6 +1015,11 @@ public class VodController extends BaseController {
 				if(isMxuamengView()) {
                     return true;
                 }
+				if (!isBottomVisible() && isPaused) {
+                    showBottom();
+					return true;
+                }
+                    
 //            } else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {  return true;// 闲置开启计时关闭透明底栏
             } else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN || keyCode == KeyEvent.KEYCODE_DPAD_UP || keyCode== KeyEvent.KEYCODE_MENU) {
                 if (!isBottomVisible()) {
