@@ -1005,7 +1005,7 @@ public class VodController extends BaseController {
             } else if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
                 if (isInPlayback) {
                     togglePlay();
-					System.Threading.Thread.Sleep(2000);
+					Thread.sleep(1000);
                     return true;
 				}                                  
 //            } else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {  return true;// 闲置开启计时关闭透明底栏
