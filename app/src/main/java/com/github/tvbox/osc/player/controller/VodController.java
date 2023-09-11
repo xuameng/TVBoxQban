@@ -1003,12 +1003,6 @@ public class VodController extends BaseController {
                     return true;
                 }
             } else if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
-                long l = System.currentTimeMillis();
-                if (mStartTime > 0 && l - mStartTime < 2500) {
-                    return true;
-                }
-			        mStartTime = l;
-
                 if (isInPlayback) {
                     togglePlay();
                     return true;
