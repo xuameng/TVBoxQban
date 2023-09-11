@@ -981,24 +981,6 @@ public class VodController extends BaseController {
         mHandler.sendEmptyMessage(1003);
     }
 
-  public boolean dispatchKeyEvent1(KeyEvent event) {                //XUAMENG
-        if (event.getAction() == KeyEvent.ACTION_UP) {
-	if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
-            long nowTime = SystemClock.elapsedRealtime();
-            this.mTimeDelay = nowTime - this.mTimeLast;
-            this.mTimeLast = nowTime;
-            if(this.mTimeSpace <= 2500L && this.mTimeDelay <= 2500L) {
-                this.mTimeSpace += this.mTimeDelay;
-                return true;
-            }
-
-            this.mTimeSpace = 0L;
-        }
-
-        return super.dispatchKeyEvent1(event);
-    }
-    }																//XUAMENG完
-
     @Override
     public boolean onKeyEvent(KeyEvent event) {
         myHandle.removeCallbacks(myRunnable);
@@ -1044,7 +1026,23 @@ public class VodController extends BaseController {
         return super.dispatchKeyEvent(event);
     }
 
+  public boolean dispatchKeyEvent1(KeyEvent event) {                //XUAMENG
+        if (event.getAction() == KeyEvent.ACTION_UP) {
+	if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
+            long nowTime = SystemClock.elapsedRealtime();
+            this.mTimeDelay = nowTime - this.mTimeLast;
+            this.mTimeLast = nowTime;
+            if(this.mTimeSpace <= 2500L && this.mTimeDelay <= 2500L) {
+                this.mTimeSpace += this.mTimeDelay;
+                return true;
+            }
 
+            this.mTimeSpace = 0L;
+        }
+
+        return super.dispatchKeyEvent1(event);
+    }
+    }																//XUAMENG完
     private boolean fromLongPress;
     private float speed_old = 1.0f;
     @Override
