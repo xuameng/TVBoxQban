@@ -1005,7 +1005,11 @@ public class VodController extends BaseController {
             } else if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
                 if (isInPlayback) {
                     togglePlay();
-					Thread.sleep(1000);
+					try {
+                    Thread.sleep(1000); // 休眠1秒
+                    } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    }
                     return true;
 				}                                  
 //            } else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {  return true;// 闲置开启计时关闭透明底栏
