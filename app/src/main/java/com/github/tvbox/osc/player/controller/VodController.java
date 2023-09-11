@@ -1003,6 +1003,14 @@ public class VodController extends BaseController {
                     return true;
                 }
             } else if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
+				 long actionUpTime = event.getEventTime();
+                 long actionDownTime = event.getDownTime();
+                 System.out.println("actionUptime = " + actionUpTime);
+                 long remainTime = actionUpTime - actionDownTime;
+                 System.out.println("remainTime = " + remainTime);
+                 if (remainTime < 3000) {
+                     return true;
+                 }
                 if (isInPlayback) {
                     togglePlay();
                     return true;
@@ -1015,22 +1023,12 @@ public class VodController extends BaseController {
                     return true;
                 }
             }
-        } else if (action == KeyEvent.ACTION_UP) {
-            if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+            } else if (action == KeyEvent.ACTION_UP) {
+                if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
                 if (isInPlayback) {
                     tvSlideStop();
                     return true;
                 }
-            if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
-                 long actionUpTime = event.getEventTime();
-                 long actionDownTime = event.getDownTime();
-                 System.out.println("actionUptime = " + actionUpTime);
-                long remainTime = actionUpTime - actionDownTime;
-                 System.out.println("remainTime = " + remainTime);
-                 if (remainTime < 3000) {
-                     return true;
-                 }
-              }
            }
         }
         return super.dispatchKeyEvent(event);
