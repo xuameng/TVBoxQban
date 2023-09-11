@@ -1013,7 +1013,7 @@ public class VodController extends BaseController {
                     return true;
 				}
 
-             if (action == KeyEvent.ACTION_UP) {}
+             if (action == KeyEvent.ACTION_UP) {
                  long actionUpTime = event.getEventTime();
                  long actionDownTime = event.getDownTime();
                  System.out.println("actionUptime = " + actionUpTime);
