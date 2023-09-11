@@ -1035,9 +1035,9 @@ public class VodController extends BaseController {
                  long actionUpTime = event.getEventTime();
                  long actionDownTime = event.getDownTime();
                  System.out.println("actionUptime = " + actionUpTime);
-                 long remainTime = actionUpTime - actionDownTime;
+                 long remainTime = event.getDownTime() - actionDownTime;
                  System.out.println("remainTime = " + remainTime);
-                 if (remainTime < 2500) {
+                 if (remainTime < 2000) {
                      return true;
                  }
              }
