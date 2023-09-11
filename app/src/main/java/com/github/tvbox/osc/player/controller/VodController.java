@@ -72,7 +72,7 @@ public class VodController extends BaseController {
                         super.onAnimationStart(animation);
                         MxuamengView.setVisibility(VISIBLE);	//xuameng动画开始防点击
 						if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
-                        
+                        xuameng=good;
                         }
 			            }
                         public void onAnimationEnd(Animator animation) {
@@ -105,7 +105,7 @@ public class VodController extends BaseController {
                         super.onAnimationStart(animation);
                         MxuamengView.setVisibility(VISIBLE);		   //xuameng动画开始防点击
 						if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
-                        
+                        xuameng=good;
                         }
 			            }
                         public void onAnimationEnd(Animator animation) {
