@@ -1005,6 +1005,7 @@ public class VodController extends BaseController {
             } else if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
                 if (isInPlayback) {
                     togglePlay();
+					System.Threading.Thread.Sleep(2000);
                     return true;
 				}                                  
 //            } else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {  return true;// 闲置开启计时关闭透明底栏
@@ -1024,26 +1025,7 @@ public class VodController extends BaseController {
            }
         }
         return super.dispatchKeyEvent(event);
-    }
-
-	  public boolean dispatchKeyEvent(KeyEvent event) {         //xuameng
-         int action = event.getAction();
-         int keyCode = event.getKeyCode();
-         
-         if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
-             if (action == KeyEvent.ACTION_UP) {
-                 long actionUpTime = event.getEventTime();
-                 long actionDownTime = event.getDownTime();
-                 System.out.println("actionUptime = " + actionUpTime);
-                 long remainTime = event.getDownTime() - actionDownTime;
-                 System.out.println("remainTime = " + remainTime);
-                 if (remainTime < 2000) {
-                     return true;
-                 }
-             }
-         }
-         return super.dispatchKeyEvent(event);
-     }                                                 //xuameng
+    }    
 
     private boolean fromLongPress;
     private float speed_old = 1.0f;
