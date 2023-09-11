@@ -1002,13 +1002,20 @@ public class VodController extends BaseController {
         }
         boolean isInPlayback = isInPlaybackState();
         if (action == KeyEvent.ACTION_DOWN) {
+			 {
+                 long actionUpTime = event.getEventTime();
+                 long actionDownTime = event.getDownTime();
+                 System.out.println("actionUptime = " + actionUpTime);
+                 long remainTime = actionUpTime - actionDownTime;
+                 System.out.println("remainTime = " + remainTime);
+             }
             if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
                 if (isInPlayback) {
                     tvSlideStart(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT ? 1 : -1);
                     return true;
                 }
             } else if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
-                if (isInPlayback && !isMxuamengView()) {
+                if (isInPlayback && remainTime > 3000) {
                     togglePlay();
                     return true;
 				}
