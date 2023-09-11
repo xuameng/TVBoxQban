@@ -1009,6 +1009,7 @@ public class VodController extends BaseController {
                 if (isInPlayback && !isMxuamengView()) {
                     togglePlay();
                     return true;
+				}
 				if(isMxuamengView()) {
                     return true;
                 }
