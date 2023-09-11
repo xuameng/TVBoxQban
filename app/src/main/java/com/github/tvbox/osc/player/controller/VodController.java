@@ -1000,15 +1000,16 @@ public class VodController extends BaseController {
             myHandle.postDelayed(myRunnable, myHandleSeconds);
             return super.dispatchKeyEvent(event);
         }
+		{
+            long actionUpTime = event.getEventTime();
+            long actionDownTime = event.getDownTime();
+            System.out.println("actionUptime = " + actionUpTime);
+            long remainTime = actionUpTime - actionDownTime;
+            System.out.println("remainTime = " + remainTime);
+			return super.dispatchKeyEvent(event);
+        }
         boolean isInPlayback = isInPlaybackState();
         if (action == KeyEvent.ACTION_DOWN) {
-			 {
-                 long actionUpTime = event.getEventTime();
-                 long actionDownTime = event.getDownTime();
-                 System.out.println("actionUptime = " + actionUpTime);
-                 long remainTime = actionUpTime - actionDownTime;
-                 System.out.println("remainTime = " + remainTime);
-             }
             if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
                 if (isInPlayback) {
                     tvSlideStart(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT ? 1 : -1);
