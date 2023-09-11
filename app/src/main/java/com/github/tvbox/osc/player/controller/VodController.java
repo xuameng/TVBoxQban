@@ -71,9 +71,6 @@ public class VodController extends BaseController {
 			            public void onAnimationStart(Animator animation) {
                         super.onAnimationStart(animation);
                         MxuamengView.setVisibility(VISIBLE);	//xuameng动画开始防点击
-						if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
-                        xuameng=good;
-                        }
 			            }
                         public void onAnimationEnd(Animator animation) {
                         super.onAnimationEnd(animation);
@@ -104,9 +101,6 @@ public class VodController extends BaseController {
 						public void onAnimationStart(Animator animation) {
                         super.onAnimationStart(animation);
                         MxuamengView.setVisibility(VISIBLE);		   //xuameng动画开始防点击
-						if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
-                        xuameng=good;
-                        }
 			            }
                         public void onAnimationEnd(Animator animation) {
                         super.onAnimationEnd(animation);
@@ -977,6 +971,9 @@ public class VodController extends BaseController {
         return mBottomRoot.getVisibility() == VISIBLE;
     }
 
+    boolean isMxuamengView() {                //xuameng防遥控键
+        return MxuamengView.getVisibility() == VISIBLE;
+    }
     void showBottom() {
         mHandler.removeMessages(1003);
         mHandler.sendEmptyMessage(1002);
@@ -1009,8 +1006,10 @@ public class VodController extends BaseController {
                     return true;
                 }
             } else if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
-                if (isInPlayback) {
+                if (isInPlayback && !isMxuamengView()) {
                     togglePlay();
+                    return true;
+				if(isMxuamengView()) {
                     return true;
                 }
 //            } else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {  return true;// 闲置开启计时关闭透明底栏
