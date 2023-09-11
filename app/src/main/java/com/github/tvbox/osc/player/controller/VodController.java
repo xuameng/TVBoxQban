@@ -1015,10 +1015,6 @@ public class VodController extends BaseController {
 				if(isMxuamengView()) {
                     return true;
                 }
-				if (!isBottomVisible() && isPaused) {
-                    showBottom();
-					return true;
-                }
                     
 //            } else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {  return true;// 闲置开启计时关闭透明底栏
             } else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN || keyCode == KeyEvent.KEYCODE_DPAD_UP || keyCode== KeyEvent.KEYCODE_MENU) {
