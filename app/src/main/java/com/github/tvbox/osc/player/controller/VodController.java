@@ -1026,21 +1026,25 @@ public class VodController extends BaseController {
         return super.dispatchKeyEvent(event);
     }
 
-public boolean dispatchKeyEvent(KeyEvent event) {		//xuameng
-        if(event.getAction() == 0) {
-            long nowTime = SystemClock.elapsedRealtime();
-            this.mTimeDelay = nowTime - this.mTimeLast;
-            this.mTimeLast = nowTime;
-            if(this.mTimeSpace <= 2500L && this.mTimeDelay <= 2500L) {
-                this.mTimeSpace += this.mTimeDelay;
-                return true;
-            }
+	  public boolean dispatchKeyEvent(KeyEvent event) {         //xuameng
+         int action = event.getAction();
+         int keyCode = event.getKeyCode();
+         
+         if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
+             if (action == KeyEvent.ACTION_UP) {
+                 long actionUpTime = event.getEventTime();
+                 long actionDownTime = event.getDownTime();
+                 System.out.println("actionUptime = " + actionUpTime);
+                 long remainTime = actionUpTime - actionDownTime;
+                 System.out.println("remainTime = " + remainTime);
+                 if (remainTime < 2500) {
+                     return true;
+                 }
+             }
+         }
+         return super.dispatchKeyEvent(event);
+     }                                                 //xuameng
 
-            this.mTimeSpace = 0L;
-        }
-
-        return super.dispatchKeyEvent(event);
-    }      //xuameng
     private boolean fromLongPress;
     private float speed_old = 1.0f;
     @Override
