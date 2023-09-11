@@ -1000,14 +1000,6 @@ public class VodController extends BaseController {
             myHandle.postDelayed(myRunnable, myHandleSeconds);
             return super.dispatchKeyEvent(event);
         }
-		{
-            long actionUpTime = event.getEventTime();
-            long actionDownTime = event.getDownTime();
-            System.out.println("actionUptime = " + actionUpTime);
-            long remainTime = actionUpTime - actionDownTime;
-            System.out.println("remainTime = " + remainTime);
-			return super.dispatchKeyEvent(event);
-        }
         boolean isInPlayback = isInPlaybackState();
         if (action == KeyEvent.ACTION_DOWN) {
             if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
@@ -1020,9 +1012,18 @@ public class VodController extends BaseController {
                     togglePlay();
                     return true;
 				}
-				if (remainTime < 3000) {
-			    return true;
-                }                    
+
+             if (action == KeyEvent.ACTION_UP) {}
+                 long actionUpTime = event.getEventTime();
+                 long actionDownTime = event.getDownTime();
+                 System.out.println("actionUptime = " + actionUpTime);
+                long remainTime = actionUpTime - actionDownTime;
+                 System.out.println("remainTime = " + remainTime);
+                 if (remainTime < 3000) {
+                     return true;
+                 }
+             }
+                            
                 
                     
 //            } else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {  return true;// 闲置开启计时关闭透明底栏
