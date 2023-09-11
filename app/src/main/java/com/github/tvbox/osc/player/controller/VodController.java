@@ -190,7 +190,7 @@ public class VodController extends BaseController {
     private boolean isLock = false;
     Handler myHandle;
     Runnable myRunnable;
-    int myHandleSeconds = 10000;//闲置多少毫秒秒关闭底栏  默认6秒
+    int myHandleSeconds = 100000;//闲置多少毫秒秒关闭底栏  默认6秒
 
     int videoPlayState = 0;
 
