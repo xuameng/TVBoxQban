@@ -1002,26 +1002,11 @@ public class VodController extends BaseController {
                     tvSlideStart(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT ? 1 : -1);
                     return true;
                 }
-            } 
-            else if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
-             if (action == KeyEvent.ACTION_UP) {
-                 long actionUpTime = event.getEventTime();
-                 long actionDownTime = event.getDownTime();
-                 System.out.println("actionUptime = " + actionUpTime);
-                long remainTime = actionUpTime - actionDownTime;
-                 System.out.println("remainTime = " + remainTime);
-                 if (remainTime < 3000) {
-                     return true;
-                 }
-				 else (isInPlayback){
+            } else if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
+                if (isInPlayback) {
                     togglePlay();
                     return true;
-                 }
-               }
-			 }
-                            
-                
-                    
+				}                                  
 //            } else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {  return true;// 闲置开启计时关闭透明底栏
             } else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN || keyCode == KeyEvent.KEYCODE_DPAD_UP || keyCode== KeyEvent.KEYCODE_MENU) {
                 if (!isBottomVisible()) {
@@ -1036,7 +1021,17 @@ public class VodController extends BaseController {
                     tvSlideStop();
                     return true;
                 }
-            }
+            if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
+                 long actionUpTime = event.getEventTime();
+                 long actionDownTime = event.getDownTime();
+                 System.out.println("actionUptime = " + actionUpTime);
+                long remainTime = actionUpTime - actionDownTime;
+                 System.out.println("remainTime = " + remainTime);
+                 if (remainTime < 3000) {
+                     return true;
+                 }
+              }
+           }
         }
         return super.dispatchKeyEvent(event);
     }
