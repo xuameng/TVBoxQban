@@ -190,7 +190,7 @@ public class VodController extends BaseController {
     private boolean isLock = false;
     Handler myHandle;
     Runnable myRunnable;
-    int myHandleSeconds = 100000;//闲置多少毫秒秒关闭底栏  默认6秒
+    int myHandleSeconds = 100000;//闲置多少毫秒秒关闭底栏  默认100秒
 
     int videoPlayState = 0;
 
@@ -971,11 +971,6 @@ public class VodController extends BaseController {
         return mBottomRoot.getVisibility() == VISIBLE;
     }
 
-    boolean isMxuamengView() {                //xuameng防遥控键
-        return MxuamengView.getVisibility() == VISIBLE;
-    }
-	private boolean isPaused = false;        //xuameng判断暂停
-
     void showBottom() {
         mHandler.removeMessages(1003);
         mHandler.sendEmptyMessage(1002);
@@ -1007,12 +1002,8 @@ public class VodController extends BaseController {
                     tvSlideStart(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT ? 1 : -1);
                     return true;
                 }
-            } else if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
-                if (isInPlayback) {
-                    togglePlay();
-                    return true;
-				}
-
+            } 
+            else if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
              if (action == KeyEvent.ACTION_UP) {
                  long actionUpTime = event.getEventTime();
                  long actionDownTime = event.getDownTime();
@@ -1022,7 +1013,12 @@ public class VodController extends BaseController {
                  if (remainTime < 3000) {
                      return true;
                  }
-             }
+				 else (isInPlayback){
+                    togglePlay();
+                    return true;
+                 }
+               }
+			 }
                             
                 
                     
