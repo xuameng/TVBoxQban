@@ -981,6 +981,8 @@ public class VodController extends BaseController {
         mHandler.sendEmptyMessage(1003);
     }
 
+	private boolean isPaused = false;
+
     @Override
     public boolean onKeyEvent(KeyEvent event) {
         myHandle.removeCallbacks(myRunnable);
@@ -1005,10 +1007,8 @@ public class VodController extends BaseController {
             } else if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
                 if (isInPlayback) {
                     togglePlay();
-					try {
-                    Thread.sleep(1000); // 休眠1秒
-                    } catch (InterruptedException e) {
-                    e.printStackTrace();
+					if (!isBottomVisible() && isPaused) {
+                        showBottom();
                     }
                     return true;
 				}                                  
