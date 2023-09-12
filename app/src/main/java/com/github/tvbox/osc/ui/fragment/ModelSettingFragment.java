@@ -26,7 +26,7 @@ import com.github.tvbox.osc.ui.dialog.ApiDialog;
 import com.github.tvbox.osc.ui.dialog.BackupDialog;
 import com.github.tvbox.osc.ui.dialog.SearchRemoteTvDialog;
 import com.github.tvbox.osc.ui.dialog.SelectDialog;
-import com.github.tvbox.osc.ui.dialog.XWalkInitDialog;
+//import com.github.tvbox.osc.ui.dialog.XWalkInitDialog;
 import com.github.tvbox.osc.util.FastClickCheckUtil;
 import com.github.tvbox.osc.util.FileUtils;
 import com.github.tvbox.osc.util.HawkConfig;
@@ -138,12 +138,12 @@ public class ModelSettingFragment extends BaseLazyFragment {
                 tvParseWebView.setText(Hawk.get(HawkConfig.PARSE_WEBVIEW, true) ? "系统自带" : "XWalkView");
                 if (!useSystem) {
                     Toast.makeText(mContext, "注意: XWalkView只适用于部分低Android版本，Android5.0以上推荐使用系统自带", Toast.LENGTH_LONG).show();
-                    XWalkInitDialog dialog = new XWalkInitDialog(mContext);
-                    dialog.setOnListener(new XWalkInitDialog.OnListener() {
-                        @Override
-                        public void onchange() {
-                        }
-                    });
+   //xuameng                 XWalkInitDialog dialog = new XWalkInitDialog(mContext);
+    //                dialog.setOnListener(new XWalkInitDialog.OnListener() {
+    //                    @Override
+   //                     public void onchange() {
+  //                      }
+ //                   });
                     dialog.show();
                 }
             }
