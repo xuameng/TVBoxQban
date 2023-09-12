@@ -1260,7 +1260,7 @@ public class PlayFragment extends BaseLazyFragment {
         if (mSysWebView == null && mXwalkWebView == null) {
             boolean useSystemWebView = Hawk.get(HawkConfig.PARSE_WEBVIEW, true);
             if (!useSystemWebView) {
-                XWalkUtils.tryUseXWalk(mContext, new XWalkUtils.XWalkState() {
+ //xuameng               XWalkUtils.tryUseXWalk(mContext, new XWalkUtils.XWalkState() {
                     @Override
                     public void success() {
                         initWebView(!sourceBean.getClickSelector().isEmpty());
