@@ -38,11 +38,11 @@ public class XWalkInitDialog extends BaseDialog {
         TextView downText = findViewById(R.id.downXWalk);
         TextView downTip = findViewById(R.id.downXWalkArch);
 
-        downTip.setText("下载XWalkView运行组件\nArch:" + XWalkUtils.getRuntimeAbi());
+  //xuameng      downTip.setText("下载XWalkView运行组件\nArch:" + XWalkUtils.getRuntimeAbi());
 
-        if (XWalkUtils.xWalkLibExist(context)) {
-            downText.setText("重新下载");
-        }
+  //      if (XWalkUtils.xWalkLibExist(context)) {
+  //          downText.setText("重新下载");
+ //       }
 
         downText.setOnClickListener(new View.OnClickListener() {
 
@@ -52,25 +52,25 @@ public class XWalkInitDialog extends BaseDialog {
             }
 
             @Override
-            public void onClick(View v) {
-                FastClickCheckUtil.check(v);
-                setTextEnable(false);
-                OkGo.<File>get(XWalkUtils.downUrl()).tag("down_xwalk").execute(new FileCallback(context.getCacheDir().getAbsolutePath(), XWalkUtils.saveZipFile()) {
-                    @Override
-                    public void onSuccess(Response<File> response) {
-                        try {
-                            XWalkUtils.unzipXWalkZip(context, response.body().getAbsolutePath());
-                            XWalkUtils.extractXWalkLib(context);
-                            downText.setText("重新下载");
-                            if (listener != null)
-                                listener.onchange();
-                            dismiss();
-                        } catch (Throwable e) {
-                            e.printStackTrace();
-                            Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
-                            setTextEnable(true);
-                        }
-                    }
+   //xuameng         public void onClick(View v) {
+ //xuameng    FastClickCheckUtil.check(v);
+   //             setTextEnable(false);
+   //             OkGo.<File>get(XWalkUtils.downUrl()).tag("down_xwalk").execute(new FileCallback(context.getCacheDir().getAbsolutePath(), XWalkUtils.saveZipFile()) {
+   //                @Override
+  //                  public void onSuccess(Response<File> response) {
+  //                      try {
+ //                           XWalkUtils.unzipXWalkZip(context, response.body().getAbsolutePath());
+ //                           XWalkUtils.extractXWalkLib(context);
+ //                           downText.setText("重新下载");
+//                            if (listener != null)
+      //                          listener.onchange();
+    //                        dismiss();
+  //                      } catch (Throwable e) {
+ //                           e.printStackTrace();
+ //                           Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
+ //                         setTextEnable(true);
+ //                       }
+ //                   }
 
                     @Override
                     public void onError(Response<File> response) {
