@@ -28,16 +28,16 @@ public class XWalkUtils {
         void ignore();
     }
 
-    public static String downUrl() {
+//    public static String downUrl() {
 //        return String.format("https://download.01.org/crosswalk/releases/crosswalk/android/stable/23.53.589.4/%s/crosswalk-apks-23.53.589.4-%s.zip", getRuntimeAbi(), getRuntimeAbi());
-        return String.format("http://home.jundie.top:81/xwalk/maven2/crosswalk-apks-23.53.589.4-%s.zip", getRuntimeAbi());
-    }
+//        return String.format("http://home.jundie.top:81/xwalk/maven2/crosswalk-apks-23.53.589.4-%s.zip", getRuntimeAbi());
+//    }
 
-    public static String saveZipFile() {
+//    public static String saveZipFile() {
         return String.format("crosswalk-apks-23.53.589.4-%s.zip", getRuntimeAbi());
     }
 
-    public static boolean xWalkLibExist(Context context) {
+//    public static boolean xWalkLibExist(Context context) {
         String[] libFiles = new String[]{
                 "classes.dex",
                 "icudtl.dat",
@@ -53,7 +53,7 @@ public class XWalkUtils {
         return true;
     }
 
-    public static void tryUseXWalk(Context context, XWalkState state) {
+//    public static void tryUseXWalk(Context context, XWalkState state) {
         if (!xWalkLibExist(context)) {
             state.ignore();
             return;
