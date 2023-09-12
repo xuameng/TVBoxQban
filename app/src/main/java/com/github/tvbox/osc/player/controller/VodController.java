@@ -47,6 +47,17 @@ import xyz.doikki.videoplayer.player.VideoView;
 import xyz.doikki.videoplayer.util.PlayerUtils;
 import static xyz.doikki.videoplayer.util.PlayerUtils.stringForTime;
 
+public class FastClickCheckUtilxu {
+/**
+* 相同视图点击必须间隔0.5s才能有效
+*
+* @param view 目标视图
+*/
+public static void checkxu(View view) {
+check(view, 2500);
+}
+
+
 public class VodController extends BaseController {
     public VodController(@NonNull @NotNull Context context) {
         super(context);
@@ -64,8 +75,8 @@ public class VodController extends BaseController {
                     }
                     case 1002: { // 显示底部菜单
                         mBottomRoot.setVisibility(VISIBLE);
-						ObjectAnimator animator = ObjectAnimator.ofFloat(mBottomRoot, "translationY", 440,0);				//xuameng动画菜单
-                        animator.setDuration(500);				//xuameng动画菜单
+						ObjectAnimator animator = ObjectAnimator.ofFloat(mBottomRoot, "translationY", 600,0);				//xuameng动画菜单
+                        animator.setDuration(2500);				//xuameng动画菜单
 						animator.addListener(new AnimatorListenerAdapter() {
                         @Override
 			            public void onAnimationStart(Animator animation) {
@@ -79,12 +90,12 @@ public class VodController extends BaseController {
                         });
                         animator.start();						//xuameng动画菜单
                         mTopRoot1.setVisibility(VISIBLE);
-						ObjectAnimator animator1 = ObjectAnimator.ofFloat(mTopRoot1, "translationY", -440,0);				//xuameng动画菜单
-                        animator1.setDuration(500);			//xuameng动画菜单
+						ObjectAnimator animator1 = ObjectAnimator.ofFloat(mTopRoot1, "translationY", -600,0);				//xuameng动画菜单
+                        animator1.setDuration(2500);			//xuameng动画菜单
                         animator1.start();						//xuameng动画菜单
                         mTopRoot2.setVisibility(VISIBLE);
-						ObjectAnimator animator2 = ObjectAnimator.ofFloat(mTopRoot2, "translationY", -440,0);				//xuameng动画菜单
-                        animator2.setDuration(500);			//xuameng动画菜单
+						ObjectAnimator animator2 = ObjectAnimator.ofFloat(mTopRoot2, "translationY", -600,0);				//xuameng动画菜单
+                        animator2.setDuration(2500);			//xuameng动画菜单
                         animator2.start();						//xuameng动画菜单
                         mxuPlay.requestFocus();				    //底部菜单默认焦点为播放
                         backBtn.setVisibility(ScreenUtils.isTv(context) ? INVISIBLE : VISIBLE);
@@ -94,8 +105,8 @@ public class VodController extends BaseController {
                         break;
                     }
                     case 1003: { // 隐藏底部菜单
-		                ObjectAnimator animator3 = ObjectAnimator.ofFloat(mBottomRoot, "translationY", -0,440);				//xuameng向下划出屏外
-                        animator3.setDuration(500);				   //xuameng动画菜单        
+		                ObjectAnimator animator3 = ObjectAnimator.ofFloat(mBottomRoot, "translationY", -0,600);				//xuameng向下划出屏外
+                        animator3.setDuration(2500);				   //xuameng动画菜单        
                         animator3.addListener(new AnimatorListenerAdapter() {
                         @Override
 						public void onAnimationStart(Animator animation) {
@@ -111,20 +122,20 @@ public class VodController extends BaseController {
                         }
                         });
                         animator3.start();                          //XUAMENG隐藏底部菜单结束                        
-				        ObjectAnimator animator4 = ObjectAnimator.ofFloat(mTopRoot1, "translationY", 0,-440);				//xuameng向上划出屏外
-                        animator4.setDuration(500);				//xuameng动画菜单				
+				        ObjectAnimator animator4 = ObjectAnimator.ofFloat(mTopRoot1, "translationY", 0,-600);				//xuameng向上划出屏外
+                        animator4.setDuration(2500);				//xuameng动画菜单				
 		                animator4.start();                          //XUAMENG隐藏上面菜单1结束
-						ObjectAnimator animator5 = ObjectAnimator.ofFloat(mTopRoot2, "translationY", 0,-440);				//xuameng向上划出屏外
-                        animator5.setDuration(500);			
+						ObjectAnimator animator5 = ObjectAnimator.ofFloat(mTopRoot2, "translationY", 0,-600);				//xuameng向上划出屏外
+                        animator5.setDuration(2500);			
 		                animator5.start();                          //XUAMENG隐藏上面菜单2结束
                         backBtn.setVisibility(INVISIBLE);           //返回键隐藏菜单
 						mPlayTitle.setVisibility(VISIBLE);          //xuameng显示上面节目名称
-				        ObjectAnimator animator6 = ObjectAnimator.ofFloat(mPlayTitle, "translationY", -440,0);				//xuameng动画菜单
-                        animator6.setDuration(500);				//xuameng动画菜单
+				        ObjectAnimator animator6 = ObjectAnimator.ofFloat(mPlayTitle, "translationY", -600,0);				//xuameng动画菜单
+                        animator6.setDuration(2500);				//xuameng动画菜单
 						animator6.start();						    //XUAMENG显示上面菜单结束
 						mPlayPauseTimexu.setVisibility(VISIBLE);          //xuameng显示上面时间
-				        ObjectAnimator animator7 = ObjectAnimator.ofFloat(mPlayPauseTimexu, "translationY", -440,0);				//xuameng动画菜单
-                        animator7.setDuration(500);				//xuameng动画菜单
+				        ObjectAnimator animator7 = ObjectAnimator.ofFloat(mPlayPauseTimexu, "translationY", -600,0);				//xuameng动画菜单
+                        animator7.setDuration(2500);				//xuameng动画菜单
 						animator7.start();						    //XUAMENG显示上面菜单的时间结束
                         break;
                     }
@@ -407,6 +418,7 @@ public class VodController extends BaseController {
             @Override												//xuameng 低菜单播放监听
             public void onClick(View v) {							//xuameng 低菜单播放监听
                 togglePlay();										//xuameng 低菜单播放监听
+                FastClickCheckUtilxu.checkxu(view);
             }
         });
         mPreBtn.setOnClickListener(new OnClickListener() {
@@ -1005,6 +1017,8 @@ public class VodController extends BaseController {
             } else if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
                 if (isInPlayback) {
                     togglePlay();
+                    FastClickCheckUtilxu.checkxu(view);
+
                     return true;
 				}                                  
 //            } else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {  return true;// 闲置开启计时关闭透明底栏
