@@ -144,7 +144,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
    //                     public void onchange() {
   //                      }
  //                   });
-                    dialog.show();
+     //               dialog.show();
                 }
             }
         });
