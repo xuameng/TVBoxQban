@@ -1237,27 +1237,27 @@ public class PlayActivity extends BaseActivity {
         if (mSysWebView == null && mXwalkWebView == null) {
             boolean useSystemWebView = Hawk.get(HawkConfig.PARSE_WEBVIEW, true);
             if (!useSystemWebView) {
-                XWalkUtils.tryUseXWalk(mContext, new XWalkUtils.XWalkState() {
-                    @Override
-                    public void success() {
-                        initWebView(!sourceBean.getClickSelector().isEmpty());
-                        loadUrl(url);
-                    }
-
-                    @Override
-                    public void fail() {
-                        Toast.makeText(mContext, "XWalkView不兼容，已替换为系统自带WebView", Toast.LENGTH_SHORT).show();
-                        initWebView(true);
-                        loadUrl(url);
-                    }
-
-                    @Override
-                    public void ignore() {
-                        Toast.makeText(mContext, "XWalkView运行组件未下载，已替换为系统自带WebView", Toast.LENGTH_SHORT).show();
-                        initWebView(true);
-                        loadUrl(url);
-                    }
-                });
+ //xuameng               XWalkUtils.tryUseXWalk(mContext, new XWalkUtils.XWalkState() {
+  //                  @Override
+ //                   public void success() {
+ //                       initWebView(!sourceBean.getClickSelector().isEmpty());
+ //                       loadUrl(url);
+ //                   }
+//
+ //                   @Override
+ //                   public void fail() {
+ //                       Toast.makeText(mContext, "XWalkView不兼容，已替换为系统自带WebView", Toast.LENGTH_SHORT).show();
+ //                       initWebView(true);
+ //                       loadUrl(url);
+ //                   }
+//
+ //                   @Override
+  //                  public void ignore() {
+ //                       Toast.makeText(mContext, "XWalkView运行组件未下载，已替换为系统自带WebView", Toast.LENGTH_SHORT).show();
+ //                       initWebView(true);
+//                        loadUrl(url);
+ //                   }
+ //               });
             } else {
                 initWebView(true);
                 loadUrl(url);
