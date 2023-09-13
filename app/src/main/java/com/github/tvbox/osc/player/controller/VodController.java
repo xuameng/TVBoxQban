@@ -72,6 +72,7 @@ public class VodController extends BaseController {
 			            public void onAnimationStart(Animator animation) {
                         super.onAnimationStart(animation);
                         MxuamengView.setVisibility(VISIBLE);	//xuameng动画开始防点击
+                        isClickBackBtn = false;
 			            }
                         public void onAnimationEnd(Animator animation) {
                         super.onAnimationEnd(animation);
@@ -275,7 +276,8 @@ public class VodController extends BaseController {
             @Override
             public void onClick(View view) {
                 if (getContext() instanceof Activity) {
-                    isClickBackBtn = true;
+   //                 isClickBackBtn = true;
+                    FastClickCheckUtilxu.check(view);
                     ((Activity) getContext()).onBackPressed();
                 }
             }
@@ -1095,7 +1097,7 @@ public class VodController extends BaseController {
             if (isBottomVisible()) {                           //xuameng按返回键退出
             hideBottom();
             }
-            return isClickBackBtn = false;;
+            return false;
         }
         if (super.onBackPressed()) {
             return true;
