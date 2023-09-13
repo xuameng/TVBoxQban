@@ -129,25 +129,25 @@ public class ModelSettingFragment extends BaseLazyFragment {
                 tvDebugOpen.setText(Hawk.get(HawkConfig.DEBUG_OPEN, false) ? "已打开" : "已关闭");
             }
         });
-        findViewById(R.id.llParseWebVew).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FastClickCheckUtil.check(v);
-                boolean useSystem = !Hawk.get(HawkConfig.PARSE_WEBVIEW, true);
-                Hawk.put(HawkConfig.PARSE_WEBVIEW, useSystem);
-                tvParseWebView.setText(Hawk.get(HawkConfig.PARSE_WEBVIEW, true) ? "系统自带");    //xuameng改  "系统自带" : "XWalkView"
-                if (!useSystem) {
-                    Toast.makeText(mContext, "注意: XWalkView只适用于部分低Android版本，Android5.0以上推荐使用系统自带", Toast.LENGTH_LONG).show();
-    //xuameng取消XWalkView         XWalkInitDialog dialog = new XWalkInitDialog(mContext);
-    //                dialog.setOnListener(new XWalkInitDialog.OnListener() {
-    //                    @Override
-    //                     public void onchange() {
-    //                      }
-    //                   });
-    //xuameng取消XWalkView结束               dialog.show();
-                }
-            }
-        });
+//xuameng取消XWalkView 监听        findViewById(R.id.llParseWebVew).setOnClickListener(new View.OnClickListener() {
+//xuameng           @Override
+//xuameng           public void onClick(View v) {
+//xuameng                FastClickCheckUtil.check(v);
+//xuameng                boolean useSystem = !Hawk.get(HawkConfig.PARSE_WEBVIEW, true);
+//xuameng                Hawk.put(HawkConfig.PARSE_WEBVIEW, useSystem);
+//xuameng                tvParseWebView.setText(Hawk.get(HawkConfig.PARSE_WEBVIEW, true) ? "系统自带");    //xuameng改  "系统自带" : "XWalkView"
+//xuameng                if (!useSystem) {
+//xuameng                    Toast.makeText(mContext, "注意: XWalkView只适用于部分低Android版本，Android5.0以上推荐使用系统自带", Toast.LENGTH_LONG).show();
+//xuameng取消XWalkView         XWalkInitDialog dialog = new XWalkInitDialog(mContext);
+//                dialog.setOnListener(new XWalkInitDialog.OnListener() {
+//                    @Override
+//                     public void onchange() {
+//                      }
+//                   });
+//xuameng取消XWalkView结束              dialog.show();
+//xuameng            }
+//xuameng      }
+//xuameng取消监听XWalkView结束    });
         findViewById(R.id.llBackup).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
