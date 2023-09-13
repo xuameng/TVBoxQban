@@ -272,10 +272,11 @@ public class VodController extends BaseController {
 		mxuPlay = findViewById(R.id.mxuplay);		                  //xuameng  低菜单播放
         backBtn.setOnClickListener(new OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View view) {
                 if (getContext() instanceof Activity) {
                     isClickBackBtn = true;
                     ((Activity) getContext()).onBackPressed();
+					FastClickCheckUtil.check(view);
                 }
             }
         });
@@ -1006,9 +1007,6 @@ public class VodController extends BaseController {
             } else if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
                 if (isInPlayback) {
                     togglePlay();
-					public void onClick(View view) {				//xuameng 时间间隔0.5秒防触碰
-					FastClickCheckUtil.check(view);                 //xuameng 时间间隔0.5秒防触碰
-                    }												//xuameng 时间间隔0.5秒防触碰
                     return true;
                 }
 //            } else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {  return true;// 闲置开启计时关闭透明底栏
@@ -1096,9 +1094,6 @@ public class VodController extends BaseController {
             isClickBackBtn = false;
             if (isBottomVisible()) {                 //xuameng按返回键退出
                 hideBottom();
-				public void onClick(View view) {				//xuameng 时间间隔0.5秒防触碰
-				FastClickCheckUtil.check(view);                 //xuameng 时间间隔0.5秒防触碰
-                }												//xuameng 时间间隔0.5秒防触碰
             }
             return false;
         }
@@ -1107,9 +1102,6 @@ public class VodController extends BaseController {
         }
         if (isBottomVisible()) {			         //xuameng按返回键退出
             hideBottom();
-			public void onClick(View view) {				//xuameng 时间间隔0.5秒防触碰
-			FastClickCheckUtil.check(view);                 //xuameng 时间间隔0.5秒防触碰
-            }												//xuameng 时间间隔0.5秒防触碰
             return true;
         }
         return false;
