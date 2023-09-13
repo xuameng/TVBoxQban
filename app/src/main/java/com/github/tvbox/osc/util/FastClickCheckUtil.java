@@ -24,7 +24,9 @@ public class FastClickCheckUtil {
      * @param view  目标视图
      * @param mills 点击间隔时间（毫秒）
      */
-    public static void check(final View view, int mills) {
+
+	 //xuameng 防触碰2.5秒
+    public static void checkxu(final View view, int mills) {
         view.setClickable(false);
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -33,4 +35,25 @@ public class FastClickCheckUtil {
             }
         }, mills);
     }
+
+	    public static void check(View view) {
+        check(view, 2500);
+    }
+
+    /**
+     * 设置间隔点击规则，配置间隔点击时长
+     *
+     * @param view  目标视图
+     * @param mills 点击间隔时间（毫秒）
+     */
+    public static void checkxu(final View view, int mills) {
+        view.setClickable(false);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                view.setClickable(true);
+            }
+        }, mills);
+    }
+//xuameng 防触碰2.5秒结束
 }
