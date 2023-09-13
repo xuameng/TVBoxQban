@@ -72,12 +72,10 @@ public class VodController extends BaseController {
 			            public void onAnimationStart(Animator animation) {
                         super.onAnimationStart(animation);
                         MxuamengView.setVisibility(VISIBLE);	//xuameng动画开始防点击
-                        isClickBackBtn = false;
 			            }
                         public void onAnimationEnd(Animator animation) {
                         super.onAnimationEnd(animation);
 			            MxuamengView.setVisibility(GONE);		//xuameng动画结束可点击
-                        isClickBackBtn = true;
                         }
                         });
                         animator.start();						//xuameng动画菜单
@@ -104,11 +102,9 @@ public class VodController extends BaseController {
 						public void onAnimationStart(Animator animation) {
                         super.onAnimationStart(animation);
                         MxuamengView.setVisibility(VISIBLE);		   //xuameng动画开始防点击
-                        isClickBackBtn = false;
 			            }
                         public void onAnimationEnd(Animator animation) {
                         super.onAnimationEnd(animation);
-                        isClickBackBtn = true;
                         mBottomRoot.setVisibility(GONE);			   //动画结束后隐藏下菜单
 						mTopRoot1.setVisibility(GONE);				   //动画结束后隐藏上菜单
 						mTopRoot2.setVisibility(GONE);                 //动画结束后隐藏上菜单
@@ -1099,7 +1095,7 @@ public class VodController extends BaseController {
             if (isBottomVisible()) {                           //xuameng按返回键退出
             hideBottom();
             }
-            return false;
+            return isClickBackBtn = false;;
         }
         if (super.onBackPressed()) {
             return true;
