@@ -8,15 +8,15 @@ import android.view.View;
  * @date :2020/12/22
  * @description:
  */
- //xuameng防动画菜单打断遥控1.5秒
+ //xuameng防动画菜单打断遥控1秒
 public class FastClickCheckUtilxu {
     /**
-     * 相同视图点击必须间隔1.5s才能有效
+     * 相同视图点击必须间隔1s才能有效
      *
      * @param view 目标视图
      */
     public static void check(View view) {
-        check(view, 1500);
+        check(view, 1000);
     }
 
     /**
