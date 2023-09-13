@@ -4,7 +4,7 @@ public class FastClickCheckUtilxu {
      *
      * @param view 目标视图
      */
-    public static void checkxu(View view) {
+    public static void check(View view) {
         check(view, 2500);
     }
 
@@ -14,7 +14,7 @@ public class FastClickCheckUtilxu {
      * @param view  目标视图
      * @param mills 点击间隔时间（毫秒）
      */
-    public static void checkxu(final View view, int mills) {
+    public static void check(final View view, int mills) {
         view.setClickable(false);
         new Handler().postDelayed(new Runnable() {
             @Override
