@@ -35,7 +35,7 @@ public class FastClickCheckUtil {
     }
 	//xuameng 防触碰2.5秒
 	    public static void checkxu(View view) {
-        check(view, 2500);
+        checkxu(view, 2500);
     }
 
     /**
