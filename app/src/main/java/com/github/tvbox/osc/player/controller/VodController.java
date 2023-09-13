@@ -65,26 +65,28 @@ public class VodController extends BaseController {
                     }
                     case 1002: { // 显示底部菜单
                         mBottomRoot.setVisibility(VISIBLE);
-						ObjectAnimator animator = ObjectAnimator.ofFloat(mBottomRoot, "translationY", 400,0);				//xuameng动画菜单
+						ObjectAnimator animator = ObjectAnimator.ofFloat(mBottomRoot, "translationY", 700,0);				//xuameng动画菜单
                         animator.setDuration(1500);				//xuameng动画菜单
 						animator.addListener(new AnimatorListenerAdapter() {
                         @Override
 			            public void onAnimationStart(Animator animation) {
                         super.onAnimationStart(animation);
                         MxuamengView.setVisibility(VISIBLE);	//xuameng动画开始防点击
+                        isClickBackBtn = false;
 			            }
                         public void onAnimationEnd(Animator animation) {
                         super.onAnimationEnd(animation);
 			            MxuamengView.setVisibility(GONE);		//xuameng动画结束可点击
+                        isClickBackBtn = true;
                         }
                         });
                         animator.start();						//xuameng动画菜单
                         mTopRoot1.setVisibility(VISIBLE);
-						ObjectAnimator animator1 = ObjectAnimator.ofFloat(mTopRoot1, "translationY", -400,0);				//xuameng动画菜单
+						ObjectAnimator animator1 = ObjectAnimator.ofFloat(mTopRoot1, "translationY", -700,0);				//xuameng动画菜单
                         animator1.setDuration(1500);			//xuameng动画菜单
                         animator1.start();						//xuameng动画菜单
                         mTopRoot2.setVisibility(VISIBLE);
-						ObjectAnimator animator2 = ObjectAnimator.ofFloat(mTopRoot2, "translationY", -400,0);				//xuameng动画菜单
+						ObjectAnimator animator2 = ObjectAnimator.ofFloat(mTopRoot2, "translationY", -700,0);				//xuameng动画菜单
                         animator2.setDuration(1500);			//xuameng动画菜单
                         animator2.start();						//xuameng动画菜单
                         mxuPlay.requestFocus();				    //底部菜单默认焦点为播放
@@ -95,16 +97,18 @@ public class VodController extends BaseController {
                         break;
                     }
                     case 1003: { // 隐藏底部菜单
-		                ObjectAnimator animator3 = ObjectAnimator.ofFloat(mBottomRoot, "translationY", -0,400);				//xuameng向下划出屏外
+		                ObjectAnimator animator3 = ObjectAnimator.ofFloat(mBottomRoot, "translationY", -0,700);				//xuameng向下划出屏外
                         animator3.setDuration(1500);				   //xuameng动画菜单        
                         animator3.addListener(new AnimatorListenerAdapter() {
                         @Override
 						public void onAnimationStart(Animator animation) {
                         super.onAnimationStart(animation);
                         MxuamengView.setVisibility(VISIBLE);		   //xuameng动画开始防点击
+                        isClickBackBtn = false;
 			            }
                         public void onAnimationEnd(Animator animation) {
                         super.onAnimationEnd(animation);
+                        isClickBackBtn = true;
                         mBottomRoot.setVisibility(GONE);			   //动画结束后隐藏下菜单
 						mTopRoot1.setVisibility(GONE);				   //动画结束后隐藏上菜单
 						mTopRoot2.setVisibility(GONE);                 //动画结束后隐藏上菜单
@@ -112,19 +116,19 @@ public class VodController extends BaseController {
                         }
                         });
                         animator3.start();                          //XUAMENG隐藏底部菜单结束                        
-				        ObjectAnimator animator4 = ObjectAnimator.ofFloat(mTopRoot1, "translationY", 0,-400);				//xuameng向上划出屏外
+				        ObjectAnimator animator4 = ObjectAnimator.ofFloat(mTopRoot1, "translationY", 0,-700);				//xuameng向上划出屏外
                         animator4.setDuration(1500);				//xuameng动画菜单				
 		                animator4.start();                          //XUAMENG隐藏上面菜单1结束
-						ObjectAnimator animator5 = ObjectAnimator.ofFloat(mTopRoot2, "translationY", 0,-400);				//xuameng向上划出屏外
+						ObjectAnimator animator5 = ObjectAnimator.ofFloat(mTopRoot2, "translationY", 0,-700);				//xuameng向上划出屏外
                         animator5.setDuration(1500);			
 		                animator5.start();                          //XUAMENG隐藏上面菜单2结束
                         backBtn.setVisibility(INVISIBLE);           //返回键隐藏菜单
 						mPlayTitle.setVisibility(VISIBLE);          //xuameng显示上面节目名称
-				        ObjectAnimator animator6 = ObjectAnimator.ofFloat(mPlayTitle, "translationY", -400,0);				//xuameng动画菜单
+				        ObjectAnimator animator6 = ObjectAnimator.ofFloat(mPlayTitle, "translationY", -700,0);				//xuameng动画菜单
                         animator6.setDuration(1500);				//xuameng动画菜单
 						animator6.start();						    //XUAMENG显示上面菜单结束
 						mPlayPauseTimexu.setVisibility(VISIBLE);          //xuameng显示上面时间
-				        ObjectAnimator animator7 = ObjectAnimator.ofFloat(mPlayPauseTimexu, "translationY", -400,0);				//xuameng动画菜单
+				        ObjectAnimator animator7 = ObjectAnimator.ofFloat(mPlayPauseTimexu, "translationY", -700,0);				//xuameng动画菜单
                         animator7.setDuration(1500);				//xuameng动画菜单
 						animator7.start();						    //XUAMENG显示上面菜单的时间结束
                         break;
