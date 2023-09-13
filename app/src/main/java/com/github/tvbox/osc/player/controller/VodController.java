@@ -16,7 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.graphics.Color;             //xuameng获取颜色值
+import android.graphics.Color;                          //xuameng获取颜色值
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -46,34 +46,6 @@ import java.util.Date;
 import xyz.doikki.videoplayer.player.VideoView;
 import xyz.doikki.videoplayer.util.PlayerUtils;
 import static xyz.doikki.videoplayer.util.PlayerUtils.stringForTime;
-
-public class FastClickCheckUtilxu {
-    /**
-     * 相同视图点击必须间隔0.5s才能有效
-     *
-     * @param view 目标视图
-     */
-    public static void checkxu(View view) {
-        check(view, 2500);
-    }
-
-    /**
-     * 设置间隔点击规则，配置间隔点击时长
-     *
-     * @param view  目标视图
-     * @param mills 点击间隔时间（毫秒）
-     */
-    public static void checkxu(final View view, int mills) {
-        view.setClickable(false);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                view.setClickable(true);
-            }
-        }, mills);
-    }
-}
-
 
 public class VodController extends BaseController {
     public VodController(@NonNull @NotNull Context context) {
@@ -198,13 +170,13 @@ public class VodController extends BaseController {
     TextView mPlayerIJKBtn;
     TextView mPlayerRetry;
     TextView mPlayrefresh;
-	TextView mxuPlay;       //xuameng 底部播放ID
+	TextView mxuPlay;                  //xuameng 底部播放ID
     public TextView mPlayerTimeStartEndText;
     public TextView mPlayerTimeStartBtn;
     public TextView mPlayerTimeSkipBtn;
     public TextView mPlayerTimeResetBtn;
     TextView mPlayPauseTime;
-	TextView mPlayPauseTimexu;   //xuameng系统时间
+	TextView mPlayPauseTimexu;         //xuameng系统时间
     TextView mPlayLoadNetSpeed;
     TextView mVideoSize;
     public SimpleSubtitleView mSubtitleView;
@@ -297,7 +269,7 @@ public class VodController extends BaseController {
         mAudioTrackBtn = findViewById(R.id.audio_track_select);
         mLandscapePortraitBtn = findViewById(R.id.landscape_portrait);
         backBtn = findViewById(R.id.tv_back);
-		mxuPlay = findViewById(R.id.mxuplay);		//xuameng  低菜单播放
+		mxuPlay = findViewById(R.id.mxuplay);		                  //xuameng  低菜单播放
         backBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -435,7 +407,7 @@ public class VodController extends BaseController {
             @Override												//xuameng 低菜单播放监听
             public void onClick(View v) {							//xuameng 低菜单播放监听
                 togglePlay();										//xuameng 低菜单播放监听
-                FastClickCheckUtilxu.checkxu(view);
+				FastClickCheckUtilxu.checkxu(view);                 //xuameng 时间间隔2.5秒防触碰
             }
         });
         mPreBtn.setOnClickListener(new OnClickListener() {
@@ -737,9 +709,9 @@ public class VodController extends BaseController {
                 hideBottom();
             }
         });
-        mNextBtn.setNextFocusLeftId(R.id.mxuplay);      //xuameng底部菜单下一集左键是播放
+        mNextBtn.setNextFocusLeftId(R.id.mxuplay);                //xuameng底部菜单下一集左键是播放
 		mxuPlay.setNextFocusLeftId(R.id.audio_track_select);      //xuameng底部菜单播放左键是音轨
-		mAudioTrackBtn.setNextFocusRightId(R.id.mxuplay);   //xuameng底部菜音轨右键是播放
+		mAudioTrackBtn.setNextFocusRightId(R.id.mxuplay);         //xuameng底部菜音轨右键是播放
     }
 
     private void hideLiveAboutBtn() {
@@ -749,14 +721,14 @@ public class VodController extends BaseController {
             mPlayerTimeStartBtn.setVisibility(GONE);
             mPlayerTimeSkipBtn.setVisibility(GONE);
             mPlayerTimeResetBtn.setVisibility(GONE);
-            mNextBtn.setNextFocusLeftId(R.id.mxuplay);		//xuameng底部菜单下一集左键是播放
+            mNextBtn.setNextFocusLeftId(R.id.mxuplay);		     //xuameng底部菜单下一集左键是播放
         } else {
             mPlayerSpeedBtn.setVisibility(View.VISIBLE);
             mPlayerTimeStartEndText.setVisibility(View.VISIBLE);
             mPlayerTimeStartBtn.setVisibility(View.VISIBLE);
             mPlayerTimeSkipBtn.setVisibility(View.VISIBLE);
             mPlayerTimeResetBtn.setVisibility(View.VISIBLE);
-            mNextBtn.setNextFocusLeftId(R.id.mxuplay);		//xuameng底部菜单下一集左键是播放
+            mNextBtn.setNextFocusLeftId(R.id.mxuplay);		    //xuameng底部菜单下一集左键是播放
         }
     }
 
@@ -958,19 +930,19 @@ public class VodController extends BaseController {
                 startProgress();
 		        mxuPlay.setVisibility(View.VISIBLE);
                 mxuPlay.setTextColor(Color.WHITE);
-                mxuPlay.setText("暂停");             //xuameng底部菜单显示暂停
-				hideBottom();						 //xuameng隐藏菜单
+                mxuPlay.setText("暂停");               //xuameng底部菜单显示暂停
+				hideBottom();						   //xuameng隐藏菜单
                 break;
             case VideoView.STATE_PAUSED:
-                //mTopRoot1.setVisibility(GONE);     //xuameng隐藏上面菜单
-                //mTopRoot2.setVisibility(GONE);     //xuameng隐藏上面菜单
-                //mPlayTitle.setVisibility(VISIBLE); //xuameng显示上面菜单
+                //mTopRoot1.setVisibility(GONE);       //xuameng隐藏上面菜单
+                //mTopRoot2.setVisibility(GONE);       //xuameng隐藏上面菜单
+                //mPlayTitle.setVisibility(VISIBLE);   //xuameng显示上面菜单
 			    mxuPlay.setVisibility(View.VISIBLE);
-                mxuPlay.setTextColor(Color.WHITE);	 //xuameng底部菜单显示播放颜色
-                mxuPlay.setText("播放");			 //xuameng底部菜单显示播放
-				mPlayPauseTimexu.setVisibility(GONE);   //xuameng隐藏上面视频名称
+                mxuPlay.setTextColor(Color.WHITE);	   //xuameng底部菜单显示播放颜色
+                mxuPlay.setText("播放");			   //xuameng底部菜单显示播放
+				mPlayPauseTimexu.setVisibility(GONE);  //xuameng隐藏上面视频名称
                 mPlayTitle.setVisibility(GONE);        //xuameng隐藏上面时间
-		        if (!isBottomVisible()) {            //xuameng如果没显示菜单就显示
+		        if (!isBottomVisible()) {              //xuameng如果没显示菜单就显示
                     showBottom();
                     myHandle.postDelayed(myRunnable, myHandleSeconds);
                 }
@@ -1034,10 +1006,9 @@ public class VodController extends BaseController {
             } else if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
                 if (isInPlayback) {
                     togglePlay();
-                    FastClickCheckUtilxu.checkxu(view);
-
+					FastClickCheckUtilxu.checkxu(view);                 //xuameng 时间间隔2.5秒防触碰
                     return true;
-				}                                  
+                }
 //            } else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {  return true;// 闲置开启计时关闭透明底栏
             } else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN || keyCode == KeyEvent.KEYCODE_DPAD_UP || keyCode== KeyEvent.KEYCODE_MENU) {
                 if (!isBottomVisible()) {
@@ -1046,16 +1017,17 @@ public class VodController extends BaseController {
                     return true;
                 }
             }
-            } else if (action == KeyEvent.ACTION_UP) {
-                if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+           } else if (action == KeyEvent.ACTION_UP) {
+            if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
                 if (isInPlayback) {
                     tvSlideStop();
                     return true;
                 }
-           }
+            }
         }
         return super.dispatchKeyEvent(event);
     }
+
 
     private boolean fromLongPress;
     private float speed_old = 1.0f;
@@ -1120,16 +1092,18 @@ public class VodController extends BaseController {
     public boolean onBackPressed() {
         if (isClickBackBtn) {
             isClickBackBtn = false;
-            if (isBottomVisible()) {          //xuameng按返回键退出
-                hideBottom();				   
+            if (isBottomVisible()) {                 //xuameng按返回键退出
+                hideBottom();
+				FastClickCheckUtilxu.checkxu(view);  //xuameng 时间间隔2.5秒防触碰
             }
             return false;
         }
         if (super.onBackPressed()) {
             return true;
         }
-        if (isBottomVisible()) {			 //xuameng按返回键退出
-            hideBottom();					 
+        if (isBottomVisible()) {			         //xuameng按返回键退出
+            hideBottom();
+			FastClickCheckUtilxu.checkxu(view);      //xuameng 时间间隔2.5秒防触碰
             return true;
         }
         return false;
