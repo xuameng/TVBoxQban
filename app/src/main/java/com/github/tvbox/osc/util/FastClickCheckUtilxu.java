@@ -1,3 +1,13 @@
+package com.github.tvbox.osc.util;
+
+import android.os.Handler;
+import android.view.View;
+
+/**
+ * @author pj567
+ * @date :2020/12/22
+ * @description:
+ */
 public class FastClickCheckUtilxu {
     /**
      * 相同视图点击必须间隔0.5s才能有效
