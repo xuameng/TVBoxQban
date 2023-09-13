@@ -277,7 +277,6 @@ public class VodController extends BaseController {
                 if (getContext() instanceof Activity) {
                     isClickBackBtn = true;
                     ((Activity) getContext()).onBackPressed();
-					FastClickCheckUtilxu.check(view);                //xuameng  防返回键打断动画
                 }
             }
         });
@@ -1093,16 +1092,20 @@ public class VodController extends BaseController {
     public boolean onBackPressed() {
         if (isClickBackBtn) {
             isClickBackBtn = false;
-            if (isBottomVisible()) {                 //xuameng按返回键退出
-                hideBottom();
+            if (isBottomVisible()) {                           //xuameng按返回键退出
+                mBottomRoot.setVisibility(GONE);			   //xuameng隐藏下菜单
+		        mTopRoot1.setVisibility(GONE);				   //xuameng隐藏上菜单
+		        mTopRoot2.setVisibility(GONE);                 //xuameng隐藏上菜单
             }
             return false;
         }
         if (super.onBackPressed()) {
             return true;
         }
-        if (isBottomVisible()) {			         //xuameng按返回键退出
-            hideBottom();
+        if (isBottomVisible()) {			                   //xuameng按返回键退出
+                mBottomRoot.setVisibility(GONE);			   //xuameng隐藏下菜单
+		        mTopRoot1.setVisibility(GONE);				   //xuameng隐藏上菜单
+		        mTopRoot2.setVisibility(GONE);                 //xuameng隐藏上菜单
             return true;
         }
         return false;
