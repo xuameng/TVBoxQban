@@ -1093,9 +1093,7 @@ public class VodController extends BaseController {
         if (isClickBackBtn) {
             isClickBackBtn = false;
             if (isBottomVisible()) {                           //xuameng按返回键退出
-                mBottomRoot.setVisibility(GONE);			   //xuameng隐藏下菜单
-		        mTopRoot1.setVisibility(GONE);				   //xuameng隐藏上菜单
-		        mTopRoot2.setVisibility(GONE);                 //xuameng隐藏上菜单
+            hideBottom();
             }
             return false;
         }
@@ -1103,9 +1101,7 @@ public class VodController extends BaseController {
             return true;
         }
         if (isBottomVisible()) {			                   //xuameng按返回键退出
-                mBottomRoot.setVisibility(GONE);			   //xuameng隐藏下菜单
-		        mTopRoot1.setVisibility(GONE);				   //xuameng隐藏上菜单
-		        mTopRoot2.setVisibility(GONE);                 //xuameng隐藏上菜单
+            hideBottom();
             return true;
         }
         return false;
