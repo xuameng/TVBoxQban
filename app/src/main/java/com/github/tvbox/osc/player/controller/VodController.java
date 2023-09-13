@@ -29,6 +29,7 @@ import com.github.tvbox.osc.ui.adapter.ParseAdapter;
 import com.github.tvbox.osc.ui.adapter.SelectDialogAdapter;
 import com.github.tvbox.osc.ui.dialog.SelectDialog;
 import com.github.tvbox.osc.util.FastClickCheckUtil;
+import com.github.tvbox.osc.util.FastClickCheckUtilxu;  //xuameng防触碰
 import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.util.PlayerHelper;
 import com.github.tvbox.osc.util.ScreenUtils;
@@ -407,7 +408,7 @@ public class VodController extends BaseController {
             @Override												//xuameng 低菜单播放监听
             public void onClick(View v) {							//xuameng 低菜单播放监听
                 togglePlay();										//xuameng 低菜单播放监听
-				FastClickCheckUtil.checkxu(view);                   //xuameng 时间间隔2.5秒防触碰
+				FastClickCheckUtilxu.check(view);                   //xuameng 时间间隔2.5秒防触碰
             }
         });
         mPreBtn.setOnClickListener(new OnClickListener() {
@@ -1006,7 +1007,7 @@ public class VodController extends BaseController {
             } else if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
                 if (isInPlayback) {
                     togglePlay();
-					FastClickCheckUtil.checkxu(view);                 //xuameng 时间间隔2.5秒防触碰
+					FastClickCheckUtilxu.check(view);                 //xuameng 时间间隔2.5秒防触碰
                     return true;
                 }
 //            } else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {  return true;// 闲置开启计时关闭透明底栏
@@ -1094,7 +1095,7 @@ public class VodController extends BaseController {
             isClickBackBtn = false;
             if (isBottomVisible()) {                 //xuameng按返回键退出
                 hideBottom();
-				FastClickCheckUtil.checkxu(view);  //xuameng 时间间隔2.5秒防触碰
+				FastClickCheckUtilxu.check(view);  //xuameng 时间间隔2.5秒防触碰
             }
             return false;
         }
@@ -1103,7 +1104,7 @@ public class VodController extends BaseController {
         }
         if (isBottomVisible()) {			         //xuameng按返回键退出
             hideBottom();
-			FastClickCheckUtil.checkxu(view);      //xuameng 时间间隔2.5秒防触碰
+			FastClickCheckUtilxu.check(view);      //xuameng 时间间隔2.5秒防触碰
             return true;
         }
         return false;
