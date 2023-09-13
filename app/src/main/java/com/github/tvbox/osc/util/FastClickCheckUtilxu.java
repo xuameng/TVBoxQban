@@ -8,7 +8,7 @@ import android.view.View;
  * @date :2020/12/22
  * @description:
  */
-public class FastClickCheckUtil {
+public class FastClickCheckUtilxu {
     /**
      * 相同视图点击必须间隔0.5s才能有效
      *
