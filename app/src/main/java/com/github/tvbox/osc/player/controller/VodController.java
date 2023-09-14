@@ -1023,7 +1023,19 @@ public class VodController extends BaseController {
                     tvSlideStop();
                     return true;
                 }
+        }
             }
+           else if (action == KeyEvent.ACTION_DOWN) {
+            if (keyCode == KeyEvent.KEYCODE_BACK ) {
+        private DOUBLE_CLICK_TIME = 0L;
+            if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME) > 1500) {//这里测试1500ms比较合适
+                DOUBLE_CLICK_TIME = System.currentTimeMillis();
+
+                //这里执行单击后的操作
+            }
+            return true;
+          }
+         }
         }
         return super.dispatchKeyEvent(event);
     }
@@ -1116,17 +1128,3 @@ public class VodController extends BaseController {
 
 
 
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-    private static double DOUBLE_CLICK_TIME = 0L;
-
-        if (event.getKeyCode() == KeyEvent.KEYCODE_BACK ) {
-            if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME) > 1500) {//这里测试1500ms比较合适
-                DOUBLE_CLICK_TIME = System.currentTimeMillis();
-
-                //这里执行单击后的操作
-            }
-            return true;
-        }
-        return super.onKeyDown(keyCode, event);
-    }
