@@ -1088,7 +1088,6 @@ public class VodController extends BaseController {
         }
     }
 
-    @Override
 	// xuameng返回键连击时间1.5秒
     private static final long WAIT_TIME = 1500L;
     private long TOUCH_TIME = 0;
