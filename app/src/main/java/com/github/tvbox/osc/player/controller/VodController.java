@@ -1097,8 +1097,8 @@ public class VodController extends BaseController {
             isClickBackBtn = false;
 			long secondTime = System.currentTimeMillis();	   //xuameng返回键防连续点击
 			if (secondTime - firstTime < 2000) {
+				firstTime = secondTime;
             return true;
-            firstTime = secondTime;
             } 
             if (isBottomVisible()) {                           //xuameng按返回键退出
                 hideBottom();
