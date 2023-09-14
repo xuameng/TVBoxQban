@@ -1097,7 +1097,7 @@ public class VodController extends BaseController {
         if (isClickBackBtn) {
             isClickBackBtn = false;
 	        if (System.currentTimeMillis() - TOUCH_TIME < WAIT_TIME) {
-            return true; //xuameng返回键时间间隔1.5秒
+            return false;                                      //xuameng返回键时间间隔1.5秒
             } 
             if (isBottomVisible()) {                           //xuameng按返回键退出
                 hideBottom();
