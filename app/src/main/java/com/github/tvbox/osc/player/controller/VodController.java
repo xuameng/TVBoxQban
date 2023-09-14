@@ -276,8 +276,7 @@ public class VodController extends BaseController {
             @Override
             public void onClick(View view) {
                 if (getContext() instanceof Activity) {
-   //                 isClickBackBtn = true;
-                    FastClickCheckUtilxu.check(view);
+                    isClickBackBtn = true;
                     ((Activity) getContext()).onBackPressed();
                 }
             }
@@ -975,6 +974,10 @@ public class VodController extends BaseController {
         return mBottomRoot.getVisibility() == VISIBLE;
     }
 
+	 boolean isMxuamengView() {
+        return MxuamengView.getVisibility() == VISIBLE;
+    }
+
     void showBottom() {
         mHandler.removeMessages(1003);
         mHandler.sendEmptyMessage(1002);
@@ -1106,6 +1109,10 @@ public class VodController extends BaseController {
             hideBottom();
             return true;
         }
+		if (isMxuamengView()) {			                       //动画屏蔽返回键
+
+        }
+
         return false;
     }
 
