@@ -1087,20 +1087,15 @@ public class VodController extends BaseController {
             mLockView.setVisibility(INVISIBLE);
         }
     }
-
-	// xuameng返回键连击时间1.5秒
-    private static final long WAIT_TIME = 1500L;
-    private long TOUCH_TIME = 0;
     
     @Override
     public boolean onBackPressed() {
         if (isClickBackBtn) {
             isClickBackBtn = false;
-			if (System.currentTimeMillis() - TOUCH_TIME < WAIT_TIME) {
-            //xuameng屏蔽返回键
-            } 
             if (isBottomVisible()) {                           //xuameng按返回键退出
                 hideBottom();
+				getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
             }
             return false;
         }
@@ -1120,5 +1115,3 @@ public class VodController extends BaseController {
         mHandler.removeCallbacks(myRunnable2);
     }
 }
-
- 
