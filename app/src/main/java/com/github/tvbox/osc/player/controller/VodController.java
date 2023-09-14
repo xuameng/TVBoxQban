@@ -73,11 +73,11 @@ public class VodController extends BaseController {
                         super.onAnimationStart(animation);
                         MxuamengView.setVisibility(VISIBLE);	//xuameng动画开始防点击
                         isClickBackBtn = false;
-			            }
+			             }
                         public void onAnimationEnd(Animator animation) {
                         super.onAnimationEnd(animation);
 			            MxuamengView.setVisibility(GONE);		//xuameng动画结束可点击
-                        }
+                         }
                         });
                         animator.start();						//xuameng动画菜单
                         mTopRoot1.setVisibility(VISIBLE);
@@ -103,6 +103,9 @@ public class VodController extends BaseController {
 						public void onAnimationStart(Animator animation) {
                         super.onAnimationStart(animation);
                         MxuamengView.setVisibility(VISIBLE);		   //xuameng动画开始防点击
+						public boolean onBackPressed() {
+                        // xuameng屏蔽返回键
+                         }
 			            }
                         public void onAnimationEnd(Animator animation) {
                         super.onAnimationEnd(animation);
@@ -110,7 +113,7 @@ public class VodController extends BaseController {
 						mTopRoot1.setVisibility(GONE);				   //动画结束后隐藏上菜单
 						mTopRoot2.setVisibility(GONE);                 //动画结束后隐藏上菜单
 						MxuamengView.setVisibility(GONE);			   //xuameng动画结束可点击
-                        }
+                         }
                         });
                         animator3.start();                          //XUAMENG隐藏底部菜单结束                        
 				        ObjectAnimator animator4 = ObjectAnimator.ofFloat(mTopRoot1, "translationY", 0,-700);				//xuameng向上划出屏外
@@ -974,10 +977,6 @@ public class VodController extends BaseController {
         return mBottomRoot.getVisibility() == VISIBLE;
     }
 
-	 boolean isMxuamengView() {
-        return MxuamengView.getVisibility() == VISIBLE;
-    }
-
     void showBottom() {
         mHandler.removeMessages(1003);
         mHandler.sendEmptyMessage(1002);
@@ -1108,9 +1107,6 @@ public class VodController extends BaseController {
         if (isBottomVisible()) {			                   //xuameng按返回键退出
             hideBottom();
             return true;
-        }
-		if (isMxuamengView()) {			                       //动画屏蔽返回键
-
         }
 
         return false;
