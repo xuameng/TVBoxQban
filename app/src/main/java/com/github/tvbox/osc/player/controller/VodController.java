@@ -1095,18 +1095,19 @@ public class VodController extends BaseController {
     public boolean onBackPressed() {
         if (isClickBackBtn) {
             isClickBackBtn = false;
-			long secondTime = System.currentTimeMillis();	   //xuameng返回键防连续点击
-			if (secondTime - firstTime < 2000) {
-				firstTime = secondTime;
-            return false;
-            } 
-            if (isBottomVisible()) {                           //xuameng按返回键退出
-                hideBottom();
-            }
+//            if (isBottomVisible()) {                           //xuameng按返回键退出
+//                hideBottom();
+//            }
             return false;
         }
         if (super.onBackPressed()) {
             return true;
+        }
+
+		if  long secondTime = System.currentTimeMillis();	   //xuameng返回键防连续点击
+	       (secondTime - firstTime < 2000) {
+			firstTime = secondTime;
+			return true;
         }
         if (isBottomVisible()) {			                   //xuameng按返回键退出
             hideBottom();
