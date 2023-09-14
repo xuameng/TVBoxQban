@@ -1112,7 +1112,6 @@ public class VodController extends BaseController {
 		if (System.currentTimeMillis() - TOUCH_TIME < WAIT_TIME) {
             //xuameng屏蔽返回键
         } 
-      }
         return false;
     }
 
