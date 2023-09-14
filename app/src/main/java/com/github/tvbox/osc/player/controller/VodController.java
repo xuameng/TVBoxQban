@@ -1096,6 +1096,9 @@ public class VodController extends BaseController {
     public boolean onBackPressed() {
         if (isClickBackBtn) {
             isClickBackBtn = false;
+			if (System.currentTimeMillis() - TOUCH_TIME < WAIT_TIME) {
+            //xuameng屏蔽返回键
+            } 
             if (isBottomVisible()) {                           //xuameng按返回键退出
                 hideBottom();
             }
@@ -1108,9 +1111,6 @@ public class VodController extends BaseController {
             hideBottom();
             return true;
         }
-		if (System.currentTimeMillis() - TOUCH_TIME < WAIT_TIME) {
-            //xuameng屏蔽返回键
-        } 
         return false;
     }
 
