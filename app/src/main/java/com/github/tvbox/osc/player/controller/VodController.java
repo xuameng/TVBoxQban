@@ -1094,8 +1094,6 @@ public class VodController extends BaseController {
             isClickBackBtn = false;
             if (isBottomVisible()) {                           //xuameng按返回键退出
                 hideBottom();
-				getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
             }
             return false;
         }
