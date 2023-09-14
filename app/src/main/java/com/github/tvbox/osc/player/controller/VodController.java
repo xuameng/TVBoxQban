@@ -1088,16 +1088,17 @@ public class VodController extends BaseController {
         }
     }
 
-	// xuameng返回键时间间隔1.5秒
-    private static final long WAIT_TIME = 1500L;
-    private long TOUCH_TIME = 0;
+ //第一次按返回键系统的时间戳，默认为0。
+    private long firstTime = 0; 
     
     @Override
     public boolean onBackPressed() {
         if (isClickBackBtn) {
             isClickBackBtn = false;
-	        if (System.currentTimeMillis() - TOUCH_TIME < WAIT_TIME) {
-            return false;                                      //xuameng返回键时间间隔1.5秒
+			long secondTime = System.currentTimeMillis();	   //xuameng返回键防连续点击
+			if (secondTime - firstTime < 2000) {
+            return true;
+            firstTime = secondTime;
             } 
             if (isBottomVisible()) {                           //xuameng按返回键退出
                 hideBottom();
@@ -1107,10 +1108,10 @@ public class VodController extends BaseController {
         if (super.onBackPressed()) {
             return true;
         }
-        if (isBottomVisible()) {			                   //xuameng按返回键退出
-            hideBottom();
-            return true;
-        }
+//        if (isBottomVisible()) {			                   //xuameng按返回键退出
+//            hideBottom();
+//            return true;
+//        }
         return false;
     }
 
@@ -1120,3 +1121,11 @@ public class VodController extends BaseController {
         mHandler.removeCallbacks(myRunnable2);
     }
 }
+
+
+long secondTime = System.currentTimeMillis();
+        //如果小于2000毫秒则直接退出。
+        if (secondTime - firstTime < 2000) {
+            
+            firstTime = secondTime;
+        } 
