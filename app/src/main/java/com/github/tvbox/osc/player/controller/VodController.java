@@ -1087,23 +1087,15 @@ public class VodController extends BaseController {
             mLockView.setVisibility(INVISIBLE);
         }
     }
-
- //第一次按返回键系统的时间戳，默认为0。
-    private long firstTime = 0; 
     
     @Override
     public boolean onBackPressed() {
         if (isClickBackBtn) {
             isClickBackBtn = false;
-			long secondTime = System.currentTimeMillis();	   //xuameng返回键防连续点击
-			if (secondTime - firstTime < 2000) {
-				firstTime = secondTime;
+            if (isBottomVisible()) {                           //xuameng按返回键退出
+                hideBottom();
+            }
             return false;
-            } 
-//            if (isBottomVisible()) {                           //xuameng按返回键退出
-//                hideBottom();
-//            }
-//            return false;
         }
         if (super.onBackPressed()) {
             return true;
@@ -1121,11 +1113,3 @@ public class VodController extends BaseController {
         mHandler.removeCallbacks(myRunnable2);
     }
 }
-
-
-long secondTime = System.currentTimeMillis();
-        //如果小于2000毫秒则直接退出。
-        if (secondTime - firstTime < 2000) {
-            
-            firstTime = secondTime;
-        } 
