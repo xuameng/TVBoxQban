@@ -1113,3 +1113,18 @@ public class VodController extends BaseController {
         mHandler.removeCallbacks(myRunnable2);
     }
 }
+
+private static double DOUBLE_CLICK_TIME = 0L;
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (event.getKeyCode() == KeyEvent.KEYCODE_BACK ) {
+            if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME) > 1500) {//这里测试1500ms比较合适
+                DOUBLE_CLICK_TIME = System.currentTimeMillis();
+
+                //这里执行单击后的操作
+            }
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
