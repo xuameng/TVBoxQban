@@ -1121,11 +1121,3 @@ public class VodController extends BaseController {
         mHandler.removeCallbacks(myRunnable2);
     }
 }
-
-
-long secondTime = System.currentTimeMillis();
-        //如果小于2000毫秒则直接退出。
-        if (secondTime - firstTime < 2000) {
-            
-            firstTime = secondTime;
-        } 
