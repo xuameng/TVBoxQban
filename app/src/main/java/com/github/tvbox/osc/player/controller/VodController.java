@@ -17,7 +17,6 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.graphics.Color;                          //xuameng获取颜色值
-import android.view.WindowManager;                      //xuamengAndroid窗口框架
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -103,8 +102,6 @@ public class VodController extends BaseController {
 						public void onAnimationStart(Animator animation) {
                         super.onAnimationStart(animation);
                         MxuamengView.setVisibility(VISIBLE);		   //xuameng动画开始防点击
-						getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 			            }
                         public void onAnimationEnd(Animator animation) {
                         super.onAnimationEnd(animation);
@@ -112,7 +109,6 @@ public class VodController extends BaseController {
 						mTopRoot1.setVisibility(GONE);				   //动画结束后隐藏上菜单
 						mTopRoot2.setVisibility(GONE);                 //动画结束后隐藏上菜单
 						MxuamengView.setVisibility(GONE);			   //xuameng动画结束可点击
-						getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                         }
                         });
                         animator3.start();                          //XUAMENG隐藏底部菜单结束                        
