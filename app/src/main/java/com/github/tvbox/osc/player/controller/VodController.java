@@ -1104,8 +1104,8 @@ public class VodController extends BaseController {
             return true;
         }
 
-		if  long secondTime = System.currentTimeMillis();	   //xuameng返回键防连续点击
-	       (secondTime - firstTime < 2000) {
+		if  (secondTime - firstTime < 2000) {
+			long secondTime = System.currentTimeMillis();	   //xuameng返回键防连续点击
 			firstTime = secondTime;
 			return true;
         }
