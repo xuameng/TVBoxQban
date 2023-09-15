@@ -1102,7 +1102,8 @@ public class VodController extends BaseController {
             }
         if (isClickBackBtn) {
             isClickBackBtn = false;
-            if (isBottomVisible()) {                           //xuameng按返回键退出
+            if (isBottomVisible() && (System.currentTimeMillis() - DOUBLE_CLICK_TIME) > 1500) {                           //xuameng按返回键退出
+            DOUBLE_CLICK_TIME = System.currentTimeMillis();
                 hideBottom();
             }
             return false;
@@ -1110,7 +1111,9 @@ public class VodController extends BaseController {
         if (super.onBackPressed()) {
             return true;
         }
-        if (isBottomVisible()) {			                   //xuameng按返回键退出
+        if (isBottomVisible() && (System.currentTimeMillis() - DOUBLE_CLICK_TIME > 1500)) {			                   //xuameng按返回键退出
+			DOUBLE_CLICK_TIME = System.currentTimeMillis();
+
             hideBottom();
             return true;
         }
