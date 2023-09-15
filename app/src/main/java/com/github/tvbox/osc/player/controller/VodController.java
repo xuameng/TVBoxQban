@@ -1096,7 +1096,7 @@ public class VodController extends BaseController {
     
     @Override
     public boolean onBackPressed() {
-		if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME) < 1500) {    //xuameng防连击这里测试1500ms比较合适
+		if (isBottomVisible() && (System.currentTimeMillis() - DOUBLE_CLICK_TIME) < 1500) {    //xuameng防连击这里测试1500ms比较合适
             DOUBLE_CLICK_TIME = System.currentTimeMillis();
             return true;
             }
@@ -1104,16 +1104,15 @@ public class VodController extends BaseController {
             isClickBackBtn = false;
             if (isBottomVisible() && (System.currentTimeMillis() - DOUBLE_CLICK_TIME) > 1500) {                           //xuameng按返回键退出
             DOUBLE_CLICK_TIME = System.currentTimeMillis();
-                hideBottom();
+            hideBottom();
             }
             return false;
         }
         if (super.onBackPressed()) {
             return true;
         }
-        if (isBottomVisible() && (System.currentTimeMillis() - DOUBLE_CLICK_TIME > 1500)) {			                   //xuameng按返回键退出
+        if (isBottomVisible() && (System.currentTimeMillis() - DOUBLE_CLICK_TIME > 1500)) {			                     //xuameng按返回键退出
 			DOUBLE_CLICK_TIME = System.currentTimeMillis();
-
             hideBottom();
             return true;
         }
