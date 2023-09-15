@@ -129,10 +129,10 @@ public class ModelSettingFragment extends BaseLazyFragment {
                 tvDebugOpen.setText(Hawk.get(HawkConfig.DEBUG_OPEN, false) ? "已打开" : "已关闭");
             }
         });
-        findViewById(R.id.llParseWebVew).setOnClickListener(new View.OnClickListener() {      //xuameng系统自带开发中
+        findViewById(R.id.llParseWebVew).setOnClickListener(new View.OnClickListener() {      //xuameng系统自带开发中   new View.OnClickListener 在该代码块运行完毕之后，该监听器也就不复存在了
             @Override
             public void onClick(View v) {
-                Toast.makeText(mContext, "许大师提示：此功能开发中，敬请期待", Toast.LENGTH_LONG).show();
+                Toast.makeText(mContext, "许大师提示：此功能开发中，敬请期待!", Toast.LENGTH_LONG).show();
 		    }
         });                                                                             //xuameng系统自带开发中结束
         findViewById(R.id.llBackup).setOnClickListener(new View.OnClickListener() {
