@@ -186,6 +186,7 @@ public class VodController extends BaseController {
     public TextView mLandscapePortraitBtn;
     private View backBtn;//返回键
     private boolean isClickBackBtn;
+	private double DOUBLE_CLICK_TIME = 0L;   //xuameng防连击
    
     LockRunnable lockRunnable = new LockRunnable();
     private boolean isLock = false;
@@ -982,10 +983,6 @@ public class VodController extends BaseController {
         mHandler.removeMessages(1002);
         mHandler.sendEmptyMessage(1003);
     }
-
-	public class Mxuamengclick {                 //xuameng防连击
-    private double DOUBLE_CLICK_TIME = 0L;
-	}
 
     @Override
     public boolean onKeyEvent(KeyEvent event) {
