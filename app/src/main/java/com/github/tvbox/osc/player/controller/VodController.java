@@ -1009,7 +1009,6 @@ public class VodController extends BaseController {
                     togglePlay();
                     return true;
                 }
-//            } else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {  return true;// 闲置开启计时关闭透明底栏
             } else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN || keyCode == KeyEvent.KEYCODE_DPAD_UP || keyCode== KeyEvent.KEYCODE_MENU) {
                 if (!isBottomVisible()) {
                     showBottom();
@@ -1018,7 +1017,7 @@ public class VodController extends BaseController {
                 }
             }
             
-            }else if (keyCode == KeyEvent.KEYCODE_BACK ) {
+            else if (keyCode == KeyEvent.KEYCODE_BACK ) {
              private static double DOUBLE_CLICK_TIME = 0L;
             if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME) > 1500) {//这里测试1500ms比较合适
                 DOUBLE_CLICK_TIME = System.currentTimeMillis();
@@ -1029,7 +1028,7 @@ public class VodController extends BaseController {
         }
             
             
-           } else if (action == KeyEvent.ACTION_UP) {
+            else if (action == KeyEvent.ACTION_UP) {
             if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
                 if (isInPlayback) {
                     tvSlideStop();
