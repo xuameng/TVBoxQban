@@ -983,6 +983,10 @@ public class VodController extends BaseController {
         mHandler.sendEmptyMessage(1003);
     }
 
+	public class Mxuamengclick {                 //xuameng防连击
+    private static double DOUBLE_CLICK_TIME = 0L;
+　　}
+
     @Override
     public boolean onKeyEvent(KeyEvent event) {
         myHandle.removeCallbacks(myRunnable);
@@ -998,7 +1002,6 @@ public class VodController extends BaseController {
             return super.dispatchKeyEvent(event);
         }
         boolean isInPlayback = isInPlaybackState();
-		private static double DOUBLE_CLICK_TIME = 0L;
         if (action == KeyEvent.ACTION_DOWN) {
             if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
                 if (isInPlayback) {
@@ -1018,9 +1021,9 @@ public class VodController extends BaseController {
                     return true;
                 }
             } else if (keyCode == KeyEvent.KEYCODE_BACK ) {
-            if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME) > 1500) {    //这里测试1500ms比较合适
+            if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME) > 1500) {    //xuameng防连击这里测试1500ms比较合适
                 DOUBLE_CLICK_TIME = System.currentTimeMillis();
-                //这里执行单击后的操作            
+                    //xuameng防连击这里执行单击后的操作            
                     return true;
                }
             }           
