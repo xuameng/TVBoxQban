@@ -91,7 +91,7 @@ public class VodController extends BaseController {
                         backBtn.setVisibility(ScreenUtils.isTv(context) ? INVISIBLE : VISIBLE);
                         showLockView();
 						mPlayPauseTimexu.setVisibility(GONE);   //xuameng隐藏上面视频名称
-                        mPlayTitle.setVisibility(GONE);        //xuameng隐藏上面时间
+                        mPlayTitle.setVisibility(GONE);         //xuameng隐藏上面时间
                         break;
                     }
                     case 1003: { // 隐藏底部菜单
@@ -158,7 +158,7 @@ public class VodController extends BaseController {
     LinearLayout mTopRoot1;
     LinearLayout mTopRoot2;
     LinearLayout mParseRoot;
-	LinearLayout MxuamengView;			//xuameng防点击
+	LinearLayout MxuamengView;			      //xuameng防点击
     TvRecyclerView mGridView;
     TextView mPlayTitle;
     TextView mPlayTitle1;
@@ -171,13 +171,13 @@ public class VodController extends BaseController {
     TextView mPlayerIJKBtn;
     TextView mPlayerRetry;
     TextView mPlayrefresh;
-	TextView mxuPlay;                  //xuameng 底部播放ID
+	TextView mxuPlay;                         //xuameng 底部播放ID
     public TextView mPlayerTimeStartEndText;
     public TextView mPlayerTimeStartBtn;
     public TextView mPlayerTimeSkipBtn;
     public TextView mPlayerTimeResetBtn;
     TextView mPlayPauseTime;
-	TextView mPlayPauseTimexu;         //xuameng系统时间
+	TextView mPlayPauseTimexu;                //xuameng系统时间
     TextView mPlayLoadNetSpeed;
     TextView mVideoSize;
     public SimpleSubtitleView mSubtitleView;
@@ -186,13 +186,13 @@ public class VodController extends BaseController {
     public TextView mLandscapePortraitBtn;
     private View backBtn;//返回键
     private boolean isClickBackBtn;
-	private double DOUBLE_CLICK_TIME = 0L;   //xuameng防连击
+	private double DOUBLE_CLICK_TIME = 0L;    //xuameng防连击
    
     LockRunnable lockRunnable = new LockRunnable();
     private boolean isLock = false;
     Handler myHandle;
     Runnable myRunnable;
-    int myHandleSeconds = 100000;//闲置多少毫秒秒关闭底栏  默认100秒
+    int myHandleSeconds = 100000;            //闲置多少毫秒秒关闭底栏  默认100秒
 
     int videoPlayState = 0;
 
@@ -1010,7 +1010,6 @@ public class VodController extends BaseController {
                     togglePlay();
                     return true;
                 }
-//            } else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {  return true;// 闲置开启计时关闭透明底栏
             } else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN || keyCode == KeyEvent.KEYCODE_DPAD_UP || keyCode== KeyEvent.KEYCODE_MENU) {
                 if (!isBottomVisible()) {
                     showBottom();
@@ -1024,12 +1023,12 @@ public class VodController extends BaseController {
                     return true;
                }
             }           
-            }else if (action == KeyEvent.ACTION_UP) {
+            } else if (action == KeyEvent.ACTION_UP) {
             if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
                 if (isInPlayback) {
                     tvSlideStop();
                     return true;
-                }
+               }
             }
         }
         return super.dispatchKeyEvent(event);
@@ -1097,6 +1096,10 @@ public class VodController extends BaseController {
     
     @Override
     public boolean onBackPressed() {
+		if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME) < 1500) {    //xuameng防连击这里测试1500ms比较合适
+            DOUBLE_CLICK_TIME = System.currentTimeMillis();
+            return true;
+            }
         if (isClickBackBtn) {
             isClickBackBtn = false;
             if (isBottomVisible()) {                           //xuameng按返回键退出
