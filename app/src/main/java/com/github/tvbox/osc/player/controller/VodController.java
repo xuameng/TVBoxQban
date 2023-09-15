@@ -124,7 +124,7 @@ public class VodController extends BaseController {
                         animator6.setDuration(1500);				//xuameng动画菜单
 						animator6.start();						    //XUAMENG显示上面菜单结束
 						mPlayPauseTimexu.setVisibility(VISIBLE);          //xuameng显示上面时间
-				        ObjectAnimator animator7 = ObjectAnimator.ofFloat(mPlayPauseTimexu, "translationY", -700,0);				//xuameng动画菜单
+				        ObjectAnimator animator7 = ObjectAnimator.ofFloat(mPlayPauseTimexu, "translationY", -700,0);	    //xuameng动画菜单
                         animator7.setDuration(1500);				//xuameng动画菜单
 						animator7.start();						    //XUAMENG显示上面菜单的时间结束
                         break;
@@ -186,7 +186,7 @@ public class VodController extends BaseController {
     public TextView mLandscapePortraitBtn;
     private View backBtn;//返回键
     private boolean isClickBackBtn;
-	private double DOUBLE_CLICK_TIME = 0L;    //xuameng防连击
+	private double DOUBLE_CLICK_TIME = 0L;    //xuameng返回键防连击1.5秒（为动画）
    
     LockRunnable lockRunnable = new LockRunnable();
     private boolean isLock = false;
@@ -409,7 +409,7 @@ public class VodController extends BaseController {
             @Override												//xuameng 低菜单播放监听
             public void onClick(View view) {						//xuameng 低菜单播放监听
                 togglePlay();										//xuameng 低菜单播放监听
-				FastClickCheckUtilxu.check(view);                   //xuameng 防返播放打断动画
+				FastClickCheckUtilxu.check(view);                   //xuameng 防播放打断动画
             }
         });
         mPreBtn.setOnClickListener(new OnClickListener() {
@@ -1016,13 +1016,13 @@ public class VodController extends BaseController {
                     myHandle.postDelayed(myRunnable, myHandleSeconds);
                     return true;
                 }
-            } else if (keyCode == KeyEvent.KEYCODE_BACK ) {
-            if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME) < 1500) {    //xuameng防连击这里测试1500ms比较合适
-                DOUBLE_CLICK_TIME = System.currentTimeMillis();
-                    //xuameng防连击这里执行单击后的操作            
-                    return true;
-               }
-            }           
+            } //else if (keyCode == KeyEvent.KEYCODE_BACK ) {
+              //if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME) < 1500) {    //xuameng防连击这里测试1500ms比较合适
+              //    DOUBLE_CLICK_TIME = System.currentTimeMillis();
+              //    xuameng防连击这里执行单击后的操作            
+              //        return true;
+              //   }
+              //}           
             } else if (action == KeyEvent.ACTION_UP) {
             if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
                 if (isInPlayback) {
@@ -1096,7 +1096,7 @@ public class VodController extends BaseController {
     
     @Override
     public boolean onBackPressed() {
-		if (isBottomVisible() && (System.currentTimeMillis() - DOUBLE_CLICK_TIME) < 1500) {    //xuameng防连击这里测试1500ms比较合适
+		if (isBottomVisible() && (System.currentTimeMillis() - DOUBLE_CLICK_TIME) < 1500) {    //xuameng返回键防连击1.5秒（为动画,当动画显示时）
             DOUBLE_CLICK_TIME = System.currentTimeMillis();
             return true;
             }
@@ -1108,7 +1108,7 @@ public class VodController extends BaseController {
             }
             return false;
         }
-        if (super.onBackPressed()) {
+        if (super.onBackPressed()) {                                                                                     //xuameng返回退出
             return true;
         }
         if (isBottomVisible() && (System.currentTimeMillis() - DOUBLE_CLICK_TIME > 1500)) {			                     //xuameng按返回键退出
