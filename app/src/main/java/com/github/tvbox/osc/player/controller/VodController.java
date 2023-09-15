@@ -985,7 +985,7 @@ public class VodController extends BaseController {
 
 	public class Mxuamengclick {                 //xuameng防连击
     private static double DOUBLE_CLICK_TIME = 0L;
-　　}
+	}
 
     @Override
     public boolean onKeyEvent(KeyEvent event) {
