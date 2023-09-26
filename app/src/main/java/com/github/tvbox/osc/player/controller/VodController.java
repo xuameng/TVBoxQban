@@ -384,6 +384,21 @@ public class VodController extends BaseController {
                 mControlWrapper.startFadeOut();
             }
         });
+
+		mSeekBar.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View arg0, int keycode, KeyEvent event) {
+                if(event.getAction()==KeyEvent.ACTION_DOWN){
+                    if(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT){
+		              if (isInPlayback) {
+                      tvSlideStart(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT ? 1 : -1);
+			 	      }
+                   }
+                }
+                return false;
+            }
+        });
+
         mPlayerRetry.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
