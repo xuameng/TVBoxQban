@@ -398,7 +398,7 @@ public class VodController extends BaseController {
 			 	      }
                    }                
                 return false;
-				}else if (action == KeyEvent.ACTION_UP) {
+				}else if (event.getAction()==KeyEvent.ACTION_UP) {
 				int keyCode = event.getKeyCode();
                 int action = event.getAction();
 				boolean isInPlayback = isInPlaybackState();
