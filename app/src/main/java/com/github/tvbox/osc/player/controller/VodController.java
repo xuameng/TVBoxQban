@@ -409,7 +409,8 @@ public class VodController extends BaseController {
                      }
 				  }
                }
-        });
+		    }
+        })
 
         mPlayerRetry.setOnClickListener(new OnClickListener() {
             @Override
