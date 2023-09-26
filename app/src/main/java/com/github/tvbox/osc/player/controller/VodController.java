@@ -399,6 +399,14 @@ public class VodController extends BaseController {
                    }
                 }
                 return false;
+				else if (action == KeyEvent.ACTION_UP) {
+                if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+                if (isInPlayback) {
+                    tvSlideStop();
+                return false;
+                     }
+                  }
+               }
             }
         });
 
