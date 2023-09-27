@@ -395,7 +395,7 @@ public class VodController extends BaseController {
                     if(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT){
 		              if (isInPlayback) {
                       tvSlideStart(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT ? 1 : -1);
-                return false;
+                return true;
                     }
                   }
 		    	}
@@ -406,7 +406,7 @@ public class VodController extends BaseController {
 		            if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
                        if (isInPlayback) {
                        tvSlideStop();
-                return false;
+                return true;
                     }
                   }	
                 }
