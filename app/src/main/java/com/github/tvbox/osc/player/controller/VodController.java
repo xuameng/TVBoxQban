@@ -400,6 +400,9 @@ public class VodController extends BaseController {
                   }
 		    	}
                 if(event.getAction()==KeyEvent.ACTION_UP){
+                int keyCode = event.getKeyCode();
+                int action = event.getAction();
+                boolean isInPlayback = isInPlaybackState();
 		            if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
                        if (isInPlayback) {
                        tvSlideStop();
