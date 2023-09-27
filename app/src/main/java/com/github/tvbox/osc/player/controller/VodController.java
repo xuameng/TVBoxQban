@@ -153,7 +153,6 @@ public class VodController extends BaseController {
     LinearLayout mProgressRoot;
     TextView mProgressText;
     ImageView mProgressIcon;
-	ImageView mProgressIconXu;
     ImageView mLockView;
     LinearLayout mBottomRoot;
     LinearLayout mTopRoot1;
@@ -244,7 +243,6 @@ public class VodController extends BaseController {
         mSeekBar = findViewById(R.id.seekBar);
         mProgressRoot = findViewById(R.id.tv_progress_container);
         mProgressIcon = findViewById(R.id.tv_progress_icon);
-        mProgressIconXu = findViewById(R.id.tv_progress_icon_1);
         mProgressText = findViewById(R.id.tv_progress_text);
         mBottomRoot = findViewById(R.id.bottom_container);
         mTopRoot1 = findViewById(R.id.tv_top_l_container);
@@ -961,9 +959,9 @@ public class VodController extends BaseController {
     protected void updateSeekUI(int curr, int seekTo, int duration) {
         super.updateSeekUI(curr, seekTo, duration);
         if (seekTo > curr) {
-            mProgressIcon.setImageResource(R.drawable.icon_prexu);
+            mProgressIcon.setImageResource(R.drawable.icon_prexu);                     //xuameng快进图标更换
         } else {
-            mProgressIconXu.setImageResource(R.drawable.icon_backxu);
+            mProgressIcon.setImageResource(R.drawable.icon_backxu);					   //xuameng快进图标更换
         }
         mProgressText.setText(PlayerUtils.stringForTime(seekTo) + " / " + PlayerUtils.stringForTime(duration));
         mHandler.sendEmptyMessage(1000);
