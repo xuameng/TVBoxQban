@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
+<FrameLayout
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
     <ProgressBar
-        android:layout_width="@dimen/vs_50"
-        android:layout_height="@dimen/vs_50"
         android:layout_gravity="center"
-        android:indeterminateBehavior="repeat"
+        android:layout_width="@dimen/vs_45"
+        android:layout_height="@dimen/vs_45"
+        android:indeterminateOnly="true"
         android:indeterminateDrawable="@drawable/anim_loading"
-        android:indeterminateOnly="true" />
+        android:indeterminateBehavior="repeat" />
 </FrameLayout>
