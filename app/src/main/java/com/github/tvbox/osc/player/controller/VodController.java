@@ -410,6 +410,7 @@ public class VodController extends BaseController {
                     }
                   }	
                 }
+               return true;
 		    }
         });
 
