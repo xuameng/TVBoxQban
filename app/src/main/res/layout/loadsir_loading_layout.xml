@@ -5,8 +5,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
     <ProgressBar
         android:layout_gravity="center"
-        android:layout_width="@dimen/vs_45"
-        android:layout_height="@dimen/vs_45"
+        android:layout_width="@dimen/vs_50"
+        android:layout_height="@dimen/vs_50"
         android:indeterminateOnly="true"
         android:indeterminateDrawable="@drawable/anim_loading"
         android:indeterminateBehavior="repeat" />
