@@ -474,32 +474,36 @@
                 android:maxLines="1"/>
         </LinearLayout>
         <LinearLayout
-            android:gravity="center"
-            android:layout_gravity="center"
-            android:orientation="vertical"
-            android:background="@drawable/shape_user_focus"
+            android:gravity="right"
+            android:layout_gravity="right"
+            android:layout_marginTop="@dimen/vs_150"
+            android:layout_marginRight="@dimen/vs_0"
+            android:orientation="horizontal"
+            android:background="@drawable/shape_user_focus_xu"
             android:focusable="false"
             android:focusableInTouchMode="false"
             android:layout_width="@dimen/vs_280"
-            android:layout_height="@dimen/vs_160">
+            android:layout_height="@dimen/vs_70">
             <ImageView
-                android:layout_gravity="center"
+                android:layout_gravity="center|left"
                 android:focusable="false"
                 android:focusableInTouchMode="false"
-                android:layout_width="@dimen/vs_60"
-                android:layout_height="@dimen/vs_60"
+                android:layout_width="@dimen/vs_35"
+                android:layout_height="@dimen/vs_35"
+                android:layout_marginLeft="@dimen/vs_0"
                 android:src="@drawable/icon_play"/>
             <TextView
                 android:textSize="@dimen/ts_30"
                 android:textColor="@android:color/white"
-                android:layout_gravity="center"
+                android:layout_gravity="center|right"
                 android:id="@+id/tv_pause_progress_text"
                 android:tag="vod_control_pause_t"
                 android:focusable="false"
                 android:focusableInTouchMode="false"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/vs_20"/>
+                android:paddingLeft="@dimen/vs_10"
+                android:layout_marginRight="@dimen/vs_24"/>
         </LinearLayout>
     </FrameLayout>
     <TextView
@@ -528,14 +532,13 @@
         android:layout_width="@dimen/vs_280"
         android:layout_height="@dimen/vs_160">
         <ImageView
-            android:layout_gravity="right"
+            android:layout_gravity="center"
             android:id="@+id/tv_progress_icon"
-            android:paddingRight="@dimen/vs_20"
             android:focusable="false"
             android:focusableInTouchMode="false"
-			android:scaleType="fitXY"
-            android:layout_width="@dimen/vs_90"
-            android:layout_height="@dimen/vs_60"/>
+            android:layout_width="@dimen/vs_70"
+            android:layout_height="@dimen/vs_60"
+            android:scaleType="fitXY"/>
         <TextView
             android:textSize="@dimen/ts_30"
             android:textColor="@android:color/white"
@@ -545,16 +548,14 @@
             android:focusableInTouchMode="false"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/vs_20"/>
+            android:layout_marginTop="@dimen/vs_45"/>
     </LinearLayout>
     <ProgressBar
-        android:layout_gravity="right"
+        android:layout_gravity="center"
         android:tag="vod_control_loading"
         android:visibility="gone"
-        android:layout_width="@dimen/vs_40"
-        android:layout_height="@dimen/vs_40"
-        android:layout_marginTop="@dimen/vs_35"
-        android:layout_marginRight="@dimen/vs_200"
+        android:layout_width="@dimen/vs_45"
+        android:layout_height="@dimen/vs_45"
         android:indeterminateOnly="true"
         android:indeterminateDrawable="@drawable/anim_loading"
         android:indeterminateBehavior="repeat"/>
