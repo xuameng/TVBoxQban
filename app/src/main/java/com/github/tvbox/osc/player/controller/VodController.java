@@ -275,6 +275,10 @@ public class VodController extends BaseController {
         backBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (isBottomVisible() && (System.currentTimeMillis() - DOUBLE_CLICK_TIME > 1500)) {			                     //xuameng按返回键退出
+			        DOUBLE_CLICK_TIME = System.currentTimeMillis();
+                    hideBottom();
+                }
                 if (getContext() instanceof Activity) {
                     isClickBackBtn = true;
                     ((Activity) getContext()).onBackPressed();
@@ -384,7 +388,7 @@ public class VodController extends BaseController {
                 mControlWrapper.startFadeOut();
             }
         });
-
+        //xuameng监听底部进度条遥控器
 		mSeekBar.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View arg0, int keycode, KeyEvent event) {
@@ -413,6 +417,7 @@ public class VodController extends BaseController {
                return false;
 		    }
         });
+		//xuameng监听底部进度条遥控器结束
 
         mPlayerRetry.setOnClickListener(new OnClickListener() {
             @Override
