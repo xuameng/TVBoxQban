@@ -480,7 +480,7 @@
             android:background="@drawable/shape_user_focus"
             android:focusable="false"
             android:focusableInTouchMode="false"
-            android:layout_width="@dimen/vs_360"
+            android:layout_width="@dimen/vs_280"
             android:layout_height="@dimen/vs_160">
             <ImageView
                 android:layout_gravity="center"
@@ -525,15 +525,16 @@
         android:focusable="false"
         android:focusableInTouchMode="false"
         android:visibility="gone"
-        android:layout_width="@dimen/vs_360"
+        android:layout_width="@dimen/vs_280"
         android:layout_height="@dimen/vs_160">
         <ImageView
             android:layout_gravity="right"
             android:id="@+id/tv_progress_icon"
-            android:paddingRight="@dimen/vs_10"
+            android:paddingRight="@dimen/vs_20"
             android:focusable="false"
             android:focusableInTouchMode="false"
-            android:layout_width="@dimen/vs_60"
+			android:scaleType="fitXY"
+            android:layout_width="@dimen/vs_90"
             android:layout_height="@dimen/vs_60"/>
         <TextView
             android:textSize="@dimen/ts_30"
