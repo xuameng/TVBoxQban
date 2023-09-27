@@ -272,13 +272,9 @@ public class VodController extends BaseController {
         mLandscapePortraitBtn = findViewById(R.id.landscape_portrait);
         backBtn = findViewById(R.id.tv_back);
 		mxuPlay = findViewById(R.id.mxuplay);		                  //xuameng  低菜单播放
-        backBtn.setOnClickListener(new OnClickListener() {
+        backBtn.setOnClickListener(new OnClickListener() {            //xuameng  屏幕上的返回键
             @Override
             public void onClick(View view) {
-                if (isBottomVisible() && (System.currentTimeMillis() - DOUBLE_CLICK_TIME > 1500)) {			                     //xuameng按返回键退出
-			        DOUBLE_CLICK_TIME = System.currentTimeMillis();
-                    hideBottom();
-                }
                 if (getContext() instanceof Activity) {
                     isClickBackBtn = true;
                     ((Activity) getContext()).onBackPressed();
@@ -1137,11 +1133,11 @@ public class VodController extends BaseController {
             }
         if (isClickBackBtn) {
             isClickBackBtn = false;
-            if (isBottomVisible() && (System.currentTimeMillis() - DOUBLE_CLICK_TIME) > 1500) {                           //xuameng按返回键退出
+            if (isBottomVisible() && (System.currentTimeMillis() - DOUBLE_CLICK_TIME) > 1500) {                           //xuameng  屏幕上的返回键退出
             DOUBLE_CLICK_TIME = System.currentTimeMillis();
             hideBottom();
             }
-            return false;
+            return true;
         }
         if (super.onBackPressed()) {                                                                                     //xuameng返回退出
             return true;
