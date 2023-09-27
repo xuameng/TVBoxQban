@@ -153,6 +153,7 @@ public class VodController extends BaseController {
     LinearLayout mProgressRoot;
     TextView mProgressText;
     ImageView mProgressIcon;
+	ImageView mProgressIconXu;
     ImageView mLockView;
     LinearLayout mBottomRoot;
     LinearLayout mTopRoot1;
@@ -243,6 +244,7 @@ public class VodController extends BaseController {
         mSeekBar = findViewById(R.id.seekBar);
         mProgressRoot = findViewById(R.id.tv_progress_container);
         mProgressIcon = findViewById(R.id.tv_progress_icon);
+        mProgressIconXu = findViewById(R.id.tv_progress_icon_1);
         mProgressText = findViewById(R.id.tv_progress_text);
         mBottomRoot = findViewById(R.id.bottom_container);
         mTopRoot1 = findViewById(R.id.tv_top_l_container);
@@ -959,9 +961,9 @@ public class VodController extends BaseController {
     protected void updateSeekUI(int curr, int seekTo, int duration) {
         super.updateSeekUI(curr, seekTo, duration);
         if (seekTo > curr) {
-            mProgressIcon.setImageResource(R.drawable.icon_pre);
+            mProgressIcon.setImageResource(R.drawable.icon_prexu);
         } else {
-            mProgressIcon.setImageResource(R.drawable.icon_back);
+            mProgressIconXu.setImageResource(R.drawable.icon_backxu);
         }
         mProgressText.setText(PlayerUtils.stringForTime(seekTo) + " / " + PlayerUtils.stringForTime(duration));
         mHandler.sendEmptyMessage(1000);
@@ -1145,22 +1147,22 @@ public class VodController extends BaseController {
     
     @Override
     public boolean onBackPressed() {
-		if (isBottomVisible() && (System.currentTimeMillis() - DOUBLE_CLICK_TIME) < 1500) {    //xuameng返回键防连击1.5秒（为动画,当动画显示时）
+		if (isBottomVisible() && (System.currentTimeMillis() - DOUBLE_CLICK_TIME) < 1500) {               //xuameng返回键防连击1.5秒（为动画,当动画显示时）
             DOUBLE_CLICK_TIME = System.currentTimeMillis();
             return true;
             }
         if (isClickBackBtn) {
             isClickBackBtn = false;
-            if (isBottomVisible() && (System.currentTimeMillis() - DOUBLE_CLICK_TIME) > 1500) {                           //xuameng  屏幕上的返回键退出
+            if (isBottomVisible() && (System.currentTimeMillis() - DOUBLE_CLICK_TIME) > 1500) {           //xuameng  屏幕上的返回键退出
             DOUBLE_CLICK_TIME = System.currentTimeMillis();
             hideBottom();
             }
             return false;
         }
-        if (super.onBackPressed()) {                                                                                     //xuameng返回退出
+        if (super.onBackPressed()) {                                                                      //xuameng返回退出
             return true;
         }
-        if (isBottomVisible() && (System.currentTimeMillis() - DOUBLE_CLICK_TIME > 1500)) {			                     //xuameng按返回键退出
+        if (isBottomVisible() && (System.currentTimeMillis() - DOUBLE_CLICK_TIME > 1500)) {			      //xuameng按返回键退出
 			DOUBLE_CLICK_TIME = System.currentTimeMillis();
             hideBottom();
             return true;
