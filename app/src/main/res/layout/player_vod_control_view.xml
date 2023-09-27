@@ -111,12 +111,12 @@
             android:text="许大师"
             android:singleLine="true"
             android:layout_marginEnd="@dimen/vs_5"/>
-        <LinearLayout
+	    <LinearLayout
             android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/vs_10">
-            <TextView
+			<TextView
                 android:textSize="@dimen/ts_20"
                 android:textColor="@color/color_FFFFFF"
                 android:id="@+id/mxuplay"
@@ -128,6 +128,61 @@
                 android:layout_height="wrap_content"
                 android:layout_marginRight="@dimen/vs_5"
                 android:text="读取中"
+                android:singleLine="true"
+                android:layout_marginEnd="@dimen/vs_5"/>
+            <TextView
+                android:textSize="@dimen/ts_20"
+                android:textColor="@color/color_FFFFFF"
+                android:id="@+id/curr_time"
+                android:paddingRight="@dimen/vs_10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="00:00"
+                android:paddingEnd="@dimen/vs_10"/>
+            <SeekBar
+                android:layout_gravity="center"
+                android:id="@+id/seekBar"
+                android:background="@null"
+                android:padding="@dimen/vs_0"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:layout_width="0.0dip"
+                android:layout_height="wrap_content"
+                android:maxHeight="@dimen/vs_6"
+                android:max="1000"
+                android:progressDrawable="@drawable/shape_player_control_vod_seek"
+                android:minHeight="@dimen/vs_6"
+                android:thumb="@drawable/shape_player_control_vod_seek_thumb"
+                android:thumbOffset="@dimen/vs_0"
+                android:layout_weight="1.0"
+                android:paddingStart="@dimen/vs_0"
+                android:paddingEnd="@dimen/vs_0"/>
+            <TextView
+                android:textSize="@dimen/ts_20"
+                android:textColor="@color/color_FFFFFF"
+                android:id="@+id/total_time"
+                android:paddingLeft="@dimen/vs_10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="00:00"
+                android:paddingStart="@dimen/vs_10"/>
+        </LinearLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/vs_10">
+            <TextView
+                android:textSize="@dimen/ts_20"
+                android:textColor="@color/color_FFFFFF"
+                android:background="@drawable/button_dialog_main_1"
+                android:padding="@dimen/vs_10"
+                android:paddingRight="@dimen/vs_10"
+                android:focusable="false"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/vs_5"
+                android:text="选择"
                 android:singleLine="true"
                 android:layout_marginEnd="@dimen/vs_5"/>
             <TextView
@@ -354,6 +409,8 @@
                 android:paddingRight="@dimen/vs_10"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+				android:background="@drawable/button_dialog_main_1"
+				android:padding="@dimen/vs_10"
                 android:layout_marginRight="@dimen/vs_5"
                 android:text="解析"
                 android:layout_marginEnd="@dimen/vs_5"/>
@@ -367,48 +424,6 @@
                 app:tv_horizontalSpacingWithMargins="@dimen/vs_5"
                 app:tv_selectedItemIsCentered="true"
                 app:tv_verticalSpacingWithMargins="@dimen/vs_5"/>
-        </LinearLayout>
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/vs_10">
-            <TextView
-                android:textSize="@dimen/ts_20"
-                android:textColor="@color/color_FFFFFF"
-                android:id="@+id/curr_time"
-                android:paddingRight="@dimen/vs_10"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="00:00"
-                android:paddingEnd="@dimen/vs_10"/>
-            <SeekBar
-                android:layout_gravity="center"
-                android:id="@+id/seekBar"
-                android:background="@null"
-                android:padding="@dimen/vs_0"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
-                android:layout_width="0.0dip"
-                android:layout_height="wrap_content"
-                android:maxHeight="@dimen/vs_6"
-                android:max="1000"
-                android:progressDrawable="@drawable/shape_player_control_vod_seek"
-                android:minHeight="@dimen/vs_6"
-                android:thumb="@drawable/shape_player_control_vod_seek_thumb"
-                android:thumbOffset="@dimen/vs_0"
-                android:layout_weight="1.0"
-                android:paddingStart="@dimen/vs_0"
-                android:paddingEnd="@dimen/vs_0"/>
-            <TextView
-                android:textSize="@dimen/ts_20"
-                android:textColor="@color/color_FFFFFF"
-                android:id="@+id/total_time"
-                android:paddingLeft="@dimen/vs_10"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="00:00"
-                android:paddingStart="@dimen/vs_10"/>
         </LinearLayout>
     </LinearLayout>
     <FrameLayout
