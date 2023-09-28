@@ -477,16 +477,16 @@
     <LinearLayout
         android:gravity="center"
         android:layout_gravity="right"
-        android:visibility="gone"
-        android:id="@+id/tv_pause_xu"
-        android:layout_marginTop="@dimen/vs_100"
-        android:layout_marginRight="@dimen/vs_0"
         android:orientation="horizontal"
+        android:id="@+id/tv_pause_xu"
         android:background="@drawable/shape_user_focus_xu"
         android:focusable="false"
         android:focusableInTouchMode="false"
+        android:visibility="gone"
         android:layout_width="@dimen/vs_280"
-        android:layout_height="@dimen/vs_70">
+        android:layout_height="@dimen/vs_70"
+        android:layout_marginTop="@dimen/vs_100"
+        android:layout_marginRight="@dimen/vs_0">
         <ImageView
             android:layout_gravity="center|left"
             android:focusable="false"
@@ -495,18 +495,20 @@
             android:layout_height="@dimen/vs_35"
             android:layout_marginLeft="@dimen/vs_20"
             android:src="@drawable/icon_play"/>
-        <TextView
+        <com.github.tvbox.osc.ui.tv.widget.MarqueeTextView
             android:textSize="@dimen/ts_30"
             android:textColor="@android:color/white"
             android:layout_gravity="center|right"
             android:id="@+id/tv_pause_progress_text"
             android:tag="vod_control_pause_t"
+            android:paddingLeft="@dimen/vs_10"
             android:focusable="false"
             android:focusableInTouchMode="false"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/vs_10"
-            android:layout_marginRight="@dimen/vs_24"/>
+            android:singleLine="true"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:layout_marginRight="@dimen/vs_20"/>
     </LinearLayout>
     <TextView
         android:textSize="@dimen/ts_30"
