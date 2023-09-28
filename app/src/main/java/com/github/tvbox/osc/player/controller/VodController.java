@@ -1205,13 +1205,12 @@ public class VodController extends BaseController {
         if (isBottomVisible() && (System.currentTimeMillis() - DOUBLE_CLICK_TIME > 1500)) {			      //xuameng按返回键退出
 			DOUBLE_CLICK_TIME = System.currentTimeMillis();
             hideBottom();
-			mPlayPauseTimexu.setVisibility(GONE);       //xuameng隐藏上面时间
-            mPlayTitle.setVisibility(GONE);             //xuameng隐藏上面视频名称
-            backBtn.setVisibility(INVISIBLE);           //返回键隐藏菜单
-			mTvPausexu.setVisibility(GONE);				//隐藏暂停菜单
-
             return true;
         }
+		mPlayPauseTimexu.setVisibility(GONE);       //xuameng隐藏上面时间
+        mPlayTitle.setVisibility(GONE);             //xuameng隐藏上面视频名称
+        backBtn.setVisibility(INVISIBLE);           //返回键隐藏菜单
+	    mTvPausexu.setVisibility(GONE);				//隐藏暂停菜单
         return false;
     }
 
