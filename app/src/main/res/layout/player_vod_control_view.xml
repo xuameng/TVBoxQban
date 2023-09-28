@@ -474,9 +474,11 @@
                 android:maxLines="1"/>
         </LinearLayout>
         <LinearLayout
-            android:gravity="right"
+            android:gravity="center"
             android:layout_gravity="right"
-            android:layout_marginTop="@dimen/vs_150"
+			android:visibility="gone"
+			android:id="@+id/tv_pause_xu"
+            android:layout_marginTop="@dimen/vs_100"
             android:layout_marginRight="@dimen/vs_0"
             android:orientation="horizontal"
             android:background="@drawable/shape_user_focus_xu"
@@ -490,7 +492,7 @@
                 android:focusableInTouchMode="false"
                 android:layout_width="@dimen/vs_35"
                 android:layout_height="@dimen/vs_35"
-                android:layout_marginLeft="@dimen/vs_0"
+                android:layout_marginLeft="@dimen/vs_20"
                 android:src="@drawable/icon_play"/>
             <TextView
                 android:textSize="@dimen/ts_30"
