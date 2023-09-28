@@ -1034,7 +1034,7 @@ public class VodController extends BaseController {
     }
 
 	boolean ismTvPausexuVisible() {				//xuameng判断暂停动画是否显示
-        return mtvpausexu.getVisibility() == VISIBLE;
+        return mTvPausexu.getVisibility() == VISIBLE;
     }
 
     void showBottom() {
