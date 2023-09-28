@@ -400,6 +400,12 @@ public class VodController extends BaseController {
                 return true;
                     }
                   }
+				if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
+                if (isInPlayback) {
+                    togglePlay();
+                return true;
+                   }
+                 }
 		    	}
                 if(event.getAction()==KeyEvent.ACTION_UP){
                 int keyCode = event.getKeyCode();
@@ -934,7 +940,7 @@ public class VodController extends BaseController {
             return;
         mControlWrapper.seekTo(simSeekPosition);
         if (!mControlWrapper.isPlaying())
-            mControlWrapper.start();
+        //xuameng快进暂停就暂停测试    mControlWrapper.start();
         simSlideStart = false;
         simSeekPosition = 0;
         simSlideOffset = 0;
@@ -1187,7 +1193,7 @@ public class VodController extends BaseController {
             }
         if (isClickBackBtn) {
             isClickBackBtn = false;
-            if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME) > 1500) {           //xuameng  屏幕上的返回键退出
+            if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME) > 1500) {                                //xuameng  屏幕上的返回键退出
             DOUBLE_CLICK_TIME = System.currentTimeMillis();
             mBottomRoot.setVisibility(GONE);	        //动画结束后隐藏下菜单
             mTopRoot1.setVisibility(GONE);	            //动画结束后隐藏上菜单
