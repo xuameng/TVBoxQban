@@ -144,6 +144,7 @@ public class LivePlayActivity extends BaseActivity {
     TextView tv_srcinfo;
     TextView tv_curepg_left;
     TextView tv_nextepg_left;
+	LinearLayout Mtv_left_top_xu;            //xuameng回看中左上图标
     private MyEpgAdapter myAdapter;
     private TextView tv_right_top_tipnetspeed;
     private TextView tv_right_top_channel_name;
@@ -216,7 +217,7 @@ public class LivePlayActivity extends BaseActivity {
         tvChannelInfo = findViewById(R.id.tvChannel);
         tvTime = findViewById(R.id.tvTime);
         tvNetSpeed = findViewById(R.id.tvNetSpeed);
-
+        Mtv_left_top_xu = findViewById(R.id.tv_left_top_xu);           //xuameng回看左上图标
         //EPG  findViewById  by 龍
         tip_chname = (TextView)  findViewById(R.id.tv_channel_bar_name);//底部名称
         tv_channelnum = (TextView) findViewById(R.id.tv_channel_bottom_number); //底部数字
@@ -269,12 +270,14 @@ public class LivePlayActivity extends BaseActivity {
 
 
         if(show){
-            backcontroller.setVisibility(View.VISIBLE);
-			iv_playpause.requestFocus(); 
+            backcontroller.setVisibility(View.GONE);
+			Mtv_left_top_xu.setVisibility(View.VISIBLE);
+			iv_playpause.requestFocus();				 //xuameng回看菜单默认焦点为播放
             ll_epg.setVisibility(View.GONE);
 
         }else{
             backcontroller.setVisibility(View.GONE);
+			Mtv_left_top_xu.setVisibility(View.VISIBLE);
             ll_epg.setVisibility(View.VISIBLE);
         }
 
@@ -1989,6 +1992,7 @@ public class LivePlayActivity extends BaseActivity {
                         }else{
                             mVideoView.start();
                             iv_play.setVisibility(View.INVISIBLE);
+							backcontroller.setVisibility(View.GONE);          //xuameng回看播放时隐藏底部菜单
                             countDownTimer.start();
                             iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
                         }
