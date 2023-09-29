@@ -144,7 +144,6 @@
                 android:background="@null"
                 android:padding="@dimen/vs_0"
                 android:focusable="true"
-                android:focusableInTouchMode="true"
                 android:layout_width="0.0dip"
                 android:layout_height="wrap_content"
                 android:maxHeight="@dimen/vs_6"
@@ -506,9 +505,9 @@
             android:focusableInTouchMode="false"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/vs_20"
             android:singleLine="true"
-            android:marqueeRepeatLimit="marquee_forever"
-            android:layout_marginRight="@dimen/vs_20"/>
+            android:marqueeRepeatLimit="marquee_forever"/>
     </LinearLayout>
     <TextView
         android:textSize="@dimen/ts_30"
