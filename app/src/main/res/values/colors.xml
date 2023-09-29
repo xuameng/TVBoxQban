@@ -115,4 +115,5 @@
     <color name="title_fouse_n">#ffce7900</color>
     <color name="tooltip_background_dark">#e6616161</color>
     <color name="tooltip_background_light">#e6ffffff</color>
+    <color name="color_ff000099">#ff000099</color>
 </resources>
