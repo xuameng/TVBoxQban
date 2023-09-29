@@ -260,7 +260,7 @@ public class LivePlayActivity extends BaseActivity {
         liveIconNullText.setVisibility(View.INVISIBLE);
         liveIconNullBg.setVisibility(View.INVISIBLE);
 
-        sBar = (SeekBar) findViewById(R.id.pb_progressbar_xu);
+        sBar = (SeekBar) findViewById(R.id.pb_progressbar);
         tv_currentpos = (TextView) findViewById(R.id.tv_currentpos);
         backcontroller = (View) findViewById(R.id.backcontroller);
         tv_duration = (TextView) findViewById(R.id.tv_duration);
@@ -1008,7 +1008,7 @@ public class LivePlayActivity extends BaseActivity {
                     ViewGroup.LayoutParams lp =  iv_play.getLayoutParams();
                     lp.width=videoHeight/7;
                     lp.height=videoHeight/7;
-                    sBar = (SeekBar) findViewById(R.id.pb_progressbar_xu);
+                    sBar = (SeekBar) findViewById(R.id.pb_progressbar);
                     sBar.setMax(shiyi_time_c*1000);
                     sBar.setProgress((int)  mVideoView.getCurrentPosition());
                     tv_currentpos.setText(durationToString((int)mVideoView.getCurrentPosition()));
@@ -1084,7 +1084,7 @@ public class LivePlayActivity extends BaseActivity {
                     ViewGroup.LayoutParams lp =  iv_play.getLayoutParams();
                     lp.width=videoHeight/7;
                     lp.height=videoHeight/7;
-                    sBar = (SeekBar) findViewById(R.id.pb_progressbar_xu);
+                    sBar = (SeekBar) findViewById(R.id.pb_progressbar);
                     sBar.setMax(shiyi_time_c*1000);
                     sBar.setProgress((int)  mVideoView.getCurrentPosition());
                    // long dd = mVideoView.getDuration();
@@ -1911,7 +1911,8 @@ public class LivePlayActivity extends BaseActivity {
     }
     public void showProgressBars( boolean show){
 
-        iv_playpause.requestFocus();
+        iv_playpause.requestFocus();                            //xuameng回看菜单默认焦点为播放
+		iv_playpause.setNextFocusRightId(R.id.pb_progressbar);
         if(show){
             backcontroller.setVisibility(View.VISIBLE);
             ll_epg.setVisibility(View.GONE);
