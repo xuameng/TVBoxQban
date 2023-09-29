@@ -1911,7 +1911,7 @@ public class LivePlayActivity extends BaseActivity {
     }
     public void showProgressBars( boolean show){
 
-        sBar.requestFocus();
+        iv_playpause.requestFocus();
         if(show){
             backcontroller.setVisibility(View.VISIBLE);
             ll_epg.setVisibility(View.GONE);
