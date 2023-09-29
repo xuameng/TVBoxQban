@@ -270,6 +270,7 @@ public class LivePlayActivity extends BaseActivity {
 
         if(show){
             backcontroller.setVisibility(View.VISIBLE);
+			iv_playpause.requestFocus(); 
             ll_epg.setVisibility(View.GONE);
 
         }else{
@@ -1911,8 +1912,7 @@ public class LivePlayActivity extends BaseActivity {
     }
     public void showProgressBars( boolean show){
 
-        iv_playpause.requestFocus();                            //xuameng回看菜单默认焦点为播放
-		iv_playpause.setNextFocusRightId(R.id.pb_progressbar);
+//        sBar.requestFocus();                            //xuameng回看菜单默认焦点为播放
         if(show){
             backcontroller.setVisibility(View.VISIBLE);
             ll_epg.setVisibility(View.GONE);
