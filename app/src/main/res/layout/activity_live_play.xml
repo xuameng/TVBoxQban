@@ -14,7 +14,7 @@
         android:orientation="horizontal"
         android:id="@+id/tv_left_top_xu"
         android:background="@drawable/shape_thumb_bottom_name"
-        android:visibility="visible"
+        android:visibility="gone"
         android:layout_width="280.0px"
         android:layout_height="110.0px"
         android:layout_marginTop="0.0px"
@@ -180,7 +180,7 @@
             android:paddingRight="10.0dip"
             android:paddingBottom="0.0dip"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_height="@dimen/vs_300"
             android:layout_marginLeft="@dimen/vs_0"
             android:layout_marginRight="@dimen/vs_0"
             android:layout_marginBottom="@dimen/vs_0">
