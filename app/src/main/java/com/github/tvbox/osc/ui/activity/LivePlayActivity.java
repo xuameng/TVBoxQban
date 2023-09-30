@@ -270,14 +270,13 @@ public class LivePlayActivity extends BaseActivity {
 
 
         if(show){
-            backcontroller.setVisibility(View.GONE);
-			Mtv_left_top_xu.setVisibility(View.VISIBLE);
+            backcontroller.setVisibility(View.VISIBLE);
+			Mtv_left_top_xu.setVisibility(View.VISIBLE); //xuameng显示左上回看图标
 			iv_playpause.requestFocus();				 //xuameng回看菜单默认焦点为播放
             ll_epg.setVisibility(View.GONE);
 
         }else{
             backcontroller.setVisibility(View.GONE);
-			Mtv_left_top_xu.setVisibility(View.VISIBLE);
             ll_epg.setVisibility(View.VISIBLE);
         }
 
@@ -304,6 +303,8 @@ public class LivePlayActivity extends BaseActivity {
                 }else{
                     mVideoView.start();
                     iv_play.setVisibility(View.INVISIBLE);
+                    backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
+					Mtv_left_top_xu.setVisibility(View.VISIBLE);
                     countDownTimer.start();
                     iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
                 }
@@ -344,7 +345,7 @@ public class LivePlayActivity extends BaseActivity {
 
 
         });
-        sBar.setOnKeyListener(new View.OnKeyListener() {
+        sBar.setOnKeyListener(new View.OnKeyListener() {            //xuameng回看进度条监听
             @Override
             public boolean onKey(View arg0, int keycode, KeyEvent event) {
                 if(event.getAction()==KeyEvent.ACTION_DOWN){
@@ -357,6 +358,7 @@ public class LivePlayActivity extends BaseActivity {
                         }else{
                             mVideoView.start();
                             iv_play.setVisibility(View.INVISIBLE);
+                            backcontroller.setVisibility(View.GONE);            //xuameng进度条监听播放时隐藏底部菜单
                             countDownTimer.start();
                             iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));    
                         }
@@ -598,6 +600,7 @@ public class LivePlayActivity extends BaseActivity {
             backcontroller.setVisibility(View.GONE);
         }else if(isBack){
             isBack= false;
+			Mtv_left_top_xu.setVisibility(View.GONE);     //xuameng返回键隐藏
             playPreSource();
         }else {
             mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
@@ -729,7 +732,7 @@ public class LivePlayActivity extends BaseActivity {
                 tvLeftChannelListLayout.setVisibility(View.VISIBLE);
                 ViewObj viewObj = new ViewObj(tvLeftChannelListLayout, (ViewGroup.MarginLayoutParams) tvLeftChannelListLayout.getLayoutParams());
                 ObjectAnimator animator = ObjectAnimator.ofObject(viewObj, "marginLeft", new IntEvaluator(), -tvLeftChannelListLayout.getLayoutParams().width, 0);
-                animator.setDuration(200);
+                animator.setDuration(500);
                 animator.addListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
@@ -750,7 +753,7 @@ public class LivePlayActivity extends BaseActivity {
             if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
                 ViewObj viewObj = new ViewObj(tvLeftChannelListLayout, params);
                 ObjectAnimator animator = ObjectAnimator.ofObject(viewObj, "marginLeft", new IntEvaluator(), 0, -tvLeftChannelListLayout.getLayoutParams().width);
-                animator.setDuration(200);
+                animator.setDuration(500);
                 animator.addListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
@@ -884,7 +887,7 @@ public class LivePlayActivity extends BaseActivity {
                 if (tvRightSettingLayout.getVisibility() == View.VISIBLE) {
                     ViewObj viewObj = new ViewObj(tvRightSettingLayout, params);
                     ObjectAnimator animator = ObjectAnimator.ofObject(viewObj, "marginRight", new IntEvaluator(), -tvRightSettingLayout.getLayoutParams().width, 0);
-                    animator.setDuration(200);
+                    animator.setDuration(500);
                     animator.addListener(new AnimatorListenerAdapter() {
                         @Override
                         public void onAnimationEnd(Animator animation) {
@@ -905,7 +908,7 @@ public class LivePlayActivity extends BaseActivity {
             if (tvRightSettingLayout.getVisibility() == View.VISIBLE) {
                 ViewObj viewObj = new ViewObj(tvRightSettingLayout, params);
                 ObjectAnimator animator = ObjectAnimator.ofObject(viewObj, "marginRight", new IntEvaluator(), 0, -tvRightSettingLayout.getLayoutParams().width);
-                animator.setDuration(200);
+                animator.setDuration(500);
                 animator.addListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
@@ -1913,11 +1916,12 @@ public class LivePlayActivity extends BaseActivity {
         }
         return result;
     }
-    public void showProgressBars( boolean show){
+    public void showProgressBars( boolean show){         //显示回看菜单
 
 //        sBar.requestFocus();                            //xuameng回看菜单默认焦点为播放
         if(show){
             backcontroller.setVisibility(View.VISIBLE);
+			Mtv_left_top_xu.setVisibility(View.VISIBLE); //xuameng显示回看上图标
             ll_epg.setVisibility(View.GONE);
         }else{
             backcontroller.setVisibility(View.GONE);
@@ -1939,7 +1943,7 @@ public class LivePlayActivity extends BaseActivity {
             }
         });
 
-        iv_playpause.setOnClickListener(new View.OnClickListener() {
+        iv_playpause.setOnClickListener(new View.OnClickListener() {        //xuameng回看播放按钮监听
             @Override
             public void onClick(View arg0) {
                 if(mVideoView.isPlaying()){
@@ -1950,6 +1954,7 @@ public class LivePlayActivity extends BaseActivity {
                 }else{
                     mVideoView.start();
                     iv_play.setVisibility(View.INVISIBLE);
+					backcontroller.setVisibility(View.GONE);   //xuameng  播放时隐藏低菜单
                     countDownTimer.start();
                     iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
                 }
@@ -2009,7 +2014,7 @@ public class LivePlayActivity extends BaseActivity {
             iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
         }
         if(countDownTimer3==null){
-            countDownTimer3 = new CountDownTimer(36000, 1000) {
+            countDownTimer3 = new CountDownTimer(10000, 1000) {       //xuameng自动隐藏回看菜单时间10秒
 
                 @Override
                 public void onTick(long arg0) {
