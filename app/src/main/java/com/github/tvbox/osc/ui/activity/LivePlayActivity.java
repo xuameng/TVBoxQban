@@ -277,6 +277,7 @@ public class LivePlayActivity extends BaseActivity {
 
         }else{
             backcontroller.setVisibility(View.GONE);
+			Mtv_left_top_xu.setVisibility(View.GONE);   //xuameng隐藏左上回看图标
             ll_epg.setVisibility(View.VISIBLE);
         }
 
