@@ -108,7 +108,7 @@ public class LivePlayActivity extends BaseActivity {
     private TvRecyclerView mLiveChannelView;
     private LiveChannelGroupAdapter liveChannelGroupAdapter;
     private LiveChannelItemAdapter liveChannelItemAdapter;
-    private long mExitTime = 0;
+    private long mExitTime = 0;         //xuameng返回键退出时间
     private LinearLayout tvRightSettingLayout;
     private TvRecyclerView mSettingGroupView;
     private TvRecyclerView mSettingItemView;
@@ -273,12 +273,14 @@ public class LivePlayActivity extends BaseActivity {
             backcontroller.setVisibility(View.VISIBLE);
 			Mtv_left_top_xu.setVisibility(View.VISIBLE); //xuameng显示左上回看图标
 			iv_playpause.requestFocus();				 //xuameng回看菜单默认焦点为播放
-            ll_epg.setVisibility(View.GONE);
+            ll_epg.setVisibility(View.GONE);			 //xuameng下面EPG菜单隐藏
+			ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
 
         }else{
             backcontroller.setVisibility(View.GONE);
 			Mtv_left_top_xu.setVisibility(View.GONE);   //xuameng隐藏左上回看图标
-            ll_epg.setVisibility(View.VISIBLE);
+            ll_epg.setVisibility(View.VISIBLE);         //xuameng下面EPG菜单显示
+			ll_right_top_loading.setVisibility(View.VISIBLE);  //xuameng右上菜单显示
         }
 
 
@@ -513,22 +515,26 @@ public class LivePlayActivity extends BaseActivity {
                 countDownTimer.cancel();
             }
             if(!tip_epg1.getText().equals("暂无当前节目单，聚汇直播欢迎您的观看！")){
-                ll_epg.setVisibility(View.VISIBLE);
+                ll_epg.setVisibility(View.VISIBLE);  //xuameng下面EPG菜单显示
+			    ll_right_top_loading.setVisibility(View.VISIBLE);  //xuameng右上菜单显示
                 countDownTimer = new CountDownTimer(10000, 1000) {//底部epg隐藏时间设定
                     public void onTick(long j) {
                     }
                     public void onFinish() {
-                        ll_epg.setVisibility(View.GONE);
+                        ll_epg.setVisibility(View.GONE);				//xuameng下面EPG菜单隐藏
+						ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
                     }
                 };
                 countDownTimer.start();
             }else {
                 ll_epg.setVisibility(View.VISIBLE);    //XUAMENG  底部epg显示
+			    ll_right_top_loading.setVisibility(View.VISIBLE);  //xuameng右上菜单显示
 		countDownTimer = new CountDownTimer(10000, 1000) {//底部epg隐藏时间设定
 		public void onTick(long j) {
                     }
                     public void onFinish() {
-                        ll_epg.setVisibility(View.GONE);
+                        ll_epg.setVisibility(View.GONE);				//xuameng下面EPG菜单隐藏
+						ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
                     }
                 };
                 countDownTimer.start();
@@ -607,14 +613,20 @@ public class LivePlayActivity extends BaseActivity {
         } else if (tvRightSettingLayout.getVisibility() == View.VISIBLE) {
             mHandler.removeCallbacks(mHideSettingLayoutRun);
             mHandler.post(mHideSettingLayoutRun);
-        } else if( backcontroller.getVisibility() == View.VISIBLE){ //
+        } else if( backcontroller.getVisibility() == View.VISIBLE){ 
             backcontroller.setVisibility(View.GONE);
+        }else if (ll_right_top_loading.setVisibility() == View.VISIBLE) {
+            ll_right_top_loading.setVisibility(View.GONE)
+			ll_epg.setVisibility(View.GONE);
+        }else if (ll_right_top_loading.setVisibility() == View.GONE) {
+            ll_right_top_loading.setVisibility(View.VISIBLE)
+			ll_epg.setVisibility(View.VISIBLE);
         }else if(isBack){
             isBack= false;
 			Mtv_left_top_xu.setVisibility(View.GONE);     //xuameng返回键隐藏
             playPreSource();
         }else {
-            xuexit();
+            xuexit();             //xuameng双击退出
         }
     }
 
@@ -1932,12 +1944,14 @@ public class LivePlayActivity extends BaseActivity {
         if(show){
             backcontroller.setVisibility(View.VISIBLE);
 			Mtv_left_top_xu.setVisibility(View.VISIBLE); //xuameng显示回看上图标
-            ll_epg.setVisibility(View.GONE);
+            ll_epg.setVisibility(View.GONE);				//xuameng下面EPG菜单隐藏
+			ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
         }else{
             backcontroller.setVisibility(View.GONE);
 			Mtv_left_top_xu.setVisibility(View.GONE);
             if(!tip_epg1.getText().equals("暂无信息")){
-                ll_epg.setVisibility(View.VISIBLE);
+                ll_epg.setVisibility(View.VISIBLE);  //xuameng下面EPG菜单显示
+			    ll_right_top_loading.setVisibility(View.VISIBLE);  //xuameng右上菜单显示
             }
         }
 
