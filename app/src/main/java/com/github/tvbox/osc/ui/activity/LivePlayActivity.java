@@ -131,7 +131,7 @@ public class LivePlayActivity extends BaseActivity {
     private static Hashtable hsEpg = new Hashtable();
     private CountDownTimer countDownTimer;
 //    private CountDownTimer countDownTimerRightTop;
-    private View ll_right_top_loading;
+    private View ll_right_top_loading;     //xuameng右上菜单
     private View ll_right_top_huikan;
     private View divLoadEpg;
     private View divLoadEpgleft;
@@ -235,7 +235,7 @@ public class LivePlayActivity extends BaseActivity {
         iv_back_bg = (ImageView) findViewById(R.id.iv_back_bg);
         tv_shownum = (TextView) findViewById(R.id.tv_shownum);
         txtNoEpg = (TextView) findViewById(R.id.txtNoEpg);
-        ll_right_top_loading (View) = findViewById(R.id.ll_right_top_loading);
+        ll_right_top_loading = findViewById(R.id.ll_right_top_loading);
         ll_right_top_huikan = findViewById(R.id.ll_right_top_huikan);
         divLoadEpg = (View) findViewById(R.id.divLoadEpg);
         divLoadEpgleft = (View) findViewById(R.id.divLoadEpgleft);
@@ -615,10 +615,10 @@ public class LivePlayActivity extends BaseActivity {
             mHandler.post(mHideSettingLayoutRun);
         } else if( backcontroller.getVisibility() == View.VISIBLE){ 
             backcontroller.setVisibility(View.GONE);
-        }else if (ll_right_top_loading.setVisibility() == View.VISIBLE) {
+        }else if (isLl_epgVisible()) {
             ll_right_top_loading.setVisibility(View.GONE);
 			ll_epg.setVisibility(View.GONE);
-        }else if (ll_right_top_loading.setVisibility() == View.GONE) {
+        }else if (!isLl_epgVisible()) {
             ll_right_top_loading.setVisibility(View.VISIBLE);
 			ll_epg.setVisibility(View.VISIBLE);
         }else if(isBack){
@@ -1668,6 +1668,9 @@ public class LivePlayActivity extends BaseActivity {
         return tvLeftChannelListLayout.getVisibility() == View.VISIBLE || tvRightSettingLayout.getVisibility() == View.VISIBLE;
     }
 
+	private boolean isLl_epgVisible() {            //XUAMENG判断底部EPG是否显示
+        return ll_epg.getVisibility() == VISIBLE;
+    }
     private void initLiveSettingGroupList() {
         ArrayList<String> groupNames = new ArrayList<>(Arrays.asList("线路选择", "画面比例", "播放解码", "超时换源", "偏好设置"));
         ArrayList<ArrayList<String>> itemsArrayList = new ArrayList<>();
