@@ -549,6 +549,7 @@ public class LivePlayActivity extends BaseActivity {
 
             Handler handler = new Handler(Looper.getMainLooper());
             ll_right_top_loading.setVisibility(View.VISIBLE);
+			ll_epg.setVisibility(View.VISIBLE);  //xuameng下面EPG菜单显示
 
             // xuameng 取消右上菜单自动隐藏 延迟5秒后执行隐藏操作
 //            handler.postDelayed(new Runnable() {
