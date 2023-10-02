@@ -1669,7 +1669,7 @@ public class LivePlayActivity extends BaseActivity {
     }
 
 	private boolean isLl_epgVisible() {            //XUAMENG判断底部EPG是否显示
-        return ll_epg.getVisibility() == VISIBLE;
+        return ll_epg.getVisibility() == View.VISIBLE;
     }
     private void initLiveSettingGroupList() {
         ArrayList<String> groupNames = new ArrayList<>(Arrays.asList("线路选择", "画面比例", "播放解码", "超时换源", "偏好设置"));
