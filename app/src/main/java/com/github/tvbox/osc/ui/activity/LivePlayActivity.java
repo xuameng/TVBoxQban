@@ -588,6 +588,16 @@ public class LivePlayActivity extends BaseActivity {
         divLoadEpg.setVisibility(View.VISIBLE);
     }
 
+    private void xuexit() {               //xuameng双击退出
+        if (System.currentTimeMillis() - mExitTime < 2000) {
+            mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
+            mHandler.removeCallbacks(mUpdateNetSpeedRun);
+            super.onBackPressed();
+        } else {
+            mExitTime = System.currentTimeMillis();
+            Toast.makeText(mContext, "再按一次返回键退出直播", Toast.LENGTH_SHORT).show();            
+        }
+    }
 
     @Override
     public void onBackPressed() {
@@ -604,9 +614,7 @@ public class LivePlayActivity extends BaseActivity {
 			Mtv_left_top_xu.setVisibility(View.GONE);     //xuameng返回键隐藏
             playPreSource();
         }else {
-            mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
-            mHandler.removeCallbacks(mUpdateNetSpeedRun);
-            super.onBackPressed();
+            xuexit();
         }
     }
 
@@ -738,7 +746,7 @@ public class LivePlayActivity extends BaseActivity {
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         super.onAnimationEnd(animation);
- //xuameng动画隐藏左侧菜单测试                       mHandler.removeCallbacks(mHideChannelListRun);
+                        mHandler.removeCallbacks(mHideChannelListRun);
                         mHandler.postDelayed(mHideChannelListRun, 5000);
                     }
                 });
