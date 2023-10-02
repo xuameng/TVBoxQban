@@ -131,7 +131,7 @@ public class LivePlayActivity extends BaseActivity {
     private static Hashtable hsEpg = new Hashtable();
     private CountDownTimer countDownTimer;
 //    private CountDownTimer countDownTimerRightTop;
-    RelativeLayout ll_right_top_loading;   //xuameng右上菜单
+    private RelativeLayout ll_right_top_loading;   //xuameng右上菜单
     private View ll_right_top_huikan;
     private View divLoadEpg;
     private View divLoadEpgleft;
@@ -603,10 +603,6 @@ public class LivePlayActivity extends BaseActivity {
             mExitTime = System.currentTimeMillis();
             Toast.makeText(mContext, "再按一次返回键退出直播", Toast.LENGTH_SHORT).show();            
         }
-    }
-
-		boolean isRighttopVisible() {     //xuameng判断右上菜单是否显示
-        return ll_right_top_loading.getVisibility() == VISIBLE;
     }
 
     @Override
