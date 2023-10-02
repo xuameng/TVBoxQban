@@ -131,7 +131,7 @@ public class LivePlayActivity extends BaseActivity {
     private static Hashtable hsEpg = new Hashtable();
     private CountDownTimer countDownTimer;
 //    private CountDownTimer countDownTimerRightTop;
-    private View ll_right_top_loading;
+    RelativeLayout ll_right_top_loading;   //xuameng右上菜单
     private View ll_right_top_huikan;
     private View divLoadEpg;
     private View divLoadEpgleft;
