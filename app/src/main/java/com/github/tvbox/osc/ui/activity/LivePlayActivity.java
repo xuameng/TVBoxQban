@@ -131,7 +131,7 @@ public class LivePlayActivity extends BaseActivity {
     private static Hashtable hsEpg = new Hashtable();
     private CountDownTimer countDownTimer;
 //    private CountDownTimer countDownTimerRightTop;
-    private RelativeLayout ll_right_top_loading;   //xuameng右上菜单
+    private View ll_right_top_loading;
     private View ll_right_top_huikan;
     private View divLoadEpg;
     private View divLoadEpgleft;
@@ -235,7 +235,7 @@ public class LivePlayActivity extends BaseActivity {
         iv_back_bg = (ImageView) findViewById(R.id.iv_back_bg);
         tv_shownum = (TextView) findViewById(R.id.tv_shownum);
         txtNoEpg = (TextView) findViewById(R.id.txtNoEpg);
-        ll_right_top_loading = findViewById(R.id.ll_right_top_loading);
+        ll_right_top_loading (View) = findViewById(R.id.ll_right_top_loading);
         ll_right_top_huikan = findViewById(R.id.ll_right_top_huikan);
         divLoadEpg = (View) findViewById(R.id.divLoadEpg);
         divLoadEpgleft = (View) findViewById(R.id.divLoadEpgleft);
