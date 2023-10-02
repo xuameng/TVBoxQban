@@ -616,10 +616,10 @@ public class LivePlayActivity extends BaseActivity {
         } else if( backcontroller.getVisibility() == View.VISIBLE){ 
             backcontroller.setVisibility(View.GONE);
         }else if (ll_right_top_loading.setVisibility() == View.VISIBLE) {
-            ll_right_top_loading.setVisibility(View.GONE)
+            ll_right_top_loading.setVisibility(View.GONE);
 			ll_epg.setVisibility(View.GONE);
         }else if (ll_right_top_loading.setVisibility() == View.GONE) {
-            ll_right_top_loading.setVisibility(View.VISIBLE)
+            ll_right_top_loading.setVisibility(View.VISIBLE);
 			ll_epg.setVisibility(View.VISIBLE);
         }else if(isBack){
             isBack= false;
