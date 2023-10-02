@@ -550,14 +550,14 @@ public class LivePlayActivity extends BaseActivity {
             Handler handler = new Handler(Looper.getMainLooper());
             ll_right_top_loading.setVisibility(View.VISIBLE);
 
-            // 延迟5秒后执行隐藏操作
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    ll_right_top_loading.setVisibility(View.GONE);
-                    ll_right_top_huikan.setVisibility(View.GONE);
-                }
-            }, 10000);
+            // xuameng 取消右上菜单自动隐藏 延迟5秒后执行隐藏操作
+//            handler.postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    ll_right_top_loading.setVisibility(View.GONE);
+//                    ll_right_top_huikan.setVisibility(View.GONE);
+//                }
+//            }, 10000);
         }
     }
 
@@ -615,12 +615,6 @@ public class LivePlayActivity extends BaseActivity {
             mHandler.post(mHideSettingLayoutRun);
         } else if( backcontroller.getVisibility() == View.VISIBLE){ 
             backcontroller.setVisibility(View.GONE);
-        }else if (isLl_epgVisible()) {
-            ll_right_top_loading.setVisibility(View.GONE);
-			ll_epg.setVisibility(View.GONE);
-        }else if (!isLl_epgVisible()) {
-            ll_right_top_loading.setVisibility(View.VISIBLE);
-			ll_epg.setVisibility(View.VISIBLE);
         }else if(isBack){
             isBack= false;
 			Mtv_left_top_xu.setVisibility(View.GONE);     //xuameng返回键隐藏
@@ -1668,9 +1662,9 @@ public class LivePlayActivity extends BaseActivity {
         return tvLeftChannelListLayout.getVisibility() == View.VISIBLE || tvRightSettingLayout.getVisibility() == View.VISIBLE;
     }
 
-	private boolean isLl_epgVisible() {            //XUAMENG判断底部EPG是否显示
-        return ll_epg.getVisibility() == View.VISIBLE;
-    }
+//	private boolean isLl_epgVisible() {            //XUAMENG判断底部EPG是否显示
+//        return ll_epg.getVisibility() == View.VISIBLE;
+//    }
     private void initLiveSettingGroupList() {
         ArrayList<String> groupNames = new ArrayList<>(Arrays.asList("线路选择", "画面比例", "播放解码", "超时换源", "偏好设置"));
         ArrayList<ArrayList<String>> itemsArrayList = new ArrayList<>();
