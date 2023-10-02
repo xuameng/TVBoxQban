@@ -605,6 +605,10 @@ public class LivePlayActivity extends BaseActivity {
         }
     }
 
+		boolean isRighttopVisible() {     //xuameng判断右上菜单是否显示
+        return ll_right_top_loading.getVisibility() == VISIBLE;
+    }
+
     @Override
     public void onBackPressed() {
         if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
