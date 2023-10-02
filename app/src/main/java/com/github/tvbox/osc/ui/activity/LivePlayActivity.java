@@ -719,7 +719,7 @@ public class LivePlayActivity extends BaseActivity {
         }
     }
 
-    private Runnable mFocusCurrentChannelAndShowChannelList = new Runnable() {
+    private Runnable mFocusCurrentChannelAndShowChannelList = new Runnable() {              //xuameng左侧菜单动画
         @Override
         public void run() {
             if (mChannelGroupView.isScrolling() || mLiveChannelView.isScrolling() || mChannelGroupView.isComputingLayout() || mLiveChannelView.isComputingLayout()) {
@@ -738,7 +738,7 @@ public class LivePlayActivity extends BaseActivity {
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         super.onAnimationEnd(animation);
-                        mHandler.removeCallbacks(mHideChannelListRun);
+ //xuameng动画隐藏左侧菜单测试                       mHandler.removeCallbacks(mHideChannelListRun);
                         mHandler.postDelayed(mHideChannelListRun, 5000);
                     }
                 });
