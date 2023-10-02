@@ -10,28 +10,27 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"/>
     <LinearLayout
-        android:layout_gravity="center|left|top"
+        android:layout_gravity="left|top"
+        android:gravity="center"
         android:orientation="horizontal"
         android:id="@+id/tv_left_top_xu"
-        android:background="@drawable/shape_thumb_bottom_name"
+        android:background="@drawable/shape_thumb_bottom_name_xu"
         android:visibility="gone"
         android:layout_width="280.0px"
         android:layout_height="110.0px"
         android:layout_marginTop="0.0px"
         android:minWidth="270.0px">
         <ImageView
+            android:layout_gravity="center"
             android:id="@+id/iv_back_bg"
-            android:layout_width="90.0px"
-            android:layout_height="90.0px"
-            android:layout_marginLeft="5.0px"
-            android:layout_marginTop="10.0px"
+            android:layout_width="100.0px"
+            android:layout_height="100.0px"
             android:src="@drawable/app_icon"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginStart="5.0dip"
-            android:layout_marginEnd="5.0px"/>
+            android:paddingLeft="10.0px"
+            android:paddingRight="10.0px"/>
         <LinearLayout
-            android:layout_gravity="center|top"
+            android:gravity="center"
+            android:layout_gravity="center"
             android:orientation="vertical"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
@@ -39,23 +38,17 @@
                 android:textSize="30.0px"
                 android:textColor="#fffcffff"
                 android:ellipsize="marquee"
+                android:gravity="center"
                 android:layout_gravity="center"
                 android:id="@+id/tv_right_top_epg_name"
-                android:paddingLeft="0.0px"
-                android:paddingTop="10.0px"
+                android:paddingTop="5.0px"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="5.0dip"
-                android:layout_marginRight="5.0dip"
+                android:paddingRight="10.0px"
                 android:text="测试频道"
                 android:singleLine="true"
                 android:layout_toRightOf="@+id/iv_back_bg"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentRight="true"
-                android:marqueeRepeatLimit="marquee_forever"
-                android:paddingStart="5.0px"
-                android:layout_marginStart="5.0dip"
-                android:layout_marginEnd="5.0dip"/>
+                android:marqueeRepeatLimit="marquee_forever"/>
             <TextView
                 android:textSize="30.0px"
                 android:textColor="#fffcffff"
@@ -63,21 +56,14 @@
                 android:gravity="center"
                 android:layout_gravity="center"
                 android:id="@+id/tv_right_top_type"
-                android:paddingLeft="0.0px"
                 android:paddingBottom="5.0px"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="0.0dip"
-                android:layout_marginRight="0.0dip"
+                android:paddingRight="10.0px"
                 android:text="回看中"
                 android:singleLine="true"
                 android:layout_toRightOf="@+id/iv_back_bg"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentBottom="true"
-                android:marqueeRepeatLimit="marquee_forever"
-                android:paddingStart="15.0px"
-                android:layout_marginStart="0.0dip"
-                android:layout_marginEnd="0.0dip"/>
+                android:marqueeRepeatLimit="marquee_forever"/>
         </LinearLayout>
     </LinearLayout>
     <LinearLayout
