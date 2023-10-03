@@ -393,6 +393,7 @@ public class VodController extends BaseController {
                 if(event.getAction()==KeyEvent.ACTION_DOWN){
 			    int keyCode = event.getKeyCode();
                 int action = event.getAction();
+	         	boolean isInPlayback = isInPlaybackState();
 				if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
                 if (isInPlayback) {
                     togglePlay();
