@@ -10,8 +10,8 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"/>
     <LinearLayout
-        android:layout_gravity="left|top"
         android:gravity="center"
+        android:layout_gravity="center|left|top"
         android:orientation="horizontal"
         android:id="@+id/tv_left_top_xu"
         android:background="@drawable/shape_thumb_bottom_name_xu"
@@ -23,11 +23,11 @@
         <ImageView
             android:layout_gravity="center"
             android:id="@+id/iv_back_bg"
+            android:paddingLeft="10.0px"
+            android:paddingRight="10.0px"
             android:layout_width="100.0px"
             android:layout_height="100.0px"
-            android:src="@drawable/app_icon"
-            android:paddingLeft="10.0px"
-            android:paddingRight="10.0px"/>
+            android:src="@drawable/app_icon"/>
         <LinearLayout
             android:gravity="center"
             android:layout_gravity="center"
@@ -42,9 +42,9 @@
                 android:layout_gravity="center"
                 android:id="@+id/tv_right_top_epg_name"
                 android:paddingTop="5.0px"
+                android:paddingRight="10.0px"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingRight="10.0px"
                 android:text="测试频道"
                 android:singleLine="true"
                 android:layout_toRightOf="@+id/iv_back_bg"
@@ -56,10 +56,10 @@
                 android:gravity="center"
                 android:layout_gravity="center"
                 android:id="@+id/tv_right_top_type"
+                android:paddingRight="10.0px"
                 android:paddingBottom="5.0px"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingRight="10.0px"
                 android:text="回看中"
                 android:singleLine="true"
                 android:layout_toRightOf="@+id/iv_back_bg"
@@ -234,13 +234,14 @@
         </LinearLayout>
     </LinearLayout>
     <LinearLayout
-        android:layout_gravity="center_horizontal"
+        android:layout_gravity="left"
+        android:gravity="center_vertical"
         android:orientation="horizontal"
         android:id="@+id/tvLeftChannnelListLayout"
         android:padding="0.0dip"
-        android:layout_width="fill_parent"
+        android:layout_width="790mm"
         android:layout_height="fill_parent"
-        android:layout_margin="0.0dip"
+        android:layout_marginLeft="-790.0mm"
         android:baselineAligned="false">
         <LinearLayout
             android:id="@+id/ll_typeSelect"
@@ -248,7 +249,6 @@
             android:padding="0.0dip"
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
-            android:layout_margin="20.0dip"
             android:baselineAligned="false">
             <LinearLayout
                 android:layout_gravity="center_vertical"
@@ -426,7 +426,7 @@
         android:layout_gravity="right"
         android:orientation="horizontal"
         android:id="@+id/tvRightSettingLayout"
-        android:background="@drawable/bg_channel_list"
+        android:background="@drawable/bg_channel_list_xu"
         android:visibility="visible"
         android:layout_width="361.0mm"
         android:layout_height="fill_parent"
