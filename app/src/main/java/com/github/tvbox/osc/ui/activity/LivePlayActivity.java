@@ -1253,19 +1253,19 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public void changeSource(int direction) {
                 if (direction > 0)
-                    if(isBack){  //手机换源和显示时移控制栏
+                    if(isBack){  //xuameng手机换源和显示时移控制栏
                         showProgressBars(true);
                     }else{
                         playNextSource();
                     }
 				 if (direction < 0)
-                    if(isBack){  //手机换源和显示时移控制栏
+                    if(isBack){  //xuameng手机换源和显示时移控制栏
                         showProgressBars(true);
                     }else{
                         playPreSource();
                     }
                 else
-                    return true;
+                     playXuSource();
             }
         });
         controller.setCanChangePosition(false);
