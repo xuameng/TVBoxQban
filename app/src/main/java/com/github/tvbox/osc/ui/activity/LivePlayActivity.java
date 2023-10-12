@@ -622,7 +622,7 @@ public class LivePlayActivity extends BaseActivity {
         } else if(isBack){
             isBack= false;
 			Mtv_left_top_xu.setVisibility(View.GONE);     //xuameng返回键隐藏左上回看菜单
-            playPreSource();
+            playXuSource();
         } else {
             xuexit();             //xuameng双击退出
         }
@@ -863,6 +863,12 @@ public class LivePlayActivity extends BaseActivity {
     public void playPreSource() {
         if (!isCurrentLiveChannelValid()) return;
         currentLiveChannelItem.preSource();
+        playChannel(currentChannelGroupIndex, currentLiveChannelIndex, true);
+    }
+
+	    public void playXuSource() {
+        if (!isCurrentLiveChannelValid()) return;
+        currentLiveChannelItem.xuSource();
         playChannel(currentChannelGroupIndex, currentLiveChannelIndex, true);
     }
 
@@ -1247,14 +1253,17 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public void changeSource(int direction) {
                 if (direction > 0)
-                    if(isBack){  //手机换源和显示时移控制栏
+                    if(isBack){  //xuameng手机换源和显示时移控制栏
                         showProgressBars(true);
                     }else{
                         playNextSource();
                     }
-                else
-                    playPreSource();
-            }
+                if (direction < 0)
+                    if(isBack){  //xuameng手机换源和显示时移控制栏
+                        showProgressBars(true);
+                    }else{
+                        playPreSource();
+                    }
         });
         controller.setCanChangePosition(false);
         controller.setEnableInNormal(true);
