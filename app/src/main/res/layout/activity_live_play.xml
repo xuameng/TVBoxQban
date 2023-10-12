@@ -272,14 +272,14 @@
             </LinearLayout>
             <LinearLayout
                 android:background="#40000000"
+                android:id="@+id/divLoadEpgleft"
+                android:visibility="gone"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:layout_margin="0.0dip">
                 <LinearLayout
                     android:layout_gravity="center_vertical"
                     android:orientation="vertical"
-                    android:id="@+id/divLoadEpgleft"
-                    android:visibility="gone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="6.0dip"
@@ -347,13 +347,13 @@
                 android:layout_margin="0.0dip"/>
             <LinearLayout
                 android:background="@drawable/bg_list_xu"
+                android:id="@+id/divLoadEpg"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:layout_margin="0.0dip">
                 <LinearLayout
                     android:layout_gravity="center_vertical"
                     android:orientation="vertical"
-                    android:id="@+id/divLoadEpg"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="2.0dip"
