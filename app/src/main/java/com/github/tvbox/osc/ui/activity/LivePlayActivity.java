@@ -1257,15 +1257,12 @@ public class LivePlayActivity extends BaseActivity {
                         showProgressBars(true);
                     }else{
                         playNextSource();
-                    }
-				 if (direction < 0)
+                    }else if (direction < 0)
                     if(isBack){  //xuameng手机换源和显示时移控制栏
                         showProgressBars(true);
                     }else{
                         playPreSource();
                     }
-                else
-                     playXuSource();
             }
         });
         controller.setCanChangePosition(false);
