@@ -1265,7 +1265,6 @@ public class LivePlayActivity extends BaseActivity {
                         playPreSource();
                     }
                 else
-            }
         });
         controller.setCanChangePosition(false);
         controller.setEnableInNormal(true);
