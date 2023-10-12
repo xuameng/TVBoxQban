@@ -614,13 +614,15 @@ public class LivePlayActivity extends BaseActivity {
         } else if (tvRightSettingLayout.getVisibility() == View.VISIBLE) {
             mHandler.removeCallbacks(mHideSettingLayoutRun);
             mHandler.post(mHideSettingLayoutRun);
-        } else if( backcontroller.getVisibility() == View.VISIBLE){ 
+        } else if(backcontroller.getVisibility() == View.VISIBLE){ 
             backcontroller.setVisibility(View.GONE);
-        }else if(isBack){
+        } else if(isLl_epgVisible()){ 
+            ll_epg.setVisibility(View.GONE);			 //xuameng返回键下面EPG菜单隐藏
+        } else if(isBack){
             isBack= false;
-			Mtv_left_top_xu.setVisibility(View.GONE);     //xuameng返回键隐藏
+			Mtv_left_top_xu.setVisibility(View.GONE);     //xuameng返回键隐藏左上回看菜单
             playPreSource();
-        }else {
+        } else {
             xuexit();             //xuameng双击退出
         }
     }
@@ -1663,9 +1665,9 @@ public class LivePlayActivity extends BaseActivity {
         return tvLeftChannelListLayout.getVisibility() == View.VISIBLE || tvRightSettingLayout.getVisibility() == View.VISIBLE;
     }
 
-//	private boolean isLl_epgVisible() {            //XUAMENG判断底部EPG是否显示
-//        return ll_epg.getVisibility() == View.VISIBLE;
-//    }
+	private boolean isLl_epgVisible() {            //XUAMENG判断底部EPG是否显示
+        return ll_epg.getVisibility() == View.VISIBLE;
+    }
     private void initLiveSettingGroupList() {
         ArrayList<String> groupNames = new ArrayList<>(Arrays.asList("线路选择", "画面比例", "播放解码", "超时换源", "偏好设置"));
         ArrayList<ArrayList<String>> itemsArrayList = new ArrayList<>();
