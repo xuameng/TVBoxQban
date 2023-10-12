@@ -617,7 +617,8 @@ public class LivePlayActivity extends BaseActivity {
         } else if(backcontroller.getVisibility() == View.VISIBLE){ 
             backcontroller.setVisibility(View.GONE);
         } else if(isLl_epgVisible()){ 
-            ll_epg.setVisibility(View.GONE);			 //xuameng返回键下面EPG菜单隐藏
+            ll_epg.setVisibility(View.GONE);			 //xuameng返回键隐藏下面EPG菜单隐藏
+			ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
         } else if(isBack){
             isBack= false;
 			Mtv_left_top_xu.setVisibility(View.GONE);     //xuameng返回键隐藏左上回看菜单
