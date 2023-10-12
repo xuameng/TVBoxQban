@@ -866,15 +866,15 @@ public class LivePlayActivity extends BaseActivity {
         playChannel(currentChannelGroupIndex, currentLiveChannelIndex, true);
     }
 
-	    public void playXuSource() {
-        if (!isCurrentLiveChannelValid()) return;
-        currentLiveChannelItem.xuSource();
-        playChannel(currentChannelGroupIndex, currentLiveChannelIndex, true);
-    }
-
     public void playNextSource() {
         if (!isCurrentLiveChannelValid()) return;
         currentLiveChannelItem.nextSource();
+        playChannel(currentChannelGroupIndex, currentLiveChannelIndex, true);
+    }
+
+    public void playXuSource() {
+        if (!isCurrentLiveChannelValid()) return;
+        currentLiveChannelItem.getUrl();
         playChannel(currentChannelGroupIndex, currentLiveChannelIndex, true);
     }
 
@@ -1253,19 +1253,18 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public void changeSource(int direction) {
                 if (direction > 0)
-                    if(isBack){  //xuameng手机换源和显示时移控制栏
+                    if(isBack){  //手机换源和显示时移控制栏
                         showProgressBars(true);
                     }else{
                         playNextSource();
                     }
-                if (direction < 0)
-                    if(isBack){  //xuameng手机换源和显示时移控制栏
+				 if (direction < 0)
+                    if(isBack){  //手机换源和显示时移控制栏
                         showProgressBars(true);
                     }else{
                         playPreSource();
                     }
                 else
-                    playXuSource();
             }
         });
         controller.setCanChangePosition(false);
