@@ -75,8 +75,7 @@ public class LiveChannelItem {
     }
 
 	public void xuSource() {                 //xuameng当前节目源
-        sourceIndex;
-        if (sourceIndex == sourceNum) sourceIndex = 0;
+        sourceIndex = sourceNum;
     }
 
     public void setSourceIndex(int sourceIndex) {
