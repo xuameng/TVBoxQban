@@ -1297,12 +1297,22 @@ public class LivePlayActivity extends BaseActivity {
             public void changeSource(int direction) {
                 if (direction > 0)
                     if(isBack){  //xuameng手机换源和显示时移控制栏
-                        showProgressBars(true);
+                        if(backcontroller.getVisibility() == View.VISIBLE){
+                        backcontroller.setVisibility(View.GONE);
+                    }
+					    if(backcontroller.getVisibility() == View.GONE){
+                        backcontroller.setVisibility(View.VISIBLE);
+                    }
                     }else{
                         playNextSource();
                     }else if (direction < 0)
                     if(isBack){  //xuameng手机换源和隐藏时移控制栏
+                        if(backcontroller.getVisibility() == View.VISIBLE){
                         backcontroller.setVisibility(View.GONE);
+                    }
+					    if(backcontroller.getVisibility() == View.GONE){
+                        backcontroller.setVisibility(View.VISIBLE);
+                    }
                     }else{
                         playPreSource();
                     }
