@@ -677,21 +677,51 @@ public class LivePlayActivity extends BaseActivity {
                         break;
                     case KeyEvent.KEYCODE_DPAD_CENTER:          //xuameng 修复回看时不能暂停，弹出菜单问题
 						if(isBack){
+                        if(mVideoView.isPlaying()){
                             showProgressBars(true);
+                        }else{
+							if(backcontrollerVisible()){                        //XUAMENG判断如果显示
+                             backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
+				             }
+                            mVideoView.start();
+                            iv_play.setVisibility(View.INVISIBLE);
+                            countDownTimer.start();
+                            iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
+                        }
                         }else{
                             showChannelList();
                         }
                         break;
                     case KeyEvent.KEYCODE_ENTER:				//xuameng 修复回看时不能暂停，弹出菜单问题
 						if(isBack){
+                        if(mVideoView.isPlaying()){
                             showProgressBars(true);
+                        }else{
+							if(backcontrollerVisible()){                        //XUAMENG判断如果显示
+                             backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
+				             }
+                            mVideoView.start();
+                            iv_play.setVisibility(View.INVISIBLE);
+                            countDownTimer.start();
+                            iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
+                        }
                         }else{
                             showChannelList();
                         }
                         break;
                     case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:		//xuameng 修复回看时不能暂停，弹出菜单问题
 						if(isBack){
+                        if(mVideoView.isPlaying()){
                             showProgressBars(true);
+                        }else{
+							if(backcontrollerVisible()){                        //XUAMENG判断如果显示
+                             backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
+				             }
+                            mVideoView.start();
+                            iv_play.setVisibility(View.INVISIBLE);
+                            countDownTimer.start();
+                            iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
+                        }
                         }else{
                             showChannelList();
                         }
