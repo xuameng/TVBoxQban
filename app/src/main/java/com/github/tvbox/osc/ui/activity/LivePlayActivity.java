@@ -208,7 +208,7 @@ public class LivePlayActivity extends BaseActivity {
         setLoadSir(findViewById(R.id.live_root));
         mVideoView = findViewById(R.id.mVideoView);
 
-        tvLeftChannelListLayout = findViewById(R.id.tvLeftChannnelListLayout);
+        tvLeftChannelListLayout = findViewById(R.id.tvLeftChannnelListLayout);       //xuameng左边频道菜单
         mChannelGroupView = findViewById(R.id.mGroupGridView);
         mLiveChannelView = findViewById(R.id.mChannelGridView);
         tvRightSettingLayout = findViewById(R.id.tvRightSettingLayout);
@@ -1266,14 +1266,50 @@ public class LivePlayActivity extends BaseActivity {
         LiveController controller = new LiveController(this);
         controller.setListener(new LiveController.LiveControlListener() {
             @Override
-            public boolean singleTap() {
+            public boolean singleTap() {           //xuameng点击屏幕显示频道菜单
+				if(isBack){
+				   if(mVideoView.isPlaying()){
+                     mVideoView.pause();
+                     countDownTimer.cancel();
+                     iv_play.setVisibility(View.VISIBLE);
+                     iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
+                     }else{
+				  if(backcontrollerVisible()){                        //XUAMENG判断如果显示
+                     backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
+				     }
+                     mVideoView.start();
+                     iv_play.setVisibility(View.INVISIBLE);
+                     countDownTimer.start();
+                     iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
+                     }
+				}
+                else{
                 showChannelList();
                 return true;
+				}
             }
 
             @Override
-            public void longPress() {
+            public void longPress() {               //xuameng长按显示左边设置菜单
+				 if(isBack){
+				   if(mVideoView.isPlaying()){
+                     mVideoView.pause();
+                     countDownTimer.cancel();
+                     iv_play.setVisibility(View.VISIBLE);
+                     iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
+                     }else{
+				  if(backcontrollerVisible()){                        //XUAMENG判断如果显示
+                     backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
+				     }
+                     mVideoView.start();
+                     iv_play.setVisibility(View.INVISIBLE);
+                     countDownTimer.start();
+                     iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
+                     }
+				}
+				else{
                 showSettingGroup();
+				}
             }
 
             @Override
