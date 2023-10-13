@@ -304,9 +304,11 @@ public class LivePlayActivity extends BaseActivity {
                     iv_play.setVisibility(View.VISIBLE);
                     iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
                 }else{
+					if(backcontrollerVisible()){ 
+                    backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
+				    }
                     mVideoView.start();
                     iv_play.setVisibility(View.INVISIBLE);
-                    backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
 					Mtv_left_top_xu.setVisibility(View.VISIBLE);
                     countDownTimer.start();
                     iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
@@ -606,6 +608,17 @@ public class LivePlayActivity extends BaseActivity {
         }
     }
 
+    private void xubackexit() {               //xuameng双击退出回看
+        if (System.currentTimeMillis() - mExitTime < 2000) {
+            isBack= false;
+			Mtv_left_top_xu.setVisibility(View.GONE);     //xuameng返回键隐藏左上回看菜单
+            playXuSource();
+        } else {
+            mExitTime = System.currentTimeMillis();
+            Toast.makeText(mContext, "再按一次返回键退出回看", Toast.LENGTH_SHORT).show();            
+        }
+    }
+
     @Override
     public void onBackPressed() {
         if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
@@ -620,9 +633,7 @@ public class LivePlayActivity extends BaseActivity {
             ll_epg.setVisibility(View.GONE);			 //xuameng返回键隐藏下面EPG菜单隐藏
 			ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
         } else if(isBack){
-            isBack= false;
-			Mtv_left_top_xu.setVisibility(View.GONE);     //xuameng返回键隐藏左上回看菜单
-            playXuSource();
+            xubackexit();             //xuameng回放双击退出
         } else {
             xuexit();             //xuameng双击退出
         }
@@ -1254,12 +1265,12 @@ public class LivePlayActivity extends BaseActivity {
             public void changeSource(int direction) {
                 if (direction > 0)
                     if(isBack){  //xuameng手机换源和显示时移控制栏
-                        showProgressBars(true);
+                        backcontroller.setVisibility(View.VISIBLE);
                     }else{
                         playNextSource();
                     }else if (direction < 0)
-                    if(isBack){  //xuameng手机换源和显示时移控制栏
-                        showProgressBars(true);
+                    if(isBack){  //xuameng手机换源和隐藏时移控制栏
+                        backcontroller.setVisibility(View.GONE);
                     }else{
                         playPreSource();
                     }
@@ -1678,6 +1689,11 @@ public class LivePlayActivity extends BaseActivity {
 	private boolean isLl_epgVisible() {            //XUAMENG判断底部EPG是否显示
         return ll_epg.getVisibility() == View.VISIBLE;
     }
+
+	private boolean backcontrollerVisible() {            //XUAMENG判断底部回看菜单是否显示
+	    return backcontroller..getVisibility() == View.VISIBLE;
+	}
+
     private void initLiveSettingGroupList() {
         ArrayList<String> groupNames = new ArrayList<>(Arrays.asList("线路选择", "画面比例", "播放解码", "超时换源", "偏好设置"));
         ArrayList<ArrayList<String>> itemsArrayList = new ArrayList<>();
@@ -1952,7 +1968,7 @@ public class LivePlayActivity extends BaseActivity {
 
 //        sBar.requestFocus();                            //xuameng回看菜单默认焦点为播放
         if(show){
-            backcontroller.setVisibility(View.VISIBLE);
+            backcontroller.setVisibility(View.VISIBLE);   //xuameng显示回看下方菜单
 			Mtv_left_top_xu.setVisibility(View.VISIBLE); //xuameng显示回看上图标
             ll_epg.setVisibility(View.GONE);				//xuameng下面EPG菜单隐藏
 			ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
