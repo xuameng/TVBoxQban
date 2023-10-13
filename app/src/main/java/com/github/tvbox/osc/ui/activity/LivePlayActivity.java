@@ -647,7 +647,7 @@ public class LivePlayActivity extends BaseActivity {
             int keyCode = event.getKeyCode();
             if (keyCode == KeyEvent.KEYCODE_MENU) {              //xuameng回看时控制
 				if(isBack){
-				showProgressBars(true); 
+				Toast.makeText(mContext, "当前回看中，请按返回键退出回看！", Toast.LENGTH_SHORT).show();  
                 }
 				else
                 showSettingGroup();
@@ -655,7 +655,11 @@ public class LivePlayActivity extends BaseActivity {
                 switch (keyCode) {
                     case KeyEvent.KEYCODE_DPAD_UP:
 						if(isBack){                            //xuameng回看时控制
-						showProgressBars(true); 
+						  if(backcontroller.getVisibility() == View.VISIBLE){
+                        backcontroller.setVisibility(View.GONE);
+                    }else if(backcontroller.getVisibility() == View.GONE){
+                        showProgressBars(true);
+                    }
                         }else if (Hawk.get(HawkConfig.LIVE_CHANNEL_REVERSE, false))
                             playNext();
                         else
@@ -663,7 +667,11 @@ public class LivePlayActivity extends BaseActivity {
                         break;
                     case KeyEvent.KEYCODE_DPAD_DOWN:         //xuameng回看时控制
 						if(isBack){
-						showProgressBars(true); 
+						  if(backcontroller.getVisibility() == View.VISIBLE){
+                          backcontroller.setVisibility(View.GONE);
+                    }else if(backcontroller.getVisibility() == View.GONE){
+                          showProgressBars(true);
+                    }
                         }else if (Hawk.get(HawkConfig.LIVE_CHANNEL_REVERSE, false))
                             playPrevious();
                         else
@@ -1270,6 +1278,7 @@ public class LivePlayActivity extends BaseActivity {
 				if(isBack){
 				   if(mVideoView.isPlaying()){
                      mVideoView.pause();
+					 showProgressBars(true);      //显示回看低菜单
                      countDownTimer.cancel();
                      iv_play.setVisibility(View.VISIBLE);
                      iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
@@ -1290,21 +1299,8 @@ public class LivePlayActivity extends BaseActivity {
 
             @Override
             public void longPress() {               //xuameng长按显示左边设置菜单
-				 if(isBack){
-				   if(mVideoView.isPlaying()){
-                     mVideoView.pause();
-                     countDownTimer.cancel();
-                     iv_play.setVisibility(View.VISIBLE);
-                     iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
-                     }else{
-				  if(backcontrollerVisible()){                        //XUAMENG判断如果显示
-                     backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
-				     }
-                     mVideoView.start();
-                     iv_play.setVisibility(View.INVISIBLE);
-                     countDownTimer.start();
-                     iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
-                     }
+				if(isBack){
+                Toast.makeText(mContext, "当前回看中，请按返回键退出回看！", Toast.LENGTH_SHORT).show(); 
 				}
 				else{
                 showSettingGroup();
