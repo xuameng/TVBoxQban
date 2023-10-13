@@ -1009,12 +1009,11 @@ public class LivePlayActivity extends BaseActivity {
         //电视
         mRightEpgList.setOnItemListener(new TvRecyclerView.OnItemListener() {
             @Override
-            public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
-                epgListAdapter.setFocusedEpgIndex(-1);
+            public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {         //xuameng遥控不选择时
             }
-
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
+				epgListAdapter.setFocusedEpgIndex(-1);        //xuameng EPG列表遥控选中才滚动
                 mHandler.removeCallbacks(mHideChannelListRun);
                 mHandler.postDelayed(mHideChannelListRun, 5000);
                 epgListAdapter.setFocusedEpgIndex(position);
@@ -1353,7 +1352,7 @@ public class LivePlayActivity extends BaseActivity {
 
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
-                selectChannelGroup(position, true, -1);
+                selectChannelGroup(position, true, -1);                //xuameng频道组遥控器选择后才滚动
             }
 
             @Override
@@ -1409,7 +1408,7 @@ public class LivePlayActivity extends BaseActivity {
         });
 
         //电视
-        mLiveChannelView.setOnItemListener(new TvRecyclerView.OnItemListener() {
+        mLiveChannelView.setOnItemListener(new TvRecyclerView.OnItemListener() {         //xuameng频道列表
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
             }
