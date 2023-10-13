@@ -1691,7 +1691,7 @@ public class LivePlayActivity extends BaseActivity {
     }
 
 	private boolean backcontrollerVisible() {            //XUAMENG判断底部回看菜单是否显示
-	    return backcontroller..getVisibility() == View.VISIBLE;
+	    return backcontroller.getVisibility() == View.VISIBLE;
 	}
 
     private void initLiveSettingGroupList() {
