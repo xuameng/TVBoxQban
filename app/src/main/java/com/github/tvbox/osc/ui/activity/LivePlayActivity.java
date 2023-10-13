@@ -1283,10 +1283,9 @@ public class LivePlayActivity extends BaseActivity {
                      iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
                      }
 				}
-                else{
+                else
                 showChannelList();
                 return true;
-				}
             }
 
             @Override
