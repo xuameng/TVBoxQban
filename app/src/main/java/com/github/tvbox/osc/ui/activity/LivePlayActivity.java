@@ -645,25 +645,25 @@ public class LivePlayActivity extends BaseActivity {
     public boolean dispatchKeyEvent(KeyEvent event) {
         if (event.getAction() == KeyEvent.ACTION_DOWN) {
             int keyCode = event.getKeyCode();
-            if (keyCode == KeyEvent.KEYCODE_MENU) {
+            if (keyCode == KeyEvent.KEYCODE_MENU) {              //xuameng回看时控制
 				if(isBack){
-				Toast.makeText(mContext, "当前回看中，请按返回键退出回看！", Toast.LENGTH_SHORT).show();
+				showProgressBars(true); 
                 }
 				else
                 showSettingGroup();
             } else if (!isListOrSettingLayoutVisible()) {
                 switch (keyCode) {
                     case KeyEvent.KEYCODE_DPAD_UP:
-						if(isBack){
-						Toast.makeText(mContext, "当前回看中，请按返回键退出回看！", Toast.LENGTH_SHORT).show();
+						if(isBack){                            //xuameng回看时控制
+						showProgressBars(true); 
                         }else if (Hawk.get(HawkConfig.LIVE_CHANNEL_REVERSE, false))
                             playNext();
                         else
                             playPrevious();
                         break;
-                    case KeyEvent.KEYCODE_DPAD_DOWN:
+                    case KeyEvent.KEYCODE_DPAD_DOWN:         //xuameng回看时控制
 						if(isBack){
-						Toast.makeText(mContext, "当前回看中，请按返回键退出回看！", Toast.LENGTH_SHORT).show();
+						showProgressBars(true); 
                         }else if (Hawk.get(HawkConfig.LIVE_CHANNEL_REVERSE, false))
                             playPrevious();
                         else
