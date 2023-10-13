@@ -1013,6 +1013,7 @@ public class LivePlayActivity extends BaseActivity {
             }
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
+				if (position < 0) return;
 				epgListAdapter.setFocusedEpgIndex(-1);        //xuameng EPG列表遥控选中才滚动
                 mHandler.removeCallbacks(mHideChannelListRun);
                 mHandler.postDelayed(mHideChannelListRun, 5000);
