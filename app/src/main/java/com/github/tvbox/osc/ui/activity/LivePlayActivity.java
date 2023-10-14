@@ -277,18 +277,17 @@ public class LivePlayActivity extends BaseActivity {
 			iv_playpause.requestFocus();				 //xuameng回看菜单默认焦点为播放
             ll_epg.setVisibility(View.GONE);			 //xuameng下面EPG菜单隐藏
 			ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
-			iv_Play_Xu.setVisibility(View.GONE);            //回看暂停图标
 			mHandler.removeCallbacks(mHideChannelListRun);  //xuameng隐藏左侧频道菜单
 			mHandler.post(mHideChannelListRun);				//xuameng隐藏左侧频道菜单
 
         }else{
             backcontroller.setVisibility(View.GONE);
 			Mtv_left_top_xu.setVisibility(View.GONE);   //xuameng隐藏左上回看图标
+			iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
             ll_epg.setVisibility(View.VISIBLE);         //xuameng下面EPG菜单显示
 			ll_right_top_loading.setVisibility(View.VISIBLE);  //xuameng右上菜单显示
 			mHandler.removeCallbacks(mHideChannelListRun);  //xuameng隐藏左侧频道菜单
 			mHandler.post(mHideChannelListRun);				//xuameng隐藏左侧频道菜单
-			iv_Play_Xu.setVisibility(View.GONE);            //回看暂停图标
         }
 
 
@@ -623,6 +622,7 @@ public class LivePlayActivity extends BaseActivity {
         if (System.currentTimeMillis() - mExitTime < 2000) {
             isBack= false;
 			Mtv_left_top_xu.setVisibility(View.GONE);     //xuameng返回键隐藏左上回看菜单
+			iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
             playXuSource();
         } else {
             mExitTime = System.currentTimeMillis();
@@ -907,6 +907,7 @@ public class LivePlayActivity extends BaseActivity {
         backcontroller.setVisibility(View.GONE);
         ll_right_top_huikan.setVisibility(View.GONE);
 		Mtv_left_top_xu.setVisibility(View.GONE);         //xuameng直播时隐藏回看的菜单
+        iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
         mVideoView.setUrl(currentLiveChannelItem.getUrl());
        // showChannelInfo();
         mVideoView.start();
@@ -2063,11 +2064,10 @@ public class LivePlayActivity extends BaseActivity {
 			ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
 			mHandler.removeCallbacks(mHideChannelListRun);  //xuameng隐藏左侧频道菜单
             mHandler.post(mHideChannelListRun);             //xuameng隐藏左侧频道菜单
-			iv_Play_Xu.setVisibility(View.GONE);            //回看暂停图标
         }else{
             backcontroller.setVisibility(View.GONE);
 			Mtv_left_top_xu.setVisibility(View.GONE);
-			iv_Play_Xu.setVisibility(View.GONE);            //回看暂停图标
+			iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
             if(!tip_epg1.getText().equals("暂无信息")){
                 ll_epg.setVisibility(View.VISIBLE);  //xuameng下面EPG菜单显示
 			    ll_right_top_loading.setVisibility(View.VISIBLE);  //xuameng右上菜单显示
