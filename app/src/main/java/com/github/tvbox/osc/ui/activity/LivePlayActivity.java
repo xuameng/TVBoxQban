@@ -292,17 +292,17 @@ public class LivePlayActivity extends BaseActivity {
         }
 
 
-        iv_play.setOnClickListener(new View.OnClickListener() {
+//xuameng iv_play升级了        iv_play.setOnClickListener(new View.OnClickListener() {
 
-            @Override
-            public void onClick(View arg0) {
-                mVideoView.start();
+//xuameng iv_play升级了            @Override
+//xuameng iv_play升级了            public void onClick(View arg0) {
+//xuameng iv_play升级了                mVideoView.start();
 //xuameng iv_play升级了                iv_play.setVisibility(View.INVISIBLE);
-                iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
-                countDownTimer.start();
-                iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
-            }
-        });
+//xuameng iv_play升级了                iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
+//xuameng iv_play升级了                countDownTimer.start();
+//xuameng iv_play升级了                iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
+//xuameng iv_play升级了            }
+//xuameng iv_play升级了        });
 
         iv_playpause.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1103,7 +1103,7 @@ public class LivePlayActivity extends BaseActivity {
                         }
                     });
                     shiyi_time_c = (int)getTime(formatDate.format(nowday) +" " + selectedData.start + ":" +"30", formatDate.format(nowday) +" " + selectedData.end + ":" +"30");
- //xuameng 暂停升级                  ViewGroup.LayoutParams lp =  iv_play.getLayoutParams();
+                   ViewGroup.LayoutParams lp =  iv_play.getLayoutParams();
                     lp.width=videoHeight/7;
                     lp.height=videoHeight/7;
                     sBar = (SeekBar) findViewById(R.id.pb_progressbar);
@@ -1179,7 +1179,7 @@ public class LivePlayActivity extends BaseActivity {
                         }
                     });
                     shiyi_time_c = (int)getTime(formatDate.format(nowday) +" " + selectedData.start + ":" +"30", formatDate.format(nowday) +" " + selectedData.end + ":" +"30");
-//xuameng 暂停升级                    ViewGroup.LayoutParams lp =  iv_play.getLayoutParams();
+                    ViewGroup.LayoutParams lp =  iv_play.getLayoutParams();
                     lp.width=videoHeight/7;
                     lp.height=videoHeight/7;
                     sBar = (SeekBar) findViewById(R.id.pb_progressbar);
@@ -2078,17 +2078,17 @@ public class LivePlayActivity extends BaseActivity {
 
 
 
-        iv_play.setOnClickListener(new View.OnClickListener() {
+//xuameng iv_play升级了        iv_play.setOnClickListener(new View.OnClickListener() {
 
-            @Override
-            public void onClick(View arg0) {
-                mVideoView.start();
+//xuameng iv_play升级了            @Override
+//xuameng iv_play升级了            public void onClick(View arg0) {
+//xuameng iv_play升级了                  mVideoView.start();
 //xuameng iv_play升级了                iv_play.setVisibility(View.INVISIBLE);
-                iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
-                countDownTimer.start();
-                iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
-            }
-        });
+//xuameng iv_play升级了                iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
+//xuameng iv_play升级了                countDownTimer.start();
+//xuameng iv_play升级了                iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
+//xuameng iv_play升级了            }
+ //xuameng iv_play升级了       });
 
         iv_playpause.setOnClickListener(new View.OnClickListener() {        //xuameng回看播放按钮监听
             @Override
