@@ -277,6 +277,7 @@ public class LivePlayActivity extends BaseActivity {
 			iv_playpause.requestFocus();				 //xuameng回看菜单默认焦点为播放
             ll_epg.setVisibility(View.GONE);			 //xuameng下面EPG菜单隐藏
 			ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
+			iv_Play_Xu.setVisibility(View.GONE);            //回看暂停图标
 			mHandler.removeCallbacks(mHideChannelListRun);  //xuameng隐藏左侧频道菜单
 			mHandler.post(mHideChannelListRun);				//xuameng隐藏左侧频道菜单
 
@@ -287,6 +288,7 @@ public class LivePlayActivity extends BaseActivity {
 			ll_right_top_loading.setVisibility(View.VISIBLE);  //xuameng右上菜单显示
 			mHandler.removeCallbacks(mHideChannelListRun);  //xuameng隐藏左侧频道菜单
 			mHandler.post(mHideChannelListRun);				//xuameng隐藏左侧频道菜单
+			iv_Play_Xu.setVisibility(View.GONE);            //回看暂停图标
         }
 
 
@@ -1101,7 +1103,7 @@ public class LivePlayActivity extends BaseActivity {
                         }
                     });
                     shiyi_time_c = (int)getTime(formatDate.format(nowday) +" " + selectedData.start + ":" +"30", formatDate.format(nowday) +" " + selectedData.end + ":" +"30");
-                    ViewGroup.LayoutParams lp =  iv_play.getLayoutParams();
+ //xuameng 暂停升级                  ViewGroup.LayoutParams lp =  iv_play.getLayoutParams();
                     lp.width=videoHeight/7;
                     lp.height=videoHeight/7;
                     sBar = (SeekBar) findViewById(R.id.pb_progressbar);
@@ -1177,7 +1179,7 @@ public class LivePlayActivity extends BaseActivity {
                         }
                     });
                     shiyi_time_c = (int)getTime(formatDate.format(nowday) +" " + selectedData.start + ":" +"30", formatDate.format(nowday) +" " + selectedData.end + ":" +"30");
-                    ViewGroup.LayoutParams lp =  iv_play.getLayoutParams();
+//xuameng 暂停升级                    ViewGroup.LayoutParams lp =  iv_play.getLayoutParams();
                     lp.width=videoHeight/7;
                     lp.height=videoHeight/7;
                     sBar = (SeekBar) findViewById(R.id.pb_progressbar);
@@ -2061,9 +2063,11 @@ public class LivePlayActivity extends BaseActivity {
 			ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
 			mHandler.removeCallbacks(mHideChannelListRun);  //xuameng隐藏左侧频道菜单
             mHandler.post(mHideChannelListRun);             //xuameng隐藏左侧频道菜单
+			iv_Play_Xu.setVisibility(View.GONE);            //回看暂停图标
         }else{
             backcontroller.setVisibility(View.GONE);
 			Mtv_left_top_xu.setVisibility(View.GONE);
+			iv_Play_Xu.setVisibility(View.GONE);            //回看暂停图标
             if(!tip_epg1.getText().equals("暂无信息")){
                 ll_epg.setVisibility(View.VISIBLE);  //xuameng下面EPG菜单显示
 			    ll_right_top_loading.setVisibility(View.VISIBLE);  //xuameng右上菜单显示
@@ -2159,7 +2163,7 @@ public class LivePlayActivity extends BaseActivity {
             iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
         }else{
 //xuameng iv_play升级了            iv_play.setVisibility(View.VISIBLE);
-            iv_Play_Xu.setVisibility(View.VISIBLE);     //回看暂停图标
+//xuameng            iv_Play_Xu.setVisibility(View.VISIBLE);     //回看暂停图标
             iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
         }
         if(countDownTimer3==null){
