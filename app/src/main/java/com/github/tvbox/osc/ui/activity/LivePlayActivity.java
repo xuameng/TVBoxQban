@@ -296,7 +296,7 @@ public class LivePlayActivity extends BaseActivity {
             public void onClick(View arg0) {
                 mVideoView.start();
 //xuameng iv_play升级了                iv_play.setVisibility(View.INVISIBLE);
-                iv_Play_Xu.setVisibility(GONE);       //回看暂停图标
+                iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
                 countDownTimer.start();
                 iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
             }
@@ -309,13 +309,13 @@ public class LivePlayActivity extends BaseActivity {
                     mVideoView.pause();
                     countDownTimer.cancel();
 //xuameng iv_play升级了                    iv_play.setVisibility(View.VISIBLE);
-                    iv_Play_Xu.setVisibility(VISIBLE);         //回看暂停图标
+                    iv_Play_Xu.setVisibility(View.VISIBLE);         //回看暂停图标
                     iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
                 }else{
                     backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
                     mVideoView.start();
 //xuameng iv_play升级了                    iv_play.setVisibility(View.INVISIBLE);
-                    iv_Play_Xu.setVisibility(GONE);       //回看暂停图标
+                    iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
 					Mtv_left_top_xu.setVisibility(View.VISIBLE);
                     countDownTimer.start();
                     iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
@@ -366,13 +366,13 @@ public class LivePlayActivity extends BaseActivity {
                             mVideoView.pause();
                             countDownTimer.cancel();
 //xuameng iv_play升级了                            iv_play.setVisibility(View.VISIBLE);
-                            iv_Play_Xu.setVisibility(VISIBLE);     //回看暂停图标
+                            iv_Play_Xu.setVisibility(View.VISIBLE);     //回看暂停图标
                             iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));   
                         }else{
                             backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
                             mVideoView.start();
 //xuameng iv_play升级了                            iv_play.setVisibility(View.INVISIBLE);
-                            iv_Play_Xu.setVisibility(GONE);       //回看暂停图标
+                            iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
                             countDownTimer.start();
                             iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));    
                         }
@@ -706,7 +706,7 @@ public class LivePlayActivity extends BaseActivity {
                             backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
                             mVideoView.start();
 //xuameng iv_play升级了                            iv_play.setVisibility(View.INVISIBLE);
-                            iv_Play_Xu.setVisibility(GONE);       //回看暂停图标
+                            iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
                             countDownTimer.start();
                             iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
                         }
@@ -722,7 +722,7 @@ public class LivePlayActivity extends BaseActivity {
                             backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
                             mVideoView.start();
 //xuameng iv_play升级了                            iv_play.setVisibility(View.INVISIBLE);
-                            iv_Play_Xu.setVisibility(GONE);       //回看暂停图标
+                            iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
                             countDownTimer.start();
                             iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
                         }
@@ -738,7 +738,7 @@ public class LivePlayActivity extends BaseActivity {
                             backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
                             mVideoView.start();
 //xuameng iv_play升级了                            iv_play.setVisibility(View.INVISIBLE);
-                            iv_Play_Xu.setVisibility(GONE);       //回看暂停图标
+                            iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
                             countDownTimer.start();
                             iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
                         }
@@ -1285,13 +1285,13 @@ public class LivePlayActivity extends BaseActivity {
 					 showProgressBars(true);      //显示回看低菜单
                      countDownTimer.cancel();
 //xuameng iv_play升级了                     iv_play.setVisibility(View.VISIBLE);
-                     iv_Play_Xu.setVisibility(VISIBLE);     //回看暂停图标
+                     iv_Play_Xu.setVisibility(View.VISIBLE);     //回看暂停图标
                      iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
                      }else{
                      backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
                      mVideoView.start();
  //xuameng iv_play升级了                    iv_play.setVisibility(View.INVISIBLE);
-                     iv_Play_Xu.setVisibility(GONE);       //回看暂停图标
+                     iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
                      countDownTimer.start();
                      iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
                      }
@@ -2080,7 +2080,7 @@ public class LivePlayActivity extends BaseActivity {
             public void onClick(View arg0) {
                 mVideoView.start();
 //xuameng iv_play升级了                iv_play.setVisibility(View.INVISIBLE);
-                iv_Play_Xu.setVisibility(GONE);       //回看暂停图标
+                iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
                 countDownTimer.start();
                 iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
             }
@@ -2093,13 +2093,13 @@ public class LivePlayActivity extends BaseActivity {
                     mVideoView.pause();
                     countDownTimer.cancel();
 //xuameng iv_play升级了                    iv_play.setVisibility(View.VISIBLE);
-                    iv_Play_Xu.setVisibility(VISIBLE);     //回看暂停图标
+                    iv_Play_Xu.setVisibility(View.VISIBLE);     //回看暂停图标
                     iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
                 }else{
                     backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
                     mVideoView.start();
 //xuameng iv_play升级了                    iv_play.setVisibility(View.INVISIBLE);
-                    iv_Play_Xu.setVisibility(GONE);       //回看暂停图标
+                    iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
                     countDownTimer.start();
                     iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
                 }
@@ -2138,13 +2138,13 @@ public class LivePlayActivity extends BaseActivity {
                             mVideoView.pause();
                             countDownTimer.cancel();
 //xuameng iv_play升级了                            iv_play.setVisibility(View.VISIBLE);
-                            iv_Play_Xu.setVisibility(VISIBLE);     //回看暂停图标
+                            iv_Play_Xu.setVisibility(View.VISIBLE);     //回看暂停图标
                             iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
                         }else{
                             backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
                             mVideoView.start();
  //xuameng iv_play升级了                           iv_play.setVisibility(View.INVISIBLE);
-                            iv_Play_Xu.setVisibility(GONE);       //回看暂停图标
+                            iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
                             countDownTimer.start();
                             iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
                         }
@@ -2155,11 +2155,11 @@ public class LivePlayActivity extends BaseActivity {
         });
         if(mVideoView.isPlaying()){
 //xuameng iv_play升级了            iv_play.setVisibility(View.INVISIBLE);
-            iv_Play_Xu.setVisibility(GONE);       //回看暂停图标
+            iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
             iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
         }else{
 //xuameng iv_play升级了            iv_play.setVisibility(View.VISIBLE);
-            iv_Play_Xu.setVisibility(VISIBLE);     //回看暂停图标
+            iv_Play_Xu.setVisibility(View.VISIBLE);     //回看暂停图标
             iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
         }
         if(countDownTimer3==null){
