@@ -99,15 +99,16 @@
         android:paddingBottom="@dimen/vs_5"
         android:visibility="gone"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="@dimen/vs_300">
         <TextView
             android:textSize="@dimen/vs_150"
             android:textColor="@color/color_90000000"
             android:paddingRight="@dimen/vs_10"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:layout_marginRight="@dimen/vs_5"
-            android:text="许大师"
+            android:text="许大师站位"
             android:singleLine="true"
             android:layout_marginEnd="@dimen/vs_5"/>
         <LinearLayout
