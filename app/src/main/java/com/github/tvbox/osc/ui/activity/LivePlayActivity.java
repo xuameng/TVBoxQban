@@ -1778,7 +1778,7 @@ public class LivePlayActivity extends BaseActivity {
 	}
 
     boolean isiv_Play_XuVisible() {				//xuameng判断暂停动画是否显示
-        return iv_Play_Xu.getVisibility() == VISIBLE;
+        return iv_Play_Xu.getVisibility() == View.VISIBLE;
     }
 
     private void initLiveSettingGroupList() {
