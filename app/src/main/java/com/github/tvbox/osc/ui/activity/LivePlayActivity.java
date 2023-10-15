@@ -102,6 +102,7 @@ public class LivePlayActivity extends BaseActivity {
     private VideoView mVideoView;
     private TextView tvChannelInfo;
     private TextView tvTime;
+	private TextView tvTime_xu;           //xuameng的系统时间
     private TextView tvNetSpeed;
     private LinearLayout tvLeftChannelListLayout;
     private TvRecyclerView mChannelGroupView;
@@ -217,6 +218,7 @@ public class LivePlayActivity extends BaseActivity {
         mSettingItemView = findViewById(R.id.mSettingItemView);
         tvChannelInfo = findViewById(R.id.tvChannel);
         tvTime = findViewById(R.id.tvTime);
+		tvTime_xu = findViewById(R.id.tvTime_xu);                      //xuameng的系统时间
         tvNetSpeed = findViewById(R.id.tvNetSpeed);
         Mtv_left_top_xu = findViewById(R.id.tv_left_top_xu);           //xuameng回看左上图标
         iv_Play_Xu = findViewById(R.id.iv_play_xu);                    //xuameng回看暂停图标
@@ -273,6 +275,7 @@ public class LivePlayActivity extends BaseActivity {
 
         if(show){
             backcontroller.setVisibility(View.VISIBLE);
+			showTimeXu();              //xuameng系统显示时间
 			Mtv_left_top_xu.setVisibility(View.VISIBLE); //xuameng显示左上回看图标
 			iv_playpause.requestFocus();				 //xuameng回看菜单默认焦点为播放
             ll_epg.setVisibility(View.GONE);			 //xuameng下面EPG菜单隐藏
@@ -282,6 +285,7 @@ public class LivePlayActivity extends BaseActivity {
 
         }else{
             backcontroller.setVisibility(View.GONE);
+			hideTimeXu();              //xuameng隐藏系统时间
 			Mtv_left_top_xu.setVisibility(View.GONE);   //xuameng隐藏左上回看图标
 			iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
             ll_epg.setVisibility(View.VISIBLE);         //xuameng下面EPG菜单显示
@@ -312,6 +316,7 @@ public class LivePlayActivity extends BaseActivity {
                     iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
                 }else{
                     backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
+					hideTimeXu();              //xuameng隐藏系统时间
                     mVideoView.start();
 //xuameng iv_play升级了                    iv_play.setVisibility(View.INVISIBLE);
                     iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
@@ -369,6 +374,7 @@ public class LivePlayActivity extends BaseActivity {
                             iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));   
                         }else{
                             backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
+							hideTimeXu();              //xuameng隐藏系统时间
                             mVideoView.start();
 //xuameng iv_play升级了                            iv_play.setVisibility(View.INVISIBLE);
                             iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
@@ -638,6 +644,7 @@ public class LivePlayActivity extends BaseActivity {
             mHandler.post(mHideSettingLayoutRun);
         } else if(backcontroller.getVisibility() == View.VISIBLE){ 
             backcontroller.setVisibility(View.GONE);
+			hideTimeXu();              //xuameng隐藏系统时间
         } else if(isLl_epgVisible()){ 
             ll_epg.setVisibility(View.GONE);			 //xuameng返回键隐藏下面EPG菜单隐藏
 			ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
@@ -664,6 +671,7 @@ public class LivePlayActivity extends BaseActivity {
 						if(isBack){                            //xuameng回看时控制
 						  if(backcontroller.getVisibility() == View.VISIBLE){
                         backcontroller.setVisibility(View.GONE);
+						hideTimeXu();              //xuameng隐藏系统时间
                     }else if(backcontroller.getVisibility() == View.GONE){
                         showProgressBars(true);
                     }
@@ -676,6 +684,7 @@ public class LivePlayActivity extends BaseActivity {
 						if(isBack){
 						  if(backcontroller.getVisibility() == View.VISIBLE){
                           backcontroller.setVisibility(View.GONE);
+						  hideTimeXu();              //xuameng隐藏系统时间
                     }else if(backcontroller.getVisibility() == View.GONE){
                           showProgressBars(true);
                     }
@@ -704,6 +713,7 @@ public class LivePlayActivity extends BaseActivity {
                             showProgressBars(true);
                         }else{
                             backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
+							hideTimeXu();              //xuameng隐藏系统时间
                             mVideoView.start();
 //xuameng iv_play升级了                            iv_play.setVisibility(View.INVISIBLE);
                             iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
@@ -720,6 +730,7 @@ public class LivePlayActivity extends BaseActivity {
                             showProgressBars(true);
                         }else{
                             backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
+							hideTimeXu();              //xuameng隐藏系统时间
                             mVideoView.start();
 //xuameng iv_play升级了                            iv_play.setVisibility(View.INVISIBLE);
                             iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
@@ -736,6 +747,7 @@ public class LivePlayActivity extends BaseActivity {
                             showProgressBars(true);
                         }else{
                             backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
+							hideTimeXu();              //xuameng隐藏系统时间
                             mVideoView.start();
 //xuameng iv_play升级了                            iv_play.setVisibility(View.INVISIBLE);
                             iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
@@ -906,6 +918,7 @@ public class LivePlayActivity extends BaseActivity {
         ll_right_top_huikan.setVisibility(View.GONE);
 		Mtv_left_top_xu.setVisibility(View.GONE);         //xuameng直播时隐藏回看的菜单
         iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
+		hideTimeXu();              //xuameng隐藏系统时间
         mVideoView.setUrl(currentLiveChannelItem.getUrl());
        // showChannelInfo();
         mVideoView.start();
@@ -1290,6 +1303,7 @@ public class LivePlayActivity extends BaseActivity {
                      iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
                      }else{
                      backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
+					 hideTimeXu();              //xuameng隐藏系统时间
                      mVideoView.start();
  //xuameng iv_play升级了                    iv_play.setVisibility(View.INVISIBLE);
                      iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
@@ -1343,6 +1357,7 @@ public class LivePlayActivity extends BaseActivity {
                     if(isBack){  //xuameng手机换源和显示时移控制栏
                         if(backcontroller.getVisibility() == View.VISIBLE){
                         backcontroller.setVisibility(View.GONE);
+						hideTimeXu();              //xuameng隐藏系统时间
                     }else if(backcontroller.getVisibility() == View.GONE){
                         showProgressBars(true);
                     }
@@ -1352,6 +1367,7 @@ public class LivePlayActivity extends BaseActivity {
                     if(isBack){  //xuameng手机换源和隐藏时移控制栏
                         if(backcontroller.getVisibility() == View.VISIBLE){
                         backcontroller.setVisibility(View.GONE);
+						hideTimeXu();              //xuameng隐藏系统时间
                     }else if(backcontroller.getVisibility() == View.GONE){
                         showProgressBars(true);
                     }
@@ -1850,6 +1866,37 @@ public class LivePlayActivity extends BaseActivity {
         }
     };
 
+	    private Runnable mUpdateTimeRunXu = new Runnable() {            //xuameng的系统时间
+        @Override
+        public void run() {
+            Date day=new Date();
+            SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
+            tvTime_xu.setText(df.format(day));
+            mHandler.postDelayed(this, 1000);
+        }
+    };
+
+	    void showTimeXu() {                                            //xuameng的系统时间
+            mHandler.post(mUpdateTimeRunXu);
+            tvTime_xu.setVisibility(View.VISIBLE);
+			mHandler.removeCallbacks(mUpdateTimeRun);
+            tvTime.setVisibility(View.GONE);
+    }
+
+		    void hideTimeXu() {                                            //xuameng的系统时间
+            mHandler.removeCallbacks(mUpdateTimeRunXu);
+            tvTime_xu.setVisibility(View.GONE);
+			if (Hawk.get(!HawkConfig.LIVE_SHOW_TIME, false)) {
+		    mHandler.post(mUpdateTimeRun);
+            tvTime.setVisibility(View.VISIBLE);
+	    } else {
+            mHandler.removeCallbacks(mUpdateTimeRun);
+            tvTime.setVisibility(View.GONE);
+        }
+
+
+    }
+
     private void showNetSpeed() {
         tv_right_top_tipnetspeed.setVisibility(View.VISIBLE);
         if (Hawk.get(HawkConfig.LIVE_SHOW_NET_SPEED, false)) {
@@ -2057,6 +2104,7 @@ public class LivePlayActivity extends BaseActivity {
 //        sBar.requestFocus();                            //xuameng回看菜单默认焦点为播放
         if(show){
             backcontroller.setVisibility(View.VISIBLE);   //xuameng显示回看下方菜单
+			hideTimeXu();              //xuameng隐藏系统时间
 			Mtv_left_top_xu.setVisibility(View.VISIBLE); //xuameng显示回看上图标
             ll_epg.setVisibility(View.GONE);				//xuameng下面EPG菜单隐藏
 			ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
@@ -2065,6 +2113,7 @@ public class LivePlayActivity extends BaseActivity {
         }else{
             backcontroller.setVisibility(View.GONE);
 			Mtv_left_top_xu.setVisibility(View.GONE);
+			hideTimeXu();              //xuameng隐藏系统时间
 			iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
             if(!tip_epg1.getText().equals("暂无信息")){
                 ll_epg.setVisibility(View.VISIBLE);  //xuameng下面EPG菜单显示
@@ -2097,6 +2146,7 @@ public class LivePlayActivity extends BaseActivity {
                     iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
                 }else{
                     backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
+					hideTimeXu();              //xuameng隐藏系统时间
                     mVideoView.start();
 //xuameng iv_play升级了                    iv_play.setVisibility(View.INVISIBLE);
                     iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
@@ -2179,6 +2229,7 @@ public class LivePlayActivity extends BaseActivity {
                 public void onFinish() {
                     if(backcontroller.getVisibility() == View.VISIBLE){
                         backcontroller.setVisibility(View.GONE);
+						hideTimeXu();              //xuameng隐藏系统时间
                     }
                 }
             };
