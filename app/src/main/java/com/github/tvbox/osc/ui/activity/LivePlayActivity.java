@@ -218,7 +218,7 @@ public class LivePlayActivity extends BaseActivity {
         mSettingItemView = findViewById(R.id.mSettingItemView);
         tvChannelInfo = findViewById(R.id.tvChannel);
         tvTime = findViewById(R.id.tvTime);
-		tvTime_xu = findViewById(R.id.tvTime_xu);                      //xuameng的系统时间
+		tvTime_xu = findViewById(R.id.tvtime_xu);                      //xuameng的系统时间
         tvNetSpeed = findViewById(R.id.tvNetSpeed);
         Mtv_left_top_xu = findViewById(R.id.tv_left_top_xu);           //xuameng回看左上图标
         iv_Play_Xu = findViewById(R.id.iv_play_xu);                    //xuameng回看暂停图标
@@ -1886,7 +1886,7 @@ public class LivePlayActivity extends BaseActivity {
 		    void hideTimeXu() {                                            //xuameng的系统时间
             mHandler.removeCallbacks(mUpdateTimeRunXu);
             tvTime_xu.setVisibility(View.GONE);
-			if (Hawk.get(!HawkConfig.LIVE_SHOW_TIME, false)) {
+			if (Hawk.get(HawkConfig.LIVE_SHOW_TIME, false)) {
 		    mHandler.post(mUpdateTimeRun);
             tvTime.setVisibility(View.VISIBLE);
 	    } else {
