@@ -130,7 +130,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="@dimen/vs_5"
-                android:text="许大师"
+				android:layout_weight="1"
+                android:text="许大师占位"
                 android:singleLine="true"
                 android:layout_marginEnd="@dimen/vs_5"/>
             <LinearLayout
@@ -515,7 +516,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="@dimen/vs_5"
-                android:text="许大师"
+                android:text="许大师占位"
+				android:layout_weight="1"
                 android:singleLine="true"
                 android:layout_marginEnd="@dimen/vs_5"/>
             <TextView
@@ -807,7 +809,7 @@
             android:layout_gravity="center|left"
             android:focusable="false"
             android:focusableInTouchMode="false"
-            android:background="@drawable/vod_pause"
+            android:background="@drawable/icon_play"
             android:layout_width="@dimen/vs_35"
             android:layout_height="@dimen/vs_35"
             android:layout_marginLeft="@dimen/vs_20"/>
@@ -816,7 +818,7 @@
             android:textColor="@android:color/white"
             android:layout_gravity="center|right"
             android:paddingLeft="@dimen/vs_10"
-            android:text="回看暂停中,聚汇直播欢迎您的收看！"
+            android:text="回看暂停中！聚汇直播欢迎您的收看！"
             android:focusable="false"
             android:focusableInTouchMode="false"
             android:layout_width="wrap_content"
