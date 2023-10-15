@@ -2104,7 +2104,7 @@ public class LivePlayActivity extends BaseActivity {
 //        sBar.requestFocus();                            //xuameng回看菜单默认焦点为播放
         if(show){
             backcontroller.setVisibility(View.VISIBLE);   //xuameng显示回看下方菜单
-			hideTimeXu();              //xuameng隐藏系统时间
+			showTimeXu();              //xuameng系统显示时间
 			Mtv_left_top_xu.setVisibility(View.VISIBLE); //xuameng显示回看上图标
             ll_epg.setVisibility(View.GONE);				//xuameng下面EPG菜单隐藏
 			ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
