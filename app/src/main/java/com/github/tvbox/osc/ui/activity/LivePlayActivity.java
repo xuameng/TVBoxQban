@@ -286,8 +286,6 @@ public class LivePlayActivity extends BaseActivity {
 			iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
             ll_epg.setVisibility(View.VISIBLE);         //xuameng下面EPG菜单显示
 			ll_right_top_loading.setVisibility(View.VISIBLE);  //xuameng右上菜单显示
-			mHandler.removeCallbacks(mHideChannelListRun);  //xuameng隐藏左侧频道菜单
-			mHandler.post(mHideChannelListRun);				//xuameng隐藏左侧频道菜单
         }
 
 
@@ -2071,8 +2069,6 @@ public class LivePlayActivity extends BaseActivity {
             if(!tip_epg1.getText().equals("暂无信息")){
                 ll_epg.setVisibility(View.VISIBLE);  //xuameng下面EPG菜单显示
 			    ll_right_top_loading.setVisibility(View.VISIBLE);  //xuameng右上菜单显示
-			    mHandler.removeCallbacks(mHideChannelListRun);  //xuameng隐藏左侧频道菜单
-                mHandler.post(mHideChannelListRun);              //xuameng隐藏左侧频道菜单
             }
         }
 
