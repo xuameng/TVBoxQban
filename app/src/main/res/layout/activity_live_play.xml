@@ -10,77 +10,6 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"/>
     <LinearLayout
-        android:gravity="center"
-        android:layout_gravity="center|left|top"
-        android:orientation="horizontal"
-        android:id="@+id/tv_left_top_xu"
-        android:background="@drawable/shape_thumb_bottom_name_xu"
-        android:visibility="gone"
-        android:layout_width="280.0px"
-        android:layout_height="110.0px"
-        android:layout_marginTop="0.0px"
-        android:minWidth="270.0px">
-        <ImageView
-            android:layout_gravity="center"
-            android:id="@+id/iv_back_bg"
-            android:paddingLeft="10.0px"
-            android:paddingRight="10.0px"
-            android:layout_width="100.0px"
-            android:layout_height="100.0px"
-            android:src="@drawable/app_icon"/>
-        <LinearLayout
-            android:gravity="center"
-            android:layout_gravity="center"
-            android:orientation="vertical"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <com.github.tvbox.osc.ui.tv.widget.MarqueeTextView
-                android:textSize="30.0px"
-                android:textColor="#fffcffff"
-                android:ellipsize="marquee"
-                android:gravity="center"
-                android:layout_gravity="center"
-                android:id="@+id/tv_right_top_epg_name"
-                android:paddingTop="5.0px"
-                android:paddingRight="10.0px"
-                android:paddingBottom="2.0px"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="测试频道"
-                android:singleLine="true"
-                android:layout_toRightOf="@+id/iv_back_bg"
-                android:marqueeRepeatLimit="marquee_forever"/>
-            <TextView
-                android:textSize="30.0px"
-                android:textColor="#fffcffff"
-                android:ellipsize="marquee"
-                android:gravity="center"
-                android:layout_gravity="center"
-                android:id="@+id/tv_right_top_type"
-                android:paddingRight="10.0px"
-                android:paddingBottom="5.0px"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="回看中"
-                android:singleLine="true"
-                android:layout_toRightOf="@+id/iv_back_bg"
-                android:marqueeRepeatLimit="marquee_forever"/>
-        </LinearLayout>
-    </LinearLayout>
-	<TextView
-       android:textSize="@dimen/ts_40"
-       android:textColor="@android:color/white"
-       android:ellipsize="end"
-	   android:visibility="gone"
-       android:layout_gravity="right|top"
-       android:id="@+id/tvtime_xu"
-       android:paddingTop="@dimen/vs_30"
-       android:paddingRight="@dimen/vs_15"
-       android:layout_width="wrap_content"
-       android:layout_height="wrap_content"
-       android:text="00:00:00"
-       android:maxLines="1"/>
-    <LinearLayout
         android:gravity="top"
         android:layout_gravity="top"
         android:orientation="vertical"
@@ -95,15 +24,14 @@
             android:layout_width="fill_parent"
             android:layout_height="150.0px"
             android:layout_marginTop="0.0px"
-            android:minWidth="270.0px">
-        </LinearLayout>
+            android:layout_weight="1.0"
+            android:minWidth="270.0px"/>
         <LinearLayout
             android:gravity="center"
             android:orientation="vertical"
             android:visibility="gone"
             android:layout_width="fill_parent"
-            android:layout_height="0.0dip"
-            android:layout_weight="1.0">
+            android:layout_height="0.0dip">
             <ImageView
                 android:id="@+id/iv_play"
                 android:background="@drawable/vod_pause"
@@ -112,15 +40,15 @@
                 android:layout_height="120.0sp"/>
         </LinearLayout>
         <TextView
-            android:textSize="@dimen/vs_150"
+            android:textSize="@dimen/vs_20"
             android:textColor="@color/color_90000000"
             android:gravity="center"
             android:layout_gravity="center"
-            android:layout_weight="1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="许大师占位"
-            android:singleLine="true"/>
+            android:singleLine="true"
+            android:layout_weight="1.0"/>
         <LinearLayout
             android:gravity="bottom"
             android:layout_gravity="bottom"
@@ -143,9 +71,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="@dimen/vs_5"
-				android:layout_weight="1"
                 android:text="许大师占位"
                 android:singleLine="true"
+                android:layout_weight="1.0"
                 android:layout_marginEnd="@dimen/vs_5"/>
             <LinearLayout
                 android:gravity="center"
@@ -530,8 +458,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginRight="@dimen/vs_5"
                 android:text="许大师占位"
-				android:layout_weight="1"
                 android:singleLine="true"
+                android:layout_weight="1.0"
                 android:layout_marginEnd="@dimen/vs_5"/>
             <TextView
                 android:textSize="@dimen/vs_100"
@@ -807,7 +735,7 @@
     </RelativeLayout>
     <LinearLayout
         android:gravity="center"
-        android:layout_gravity="top|right"
+        android:layout_gravity="center|right|top"
         android:orientation="horizontal"
         android:id="@+id/iv_play_xu"
         android:background="@drawable/shape_user_focus_xu"
@@ -820,9 +748,9 @@
         android:layout_marginRight="@dimen/vs_0">
         <ImageView
             android:layout_gravity="center|left"
+            android:background="@drawable/icon_play"
             android:focusable="false"
             android:focusableInTouchMode="false"
-            android:background="@drawable/icon_play"
             android:layout_width="@dimen/vs_35"
             android:layout_height="@dimen/vs_35"
             android:layout_marginLeft="@dimen/vs_20"/>
@@ -831,13 +759,84 @@
             android:textColor="@android:color/white"
             android:layout_gravity="center|right"
             android:paddingLeft="@dimen/vs_10"
-            android:text="回看暂停中！聚汇直播欢迎您的收看！"
             android:focusable="false"
             android:focusableInTouchMode="false"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="@dimen/vs_20"
-            android:marqueeRepeatLimit="marquee_forever"
-            android:singleLine="true"/>
+            android:text="回看暂停中！聚汇直播欢迎您的收看！"
+            android:singleLine="true"
+            android:marqueeRepeatLimit="marquee_forever"/>
+    </LinearLayout>
+    <TextView
+        android:textSize="@dimen/ts_40"
+        android:textColor="@android:color/white"
+        android:ellipsize="end"
+        android:layout_gravity="center|right|top"
+        android:id="@+id/tvtime_xu"
+        android:paddingTop="@dimen/vs_30"
+        android:paddingRight="@dimen/vs_15"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="00:00:00"
+        android:maxLines="1"/>
+    <LinearLayout
+        android:gravity="center"
+        android:layout_gravity="center|left|top"
+        android:orientation="horizontal"
+        android:id="@+id/tv_left_top_xu"
+        android:background="@drawable/shape_thumb_bottom_name_xu"
+        android:visibility="gone"
+        android:layout_width="280.0px"
+        android:layout_height="110.0px"
+        android:layout_marginTop="0.0px"
+        android:minWidth="270.0px">
+        <ImageView
+            android:layout_gravity="center"
+            android:id="@+id/iv_back_bg"
+            android:paddingLeft="10.0px"
+            android:paddingRight="10.0px"
+            android:layout_width="100.0px"
+            android:layout_height="100.0px"
+            android:src="@drawable/app_icon"/>
+        <LinearLayout
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <com.github.tvbox.osc.ui.tv.widget.MarqueeTextView
+                android:textSize="30.0px"
+                android:textColor="#fffcffff"
+                android:ellipsize="marquee"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:id="@+id/tv_right_top_epg_name"
+                android:paddingTop="5.0px"
+                android:paddingRight="10.0px"
+                android:paddingBottom="2.0px"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="测试频道"
+                android:singleLine="true"
+                android:layout_toRightOf="@+id/iv_back_bg"
+                android:marqueeRepeatLimit="marquee_forever"/>
+            <TextView
+                android:textSize="30.0px"
+                android:textColor="#fffcffff"
+                android:ellipsize="marquee"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:id="@+id/tv_right_top_type"
+                android:paddingRight="10.0px"
+                android:paddingBottom="5.0px"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="回看中"
+                android:singleLine="true"
+                android:layout_toRightOf="@+id/iv_back_bg"
+                android:marqueeRepeatLimit="marquee_forever"/>
+        </LinearLayout>
     </LinearLayout>
 </FrameLayout>
