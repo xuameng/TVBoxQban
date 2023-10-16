@@ -691,6 +691,7 @@ public class LivePlayActivity extends BaseActivity {
                         else
                         playPrevious();
                     }else {
+						mExitTime = System.currentTimeMillis();
                         getEpg(new Date());
                         showBottomEpg();           //xuameng显示EPG和上面菜单   
                         }
@@ -709,6 +710,7 @@ public class LivePlayActivity extends BaseActivity {
                         else
                         playNext();
                         }else {
+                        mExitTime = System.currentTimeMillis();
                         getEpg(new Date());
                         showBottomEpg();           //xuameng显示EPG和上面菜单   
                         }
@@ -1144,6 +1146,7 @@ public class LivePlayActivity extends BaseActivity {
                     tv_duration.setText(durationToString(shiyi_time_c*1000));
                     showProgressBars(true);
                     isBack = true;
+					hideTimeXu();              //xuameng隐藏系统时间
                 }
             }
         });
@@ -1221,6 +1224,7 @@ public class LivePlayActivity extends BaseActivity {
                     tv_duration.setText(durationToString(shiyi_time_c*1000));
                     showProgressBars(true);
                     isBack = true;
+					hideTimeXu();              //xuameng隐藏系统时间
                 }
             }
         });
