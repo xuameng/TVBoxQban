@@ -289,7 +289,7 @@ public class LivePlayActivity extends BaseActivity {
 			iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
             ll_epg.setVisibility(View.VISIBLE);         //xuameng下面EPG菜单显示
 			ll_right_top_loading.setVisibility(View.VISIBLE);  //xuameng右上菜单显示
-			hideTimeXu();              //xuameng隐藏系统时间
+			showTimeXu();                       //xuameng显示系统时间
         }
 
 
@@ -1146,7 +1146,6 @@ public class LivePlayActivity extends BaseActivity {
                     tv_duration.setText(durationToString(shiyi_time_c*1000));
                     showProgressBars(true);
                     isBack = true;
-					hideTimeXu();              //xuameng隐藏系统时间
 					showTimeXu();                       //xuameng显示系统时间
                 }
             }
@@ -1225,7 +1224,6 @@ public class LivePlayActivity extends BaseActivity {
                     tv_duration.setText(durationToString(shiyi_time_c*1000));
                     showProgressBars(true);
                     isBack = true;
-					hideTimeXu();              //xuameng隐藏系统时间
 					showTimeXu();                       //xuameng显示系统时间
                 }
             }
@@ -1517,8 +1515,11 @@ public class LivePlayActivity extends BaseActivity {
             }
 
             @Override
-            public void onItemClick(TvRecyclerView parent, View itemView, int position) {
+            public void onItemClick(TvRecyclerView parent, View itemView, int position) {        //选中播放就隐藏左侧频道菜单
                 clickLiveChannel(position);
+				mHandler.removeCallbacks(mHideChannelListRun);  //xuameng隐藏左侧频道菜单
+                mHandler.post(mHideChannelListRun);             //xuameng隐藏左侧频道菜单
+
             }
         });
 
@@ -1528,6 +1529,8 @@ public class LivePlayActivity extends BaseActivity {
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 FastClickCheckUtil.check(view);
                 clickLiveChannel(position);
+				mHandler.removeCallbacks(mHideChannelListRun);  //xuameng隐藏左侧频道菜单
+                mHandler.post(mHideChannelListRun);             //xuameng隐藏左侧频道菜单
             }
         });
     }
@@ -1645,6 +1648,8 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public void onItemClick(TvRecyclerView parent, View itemView, int position) {
                 clickSettingItem(position);
+			    mHandler.removeCallbacks(mHideSettingLayoutRun);         //xuameng选中源就隐藏右侧菜单
+                mHandler.post(mHideSettingLayoutRun);					//xuameng选中源就隐藏右侧菜单
             }
         });
 
@@ -1654,6 +1659,8 @@ public class LivePlayActivity extends BaseActivity {
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 FastClickCheckUtil.check(view);
                 clickSettingItem(position);
+				mHandler.removeCallbacks(mHideSettingLayoutRun);         //xuameng选中源就隐藏右侧菜单
+                mHandler.post(mHideSettingLayoutRun);					//xuameng选中源就隐藏右侧菜单
             }
         });
     }
@@ -2129,12 +2136,13 @@ public class LivePlayActivity extends BaseActivity {
 //        sBar.requestFocus();                            //xuameng回看菜单默认焦点为播放
         if(show){
             backcontroller.setVisibility(View.VISIBLE);   //xuameng显示回看下方菜单
-			showTimeXu();              //xuameng系统显示时间
+			hideTimeXu();              //xuameng隐藏系统时间
 			Mtv_left_top_xu.setVisibility(View.VISIBLE); //xuameng显示回看上图标
             ll_epg.setVisibility(View.GONE);				//xuameng下面EPG菜单隐藏
 			ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
 			mHandler.removeCallbacks(mHideChannelListRun);  //xuameng隐藏左侧频道菜单
             mHandler.post(mHideChannelListRun);             //xuameng隐藏左侧频道菜单
+			showTimeXu();              //xuameng系统显示时间
         }else{
             backcontroller.setVisibility(View.GONE);
 			Mtv_left_top_xu.setVisibility(View.GONE);
@@ -2142,7 +2150,7 @@ public class LivePlayActivity extends BaseActivity {
             if(!tip_epg1.getText().equals("暂无信息")){
                 ll_epg.setVisibility(View.VISIBLE);  //xuameng下面EPG菜单显示
 			    ll_right_top_loading.setVisibility(View.VISIBLE);  //xuameng右上菜单显示
-                hideTimeXu();              //xuameng隐藏系统时间
+                showTimeXu();              //xuameng系统显示时间
             }
         }
 
