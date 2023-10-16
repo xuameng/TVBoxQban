@@ -630,7 +630,8 @@ public class LivePlayActivity extends BaseActivity {
             playXuSource();
         } else {
             mExitTime = System.currentTimeMillis();
-            Toast.makeText(mContext, "再按一次返回键退出回看", Toast.LENGTH_SHORT).show();            
+            ll_epg.setVisibility(View.VISIBLE);			 //xuameng返回键隐藏下面EPG菜单隐藏
+			ll_right_top_loading.setVisibility(View.VISIBLE); //xuameng右上菜单隐藏         
         }
     }
 
