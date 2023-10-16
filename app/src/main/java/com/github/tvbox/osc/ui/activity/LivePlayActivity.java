@@ -634,7 +634,7 @@ public class LivePlayActivity extends BaseActivity {
             playXuSource();
         } else {
             mExitTime = System.currentTimeMillis();
-            Toast.makeText(mContext, "快速双击返回键退出回看", Toast.LENGTH_SHORT).show();            
+            Toast.makeText(mContext, "当前回看中，双击返回键退出回看！", Toast.LENGTH_SHORT).show();            
         }
     }
 
@@ -665,7 +665,7 @@ public class LivePlayActivity extends BaseActivity {
             int keyCode = event.getKeyCode();
             if (keyCode == KeyEvent.KEYCODE_MENU) {              //xuameng回看时控制
 				if(isBack){
-				Toast.makeText(mContext, "当前回看中，不显示设置菜单！", Toast.LENGTH_SHORT).show();  
+				Toast.makeText(mContext, "当前回看中，双击返回键退出回看！", Toast.LENGTH_SHORT).show();  
                 }
 				else
                 showSettingGroup();
@@ -1323,12 +1323,26 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public void longPress() {               //xuameng长按显示左边设置菜单
 				if(isBack){
-                Toast.makeText(mContext, "当前回看中，请按返回键退出回看！", Toast.LENGTH_SHORT).show(); 
+                Toast.makeText(mContext, "当前回看中，双击返回键退出回看！", Toast.LENGTH_SHORT).show(); 
 				}
 				else{
                 showSettingGroup();
 				}
             }
+
+            @Override
+			public boolean onDoubleTap(MotionEvent e) {         //双击事件
+               if(isLl_epgVisible()){ 
+               ll_epg.setVisibility(View.GONE);			 //xuameng返回键隐藏下面EPG菜单隐藏
+	           ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
+             } else if(isBack){
+            
+             } else if(！isLl_epgVisible()){
+               ll_epg.setVisibility(View.VISIBLE);			 //xuameng返回键隐藏下面EPG菜单显示
+	           ll_right_top_loading.setVisibility(View.VISIBLE); //xuameng右上菜单显示
+             } 
+               return true;
+           }
 
             @Override
             public void playStateChanged(int playState) {
