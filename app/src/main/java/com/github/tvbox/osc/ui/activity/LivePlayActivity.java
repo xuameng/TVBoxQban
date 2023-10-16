@@ -613,12 +613,16 @@ public class LivePlayActivity extends BaseActivity {
 
     private void xuexit() {               //xuameng双击退出
         if (System.currentTimeMillis() - mExitTime < 2000) {
+			ll_epg.setVisibility(View.GONE);			 //xuameng返回键隐藏下面EPG菜单隐藏
+			ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
             mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
             mHandler.removeCallbacks(mUpdateNetSpeedRun);
             super.onBackPressed();
         } else {
             mExitTime = System.currentTimeMillis();
-            Toast.makeText(mContext, "再按一次返回键退出直播", Toast.LENGTH_SHORT).show();            
+            Toast.makeText(mContext, "快速双击返回键退出直播", Toast.LENGTH_SHORT).show(); 
+			getEpg(new Date());
+            showBottomEpg();           //xuameng显示EPG和上面菜单
         }
     }
 
@@ -630,8 +634,7 @@ public class LivePlayActivity extends BaseActivity {
             playXuSource();
         } else {
             mExitTime = System.currentTimeMillis();
-            ll_epg.setVisibility(View.VISIBLE);			 //xuameng返回键隐藏下面EPG菜单隐藏
-			ll_right_top_loading.setVisibility(View.VISIBLE); //xuameng右上菜单隐藏         
+            Toast.makeText(mContext, "快速双击返回键退出回看", Toast.LENGTH_SHORT).show();            
         }
     }
 
@@ -662,7 +665,7 @@ public class LivePlayActivity extends BaseActivity {
             int keyCode = event.getKeyCode();
             if (keyCode == KeyEvent.KEYCODE_MENU) {              //xuameng回看时控制
 				if(isBack){
-				Toast.makeText(mContext, "当前回看中，请按返回键退出回看！", Toast.LENGTH_SHORT).show();  
+				Toast.makeText(mContext, "当前回看中，不显示设置菜单！", Toast.LENGTH_SHORT).show();  
                 }
 				else
                 showSettingGroup();
