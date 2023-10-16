@@ -666,16 +666,6 @@
         android:layout_height="wrap_content"/>
     <RelativeLayout
         android:layout_gravity="center|left|top"
-        android:orientation="vertical"
-        android:background="@drawable/shape_thumb_bottom_name"
-        android:visibility="gone"
-        android:layout_width="290.0px"
-        android:layout_height="100.0px"
-        android:layout_marginTop="40.0px"
-        android:layout_marginRight="50.0px"
-        android:minWidth="270.0px"/>
-    <RelativeLayout
-        android:layout_gravity="center|right|top"
         android:orientation="horizontal"
         android:id="@+id/ll_right_top_loading"
         android:background="@drawable/shape_dialog_filter_bg_1"
@@ -685,22 +675,15 @@
         android:layout_marginRight="0.0mm"
         android:minWidth="270.0px">
         <ImageView
+            android:layout_gravity="center|left|top"
             android:id="@+id/iv_circle_bg"
+            android:gravity="center"
             android:layout_width="@dimen/vs_50"
             android:layout_height="@dimen/vs_50"
-            android:layout_marginTop="5.0mm"
-            android:layout_marginRight="@dimen/vs_30"
-            android:src="@drawable/app_icon"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"/>
-        <ImageView
-            android:layout_width="@dimen/vs_40"
-            android:layout_height="@dimen/vs_40"
-            android:layout_margin="@dimen/vs_10"
-            android:layout_alignLeft="@+id/iv_circle_bg"
-            android:layout_alignTop="@+id/iv_circle_bg"
-            android:layout_alignRight="@+id/iv_circle_bg"
-            android:layout_alignBottom="@+id/iv_circle_bg"/>
+            android:layout_marginTop="25.0mm"
+            android:layout_marginLeft="@dimen/vs_15"
+            android:layout_marginRight="@dimen/vs_15"
+            android:src="@drawable/app_icon"/>
         <com.github.tvbox.osc.ui.tv.widget.MarqueeTextView
             android:textSize="@dimen/vs_30"
             android:textColor="#fffcffff"
@@ -709,27 +692,26 @@
             android:id="@+id/tv_right_top_channel_name"
             android:layout_width="@dimen/vs_150"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10.0mm"
-            android:layout_marginRight="@dimen/vs_5"
+            android:layout_marginTop="30.0mm"
+            android:layout_marginRight="@dimen/vs_0"
+            android:layout_marginLeft="@dimen/vs_5"
             android:text="测试频道"
             android:singleLine="true"
-            android:layout_toLeftOf="@+id/iv_circle_bg"
+            android:layout_toRightOf="@+id/iv_circle_bg"
             android:layout_alignParentTop="true"
             android:marqueeRepeatLimit="marquee_forever"
-            android:layout_marginEnd="@dimen/vs_5"
-            android:layout_toStartOf="@+id/iv_circle_bg"/>
+            android:layout_marginEnd="@dimen/vs_5"/>
         <TextView
             android:textSize="@dimen/vs_30"
             android:textColor="#fffcffff"
             android:gravity="center"
-            android:layout_gravity="center"
             android:id="@+id/tv_right_top_tipnetspeed"
             android:layout_width="@dimen/vs_150"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10.0mm"
+            android:layout_marginTop="30.0mm"
             android:layout_marginRight="@dimen/vs_5"
             android:text=""
-            android:layout_toLeftOf="@+id/tv_right_top_channel_name"
+            android:layout_toRightOf="@+id/tv_right_top_channel_name"
             android:layout_marginEnd="@dimen/vs_5"/>
     </RelativeLayout>
     <LinearLayout
