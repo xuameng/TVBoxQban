@@ -22,9 +22,8 @@
             android:orientation="horizontal"
             android:background="@drawable/shape_dialog_filter_bg_1"
             android:layout_width="fill_parent"
-            android:layout_height="150.0px"
+            android:layout_height="240.0px"
             android:layout_marginTop="0.0px"
-            android:layout_weight="1.0"
             android:minWidth="270.0px"/>
         <LinearLayout
             android:gravity="center"
@@ -40,7 +39,7 @@
                 android:layout_height="120.0sp"/>
         </LinearLayout>
         <TextView
-            android:textSize="@dimen/vs_20"
+            android:textSize="@dimen/vs_100"
             android:textColor="@color/color_90000000"
             android:gravity="center"
             android:layout_gravity="center"
