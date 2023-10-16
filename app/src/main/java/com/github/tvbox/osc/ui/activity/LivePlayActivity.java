@@ -275,14 +275,14 @@ public class LivePlayActivity extends BaseActivity {
 
         if(show){
             backcontroller.setVisibility(View.VISIBLE);
-			showTimeXu();              //xuameng系统显示时间
+			hideTimeXu();              //xuameng隐藏系统时间			
 			Mtv_left_top_xu.setVisibility(View.VISIBLE); //xuameng显示左上回看图标
 			iv_playpause.requestFocus();				 //xuameng回看菜单默认焦点为播放
             ll_epg.setVisibility(View.GONE);			 //xuameng下面EPG菜单隐藏
 			ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
 			mHandler.removeCallbacks(mHideChannelListRun);  //xuameng隐藏左侧频道菜单
 			mHandler.post(mHideChannelListRun);				//xuameng隐藏左侧频道菜单
-
+            showTimeXu();              //xuameng系统显示时间
         }else{
             backcontroller.setVisibility(View.GONE);
 			Mtv_left_top_xu.setVisibility(View.GONE);   //xuameng隐藏左上回看图标
@@ -940,6 +940,7 @@ public class LivePlayActivity extends BaseActivity {
         ll_right_top_huikan.setVisibility(View.GONE);
 		Mtv_left_top_xu.setVisibility(View.GONE);         //xuameng直播时隐藏回看的菜单
         iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
+		hideTimeXu();              //xuameng隐藏系统时间
         mVideoView.setUrl(currentLiveChannelItem.getUrl());
        // showChannelInfo();
         mVideoView.start();
@@ -1146,6 +1147,7 @@ public class LivePlayActivity extends BaseActivity {
                     tv_duration.setText(durationToString(shiyi_time_c*1000));
                     showProgressBars(true);
                     isBack = true;
+					hideTimeXu();              //xuameng隐藏系统时间
 					showTimeXu();                       //xuameng显示系统时间
                 }
             }
@@ -1224,6 +1226,7 @@ public class LivePlayActivity extends BaseActivity {
                     tv_duration.setText(durationToString(shiyi_time_c*1000));
                     showProgressBars(true);
                     isBack = true;
+					hideTimeXu();              //xuameng隐藏系统时间
 					showTimeXu();                       //xuameng显示系统时间
                 }
             }
@@ -1648,8 +1651,8 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public void onItemClick(TvRecyclerView parent, View itemView, int position) {
                 clickSettingItem(position);
-			    mHandler.removeCallbacks(mHideSettingLayoutRun);         //xuameng选中源就隐藏右侧菜单
-                mHandler.post(mHideSettingLayoutRun);					//xuameng选中源就隐藏右侧菜单
+//xuameng选中源就隐藏右侧菜单			    mHandler.removeCallbacks(mHideSettingLayoutRun);         
+//xuameng选中源就隐藏右侧菜单                mHandler.post(mHideSettingLayoutRun);					
             }
         });
 
