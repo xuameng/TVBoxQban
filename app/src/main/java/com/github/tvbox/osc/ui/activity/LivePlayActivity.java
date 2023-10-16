@@ -1331,13 +1331,13 @@ public class LivePlayActivity extends BaseActivity {
             }
 
             @Override
-			public boolean onDoubleTap(MotionEvent e) {         //双击事件
+			public boolean onDoubleTap(MotionEvent e) {        //双击事件
                if(isLl_epgVisible()){ 
-               ll_epg.setVisibility(View.GONE);			 //xuameng返回键隐藏下面EPG菜单隐藏
+               ll_epg.setVisibility(View.GONE);              //xuameng返回键隐藏下面EPG菜单隐藏
 	           ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
              } else if(isBack){
             
-             } else if(！isLl_epgVisible()){
+             } else if(!isLl_epgVisible()){
                ll_epg.setVisibility(View.VISIBLE);			 //xuameng返回键隐藏下面EPG菜单显示
 	           ll_right_top_loading.setVisibility(View.VISIBLE); //xuameng右上菜单显示
              } 
