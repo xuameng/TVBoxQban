@@ -685,13 +685,13 @@ public class LivePlayActivity extends BaseActivity {
                     }else if(backcontroller.getVisibility() == View.GONE){
                         showProgressBars(true);
                         }
-                    }else if (System.currentTimeMillis() - mExitTime < 2000) {
+                    }else if (System.currentTimeMillis() - mExitTime < 1200) {        //xuameng小于1.2秒换台
                           if (Hawk.get(HawkConfig.LIVE_CHANNEL_REVERSE, false))
                         playNext();
                         else
                         playPrevious();
                     }else {
-						mExitTime = System.currentTimeMillis();
+						mExitTime = System.currentTimeMillis();                //xuamen否则显示EPG
                         getEpg(new Date());
                         showBottomEpg();           //xuameng显示EPG和上面菜单   
                         }
@@ -704,7 +704,7 @@ public class LivePlayActivity extends BaseActivity {
                     }else if(backcontroller.getVisibility() == View.GONE){
                           showProgressBars(true);
                     }
-                        }else if (System.currentTimeMillis() - mExitTime < 2000) {
+                        }else if (System.currentTimeMillis() - mExitTime < 1200) {
                           if (Hawk.get(HawkConfig.LIVE_CHANNEL_REVERSE, false))
                         playPrevious();
                         else
@@ -1147,6 +1147,7 @@ public class LivePlayActivity extends BaseActivity {
                     showProgressBars(true);
                     isBack = true;
 					hideTimeXu();              //xuameng隐藏系统时间
+					showTimeXu();                       //xuameng显示系统时间
                 }
             }
         });
@@ -1225,6 +1226,7 @@ public class LivePlayActivity extends BaseActivity {
                     showProgressBars(true);
                     isBack = true;
 					hideTimeXu();              //xuameng隐藏系统时间
+					showTimeXu();                       //xuameng显示系统时间
                 }
             }
         });
