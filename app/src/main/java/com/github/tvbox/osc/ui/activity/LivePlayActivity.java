@@ -1662,8 +1662,8 @@ public class LivePlayActivity extends BaseActivity {
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 FastClickCheckUtil.check(view);
                 clickSettingItem(position);
-				mHandler.removeCallbacks(mHideSettingLayoutRun);         //xuameng选中源就隐藏右侧菜单
-                mHandler.post(mHideSettingLayoutRun);					//xuameng选中源就隐藏右侧菜单
+//xuameng选中源就隐藏右侧菜单				mHandler.removeCallbacks(mHideSettingLayoutRun);         //xuameng选中源就隐藏右侧菜单
+//xuameng选中源就隐藏右侧菜单                mHandler.post(mHideSettingLayoutRun);					//xuameng选中源就隐藏右侧菜单
             }
         });
     }
@@ -2276,3 +2276,13 @@ public class LivePlayActivity extends BaseActivity {
     }
 
 }
+
+    final GestureDetector.SimpleOnGestureListener listener = new GestureDetector.SimpleOnGestureListener(){
+
+        @Override
+        public boolean onDoubleTap(MotionEvent e) {
+            MyToast.makeToast(GestureDetectorActivity.this, "double  click down!");
+            return super.onDoubleTap(e);
+        }
+
+    };
