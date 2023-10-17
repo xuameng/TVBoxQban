@@ -397,6 +397,7 @@ public class LivePlayActivity extends BaseActivity {
         initSettingItemView();
         initLiveChannelList();
         initLiveSettingGroupList();
+		mHandler.post(mUpdateNetSpeedRunXu);
     }
     //获取EPG并存储 // 百川epg  DIYP epg   51zmt epg ------- 自建EPG格式输出格式请参考 51zmt
     private List<Epginfo> epgdata = new ArrayList<>();
@@ -626,6 +627,7 @@ public class LivePlayActivity extends BaseActivity {
         if (System.currentTimeMillis() - mExitTime < 2000) {
             mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
             mHandler.removeCallbacks(mUpdateNetSpeedRun);
+			mHandler.removeCallbacks(mUpdateNetSpeedRunXu);
             super.onBackPressed();
         } else {
             mExitTime = System.currentTimeMillis();
@@ -1955,19 +1957,16 @@ public class LivePlayActivity extends BaseActivity {
 
     private void showNetSpeedXu() {
             tv_right_top_tipnetspeed.setVisibility(View.VISIBLE);           //xuameng右上网络速度，这行无所谓
-            mHandler.post(mUpdateNetSpeedRunXu);
 			tvNetSpeed.setVisibility(View.GONE);
     }
 
 
     private void hideNetSpeedXu() {
             tv_right_top_tipnetspeed.setVisibility(View.GONE);           //xuameng右上网络速度，这行无所谓
-            mHandler.removeCallbacks(mUpdateNetSpeedRunXu);
 			if (Hawk.get(HawkConfig.LIVE_SHOW_NET_SPEED, false)) {
 //xuameng重复的后果显示网速显示很快            mHandler.post(mUpdateNetSpeedRun);        
             tvNetSpeed.setVisibility(View.VISIBLE);
         } else {
-            mHandler.removeCallbacks(mUpdateNetSpeedRun);
             tvNetSpeed.setVisibility(View.GONE);
         }			
     }
