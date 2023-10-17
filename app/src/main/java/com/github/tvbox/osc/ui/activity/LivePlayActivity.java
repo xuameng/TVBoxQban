@@ -1930,15 +1930,12 @@ public class LivePlayActivity extends BaseActivity {
 
     private void showNetSpeed() {
         tv_right_top_tipnetspeed.setVisibility(View.VISIBLE);           //xuameng右上网络速度，这行无所谓
-        if (tv_right_top_tipnetspeed.getVisibility() == View.VISIBLE) {   //XUAMENG判断下只显示一个网速
-         tvNetSpeed.setVisibility(View.GONE);
-        }else if (Hawk.get(HawkConfig.LIVE_SHOW_NET_SPEED, false)) {
+        if (Hawk.get(HawkConfig.LIVE_SHOW_NET_SPEED, false)) {
             mHandler.post(mUpdateNetSpeedRun);
             tvNetSpeed.setVisibility(View.VISIBLE);
-		}
-		else {
+        } else {
 //xuameng防止网络速度检测            mHandler.removeCallbacks(mUpdateNetSpeedRun);
-         tvNetSpeed.setVisibility(View.GONE);
+            tvNetSpeed.setVisibility(View.GONE);
         }
     }
 
