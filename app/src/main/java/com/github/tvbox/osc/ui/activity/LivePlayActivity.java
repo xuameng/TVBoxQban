@@ -13,6 +13,8 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
+import android.view.GestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -1348,6 +1350,15 @@ public class LivePlayActivity extends BaseActivity {
 				}
             }
 
+  public boolean onDoubleTap(MotionEvent e) {
+        Toast.makeText(mContext, "双击双击双击双击双击", Toast.LENGTH_SHORT).show(); 
+        return true;
+    }
+			  public boolean onDoubleTap(MotionEvent e) {
+        if (mIsDoubleTapTogglePlayEnabled && !isLocked() && isInPlaybackState()) togglePlay();
+        return true;
+    }
+
             @Override
             public void playStateChanged(int playState) {
                 switch (playState) {
@@ -2145,7 +2156,7 @@ public class LivePlayActivity extends BaseActivity {
             backcontroller.setVisibility(View.GONE);
 			Mtv_left_top_xu.setVisibility(View.GONE);
 			iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
-            if(!tip_epg1.getText().equals("暂无信息")){
+            if(!tip_epg1.getText().equals("暂无当前节目单，聚汇直播欢迎您的观看！")){
                 ll_epg.setVisibility(View.VISIBLE);  //xuameng下面EPG菜单显示
 			    ll_right_top_loading.setVisibility(View.VISIBLE);  //xuameng右上菜单显示
                 showTimeXu();              //xuameng系统显示时间
