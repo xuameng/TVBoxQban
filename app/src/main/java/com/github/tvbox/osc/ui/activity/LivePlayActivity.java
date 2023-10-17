@@ -1312,7 +1312,7 @@ public class LivePlayActivity extends BaseActivity {
 
 
 
-    private void initVideoView() {
+    private void initVideoView() implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener, View.OnTouchListener{
         LiveController controller = new LiveController(this);
         controller.setListener(new LiveController.LiveControlListener() {
             @Override
@@ -1351,13 +1351,10 @@ public class LivePlayActivity extends BaseActivity {
             }
 
   public boolean onDoubleTap(MotionEvent e) {
-        Toast.makeText(mContext, "双击双击双击双击双击", Toast.LENGTH_SHORT).show(); 
+        Toast.makeText(mContext, "双击双击双击双击", Toast.LENGTH_SHORT).show(); 
         return true;
     }
-			  public boolean onDoubleTap(MotionEvent e) {
-        if (mIsDoubleTapTogglePlayEnabled && !isLocked() && isInPlaybackState()) togglePlay();
-        return true;
-    }
+
 
             @Override
             public void playStateChanged(int playState) {
