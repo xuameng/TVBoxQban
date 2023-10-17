@@ -624,9 +624,6 @@ public class LivePlayActivity extends BaseActivity {
 
     private void xuexit() {               //xuameng双击退出
         if (System.currentTimeMillis() - mExitTime < 2000) {
-			ll_epg.setVisibility(View.GONE);			 //xuameng返回键隐藏下面EPG菜单隐藏
-			ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
-			hideTimeXu();              //xuameng隐藏系统时间
             mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
             mHandler.removeCallbacks(mUpdateNetSpeedRun);
             super.onBackPressed();
@@ -1967,7 +1964,7 @@ public class LivePlayActivity extends BaseActivity {
             tv_right_top_tipnetspeed.setVisibility(View.GONE);           //xuameng右上网络速度，这行无所谓
             mHandler.removeCallbacks(mUpdateNetSpeedRunXu);
 			if (Hawk.get(HawkConfig.LIVE_SHOW_NET_SPEED, false)) {
-            mHandler.post(mUpdateNetSpeedRun);
+//xuameng重复的后果显示网速显示很快            mHandler.post(mUpdateNetSpeedRun);        
             tvNetSpeed.setVisibility(View.VISIBLE);
         } else {
             mHandler.removeCallbacks(mUpdateNetSpeedRun);
