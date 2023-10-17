@@ -282,6 +282,7 @@ public class LivePlayActivity extends BaseActivity {
 			ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
 			mHandler.removeCallbacks(mHideChannelListRun);  //xuameng隐藏左侧频道菜单
 			mHandler.post(mHideChannelListRun);				//xuameng隐藏左侧频道菜单
+			hideNetSpeedXu();		//XUAMENG隐藏左上网速
         }else{
             backcontroller.setVisibility(View.GONE);
 			Mtv_left_top_xu.setVisibility(View.GONE);   //xuameng隐藏左上回看图标
@@ -289,6 +290,7 @@ public class LivePlayActivity extends BaseActivity {
             ll_epg.setVisibility(View.VISIBLE);         //xuameng下面EPG菜单显示
 			ll_right_top_loading.setVisibility(View.VISIBLE);  //xuameng右上菜单显示
 			showTimeXu();                       //xuameng显示系统时间
+			showNetSpeedXu();                  //XUAMENG显示左上网速
         }
 
 
@@ -533,6 +535,7 @@ public class LivePlayActivity extends BaseActivity {
                 ll_epg.setVisibility(View.VISIBLE);  //xuameng下面EPG菜单显示
 			    ll_right_top_loading.setVisibility(View.VISIBLE);  //xuameng右上菜单显示
 				showTimeXu();                       //xuameng显示系统时间
+				showNetSpeedXu();                  //XUAMENG显示左上网速
                 countDownTimer = new CountDownTimer(10000, 1000) {//底部epg隐藏时间设定
                     public void onTick(long j) {
                     }
@@ -540,6 +543,7 @@ public class LivePlayActivity extends BaseActivity {
                         ll_epg.setVisibility(View.GONE);				//xuameng下面EPG菜单隐藏
 						ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
 						hideTimeXu();              //xuameng隐藏系统时间
+						hideNetSpeedXu();		//XUAMENG隐藏左上网速
                     }
                 };
                 countDownTimer.start();
@@ -547,6 +551,7 @@ public class LivePlayActivity extends BaseActivity {
                 ll_epg.setVisibility(View.VISIBLE);    //XUAMENG  底部epg显示
 			    ll_right_top_loading.setVisibility(View.VISIBLE);  //xuameng右上菜单显示
 				showTimeXu();                       //xuameng显示系统时间
+				showNetSpeedXu();                  //XUAMENG显示左上网速
 		countDownTimer = new CountDownTimer(10000, 1000) {//底部epg隐藏时间设定
 		public void onTick(long j) {
                     }
@@ -554,6 +559,7 @@ public class LivePlayActivity extends BaseActivity {
                         ll_epg.setVisibility(View.GONE);				//xuameng下面EPG菜单隐藏
 						ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
 						hideTimeXu();              //xuameng隐藏系统时间
+						hideNetSpeedXu();		//XUAMENG隐藏左上网速
                     }
                 };
                 countDownTimer.start();
@@ -570,6 +576,7 @@ public class LivePlayActivity extends BaseActivity {
             ll_right_top_loading.setVisibility(View.VISIBLE);
 			ll_epg.setVisibility(View.VISIBLE);  //xuameng下面EPG菜单显示
 			showTimeXu();                       //xuameng显示系统时间
+			showNetSpeedXu();                  //XUAMENG显示左上网速
 
             // xuameng 取消右上菜单自动隐藏 延迟5秒后执行隐藏操作
 //            handler.postDelayed(new Runnable() {
@@ -657,6 +664,7 @@ public class LivePlayActivity extends BaseActivity {
             ll_epg.setVisibility(View.GONE);			 //xuameng返回键隐藏下面EPG菜单隐藏
 			ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
 			hideTimeXu();              //xuameng隐藏系统时间
+			hideNetSpeedXu();		//XUAMENG隐藏左上网速
         } else if(isBack){
             xubackexit();             //xuameng回放双击退出
         } else {
@@ -1929,12 +1937,11 @@ public class LivePlayActivity extends BaseActivity {
     }
 
     private void showNetSpeed() {
-        tv_right_top_tipnetspeed.setVisibility(View.VISIBLE);           //xuameng右上网络速度，这行无所谓
         if (Hawk.get(HawkConfig.LIVE_SHOW_NET_SPEED, false)) {
             mHandler.post(mUpdateNetSpeedRun);
             tvNetSpeed.setVisibility(View.VISIBLE);
         } else {
-//xuameng防止网络速度检测            mHandler.removeCallbacks(mUpdateNetSpeedRun);
+            mHandler.removeCallbacks(mUpdateNetSpeedRun);
             tvNetSpeed.setVisibility(View.GONE);
         }
     }
@@ -1945,6 +1952,34 @@ public class LivePlayActivity extends BaseActivity {
             if (mVideoView == null) return;
             String speed = PlayerHelper.getDisplaySpeed(mVideoView.getTcpSpeed());
             tvNetSpeed.setText(speed);
+            mHandler.postDelayed(this, 1000);
+        }
+    };
+
+    private void showNetSpeedXu() {
+            tv_right_top_tipnetspeed.setVisibility(View.VISIBLE);           //xuameng右上网络速度，这行无所谓
+            mHandler.post(mUpdateNetSpeedRunXu);
+			tvNetSpeed.setVisibility(View.GONE);
+    }
+
+
+    private void hideNetSpeedXu() {
+            tv_right_top_tipnetspeed.setVisibility(View.GONE);           //xuameng右上网络速度，这行无所谓
+            mHandler.removeCallbacks(mUpdateNetSpeedRunXu);
+			if (Hawk.get(HawkConfig.LIVE_SHOW_NET_SPEED, false)) {
+            mHandler.post(mUpdateNetSpeedRun);
+            tvNetSpeed.setVisibility(View.VISIBLE);
+        } else {
+            mHandler.removeCallbacks(mUpdateNetSpeedRun);
+            tvNetSpeed.setVisibility(View.GONE);
+        }			
+    }
+
+    private Runnable mUpdateNetSpeedRunXu = new Runnable() {
+        @Override
+        public void run() {
+            if (mVideoView == null) return;
+            String speed = PlayerHelper.getDisplaySpeed(mVideoView.getTcpSpeed());
             tv_right_top_tipnetspeed.setText(speed);
             mHandler.postDelayed(this, 1000);
         }
@@ -2141,6 +2176,7 @@ public class LivePlayActivity extends BaseActivity {
 			ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
 			mHandler.removeCallbacks(mHideChannelListRun);  //xuameng隐藏左侧频道菜单
             mHandler.post(mHideChannelListRun);             //xuameng隐藏左侧频道菜单
+			hideNetSpeedXu();		//XUAMENG隐藏左上网速
         }else{
             backcontroller.setVisibility(View.GONE);
 			Mtv_left_top_xu.setVisibility(View.GONE);
@@ -2149,6 +2185,7 @@ public class LivePlayActivity extends BaseActivity {
                 ll_epg.setVisibility(View.VISIBLE);  //xuameng下面EPG菜单显示
 			    ll_right_top_loading.setVisibility(View.VISIBLE);  //xuameng右上菜单显示
                 showTimeXu();              //xuameng系统显示时间
+				showNetSpeedXu();                  //XUAMENG显示左上网速
             }
         }
 
