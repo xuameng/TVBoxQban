@@ -44,6 +44,8 @@ public class LiveController extends BaseController {
         void playStateChanged(int playState);
 
         void changeSource(int direction);
+
+		void DoublePress();             //xuameng双击
     }
 
     private LiveController.LiveControlListener listener = null;
@@ -63,6 +65,12 @@ public class LiveController extends BaseController {
     public void onLongPress(MotionEvent e) {
         listener.longPress();
         super.onLongPress(e);
+    }
+
+	@Override
+    public boolean onDoubleTapEvent(MotionEvent e) {         //xuameng双击
+        listener.DoublePress();
+        super.DoublePress(e);
     }
 
     @Override
