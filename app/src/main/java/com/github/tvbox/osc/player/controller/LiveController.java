@@ -68,7 +68,7 @@ public class LiveController extends BaseController {
     }
 
 	@Override
-    public boolean onDoubleTapEvent(MotionEvent e) {         //xuameng双击
+    public boolean onDoubleTap(MotionEvent e) {         //xuameng双击		
         if (listener.DoublePress())
 		   return true;
         return super.onDoubleTapEvent(e);
