@@ -45,7 +45,7 @@ public class LiveController extends BaseController {
 
         void changeSource(int direction);
 
-		void DoublePress();             //xuameng双击
+		boolean DoublePress();             //xuameng双击
     }
 
     private LiveController.LiveControlListener listener = null;
