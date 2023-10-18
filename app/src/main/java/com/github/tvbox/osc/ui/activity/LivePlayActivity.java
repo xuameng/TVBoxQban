@@ -1358,6 +1358,7 @@ public class LivePlayActivity extends BaseActivity {
 			@Override
             public boolean DoublePress() {               //xuameng长按显示左边设置菜单
                 Toast.makeText(mContext, "双击双击双击双击双击", Toast.LENGTH_SHORT).show(); 
+				return true;
             }
 
             @Override
