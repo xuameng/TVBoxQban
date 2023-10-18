@@ -397,7 +397,7 @@ public class LivePlayActivity extends BaseActivity {
         initSettingItemView();
         initLiveChannelList();
         initLiveSettingGroupList();
-		mHandler.post(mUpdateNetSpeedRunXu);
+		mHandler.post(mUpdateNetSpeedRunXu);          //XUAMENG左上网速检测1秒钟一次
     }
     //获取EPG并存储 // 百川epg  DIYP epg   51zmt epg ------- 自建EPG格式输出格式请参考 51zmt
     private List<Epginfo> epgdata = new ArrayList<>();
@@ -677,7 +677,7 @@ public class LivePlayActivity extends BaseActivity {
             int keyCode = event.getKeyCode();
             if (keyCode == KeyEvent.KEYCODE_MENU) {              //xuameng回看时控制
 				if(isBack){
-				Toast.makeText(mContext, "当前回看中，再按一次返回键退出回看！", Toast.LENGTH_SHORT).show();  
+				Toast.makeText(mContext, "当前回看中，请按返回键退出回看！", Toast.LENGTH_SHORT).show();  
                 }
 				else
                 showSettingGroup();
@@ -1348,7 +1348,7 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public void longPress() {               //xuameng长按显示左边设置菜单
 				if(isBack){
-                Toast.makeText(mContext, "当前回看中，再按一次返回键退出回看！", Toast.LENGTH_SHORT).show(); 
+                Toast.makeText(mContext, "当前回看中，请按返回键退出回看！", Toast.LENGTH_SHORT).show(); 
 				}
 				else{
                 showSettingGroup();
