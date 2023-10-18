@@ -510,7 +510,7 @@ public class LivePlayActivity extends BaseActivity {
                             tip_epg1.setText(((Epginfo) arrayList.get(size)).start + "--" + ((Epginfo) arrayList.get(size)).end);
                             ((TextView) findViewById(R.id.tv_current_program_name)).setText(((Epginfo) arrayList.get(size)).title);
                             if (size != arrayList.size() - 1) {
-                                tip_epg2.setText(((Epginfo) arrayList.get(size + 1)).start + "--" + ((Epginfo) arrayList.get(size)).end);
+                                tip_epg2.setText(((Epginfo) arrayList.get(size + 1)).start + "--" + ((Epginfo) arrayList.get(size + 1)).end);  //xuameng修复EPG低菜单下一个节目结束的时间
                                 ((TextView) findViewById(R.id.tv_next_program_name)).setText(((Epginfo) arrayList.get(size + 1)).title);
                             }
                             break;
@@ -1150,9 +1150,9 @@ public class LivePlayActivity extends BaseActivity {
                     sBar.setProgress((int)  mVideoView.getCurrentPosition());
                     tv_currentpos.setText(durationToString((int)mVideoView.getCurrentPosition()));
                     tv_duration.setText(durationToString(shiyi_time_c*1000));
-                    showProgressBars(true);
+					hideTimeXu();                       //xuameng进入回看前先隐藏上方系统时间
+                    showProgressBars(true);             //xuameng然后再显示
                     isBack = true;
-					showTimeXu();                       //xuameng显示系统时间
                 }
             }
         });
@@ -1359,19 +1359,15 @@ public class LivePlayActivity extends BaseActivity {
             public boolean DoublePress() {               //xuameng双击显示回看菜单
                 if(isBack){
 				Toast.makeText(mContext, "聚汇直播提示您：别乱点了，手机还要不？！", Toast.LENGTH_SHORT).show();
-				} else if{					
-				  if(isLl_epgVisible()){ 
+				}else if(isLl_epgVisible()){ 
                      ll_epg.setVisibility(View.GONE);			 //xuameng返回键隐藏下面EPG菜单隐藏
 			         ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
 			         hideTimeXu();              //xuameng隐藏系统时间
 			         hideNetSpeedXu();		//XUAMENG隐藏左上网速
-				  }
-                 } else if{
-				   if(!isLl_epgVisible()){
+				  }else if(!isLl_epgVisible()){
                       getEpg(new Date());
                       showBottomEpg();           //xuameng显示EPG和上面菜单
-				 }					  
-			    }
+				 }
 				return true;
             }
 
@@ -1747,7 +1743,7 @@ public class LivePlayActivity extends BaseActivity {
     private void initLiveChannelList() {
         List<LiveChannelGroup> list = ApiConfig.get().getChannelGroupList();
         if (list.isEmpty()) {
-            Toast.makeText(App.getInstance(), "频道列表为空", Toast.LENGTH_SHORT).show();
+            Toast.makeText(App.getInstance(), "聚汇影视提示您：频道列表为空", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
@@ -1768,7 +1764,7 @@ public class LivePlayActivity extends BaseActivity {
             Uri parsedUrl = Uri.parse(url);
             url = new String(Base64.decode(parsedUrl.getQueryParameter("ext"), Base64.DEFAULT | Base64.URL_SAFE | Base64.NO_WRAP), "UTF-8");
         } catch (Throwable th) {
-            Toast.makeText(App.getInstance(), "频道列表为空", Toast.LENGTH_SHORT).show();
+            Toast.makeText(App.getInstance(), "聚汇影视提示您：频道列表为空", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
@@ -1790,7 +1786,7 @@ public class LivePlayActivity extends BaseActivity {
                 ApiConfig.get().loadLives(livesArray);
                 List<LiveChannelGroup> list = ApiConfig.get().getChannelGroupList();
                 if (list.isEmpty()) {
-                    Toast.makeText(App.getInstance(), "频道列表为空", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(App.getInstance(), "聚汇影视提示您：频道列表为空", Toast.LENGTH_SHORT).show();
                     finish();
                     return;
                 }
