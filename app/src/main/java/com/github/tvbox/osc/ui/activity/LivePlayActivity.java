@@ -1359,14 +1359,14 @@ public class LivePlayActivity extends BaseActivity {
             public boolean DoublePress() {               //xuameng双击显示回看菜单
                 if(isBack){
 				Toast.makeText(mContext, "聚汇直播提示您：别乱点了，手机还要不？！", Toast.LENGTH_SHORT).show();
-				} else if{					
+				}else if{					
 				  if(isLl_epgVisible()){ 
                      ll_epg.setVisibility(View.GONE);			 //xuameng返回键隐藏下面EPG菜单隐藏
 			         ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
 			         hideTimeXu();              //xuameng隐藏系统时间
 			         hideNetSpeedXu();		//XUAMENG隐藏左上网速
 				  }
-                 } else if{
+                 }else if{
 				   if(!isLl_epgVisible()){
                       getEpg(new Date());
                       showBottomEpg();           //xuameng显示EPG和上面菜单
