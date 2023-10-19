@@ -291,6 +291,13 @@ public class LivePlayActivity extends BaseActivity {
 			ll_right_top_loading.setVisibility(View.VISIBLE);  //xuameng右上菜单显示
 			showTimeXu();                       //xuameng显示系统时间
 			showNetSpeedXu();                  //XUAMENG显示左上网速
+			if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
+                mHandler.removeCallbacks(mHideChannelListRun);
+                mHandler.post(mHideChannelListRun);
+          } else if (tvRightSettingLayout.getVisibility() == View.VISIBLE) {
+                mHandler.removeCallbacks(mHideSettingLayoutRun);
+                mHandler.post(mHideSettingLayoutRun);
+          } 
         }
 
 
@@ -537,6 +544,13 @@ public class LivePlayActivity extends BaseActivity {
 			    ll_right_top_loading.setVisibility(View.VISIBLE);  //xuameng右上菜单显示
 				showTimeXu();                       //xuameng显示系统时间
 				showNetSpeedXu();                  //XUAMENG显示左上网速
+			    if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
+                mHandler.removeCallbacks(mHideChannelListRun);
+                mHandler.post(mHideChannelListRun);
+                } else if (tvRightSettingLayout.getVisibility() == View.VISIBLE) {
+                mHandler.removeCallbacks(mHideSettingLayoutRun);
+                mHandler.post(mHideSettingLayoutRun);
+                } 
                 countDownTimer = new CountDownTimer(10000, 1000) {//底部epg隐藏时间设定
                     public void onTick(long j) {
                     }
@@ -553,6 +567,13 @@ public class LivePlayActivity extends BaseActivity {
 			    ll_right_top_loading.setVisibility(View.VISIBLE);  //xuameng右上菜单显示
 				showTimeXu();                       //xuameng显示系统时间
 				showNetSpeedXu();                  //XUAMENG显示左上网速
+			    if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
+                mHandler.removeCallbacks(mHideChannelListRun);
+                mHandler.post(mHideChannelListRun);
+                } else if (tvRightSettingLayout.getVisibility() == View.VISIBLE) {
+                mHandler.removeCallbacks(mHideSettingLayoutRun);
+                mHandler.post(mHideSettingLayoutRun);
+                } 
 		countDownTimer = new CountDownTimer(10000, 1000) {//底部epg隐藏时间设定
 		public void onTick(long j) {
                     }
@@ -578,6 +599,13 @@ public class LivePlayActivity extends BaseActivity {
 			ll_epg.setVisibility(View.VISIBLE);  //xuameng下面EPG菜单显示
 			showTimeXu();                       //xuameng显示系统时间
 			showNetSpeedXu();                  //XUAMENG显示左上网速
+			    if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
+                mHandler.removeCallbacks(mHideChannelListRun);
+                mHandler.post(mHideChannelListRun);
+                } else if (tvRightSettingLayout.getVisibility() == View.VISIBLE) {
+                mHandler.removeCallbacks(mHideSettingLayoutRun);
+                mHandler.post(mHideSettingLayoutRun);
+                } 
 
             // xuameng 取消右上菜单自动隐藏 延迟5秒后执行隐藏操作
 //            handler.postDelayed(new Runnable() {
@@ -600,8 +628,9 @@ public class LivePlayActivity extends BaseActivity {
         } else {
             imgLiveIcon.setVisibility(View.VISIBLE);
             Picasso.get().load(logoUrl).placeholder(R.drawable.app_banner).into(imgLiveIcon);	// xuameng内不空显示banner
-            liveIconNullBg.setVisibility(View.INVISIBLE);
-            liveIconNullText.setVisibility(View.INVISIBLE);
+            liveIconNullBg.setVisibility(View.VISIBLE);
+            liveIconNullText.setVisibility(View.VISIBLE);
+			liveIconNullText.setVisibility(View.VISIBLE);liveIconNullText.setText("频道编号" + channel_Name.getChannelNum());   // xuameng显示频道编号
         }
     }
 
@@ -1367,6 +1396,13 @@ public class LivePlayActivity extends BaseActivity {
 				  }else if(!isLl_epgVisible()){
                       getEpg(new Date());
                       showBottomEpg();           //xuameng显示EPG和上面菜单
+			    if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
+                mHandler.removeCallbacks(mHideChannelListRun);
+                mHandler.post(mHideChannelListRun);
+                } else if (tvRightSettingLayout.getVisibility() == View.VISIBLE) {
+                mHandler.removeCallbacks(mHideSettingLayoutRun);
+                mHandler.post(mHideSettingLayoutRun);
+                } 
 				 }
 				return true;
             }
@@ -2198,6 +2234,13 @@ public class LivePlayActivity extends BaseActivity {
 			    ll_right_top_loading.setVisibility(View.VISIBLE);  //xuameng右上菜单显示
                 showTimeXu();              //xuameng系统显示时间
 				showNetSpeedXu();                  //XUAMENG显示左上网速
+			    if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
+                mHandler.removeCallbacks(mHideChannelListRun);
+                mHandler.post(mHideChannelListRun);
+                } else if (tvRightSettingLayout.getVisibility() == View.VISIBLE) {
+                mHandler.removeCallbacks(mHideSettingLayoutRun);
+                mHandler.post(mHideSettingLayoutRun);
+                } 
             }
         }
 
