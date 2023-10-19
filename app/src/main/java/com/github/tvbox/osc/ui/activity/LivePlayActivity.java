@@ -962,7 +962,7 @@ public class LivePlayActivity extends BaseActivity {
         }else {
             currentLiveChannelItem.setinclude_back(false);
         }
-        showBottomEpg();
+        //xuameng 测试左菜单反复显示   showBottomEpg();
         getEpg(new Date());
         backcontroller.setVisibility(View.GONE);
         ll_right_top_huikan.setVisibility(View.GONE);
