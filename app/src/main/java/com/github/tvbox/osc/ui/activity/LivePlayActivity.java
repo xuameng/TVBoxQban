@@ -483,13 +483,13 @@ public class LivePlayActivity extends BaseActivity {
                 if (!hsEpg.contains(savedEpgKey))
                     hsEpg.put(savedEpgKey, arrayList);
                 showBottomEpg();               //xuameng测试EPG刷新
-        if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {           //XUAMENG只要显示EPG就隐藏左右菜单
-            mHandler.removeCallbacks(mHideChannelListRun);
-            mHandler.post(mHideChannelListRun);
-        } else if (tvRightSettingLayout.getVisibility() == View.VISIBLE) {
-            mHandler.removeCallbacks(mHideSettingLayoutRun);
-            mHandler.post(mHideSettingLayoutRun);
-        } 
+                if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {           //XUAMENG只要显示EPG就隐藏左右菜单
+                mHandler.removeCallbacks(mHideChannelListRun);
+                mHandler.post(mHideChannelListRun);
+              } else if (tvRightSettingLayout.getVisibility() == View.VISIBLE) {
+                mHandler.removeCallbacks(mHideSettingLayoutRun);
+                mHandler.post(mHideSettingLayoutRun);
+              } 
             }
         });
     }
@@ -532,13 +532,6 @@ public class LivePlayActivity extends BaseActivity {
                 int selectedIndex = liveEpgDateAdapter.getSelectedIndex();
                 if (selectedIndex < 0)
                     getEpg(new Date());
-        if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {           //XUAMENG只要显示EPG就隐藏左右菜单
-            mHandler.removeCallbacks(mHideChannelListRun);
-            mHandler.post(mHideChannelListRun);
-        } else if (tvRightSettingLayout.getVisibility() == View.VISIBLE) {
-            mHandler.removeCallbacks(mHideSettingLayoutRun);
-            mHandler.post(mHideSettingLayoutRun);
-        } 
                 else
                     getEpg(liveEpgDateAdapter.getData().get(selectedIndex).getDateParamVal());
             }
@@ -718,14 +711,14 @@ public class LivePlayActivity extends BaseActivity {
                     }else {
 						mExitTime = System.currentTimeMillis();                //xuamen否则显示EPG
                         showBottomEpg();           //xuameng显示EPG和上面菜单
-        if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {           //XUAMENG只要显示EPG就隐藏左右菜单
-            mHandler.removeCallbacks(mHideChannelListRun);
-            mHandler.post(mHideChannelListRun);
-        } else if (tvRightSettingLayout.getVisibility() == View.VISIBLE) {
-            mHandler.removeCallbacks(mHideSettingLayoutRun);
-            mHandler.post(mHideSettingLayoutRun);
-        } 						
-                        }
+                        if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {           //XUAMENG只要显示EPG就隐藏左右菜单
+                           mHandler.removeCallbacks(mHideChannelListRun);
+                           mHandler.post(mHideChannelListRun);
+                      } else if (tvRightSettingLayout.getVisibility() == View.VISIBLE) {
+                           mHandler.removeCallbacks(mHideSettingLayoutRun);
+                           mHandler.post(mHideSettingLayoutRun);
+                      } 						
+                     }
                         break;
                     case KeyEvent.KEYCODE_DPAD_DOWN:         //xuameng回看时控制
 						if(isBack){
@@ -743,14 +736,14 @@ public class LivePlayActivity extends BaseActivity {
                         }else {
                         mExitTime = System.currentTimeMillis();
                         showBottomEpg();           //xuameng显示EPG和上面菜单   
-        if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {           //XUAMENG只要显示EPG就隐藏左右菜单
-            mHandler.removeCallbacks(mHideChannelListRun);
-            mHandler.post(mHideChannelListRun);
-        } else if (tvRightSettingLayout.getVisibility() == View.VISIBLE) {
-            mHandler.removeCallbacks(mHideSettingLayoutRun);
-            mHandler.post(mHideSettingLayoutRun);
-        } 				
-                        }
+                        if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {           //XUAMENG只要显示EPG就隐藏左右菜单
+                           mHandler.removeCallbacks(mHideChannelListRun);
+                           mHandler.post(mHideChannelListRun);
+                      } else if (tvRightSettingLayout.getVisibility() == View.VISIBLE) {
+                           mHandler.removeCallbacks(mHideSettingLayoutRun);
+                           mHandler.post(mHideSettingLayoutRun);
+                      } 				
+                     }
                         break;
                     case KeyEvent.KEYCODE_DPAD_LEFT:
                         if(isBack){
@@ -985,13 +978,6 @@ public class LivePlayActivity extends BaseActivity {
         }
         showBottomEpg();
         getEpg(new Date());
-        if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {           //XUAMENG只要显示EPG就隐藏左右菜单
-            mHandler.removeCallbacks(mHideChannelListRun);
-            mHandler.post(mHideChannelListRun);
-        } else if (tvRightSettingLayout.getVisibility() == View.VISIBLE) {
-            mHandler.removeCallbacks(mHideSettingLayoutRun);
-            mHandler.post(mHideSettingLayoutRun);
-        } 
         backcontroller.setVisibility(View.GONE);
         ll_right_top_huikan.setVisibility(View.GONE);
 		Mtv_left_top_xu.setVisibility(View.GONE);         //xuameng直播时隐藏回看的菜单
@@ -1424,13 +1410,13 @@ public class LivePlayActivity extends BaseActivity {
 			         hideNetSpeedXu();		//XUAMENG隐藏左上网速
 				  }else if(!isLl_epgVisible()){
                       showBottomEpg();           //xuameng显示EPG和上面菜单
-        if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {           //XUAMENG只要显示EPG就隐藏左右菜单
-            mHandler.removeCallbacks(mHideChannelListRun);
-            mHandler.post(mHideChannelListRun);
-        } else if (tvRightSettingLayout.getVisibility() == View.VISIBLE) {
-            mHandler.removeCallbacks(mHideSettingLayoutRun);
-            mHandler.post(mHideSettingLayoutRun);
-        } 
+                      if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {           //XUAMENG只要显示EPG就隐藏左右菜单
+                      mHandler.removeCallbacks(mHideChannelListRun);
+                      mHandler.post(mHideChannelListRun);
+                    } else if (tvRightSettingLayout.getVisibility() == View.VISIBLE) {
+                      mHandler.removeCallbacks(mHideSettingLayoutRun);
+                      mHandler.post(mHideSettingLayoutRun);
+                   } 
 				 }
 				return true;
             }
