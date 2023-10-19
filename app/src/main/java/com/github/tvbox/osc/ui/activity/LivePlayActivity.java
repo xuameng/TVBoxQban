@@ -524,7 +524,7 @@ public class LivePlayActivity extends BaseActivity {
             } else {
                 int selectedIndex = liveEpgDateAdapter.getSelectedIndex();
                 if (selectedIndex < 0)
-                    getEpg(new Date());
+//xuameng测试导致重复隐藏左菜单                    getEpg(new Date());
                 else
                     getEpg(liveEpgDateAdapter.getData().get(selectedIndex).getDateParamVal());
             }
@@ -963,7 +963,7 @@ public class LivePlayActivity extends BaseActivity {
             currentLiveChannelItem.setinclude_back(false);
         }
         showBottomEpg();
-//xuameng测试        getEpg(new Date());
+//xuameng测试导致重复隐藏左菜单        getEpg(new Date());
         backcontroller.setVisibility(View.GONE);
         ll_right_top_huikan.setVisibility(View.GONE);
 		Mtv_left_top_xu.setVisibility(View.GONE);         //xuameng直播时隐藏回看的菜单
