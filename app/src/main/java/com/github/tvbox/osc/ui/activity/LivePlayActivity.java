@@ -537,13 +537,6 @@ public class LivePlayActivity extends BaseActivity {
 			    ll_right_top_loading.setVisibility(View.VISIBLE);  //xuameng右上菜单显示
 				showTimeXu();                       //xuameng显示系统时间
 				showNetSpeedXu();                  //XUAMENG显示左上网速
-		    if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {           //XUAMENG只要显示EPG就隐藏左右菜单
-            mHandler.removeCallbacks(mHideChannelListRun);
-            mHandler.post(mHideChannelListRun);
-            } else if (tvRightSettingLayout.getVisibility() == View.VISIBLE) {
-            mHandler.removeCallbacks(mHideSettingLayoutRun);
-            mHandler.post(mHideSettingLayoutRun);
-            } 
                 countDownTimer = new CountDownTimer(10000, 1000) {//底部epg隐藏时间设定
                     public void onTick(long j) {
                     }
@@ -560,13 +553,6 @@ public class LivePlayActivity extends BaseActivity {
 			    ll_right_top_loading.setVisibility(View.VISIBLE);  //xuameng右上菜单显示
 				showTimeXu();                       //xuameng显示系统时间
 				showNetSpeedXu();                  //XUAMENG显示左上网速
-        if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {           //XUAMENG只要显示EPG就隐藏左右菜单
-            mHandler.removeCallbacks(mHideChannelListRun);
-            mHandler.post(mHideChannelListRun);
-        } else if (tvRightSettingLayout.getVisibility() == View.VISIBLE) {
-            mHandler.removeCallbacks(mHideSettingLayoutRun);
-            mHandler.post(mHideSettingLayoutRun);
-        } 
 		countDownTimer = new CountDownTimer(10000, 1000) {//底部epg隐藏时间设定
 		public void onTick(long j) {
                     }
@@ -592,6 +578,13 @@ public class LivePlayActivity extends BaseActivity {
 			ll_epg.setVisibility(View.VISIBLE);  //xuameng下面EPG菜单显示
 			showTimeXu();                       //xuameng显示系统时间
 			showNetSpeedXu();                  //XUAMENG显示左上网速
+        if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {           //XUAMENG只要显示EPG就隐藏左右菜单
+            mHandler.removeCallbacks(mHideChannelListRun);
+            mHandler.post(mHideChannelListRun);
+        } else if (tvRightSettingLayout.getVisibility() == View.VISIBLE) {
+            mHandler.removeCallbacks(mHideSettingLayoutRun);
+            mHandler.post(mHideSettingLayoutRun);
+        } 
 
             // xuameng 取消右上菜单自动隐藏 延迟5秒后执行隐藏操作
 //            handler.postDelayed(new Runnable() {
