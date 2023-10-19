@@ -710,7 +710,6 @@ public class LivePlayActivity extends BaseActivity {
                         playPrevious();
                     }else {
 						mExitTime = System.currentTimeMillis();                //xuamen否则显示EPG
-                        getEpg(new Date());
                         showBottomEpg();           //xuameng显示EPG和上面菜单   
                         }
                         break;
@@ -729,7 +728,6 @@ public class LivePlayActivity extends BaseActivity {
                         playNext();
                         }else {
                         mExitTime = System.currentTimeMillis();
-                        getEpg(new Date());
                         showBottomEpg();           //xuameng显示EPG和上面菜单   
                         }
                         break;
@@ -1397,7 +1395,6 @@ public class LivePlayActivity extends BaseActivity {
 			         hideTimeXu();              //xuameng隐藏系统时间
 			         hideNetSpeedXu();		//XUAMENG隐藏左上网速
 				  }else if(!isLl_epgVisible()){
-                      getEpg(new Date());
                       showBottomEpg();           //xuameng显示EPG和上面菜单
 				 }
 				return true;
