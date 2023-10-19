@@ -482,13 +482,14 @@ public class LivePlayActivity extends BaseActivity {
                 String savedEpgKey = channelName + "_" + liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex()).getDatePresented();
                 if (!hsEpg.contains(savedEpgKey))
                     hsEpg.put(savedEpgKey, arrayList);
-                //showBottomEpg();               //xuameng测试EPG刷新
+                showBottomEpg();               //xuameng测试EPG刷新
             }
         });
     }
 
     //显示底部EPG
     private void showBottomEpg() {
+		getEpg(new Date());
         if (isSHIYI)
             return;
         if (channel_Name.getChannelName() != null) {
@@ -962,8 +963,8 @@ public class LivePlayActivity extends BaseActivity {
         }else {
             currentLiveChannelItem.setinclude_back(false);
         }
-		getEpg(new Date());
         showBottomEpg();
+        //xuameng 测试  getEpg(new Date());
         backcontroller.setVisibility(View.GONE);
         ll_right_top_huikan.setVisibility(View.GONE);
 		Mtv_left_top_xu.setVisibility(View.GONE);         //xuameng直播时隐藏回看的菜单
