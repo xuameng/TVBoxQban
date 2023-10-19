@@ -482,7 +482,7 @@ public class LivePlayActivity extends BaseActivity {
                 String savedEpgKey = channelName + "_" + liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex()).getDatePresented();
                 if (!hsEpg.contains(savedEpgKey))
                     hsEpg.put(savedEpgKey, arrayList);
-                showBottomEpg();               //xuameng测试EPG刷新
+//                showBottomEpg();               //xuameng测试EPG刷新
             }
         });
     }
