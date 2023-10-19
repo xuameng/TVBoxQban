@@ -482,7 +482,7 @@ public class LivePlayActivity extends BaseActivity {
                 String savedEpgKey = channelName + "_" + liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex()).getDatePresented();
                 if (!hsEpg.contains(savedEpgKey))
                     hsEpg.put(savedEpgKey, arrayList);
-                showBottomEpg();               //xuameng测试EPG刷新
+                //showBottomEpg();               //xuameng测试EPG刷新
             }
         });
     }
@@ -962,7 +962,7 @@ public class LivePlayActivity extends BaseActivity {
         }else {
             currentLiveChannelItem.setinclude_back(false);
         }
-        //xuameng 测试左菜单反复显示   showBottomEpg();
+        showBottomEpg();
         getEpg(new Date());
         backcontroller.setVisibility(View.GONE);
         ll_right_top_huikan.setVisibility(View.GONE);
