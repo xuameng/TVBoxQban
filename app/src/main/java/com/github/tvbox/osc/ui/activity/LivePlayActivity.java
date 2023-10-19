@@ -524,7 +524,7 @@ public class LivePlayActivity extends BaseActivity {
             } else {
                 int selectedIndex = liveEpgDateAdapter.getSelectedIndex();
                 if (selectedIndex < 0)
-//xuameng测试导致重复隐藏左菜单                    getEpg(new Date());
+                    getEpg(liveEpgDateAdapter.getData().get(selectedIndex).getDateParamVal());      //xuameng测试导致重复隐藏左菜单                    getEpg(new Date());
                 else
                     getEpg(liveEpgDateAdapter.getData().get(selectedIndex).getDateParamVal());
             }
