@@ -482,7 +482,7 @@ public class LivePlayActivity extends BaseActivity {
                 String savedEpgKey = channelName + "_" + liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex()).getDatePresented();
                 if (!hsEpg.contains(savedEpgKey))
                     hsEpg.put(savedEpgKey, arrayList);
-//                showBottomEpg();
+                showBottomEpg();               //xuameng测试EPG刷新
             }
         });
     }
@@ -596,7 +596,7 @@ public class LivePlayActivity extends BaseActivity {
             liveIconNullText.setVisibility(View.VISIBLE);
             imgLiveIcon.setVisibility(View.VISIBLE);
 		    Picasso.get().load(logoUrl).placeholder(R.drawable.app_banner).into(imgLiveIcon);	// xuameng内容空显示banner
-            // xuameng不显示频道号 liveIconNullText.setVisibility(View.VISIBLE);liveIconNullText.setText("" + channel_Name.getChannelNum());
+            liveIconNullText.setVisibility(View.VISIBLE);liveIconNullText.setText("频道编号" + channel_Name.getChannelNum());   // xuameng显示频道编号
         } else {
             imgLiveIcon.setVisibility(View.VISIBLE);
             Picasso.get().load(logoUrl).placeholder(R.drawable.app_banner).into(imgLiveIcon);	// xuameng内不空显示banner
