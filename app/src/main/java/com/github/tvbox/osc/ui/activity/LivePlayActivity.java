@@ -879,7 +879,7 @@ public class LivePlayActivity extends BaseActivity {
             mLiveChannelView.setSelection(currentLiveChannelIndex);
             mChannelGroupView.scrollToPosition(currentChannelGroupIndex);
             mChannelGroupView.setSelection(currentChannelGroupIndex);
-            mHandler.postDelayed(mFocusCurrentChannelAndShowChannelList);
+            mHandler.postDelayed(mFocusCurrentChannelAndShowChannelList, 1);
         } else {
             mHandler.removeCallbacks(mHideChannelListRun);
             mHandler.post(mHideChannelListRun);
@@ -890,7 +890,7 @@ public class LivePlayActivity extends BaseActivity {
         @Override
         public void run() {
             if (mChannelGroupView.isScrolling() || mLiveChannelView.isScrolling() || mChannelGroupView.isComputingLayout() || mLiveChannelView.isComputingLayout()) {
-                mHandler.postDelayed(this);
+                mHandler.postDelayed(this, 1);
             } else {
                 liveChannelGroupAdapter.setSelectedGroupIndex(currentChannelGroupIndex);
                 liveChannelItemAdapter.setSelectedChannelIndex(currentLiveChannelIndex);
@@ -1043,7 +1043,7 @@ public class LivePlayActivity extends BaseActivity {
             selectSettingGroup(0, false);
             mSettingGroupView.scrollToPosition(0);
             mSettingItemView.scrollToPosition(currentLiveChannelItem.getSourceIndex());
-            mHandler.postDelayed(mFocusAndShowSettingGroup);
+            mHandler.postDelayed(mFocusAndShowSettingGroup, 1);
         } else {
             mHandler.removeCallbacks(mHideSettingLayoutRun);
             mHandler.post(mHideSettingLayoutRun);
@@ -1054,7 +1054,7 @@ public class LivePlayActivity extends BaseActivity {
         @Override
         public void run() {
             if (mSettingGroupView.isScrolling() || mSettingItemView.isScrolling() || mSettingGroupView.isComputingLayout() || mSettingItemView.isComputingLayout()) {
-                mHandler.postDelayed(this);
+                mHandler.postDelayed(this, 1);
             } else {
                 RecyclerView.ViewHolder holder = mSettingGroupView.findViewHolderForAdapterPosition(0);
                 if (holder != null)
