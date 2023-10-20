@@ -865,7 +865,7 @@ public class LivePlayActivity extends BaseActivity {
             mLiveChannelView.setSelection(currentLiveChannelIndex);
             mChannelGroupView.scrollToPosition(currentChannelGroupIndex);
             mChannelGroupView.setSelection(currentChannelGroupIndex);
-            mHandler.postDelayed(mFocusCurrentChannelAndShowChannelList, 5000);
+            mHandler.postDelayed(mFocusCurrentChannelAndShowChannelList, 100);
         } else {
             mHandler.removeCallbacks(mHideChannelListRun);
             mHandler.post(mHideChannelListRun);
@@ -892,7 +892,7 @@ public class LivePlayActivity extends BaseActivity {
                     public void onAnimationEnd(Animator animation) {
                         super.onAnimationEnd(animation);
                         mHandler.removeCallbacks(mHideChannelListRun);
-                        mHandler.postDelayed(mHideChannelListRun, 100);
+                        mHandler.postDelayed(mHideChannelListRun, 5000);
                     }
                 });
                 animator.start();
@@ -1028,7 +1028,7 @@ public class LivePlayActivity extends BaseActivity {
             selectSettingGroup(0, false);
             mSettingGroupView.scrollToPosition(0);
             mSettingItemView.scrollToPosition(currentLiveChannelItem.getSourceIndex());
-            mHandler.postDelayed(mFocusAndShowSettingGroup, 5000);
+            mHandler.postDelayed(mFocusAndShowSettingGroup, 100);           //XUAMENG100毫秒后执行
         } else {
             mHandler.removeCallbacks(mHideSettingLayoutRun);
             mHandler.post(mHideSettingLayoutRun);
@@ -1054,7 +1054,7 @@ public class LivePlayActivity extends BaseActivity {
                         @Override
                         public void onAnimationEnd(Animator animation) {
                             super.onAnimationEnd(animation);
-                            mHandler.postDelayed(mHideSettingLayoutRun, 100);
+                            mHandler.postDelayed(mHideSettingLayoutRun, 5000);          //xuameng5秒后隐藏
                         }
                     });
                     animator.start();
