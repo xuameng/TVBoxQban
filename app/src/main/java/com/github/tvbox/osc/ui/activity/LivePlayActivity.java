@@ -110,6 +110,8 @@ public class LivePlayActivity extends BaseActivity {
     private LiveChannelGroupAdapter liveChannelGroupAdapter;
     private LiveChannelItemAdapter liveChannelItemAdapter;
     private long mExitTime = 0;         //xuameng返回键退出时间
+	private long mExitTimeUp = 0;         //xuameng上键间隔时间
+	private long mExitTimeDown = 0;         //xuameng下键间隔时间
     private LinearLayout tvRightSettingLayout;
     private TvRecyclerView mSettingGroupView;
     private TvRecyclerView mSettingItemView;
@@ -751,19 +753,19 @@ public class LivePlayActivity extends BaseActivity {
                     }else if(backcontroller.getVisibility() == View.GONE){
                         showProgressBars(true);
                         }
-                    }else if (System.currentTimeMillis() - mExitTime < 1200) {        //xuameng小于1.2秒换台
+                    }else if (System.currentTimeMillis() - mExitTimeUp < 1200) {        //xuameng小于1.2秒换台
                           if (Hawk.get(HawkConfig.LIVE_CHANNEL_REVERSE, false))
                         playNext();
                         else
                         playPrevious();
                     }else if(isLl_epgVisible()){ 
+					    mExitTimeUp = System.currentTimeMillis();
                         ll_epg.setVisibility(View.GONE);			 //xuameng返回键隐藏下面EPG菜单隐藏
 			            ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
 			            hideTimeXu();              //xuameng隐藏系统时间
 			            hideNetSpeedXu();		//XUAMENG隐藏左上网速
-					    mExitTime = System.currentTimeMillis();
 				    }else if(!isLl_epgVisible()){
-					  mExitTime = System.currentTimeMillis();
+					  mExitTimeUp = System.currentTimeMillis();
                       showBottomEpg();           //xuameng显示EPG和上面菜单
 				 }
                         break;
@@ -775,20 +777,20 @@ public class LivePlayActivity extends BaseActivity {
                     }else if(backcontroller.getVisibility() == View.GONE){
                           showProgressBars(true);
                           }
-                    }else if (System.currentTimeMillis() - mExitTime < 1200) {
+                    }else if (System.currentTimeMillis() - mExitTimeDown < 1200) {
                           if (Hawk.get(HawkConfig.LIVE_CHANNEL_REVERSE, false))
                         playPrevious();
                         else
                         playNext();
-                    }else if(isLl_epgVisible()){ 
+                    }else if(isLl_epgVisible()){
+						mExitTimeDown = System.currentTimeMillis();
                         ll_epg.setVisibility(View.GONE);			 //xuameng返回键隐藏下面EPG菜单隐藏
 			            ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
 			            hideTimeXu();              //xuameng隐藏系统时间
-			            hideNetSpeedXu();		//XUAMENG隐藏左上网速
-					    mExitTime = System.currentTimeMillis();
+			            hideNetSpeedXu();		//XUAMENG隐藏左上网速					    
 				    }else if (!isLl_epgVisible()){
-					  mExitTime = System.currentTimeMillis();
-                      showBottomEpg();           //xuameng显示EPG和上面菜单
+					    mExitTimeDown = System.currentTimeMillis();
+                        showBottomEpg();           //xuameng显示EPG和上面菜单
 				 }
                         break;
                     case KeyEvent.KEYCODE_DPAD_LEFT:
