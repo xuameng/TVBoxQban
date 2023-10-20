@@ -638,7 +638,7 @@ public class LivePlayActivity extends BaseActivity {
             } else if (tvRightSettingLayout.getVisibility() == View.VISIBLE) {
                 mHandler.removeCallbacks(mHideSettingLayoutRun);
                 mHandler.post(mHideSettingLayoutRun);
-            }
+         }
         }
     }
 
@@ -762,7 +762,7 @@ public class LivePlayActivity extends BaseActivity {
 			            hideTimeXu();              //xuameng隐藏系统时间
 			            hideNetSpeedXu();		//XUAMENG隐藏左上网速
 					    mExitTime = System.currentTimeMillis();
-				    }else (!isLl_epgVisible()){
+				    }else if(!isLl_epgVisible()){
 					  mExitTime = System.currentTimeMillis();
                       showBottomEpg();           //xuameng显示EPG和上面菜单
 				 }
@@ -786,7 +786,7 @@ public class LivePlayActivity extends BaseActivity {
 			            hideTimeXu();              //xuameng隐藏系统时间
 			            hideNetSpeedXu();		//XUAMENG隐藏左上网速
 					    mExitTime = System.currentTimeMillis();
-				    }else (!isLl_epgVisible()){
+				    }else if (!isLl_epgVisible()){
 					  mExitTime = System.currentTimeMillis();
                       showBottomEpg();           //xuameng显示EPG和上面菜单
 				 }
