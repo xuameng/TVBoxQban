@@ -865,7 +865,7 @@ public class LivePlayActivity extends BaseActivity {
             mLiveChannelView.setSelection(currentLiveChannelIndex);
             mChannelGroupView.scrollToPosition(currentChannelGroupIndex);
             mChannelGroupView.setSelection(currentChannelGroupIndex);
-            mHandler.postDelayed(mFocusCurrentChannelAndShowChannelList, 200);
+            mHandler.postDelayed(mFocusCurrentChannelAndShowChannelList, 100);
         } else {
             mHandler.removeCallbacks(mHideChannelListRun);
             mHandler.post(mHideChannelListRun);
@@ -1028,7 +1028,7 @@ public class LivePlayActivity extends BaseActivity {
             selectSettingGroup(0, false);
             mSettingGroupView.scrollToPosition(0);
             mSettingItemView.scrollToPosition(currentLiveChannelItem.getSourceIndex());
-            mHandler.postDelayed(mFocusAndShowSettingGroup, 200);
+            mHandler.postDelayed(mFocusAndShowSettingGroup, 100);
         } else {
             mHandler.removeCallbacks(mHideSettingLayoutRun);
             mHandler.post(mHideSettingLayoutRun);
