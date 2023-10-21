@@ -930,17 +930,14 @@ public class LivePlayActivity extends BaseActivity {
                 if (holder != null)
                     holder.itemView.requestFocus();
                     tvLeftChannelListLayout.setVisibility(View.VISIBLE); 
-    };
+    }
 
     private void mHideChannelListRun() {
-        @Override
-        public void run() {
             ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) tvLeftChannelListLayout.getLayoutParams();
             if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {              
                 tvLeftChannelListLayout.setVisibility(View.INVISIBLE);
-            }
         }
-    };
+    }
 
 /*XUAMENG没用    private void showChannelInfo() {     
         tvChannelInfo.setText(String.format(Locale.getDefault(), "%d %s %s(%d/%d)", currentLiveChannelItem.getChannelNum(),
@@ -1073,7 +1070,7 @@ public class LivePlayActivity extends BaseActivity {
                     holder.itemView.requestFocus();
                 tvRightSettingLayout.setVisibility(View.VISIBLE);
                 ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) tvRightSettingLayout.getLayoutParams();
-    };
+    }
 
     private void mHideSettingLayoutRun() {
             ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) tvRightSettingLayout.getLayoutParams();
@@ -1081,7 +1078,7 @@ public class LivePlayActivity extends BaseActivity {
                         tvRightSettingLayout.setVisibility(View.INVISIBLE);
                         liveSettingGroupAdapter.setSelectedGroupIndex(-1);
             }
-    };
+    }
 
     //laodao 7天Epg数据绑定和展示
     private void initEpgListView() {
