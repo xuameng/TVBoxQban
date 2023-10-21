@@ -582,7 +582,7 @@ public class LivePlayActivity extends BaseActivity {
 			showNetSpeedXu();                  //XUAMENG显示左上网速
 */
 			if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
-                vLeftChannelListLayout.setVisibility(View.INVISIBLE);
+                tvLeftChannelListLayout.setVisibility(View.INVISIBLE);
               } else if (tvRightSettingLayout.getVisibility() == View.VISIBLE) {
                         tvRightSettingLayout.setVisibility(View.INVISIBLE);
 		   }
