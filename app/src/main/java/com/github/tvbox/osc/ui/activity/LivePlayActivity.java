@@ -574,20 +574,13 @@ public class LivePlayActivity extends BaseActivity {
             }
             tv_right_top_channel_name.setText(channel_Name.getChannelName());
             tv_right_top_epg_name.setText(channel_Name.getChannelName());
-/*xuameng测试
+/*xuameng没用了
             Handler handler = new Handler(Looper.getMainLooper());
             ll_right_top_loading.setVisibility(View.VISIBLE);
 			ll_epg.setVisibility(View.VISIBLE);  //xuameng下面EPG菜单显示
 			showTimeXu();                       //xuameng显示系统时间
 			showNetSpeedXu();                  //XUAMENG显示左上网速
 */
-        if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {           //XUAMENG只要显示EPG就隐藏左右菜单
-            mHandler.removeCallbacks(mHideChannelListRun);
-            mHandler.post(mHideChannelListRun);
-        } else if (tvRightSettingLayout.getVisibility() == View.VISIBLE) {
-            mHandler.removeCallbacks(mHideSettingLayoutRun);
-            mHandler.post(mHideSettingLayoutRun);
-        } 
 
             // xuameng 取消右上菜单自动隐藏 延迟5秒后执行隐藏操作
 //            handler.postDelayed(new Runnable() {
@@ -635,13 +628,6 @@ public class LivePlayActivity extends BaseActivity {
                 else
                     getEpg(liveEpgDateAdapter.getData().get(selectedIndex).getDateParamVal());
             }
-            if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {           //XUAMENG只要显示EPG就隐藏左右菜单
-                mHandler.removeCallbacks(mHideChannelListRun);
-                mHandler.post(mHideChannelListRun);
-            } else if (tvRightSettingLayout.getVisibility() == View.VISIBLE) {
-                mHandler.removeCallbacks(mHideSettingLayoutRun);
-                mHandler.post(mHideSettingLayoutRun);
-         }
         }
     }
 
@@ -1632,8 +1618,8 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public void onItemClick(TvRecyclerView parent, View itemView, int position) {        //选中播放就隐藏左侧频道菜单
                 clickLiveChannel(position);
-//xuameng测试				mHandler.removeCallbacks(mHideChannelListRun);  //xuameng隐藏左侧频道菜单
-//xuameng测试                mHandler.post(mHideChannelListRun);             //xuameng隐藏左侧频道菜单
+				mHandler.removeCallbacks(mHideChannelListRun);  //xuameng隐藏左侧频道菜单
+                mHandler.post(mHideChannelListRun);             //xuameng隐藏左侧频道菜单
 
             }
         });
@@ -1763,8 +1749,8 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public void onItemClick(TvRecyclerView parent, View itemView, int position) {
                 clickSettingItem(position);
-//xuameng选中源就隐藏右侧菜单			    mHandler.removeCallbacks(mHideSettingLayoutRun);         
-//xuameng选中源就隐藏右侧菜单                mHandler.post(mHideSettingLayoutRun);					
+			    mHandler.removeCallbacks(mHideSettingLayoutRun);         //xuameng选中源就隐藏右侧菜单
+                mHandler.post(mHideSettingLayoutRun);					//xuameng选中源就隐藏右侧菜单
             }
         });
 
@@ -1774,8 +1760,8 @@ public class LivePlayActivity extends BaseActivity {
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 FastClickCheckUtil.check(view);
                 clickSettingItem(position);
-//xuameng选中源就隐藏右侧菜单				mHandler.removeCallbacks(mHideSettingLayoutRun);         //xuameng选中源就隐藏右侧菜单
-//xuameng选中源就隐藏右侧菜单                mHandler.post(mHideSettingLayoutRun);					//xuameng选中源就隐藏右侧菜单
+				mHandler.removeCallbacks(mHideSettingLayoutRun);         //xuameng选中源就隐藏右侧菜单
+                mHandler.post(mHideSettingLayoutRun);					//xuameng选中源就隐藏右侧菜单
             }
         });
     }
