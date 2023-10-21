@@ -190,6 +190,8 @@ public class LivePlayActivity extends BaseActivity {
     private CountDownTimer countDownTimer3;
 	private CountDownTimer countDownTimer6;
 	private CountDownTimer countDownTimer5;
+	private CountDownTimer countDownTimer7;
+	private CountDownTimer countDownTimer8;
     private int videoWidth = 1920;
     private int videoHeight = 1080;
     private TextView tv_currentpos;
@@ -939,6 +941,20 @@ public class LivePlayActivity extends BaseActivity {
         }
     }
 
+	    private void mHideChannelListRunXu() {
+				if (countDownTimer7 != null) {
+                countDownTimer7.cancel();
+                }
+			    countDownTimer7 = new CountDownTimer(5000, 1000) {//底部epg隐藏时间设定
+		        public void onTick(long j) {
+                    }
+                    public void onFinish() {
+                    mHideChannelListRun();
+                    }
+                };
+                countDownTimer7.start();
+    }
+
 /*XUAMENG没用    private void showChannelInfo() {     
         tvChannelInfo.setText(String.format(Locale.getDefault(), "%d %s %s(%d/%d)", currentLiveChannelItem.getChannelNum(),
                 currentLiveChannelItem.getChannelName(), currentLiveChannelItem.getSourceName(),
@@ -1080,6 +1096,20 @@ public class LivePlayActivity extends BaseActivity {
             }
     }
 
+	    private void mHideSettingLayoutRunXu() {
+				if (countDownTimer8 != null) {
+                countDownTimer8.cancel();
+                }
+			    countDownTimer8 = new CountDownTimer(5000, 1000) {//底部epg隐藏时间设定
+		        public void onTick(long j) {
+                    }
+                    public void onFinish() {
+                    mHideSettingLayoutRun();
+                    }
+                };
+                countDownTimer8.start();
+    }
+
     //laodao 7天Epg数据绑定和展示
     private void initEpgListView() {
         mRightEpgList.setHasFixedSize(true);
@@ -1091,7 +1121,7 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                mFocusCurrentChannelAndShowChannelList();
+                mHideChannelListRunXu();
             }
         });
         //电视
@@ -1103,7 +1133,7 @@ public class LivePlayActivity extends BaseActivity {
 
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
-                mFocusCurrentChannelAndShowChannelList();
+                mHideChannelListRunXu();
                 epgListAdapter.setFocusedEpgIndex(position);
             }
 
@@ -1297,7 +1327,7 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                mFocusCurrentChannelAndShowChannelList();
+                mHideChannelListRunXu();
             }
         });
 
@@ -1310,13 +1340,13 @@ public class LivePlayActivity extends BaseActivity {
 
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
-                mFocusCurrentChannelAndShowChannelList();
+                mHideChannelListRunXu();
                 liveEpgDateAdapter.setFocusedIndex(position);
             }
 
             @Override
             public void onItemClick(TvRecyclerView parent, View itemView, int position) {
-                mFocusCurrentChannelAndShowChannelList();
+                mHideChannelListRunXu();
                 liveEpgDateAdapter.setSelectedIndex(position);
                 getEpg(liveEpgDateAdapter.getData().get(position).getDateParamVal());
             }
@@ -1327,7 +1357,7 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 FastClickCheckUtil.check(view);
-                mFocusCurrentChannelAndShowChannelList();
+                mHideChannelListRunXu();
                 liveEpgDateAdapter.setSelectedIndex(position);
                 getEpg(liveEpgDateAdapter.getData().get(position).getDateParamVal());
             }
@@ -1484,7 +1514,7 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                mFocusCurrentChannelAndShowChannelList();
+                mHideChannelListRunXu();
             }
         });
 
@@ -1531,7 +1561,7 @@ public class LivePlayActivity extends BaseActivity {
             loadChannelGroupDataAndPlay(groupIndex, liveChannelIndex);
         }
         if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
-            mFocusCurrentChannelAndShowChannelList();
+            mHideChannelListRunXu();
         }
     }
 
@@ -1545,7 +1575,7 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                mFocusCurrentChannelAndShowChannelList();
+                mHideChannelListRunXu();
             }
         });
 
@@ -1560,7 +1590,7 @@ public class LivePlayActivity extends BaseActivity {
                 if (position < 0) return;
                 liveChannelGroupAdapter.setFocusedGroupIndex(-1);
                 liveChannelItemAdapter.setFocusedChannelIndex(position);
-                mFocusCurrentChannelAndShowChannelList();
+                mHideChannelListRunXu();
             }
 
             @Override
@@ -1585,7 +1615,7 @@ public class LivePlayActivity extends BaseActivity {
         liveChannelItemAdapter.setSelectedChannelIndex(position);
         playChannel(liveChannelGroupAdapter.getSelectedGroupIndex(), position, false);
         if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
-            mFocusCurrentChannelAndShowChannelList();
+            mHideChannelListRunXu();
         }
     }
 
@@ -1599,7 +1629,7 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                mFocusAndShowSettingGroup();
+                mHideSettingLayoutRunXu();
             }
         });
 
@@ -1655,7 +1685,7 @@ public class LivePlayActivity extends BaseActivity {
         int scrollToPosition = liveSettingItemAdapter.getSelectedItemIndex();
         if (scrollToPosition < 0) scrollToPosition = 0;
         mSettingItemView.scrollToPosition(scrollToPosition);
-        mFocusAndShowSettingGroup();
+        mHideSettingLayoutRunXu();
     }
 
     private void initSettingItemView() {
@@ -1668,7 +1698,7 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                mFocusAndShowSettingGroup();
+                mHideSettingLayoutRunXu();
             }
         });
 
@@ -1683,7 +1713,7 @@ public class LivePlayActivity extends BaseActivity {
                 if (position < 0) return;
                 liveSettingGroupAdapter.setFocusedGroupIndex(-1);
                 liveSettingItemAdapter.setFocusedItemIndex(position);
-                mFocusAndShowSettingGroup();
+                mHideSettingLayoutRunXu();
             }
 
             @Override
@@ -1753,7 +1783,7 @@ public class LivePlayActivity extends BaseActivity {
                 liveSettingItemAdapter.selectItem(position, select, false);
                 break;
         }
-            mFocusAndShowSettingGroup();
+            mHideSettingLayoutRunXu();
     }
 
     private void initLiveChannelList() {
@@ -2029,7 +2059,7 @@ public class LivePlayActivity extends BaseActivity {
                 }
 
                 if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE)
-                    mFocusCurrentChannelAndShowChannelList();
+                    mHideChannelListRunXu();
             }
 
             @Override
