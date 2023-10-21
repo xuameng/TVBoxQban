@@ -1444,6 +1444,8 @@ public class LivePlayActivity extends BaseActivity {
 			         ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
 			         hideTimeXu();              //xuameng隐藏系统时间
 			         hideNetSpeedXu();		//XUAMENG隐藏左上网速
+					 tvLeftChannelListLayout.setVisibility(View.INVISIBLE);
+                     tvRightSettingLayout.setVisibility(View.INVISIBLE);
 				  }else if(!isLl_epgVisible()){
                       showBottomEpg();           //xuameng显示EPG和上面菜单
 				 }
@@ -1618,9 +1620,7 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public void onItemClick(TvRecyclerView parent, View itemView, int position) {        //选中播放就隐藏左侧频道菜单
                 clickLiveChannel(position);
-				mHandler.removeCallbacks(mHideChannelListRun);  //xuameng隐藏左侧频道菜单
-                mHandler.post(mHideChannelListRun);             //xuameng隐藏左侧频道菜单
-
+				tvLeftChannelListLayout.setVisibility(View.INVISIBLE);  //xuameng隐藏左侧频道菜单
             }
         });
 
@@ -1630,8 +1630,7 @@ public class LivePlayActivity extends BaseActivity {
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 FastClickCheckUtil.check(view);
                 clickLiveChannel(position);
-				mHandler.removeCallbacks(mHideChannelListRun);  //xuameng隐藏左侧频道菜单
-                mHandler.post(mHideChannelListRun);             //xuameng隐藏左侧频道菜单
+				tvLeftChannelListLayout.setVisibility(View.INVISIBLE);  //xuameng隐藏左侧频道菜单
             }
         });
     }
@@ -1749,8 +1748,7 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public void onItemClick(TvRecyclerView parent, View itemView, int position) {
                 clickSettingItem(position);
-			    mHandler.removeCallbacks(mHideSettingLayoutRun);         //xuameng选中源就隐藏右侧菜单
-                mHandler.post(mHideSettingLayoutRun);					//xuameng选中源就隐藏右侧菜单
+			    tvRightSettingLayout.setVisibility(View.INVISIBLE);         //xuameng选中源就隐藏右侧菜单
             }
         });
 
@@ -1760,8 +1758,7 @@ public class LivePlayActivity extends BaseActivity {
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 FastClickCheckUtil.check(view);
                 clickSettingItem(position);
-				mHandler.removeCallbacks(mHideSettingLayoutRun);         //xuameng选中源就隐藏右侧菜单
-                mHandler.post(mHideSettingLayoutRun);					//xuameng选中源就隐藏右侧菜单
+				tvRightSettingLayout.setVisibility(View.INVISIBLE);        //xuameng选中源就隐藏右侧菜单
             }
         });
     }
