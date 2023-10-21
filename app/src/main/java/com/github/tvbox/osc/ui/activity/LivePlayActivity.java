@@ -284,7 +284,7 @@ public class LivePlayActivity extends BaseActivity {
 			iv_playpause.requestFocus();				 //xuameng回看菜单默认焦点为播放
             ll_epg.setVisibility(View.GONE);			 //xuameng下面EPG菜单隐藏
 			ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
-            mHideChannelListRun;
+            mHideChannelListRun();
 			hideNetSpeedXu();		//XUAMENG隐藏左上网速
         }else{
             backcontroller.setVisibility(View.GONE);
@@ -701,7 +701,7 @@ public class LivePlayActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
-            mHideChannelListRun;
+            mHideChannelListRun();
         } else if (tvRightSettingLayout.getVisibility() == View.VISIBLE) {
             mHideSettingLayoutRun();
         } else if(backcontroller.getVisibility() == View.VISIBLE){ 
@@ -1037,7 +1037,7 @@ public class LivePlayActivity extends BaseActivity {
     //显示设置列表
     private void showSettingGroup() {
         if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
-            mHideChannelListRun;
+            mHideChannelListRun();
         }
         if (tvRightSettingLayout.getVisibility() == View.INVISIBLE) {
             if (!isCurrentLiveChannelValid()) return;
