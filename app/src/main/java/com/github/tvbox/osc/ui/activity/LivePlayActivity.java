@@ -898,7 +898,7 @@ public class LivePlayActivity extends BaseActivity {
     private void showChannelList() {
         if (tvRightSettingLayout.getVisibility() == View.VISIBLE) {
             mHideSettingLayoutRun();
- //XUAMENG直接隐藏右侧菜单显示左侧菜单，手机单击时           return;
+            return;
         }
         if (tvLeftChannelListLayout.getVisibility() == View.INVISIBLE) {
             //重新载入上一次状态
