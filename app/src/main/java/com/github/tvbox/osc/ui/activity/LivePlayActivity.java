@@ -945,6 +945,9 @@ public class LivePlayActivity extends BaseActivity {
 				if (countDownTimer7 != null) {
                 countDownTimer7.cancel();
                 }
+ 				if (countDownTimer5 != null) {
+                countDownTimer5.cancel();
+                }
 			    countDownTimer7 = new CountDownTimer(5000, 1000) {//底部epg隐藏时间设定
 		        public void onTick(long j) {
                     }
@@ -1099,6 +1102,9 @@ public class LivePlayActivity extends BaseActivity {
 	    private void mHideSettingLayoutRunXu() {
 				if (countDownTimer8 != null) {
                 countDownTimer8.cancel();
+                }
+				if (countDownTimer6 != null) {
+                countDownTimer6.cancel();
                 }
 			    countDownTimer8 = new CountDownTimer(5000, 1000) {//底部epg隐藏时间设定
 		        public void onTick(long j) {
