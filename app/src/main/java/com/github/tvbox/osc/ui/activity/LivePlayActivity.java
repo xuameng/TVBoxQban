@@ -584,7 +584,7 @@ public class LivePlayActivity extends BaseActivity {
 			showTimeXu();                       //xuameng显示系统时间
 			showNetSpeedXu();                  //XUAMENG显示左上网速
 */
-			if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
+			if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {                 //xuameng显示EPG就隐藏左右菜单
                 tvLeftChannelListLayout.setVisibility(View.INVISIBLE);
               } else if (tvRightSettingLayout.getVisibility() == View.VISIBLE) {
                         tvRightSettingLayout.setVisibility(View.INVISIBLE);
@@ -898,7 +898,7 @@ public class LivePlayActivity extends BaseActivity {
     private void showChannelList() {
         if (tvRightSettingLayout.getVisibility() == View.VISIBLE) {
             mHideSettingLayoutRun();
-            return;
+ //XUAMENG直接隐藏右侧菜单显示左侧菜单，手机单击时           return;
         }
         if (tvLeftChannelListLayout.getVisibility() == View.INVISIBLE) {
             //重新载入上一次状态
@@ -914,7 +914,7 @@ public class LivePlayActivity extends BaseActivity {
         }
     }
 
-    private void mFocusCurrentChannelAndShowChannelList() {              //xuameng左侧菜单动画
+    private void mFocusCurrentChannelAndShowChannelList() {              //xuameng左侧菜单显示
                 liveChannelGroupAdapter.setSelectedGroupIndex(currentChannelGroupIndex);
                 liveChannelItemAdapter.setSelectedChannelIndex(currentLiveChannelIndex);
                 RecyclerView.ViewHolder holder = mLiveChannelView.findViewHolderForAdapterPosition(currentLiveChannelIndex);
@@ -934,14 +934,14 @@ public class LivePlayActivity extends BaseActivity {
                     tvLeftChannelListLayout.setVisibility(View.VISIBLE); 
     }
 
-    private void mHideChannelListRun() {
+    private void mHideChannelListRun() {            //xuameng左侧菜单隐藏
             ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) tvLeftChannelListLayout.getLayoutParams();
             if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {              
                 tvLeftChannelListLayout.setVisibility(View.INVISIBLE);
         }
     }
 
-	    private void mHideChannelListRunXu() {
+	    private void mHideChannelListRunXu() {   //xuameng左侧菜单验收5秒隐藏
 				if (countDownTimer7 != null) {
                 countDownTimer7.cancel();
                 }
@@ -1072,12 +1072,12 @@ public class LivePlayActivity extends BaseActivity {
         }
     }
 
-    private void mFocusAndShowSettingGroup() {
+    private void mFocusAndShowSettingGroup() {                     //XUAMENG显示右侧菜单
                 RecyclerView.ViewHolder holder = mSettingGroupView.findViewHolderForAdapterPosition(0);
 				if (countDownTimer6 != null) {
                 countDownTimer6.cancel();
                 }
-			    countDownTimer6 = new CountDownTimer(5000, 1000) {//底部epg隐藏时间设定
+			    countDownTimer6 = new CountDownTimer(5000, 1000) {//XUAMENG时间设定
 		        public void onTick(long j) {
                     }
                     public void onFinish() {
@@ -1091,7 +1091,7 @@ public class LivePlayActivity extends BaseActivity {
                 ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) tvRightSettingLayout.getLayoutParams();
     }
 
-    private void mHideSettingLayoutRun() {
+    private void mHideSettingLayoutRun() {        //XUAMENG隐藏右侧菜单
             ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) tvRightSettingLayout.getLayoutParams();
             if (tvRightSettingLayout.getVisibility() == View.VISIBLE) {
                         tvRightSettingLayout.setVisibility(View.INVISIBLE);
@@ -1099,7 +1099,7 @@ public class LivePlayActivity extends BaseActivity {
             }
     }
 
-	    private void mHideSettingLayoutRunXu() {
+	    private void mHideSettingLayoutRunXu() {			//XUAMENG隐藏右侧延时5秒菜单
 				if (countDownTimer8 != null) {
                 countDownTimer8.cancel();
                 }
@@ -1989,7 +1989,7 @@ public class LivePlayActivity extends BaseActivity {
             tvTime.setVisibility(View.GONE);
     }
 
-		    void hideTimeXu() {                                            //xuameng的系统时间
+		void hideTimeXu() {                                            //xuameng的系统时间
             mHandler.removeCallbacks(mUpdateTimeRunXu);
             tvTime_xu.setVisibility(View.GONE);
 			if (Hawk.get(HawkConfig.LIVE_SHOW_TIME, false)) {
