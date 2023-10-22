@@ -192,6 +192,7 @@ public class LivePlayActivity extends BaseActivity {
 	private CountDownTimer countDownTimer5;
 	private CountDownTimer countDownTimer7;
 	private CountDownTimer countDownTimer8;
+	private CountDownTimer countDownTimer10;
     private int videoWidth = 1920;
     private int videoHeight = 1080;
     private TextView tv_currentpos;
@@ -908,7 +909,17 @@ public class LivePlayActivity extends BaseActivity {
             mLiveChannelView.setSelection(currentLiveChannelIndex);
             mChannelGroupView.scrollToPosition(currentChannelGroupIndex);
             mChannelGroupView.setSelection(currentChannelGroupIndex);
-            mFocusCurrentChannelAndShowChannelList();
+			if (countDownTimer10 != null) {
+                countDownTimer10.cancel();
+                }
+			    countDownTimer10 = new CountDownTimer(500, 100) {//底部epg隐藏时间设定
+		        public void onTick(long j) {
+                    }
+                    public void onFinish() {
+                    mFocusCurrentChannelAndShowChannelList();
+                    }
+                };
+                countDownTimer10.start();
         } else {
             mHideChannelListRun();
         }
@@ -917,7 +928,12 @@ public class LivePlayActivity extends BaseActivity {
     private void mFocusCurrentChannelAndShowChannelList() {              //xuameng左侧菜单显示
                 liveChannelGroupAdapter.setSelectedGroupIndex(currentChannelGroupIndex);
                 liveChannelItemAdapter.setSelectedChannelIndex(currentLiveChannelIndex);
-                RecyclerView.ViewHolder holder = mChannelGroupView.findViewHolderForAdapterPosition(0);   //xuameng (currentLiveChannelIndex);测试焦点
+                if (divLoadEpg.getVisibility() == View.VISIBLE){
+                RecyclerView.ViewHolder holder = mLiveChannelView.findViewHolderForAdapterPosition(0);   //xuameng (currentLiveChannelIndex);测试焦点 默认焦点		
+               } else if (divLoadEpg.getVisibility() == View.GONE) {
+                RecyclerView.ViewHolder holder = mChannelGroupView.findViewHolderForAdapterPosition(0);   //xuameng (currentLiveChannelIndex);测试焦点 默认焦点
+		   }
+
 				if (countDownTimer5 != null) {
                 countDownTimer5.cancel();
                 }
@@ -2051,7 +2067,7 @@ public class LivePlayActivity extends BaseActivity {
 
     private void showPasswordDialog(int groupIndex, int liveChannelIndex) {
         if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE)
-            mHideChannelListRun();
+            mHideChannelListRunXu();
 
         LivePasswordDialog dialog = new LivePasswordDialog(this);
         dialog.setOnListener(new LivePasswordDialog.OnListener() {
