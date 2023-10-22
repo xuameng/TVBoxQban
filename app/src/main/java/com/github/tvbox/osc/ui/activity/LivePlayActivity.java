@@ -571,7 +571,7 @@ public class LivePlayActivity extends BaseActivity {
                 countDownTimer.start();
             }
             if (channel_Name == null || channel_Name.getSourceNum() <= 0) {
-                ((TextView) findViewById(R.id.tv_source)).setText("1/1");
+                ((TextView) findViewById(R.id.tv_source)).setText("[线路信源1/1]");
             } else {
                 ((TextView) findViewById(R.id.tv_source)).setText("[线路信源" + (channel_Name.getSourceIndex() + 1) + "/" + channel_Name.getSourceNum() + "]");
             }
@@ -653,7 +653,7 @@ public class LivePlayActivity extends BaseActivity {
             Picasso.get().load(logoUrl).placeholder(R.drawable.app_banner).into(imgLiveIcon);	// xuameng内不空显示banner
             liveIconNullBg.setVisibility(View.VISIBLE);
             liveIconNullText.setVisibility(View.VISIBLE);
-			liveIconNullText.setVisibility(View.VISIBLE);liveIconNullText.setText("频道编号" + channel_Name.getChannelNum() + "]");   // xuameng显示频道编号
+			liveIconNullText.setVisibility(View.VISIBLE);liveIconNullText.setText("[频道编号" + channel_Name.getChannelNum() + "]");   // xuameng显示频道编号
         }
     }
 
@@ -1795,7 +1795,7 @@ public class LivePlayActivity extends BaseActivity {
     private void initLiveChannelList() {
         List<LiveChannelGroup> list = ApiConfig.get().getChannelGroupList();
         if (list.isEmpty()) {
-            Toast.makeText(App.getInstance(), "聚汇影视提示您：频道列表为空", Toast.LENGTH_SHORT).show();
+            Toast.makeText(App.getInstance(), "聚汇影视提示您：频道列表为空！", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
@@ -1816,7 +1816,7 @@ public class LivePlayActivity extends BaseActivity {
             Uri parsedUrl = Uri.parse(url);
             url = new String(Base64.decode(parsedUrl.getQueryParameter("ext"), Base64.DEFAULT | Base64.URL_SAFE | Base64.NO_WRAP), "UTF-8");
         } catch (Throwable th) {
-            Toast.makeText(App.getInstance(), "聚汇影视提示您：频道列表为空", Toast.LENGTH_SHORT).show();
+            Toast.makeText(App.getInstance(), "聚汇影视提示您：频道列表为空！", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
@@ -1838,7 +1838,7 @@ public class LivePlayActivity extends BaseActivity {
                 ApiConfig.get().loadLives(livesArray);
                 List<LiveChannelGroup> list = ApiConfig.get().getChannelGroupList();
                 if (list.isEmpty()) {
-                    Toast.makeText(App.getInstance(), "聚汇影视提示您：频道列表为空", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(App.getInstance(), "聚汇影视提示您：频道列表为空！", Toast.LENGTH_SHORT).show();
                     finish();
                     return;
                 }
@@ -1908,9 +1908,9 @@ public class LivePlayActivity extends BaseActivity {
         ArrayList<String> groupNames = new ArrayList<>(Arrays.asList("线路选择", "画面比例", "播放解码", "超时换源", "偏好设置"));
         ArrayList<ArrayList<String>> itemsArrayList = new ArrayList<>();
         ArrayList<String> sourceItems = new ArrayList<>();
-        ArrayList<String> scaleItems = new ArrayList<>(Arrays.asList("默认", "16:9", "4:3", "填充", "原始", "裁剪"));
-        ArrayList<String> playerDecoderItems = new ArrayList<>(Arrays.asList("系统", "ijk硬解", "ijk软解", "exo"));
-        ArrayList<String> timeoutItems = new ArrayList<>(Arrays.asList("5s", "10s", "15s", "20s", "25s", "30s"));
+        ArrayList<String> scaleItems = new ArrayList<>(Arrays.asList("默认比例", "16:9比例", "4:3比例", "填充比例", "原始比例", "裁剪比例"));
+        ArrayList<String> playerDecoderItems = new ArrayList<>(Arrays.asList("系统解码", "ijk硬解", "ijk软解", "exo解码"));
+        ArrayList<String> timeoutItems = new ArrayList<>(Arrays.asList("超时05秒", "超时10秒", "超时15秒", "超时20秒", "超时25秒", "超时30秒"));
         ArrayList<String> personalSettingItems = new ArrayList<>(Arrays.asList("显示时间", "显示网速", "换台反转", "跨选分类"));
         itemsArrayList.add(sourceItems);
         itemsArrayList.add(scaleItems);
