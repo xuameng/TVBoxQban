@@ -917,7 +917,7 @@ public class LivePlayActivity extends BaseActivity {
     private void mFocusCurrentChannelAndShowChannelList() {              //xuameng左侧菜单显示
                 liveChannelGroupAdapter.setSelectedGroupIndex(currentChannelGroupIndex);
                 liveChannelItemAdapter.setSelectedChannelIndex(currentLiveChannelIndex);
-                RecyclerView.ViewHolder holder = mLiveChannelView.findViewHolderForAdapterPosition(currentLiveChannelIndex);
+                RecyclerView.ViewHolder holder = mLiveChannelView.findViewHolderForAdapterPosition(0);   //xuameng (currentLiveChannelIndex);测试焦点
 				if (countDownTimer5 != null) {
                 countDownTimer5.cancel();
                 }
@@ -1909,7 +1909,7 @@ public class LivePlayActivity extends BaseActivity {
         ArrayList<ArrayList<String>> itemsArrayList = new ArrayList<>();
         ArrayList<String> sourceItems = new ArrayList<>();
         ArrayList<String> scaleItems = new ArrayList<>(Arrays.asList("默认比例", "16:9比例", "4:3 比例", "填充比例", "原始比例", "裁剪比例"));
-        ArrayList<String> playerDecoderItems = new ArrayList<>(Arrays.asList("系统解码", "IJK 硬解", "IJK 软解", "EXO 解码"));
+        ArrayList<String> playerDecoderItems = new ArrayList<>(Arrays.asList("系统解码", "IJK  硬解", "IJK  软解", "EXO 解码"));
         ArrayList<String> timeoutItems = new ArrayList<>(Arrays.asList("超时05秒", "超时10秒", "超时15秒", "超时20秒", "超时25秒", "超时30秒"));
         ArrayList<String> personalSettingItems = new ArrayList<>(Arrays.asList("显示时间", "显示网速", "换台反转", "跨选分类"));
         itemsArrayList.add(sourceItems);
