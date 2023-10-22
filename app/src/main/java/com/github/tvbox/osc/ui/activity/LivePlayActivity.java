@@ -917,7 +917,7 @@ public class LivePlayActivity extends BaseActivity {
     private void mFocusCurrentChannelAndShowChannelList() {              //xuameng左侧菜单显示
                 liveChannelGroupAdapter.setSelectedGroupIndex(currentChannelGroupIndex);
                 liveChannelItemAdapter.setSelectedChannelIndex(currentLiveChannelIndex);
-                RecyclerView.ViewHolder holder = mLiveChannelView.findViewHolderForAdapterPosition(0);   //xuameng (currentLiveChannelIndex);测试焦点
+                RecyclerView.ViewHolder holder = mChannelGroupView.findViewHolderForAdapterPosition(0);   //xuameng (currentLiveChannelIndex);测试焦点
 				if (countDownTimer5 != null) {
                 countDownTimer5.cancel();
                 }
