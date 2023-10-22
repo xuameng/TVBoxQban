@@ -929,7 +929,7 @@ public class LivePlayActivity extends BaseActivity {
                 liveChannelGroupAdapter.setSelectedGroupIndex(currentChannelGroupIndex);
                 liveChannelItemAdapter.setSelectedChannelIndex(currentLiveChannelIndex);
                 if (divLoadEpg.getVisibility() == View.VISIBLE){
-                RecyclerView.ViewHolder holder = mLiveChannelView.findViewHolderForAdapterPosition(setFocusedChannelIndex);   //xuameng (currentLiveChannelIndex);测试焦点 默认焦点	
+                RecyclerView.ViewHolder holder = mLiveChannelView.findViewHolderForAdapterPosition(currentLiveChannelIndex);   //xuameng (currentLiveChannelIndex);测试焦点 默认焦点	
 				    if (holder != null)
                     holder.itemView.requestFocus();
                     tvLeftChannelListLayout.setVisibility(View.VISIBLE); 
