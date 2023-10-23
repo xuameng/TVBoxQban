@@ -431,12 +431,12 @@ public class LivePlayActivity extends BaseActivity {
                 mRightEpgList.setSelection(i);
                 epgListAdapter.setSelectedEpgIndex(i);
                 int finalI = i;
-                mRightEpgList.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mRightEpgList.smoothScrollToPosition(finalI);
-                    }
-                });
+//xuameng测试焦点问题                mRightEpgList.post(new Runnable() {
+//xuameng测试焦点问题                     @Override
+//xuameng测试焦点问题                     public void run() {
+//xuameng测试焦点问题                         mRightEpgList.smoothScrollToPosition(finalI);
+//xuameng测试焦点问题                     }
+//xuameng测试焦点问题                 });
             }
         }
     }
@@ -915,7 +915,7 @@ public class LivePlayActivity extends BaseActivity {
 			if (countDownTimer10 != null) {
                 countDownTimer10.cancel();
                 }
-			    countDownTimer10 = new CountDownTimer(300, 100) {//底部epg隐藏时间设定
+			    countDownTimer10 = new CountDownTimer(400, 100) {//底部epg隐藏时间设定
 		        public void onTick(long j) {
                     }
                     public void onFinish() {
@@ -933,7 +933,7 @@ public class LivePlayActivity extends BaseActivity {
                 if (countDownTimer20 != null) {
                 countDownTimer20.cancel();
                 }
-			    countDownTimer20 = new CountDownTimer(200, 100) {//底部epg隐藏时间设定
+			    countDownTimer20 = new CountDownTimer(100, 50) {//底部epg隐藏时间设定
 		        public void onTick(long j) {
                     }
                     public void onFinish() {
@@ -1102,7 +1102,7 @@ public class LivePlayActivity extends BaseActivity {
 			if (countDownTimer22 != null) {
                 countDownTimer22.cancel();
                 }
-			    countDownTimer22 = new CountDownTimer(300, 100) {//底部epg隐藏时间设定
+			    countDownTimer22 = new CountDownTimer(400, 100) {//底部epg隐藏时间设定
 		        public void onTick(long j) {
                     }
                     public void onFinish() {
@@ -1121,7 +1121,7 @@ public class LivePlayActivity extends BaseActivity {
                 if (countDownTimer21 != null) {
                 countDownTimer21.cancel();
                 }
-			    countDownTimer21 = new CountDownTimer(200, 100) {//底部epg隐藏时间设定
+			    countDownTimer21 = new CountDownTimer(100, 50) {//底部epg隐藏时间设定
 		        public void onTick(long j) {
                     }
                     public void onFinish() {
