@@ -933,7 +933,7 @@ public class LivePlayActivity extends BaseActivity {
                 if (countDownTimer20 != null) {
                 countDownTimer20.cancel();
                 }
-			    countDownTimer20 = new CountDownTimer(100, 50) {//底部epg隐藏时间设定
+			    countDownTimer20 = new CountDownTimer(2000, 50) {//底部epg隐藏时间设定
 		        public void onTick(long j) {
                     }
                     public void onFinish() {
@@ -1262,7 +1262,7 @@ public class LivePlayActivity extends BaseActivity {
                     epgListAdapter.setShiyiSelection(position, true, timeFormat.format(date));
                     epgListAdapter.notifyDataSetChanged();
                     mRightEpgList.setSelectedPosition(position);
-                   mRightEpgList.post(new Runnable() {
+                    mRightEpgList.post(new Runnable() {
                         @Override
                         public void run() {
                             mRightEpgList.smoothScrollToPosition(position);
@@ -1338,7 +1338,7 @@ public class LivePlayActivity extends BaseActivity {
                     epgListAdapter.setShiyiSelection(position, true,timeFormat.format(date));
                     epgListAdapter.notifyDataSetChanged();
                     mRightEpgList.setSelectedPosition(position);
-                   mRightEpgList.post(new Runnable() {
+                    mRightEpgList.post(new Runnable() {
                         @Override
                         public void run() {
                             mRightEpgList.smoothScrollToPosition(position);
