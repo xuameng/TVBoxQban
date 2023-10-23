@@ -193,6 +193,9 @@ public class LivePlayActivity extends BaseActivity {
 	private CountDownTimer countDownTimer7;
 	private CountDownTimer countDownTimer8;
 	private CountDownTimer countDownTimer10;
+    private CountDownTimer countDownTimer20;
+	private CountDownTimer countDownTimer21;
+	private CountDownTimer countDownTimer22;
     private int videoWidth = 1920;
     private int videoHeight = 1080;
     private TextView tv_currentpos;
@@ -424,16 +427,16 @@ public class LivePlayActivity extends BaseActivity {
             }
             i = size;
             if (i >= 0 && new Date().compareTo(epgdata.get(i).enddateTime) <= 0) {
-                mRightEpgList.setSelectedPosition(i);
+//xuameng测试焦点问题                 mRightEpgList.setSelectedPosition(i);
                 mRightEpgList.setSelection(i);
                 epgListAdapter.setSelectedEpgIndex(i);
                 int finalI = i;
-                mRightEpgList.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mRightEpgList.smoothScrollToPosition(finalI);
-                    }
-                });
+//xuameng测试焦点问题                mRightEpgList.post(new Runnable() {
+//xuameng测试焦点问题                     @Override
+//xuameng测试焦点问题                     public void run() {
+//xuameng测试焦点问题                         mRightEpgList.smoothScrollToPosition(finalI);
+//xuameng测试焦点问题                     }
+//xuameng测试焦点问题                 });
             }
         }
     }
@@ -504,36 +507,7 @@ public class LivePlayActivity extends BaseActivity {
             ((TextView) findViewById(R.id.tv_current_program_name)).setText("");
             tip_epg2.setText("许大师开发制作,请勿商用以及播放违法内容");
             ((TextView) findViewById(R.id.tv_next_program_name)).setText("");
-            String savedEpgKey = channel_Name.getChannelName() + "_" + liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex()).getDatePresented();
-            if (hsEpg.containsKey(savedEpgKey)) {
-                String[] epgInfo = EpgUtil.getEpgInfo(channel_Name.getChannelName());
-                updateChannelIcon(channel_Name.getChannelName(), epgInfo == null ? null : epgInfo[0]);
-                ArrayList arrayList = (ArrayList) hsEpg.get(savedEpgKey);
-                if (arrayList != null && arrayList.size() > 0) {
-                    int size = arrayList.size() - 1;
-                    while (size >= 0) {
-                        if (new Date().compareTo(((Epginfo) arrayList.get(size)).startdateTime) >= 0) {
-                            tip_epg1.setText(((Epginfo) arrayList.get(size)).start + "--" + ((Epginfo) arrayList.get(size)).end);
-                            ((TextView) findViewById(R.id.tv_current_program_name)).setText(((Epginfo) arrayList.get(size)).title);
-                            if (size != arrayList.size() - 1) {
-                                tip_epg2.setText(((Epginfo) arrayList.get(size + 1)).start + "--" + ((Epginfo) arrayList.get(size + 1)).end);  //xuameng修复EPG低菜单下一个节目结束的时间
-                                ((TextView) findViewById(R.id.tv_next_program_name)).setText(((Epginfo) arrayList.get(size + 1)).title);
-                            }
-                            break;
-                        } else {
-                            size--;
-                        }
-                    }
-                }
-                epgListAdapter.CanBack(currentLiveChannelItem.getinclude_back());
-                epgListAdapter.setNewData(arrayList);
-            } else {
-                int selectedIndex = liveEpgDateAdapter.getSelectedIndex();
-                if (selectedIndex < 0)
-                    getEpg(new Date());
-                else
-                    getEpg(liveEpgDateAdapter.getData().get(selectedIndex).getDateParamVal());
-            }
+		}  
 
             if (countDownTimer != null) {
                 countDownTimer.cancel();
@@ -912,7 +886,7 @@ public class LivePlayActivity extends BaseActivity {
 			if (countDownTimer10 != null) {
                 countDownTimer10.cancel();
                 }
-			    countDownTimer10 = new CountDownTimer(500, 100) {//底部epg隐藏时间设定
+			    countDownTimer10 = new CountDownTimer(400, 100) {//底部epg隐藏时间设定
 		        public void onTick(long j) {
                     }
                     public void onFinish() {
@@ -926,9 +900,31 @@ public class LivePlayActivity extends BaseActivity {
     }
 
     private void mFocusCurrentChannelAndShowChannelList() {              //xuameng左侧菜单显示
+		      if (mChannelGroupView.isScrolling() || mLiveChannelView.isScrolling() || mChannelGroupView.isComputingLayout() || mLiveChannelView.isComputingLayout()) {
+                if (countDownTimer20 != null) {
+                countDownTimer20.cancel();
+                }
+			    countDownTimer20 = new CountDownTimer(100, 50) {//底部epg隐藏时间设定
+		        public void onTick(long j) {
+                    }
+                    public void onFinish() {
+                    mFocusCurrentChannelAndShowChannelListXu();
+                    }
+                };
+                countDownTimer20.start();
+            } else {
+                mFocusCurrentChannelAndShowChannelListXu();
+		   }
+    }
+
+    private void mFocusCurrentChannelAndShowChannelListXu() {              //xuameng左侧菜单显示
                 liveChannelGroupAdapter.setSelectedGroupIndex(currentChannelGroupIndex);
                 liveChannelItemAdapter.setSelectedChannelIndex(currentLiveChannelIndex);
                 RecyclerView.ViewHolder holder = mLiveChannelView.findViewHolderForAdapterPosition(currentLiveChannelIndex);
+				if (holder != null)               
+                    holder.itemView.requestFocus();
+                    tvLeftChannelListLayout.setVisibility(View.VISIBLE); 
+
 				if (countDownTimer5 != null) {
                 countDownTimer5.cancel();
                 }
@@ -939,10 +935,7 @@ public class LivePlayActivity extends BaseActivity {
                     mHideChannelListRun();
                     }
                 };
-                countDownTimer5.start();
-					if (holder != null)               
-                    holder.itemView.requestFocus();
-                    tvLeftChannelListLayout.setVisibility(View.VISIBLE); 
+                countDownTimer5.start();   
     }
 
     private void mHideChannelListRun() {            //xuameng左侧菜单隐藏
@@ -1077,14 +1070,48 @@ public class LivePlayActivity extends BaseActivity {
             selectSettingGroup(0, false);
             mSettingGroupView.scrollToPosition(0);
             mSettingItemView.scrollToPosition(currentLiveChannelItem.getSourceIndex());
-            mFocusAndShowSettingGroup();
+			if (countDownTimer22 != null) {
+                countDownTimer22.cancel();
+                }
+			    countDownTimer22 = new CountDownTimer(400, 100) {//底部epg隐藏时间设定
+		        public void onTick(long j) {
+                    }
+                    public void onFinish() {
+                    mFocusAndShowSettingGroup();
+                    }
+                };
+                countDownTimer22.start();
+            
         } else {
             mHideSettingLayoutRun();
         }
     }
 
     private void mFocusAndShowSettingGroup() {                     //XUAMENG显示右侧菜单
+            if (mSettingGroupView.isScrolling() || mSettingItemView.isScrolling() || mSettingGroupView.isComputingLayout() || mSettingItemView.isComputingLayout()) {
+                if (countDownTimer21 != null) {
+                countDownTimer21.cancel();
+                }
+			    countDownTimer21 = new CountDownTimer(100, 50) {//底部epg隐藏时间设定
+		        public void onTick(long j) {
+                    }
+                    public void onFinish() {
+                    mFocusAndShowSettingGroupXu();
+                    }
+                };
+                countDownTimer21.start();
+            } else {
+                mFocusAndShowSettingGroupXu();
+         }
+	}
+
+	    private void mFocusAndShowSettingGroupXu() {                     //XUAMENG显示右侧菜单
                 RecyclerView.ViewHolder holder = mSettingGroupView.findViewHolderForAdapterPosition(0);
+				if (holder != null)
+                    holder.itemView.requestFocus();
+                tvRightSettingLayout.setVisibility(View.VISIBLE);
+                ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) tvRightSettingLayout.getLayoutParams();
+
 				if (countDownTimer6 != null) {
                 countDownTimer6.cancel();
                 }
@@ -1096,11 +1123,10 @@ public class LivePlayActivity extends BaseActivity {
                     }
                 };
                 countDownTimer6.start();
-                if (holder != null)
-                    holder.itemView.requestFocus();
-                tvRightSettingLayout.setVisibility(View.VISIBLE);
-                ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) tvRightSettingLayout.getLayoutParams();
+
     }
+
+
 
     private void mHideSettingLayoutRun() {        //XUAMENG隐藏右侧菜单
             ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) tvRightSettingLayout.getLayoutParams();
@@ -1206,15 +1232,17 @@ public class LivePlayActivity extends BaseActivity {
                     mVideoView.start();
                     epgListAdapter.setShiyiSelection(position, true, timeFormat.format(date));
                     epgListAdapter.notifyDataSetChanged();
-                    //mRightEpgList.setSelectedPosition(position);
-                    mRightEpgList.post(new Runnable() {
+                    //xuameng测试焦点问题  mRightEpgList.setSelectedPosition(position);
+/*                    mRightEpgList.post(new Runnable() {
                         @Override
                         public void run() {
                             mRightEpgList.smoothScrollToPosition(position);
                         }
                     });
+*/
+//xuameng测试焦点问题完
                     shiyi_time_c = (int)getTime(formatDate.format(nowday) +" " + selectedData.start + ":" +"30", formatDate.format(nowday) +" " + selectedData.end + ":" +"30");
-                   ViewGroup.LayoutParams lp =  iv_play.getLayoutParams();
+                    ViewGroup.LayoutParams lp =  iv_play.getLayoutParams();
                     lp.width=videoHeight/7;
                     lp.height=videoHeight/7;
                     sBar = (SeekBar) findViewById(R.id.pb_progressbar);
@@ -1282,13 +1310,15 @@ public class LivePlayActivity extends BaseActivity {
                     mVideoView.start();
                     epgListAdapter.setShiyiSelection(position, true,timeFormat.format(date));
                     epgListAdapter.notifyDataSetChanged();
-                    //mRightEpgList.setSelectedPosition(position);
-                    mRightEpgList.post(new Runnable() {
+                    //xuameng测试焦点问题 //mRightEpgList.setSelectedPosition(position);
+/*                   mRightEpgList.post(new Runnable() {
                         @Override
                         public void run() {
                             mRightEpgList.smoothScrollToPosition(position);
                         }
                     });
+*/
+//xuameng测试焦点问题完
                     shiyi_time_c = (int)getTime(formatDate.format(nowday) +" " + selectedData.start + ":" +"30", formatDate.format(nowday) +" " + selectedData.end + ":" +"30");
                     ViewGroup.LayoutParams lp =  iv_play.getLayoutParams();
                     lp.width=videoHeight/7;
