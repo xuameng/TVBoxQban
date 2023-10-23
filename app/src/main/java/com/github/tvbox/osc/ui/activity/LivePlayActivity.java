@@ -427,7 +427,7 @@ public class LivePlayActivity extends BaseActivity {
             }
             i = size;
             if (i >= 0 && new Date().compareTo(epgdata.get(i).enddateTime) <= 0) {
-//xuameng测试焦点问题                 mRightEpgList.setSelectedPosition(i);
+                mRightEpgList.setSelectedPosition(i);
                 mRightEpgList.setSelection(i);
                 epgListAdapter.setSelectedEpgIndex(i);
                 int finalI = i;
