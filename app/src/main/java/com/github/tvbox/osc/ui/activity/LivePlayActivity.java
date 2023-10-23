@@ -915,7 +915,7 @@ public class LivePlayActivity extends BaseActivity {
 			if (countDownTimer10 != null) {
                 countDownTimer10.cancel();
                 }
-			    countDownTimer10 = new CountDownTimer(400, 100) {//底部epg隐藏时间设定
+			    countDownTimer10 = new CountDownTimer(500, 100) {//底部epg隐藏时间设定
 		        public void onTick(long j) {
                     }
                     public void onFinish() {
@@ -933,7 +933,7 @@ public class LivePlayActivity extends BaseActivity {
                 if (countDownTimer20 != null) {
                 countDownTimer20.cancel();
                 }
-			    countDownTimer20 = new CountDownTimer(2000, 50) {//底部epg隐藏时间设定
+			    countDownTimer20 = new CountDownTimer(100, 50) {//底部epg隐藏时间设定
 		        public void onTick(long j) {
                     }
                     public void onFinish() {
@@ -1102,7 +1102,7 @@ public class LivePlayActivity extends BaseActivity {
 			if (countDownTimer22 != null) {
                 countDownTimer22.cancel();
                 }
-			    countDownTimer22 = new CountDownTimer(400, 100) {//底部epg隐藏时间设定
+			    countDownTimer22 = new CountDownTimer(500, 100) {//底部epg隐藏时间设定
 		        public void onTick(long j) {
                     }
                     public void onFinish() {
