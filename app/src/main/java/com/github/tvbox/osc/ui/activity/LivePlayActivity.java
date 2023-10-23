@@ -427,7 +427,7 @@ public class LivePlayActivity extends BaseActivity {
             }
             i = size;
             if (i >= 0 && new Date().compareTo(epgdata.get(i).enddateTime) <= 0) {
-                mRightEpgList.setSelectedPosition(i);
+//xuameng测试焦点问题                mRightEpgList.setSelectedPosition(i);
                 mRightEpgList.setSelection(i);
                 epgListAdapter.setSelectedEpgIndex(i);
                 int finalI = i;
@@ -507,7 +507,36 @@ public class LivePlayActivity extends BaseActivity {
             ((TextView) findViewById(R.id.tv_current_program_name)).setText("");
             tip_epg2.setText("许大师开发制作,请勿商用以及播放违法内容");
             ((TextView) findViewById(R.id.tv_next_program_name)).setText("");
-		}  
+            String savedEpgKey = channel_Name.getChannelName() + "_" + liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex()).getDatePresented();
+            if (hsEpg.containsKey(savedEpgKey)) {
+                String[] epgInfo = EpgUtil.getEpgInfo(channel_Name.getChannelName());
+                updateChannelIcon(channel_Name.getChannelName(), epgInfo == null ? null : epgInfo[0]);
+                ArrayList arrayList = (ArrayList) hsEpg.get(savedEpgKey);
+                if (arrayList != null && arrayList.size() > 0) {
+                    int size = arrayList.size() - 1;
+                    while (size >= 0) {
+                        if (new Date().compareTo(((Epginfo) arrayList.get(size)).startdateTime) >= 0) {
+                            tip_epg1.setText(((Epginfo) arrayList.get(size)).start + "--" + ((Epginfo) arrayList.get(size)).end);
+                            ((TextView) findViewById(R.id.tv_current_program_name)).setText(((Epginfo) arrayList.get(size)).title);
+                            if (size != arrayList.size() - 1) {
+                                tip_epg2.setText(((Epginfo) arrayList.get(size + 1)).start + "--" + ((Epginfo) arrayList.get(size + 1)).end);  //xuameng修复EPG低菜单下一个节目结束的时间
+                                ((TextView) findViewById(R.id.tv_next_program_name)).setText(((Epginfo) arrayList.get(size + 1)).title);
+                            }
+                            break;
+                        } else {
+                            size--;
+                        }
+                    }
+                }
+                epgListAdapter.CanBack(currentLiveChannelItem.getinclude_back());
+                epgListAdapter.setNewData(arrayList);
+            } else {
+                int selectedIndex = liveEpgDateAdapter.getSelectedIndex();
+                if (selectedIndex < 0)
+                    getEpg(new Date());
+                else
+                    getEpg(liveEpgDateAdapter.getData().get(selectedIndex).getDateParamVal());
+            }
 
             if (countDownTimer != null) {
                 countDownTimer.cancel();
