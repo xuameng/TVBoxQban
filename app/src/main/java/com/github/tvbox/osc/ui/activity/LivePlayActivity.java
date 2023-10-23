@@ -427,16 +427,16 @@ public class LivePlayActivity extends BaseActivity {
             }
             i = size;
             if (i >= 0 && new Date().compareTo(epgdata.get(i).enddateTime) <= 0) {
-//xuameng测试焦点问题                mRightEpgList.setSelectedPosition(i);
+                mRightEpgList.setSelectedPosition(i);
                 mRightEpgList.setSelection(i);
                 epgListAdapter.setSelectedEpgIndex(i);
                 int finalI = i;
-//xuameng测试焦点问题                mRightEpgList.post(new Runnable() {
-//xuameng测试焦点问题                     @Override
-//xuameng测试焦点问题                     public void run() {
-//xuameng测试焦点问题                         mRightEpgList.smoothScrollToPosition(finalI);
-//xuameng测试焦点问题                     }
-//xuameng测试焦点问题                 });
+                mRightEpgList.post(new Runnable() {
+                     @Override
+                     public void run() {
+                         mRightEpgList.smoothScrollToPosition(finalI);
+                     }
+                });
             }
         }
     }
@@ -668,7 +668,7 @@ public class LivePlayActivity extends BaseActivity {
         divEpg.setVisibility(View.VISIBLE);
         divLoadEpgleft.setVisibility(View.VISIBLE);
         divLoadEpg.setVisibility(View.GONE);
-        // mRightEpgList.setSelectedPosition(epgListAdapter.getSelectedIndex());
+        mRightEpgList.setSelectedPosition(epgListAdapter.getSelectedIndex());
         epgListAdapter.notifyDataSetChanged();
     }
     //频道列表
@@ -1261,15 +1261,13 @@ public class LivePlayActivity extends BaseActivity {
                     mVideoView.start();
                     epgListAdapter.setShiyiSelection(position, true, timeFormat.format(date));
                     epgListAdapter.notifyDataSetChanged();
-                    //xuameng测试焦点问题  mRightEpgList.setSelectedPosition(position);
-/*                    mRightEpgList.post(new Runnable() {
+                    xuameng测试焦点问题  mRightEpgList.setSelectedPosition(position);
+                   mRightEpgList.post(new Runnable() {
                         @Override
                         public void run() {
                             mRightEpgList.smoothScrollToPosition(position);
                         }
                     });
-*/
-//xuameng测试焦点问题完
                     shiyi_time_c = (int)getTime(formatDate.format(nowday) +" " + selectedData.start + ":" +"30", formatDate.format(nowday) +" " + selectedData.end + ":" +"30");
                     ViewGroup.LayoutParams lp =  iv_play.getLayoutParams();
                     lp.width=videoHeight/7;
