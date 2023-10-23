@@ -1261,7 +1261,7 @@ public class LivePlayActivity extends BaseActivity {
                     mVideoView.start();
                     epgListAdapter.setShiyiSelection(position, true, timeFormat.format(date));
                     epgListAdapter.notifyDataSetChanged();
-                    xuameng测试焦点问题  mRightEpgList.setSelectedPosition(position);
+                    mRightEpgList.setSelectedPosition(position);
                    mRightEpgList.post(new Runnable() {
                         @Override
                         public void run() {
@@ -1337,15 +1337,13 @@ public class LivePlayActivity extends BaseActivity {
                     mVideoView.start();
                     epgListAdapter.setShiyiSelection(position, true,timeFormat.format(date));
                     epgListAdapter.notifyDataSetChanged();
-                    //xuameng测试焦点问题 //mRightEpgList.setSelectedPosition(position);
-/*                   mRightEpgList.post(new Runnable() {
+                    mRightEpgList.setSelectedPosition(position);
+                   mRightEpgList.post(new Runnable() {
                         @Override
                         public void run() {
                             mRightEpgList.smoothScrollToPosition(position);
                         }
                     });
-*/
-//xuameng测试焦点问题完
                     shiyi_time_c = (int)getTime(formatDate.format(nowday) +" " + selectedData.start + ":" +"30", formatDate.format(nowday) +" " + selectedData.end + ":" +"30");
                     ViewGroup.LayoutParams lp =  iv_play.getLayoutParams();
                     lp.width=videoHeight/7;
