@@ -1224,7 +1224,7 @@ public class LivePlayActivity extends BaseActivity {
                 if(new Date().compareTo(selectedData.startdateTime) < 0){
                     return;
                 }
-                // xuameng测试焦点   epgListAdapter.setSelectedEpgIndex(position);
+                epgListAdapter.setSelectedEpgIndex(position);
                 if (now.compareTo(selectedData.startdateTime) >= 0 && now.compareTo(selectedData.enddateTime) <= 0) {
                     mVideoView.release();
                     isSHIYI = false;
@@ -1302,7 +1302,7 @@ public class LivePlayActivity extends BaseActivity {
                 if(new Date().compareTo(selectedData.startdateTime) < 0){
                     return;
                 }
-           //xuameng测试焦点问题     epgListAdapter.setSelectedEpgIndex(position);
+                epgListAdapter.setSelectedEpgIndex(position);
                 if (now.compareTo(selectedData.startdateTime) >= 0 && now.compareTo(selectedData.enddateTime) <= 0) {
                     mVideoView.release();
                     isSHIYI = false;
