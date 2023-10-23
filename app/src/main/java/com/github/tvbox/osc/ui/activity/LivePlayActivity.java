@@ -429,7 +429,7 @@ public class LivePlayActivity extends BaseActivity {
             if (i >= 0 && new Date().compareTo(epgdata.get(i).enddateTime) <= 0) {
 //xuameng测试焦点问题                mRightEpgList.setSelectedPosition(i);
                 mRightEpgList.setSelection(i);
-//xuameng测试焦点问题                epgListAdapter.setSelectedEpgIndex(i);
+                epgListAdapter.setSelectedEpgIndex(i);
                 int finalI = i;
 //xuameng测试焦点问题                mRightEpgList.post(new Runnable() {
 //xuameng测试焦点问题                     @Override
@@ -1224,7 +1224,7 @@ public class LivePlayActivity extends BaseActivity {
                 if(new Date().compareTo(selectedData.startdateTime) < 0){
                     return;
                 }
-                epgListAdapter.setSelectedEpgIndex(position);
+                // xuameng测试焦点   epgListAdapter.setSelectedEpgIndex(position);
                 if (now.compareTo(selectedData.startdateTime) >= 0 && now.compareTo(selectedData.enddateTime) <= 0) {
                     mVideoView.release();
                     isSHIYI = false;
@@ -1302,7 +1302,7 @@ public class LivePlayActivity extends BaseActivity {
                 if(new Date().compareTo(selectedData.startdateTime) < 0){
                     return;
                 }
-                epgListAdapter.setSelectedEpgIndex(position);
+           //xuameng测试焦点问题     epgListAdapter.setSelectedEpgIndex(position);
                 if (now.compareTo(selectedData.startdateTime) >= 0 && now.compareTo(selectedData.enddateTime) <= 0) {
                     mVideoView.release();
                     isSHIYI = false;
