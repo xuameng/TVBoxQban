@@ -665,7 +665,7 @@ public class LivePlayActivity extends BaseActivity {
         divEpg.setVisibility(View.VISIBLE);
         divLoadEpgleft.setVisibility(View.VISIBLE);
         divLoadEpg.setVisibility(View.GONE);
-        mRightEpgList.setSelectedPosition(epgListAdapter.getSelectedIndex());
+        // mRightEpgList.setSelectedPosition(epgListAdapter.getSelectedIndex());
         epgListAdapter.notifyDataSetChanged();
     }
     //频道列表
@@ -928,18 +928,7 @@ public class LivePlayActivity extends BaseActivity {
     private void mFocusCurrentChannelAndShowChannelList() {              //xuameng左侧菜单显示
                 liveChannelGroupAdapter.setSelectedGroupIndex(currentChannelGroupIndex);
                 liveChannelItemAdapter.setSelectedChannelIndex(currentLiveChannelIndex);
-                if (divLoadEpg.getVisibility() == View.VISIBLE){
-                RecyclerView.ViewHolder holder = mLiveChannelView.findViewHolderForAdapterPosition(currentLiveChannelIndex);   //xuameng (currentLiveChannelIndex);测试焦点 默认焦点	
-				    if (holder != null)
-                    holder.itemView.requestFocus();
-                    tvLeftChannelListLayout.setVisibility(View.VISIBLE); 
-               } else if (divLoadEpg.getVisibility() == View.GONE) {
-                RecyclerView.ViewHolder holder = mChannelGroupView.findViewHolderForAdapterPosition(0);   //xuameng (currentLiveChannelIndex);测试焦点 默认焦点
-				    if (holder != null)               
-                    holder.itemView.requestFocus();
-                    tvLeftChannelListLayout.setVisibility(View.VISIBLE); 
-		   }
-
+                RecyclerView.ViewHolder holder = mLiveChannelView.findViewHolderForAdapterPosition(currentLiveChannelIndex);
 				if (countDownTimer5 != null) {
                 countDownTimer5.cancel();
                 }
@@ -951,6 +940,9 @@ public class LivePlayActivity extends BaseActivity {
                     }
                 };
                 countDownTimer5.start();
+					if (holder != null)               
+                    holder.itemView.requestFocus();
+                    tvLeftChannelListLayout.setVisibility(View.VISIBLE); 
     }
 
     private void mHideChannelListRun() {            //xuameng左侧菜单隐藏
@@ -1214,7 +1206,7 @@ public class LivePlayActivity extends BaseActivity {
                     mVideoView.start();
                     epgListAdapter.setShiyiSelection(position, true, timeFormat.format(date));
                     epgListAdapter.notifyDataSetChanged();
-                    mRightEpgList.setSelectedPosition(position);
+                    //mRightEpgList.setSelectedPosition(position);
                     mRightEpgList.post(new Runnable() {
                         @Override
                         public void run() {
@@ -1290,7 +1282,7 @@ public class LivePlayActivity extends BaseActivity {
                     mVideoView.start();
                     epgListAdapter.setShiyiSelection(position, true,timeFormat.format(date));
                     epgListAdapter.notifyDataSetChanged();
-                    mRightEpgList.setSelectedPosition(position);
+                    //mRightEpgList.setSelectedPosition(position);
                     mRightEpgList.post(new Runnable() {
                         @Override
                         public void run() {
