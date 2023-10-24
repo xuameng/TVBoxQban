@@ -912,6 +912,8 @@ public class LivePlayActivity extends BaseActivity {
             mLiveChannelView.setSelection(currentLiveChannelIndex);
             mChannelGroupView.scrollToPosition(currentChannelGroupIndex);
             mChannelGroupView.setSelection(currentChannelGroupIndex);
+			mRightEpgList.setSelectedPosition(epgListAdapter.getSelectedIndex());        //xuameng测试
+            epgListAdapter.notifyDataSetChanged();                                       //xuameng测试
 			if (countDownTimer10 != null) {
                 countDownTimer10.cancel();
                 }
