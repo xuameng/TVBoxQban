@@ -912,8 +912,8 @@ public class LivePlayActivity extends BaseActivity {
             mLiveChannelView.setSelection(currentLiveChannelIndex);
             mChannelGroupView.scrollToPosition(currentChannelGroupIndex);
             mChannelGroupView.setSelection(currentChannelGroupIndex);
-			mRightEpgList.setSelectedPosition(epgListAdapter.getSelectedIndex());        //xuameng测试
-            epgListAdapter.notifyDataSetChanged();                                       //xuameng测试
+			mRightEpgList.setSelectedPosition(epgListAdapter.getSelectedIndex());        //xuamengEPG打开菜单自动变颜色
+            epgListAdapter.notifyDataSetChanged();                                       //xuamengEPG打开菜单自动变颜色
 			if (countDownTimer10 != null) {
                 countDownTimer10.cancel();
                 }
@@ -1263,13 +1263,14 @@ public class LivePlayActivity extends BaseActivity {
                     mVideoView.start();
                     epgListAdapter.setShiyiSelection(position, true, timeFormat.format(date));
                     epgListAdapter.notifyDataSetChanged();
-                    mRightEpgList.setSelectedPosition(position);
+/*                    mRightEpgList.setSelectedPosition(position);
                     mRightEpgList.post(new Runnable() {
                         @Override
                         public void run() {
                             mRightEpgList.smoothScrollToPosition(position);
                         }
                     });
+*/
                     shiyi_time_c = (int)getTime(formatDate.format(nowday) +" " + selectedData.start + ":" +"30", formatDate.format(nowday) +" " + selectedData.end + ":" +"30");
                     ViewGroup.LayoutParams lp =  iv_play.getLayoutParams();
                     lp.width=videoHeight/7;
@@ -1339,13 +1340,14 @@ public class LivePlayActivity extends BaseActivity {
                     mVideoView.start();
                     epgListAdapter.setShiyiSelection(position, true,timeFormat.format(date));
                     epgListAdapter.notifyDataSetChanged();
-                    mRightEpgList.setSelectedPosition(position);
+/*                    mRightEpgList.setSelectedPosition(position);
                     mRightEpgList.post(new Runnable() {
                         @Override
                         public void run() {
                             mRightEpgList.smoothScrollToPosition(position);
                         }
-                    });
+                 });
+ */  
                     shiyi_time_c = (int)getTime(formatDate.format(nowday) +" " + selectedData.start + ":" +"30", formatDate.format(nowday) +" " + selectedData.end + ":" +"30");
                     ViewGroup.LayoutParams lp =  iv_play.getLayoutParams();
                     lp.width=videoHeight/7;
