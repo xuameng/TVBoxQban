@@ -574,7 +574,7 @@ public class LivePlayActivity extends BaseActivity {
                 };
                 countDownTimer.start();
             }
-            if (channel_Name == null || channel_Name.getSourceNum() <= 0) {
+            if (channel_Name == null || channel_Name.getSourceNum() <= 1) {
                 ((TextView) findViewById(R.id.tv_source)).setText("[线路信源1/1]");
             } else {
                 ((TextView) findViewById(R.id.tv_source)).setText("[线路信源" + (channel_Name.getSourceIndex() + 1) + "/" + channel_Name.getSourceNum() + "]");
@@ -1263,8 +1263,8 @@ public class LivePlayActivity extends BaseActivity {
                     mVideoView.start();
                     epgListAdapter.setShiyiSelection(position, true, timeFormat.format(date));
                     epgListAdapter.notifyDataSetChanged();
-                   mRightEpgList.setSelectedPosition(position);
-/*                     mRightEpgList.post(new Runnable() {
+                    mRightEpgList.setSelectedPosition(position);    
+/*                     mRightEpgList.post(new Runnable() {    //xuameng取消滚动耗时间
                         @Override
                         public void run() {
                             mRightEpgList.smoothScrollToPosition(position);
@@ -1341,7 +1341,7 @@ public class LivePlayActivity extends BaseActivity {
                     epgListAdapter.setShiyiSelection(position, true,timeFormat.format(date));
                     epgListAdapter.notifyDataSetChanged();
                     mRightEpgList.setSelectedPosition(position);
-/*                    mRightEpgList.post(new Runnable() {
+/*                    mRightEpgList.post(new Runnable() {           //xuameng取消滚动耗时间
                         @Override
                         public void run() {
                             mRightEpgList.smoothScrollToPosition(position);
