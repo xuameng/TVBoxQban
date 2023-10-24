@@ -1263,8 +1263,8 @@ public class LivePlayActivity extends BaseActivity {
                     mVideoView.start();
                     epgListAdapter.setShiyiSelection(position, true, timeFormat.format(date));
                     epgListAdapter.notifyDataSetChanged();
-/*                    mRightEpgList.setSelectedPosition(position);
-                    mRightEpgList.post(new Runnable() {
+                   mRightEpgList.setSelectedPosition(position);
+/*                     mRightEpgList.post(new Runnable() {
                         @Override
                         public void run() {
                             mRightEpgList.smoothScrollToPosition(position);
@@ -1340,8 +1340,8 @@ public class LivePlayActivity extends BaseActivity {
                     mVideoView.start();
                     epgListAdapter.setShiyiSelection(position, true,timeFormat.format(date));
                     epgListAdapter.notifyDataSetChanged();
-/*                    mRightEpgList.setSelectedPosition(position);
-                    mRightEpgList.post(new Runnable() {
+                    mRightEpgList.setSelectedPosition(position);
+/*                    mRightEpgList.post(new Runnable() {
                         @Override
                         public void run() {
                             mRightEpgList.smoothScrollToPosition(position);
