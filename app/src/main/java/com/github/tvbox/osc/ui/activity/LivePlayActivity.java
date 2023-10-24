@@ -272,7 +272,7 @@ public class LivePlayActivity extends BaseActivity {
         liveIconNullBg = findViewById(R.id.live_icon_null_bg);
         liveIconNullText = findViewById(R.id.live_icon_null_text);
         imgLiveIcon.setVisibility(View.INVISIBLE);
-        liveIconNullText.setVisibility(View.INVISIBLE);
+        liveIconNullText.setVisibility(View.VISIBLE);
         liveIconNullBg.setVisibility(View.INVISIBLE);
 
         sBar = (SeekBar) findViewById(R.id.pb_progressbar);
