@@ -296,7 +296,7 @@ public class LivePlayActivity extends BaseActivity {
             backcontroller.setVisibility(View.GONE);
 			Mtv_left_top_xu.setVisibility(View.GONE);   //xuameng隐藏左上回看图标
 			iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
-            showBottomEpg();               //xuameng回看EPG
+            ll_epg.setVisibility(View.VISIBLE);         //xuameng下面EPG菜单显示
 			ll_right_top_loading.setVisibility(View.VISIBLE);  //xuameng右上菜单显示
 			showTimeXu();                       //xuameng显示系统时间
 			showNetSpeedXu();                  //XUAMENG显示左上网速
