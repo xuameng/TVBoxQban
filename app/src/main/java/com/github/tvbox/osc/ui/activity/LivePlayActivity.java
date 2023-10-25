@@ -505,7 +505,7 @@ public class LivePlayActivity extends BaseActivity {
             ((TextView) findViewById(R.id.tv_channel_bottom_number)).setText("" + channel_Name.getChannelNum());
             tip_epg1.setText("暂无当前节目单，聚汇直播欢迎您的观看！");
             ((TextView) findViewById(R.id.tv_current_program_name)).setText("");
-            tip_epg2.setText("许大师开发制作,请勿商用以及播放违法内容");
+            tip_epg2.setText("许大师开发制作，请勿商用以及播放违法内容！");
             ((TextView) findViewById(R.id.tv_next_program_name)).setText("");
             String savedEpgKey = channel_Name.getChannelName() + "_" + liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex()).getDatePresented();
             if (hsEpg.containsKey(savedEpgKey)) {
@@ -1503,7 +1503,7 @@ public class LivePlayActivity extends BaseActivity {
 				  }else if(!isLl_epgVisible()){
                       showBottomEpg();           //xuameng显示EPG和上面菜单
 					  tvLeftChannelListLayout.setVisibility(View.INVISIBLE);
-                     tvRightSettingLayout.setVisibility(View.INVISIBLE);
+                      tvRightSettingLayout.setVisibility(View.INVISIBLE);
 				 }
 				return true;
             }
@@ -2310,6 +2310,7 @@ public class LivePlayActivity extends BaseActivity {
 			ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
             mHideChannelListRun();
 			hideNetSpeedXu();		//XUAMENG隐藏左上网速
+            showBottomEpg();       //xuameng测试
         }else{
             backcontroller.setVisibility(View.GONE);
 			Mtv_left_top_xu.setVisibility(View.GONE);
