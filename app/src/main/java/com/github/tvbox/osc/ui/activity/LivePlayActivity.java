@@ -692,33 +692,21 @@ public class LivePlayActivity extends BaseActivity {
             }
             if(!tip_epg1.getText().equals("暂无当前节目单，聚汇直播欢迎您的观看！")){
                 ll_epg.setVisibility(View.VISIBLE);  //xuameng下面EPG菜单显示
-			    ll_right_top_loading.setVisibility(View.VISIBLE);  //xuameng右上菜单显示
-				showTimeXu();                       //xuameng显示系统时间
-				showNetSpeedXu();                  //XUAMENG显示左上网速
                 countDownTimer = new CountDownTimer(10000, 1000) {//底部epg隐藏时间设定
                     public void onTick(long j) {
                     }
                     public void onFinish() {
                         ll_epg.setVisibility(View.GONE);				//xuameng下面EPG菜单隐藏
-						ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
-						hideTimeXu();              //xuameng隐藏系统时间
-						hideNetSpeedXu();		//XUAMENG隐藏左上网速
                     }
                 };
                 countDownTimer.start();
             }else {
                 ll_epg.setVisibility(View.VISIBLE);    //XUAMENG  底部epg显示
-			    ll_right_top_loading.setVisibility(View.VISIBLE);  //xuameng右上菜单显示
-				showTimeXu();                       //xuameng显示系统时间
-				showNetSpeedXu();                  //XUAMENG显示左上网速
 		        countDownTimer = new CountDownTimer(10000, 1000) {//底部epg隐藏时间设定
 		public void onTick(long j) {
                     }
                     public void onFinish() {
                         ll_epg.setVisibility(View.GONE);				//xuameng下面EPG菜单隐藏
-						ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
-						hideTimeXu();              //xuameng隐藏系统时间
-						hideNetSpeedXu();		//XUAMENG隐藏左上网速
                     }
                 };
                 countDownTimer.start();
@@ -730,26 +718,6 @@ public class LivePlayActivity extends BaseActivity {
             }
             tv_right_top_channel_name.setText(channel_Name.getChannelName());
             tv_right_top_epg_name.setText(channel_Name.getChannelName());
-/*xuameng没用了
-            Handler handler = new Handler(Looper.getMainLooper());
-            ll_right_top_loading.setVisibility(View.VISIBLE);
-			ll_epg.setVisibility(View.VISIBLE);  //xuameng下面EPG菜单显示
-			showTimeXu();                       //xuameng显示系统时间
-			showNetSpeedXu();                  //XUAMENG显示左上网速
-*/
-			if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {                 //xuameng显示EPG就隐藏左右菜单
-                tvLeftChannelListLayout.setVisibility(View.INVISIBLE);
-              } else if (tvRightSettingLayout.getVisibility() == View.VISIBLE) {
-                        tvRightSettingLayout.setVisibility(View.INVISIBLE);
-		   }
-            // xuameng 取消右上菜单自动隐藏 延迟5秒后执行隐藏操作
-//            handler.postDelayed(new Runnable() {
-//                @Override
-//                public void run() {
-//                    ll_right_top_loading.setVisibility(View.GONE);
-//                    ll_right_top_huikan.setVisibility(View.GONE);
-//                }
-//            }, 10000);
         }
     }
 
@@ -821,6 +789,7 @@ public class LivePlayActivity extends BaseActivity {
             mHideSettingLayoutRun();
         } else if(backcontroller.getVisibility() == View.VISIBLE){ 
             backcontroller.setVisibility(View.GONE);
+			ll_epg.setVisibility(View.GONE);			 //xuameng下面EPG菜单隐藏
 			hideTimeXu();              //xuameng隐藏系统时间
         } else if(isLl_epgVisible()){ 
             ll_epg.setVisibility(View.GONE);			 //xuameng返回键隐藏下面EPG菜单隐藏
@@ -1576,7 +1545,6 @@ public class LivePlayActivity extends BaseActivity {
                      mVideoView.pause();
 					 showProgressBars(true);      //显示回看低菜单
 					 showBottomEpgBack();               //xuameng回看EPG
-                     countDownTimer.cancel();
 //xuameng iv_play升级了                     iv_play.setVisibility(View.VISIBLE);
                      iv_Play_Xu.setVisibility(View.VISIBLE);     //回看暂停图标
                      iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
@@ -1587,7 +1555,6 @@ public class LivePlayActivity extends BaseActivity {
                      mVideoView.start();
  //xuameng iv_play升级了                    iv_play.setVisibility(View.INVISIBLE);
                      iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
-                     countDownTimer.start();
                      iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
                      }
 				}
