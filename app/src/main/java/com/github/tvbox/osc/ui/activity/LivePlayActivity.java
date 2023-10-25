@@ -292,6 +292,7 @@ public class LivePlayActivity extends BaseActivity {
 			ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
             mHideChannelListRun();
 			hideNetSpeedXu();		//XUAMENG隐藏左上网速
+            showBottomEpg(); 
         }else{
             backcontroller.setVisibility(View.GONE);
 			Mtv_left_top_xu.setVisibility(View.GONE);   //xuameng隐藏左上回看图标
