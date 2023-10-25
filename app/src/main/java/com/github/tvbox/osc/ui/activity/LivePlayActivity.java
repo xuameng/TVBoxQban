@@ -288,11 +288,10 @@ public class LivePlayActivity extends BaseActivity {
 			showTimeXu();              //xuameng系统显示时间
 			Mtv_left_top_xu.setVisibility(View.VISIBLE); //xuameng显示左上回看图标
 			iv_playpause.requestFocus();				 //xuameng回看菜单默认焦点为播放
-            ll_epg.setVisibility(View.GONE);			 //xuameng下面EPG菜单隐藏
+            ll_epg.setVisibility(View.VISIBLE);			 //xuameng下面EPG菜单隐藏
 			ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
             mHideChannelListRun();
 			hideNetSpeedXu();		//XUAMENG隐藏左上网速
-            showBottomEpg(); 
         }else{
             backcontroller.setVisibility(View.GONE);
 			Mtv_left_top_xu.setVisibility(View.GONE);   //xuameng隐藏左上回看图标
@@ -2307,11 +2306,10 @@ public class LivePlayActivity extends BaseActivity {
             backcontroller.setVisibility(View.VISIBLE);   //xuameng显示回看下方菜单
             showTimeXu();              //xuameng系统显示时间
 			Mtv_left_top_xu.setVisibility(View.VISIBLE); //xuameng显示回看上图标
-            ll_epg.setVisibility(View.GONE);				//xuameng下面EPG菜单隐藏
+            ll_epg.setVisibility(View.VISIBLE);				//xuameng下面EPG菜单隐藏
 			ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
             mHideChannelListRun();
 			hideNetSpeedXu();		//XUAMENG隐藏左上网速
-            showBottomEpg();       //xuameng测试
         }else{
             backcontroller.setVisibility(View.GONE);
 			Mtv_left_top_xu.setVisibility(View.GONE);
