@@ -1468,11 +1468,11 @@ public class LivePlayActivity extends BaseActivity {
 				}
                 else
                 showChannelList();
- //               ll_epg.setVisibility(View.GONE);				//xuameng下面EPG菜单隐藏
- //               ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
- //               hideTimeXu();              //xuameng隐藏系统时间
- //               hideNetSpeedXu();		//XUAMENG隐藏左上网速
-                return true;
+                ll_epg.setVisibility(View.GONE);				//xuameng下面EPG菜单隐藏
+                ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
+                hideTimeXu();              //xuameng隐藏系统时间
+                hideNetSpeedXu();		//XUAMENG隐藏左上网速
+                return false;
             }
 
             @Override
