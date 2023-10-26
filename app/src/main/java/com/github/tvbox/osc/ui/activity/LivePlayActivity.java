@@ -1381,6 +1381,7 @@ private void showProgressBarsXu() {
 //修好了					hideTimeXu();                       //xuameng进入回看前先隐藏上方系统时间
                     showProgressBars(true);             //xuameng然后再显示
 					showBottomEpgBack();               //xuameng回看EPG
+					showTimeXu();                       //xuameng显示系统时间
                     isBack = true;
                 }
             }
@@ -1550,9 +1551,9 @@ private void showProgressBarsXu() {
             public boolean singleTap() {           //xuameng点击屏幕显示频道菜单
 				if(isBack){
 				   if(mVideoView.isPlaying()){
-                     mVideoView.pause();
-					 showProgressBarsXu();      //显示回看低菜单
-					 
+					 showProgressBars(true);
+					 showBottomEpgBack();               //xuameng回看EPG
+                     mVideoView.pause();				 
 //xuameng iv_play升级了                     iv_play.setVisibility(View.VISIBLE);
                      iv_Play_Xu.setVisibility(View.VISIBLE);     //回看暂停图标
                      iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
@@ -1578,7 +1579,8 @@ private void showProgressBarsXu() {
             @Override
             public void longPress() {               //xuameng长按显示左边设置菜单
 				if(isBack){
-                Toast.makeText(mContext, "当前回看中，请按返回键退出回看！", Toast.LENGTH_SHORT).show(); 
+					showBottomEpgBack();               //xuameng回看EPG
+                //Toast.makeText(mContext, "当前回看中，请按返回键退出回看！", Toast.LENGTH_SHORT).show(); 
 				}
 				else{
                 showSettingGroup();
