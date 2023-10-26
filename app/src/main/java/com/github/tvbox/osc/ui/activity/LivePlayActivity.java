@@ -320,7 +320,7 @@ public class LivePlayActivity extends BaseActivity {
             public void onClick(View arg0) {
                 if(mVideoView.isPlaying()){
                     mVideoView.pause();
-                    countDownTimer3.cancel();
+                    countDownTimer8.cancel();
 //xuameng iv_play升级了                    iv_play.setVisibility(View.VISIBLE);
                     iv_Play_Xu.setVisibility(View.VISIBLE);         //回看暂停图标
                     iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
@@ -332,7 +332,7 @@ public class LivePlayActivity extends BaseActivity {
 //xuameng iv_play升级了                    iv_play.setVisibility(View.INVISIBLE);
                     iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
 					Mtv_left_top_xu.setVisibility(View.VISIBLE);
-                    countDownTimer3.start();
+                    countDownTimer8.start();
                     iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
                 }
             }
@@ -356,10 +356,10 @@ public class LivePlayActivity extends BaseActivity {
                     return;
                 }
                 if(fromuser){
-                    if(countDownTimer3!=null){
+                    if(countDownTimer8!=null){
                         mVideoView.seekTo(progress);
-                        countDownTimer3.cancel();
-                        countDownTimer3.start();
+                        countDownTimer8.cancel();
+                        countDownTimer8.start();
                     }
 /*
                     long duration = mControlWrapper.getDuration();
@@ -379,7 +379,7 @@ public class LivePlayActivity extends BaseActivity {
                     if(keycode==KeyEvent.KEYCODE_DPAD_CENTER||keycode==KeyEvent.KEYCODE_ENTER){
                         if(mVideoView.isPlaying()){
                             mVideoView.pause();
-                            countDownTimer3.cancel();
+                            countDownTimer8.cancel();
 //xuameng iv_play升级了                            iv_play.setVisibility(View.VISIBLE);
                             iv_Play_Xu.setVisibility(View.VISIBLE);     //回看暂停图标
                             iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));   
@@ -390,7 +390,7 @@ public class LivePlayActivity extends BaseActivity {
                             mVideoView.start();
 //xuameng iv_play升级了                            iv_play.setVisibility(View.INVISIBLE);
                             iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
-                            countDownTimer3.start();
+                            countDownTimer8.start();
                             iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));    
                         }
                     }
@@ -899,7 +899,7 @@ public class LivePlayActivity extends BaseActivity {
                             mVideoView.start();
 //xuameng iv_play升级了                            iv_play.setVisibility(View.INVISIBLE);
                             iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
-                            countDownTimer3.start();
+                            countDownTimer8.start();
                             iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
                         }
                         }else{
@@ -922,7 +922,7 @@ public class LivePlayActivity extends BaseActivity {
                             mVideoView.start();
 //xuameng iv_play升级了                            iv_play.setVisibility(View.INVISIBLE);
                             iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
-                            countDownTimer3.start();
+                            countDownTimer8.start();
                             iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
                         }
                         }else{
@@ -945,7 +945,7 @@ public class LivePlayActivity extends BaseActivity {
                             mVideoView.start();
 //xuameng iv_play升级了                            iv_play.setVisibility(View.INVISIBLE);
                             iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
-                            countDownTimer3.start();
+                            countDownTimer8.start();
                             iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
                         }
                         }else{
@@ -2440,7 +2440,7 @@ public class LivePlayActivity extends BaseActivity {
             public void onClick(View arg0) {
                 if(mVideoView.isPlaying()){
                     mVideoView.pause();
-                    countDownTimer3.cancel();
+                    countDownTimer8.cancel();
 //xuameng iv_play升级了                    iv_play.setVisibility(View.VISIBLE);
                     iv_Play_Xu.setVisibility(View.VISIBLE);     //回看暂停图标
                     iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
@@ -2451,7 +2451,7 @@ public class LivePlayActivity extends BaseActivity {
                     mVideoView.start();
 //xuameng iv_play升级了                    iv_play.setVisibility(View.INVISIBLE);
                     iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
-                    countDownTimer3.start();
+                    countDownTimer8.start();
                     iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
                 }
             }
@@ -2472,10 +2472,10 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public void onProgressChanged(SeekBar sb, int progress, boolean fromuser) {
                 if(fromuser){
-                    if(countDownTimer3!=null){
+                    if(countDownTimer8!=null){
                         mVideoView.seekTo(progress);
-                        countDownTimer3.cancel();
-                        countDownTimer3.start();
+                        countDownTimer8.cancel();
+                        countDownTimer8.start();
                     }
                 }
             }
@@ -2487,7 +2487,7 @@ public class LivePlayActivity extends BaseActivity {
                     if(keycode==KeyEvent.KEYCODE_DPAD_CENTER||keycode==KeyEvent.KEYCODE_ENTER){
                         if(mVideoView.isPlaying()){
                             mVideoView.pause();
-                            countDownTimer3.cancel();
+                            countDownTimer8.cancel();
 //xuameng iv_play升级了                            iv_play.setVisibility(View.VISIBLE);
                             iv_Play_Xu.setVisibility(View.VISIBLE);     //回看暂停图标
                             iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
@@ -2497,7 +2497,7 @@ public class LivePlayActivity extends BaseActivity {
                             mVideoView.start();
  //xuameng iv_play升级了                           iv_play.setVisibility(View.INVISIBLE);
                             iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
-                            countDownTimer3.start();
+                            countDownTimer8.start();
                             iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
                         }
                     }
