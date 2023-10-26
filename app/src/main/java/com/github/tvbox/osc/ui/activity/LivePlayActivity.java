@@ -2549,7 +2549,7 @@ public class LivePlayActivity extends BaseActivity {
 
 
 
-    private void showProgressBarsXu(){         //显示回看菜单
+    public void showProgressBarsXu(){         //显示回看菜单
             backcontroller.setVisibility(View.VISIBLE);   //xuameng显示回看下方菜单
             showTimeXu();              //xuameng系统显示时间
 			Mtv_left_top_xu.setVisibility(View.VISIBLE); //xuameng显示回看上图标
