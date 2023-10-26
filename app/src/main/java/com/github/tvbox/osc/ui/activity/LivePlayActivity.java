@@ -358,8 +358,8 @@ public class LivePlayActivity extends BaseActivity {
                 if(fromuser){
                     if(countDownTimer!=null){
                         mVideoView.seekTo(progress);
-                        countDownTimer.cancel();
-                        countDownTimer.start();
+                        countDownTimer50.cancel();
+                        countDownTimer50.start();
                     }
 /*
                     long duration = mControlWrapper.getDuration();
@@ -2474,8 +2474,8 @@ public class LivePlayActivity extends BaseActivity {
                 if(fromuser){
                     if(countDownTimer!=null){
                         mVideoView.seekTo(progress);
-                        countDownTimer.cancel();
-                        countDownTimer.start();
+                        countDownTimer50.cancel();
+                        countDownTimer50.start();
                     }
                 }
             }
@@ -2545,3 +2545,10 @@ public class LivePlayActivity extends BaseActivity {
 }
 
 
+countDownTimer50 = new CountDownTimer(10000, 1000) {//底部epg隐藏时间设定
+		        public void onTick(long j) {
+                    }
+                    public void onFinish() {
+       
+                    }
+                };
