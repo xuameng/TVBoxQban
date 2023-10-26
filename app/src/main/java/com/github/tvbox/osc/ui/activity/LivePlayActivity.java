@@ -1465,6 +1465,7 @@ public class LivePlayActivity extends BaseActivity {
                      countDownTimer.start();
                      iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
                      }
+					 return true;
 				}
                 else
                 showChannelList();
