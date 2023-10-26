@@ -1542,13 +1542,9 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public boolean singleTap() {           //xuameng点击屏幕显示频道菜单
 				if(isBack){
-				   if(backcontroller.getVisibility() == View.GONE){
-                        showProgressBars(true);
-						showBottomEpgBack();               //xuameng回看EPG
-                    }
-				   else if(mVideoView.isPlaying()){
+				   if(mVideoView.isPlaying()){
 					 showProgressBars(true);
-					 showBottomEpgBack();               //xuameng回看EPG
+					 showBottomEpg();               //xuameng回看EPG
                      mVideoView.pause();				 
 //xuameng iv_play升级了                     iv_play.setVisibility(View.VISIBLE);
                      iv_Play_Xu.setVisibility(View.VISIBLE);     //回看暂停图标
