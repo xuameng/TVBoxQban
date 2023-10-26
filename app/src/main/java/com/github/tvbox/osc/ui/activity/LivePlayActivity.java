@@ -1450,7 +1450,6 @@ public class LivePlayActivity extends BaseActivity {
             public boolean singleTap() {           //xuameng点击屏幕显示频道菜单
 				if(isBack){
 				   if(mVideoView.isPlaying()){
-					  showTimeXu(); 
                      mVideoView.pause();
 					 showProgressBars(true);      //显示回看低菜单
                      countDownTimer.cancel();
@@ -1459,7 +1458,7 @@ public class LivePlayActivity extends BaseActivity {
                      iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
                      }else{
                      backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
-					 showTimeXu();              //xuameng隐藏系统时间
+					 hideTimeXu();              //xuameng隐藏系统时间
                      mVideoView.start();
  //xuameng iv_play升级了                    iv_play.setVisibility(View.INVISIBLE);
                      iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
@@ -1469,10 +1468,10 @@ public class LivePlayActivity extends BaseActivity {
 				}
                 else
                 showChannelList();
-                ll_epg.setVisibility(View.GONE);				//xuameng下面EPG菜单隐藏
-                ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
-                hideTimeXu();              //xuameng隐藏系统时间
-                hideNetSpeedXu();		//XUAMENG隐藏左上网速
+ //               ll_epg.setVisibility(View.GONE);				//xuameng下面EPG菜单隐藏
+ //               ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
+ //               hideTimeXu();              //xuameng隐藏系统时间
+ //               hideNetSpeedXu();		//XUAMENG隐藏左上网速
                 return true;
             }
 
