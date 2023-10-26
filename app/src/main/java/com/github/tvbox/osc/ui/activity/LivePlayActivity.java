@@ -1280,7 +1280,7 @@ public class LivePlayActivity extends BaseActivity {
                     sBar.setProgress((int)  mVideoView.getCurrentPosition());
                     tv_currentpos.setText(durationToString((int)mVideoView.getCurrentPosition()));
                     tv_duration.setText(durationToString(shiyi_time_c*1000));
-					hideTimeXu();                       //xuameng进入回看前先隐藏上方系统时间
+					showTimeXu(); 
                     showProgressBars(true);             //xuameng然后再显示
                     isBack = true;
                 }
@@ -1358,9 +1358,9 @@ public class LivePlayActivity extends BaseActivity {
                    // long dd = mVideoView.getDuration();
                     tv_currentpos.setText(durationToString((int)mVideoView.getCurrentPosition()));
                     tv_duration.setText(durationToString(shiyi_time_c*1000));
+					showTimeXu();                       //xuameng显示系统时间
                     showProgressBars(true);
                     isBack = true;
-					showTimeXu();                       //xuameng显示系统时间
                 }
             }
         });
@@ -1450,6 +1450,7 @@ public class LivePlayActivity extends BaseActivity {
             public boolean singleTap() {           //xuameng点击屏幕显示频道菜单
 				if(isBack){
 				   if(mVideoView.isPlaying()){
+					  showTimeXu(); 
                      mVideoView.pause();
 					 showProgressBars(true);      //显示回看低菜单
                      countDownTimer.cancel();
@@ -1458,7 +1459,7 @@ public class LivePlayActivity extends BaseActivity {
                      iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
                      }else{
                      backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
-					 hideTimeXu();              //xuameng隐藏系统时间
+					 showTimeXu();              //xuameng隐藏系统时间
                      mVideoView.start();
  //xuameng iv_play升级了                    iv_play.setVisibility(View.INVISIBLE);
                      iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
