@@ -891,7 +891,6 @@ public class LivePlayActivity extends BaseActivity {
                         if(mVideoView.isPlaying()){
                             showProgressBars(true);
 							showBottomEpgBack();               //xuameng回看EPG
-							mVideoView.pause();
 						    iv_Play_Xu.setVisibility(View.VISIBLE);     //回看暂停图标
                             iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
                         }else{
@@ -1545,8 +1544,8 @@ public class LivePlayActivity extends BaseActivity {
 				if(isBack){
 				   if(mVideoView.isPlaying()){
                      mVideoView.pause();
-					 showProgressBars(true);      //显示回看低菜单
-					 //showBottomEpgBack();               //xuameng回看EPG
+					 showProgressBarsXu();      //显示回看低菜单
+					 
 //xuameng iv_play升级了                     iv_play.setVisibility(View.VISIBLE);
                      iv_Play_Xu.setVisibility(View.VISIBLE);     //回看暂停图标
                      iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
@@ -2403,6 +2402,7 @@ public class LivePlayActivity extends BaseActivity {
         if(show){
             backcontroller.setVisibility(View.VISIBLE);   //xuameng显示回看下方菜单
             showTimeXu();              //xuameng系统显示时间
+			iv_playpause.requestFocus();     //xuameng默认焦点
 			Mtv_left_top_xu.setVisibility(View.VISIBLE); //xuameng显示回看上图标
 			ll_epg.setVisibility(View.VISIBLE);  //xuameng下面EPG菜单显示
 			ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
@@ -2542,3 +2542,16 @@ public class LivePlayActivity extends BaseActivity {
     }
 
 }
+
+
+
+
+
+
+
+    private void showProgressBarsXu(){         //显示回看菜单
+            backcontroller.setVisibility(View.VISIBLE);   //xuameng显示回看下方菜单
+            showTimeXu();              //xuameng系统显示时间
+			Mtv_left_top_xu.setVisibility(View.VISIBLE); //xuameng显示回看上图标
+			ll_epg.setVisibility(View.VISIBLE);  //xuameng下面EPG菜单显示
+        }
