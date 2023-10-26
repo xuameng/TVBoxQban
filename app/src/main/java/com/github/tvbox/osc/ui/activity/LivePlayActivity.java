@@ -196,7 +196,6 @@ public class LivePlayActivity extends BaseActivity {
     private CountDownTimer countDownTimer20;
 	private CountDownTimer countDownTimer21;
 	private CountDownTimer countDownTimer22;
-	private CountDownTimer countDownTimer50;
     private int videoWidth = 1920;
     private int videoHeight = 1080;
     private TextView tv_currentpos;
@@ -357,13 +356,10 @@ public class LivePlayActivity extends BaseActivity {
                     return;
                 }
                 if(fromuser){
-				countDownTimer50 = new CountDownTimer(10000, 1000) {//底部epg隐藏时间设定
-                };
-
-                    if(countDownTimer50!=null){
+                    if(countDownTimer!=null){
                         mVideoView.seekTo(progress);
-                        countDownTimer50.cancel();
-                        countDownTimer50.start();
+                        countDownTimer3.cancel();
+                        countDownTimer3.start();
                     }
 /*
                     long duration = mControlWrapper.getDuration();
@@ -383,7 +379,7 @@ public class LivePlayActivity extends BaseActivity {
                     if(keycode==KeyEvent.KEYCODE_DPAD_CENTER||keycode==KeyEvent.KEYCODE_ENTER){
                         if(mVideoView.isPlaying()){
                             mVideoView.pause();
-                            countDownTimer.cancel();
+                            countDownTimer3.cancel();
 //xuameng iv_play升级了                            iv_play.setVisibility(View.VISIBLE);
                             iv_Play_Xu.setVisibility(View.VISIBLE);     //回看暂停图标
                             iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));   
@@ -394,7 +390,7 @@ public class LivePlayActivity extends BaseActivity {
                             mVideoView.start();
 //xuameng iv_play升级了                            iv_play.setVisibility(View.INVISIBLE);
                             iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
-                            countDownTimer.start();
+                            countDownTimer3.start();
                             iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));    
                         }
                     }
@@ -2476,13 +2472,10 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public void onProgressChanged(SeekBar sb, int progress, boolean fromuser) {
                 if(fromuser){
-				countDownTimer50 = new CountDownTimer(10000, 1000) {//底部epg隐藏时间设定
-                };
-        
-                    if(countDownTimer50!=null){
+                    if(countDownTimer!=null){
                         mVideoView.seekTo(progress);
-                        countDownTimer50.cancel();
-                        countDownTimer50.start();
+                        countDownTimer3.cancel();
+                        countDownTimer3.start();
                     }
                 }
             }
@@ -2494,7 +2487,7 @@ public class LivePlayActivity extends BaseActivity {
                     if(keycode==KeyEvent.KEYCODE_DPAD_CENTER||keycode==KeyEvent.KEYCODE_ENTER){
                         if(mVideoView.isPlaying()){
                             mVideoView.pause();
-                            countDownTimer.cancel();
+                            countDownTimer3.cancel();
 //xuameng iv_play升级了                            iv_play.setVisibility(View.VISIBLE);
                             iv_Play_Xu.setVisibility(View.VISIBLE);     //回看暂停图标
                             iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
@@ -2504,7 +2497,7 @@ public class LivePlayActivity extends BaseActivity {
                             mVideoView.start();
  //xuameng iv_play升级了                           iv_play.setVisibility(View.INVISIBLE);
                             iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
-                            countDownTimer.start();
+                            countDownTimer3.start();
                             iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
                         }
                     }
