@@ -1539,10 +1539,14 @@ public class LivePlayActivity extends BaseActivity {
     private void initVideoView() {
         LiveController controller = new LiveController(this);
         controller.setListener(new LiveController.LiveControlListener() {
-/*            @Override
+            @Override
             public boolean singleTap() {           //xuameng点击屏幕显示频道菜单
 				if(isBack){
-				   if(mVideoView.isPlaying()){
+				   if(backcontroller.getVisibility() == View.GONE){
+                        showProgressBars(true);
+						showBottomEpgBack();               //xuameng回看EPG
+                    }
+				   else if(mVideoView.isPlaying()){
 					 showProgressBars(true);
 					 showBottomEpgBack();               //xuameng回看EPG
                      mVideoView.pause();				 
@@ -1567,36 +1571,6 @@ public class LivePlayActivity extends BaseActivity {
                 hideNetSpeedXu();		//XUAMENG隐藏左上网速
                 return true;
             }
-*/
-                @Override
-	            public boolean onSingleTapConfirmed(MotionEvent e) {           //xuameng点击屏幕显示频道菜单
-				if(isBack){
-				   if(mVideoView.isPlaying()){
-					 showProgressBars(true);
-					 showBottomEpgBack();               //xuameng回看EPG
-                     mVideoView.pause();				 
-//xuameng iv_play升级了                     iv_play.setVisibility(View.VISIBLE);
-                     iv_Play_Xu.setVisibility(View.VISIBLE);     //回看暂停图标
-                     iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
-                     }else{
-                     backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
-					 ll_epg.setVisibility(View.GONE);			 //xuameng下面EPG菜单隐藏
-					 hideTimeXu();              //xuameng隐藏系统时间
-                     mVideoView.start();
- //xuameng iv_play升级了                    iv_play.setVisibility(View.INVISIBLE);
-                     iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
-                     iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
-                     }
-				}
-                else
-                showChannelList();
-                ll_epg.setVisibility(View.GONE);				//xuameng下面EPG菜单隐藏
-                ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
-                hideTimeXu();              //xuameng隐藏系统时间
-                hideNetSpeedXu();		//XUAMENG隐藏左上网速
-                return true;
-            }
-
 
             @Override
             public void longPress() {               //xuameng长按显示左边设置菜单
@@ -2572,4 +2546,5 @@ public class LivePlayActivity extends BaseActivity {
     }
 
 }
+
 
