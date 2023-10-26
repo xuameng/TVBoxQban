@@ -196,6 +196,7 @@ public class LivePlayActivity extends BaseActivity {
     private CountDownTimer countDownTimer20;
 	private CountDownTimer countDownTimer21;
 	private CountDownTimer countDownTimer22;
+	private CountDownTimer countDownTimer50;
     private int videoWidth = 1920;
     private int videoHeight = 1080;
     private TextView tv_currentpos;
