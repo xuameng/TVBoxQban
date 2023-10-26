@@ -136,6 +136,7 @@ public class LivePlayActivity extends BaseActivity {
 //    private CountDownTimer countDownTimerRightTop;
     private View ll_right_top_loading;     //xuameng右上菜单
     private View ll_right_top_huikan;
+	private View view_line_XU;
     private View divLoadEpg;
     private View divLoadEpgleft;
     private LinearLayout divEpg;
@@ -253,6 +254,7 @@ public class LivePlayActivity extends BaseActivity {
         ll_right_top_huikan = findViewById(R.id.ll_right_top_huikan);
         divLoadEpg = (View) findViewById(R.id.divLoadEpg);
         divLoadEpgleft = (View) findViewById(R.id.divLoadEpgleft);
+		view_line_XU  = (View) findViewById(R.id.view_line);  
         divEpg = (LinearLayout) findViewById(R.id.divEPG);
         //右上角图片旋转
         objectAnimator = ObjectAnimator.ofFloat(iv_circle_bg,"rotation", 360.0f);
@@ -690,6 +692,7 @@ public class LivePlayActivity extends BaseActivity {
             }
             if(!tip_epg1.getText().equals("暂无当前节目单，聚汇直播欢迎您的观看！")){
                 ll_epg.setVisibility(View.VISIBLE);  //xuameng下面EPG菜单显示
+				view_line_XU.setVisibility(View.GONE);
                 countDownTimer = new CountDownTimer(10000, 1000) {//底部epg隐藏时间设定
                     public void onTick(long j) {
                     }
@@ -700,6 +703,7 @@ public class LivePlayActivity extends BaseActivity {
                 countDownTimer.start();
             }else {
                 ll_epg.setVisibility(View.VISIBLE);    //XUAMENG  底部epg显示
+				view_line_XU.setVisibility(View.GONE);
 		        countDownTimer = new CountDownTimer(10000, 1000) {//底部epg隐藏时间设定
 		public void onTick(long j) {
                     }
@@ -890,8 +894,8 @@ public class LivePlayActivity extends BaseActivity {
                         if(mVideoView.isPlaying()){
                             showProgressBars(true);
 							showBottomEpgBack();               //xuameng回看EPG
-						    iv_Play_Xu.setVisibility(View.VISIBLE);     //回看暂停图标
-                            iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
+	//xuameng测试					    iv_Play_Xu.setVisibility(View.VISIBLE);     //回看暂停图标
+     //xuameng测试                       iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
                         }else{
                             backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
 							ll_epg.setVisibility(View.GONE);			 //xuameng下面EPG菜单隐藏
@@ -915,8 +919,8 @@ public class LivePlayActivity extends BaseActivity {
                         if(mVideoView.isPlaying()){
                             showProgressBars(true);
 							showBottomEpgBack();               //xuameng回看EPG
-							iv_Play_Xu.setVisibility(View.VISIBLE);     //回看暂停图标
-                            iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
+//xuameng测试							iv_Play_Xu.setVisibility(View.VISIBLE);     //回看暂停图标
+//xuameng测试                            iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
                         }else{
                             backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
 							ll_epg.setVisibility(View.GONE);			 //xuameng下面EPG菜单隐藏
@@ -940,8 +944,8 @@ public class LivePlayActivity extends BaseActivity {
                         if(mVideoView.isPlaying()){
                             showProgressBars(true);
 							showBottomEpgBack();               //xuameng回看EPG
-							iv_Play_Xu.setVisibility(View.VISIBLE);     //回看暂停图标
-							iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
+	//xuameng测试						iv_Play_Xu.setVisibility(View.VISIBLE);     //回看暂停图标
+	//xuameng测试						iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
                         }else{
                             backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
 							ll_epg.setVisibility(View.GONE);			 //xuameng下面EPG菜单隐藏
