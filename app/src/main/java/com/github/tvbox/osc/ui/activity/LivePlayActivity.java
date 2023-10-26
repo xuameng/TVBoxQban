@@ -357,6 +357,10 @@ public class LivePlayActivity extends BaseActivity {
                     return;
                 }
                 if(fromuser){
+				countDownTimer50 = new CountDownTimer(10000, 1000) {//底部epg隐藏时间设定
+                };
+
+        }
                     if(countDownTimer50!=null){
                         mVideoView.seekTo(progress);
                         countDownTimer50.cancel();
@@ -2473,6 +2477,9 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public void onProgressChanged(SeekBar sb, int progress, boolean fromuser) {
                 if(fromuser){
+				countDownTimer50 = new CountDownTimer(10000, 1000) {//底部epg隐藏时间设定
+                };
+        }
                     if(countDownTimer50!=null){
                         mVideoView.seekTo(progress);
                         countDownTimer50.cancel();
@@ -2546,10 +2553,3 @@ public class LivePlayActivity extends BaseActivity {
 }
 
 
-countDownTimer50 = new CountDownTimer(10000, 1000) {//底部epg隐藏时间设定
-		        public void onTick(long j) {
-                    }
-                    public void onFinish() {
-       
-                    }
-                };
