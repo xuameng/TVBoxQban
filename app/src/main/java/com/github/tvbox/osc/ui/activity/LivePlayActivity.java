@@ -287,7 +287,7 @@ public class LivePlayActivity extends BaseActivity {
             backcontroller.setVisibility(View.VISIBLE);		
 			showTimeXu();              //xuameng系统显示时间
 			Mtv_left_top_xu.setVisibility(View.VISIBLE); //xuameng显示左上回看图标
-			iv_playpause.requestFocus();				 //xuameng回看菜单默认焦点为播放
+			//iv_playpause.requestFocus();				 //xuameng回看菜单默认焦点为播放
 			ll_epg.setVisibility(View.VISIBLE);  //xuameng下面EPG菜单显示
 			ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
             mHideChannelListRun();
@@ -890,6 +890,7 @@ public class LivePlayActivity extends BaseActivity {
                         if(mVideoView.isPlaying()){
                             showProgressBars(true);
 							showBottomEpgBack();               //xuameng回看EPG
+							mVideoView.pause();
 						    iv_Play_Xu.setVisibility(View.VISIBLE);     //回看暂停图标
                             iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
                         }else{
@@ -915,6 +916,9 @@ public class LivePlayActivity extends BaseActivity {
                         if(mVideoView.isPlaying()){
                             showProgressBars(true);
 							showBottomEpgBack();               //xuameng回看EPG
+							mVideoView.pause();
+							iv_Play_Xu.setVisibility(View.VISIBLE);     //回看暂停图标
+                            iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
                         }else{
                             backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
 							ll_epg.setVisibility(View.GONE);			 //xuameng下面EPG菜单隐藏
@@ -938,6 +942,9 @@ public class LivePlayActivity extends BaseActivity {
                         if(mVideoView.isPlaying()){
                             showProgressBars(true);
 							showBottomEpgBack();               //xuameng回看EPG
+							mVideoView.pause();
+							iv_Play_Xu.setVisibility(View.VISIBLE);     //回看暂停图标
+							iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
                         }else{
                             backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
 							ll_epg.setVisibility(View.GONE);			 //xuameng下面EPG菜单隐藏
