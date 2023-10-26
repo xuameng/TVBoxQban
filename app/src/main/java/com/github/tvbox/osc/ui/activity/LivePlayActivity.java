@@ -357,7 +357,7 @@ public class LivePlayActivity extends BaseActivity {
                     return;
                 }
                 if(fromuser){
-                    if(countDownTimer!=null){
+                    if(countDownTimer50!=null){
                         mVideoView.seekTo(progress);
                         countDownTimer50.cancel();
                         countDownTimer50.start();
@@ -2473,7 +2473,7 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public void onProgressChanged(SeekBar sb, int progress, boolean fromuser) {
                 if(fromuser){
-                    if(countDownTimer!=null){
+                    if(countDownTimer50!=null){
                         mVideoView.seekTo(progress);
                         countDownTimer50.cancel();
                         countDownTimer50.start();
