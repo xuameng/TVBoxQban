@@ -646,6 +646,13 @@ public class LivePlayActivity extends BaseActivity {
 
 
 
+private void showProgressBarsXu() {
+            backcontroller.setVisibility(View.VISIBLE);   //xuameng显示回看下方菜单
+            showTimeXu();              //xuameng系统显示时间
+			Mtv_left_top_xu.setVisibility(View.VISIBLE); //xuameng显示回看上图标
+			ll_epg.setVisibility(View.VISIBLE);  //xuameng下面EPG菜单显示
+    }
+
 //显示底部EPG
     private void showBottomEpgBack() {
         if (channel_Name.getChannelName() != null) {
@@ -2544,14 +2551,3 @@ public class LivePlayActivity extends BaseActivity {
 }
 
 
-
-
-
-
-
-    public void showProgressBarsXu(){         //显示回看菜单
-            backcontroller.setVisibility(View.VISIBLE);   //xuameng显示回看下方菜单
-            showTimeXu();              //xuameng系统显示时间
-			Mtv_left_top_xu.setVisibility(View.VISIBLE); //xuameng显示回看上图标
-			ll_epg.setVisibility(View.VISIBLE);  //xuameng下面EPG菜单显示
-        }
