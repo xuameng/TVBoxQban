@@ -292,6 +292,7 @@ public class LivePlayActivity extends BaseActivity {
 			//iv_playpause.requestFocus();				 //xuameng回看菜单默认焦点为播放
 			ll_epg.setVisibility(View.VISIBLE);  //xuameng下面EPG菜单显示
 			ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
+			view_line_XU.setVisibility(View.GONE);			//xuamengEPG中的横线
             mHideChannelListRun();
 			hideNetSpeedXu();		//XUAMENG隐藏左上网速
         }else{
@@ -302,6 +303,7 @@ public class LivePlayActivity extends BaseActivity {
 			ll_right_top_loading.setVisibility(View.VISIBLE);  //xuameng右上菜单显示
 			showTimeXu();                       //xuameng显示系统时间
 			showNetSpeedXu();                  //XUAMENG显示左上网速
+			view_line_XU.setVisibility(View.VISIBLE);		//xuamengEPG中的横线
         }
 
 
@@ -317,7 +319,7 @@ public class LivePlayActivity extends BaseActivity {
 //xuameng iv_play升级了            }
 //xuameng iv_play升级了        });
 
-        iv_playpause.setOnClickListener(new View.OnClickListener() {
+        iv_playpause.setOnClickListener(new View.OnClickListener() {			//xuameng回看暂停键
             @Override
             public void onClick(View arg0) {
                 if(mVideoView.isPlaying()){
@@ -609,7 +611,7 @@ public class LivePlayActivity extends BaseActivity {
     }
 
 
-	private void showBottomEpgXU() {
+	private void showBottomEpgXU() {              //XUAMENG刷新EPG，要不不能自动刷新
         if (isSHIYI)
             return;
         if (channel_Name.getChannelName() != null) {
@@ -647,7 +649,7 @@ public class LivePlayActivity extends BaseActivity {
     }
 
 
-//显示底部EPG
+//XUAMENG显示底部回看时的EPG
     private void showBottomEpgBack() {
         if (channel_Name.getChannelName() != null) {
             ((TextView) findViewById(R.id.tv_channel_bar_name)).setText(channel_Name.getChannelName());
@@ -692,7 +694,7 @@ public class LivePlayActivity extends BaseActivity {
             }
             if(!tip_epg1.getText().equals("暂无当前节目单，聚汇直播欢迎您的观看！")){
                 ll_epg.setVisibility(View.VISIBLE);  //xuameng下面EPG菜单显示
-				view_line_XU.setVisibility(View.GONE);
+				//view_line_XU.setVisibility(View.GONE);
                 countDownTimer = new CountDownTimer(10000, 1000) {//底部epg隐藏时间设定
                     public void onTick(long j) {
                     }
@@ -703,7 +705,7 @@ public class LivePlayActivity extends BaseActivity {
                 countDownTimer.start();
             }else {
                 ll_epg.setVisibility(View.VISIBLE);    //XUAMENG  底部epg显示
-				view_line_XU.setVisibility(View.GONE);
+				//view_line_XU.setVisibility(View.GONE);
 		        countDownTimer = new CountDownTimer(10000, 1000) {//底部epg隐藏时间设定
 		public void onTick(long j) {
                     }
@@ -894,7 +896,7 @@ public class LivePlayActivity extends BaseActivity {
                         if(mVideoView.isPlaying()){
                             showProgressBars(true);
 							showBottomEpgBack();               //xuameng回看EPG
-	//xuameng测试					    iv_Play_Xu.setVisibility(View.VISIBLE);     //回看暂停图标
+	//xuameng测试					     iv_Play_Xu.setVisibility(View.VISIBLE);     //回看暂停图标
      //xuameng测试                       iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
                         }else{
                             backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
@@ -2417,6 +2419,7 @@ public class LivePlayActivity extends BaseActivity {
 			Mtv_left_top_xu.setVisibility(View.VISIBLE); //xuameng显示回看上图标
 			ll_epg.setVisibility(View.VISIBLE);  //xuameng下面EPG菜单显示
 			ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
+			view_line_XU.setVisibility(View.GONE);         //xuamengEPG中的横线
             mHideChannelListRun();
 			hideNetSpeedXu();		//XUAMENG隐藏左上网速
         }else{
@@ -2426,6 +2429,7 @@ public class LivePlayActivity extends BaseActivity {
             if(!tip_epg1.getText().equals("暂无当前节目单，聚汇直播欢迎您的观看！")){
                 ll_epg.setVisibility(View.VISIBLE);  //xuameng下面EPG菜单显示
 			    ll_right_top_loading.setVisibility(View.VISIBLE);  //xuameng右上菜单显示
+				view_line_XU.setVisibility(View.VISIBLE);			//xuamengEPG中的横线
                 showTimeXu();              //xuameng系统显示时间
 				showNetSpeedXu();                  //XUAMENG显示左上网速
             }
@@ -2521,7 +2525,7 @@ public class LivePlayActivity extends BaseActivity {
             iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
         }else{
 //xuameng iv_play升级了            iv_play.setVisibility(View.VISIBLE);
-//xuameng            iv_Play_Xu.setVisibility(View.VISIBLE);     //回看暂停图标
+            iv_Play_Xu.setVisibility(View.VISIBLE);     //回看暂停图标
             iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
         }
         if(countDownTimer3==null){
