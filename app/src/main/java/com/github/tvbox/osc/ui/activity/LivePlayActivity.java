@@ -2529,7 +2529,7 @@ public class LivePlayActivity extends BaseActivity {
             iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
         }else{
 //xuameng iv_play升级了            iv_play.setVisibility(View.VISIBLE);
-            iv_Play_Xu.setVisibility(View.VISIBLE);     //回看暂停图标
+//            iv_Play_Xu.setVisibility(View.VISIBLE);     //回看暂停图标
             iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
         }
         if(countDownTimer3==null){
@@ -2561,5 +2561,3 @@ public class LivePlayActivity extends BaseActivity {
     }
 
 }
-
-
