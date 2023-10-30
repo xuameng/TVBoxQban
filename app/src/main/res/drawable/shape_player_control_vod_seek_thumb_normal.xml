@@ -1,10 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="oval">
-    <!--    进度条圆点常规状态颜色-->
-<!--    <solid android:color="@color/color_02F8E1" />-->
-    <solid android:color="@color/color_1890FF" />
+<shape
+    android:shape="oval"
+    xmlns:android="http://schemas.android.com/apk/res/android">
     <size
-        android:width="@dimen/vs_30"
-        android:height="@dimen/vs_30" />
+        android:height="23mm"
+        android:width="23mm"/>
+    <gradient
+        android:type="radial"
+        android:startColor="#ffcf7900"
+        android:centerColor="#ffcf7900"
+        android:endColor="#ffffd300"
+        android:gradientRadius="23"
+        android:centerX="0.50"
+        android:centerY="0.75"
+        android:useLevel="false"/>
 </shape>

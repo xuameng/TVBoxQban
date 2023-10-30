@@ -2,9 +2,16 @@
 <shape
     android:shape="oval"
     xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid
-        android:color="@color/color_ff000099" />
     <size
-        android:height="@dimen/vs_30"
-        android:width="@dimen/vs_30" />
+        android:height="23mm"
+        android:width="23mm"/>
+    <gradient
+        android:type="radial"
+        android:startColor="#ff824c00"
+        android:centerColor="#ff824c00"
+        android:endColor="#ffffb600"
+        android:gradientRadius="23"
+        android:centerX="0.50"
+        android:centerY="0.75"
+        android:useLevel="false"/>
 </shape>
