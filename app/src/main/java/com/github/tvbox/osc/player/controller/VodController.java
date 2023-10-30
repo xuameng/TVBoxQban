@@ -413,7 +413,7 @@ public class VodController extends BaseController {
                 boolean isInPlayback = isInPlaybackState();
 		            if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
                        if (isInPlayback) {
-                       tvSlideStop();
+                       tvSlideStartXu();
                 return true;
                     }
                   }	
@@ -953,6 +953,26 @@ public class VodController extends BaseController {
         if (!simSlideStart) {
             simSlideStart = true;
         }
+        // 每次10秒
+        simSlideOffset += (10000.0f * dir);
+        int currentPosition = (int) mControlWrapper.getCurrentPosition();
+        int position = (int) (simSlideOffset + currentPosition);
+        if (position > duration) position = duration;
+        if (position < 0) position = 0;
+        updateSeekUI(currentPosition, position, duration);
+        simSeekPosition = position;
+    }
+
+    public void tvSlideStartXu(int dir) {
+        int duration = (int) mControlWrapper.getDuration();
+        if (duration <= 0)
+            return;
+        if (!simSlideStart) {
+            simSlideStart = false;
+        }
+		if (!mControlWrapper.isPlaying()){
+			simSlideStart = false;
+			}
         // 每次10秒
         simSlideOffset += (10000.0f * dir);
         int currentPosition = (int) mControlWrapper.getCurrentPosition();
