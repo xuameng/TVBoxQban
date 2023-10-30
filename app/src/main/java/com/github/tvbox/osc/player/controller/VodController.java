@@ -963,7 +963,7 @@ public class VodController extends BaseController {
         simSeekPosition = position;
     }
 
-    public void tvSlideStartXu(int dir) {
+    public void tvSlideStartXu() {
         int duration = (int) mControlWrapper.getDuration();
         if (duration <= 0)
             return;
