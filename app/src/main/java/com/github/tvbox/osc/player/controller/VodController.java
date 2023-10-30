@@ -413,7 +413,7 @@ public class VodController extends BaseController {
                 boolean isInPlayback = isInPlaybackState();
 		            if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
                        if (isInPlayback) {
-                       tvSlideStartXu(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT ? 1 : -1);
+                       tvSlideStopXu(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT  || keyCode == KeyEvent.KEYCODE_DPAD_LEFT);
                 return true;
                     }
                   }	
@@ -963,24 +963,19 @@ public class VodController extends BaseController {
         simSeekPosition = position;
     }
 
-    public void tvSlideStartXu(int dir) {
-        int duration = (int) mControlWrapper.getDuration();
-        if (duration <= 0)
+    public void tvSlideStopXu(int dir) {
+        if (!simSlideStart)
             return;
-        if (!simSlideStart) {
-            simSlideStart = false;
-        }
-		if (!mControlWrapper.isPlaying()){
-			simSlideStart = false;
-			}
-        // 每次10秒
-        simSlideOffset += (10000.0f * dir);
+	simSlideOffset += (10000.0f * dir);
         int currentPosition = (int) mControlWrapper.getCurrentPosition();
         int position = (int) (simSlideOffset + currentPosition);
         if (position > duration) position = duration;
         if (position < 0) position = 0;
-        updateSeekUI(currentPosition, position, duration);
         simSeekPosition = position;
+	mControlWrapper.seekTo(simSeekPosition);
+        if (!mControlWrapper.isPlaying())
+        //xuameng快进暂停就暂停测试    mControlWrapper.start();    //测试成功，如果想暂停时快进自动播放取消注销
+        simSlideStart = false;
     }
 
     @Override
