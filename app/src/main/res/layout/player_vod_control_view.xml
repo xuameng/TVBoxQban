@@ -34,7 +34,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="http://"
-            android:width="680.0dip"
+            android:width="@dimen/vs_960"
             android:singleLine="true"/>
         <TextView
             android:textSize="@dimen/ts_20"
@@ -106,10 +106,10 @@
             android:paddingRight="@dimen/vs_10"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_marginRight="@dimen/vs_5"
             android:text="许大师站位"
             android:singleLine="true"
+            android:layout_weight="1.0"
             android:layout_marginEnd="@dimen/vs_5"/>
         <LinearLayout
             android:orientation="horizontal"
@@ -147,10 +147,10 @@
                 android:focusable="true"
                 android:layout_width="0.0dip"
                 android:layout_height="wrap_content"
-                android:maxHeight="@dimen/vs_6"
+                android:maxHeight="9mm"
                 android:max="1000"
-                android:progressDrawable="@drawable/shape_player_control_vod_seek"
-                android:minHeight="@dimen/vs_6"
+                android:progressDrawable="@drawable/progress_bar_xu"
+                android:minHeight="9mm"
                 android:thumb="@drawable/shape_player_control_vod_seek_thumb"
                 android:thumbOffset="@dimen/vs_0"
                 android:layout_weight="1.0"
