@@ -969,7 +969,7 @@ public class VodController extends BaseController {
             return;
         if (!simSlideStart)
             return;
-	    simSlideOffset += (10000.0f * dir);
+	    simSlideOffset += (0.0f * dir);
         int currentPosition = (int) mControlWrapper.getCurrentPosition();
         int position = (int) (simSlideOffset + currentPosition);
         if (position > duration) position = duration;
