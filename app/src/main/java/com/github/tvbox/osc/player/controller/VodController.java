@@ -388,6 +388,15 @@ public class VodController extends BaseController {
         });
         //xuameng监听底部进度条遥控器
 		mSeekBar.setOnKeyListener(new View.OnKeyListener() {
+			     if (!fromUser) {
+                    return;
+                }
+
+                long duration = mControlWrapper.getDuration();
+                long newPosition = (duration * progress) / seekBar.getMax();
+                if (mCurrentTime != null)
+                    mCurrentTime.setText(stringForTime((int) newPosition));
+            }
             @Override
             public boolean onKey(View arg0, int keycode, KeyEvent event) {
                 if(event.getAction()==KeyEvent.ACTION_DOWN){
@@ -396,7 +405,9 @@ public class VodController extends BaseController {
 				boolean isInPlayback = isInPlaybackState();
                     if(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT){
 		              if (isInPlayback) {
-                      tvSlideStart(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT ? 1 : -1);
+                mIsDragging = true;
+                mControlWrapper.stopProgress();
+                mControlWrapper.stopFadeOut();
                 return true;
                     }
                   }
@@ -413,7 +424,16 @@ public class VodController extends BaseController {
                 boolean isInPlayback = isInPlaybackState();
 		            if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
                        if (isInPlayback) {
-                       tvSlideStopXu(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT ? 1 : -1);
+                myHandle.removeCallbacks(myRunnable);
+                myHandle.postDelayed(myRunnable, myHandleSeconds);
+                long duration = mControlWrapper.getDuration();
+                long newPosition = (duration * seekBar.getProgress()) / seekBar.getMax();
+                mControlWrapper.seekTo((int) newPosition);
+                mIsDragging = false;
+                mControlWrapper.startProgress();
+                mControlWrapper.startFadeOut();
+
+
                 return true;
                     }
                   }	
@@ -961,24 +981,6 @@ public class VodController extends BaseController {
         if (position < 0) position = 0;
         updateSeekUI(currentPosition, position, duration);
         simSeekPosition = position;
-    }
-
-    public void tvSlideStopXu(int dir) {
-		int duration = (int) mControlWrapper.getDuration();
-        if (duration <= 0)
-            return;
-        if (!simSlideStart)
-            return;
-	    simSlideOffset += (0.0f * dir);
-        int currentPosition = (int) mControlWrapper.getCurrentPosition();
-        int position = (int) (simSlideOffset + currentPosition);
-        if (position > duration) position = duration;
-        if (position < 0) position = 0;
-        simSeekPosition = position;
-	    mControlWrapper.seekTo(simSeekPosition);
-        if (!mControlWrapper.isPlaying())
-        //xuameng快进暂停就暂停测试    mControlWrapper.start();    //测试成功，如果想暂停时快进自动播放取消注销
-        simSlideStart = false;
     }
 
     @Override
