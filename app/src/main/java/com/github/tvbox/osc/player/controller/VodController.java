@@ -389,11 +389,12 @@ public class VodController extends BaseController {
         //xuameng监听底部进度条遥控器
 		mSeekBar.setOnKeyListener(new View.OnKeyListener() {
 
-                long duration = mControlWrapper.getDuration();
-                long newPosition = (duration * progress) / seekBar.getMax();
+
 
 
             public boolean onKey(View arg0, int keycode, KeyEvent event) {
+				                long duration = mControlWrapper.getDuration();
+                long newPosition = (duration * progress) / seekBar.getMax();
                 if(event.getAction()==KeyEvent.ACTION_DOWN){
 			    int keyCode = event.getKeyCode();
                 int action = event.getAction();
