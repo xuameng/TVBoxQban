@@ -388,22 +388,15 @@ public class VodController extends BaseController {
         });
         //xuameng监听底部进度条遥控器
 		mSeekBar.setOnKeyListener(new View.OnKeyListener() {
-
-
-
-
+            @Override
             public boolean onKey(View arg0, int keycode, KeyEvent event) {
-				                long duration = mControlWrapper.getDuration();
-                long newPosition = (duration * progress) / seekBar.getMax();
                 if(event.getAction()==KeyEvent.ACTION_DOWN){
 			    int keyCode = event.getKeyCode();
                 int action = event.getAction();
 				boolean isInPlayback = isInPlaybackState();
                     if(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT){
 		              if (isInPlayback) {
-                mIsDragging = true;
-                mControlWrapper.stopProgress();
-                mControlWrapper.stopFadeOut();
+                      tvSlideStart(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT ? 1 : -1);
                 return true;
                     }
                   }
@@ -420,16 +413,7 @@ public class VodController extends BaseController {
                 boolean isInPlayback = isInPlaybackState();
 		            if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
                        if (isInPlayback) {
-                myHandle.removeCallbacks(myRunnable);
-                myHandle.postDelayed(myRunnable, myHandleSeconds);
-                long duration = mControlWrapper.getDuration();
-                long newPosition = (duration * seekBar.getProgress()) / seekBar.getMax();
-                mControlWrapper.seekTo((int) newPosition);
-                mIsDragging = false;
-                mControlWrapper.startProgress();
-                mControlWrapper.startFadeOut();
-
-
+                       tvSlideStop();
                 return true;
                     }
                   }	
