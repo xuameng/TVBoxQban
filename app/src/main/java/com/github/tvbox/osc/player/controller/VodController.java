@@ -413,7 +413,7 @@ public class VodController extends BaseController {
                 boolean isInPlayback = isInPlaybackState();
 		            if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
                        if (isInPlayback) {
-                       tvSlideStartXu();
+                       tvSlideStartXu(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT ? 1 : -1);
                 return true;
                     }
                   }	
@@ -963,7 +963,7 @@ public class VodController extends BaseController {
         simSeekPosition = position;
     }
 
-    public void tvSlideStartXu() {
+    public void tvSlideStartXu(int dir) {
         int duration = (int) mControlWrapper.getDuration();
         if (duration <= 0)
             return;
