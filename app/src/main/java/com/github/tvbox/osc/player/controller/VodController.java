@@ -413,7 +413,7 @@ public class VodController extends BaseController {
                 boolean isInPlayback = isInPlaybackState();
 		            if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
                        if (isInPlayback) {
-                       tvSlideStopXu();
+                       tvSlideStopXu();			//xuameng修复SEEKBAR快进重新播放问题
                 return true;
                     }
                   }	
@@ -946,7 +946,7 @@ public class VodController extends BaseController {
         simSlideOffset = 0;
     }
 
-    public void tvSlideStopXu() {
+    public void tvSlideStopXu() {           //xuameng修复SEEKBAR快进重新播放问题
         if (!simSlideStart)
             return;
 		mControlWrapper.seekTo(simSeekPosition);
