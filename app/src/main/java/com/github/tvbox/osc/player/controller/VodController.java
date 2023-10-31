@@ -973,7 +973,7 @@ public class VodController extends BaseController {
             simSlideStart = false;
         }
         // 每次10秒
-        simSlideOffset += (10000.0f * dir);
+        long simSlideOffset = (10000.0f * dir);
         long currentPosition = mControlWrapper.getCurrentPosition();
         long position = (simSlideOffset + currentPosition);
         if (position > duration) position = duration;
