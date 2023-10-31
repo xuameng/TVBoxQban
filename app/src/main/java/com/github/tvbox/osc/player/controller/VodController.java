@@ -396,7 +396,7 @@ public class VodController extends BaseController {
 				boolean isInPlayback = isInPlaybackState();
                     if(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT){
 		              if (isInPlayback) {
-                      tvSlideStartXU(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT ? 1 : -1);
+                      tvSlideStart(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT ? 1 : -1);
                 return true;
                     }
                   }
@@ -413,7 +413,7 @@ public class VodController extends BaseController {
                 boolean isInPlayback = isInPlaybackState();
 		            if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
                        if (isInPlayback) {
-                       tvSlideStop();
+                       tvSlideStopXU();
                 return true;
                     }
                   }	
@@ -963,21 +963,24 @@ public class VodController extends BaseController {
         simSeekPosition = position;
     }
 
-    public void tvSlideStartXU(int dir) {
-        int duration = (int) mControlWrapper.getDuration();
-        if (duration < 0)
+    public void tvSlideStopXU() {
+		if (!simSlideStart)
+        return;
+        duration = mControlWrapper.getDuration();
+        if (duration <= 0)
             return;
         if (!simSlideStart) {
-            simSlideStart = true;
+            simSlideStart = false;
         }
         // 每次10秒
         simSlideOffset += (10000.0f * dir);
-        int currentPosition = (int) mControlWrapper.getCurrentPosition();
-        int position = (int) (simSlideOffset + currentPosition);
+        currentPosition = mControlWrapper.getCurrentPosition();
+        position = (simSlideOffset + currentPosition);
         if (position > duration) position = duration;
         if (position < 0) position = 0;
         updateSeekUI(currentPosition, position, duration);
         simSeekPosition = position;
+		mControlWrapper.seekTo(simSeekPosition);
     }
 
     @Override
