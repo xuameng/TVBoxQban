@@ -964,12 +964,23 @@ public class VodController extends BaseController {
     }
 
     public void tvSlideStopXU() {
-        if (!simSlideStart)
+		if (!simSlideStart)
+        return;
+        long duration = mControlWrapper.getDuration();
+        if (duration <= 0)
             return;
-        mControlWrapper.seekTo(simSeekPosition);
-        if (!mControlWrapper.isPlaying())
-        //xuameng快进暂停就暂停测试    mControlWrapper.start();    //测试成功，如果想暂停时快进自动播放取消注销
-        simSlideStart = false;
+        if (!simSlideStart) {
+            simSlideStart = false;
+        }
+        // 每次10秒
+        simSlideOffset += (10000.0f * dir);
+        long currentPosition = mControlWrapper.getCurrentPosition();
+        long position = (simSlideOffset + currentPosition);
+        if (position > duration) position = duration;
+        if (position < 0) position = 0;
+        updateSeekUI(currentPosition, position, duration);
+        simSeekPosition = position;
+		mControlWrapper.seekTo(simSeekPosition);
     }
 
     @Override
