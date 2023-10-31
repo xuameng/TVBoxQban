@@ -54,21 +54,19 @@ public class HomeHotVodAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHol
             tvNote.setVisibility(View.GONE);
         } else {
             tvNote.setText(item.note);
-            tvNote.setVisibility(View.VISIBLE);     //xuameng显示主页聚汇热播左上小字
+            tvNote.setVisibility(View.VISIBLE);      //xuameng显示主页聚汇热播左上小字
         }
         helper.setText(R.id.tvName, item.name);
         ImageView ivThumb = helper.getView(R.id.ivThumb);
         //由于部分电视机使用glide报错
         if (!TextUtils.isEmpty(item.pic)) {
-            item.pic=item.pic.trim();
             Picasso.get()
                     .load(DefaultConfig.checkReplaceProxy(item.pic))
-                    .transform(new RoundTransformation(MD5.string2MD5(item.pic))
+				    .transform(new RoundTransformation(MD5.string2MD5(item.pic))
                             .centerCorp(true)
                             .override(AutoSizeUtils.mm2px(mContext, 300), AutoSizeUtils.mm2px(mContext, 400))
-                            .roundRadius(AutoSizeUtils.mm2px(mContext, 10), RoundTransformation.RoundType.ALL))
+                            .roundRadius(AutoSizeUtils.mm3px(mContext, 15), RoundTransformation.RoundType.ALL))
                     .placeholder(R.drawable.img_loading_placeholder)
-                    .noFade()
                     .error(R.drawable.img_loading_placeholder)
                     .into(ivThumb);
         } else {
