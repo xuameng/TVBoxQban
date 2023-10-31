@@ -2530,7 +2530,7 @@ public class LivePlayActivity extends BaseActivity {
         }else{
 //xuameng iv_play升级了            iv_play.setVisibility(View.VISIBLE);
 //            iv_Play_Xu.setVisibility(View.VISIBLE);     //回看暂停图标
-            iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
+//            iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
         }
         if(countDownTimer3==null){
             countDownTimer3 = new CountDownTimer(10000, 1000) {       //xuameng自动隐藏回看菜单时间10秒
