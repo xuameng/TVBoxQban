@@ -289,7 +289,7 @@ public class LivePlayActivity extends BaseActivity {
             backcontroller.setVisibility(View.VISIBLE);		
 			showTimeXu();              //xuameng系统显示时间
 			Mtv_left_top_xu.setVisibility(View.VISIBLE); //xuameng显示左上回看图标
-			//iv_playpause.requestFocus();				 //xuameng回看菜单默认焦点为播放
+			iv_playpause.requestFocus();				 //xuameng回看菜单默认焦点为播放
 			ll_epg.setVisibility(View.VISIBLE);  //xuameng下面EPG菜单显示
 			ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
 			view_line_XU.setVisibility(View.INVISIBLE);			//xuamengEPG中的横线
