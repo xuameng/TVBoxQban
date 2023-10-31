@@ -179,16 +179,16 @@ public class RoundTransformation implements Transformation {
             case RoundType.ALL:
                 if (viewWidth == width && viewHeight == height) {
                     mCanvas.drawRoundRect(new RectF(0, 0, viewWidth, viewHeight), radius, radius, mPaint);
-                    drawBottomLabel(mCanvas, mPaint, 30, 30, viewWidth, viewHeight);
+                    drawBottomLabel(mCanvas, mPaint, 0, 0, viewWidth, viewHeight);
                 } else if (viewWidth == width && viewHeight != height) {
                     float dis = (height - viewHeight) / 2f;
                     if (isCenterCorp) {
                         mCanvas.translate(0, -dis);
                         mCanvas.drawRoundRect(new RectF(0, dis, viewWidth, viewHeight + dis), radius, radius, mPaint);
-                        drawBottomLabel(mCanvas, mPaint, 30, dis, viewWidth, viewHeight + dis);
+                        drawBottomLabel(mCanvas, mPaint, 0, dis, viewWidth, viewHeight + dis);
                     } else {
                         mCanvas.drawRoundRect(new RectF(0, 0, viewWidth, viewHeight), radius, radius, mPaint);
-                        drawBottomLabel(mCanvas, mPaint, 30, 30, viewWidth, viewHeight);
+                        drawBottomLabel(mCanvas, mPaint, 0, 0, viewWidth, viewHeight);
                     }
                 } else {
                     float dis = (width - viewWidth) / 2f;
