@@ -951,7 +951,7 @@ public class LivePlayActivity extends BaseActivity {
                             showProgressBars(true);
 							showBottomEpgBack();               //xuameng回看EPG
 	//xuameng测试						iv_Play_Xu.setVisibility(View.VISIBLE);     //回看暂停图标
-	//xuameng测试						iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
+                 		    iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
                         }else{
                             backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
 							ll_epg.setVisibility(View.GONE);			 //xuameng下面EPG菜单隐藏
@@ -2526,11 +2526,12 @@ public class LivePlayActivity extends BaseActivity {
         if(mVideoView.isPlaying()){
 //xuameng iv_play升级了            iv_play.setVisibility(View.INVISIBLE);
             iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
-            iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
+            iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
         }else{
 //xuameng iv_play升级了            iv_play.setVisibility(View.VISIBLE);
 //            iv_Play_Xu.setVisibility(View.VISIBLE);     //回看暂停图标
-            iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
+
+		    iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
         }
         if(countDownTimer3==null){
             countDownTimer3 = new CountDownTimer(10000, 1000) {       //xuameng自动隐藏回看菜单时间10秒
