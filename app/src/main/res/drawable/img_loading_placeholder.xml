@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+<layer-list
+    xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
         <shape>
-            <solid android:color="#36ffffff"/>
-            <corners android:radius="10.0mm"/>
+            <solid
+                android:color="#36ffffff" />
+            <corners
+                android:radius="5.0mm" />
         </shape>
     </item>
     <item>
         <bitmap
             android:src="@drawable/icon_img_placeholder"
-            android:scaleType="centerCrop"
-            android:antialias="true"/>
+            android:antialias="true"
+            android:scaleType="centerCrop" />
     </item>
 </layer-list>
