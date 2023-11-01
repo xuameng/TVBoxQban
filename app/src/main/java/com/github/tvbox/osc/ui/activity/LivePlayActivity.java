@@ -897,20 +897,16 @@ public class LivePlayActivity extends BaseActivity {
                         break;
                     case KeyEvent.KEYCODE_DPAD_CENTER:          //xuameng 修复回看时不能暂停，弹出菜单问题
 						if(isBack){
-                        if(mVideoView.isPlaying()){
-                            showProgressBars(true);
-							showBottomEpgBack();               //xuameng回看EPG
+                        if(backcontroller.getVisibility() == View.VISIBLE){
+							backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
+							ll_epg.setVisibility(View.GONE);			 //xuameng下面EPG菜单隐藏
+							hideTimeXu();              //xuameng隐藏系统时间
 	//xuameng测试					     iv_Play_Xu.setVisibility(View.VISIBLE);     //回看暂停图标
      //xuameng测试                       iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
                         }else{
-                            backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
-							ll_epg.setVisibility(View.GONE);			 //xuameng下面EPG菜单隐藏
-							hideTimeXu();              //xuameng隐藏系统时间
-                            mVideoView.start();
+                            showProgressBars(true);
+							showBottomEpgBack();               //xuameng回看EPG
 //xuameng iv_play升级了                            iv_play.setVisibility(View.INVISIBLE);
-                            iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
-                            countDownTimer.start();
-                            iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
                         }
                         }else{
                             showChannelList();
@@ -922,20 +918,16 @@ public class LivePlayActivity extends BaseActivity {
                         break;
                     case KeyEvent.KEYCODE_ENTER:				//xuameng 修复回看时不能暂停，弹出菜单问题
 						if(isBack){
-                        if(mVideoView.isPlaying()){
-                            showProgressBars(true);
-							showBottomEpgBack();               //xuameng回看EPG
+                        if(backcontroller.getVisibility() == View.VISIBLE){
+							backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
+							ll_epg.setVisibility(View.GONE);			 //xuameng下面EPG菜单隐藏
+							hideTimeXu();              //xuameng隐藏系统时间
 //xuameng测试							iv_Play_Xu.setVisibility(View.VISIBLE);     //回看暂停图标
 //xuameng测试                            iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
                         }else{
-                            backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
-							ll_epg.setVisibility(View.GONE);			 //xuameng下面EPG菜单隐藏
-							hideTimeXu();              //xuameng隐藏系统时间
-                            mVideoView.start();
+                            showProgressBars(true);
+							showBottomEpgBack();               //xuameng回看EPG
 //xuameng iv_play升级了                            iv_play.setVisibility(View.INVISIBLE);
-                            iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
-                            countDownTimer.start();
-                            iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
                         }
                         }else{
                             showChannelList();
@@ -947,20 +939,16 @@ public class LivePlayActivity extends BaseActivity {
                         break;
                     case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:		//xuameng 修复回看时不能暂停，弹出菜单问题
 						if(isBack){
-                        if(mVideoView.isPlaying()){
-                            showProgressBars(true);
-							showBottomEpgBack();               //xuameng回看EPG
+                        if(backcontroller.getVisibility() == View.VISIBLE){
+							backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
+							ll_epg.setVisibility(View.GONE);			 //xuameng下面EPG菜单隐藏
+							hideTimeXu();              //xuameng隐藏系统时间
 	//xuameng测试						iv_Play_Xu.setVisibility(View.VISIBLE);     //回看暂停图标
 	//xuameng测试						iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
                         }else{
-                            backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
-							ll_epg.setVisibility(View.GONE);			 //xuameng下面EPG菜单隐藏
-							hideTimeXu();              //xuameng隐藏系统时间
-                            mVideoView.start();
+                            showProgressBars(true);
+							showBottomEpgBack();               //xuameng回看EPG
 //xuameng iv_play升级了                            iv_play.setVisibility(View.INVISIBLE);
-                            iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
-                            countDownTimer.start();
-                            iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
                         }
                         }else{
                             showChannelList();
