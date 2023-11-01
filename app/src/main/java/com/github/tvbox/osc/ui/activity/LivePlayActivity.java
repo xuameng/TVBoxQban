@@ -897,7 +897,7 @@ public class LivePlayActivity extends BaseActivity {
                         break;
                     case KeyEvent.KEYCODE_DPAD_CENTER:          //xuameng 修复回看时不能暂停，弹出菜单问题
 						if(isBack){
-                        if(backcontroller.getVisibility() == View.GONE){
+                        if(mVideoView.isPlaying()){
                             showProgressBars(true);
 							showBottomEpgBack();               //xuameng回看EPG
 	//xuameng测试					     iv_Play_Xu.setVisibility(View.VISIBLE);     //回看暂停图标
@@ -922,7 +922,7 @@ public class LivePlayActivity extends BaseActivity {
                         break;
                     case KeyEvent.KEYCODE_ENTER:				//xuameng 修复回看时不能暂停，弹出菜单问题
 						if(isBack){
-                        if(backcontroller.getVisibility() == View.GONE){
+                        if(mVideoView.isPlaying()){
                             showProgressBars(true);
 							showBottomEpgBack();               //xuameng回看EPG
 //xuameng测试							iv_Play_Xu.setVisibility(View.VISIBLE);     //回看暂停图标
@@ -947,7 +947,7 @@ public class LivePlayActivity extends BaseActivity {
                         break;
                     case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:		//xuameng 修复回看时不能暂停，弹出菜单问题
 						if(isBack){
-                        if(backcontroller.getVisibility() == View.GONE){
+                        if(mVideoView.isPlaying()){
                             showProgressBars(true);
 							showBottomEpgBack();               //xuameng回看EPG
 	//xuameng测试						iv_Play_Xu.setVisibility(View.VISIBLE);     //回看暂停图标
