@@ -37,7 +37,7 @@ public class PlayerHelper {
         int playerType = Hawk.get(HawkConfig.PLAY_TYPE, 0);
         int renderType = Hawk.get(HawkConfig.PLAY_RENDER, 0);
         String ijkCode = Hawk.get(HawkConfig.IJK_CODEC, "软解码");
-        int scale = Hawk.get(HawkConfig.PLAY_SCALE, 3);   //XUAMENG默认缩放比例填充
+        int scale = Hawk.get(HawkConfig.PLAY_SCALE, 0);
         try {
             playerType = playerCfg.getInt("pl");
             renderType = playerCfg.getInt("pr");
@@ -255,7 +255,7 @@ public class PlayerHelper {
     }
 
     public static String getScaleName(int screenScaleType) {
-        String scaleText = "填充";
+        String scaleText = "默认";
         switch (screenScaleType) {
             case VideoView.SCREEN_SCALE_DEFAULT:
                 scaleText = "默认";
