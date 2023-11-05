@@ -88,6 +88,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
         }else {
             tvHotList1.setVisibility(View.GONE);
             tvHotList2.setVisibility(View.VISIBLE);
+            tvHotList2.setLayoutManager(new V7GridLayoutManager(this.mContext, 5));
         }
         super.onFragmentResume();
         if (Hawk.get(HawkConfig.HOME_REC, 0) == 2) {
