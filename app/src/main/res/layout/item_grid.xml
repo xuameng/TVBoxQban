@@ -7,8 +7,8 @@
     android:layout_height="wrap_content"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <FrameLayout
-        android:layout_width="@dimen/vs_214"
-        android:layout_height="@dimen/vs_280">
+        android:layout_width="wrap_content"
+        android:layout_height="291mm">
         <ImageView
             android:id="@+id/ivThumb"
             android:padding="@dimen/vs_1"
