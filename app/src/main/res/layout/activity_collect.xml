@@ -23,11 +23,11 @@
             android:layout_width="wrap_content"
             android:layout_height="@dimen/vs_50"
             android:text="收藏夹"
-            android:drawablePadding="@dimen/vs_10"/>
+            android:drawablePadding="@dimen/vs_10" />
         <Space
             android:layout_width="0.0dip"
             android:layout_height="wrap_content"
-            android:layout_weight="1.0"/>
+            android:layout_weight="1.0" />
         <TextView
             android:textSize="@dimen/ts_24"
             android:textColor="@android:color/white"
@@ -40,7 +40,7 @@
             android:layout_width="wrap_content"
             android:layout_height="@dimen/vs_50"
             android:layout_marginRight="@dimen/vs_10"
-            android:text="确定键删除当前选中收藏"/>
+            android:text="确定键删除当前选中收藏" />
         <ImageView
             android:gravity="center"
             android:id="@+id/tvDelete"
@@ -52,7 +52,7 @@
             android:layout_height="@dimen/vs_50"
             android:src="@drawable/icon_delete"
             android:layout_marginStart="@dimen/vs_10"
-            android:layout_marginEnd="@dimen/vs_0"/>
+            android:layout_marginEnd="@dimen/vs_0" />
         <ImageView
             android:gravity="center"
             android:id="@+id/tvClear"
@@ -64,19 +64,19 @@
             android:layout_height="@dimen/vs_50"
             android:src="@drawable/icon_clear"
             android:layout_marginStart="@dimen/vs_10"
-            android:layout_marginEnd="@dimen/vs_0"/>
+            android:layout_marginEnd="@dimen/vs_0" />
     </LinearLayout>
     <com.owen.tvrecyclerview.widget.TvRecyclerView
         android:id="@+id/mGridView"
-        android:paddingLeft="48mm"
+        android:paddingLeft="48.0mm"
         android:paddingTop="@dimen/vs_10"
-        android:paddingRight="48mm"
+        android:paddingRight="48.0mm"
         android:paddingBottom="@dimen/vs_10"
         android:clipChildren="false"
         android:clipToPadding="false"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        app:tv_horizontalSpacingWithMargins="@dimen/vs_15"
+        app:tv_horizontalSpacingWithMargins="20dip"
         app:tv_selectedItemIsCentered="true"
-        app:tv_verticalSpacingWithMargins="@dimen/vs_10"/>
+        app:tv_verticalSpacingWithMargins="@dimen/vs_10" />
 </LinearLayout>

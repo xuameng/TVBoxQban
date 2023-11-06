@@ -9,15 +9,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <com.owen.tvrecyclerview.widget.TvRecyclerView
         android:id="@+id/mGridView"
-        android:paddingLeft="48mm"
+        android:paddingLeft="48.0mm"
         android:paddingTop="@dimen/vs_10"
-        android:paddingRight="48mm"
+        android:paddingRight="48.0mm"
         android:paddingBottom="@dimen/vs_10"
         android:clipChildren="false"
         android:clipToPadding="false"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        app:tv_horizontalSpacingWithMargins="@dimen/vs_15"
+        app:tv_horizontalSpacingWithMargins="20dip"
         app:tv_selectedItemIsCentered="true"
-        app:tv_verticalSpacingWithMargins="@dimen/vs_10"/>
+        app:tv_verticalSpacingWithMargins="@dimen/vs_10" />
 </LinearLayout>
