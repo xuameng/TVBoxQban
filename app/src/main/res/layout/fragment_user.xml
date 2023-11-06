@@ -22,23 +22,29 @@
             android:layout_height="wrap_content">
             <LinearLayout
                 android:layout_gravity="center"
+                android:gravity="center"
                 android:orientation="horizontal"
                 android:id="@+id/tvHistory"
                 android:background="@drawable/shape_user_focus"
-                android:padding="@dimen/vs_15"
+                android:paddingTop="13mm"
+                android:paddingBottom="13mm"
+                android:paddingLeft="@dimen/vs_10"
+                android:paddingRight="@dimen/vs_10"
                 android:focusable="true"
                 android:nextFocusLeft="@+id/tvxuameng"
                 android:clipChildren="false"
                 android:clipToPadding="false"
+                android:layout_weight="1"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/vs_80"
                 android:layout_margin="@dimen/vs_3">
                 <ImageView
                     android:layout_gravity="center"
+                    android:gravity="center"
                     android:layout_width="@dimen/ts_xu"
                     android:layout_height="@dimen/ts_xu"
                     android:src="@drawable/icon_history"
-                    android:alpha="0.9" />
+                    android:alpha="0.9"/>
                 <TextView
                     android:textSize="@dimen/vs_xu"
                     android:textStyle="bold"
@@ -52,26 +58,32 @@
                     android:layout_marginLeft="@dimen/vs_10"
                     android:text="历史"
                     android:textAlignment="gravity"
-                    android:letterSpacing="0.1" />
+                    android:letterSpacing="0.1"/>
             </LinearLayout>
             <LinearLayout
                 android:layout_gravity="center"
+                android:gravity="center"
                 android:orientation="horizontal"
                 android:id="@+id/tvLive"
                 android:background="@drawable/shape_user_focus"
-                android:padding="@dimen/vs_15"
+                android:paddingTop="13mm"
+                android:paddingBottom="13mm"
+                android:paddingLeft="@dimen/vs_10"
+                android:paddingRight="@dimen/vs_10"
                 android:focusable="true"
                 android:clipChildren="false"
                 android:clipToPadding="false"
+                android:layout_weight="1"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/vs_80"
                 android:layout_margin="@dimen/vs_3">
                 <ImageView
                     android:layout_gravity="center"
+                    android:gravity="center"
                     android:layout_width="@dimen/ts_xu"
                     android:layout_height="@dimen/ts_xu"
                     android:src="@drawable/icon_live"
-                    android:alpha="0.9" />
+                    android:alpha="0.9"/>
                 <TextView
                     android:textSize="@dimen/vs_xu"
                     android:textStyle="bold"
@@ -85,26 +97,32 @@
                     android:layout_marginLeft="@dimen/vs_10"
                     android:text="直播"
                     android:textAlignment="gravity"
-                    android:letterSpacing="0.1" />
+                    android:letterSpacing="0.1"/>
             </LinearLayout>
             <LinearLayout
                 android:layout_gravity="center"
+                android:gravity="center"
                 android:orientation="horizontal"
                 android:id="@+id/tvSearch"
                 android:background="@drawable/shape_user_focus"
-                android:padding="@dimen/vs_15"
+                android:paddingTop="13mm"
+                android:paddingBottom="13mm"
+                android:paddingLeft="@dimen/vs_10"
+                android:paddingRight="@dimen/vs_10"
                 android:focusable="true"
                 android:clipChildren="false"
                 android:clipToPadding="false"
+                android:layout_weight="1"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/vs_80"
                 android:layout_margin="@dimen/vs_3">
                 <ImageView
                     android:layout_gravity="center"
+                    android:gravity="center"
                     android:layout_width="@dimen/ts_xu"
                     android:layout_height="@dimen/ts_xu"
                     android:src="@drawable/icon_search"
-                    android:alpha="0.9" />
+                    android:alpha="0.9"/>
                 <TextView
                     android:textSize="@dimen/vs_xu"
                     android:textStyle="bold"
@@ -118,26 +136,32 @@
                     android:layout_marginLeft="@dimen/vs_10"
                     android:text="搜索"
                     android:textAlignment="gravity"
-                    android:letterSpacing="0.1" />
+                    android:letterSpacing="0.1"/>
             </LinearLayout>
             <LinearLayout
                 android:layout_gravity="center"
+                android:gravity="center"
                 android:orientation="horizontal"
                 android:id="@+id/tvPush"
                 android:background="@drawable/shape_user_focus"
-                android:padding="@dimen/vs_15"
+                android:paddingTop="13mm"
+                android:paddingBottom="13mm"
+                android:paddingLeft="@dimen/vs_10"
+                android:paddingRight="@dimen/vs_10"
                 android:focusable="true"
                 android:clipChildren="false"
                 android:clipToPadding="false"
+                android:layout_weight="1"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/vs_80"
                 android:layout_margin="@dimen/vs_3">
                 <ImageView
                     android:layout_gravity="center"
+                    android:gravity="center"
                     android:layout_width="@dimen/ts_xu"
                     android:layout_height="@dimen/ts_xu"
                     android:src="@drawable/icon_push"
-                    android:alpha="0.9" />
+                    android:alpha="0.9"/>
                 <TextView
                     android:textSize="@dimen/vs_xu"
                     android:textStyle="bold"
@@ -151,26 +175,32 @@
                     android:layout_marginLeft="@dimen/vs_10"
                     android:text="推送"
                     android:textAlignment="gravity"
-                    android:letterSpacing="0.1" />
+                    android:letterSpacing="0.1"/>
             </LinearLayout>
             <LinearLayout
                 android:layout_gravity="center"
+                android:gravity="center"
                 android:orientation="horizontal"
                 android:id="@+id/tvFavorite"
                 android:background="@drawable/shape_user_focus"
-                android:padding="@dimen/vs_15"
+                android:paddingTop="13mm"
+                android:paddingBottom="13mm"
+                android:paddingLeft="@dimen/vs_10"
+                android:paddingRight="@dimen/vs_10"
                 android:focusable="true"
                 android:clipChildren="false"
                 android:clipToPadding="false"
+                android:layout_weight="1"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/vs_80"
                 android:layout_margin="@dimen/vs_3">
                 <ImageView
                     android:layout_gravity="center"
+                    android:gravity="center"
                     android:layout_width="@dimen/ts_xu"
                     android:layout_height="@dimen/ts_xu"
                     android:src="@drawable/icon_collect"
-                    android:alpha="0.9" />
+                    android:alpha="0.9"/>
                 <TextView
                     android:textSize="@dimen/vs_xu"
                     android:textStyle="bold"
@@ -184,26 +214,32 @@
                     android:layout_marginLeft="@dimen/vs_10"
                     android:text="收藏"
                     android:textAlignment="gravity"
-                    android:letterSpacing="0.1" />
+                    android:letterSpacing="0.1"/>
             </LinearLayout>
             <LinearLayout
                 android:layout_gravity="center"
+                android:gravity="center"
                 android:orientation="horizontal"
                 android:id="@+id/tvSetting"
                 android:background="@drawable/shape_user_focus"
-                android:padding="@dimen/vs_15"
+                android:paddingTop="13mm"
+                android:paddingBottom="13mm"
+                android:paddingLeft="@dimen/vs_10"
+                android:paddingRight="@dimen/vs_10"
                 android:focusable="true"
                 android:clipChildren="false"
                 android:clipToPadding="false"
+                android:layout_weight="1"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/vs_80"
                 android:layout_margin="@dimen/vs_3">
                 <ImageView
                     android:layout_gravity="center"
+                    android:gravity="center"
                     android:layout_width="@dimen/ts_xu"
                     android:layout_height="@dimen/ts_xu"
                     android:src="@drawable/icon_setting"
-                    android:alpha="0.9" />
+                    android:alpha="0.9"/>
                 <TextView
                     android:textSize="@dimen/vs_xu"
                     android:textStyle="bold"
@@ -217,7 +253,7 @@
                     android:layout_marginLeft="@dimen/vs_10"
                     android:text="设置"
                     android:textAlignment="gravity"
-                    android:letterSpacing="0.1" />
+                    android:letterSpacing="0.1"/>
             </LinearLayout>
             <LinearLayout
                 android:gravity="center"
@@ -225,15 +261,16 @@
                 android:orientation="horizontal"
                 android:id="@+id/tvxuameng"
                 android:background="@drawable/shape_user_focus"
-                android:paddingLeft="@dimen/vs_5"
-                android:paddingTop="@dimen/vs_15"
-                android:paddingRight="@dimen/vs_5"
-                android:paddingBottom="@dimen/vs_15"
+                android:paddingTop="13mm"
+                android:paddingBottom="13mm"
+                android:paddingLeft="@dimen/vs_10"
+                android:paddingRight="@dimen/vs_10"
                 android:focusable="true"
                 android:nextFocusRight="@+id/tvHistory"
                 android:clipChildren="false"
                 android:clipToPadding="false"
-                android:layout_width="fill_parent"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
                 android:layout_height="@dimen/vs_80"
                 android:layout_margin="@dimen/vs_3">
                 <ImageView
@@ -242,7 +279,7 @@
                     android:layout_width="@dimen/ts_60"
                     android:layout_height="@dimen/ts_60"
                     android:src="@drawable/lilijuan"
-                    android:alpha="0.9" />
+                    android:alpha="0.9"/>
                 <TextView
                     android:textSize="@dimen/vs_xu"
                     android:textStyle="bold"
@@ -256,7 +293,7 @@
                     android:layout_marginLeft="@dimen/vs_10"
                     android:text="许大师制作"
                     android:textAlignment="gravity"
-                    android:letterSpacing="0.1" />
+                    android:letterSpacing="0.1"/>
             </LinearLayout>
         </LinearLayout>
         <com.owen.tvrecyclerview.widget.TvRecyclerView
@@ -274,7 +311,7 @@
             app:tv_horizontalSpacingWithMargins="@dimen/vs_15"
             app:tv_layoutManager="V7GridLayoutManager"
             app:tv_selectedItemIsCentered="true"
-            app:tv_verticalSpacingWithMargins="@dimen/vs_10" />
+            app:tv_verticalSpacingWithMargins="@dimen/vs_10"/>
         <com.owen.tvrecyclerview.widget.TvRecyclerView
             android:orientation="horizontal"
             android:id="@+id/tvHotList2"
@@ -291,6 +328,6 @@
             app:tv_horizontalSpacingWithMargins="@dimen/vs_15"
             app:tv_layoutManager="V7LinearLayoutManager"
             app:tv_selectedItemIsCentered="true"
-            app:tv_verticalSpacingWithMargins="@dimen/vs_10" />
+            app:tv_verticalSpacingWithMargins="@dimen/vs_10"/>
     </RelativeLayout>
 </RelativeLayout>
