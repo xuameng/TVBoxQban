@@ -1555,26 +1555,16 @@ public class LivePlayActivity extends BaseActivity {
         controller.setListener(new LiveController.LiveControlListener() {
             @Override
             public boolean singleTap() {           //xuameng点击屏幕显示频道菜单
-				if(isBack){
-				   if(mVideoView.isPlaying()){
-					 showProgressBars(true);
-					 showBottomEpgBack();               //xuameng回看EPG
-                     mVideoView.pause();	
-					 countDownTimer.cancel();
-//xuameng iv_play升级了                     iv_play.setVisibility(View.VISIBLE);
-                     iv_Play_Xu.setVisibility(View.VISIBLE);     //回看暂停图标
-                     iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
-                     }else{
-                     backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
-					 ll_epg.setVisibility(View.GONE);			 //xuameng下面EPG菜单隐藏
-					 hideTimeXu();              //xuameng隐藏系统时间
-                     mVideoView.start();
- //xuameng iv_play升级了                    iv_play.setVisibility(View.INVISIBLE);
-                     iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
-					 countDownTimer.start();
-                     iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
-                     }
-					 return true;
+              if(isBack){  //xuameng手机换源和显示时移控制栏
+                if(backcontroller.getVisibility() == View.VISIBLE){
+                   backcontroller.setVisibility(View.GONE);
+  	               ll_epg.setVisibility(View.GONE);			 //xuameng下面EPG菜单隐藏
+				   hideTimeXu();              //xuameng隐藏系统时间
+                }else if(backcontroller.getVisibility() == View.GONE){
+                   showProgressBars(true);
+	    		   showBottomEpgBack();               //xuameng回看EPG
+                  }
+				 return true;
 				}
                 else
                 showChannelList();
@@ -1601,8 +1591,26 @@ public class LivePlayActivity extends BaseActivity {
 
 			@Override
             public boolean DoublePress() {               //xuameng双击显示回看菜单
-                if(isBack){
-				Toast.makeText(mContext, "聚汇直播提示您：别乱点了，手机还要不？！", Toast.LENGTH_SHORT).show();
+				if(isBack){
+				   if(mVideoView.isPlaying()){
+					 showProgressBars(true);
+					 showBottomEpgBack();               //xuameng回看EPG
+                     mVideoView.pause();	
+					 countDownTimer.cancel();
+//xuameng iv_play升级了                     iv_play.setVisibility(View.VISIBLE);
+                     iv_Play_Xu.setVisibility(View.VISIBLE);     //回看暂停图标
+                     iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
+                }else{
+                     backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
+					 ll_epg.setVisibility(View.GONE);			 //xuameng下面EPG菜单隐藏
+					 hideTimeXu();              //xuameng隐藏系统时间
+                     mVideoView.start();
+ //xuameng iv_play升级了                    iv_play.setVisibility(View.INVISIBLE);
+                     iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
+					 countDownTimer.start();
+                     iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
+                     }
+				 return true;
 				}else if(isLl_epgVisible()){ 
                      ll_epg.setVisibility(View.GONE);			 //xuameng返回键隐藏下面EPG菜单隐藏
 			         ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
@@ -1611,11 +1619,11 @@ public class LivePlayActivity extends BaseActivity {
 					 tvLeftChannelListLayout.setVisibility(View.INVISIBLE);
                      tvRightSettingLayout.setVisibility(View.INVISIBLE);
 				  }else if(!isLl_epgVisible()){
-                      showBottomEpg();           //xuameng显示EPG和上面菜单
-					  tvLeftChannelListLayout.setVisibility(View.INVISIBLE);
-                      tvRightSettingLayout.setVisibility(View.INVISIBLE);
+                     showBottomEpg();           //xuameng显示EPG和上面菜单
+					 tvLeftChannelListLayout.setVisibility(View.INVISIBLE);
+                     tvRightSettingLayout.setVisibility(View.INVISIBLE);
 				 }
-				return true;
+				return false;
             }
 
             @Override
