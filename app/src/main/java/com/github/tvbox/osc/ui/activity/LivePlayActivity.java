@@ -150,6 +150,7 @@ public class LivePlayActivity extends BaseActivity {
     TextView tv_nextepg_left;
 	LinearLayout Mtv_left_top_xu;            //xuameng回看中左上图标
 	LinearLayout iv_Play_Xu;				//xuameng回看暂停图标
+	private TextView tv_size;               //xuameng分辨率
     private MyEpgAdapter myAdapter;
     private TextView tv_right_top_tipnetspeed;
     private TextView tv_right_top_channel_name;
@@ -233,6 +234,7 @@ public class LivePlayActivity extends BaseActivity {
         tvNetSpeed = findViewById(R.id.tvNetSpeed);
         Mtv_left_top_xu = findViewById(R.id.tv_left_top_xu);           //xuameng回看左上图标
         iv_Play_Xu = findViewById(R.id.iv_play_xu);                    //xuameng回看暂停图标
+		tv_size = findViewById(R.id.tv_size);                          //XUAMENG分辨率
         //EPG  findViewById  by 龍
         tip_chname = (TextView)  findViewById(R.id.tv_channel_bar_name);//底部名称
         tv_channelnum = (TextView) findViewById(R.id.tv_channel_bottom_number); //底部数字
@@ -1080,14 +1082,14 @@ public class LivePlayActivity extends BaseActivity {
         }
     }
 
-	    private void mHideChannelListRunXu() {   //xuameng左侧菜单验收5秒隐藏
+	    private void mHideChannelListRunXu() {   //xuameng左侧菜单延时5秒隐藏
 				if (countDownTimer7 != null) {
                 countDownTimer7.cancel();
                 }
  				if (countDownTimer5 != null) {
                 countDownTimer5.cancel();
                 }
-			    countDownTimer7 = new CountDownTimer(5000, 1000) {//底部epg隐藏时间设定
+			    countDownTimer7 = new CountDownTimer(5000, 1000) {  //xuameng左侧菜单延时5秒时间设定
 		        public void onTick(long j) {
                     }
                     public void onFinish() {
@@ -1208,7 +1210,7 @@ public class LivePlayActivity extends BaseActivity {
 			if (countDownTimer22 != null) {
                 countDownTimer22.cancel();
                 }
-			    countDownTimer22 = new CountDownTimer(500, 100) {//底部epg隐藏时间设定
+			    countDownTimer22 = new CountDownTimer(500, 100) {        //XUAMENG显示右侧菜单时间设定
 		        public void onTick(long j) {
                     }
                     public void onFinish() {
@@ -1555,7 +1557,7 @@ public class LivePlayActivity extends BaseActivity {
         controller.setListener(new LiveController.LiveControlListener() {
             @Override
             public boolean singleTap() {           //xuameng点击屏幕显示频道菜单
-              if(isBack){  //xuameng手机换源和显示时移控制栏
+              if(isBack){  //xuameng显示EPG和显示时移控制栏
                 if(backcontroller.getVisibility() == View.VISIBLE){
                    backcontroller.setVisibility(View.GONE);
   	               ll_epg.setVisibility(View.GONE);			 //xuameng下面EPG菜单隐藏
@@ -1590,7 +1592,7 @@ public class LivePlayActivity extends BaseActivity {
             }
 
 			@Override
-            public boolean DoublePress() {               //xuameng双击显示回看菜单
+            public boolean DoublePress() {               //xuameng双击显示回看菜单并暂停
 				if(isBack){
 				   if(mVideoView.isPlaying()){
 					 showProgressBars(true);
@@ -1633,6 +1635,9 @@ public class LivePlayActivity extends BaseActivity {
                     case VideoView.STATE_PAUSED:
                         break;
                     case VideoView.STATE_PREPARED:
+						 if (mVideoView.getVideoSize().length >= 2) {         //XUAMENG分辨率
+                         tv_size.setText("[" + mVideoView.getVideoSize()[0] + " x " + mVideoView.getVideoSize()[1] + "]");
+                        }
                     case VideoView.STATE_BUFFERED:
                     case VideoView.STATE_PLAYING:
                         currentLiveChangeSourceTimes = 0;
