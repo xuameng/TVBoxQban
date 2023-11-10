@@ -533,6 +533,18 @@
         <TextView
             android:textSize="@dimen/vs_20"
             android:textStyle="bold"
+            android:textColor="@color/color_FFFFFF"
+            android:id="@+id/tv_size"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="171.0mm"
+            android:layout_marginRight="150mm"
+            android:layout_marginBottom="@dimen/vs_0"
+            android:text="源 1/1"
+            android:layout_alignParentRight="true"/>
+        <TextView
+            android:textSize="@dimen/vs_20"
+            android:textStyle="bold"
             android:textColor="@android:color/white"
             android:ellipsize="marquee"
             android:layout_gravity="center"
