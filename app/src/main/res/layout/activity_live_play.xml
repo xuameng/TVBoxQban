@@ -592,7 +592,7 @@
         android:id="@+id/tv_right_top_tipnetspeed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="18.0mm"
+        android:layout_marginBottom="19.0mm"
         android:layout_marginRight="192mm"
         android:text="网速"
         android:layout_alignParentRight="true"
