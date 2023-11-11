@@ -296,7 +296,8 @@ public class LivePlayActivity extends BaseActivity {
 			ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
 			view_line_XU.setVisibility(View.INVISIBLE);			//xuamengEPG中的横线
             mHideChannelListRun();
-			hideNetSpeedXu();		//XUAMENG隐藏左上网速
+			showNetSpeedXu();                  //XUAMENG显示右下网速
+//			hideNetSpeedXu();		//XUAMENG隐藏左上网速
         }else{
             backcontroller.setVisibility(View.GONE);
 			Mtv_left_top_xu.setVisibility(View.GONE);   //xuameng隐藏左上回看图标
@@ -333,6 +334,7 @@ public class LivePlayActivity extends BaseActivity {
                 }else{
                     backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
 					hideTimeXu();              //xuameng隐藏系统时间
+					hideNetSpeedXu();		//XUAMENG隐藏左上网速
 					ll_epg.setVisibility(View.GONE);			 //xuameng下面EPG菜单隐藏
                     mVideoView.start();
 //xuameng iv_play升级了                    iv_play.setVisibility(View.INVISIBLE);
@@ -393,6 +395,7 @@ public class LivePlayActivity extends BaseActivity {
                             backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
 							ll_epg.setVisibility(View.GONE);			 //xuameng下面EPG菜单隐藏
 							hideTimeXu();              //xuameng隐藏系统时间
+							hideNetSpeedXu();		//XUAMENG隐藏左上网速
                             mVideoView.start();
 //xuameng iv_play升级了                            iv_play.setVisibility(View.INVISIBLE);
                             iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
@@ -784,6 +787,7 @@ public class LivePlayActivity extends BaseActivity {
 			Mtv_left_top_xu.setVisibility(View.GONE);     //xuameng返回键隐藏左上回看菜单
 			iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
 			hideTimeXu();              //xuameng隐藏系统时间
+			hideNetSpeedXu();		//XUAMENG隐藏左上网速
             playXuSource();
         } else {
             mExitTime = System.currentTimeMillis();
@@ -801,6 +805,7 @@ public class LivePlayActivity extends BaseActivity {
             backcontroller.setVisibility(View.GONE);
 			ll_epg.setVisibility(View.GONE);			 //xuameng下面EPG菜单隐藏
 			hideTimeXu();              //xuameng隐藏系统时间
+			hideNetSpeedXu();		//XUAMENG隐藏左上网速
         } else if(isLl_epgVisible()){ 
             ll_epg.setVisibility(View.GONE);			 //xuameng返回键隐藏下面EPG菜单隐藏
 			ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
@@ -835,6 +840,7 @@ public class LivePlayActivity extends BaseActivity {
                         backcontroller.setVisibility(View.GONE);
 						ll_epg.setVisibility(View.GONE);			 //xuameng下面EPG菜单隐藏
 						hideTimeXu();              //xuameng隐藏系统时间
+						hideNetSpeedXu();		//XUAMENG隐藏左上网速
                     }else if(backcontroller.getVisibility() == View.GONE){
                         showProgressBars(true);
 						showBottomEpgBack();               //xuameng回看EPG
@@ -861,6 +867,7 @@ public class LivePlayActivity extends BaseActivity {
                           backcontroller.setVisibility(View.GONE);
 						  ll_epg.setVisibility(View.GONE);			 //xuameng下面EPG菜单隐藏
 						  hideTimeXu();              //xuameng隐藏系统时间
+						  hideNetSpeedXu();		//XUAMENG隐藏左上网速
                     }else if(backcontroller.getVisibility() == View.GONE){
                           showProgressBars(true);
 						  showBottomEpgBack();               //xuameng回看EPG
@@ -908,6 +915,7 @@ public class LivePlayActivity extends BaseActivity {
                             backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
 							ll_epg.setVisibility(View.GONE);			 //xuameng下面EPG菜单隐藏
 							hideTimeXu();              //xuameng隐藏系统时间
+							hideNetSpeedXu();		//XUAMENG隐藏左上网速
                             mVideoView.start();
 //xuameng iv_play升级了                            iv_play.setVisibility(View.INVISIBLE);
                             iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
@@ -933,6 +941,7 @@ public class LivePlayActivity extends BaseActivity {
                             backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
 							ll_epg.setVisibility(View.GONE);			 //xuameng下面EPG菜单隐藏
 							hideTimeXu();              //xuameng隐藏系统时间
+							hideNetSpeedXu();		//XUAMENG隐藏左上网速
                             mVideoView.start();
 //xuameng iv_play升级了                            iv_play.setVisibility(View.INVISIBLE);
                             iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
@@ -958,6 +967,7 @@ public class LivePlayActivity extends BaseActivity {
                             backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
 							ll_epg.setVisibility(View.GONE);			 //xuameng下面EPG菜单隐藏
 							hideTimeXu();              //xuameng隐藏系统时间
+							hideNetSpeedXu();		//XUAMENG隐藏左上网速
                             mVideoView.start();
 //xuameng iv_play升级了                            iv_play.setVisibility(View.INVISIBLE);
                             iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
@@ -1390,6 +1400,7 @@ public class LivePlayActivity extends BaseActivity {
                     showProgressBars(true);             //xuameng然后再显示
 					showBottomEpgBack();               //xuameng回看EPG
 					showTimeXu();                       //xuameng显示系统时间
+					showNetSpeedXu();  
                     isBack = true;
                 }
             }
@@ -1562,6 +1573,7 @@ public class LivePlayActivity extends BaseActivity {
                    backcontroller.setVisibility(View.GONE);
   	               ll_epg.setVisibility(View.GONE);			 //xuameng下面EPG菜单隐藏
 				   hideTimeXu();              //xuameng隐藏系统时间
+				   hideNetSpeedXu();		//XUAMENG隐藏左上网速
                 }else if(backcontroller.getVisibility() == View.GONE){
                    showProgressBars(true);
 	    		   showBottomEpgBack();               //xuameng回看EPG
@@ -1606,6 +1618,7 @@ public class LivePlayActivity extends BaseActivity {
                      backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
 					 ll_epg.setVisibility(View.GONE);			 //xuameng下面EPG菜单隐藏
 					 hideTimeXu();              //xuameng隐藏系统时间
+					 hideNetSpeedXu();		//XUAMENG隐藏左上网速
                      mVideoView.start();
  //xuameng iv_play升级了                    iv_play.setVisibility(View.INVISIBLE);
                      iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
@@ -1636,7 +1649,7 @@ public class LivePlayActivity extends BaseActivity {
                         break;
                     case VideoView.STATE_PREPARED:
 						 if (mVideoView.getVideoSize().length >= 2) {         //XUAMENG分辨率
-                         tv_size.setText("[" + mVideoView.getVideoSize()[0] + " x " + mVideoView.getVideoSize()[1] + "]");
+                         tv_size.setText("[" + mVideoView.getVideoSize()[0] + " X " + mVideoView.getVideoSize()[1] + "]");
                         }
                     case VideoView.STATE_BUFFERED:
                     case VideoView.STATE_PLAYING:
@@ -1664,6 +1677,7 @@ public class LivePlayActivity extends BaseActivity {
                         backcontroller.setVisibility(View.GONE);
 						ll_epg.setVisibility(View.GONE);			 //xuameng下面EPG菜单隐藏
 						hideTimeXu();              //xuameng隐藏系统时间
+						hideNetSpeedXu();		//XUAMENG隐藏左上网速
                     }else if(backcontroller.getVisibility() == View.GONE){
                         showProgressBars(true);
 						showBottomEpgBack();               //xuameng回看EPG
@@ -1676,6 +1690,7 @@ public class LivePlayActivity extends BaseActivity {
                         backcontroller.setVisibility(View.GONE);
 						ll_epg.setVisibility(View.GONE);			 //xuameng下面EPG菜单隐藏
 						hideTimeXu();              //xuameng隐藏系统时间
+						hideNetSpeedXu();		//XUAMENG隐藏左上网速
                     }else if(backcontroller.getVisibility() == View.GONE){
                         showProgressBars(true);
 						showBottomEpgBack();               //xuameng回看EPG
@@ -2241,7 +2256,7 @@ public class LivePlayActivity extends BaseActivity {
         public void run() {
             if (mVideoView == null) return;
             String speed = PlayerHelper.getDisplaySpeed(mVideoView.getTcpSpeed());
-            tv_right_top_tipnetspeed.setText(speed);
+			tv_right_top_tipnetspeed.setText("[" + speed + "]");
             mHandler.postDelayed(this, 1000);
         }
     };
@@ -2438,7 +2453,8 @@ public class LivePlayActivity extends BaseActivity {
 			ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
 			view_line_XU.setVisibility(View.INVISIBLE);         //xuamengEPG中的横线
             mHideChannelListRun();
-			hideNetSpeedXu();		//XUAMENG隐藏左上网速
+			showNetSpeedXu();                  //XUAMENG显示右下网速
+//			hideNetSpeedXu();		//XUAMENG隐藏左上网速
         }else{
             backcontroller.setVisibility(View.GONE);
 			Mtv_left_top_xu.setVisibility(View.GONE);
@@ -2448,7 +2464,7 @@ public class LivePlayActivity extends BaseActivity {
 			    ll_right_top_loading.setVisibility(View.VISIBLE);  //xuameng右上菜单显示
 				view_line_XU.setVisibility(View.VISIBLE);			//xuamengEPG中的横线
                 showTimeXu();              //xuameng系统显示时间
-				showNetSpeedXu();                  //XUAMENG显示左上网速
+				showNetSpeedXu();                  //XUAMENG显示右下网速
             }
         }
 
@@ -2479,6 +2495,7 @@ public class LivePlayActivity extends BaseActivity {
                     backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
 					ll_epg.setVisibility(View.GONE);			 //xuameng下面EPG菜单隐藏
 					hideTimeXu();              //xuameng隐藏系统时间
+					hideNetSpeedXu();		//XUAMENG隐藏左上网速
                     mVideoView.start();
 //xuameng iv_play升级了                    iv_play.setVisibility(View.INVISIBLE);
                     iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
@@ -2564,6 +2581,7 @@ public class LivePlayActivity extends BaseActivity {
                         backcontroller.setVisibility(View.GONE);
 						ll_epg.setVisibility(View.GONE);			 //xuameng下面EPG菜单隐藏
 						hideTimeXu();              //xuameng隐藏系统时间
+						hideNetSpeedXu();		//XUAMENG隐藏左上网速
                     }
                 }
             };
