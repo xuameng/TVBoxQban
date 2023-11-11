@@ -328,7 +328,7 @@
             android:id="@+id/channelinfo"
             android:layout_width="@dimen/vs_240"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="22mm"
+            android:layout_marginLeft="22.0mm"
             android:layout_marginRight="@dimen/vs_20"
             android:layout_marginBottom="@dimen/vs_20">
             <TextView
@@ -406,11 +406,11 @@
         <LinearLayout
             android:layout_gravity="center_horizontal"
             android:orientation="horizontal"
-            android:layout_marginLeft="@dimen/vs_280"
-            android:layout_marginRight="@dimen/vs_45"
-            android:layout_marginTop="161.0mm"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
+            android:layout_height="fill_parent"
+            android:layout_marginLeft="@dimen/vs_280"
+            android:layout_marginTop="161.0mm"
+            android:layout_marginRight="@dimen/vs_45">
             <TextView
                 android:textSize="@dimen/ts_30"
                 android:textStyle="bold"
@@ -449,7 +449,6 @@
                 android:paddingRight="@dimen/vs_15"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1.0"
                 android:layout_marginLeft="@dimen/vs_20"
                 android:layout_marginRight="@dimen/vs_15"
                 android:text=""
@@ -457,6 +456,7 @@
                 android:shadowColor="#cc000000"
                 android:shadowDx="5.0"
                 android:shadowRadius="5.0"
+                android:layout_weight="1.0"
                 android:layout_toRightOf="@+id/tv_current_program_time"
                 android:layout_alignTop="@+id/tv_current_program"
                 android:marqueeRepeatLimit="marquee_forever"/>
@@ -464,23 +464,23 @@
                 android:textSize="@dimen/vs_20"
                 android:textStyle="bold"
                 android:textColor="@color/color_FFFFFF"
+                android:gravity="right"
                 android:id="@+id/tv_size"
+                android:paddingLeft="@dimen/vs_0"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="@dimen/vs_0"
-                android:gravity="right"
                 android:layout_marginBottom="@dimen/vs_0"
                 android:text="1024x768"
                 android:layout_alignParentRight="true"/>
             <TextView
                 android:textSize="@dimen/vs_20"
                 android:textStyle="bold"
-                android:gravity="right"
                 android:textColor="@color/color_FFFFFF"
+                android:gravity="right"
                 android:id="@+id/tv_source"
+                android:paddingLeft="@dimen/vs_10"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="@dimen/vs_10"
                 android:layout_marginRight="@dimen/vs_0"
                 android:layout_marginBottom="@dimen/vs_0"
                 android:text="源 1/1"
@@ -493,8 +493,8 @@
             android:background="#00000000"
             android:layout_width="fill_parent"
             android:layout_height="9.0mm"
-            android:layout_marginTop="220.0mm"
             android:layout_marginLeft="280.0mm"
+            android:layout_marginTop="220.0mm"
             android:layout_marginRight="42.0mm"
             android:layout_marginBottom="20.0mm"
             android:shadowColor="#cc000000"
@@ -506,12 +506,12 @@
         <LinearLayout
             android:layout_gravity="center_horizontal"
             android:orientation="horizontal"
-            android:layout_marginLeft="@dimen/vs_280"
-            android:layout_marginRight="@dimen/vs_45"
-            android:layout_marginTop="248.0mm"
-            android:layout_marginBottom="20mm"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
+            android:layout_height="fill_parent"
+            android:layout_marginLeft="@dimen/vs_280"
+            android:layout_marginTop="248.0mm"
+            android:layout_marginRight="@dimen/vs_45"
+            android:layout_marginBottom="20.0mm">
             <TextView
                 android:textSize="@dimen/ts_26"
                 android:textStyle="bold"
@@ -554,11 +554,11 @@
                 android:layout_marginLeft="@dimen/vs_20"
                 android:layout_marginRight="@dimen/vs_20"
                 android:text=""
-                android:layout_weight="1.0"
                 android:singleLine="true"
                 android:shadowColor="#cc000000"
                 android:shadowDx="5.0"
                 android:shadowRadius="5.0"
+                android:layout_weight="1.0"
                 android:layout_toRightOf="@+id/tv_next_program_time"
                 android:layout_alignTop="@+id/tv_next_program"
                 android:marqueeRepeatLimit="marquee_forever"
@@ -567,9 +567,9 @@
                 android:textSize="@dimen/vs_20"
                 android:textStyle="bold"
                 android:textColor="#00000000"
+                android:paddingLeft="@dimen/vs_0"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="@dimen/vs_0"
                 android:text="许大师站位"
                 android:layout_alignParentRight="true"/>
             <TextView
@@ -577,10 +577,10 @@
                 android:textStyle="bold"
                 android:textColor="@android:color/white"
                 android:id="@+id/live_icon_null_text"
+                android:paddingLeft="@dimen/vs_10"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="@dimen/vs_0"
-                android:paddingLeft="@dimen/vs_10"
                 android:layout_alignParentRight="true"/>
         </LinearLayout>
     </RelativeLayout>
@@ -588,15 +588,15 @@
         android:textSize="@dimen/vs_20"
         android:textStyle="bold"
         android:textColor="@android:color/white"
-        android:layout_gravity="right|bottom"
+        android:layout_gravity="bottom|center|right"
         android:id="@+id/tv_right_top_tipnetspeed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginRight="192.0mm"
         android:layout_marginBottom="19.0mm"
-        android:layout_marginRight="192mm"
         android:text="网速"
-        android:layout_alignParentRight="true"
-        android:layout_alignTop="@+id/tv_size"/>
+        android:layout_alignTop="@+id/tv_size"
+        android:layout_alignParentRight="true"/>
     <TextView
         android:layout_gravity="end|center|top"
         android:id="@+id/tv_shownum"
@@ -822,8 +822,8 @@
             android:layout_marginLeft="@dimen/vs_20"/>
         <com.github.tvbox.osc.ui.tv.widget.MarqueeTextView
             android:textSize="@dimen/vs_30"
-            android:ellipsize="marquee"
             android:textColor="@android:color/white"
+            android:ellipsize="marquee"
             android:layout_gravity="center|right"
             android:paddingLeft="@dimen/vs_10"
             android:focusable="false"
@@ -842,7 +842,7 @@
         android:layout_gravity="center|right|top"
         android:id="@+id/tvtime_xu"
         android:paddingTop="@dimen/vs_30"
-        android:paddingRight="@dimen/vs_15"
+        android:paddingRight="@dimen/vs_30"
         android:visibility="gone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
