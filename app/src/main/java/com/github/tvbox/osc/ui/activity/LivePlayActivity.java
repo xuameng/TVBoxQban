@@ -1170,6 +1170,7 @@ public class LivePlayActivity extends BaseActivity {
         ll_right_top_huikan.setVisibility(View.GONE);
 		Mtv_left_top_xu.setVisibility(View.GONE);         //xuameng直播时隐藏回看的菜单
         iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
+		mHideChannelListRun();       //xuameng
         mVideoView.setUrl(currentLiveChannelItem.getUrl());
        // showChannelInfo();
         mVideoView.start();
@@ -1352,6 +1353,7 @@ public class LivePlayActivity extends BaseActivity {
                     mVideoView.start();
                     epgListAdapter.setShiyiSelection(-1, false,timeFormat.format(date));
                     showProgressBars(false);
+					mHideChannelListRun();
                     return;
                 }
                 String shiyiUrl = currentLiveChannelItem.getUrl();
