@@ -1094,7 +1094,7 @@ public class LivePlayActivity extends BaseActivity {
     }
 
     private void mHideChannelListRun() {            //xuameng左侧菜单隐藏
-            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) tvLeftChannelListLayout.getLayoutParams();
+ //xuameng测试           ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) tvLeftChannelListLayout.getLayoutParams();
             if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {              
                 tvLeftChannelListLayout.setVisibility(View.INVISIBLE);
         }
@@ -1284,10 +1284,10 @@ public class LivePlayActivity extends BaseActivity {
 
 
     private void mHideSettingLayoutRun() {        //XUAMENG隐藏右侧菜单
-            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) tvRightSettingLayout.getLayoutParams();
+//xuameng测试            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) tvRightSettingLayout.getLayoutParams();
             if (tvRightSettingLayout.getVisibility() == View.VISIBLE) {
                 tvRightSettingLayout.setVisibility(View.INVISIBLE);
-                liveSettingGroupAdapter.setSelectedGroupIndex(-1);
+//xuameng测试                 liveSettingGroupAdapter.setSelectedGroupIndex(-1);
             }
     }
 
