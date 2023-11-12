@@ -1094,7 +1094,7 @@ public class LivePlayActivity extends BaseActivity {
     }
 
     private void mHideChannelListRun() {            //xuameng左侧菜单隐藏
- //xuameng测试           ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) tvLeftChannelListLayout.getLayoutParams();
+            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) tvLeftChannelListLayout.getLayoutParams();
             if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {              
                 tvLeftChannelListLayout.setVisibility(View.INVISIBLE);
         }
@@ -1284,10 +1284,10 @@ public class LivePlayActivity extends BaseActivity {
 
 
     private void mHideSettingLayoutRun() {        //XUAMENG隐藏右侧菜单
-//xuameng测试            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) tvRightSettingLayout.getLayoutParams();
+            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) tvRightSettingLayout.getLayoutParams();
             if (tvRightSettingLayout.getVisibility() == View.VISIBLE) {
                 tvRightSettingLayout.setVisibility(View.INVISIBLE);
-//xuameng测试                 liveSettingGroupAdapter.setSelectedGroupIndex(-1);
+                liveSettingGroupAdapter.setSelectedGroupIndex(-1);
             }
     }
 
@@ -1357,7 +1357,7 @@ public class LivePlayActivity extends BaseActivity {
                     mVideoView.setUrl(currentLiveChannelItem.getUrl());
                     mVideoView.start();
                     epgListAdapter.setShiyiSelection(-1, false,timeFormat.format(date));
-                    showProgressBars(false);
+                    showBottomEpg();           //xuameng显示EPG和上面菜单
                     return;
                 }
                 String shiyiUrl = currentLiveChannelItem.getUrl();
@@ -1437,7 +1437,7 @@ public class LivePlayActivity extends BaseActivity {
                     mVideoView.setUrl(currentLiveChannelItem.getUrl());
                     mVideoView.start();
                     epgListAdapter.setShiyiSelection(-1, false,timeFormat.format(date));
-                    showProgressBars(false);
+                    showBottomEpg();           //xuameng显示EPG和上面菜单
                     return;
                 }
                 String shiyiUrl = currentLiveChannelItem.getUrl();
