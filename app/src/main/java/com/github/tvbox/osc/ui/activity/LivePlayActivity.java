@@ -561,8 +561,8 @@ public class LivePlayActivity extends BaseActivity {
 				showNetSpeedXu();                  //XUAMENG显示左上网速
 				view_line_XU.setVisibility(View.VISIBLE);		//xuamengEPG中的横线
 			               
-                mHideChannelListRun();       //xuameng显示EPG就隐藏左右菜单
-                mHideSettingLayoutRun();    //xuameng显示EPG就隐藏左右菜单
+                tvLeftChannelListLayout.setVisibility(View.INVISIBLE);		 //xuameng显示EPG就隐藏左右菜单
+                tvRightSettingLayout.setVisibility(View.INVISIBLE);			 //xuameng显示EPG就隐藏左右菜单
 		   
                 countDownTimer = new CountDownTimer(10000, 1000) {//底部epg隐藏时间设定
                     public void onTick(long j) {
@@ -583,8 +583,8 @@ public class LivePlayActivity extends BaseActivity {
 				showNetSpeedXu();                  //XUAMENG显示左上网速
 				view_line_XU.setVisibility(View.VISIBLE);		//xuamengEPG中的横线
 
-                mHideChannelListRun();       //xuameng显示EPG就隐藏左右菜单
-                mHideSettingLayoutRun();    //xuameng显示EPG就隐藏左右菜单
+                tvLeftChannelListLayout.setVisibility(View.INVISIBLE);		 //xuameng显示EPG就隐藏左右菜单
+                tvRightSettingLayout.setVisibility(View.INVISIBLE);			 //xuameng显示EPG就隐藏左右菜单
 
 		        countDownTimer = new CountDownTimer(10000, 1000) {//底部epg隐藏时间设定
 		public void onTick(long j) {
