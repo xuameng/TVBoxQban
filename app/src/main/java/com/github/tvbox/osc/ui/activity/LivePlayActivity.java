@@ -302,6 +302,7 @@ public class LivePlayActivity extends BaseActivity {
             backcontroller.setVisibility(View.GONE);
 			Mtv_left_top_xu.setVisibility(View.GONE);   //xuameng隐藏左上回看图标
 			iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
+			mHideChannelListRun();
             ll_epg.setVisibility(View.VISIBLE);         //xuameng下面EPG菜单显示
 			ll_right_top_loading.setVisibility(View.VISIBLE);  //xuameng右上菜单显示
 			showTimeXu();                       //xuameng显示系统时间
@@ -557,6 +558,10 @@ public class LivePlayActivity extends BaseActivity {
 				showTimeXu();                       //xuameng显示系统时间
 				showNetSpeedXu();                  //XUAMENG显示左上网速
 				view_line_XU.setVisibility(View.VISIBLE);		//xuamengEPG中的横线
+			               
+                tvLeftChannelListLayout.setVisibility(View.INVISIBLE);   //xuameng显示EPG就隐藏左右菜单
+                tvRightSettingLayout.setVisibility(View.INVISIBLE);		//xuameng显示EPG就隐藏左右菜单
+		   
                 countDownTimer = new CountDownTimer(10000, 1000) {//底部epg隐藏时间设定
                     public void onTick(long j) {
                     }
@@ -575,6 +580,10 @@ public class LivePlayActivity extends BaseActivity {
 				showTimeXu();                       //xuameng显示系统时间
 				showNetSpeedXu();                  //XUAMENG显示左上网速
 				view_line_XU.setVisibility(View.VISIBLE);		//xuamengEPG中的横线
+
+                tvLeftChannelListLayout.setVisibility(View.INVISIBLE);   //xuameng显示EPG就隐藏左右菜单
+                tvRightSettingLayout.setVisibility(View.INVISIBLE);		//xuameng显示EPG就隐藏左右菜单
+
 		        countDownTimer = new CountDownTimer(10000, 1000) {//底部epg隐藏时间设定
 		public void onTick(long j) {
                     }
@@ -602,11 +611,6 @@ public class LivePlayActivity extends BaseActivity {
 			showTimeXu();                       //xuameng显示系统时间
 			showNetSpeedXu();                  //XUAMENG显示左上网速
 */
-			if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {                 //xuameng显示EPG就隐藏左右菜单
-                tvLeftChannelListLayout.setVisibility(View.INVISIBLE);
-              } else if (tvRightSettingLayout.getVisibility() == View.VISIBLE) {
-                        tvRightSettingLayout.setVisibility(View.INVISIBLE);
-		   }
             // xuameng 取消右上菜单自动隐藏 延迟5秒后执行隐藏操作
 //            handler.postDelayed(new Runnable() {
 //                @Override
@@ -1170,7 +1174,6 @@ public class LivePlayActivity extends BaseActivity {
         ll_right_top_huikan.setVisibility(View.GONE);
 		Mtv_left_top_xu.setVisibility(View.GONE);         //xuameng直播时隐藏回看的菜单
         iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
-		mHideChannelListRun();       //xuameng
         mVideoView.setUrl(currentLiveChannelItem.getUrl());
        // showChannelInfo();
         mVideoView.start();
@@ -1353,7 +1356,6 @@ public class LivePlayActivity extends BaseActivity {
                     mVideoView.start();
                     epgListAdapter.setShiyiSelection(-1, false,timeFormat.format(date));
                     showProgressBars(false);
-					mHideChannelListRun();
                     return;
                 }
                 String shiyiUrl = currentLiveChannelItem.getUrl();
@@ -2463,6 +2465,7 @@ public class LivePlayActivity extends BaseActivity {
             backcontroller.setVisibility(View.GONE);
 			Mtv_left_top_xu.setVisibility(View.GONE);
 			iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
+            mHideChannelListRun();
             if(!tip_epg1.getText().equals("暂无当前节目单，聚汇直播欢迎您的观看！")){
                 ll_epg.setVisibility(View.VISIBLE);  //xuameng下面EPG菜单显示
 			    ll_right_top_loading.setVisibility(View.VISIBLE);  //xuameng右上菜单显示
