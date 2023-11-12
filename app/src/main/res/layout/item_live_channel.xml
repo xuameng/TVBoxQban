@@ -1,36 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="10mm"
-    android:layout_marginBottom="10mm"
+<LinearLayout
+    android:orientation="horizontal"
     android:background="@drawable/shape_live_focus"
-    android:layout_marginLeft="10mm"
-    android:layout_marginRight="10mm"
     android:focusable="true"
     android:focusableInTouchMode="false"
-    android:orientation="horizontal">
-
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="10.0mm"
+    android:layout_marginTop="10.0mm"
+    android:layout_marginRight="10.0mm"
+    android:layout_marginBottom="10.0mm"
+    xmlns:android="http://schemas.android.com/apk/res/android">
     <TextView
-        android:id="@+id/tvChannelNum"
-        android:layout_width="60mm"
-        android:layout_height="60mm"
+        android:textSize="22.0mm"
+        android:textColor="@android:color/white"
         android:ellipsize="marquee"
         android:gravity="center"
-        android:marqueeRepeatLimit="marquee_forever"
+        android:id="@+id/tvChannelNum"
+        android:layout_width="60.0mm"
+        android:layout_height="60.0mm"
         android:singleLine="true"
-        android:textColor="@android:color/white"
-        android:textSize="22mm" />
-
+        android:marqueeRepeatLimit="marquee_forever"/>
     <TextView
-        android:id="@+id/tvChannelName"
-        android:layout_width="0mm"
-        android:layout_height="60mm"
-        android:layout_weight="1"
+        android:textSize="22.0mm"
+        android:textColor="@android:color/white"
         android:ellipsize="marquee"
         android:gravity="left"
-        android:marqueeRepeatLimit="marquee_forever"
+        android:focusableInTouchMode="true"
+        android:id="@+id/tvChannelName"
+        android:layout_width="0.0mm"
+        android:layout_height="60.0mm"
         android:singleLine="true"
-        android:textColor="@android:color/white"
-        android:textSize="22mm" />
+        android:layout_weight="1.0"
+        android:marqueeRepeatLimit="marquee_forever"/>
 </LinearLayout>
