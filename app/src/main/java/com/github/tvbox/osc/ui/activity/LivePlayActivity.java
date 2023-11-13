@@ -2268,7 +2268,7 @@ public class LivePlayActivity extends BaseActivity {
 			if(!tv_right_top_tipnetspeed.getText().equals("")){
 			tv_right_top_tipnetspeed.setText("[" + speed + "]");
             mHandler.postDelayed(this, 1000);
-			else
+			}else{
             tv_right_top_tipnetspeed.setText("[当前网速]");
 			}
         }
