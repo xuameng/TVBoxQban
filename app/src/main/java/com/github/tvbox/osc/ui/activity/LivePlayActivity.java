@@ -1287,7 +1287,7 @@ public class LivePlayActivity extends BaseActivity {
 //xuameng测试            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) tvRightSettingLayout.getLayoutParams();
             if (tvRightSettingLayout.getVisibility() == View.VISIBLE) {
                 tvRightSettingLayout.setVisibility(View.INVISIBLE);
-//xuameng测试                liveSettingGroupAdapter.setSelectedGroupIndex(-1);
+                liveSettingGroupAdapter.setSelectedGroupIndex(-1);
             }
     }
 
