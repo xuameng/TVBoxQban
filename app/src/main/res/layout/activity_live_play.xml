@@ -566,12 +566,11 @@
             <TextView
                 android:textSize="@dimen/vs_20"
                 android:textStyle="bold"
-                android:textColor="#00000000"
-                android:paddingLeft="@dimen/vs_0"
-                android:layout_width="wrap_content"
+                android:textColor="@android:color/white"
+                android:id="@+id/tv_right_top_tipnetspeed"
+                android:layout_width="115mm"
                 android:layout_height="wrap_content"
-                android:text="许大师站位"
-                android:layout_alignParentRight="true"/>
+                android:text="网速"/>
             <TextView
                 android:textSize="@dimen/vs_20"
                 android:textStyle="bold"
@@ -584,19 +583,6 @@
                 android:layout_alignParentRight="true"/>
         </LinearLayout>
     </RelativeLayout>
-    <TextView
-        android:textSize="@dimen/vs_20"
-        android:textStyle="bold"
-        android:textColor="@android:color/white"
-        android:layout_gravity="bottom|center|right"
-        android:id="@+id/tv_right_top_tipnetspeed"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="192.0mm"
-        android:layout_marginBottom="19.0mm"
-        android:text="网速"
-        android:layout_alignTop="@+id/tv_size"
-        android:layout_alignParentRight="true"/>
     <TextView
         android:layout_gravity="end|center|top"
         android:id="@+id/tv_shownum"
