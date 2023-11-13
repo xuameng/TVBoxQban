@@ -303,8 +303,8 @@ public class LivePlayActivity extends BaseActivity {
             backcontroller.setVisibility(View.GONE);
 			Mtv_left_top_xu.setVisibility(View.GONE);   //xuameng隐藏左上回看图标
 			iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
-            mHideChannelListRun();       //xuameng显示EPG就隐藏左右菜单
-            mHideSettingLayoutRun();    //xuameng显示EPG就隐藏左右菜单
+            tvLeftChannelListLayout.setVisibility(View.INVISIBLE);		//xuameng显示EPG就隐藏左右菜单
+            tvRightSettingLayout.setVisibility(View.INVISIBLE);		//xuameng显示EPG就隐藏左右菜单
             ll_epg.setVisibility(View.VISIBLE);         //xuameng下面EPG菜单显示
 			ll_right_top_loading.setVisibility(View.VISIBLE);  //xuameng右上菜单显示
 			showTimeXu();                       //xuameng显示系统时间
@@ -561,8 +561,8 @@ public class LivePlayActivity extends BaseActivity {
 				showNetSpeedXu();                  //XUAMENG显示左上网速
 				view_line_XU.setVisibility(View.VISIBLE);		//xuamengEPG中的横线
 			               
-                mHideChannelListRun();       //xuameng显示EPG就隐藏左右菜单
-                mHideSettingLayoutRun();    //xuameng显示EPG就隐藏左右菜单
+                tvLeftChannelListLayout.setVisibility(View.INVISIBLE);		//xuameng显示EPG就隐藏左右菜单
+                tvRightSettingLayout.setVisibility(View.INVISIBLE);		//xuameng显示EPG就隐藏左右菜单
 		   
                 countDownTimer = new CountDownTimer(10000, 1000) {//底部epg隐藏时间设定
                     public void onTick(long j) {
@@ -583,8 +583,8 @@ public class LivePlayActivity extends BaseActivity {
 				showNetSpeedXu();                  //XUAMENG显示左上网速
 				view_line_XU.setVisibility(View.VISIBLE);		//xuamengEPG中的横线
 
-                mHideChannelListRun();       //xuameng显示EPG就隐藏左右菜单
-                mHideSettingLayoutRun();    //xuameng显示EPG就隐藏左右菜单
+                tvLeftChannelListLayout.setVisibility(View.INVISIBLE);		//xuameng显示EPG就隐藏左右菜单
+                tvRightSettingLayout.setVisibility(View.INVISIBLE);		//xuameng显示EPG就隐藏左右菜单
 
 		        countDownTimer = new CountDownTimer(10000, 1000) {//底部epg隐藏时间设定
 		public void onTick(long j) {
@@ -1365,7 +1365,7 @@ public class LivePlayActivity extends BaseActivity {
 
                 } else if(shiyiUrl.indexOf("PLTV/8888") !=-1){
 
-                    mHideChannelListRun();
+                    mHideChannelListRun();      //xuameng点击EPG中的直播隐藏左菜单
                     mVideoView.release();
                     shiyi_time = shiyiStartdate + "-" + shiyiEnddate;
                     isSHIYI = true;
@@ -1690,6 +1690,7 @@ public class LivePlayActivity extends BaseActivity {
                     }
                     }else{
                         playNextSource();
+                        liveSettingGroupAdapter.setSelectedGroupIndex(-1);          //xuameng右菜单BUG修复
                     }else if (direction < 0)
                     if(isBack){  //xuameng手机换源和隐藏时移控制栏
                         if(backcontroller.getVisibility() == View.VISIBLE){
@@ -1703,6 +1704,7 @@ public class LivePlayActivity extends BaseActivity {
                     }
                     }else{
                         playPreSource();
+						liveSettingGroupAdapter.setSelectedGroupIndex(-1);		 //xuameng右菜单BUG修复
                     }
             }
         });
@@ -2099,8 +2101,8 @@ public class LivePlayActivity extends BaseActivity {
         livePlayerManager.init(mVideoView);
         showTime();
         showNetSpeed();
-        mHideChannelListRun();       //xuameng显示EPG就隐藏左右菜单
-        mHideSettingLayoutRun();    //xuameng显示EPG就隐藏左右菜单
+        tvLeftChannelListLayout.setVisibility(View.INVISIBLE);		//xuameng显示EPG就隐藏左右菜单
+        tvRightSettingLayout.setVisibility(View.INVISIBLE);		//xuameng显示EPG就隐藏左右菜单
 
         liveChannelGroupAdapter.setNewData(liveChannelGroupList);
         selectChannelGroup(lastChannelGroupIndex, false, lastLiveChannelIndex);
@@ -2466,8 +2468,8 @@ public class LivePlayActivity extends BaseActivity {
             backcontroller.setVisibility(View.GONE);
 			Mtv_left_top_xu.setVisibility(View.GONE);
 			iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
-            mHideChannelListRun();       //xuameng显示EPG就隐藏左右菜单
-            mHideSettingLayoutRun();    //xuameng显示EPG就隐藏左右菜单
+            tvLeftChannelListLayout.setVisibility(View.INVISIBLE);		//xuameng显示EPG就隐藏左右菜单
+            tvRightSettingLayout.setVisibility(View.INVISIBLE);		//xuameng显示EPG就隐藏左右菜单
             if(!tip_epg1.getText().equals("暂无当前节目单，聚汇直播欢迎您的观看！")){
                 ll_epg.setVisibility(View.VISIBLE);  //xuameng下面EPG菜单显示
 			    ll_right_top_loading.setVisibility(View.VISIBLE);  //xuameng右上菜单显示
