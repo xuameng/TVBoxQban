@@ -1038,6 +1038,7 @@ public class LivePlayActivity extends BaseActivity {
                 mChannelGroupView.setSelection(currentChannelGroupIndex);
 			    mRightEpgList.setSelectedPosition(epgListAdapter.getSelectedIndex());        //xuamengEPG打开菜单自动变颜色
                 epgListAdapter.notifyDataSetChanged();                                       //xuamengEPG打开菜单自动变颜色
+				mEpgDateGridView.setAdapter(liveEpgDateAdapter);  //xuameng测试
 			if (countDownTimer10 != null) {
                 countDownTimer10.cancel();
                 }
