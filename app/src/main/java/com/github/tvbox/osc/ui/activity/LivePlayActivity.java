@@ -2267,9 +2267,6 @@ public class LivePlayActivity extends BaseActivity {
             String speed = PlayerHelper.getDisplaySpeed(mVideoView.getTcpSpeed());
 			tv_right_top_tipnetspeed.setText("[" + speed + "]");
             mHandler.postDelayed(this, 1000);
-			if(tv_right_top_tipnetspeed.getText().equals("")){
-            tv_right_top_tipnetspeed.setText("[当前网速]");
-			}
         }
     };
 
