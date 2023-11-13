@@ -802,7 +802,7 @@ public class LivePlayActivity extends BaseActivity {
     }
 
     @Override
-    public void onBackPressed() {
+    public void onBackPressed() {           //xuameng返回键
         if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
             mHideChannelListRun();
         } else if (tvRightSettingLayout.getVisibility() == View.VISIBLE) {
@@ -1079,6 +1079,7 @@ public class LivePlayActivity extends BaseActivity {
 				if (holder != null)               
                     holder.itemView.requestFocus();
                     tvLeftChannelListLayout.setVisibility(View.VISIBLE); 
+					ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) tvLeftChannelListLayout.getLayoutParams();
 
 				if (countDownTimer5 != null) {
                 countDownTimer5.cancel();
@@ -1094,7 +1095,7 @@ public class LivePlayActivity extends BaseActivity {
     }
 
     private void mHideChannelListRun() {            //xuameng左侧菜单隐藏
-//xuameng测试            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) tvLeftChannelListLayout.getLayoutParams();
+            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) tvLeftChannelListLayout.getLayoutParams();
             if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {              
                 tvLeftChannelListLayout.setVisibility(View.INVISIBLE);
         }
@@ -1284,7 +1285,7 @@ public class LivePlayActivity extends BaseActivity {
 
 
     private void mHideSettingLayoutRun() {        //XUAMENG隐藏右侧菜单
-//xuameng测试            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) tvRightSettingLayout.getLayoutParams();
+                ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) tvRightSettingLayout.getLayoutParams();
             if (tvRightSettingLayout.getVisibility() == View.VISIBLE) {
                 tvRightSettingLayout.setVisibility(View.INVISIBLE);
                 liveSettingGroupAdapter.setSelectedGroupIndex(-1);
