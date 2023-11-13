@@ -2265,12 +2265,8 @@ public class LivePlayActivity extends BaseActivity {
         public void run() {
             if (mVideoView == null) return;
             String speed = PlayerHelper.getDisplaySpeed(mVideoView.getTcpSpeed());
-			if(speed !== null){
-               tv_right_top_tipnetspeed.setText("[" + speed + "]");
-			   mHandler.postDelayed(this, 1000);
-		    } else {
-			tv_right_top_tipnetspeed.setText("当前网速");
-			}
+			tv_right_top_tipnetspeed.setText("[" + speed + "]");
+            mHandler.postDelayed(this, 1000);
         }
     };
 
