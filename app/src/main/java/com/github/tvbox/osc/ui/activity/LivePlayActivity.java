@@ -1523,7 +1523,7 @@ public class LivePlayActivity extends BaseActivity {
             epgDate.setDatePresented(datePresentFormat.format(dateIns));
             epgDate.setDateParamVal(dateIns);
             liveEpgDateAdapter.addData(epgDate);
-            calendar.add(Calendar.DAY_OF_MONTH, -2);
+            calendar.add(Calendar.DAY_OF_MONTH, -1);
         }
         mEpgDateGridView.setAdapter(liveEpgDateAdapter);
         mEpgDateGridView.addOnScrollListener(new RecyclerView.OnScrollListener() {
