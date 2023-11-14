@@ -1515,7 +1515,7 @@ public class LivePlayActivity extends BaseActivity {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
         SimpleDateFormat datePresentFormat = new SimpleDateFormat("MM月dd日");
-        calendar.add(Calendar.DAY_OF_MONTH, -6);
+        calendar.add(Calendar.DAY_OF_MONTH, 1);
         for (int i = 0; i < 9; i++) {
             Date dateIns = calendar.getTime();
             LiveEpgDate epgDate = new LiveEpgDate();
@@ -1523,7 +1523,7 @@ public class LivePlayActivity extends BaseActivity {
             epgDate.setDatePresented(datePresentFormat.format(dateIns));
             epgDate.setDateParamVal(dateIns);
             liveEpgDateAdapter.addData(epgDate);
-            calendar.add(Calendar.DAY_OF_MONTH, 1);
+            calendar.add(Calendar.DAY_OF_MONTH, -2);
         }
         mEpgDateGridView.setAdapter(liveEpgDateAdapter);
         mEpgDateGridView.addOnScrollListener(new RecyclerView.OnScrollListener() {
