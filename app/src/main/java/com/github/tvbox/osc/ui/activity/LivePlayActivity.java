@@ -2266,10 +2266,11 @@ public class LivePlayActivity extends BaseActivity {
             if (mVideoView == null) return;
             String speed = PlayerHelper.getDisplaySpeed(mVideoView.getTcpSpeed());
 
-			if(speed != null && speed.length() != 0){
+			if(speed.length() != 0){
 			tv_right_top_tipnetspeed.setText("[" + speed + "]");
             mHandler.postDelayed(this, 1000);
-		    } else {tv_right_top_tipnetspeed.setText("网速0KB/S");
+		    } else {
+			tv_right_top_tipnetspeed.setText("网速0KB/S");
 		  }
         }
     };
