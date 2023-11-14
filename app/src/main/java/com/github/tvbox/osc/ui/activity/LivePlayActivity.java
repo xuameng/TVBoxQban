@@ -1516,7 +1516,7 @@ public class LivePlayActivity extends BaseActivity {
         calendar.setTime(new Date());
         SimpleDateFormat datePresentFormat = new SimpleDateFormat("MM月dd日");
         calendar.add(Calendar.DAY_OF_MONTH, 1);
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < 9; i++) {
             Date dateIns = calendar.getTime();
             LiveEpgDate epgDate = new LiveEpgDate();
             epgDate.setIndex(i);
