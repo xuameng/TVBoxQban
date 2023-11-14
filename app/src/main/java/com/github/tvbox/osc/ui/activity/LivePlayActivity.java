@@ -794,7 +794,9 @@ public class LivePlayActivity extends BaseActivity {
 			iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
 			hideTimeXu();              //xuameng隐藏系统时间
 			hideNetSpeedXu();		//XUAMENG隐藏左上网速
+			getEpg(new Date());
             playXuSource();
+			liveEpgDateAdapter.setSelectedIndex(1);      //xuameng频道EPG日期自动选今天
         } else {
             mExitTime = System.currentTimeMillis();
             Toast.makeText(mContext, "当前回看中，再按一次返回键退出回看！", Toast.LENGTH_SHORT).show();            
@@ -1059,7 +1061,7 @@ public class LivePlayActivity extends BaseActivity {
                 if (countDownTimer20 != null) {
                 countDownTimer20.cancel();
                 }
-			    countDownTimer20 = new CountDownTimer(100, 50) {//底部epg隐藏时间设定
+			    countDownTimer20 = new CountDownTimer(500, 50) {//底部epg隐藏时间设定
 		        public void onTick(long j) {
                     }
                     public void onFinish() {
@@ -1406,6 +1408,7 @@ public class LivePlayActivity extends BaseActivity {
                     tv_currentpos.setText(durationToString((int)mVideoView.getCurrentPosition()));
                     tv_duration.setText(durationToString(shiyi_time_c*1000));
 //修好了					hideTimeXu();                       //xuameng进入回看前先隐藏上方系统时间
+                    getEpg(new Date());
                     showProgressBars(true);             //xuameng然后再显示
 					showBottomEpgBack();               //xuameng回看EPG
 //					showTimeXu();                       //xuameng显示系统时间
@@ -1486,6 +1489,7 @@ public class LivePlayActivity extends BaseActivity {
                    // long dd = mVideoView.getDuration();
                     tv_currentpos.setText(durationToString((int)mVideoView.getCurrentPosition()));
                     tv_duration.setText(durationToString(shiyi_time_c*1000));
+					getEpg(new Date());
                     showProgressBars(true);
 					showBottomEpgBack();               //xuameng回看EPG
                     isBack = true;
