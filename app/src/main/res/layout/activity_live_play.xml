@@ -566,6 +566,7 @@
             <TextView
                 android:textSize="@dimen/vs_20"
                 android:textStyle="bold"
+                android:gravity="right"
                 android:textColor="@android:color/white"
                 android:id="@+id/tv_right_top_tipnetspeed"
                 android:layout_width="115.0mm"
