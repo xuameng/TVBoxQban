@@ -124,7 +124,6 @@ public class LivePlayActivity extends BaseActivity {
 
     private List<LiveChannelGroup> liveChannelGroupList = new ArrayList<>();
     private int currentLiveChannelIndex = -1;
-	private int finalI = -1;
     private int currentLiveChangeSourceTimes = 0;
     private LiveChannelItem currentLiveChannelItem = null;
     private LivePlayerManager livePlayerManager = new LivePlayerManager();
@@ -445,9 +444,12 @@ public class LivePlayActivity extends BaseActivity {
                 mRightEpgList.setSelection(i);
                 epgListAdapter.setSelectedEpgIndex(i);
                 int finalI = i;
-
-                         mRightEpgList.ScrollToPosition(finalI);
-
+                mRightEpgList.post(new Runnable() {
+                     @Override
+                     public void run() {
+                         mRightEpgList.smoothScrollToPosition(finalI);
+                     }
+                });
             }
         }
     }
