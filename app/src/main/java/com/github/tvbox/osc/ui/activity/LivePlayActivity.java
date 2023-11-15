@@ -443,7 +443,13 @@ public class LivePlayActivity extends BaseActivity {
                 mRightEpgList.setSelectedPosition(i);
                 mRightEpgList.setSelection(i);
                 epgListAdapter.setSelectedEpgIndex(i);
-                mRightEpgList.ScrollToPosition(i);
+                int finalI = i;
+                mRightEpgList.post(new Runnable() {
+                     @Override
+                     public void run() {
+                         mRightEpgList.ScrollToPosition(finalI);
+                     }
+                });
             }
         }
     }
@@ -460,7 +466,7 @@ public class LivePlayActivity extends BaseActivity {
         }
         String finalChannelName = channelName;
         epgListAdapter.CanBack(currentLiveChannelItem.getinclude_back());
-        epgListAdapter.updateData(date, new ArrayList<>());
+        //epgListAdapter.updateData(date, new ArrayList<>());
 
         String url;
         if(epgStringAddress.contains("{name}") && epgStringAddress.contains("{date}")){
@@ -471,7 +477,7 @@ public class LivePlayActivity extends BaseActivity {
         UrlHttpUtil.get(url, new CallBackUtil.CallBackString() {
             public void onFailure(int i, String str) {
                 showEpg(date, new ArrayList());
-                showBottomEpgXU();               //xuameng测试EPG刷新       
+ //               showBottomEpg();        
             }
 
             public void onResponse(String paramString) {
