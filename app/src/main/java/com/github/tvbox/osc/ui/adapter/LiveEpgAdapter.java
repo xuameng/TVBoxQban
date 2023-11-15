@@ -55,6 +55,7 @@ public class LiveEpgAdapter extends BaseQuickAdapter<Epginfo, BaseViewHolder> {
             shiyi.setBackgroundColor(Color.YELLOW);
             shiyi.setText("直播中");
             shiyi.setTextColor(Color.RED);
+			shiyiDate = null;
         } else if (new Date().compareTo(value.enddateTime) > 0 && source_include_back ) {
             shiyi.setVisibility(View.VISIBLE);
             shiyi.setBackgroundColor(Color.BLUE);
@@ -93,6 +94,7 @@ public class LiveEpgAdapter extends BaseQuickAdapter<Epginfo, BaseViewHolder> {
                     shiyi.setBackgroundColor(Color.YELLOW);
                     shiyi.setText("直播中");
                     shiyi.setTextColor(Color.RED);
+					shiyiDate = null;
                 }
             } else {
                 wqddg_AudioWaveView.setVisibility(View.GONE);
