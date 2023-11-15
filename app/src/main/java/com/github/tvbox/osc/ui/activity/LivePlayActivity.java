@@ -217,7 +217,7 @@ public class LivePlayActivity extends BaseActivity {
         context = this;
         epgStringAddress = Hawk.get(HawkConfig.EPG_URL,"");
         if(epgStringAddress == null || epgStringAddress.length()<5)
-            epgStringAddress = "http://epg.51zmt.top:8000/api/diyp/";
+            epgStringAddress = "https://epg.112114.xyz/";
 
         setLoadSir(findViewById(R.id.live_root));
         mVideoView = findViewById(R.id.mVideoView);
@@ -437,7 +437,13 @@ public class LivePlayActivity extends BaseActivity {
                     break;
                 }
                 size--;
-            }
+            }else {
+
+            Epginfo epgbcinfo = new Epginfo(date, "聚汇直播提示：暂无节目信息！", date, "00:00", "23:59", 0);
+            arrayList.add(epgbcinfo);
+            epgdata = arrayList;
+            epgListAdapter.setNewData(epgdata);
+			}
             i = size;
             if (i >= 0 && new Date().compareTo(epgdata.get(i).enddateTime) <= 0) {
                 mRightEpgList.setSelectedPosition(i);
@@ -450,13 +456,7 @@ public class LivePlayActivity extends BaseActivity {
                          mRightEpgList.smoothScrollToPosition(finalI);
                      }
                 });
-            }else {
-
-            Epginfo epgbcinfo = new Epginfo(date, "暂无节目信息", date, "00:00", "23:59", 0);
-            arrayList.add(epgbcinfo);
-            epgdata = arrayList;
-            epgListAdapter.setNewData(epgdata);
-			}
+            }
         }
     }
 
