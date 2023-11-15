@@ -444,12 +444,8 @@ public class LivePlayActivity extends BaseActivity {
                 mRightEpgList.setSelection(i);
                 epgListAdapter.setSelectedEpgIndex(i);
                 int finalI = i;
-                mRightEpgList.post(new Runnable() {
-                     @Override
-                     public void run() {
-                         mRightEpgList.smoothScrollToPosition(finalI);
-                     }
-                });
+                mRightEpgList.ScrollToPosition(finalI);    //xuameng测试
+
             }
         }
     }
@@ -1149,13 +1145,15 @@ public class LivePlayActivity extends BaseActivity {
     };
 	*/
 
-    private boolean playChannel(int channelGroupIndex, int liveChannelIndex, boolean changeSource) {
+    private boolean playChannel(int channelGroupIndex, int liveChannelIndex, boolean changeSource) {       //xuameng播放
         if ((channelGroupIndex == currentChannelGroupIndex && liveChannelIndex == currentLiveChannelIndex && !changeSource)
                 || (changeSource && currentLiveChannelItem.getSourceNum() == 1)) {
            // xuameng测试
-		   	 liveEpgDateAdapter.setSelectedIndex(1);
+		   	 liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
 		     showBottomEpg();
              getEpg(new Date());
+             isSHIYI=false;
+             isBack = false;
             return true;
         }
         mVideoView.release();
@@ -1182,6 +1180,7 @@ public class LivePlayActivity extends BaseActivity {
 		Mtv_left_top_xu.setVisibility(View.GONE);         //xuameng直播时隐藏回看的菜单
         iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
         mVideoView.setUrl(currentLiveChannelItem.getUrl());
+        liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
        // showChannelInfo();
         mVideoView.start();
         return true;
@@ -1569,7 +1568,7 @@ public class LivePlayActivity extends BaseActivity {
                 getEpg(liveEpgDateAdapter.getData().get(position).getDateParamVal());
             }
         });
-        liveEpgDateAdapter.setSelectedIndex(1);
+        liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
     }
 
 
