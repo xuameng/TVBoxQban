@@ -444,11 +444,12 @@ public class LivePlayActivity extends BaseActivity {
                 mRightEpgList.setSelection(i);
                 epgListAdapter.setSelectedEpgIndex(i);
                 int finalI = i;
-
+                mRightEpgList.post(new Runnable() {
+                     @Override
                      public void run() {
-                         mRightEpgList.ScrollToPosition(finalI);
+                         mRightEpgList.smoothScrollToPosition(finalI);
                      }
-
+                });
             }
         }
     }
