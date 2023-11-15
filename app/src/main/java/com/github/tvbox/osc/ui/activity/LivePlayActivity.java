@@ -437,13 +437,7 @@ public class LivePlayActivity extends BaseActivity {
                     break;
                 }
                 size--;
-            }else {
-
-            Epginfo epgbcinfo = new Epginfo(date, "聚汇直播提示：暂无节目信息！", date, "00:00", "23:59", 0);
-            arrayList.add(epgbcinfo);
-            epgdata = arrayList;
-            epgListAdapter.setNewData(epgdata);
-			}
+            }
             i = size;
             if (i >= 0 && new Date().compareTo(epgdata.get(i).enddateTime) <= 0) {
                 mRightEpgList.setSelectedPosition(i);
@@ -457,7 +451,13 @@ public class LivePlayActivity extends BaseActivity {
                      }
                 });
             }
-        }
+        } else {
+
+            Epginfo epgbcinfo = new Epginfo(date, "聚汇直播提示：暂无节目信息！", date, "00:00", "23:59", 0);
+            arrayList.add(epgbcinfo);
+            epgdata = arrayList;
+            epgListAdapter.setNewData(epgdata);
+			}
     }
 
     public void getEpg(Date date) {
