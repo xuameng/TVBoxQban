@@ -456,6 +456,7 @@ public class LivePlayActivity extends BaseActivity {
             arrayList.add(epgbcinfo);
             epgdata = arrayList;
             epgListAdapter.setNewData(epgdata);
+			}
         }
     }
 
