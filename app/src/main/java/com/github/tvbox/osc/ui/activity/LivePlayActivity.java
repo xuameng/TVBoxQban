@@ -443,13 +443,15 @@ public class LivePlayActivity extends BaseActivity {
                 mRightEpgList.setSelectedPosition(i);
                 mRightEpgList.setSelection(i);
                 epgListAdapter.setSelectedEpgIndex(i);
+/*
                 int finalI = i;
-				private Runnable mRightEpgListXu = new Runnable()
+                mRightEpgList.post(new Runnable() {
                      @Override
                      public void run() {
                          mRightEpgList.smoothScrollToPosition(finalI);
                      }
                 });
+*/
             }
         } else {             //xuameng无EPG时提示信息
             Epginfo epgbcinfo = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "00:00", "23:59", 0);
@@ -1061,7 +1063,7 @@ public class LivePlayActivity extends BaseActivity {
     }
 
     private void mFocusCurrentChannelAndShowChannelList() {              //xuameng左侧菜单显示
-		      if (mChannelGroupView.isScrolling() || mLiveChannelView.isScrolling() || mChannelGroupView.isComputingLayout() || mLiveChannelView.isComputingLayout() || mRightEpgList.isScrolling() ||  mRightEpgList.isComputingLayout()) {
+		      if (mChannelGroupView.isScrolling() || mLiveChannelView.isScrolling() || mChannelGroupView.isComputingLayout() || mLiveChannelView.isComputingLayout()) {
                 if (countDownTimer20 != null) {
                 countDownTimer20.cancel();
                 }
@@ -1086,7 +1088,6 @@ public class LivePlayActivity extends BaseActivity {
                     holder.itemView.requestFocus();
                     tvLeftChannelListLayout.setVisibility(View.VISIBLE); 
 					ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) tvLeftChannelListLayout.getLayoutParams();
-					mHandler.post(mRightEpgListXu);
 
 				if (countDownTimer5 != null) {
                 countDownTimer5.cancel();
@@ -1105,7 +1106,6 @@ public class LivePlayActivity extends BaseActivity {
             ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) tvLeftChannelListLayout.getLayoutParams();
             if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {              
                 tvLeftChannelListLayout.setVisibility(View.INVISIBLE);
-				mHandler.removeCallbacks(mRightEpgListXu);
         }
     }
 
