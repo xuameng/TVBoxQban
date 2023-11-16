@@ -270,7 +270,7 @@ public class LivePlayActivity extends BaseActivity {
         day=formatDate.format(new Date());
         nowday=new Date();
 
-        mRightEpgList = findViewById(R.id.lv_epg);
+        mRightEpgList = (TvRecyclerView) findViewById(R.id.lv_epg);
         //EPG频道名称
         imgLiveIcon = findViewById(R.id.img_live_icon);
         liveIconNullBg = findViewById(R.id.live_icon_null_bg);
@@ -443,8 +443,13 @@ public class LivePlayActivity extends BaseActivity {
                 mRightEpgList.setSelectedPosition(i);
                 mRightEpgList.setSelection(i);
                 epgListAdapter.setSelectedEpgIndex(i);
-                mRightEpgList.setSelectedPosition(epgListAdapter.getSelectedIndex());
-                epgListAdapter.notifyDataSetChanged();
+                int finalI = i;
+                mRightEpgList.post(new Runnable() {
+                     @Override
+                     public void run() {
+                         mRightEpgList.smoothScrollToPosition(finalI);
+                     }
+                });
             }
         } else {             //xuameng无EPG时提示信息
             Epginfo epgbcinfo = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "00:00", "23:59", 0);
