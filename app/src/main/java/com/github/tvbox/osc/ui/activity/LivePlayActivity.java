@@ -452,7 +452,7 @@ public class LivePlayActivity extends BaseActivity {
                 });
             }
         } else {             //xuameng无EPG时提示信息
-            Epginfo epgbcinfo = new Epginfo(date, "聚汇直播提示：暂无节目信息！", date, "00:00", "23:59", 10);
+            Epginfo epgbcinfo = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "00:00", "23:59", date, "聚汇直播提示您：暂无节目信息！", date, "20:00", "23:59");
             arrayList.add(epgbcinfo);
             epgdata = arrayList;
             epgListAdapter.setNewData(epgdata);
