@@ -444,7 +444,7 @@ public class LivePlayActivity extends BaseActivity {
                 mRightEpgList.setSelection(i);
                 epgListAdapter.setSelectedEpgIndex(i);
                 int finalI = i;
-                mRightEpgList.post(new Runnable() {
+				private Runnable mRightEpgListXu = new Runnable()
                      @Override
                      public void run() {
                          mRightEpgList.smoothScrollToPosition(finalI);
@@ -1065,7 +1065,7 @@ public class LivePlayActivity extends BaseActivity {
                 if (countDownTimer20 != null) {
                 countDownTimer20.cancel();
                 }
-			    countDownTimer20 = new CountDownTimer(500, 50) {//底部epg隐藏时间设定
+			    countDownTimer20 = new CountDownTimer(100, 50) {//底部epg隐藏时间设定
 		        public void onTick(long j) {
                     }
                     public void onFinish() {
@@ -1086,6 +1086,7 @@ public class LivePlayActivity extends BaseActivity {
                     holder.itemView.requestFocus();
                     tvLeftChannelListLayout.setVisibility(View.VISIBLE); 
 					ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) tvLeftChannelListLayout.getLayoutParams();
+					mHandler.post(mRightEpgListXu);
 
 				if (countDownTimer5 != null) {
                 countDownTimer5.cancel();
@@ -1104,6 +1105,7 @@ public class LivePlayActivity extends BaseActivity {
             ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) tvLeftChannelListLayout.getLayoutParams();
             if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {              
                 tvLeftChannelListLayout.setVisibility(View.INVISIBLE);
+				mHandler.removeCallbacks(mRightEpgListXu);
         }
     }
 
