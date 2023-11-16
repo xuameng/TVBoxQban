@@ -1575,6 +1575,7 @@ public class LivePlayActivity extends BaseActivity {
                 getEpg(liveEpgDateAdapter.getData().get(position).getDateParamVal());
             }
         });
+        liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
     }
 
 
