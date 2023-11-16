@@ -1185,7 +1185,26 @@ public class LivePlayActivity extends BaseActivity {
 		liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
         showBottomEpg();
         getEpg(new Date());
-		getEpg(liveEpgDateAdapter.getData().get(position).getDateParamVal());
+		private void initEpgDateViewXu() {
+        mEpgDateGridView.setHasFixedSize(true);
+        mEpgDateGridView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
+        liveEpgDateAdapter = new LiveEpgDateAdapter();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        SimpleDateFormat datePresentFormat = new SimpleDateFormat("MM月dd日");          //xuameng加中文
+        calendar.add(Calendar.DAY_OF_MONTH, 1);
+        for (int i = 0; i < 9; i++) {              //XUAMENG8天回看
+            Date dateIns = calendar.getTime();
+            LiveEpgDate epgDate = new LiveEpgDate();
+            epgDate.setIndex(i);
+            epgDate.setDatePresented(datePresentFormat.format(dateIns));
+            epgDate.setDateParamVal(dateIns);
+            liveEpgDateAdapter.addData(epgDate);
+            calendar.add(Calendar.DAY_OF_MONTH, -1);
+        }
+        mEpgDateGridView.setAdapter(liveEpgDateAdapter);
+        getEpg(liveEpgDateAdapter.getData().get(position).getDateParamVal());
+    }
         backcontroller.setVisibility(View.GONE);
         ll_right_top_huikan.setVisibility(View.GONE);
 		Mtv_left_top_xu.setVisibility(View.GONE);         //xuameng直播时隐藏回看的菜单
