@@ -443,11 +443,10 @@ public class LivePlayActivity extends BaseActivity {
                 mRightEpgList.setSelectedPosition(i);
                 mRightEpgList.setSelection(i);
                 epgListAdapter.setSelectedEpgIndex(i);
-                int finalI = i;
-                mRightEpgList.ScrollToPosition(finalI);
+                mRightEpgList.ScrollToPosition(i);
             }
         } else {             //xuameng无EPG时提示信息
-            Epginfo epgbcinfo = new Epginfo(date, "聚汇直播提示：暂无节目信息！", date, "00:00", "23:59", 0);
+            Epginfo epgbcinfo = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "00:00", "23:59", 0);
             arrayList.add(epgbcinfo);
             epgdata = arrayList;
             epgListAdapter.setNewData(epgdata);
