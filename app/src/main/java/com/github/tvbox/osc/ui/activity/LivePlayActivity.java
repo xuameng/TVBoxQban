@@ -1185,7 +1185,7 @@ public class LivePlayActivity extends BaseActivity {
 		liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
         showBottomEpg();
         getEpg(new Date());
-		private void initEpgDateViewXu() {
+
         mEpgDateGridView.setHasFixedSize(true);
         mEpgDateGridView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
         liveEpgDateAdapter = new LiveEpgDateAdapter();
@@ -1204,7 +1204,7 @@ public class LivePlayActivity extends BaseActivity {
         }
         mEpgDateGridView.setAdapter(liveEpgDateAdapter);
         getEpg(liveEpgDateAdapter.getData().get(position).getDateParamVal());
-    }
+   
         backcontroller.setVisibility(View.GONE);
         ll_right_top_huikan.setVisibility(View.GONE);
 		Mtv_left_top_xu.setVisibility(View.GONE);         //xuameng直播时隐藏回看的菜单
