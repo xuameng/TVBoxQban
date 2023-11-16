@@ -270,7 +270,7 @@ public class LivePlayActivity extends BaseActivity {
         day=formatDate.format(new Date());
         nowday=new Date();
 
-        mRightEpgList = (TvRecyclerView) findViewById(R.id.lv_epg);
+        mRightEpgList = findViewById(R.id.lv_epg);
         //EPG频道名称
         imgLiveIcon = findViewById(R.id.img_live_icon);
         liveIconNullBg = findViewById(R.id.live_icon_null_bg);
@@ -444,15 +444,10 @@ public class LivePlayActivity extends BaseActivity {
                 mRightEpgList.setSelection(i);
                 epgListAdapter.setSelectedEpgIndex(i);
                 int finalI = i;
-                mRightEpgList.post(new Runnable() {
-                     @Override
-                     public void run() {
-                         mRightEpgList.smoothScrollToPosition(finalI);
-                     }
-                });
+                mRightEpgList.ScrollToPosition(finalI);
             }
         } else {             //xuameng无EPG时提示信息
-            Epginfo epgbcinfo = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "00:00", "23:59", 0);
+            Epginfo epgbcinfo = new Epginfo(date, "聚汇直播提示：暂无节目信息！", date, "00:00", "23:59", 0);
             arrayList.add(epgbcinfo);
             epgdata = arrayList;
             epgListAdapter.setNewData(epgdata);
@@ -799,6 +794,7 @@ public class LivePlayActivity extends BaseActivity {
 			iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
 			hideTimeXu();              //xuameng隐藏系统时间
 			hideNetSpeedXu();		//XUAMENG隐藏左上网速
+			liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
             playXuSource();
         } else {
             mExitTime = System.currentTimeMillis();
@@ -1188,6 +1184,7 @@ public class LivePlayActivity extends BaseActivity {
 		Mtv_left_top_xu.setVisibility(View.GONE);         //xuameng直播时隐藏回看的菜单
         iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
         mVideoView.setUrl(currentLiveChannelItem.getUrl());
+        liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
        // showChannelInfo();
         mVideoView.start();
         return true;
@@ -1851,6 +1848,7 @@ public class LivePlayActivity extends BaseActivity {
     private void clickLiveChannel(int position) {
         liveChannelItemAdapter.setSelectedChannelIndex(position);
         playChannel(liveChannelGroupAdapter.getSelectedGroupIndex(), position, false);
+		liveEpgDateAdapter.setSelectedIndex(1);      //xuameng频道EPG日期自动选今天
         if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
             mHideChannelListRunXu();   //xuameng隐藏频道菜单
         }
