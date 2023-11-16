@@ -165,7 +165,7 @@ public class LivePlayActivity extends BaseActivity {
     public String epgStringAddress ="";
 
     private TvRecyclerView mEpgDateGridView;
-    private TextView mRightEpgList;
+    private TvRecyclerView mRightEpgList;
     private LiveEpgDateAdapter liveEpgDateAdapter;
     private LiveEpgAdapter epgListAdapter;
 
@@ -444,7 +444,12 @@ public class LivePlayActivity extends BaseActivity {
                 mRightEpgList.setSelection(i);
                 epgListAdapter.setSelectedEpgIndex(i);
                 int finalI = i;
-                         mRightEpgList.ScrollToPosition(finalI);
+                mRightEpgList.post(new Runnable() {
+                     @Override
+                     public void run() {
+                         mRightEpgList.smoothScrollToPosition(finalI);
+                     }
+                });
             }
         } else {             //xuameng无EPG时提示信息
             Epginfo epgbcinfo = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "00:00", "23:59", 0);
@@ -1056,11 +1061,11 @@ public class LivePlayActivity extends BaseActivity {
     }
 
     private void mFocusCurrentChannelAndShowChannelList() {              //xuameng左侧菜单显示
-		      if (mChannelGroupView.isScrolling() || mLiveChannelView.isScrolling() || mChannelGroupView.isComputingLayout() || mLiveChannelView.isComputingLayout()) {
+		      if (mChannelGroupView.isScrolling() || mLiveChannelView.isScrolling() || mChannelGroupView.isComputingLayout() || mLiveChannelView.isComputingLayout() || mRightEpgList.isScrolling() ||  mRightEpgList.isComputingLayout()) {
                 if (countDownTimer20 != null) {
                 countDownTimer20.cancel();
                 }
-			    countDownTimer20 = new CountDownTimer(100, 50) {//底部epg隐藏时间设定
+			    countDownTimer20 = new CountDownTimer(500, 50) {//底部epg隐藏时间设定
 		        public void onTick(long j) {
                     }
                     public void onFinish() {
