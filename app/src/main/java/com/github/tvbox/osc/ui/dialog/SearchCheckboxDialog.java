@@ -40,7 +40,7 @@ public class SearchCheckboxDialog extends BaseDialog{
         if (context instanceof Activity) {
             setOwnerActivity((Activity) context);
         }
-        setCanceledOnTouchOutside(true);
+        setCanceledOnTouchOutside(false);
         setCancelable(true);
         mSourceList = sourceList;
         mCheckSourcees = checkedSources;
@@ -73,8 +73,8 @@ public class SearchCheckboxDialog extends BaseDialog{
 
         int size = mSourceList.size();
         int spanCount = (int) Math.floor(size / 10);
-        if (spanCount <= 1) spanCount = 2;
-        if (spanCount >= 3) spanCount = 3;
+        if (spanCount <= 0) spanCount = 1;
+        if (spanCount > 3) spanCount = 3;
         mGridView.setLayoutManager(new V7GridLayoutManager(getContext(), spanCount));
         View root = findViewById(R.id.root);
         ViewGroup.LayoutParams clp = root.getLayoutParams();
