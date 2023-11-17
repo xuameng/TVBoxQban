@@ -57,13 +57,13 @@ public class LiveEpgAdapter extends BaseQuickAdapter<Epginfo, BaseViewHolder> {
             shiyi.setTextColor(Color.RED);
         } else if (new Date().compareTo(value.enddateTime) > 0 && source_include_back ) {
             shiyi.setVisibility(View.VISIBLE);
-            shiyi.setBackgroundColor(Color.BLUE);
+            shiyi.setBackgroundColor(Color.rgb(153, 153, 153));
             shiyi.setTextColor(Color.WHITE);
             shiyi.setText("回看");
         } else if (new Date().compareTo(value.startdateTime) < 0) {
             shiyi.setVisibility(View.VISIBLE);
-            shiyi.setBackgroundColor(Color.GRAY);
-            shiyi.setTextColor(Color.BLACK);
+            shiyi.setBackgroundColor(Color.rgb(43, 220, 35));
+            shiyi.setTextColor(Color.WHITE);
             shiyi.setText("未来");
         } else {
             shiyi.setVisibility(View.GONE);
@@ -87,7 +87,7 @@ public class LiveEpgAdapter extends BaseQuickAdapter<Epginfo, BaseViewHolder> {
                 timeview.setFreezesText(true);
                 shiyi.setText("回看中");
                 shiyi.setTextColor(Color.RED);
-                shiyi.setBackgroundColor(Color.rgb(12, 255, 0));
+                shiyi.setBackgroundColor(Color.YELLOW);
                 if (new Date().compareTo(value.startdateTime) >= 0 && new Date().compareTo(value.enddateTime) <= 0) {
                     shiyi.setVisibility(View.VISIBLE);
                     shiyi.setBackgroundColor(Color.YELLOW);
