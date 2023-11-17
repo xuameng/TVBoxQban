@@ -800,7 +800,7 @@ public class LivePlayActivity extends BaseActivity {
 			iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
 			hideTimeXu();              //xuameng隐藏系统时间
 			hideNetSpeedXu();		//XUAMENG隐藏左上网速
-			liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
+//			liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
             playXuSource();
         } else {
             mExitTime = System.currentTimeMillis();
@@ -1193,6 +1193,7 @@ public class LivePlayActivity extends BaseActivity {
                     }
                     public void onFinish() {
                     getEpg(new Date());
+					        liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
                     }
                 };
                 countDownTimer30.start();
@@ -1203,7 +1204,7 @@ public class LivePlayActivity extends BaseActivity {
 		Mtv_left_top_xu.setVisibility(View.GONE);         //xuameng直播时隐藏回看的菜单
         iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
         mVideoView.setUrl(currentLiveChannelItem.getUrl());
-        liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
+
        // showChannelInfo();
         mVideoView.start();
         return true;
@@ -1867,7 +1868,7 @@ public class LivePlayActivity extends BaseActivity {
     private void clickLiveChannel(int position) {
         liveChannelItemAdapter.setSelectedChannelIndex(position);
         playChannel(liveChannelGroupAdapter.getSelectedGroupIndex(), position, false);
-		liveEpgDateAdapter.setSelectedIndex(1);      //xuameng频道EPG日期自动选今天
+//		liveEpgDateAdapter.setSelectedIndex(1);      //xuameng频道EPG日期自动选今天
         if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
             mHideChannelListRunXu();   //xuameng隐藏频道菜单
         }
