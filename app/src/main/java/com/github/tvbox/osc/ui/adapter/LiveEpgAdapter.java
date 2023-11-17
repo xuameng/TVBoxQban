@@ -60,7 +60,6 @@ public class LiveEpgAdapter extends BaseQuickAdapter<Epginfo, BaseViewHolder> {
             shiyi.setBackgroundColor(Color.BLUE);
             shiyi.setTextColor(Color.WHITE);
             shiyi.setText("回看");
-			shiyiDate = null;      //xuameng直播时回看图标恢复原样
         } else if (new Date().compareTo(value.startdateTime) < 0) {
             shiyi.setVisibility(View.VISIBLE);
             shiyi.setBackgroundColor(Color.GRAY);
@@ -83,13 +82,12 @@ public class LiveEpgAdapter extends BaseQuickAdapter<Epginfo, BaseViewHolder> {
             }
         } else {
             if (value.index == this.selectedEpgIndex && value.currentEpgDate.equals(shiyiDate)) {
-                wqddg_AudioWaveView.setVisibility(View.VISIBLE);
-                textview.setFreezesText(true);
-                timeview.setFreezesText(true);
-                shiyi.setText("回看中");
-                shiyi.setTextColor(Color.RED);
-                shiyi.setBackgroundColor(Color.rgb(12, 255, 0));
-				shiyiDate = null;           //xuameng直播时回看图标恢复原样
+ //               wqddg_AudioWaveView.setVisibility(View.VISIBLE);
+ //               textview.setFreezesText(true);
+ //               timeview.setFreezesText(true);
+                shiyi.setText("回看");
+                shiyi.setTextColor(Color.WHITE);
+                shiyi.setBackgroundColor(Color.BLUE);
                 if (new Date().compareTo(value.startdateTime) >= 0 && new Date().compareTo(value.enddateTime) <= 0) {
                     shiyi.setVisibility(View.VISIBLE);
                     shiyi.setBackgroundColor(Color.YELLOW);
