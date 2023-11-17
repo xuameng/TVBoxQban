@@ -55,12 +55,12 @@ public class LiveEpgAdapter extends BaseQuickAdapter<Epginfo, BaseViewHolder> {
             shiyi.setBackgroundColor(Color.YELLOW);
             shiyi.setText("直播中");
             shiyi.setTextColor(Color.RED);
-			shiyiDate = null;      //xuameng直播时回看图标恢复原样
         } else if (new Date().compareTo(value.enddateTime) > 0 && source_include_back ) {
             shiyi.setVisibility(View.VISIBLE);
             shiyi.setBackgroundColor(Color.BLUE);
             shiyi.setTextColor(Color.WHITE);
             shiyi.setText("回看");
+			shiyiDate = null;      //xuameng直播时回看图标恢复原样
         } else if (new Date().compareTo(value.startdateTime) < 0) {
             shiyi.setVisibility(View.VISIBLE);
             shiyi.setBackgroundColor(Color.GRAY);
@@ -89,6 +89,7 @@ public class LiveEpgAdapter extends BaseQuickAdapter<Epginfo, BaseViewHolder> {
                 shiyi.setText("回看中");
                 shiyi.setTextColor(Color.RED);
                 shiyi.setBackgroundColor(Color.rgb(12, 255, 0));
+				shiyiDate = null;           //xuameng直播时回看图标恢复原样
                 if (new Date().compareTo(value.startdateTime) >= 0 && new Date().compareTo(value.enddateTime) <= 0) {
                     shiyi.setVisibility(View.VISIBLE);
                     shiyi.setBackgroundColor(Color.YELLOW);
