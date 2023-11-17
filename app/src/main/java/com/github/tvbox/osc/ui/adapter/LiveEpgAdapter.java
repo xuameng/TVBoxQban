@@ -80,7 +80,9 @@ public class LiveEpgAdapter extends BaseQuickAdapter<Epginfo, BaseViewHolder> {
                 textview.setFreezesText(true);
                 timeview.setFreezesText(true);
             } else {
-                wqddg_AudioWaveView.setVisibility(View.GONE);
+                wqddg_AudioWaveView.setVisibility(View.VISIBLE);
+                textview.setFreezesText(true);
+                timeview.setFreezesText(true);
             }
         } else {
             if (value.index == this.selectedEpgIndex && value.currentEpgDate.equals(shiyiDate)) {
