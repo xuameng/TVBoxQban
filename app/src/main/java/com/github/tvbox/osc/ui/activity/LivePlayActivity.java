@@ -800,7 +800,7 @@ public class LivePlayActivity extends BaseActivity {
 			iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
 			hideTimeXu();              //xuameng隐藏系统时间
 			hideNetSpeedXu();		//XUAMENG隐藏左上网速
-//			liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
+			liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
             playXuSource();
         } else {
             mExitTime = System.currentTimeMillis();
