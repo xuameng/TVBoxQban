@@ -1166,6 +1166,7 @@ public class LivePlayActivity extends BaseActivity {
              isBack = false;
              return true;
         }
+		if (mVideoView == null) return true;
         mVideoView.release();
         if (!changeSource) {
             currentChannelGroupIndex = channelGroupIndex;
@@ -1197,7 +1198,6 @@ public class LivePlayActivity extends BaseActivity {
                     }
                 };
                 countDownTimer30.start();
-
 
         backcontroller.setVisibility(View.GONE);
         ll_right_top_huikan.setVisibility(View.GONE);
@@ -1238,7 +1238,6 @@ public class LivePlayActivity extends BaseActivity {
         if (!isCurrentLiveChannelValid()) return;
         currentLiveChannelItem.getUrl();
         playChannel(currentChannelGroupIndex, currentLiveChannelIndex, true);
-		getEpg(new Date());
     }
 
     //显示设置列表
@@ -1869,7 +1868,7 @@ public class LivePlayActivity extends BaseActivity {
     private void clickLiveChannel(int position) {
         liveChannelItemAdapter.setSelectedChannelIndex(position);
         playChannel(liveChannelGroupAdapter.getSelectedGroupIndex(), position, false);
-//		liveEpgDateAdapter.setSelectedIndex(1);      //xuameng频道EPG日期自动选今天
+		liveEpgDateAdapter.setSelectedIndex(1);      //xuameng频道EPG日期自动选今天
         if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
             mHideChannelListRunXu();   //xuameng隐藏频道菜单
         }
