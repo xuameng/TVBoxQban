@@ -1238,7 +1238,7 @@ public class LivePlayActivity extends BaseActivity {
         if (!isCurrentLiveChannelValid()) return;
         currentLiveChannelItem.getUrl();
         playChannel(currentChannelGroupIndex, currentLiveChannelIndex, true);
-		showEpg(date, arrayList);
+		getEpg(new Date());
     }
 
     //显示设置列表
