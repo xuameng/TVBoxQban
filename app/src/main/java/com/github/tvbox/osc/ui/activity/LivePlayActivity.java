@@ -198,6 +198,7 @@ public class LivePlayActivity extends BaseActivity {
     private CountDownTimer countDownTimer20;
 	private CountDownTimer countDownTimer21;
 	private CountDownTimer countDownTimer22;
+	private CountDownTimer countDownTimer30;
     private int videoWidth = 1920;
     private int videoHeight = 1080;
     private TextView tv_currentpos;
@@ -1183,7 +1184,20 @@ public class LivePlayActivity extends BaseActivity {
             currentLiveChannelItem.setinclude_back(false);
         }
         showBottomEpg();
-        getEpg(new Date());
+
+		if (countDownTimer30 != null) {
+                countDownTimer30.cancel();
+                }
+			    countDownTimer30 = new CountDownTimer(200, 50) {//底部epg隐藏时间设定
+		        public void onTick(long j) {
+                    }
+                    public void onFinish() {
+                    getEpg(new Date());
+                    }
+                };
+                countDownTimer30.start();
+
+
         backcontroller.setVisibility(View.GONE);
         ll_right_top_huikan.setVisibility(View.GONE);
 		Mtv_left_top_xu.setVisibility(View.GONE);         //xuameng直播时隐藏回看的菜单
