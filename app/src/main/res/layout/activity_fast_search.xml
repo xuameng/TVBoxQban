@@ -1,100 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
-
-
+<LinearLayout
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <LinearLayout
-        android:layout_width="match_parent"
+        android:paddingLeft="20.0mm"
+        android:layout_width="fill_parent"
         android:layout_height="@dimen/vs_50"
-                android:layout_marginTop="@dimen/vs_10"
-                android:layout_marginBottom="@dimen/vs_10"
-        android:paddingLeft="20mm"
-       >
-
+        android:layout_marginTop="@dimen/vs_10"
+        android:layout_marginBottom="@dimen/vs_10">
         <TextView
-            android:id="@+id/mSearchTitle"
-            android:layout_width="@dimen/vs_180"
-            android:layout_height="match_parent"
-            android:text="搜索(0/0)"
-            android:layout_gravity="center_horizontal"
-            android:textAlignment="center"
+            android:textSize="@dimen/ts_22"
             android:textColor="@android:color/white"
+            android:layout_gravity="center_horizontal"
+            android:id="@+id/mSearchTitle"
             android:paddingTop="@dimen/vs_10"
-            android:textSize="@dimen/ts_22"  />
-
+            android:layout_width="@dimen/vs_180"
+            android:layout_height="fill_parent"
+            android:text="搜索(0/0)"
+            android:textAlignment="center"/>
         <com.owen.tvrecyclerview.widget.TvRecyclerView
             android:id="@+id/mGridViewWordFenci"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/vs_50"
             android:clipChildren="false"
             android:clipToPadding="false"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/vs_50"
             app:tv_horizontalSpacingWithMargins="@dimen/vs_5"
             app:tv_selectedItemIsCentered="true"
-            app:tv_verticalSpacingWithMargins="@dimen/vs_5" />
-
+            app:tv_verticalSpacingWithMargins="@dimen/vs_5"/>
     </LinearLayout>
-
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
-
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
         <LinearLayout
-            android:id="@+id/llWord"
-            android:layout_width="@dimen/vs_180"
-            android:layout_height="match_parent"
             android:orientation="vertical"
-            android:paddingLeft="20mm"
-            android:paddingBottom="@dimen/vs_20">
-
+            android:id="@+id/llWord"
+            android:paddingLeft="20.0mm"
+            android:paddingBottom="@dimen/vs_20"
+            android:layout_width="@dimen/vs_180"
+            android:layout_height="fill_parent">
             <com.owen.tvrecyclerview.widget.TvRecyclerView
                 android:id="@+id/mGridViewWord"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:focusable="true"
                 android:clipChildren="false"
                 android:clipToPadding="false"
-                android:focusable="true"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
                 app:tv_horizontalSpacingWithMargins="@dimen/vs_5"
                 app:tv_selectedItemIsCentered="true"
-                app:tv_verticalSpacingWithMargins="@dimen/vs_5" />
+                app:tv_verticalSpacingWithMargins="@dimen/vs_5"/>
         </LinearLayout>
-
         <LinearLayout
-            android:id="@+id/llLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
             android:orientation="vertical"
-            android:paddingLeft="20mm"
+            android:id="@+id/llLayout"
+            android:paddingLeft="20.0mm"
+            android:paddingRight="20.0mm"
             android:paddingBottom="@dimen/vs_20"
-            android:paddingRight="20mm" >
-
-
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
             <com.owen.tvrecyclerview.widget.TvRecyclerView
                 android:id="@+id/mGridView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:visibility="invisible"
                 android:clipChildren="false"
                 android:clipToPadding="false"
-                android:visibility="invisible"
-                app:tv_horizontalSpacingWithMargins="@dimen/vs_5"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                app:tv_horizontalSpacingWithMargins="@dimen/vs_10"
                 app:tv_selectedItemIsCentered="true"
-                app:tv_verticalSpacingWithMargins="@dimen/vs_5" />
-
+                app:tv_verticalSpacingWithMargins="@dimen/vs_5"/>
             <com.owen.tvrecyclerview.widget.TvRecyclerView
                 android:id="@+id/mGridViewFilter"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:visibility="invisible"
                 android:clipChildren="false"
                 android:clipToPadding="false"
-                android:visibility="invisible"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
                 app:tv_horizontalSpacingWithMargins="@dimen/vs_5"
                 app:tv_selectedItemIsCentered="true"
-                app:tv_verticalSpacingWithMargins="@dimen/vs_5" />
-
-
+                app:tv_verticalSpacingWithMargins="@dimen/vs_5"/>
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

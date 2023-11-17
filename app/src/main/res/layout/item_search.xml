@@ -7,14 +7,14 @@
     android:layout_height="wrap_content"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <FrameLayout
-        android:layout_width="@dimen/vs_214"
+        android:layout_width="wrap_content"
         android:layout_height="@dimen/vs_280">
         <ImageView
             android:id="@+id/ivThumb"
             android:padding="@dimen/vs_1"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:scaleType="fitXY"/>
+            android:scaleType="fitXY" />
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="wrap_content"
@@ -35,7 +35,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginRight="@dimen/vs_5"
                 android:singleLine="true"
-                android:layout_marginEnd="@dimen/vs_5"/>
+                android:layout_marginEnd="@dimen/vs_5" />
         </LinearLayout>
         <LinearLayout
             android:layout_gravity="bottom"
@@ -58,7 +58,7 @@
                 android:layout_marginLeft="@dimen/vs_5"
                 android:layout_marginRight="@dimen/vs_5"
                 android:layout_marginBottom="@dimen/vs_5"
-                android:singleLine="true"/>
+                android:singleLine="true" />
             <TextView
                 android:textSize="@dimen/ts_22"
                 android:textColor="@android:color/white"
@@ -69,7 +69,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:singleLine="true"
-                android:marqueeRepeatLimit="marquee_forever"/>
+                android:marqueeRepeatLimit="marquee_forever" />
         </LinearLayout>
     </FrameLayout>
 </FrameLayout>
