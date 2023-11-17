@@ -1174,7 +1174,6 @@ public class LivePlayActivity extends BaseActivity {
             currentLiveChannelItem = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndex);
             Hawk.put(HawkConfig.LIVE_CHANNEL, currentLiveChannelItem.getChannelName());
             livePlayerManager.getLiveChannelPlayer(mVideoView, currentLiveChannelItem.getChannelName());
-	        liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
         }
 
         channel_Name = currentLiveChannelItem;
@@ -1198,7 +1197,7 @@ public class LivePlayActivity extends BaseActivity {
                     }
                 };
                 countDownTimer30.start();
-
+	    liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
         backcontroller.setVisibility(View.GONE);
         ll_right_top_huikan.setVisibility(View.GONE);
 		Mtv_left_top_xu.setVisibility(View.GONE);         //xuameng直播时隐藏回看的菜单
