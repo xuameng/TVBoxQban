@@ -40,7 +40,7 @@ public class CheckboxSearchAdapter extends ListAdapter<SourceBean, CheckboxSearc
         mCheckedSources = checkedSources;
     }
 
-    private final ArrayList<SourceBean> data = new ArrayList<>();
+    private ArrayList<SourceBean> data = new ArrayList<>();
     public HashMap<String, String> mCheckedSources = new HashMap<>();
 
     @SuppressLint("NotifyDataSetChanged")
@@ -53,7 +53,6 @@ public class CheckboxSearchAdapter extends ListAdapter<SourceBean, CheckboxSearc
 
     public void setMCheckedSources() {
 //        LOG.i(data.size()+"size----size"+mCheckedSources.size());
-    if (mCheckedSources != null)
         SearchHelper.putCheckedSources(mCheckedSources,data.size()==mCheckedSources.size());
     }
 
@@ -91,7 +90,7 @@ public class CheckboxSearchAdapter extends ListAdapter<SourceBean, CheckboxSearc
 
         public ViewHolder(View view) {
             super(view);
-            oneSearchSource = view.findViewById(R.id.oneSearchSource);
+            oneSearchSource = (CheckBox) view.findViewById(R.id.oneSearchSource);
         }
     }
 
