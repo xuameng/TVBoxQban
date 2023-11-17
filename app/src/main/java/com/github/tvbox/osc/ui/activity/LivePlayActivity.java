@@ -1173,6 +1173,7 @@ public class LivePlayActivity extends BaseActivity {
             currentLiveChannelItem = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndex);
             Hawk.put(HawkConfig.LIVE_CHANNEL, currentLiveChannelItem.getChannelName());
             livePlayerManager.getLiveChannelPlayer(mVideoView, currentLiveChannelItem.getChannelName());
+	        liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
         }
 
         channel_Name = currentLiveChannelItem;
@@ -1188,12 +1189,11 @@ public class LivePlayActivity extends BaseActivity {
 		if (countDownTimer30 != null) {
                 countDownTimer30.cancel();
                 }
-			    countDownTimer30 = new CountDownTimer(200, 50) {//底部epg隐藏时间设定
+			    countDownTimer30 = new CountDownTimer(300, 50) {//底部epg隐藏时间设定
 		        public void onTick(long j) {
                     }
                     public void onFinish() {
                     getEpg(new Date());
-					        liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
                     }
                 };
                 countDownTimer30.start();
@@ -1238,6 +1238,7 @@ public class LivePlayActivity extends BaseActivity {
         if (!isCurrentLiveChannelValid()) return;
         currentLiveChannelItem.getUrl();
         playChannel(currentChannelGroupIndex, currentLiveChannelIndex, true);
+		showEpg(date, arrayList);
     }
 
     //显示设置列表
