@@ -456,11 +456,9 @@ public class LivePlayActivity extends BaseActivity {
             Epginfo epgbcinfo = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "00:00", "23:59", 0);
 			Epginfo epgbcinfo1 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "00:00", "23:59", 0);
             arrayList.add(epgbcinfo);
-			arrayList1.add(epgbcinfo1);
+			arrayList.add(epgbcinfo1);
             epgdata = arrayList;
-			epgdata1 = arrayList1;
             epgListAdapter.setNewData(epgdata);
-			epgListAdapter.setNewData(epgdata1);
 		}
     }
 
