@@ -808,6 +808,7 @@ public class LivePlayActivity extends BaseActivity {
             mHandler.removeCallbacks(mUpdateNetSpeedRun);
 			mHandler.removeCallbacks(mUpdateNetSpeedRunXu);
 			mHandler.removeCallbacks(mUpdateTimeRun);
+			mHandler.removeCallbacks(mUpdateTimeRunXu);
             super.onBackPressed();
         } else {
             mExitTime = System.currentTimeMillis();
