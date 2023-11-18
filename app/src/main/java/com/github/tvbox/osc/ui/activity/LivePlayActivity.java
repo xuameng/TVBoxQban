@@ -709,8 +709,8 @@ public class LivePlayActivity extends BaseActivity {
                     int size = arrayList.size() - 1;
                     while (size >= 0) {
                         if (new Date().compareTo(((Epginfo) arrayList.get(size)).startdateTime) >= 0) {
-                            tip_epg1.setText((Epginfo) selectedData.start + "--" + (Epginfo) selectedData.end);
-                            ((TextView) findViewById(R.id.tv_current_program_name)).setText((Epginfo) selectedData.title);
+                            tip_epg1.setText(((Epginfo) arrayList.get(size)).start + "--" + ((Epginfo) arrayList.get(size)).end);
+                            ((TextView) findViewById(R.id.tv_current_program_name)).setText(((Epginfo) arrayList.get(size)).title);
                             if (size != arrayList.size() - 1) {
                                 tip_epg2.setText(((Epginfo) arrayList.get(size + 1)).start + "--" + ((Epginfo) arrayList.get(size + 1)).end);  //xuameng修复EPG低菜单下一个节目结束的时间
                                 ((TextView) findViewById(R.id.tv_next_program_name)).setText(((Epginfo) arrayList.get(size + 1)).title);
@@ -1457,6 +1457,7 @@ public class LivePlayActivity extends BaseActivity {
                     tv_currentpos.setText(durationToString((int)mVideoView.getCurrentPosition()));
                     tv_duration.setText(durationToString(shiyi_time_c*1000));
 //修好了					hideTimeXu();                       //xuameng进入回看前先隐藏上方系统时间
+                    getEpg(new Date());
                     showProgressBars(true);             //xuameng然后再显示
 					showBottomEpgBack();               //xuameng回看EPG
 //					showTimeXu();                       //xuameng显示系统时间
@@ -1537,6 +1538,7 @@ public class LivePlayActivity extends BaseActivity {
                    // long dd = mVideoView.getDuration();
                     tv_currentpos.setText(durationToString((int)mVideoView.getCurrentPosition()));
                     tv_duration.setText(durationToString(shiyi_time_c*1000));
+					getEpg(new Date());
                     showProgressBars(true);
 					showBottomEpgBack();               //xuameng回看EPG
                     isBack = true;
