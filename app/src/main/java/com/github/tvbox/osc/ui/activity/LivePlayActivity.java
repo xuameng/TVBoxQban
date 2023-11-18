@@ -709,8 +709,8 @@ public class LivePlayActivity extends BaseActivity {
                     int size = arrayList.size() - 1;
                     while (size >= 0) {
                         if (new Date().compareTo(((Epginfo) arrayList.get(size)).startdateTime) >= 0) {
-                            tip_epg1.setText(((Epginfo) selectedData.start + "--" + ((Epginfo) selectedData.end);
-                            ((TextView) findViewById(R.id.tv_current_program_name)).setText(((Epginfo) selectedData.title);
+                            tip_epg1.setText((Epginfo) selectedData.start + "--" + (Epginfo) selectedData.end);
+                            ((TextView) findViewById(R.id.tv_current_program_name)).setText((Epginfo) selectedData.title);
                             if (size != arrayList.size() - 1) {
                                 tip_epg2.setText(((Epginfo) arrayList.get(size + 1)).start + "--" + ((Epginfo) arrayList.get(size + 1)).end);  //xuameng修复EPG低菜单下一个节目结束的时间
                                 ((TextView) findViewById(R.id.tv_next_program_name)).setText(((Epginfo) arrayList.get(size + 1)).title);
