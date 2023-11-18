@@ -454,9 +454,13 @@ public class LivePlayActivity extends BaseActivity {
             }
         } else {             //xuameng无EPG时提示信息
             Epginfo epgbcinfo = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "00:00", "23:59", 0);
+			Epginfo epgbcinfo1 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "00:00", "23:59", 0);
             arrayList.add(epgbcinfo);
+			arrayList1.add(epgbcinfo1);
             epgdata = arrayList;
+			epgdata1 = arrayList1;
             epgListAdapter.setNewData(epgdata);
+			epgListAdapter.setNewData(epgdata1);
 		}
     }
 
@@ -606,9 +610,9 @@ public class LivePlayActivity extends BaseActivity {
                 countDownTimer.start();
             }
             if (channel_Name == null || channel_Name.getSourceNum() <= 1) {
-                ((TextView) findViewById(R.id.tv_source)).setText("[线路信源1/1]");
+                ((TextView) findViewById(R.id.tv_source)).setText("[线路源1/1]");
             } else {
-                ((TextView) findViewById(R.id.tv_source)).setText("[线路信源" + (channel_Name.getSourceIndex() + 1) + "/" + channel_Name.getSourceNum() + "]");
+                ((TextView) findViewById(R.id.tv_source)).setText("[线路源" + (channel_Name.getSourceIndex() + 1) + "/" + channel_Name.getSourceNum() + "]");
             }
             tv_right_top_channel_name.setText(channel_Name.getChannelName());
             tv_right_top_epg_name.setText(channel_Name.getChannelName());
@@ -736,9 +740,9 @@ public class LivePlayActivity extends BaseActivity {
                 countDownTimer.start();
             }
             if (channel_Name == null || channel_Name.getSourceNum() <= 1) {
-                ((TextView) findViewById(R.id.tv_source)).setText("[线路信源1/1]");
+                ((TextView) findViewById(R.id.tv_source)).setText("[线路源1/1]");
             } else {
-                ((TextView) findViewById(R.id.tv_source)).setText("[线路信源" + (channel_Name.getSourceIndex() + 1) + "/" + channel_Name.getSourceNum() + "]");
+                ((TextView) findViewById(R.id.tv_source)).setText("[线路源" + (channel_Name.getSourceIndex() + 1) + "/" + channel_Name.getSourceNum() + "]");
             }
             tv_right_top_channel_name.setText(channel_Name.getChannelName());
             tv_right_top_epg_name.setText(channel_Name.getChannelName());
@@ -802,7 +806,7 @@ public class LivePlayActivity extends BaseActivity {
 			hideNetSpeedXu();		//XUAMENG隐藏左上网速
 			liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
 			epgListAdapter = new LiveEpgAdapter();
-            initEpgListView();
+            initEpgListView();          //xuameng修复回看退出后音频图标不显示，回看还显示回看中等问题
             playXuSource();
         } else {
             mExitTime = System.currentTimeMillis();
@@ -1168,7 +1172,7 @@ public class LivePlayActivity extends BaseActivity {
              isBack = false;
              return true;
         }
-		if (mVideoView == null) return true;
+		if (mVideoView == null) return true;    //XUAMENG可能会引起空指针问题的修复
         mVideoView.release();
         if (!changeSource) {
             currentChannelGroupIndex = channelGroupIndex;
