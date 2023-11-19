@@ -1379,6 +1379,8 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
 //                epgListAdapter.setFocusedEpgIndex(-1);
+			    mRightEpgList.setSelectedPosition(epgListAdapter.getSelectedIndex());        //xuamengEPG打开菜单自动变颜色
+                epgListAdapter.notifyDataSetChanged();                                       //xuamengEPG打开菜单自动变颜色
             }
 
             @Override
