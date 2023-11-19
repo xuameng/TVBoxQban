@@ -1378,8 +1378,7 @@ public class LivePlayActivity extends BaseActivity {
         mRightEpgList.setOnItemListener(new TvRecyclerView.OnItemListener() {
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
-//                epgListAdapter.setFocusedEpgIndex(-1);
-epgListAdapter.setSelectedEpgIndex(-1);
+                epgListAdapter.setFocusedEpgIndex(-1);
             }
 
             @Override
@@ -1484,7 +1483,7 @@ epgListAdapter.setSelectedEpgIndex(-1);
                 if(new Date().compareTo(selectedData.startdateTime) < 0){
                     return;
                 }
-//                epgListAdapter.setSelectedEpgIndex(position);   //xuameng取消电视手机点击无法回看的EPG节目源变色
+//                epgListAdapter.setSelectedEpgIndex(position);
                 if (now.compareTo(selectedData.startdateTime) >= 0 && now.compareTo(selectedData.enddateTime) <= 0) {
                     mVideoView.release();
                     isSHIYI = false;
