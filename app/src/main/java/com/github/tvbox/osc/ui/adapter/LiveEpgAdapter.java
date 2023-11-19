@@ -46,7 +46,10 @@ public class LiveEpgAdapter extends BaseQuickAdapter<Epginfo, BaseViewHolder> {
         if (value.index == selectedEpgIndex && value.index != focusedEpgIndex && (value.currentEpgDate.equals(shiyiDate) || value.currentEpgDate.equals(timeFormat.format(new Date())))) {
             textview.setTextColor(mContext.getResources().getColor(R.color.color_1890FF));
             timeview.setTextColor(mContext.getResources().getColor(R.color.color_1890FF));
-        }else {
+        }else if(value.index == selectedEpgIndex && value.index != focusedEpgIndex){
+            textview.setTextColor(mContext.getResources().getColor(R.color.color_1890FF));
+            timeview.setTextColor(mContext.getResources().getColor(R.color.color_1890FF));
+		}else {
             textview.setTextColor(Color.WHITE);
             timeview.setTextColor(Color.WHITE);
         }
@@ -113,26 +116,19 @@ public class LiveEpgAdapter extends BaseQuickAdapter<Epginfo, BaseViewHolder> {
 
     public void setSelectedEpgIndex(int selectedEpgIndex) {
         if (selectedEpgIndex == this.selectedEpgIndex) return;
-        int preSelectedEpgIndex = this.selectedEpgIndex;
         this.selectedEpgIndex = selectedEpgIndex;
-        if (preSelectedEpgIndex != -1)
-            notifyItemChanged(preSelectedEpgIndex);
         if (this.selectedEpgIndex != -1)
             notifyItemChanged(this.selectedEpgIndex);
     }
+
 
     public int getFocusedEpgIndex() {
         return focusedEpgIndex;
     }
 
     public void setFocusedEpgIndex(int focusedEpgIndex) {
-        int preFocusedEpgIndex = this.focusedEpgIndex;
         this.focusedEpgIndex = focusedEpgIndex;
-        if (preFocusedEpgIndex != -1)
-            notifyItemChanged(preFocusedEpgIndex);
         if (this.focusedEpgIndex != -1)
             notifyItemChanged(this.focusedEpgIndex);
-        else if (this.selectedEpgIndex != -1)
-            notifyItemChanged(this.selectedEpgIndex);
     }
 }
