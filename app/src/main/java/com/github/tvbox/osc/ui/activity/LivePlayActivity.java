@@ -824,7 +824,6 @@ public class LivePlayActivity extends BaseActivity {
 			hideTimeXu();              //xuameng隐藏系统时间
 			hideNetSpeedXu();		//XUAMENG隐藏左上网速
 			liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
-			epgListAdapter = new LiveEpgAdapter();
             initEpgListView();          //xuameng修复回看退出后音频图标不显示，回看还显示回看中等问题
             playXuSource();
         } else {
@@ -1385,7 +1384,7 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
                 mHideChannelListRunXu();
-                epgListAdapter.setFocusedEpgIndex(position);
+//                epgListAdapter.setFocusedEpgIndex(position);
             }
 
             @Override
@@ -1403,13 +1402,14 @@ public class LivePlayActivity extends BaseActivity {
                 if(new Date().compareTo(selectedData.startdateTime) < 0){
                     return;
                 }
-                epgListAdapter.setSelectedEpgIndex(position);
+//                epgListAdapter.setSelectedEpgIndex(position);
                 if (now.compareTo(selectedData.startdateTime) >= 0 && now.compareTo(selectedData.enddateTime) <= 0) {
                     mVideoView.release();
                     isSHIYI = false;
                     mVideoView.setUrl(currentLiveChannelItem.getUrl());
                     mVideoView.start();
                     epgListAdapter.setShiyiSelection(-1, false,timeFormat.format(date));
+					getEpg(new Date());
                     showBottomEpg();           //xuameng显示EPG和上面菜单
                     return;
                 }
@@ -1483,13 +1483,14 @@ public class LivePlayActivity extends BaseActivity {
                 if(new Date().compareTo(selectedData.startdateTime) < 0){
                     return;
                 }
-                epgListAdapter.setSelectedEpgIndex(position);
+//                epgListAdapter.setSelectedEpgIndex(position);
                 if (now.compareTo(selectedData.startdateTime) >= 0 && now.compareTo(selectedData.enddateTime) <= 0) {
                     mVideoView.release();
                     isSHIYI = false;
                     mVideoView.setUrl(currentLiveChannelItem.getUrl());
                     mVideoView.start();
                     epgListAdapter.setShiyiSelection(-1, false,timeFormat.format(date));
+					getEpg(new Date());
                     showBottomEpg();           //xuameng显示EPG和上面菜单
                     return;
                 }
