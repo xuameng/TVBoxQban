@@ -1385,6 +1385,8 @@ public class LivePlayActivity extends BaseActivity {
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
                 mHideChannelListRunXu();
                 epgListAdapter.setFocusedEpgIndex(position);
+				mRightEpgList.setSelectedPosition(epgListAdapter.getSelectedIndex());        //xuamengEPG打开菜单自动变颜色
+                epgListAdapter.notifyDataSetChanged();                                       //xuamengEPG打开菜单自动变颜色
             }
 
             @Override
@@ -1402,7 +1404,7 @@ public class LivePlayActivity extends BaseActivity {
                 if(new Date().compareTo(selectedData.startdateTime) < 0){
                     return;
                 }
-//                epgListAdapter.setSelectedEpgIndex(position);
+//                epgListAdapter.setSelectedEpgIndex(position);        //xuameng取消电视手机点击无法回看的EPG节目源变色
                 if (now.compareTo(selectedData.startdateTime) >= 0 && now.compareTo(selectedData.enddateTime) <= 0) {
                     mVideoView.release();
                     isSHIYI = false;
@@ -1483,7 +1485,7 @@ public class LivePlayActivity extends BaseActivity {
                 if(new Date().compareTo(selectedData.startdateTime) < 0){
                     return;
                 }
-//                epgListAdapter.setSelectedEpgIndex(position);
+//                epgListAdapter.setSelectedEpgIndex(position);   //xuameng取消电视手机点击无法回看的EPG节目源变色
                 if (now.compareTo(selectedData.startdateTime) >= 0 && now.compareTo(selectedData.enddateTime) <= 0) {
                     mVideoView.release();
                     isSHIYI = false;
