@@ -1384,7 +1384,7 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
                 mHideChannelListRunXu();
-//                epgListAdapter.setFocusedEpgIndex(position);
+                epgListAdapter.setFocusedEpgIndex(position);
             }
 
             @Override
