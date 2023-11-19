@@ -1386,7 +1386,6 @@ public class LivePlayActivity extends BaseActivity {
                 mHideChannelListRunXu();
                 epgListAdapter.setFocusedEpgIndex(position);
 				mRightEpgList.setSelectedPosition(epgListAdapter.getSelectedIndex());        //xuamengEPG打开菜单自动变颜色
-                epgListAdapter.notifyDataSetChanged();                                       //xuamengEPG打开菜单自动变颜色
             }
 
             @Override
