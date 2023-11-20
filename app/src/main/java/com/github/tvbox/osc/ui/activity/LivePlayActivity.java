@@ -199,6 +199,7 @@ public class LivePlayActivity extends BaseActivity {
 	private CountDownTimer countDownTimer21;
 	private CountDownTimer countDownTimer22;
 	private CountDownTimer countDownTimer30;
+	private CountDownTimer countDownTimer50;
     private int videoWidth = 1920;
     private int videoHeight = 1080;
     private TextView tv_currentpos;
@@ -1378,7 +1379,22 @@ public class LivePlayActivity extends BaseActivity {
         mRightEpgList.setOnItemListener(new TvRecyclerView.OnItemListener() {
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
-                epgListAdapter.setFocusedEpgIndex(-1);
+               if (mRightEpgList.isScrolling()) {
+                if (countDownTimer50 != null) {
+                countDownTimer50.cancel();
+                }
+			    countDownTimer50 = new CountDownTimer(350, 50) {
+		        public void onTick(long j) {
+                    }
+                    public void onFinish() {
+                                    epgListAdapter.setFocusedEpgIndex(-1);
+                    }
+                };
+                countDownTimer50.start();
+            } else {
+                                epgListAdapter.setFocusedEpgIndex(-1);
+		   }
+
             }
 
             @Override
@@ -1438,9 +1454,9 @@ public class LivePlayActivity extends BaseActivity {
 
                     mVideoView.setUrl(playUrl);
                     mVideoView.start();
-//                    epgListAdapter.setShiyiSelection(position, true, timeFormat.format(date));
-//                    epgListAdapter.notifyDataSetChanged();
-//                    mRightEpgList.setSelectedPosition(position);    
+//                    epgListAdapter.setShiyiSelection(position, true, timeFormat.format(date));       //xuameng修复不能回看时还显示回看中的问题
+//                    epgListAdapter.notifyDataSetChanged();		//xuameng修复不能回看时还显示回看中的问题
+//                    mRightEpgList.setSelectedPosition(position);    //xuameng修复不能回看时还显示回看中的问题
 /*                     mRightEpgList.post(new Runnable() {    //xuameng取消滚动耗时间
                         @Override
                         public void run() {
@@ -1519,9 +1535,9 @@ public class LivePlayActivity extends BaseActivity {
 
                     mVideoView.setUrl(playUrl);
                     mVideoView.start();
-//                    epgListAdapter.setShiyiSelection(position, true,timeFormat.format(date));
-//                    epgListAdapter.notifyDataSetChanged();
-//                    mRightEpgList.setSelectedPosition(position);
+//                    epgListAdapter.setShiyiSelection(position, true,timeFormat.format(date));//xuameng修复不能回看时还显示回看中的问题
+//                    epgListAdapter.notifyDataSetChanged();//xuameng修复不能回看时还显示回看中的问题
+//                    mRightEpgList.setSelectedPosition(position);//xuameng修复不能回看时还显示回看中的问题
 /*                    mRightEpgList.post(new Runnable() {           //xuameng取消滚动耗时间
                         @Override
                         public void run() {
