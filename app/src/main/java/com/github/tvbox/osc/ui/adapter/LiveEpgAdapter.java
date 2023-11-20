@@ -4,7 +4,6 @@ import android.graphics.Color;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-import android.os.CountDownTimer;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -16,8 +15,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-private CountDownTimer countDownTimer30;
 
 public class LiveEpgAdapter extends BaseQuickAdapter<Epginfo, BaseViewHolder> {
     private int selectedEpgIndex = -1;
@@ -127,21 +124,14 @@ public class LiveEpgAdapter extends BaseQuickAdapter<Epginfo, BaseViewHolder> {
     }
 
     public void setFocusedEpgIndex(int focusedEpgIndex) {
-				if (countDownTimer30 != null) {
-                countDownTimer30.cancel();
-                }
-			    countDownTimer30 = new CountDownTimer(200, 50) {//底部epg隐藏时间设定
-		        public void onTick(long j) {
-                    }
-                    public void onFinish() {
-                    int preFocusedEpgIndex = this.focusedEpgIndex;
-					if (preFocusedEpgIndex != -1)
-                    notifyItemChanged(preFocusedEpgIndex);
-                    }
-                };
-                countDownTimer30.start();
-
         this.focusedEpgIndex = focusedEpgIndex;
+		        if (value.index == selectedEpgIndex && value.index != focusedEpgIndex && (value.currentEpgDate.equals(shiyiDate) || value.currentEpgDate.equals(timeFormat.format(new Date())))) {
+            textview.setTextColor(mContext.getResources().getColor(R.color.color_1890FF));
+            timeview.setTextColor(mContext.getResources().getColor(R.color.color_1890FF));
+        }else {
+            textview.setTextColor(Color.WHITE);
+            timeview.setTextColor(Color.WHITE);
+        }
         if (this.focusedEpgIndex != -1)
             notifyItemChanged(this.focusedEpgIndex);
     }
