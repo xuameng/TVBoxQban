@@ -1467,6 +1467,7 @@ public class LivePlayActivity extends BaseActivity {
                     tv_duration.setText(durationToString(shiyi_time_c*1000));
 //修好了					hideTimeXu();                       //xuameng进入回看前先隐藏上方系统时间
                     showProgressBars(true);             //xuameng然后再显示
+					liveEpgDateAdapter.setSelectedIndex(position);
 					getEpg(liveEpgDateAdapter.getData().get(position).getDateParamVal());
 					showBottomEpgBack();               //xuameng回看EPG
 //					showTimeXu();                       //xuameng显示系统时间
@@ -1499,6 +1500,8 @@ public class LivePlayActivity extends BaseActivity {
                     mVideoView.setUrl(currentLiveChannelItem.getUrl());
                     mVideoView.start();
                     epgListAdapter.setShiyiSelection(-1, false,timeFormat.format(date));
+					epgListAdapter.notifyDataSetChanged();
+                    mRightEpgList.setSelectedPosition(position);  
 					getEpg(new Date());
                     showBottomEpg();           //xuameng显示EPG和上面菜单
                     return;
@@ -1548,6 +1551,7 @@ public class LivePlayActivity extends BaseActivity {
                    // long dd = mVideoView.getDuration();
                     tv_currentpos.setText(durationToString((int)mVideoView.getCurrentPosition()));
                     tv_duration.setText(durationToString(shiyi_time_c*1000));
+					liveEpgDateAdapter.setSelectedIndex(position);
 					getEpg(liveEpgDateAdapter.getData().get(position).getDateParamVal());
                     showProgressBars(true);
 					showBottomEpgBack();               //xuameng回看EPG
