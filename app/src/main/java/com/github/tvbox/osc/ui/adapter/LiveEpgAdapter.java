@@ -125,9 +125,14 @@ public class LiveEpgAdapter extends BaseQuickAdapter<Epginfo, BaseViewHolder> {
 
     public void setFocusedEpgIndex(int focusedEpgIndex) {
         this.focusedEpgIndex = focusedEpgIndex;
+		        if (value.index == selectedEpgIndex && value.index != focusedEpgIndex && (value.currentEpgDate.equals(shiyiDate) || value.currentEpgDate.equals(timeFormat.format(new Date())))) {
+            textview.setTextColor(mContext.getResources().getColor(R.color.color_1890FF));
+            timeview.setTextColor(mContext.getResources().getColor(R.color.color_1890FF));
+        }else {
+            textview.setTextColor(Color.WHITE);
+            timeview.setTextColor(Color.WHITE);
+        }
         if (this.focusedEpgIndex != -1)
             notifyItemChanged(this.focusedEpgIndex);
-		else
-			notifyItemChanged(this.focusedEpgIndex);
     }
 }
