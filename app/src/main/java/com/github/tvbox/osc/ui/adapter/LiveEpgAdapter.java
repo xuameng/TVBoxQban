@@ -130,5 +130,7 @@ public class LiveEpgAdapter extends BaseQuickAdapter<Epginfo, BaseViewHolder> {
             notifyItemChanged(preFocusedEpgIndex);
         if (this.focusedEpgIndex != -1)
             notifyItemChanged(this.focusedEpgIndex);
+		if (this.focusedEpgIndex = -1)
+            return;
     }
 }
