@@ -448,17 +448,7 @@ public class LivePlayActivity extends BaseActivity {
                 mRightEpgList.post(new Runnable() {
                      @Override
                      public void run() {
-                         			if (countDownTimer30 != null) {
-                countDownTimer30.cancel();
-                }
-			    countDownTimer30 = new CountDownTimer(300, 50) {//底部epg隐藏时间设定
-		        public void onTick(long j) {
-                    }
-                    public void onFinish() {
-                    mRightEpgList.smoothScrollToPosition(finalI);
-                    }
-                };
-                countDownTimer30.start();
+                         mRightEpgList.smoothScrollToPosition(finalI);
                      }
                 });
             }
