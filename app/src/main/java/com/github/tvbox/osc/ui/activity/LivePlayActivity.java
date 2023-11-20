@@ -824,8 +824,7 @@ public class LivePlayActivity extends BaseActivity {
 			hideTimeXu();              //xuameng隐藏系统时间
 			hideNetSpeedXu();		//XUAMENG隐藏左上网速
 			liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
-            	    mRightEpgList.setSelectedPosition(epgListAdapter.getSelectedIndex());        //xuamengEPG打开菜单自动变颜色
-        epgListAdapter.notifyDataSetChanged();                                       //xuamengEPG打开菜单自动变颜色
+            initEpgListView();          //xuameng修复回看退出后音频图标不显示，回看还显示回看中等问题
             playXuSource();
         } else {
             mExitTime = System.currentTimeMillis();
