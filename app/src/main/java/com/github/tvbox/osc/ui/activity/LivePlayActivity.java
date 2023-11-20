@@ -824,7 +824,8 @@ public class LivePlayActivity extends BaseActivity {
 			hideTimeXu();              //xuameng隐藏系统时间
 			hideNetSpeedXu();		//XUAMENG隐藏左上网速
 			liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
-            initEpgListView();          //xuameng修复回看退出后音频图标不显示，回看还显示回看中等问题
+            	    mRightEpgList.setSelectedPosition(epgListAdapter.getSelectedIndex());        //xuamengEPG打开菜单自动变颜色
+        epgListAdapter.notifyDataSetChanged();                                       //xuamengEPG打开菜单自动变颜色
             playXuSource();
         } else {
             mExitTime = System.currentTimeMillis();
@@ -1184,6 +1185,8 @@ public class LivePlayActivity extends BaseActivity {
                 || (changeSource && currentLiveChannelItem.getSourceNum() == 1)) {
            // xuamengEPG日期自动选今天
 		   	 liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
+			 mRightEpgList.setSelectedPosition(epgListAdapter.getSelectedIndex());        //xuamengEPG打开菜单自动变颜色
+             epgListAdapter.notifyDataSetChanged();                                       //xuamengEPG打开菜单自动变颜色
 		     showBottomEpg();
              getEpg(new Date());
              isSHIYI=false;
@@ -1199,6 +1202,8 @@ public class LivePlayActivity extends BaseActivity {
             Hawk.put(HawkConfig.LIVE_CHANNEL, currentLiveChannelItem.getChannelName());
             livePlayerManager.getLiveChannelPlayer(mVideoView, currentLiveChannelItem.getChannelName());
 			liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
+		    mRightEpgList.setSelectedPosition(epgListAdapter.getSelectedIndex());        //xuamengEPG打开菜单自动变颜色
+            epgListAdapter.notifyDataSetChanged();                                       //xuamengEPG打开菜单自动变颜色
         }
 
         channel_Name = currentLiveChannelItem;
@@ -1223,6 +1228,8 @@ public class LivePlayActivity extends BaseActivity {
                 };
                 countDownTimer30.start();
 	    liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
+	    mRightEpgList.setSelectedPosition(epgListAdapter.getSelectedIndex());        //xuamengEPG打开菜单自动变颜色
+        epgListAdapter.notifyDataSetChanged();                                       //xuamengEPG打开菜单自动变颜色
         backcontroller.setVisibility(View.GONE);
         ll_right_top_huikan.setVisibility(View.GONE);
 		Mtv_left_top_xu.setVisibility(View.GONE);         //xuameng直播时隐藏回看的菜单
@@ -1409,6 +1416,8 @@ public class LivePlayActivity extends BaseActivity {
                     mVideoView.setUrl(currentLiveChannelItem.getUrl());
                     mVideoView.start();
                     epgListAdapter.setShiyiSelection(-1, false,timeFormat.format(date));
+					epgListAdapter.notifyDataSetChanged();
+                    mRightEpgList.setSelectedPosition(position); 
 					getEpg(new Date());
                     showBottomEpg();           //xuameng显示EPG和上面菜单
                     return;
@@ -1483,7 +1492,7 @@ public class LivePlayActivity extends BaseActivity {
                 if(new Date().compareTo(selectedData.startdateTime) < 0){
                     return;
                 }
-//                epgListAdapter.setSelectedEpgIndex(position);
+//                epgListAdapter.setSelectedEpgIndex(position);   //xuameng取消电视手机点击无法回看的EPG节目源变色
                 if (now.compareTo(selectedData.startdateTime) >= 0 && now.compareTo(selectedData.enddateTime) <= 0) {
                     mVideoView.release();
                     isSHIYI = false;
