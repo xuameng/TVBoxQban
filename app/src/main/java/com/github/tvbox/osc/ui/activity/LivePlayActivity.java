@@ -1438,7 +1438,7 @@ public class LivePlayActivity extends BaseActivity {
 
                     mVideoView.setUrl(playUrl);
                     mVideoView.start();
-                    epgListAdapter.setShiyiSelection(position, true, timeFormat.format(date));
+//                    epgListAdapter.setShiyiSelection(position, true, timeFormat.format(date));
 //                    epgListAdapter.notifyDataSetChanged();
 //                    mRightEpgList.setSelectedPosition(position);    
 /*                     mRightEpgList.post(new Runnable() {    //xuameng取消滚动耗时间
@@ -1519,7 +1519,7 @@ public class LivePlayActivity extends BaseActivity {
 
                     mVideoView.setUrl(playUrl);
                     mVideoView.start();
-                    epgListAdapter.setShiyiSelection(position, true,timeFormat.format(date));
+//                    epgListAdapter.setShiyiSelection(position, true,timeFormat.format(date));
 //                    epgListAdapter.notifyDataSetChanged();
 //                    mRightEpgList.setSelectedPosition(position);
 /*                    mRightEpgList.post(new Runnable() {           //xuameng取消滚动耗时间
