@@ -199,7 +199,6 @@ public class LivePlayActivity extends BaseActivity {
 	private CountDownTimer countDownTimer21;
 	private CountDownTimer countDownTimer22;
 	private CountDownTimer countDownTimer30;
-	private CountDownTimer countDownTimer50;
     private int videoWidth = 1920;
     private int videoHeight = 1080;
     private TextView tv_currentpos;
@@ -1379,22 +1378,7 @@ public class LivePlayActivity extends BaseActivity {
         mRightEpgList.setOnItemListener(new TvRecyclerView.OnItemListener() {
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
-               if (mRightEpgList.isScrolling()) {
-                if (countDownTimer50 != null) {
-                countDownTimer50.cancel();
-                }
-			    countDownTimer50 = new CountDownTimer(350, 50) {
-		        public void onTick(long j) {
-                    }
-                    public void onFinish() {
-                                    epgListAdapter.setFocusedEpgIndex(-1);
-                    }
-                };
-                countDownTimer50.start();
-            } else {
-                                epgListAdapter.setFocusedEpgIndex(-1);
-		   }
-
+                epgListAdapter.setFocusedEpgIndex(-1);
             }
 
             @Override
