@@ -1209,8 +1209,18 @@ public class LivePlayActivity extends BaseActivity {
             currentLiveChannelItem.setinclude_back(false);
         }
         showBottomEpg();
-                    getEpg(new Date());
 
+		if (countDownTimer30 != null) {
+                countDownTimer30.cancel();
+                }
+			    countDownTimer30 = new CountDownTimer(300, 50) {//底部epg隐藏时间设定
+		        public void onTick(long j) {
+                    }
+                    public void onFinish() {
+                    getEpg(new Date());
+                    }
+                };
+                countDownTimer30.start();
 	    liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
         backcontroller.setVisibility(View.GONE);
         ll_right_top_huikan.setVisibility(View.GONE);
