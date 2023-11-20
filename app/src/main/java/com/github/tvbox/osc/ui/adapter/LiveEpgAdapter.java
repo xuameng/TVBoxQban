@@ -4,7 +4,6 @@ import android.graphics.Color;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-import android.os.CountDownTimer;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -27,7 +26,6 @@ public class LiveEpgAdapter extends BaseQuickAdapter<Epginfo, BaseViewHolder> {
     private String currentEpgDate = null;
     private int focusSelection = -1;
     private boolean source_include_back = false;
-	private CountDownTimer countDownTimer30;
 
     SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd");
     public LiveEpgAdapter() {
@@ -126,20 +124,6 @@ public class LiveEpgAdapter extends BaseQuickAdapter<Epginfo, BaseViewHolder> {
     }
 
     public void setFocusedEpgIndex(int focusedEpgIndex) {
-				if (countDownTimer30 != null) {
-                countDownTimer30.cancel();
-                }
-			    countDownTimer30 = new CountDownTimer(200, 50) {//底部epg隐藏时间设定
-		        public void onTick(long j) {
-                    }
-                    public void onFinish() {
-                    int preFocusedEpgIndex = this.focusedEpgIndex;
-					if (preFocusedEpgIndex != -1)
-                    notifyItemChanged(preFocusedEpgIndex);
-                    }
-                };
-                countDownTimer30.start();
-
         this.focusedEpgIndex = focusedEpgIndex;
         if (this.focusedEpgIndex != -1)
             notifyItemChanged(this.focusedEpgIndex);
