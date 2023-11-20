@@ -1184,8 +1184,6 @@ public class LivePlayActivity extends BaseActivity {
                 || (changeSource && currentLiveChannelItem.getSourceNum() == 1)) {
            // xuamengEPG日期自动选今天
 		   	 liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
-					epgListAdapter.notifyDataSetChanged();
-                    mRightEpgList.setSelectedPosition(position); 
 		     showBottomEpg();
              getEpg(new Date());
              isSHIYI=false;
@@ -1201,8 +1199,6 @@ public class LivePlayActivity extends BaseActivity {
             Hawk.put(HawkConfig.LIVE_CHANNEL, currentLiveChannelItem.getChannelName());
             livePlayerManager.getLiveChannelPlayer(mVideoView, currentLiveChannelItem.getChannelName());
 			liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
-					epgListAdapter.notifyDataSetChanged();
-                    mRightEpgList.setSelectedPosition(position); 
         }
 
         channel_Name = currentLiveChannelItem;
@@ -1227,8 +1223,6 @@ public class LivePlayActivity extends BaseActivity {
                 };
                 countDownTimer30.start();
 	    liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
-					epgListAdapter.notifyDataSetChanged();
-                    mRightEpgList.setSelectedPosition(position); 
         backcontroller.setVisibility(View.GONE);
         ll_right_top_huikan.setVisibility(View.GONE);
 		Mtv_left_top_xu.setVisibility(View.GONE);         //xuameng直播时隐藏回看的菜单
@@ -1415,8 +1409,6 @@ public class LivePlayActivity extends BaseActivity {
                     mVideoView.setUrl(currentLiveChannelItem.getUrl());
                     mVideoView.start();
                     epgListAdapter.setShiyiSelection(-1, false,timeFormat.format(date));
-					epgListAdapter.notifyDataSetChanged();
-                    mRightEpgList.setSelectedPosition(position); 
 					getEpg(new Date());
                     showBottomEpg();           //xuameng显示EPG和上面菜单
                     return;
@@ -1447,8 +1439,8 @@ public class LivePlayActivity extends BaseActivity {
                     mVideoView.setUrl(playUrl);
                     mVideoView.start();
                     epgListAdapter.setShiyiSelection(position, true, timeFormat.format(date));
-                    epgListAdapter.notifyDataSetChanged();
-                    mRightEpgList.setSelectedPosition(position);    
+//                    epgListAdapter.notifyDataSetChanged();
+//                    mRightEpgList.setSelectedPosition(position);    
 /*                     mRightEpgList.post(new Runnable() {    //xuameng取消滚动耗时间
                         @Override
                         public void run() {
@@ -1528,8 +1520,8 @@ public class LivePlayActivity extends BaseActivity {
                     mVideoView.setUrl(playUrl);
                     mVideoView.start();
                     epgListAdapter.setShiyiSelection(position, true,timeFormat.format(date));
-                    epgListAdapter.notifyDataSetChanged();
-                    mRightEpgList.setSelectedPosition(position);
+//                    epgListAdapter.notifyDataSetChanged();
+//                    mRightEpgList.setSelectedPosition(position);
 /*                    mRightEpgList.post(new Runnable() {           //xuameng取消滚动耗时间
                         @Override
                         public void run() {
