@@ -791,8 +791,8 @@ public class LivePlayActivity extends BaseActivity {
         divEpg.setVisibility(View.VISIBLE);
         divLoadEpgleft.setVisibility(View.VISIBLE);
         divLoadEpg.setVisibility(View.GONE);
-       
-       
+        mRightEpgList.setSelectedPosition(epgListAdapter.getSelectedIndex());
+        epgListAdapter.notifyDataSetChanged();
     }
     //频道列表
     public  void divLoadEpgLeft(View view) {
@@ -1066,8 +1066,8 @@ public class LivePlayActivity extends BaseActivity {
                 mLiveChannelView.setSelection(currentLiveChannelIndex);
                 mChannelGroupView.scrollToPosition(currentChannelGroupIndex);
                 mChannelGroupView.setSelection(currentChannelGroupIndex);
-			          //xuamengEPG打开菜单自动变颜色
-                                                      //xuamengEPG打开菜单自动变颜色
+			    mRightEpgList.setSelectedPosition(epgListAdapter.getSelectedIndex());        //xuamengEPG打开菜单自动变颜色
+                epgListAdapter.notifyDataSetChanged();                                       //xuamengEPG打开菜单自动变颜色
 			if (countDownTimer10 != null) {
                 countDownTimer10.cancel();
                 }
@@ -1210,10 +1210,17 @@ public class LivePlayActivity extends BaseActivity {
         }
         showBottomEpg();
 
-
+		if (countDownTimer30 != null) {
+                countDownTimer30.cancel();
+                }
+			    countDownTimer30 = new CountDownTimer(300, 50) {//底部epg隐藏时间设定
+		        public void onTick(long j) {
+                    }
+                    public void onFinish() {
                     getEpg(new Date());
-                    
-             
+                    }
+                };
+                countDownTimer30.start();
 	    liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
         backcontroller.setVisibility(View.GONE);
         ll_right_top_huikan.setVisibility(View.GONE);
