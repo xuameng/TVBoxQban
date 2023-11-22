@@ -444,7 +444,13 @@ public class LivePlayActivity extends BaseActivity {
                 mRightEpgList.setSelectedPosition(i);
                 mRightEpgList.setSelection(i);
                 epgListAdapter.setSelectedEpgIndex(i);
-
+                int finalI = i;
+                mRightEpgList.post(new Runnable() {
+                     @Override
+                     public void run() {
+                         mRightEpgList.smoothScrollToPosition(finalI);
+                     }
+                });
             }
         } else {             //xuameng无EPG时提示信息
             Epginfo epgbcinfo = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "00:00", "01:59", 0);
@@ -785,8 +791,8 @@ public class LivePlayActivity extends BaseActivity {
         divEpg.setVisibility(View.VISIBLE);
         divLoadEpgleft.setVisibility(View.VISIBLE);
         divLoadEpg.setVisibility(View.GONE);
- 	//		    mRightEpgList.setSelection(epgListAdapter.getSelectedIndex());        //xuamengEPG打开菜单自动变颜色
-    //            mRightEpgList.scrollToPosition(epgListAdapter.getSelectedIndex());        //xuamengEPG打开菜单自动变颜色
+        mRightEpgList.setSelectedPosition(epgListAdapter.getSelectedIndex());
+        epgListAdapter.notifyDataSetChanged();
     }
     //频道列表
     public  void divLoadEpgLeft(View view) {
@@ -1060,10 +1066,7 @@ public class LivePlayActivity extends BaseActivity {
                 mLiveChannelView.setSelection(currentLiveChannelIndex);
                 mChannelGroupView.scrollToPosition(currentChannelGroupIndex);
                 mChannelGroupView.setSelection(currentChannelGroupIndex);
-			    mRightEpgList.setSelection(epgListAdapter.getSelectedIndex());        //xuamengEPG打开菜单自动变颜色
-                mRightEpgList.scrollToPosition(epgListAdapter.getSelectedIndex());        //xuamengEPG打开菜单自动变颜色
-
-
+			    mRightEpgList.setSelectedPosition(epgListAdapter.getSelectedIndex());        //xuamengEPG打开菜单自动变颜色
                 epgListAdapter.notifyDataSetChanged();                                       //xuamengEPG打开菜单自动变颜色
 			if (countDownTimer10 != null) {
                 countDownTimer10.cancel();
@@ -1181,6 +1184,7 @@ public class LivePlayActivity extends BaseActivity {
            // xuamengEPG日期自动选今天
 		   	 liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
 		     showBottomEpg();
+//             getEpg(new Date());
              isSHIYI=false;
              isBack = false;
              return true;
@@ -1206,8 +1210,17 @@ public class LivePlayActivity extends BaseActivity {
         }
         showBottomEpg();
 
+		if (countDownTimer30 != null) {
+                countDownTimer30.cancel();
+                }
+			    countDownTimer30 = new CountDownTimer(300, 50) {//底部epg隐藏时间设定
+		        public void onTick(long j) {
+                    }
+                    public void onFinish() {
                     getEpg(new Date());
-
+                    }
+                };
+                countDownTimer30.start();
 	    liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
         backcontroller.setVisibility(View.GONE);
         ll_right_top_huikan.setVisibility(View.GONE);
@@ -1364,11 +1377,11 @@ public class LivePlayActivity extends BaseActivity {
         mRightEpgList.setOnItemListener(new TvRecyclerView.OnItemListener() {
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
-				if (mRightEpgList.isScrolling() || mRightEpgList.isComputingLayout())  {
+               if (mRightEpgList.isScrolling() || mRightEpgList.isComputingLayout())  {
                    return;
 				}
-           else     
-			   epgListAdapter.setFocusedEpgIndex(-1);
+               else     
+			       epgListAdapter.setFocusedEpgIndex(-1);
             }
 
             @Override
@@ -1398,7 +1411,8 @@ public class LivePlayActivity extends BaseActivity {
                     isSHIYI = false;
                     mVideoView.setUrl(currentLiveChannelItem.getUrl());
                     mVideoView.start();
-      //              epgListAdapter.setShiyiSelection(-1, false,timeFormat.format(date));
+//                    epgListAdapter.setShiyiSelection(-1, false,timeFormat.format(date));    //XUAMENG没用了
+//					getEpg(new Date());
                     showBottomEpg();           //xuameng显示EPG和上面菜单
                     return;
                 }
@@ -1447,7 +1461,6 @@ public class LivePlayActivity extends BaseActivity {
                     tv_currentpos.setText(durationToString((int)mVideoView.getCurrentPosition()));
                     tv_duration.setText(durationToString(shiyi_time_c*1000));
 //修好了					hideTimeXu();                       //xuameng进入回看前先隐藏上方系统时间
-getEpg(new Date());
                     showProgressBars(true);             //xuameng然后再显示
 					showBottomEpgBack();               //xuameng回看EPG
 //					showTimeXu();                       //xuameng显示系统时间
@@ -1479,7 +1492,8 @@ getEpg(new Date());
                     isSHIYI = false;
                     mVideoView.setUrl(currentLiveChannelItem.getUrl());
                     mVideoView.start();
-    //                epgListAdapter.setShiyiSelection(-1, false,timeFormat.format(date));
+                    epgListAdapter.setShiyiSelection(-1, false,timeFormat.format(date));
+//					getEpg(new Date());
                     showBottomEpg();           //xuameng显示EPG和上面菜单
                     return;
                 }
@@ -1528,7 +1542,6 @@ getEpg(new Date());
                    // long dd = mVideoView.getDuration();
                     tv_currentpos.setText(durationToString((int)mVideoView.getCurrentPosition()));
                     tv_duration.setText(durationToString(shiyi_time_c*1000));
-					getEpg(new Date());
                     showProgressBars(true);
 					showBottomEpgBack();               //xuameng回看EPG
                     isBack = true;
