@@ -1364,7 +1364,7 @@ public class LivePlayActivity extends BaseActivity {
         mRightEpgList.setOnItemListener(new TvRecyclerView.OnItemListener() {
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
-				if (mRightEpgList.isScrolling() || mRightEpgList.isComputingLayout()  {
+				if (mRightEpgList.isScrolling() || mRightEpgList.isComputingLayout())  {
                    return;
 				}
            else     
