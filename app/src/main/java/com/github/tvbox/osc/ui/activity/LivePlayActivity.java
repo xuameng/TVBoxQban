@@ -1394,7 +1394,7 @@ public class LivePlayActivity extends BaseActivity {
                     isSHIYI = false;
                     mVideoView.setUrl(currentLiveChannelItem.getUrl());
                     mVideoView.start();
-                    epgListAdapter.setShiyiSelection(-1, false,timeFormat.format(date));
+      //              epgListAdapter.setShiyiSelection(-1, false,timeFormat.format(date));
                     showBottomEpg();           //xuameng显示EPG和上面菜单
                     return;
                 }
@@ -1475,7 +1475,7 @@ getEpg(new Date());
                     isSHIYI = false;
                     mVideoView.setUrl(currentLiveChannelItem.getUrl());
                     mVideoView.start();
-                    epgListAdapter.setShiyiSelection(-1, false,timeFormat.format(date));
+    //                epgListAdapter.setShiyiSelection(-1, false,timeFormat.format(date));
                     showBottomEpg();           //xuameng显示EPG和上面菜单
                     return;
                 }
