@@ -791,7 +791,6 @@ public class LivePlayActivity extends BaseActivity {
         divEpg.setVisibility(View.VISIBLE);
         divLoadEpgleft.setVisibility(View.VISIBLE);
         divLoadEpg.setVisibility(View.GONE);
-
 		mRightEpgList.setSelection(epgListAdapter.getSelectedIndex());        //xuamengEPG打开菜单自动变颜色
 
     }
@@ -1067,7 +1066,7 @@ public class LivePlayActivity extends BaseActivity {
                 mLiveChannelView.setSelection(currentLiveChannelIndex);
                 mChannelGroupView.scrollToPosition(currentChannelGroupIndex);
                 mChannelGroupView.setSelection(currentChannelGroupIndex);
-	mRightEpgList.setSelection(epgListAdapter.getSelectedIndex());        //xuamengEPG打开菜单自动变颜色
+	            mRightEpgList.setSelection(epgListAdapter.getSelectedIndex());        //xuamengEPG打开菜单自动变颜色
 			if (countDownTimer10 != null) {
                 countDownTimer10.cancel();
                 }
@@ -1184,7 +1183,7 @@ public class LivePlayActivity extends BaseActivity {
            // xuamengEPG日期自动选今天
 		   	 liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
 		     showBottomEpg();
-//             getEpg(new Date());
+             getEpg(new Date());
              isSHIYI=false;
              isBack = false;
              return true;
@@ -1377,7 +1376,7 @@ public class LivePlayActivity extends BaseActivity {
         mRightEpgList.setOnItemListener(new TvRecyclerView.OnItemListener() {
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
-               if (mRightEpgList.isScrolling() || mRightEpgList.isComputingLayout())  {
+               if (mRightEpgList.isScrolling() || mRightEpgList.isComputingLayout())  {        //xuameng如果EPG正在滚动返回，解决BUG
                    return;
 				}
                else     
@@ -1412,7 +1411,7 @@ public class LivePlayActivity extends BaseActivity {
                     mVideoView.setUrl(currentLiveChannelItem.getUrl());
                     mVideoView.start();
 //                    epgListAdapter.setShiyiSelection(-1, false,timeFormat.format(date));    //XUAMENG没用了
-//					getEpg(new Date());
+					getEpg(new Date());
                     showBottomEpg();           //xuameng显示EPG和上面菜单
                     return;
                 }
@@ -1493,7 +1492,7 @@ public class LivePlayActivity extends BaseActivity {
                     mVideoView.setUrl(currentLiveChannelItem.getUrl());
                     mVideoView.start();
                     epgListAdapter.setShiyiSelection(-1, false,timeFormat.format(date));
-//					getEpg(new Date());
+					getEpg(new Date());
                     showBottomEpg();           //xuameng显示EPG和上面菜单
                     return;
                 }
