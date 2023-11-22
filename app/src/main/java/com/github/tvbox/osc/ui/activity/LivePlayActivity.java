@@ -717,7 +717,11 @@ public class LivePlayActivity extends BaseActivity {
                             }
                             break;
                         } else {
-                            size--;
+                                                      tip_epg1.setText(((Epginfo) arrayList.get(size)).start + "--" + ((Epginfo) arrayList.get(size)).end);
+                            ((TextView) findViewById(R.id.tv_current_program_name)).setText(((Epginfo) arrayList.get(size)).title);
+                            if (size != arrayList.size() - 1) {
+                                tip_epg2.setText(((Epginfo) arrayList.get(size + 1)).start + "--" + ((Epginfo) arrayList.get(size + 1)).end);  //xuameng修复EPG低菜单下一个节目结束的时间
+                                ((TextView) findViewById(R.id.tv_next_program_name)).setText(((Epginfo) arrayList.get(size + 1)).title);
                         }
                     }
                 }
@@ -1180,7 +1184,7 @@ public class LivePlayActivity extends BaseActivity {
     private boolean playChannel(int channelGroupIndex, int liveChannelIndex, boolean changeSource) {       //xuameng播放
         if ((channelGroupIndex == currentChannelGroupIndex && liveChannelIndex == currentLiveChannelIndex && !changeSource)
                 || (changeSource && currentLiveChannelItem.getSourceNum() == 1)) {
-           // xuamengEPG日期自动选今天
+             // xuamengEPG日期自动选今天
 		   	 liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
 		     showBottomEpg();
              getEpg(new Date());
@@ -1202,7 +1206,7 @@ public class LivePlayActivity extends BaseActivity {
         channel_Name = currentLiveChannelItem;
         isSHIYI=false;
         isBack = false;
-        if(currentLiveChannelItem.getUrl().indexOf("PLTV/") !=-1){
+        if(currentLiveChannelItem.getUrl().indexOf("PLTV/") !=-1){       //xuameng判断直播源URL中有没有PLTV字符，有才可以时移
             currentLiveChannelItem.setinclude_back(true);
         }else {
             currentLiveChannelItem.setinclude_back(false);
@@ -1404,13 +1408,13 @@ public class LivePlayActivity extends BaseActivity {
                 if(new Date().compareTo(selectedData.startdateTime) < 0){
                     return;
                 }
-//                epgListAdapter.setSelectedEpgIndex(position);        //xuameng取消电视手机点击无法回看的EPG节目源变色
+//                 epgListAdapter.setSelectedEpgIndex(position);        //xuameng取消电视手机点击无法回看的EPG节目源变色
                 if (now.compareTo(selectedData.startdateTime) >= 0 && now.compareTo(selectedData.enddateTime) <= 0) {
                     mVideoView.release();
                     isSHIYI = false;
                     mVideoView.setUrl(currentLiveChannelItem.getUrl());
                     mVideoView.start();
-//                    epgListAdapter.setShiyiSelection(-1, false,timeFormat.format(date));    //XUAMENG没用了
+//                  epgListAdapter.setShiyiSelection(-1, false,timeFormat.format(date));    //XUAMENG没用了
 					getEpg(new Date());
                     showBottomEpg();           //xuameng显示EPG和上面菜单
                     return;
@@ -1418,7 +1422,7 @@ public class LivePlayActivity extends BaseActivity {
                 String shiyiUrl = currentLiveChannelItem.getUrl();
                 if (now.compareTo(selectedData.startdateTime) < 0) {
 
-                } else if(shiyiUrl.indexOf("PLTV/") !=-1){
+                } else if(shiyiUrl.indexOf("PLTV/") !=-1){     //xuameng判断直播源URL中有没有PLTV字符，有才可以时移
 
                     mHideChannelListRun();      //xuameng点击EPG中的直播隐藏左菜单
                     mVideoView.release();
@@ -1459,7 +1463,7 @@ public class LivePlayActivity extends BaseActivity {
                     sBar.setProgress((int)  mVideoView.getCurrentPosition());
                     tv_currentpos.setText(durationToString((int)mVideoView.getCurrentPosition()));
                     tv_duration.setText(durationToString(shiyi_time_c*1000));
-//修好了					hideTimeXu();                       //xuameng进入回看前先隐藏上方系统时间
+//修好了			hideTimeXu();                       //xuameng进入回看前先隐藏上方系统时间
                     showProgressBars(true);             //xuameng然后再显示
 					showBottomEpgBack();               //xuameng回看EPG
 //					showTimeXu();                       //xuameng显示系统时间
@@ -1499,7 +1503,7 @@ public class LivePlayActivity extends BaseActivity {
                 String shiyiUrl = currentLiveChannelItem.getUrl();
                 if (now.compareTo(selectedData.startdateTime) < 0) {
 
-                } else if(shiyiUrl.indexOf("PLTV/") !=-1){
+                } else if(shiyiUrl.indexOf("PLTV/") !=-1){     //xuameng判断直播源URL中有没有PLTV字符，有才可以时移
                   mHideChannelListRun();
 
                     mVideoView.release();
