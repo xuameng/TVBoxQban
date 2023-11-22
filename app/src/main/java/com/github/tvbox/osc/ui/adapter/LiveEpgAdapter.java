@@ -55,7 +55,8 @@ public class LiveEpgAdapter extends BaseQuickAdapter<Epginfo, BaseViewHolder> {
             shiyi.setBackgroundColor(Color.YELLOW);
             shiyi.setText("直播中");
             shiyi.setTextColor(Color.RED);
-        } else if (new Date().compareTo(value.enddateTime) > 0 && source_include_back ) {
+//        } else if (new Date().compareTo(value.enddateTime) > 0 && source_include_back ) {
+        } else if (new Date().compareTo(value.enddateTime) > 0) {
             shiyi.setVisibility(View.VISIBLE);
             shiyi.setBackgroundColor(Color.rgb(80, 80, 80));
             shiyi.setTextColor(Color.WHITE);
@@ -123,12 +124,12 @@ public class LiveEpgAdapter extends BaseQuickAdapter<Epginfo, BaseViewHolder> {
         return focusedEpgIndex;
     }
 
-    public void setFocusedEpgIndex(int focusedEpgIndex) {
+    public void setFocusedEpgIndex(int focusedEpgIndex) {   //xuamengEPG选中时白色，不选中时蓝色
       int prefocusedEpgIndex = this.focusedEpgIndex;   
-        this.focusedEpgIndex = focusedEpgIndex;
+      this.focusedEpgIndex = focusedEpgIndex;
           if (prefocusedEpgIndex != -1)
             notifyItemChanged(prefocusedEpgIndex);   
-        if (this.focusedEpgIndex != -1)
+          if (this.focusedEpgIndex != -1)
             notifyItemChanged(this.focusedEpgIndex);
     }
 }
