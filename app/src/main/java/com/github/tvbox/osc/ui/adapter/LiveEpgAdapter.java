@@ -64,7 +64,7 @@ public class LiveEpgAdapter extends BaseQuickAdapter<Epginfo, BaseViewHolder> {
             shiyi.setVisibility(View.VISIBLE);
             shiyi.setBackgroundColor(Color.rgb(8, 157, 1));
             shiyi.setTextColor(Color.WHITE);
-            shiyi.setText("将来");
+            shiyi.setText("预告");
         } else {
             shiyi.setVisibility(View.GONE);
         }
