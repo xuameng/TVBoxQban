@@ -716,11 +716,11 @@ public class LivePlayActivity extends BaseActivity {
                                 ((TextView) findViewById(R.id.tv_next_program_name)).setText(((Epginfo) arrayList.get(size + 1)).title);
                             }
                             break;
-                        } else if (new Date().compareTo(selectedData.enddateTime) > 0){
-							String savedEpgKey = channel_Name.getChannelName() + "_" + liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex()).getDatePresented();
-							                String[] epgInfo = EpgUtil.getEpgInfo(channel_Name.getChannelName());
-                updateChannelIcon(channel_Name.getChannelName(), epgInfo == null ? null : epgInfo[0]);
-                ArrayList arrayList = (ArrayList) hsEpg.get(savedEpgKey);
+                        } else if (new Date().compareTo(((Epginfo) arrayList.get(size)).enddateTime) > 0){
+							String savedEpgKeyXu = channel_Name.getChannelName() + "_" + liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex()).getDatePresented();
+							                String[] epgInfoXu = EpgUtil.getEpgInfo(channel_Name.getChannelName());
+                updateChannelIcon(channel_Name.getChannelName(), epgInfoXu == null ? null : epgInfoXu[0]);
+                ArrayList arrayList = (ArrayList) hsEpg.get(savedEpgKeyXu);
 						     tip_epg1.setText(((Epginfo) arrayList.get(size)).start + "--" + ((Epginfo) arrayList.get(size)).end);
                             ((TextView) findViewById(R.id.tv_current_program_name)).setText(((Epginfo) arrayList.get(size)).title);
                             if (size != arrayList.size() - 1) {
