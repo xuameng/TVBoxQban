@@ -1990,7 +1990,8 @@ public class LivePlayActivity extends BaseActivity {
                 countDownTimer50.start();
 
 epgListAdapter.notifyDataSetChanged();
-liveChannelItemAdapter.setSelectedChannelIndex(currentLiveChannelIndex);
+liveChannelItemAdapter.setSelectedChannelIndex(position);
+
                 liveChannelItemAdapter.setFocusedChannelIndex(position);
                 mHideChannelListRunXu();  //xuameng隐藏频道菜单
             }
