@@ -199,6 +199,7 @@ public class LivePlayActivity extends BaseActivity {
 	private CountDownTimer countDownTimer21;
 	private CountDownTimer countDownTimer22;
 	private CountDownTimer countDownTimer30;
+	private CountDownTimer countDownTimer50;
     private int videoWidth = 1920;
     private int videoHeight = 1080;
     private TextView tv_currentpos;
@@ -1976,7 +1977,18 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
                 if (position < 0) return;
-getEpgXu(new Date());
+						if (countDownTimer50 != null) {
+                countDownTimer50.cancel();
+                }
+			    countDownTimer50 = new CountDownTimer(300, 50) {//底部epg隐藏时间设定
+		        public void onTick(long j) {
+                    }
+                    public void onFinish() {
+                    getEpgXu(new Date());
+                    }
+                };
+                countDownTimer50.start();
+
 epgListAdapter.notifyDataSetChanged();
 liveChannelItemAdapter.setSelectedChannelIndex(currentLiveChannelIndex);
                 liveChannelItemAdapter.setFocusedChannelIndex(position);
