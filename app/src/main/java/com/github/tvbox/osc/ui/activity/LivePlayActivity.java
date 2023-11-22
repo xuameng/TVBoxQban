@@ -1989,7 +1989,6 @@ public class LivePlayActivity extends BaseActivity {
                 };
                 countDownTimer50.start();
 
-epgListAdapter.notifyDataSetChanged();
 liveChannelItemAdapter.setSelectedChannelIndex(position);
 
                 liveChannelItemAdapter.setFocusedChannelIndex(position);
