@@ -1865,7 +1865,7 @@ public class LivePlayActivity extends BaseActivity {
         mLiveChannelView.setOnItemListener(new TvRecyclerView.OnItemListener() {
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
-				liveChannelItemAdapter.setFocusedChannelIndex(-1);
+				liveChannelItemAdapter.setFocusedChannelIndex(-1);         //xuameng修复频道名称移走焦点变色问题
             }
 
             @Override
@@ -1874,6 +1874,7 @@ public class LivePlayActivity extends BaseActivity {
                 liveChannelGroupAdapter.setFocusedGroupIndex(-1);
                 liveChannelItemAdapter.setFocusedChannelIndex(position);
                 mHideChannelListRunXu();  //xuameng隐藏频道菜单
+				liveChannelItemAdapter.setSelectedChannelIndex(position);
             }
 
             @Override
