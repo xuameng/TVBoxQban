@@ -1865,16 +1865,13 @@ public class LivePlayActivity extends BaseActivity {
         mLiveChannelView.setOnItemListener(new TvRecyclerView.OnItemListener() {
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
-			liveChannelGroupAdapter.setFocusedGroupIndex(-1);	             
             }
+
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
                 if (position < 0) return;
                 liveChannelGroupAdapter.setFocusedGroupIndex(-1);
                 liveChannelItemAdapter.setFocusedChannelIndex(position);
-
-				liveChannelItemAdapter.setSelectedChannelIndex(position);
-                getEpg(liveEpgDateAdapter.getData().get(position).getDateParamVal());
                 mHideChannelListRunXu();  //xuameng隐藏频道菜单
             }
 
