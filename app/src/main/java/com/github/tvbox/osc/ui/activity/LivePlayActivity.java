@@ -1874,7 +1874,6 @@ public class LivePlayActivity extends BaseActivity {
                 liveChannelItemAdapter.setFocusedChannelIndex(position);
 
 				liveChannelItemAdapter.setSelectedChannelIndex(position);
-                liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
                 getEpg(liveEpgDateAdapter.getData().get(position).getDateParamVal());
                 mHideChannelListRunXu();  //xuameng隐藏频道菜单
             }
