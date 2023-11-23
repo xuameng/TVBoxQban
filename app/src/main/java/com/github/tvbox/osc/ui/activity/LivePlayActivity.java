@@ -1865,6 +1865,7 @@ public class LivePlayActivity extends BaseActivity {
         mLiveChannelView.setOnItemListener(new TvRecyclerView.OnItemListener() {
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
+				liveChannelItemAdapter.setFocusedChannelIndex(-1);
             }
 
             @Override
