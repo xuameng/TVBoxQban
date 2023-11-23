@@ -1832,7 +1832,7 @@ public class LivePlayActivity extends BaseActivity {
     private void selectChannelGroup(int groupIndex, boolean focus, int liveChannelIndex) {
         if (focus) {
             liveChannelGroupAdapter.setFocusedGroupIndex(groupIndex);
-            liveChannelItemAdapter.setFocusedChannelIndex(-1);
+            liveChannelItemAdapter.setFocusedChannelIndex(-1);			 //xuameng修复频道名称移走焦点变色问题
         }
         if ((groupIndex > -1 && groupIndex != liveChannelGroupAdapter.getSelectedGroupIndex()) || isNeedInputPassword(groupIndex)) {
             liveChannelGroupAdapter.setSelectedGroupIndex(groupIndex);
@@ -1874,7 +1874,6 @@ public class LivePlayActivity extends BaseActivity {
                 liveChannelGroupAdapter.setFocusedGroupIndex(-1);
                 liveChannelItemAdapter.setFocusedChannelIndex(position);
                 mHideChannelListRunXu();  //xuameng隐藏频道菜单
-				liveChannelItemAdapter.setSelectedChannelIndex(position);
             }
 
             @Override
