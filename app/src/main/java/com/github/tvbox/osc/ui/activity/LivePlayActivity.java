@@ -1294,7 +1294,17 @@ public class LivePlayActivity extends BaseActivity {
 
     private void mFocusAndShowSettingGroup() {                     //XUAMENG显示右侧菜单
             if (mSettingGroupView.isScrolling() || mSettingItemView.isScrolling() || mSettingGroupView.isComputingLayout() || mSettingItemView.isComputingLayout()) {
-            return;
+                if (countDownTimer21 != null) {
+                countDownTimer21.cancel();
+                }
+			    countDownTimer21 = new CountDownTimer(100, 50) {//底部epg隐藏时间设定
+		        public void onTick(long j) {
+                    }
+                    public void onFinish() {
+                    mFocusAndShowSettingGroupXu();
+                    }
+                };
+                countDownTimer21.start();
             } else {
                 mFocusAndShowSettingGroupXu();
          }
@@ -1856,12 +1866,16 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
             }
-
+                liveChannelGroupAdapter.setFocusedGroupIndex(-1);
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
                 if (position < 0) return;
                 liveChannelGroupAdapter.setFocusedGroupIndex(-1);
                 liveChannelItemAdapter.setFocusedChannelIndex(position);
+
+				liveChannelItemAdapter.setSelectedChannelIndex(position);
+
+getEpg(liveEpgDateAdapter.getData().get(position).getDateParamVal());
                 mHideChannelListRunXu();  //xuameng隐藏频道菜单
             }
 
