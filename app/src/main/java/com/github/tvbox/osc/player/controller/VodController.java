@@ -721,7 +721,7 @@ public class VodController extends BaseController {
                 listener.selectSubtitle();
 		       if (isBottomVisible()) {
                   hideBottom();
-                 }else
+                 }else{
 		         return;
 		       }
             }
