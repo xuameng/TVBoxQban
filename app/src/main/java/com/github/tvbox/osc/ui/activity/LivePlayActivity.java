@@ -588,8 +588,7 @@ public class LivePlayActivity extends BaseActivity {
 
     public void getEpgXu(Date date) {
    //     String channelName = channel_Name.getChannelName();
-            currentChannelGroupIndex = channelGroupIndex;
-            currentLiveChannelIndex = liveChannelIndex;
+
             currentLiveChannelItem = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndex);
             Hawk.put(HawkConfig.LIVE_CHANNEL, currentLiveChannelItem.getChannelName());
 			liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
