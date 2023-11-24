@@ -719,11 +719,7 @@ public class VodController extends BaseController {
             public void onClick(View view) {
                 FastClickCheckUtil.check(view);
                 listener.selectSubtitle();
-		       if (isBottomVisible()) {
-                  hideBottom();
-                 }else{
-		         return;
-		       }
+                hideBottom();
             }
         });
         mZimuBtn.setOnLongClickListener(new OnLongClickListener() {
@@ -1010,9 +1006,7 @@ public class VodController extends BaseController {
 		        mxuPlay.setVisibility(View.VISIBLE);
                 mxuPlay.setTextColor(Color.WHITE);
                 mxuPlay.setText("暂停");               //xuameng底部菜单显示暂停
-				if (isBottomVisible()) {
-                    hideBottom();       //xuameng隐藏菜单
-                 }						   
+				hideBottom();						   //xuameng隐藏菜单
 			    ObjectAnimator animator9 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0,700);				//xuameng动画暂停菜单开始
                 animator9.setDuration(1500);			//xuameng动画暂停菜单
                 animator9.addListener(new AnimatorListenerAdapter() {
