@@ -32,9 +32,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.animation.Animator;                      //xuameng动画
-import android.animation.AnimatorListenerAdapter;       //xuameng动画
-import android.animation.ObjectAnimator;                //xuameng动画
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -129,9 +126,6 @@ public class PlayFragment extends BaseLazyFragment {
     @Override
     protected int getLayoutResID() {
         return R.layout.activity_play;
-    }
-	protected int getLayoutId() {
-        return R.layout.player_vod_control_view;
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -390,26 +384,6 @@ public class PlayFragment extends BaseLazyFragment {
                         public void run() {
                             mediaPlayer.seekTo(progress);
                             mediaPlayer.start();
-
-				mxuPlay.setVisibility(View.VISIBLE);
-                mxuPlay.setTextColor(Color.WHITE);
-                mxuPlay.setText("暂停");               //xuameng底部菜单显示暂停
-				hideBottom();						   //xuameng隐藏菜单
-			    ObjectAnimator animator9 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0,700);				//xuameng动画暂停菜单开始
-                animator9.setDuration(1500);			//xuameng动画暂停菜单
-                animator9.addListener(new AnimatorListenerAdapter() {
-                @Override
-			    public void onAnimationStart(Animator animation) {
-                super.onAnimationStart(animation);
-                MxuamengView.setVisibility(VISIBLE);		   //xuameng动画开始防点击
-			    }
-                public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-			    MxuamengView.setVisibility(GONE);			   //xuameng动画结束可点击
-			    mTvPausexu.setVisibility(GONE);                //xuameng动画暂停菜单隐藏 
-                }
-                });
-			    animator9.start();						      //xuameng动画暂停菜单结束
                         }
                     }, 800);
                     dialog.dismiss();
