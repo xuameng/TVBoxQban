@@ -131,7 +131,7 @@ public class PlayFragment extends BaseLazyFragment {
     private final long videoDuration = -1;
 
     @Override
-    protected int getLayoutResID() {
+    protected int getLayoutId {
         return R.layout.activity_play;
     }
 
@@ -391,6 +391,7 @@ public class PlayFragment extends BaseLazyFragment {
                         audio.selected = audio.index == value.index;
                     }
                     mediaPlayer.pause();
+											    mTvPausexu.setVisibility(View.GONE);                //xuameng动画暂停菜单隐藏 
                     long progress = mediaPlayer.getCurrentPosition();//保存当前进度，ijk 切换轨道 会有快进几秒
                     ((IjkMediaPlayer)mediaPlayer).setTrack(value.index);
                     new Handler().postDelayed(new Runnable() {
@@ -398,7 +399,6 @@ public class PlayFragment extends BaseLazyFragment {
                         public void run() {
                             mediaPlayer.seekTo(progress);
                             mediaPlayer.start();
-						    mTvPausexu.setVisibility(View.GONE);                //xuameng动画暂停菜单隐藏 
                         }
                     }, 800);
                     dialog.dismiss();
