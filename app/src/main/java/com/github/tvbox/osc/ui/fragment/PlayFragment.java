@@ -35,6 +35,7 @@ import android.widget.Toast;
 import android.animation.Animator;                      //xuameng动画
 import android.animation.AnimatorListenerAdapter;       //xuameng动画
 import android.animation.ObjectAnimator;                //xuameng动画
+import android.widget.LinearLayout;						//xuameng动画
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
