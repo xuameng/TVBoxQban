@@ -398,26 +398,9 @@ public class PlayFragment extends BaseLazyFragment {
                         public void run() {
                             mediaPlayer.seekTo(progress);
                             mediaPlayer.start();
+						    mTvPausexu.setVisibility(View.GONE);                //xuameng动画暂停菜单隐藏 
                         }
                     }, 800);
-									mxuPlay.setVisibility(View.VISIBLE);
-                mxuPlay.setTextColor(Color.WHITE);
-                mxuPlay.setText("暂停");               //xuameng底部菜单显示暂停
-			    ObjectAnimator animator9 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0,700);				//xuameng动画暂停菜单开始
-                animator9.setDuration(1500);			//xuameng动画暂停菜单
-                animator9.addListener(new AnimatorListenerAdapter() {
-                @Override
-			    public void onAnimationStart(Animator animation) {
-                super.onAnimationStart(animation);
-                MxuamengView.setVisibility(View.VISIBLE);		   //xuameng动画开始防点击
-			    }
-                public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-			    MxuamengView.setVisibility(View.GONE);			   //xuameng动画结束可点击
-			    mTvPausexu.setVisibility(View.GONE);                //xuameng动画暂停菜单隐藏 
-                }
-                });
-			    animator9.start();						      //xuameng动画暂停菜单结束
                     dialog.dismiss();
                 } catch (Exception e) {
                     LOG.e("切换音轨出错");
