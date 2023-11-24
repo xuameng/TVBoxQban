@@ -125,8 +125,9 @@ public class PlayFragment extends BaseLazyFragment {
 
     @Override
     protected int getLayoutResID() {
-        return R.layout.activity_play;
-		return R.layout.player_vod_control_view;
+        R.layout.activity_play;
+		R.layout.player_vod_control_view;
+		return;
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
