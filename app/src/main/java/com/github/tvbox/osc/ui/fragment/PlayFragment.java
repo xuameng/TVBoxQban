@@ -32,6 +32,9 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.animation.Animator;                      //xuameng动画
+import android.animation.AnimatorListenerAdapter;       //xuameng动画
+import android.animation.ObjectAnimator;                //xuameng动画
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -115,6 +118,9 @@ import xyz.doikki.videoplayer.player.ProgressManager;
 public class PlayFragment extends BaseLazyFragment {
     private MyVideoView mVideoView;
     private TextView mPlayLoadTip;
+	private TextView mxuPlay;                         //xuameng 底部播放ID
+	private LinearLayout MxuamengView;			      //xuameng防点击
+	private LinearLayout mTvPausexu;				  //xuameng暂停动画
     private ImageView mPlayLoadErr;
     private ProgressBar mPlayLoading;
     private VodController mController;
@@ -126,6 +132,10 @@ public class PlayFragment extends BaseLazyFragment {
     @Override
     protected int getLayoutResID() {
         return R.layout.activity_play;
+    }
+
+    protected int getLayoutId() {
+        return R.layout.player_vod_control_view;
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -187,6 +197,9 @@ public class PlayFragment extends BaseLazyFragment {
         mPlayLoadTip = findViewById(R.id.play_load_tip);
         mPlayLoading = findViewById(R.id.play_loading);
         mPlayLoadErr = findViewById(R.id.play_load_error);
+		mxuPlay = findViewById(R.id.mxuplay);		                  //xuameng  低菜单播放
+		MxuamengView = findViewById(R.id.xuamengView);				   //XUAMENG防点击
+		mTvPausexu = findViewById(R.id.tv_pause_xu);				   //XUAMENG暂停动画
         mController = new VodController(requireContext());
         mController.setCanChangePosition(true);
         mController.setEnableInNormal(true);
@@ -384,6 +397,24 @@ public class PlayFragment extends BaseLazyFragment {
                         public void run() {
                             mediaPlayer.seekTo(progress);
                             mediaPlayer.start();
+				mxuPlay.setVisibility(View.VISIBLE);
+                mxuPlay.setTextColor(Color.WHITE);
+                mxuPlay.setText("暂停");               //xuameng底部菜单显示暂停
+			    ObjectAnimator animator9 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0,700);				//xuameng动画暂停菜单开始
+                animator9.setDuration(1500);			//xuameng动画暂停菜单
+                animator9.addListener(new AnimatorListenerAdapter() {
+                @Override
+			    public void onAnimationStart(Animator animation) {
+                super.onAnimationStart(animation);
+                MxuamengView.setVisibility(VISIBLE);		   //xuameng动画开始防点击
+			    }
+                public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+			    MxuamengView.setVisibility(GONE);			   //xuameng动画结束可点击
+			    mTvPausexu.setVisibility(GONE);                //xuameng动画暂停菜单隐藏 
+                }
+                });
+			    animator9.start();						      //xuameng动画暂停菜单结束
                         }
                     }, 800);
                     dialog.dismiss();
