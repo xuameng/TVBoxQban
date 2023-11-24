@@ -407,12 +407,12 @@ public class PlayFragment extends BaseLazyFragment {
                 @Override
 			    public void onAnimationStart(Animator animation) {
                 super.onAnimationStart(animation);
-                MxuamengView.setVisibility(VISIBLE);		   //xuameng动画开始防点击
+                MxuamengView.setVisibility(View.VISIBLE);		   //xuameng动画开始防点击
 			    }
                 public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
-			    MxuamengView.setVisibility(GONE);			   //xuameng动画结束可点击
-			    mTvPausexu.setVisibility(GONE);                //xuameng动画暂停菜单隐藏 
+			    MxuamengView.setVisibility(View.GONE);			   //xuameng动画结束可点击
+			    mTvPausexu.setVisibility(View.GONE);                //xuameng动画暂停菜单隐藏 
                 }
                 });
 			    animator9.start();						      //xuameng动画暂停菜单结束
