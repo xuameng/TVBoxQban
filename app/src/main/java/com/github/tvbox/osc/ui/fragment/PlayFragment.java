@@ -131,7 +131,7 @@ public class PlayFragment extends BaseLazyFragment {
     private final long videoDuration = -1;
 
     @Override
-    protected int getLayoutId {
+    protected int getLayoutId() {
         return R.layout.activity_play;
     }
 
