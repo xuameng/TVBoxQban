@@ -376,16 +376,16 @@ public class PlayFragment extends BaseLazyFragment {
                     for (TrackInfoBean audio : bean) {
                         audio.selected = audio.index == value.index;
                     }
-  //                  mediaPlayer.pause();
+                    mediaPlayer.pause();
                     long progress = mediaPlayer.getCurrentPosition();//保存当前进度，ijk 切换轨道 会有快进几秒
                     ((IjkMediaPlayer)mediaPlayer).setTrack(value.index);
                     new Handler().postDelayed(new Runnable() {
                         @Override
-           //             public void run() {
-           //                 mediaPlayer.seekTo(progress);
-           //                 mediaPlayer.start();
-           //             }
-            //        }, 800);
+                        public void run() {
+                            mediaPlayer.seekTo(progress);
+                            mediaPlayer.start();
+                        }
+                    }, 800);
                     dialog.dismiss();
                 } catch (Exception e) {
                     LOG.e("切换音轨出错");
