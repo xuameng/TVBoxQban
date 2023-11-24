@@ -32,10 +32,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.animation.Animator;                      //xuameng动画
-import android.animation.AnimatorListenerAdapter;       //xuameng动画
-import android.animation.ObjectAnimator;                //xuameng动画
-import android.widget.LinearLayout;						//xuameng动画
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -119,9 +115,6 @@ import xyz.doikki.videoplayer.player.ProgressManager;
 public class PlayFragment extends BaseLazyFragment {
     private MyVideoView mVideoView;
     private TextView mPlayLoadTip;
-	private TextView mxuPlay;                         //xuameng 底部播放ID
-	private LinearLayout MxuamengView;			      //xuameng防点击
-	private LinearLayout mTvPausexu;				  //xuameng暂停动画
     private ImageView mPlayLoadErr;
     private ProgressBar mPlayLoading;
     private VodController mController;
@@ -133,11 +126,6 @@ public class PlayFragment extends BaseLazyFragment {
     @Override
     protected int getLayoutResID() {
         return R.layout.activity_play;
-    }
-
-    @Override
-    protected int getLayoutResID() {
-        return R.layout.player_vod_control_view;
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -199,9 +187,6 @@ public class PlayFragment extends BaseLazyFragment {
         mPlayLoadTip = findViewById(R.id.play_load_tip);
         mPlayLoading = findViewById(R.id.play_loading);
         mPlayLoadErr = findViewById(R.id.play_load_error);
-		mxuPlay = findViewById(R.id.mxuplay);		                  //xuameng  低菜单播放
-		MxuamengView = findViewById(R.id.xuamengView);				   //XUAMENG防点击
-		mTvPausexu = findViewById(R.id.tv_pause_xu);				   //XUAMENG暂停动画
         mController = new VodController(requireContext());
         mController.setCanChangePosition(true);
         mController.setEnableInNormal(true);
@@ -399,7 +384,6 @@ public class PlayFragment extends BaseLazyFragment {
                         public void run() {
                             mediaPlayer.seekTo(progress);
                             mediaPlayer.start();
-						mTvPausexu.setVisibility(View.GONE);                //xuameng动画暂停菜单隐藏 
                         }
                     }, 800);
                     dialog.dismiss();
@@ -452,7 +436,6 @@ public class PlayFragment extends BaseLazyFragment {
                         subtitle.selected = subtitle.index == value.index;
                     }
                     mediaPlayer.pause();
-								    mTvPausexu.setVisibility(View.GONE);                //xuameng动画暂停菜单隐藏 
                     long progress = mediaPlayer.getCurrentPosition();//保存当前进度，ijk 切换轨道 会有快进几秒
                     mController.mSubtitleView.destroy();
                     mController.mSubtitleView.clearSubtitleCache();
