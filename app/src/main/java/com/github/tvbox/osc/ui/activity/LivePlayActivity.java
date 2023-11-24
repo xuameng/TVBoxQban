@@ -537,6 +537,110 @@ public class LivePlayActivity extends BaseActivity {
         });
     }
 
+
+    private void showEpgXu(Date date, ArrayList<Epginfo> arrayList) {
+        if (arrayList != null && arrayList.size() > 0) {
+            epgdata = arrayList;
+            epgListAdapter.CanBack(currentLiveChannelItem.getinclude_back());
+            epgListAdapter.setNewData(epgdata);
+
+            int i = -1;
+            int size = epgdata.size() - 1;
+            while (size >= 0) {
+                if (new Date().compareTo(((Epginfo) epgdata.get(size)).startdateTime) >= 0) {
+                    break;
+                }
+                size--;
+            }
+            i = size;
+            if (i >= 0 && new Date().compareTo(epgdata.get(i).enddateTime) <= 0) {
+
+            }
+        } else {             //xuameng无EPG时提示信息
+            Epginfo epgbcinfo = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "00:00", "01:59", 0);
+			Epginfo epgbcinfo1 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "02:00", "03:59", 0);
+			Epginfo epgbcinfo2 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "04:00", "05:59", 0);
+			Epginfo epgbcinfo3 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "06:00", "07:59", 0);
+			Epginfo epgbcinfo4 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "08:00", "09:59", 0);
+			Epginfo epgbcinfo5 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "10:00", "11:59", 0);
+			Epginfo epgbcinfo6 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "12:00", "13:59", 0);
+			Epginfo epgbcinfo7 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "14:00", "15:59", 0);
+			Epginfo epgbcinfo8 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "16:00", "17:59", 0);
+			Epginfo epgbcinfo9 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "18:00", "19:59", 0);
+			Epginfo epgbcinfo10 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "20:00", "21:59", 0);
+			Epginfo epgbcinfo11 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "22:00", "23:59", 0);
+            arrayList.add(epgbcinfo);
+			arrayList.add(epgbcinfo1);
+			arrayList.add(epgbcinfo2);
+			arrayList.add(epgbcinfo3);
+			arrayList.add(epgbcinfo4);
+			arrayList.add(epgbcinfo5);
+			arrayList.add(epgbcinfo6);
+			arrayList.add(epgbcinfo7);
+			arrayList.add(epgbcinfo8);
+			arrayList.add(epgbcinfo9);
+			arrayList.add(epgbcinfo10);
+			arrayList.add(epgbcinfo11);
+            epgdata = arrayList;
+            epgListAdapter.setNewData(epgdata);
+		}
+    }
+
+    public void getEpgXu(Date date) {
+   //     String channelName = channel_Name.getChannelName();
+String channelName = currentLiveChannelItem.getChannelName();
+        SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd");
+        timeFormat.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
+        String[] epgInfo = EpgUtil.getEpgInfo(channelName);
+        String epgTagName = channelName;
+        updateChannelIcon(channelName, epgInfo == null ? null : epgInfo[0]);
+        if (epgInfo != null && !epgInfo[1].isEmpty()) {
+            epgTagName = epgInfo[1];
+        }
+        String finalChannelName = channelName;
+        epgListAdapter.CanBack(currentLiveChannelItem.getinclude_back());
+        //epgListAdapter.updateData(date, new ArrayList<>());
+
+        String url;
+        if(epgStringAddress.contains("{name}") && epgStringAddress.contains("{date}")){
+            url= epgStringAddress.replace("{name}",URLEncoder.encode(epgTagName)).replace("{date}",timeFormat.format(date));
+        }else {
+            url= epgStringAddress + "?ch="+ URLEncoder.encode(epgTagName) + "&date=" + timeFormat.format(date);
+        }
+        UrlHttpUtil.get(url, new CallBackUtil.CallBackString() {
+            public void onFailure(int i, String str) {
+                showEpgXu(date, new ArrayList());
+ //               showBottomEpg();        
+            }
+
+            public void onResponse(String paramString) {
+
+                ArrayList arrayList = new ArrayList();
+
+                Log.d("返回的EPG信息", paramString);
+                try {
+                    if (paramString.contains("epg_data")) {
+                        final JSONArray jSONArray = new JSONObject(paramString).optJSONArray("epg_data");
+                        if (jSONArray != null)
+                            for (int b = 0; b < jSONArray.length(); b++) {
+                                JSONObject jSONObject = jSONArray.getJSONObject(b);
+                                Epginfo epgbcinfo = new Epginfo(date,jSONObject.optString("title"), date, jSONObject.optString("start"), jSONObject.optString("end"),b);
+                                arrayList.add(epgbcinfo);
+                                Log.d("EPG信息:", day +"  "+ jSONObject.optString("start") +" - "+jSONObject.optString("end") + "  " +jSONObject.optString("title"));
+                            }
+                    }
+
+                } catch (JSONException jSONException) {
+                    jSONException.printStackTrace();
+                }
+                showEpgXu(date, arrayList);
+                String savedEpgKey = channelName + "_" + liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex()).getDatePresented();
+                if (!hsEpg.contains(savedEpgKey))
+                    hsEpg.put(savedEpgKey, arrayList);
+            }
+        });
+    }
+
     //显示底部EPG
     private void showBottomEpg() {
         if (isSHIYI)
@@ -1832,7 +1936,7 @@ public class LivePlayActivity extends BaseActivity {
     private void selectChannelGroup(int groupIndex, boolean focus, int liveChannelIndex) {
         if (focus) {
             liveChannelGroupAdapter.setFocusedGroupIndex(groupIndex);
-            liveChannelItemAdapter.setFocusedChannelIndex(-1);			 //xuameng修复频道名称移走焦点变色问题
+            liveChannelItemAdapter.setFocusedChannelIndex(-1);
         }
         if ((groupIndex > -1 && groupIndex != liveChannelGroupAdapter.getSelectedGroupIndex()) || isNeedInputPassword(groupIndex)) {
             liveChannelGroupAdapter.setSelectedGroupIndex(groupIndex);
@@ -1874,6 +1978,8 @@ public class LivePlayActivity extends BaseActivity {
                 liveChannelGroupAdapter.setFocusedGroupIndex(-1);
                 liveChannelItemAdapter.setFocusedChannelIndex(position);
                 mHideChannelListRunXu();  //xuameng隐藏频道菜单
+				liveChannelItemAdapter.setSelectedChannelIndex(position);
+				getEpgXu(new Date());
             }
 
             @Override
