@@ -719,7 +719,11 @@ public class VodController extends BaseController {
             public void onClick(View view) {
                 FastClickCheckUtil.check(view);
                 listener.selectSubtitle();
-                hideBottom();
+		       if (isBottomVisible()) {
+                  hideBottom();
+                 }else
+		         return;
+		       }
             }
         });
         mZimuBtn.setOnLongClickListener(new OnLongClickListener() {
@@ -740,7 +744,7 @@ public class VodController extends BaseController {
                 FastClickCheckUtil.check(view);
                 listener.selectAudioTrack();
                 hideBottom();
-			if (mControlWrapper.isPlaying()){
+			if (mControlWrapper.isPlaying()){             //xuameng修复暂停时选音轨时显示暂停图标等问题
                 return;
                }
             else {
