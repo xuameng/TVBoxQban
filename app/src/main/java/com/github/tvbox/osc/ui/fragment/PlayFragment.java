@@ -131,11 +131,12 @@ public class PlayFragment extends BaseLazyFragment {
     private final long videoDuration = -1;
 
     @Override
-    protected int getLayoutId() {
+    protected int getLayoutResID() {
         return R.layout.activity_play;
     }
 
-    protected int getLayoutId() {
+    @Override
+    protected int getLayoutResID() {
         return R.layout.player_vod_control_view;
     }
 
@@ -391,7 +392,6 @@ public class PlayFragment extends BaseLazyFragment {
                         audio.selected = audio.index == value.index;
                     }
                     mediaPlayer.pause();
-											    mTvPausexu.setVisibility(View.GONE);                //xuameng动画暂停菜单隐藏 
                     long progress = mediaPlayer.getCurrentPosition();//保存当前进度，ijk 切换轨道 会有快进几秒
                     ((IjkMediaPlayer)mediaPlayer).setTrack(value.index);
                     new Handler().postDelayed(new Runnable() {
@@ -399,6 +399,7 @@ public class PlayFragment extends BaseLazyFragment {
                         public void run() {
                             mediaPlayer.seekTo(progress);
                             mediaPlayer.start();
+						mTvPausexu.setVisibility(View.GONE);                //xuameng动画暂停菜单隐藏 
                         }
                     }, 800);
                     dialog.dismiss();
@@ -451,6 +452,7 @@ public class PlayFragment extends BaseLazyFragment {
                         subtitle.selected = subtitle.index == value.index;
                     }
                     mediaPlayer.pause();
+								    mTvPausexu.setVisibility(View.GONE);                //xuameng动画暂停菜单隐藏 
                     long progress = mediaPlayer.getCurrentPosition();//保存当前进度，ijk 切换轨道 会有快进几秒
                     mController.mSubtitleView.destroy();
                     mController.mSubtitleView.clearSubtitleCache();
