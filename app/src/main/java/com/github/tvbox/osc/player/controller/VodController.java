@@ -738,6 +738,7 @@ public class VodController extends BaseController {
             @Override
             public void onClick(View view) {
                 FastClickCheckUtil.check(view);
+				togglePlay();										//xuameng 修正错误
                 listener.selectAudioTrack();
                 hideBottom();
             }
