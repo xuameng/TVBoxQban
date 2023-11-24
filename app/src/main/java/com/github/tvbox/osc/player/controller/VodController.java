@@ -740,6 +740,12 @@ public class VodController extends BaseController {
                 FastClickCheckUtil.check(view);
                 listener.selectAudioTrack();
                 hideBottom();
+			if (mControlWrapper.isPlaying()){
+                return;
+               }
+            else {
+               togglePlay();
+              }
             }
         });
         mLandscapePortraitBtn.setOnClickListener(new OnClickListener() {
