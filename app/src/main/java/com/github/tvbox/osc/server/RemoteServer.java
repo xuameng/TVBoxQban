@@ -415,23 +415,4 @@ public class RemoteServer extends NanoHTTPD {
         bos.close();
     }
 
-}Stream is = zip.getInputStream(entry);
-            String filePath = destDirectory + File.separator + entry.getName();
-            if (!entry.isDirectory()) {
-                extractFile(is, filePath);
-            } else {
-                File dir = new File(filePath);
-                if (!dir.exists())
-                    dir.mkdirs();
-                File flag = new File(dir + "/.tvbox_folder");
-                if (!flag.exists())
-                    flag.createNewFile();
-            }
-        }
-    }
-
-    void extractFile(InputStream inputStream, String destFilePath) throws Throwable {
-        File dst = new File(destFilePath);
-        if (dst.exists())
-            dst.delete();
-        BufferedOutputStream bos = n
+}
