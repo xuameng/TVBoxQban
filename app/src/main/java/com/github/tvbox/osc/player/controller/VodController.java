@@ -720,6 +720,12 @@ public class VodController extends BaseController {
                 FastClickCheckUtil.check(view);
                 listener.selectSubtitle();
                 hideBottom();
+			if (mControlWrapper.isPlaying()){             //xuameng修复暂停时选字幕时显示暂停图标等问题
+                return;
+               }
+            else {
+               togglePlay();
+              }
             }
         });
         mZimuBtn.setOnLongClickListener(new OnLongClickListener() {
