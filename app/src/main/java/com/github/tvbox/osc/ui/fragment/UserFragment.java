@@ -181,7 +181,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
 
 		       findViewById(R.id.tvxuameng).setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override         //xuameng许大师制作焦点变大
-	        public void onFocusChange(View v, boolean hasFocus{
+	        public void onFocusChange(View v, boolean hasFocus){
             if (hasFocus){
                 v.animate().scaleX(1.05f).scaleY(1.05f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
             }else{
