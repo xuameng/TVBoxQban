@@ -177,13 +177,18 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
                 xuamengAboutDialog dialog = new xuamengAboutDialog(mActivity);
                 dialog.show();
             }
-           public void onFocusChange(View v, boolean hasFocus) {
-            if (hasFocus)
+        });
+
+		       findViewById(R.id.tvxuameng).setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override         //xuameng许大师制作焦点变大
+	        public void onFocusChange(View v, boolean hasFocus{
+            if (hasFocus){
                 v.animate().scaleX(1.05f).scaleY(1.05f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
-            else
+            }else{
                 v.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
             }
-        });
+	    }
+	    });
         //xuameng : end
         // takagen99 : Long press to trigger Delete Mode for VOD History on Home Page       
         homeHotVodAdapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLongClickListener() {
