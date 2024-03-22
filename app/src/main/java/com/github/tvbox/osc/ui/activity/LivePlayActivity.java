@@ -1713,6 +1713,15 @@ public class LivePlayActivity extends BaseActivity {
 						 if (mVideoView.getVideoSize().length >= 2) {         //XUAMENG分辨率
                          tv_size.setText("[" + mVideoView.getVideoSize()[0] + " X " + mVideoView.getVideoSize()[1] + "]");
                         }
+						int duration = (int) mVideoView.getDuration();
+						if (duration > 0) {
+                            backcontroller.setVisibility(View.VISIBLE);
+                            view_line_XU.setVisibility(View.INVISIBLE);       		//xuamengEPG中的横线
+                        } else {
+                            backcontroller.setVisibility(View.INVISIBLE);
+							view_line_XU.setVisibility(View.VISIBLE);       		//xuamengEPG中的横线
+                        }
+                        break;
                     case VideoView.STATE_BUFFERED:
                     case VideoView.STATE_PLAYING:
                         currentLiveChangeSourceTimes = 0;
