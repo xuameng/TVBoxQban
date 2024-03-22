@@ -22,6 +22,7 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
@@ -179,7 +180,6 @@ public class LivePlayActivity extends BaseActivity {
 
     private boolean isSHIYI = false;
     private boolean isBack = false;
-	private boolean isVOD = false;       //xuameng点播
     private static String shiyi_time;//时移时间
     private static int shiyi_time_c;//时移时间差值
     public static String playUrl;
@@ -377,13 +377,6 @@ public class LivePlayActivity extends BaseActivity {
                     long newPosition = (duration * progress) / seekBar.getMax();
                     if (mCurrentTime != null)
                         mCurrentTime.setText(stringForTime((int) newPosition));*/
-						                long duration = mVideoView.getDuration();
-
-               long newPosition = (duration * SeekBar.getProgress()) / SeekBar.getMax();
-                if (countDownTimer!=null)
-
-				                    tv_duration.setText(stringForTimeVod((int)newPosition));
- 
 
                 }
             }
@@ -1720,19 +1713,6 @@ public class LivePlayActivity extends BaseActivity {
 						 if (mVideoView.getVideoSize().length >= 2) {         //XUAMENG分辨率
                          tv_size.setText("[" + mVideoView.getVideoSize()[0] + " X " + mVideoView.getVideoSize()[1] + "]");
                         }
-						int duration = (int) mVideoView.getDuration();
-						if (duration > 0) {
-							isVOD = true;
-                            backcontroller.setVisibility(View.VISIBLE);
-                            view_line_XU.setVisibility(View.INVISIBLE);       		//xuamengEPG中的横线
-
-
-                        } else {
-							isVOD = false;
-                            backcontroller.setVisibility(View.INVISIBLE);
-							view_line_XU.setVisibility(View.VISIBLE);       		//xuamengEPG中的横线
-                        }
-                        break;
                     case VideoView.STATE_BUFFERED:
                     case VideoView.STATE_PLAYING:
                         currentLiveChangeSourceTimes = 0;
@@ -2490,15 +2470,6 @@ public class LivePlayActivity extends BaseActivity {
         long diff = (eTime - sTime) / 1000;
         return diff;
     }
-
-	    private static String stringForTimeVod(int timeMs) {
-        int totalSeconds = timeMs / 1000;
-        int seconds = totalSeconds % 60;
-        int minutes = (totalSeconds / 60) % 60;
-        int hours = totalSeconds / 3600;
-        return String.format(Locale.getDefault(), "%02d:%02d:%02d", hours, minutes, seconds);
-    }
-
     private  String durationToString(int duration) {
         String result = "";
         int dur = duration / 1000;
@@ -2624,11 +2595,6 @@ public class LivePlayActivity extends BaseActivity {
                         countDownTimer.start();
                     }
                 }
- long duration = mVideoView.getDuration();
-                long newPosition = (duration * SeekBar.getProgress()) / SeekBar.getMax();
-                if (countDownTimer!=null)
-
-				                    tv_duration.setText(stringForTimeVod((int)newPosition));
             }
         });
         sBar.setOnKeyListener(new View.OnKeyListener() {
