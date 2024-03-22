@@ -1713,9 +1713,15 @@ public class LivePlayActivity extends BaseActivity {
 						 if (mVideoView.getVideoSize().length >= 2) {         //XUAMENG分辨率
                          tv_size.setText("[" + mVideoView.getVideoSize()[0] + " X " + mVideoView.getVideoSize()[1] + "]");
                         }
-						int duration = (int) mVideoView.getDuration();
-		                int seekProgress = (int) seekBar.getProgress();  
-						int seekMax = (int) seekBar.getMax();  
+
+shiyi_time_c = (int)seekBar.getMax();
+
+                    sBar = (SeekBar) findViewById(R.id.pb_progressbar);
+                    sBar.setMax(shiyi_time_c);
+                    sBar.setProgress((int)  mVideoView.getCurrentPosition());
+                    tv_currentpos.setText(durationToString((int)mVideoView.getCurrentPosition()));
+                    tv_duration.setText(durationToString(shiyi_time_c));
+
 						if (duration > 0) {
 							isVOD = true;
                             backcontroller.setVisibility(View.VISIBLE);
@@ -2686,10 +2692,3 @@ public class LivePlayActivity extends BaseActivity {
 
 }
 
-    public static String stringForTimeVod(int timeMs) {
-        int totalSeconds = timeMs / 1000;
-        int seconds = totalSeconds % 60;
-        int minutes = (totalSeconds / 60) % 60;
-        int hours = totalSeconds / 3600;
-        return String.format(Locale.getDefault(), "%02d:%02d:%02d", hours, minutes, seconds);
-    }
