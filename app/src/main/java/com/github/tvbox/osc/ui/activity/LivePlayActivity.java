@@ -378,7 +378,8 @@ public class LivePlayActivity extends BaseActivity {
                     if (mCurrentTime != null)
                         mCurrentTime.setText(stringForTime((int) newPosition));*/
 						                long duration = mVideoView.getDuration();
-                long newPosition = (duration * progress) / seekBar.getMax();
+
+               long newPosition = (duration * SeekBar.getProgress()) / SeekBar.getMax();
                 if (countDownTimer!=null)
 
 				                    tv_duration.setText(stringForTimeVod((int)newPosition));
@@ -2624,7 +2625,7 @@ public class LivePlayActivity extends BaseActivity {
                     }
                 }
  long duration = mVideoView.getDuration();
-                long newPosition = (duration * progress) / seekBar.getMax();
+                long newPosition = (duration * SeekBar.getProgress()) / SeekBar.getMax();
                 if (countDownTimer!=null)
 
 				                    tv_duration.setText(stringForTimeVod((int)newPosition));
