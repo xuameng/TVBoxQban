@@ -22,7 +22,7 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import static xyz.doikki.videoplayer.util.PlayerUtils.stringForTimeVod;         //XUAMENG
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
@@ -180,6 +180,7 @@ public class LivePlayActivity extends BaseActivity {
 
     private boolean isSHIYI = false;
     private boolean isBack = false;
+	private boolean isVOD = false;       //xuameng点播
     private static String shiyi_time;//时移时间
     private static int shiyi_time_c;//时移时间差值
     public static String playUrl;
@@ -1715,9 +1716,15 @@ public class LivePlayActivity extends BaseActivity {
                         }
 						int duration = (int) mVideoView.getDuration();
 						if (duration > 0) {
+							isVOD = true;
                             backcontroller.setVisibility(View.VISIBLE);
                             view_line_XU.setVisibility(View.INVISIBLE);       		//xuamengEPG中的横线
+							SeekBar.setProgress(10);
+                            SeekBar.setMax(duration);
+                            SeekBar.setProgress(0);
+                            tv_duration.setText(stringForTimeVod(duration));
                         } else {
+							isVOD = false;
                             backcontroller.setVisibility(View.INVISIBLE);
 							view_line_XU.setVisibility(View.VISIBLE);       		//xuamengEPG中的横线
                         }
