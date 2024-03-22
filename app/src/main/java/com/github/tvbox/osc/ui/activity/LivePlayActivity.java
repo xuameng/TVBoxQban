@@ -22,7 +22,6 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import static xyz.doikki.videoplayer.util.PlayerUtils.stringForTimeVod;         //XUAMENG
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
@@ -1715,13 +1714,20 @@ public class LivePlayActivity extends BaseActivity {
                          tv_size.setText("[" + mVideoView.getVideoSize()[0] + " X " + mVideoView.getVideoSize()[1] + "]");
                         }
 						int duration = (int) mVideoView.getDuration();
+		                int seekProgress = (int) seekBar.getProgress();  
+						int seekMax = (int) seekBar.getMax();  
 						if (duration > 0) {
 							isVOD = true;
                             backcontroller.setVisibility(View.VISIBLE);
                             view_line_XU.setVisibility(View.INVISIBLE);       		//xuamengEPG中的横线
-							SeekBar.setProgress(10);
-                            SeekBar.setMax(duration);
-                            SeekBar.setProgress(0);
+
+
+
+
+
+							SeekBar.seekProgress(10);
+                            SeekBar.seekMax(duration);
+                            SeekBar.seekProgress(0);
                             tv_duration.setText(stringForTimeVod(duration));
                         } else {
 							isVOD = false;
@@ -2679,3 +2685,11 @@ public class LivePlayActivity extends BaseActivity {
     }
 
 }
+
+    public static String stringForTimeVod(int timeMs) {
+        int totalSeconds = timeMs / 1000;
+        int seconds = totalSeconds % 60;
+        int minutes = (totalSeconds / 60) % 60;
+        int hours = totalSeconds / 3600;
+        return String.format(Locale.getDefault(), "%02d:%02d:%02d", hours, minutes, seconds);
+    }
