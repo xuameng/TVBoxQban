@@ -377,6 +377,12 @@ public class LivePlayActivity extends BaseActivity {
                     long newPosition = (duration * progress) / seekBar.getMax();
                     if (mCurrentTime != null)
                         mCurrentTime.setText(stringForTime((int) newPosition));*/
+						                long duration = mVideoView.getDuration();
+                long newPosition = (duration * progress) / seekBar.getMax();
+                if (countDownTimer!=null)
+
+				                    tv_duration.setText(stringForTimeVod((int)newPosition));
+ 
 
                 }
             }
@@ -1713,28 +1719,14 @@ public class LivePlayActivity extends BaseActivity {
 						 if (mVideoView.getVideoSize().length >= 2) {         //XUAMENG分辨率
                          tv_size.setText("[" + mVideoView.getVideoSize()[0] + " X " + mVideoView.getVideoSize()[1] + "]");
                         }
-
-shiyi_time_c = (int)seekBar.getMax();
-
-                    sBar = (SeekBar) findViewById(R.id.pb_progressbar);
-                    sBar.setMax(shiyi_time_c);
-                    sBar.setProgress((int)  mVideoView.getCurrentPosition());
-                    tv_currentpos.setText(durationToString((int)mVideoView.getCurrentPosition()));
-                    tv_duration.setText(durationToString(shiyi_time_c));
-
+						int duration = (int) mVideoView.getDuration();
+  
 						if (duration > 0) {
 							isVOD = true;
                             backcontroller.setVisibility(View.VISIBLE);
                             view_line_XU.setVisibility(View.INVISIBLE);       		//xuamengEPG中的横线
 
 
-
-
-
-							SeekBar.seekProgress(10);
-                            SeekBar.seekMax(duration);
-                            SeekBar.seekProgress(0);
-                            tv_duration.setText(stringForTimeVod(duration));
                         } else {
 							isVOD = false;
                             backcontroller.setVisibility(View.INVISIBLE);
@@ -2498,6 +2490,15 @@ shiyi_time_c = (int)seekBar.getMax();
         long diff = (eTime - sTime) / 1000;
         return diff;
     }
+
+	    private static String stringForTimeVod(int timeMs) {
+        int totalSeconds = timeMs / 1000;
+        int seconds = totalSeconds % 60;
+        int minutes = (totalSeconds / 60) % 60;
+        int hours = totalSeconds / 3600;
+        return String.format(Locale.getDefault(), "%02d:%02d:%02d", hours, minutes, seconds);
+    }
+
     private  String durationToString(int duration) {
         String result = "";
         int dur = duration / 1000;
@@ -2623,6 +2624,11 @@ shiyi_time_c = (int)seekBar.getMax();
                         countDownTimer.start();
                     }
                 }
+ long duration = mVideoView.getDuration();
+                long newPosition = (duration * progress) / seekBar.getMax();
+                if (countDownTimer!=null)
+
+				                    tv_duration.setText(stringForTimeVod((int)newPosition));
             }
         });
         sBar.setOnKeyListener(new View.OnKeyListener() {
@@ -2692,3 +2698,10 @@ shiyi_time_c = (int)seekBar.getMax();
 
 }
 
+    public static String stringForTimeVod(int timeMs) {
+        int totalSeconds = timeMs / 1000;
+        int seconds = totalSeconds % 60;
+        int minutes = (totalSeconds / 60) % 60;
+        int hours = totalSeconds / 3600;
+        return String.format(Locale.getDefault(), "%02d:%02d:%02d", hours, minutes, seconds);
+    }
