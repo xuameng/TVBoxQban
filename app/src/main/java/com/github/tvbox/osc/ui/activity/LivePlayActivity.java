@@ -1230,11 +1230,20 @@ public class LivePlayActivity extends BaseActivity {
                 || (changeSource && currentLiveChannelItem.getSourceNum() == 1)) {
              // xuamengEPG日期自动选今天
 		   	 liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
-		     showBottomEpg();
-             getEpg(new Date());
-             isSHIYI=false;
-             isBack = false;
-             return true;
+
+		if(isVOD){
+          if(backcontroller.getVisibility() == View.GONE){
+          showProgressBars(true);
+		  mHideChannelListRun();       //xuameng显示EPG就隐藏左右菜单
+          mHideSettingLayoutRun();    //xuameng显示EPG就隐藏左右菜单
+		}else{
+		  showBottomEpg();
+          getEpg(new Date());
+		 }
+		}
+          isSHIYI=false;
+          isBack = false;
+          return true;
         }
 		if (mVideoView == null) return true;    //XUAMENG可能会引起空指针问题的修复
         mVideoView.release();
@@ -1255,6 +1264,7 @@ public class LivePlayActivity extends BaseActivity {
         }else {
             currentLiveChannelItem.setinclude_back(false);
         }
+        showBottomEpg();         //XUAMENG重要点击频道播放，上面的不重新播放。只显示EPG
 
 		if (countDownTimer30 != null) {
                 countDownTimer30.cancel();
