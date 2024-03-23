@@ -1839,7 +1839,7 @@ public class LivePlayActivity extends BaseActivity {
                         playPreSource();
 						liveSettingGroupAdapter.setSelectedGroupIndex(-1);		 //xuameng右菜单BUG修复
                     }
-				｝
+				}
             }
         });
         controller.setCanChangePosition(false);
