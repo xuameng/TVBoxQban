@@ -1722,7 +1722,7 @@ public class LivePlayActivity extends BaseActivity {
 						int duration = (int) mVideoView.getDuration();
 						if (duration > 0) {
 							isVOD = true;
-                            backcontroller.setVisibility(View.VISIBLE);
+                            showProgressBars(true);
                             view_line_XU.setVisibility(View.INVISIBLE);       		//xuamengEPG中的横线
 			                sBar = (SeekBar) findViewById(R.id.pb_progressbar);
                             sBar.setMax(duration);
