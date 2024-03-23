@@ -250,6 +250,7 @@ public class LivePlayActivity extends BaseActivity {
         tv_right_top_channel_name = (TextView)findViewById(R.id.tv_right_top_channel_name);
         tv_right_top_epg_name = (TextView)findViewById(R.id.tv_right_top_epg_name);
         tv_right_top_type = (TextView)findViewById(R.id.tv_right_top_type);
+		iv_play_pause = (TextView)findViewById(R.id.iv_play_pause);
         iv_circle_bg = (ImageView) findViewById(R.id.iv_circle_bg);
         iv_back_bg = (ImageView) findViewById(R.id.iv_back_bg);
         tv_shownum = (TextView) findViewById(R.id.tv_shownum);
@@ -1223,7 +1224,7 @@ public class LivePlayActivity extends BaseActivity {
                         mHideSettingLayoutRun();    //xuameng显示EPG就隐藏左右菜单
 		      	     } 
 				   }else{
-        showBottomEpg();
+                        showBottomEpg();
 				   }
 
 
