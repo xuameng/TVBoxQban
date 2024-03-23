@@ -248,7 +248,7 @@ public class LivePlayActivity extends BaseActivity {
         tv_right_top_tipnetspeed = (TextView)findViewById(R.id.tv_right_top_tipnetspeed);
         tv_right_top_channel_name = (TextView)findViewById(R.id.tv_right_top_channel_name);
         tv_right_top_epg_name = (TextView)findViewById(R.id.tv_right_top_epg_name);
-//        tv_right_top_type = (TextView)findViewById(R.id.tv_right_top_type);
+        tv_right_top_type = (TextView)findViewById(R.id.tv_right_top_type);
         iv_circle_bg = (ImageView) findViewById(R.id.iv_circle_bg);
         iv_back_bg = (ImageView) findViewById(R.id.iv_back_bg);
         tv_shownum = (TextView) findViewById(R.id.tv_shownum);
@@ -1642,10 +1642,20 @@ public class LivePlayActivity extends BaseActivity {
                   }
 				 return true;
 				}
+			  if(isVOD){
+			    if(backcontroller.getVisibility() == View.VISIBLE){
+                   backcontroller.setVisibility(View.GONE);
+  	               ll_epg.setVisibility(View.GONE);			 //xuameng下面EPG菜单隐藏
+		   	       hideTimeXu();              //xuameng隐藏系统时间
+				   hideNetSpeedXu();		//XUAMENG隐藏左上网速
+				   }
+				   return true;
+				}
                 else
                 showChannelList();
                 ll_epg.setVisibility(View.GONE);				//xuameng下面EPG菜单隐藏
                 ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
+				backcontroller.setVisibility(View.GONE);
                 hideTimeXu();              //xuameng隐藏系统时间
                 hideNetSpeedXu();		//XUAMENG隐藏左上网速
                 return false;             //XUAMENG如果true 就会默认执行
@@ -1702,7 +1712,7 @@ public class LivePlayActivity extends BaseActivity {
                         mHideSettingLayoutRun();    //xuameng显示EPG就隐藏左右菜单
 		    	}
 				return true;
-			  }else if(isLl_epgVisible()){ 
+			      }else if(isLl_epgVisible()){ 
                      ll_epg.setVisibility(View.GONE);			 //xuameng返回键隐藏下面EPG菜单隐藏
 			         ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
 			         hideTimeXu();              //xuameng隐藏系统时间
@@ -1714,7 +1724,7 @@ public class LivePlayActivity extends BaseActivity {
                      mHideChannelListRun();       //xuameng显示EPG就隐藏左右菜单
                      mHideSettingLayoutRun();    //xuameng显示EPG就隐藏左右菜单
 				 }
-			   	return false;
+			   return false;
             }
 
             @Override
@@ -1736,16 +1746,19 @@ public class LivePlayActivity extends BaseActivity {
                             sBar.setProgress((int) mVideoView.getCurrentPosition());
                             tv_currentpos.setText(durationToString((int) mVideoView.getCurrentPosition()));
                             tv_duration.setText(durationToString(duration));
+							tv_right_top_type.setText("点播中");
                         } else {
 							isVOD = false;
-                            backcontroller.setVisibility(View.INVISIBLE);
-							view_line_XU.setVisibility(View.VISIBLE);       		//xuamengEPG中的横线
+							tv_right_top_type.setText("回看中");
+ //                           backcontroller.setVisibility(View.INVISIBLE);
+ //							view_line_XU.setVisibility(View.VISIBLE);       		//xuamengEPG中的横线
                         }
                         break;
                     case VideoView.STATE_BUFFERED:
                     case VideoView.STATE_PLAYING:
                         currentLiveChangeSourceTimes = 0;
                         mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
+						iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
                         break;
                     case VideoView.STATE_ERROR:
                     case VideoView.STATE_PLAYBACK_COMPLETED:
