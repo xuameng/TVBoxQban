@@ -996,12 +996,17 @@ public class LivePlayActivity extends BaseActivity {
                             countDownTimer.start();
                             iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
                         }
-                        }else{
+                        }else if{
+				           if(backcontroller.getVisibility() == View.VISIBLE){
+                           sBar.requestFocus();  
+				           }else{
                             showChannelList();
 							ll_epg.setVisibility(View.GONE);				//xuameng下面EPG菜单隐藏
                             ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
                             hideTimeXu();              //xuameng隐藏系统时间
                             hideNetSpeedXu();		//XUAMENG隐藏左上网速
+							backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
+						}
                         }
                         break;
                     case KeyEvent.KEYCODE_ENTER:				//xuameng 修复回看时不能暂停，弹出菜单问题
@@ -1022,12 +1027,17 @@ public class LivePlayActivity extends BaseActivity {
                             countDownTimer.start();
                             iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
                         }
-                        }else{
+                        }else if{
+				           if(backcontroller.getVisibility() == View.VISIBLE){
+                           sBar.requestFocus();  
+				           }else{
                             showChannelList();
-                            ll_epg.setVisibility(View.GONE);				//xuameng下面EPG菜单隐藏
+							ll_epg.setVisibility(View.GONE);				//xuameng下面EPG菜单隐藏
                             ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
                             hideTimeXu();              //xuameng隐藏系统时间
                             hideNetSpeedXu();		//XUAMENG隐藏左上网速
+							backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
+						}
                         }
                         break;
                     case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:		//xuameng 修复回看时不能暂停，弹出菜单问题
@@ -1048,12 +1058,17 @@ public class LivePlayActivity extends BaseActivity {
                             countDownTimer.start();
                             iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
                         }
-                        }else{
+                        }else if{
+				           if(backcontroller.getVisibility() == View.VISIBLE){
+                           sBar.requestFocus();  
+				           }else{
                             showChannelList();
-                            ll_epg.setVisibility(View.GONE);				//xuameng下面EPG菜单隐藏
+							ll_epg.setVisibility(View.GONE);				//xuameng下面EPG菜单隐藏
                             ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
                             hideTimeXu();              //xuameng隐藏系统时间
                             hideNetSpeedXu();		//XUAMENG隐藏左上网速
+							backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
+						}
                         }
                         break;
                 }
