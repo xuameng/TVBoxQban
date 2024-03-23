@@ -1648,6 +1648,7 @@ public class LivePlayActivity extends BaseActivity {
   	               ll_epg.setVisibility(View.GONE);			 //xuameng下面EPG菜单隐藏
 		   	       hideTimeXu();              //xuameng隐藏系统时间
 				   hideNetSpeedXu();		//XUAMENG隐藏左上网速
+				   showChannelList();
 				   }
 				   return true;
 				}
