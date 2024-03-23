@@ -1006,7 +1006,7 @@ public class LivePlayActivity extends BaseActivity {
                             hideNetSpeedXu();		//XUAMENG隐藏左上网速
 							backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
 						}
-                        }
+                        
                         break;
                     case KeyEvent.KEYCODE_ENTER:				//xuameng 修复回看时不能暂停，弹出菜单问题
 						if(isBack){
@@ -1036,7 +1036,7 @@ public class LivePlayActivity extends BaseActivity {
                             hideNetSpeedXu();		//XUAMENG隐藏左上网速
 							backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
 						}
-                        }
+                        
                         break;
                     case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:		//xuameng 修复回看时不能暂停，弹出菜单问题
 						if(isBack){
@@ -1066,7 +1066,7 @@ public class LivePlayActivity extends BaseActivity {
                             hideNetSpeedXu();		//XUAMENG隐藏左上网速
 							backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
 						}
-                        }
+                        
                         break;
                 }
             }
