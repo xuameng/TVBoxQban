@@ -1208,7 +1208,24 @@ public class LivePlayActivity extends BaseActivity {
         }else {
             currentLiveChannelItem.setinclude_back(false);
         }
+
+               if(isVOD){
+					 if(backcontroller.getVisibility() == View.VISIBLE){
+                        backcontroller.setVisibility(View.GONE);
+						ll_epg.setVisibility(View.GONE);			 //xuameng下面EPG菜单隐藏
+						hideTimeXu();              //xuameng隐藏系统时间
+						hideNetSpeedXu();		//XUAMENG隐藏左上网速
+					    mHideChannelListRun();       //xuameng显示EPG就隐藏左右菜单
+                        mHideSettingLayoutRun();    //xuameng显示EPG就隐藏左右菜单
+			       } else if(backcontroller.getVisibility() == View.GONE){
+                        showProgressBars(true);
+						mHideChannelListRun();       //xuameng显示EPG就隐藏左右菜单
+                        mHideSettingLayoutRun();    //xuameng显示EPG就隐藏左右菜单
+		      	     } 
+				   }else{
         showBottomEpg();
+				   }
+
 
 		if (countDownTimer30 != null) {
                 countDownTimer30.cancel();
