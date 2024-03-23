@@ -1688,7 +1688,21 @@ public class LivePlayActivity extends BaseActivity {
                      iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
                      }
 				 return true;
-				}else if(isLl_epgVisible()){ 
+				}if(isVOD){
+					 if(backcontroller.getVisibility() == View.VISIBLE){
+                        backcontroller.setVisibility(View.GONE);
+						ll_epg.setVisibility(View.GONE);			 //xuameng下面EPG菜单隐藏
+						hideTimeXu();              //xuameng隐藏系统时间
+						hideNetSpeedXu();		//XUAMENG隐藏左上网速
+					    mHideChannelListRun();       //xuameng显示EPG就隐藏左右菜单
+                        mHideSettingLayoutRun();    //xuameng显示EPG就隐藏左右菜单
+			     } else if(backcontroller.getVisibility() == View.GONE){
+                        showProgressBarsVod(true);
+						mHideChannelListRun();       //xuameng显示EPG就隐藏左右菜单
+                        mHideSettingLayoutRun();    //xuameng显示EPG就隐藏左右菜单
+		    	}
+				return true;
+			  }else if(isLl_epgVisible()){ 
                      ll_epg.setVisibility(View.GONE);			 //xuameng返回键隐藏下面EPG菜单隐藏
 			         ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
 			         hideTimeXu();              //xuameng隐藏系统时间
@@ -1699,13 +1713,7 @@ public class LivePlayActivity extends BaseActivity {
                      showBottomEpg();           //xuameng显示EPG和上面菜单
                      mHideChannelListRun();       //xuameng显示EPG就隐藏左右菜单
                      mHideSettingLayoutRun();    //xuameng显示EPG就隐藏左右菜单
-				 } else if(isVOD){
-					 if(backcontroller.getVisibility() == View.VISIBLE){
-                        backcontroller.setVisibility(View.GONE);
-			     } else if(backcontroller.getVisibility() == View.GONE){
-                        backcontroller.setVisibility(View.VISIBLE);
-		    	}
-			  }
+				 }
 			   	return false;
             }
 
@@ -1722,8 +1730,7 @@ public class LivePlayActivity extends BaseActivity {
 						int duration = (int) mVideoView.getDuration();
 						if (duration > 0) {
 							isVOD = true;
-                            showProgressBars(true);
-                            view_line_XU.setVisibility(View.INVISIBLE);       		//xuamengEPG中的横线
+                            showProgressBarsVod(true);
 			                sBar = (SeekBar) findViewById(R.id.pb_progressbar);
                             sBar.setMax(duration);
                             sBar.setProgress((int) mVideoView.getCurrentPosition());
@@ -2530,6 +2537,166 @@ public class LivePlayActivity extends BaseActivity {
         return result;
     }
     public void showProgressBars( boolean show){         //显示回看菜单
+
+//        sBar.requestFocus();                            //xuameng回看菜单默认焦点为播放
+        if(show){
+            backcontroller.setVisibility(View.VISIBLE);   //xuameng显示回看下方菜单
+            showTimeXu();              //xuameng系统显示时间
+			showNetSpeedXu();                  //XUAMENG显示右下网速
+			//iv_playpause.requestFocus();     //xuameng默认焦点
+			Mtv_left_top_xu.setVisibility(View.VISIBLE); //xuameng显示回看上图标
+			ll_epg.setVisibility(View.VISIBLE);  //xuameng下面EPG菜单显示
+			ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
+			view_line_XU.setVisibility(View.INVISIBLE);         //xuamengEPG中的横线
+            mHideChannelListRun();       //xuameng显示EPG就隐藏左右菜单
+            mHideSettingLayoutRun();    //xuameng显示EPG就隐藏左右菜单
+//			hideNetSpeedXu();		//XUAMENG隐藏左上网速
+        }else{
+            backcontroller.setVisibility(View.GONE);
+			Mtv_left_top_xu.setVisibility(View.GONE);
+			iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
+            tvLeftChannelListLayout.setVisibility(View.INVISIBLE);		//xuameng显示EPG就隐藏左右菜单
+            tvRightSettingLayout.setVisibility(View.INVISIBLE);		//xuameng显示EPG就隐藏左右菜单
+            if(!tip_epg1.getText().equals("暂无当前节目单，聚汇直播欢迎您的观看！")){
+                ll_epg.setVisibility(View.VISIBLE);  //xuameng下面EPG菜单显示
+			    ll_right_top_loading.setVisibility(View.VISIBLE);  //xuameng右上菜单显示
+				view_line_XU.setVisibility(View.VISIBLE);			//xuamengEPG中的横线
+                showTimeXu();              //xuameng系统显示时间
+				showNetSpeedXu();                  //XUAMENG显示右下网速
+            }
+        }
+
+
+
+//xuameng iv_play升级了        iv_play.setOnClickListener(new View.OnClickListener() {
+
+//xuameng iv_play升级了            @Override
+//xuameng iv_play升级了            public void onClick(View arg0) {
+//xuameng iv_play升级了                  mVideoView.start();
+//xuameng iv_play升级了                iv_play.setVisibility(View.INVISIBLE);
+//xuameng iv_play升级了                iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
+//xuameng iv_play升级了                countDownTimer.start();
+//xuameng iv_play升级了                iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
+//xuameng iv_play升级了            }
+ //xuameng iv_play升级了       });
+
+        iv_playpause.setOnClickListener(new View.OnClickListener() {        //xuameng回看播放按钮监听
+            @Override
+            public void onClick(View arg0) {
+                if(mVideoView.isPlaying()){
+                    mVideoView.pause();
+                    countDownTimer.cancel();
+//xuameng iv_play升级了                    iv_play.setVisibility(View.VISIBLE);
+                    iv_Play_Xu.setVisibility(View.VISIBLE);     //回看暂停图标
+                    iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
+                }else{
+                    backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
+					ll_epg.setVisibility(View.GONE);			 //xuameng下面EPG菜单隐藏
+					hideTimeXu();              //xuameng隐藏系统时间
+					hideNetSpeedXu();		//XUAMENG隐藏左上网速
+                    mVideoView.start();
+//xuameng iv_play升级了                    iv_play.setVisibility(View.INVISIBLE);
+                    iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
+                    countDownTimer.start();
+                    iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
+                }
+            }
+        });
+        sBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+
+            @Override
+            public void onStopTrackingTouch(SeekBar arg0) {
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar arg0) {
+
+            }
+
+            @Override
+            public void onProgressChanged(SeekBar sb, int progress, boolean fromuser) {
+                if(fromuser){
+                    if(countDownTimer!=null){
+                        mVideoView.seekTo(progress);
+                        countDownTimer.cancel();
+                        countDownTimer.start();
+                    }
+                }
+            }
+        });
+        sBar.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View arg0, int keycode, KeyEvent event) {
+                if(event.getAction()==KeyEvent.ACTION_DOWN){
+                    if(keycode==KeyEvent.KEYCODE_DPAD_CENTER||keycode==KeyEvent.KEYCODE_ENTER){
+                        if(mVideoView.isPlaying()){
+                            mVideoView.pause();
+                            countDownTimer.cancel();
+//xuameng iv_play升级了                            iv_play.setVisibility(View.VISIBLE);
+                            iv_Play_Xu.setVisibility(View.VISIBLE);     //回看暂停图标
+                            iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
+                        }else{
+                            backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
+							ll_epg.setVisibility(View.GONE);			 //xuameng下面EPG菜单隐藏
+							hideTimeXu();              //xuameng隐藏系统时间
+							hideNetSpeedXu();		//XUAMENG隐藏左上网速
+                            mVideoView.start();
+ //xuameng iv_play升级了                           iv_play.setVisibility(View.INVISIBLE);
+                            iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
+                            countDownTimer.start();
+                            iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
+                        }
+                    }
+                }
+                return false;
+            }
+        });
+        if(mVideoView.isPlaying()){
+//xuameng iv_play升级了            iv_play.setVisibility(View.INVISIBLE);
+            iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
+//            iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
+        }else{
+//xuameng iv_play升级了            iv_play.setVisibility(View.VISIBLE);
+//            iv_Play_Xu.setVisibility(View.VISIBLE);     //回看暂停图标
+//            iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
+        }
+        if(countDownTimer3==null){
+            countDownTimer3 = new CountDownTimer(10000, 1000) {       //xuameng自动隐藏回看菜单时间10秒
+
+                @Override
+                public void onTick(long arg0) {
+
+                    if(mVideoView != null){
+                        sBar.setProgress((int) mVideoView.getCurrentPosition());
+                        tv_currentpos.setText(durationToString((int) mVideoView.getCurrentPosition()));
+                    }
+                }
+
+                @Override
+                public void onFinish() {
+                    if(backcontroller.getVisibility() == View.VISIBLE){
+                        backcontroller.setVisibility(View.GONE);
+						ll_epg.setVisibility(View.GONE);			 //xuameng下面EPG菜单隐藏
+						hideTimeXu();              //xuameng隐藏系统时间
+						hideNetSpeedXu();		//XUAMENG隐藏左上网速
+                    }
+                }
+            };
+        }else{
+            countDownTimer3.cancel();
+        }
+        countDownTimer3.start();
+    }
+
+}
+
+
+
+
+
+    public void showProgressBarsVod( boolean show){         //显示回看菜单
 
 //        sBar.requestFocus();                            //xuameng回看菜单默认焦点为播放
         if(show){
