@@ -1699,8 +1699,14 @@ public class LivePlayActivity extends BaseActivity {
                      showBottomEpg();           //xuameng显示EPG和上面菜单
                      mHideChannelListRun();       //xuameng显示EPG就隐藏左右菜单
                      mHideSettingLayoutRun();    //xuameng显示EPG就隐藏左右菜单
-				 }
-				return false;
+				 } else if(isVOD){
+					 if(backcontroller.getVisibility() == View.VISIBLE){
+                        backcontroller.setVisibility(View.GONE);
+			     } else if(backcontroller.getVisibility() == View.GONE){
+                        backcontroller.setVisibility(View.VISIBLE);
+		    	}
+			  }
+			   	return false;
             }
 
             @Override
@@ -1714,18 +1720,15 @@ public class LivePlayActivity extends BaseActivity {
                          tv_size.setText("[" + mVideoView.getVideoSize()[0] + " X " + mVideoView.getVideoSize()[1] + "]");
                         }
 						int duration = (int) mVideoView.getDuration();
-                        int currentpos = (int) mVideoView.getCurrentPosition();
 						if (duration > 0) {
 							isVOD = true;
                             backcontroller.setVisibility(View.VISIBLE);
                             view_line_XU.setVisibility(View.INVISIBLE);       		//xuamengEPG中的横线
 			                sBar = (SeekBar) findViewById(R.id.pb_progressbar);
                             sBar.setMax(duration);
-                            sBar.setProgress((int)  mVideoView.getCurrentPosition());
-					        if(mVideoView != null){
-	//xuameng测试				          tv_currentpos.setText(durationToString(currentpos));
-                              tv_duration.setText(durationToString(duration));
-					       }
+                            sBar.setProgress((int) mVideoView.getCurrentPosition());
+                            tv_currentpos.setText(durationToString((int) mVideoView.getCurrentPosition()));
+                            tv_duration.setText(durationToString(duration));
                         } else {
 							isVOD = false;
                             backcontroller.setVisibility(View.INVISIBLE);
