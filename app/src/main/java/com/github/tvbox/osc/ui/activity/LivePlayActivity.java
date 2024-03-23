@@ -1723,7 +1723,7 @@ public class LivePlayActivity extends BaseActivity {
                             sBar.setMax(duration);
                             sBar.setProgress((int)  mVideoView.getCurrentPosition());
 					        if(mVideoView != null){
-					          tv_currentpos.setText(durationToString(currentpos));
+	//xuameng测试				          tv_currentpos.setText(durationToString(currentpos));
                               tv_duration.setText(durationToString(duration));
 					       }
                         } else {
@@ -2657,12 +2657,11 @@ public class LivePlayActivity extends BaseActivity {
 
                 @Override
                 public void onTick(long arg0) {
-/*xuameng测试
+
                     if(mVideoView != null){
                         sBar.setProgress((int) mVideoView.getCurrentPosition());
                         tv_currentpos.setText(durationToString((int) mVideoView.getCurrentPosition()));
                     }
-xuameng测试 */
                 }
 
                 @Override
