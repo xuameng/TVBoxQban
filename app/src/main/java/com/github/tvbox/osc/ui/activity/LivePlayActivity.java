@@ -586,9 +586,10 @@ public class LivePlayActivity extends BaseActivity {
                 ll_epg.setVisibility(View.VISIBLE);  //xuameng下面EPG菜单显示
 			    if(isVOD){
 				ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
-				else 			    
+				}else{		    
 				ll_right_top_loading.setVisibility(View.VISIBLE);  //xuameng右上菜单显示
 			    }
+			    
 				showTimeXu();                       //xuameng显示系统时间
 				showNetSpeedXu();                  //XUAMENG显示左上网速
 				view_line_XU.setVisibility(View.VISIBLE);		//xuamengEPG中的横线
@@ -610,7 +611,11 @@ public class LivePlayActivity extends BaseActivity {
                 countDownTimer.start();
             }else {
                 ll_epg.setVisibility(View.VISIBLE);    //XUAMENG  底部epg显示
-			    ll_right_top_loading.setVisibility(View.VISIBLE);  //xuameng右上菜单显示
+			    if(isVOD){
+				ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
+				}else{		    
+				ll_right_top_loading.setVisibility(View.VISIBLE);  //xuameng右上菜单显示
+			    }
 				showTimeXu();                       //xuameng显示系统时间
 				showNetSpeedXu();                  //XUAMENG显示左上网速
 				view_line_XU.setVisibility(View.VISIBLE);		//xuamengEPG中的横线
