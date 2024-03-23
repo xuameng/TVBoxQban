@@ -1748,6 +1748,10 @@ public class LivePlayActivity extends BaseActivity {
                         }
 						int duration = (int) mVideoView.getDuration();
 						if (duration > 0) {
+							if(isBack){
+							tv_right_top_type.setText("回看中");
+                            return;
+							}
 							isVOD = true;
                             showProgressBars(true);
 			                sBar = (SeekBar) findViewById(R.id.pb_progressbar);
@@ -1840,7 +1844,7 @@ public class LivePlayActivity extends BaseActivity {
 				 }else{
                         playPreSource();
 						liveSettingGroupAdapter.setSelectedGroupIndex(-1);		 //xuameng右菜单BUG修复
-                    }	
+                }	
             }
         });
         controller.setCanChangePosition(false);
