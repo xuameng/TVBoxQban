@@ -1767,6 +1767,7 @@ public class LivePlayActivity extends BaseActivity {
                         currentLiveChangeSourceTimes = 0;
                         mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
 						iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
+						iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
                         break;
                     case VideoView.STATE_ERROR:
                     case VideoView.STATE_PLAYBACK_COMPLETED:
@@ -1809,7 +1810,8 @@ public class LivePlayActivity extends BaseActivity {
 		      	   } else{
                         playNextSource();
                         liveSettingGroupAdapter.setSelectedGroupIndex(-1);          //xuameng右菜单BUG修复
-                    }else if (direction < 0)
+                    }
+				   }else if (direction < 0)
                     if(isBack){  //xuameng手机换源和隐藏时移控制栏
                         if(backcontroller.getVisibility() == View.VISIBLE){
                         backcontroller.setVisibility(View.GONE);
@@ -1836,6 +1838,7 @@ public class LivePlayActivity extends BaseActivity {
                         playPreSource();
 						liveSettingGroupAdapter.setSelectedGroupIndex(-1);		 //xuameng右菜单BUG修复
                     }
+				｝
             }
         });
         controller.setCanChangePosition(false);
