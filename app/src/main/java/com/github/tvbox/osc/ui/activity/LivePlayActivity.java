@@ -1714,17 +1714,18 @@ public class LivePlayActivity extends BaseActivity {
                          tv_size.setText("[" + mVideoView.getVideoSize()[0] + " X " + mVideoView.getVideoSize()[1] + "]");
                         }
 						int duration = (int) mVideoView.getDuration();
+                        int currentpos = (int) mVideoView.getCurrentPosition();
 						if (duration > 0) {
 							isVOD = true;
                             backcontroller.setVisibility(View.VISIBLE);
                             view_line_XU.setVisibility(View.INVISIBLE);       		//xuamengEPG中的横线
-
-			        sBar = (SeekBar) findViewById(R.id.pb_progressbar);
-                    sBar.setMax(duration);
-                    sBar.setProgress((int)  mVideoView.getCurrentPosition());
-					tv_currentpos.setText(durationToString((int)mVideoView.getCurrentPosition()));
-                    tv_duration.setText(durationToString(duration));
-
+			                sBar = (SeekBar) findViewById(R.id.pb_progressbar);
+                            sBar.setMax(duration);
+                            sBar.setProgress((int)  mVideoView.getCurrentPosition());
+					        if(mVideoView != null){
+					          tv_currentpos.setText(durationToString(currentpos));
+                              tv_duration.setText(durationToString(duration));
+					       }
                         } else {
 							isVOD = false;
                             backcontroller.setVisibility(View.INVISIBLE);
@@ -2656,12 +2657,12 @@ public class LivePlayActivity extends BaseActivity {
 
                 @Override
                 public void onTick(long arg0) {
-
+/*xuameng测试
                     if(mVideoView != null){
                         sBar.setProgress((int) mVideoView.getCurrentPosition());
                         tv_currentpos.setText(durationToString((int) mVideoView.getCurrentPosition()));
                     }
-
+*/xuameng测试
                 }
 
                 @Override
