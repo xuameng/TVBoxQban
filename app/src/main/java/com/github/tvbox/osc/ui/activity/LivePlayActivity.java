@@ -996,8 +996,7 @@ public class LivePlayActivity extends BaseActivity {
                             countDownTimer.start();
                             iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
                         }
-                        }else if{
-				           if(backcontroller.getVisibility() == View.VISIBLE){
+                        }else if(backcontroller.getVisibility() == View.VISIBLE){
                            sBar.requestFocus();  
 				           }else{
                             showChannelList();
@@ -1027,8 +1026,7 @@ public class LivePlayActivity extends BaseActivity {
                             countDownTimer.start();
                             iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
                         }
-                        }else if{
-				           if(backcontroller.getVisibility() == View.VISIBLE){
+                        }else if(backcontroller.getVisibility() == View.VISIBLE){
                            sBar.requestFocus();  
 				           }else{
                             showChannelList();
@@ -1058,8 +1056,7 @@ public class LivePlayActivity extends BaseActivity {
                             countDownTimer.start();
                             iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
                         }
-                        }else if{
-				           if(backcontroller.getVisibility() == View.VISIBLE){
+                        }else if(backcontroller.getVisibility() == View.VISIBLE){
                            sBar.requestFocus();  
 				           }else{
                             showChannelList();
