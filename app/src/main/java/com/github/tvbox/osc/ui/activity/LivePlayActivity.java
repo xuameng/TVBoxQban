@@ -2662,7 +2662,7 @@ public class LivePlayActivity extends BaseActivity {
                         sBar.setProgress((int) mVideoView.getCurrentPosition());
                         tv_currentpos.setText(durationToString((int) mVideoView.getCurrentPosition()));
                     }
-*/xuameng测试
+xuameng测试 */
                 }
 
                 @Override
