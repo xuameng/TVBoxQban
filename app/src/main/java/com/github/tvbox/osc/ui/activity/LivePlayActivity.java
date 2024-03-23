@@ -155,6 +155,7 @@ public class LivePlayActivity extends BaseActivity {
     private TextView tv_right_top_channel_name;
     private TextView tv_right_top_epg_name;
     private TextView tv_right_top_type;
+    private TextView iv_play_pause;
     private ImageView iv_circle_bg;
     private TextView tv_shownum ;
     private TextView txtNoEpg ;
@@ -584,12 +585,7 @@ public class LivePlayActivity extends BaseActivity {
             }
             if(!tip_epg1.getText().equals("暂无当前节目单，聚汇直播欢迎您的观看！")){
                 ll_epg.setVisibility(View.VISIBLE);  //xuameng下面EPG菜单显示
-			    if(isVOD){
-				ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
-				}else{		    
-				ll_right_top_loading.setVisibility(View.VISIBLE);  //xuameng右上菜单显示
-			    }
-			    
+			    ll_right_top_loading.setVisibility(View.VISIBLE);  //xuameng右上菜单显示
 				showTimeXu();                       //xuameng显示系统时间
 				showNetSpeedXu();                  //XUAMENG显示左上网速
 				view_line_XU.setVisibility(View.VISIBLE);		//xuamengEPG中的横线
@@ -611,11 +607,7 @@ public class LivePlayActivity extends BaseActivity {
                 countDownTimer.start();
             }else {
                 ll_epg.setVisibility(View.VISIBLE);    //XUAMENG  底部epg显示
-			    if(isVOD){
-				ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
-				}else{		    
-				ll_right_top_loading.setVisibility(View.VISIBLE);  //xuameng右上菜单显示
-			    }
+			    ll_right_top_loading.setVisibility(View.VISIBLE);  //xuameng右上菜单显示
 				showTimeXu();                       //xuameng显示系统时间
 				showNetSpeedXu();                  //XUAMENG显示左上网速
 				view_line_XU.setVisibility(View.VISIBLE);		//xuamengEPG中的横线
@@ -1759,6 +1751,7 @@ public class LivePlayActivity extends BaseActivity {
 						if (duration > 0) {
 							if(isBack){
 							tv_right_top_type.setText("回看中");
+							iv_play_pause.setText("回看暂停中！聚汇直播欢迎您的收看！");
                             return;
 							}
 							isVOD = true;
@@ -1769,6 +1762,7 @@ public class LivePlayActivity extends BaseActivity {
                             tv_currentpos.setText(durationToString((int) mVideoView.getCurrentPosition()));
                             tv_duration.setText(durationToString(duration));
 							tv_right_top_type.setText("点播中");
+							iv_play_pause.setText("点播暂停中！聚汇直播欢迎您的收看！");
                         } else {
 							isVOD = false;
 							tv_right_top_type.setText("回看中");
