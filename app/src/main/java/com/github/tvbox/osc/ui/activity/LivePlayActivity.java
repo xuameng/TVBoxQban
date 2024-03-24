@@ -200,6 +200,7 @@ public class LivePlayActivity extends BaseActivity {
 	private CountDownTimer countDownTimer21;
 	private CountDownTimer countDownTimer22;
 	private CountDownTimer countDownTimer30;
+	private CountDownTimer countDownTimer40;
     private int videoWidth = 1920;
     private int videoHeight = 1080;
     private TextView tv_currentpos;
@@ -733,31 +734,31 @@ public class LivePlayActivity extends BaseActivity {
                     getEpg(liveEpgDateAdapter.getData().get(selectedIndex).getDateParamVal());
             }
 
-            if (countDownTimer != null) {
-                countDownTimer.cancel();
+            if (countDownTimer40 != null) {
+                countDownTimer40.cancel();
             }
             if(!tip_epg1.getText().equals("暂无当前节目单，聚汇直播欢迎您的观看！")){
                 ll_epg.setVisibility(View.VISIBLE);  //xuameng下面EPG菜单显示
 				view_line_XU.setVisibility(View.INVISIBLE);
-                countDownTimer = new CountDownTimer(10000, 1000) {//底部epg隐藏时间设定
+                countDownTimer40 = new CountDownTimer(10000, 1000) {//底部epg隐藏时间设定
                     public void onTick(long j) {
                     }
                     public void onFinish() {
                         ll_epg.setVisibility(View.GONE);				//xuameng下面EPG菜单隐藏
                     }
                 };
-                countDownTimer.start();
+                countDownTimer40.start();
             }else {
                 ll_epg.setVisibility(View.VISIBLE);    //XUAMENG  底部epg显示
 				view_line_XU.setVisibility(View.INVISIBLE);
-		        countDownTimer = new CountDownTimer(10000, 1000) {//底部epg隐藏时间设定
+		        countDownTimer40 = new CountDownTimer(10000, 1000) {//底部epg隐藏时间设定
 		public void onTick(long j) {
                     }
                     public void onFinish() {
                         ll_epg.setVisibility(View.GONE);				//xuameng下面EPG菜单隐藏
                     }
                 };
-                countDownTimer.start();
+                countDownTimer40.start();
             }
             if (channel_Name == null || channel_Name.getSourceNum() <= 1) {
                 ((TextView) findViewById(R.id.tv_source)).setText("[线路源1/1]");
@@ -897,7 +898,12 @@ public class LivePlayActivity extends BaseActivity {
                         showProgressBars(true);
 						mHideChannelListRun();       //xuameng显示EPG就隐藏左右菜单
                         mHideSettingLayoutRun();    //xuameng显示EPG就隐藏左右菜单
-		    	     }
+		    	    } else if (System.currentTimeMillis() - mExitTimeDown < 1200) {
+                          if (Hawk.get(HawkConfig.LIVE_CHANNEL_REVERSE, false))
+                        playNext();
+                        else
+                        playPrevious();
+                    }
 					}else if (System.currentTimeMillis() - mExitTimeUp < 1200) {        //xuameng小于1.2秒换台
                           if (Hawk.get(HawkConfig.LIVE_CHANNEL_REVERSE, false))
                         playNext();
@@ -937,7 +943,12 @@ public class LivePlayActivity extends BaseActivity {
                         showProgressBars(true);
 						mHideChannelListRun();       //xuameng显示EPG就隐藏左右菜单
                         mHideSettingLayoutRun();    //xuameng显示EPG就隐藏左右菜单
-		    	     }
+		    	    } else if (System.currentTimeMillis() - mExitTimeDown < 1200) {
+                          if (Hawk.get(HawkConfig.LIVE_CHANNEL_REVERSE, false))
+                        playPrevious();
+                        else
+                        playNext();
+                    }
 					}else if (System.currentTimeMillis() - mExitTimeDown < 1200) {
                           if (Hawk.get(HawkConfig.LIVE_CHANNEL_REVERSE, false))
                         playPrevious();
@@ -998,7 +1009,10 @@ public class LivePlayActivity extends BaseActivity {
                         }
                         }else if(backcontroller.getVisibility() == View.VISIBLE){
                            sBar.requestFocus();  
-				           }else{
+				        }else if(!mVideoView.isPlaying()){
+                           mVideoView.start();
+                           iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
+						}else{
                             showChannelList();
 							ll_epg.setVisibility(View.GONE);				//xuameng下面EPG菜单隐藏
                             ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
@@ -1028,7 +1042,10 @@ public class LivePlayActivity extends BaseActivity {
                         }
                         }else if(backcontroller.getVisibility() == View.VISIBLE){
                            sBar.requestFocus();  
-				           }else{
+				        }else if(!mVideoView.isPlaying()){
+                           mVideoView.start();
+                           iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
+						}else{
                             showChannelList();
 							ll_epg.setVisibility(View.GONE);				//xuameng下面EPG菜单隐藏
                             ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
@@ -1058,7 +1075,10 @@ public class LivePlayActivity extends BaseActivity {
                         }
                         }else if(backcontroller.getVisibility() == View.VISIBLE){
                            sBar.requestFocus();  
-				           }else{
+				        }else if(!mVideoView.isPlaying()){
+                           mVideoView.start();
+                           iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
+						}else{
                             showChannelList();
 							ll_epg.setVisibility(View.GONE);				//xuameng下面EPG菜单隐藏
                             ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
@@ -1236,10 +1256,12 @@ public class LivePlayActivity extends BaseActivity {
           showProgressBars(true);
 		  mHideChannelListRun();       //xuameng显示EPG就隐藏左右菜单
           mHideSettingLayoutRun();    //xuameng显示EPG就隐藏左右菜单
-		}else{
+		  }
+		}
+
+	    if(!isVOD){
 		  showBottomEpg();
           getEpg(new Date());
-		 }
 		}
           isSHIYI=false;
           isBack = false;
@@ -1811,9 +1833,12 @@ public class LivePlayActivity extends BaseActivity {
                             return;
 							}
 							isVOD = true;
+						    if (countDownTimer != null) {
+                            countDownTimer.cancel();
+                            }
                             showProgressBars(true);
 			                sBar = (SeekBar) findViewById(R.id.pb_progressbar);
-                            sBar.setMax(duration);
+                            sBar.setMax(duration*1000);
                             sBar.setProgress((int) mVideoView.getCurrentPosition());
                             tv_currentpos.setText(durationToString((int) mVideoView.getCurrentPosition()));
                             tv_duration.setText(durationToString(duration));
