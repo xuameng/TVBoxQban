@@ -200,7 +200,6 @@ public class LivePlayActivity extends BaseActivity {
 	private CountDownTimer countDownTimer21;
 	private CountDownTimer countDownTimer22;
 	private CountDownTimer countDownTimer30;
-	private CountDownTimer countDownTimer40;
     private int videoWidth = 1920;
     private int videoHeight = 1080;
     private TextView tv_currentpos;
@@ -734,31 +733,31 @@ public class LivePlayActivity extends BaseActivity {
                     getEpg(liveEpgDateAdapter.getData().get(selectedIndex).getDateParamVal());
             }
 
-            if (countDownTimer40 != null) {
-                countDownTimer40.cancel();
+            if (countDownTimer != null) {
+                countDownTimer.cancel();
             }
             if(!tip_epg1.getText().equals("暂无当前节目单，聚汇直播欢迎您的观看！")){
                 ll_epg.setVisibility(View.VISIBLE);  //xuameng下面EPG菜单显示
 				view_line_XU.setVisibility(View.INVISIBLE);
-                countDownTimer40 = new CountDownTimer(10000, 1000) {//底部epg隐藏时间设定
+                countDownTimer = new CountDownTimer(10000, 1000) {//底部epg隐藏时间设定
                     public void onTick(long j) {
                     }
                     public void onFinish() {
                         ll_epg.setVisibility(View.GONE);				//xuameng下面EPG菜单隐藏
                     }
                 };
-                countDownTimer40.start();
+                countDownTimer.start();
             }else {
                 ll_epg.setVisibility(View.VISIBLE);    //XUAMENG  底部epg显示
 				view_line_XU.setVisibility(View.INVISIBLE);
-		        countDownTimer40 = new CountDownTimer(10000, 1000) {//底部epg隐藏时间设定
+		        countDownTimer = new CountDownTimer(10000, 1000) {//底部epg隐藏时间设定
 		public void onTick(long j) {
                     }
                     public void onFinish() {
                         ll_epg.setVisibility(View.GONE);				//xuameng下面EPG菜单隐藏
                     }
                 };
-                countDownTimer40.start();
+                countDownTimer.start();
             }
             if (channel_Name == null || channel_Name.getSourceNum() <= 1) {
                 ((TextView) findViewById(R.id.tv_source)).setText("[线路源1/1]");
