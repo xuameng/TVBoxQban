@@ -869,6 +869,7 @@ public class LivePlayActivity extends BaseActivity {
                 showSettingGroup();
                 ll_epg.setVisibility(View.GONE);				//xuameng下面EPG菜单隐藏
                 ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
+				backcontroller.setVisibility(View.GONE);
                 hideTimeXu();              //xuameng隐藏系统时间
                 hideNetSpeedXu();		//XUAMENG隐藏左上网速
 				return false;
@@ -1922,6 +1923,14 @@ public class LivePlayActivity extends BaseActivity {
                         break;
                     case VideoView.STATE_BUFFERED:
                     case VideoView.STATE_PLAYING:
+						if(isVOD){
+                         int duration2 = (int) mVideoView.getDuration();
+                         sBar = (SeekBar) findViewById(R.id.pb_progressbar);
+                         sBar.setMax(duration2);
+                         sBar.setProgress((int) mVideoView.getCurrentPosition());
+                         tv_currentpos.setText(durationToString((int) mVideoView.getCurrentPosition()));
+                         tv_duration.setText(durationToString(duration2));
+                         }
                         currentLiveChangeSourceTimes = 0;
                         mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
 						iv_Play_Xu.setVisibility(View.GONE);       //XUAMENG修复PLAY时关闭回看暂停图标
