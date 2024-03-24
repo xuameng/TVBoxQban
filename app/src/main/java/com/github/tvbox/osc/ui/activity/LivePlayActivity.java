@@ -2836,6 +2836,10 @@ public class LivePlayActivity extends BaseActivity {
             }
         });
         sBar.setOnKeyListener(new View.OnKeyListener() {
+			if(isVOD){
+			int duration = (int) mVideoView.getDuration();
+			sBar.setMax(duration);
+			}
             @Override
             public boolean onKey(View arg0, int keycode, KeyEvent event) {
                 if(event.getAction()==KeyEvent.ACTION_DOWN){
