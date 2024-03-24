@@ -1909,7 +1909,7 @@ public class LivePlayActivity extends BaseActivity {
                             }
                             showProgressBars(true);
 			                sBar = (SeekBar) findViewById(R.id.pb_progressbar);
-                            sBar.setMax(100);
+                            sBar.setMax(duration1);
                             sBar.setProgress((int) mVideoView.getCurrentPosition());
                             tv_currentpos.setText(durationToString((int) mVideoView.getCurrentPosition()));
                             tv_duration.setText(durationToString(duration1));
