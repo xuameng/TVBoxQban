@@ -1723,6 +1723,13 @@ public class LivePlayActivity extends BaseActivity {
 				else if(!mVideoView.isPlaying()){
                    mVideoView.start();
                    iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
+			    }else if(view_line_XU.getVisibility() == View.VISIBLE){
+				   showChannelList();
+				   ll_epg.setVisibility(View.GONE);				//xuameng下面EPG菜单隐藏
+                   ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
+				   backcontroller.setVisibility(View.GONE);
+                   hideTimeXu();              //xuameng隐藏系统时间
+                   hideNetSpeedXu();		//XUAMENG隐藏左上网速
 			    }else{
 				   showChannelList();
 				   ll_epg.setVisibility(View.GONE);				//xuameng下面EPG菜单隐藏
@@ -1866,6 +1873,7 @@ public class LivePlayActivity extends BaseActivity {
                         mHandler.postDelayed(mConnectTimeoutChangeSourceRun, 2000);
                         break;
                     case VideoView.STATE_PREPARING:
+                         isVOD = false;
                     case VideoView.STATE_BUFFERING:
                         mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
                         mHandler.postDelayed(mConnectTimeoutChangeSourceRun, (Hawk.get(HawkConfig.LIVE_CONNECT_TIMEOUT, 1) + 1) * 5000);
@@ -2802,6 +2810,9 @@ public class LivePlayActivity extends BaseActivity {
 //            iv_Play_Xu.setVisibility(View.VISIBLE);     //回看暂停图标
 //            iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
         }
+		if (countDownTimer3 != null) {
+           countDownTimer3.cancel();
+		}
         if(countDownTimer3==null){
             countDownTimer3 = new CountDownTimer(10000, 1000) {       //xuameng自动隐藏回看菜单时间10秒
 
