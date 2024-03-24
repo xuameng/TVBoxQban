@@ -1182,6 +1182,9 @@ public class LivePlayActivity extends BaseActivity {
             mHideSettingLayoutRun();
             return;
         }
+		if(isVOD){
+			Mtv_left_top_xu.setVisibility(View.GONE);
+		}
         if (tvLeftChannelListLayout.getVisibility() == View.INVISIBLE) {
             //重新载入上一次状态
             liveChannelItemAdapter.setNewData(getLiveChannels(currentChannelGroupIndex));
@@ -1266,6 +1269,9 @@ public class LivePlayActivity extends BaseActivity {
                     }
                     public void onFinish() {
                     mHideChannelListRun();
+				    if(isVOD){
+			        Mtv_left_top_xu.setVisibility(View.VISIBLE);
+		            }
                     }
                 };
                 countDownTimer7.start();
