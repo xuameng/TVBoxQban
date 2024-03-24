@@ -1895,12 +1895,11 @@ public class LivePlayActivity extends BaseActivity {
 						 if (mVideoView.getVideoSize().length >= 2) {         //XUAMENG分辨率
                          tv_size.setText("[" + mVideoView.getVideoSize()[0] + " X " + mVideoView.getVideoSize()[1] + "]");
                         }
-						int duration = (int) mVideoView.getDuration();
-						if (duration > 0) {
+						int duration1 = (int) mVideoView.getDuration();
+						if (duration1 > 0) {
 							if(isBack){
 							tv_right_top_type.setText("回看中");
 							iv_play_pause.setText("回看暂停中！聚汇直播欢迎您的收看！");
-                            return;
 							}
 							isVOD = true;
 						    if (countDownTimer != null) {
@@ -1908,10 +1907,10 @@ public class LivePlayActivity extends BaseActivity {
                             }
                             showProgressBars(true);
 			                sBar = (SeekBar) findViewById(R.id.pb_progressbar);
-                            sBar.setMax(duration);
+                            sBar.setMax(duration1);
                             sBar.setProgress((int) mVideoView.getCurrentPosition());
                             tv_currentpos.setText(durationToString((int) mVideoView.getCurrentPosition()));
-                            tv_duration.setText(durationToString(duration));
+                            tv_duration.setText(durationToString(duration1));
 							tv_right_top_type.setText("点播中");
 							iv_play_pause.setText("点播暂停中！聚汇直播欢迎您的收看！");
                         } else {
@@ -2836,10 +2835,6 @@ public class LivePlayActivity extends BaseActivity {
             }
         });
         sBar.setOnKeyListener(new View.OnKeyListener() {
-			if(isVOD){
-			int duration = (int) mVideoView.getDuration();
-			sBar.setMax(duration);
-			}
             @Override
             public boolean onKey(View arg0, int keycode, KeyEvent event) {
                 if(event.getAction()==KeyEvent.ACTION_DOWN){
