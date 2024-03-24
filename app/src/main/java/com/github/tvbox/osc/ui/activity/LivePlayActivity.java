@@ -1532,11 +1532,12 @@ public class LivePlayActivity extends BaseActivity {
                     ViewGroup.LayoutParams lp =  iv_play.getLayoutParams();
                     lp.width=videoHeight/7;
                     lp.height=videoHeight/7;
+					int duration = (int) mVideoView.getDuration();
                     sBar = (SeekBar) findViewById(R.id.pb_progressbar);
-                    sBar.setMax(shiyi_time_c*1000);
+                    sBar.setMax(duration);
                     sBar.setProgress((int)  mVideoView.getCurrentPosition());
                     tv_currentpos.setText(durationToString((int)mVideoView.getCurrentPosition()));
-                    tv_duration.setText(durationToString(shiyi_time_c*1000));
+                    tv_duration.setText(durationToString(duration));
 //修好了			hideTimeXu();                       //xuameng进入回看前先隐藏上方系统时间
                     showProgressBars(true);             //xuameng然后再显示
 					showBottomEpgBack();               //xuameng回看EPG
@@ -1613,12 +1614,13 @@ public class LivePlayActivity extends BaseActivity {
                     ViewGroup.LayoutParams lp =  iv_play.getLayoutParams();
                     lp.width=videoHeight/7;
                     lp.height=videoHeight/7;
+					int duration = (int) mVideoView.getDuration();
                     sBar = (SeekBar) findViewById(R.id.pb_progressbar);
-                    sBar.setMax(shiyi_time_c*1000);
+                    sBar.setMax(duration);
                     sBar.setProgress((int)  mVideoView.getCurrentPosition());
                    // long dd = mVideoView.getDuration();
                     tv_currentpos.setText(durationToString((int)mVideoView.getCurrentPosition()));
-                    tv_duration.setText(durationToString(shiyi_time_c*1000));
+                    tv_duration.setText(durationToString(duration));
                     showProgressBars(true);
 					showBottomEpgBack();               //xuameng回看EPG
                     isBack = true;
@@ -1722,12 +1724,12 @@ public class LivePlayActivity extends BaseActivity {
 				}
 			  if(isVOD){
 			    if(backcontroller.getVisibility() == View.VISIBLE){
-                   backcontroller.setVisibility(View.GONE);
-  	               ll_epg.setVisibility(View.GONE);			 //xuameng下面EPG菜单隐藏
-		   	       hideTimeXu();              //xuameng隐藏系统时间
-				   hideNetSpeedXu();		//XUAMENG隐藏左上网速
-				   showChannelList();
-				   }else {
+                   sBar.requestFocus();  
+				   }
+				else if(!mVideoView.isPlaying()){
+                   mVideoView.start();
+                   iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
+			    }else{
 				   showChannelList();
 				   ll_epg.setVisibility(View.GONE);				//xuameng下面EPG菜单隐藏
                    ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
@@ -1785,18 +1787,25 @@ public class LivePlayActivity extends BaseActivity {
                      iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
                      }
 				 return true;
-				}if(isVOD){
-					 if(backcontroller.getVisibility() == View.VISIBLE){
+			     }if(isVOD){
+				   if(mVideoView.isPlaying()){
+                        showProgressBars(true);
+						mHideChannelListRun();       //xuameng显示EPG就隐藏左右菜单
+                        mHideSettingLayoutRun();    //xuameng显示EPG就隐藏左右菜单
+						mVideoView.pause();	
+					    countDownTimer.cancel();
+                        iv_Play_Xu.setVisibility(View.VISIBLE);     //回看暂停图标
+                        iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
+			     } else {
                         backcontroller.setVisibility(View.GONE);
 						ll_epg.setVisibility(View.GONE);			 //xuameng下面EPG菜单隐藏
 						hideTimeXu();              //xuameng隐藏系统时间
 						hideNetSpeedXu();		//XUAMENG隐藏左上网速
-					    mHideChannelListRun();       //xuameng显示EPG就隐藏左右菜单
-                        mHideSettingLayoutRun();    //xuameng显示EPG就隐藏左右菜单
-			     } else if(backcontroller.getVisibility() == View.GONE){
-                        showProgressBars(true);
-						mHideChannelListRun();       //xuameng显示EPG就隐藏左右菜单
-                        mHideSettingLayoutRun();    //xuameng显示EPG就隐藏左右菜单
+						mVideoView.start();
+                        iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
+					    countDownTimer.start();
+                        iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
+
 		    	}
 				return true;
 			      }else if(isLl_epgVisible()){ 
