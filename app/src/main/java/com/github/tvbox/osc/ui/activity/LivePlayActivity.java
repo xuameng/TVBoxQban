@@ -1586,7 +1586,7 @@ public class LivePlayActivity extends BaseActivity {
                     lp.height=videoHeight/7;
 					int duration = (int) mVideoView.getDuration();
                     sBar = (SeekBar) findViewById(R.id.pb_progressbar);
-                    sBar.setMax(shiyi_time_c*1000);
+                    sBar.setMax(duration);
                     sBar.setProgress((int)  mVideoView.getCurrentPosition());
                     tv_currentpos.setText(durationToString((int)mVideoView.getCurrentPosition()));
                     tv_duration.setText(durationToString(shiyi_time_c*1000));
