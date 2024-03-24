@@ -885,13 +885,13 @@ public class LivePlayActivity extends BaseActivity {
                         showProgressBars(true);
 						showBottomEpgBack();               //xuameng回看EPG
                         }
-                    }else if(isVOD){
-					  if (System.currentTimeMillis() - mExitTimeDown < 1200) {
-                        if (Hawk.get(HawkConfig.LIVE_CHANNEL_REVERSE, false))
+                    }else if (System.currentTimeMillis() - mExitTimeUp < 1200) {        //xuameng小于1.2秒换台
+                          if (Hawk.get(HawkConfig.LIVE_CHANNEL_REVERSE, false))
                         playNext();
                         else
                         playPrevious();
-                    }else if(backcontroller.getVisibility() == View.VISIBLE){
+                    }else if(isVOD){
+					  if(backcontroller.getVisibility() == View.VISIBLE){
                         backcontroller.setVisibility(View.GONE);
 						ll_epg.setVisibility(View.GONE);			 //xuameng下面EPG菜单隐藏
 						hideTimeXu();              //xuameng隐藏系统时间
@@ -903,12 +903,7 @@ public class LivePlayActivity extends BaseActivity {
 						mHideChannelListRun();       //xuameng显示EPG就隐藏左右菜单
                         mHideSettingLayoutRun();    //xuameng显示EPG就隐藏左右菜单
 		    	    }
-					}else if (System.currentTimeMillis() - mExitTimeUp < 1200) {        //xuameng小于1.2秒换台
-                          if (Hawk.get(HawkConfig.LIVE_CHANNEL_REVERSE, false))
-                        playNext();
-                        else
-                        playPrevious();
-                    }else if(isLl_epgVisible()){ 
+					}else if(isLl_epgVisible()){ 
 					    mExitTimeUp = System.currentTimeMillis();
                         ll_epg.setVisibility(View.GONE);			 //xuameng返回键隐藏下面EPG菜单隐藏
 			            ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
@@ -930,13 +925,13 @@ public class LivePlayActivity extends BaseActivity {
                           showProgressBars(true);
 						  showBottomEpgBack();               //xuameng回看EPG
                           }
-                    }else if(isVOD){
-					 if (System.currentTimeMillis() - mExitTimeDown < 1200) {
-                        if (Hawk.get(HawkConfig.LIVE_CHANNEL_REVERSE, false))
+                    }else if (System.currentTimeMillis() - mExitTimeDown < 1200) {
+                          if (Hawk.get(HawkConfig.LIVE_CHANNEL_REVERSE, false))
                         playPrevious();
                         else
                         playNext();
-                    }else if(backcontroller.getVisibility() == View.VISIBLE){
+                    }else if(isVOD){
+                      if(backcontroller.getVisibility() == View.VISIBLE){
                         backcontroller.setVisibility(View.GONE);
 						ll_epg.setVisibility(View.GONE);			 //xuameng下面EPG菜单隐藏
 						hideTimeXu();              //xuameng隐藏系统时间
@@ -948,12 +943,7 @@ public class LivePlayActivity extends BaseActivity {
 						mHideChannelListRun();       //xuameng显示EPG就隐藏左右菜单
                         mHideSettingLayoutRun();    //xuameng显示EPG就隐藏左右菜单
 		    	    }
-					}else if (System.currentTimeMillis() - mExitTimeDown < 1200) {
-                          if (Hawk.get(HawkConfig.LIVE_CHANNEL_REVERSE, false))
-                        playPrevious();
-                        else
-                        playNext();
-                    }else if(isLl_epgVisible()){
+					}else if(isLl_epgVisible()){
 						mExitTimeDown = System.currentTimeMillis();
                         ll_epg.setVisibility(View.GONE);			 //xuameng返回键隐藏下面EPG菜单隐藏
 			            ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
