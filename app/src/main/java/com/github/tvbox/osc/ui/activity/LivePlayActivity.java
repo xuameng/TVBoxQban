@@ -1898,10 +1898,6 @@ public class LivePlayActivity extends BaseActivity {
                         }
 						int duration1 = (int) mVideoView.getDuration();
 						if (duration1 > 0) {
-							if(isBack){
-							tv_right_top_type.setText("回看中");
-							iv_play_pause.setText("回看暂停中！聚汇直播欢迎您的收看！");
-							}
 							isVOD = true;
 						    if (countDownTimer != null) {
                             countDownTimer.cancel();
@@ -1914,6 +1910,11 @@ public class LivePlayActivity extends BaseActivity {
                             tv_duration.setText(durationToString(duration1));
 							tv_right_top_type.setText("点播中");
 							iv_play_pause.setText("点播暂停中！聚汇直播欢迎您的收看！");
+							if(isBack){
+							tv_right_top_type.setText("回看中");
+							iv_play_pause.setText("回看暂停中！聚汇直播欢迎您的收看！");
+							return;
+							}
                         } else {
 							isVOD = false;
 							tv_right_top_type.setText("回看中");
@@ -1923,14 +1924,6 @@ public class LivePlayActivity extends BaseActivity {
                         break;
                     case VideoView.STATE_BUFFERED:
                     case VideoView.STATE_PLAYING:
-						if(isVOD){
-                         int duration2 = (int) mVideoView.getDuration();
-                         sBar = (SeekBar) findViewById(R.id.pb_progressbar);
-                         sBar.setMax(duration2);
-                         sBar.setProgress((int) mVideoView.getCurrentPosition());
-                         tv_currentpos.setText(durationToString((int) mVideoView.getCurrentPosition()));
-                         tv_duration.setText(durationToString(duration2));
-                         }
                         currentLiveChangeSourceTimes = 0;
                         mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
 						iv_Play_Xu.setVisibility(View.GONE);       //XUAMENG修复PLAY时关闭回看暂停图标
