@@ -1909,9 +1909,9 @@ public class LivePlayActivity extends BaseActivity {
                             }
                             showProgressBars(true);
 			                sBar = (SeekBar) findViewById(R.id.pb_progressbar);
-							sBar.setProgress(10);
-                            sBar.setMax(duration1);
-							sBar.setProgress(0);
+                            sBar.setMax(100);
+							sBar.setkeyprogressincrement(5);
+                            sBar.setProgress((int) mVideoView.getCurrentPosition());
                             tv_currentpos.setText(durationToString((int) mVideoView.getCurrentPosition()));
                             tv_duration.setText(durationToString(duration1));
 							tv_right_top_type.setText("点播中");
