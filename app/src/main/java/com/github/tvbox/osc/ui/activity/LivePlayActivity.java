@@ -1586,7 +1586,7 @@ public class LivePlayActivity extends BaseActivity {
                     lp.height=videoHeight/7;
 					int duration = (int) mVideoView.getDuration();
                     sBar = (SeekBar) findViewById(R.id.pb_progressbar);
-                    sBar.setMax(duration);
+                    sBar.setMax(shiyi_time_c*1000);
                     sBar.setProgress((int)  mVideoView.getCurrentPosition());
                     tv_currentpos.setText(durationToString((int)mVideoView.getCurrentPosition()));
                     tv_duration.setText(durationToString(shiyi_time_c*1000));
@@ -1898,23 +1898,24 @@ public class LivePlayActivity extends BaseActivity {
                         }
 						int duration1 = (int) mVideoView.getDuration();
 						if (duration1 > 0) {
+							if(isBack){
+							tv_right_top_type.setText("回看中");
+							iv_play_pause.setText("回看暂停中！聚汇直播欢迎您的收看！");
+							return;
+							}
 							isVOD = true;
 						    if (countDownTimer != null) {
                             countDownTimer.cancel();
                             }
                             showProgressBars(true);
 			                sBar = (SeekBar) findViewById(R.id.pb_progressbar);
+							sBar.setProgress(10);
                             sBar.setMax(duration1);
-                            sBar.setProgress((int) mVideoView.getCurrentPosition());
+							sBar.setProgress(0);
                             tv_currentpos.setText(durationToString((int) mVideoView.getCurrentPosition()));
                             tv_duration.setText(durationToString(duration1));
 							tv_right_top_type.setText("点播中");
 							iv_play_pause.setText("点播暂停中！聚汇直播欢迎您的收看！");
-							if(isBack){
-							tv_right_top_type.setText("回看中");
-							iv_play_pause.setText("回看暂停中！聚汇直播欢迎您的收看！");
-							return;
-							}
                         } else {
 							isVOD = false;
 							tv_right_top_type.setText("回看中");
