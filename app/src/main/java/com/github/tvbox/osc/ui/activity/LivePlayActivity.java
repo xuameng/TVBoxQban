@@ -1524,10 +1524,10 @@ public class LivePlayActivity extends BaseActivity {
                     lp.height=videoHeight/7;
 					int duration = (int) mVideoView.getDuration();
                     sBar = (SeekBar) findViewById(R.id.pb_progressbar);
-                    sBar.setMax(duration);
+                    sBar.setMax(shiyi_time_c*1000);
                     sBar.setProgress((int)  mVideoView.getCurrentPosition());
                     tv_currentpos.setText(durationToString((int)mVideoView.getCurrentPosition()));
-                    tv_duration.setText(durationToString(duration));
+                    tv_duration.setText(durationToString(shiyi_time_c*1000));
 //修好了			hideTimeXu();                       //xuameng进入回看前先隐藏上方系统时间
                     showProgressBars(true);             //xuameng然后再显示
 					showBottomEpgBack();               //xuameng回看EPG
@@ -1606,11 +1606,11 @@ public class LivePlayActivity extends BaseActivity {
                     lp.height=videoHeight/7;
 					int duration = (int) mVideoView.getDuration();
                     sBar = (SeekBar) findViewById(R.id.pb_progressbar);
-                    sBar.setMax(duration);
+                    sBar.setMax(shiyi_time_c*1000);
                     sBar.setProgress((int)  mVideoView.getCurrentPosition());
                    // long dd = mVideoView.getDuration();
                     tv_currentpos.setText(durationToString((int)mVideoView.getCurrentPosition()));
-                    tv_duration.setText(durationToString(duration));
+                    tv_duration.setText(durationToString(shiyi_time_c*1000));
                     showProgressBars(true);
 					showBottomEpgBack();               //xuameng回看EPG
                     isBack = true;
@@ -1714,7 +1714,11 @@ public class LivePlayActivity extends BaseActivity {
 				}
 			  if(isVOD){
 			    if(backcontroller.getVisibility() == View.VISIBLE){
-                   sBar.requestFocus();  
+				   ll_epg.setVisibility(View.GONE);				//xuameng下面EPG菜单隐藏
+                   ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
+				   backcontroller.setVisibility(View.GONE);
+                   hideTimeXu();              //xuameng隐藏系统时间
+                   hideNetSpeedXu();		//XUAMENG隐藏左上网速
 				   }
 				else if(!mVideoView.isPlaying()){
                    mVideoView.start();
