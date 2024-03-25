@@ -1901,10 +1901,9 @@ public class LivePlayActivity extends BaseActivity {
 							if(isBack){
 							tv_right_top_type.setText("回看中");
 							iv_play_pause.setText("回看暂停中！聚汇直播欢迎您的收看！");
-                            isVOD = false;
 							return;
 							}
-							isVOD = true;
+	//						isVOD = true;
 						    if (countDownTimer != null) {
                             countDownTimer.cancel();
                             }
