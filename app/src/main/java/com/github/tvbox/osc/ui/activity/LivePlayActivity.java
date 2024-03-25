@@ -2889,32 +2889,23 @@ public class LivePlayActivity extends BaseActivity {
 		if (countDownTimer != null) {
            countDownTimer.cancel();
 		}
-        if(countDownTimer==null){
-            countDownTimer = new CountDownTimer(10000, 1000) {       //xuameng自动隐藏回看菜单时间10秒
-
-                @Override
-                public void onTick(long arg0) {
-
-                    if(mVideoView != null){
-                        sBar.setProgress((int) mVideoView.getCurrentPosition());
-                        tv_currentpos.setText(durationToString((int) mVideoView.getCurrentPosition()));
-                    }
-                }
-
-                @Override
-                public void onFinish() {
-                    if(backcontroller.getVisibility() == View.VISIBLE){
-                        backcontroller.setVisibility(View.GONE);
-						ll_epg.setVisibility(View.GONE);			 //xuameng下面EPG菜单隐藏
-						hideTimeXu();              //xuameng隐藏系统时间
-						hideNetSpeedXu();		//XUAMENG隐藏左上网速
-                    }
-                }
-            };
-        }else{
-            countDownTimer.cancel();
-        }
         countDownTimer.start();
+
+
+		if (countDownTimer3 != null) {
+           countDownTimer3.cancel();
+		}
+        countDownTimer3 = new CountDownTimer(10000, 1000) {//底部epg隐藏时间设定
+              public void onTick(long xu) {
+			  if(mVideoView != null){
+              sBar.setProgress((int) mVideoView.getCurrentPosition());
+              tv_currentpos.setText(durationToString((int) mVideoView.getCurrentPosition()));
+                      }
+                    }
+                    public void onFinish() {
+                    }
+                };
+                countDownTimer3.start();
     }
 
 }
