@@ -1857,6 +1857,7 @@ public class LivePlayActivity extends BaseActivity {
 					 ll_epg.setVisibility(View.GONE);			 //xuameng下面EPG菜单隐藏
 					 hideTimeXu();              //xuameng隐藏系统时间
 					 hideNetSpeedXu();		//XUAMENG隐藏左上网速
+					 mVideoView.start();
  //xuameng iv_play升级了                    iv_play.setVisibility(View.INVISIBLE);
                      iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
                      iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
