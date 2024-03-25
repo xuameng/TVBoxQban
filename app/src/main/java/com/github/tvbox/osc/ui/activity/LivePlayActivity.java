@@ -746,6 +746,11 @@ public class LivePlayActivity extends BaseActivity {
                     }
                     public void onFinish() {
                         ll_epg.setVisibility(View.GONE);				//xuameng下面EPG菜单隐藏
+						ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
+                        backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
+						hideTimeXu();              //xuameng隐藏系统时间
+						hideNetSpeedXu();		//XUAMENG隐藏左上网速
+						view_line_XU.setVisibility(View.INVISIBLE);			//xuamengEPG中的横线
                     }
                 };
                 countDownTimer.start();
@@ -753,10 +758,15 @@ public class LivePlayActivity extends BaseActivity {
                 ll_epg.setVisibility(View.VISIBLE);    //XUAMENG  底部epg显示
 				view_line_XU.setVisibility(View.INVISIBLE);
 		        countDownTimer = new CountDownTimer(10000, 1000) {//底部epg隐藏时间设定
-		public void onTick(long j) {
+		            public void onTick(long j) {
                     }
                     public void onFinish() {
                         ll_epg.setVisibility(View.GONE);				//xuameng下面EPG菜单隐藏
+						ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
+                        backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
+						hideTimeXu();              //xuameng隐藏系统时间
+						hideNetSpeedXu();		//XUAMENG隐藏左上网速
+						view_line_XU.setVisibility(View.INVISIBLE);			//xuamengEPG中的横线
                     }
                 };
                 countDownTimer.start();
