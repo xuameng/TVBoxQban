@@ -1596,6 +1596,7 @@ public class LivePlayActivity extends BaseActivity {
 //					showTimeXu();                       //xuameng显示系统时间
 //					showNetSpeedXu();  
                     isBack = true;
+					isVOD = false;
 					tv_right_top_type.setText("回看中");
 					iv_play_pause.setText("回看暂停中！聚汇直播欢迎您的收看！");
                 }
@@ -1678,6 +1679,7 @@ public class LivePlayActivity extends BaseActivity {
                     showProgressBars(true);
 					showBottomEpgBack();               //xuameng回看EPG
                     isBack = true;
+					isVOD = false;
 					tv_right_top_type.setText("回看中");
 					iv_play_pause.setText("回看暂停中！聚汇直播欢迎您的收看！");
 //					showTimeXu();                       //xuameng显示系统时间
@@ -1905,6 +1907,7 @@ public class LivePlayActivity extends BaseActivity {
 							if(isBack){
 							tv_right_top_type.setText("回看中");
 							iv_play_pause.setText("回看暂停中！聚汇直播欢迎您的收看！");
+							isVOD = false;
 							return;
 							}
 							isVOD = true;
