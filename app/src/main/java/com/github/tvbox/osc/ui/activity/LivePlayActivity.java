@@ -2880,11 +2880,11 @@ public class LivePlayActivity extends BaseActivity {
 //            iv_Play_Xu.setVisibility(View.VISIBLE);     //回看暂停图标
 //            iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
         }
-		if (countDownTimer3 != null) {
-           countDownTimer3.cancel();
+		if (countDownTimer != null) {
+           countDownTimer.cancel();
 		}
-        if(countDownTimer3==null){
-            countDownTimer3 = new CountDownTimer(10000, 1000) {       //xuameng自动隐藏回看菜单时间10秒
+        if(countDownTimer==null){
+            countDownTimer = new CountDownTimer(10000, 1000) {       //xuameng自动隐藏回看菜单时间10秒
 
                 @Override
                 public void onTick(long arg0) {
@@ -2906,9 +2906,9 @@ public class LivePlayActivity extends BaseActivity {
                 }
             };
         }else{
-            countDownTimer3.cancel();
+            countDownTimer.cancel();
         }
-        countDownTimer3.start();
+        countDownTimer.start();
     }
 
 }
