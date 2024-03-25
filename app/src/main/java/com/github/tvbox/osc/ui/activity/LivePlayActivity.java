@@ -335,8 +335,6 @@ public class LivePlayActivity extends BaseActivity {
                     mVideoView.pause();
                     countDownTimer.cancel();
 					countDownTimer.start();
-					countDownTimer3.cancel();
-					countDownTimer3.start();
 //xuameng iv_play升级了                    iv_play.setVisibility(View.VISIBLE);
                     iv_Play_Xu.setVisibility(View.VISIBLE);         //回看暂停图标
                     iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
@@ -396,8 +394,6 @@ public class LivePlayActivity extends BaseActivity {
                             mVideoView.pause();
                             countDownTimer.cancel();
 					        countDownTimer.start();
-							countDownTimer3.cancel();
-					        countDownTimer3.start();
 //xuameng iv_play升级了                            iv_play.setVisibility(View.VISIBLE);
                             iv_Play_Xu.setVisibility(View.VISIBLE);     //回看暂停图标
                             iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));   
@@ -2814,8 +2810,6 @@ public class LivePlayActivity extends BaseActivity {
                     mVideoView.pause();
                     countDownTimer.cancel();
 					countDownTimer.start();
-					countDownTimer3.cancel();
-					countDownTimer3.start();
 //xuameng iv_play升级了                    iv_play.setVisibility(View.VISIBLE);
                     iv_Play_Xu.setVisibility(View.VISIBLE);     //回看暂停图标
                     iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
@@ -2865,8 +2859,6 @@ public class LivePlayActivity extends BaseActivity {
                             mVideoView.pause();
                             countDownTimer.cancel();
 					        countDownTimer.start();
-                            countDownTimer3.cancel();
-					        countDownTimer3.start();
 //xuameng iv_play升级了                            iv_play.setVisibility(View.VISIBLE);
                             iv_Play_Xu.setVisibility(View.VISIBLE);     //回看暂停图标
                             iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
@@ -2903,7 +2895,7 @@ public class LivePlayActivity extends BaseActivity {
 		if (countDownTimer3 != null) {
            countDownTimer3.cancel();
 		}
-        countDownTimer3 = new CountDownTimer(10000, 1000) {//底部epg隐藏时间设定
+        countDownTimer3 = new CountDownTimer(60000, 1000) {//底部epg隐藏时间设定
            public void onTick(long xu) {
 			  if(mVideoView != null){
               sBar.setProgress((int) mVideoView.getCurrentPosition());
