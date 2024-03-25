@@ -2896,18 +2896,17 @@ public class LivePlayActivity extends BaseActivity {
            countDownTimer3.cancel();
 		}
         countDownTimer3 = new CountDownTimer(10000, 1000) {//底部epg隐藏时间设定
-              public void onTick(long xu) {
+           public void onTick(long xu) {
 			  if(mVideoView != null){
               sBar.setProgress((int) mVideoView.getCurrentPosition());
               tv_currentpos.setText(durationToString((int) mVideoView.getCurrentPosition()));
-                      }
-                    }
-                    public void onFinish() {
-                    }
-                };
-                countDownTimer3.start();
+               }
+            }
+           public void onFinish() {
+               }
+           };
+       countDownTimer3.start();
     }
 
-}
 
 
