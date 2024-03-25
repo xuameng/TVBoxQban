@@ -1001,7 +1001,6 @@ public class LivePlayActivity extends BaseActivity {
                             countDownTimer.start();
                             iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
                         }
-                        return true;
                         }if(isVOD){
 			               if(backcontroller.getVisibility() == View.VISIBLE){
                            sBar.requestFocus();  
@@ -1051,7 +1050,6 @@ public class LivePlayActivity extends BaseActivity {
                             countDownTimer.start();
                             iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
                         }
-                        return true;
                         }if(isVOD){
 			               if(backcontroller.getVisibility() == View.VISIBLE){
                            sBar.requestFocus();  
@@ -1101,7 +1099,6 @@ public class LivePlayActivity extends BaseActivity {
                             countDownTimer.start();
                             iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
                          }
-                         return true;
                         }if(isVOD){
 			                if(backcontroller.getVisibility() == View.VISIBLE){
                             sBar.requestFocus();  
@@ -1904,6 +1901,7 @@ public class LivePlayActivity extends BaseActivity {
 							if(isBack){
 							tv_right_top_type.setText("回看中");
 							iv_play_pause.setText("回看暂停中！聚汇直播欢迎您的收看！");
+                            isVOD = false;
 							return;
 							}
 							isVOD = true;
