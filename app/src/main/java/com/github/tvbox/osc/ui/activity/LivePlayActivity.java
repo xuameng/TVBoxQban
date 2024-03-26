@@ -1902,6 +1902,8 @@ public class LivePlayActivity extends BaseActivity {
                 switch (playState) {
                     case VideoView.STATE_IDLE:
                     case VideoView.STATE_PAUSED:
+						iv_Play_Xu.setVisibility(View.VISIBLE);       //XUAMENG修复PLAY时关闭回看暂停图标
+						iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_play)); //XUAMENG修复PLAY时关闭回看暂停图标
                         break;
                     case VideoView.STATE_PREPARED:
 						 if (mVideoView.getVideoSize().length >= 2) {         //XUAMENG分辨率
