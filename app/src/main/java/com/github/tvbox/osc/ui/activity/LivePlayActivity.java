@@ -1347,7 +1347,9 @@ public class LivePlayActivity extends BaseActivity {
 		Mtv_left_top_xu.setVisibility(View.GONE);         //xuameng直播时隐藏回看的菜单
         iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
         mVideoView.setUrl(currentLiveChannelItem.getUrl());
-
+		if (countDownTimer3 != null) {
+           countDownTimer3.cancel();
+		}
        // showChannelInfo();
         mVideoView.start();
         return true;
@@ -1884,8 +1886,6 @@ public class LivePlayActivity extends BaseActivity {
             public void playStateChanged(int playState) {
                 switch (playState) {
                     case VideoView.STATE_IDLE:
-						iv_Play_Xu.setVisibility(View.GONE);       //XUAMENG修复PLAY时关闭回看暂停图标
-			            iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play)); //XUAMENG修复PLAY时关闭回看暂停图标
                     case VideoView.STATE_PAUSED:
                         break;
                     case VideoView.STATE_PREPARED:
@@ -1934,8 +1934,6 @@ public class LivePlayActivity extends BaseActivity {
                         break;
                     case VideoView.STATE_PREPARING:
                          isVOD = false;
-						 iv_Play_Xu.setVisibility(View.GONE);       //XUAMENG修复PLAY时关闭回看暂停图标
-			             iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play)); //XUAMENG修复PLAY时关闭回看暂停图标
                     case VideoView.STATE_BUFFERING:
                         mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
                         mHandler.postDelayed(mConnectTimeoutChangeSourceRun, (Hawk.get(HawkConfig.LIVE_CONNECT_TIMEOUT, 1) + 1) * 5000);
@@ -2882,7 +2880,7 @@ public class LivePlayActivity extends BaseActivity {
 		if (countDownTimer3 != null) {
            countDownTimer3.cancel();
 		}
-        countDownTimer3 = new CountDownTimer(60000, 1000) {//底部epg隐藏时间设定
+        countDownTimer3 = new CountDownTimer(60000, 500) {//底部epg隐藏时间设定
            public void onTick(long xu) {
 			  if(mVideoView != null){
                 sBar.setProgress((int) mVideoView.getCurrentPosition());
