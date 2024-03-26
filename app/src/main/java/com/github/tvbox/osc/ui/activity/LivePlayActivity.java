@@ -2826,18 +2826,18 @@ public class LivePlayActivity extends BaseActivity {
 		if (countDownTimer3 != null) {
            countDownTimer3.cancel();
 		}
-        countDownTimer3 = new CountDownTimer(60000, 1000) {//底部epg隐藏时间设定
+        countDownTimer3 = new CountDownTimer(60000, 500) {//底部epg隐藏时间设定
            public void onTick(long xu) {
 			  if(mVideoView != null){
               sBar.setProgress((int) mVideoView.getCurrentPosition());
               tv_currentpos.setText(durationToString((int) mVideoView.getCurrentPosition()));
-               }
-			  if(mVideoView.isPlaying()){
+			  	if(mVideoView.isPlaying()){
 				 iv_Play_Xu.setVisibility(View.GONE);       //XUAMENG修复PLAY时关闭回看暂停图标
 				 iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play)); //XUAMENG修复PLAY时关闭回看暂停图标
 				}else{iv_Play_Xu.setVisibility(View.VISIBLE);       //XUAMENG修复PLAY时关闭回看暂停图标
 				 iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause)); //XUAMENG修复PLAY时关闭回看暂停图标
 				}
+              }
             }
            public void onFinish() {
                }
