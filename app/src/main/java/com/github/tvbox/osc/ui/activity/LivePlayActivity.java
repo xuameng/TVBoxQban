@@ -1884,6 +1884,8 @@ public class LivePlayActivity extends BaseActivity {
             public void playStateChanged(int playState) {
                 switch (playState) {
                     case VideoView.STATE_IDLE:
+						iv_Play_Xu.setVisibility(View.GONE);       //XUAMENG修复PLAY时关闭回看暂停图标
+			            iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play)); //XUAMENG修复PLAY时关闭回看暂停图标
                     case VideoView.STATE_PAUSED:
                         break;
                     case VideoView.STATE_PREPARED:
@@ -1932,6 +1934,8 @@ public class LivePlayActivity extends BaseActivity {
                         break;
                     case VideoView.STATE_PREPARING:
                          isVOD = false;
+						 iv_Play_Xu.setVisibility(View.GONE);       //XUAMENG修复PLAY时关闭回看暂停图标
+			             iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play)); //XUAMENG修复PLAY时关闭回看暂停图标
                     case VideoView.STATE_BUFFERING:
                         mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
                         mHandler.postDelayed(mConnectTimeoutChangeSourceRun, (Hawk.get(HawkConfig.LIVE_CONNECT_TIMEOUT, 1) + 1) * 5000);
