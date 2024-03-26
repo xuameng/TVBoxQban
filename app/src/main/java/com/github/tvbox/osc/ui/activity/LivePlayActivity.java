@@ -423,6 +423,7 @@ public class LivePlayActivity extends BaseActivity {
         initLiveChannelList();
         initLiveSettingGroupList();
 		mHandler.post(mUpdateNetSpeedRunXu);          //XUAMENG左上网速检测1秒钟一次
+		iv_Play_Xu.setVisibility(View.GONE);
     }
     //获取EPG并存储 // 百川epg  DIYP epg   51zmt epg ------- 自建EPG格式输出格式请参考 51zmt
     private List<Epginfo> epgdata = new ArrayList<>();
@@ -1791,23 +1792,13 @@ public class LivePlayActivity extends BaseActivity {
 				}
 			  if(isVOD){
 			    if(backcontroller.getVisibility() == View.VISIBLE){
-				   ll_epg.setVisibility(View.GONE);				//xuameng下面EPG菜单隐藏
-                   ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
-				   backcontroller.setVisibility(View.GONE);
-                   hideTimeXu();              //xuameng隐藏系统时间
-                   hideNetSpeedXu();		//XUAMENG隐藏左上网速
-				   }
-				else if(!mVideoView.isPlaying()){
-                   mVideoView.start();
-                   iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
-			    }else if(view_line_XU.getVisibility() == View.VISIBLE){
 				   showChannelList();
 				   ll_epg.setVisibility(View.GONE);				//xuameng下面EPG菜单隐藏
                    ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
 				   backcontroller.setVisibility(View.GONE);
                    hideTimeXu();              //xuameng隐藏系统时间
                    hideNetSpeedXu();		//XUAMENG隐藏左上网速
-			    }else{
+				   }else{
 				   showChannelList();
 				   ll_epg.setVisibility(View.GONE);				//xuameng下面EPG菜单隐藏
                    ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
@@ -1939,6 +1930,8 @@ public class LivePlayActivity extends BaseActivity {
                     case VideoView.STATE_PLAYING:
                         currentLiveChangeSourceTimes = 0;
                         mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
+//						iv_Play_Xu.setVisibility(View.GONE);       //XUAMENG修复PLAY时关闭回看暂停图标
+//						iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause)); //XUAMENG修复PLAY时关闭回看暂停图标
                         break;
                     case VideoView.STATE_ERROR:
                     case VideoView.STATE_PLAYBACK_COMPLETED:
