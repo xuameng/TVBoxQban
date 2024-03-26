@@ -2887,12 +2887,12 @@ public class LivePlayActivity extends BaseActivity {
                 tv_currentpos.setText(durationToString((int) mVideoView.getCurrentPosition()));
 			    if(mVideoView.isPlaying()){
 			      iv_Play_Xu.setVisibility(View.GONE);       //XUAMENG修复PLAY时关闭回看暂停图标
-			      iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play)); //XUAMENG修复PLAY时关闭回看暂停图标
+			      iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause)); //XUAMENG修复PLAY时关闭回看暂停图标
 			    }else if (tvRightSettingLayout.getVisibility() == View.VISIBLE){
 			        iv_Play_Xu.setVisibility(View.GONE);       //XUAMENG修复PLAY时关闭回看暂停图标
 			    }else{
 				iv_Play_Xu.setVisibility(View.VISIBLE);       //XUAMENG修复PLAY时关闭回看暂停图标
-			    iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause)); //XUAMENG修复PLAY时关闭回看暂停图标
+			    iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play)); //XUAMENG修复PLAY时关闭回看暂停图标
 				}
               }
             }
