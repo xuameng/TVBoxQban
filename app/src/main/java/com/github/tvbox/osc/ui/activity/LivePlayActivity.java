@@ -1798,7 +1798,7 @@ public class LivePlayActivity extends BaseActivity {
                   }
 				 return true;
 				}
-			  if(isVOD){
+			  else if(isVOD){
 			    if(backcontroller.getVisibility() == View.VISIBLE){
 				   showChannelList();
 				   ll_epg.setVisibility(View.GONE);				//xuameng下面EPG菜单隐藏
@@ -1862,7 +1862,7 @@ public class LivePlayActivity extends BaseActivity {
                      iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
                      }
 				 return true;
-			     }if(isVOD){
+			     }else if(isVOD){
 				   if(mVideoView.isPlaying()){
                         showProgressBars(true);
 						mHideChannelListRun();       //xuameng显示EPG就隐藏左右菜单
@@ -1870,7 +1870,7 @@ public class LivePlayActivity extends BaseActivity {
 						mVideoView.pause();	
                         iv_Play_Xu.setVisibility(View.VISIBLE);     //回看暂停图标
                         iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
-			     } else {
+			     } else if(!mVideoView.isPlaying()){
                         backcontroller.setVisibility(View.GONE);
 						ll_epg.setVisibility(View.GONE);			 //xuameng下面EPG菜单隐藏
 						hideTimeXu();              //xuameng隐藏系统时间
