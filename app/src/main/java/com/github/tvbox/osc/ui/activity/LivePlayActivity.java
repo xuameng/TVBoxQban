@@ -1777,9 +1777,7 @@ public class LivePlayActivity extends BaseActivity {
                 }else if(backcontroller.getVisibility() == View.GONE){
                    showProgressBars(true);
 	    		   showBottomEpgBack();               //xuameng回看EPG
-                }else if(mVideoView.isPlaying()){
-				   iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
-				}
+                  }
 				 return true;
 				}
 			  if(isVOD){
@@ -1887,6 +1885,8 @@ public class LivePlayActivity extends BaseActivity {
                 switch (playState) {
                     case VideoView.STATE_IDLE:
                     case VideoView.STATE_PAUSED:
+						iv_Play_Xu.setVisibility(View.VISIBLE);       //XUAMENG修复PLAY时关闭回看暂停图标
+						iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play)); //XUAMENG修复PLAY时关闭回看暂停图标
                         break;
                     case VideoView.STATE_PREPARED:
 						 if (mVideoView.getVideoSize().length >= 2) {         //XUAMENG分辨率
@@ -1924,8 +1924,8 @@ public class LivePlayActivity extends BaseActivity {
                     case VideoView.STATE_PLAYING:
                         currentLiveChangeSourceTimes = 0;
                         mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
-//						iv_Play_Xu.setVisibility(View.GONE);       //XUAMENG修复PLAY时关闭回看暂停图标
-//						iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause)); //XUAMENG修复PLAY时关闭回看暂停图标
+						iv_Play_Xu.setVisibility(View.GONE);       //XUAMENG修复PLAY时关闭回看暂停图标
+						iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause)); //XUAMENG修复PLAY时关闭回看暂停图标
                         break;
                     case VideoView.STATE_ERROR:
                     case VideoView.STATE_PLAYBACK_COMPLETED:
