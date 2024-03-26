@@ -1777,7 +1777,9 @@ public class LivePlayActivity extends BaseActivity {
                 }else if(backcontroller.getVisibility() == View.GONE){
                    showProgressBars(true);
 	    		   showBottomEpgBack();               //xuameng回看EPG
-                  }
+                }else if(mVideoView.isPlaying()){
+				   iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
+				}
 				 return true;
 				}
 			  if(isVOD){
