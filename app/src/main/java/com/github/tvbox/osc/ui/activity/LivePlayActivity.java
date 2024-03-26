@@ -1017,15 +1017,9 @@ public class LivePlayActivity extends BaseActivity {
                            sBar.requestFocus();  
 			               }else if(!mVideoView.isPlaying()){
                            mVideoView.start();
+						   iv_Play_Xu.setVisibility(View.GONE);     //回看暂停图标
                            iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
-			               }else if(view_line_XU.getVisibility() == View.VISIBLE){
-				           showChannelList();
-				           ll_epg.setVisibility(View.GONE);				//xuameng下面EPG菜单隐藏
-                           ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
-				           backcontroller.setVisibility(View.GONE);
-                           hideTimeXu();              //xuameng隐藏系统时间
-                           hideNetSpeedXu();		//XUAMENG隐藏左上网速
-			              }else{
+			               }else{
 				          showChannelList();
 				          ll_epg.setVisibility(View.GONE);				//xuameng下面EPG菜单隐藏
                           ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
@@ -1065,15 +1059,9 @@ public class LivePlayActivity extends BaseActivity {
                            sBar.requestFocus();  
 				           }else if(!mVideoView.isPlaying()){
                            mVideoView.start();
+						   iv_Play_Xu.setVisibility(View.GONE);     //回看暂停图标
                            iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
-			               }else if(view_line_XU.getVisibility() == View.VISIBLE){
-				           showChannelList();
-				           ll_epg.setVisibility(View.GONE);				//xuameng下面EPG菜单隐藏
-                           ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
-				           backcontroller.setVisibility(View.GONE);
-                           hideTimeXu();              //xuameng隐藏系统时间
-                           hideNetSpeedXu();		//XUAMENG隐藏左上网速
-			             }else{
+			               }else{
 				           showChannelList();
 				           ll_epg.setVisibility(View.GONE);				//xuameng下面EPG菜单隐藏
                            ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
@@ -1113,15 +1101,9 @@ public class LivePlayActivity extends BaseActivity {
                             sBar.requestFocus();  
 				            }else if(!mVideoView.isPlaying()){
                             mVideoView.start();
+							iv_Play_Xu.setVisibility(View.GONE);     //回看暂停图标
                             iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
-			                }else if(view_line_XU.getVisibility() == View.VISIBLE){
-				            showChannelList();
-				            ll_epg.setVisibility(View.GONE);				//xuameng下面EPG菜单隐藏
-                            ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
-				            backcontroller.setVisibility(View.GONE);
-                            hideTimeXu();              //xuameng隐藏系统时间
-                            hideNetSpeedXu();		//XUAMENG隐藏左上网速
-			           }else{
+			                }else{
 				            showChannelList();
 				            ll_epg.setVisibility(View.GONE);				//xuameng下面EPG菜单隐藏
                             ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
@@ -1798,7 +1780,7 @@ public class LivePlayActivity extends BaseActivity {
                   }
 				 return true;
 				}
-			  else if(isVOD){
+			  if(isVOD){
 			    if(backcontroller.getVisibility() == View.VISIBLE){
 				   showChannelList();
 				   ll_epg.setVisibility(View.GONE);				//xuameng下面EPG菜单隐藏
@@ -1862,7 +1844,7 @@ public class LivePlayActivity extends BaseActivity {
                      iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
                      }
 				 return true;
-			     }else if(isVOD){
+			     }if(isVOD){
 				   if(mVideoView.isPlaying()){
                         showProgressBars(true);
 						mHideChannelListRun();       //xuameng显示EPG就隐藏左右菜单
@@ -1870,7 +1852,7 @@ public class LivePlayActivity extends BaseActivity {
 						mVideoView.pause();	
                         iv_Play_Xu.setVisibility(View.VISIBLE);     //回看暂停图标
                         iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
-			     } else if(!mVideoView.isPlaying()){
+			     } else {
                         backcontroller.setVisibility(View.GONE);
 						ll_epg.setVisibility(View.GONE);			 //xuameng下面EPG菜单隐藏
 						hideTimeXu();              //xuameng隐藏系统时间
