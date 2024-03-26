@@ -2816,7 +2816,6 @@ public class LivePlayActivity extends BaseActivity {
                 return false;
             }
         });
-        if(mVideoView.isPlaying()){
 				if(mVideoView.isPlaying()){
 				   iv_Play_Xu.setVisibility(View.GONE);       //XUAMENG修复PLAY时关闭回看暂停图标
 				   iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play)); //XUAMENG修复PLAY时关闭回看暂停图标
