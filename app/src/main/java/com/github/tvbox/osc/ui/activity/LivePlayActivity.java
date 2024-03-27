@@ -2904,9 +2904,6 @@ public class LivePlayActivity extends BaseActivity {
 */
     }
 
-}
-
-
     private boolean simSlideStart = false;
     private int simSeekPosition = 0;
     private long simSlideOffset = 0;
@@ -2955,3 +2952,6 @@ public class LivePlayActivity extends BaseActivity {
     }
 
     
+}
+
+
