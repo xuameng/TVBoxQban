@@ -2958,8 +2958,6 @@ public class LivePlayActivity extends BaseActivity {
         if (!mVideoView.isPlaying())
         //xuameng快进暂停就暂停测试    mVideoView.start();    //测试成功，如果想暂停时快进自动播放取消注销
         simSlideStart = false;
-        simSeekPosition = 0;
-        simSlideOffset = 0;
     }
 
 
