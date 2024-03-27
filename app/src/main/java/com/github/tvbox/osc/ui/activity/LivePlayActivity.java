@@ -1367,6 +1367,8 @@ public class LivePlayActivity extends BaseActivity {
 		Mtv_left_top_xu.setVisibility(View.GONE);         //xuameng直播时隐藏回看的菜单
         iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
         mVideoView.setUrl(currentLiveChannelItem.getUrl());
+		simSeekPosition = 0;
+        simSlideOffset = 0;
 
        // showChannelInfo();
         mVideoView.start();
@@ -2958,8 +2960,6 @@ public class LivePlayActivity extends BaseActivity {
 
         mVideoView.seekTo(simSeekPosition);
         //xuameng快进暂停就暂停测试    mVideoView.start();    //测试成功，如果想暂停时快进自动播放取消注销
-        simSeekPosition = 0;
-        simSlideOffset = 0;
     }
 
 
