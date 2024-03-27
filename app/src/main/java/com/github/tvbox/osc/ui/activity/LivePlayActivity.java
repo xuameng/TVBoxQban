@@ -2937,7 +2937,6 @@ public class LivePlayActivity extends BaseActivity {
         simSeekPosition = position;
     }
 
-    @Override
     protected void updateSeekUI(int curr, int seekTo, int duration) {
         super.updateSeekUI(curr, seekTo, duration);
         if (seekTo > curr) {
