@@ -1906,7 +1906,6 @@ public class LivePlayActivity extends BaseActivity {
 			                sBar = (SeekBar) findViewById(R.id.pb_progressbar);
                             sBar.setMax(duration1);
                             sBar.setProgress((int) mVideoView.getCurrentPosition());
-							sBar.incrementProgressBy(10);
                             tv_currentpos.setText(durationToString((int) mVideoView.getCurrentPosition()));
                             tv_duration.setText(durationToString(duration1));
 							tv_right_top_type.setText("点播中");
@@ -2908,3 +2907,51 @@ public class LivePlayActivity extends BaseActivity {
 }
 
 
+    private boolean simSlideStart = false;
+    private int simSeekPosition = 0;
+    private long simSlideOffset = 0;
+
+    public void tvSlideStop() {
+        if (!simSlideStart)
+            return;
+        mVideoView.seekTo(simSeekPosition);
+        if (!mVideoView.isPlaying())
+        //xuameng快进暂停就暂停测试    mVideoView.start();    //测试成功，如果想暂停时快进自动播放取消注销
+        simSlideStart = false;
+        simSeekPosition = 0;
+        simSlideOffset = 0;
+    }
+
+
+    public void tvSlideStart(int dir) {
+        int duration = (int) mVideoView.getDuration();
+        if (duration <= 0)
+            return;
+        if (!simSlideStart) {
+            simSlideStart = true;
+        }
+        // 每次10秒
+        simSlideOffset += (10000.0f * dir);
+        int currentPosition = (int) mVideoView.getCurrentPosition();
+        int position = (int) (simSlideOffset + currentPosition);
+        if (position > duration) position = duration;
+        if (position < 0) position = 0;
+        updateSeekUI(currentPosition, position, duration);
+        simSeekPosition = position;
+    }
+
+    @Override
+    protected void updateSeekUI(int curr, int seekTo, int duration) {
+        super.updateSeekUI(curr, seekTo, duration);
+        if (seekTo > curr) {
+            mProgressIcon.setImageResource(R.drawable.icon_prexu);                     //xuameng快进图标更换
+        } else {
+            mProgressIcon.setImageResource(R.drawable.icon_backxu);					   //xuameng快进图标更换
+        }
+        mProgressText.setText(PlayerUtils.stringForTime(seekTo) + " / " + PlayerUtils.stringForTime(duration));
+        mHandler.sendEmptyMessage(1000);
+        mHandler.removeMessages(1001);
+        mHandler.sendEmptyMessageDelayed(1001, 1000);
+    }
+
+    
