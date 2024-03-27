@@ -181,6 +181,7 @@ public class LivePlayActivity extends BaseActivity {
     private boolean isSHIYI = false;
     private boolean isBack = false;
 	private boolean isVOD = false;       //xuameng点播
+	private boolean isKUAIJIN = false;       //xuameng快进
     private static String shiyi_time;//时移时间
     private static int shiyi_time_c;//时移时间差值
     public static String playUrl;
@@ -2589,10 +2590,14 @@ public class LivePlayActivity extends BaseActivity {
 		if (duration2 > 0) {
 			if(mVideoView != null){
 	      	if(mVideoView.isPlaying()){
-			sBar.setProgress((int) mVideoView.getCurrentPosition());
-            tv_currentpos.setText(durationToString((int) mVideoView.getCurrentPosition()));
-		    iv_Play_Xu.setVisibility(View.GONE);       //XUAMENG修复PLAY时关闭回看暂停图标
+			iv_Play_Xu.setVisibility(View.GONE);       //XUAMENG修复PLAY时关闭回看暂停图标
 		    iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause)); //XUAMENG修复PLAY时关闭回看暂停图标
+				if(isKUAIJIN){
+				return;
+				}else{
+			    sBar.setProgress((int) mVideoView.getCurrentPosition());
+                tv_currentpos.setText(durationToString((int) mVideoView.getCurrentPosition()));
+			  }
 		    }
 		  }
 		}
@@ -2958,12 +2963,14 @@ public class LivePlayActivity extends BaseActivity {
         if (!mVideoView.isPlaying())
         //xuameng快进暂停就暂停测试    mVideoView.start();    //测试成功，如果想暂停时快进自动播放取消注销
         simSlideStart = false;
-        simSeekPosition = 0;
+		isKUAIJIN = false;
+//        simSeekPosition = 0;
         simSlideOffset = 0;
     }
 
 
     public void tvSlideStart(int dir) {
+		isKUAIJIN = true;
         int duration = (int) mVideoView.getDuration();
         if (duration <= 0)
             return;
