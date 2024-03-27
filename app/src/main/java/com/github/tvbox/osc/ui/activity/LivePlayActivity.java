@@ -2933,21 +2933,8 @@ public class LivePlayActivity extends BaseActivity {
         int position = (int) (simSlideOffset + currentPosition);
         if (position > duration) position = duration;
         if (position < 0) position = 0;
-        updateSeekUI(currentPosition, position, duration);
-        simSeekPosition = position;
-    }
 
-    protected void updateSeekUI(int curr, int seekTo, int duration) {
-        super.updateSeekUI(curr, seekTo, duration);
-        if (seekTo > curr) {
-            mProgressIcon.setImageResource(R.drawable.icon_prexu);                     //xuameng快进图标更换
-        } else {
-            mProgressIcon.setImageResource(R.drawable.icon_backxu);					   //xuameng快进图标更换
-        }
-        mProgressText.setText(PlayerUtils.stringForTime(seekTo) + " / " + PlayerUtils.stringForTime(duration));
-        mHandler.sendEmptyMessage(1000);
-        mHandler.removeMessages(1001);
-        mHandler.sendEmptyMessageDelayed(1001, 1000);
+        simSeekPosition = position;
     }
 
     
