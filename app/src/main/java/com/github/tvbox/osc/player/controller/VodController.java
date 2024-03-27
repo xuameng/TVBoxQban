@@ -396,7 +396,7 @@ public class VodController extends BaseController {
 				boolean isInPlayback = isInPlaybackState();
                     if(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT){
 		              if (isInPlayback) {
-                      tvSlideStart(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT ? 1 : -1);
+                      tvSlideStartXu(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT ? 1 : -1);
                 return true;
                     }
                   }
@@ -958,16 +958,6 @@ public class VodController extends BaseController {
         simSlideOffset = 0;
     }
 
-    public void tvSlideStopXu() {           //xuameng修复SEEKBAR快进重新播放问题
-        if (!simSlideStart)
-            return;
-		mControlWrapper.seekTo(simSeekPosition);
-        if (!mControlWrapper.isPlaying())
-        //xuameng快进暂停就暂停测试    mControlWrapper.start();    //测试成功，如果想暂停时快进自动播放取消注销
-        simSlideStart = false;
-		simSlideOffset = 0;
-    }
-
     public void tvSlideStart(int dir) {
         int duration = (int) mControlWrapper.getDuration();
         if (duration <= 0)
@@ -983,6 +973,38 @@ public class VodController extends BaseController {
         if (position < 0) position = 0;
         updateSeekUI(currentPosition, position, duration);
         simSeekPosition = position;
+    }
+
+	private boolean simSlideStartXu = false;
+    private int simSeekPositionXu = 0;
+    private long simSlideOffsetXu = 0;
+
+    public void tvSlideStopXu() {           //xuameng修复SEEKBAR快进重新播放问题
+        if (!simSlideStartXu)
+            return;
+		mControlWrapper.seekTo(simSeekPositionXu);
+        if (!mControlWrapper.isPlaying())
+        //xuameng快进暂停就暂停测试    mControlWrapper.start();    //测试成功，如果想暂停时快进自动播放取消注销
+        simSlideStartXu = false;
+		simSeekPositionXu = 0;
+		simSlideOffsetXu = 0;
+    }
+
+    public void tvSlideStartXu(int dir) {
+        int duration1 = (int) mControlWrapper.getDuration();
+        if (duration1 <= 0)
+            return;
+        if (!simSlideStartXu) {
+            simSlideStartXu = true;
+        }
+        // 每次10秒
+        simSlideOffsetXu += (10000.0f * dir);
+        int currentPosition1 = (int) mControlWrapper.getCurrentPosition();
+        int position1 = (int) (simSlideOffsetXu + currentPosition1);
+        if (position1 > duration1) position1 = duration1;
+        if (position1 < 0) position1 = 0;
+        updateSeekUI(currentPosition1, position1, duration1);
+        simSeekPositionXu = position1;
     }
 
     @Override
