@@ -2969,6 +2969,7 @@ public class LivePlayActivity extends BaseActivity {
         if (position < 0) position = 0;
 
         simSeekPosition = position;
+		mVideoView.seekTo(simSeekPosition);
     }
 
     
