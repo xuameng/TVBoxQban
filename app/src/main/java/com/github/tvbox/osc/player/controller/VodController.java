@@ -954,7 +954,7 @@ public class VodController extends BaseController {
         if (!mControlWrapper.isPlaying())
         //xuameng快进暂停就暂停测试    mControlWrapper.start();    //测试成功，如果想暂停时快进自动播放取消注销
         simSlideStart = false;
-//        simSeekPosition = 0;
+//        simSeekPosition = 0;  //XUAMENG重要
         simSlideOffset = 0;
     }
 
@@ -965,7 +965,7 @@ public class VodController extends BaseController {
         if (!mControlWrapper.isPlaying())
         //xuameng快进暂停就暂停测试    mControlWrapper.start();    //测试成功，如果想暂停时快进自动播放取消注销
         simSlideStart = false;
-//		simSeekPosition = 0;
+//		simSeekPosition = 0;      //XUAMENG重要
         simSlideOffset = 0;
     }
 
@@ -1071,7 +1071,7 @@ public class VodController extends BaseController {
                 mPlayLoadNetSpeed.setVisibility(GONE);
                 break;
             case VideoView.STATE_PREPARING:
-				simSeekPosition = 0;
+				simSeekPosition = 0;       //XUAMENG重要,换视频时重新记录进度
             case VideoView.STATE_BUFFERING:
                 if(mProgressRoot.getVisibility()==GONE)mPlayLoadNetSpeed.setVisibility(VISIBLE);
                 break;
