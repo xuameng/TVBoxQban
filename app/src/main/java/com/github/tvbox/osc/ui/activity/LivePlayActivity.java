@@ -389,6 +389,8 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public boolean onKey(View arg0, int keycode, KeyEvent event) {
                 if(event.getAction()==KeyEvent.ACTION_DOWN){
+				int keyCode = event.getKeyCode();
+                int action = event.getAction();
                     if(keycode==KeyEvent.KEYCODE_DPAD_CENTER||keycode==KeyEvent.KEYCODE_ENTER){
                         if(mVideoView.isPlaying()){
                             mVideoView.pause();
@@ -408,7 +410,22 @@ public class LivePlayActivity extends BaseActivity {
                             iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));    
                         }
                     }
+
+			 if(keyCode==KeyEvent.KEYCODE_DPAD_RIGHT || keyCode==KeyEvent.KEYCODE_DPAD_LEFT){
+                tvSlideStart(keyCode==KeyEvent.KEYCODE_DPAD_RIGHT ? 1 : -1);
+			    return true;
                 }
+              }
+
+			 if(event.getAction()==KeyEvent.ACTION_UP){
+             int keyCode = event.getKeyCode();
+             int action = event.getAction();
+		        if (keyCode==KeyEvent.KEYCODE_DPAD_RIGHT || keyCode==KeyEvent.KEYCODE_DPAD_LEFT) {
+                    tvSlideStop();			//xuameng修复SEEKBAR快进重新播放问题
+                return true;
+                }	
+              }
+                
                 return false;
             }
         });
@@ -2871,22 +2888,20 @@ public class LivePlayActivity extends BaseActivity {
                         }
                     }
 
-                    if(keyCode==KeyEvent.KEYCODE_DPAD_RIGHT || keyCode==KeyEvent.KEYCODE_DPAD_LEFT){
-                      tvSlideStart(keyCode==KeyEvent.KEYCODE_DPAD_RIGHT ? 1 : -1);
-					  return true;
-                  }
-
+             if(keyCode==KeyEvent.KEYCODE_DPAD_RIGHT || keyCode==KeyEvent.KEYCODE_DPAD_LEFT){
+                tvSlideStart(keyCode==KeyEvent.KEYCODE_DPAD_RIGHT ? 1 : -1);
+			    return true;
                 }
+              }
 
 			 if(event.getAction()==KeyEvent.ACTION_UP){
-                int keyCode = event.getKeyCode();
-                int action = event.getAction();
-		            if (keyCode==KeyEvent.KEYCODE_DPAD_RIGHT || keyCode==KeyEvent.KEYCODE_DPAD_LEFT) {
-                       tvSlideStop();			//xuameng修复SEEKBAR快进重新播放问题
+             int keyCode = event.getKeyCode();
+             int action = event.getAction();
+		        if (keyCode==KeyEvent.KEYCODE_DPAD_RIGHT || keyCode==KeyEvent.KEYCODE_DPAD_LEFT) {
+                    tvSlideStop();			//xuameng修复SEEKBAR快进重新播放问题
                 return true;
-
-                  }	
-                }
+                }	
+              }
 
                 return false;
             }
