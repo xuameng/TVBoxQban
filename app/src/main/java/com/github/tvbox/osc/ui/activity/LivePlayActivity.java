@@ -2592,9 +2592,7 @@ public class LivePlayActivity extends BaseActivity {
 	      	if(mVideoView.isPlaying()){
 			iv_Play_Xu.setVisibility(View.GONE);       //XUAMENG修复PLAY时关闭回看暂停图标
 		    iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause)); //XUAMENG修复PLAY时关闭回看暂停图标
-				if(isKUAIJIN){
-				return;
-				}else{
+				if(!isKUAIJIN){
 			    sBar.setProgress((int) mVideoView.getCurrentPosition());
                 tv_currentpos.setText(durationToString((int) mVideoView.getCurrentPosition()));
 			  }
