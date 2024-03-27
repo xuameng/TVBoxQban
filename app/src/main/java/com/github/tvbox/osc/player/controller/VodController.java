@@ -986,8 +986,6 @@ public class VodController extends BaseController {
         if (!mControlWrapper.isPlaying())
         //xuameng快进暂停就暂停测试    mControlWrapper.start();    //测试成功，如果想暂停时快进自动播放取消注销
         simSlideStartXu = false;
-		simSeekPositionXu = 0;
-		simSlideOffsetXu = 0;
     }
 
     public void tvSlideStartXu(int dir) {
