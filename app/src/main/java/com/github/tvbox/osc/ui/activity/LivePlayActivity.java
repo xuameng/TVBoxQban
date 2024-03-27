@@ -2588,9 +2588,9 @@ public class LivePlayActivity extends BaseActivity {
 		int duration2 = (int) mVideoView.getDuration();
 		if (duration2 > 0) {
 			if(mVideoView != null){
+	      	if(mVideoView.isPlaying()){
 			sBar.setProgress((int) mVideoView.getCurrentPosition());
             tv_currentpos.setText(durationToString((int) mVideoView.getCurrentPosition()));
-	      	if(mVideoView.isPlaying()){
 		    iv_Play_Xu.setVisibility(View.GONE);       //XUAMENG修复PLAY时关闭回看暂停图标
 		    iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause)); //XUAMENG修复PLAY时关闭回看暂停图标
 		    }
@@ -2959,7 +2959,7 @@ public class LivePlayActivity extends BaseActivity {
         //xuameng快进暂停就暂停测试    mVideoView.start();    //测试成功，如果想暂停时快进自动播放取消注销
         simSlideStart = false;
         simSeekPosition = 0;
-          simSlideOffset = 0;
+        simSlideOffset = 0;
     }
 
 
@@ -2976,7 +2976,8 @@ public class LivePlayActivity extends BaseActivity {
         int position = (int) (simSlideOffset + currentPosition);
         if (position > duration) position = duration;
         if (position < 0) position = 0;
-
+        sBar.setProgress(simSeekPosition);
+		tv_currentpos.setText(durationToString(simSeekPosition));
         simSeekPosition = position;
     }
 
