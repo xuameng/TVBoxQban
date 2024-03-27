@@ -2849,6 +2849,8 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public boolean onKey(View arg0, int keycode, KeyEvent event) {
                 if(event.getAction()==KeyEvent.ACTION_DOWN){
+			    int keyCode = event.getKeyCode();
+                int action = event.getAction();
                     if(keycode==KeyEvent.KEYCODE_DPAD_CENTER||keycode==KeyEvent.KEYCODE_ENTER){
                         if(mVideoView.isPlaying()){
                             mVideoView.pause();
@@ -2869,8 +2871,8 @@ public class LivePlayActivity extends BaseActivity {
                         }
                     }
 
-                    else if(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT){
-                      tvSlideStart(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT ? 1 : -1);
+                    if(keyCode==KeyEvent.KEYCODE_DPAD_RIGHT || keyCode==KeyEvent.KEYCODE_DPAD_LEFT){
+                      tvSlideStart(keyCode==KeyEvent.KEYCODE_DPAD_RIGHT ? 1 : -1);
 					  return true;
                   }
 
@@ -2879,7 +2881,7 @@ public class LivePlayActivity extends BaseActivity {
 			 if(event.getAction()==KeyEvent.ACTION_UP){
                 int keyCode = event.getKeyCode();
                 int action = event.getAction();
-		            if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+		            if (keyCode==KeyEvent.KEYCODE_DPAD_RIGHT || keyCode==KeyEvent.KEYCODE_DPAD_LEFT) {
                        tvSlideStop();			//xuameng修复SEEKBAR快进重新播放问题
                 return true;
 
