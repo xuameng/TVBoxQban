@@ -982,7 +982,6 @@ public class VodController extends BaseController {
         if (position < 0) position = 0;
         updateSeekUI(currentPosition, position, duration);
         simSeekPosition = position;
-		mControlWrapper.seekTo(simSeekPosition);
     }
 
     @Override
