@@ -2868,7 +2868,24 @@ public class LivePlayActivity extends BaseActivity {
                             iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
                         }
                     }
+
+                    else if(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT){
+                      tvSlideStart(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT ? 1 : -1);
+					  return true;
+                  }
+
                 }
+
+			 if(event.getAction()==KeyEvent.ACTION_UP){
+                int keyCode = event.getKeyCode();
+                int action = event.getAction();
+		            if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+                       tvSlideStop();			//xuameng修复SEEKBAR快进重新播放问题
+                return true;
+
+                  }	
+                }
+
                 return false;
             }
         });
