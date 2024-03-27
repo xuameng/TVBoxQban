@@ -2555,7 +2555,20 @@ public class LivePlayActivity extends BaseActivity {
     private Runnable mUpdateNetSpeedRunXu = new Runnable() {
         @Override
         public void run() {
-            if (mVideoView == null) return;
+	    if (mVideoView == null) return;
+
+		int duration2 = (int) mVideoView.getDuration();
+		if (duration2 > 0) {
+			if(mVideoView != null){
+			sBar.setProgress((int) mVideoView.getCurrentPosition());
+            tv_currentpos.setText(durationToString((int) mVideoView.getCurrentPosition()));
+	      	if(mVideoView.isPlaying()){
+		    iv_Play_Xu.setVisibility(View.GONE);       //XUAMENG修复PLAY时关闭回看暂停图标
+		    iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause)); //XUAMENG修复PLAY时关闭回看暂停图标
+		    }
+		  }
+		}
+
             String speed = PlayerHelper.getDisplaySpeed(mVideoView.getTcpSpeed());
 			tv_right_top_tipnetspeed.setText("[" + speed + "]");
             mHandler.postDelayed(this, 1000);
@@ -2875,7 +2888,7 @@ public class LivePlayActivity extends BaseActivity {
         countDownTimer.start();
 
 
-		if (countDownTimer3 != null) {
+/*		if (countDownTimer3 != null) {
            countDownTimer3.cancel();
 		}
         countDownTimer3 = new CountDownTimer(60000, 1000) {//底部epg隐藏时间设定
@@ -2889,6 +2902,7 @@ public class LivePlayActivity extends BaseActivity {
                }
            };
        countDownTimer3.start();
+*/
     }
 
 }
