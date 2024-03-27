@@ -440,6 +440,7 @@ public class LivePlayActivity extends BaseActivity {
         initLiveChannelList();
         initLiveSettingGroupList();
 		mHandler.post(mUpdateNetSpeedRunXu);          //XUAMENG左上网速检测1秒钟一次
+		mHandler.post(mUpdateVodProgressXu);                          //xuamengVOD BACK播放进度检测
     }
     //获取EPG并存储 // 百川epg  DIYP epg   51zmt epg ------- 自建EPG格式输出格式请参考 51zmt
     private List<Epginfo> epgdata = new ArrayList<>();
@@ -838,6 +839,7 @@ public class LivePlayActivity extends BaseActivity {
             mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
             mHandler.removeCallbacks(mUpdateNetSpeedRun);
 			mHandler.removeCallbacks(mUpdateNetSpeedRunXu);
+			mHandler.removeCallbacks(mUpdateVodProgressXu);
 			mHandler.removeCallbacks(mUpdateTimeRun);
 			mHandler.removeCallbacks(mUpdateTimeRunXu);
             super.onBackPressed();
@@ -2571,8 +2573,18 @@ public class LivePlayActivity extends BaseActivity {
     private Runnable mUpdateNetSpeedRunXu = new Runnable() {
         @Override
         public void run() {
-	    if (mVideoView == null) return;
+            if (mVideoView == null) return;
+            String speed = PlayerHelper.getDisplaySpeed(mVideoView.getTcpSpeed());
+			tv_right_top_tipnetspeed.setText("[" + speed + "]");
+            mHandler.postDelayed(this, 1000);
+        }
+    };
 
+
+	 private Runnable mUpdateVodProgressXu = new Runnable() {
+        @Override
+        public void run() {
+	    if (mVideoView == null) return;
 		int duration2 = (int) mVideoView.getDuration();
 		if (duration2 > 0) {
 			if(mVideoView != null){
@@ -2584,10 +2596,7 @@ public class LivePlayActivity extends BaseActivity {
 		    }
 		  }
 		}
-
-            String speed = PlayerHelper.getDisplaySpeed(mVideoView.getTcpSpeed());
-			tv_right_top_tipnetspeed.setText("[" + speed + "]");
-            mHandler.postDelayed(this, 1000);
+            mHandler.postDelayed(this, 200);
         }
     };
 
