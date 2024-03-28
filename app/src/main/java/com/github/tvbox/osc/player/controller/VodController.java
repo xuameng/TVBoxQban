@@ -1002,7 +1002,7 @@ public class VodController extends BaseController {
         if (position < 0) position = 0;
         updateSeekUI(currentPosition, position, duration);
 
-		mSeekBar.setProgress(simSeekPosition /1500);
+		mSeekBar.setProgress(simSeekPosition /1800);
 		mCurrentTime.setText(durationToString(simSeekPosition));
 
         simSeekPosition = position;
