@@ -973,7 +973,6 @@ public class VodController extends BaseController {
 		if (isSEEKBAR){
         mControlWrapper.seekTo(simSeekPosition);
 		}
-		mIsDragging = false;
         if (!mControlWrapper.isPlaying())
         //xuameng快进暂停就暂停测试    mControlWrapper.start();    //测试成功，如果想暂停时快进自动播放取消注销
         simSlideStart = false;
@@ -983,7 +982,6 @@ public class VodController extends BaseController {
 
     public void tvSlideStart(int dir) {
 		isSEEKBAR = true;
-		mIsDragging = true;
         int duration = (int) mControlWrapper.getDuration();
         if (duration <= 0)
             return;
@@ -998,7 +996,7 @@ public class VodController extends BaseController {
         if (position < 0) position = 0;
         updateSeekUI(currentPosition, position, duration);
 
-		mSeekBar.setProgress(simSeekPosition /3600);
+		mSeekBar.setProgress(simSeekPosition /2000);
 		mCurrentTime.setText(durationToString(simSeekPosition));
 
         simSeekPosition = position;
