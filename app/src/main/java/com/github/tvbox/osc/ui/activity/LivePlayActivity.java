@@ -182,7 +182,7 @@ public class LivePlayActivity extends BaseActivity {
     private boolean isBack = false;
 	private boolean isVOD = false;       //xuameng点播
 	private boolean isKUAIJIN = false;       //xuameng快进
-	private boolean isSEEKBAR = false;       //xuameng快进
+	private boolean isSEEKBAR = false;       //xuameng进入SEEKBAR
     private static String shiyi_time;//时移时间
     private static int shiyi_time_c;//时移时间差值
     public static String playUrl;
