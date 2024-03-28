@@ -191,6 +191,7 @@ public class VodController extends BaseController {
    
     LockRunnable lockRunnable = new LockRunnable();
     private boolean isLock = false;
+	private boolean isSEEKBAR = false;       //xuameng进入SEEKBAR
     Handler myHandle;
     Runnable myRunnable;
     int myHandleSeconds = 100000;            //闲置多少毫秒秒关闭底栏  默认100秒
@@ -961,7 +962,9 @@ public class VodController extends BaseController {
     public void tvSlideStopXu() {           //xuameng修复SEEKBAR快进重新播放问题
         if (!simSlideStart)
             return;
-		mControlWrapper.seekTo(simSeekPosition);
+		if (isSEEKBAR){
+        mControlWrapper.seekTo(simSeekPosition);
+		}
         if (!mControlWrapper.isPlaying())
         //xuameng快进暂停就暂停测试    mControlWrapper.start();    //测试成功，如果想暂停时快进自动播放取消注销
         simSlideStart = false;
@@ -970,6 +973,7 @@ public class VodController extends BaseController {
     }
 
     public void tvSlideStart(int dir) {
+		isSEEKBAR = true;
         int duration = (int) mControlWrapper.getDuration();
         if (duration <= 0)
             return;
@@ -1095,6 +1099,7 @@ public class VodController extends BaseController {
     }
 
     void hideBottom() {
+		isSEEKBAR = false;        //XUAMENG隐藏菜单时修复进度条BUG
         mHandler.removeMessages(1002);
         mHandler.sendEmptyMessage(1003);
     }
