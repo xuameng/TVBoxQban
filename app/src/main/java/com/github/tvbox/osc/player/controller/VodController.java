@@ -452,6 +452,14 @@ public class VodController extends BaseController {
 				FastClickCheckUtilxu.check(view);                   //xuameng 防播放打断动画
             }
         });
+
+	   mxuPlay.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override         //xuameng进入SEEKBAR
+	        public void onFocusChange(View v, boolean hasFocus){
+            isSEEKBAR = false;       //xuameng进入SEEKBAR
+	    }
+	    });
+
         mPreBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
