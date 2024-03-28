@@ -453,7 +453,7 @@ public class VodController extends BaseController {
             }
         });
 
-	   mxuPlay.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+	   mxuPlay.setOnFocusChangeListener(new View.OnFocusChangeListener() {          //XUAMENG播放键预选取消SEEKBAR进度
             @Override         //xuameng进入SEEKBAR
 	        public void onFocusChange(View v, boolean hasFocus){
             isSEEKBAR = false;       //xuameng进入SEEKBAR
@@ -995,7 +995,49 @@ public class VodController extends BaseController {
         if (position > duration) position = duration;
         if (position < 0) position = 0;
         updateSeekUI(currentPosition, position, duration);
+
+		mSeekBar.setProgress(simSeekPosition);
+		mCurrentTime.setText(durationToString(simSeekPosition));
+
         simSeekPosition = position;
+    }
+
+    private  String durationToString(int duration) {
+        String result = "";
+        int dur = duration / 1000;
+        int hour=dur/3600;
+        int min = (dur / 60) % 60;
+        int sec = dur % 60;
+        if(hour>0){
+            if (min > 9) {
+                if (sec > 9) {
+                    result =hour+":"+ min + ":" + sec;
+                } else {
+                    result =hour+":"+ min + ":0" + sec;
+                }
+            } else {
+                if (sec > 9) {
+                    result =hour+":"+ "0" + min + ":" + sec;
+                } else {
+                    result = hour+":"+"0" + min + ":0" + sec;
+                }
+            }
+        }else{
+            if (min > 9) {
+                if (sec > 9) {
+                    result = min + ":" + sec;
+                } else {
+                    result = min + ":0" + sec;
+                }
+            } else {
+                if (sec > 9) {
+                    result ="0" + min + ":" + sec;
+                } else {
+                    result = "0" + min + ":0" + sec;
+                }
+            }
+        }
+        return result;
     }
 
     @Override
