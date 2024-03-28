@@ -46,6 +46,9 @@ public class BackupDialog extends BaseDialog {
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
                 if (view.getId() == R.id.tvName) {
                     restore((String) adapter.getItem(position));
+                }else if (view.getId() == R.id.tvDel) {
+                    delete((String) adapter.getItem(position));
+                    adapter.setNewData(allBackup());
                 }
             }
         });
