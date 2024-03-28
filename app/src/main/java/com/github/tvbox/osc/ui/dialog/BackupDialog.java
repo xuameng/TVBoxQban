@@ -198,7 +198,6 @@ public class BackupDialog extends BaseDialog {
             String root = Environment.getExternalStorageDirectory().getAbsolutePath();
             File backup = new File(root + "/聚汇影视备份黑标/" + dir);
             FileUtils.recursiveDelete(backup);
-            Toast.makeText(getContext(), HomeActivity.getRes().getString(R.string.set_bkup_del), Toast.LENGTH_SHORT).show();
 			Toast.makeText(mContext, "此备份已删除！", Toast.LENGTH_SHORT).show(); 
         } catch (Throwable e) {
             e.printStackTrace();
