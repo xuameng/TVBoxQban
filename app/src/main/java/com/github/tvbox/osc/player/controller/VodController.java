@@ -968,6 +968,9 @@ public class VodController extends BaseController {
     }
 
     public void tvSlideStopXu() {           //xuameng修复SEEKBAR快进重新播放问题
+	    mIsDragging = false;
+        mControlWrapper.startProgress();
+        mControlWrapper.startFadeOut();
         if (!simSlideStart)
             return;
 		if (isSEEKBAR){
@@ -981,6 +984,9 @@ public class VodController extends BaseController {
     }
 
     public void tvSlideStart(int dir) {
+		mIsDragging = true;
+        mControlWrapper.stopProgress();
+        mControlWrapper.stopFadeOut();
 		isSEEKBAR = true;
         int duration = (int) mControlWrapper.getDuration();
         if (duration <= 0)
@@ -996,7 +1002,7 @@ public class VodController extends BaseController {
         if (position < 0) position = 0;
         updateSeekUI(currentPosition, position, duration);
 
-		mSeekBar.setProgress(simSeekPosition /1000);
+		mSeekBar.setProgress(simSeekPosition /1500);
 		mCurrentTime.setText(durationToString(simSeekPosition));
 
         simSeekPosition = position;
@@ -1147,6 +1153,9 @@ public class VodController extends BaseController {
 		isSEEKBAR = false;        //XUAMENG隐藏菜单时修复进度条BUG
         mHandler.removeMessages(1003);
         mHandler.sendEmptyMessage(1002);
+		mIsDragging = false;
+        mControlWrapper.startProgress();
+        mControlWrapper.startFadeOut();
     }
 
     void hideBottom() {
