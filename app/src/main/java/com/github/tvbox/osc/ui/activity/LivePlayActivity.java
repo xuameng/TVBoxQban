@@ -182,6 +182,7 @@ public class LivePlayActivity extends BaseActivity {
     private boolean isBack = false;
 	private boolean isVOD = false;       //xuameng点播
 	private boolean isKUAIJIN = false;       //xuameng快进
+	private boolean isSEEKBAR = false;       //xuameng快进
     private static String shiyi_time;//时移时间
     private static int shiyi_time_c;//时移时间差值
     public static String playUrl;
@@ -2588,6 +2589,9 @@ public class LivePlayActivity extends BaseActivity {
         @Override
         public void run() {
 	    if (mVideoView == null) return;
+        if(backcontroller.getVisibility() == View.GONE){
+			isSEEKBAR = false;
+		}
 		int duration2 = (int) mVideoView.getDuration();
 		if (duration2 > 0) {
 			if(mVideoView != null){
@@ -2960,7 +2964,9 @@ public class LivePlayActivity extends BaseActivity {
 		isKUAIJIN = false;
         if (!simSlideStart)
             return;
+		if (isSEEKBAR){
         mVideoView.seekTo(simSeekPosition);
+		}
         if (!mVideoView.isPlaying())
         //xuameng快进暂停就暂停测试    mVideoView.start();    //测试成功，如果想暂停时快进自动播放取消注销
         simSlideStart = false;
@@ -2970,6 +2976,7 @@ public class LivePlayActivity extends BaseActivity {
 
 
     public void tvSlideStart(int dir) {
+        isSEEKBAR = true;
 		isKUAIJIN = true;
         int duration = (int) mVideoView.getDuration();
         if (duration <= 0)
