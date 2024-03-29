@@ -916,14 +916,13 @@ public class VodController extends BaseController {
 
     private boolean skipEnd = true;
 
-    @Override
+
     public void setProgress() {
 
         if (mIsDragging) {
             return;
         }
 
- 
 		int duration = (int) mControlWrapper.getDuration();
 		if (duration > 0) {
 		mCurrentTime.setText(durationToString((int) mControlWrapper.getCurrentPosition()));
