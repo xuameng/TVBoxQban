@@ -940,8 +940,8 @@ public class VodController extends BaseController {
         } else {
             mSeekBar.setSecondaryProgress(percent * 10);
         }
-    }
-          mHandler.postDelayed(this, 1000);
+		mHandler.postDelayed(this, 1000);
+      }
     };
     private boolean simSlideStart = false;
     private int simSeekPosition = 0;
