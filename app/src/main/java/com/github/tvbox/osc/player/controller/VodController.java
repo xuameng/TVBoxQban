@@ -237,6 +237,7 @@ public class VodController extends BaseController {
     @Override
     protected void initView() {
         super.initView();
+		mHandler.post(mUpdateSetProgressXu); 
         mCurrentTime = findViewById(R.id.curr_time);
         mTotalTime = findViewById(R.id.total_time);
         mPlayTitle = findViewById(R.id.tv_info_name);
@@ -916,8 +917,12 @@ public class VodController extends BaseController {
 
     private boolean skipEnd = true;
 
-
-    public void setProgress() {
+	
+	private Runnable mUpdateSetProgressXu = new Runnable() {
+    @Override
+    public void run() {
+	    
+		if (mControlWrapper == null) return;
 
         if (mIsDragging) {
             return;
@@ -933,12 +938,14 @@ public class VodController extends BaseController {
 
         int percent = mControlWrapper.getBufferedPercentage();
         if (percent >= 95) {
-            mSeekBar.setSecondaryProgress(mSeekBar.getMax());
+            mSeekBar.setSecondaryProgress(duration);
         } else {
             mSeekBar.setSecondaryProgress(percent * 10);
         }
     }
-
+          mHandler.postDelayed(this, 1000);
+        }
+    };
     private boolean simSlideStart = false;
     private int simSeekPosition = 0;
     private long simSlideOffset = 0;
@@ -956,8 +963,6 @@ public class VodController extends BaseController {
 
     public void tvSlideStopXu() {           //xuameng修复SEEKBAR快进重新播放问题
 	    mIsDragging = false;     //XUAMENG监控进度条
-        mControlWrapper.startProgress();
-        mControlWrapper.startFadeOut();
         if (!simSlideStart)
             return;
 		if (isSEEKBAR){
@@ -972,8 +977,6 @@ public class VodController extends BaseController {
 
     public void tvSlideStart(int dir) {
 		mIsDragging = true;     //XUAMENG不监控进度条
-        mControlWrapper.stopProgress();
-        mControlWrapper.stopFadeOut();
 		isSEEKBAR = true;
         int duration = (int) mControlWrapper.getDuration();
         if (duration <= 0)
@@ -1139,8 +1142,6 @@ public class VodController extends BaseController {
         mHandler.removeMessages(1003);
         mHandler.sendEmptyMessage(1002);
 		mIsDragging = false;
-        mControlWrapper.startProgress();
-        mControlWrapper.startFadeOut();
     }
 
     void hideBottom() {
