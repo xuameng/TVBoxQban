@@ -3,6 +3,7 @@ import android.animation.Animator;                      //xuameng动画
 import android.animation.AnimatorListenerAdapter;       //xuameng动画
 import android.animation.ObjectAnimator;                //xuameng动画
 import org.greenrobot.eventbus.EventBus;
+import com.github.tvbox.osc.event.RefreshEvent;
 import android.app.Activity;
 import android.annotation.SuppressLint;
 import android.content.Context;
