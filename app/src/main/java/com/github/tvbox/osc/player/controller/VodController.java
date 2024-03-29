@@ -916,7 +916,7 @@ public class VodController extends BaseController {
 
     private boolean skipEnd = true;
 
-    @Override
+
     protected void setProgress() {
 
         if (mIsDragging) {
