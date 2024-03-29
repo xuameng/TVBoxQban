@@ -149,7 +149,7 @@ public class VodController extends BaseController {
     SeekBar mSeekBar;
     TextView mCurrentTime;
     TextView mTotalTime;
-    boolean mIsDragging;
+    boolean mIsDragging;              //XUAMENG SEEKBAR快进时不监控进度
     LinearLayout mProgressRoot;
     TextView mProgressText;
     ImageView mProgressIcon;
@@ -923,28 +923,16 @@ public class VodController extends BaseController {
             return;
         }
         super.setProgress(duration, position);
-        if (skipEnd && position != 0 && duration != 0) {
-            int et = 0;
-            try {
-                et = mPlayerConfig.getInt("et");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            if (et > 0 && position + (et * 1000) >= duration) {
-                skipEnd = false;
-                listener.playNext(true);
-            }
+
+ 
+		int duration = (int) mVideoView.getDuration();
+		if (duration > 0) {
+		mCurrentTime.setText(durationToString((int) mControlWrapper.getCurrentPosition()));
+		mTotalTime.setText(durationToString(duration));
+	    mSeekBar.setProgress((int)  mControlWrapper.getCurrentPosition());
+	    mSeekBar.setMax(duration);
         }
-        mCurrentTime.setText(PlayerUtils.stringForTime(position));
-        mTotalTime.setText(PlayerUtils.stringForTime(duration));
-        if (duration > 0) {
-            mSeekBar.setEnabled(true);
-            int pos = (int) (position * 1.0 / duration * mSeekBar.getMax());
- //           mSeekBar.setProgress(pos);
-			mSeekBar.setProgress((int)  mControlWrapper.getCurrentPosition());
-        } else {
-            mSeekBar.setEnabled(false);
-        }
+
         int percent = mControlWrapper.getBufferedPercentage();
         if (percent >= 95) {
             mSeekBar.setSecondaryProgress(mSeekBar.getMax());
@@ -969,7 +957,7 @@ public class VodController extends BaseController {
     }
 
     public void tvSlideStopXu() {           //xuameng修复SEEKBAR快进重新播放问题
-	    mIsDragging = false;
+	    mIsDragging = false;     //XUAMENG监控进度条
         mControlWrapper.startProgress();
         mControlWrapper.startFadeOut();
         if (!simSlideStart)
@@ -985,7 +973,7 @@ public class VodController extends BaseController {
     }
 
     public void tvSlideStart(int dir) {
-		mIsDragging = true;
+		mIsDragging = true;     //XUAMENG不监控进度条
         mControlWrapper.stopProgress();
         mControlWrapper.stopFadeOut();
 		isSEEKBAR = true;
@@ -1002,11 +990,9 @@ public class VodController extends BaseController {
         if (position > duration) position = duration;
         if (position < 0) position = 0;
         updateSeekUI(currentPosition, position, duration);
-
+        simSeekPosition = position;
 		mSeekBar.setProgress(simSeekPosition);
 		mCurrentTime.setText(durationToString(simSeekPosition));
-
-        simSeekPosition = position;
     }
 
     private  String durationToString(int duration) {
