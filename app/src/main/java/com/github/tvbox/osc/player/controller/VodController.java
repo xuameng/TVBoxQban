@@ -363,7 +363,7 @@ public class VodController extends BaseController {
                 }
 
                 long duration = mControlWrapper.getDuration();
-                long newPosition = (duration * progress) / seekBar.getMax();
+                long newPosition = mControlWrapper.getCurrentPosition();
                 if (mCurrentTime != null)
                     mCurrentTime.setText(stringForTime((int) newPosition));
             }
@@ -380,7 +380,7 @@ public class VodController extends BaseController {
                 myHandle.removeCallbacks(myRunnable);
                 myHandle.postDelayed(myRunnable, myHandleSeconds);
                 long duration = mControlWrapper.getDuration();
-                long newPosition = (duration * seekBar.getProgress()) / seekBar.getMax();
+                long newPosition = mControlWrapper.getCurrentPosition();
                 mControlWrapper.seekTo((int) newPosition);
                 mIsDragging = false;
                 mControlWrapper.startProgress();
@@ -923,6 +923,10 @@ public class VodController extends BaseController {
             return;
         }
         super.setProgress(duration, position);
+
+            int  duration1 = (int) mControlWrapper.getDuration();
+            int  newPosition = (int) mControlWrapper.getCurrentPosition();
+
         if (skipEnd && position != 0 && duration != 0) {
             int et = 0;
             try {
@@ -939,8 +943,10 @@ public class VodController extends BaseController {
         mTotalTime.setText(PlayerUtils.stringForTime(duration));
         if (duration > 0) {
             mSeekBar.setEnabled(true);
-            int pos = (int) (position * 1.0 / duration * mSeekBar.getMax());
-            mSeekBar.setProgress(pos);
+
+            mSeekBar.setProgress(newPosition);
+
+			mSeekBar.getMax(duration1);
         } else {
             mSeekBar.setEnabled(false);
         }
