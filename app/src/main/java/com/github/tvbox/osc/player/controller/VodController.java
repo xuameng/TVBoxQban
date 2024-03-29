@@ -922,7 +922,6 @@ public class VodController extends BaseController {
         if (mIsDragging) {
             return;
         }
-        super.setProgress(duration, position);
 
             int  duration1 = (int) mControlWrapper.getDuration();
             int  newPosition = (int) mControlWrapper.getCurrentPosition();
@@ -939,8 +938,8 @@ public class VodController extends BaseController {
                 listener.playNext(true);
             }
         }
-        mCurrentTime.setText(PlayerUtils.stringForTime(position));
-        mTotalTime.setText(PlayerUtils.stringForTime(duration));
+        mCurrentTime.setText(PlayerUtils.stringForTime(newPosition));
+        mTotalTime.setText(PlayerUtils.stringForTime(duration1));
         if (duration > 0) {
             mSeekBar.setEnabled(true);
 
