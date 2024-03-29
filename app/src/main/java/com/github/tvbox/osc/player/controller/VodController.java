@@ -917,14 +917,14 @@ public class VodController extends BaseController {
     private boolean skipEnd = true;
 
     @Override
-    protected void setProgress(int duration, int position) {
+    protected void setProgress(int duration1, int position) {
 
         if (mIsDragging) {
             return;
         }
 
             int  duration1 = (int) mControlWrapper.getDuration();
-            int  newPosition = (int) mControlWrapper.getCurrentPosition();
+            int  position = (int) mControlWrapper.getCurrentPosition();
 
         if (skipEnd && position != 0 && duration != 0) {
             int et = 0;
