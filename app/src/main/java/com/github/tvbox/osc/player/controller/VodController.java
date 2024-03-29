@@ -2,8 +2,6 @@ package com.github.tvbox.osc.player.controller;
 import android.animation.Animator;                      //xuameng动画
 import android.animation.AnimatorListenerAdapter;       //xuameng动画
 import android.animation.ObjectAnimator;                //xuameng动画
-import org.greenrobot.eventbus.EventBus;
-import com.github.tvbox.osc.event.RefreshEvent;
 import android.app.Activity;
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -1017,7 +1015,6 @@ public class VodController extends BaseController {
     @Override
     protected void onPlayStateChanged(int playState) {
         super.onPlayStateChanged(playState);
-		EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_REFRESH_NOTIFY, null));
         videoPlayState = playState;
         switch (playState) {
             case VideoView.STATE_IDLE:
