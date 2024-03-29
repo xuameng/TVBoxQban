@@ -997,11 +997,50 @@ public class VodController extends BaseController {
         updateSeekUI(currentPosition, position, duration);
         simSeekPosition = position;
 
-		        
-                long newPosition = (duration * progress) / seekBar.getMax();
+		        long newPosition = (duration * simSeekPosition) / seekBar.getMax();
                 if (mCurrentTime != null)
-                mCurrentTime.setText(stringForTime((int) newPosition));
+
+				mCurrentTime.setText(durationToString(simSeekPosition));
+
 				mSeekBar.setProgress(newPosition);
+    }
+
+    private  String durationToString(int duration) {
+        String result = "";
+        int dur = duration / 1000;
+        int hour=dur/3600;
+        int min = (dur / 60) % 60;
+        int sec = dur % 60;
+        if(hour>0){
+            if (min > 9) {
+                if (sec > 9) {
+                    result =hour+":"+ min + ":" + sec;
+                } else {
+                    result =hour+":"+ min + ":0" + sec;
+                }
+            } else {
+                if (sec > 9) {
+                    result =hour+":"+ "0" + min + ":" + sec;
+                } else {
+                    result = hour+":"+"0" + min + ":0" + sec;
+                }
+            }
+        }else{
+            if (min > 9) {
+                if (sec > 9) {
+                    result = min + ":" + sec;
+                } else {
+                    result = min + ":0" + sec;
+                }
+            } else {
+                if (sec > 9) {
+                    result ="0" + min + ":" + sec;
+                } else {
+                    result = "0" + min + ":0" + sec;
+                }
+            }
+        }
+        return result;
     }
 
     @Override
