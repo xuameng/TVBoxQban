@@ -917,7 +917,7 @@ public class VodController extends BaseController {
     private boolean skipEnd = true;
 
     @Override
-    protected void setProgress(int duration1, int position) {
+    protected void setProgress() {
 
         if (mIsDragging) {
             return;
@@ -926,24 +926,24 @@ public class VodController extends BaseController {
             int  duration1 = (int) mControlWrapper.getDuration();
             int  position = (int) mControlWrapper.getCurrentPosition();
 
-        if (skipEnd && position != 0 && duration != 0) {
+        if (skipEnd && position != 0 && duration1 != 0) {
             int et = 0;
             try {
                 et = mPlayerConfig.getInt("et");
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            if (et > 0 && position + (et * 1000) >= duration) {
+            if (et > 0 && position + (et * 1000) >= duration1) {
                 skipEnd = false;
                 listener.playNext(true);
             }
         }
-        mCurrentTime.setText(PlayerUtils.stringForTime(newPosition));
+        mCurrentTime.setText(PlayerUtils.stringForTime(position));
         mTotalTime.setText(PlayerUtils.stringForTime(duration1));
-        if (duration > 0) {
+        if (duration1 > 0) {
             mSeekBar.setEnabled(true);
 
-            mSeekBar.setProgress(newPosition);
+            mSeekBar.setProgress(position);
 
         } else {
             mSeekBar.setEnabled(false);
