@@ -236,8 +236,7 @@ public class VodController extends BaseController {
 
     @Override
     protected void initView() {
-        super.initView();
-		mHandler.post(mUpdateSetProgressXu); 
+        super.initView(); 
         mCurrentTime = findViewById(R.id.curr_time);
         mTotalTime = findViewById(R.id.total_time);
         mPlayTitle = findViewById(R.id.tv_info_name);
@@ -943,6 +942,7 @@ public class VodController extends BaseController {
 		mHandler.postDelayed(this, 1000);
       }
     };
+
     private boolean simSlideStart = false;
     private int simSeekPosition = 0;
     private long simSlideOffset = 0;
@@ -1051,6 +1051,7 @@ public class VodController extends BaseController {
         videoPlayState = playState;
         switch (playState) {
             case VideoView.STATE_IDLE:
+				mHandler.removeCallbacks(mUpdateSetProgressXu);
                 break;
             case VideoView.STATE_PLAYING:
                 initLandscapePortraitBtnInfo();
@@ -1117,6 +1118,7 @@ public class VodController extends BaseController {
 		        mTotalTime.setText(durationToString(duration1));
 	            mSeekBar.setProgress((int)  mControlWrapper.getCurrentPosition());
 	            mSeekBar.setMax(duration1);
+				mHandler.post(mUpdateSetProgressXu);
         }
                 break;
             case VideoView.STATE_BUFFERED:
