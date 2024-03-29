@@ -992,18 +992,15 @@ public class VodController extends BaseController {
         simSlideOffset += (10000.0f * dir);
         int currentPosition = (int) mControlWrapper.getCurrentPosition();
         int position = (int) (simSlideOffset + currentPosition);
-		int newSeekBar = (int) mSeekBar.setMax(duration);
         if (position > duration) position = duration;
         if (position < 0) position = 0;
         updateSeekUI(currentPosition, position, duration);
         simSeekPosition = position;
 
-		 int newPosition = (duration * simSeekPosition) / newSeekBar;
-                if (mCurrentTime != null)
-
+                if (mCurrentTime != null){
 				mCurrentTime.setText(durationToString(simSeekPosition));
-
-				mSeekBar.setProgress(newPosition);
+				}
+				mSeekBar.setProgress((duration*simSeekPosition)/currentPosition );
     }
 
     private  String durationToString(int duration) {
