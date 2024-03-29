@@ -1368,7 +1368,7 @@ public class LivePlayActivity extends BaseActivity {
 		Mtv_left_top_xu.setVisibility(View.GONE);         //xuameng直播时隐藏回看的菜单
         iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
         mVideoView.setUrl(currentLiveChannelItem.getUrl());
-		simSeekPosition = 0;      //XUAMENG重要,换视频时重新记录进度
+		simSeekPosition = null;      //XUAMENG重要,换视频时重新记录进度
         simSlideOffset = 0;       //XUAMENG重要,换视频时重新记录进度
 
        // showChannelInfo();
@@ -2970,7 +2970,7 @@ public class LivePlayActivity extends BaseActivity {
         if (!mVideoView.isPlaying())
         //xuameng快进暂停就暂停测试    mVideoView.start();    //测试成功，如果想暂停时快进自动播放取消注销
         simSlideStart = false;
-        simSeekPosition = 0;    //XUAMENG重要
+        simSeekPosition = null;    //XUAMENG重要
         simSlideOffset = 0;
     }
 
@@ -2990,9 +2990,10 @@ public class LivePlayActivity extends BaseActivity {
         int position = (int) (simSlideOffset + currentPosition);
         if (position > duration) position = duration;
         if (position < 0) position = 0;
+		simSeekPosition = position;
         sBar.setProgress(simSeekPosition);
 		tv_currentpos.setText(durationToString(simSeekPosition));
-        simSeekPosition = position;
+
     }
     
 }
