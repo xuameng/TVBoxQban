@@ -946,7 +946,6 @@ public class VodController extends BaseController {
 
             mSeekBar.setProgress(newPosition);
 
-			mSeekBar.getMax(duration1);
         } else {
             mSeekBar.setEnabled(false);
         }
