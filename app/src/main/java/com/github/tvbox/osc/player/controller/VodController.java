@@ -363,7 +363,7 @@ public class VodController extends BaseController {
                 }
 
                 long duration = mControlWrapper.getDuration();
-                long newPosition = mControlWrapper.getCurrentPosition();
+                long newPosition = (duration * progress) / seekBar.getMax();
                 if (mCurrentTime != null)
                     mCurrentTime.setText(stringForTime((int) newPosition));
             }
@@ -380,7 +380,7 @@ public class VodController extends BaseController {
                 myHandle.removeCallbacks(myRunnable);
                 myHandle.postDelayed(myRunnable, myHandleSeconds);
                 long duration = mControlWrapper.getDuration();
-                long newPosition = mControlWrapper.getCurrentPosition();
+                long newPosition = (duration * seekBar.getProgress()) / seekBar.getMax();
                 mControlWrapper.seekTo((int) newPosition);
                 mIsDragging = false;
                 mControlWrapper.startProgress();
@@ -916,35 +916,31 @@ public class VodController extends BaseController {
 
     private boolean skipEnd = true;
 
-
-    protected void setProgress() {
+    @Override
+    protected void setProgress(int duration, int position) {
 
         if (mIsDragging) {
             return;
         }
-
-            int  duration1 = (int) mControlWrapper.getDuration();
-            int  position = (int) mControlWrapper.getCurrentPosition();
-
-        if (skipEnd && position != 0 && duration1 != 0) {
+        super.setProgress(duration, position);
+        if (skipEnd && position != 0 && duration != 0) {
             int et = 0;
             try {
                 et = mPlayerConfig.getInt("et");
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            if (et > 0 && position + (et * 1000) >= duration1) {
+            if (et > 0 && position + (et * 1000) >= duration) {
                 skipEnd = false;
                 listener.playNext(true);
             }
         }
         mCurrentTime.setText(PlayerUtils.stringForTime(position));
-        mTotalTime.setText(PlayerUtils.stringForTime(duration1));
-        if (duration1 > 0) {
+        mTotalTime.setText(PlayerUtils.stringForTime(duration));
+        if (duration > 0) {
             mSeekBar.setEnabled(true);
-
-            mSeekBar.setProgress(position);
-
+            int pos = (int) (position * 1.0 / duration * mSeekBar.getMax());
+            mSeekBar.setProgress(pos);
         } else {
             mSeekBar.setEnabled(false);
         }
