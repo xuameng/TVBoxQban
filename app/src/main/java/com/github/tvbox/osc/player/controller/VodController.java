@@ -917,15 +917,14 @@ public class VodController extends BaseController {
     private boolean skipEnd = true;
 
     @Override
-    protected void setProgress(int duration, int position) {
+    public void setProgress() {
 
         if (mIsDragging) {
             return;
         }
-        super.setProgress(duration, position);
 
  
-		int duration = (int) mVideoView.getDuration();
+		int duration = (int) mControlWrapper.getDuration();
 		if (duration > 0) {
 		mCurrentTime.setText(durationToString((int) mControlWrapper.getCurrentPosition()));
 		mTotalTime.setText(durationToString(duration));
