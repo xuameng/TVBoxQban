@@ -931,20 +931,17 @@ public class VodController extends BaseController {
 		int duration = (int) mControlWrapper.getDuration();
 		if (duration > 0) {
 		mCurrentTime.setText(durationToString((int) mControlWrapper.getCurrentPosition()));
-		mTotalTime.setText(durationToString(duration));
 	    mSeekBar.setProgress((int)  mControlWrapper.getCurrentPosition());
-	    mSeekBar.setMax(duration);
         }
 
         int percent = mControlWrapper.getBufferedPercentage();
-        if (percent >= 95) {
+        if (percent >= duration - 1000) {
             mSeekBar.setSecondaryProgress(duration);
         } else {
             mSeekBar.setSecondaryProgress(percent * 10);
         }
     }
           mHandler.postDelayed(this, 1000);
-        }
     };
     private boolean simSlideStart = false;
     private int simSeekPosition = 0;
@@ -1114,6 +1111,13 @@ public class VodController extends BaseController {
                 mPlayLoadNetSpeed.setVisibility(GONE);
                 hideLiveAboutBtn();
                 listener.prepared();
+				int duration1 = (int) mControlWrapper.getDuration();
+		        if (duration1 > 0) {
+		        mCurrentTime.setText(durationToString((int) mControlWrapper.getCurrentPosition()));
+		        mTotalTime.setText(durationToString(duration1));
+	            mSeekBar.setProgress((int)  mControlWrapper.getCurrentPosition());
+	            mSeekBar.setMax(duration1);
+        }
                 break;
             case VideoView.STATE_BUFFERED:
                 mPlayLoadNetSpeed.setVisibility(GONE);
