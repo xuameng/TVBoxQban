@@ -20,10 +20,10 @@
             android:layout_marginTop="@dimen/vs_10">
             <ImageView
                 android:id="@+id/ivThumb"
-                android:layout_marginTop="@dimen/vs_5"
                 android:layout_width="@dimen/vs_240"
-                android:layout_height="314mm"
-                android:layout_marginLeft="11mm"
+                android:layout_height="313.0mm"
+                android:layout_marginLeft="11.0mm"
+                android:layout_marginTop="@dimen/vs_7"
                 android:scaleType="fitXY"/>
             <View
                 android:id="@+id/previewPlayerPlace"
