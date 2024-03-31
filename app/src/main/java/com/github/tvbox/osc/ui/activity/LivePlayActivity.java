@@ -1914,7 +1914,7 @@ public class LivePlayActivity extends BaseActivity {
                          tv_size.setText("[" + mVideoView.getVideoSize()[0] + " X " + mVideoView.getVideoSize()[1] + "]");
                         }
 						int duration1 = (int) mVideoView.getDuration();
-						if (duration1 > 0) {
+						if (duration1 > 40000) {
 							if(isBack){
 							tv_right_top_type.setText("回看中");
 							iv_play_pause.setText("回看暂停中！聚汇直播欢迎您的收看！");
