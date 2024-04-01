@@ -522,7 +522,6 @@ public class PlayFragment extends BaseLazyFragment {
             PlayerHelper.updateCfg(mVideoView, mVodPlayerCfg);
         }
 
-        if (!isAdded()) return;   //xuameng测试
         String finalUrl = url;
         if (mActivity == null) return;
         requireActivity().runOnUiThread(new Runnable() {
