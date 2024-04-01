@@ -2989,7 +2989,7 @@ public class LivePlayActivity extends BaseActivity {
         int currentPosition = (int) mVideoView.getCurrentPosition();
         int position = (int) (simSlideOffset + currentPosition);
         if (position > duration) position = duration;
-        if (position < 0) position = 0;
+        if (position < 10) position = 5;
 		simSeekPosition = position;
         sBar.setProgress(simSeekPosition);
 		tv_currentpos.setText(durationToString(simSeekPosition));
