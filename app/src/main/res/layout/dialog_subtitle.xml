@@ -134,7 +134,7 @@
                 <TextView
                     android:textSize="@dimen/ts_20"
                     android:textStyle="bold"
-                    android:textColor="@color/color_FFFFFF"
+                    android:textColor="@color/color_1890FF"
                     android:gravity="center"
                     android:layout_gravity="center"
                     android:id="@+id/subtitleStyleTwo"
