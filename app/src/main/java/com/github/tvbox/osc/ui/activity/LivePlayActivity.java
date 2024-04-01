@@ -372,7 +372,6 @@ public class LivePlayActivity extends BaseActivity {
                 }
                 if(fromuser){
                     if(countDownTimer!=null){
-                  if (progress < 10) progress = 0;
                         mVideoView.seekTo(progress);
                         countDownTimer.cancel();
                         countDownTimer.start();
