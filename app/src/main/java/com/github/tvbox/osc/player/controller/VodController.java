@@ -743,7 +743,6 @@ public class VodController extends BaseController {
 					mSubtitleView.setVisibility(VISIBLE);
                     hideBottom();
                     Toast.makeText(getContext(), "字幕已开启!", Toast.LENGTH_SHORT).show();
-					return false;
 				} else {
 					mSubtitleView.setVisibility(View.GONE);
 //                  mSubtitleView.destroy();
@@ -751,7 +750,6 @@ public class VodController extends BaseController {
 //                  mSubtitleView.isInternal = false;
                     hideBottom();
                     Toast.makeText(getContext(), "字幕已关闭!", Toast.LENGTH_SHORT).show();
-					return false;
 				}  
 			   return true;
             }
