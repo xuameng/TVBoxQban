@@ -1009,6 +1009,9 @@ public class PlayActivity extends BaseActivity {
         stopParse();
         initParseLoadFound();
         if (pb.getType() == 0) {
+
+                    mVideoView.release();
+
             setTip("正在嗅探播放地址", true, false);
             mHandler.removeMessages(100);
             mHandler.sendEmptyMessageDelayed(100, 20 * 1000);
@@ -1184,6 +1187,9 @@ public class PlayActivity extends BaseActivity {
                                 public void run() {
                                     String mixParseUrl = DefaultConfig.checkReplaceProxy(rs.optString("url", ""));
                                     stopParse();
+
+                    mVideoView.release();
+
                                     setTip("正在嗅探播放地址", true, false);
                                     mHandler.removeMessages(100);
                                     mHandler.sendEmptyMessageDelayed(100, 20 * 1000);
