@@ -560,7 +560,7 @@ public class VodController extends BaseController {
             public boolean onLongClick(View view) {
                 myHandle.removeCallbacks(myRunnable);
                 myHandle.postDelayed(myRunnable, myHandleSeconds);
-                FastClickCheckUtilxu.check(view);
+                FastClickCheckUtil.check(view);
                 try {
                     int playerType = mPlayerConfig.getInt("pl");
                     int defaultPos = 0;
@@ -726,14 +726,15 @@ public class VodController extends BaseController {
         mZimuBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                FastClickCheckUtilxu.check(view);
+                FastClickCheckUtil.check(view);
                 listener.selectSubtitle();
                 hideBottom();
-			    if (mControlWrapper.isPlaying()){             //xuameng修复暂停时选字幕时显示暂停图标等问题
+			if (mControlWrapper.isPlaying()){             //xuameng修复暂停时选字幕时显示暂停图标等问题
                 return;
-                } else {
-                togglePlay();
                }
+            else {
+               togglePlay();
+              }
             }
         });
         mZimuBtn.setOnLongClickListener(new OnLongClickListener() {
@@ -743,6 +744,7 @@ public class VodController extends BaseController {
 					mSubtitleView.setVisibility(VISIBLE);
                     hideBottom();
                     Toast.makeText(getContext(), "字幕已开启!", Toast.LENGTH_SHORT).show();
+					return true;
 				} else {
 					mSubtitleView.setVisibility(View.GONE);
 //                  mSubtitleView.destroy();
@@ -750,27 +752,28 @@ public class VodController extends BaseController {
 //                  mSubtitleView.isInternal = false;
                     hideBottom();
                     Toast.makeText(getContext(), "字幕已关闭!", Toast.LENGTH_SHORT).show();
-				}  
-			   return true;
+					return true;
+				}              
             }
         });
         mAudioTrackBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                FastClickCheckUtilxu.check(view);
+                FastClickCheckUtil.check(view);
                 listener.selectAudioTrack();
                 hideBottom();
-			    if (mControlWrapper.isPlaying()){             //xuameng修复暂停时选音轨时显示暂停图标等问题
+			if (mControlWrapper.isPlaying()){             //xuameng修复暂停时选音轨时显示暂停图标等问题
                 return;
-                } else {
-                togglePlay();
+               }
+            else {
+               togglePlay();
               }
             }
         });
         mLandscapePortraitBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                FastClickCheckUtilxu.check(view);
+                FastClickCheckUtil.check(view);
                 setLandscapePortrait();
                 hideBottom();
             }
