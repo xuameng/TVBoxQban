@@ -807,11 +807,11 @@ public class LivePlayActivity extends BaseActivity {
             liveIconNullBg.setVisibility(View.VISIBLE);
             liveIconNullText.setVisibility(View.VISIBLE);
             imgLiveIcon.setVisibility(View.VISIBLE);
-		    Picasso.get().load(logoUrl).placeholder(R.drawable.app_banner).into(imgLiveIcon);	// xuameng内容空显示banner
+		    Picasso.get().load(logoUrl).placeholder(R.drawable.banner_xu).into(imgLiveIcon);	// xuameng内容空显示banner
             liveIconNullText.setVisibility(View.VISIBLE);liveIconNullText.setText("[频道编号" + channel_Name.getChannelNum() + "]");   // xuameng显示频道编号
         } else {
             imgLiveIcon.setVisibility(View.VISIBLE);
-            Picasso.get().load(logoUrl).placeholder(R.drawable.app_banner).into(imgLiveIcon);	// xuameng内不空显示banner
+            Picasso.get().load(logoUrl).placeholder(R.drawable.banner_xu).into(imgLiveIcon);	// xuameng内不空显示banner
             liveIconNullBg.setVisibility(View.VISIBLE);
             liveIconNullText.setVisibility(View.VISIBLE);
 			liveIconNullText.setVisibility(View.VISIBLE);liveIconNullText.setText("[频道编号" + channel_Name.getChannelNum() + "]");   // xuameng显示频道编号
