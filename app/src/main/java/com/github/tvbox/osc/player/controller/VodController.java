@@ -753,7 +753,8 @@ public class VodController extends BaseController {
                     hideBottom();
                     Toast.makeText(getContext(), "字幕已关闭!", Toast.LENGTH_SHORT).show();
 					return true;
-				}              
+				}  
+			   return true;
             }
         });
         mAudioTrackBtn.setOnClickListener(new OnClickListener() {
@@ -768,6 +769,7 @@ public class VodController extends BaseController {
             else {
                togglePlay();
               }
+			  return true;
             }
         });
         mLandscapePortraitBtn.setOnClickListener(new OnClickListener() {
