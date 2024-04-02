@@ -729,12 +729,11 @@ public class VodController extends BaseController {
                 FastClickCheckUtil.check(view);
                 listener.selectSubtitle();
                 hideBottom();
-			if (mControlWrapper.isPlaying()){             //xuameng修复暂停时选字幕时显示暂停图标等问题
+			    if (mControlWrapper.isPlaying()){             //xuameng修复暂停时选字幕时显示暂停图标等问题
                 return;
+                } else {
+                togglePlay();
                }
-            else {
-               togglePlay();
-              }
             }
         });
         mZimuBtn.setOnLongClickListener(new OnLongClickListener() {
@@ -763,13 +762,11 @@ public class VodController extends BaseController {
                 FastClickCheckUtil.check(view);
                 listener.selectAudioTrack();
                 hideBottom();
-			if (mControlWrapper.isPlaying()){             //xuameng修复暂停时选音轨时显示暂停图标等问题
+			    if (mControlWrapper.isPlaying()){             //xuameng修复暂停时选音轨时显示暂停图标等问题
                 return;
-               }
-            else {
-               togglePlay();
+                } else {
+                togglePlay();
               }
-			  return true;
             }
         });
         mLandscapePortraitBtn.setOnClickListener(new OnClickListener() {
