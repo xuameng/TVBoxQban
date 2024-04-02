@@ -1008,10 +1008,8 @@ public class PlayActivity extends BaseActivity {
     private void doParse(ParseBean pb) {
         stopParse();
         initParseLoadFound();
+		mVideoView.release();       //XUAMENG修复嗅探换源闪退
         if (pb.getType() == 0) {
-
-                    mVideoView.release();
-
             setTip("正在嗅探播放地址", true, false);
             mHandler.removeMessages(100);
             mHandler.sendEmptyMessageDelayed(100, 20 * 1000);
@@ -1187,9 +1185,7 @@ public class PlayActivity extends BaseActivity {
                                 public void run() {
                                     String mixParseUrl = DefaultConfig.checkReplaceProxy(rs.optString("url", ""));
                                     stopParse();
-
-                    mVideoView.release();
-
+                                    mVideoView.release();    //XUAMENG修复嗅探换源闪退
                                     setTip("正在嗅探播放地址", true, false);
                                     mHandler.removeMessages(100);
                                     mHandler.sendEmptyMessageDelayed(100, 20 * 1000);
