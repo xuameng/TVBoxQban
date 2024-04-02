@@ -794,7 +794,7 @@ public class PlayActivity extends BaseActivity {
             hasNext = mVodInfo.playIndex + 1 < mVodInfo.seriesMap.get(mVodInfo.playFlag).size();
         }
         if (!hasNext) {
-            if(isProgress && mVodInfo!=null){
+            if(isProgress && mVodInfo!= null){
                 mVodInfo.playIndex=0;
                 Toast.makeText(this, "已经是最后一集了!,即将跳到第一集继续播放", Toast.LENGTH_SHORT).show();
             }else {
@@ -860,7 +860,7 @@ public class PlayActivity extends BaseActivity {
 
         stopParse();
         initParseLoadFound();
-        if(mVideoView!=null) mVideoView.release();
+        if(mVideoView!= null) mVideoView.release();
         String subtitleCacheKey = mVodInfo.sourceKey + "-" + mVodInfo.id + "-" + mVodInfo.playFlag + "-" + mVodInfo.playIndex+ "-" + vs.name + "-subt";
         String progressKey = mVodInfo.sourceKey + mVodInfo.id + mVodInfo.playFlag + mVodInfo.playIndex + vs.name;
         //重新播放清除现有进度
@@ -1012,7 +1012,7 @@ public class PlayActivity extends BaseActivity {
             setTip("正在嗅探播放地址", true, false);
             mHandler.removeMessages(100);
             mHandler.sendEmptyMessageDelayed(100, 20 * 1000);
-            if(pb.getExt()!=null){
+            if(pb.getExt()!= null){
                 // 解析ext
                 try {
                     HashMap<String, String> reqHeaders = new HashMap<>();
