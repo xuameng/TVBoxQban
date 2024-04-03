@@ -2963,13 +2963,13 @@ public class LivePlayActivity extends BaseActivity {
 		isKUAIJIN = false;
 		if (!simSlideStart)
             return;
-        if(simSeekPosition < 10){
+        if(simSeekPosition = 0){
 	       mVideoView.release();
            mVideoView.setUrl(currentLiveChannelItem.getUrl());
            mVideoView.start();
          }
 		if (isSEEKBAR){
-		   if(simSeekPosition >= 10){
+		   if(simSeekPosition > 0){
            mVideoView.seekTo(simSeekPosition);
 		   }
 		}
