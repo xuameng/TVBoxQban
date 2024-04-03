@@ -2963,13 +2963,13 @@ public class LivePlayActivity extends BaseActivity {
 		isKUAIJIN = false;
 		if (!simSlideStart)
             return;
-        if(simSeekPosition = 0){
+        if(simSeekPosition < 1000){
 	       mVideoView.release();
            mVideoView.setUrl(currentLiveChannelItem.getUrl());
            mVideoView.start();
          }
 		if (isSEEKBAR){
-		   if(simSeekPosition > 0){
+		   if(simSeekPosition >= 1000){
            mVideoView.seekTo(simSeekPosition);
 		   }
 		}
@@ -2989,7 +2989,7 @@ public class LivePlayActivity extends BaseActivity {
             return;
         if (!simSlideStart) {
             simSlideStart = true;
-		}
+			}
         // 每次10秒
         simSlideOffset += (10000.0f * dir);
         int currentPosition = (int) mVideoView.getCurrentPosition();
