@@ -2989,6 +2989,7 @@ public class LivePlayActivity extends BaseActivity {
             return;
         if (!simSlideStart) {
             simSlideStart = true;
+		}
         // 每次10秒
         simSlideOffset += (10000.0f * dir);
         int currentPosition = (int) mVideoView.getCurrentPosition();
