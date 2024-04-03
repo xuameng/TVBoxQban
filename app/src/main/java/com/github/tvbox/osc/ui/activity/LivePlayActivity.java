@@ -2956,16 +2956,15 @@ public class LivePlayActivity extends BaseActivity {
 */
     }
 
-    private boolean simSlideStart = false;
     private int simSeekPosition = 0;
     private long simSlideOffset = 0;
 
     public void tvSlideStop() {
 		isKUAIJIN = false;
-        if (!simSlideStart)
-            return;
+
 		if (simSeekPosition <= 10){
-        mVideoView.seekTo(simSeekPosition);
+			mVideoView.setUrl(currentLiveChannelItem.getUrl());
+            mVideoView.start();
 		    }
 
 		if (isSEEKBAR){
@@ -2973,7 +2972,6 @@ public class LivePlayActivity extends BaseActivity {
 		}
         if (!mVideoView.isPlaying())
         //xuameng快进暂停就暂停测试    mVideoView.start();    //测试成功，如果想暂停时快进自动播放取消注销
-        simSlideStart = false;
 //        simSeekPosition = 0;    //XUAMENG重要
         simSlideOffset = 0;
     }
@@ -2985,9 +2983,7 @@ public class LivePlayActivity extends BaseActivity {
         int duration = (int) mVideoView.getDuration();
         if (duration <= 0)
             return;
-        if (!simSlideStart) {
-            simSlideStart = true;
-        }
+
         // 每次10秒
         simSlideOffset += (10000.0f * dir);
         int currentPosition = (int) mVideoView.getCurrentPosition();
