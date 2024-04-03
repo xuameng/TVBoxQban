@@ -2964,6 +2964,8 @@ public class LivePlayActivity extends BaseActivity {
 		isKUAIJIN = false;
         if (!simSlideStart)
             return;
+		if (simSeekPosition <= 10) simSeekPosition = 0;
+
 		if (isSEEKBAR){
         mVideoView.seekTo(simSeekPosition);
 		}
