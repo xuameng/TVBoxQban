@@ -2962,11 +2962,6 @@ public class LivePlayActivity extends BaseActivity {
     public void tvSlideStop() {
 		isKUAIJIN = false;
 
-		if (simSeekPosition <= 10){
-			mVideoView.setUrl(currentLiveChannelItem.getUrl());
-            mVideoView.start();
-		    }
-
 		if (isSEEKBAR){
         mVideoView.seekTo(simSeekPosition);
 		}
