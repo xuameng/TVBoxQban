@@ -443,6 +443,7 @@ public class LivePlayActivity extends BaseActivity {
         initLiveSettingGroupList();
 		mHandler.post(mUpdateNetSpeedRunXu);          //XUAMENG左上网速检测1秒钟一次
 		mHandler.post(mUpdateVodProgressXu);                          //xuamengVOD BACK播放进度检测
+		iv_playpause.setNextFocusLeftId(R.id.pb_progressbar);        
     }
     //获取EPG并存储 // 百川epg  DIYP epg   51zmt epg ------- 自建EPG格式输出格式请参考 51zmt
     private List<Epginfo> epgdata = new ArrayList<>();
