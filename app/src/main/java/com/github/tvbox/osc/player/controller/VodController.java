@@ -560,7 +560,7 @@ public class VodController extends BaseController {
             public boolean onLongClick(View view) {
                 myHandle.removeCallbacks(myRunnable);
                 myHandle.postDelayed(myRunnable, myHandleSeconds);
-                FastClickCheckUtil.check(view);
+                FastClickCheckUtilxu.check(view);
                 try {
                     int playerType = mPlayerConfig.getInt("pl");
                     int defaultPos = 0;
@@ -726,7 +726,7 @@ public class VodController extends BaseController {
         mZimuBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                FastClickCheckUtil.check(view);
+                FastClickCheckUtilxu.check(view);
                 listener.selectSubtitle();
                 hideBottom();
 			if (mControlWrapper.isPlaying()){             //xuameng修复暂停时选字幕时显示暂停图标等问题
@@ -759,10 +759,9 @@ public class VodController extends BaseController {
         mAudioTrackBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                FastClickCheckUtil.check(view);
+                FastClickCheckUtilxu.check(view);
                 listener.selectAudioTrack();
                 hideBottom();
-				mAudioTrackBtn.setEnabled(false);
 			if (mControlWrapper.isPlaying()){             //xuameng修复暂停时选音轨时显示暂停图标等问题
                 return;
                }
@@ -774,7 +773,7 @@ public class VodController extends BaseController {
         mLandscapePortraitBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                FastClickCheckUtil.check(view);
+                FastClickCheckUtilxu.check(view);
                 setLandscapePortrait();
                 hideBottom();
             }
