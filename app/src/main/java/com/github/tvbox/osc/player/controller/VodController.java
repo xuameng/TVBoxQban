@@ -745,20 +745,15 @@ public class VodController extends BaseController {
 					hideBottom();
 					mSubtitleView.setVisibility(VISIBLE);
                     Toast.makeText(getContext(), "字幕已开启!", Toast.LENGTH_SHORT).show();
-					mZimuBtn.requestFocus();
-                    mZimuBtn.requestFocusFromTouch();
-					return true;
-				} else {
+				} else if (mSubtitleView.getVisibility() == View.VISIBLE){
 					hideBottom();
 					mSubtitleView.setVisibility(View.GONE);
 //                  mSubtitleView.destroy();
 //                  mSubtitleView.clearSubtitleCache();
 //                  mSubtitleView.isInternal = false;
                     Toast.makeText(getContext(), "字幕已关闭!", Toast.LENGTH_SHORT).show();
-					mZimuBtn.requestFocus();
-                    mZimuBtn.requestFocusFromTouch();
-					return true;
-				}              
+				} 
+			    return true;
             }
         });
         mAudioTrackBtn.setOnClickListener(new OnClickListener() {
