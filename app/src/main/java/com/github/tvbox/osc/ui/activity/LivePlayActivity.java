@@ -2961,9 +2961,15 @@ public class LivePlayActivity extends BaseActivity {
 
     public void tvSlideStop() {
 		isKUAIJIN = false;
-
+        if(simSeekPosition < 10){
+	       mVideoView.release();
+           mVideoView.setUrl(currentLiveChannelItem.getUrl());
+           mVideoView.start();
+         }
 		if (isSEEKBAR){
-        mVideoView.seekTo(simSeekPosition);
+		   if(simSeekPosition >= 10){
+           mVideoView.seekTo(simSeekPosition);
+		   }
 		}
         if (!mVideoView.isPlaying())
         //xuameng快进暂停就暂停测试    mVideoView.start();    //测试成功，如果想暂停时快进自动播放取消注销
