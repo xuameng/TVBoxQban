@@ -560,7 +560,7 @@ public class VodController extends BaseController {
             public boolean onLongClick(View view) {
                 myHandle.removeCallbacks(myRunnable);
                 myHandle.postDelayed(myRunnable, myHandleSeconds);
-                FastClickCheckUtilxu.check(view);
+                FastClickCheckUtil.check(view);
                 try {
                     int playerType = mPlayerConfig.getInt("pl");
                     int defaultPos = 0;
@@ -726,7 +726,7 @@ public class VodController extends BaseController {
         mZimuBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                FastClickCheckUtilxu.check(view);
+                FastClickCheckUtil.check(view);
                 listener.selectSubtitle();
                 hideBottom();
 			if (mControlWrapper.isPlaying()){             //xuameng修复暂停时选字幕时显示暂停图标等问题
@@ -740,18 +740,23 @@ public class VodController extends BaseController {
         mZimuBtn.setOnLongClickListener(new OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
+				FastClickCheckUtil.check(view);                   //xuameng 防播放打断动画
 				if (mSubtitleView.getVisibility() == View.GONE) {
+					hideBottom();
 					mSubtitleView.setVisibility(VISIBLE);
-                    hideBottom();
                     Toast.makeText(getContext(), "字幕已开启!", Toast.LENGTH_SHORT).show();
+					mZimuBtn.requestFocus();
+                    mZimuBtn.requestFocusFromTouch();
 					return true;
 				} else {
+					hideBottom();
 					mSubtitleView.setVisibility(View.GONE);
 //                  mSubtitleView.destroy();
 //                  mSubtitleView.clearSubtitleCache();
 //                  mSubtitleView.isInternal = false;
-                    hideBottom();
                     Toast.makeText(getContext(), "字幕已关闭!", Toast.LENGTH_SHORT).show();
+					mZimuBtn.requestFocus();
+                    mZimuBtn.requestFocusFromTouch();
 					return true;
 				}              
             }
@@ -759,7 +764,7 @@ public class VodController extends BaseController {
         mAudioTrackBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                FastClickCheckUtilxu.check(view);
+                FastClickCheckUtil.check(view);
                 listener.selectAudioTrack();
                 hideBottom();
 			if (mControlWrapper.isPlaying()){             //xuameng修复暂停时选音轨时显示暂停图标等问题
@@ -773,7 +778,7 @@ public class VodController extends BaseController {
         mLandscapePortraitBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                FastClickCheckUtilxu.check(view);
+                FastClickCheckUtil.check(view);
                 setLandscapePortrait();
                 hideBottom();
             }
