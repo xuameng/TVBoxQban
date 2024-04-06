@@ -2964,15 +2964,21 @@ public class LivePlayActivity extends BaseActivity {
 		isKUAIJIN = false;
 		if (!simSlideStart)
             return;
-        if(simSeekPosition < 1000){
-	       mVideoView.release();
-           mVideoView.setUrl(currentLiveChannelItem.getUrl());
-           mVideoView.start();
-         }
-		if (isSEEKBAR){
-		   if(simSeekPosition >= 1000){
-           mVideoView.seekTo(simSeekPosition);
-		   }
+		if (isVOD){
+		  if (isSEEKBAR){
+            if(simSeekPosition < 1000){
+	           mVideoView.release();
+               mVideoView.setUrl(currentLiveChannelItem.getUrl());
+               mVideoView.start();
+           }else if(simSeekPosition >= 1000){
+               mVideoView.seekTo(simSeekPosition);
+		  }
+		 }
+		}
+        if(isBack){
+		  if (isSEEKBAR){
+          mVideoView.seekTo(simSeekPosition);
+		  }
 		}
         if (!mVideoView.isPlaying())
         //xuameng快进暂停就暂停测试    mVideoView.start();    //测试成功，如果想暂停时快进自动播放取消注销
