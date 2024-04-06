@@ -93,8 +93,8 @@ public class ApiHistoryDialogAdapter extends ListAdapter<String, ApiHistoryDialo
         holder.itemView.findViewById(R.id.tvDel).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (select.equals(value))
-                    return;
+//xuameng                if (select.equals(value))
+//xuameng                    return;
                 notifyItemRemoved(data.indexOf(value));
                 data.remove(value);
                 dialogInterface.del(value, data);
