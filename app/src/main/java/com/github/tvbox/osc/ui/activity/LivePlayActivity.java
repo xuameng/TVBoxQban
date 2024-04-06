@@ -1416,8 +1416,12 @@ public class LivePlayActivity extends BaseActivity {
             if (!isCurrentLiveChannelValid()) return;
             //重新载入默认状态
         if (iv_Play_Xu.getVisibility() == View.VISIBLE) {
-            iv_Play_Xu.setVisibility(View.GONE);       //回看暂停图标
+            iv_Play_Xu.setVisibility(View.GONE);       //XUAMENG隐藏暂停图标
         }
+		if(tvTime.getVisibility() == View.VISIBLE){   //XUAMENG隐藏系统时间
+            mHandler.removeCallbacks(mUpdateTimeRun);
+            tvTime.setVisibility(View.GONE);
+	    }
             loadCurrentSourceList();
             liveSettingGroupAdapter.setNewData(liveSettingGroupList);
             selectSettingGroup(0, false);
@@ -1487,6 +1491,8 @@ public class LivePlayActivity extends BaseActivity {
                 tvRightSettingLayout.setVisibility(View.INVISIBLE);
                 liveSettingGroupAdapter.setSelectedGroupIndex(-1);
             }
+
+            showTime();    //xuameng显示系统时间
 
             if(isVOD){
               if(!mVideoView.isPlaying()){
@@ -1567,6 +1573,7 @@ public class LivePlayActivity extends BaseActivity {
 //                  epgListAdapter.setShiyiSelection(-1, false,timeFormat.format(date));    //XUAMENG没用了
 					getEpg(new Date());
                     showBottomEpg();           //xuameng显示EPG和上面菜单
+					Toast.makeText(mContext, "聚汇直播提示您：当前直播源回看失败！已返回直播状态！请切换直播源进行回看！", Toast.LENGTH_SHORT).show();  
                     return;
                 }
                 String shiyiUrl = currentLiveChannelItem.getUrl();
@@ -1652,6 +1659,7 @@ public class LivePlayActivity extends BaseActivity {
                     epgListAdapter.setShiyiSelection(-1, false,timeFormat.format(date));
 					getEpg(new Date());
                     showBottomEpg();           //xuameng显示EPG和上面菜单
+					Toast.makeText(mContext, "聚汇直播提示您：当前直播源回看失败！已返回直播状态！请切换直播源进行回看！", Toast.LENGTH_SHORT).show(); 
                     return;
                 }
                 String shiyiUrl = currentLiveChannelItem.getUrl();
