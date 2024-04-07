@@ -183,7 +183,6 @@ public class LivePlayActivity extends BaseActivity {
 	private boolean isVOD = false;       //xuameng点播
 	private boolean isKUAIJIN = false;       //xuameng快进
 	private boolean isSEEKBAR = false;       //xuameng进入SEEKBAR
-	private boolean mSpeedTimeUp = 0;         //xuameng进度按键时间
     private static String shiyi_time;//时移时间
     private static int shiyi_time_c;//时移时间差值
     public static String playUrl;
@@ -2959,6 +2958,7 @@ public class LivePlayActivity extends BaseActivity {
     }
     private boolean simSlideStart = false;
     private int simSeekPosition = 0;
+	private int mSpeedTimeUp = 0;         //xuameng进度按键时间
     private long simSlideOffset = 0;
 
     public void tvSlideStop() {
