@@ -111,6 +111,7 @@ public class LivePlayActivity extends BaseActivity {
     private long mExitTime = 0;         //xuameng返回键退出时间
 	private long mExitTimeUp = 0;         //xuameng上键间隔时间
 	private long mExitTimeDown = 0;         //xuameng下键间隔时间
+	private long mSpeedTimeUp = 0;         //xuameng上键间隔时间
     private LinearLayout tvRightSettingLayout;
     private TvRecyclerView mSettingGroupView;
     private TvRecyclerView mSettingItemView;
@@ -2958,7 +2959,6 @@ public class LivePlayActivity extends BaseActivity {
     }
     private boolean simSlideStart = false;
     private int simSeekPosition = 0;
-	private int mSpeedTimeUp = 0;         //xuameng进度按键时间
     private long simSlideOffset = 0;
 
     public void tvSlideStop() {
@@ -3000,7 +3000,7 @@ public class LivePlayActivity extends BaseActivity {
             simSlideStart = true;
 			}
         // 每次10秒
-		if (mSpeedTimeUp = 0){
+		if (mSpeedTimeUp == 0){
 			mSpeedTimeUp = System.currentTimeMillis();
 		}
 		if (System.currentTimeMillis() - mSpeedTimeUp < 5000) {
