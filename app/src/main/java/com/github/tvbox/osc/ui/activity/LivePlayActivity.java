@@ -2061,10 +2061,10 @@ public void showToastXu(){
 	  toast_layout.setBackgroundResource(android.R.color.transparent);  //设置toast的背景颜色
 	  TextView v = (TextView) toast.getView().findViewById(android.R.id.message);
       v.setTextColor(Color.WHITE);     //设置字体颜色
-	  v.setTextSize(15f);
+	  v.setTextSize(TypedValue.COMPLEX_UNIT_MM, 18mm);
       //为toast添加图片资源,第二个参数，0表示图片在上
       toast_layout.addView(img,0);
-      toast.setGravity(Gravity.CENTER, 0, 0);
+      toast.setGravity(Gravity.CENTER, 0, 280);      //xuameng 0为左右，280是上下
       toast.show();
  }
 
