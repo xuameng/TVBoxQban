@@ -2057,11 +2057,22 @@ public void showToastXu(){
       ImageView img = new ImageView(this);
       img.setImageResource(R.drawable.error_xu);
           //得到toast的布局对象
+float mmSize = 15f; 
+ 
+// 获取屏幕密度
+DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+ 
+// 将毫米转换为像素
+float pxSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_MM, mmSize, metrics);
+ 
+// 设置文本大小
+//textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, pxSize);
+
       LinearLayout toast_layout = (LinearLayout) toast.getView();
 	  toast_layout.setBackgroundResource(android.R.color.transparent);  //设置toast的背景颜色
 	  TextView v = (TextView) toast.getView().findViewById(android.R.id.message);
       v.setTextColor(Color.WHITE);     //设置字体颜色
-	  v.setTextSize(15);
+	  v.setTextSize(TypedValue.COMPLEX_UNIT_PX, pxSize);
       //为toast添加图片资源,第二个参数，0表示图片在上
       toast_layout.addView(img,0);
       toast.setGravity(Gravity.CENTER, 0, 280);      //xuameng 0为左右，280是上下
