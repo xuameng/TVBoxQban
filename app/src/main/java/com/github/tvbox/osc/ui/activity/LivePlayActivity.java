@@ -2061,8 +2061,7 @@ public class LivePlayActivity extends BaseActivity {
                 playChannel(groupChannelIndex[0], groupChannelIndex[1], false);
             } else {
                 playXuSource();
-				Toast.setGravity(Gravity.CENTER, 0, 0);
-				Toast.makeText(mContext, "当前直播源回看失败，请更换直播源进行回看！", Toast.LENGTH_SHORT).show(); 
+				Toast.makeText(mContext, "当前直播源回看失败，请更换直播源进行回看！", Toast.setGravity(Gravity.CENTER, 0, 0),Toast.LENGTH_SHORT).show(); 
             }
         }
     };
