@@ -3003,16 +3003,16 @@ public class LivePlayActivity extends BaseActivity {
 		if (mSpeedTimeUp == 0){
 			mSpeedTimeUp = System.currentTimeMillis();
 		}
-		if (System.currentTimeMillis() - mSpeedTimeUp < 5000) {
+		if (System.currentTimeMillis() - mSpeedTimeUp < 3000) {
         simSlideOffset += (10000.0f * dir);
 		}
-	    if (System.currentTimeMillis() - mSpeedTimeUp > 5000 && System.currentTimeMillis() - mSpeedTimeUp < 10000) {
+	    if (System.currentTimeMillis() - mSpeedTimeUp > 3000 && System.currentTimeMillis() - mSpeedTimeUp < 6000) {
         simSlideOffset += (30000.0f * dir);
 		}
-	    if (System.currentTimeMillis() - mSpeedTimeUp > 10000 && System.currentTimeMillis() - mSpeedTimeUp < 15000) {
+	    if (System.currentTimeMillis() - mSpeedTimeUp > 6000 && System.currentTimeMillis() - mSpeedTimeUp < 9000) {
         simSlideOffset += (60000.0f * dir);
 		}
-	    if (System.currentTimeMillis() - mSpeedTimeUp > 15000) {
+	    if (System.currentTimeMillis() - mSpeedTimeUp > 9000) {
         simSlideOffset += (120000.0f * dir);
 		}
 
