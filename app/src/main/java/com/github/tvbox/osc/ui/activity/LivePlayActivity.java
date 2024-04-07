@@ -25,6 +25,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
+import android.graphics.Color;                          //xuameng获取颜色值
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.github.tvbox.osc.R;
@@ -2059,8 +2060,8 @@ public void showToastXu(){
       LinearLayout toast_layout = (LinearLayout) toast.getView();
 	  toast_layout.setBackgroundResource(android.R.color.transparent);  //设置toast的背景颜色
 	  TextView v = (TextView) toast.getView().findViewById(android.R.id.message);
-
-	  v.setTextSize(16f);
+      v.setTextColor(Color.WHITE);     //设置字体颜色
+	  v.setTextSize(15f);
       //为toast添加图片资源,第二个参数，0表示图片在上
       toast_layout.addView(img,0);
       toast.setGravity(Gravity.CENTER, 0, 0);
