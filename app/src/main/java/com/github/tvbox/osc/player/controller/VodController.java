@@ -962,8 +962,10 @@ public class VodController extends BaseController {
     private boolean simSlideStart = false;
     private int simSeekPosition = 0;
     private long simSlideOffset = 0;
+	private long mSpeedTimeUp = 0;         //xuameng上键间隔时间
 
     public void tvSlideStop() {
+		mSpeedTimeUp = 0;
         if (!simSlideStart)
             return;
         mControlWrapper.seekTo(simSeekPosition);
@@ -975,6 +977,7 @@ public class VodController extends BaseController {
     }
 
     public void tvSlideStopXu() {           //xuameng修复SEEKBAR快进重新播放问题
+		mSpeedTimeUp = 0;
         if (!simSlideStart)
             return;
 		if (isSEEKBAR){
@@ -996,7 +999,21 @@ public class VodController extends BaseController {
             simSlideStart = true;
         }
         // 每次10秒
+		if (mSpeedTimeUp == 0){
+			mSpeedTimeUp = System.currentTimeMillis();
+		}
+		if (System.currentTimeMillis() - mSpeedTimeUp < 3000) {
         simSlideOffset += (10000.0f * dir);
+		}
+	    if (System.currentTimeMillis() - mSpeedTimeUp > 3000 && System.currentTimeMillis() - mSpeedTimeUp < 6000) {
+        simSlideOffset += (30000.0f * dir);
+		}
+	    if (System.currentTimeMillis() - mSpeedTimeUp > 6000 && System.currentTimeMillis() - mSpeedTimeUp < 9000) {
+        simSlideOffset += (60000.0f * dir);
+		}
+	    if (System.currentTimeMillis() - mSpeedTimeUp > 9000) {
+        simSlideOffset += (120000.0f * dir);
+		}
         int currentPosition = (int) mControlWrapper.getCurrentPosition();
         int position = (int) (simSlideOffset + currentPosition);
         if (position > duration) position = duration;
