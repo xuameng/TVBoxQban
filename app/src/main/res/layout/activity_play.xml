@@ -7,7 +7,7 @@
     <com.github.tvbox.osc.player.MyVideoView
         android:id="@+id/mVideoView"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent" />
+        android:layout_height="fill_parent"/>
     <ProgressBar
         android:layout_gravity="center"
         android:id="@+id/play_loading"
@@ -15,7 +15,7 @@
         android:layout_height="@dimen/vs_50"
         android:indeterminateOnly="true"
         android:indeterminateDrawable="@drawable/anim_loading"
-        android:indeterminateBehavior="repeat" />
+        android:indeterminateBehavior="repeat"/>
     <ImageView
         android:layout_gravity="center"
         android:id="@+id/play_load_error"
@@ -24,8 +24,8 @@
         android:visibility="gone"
         android:layout_width="@dimen/vs_50"
         android:layout_height="@dimen/vs_50"
-        android:src="@drawable/icon_error"
-        android:alpha="0.75" />
+        android:src="@drawable/error_xu"
+        android:alpha="0.75"/>
     <TextView
         android:textSize="@dimen/ts_24"
         android:textColor="@color/color_CCFFFFFF"
@@ -33,6 +33,6 @@
         android:id="@+id/play_load_tip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="65mm"
-        android:text="\ 1111111111111" />
+        android:layout_marginTop="65.0mm"
+        android:text=" 1111111111111"/>
 </FrameLayout>
