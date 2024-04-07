@@ -2051,6 +2051,19 @@ public class LivePlayActivity extends BaseActivity {
         }
     };
 
+public void showToastXu(){
+      Toast toast = Toast.makeText(mContext, "当前直播回看失败，已返回直播中！请更换直播源进行回看！", Toast.LENGTH_SHORT);
+      ImageView img = new ImageView(this);
+      img.setImageResource(R.drawable.icon_error);
+          //得到toast的布局对象
+      LinearLayout toast_layout = (LinearLayout) toast.getView();
+      //为toast添加图片资源,第二个参数，0表示图片在上
+      toast_layout.addView(img,0);
+      toast.setDuration(5000);
+      toast.setGravity(Gravity.CENTER, 0, 0);
+      toast.show();
+ }
+
    private Runnable mConnectTimeoutChangeSourceRunBack = new Runnable() {          //xuameng为回看失败准备
         @Override
         public void run() {
@@ -2061,9 +2074,7 @@ public class LivePlayActivity extends BaseActivity {
                 playChannel(groupChannelIndex[0], groupChannelIndex[1], false);
             } else {
                 playXuSource();
-				Toast toast = Toast.makeText(mContext, "当前直播源回看失败，请更换直播源进行回看！", Toast.LENGTH_SHORT);
-				toast.setGravity(Gravity.CENTER, 0, 0);
-				toast.show();
+                showToastXu();
             }
         }
     };
@@ -2646,7 +2657,7 @@ public class LivePlayActivity extends BaseActivity {
                     channelGroupPasswordConfirmed.add(groupIndex);
                     loadChannelGroupDataAndPlay(groupIndex, liveChannelIndex);
                 } else {
-                    Toast.makeText(App.getInstance(), "密码错误", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(App.getInstance(), "密码错误！请重新输入！", Toast.LENGTH_SHORT).show();
                 }
 
                 if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE)
@@ -2753,7 +2764,7 @@ public class LivePlayActivity extends BaseActivity {
 
     private boolean isCurrentLiveChannelValid() {
         if (currentLiveChannelItem == null) {
-            Toast.makeText(App.getInstance(), "请先选择频道", Toast.LENGTH_SHORT).show();
+            Toast.makeText(App.getInstance(), "请先选择频道！", Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;
