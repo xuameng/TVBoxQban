@@ -841,6 +841,7 @@ public class LivePlayActivity extends BaseActivity {
     private void xuexit() {               //xuameng双击退出
         if (System.currentTimeMillis() - mExitTime < 2000) {
             mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
+			mHandler.removeCallbacks(mConnectTimeoutChangeSourceRunBack);
             mHandler.removeCallbacks(mUpdateNetSpeedRun);
 			mHandler.removeCallbacks(mUpdateNetSpeedRunXu);
 			mHandler.removeCallbacks(mUpdateVodProgressXu);
@@ -1951,6 +1952,10 @@ public class LivePlayActivity extends BaseActivity {
                         break;
                     case VideoView.STATE_ERROR:
                     case VideoView.STATE_PLAYBACK_COMPLETED:
+						if (isBack){
+						mHandler.removeCallbacks(mConnectTimeoutChangeSourceRunBack);
+                        mHandler.postDelayed(mConnectTimeoutChangeSourceRunBack, 2000);
+						}
                         mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
                         mHandler.postDelayed(mConnectTimeoutChangeSourceRun, 2000);
                         break;
@@ -2041,6 +2046,21 @@ public class LivePlayActivity extends BaseActivity {
                 playChannel(groupChannelIndex[0], groupChannelIndex[1], false);
             } else {
                 playNextSource();
+            }
+        }
+    };
+
+   private Runnable mConnectTimeoutChangeSourceRunBack = new Runnable() {          //xuameng为回看失败准备
+        @Override
+        public void run() {
+            currentLiveChangeSourceTimes++;
+            if (currentLiveChannelItem.getSourceNum() == currentLiveChangeSourceTimes) {
+                currentLiveChangeSourceTimes = 0;
+                Integer[] groupChannelIndex = getNextChannel(Hawk.get(HawkConfig.LIVE_CHANNEL_REVERSE, false) ? -1 : 1);
+                playChannel(groupChannelIndex[0], groupChannelIndex[1], false);
+            } else {
+                playXuSource();
+				Toast.makeText(mContext, "当前直播源回看失败，请更换直播源进行回看！", Toast.LENGTH_SHORT).show(); 
             }
         }
     };
