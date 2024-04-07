@@ -2057,7 +2057,6 @@ public void showToastXu(){
       img.setImageResource(R.drawable.error_xu);
           //得到toast的布局对象
       LinearLayout toast_layout = (LinearLayout) toast.getView();
-	  toast_layout.setBackgroundColor(Color.parseColor("#00000000"));  //设置toast的背景颜色
       //为toast添加图片资源,第二个参数，0表示图片在上
       toast_layout.addView(img,0);
       toast.setGravity(Gravity.CENTER, 0, 0);
