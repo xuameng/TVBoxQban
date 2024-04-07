@@ -2064,7 +2064,7 @@ public void showToastXu(){
 	  v.setTextSize(15);
       //为toast添加图片资源,第二个参数，0表示图片在上
       toast_layout.addView(img,0);
-      toast.setGravity(Gravity.CENTER, 20, 40);      //xuameng 20为左右，0是上下
+      toast.setGravity(Gravity.CENTER, 20, 42);      //xuameng 20为左右，0是上下
       toast.show();
  }
 
