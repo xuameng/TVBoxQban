@@ -111,6 +111,7 @@ public class LivePlayActivity extends BaseActivity {
     private long mExitTime = 0;         //xuameng返回键退出时间
 	private long mExitTimeUp = 0;         //xuameng上键间隔时间
 	private long mExitTimeDown = 0;         //xuameng下键间隔时间
+	private long mSpeedTimeUp = 0;         //xuameng进度按键时间
     private LinearLayout tvRightSettingLayout;
     private TvRecyclerView mSettingGroupView;
     private TvRecyclerView mSettingItemView;
@@ -2962,6 +2963,7 @@ public class LivePlayActivity extends BaseActivity {
 
     public void tvSlideStop() {
 		isKUAIJIN = false;
+		mSpeedTimeUp = 0;
 		if (!simSlideStart)
             return;
 		if (isVOD){
@@ -2998,7 +3000,22 @@ public class LivePlayActivity extends BaseActivity {
             simSlideStart = true;
 			}
         // 每次10秒
+		if (mSpeedTimeUp = 0){
+			mSpeedTimeUp = System.currentTimeMillis();
+		}
+		if (System.currentTimeMillis() - mSpeedTimeUp < 5000) {
         simSlideOffset += (10000.0f * dir);
+		}
+	    if (System.currentTimeMillis() - mSpeedTimeUp > 5000 && System.currentTimeMillis() - mSpeedTimeUp < 10000) {
+        simSlideOffset += (30000.0f * dir);
+		}
+	    if (System.currentTimeMillis() - mSpeedTimeUp > 10000 && System.currentTimeMillis() - mSpeedTimeUp < 15000) {
+        simSlideOffset += (60000.0f * dir);
+		}
+	    if (System.currentTimeMillis() - mSpeedTimeUp > 15000) {
+        simSlideOffset += (60000.0f * dir);
+		}
+
         int currentPosition = (int) mVideoView.getCurrentPosition();
         int position = (int) (simSlideOffset + currentPosition);
         if (position > duration) position = duration;
