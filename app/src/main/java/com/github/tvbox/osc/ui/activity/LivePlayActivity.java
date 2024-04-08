@@ -2053,9 +2053,9 @@ public class LivePlayActivity extends BaseActivity {
     };
 
 public void showToastXu(){
-      Toast toast = Toast.makeText(mContext, "当前直播回看失败，已返回直播中！请更换直播源进行回看！", Toast.LENGTH_LONG);
+      Toast toast = Toast.makeText(mContext, "回看已结束！如未成功播放请更换直播源！", Toast.LENGTH_LONG);
       ImageView img = new ImageView(this);
-      img.setImageResource(R.drawable.error_xu);
+      img.setImageResource(R.drawable.welcome);
           //得到toast的布局对象
       LinearLayout toast_layout = (LinearLayout) toast.getView();
 	  toast_layout.setBackgroundResource(android.R.color.transparent);  //设置toast的背景颜色
