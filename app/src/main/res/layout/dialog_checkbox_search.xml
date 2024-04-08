@@ -7,7 +7,7 @@
     <LinearLayout
         android:layout_gravity="center"
         android:orientation="vertical"
-        android:id="@id/root"
+        android:id="@+id/root"
         android:background="@drawable/shape_dialog_bg_main"
         android:layout_width="@dimen/vs_420"
         android:layout_height="fill_parent">
@@ -22,7 +22,7 @@
                 android:textColor="@color/color_FFFFFF"
                 android:gravity="center"
                 android:layout_gravity="center"
-                android:id="@id/checkAll"
+                android:id="@+id/checkAll"
                 android:background="@drawable/button_dialog_main"
                 android:padding="@dimen/vs_20"
                 android:focusable="true"
@@ -37,7 +37,7 @@
                 android:textColor="@color/color_FFFFFF"
                 android:gravity="center"
                 android:layout_gravity="center"
-                android:id="@id/clearAll"
+                android:id="@+id/clearAll"
                 android:background="@drawable/button_dialog_main"
                 android:padding="@dimen/vs_20"
                 android:focusable="true"
@@ -51,7 +51,7 @@
         </LinearLayout>
         <com.owen.tvrecyclerview.widget.TvRecyclerView
             android:orientation="vertical"
-            android:id="@id/mGridView"
+            android:id="@+id/mGridView"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"/>
     </LinearLayout>
