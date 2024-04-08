@@ -16,6 +16,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/vs_10"
+            android:layout_marginBottom="@dimen/vs_5"
             android:weightSum="2.0">
             <TextView
                 android:textSize="@dimen/ts_26"
@@ -52,6 +53,7 @@
         <com.owen.tvrecyclerview.widget.TvRecyclerView
             android:orientation="vertical"
             android:id="@+id/mGridView"
+            android:layout_marginBottom="@dimen/vs_5"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"/>
     </LinearLayout>
