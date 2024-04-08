@@ -16,7 +16,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:weightSum="2">
-            <LinearLayout
+            <TextView
                 android:textSize="@dimen/vs_28"
                 android:textColor="@color/color_FFFFFF"
                 android:gravity="center"
@@ -32,7 +32,7 @@
                 android:layout_marginLeft="@dimen/vs_148"
                 android:layout_marginTop="@dimen/vs_15"
                 android:layout_weight="1"/>
-            <LinearLayout
+            <TextView
                 android:textSize="@dimen/vs_28"
                 android:textColor="@color/color_FFFFFF"
                 android:layout_weight="1"
