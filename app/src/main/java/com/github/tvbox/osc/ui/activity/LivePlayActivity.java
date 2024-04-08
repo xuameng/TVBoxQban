@@ -851,7 +851,7 @@ public class LivePlayActivity extends BaseActivity {
             super.onBackPressed();
         } else {
             mExitTime = System.currentTimeMillis();
-            Toast.makeText(mContext, "当前直播中，再按一次返回键退出直播！", Toast.LENGTH_SHORT).show(); 
+            showLiveXu();
         }
     }
 
@@ -2054,6 +2054,23 @@ public class LivePlayActivity extends BaseActivity {
 
 public void showToastXu(){
       Toast toast = Toast.makeText(mContext, "回看已结束！如未成功播放请更换直播源！", Toast.LENGTH_LONG);
+      ImageView img = new ImageView(this);
+      img.setImageResource(R.drawable.welcome);
+          //得到toast的布局对象
+      LinearLayout toast_layout = (LinearLayout) toast.getView();
+	  toast_layout.setBackgroundResource(android.R.color.transparent);  //设置toast的背景颜色
+	  TextView v = (TextView) toast.getView().findViewById(android.R.id.message);
+      v.setTextColor(Color.WHITE);     //设置字体颜色
+	  v.getPaint().setShadowLayer(1f, 3f, 3f, Color.BLACK);     //XUAMENG阴影半径，X,Y轴偏移
+	  v.setTextSize(18);
+      //为toast添加图片资源,第二个参数，0表示图片在上
+      toast_layout.addView(img,0);
+      toast.setGravity(Gravity.CENTER, 0, 28);      //xuameng 20为左右，0是上下
+      toast.show();
+ }
+
+ public void showLiveXu(){
+      Toast toast = Toast.makeText(mContext, "当前直播中，再按一次返回键退出直播！", Toast.LENGTH_SHORT);
       ImageView img = new ImageView(this);
       img.setImageResource(R.drawable.welcome);
           //得到toast的布局对象
