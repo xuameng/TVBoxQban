@@ -17,6 +17,7 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.BounceInterpolator;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.view.Gravity;							//xuameng
 import android.content.Context;							//xuameng
 import androidx.core.content.ContextCompat;				//xuameng
 import android.widget.ImageView;						//xuameng
