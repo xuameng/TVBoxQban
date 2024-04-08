@@ -2054,7 +2054,7 @@ public class LivePlayActivity extends BaseActivity {
 
 public void showToastXu(Context context, String text){
 	    LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(R.layout.toastError, null);
+        View view = inflater.inflate(R.layout.toast_xu, null);
 
         ImageView imageView=(ImageView)view.findViewById(R.id.toast_image);
         imageView.setBackgroundResource(android.R.color.transparent);
