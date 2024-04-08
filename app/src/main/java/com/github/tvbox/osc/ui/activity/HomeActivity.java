@@ -17,6 +17,8 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.BounceInterpolator;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.ImageView;
+import android.graphics.Color;                          //xuameng获取颜色值
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
