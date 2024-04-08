@@ -4,7 +4,6 @@
     android:layout_height="@dimen/vs_570"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-
     <LinearLayout
         android:layout_gravity="center"
         android:orientation="vertical"
@@ -12,13 +11,11 @@
         android:background="@drawable/shape_dialog_bg_main"
         android:layout_width="@dimen/vs_440"
         android:layout_height="@dimen/vs_570">
-
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:weightSum="2">
-
             <LinearLayout
                 android:textSize="@dimen/vs_28"
                 android:textColor="@color/color_FFFFFF"
@@ -35,8 +32,6 @@
                 android:layout_marginLeft="@dimen/vs_148"
                 android:layout_marginTop="@dimen/vs_15"
                 android:layout_weight="1"/>
-            </LinearLayout>
-
             <LinearLayout
                 android:textSize="@dimen/vs_28"
                 android:textColor="@color/color_FFFFFF"
@@ -54,16 +49,12 @@
                 android:layout_marginLeft="@dimen/vs_15"
                 android:layout_marginRight="@dimen/vs_148"
                 android:text="全不选"/>
-            </LinearLayout>
         </LinearLayout>
-
         <com.owen.tvrecyclerview.widget.TvRecyclerView
             android:orientation="vertical"
             android:layout_gravity="center"
             android:id="@+id/mGridView"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/vs_570"/>
-
     </LinearLayout>
-
 </FrameLayout>
