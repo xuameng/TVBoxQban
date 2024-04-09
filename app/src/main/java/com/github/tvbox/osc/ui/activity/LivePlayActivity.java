@@ -851,9 +851,8 @@ public class LivePlayActivity extends BaseActivity {
 			mHandler.removeCallbacks(mUpdateTimeRunXu);
             super.onBackPressed();
 
-			private Toast mtoast;
-            if(mtoast!=null)
-            {
+			Toast mtoast;
+            if(mtoast!=null){
             mtoast.cancel();//注销之前显示的那条信息
             mtoast=null;//这里要注意上一步相当于隐藏了信息，mtoast并没有为空，我们强制是他为空
             }
