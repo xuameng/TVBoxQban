@@ -153,6 +153,7 @@ public class LivePlayActivity extends BaseActivity {
 	LinearLayout Mtv_left_top_xu;            //xuameng回看中左上图标
 	LinearLayout iv_Play_Xu;				//xuameng回看暂停图标
 	private TextView tv_size;               //xuameng分辨率
+	private Toast mtoast;
     private MyEpgAdapter myAdapter;
     private TextView tv_right_top_tipnetspeed;
     private TextView tv_right_top_channel_name;
@@ -851,7 +852,6 @@ public class LivePlayActivity extends BaseActivity {
 			mHandler.removeCallbacks(mUpdateTimeRunXu);
             super.onBackPressed();
 
-			Toast mtoast;
             if(mtoast!=null){
             mtoast.cancel();//注销之前显示的那条信息
             mtoast=null;//这里要注意上一步相当于隐藏了信息，mtoast并没有为空，我们强制是他为空
