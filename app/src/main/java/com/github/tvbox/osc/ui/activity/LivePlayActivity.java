@@ -2089,8 +2089,7 @@ public void showToastXu(){
       toast.setGravity(Gravity.CENTER, 0, 25);      //xuameng 20为左右，0是上下
 	  if(toast==null){
       toast.show();
-	  }
-	  if(toast!=null){
+	  }else{
       toast.cancel();//注销之前显示的那条信息
       toast=null;//这里要注意上一步相当于隐藏了信息，mtoast并没有为空，我们强制是他为空
       } 
