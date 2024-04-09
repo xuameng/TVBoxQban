@@ -1169,7 +1169,6 @@ public class LivePlayActivity extends BaseActivity {
         super.onPause();
         if (mVideoView != null) {
             mVideoView.pause();
-			showLiveXuExit();
         }
     }
 
@@ -2069,7 +2068,7 @@ public void showToastXu(){
 	  v.setTextSize(TypedValue.COMPLEX_UNIT_MM, 22);
       //为toast添加图片资源,第二个参数，0表示图片在上
       toast_layout.addView(img,0);
-      toast.setGravity(Gravity.CENTER, 0, 28);      //xuameng 20为左右，0是上下
+      toast.setGravity(Gravity.CENTER, 0, 25);      //xuameng 20为左右，0是上下
       toast.show();
  }
 
@@ -2089,12 +2088,6 @@ public void showToastXu(){
       toast_layout.addView(img,0);
       toast.setGravity(Gravity.CENTER, 0, 25);      //xuameng 20为左右，0是上下
       toast.show();
- }
-
-  public void showLiveXuExit(){
-	  if(toast!=null){
-      toast.cancel();//注销之前显示的那条信息
-	 }
  }
 
    private Runnable mConnectTimeoutChangeSourceRunBack = new Runnable() {          //xuameng为回看失败准备
