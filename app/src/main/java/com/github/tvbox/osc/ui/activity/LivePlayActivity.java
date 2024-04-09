@@ -153,7 +153,6 @@ public class LivePlayActivity extends BaseActivity {
 	LinearLayout Mtv_left_top_xu;            //xuameng回看中左上图标
 	LinearLayout iv_Play_Xu;				//xuameng回看暂停图标
 	private TextView tv_size;               //xuameng分辨率
-	private Toast mtoast;
     private MyEpgAdapter myAdapter;
     private TextView tv_right_top_tipnetspeed;
     private TextView tv_right_top_channel_name;
@@ -851,11 +850,6 @@ public class LivePlayActivity extends BaseActivity {
 			mHandler.removeCallbacks(mUpdateTimeRun);
 			mHandler.removeCallbacks(mUpdateTimeRunXu);
             super.onBackPressed();
-
-            if(mtoast!=null){
-            mtoast.cancel();//注销之前显示的那条信息
-            mtoast=null;//这里要注意上一步相当于隐藏了信息，mtoast并没有为空，我们强制是他为空
-            }
         } else {
             mExitTime = System.currentTimeMillis();
             showLiveXu();
@@ -2070,7 +2064,7 @@ public void showToastXu(){
       v.setTextColor(Color.WHITE);     //设置字体颜色
 	  v.getPaint().setShadowLayer(1f, 2f, 2f, Color.BLACK);     //XUAMENG阴影半径，X,Y轴偏移
 //	  v.setTextSize(18);
-	  v.setTextSize(TypedValue.COMPLEX_UNIT_MM, 20);
+	  v.setTextSize(TypedValue.COMPLEX_UNIT_MM, 22);
       //为toast添加图片资源,第二个参数，0表示图片在上
       toast_layout.addView(img,0);
       toast.setGravity(Gravity.CENTER, 0, 28);      //xuameng 20为左右，0是上下
@@ -2088,10 +2082,10 @@ public void showToastXu(){
       v.setTextColor(Color.WHITE);     //设置字体颜色
 	  v.getPaint().setShadowLayer(1f, 2f, 2f, Color.BLACK);     //XUAMENG阴影半径，X,Y轴偏移
 //	  v.setTextSize(18);
-	  v.setTextSize(TypedValue.COMPLEX_UNIT_MM, 20);
+	  v.setTextSize(TypedValue.COMPLEX_UNIT_MM, 22);
       //为toast添加图片资源,第二个参数，0表示图片在上
       toast_layout.addView(img,0);
-      toast.setGravity(Gravity.CENTER, 0, 28);      //xuameng 20为左右，0是上下
+      toast.setGravity(Gravity.CENTER, 0, 25);      //xuameng 20为左右，0是上下
       toast.show();
  }
 
