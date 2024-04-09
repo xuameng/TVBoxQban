@@ -2087,19 +2087,13 @@ public void showToastXu(){
       //为toast添加图片资源,第二个参数，0表示图片在上
       toast_layout.addView(img,0);
       toast.setGravity(Gravity.CENTER, 0, 25);      //xuameng 20为左右，0是上下
-	  if(toast==null){
       toast.show();
-	  }else{
-      toast.cancel();//注销之前显示的那条信息
-      toast=null;//这里要注意上一步相当于隐藏了信息，mtoast并没有为空，我们强制是他为空
-      } 
  }
 
- public void showLiveXuExit(){
-      Toast toast = Toast.makeText(mContext, "当前直播中，再按一次返回键退出直播！", Toast.LENGTH_SHORT);
+  public void showLiveXuExit(){
+      Toast toast = Toast.makeText(mContext, "", Toast.LENGTH_SHORT);
       toast.cancel();//注销之前显示的那条信息
       toast=null;//这里要注意上一步相当于隐藏了信息，mtoast并没有为空，我们强制是他为空
-      
  }
 
    private Runnable mConnectTimeoutChangeSourceRunBack = new Runnable() {          //xuameng为回看失败准备
