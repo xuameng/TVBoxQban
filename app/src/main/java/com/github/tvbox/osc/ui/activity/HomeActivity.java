@@ -18,10 +18,9 @@ import android.view.animation.BounceInterpolator;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.view.Gravity;							//xuameng
-import android.content.Context;							//xuameng
-import androidx.core.content.ContextCompat;				//xuameng
 import android.widget.ImageView;						//xuameng
 import android.graphics.Color;                          //xuameng获取颜色值
+import android.util.TypedValue;              //xuameng TypedValue依赖
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -477,8 +476,9 @@ public class HomeActivity extends BaseActivity {
 	  toast_layout.setBackgroundResource(android.R.color.transparent);  //设置toast的背景颜色
 	  TextView v = (TextView) toast.getView().findViewById(android.R.id.message);
       v.setTextColor(Color.WHITE);     //设置字体颜色
-	  v.getPaint().setShadowLayer(1f, 3f, 3f, Color.BLACK);     //XUAMENG阴影半径，X,Y轴偏移
-	  v.setTextSize(18);
+	  v.getPaint().setShadowLayer(1f, 2f, 2f, Color.BLACK);     //XUAMENG阴影半径，X,Y轴偏移
+	  v.setTextSize(TypedValue.COMPLEX_UNIT_MM, 20);
+//	  v.setTextSize(18);
       //为toast添加图片资源,第二个参数，0表示图片在上
       toast_layout.addView(img,0);
       toast.setGravity(Gravity.CENTER, 0, 28);      //xuameng 20为左右，0是上下
