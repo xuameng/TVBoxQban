@@ -477,7 +477,7 @@ public class HomeActivity extends BaseActivity {
 	  TextView v = (TextView) toast.getView().findViewById(android.R.id.message);
       v.setTextColor(Color.WHITE);     //设置字体颜色
 	  v.getPaint().setShadowLayer(1f, 2f, 2f, Color.BLACK);     //XUAMENG阴影半径，X,Y轴偏移
-	  v.setTextSize(TypedValue.COMPLEX_UNIT_MM, 20);
+	  v.setTextSize(TypedValue.COMPLEX_UNIT_MM, 22);
 //	  v.setTextSize(18);
       //为toast添加图片资源,第二个参数，0表示图片在上
       toast_layout.addView(img,0);
