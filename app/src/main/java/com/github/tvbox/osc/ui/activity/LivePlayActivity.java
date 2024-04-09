@@ -186,6 +186,7 @@ public class LivePlayActivity extends BaseActivity {
 	private boolean isVOD = false;       //xuameng点播
 	private boolean isKUAIJIN = false;       //xuameng快进
 	private boolean isSEEKBAR = false;       //xuameng进入SEEKBAR
+	private static Toast toast;
     private static String shiyi_time;//时移时间
     private static int shiyi_time_c;//时移时间差值
     public static String playUrl;
@@ -850,7 +851,6 @@ public class LivePlayActivity extends BaseActivity {
 			mHandler.removeCallbacks(mUpdateTimeRun);
 			mHandler.removeCallbacks(mUpdateTimeRunXu);
             super.onBackPressed();
-			showLiveXuExit();
         } else {
             mExitTime = System.currentTimeMillis();
             showLiveXu();
@@ -1169,6 +1169,7 @@ public class LivePlayActivity extends BaseActivity {
         super.onPause();
         if (mVideoView != null) {
             mVideoView.pause();
+			showLiveXuExit();
         }
     }
 
@@ -2091,7 +2092,6 @@ public void showToastXu(){
  }
 
   public void showLiveXuExit(){
-      Toast toast = Toast.makeText(mContext, "", Toast.LENGTH_SHORT);
       toast.cancel();//注销之前显示的那条信息
       toast=null;//这里要注意上一步相当于隐藏了信息，mtoast并没有为空，我们强制是他为空
  }
