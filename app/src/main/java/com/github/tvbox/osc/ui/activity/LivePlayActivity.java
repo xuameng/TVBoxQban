@@ -2081,7 +2081,7 @@ public void showToastXu(){
       v.setTextColor(Color.WHITE);     //设置字体颜色
 	  v.getPaint().setShadowLayer(1f, 2f, 2f, Color.BLACK);     //XUAMENG阴影半径，X,Y轴偏移
 //	  v.setTextSize(18);
-	  v.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
+	  v.setTextSize(TypedValue.COMPLEX_UNIT_MM, 25);
       //为toast添加图片资源,第二个参数，0表示图片在上
       toast_layout.addView(img,0);
       toast.setGravity(Gravity.CENTER, 0, 28);      //xuameng 20为左右，0是上下
