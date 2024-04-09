@@ -2092,8 +2092,9 @@ public void showToastXu(){
  }
 
   public void showLiveXuExit(){
+	  if(toast!=null){
       toast.cancel();//注销之前显示的那条信息
-      toast=null;//这里要注意上一步相当于隐藏了信息，mtoast并没有为空，我们强制是他为空
+	 }
  }
 
    private Runnable mConnectTimeoutChangeSourceRunBack = new Runnable() {          //xuameng为回看失败准备
