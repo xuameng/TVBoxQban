@@ -78,7 +78,7 @@ public class SearchCheckboxDialog extends BaseDialog{
         mGridView.setLayoutManager(new V7GridLayoutManager(getContext(), spanCount));
         View root = findViewById(R.id.root);
         ViewGroup.LayoutParams clp = root.getLayoutParams();
-        clp.width = AutoSizeUtils.mm2px(getContext(), 400 + 260 * (spanCount - 1));
+        clp.width = AutoSizeUtils.mm2px(getContext(), 380 + 200 * spanCount);
                 mCheckSourcees = new HashMap<>();         //xuameng搜索默认全选，解决空指针问题
                 assert mSourceList != null;
                 for(SourceBean sourceBean : mSourceList) {
