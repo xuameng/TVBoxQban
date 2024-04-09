@@ -481,7 +481,7 @@ public class HomeActivity extends BaseActivity {
 //	  v.setTextSize(18);
       //为toast添加图片资源,第二个参数，0表示图片在上
       toast_layout.addView(img,0);
-      toast.setGravity(Gravity.CENTER, 0, 30);      //xuameng 20为左右，0是上下
+      toast.setGravity(Gravity.CENTER, 0, 33);      //xuameng 20为左右，0是上下
       toast.show();
  }
 
