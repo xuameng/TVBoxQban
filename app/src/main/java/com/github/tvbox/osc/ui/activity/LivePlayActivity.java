@@ -852,7 +852,6 @@ public class LivePlayActivity extends BaseActivity {
 			mHandler.removeCallbacks(mUpdateTimeRun);
 			mHandler.removeCallbacks(mUpdateTimeRunXu);
             super.onBackPressed();
-			hideLiveXu();
         } else {
             mExitTime = System.currentTimeMillis();
             showLiveXu();
@@ -2057,42 +2056,26 @@ public class LivePlayActivity extends BaseActivity {
     };
 
 public void showToastXu(){
-      Toast toast = Toast.makeText(mContext, "回看已结束！如未成功播放请更换直播源！", Toast.LENGTH_LONG);
-      ImageView img = new ImageView(this);
-      img.setImageResource(R.drawable.review);
-          //得到toast的布局对象
-      LinearLayout toast_layout = (LinearLayout) toast.getView();
-	  toast_layout.setBackgroundResource(android.R.color.transparent);  //设置toast的背景颜色
-	  TextView v = (TextView) toast.getView().findViewById(android.R.id.message);
-      v.setTextColor(Color.WHITE);     //设置字体颜色
-	  v.getPaint().setShadowLayer(1f, 2f, 2f, Color.BLACK);     //XUAMENG阴影半径，X,Y轴偏移
-//	  v.setTextSize(18);
-	  v.setTextSize(TypedValue.COMPLEX_UNIT_MM, 22);
-      //为toast添加图片资源,第二个参数，0表示图片在上
-      toast_layout.addView(img,0);
-      toast.setGravity(Gravity.CENTER, 0, 33);      //xuameng 20为左右，0是上下
-      toast.show();
+        LayoutInflater inflater = getLayoutInflater();
+        View customToastView = inflater.inflate(R.layout.review_toast, null);
+        ImageView imageView = customToastView.findViewById(R.id.toastImage);
+        Toast toast = new Toast(getApplicationContext());
+        toast.setDuration(Toast.LENGTH_LONG);
+        toast.setView(customToastView);
+        toast.setGravity(Gravity.CENTER, 0, 0);      //xuameng 20为左右，0是上下
+        toast.show();
  }
 
- public void showLiveXu(){
-      LayoutInflater inflater = getLayoutInflater();
-      View customToastView = inflater.inflate(R.layout.live_toast, null);
-      ImageView imageView = customToastView.findViewById(R.id.toastImage);
-      Toast toast = new Toast(getApplicationContext());
-      toast.setDuration(Toast.LENGTH_SHORT);
-      toast.setView(customToastView);
-      toast.setGravity(Gravity.CENTER, 0, 0);      //xuameng 20为左右，0是上下
-      toast.show();
-    }
-
- public void hideLiveXu(){
-      LayoutInflater inflater = getLayoutInflater();
-      View customToastView = inflater.inflate(R.layout.live_toast, null);
-      ImageView imageView = customToastView.findViewById(R.id.toastImage);
-      TextView textView = customToastView.findViewById(R.id.toastText);
-      textView.setVisibility(View.GONE);
-      imageView.setVisibility(View.GONE);
-    }
+   public void showLiveXu(){
+        LayoutInflater inflater = getLayoutInflater();
+        View customToastView = inflater.inflate(R.layout.live_toast, null);
+        ImageView imageView = customToastView.findViewById(R.id.toastImage);
+        Toast toast = new Toast(getApplicationContext());
+        toast.setDuration(Toast.LENGTH_SHORT);
+        toast.setView(customToastView);
+        toast.setGravity(Gravity.CENTER, 0, 0);      //xuameng 20为左右，0是上下
+        toast.show();
+      }
 
    private Runnable mConnectTimeoutChangeSourceRunBack = new Runnable() {          //xuameng为回看失败准备
         @Override

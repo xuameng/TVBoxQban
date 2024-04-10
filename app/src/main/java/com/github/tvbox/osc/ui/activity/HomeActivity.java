@@ -468,22 +468,15 @@ public class HomeActivity extends BaseActivity {
     }
 
 	 public void showExitXu(){
-      Toast toast = Toast.makeText(mContext, "再按一次返回键退出聚汇影视!", Toast.LENGTH_SHORT);
-      ImageView img = new ImageView(this);
-      img.setImageResource(R.drawable.welcome);
-          //得到toast的布局对象
-      LinearLayout toast_layout = (LinearLayout) toast.getView();
-	  toast_layout.setBackgroundResource(android.R.color.transparent);  //设置toast的背景颜色
-	  TextView v = (TextView) toast.getView().findViewById(android.R.id.message);
-      v.setTextColor(Color.WHITE);     //设置字体颜色
-	  v.getPaint().setShadowLayer(1f, 2f, 2f, Color.BLACK);     //XUAMENG阴影半径，X,Y轴偏移
-	  v.setTextSize(TypedValue.COMPLEX_UNIT_MM, 22);
-//	  v.setTextSize(18);
-      //为toast添加图片资源,第二个参数，0表示图片在上
-      toast_layout.addView(img,0);
-      toast.setGravity(Gravity.CENTER, 0, 33);      //xuameng 20为左右，0是上下
-      toast.show();
- }
+        LayoutInflater inflater = getLayoutInflater();
+        View customToastView = inflater.inflate(R.layout.exit_toast, null);
+        ImageView imageView = customToastView.findViewById(R.id.toastImage);
+        Toast toast = new Toast(getApplicationContext());
+        toast.setDuration(Toast.LENGTH_SHORT);
+        toast.setView(customToastView);
+        toast.setGravity(Gravity.CENTER, 0, 0);      //xuameng 20为左右，0是上下
+        toast.show();
+   }
 
     private void exit() {
         if (System.currentTimeMillis() - mExitTime < 2000) {
