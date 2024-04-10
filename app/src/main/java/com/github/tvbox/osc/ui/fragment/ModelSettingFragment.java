@@ -26,7 +26,7 @@ import com.github.tvbox.osc.ui.dialog.ApiDialog;
 import com.github.tvbox.osc.ui.dialog.BackupDialog;
 import com.github.tvbox.osc.ui.dialog.SearchRemoteTvDialog;
 import com.github.tvbox.osc.ui.dialog.SelectDialog;
-//import com.github.tvbox.osc.ui.dialog.XWalkInitDialog;      //xuameng取消XWalk
+import com.github.tvbox.osc.ui.dialog.XWalkInitDialog;      //xuameng取消XWalk
 import com.github.tvbox.osc.util.FastClickCheckUtil;
 import com.github.tvbox.osc.util.FileUtils;
 import com.github.tvbox.osc.util.HawkConfig;
@@ -129,12 +129,25 @@ public class ModelSettingFragment extends BaseLazyFragment {
                 tvDebugOpen.setText(Hawk.get(HawkConfig.DEBUG_OPEN, false) ? "已打开" : "已关闭");
             }
         });
-        findViewById(R.id.llParseWebVew).setOnClickListener(new View.OnClickListener() {      //xuameng系统自带开发中   new View.OnClickListener 在该代码块运行完毕之后，该监听器也就不复存在了
+        findViewById(R.id.llParseWebVew).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(mContext, "许大师提示：此功能开发中，敬请期待!", Toast.LENGTH_LONG).show();
-		    }
-        });                                                                             //xuameng系统自带开发中结束
+                FastClickCheckUtil.check(v);
+                boolean useSystem = !Hawk.get(HawkConfig.PARSE_WEBVIEW, true);
+                Hawk.put(HawkConfig.PARSE_WEBVIEW, useSystem);
+                tvParseWebView.setText(Hawk.get(HawkConfig.PARSE_WEBVIEW, true) ? "系统自带" : "XWalkView");
+                if (!useSystem) {
+                    Toast.makeText(mContext, "注意: XWalkView只适用于部分低Android版本，Android5.0以上推荐使用系统自带", Toast.LENGTH_LONG).show();
+                    XWalkInitDialog dialog = new XWalkInitDialog(mContext);
+                    dialog.setOnListener(new XWalkInitDialog.OnListener() {
+                        @Override
+                        public void onchange() {
+                        }
+                    });
+                    dialog.show();
+                }
+            }
+        });
         findViewById(R.id.llBackup).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
