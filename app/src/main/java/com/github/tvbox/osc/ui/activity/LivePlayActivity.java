@@ -27,7 +27,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import android.graphics.Color;                          //xuameng获取颜色值
 import android.util.TypedValue;              //xuameng TypedValue依赖
-import android.view.LayoutInflater;
+import android.view.LayoutInflater;			//xuameng LayoutInflater依赖
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.github.tvbox.osc.R;
@@ -2074,17 +2074,15 @@ public void showToastXu(){
  }
 
  public void showLiveXu(){
-LayoutInflater inflater = getLayoutInflater();
-View customToastView = inflater.inflate(R.layout.live_toast, null);
-ImageView imageView = customToastView.findViewById(R.id.toastImage);
-// 你可以在这里设置其他图像属性，例如：
-// imageView.setImageResource(R.drawable.another_image);
- 
-Toast toast = new Toast(getApplicationContext());
-toast.setDuration(Toast.LENGTH_SHORT);
-toast.setView(customToastView);
-toast.show();
- }
+      LayoutInflater inflater = getLayoutInflater();
+      View customToastView = inflater.inflate(R.layout.live_toast, null);
+      ImageView imageView = customToastView.findViewById(R.id.toastImage);
+      Toast toast = new Toast(getApplicationContext());
+      toast.setDuration(Toast.LENGTH_SHORT);
+      toast.setView(customToastView);
+      toast.setGravity(Gravity.CENTER, 0, 33);      //xuameng 20为左右，0是上下
+      toast.show();
+    }
 
    private Runnable mConnectTimeoutChangeSourceRunBack = new Runnable() {          //xuameng为回看失败准备
         @Override
