@@ -3,6 +3,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical"
+	android:gravity="center"
 	android:layout_gravity="center"
 	android:background="#00000000"
     android:padding="8mm">
@@ -24,8 +25,9 @@
         android:layout_gravity="center"
         android:textColor="#FFFFFFFF"
 		android:shadowColor="#cc000000"
-        android:shadowDx="5.0"
-        android:shadowRadius="5.0"
+        android:shadowDx="2.0"
+		android:shadowDy="2.0"
+        android:shadowRadius="1.0"
         android:text="当前直播中，再按一次返回键退出直播！" />
  
 </LinearLayout>
