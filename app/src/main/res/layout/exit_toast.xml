@@ -23,7 +23,7 @@
         android:id="@+id/toastText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="当前直播中，再按一次返回键退出直播！"
+        android:text="再按一次返回键退出聚汇影视！"
         android:shadowColor="#ff000000"
         android:shadowDx="2.0"
         android:shadowDy="2.0"
