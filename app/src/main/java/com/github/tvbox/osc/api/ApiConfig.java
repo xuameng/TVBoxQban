@@ -335,7 +335,7 @@ public class ApiConfig {
             sourceBeanList.put(siteKey, sb);
         }
         if (sourceBeanList != null && sourceBeanList.size() > 0) {
-            String home = Hawk.get(HawkConfig.HOME_API, "http://xuameng.vicp.net:8082/tvbox/1/xu.json");
+            String home = Hawk.get(HawkConfig.HOME_API, "");
             SourceBean sh = getSource(home);
             if (sh == null)
                 setSourceBean(firstSite);
