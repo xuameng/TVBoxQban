@@ -21,6 +21,7 @@ import android.view.Gravity;							//xuameng
 import android.widget.ImageView;						//xuameng
 import android.graphics.Color;                          //xuameng获取颜色值
 import android.util.TypedValue;              //xuameng TypedValue依赖
+import android.view.LayoutInflater;			//xuameng LayoutInflater依赖
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
