@@ -65,7 +65,7 @@ public class SearchCheckboxDialog extends BaseDialog{
         
         // Multi Column Selection
         int size = mSourceList.size();
-        int spanCount = (int) Math.floor(size / 10);
+        int spanCount = (int) Math.floor(size / 60);
         if (spanCount <= 1) spanCount = 2;
         if (spanCount >= 3) spanCount = 3;
         mGridView.setLayoutManager(new V7GridLayoutManager(getContext(), spanCount));
