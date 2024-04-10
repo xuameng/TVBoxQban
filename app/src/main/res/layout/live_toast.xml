@@ -13,7 +13,7 @@
         android:id="@+id/toastImage"
         android:layout_width="197.0mm"
         android:layout_height="100.0mm"
-        android:src="@drawable/welcome"/>
+        android:src="@drawable/live_xu"/>
     <TextView
         android:textSize="22.0mm"
         android:textColor="#ffffffff"
