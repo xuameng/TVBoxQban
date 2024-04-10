@@ -61,7 +61,7 @@ public class SearchCheckboxDialog extends BaseDialog{
                 return oldItem.getName().equals(newItem.getName());
             }
         });
-//        mGridView.setHasFixedSize(true);
+        mGridView.setHasFixedSize(true);
         
         // Multi Column Selection
         int size = mSourceList.size();
