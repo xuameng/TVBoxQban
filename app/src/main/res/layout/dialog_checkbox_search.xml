@@ -10,6 +10,7 @@
         android:id="@+id/root"
         android:background="@drawable/shape_dialog_bg_main"
         android:layout_width="@dimen/vs_420"
+        android:layout_margin="@dimen/vs_50"
         android:layout_height="fill_parent">
         <LinearLayout
             android:orientation="horizontal"
@@ -53,8 +54,8 @@
         <com.owen.tvrecyclerview.widget.TvRecyclerView
             android:orientation="vertical"
             android:id="@+id/mGridView"
-            android:layout_marginBottom="@dimen/vs_5"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/vs_5"/>
     </LinearLayout>
 </FrameLayout>
