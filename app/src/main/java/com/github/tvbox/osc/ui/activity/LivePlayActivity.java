@@ -852,6 +852,7 @@ public class LivePlayActivity extends BaseActivity {
 			mHandler.removeCallbacks(mUpdateTimeRun);
 			mHandler.removeCallbacks(mUpdateTimeRunXu);
             super.onBackPressed();
+			hideLiveXu();
         } else {
             mExitTime = System.currentTimeMillis();
             showLiveXu();
@@ -2080,8 +2081,17 @@ public void showToastXu(){
       Toast toast = new Toast(getApplicationContext());
       toast.setDuration(Toast.LENGTH_SHORT);
       toast.setView(customToastView);
-      toast.setGravity(Gravity.CENTER, 0, 33);      //xuameng 20为左右，0是上下
+      toast.setGravity(Gravity.CENTER, 0, 0);      //xuameng 20为左右，0是上下
       toast.show();
+    }
+
+ public void hideLiveXu(){
+      LayoutInflater inflater = getLayoutInflater();
+      View customToastView = inflater.inflate(R.layout.live_toast, null);
+      ImageView imageView = customToastView.findViewById(R.id.toastImage);
+      TextView textView = customToastView.findViewById(R.id.toastText);
+      textView.setVisibility(View.GONE);
+      imageView.setVisibility(View.GONE);
     }
 
    private Runnable mConnectTimeoutChangeSourceRunBack = new Runnable() {          //xuameng为回看失败准备
