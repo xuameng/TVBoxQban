@@ -5,8 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.util.TypedValue;              //xuameng TypedValue依赖
-import android.widget.LinearLayout;    //xuameng
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
@@ -82,13 +81,6 @@ public class CheckboxSearchAdapter extends ListAdapter<SourceBean, CheckboxSearc
 
         public ViewHolder(View view) {
             super(view);
-			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-    // 宽度
-    (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_MM, 24, getResources().getDisplayMetrics()),
-    // 高度
-    (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_MM, 24, getResources().getDisplayMetrics())
-);
-CheckBox.setLayoutParams(params);
             oneSearchSource = (CheckBox) view.findViewById(R.id.oneSearchSource);            
         }
     }
