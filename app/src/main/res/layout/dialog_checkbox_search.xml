@@ -9,9 +9,9 @@
         android:orientation="vertical"
         android:id="@+id/root"
         android:background="@drawable/shape_dialog_bg_main"
-        android:layout_width="@dimen/vs_420"
-        android:layout_margin="@dimen/vs_50"
-        android:layout_height="fill_parent">
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_margin="@dimen/vs_70">
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="fill_parent"
@@ -26,7 +26,7 @@
                 android:layout_gravity="center"
                 android:id="@+id/checkAll"
                 android:background="@drawable/button_dialog_main"
-                android:padding="@dimen/vs_20"
+                android:padding="@dimen/vs_15"
                 android:focusable="true"
                 android:clickable="true"
                 android:layout_width="0.0dip"
@@ -41,7 +41,7 @@
                 android:layout_gravity="center"
                 android:id="@+id/clearAll"
                 android:background="@drawable/button_dialog_main"
-                android:padding="@dimen/vs_20"
+                android:padding="@dimen/vs_15"
                 android:focusable="true"
                 android:clickable="true"
                 android:layout_width="0.0dip"
@@ -56,6 +56,6 @@
             android:id="@+id/mGridView"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/vs_5"/>
+            android:layout_marginBottom="7.5mm"/>
     </LinearLayout>
 </FrameLayout>
