@@ -71,7 +71,7 @@ public class SearchCheckboxDialog extends BaseDialog{
         mGridView.setLayoutManager(new V7GridLayoutManager(getContext(), spanCount));
         View root = findViewById(R.id.root);
         ViewGroup.LayoutParams clp = root.getLayoutParams();
-        clp.width = AutoSizeUtils.mm2px(getContext(), 400 + 300 * (spanCount - 1));
+        clp.width = AutoSizeUtils.mm2px(getContext(), 400 + 200 * (spanCount - 1));
 
         mGridView.setAdapter(checkboxSearchAdapter);
         checkboxSearchAdapter.setData(mSourceList, mCheckSourcees);
