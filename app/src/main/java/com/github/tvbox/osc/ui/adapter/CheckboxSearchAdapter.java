@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.core.graphics.drawable.DrawableCompat;
 
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.bean.SourceBean;
@@ -81,7 +82,9 @@ public class CheckboxSearchAdapter extends ListAdapter<SourceBean, CheckboxSearc
 
         public ViewHolder(View view) {
             super(view);
-            oneSearchSource = (CheckBox) view.findViewById(R.id.oneSearchSource);            
+            oneSearchSource = (CheckBox) view.findViewById(R.id.oneSearchSource);           
+			Drawable drawable = oneSearchSource.getCompoundDrawables()[0];
+            DrawableCompat.setTint(drawable, Color.RED);
         }
     }
 }
