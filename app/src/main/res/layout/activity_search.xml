@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/vs_10">
             <TextView
-                android:textSize="@dimen/ts_20"
+                android:textSize="@dimen/ts_22"
                 android:textColor="@android:color/white"
                 android:gravity="center"
                 android:id="@+id/tvSearchCheckboxBtn"
@@ -48,7 +48,7 @@
                 android:layout_height="@dimen/vs_50"
                 android:layout_marginTop="@dimen/vs_10">
                 <TextView
-                    android:textSize="@dimen/ts_20"
+                    android:textSize="@dimen/ts_22"
                     android:textColor="@android:color/white"
                     android:gravity="center"
                     android:id="@+id/tvSearch"
@@ -62,7 +62,7 @@
                     android:layout_width="@dimen/vs_10"
                     android:layout_height="wrap_content"/>
                 <TextView
-                    android:textSize="@dimen/ts_20"
+                    android:textSize="@dimen/ts_22"
                     android:textColor="@android:color/white"
                     android:gravity="center"
                     android:id="@+id/tvClear"
