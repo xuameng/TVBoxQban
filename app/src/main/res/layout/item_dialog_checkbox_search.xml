@@ -16,12 +16,12 @@
             android:textSize="@dimen/ts_24"
             android:gravity="center"
             android:id="@+id/oneSearchSource"
-            android:paddingRight="@dimen/vs_10"
             android:background="@drawable/button_dialog_main"
+            android:paddingRight="@dimen/vs_10"
             android:focusable="true"
             android:clickable="true"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="53.0mm"
             android:text="1111"/>
     </LinearLayout>
 </FrameLayout>
