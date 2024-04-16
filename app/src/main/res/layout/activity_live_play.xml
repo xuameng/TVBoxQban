@@ -27,13 +27,12 @@
             android:layout_height="fill_parent"
             android:baselineAligned="false">
             <LinearLayout
-                android:layout_gravity="center_vertical"
+                android:background="#40000000"
                 android:orientation="horizontal"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="fill_parent">
                 <com.owen.tvrecyclerview.widget.TvRecyclerView
                     android:id="@+id/mGroupGridView"
-                    android:background="#40000000"
                     android:paddingLeft="5.0mm"
                     android:paddingTop="10.0mm"
                     android:paddingRight="5.0mm"
@@ -818,9 +817,9 @@
             android:textColor="@android:color/white"
             android:ellipsize="marquee"
             android:layout_gravity="center|right"
+            android:id="@+id/iv_play_pause"
             android:paddingLeft="@dimen/vs_10"
             android:focusable="false"
-            android:id="@+id/iv_play_pause"
             android:focusableInTouchMode="false"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
