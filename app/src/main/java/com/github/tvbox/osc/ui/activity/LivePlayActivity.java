@@ -1492,6 +1492,8 @@ public class LivePlayActivity extends BaseActivity {
     private boolean playChannelxu(int channelGroupIndex, int liveChannelIndex, boolean changeSource) {       //xuameng播放
         if ((channelGroupIndex == currentChannelGroupIndex && liveChannelIndex == currentLiveChannelIndex && !changeSource)
                 || (changeSource && currentLiveChannelItem.getSourceNum() == 1)) {
+			return true;
+		}
 
 
         if (!changeSource) {
