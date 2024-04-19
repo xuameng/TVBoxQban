@@ -2293,6 +2293,7 @@ public void showToastXu(){
             Hawk.put(HawkConfig.LIVE_CHANNEL, currentLiveChannelItem.getChannelName());
             livePlayerManager.getLiveChannelPlayer(mVideoView, currentLiveChannelItem.getChannelName());
 			liveEpgDateAdapter.setSelectedIndex(1);
+			channel_Name = currentLiveChannelItem;
                 mHideChannelListRunXu();  //xuameng隐藏频道菜单
                 getEpgxu(new Date());
 
