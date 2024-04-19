@@ -1507,7 +1507,7 @@ public class LivePlayActivity extends BaseActivity {
 
         channel_Name = currentLiveChannelItem;
 
-                    getEpg(new Date());
+                    getEpgxu(new Date());
 
         return true;
     }
