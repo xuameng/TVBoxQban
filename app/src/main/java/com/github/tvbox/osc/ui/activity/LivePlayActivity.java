@@ -2288,7 +2288,13 @@ public void showToastXu(){
                 if (position < 0) return;
                 liveChannelGroupAdapter.setFocusedGroupIndex(-1);
                 liveChannelItemAdapter.setFocusedChannelIndex(position);
-				liveChannelItemAdapter.setSelectedChannelIndex(position);
+
+				            currentChannelGroupIndex = channelGroupIndex;
+            currentLiveChannelIndex = liveChannelIndex;
+            currentLiveChannelItem = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndex);
+            Hawk.put(HawkConfig.LIVE_CHANNEL, currentLiveChannelItem.getChannelName());
+            livePlayerManager.getLiveChannelPlayer(mVideoView, currentLiveChannelItem.getChannelName());
+			liveEpgDateAdapter.setSelectedIndex(1);
                 mHideChannelListRunXu();  //xuameng隐藏频道菜单
                 getEpgxu(new Date());
 
