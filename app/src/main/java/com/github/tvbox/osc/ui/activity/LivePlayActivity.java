@@ -530,7 +530,7 @@ public class LivePlayActivity extends BaseActivity {
                 mRightEpgList.post(new Runnable() {
                      @Override
                      public void run() {
-                 //        mRightEpgList.smoothScrollToPosition(finalI);
+                         mRightEpgList.smoothScrollToPosition(finalI);
                      }
                 });
             }
@@ -1503,13 +1503,11 @@ public class LivePlayActivity extends BaseActivity {
             Hawk.put(HawkConfig.LIVE_CHANNEL, currentLiveChannelItem.getChannelName());
             livePlayerManager.getLiveChannelPlayer(mVideoView, currentLiveChannelItem.getChannelName());
 			liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
-        }
+			channel_Name = currentLiveChannelItem;
+			getEpgxu(new Date());
+			return true;
+        }           
 
-        channel_Name = currentLiveChannelItem;
-
-                    getEpgxu(new Date());
-
-        return true;
     }
 
 
@@ -2312,10 +2310,9 @@ public void showToastXu(){
                 if (position < 0) return;
                 liveChannelGroupAdapter.setFocusedGroupIndex(-1);
                 liveChannelItemAdapter.setFocusedChannelIndex(position);
-playChannelxu(liveChannelGroupAdapter.getSelectedGroupIndex(), position, false);
+playChannelxu(liveChannelGroupAdapter.getSelectedGroupIndex());
 
                 mHideChannelListRunXu();  //xuameng隐藏频道菜单
-                getEpgxu(new Date());
 
             }
 
