@@ -1489,6 +1489,28 @@ public class LivePlayActivity extends BaseActivity {
         return true;
     }
 
+    private boolean playChannelxu(int channelGroupIndex, int liveChannelIndex, boolean changeSource) {       //xuameng播放
+        if ((channelGroupIndex == currentChannelGroupIndex && liveChannelIndex == currentLiveChannelIndex && !changeSource)
+                || (changeSource && currentLiveChannelItem.getSourceNum() == 1)) {
+
+
+        if (!changeSource) {
+            currentChannelGroupIndex = channelGroupIndex;
+            currentLiveChannelIndex = liveChannelIndex;
+            currentLiveChannelItem = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndex);
+            Hawk.put(HawkConfig.LIVE_CHANNEL, currentLiveChannelItem.getChannelName());
+            livePlayerManager.getLiveChannelPlayer(mVideoView, currentLiveChannelItem.getChannelName());
+			liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
+        }
+
+        channel_Name = currentLiveChannelItem;
+
+                    getEpg(new Date());
+
+        return true;
+    }
+
+
     private void playNext() {
         if (!isCurrentLiveChannelValid()) return;
         Integer[] groupChannelIndex = getNextChannel(1);
@@ -2288,13 +2310,9 @@ public void showToastXu(){
                 if (position < 0) return;
                 liveChannelGroupAdapter.setFocusedGroupIndex(-1);
                 liveChannelItemAdapter.setFocusedChannelIndex(position);
-				liveChannelItemAdapter.setSelectedChannelIndex(position);
 
-            currentLiveChannelItem = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndex);
-            Hawk.put(HawkConfig.LIVE_CHANNEL, currentLiveChannelItem.getChannelName());
-            livePlayerManager.getLiveChannelPlayer(mVideoView, currentLiveChannelItem.getChannelName());
-			liveEpgDateAdapter.setSelectedIndex(1);
-			channel_Name = currentLiveChannelItem;
+playChannelxu(groupChannelIndex[0], groupChannelIndex[1], false);
+
                 mHideChannelListRunXu();  //xuameng隐藏频道菜单
                 getEpgxu(new Date());
 
