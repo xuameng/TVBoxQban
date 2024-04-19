@@ -2289,7 +2289,8 @@ public void showToastXu(){
                 liveChannelGroupAdapter.setFocusedGroupIndex(-1);
                 liveChannelItemAdapter.setFocusedChannelIndex(position);
                 mHideChannelListRunXu();  //xuameng隐藏频道菜单
-				getEpgxu(liveEpgDateAdapter.getData().get(position).getDateParamVal());
+                getEpgxu(new Date());
+				showEpgxu(date, new ArrayList());
             }
 
             @Override
