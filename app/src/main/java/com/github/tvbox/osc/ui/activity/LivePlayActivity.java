@@ -2288,6 +2288,7 @@ public void showToastXu(){
                 if (position < 0) return;
                 liveChannelGroupAdapter.setFocusedGroupIndex(-1);
                 liveChannelItemAdapter.setFocusedChannelIndex(position);
+				liveChannelItemAdapter.setSelectedChannelIndex(position);
 
             currentLiveChannelItem = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndex);
             Hawk.put(HawkConfig.LIVE_CHANNEL, currentLiveChannelItem.getChannelName());
