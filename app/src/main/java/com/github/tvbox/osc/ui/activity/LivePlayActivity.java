@@ -1507,7 +1507,7 @@ public class LivePlayActivity extends BaseActivity {
 			getEpgxu(new Date());
 			return true;
         }           
-
+return true;
     }
 
 
