@@ -565,6 +565,62 @@ public class LivePlayActivity extends BaseActivity {
         });
     }
 
+
+    public void getEpgxu(Date date) {
+        String channelName = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndex);
+        SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd");
+        timeFormat.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
+        String[] epgInfo = EpgUtil.getEpgInfo(channelName);
+        String epgTagName = channelName;
+        updateChannelIcon(channelName, epgInfo == null ? null : epgInfo[0]);
+        if (epgInfo != null && !epgInfo[1].isEmpty()) {
+            epgTagName = epgInfo[1];
+        }
+        String finalChannelName = channelName;
+        epgListAdapter.CanBack(currentLiveChannelItem.getinclude_back());
+        //epgListAdapter.updateData(date, new ArrayList<>());
+
+        String url;
+        if(epgStringAddress.contains("{name}") && epgStringAddress.contains("{date}")){
+            url= epgStringAddress.replace("{name}",URLEncoder.encode(epgTagName)).replace("{date}",timeFormat.format(date));
+        }else {
+            url= epgStringAddress + "?ch="+ URLEncoder.encode(epgTagName) + "&date=" + timeFormat.format(date);
+        }
+        UrlHttpUtil.get(url, new CallBackUtil.CallBackString() {
+            public void onFailure(int i, String str) {
+                showEpg(date, new ArrayList());
+ //               showBottomEpg();        
+            }
+
+            public void onResponse(String paramString) {
+
+                ArrayList arrayList = new ArrayList();
+
+                Log.d("返回的EPG信息", paramString);
+                try {
+                    if (paramString.contains("epg_data")) {
+                        final JSONArray jSONArray = new JSONObject(paramString).optJSONArray("epg_data");
+                        if (jSONArray != null)
+                            for (int b = 0; b < jSONArray.length(); b++) {
+                                JSONObject jSONObject = jSONArray.getJSONObject(b);
+                                Epginfo epgbcinfo = new Epginfo(date,jSONObject.optString("title"), date, jSONObject.optString("start"), jSONObject.optString("end"),b);
+                                arrayList.add(epgbcinfo);
+                                Log.d("EPG信息:", day +"  "+ jSONObject.optString("start") +" - "+jSONObject.optString("end") + "  " +jSONObject.optString("title"));
+                            }
+                    }
+
+                } catch (JSONException jSONException) {
+                    jSONException.printStackTrace();
+                }
+                showEpg(date, arrayList);
+                String savedEpgKey = channelName + "_" + liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex()).getDatePresented();
+                if (!hsEpg.contains(savedEpgKey))
+                    hsEpg.put(savedEpgKey, arrayList);
+                showBottomEpgXU();               //xuameng测试EPG刷新
+            }
+        });
+    }
+
     //显示底部EPG
     private void showBottomEpg() {
         if (isSHIYI)
@@ -1277,9 +1333,6 @@ public class LivePlayActivity extends BaseActivity {
                     }
                     public void onFinish() {
                     mHideChannelListRun();
-				    if(isVOD){
-			        Mtv_left_top_xu.setVisibility(View.VISIBLE);
-		            }
                     }
                 };
                 countDownTimer7.start();
@@ -1402,6 +1455,9 @@ public class LivePlayActivity extends BaseActivity {
     }
 
     public void playNextSource() {
+		if (mVideoView == null) {
+            return;
+        }
         if (!isCurrentLiveChannelValid()) return;
         currentLiveChannelItem.nextSource();
         playChannel(currentChannelGroupIndex, currentLiveChannelIndex, true);
@@ -2180,6 +2236,7 @@ public void showToastXu(){
                 liveChannelGroupAdapter.setFocusedGroupIndex(-1);
                 liveChannelItemAdapter.setFocusedChannelIndex(position);
                 mHideChannelListRunXu();  //xuameng隐藏频道菜单
+                getEpgxu(new Date());
             }
 
             @Override
