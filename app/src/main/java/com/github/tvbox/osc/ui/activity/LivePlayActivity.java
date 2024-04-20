@@ -1421,33 +1421,6 @@ public class LivePlayActivity extends BaseActivity {
     };
 	*/
 
-    private boolean playChannelxu(int channelGroupIndex, int liveChannelIndex, boolean changeSource) {       //xuameng播放
-		if (mVideoView == null) return true;    //XUAMENG可能会引起空指针问题的修复
-        mVideoView.release();
-
-        if (!changeSource) {
-            currentChannelGroupIndex = channelGroupIndex;
-            currentLiveChannelIndex = liveChannelIndex;
-            currentLiveChannelItem = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndex);
-			liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
-        }
-
-        channel_Name = currentLiveChannelItem;
-        isSHIYI=false;
-        isBack = false;
-        if(currentLiveChannelItem.getUrl().indexOf("PLTV/") !=-1){       //xuameng判断直播源URL中有没有PLTV字符，有才可以时移
-            currentLiveChannelItem.setinclude_back(true);
-        }else {
-            currentLiveChannelItem.setinclude_back(false);
-        }
-
-
-	    liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
-        getEpgxu(new Date());
-
-        return true;
-    }
-
 	    private boolean playChannel(int channelGroupIndex, int liveChannelIndex, boolean changeSource) {       //xuameng播放
 		if (mVideoView == null) return true;    //XUAMENG可能会引起空指针问题的修复
         mVideoView.release();
@@ -1501,6 +1474,25 @@ public class LivePlayActivity extends BaseActivity {
 
        // showChannelInfo();
         mVideoView.start();
+        return true;
+    }
+
+	    private boolean playChannelxu(int channelGroupIndex, int liveChannelIndex, boolean changeSource) {       //xuameng播放
+		if (mVideoView == null) return true;    //XUAMENG可能会引起空指针问题的修复
+        if (!changeSource) {
+            currentChannelGroupIndex = channelGroupIndex;
+            currentLiveChannelIndex = liveChannelIndex;
+            currentLiveChannelItem = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndex);
+        }
+        channel_Name = currentLiveChannelItem;        //xuameng重要EPG名称
+        isSHIYI=false;
+        isBack = false;
+        if(currentLiveChannelItem.getUrl().indexOf("PLTV/") !=-1){       //xuameng判断直播源URL中有没有PLTV字符，有才可以时移
+            currentLiveChannelItem.setinclude_back(true);
+        }else {
+            currentLiveChannelItem.setinclude_back(false);
+        }
+        getEpgxu(new Date());
         return true;
     }
 
@@ -2303,13 +2295,10 @@ public void showToastXu(){
                 if (position < 0) return;
                 liveChannelGroupAdapter.setFocusedGroupIndex(-1);
                 liveChannelItemAdapter.setFocusedChannelIndex(position);
-
-                liveChannelItemAdapter.setSelectedChannelIndex(position);
-
-	        playChannelxu(liveChannelGroupAdapter.getSelectedGroupIndex(), liveChannelItemAdapter.getSelectedChannelIndex(), false);
+                liveChannelItemAdapter.setSelectedChannelIndex(position);            //xuameng换频道显示EPG
+	            playChannelxu(liveChannelGroupAdapter.getSelectedGroupIndex(), liveChannelItemAdapter.getSelectedChannelIndex(), false);   //xuameng换频道显示EPG
 			    liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
                 mHideChannelListRunXu();  //xuameng隐藏频道菜单
-
             }
 
             @Override
