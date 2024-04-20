@@ -2278,7 +2278,7 @@ public void showToastXu(){
                 liveChannelItemAdapter.setFocusedChannelIndex(position);
 
                 liveChannelItemAdapter.setSelectedChannelIndex(position);
-                channel_Name = liveChannelItemAdapter.getSelectedChannelIndex(),
+                channel_Name = liveChannelItemAdapter.getSelectedChannelIndex();
 			    liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
 			    getEpgxu(new Date());
                 mHideChannelListRunXu();  //xuameng隐藏频道菜单
