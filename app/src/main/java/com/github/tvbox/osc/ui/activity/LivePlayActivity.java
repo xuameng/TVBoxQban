@@ -1482,10 +1482,10 @@ public class LivePlayActivity extends BaseActivity {
 	    private boolean playChannelxu(int liveChannelIndex, boolean changeSource) {       //xuameng播放
 		if (mVideoView == null) return true;    //XUAMENG可能会引起空指针问题的修复
         if (!changeSource) {
-            currentChannelGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();     //xuameng重要频道组
+//            currentChannelGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();     //xuameng重要频道组
 			currentLiveChannelIndex = liveChannelItemAdapter.getSelectedChannelIndex();     //xuameng重要频道名称
 			currentLiveChannelIndexXu = liveChannelItemAdapter.getSelectedfocusedChannelIndex();     //xuameng重要频道名称
-            currentLiveChannelItem = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndex);
+            currentLiveChannelItem = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndexXu);
 			currentLiveChannelItemXu = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndexXu);
 			Hawk.put(HawkConfig.LIVE_CHANNEL, currentLiveChannelItemXu.getChannelName());
             livePlayerManager.getLiveChannelPlayer(mVideoView, currentLiveChannelItemXu.getChannelName());
@@ -1494,10 +1494,10 @@ public class LivePlayActivity extends BaseActivity {
         channel_Name = currentLiveChannelItemXu;        //xuameng重要EPG名称
         isSHIYI=false;
         isBack = false;
-        if(currentLiveChannelItemXu.getUrl().indexOf("PLTV/") !=-1){       //xuameng判断直播源URL中有没有PLTV字符，有才可以时移
-            currentLiveChannelItemXu.setinclude_back(true);
+        if(currentLiveChannelItem.getUrl().indexOf("PLTV/") !=-1){       //xuameng判断直播源URL中有没有PLTV字符，有才可以时移
+            currentLiveChannelItem.setinclude_back(true);
         }else {
-            currentLiveChannelItemXu.setinclude_back(false);
+            currentLiveChannelItem.setinclude_back(false);
         }
         getEpgxu(new Date());
         return true;
