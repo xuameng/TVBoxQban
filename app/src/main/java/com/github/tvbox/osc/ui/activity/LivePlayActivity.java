@@ -621,7 +621,8 @@ public class LivePlayActivity extends BaseActivity {
 
 
     public void getEpgxu(Date date) {
-        String channelName = liveChannelItemAdapter.getSelectedChannelIndex();
+		int num = liveChannelItemAdapter.getSelectedChannelIndex();
+        String channelName = num;
         SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd");
         timeFormat.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
         String[] epgInfo = EpgUtil.getEpgInfo(channelName);
