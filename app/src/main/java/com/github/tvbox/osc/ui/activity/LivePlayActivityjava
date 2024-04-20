@@ -1447,7 +1447,7 @@ public class LivePlayActivity extends BaseActivity {
         mVideoView.release();
         if (!changeSource) {
             currentChannelGroupIndex = channelGroupIndex;
-            currentLiveChannelIndex = liveChannelItemAdapter.getSelectedChannelIndex();
+            currentLiveChannelIndex = liveChannelIndex;
             currentLiveChannelItem = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndex);
             Hawk.put(HawkConfig.LIVE_CHANNEL, currentLiveChannelItem.getChannelName());
             livePlayerManager.getLiveChannelPlayer(mVideoView, currentLiveChannelItem.getChannelName());
@@ -2311,9 +2311,9 @@ public void showToastXu(){
                 liveChannelGroupAdapter.setFocusedGroupIndex(-1);
                 liveChannelItemAdapter.setFocusedChannelIndex(position);
 
-        liveChannelItemAdapter.setSelectedChannelIndex(position);
+//        liveChannelItemAdapter.setSelectedChannelIndex(position);
 
-							channel_Name = liveChannelItemAdapter.getSelectedChannelIndex(),
+							channel_Name = liveChannelItemAdapter.getFocusedChannelIndex(),
 			getEpgxu(new Date());
  
 
