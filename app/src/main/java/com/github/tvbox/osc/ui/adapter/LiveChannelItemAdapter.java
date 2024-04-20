@@ -50,8 +50,12 @@ public class LiveChannelItemAdapter extends BaseQuickAdapter<LiveChannelItem, Ba
             notifyItemChanged(this.selectedChannelIndex);
     }
 
-    public int getSelectedChannelIndex() {
+    public int getSelectedChannelIndex() {        //xuameng
         return selectedChannelIndex;
+    }
+
+	public int getSelectedfocusedChannelIndex() {        //xuameng
+        return selectedfocusedChannelIndex;
     }
 
     public void setFocusedChannelIndex(int focusedChannelIndex) {
