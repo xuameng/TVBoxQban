@@ -2312,7 +2312,7 @@ public void showToastXu(){
                 liveChannelItemAdapter.setFocusedChannelIndex(position);
 
         liveChannelItemAdapter.setSelectedChannelIndex(position);
-        playChannel(liveChannelGroupAdapter.getSelectedGroupIndex(), liveChannelItemAdapter.getSelectedChannelIndex(), false);
+        playChannelxu(liveChannelGroupAdapter.getSelectedGroupIndex(), liveChannelItemAdapter.getSelectedChannelIndex(), false);
 
 
                 mHideChannelListRunXu();  //xuameng隐藏频道菜单
