@@ -1434,8 +1434,8 @@ public class LivePlayActivity extends BaseActivity {
 		}
 
         if (!changeSource) {
-            currentChannelGroupIndex = channelGroupIndex;
-            currentLiveChannelIndex = liveChannelIndex;
+            currentChannelGroupIndex = int liveChannelGroupAdapter.getSelectedGroupIndex();
+            currentLiveChannelIndex = int liveChannelItemAdapter.getSelectedfocusedChannelIndex();
             currentLiveChannelItem = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndex);
             Hawk.put(HawkConfig.LIVE_CHANNEL, currentLiveChannelItem.getChannelName());
             livePlayerManager.getLiveChannelPlayer(mVideoView, currentLiveChannelItem.getChannelName());
