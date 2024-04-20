@@ -123,7 +123,6 @@ public class LivePlayActivity extends BaseActivity {
     private List<LiveSettingGroup> liveSettingGroupList = new ArrayList<>();
 
     public static  int currentChannelGroupIndex = 0;
-    public static  int ChannelliveIndexxu = 0;
     private Handler mHandler = new Handler();
 
     private List<LiveChannelGroup> liveChannelGroupList = new ArrayList<>();
@@ -1422,7 +1421,34 @@ public class LivePlayActivity extends BaseActivity {
     };
 	*/
 
-    private boolean playChannel(int channelGroupIndex, int liveChannelIndex, boolean changeSource) {       //xuameng播放
+    private boolean playChannelxu(int channelGroupIndex, int liveChannelIndex, boolean changeSource) {       //xuameng播放
+		if (mVideoView == null) return true;    //XUAMENG可能会引起空指针问题的修复
+        mVideoView.release();
+
+        if (!changeSource) {
+            currentChannelGroupIndex = channelGroupIndex;
+            currentLiveChannelIndex = liveChannelIndex;
+            currentLiveChannelItem = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndex);
+			liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
+        }
+
+        channel_Name = currentLiveChannelItem;
+        isSHIYI=false;
+        isBack = false;
+        if(currentLiveChannelItem.getUrl().indexOf("PLTV/") !=-1){       //xuameng判断直播源URL中有没有PLTV字符，有才可以时移
+            currentLiveChannelItem.setinclude_back(true);
+        }else {
+            currentLiveChannelItem.setinclude_back(false);
+        }
+
+
+	    liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
+        getEpgxu(new Date());
+
+        return true;
+    }
+
+	    private boolean playChannel(int channelGroupIndex, int liveChannelIndex, boolean changeSource) {       //xuameng播放
 		if (mVideoView == null) return true;    //XUAMENG可能会引起空指针问题的修复
         mVideoView.release();
 
@@ -2279,11 +2305,9 @@ public void showToastXu(){
                 liveChannelItemAdapter.setFocusedChannelIndex(position);
 
                 liveChannelItemAdapter.setSelectedChannelIndex(position);
-                channel_Name = liveChannelItemAdapter.getSelectedChannelIndex();
-				ChannelliveIndexxu = liveChannelItemAdapter.getSelectedChannelIndex();
-                channel_Name = ChannelliveIndexxu;
+
+	        playChannelxu(liveChannelGroupAdapter.getSelectedGroupIndex(), liveChannelItemAdapter.getSelectedChannelIndex(), false);
 			    liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
-			    getEpgxu(new Date());
                 mHideChannelListRunXu();  //xuameng隐藏频道菜单
 
             }
