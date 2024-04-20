@@ -1503,6 +1503,16 @@ public class LivePlayActivity extends BaseActivity {
         return true;
     }
 
+	    
+	    private boolean playChannelback(int channelGroupIndex, int liveChannelIndex, boolean changeSource) {       //xuameng播放
+		if (mVideoView == null) return true;    //XUAMENG可能会引起空指针问题的修复
+        if (!changeSource) {
+            currentChannelGroupIndex = channelGroupIndex;
+            currentLiveChannelIndex = liveChannelIndex;
+        }
+        return true;
+    }
+
     private void playNext() {
         if (!isCurrentLiveChannelValid()) return;
         Integer[] groupChannelIndex = getNextChannel(1);
@@ -1694,8 +1704,7 @@ public class LivePlayActivity extends BaseActivity {
                     mVideoView.setUrl(currentLiveChannelItem.getUrl());
                     mVideoView.start();
 //                  epgListAdapter.setShiyiSelection(-1, false,timeFormat.format(date));    //XUAMENG没用了
-                    liveChannelItemAdapter.setSelectedChannelIndex(position);
-                    liveChannelGroupAdapter.getSelectedGroupIndex();
+                    playChannelback(liveChannelGroupAdapter.getSelectedGroupIndex(), position, false);
 					getEpg(new Date());
                     showBottomEpg();           //xuameng显示EPG和上面菜单
                     return;
@@ -1748,8 +1757,7 @@ public class LivePlayActivity extends BaseActivity {
 //修好了			hideTimeXu();                       //xuameng进入回看前先隐藏上方系统时间
                     showProgressBars(true);             //xuameng然后再显示
 					showBottomEpgBack();               //xuameng回看EPG
-					liveChannelItemAdapter.setSelectedChannelIndex(position);
-                    liveChannelGroupAdapter.getSelectedGroupIndex();
+                    playChannelback(liveChannelGroupAdapter.getSelectedGroupIndex(), position, false);
 //					showTimeXu();                       //xuameng显示系统时间
 //					showNetSpeedXu();  
                     isBack = true;
