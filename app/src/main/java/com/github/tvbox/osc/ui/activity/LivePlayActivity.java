@@ -1480,11 +1480,14 @@ public class LivePlayActivity extends BaseActivity {
 	    private boolean playChannelxu(int channelGroupIndex, int liveChannelIndex, boolean changeSource) {       //xuameng播放
 		if (mVideoView == null) return true;    //XUAMENG可能会引起空指针问题的修复
         if (!changeSource) {
-            currentChannelGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
-            currentLiveChannelIndex = liveChannelItemAdapter.getSelectedChannelIndex();
+            currentChannelGroupIndex = channelGroupIndex;     //xuameng重要频道组
+			currentLiveChannelIndex = liveChannelItemAdapter.getSelectedChannelIndex();     //xuameng重要频道名称
+			currentLiveChannelIndexXu = liveChannelItemAdapter.getSelectedfocusedChannelIndex();     //xuameng重要频道名称
             currentLiveChannelItem = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndex);
+			currentLiveChannelItemXu = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndexXu);
+
         }
-        channel_Name = currentLiveChannelItem;        //xuameng重要EPG名称
+        channel_Name = currentLiveChannelItemXu;        //xuameng重要EPG名称
         isSHIYI=false;
         isBack = false;
         if(currentLiveChannelItem.getUrl().indexOf("PLTV/") !=-1){       //xuameng判断直播源URL中有没有PLTV字符，有才可以时移
@@ -2296,7 +2299,7 @@ public void showToastXu(){
                 liveChannelGroupAdapter.setFocusedGroupIndex(-1);
                 liveChannelItemAdapter.setFocusedChannelIndex(position);
        //         liveChannelItemAdapter.setSelectedChannelIndex(position);            //xuameng换频道显示EPG
-	            playChannelxu(liveChannelGroupAdapter.getSelectedGroupIndex(), liveChannelItemAdapter.getSelectedfocusedChannelIndex(), false);   //xuameng换频道显示EPG
+	            playChannelxu(currentChannelGroupIndex, liveChannelItemAdapter.getSelectedfocusedChannelIndex(), false);   //xuameng换频道显示EPG
 			    liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
                 mHideChannelListRunXu();  //xuameng隐藏频道菜单
             }
