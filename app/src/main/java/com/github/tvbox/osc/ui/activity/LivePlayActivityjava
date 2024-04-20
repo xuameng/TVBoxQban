@@ -469,9 +469,9 @@ public class LivePlayActivity extends BaseActivity {
             }
             i = size;
             if (i >= 0 && new Date().compareTo(epgdata.get(i).enddateTime) <= 0) {
-                mRightEpgList.setSelectedPosition(i);
-                mRightEpgList.setSelection(i);
-                epgListAdapter.setSelectedEpgIndex(i);
+//xuameng防止跳焦点                mRightEpgList.setSelectedPosition(i);
+//xuameng防止跳焦点                 mRightEpgList.setSelection(i);
+//xuameng防止跳焦点                 epgListAdapter.setSelectedEpgIndex(i);
                 int finalI = i;
                 mRightEpgList.post(new Runnable() {
                      @Override
@@ -1422,10 +1422,8 @@ public class LivePlayActivity extends BaseActivity {
 	*/
 
     private boolean playChannel(int channelGroupIndex, int liveChannelIndex, boolean changeSource) {       //xuameng播放
-        if ((channelGroupIndex == currentChannelGroupIndex && liveChannelIndex == currentLiveChannelIndex && !changeSource)
-                || (changeSource && currentLiveChannelItem.getSourceNum() == 1)) {
-             // xuamengEPG日期自动选今天
-		   	 liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
+		if (mVideoView == null) return true;    //XUAMENG可能会引起空指针问题的修复
+        mVideoView.release();
 
 		if(isVOD){
           if(backcontroller.getVisibility() == View.GONE){
@@ -1435,16 +1433,6 @@ public class LivePlayActivity extends BaseActivity {
 		  }
 		}
 
-	    if(!isVOD){
-		  showBottomEpg();
-          getEpg(new Date());
-		}
-          isSHIYI=false;
-          isBack = false;
-          return true;
-        }
-		if (mVideoView == null) return true;    //XUAMENG可能会引起空指针问题的修复
-        mVideoView.release();
         if (!changeSource) {
             currentChannelGroupIndex = channelGroupIndex;
             currentLiveChannelIndex = liveChannelIndex;
@@ -1488,28 +1476,6 @@ public class LivePlayActivity extends BaseActivity {
         mVideoView.start();
         return true;
     }
-
-    private boolean playChannelxu(int channelGroupIndex, int liveChannelIndex, boolean changeSource) {       //xuameng播放
-        if ((channelGroupIndex == currentChannelGroupIndex && liveChannelIndex == currentLiveChannelIndex && !changeSource)
-                || (changeSource && currentLiveChannelItem.getSourceNum() == 1)) {
-			return true;
-		}
-
-
-        if (!changeSource) {
-            currentChannelGroupIndex = channelGroupIndex;
-            currentLiveChannelIndex = liveChannelIndex;
-            currentLiveChannelItem = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndex);
-            Hawk.put(HawkConfig.LIVE_CHANNEL, currentLiveChannelItem.getChannelName());
-            livePlayerManager.getLiveChannelPlayer(mVideoView, currentLiveChannelItem.getChannelName());
-			liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
-			channel_Name = currentLiveChannelItem;
-			getEpgxu(new Date());
-			return true;
-        }           
-return true;
-    }
-
 
     private void playNext() {
         if (!isCurrentLiveChannelValid()) return;
@@ -2311,10 +2277,10 @@ public void showToastXu(){
                 liveChannelGroupAdapter.setFocusedGroupIndex(-1);
                 liveChannelItemAdapter.setFocusedChannelIndex(position);
 
-        liveChannelItemAdapter.setSelectedChannelIndex(position);
-
-							channel_Name = liveChannelItemAdapter.getSelectedChannelIndex();
-			getEpgxu(new Date());
+                liveChannelItemAdapter.setSelectedChannelIndex(position);
+                channel_Name = liveChannelItemAdapter.getSelectedChannelIndex();
+			    liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
+			    getEpgxu(new Date());
  
 
 
