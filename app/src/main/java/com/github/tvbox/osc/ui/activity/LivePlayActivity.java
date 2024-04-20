@@ -1487,15 +1487,17 @@ public class LivePlayActivity extends BaseActivity {
 			currentLiveChannelIndexXu = liveChannelItemAdapter.getSelectedfocusedChannelIndex();     //xuameng重要频道名称
             currentLiveChannelItem = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndex);
 			currentLiveChannelItemXu = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndexXu);
+			Hawk.put(HawkConfig.LIVE_CHANNEL, currentLiveChannelItemXu.getChannelName());
+            livePlayerManager.getLiveChannelPlayer(mVideoView, currentLiveChannelItemXu.getChannelName());
 
         }
         channel_Name = currentLiveChannelItemXu;        //xuameng重要EPG名称
         isSHIYI=false;
         isBack = false;
-        if(currentLiveChannelItem.getUrl().indexOf("PLTV/") !=-1){       //xuameng判断直播源URL中有没有PLTV字符，有才可以时移
-            currentLiveChannelItem.setinclude_back(true);
+        if(currentLiveChannelItemXu.getUrl().indexOf("PLTV/") !=-1){       //xuameng判断直播源URL中有没有PLTV字符，有才可以时移
+            currentLiveChannelItemXu.setinclude_back(true);
         }else {
-            currentLiveChannelItem.setinclude_back(false);
+            currentLiveChannelItemXu.setinclude_back(false);
         }
         getEpgxu(new Date());
         return true;
@@ -2300,8 +2302,9 @@ public void showToastXu(){
                 if (position < 0) return;
                 liveChannelGroupAdapter.setFocusedGroupIndex(-1);
                 liveChannelItemAdapter.setFocusedChannelIndex(position);
+				liveChannelGroupAdapter.setSelectedGroupIndex(position);
        //         liveChannelItemAdapter.setSelectedChannelIndex(position);            //xuameng换频道显示EPG
-	            playChannelxu(currentChannelGroupIndex, liveChannelItemAdapter.getSelectedfocusedChannelIndex(), false);   //xuameng换频道显示EPG
+	            playChannelxu(liveChannelGroupAdapter.getSelectedGroupIndex(), liveChannelItemAdapter.getSelectedfocusedChannelIndex(), false);   //xuameng换频道显示EPG
 			    liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
                 mHideChannelListRunXu();  //xuameng隐藏频道菜单
             }
