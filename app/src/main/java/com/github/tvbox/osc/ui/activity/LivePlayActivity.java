@@ -1434,8 +1434,8 @@ public class LivePlayActivity extends BaseActivity {
 		}
 
         if (!changeSource) {
-            currentChannelGroupIndex = int liveChannelGroupAdapter.getSelectedGroupIndex();
-            currentLiveChannelIndex = int liveChannelItemAdapter.getSelectedfocusedChannelIndex();
+            currentChannelGroupIndex = channelGroupIndex;
+            currentLiveChannelIndex = liveChannelIndex;
             currentLiveChannelItem = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndex);
             Hawk.put(HawkConfig.LIVE_CHANNEL, currentLiveChannelItem.getChannelName());
             livePlayerManager.getLiveChannelPlayer(mVideoView, currentLiveChannelItem.getChannelName());
@@ -1480,8 +1480,8 @@ public class LivePlayActivity extends BaseActivity {
 	    private boolean playChannelxu(int channelGroupIndex, int liveChannelIndex, boolean changeSource) {       //xuameng播放
 		if (mVideoView == null) return true;    //XUAMENG可能会引起空指针问题的修复
         if (!changeSource) {
-            currentChannelGroupIndex = channelGroupIndex;
-            currentLiveChannelIndex = liveChannelIndex;
+            currentChannelGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
+            currentLiveChannelIndex = liveChannelItemAdapter.getSelectedfocusedChannelIndex();
             currentLiveChannelItem = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndex);
         }
         channel_Name = currentLiveChannelItem;        //xuameng重要EPG名称
