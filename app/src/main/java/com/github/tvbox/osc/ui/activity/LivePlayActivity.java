@@ -123,6 +123,7 @@ public class LivePlayActivity extends BaseActivity {
     private List<LiveSettingGroup> liveSettingGroupList = new ArrayList<>();
 
     public static  int currentChannelGroupIndex = 0;
+    public static  int ChannelliveIndexxu = 0;
     private Handler mHandler = new Handler();
 
     private List<LiveChannelGroup> liveChannelGroupList = new ArrayList<>();
@@ -2278,8 +2279,9 @@ public void showToastXu(){
                 liveChannelItemAdapter.setFocusedChannelIndex(position);
 
                 liveChannelItemAdapter.setSelectedChannelIndex(position);
-                int channel_xu = liveChannelItemAdapter.getSelectedChannelIndex();
-                channel_Name = channel_xu;
+                channel_Name = liveChannelItemAdapter.getSelectedChannelIndex();
+				ChannelliveIndexxu = liveChannelItemAdapter.getSelectedChannelIndex();
+                channel_Name = ChannelliveIndexxu;
 			    liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
 			    getEpgxu(new Date());
                 mHideChannelListRunXu();  //xuameng隐藏频道菜单
