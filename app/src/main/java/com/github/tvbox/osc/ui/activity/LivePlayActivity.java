@@ -1481,7 +1481,7 @@ public class LivePlayActivity extends BaseActivity {
 		if (mVideoView == null) return true;    //XUAMENG可能会引起空指针问题的修复
         if (!changeSource) {
             currentChannelGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
-            currentLiveChannelIndex = liveChannelItemAdapter.getSelectedfocusedChannelIndex();
+            currentLiveChannelIndex = liveChannelItemAdapter.getSelectedChannelIndex();
             currentLiveChannelItem = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndex);
         }
         channel_Name = currentLiveChannelItem;        //xuameng重要EPG名称
