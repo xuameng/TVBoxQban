@@ -621,7 +621,7 @@ public class LivePlayActivity extends BaseActivity {
 
 
     public void getEpgxu(Date date) {
-        String channelName = channel_Name.getChannelName();
+        String channelName = liveChannelItemAdapter.getSelectedChannelIndex();
         SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd");
         timeFormat.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
         String[] epgInfo = EpgUtil.getEpgInfo(channelName);
@@ -2278,7 +2278,7 @@ public void showToastXu(){
                 liveChannelItemAdapter.setFocusedChannelIndex(position);
 
                 liveChannelItemAdapter.setSelectedChannelIndex(position);
-                channel_Name = liveChannelItemAdapter.getSelectedChannelIndex();
+
 			    liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
 			    getEpgxu(new Date());
                 mHideChannelListRunXu();  //xuameng隐藏频道菜单
