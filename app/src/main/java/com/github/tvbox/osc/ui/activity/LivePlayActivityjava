@@ -2311,9 +2311,9 @@ public void showToastXu(){
                 liveChannelGroupAdapter.setFocusedGroupIndex(-1);
                 liveChannelItemAdapter.setFocusedChannelIndex(position);
 
-//        liveChannelItemAdapter.setSelectedChannelIndex(position);
+        liveChannelItemAdapter.setSelectedChannelIndex(position);
 
-							channel_Name = liveChannelItemAdapter.getFocusedChannelIndex(),
+							channel_Name = liveChannelItemAdapter.getSelectedChannelIndex();
 			getEpgxu(new Date());
  
 
