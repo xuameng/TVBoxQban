@@ -2295,8 +2295,8 @@ public void showToastXu(){
                 if (position < 0) return;
                 liveChannelGroupAdapter.setFocusedGroupIndex(-1);
                 liveChannelItemAdapter.setFocusedChannelIndex(position);
-                liveChannelItemAdapter.setSelectedChannelIndex(position);            //xuameng换频道显示EPG
-	            playChannelxu(liveChannelGroupAdapter.getSelectedGroupIndex(), liveChannelItemAdapter.getSelectedChannelIndex(), false);   //xuameng换频道显示EPG
+       //         liveChannelItemAdapter.setSelectedChannelIndex(position);            //xuameng换频道显示EPG
+	            playChannelxu(liveChannelGroupAdapter.getSelectedGroupIndex(), liveChannelItemAdapter.getSelectedfocusedChannelIndex(), false);   //xuameng换频道显示EPG
 			    liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
                 mHideChannelListRunXu();  //xuameng隐藏频道菜单
             }
