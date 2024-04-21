@@ -123,6 +123,7 @@ public class LivePlayActivity extends BaseActivity {
     private List<LiveSettingGroup> liveSettingGroupList = new ArrayList<>();
 
     public static  int currentChannelGroupIndex = 0;
+	public static  int currentChannelGroupIndexXu = 0;
     private Handler mHandler = new Handler();
 
     private List<LiveChannelGroup> liveChannelGroupList = new ArrayList<>();
@@ -3212,5 +3213,3 @@ public void showToastXu(){
     }
     
 }
-
-
