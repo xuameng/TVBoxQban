@@ -1258,8 +1258,8 @@ public class LivePlayActivity extends BaseActivity {
                 mLiveChannelView.setSelection(currentLiveChannelIndex);
                 mChannelGroupView.scrollToPosition(currentChannelGroupIndex);
                 mChannelGroupView.setSelection(currentChannelGroupIndex);
-			    currentChannelGroupIndex = currentChannelGroupIndexXu;
-			    currentLiveChannelIndex currentLiveChannelIndexXu;
+			    currentChannelGroupIndex = currentChannelGroupIndexXu;     //xuameng防止手机空指针
+			    currentLiveChannelIndex = currentLiveChannelIndexXu;			//xuameng防止手机空指针
 	            epgListAdapter.getSelectedIndex();        //xuamengEPG打开菜单自动变颜色        
 			if (countDownTimer10 != null) {
                 countDownTimer10.cancel();
