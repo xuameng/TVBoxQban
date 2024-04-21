@@ -1675,8 +1675,8 @@ public class LivePlayActivity extends BaseActivity {
 
             @Override
             public void onItemClick(TvRecyclerView parent, View itemView, int position) {
-				currentChannelGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
-                currentLiveChannelIndex = liveChannelItemAdapter.getSelectedChannelIndex();
+								    currentChannelGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
+                    currentLiveChannelIndex = liveChannelItemAdapter.getSelectedChannelIndex();
                 Date date = liveEpgDateAdapter.getSelectedIndex() < 0 ? new Date() :
                 liveEpgDateAdapter.getData().get(liveEpgDateAdapter.getSelectedIndex()).getDateParamVal();
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
@@ -1698,6 +1698,8 @@ public class LivePlayActivity extends BaseActivity {
 //                  epgListAdapter.setShiyiSelection(-1, false,timeFormat.format(date));    //XUAMENG没用了
 					getEpg(new Date());
                     showBottomEpg();           //xuameng显示EPG和上面菜单
+				currentChannelGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
+                currentLiveChannelIndex = liveChannelItemAdapter.getSelectedChannelIndex();
                     return;
                 }
                 String shiyiUrl = currentLiveChannelItem.getUrl();
@@ -1754,6 +1756,8 @@ public class LivePlayActivity extends BaseActivity {
 					isVOD = false;
 					tv_right_top_type.setText("回看中");
 					iv_play_pause.setText("回看暂停中！聚汇直播欢迎您的收看！");
+				    currentChannelGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
+                    currentLiveChannelIndex = liveChannelItemAdapter.getSelectedChannelIndex();
                 }
             }
         });
@@ -1762,6 +1766,8 @@ public class LivePlayActivity extends BaseActivity {
         epgListAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+								    currentChannelGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
+                    currentLiveChannelIndex = liveChannelItemAdapter.getSelectedChannelIndex();
                 Date date = liveEpgDateAdapter.getSelectedIndex() < 0 ? new Date() :
                 liveEpgDateAdapter.getData().get(liveEpgDateAdapter.getSelectedIndex()).getDateParamVal();
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
@@ -1783,6 +1789,8 @@ public class LivePlayActivity extends BaseActivity {
                     epgListAdapter.setShiyiSelection(-1, false,timeFormat.format(date));
 					getEpg(new Date());
                     showBottomEpg();           //xuameng显示EPG和上面菜单
+									    currentChannelGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
+                    currentLiveChannelIndex = liveChannelItemAdapter.getSelectedChannelIndex();
                     return;
                 }
                 String shiyiUrl = currentLiveChannelItem.getUrl();
@@ -1838,6 +1846,8 @@ public class LivePlayActivity extends BaseActivity {
 					tv_right_top_type.setText("回看中");
 					iv_play_pause.setText("回看暂停中！聚汇直播欢迎您的收看！");
 //					showTimeXu();                       //xuameng显示系统时间
+				    currentChannelGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
+                    currentLiveChannelIndex = liveChannelItemAdapter.getSelectedChannelIndex();
                 }
             }
         });
@@ -2437,7 +2447,7 @@ public void showToastXu(){
             @Override
             public void onItemClick(TvRecyclerView parent, View itemView, int position) {
                 clickSettingItem(position);
-			    mHideSettingLayoutRun();          //xuameng选中源就隐藏右侧菜单
+//			    mHideSettingLayoutRun();          //xuameng选中源就隐藏右侧菜单
             }
         });
 
@@ -2447,7 +2457,7 @@ public void showToastXu(){
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 FastClickCheckUtil.check(view);
                 clickSettingItem(position);
-				mHideSettingLayoutRun();         //xuameng选中源就隐藏右侧菜单
+//				mHideSettingLayoutRun();         //xuameng选中源就隐藏右侧菜单
             }
         });
     }
