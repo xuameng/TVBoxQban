@@ -1671,13 +1671,12 @@ public class LivePlayActivity extends BaseActivity {
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
                 mHideChannelListRunXu();
                 epgListAdapter.setFocusedEpgIndex(position);
-				                    currentChannelGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
-                    currentLiveChannelIndex = liveChannelItemAdapter.getSelectedChannelIndex();
             }
 
             @Override
             public void onItemClick(TvRecyclerView parent, View itemView, int position) {
-
+				currentChannelGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
+                currentLiveChannelIndex = liveChannelItemAdapter.getSelectedChannelIndex();
                 Date date = liveEpgDateAdapter.getSelectedIndex() < 0 ? new Date() :
                 liveEpgDateAdapter.getData().get(liveEpgDateAdapter.getSelectedIndex()).getDateParamVal();
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
