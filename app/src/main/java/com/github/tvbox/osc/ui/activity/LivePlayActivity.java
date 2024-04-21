@@ -471,9 +471,9 @@ public class LivePlayActivity extends BaseActivity {
             }
             i = size;
             if (i >= 0 && new Date().compareTo(epgdata.get(i).enddateTime) <= 0) {
-//xuameng防止跳焦点                mRightEpgList.setSelectedPosition(i);
+                 mRightEpgList.setSelectedPosition(i);
 //xuameng防止跳焦点                 mRightEpgList.setSelection(i);
-//xuameng防止跳焦点                 epgListAdapter.setSelectedEpgIndex(i);
+                 epgListAdapter.setSelectedEpgIndex(i);
                 int finalI = i;
                 mRightEpgList.post(new Runnable() {
                      @Override
@@ -529,6 +529,8 @@ public class LivePlayActivity extends BaseActivity {
             i = size;
             if (i >= 0 && new Date().compareTo(epgdata.get(i).enddateTime) <= 0) {
                 int finalI = i;
+	            mRightEpgList.setSelectedPosition(i);
+				epgListAdapter.setSelectedEpgIndex(i);
                 mRightEpgList.post(new Runnable() {
                      @Override
                      public void run() {
@@ -1479,19 +1481,17 @@ public class LivePlayActivity extends BaseActivity {
         return true;
     }
 
-	    private boolean playChannelxu(int liveChannelIndex, boolean changeSource) {       //xuameng播放
+	    private boolean playChannelxu(int channelGroupIndex, int liveChannelIndex, boolean changeSource) {       //xuameng播放
 		if (mVideoView == null) return true;    //XUAMENG可能会引起空指针问题的修复
         if (!changeSource) {
-//            currentChannelGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();     //xuameng重要频道组
-			currentLiveChannelIndex = liveChannelItemAdapter.getSelectedChannelIndex();     //xuameng重要频道名称
-			currentLiveChannelIndexXu = liveChannelItemAdapter.getSelectedfocusedChannelIndex();     //xuameng重要频道名称
-            currentLiveChannelItem = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndexXu);
-			currentLiveChannelItemXu = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndexXu);
-			Hawk.put(HawkConfig.LIVE_CHANNEL, currentLiveChannelItemXu.getChannelName());
-            livePlayerManager.getLiveChannelPlayer(mVideoView, currentLiveChannelItemXu.getChannelName());
+            currentChannelGroupIndexXu = channelGroupIndex;     //xuameng重要频道组
+			currentLiveChannelIndexXu = liveChannelIndex;     //xuameng重要频道名称
+            currentLiveChannelItem = getLiveChannels(currentChannelGroupIndexXu).get(currentLiveChannelIndexXu);
+			Hawk.put(HawkConfig.LIVE_CHANNEL, currentLiveChannelItem.getChannelName());
+            livePlayerManager.getLiveChannelPlayer(mVideoView, currentLiveChannelItem.getChannelName());
 
         }
-        channel_Name = currentLiveChannelItemXu;        //xuameng重要EPG名称
+        channel_Name = currentLiveChannelItem;        //xuameng重要EPG名称
         isSHIYI=false;
         isBack = false;
         if(currentLiveChannelItem.getUrl().indexOf("PLTV/") !=-1){       //xuameng判断直播源URL中有没有PLTV字符，有才可以时移
@@ -1508,7 +1508,7 @@ public class LivePlayActivity extends BaseActivity {
 		if (mVideoView == null) return true;    //XUAMENG可能会引起空指针问题的修复
         if (!changeSource) {
             currentChannelGroupIndex = channelGroupIndex;
-            currentLiveChannelIndex = currentLiveChannelIndexXu;
+            currentLiveChannelIndex = liveChannelIndex;
         }
         return true;
     }
@@ -1704,8 +1704,7 @@ public class LivePlayActivity extends BaseActivity {
                     mVideoView.setUrl(currentLiveChannelItem.getUrl());
                     mVideoView.start();
 //                  epgListAdapter.setShiyiSelection(-1, false,timeFormat.format(date));    //XUAMENG没用了
-                    liveChannelItemAdapter.setSelectedChannelIndex(position);
-                    playChannelback(liveChannelGroupAdapter.getSelectedGroupIndex(), position, false);
+                    playChannelback(liveChannelGroupAdapter.getSelectedGroupIndex(), liveChannelItemAdapter.getSelectedChannelIndex(), false);
 					getEpg(new Date());
                     showBottomEpg();           //xuameng显示EPG和上面菜单
                     return;
@@ -1758,8 +1757,7 @@ public class LivePlayActivity extends BaseActivity {
 //修好了			hideTimeXu();                       //xuameng进入回看前先隐藏上方系统时间
                     showProgressBars(true);             //xuameng然后再显示
 					showBottomEpgBack();               //xuameng回看EPG
-					liveChannelItemAdapter.setSelectedChannelIndex(position);
-                    playChannelback(liveChannelGroupAdapter.getSelectedGroupIndex(), position, false);
+                    playChannelback(liveChannelGroupAdapter.getSelectedGroupIndex(), liveChannelItemAdapter.getSelectedChannelIndex(), false);
 //					showTimeXu();                       //xuameng显示系统时间
 //					showNetSpeedXu();  
                     isBack = true;
@@ -2316,8 +2314,8 @@ public void showToastXu(){
                 if (position < 0) return;
                 liveChannelGroupAdapter.setFocusedGroupIndex(-1);
                 liveChannelItemAdapter.setFocusedChannelIndex(position);
-				playChannelback(liveChannelGroupAdapter.getSelectedGroupIndex(), position, false);
-	            playChannelxu(liveChannelItemAdapter.getSelectedfocusedChannelIndex(), false);   //xuameng换频道显示EPG
+				liveChannelItemAdapter.setSelectedChannelIndex(position);
+	            playChannelxu(liveChannelGroupAdapter.getSelectedGroupIndex(), liveChannelItemAdapter.getSelectedChannelIndex(), false);   //xuameng换频道显示EPG
 			    liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
                 mHideChannelListRunXu();  //xuameng隐藏频道菜单
             }
