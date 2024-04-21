@@ -1683,7 +1683,7 @@ public class LivePlayActivity extends BaseActivity {
                 if (now.compareTo(selectedData.startdateTime) >= 0 && now.compareTo(selectedData.enddateTime) <= 0) {
                     mVideoView.release();
                     isSHIYI = false;
-                    mVideoView.setUrl(currentLiveChannelItem.getUrl());
+                    mVideoView.setUrl(currentLiveChannelItemXu.getUrl());
                     mVideoView.start();
                     epgListAdapter.setShiyiSelection(-1, false,timeFormat.format(date));
 					getEpg(new Date());
@@ -1692,7 +1692,7 @@ public class LivePlayActivity extends BaseActivity {
                     currentLiveChannelIndex = liveChannelItemAdapter.getSelectedChannelIndex();
                     return;
                 }
-                String shiyiUrl = currentLiveChannelItem.getUrl();
+                String shiyiUrl = currentLiveChannelItemXu.getUrl();
                 if (now.compareTo(selectedData.startdateTime) < 0) {
 
                 } else if(shiyiUrl.indexOf("PLTV/") !=-1){     //xuameng判断直播源URL中有没有PLTV字符，有才可以时移
