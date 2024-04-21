@@ -503,12 +503,13 @@ public class LivePlayActivity extends BaseActivity {
                 int finalI = i;
 	            mRightEpgList.setSelectedPosition(i);
 				epgListAdapter.setSelectedEpgIndex(i);
-                mRightEpgList.post(new Runnable() {
+/*                mRightEpgList.post(new Runnable() {
                      @Override
                      public void run() {
                          mRightEpgList.smoothScrollToPosition(finalI);
                      }
                 });
+				*/
             }
         } else {             //xuameng无EPG时提示信息
             Epginfo epgbcinfo = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "00:00", "01:59", 0);
@@ -1584,10 +1585,6 @@ public class LivePlayActivity extends BaseActivity {
 
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
-				if (mRightEpgList.isScrolling() || mRightEpgList.isComputingLayout())  {        //xuameng如果EPG正在滚动返回，解决BUG
-                   return;
-				}
-				else
                    mHideChannelListRunXu();
                    epgListAdapter.setFocusedEpgIndex(position);
             }
