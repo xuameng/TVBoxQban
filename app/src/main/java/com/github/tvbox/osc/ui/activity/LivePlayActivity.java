@@ -1669,11 +1669,10 @@ public class LivePlayActivity extends BaseActivity {
 
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
-			   if (mRightEpgList.isScrolling() || mRightEpgList.isComputingLayout())  {        //xuameng如果EPG正在滚动返回，解决BUG
-                   return;
-				}
                 mHideChannelListRunXu();
                 epgListAdapter.setFocusedEpgIndex(position);
+				                    currentChannelGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
+                    currentLiveChannelIndex = liveChannelItemAdapter.getSelectedChannelIndex();
             }
 
             @Override
@@ -1698,8 +1697,6 @@ public class LivePlayActivity extends BaseActivity {
                     mVideoView.setUrl(currentLiveChannelItem.getUrl());
                     mVideoView.start();
 //                  epgListAdapter.setShiyiSelection(-1, false,timeFormat.format(date));    //XUAMENG没用了
-                    currentChannelGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
-                    currentLiveChannelIndex = liveChannelItemAdapter.getSelectedChannelIndex();
 					getEpg(new Date());
                     showBottomEpg();           //xuameng显示EPG和上面菜单
                     return;
@@ -1752,8 +1749,6 @@ public class LivePlayActivity extends BaseActivity {
 //修好了			hideTimeXu();                       //xuameng进入回看前先隐藏上方系统时间
                     showProgressBars(true);             //xuameng然后再显示
 					showBottomEpgBack();               //xuameng回看EPG
-                    currentChannelGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
-                    currentLiveChannelIndex = liveChannelItemAdapter.getSelectedChannelIndex();
 //					showTimeXu();                       //xuameng显示系统时间
 //					showNetSpeedXu();  
                     isBack = true;
