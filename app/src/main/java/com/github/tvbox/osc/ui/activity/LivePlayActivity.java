@@ -1672,6 +1672,8 @@ public class LivePlayActivity extends BaseActivity {
         epgListAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+			    currentChannelGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
+                currentLiveChannelIndex = liveChannelItemAdapter.getSelectedChannelIndex();
                 Date date = liveEpgDateAdapter.getSelectedIndex() < 0 ? new Date() :
                 liveEpgDateAdapter.getData().get(liveEpgDateAdapter.getSelectedIndex()).getDateParamVal();
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
@@ -1693,6 +1695,8 @@ public class LivePlayActivity extends BaseActivity {
                     epgListAdapter.setShiyiSelection(-1, false,timeFormat.format(date));
 					getEpg(new Date());
                     showBottomEpg();           //xuameng显示EPG和上面菜单
+			        currentChannelGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
+                    currentLiveChannelIndex = liveChannelItemAdapter.getSelectedChannelIndex();
                     return;
                 }
                 String shiyiUrl = currentLiveChannelItem.getUrl();
@@ -1736,6 +1740,8 @@ public class LivePlayActivity extends BaseActivity {
 					isVOD = false;
 					tv_right_top_type.setText("回看中");
 					iv_play_pause.setText("回看暂停中！聚汇直播欢迎您的收看！");
+			        currentChannelGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
+                    currentLiveChannelIndex = liveChannelItemAdapter.getSelectedChannelIndex();
                 }
             }
         });
