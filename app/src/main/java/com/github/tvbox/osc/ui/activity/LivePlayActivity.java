@@ -1402,18 +1402,15 @@ public class LivePlayActivity extends BaseActivity {
         if (!changeSource) {
             currentChannelGroupIndexXu = channelGroupIndex;     //xuameng重要频道组
 			currentLiveChannelIndexXu = liveChannelIndex;     //xuameng重要频道名称
-            currentLiveChannelItem = getLiveChannels(currentChannelGroupIndexXu).get(currentLiveChannelIndexXu);
-			Hawk.put(HawkConfig.LIVE_CHANNEL, currentLiveChannelItem.getChannelName());
-            livePlayerManager.getLiveChannelPlayer(mVideoView, currentLiveChannelItem.getChannelName());
-
+            currentLiveChannelItemXu = getLiveChannels(currentChannelGroupIndexXu).get(currentLiveChannelIndexXu);
         }
-        channel_Name = currentLiveChannelItem;        //xuameng重要EPG名称
+        channel_Name = currentLiveChannelItemXu;        //xuameng重要EPG名称
         isSHIYI=false;
         isBack = false;
-        if(currentLiveChannelItem.getUrl().indexOf("PLTV/") !=-1){       //xuameng判断直播源URL中有没有PLTV字符，有才可以时移
-            currentLiveChannelItem.setinclude_back(true);
+        if(currentLiveChannelItemXu.getUrl().indexOf("PLTV/") !=-1){       //xuameng判断直播源URL中有没有PLTV字符，有才可以时移
+            currentLiveChannelItemXu.setinclude_back(true);
         }else {
-            currentLiveChannelItem.setinclude_back(false);
+            currentLiveChannelItemXu.setinclude_back(false);
         }
         getEpgxu(new Date());
         return true;
@@ -1608,7 +1605,7 @@ public class LivePlayActivity extends BaseActivity {
                 if (now.compareTo(selectedData.startdateTime) >= 0 && now.compareTo(selectedData.enddateTime) <= 0) {
                     mVideoView.release();
                     isSHIYI = false;
-                    mVideoView.setUrl(currentLiveChannelItem.getUrl());
+                    mVideoView.setUrl(currentLiveChannelItemXu.getUrl());
                     mVideoView.start();
 //                  epgListAdapter.setShiyiSelection(-1, false,timeFormat.format(date));    //XUAMENG没用了
 					getEpg(new Date());
@@ -1617,7 +1614,7 @@ public class LivePlayActivity extends BaseActivity {
                     currentLiveChannelIndex = liveChannelItemAdapter.getSelectedChannelIndex();
                     return;
                 }
-                String shiyiUrl = currentLiveChannelItem.getUrl();
+                String shiyiUrl = currentLiveChannelItemXu.getUrl();
                 if (now.compareTo(selectedData.startdateTime) < 0) {
 
                 } else if(shiyiUrl.indexOf("PLTV/") !=-1){     //xuameng判断直播源URL中有没有PLTV字符，有才可以时移
