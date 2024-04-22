@@ -1247,6 +1247,15 @@ public class LivePlayActivity extends BaseActivity {
 		if(isVOD){
 			Mtv_left_top_xu.setVisibility(View.GONE);
 		}
+			Calendar calendar = Calendar.getInstance();
+            calendar.setTime(new Date());
+            SimpleDateFormat datePresentFormat = new SimpleDateFormat("MM月dd日");          //xuameng加中文
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
+            Date dateIns = calendar.getTime();
+            LiveEpgDate epgDate = new LiveEpgDate();
+            epgDate.setDatePresented(datePresentFormat.format(dateIns));
+            epgDate.setDateParamVal(dateIns);
+            liveEpgDateAdapter.addData(epgDate);
         if (tvLeftChannelListLayout.getVisibility() == View.INVISIBLE) {
             //重新载入上一次状态
             liveChannelItemAdapter.setNewData(getLiveChannels(currentChannelGroupIndex));
@@ -1782,7 +1791,7 @@ public class LivePlayActivity extends BaseActivity {
         });
 
         //电视
-        liveEpgDateAdapter.setOnItemClickListener(new TvRecyclerView.OnItemListener() {
+        mEpgDateGridView.setOnItemListener(new TvRecyclerView.OnItemListener() {
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
                 liveEpgDateAdapter.setFocusedIndex(-1);
@@ -1798,14 +1807,25 @@ public class LivePlayActivity extends BaseActivity {
             public void onItemClick(TvRecyclerView parent, View itemView, int position) {
                 mHideChannelListRunXu();  //xuameng隐藏频道菜单
                 liveEpgDateAdapter.setSelectedIndex(position); 
+                getEpgXu(liveEpgDateAdapter.getData().get(position).getDateParamVal());    //XUAMENG 7天EPG
+            }
+        });
+
+        //手机/模拟器
+        liveEpgDateAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                FastClickCheckUtil.check(view);
+                mHideChannelListRunXu();   //xuameng隐藏频道菜单
+                liveEpgDateAdapter.setSelectedIndex(position);
 				currentChannelGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
                 currentLiveChannelIndex = liveChannelItemAdapter.getSelectedChannelIndex();
 				currentLiveChannelItem = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndex);
 				channel_NameXu = currentLiveChannelItem;
                 getEpgXu(liveEpgDateAdapter.getData().get(position).getDateParamVal());    //XUAMENG 7天EPG
+
             }
         });
-
         liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
     }
 
