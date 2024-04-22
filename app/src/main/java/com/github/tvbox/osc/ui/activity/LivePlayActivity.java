@@ -487,7 +487,7 @@ public class LivePlayActivity extends BaseActivity {
 	private void showEpgxu(Date date, ArrayList<Epginfo> arrayList) {
         if (arrayList != null && arrayList.size() > 0) {
             epgdata = arrayList;
-            epgListAdapter.CanBack(currentLiveChannelItem.getinclude_back());
+            epgListAdapter.CanBack(currentLiveChannelItemXu.getinclude_back());
             epgListAdapter.setNewData(epgdata);
 
             int i = -1;
@@ -607,7 +607,7 @@ public class LivePlayActivity extends BaseActivity {
             epgTagName = epgInfo[1];
         }
         String finalChannelName = channelName;
-        epgListAdapter.CanBack(currentLiveChannelItem.getinclude_back());
+        epgListAdapter.CanBack(currentLiveChannelItemXu.getinclude_back());
         //epgListAdapter.updateData(date, new ArrayList<>());
 
         String url;
