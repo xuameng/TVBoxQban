@@ -1819,16 +1819,7 @@ public class LivePlayActivity extends BaseActivity {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
         SimpleDateFormat datePresentFormat = new SimpleDateFormat("MM月dd日");          //xuameng加中文
-        calendar.add(Calendar.DAY_OF_MONTH, 1);
-        for (int i = 0; i < 9; i++) {              //XUAMENG8天回看
-            Date dateIns = calendar.getTime();
-            LiveEpgDate epgDate = new LiveEpgDate();
-            epgDate.setIndex(i);
-            epgDate.setDatePresented(datePresentFormat.format(dateIns));
-            epgDate.setDateParamVal(dateIns);
-            liveEpgDateAdapter.addData(epgDate);
-            calendar.add(Calendar.DAY_OF_MONTH, -1);
-        }
+
                 currentChannelGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();    //XUAMENG 7天EPG
                 currentLiveChannelIndex = liveChannelItemAdapter.getSelectedChannelIndex();
 				currentLiveChannelItem = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndex);
