@@ -1782,7 +1782,7 @@ public class LivePlayActivity extends BaseActivity {
         });
 
         //电视
-        mEpgDateGridView.setOnItemClickListener(new TvRecyclerView.OnItemListener() {
+        liveEpgDateAdapter.setOnItemClickListener(new TvRecyclerView.OnItemListener() {
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
                 liveEpgDateAdapter.setFocusedIndex(-1);
