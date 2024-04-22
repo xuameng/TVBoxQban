@@ -642,6 +642,9 @@ public class LivePlayActivity extends BaseActivity {
                     jSONException.printStackTrace();
                 }
                 showEpgxu(date, arrayList);
+				String savedEpgKeyXu = channelName + "_" + liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex()).getDatePresented();
+                if (!hsEpg.contains(savedEpgKey))
+                hsEpg.put(savedEpgKey, arrayList);
             }
         });
     }
