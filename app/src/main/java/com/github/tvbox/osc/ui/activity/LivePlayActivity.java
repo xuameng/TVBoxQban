@@ -1665,6 +1665,11 @@ public class LivePlayActivity extends BaseActivity {
         epgListAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+				currentChannelGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
+                currentLiveChannelIndex = liveChannelItemAdapter.getSelectedChannelIndex();
+			    Hawk.put(HawkConfig.LIVE_CHANNEL, currentLiveChannelItemXu.getChannelName());
+                livePlayerManager.getLiveChannelPlayer(mVideoView, currentLiveChannelItemXu.getChannelName());
+			    liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
                 Date date = liveEpgDateAdapter.getSelectedIndex() < 0 ? new Date() :
                 liveEpgDateAdapter.getData().get(liveEpgDateAdapter.getSelectedIndex()).getDateParamVal();
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
@@ -1681,24 +1686,11 @@ public class LivePlayActivity extends BaseActivity {
                 if (now.compareTo(selectedData.startdateTime) >= 0 && now.compareTo(selectedData.enddateTime) <= 0) {
                     mVideoView.release();
                     isSHIYI = false;
-					if (currentLiveChannelItemXu = 0){
-                    mVideoView.setUrl(currentLiveChannelItem.getUrl());
-                    mVideoView.start();
-                    epgListAdapter.setShiyiSelection(-1, false,timeFormat.format(date));
-					getEpg(new Date());
-                    showBottomEpg();           //xuameng显示EPG和上面菜单
-					}else{
-					currentChannelGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
-                    currentLiveChannelIndex = liveChannelItemAdapter.getSelectedChannelIndex();
-			        Hawk.put(HawkConfig.LIVE_CHANNEL, currentLiveChannelItemXu.getChannelName());
-                    livePlayerManager.getLiveChannelPlayer(mVideoView, currentLiveChannelItemXu.getChannelName());
-			        liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
                     mVideoView.setUrl(currentLiveChannelItemXu.getUrl());
                     mVideoView.start();
                     epgListAdapter.setShiyiSelection(-1, false,timeFormat.format(date));
 					getEpg(new Date());
-                    showBottomEpg();           //xuameng显示EPG和上面菜单
-					}                    
+                    showBottomEpg();           //xuameng显示EPG和上面菜                
                     return;
                 }
 				if (currentLiveChannelItemXu = 0){
