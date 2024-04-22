@@ -1805,8 +1805,8 @@ public class LivePlayActivity extends BaseActivity {
 				currentChannelGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();    //XUAMENG 7天EPG
                 currentLiveChannelIndex = liveChannelItemAdapter.getSelectedChannelIndex();
 				currentLiveChannelItem = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndex);
-				channel_Name = currentLiveChannelItem; 
-                getEpg(liveEpgDateAdapter.getData().get(position).getDateParamVal());    //XUAMENG 7天EPG
+				channel_NameXu = currentLiveChannelItem; 
+                getEpgxu(liveEpgDateAdapter.getData().get(position).getDateParamVal());    //XUAMENG 7天EPG
             }
         });
 
@@ -1817,11 +1817,12 @@ public class LivePlayActivity extends BaseActivity {
                 FastClickCheckUtil.check(view);
                 mHideChannelListRunXu();   //xuameng隐藏频道菜单
                 liveEpgDateAdapter.setSelectedIndex(position);
+				Date date = liveEpgDateAdapter.getSelectedIndex() < 0 ? new Date() :
                 currentChannelGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();    //XUAMENG 7天EPG
                 currentLiveChannelIndex = liveChannelItemAdapter.getSelectedChannelIndex();
 				currentLiveChannelItem = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndex);
-				channel_Name = currentLiveChannelItem; 
-                getEpg(liveEpgDateAdapter.getData().get(position).getDateParamVal());
+				channel_NameXu = currentLiveChannelItem; 
+                getEpgXu(liveEpgDateAdapter.getData().get(position).getDateParamVal());
             }
         });
         liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
