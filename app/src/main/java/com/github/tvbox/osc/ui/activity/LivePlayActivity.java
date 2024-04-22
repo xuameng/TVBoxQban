@@ -1807,26 +1807,6 @@ public class LivePlayActivity extends BaseActivity {
             }
         });
 
-        //手机/模拟器
-        liveEpgDateAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                FastClickCheckUtil.check(view);
-                mHideChannelListRunXu();   //xuameng隐藏频道菜单
-                liveEpgDateAdapter.setSelectedIndex(position);
-
-        liveEpgDateAdapter = new LiveEpgDateAdapter();
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date());
-        SimpleDateFormat datePresentFormat = new SimpleDateFormat("MM月dd日");          //xuameng加中文
-
-                currentChannelGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();    //XUAMENG 7天EPG
-                currentLiveChannelIndex = liveChannelItemAdapter.getSelectedChannelIndex();
-				currentLiveChannelItem = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndex);
-				channel_NameXu = currentLiveChannelItem; 
-                getEpgxu(liveEpgDateAdapter.getData().get(position).getDateParamVal());    //XUAMENG 7天EPG
-            }
-        });
         liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
     }
 
