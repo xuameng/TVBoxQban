@@ -1817,6 +1817,14 @@ public class LivePlayActivity extends BaseActivity {
         SimpleDateFormat datePresentFormat = new SimpleDateFormat("MM月dd日");          //xuameng加中文
         calendar.add(Calendar.DAY_OF_MONTH, 1);
 
+            Date dateIns = calendar.getTime();
+            LiveEpgDate epgDate = new LiveEpgDate();
+            epgDate.setDatePresented(datePresentFormat.format(dateIns));
+            epgDate.setDateParamVal(dateIns);
+            liveEpgDateAdapter.addData(epgDate);
+
+        }
+
                 FastClickCheckUtil.check(view);
                 mHideChannelListRunXu();   //xuameng隐藏频道菜单
                 liveEpgDateAdapter.setSelectedIndex(position);
@@ -1825,6 +1833,7 @@ public class LivePlayActivity extends BaseActivity {
 				currentLiveChannelItem = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndex);
 				channel_NameXu = currentLiveChannelItem; 
                 getEpgxu(liveEpgDateAdapter.getData().get(position).getDateParamVal());    //XUAMENG 7天EPG
+
             }
         });
         liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
