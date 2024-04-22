@@ -1590,8 +1590,9 @@ public class LivePlayActivity extends BaseActivity {
             public void onItemClick(TvRecyclerView parent, View itemView, int position) {
 		        currentChannelGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
                 currentLiveChannelIndex = liveChannelItemAdapter.getSelectedChannelIndex();
-			    Hawk.put(HawkConfig.LIVE_CHANNEL, currentLiveChannelItemXu.getChannelName());
-                livePlayerManager.getLiveChannelPlayer(mVideoView, currentLiveChannelItemXu.getChannelName());
+				currentLiveChannelItem = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndex);
+			    Hawk.put(HawkConfig.LIVE_CHANNEL, currentLiveChannelItem.getChannelName());
+                livePlayerManager.getLiveChannelPlayer(mVideoView, currentLiveChannelItem.getChannelName());
 			    liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
                 Date date = liveEpgDateAdapter.getSelectedIndex() < 0 ? new Date() :
                 liveEpgDateAdapter.getData().get(liveEpgDateAdapter.getSelectedIndex()).getDateParamVal();
@@ -1665,10 +1666,11 @@ public class LivePlayActivity extends BaseActivity {
         epgListAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-				currentChannelGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
+		        currentChannelGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
                 currentLiveChannelIndex = liveChannelItemAdapter.getSelectedChannelIndex();
-			    Hawk.put(HawkConfig.LIVE_CHANNEL, currentLiveChannelItemXu.getChannelName());
-                livePlayerManager.getLiveChannelPlayer(mVideoView, currentLiveChannelItemXu.getChannelName());
+				currentLiveChannelItem = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndex);
+			    Hawk.put(HawkConfig.LIVE_CHANNEL, currentLiveChannelItem.getChannelName());
+                livePlayerManager.getLiveChannelPlayer(mVideoView, currentLiveChannelItem.getChannelName());
 			    liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
                 Date date = liveEpgDateAdapter.getSelectedIndex() < 0 ? new Date() :
                 liveEpgDateAdapter.getData().get(liveEpgDateAdapter.getSelectedIndex()).getDateParamVal();
@@ -1690,10 +1692,10 @@ public class LivePlayActivity extends BaseActivity {
                     mVideoView.start();
                     epgListAdapter.setShiyiSelection(-1, false,timeFormat.format(date));
 					getEpg(new Date());
-                    showBottomEpg();           //xuameng显示EPG和上面菜                
+                    showBottomEpg();           //xuameng显示EPG和上面菜单            
                     return;
                 }
-                    String shiyiUrl = currentLiveChannelItemXu.getUrl();
+                String shiyiUrl = currentLiveChannelItemXu.getUrl();
                 if (now.compareTo(selectedData.startdateTime) < 0) {
 
                 } else if(shiyiUrl.indexOf("PLTV/") !=-1){     //xuameng判断直播源URL中有没有PLTV字符，有才可以时移
