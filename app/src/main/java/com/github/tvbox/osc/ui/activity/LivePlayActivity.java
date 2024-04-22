@@ -1251,6 +1251,15 @@ public class LivePlayActivity extends BaseActivity {
 		if(isVOD){
 			Mtv_left_top_xu.setVisibility(View.GONE);
 		}
+			Calendar calendar = Calendar.getInstance();
+            calendar.setTime(new Date());
+            SimpleDateFormat datePresentFormat = new SimpleDateFormat("MM月dd日");          //xuameng加中文
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
+            Date dateIns = calendar.getTime();
+            LiveEpgDate epgDate = new LiveEpgDate();
+            epgDate.setDatePresented(datePresentFormat.format(dateIns));
+            epgDate.setDateParamVal(dateIns);
+            liveEpgDateAdapter.addData(epgDate);
         if (tvLeftChannelListLayout.getVisibility() == View.INVISIBLE) {
             //重新载入上一次状态
             liveChannelItemAdapter.setNewData(getLiveChannels(currentChannelGroupIndex));
@@ -1810,19 +1819,7 @@ public class LivePlayActivity extends BaseActivity {
         //手机/模拟器
         liveEpgDateAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
-
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-		Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date());
-        SimpleDateFormat datePresentFormat = new SimpleDateFormat("MM月dd日");          //xuameng加中文
-        calendar.add(Calendar.DAY_OF_MONTH, 1);
-
-            Date dateIns = calendar.getTime();
-            LiveEpgDate epgDate = new LiveEpgDate();
-            epgDate.setDatePresented(datePresentFormat.format(dateIns));
-            epgDate.setDateParamVal(dateIns);
-            liveEpgDateAdapter.addData(epgDate);
-
 
                 FastClickCheckUtil.check(view);
                 mHideChannelListRunXu();   //xuameng隐藏频道菜单
