@@ -1693,11 +1693,7 @@ public class LivePlayActivity extends BaseActivity {
                     showBottomEpg();           //xuameng显示EPG和上面菜                
                     return;
                 }
-				if (currentLiveChannelItemXu = 0){
-                    String shiyiUrl = currentLiveChannelItem.getUrl();
-				}else{
                     String shiyiUrl = currentLiveChannelItemXu.getUrl();
-				}
                 if (now.compareTo(selectedData.startdateTime) < 0) {
 
                 } else if(shiyiUrl.indexOf("PLTV/") !=-1){     //xuameng判断直播源URL中有没有PLTV字符，有才可以时移
