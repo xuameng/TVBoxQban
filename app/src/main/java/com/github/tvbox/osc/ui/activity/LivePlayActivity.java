@@ -1782,7 +1782,7 @@ public class LivePlayActivity extends BaseActivity {
         });
 
         //电视
-        mEpgDateGridView.setOnItemListener(new TvRecyclerView.OnItemListener() {
+        mEpgDateGridView.setOnItemClickListener(new TvRecyclerView.OnItemListener() {
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
                 liveEpgDateAdapter.setFocusedIndex(-1);
@@ -1798,22 +1798,14 @@ public class LivePlayActivity extends BaseActivity {
             public void onItemClick(TvRecyclerView parent, View itemView, int position) {
                 mHideChannelListRunXu();  //xuameng隐藏频道菜单
                 liveEpgDateAdapter.setSelectedIndex(position); 
-                getEpg(liveEpgDateAdapter.getData().get(position).getDateParamVal());    //XUAMENG 7天EPG
+				currentChannelGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
+                currentLiveChannelIndex = liveChannelItemAdapter.getSelectedChannelIndex();
+				currentLiveChannelItem = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndex);
+				channel_NameXu = currentLiveChannelItem;
+                getEpgXu(liveEpgDateAdapter.getData().get(position).getDateParamVal());    //XUAMENG 7天EPG
             }
         });
 
-        //手机/模拟器
-        liveEpgDateAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-
-                FastClickCheckUtil.check(view);
-                mHideChannelListRunXu();   //xuameng隐藏频道菜单
-                liveEpgDateAdapter.setSelectedIndex(position);
-                getEpg(liveEpgDateAdapter.getData().get(position).getDateParamVal());    //XUAMENG 7天EPG
-
-            }
-        });
         liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
     }
 
