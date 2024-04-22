@@ -1823,7 +1823,6 @@ public class LivePlayActivity extends BaseActivity {
             epgDate.setDateParamVal(dateIns);
             liveEpgDateAdapter.addData(epgDate);
 
-        }
 
                 FastClickCheckUtil.check(view);
                 mHideChannelListRunXu();   //xuameng隐藏频道菜单
