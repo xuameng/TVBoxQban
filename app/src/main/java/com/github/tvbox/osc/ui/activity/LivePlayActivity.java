@@ -643,8 +643,8 @@ public class LivePlayActivity extends BaseActivity {
                 }
                 showEpgxu(date, arrayList);
 				String savedEpgKeyXu = channelName + "_" + liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex()).getDatePresented();
-                if (!hsEpg.contains(savedEpgKey))
-                hsEpg.put(savedEpgKey, arrayList);
+                if (!hsEpg.contains(savedEpgKeyXu))
+                hsEpg.put(savedEpgKeyXu, arrayList);
             }
         });
     }
