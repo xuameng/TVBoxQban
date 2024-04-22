@@ -1247,19 +1247,6 @@ public class LivePlayActivity extends BaseActivity {
 		if(isVOD){
 			Mtv_left_top_xu.setVisibility(View.GONE);
 		}
-			Calendar calendar = Calendar.getInstance();
-            calendar.setTime(new Date());
-            SimpleDateFormat datePresentFormat = new SimpleDateFormat("MM月dd日");          //xuameng加中文
-            calendar.add(Calendar.DAY_OF_MONTH, 1);
-        for (int i = 0; i < 9; i++) {              //XUAMENG8天回看
-            Date dateIns = calendar.getTime();
-            LiveEpgDate epgDate = new LiveEpgDate();
-            epgDate.setIndex(i);
-            epgDate.setDatePresented(datePresentFormat.format(dateIns));
-            epgDate.setDateParamVal(dateIns);
-            liveEpgDateAdapter.addData(epgDate);
-            calendar.add(Calendar.DAY_OF_MONTH, -1);
-        }
         if (tvLeftChannelListLayout.getVisibility() == View.INVISIBLE) {
             //重新载入上一次状态
             liveChannelItemAdapter.setNewData(getLiveChannels(currentChannelGroupIndex));
@@ -1820,7 +1807,19 @@ public class LivePlayActivity extends BaseActivity {
         liveEpgDateAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-
+			Calendar calendar = Calendar.getInstance();
+            calendar.setTime(new Date());
+            SimpleDateFormat datePresentFormat = new SimpleDateFormat("MM月dd日");          //xuameng加中文
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
+        for (int i = 0; i < 9; i++) {              //XUAMENG8天回看
+            Date dateIns = calendar.getTime();
+            LiveEpgDate epgDate = new LiveEpgDate();
+            epgDate.setIndex(i);
+            epgDate.setDatePresented(datePresentFormat.format(dateIns));
+            epgDate.setDateParamVal(dateIns);
+            liveEpgDateAdapter.addData(epgDate);
+            calendar.add(Calendar.DAY_OF_MONTH, -1);
+        }
                 FastClickCheckUtil.check(view);
                 mHideChannelListRunXu();   //xuameng隐藏频道菜单
                 liveEpgDateAdapter.setSelectedIndex(position);
