@@ -1802,7 +1802,7 @@ public class LivePlayActivity extends BaseActivity {
             public void onItemClick(TvRecyclerView parent, View itemView, int position) {
                 mHideChannelListRunXu();  //xuameng隐藏频道菜单
                 liveEpgDateAdapter.setSelectedIndex(position);
-                getEpg(liveEpgDateAdapter.getData().get(position).getDateParamVal());
+                getEpgxu(liveEpgDateAdapter.getData().get(position).getDateParamVal());    //XUAMENG 7天EPG
             }
         });
 
