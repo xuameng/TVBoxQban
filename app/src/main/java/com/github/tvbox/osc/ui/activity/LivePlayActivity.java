@@ -1810,12 +1810,13 @@ public class LivePlayActivity extends BaseActivity {
         //手机/模拟器
         liveEpgDateAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
-				        Calendar calendar = Calendar.getInstance();
+
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+		Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
         SimpleDateFormat datePresentFormat = new SimpleDateFormat("MM月dd日");          //xuameng加中文
         calendar.add(Calendar.DAY_OF_MONTH, 1);
 
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 FastClickCheckUtil.check(view);
                 mHideChannelListRunXu();   //xuameng隐藏频道菜单
                 liveEpgDateAdapter.setSelectedIndex(position);
