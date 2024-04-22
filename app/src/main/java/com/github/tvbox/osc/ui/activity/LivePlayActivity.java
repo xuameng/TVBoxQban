@@ -131,6 +131,7 @@ public class LivePlayActivity extends BaseActivity {
     private ArrayList<Integer> channelGroupPasswordConfirmed = new ArrayList<>();
 
     private static LiveChannelItem  channel_Name = null;
+	private static LiveChannelItem  channel_NameXu = null;
     private static Hashtable hsEpg = new Hashtable();
     private CountDownTimer countDownTimer;
     private View ll_right_top_loading;     //xuameng右上菜单
@@ -597,7 +598,7 @@ public class LivePlayActivity extends BaseActivity {
 
 
     public void getEpgxu(Date date) {
-        String channelName = channel_Name.getChannelName();
+        String channelName = channel_NameXu.getChannelName();
         SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd");
         timeFormat.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
         String[] epgInfo = EpgUtil.getEpgInfo(channelName);
@@ -1405,7 +1406,7 @@ public class LivePlayActivity extends BaseActivity {
             currentLiveChannelItemXu = getLiveChannels(currentChannelGroupIndexXu).get(currentLiveChannelIndexXu);
 			liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
         }
-        channel_Name = currentLiveChannelItemXu;        //xuameng重要EPG名称
+        channel_NameXu = currentLiveChannelItemXu;        //xuameng重要EPG名称
         isSHIYI=false;
         isBack = false;
         if(currentLiveChannelItemXu.getUrl().indexOf("PLTV/") !=-1){       //xuameng判断直播源URL中有没有PLTV字符，有才可以时移
@@ -1594,6 +1595,8 @@ public class LivePlayActivity extends BaseActivity {
 			    Hawk.put(HawkConfig.LIVE_CHANNEL, currentLiveChannelItem.getChannelName());
                 livePlayerManager.getLiveChannelPlayer(mVideoView, currentLiveChannelItem.getChannelName());
 			    liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
+				channel_NameXu = currentLiveChannelItem;        //xuameng重要EPG名称
+				String channelName = channel_NameXu.getChannelName();
                 Date date = liveEpgDateAdapter.getSelectedIndex() < 0 ? new Date() :
                 liveEpgDateAdapter.getData().get(liveEpgDateAdapter.getSelectedIndex()).getDateParamVal();
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
@@ -1671,6 +1674,8 @@ public class LivePlayActivity extends BaseActivity {
 				currentLiveChannelItem = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndex);
 			    Hawk.put(HawkConfig.LIVE_CHANNEL, currentLiveChannelItem.getChannelName());
                 livePlayerManager.getLiveChannelPlayer(mVideoView, currentLiveChannelItem.getChannelName());
+				channel_NameXu = currentLiveChannelItem;        //xuameng重要EPG名称
+				String channelName = channel_NameXu.getChannelName();
 			    liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
                 Date date = liveEpgDateAdapter.getSelectedIndex() < 0 ? new Date() :
                 liveEpgDateAdapter.getData().get(liveEpgDateAdapter.getSelectedIndex()).getDateParamVal();
