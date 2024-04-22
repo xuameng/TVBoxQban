@@ -1595,8 +1595,8 @@ public class LivePlayActivity extends BaseActivity {
 			    Hawk.put(HawkConfig.LIVE_CHANNEL, currentLiveChannelItem.getChannelName());
                 livePlayerManager.getLiveChannelPlayer(mVideoView, currentLiveChannelItem.getChannelName());
 			    liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
-				channel_NameXu = currentLiveChannelItem;        //xuameng重要EPG名称
-				String channelName = channel_NameXu.getChannelName();
+				channel_Name = currentLiveChannelItem;        //xuameng重要EPG名称
+				String channelName = channel_Name.getChannelName();
                 Date date = liveEpgDateAdapter.getSelectedIndex() < 0 ? new Date() :
                 liveEpgDateAdapter.getData().get(liveEpgDateAdapter.getSelectedIndex()).getDateParamVal();
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
@@ -1674,8 +1674,8 @@ public class LivePlayActivity extends BaseActivity {
 				currentLiveChannelItem = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndex);
 			    Hawk.put(HawkConfig.LIVE_CHANNEL, currentLiveChannelItem.getChannelName());
                 livePlayerManager.getLiveChannelPlayer(mVideoView, currentLiveChannelItem.getChannelName());
-				channel_NameXu = currentLiveChannelItem;        //xuameng重要EPG名称
-				String channelName = channel_NameXu.getChannelName();
+				channel_Name = currentLiveChannelItem;        //xuameng重要EPG名称
+				String channelName = channel_Name.getChannelName();
 			    liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
                 Date date = liveEpgDateAdapter.getSelectedIndex() < 0 ? new Date() :
                 liveEpgDateAdapter.getData().get(liveEpgDateAdapter.getSelectedIndex()).getDateParamVal();
