@@ -363,7 +363,7 @@ public class VodController extends BaseController {
                 }
 
                 long duration = mControlWrapper.getDuration();
-                long newPosition = (duration * progress) / seekBar.getMax();
+                long newPosition = mControlWrapper.getCurrentPosition();
                 if (mCurrentTime != null)
                     mCurrentTime.setText(stringForTime((int) newPosition));
             }
@@ -380,7 +380,7 @@ public class VodController extends BaseController {
                 myHandle.removeCallbacks(myRunnable);
                 myHandle.postDelayed(myRunnable, myHandleSeconds);
                 long duration = mControlWrapper.getDuration();
-                long newPosition = (duration * seekBar.getProgress()) / seekBar.getMax();
+                long newPosition = mControlWrapper.getCurrentPosition();
                 mControlWrapper.seekTo((int) newPosition);
                 mIsDragging = false;
                 mControlWrapper.startProgress();
@@ -929,25 +929,24 @@ public class VodController extends BaseController {
         if (mIsDragging) {
             return;
         }
-        super.setProgress(duration, position);
-        if (skipEnd && position != 0 && duration != 0) {
+		int durationXu = (int) mControlWrapper.getDuration();
+		int posXu = (int) (mControlWrapper.getCurrentPosition());
+        super.setProgress(durationXu, posXu);
+        if (skipEnd && posXu != 0 && durationXu != 0) {
             int et = 0;
             try {
                 et = mPlayerConfig.getInt("et");
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            if (et > 0 && position + (et * 1000) >= duration) {
+            if (et > 0 && posXu + (et * 1000) >= durationXu) {
                 skipEnd = false;
                 listener.playNext(true);
             }
         }
-        mCurrentTime.setText(PlayerUtils.stringForTime(position));
-        mTotalTime.setText(PlayerUtils.stringForTime(duration));
-        if (duration > 0) {
+        if (durationXu > 0) {
             mSeekBar.setEnabled(true);
-            int pos = (int) (position * 1.0 / duration * mSeekBar.getMax());
-            mSeekBar.setProgress(pos);
+            mSeekBar.setProgress(posXu);
         } else {
             mSeekBar.setEnabled(false);
         }
@@ -957,6 +956,8 @@ public class VodController extends BaseController {
         } else {
             mSeekBar.setSecondaryProgress(percent * 10);
         }
+		mCurrentTime.setText(PlayerUtils.stringForTime(posXu));
+        mTotalTime.setText(PlayerUtils.stringForTime(durationXu));
     }
 
     private boolean simSlideStart = false;
@@ -1169,13 +1170,7 @@ public class VodController extends BaseController {
                     myHandle.postDelayed(myRunnable, myHandleSeconds);
                     return true;
                 }
-            } //else if (keyCode == KeyEvent.KEYCODE_BACK ) {
-              //if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME) < 1500) {    //xuameng防连击这里测试1500ms比较合适
-              //    DOUBLE_CLICK_TIME = System.currentTimeMillis();
-              //    xuameng防连击这里执行单击后的操作            
-              //        return true;
-              //   }
-              //}           
+            }      
             } else if (action == KeyEvent.ACTION_UP) {
             if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
                 if (isInPlayback) {
