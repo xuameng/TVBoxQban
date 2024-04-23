@@ -1341,9 +1341,8 @@ public class LivePlayActivity extends BaseActivity {
           isBack = false;
           return true;
         }
-		if (mVideoView == null) 
-			mVideoView.release();
-			return true;    //XUAMENG可能会引起空指针问题的修复
+		if (mVideoView == null) return true;    //XUAMENG可能会引起空指针问题的修复
+        mVideoView.release();
         if (!changeSource) {
             currentChannelGroupIndex = channelGroupIndex;
             currentLiveChannelIndex = liveChannelIndex;
