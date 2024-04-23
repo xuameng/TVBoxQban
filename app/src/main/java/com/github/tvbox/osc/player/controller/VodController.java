@@ -924,7 +924,7 @@ public class VodController extends BaseController {
     private boolean skipEnd = true;
 
     @Override
-    protected void setProgress(int durationXu, int posXu) {
+    protected void setProgress(int duration, int position) {
 
         if (mIsDragging) {
             return;
@@ -1028,8 +1028,8 @@ public class VodController extends BaseController {
         if (position < 0) position = 0;
         updateSeekUI(currentPosition, position, duration);
         simSeekPosition = position;
-		mSeekBar.setProgress(simSeekPosition);        //xuameng设置SEEKBAR当前进度
-		mCurrentTime.setText(PlayerUtils.stringForTime(simSeekPosition)); //xuameng设置SEEKBAR当前进度
+		mSeekBar.setProgress(simSeekPosition);  //xuameng设置SEEKBAR当前进度
+		mCurrentTime.setText(PlayerUtils.stringForTime(simSeekPosition));  //xuameng设置SEEKBAR当前进度
     }
 
     @Override
