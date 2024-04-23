@@ -363,7 +363,7 @@ public class VodController extends BaseController {
                 }
 
                 long duration = mControlWrapper.getDuration();
-                long newPosition = mControlWrapper.getCurrentPosition();
+                long newPosition = (duration * progress) / seekBar.getMax();
                 if (mCurrentTime != null)
                     mCurrentTime.setText(stringForTime((int) newPosition));
             }
@@ -380,7 +380,7 @@ public class VodController extends BaseController {
                 myHandle.removeCallbacks(myRunnable);
                 myHandle.postDelayed(myRunnable, myHandleSeconds);
                 long duration = mControlWrapper.getDuration();
-                long newPosition = mControlWrapper.getCurrentPosition();
+                long newPosition = (duration * seekBar.getProgress()) / seekBar.getMax();
                 mControlWrapper.seekTo((int) newPosition);
                 mIsDragging = false;
                 mControlWrapper.startProgress();
@@ -924,14 +924,14 @@ public class VodController extends BaseController {
     private boolean skipEnd = true;
 
     @Override
-    protected void setProgress(int duration, int position) {
+    protected void setProgress(int durationXu, int posXu) {
 
         if (mIsDragging) {
             return;
         }
 		int durationXu = (int) mControlWrapper.getDuration();
 		int posXu = (int) (mControlWrapper.getCurrentPosition());
-		mSeekBar.setMax(durationXu);
+		mSeekBar.setMax(durationXu);       //xuameng设置总进程必须
         super.setProgress(durationXu, posXu);
         if (skipEnd && posXu != 0 && durationXu != 0) {
             int et = 0;
@@ -955,10 +955,10 @@ public class VodController extends BaseController {
         if (percent >= 95) {
             mSeekBar.setSecondaryProgress(durationXu);
         } else {
-            mSeekBar.setSecondaryProgress(percent * 10);
+            mSeekBar.setSecondaryProgress(posXu + percent * 10);
         }
-		mCurrentTime.setText(PlayerUtils.stringForTime(posXu));
-        mTotalTime.setText(PlayerUtils.stringForTime(durationXu));
+		mCurrentTime.setText(PlayerUtils.stringForTime(posXu));        //xuameng当前进程时间
+        mTotalTime.setText(PlayerUtils.stringForTime(durationXu));	   //xuameng总进程时间
     }
 
     private boolean simSlideStart = false;
@@ -974,12 +974,13 @@ public class VodController extends BaseController {
         if (!mControlWrapper.isPlaying())
         //xuameng快进暂停就暂停测试    mControlWrapper.start();    //测试成功，如果想暂停时快进自动播放取消注销
         simSlideStart = false;
-//        simSeekPosition = 0;  //XUAMENG重要
+        //simSeekPosition = 0;  //XUAMENG重要要不然重0播放
         simSlideOffset = 0;
     }
 
     public void tvSlideStopXu() {           //xuameng修复SEEKBAR快进重新播放问题
-        mControlWrapper.startProgress();
+		mIsDragging = false;
+        mControlWrapper.startProgress();    //xuameng启动进程
         mControlWrapper.startFadeOut();
 		mSpeedTimeUp = 0;
         if (!simSlideStart)
@@ -996,7 +997,8 @@ public class VodController extends BaseController {
 
     public void tvSlideStart(int dir) {
 		isSEEKBAR = true;
-        mControlWrapper.stopProgress();
+		mIsDragging = true;
+        mControlWrapper.stopProgress();		//xuameng结束进程
         mControlWrapper.stopFadeOut();
         int duration = (int) mControlWrapper.getDuration();
         if (duration <= 0)
@@ -1026,8 +1028,8 @@ public class VodController extends BaseController {
         if (position < 0) position = 0;
         updateSeekUI(currentPosition, position, duration);
         simSeekPosition = position;
-		mSeekBar.setProgress(simSeekPosition);
-		mCurrentTime.setText(PlayerUtils.stringForTime(simSeekPosition));
+		mSeekBar.setProgress(simSeekPosition);        //xuameng设置SEEKBAR当前进度
+		mCurrentTime.setText(PlayerUtils.stringForTime(simSeekPosition)); //xuameng设置SEEKBAR当前进度
     }
 
     @Override
