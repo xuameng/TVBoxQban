@@ -957,8 +957,10 @@ public class VodController extends BaseController {
         } else {
             mSeekBar.setSecondaryProgress(posXu + percent * 30000);   //xuameng缓冲进度
         }
+		if (!mIsDragging){
 		mCurrentTime.setText(PlayerUtils.stringForTime(posXu));        //xuameng当前进程时间
         mTotalTime.setText(PlayerUtils.stringForTime(durationXu));	   //xuameng总进程时间
+		}
     }
 
     private boolean simSlideStart = false;
@@ -967,7 +969,7 @@ public class VodController extends BaseController {
 	private long mSpeedTimeUp = 0;         //xuameng上键间隔时间
 
     public void tvSlideStop() {
-		mIsDragging = false;
+		mIsDragging = false;                //xuamengsetProgress监听
 		mControlWrapper.startProgress();    //xuameng启动进程
         mControlWrapper.startFadeOut();
 		mSpeedTimeUp = 0;
@@ -982,7 +984,7 @@ public class VodController extends BaseController {
     }
 
     public void tvSlideStopXu() {           //xuameng修复SEEKBAR快进重新播放问题
-		mIsDragging = false;
+		mIsDragging = false;                //xuamengsetProgress监听
         mControlWrapper.startProgress();    //xuameng启动进程
         mControlWrapper.startFadeOut();
 		mSpeedTimeUp = 0;
@@ -1000,7 +1002,7 @@ public class VodController extends BaseController {
 
     public void tvSlideStart(int dir) {
 		isSEEKBAR = true;
-		mIsDragging = true;
+		mIsDragging = true;                 //xuamengsetProgress不监听
         mControlWrapper.stopProgress();		//xuameng结束进程
         mControlWrapper.stopFadeOut();
         int duration = (int) mControlWrapper.getDuration();
