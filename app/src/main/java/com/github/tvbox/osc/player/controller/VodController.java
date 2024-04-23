@@ -955,9 +955,9 @@ public class VodController extends BaseController {
         if (percent >= 95) {
             mSeekBar.setSecondaryProgress(durationXu);
         } else {
-            mSeekBar.setSecondaryProgress(posXu + percent * 1000);   //xuameng缓冲进度
+            mSeekBar.setSecondaryProgress(posXu + percent * 60000);   //xuameng缓冲进度
         }
-		mCurrentTime.setText(PlayerUtils.stringForTime(posXu));        //xuameng当前进程时间
+		mCurrentTime.setText(stringForTime(posXu));        //xuameng当前进程时间
         mTotalTime.setText(PlayerUtils.stringForTime(durationXu));	   //xuameng总进程时间
     }
 
