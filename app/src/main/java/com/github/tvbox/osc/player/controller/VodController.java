@@ -952,7 +952,7 @@ public class VodController extends BaseController {
         }
         int percent = mControlWrapper.getBufferedPercentage();
         if (percent >= 95) {
-            mSeekBar.setSecondaryProgress(mSeekBar.getMax());
+            mSeekBar.setSecondaryProgress(durationXu);
         } else {
             mSeekBar.setSecondaryProgress(percent * 10);
         }
@@ -978,6 +978,8 @@ public class VodController extends BaseController {
     }
 
     public void tvSlideStopXu() {           //xuameng修复SEEKBAR快进重新播放问题
+        mControlWrapper.startProgress();
+        mControlWrapper.startFadeOut();
 		mSpeedTimeUp = 0;
         if (!simSlideStart)
             return;
@@ -993,6 +995,8 @@ public class VodController extends BaseController {
 
     public void tvSlideStart(int dir) {
 		isSEEKBAR = true;
+        mControlWrapper.stopProgress();
+        mControlWrapper.stopFadeOut();
         int duration = (int) mControlWrapper.getDuration();
         if (duration <= 0)
             return;
@@ -1021,6 +1025,8 @@ public class VodController extends BaseController {
         if (position < 0) position = 0;
         updateSeekUI(currentPosition, position, duration);
         simSeekPosition = position;
+		mSeekBar.setProgress(simSeekPosition);
+		mCurrentTime.setText(PlayerUtils.stringForTime(simSeekPosition));
     }
 
     @Override
