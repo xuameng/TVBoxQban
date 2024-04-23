@@ -955,9 +955,9 @@ public class VodController extends BaseController {
         if (percent >= 95) {
             mSeekBar.setSecondaryProgress(durationXu);
         } else {
-            mSeekBar.setSecondaryProgress(posXu + percent * 60000);   //xuameng缓冲进度
+            mSeekBar.setSecondaryProgress(posXu + percent * 30000);   //xuameng缓冲进度
         }
-		mCurrentTime.setText(stringForTime(posXu));        //xuameng当前进程时间
+		mCurrentTime.setText(PlayerUtils.stringForTime(posXu));        //xuameng当前进程时间
         mTotalTime.setText(PlayerUtils.stringForTime(durationXu));	   //xuameng总进程时间
     }
 
@@ -968,6 +968,8 @@ public class VodController extends BaseController {
 
     public void tvSlideStop() {
 		mIsDragging = false;
+		mControlWrapper.startProgress();    //xuameng启动进程
+        mControlWrapper.startFadeOut();
 		mSpeedTimeUp = 0;
         if (!simSlideStart)
             return;
