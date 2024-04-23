@@ -1322,9 +1322,6 @@ public class LivePlayActivity extends BaseActivity {
 
 
 	    private boolean playChannel(int channelGroupIndex, int liveChannelIndex, boolean changeSource) {       //xuameng播放
-		if (mVideoView == null) return true;    //XUAMENG可能会引起空指针问题的修复
-          mVideoView.release();
-
         if ((channelGroupIndex == currentChannelGroupIndex && liveChannelIndex == currentLiveChannelIndex && !changeSource)
                 || (changeSource && currentLiveChannelItem.getSourceNum() == 1)) {
              // xuamengEPG日期自动选今天
@@ -1344,7 +1341,9 @@ public class LivePlayActivity extends BaseActivity {
           isBack = false;
           return true;
         }
-
+		if (mVideoView == null) 
+			mVideoView.release();
+			return true;    //XUAMENG可能会引起空指针问题的修复
         if (!changeSource) {
             currentChannelGroupIndex = channelGroupIndex;
             currentLiveChannelIndex = liveChannelIndex;
