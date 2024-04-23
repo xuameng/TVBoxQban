@@ -931,6 +931,7 @@ public class VodController extends BaseController {
         }
 		int durationXu = (int) mControlWrapper.getDuration();
 		int posXu = (int) (mControlWrapper.getCurrentPosition());
+		mSeekBar.setMax(durationXu);
         super.setProgress(durationXu, posXu);
         if (skipEnd && posXu != 0 && durationXu != 0) {
             int et = 0;
