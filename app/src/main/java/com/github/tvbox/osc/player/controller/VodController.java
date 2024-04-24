@@ -395,10 +395,8 @@ public class VodController extends BaseController {
 			    int keyCode = event.getKeyCode();
                 int action = event.getAction();
                     if(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT){
-		              if (isInPlayback) {
                       tvSlideStartXu(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT ? 1 : -1);
-                return true;
-                    }
+                return true;                    
                   }
 				if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
                 if (isInPlayback) {
@@ -411,10 +409,8 @@ public class VodController extends BaseController {
                 int keyCode = event.getKeyCode();
                 int action = event.getAction();
 		            if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
-                       if (isInPlayback) {
                        tvSlideStopXu();			//xuameng修复SEEKBAR快进重新播放问题
                 return true;
-                    }
                   }	
                 }
                return false;
