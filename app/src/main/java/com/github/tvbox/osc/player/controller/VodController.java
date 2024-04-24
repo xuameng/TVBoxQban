@@ -929,38 +929,35 @@ public class VodController extends BaseController {
         if (mIsDragging) {
             return;
         }
-		int durationXu = (int) mControlWrapper.getDuration();
-		int posXu = (int) (mControlWrapper.getCurrentPosition());
-		mSeekBar.setMax(durationXu);       //xuameng设置总进程必须
-        super.setProgress(durationXu, posXu);
-        if (skipEnd && posXu != 0 && durationXu != 0) {
+        super.setProgress(duration, position);
+        if (skipEnd && position != 0 && duration != 0) {
             int et = 0;
             try {
                 et = mPlayerConfig.getInt("et");
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            if (et > 0 && posXu + (et * 1000) >= durationXu) {
+            if (et > 0 && position + (et * 1000) >= duration) {
                 skipEnd = false;
                 listener.playNext(true);
             }
         }
-        if (durationXu > 0) {
+        if (duration > 0) {
             mSeekBar.setEnabled(true);
-            mSeekBar.setProgress(posXu);
+			int pos = (int) (position);
+            mSeekBar.setProgress(position);
+			mSeekBar.setMax(duration);       //xuameng设置总进程必须
         } else {
             mSeekBar.setEnabled(false);
         }
         int percent = mControlWrapper.getBufferedPercentage();
         if (percent >= 95) {
-            mSeekBar.setSecondaryProgress(durationXu);
+            mSeekBar.setSecondaryProgress(duration);
         } else {
-            mSeekBar.setSecondaryProgress(posXu + percent * 30000);   //xuameng缓冲进度
+            mSeekBar.setSecondaryProgress(percent * 10000);   //xuameng缓冲进度
         }
-		if (!mIsDragging){
-		mCurrentTime.setText(PlayerUtils.stringForTime(posXu));        //xuameng当前进程时间
-        mTotalTime.setText(PlayerUtils.stringForTime(durationXu));	   //xuameng总进程时间
-		}
+//		mCurrentTime.setText(PlayerUtils.stringForTime(posXu));        //xuameng当前进程时间
+//        mTotalTime.setText(PlayerUtils.stringForTime(durationXu));	   //xuameng总进程时间
     }
 
     private boolean simSlideStart = false;
