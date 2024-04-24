@@ -942,10 +942,11 @@ public class VodController extends BaseController {
                 listener.playNext(true);
             }
         }
+		mCurrentTime.setText(PlayerUtils.stringForTime(position));        //xuameng当前进程时间
+        mTotalTime.setText(PlayerUtils.stringForTime(duration));	   //xuameng总进程时间
         if (duration > 0) {
             mSeekBar.setEnabled(true);
-			int pos = (int) (position);
-            mSeekBar.setProgress(position);
+            mSeekBar.setProgress(position);	 //xuameng当前进程
 			mSeekBar.setMax(duration);       //xuameng设置总进程必须
         } else {
             mSeekBar.setEnabled(false);
@@ -954,10 +955,8 @@ public class VodController extends BaseController {
         if (percent >= 95) {
             mSeekBar.setSecondaryProgress(duration);
         } else {
-            mSeekBar.setSecondaryProgress(percent * 10000);   //xuameng缓冲进度
+            mSeekBar.setSecondaryProgress(position + percent * 20000);   //xuameng缓冲进度
         }
-//		mCurrentTime.setText(PlayerUtils.stringForTime(posXu));        //xuameng当前进程时间
-//        mTotalTime.setText(PlayerUtils.stringForTime(durationXu));	   //xuameng总进程时间
     }
 
     private boolean simSlideStart = false;
