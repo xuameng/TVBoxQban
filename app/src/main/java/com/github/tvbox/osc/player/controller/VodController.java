@@ -951,16 +951,13 @@ public class VodController extends BaseController {
         } else {
             mSeekBar.setEnabled(false);
         }
-		int durationXu = (int) mControlWrapper.getDuration();
         int percent = mControlWrapper.getBufferedPercentage();
-		int percentXu = durationXu * percent / 100 + 10000;
-		if (percentXu > durationXu){
-            percentXu = durationXu;
-		}
+		int totalBuffer = percent * duration;
+		int SecondaryProgress = totalBuffer / 100;
         if (percent >= 95) {
             mSeekBar.setSecondaryProgress(duration);
         } else {
-            mSeekBar.setSecondaryProgress(durationXu * percentXu);   //xuameng缓冲进度
+            mSeekBar.setSecondaryProgress(SecondaryProgress);   //xuameng缓冲进度
         }
     }
 
