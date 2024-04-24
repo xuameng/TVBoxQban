@@ -2666,13 +2666,14 @@ public class LivePlayActivity extends BaseActivity {
 		    iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause)); //XUAMENG修复PLAY时关闭回看暂停图标
 				if(!isKUAIJIN && backcontroller.getVisibility() == View.VISIBLE){
 			    sBar.setProgress((int) mVideoView.getCurrentPosition());
-                int position = (int) mVideoView.getCurrentPosition();
-                tv_currentpos.setText(durationToString((int) mVideoView.getCurrentPosition()));
 				int percent = mVideoView.getBufferedPercentage();
-                  if (percent >= 95) {
+				int totalBuffer = percent * duration2;
+		        int SecondaryProgress = totalBuffer / 100;
+                tv_currentpos.setText(durationToString((int) mVideoView.getCurrentPosition()));
+                  if (percent >= 98) {
                   sBar.setSecondaryProgress(duration2);
                   } else {
-                  sBar.setSecondaryProgress(position + percent * 10000);   //xuameng缓冲进度
+                  sBar.setSecondaryProgress(SecondaryProgress);   //xuameng缓冲进度
                  }
 			  }
 		    }
