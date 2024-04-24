@@ -1076,6 +1076,9 @@ public class VodController extends BaseController {
         } else {
             mProgressIcon.setImageResource(R.drawable.icon_backxu);					   //xuameng快进图标更换
         }
+		mIsDragging = false;                //xuamengsetProgress监听
+        mControlWrapper.startProgress();    //xuameng启动进程
+        mControlWrapper.startFadeOut();
         mProgressText.setText(PlayerUtils.stringForTime(seekTo) + " / " + PlayerUtils.stringForTime(duration));
         mHandler.sendEmptyMessage(1000);
         mHandler.removeMessages(1001);
