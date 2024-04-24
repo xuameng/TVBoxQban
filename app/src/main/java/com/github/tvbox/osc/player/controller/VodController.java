@@ -959,6 +959,44 @@ public class VodController extends BaseController {
         }
     }
 
+	private  String durationToString(int duration) {
+        String result = "";
+        int dur = duration / 1000;
+        int hour=dur/3600;
+        int min = (dur / 60) % 60;
+        int sec = dur % 60;
+        if(hour>0){
+            if (min > 9) {
+                if (sec > 9) {
+                    result =hour+":"+ min + ":" + sec;
+                } else {
+                    result =hour+":"+ min + ":0" + sec;
+                }
+            } else {
+                if (sec > 9) {
+                    result =hour+":"+ "0" + min + ":" + sec;
+                } else {
+                    result = hour+":"+"0" + min + ":0" + sec;
+                }
+            }
+        }else{
+            if (min > 9) {
+                if (sec > 9) {
+                    result = min + ":" + sec;
+                } else {
+                    result = min + ":0" + sec;
+                }
+            } else {
+                if (sec > 9) {
+                    result ="0" + min + ":" + sec;
+                } else {
+                    result = "0" + min + ":0" + sec;
+                }
+            }
+        }
+        return result;
+    }
+
     private boolean simSlideStart = false;
     private int simSeekPosition = 0;
     private long simSlideOffset = 0;
@@ -1065,11 +1103,11 @@ public class VodController extends BaseController {
         if (position < 0) position = 0;
         simSeekPosition = position;
 		mSeekBar.setProgress(simSeekPosition);  //xuameng设置SEEKBAR当前进度
-		mCurrentTime.setText(PlayerUtils.stringForTime(simSeekPosition));  //xuameng设置SEEKBAR当前进度
+		mCurrentTime.setText(durationToString(simSeekPosition));  //xuameng设置SEEKBAR当前进度
     }
 
     @Override
-    protected void updateSeekUI(int curr, int seekTo, int duration) {
+    protected void updateSeekUI(int curr, int seekTo, int duration) {            //xuameng手机滑动屏幕快进
         super.updateSeekUI(curr, seekTo, duration);
         if (seekTo > curr) {
             mProgressIcon.setImageResource(R.drawable.icon_prexu);                     //xuameng快进图标更换
