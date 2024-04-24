@@ -399,10 +399,8 @@ public class VodController extends BaseController {
                 return true;                    
                   }
 				if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
-                if (isInPlayback) {
                     togglePlay();
                 return true;
-                   }
                  }
 		    	}
                 if(event.getAction()==KeyEvent.ACTION_UP){
