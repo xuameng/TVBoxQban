@@ -954,7 +954,7 @@ public class VodController extends BaseController {
         int percent = mControlWrapper.getBufferedPercentage();
 		int totalBuffer = percent * duration;
 		int SecondaryProgress = totalBuffer / 100;
-        if (percent >= 95) {
+        if (percent >= 98) {
             mSeekBar.setSecondaryProgress(duration);
         } else {
             mSeekBar.setSecondaryProgress(SecondaryProgress);   //xuameng缓冲进度
