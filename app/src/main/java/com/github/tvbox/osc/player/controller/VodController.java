@@ -965,6 +965,9 @@ public class VodController extends BaseController {
 	private long mSpeedTimeUp = 0;         //xuameng上键间隔时间
 
     public void tvSlideStop() {
+		mIsDragging = false;                //xuamengsetProgress监听
+        mControlWrapper.startProgress();    //xuameng启动进程
+        mControlWrapper.startFadeOut();
 		mSpeedTimeUp = 0;
         if (!simSlideStart)
             return;
@@ -994,7 +997,9 @@ public class VodController extends BaseController {
     }
 
     public void tvSlideStart(int dir) {
-		isSEEKBAR = true;
+		mIsDragging = true;                 //xuamengsetProgress不监听
+        mControlWrapper.stopProgress();		//xuameng结束进程
+        mControlWrapper.stopFadeOut();
         int duration = (int) mControlWrapper.getDuration();
         if (duration <= 0)
             return;
