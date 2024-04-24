@@ -2672,7 +2672,7 @@ public class LivePlayActivity extends BaseActivity {
                   if (percent >= 95) {
                   sBar.setSecondaryProgress(duration2);
                   } else {
-                  sBar.setSecondaryProgress(percent * 10000);   //xuameng缓冲进度
+                  sBar.setSecondaryProgress(position + percent * 10000);   //xuameng缓冲进度
                  }
 			  }
 		    }
