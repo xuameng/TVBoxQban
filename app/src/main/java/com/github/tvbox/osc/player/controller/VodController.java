@@ -394,21 +394,29 @@ public class VodController extends BaseController {
                 if(event.getAction()==KeyEvent.ACTION_DOWN){
 			    int keyCode = event.getKeyCode();
                 int action = event.getAction();
+				boolean isInPlayback = isInPlaybackState();
                     if(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT){
+		              if (isInPlayback) {
                       tvSlideStartXu(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT ? 1 : -1);
-                return true;                    
+                return true;
+                    }
                   }
 				if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
+                if (isInPlayback) {
                     togglePlay();
                 return true;
+                   }
                  }
 		    	}
                 if(event.getAction()==KeyEvent.ACTION_UP){
                 int keyCode = event.getKeyCode();
                 int action = event.getAction();
+                boolean isInPlayback = isInPlaybackState();
 		            if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+                       if (isInPlayback) {
                        tvSlideStopXu();			//xuameng修复SEEKBAR快进重新播放问题
                 return true;
+                    }
                   }	
                 }
                return false;
@@ -947,7 +955,7 @@ public class VodController extends BaseController {
         if (percent >= 95) {
             mSeekBar.setSecondaryProgress(duration);
         } else {
-            mSeekBar.setSecondaryProgress(position + percent * 20000);   //xuameng缓冲进度
+            mSeekBar.setSecondaryProgress(position + percent * 10000);   //xuameng缓冲进度
         }
     }
 
@@ -1069,7 +1077,7 @@ public class VodController extends BaseController {
             mProgressIcon.setImageResource(R.drawable.icon_backxu);					   //xuameng快进图标更换
         }
 		mIsDragging = false;                //xuamengsetProgress监听
-        mControlWrapper.startProgress();    //xuameng启动进程
+        mControlWrapper.startProgress();    //xuameng启动进程 手机滑动快进时候暂停图标文字跟随变化
         mControlWrapper.startFadeOut();
         mProgressText.setText(PlayerUtils.stringForTime(seekTo) + " / " + PlayerUtils.stringForTime(duration));
         mHandler.sendEmptyMessage(1000);
