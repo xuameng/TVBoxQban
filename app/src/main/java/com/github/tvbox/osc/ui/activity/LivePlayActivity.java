@@ -2664,9 +2664,16 @@ public class LivePlayActivity extends BaseActivity {
 	      	if(mVideoView.isPlaying()){
 			iv_Play_Xu.setVisibility(View.GONE);       //XUAMENG修复PLAY时关闭回看暂停图标
 		    iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause)); //XUAMENG修复PLAY时关闭回看暂停图标
-				if(!isKUAIJIN){
+				if(!isKUAIJIN && backcontroller.getVisibility() == View.VISIBLE){
 			    sBar.setProgress((int) mVideoView.getCurrentPosition());
+                int position = (int) mVideoView.getCurrentPosition();
                 tv_currentpos.setText(durationToString((int) mVideoView.getCurrentPosition()));
+				int percent = mVideoView.getBufferedPercentage();
+                  if (percent >= 95) {
+                  sBar.setSecondaryProgress(duration2);
+                  } else {
+                  sBar.setSecondaryProgress(position + percent * 20000);   //xuameng缓冲进度
+                 }
 			  }
 		    }
 		  }
