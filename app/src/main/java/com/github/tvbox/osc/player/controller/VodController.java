@@ -960,7 +960,7 @@ public class VodController extends BaseController {
         if (percent >= 95) {
             mSeekBar.setSecondaryProgress(duration);
         } else {
-            mSeekBar.setSecondaryProgress(durationXu * durationXu);   //xuameng缓冲进度
+            mSeekBar.setSecondaryProgress(durationXu * percentXu);   //xuameng缓冲进度
         }
     }
 
