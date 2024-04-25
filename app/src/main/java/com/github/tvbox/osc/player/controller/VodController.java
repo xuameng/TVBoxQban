@@ -363,7 +363,6 @@ public class VodController extends BaseController {
                 }
 
                 long duration = mControlWrapper.getDuration();
-                long newPosition = (duration * progress) / seekBar.getMax();
                 if (mCurrentTime != null)
                     mCurrentTime.setText(stringForTime((int) newPosition));
             }
@@ -380,8 +379,7 @@ public class VodController extends BaseController {
                 myHandle.removeCallbacks(myRunnable);
                 myHandle.postDelayed(myRunnable, myHandleSeconds);
                 long duration = mControlWrapper.getDuration();
-                long newPosition = (duration * seekBar.getProgress()) / seekBar.getMax();
-                mControlWrapper.seekTo((int) newPosition);
+				mControlWrapper.seekTo(progress);
                 mIsDragging = false;
                 mControlWrapper.startProgress();
                 mControlWrapper.startFadeOut();
