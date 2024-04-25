@@ -357,13 +357,13 @@ public class VodController extends BaseController {
 
         mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
-            public void onProgressChanged(SeekBar seekBar, boolean fromUser) {
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if (!fromUser) {
                     return;
                 }
                 int newPosition = (int) mControlWrapper.getCurrentPosition();
                 if (mCurrentTime != null)
-                    mCurrentTime.setText(PlayerUtils.stringForTime(newPosition));
+                    mCurrentTime.setText(PlayerUtils.stringForTime(newPosition);
             }
 
             @Override
@@ -374,10 +374,11 @@ public class VodController extends BaseController {
             }
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar, int progress ) {
+            public void onStopTrackingTouch(SeekBar seekBar) {
                 myHandle.removeCallbacks(myRunnable);
                 myHandle.postDelayed(myRunnable, myHandleSeconds);
-                mControlWrapper.seekTo(progress);
+                int newPosition = (int) mControlWrapper.getCurrentPosition();
+                mControlWrapper.seekTo((int) newPosition);
                 mIsDragging = false;
                 mControlWrapper.startProgress();
                 mControlWrapper.startFadeOut();
