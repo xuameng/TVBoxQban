@@ -2660,7 +2660,6 @@ public class LivePlayActivity extends BaseActivity {
 		}
 		int duration2 = (int) mVideoView.getDuration();
 		if (duration2 > 0) {
-			if(mVideoView != null){
 	      	if(mVideoView.isPlaying()){
 			iv_Play_Xu.setVisibility(View.GONE);       //XUAMENG修复PLAY时关闭回看暂停图标
 		    iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause)); //XUAMENG修复PLAY时关闭回看暂停图标
@@ -2676,8 +2675,7 @@ public class LivePlayActivity extends BaseActivity {
                   sBar.setSecondaryProgress(SecondaryProgress);   //xuameng缓冲进度
                  }
 			  }
-		    }
-		  }
+		   }
 		}
             mHandler.postDelayed(this, 200);
         }
