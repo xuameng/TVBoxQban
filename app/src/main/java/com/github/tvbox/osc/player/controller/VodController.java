@@ -363,7 +363,7 @@ public class VodController extends BaseController {
                 }
                 int newPosition = (int) mControlWrapper.getCurrentPosition();
                 if (mCurrentTime != null)
-                    mCurrentTime.setText(PlayerUtils.stringForTime(newPosition);
+                    mCurrentTime.setText(PlayerUtils.stringForTime(newPosition));
             }
 
             @Override
