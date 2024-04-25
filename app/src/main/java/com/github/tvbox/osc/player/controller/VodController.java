@@ -361,11 +361,9 @@ public class VodController extends BaseController {
                 if (!fromUser) {
                     return;
                 }
-
-                long duration = mControlWrapper.getDuration();
                 long newPosition = progress;
                 if (mCurrentTime != null)
-                    mCurrentTime.setText(PlayerUtils.stringForTime(newPosition);
+                    mCurrentTime.setText(PlayerUtils.stringForTime(newPosition));
             }
 
             @Override
