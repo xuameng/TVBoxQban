@@ -374,7 +374,7 @@ public class VodController extends BaseController {
                 mControlWrapper.stopFadeOut();
             }
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar , int progress, boolean fromuser) {
+            public void onStopTrackingTouch(SeekBar seekBar , int progress) {
                 myHandle.removeCallbacks(myRunnable);
                 myHandle.postDelayed(myRunnable, myHandleSeconds);
                 long duration = mControlWrapper.getDuration();
