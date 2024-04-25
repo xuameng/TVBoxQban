@@ -364,7 +364,7 @@ public class VodController extends BaseController {
 
                 long duration = mControlWrapper.getDuration();
                 if (mCurrentTime != null)
-                    mCurrentTime.setText(stringForTime((int) newPosition));
+                    mCurrentTime.setText(stringForTime((int) progress));
             }
 
             @Override
@@ -373,9 +373,8 @@ public class VodController extends BaseController {
                 mControlWrapper.stopProgress();
                 mControlWrapper.stopFadeOut();
             }
-
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
+            public void onStopTrackingTouch(SeekBar seekBar , int progress, boolean fromuser) {
                 myHandle.removeCallbacks(myRunnable);
                 myHandle.postDelayed(myRunnable, myHandleSeconds);
                 long duration = mControlWrapper.getDuration();
