@@ -965,12 +965,14 @@ public class VodController extends BaseController {
     private int simSeekPosition = 0;
     private long simSlideOffset = 0;
 	private long mSpeedTimeUp = 0;         //xuameng上键间隔时间
+	private long mPositionUp = 0;         //xuameng上键间隔时间
 
     public void tvSlideStop() {
 		mIsDragging = false;                //xuamengsetProgress监听
         mControlWrapper.startProgress();    //xuameng启动进程
         mControlWrapper.startFadeOut();
 		mSpeedTimeUp = 0;
+		mPositionUp = 0;
         if (!simSlideStart)
             return;
         mControlWrapper.seekTo(simSeekPosition);
@@ -986,6 +988,7 @@ public class VodController extends BaseController {
         mControlWrapper.startProgress();    //xuameng启动进程
         mControlWrapper.startFadeOut();
 		mSpeedTimeUp = 0;
+		mPositionUp = 0;
         if (!simSlideStart)
             return;
 		if (isSEEKBAR){
@@ -1024,8 +1027,11 @@ public class VodController extends BaseController {
 	    if (System.currentTimeMillis() - mSpeedTimeUp > 9000) {
         simSlideOffset += (120000.0f * dir);
 		}
-        int currentPosition = (int) mControlWrapper.getCurrentPosition();
-        int position = (int) (simSlideOffset + currentPosition);
+		if (mPositionUp == 0){
+		   int currentPosition = (int) mControlWrapper.getCurrentPosition();
+		   int position = (int) currentPosition;
+		}
+        int position = (int) (simSlideOffset + position);
         if (position > duration) position = duration;
         if (position < 0) position = 0;
         updateSeekUI(currentPosition, position, duration);
@@ -1061,8 +1067,11 @@ public class VodController extends BaseController {
 	    if (System.currentTimeMillis() - mSpeedTimeUp > 9000) {
         simSlideOffset += (120000.0f * dir);
 		}
-        int currentPosition = (int) mControlWrapper.getCurrentPosition();
-        int position = (int) (simSlideOffset + currentPosition);
+		if (mPositionUp == 0){
+		   int currentPosition = (int) mControlWrapper.getCurrentPosition();
+		   int position = (int) currentPosition;
+		}
+        int position = (int) (simSlideOffset + position);
         if (position > duration) position = duration;
         if (position < 0) position = 0;
         simSeekPosition = position;
