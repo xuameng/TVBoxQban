@@ -1026,9 +1026,9 @@ public class VodController extends BaseController {
 		}
 	    if (System.currentTimeMillis() - mSpeedTimeUp > 9000) {
         simSlideOffset += (120000.0f * dir);
+		int currentPosition = (int) mControlWrapper.getCurrentPosition();
 		}
 		if (mPositionUp == 0){
-		   int currentPosition = (int) mControlWrapper.getCurrentPosition();
 		   int position = (int) currentPosition;
 		}
         int position = (int) (simSlideOffset + position);
@@ -1067,8 +1067,8 @@ public class VodController extends BaseController {
 	    if (System.currentTimeMillis() - mSpeedTimeUp > 9000) {
         simSlideOffset += (120000.0f * dir);
 		}
+		int currentPosition = (int) mControlWrapper.getCurrentPosition();
 		if (mPositionUp == 0){
-		   int currentPosition = (int) mControlWrapper.getCurrentPosition();
 		   int position = (int) currentPosition;
 		}
         int position = (int) (simSlideOffset + position);
