@@ -963,6 +963,7 @@ public class VodController extends BaseController {
 
     private boolean simSlideStart = false;
     private int simSeekPosition = 0;
+	private int sXuPosition = 0;
     private long simSlideOffset = 0;
 	private long mSpeedTimeUp = 0;         //xuameng上键间隔时间
 	private long mPositionUp = 0;         //xuameng上键间隔时间
@@ -1030,16 +1031,16 @@ public class VodController extends BaseController {
 		int currentPosition = (int) mControlWrapper.getCurrentPosition();
 		if (mPositionUp == 0){
 		   mPositionUp = 1;
-		   int position = (int) currentPosition;
+		   int sXuPosition = (int) currentPosition;
 		}
-        int position = (int) (simSlideOffset + position);
-        if (position > duration) position = duration;
-        if (position < 0) position = 0;
+        int sXuPosition = (int) (simSlideOffset + sXuPosition);
+        if (sXuPosition > duration) sXuPosition = duration;
+        if (sXuPosition < 0) sXuPosition = 0;
 		if (mPositionUp == 1){
-		   updateSeekUI(currentPosition, position, duration);
+		   updateSeekUI(currentPosition, sXuPosition, duration);
 		}
 
-        simSeekPosition = position;
+        simSeekPosition = sXuPosition;
 		mSeekBar.setProgress(simSeekPosition);  //xuameng设置SEEKBAR当前进度
 		mCurrentTime.setText(PlayerUtils.stringForTime(simSeekPosition));  //xuameng设置SEEKBAR当前进度
     }
@@ -1076,10 +1077,10 @@ public class VodController extends BaseController {
 			mPositionUp = 1;
 		   int position = (int) mControlWrapper.getCurrentPosition();
 		}
-        int position = (int) (simSlideOffset + position);
-        if (position > duration) position = duration;
-        if (position < 0) position = 0;
-        simSeekPosition = position;
+        int sXuPosition = (int) (simSlideOffset + sXuPosition);
+        if (sXuPosition > duration) sXuPosition = duration;
+        if (sXuPosition < 0) sXuPosition = 0;
+        simSeekPosition = sXuPosition;
 		mSeekBar.setProgress(simSeekPosition);  //xuameng设置SEEKBAR当前进度
 		mCurrentTime.setText(PlayerUtils.stringForTime(simSeekPosition));  //xuameng设置SEEKBAR当前进度
     }
