@@ -1026,15 +1026,19 @@ public class VodController extends BaseController {
 		}
 	    if (System.currentTimeMillis() - mSpeedTimeUp > 9000) {
         simSlideOffset += (120000.0f * dir);
-		int currentPosition = (int) mControlWrapper.getCurrentPosition();
 		}
+		int currentPosition = (int) mControlWrapper.getCurrentPosition();
 		if (mPositionUp == 0){
-		   int position = (int) mControlWrapper.getCurrentPosition();
+		   mPositionUp = 1;
+		   int position = (int) currentPosition;
 		}
         int position = (int) (simSlideOffset + position);
         if (position > duration) position = duration;
         if (position < 0) position = 0;
-        updateSeekUI(currentPosition, position, duration);
+		if (mPositionUp == 1){
+		   updateSeekUI(currentPosition, position, duration);
+		}
+
         simSeekPosition = position;
 		mSeekBar.setProgress(simSeekPosition);  //xuameng设置SEEKBAR当前进度
 		mCurrentTime.setText(PlayerUtils.stringForTime(simSeekPosition));  //xuameng设置SEEKBAR当前进度
@@ -1069,6 +1073,7 @@ public class VodController extends BaseController {
 		}
 		int currentPosition = (int) mControlWrapper.getCurrentPosition();
 		if (mPositionUp == 0){
+			mPositionUp = 1;
 		   int position = (int) mControlWrapper.getCurrentPosition();
 		}
         int position = (int) (simSlideOffset + position);
