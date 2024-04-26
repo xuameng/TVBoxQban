@@ -1033,7 +1033,7 @@ public class VodController extends BaseController {
 		   mPositionUp = 1;
 		   int sXuPost = (int) currentPosition;
 		}
-        sXuPost = (simSlideOffset + sXuPost);
+        sXuPost = (int) (simSlideOffset + sXuPost);
         if (sXuPost > duration) sXuPost = duration;
         if (sXuPost < 0) sXuPost = 0;
 		if (mPositionUp == 1){
@@ -1077,7 +1077,7 @@ public class VodController extends BaseController {
 			mPositionUp = 1;
 		   int sXuPost = (int) mControlWrapper.getCurrentPosition();
 		}
-        sXuPost = (simSlideOffset + sXuPost);
+        sXuPost = (int) (simSlideOffset + sXuPost);
         if (sXuPost > duration) sXuPost = duration;
         if (sXuPost < 0) sXuPost = 0;
         simSeekPosition = sXuPost;
