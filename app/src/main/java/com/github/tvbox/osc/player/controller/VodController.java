@@ -963,22 +963,17 @@ public class VodController extends BaseController {
 
     private boolean simSlideStart = false;
     private int simSeekPosition = 0;
-	private int PositionXu= 0;
     private long simSlideOffset = 0;
 	private long mSpeedTimeUp = 0;         //xuameng上键间隔时间
-	private long mPositionUp = 0;         //xuameng上键间隔时间
 
     public void tvSlideStop() {
 		mIsDragging = false;                //xuamengsetProgress监听
         mControlWrapper.startProgress();    //xuameng启动进程
         mControlWrapper.startFadeOut();
 		mSpeedTimeUp = 0;
-		mPositionUp = 0;
         if (!simSlideStart)
             return;
-		if (mPositionUp == 1){
         mControlWrapper.seekTo(simSeekPosition);
-		}
         if (!mControlWrapper.isPlaying())
         //xuameng快进暂停就暂停测试    mControlWrapper.start();    //测试成功，如果想暂停时快进自动播放取消注销
         simSlideStart = false;
@@ -991,10 +986,9 @@ public class VodController extends BaseController {
         mControlWrapper.startProgress();    //xuameng启动进程
         mControlWrapper.startFadeOut();
 		mSpeedTimeUp = 0;
-		mPositionUp = 0;
         if (!simSlideStart)
             return;
-		if (isSEEKBAR && mPositionUp == 1){
+		if (isSEEKBAR){
         mControlWrapper.seekTo(simSeekPosition);
 		}
         if (!mControlWrapper.isPlaying())
@@ -1030,23 +1024,14 @@ public class VodController extends BaseController {
 	    if (System.currentTimeMillis() - mSpeedTimeUp > 9000) {
         simSlideOffset += (120000.0f * dir);
 		}
-		int currentPosition = (int) mControlWrapper.getCurrentPosition();
-		if (mPositionUp == 0){
-		   mPositionUp = 1;
-		int PositionXu = (int) mControlWrapper.getCurrentPosition();
-		}
-        PositionXu =  (int) (simSlideOffset + PositionXu);
-        if (PositionXu > duration) PositionXu = duration;
-        if (PositionXu < 0) PositionXu = 0;
-		if (mPositionUp == 1){
-		   updateSeekUI(currentPosition, PositionXu, duration);
-		}
-
-        simSeekPosition = PositionXu;
-		if (mPositionUp == 1){
+        int currentPosition = (int) mControlWrapper.getCurrentPosition();
+        int position = (int) (simSlideOffset + currentPosition);
+        if (position > duration) position = duration;
+        if (position < 0) position = 0;
+        updateSeekUI(currentPosition, position, duration);
+        simSeekPosition = position;
 		mSeekBar.setProgress(simSeekPosition);  //xuameng设置SEEKBAR当前进度
 		mCurrentTime.setText(PlayerUtils.stringForTime(simSeekPosition));  //xuameng设置SEEKBAR当前进度
-		}
     }
 
 	public void tvSlideStartXu(int dir) {
@@ -1076,19 +1061,13 @@ public class VodController extends BaseController {
 	    if (System.currentTimeMillis() - mSpeedTimeUp > 9000) {
         simSlideOffset += (120000.0f * dir);
 		}
-		int currentPosition = (int) mControlWrapper.getCurrentPosition();
-		if (mPositionUp == 0){
-			mPositionUp = 1;
-		int PositionXu = (int) mControlWrapper.getCurrentPosition();
-		}
-        PositionXu =  (int) (simSlideOffset + PositionXu);
-        if (PositionXu > duration) PositionXu = duration;
-        if (PositionXu < 0) PositionXu = 0;
-        simSeekPosition = PositionXu;
-		if (mPositionUp == 1){
+        int currentPosition = (int) mControlWrapper.getCurrentPosition();
+        int position = (int) (simSlideOffset + currentPosition);
+        if (position > duration) position = duration;
+        if (position < 0) position = 0;
+        simSeekPosition = position;
 		mSeekBar.setProgress(simSeekPosition);  //xuameng设置SEEKBAR当前进度
 		mCurrentTime.setText(PlayerUtils.stringForTime(simSeekPosition));  //xuameng设置SEEKBAR当前进度
-		}
     }
 
     @Override
