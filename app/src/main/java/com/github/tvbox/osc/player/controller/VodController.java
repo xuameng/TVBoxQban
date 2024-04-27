@@ -963,7 +963,7 @@ public class VodController extends BaseController {
 
     private boolean simSlideStart = false;
     private int simSeekPosition = 0;
-	private long PositionXu= 0;
+	private int PositionXu= 0;
     private long simSlideOffset = 0;
 	private long mSpeedTimeUp = 0;         //xuameng上键间隔时间
 	private long mPositionUp = 0;         //xuameng上键间隔时间
@@ -1033,9 +1033,9 @@ public class VodController extends BaseController {
 		int currentPosition = (int) mControlWrapper.getCurrentPosition();
 		if (mPositionUp == 0){
 		   mPositionUp = 1;
-		   PositionXu = mControlWrapper.getCurrentPosition();
+		int PositionXu = (int) mControlWrapper.getCurrentPosition();
 		}
-        PositionXu =  (int) simSlideOffset + PositionXu;
+        PositionXu =  (int) (simSlideOffset + PositionXu);
         if (PositionXu > duration) PositionXu = duration;
         if (PositionXu < 0) PositionXu = 0;
 		if (mPositionUp == 1){
@@ -1079,9 +1079,9 @@ public class VodController extends BaseController {
 		int currentPosition = (int) mControlWrapper.getCurrentPosition();
 		if (mPositionUp == 0){
 			mPositionUp = 1;
-		   PositionXu = mControlWrapper.getCurrentPosition();
+		int PositionXu = (int) mControlWrapper.getCurrentPosition();
 		}
-        PositionXu =  (int) simSlideOffset + PositionXu;
+        PositionXu =  (int) (simSlideOffset + PositionXu);
         if (PositionXu > duration) PositionXu = duration;
         if (PositionXu < 0) PositionXu = 0;
         simSeekPosition = PositionXu;
