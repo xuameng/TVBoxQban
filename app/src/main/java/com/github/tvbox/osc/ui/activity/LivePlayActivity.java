@@ -3023,13 +3023,20 @@ public class LivePlayActivity extends BaseActivity {
 		mSpeedTimeUp = 0;
 		if (!simSlideStart)
             return;
-		if (isVOD && isSEEKBAR){
+		if (isVOD){
+		  if (isSEEKBAR){
             if(simSeekPosition < 1000){        //xuameng主要解决某些M3U8文件不能快进到0
                mVideoView.release();
                mVideoView.setUrl(currentLiveChannelItem.getUrl());
                mVideoView.start();
-           }else{
+           }else if(simSeekPosition >= 1000){
                mVideoView.seekTo(simSeekPosition);
+		  }
+		 }
+		}
+        if(isBack){
+		  if (isSEEKBAR){
+          mVideoView.seekTo(simSeekPosition);
 		  }
 		}
         if (!mVideoView.isPlaying())
