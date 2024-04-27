@@ -330,7 +330,7 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public void onStopTrackingTouch(SeekBar arg0) {
 				long duration = mVideoView.getDuration();
-                long newPosition = (duration * sbar.getProgress()) / sBar.getMax();
+                long newPosition = (duration * SeekBar.getProgress()) / sBar.getMax();
                 mVideoView.seekTo((int) newPosition);
 				isKUAIJIN = false;
             }
@@ -2923,7 +2923,7 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public void onStopTrackingTouch(SeekBar arg0) {
 				long duration = mVideoView.getDuration();
-                long newPosition = (duration * sbar.getProgress()) / sBar.getMax();
+                long newPosition = (duration * SeekBar.getProgress()) / sBar.getMax();
                 mVideoView.seekTo((int) newPosition);
 				isKUAIJIN = false;
             }
@@ -3068,7 +3068,6 @@ public class LivePlayActivity extends BaseActivity {
 		simSeekPosition = position;
         sBar.setProgress(simSeekPosition);
 		tv_currentpos.setText(durationToString(simSeekPosition));
-
     }
     
 }
