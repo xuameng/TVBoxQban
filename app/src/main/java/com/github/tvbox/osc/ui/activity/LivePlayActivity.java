@@ -328,20 +328,20 @@ public class LivePlayActivity extends BaseActivity {
 
 
             @Override
-            public void onStopTrackingTouch(SeekBar arg0) {
+            public void onStopTrackingTouch(SeekBar seekBar) {
 				long duration = mVideoView.getDuration();
-                long newPosition = (duration * SeekBar.getProgress()) / sBar.getMax();
+                long newPosition = (duration * seekBar.getProgress()) / sBar.getMax();
                 mVideoView.seekTo((int) newPosition);
 				isKUAIJIN = false;
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar arg0) {
+            public void onStartTrackingTouch(SeekBar seekBar) {
                isKUAIJIN = true;
             }
 
             @Override
-            public void onProgressChanged(SeekBar sb, int progress, boolean fromuser) {
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromuser) {
                 if (!fromuser) {
                     return;
                 }
@@ -2921,20 +2921,20 @@ public class LivePlayActivity extends BaseActivity {
 
 
             @Override
-            public void onStopTrackingTouch(SeekBar arg0) {
+            public void onStopTrackingTouch(SeekBar seekBar) {
 				long duration = mVideoView.getDuration();
-                long newPosition = (duration * SeekBar.getProgress()) / sBar.getMax();
+                long newPosition = (duration * seekBar.getProgress()) / sBar.getMax();
                 mVideoView.seekTo((int) newPosition);
 				isKUAIJIN = false;
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar arg0) {
+            public void onStartTrackingTouch(SeekBar seekBar) {
                isKUAIJIN = true;
             }
 
             @Override
-            public void onProgressChanged(SeekBar sb, int progress, boolean fromuser) {
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromuser) {
                 if (!fromuser) {
                     return;
                 }
