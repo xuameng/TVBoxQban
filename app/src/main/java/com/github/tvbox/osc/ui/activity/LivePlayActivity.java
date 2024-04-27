@@ -331,12 +331,12 @@ public class LivePlayActivity extends BaseActivity {
             public void onStopTrackingTouch(SeekBar seekBar) {
 				long duration = mVideoView.getDuration();
                 long newPosition = (duration * seekBar.getProgress()) / sBar.getMax();   //xuameng停止触碰获取进度条进度
-				if(newPosition < 1000){        //xuameng主要解决某些M3U8文件不能快进到0
+				if(newPosition < 1000 && isVOD){        //xuameng主要解决某些M3U8文件不能快进到0
                   mVideoView.release();
                   mVideoView.setUrl(currentLiveChannelItem.getUrl());
                   mVideoView.start();
-               }else if(newPosition >= 1000){
-                  mVideoView.seekTo((int) newPosition);  //xuameng当前进度播放
+               }else{
+                  mVideoView.seekTo((int) newPosition);       //xuameng当前进度播放
 		       }                                  
 				isKUAIJIN = false;
             }
@@ -2930,11 +2930,11 @@ public class LivePlayActivity extends BaseActivity {
             public void onStopTrackingTouch(SeekBar seekBar) {
 				long duration = mVideoView.getDuration();
                 long newPosition = (duration * seekBar.getProgress()) / sBar.getMax();   //xuameng停止触碰获取进度条进度
-				if(newPosition < 1000){        //xuameng主要解决某些M3U8文件不能快进到0
+				if(newPosition < 1000 && isVOD){        //xuameng主要解决某些M3U8文件不能快进到0
                   mVideoView.release();
                   mVideoView.setUrl(currentLiveChannelItem.getUrl());
                   mVideoView.start();
-               }else if(newPosition >= 1000){
+               }else{
                   mVideoView.seekTo((int) newPosition);       //xuameng当前进度播放
 		       }                                  
 				isKUAIJIN = false;
@@ -3023,20 +3023,13 @@ public class LivePlayActivity extends BaseActivity {
 		mSpeedTimeUp = 0;
 		if (!simSlideStart)
             return;
-		if (isVOD){
-		  if (isSEEKBAR){
+		if (isVOD && isSEEKBAR){
             if(simSeekPosition < 1000){        //xuameng主要解决某些M3U8文件不能快进到0
                mVideoView.release();
                mVideoView.setUrl(currentLiveChannelItem.getUrl());
                mVideoView.start();
-           }else if(simSeekPosition >= 1000){
+           }else{
                mVideoView.seekTo(simSeekPosition);
-		  }
-		 }
-		}
-        if(isBack){
-		  if (isSEEKBAR){
-          mVideoView.seekTo(simSeekPosition);
 		  }
 		}
         if (!mVideoView.isPlaying())
