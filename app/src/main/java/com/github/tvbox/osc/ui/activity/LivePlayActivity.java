@@ -324,14 +324,18 @@ public class LivePlayActivity extends BaseActivity {
                 }
             }
         });
-        sBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        sBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {         //xuameng升级手机进程条
 
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
 				long duration = mVideoView.getDuration();
-                long newPosition = (duration * seekBar.getProgress()) / sBar.getMax();
-                mVideoView.seekTo((int) newPosition);
+                long newPosition = (duration * seekBar.getProgress()) / sBar.getMax();   //xuameng停止触碰获取进度条进度
+				if(newPosition < 1000){        //xuameng主要解决某些M3U8文件不能快进到0
+                  mVideoView.seekTo(0);
+               }else if(newPosition >= 1000){
+                  mVideoView.seekTo((int) newPosition);  //xuameng当前进度播放
+		       }                                  
 				isKUAIJIN = false;
             }
 
@@ -347,9 +351,9 @@ public class LivePlayActivity extends BaseActivity {
                 }
                 if(fromuser){
 				  long duration = mVideoView.getDuration();
-                  long newPosition = (duration * progress) / sBar.getMax();
+                  long newPosition = (duration * progress) / sBar.getMax();       //xuameng触碰进度变化获取
                   if (tv_currentpos != null){
-                     tv_currentpos.setText(durationToString((int) newPosition));
+                     tv_currentpos.setText(durationToString((int) newPosition));  //xuameng文字显示进度
 				     }
                   if(countDownTimer!=null){
                      countDownTimer.cancel();
@@ -2917,14 +2921,18 @@ public class LivePlayActivity extends BaseActivity {
                 }
             }
         });
-        sBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        sBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {         //xuameng升级手机进程条
 
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
 				long duration = mVideoView.getDuration();
-                long newPosition = (duration * seekBar.getProgress()) / sBar.getMax();
-                mVideoView.seekTo((int) newPosition);
+                long newPosition = (duration * seekBar.getProgress()) / sBar.getMax();   //xuameng停止触碰获取进度条进度
+				if(newPosition < 1000){        //xuameng主要解决某些M3U8文件不能快进到0
+                  mVideoView.seekTo(0);
+               }else if(newPosition >= 1000){
+                  mVideoView.seekTo((int) newPosition);       //xuameng当前进度播放
+		       }                                  
 				isKUAIJIN = false;
             }
 
@@ -2940,9 +2948,9 @@ public class LivePlayActivity extends BaseActivity {
                 }
                 if(fromuser){
 				  long duration = mVideoView.getDuration();
-                  long newPosition = (duration * progress) / sBar.getMax();
+                  long newPosition = (duration * progress) / sBar.getMax();       //xuameng触碰进度变化获取
                   if (tv_currentpos != null){
-                     tv_currentpos.setText(durationToString((int) newPosition));
+                     tv_currentpos.setText(durationToString((int) newPosition));  //xuameng文字显示进度
 				     }
                   if(countDownTimer!=null){
                      countDownTimer.cancel();
@@ -3013,10 +3021,8 @@ public class LivePlayActivity extends BaseActivity {
             return;
 		if (isVOD){
 		  if (isSEEKBAR){
-            if(simSeekPosition < 1000){
-	           mVideoView.release();
-               mVideoView.setUrl(currentLiveChannelItem.getUrl());
-               mVideoView.start();
+            if(simSeekPosition < 1000){        //xuameng主要解决某些M3U8文件不能快进到0
+               mVideoView.seekTo(0);
            }else if(simSeekPosition >= 1000){
                mVideoView.seekTo(simSeekPosition);
 		  }
@@ -3048,7 +3054,7 @@ public class LivePlayActivity extends BaseActivity {
 		if (mSpeedTimeUp == 0){
 			mSpeedTimeUp = System.currentTimeMillis();
 		}
-		if (System.currentTimeMillis() - mSpeedTimeUp < 3000) {
+		if (System.currentTimeMillis() - mSpeedTimeUp < 3000) {           //xuameng快进越来越快
         simSlideOffset += (10000.0f * dir);
 		}
 	    if (System.currentTimeMillis() - mSpeedTimeUp > 3000 && System.currentTimeMillis() - mSpeedTimeUp < 6000) {
