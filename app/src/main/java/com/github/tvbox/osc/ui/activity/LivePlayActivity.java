@@ -332,7 +332,9 @@ public class LivePlayActivity extends BaseActivity {
 				long duration = mVideoView.getDuration();
                 long newPosition = (duration * seekBar.getProgress()) / sBar.getMax();   //xuameng停止触碰获取进度条进度
 				if(newPosition < 1000){        //xuameng主要解决某些M3U8文件不能快进到0
-                  mVideoView.seekTo(0);
+                  mVideoView.release();
+                  mVideoView.setUrl(currentLiveChannelItem.getUrl());
+                  mVideoView.start();
                }else if(newPosition >= 1000){
                   mVideoView.seekTo((int) newPosition);  //xuameng当前进度播放
 		       }                                  
@@ -2929,7 +2931,9 @@ public class LivePlayActivity extends BaseActivity {
 				long duration = mVideoView.getDuration();
                 long newPosition = (duration * seekBar.getProgress()) / sBar.getMax();   //xuameng停止触碰获取进度条进度
 				if(newPosition < 1000){        //xuameng主要解决某些M3U8文件不能快进到0
-                  mVideoView.seekTo(0);
+                  mVideoView.release();
+                  mVideoView.setUrl(currentLiveChannelItem.getUrl());
+                  mVideoView.start();
                }else if(newPosition >= 1000){
                   mVideoView.seekTo((int) newPosition);       //xuameng当前进度播放
 		       }                                  
@@ -3022,7 +3026,9 @@ public class LivePlayActivity extends BaseActivity {
 		if (isVOD){
 		  if (isSEEKBAR){
             if(simSeekPosition < 1000){        //xuameng主要解决某些M3U8文件不能快进到0
-               mVideoView.seekTo(0);
+               mVideoView.release();
+               mVideoView.setUrl(currentLiveChannelItem.getUrl());
+               mVideoView.start();
            }else if(simSeekPosition >= 1000){
                mVideoView.seekTo(simSeekPosition);
 		  }
