@@ -330,8 +330,7 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public void onStopTrackingTouch(SeekBar arg0) {
 				long duration = mVideoView.getDuration();
-                long CurrentPosition = mVideoView.getCurrentPosition();
-                long newPosition = (duration * CurrentPosition) / sBar.getMax();
+                long newPosition = (duration * sbar.getProgress()) / sBar.getMax();
                 mVideoView.seekTo((int) newPosition);
 				isKUAIJIN = false;
             }
@@ -347,9 +346,14 @@ public class LivePlayActivity extends BaseActivity {
                     return;
                 }
                 if(fromuser){
-                    if(countDownTimer!=null){
-                        countDownTimer.cancel();
-                        countDownTimer.start();
+				  long duration = mVideoView.getDuration();
+                  long newPosition = (duration * progress) / sBar.getMax();
+                  if (tv_currentpos != null){
+                     tv_currentpos.setText(durationToString((int) newPosition));
+					 {
+                  if(countDownTimer!=null){
+                     countDownTimer.cancel();
+                     countDownTimer.start();
                     }
                 }
             }
@@ -2919,8 +2923,7 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public void onStopTrackingTouch(SeekBar arg0) {
 				long duration = mVideoView.getDuration();
-                long CurrentPosition = mVideoView.getCurrentPosition();
-                long newPosition = (duration * CurrentPosition) / sBar.getMax();
+                long newPosition = (duration * sbar.getProgress()) / sBar.getMax();
                 mVideoView.seekTo((int) newPosition);
 				isKUAIJIN = false;
             }
@@ -2936,9 +2939,14 @@ public class LivePlayActivity extends BaseActivity {
                     return;
                 }
                 if(fromuser){
-                    if(countDownTimer!=null){
-                        countDownTimer.cancel();
-                        countDownTimer.start();
+				  long duration = mVideoView.getDuration();
+                  long newPosition = (duration * progress) / sBar.getMax();
+                  if (tv_currentpos != null){
+                     tv_currentpos.setText(durationToString((int) newPosition));
+					 {
+                  if(countDownTimer!=null){
+                     countDownTimer.cancel();
+                     countDownTimer.start();
                     }
                 }
             }
