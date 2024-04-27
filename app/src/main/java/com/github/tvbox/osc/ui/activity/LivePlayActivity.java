@@ -350,7 +350,7 @@ public class LivePlayActivity extends BaseActivity {
                   long newPosition = (duration * progress) / sBar.getMax();
                   if (tv_currentpos != null){
                      tv_currentpos.setText(durationToString((int) newPosition));
-					 {
+				     }
                   if(countDownTimer!=null){
                      countDownTimer.cancel();
                      countDownTimer.start();
@@ -2943,7 +2943,7 @@ public class LivePlayActivity extends BaseActivity {
                   long newPosition = (duration * progress) / sBar.getMax();
                   if (tv_currentpos != null){
                      tv_currentpos.setText(durationToString((int) newPosition));
-					 {
+				     }
                   if(countDownTimer!=null){
                      countDownTimer.cancel();
                      countDownTimer.start();
