@@ -328,27 +328,29 @@ public class LivePlayActivity extends BaseActivity {
 
 
             @Override
-            public void onStopTrackingTouch(SeekBar arg0) {
-
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar arg0) {
-
-            }
-
-            @Override
-            public void onProgressChanged(SeekBar sb, int progress, boolean fromuser) {
+            public void onStopTrackingTouch(SeekBar sb, int progress, boolean fromuser) {
                 if (!fromuser) {
                     return;
                 }
                 if(fromuser){
                     if(countDownTimer!=null){
-                        mVideoView.seekTo(progress);
-                        countDownTimer.cancel();
-                        countDownTimer.start();
+                       mVideoView.seekTo(progress);
+                       countDownTimer.cancel();
+                       countDownTimer.start();
+                       isKUAIJIN = false;
                     }
                 }
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar arg0) {
+                isKUAIJIN = true;
+            }
+
+            @Override
+            public void onProgressChanged(SeekBar arg0) {
+
             }
 
 
