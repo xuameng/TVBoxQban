@@ -328,32 +328,31 @@ public class LivePlayActivity extends BaseActivity {
 
 
             @Override
-            public void onStopTrackingTouch(SeekBar sb, int progress, boolean fromuser) {
+            public void onStopTrackingTouch(SeekBar arg0) {
+				long duration = mVideoView.getDuration();
+                long CurrentPosition = mVideoView.getCurrentPosition();
+                long newPosition = (duration * CurrentPosition) / sBar.getMax();
+                mVideoView.seekTo((int) newPosition);
+				isKUAIJIN = false;
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar arg0) {
+               isKUAIJIN = true;
+            }
+
+            @Override
+            public void onProgressChanged(SeekBar sb, int progress, boolean fromuser) {
                 if (!fromuser) {
                     return;
                 }
                 if(fromuser){
                     if(countDownTimer!=null){
-                       mVideoView.seekTo(progress);
-                       countDownTimer.cancel();
-                       countDownTimer.start();
-                       isKUAIJIN = false;
+                        countDownTimer.cancel();
+                        countDownTimer.start();
                     }
                 }
-
             }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar arg0) {
-                isKUAIJIN = true;
-            }
-
-            @Override
-            public void onProgressChanged(SeekBar arg0) {
-
-            }
-
-
         });
         sBar.setOnKeyListener(new View.OnKeyListener() {            //xuameng回看进度条监听
             @Override
@@ -2919,19 +2918,25 @@ public class LivePlayActivity extends BaseActivity {
 
             @Override
             public void onStopTrackingTouch(SeekBar arg0) {
-
+				long duration = mVideoView.getDuration();
+                long CurrentPosition = mVideoView.getCurrentPosition();
+                long newPosition = (duration * CurrentPosition) / sBar.getMax();
+                mVideoView.seekTo((int) newPosition);
+				isKUAIJIN = false;
             }
 
             @Override
             public void onStartTrackingTouch(SeekBar arg0) {
-
+               isKUAIJIN = true;
             }
 
             @Override
             public void onProgressChanged(SeekBar sb, int progress, boolean fromuser) {
+                if (!fromuser) {
+                    return;
+                }
                 if(fromuser){
                     if(countDownTimer!=null){
-                        mVideoView.seekTo(progress);
                         countDownTimer.cancel();
                         countDownTimer.start();
                     }
