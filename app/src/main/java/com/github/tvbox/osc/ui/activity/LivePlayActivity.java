@@ -991,10 +991,10 @@ public class LivePlayActivity extends BaseActivity {
     };
 
     private void numericKeyDown(int digit) {
-		int maxChannelIndex = getLiveChannels(currentChannelGroupIndex).size();
+		int maxChannelIndex = getLiveChannels(channelGroupIndex).size());
         selectedChannelNumber = selectedChannelNumber * 10 + digit;
         if (selectedChannelNumber > maxChannelIndex) {
-            selectedChannelNumber = 0;
+            selectedChannelNumber = maxChannelIndex;
         }
         tvSelectedChannel.setText(Integer.toString(selectedChannelNumber));
         tvSelectedChannel.setVisibility(View.VISIBLE);
