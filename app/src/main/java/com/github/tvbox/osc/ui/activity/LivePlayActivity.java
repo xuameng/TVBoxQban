@@ -175,6 +175,8 @@ public class LivePlayActivity extends BaseActivity {
 	private boolean isVOD = false;       //xuameng点播
 	private boolean isKUAIJIN = false;       //xuameng快进
 	private boolean isSEEKBAR = false;       //xuameng进入SEEKBAR
+    private int selectedChannelNumber = 0;  	    // xuameng遥控器数字键输入的要切换的频道号码
+    private TextView tvSelectedChannel;             //xuameng频道编号
 	private static Toast toast;
     private static String shiyi_time;//时移时间
     private static int shiyi_time_c;//时移时间差值
@@ -225,6 +227,7 @@ public class LivePlayActivity extends BaseActivity {
         tvChannelInfo = findViewById(R.id.tvChannel);
         tvTime = findViewById(R.id.tvTime);
 		tvTime_xu = findViewById(R.id.tvtime_xu);                      //xuameng的系统时间
+		tvSelectedChannel = findViewById(R.id.tv_selected_channel);    //xuameng选中频道编号
         tvNetSpeed = findViewById(R.id.tvNetSpeed);
         Mtv_left_top_xu = findViewById(R.id.tv_left_top_xu);           //xuameng回看左上图标
         iv_Play_Xu = findViewById(R.id.iv_play_xu);                    //xuameng回看暂停图标
@@ -956,6 +959,45 @@ public class LivePlayActivity extends BaseActivity {
         }
     }
 
+	    private final Runnable mPlaySelectedChannel = new Runnable() {
+        @Override
+        public void run() {
+            tvSelectedChannel.setVisibility(View.GONE);
+            tvSelectedChannel.setText("");
+
+            int grpIndx = 0;
+            int chaIndx = 0;
+            int getMin = 1;
+            int getMax;
+            for (int j = 0; j < 20; j++) {
+                getMax = getMin + getLiveChannels(j).size() - 1;
+
+                if (selectedChannelNumber >= getMin && selectedChannelNumber <= getMax) {
+                    grpIndx = j;
+                    chaIndx = selectedChannelNumber - getMin + 1;
+                    break;
+                } else {
+                    getMin = getMax + 1;
+                }
+            }
+
+            if (selectedChannelNumber > 0) {
+                playChannel(grpIndx, chaIndx - 1, false);
+            }
+            selectedChannelNumber = 0;
+        }
+    };
+
+    private void numericKeyDown(int digit) {
+        selectedChannelNumber = selectedChannelNumber * 10 + digit;
+
+        tvSelectedChannel.setText(Integer.toString(selectedChannelNumber));
+        tvSelectedChannel.setVisibility(View.VISIBLE);
+
+        mHandler.removeCallbacks(mPlaySelectedChannel);
+        mHandler.postDelayed(mPlaySelectedChannel, 2000);
+    }
+
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         if (event.getAction() == KeyEvent.ACTION_DOWN) {
@@ -1198,6 +1240,15 @@ public class LivePlayActivity extends BaseActivity {
 						   backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
 						}                     
                         break;
+						default:
+                        if (keyCode >= KeyEvent.KEYCODE_0 && keyCode <= KeyEvent.KEYCODE_9) {
+                            keyCode -= KeyEvent.KEYCODE_0;
+                        } else if (keyCode >= KeyEvent.KEYCODE_NUMPAD_0 && keyCode <= KeyEvent.KEYCODE_NUMPAD_9) {
+                            keyCode -= KeyEvent.KEYCODE_NUMPAD_0;
+                        } else {
+                            break;
+                        }
+                        numericKeyDown(keyCode);
                 }
             }
         } else if (event.getAction() == KeyEvent.ACTION_UP) {
