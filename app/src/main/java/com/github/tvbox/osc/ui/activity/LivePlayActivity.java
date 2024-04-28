@@ -971,6 +971,9 @@ public class LivePlayActivity extends BaseActivity {
             int getMax;
             for (int j = 0; j < 100; j++) {
                 getMax = getMin + getLiveChannels(j).size() - 1;
+        if (selectedChannelNumber > getMax) {
+            selectedChannelNumber = 0;
+        }
 
                 if (selectedChannelNumber >= getMin && selectedChannelNumber <= getMax) {
                     grpIndx = j;
@@ -991,11 +994,7 @@ public class LivePlayActivity extends BaseActivity {
     };
 
     private void numericKeyDown(int digit) {
-		int maxChannelIndex = getLiveChannels(channelGroupIndex).size();
         selectedChannelNumber = selectedChannelNumber * 10 + digit;
-        if (selectedChannelNumber > maxChannelIndex) {
-            selectedChannelNumber = maxChannelIndex;
-        }
         tvSelectedChannel.setText(Integer.toString(selectedChannelNumber));
         tvSelectedChannel.setVisibility(View.VISIBLE);
 
