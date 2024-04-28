@@ -981,9 +981,11 @@ public class LivePlayActivity extends BaseActivity {
                 }
             }
 
-            if (selectedChannelNumber > 0) {
-                playChannel(grpIndx, chaIndx - 1, false);
-            }
+            if (selectedChannelNumber > 0 && selectedChannelNumber <= getMax) {
+                playChannel(grpIndx, chaIndx, false);
+            }else {
+            Toast.makeText(mContext, "聚汇直播提示您：无此频道！", Toast.LENGTH_SHORT).show(); 
+			}
             selectedChannelNumber = 0;
         }
     };
@@ -1241,7 +1243,7 @@ public class LivePlayActivity extends BaseActivity {
 						}                     
                         break;
 						default:
-                        if (keyCode >= KeyEvent.KEYCODE_0 && keyCode <= KeyEvent.KEYCODE_9) {
+                        if (keyCode >= KeyEvent.KEYCODE_0 && keyCode <= KeyEvent.KEYCODE_9) {     //xuameng遥控数字键切换频道
                             keyCode -= KeyEvent.KEYCODE_0;
                         } else if (keyCode >= KeyEvent.KEYCODE_NUMPAD_0 && keyCode <= KeyEvent.KEYCODE_NUMPAD_9) {
                             keyCode -= KeyEvent.KEYCODE_NUMPAD_0;
