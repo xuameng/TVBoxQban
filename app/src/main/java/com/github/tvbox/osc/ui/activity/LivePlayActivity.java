@@ -959,7 +959,7 @@ public class LivePlayActivity extends BaseActivity {
         }
     }
 
-	    private final Runnable mPlaySelectedChannel = new Runnable() {
+    private final Runnable mPlaySelectedChannel = new Runnable() {
         @Override
         public void run() {
             tvSelectedChannel.setVisibility(View.GONE);
@@ -968,8 +968,10 @@ public class LivePlayActivity extends BaseActivity {
             int grpIndx = 0;
             int chaIndx = 0;
             int getMin = 1;
-            int getMax = getMin + getLiveChannels().size() - 1;
-            for (int j = 0; j < 20; j++) {
+            int getMax;
+            for (int j = 0; j < 100; j++) {
+                getMax = getMin + getLiveChannels(channelGroupIndex).size() - 1;
+				
                 if (selectedChannelNumber >= getMin && selectedChannelNumber <= getMax) {
                     grpIndx = j;
                     chaIndx = selectedChannelNumber - getMin + 1;
@@ -979,11 +981,9 @@ public class LivePlayActivity extends BaseActivity {
                 }
             }
 
-            if (selectedChannelNumber > 0 && selectedChannelNumber <= getMax) {
+            if (selectedChannelNumber >= getMin && selectedChannelNumber <= getMax) {
                 playChannel(grpIndx, chaIndx - 1, false);
-            }else {
-            Toast.makeText(mContext, "聚汇直播提示您：无此频道！", Toast.LENGTH_SHORT).show(); 
-			}
+            }
             selectedChannelNumber = 0;
         }
     };
