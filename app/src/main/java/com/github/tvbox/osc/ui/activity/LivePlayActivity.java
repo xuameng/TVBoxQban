@@ -970,7 +970,7 @@ public class LivePlayActivity extends BaseActivity {
             int getMin = 1;
             int getMax;
             for (int j = 0; j < 100; j++) {
-                getMax = getMin + getLiveChannels(channelGroupIndex).size() - 1;
+                getMax = getMin + getLiveChannels(j).size() - 1;
 				
                 if (selectedChannelNumber >= getMin && selectedChannelNumber <= getMax) {
                     grpIndx = j;
