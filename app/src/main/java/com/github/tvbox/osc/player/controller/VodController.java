@@ -1024,8 +1024,8 @@ public class VodController extends BaseController {
 	    if (System.currentTimeMillis() - mSpeedTimeUp > 9000) {
         simSlideOffset += (120000.0f * dir);
 		}
-        int currentPosition = (int) mSeekBar.getProgress();
-        int position = (int) (simSlideOffset + currentPosition / 1000);
+        int currentPosition = (int) mControlWrapper.getCurrentPosition();
+        int position = (int) (simSlideOffset + currentPosition);
         if (position > duration) position = duration;
         if (position < 0) position = 0;
         updateSeekUI(currentPosition, position, duration);
@@ -1061,8 +1061,8 @@ public class VodController extends BaseController {
 	    if (System.currentTimeMillis() - mSpeedTimeUp > 9000) {
         simSlideOffset += (120000.0f * dir);
 		}
-        int currentPosition = (int) mSeekBar.getProgress();
-        int position = (int) (simSlideOffset + currentPosition / 1000);
+        int currentPosition = (int) mControlWrapper.getCurrentPosition();
+        int position = (int) (simSlideOffset + currentPosition);
         if (position > duration) position = duration;
         if (position < 0) position = 0;
         simSeekPosition = position;
