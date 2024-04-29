@@ -970,7 +970,7 @@ public class LivePlayActivity extends BaseActivity {
             int chaIndx = 0;
             int getMin = 1;
             int getMax;
-            for (int j = 0; j < 40; j++) {
+            for (int j = 0; j < 20; j++) {
                 getMax = getMin + getLiveChannels(j).size() - 1;
 
                 if (selectedChannelNumber >= getMin && selectedChannelNumber <= getMax) {
@@ -981,10 +981,13 @@ public class LivePlayActivity extends BaseActivity {
                     getMin = getMax + 1;
                 }
             }
-
-            if (selectedChannelNumber > 0) {
+           getMax1 = getMin + getLiveChannels(20).size() - 1;
+            if (selectedChannelNumber > 0 && selectedChannelNumber <= getMax1) {
                 playChannel(grpIndx, chaIndx - 1, false);
-            }
+              }
+			}else{
+				Toast.makeText(mContext, "聚汇直播提示您：无此频道编号！", Toast.LENGTH_SHORT).show();
+			}
             selectedChannelNumber = 0;
         }
     };
