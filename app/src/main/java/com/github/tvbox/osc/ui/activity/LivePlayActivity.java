@@ -176,7 +176,7 @@ public class LivePlayActivity extends BaseActivity {
 	private boolean isVOD = false;       //xuameng点播
 	private boolean isKUAIJIN = false;       //xuameng快进
 	private boolean isSEEKBAR = false;       //xuameng进入SEEKBAR
-	private boolean isTVNUM = false;       //xuameng进入频道编号
+	private boolean isTVNUM = false;       //xuameng获取频道编号
     private int selectedChannelNumber = 0;  	    // xuameng遥控器数字键输入的要切换的频道号码
     private TextView tvSelectedChannel;             //xuameng频道编号
 	private static Toast toast;
@@ -971,7 +971,7 @@ public class LivePlayActivity extends BaseActivity {
             int chaIndx = 0;
             int getMin = 1;
             int getMax;
-            for (int j = 0; j < 30; j++) {
+            for (int j = 0; j < 50; j++) {
                 getMax = getMin + getLiveChannels(j).size() - 1;
 
                 if (selectedChannelNumber >= getMin && selectedChannelNumber <= getMax) {
@@ -987,6 +987,7 @@ public class LivePlayActivity extends BaseActivity {
             if (selectedChannelNumber > 0) {
 				if (!isTVNUM){
                 Toast.makeText(mContext, "聚汇直播提示您：无此频道编号！", Toast.LENGTH_SHORT).show();
+				selectedChannelNumber = 0;
 				return;
 				}
                 playChannel(grpIndx, chaIndx - 1, false);
