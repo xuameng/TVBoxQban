@@ -995,7 +995,6 @@ public class LivePlayActivity extends BaseActivity {
 			if (selectedChannelNumber > maxChannelIndex) {
 				selectedChannelNumber = maxChannelIndex;
             }
-           }
 
         tvSelectedChannel.setText(Integer.toString(selectedChannelNumber));
         tvSelectedChannel.setVisibility(View.VISIBLE);
