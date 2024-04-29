@@ -970,7 +970,7 @@ public class LivePlayActivity extends BaseActivity {
             int chaIndx = 0;
             int getMin = 1;
             int getMax;
-            for (int j = 0; j < 20; j++) {
+            for (int j = 0; j < 30; j++) {
                 getMax = getMin + getLiveChannels(j).size() - 1;
 
                 if (selectedChannelNumber >= getMin && selectedChannelNumber <= getMax) {
@@ -978,11 +978,15 @@ public class LivePlayActivity extends BaseActivity {
                     chaIndx = selectedChannelNumber - getMin + 1;
                     break;
                 } else {
-					selectedChannelNumber = 0;
+                    getMin = getMax + 1;
                 }
             }
 
             if (selectedChannelNumber > 0) {
+				if (chaIndx = 0){
+                Toast.makeText(mContext, "聚汇直播提示您：无此频道编号！", Toast.LENGTH_SHORT).show();
+				return;
+				}
                 playChannel(grpIndx, chaIndx - 1, false);
               }else{
 				Toast.makeText(mContext, "聚汇直播提示您：无此频道编号！", Toast.LENGTH_SHORT).show();
@@ -995,7 +999,7 @@ public class LivePlayActivity extends BaseActivity {
 		selectedChannelNumber = selectedChannelNumber * 10 + digit;
 
         InputFilter[] filters = new InputFilter[1];
-        filters[0] = new InputFilter.LengthFilter(4); // 限制输入长度为20位
+        filters[0] = new InputFilter.LengthFilter(4); // XUAMENG限制输入长度为4位
 		tvSelectedChannel.setFilters(filters);
         tvSelectedChannel.setText(Integer.toString(selectedChannelNumber));
         tvSelectedChannel.setVisibility(View.VISIBLE);
