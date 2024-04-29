@@ -999,9 +999,11 @@ public class LivePlayActivity extends BaseActivity {
 
     private void numericKeyDown(int digit) {
 		selectedChannelNumber = selectedChannelNumber * 10 + digit;
-		selectedChannelNumber <= 99999;
+		if (selectedChannelNumber > 99999){
+			selectedChannelNumber = 0;
+		}
         InputFilter[] filters = new InputFilter[1];
-        filters[0] = new InputFilter.LengthFilter(5); // XUAMENG限制输入长度为5位
+        filters[0] = new InputFilter.LengthFilter(5); // XUAMENG限制输入长度为4位
 		tvSelectedChannel.setFilters(filters);
         tvSelectedChannel.setText(Integer.toString(selectedChannelNumber));
         tvSelectedChannel.setVisibility(View.VISIBLE);
