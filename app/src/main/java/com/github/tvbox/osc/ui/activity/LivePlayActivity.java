@@ -981,7 +981,7 @@ public class LivePlayActivity extends BaseActivity {
                     getMin = getMax + 1;
                 }
             }
-           getMax1 = getMin + getLiveChannels(20).size() - 1;
+           int getMax1 = getMin + getLiveChannels(20).size() - 1;
             if (selectedChannelNumber > 0 && selectedChannelNumber <= getMax1) {
                 playChannel(grpIndx, chaIndx - 1, false);
               }else{
