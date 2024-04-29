@@ -993,8 +993,8 @@ public class LivePlayActivity extends BaseActivity {
             int getMax1;
             for (int j = 0; j <= liveChannelGroupList.size(); j++) {
                 getMax1 = getMin1 + getLiveChannels(j).size() - 1;
+				int maxChannelIndex = getMax1;
             }
-        int maxChannelIndex <= getMax1;
         selectedChannelNumber = selectedChannelNumber * 10 + digit;
 
         if (selectedChannelNumber > maxChannelIndex) {
