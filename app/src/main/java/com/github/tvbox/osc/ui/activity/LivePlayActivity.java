@@ -28,6 +28,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.graphics.Color;                          //xuameng获取颜色值
 import android.util.TypedValue;              //xuameng TypedValue依赖
 import android.view.LayoutInflater;			//xuameng LayoutInflater依赖
+import android.text.InputFilter; //xuameng导入依赖的package包/类
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.github.tvbox.osc.R;
