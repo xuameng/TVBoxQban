@@ -989,9 +989,9 @@ public class LivePlayActivity extends BaseActivity {
 				selectedChannelNumber = 0;
 				return;
 				}
-                playChannel(grpIndx, chaIndx - 1, false);
+                playChannel(grpIndx, chaIndx - 1, false);    //xuameng获取到编号播放
               }else{
-				Toast.makeText(mContext, "聚汇直播提示您：无此频道编号！", Toast.LENGTH_SHORT).show();
+				Toast.makeText(mContext, "聚汇直播提示您：无此频道编号！", Toast.LENGTH_SHORT).show();   //xuameng编号为0
 			}
             selectedChannelNumber = 0;
         }
@@ -1003,7 +1003,7 @@ public class LivePlayActivity extends BaseActivity {
 			selectedChannelNumber = 0;
 		}
         InputFilter[] filters = new InputFilter[1];
-        filters[0] = new InputFilter.LengthFilter(5); // XUAMENG限制输入长度为4位
+        filters[0] = new InputFilter.LengthFilter(5); // XUAMENG限制输入长度为5位
 		tvSelectedChannel.setFilters(filters);
         tvSelectedChannel.setText(Integer.toString(selectedChannelNumber));
         tvSelectedChannel.setVisibility(View.VISIBLE);
