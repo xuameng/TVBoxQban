@@ -971,10 +971,9 @@ public class LivePlayActivity extends BaseActivity {
             int chaIndx = 0;
             int getMin = 1;
             int getMax;
-            for (int j = 0; j < 50; j++) {    //xuameng循环50次，如频道列表太多需增加J的值
+            for (int j = 0; j < getLiveChannels(channelGroupIndex).size(); j++) {    //xuameng循环50次，如频道列表太多需增加J的值
                 getMax = getMin + getLiveChannels(j).size() - 1;
                 if (selectedChannelNumber >= getMin && selectedChannelNumber <= getMax) {
-					Toast.makeText(mContext, "选中！", Toast.LENGTH_SHORT).show();
                     grpIndx = j;
                     chaIndx = selectedChannelNumber - getMin + 1;
 					isTVNUM = true;    //xuameng以获取到频道编号
@@ -987,6 +986,7 @@ public class LivePlayActivity extends BaseActivity {
             if (selectedChannelNumber > 0) {
 				if (!isTVNUM){    //xuameng没获取到频道编号
                 Toast.makeText(mContext, "聚汇直播提示您：无此频道编号！", Toast.LENGTH_SHORT).show();
+				selectedChannelNumber = 0;
 				return;
 				}
                 playChannel(grpIndx, chaIndx - 1, false);
