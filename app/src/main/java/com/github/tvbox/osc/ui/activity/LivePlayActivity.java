@@ -971,7 +971,7 @@ public class LivePlayActivity extends BaseActivity {
             int chaIndx = 0;
             int getMin = 1;
             int getMax;
-            for (int j = 0; j < getLiveChannels(channelGroupIndex).size(); j++) {    //xuameng循环50次，如频道列表太多需增加J的值
+            for (int j = 0; j < liveChannelGroupList.size(); j++) {    //xuameng循环50次，如频道列表太多需增加J的值
                 getMax = getMin + getLiveChannels(j).size() - 1;
                 if (selectedChannelNumber >= getMin && selectedChannelNumber <= getMax) {
                     grpIndx = j;
