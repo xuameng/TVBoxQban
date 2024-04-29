@@ -983,7 +983,8 @@ public class LivePlayActivity extends BaseActivity {
             }
 
             if (selectedChannelNumber > 0) {
-				if (chaIndx = 0){
+				int xuameng = int chaIndx;
+				if (xuameng = 0){
                 Toast.makeText(mContext, "聚汇直播提示您：无此频道编号！", Toast.LENGTH_SHORT).show();
 				return;
 				}
