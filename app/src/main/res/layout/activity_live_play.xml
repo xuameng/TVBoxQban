@@ -617,11 +617,16 @@
         android:layout_marginTop="25dp"
         android:layout_marginRight="40dp"
         android:background="@android:color/transparent"
+		android:inputType="number"
+        android:digits="0123456789"
         android:clickable="false"
         android:focusable="false"
         android:textColor="@android:color/white"
-        android:textSize="96sp"
+        android:textSize="96mm"
         android:textStyle="bold"
+		android:shadowColor="#cc000000"
+        android:shadowDx="5.0"
+        android:shadowRadius="5.0"
         android:visibility="gone" />
     <RelativeLayout
         android:layout_gravity="center|left|top"
