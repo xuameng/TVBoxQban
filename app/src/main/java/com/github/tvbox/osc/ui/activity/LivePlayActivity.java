@@ -977,7 +977,8 @@ public class LivePlayActivity extends BaseActivity {
                     chaIndx = selectedChannelNumber - getMin + 1;
                     break;
                 } else {
-                    getMin = getMax + 1;
+                    selectedChannelNumber = 0;
+					Toast.makeText(mContext, "聚汇直播提示您：无此频道编号！", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -990,17 +991,9 @@ public class LivePlayActivity extends BaseActivity {
 
         private void numericKeyDown(int digit) {
 			selectedChannelNumber = selectedChannelNumber * 10 + digit;
-            int getMin1 = 1;
-            int getMax1;
-            for (int j = 0; j <= liveChannelGroupList.size(); j++) {
-                getMax1 = getMin1 + getLiveChannels(j).size() - 1;
-			int maxChannelIndex = getMax1;
+			int maxChannelIndex = 9999;
 			if (selectedChannelNumber > maxChannelIndex) {
-                Toast.makeText(mContext, "聚汇直播提示您：无此频道编号！", Toast.LENGTH_SHORT).show();
-				selectedChannelNumber = 0;
-            }else if (selectedChannelNumber < maxChannelIndex) {
-                Toast.makeText(mContext, "聚汇直播提示您：无此频道编号！", Toast.LENGTH_SHORT).show();
-				selectedChannelNumber = 0;
+				selectedChannelNumber = maxChannelIndex;
             }
            }
 
