@@ -981,7 +981,7 @@ public class LivePlayActivity extends BaseActivity {
                 }
             }
 
-            if (selectedChannelNumber > getMin && selectedChannelNumber <= getMax) {
+            if (selectedChannelNumber > 0) {
                 playChannel(grpIndx, chaIndx - 1, false);
             }
             selectedChannelNumber = 0;
@@ -997,8 +997,10 @@ public class LivePlayActivity extends BaseActivity {
 			int maxChannelIndex = getMax1;
 			if (selectedChannelNumber > maxChannelIndex) {
                 Toast.makeText(mContext, "聚汇直播提示您：无此频道编号！", Toast.LENGTH_SHORT).show();
+				selectedChannelNumber = 0;
             }else if (selectedChannelNumber < maxChannelIndex) {
                 Toast.makeText(mContext, "聚汇直播提示您：无此频道编号！", Toast.LENGTH_SHORT).show();
+				selectedChannelNumber = 0;
             }
            }
 
