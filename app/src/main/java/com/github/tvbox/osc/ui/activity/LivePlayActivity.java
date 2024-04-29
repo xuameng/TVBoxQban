@@ -989,19 +989,18 @@ public class LivePlayActivity extends BaseActivity {
     };
 
         private void numericKeyDown(int digit) {
+			selectedChannelNumber = selectedChannelNumber * 10 + digit;
             int getMin1 = 1;
             int getMax1;
             for (int j = 0; j <= liveChannelGroupList.size(); j++) {
                 getMax1 = getMin1 + getLiveChannels(j).size() - 1;
-				int maxChannelIndex = getMax1;
+			int maxChannelIndex = getMax1;
+			if (selectedChannelNumber > maxChannelIndex) {
+                Toast.makeText(mContext, "聚汇直播提示您：无此频道编号！", Toast.LENGTH_SHORT).show();
+            }else if (selectedChannelNumber < maxChannelIndex) {
+                Toast.makeText(mContext, "聚汇直播提示您：无此频道编号！", Toast.LENGTH_SHORT).show();
             }
-        selectedChannelNumber = selectedChannelNumber * 10 + digit;
-
-        if (selectedChannelNumber > maxChannelIndex) {
-            Toast.makeText(mContext, "聚汇直播提示您：无此频道编号！", Toast.LENGTH_SHORT).show();
-        }else if (selectedChannelNumber < maxChannelIndex) {
-            Toast.makeText(mContext, "聚汇直播提示您：无此频道编号！", Toast.LENGTH_SHORT).show();
-        }
+           }
 
         tvSelectedChannel.setText(Integer.toString(selectedChannelNumber));
         tvSelectedChannel.setVisibility(View.VISIBLE);
