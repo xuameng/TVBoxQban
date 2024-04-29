@@ -971,7 +971,7 @@ public class LivePlayActivity extends BaseActivity {
             int chaIndx = 0;
             int getMin = 1;
             int getMax;
-            for (int j = 0; j < liveChannelGroupList.size(); j++) {    //xuameng循环50次，如频道列表太多需增加J的值
+            for (int j = 0; j < liveChannelGroupList.size(); j++) {    //xuameng循环频道组
                 getMax = getMin + getLiveChannels(j).size() - 1;
                 if (selectedChannelNumber >= getMin && selectedChannelNumber <= getMax) {
                     grpIndx = j;
@@ -999,14 +999,15 @@ public class LivePlayActivity extends BaseActivity {
 
     private void numericKeyDown(int digit) {
 		selectedChannelNumber = selectedChannelNumber * 10 + digit;
+		selectedChannelNumber <= 99999;
         InputFilter[] filters = new InputFilter[1];
-        filters[0] = new InputFilter.LengthFilter(4); // XUAMENG限制输入长度为4位
+        filters[0] = new InputFilter.LengthFilter(5); // XUAMENG限制输入长度为5位
 		tvSelectedChannel.setFilters(filters);
         tvSelectedChannel.setText(Integer.toString(selectedChannelNumber));
         tvSelectedChannel.setVisibility(View.VISIBLE);
         isTVNUM = false;
         mHandler.removeCallbacks(mPlaySelectedChannel);
-        mHandler.postDelayed(mPlaySelectedChannel, 2000);
+        mHandler.postDelayed(mPlaySelectedChannel, 2500);
     }
 
     @Override
