@@ -184,7 +184,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
                         @Override
                         public void downloadProgress(Progress progress) {
                             super.downloadProgress(progress);
-							Toast.makeText(mContext, "壁纸下载中请稍后！", Toast.LENGTH_LONG).show();
+							Toast.makeText(mContext, "壁纸下载中，请稍后！", Toast.LENGTH_LONG).show();
                         }
                     });
             }
