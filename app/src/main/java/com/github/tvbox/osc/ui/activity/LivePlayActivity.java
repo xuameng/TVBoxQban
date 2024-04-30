@@ -132,7 +132,7 @@ public class LivePlayActivity extends BaseActivity {
 	private static LiveChannelItem  channel_NameXu = null;
     private static Hashtable hsEpg = new Hashtable();
     private CountDownTimer countDownTimer;
-    private View ll_right_top_loading;     //xuameng右上菜单
+    private View ll_right_top_loading;     //xuameng左上图标
     private View ll_right_top_huikan;
 	private View view_line_XU;
     private View divLoadEpg;
@@ -1001,6 +1001,24 @@ public class LivePlayActivity extends BaseActivity {
 		selectedChannelNumber = selectedChannelNumber * 10 + digit;
 		if (selectedChannelNumber > 99999){
 			selectedChannelNumber = 0;
+		}
+		if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
+            mHideChannelListRun();       //xuameng显示EPG就隐藏左右菜单
+        }
+        if (tvRightSettingLayout.getVisibility() == View.VISIBLE) {
+            mHideSettingLayoutRun();    //xuameng显示EPG就隐藏左右菜单
+        }
+        if (backcontroller.getVisibility() == View.VISIBLE){
+            backcontroller.setVisibility(View.GONE);
+  	        ll_epg.setVisibility(View.GONE);			 //xuameng下面EPG菜单隐藏
+			hideTimeXu();              //xuameng隐藏系统时间
+			hideNetSpeedXu();		//XUAMENG隐藏左上网速
+        }
+		if (isLl_epgVisible()){ 
+            ll_epg.setVisibility(View.GONE);			 //xuameng返回键隐藏下面EPG菜单隐藏
+			ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
+			hideTimeXu();              //xuameng隐藏系统时间
+			hideNetSpeedXu();		//XUAMENG隐藏左上网速
 		}
         InputFilter[] filters = new InputFilter[1];
         filters[0] = new InputFilter.LengthFilter(5); // XUAMENG限制输入长度为5位
