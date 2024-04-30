@@ -178,13 +178,11 @@ public class ModelSettingFragment extends BaseLazyFragment {
                         @Override
                         public void onError(Response<File> response) {
                             super.onError(response);
-							Toast.makeText(mContext, "壁纸下载失败！", Toast.LENGTH_LONG).show();
                         }
 
                         @Override
                         public void downloadProgress(Progress progress) {
                             super.downloadProgress(progress);
-							Toast.makeText(mContext, "壁纸下载中，请稍后！", Toast.LENGTH_LONG).show();
                         }
                     });
             }
