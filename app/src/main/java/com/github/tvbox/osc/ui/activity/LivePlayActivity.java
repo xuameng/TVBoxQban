@@ -645,6 +645,9 @@ public class LivePlayActivity extends BaseActivity {
                     jSONException.printStackTrace();
                 }
                 showEpgxu(date, arrayList);
+				String savedEpgKey = channelName + "_" + liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex()).getDatePresented();
+
+                    hsEpg.put(savedEpgKey, arrayList);
             }
         });
     }
@@ -1722,7 +1725,7 @@ public class LivePlayActivity extends BaseActivity {
                     sBar.setProgress((int)  mVideoView.getCurrentPosition());
                     tv_currentpos.setText(durationToString((int)mVideoView.getCurrentPosition()));
                     tv_duration.setText(durationToString(shiyi_time_c*1000));
-					getEpg(new Date());
+					getEpgxu(new Date());
                     showProgressBars(true);             //xuameng然后再显示
 					showBottomEpgBack();               //xuameng回看EPG
 					tv_right_top_type.setText("回看中");
@@ -1803,7 +1806,7 @@ public class LivePlayActivity extends BaseActivity {
                     sBar.setProgress((int)  mVideoView.getCurrentPosition());
                     tv_currentpos.setText(durationToString((int)mVideoView.getCurrentPosition()));
                     tv_duration.setText(durationToString(shiyi_time_c*1000));
-					getEpg(new Date());
+					getEpgxu(new Date());
                     showProgressBars(true);
 					showBottomEpgBack();               //xuameng回看EPG
 					tv_right_top_type.setText("回看中");
