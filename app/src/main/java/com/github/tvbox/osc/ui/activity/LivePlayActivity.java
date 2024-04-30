@@ -588,6 +588,10 @@ public class LivePlayActivity extends BaseActivity {
                 }
                 showEpg(date, arrayList);
                 String savedEpgKey = channelName + "_" + liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex()).getDatePresented();
+
+                if(isBack){
+	                hsEpg.put(savedEpgKey, arrayList);
+                }
                 if (!hsEpg.contains(savedEpgKey))
                     hsEpg.put(savedEpgKey, arrayList);
                 showBottomEpgXU();               //xuameng测试EPG刷新
@@ -821,7 +825,7 @@ public class LivePlayActivity extends BaseActivity {
             } else {
                 int selectedIndex = liveEpgDateAdapter.getSelectedIndex();
                 if (selectedIndex < 0)
-                    getEpg(liveEpgDateAdapter.getData().get(selectedIndex).getDateParamVal());
+                    getEpg(new Date());
                 else
                     getEpg(liveEpgDateAdapter.getData().get(selectedIndex).getDateParamVal());
             }
@@ -1690,6 +1694,8 @@ public class LivePlayActivity extends BaseActivity {
                     mVideoView.release();
                     shiyi_time = shiyiStartdate + "-" + shiyiEnddate;
                     isSHIYI = true;
+					isBack = true;
+					isVOD = false;
                     if(shiyiUrl.contains("/PLTV/")){
                         if (shiyiUrl.indexOf("?") <= 0) {
                             shiyiUrl = shiyiUrl.replaceAll("/PLTV/", "/TVOD/");
@@ -1716,10 +1722,9 @@ public class LivePlayActivity extends BaseActivity {
                     sBar.setProgress((int)  mVideoView.getCurrentPosition());
                     tv_currentpos.setText(durationToString((int)mVideoView.getCurrentPosition()));
                     tv_duration.setText(durationToString(shiyi_time_c*1000));
+					getEpg(new Date());
                     showProgressBars(true);             //xuameng然后再显示
 					showBottomEpgBack();               //xuameng回看EPG
-                    isBack = true;
-					isVOD = false;
 					tv_right_top_type.setText("回看中");
 					iv_play_pause.setText("回看暂停中！聚汇直播欢迎您的收看！");
                 }
@@ -1770,6 +1775,8 @@ public class LivePlayActivity extends BaseActivity {
                     mVideoView.release();
                     shiyi_time = shiyiStartdate + "-" + shiyiEnddate;
                     isSHIYI = true;
+					isBack = true;
+					isVOD = false;
                     if(shiyiUrl.contains("/PLTV/")){
                         if (shiyiUrl.indexOf("?") <= 0) {
                             shiyiUrl = shiyiUrl.replaceAll("/PLTV/", "/TVOD/");
@@ -1796,10 +1803,9 @@ public class LivePlayActivity extends BaseActivity {
                     sBar.setProgress((int)  mVideoView.getCurrentPosition());
                     tv_currentpos.setText(durationToString((int)mVideoView.getCurrentPosition()));
                     tv_duration.setText(durationToString(shiyi_time_c*1000));
+					getEpg(new Date());
                     showProgressBars(true);
 					showBottomEpgBack();               //xuameng回看EPG
-                    isBack = true;
-					isVOD = false;
 					tv_right_top_type.setText("回看中");
 					iv_play_pause.setText("回看暂停中！聚汇直播欢迎您的收看！");
                 }
