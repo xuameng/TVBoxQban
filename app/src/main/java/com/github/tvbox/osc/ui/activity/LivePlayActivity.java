@@ -1056,7 +1056,7 @@ public class LivePlayActivity extends BaseActivity {
             }
                 numericKeyDown(keyCode);			
 			
-			else if (!isListOrSettingLayoutVisible()) {
+			if (!isListOrSettingLayoutVisible()) {
                 switch (keyCode) {
                     case KeyEvent.KEYCODE_DPAD_UP:
 						if(isBack){                            //xuameng回看时控制
