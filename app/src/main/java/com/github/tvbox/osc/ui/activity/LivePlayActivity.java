@@ -787,7 +787,7 @@ public class LivePlayActivity extends BaseActivity {
                 if (selectedIndex < 0)
                     getEpgxu(new Date());
                 else
-                    getEpg(liveEpgDateAdapter.getData().get(selectedIndex).getDateParamVal());
+                    getEpgxu(liveEpgDateAdapter.getData().get(selectedIndex).getDateParamVal());
             }
         }
     }
