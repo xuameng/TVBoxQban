@@ -178,13 +178,13 @@ public class ModelSettingFragment extends BaseLazyFragment {
                         @Override
                         public void onError(Response<File> response) {
                             super.onError(response);
-							showToastError;
+							showToastError();
                         }
 
                         @Override
                         public void downloadProgress(Progress progress) {
                             super.downloadProgress(progress);
-							showToastDown;
+							showToastDown();
                         }
                     });
             }
