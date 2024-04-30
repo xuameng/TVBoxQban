@@ -1047,7 +1047,16 @@ public class LivePlayActivity extends BaseActivity {
                   hideTimeXu();              //xuameng隐藏系统时间
                   hideNetSpeedXu();		//XUAMENG隐藏左上网速
 				  return false;
-            } else if (!isListOrSettingLayoutVisible()) {
+            } else if (keyCode >= KeyEvent.KEYCODE_0 && keyCode <= KeyEvent.KEYCODE_9) {     //xuameng遥控数字键切换频道
+                keyCode -= KeyEvent.KEYCODE_0;
+            } else if (keyCode >= KeyEvent.KEYCODE_NUMPAD_0 && keyCode <= KeyEvent.KEYCODE_NUMPAD_9) {
+                keyCode -= KeyEvent.KEYCODE_NUMPAD_0;
+            } else {
+                break;
+            }
+                numericKeyDown(keyCode);			
+			
+			else if (!isListOrSettingLayoutVisible()) {
                 switch (keyCode) {
                     case KeyEvent.KEYCODE_DPAD_UP:
 						if(isBack){                            //xuameng回看时控制
@@ -1270,17 +1279,8 @@ public class LivePlayActivity extends BaseActivity {
                            hideTimeXu();              //xuameng隐藏系统时间
                            hideNetSpeedXu();		//XUAMENG隐藏左上网速
 						   backcontroller.setVisibility(View.GONE);            //XUAMENG底部回看菜单播放键点击播放隐藏菜单
-						}                     
+					  }                     
                         break;
-						default:
-                        if (keyCode >= KeyEvent.KEYCODE_0 && keyCode <= KeyEvent.KEYCODE_9) {     //xuameng遥控数字键切换频道
-                            keyCode -= KeyEvent.KEYCODE_0;
-                        } else if (keyCode >= KeyEvent.KEYCODE_NUMPAD_0 && keyCode <= KeyEvent.KEYCODE_NUMPAD_9) {
-                            keyCode -= KeyEvent.KEYCODE_NUMPAD_0;
-                        } else {
-                            break;
-                        }
-                        numericKeyDown(keyCode);
                 }
             }
         } else if (event.getAction() == KeyEvent.ACTION_UP) {
