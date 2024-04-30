@@ -1047,13 +1047,12 @@ public class LivePlayActivity extends BaseActivity {
                   hideTimeXu();              //xuameng隐藏系统时间
                   hideNetSpeedXu();		//XUAMENG隐藏左上网速
 				  return false;
-            } if (keyCode >= KeyEvent.KEYCODE_0 && keyCode <= KeyEvent.KEYCODE_9) {     //xuameng遥控数字键切换频道
+            } 
+			if (keyCode >= KeyEvent.KEYCODE_0 && keyCode <= KeyEvent.KEYCODE_9) {     //xuameng遥控数字键切换频道
                 keyCode -= KeyEvent.KEYCODE_0;
             } else if (keyCode >= KeyEvent.KEYCODE_NUMPAD_0 && keyCode <= KeyEvent.KEYCODE_NUMPAD_9) {
                 keyCode -= KeyEvent.KEYCODE_NUMPAD_0;
-            } else {
-                break;
-            }
+            } 
                 numericKeyDown(keyCode);			
 			
 			if (!isListOrSettingLayoutVisible()) {
