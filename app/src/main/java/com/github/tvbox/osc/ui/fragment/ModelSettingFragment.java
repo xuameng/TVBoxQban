@@ -178,11 +178,13 @@ public class ModelSettingFragment extends BaseLazyFragment {
                         @Override
                         public void onError(Response<File> response) {
                             super.onError(response);
+							Toast.makeText(mContext, "壁纸下载失败！", Toast.LENGTH_LONG).show();
                         }
 
                         @Override
                         public void downloadProgress(Progress progress) {
                             super.downloadProgress(progress);
+							Toast.makeText(mContext, "壁纸下载中请稍后！", Toast.LENGTH_LONG).show();
                         }
                     });
             }
@@ -195,6 +197,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
                 if (wp.exists())
                     wp.delete();
                 ((BaseActivity) requireActivity()).changeWallpaper(true);
+				Toast.makeText(mContext, "壁纸已重置！", Toast.LENGTH_LONG).show();
             }
         });
         findViewById(R.id.llHomeApi).setOnClickListener(new View.OnClickListener() {
