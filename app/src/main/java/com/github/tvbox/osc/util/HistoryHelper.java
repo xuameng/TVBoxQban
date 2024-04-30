@@ -1,11 +1,11 @@
 package com.github.tvbox.osc.util;
 
 public class HistoryHelper {
-    private static Integer[] hisNumArray = {30,50,70};
+    private static Integer[] hisNumArray = {30,50,70,100};
 
     public static final String getHistoryNumName(int index){
         Integer value = getHisNum(index);
-        return value + "条";
+        return value + "条记录";
     }
 
     public static final int getHisNum(int index){
