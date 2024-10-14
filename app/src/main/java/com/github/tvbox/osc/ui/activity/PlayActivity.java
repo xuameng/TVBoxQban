@@ -344,6 +344,9 @@ public class PlayActivity extends BaseActivity {
         if (mediaPlayer instanceof IjkMediaPlayer) {
             trackInfo = ((IjkMediaPlayer)mediaPlayer).getTrackInfo();
         }
+		if (mediaPlayer instanceof EXOmPlayer) {    //xuameng EXO播放器显示音轨信息
+            trackInfo = ((EXOmPlayer) mediaPlayer).getTrackInfo();
+        }
         if (trackInfo == null) {
             Toast.makeText(mContext, "没有音轨", Toast.LENGTH_SHORT).show();
             return;
@@ -363,6 +366,9 @@ public class PlayActivity extends BaseActivity {
                     long progress = mediaPlayer.getCurrentPosition();//保存当前进度，ijk 切换轨道 会有快进几秒
                     if (mediaPlayer instanceof IjkMediaPlayer) {
                         ((IjkMediaPlayer)mediaPlayer).setTrack(value.index);
+                    }
+					if (mediaPlayer instanceof EXOmPlayer) {      //xuameng EXO播放器显示音轨信息
+                        ((EXOmPlayer) mediaPlayer).selectExoTrack(value.index);
                     }
                     new Handler().postDelayed(new Runnable() {
                         @Override
@@ -407,6 +413,9 @@ public class PlayActivity extends BaseActivity {
         if (mediaPlayer instanceof IjkMediaPlayer) {
             trackInfo = ((IjkMediaPlayer)mediaPlayer).getTrackInfo();
         }
+		if (mediaPlayer instanceof EXOmPlayer) {              //xuameng EXO播放器显示内置字幕
+            trackInfo = ((EXOmPlayer) mediaPlayer).getTrackInfo();
+        }
         if (trackInfo == null) {
             Toast.makeText(mContext, "没有内置字幕", Toast.LENGTH_SHORT).show();
             return;
@@ -434,6 +443,20 @@ public class PlayActivity extends BaseActivity {
                             public void run() {
                                 mediaPlayer.seekTo(progress);
                                 mediaPlayer.start();
+                            }
+                        }, 800);
+                    }
+					if (mediaPlayer instanceof EXOmPlayer) {      //xuameng EXO播放器切换内置字幕
+                        mController.mSubtitleView.destroy();
+                        mController.mSubtitleView.clearSubtitleCache();
+                        mController.mSubtitleView.isInternal = true;
+                        ((EXOmPlayer) mediaPlayer).selectExoTrack(value);
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                mediaPlayer.seekTo(progress);
+                                mediaPlayer.start();
+                                mController.startProgress();
                             }
                         }, 800);
                     }
