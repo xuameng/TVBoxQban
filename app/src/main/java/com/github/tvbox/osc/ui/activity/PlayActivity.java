@@ -499,7 +499,7 @@ public class PlayActivity extends BaseActivity {
     void playUrl(String url, HashMap<String, String> headers) {
         LOG.i("playUrl:" + url);
         if(autoRetryCount>1 && url.contains(".m3u8")){
-            url="http://home.jundie.top:666/unBom.php?m3u8="+url;//尝试去bom头再次播放
+  //xuameng没用了          url="http://home.jundie.top:666/unBom.php?m3u8="+url;//尝试去bom头再次播放
         }
         final String finalUrl = url;
         runOnUiThread(new Runnable() {
@@ -559,6 +559,7 @@ public class PlayActivity extends BaseActivity {
             ((IjkMediaPlayer)(mVideoView.getMediaPlayer())).setOnTimedTextListener(new IMediaPlayer.OnTimedTextListener() {
                 @Override
                 public void onTimedText(IMediaPlayer mp, IjkTimedText text) {
+		    if(text==null)return;   //xuameng
                     if (mController.mSubtitleView.isInternal) {
                         com.github.tvbox.osc.subtitle.model.Subtitle subtitle = new com.github.tvbox.osc.subtitle.model.Subtitle();
                         subtitle.content = text.getText();
@@ -861,8 +862,8 @@ public class PlayActivity extends BaseActivity {
         stopParse();
         initParseLoadFound();
         if(mVideoView!= null) mVideoView.release();
-        String subtitleCacheKey = mVodInfo.sourceKey + "-" + mVodInfo.id + "-" + mVodInfo.playFlag + "-" + mVodInfo.playIndex+ "-" + vs.name + "-subt";
-        String progressKey = mVodInfo.sourceKey + mVodInfo.id + mVodInfo.playFlag + mVodInfo.playIndex + vs.name;
+        subtitleCacheKey = mVodInfo.sourceKey + "-" + mVodInfo.id + "-" + mVodInfo.playFlag + "-" + mVodInfo.playIndex+ "-" + vs.name + "-subt";
+        progressKey = mVodInfo.sourceKey + mVodInfo.id + mVodInfo.playFlag + mVodInfo.playIndex + vs.name;       //xuameng
         //重新播放清除现有进度
         if (reset) {
             CacheManager.delete(MD5.string2MD5(progressKey), 0);
