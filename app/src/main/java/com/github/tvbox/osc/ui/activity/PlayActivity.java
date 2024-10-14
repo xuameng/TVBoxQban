@@ -508,10 +508,6 @@ public class PlayActivity extends BaseActivity {
                 stopParse();
                 if (mVideoView != null) {
                     mVideoView.release();
-					mController.mSubtitleView.destroy();
-					mController.mSubtitleView.clearSubtitleCache();
-					mController.mSubtitleView.setVisibility(View.GONE);
-					mController.mSubtitleView.setVisibility(View.VISIBLE);
                     if (finalUrl != null) {
                         String url =finalUrl;
                         try {
@@ -808,10 +804,6 @@ public class PlayActivity extends BaseActivity {
             }
         }else {
             mVodInfo.playIndex++;
-								mController.mSubtitleView.destroy();
-					mController.mSubtitleView.clearSubtitleCache();
-					mController.mSubtitleView.setVisibility(View.GONE);
-					mController.mSubtitleView.setVisibility(View.VISIBLE);
         }
         play(false);
     }
@@ -828,10 +820,6 @@ public class PlayActivity extends BaseActivity {
             return;
         }
         mVodInfo.playIndex--;
-							mController.mSubtitleView.destroy();
-					mController.mSubtitleView.clearSubtitleCache();
-					mController.mSubtitleView.setVisibility(View.GONE);
-					mController.mSubtitleView.setVisibility(View.VISIBLE);
         play(false);
     }
 
@@ -876,10 +864,6 @@ public class PlayActivity extends BaseActivity {
         if(mVideoView!= null) mVideoView.release();
         subtitleCacheKey = mVodInfo.sourceKey + "-" + mVodInfo.id + "-" + mVodInfo.playFlag + "-" + mVodInfo.playIndex+ "-" + vs.name + "-subt";
         progressKey = mVodInfo.sourceKey + mVodInfo.id + mVodInfo.playFlag + mVodInfo.playIndex + vs.name;       //xuameng
-							mController.mSubtitleView.destroy();
-					mController.mSubtitleView.clearSubtitleCache();
-					mController.mSubtitleView.setVisibility(View.GONE);
-					mController.mSubtitleView.setVisibility(View.VISIBLE);
         //重新播放清除现有进度
         if (reset) {
             CacheManager.delete(MD5.string2MD5(progressKey), 0);
