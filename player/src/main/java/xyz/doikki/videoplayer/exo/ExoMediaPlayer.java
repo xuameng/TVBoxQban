@@ -50,7 +50,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
         mMediaSourceHelper = ExoMediaSourceHelper.getInstance(context);
     }
 
-    public void TrackInfo getTrackInfo() {
+    public TrackInfo getTrackInfo() {
         TrackInfo data = new TrackInfo();
         MappingTrackSelector.MappedTrackInfo trackInfo = getTrackSelector().getCurrentMappedTrackInfo();
         if (trackInfo != null) {
