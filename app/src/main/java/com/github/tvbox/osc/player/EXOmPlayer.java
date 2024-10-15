@@ -46,7 +46,7 @@ public class EXOmPlayer extends ExoMediaPlayer {
                             TrackInfoBean t = new TrackInfoBean();
                             t.name = trackName;
                             t.language = "";
-                            t.trackId = formatIndex;
+                            t.index = formatIndex;
                             t.selected = !StringUtils.isEmpty(audioId) && audioId.equals(format.id);
                             t.trackGroupId = groupIndex;
                             t.renderId = groupArrayIndex;
@@ -56,7 +56,7 @@ public class EXOmPlayer extends ExoMediaPlayer {
                             TrackInfoBean t = new TrackInfoBean();
                             t.name = trackName;
                             t.language = "";
-                            t.trackId = formatIndex;
+                            t.index = formatIndex;
                             t.selected = !StringUtils.isEmpty(subtitleId) && subtitleId.equals(format.id);
                             t.trackGroupId = groupIndex;
                             t.renderId = groupArrayIndex;
@@ -103,7 +103,7 @@ public class EXOmPlayer extends ExoMediaPlayer {
                 }
             } else {
                 TrackGroupArray trackGroupArray = trackInfo.getTrackGroups(videoTrackBean.renderId);
-                @SuppressLint("UnsafeOptInUsageError") DefaultTrackSelector.SelectionOverride override = new DefaultTrackSelector.SelectionOverride(videoTrackBean.trackGroupId, videoTrackBean.trackId);
+                @SuppressLint("UnsafeOptInUsageError") DefaultTrackSelector.SelectionOverride override = new DefaultTrackSelector.SelectionOverride(videoTrackBean.trackGroupId, videoTrackBean.index);
                 DefaultTrackSelector.Parameters.Builder parametersBuilder = getTrackSelector().buildUponParameters();
                 parametersBuilder.setRendererDisabled(videoTrackBean.renderId, false);
                 parametersBuilder.setSelectionOverride(videoTrackBean.renderId, trackGroupArray, override);
