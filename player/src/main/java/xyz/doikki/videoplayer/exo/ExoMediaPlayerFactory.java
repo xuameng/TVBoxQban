@@ -14,7 +14,6 @@ public class ExoMediaPlayerFactory extends PlayerFactory<ExoMediaPlayer> {
     public ExoMediaPlayer createPlayer(Context context) {
         return new ExoMediaPlayer(context);
     }
-}
 
     @SuppressLint("UnsafeOptInUsageError")
     public TrackInfo getTrackInfo() {
@@ -99,3 +98,9 @@ public class ExoMediaPlayerFactory extends PlayerFactory<ExoMediaPlayer> {
         }
 
     }
+
+    public void setOnTimedTextListener(Player.Listener listener) {
+        mMediaPlayer.addListener(listener);
+    }    
+}
+
