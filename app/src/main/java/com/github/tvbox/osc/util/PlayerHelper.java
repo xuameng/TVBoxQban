@@ -6,6 +6,7 @@ import android.content.Context;
 import com.github.tvbox.osc.api.ApiConfig;
 import com.github.tvbox.osc.bean.IJKCode;
 import com.github.tvbox.osc.player.IjkMediaPlayer;
+import com.github.tvbox.osc.player.EXOmPlayer;
 import com.github.tvbox.osc.player.render.SurfaceRenderViewFactory;
 import com.github.tvbox.osc.player.thirdparty.Kodi;
 import com.github.tvbox.osc.player.thirdparty.MXPlayer;
@@ -70,8 +71,13 @@ public class PlayerHelper {
             } catch (Throwable th) {
                 th.printStackTrace();
             }
-        } else if (playerType == 2) {
-            playerFactory = ExoMediaPlayerFactory.create();
+        } elseelse if (playerType == 2) {
+            playerFactory = new PlayerFactory<EXOmPlayer>() {
+                @Override
+                public EXOmPlayer createPlayer(Context context) {
+                    return new EXOmPlayer(context);
+                }
+            };
         } else {
             playerFactory = AndroidMediaPlayerFactory.create();
         }
@@ -115,7 +121,12 @@ public class PlayerHelper {
                 th.printStackTrace();
             }
         } else if (playType == 2) {
-            playerFactory = ExoMediaPlayerFactory.create();
+            playerFactory = new PlayerFactory<EXOmPlayer>() {
+                @Override
+                public EXOmPlayer createPlayer(Context context) {
+                    return new EXOmPlayer(context);
+                }
+            };
         } else {
             playerFactory = AndroidMediaPlayerFactory.create();
         }
