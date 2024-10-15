@@ -71,7 +71,7 @@ public class PlayerHelper {
             } catch (Throwable th) {
                 th.printStackTrace();
             }
-        } elseelse if (playerType == 2) {
+        } else if (playerType == 2) {
             playerFactory = new PlayerFactory<EXOmPlayer>() {
                 @Override
                 public EXOmPlayer createPlayer(Context context) {
