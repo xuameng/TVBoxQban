@@ -104,11 +104,11 @@ public class SimpleSubtitleView extends TextView
             setText(EMPTY_TEXT);
             return;
         }
-		if (text.startsWith("Dialogue:") || text.startsWith("m ")) {        //xuameng解决字幕乱码
+        String text = subtitle.content;
+        if (text.startsWith("Dialogue:") || text.startsWith("m ")) {
             setText(EMPTY_TEXT);
             return;
         }
-        String text = subtitle.content;
         text = text.replaceAll("(?:\\r\\n)", "<br />");
         text = text.replaceAll("(?:\\r)", "<br />");
         text = text.replaceAll("(?:\\n)", "<br />");
