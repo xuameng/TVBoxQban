@@ -51,7 +51,6 @@ import com.github.tvbox.osc.bean.VodInfo;
 import com.github.tvbox.osc.cache.CacheManager;
 import com.github.tvbox.osc.event.RefreshEvent;
 import com.github.tvbox.osc.player.IjkMediaPlayer;
-import com.github.tvbox.osc.player.EXOmPlayer;     //xuameng exo切换字幕音轨
 import com.github.tvbox.osc.player.MyVideoView;
 import com.github.tvbox.osc.player.TrackInfo;
 import com.github.tvbox.osc.player.TrackInfoBean;
@@ -79,9 +78,6 @@ import com.lzy.okgo.model.HttpHeaders;
 import com.lzy.okgo.model.Response;
 import com.obsez.android.lib.filechooser.ChooserDialog;
 import com.orhanobut.hawk.Hawk;
-
-import com.google.android.exoplayer2.Player;	//xuameng exo切换字幕音轨
-import com.google.android.exoplayer2.text.Cue;	//xuameng exo切换字幕音轨
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -279,9 +275,11 @@ public class PlayFragment extends BaseLazyFragment {
     void selectMySubtitle() throws Exception {
         SubtitleDialog subtitleDialog = new SubtitleDialog(getActivity());
         int playerType = mVodPlayerCfg.getInt("pl");
-
+        if (mController.mSubtitleView.hasInternal && playerType == 1) {
             subtitleDialog.selectInternal.setVisibility(View.VISIBLE);
-
+        } else {
+            subtitleDialog.selectInternal.setVisibility(View.GONE);
+        }
         subtitleDialog.setSubtitleViewListener(new SubtitleDialog.SubtitleViewListener() {
             @Override
             public void setTextSize(int size) {
@@ -358,7 +356,7 @@ public class PlayFragment extends BaseLazyFragment {
 
     void selectMyAudioTrack() {
         AbstractPlayer mediaPlayer = mVideoView.getMediaPlayer();
-        if (!(mediaPlayer instanceof IjkMediaPlayer)||!(mediaPlayer instanceof EXOmPlayer)) {   //xuameng exo播放器切换音轨字幕
+        if (!(mediaPlayer instanceof IjkMediaPlayer)) {
             return;
         }
         TrackInfo trackInfo = null;
@@ -417,14 +415,11 @@ public class PlayFragment extends BaseLazyFragment {
 
     void selectMyInternalSubtitle() {
         AbstractPlayer mediaPlayer = mVideoView.getMediaPlayer();
-
+        if (!(mediaPlayer instanceof IjkMediaPlayer)) {
+            return;
+        }
         TrackInfo trackInfo = null;
-        if (mediaPlayer instanceof IjkMediaPlayer) {
-            trackInfo = ((IjkMediaPlayer)mediaPlayer).getTrackInfo();
-        }
-		if (mediaPlayer instanceof EXOmPlayer) {  //xuameng exo播放器切换音轨字幕
-            trackInfo = ((EXOmPlayer)mediaPlayer).getTrackInfo();
-        }
+        trackInfo = ((IjkMediaPlayer)mediaPlayer).getTrackInfo();
         if (trackInfo == null) {
             Toast.makeText(mContext, "没有内置字幕", Toast.LENGTH_SHORT).show();
             return;
