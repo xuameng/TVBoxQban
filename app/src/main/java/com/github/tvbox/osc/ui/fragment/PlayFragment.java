@@ -51,6 +51,7 @@ import com.github.tvbox.osc.bean.VodInfo;
 import com.github.tvbox.osc.cache.CacheManager;
 import com.github.tvbox.osc.event.RefreshEvent;
 import com.github.tvbox.osc.player.IjkMediaPlayer;
+import com.github.tvbox.osc.player.EXOmPlayer;     //xuameng exo切换字幕音轨
 import com.github.tvbox.osc.player.MyVideoView;
 import com.github.tvbox.osc.player.TrackInfo;
 import com.github.tvbox.osc.player.TrackInfoBean;
@@ -78,6 +79,9 @@ import com.lzy.okgo.model.HttpHeaders;
 import com.lzy.okgo.model.Response;
 import com.obsez.android.lib.filechooser.ChooserDialog;
 import com.orhanobut.hawk.Hawk;
+
+import com.google.android.exoplayer2.Player;	//xuameng exo切换字幕音轨
+import com.google.android.exoplayer2.text.Cue;	//xuameng exo切换字幕音轨
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -275,7 +279,7 @@ public class PlayFragment extends BaseLazyFragment {
     void selectMySubtitle() throws Exception {
         SubtitleDialog subtitleDialog = new SubtitleDialog(getActivity());
         int playerType = mVodPlayerCfg.getInt("pl");
-        if (mController.mSubtitleView.hasInternal && playerType == 1) {
+        if (mController.mSubtitleView.hasInternal && playerType == 1||mController.mSubtitleView.hasInternal && playerType == 2) {
             subtitleDialog.selectInternal.setVisibility(View.VISIBLE);
         } else {
             subtitleDialog.selectInternal.setVisibility(View.GONE);
@@ -356,11 +360,16 @@ public class PlayFragment extends BaseLazyFragment {
 
     void selectMyAudioTrack() {
         AbstractPlayer mediaPlayer = mVideoView.getMediaPlayer();
-        if (!(mediaPlayer instanceof IjkMediaPlayer)) {
+        if (!(mediaPlayer instanceof IjkMediaPlayer)||!(mediaPlayer instanceof EXOmPlayer)) {   //xuameng exo播放器切换音轨字幕
             return;
         }
         TrackInfo trackInfo = null;
-        trackInfo = ((IjkMediaPlayer)mediaPlayer).getTrackInfo();
+        if (mediaPlayer instanceof IjkMediaPlayer) {
+            trackInfo = ((IjkMediaPlayer)mediaPlayer).getTrackInfo();
+        }
+		if (mediaPlayer instanceof EXOmPlayer) {   //xuameng exo播放器切换音轨字幕
+            trackInfo = ((EXOmPlayer) mediaPlayer).getTrackInfo();
+        }
         if (trackInfo == null) {
             Toast.makeText(mContext, "没有音轨", Toast.LENGTH_SHORT).show();
             return;
@@ -378,7 +387,12 @@ public class PlayFragment extends BaseLazyFragment {
                     }
                     mediaPlayer.pause();
                     long progress = mediaPlayer.getCurrentPosition();//保存当前进度，ijk 切换轨道 会有快进几秒
-                    ((IjkMediaPlayer)mediaPlayer).setTrack(value.index);
+                    if (mediaPlayer instanceof IjkMediaPlayer) {
+                        ((IjkMediaPlayer)mediaPlayer).setTrack(value.index);
+                    }
+					if (mediaPlayer instanceof EXOmPlayer) {   //xuameng exo播放器切换音轨字幕
+                        ((EXOmPlayer) mediaPlayer).selectExoTrack(value);
+                    }
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -415,11 +429,16 @@ public class PlayFragment extends BaseLazyFragment {
 
     void selectMyInternalSubtitle() {
         AbstractPlayer mediaPlayer = mVideoView.getMediaPlayer();
-        if (!(mediaPlayer instanceof IjkMediaPlayer)) {
+        if (!(mediaPlayer instanceof IjkMediaPlayer)||!(mediaPlayer instanceof EXOmPlayer)) {  //xuameng exo播放器切换音轨字幕
             return;
         }
         TrackInfo trackInfo = null;
-        trackInfo = ((IjkMediaPlayer)mediaPlayer).getTrackInfo();
+        if (mediaPlayer instanceof IjkMediaPlayer) {
+            trackInfo = ((IjkMediaPlayer)mediaPlayer).getTrackInfo();
+        }
+		if (mediaPlayer instanceof EXOmPlayer) {  //xuameng exo播放器切换音轨字幕
+            trackInfo = ((EXOmPlayer)mediaPlayer).getTrackInfo();
+        }
         if (trackInfo == null) {
             Toast.makeText(mContext, "没有内置字幕", Toast.LENGTH_SHORT).show();
             return;
@@ -437,17 +456,33 @@ public class PlayFragment extends BaseLazyFragment {
                     }
                     mediaPlayer.pause();
                     long progress = mediaPlayer.getCurrentPosition();//保存当前进度，ijk 切换轨道 会有快进几秒
-                    mController.mSubtitleView.destroy();
-                    mController.mSubtitleView.clearSubtitleCache();
-                    mController.mSubtitleView.isInternal = true;
-                    ((IjkMediaPlayer)mediaPlayer).setTrack(value.index);
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            mediaPlayer.seekTo(progress);
-                            mediaPlayer.start();
-                        }
-                    }, 800);
+                    if (mediaPlayer instanceof IjkMediaPlayer) {
+                        mController.mSubtitleView.destroy();
+                        mController.mSubtitleView.clearSubtitleCache();
+                        mController.mSubtitleView.isInternal = true;
+                        ((IjkMediaPlayer)mediaPlayer).setTrack(value.index);
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                mediaPlayer.seekTo(progress);
+                                mediaPlayer.start();
+                            }
+                        }, 800);
+                    }
+                    if (mediaPlayer instanceof EXOmPlayer) {  //xuameng exo播放器切换音轨字幕
+					    mController.mSubtitleView.destroy();
+                        mController.mSubtitleView.clearSubtitleCache();
+                        mController.mSubtitleView.isInternal = true;
+                        ((EXOmPlayer)mediaPlayer).selectExoTrack(value);
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                mediaPlayer.seekTo(progress);
+                                mediaPlayer.start();
+                                mController.startProgress();
+                            }
+                        }, 800);
+                    }
                     dialog.dismiss();
                 } catch (Exception e) {
                     LOG.e("切换内置字幕出错");
@@ -581,6 +616,28 @@ public class PlayFragment extends BaseLazyFragment {
                 }
             });
         }
+
+        if (mVideoView.getMediaPlayer() instanceof EXOmPlayer) {  //xuameng exo播放器切换音轨字幕
+            trackInfo = ((EXOmPlayer) (mVideoView.getMediaPlayer())).getTrackInfo();
+            if (trackInfo != null && trackInfo.getSubtitle().size() > 0) {
+                mController.mSubtitleView.hasInternal = true;
+            }
+            ((EXOmPlayer) (mVideoView.getMediaPlayer())).setOnTimedTextListener(new Player.Listener() {  //xuameng exo播放器切换音轨字幕
+                @Override
+                public void onCues(@NonNull List<Cue> cues) {
+                    if (cues.size() > 0) {
+                        CharSequence ss = cues.get(0).text;
+                        if (ss != null && mController.mSubtitleView.isInternal) {
+                            com.github.tvbox.osc.subtitle.model.Subtitle subtitle = new com.github.tvbox.osc.subtitle.model.Subtitle();
+                            subtitle.content = ss.toString();
+                            mController.mSubtitleView.onSubtitleChanged(subtitle);
+                        }
+                    } else{
+                        mController.mSubtitleView.onSubtitleChanged(null);
+                    }
+                }
+            });
+        }
         mController.mSubtitleView.bindToMediaPlayer(mVideoView.getMediaPlayer());
         mController.mSubtitleView.setPlaySubtitleCacheKey(subtitleCacheKey);
         String subtitlePathCache = (String)CacheManager.getCache(MD5.string2MD5(subtitleCacheKey));
@@ -592,19 +649,33 @@ public class PlayFragment extends BaseLazyFragment {
             } else {
                 if (mController.mSubtitleView.hasInternal) {
                     mController.mSubtitleView.isInternal = true;
-                    if (trackInfo != null) {
+                    if (trackInfo != null && trackInfo.getSubtitle().size()>0) {
                         List<TrackInfoBean> subtitleTrackList = trackInfo.getSubtitle();
                         int selectedIndex = trackInfo.getSubtitleSelected(true);
+                        boolean hasCh =false;
                         for(TrackInfoBean subtitleTrackInfoBean : subtitleTrackList) {
                             String lowerLang = subtitleTrackInfoBean.language.toLowerCase();
                             if (lowerLang.startsWith("zh") || lowerLang.startsWith("ch")) {
+                                hasCh=true;
                                 if (selectedIndex != subtitleTrackInfoBean.index) {
-                                    ((IjkMediaPlayer)(mVideoView.getMediaPlayer())).setTrack(subtitleTrackInfoBean.index);
+									 if (mVideoView.getMediaPlayer() instanceof IjkMediaPlayer){
+                                        ((IjkMediaPlayer)(mVideoView.getMediaPlayer())).setTrack(subtitleTrackInfoBean.index);
+                                    }
+									 else if (mVideoView.getMediaPlayer() instanceof EXOmPlayer){  //xuameng exo播放器切换音轨字幕
+                                        ((EXOmPlayer)(mVideoView.getMediaPlayer())).selectExoTrack(subtitleTrackInfoBean);
+                                    }
                                     break;
                                 }
                             }
                         }
-                    }
+                        if(!hasCh){
+						  if (mVideoView.getMediaPlayer() instanceof IjkMediaPlayer){
+							((IjkMediaPlayer)(mVideoView.getMediaPlayer())).setTrack(subtitleTrackList.get(0).index);
+                          }else if (mVideoView.getMediaPlayer() instanceof EXOmPlayer){  //xuameng exo播放器切换音轨字幕
+                           ((EXOmPlayer)(mVideoView.getMediaPlayer())).selectExoTrack(subtitleTrackList.get(0));
+                       }
+					 }
+                  }
                 }
             }
         }
