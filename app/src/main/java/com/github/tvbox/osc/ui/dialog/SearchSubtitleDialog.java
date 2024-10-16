@@ -82,6 +82,10 @@ public class SearchSubtitleDialog extends BaseDialog {
                         mGridView.setVisibility(View.GONE);
                         subtitleViewModel.getSearchResultSubtitleUrls(subtitle);
                     } else {
+                        if (TextUtils.isEmpty(subtitle.getUrl())){
+                            ToastUtils.showShort("url加载失败,请重新搜索");
+                            return;
+                        }
                         loadSubtitle(subtitle);
                         dismiss();
                     }
