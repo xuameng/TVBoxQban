@@ -83,7 +83,7 @@ public class SearchSubtitleDialog extends BaseDialog {
                         subtitleViewModel.getSearchResultSubtitleUrls(subtitle);
                     } else {
                         if (TextUtils.isEmpty(subtitle.getUrl())){
-                            ToastUtils.showShort("url加载失败,请重新搜索");
+                            Toast.makeText(getContext(), "url加载失败,请重新搜索!", Toast.LENGTH_SHORT).show();
                             return;
                         }
                         loadSubtitle(subtitle);
