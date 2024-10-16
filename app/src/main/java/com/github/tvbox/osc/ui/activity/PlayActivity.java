@@ -5,7 +5,6 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.http.SslError;
@@ -52,7 +51,6 @@ import com.github.tvbox.osc.bean.VodInfo;
 import com.github.tvbox.osc.cache.CacheManager;
 import com.github.tvbox.osc.event.RefreshEvent;
 import com.github.tvbox.osc.player.IjkMediaPlayer;
-import com.github.tvbox.osc.player.EXOmPlayer;     //xuameng exo切换字幕音轨
 import com.github.tvbox.osc.player.MyVideoView;
 import com.github.tvbox.osc.player.TrackInfo;
 import com.github.tvbox.osc.player.TrackInfoBean;
@@ -80,9 +78,6 @@ import com.lzy.okgo.model.HttpHeaders;
 import com.lzy.okgo.model.Response;
 import com.obsez.android.lib.filechooser.ChooserDialog;
 import com.orhanobut.hawk.Hawk;
-
-import com.google.android.exoplayer2.Player;	//xuameng exo切换字幕音轨
-import com.google.android.exoplayer2.text.Cue;	//xuameng exo切换字幕音轨
 
 import org.greenrobot.eventbus.EventBus;
 import org.jetbrains.annotations.NotNull;
@@ -261,7 +256,7 @@ public class PlayActivity extends BaseActivity {
     void selectMySubtitle() throws Exception {
         SubtitleDialog subtitleDialog = new SubtitleDialog(PlayActivity.this);
         int playerType = mVodPlayerCfg.getInt("pl");
-        if (mController.mSubtitleView.hasInternal && playerType == 1||mController.mSubtitleView.hasInternal && playerType == 2) {
+        if (mController.mSubtitleView.hasInternal && playerType == 1) {
             subtitleDialog.selectInternal.setVisibility(View.VISIBLE);
         } else {
             subtitleDialog.selectInternal.setVisibility(View.GONE);
@@ -342,15 +337,12 @@ public class PlayActivity extends BaseActivity {
 
     void selectMyAudioTrack() {
         AbstractPlayer mediaPlayer = mVideoView.getMediaPlayer();
-        if (!(mediaPlayer instanceof IjkMediaPlayer)||!(mediaPlayer instanceof EXOmPlayer)) {   //xuameng exo播放器切换音轨字幕
+        if (!(mediaPlayer instanceof IjkMediaPlayer)) {
             return;
         }
         TrackInfo trackInfo = null;
         if (mediaPlayer instanceof IjkMediaPlayer) {
             trackInfo = ((IjkMediaPlayer)mediaPlayer).getTrackInfo();
-        }
-		if (mediaPlayer instanceof EXOmPlayer) {   //xuameng exo播放器切换音轨字幕
-            trackInfo = ((EXOmPlayer) mediaPlayer).getTrackInfo();
         }
         if (trackInfo == null) {
             Toast.makeText(mContext, "没有音轨", Toast.LENGTH_SHORT).show();
@@ -371,9 +363,6 @@ public class PlayActivity extends BaseActivity {
                     long progress = mediaPlayer.getCurrentPosition();//保存当前进度，ijk 切换轨道 会有快进几秒
                     if (mediaPlayer instanceof IjkMediaPlayer) {
                         ((IjkMediaPlayer)mediaPlayer).setTrack(value.index);
-                    }
-					if (mediaPlayer instanceof EXOmPlayer) {   //xuameng exo播放器切换音轨字幕
-                        ((EXOmPlayer) mediaPlayer).selectExoTrack(value);
                     }
                     new Handler().postDelayed(new Runnable() {
                         @Override
@@ -411,15 +400,12 @@ public class PlayActivity extends BaseActivity {
 
     void selectMyInternalSubtitle() {
         AbstractPlayer mediaPlayer = mVideoView.getMediaPlayer();
-        if (!(mediaPlayer instanceof IjkMediaPlayer)||!(mediaPlayer instanceof EXOmPlayer)) {  //xuameng exo播放器切换音轨字幕
+        if (!(mediaPlayer instanceof IjkMediaPlayer)) {
             return;
         }
         TrackInfo trackInfo = null;
         if (mediaPlayer instanceof IjkMediaPlayer) {
             trackInfo = ((IjkMediaPlayer)mediaPlayer).getTrackInfo();
-        }
-		if (mediaPlayer instanceof EXOmPlayer) {  //xuameng exo播放器切换音轨字幕
-            trackInfo = ((EXOmPlayer)mediaPlayer).getTrackInfo();
         }
         if (trackInfo == null) {
             Toast.makeText(mContext, "没有内置字幕", Toast.LENGTH_SHORT).show();
@@ -434,8 +420,7 @@ public class PlayActivity extends BaseActivity {
             public void click(TrackInfoBean value, int pos) {
                 try {
                     for (TrackInfoBean subtitle : bean) {
-//xuameng                        subtitle.selected = subtitle.index == value.index;
-						subtitle.selected =subtitle.trackGroupId == value.trackGroupId && subtitle.index == value.index;
+                        subtitle.selected = subtitle.index == value.index;
                     }
                     mediaPlayer.pause();
                     long progress = mediaPlayer.getCurrentPosition();//保存当前进度，ijk 切换轨道 会有快进几秒
@@ -453,17 +438,6 @@ public class PlayActivity extends BaseActivity {
                         }, 800);
                     }
 
-                    if (mediaPlayer instanceof EXOmPlayer) {  //xuameng exo播放器切换音轨字幕
-                        ((EXOmPlayer)mediaPlayer).selectExoTrack(value);
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                mediaPlayer.seekTo(progress);
-                                mediaPlayer.start();
-                                mController.startProgress();
-                            }
-                        }, 800);
-                    }
                     dialog.dismiss();
                 } catch (Exception e) {
                     LOG.e("切换内置字幕出错");
@@ -594,28 +568,6 @@ public class PlayActivity extends BaseActivity {
                 }
             });
         }
-
-        if (mVideoView.getMediaPlayer() instanceof EXOmPlayer) {  //xuameng exo播放器切换音轨字幕
-            trackInfo = ((EXOmPlayer) (mVideoView.getMediaPlayer())).getTrackInfo();
-            if (trackInfo != null && trackInfo.getSubtitle().size() > 0) {
-                mController.mSubtitleView.hasInternal = true;
-            }
-            ((EXOmPlayer) (mVideoView.getMediaPlayer())).setOnTimedTextListener(new Player.Listener() {  //xuameng exo播放器切换音轨字幕
-                @Override
-                public void onCues(@NonNull List<Cue> cues) {
-                    if (cues.size() > 0) {
-                        CharSequence ss = cues.get(0).text;
-                        if (ss != null && mController.mSubtitleView.isInternal) {
-                            com.github.tvbox.osc.subtitle.model.Subtitle subtitle = new com.github.tvbox.osc.subtitle.model.Subtitle();
-                            subtitle.content = ss.toString();
-                            mController.mSubtitleView.onSubtitleChanged(subtitle);
-                        }
-                    } else{
-                        mController.mSubtitleView.onSubtitleChanged(null);
-                    }
-                }
-            });
-        }
         mController.mSubtitleView.bindToMediaPlayer(mVideoView.getMediaPlayer());
         mController.mSubtitleView.setPlaySubtitleCacheKey(subtitleCacheKey);
         String subtitlePathCache = (String)CacheManager.getCache(MD5.string2MD5(subtitleCacheKey));
@@ -636,24 +588,13 @@ public class PlayActivity extends BaseActivity {
                             if (lowerLang.startsWith("zh") || lowerLang.startsWith("ch")) {
                                 hasCh=true;
                                 if (selectedIndex != subtitleTrackInfoBean.index) {
-									 if (mVideoView.getMediaPlayer() instanceof IjkMediaPlayer){
-                                        ((IjkMediaPlayer)(mVideoView.getMediaPlayer())).setTrack(subtitleTrackInfoBean.index);
-                                    }
-									 else if (mVideoView.getMediaPlayer() instanceof EXOmPlayer){  //xuameng exo播放器切换音轨字幕
-                                        ((EXOmPlayer)(mVideoView.getMediaPlayer())).selectExoTrack(subtitleTrackInfoBean);
-                                    }
+                                    ((IjkMediaPlayer)(mVideoView.getMediaPlayer())).setTrack(subtitleTrackInfoBean.index);
                                     break;
                                 }
                             }
                         }
-                        if(!hasCh){
-						  if (mVideoView.getMediaPlayer() instanceof IjkMediaPlayer){
-							((IjkMediaPlayer)(mVideoView.getMediaPlayer())).setTrack(subtitleTrackList.get(0).index);
-                          }else if (mVideoView.getMediaPlayer() instanceof EXOmPlayer){  //xuameng exo播放器切换音轨字幕
-                           ((EXOmPlayer)(mVideoView.getMediaPlayer())).selectExoTrack(subtitleTrackList.get(0));
-                       }
-					 }
-                  }
+                        if(!hasCh)((IjkMediaPlayer)(mVideoView.getMediaPlayer())).setTrack(subtitleTrackList.get(0).index);
+                    }
                 }
             }
         }
@@ -930,7 +871,7 @@ public class PlayActivity extends BaseActivity {
         }else{
             try{
                 int playerType = mVodPlayerCfg.getInt("pl");
-                if(playerType==1||playerType==2){
+                if(playerType==1){
                     mController.mSubtitleView.setVisibility(View.VISIBLE);
                 }else {
                     mController.mSubtitleView.setVisibility(View.GONE);
