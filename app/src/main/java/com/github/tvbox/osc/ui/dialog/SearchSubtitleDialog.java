@@ -75,14 +75,14 @@ public class SearchSubtitleDialog extends BaseDialog {
                 FastClickCheckUtil.check(view);
                 Subtitle subtitle = searchAdapter.getData().get(position);
                 //加载字幕
-                if (mSubtitleLoader != null) {
+                if (mLoader != null) {
                     if (subtitle.getIsZip()) {
                         isSearchPag = false;
                         loadingBar.setVisibility(View.VISIBLE);
                         mGridView.setVisibility(View.GONE);
                         subtitleViewModel.getSearchResultSubtitleUrls(subtitle);
                     } else {
-                        if (loadSubtitle(subtitle) = null){
+                        if (subtitle = null){
                             return;
                         }
                         loadSubtitle(subtitle);
