@@ -81,9 +81,9 @@ public class SearchSubtitleDialog extends BaseDialog {
                         loadingBar.setVisibility(View.VISIBLE);
                         mGridView.setVisibility(View.GONE);
                         subtitleViewModel.getSearchResultSubtitleUrls(subtitle);
-                    } else {
+                    } else {        //xuameng搜索在线字幕重复点击相同字幕文件空指针问题
                         if (TextUtils.isEmpty(subtitle.getUrl())){
-                            Toast.makeText(getContext(), "url加载失败,请重新搜索!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "网络链接已失败,请重新搜索!", Toast.LENGTH_SHORT).show();
                             return;
                         }
                         loadSubtitle(subtitle);
