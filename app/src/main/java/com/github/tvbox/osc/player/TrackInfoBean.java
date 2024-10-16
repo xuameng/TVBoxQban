@@ -5,10 +5,4 @@ public class TrackInfoBean {
     public String language;
     public int index;
     public boolean selected;
-
-    //渲染器ID（exo）
-    public int renderId;
-    //分组ID（exo）
-    public int trackGroupId;
-
 }
