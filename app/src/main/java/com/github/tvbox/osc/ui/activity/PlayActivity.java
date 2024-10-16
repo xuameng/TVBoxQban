@@ -261,9 +261,11 @@ public class PlayActivity extends BaseActivity {
     void selectMySubtitle() throws Exception {
         SubtitleDialog subtitleDialog = new SubtitleDialog(PlayActivity.this);
         int playerType = mVodPlayerCfg.getInt("pl");
-
+        if (mController.mSubtitleView.hasInternal && playerType == 1||mController.mSubtitleView.hasInternal && playerType == 2) {
             subtitleDialog.selectInternal.setVisibility(View.VISIBLE);
-        
+        } else {
+            subtitleDialog.selectInternal.setVisibility(View.GONE);
+        }
         subtitleDialog.setSubtitleViewListener(new SubtitleDialog.SubtitleViewListener() {
             @Override
             public void setTextSize(int size) {
@@ -340,14 +342,14 @@ public class PlayActivity extends BaseActivity {
 
     void selectMyAudioTrack() {
         AbstractPlayer mediaPlayer = mVideoView.getMediaPlayer();
-        if (!(mediaPlayer instanceof IjkMediaPlayer)||!(mediaPlayer instanceof EXOmPlayer)) {
+        if (!(mediaPlayer instanceof IjkMediaPlayer)||!(mediaPlayer instanceof EXOmPlayer)) {   //xuameng exo播放器切换音轨字幕
             return;
         }
         TrackInfo trackInfo = null;
         if (mediaPlayer instanceof IjkMediaPlayer) {
             trackInfo = ((IjkMediaPlayer)mediaPlayer).getTrackInfo();
         }
-		if (mediaPlayer instanceof EXOmPlayer) {
+		if (mediaPlayer instanceof EXOmPlayer) {   //xuameng exo播放器切换音轨字幕
             trackInfo = ((EXOmPlayer) mediaPlayer).getTrackInfo();
         }
         if (trackInfo == null) {
@@ -370,7 +372,7 @@ public class PlayActivity extends BaseActivity {
                     if (mediaPlayer instanceof IjkMediaPlayer) {
                         ((IjkMediaPlayer)mediaPlayer).setTrack(value.index);
                     }
-					if (mediaPlayer instanceof EXOmPlayer) {
+					if (mediaPlayer instanceof EXOmPlayer) {   //xuameng exo播放器切换音轨字幕
                         ((EXOmPlayer) mediaPlayer).selectExoTrack(value);
                     }
                     new Handler().postDelayed(new Runnable() {
@@ -409,14 +411,14 @@ public class PlayActivity extends BaseActivity {
 
     void selectMyInternalSubtitle() {
         AbstractPlayer mediaPlayer = mVideoView.getMediaPlayer();
-        if (!(mediaPlayer instanceof IjkMediaPlayer)||!(mediaPlayer instanceof EXOmPlayer)) {
+        if (!(mediaPlayer instanceof IjkMediaPlayer)||!(mediaPlayer instanceof EXOmPlayer)) {  //xuameng exo播放器切换音轨字幕
             return;
         }
         TrackInfo trackInfo = null;
         if (mediaPlayer instanceof IjkMediaPlayer) {
             trackInfo = ((IjkMediaPlayer)mediaPlayer).getTrackInfo();
         }
-		if (mediaPlayer instanceof EXOmPlayer) {
+		if (mediaPlayer instanceof EXOmPlayer) {  //xuameng exo播放器切换音轨字幕
             trackInfo = ((EXOmPlayer)mediaPlayer).getTrackInfo();
         }
         if (trackInfo == null) {
@@ -451,7 +453,7 @@ public class PlayActivity extends BaseActivity {
                         }, 800);
                     }
 
-                    if (mediaPlayer instanceof EXOmPlayer) {
+                    if (mediaPlayer instanceof EXOmPlayer) {  //xuameng exo播放器切换音轨字幕
                         ((EXOmPlayer)mediaPlayer).selectExoTrack(value);
                         new Handler().postDelayed(new Runnable() {
                             @Override
@@ -593,12 +595,12 @@ public class PlayActivity extends BaseActivity {
             });
         }
 
-        if (mVideoView.getMediaPlayer() instanceof EXOmPlayer) {
+        if (mVideoView.getMediaPlayer() instanceof EXOmPlayer) {  //xuameng exo播放器切换音轨字幕
             trackInfo = ((EXOmPlayer) (mVideoView.getMediaPlayer())).getTrackInfo();
             if (trackInfo != null && trackInfo.getSubtitle().size() > 0) {
                 mController.mSubtitleView.hasInternal = true;
             }
-            ((EXOmPlayer) (mVideoView.getMediaPlayer())).setOnTimedTextListener(new Player.Listener() {
+            ((EXOmPlayer) (mVideoView.getMediaPlayer())).setOnTimedTextListener(new Player.Listener() {  //xuameng exo播放器切换音轨字幕
                 @Override
                 public void onCues(@NonNull List<Cue> cues) {
                     if (cues.size() > 0) {
@@ -637,7 +639,7 @@ public class PlayActivity extends BaseActivity {
 									 if (mVideoView.getMediaPlayer() instanceof IjkMediaPlayer){
                                         ((IjkMediaPlayer)(mVideoView.getMediaPlayer())).setTrack(subtitleTrackInfoBean.index);
                                     }
-									 else if (mVideoView.getMediaPlayer() instanceof EXOmPlayer){
+									 else if (mVideoView.getMediaPlayer() instanceof EXOmPlayer){  //xuameng exo播放器切换音轨字幕
                                         ((EXOmPlayer)(mVideoView.getMediaPlayer())).selectExoTrack(subtitleTrackInfoBean);
                                     }
                                     break;
@@ -647,7 +649,7 @@ public class PlayActivity extends BaseActivity {
                         if(!hasCh){
 						  if (mVideoView.getMediaPlayer() instanceof IjkMediaPlayer){
 							((IjkMediaPlayer)(mVideoView.getMediaPlayer())).setTrack(subtitleTrackList.get(0).index);
-                          }else if (mVideoView.getMediaPlayer() instanceof EXOmPlayer){
+                          }else if (mVideoView.getMediaPlayer() instanceof EXOmPlayer){  //xuameng exo播放器切换音轨字幕
                            ((EXOmPlayer)(mVideoView.getMediaPlayer())).selectExoTrack(subtitleTrackList.get(0));
                        }
 					 }
