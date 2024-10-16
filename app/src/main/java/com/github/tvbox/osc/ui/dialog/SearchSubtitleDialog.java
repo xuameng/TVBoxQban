@@ -82,7 +82,7 @@ public class SearchSubtitleDialog extends BaseDialog {
                         mGridView.setVisibility(View.GONE);
                         subtitleViewModel.getSearchResultSubtitleUrls(subtitle);
                     } else {
-                        if (subtitle = null){
+                        if (Subtitle = null){
                             return;
                         }
                         loadSubtitle(subtitle);
