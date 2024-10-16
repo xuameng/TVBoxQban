@@ -310,7 +310,7 @@ public class PlayFragment extends BaseLazyFragment {
                             @Override
                             public void run() {
                                 String zimuUrl = subtitle.getUrl();
-				    if (zimuUrl = null){    //xuameng 在线搜索字幕空指针
+				    if (zimuUrl == null|| zimuUrl.isEmpty()){    //xuameng 在线搜索字幕空指针
 				    return;
 				    }
                                 LOG.i("Remote Subtitle Url: " + zimuUrl);
