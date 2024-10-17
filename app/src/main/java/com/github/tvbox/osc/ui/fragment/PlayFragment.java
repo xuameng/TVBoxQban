@@ -664,7 +664,7 @@ public class PlayFragment extends BaseLazyFragment {
                             }
                         }
                     }
-                }
+                
             }
         }
     }
