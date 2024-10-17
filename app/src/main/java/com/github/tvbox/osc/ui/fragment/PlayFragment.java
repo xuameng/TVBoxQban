@@ -610,7 +610,7 @@ public class PlayFragment extends BaseLazyFragment {
             });
         }
 
-		if (mVideoView.getMediaPlayer() instanceof EXOmPlayer) {
+       if (mVideoView.getMediaPlayer() instanceof EXOmPlayer) {
             trackInfo = ((EXOmPlayer) (mVideoView.getMediaPlayer())).getTrackInfo();
             if (trackInfo != null && trackInfo.getSubtitle().size() > 0) {
                 mController.mSubtitleView.hasInternal = true;
@@ -625,6 +625,8 @@ public class PlayFragment extends BaseLazyFragment {
                             subtitle.content = ss.toString();
                             mController.mSubtitleView.onSubtitleChanged(subtitle);
                         }
+                    } else{
+                        mController.mSubtitleView.onSubtitleChanged(null);
                     }
                 }
             });
@@ -636,17 +638,20 @@ public class PlayFragment extends BaseLazyFragment {
         if (subtitlePathCache != null && !subtitlePathCache.isEmpty()) {
             mController.mSubtitleView.setSubtitlePath(subtitlePathCache);
         } else {
-            if (playSubtitle != null && playSubtitle .length() > 0) {
+            if (playSubtitle != null && playSubtitle.length() > 0) {
                 mController.mSubtitleView.setSubtitlePath(playSubtitle);
             } else {
-                if (mController.mSubtitleView.hasInternal) {
+                if (mController.mSubtitleView.hasInternal) {//有则使用内置字幕
                     mController.mSubtitleView.isInternal = true;
-                    if (trackInfo != null) {
+                    if (trackInfo != null && !trackInfo.getSubtitle().isEmpty()) {
                         List<TrackInfoBean> subtitleTrackList = trackInfo.getSubtitle();
                         int selectedIndex = trackInfo.getSubtitleSelected(true);
+                        boolean hasCh =false;
                         for(TrackInfoBean subtitleTrackInfoBean : subtitleTrackList) {
                             String lowerLang = subtitleTrackInfoBean.language.toLowerCase();
-                                 if (selectedIndex != subtitleTrackInfoBean.trackId) {
+                            if (lowerLang.contains("zh") || lowerLang.contains("ch")) {
+                                hasCh=true;
+                                if (selectedIndex != subtitleTrackInfoBean.trackId) {
                                     if (mVideoView.getMediaPlayer() instanceof IjkMediaPlayer){
                                         ((IjkMediaPlayer)(mVideoView.getMediaPlayer())).setTrack(subtitleTrackInfoBean.trackId);
                                     }else if (mVideoView.getMediaPlayer() instanceof EXOmPlayer){
@@ -656,7 +661,7 @@ public class PlayFragment extends BaseLazyFragment {
                                 }
                             }
                         }
-						   if(!hasCh){
+                        if(!hasCh){
                             if (mVideoView.getMediaPlayer() instanceof IjkMediaPlayer){
                                 ((IjkMediaPlayer)(mVideoView.getMediaPlayer())).setTrack(subtitleTrackList.get(0).trackId);
                             }else if (mVideoView.getMediaPlayer() instanceof EXOmPlayer){
@@ -664,7 +669,7 @@ public class PlayFragment extends BaseLazyFragment {
                             }
                         }
                     }
-                
+                }
             }
         }
     }
