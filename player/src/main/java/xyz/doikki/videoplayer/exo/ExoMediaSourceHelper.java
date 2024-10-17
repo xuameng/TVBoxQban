@@ -19,28 +19,18 @@ import com.google.android.exoplayer2.upstream.cache.Cache;
 import com.google.android.exoplayer2.upstream.cache.CacheDataSource;
 import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor;
 import com.google.android.exoplayer2.upstream.cache.SimpleCache;
-import com.google.android.exoplayer2.PlaybackException;
-import com.google.android.exoplayer2.database.StandaloneDatabaseProvider;
-import com.google.android.exoplayer2.ext.rtmp.RtmpDataSource;
-import com.google.android.exoplayer2.ext.rtmp.RtmpDataSourceFactory;
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
-import com.google.android.exoplayer2.extractor.ExtractorsFactory;
-import com.google.android.exoplayer2.extractor.ts.DefaultTsPayloadReaderFactory;
-import com.google.android.exoplayer2.extractor.ts.TsExtractor;
-import com.google.android.exoplayer2.source.DefaultMediaSourceFactory;
-import com.google.android.exoplayer2.upstream.DefaultDataSource;
-import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.Util;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.util.Iterator;
 import java.util.Map;
 
 import okhttp3.OkHttpClient;
 
 public final class ExoMediaSourceHelper {
 
-    private static volatile ExoMediaSourceHelper sInstance;
+    private static ExoMediaSourceHelper sInstance;
 
     private final String mUserAgent;
     private final Context mAppContext;
@@ -81,12 +71,9 @@ public final class ExoMediaSourceHelper {
     }
 
     public MediaSource getMediaSource(String uri, Map<String, String> headers, boolean isCache) {
-        return getMediaSource(uri, headers, isCache, -1);
-    }
-    public MediaSource getMediaSource(String uri, Map<String, String> headers, boolean isCache, int errorCode) {
         Uri contentUri = Uri.parse(uri);
         if ("rtmp".equals(contentUri.getScheme())) {
-            return new ProgressiveMediaSource.Factory(new RtmpDataSource.Factory())
+            return new ProgressiveMediaSource.Factory(new RtmpDataSourceFactory(null))
                     .createMediaSource(MediaItem.fromUri(contentUri));
         } else if ("rtsp".equals(contentUri.getScheme())) {
             return new RtspMediaSource.Factory().createMediaSource(MediaItem.fromUri(contentUri));
@@ -101,11 +88,6 @@ public final class ExoMediaSourceHelper {
         if (mHttpDataSourceFactory != null) {
             setHeaders(headers);
         }
-        if (errorCode == PlaybackException.ERROR_CODE_PARSING_CONTAINER_UNSUPPORTED) {
-            MediaItem.Builder builder = new MediaItem.Builder().setUri(uri);
-            builder.setMimeType(MimeTypes.APPLICATION_M3U8);
-            return new DefaultMediaSourceFactory(getDataSourceFactory(), getExtractorsFactory()).createMediaSource(getMediaItem(uri, errorCode));
-        }
         switch (contentType) {
             case C.TYPE_DASH:
                 return new DashMediaSource.Factory(factory).createMediaSource(MediaItem.fromUri(contentUri));
@@ -115,16 +97,6 @@ public final class ExoMediaSourceHelper {
             case C.TYPE_OTHER:
                 return new ProgressiveMediaSource.Factory(factory).createMediaSource(MediaItem.fromUri(contentUri));
         }
-    }
-
-    private static MediaItem getMediaItem(String uri, int errorCode) {
-        MediaItem.Builder builder = new MediaItem.Builder().setUri(Uri.parse(uri.trim().replace("\\", "")));
-        if (errorCode == PlaybackException.ERROR_CODE_PARSING_CONTAINER_UNSUPPORTED)
-            builder.setMimeType(MimeTypes.APPLICATION_M3U8);
-        return builder.build();
-    }
-    private static synchronized ExtractorsFactory getExtractorsFactory() {
-        return new DefaultExtractorsFactory().setTsExtractorFlags(DefaultTsPayloadReaderFactory.FLAG_ENABLE_HDMV_DTS_AUDIO_STREAMS).setTsExtractorTimestampSearchBytes(TsExtractor.DEFAULT_TIMESTAMP_SEARCH_BYTES * 3);
     }
 
     private int inferContentType(String fileName) {
@@ -152,8 +124,7 @@ public final class ExoMediaSourceHelper {
         return new SimpleCache(
                 new File(mAppContext.getExternalCacheDir(), "exo-video-cache"),//缓存目录
                 new LeastRecentlyUsedCacheEvictor(512 * 1024 * 1024),//缓存大小，默认512M，使用LRU算法实现
-                new StandaloneDatabaseProvider(mAppContext));
-
+                new ExoDatabaseProvider(mAppContext));
     }
 
     /**
@@ -162,7 +133,7 @@ public final class ExoMediaSourceHelper {
      * @return A new DataSource factory.
      */
     private DataSource.Factory getDataSourceFactory() {
-        return new DefaultDataSource.Factory(mAppContext, getHttpDataSourceFactory());
+        return new DefaultDataSourceFactory(mAppContext, getHttpDataSourceFactory());
     }
 
     /**
@@ -194,9 +165,9 @@ public final class ExoMediaSourceHelper {
                     }
                 }
             }
-           
-
-            for (String k : headers.keySet()) {
+            Iterator<String> iter = headers.keySet().iterator();
+            while (iter.hasNext()) {
+                String k = iter.next();
                 String v = headers.get(k);
                 if (v != null)
                     headers.put(k, v.trim());
