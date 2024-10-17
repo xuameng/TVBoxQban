@@ -631,7 +631,9 @@ public class PlayFragment extends BaseLazyFragment {
                             mController.mSubtitleView.onSubtitleChanged(subtitle);
                         }
                     } else{
-                        mController.mSubtitleView.onSubtitleChanged(null);
+                        Subtitle subtitle = new Subtitle();
+                        subtitle.content = "";
+                        mController.mSubtitleView.onSubtitleChanged(subtitle);
                     }
                 }
             });
