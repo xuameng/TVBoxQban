@@ -31,7 +31,8 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     protected ExoPlayer mMediaPlayer;
     protected MediaSource mMediaSource;
     protected ExoMediaSourceHelper mMediaSourceHelper;
-
+    protected ExoTrackNameProvider trackNameProvider;
+    protected TrackSelectionArray mTrackSelections;
     private PlaybackParameters mSpeedPlaybackParameters;
 
     private boolean mIsPreparing;
