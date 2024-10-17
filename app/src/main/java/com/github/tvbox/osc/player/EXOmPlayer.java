@@ -29,7 +29,7 @@ public class EXOmPlayer extends ExoMediaPlayer {
     @SuppressLint("UnsafeOptInUsageError")
     public TrackInfo getTrackInfo() {
         TrackInfo data = new TrackInfo();
-        MappingTrackSelector.MappedTrackInfo trackInfo = 
+        MappingTrackSelector.MappedTrackInfo trackInfo = getTrackSelector().getCurrentMappedTrackInfo();
 
         if (trackInfo != null) {
             getExoSelectedTrack();
