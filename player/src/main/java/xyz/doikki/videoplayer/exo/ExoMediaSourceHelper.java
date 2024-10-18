@@ -26,6 +26,7 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.util.Iterator;
 import java.util.Map;
+import java.net.Proxy;
 
 import okhttp3.OkHttpClient;
 
@@ -148,6 +149,8 @@ public final class ExoMediaSourceHelper {
             mHttpDataSourceFactory = new OkHttpDataSource.Factory(mOkClient)
                     .setUserAgent(mUserAgent)/*
                     .setAllowCrossProtocolRedirects(true)*/;
+					.setAllowCrossProtocolRedirects(true)*/;
+                    mHttpDataSourceFactoryNoProxy = mHttpDataSourceFactory;
         }
         return mHttpDataSourceFactory;
     }
