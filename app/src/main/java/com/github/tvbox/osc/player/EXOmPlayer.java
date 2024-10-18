@@ -1,32 +1,38 @@
 package com.github.tvbox.osc.player;
+
 import android.annotation.SuppressLint;
-import android.text.TextUtils;
 import android.content.Context;
 import android.text.TextUtils;
+
 import androidx.annotation.Nullable;
-import com.blankj.utilcode.util.LogUtils;
+
 import com.github.tvbox.osc.util.StringUtils;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.Player;
+import com.google.android.exoplayer2.Tracks;
 import com.google.android.exoplayer2.source.TrackGroup;
 import com.google.android.exoplayer2.source.TrackGroupArray;
-import com.google.android.exoplayer2.Tracks;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector.SelectionOverride;
+import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector.MappedTrackInfo;
 import com.google.android.exoplayer2.util.MimeTypes;
+
 import xyz.doikki.videoplayer.exo.ExoMediaPlayer;
+
 public class EXOmPlayer extends ExoMediaPlayer {
     private String audioId = "";
     private String subtitleId = "";
+
     public EXOmPlayer(Context context) {
         super(context);
     }
+
     @SuppressLint("UnsafeOptInUsageError")
     public TrackInfo getTrackInfo() {
         TrackInfo data = new TrackInfo();
-        MappedTrackInfo trackInfo = getTrackSelector().getCurrentMappedTrackInfo();
+        MappingTrackSelector.MappedTrackInfo trackInfo = getTrackSelector().getCurrentMappedTrackInfo();
         if (trackInfo != null) {
             getExoSelectedTrack();
             for (int groupArrayIndex = 0; groupArrayIndex < trackInfo.getRendererCount(); groupArrayIndex++) {
@@ -62,11 +68,15 @@ public class EXOmPlayer extends ExoMediaPlayer {
         }
         return data;
     }
+
+    @SuppressLint("UnsafeOptInUsageError")
     private void getExoSelectedTrack() {
         audioId = "";
         subtitleId = "";
- for (Tracks.Group group : mMediaPlayer.getCurrentTracks().getGroups()) {
+        for (Tracks.Group group : mMediaPlayer.getCurrentTracks().getGroups()) {
+            if (!group.isSelected()) continue;
             for (int trackIndex = 0; trackIndex < group.length; trackIndex++) {
+                if (!group.isTrackSelected(trackIndex)) continue;
                 Format format = group.getTrackFormat(trackIndex);
                 if (MimeTypes.isAudio(format.sampleMimeType)) {
                     audioId = format.id;
@@ -77,8 +87,10 @@ public class EXOmPlayer extends ExoMediaPlayer {
             }
         }
     }
+
+    @SuppressLint("UnsafeOptInUsageError")
     public void selectExoTrack(@Nullable TrackInfoBean videoTrackBean) {
-        MappedTrackInfo trackInfo = getTrackSelector().getCurrentMappedTrackInfo();
+        MappingTrackSelector.MappedTrackInfo trackInfo = getTrackSelector().getCurrentMappedTrackInfo();
         if (trackInfo != null) {
             if (videoTrackBean == null) {
                 for (int renderIndex = 0; renderIndex < trackInfo.getRendererCount(); renderIndex++) {
@@ -91,15 +103,18 @@ public class EXOmPlayer extends ExoMediaPlayer {
                 }
             } else {
                 TrackGroupArray trackGroupArray = trackInfo.getTrackGroups(videoTrackBean.renderId);
-				SelectionOverride override = new SelectionOverride(videoTrackBean.trackGroupId, videoTrackBean.trackId);
+                @SuppressLint("UnsafeOptInUsageError") DefaultTrackSelector.SelectionOverride override = new DefaultTrackSelector.SelectionOverride(videoTrackBean.trackGroupId, videoTrackBean.trackId);
                 DefaultTrackSelector.Parameters.Builder parametersBuilder = getTrackSelector().buildUponParameters();
                 parametersBuilder.setRendererDisabled(videoTrackBean.renderId, false);
                 parametersBuilder.setSelectionOverride(videoTrackBean.renderId, trackGroupArray, override);
                 getTrackSelector().setParameters(parametersBuilder);
             }
         }
+
     }
+
     public void setOnTimedTextListener(Player.Listener listener) {
         mMediaPlayer.addListener(listener);
     }
+
 }
