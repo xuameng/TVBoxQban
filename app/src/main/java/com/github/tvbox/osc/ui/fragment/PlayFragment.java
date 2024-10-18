@@ -234,6 +234,14 @@ public class PlayFragment extends BaseLazyFragment {
 
             @Override
             public void updatePlayerCfg() {
+
+        SubtitleDialog subtitleDialog1 = new SubtitleDialog(getActivity());
+		int playerType = mVodPlayerCfg.getInt("pl");
+        if (mController.mSubtitleView.hasInternal && playerType == 1 ||mController.mSubtitleView.hasInternal && playerType == 2) {
+            subtitleDialog1.selectInternal.setVisibility(View.VISIBLE);
+        } else {
+            subtitleDialog1.selectInternal.setVisibility(View.GONE);
+        }
                 mVodInfo.playerCfg = mVodPlayerCfg.toString();
                 EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_REFRESH, mVodPlayerCfg));
             }
@@ -378,7 +386,10 @@ public class PlayFragment extends BaseLazyFragment {
             return;
         }
         List<TrackInfoBean> bean = trackInfo.getAudio();
-        if (bean.size() < 1)Toast.makeText(mContext, "没有内置音轨", Toast.LENGTH_SHORT).show();return;
+        if (bean.size() < 1){
+			Toast.makeText(mContext, "没有内置音轨", Toast.LENGTH_SHORT).show();
+			return;
+		}
         SelectDialog<TrackInfoBean> dialog = new SelectDialog<>(getActivity());
         dialog.setTip("切换音轨");
         dialog.setAdapter(new SelectDialogAdapter.SelectDialogInterface<TrackInfoBean>() {
@@ -445,7 +456,10 @@ public class PlayFragment extends BaseLazyFragment {
             return;
         }
         List<TrackInfoBean> bean = trackInfo.getSubtitle();
-        if (bean.size() < 1) Toast.makeText(mContext, "没有内置字幕", Toast.LENGTH_SHORT).show();return;
+        if (bean.size() < 1) {
+			Toast.makeText(mContext, "没有内置字幕", Toast.LENGTH_SHORT).show();
+			return;
+		}
         SelectDialog<TrackInfoBean> dialog = new SelectDialog<>(mActivity);
         dialog.setTip("切换内置字幕");
         dialog.setAdapter(new SelectDialogAdapter.SelectDialogInterface<TrackInfoBean>() {
