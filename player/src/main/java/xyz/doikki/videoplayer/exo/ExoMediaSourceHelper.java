@@ -147,9 +147,8 @@ public final class ExoMediaSourceHelper {
     private DataSource.Factory getHttpDataSourceFactory() {
         if (mHttpDataSourceFactory == null) {
             mHttpDataSourceFactory = new OkHttpDataSource.Factory(mOkClient)
-                    .setUserAgent(mUserAgent)/*
-                    .setAllowCrossProtocolRedirects(true)*/;
-					.setAllowCrossProtocolRedirects(true)*/;
+                    .setUserAgent(mUserAgent);/*
+                    .setAllowCrossProtocolRedirects(true)*/
                     mHttpDataSourceFactoryNoProxy = mHttpDataSourceFactory;
         }
         return mHttpDataSourceFactory;
