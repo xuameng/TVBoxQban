@@ -379,6 +379,10 @@ public class PlayFragment extends BaseLazyFragment {
         }
         List<TrackInfoBean> bean = trackInfo.getAudio();
         if (bean.size() < 1) return;
+	    if (bean.size() = 1) 
+			dialog.dismiss();
+            return;
+        }
         SelectDialog<TrackInfoBean> dialog = new SelectDialog<>(getActivity());
         dialog.setTip("切换音轨");
         dialog.setAdapter(new SelectDialogAdapter.SelectDialogInterface<TrackInfoBean>() {
@@ -442,10 +446,19 @@ public class PlayFragment extends BaseLazyFragment {
         }
         if (trackInfo == null) {
             Toast.makeText(mContext, "没有内置字幕", Toast.LENGTH_SHORT).show();
+			dialog.dismiss();
             return;
         }
         List<TrackInfoBean> bean = trackInfo.getSubtitle();
-        if (bean.size() < 1) return;
+        if (bean.size() < 1) 
+			Toast.makeText(mContext, "没有内置字幕", Toast.LENGTH_SHORT).show();
+			dialog.dismiss();
+            return;
+        }
+		if (bean.size() = 1) 
+			dialog.dismiss();
+            return;
+        }
         SelectDialog<TrackInfoBean> dialog = new SelectDialog<>(mActivity);
         dialog.setTip("切换内置字幕");
         dialog.setAdapter(new SelectDialogAdapter.SelectDialogInterface<TrackInfoBean>() {
