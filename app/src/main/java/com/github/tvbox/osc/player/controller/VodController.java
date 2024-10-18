@@ -534,7 +534,7 @@ public class VodController extends BaseController {
 
             subtitleDialog.selectInternal.setVisibility(View.GONE);
 
-        }
+        });
                 try {
                     int playerType = mPlayerConfig.getInt("pl");
                     ArrayList<Integer> exsitPlayerTypes = PlayerHelper.getExistPlayerTypes();
