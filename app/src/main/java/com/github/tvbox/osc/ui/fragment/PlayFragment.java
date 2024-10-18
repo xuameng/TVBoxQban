@@ -234,11 +234,6 @@ public class PlayFragment extends BaseLazyFragment {
 
             @Override
             public void updatePlayerCfg() {
-
-        SubtitleDialog subtitleDialog1 = new SubtitleDialog(getActivity());
-
-            subtitleDialog1.selectInternal.setVisibility(View.GONE);
-        
                 mVodInfo.playerCfg = mVodPlayerCfg.toString();
                 EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_REFRESH, mVodPlayerCfg));
             }
