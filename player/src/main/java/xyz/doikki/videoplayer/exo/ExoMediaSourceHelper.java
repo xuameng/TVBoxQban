@@ -24,6 +24,7 @@ import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSource;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.net.InetSocketAddress;
 import java.util.Iterator;
 import java.util.Map;
 import java.net.Proxy;
