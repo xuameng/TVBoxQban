@@ -2,23 +2,18 @@ package com.github.tvbox.osc.player;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.text.TextUtils;
 
 import androidx.annotation.Nullable;
-
+import androidx.media3.common.C;
+import androidx.media3.common.Format;
+import androidx.media3.common.MimeTypes;
+import androidx.media3.common.Player;
+import androidx.media3.common.TrackGroup;
+import androidx.media3.common.Tracks;
+import androidx.media3.exoplayer.source.TrackGroupArray;
+import androidx.media3.exoplayer.trackselection.DefaultTrackSelector;
+import androidx.media3.exoplayer.trackselection.MappingTrackSelector;
 import com.github.tvbox.osc.util.StringUtils;
-import com.google.android.exoplayer2.C;
-import com.google.android.exoplayer2.Format;
-import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.Tracks;
-import com.google.android.exoplayer2.source.TrackGroup;
-import com.google.android.exoplayer2.source.TrackGroupArray;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector.SelectionOverride;
-import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
-import com.google.android.exoplayer2.trackselection.MappingTrackSelector.MappedTrackInfo;
-import com.google.android.exoplayer2.util.MimeTypes;
-
 import xyz.doikki.videoplayer.exo.ExoMediaPlayer;
 
 public class EXOmPlayer extends ExoMediaPlayer {
@@ -28,6 +23,7 @@ public class EXOmPlayer extends ExoMediaPlayer {
     public EXOmPlayer(Context context) {
         super(context);
     }
+
 
     @SuppressLint("UnsafeOptInUsageError")
     public TrackInfo getTrackInfo() {
@@ -42,7 +38,7 @@ public class EXOmPlayer extends ExoMediaPlayer {
                     for (int formatIndex = 0; formatIndex < group.length; formatIndex++) {
                         Format format = group.getFormat(formatIndex);
                         if (MimeTypes.isAudio(format.sampleMimeType)) {
-                            String trackName = trackNameProvider.getTrackName(format) + "[" + (TextUtils.isEmpty(format.codecs)?format.sampleMimeType:format.codecs) + "]";
+                            String trackName = (data.getAudio().size() + 1) + "：" + trackNameProvider.getTrackName(format) + "[" + format.codecs + "]";
                             TrackInfoBean t = new TrackInfoBean();
                             t.name = trackName;
                             t.language = "";
@@ -52,7 +48,7 @@ public class EXOmPlayer extends ExoMediaPlayer {
                             t.renderId = groupArrayIndex;
                             data.addAudio(t);
                         } else if (MimeTypes.isText(format.sampleMimeType)) {
-                            String trackName = trackNameProvider.getTrackName(format);
+                            String trackName = (data.getSubtitle().size() + 1) + "：" + trackNameProvider.getTrackName(format);
                             TrackInfoBean t = new TrackInfoBean();
                             t.name = trackName;
                             t.language = "";
@@ -72,7 +68,7 @@ public class EXOmPlayer extends ExoMediaPlayer {
     @SuppressLint("UnsafeOptInUsageError")
     private void getExoSelectedTrack() {
         audioId = "";
-        subtitleId = "";
+        subtitleId = "";        
         for (Tracks.Group group : mMediaPlayer.getCurrentTracks().getGroups()) {
             if (!group.isSelected()) continue;
             for (int trackIndex = 0; trackIndex < group.length; trackIndex++) {
@@ -83,7 +79,7 @@ public class EXOmPlayer extends ExoMediaPlayer {
                 }
                 if (MimeTypes.isText(format.sampleMimeType)) {
                     subtitleId = format.id;
-                }
+                }                
             }
         }
     }
