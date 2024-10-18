@@ -529,12 +529,11 @@ public class VodController extends BaseController {
                 myHandle.removeCallbacks(myRunnable);
                 myHandle.postDelayed(myRunnable, myHandleSeconds);
 
-		void selectMySubtitle() throws Exception {
+    void selectMySubtitle() throws Exception {
         SubtitleDialog subtitleDialog = new SubtitleDialog(getActivity());
+            subtitleDialog.selectInternal.setVisibility(View.VISIBLE);
+        }
 
-            subtitleDialog.selectInternal.setVisibility(View.GONE);
-
-        });
                 try {
                     int playerType = mPlayerConfig.getInt("pl");
                     ArrayList<Integer> exsitPlayerTypes = PlayerHelper.getExistPlayerTypes();
