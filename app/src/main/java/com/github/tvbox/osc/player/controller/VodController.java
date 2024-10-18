@@ -529,11 +529,6 @@ public class VodController extends BaseController {
                 myHandle.removeCallbacks(myRunnable);
                 myHandle.postDelayed(myRunnable, myHandleSeconds);
 
-    public void xuTest(){
-        SubtitleDialog subtitleDialog = new SubtitleDialog(getActivity());
-            subtitleDialog.selectInternal.setVisibility(View.VISIBLE);
-        }
-
                 try {
                     int playerType = mPlayerConfig.getInt("pl");
                     ArrayList<Integer> exsitPlayerTypes = PlayerHelper.getExistPlayerTypes();
@@ -559,6 +554,8 @@ public class VodController extends BaseController {
                 }
                 mPlayerBtn.requestFocus();
                 mPlayerBtn.requestFocusFromTouch();
+				        SubtitleDialog subtitleDialog = new SubtitleDialog();
+            subtitleDialog.selectInternal.setVisibility(View.VISIBLE);
             }
         });
 
