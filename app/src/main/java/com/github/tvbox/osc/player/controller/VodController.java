@@ -529,7 +529,7 @@ public class VodController extends BaseController {
                 myHandle.removeCallbacks(myRunnable);
                 myHandle.postDelayed(myRunnable, myHandleSeconds);
 
-    void selectMySubtitle() throws Exception {
+    public void xuTest(){
         SubtitleDialog subtitleDialog = new SubtitleDialog(getActivity());
             subtitleDialog.selectInternal.setVisibility(View.VISIBLE);
         }
