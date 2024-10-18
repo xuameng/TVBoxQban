@@ -528,7 +528,7 @@ public class VodController extends BaseController {
             public void onClick(View view) {
                 myHandle.removeCallbacks(myRunnable);
                 myHandle.postDelayed(myRunnable, myHandleSeconds);
-				SubtitleDialog subtitleDialog = new SubtitleDialog(getActivity());
+				SubtitleDialog subtitleDialog = new SubtitleDialog();
 				subtitleDialog.selectInternal.setVisibility(View.GONE);
                 try {
                     int playerType = mPlayerConfig.getInt("pl");
@@ -563,7 +563,7 @@ public class VodController extends BaseController {
             public boolean onLongClick(View view) {
                 myHandle.removeCallbacks(myRunnable);
                 myHandle.postDelayed(myRunnable, myHandleSeconds);
-				SubtitleDialog subtitleDialog = new SubtitleDialog(getActivity());
+				SubtitleDialog subtitleDialog = new SubtitleDialog();
 				subtitleDialog.selectInternal.setVisibility(View.GONE);
                 FastClickCheckUtil.check(view);
                 try {
