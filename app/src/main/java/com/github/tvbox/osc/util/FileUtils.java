@@ -1,198 +1,253 @@
-package xyz.doikki.videoplayer.exo;
+package com.github.tvbox.osc.util;
 
-import android.content.Context;
-import android.net.Uri;
+import android.os.Environment;
 import android.text.TextUtils;
 
-import com.google.android.exoplayer2.C;
-import com.google.android.exoplayer2.MediaItem;
-import com.google.android.exoplayer2.database.ExoDatabaseProvider;
-import com.google.android.exoplayer2.database.StandaloneDatabaseProvider;
-import com.google.android.exoplayer2.ext.rtmp.RtmpDataSourceFactory;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.ProgressiveMediaSource;
-import com.google.android.exoplayer2.source.dash.DashMediaSource;
-import com.google.android.exoplayer2.source.hls.HlsMediaSource;
-import com.google.android.exoplayer2.source.rtsp.RtspMediaSource;
-import com.google.android.exoplayer2.upstream.DataSource;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.google.android.exoplayer2.upstream.cache.Cache;
-import com.google.android.exoplayer2.upstream.cache.CacheDataSource;
-import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor;
-import com.google.android.exoplayer2.upstream.cache.SimpleCache;
-import com.google.android.exoplayer2.util.Util;
-import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSource;   //xuameng解决BILI EXO不能播放
 import com.github.tvbox.osc.base.App;
-import com.github.tvbox.osc.util.FileUtils;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.File;
-import java.lang.reflect.Field;
-import java.net.InetSocketAddress;
-import java.util.Iterator;
-import java.util.Map;
-import java.net.Proxy;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 
-import okhttp3.OkHttpClient;
+public class FileUtils {
 
-public final class ExoMediaSourceHelper {
-
-    private static ExoMediaSourceHelper sInstance;
-
-    private final String mUserAgent;
-    private final Context mAppContext;
-    private OkHttpDataSource.Factory mHttpDataSourceFactory;
-	private OkHttpDataSource.Factory mHttpDataSourceFactoryNoProxy;
-    private OkHttpClient mOkClient = null;
-    private Cache mCache;
-
-    private ExoMediaSourceHelper(Context context) {
-        mAppContext = context.getApplicationContext();
-        mUserAgent = Util.getUserAgent(mAppContext, mAppContext.getApplicationInfo().name);
+    public static File open(String str) {
+        return new File(getExternalCachePath() + "/qjscache_" + str + ".js");
     }
 
-    public static ExoMediaSourceHelper getInstance(Context context) {
-        if (sInstance == null) {
-            synchronized (ExoMediaSourceHelper.class) {
-                if (sInstance == null) {
-                    sInstance = new ExoMediaSourceHelper(context);
+    public static boolean writeSimple(byte[] data, File dst) {
+        try {
+            if (dst.exists())
+                dst.delete();
+            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(dst));
+            bos.write(data);
+            bos.close();
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static byte[] readSimple(File src) {
+        try {
+            BufferedInputStream bis = new BufferedInputStream(new FileInputStream(src));
+            int len = bis.available();
+            byte[] data = new byte[len];
+            bis.read(data);
+            bis.close();
+            return data;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static void copyFile(File source, File dest) throws IOException {
+        InputStream is = null;
+        OutputStream os = null;
+        try {
+            is = new FileInputStream(source);
+            os = new FileOutputStream(dest);
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = is.read(buffer)) > 0) {
+                os.write(buffer, 0, length);
+            }
+        } finally {
+            is.close();
+            os.close();
+        }
+    }
+
+    public static void recursiveDelete(File file) {
+        if (!file.exists())
+            return;
+        if (file.isDirectory()) {
+            for (File f : file.listFiles()) {
+                recursiveDelete(f);
+            }
+        }
+        file.delete();
+    }
+
+    public static String readFileToString(String path, String charsetName) {
+        // 定义返回结果
+        String jsonString = "";
+
+        BufferedReader in = null;
+        try {
+            in = new BufferedReader(new InputStreamReader(new FileInputStream(new File(path)), charsetName));// 读取文件
+            String thisLine = null;
+            while ((thisLine = in.readLine()) != null) {
+                jsonString += thisLine;
+            }
+            in.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException el) {
                 }
             }
         }
-        return sInstance;
+        // 返回拼接好的JSON String
+        return jsonString;
     }
 
-    public void setOkClient(OkHttpClient client) {
-        mOkClient = client;
+    public static String getAssetFile(String assetName) throws IOException {
+        InputStream is = App.getInstance().getAssets().open(assetName);
+        byte[] data = new byte[is.available()];
+        is.read(data);
+        return new String(data, "UTF-8");
     }
 
-    public MediaSource getMediaSource(String uri) {
-        return getMediaSource(uri, null, false);
-    }
-
-    public MediaSource getMediaSource(String uri, Map<String, String> headers) {
-        return getMediaSource(uri, headers, false);
-    }
-
-    public MediaSource getMediaSource(String uri, boolean isCache) {
-        return getMediaSource(uri, null, isCache);
-    }
-
-    public MediaSource getMediaSource(String uri, Map<String, String> headers, boolean isCache) {
-        Uri contentUri = Uri.parse(uri);
-        if ("rtmp".equals(contentUri.getScheme())) {
-            return new ProgressiveMediaSource.Factory(new RtmpDataSourceFactory(null))
-                    .createMediaSource(MediaItem.fromUri(contentUri));
-        } else if ("rtsp".equals(contentUri.getScheme())) {
-            return new RtspMediaSource.Factory().createMediaSource(MediaItem.fromUri(contentUri));
-        }
-        int contentType = inferContentType(uri);
-        DataSource.Factory factory;
-        if (isCache) {
-            factory = getCacheDataSourceFactory();
-        } else {
-            factory = getDataSourceFactory();
-        }
-        if (mHttpDataSourceFactory != null) {
-            setHeaders(headers);
-        }
-        switch (contentType) {
-            case C.TYPE_DASH:
-                return new DashMediaSource.Factory(factory).createMediaSource(MediaItem.fromUri(contentUri));
-            case C.TYPE_HLS:
-                return new HlsMediaSource.Factory(factory).createMediaSource(MediaItem.fromUri(contentUri));
-            default:
-            case C.TYPE_OTHER:
-                return new ProgressiveMediaSource.Factory(factory).createMediaSource(MediaItem.fromUri(contentUri));
-        }
-    }
-
-    private int inferContentType(String fileName) {
-        fileName = fileName.toLowerCase();
-        if (fileName.contains(".mpd") || fileName.contains("type=mpd")) {
-            return C.TYPE_DASH;
-        } else if (fileName.contains("m3u8")) {
-            return C.TYPE_HLS;
-        } else {
-            return C.TYPE_OTHER;
-        }
-    }
-
-    private DataSource.Factory getCacheDataSourceFactory() {
-        if (mCache == null) {
-            mCache = newCache();
-        }
-        return new CacheDataSource.Factory()
-                .setCache(mCache)
-                .setUpstreamDataSourceFactory(getDataSourceFactory())
-                .setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR);
-    }
-
-    private Cache newCache() {
-        return new SimpleCache(
-                new File(FileUtils.getExternalCachePath(), "exo-video-cache"),//缓存目录
-                new LeastRecentlyUsedCacheEvictor(512 * 1024 * 1024),//缓存大小，默认512M，使用LRU算法实现
-                new StandaloneDatabaseProvider(mAppContext));
-    }
-    /**
-     * Returns a new DataSource factory.
-     *
-     * @return A new DataSource factory.
-     */
-    private DataSource.Factory getDataSourceFactory() {
-        return new DefaultDataSourceFactory(mAppContext, getHttpDataSourceFactory());
-    }
-
-    /**
-     * Returns a new HttpDataSource factory.
-     *
-     * @return A new HttpDataSource factory.
-     */
-    private DataSource.Factory getHttpDataSourceFactory() {
-        if (mHttpDataSourceFactory == null) {
-            mHttpDataSourceFactory = new OkHttpDataSource.Factory(mOkClient)
-                    .setUserAgent(mUserAgent);/*
-                    .setAllowCrossProtocolRedirects(true)*/
-                    mHttpDataSourceFactoryNoProxy = mHttpDataSourceFactory;
-        }
-        return mHttpDataSourceFactory;
-    }
-
-    private void setHeaders(Map<String, String> headers) {
-        if (headers != null && headers.size() > 0) {
-            //如果发现用户通过header传递了UA，则强行将HttpDataSourceFactory里面的userAgent字段替换成用户的
-            if (headers.containsKey("User-Agent")) {
-                String value = headers.remove("User-Agent");
-                if (!TextUtils.isEmpty(value)) {
-                    try {
-                        Field userAgentField = mHttpDataSourceFactory.getClass().getDeclaredField("userAgent");
-                        userAgentField.setAccessible(true);
-                        userAgentField.set(mHttpDataSourceFactory, value.trim());
-                    } catch (Exception e) {
-                        //ignore
-                    }
-                }
+    public static boolean isAssetFile(String name, String path) {
+        try {
+            for(String one : App.getInstance().getAssets().list(path)) {
+                if (one.equals(name)) return true;
             }
-            Iterator<String> iter = headers.keySet().iterator();
-            while (iter.hasNext()) {
-                String k = iter.next();
-                String v = headers.get(k);
-                if (v != null)
-                    headers.put(k, v.trim());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static String getRootPath() {
+        return Environment.getExternalStorageDirectory().getAbsolutePath();
+    }
+
+    public static File getLocal(String path) {
+        return new File(path.replace("file:/", getRootPath()));
+    }
+
+    public static File getCacheDir() {
+        return App.getInstance().getCacheDir();
+    }
+    public static File getExternalCacheDir() {
+        return App.getInstance().getExternalCacheDir();
+    }
+    public static String getExternalCachePath() {
+        //部分机器getExternalCacheDir()会返回空
+        File externalCacheDir = getExternalCacheDir();
+        if (externalCacheDir == null){
+            return getCachePath();
+        }
+        return externalCacheDir.getAbsolutePath();
+    }
+
+    public static String getCachePath() {
+        return getCacheDir().getAbsolutePath();
+    }
+
+    public static void cleanDirectory(File dir) {
+        if (!dir.exists()) return;
+        File[] files = dir.listFiles();
+        if (files == null || files.length == 0) return;
+        for(File one : files) {
+            try {
+                deleteFile(one);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            mHttpDataSourceFactory.setDefaultRequestProperties(headers);
         }
     }
 
-    public void setCache(Cache cache) {
-        this.mCache = cache;
+    public static void deleteFile(File file) {
+        if (!file.exists()) return;
+        if (file.isFile()) {
+            if (file.canWrite()) file.delete();
+            return;
+        }
+        if (file.isDirectory()) {
+            File[] files = file.listFiles();
+            if (files == null || files.length == 0) {
+                if (file.canWrite()) file.delete();
+                return;
+            }
+            for(File one : files) {
+                deleteFile(one);
+            }
+        }
+        return;
     }
 
-    public void setSocksProxy(String server, int port) {
-        Proxy proxy = new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(server, port));
-        mHttpDataSourceFactory = new OkHttpDataSource.Factory(mOkClient.newBuilder().proxy(proxy).build())
-                .setUserAgent(mUserAgent);
+    public static void cleanPlayerCache() {
+        String ijkCachePath = getCachePath() + "/ijkcaches/";
+        String thunderCachePath = getCachePath() + "/thunder/";
+        File ijkCacheDir = new File(ijkCachePath);
+        File thunderCacheDir = new File(thunderCachePath);
+        try {
+            if (ijkCacheDir.exists()) cleanDirectory(ijkCacheDir);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            if (thunderCacheDir.exists()) cleanDirectory(thunderCacheDir);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
-    public void clearSocksProxy() {
-        mHttpDataSourceFactory = mHttpDataSourceFactoryNoProxy;
+
+    public static String read(String path) {
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(getLocal(path))));
+            StringBuilder sb = new StringBuilder();
+            String text;
+            while ((text = br.readLine()) != null) sb.append(text).append("\n");
+            br.close();
+            return sb.toString();
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    public static String getFileName(String filePath){
+        if(TextUtils.isEmpty(filePath)) return "";
+        String fileName = filePath;
+        int p = fileName.lastIndexOf(File.separatorChar);
+        if(p != -1){
+            fileName = fileName.substring(p + 1);
+        }
+        return fileName;
+    }
+
+    public static String getFileNameWithoutExt(String filePath){
+        if(TextUtils.isEmpty(filePath)) return "";
+        String fileName = filePath;
+        int p = fileName.lastIndexOf(File.separatorChar);
+        if(p != -1){
+            fileName = fileName.substring(p + 1);
+        }
+        p = fileName.indexOf('.');
+        if(p != -1){
+            fileName = fileName.substring(0, p);
+        }
+        return fileName;
+    }
+
+    public static String getFileExt(String fileName){
+        if(TextUtils.isEmpty(fileName)) return "";
+        int p = fileName.lastIndexOf('.');
+        if(p != -1) {
+            return fileName.substring(p).toLowerCase();
+        }
+        return "";
+    }
+
+    public static boolean hasExtension(String path) {
+        int lastDotIndex = path.lastIndexOf(".");
+        int lastSlashIndex = Math.max(path.lastIndexOf("/"), path.lastIndexOf("\\"));
+        // 如果路径中有点号，并且点号在最后一个斜杠之后，认为有后缀
+        return lastDotIndex > lastSlashIndex && lastDotIndex < path.length() - 1;
     }
 }
