@@ -21,7 +21,7 @@ import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvicto
 import com.google.android.exoplayer2.upstream.cache.SimpleCache;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSource;   //xuameng解决BILI EXO不能播放
-import com.github.tvbox.osc.player.R;
+import com.github.tvbox.osc.util.R;
 
 import java.io.File;
 import java.lang.reflect.Field;
