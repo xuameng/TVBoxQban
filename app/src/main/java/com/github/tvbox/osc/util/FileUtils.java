@@ -18,6 +18,10 @@ import java.io.OutputStream;
 
 public class FileUtils {
 
+    public static File open(String str) {
+        return new File(getExternalCachePath() + "/qjscache_" + str + ".js");
+    }
+
     public static boolean writeSimple(byte[] data, File dst) {
         try {
             if (dst.exists())
