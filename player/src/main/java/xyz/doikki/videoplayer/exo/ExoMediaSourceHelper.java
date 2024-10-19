@@ -3,12 +3,10 @@ package xyz.doikki.videoplayer.exo;
 import android.content.Context;
 import android.net.Uri;
 import android.text.TextUtils;
-import android.annotation.SuppressLint;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.database.ExoDatabaseProvider;
-import com.google.android.exoplayer2.database.StandaloneDatabaseProvider;
 import com.google.android.exoplayer2.ext.rtmp.RtmpDataSourceFactory;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
@@ -129,9 +127,9 @@ public final class ExoMediaSourceHelper {
 
     private Cache newCache() {
         return new SimpleCache(
-                new File(FileUtils.getExternalCacheDir(), "exo-video-cache"),//缓存目录
+                new File(mAppContext.getExternalCacheDir(), "exo-video-cache"),//缓存目录
                 new LeastRecentlyUsedCacheEvictor(512 * 1024 * 1024),//缓存大小，默认512M，使用LRU算法实现
-                new StandaloneDatabaseProvider(mAppContext));
+                new ExoDatabaseProvider(mAppContext));
     }
 
     /**
