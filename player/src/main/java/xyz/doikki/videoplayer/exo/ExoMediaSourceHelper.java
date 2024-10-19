@@ -127,7 +127,7 @@ public final class ExoMediaSourceHelper {
 
     private Cache newCache() {
         return new SimpleCache(
-                new File(mAppContext.getExternalCachePath(), "exo-video-cache"),//缓存目录
+                new File(mAppContext.getExternalCacheDir(), "exo-video-cache"),//缓存目录
                 new LeastRecentlyUsedCacheEvictor(512 * 1024 * 1024),//缓存大小，默认512M，使用LRU算法实现
                 new StandaloneDatabaseProvider(mAppContext));
     }
