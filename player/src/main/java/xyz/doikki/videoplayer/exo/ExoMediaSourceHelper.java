@@ -1,5 +1,4 @@
 package xyz.doikki.videoplayer.exo;
-package com.github.tvbox.osc.util;
 import android.content.Context;
 import android.net.Uri;
 import android.text.TextUtils;
@@ -22,6 +21,7 @@ import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvicto
 import com.google.android.exoplayer2.upstream.cache.SimpleCache;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSource;   //xuameng解决BILI EXO不能播放
+
 import com.github.tvbox.osc.util.FileUtils;
 
 import java.io.File;
