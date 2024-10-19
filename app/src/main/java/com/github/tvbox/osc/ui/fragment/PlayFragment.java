@@ -603,6 +603,7 @@ public class PlayFragment extends BaseLazyFragment {
     }
 
     private void initSubtitleView() {
+		AbstractPlayer mediaPlayer = mVideoView.getMediaPlayer();
         TrackInfo trackInfo = null;
         if (mVideoView.getMediaPlayer() instanceof IjkMediaPlayer) {
             trackInfo = ((IjkMediaPlayer)(mVideoView.getMediaPlayer())).getTrackInfo();
