@@ -135,13 +135,13 @@ public class FileUtils {
     public static String getCachePath() {
         return getCacheDir().getAbsolutePath();
     }
-	    public static String getExternalCacheDir() {
-        //部分机器getExternalCacheDir()会返回空
-        File externalCacheDir = getExternalCacheDir();
-        if (externalCacheDir == null){
-            return getCachePath();
-        }
-        return externalCacheDir.getAbsolutePath();
+    public static File getExternalCacheDir() {
+        return App.getInstance()
+            .getExternalCacheDir();
+    }
+    public static String getExternalCachePath() {
+        return getExternalCacheDir()
+            .getAbsolutePath();
     }
 
     public static void cleanDirectory(File dir) {
