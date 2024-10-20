@@ -202,20 +202,29 @@ public class ModelSettingFragment extends BaseLazyFragment {
 				Toast.makeText(mContext, "壁纸已重置！", Toast.LENGTH_LONG).show();
             }
         });
-        findViewById(R.id.llHomeApi).setOnClickListener(new View.OnClickListener() {
+		findViewById(R.id.llHomeApi).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 FastClickCheckUtil.check(v);
-                List<SourceBean> sites = ApiConfig.get().getSourceBeanList();
+				List<SourceBean> sites = ApiConfig.get().getSourceBeanList();
                 if (sites.size() > 0) {
                     SelectDialog<SourceBean> dialog = new SelectDialog<>(mActivity);
+
+                    // Multi Column Selection
+					int spanCount;
+					spanCount = (int)Math.floor(sites.size()/60);
+					spanCount = Math.min(spanCount, 2);
+                    TvRecyclerView tvRecyclerView = dialog.findViewById(R.id.list);
+                    tvRecyclerView.setLayoutManager(new V7GridLayoutManager(dialog.getContext(), spanCount));
+                    ConstraintLayout cl_root = dialog.findViewById(R.id.cl_root);
+                    ViewGroup.LayoutParams clp = cl_root.getLayoutParams();
+					clp.width = AutoSizeUtils.mm2px(dialog.getContext(), 380+200*spanCount);
                     dialog.setTip("请选择首页数据源");
-                    dialog.setAdapter(new SelectDialogAdapter.SelectDialogInterface<SourceBean>() {
+					dialog.setAdapter(new SelectDialogAdapter.SelectDialogInterface<SourceBean>() {
                         @Override
                         public void click(SourceBean value, int pos) {
                             ApiConfig.get().setSourceBean(value);
                             tvHomeApi.setText(ApiConfig.get().getHomeSourceBean().getName());
-
                             Intent intent =new Intent(mContext, HomeActivity.class);
                             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             Bundle bundle = new Bundle();
