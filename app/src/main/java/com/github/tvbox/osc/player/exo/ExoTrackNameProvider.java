@@ -1,4 +1,4 @@
-package xyz.doikki.videoplayer.exo;
+package com.github.tvbox.osc.player.exo;
 import android.annotation.SuppressLint;
 import android.content.res.Resources;
 import android.text.TextUtils;
