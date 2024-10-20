@@ -30,6 +30,7 @@ import com.github.tvbox.osc.ui.adapter.SelectDialogAdapter;
 import com.github.tvbox.osc.ui.dialog.SelectDialog;
 import com.github.tvbox.osc.util.FastClickCheckUtil;
 import com.github.tvbox.osc.util.FastClickCheckUtilxu; //xuameng防连击1秒
+import com.github.tvbox.osc.ui.dialog.SubtitleDialog;
 import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.util.PlayerHelper;
 import com.github.tvbox.osc.util.ScreenUtils;
@@ -523,6 +524,8 @@ public class VodController extends BaseController {
             }
         });
         mPlayerBtn.setOnClickListener(new OnClickListener() {
+        SubtitleDialog subtitleDialog = new SubtitleDialog(getActivity());
+		subtitleDialog.selectInternal.setVisibility(View.GONE);
             @Override
             public void onClick(View view) {
                 myHandle.removeCallbacks(myRunnable);
@@ -556,6 +559,8 @@ public class VodController extends BaseController {
         });
 
         mPlayerBtn.setOnLongClickListener(new OnLongClickListener() {
+        SubtitleDialog subtitleDialog = new SubtitleDialog(getActivity());
+		subtitleDialog.selectInternal.setVisibility(View.GONE);
             @Override
             public boolean onLongClick(View view) {
                 myHandle.removeCallbacks(myRunnable);
