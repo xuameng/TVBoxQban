@@ -1,7 +1,6 @@
 package com.github.tvbox.osc.player;
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.text.TextUtils;
 import androidx.annotation.Nullable;
 import com.blankj.utilcode.util.LogUtils;
 import com.github.tvbox.osc.util.StringUtils;
