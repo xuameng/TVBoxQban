@@ -39,7 +39,7 @@ import com.github.tvbox.osc.subtitle.model.Time;
 import com.github.tvbox.osc.util.FileUtils;
 import com.github.tvbox.osc.util.MD5;
 import com.github.tvbox.osc.util.SubtitleHelper;
-import com.github.tvbox.osc.player.EXOmPlayer;
+import com.github.tvbox.osc.player.EXOmPlayer;        //xuameng
 
 import java.io.File;
 import java.util.ArrayList;
@@ -219,7 +219,7 @@ public class DefaultSubtitleEngine implements SubtitleEngine {
 
     }
 
-    private void initWorkThread() {
+    private void initWorkThread() {        //xuameng EXO播放器支持显示在线、本地字幕
         stopWorkThread();
         mHandlerThread = new HandlerThread("SubtitleFindThread");
         mHandlerThread.start();
