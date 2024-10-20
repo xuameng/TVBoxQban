@@ -17,9 +17,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 
 public class FileUtils {
-    public static File open(String str) {
-        return new File(getExternalCacheDir() + "/qjscache_" + str + ".js");
-    }
+
     public static boolean writeSimple(byte[] data, File dst) {
         try {
             if (dst.exists())
@@ -134,14 +132,6 @@ public class FileUtils {
 
     public static String getCachePath() {
         return getCacheDir().getAbsolutePath();
-    }
-    public static File getExternalCacheDir() {
-        return App.getInstance()
-            .getExternalCacheDir();
-    }
-    public static String getExternalCachePath() {
-        return getExternalCacheDir()
-            .getAbsolutePath();
     }
 
     public static void cleanDirectory(File dir) {
