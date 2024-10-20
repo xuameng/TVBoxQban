@@ -524,10 +524,10 @@ public class VodController extends BaseController {
             }
         });
         mPlayerBtn.setOnClickListener(new OnClickListener() {
-        SubtitleDialog subtitleDialog = new SubtitleDialog(getActivity());
-		subtitleDialog.selectInternal.setVisibility(View.GONE);
             @Override
             public void onClick(View view) {
+			SubtitleDialog subtitleDialog = new SubtitleDialog(getActivity());
+			subtitleDialog.selectInternal.setVisibility(View.GONE);
                 myHandle.removeCallbacks(myRunnable);
                 myHandle.postDelayed(myRunnable, myHandleSeconds);
                 try {
@@ -559,10 +559,10 @@ public class VodController extends BaseController {
         });
 
         mPlayerBtn.setOnLongClickListener(new OnLongClickListener() {
-        SubtitleDialog subtitleDialog = new SubtitleDialog(getActivity());
-		subtitleDialog.selectInternal.setVisibility(View.GONE);
             @Override
             public boolean onLongClick(View view) {
+			SubtitleDialog subtitleDialog = new SubtitleDialog(getActivity());
+			subtitleDialog.selectInternal.setVisibility(View.GONE);
                 myHandle.removeCallbacks(myRunnable);
                 myHandle.postDelayed(myRunnable, myHandleSeconds);
                 FastClickCheckUtil.check(view);
