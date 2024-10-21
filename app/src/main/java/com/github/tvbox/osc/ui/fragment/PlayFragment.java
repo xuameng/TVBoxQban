@@ -465,10 +465,10 @@ public class PlayFragment extends BaseLazyFragment {
                     }
                     mediaPlayer.pause();
                     long progress = mediaPlayer.getCurrentPosition();//保存当前进度，ijk 切换轨道 会有快进几秒
-                    mController.mSubtitleView.destroy();
-                    mController.mSubtitleView.clearSubtitleCache();
-                    mController.mSubtitleView.isInternal = true;
                     if (mediaPlayer instanceof IjkMediaPlayer) {
+						 mController.mSubtitleView.destroy();
+						 mController.mSubtitleView.clearSubtitleCache();
+						 mController.mSubtitleView.isInternal = true;
                         ((IjkMediaPlayer)mediaPlayer).setTrack(value.trackId);
                         new Handler().postDelayed(new Runnable() {
                             @Override
@@ -479,6 +479,9 @@ public class PlayFragment extends BaseLazyFragment {
                         }, 800);
                     }
                     if (mediaPlayer instanceof EXOmPlayer) {
+                        mController.mSubtitleView.destroy();
+                        mController.mSubtitleView.clearSubtitleCache();
+                        mController.mSubtitleView.isInternal = true;
                         ((EXOmPlayer)mediaPlayer).selectExoTrack(value);
                         new Handler().postDelayed(new Runnable() {
                             @Override
