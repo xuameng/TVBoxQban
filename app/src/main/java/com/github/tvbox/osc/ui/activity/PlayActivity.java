@@ -1574,7 +1574,6 @@ public class PlayActivity extends BaseLazyFragment {
 
     private class SysWebClient extends WebViewClient {
 
-        @SuppressLint("WebViewClientOnReceivedSslError")
         @Override
         public void onReceivedSslError(WebView webView, SslErrorHandler sslErrorHandler, SslError sslError) {
             sslErrorHandler.proceed();
@@ -1600,7 +1599,6 @@ public class PlayActivity extends BaseLazyFragment {
             super.onPageFinished(view,url);
             String click=sourceBean.getClickSelector();
             LOG.i("onPageFinished url:" + url);
-
             if(!click.isEmpty()){
                 String selector;
                 if(click.contains(";")){
@@ -1610,7 +1608,6 @@ public class PlayActivity extends BaseLazyFragment {
                     selector=click.trim();
                 }
                 String js="$(\""+ selector+"\").click();";
-                LOG.i("javascript:" + js);
                 mSysWebView.loadUrl("javascript:"+js);
             }
         }
