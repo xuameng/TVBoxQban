@@ -2049,7 +2049,7 @@ public class LivePlayActivity extends BaseActivity {
 							iv_play_pause.setText("点播暂停中！聚汇直播欢迎您的收看！");
                         } else {
 							isVOD = false;
-							tv_right_top_type.setText("回看中");
+							Mtv_left_top_xu.setVisibility(View.GONE);     //xuameng返回键隐藏左上回看菜单
                         }
                         break;
                     case VideoView.STATE_BUFFERED:
