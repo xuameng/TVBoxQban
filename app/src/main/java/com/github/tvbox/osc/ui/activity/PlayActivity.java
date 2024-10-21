@@ -48,7 +48,7 @@ import com.github.catvod.crawler.Spider;
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.api.ApiConfig;
 import com.github.tvbox.osc.base.App;
-import com.github.tvbox.osc.base.BaseLazyFragment;
+import com.github.tvbox.osc.base.BaseActivity;
 import com.github.tvbox.osc.bean.ParseBean;
 import com.github.tvbox.osc.bean.SourceBean;
 import com.github.tvbox.osc.bean.Subtitle;
@@ -209,7 +209,7 @@ public class PlayActivity extends BaseActivity {
 
             @Override
             public long getSavedProgress(String url) {
-                return PlayFragment.this.getSavedProgress(url);
+                return PlayActivity.this.getSavedProgress(url);
             }
         };
         mVideoView.setProgressManager(progressManager);
@@ -217,14 +217,14 @@ public class PlayActivity extends BaseActivity {
             @Override
             public void playNext(boolean rmProgress) {
                 String preProgressKey = progressKey;
-                PlayFragment.this.playNext(rmProgress);
+                PlayActivity.this.playNext(rmProgress);
                 if (rmProgress && preProgressKey != null)
                     CacheManager.delete(MD5.string2MD5(preProgressKey), 0);
             }
 
             @Override
             public void playPre() {
-                PlayFragment.this.playPrevious();
+                PlayActivity.this.playPrevious();
             }
 
             @Override
@@ -1469,7 +1469,7 @@ public class PlayActivity extends BaseActivity {
         public void setOverScrollMode(int mode) {
             super.setOverScrollMode(mode);
             if (mContext instanceof Activity)
-                AutoSize.autoConvertDensityOfCustomAdapt((Activity) mContext, PlayFragment.this);
+                AutoSize.autoConvertDensityOfCustomAdapt((Activity) mContext, PlayActivity.this);
         }
 
         @Override
@@ -1487,7 +1487,7 @@ public class PlayActivity extends BaseActivity {
         public void setOverScrollMode(int mode) {
             super.setOverScrollMode(mode);
             if (mContext instanceof Activity)
-                AutoSize.autoConvertDensityOfCustomAdapt((Activity) mContext, PlayFragment.this);
+                AutoSize.autoConvertDensityOfCustomAdapt((Activity) mContext, PlayActivity.this);
         }
 
         @Override
