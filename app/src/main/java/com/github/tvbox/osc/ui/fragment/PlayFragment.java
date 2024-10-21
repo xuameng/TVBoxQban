@@ -655,7 +655,7 @@ public class PlayFragment extends BaseLazyFragment {
             } else {
                 if (mController.mSubtitleView.hasInternal) {
                     mController.mSubtitleView.isInternal = true;
-                    if (mediaPlayer instanceof IjkmPlayer) {
+                    if (mediaPlayer instanceof IjkMediaPlayer) {
                         if (trackInfo != null && trackInfo.getSubtitle()
                             .size() > 0) {
                             List < TrackInfoBean > subtitleTrackList = trackInfo.getSubtitle();
@@ -666,13 +666,13 @@ public class PlayFragment extends BaseLazyFragment {
                                 if (lowerLang.contains("zh") || lowerLang.contains("ch")) {
                                     hasCh = true;
                                     if (selectedIndex != subtitleTrackInfoBean.trackId) {
-                                        ((IjkmPlayer)(mVideoView.getMediaPlayer()))
+                                        ((IjkMediaPlayer)(mVideoView.getMediaPlayer()))
                                             .setTrack(subtitleTrackInfoBean.trackId);
                                         break;
                                     }
                                 }
                             }
-                            if (!hasCh)((IjkmPlayer)(mVideoView.getMediaPlayer()))
+                            if (!hasCh)((IjkMediaPlayer)(mVideoView.getMediaPlayer()))
                                 .setTrack(subtitleTrackList.get(0)
                                 .trackId);
                         }
