@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
+import android.content.pm.ActivityInfo;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +34,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.blankj.utilcode.util.GsonUtils;
+import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.ScreenUtils;
+import com.blankj.utilcode.util.ToastUtils;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
@@ -51,6 +57,8 @@ import com.github.tvbox.osc.bean.VodInfo;
 import com.github.tvbox.osc.cache.CacheManager;
 import com.github.tvbox.osc.event.RefreshEvent;
 import com.github.tvbox.osc.player.IjkMediaPlayer;
+import com.github.tvbox.osc.player.EXOmPlayer;
+import com.github.tvbox.osc.util.StringUtils;
 import com.github.tvbox.osc.player.MyVideoView;
 import com.github.tvbox.osc.player.TrackInfo;
 import com.github.tvbox.osc.player.TrackInfoBean;
@@ -78,6 +86,12 @@ import com.lzy.okgo.model.HttpHeaders;
 import com.lzy.okgo.model.Response;
 import com.obsez.android.lib.filechooser.ChooserDialog;
 import com.orhanobut.hawk.Hawk;
+
+import com.google.android.exoplayer2.Player;
+import com.google.android.exoplayer2.text.Cue;
+
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import org.greenrobot.eventbus.EventBus;
 import org.jetbrains.annotations.NotNull;
@@ -124,6 +138,13 @@ public class PlayActivity extends BaseActivity {
     @Override
     protected int getLayoutResID() {
         return R.layout.activity_play;
+		}
+	
+	@Subscribe(threadMode = ThreadMode.MAIN)
+		public void refresh(RefreshEvent event) {
+		if (event.type == RefreshEvent.TYPE_SUBTITLE_SIZE_CHANGE) {
+		mController.mSubtitleView.setTextSize((int) event.obj);
+		}
     }
 
     @Override
@@ -256,7 +277,7 @@ public class PlayActivity extends BaseActivity {
     void selectMySubtitle() throws Exception {
         SubtitleDialog subtitleDialog = new SubtitleDialog(PlayActivity.this);
         int playerType = mVodPlayerCfg.getInt("pl");
-        if (mController.mSubtitleView.hasInternal && playerType == 1) {
+        if (mController.mSubtitleView.hasInternal && playerType == 1 ||mController.mSubtitleView.hasInternal && playerType == 2) {
             subtitleDialog.selectInternal.setVisibility(View.VISIBLE);
         } else {
             subtitleDialog.selectInternal.setVisibility(View.GONE);
@@ -337,19 +358,22 @@ public class PlayActivity extends BaseActivity {
 
     void selectMyAudioTrack() {
         AbstractPlayer mediaPlayer = mVideoView.getMediaPlayer();
-        if (!(mediaPlayer instanceof IjkMediaPlayer)) {
-            return;
-        }
         TrackInfo trackInfo = null;
         if (mediaPlayer instanceof IjkMediaPlayer) {
             trackInfo = ((IjkMediaPlayer)mediaPlayer).getTrackInfo();
         }
+		if (mediaPlayer instanceof EXOmPlayer) {
+			trackInfo = ((EXOmPlayer) mediaPlayer).getTrackInfo();
+		}
         if (trackInfo == null) {
             Toast.makeText(mContext, "没有音轨", Toast.LENGTH_SHORT).show();
             return;
         }
         List<TrackInfoBean> bean = trackInfo.getAudio();
-        if (bean.size() < 1) return;
+        if (bean.size() < 1){
+			Toast.makeText(mContext, "没有内置音轨", Toast.LENGTH_SHORT).show();
+			return;
+		}
         SelectDialog<TrackInfoBean> dialog = new SelectDialog<>(PlayActivity.this);
         dialog.setTip("切换音轨");
         dialog.setAdapter(new SelectDialogAdapter.SelectDialogInterface<TrackInfoBean>() {
@@ -364,6 +388,9 @@ public class PlayActivity extends BaseActivity {
                     if (mediaPlayer instanceof IjkMediaPlayer) {
                         ((IjkMediaPlayer)mediaPlayer).setTrack(value.trackId);
                     }
+					if (mediaPlayer instanceof EXOmPlayer) {
+						((EXOmPlayer) mediaPlayer).selectExoTrack(value);
+					}
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -382,7 +409,7 @@ public class PlayActivity extends BaseActivity {
                 String name = val.name.replace("AUDIO,", "");
                 name = name.replace("N/A,", "");
                 name = name.replace(" ", "");
-                return val.trackId + " : " + val.language + " : " + name;
+                return name + (StringUtils.isEmpty(val.language) ? "" : " " + val.language);
             }
         }, new DiffUtil.ItemCallback<TrackInfoBean>() {
             @Override
@@ -400,24 +427,28 @@ public class PlayActivity extends BaseActivity {
 
     void selectMyInternalSubtitle() {
         AbstractPlayer mediaPlayer = mVideoView.getMediaPlayer();
-        if (!(mediaPlayer instanceof IjkMediaPlayer)) {
-            return;
-        }
         TrackInfo trackInfo = null;
         if (mediaPlayer instanceof IjkMediaPlayer) {
             trackInfo = ((IjkMediaPlayer)mediaPlayer).getTrackInfo();
         }
+		if (mediaPlayer instanceof EXOmPlayer) {
+			trackInfo = ((EXOmPlayer)mediaPlayer).getTrackInfo();
+		}
         if (trackInfo == null) {
             Toast.makeText(mContext, "没有内置字幕", Toast.LENGTH_SHORT).show();
             return;
         }
         List<TrackInfoBean> bean = trackInfo.getSubtitle();
-        if (bean.size() < 1) return;
+        if (bean.size() < 1) {
+			Toast.makeText(mContext, "没有内置字幕", Toast.LENGTH_SHORT).show();
+			return;
+		}
         SelectDialog<TrackInfoBean> dialog = new SelectDialog<>(PlayActivity.this);
         dialog.setTip("切换内置字幕");
         dialog.setAdapter(new SelectDialogAdapter.SelectDialogInterface<TrackInfoBean>() {
             @Override
             public void click(TrackInfoBean value, int pos) {
+				mController.mSubtitleView.setVisibility(View.VISIBLE);
                 try {
                     for (TrackInfoBean subtitle : bean) {
                         subtitle.selected = subtitle.trackId == value.trackId;
@@ -437,7 +468,19 @@ public class PlayActivity extends BaseActivity {
                             }
                         }, 800);
                     }
-
+				   if (mediaPlayer instanceof EXOmPlayer) {
+                        mController.mSubtitleView.destroy();
+                        mController.mSubtitleView.clearSubtitleCache();
+                        mController.mSubtitleView.isInternal = true;
+                        ((EXOmPlayer)mediaPlayer).selectExoTrack(value);
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                mediaPlayer.seekTo(progress);
+                                mediaPlayer.start();
+                            }
+                        }, 800);
+                    }
                     dialog.dismiss();
                 } catch (Exception e) {
                     LOG.e("切换内置字幕出错");
@@ -446,7 +489,7 @@ public class PlayActivity extends BaseActivity {
 
             @Override
             public String getDisplay(TrackInfoBean val) {
-                return val.trackId + " : " + val.language;
+                return val.name + (StringUtils.isEmpty(val.language) ? "" : " " + val.language);
             }
         }, new DiffUtil.ItemCallback<TrackInfoBean>() {
             @Override
@@ -568,6 +611,30 @@ public class PlayActivity extends BaseActivity {
                 }
             });
         }
+
+     if (mVideoView.getMediaPlayer() instanceof EXOmPlayer) {
+            trackInfo = ((EXOmPlayer) (mVideoView.getMediaPlayer())).getTrackInfo();
+            if (trackInfo != null && trackInfo.getSubtitle().size() > 0) {
+                mController.mSubtitleView.hasInternal = true;
+            }
+            ((EXOmPlayer) (mVideoView.getMediaPlayer())).setOnTimedTextListener(new Player.Listener() {
+                @Override
+                public void onCues(@NonNull List<Cue> cues) {
+                    if (cues.size() > 0) {
+                        CharSequence ss = cues.get(0).text;
+                        if (ss != null && mController.mSubtitleView.isInternal) {
+                            com.github.tvbox.osc.subtitle.model.Subtitle subtitle = new com.github.tvbox.osc.subtitle.model.Subtitle();
+                            subtitle.content = ss.toString();
+                            mController.mSubtitleView.onSubtitleChanged(subtitle);
+                        }
+                    }else{
+                        com.github.tvbox.osc.subtitle.model.Subtitle subtitle = new com.github.tvbox.osc.subtitle.model.Subtitle();
+                        subtitle.content = "";
+                        mController.mSubtitleView.onSubtitleChanged(subtitle);
+                    }
+                }
+            });
+        }
         mController.mSubtitleView.bindToMediaPlayer(mVideoView.getMediaPlayer());
         mController.mSubtitleView.setPlaySubtitleCacheKey(subtitleCacheKey);
         String subtitlePathCache = (String)CacheManager.getCache(MD5.string2MD5(subtitleCacheKey));
@@ -579,7 +646,7 @@ public class PlayActivity extends BaseActivity {
             } else {
                 if (mController.mSubtitleView.hasInternal) {
                     mController.mSubtitleView.isInternal = true;
-                    if (trackInfo != null && trackInfo.getSubtitle().size()>0) {
+                    if (trackInfo != null && !trackInfo.getSubtitle().isEmpty()) {
                         List<TrackInfoBean> subtitleTrackList = trackInfo.getSubtitle();
                         int selectedIndex = trackInfo.getSubtitleSelected(true);
                         boolean hasCh =false;
@@ -588,12 +655,22 @@ public class PlayActivity extends BaseActivity {
                             if (lowerLang.startsWith("zh") || lowerLang.startsWith("ch")) {
                                 hasCh=true;
                                 if (selectedIndex != subtitleTrackInfoBean.trackId) {
-                                    ((IjkMediaPlayer)(mVideoView.getMediaPlayer())).setTrack(subtitleTrackInfoBean.trackId);
+                                    if (mVideoView.getMediaPlayer() instanceof IjkMediaPlayer){
+                                        ((IjkMediaPlayer)(mVideoView.getMediaPlayer())).setTrack(subtitleTrackInfoBean.trackId);
+                                    }else if (mVideoView.getMediaPlayer() instanceof EXOmPlayer){
+                                        ((EXOmPlayer)(mVideoView.getMediaPlayer())).selectExoTrack(subtitleTrackInfoBean);
+                                    }
                                     break;
                                 }
                             }
                         }
-                        if(!hasCh)((IjkMediaPlayer)(mVideoView.getMediaPlayer())).setTrack(subtitleTrackList.get(0).trackId);
+						if(!hasCh){
+                            if (mVideoView.getMediaPlayer() instanceof IjkMediaPlayer){
+                                ((IjkMediaPlayer)(mVideoView.getMediaPlayer())).setTrack(subtitleTrackList.get(0).trackId);
+                            }else if (mVideoView.getMediaPlayer() instanceof EXOmPlayer){
+                                ((EXOmPlayer)(mVideoView.getMediaPlayer())).selectExoTrack(subtitleTrackList.get(0));
+                            }
+                        }
                     }
                 }
             }
