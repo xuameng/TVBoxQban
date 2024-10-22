@@ -662,7 +662,7 @@ public class PlayFragment extends BaseLazyFragment {
             } else {
                 if (mController.mSubtitleView.hasInternal) { //有则使用内置字幕
                     mController.mSubtitleView.isInternal = true;
-                    if (mediaPlayer instanceof IjkMediaPlayer) {
+                    if (mVideoView.getMediaPlayer() instanceof IjkMediaPlayer){
                         if (trackInfo != null && trackInfo.getSubtitle()
                             .size() > 0) {
                             List < TrackInfoBean > subtitleTrackList = trackInfo.getSubtitle();
