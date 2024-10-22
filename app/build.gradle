@@ -1,14 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 33
+    compileSdkVersion 30
 
     defaultConfig {
         applicationId 'com.jvhuiys.player'
-        minSdkVersion 24
-        targetSdkVersion 30
+        minSdkVersion 16
+        targetSdkVersion 26
         versionCode 1
-        versionName '20241019-2222'
+        versionName '20241022-2222'
         multiDexEnabled true
         //设置room的Schema的位置
         javaCompileOptions {
