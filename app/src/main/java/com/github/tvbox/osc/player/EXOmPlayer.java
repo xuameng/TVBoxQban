@@ -8,7 +8,6 @@ import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.source.TrackGroup;
-import com.google.android.exoplayer2.Tracks;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
@@ -27,7 +26,7 @@ public class EXOmPlayer extends ExoMediaPlayer {
         TrackInfo data = new TrackInfo();
         MappingTrackSelector.MappedTrackInfo trackInfo = getTrackSelector().getCurrentMappedTrackInfo();
         if (trackInfo != null) {
-            getExoSelectedTrack();
+            getExoSelectedTrack(mTrackSelections);
             for (int groupArrayIndex = 0; groupArrayIndex < trackInfo.getRendererCount(); groupArrayIndex++) {
                 TrackGroupArray groupArray = trackInfo.getTrackGroups(groupArrayIndex);
                 for (int groupIndex = 0; groupIndex < groupArray.length; groupIndex++) {
@@ -62,20 +61,19 @@ public class EXOmPlayer extends ExoMediaPlayer {
         return data;
     }
     @SuppressLint("UnsafeOptInUsageError")
-    private void getExoSelectedTrack() {
+    private void getExoSelectedTrack(TrackSelectionArray trackSelections) {
         audioId = "";
-        subtitleId = "";        
-        for (Tracks.Group group : mMediaPlayer.getCurrentTracks().getGroups()) {
-            if (!group.isSelected()) continue;
-            for (int trackIndex = 0; trackIndex < group.length; trackIndex++) {
-                if (!group.isTrackSelected(trackIndex)) continue;
-                Format format = group.getTrackFormat(trackIndex);
+        subtitleId = "";
+        for (TrackSelection selection : trackSelections.getAll()) {
+            if (selection == null) continue;
+            for(int trackIndex = 0; trackIndex < selection.length(); trackIndex++) {
+                Format format = selection.getFormat(trackIndex);
                 if (MimeTypes.isAudio(format.sampleMimeType)) {
                     audioId = format.id;
                 }
                 if (MimeTypes.isText(format.sampleMimeType)) {
                     subtitleId = format.id;
-                }                
+                }
             }
         }
     }
