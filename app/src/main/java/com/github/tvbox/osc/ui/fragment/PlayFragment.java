@@ -675,14 +675,14 @@ public class PlayFragment extends BaseLazyFragment {
                                     if (selectedIndex != subtitleTrackInfoBean.trackId) {
                                         ((IjkMediaPlayer)(mVideoView.getMediaPlayer()))
                                             .setTrack(subtitleTrackInfoBean.trackId);
-										else if (mVideoView.getMediaPlayer() instanceof EXOmPlayer){
+									}else if (mVideoView.getMediaPlayer() instanceof EXOmPlayer){
                                         ((EXOmPlayer)(mVideoView.getMediaPlayer())).selectExoTrack(subtitleTrackInfoBean);
                                     }
-                                        break;
-                                    }
+                                    break;
                                 }
                             }
-						  if(!hasCh){
+                        }
+                        if(!hasCh){
                             if (mVideoView.getMediaPlayer() instanceof IjkMediaPlayer){
                                 ((IjkMediaPlayer)(mVideoView.getMediaPlayer())).setTrack(subtitleTrackList.get(0).trackId);
                             }else if (mVideoView.getMediaPlayer() instanceof EXOmPlayer){
