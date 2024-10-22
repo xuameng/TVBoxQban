@@ -26,7 +26,7 @@ public class EXOmPlayer extends ExoMediaPlayer {
         TrackInfo data = new TrackInfo();
         MappingTrackSelector.MappedTrackInfo trackInfo = getTrackSelector().getCurrentMappedTrackInfo();
         if (trackInfo != null) {
-            getExoSelectedTrack(mTrackSelections);
+            getExoSelectedTrack();
             for (int groupArrayIndex = 0; groupArrayIndex < trackInfo.getRendererCount(); groupArrayIndex++) {
                 TrackGroupArray groupArray = trackInfo.getTrackGroups(groupArrayIndex);
                 for (int groupIndex = 0; groupIndex < groupArray.length; groupIndex++) {
@@ -61,29 +61,31 @@ public class EXOmPlayer extends ExoMediaPlayer {
         return data;
     }
     @SuppressLint("UnsafeOptInUsageError")
-    private void getExoSelectedTrack(TrackSelectionArray trackSelections) {
+    private void getExoSelectedTrack() {
         audioId = "";
-        subtitleId = "";
-        for (TrackSelection selection : trackSelections.getAll()) {
-            if (selection == null) continue;
-            for(int trackIndex = 0; trackIndex < selection.length(); trackIndex++) {
-                Format format = selection.getFormat(trackIndex);
+        subtitleId = "";        
+        for (Tracks.Group group : mMediaPlayer.getCurrentTracks().getGroups()) {
+            if (!group.isSelected()) continue;
+            for (int trackIndex = 0; trackIndex < group.length; trackIndex++) {
+                if (!group.isTrackSelected(trackIndex)) continue;
+                Format format = group.getTrackFormat(trackIndex);
                 if (MimeTypes.isAudio(format.sampleMimeType)) {
                     audioId = format.id;
                 }
                 if (MimeTypes.isText(format.sampleMimeType)) {
                     subtitleId = format.id;
-                }
+                }                
             }
         }
     }
+	@SuppressLint("UnsafeOptInUsageError")
     public void selectExoTrack(@Nullable TrackInfoBean videoTrackBean) {
         MappingTrackSelector.MappedTrackInfo trackInfo = getTrackSelector().getCurrentMappedTrackInfo();
         if (trackInfo != null) {
             if (videoTrackBean == null) {
                 for (int renderIndex = 0; renderIndex < trackInfo.getRendererCount(); renderIndex++) {
-                    if (trackInfo.getRendererType(renderIndex) == C.TRACK_TYPE_TEXT) {
-                        DefaultTrackSelector.ParametersBuilder parametersBuilder = getTrackSelector().getParameters().buildUpon();
+                    if (trackInfo.getRendererType(renderIndex) == C.TRACK_TYPE_TEXT) {                       
+						DefaultTrackSelector.Parameters.Builder parametersBuilder = getTrackSelector().getParameters().buildUpon();
                         parametersBuilder.setRendererDisabled(renderIndex, true);
                         getTrackSelector().setParameters(parametersBuilder);
                         break;
@@ -91,8 +93,8 @@ public class EXOmPlayer extends ExoMediaPlayer {
                 }
             } else {
                 TrackGroupArray trackGroupArray = trackInfo.getTrackGroups(videoTrackBean.renderId);
-                DefaultTrackSelector.SelectionOverride override = new DefaultTrackSelector.SelectionOverride(videoTrackBean.trackGroupId, videoTrackBean.trackId);
-                DefaultTrackSelector.ParametersBuilder parametersBuilder = getTrackSelector().buildUponParameters();
+				@SuppressLint("UnsafeOptInUsageError") DefaultTrackSelector.SelectionOverride override = new DefaultTrackSelector.SelectionOverride(videoTrackBean.trackGroupId, videoTrackBean.trackId);
+                DefaultTrackSelector.Parameters.Builder parametersBuilder = getTrackSelector().buildUponParameters();
                 parametersBuilder.setRendererDisabled(videoTrackBean.renderId, false);
                 parametersBuilder.setSelectionOverride(videoTrackBean.renderId, trackGroupArray, override);
                 getTrackSelector().setParameters(parametersBuilder);
