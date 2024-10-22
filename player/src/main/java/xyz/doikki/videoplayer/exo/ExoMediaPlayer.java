@@ -57,9 +57,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 
     @Override
     public void initPlayer() {
-		mRenderersFactory.setExtensionRendererMode(HawkUtils.getExoRendererModeActualValue());
-		mTrackSelector.ParametersBuilder(mTrackSelector.getParameters().buildUpon().setPreferredTextLanguage(Locale.getDefault().getISO3Language()).setTunnelingEnabled(true));
-/*        mMediaPlayer = new SimpleExoPlayer.Builder(
+        mMediaPlayer = new SimpleExoPlayer.Builder(
                 mAppContext,
                 mRenderersFactory == null ? mRenderersFactory = new DefaultRenderersFactory(mAppContext) : mRenderersFactory,
                 mTrackSelector == null ? mTrackSelector = new DefaultTrackSelector(mAppContext) : mTrackSelector,
@@ -67,11 +65,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
                 mLoadControl == null ? mLoadControl = new DefaultLoadControl() : mLoadControl,
                 DefaultBandwidthMeter.getSingletonInstance(mAppContext),
                 new AnalyticsCollector(Clock.DEFAULT))
-                .build();  */
-        mMediaPlayer = new SimpleExoPlayer.Builder(mAppContext)
-                .setLoadControl(mLoadControl)
-                .setRenderersFactory(mRenderersFactory)
-                .setTrackSelector(mTrackSelector).build();
+                .build();
         setOptions();
 
         //播放器日志
