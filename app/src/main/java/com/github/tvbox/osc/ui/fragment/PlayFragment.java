@@ -653,54 +653,39 @@ public class PlayFragment extends BaseLazyFragment {
 
         mController.mSubtitleView.bindToMediaPlayer(mVideoView.getMediaPlayer());
         mController.mSubtitleView.setPlaySubtitleCacheKey(subtitleCacheKey);
-        String subtitlePathCache = (String) CacheManager.getCache(MD5.string2MD5(subtitleCacheKey));
+        String subtitlePathCache = (String)CacheManager.getCache(MD5.string2MD5(subtitleCacheKey));
         if (subtitlePathCache != null && !subtitlePathCache.isEmpty()) {
             mController.mSubtitleView.setSubtitlePath(subtitlePathCache);
         } else {
             if (playSubtitle != null && playSubtitle.length() > 0) {
                 mController.mSubtitleView.setSubtitlePath(playSubtitle);
             } else {
-                if (mController.mSubtitleView.hasInternal) { //有则使用内置字幕
+                if (mController.mSubtitleView.hasInternal) {//有则使用内置字幕
                     mController.mSubtitleView.isInternal = true;
-                    if (mVideoView.getMediaPlayer() instanceof IjkMediaPlayer){
-                        if (trackInfo != null && trackInfo.getSubtitle()
-                            .size() > 0) {
-                            List < TrackInfoBean > subtitleTrackList = trackInfo.getSubtitle();
-                            int selectedIndex = trackInfo.getSubtitleSelected(true);
-                            boolean hasCh = false;
-                            for (TrackInfoBean subtitleTrackInfoBean: subtitleTrackList) {
-                                String lowerLang = subtitleTrackInfoBean.language.toLowerCase();
-                                if (lowerLang.contains("zh") || lowerLang.contains("ch")) {
-                                    hasCh = true;
-                                    if (selectedIndex != subtitleTrackInfoBean.trackId) {
-                                        ((IjkMediaPlayer)(mVideoView.getMediaPlayer()))
-                                            .setTrack(subtitleTrackInfoBean.trackId);
-                                        break;
+                    if (trackInfo != null && !trackInfo.getSubtitle().isEmpty()) {
+                        List<TrackInfoBean> subtitleTrackList = trackInfo.getSubtitle();
+                        int selectedIndex = trackInfo.getSubtitleSelected(true);
+                        boolean hasCh =false;
+                        for(TrackInfoBean subtitleTrackInfoBean : subtitleTrackList) {
+                            String lowerLang = subtitleTrackInfoBean.language.toLowerCase();
+                            if (lowerLang.contains("zh") || lowerLang.contains("ch")){
+                                hasCh=true;
+                                if (selectedIndex != subtitleTrackInfoBean.trackId) {
+                                    if (mVideoView.getMediaPlayer() instanceof IjkMediaPlayer){
+                                        ((IjkMediaPlayer)(mVideoView.getMediaPlayer())).setTrack(subtitleTrackInfoBean.trackId);
+                                    }else if (mVideoView.getMediaPlayer() instanceof EXOmPlayer){
+                                        ((EXOmPlayer)(mVideoView.getMediaPlayer())).selectExoTrack(subtitleTrackInfoBean);
                                     }
+                                    break;
                                 }
                             }
-                            if (!hasCh)((IjkMediaPlayer)(mVideoView.getMediaPlayer()))
-                                .setTrack(subtitleTrackList.get(0)
-                                .trackId);
                         }
-                    }
-                    if (mVideoView.getMediaPlayer() instanceof EXOmPlayer){
-                        if (trackInfo != null && trackInfo.getSubtitle()
-                            .size() > 0) {
-                            List < TrackInfoBean > subtitleTrackList = trackInfo.getSubtitle();
-                            int selectedIndex = trackInfo.getSubtitleSelected(true);
-                            boolean hasCh = false;
-                            for (TrackInfoBean subtitleTrackInfoBean: subtitleTrackList) {
-                                String lowerLang = subtitleTrackInfoBean.language.toLowerCase();
-                                if (lowerLang.contains("zh") || lowerLang.contains("ch")) {
-                                    hasCh = true;
-                                    if (selectedIndex != subtitleTrackInfoBean.trackId) {
-									  ((EXOmPlayer)(mVideoView.getMediaPlayer())).selectExoTrack(subtitleTrackInfoBean);
-                                        break;
-                                    }
-                                }
+                        if(!hasCh){
+                            if (mVideoView.getMediaPlayer() instanceof IjkMediaPlayer){
+                                ((IjkMediaPlayer)(mVideoView.getMediaPlayer())).setTrack(subtitleTrackList.get(0).trackId);
+                            }else if (mVideoView.getMediaPlayer() instanceof EXOmPlayer){
+                                ((EXOmPlayer)(mVideoView.getMediaPlayer())).selectExoTrack(subtitleTrackList.get(0));
                             }
-                            if (!hasCh)((EXOmPlayer)(mVideoView.getMediaPlayer())).selectExoTrack(subtitleTrackList.get(0));
                         }
                     }
                 }
