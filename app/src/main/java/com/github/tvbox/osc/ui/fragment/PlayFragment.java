@@ -927,7 +927,7 @@ public class PlayFragment extends BaseLazyFragment {
             hasPre = mVodInfo.playIndex - 1 >= 0;
         }
         if (!hasPre) {
-            Toast.makeText "已经是第一集了!", Toast.LENGTH_SHORT).show();
+			Toast.makeText(requireContext(), "已经是第一集了!", Toast.LENGTH_SHORT).show();
             return;
         }
         mVodInfo.playIndex--;
