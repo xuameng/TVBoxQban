@@ -30,6 +30,7 @@ import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvicto
 import com.google.android.exoplayer2.upstream.cache.SimpleCache;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.Util;
+import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSource;   //xuameng解决BILI EXO不能播放
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -44,6 +45,7 @@ public final class ExoMediaSourceHelper {
     private final String mUserAgent;
     private final Context mAppContext;
     private OkHttpDataSource.Factory mHttpDataSourceFactory;
+	private OkHttpDataSource.Factory mHttpDataSourceFactoryNoProxy;
     private OkHttpClient mOkClient = null;
     private Cache mCache;
 
