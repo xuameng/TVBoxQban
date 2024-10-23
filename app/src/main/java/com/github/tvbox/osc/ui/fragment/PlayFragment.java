@@ -212,17 +212,25 @@ public class PlayFragment extends BaseLazyFragment {
         mController.setListener(new VodController.VodControlListener() {
             @Override
             public void playNext(boolean rmProgress) {
-                String preProgressKey = progressKey;
-                PlayFragment.this.playNext(rmProgress);
-                if (rmProgress && preProgressKey != null)
+				 if (mVodInfo.reverseSort) {
+                    PlayFragment.this.playPrevious();
+                } else {
+					String preProgressKey = progressKey;
+					PlayFragment.this.playNext(rmProgress);
+					if (rmProgress && preProgressKey != null)
                     CacheManager.delete(MD5.string2MD5(preProgressKey), 0);
+				}
+              }
             }
 
             @Override
             public void playPre() {
-                PlayFragment.this.playPrevious();
-            }
-
+                if (mVodInfo.reverseSort) {
+                    PlayFragment.this.playNext(false);
+                } else {
+                    PlayFragment.this.playPrevious();
+                }
+			}
             @Override
             public void changeParse(ParseBean pb) {
                 autoRetryCount = 0;
@@ -899,14 +907,18 @@ public class PlayFragment extends BaseLazyFragment {
     private SourceBean sourceBean;
 
     private void playNext(boolean isProgress) {
-        boolean hasNext;
+        boolean hasNext = true;
         if (mVodInfo == null || mVodInfo.seriesMap.get(mVodInfo.playFlag) == null) {
             hasNext = false;
         } else {
             hasNext = mVodInfo.playIndex + 1 < mVodInfo.seriesMap.get(mVodInfo.playFlag).size();
         }
         if (!hasNext) {
-            Toast.makeText(requireContext(), "已经是最后一集了!", Toast.LENGTH_SHORT).show();
+            if(mVodInfo.reverseSort){
+                Toast.makeText(requireContext(), "已经是第一集了", Toast.LENGTH_SHORT).show();
+            }else {
+                Toast.makeText(requireContext(), "已经是最后一集了", Toast.LENGTH_SHORT).show();
+            }
             return;
         }else {
             mVodInfo.playIndex++;
@@ -922,7 +934,11 @@ public class PlayFragment extends BaseLazyFragment {
             hasPre = mVodInfo.playIndex - 1 >= 0;
         }
         if (!hasPre) {
-            Toast.makeText(requireContext(), "已经是第一集了!", Toast.LENGTH_SHORT).show();
+            if(mVodInfo.reverseSort){
+                Toast.makeText(requireContext(), "已经是最后一集了", Toast.LENGTH_SHORT).show();
+            }else {
+                Toast.makeText(requireContext(), "已经是第一集了", Toast.LENGTH_SHORT).show();
+            }
             return;
         }
         mVodInfo.playIndex--;
