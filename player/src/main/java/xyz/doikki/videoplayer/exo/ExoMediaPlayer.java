@@ -9,11 +9,11 @@ import android.view.SurfaceHolder;
 
 import androidx.annotation.NonNull;
 
-import com.google.android.exoplayer2.PlaybackException;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.LoadControl;
+import com.google.android.exoplayer2.PlaybackException;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.Tracks;
@@ -26,7 +26,6 @@ import com.google.android.exoplayer2.video.VideoSize;
 import java.util.Map;
 
 import xyz.doikki.videoplayer.player.AbstractPlayer;
-import xyz.doikki.videoplayer.util.PlayerUtils;
 
 public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 
@@ -64,7 +63,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
         if (mLoadControl == null) {
             mLoadControl = new DefaultLoadControl();
         }
-		mTrackSelector.setParameters(mTrackSelector.getParameters().buildUpon().setTunnelingEnabled(true));
+        mTrackSelector.setParameters(mTrackSelector.getParameters().buildUpon().setTunnelingEnabled(true));
         /*mMediaPlayer = new SimpleExoPlayer.Builder(
                 mAppContext,
                 mRenderersFactory,
@@ -74,14 +73,16 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
                 DefaultBandwidthMeter.getSingletonInstance(mAppContext),
                 new AnalyticsCollector(Clock.DEFAULT))
                 .build();*/
-	   mMediaPlayer = new ExoPlayer.Builder(mAppContext)
+        mMediaPlayer = new ExoPlayer.Builder(mAppContext)
                 .setLoadControl(mLoadControl)
                 .setRenderersFactory(mRenderersFactory)
                 .setTrackSelector(mTrackSelector).build();
+
         setOptions();
 
         mMediaPlayer.addListener(this);
     }
+
     public DefaultTrackSelector getTrackSelector() {
         return mTrackSelector;
     }
@@ -126,7 +127,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
             return;
         if (mMediaSource == null) return;
         if (mSpeedPlaybackParameters != null) {
-			mMediaPlayer.setPlaybackParameters(mSpeedPlaybackParameters);
+            mMediaPlayer.setPlaybackParameters(mSpeedPlaybackParameters);
         }
         mIsPreparing = true;
         mMediaPlayer.setMediaSource(mMediaSource);
@@ -173,7 +174,8 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
             mMediaPlayer.release();
             mMediaPlayer = null;
         }
-
+        lastTotalRxBytes = 0;
+        lastTimeStamp = 0;
         mIsPreparing = false;
         mSpeedPlaybackParameters = null;
     }
@@ -220,7 +222,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 
     @Override
     public void setLooping(boolean isLooping) {
-       if (mMediaPlayer != null)
+        if (mMediaPlayer != null)
             mMediaPlayer.setRepeatMode(isLooping ? Player.REPEAT_MODE_ALL : Player.REPEAT_MODE_OFF);
     }
 
@@ -247,9 +249,41 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
         return 1f;
     }
 
+    private long lastTotalRxBytes = 0;
+
+    private long lastTimeStamp = 0;
+
+    private boolean unsupported() {
+        if (mAppContext == null) {
+            return true;
+        }
+        return TrafficStats.getUidRxBytes(mAppContext.getApplicationInfo().uid) == TrafficStats.UNSUPPORTED;
+    }
+
     @Override
     public long getTcpSpeed() {
-        return PlayerUtils.getNetSpeed(mAppContext);
+        if (mAppContext == null || unsupported()) {
+            return 0;
+        }
+        //使用getUidRxBytes方法获取该进程总接收量
+        long total = TrafficStats.getTotalRxBytes();
+        //记录当前的时间
+        long time = System.currentTimeMillis();
+        //数据接收量除以数据接收的时间，就计算网速了。
+        long diff = total - lastTotalRxBytes;
+        long speed = diff / Math.max(time - lastTimeStamp, 1);
+        //当前时间存到上次时间这个变量，供下次计算用
+        lastTimeStamp = time;
+        //当前总接收量存到上次接收总量这个变量，供下次计算用
+        lastTotalRxBytes = total;
+
+        return speed * 1024;
+    }
+
+    @Override
+    public void onTracksChanged(Tracks tracks) {
+        if (trackNameProvider == null)
+            trackNameProvider = new ExoTrackNameProvider(mAppContext.getResources());
     }
 
     @Override
@@ -273,7 +307,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
             case Player.STATE_ENDED:
                 mPlayerEventListener.onCompletion();
                 break;
-			case Player.STATE_IDLE:
+            case Player.STATE_IDLE:
                 break;
         }
     }
@@ -295,7 +329,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     }
 
     @Override
-    public void onVideoSizeChanged(VideoSize videoSize) {
+    public void onVideoSizeChanged(@NonNull VideoSize videoSize) {
         if (mPlayerEventListener != null) {
             mPlayerEventListener.onVideoSizeChanged(videoSize.width, videoSize.height);
             if (videoSize.unappliedRotationDegrees > 0) {
@@ -303,4 +337,5 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
             }
         }
     }
+
 }
