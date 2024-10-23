@@ -44,16 +44,18 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     protected ExoPlayer mMediaPlayer;
     protected MediaSource mMediaSource;
     protected ExoMediaSourceHelper mMediaSourceHelper;
-
+    protected ExoTrackNameProvider trackNameProvider;
+    protected TrackSelectionArray mTrackSelections;
     private PlaybackParameters mSpeedPlaybackParameters;
-
     private boolean mIsPreparing;
 
     private LoadControl mLoadControl;
-    private RenderersFactory mRenderersFactory;
-    private TrackSelector mTrackSelector;
-	protected ExoTrackNameProvider trackNameProvider;
-    protected TrackSelectionArray mTrackSelections;
+    private DefaultRenderersFactory mRenderersFactory;
+    private DefaultTrackSelector mTrackSelector;
+
+    private int errorCode = -100;
+    private String path;
+    private Map<String, String> headers;
 
     public ExoMediaPlayer(Context context) {
         mAppContext = context.getApplicationContext();
