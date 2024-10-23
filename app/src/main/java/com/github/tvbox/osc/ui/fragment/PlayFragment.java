@@ -220,7 +220,6 @@ public class PlayFragment extends BaseLazyFragment {
 					if (rmProgress && preProgressKey != null)
                     CacheManager.delete(MD5.string2MD5(preProgressKey), 0);
 				}
-              }
             }
 
             @Override
