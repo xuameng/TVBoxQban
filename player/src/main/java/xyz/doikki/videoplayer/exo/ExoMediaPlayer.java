@@ -16,26 +16,15 @@ import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.RenderersFactory;
-import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.analytics.AnalyticsCollector;
-import com.google.android.exoplayer2.source.DefaultMediaSourceFactory;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
-import com.google.android.exoplayer2.trackselection.TrackSelector;
-import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
-import com.google.android.exoplayer2.util.NonNullApi;
-import com.google.android.exoplayer2.util.Clock;
-import com.google.android.exoplayer2.util.EventLogger;
 import com.google.android.exoplayer2.video.VideoSize;
 
 import java.util.Map;
 
 import xyz.doikki.videoplayer.player.AbstractPlayer;
-import xyz.doikki.videoplayer.player.VideoViewManager;
 import xyz.doikki.videoplayer.util.PlayerUtils;
 
 public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
@@ -100,7 +89,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     public void setDataSource(String path, Map<String, String> headers) {
         this.path = path;
         this.headers = headers;
-        mMediaSource = mMediaSourceHelper.getMediaSource(path, headers, false, errorCode);
+        mMediaSource = mMediaSourceHelper.getMediaSource(path, headers, false);
         errorCode = -1;
     }
 
@@ -282,6 +271,8 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
                 break;
             case Player.STATE_ENDED:
                 mPlayerEventListener.onCompletion();
+                break;
+			case Player.STATE_IDLE:
                 break;
         }
     }
