@@ -106,4 +106,7 @@ dependencies {
     implementation 'com.googlecode.juniversalchardet:juniversalchardet:1.0.3'
       //工具类
     implementation 'com.blankj:utilcodex:1.31.0'
+
+    implementation 'androidx.core:core-ktx:1.6.0'
+    implementation 'org.conscrypt:conscrypt-android:2.5.2'
 }
