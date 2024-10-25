@@ -14,7 +14,6 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
-import com.google.android.exoplayer2.Tracks;
 import com.google.android.exoplayer2.util.MimeTypes;
 import xyz.doikki.videoplayer.exo.ExoMediaPlayer;
 public class EXOmPlayer extends ExoMediaPlayer {
