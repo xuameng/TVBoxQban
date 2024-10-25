@@ -84,7 +84,7 @@ public class EXOmPlayer extends ExoMediaPlayer {
             if (videoTrackBean == null) {
                 for (int renderIndex = 0; renderIndex < trackInfo.getRendererCount(); renderIndex++) {
                     if (trackInfo.getRendererType(renderIndex) == C.TRACK_TYPE_TEXT) {
-                        DefaultTrackSelector.Parameters.Builder parametersBuilder = getTrackSelector().getParameters().buildUpon();
+                        DefaultTrackSelector.ParametersBuilder parametersBuilder = getTrackSelector().getParameters().buildUpon();
                         parametersBuilder.setRendererDisabled(renderIndex, true);
                         getTrackSelector().setParameters(parametersBuilder);
                         break;
@@ -93,7 +93,7 @@ public class EXOmPlayer extends ExoMediaPlayer {
             } else {
                 TrackGroupArray trackGroupArray = trackInfo.getTrackGroups(videoTrackBean.renderId);
                 DefaultTrackSelector.SelectionOverride override = new DefaultTrackSelector.SelectionOverride(videoTrackBean.trackGroupId, videoTrackBean.trackId);
-                DefaultTrackSelector.Parameters.Builder parametersBuilder = getTrackSelector().buildUponParameters();
+                DefaultTrackSelector.ParametersBuilder parametersBuilder = getTrackSelector().buildUponParameters();
                 parametersBuilder.setRendererDisabled(videoTrackBean.renderId, false);
                 parametersBuilder.setSelectionOverride(videoTrackBean.renderId, trackGroupArray, override);
                 getTrackSelector().setParameters(parametersBuilder);
