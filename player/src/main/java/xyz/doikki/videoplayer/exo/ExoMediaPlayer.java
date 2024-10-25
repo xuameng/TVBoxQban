@@ -61,28 +61,29 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     }
 
     @Override
-    public void initPlayer() {
-		mRenderersFactory.setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER);
-		mTrackSelector.setParameters(mTrackSelector.getParameters().buildUpon().setTunnelingEnabled(true));
-        mMediaPlayer = new SimpleExoPlayer.Builder(
-                mAppContext,
-                mRenderersFactory == null ? mRenderersFactory = new DefaultRenderersFactory(mAppContext) : mRenderersFactory,
-                mTrackSelector == null ? mTrackSelector = new DefaultTrackSelector(mAppContext) : mTrackSelector,
-                new DefaultMediaSourceFactory(mAppContext),
-                mLoadControl == null ? mLoadControl = new DefaultLoadControl() : mLoadControl,
-                DefaultBandwidthMeter.getSingletonInstance(mAppContext))
-//xuameng		new AnalyticsCollector(Clock.DEFAULT))
-                .build();  
+   public void initPlayer() {
+        if (mRenderersFactory == null) {
+            mRenderersFactory = new DefaultRenderersFactory(mAppContext);
+        }
+        mRenderersFactory.setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER);
+        if (mTrackSelector == null) {
+            mTrackSelector = new DefaultTrackSelector(mAppContext);
+        }
+        if (mLoadControl == null) {
+            mLoadControl = new DefaultLoadControl();
+        }
+        mTrackSelector.setParameters(mTrackSelector.getParameters().buildUpon().setTunnelingEnabled(true));
+
+        mMediaPlayer = new ExoPlayer.Builder(mAppContext)
+                .setLoadControl(mLoadControl)
+                .setRenderersFactory(mRenderersFactory)
+                .setTrackSelector(mTrackSelector).build();
 
         setOptions();
 
-        //播放器日志
-        if (VideoViewManager.getConfig().mIsEnableLog && mTrackSelector instanceof MappingTrackSelector) {
-            mMediaPlayer.addAnalyticsListener(new EventLogger((MappingTrackSelector) mTrackSelector, "ExoPlayer"));
-        }
-
         mMediaPlayer.addListener(this);
     }
+
     public DefaultTrackSelector getTrackSelector() {
         return mTrackSelector;
     }
