@@ -14,6 +14,7 @@ import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
 //xuameng  import com.google.android.exoplayer2.RenderersFactory;
 //xuameng  import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
+//xuamengimport com.google.android.exoplayer2.util.Clock;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.analytics.AnalyticsCollector;
 import com.google.android.exoplayer2.source.DefaultMediaSourceFactory;
@@ -44,11 +45,8 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     protected ExoPlayer mMediaPlayer;
     protected MediaSource mMediaSource;
     protected ExoMediaSourceHelper mMediaSourceHelper;
-
     private PlaybackParameters mSpeedPlaybackParameters;
-
     private boolean mIsPreparing;
-
     private LoadControl mLoadControl;
 //xuameng    private RenderersFactory mRenderersFactory;
 //xuameng    private TrackSelector mTrackSelector;
@@ -72,7 +70,8 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
                 mTrackSelector == null ? mTrackSelector = new DefaultTrackSelector(mAppContext) : mTrackSelector,
                 new DefaultMediaSourceFactory(mAppContext),
                 mLoadControl == null ? mLoadControl = new DefaultLoadControl() : mLoadControl,
-                DefaultBandwidthMeter.getSingletonInstance(mAppContext),
+                DefaultBandwidthMeter.getSingletonInstance(mAppContext)
+//xuameng		new AnalyticsCollector(Clock.DEFAULT))
                 .build();  
 
         setOptions();
