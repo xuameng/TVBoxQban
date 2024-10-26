@@ -318,38 +318,8 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 
     @Override
     public void onPlayerError(@NonNull PlaybackException error) {
-        errorCode = error.errorCode;
-        Log.e("tag--", "" + error.errorCode);
-             if (mPlayerEventListener != null) {
-                 mPlayerEventListener.onError(error.errorCode, PlayerHelper.getRootCauseMessage(error));
-                }
-            return;
-        }
-        String[] proxyServers = proxyServer.split("\\s+|,|;|，");
-        if (retriedTimes > proxyServers.length - 1) {
-            if (mPlayerEventListener != null) {
-                mPlayerEventListener.onError(error.errorCode, PlayerHelper.getRootCauseMessage(error));
-            }
-            return;
-        }
-        String[] ps = proxyServers[retriedTimes].split(":");
-        if (ps.length != 2) {
-            if (mPlayerEventListener != null) {
-                mPlayerEventListener.onError(error.errorCode, PlayerHelper.getRootCauseMessage(error));
-            }
-            return;
-        }
-        try {
-            mMediaSourceHelper.setSocksProxy(ps[0], Integer.parseInt(ps[1]));
-            retriedTimes++;
-            setDataSource(path, headers);
-            prepareAsync();
-            start();
-        } catch (Exception e) {
-            if (mPlayerEventListener != null) {
-                mPlayerEventListener.onError(error.errorCode, PlayerHelper.getRootCauseMessage(error));
-            }
-            return;
+        if (mPlayerEventListener != null) {
+            mPlayerEventListener.onError();
         }
     }
 
