@@ -12,7 +12,6 @@ import com.orhanobut.hawk.Hawk;
 
 import java.util.List;
 
-import io.github.anilbeesetti.nextlib.media3ext.ffdecoder.NextRenderersFactory;
 
 public class HawkUtils {
 
@@ -111,14 +110,6 @@ public class HawkUtils {
         return Hawk.get(HawkConfig.EXO_RENDERER, 0);
     }
 
-    public static void nextExoRenderer() {
-        App app = App.getInstance();
-        String[] array = app.getResources().getStringArray(R.array.media_content_ExoPlayer_renderer);
-        int renderer = getExoRenderer();
-        renderer++;
-        renderer %= array.length;
-        Hawk.put(HawkConfig.EXO_RENDERER, renderer);
-    }
 
     /**
      * 创建exo渲染器
@@ -144,7 +135,7 @@ public class HawkUtils {
      */
     public static String getExoRendererDesc() {
         App app = App.getInstance();
-        String[] array = app.getResources().getStringArray(R.array.media_content_ExoPlayer_renderer);
+        String[] array = app.getResources().getStringArray(R.string.media_content_ExoPlayer_renderer);
         return array[getExoRenderer()];
     }
 
@@ -157,14 +148,6 @@ public class HawkUtils {
         return Hawk.get(HawkConfig.EXO_RENDERER_MODE, 1);
     }
 
-    public static void nextExoRendererMode() {
-        int rendererMode = getExoRendererMode();
-        App app = App.getInstance();
-        String[] array = app.getResources().getStringArray(R.array.media_content_ExoPlayer_renderer_mode);
-        rendererMode++;
-        rendererMode %= array.length;
-        Hawk.put(HawkConfig.EXO_RENDERER_MODE, rendererMode);
-    }
 
 
     /**
@@ -188,44 +171,13 @@ public class HawkUtils {
      *
      * @return {@link String }
      */
-    public static String getExoRendererModeDesc() {
-        App app = App.getInstance();
-        String[] array = app.getResources().getStringArray(R.array.media_content_ExoPlayer_renderer_mode);
-        return array[getExoRendererMode()];
-    }
 
-    // Vod 播放器首选
-    public static int getVodPlayerPreferred() {
-        return Hawk.get(HawkConfig.VOD_PLAYER_PREFERRED, 0);
-    }
-
-    public static void nextVodPlayerPreferred() {
-        int index = getVodPlayerPreferred();
-        App app = App.getInstance();
-        String[] array = app.getResources().getStringArray(R.array.media_content_General_VodPlayerPreferred);
-        index++;
-        index %= array.length;
-        Hawk.put(HawkConfig.VOD_PLAYER_PREFERRED, index);
-    }
 
     public static boolean getVodPlayerPreferredConfigurationFile() {
         int i = getVodPlayerPreferred();
         return i == 0;
     }
 
-    public static String getVodPlayerPreferredDesc() {
-        App app = App.getInstance();
-        String[] array = app.getResources().getStringArray(R.array.media_content_General_VodPlayerPreferred);
-        return array[getVodPlayerPreferred()];
-    }
-
-    public static String getLastLiveChannelGroup() {
-        return Hawk.get(HawkConfig.LIVE_CHANNEL_GROUP, "");
-    }
-
-    public static void setLastLiveChannelGroup(String group) {
-        Hawk.put(HawkConfig.LIVE_CHANNEL_GROUP, group);
-    }
 
     public static String getLastLiveChannel() {
         return Hawk.get(HawkConfig.LIVE_CHANNEL, "");
