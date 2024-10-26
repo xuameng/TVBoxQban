@@ -12,61 +12,10 @@ import com.orhanobut.hawk.Hawk;
 
 import java.util.List;
 
+import io.github.anilbeesetti.nextlib.media3ext.ffdecoder.NextRenderersFactory;
 
 public class HawkUtils {
 
-    private static final String DANMU_OPEN = "danmu_open";
-    private static final String DANMU_MAXLINE = "danmu_maxline";
-    private static final String DANMU_SPEED = "danmu_speed";
-    private static final String DANMU_ALPHA = "danmu_alpha";
-    private static final String DANMU_SIZESCALE = "danmu_sizescale";
-    private static final String DANMU_COLOR = "danmu_color";
-
-    public static boolean getDanmuOpen() {
-        return Hawk.get(DANMU_OPEN, true);
-    }
-
-    public static void setDanmuOpen(boolean danmuOpen) {
-        Hawk.put(DANMU_OPEN, danmuOpen);
-    }
-
-    public static int getDanmuMaxLine() {
-        return Hawk.get(DANMU_MAXLINE, 3);
-    }
-
-    public static void setDanmuMaxLine(int danmuMaxLine) {
-        Hawk.put(DANMU_MAXLINE,danmuMaxLine);
-    }
-
-    public static float getDanmuSpeed() {
-        return Hawk.get(DANMU_SPEED, 1.5f);
-    }
-
-    public static void setDanmuSpeed(float danmuSpeed) {
-        Hawk.put(DANMU_SPEED,danmuSpeed);
-    }
-
-    public static float getDanmuAlpha() {
-        return Hawk.get(DANMU_ALPHA, 90 / 100.0f);
-    }
-
-    public static void setDanmuAlpha(float danmuAlpha) {
-        Hawk.put(DANMU_ALPHA,danmuAlpha);
-    }
-
-    public static float getDanmuSizeScale() {
-        return Hawk.get(DANMU_SIZESCALE, 0.8f);
-    }
-
-    public static void setDanmuSizeScale(float danmuSizeScale) {
-        Hawk.put(DANMU_SIZESCALE,danmuSizeScale);
-    }
-    public static boolean getDanmuColor() {
-        return Hawk.get(DANMU_COLOR, false);
-    }
-    public static void setDanmuColor(boolean color) {
-        Hawk.put(DANMU_COLOR,color);
-    }
     public static String getIJKCodec() {
         return Hawk.get(HawkConfig.IJK_CODEC, "");
     }
@@ -110,6 +59,14 @@ public class HawkUtils {
         return Hawk.get(HawkConfig.EXO_RENDERER, 0);
     }
 
+    public static void nextExoRenderer() {
+        
+        String[] array = resources.getString(R.string.media_content_ExoPlayer_renderer);
+        int renderer = getExoRenderer();
+        renderer++;
+        renderer %= array.length;
+        Hawk.put(HawkConfig.EXO_RENDERER, renderer);
+    }
 
     /**
      * 创建exo渲染器
@@ -120,6 +77,9 @@ public class HawkUtils {
     public static DefaultRenderersFactory createExoRendererActualValue(Context context) {
         int renderer = getExoRenderer();
         switch (renderer) {
+            case 1:
+                return new NextRenderersFactory(context);
+            case 0:
             default:
                 return new DefaultRenderersFactory(context);
         }
@@ -130,6 +90,11 @@ public class HawkUtils {
      *
      * @return {@link String }
      */
+    public static String getExoRendererDesc() {
+        
+        String[] array = resources.getString(R.string.media_content_ExoPlayer_renderer);
+        return array[getExoRenderer()];
+    }
 
     /**
      * 获取exo渲染器模式 自己存储的 值
@@ -140,6 +105,14 @@ public class HawkUtils {
         return Hawk.get(HawkConfig.EXO_RENDERER_MODE, 1);
     }
 
+    public static void nextExoRendererMode() {
+        int rendererMode = getExoRendererMode();
+        
+        String[] array = resources.getString(R.string.media_content_ExoPlayer_renderer_mode);
+        rendererMode++;
+        rendererMode %= array.length;
+        Hawk.put(HawkConfig.EXO_RENDERER_MODE, rendererMode);
+    }
 
 
     /**
@@ -163,9 +136,44 @@ public class HawkUtils {
      *
      * @return {@link String }
      */
+    public static String getExoRendererModeDesc() {
+        
+        String[] array = resources.getString(R.string.media_content_ExoPlayer_renderer_mode);
+        return array[getExoRendererMode()];
+    }
 
+    // Vod 播放器首选
+    public static int getVodPlayerPreferred() {
+        return Hawk.get(HawkConfig.VOD_PLAYER_PREFERRED, 0);
+    }
 
+    public static void nextVodPlayerPreferred() {
+        int index = getVodPlayerPreferred();
+        
+        String[] array = resources.getString(R.string.media_content_General_VodPlayerPreferred);
+        index++;
+        index %= array.length;
+        Hawk.put(HawkConfig.VOD_PLAYER_PREFERRED, index);
+    }
 
+    public static boolean getVodPlayerPreferredConfigurationFile() {
+        int i = getVodPlayerPreferred();
+        return i == 0;
+    }
+
+    public static String getVodPlayerPreferredDesc() {
+        
+        String[] array = resources.getString(R.string.media_content_General_VodPlayerPreferred);
+        return array[getVodPlayerPreferred()];
+    }
+
+    public static String getLastLiveChannelGroup() {
+        return Hawk.get(HawkConfig.LIVE_CHANNEL_GROUP, "");
+    }
+
+    public static void setLastLiveChannelGroup(String group) {
+        Hawk.put(HawkConfig.LIVE_CHANNEL_GROUP, group);
+    }
 
     public static String getLastLiveChannel() {
         return Hawk.get(HawkConfig.LIVE_CHANNEL, "");
