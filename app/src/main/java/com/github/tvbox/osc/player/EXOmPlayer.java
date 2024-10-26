@@ -1,6 +1,7 @@
 package com.github.tvbox.osc.player;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.text.TextUtils;
 import androidx.annotation.Nullable;
 import com.blankj.utilcode.util.LogUtils;
 import com.github.tvbox.osc.util.StringUtils;
@@ -34,7 +35,7 @@ public class EXOmPlayer extends ExoMediaPlayer {
                     for (int formatIndex = 0; formatIndex < group.length; formatIndex++) {
                         Format format = group.getFormat(formatIndex);
                         if (MimeTypes.isAudio(format.sampleMimeType)) {
-							String trackName = (data.getAudio().size() + 1) + "：" + trackNameProvider.getTrackName(format) + "[" + format.codecs + "]";
+							String trackName = (data.getAudio().size() + 1) + "：" + trackNameProvider.getTrackName(format) + "[" + (TextUtils.isEmpty(format.codecs)?format.sampleMimeType:format.codecs) + "]";
 							TrackInfoBean t = new TrackInfoBean();
                             t.name = trackName;
                             t.language = "";
