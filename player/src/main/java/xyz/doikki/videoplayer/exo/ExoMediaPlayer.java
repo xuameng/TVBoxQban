@@ -98,10 +98,6 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
         mTrackSelector = trackSelector;
     }
 
-    public void setRenderersFactory(RenderersFactory renderersFactory) {
-        mRenderersFactory = renderersFactory;
-    }
-
     public void setLoadControl(LoadControl loadControl) {
         mLoadControl = loadControl;
     }
