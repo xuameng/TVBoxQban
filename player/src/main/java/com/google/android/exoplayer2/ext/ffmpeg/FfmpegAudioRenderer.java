@@ -35,15 +35,7 @@ import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.TraceUtil;
 import com.google.android.exoplayer2.util.Util;
 
-/**
- * Decodes and renders audio using FFmpeg.
- *
- * @deprecated com.google.android.exoplayer2 is deprecated. Please migrate to androidx.media3 (which
- *     contains the same ExoPlayer code). See <a
- *     href="https://developer.android.com/guide/topics/media/media3/getting-started/migration-guide">the
- *     migration guide</a> for more details, including a script to help with the migration.
- */
-@Deprecated
+/** Decodes and renders audio using FFmpeg. */
 public final class FfmpegAudioRenderer extends DecoderAudioRenderer<FfmpegAudioDecoder> {
 
   private static final String TAG = "FfmpegAudioRenderer";
@@ -72,7 +64,7 @@ public final class FfmpegAudioRenderer extends DecoderAudioRenderer<FfmpegAudioD
     this(
         eventHandler,
         eventListener,
-        new DefaultAudioSink.Builder().setAudioProcessors(audioProcessors).build());
+        new DefaultAudioSink(/* audioCapabilities= */ null, audioProcessors));
   }
 
   /**
@@ -96,7 +88,8 @@ public final class FfmpegAudioRenderer extends DecoderAudioRenderer<FfmpegAudioD
   }
 
   @Override
-  protected @C.FormatSupport int supportsFormatInternal(Format format) {
+  @C.FormatSupport
+  protected int supportsFormatInternal(Format format) {
     String mimeType = Assertions.checkNotNull(format.sampleMimeType);
     if (!FfmpegLibrary.isAvailable() || !MimeTypes.isAudio(mimeType)) {
       return C.FORMAT_UNSUPPORTED_TYPE;
@@ -112,11 +105,11 @@ public final class FfmpegAudioRenderer extends DecoderAudioRenderer<FfmpegAudioD
   }
 
   @Override
-  public @AdaptiveSupport int supportsMixedMimeTypeAdaptation() {
+  @AdaptiveSupport
+  public final int supportsMixedMimeTypeAdaptation() {
     return ADAPTIVE_NOT_SEAMLESS;
   }
 
-  /** {@inheritDoc} */
   @Override
   protected FfmpegAudioDecoder createDecoder(Format format, @Nullable CryptoConfig cryptoConfig)
       throws FfmpegDecoderException {
@@ -130,9 +123,8 @@ public final class FfmpegAudioRenderer extends DecoderAudioRenderer<FfmpegAudioD
     return decoder;
   }
 
-  /** {@inheritDoc} */
   @Override
-  protected Format getOutputFormat(FfmpegAudioDecoder decoder) {
+  public Format getOutputFormat(FfmpegAudioDecoder decoder) {
     Assertions.checkNotNull(decoder);
     return new Format.Builder()
         .setSampleMimeType(MimeTypes.AUDIO_RAW)
