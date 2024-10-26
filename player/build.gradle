@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    compileSdkVersion 34
+    compileSdkVersion 30
 
     defaultConfig {
-        minSdkVersion 21
-        targetSdkVersion 28
+        minSdkVersion 16
+        targetSdkVersion 26
     }
 
     buildTypes {
@@ -33,6 +33,13 @@ android {
 
 dependencies {
     implementation "androidx.annotation:annotation:1.3.0"
+    def exoplayerVersion = "2.16.0"
+    api "com.google.android.exoplayer:exoplayer-core:$exoplayerVersion"
+    api "com.google.android.exoplayer:exoplayer-dash:$exoplayerVersion"
+    api "com.google.android.exoplayer:exoplayer-hls:$exoplayerVersion"
+    api "com.google.android.exoplayer:exoplayer-rtsp:$exoplayerVersion"
+    api "com.google.android.exoplayer:extension-rtmp:$exoplayerVersion"
+    api "com.google.android.exoplayer:extension-okhttp:2.14.2"  //xuameng解决BILI EXO不能播放
     implementation 'com.squareup.okhttp3:okhttp:3.12.11'      
     api 'xyz.doikki.android.dkplayer:dkplayer-ui:3.3.5'
 }
