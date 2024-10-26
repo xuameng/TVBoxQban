@@ -21,19 +21,4 @@
     <string name="exo_track_bitrate">%1$.2f Mbps</string>
     <string name="exo_item_list">%1$s，%2$s</string>
 
-   <string-array name="media_content_ExoPlayer">
-        <item>渲染器</item>
-   <!--        <item>渲染器模式</item>-->
-    </string-array>
-
-    <string-array name="media_content_ExoPlayer_renderer">
-        <item>默认</item>
-        <item>NextLib</item>
-    </string-array>
-
-    <string-array name="media_content_ExoPlayer_renderer_mode">
-        <item>首选核心渲染器</item>
-        <item>首选扩展渲染器</item>
-        <item>不允许使用扩展渲染器</item>
-    </string-array>
 </resources>
