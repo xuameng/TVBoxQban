@@ -8,7 +8,6 @@ buildscript {
         maven { url "https://maven.aliyun.com/repository/releases" }
         maven { url "https://maven.aliyun.com/repository/public" }
         maven { url "https://storage.googleapis.com/r8-releases/raw" }
-        maven { url "https://checkerframework.org/ajava/repo" }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:4.2.2'
@@ -25,7 +24,6 @@ allprojects {
         maven { url "https://jitpack.io" }
         maven { url "https://maven.aliyun.com/repository/releases" }
         maven { url "https://maven.aliyun.com/repository/public" }
-        maven { url "https://checkerframework.org/ajava/repo" }
         gradlePluginPortal()
     }
 }
