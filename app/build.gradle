@@ -8,7 +8,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 26
         versionCode 1
-        versionName '20241024-2222'
+        versionName '20241026-2222'
         multiDexEnabled true
         //设置room的Schema的位置
         javaCompileOptions {
@@ -105,6 +105,4 @@ dependencies {
     implementation 'com.googlecode.juniversalchardet:juniversalchardet:1.0.3'
       //工具类
     implementation 'com.blankj:utilcodex:1.31.0'
-    implementation "com.github.anilbeesetti.nextlib:nextlib-media3ext:0.7.1"
-    
 }
