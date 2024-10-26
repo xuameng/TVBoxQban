@@ -320,18 +320,9 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     public void onPlayerError(@NonNull PlaybackException error) {
         errorCode = error.errorCode;
         Log.e("tag--", "" + error.errorCode);
-        String proxyServer = Hawk.get(HawkConfig.PROXY_SERVER, "");
-        if ("".equals(proxyServer)) {
-            if (retriedTimes == 0) {
-                retriedTimes = 1;
-                setDataSource(path, headers);
-                prepareAsync();
-                start();
-            } else {
-                if (mPlayerEventListener != null) {
-                    mPlayerEventListener.onError(error.errorCode, PlayerHelper.getRootCauseMessage(error));
+             if (mPlayerEventListener != null) {
+                 mPlayerEventListener.onError(error.errorCode, PlayerHelper.getRootCauseMessage(error));
                 }
-            }
             return;
         }
         String[] proxyServers = proxyServer.split("\\s+|,|;|，");
