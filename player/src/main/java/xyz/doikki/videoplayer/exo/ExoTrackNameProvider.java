@@ -1,23 +1,54 @@
 package xyz.doikki.videoplayer.exo;
+
 import android.annotation.SuppressLint;
 import android.content.res.Resources;
 import android.text.TextUtils;
+
 import androidx.annotation.Nullable;
-import com.github.tvbox.osc.player.R;
-import com.google.android.exoplayer2.C;
-import com.google.android.exoplayer2.Format;
-import com.google.android.exoplayer2.util.Assertions;
-import com.google.android.exoplayer2.util.MimeTypes;
-import com.google.android.exoplayer2.util.Util;
+import androidx.annotation.OptIn;
+import androidx.media3.common.C;
+import androidx.media3.common.Format;
+import androidx.media3.common.MimeTypes;
+import androidx.media3.common.util.Assertions;
+import androidx.media3.common.util.UnstableApi;
+import androidx.media3.common.util.Util;
+
+import com.github.tvbox.osc.R;
+
 import java.util.Locale;
+
 public class ExoTrackNameProvider {
+
     private final Resources resources;
+
     /**
      * @param resources Resources from which to obtain strings.
      */
-    public ExoTrackNameProvider(Resources resources) {
+    public @OptIn(markerClass = UnstableApi.class) ExoTrackNameProvider(Resources resources) {
         this.resources = Assertions.checkNotNull(resources);
     }
+
+    @SuppressLint("UnsafeOptInUsageError")
+    private static int inferPrimaryTrackType(Format format) {
+        @SuppressLint("UnsafeOptInUsageError") int trackType = MimeTypes.getTrackType(format.sampleMimeType);
+        if (trackType != C.TRACK_TYPE_UNKNOWN) {
+            return trackType;
+        }
+        if (MimeTypes.getVideoMediaMimeType(format.codecs) != null) {
+            return C.TRACK_TYPE_VIDEO;
+        }
+        if (MimeTypes.getAudioMediaMimeType(format.codecs) != null) {
+            return C.TRACK_TYPE_AUDIO;
+        }
+        if (format.width != Format.NO_VALUE || format.height != Format.NO_VALUE) {
+            return C.TRACK_TYPE_VIDEO;
+        }
+        if (format.channelCount != Format.NO_VALUE || format.sampleRate != Format.NO_VALUE) {
+            return C.TRACK_TYPE_AUDIO;
+        }
+        return C.TRACK_TYPE_UNKNOWN;
+    }
+
     public String getTrackName(Format format) {
         String trackName;
         int trackType = inferPrimaryTrackType(format);
@@ -36,6 +67,7 @@ public class ExoTrackNameProvider {
         }
         return trackName.length() == 0 ? resources.getString(R.string.exo_track_unknown) : trackName;
     }
+
     private String buildResolutionString(Format format) {
         int width = format.width;
         int height = format.height;
@@ -43,12 +75,14 @@ public class ExoTrackNameProvider {
                 ? ""
                 : resources.getString(R.string.exo_track_resolution, width, height);
     }
+
     private String buildBitrateString(Format format) {
-        int bitrate = format.bitrate;
+        @SuppressLint("UnsafeOptInUsageError") int bitrate = format.bitrate;
         return bitrate == Format.NO_VALUE
                 ? ""
                 : resources.getString(R.string.exo_track_bitrate, bitrate / 1000000f);
     }
+
     private String buildAudioChannelString(Format format) {
         int channelCount = format.channelCount;
         if (channelCount == Format.NO_VALUE || channelCount < 1) {
@@ -68,22 +102,25 @@ public class ExoTrackNameProvider {
                 return resources.getString(R.string.exo_track_surround);
         }
     }
+
     private String buildLanguageOrLabelString(Format format) {
         String languageAndRole =
                 joinWithSeparator(buildLanguageString(format), buildRoleString(format));
         return TextUtils.isEmpty(languageAndRole) ? buildLabelString(format) : languageAndRole;
     }
+
     private String buildLabelString(Format format) {
         return TextUtils.isEmpty(format.label) ? "" : format.label;
     }
+
     private String buildLanguageString(Format format) {
         @Nullable String language = format.language;
         if (TextUtils.isEmpty(language) || C.LANGUAGE_UNDETERMINED.equals(language)) {
             return "";
         }
-        Locale languageLocale =
+        @SuppressLint("UnsafeOptInUsageError") Locale languageLocale =
                 Util.SDK_INT >= 21 ? Locale.forLanguageTag(language) : new Locale(language);
-        Locale displayLocale =
+        @SuppressLint("UnsafeOptInUsageError") Locale displayLocale =
                 Util.SDK_INT >= 24 ? Locale.getDefault(Locale.Category.DISPLAY) : Locale.getDefault();
         String languageName = languageLocale.getDisplayName(displayLocale);
         if (TextUtils.isEmpty(languageName)) {
@@ -99,6 +136,7 @@ public class ExoTrackNameProvider {
             return languageName;
         }
     }
+
     private String buildRoleString(Format format) {
         String roles = "";
         if ((format.roleFlags & C.ROLE_FLAG_ALTERNATE) != 0) {
@@ -116,6 +154,7 @@ public class ExoTrackNameProvider {
         }
         return roles;
     }
+
     private String joinWithSeparator(String... items) {
         String itemList = "";
         for (String item : items) {
@@ -128,24 +167,5 @@ public class ExoTrackNameProvider {
             }
         }
         return itemList;
-    }
-    private static int inferPrimaryTrackType(Format format) {
-        int trackType = MimeTypes.getTrackType(format.sampleMimeType);
-        if (trackType != C.TRACK_TYPE_UNKNOWN) {
-            return trackType;
-        }
-        if (MimeTypes.getVideoMediaMimeType(format.codecs) != null) {
-            return C.TRACK_TYPE_VIDEO;
-        }
-        if (MimeTypes.getAudioMediaMimeType(format.codecs) != null) {
-            return C.TRACK_TYPE_AUDIO;
-        }
-        if (format.width != Format.NO_VALUE || format.height != Format.NO_VALUE) {
-            return C.TRACK_TYPE_VIDEO;
-        }
-        if (format.channelCount != Format.NO_VALUE || format.sampleRate != Format.NO_VALUE) {
-            return C.TRACK_TYPE_AUDIO;
-        }
-        return C.TRACK_TYPE_UNKNOWN;
     }
 }
