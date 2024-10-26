@@ -120,9 +120,6 @@ public class HawkUtils {
     public static DefaultRenderersFactory createExoRendererActualValue(Context context) {
         int renderer = getExoRenderer();
         switch (renderer) {
-            case 1:
-                return new NextRenderersFactory(context);
-            case 0:
             default:
                 return new DefaultRenderersFactory(context);
         }
@@ -133,11 +130,6 @@ public class HawkUtils {
      *
      * @return {@link String }
      */
-    public static String getExoRendererDesc() {
-        App app = App.getInstance();
-        String[] array = app.getResources().getStringArray(R.string.media_content_ExoPlayer_renderer);
-        return array[getExoRenderer()];
-    }
 
     /**
      * 获取exo渲染器模式 自己存储的 值
@@ -173,10 +165,6 @@ public class HawkUtils {
      */
 
 
-    public static boolean getVodPlayerPreferredConfigurationFile() {
-        int i = getVodPlayerPreferred();
-        return i == 0;
-    }
 
 
     public static String getLastLiveChannel() {
