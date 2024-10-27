@@ -105,10 +105,11 @@ dependencies {
       //工具类
     implementation 'com.blankj:utilcodex:1.31.0'
     //xuameng exo
-    api "com.google.android.exoplayer:exoplayer-core:2.14.2"
-    api "com.google.android.exoplayer:exoplayer-dash:2.14.2"
-    api "com.google.android.exoplayer:exoplayer-hls:2.14.2"
-    api "com.google.android.exoplayer:exoplayer-rtsp:2.14.2"
-    api "com.google.android.exoplayer:extension-rtmp:2.14.2"
-    api "com.google.android.exoplayer:extension-okhttp:2.14.2"
+    def exoplayerVersion = "2.19.0"
+    api "com.google.android.exoplayer:exoplayer-core:$exoplayerVersion"
+    api "com.google.android.exoplayer:exoplayer-dash:$exoplayerVersion"
+    api "com.google.android.exoplayer:exoplayer-hls:$exoplayerVersion"
+    api "com.google.android.exoplayer:exoplayer-rtsp:$exoplayerVersion"
+    api "com.google.android.exoplayer:extension-rtmp:$exoplayerVersion"
+    api "com.google.android.exoplayer:extension-okhttp"  //xuameng解决BILI EXO不能播放
 }
