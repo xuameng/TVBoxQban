@@ -105,7 +105,7 @@ dependencies {
       //工具类
     implementation 'com.blankj:utilcodex:1.31.0'
     //xuameng exo
-    def exoplayerVersion = "2.16.1"
+    def exoplayerVersion = "2.16.0"
     api "com.google.android.exoplayer:exoplayer-core:$exoplayerVersion"
     api "com.google.android.exoplayer:exoplayer-dash:$exoplayerVersion"
     api "com.google.android.exoplayer:exoplayer-hls:$exoplayerVersion"
