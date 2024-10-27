@@ -21,6 +21,7 @@ import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvicto
 import com.google.android.exoplayer2.upstream.cache.SimpleCache;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSource;   //xuameng解决BILI EXO不能播放
+import com.github.tvbox.osc.util.FileUtils;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -126,7 +127,8 @@ public final class ExoMediaSourceHelper {
 
     private Cache newCache() {
         return new SimpleCache(
-                new File(mAppContext.getExternalCacheDir(), "exo-video-cache"),//缓存目录
+  //              new File(mAppContext.getExternalCacheDir(), "exo-video-cache"),//缓存目录
+		        new File(FileUtils.getExternalCachePath(), "exo-video-cache"),//缓存目录
                 new LeastRecentlyUsedCacheEvictor(512 * 1024 * 1024),//缓存大小，默认512M，使用LRU算法实现
                 new ExoDatabaseProvider(mAppContext));
     }
