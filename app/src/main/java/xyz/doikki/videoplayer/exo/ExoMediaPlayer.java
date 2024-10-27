@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.view.Surface;
 import android.view.SurfaceHolder;
-import com.google.android.exoplayer2.PlaybackException;
+import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -285,7 +285,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     }
 
     @Override
-    public void onPlayerError(PlaybackException error) {
+    public void onPlayerError(ExoPlaybackException error) {
         if (mPlayerEventListener != null) {
             mPlayerEventListener.onError();
         }
