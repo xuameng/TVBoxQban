@@ -10,7 +10,7 @@ import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
-//  import com.google.android.exoplayer2.RenderersFactory;
+import com.google.android.exoplayer2.RenderersFactory;
 import androidx.annotation.NonNull;  //xuameng
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.analytics.AnalyticsCollector;
@@ -45,7 +45,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     private boolean mIsPreparing;
 
     private LoadControl mLoadControl;
-    private DefaultRenderersFactory mRenderersFactory;
+    private RenderersFactory mRenderersFactory;
     private TrackSelector mTrackSelector;
 	protected ExoTrackNameProvider trackNameProvider;
     protected TrackSelectionArray mTrackSelections;
@@ -82,7 +82,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
                 .build();*/
         mMediaPlayer = new SimpleExoPlayer.Builder(mAppContext)
                 .setLoadControl(mLoadControl)
-                .DefaultRenderersFactory(mRenderersFactory)
+                .RenderersFactory(mRenderersFactory)
                 .setTrackSelector(mTrackSelector).build();
 
         setOptions();
