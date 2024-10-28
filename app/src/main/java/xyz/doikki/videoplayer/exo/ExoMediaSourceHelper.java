@@ -80,7 +80,7 @@ public final class ExoMediaSourceHelper {
     public MediaSource getMediaSource(String uri, Map<String, String> headers, boolean isCache, int errorCode) {
         Uri contentUri = Uri.parse(uri);
         if ("rtmp".equals(contentUri.getScheme())) {
-            return new ProgressiveMediaSource.Factory(new RtmpDataSourceFactory(null))
+            return new ProgressiveMediaSource.Factory(new RtmpDataSource.Factory())
                     .createMediaSource(MediaItem.fromUri(contentUri));
         } else if ("rtsp".equals(contentUri.getScheme())) {
             return new RtspMediaSource.Factory().createMediaSource(MediaItem.fromUri(contentUri));
@@ -95,11 +95,21 @@ public final class ExoMediaSourceHelper {
         if (mHttpDataSourceFactory != null) {
             setHeaders(headers);
         }
-        if (errorCode == ExoPlaybackException.ERROR_CODE_PARSING_CONTAINER_UNSUPPORTED) {
+        if (errorCode == PlaybackException.ERROR_CODE_PARSING_CONTAINER_UNSUPPORTED) {
             MediaItem.Builder builder = new MediaItem.Builder().setUri(uri);
             builder.setMimeType(MimeTypes.APPLICATION_M3U8);
             return new DefaultMediaSourceFactory(getDataSourceFactory(), getExtractorsFactory()).createMediaSource(getMediaItem(uri, errorCode));
         }
+        switch (contentType) {
+            case C.TYPE_DASH:
+                return new DashMediaSource.Factory(factory).createMediaSource(MediaItem.fromUri(contentUri));
+            case C.TYPE_HLS:
+                return new HlsMediaSource.Factory(factory).createMediaSource(MediaItem.fromUri(contentUri));
+            default:
+            case C.TYPE_OTHER:
+                return new ProgressiveMediaSource.Factory(factory).createMediaSource(MediaItem.fromUri(contentUri));
+        }
+    }
 		
     private static MediaItem getMediaItem(String uri, int errorCode) {
         MediaItem.Builder builder = new MediaItem.Builder().setUri(Uri.parse(uri.trim().replace("\\", "")));
@@ -113,7 +123,7 @@ public final class ExoMediaSourceHelper {
 
     }
 
-    private int inferContentType(String fileName) {
+/*    private int inferContentType(String fileName) {
         fileName = fileName.toLowerCase();
         if (fileName.contains(".mpd") || fileName.contains("type=mpd")) {
             return C.TYPE_DASH;
@@ -123,7 +133,17 @@ public final class ExoMediaSourceHelper {
             return C.TYPE_OTHER;
         }
     }
-
+	*/
+    private int inferContentType(String fileName) {
+        fileName = fileName.toLowerCase();
+        if (fileName.contains(".mpd")) {
+            return C.TYPE_DASH;
+        } else if (fileName.contains(".m3u8")) {
+            return C.TYPE_HLS;
+        } else {
+            return C.TYPE_OTHER;
+        }
+    }
     private DataSource.Factory getCacheDataSourceFactory() {
         if (mCache == null) {
             mCache = newCache();
