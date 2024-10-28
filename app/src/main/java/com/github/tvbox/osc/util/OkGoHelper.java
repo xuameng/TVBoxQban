@@ -1,8 +1,5 @@
 package com.github.tvbox.osc.util;
-import static okhttp3.ConnectionSpec.CLEARTEXT;
-import static okhttp3.ConnectionSpec.COMPATIBLE_TLS;
-import static okhttp3.ConnectionSpec.MODERN_TLS;
-import static okhttp3.ConnectionSpec.RESTRICTED_TLS;
+
 import android.graphics.Bitmap;
 
 import com.github.tvbox.osc.base.App;
@@ -31,10 +28,6 @@ import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.dnsoverhttps.DnsOverHttps;
 import okhttp3.internal.Version;
-import okhttp3.ConnectionSpec;
-import okhttp3.internal.Util;
-
-
 import xyz.doikki.videoplayer.exo.ExoMediaSourceHelper;
 
 public class OkGoHelper {
