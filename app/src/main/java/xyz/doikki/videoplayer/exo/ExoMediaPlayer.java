@@ -50,6 +50,10 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 	protected ExoTrackNameProvider trackNameProvider;
     protected TrackSelectionArray mTrackSelections;
 
+    private int errorCode = -100;
+    private String path;
+    private Map<String, String> headers;
+
     public ExoMediaPlayer(Context context) {
         mAppContext = context.getApplicationContext();
         mMediaSourceHelper = ExoMediaSourceHelper.getInstance(context);
