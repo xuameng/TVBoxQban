@@ -25,6 +25,7 @@ import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.extractor.ExtractorsFactory;
 import com.google.android.exoplayer2.source.DefaultMediaSourceFactory;
+import com.google.android.exoplayer2.extractor.ts.TsExtractor;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -79,6 +80,29 @@ public final class ExoMediaSourceHelper {
         Uri contentUri = Uri.parse(uri);
         if ("rtmp".equals(contentUri.getScheme())) {
             return new ProgressiveMediaSource.Factory(new RtmpDataSourceFactory(null))
+                    .createMediaSource(MediaItem.fromUri(contentUri));
+        } else if ("rtsp".equals(contentUri.getScheme())) {
+            return new RtspMediaSource.Factory().createMediaSource(MediaItem.fromUri(contentUri));
+        }
+        int contentType = inferContentType(uri);
+        DataSource.Factory factory;
+        if (isCache) {
+            factory = getCacheDataSourceFactory();
+        } else {
+            factory = getDataSourceFactory();
+        }
+        if (mHttpDataSourceFactory != null) {
+            setHeaders(headers);
+        }
+        if (errorCode == PlaybackException.ERROR_CODE_PARSING_CONTAINER_UNSUPPORTED) {
+            MediaItem.Builder builder = new MediaItem.Builder().setUri(uri);
+            builder.setMimeType(MimeTypes.APPLICATION_M3U8);
+            return new DefaultMediaSourceFactory(getDataSourceFactory(), getExtractorsFactory()).createMediaSource(getMediaItem(uri, errorCode));
+        }
+    public MediaSource getMediaSource(String uri, Map<String, String> headers, boolean isCache, int errorCode) {
+        Uri contentUri = Uri.parse(uri);
+        if ("rtmp".equals(contentUri.getScheme())) {
+            return new ProgressiveMediaSource.Factory(new RtmpDataSource.Factory())
                     .createMediaSource(MediaItem.fromUri(contentUri));
         } else if ("rtsp".equals(contentUri.getScheme())) {
             return new RtspMediaSource.Factory().createMediaSource(MediaItem.fromUri(contentUri));
