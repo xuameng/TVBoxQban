@@ -82,7 +82,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
                 .build();*/
         mMediaPlayer = new SimpleExoPlayer.Builder(mAppContext)
                 .setLoadControl(mLoadControl)
-                .setRenderersFactory(mRenderersFactory)
+                .DefaultRenderersFactory(mRenderersFactory)
                 .setTrackSelector(mTrackSelector).build();
 
         setOptions();
@@ -302,11 +302,17 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
         }
     }
 	*/
-    public void setDataSource(String path, Map<String, String> headers) {
-        this.path = path;
-        this.headers = headers;
-        mMediaSource = mMediaSourceHelper.getMediaSource(path, headers, false, errorCode);
-        errorCode = -1;
+    public void onPlayerError(@NonNull ExoPlaybackException error) {
+        if (path != null) {
+            setDataSource(path, headers);
+            path = null;
+            prepareAsync();
+            start();
+        } else {
+            if (mPlayerEventListener != null) {
+                mPlayerEventListener.onError();
+            }
+        }
     }
 
     @Override
