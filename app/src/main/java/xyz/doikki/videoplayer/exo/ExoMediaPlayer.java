@@ -60,23 +60,31 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     }
 
     @Override
-    public void initPlayer() {
-		mRenderersFactory.setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER);
-        mMediaPlayer = new SimpleExoPlayer.Builder(
+        if (mRenderersFactory == null) {
+            mRenderersFactory = new DefaultRenderersFactory(mAppContext);
+        }
+        mRenderersFactory.setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER);
+        if (mTrackSelector == null) {
+            mTrackSelector = new DefaultTrackSelector(mAppContext);
+        }
+        if (mLoadControl == null) {
+            mLoadControl = new DefaultLoadControl();
+        }
+        /*mMediaPlayer = new SimpleExoPlayer.Builder(
                 mAppContext,
-                mRenderersFactory == null ? mRenderersFactory = new DefaultRenderersFactory(mAppContext) : mRenderersFactory,
-                mTrackSelector == null ? mTrackSelector = new DefaultTrackSelector(mAppContext) : mTrackSelector,
+                mRenderersFactory,
+                mTrackSelector,
                 new DefaultMediaSourceFactory(mAppContext),
-                mLoadControl == null ? mLoadControl = new DefaultLoadControl() : mLoadControl,
+                mLoadControl,
                 DefaultBandwidthMeter.getSingletonInstance(mAppContext),
                 new AnalyticsCollector(Clock.DEFAULT))
-                .build();
-        setOptions();
+                .build();*/
+        mMediaPlayer = new SimpleExoPlayer.Builder(mAppContext)
+                .setLoadControl(mLoadControl)
+                .setRenderersFactory(mRenderersFactory)
+                .setTrackSelector(mTrackSelector).build();
 
-        //播放器日志
-        if (VideoViewManager.getConfig().mIsEnableLog && mTrackSelector instanceof MappingTrackSelector) {
-            mMediaPlayer.addAnalyticsListener(new EventLogger((MappingTrackSelector) mTrackSelector, "ExoPlayer"));
-        }
+        setOptions();
 
         mMediaPlayer.addListener(this);
     }
@@ -90,17 +98,6 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
         mTrackSelections = trackSelections;
     }
 
-    public void setTrackSelector(TrackSelector trackSelector) {
-        mTrackSelector = trackSelector;
-    }
-
-    public void setDefaultRenderersFactory(DefaultRenderersFactory renderersFactory) {
-        mRenderersFactory = renderersFactory;
-    }
-
-    public void setLoadControl(LoadControl loadControl) {
-        mLoadControl = loadControl;
-    }
     @Override
 /*    public void setDataSource(String path, Map<String, String> headers) {
         mMediaSource = mMediaSourceHelper.getMediaSource(path, headers);
@@ -303,17 +300,11 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
         }
     }
 	*/
-    public void onPlayerError(@NonNull ExoPlaybackException error) {
-        if (path != null) {
-            setDataSource(path, headers);
-            path = null;
-            prepareAsync();
-            start();
-        } else {
-            if (mPlayerEventListener != null) {
-                mPlayerEventListener.onError();
-            }
-        }
+    public void setDataSource(String path, Map<String, String> headers) {
+        this.path = path;
+        this.headers = headers;
+        mMediaSource = mMediaSourceHelper.getMediaSource(path, headers, false, errorCode);
+        errorCode = -1;
     }
 
     @Override
