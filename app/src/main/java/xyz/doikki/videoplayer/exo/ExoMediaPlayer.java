@@ -49,6 +49,10 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 	protected ExoTrackNameProvider trackNameProvider;
     protected TrackSelectionArray mTrackSelections;
 
+    private int errorCode = -100;
+    private String path;
+    private Map<String, String> headers;
+
     public ExoMediaPlayer(Context context) {
         mAppContext = context.getApplicationContext();
         mMediaSourceHelper = ExoMediaSourceHelper.getInstance(context);
@@ -86,10 +90,16 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     }
 
     @Override
-    public void setDataSource(String path, Map<String, String> headers) {
+/*    public void setDataSource(String path, Map<String, String> headers) {
         mMediaSource = mMediaSourceHelper.getMediaSource(path, headers);
     }
-
+	*/
+    public void setDataSource(String path, Map<String, String> headers) {
+        this.path = path;
+        this.headers = headers;
+        mMediaSource = mMediaSourceHelper.getMediaSource(path, headers, false, errorCode);
+        errorCode = -1;
+    }
     @Override
     public void setDataSource(AssetFileDescriptor fd) {
         //no support
