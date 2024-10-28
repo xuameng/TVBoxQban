@@ -11,7 +11,6 @@ import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.RenderersFactory;
-import androidx.annotation.NonNull;  //xuameng
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.analytics.AnalyticsCollector;
 import com.google.android.exoplayer2.source.DefaultMediaSourceFactory;
@@ -45,14 +44,10 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     private boolean mIsPreparing;
 
     private LoadControl mLoadControl;
-    private DefaultRenderersFactory mRenderersFactory;
+    private RenderersFactory mRenderersFactory;
     private TrackSelector mTrackSelector;
 	protected ExoTrackNameProvider trackNameProvider;
     protected TrackSelectionArray mTrackSelections;
-
-    private int errorCode = -100;
-    private String path;
-    private Map<String, String> headers;
 
     public ExoMediaPlayer(Context context) {
         mAppContext = context.getApplicationContext();
@@ -61,31 +56,24 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 
     @Override
     public void initPlayer() {
-        if (mRenderersFactory == null) {
-            mRenderersFactory = new DefaultRenderersFactory(mAppContext);
-        }
-        mRenderersFactory.setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER);
-        if (mTrackSelector == null) {
-            mTrackSelector = new DefaultTrackSelector(mAppContext);
-        }
-        if (mLoadControl == null) {
-            mLoadControl = new DefaultLoadControl();
-        }
         mMediaPlayer = new SimpleExoPlayer.Builder(
                 mAppContext,
-                mRenderersFactory,
-                mTrackSelector,
+                mRenderersFactory == null ? mRenderersFactory = new DefaultRenderersFactory(mAppContext) : mRenderersFactory,
+                mTrackSelector == null ? mTrackSelector = new DefaultTrackSelector(mAppContext) : mTrackSelector,
                 new DefaultMediaSourceFactory(mAppContext),
-                mLoadControl,
+                mLoadControl == null ? mLoadControl = new DefaultLoadControl() : mLoadControl,
                 DefaultBandwidthMeter.getSingletonInstance(mAppContext),
                 new AnalyticsCollector(Clock.DEFAULT))
                 .build();
-
         setOptions();
+
+        //播放器日志
+        if (VideoViewManager.getConfig().mIsEnableLog && mTrackSelector instanceof MappingTrackSelector) {
+            mMediaPlayer.addAnalyticsListener(new EventLogger((MappingTrackSelector) mTrackSelector, "ExoPlayer"));
+        }
 
         mMediaPlayer.addListener(this);
     }
-
     public DefaultTrackSelector getTrackSelector() {
         return (DefaultTrackSelector) mTrackSelector;
     }
@@ -96,17 +84,23 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
         mTrackSelections = trackSelections;
     }
 
+    public void setTrackSelector(TrackSelector trackSelector) {
+        mTrackSelector = trackSelector;
+    }
+
+    public void setRenderersFactory(RenderersFactory renderersFactory) {
+        mRenderersFactory = renderersFactory;
+    }
+
+    public void setLoadControl(LoadControl loadControl) {
+        mLoadControl = loadControl;
+    }
+
     @Override
-/*    public void setDataSource(String path, Map<String, String> headers) {
+    public void setDataSource(String path, Map<String, String> headers) {
         mMediaSource = mMediaSourceHelper.getMediaSource(path, headers);
     }
-	*/
-    public void setDataSource(String path, Map<String, String> headers) {
-        this.path = path;
-        this.headers = headers;
-        mMediaSource = mMediaSourceHelper.getMediaSource(path, headers, false, errorCode);
-        errorCode = -1;
-    }
+
     @Override
     public void setDataSource(AssetFileDescriptor fd) {
         //no support
@@ -292,22 +286,9 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     }
 
     @Override
-/*   public void onPlayerError(ExoPlaybackException error) {
+    public void onPlayerError(ExoPlaybackException error) {
         if (mPlayerEventListener != null) {
             mPlayerEventListener.onError();
-        }
-    }
-	*/
-    public void onPlayerError(@NonNull ExoPlaybackException error) {
-        if (path != null) {
-            setDataSource(path, headers);
-            path = null;
-            prepareAsync();
-            start();
-        } else {
-            if (mPlayerEventListener != null) {
-                mPlayerEventListener.onError();
-            }
         }
     }
 
