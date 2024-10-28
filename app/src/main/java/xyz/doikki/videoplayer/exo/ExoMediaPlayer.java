@@ -94,7 +94,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
         mTrackSelector = trackSelector;
     }
 
-    public void setRenderersFactory(RenderersFactory renderersFactory) {
+    public void setDefaultRenderersFactory(DefaultRenderersFactory renderersFactory) {
         mRenderersFactory = renderersFactory;
     }
 
