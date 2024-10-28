@@ -280,6 +280,8 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
             case Player.STATE_ENDED:
                 mPlayerEventListener.onCompletion();
                 break;
+		    case Player.STATE_IDLE:
+                break;
         }
     }
 
