@@ -12,7 +12,6 @@ import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
 //  import com.google.android.exoplayer2.RenderersFactory;
 import androidx.annotation.NonNull;  //xuameng
-import android.util.Log;   //xuameng
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.analytics.AnalyticsCollector;
 import com.google.android.exoplayer2.source.DefaultMediaSourceFactory;
@@ -50,10 +49,6 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     private TrackSelector mTrackSelector;
 	protected ExoTrackNameProvider trackNameProvider;
     protected TrackSelectionArray mTrackSelections;
-
-    private int errorCode = -100;
-    private String path;
-    private Map<String, String> headers;
 
     public ExoMediaPlayer(Context context) {
         mAppContext = context.getApplicationContext();
@@ -294,8 +289,6 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     }
 	*/
     public void onPlayerError(@NonNull ExoPlaybackException error) {
-        errorCode = error.errorCode;
-        Log.e("tag--", "" + error.errorCode);
         if (path != null) {
             setDataSource(path, headers);
             path = null;
