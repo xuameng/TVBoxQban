@@ -5,7 +5,6 @@ import android.content.res.AssetFileDescriptor;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.PlaybackException;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.LoadControl;
@@ -26,8 +25,6 @@ import com.google.android.exoplayer2.util.NonNullApi;
 import com.google.android.exoplayer2.util.Clock;
 import com.google.android.exoplayer2.util.EventLogger;
 import com.google.android.exoplayer2.video.VideoSize;
-
-import androidx.annotation.NonNull;
 
 import java.util.Map;
 
@@ -51,10 +48,6 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     private TrackSelector mTrackSelector;
 	protected ExoTrackNameProvider trackNameProvider;
     protected TrackSelectionArray mTrackSelections;
-
-	private int errorCode = -100;
-    private String path;
-    private Map<String, String> headers;
 
     public ExoMediaPlayer(Context context) {
         mAppContext = context.getApplicationContext();
@@ -94,10 +87,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 
     @Override
     public void setDataSource(String path, Map<String, String> headers) {
-        this.path = path;
-        this.headers = headers;
-        mMediaSource = mMediaSourceHelper.getMediaSource(path, headers, false, errorCode);
-        errorCode = -1;
+        mMediaSource = mMediaSourceHelper.getMediaSource(path, headers);
     }
 
     @Override
@@ -285,26 +275,12 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     }
 
     @Override
-/*    public void onPlayerError(ExoPlaybackException error) {
+   public void onPlayerError(ExoPlaybackException error) {
         if (mPlayerEventListener != null) {
             mPlayerEventListener.onError();
         }
     }
-*/
-    public void onPlayerError(@NonNull PlaybackException error) {
-        errorCode = error.errorCode;
-        Log.e("tag--", "" + error.errorCode);
-        if (path != null) {
-            setDataSource(path, headers);
-            path = null;
-            prepareAsync();
-            start();
-        } else {
-            if (mPlayerEventListener != null) {
-                mPlayerEventListener.onError();
-            }
-        }
-    }
+
     @Override
     public void onVideoSizeChanged(VideoSize videoSize) {
         if (mPlayerEventListener != null) {
