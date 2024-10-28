@@ -22,14 +22,6 @@ import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvicto
 import com.google.android.exoplayer2.upstream.cache.SimpleCache;
 import com.google.android.exoplayer2.util.Util;
 
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
-import com.google.android.exoplayer2.extractor.ExtractorsFactory;
-import com.google.android.exoplayer2.source.DefaultMediaSourceFactory;
-import com.google.android.exoplayer2.extractor.ts.TsExtractor;
-import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.extractor.ts.DefaultTsPayloadReaderFactory;
-import com.google.android.exoplayer2.util.MimeTypes;
-
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.Iterator;
@@ -78,13 +70,11 @@ public final class ExoMediaSourceHelper {
     public MediaSource getMediaSource(String uri, boolean isCache) {
         return getMediaSource(uri, null, isCache);
     }
+
     public MediaSource getMediaSource(String uri, Map<String, String> headers, boolean isCache) {
-        return getMediaSource(uri, headers, isCache, -1);
-    }
-    public MediaSource getMediaSource(String uri, Map<String, String> headers, boolean isCache, int errorCode) {
         Uri contentUri = Uri.parse(uri);
         if ("rtmp".equals(contentUri.getScheme())) {
-            return new ProgressiveMediaSource.Factory(new RtmpDataSourceFactory())
+            return new ProgressiveMediaSource.Factory(new RtmpDataSourceFactory(null))
                     .createMediaSource(MediaItem.fromUri(contentUri));
         } else if ("rtsp".equals(contentUri.getScheme())) {
             return new RtspMediaSource.Factory().createMediaSource(MediaItem.fromUri(contentUri));
@@ -99,12 +89,6 @@ public final class ExoMediaSourceHelper {
         if (mHttpDataSourceFactory != null) {
             setHeaders(headers);
         }
-/*        if (errorCode == ExoPlaybackException.ERROR_CODE_PARSING_CONTAINER_UNSUPPORTED) {
-            MediaItem.Builder builder = new MediaItem.Builder().setUri(uri);
-            builder.setMimeType(MimeTypes.APPLICATION_M3U8);
-            return new DefaultMediaSourceFactory(getDataSourceFactory(), getExtractorsFactory()).createMediaSource(getMediaItem(uri, errorCode));
-        }
-		*/
         switch (contentType) {
             case C.TYPE_DASH:
                 return new DashMediaSource.Factory(factory).createMediaSource(MediaItem.fromUri(contentUri));
@@ -115,20 +99,8 @@ public final class ExoMediaSourceHelper {
                 return new ProgressiveMediaSource.Factory(factory).createMediaSource(MediaItem.fromUri(contentUri));
         }
     }
-		
-/*    private static MediaItem getMediaItem(String uri, int errorCode) {
-        MediaItem.Builder builder = new MediaItem.Builder().setUri(Uri.parse(uri.trim().replace("\\", "")));
-        if (errorCode == ExoPlaybackException.ERROR_CODE_PARSING_CONTAINER_UNSUPPORTED)
-            builder.setMimeType(MimeTypes.APPLICATION_M3U8);
-        return builder.build();
-    }
-*/
-    private static synchronized ExtractorsFactory getExtractorsFactory() {
-        return new DefaultExtractorsFactory().setTsExtractorFlags(DefaultTsPayloadReaderFactory.FLAG_ENABLE_HDMV_DTS_AUDIO_STREAMS).setTsExtractorTimestampSearchBytes(TsExtractor.DEFAULT_TIMESTAMP_SEARCH_BYTES * 3);
 
-    }
-
-/*    private int inferContentType(String fileName) {
+    private int inferContentType(String fileName) {
         fileName = fileName.toLowerCase();
         if (fileName.contains(".mpd") || fileName.contains("type=mpd")) {
             return C.TYPE_DASH;
@@ -138,17 +110,7 @@ public final class ExoMediaSourceHelper {
             return C.TYPE_OTHER;
         }
     }
-	*/
-    private int inferContentType(String fileName) {
-        fileName = fileName.toLowerCase();
-        if (fileName.contains(".mpd")) {
-            return C.TYPE_DASH;
-        } else if (fileName.contains(".m3u8")) {
-            return C.TYPE_HLS;
-        } else {
-            return C.TYPE_OTHER;
-        }
-    }
+
     private DataSource.Factory getCacheDataSourceFactory() {
         if (mCache == null) {
             mCache = newCache();
