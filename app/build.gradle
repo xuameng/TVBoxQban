@@ -5,8 +5,8 @@ android {
 
     defaultConfig {
         applicationId 'com.jvhuiys.player'
-        minSdkVersion 21
-        targetSdkVersion 28
+        minSdkVersion 24
+        targetSdkVersion 30
         versionCode 1
         versionName '20241028-2222'
         multiDexEnabled true
