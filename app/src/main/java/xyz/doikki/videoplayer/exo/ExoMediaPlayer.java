@@ -60,6 +60,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     }
 
     @Override
+    public void initPlayer() {
         if (mRenderersFactory == null) {
             mRenderersFactory = new DefaultRenderersFactory(mAppContext);
         }
@@ -88,6 +89,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 
         mMediaPlayer.addListener(this);
     }
+
     public DefaultTrackSelector getTrackSelector() {
         return (DefaultTrackSelector) mTrackSelector;
     }
