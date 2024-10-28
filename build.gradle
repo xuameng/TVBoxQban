@@ -8,6 +8,7 @@ buildscript {
         maven { url "https://maven.aliyun.com/repository/releases" }
         maven { url "https://maven.aliyun.com/repository/public" }
         maven { url "https://storage.googleapis.com/r8-releases/raw" }
+        maven { url "https://checkerframework.org/ajava/repo" }
     }
     dependencies {
         classpath "com.android.tools.build:gradle:7.2.2"
