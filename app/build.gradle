@@ -113,7 +113,6 @@ dependencies {
     api "com.google.android.exoplayer:exoplayer-rtsp:$exoplayerVersion"
     api "com.google.android.exoplayer:extension-rtmp:$exoplayerVersion"
     api "com.google.android.exoplayer:extension-okhttp:$exoplayerVersion"
-    implementation 'com.squareup.okhttp3:okhttp:3.12.11'
     //xuameng exo ffmepg
     compileOnly 'org.checkerframework:checker-qual:3.4.0'
 }
