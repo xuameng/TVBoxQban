@@ -26,6 +26,8 @@ import com.google.android.exoplayer2.util.Clock;
 import com.google.android.exoplayer2.util.EventLogger;
 import com.google.android.exoplayer2.video.VideoSize;
 
+import androidx.annotation.NonNull;
+
 import java.util.Map;
 
 import xyz.doikki.videoplayer.player.AbstractPlayer;
@@ -70,7 +72,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
         if (mLoadControl == null) {
             mLoadControl = new DefaultLoadControl();
         }
-        mTrackSelector.setParameters(mTrackSelector.getParameters().buildUpon().setTunnelingEnabled(true));
+//        mTrackSelector.setParameters(mTrackSelector.getParameters().buildUpon().setTunnelingEnabled(true));
         /*mMediaPlayer = new SimpleExoPlayer.Builder(
                 mAppContext,
                 mRenderersFactory,
@@ -80,7 +82,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
                 DefaultBandwidthMeter.getSingletonInstance(mAppContext),
                 new AnalyticsCollector(Clock.DEFAULT))
                 .build();*/
-        mMediaPlayer = new ExoPlayer.Builder(mAppContext)
+        mMediaPlayer = new SimpleExoPlayer.Builder(mAppContext)
                 .setLoadControl(mLoadControl)
                 .setRenderersFactory(mRenderersFactory)
                 .setTrackSelector(mTrackSelector).build();
@@ -292,12 +294,26 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     }
 
     @Override
-    public void onPlayerError(ExoPlaybackException error) {
+/*    public void onPlayerError(ExoPlaybackException error) {
         if (mPlayerEventListener != null) {
             mPlayerEventListener.onError();
         }
     }
-
+*/
+    public void onPlayerError(@NonNull PlaybackException error) {
+        errorCode = error.errorCode;
+        Log.e("tag--", "" + error.errorCode);
+        if (path != null) {
+            setDataSource(path, headers);
+            path = null;
+            prepareAsync();
+            start();
+        } else {
+            if (mPlayerEventListener != null) {
+                mPlayerEventListener.onError();
+            }
+        }
+    }
     @Override
     public void onVideoSizeChanged(VideoSize videoSize) {
         if (mPlayerEventListener != null) {
