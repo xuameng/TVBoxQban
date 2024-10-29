@@ -11,7 +11,11 @@ import androidx.annotation.NonNull;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
-import com.google.android.exoplayer2.ExoPlayer;
+//import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.source.DefaultMediaSourceFactory;
+import com.google.android.exoplayer2.util.Clock;
+import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.PlaybackParameters;
@@ -310,8 +314,8 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 
     @Override
     public void onPlayerError(@NonNull ExoPlaybackException error) {
-        errorCode = error.errorCode;
-        Log.e("tag--", "" + error.errorCode);
+//        errorCode = error.errorCode;
+//        Log.e("tag--", "" + error.errorCode);
         if (path != null) {
             setDataSource(path, headers);
             path = null;
