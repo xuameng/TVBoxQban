@@ -34,7 +34,11 @@ import xyz.doikki.videoplayer.exo.OkHttpDataSource;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.net.InetSocketAddress;
+import java.util.Iterator;
 import java.util.Map;
+import java.net.Proxy;
+
 
 import okhttp3.OkHttpClient;
 
@@ -45,6 +49,7 @@ public final class ExoMediaSourceHelper {
     private final String mUserAgent;
     private final Context mAppContext;
     private OkHttpDataSource.Factory mHttpDataSourceFactory;
+	private OkHttpDataSource.Factory mHttpDataSourceFactoryNoProxy;
     private OkHttpClient mOkClient = null;
     private Cache mCache;
 
@@ -177,6 +182,7 @@ public final class ExoMediaSourceHelper {
             mHttpDataSourceFactory = new OkHttpDataSource.Factory(mOkClient)
                     .setUserAgent(mUserAgent)/*
                     .setAllowCrossProtocolRedirects(true)*/;
+					mHttpDataSourceFactoryNoProxy = mHttpDataSourceFactory;
         }
         return mHttpDataSourceFactory;
     }
@@ -208,5 +214,12 @@ public final class ExoMediaSourceHelper {
     public void setCache(Cache cache) {
         this.mCache = cache;
     }
-
+    public void setSocksProxy(String server, int port) {
+        Proxy proxy = new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(server, port));
+        mHttpDataSourceFactory = new OkHttpDataSource.Factory(mOkClient.newBuilder().proxy(proxy).build())
+                .setUserAgent(mUserAgent);
+    }
+    public void clearSocksProxy() {
+        mHttpDataSourceFactory = mHttpDataSourceFactoryNoProxy;
+    }
 }
