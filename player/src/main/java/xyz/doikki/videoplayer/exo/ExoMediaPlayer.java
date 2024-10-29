@@ -316,8 +316,8 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 
     @Override
     public void onPlayerError(@NonNull ExoPlaybackException error) {
-//        errorCode = error.errorCode;
-//        Log.e("tag--", "" + error.errorCode);
+        errorCode = error.errorCode;
+        Log.e("tag--", "" + error.errorCode);
         if (path != null) {
             setDataSource(path, headers);
             path = null;
