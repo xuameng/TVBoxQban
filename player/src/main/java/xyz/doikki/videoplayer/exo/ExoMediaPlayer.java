@@ -13,10 +13,10 @@ import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.LoadControl;
-import com.google.android.exoplayer2.PlaybackException;
+import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.Tracks;
+//import com.google.android.exoplayer2.Tracks;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
@@ -64,7 +64,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
             mLoadControl = new DefaultLoadControl();
         }
         mTrackSelector.setParameters(mTrackSelector.getParameters().buildUpon().setTunnelingEnabled(true));
-        /*mMediaPlayer = new SimpleExoPlayer.Builder(
+        mMediaPlayer = new SimpleExoPlayer.Builder(
                 mAppContext,
                 mRenderersFactory,
                 mTrackSelector,
@@ -72,11 +72,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
                 mLoadControl,
                 DefaultBandwidthMeter.getSingletonInstance(mAppContext),
                 new AnalyticsCollector(Clock.DEFAULT))
-                .build();*/
-        mMediaPlayer = new ExoPlayer.Builder(mAppContext)
-                .setLoadControl(mLoadControl)
-                .setRenderersFactory(mRenderersFactory)
-                .setTrackSelector(mTrackSelector).build();
+                .build();
 
         setOptions();
 
@@ -281,11 +277,11 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     }
 
     @Override
-    public void onTracksChanged(Tracks tracks) {
-        if (trackNameProvider == null)
-            trackNameProvider = new ExoTrackNameProvider(mAppContext.getResources());
+    public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
+        Player.Listener.super.onTracksChanged(trackGroups, trackSelections);
+        trackNameProvider = new ExoTrackNameProvider(mAppContext.getResources());
+        mTrackSelections = trackSelections;
     }
-
     @Override
     public void onPlaybackStateChanged(int playbackState) {
         if (mPlayerEventListener == null) return;
@@ -313,7 +309,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     }
 
     @Override
-    public void onPlayerError(@NonNull PlaybackException error) {
+    public void onPlayerError(@NonNull ExoPlaybackException error) {
         errorCode = error.errorCode;
         Log.e("tag--", "" + error.errorCode);
         if (path != null) {
