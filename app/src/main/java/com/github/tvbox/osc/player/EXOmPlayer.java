@@ -12,6 +12,7 @@ import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.Player;
 //import com.google.android.exoplayer2.Tracks;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
+import com.google.android.exoplayer2.trackselection.TrackSelection;
 
 import com.google.android.exoplayer2.source.TrackGroup;
 import com.google.android.exoplayer2.source.TrackGroupArray;
@@ -36,7 +37,7 @@ public class EXOmPlayer extends ExoMediaPlayer {
         TrackInfo data = new TrackInfo();
         MappingTrackSelector.MappedTrackInfo trackInfo = getTrackSelector().getCurrentMappedTrackInfo();
         if (trackInfo != null) {
-            getExoSelectedTrack();
+            getExoSelectedTrack(mTrackSelections);
             for (int groupArrayIndex = 0; groupArrayIndex < trackInfo.getRendererCount(); groupArrayIndex++) {
                 TrackGroupArray groupArray = trackInfo.getTrackGroups(groupArrayIndex);
                 for (int groupIndex = 0; groupIndex < groupArray.length; groupIndex++) {
