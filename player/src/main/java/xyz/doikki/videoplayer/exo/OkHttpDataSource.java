@@ -1,516 +1,212 @@
-/*
- * Copyright (C) 2016 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package xyz.doikki.videoplayer.exo;
 
-import static com.google.android.exoplayer2.upstream.HttpUtil.buildRangeRequestHeader;
-import static com.google.android.exoplayer2.util.Util.castNonNull;
-import static java.lang.Math.min;
-
+import android.content.Context;
 import android.net.Uri;
-
-import androidx.annotation.Nullable;
+import android.text.TextUtils;
 
 import com.google.android.exoplayer2.C;
-import com.google.android.exoplayer2.ExoPlayerLibraryInfo;
+import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.PlaybackException;
-import com.google.android.exoplayer2.upstream.BaseDataSource;
+import com.google.android.exoplayer2.database.ExoDatabaseProvider;
+import com.google.android.exoplayer2.database.StandaloneDatabaseProvider;
+import com.google.android.exoplayer2.ext.rtmp.RtmpDataSource;
+import com.google.android.exoplayer2.ext.rtmp.RtmpDataSourceFactory;
+import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
+import com.google.android.exoplayer2.extractor.ExtractorsFactory;
+import com.google.android.exoplayer2.extractor.ts.DefaultTsPayloadReaderFactory;
+import com.google.android.exoplayer2.extractor.ts.TsExtractor;
+import com.google.android.exoplayer2.source.DefaultMediaSourceFactory;
+import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.ProgressiveMediaSource;
+import com.google.android.exoplayer2.source.dash.DashMediaSource;
+import com.google.android.exoplayer2.source.hls.HlsMediaSource;
+import com.google.android.exoplayer2.source.rtsp.RtspMediaSource;
 import com.google.android.exoplayer2.upstream.DataSource;
-import com.google.android.exoplayer2.upstream.DataSourceException;
-import com.google.android.exoplayer2.upstream.DataSpec;
-import com.google.android.exoplayer2.upstream.HttpDataSource;
-import com.google.android.exoplayer2.upstream.HttpUtil;
-import com.google.android.exoplayer2.upstream.TransferListener;
-import com.google.android.exoplayer2.util.Assertions;
+import com.google.android.exoplayer2.upstream.DefaultDataSource;
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.upstream.cache.Cache;
+import com.google.android.exoplayer2.upstream.cache.CacheDataSource;
+import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor;
+import com.google.android.exoplayer2.upstream.cache.SimpleCache;
+import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.Util;
-import com.google.common.base.Predicate;
-import com.google.common.net.HttpHeaders;
+import xyz.doikki.videoplayer.exo.OkHttpDataSource;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InterruptedIOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.io.File;
+import java.lang.reflect.Field;
 import java.util.Map;
 
-import okhttp3.CacheControl;
-import okhttp3.Call;
-import okhttp3.HttpUrl;
-import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
-import okhttp3.ResponseBody;
 
-/**
- * An {@link HttpDataSource} that delegates to Square's {@link Call.Factory}.
- *
- * <p>Note: HTTP request headers will be set using all parameters passed via (in order of decreasing
- * priority) the {@code dataSpec}, {@link #setRequestProperty} and the default parameters used to
- * construct the instance.
- */
-public class OkHttpDataSource extends BaseDataSource implements HttpDataSource {
+public final class ExoMediaSourceHelper {
 
-    static {
-        ExoPlayerLibraryInfo.registerModule("goog.exo.okhttp");
+    private static volatile ExoMediaSourceHelper sInstance;
+
+    private final String mUserAgent;
+    private final Context mAppContext;
+    private OkHttpDataSource.Factory mHttpDataSourceFactory;
+    private OkHttpClient mOkClient = null;
+    private Cache mCache;
+
+    private ExoMediaSourceHelper(Context context) {
+        mAppContext = context.getApplicationContext();
+        mUserAgent = Util.getUserAgent(mAppContext, mAppContext.getApplicationInfo().name);
     }
 
-    /** {@link DataSource.Factory} for {@link OkHttpDataSource} instances. */
-    public static final class Factory implements HttpDataSource.Factory {
-
-        private final RequestProperties defaultRequestProperties;
-        private final Call.Factory callFactory;
-
-        @Nullable private String userAgent;
-        @Nullable private TransferListener transferListener;
-        @Nullable private CacheControl cacheControl;
-        @Nullable private Predicate<String> contentTypePredicate;
-
-        /**
-         * Creates an instance.
-         *
-         * @param callFactory A {@link Call.Factory} (typically an {@link OkHttpClient}) for use by the
-         *     sources created by the factory.
-         */
-        public Factory(Call.Factory callFactory) {
-            this.callFactory = callFactory;
-            defaultRequestProperties = new RequestProperties();
-        }
-
-        @Override
-        public final Factory setDefaultRequestProperties(Map<String, String> defaultRequestProperties) {
-            this.defaultRequestProperties.clearAndSet(defaultRequestProperties);
-            return this;
-        }
-
-        /**
-         * Sets the user agent that will be used.
-         *
-         * <p>The default is {@code null}, which causes the default user agent of the underlying {@link
-         * OkHttpClient} to be used.
-         *
-         * @param userAgent The user agent that will be used, or {@code null} to use the default user
-         *     agent of the underlying {@link OkHttpClient}.
-         * @return This factory.
-         */
-        public Factory setUserAgent(@Nullable String userAgent) {
-            this.userAgent = userAgent;
-            return this;
-        }
-
-        /**
-         * Sets the {@link CacheControl} that will be used.
-         *
-         * <p>The default is {@code null}.
-         *
-         * @param cacheControl The cache control that will be used.
-         * @return This factory.
-         */
-        public Factory setCacheControl(@Nullable CacheControl cacheControl) {
-            this.cacheControl = cacheControl;
-            return this;
-        }
-
-        /**
-         * Sets a content type {@link Predicate}. If a content type is rejected by the predicate then a
-         * {@link InvalidContentTypeException} is thrown from {@link
-         * OkHttpDataSource#open(DataSpec)}.
-         *
-         * <p>The default is {@code null}.
-         *
-         * @param contentTypePredicate The content type {@link Predicate}, or {@code null} to clear a
-         *     predicate that was previously set.
-         * @return This factory.
-         */
-        public Factory setContentTypePredicate(@Nullable Predicate<String> contentTypePredicate) {
-            this.contentTypePredicate = contentTypePredicate;
-            return this;
-        }
-
-        /**
-         * Sets the {@link TransferListener} that will be used.
-         *
-         * <p>The default is {@code null}.
-         *
-         * <p>See {@link DataSource#addTransferListener(TransferListener)}.
-         *
-         * @param transferListener The listener that will be used.
-         * @return This factory.
-         */
-        public Factory setTransferListener(@Nullable TransferListener transferListener) {
-            this.transferListener = transferListener;
-            return this;
-        }
-
-        @Override
-        public OkHttpDataSource createDataSource() {
-            OkHttpDataSource dataSource =
-                    new OkHttpDataSource(
-                            callFactory, userAgent, cacheControl, defaultRequestProperties, contentTypePredicate);
-            if (transferListener != null) {
-                dataSource.addTransferListener(transferListener);
-            }
-            return dataSource;
-        }
-    }
-
-    private final Call.Factory callFactory;
-    private final RequestProperties requestProperties;
-
-    @Nullable private final String userAgent;
-    @Nullable private final CacheControl cacheControl;
-    @Nullable private final RequestProperties defaultRequestProperties;
-
-    @Nullable private Predicate<String> contentTypePredicate;
-    @Nullable private DataSpec dataSpec;
-    @Nullable private Response response;
-    @Nullable private InputStream responseByteStream;
-    private boolean opened;
-    private long bytesToRead;
-    private long bytesRead;
-
-    /** @deprecated Use {@link Factory} instead. */
-    @SuppressWarnings("deprecation")
-    @Deprecated
-    public OkHttpDataSource(Call.Factory callFactory) {
-        this(callFactory, /* userAgent= */ null);
-    }
-
-    /** @deprecated Use {@link Factory} instead. */
-    @SuppressWarnings("deprecation")
-    @Deprecated
-    public OkHttpDataSource(Call.Factory callFactory, @Nullable String userAgent) {
-        this(callFactory, userAgent, /* cacheControl= */ null, /* defaultRequestProperties= */ null);
-    }
-
-    /** @deprecated Use {@link Factory} instead. */
-    @Deprecated
-    public OkHttpDataSource(
-            Call.Factory callFactory,
-            @Nullable String userAgent,
-            @Nullable CacheControl cacheControl,
-            @Nullable RequestProperties defaultRequestProperties) {
-        this(
-                callFactory,
-                userAgent,
-                cacheControl,
-                defaultRequestProperties,
-                /* contentTypePredicate= */ null);
-    }
-
-    private OkHttpDataSource(
-            Call.Factory callFactory,
-            @Nullable String userAgent,
-            @Nullable CacheControl cacheControl,
-            @Nullable RequestProperties defaultRequestProperties,
-            @Nullable Predicate<String> contentTypePredicate) {
-        super(/* isNetwork= */ true);
-        this.callFactory = Assertions.checkNotNull(callFactory);
-        this.userAgent = userAgent;
-        this.cacheControl = cacheControl;
-        this.defaultRequestProperties = defaultRequestProperties;
-        this.contentTypePredicate = contentTypePredicate;
-        this.requestProperties = new RequestProperties();
-    }
-
-    /**
-     * @deprecated Use {@link Factory#setContentTypePredicate(Predicate)} instead.
-     */
-    @Deprecated
-    public void setContentTypePredicate(@Nullable Predicate<String> contentTypePredicate) {
-        this.contentTypePredicate = contentTypePredicate;
-    }
-
-    @Override
-    @Nullable
-    public Uri getUri() {
-        return response == null ? null : Uri.parse(response.request().url().toString());
-    }
-
-    @Override
-    public int getResponseCode() {
-        return response == null ? -1 : response.code();
-    }
-
-    @Override
-    public Map<String, List<String>> getResponseHeaders() {
-        return response == null ? Collections.emptyMap() : response.headers().toMultimap();
-    }
-
-    @Override
-    public void setRequestProperty(String name, String value) {
-        Assertions.checkNotNull(name);
-        Assertions.checkNotNull(value);
-        requestProperties.set(name, value);
-    }
-
-    @Override
-    public void clearRequestProperty(String name) {
-        Assertions.checkNotNull(name);
-        requestProperties.remove(name);
-    }
-
-    @Override
-    public void clearAllRequestProperties() {
-        requestProperties.clear();
-    }
-
-    @Override
-    public long open(DataSpec dataSpec) throws HttpDataSourceException {
-        this.dataSpec = dataSpec;
-        bytesRead = 0;
-        bytesToRead = 0;
-        transferInitializing(dataSpec);
-
-        Request request = makeRequest(dataSpec);
-        Response response;
-        ResponseBody responseBody;
-        try {
-            this.response = callFactory.newCall(request).execute();
-            response = this.response;
-            responseBody = Assertions.checkNotNull(response.body());
-            responseByteStream = responseBody.byteStream();
-        } catch (IOException e) {
-            throw HttpDataSourceException.createForIOException(
-                    e, dataSpec, HttpDataSourceException.TYPE_OPEN);
-        }
-
-        int responseCode = response.code();
-
-        // Check for a valid response code.
-        if (!response.isSuccessful()) {
-            if (responseCode == 416) {
-                long documentSize =
-                        HttpUtil.getDocumentSize(response.headers().get(HttpHeaders.CONTENT_RANGE));
-                if (dataSpec.position == documentSize) {
-                    opened = true;
-                    transferStarted(dataSpec);
-                    return dataSpec.length != C.LENGTH_UNSET ? dataSpec.length : 0;
+    public static ExoMediaSourceHelper getInstance(Context context) {
+        if (sInstance == null) {
+            synchronized (ExoMediaSourceHelper.class) {
+                if (sInstance == null) {
+                    sInstance = new ExoMediaSourceHelper(context);
                 }
             }
-
-            byte[] errorResponseBody;
-            try {
-                errorResponseBody = Util.toByteArray(Assertions.checkNotNull(responseByteStream));
-            } catch (IOException e) {
-                errorResponseBody = Util.EMPTY_BYTE_ARRAY;
-            }
-            Map<String, List<String>> headers = response.headers().toMultimap();
-            closeConnectionQuietly();
-            @Nullable
-            IOException cause =
-                    responseCode == 416
-                            ? new DataSourceException(PlaybackException.ERROR_CODE_IO_READ_POSITION_OUT_OF_RANGE)
-                            : null;
-            throw new InvalidResponseCodeException(
-                    responseCode, response.message(), cause, headers, dataSpec, errorResponseBody);
         }
+        return sInstance;
+    }
 
-        // Check for a valid content type.
-        @Nullable MediaType mediaType = responseBody.contentType();
-        String contentType = mediaType != null ? mediaType.toString() : "";
-        if (contentTypePredicate != null && !contentTypePredicate.apply(contentType)) {
-            closeConnectionQuietly();
-            throw new InvalidContentTypeException(contentType, dataSpec);
+    public void setOkClient(OkHttpClient client) {
+        mOkClient = client;
+    }
+
+    public MediaSource getMediaSource(String uri) {
+        return getMediaSource(uri, null, false);
+    }
+
+    public MediaSource getMediaSource(String uri, Map<String, String> headers) {
+        return getMediaSource(uri, headers, false);
+    }
+
+    public MediaSource getMediaSource(String uri, boolean isCache) {
+        return getMediaSource(uri, null, isCache);
+    }
+
+    public MediaSource getMediaSource(String uri, Map<String, String> headers, boolean isCache) {
+        return getMediaSource(uri, headers, isCache, -1);
+    }
+
+    public MediaSource getMediaSource(String uri, Map<String, String> headers, boolean isCache, int errorCode) {
+        Uri contentUri = Uri.parse(uri);
+        if ("rtmp".equals(contentUri.getScheme())) {
+            return new ProgressiveMediaSource.Factory(new RtmpDataSource.Factory())
+                    .createMediaSource(MediaItem.fromUri(contentUri));
+        } else if ("rtsp".equals(contentUri.getScheme())) {
+            return new RtspMediaSource.Factory().createMediaSource(MediaItem.fromUri(contentUri));
         }
-
-        // If we requested a range starting from a non-zero position and received a 200 rather than a
-        // 206, then the server does not support partial requests. We'll need to manually skip to the
-        // requested position.
-        long bytesToSkip = responseCode == 200 && dataSpec.position != 0 ? dataSpec.position : 0;
-
-        // Determine the length of the data to be read, after skipping.
-        if (dataSpec.length != C.LENGTH_UNSET) {
-            bytesToRead = dataSpec.length;
+        int contentType = inferContentType(uri);
+        DataSource.Factory factory;
+        if (isCache) {
+            factory = getCacheDataSourceFactory();
         } else {
-            long contentLength = responseBody.contentLength();
-            bytesToRead = contentLength != -1 ? (contentLength - bytesToSkip) : C.LENGTH_UNSET;
+            factory = getDataSourceFactory();
         }
-
-        opened = true;
-        transferStarted(dataSpec);
-
-        try {
-            skipFully(bytesToSkip, dataSpec);
-        } catch (HttpDataSourceException e) {
-            closeConnectionQuietly();
-            throw e;
+        if (mHttpDataSourceFactory != null) {
+            setHeaders(headers);
         }
-
-        return bytesToRead;
-    }
-
-    @Override
-    public int read(byte[] buffer, int offset, int length) throws HttpDataSourceException {
-        try {
-            return readInternal(buffer, offset, length);
-        } catch (IOException e) {
-            throw HttpDataSourceException.createForIOException(
-                    e, castNonNull(dataSpec), HttpDataSourceException.TYPE_READ);
+        if (errorCode == PlaybackException.ERROR_CODE_PARSING_CONTAINER_UNSUPPORTED) {
+            MediaItem.Builder builder = new MediaItem.Builder().setUri(uri);
+            builder.setMimeType(MimeTypes.APPLICATION_M3U8);
+            return new DefaultMediaSourceFactory(getDataSourceFactory(), getExtractorsFactory()).createMediaSource(getMediaItem(uri, errorCode));
+        }
+        switch (contentType) {
+            case C.TYPE_DASH:
+                return new DashMediaSource.Factory(factory).createMediaSource(MediaItem.fromUri(contentUri));
+            case C.TYPE_HLS:
+                return new HlsMediaSource.Factory(factory).createMediaSource(MediaItem.fromUri(contentUri));
+            default:
+            case C.TYPE_OTHER:
+                return new ProgressiveMediaSource.Factory(factory).createMediaSource(MediaItem.fromUri(contentUri));
         }
     }
 
-    @Override
-    public void close() {
-        if (opened) {
-            opened = false;
-            transferEnded();
-            closeConnectionQuietly();
-        }
-    }
-
-    /** Establishes a connection. */
-    private Request makeRequest(DataSpec dataSpec) throws HttpDataSourceException {
-        long position = dataSpec.position;
-        long length = dataSpec.length;
-
-        @Nullable HttpUrl url = HttpUrl.parse(dataSpec.uri.toString());
-        if (url == null) {
-            throw new HttpDataSourceException(
-                    "Malformed URL",
-                    dataSpec,
-                    PlaybackException.ERROR_CODE_FAILED_RUNTIME_CHECK,
-                    HttpDataSourceException.TYPE_OPEN);
-        }
-
-        Request.Builder builder = new Request.Builder().url(url);
-        if (cacheControl != null) {
-            builder.cacheControl(cacheControl);
-        }
-
-        Map<String, String> headers = new HashMap<>();
-        if (defaultRequestProperties != null) {
-            headers.putAll(defaultRequestProperties.getSnapshot());
-        }
-
-        headers.putAll(requestProperties.getSnapshot());
-        headers.putAll(dataSpec.httpRequestHeaders);
-
-        for (Map.Entry<String, String> header : headers.entrySet()) {
-            builder.header(header.getKey(), header.getValue());
-        }
-
-        @Nullable String rangeHeader = buildRangeRequestHeader(position, length);
-        if (rangeHeader != null) {
-            builder.addHeader(HttpHeaders.RANGE, rangeHeader);
-        }
-        if (userAgent != null) {
-            builder.addHeader(HttpHeaders.USER_AGENT, userAgent);
-        }
-        if (!dataSpec.isFlagSet(DataSpec.FLAG_ALLOW_GZIP)) {
-            builder.addHeader(HttpHeaders.ACCEPT_ENCODING, "identity");
-        }
-
-        @Nullable RequestBody requestBody = null;
-        if (dataSpec.httpBody != null) {
-            requestBody = RequestBody.create(null, dataSpec.httpBody);
-        } else if (dataSpec.httpMethod == DataSpec.HTTP_METHOD_POST) {
-            // OkHttp requires a non-null body for POST requests.
-            requestBody = RequestBody.create(null, Util.EMPTY_BYTE_ARRAY);
-        }
-        builder.method(dataSpec.getHttpMethodString(), requestBody);
+    private static MediaItem getMediaItem(String uri, int errorCode) {
+        MediaItem.Builder builder = new MediaItem.Builder().setUri(Uri.parse(uri.trim().replace("\\", "")));
+        if (errorCode == PlaybackException.ERROR_CODE_PARSING_CONTAINER_UNSUPPORTED)
+            builder.setMimeType(MimeTypes.APPLICATION_M3U8);
         return builder.build();
     }
 
-    /**
-     * Attempts to skip the specified number of bytes in full.
-     *
-     * @param bytesToSkip The number of bytes to skip.
-     * @param dataSpec The {@link DataSpec}.
-     * @throws HttpDataSourceException If the thread is interrupted during the operation, or an error
-     *     occurs while reading from the source, or if the data ended before skipping the specified
-     *     number of bytes.
-     */
-    private void skipFully(long bytesToSkip, DataSpec dataSpec) throws HttpDataSourceException {
-        if (bytesToSkip == 0) {
-            return;
+    private static synchronized ExtractorsFactory getExtractorsFactory() {
+        return new DefaultExtractorsFactory().setTsExtractorFlags(DefaultTsPayloadReaderFactory.FLAG_ENABLE_HDMV_DTS_AUDIO_STREAMS).setTsExtractorTimestampSearchBytes(TsExtractor.DEFAULT_TIMESTAMP_SEARCH_BYTES * 3);
+
+    }
+
+    private int inferContentType(String fileName) {
+        fileName = fileName.toLowerCase();
+        if (fileName.contains(".mpd")) {
+            return C.TYPE_DASH;
+        } else if (fileName.contains(".m3u8")) {
+            return C.TYPE_HLS;
+        } else {
+            return C.TYPE_OTHER;
         }
-        byte[] skipBuffer = new byte[4096];
-        try {
-            while (bytesToSkip > 0) {
-                int readLength = (int) min(bytesToSkip, skipBuffer.length);
-                int read = castNonNull(responseByteStream).read(skipBuffer, 0, readLength);
-                if (Thread.currentThread().isInterrupted()) {
-                    throw new InterruptedIOException();
-                }
-                if (read == -1) {
-                    throw new HttpDataSourceException(
-                            dataSpec,
-                            PlaybackException.ERROR_CODE_IO_READ_POSITION_OUT_OF_RANGE,
-                            HttpDataSourceException.TYPE_OPEN);
-                }
-                bytesToSkip -= read;
-                bytesTransferred(read);
-            }
-            return;
-        } catch (IOException e) {
-            if (e instanceof HttpDataSourceException) {
-                throw (HttpDataSourceException) e;
-            } else {
-                throw new HttpDataSourceException(
-                        dataSpec,
-                        PlaybackException.ERROR_CODE_IO_UNSPECIFIED,
-                        HttpDataSourceException.TYPE_OPEN);
-            }
+    }
+
+    private DataSource.Factory getCacheDataSourceFactory() {
+        if (mCache == null) {
+            mCache = newCache();
         }
+        return new CacheDataSource.Factory()
+                .setCache(mCache)
+                .setUpstreamDataSourceFactory(getDataSourceFactory())
+                .setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR);
+    }
+
+    private Cache newCache() {
+        return new SimpleCache(
+                new File(mAppContext.getExternalCacheDir(), "exo-video-cache"),//缓存目录
+                new LeastRecentlyUsedCacheEvictor(512 * 1024 * 1024),//缓存大小，默认512M，使用LRU算法实现
+                new StandaloneDatabaseProvider(mAppContext));
     }
 
     /**
-     * Reads up to {@code length} bytes of data and stores them into {@code buffer}, starting at index
-     * {@code offset}.
+     * Returns a new DataSource factory.
      *
-     * <p>This method blocks until at least one byte of data can be read, the end of the opened range
-     * is detected, or an exception is thrown.
-     *
-     * @param buffer The buffer into which the read data should be stored.
-     * @param offset The start offset into {@code buffer} at which data should be written.
-     * @param readLength The maximum number of bytes to read.
-     * @return The number of bytes read, or {@link C#RESULT_END_OF_INPUT} if the end of the opened
-     *     range is reached.
-     * @throws IOException If an error occurs reading from the source.
+     * @return A new DataSource factory.
      */
-    private int readInternal(byte[] buffer, int offset, int readLength) throws IOException {
-        if (readLength == 0) {
-            return 0;
+    private DataSource.Factory getDataSourceFactory() {
+        return new DefaultDataSource.Factory(mAppContext, getHttpDataSourceFactory());
+    }
+
+    /**
+     * Returns a new HttpDataSource factory.
+     *
+     * @return A new HttpDataSource factory.
+     */
+    private DataSource.Factory getHttpDataSourceFactory() {
+        if (mHttpDataSourceFactory == null) {
+            mHttpDataSourceFactory = new OkHttpDataSource.Factory(mOkClient)
+                    .setUserAgent(mUserAgent)/*
+                    .setAllowCrossProtocolRedirects(true)*/;
         }
-        if (bytesToRead != C.LENGTH_UNSET) {
-            long bytesRemaining = bytesToRead - bytesRead;
-            if (bytesRemaining == 0) {
-                return C.RESULT_END_OF_INPUT;
+        return mHttpDataSourceFactory;
+    }
+
+    private void setHeaders(Map<String, String> headers) {
+        if (headers != null && headers.size() > 0) {
+            //如果发现用户通过header传递了UA，则强行将HttpDataSourceFactory里面的userAgent字段替换成用户的
+            if (headers.containsKey("User-Agent")) {
+                String value = headers.remove("User-Agent");
+                if (!TextUtils.isEmpty(value)) {
+                    try {
+                        Field userAgentField = mHttpDataSourceFactory.getClass().getDeclaredField("userAgent");
+                        userAgentField.setAccessible(true);
+                        userAgentField.set(mHttpDataSourceFactory, value.trim());
+                    } catch (Exception e) {
+                        //ignore
+                    }
+                }
             }
-            readLength = (int) min(readLength, bytesRemaining);
+            for (String k : headers.keySet()) {
+                String v = headers.get(k);
+                if (v != null)
+                    headers.put(k, v.trim());
+            }
+            mHttpDataSourceFactory.setDefaultRequestProperties(headers);
         }
-
-        int read = castNonNull(responseByteStream).read(buffer, offset, readLength);
-        if (read == -1) {
-            return C.RESULT_END_OF_INPUT;
-        }
-
-        bytesRead += read;
-        bytesTransferred(read);
-        return read;
     }
 
-    /** Closes the current connection quietly, if there is one. */
-    private void closeConnectionQuietly() {
-        if (response != null) {
-            Assertions.checkNotNull(response.body()).close();
-            response = null;
-        }
-        responseByteStream = null;
+    public void setCache(Cache cache) {
+        this.mCache = cache;
     }
+
 }
