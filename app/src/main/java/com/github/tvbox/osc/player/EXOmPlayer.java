@@ -10,7 +10,7 @@ import com.github.tvbox.osc.util.StringUtils;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.Tracks;
+//import com.google.android.exoplayer2.Tracks;
 import com.google.android.exoplayer2.source.TrackGroup;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
@@ -95,7 +95,7 @@ public class EXOmPlayer extends ExoMediaPlayer {
             if (videoTrackBean == null) {
                 for (int renderIndex = 0; renderIndex < trackInfo.getRendererCount(); renderIndex++) {
                     if (trackInfo.getRendererType(renderIndex) == C.TRACK_TYPE_TEXT) {
-                        DefaultTrackSelector.Parameters.Builder parametersBuilder = getTrackSelector().getParameters().buildUpon();
+                        DefaultTrackSelector.ParametersBuilder parametersBuilder = getTrackSelector().getParameters().buildUpon();
                         parametersBuilder.setRendererDisabled(renderIndex, true);
                         getTrackSelector().setParameters(parametersBuilder);
                         break;
@@ -104,7 +104,7 @@ public class EXOmPlayer extends ExoMediaPlayer {
             } else {
                 TrackGroupArray trackGroupArray = trackInfo.getTrackGroups(videoTrackBean.renderId);
                 @SuppressLint("UnsafeOptInUsageError") DefaultTrackSelector.SelectionOverride override = new DefaultTrackSelector.SelectionOverride(videoTrackBean.trackGroupId, videoTrackBean.trackId);
-                DefaultTrackSelector.Parameters.Builder parametersBuilder = getTrackSelector().buildUponParameters();
+                DefaultTrackSelector.ParametersBuilder parametersBuilder = getTrackSelector().buildUponParameters();
                 parametersBuilder.setRendererDisabled(videoTrackBean.renderId, false);
                 parametersBuilder.setSelectionOverride(videoTrackBean.renderId, trackGroupArray, override);
                 getTrackSelector().setParameters(parametersBuilder);
