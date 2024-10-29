@@ -8,6 +8,7 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.view.KeyEvent;       //xuameng 键盘问题
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LifecycleOwner;
@@ -102,6 +103,9 @@ public class SearchSubtitleDialog extends BaseDialog {
             }
         }, mGridView);
 
+        // xuameng : Fix on Key Enter
+        subtitleSearchEt.setOnKeyListener(onSoftKeyPress);
+
         subtitleSearchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -112,6 +116,18 @@ public class SearchSubtitleDialog extends BaseDialog {
         });
         searchAdapter.setNewData(new ArrayList<>());
     }
+
+// xuameng : Fix on Key Enter
+    private final View.OnKeyListener onSoftKeyPress = new View.OnKeyListener() {
+        public boolean onKey(View v, int keyCode, KeyEvent event) {
+            if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+                // hide soft keyboard, set focus on next button
+                subtitleSearchEt.clearFocus();
+                subtitleSearchBtn.requestFocus();
+            }
+            return false;
+        }
+    };
 
     public void setSearchWord(String wd) {
         wd = wd.replaceAll("(?:（|\\(|\\[|【|\\.mp4|\\.mkv|\\.avi|\\.MP4|\\.MKV|\\.AVI)", "");
