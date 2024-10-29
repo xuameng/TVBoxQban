@@ -202,7 +202,9 @@ public final class ExoMediaSourceHelper {
                     }
                 }
             }
-            for (String k : headers.keySet()) {
+            Iterator<String> iter = headers.keySet().iterator();
+            while (iter.hasNext()) {
+                String k = iter.next();
                 String v = headers.get(k);
                 if (v != null)
                     headers.put(k, v.trim());
