@@ -30,7 +30,7 @@ import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvicto
 import com.google.android.exoplayer2.upstream.cache.SimpleCache;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.Util;
-import xyz.doikki.videoplayer.exo.OkHttpDataSource;
+import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSource;
 
 import java.io.File;
 import java.lang.reflect.Field;
