@@ -11,6 +11,8 @@ import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.Player;
 //import com.google.android.exoplayer2.Tracks;
+import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
+
 import com.google.android.exoplayer2.source.TrackGroup;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
@@ -70,14 +72,13 @@ public class EXOmPlayer extends ExoMediaPlayer {
     }
 
     @SuppressLint("UnsafeOptInUsageError")
-    private void getExoSelectedTrack() {
+    private void getExoSelectedTrack(TrackSelectionArray trackSelections) {
         audioId = "";
         subtitleId = "";
-        for (Tracks.Group group : mMediaPlayer.getCurrentTracks().getGroups()) {
-            if (!group.isSelected()) continue;
-            for (int trackIndex = 0; trackIndex < group.length; trackIndex++) {
-                if (!group.isTrackSelected(trackIndex)) continue;
-                Format format = group.getTrackFormat(trackIndex);
+        for (TrackSelection selection : trackSelections.getAll()) {
+            if (selection == null) continue;
+            for(int trackIndex = 0; trackIndex < selection.length(); trackIndex++) {
+                Format format = selection.getFormat(trackIndex);
                 if (MimeTypes.isAudio(format.sampleMimeType)) {
                     audioId = format.id;
                 }
