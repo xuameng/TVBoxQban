@@ -1,24 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<FrameLayout
     android:layout_width="@dimen/vs_600"
-    android:layout_height="match_parent">
-
-    <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
+    android:layout_height="fill_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <androidx.core.widget.NestedScrollView
+        android:background="@drawable/shape_dialog_bg_xuameng"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/shape_dialog_bg_main"
-        android:fillViewport="true">
-
+        android:fillViewport="true"
+        xmlns:android="http://schemas.android.com/apk/res/android">
         <TextView
-            android:id="@+id/describe"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:lineSpacingMultiplier="1.2"
-            android:padding="@dimen/vs_20"
+            android:textSize="@dimen/ts_26"
             android:textColor="@color/color_FFFFFF"
-            android:textSize="@dimen/ts_26" />
-
+            android:id="@+id/describe"
+            android:padding="@dimen/vs_20"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:lineSpacingMultiplier="1.2"/>
     </androidx.core.widget.NestedScrollView>
 </FrameLayout>
