@@ -329,7 +329,7 @@ public class DetailActivity extends BaseActivity {
                     @Override
                     public void run() {
                         FastClickCheckUtil.check(v);
-                        ClipboardManager clipprofile = (ClipboardManager) DetailActivity.this.getSystemService(Context.CLIPBOARD_SERVICE);
+                        ClipboardManager clipprofile = (ClipboardManager)getSystemService(mContext.CLIPBOARD_SERVICE);
                         String cpContent = removeHtmlTag(mVideo.des);
                         ClipData clipData = ClipData.newPlainText(null, cpContent);
                         clipprofile.setPrimaryClip(clipData);
