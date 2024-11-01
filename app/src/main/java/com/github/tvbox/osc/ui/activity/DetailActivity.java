@@ -110,6 +110,7 @@ public class DetailActivity extends BaseActivity {
     private TextView tvDirector;
     private TextView tvPlayUrl;
     private TextView tvDes;
+	private TextView tvDesc;  //xuameng 内容简介
     private TextView tvPlay;
     private TextView tvSort;
     private TextView tvQuickSearch;
@@ -169,6 +170,7 @@ public class DetailActivity extends BaseActivity {
         tvDirector = findViewById(R.id.tvDirector);
         tvPlayUrl = findViewById(R.id.tvPlayUrl);
         tvDes = findViewById(R.id.tvDes);
+		tvDesc = findViewById(R.id.tvDesc);  //xuameng 内容简介
         tvPlay = findViewById(R.id.tvPlay);
         tvSort = findViewById(R.id.tvSort);
         tvCollect = findViewById(R.id.tvCollect);
@@ -302,6 +304,41 @@ public class DetailActivity extends BaseActivity {
                 Toast.makeText(DetailActivity.this, "已复制", Toast.LENGTH_SHORT).show();
             }
         });
+
+        tvDesc.setOnClickListener(new View.OnClickListener() {      //xuameng内容简介
+            @Override
+            public void onClick(View v) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        FastClickCheckUtil.check(v);
+                        DescDialog dialog = new DescDialog(mContext);
+                        //  dialog.setTip("内容简介");
+                        dialog.setDescribe(removeHtmlTag(mVideo.des));
+                        dialog.show();
+                    }
+                });
+            }
+        });
+
+        tvDesc.setOnLongClickListener(new View.OnLongClickListener() {  //xuameng内容简介长按复制
+            @Override
+            public boolean onLongClick(View v) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        FastClickCheckUtil.check(v);
+                        ClipboardManager clipprofile = (ClipboardManager) DetailActivity.this.getSystemService(Context.CLIPBOARD_SERVICE);
+                        String cpContent = removeHtmlTag(mVideo.des);
+                        ClipData clipData = ClipData.newPlainText(null, cpContent);
+                        clipprofile.setPrimaryClip(clipData);
+                        Toast.makeText(DetailActivity.this, "已复制：" + cpContent, Toast.LENGTH_SHORT).show();
+                    }
+                });
+                return true;
+            }
+        });
+
         mGridView.setOnItemListener(new TvRecyclerView.OnItemListener() {
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
@@ -974,6 +1011,7 @@ public class DetailActivity extends BaseActivity {
         tvSort.setFocusable(!fullWindows);
         tvCollect.setFocusable(!fullWindows);
         tvQuickSearch.setFocusable(!fullWindows);
+		tvDesc.setFocusable(!fullWindows);      //xuameng 内容简介
         toggleSubtitleTextSize();
     }
 
