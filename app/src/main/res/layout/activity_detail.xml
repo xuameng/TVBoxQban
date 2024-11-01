@@ -196,6 +196,16 @@
                         android:layout_width="@dimen/vs_120"
                         android:layout_height="@dimen/vs_40"
                         android:text="加入收藏"/>
+                    <TextView
+                        android:textSize="@dimen/vs_20"
+                        android:textColor="@android:color/white"
+                        android:gravity="center"
+                        android:id="@+id/tvDesc"
+                        android:background="@drawable/button_detail_collect"
+                        android:focusable="true"
+                        android:layout_width="@dimen/vs_120"
+                        android:layout_height="@dimen/vs_40"
+                        android:text="内容简介"/>
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
