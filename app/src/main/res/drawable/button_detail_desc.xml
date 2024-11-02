@@ -12,16 +12,4 @@
             <solid android:color="@color/color_3D3D3D"/>
         </shape>
     </item>
-    <item android:state_pressed="true">
-        <shape>
-            <corners android:radius="@dimen/vs_20"/>
-            <solid android:color="@color/color_1890FF"/>
-        </shape>
-    </item>
-    <item android:state_pressed="false">
-        <shape>
-            <corners android:radius="@dimen/vs_20"/>
-            <solid android:color="@color/color_3D3D3D"/>
-        </shape>
-    </item>
 </selector>
