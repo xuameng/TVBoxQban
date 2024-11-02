@@ -240,7 +240,7 @@ public class DetailActivity extends BaseActivity {
             @Override         //xuameng许大师制作焦点变大
 	        public void onFocusChange(View v, boolean hasFocus){
             if (hasFocus){
-                v.animate().scaleX(1.05f).scaleY(1.05f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
+                v.animate().scaleX(1.10f).scaleY(1.10f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
             }else{
                 v.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
             }
@@ -268,7 +268,7 @@ public class DetailActivity extends BaseActivity {
             @Override         //xuameng许大师制作焦点变大
 	        public void onFocusChange(View v, boolean hasFocus){
             if (hasFocus){
-                v.animate().scaleX(1.05f).scaleY(1.05f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
+                v.animate().scaleX(1.10f).scaleY(1.10f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
             }else{
                 v.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
             }
@@ -312,7 +312,7 @@ public class DetailActivity extends BaseActivity {
             @Override         //xuameng许大师制作焦点变大
 	        public void onFocusChange(View v, boolean hasFocus){
             if (hasFocus){
-                v.animate().scaleX(1.05f).scaleY(1.05f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
+                v.animate().scaleX(1.10f).scaleY(1.10f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
             }else{
                 v.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
             }
@@ -340,7 +340,7 @@ public class DetailActivity extends BaseActivity {
             @Override         //xuameng许大师制作焦点变大
 	        public void onFocusChange(View v, boolean hasFocus){
             if (hasFocus){
-                v.animate().scaleX(1.05f).scaleY(1.05f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
+                v.animate().scaleX(1.10f).scaleY(1.10f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
             }else{
                 v.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
             }
@@ -379,7 +379,7 @@ public class DetailActivity extends BaseActivity {
             @Override         //xuameng许大师制作焦点变大
 	        public void onFocusChange(View v, boolean hasFocus){
             if (hasFocus){
-                v.animate().scaleX(1.05f).scaleY(1.05f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
+                v.animate().scaleX(1.10f).scaleY(1.10f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
             }else{
                 v.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
             }
