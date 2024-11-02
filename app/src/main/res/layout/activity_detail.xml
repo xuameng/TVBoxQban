@@ -162,6 +162,8 @@
 						android:layout_marginLeft="@dimen/vs_10"
 						android:layout_marginStart="@dimen/vs_10"
                         android:layout_marginRight="@dimen/vs_10"
+						android:layout_marginTop="@dimen/vs_10"
+						android:layout_marginBottom="@dimen/vs_10" 
                         android:text="立即播放"
                         android:layout_marginEnd="@dimen/vs_10"/>
                     <TextView
@@ -173,6 +175,8 @@
                         android:focusable="true"
                         android:layout_width="@dimen/vs_120"
                         android:layout_height="@dimen/vs_40"
+						android:layout_marginTop="@dimen/vs_10"
+						android:layout_marginBottom="@dimen/vs_10" 
                         android:layout_marginRight="@dimen/vs_10"
                         android:text="快速搜索"
                         android:layout_marginEnd="@dimen/vs_10"/>
@@ -185,6 +189,8 @@
                         android:focusable="true"
                         android:layout_width="@dimen/vs_120"
                         android:layout_height="@dimen/vs_40"
+						android:layout_marginTop="@dimen/vs_10"
+						android:layout_marginBottom="@dimen/vs_10" 
                         android:layout_marginRight="@dimen/vs_10"
                         android:text="倒序"
                         android:layout_marginEnd="@dimen/vs_10"/>
@@ -197,6 +203,8 @@
                         android:focusable="true"
                         android:layout_width="@dimen/vs_120"
                         android:layout_height="@dimen/vs_40"
+						android:layout_marginTop="@dimen/vs_10"
+						android:layout_marginBottom="@dimen/vs_10" 
                         android:layout_marginRight="@dimen/vs_10"
                         android:layout_marginEnd="@dimen/vs_10"
                         android:text="加入收藏"/>
@@ -209,6 +217,10 @@
                         android:focusable="true"
                         android:layout_width="@dimen/vs_120"
                         android:layout_height="@dimen/vs_40"
+						android:layout_marginTop="@dimen/vs_10"
+						android:layout_marginBottom="@dimen/vs_10" 
+                        android:layout_marginRight="@dimen/vs_10"
+                        android:layout_marginEnd="@dimen/vs_10"
                         android:text="内容简介"/>
                 </LinearLayout>
             </LinearLayout>
