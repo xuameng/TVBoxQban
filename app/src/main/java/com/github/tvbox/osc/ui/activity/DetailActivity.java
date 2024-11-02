@@ -20,6 +20,8 @@ import android.widget.Toast;
 import android.content.ClipboardManager;
 import android.content.ClipData;
 
+import android.view.animation.BounceInterpolator;   //xuameng动画
+
 import androidx.fragment.app.FragmentContainerView;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -233,6 +235,19 @@ public class DetailActivity extends BaseActivity {
                 }
             }
         });
+
+		tvSort.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override         //xuameng许大师制作焦点变大
+	        public void onFocusChange(View v, boolean hasFocus){
+            if (hasFocus){
+                v.animate().scaleX(1.05f).scaleY(1.05f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
+            }else{
+                v.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
+            }
+	    }
+	    });
+        //xuameng : end
+
         tvPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -248,6 +263,18 @@ public class DetailActivity extends BaseActivity {
                 }
             }
         });
+
+		tvPlay.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override         //xuameng许大师制作焦点变大
+	        public void onFocusChange(View v, boolean hasFocus){
+            if (hasFocus){
+                v.animate().scaleX(1.05f).scaleY(1.05f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
+            }else{
+                v.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
+            }
+	    }
+	    });
+        //xuameng : end
 
         tvQuickSearch.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -280,6 +307,19 @@ public class DetailActivity extends BaseActivity {
                 });
             }
         });
+
+		tvQuickSearch.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override         //xuameng许大师制作焦点变大
+	        public void onFocusChange(View v, boolean hasFocus){
+            if (hasFocus){
+                v.animate().scaleX(1.05f).scaleY(1.05f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
+            }else{
+                v.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
+            }
+	    }
+	    });
+        //xuameng : end
+
         tvCollect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -295,6 +335,19 @@ public class DetailActivity extends BaseActivity {
                 }
             }
         });
+
+		tvCollect.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override         //xuameng许大师制作焦点变大
+	        public void onFocusChange(View v, boolean hasFocus){
+            if (hasFocus){
+                v.animate().scaleX(1.05f).scaleY(1.05f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
+            }else{
+                v.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
+            }
+	    }
+	    });
+        //xuameng : end
+
         tvPlayUrl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -321,6 +374,18 @@ public class DetailActivity extends BaseActivity {
                 });
             }
         });
+
+		tvDesc.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override         //xuameng许大师制作焦点变大
+	        public void onFocusChange(View v, boolean hasFocus){
+            if (hasFocus){
+                v.animate().scaleX(1.05f).scaleY(1.05f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
+            }else{
+                v.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
+            }
+	    }
+	    });
+        //xuameng : end
 
         tvDesc.setOnLongClickListener(new View.OnLongClickListener() {  //xuameng内容简介长按复制
             @Override
