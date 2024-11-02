@@ -17,7 +17,7 @@ public class DescDialog extends BaseDialog {
     
     public void setDescribe(String describe) {
     	TextView tvDescribe = findViewById(R.id.describe);
-        tvDescribe.setText(String.format("内容简介："), describe);
+        tvDescribe.setText("内容简介：" + describe);  //xuameng
         tvDescribe.requestFocus();
         tvDescribe.requestFocusFromTouch();
     }
