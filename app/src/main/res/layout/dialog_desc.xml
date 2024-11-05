@@ -16,7 +16,8 @@
             android:id="@+id/describe"
             android:padding="@dimen/vs_20"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/vs_600"
+			android:scrollbars="vertical"
             android:lineSpacingMultiplier="1.2"/>
     </androidx.core.widget.NestedScrollView>
 </FrameLayout>
