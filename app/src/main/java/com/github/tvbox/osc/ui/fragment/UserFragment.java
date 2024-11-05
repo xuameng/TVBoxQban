@@ -151,11 +151,20 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
                     VodInfo vodInfo = RoomDataManger.getVodInfo(vod.sourceKey, vod.id);
                     RoomDataManger.deleteVodRecord(vod.sourceKey, vodInfo);
                     Toast.makeText(mContext, "已删除当前记录", Toast.LENGTH_SHORT).show();
-               } else if (vod.id != null && !vod.id.isEmpty()) {
+               }  else if (vod.id != null && !vod.id.isEmpty()) {         //xuameng 修复首页聚汇推荐单击不能搜索的问题
                     Bundle bundle = new Bundle();
                     bundle.putString("id", vod.id);
                     bundle.putString("sourceKey", vod.sourceKey);
-                    jumpActivity(DetailActivity.class, bundle);
+                    if (vod.id.startsWith("msearch:")) {
+                        bundle.putString("title", vod.name);
+                      if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)){
+                        jumpActivity(FastSearchActivity.class, bundle);
+                      }else {
+						jumpActivity(SearchActivity.class, bundle);
+					  }
+		              }else {
+                        jumpActivity(DetailActivity.class, bundle);
+                    }                           //xuameng 修复首页聚汇推荐单击不能搜索的问题结束
                 } else {
                     Intent newIntent;
                     if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)){
