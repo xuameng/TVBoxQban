@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import com.github.tvbox.osc.R;
 import org.greenrobot.eventbus.EventBus;
 import org.jetbrains.annotations.NotNull;
+import android.text.method.ScrollingMovementMethod;   //XUAMENG滚动条
 
 public class DescDialog extends BaseDialog {    
 
