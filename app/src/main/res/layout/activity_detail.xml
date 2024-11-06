@@ -214,7 +214,7 @@
                         android:layout_marginTop="@dimen/vs_10"
                         android:layout_marginRight="@dimen/vs_10"
                         android:layout_marginBottom="@dimen/vs_10"
-                        android:text="☆ 收藏"
+                        android:text="☆收藏"
 			android:letterSpacing="0.2"
                         android:layout_marginEnd="@dimen/vs_10"/>
                     <TextView
