@@ -1,189 +1,153 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="@dimen/vs_600"
-    android:layout_height="wrap_content"
-    android:background="@drawable/shape_dialog_bg_main"
+<LinearLayout
     android:orientation="vertical"
+    android:background="@drawable/shape_dialog_bg_main"
     android:paddingLeft="@dimen/vs_20"
     android:paddingTop="@dimen/vs_10"
     android:paddingRight="@dimen/vs_20"
-    android:paddingBottom="@dimen/vs_10">
-
+    android:paddingBottom="@dimen/vs_10"
+    android:layout_width="@dimen/vs_600"
+    android:layout_height="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <TableLayout
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content">
-
         <TableRow
-            android:layout_width="match_parent"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/vs_10">
-
+            android:layout_marginTop="@dimen/vs_10"
+            android:layout_marginBottom="@dimen/vs_10"
+            android:layout_marginRight="@dimen/vs_10">
             <TextView
-                android:layout_width="@dimen/vs_160"
-                android:layout_height="match_parent"
-                android:layout_marginEnd="@dimen/vs_20"
-                android:layout_marginRight="@dimen/vs_20"
+                android:textSize="@dimen/ts_24"
+                android:textStyle="bold"
+                android:textColor="@color/color_80000000"
                 android:gravity="center"
-                android:shadowColor="@color/color_000000_60"
-                android:shadowDx="0"
-                android:shadowDy="0"
-                android:shadowRadius="5"
-                android:text="远端tvbox地址"
-                android:textColor="@color/color_FFFFFF"
-                android:textSize="@dimen/ts_20"
-                android:textStyle="bold" />
-
+                android:layout_width="@dimen/vs_214"
+                android:layout_height="fill_parent"
+                android:layout_marginRight="@dimen/vs_20"
+                android:text="远端聚汇影视地址"
+                android:layout_marginEnd="@dimen/vs_20"/>
             <EditText
-                android:id="@+id/etAddr"
+                android:textSize="@dimen/ts_24"
+                android:textColor="@color/color_80000000"
+                android:textColorHint="@color/color_6C3D3D3D"
+                android:gravity="center"
+                android:id="@id/etAddr"
+                android:background="@drawable/input_search_1"
+                android:paddingLeft="@dimen/vs_10"
+                android:paddingRight="@dimen/vs_10"
                 android:layout_width="@dimen/vs_200"
                 android:layout_height="@dimen/vs_50"
-                android:layout_weight="1"
-                android:background="@drawable/shape_live_channel_num"
-                android:gravity="center"
                 android:hint="推送 IP 地址"
-                android:inputType="text"
                 android:maxLines="1"
-                android:paddingLeft="@dimen/vs_10"
-                android:paddingRight="@dimen/vs_10"
-                android:textColor="@color/color_FFFFFF"
-                android:textColorHint="@color/color_FFFFFF_50"
-                android:textSize="@dimen/ts_20" />
-
+                android:layout_weight="1.0"
+                android:inputType="text"/>
             <TextView
+                android:textSize="@dimen/ts_24"
+                android:textStyle="bold"
+                android:textColor="@color/color_80000000"
+                android:gravity="end|center"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginStart="@dimen/vs_10"
+                android:layout_height="fill_parent"
                 android:layout_marginLeft="@dimen/vs_10"
-                android:layout_marginEnd="@dimen/vs_10"
                 android:layout_marginRight="@dimen/vs_10"
-                android:gravity="center_vertical|end"
-                android:shadowColor="@color/color_000000_60"
-                android:shadowDx="0"
-                android:shadowDy="0"
-                android:shadowRadius="5"
                 android:text=":"
-                android:textColor="@color/color_FFFFFF"
-                android:textSize="@dimen/ts_20"
-                android:textStyle="bold" />
-
+                android:layout_marginStart="@dimen/vs_10"
+                android:layout_marginEnd="@dimen/vs_10"/>
             <EditText
-                android:id="@+id/etPort"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/vs_50"
-                android:layout_gravity="center|end"
-                android:layout_weight="1"
-                android:background="@drawable/shape_live_channel_num"
+                android:textSize="@dimen/ts_24"
+                android:textColor="@color/color_80000000"
+                android:textColorHint="@color/color_6C3D3D3D"
                 android:gravity="center"
-                android:hint="端口"
-                android:inputType="text"
-                android:maxLines="1"
-                android:nextFocusDown="@id/btnConfirm"
+                android:layout_gravity="end|center"
+                android:id="@id/etPort"
+                android:background="@drawable/input_search_1"
                 android:paddingLeft="@dimen/vs_10"
                 android:paddingRight="@dimen/vs_10"
-                android:shadowColor="@color/color_000000_60"
-                android:shadowDx="0"
-                android:shadowDy="0"
-                android:shadowRadius="5"
-                android:textColor="@color/color_FFFFFF"
-                android:textColorHint="@color/color_FFFFFF_50"
-                android:textSize="@dimen/ts_20" />
-
+                android:nextFocusDown="@id/btnConfirm"
+                android:layout_width="@dimen/vs_70"
+                android:layout_height="@dimen/vs_50"
+                android:hint="端口"
+                android:maxLines="1"
+                android:layout_weight="1.0"
+                android:inputType="text"/>
         </TableRow>
-
         <TableRow
-            android:layout_width="match_parent"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/vs_10">
-
             <TextView
-                android:layout_width="@dimen/vs_160"
-                android:layout_height="match_parent"
-                android:layout_marginEnd="@dimen/vs_20"
-                android:layout_marginRight="@dimen/vs_20"
+                android:textSize="@dimen/ts_24"
+                android:textStyle="bold"
+                android:textColor="@color/color_80000000"
                 android:gravity="center"
-                android:shadowColor="@color/color_000000_60"
-                android:shadowDx="0"
-                android:shadowDy="0"
-                android:shadowRadius="5"
-                android:text="当前 IP"
-                android:textColor="@color/color_FFFFFF"
-                android:textSize="@dimen/ts_20"
-                android:textStyle="bold" />
-
+                android:layout_width="@dimen/vs_160"
+                android:layout_height="fill_parent"
+                android:paddingLeft="@dimen/vs_10"
+                android:paddingRight="@dimen/vs_10"
+                android:layout_marginRight="@dimen/vs_20"
+                android:text="当前 IP 地址   "
+                android:layout_marginEnd="@dimen/vs_20"/>
             <TextView
-                android:id="@+id/etCurrent"
+                android:textSize="@dimen/ts_24"
+                android:textColor="@color/color_80000000"
+                android:textColorHint="@color/color_6C3D3D3D"
+                android:gravity="center"
+                android:id="@id/etCurrent"
+                android:paddingLeft="@dimen/vs_20"
+                android:paddingRight="@dimen/vs_40"
+                android:focusable="false"
+                android:clickable="false"
                 android:layout_width="@dimen/vs_200"
                 android:layout_height="@dimen/vs_50"
-                android:layout_weight="1"
-                android:clickable="false"
-                android:focusable="false"
-                android:gravity="center"
-                android:inputType="text"
                 android:maxLines="1"
-                android:paddingLeft="@dimen/vs_10"
-                android:paddingRight="@dimen/vs_10"
-                android:textColor="@color/color_FFFFFF"
-                android:textColorHint="@color/color_FFFFFF_50"
-                android:textSize="@dimen/ts_20" />
-
+                android:layout_weight="1.0"
+                android:inputType="text"/>
             <TextView
+                android:textSize="@dimen/ts_24"
+                android:textStyle="bold"
+                android:textColor="@color/color_80000000"
+                android:gravity="end|center"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginStart="@dimen/vs_10"
+                android:layout_height="fill_parent"
                 android:layout_marginLeft="@dimen/vs_10"
-                android:layout_marginEnd="@dimen/vs_10"
                 android:layout_marginRight="@dimen/vs_10"
-                android:gravity="center_vertical|end"
-                android:shadowColor="@color/color_000000_60"
-                android:shadowDx="0"
-                android:shadowDy="0"
-                android:shadowRadius="5"
                 android:text=""
-                android:textColor="@color/color_FFFFFF"
-                android:textSize="@dimen/ts_20"
-                android:textStyle="bold" />
-
+                android:layout_marginStart="@dimen/vs_10"
+                android:layout_marginEnd="@dimen/vs_10"/>
             <TextView
-                android:id="@+id/btnConfirm"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/vs_50"
-                android:layout_gravity="center|end"
-                android:layout_weight="1"
-                android:background="@drawable/button_dialog_main"
-                android:clickable="true"
-                android:focusable="true"
+                android:textSize="@dimen/ts_24"
+                android:textColor="@android:color/white"
+                android:textColorHint="@color/color_6C3D3D3D"
                 android:gravity="center"
-                android:maxLines="1"
+                android:layout_gravity="end|center"
+                android:id="@id/btnConfirm"
+                android:background="@drawable/button_dialog_main"
+                android:focusable="true"
                 android:nextFocusDown="@id/btnConfirm"
-                android:paddingLeft="@dimen/vs_10"
-                android:paddingRight="@dimen/vs_10"
-                android:shadowColor="@color/color_000000_60"
-                android:shadowDx="0"
-                android:shadowDy="0"
-                android:shadowRadius="5"
+                android:clickable="true"
+                android:paddingLeft="13mm"
+                android:paddingRight="13mm"
+                android:layout_width="@dimen/vs_80"
+                android:layout_height="@dimen/vs_50"
                 android:text="推送"
-                android:textColor="@color/color_FFFFFF"
-                android:textColorHint="@color/color_FFFFFF_50"
-                android:textSize="@dimen/ts_20" />
-
+                android:maxLines="1"
+                android:layout_weight="1.0"/>
             <TextView
-                android:id="@+id/btnCancel"
+                android:textSize="@dimen/vs_20"
+                android:textColor="@android:color/white"
+                android:gravity="center"
+                android:id="@id/btnCancel"
+                android:background="@drawable/button_dialog_main"
+                android:padding="@dimen/vs_10"
+                android:focusable="true"
+                android:visibility="gone"
                 android:layout_width="@dimen/vs_120"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@drawable/button_dialog_main"
-                android:focusable="true"
-                android:gravity="center"
-                android:padding="@dimen/vs_10"
                 android:text="To-Do"
-                android:textColor="@android:color/white"
-                android:textSize="@dimen/vs_20"
-                android:visibility="gone" />
-
+                android:layout_weight="1.0"/>
         </TableRow>
-
     </TableLayout>
-
 </LinearLayout>
