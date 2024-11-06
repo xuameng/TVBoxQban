@@ -931,7 +931,7 @@ public class DetailActivity extends BaseActivity {
                                 if ("mirrored".equals(r))
                                     Toast.makeText(DetailActivity.this, "推送成功", Toast.LENGTH_SHORT).show();
                                 else
-                                    Toast.makeText(DetailActivity.this, "推送失败，远端tvbox版本不支持", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(DetailActivity.this, "推送失败，远端聚汇影视版本不支持", Toast.LENGTH_SHORT).show();
                             }
 
                             @Override
