@@ -51,6 +51,7 @@ import com.github.tvbox.osc.util.MD5;
 import com.github.tvbox.osc.util.SearchHelper;
 import com.github.tvbox.osc.util.SubtitleHelper;
 import com.github.tvbox.osc.ui.dialog.DescDialog;     //xuameng 内容简介
+import com.github.tvbox.osc.ui.dialog.PushDialog;    //xuameng远程推送
 import com.github.tvbox.osc.viewmodel.SourceViewModel;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -114,6 +115,7 @@ public class DetailActivity extends BaseActivity {
     private TextView tvPlayUrl;
     private TextView tvDes;
 	private TextView tvDesc;  //xuameng 内容简介
+	private TextView tvPush;   //xuameng 远程推送
     private TextView tvPlay;
     private TextView tvSort;
     private TextView tvQuickSearch;
@@ -174,6 +176,7 @@ public class DetailActivity extends BaseActivity {
         tvPlayUrl = findViewById(R.id.tvPlayUrl);
         tvDes = findViewById(R.id.tvDes);
 		tvDesc = findViewById(R.id.tvDesc);  //xuameng 内容简介
+		tvPush = findViewById(R.id.tvPush);   //xuameng 远程推送
         tvPlay = findViewById(R.id.tvPlay);
         tvSort = findViewById(R.id.tvSort);
         tvCollect = findViewById(R.id.tvCollect);
@@ -252,6 +255,14 @@ public class DetailActivity extends BaseActivity {
             public void onClick(View v) {
                 FastClickCheckUtil.check(v);
                 jumpToPlay();
+            }
+        });
+		
+		tvPush.setOnClickListener(new View.OnClickListener() {  //xuameng播放窗口中的远程推送
+            @Override
+            public void onClick(View v) {
+                PushDialog pushDialog = new PushDialog(mContext);
+                pushDialog.show();
             }
         });
 
@@ -1085,6 +1096,7 @@ public class DetailActivity extends BaseActivity {
         tvCollect.setFocusable(!fullWindows);
         tvQuickSearch.setFocusable(!fullWindows);
 		tvDesc.setFocusable(!fullWindows);      //xuameng 内容简介
+		tvPush.setFocusable(!fullWindows);    //xuameng 远程推送
         toggleSubtitleTextSize();
     }
 
