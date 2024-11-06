@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
     android:layout_width="@dimen/vs_600"
-    android:layout_height="@dimen/vs_400"
+    android:layout_height="fill_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <androidx.core.widget.NestedScrollView
@@ -17,9 +17,6 @@
             android:padding="@dimen/vs_20"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-			android:scrollbars="vertical"
-			android:scrollbarStyle="outsideInset"
-			android:scrollbarSize="20mm"
             android:lineSpacingMultiplier="1.2"/>
     </androidx.core.widget.NestedScrollView>
 </FrameLayout>
