@@ -266,6 +266,18 @@ public class DetailActivity extends BaseActivity {
             }
         });
 
+		tvPush.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override         //xuameng许大师制作焦点变大
+	        public void onFocusChange(View v, boolean hasFocus){
+            if (hasFocus){
+                v.animate().scaleX(1.10f).scaleY(1.10f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
+            }else{
+                v.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
+            }
+	    }
+	    });
+        //xuameng : end
+
         tvPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
