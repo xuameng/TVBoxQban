@@ -68,11 +68,11 @@ public class PushDialog extends BaseDialog {
                 String addr = etAddr.getText().toString();
                 String port = etPort.getText().toString();
                 if (addr == null || addr.length() == 0) {
-                    Toast.makeText(PushDialog.this.getContext(), "请输入远端tvbox地址", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PushDialog.this.getContext(), "请输入远端聚汇影视地址", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if (port == null || port.length() == 0) {
-                    Toast.makeText(PushDialog.this.getContext(), "请输入远端tvbox端口", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PushDialog.this.getContext(), "请输入远端聚汇影视端口", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 Hawk.put(HawkConfig.PUSH_TO_ADDR, addr);
