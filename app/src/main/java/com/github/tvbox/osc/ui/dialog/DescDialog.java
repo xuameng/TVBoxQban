@@ -7,7 +7,6 @@ import androidx.annotation.NonNull;
 import com.github.tvbox.osc.R;
 import org.greenrobot.eventbus.EventBus;
 import org.jetbrains.annotations.NotNull;
-import android.text.method.ScrollingMovementMethod;
 
 public class DescDialog extends BaseDialog {    
 
@@ -18,10 +17,6 @@ public class DescDialog extends BaseDialog {
     
     public void setDescribe(String describe) {
     	TextView tvDescribe = findViewById(R.id.describe);
-		tvDescribe.setMovementMethod(new ScrollingMovementMethod());
-		tvDescribe.setVerticalScrollBarEnabled(true);
-
-
         tvDescribe.setText("        内容简介：" + describe);  //xuameng
         tvDescribe.requestFocus();
         tvDescribe.requestFocusFromTouch();
