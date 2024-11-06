@@ -903,6 +903,47 @@ public class DetailActivity extends BaseActivity {
         }
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)              //xuameng远程推送
+    public void pushVod(RefreshEvent event) {
+        if (event.type == RefreshEvent.TYPE_PUSH_VOD) {
+            if (event.obj != null) {
+                List<String> data = (List<String>) event.obj;
+                OkGo.getInstance().cancelTag("pushVod");
+                OkGo.<String>post("http://" + data.get(0) + ":" + data.get(1) + "/action")
+                        .tag("pushVod")
+                        .params("id", vodId)
+                        .params("sourceKey", sourceKey)
+                        .params("do", "mirror")
+                        .execute(new AbsCallback<String>() {
+                            @Override
+                            public String convertResponse(okhttp3.Response response) throws Throwable {
+                                if (response.body() != null) {
+                                    return response.body().string();
+                                } else {
+                                    Toast.makeText(DetailActivity.this, "推送失败，填的地址可能不对", Toast.LENGTH_SHORT).show();
+                                    throw new IllegalStateException("网络请求错误");
+                                }
+                            }
+
+                            @Override
+                            public void onSuccess(Response<String> response) {
+                                String r = response.body();
+                                if ("mirrored".equals(r))
+                                    Toast.makeText(DetailActivity.this, "推送成功", Toast.LENGTH_SHORT).show();
+                                else
+                                    Toast.makeText(DetailActivity.this, "推送失败，远端tvbox版本不支持", Toast.LENGTH_SHORT).show();
+                            }
+
+                            @Override
+                            public void onError(Response<String> response) {
+                                super.onError(response);
+                                Toast.makeText(DetailActivity.this, "推送失败，填的地址可能不对", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+            }
+        }
+    }                //xuameng远程推送END
+
     private String searchTitle = "";
     private boolean hadQuickStart = false;
     private final List<Movie.Video> quickSearchData = new ArrayList<>();
@@ -1036,6 +1077,7 @@ public class DetailActivity extends BaseActivity {
         OkGo.getInstance().cancelTag("fenci");
         OkGo.getInstance().cancelTag("detail");
         OkGo.getInstance().cancelTag("quick_search");
+		OkGo.getInstance().cancelTag("pushVod");      //XUAMENG远程推送
         EventBus.getDefault().unregister(this);
     }
 
