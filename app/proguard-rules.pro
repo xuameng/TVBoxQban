@@ -83,7 +83,6 @@
 
 # Cronet支持http3   xuameng
 -keep class com.google.net.cronet.**{*;}
--keep class org.chromium.net.**{*;}
 
 # 保留我们自定义控件（继承自View）不被混淆
 -keep public class * extends android.view.View{
