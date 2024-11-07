@@ -64,16 +64,9 @@ public class PushDialog extends BaseDialog {
 			    int index = text.lastIndexOf(".");
 			  etAddr.getEditableText().delete(index, index + 1);
 			  isPointAdded = false;
-			} else {
-			 // 确保只有一个点
-			 if (text.contains(".") && !isPointAdded) {
-			     int index = text.indexOf(".") + 1;
-				    etAddr.getEditableText().insert(index, ".");
-				    isPointAdded = true;
-				} else {
-					isPointAdded = false;
-				}
-			 }
+			} else {				
+			  isPointAdded = true;				
+			}
 		  }
 		});            //xuameng输入监听完
         etPort = findViewById(R.id.etPort);
