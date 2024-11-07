@@ -319,7 +319,7 @@ public class RemoteServer extends NanoHTTPD {
                 while (enumerationNi.hasMoreElements()) {
                     NetworkInterface networkInterface = enumerationNi.nextElement();
                     String interfaceName = networkInterface.getDisplayName();
-                    (ETH_PATTERN.matcher(interfaceName).matches() || interfaceName.equals("wlan0")) {    //xuameng网卡问题
+                    if (ETH_PATTERN.matcher(interfaceName).matches() || interfaceName.equals("wlan0")) {    //xuameng网卡问题
                         Enumeration<InetAddress> enumIpAddr = networkInterface.getInetAddresses();
                         while (enumIpAddr.hasMoreElements()) {
                             InetAddress inetAddress = enumIpAddr.nextElement();
