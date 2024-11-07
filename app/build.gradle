@@ -8,7 +8,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 26
         versionCode 1
-        versionName '20241106-2222'
+        versionName '20241107-2222'
         multiDexEnabled true
         //设置room的Schema的位置
         javaCompileOptions {
@@ -104,4 +104,9 @@ dependencies {
     implementation 'com.googlecode.juniversalchardet:juniversalchardet:1.0.3'
       //工具类
     implementation 'com.blankj:utilcodex:1.31.0'
+
+     //xuameng 支持http3
+    implementation ('com.google.net.cronet:cronet-okhttp:0.1.0')
+//    implementation 'com.google.android.gms:play-services-cronet:18.0.1'
+    implementation ('org.chromium.net:cronet-embedded:101.4951.41')
 }
