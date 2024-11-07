@@ -105,5 +105,3 @@ dependencies {
       //工具类
     implementation 'com.blankj:utilcodex:1.31.0'
 }
-     //支持http3
-    implementation ('com.google.net.cronet:cronet-okhttp:0.1.0')
