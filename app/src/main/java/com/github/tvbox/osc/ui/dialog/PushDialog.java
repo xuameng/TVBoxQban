@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.text.TextWatcher;  //xuameng输入监听依赖
+import android.text.Editable;		//xuameng输入监听依赖
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -42,39 +43,39 @@ public class PushDialog extends BaseDialog {
         // Push IP / Port
         etAddr = findViewById(R.id.etAddr);
 
-	etAddr.addTextChangedListener(new TextWatcher() {         //xuameng输入监听
-    private boolean isPointAdded = false;
+		etAddr.addTextChangedListener(new TextWatcher() {         //xuameng输入监听
+		private boolean isPointAdded = false;
  
-    @Override
-    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+		@Override
+		public void beforeTextChanged(CharSequence s, int start, int count, int after) {
         // 在文本改变之前不需要做任何操作
-    }
+		}
  
-    @Override
-    public void onTextChanged(CharSequence s, int start, int before, int count) {
-        // 在文本改变时也不需要做任何操作
-    }
+		@Override
+		public void onTextChanged(CharSequence s, int start, int before, int count) {
+	    // 在文本改变时也不需要做任何操作
+		}
  
-    @Override
-    public void afterTextChanged(Editable s) {
+		@Override
+		public void afterTextChanged(Editable s) {
         String text = s.toString();
-        if (text.contains("..")) {
-            // 移除最后输入的点
-            int index = text.lastIndexOf(".");
-            etAddr.getEditableText().delete(index, index + 1);
-            isPointAdded = false;
-        } else {
-            // 确保只有一个点
-            if (text.contains(".") && !isPointAdded) {
-                int index = text.indexOf(".") + 1;
-                etAddr.getEditableText().insert(index, ".");
-                isPointAdded = true;
-            } else {
-                isPointAdded = false;
-            }
-        }
-    }
-});            //xuameng输入监听完
+		   if (text.contains("..")) {
+			    // 移除最后输入的点
+			    int index = text.lastIndexOf(".");
+			  etAddr.getEditableText().delete(index, index + 1);
+			  isPointAdded = false;
+			} else {
+			 // 确保只有一个点
+			 if (text.contains(".") && !isPointAdded) {
+			     int index = text.indexOf(".") + 1;
+				    etAddr.getEditableText().insert(index, ".");
+				    isPointAdded = true;
+				} else {
+					isPointAdded = false;
+				}
+			 }
+		  }
+		});            //xuameng输入监听完
         etPort = findViewById(R.id.etPort);
         String cfgAddr = Hawk.get(HawkConfig.PUSH_TO_ADDR, "");
         String cfgPort = Hawk.get(HawkConfig.PUSH_TO_PORT, "");
