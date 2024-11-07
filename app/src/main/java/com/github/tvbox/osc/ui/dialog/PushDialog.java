@@ -48,7 +48,6 @@ public class PushDialog extends BaseDialog {
  
 		@Override
 		public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-			Toast.makeText(PushDialog.this.getContext(), "聚汇影视提示：IP地址格式为222.222.222.222", Toast.LENGTH_SHORT).show();
         // 在文本改变之前不需要做任何操作
 		}
  
