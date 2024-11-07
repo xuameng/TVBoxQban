@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.text.TextWatcher;  //xuameng输入监听依赖
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -41,7 +42,7 @@ public class PushDialog extends BaseDialog {
         // Push IP / Port
         etAddr = findViewById(R.id.etAddr);
 
-	etAddr.addTextChangedListener(new TextWatcher() {
+	etAddr.addTextChangedListener(new TextWatcher() {         //xuameng输入监听
     private boolean isPointAdded = false;
  
     @Override
@@ -73,7 +74,7 @@ public class PushDialog extends BaseDialog {
             }
         }
     }
-});
+});            //xuameng输入监听完
         etPort = findViewById(R.id.etPort);
         String cfgAddr = Hawk.get(HawkConfig.PUSH_TO_ADDR, "");
         String cfgPort = Hawk.get(HawkConfig.PUSH_TO_PORT, "");
