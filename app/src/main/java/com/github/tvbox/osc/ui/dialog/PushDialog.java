@@ -61,13 +61,13 @@ public class PushDialog extends BaseDialog {
         if (text.contains("..")) {
             // 移除最后输入的点
             int index = text.lastIndexOf(".");
-            editText.getEditableText().delete(index, index + 1);
+            etAddr.getEditableText().delete(index, index + 1);
             isPointAdded = false;
         } else {
             // 确保只有一个点
             if (text.contains(".") && !isPointAdded) {
                 int index = text.indexOf(".") + 1;
-                editText.getEditableText().insert(index, ".");
+                etAddr.getEditableText().insert(index, ".");
                 isPointAdded = true;
             } else {
                 isPointAdded = false;
