@@ -40,6 +40,40 @@ public class PushDialog extends BaseDialog {
 
         // Push IP / Port
         etAddr = findViewById(R.id.etAddr);
+
+	etAddr.addTextChangedListener(new TextWatcher() {
+    private boolean isPointAdded = false;
+ 
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        // 在文本改变之前不需要做任何操作
+    }
+ 
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+        // 在文本改变时也不需要做任何操作
+    }
+ 
+    @Override
+    public void afterTextChanged(Editable s) {
+        String text = s.toString();
+        if (text.contains("..")) {
+            // 移除最后输入的点
+            int index = text.lastIndexOf(".");
+            editText.getEditableText().delete(index, index + 1);
+            isPointAdded = false;
+        } else {
+            // 确保只有一个点
+            if (text.contains(".") && !isPointAdded) {
+                int index = text.indexOf(".") + 1;
+                editText.getEditableText().insert(index, ".");
+                isPointAdded = true;
+            } else {
+                isPointAdded = false;
+            }
+        }
+    }
+});
         etPort = findViewById(R.id.etPort);
         String cfgAddr = Hawk.get(HawkConfig.PUSH_TO_ADDR, "");
         String cfgPort = Hawk.get(HawkConfig.PUSH_TO_PORT, "");
