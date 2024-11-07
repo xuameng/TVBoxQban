@@ -100,7 +100,7 @@ dependencies {
     implementation 'com.github.hedzr:android-file-chooser:v1.2.0-final'
     implementation 'commons-io:commons-io:2.11.0'
     implementation 'com.googlecode.juniversalchardet:juniversalchardet:1.0.3'
-    implementation(name:'xwalk_shared_library-23.53.589.4',ext:'aar')
+    implementation files('libs/xwalk_shared_library-23.53.589.4.aar')
       //工具类
     implementation 'com.blankj:utilcodex:1.31.0'
 
