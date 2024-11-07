@@ -58,12 +58,6 @@ android {
     }
 }
 
-repositories {      //xuameng
-    flatDir {
-        dirs 'libs'
-    }
-}
-
 dependencies {
     api fileTree(dir: "libs", include: ["*.jar"])
 
