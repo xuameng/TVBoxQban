@@ -234,10 +234,11 @@ public class HomeActivity extends BaseActivity {
                     bundle.putBoolean("useCache", true);
                     intent.putExtras(bundle);
                     HomeActivity.this.startActivity(intent);
-					Toast.makeText(HomeActivity.this, "清除缓存并重新加载主页数据！", Toast.LENGTH_SHORT).show();   
                 }else {
                     jumpActivity(SettingActivity.class);
-                }
+                }else if(topHide < 0){
+					Toast.makeText(HomeActivity.this, "当前没有加载主页！请联系许大师！", Toast.LENGTH_SHORT).show();
+				}
                 return true;
             }
         });
@@ -561,11 +562,7 @@ public class HomeActivity extends BaseActivity {
         int keyCode = event.getKeyCode();
         if (event.getAction() == KeyEvent.ACTION_DOWN) {
             if (keyCode == KeyEvent.KEYCODE_MENU) {
-                if(dataInitOk && jarInitOk){         
-                    showSiteSwitch();    //xuameng显示主页数据源
-                }else {
-                    jumpActivity(SettingActivity.class);   //xuameng主页加载缓慢时跳转到设置页面
-                }
+                showSiteSwitch();
             }
         } else if (event.getAction() == KeyEvent.ACTION_UP) {
 
