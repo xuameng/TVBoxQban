@@ -198,8 +198,7 @@ public class HomeActivity extends BaseActivity {
             }
         });
 
-		this.mGridView.setOnItemLongClickListener(new TvRecyclerView.setOnItemLongClickListener() {
-			@Override
+		this.mGridView.setOnItemLongClickListener(new TvRecyclerView.OnItemLongClickListener() {
             public void onItemLongClick(TvRecyclerView parent, View itemView, int position) {           //xuameng长按主页键清除并重新加载主页数据
                 if (itemView != null && currentSelected == position) {
                     BaseLazyFragment baseLazyFragment = fragments.get(currentSelected);
