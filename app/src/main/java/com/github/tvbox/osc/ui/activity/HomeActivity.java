@@ -195,6 +195,7 @@ public class HomeActivity extends BaseActivity {
                         showSiteSwitch();
                     }
                 }
+				return false;
             }
 
             public void onItemLongClick(TvRecyclerView parent, View itemView, int position) {           //xuameng长按主页键清除并重新加载主页数据
@@ -215,6 +216,7 @@ public class HomeActivity extends BaseActivity {
 						}
                     }
                 }
+				return true;
             }
         });
 
