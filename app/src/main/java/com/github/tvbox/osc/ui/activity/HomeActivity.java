@@ -196,6 +196,27 @@ public class HomeActivity extends BaseActivity {
                     }
                 }
             }
+
+            @Override
+            public void setOnLongClickListener(TvRecyclerView parent, View itemView, int position) {           //xuameng长按主页键
+                if (itemView != null && currentSelected == position) {
+                    BaseLazyFragment baseLazyFragment = fragments.get(currentSelected);
+                    if ((baseLazyFragment instanceof GridFragment) && !sortAdapter.getItem(position).filters.isEmpty()) {// 弹出筛选
+                        ((GridFragment) baseLazyFragment).showFilter();
+                    } else if (baseLazyFragment instanceof UserFragment) {
+						if(dataInitOk && jarInitOk){
+						Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+						intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+						Bundle bundle = new Bundle();
+						bundle.putBoolean("useCache", true);
+						intent.putExtras(bundle);
+						HomeActivity.this.startActivity(intent);
+						}else{
+						Toast.makeText(HomeActivity.this, "没有加载任何数据！", Toast.LENGTH_SHORT).show();
+						}
+                    }
+                }
+            }
         });
 
         this.mGridView.setOnInBorderKeyEventListener(new TvRecyclerView.OnInBorderKeyEventListener() {
@@ -234,6 +255,7 @@ public class HomeActivity extends BaseActivity {
                     bundle.putBoolean("useCache", true);
                     intent.putExtras(bundle);
                     HomeActivity.this.startActivity(intent);
+					Toast.makeText(HomeActivity.this, "清除缓存并重新加载！", Toast.LENGTH_SHORT).show();   //xuameng
                 }else {
                     jumpActivity(SettingActivity.class);
                 }
