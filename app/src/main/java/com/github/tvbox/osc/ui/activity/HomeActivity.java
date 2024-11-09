@@ -229,6 +229,9 @@ public class HomeActivity extends BaseActivity {
         tvName.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
+		    if (topHide < 0)
+			Toast.makeText(HomeActivity.this, "当前没有加载主页数据！请联系许大师！", Toast.LENGTH_SHORT).show(); 
+            return true;
                 if(dataInitOk && jarInitOk){
                     Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
