@@ -236,9 +236,7 @@ public class HomeActivity extends BaseActivity {
                     HomeActivity.this.startActivity(intent);
                 }else {
                     jumpActivity(SettingActivity.class);
-                }else if(topHide < 0){
-					Toast.makeText(HomeActivity.this, "当前没有加载主页！请联系许大师！", Toast.LENGTH_SHORT).show();
-				}
+                }
                 return true;
             }
         });
