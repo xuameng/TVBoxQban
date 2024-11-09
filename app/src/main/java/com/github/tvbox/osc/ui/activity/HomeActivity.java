@@ -198,7 +198,8 @@ public class HomeActivity extends BaseActivity {
             }
         });
 
-		this.mGridView.setOnItemLongListener(new TvRecyclerView.OnItemLongListener() {
+		this.mGridView.setOnItemLongClickListener(new TvRecyclerView.setOnItemLongClickListener() {
+			@Override
             public void onItemLongClick(TvRecyclerView parent, View itemView, int position) {           //xuameng长按主页键清除并重新加载主页数据
                 if (itemView != null && currentSelected == position) {
                     BaseLazyFragment baseLazyFragment = fragments.get(currentSelected);
@@ -216,8 +217,7 @@ public class HomeActivity extends BaseActivity {
 						Toast.makeText(HomeActivity.this, "没有加载任何数据！", Toast.LENGTH_SHORT).show();
 						}
                     }
-                }
-				return true;
+                }				
             }
 		});
 
