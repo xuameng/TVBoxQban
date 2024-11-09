@@ -197,7 +197,7 @@ public class HomeActivity extends BaseActivity {
                 }
             }
 
-            public void setOnLongClickListener(TvRecyclerView parent, View itemView, int position) {           //xuameng长按主页键
+            public void onItemLongClick(TvRecyclerView parent, View itemView, int position) {           //xuameng长按主页键清除并重新加载主页数据
                 if (itemView != null && currentSelected == position) {
                     BaseLazyFragment baseLazyFragment = fragments.get(currentSelected);
                     if ((baseLazyFragment instanceof GridFragment) && !sortAdapter.getItem(position).filters.isEmpty()) {// 弹出筛选
