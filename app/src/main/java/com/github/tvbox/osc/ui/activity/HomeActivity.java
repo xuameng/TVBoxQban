@@ -573,22 +573,6 @@ public class HomeActivity extends BaseActivity {
         return super.dispatchKeyEvent(event);
     }
 
-	
-	public boolean onKeyLongPress(KeyEvent event) {
-		        if (topHide < 0)
-            return false;
-		int keyCode = event.getKeyCode();
-		if (event.getAction() == KeyEvent.ACTION_DOWN) {
-		if (keyCode == KeyEvent.KEYCODE_MENU) {
-        // 处理回退键长按事件
-        // 例如，显示一个对话框或者Toast
-        Toast.makeText(this, "回退键长按", Toast.LENGTH_SHORT).show();
-        return true; // 返回true表示事件已被处理
-	  }
-    }
-    return super.onKeyLongPress(keyCode, event);
-}
-
     byte topHide = 0;
 
     private void changeTop(boolean hide) {
