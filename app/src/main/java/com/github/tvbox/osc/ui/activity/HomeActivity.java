@@ -195,9 +195,10 @@ public class HomeActivity extends BaseActivity {
                         showSiteSwitch();
                     }
                 }
-				return false;
             }
+        });
 
+		this.mGridView.setOnItemLongListener(new TvRecyclerView.OnItemLongListener() {
             public void onItemLongClick(TvRecyclerView parent, View itemView, int position) {           //xuameng长按主页键清除并重新加载主页数据
                 if (itemView != null && currentSelected == position) {
                     BaseLazyFragment baseLazyFragment = fragments.get(currentSelected);
@@ -218,7 +219,7 @@ public class HomeActivity extends BaseActivity {
                 }
 				return true;
             }
-        });
+		});
 
         this.mGridView.setOnInBorderKeyEventListener(new TvRecyclerView.OnInBorderKeyEventListener() {
             public final boolean onInBorderKeyEvent(int direction, View view) {
