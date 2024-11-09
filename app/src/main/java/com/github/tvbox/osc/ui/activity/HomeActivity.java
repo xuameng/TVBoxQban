@@ -255,7 +255,7 @@ public class HomeActivity extends BaseActivity {
                     bundle.putBoolean("useCache", true);
                     intent.putExtras(bundle);
                     HomeActivity.this.startActivity(intent);
-					Toast.makeText(HomeActivity.this, "清除缓存并重新加载！", Toast.LENGTH_SHORT).show();   //xuameng
+					Toast.makeText(HomeActivity.this, "清除缓存并重新加载主页数据！", Toast.LENGTH_SHORT).show();   //xuameng
                 }else {
                     jumpActivity(SettingActivity.class);
                 }
