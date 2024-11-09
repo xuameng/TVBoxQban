@@ -573,7 +573,7 @@ public class HomeActivity extends BaseActivity {
         return super.dispatchKeyEvent(event);
     }
 
-	@Override
+	
 	public boolean onKeyLongPress(KeyEvent event) {
 		        if (topHide < 0)
             return false;
