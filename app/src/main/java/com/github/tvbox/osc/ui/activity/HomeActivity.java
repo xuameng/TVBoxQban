@@ -198,28 +198,6 @@ public class HomeActivity extends BaseActivity {
             }
         });
 
-		this.mGridView.setOnItemLongListener(new TvRecyclerView.OnItemLongListener() {
-            public void onItemLongClick(TvRecyclerView parent, View itemView, int position) {           //xuameng长按主页键清除并重新加载主页数据
-                if (itemView != null && currentSelected == position) {
-                    BaseLazyFragment baseLazyFragment = fragments.get(currentSelected);
-                    if ((baseLazyFragment instanceof GridFragment) && !sortAdapter.getItem(position).filters.isEmpty()) {// 弹出筛选
-                        ((GridFragment) baseLazyFragment).showFilter();
-                    } else if (baseLazyFragment instanceof UserFragment) {
-						if(dataInitOk && jarInitOk){
-						Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-						intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-						Bundle bundle = new Bundle();
-						bundle.putBoolean("useCache", true);
-						intent.putExtras(bundle);
-						HomeActivity.this.startActivity(intent);
-						}else{
-						Toast.makeText(HomeActivity.this, "没有加载任何数据！", Toast.LENGTH_SHORT).show();
-						}
-                    }
-                }				
-            }
-		});
-
         this.mGridView.setOnInBorderKeyEventListener(new TvRecyclerView.OnInBorderKeyEventListener() {
             public final boolean onInBorderKeyEvent(int direction, View view) {
                 if (direction != View.FOCUS_DOWN) {
@@ -256,7 +234,7 @@ public class HomeActivity extends BaseActivity {
                     bundle.putBoolean("useCache", true);
                     intent.putExtras(bundle);
                     HomeActivity.this.startActivity(intent);
-					Toast.makeText(HomeActivity.this, "清除缓存并重新加载主页数据！", Toast.LENGTH_SHORT).show();   //xuameng
+					Toast.makeText(HomeActivity.this, "清除缓存并重新加载主页数据！", Toast.LENGTH_SHORT).show();   
                 }else {
                     jumpActivity(SettingActivity.class);
                 }
@@ -594,6 +572,22 @@ public class HomeActivity extends BaseActivity {
         }
         return super.dispatchKeyEvent(event);
     }
+
+	@Override
+	public boolean onKeyLongPress(KeyEvent event) {
+		        if (topHide < 0)
+            return false;
+		int keyCode = event.getKeyCode();
+		if (event.getAction() == KeyEvent.ACTION_DOWN) {
+		if (keyCode == KeyEvent.KEYCODE_MENU) {
+        // 处理回退键长按事件
+        // 例如，显示一个对话框或者Toast
+        Toast.makeText(this, "回退键长按", Toast.LENGTH_SHORT).show();
+        return true; // 返回true表示事件已被处理
+	  }
+    }
+    return super.onKeyLongPress(keyCode, event);
+}
 
     byte topHide = 0;
 
