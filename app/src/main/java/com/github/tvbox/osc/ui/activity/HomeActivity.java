@@ -234,6 +234,7 @@ public class HomeActivity extends BaseActivity {
                     bundle.putBoolean("useCache", true);
                     intent.putExtras(bundle);
                     HomeActivity.this.startActivity(intent);
+					Toast.makeText(HomeActivity.this, "清除缓存并重新加载主页数据！", Toast.LENGTH_SHORT).show();   
                 }else {
                     jumpActivity(SettingActivity.class);
                 }
@@ -560,7 +561,11 @@ public class HomeActivity extends BaseActivity {
         int keyCode = event.getKeyCode();
         if (event.getAction() == KeyEvent.ACTION_DOWN) {
             if (keyCode == KeyEvent.KEYCODE_MENU) {
-                showSiteSwitch();
+                if(dataInitOk && jarInitOk){         
+                    showSiteSwitch();    //xuameng显示主页数据源
+                }else {
+                    jumpActivity(SettingActivity.class);   //xuameng主页加载缓慢时跳转到设置页面
+                }
             }
         } else if (event.getAction() == KeyEvent.ACTION_UP) {
 
