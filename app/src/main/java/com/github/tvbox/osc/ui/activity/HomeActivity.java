@@ -197,7 +197,6 @@ public class HomeActivity extends BaseActivity {
                 }
             }
 
-            @Override
             public void setOnLongClickListener(TvRecyclerView parent, View itemView, int position) {           //xuameng长按主页键
                 if (itemView != null && currentSelected == position) {
                     BaseLazyFragment baseLazyFragment = fragments.get(currentSelected);
