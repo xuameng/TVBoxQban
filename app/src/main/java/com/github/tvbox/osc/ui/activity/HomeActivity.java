@@ -193,7 +193,9 @@ public class HomeActivity extends BaseActivity {
                         ((GridFragment) baseLazyFragment).showFilter();
                     } else if (baseLazyFragment instanceof UserFragment) {
                         showSiteSwitch();
-                    }
+                    } else{
+						Toast.makeText(HomeActivity.this, "当前没有加载主页数据！请联系许大师！", Toast.LENGTH_SHORT).show(); 
+					}
                 }
             }
         });
@@ -557,6 +559,7 @@ public class HomeActivity extends BaseActivity {
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         if (topHide < 0)
+			Toast.makeText(HomeActivity.this, "当前没有加载主页数据！请联系许大师！", Toast.LENGTH_SHORT).show(); 
             return false;
         int keyCode = event.getKeyCode();
         if (event.getAction() == KeyEvent.ACTION_DOWN) {
