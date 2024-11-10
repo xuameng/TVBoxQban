@@ -22,8 +22,7 @@ import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvicto
 import com.google.android.exoplayer2.upstream.cache.SimpleCache;
 import com.google.android.exoplayer2.util.Util;
 
-import com.github.tvbox.osc.util.FileUtils;      //xuameng exo  缓存
-import com.google.android.exoplayer2.database.StandaloneDatabaseProvider;  //xuameng exo 缓存
+import com.github.tvbox.osc.util.FileUtils;      //xuameng exo
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -128,7 +127,7 @@ public final class ExoMediaSourceHelper {
         return new SimpleCache(
                 new File(FileUtils.getExternalCachePath(), "exo-video-cache"),//缓存目录
                 new LeastRecentlyUsedCacheEvictor(512 * 1024 * 1024),//缓存大小，默认512M，使用LRU算法实现
-                new StandaloneDatabaseProvider(mAppContext));
+				new ExoDatabaseProvider(mAppContext));
     }
 
     /**
