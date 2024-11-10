@@ -222,9 +222,6 @@ public class HomeActivity extends BaseActivity {
                 }else {
                     jumpActivity(SettingActivity.class);
                 }
-				if(!dataInitOk && !jarInitOk){
-				Toast.makeText(HomeActivity.this, "当前没有成功加载主页数据！", Toast.LENGTH_SHORT).show();
-				}
             }
         });
         tvName.setOnLongClickListener(new View.OnLongClickListener() {
@@ -241,9 +238,6 @@ public class HomeActivity extends BaseActivity {
                 }else {
                     jumpActivity(SettingActivity.class);
                 }
-				if(!dataInitOk && !jarInitOk){
-				Toast.makeText(HomeActivity.this, "当前没有成功加载主页数据！", Toast.LENGTH_SHORT).show();
-				}
                 return true;
             }
         });
@@ -294,7 +288,6 @@ public class HomeActivity extends BaseActivity {
                         mHandler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                if (!useCacheConfig)
                                 if (!useCacheConfig) {
                                     if (Hawk.get(HawkConfig.HOME_DEFAULT_SHOW, false)) {
                                         jumpActivity(LivePlayActivity.class);
@@ -572,9 +565,6 @@ public class HomeActivity extends BaseActivity {
                 }else {
                     jumpActivity(SettingActivity.class);   //xuameng主页加载缓慢时跳转到设置页面
                 }
-				if(!dataInitOk && !jarInitOk){
-				Toast.makeText(HomeActivity.this, "当前没有成功加载主页数据！", Toast.LENGTH_SHORT).show();
-				}
             }
         } else if (event.getAction() == KeyEvent.ACTION_UP) {
 
@@ -694,5 +684,8 @@ public class HomeActivity extends BaseActivity {
             }, sites, sites.indexOf(ApiConfig.get().getHomeSourceBean()));
             dialog.show();
         }
+		else {
+			Toast.makeText(HomeActivity.this, "主页数据没有加载成功！", Toast.LENGTH_SHORT).show();
+		}
     }
 }
