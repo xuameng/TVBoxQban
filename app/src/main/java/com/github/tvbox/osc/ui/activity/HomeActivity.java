@@ -221,7 +221,8 @@ public class HomeActivity extends BaseActivity {
                     showSiteSwitch();
                 }else {
                     jumpActivity(SettingActivity.class);
-                }else if(!dataInitOk && !jarInitOk){
+                }
+				if(!dataInitOk && !jarInitOk){
 				Toast.makeText(HomeActivity.this, "当前没有成功加载主页数据！", Toast.LENGTH_SHORT).show();
 				}
             }
@@ -239,7 +240,8 @@ public class HomeActivity extends BaseActivity {
 					Toast.makeText(HomeActivity.this, "清除缓存并重新加载主页数据！", Toast.LENGTH_SHORT).show();   
                 }else {
                     jumpActivity(SettingActivity.class);
-                }else if(!dataInitOk && !jarInitOk){
+                }
+				if(!dataInitOk && !jarInitOk){
 				Toast.makeText(HomeActivity.this, "当前没有成功加载主页数据！", Toast.LENGTH_SHORT).show();
 				}
                 return true;
@@ -569,7 +571,8 @@ public class HomeActivity extends BaseActivity {
                     showSiteSwitch();    //xuameng显示主页数据源
                 }else {
                     jumpActivity(SettingActivity.class);   //xuameng主页加载缓慢时跳转到设置页面
-                }else if(!dataInitOk && !jarInitOk){
+                }
+				if(!dataInitOk && !jarInitOk){
 				Toast.makeText(HomeActivity.this, "当前没有成功加载主页数据！", Toast.LENGTH_SHORT).show();
 				}
             }
