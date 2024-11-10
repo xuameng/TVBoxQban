@@ -563,12 +563,11 @@ public class HomeActivity extends BaseActivity {
 					Toast.makeText(HomeActivity.this, "没有成功加载主页数据！", Toast.LENGTH_SHORT).show(); 
 				}
 
-                if(dataInitOk && jarInitOk){         
+                else if(dataInitOk && jarInitOk){         
                     showSiteSwitch();    //xuameng显示主页数据源
-                else {
+                }else {
                     jumpActivity(SettingActivity.class);   //xuameng主页加载缓慢时跳转到设置页面
                 }
-			  }
             }
         } else if (event.getAction() == KeyEvent.ACTION_UP) {
 
