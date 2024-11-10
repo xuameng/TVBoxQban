@@ -22,6 +22,8 @@ import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvicto
 import com.google.android.exoplayer2.upstream.cache.SimpleCache;
 import com.google.android.exoplayer2.util.Util;
 
+import com.github.tvbox.osc.util.FileUtils;      //xuameng exo
+
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.Iterator;
