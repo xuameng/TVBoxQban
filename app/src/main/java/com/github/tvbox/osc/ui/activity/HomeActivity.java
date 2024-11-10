@@ -556,16 +556,19 @@ public class HomeActivity extends BaseActivity {
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        if (topHide < 0)
-            return false;
         int keyCode = event.getKeyCode();
         if (event.getAction() == KeyEvent.ACTION_DOWN) {
             if (keyCode == KeyEvent.KEYCODE_MENU) {
+				if (topHide < 0){
+					Toast.makeText(HomeActivity.this, "没有成功加载主页数据！", Toast.LENGTH_SHORT).show(); 
+				}
+
                 if(dataInitOk && jarInitOk){         
                     showSiteSwitch();    //xuameng显示主页数据源
-                }else {
+                else {
                     jumpActivity(SettingActivity.class);   //xuameng主页加载缓慢时跳转到设置页面
                 }
+			  }
             }
         } else if (event.getAction() == KeyEvent.ACTION_UP) {
 
