@@ -60,6 +60,8 @@ import com.orhanobut.hawk.Hawk;
 import com.owen.tvrecyclerview.widget.TvRecyclerView;
 import com.owen.tvrecyclerview.widget.V7GridLayoutManager;
 import com.owen.tvrecyclerview.widget.V7LinearLayoutManager;
+import com.github.tvbox.osc.util.FileUtils;  //xuameng 清缓存
+import java.io.File;   //xuameng 清缓存
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -218,7 +220,11 @@ public class HomeActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 if(dataInitOk && jarInitOk){
-                    showSiteSwitch();
+					File dir = getCacheDir();
+					FileUtils.recursiveDelete(dir);
+					dir = getExternalCacheDir();
+					FileUtils.recursiveDelete(dir);
+					Toast.makeText(HomeActivity.this, "清空缓存成功！", Toast.LENGTH_SHORT).show(); 
                 }else {
                     jumpActivity(SettingActivity.class);
                 }
@@ -561,13 +567,17 @@ public class HomeActivity extends BaseActivity {
         if (event.getAction() == KeyEvent.ACTION_DOWN) {
             if (keyCode == KeyEvent.KEYCODE_MENU) {
                 if(dataInitOk && jarInitOk){           //xuameng MENU键更改为重新加载主页数据
+					File dir = getCacheDir();
+					FileUtils.recursiveDelete(dir);
+					dir = getExternalCacheDir();
+					FileUtils.recursiveDelete(dir);
                     Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     Bundle bundle = new Bundle();
                     bundle.putBoolean("useCache", true);
                     intent.putExtras(bundle);
                     HomeActivity.this.startActivity(intent);
-					Toast.makeText(HomeActivity.this, "重新加载主页数据！", Toast.LENGTH_SHORT).show(); 
+					Toast.makeText(HomeActivity.this, "清空缓存并重新加载主页数据！", Toast.LENGTH_SHORT).show(); 
                 }else {
                     jumpActivity(SettingActivity.class);   //xuameng主页加载缓慢时跳转到设置页面
                 }
