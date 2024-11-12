@@ -18,9 +18,6 @@ import java.io.OutputStream;
 
 public class FileUtils {
 
-    public static File open(String str) {        //xuameng exo cache
-        return new File(getExternalCachePath() + "/qjscache_" + str + ".js");
-    }
     public static boolean writeSimple(byte[] data, File dst) {
         try {
             if (dst.exists())
@@ -132,16 +129,6 @@ public class FileUtils {
     public static File getCacheDir() {
         return App.getInstance().getCacheDir();
     }
-    public static File getExternalCacheDir() {       //xuameng
-        return App.getInstance().getExternalCacheDir();
-    }
-    public static String getExternalCachePath() {
-        File externalCacheDir = getExternalCacheDir();
-        if (externalCacheDir == null){
-            return getCachePath();
-        }
-        return externalCacheDir.getAbsolutePath();
-    }
     public static String getCachePath() {
         return getCacheDir().getAbsolutePath();
     }
@@ -179,10 +166,14 @@ public class FileUtils {
     }
 
     public static void cleanPlayerCache() {
-        String ijkCachePath = getCachePath() + "/ijkcaches/";
-        String thunderCachePath = getCachePath() + "/thunder/";
+        String ijkCachePath = getCachePath() + "ijkcaches";
+        String thunderCachePath = getCachePath() + "thunder";
+		String exoCachePath = getCachePath() + "exo-video-cache";     //xuameng exo缓存
+		String jpaCachePath = getCachePath() + "jpali";     //xuameng jp缓存
         File ijkCacheDir = new File(ijkCachePath);
         File thunderCacheDir = new File(thunderCachePath);
+		File exoCachePathDir = new File(exoCachePath);       //xuameng exo缓存
+		File jpaCachePathDir = new File(jpaCachePath + File.separator + "Downloads");       //xuameng jp缓存
 
         try {
             if (ijkCacheDir.exists()) cleanDirectory(ijkCacheDir);
@@ -191,6 +182,16 @@ public class FileUtils {
         }
         try {
             if (thunderCacheDir.exists()) cleanDirectory(thunderCacheDir);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            if (exoCachePathDir.exists()) cleanDirectory(exoCachePathDir);    //xuameng exo缓存
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+		try {
+            if (jpaCachePathDir.exists()) cleanDirectory(jpaCachePathDir);    //xuameng jp缓存
         } catch (Exception e) {
             e.printStackTrace();
         }
