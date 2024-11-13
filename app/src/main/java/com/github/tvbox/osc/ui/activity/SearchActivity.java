@@ -398,53 +398,35 @@ public class SearchActivity extends BaseActivity {
      * 拼音联想
      */
     private void loadRec(String key) {
-//        OkGo.<String>get("https://s.video.qq.com/smartbox")
-//                .params("plat", 2)
-//                .params("ver", 0)
-//                .params("num", 20)
-//                .params("otype", "json")
-//                .params("query", key)
-//                .execute(new AbsCallback<String>() {
-//                    @Override
-//                    public void onSuccess(Response<String> response) {
-//                        try {
-//                            ArrayList<String> hots = new ArrayList<>();
-//                            String result = response.body();
-//                            JsonObject json = JsonParser.parseString(result.substring(result.indexOf("{"), result.lastIndexOf("}") + 1)).getAsJsonObject();
-//                            JsonArray itemList = json.get("item").getAsJsonArray();
-//                            for (JsonElement ele : itemList) {
-//                                JsonObject obj = (JsonObject) ele;
-//                                hots.add(obj.get("word").getAsString().trim().replaceAll("<|>|《|》|-", "").split(" ")[0]);
-//                            }
-//                            wordAdapter.setNewData(hots);
-//                        } catch (Throwable th) {
-//                            th.printStackTrace();
-//                        }
-//                    }
-//
-//                    @Override
-//                    public String convertResponse(okhttp3.Response response) throws Throwable {
-//                        return response.body().string();
-//                    }
-//                });
-        OkGo.<String>get("https://suggest.video.iqiyi.com/")
-                .params("if", "mobile")
+        OkGo.get("https://tv.aiseet.atianqi.com/i-tvbin/qtv_video/search/get_search_smart_box")
+                .params("format", "json")
+                .params("page_num", 0)
+                .params("page_size", 50) //随便改
                 .params("key", key)
-                .execute(new AbsCallback<String>() {
+                .execute(new AbsCallback() {
                     @Override
-                    public void onSuccess(Response<String> response) {
+                    public void onSuccess(Response response) {
                         try {
-                            ArrayList<String> hots = new ArrayList<>();
-                            String result = response.body();
-                            JsonObject json = JsonParser.parseString(result).getAsJsonObject();
-                            JsonArray itemList = json.get("data").getAsJsonArray();
-                            for (JsonElement ele : itemList) {
-                                JsonObject obj = (JsonObject) ele;
-                                hots.add(obj.get("name").getAsString().trim().replaceAll("<|>|《|》|-", ""));
+                            ArrayList hots = new ArrayList<>();
+                            String result = (String) response.body();
+                            Gson gson = new Gson();
+                            JsonElement json = gson.fromJson(result, JsonElement.class);
+                            JsonArray groupDataArr = json.getAsJsonObject()
+                                    .get("data").getAsJsonObject()
+                                    .get("search_data").getAsJsonObject()
+                                    .get("vecGroupData").getAsJsonArray()
+                                    .get(0).getAsJsonObject()
+                                    .get("group_data").getAsJsonArray();
+                            for (JsonElement groupDataElement : groupDataArr) {
+                                JsonObject groupData = groupDataElement.getAsJsonObject();
+                                String keywordTxt = groupData.getAsJsonObject("dtReportInfo")
+                                        .getAsJsonObject("reportData")
+                                        .get("keyword_txt").getAsString();
+                                hots.add(keywordTxt.trim());
                             }
-                            wordAdapter.setNewData(hots);        //xuameng 热门搜索
-							tHotSearchText.setText("猜你想搜"); //xuameng 热门搜索
-                            mGridViewWord.smoothScrollToPosition(0); //xuameng 热门搜索
+                            tHotSearchText.setText("猜你想搜");
+                            wordAdapter.setNewData(hots);
+                            mGridViewWord.smoothScrollToPosition(0);
                         } catch (Throwable th) {
                             th.printStackTrace();
                         }
@@ -476,6 +458,10 @@ public class SearchActivity extends BaseActivity {
             }
         }
         // 加载热词
+        if (hots.size() != 0) {
+            wordAdapter.setNewData(hots);
+            return;
+        }
         OkGo.<String>get("https://node.video.qq.com/x/api/hot_search")
 //        OkGo.<String>get("https://api.web.360kan.com/v1/rank")
 //                .params("cat", "1")
@@ -492,11 +478,7 @@ public class SearchActivity extends BaseActivity {
                                 JsonObject obj = (JsonObject) ele;
                                 hots.add(obj.get("title").getAsString().trim().replaceAll("<|>|《|》|-", "").split(" ")[0]);
                             }
- //                           wordAdapter.setNewData(hots);
-							if (hots.size() != 0) {
-							wordAdapter.setNewData(hots);   //xuameng防止为空
-							return;
-							}
+							wordAdapter.setNewData(hots);   
                         } catch (Throwable th) {
                             th.printStackTrace();
                         }
