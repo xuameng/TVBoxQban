@@ -198,9 +198,6 @@
     <methods>;
 }
 
-#gson  xuameng热门搜索
--keep class com.google.gson.**{*;}
-
 -keep class com.github.catvod.crawler.*{*;}
 # 迅雷下载模块
 -keep class com.xunlei.downloadlib.** {*;}
