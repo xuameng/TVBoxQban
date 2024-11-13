@@ -197,6 +197,7 @@ public class SearchActivity extends BaseActivity {
 				keyword = wordAdapter.getItem(position);
 				String[] split = keyword.split("\uFEFF");
 				keyword = split[split.length - 1];
+				etSearch.setText(keyword);
                 if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)){
                     Bundle bundle = new Bundle();
                     bundle.putString("title", keyword);
