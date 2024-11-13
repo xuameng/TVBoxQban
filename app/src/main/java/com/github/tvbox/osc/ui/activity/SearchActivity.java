@@ -98,6 +98,7 @@ public class SearchActivity extends BaseActivity {
 	private ImageView clearHistory;  //xuameng搜索历史
 	private SearchPresenter searchPresenter;  //xuameng搜索历史
 	private TextView tHotSearchText;  //xuameng热门搜索
+	private static ArrayList<String> hots = new ArrayList<>();  //xuameng热门搜索
 
     private static HashMap<String, String> mCheckSources = null;
     private SearchCheckboxDialog mSearchCheckboxDialog = null;
