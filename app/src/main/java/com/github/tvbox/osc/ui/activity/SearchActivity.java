@@ -97,6 +97,7 @@ public class SearchActivity extends BaseActivity {
 	public String keyword;  //xuameng搜索历史
 	private ImageView clearHistory;  //xuameng搜索历史
 	private SearchPresenter searchPresenter;  //xuameng搜索历史
+	private static ArrayList<String> hots = new ArrayList<>(); //xuameng搜索历史
 
     private static HashMap<String, String> mCheckSources = null;
     private SearchCheckboxDialog mSearchCheckboxDialog = null;
