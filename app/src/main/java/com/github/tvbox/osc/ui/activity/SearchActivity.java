@@ -187,16 +187,13 @@ public class SearchActivity extends BaseActivity {
         wordAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-				keyword = wordAdapter.getItem(position);
-				String[] split = keyword.split("\uFEFF");
-				keyword = split[split.length - 1];
                 if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)){
                     Bundle bundle = new Bundle();
-                    bundle.putString("title", keyword);
+                    bundle.putString("title", wordAdapter.getItem(position));
 					refreshSearchHistory(keyword);  //xuameng搜索历史
                     jumpActivity(FastSearchActivity.class, bundle);
                 }else {
-                    search(keyword);
+                    search(wordAdapter.getItem(position));
                 }
             }
         });
@@ -238,14 +235,15 @@ public class SearchActivity extends BaseActivity {
             public void onClick(View v) {
                 FastClickCheckUtil.check(v);
                 hasKeyBoard = true;
-				if (!TextUtils.isEmpty(keyword)) {
+                String wd = etSearch.getText().toString().trim();
+				if (!TextUtils.isEmpty(wd)) {
                     if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)){
                         Bundle bundle = new Bundle();
-                        bundle.putString("title", keyword);
-						refreshSearchHistory(keyword);  //xuameng搜索历史
+                        bundle.putString("title", wd);
+						refreshSearchHistory(wd);  //xuameng搜索历史
                         jumpActivity(FastSearchActivity.class, bundle);
                     }else {
-                        search(keyword);
+                        search(wd);
                     }
                 } else {
                     Toast.makeText(mContext, "输入内容不能为空", Toast.LENGTH_SHORT).show();
@@ -279,15 +277,14 @@ public class SearchActivity extends BaseActivity {
             }
         });
 
-        etSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                Toast.makeText(mContext,"点击",Toast.LENGTH_SHORT).show();
-                if (!hasKeyBoard) enableKeyboard(SearchActivity.this);
-                openSystemKeyBoard();//再次尝试拉起键盘
-                SearchActivity.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-            }
-        });
+//        etSearch.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                enableKeyboard(SearchActivity.this);
+//                openSystemKeyBoard();//再次尝试拉起键盘
+//                SearchActivity.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+//            }
+//        });
 
 //        etSearch.setOnFocusChangeListener(tvSearchFocusChangeListener);
 
@@ -447,7 +444,6 @@ public class SearchActivity extends BaseActivity {
         initCheckedSourcesForSearch();
         Intent intent = getIntent();
 		initSearchHistory();  //xuameng 搜索历史
-		showSuccess();  //xuameng 搜索历史
 		mGridView.setVisibility(View.GONE);
         if (intent != null && intent.hasExtra("title")) {
             String title = intent.getStringExtra("title");
@@ -578,7 +574,7 @@ public class SearchActivity extends BaseActivity {
         }
         if (siteKey.size() <= 0) {
             Toast.makeText(mContext, "没有指定搜索源", Toast.LENGTH_SHORT).show();
-            //showEmpty();  //xuameng
+            showEmpty();  //xuameng
             return;
         }
         for (String key : siteKey) {
@@ -616,14 +612,14 @@ public class SearchActivity extends BaseActivity {
                 searchAdapter.setNewData(data);
                 tv_history.setVisibility(View.GONE);    //xuameng搜索历史
                 searchTips.setVisibility(View.GONE);  //xuameng搜索历史
-                llWord.setVisibility(View.GONE);   //xuameng搜索历史
+//                llWord.setVisibility(View.GONE);   //xuameng搜索历史
             }
         }
 
         int count = allRunCount.decrementAndGet();
         if (count <= 0) {
             if (searchAdapter.getData().size() <= 0) {
-                showEmpty();
+//                showEmpty();
             }
             cancel();
         }
