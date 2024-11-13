@@ -57,6 +57,7 @@ import com.yang.flowlayoutlibrary.FlowLayout;  //xuameng搜索历史
 import android.text.TextWatcher;  //xuameng搜索历史
 import android.text.Editable;		//xuameng搜索历史
 import com.github.tvbox.osc.data.SearchPresenter;  //xuameng搜索历史
+import com.github.tvbox.osc.cache.SearchHistory;   //xuameng搜索历史
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -185,6 +186,7 @@ public class SearchActivity extends BaseActivity {
                 if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)){
                     Bundle bundle = new Bundle();
                     bundle.putString("title", wordAdapter.getItem(position));
+					refreshSearchHistory(keyword);  //xuameng搜索历史
                     jumpActivity(FastSearchActivity.class, bundle);
                 }else {
                     search(wordAdapter.getItem(position));
@@ -234,6 +236,7 @@ public class SearchActivity extends BaseActivity {
                     if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)){
                         Bundle bundle = new Bundle();
                         bundle.putString("title", wd);
+						refreshSearchHistory(keyword);  //xuameng搜索历史
                         jumpActivity(FastSearchActivity.class, bundle);
                     }else {
                         search(wd);
@@ -329,9 +332,9 @@ public class SearchActivity extends BaseActivity {
         });
     }
 
-    private void refreshSearchHistory(String keyword2) {         //xuameng 搜索历史
-        if (!this.searchPresenter.keywordsExist(keyword2)) {
-            this.searchPresenter.addKeyWordsTodb(keyword2);
+    private void refreshSearchHistory(String keyword) {         //xuameng 搜索历史
+        if (!this.searchPresenter.keywordsExist(keyword)) {
+            this.searchPresenter.addKeyWordsTodb(keyword);
             initSearchHistory();
         }
     }
@@ -430,12 +433,14 @@ public class SearchActivity extends BaseActivity {
         Intent intent = getIntent();
 		initSearchHistory();  //xuameng 搜索历史
 		showSuccess();  //xuameng 搜索历史
+		mGridView.setVisibility(View.GONE);
         if (intent != null && intent.hasExtra("title")) {
             String title = intent.getStringExtra("title");
             showLoading();
             if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)){
                 Bundle bundle = new Bundle();
                 bundle.putString("title", title);
+				refreshSearchHistory(title);  //xuameng 搜索历史
                 jumpActivity(FastSearchActivity.class, bundle);
             }else {
                 search(title);
@@ -480,6 +485,7 @@ public class SearchActivity extends BaseActivity {
             if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)){
                 Bundle bundle = new Bundle();
                 bundle.putString("title", title);
+				refreshSearchHistory(title);   //xuameng 搜索历史
                 jumpActivity(FastSearchActivity.class, bundle);
             }else{
                 search(title);
@@ -515,8 +521,9 @@ public class SearchActivity extends BaseActivity {
         showLoading();
         etSearch.setText(title);
         this.searchTitle = title;
-        mGridView.setVisibility(View.INVISIBLE);
+        mGridView.setVisibility(View.GONE); //xuameng 搜索历史
         searchAdapter.setNewData(new ArrayList<>());
+		refreshSearchHistory(title);  //xuameng 搜索历史
         searchResult();
     }
 
