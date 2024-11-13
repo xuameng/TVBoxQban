@@ -97,6 +97,7 @@ public class SearchActivity extends BaseActivity {
 	public String keyword;  //xuameng搜索历史
 	private ImageView clearHistory;  //xuameng搜索历史
 	private SearchPresenter searchPresenter;  //xuameng搜索历史
+	private TextView tHotSearchText;  //xuameng热门搜索
 
     private static HashMap<String, String> mCheckSources = null;
     private SearchCheckboxDialog mSearchCheckboxDialog = null;
@@ -176,6 +177,7 @@ public class SearchActivity extends BaseActivity {
 		llWord = findViewById(R.id.llWord);	//xuameng搜索历史
 		tv_history = findViewById(R.id.tv_history);  //xuameng搜索历史
 		clearHistory = findViewById(R.id.clear_history);  //xuameng搜索历史
+		tHotSearchText = findViewById(R.id.mHotSearch_text);   //xuameng热门搜索
         tvClear = findViewById(R.id.tvClear);
         mGridView = findViewById(R.id.mGridView);
         keyboard = findViewById(R.id.keyBoardRoot);
@@ -257,6 +259,8 @@ public class SearchActivity extends BaseActivity {
             public void onClick(View v) {
                 FastClickCheckUtil.check(v);
                 etSearch.setText("");
+                mGridViewWord.smoothScrollToPosition(0);
+                tHotSearchText.setText("热门搜索");
             }
         });
 
@@ -315,6 +319,11 @@ public class SearchActivity extends BaseActivity {
                     }
                     if (text.length() > 0) {
                         loadRec(text);
+                    }
+                    if (text.length() == 0) {
+                        wordAdapter.setNewData(hots);
+                        mGridViewWord.smoothScrollToPosition(0);
+                        tHotSearchText.setText("热门搜索");
                     }
                 } else if (pos == 0) {
                     remoteDialog = new RemoteDialog(mContext);
@@ -430,7 +439,9 @@ public class SearchActivity extends BaseActivity {
                                 JsonObject obj = (JsonObject) ele;
                                 hots.add(obj.get("name").getAsString().trim().replaceAll("<|>|《|》|-", ""));
                             }
-                            wordAdapter.setNewData(hots);
+                            wordAdapter.setNewData(hots);        //xuameng 热门搜索
+							tHotSearchText.setText("猜你想搜"); //xuameng 热门搜索
+                            mGridViewWord.smoothScrollToPosition(0); //xuameng 热门搜索
                         } catch (Throwable th) {
                             th.printStackTrace();
                         }
@@ -552,6 +563,7 @@ public class SearchActivity extends BaseActivity {
             allRunCount.incrementAndGet();
         }
         if (siteKey.size() <= 0) {
+			Toast.makeText(mContext, "没有指定搜索源", Toast.LENGTH_SHORT).show();
             return;
         }           //xuameng修复不选择搜索源还进行搜索，还显示搜索动画完
 
@@ -601,8 +613,8 @@ public class SearchActivity extends BaseActivity {
         if (siteKey.size() <= 0) {
             Toast.makeText(mContext, "没有指定搜索源", Toast.LENGTH_SHORT).show();
    //         showEmpty();  //xuameng
-                    tv_history.setVisibility(View.VISIBLE);      //xuameng修复BUG
-                    searchTips.setVisibility(View.VISIBLE);
+            tv_history.setVisibility(View.VISIBLE);      //xuameng修复BUG
+            searchTips.setVisibility(View.VISIBLE);
             return;
         }
         for (String key : siteKey) {
@@ -647,9 +659,9 @@ public class SearchActivity extends BaseActivity {
         int count = allRunCount.decrementAndGet();
         if (count <= 0) {
             if (searchAdapter.getData().size() <= 0) {
-   //             showEmpty();
-                    tv_history.setVisibility(View.VISIBLE);   //xuameng修复BUG
-                    searchTips.setVisibility(View.VISIBLE);
+                showEmpty();
+                tv_history.setVisibility(View.VISIBLE);   //xuameng修复BUG
+                searchTips.setVisibility(View.VISIBLE);
             }
             cancel();
         }
