@@ -56,16 +56,10 @@ import com.owen.tvrecyclerview.widget.V7LinearLayoutManager;
 import com.yang.flowlayoutlibrary.FlowLayout;  //xuameng搜索历史
 import android.text.TextWatcher;  //xuameng搜索历史
 import android.text.Editable;		//xuameng搜索历史
-import android.view.ViewGroup;   //xuameng搜索历史
 import com.github.tvbox.osc.data.SearchPresenter;  //xuameng搜索历史
 import com.github.tvbox.osc.cache.SearchHistory;   //xuameng搜索历史
-import androidx.annotation.NonNull;        //xuameng搜索历史
 import androidx.constraintlayout.widget.ConstraintLayout; //xuameng搜索历史
-import androidx.recyclerview.widget.DiffUtil;  //xuameng搜索历史
 import com.github.tvbox.osc.event.InputMsgEvent;  //xuameng搜索历史
-import com.github.tvbox.osc.ui.adapter.SelectDialogAdapter; //xuameng搜索历史
-import com.github.tvbox.osc.ui.dialog.SelectDialog;  //xuameng搜索历史
-import org.jetbrains.annotations.NotNull;   //xuameng搜索历史
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
