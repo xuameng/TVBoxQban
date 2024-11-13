@@ -59,7 +59,6 @@ import android.text.Editable;		//xuameng搜索历史
 import com.github.tvbox.osc.data.SearchPresenter;  //xuameng搜索历史
 import com.github.tvbox.osc.cache.SearchHistory;   //xuameng搜索历史
 import androidx.constraintlayout.widget.ConstraintLayout; //xuameng搜索历史
-import com.github.tvbox.osc.event.InputMsgEvent;  //xuameng搜索历史
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -98,7 +97,6 @@ public class SearchActivity extends BaseActivity {
 	public String keyword;  //xuameng搜索历史
 	private ImageView clearHistory;  //xuameng搜索历史
 	private SearchPresenter searchPresenter;  //xuameng搜索历史
-	private TextView clearHistory;  //xuameng搜索历史
 
     private static HashMap<String, String> mCheckSources = null;
     private SearchCheckboxDialog mSearchCheckboxDialog = null;
@@ -281,15 +279,6 @@ public class SearchActivity extends BaseActivity {
             }
         });
 
-        etSearch.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_ENTER) {
-                    hideSystemKeyBoard();
-                }
-                return false;
-            }
-        });
         etSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -297,33 +286,6 @@ public class SearchActivity extends BaseActivity {
                 if (!hasKeyBoard) enableKeyboard(SearchActivity.this);
                 openSystemKeyBoard();//再次尝试拉起键盘
                 SearchActivity.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-            }
-        });
-        etSearch.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View view, int keyCode, KeyEvent keyEvent) {
-                if (isKeyboardHidden()) {
-                    if (keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
-                        if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER) {
-                            ((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE))
-                                    .showSoftInput(etSearch, 0);
-                            return false;
-                        }
-                    } else if (keyEvent.getAction() == KeyEvent.ACTION_UP) {
-                        int len = etSearch.getText().length();
-                        if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER) {
-                            // Avoid show ime keyboard bug
-                            return true;
-                        } else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
-                            etSearch.focusSearch(View.FOCUS_DOWN).requestFocus();
-                            return true;
-                        } else if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT && (len == 0 || etSearch.getSelectionStart() == len)) {
-                            etSearch.focusSearch(View.FOCUS_RIGHT).requestFocus();
-                            return true;
-                        }
-                    }
-                }
-                return false;
             }
         });
 
@@ -686,12 +648,5 @@ public class SearchActivity extends BaseActivity {
             th.printStackTrace();
         }
         EventBus.getDefault().unregister(this);
-    }
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onInputMsgEvent(InputMsgEvent inputMsgEvent) {
-        etSearch.setFocusableInTouchMode(true);
-        etSearch.requestFocus();
-        etSearch.setText(inputMsgEvent.getText());
-        search(inputMsgEvent.getText());
     }
 }
