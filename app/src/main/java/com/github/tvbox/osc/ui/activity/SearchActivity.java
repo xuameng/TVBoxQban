@@ -255,14 +255,15 @@ public class SearchActivity extends BaseActivity {
                 }
             }
         });
-        tvClear.setOnClickListener(new View.OnClickListener() {
+        tvClear.setOnClickListener(new View.OnClickListener() {     
             @Override
             public void onClick(View v) {
                 FastClickCheckUtil.check(v);
                 etSearch.setText("");
 				wordAdapter.setNewData(hots);
                 mGridViewWord.smoothScrollToPosition(0);
-                tHotSearchText.setText("热门搜索");          //xuameng修复热门搜索为空
+                tHotSearchText.setText("热门搜索");          //xuameng修复删除内容后，热门搜索为空
+				cancel();
             }
         });
 
