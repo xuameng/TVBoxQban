@@ -52,6 +52,7 @@ import com.orhanobut.hawk.Hawk;
 import com.owen.tvrecyclerview.widget.TvRecyclerView;
 import com.owen.tvrecyclerview.widget.V7GridLayoutManager;
 import com.owen.tvrecyclerview.widget.V7LinearLayoutManager;
+import com.yang.flowlayoutlibrary.FlowLayout;  //xuameng搜索历史
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -421,6 +422,8 @@ public class SearchActivity extends BaseActivity {
     private void initData() {
         initCheckedSourcesForSearch();
         Intent intent = getIntent();
+		initSearchHistory();  //xuameng 搜索历史
+		showSuccess();  //xuameng 搜索历史
         if (intent != null && intent.hasExtra("title")) {
             String title = intent.getStringExtra("title");
             showLoading();
@@ -580,7 +583,7 @@ public class SearchActivity extends BaseActivity {
             if (searchAdapter.getData().size() > 0) {
                 searchAdapter.addData(data);
             } else {
-                showSuccess();
+                showSuccess();   //xuameng搜索历史
                 mGridView.setVisibility(View.VISIBLE);
                 searchAdapter.setNewData(data);
                 tv_history.setVisibility(View.GONE);    //xuameng搜索历史
