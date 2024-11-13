@@ -67,7 +67,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.Collections;   /xuameng搜索历史
+import java.util.Collections;   //xuameng搜索历史
 
 /**
  * @author pj567
