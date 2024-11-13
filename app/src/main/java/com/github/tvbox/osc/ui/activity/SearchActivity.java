@@ -54,6 +54,8 @@ import com.owen.tvrecyclerview.widget.TvRecyclerView;
 import com.owen.tvrecyclerview.widget.V7GridLayoutManager;
 import com.owen.tvrecyclerview.widget.V7LinearLayoutManager;
 import com.yang.flowlayoutlibrary.FlowLayout;  //xuameng搜索历史
+import android.text.TextWatcher;  //xuameng搜索历史
+import android.text.Editable;		//xuameng搜索历史
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -65,6 +67,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Collections;   /xuameng搜索历史
 
 /**
  * @author pj567
@@ -357,6 +360,7 @@ public class SearchActivity extends BaseActivity {
 
     private void initViewModel() {
         sourceViewModel = new ViewModelProvider(this).get(SourceViewModel.class);
+		searchPresenter = new SearchPresenter();   //xuameng 搜索历史
     }
 
     /**
