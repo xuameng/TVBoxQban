@@ -447,6 +447,7 @@ public class SearchActivity extends BaseActivity {
         initCheckedSourcesForSearch();
         Intent intent = getIntent();
 		initSearchHistory();  //xuameng 搜索历史
+		showSuccess();  //xuameng 搜索历史
 		mGridView.setVisibility(View.GONE);
         if (intent != null && intent.hasExtra("title")) {
             String title = intent.getStringExtra("title");
