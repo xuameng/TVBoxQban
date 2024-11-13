@@ -60,7 +60,10 @@ import com.github.tvbox.osc.data.SearchPresenter;  //xuameng搜索历史
 import com.github.tvbox.osc.cache.SearchHistory;   //xuameng搜索历史
 import androidx.constraintlayout.widget.ConstraintLayout; //xuameng搜索历史
 import com.google.gson.Gson;  热门搜索
-
+import com.google.gson.JsonArray; 热门搜索
+import com.google.gson.JsonElement; 热门搜索
+import com.google.gson.JsonObject; 热门搜索
+import com.google.gson.JsonParser; 热门搜索
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
