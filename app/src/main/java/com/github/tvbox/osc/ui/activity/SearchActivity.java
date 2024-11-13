@@ -490,7 +490,11 @@ public class SearchActivity extends BaseActivity {
                                 JsonObject obj = (JsonObject) ele;
                                 hots.add(obj.get("title").getAsString().trim().replaceAll("<|>|《|》|-", "").split(" ")[0]);
                             }
-                            wordAdapter.setNewData(hots);
+ //                           wordAdapter.setNewData(hots);
+							if (hots.size() != 0) {
+							wordAdapter.setNewData(hots);   //xuameng防止为空
+							return;
+							}
                         } catch (Throwable th) {
                             th.printStackTrace();
                         }
