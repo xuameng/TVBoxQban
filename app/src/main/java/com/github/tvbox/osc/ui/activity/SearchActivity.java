@@ -187,13 +187,16 @@ public class SearchActivity extends BaseActivity {
         wordAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+				keyword = wordAdapter.getItem(position);
+				String[] split = keyword.split("\uFEFF");
+				keyword = split[split.length - 1];
                 if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)){
                     Bundle bundle = new Bundle();
-                    bundle.putString("title", wordAdapter.getItem(position));
+                    bundle.putString("title", keyword);
 					refreshSearchHistory(keyword);  //xuameng搜索历史
                     jumpActivity(FastSearchActivity.class, bundle);
                 }else {
-                    search(wordAdapter.getItem(position));
+                    search(keyword);
                 }
             }
         });
@@ -235,15 +238,14 @@ public class SearchActivity extends BaseActivity {
             public void onClick(View v) {
                 FastClickCheckUtil.check(v);
                 hasKeyBoard = true;
-                String wd = etSearch.getText().toString().trim();
-				if (!TextUtils.isEmpty(wd)) {
+				if (!TextUtils.isEmpty(keyword)) {
                     if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)){
                         Bundle bundle = new Bundle();
-                        bundle.putString("title", wd);
-						refreshSearchHistory(wd);  //xuameng搜索历史
+                        bundle.putString("title", keyword);
+						refreshSearchHistory(keyword);  //xuameng搜索历史
                         jumpActivity(FastSearchActivity.class, bundle);
                     }else {
-                        search(wd);
+                        search(keyword);
                     }
                 } else {
                     Toast.makeText(mContext, "输入内容不能为空", Toast.LENGTH_SHORT).show();
@@ -271,20 +273,21 @@ public class SearchActivity extends BaseActivity {
                     cancel();
                     tv_history.setVisibility(View.VISIBLE);
                     searchTips.setVisibility(View.VISIBLE);
-                    llWord.setVisibility(View.VISIBLE);
+  //                  llWord.setVisibility(View.VISIBLE);
                     mGridView.setVisibility(View.GONE);
                 }
             }
         });
 
-//        etSearch.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                enableKeyboard(SearchActivity.this);
-//                openSystemKeyBoard();//再次尝试拉起键盘
-//                SearchActivity.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-//            }
-//        });
+        etSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                Toast.makeText(mContext,"点击",Toast.LENGTH_SHORT).show();
+                if (!hasKeyBoard) enableKeyboard(SearchActivity.this);
+                openSystemKeyBoard();//再次尝试拉起键盘
+                SearchActivity.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+            }
+        });
 
 //        etSearch.setOnFocusChangeListener(tvSearchFocusChangeListener);
 
@@ -574,7 +577,7 @@ public class SearchActivity extends BaseActivity {
         }
         if (siteKey.size() <= 0) {
             Toast.makeText(mContext, "没有指定搜索源", Toast.LENGTH_SHORT).show();
-            showEmpty();  //xuameng
+   //         showEmpty();  //xuameng
             return;
         }
         for (String key : siteKey) {
@@ -619,7 +622,7 @@ public class SearchActivity extends BaseActivity {
         int count = allRunCount.decrementAndGet();
         if (count <= 0) {
             if (searchAdapter.getData().size() <= 0) {
-//                showEmpty();
+   //             showEmpty();
             }
             cancel();
         }
