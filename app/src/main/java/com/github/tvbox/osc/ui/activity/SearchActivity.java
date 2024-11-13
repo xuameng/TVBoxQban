@@ -579,6 +579,8 @@ public class SearchActivity extends BaseActivity {
         if (siteKey.size() <= 0) {
             Toast.makeText(mContext, "没有指定搜索源", Toast.LENGTH_SHORT).show();
    //         showEmpty();  //xuameng
+                    tv_history.setVisibility(View.VISIBLE);      //xuameng修复BUG
+                    searchTips.setVisibility(View.VISIBLE);
             return;
         }
         for (String key : siteKey) {
@@ -624,6 +626,8 @@ public class SearchActivity extends BaseActivity {
         if (count <= 0) {
             if (searchAdapter.getData().size() <= 0) {
    //             showEmpty();
+                    tv_history.setVisibility(View.VISIBLE);   //xuameng修复BUG
+                    searchTips.setVisibility(View.VISIBLE);
             }
             cancel();
         }
