@@ -73,7 +73,7 @@ public class SearchActivity extends BaseActivity {
     private LinearLayout llLayout;
     private TvRecyclerView mGridView;
     private TvRecyclerView mGridViewWord;
-    SourceViewModel sourceViewModel;
+    private SourceViewModel sourceViewModel;   //xuameng
     private RemoteDialog remoteDialog;
     private EditText etSearch;
     private TextView tvSearch;
@@ -83,6 +83,10 @@ public class SearchActivity extends BaseActivity {
     private PinyinAdapter wordAdapter;
     private String searchTitle = "";
     private TextView tvSearchCheckboxBtn;
+	private RelativeLayout searchTips;   //xuameng搜索历史
+	private LinearLayout llWord;   //xuameng搜索历史
+	private FlowLayout tv_history;    //xuameng搜索历史
+	public String keyword;  //xuameng搜索历史
 
     private static HashMap<String, String> mCheckSources = null;
     private SearchCheckboxDialog mSearchCheckboxDialog = null;
@@ -158,6 +162,9 @@ public class SearchActivity extends BaseActivity {
         etSearch = findViewById(R.id.etSearch);
         tvSearch = findViewById(R.id.tvSearch);
         tvSearchCheckboxBtn = findViewById(R.id.tvSearchCheckboxBtn);
+		searchTips = findViewById(R.id.search_tips);   //xuameng搜索历史
+		llWord = findViewById(R.id.llWord);	//xuameng搜索历史
+		tv_history = findViewById(R.id.tv_history);  //xuameng搜索历史
         tvClear = findViewById(R.id.tvClear);
         mGridView = findViewById(R.id.mGridView);
         keyboard = findViewById(R.id.keyBoardRoot);
@@ -237,6 +244,25 @@ public class SearchActivity extends BaseActivity {
                 etSearch.setText("");
             }
         });
+
+        this.etSearch.addTextChangedListener(new TextWatcher() {   //xuameng搜索历史
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            public void afterTextChanged(Editable s) {
+                keyword = s.toString().trim();
+                if (TextUtils.isEmpty(keyword)) {
+                    cancel();
+                    tv_history.setVisibility(View.VISIBLE);
+                    searchTips.setVisibility(View.VISIBLE);
+                    llWord.setVisibility(View.VISIBLE);
+                    mGridView.setVisibility(View.GONE);
+                }
+            }
+        });
 //        etSearch.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
@@ -296,6 +322,36 @@ public class SearchActivity extends BaseActivity {
             }
         });
     }
+
+    private void refreshSearchHistory(String keyword2) {         //xuameng 搜索历史
+        if (!this.searchPresenter.keywordsExist(keyword2)) {
+            this.searchPresenter.addKeyWordsTodb(keyword2);
+            initSearchHistory();
+        }
+    }
+
+    private void initSearchHistory() {
+        ArrayList<SearchHistory> searchHistory = this.searchPresenter.getSearchHistory();
+        List<String> historyList = new ArrayList<>();
+        for (SearchHistory history : searchHistory) {
+            historyList.add(history.searchKeyWords);
+        }
+        Collections.reverse(historyList);
+        tv_history.setViews(historyList, new FlowLayout.OnItemClickListener() {
+            public void onItemClick(String content) {
+                etSearch.setText(content);
+                if (Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)) {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("title", content);
+                    refreshSearchHistory(content);
+                    jumpActivity(FastSearchActivity.class, bundle);
+                } else {
+                    search(content);
+                    //etSearch.setSelection(etSearch.getText().length());
+                }
+            }
+        });
+    }               //xuameng 搜索历史
 
     private void initViewModel() {
         sourceViewModel = new ViewModelProvider(this).get(SourceViewModel.class);
@@ -527,6 +583,9 @@ public class SearchActivity extends BaseActivity {
                 showSuccess();
                 mGridView.setVisibility(View.VISIBLE);
                 searchAdapter.setNewData(data);
+                tv_history.setVisibility(View.GONE);    //xuameng搜索历史
+                searchTips.setVisibility(View.GONE);  //xuameng搜索历史
+                llWord.setVisibility(View.GONE);   //xuameng搜索历史
             }
         }
 
