@@ -266,7 +266,6 @@ public class SearchActivity extends BaseActivity {
                 FastClickCheckUtil.check(v);
                 etSearch.setText("");
 				wordAdapter.setNewData(hots);
-                mGridViewWord.smoothScrollToPosition(0);
                 tHotSearchText.setText("热门搜索");          //xuameng修复删除内容后，热门搜索为空
 				cancel();
             }
@@ -330,7 +329,6 @@ public class SearchActivity extends BaseActivity {
                     }
                     if (text.length() == 0) {
                         wordAdapter.setNewData(hots);
-                        mGridViewWord.smoothScrollToPosition(0);
                         tHotSearchText.setText("热门搜索");
                     }
                 } else if (pos == 0) {
@@ -431,7 +429,6 @@ public class SearchActivity extends BaseActivity {
                             }
                             tHotSearchText.setText("猜你想搜");
                             wordAdapter.setNewData(hots);
-                            mGridViewWord.smoothScrollToPosition(0);
                         } catch (Throwable th) {
                             th.printStackTrace();
                         }
