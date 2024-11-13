@@ -56,8 +56,16 @@ import com.owen.tvrecyclerview.widget.V7LinearLayoutManager;
 import com.yang.flowlayoutlibrary.FlowLayout;  //xuameng搜索历史
 import android.text.TextWatcher;  //xuameng搜索历史
 import android.text.Editable;		//xuameng搜索历史
+import android.view.ViewGroup;   //xuameng搜索历史
 import com.github.tvbox.osc.data.SearchPresenter;  //xuameng搜索历史
 import com.github.tvbox.osc.cache.SearchHistory;   //xuameng搜索历史
+import androidx.annotation.NonNull;        //xuameng搜索历史
+import androidx.constraintlayout.widget.ConstraintLayout; //xuameng搜索历史
+import androidx.recyclerview.widget.DiffUtil;  //xuameng搜索历史
+import com.github.tvbox.osc.event.InputMsgEvent;  //xuameng搜索历史
+import com.github.tvbox.osc.ui.adapter.SelectDialogAdapter; //xuameng搜索历史
+import com.github.tvbox.osc.ui.dialog.SelectDialog;  //xuameng搜索历史
+import org.jetbrains.annotations.NotNull;   //xuameng搜索历史
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -96,6 +104,7 @@ public class SearchActivity extends BaseActivity {
 	public String keyword;  //xuameng搜索历史
 	private ImageView clearHistory;  //xuameng搜索历史
 	private SearchPresenter searchPresenter;  //xuameng搜索历史
+	private TextView clearHistory;  //xuameng搜索历史
 
     private static HashMap<String, String> mCheckSources = null;
     private SearchCheckboxDialog mSearchCheckboxDialog = null;
@@ -174,6 +183,7 @@ public class SearchActivity extends BaseActivity {
 		searchTips = findViewById(R.id.search_tips);   //xuameng搜索历史
 		llWord = findViewById(R.id.llWord);	//xuameng搜索历史
 		tv_history = findViewById(R.id.tv_history);  //xuameng搜索历史
+		clearHistory = findViewById(R.id.clear_history);  //xuameng搜索历史
         tvClear = findViewById(R.id.tvClear);
         mGridView = findViewById(R.id.mGridView);
         keyboard = findViewById(R.id.keyBoardRoot);
@@ -185,13 +195,16 @@ public class SearchActivity extends BaseActivity {
         wordAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+				keyword = wordAdapter.getItem(position);
+				String[] split = keyword.split("\uFEFF");
+				keyword = split[split.length - 1];
                 if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)){
                     Bundle bundle = new Bundle();
-                    bundle.putString("title", wordAdapter.getItem(position));
+                    bundle.putString("title", keyword);
 					refreshSearchHistory(keyword);  //xuameng搜索历史
                     jumpActivity(FastSearchActivity.class, bundle);
                 }else {
-                    search(wordAdapter.getItem(position));
+                    search(keyword);
                 }
             }
         });
@@ -233,15 +246,14 @@ public class SearchActivity extends BaseActivity {
             public void onClick(View v) {
                 FastClickCheckUtil.check(v);
                 hasKeyBoard = true;
-                String wd = etSearch.getText().toString().trim();
-                if (!TextUtils.isEmpty(wd)) {
+				if (!TextUtils.isEmpty(keyword)) {
                     if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)){
                         Bundle bundle = new Bundle();
-                        bundle.putString("title", wd);
+                        bundle.putString("title", keyword);
 						refreshSearchHistory(keyword);  //xuameng搜索历史
                         jumpActivity(FastSearchActivity.class, bundle);
                     }else {
-                        search(wd);
+                        search(keyword);
                     }
                 } else {
                     Toast.makeText(mContext, "输入内容不能为空", Toast.LENGTH_SHORT).show();
@@ -274,14 +286,52 @@ public class SearchActivity extends BaseActivity {
                 }
             }
         });
-//        etSearch.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                enableKeyboard(SearchActivity.this);
-//                openSystemKeyBoard();//再次尝试拉起键盘
-//                SearchActivity.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-//            }
-//        });
+
+        etSearch.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                    hideSystemKeyBoard();
+                }
+                return false;
+            }
+        });
+        etSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                Toast.makeText(mContext,"点击",Toast.LENGTH_SHORT).show();
+                if (!hasKeyBoard) enableKeyboard(SearchActivity.this);
+                openSystemKeyBoard();//再次尝试拉起键盘
+                SearchActivity.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+            }
+        });
+        etSearch.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View view, int keyCode, KeyEvent keyEvent) {
+                if (isKeyboardHidden()) {
+                    if (keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
+                        if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER) {
+                            ((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE))
+                                    .showSoftInput(etSearch, 0);
+                            return false;
+                        }
+                    } else if (keyEvent.getAction() == KeyEvent.ACTION_UP) {
+                        int len = etSearch.getText().length();
+                        if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER) {
+                            // Avoid show ime keyboard bug
+                            return true;
+                        } else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
+                            etSearch.focusSearch(View.FOCUS_DOWN).requestFocus();
+                            return true;
+                        } else if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT && (len == 0 || etSearch.getSelectionStart() == len)) {
+                            etSearch.focusSearch(View.FOCUS_RIGHT).requestFocus();
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+        });
 
 //        etSearch.setOnFocusChangeListener(tvSearchFocusChangeListener);
 
@@ -572,7 +622,7 @@ public class SearchActivity extends BaseActivity {
         }
         if (siteKey.size() <= 0) {
             Toast.makeText(mContext, "没有指定搜索源", Toast.LENGTH_SHORT).show();
-            showEmpty();
+            //showEmpty();  //xuameng
             return;
         }
         for (String key : siteKey) {
@@ -642,5 +692,12 @@ public class SearchActivity extends BaseActivity {
             th.printStackTrace();
         }
         EventBus.getDefault().unregister(this);
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onInputMsgEvent(InputMsgEvent inputMsgEvent) {
+        etSearch.setFocusableInTouchMode(true);
+        etSearch.requestFocus();
+        etSearch.setText(inputMsgEvent.getText());
+        search(inputMsgEvent.getText());
     }
 }
