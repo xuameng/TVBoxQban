@@ -533,7 +533,17 @@ public class SearchActivity extends BaseActivity {
             remoteDialog.dismiss();
             remoteDialog = null;
         }
-        showLoading();
+
+        int count = allRunCount.decrementAndGet();
+        if (count <= 0) {
+            if (searchAdapter.getData().size() <= 0) {
+   //             showEmpty();
+                    tv_history.setVisibility(View.VISIBLE);   //xuameng修复BUG
+                    searchTips.setVisibility(View.VISIBLE);
+            }else 
+			 showLoading();
+        }
+
         etSearch.setText(title);
         this.searchTitle = title;
         mGridView.setVisibility(View.GONE); //xuameng 搜索历史
