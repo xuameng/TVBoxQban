@@ -94,6 +94,8 @@ public class SearchActivity extends BaseActivity {
 	private LinearLayout llWord;   //xuameng搜索历史
 	private FlowLayout tv_history;    //xuameng搜索历史
 	public String keyword;  //xuameng搜索历史
+	private ImageView clearHistory;  //xuameng搜索历史
+	private SearchPresenter searchPresenter;  //xuameng搜索历史
 
     private static HashMap<String, String> mCheckSources = null;
     private SearchCheckboxDialog mSearchCheckboxDialog = null;
@@ -282,6 +284,13 @@ public class SearchActivity extends BaseActivity {
 //        });
 
 //        etSearch.setOnFocusChangeListener(tvSearchFocusChangeListener);
+
+        clearHistory.setOnClickListener(v -> {
+            searchPresenter.clearSearchHistory();
+            initSearchHistory();
+        });
+
+
         keyboard.setOnSearchKeyListener(new SearchKeyboard.OnSearchKeyListener() {
             @Override
             public void onSearchKey(int pos, String key) {
@@ -332,9 +341,9 @@ public class SearchActivity extends BaseActivity {
         });
     }
 
-    private void refreshSearchHistory(String keyword) {         //xuameng 搜索历史
-        if (!this.searchPresenter.keywordsExist(keyword)) {
-            this.searchPresenter.addKeyWordsTodb(keyword);
+    private void refreshSearchHistory(String keyword2) {         //xuameng 搜索历史
+        if (!this.searchPresenter.keywordsExist(keyword2)) {
+            this.searchPresenter.addKeyWordsTodb(keyword2);
             initSearchHistory();
         }
     }
