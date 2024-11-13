@@ -119,8 +119,8 @@ public class AppDataManager {
         if (dbInstance == null)
             dbInstance = Room.databaseBuilder(App.getInstance(), AppDataBase.class, dbPath())
                     .setJournalMode(RoomDatabase.JournalMode.TRUNCATE)
-                    .addMigrations(MIGRATION_1_2)
-                    .addMigrations(MIGRATION_2_3)
+   //                 .addMigrations(MIGRATION_1_2)
+                    .addMigrations(MIGRATION_2_3)     //xuameng搜索历史
                     //.addMigrations(MIGRATION_3_4)
                     //.addMigrations(MIGRATION_4_5)
                     .addCallback(new RoomDatabase.Callback() {
