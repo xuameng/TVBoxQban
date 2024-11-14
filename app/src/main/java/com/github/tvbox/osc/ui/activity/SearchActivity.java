@@ -200,29 +200,29 @@ public class SearchActivity extends BaseActivity {
 				etSearch.setText(keyword);
                 if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)){
 
-        searchExecutorService = Executors.newFixedThreadPool(5);         //xuameng修复不选择搜索源还进行搜索，还显示搜索动画
-        List<SourceBean> searchRequestList = new ArrayList<>();
-        searchRequestList.addAll(ApiConfig.get().getSourceBeanList());
-        SourceBean home = ApiConfig.get().getHomeSourceBean();
-        searchRequestList.remove(home);
-        searchRequestList.add(0, home);
-        ArrayList<String> siteKey = new ArrayList<>();
-        for (SourceBean bean : searchRequestList) {
-            if (!bean.isSearchable()) {
-                continue;
-            }
-            if (mCheckSources != null && !mCheckSources.containsKey(bean.getKey())) {
-                continue;
-            }
-            siteKey.add(bean.getKey());
-            allRunCount.incrementAndGet();
-        }
-        if (siteKey.size() <= 0) {
-			Toast.makeText(mContext, "没有指定搜索源", Toast.LENGTH_SHORT).show();
-			tv_history.setVisibility(View.VISIBLE);      //xuameng修复BUG
-            searchTips.setVisibility(View.VISIBLE);
-            return;
-        }    //xuameng修复不选择搜索源还进行搜索，还显示搜索动画完 
+				searchExecutorService = Executors.newFixedThreadPool(5);         //xuameng修复不选择搜索源还进行搜索，还显示搜索动画
+				List<SourceBean> searchRequestList = new ArrayList<>();
+				searchRequestList.addAll(ApiConfig.get().getSourceBeanList());
+				SourceBean home = ApiConfig.get().getHomeSourceBean();
+				searchRequestList.remove(home);
+				searchRequestList.add(0, home);
+				ArrayList<String> siteKey = new ArrayList<>();
+				for (SourceBean bean : searchRequestList) {
+					if (!bean.isSearchable()) {
+						continue;
+					}
+					if (mCheckSources != null && !mCheckSources.containsKey(bean.getKey())) {
+						continue;
+					}
+					siteKey.add(bean.getKey());
+					allRunCount.incrementAndGet();
+				}
+				if (siteKey.size() <= 0) {
+					Toast.makeText(mContext, "没有指定搜索源", Toast.LENGTH_SHORT).show();
+					tv_history.setVisibility(View.VISIBLE);      //xuameng修复BUG
+					searchTips.setVisibility(View.VISIBLE);
+					return;
+				}    //xuameng修复不选择搜索源还进行搜索，还显示搜索动画完 
 
                     Bundle bundle = new Bundle();
                     bundle.putString("title", keyword);
@@ -274,29 +274,29 @@ public class SearchActivity extends BaseActivity {
 				if (!TextUtils.isEmpty(keyword)) {
                     if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)){
 
-        searchExecutorService = Executors.newFixedThreadPool(5);         //xuameng修复不选择搜索源还进行搜索，还显示搜索动画
-        List<SourceBean> searchRequestList = new ArrayList<>();
-        searchRequestList.addAll(ApiConfig.get().getSourceBeanList());
-        SourceBean home = ApiConfig.get().getHomeSourceBean();
-        searchRequestList.remove(home);
-        searchRequestList.add(0, home);
-        ArrayList<String> siteKey = new ArrayList<>();
-        for (SourceBean bean : searchRequestList) {
-            if (!bean.isSearchable()) {
-                continue;
-            }
-            if (mCheckSources != null && !mCheckSources.containsKey(bean.getKey())) {
-                continue;
-            }
-            siteKey.add(bean.getKey());
-            allRunCount.incrementAndGet();
-        }
-        if (siteKey.size() <= 0) {
-			Toast.makeText(mContext, "没有指定搜索源", Toast.LENGTH_SHORT).show();
-			tv_history.setVisibility(View.VISIBLE);      //xuameng修复BUG
-            searchTips.setVisibility(View.VISIBLE);
-            return;
-        }    //xuameng修复不选择搜索源还进行搜索，还显示搜索动画完 
+				searchExecutorService = Executors.newFixedThreadPool(5);         //xuameng修复不选择搜索源还进行搜索，还显示搜索动画
+				List<SourceBean> searchRequestList = new ArrayList<>();
+				searchRequestList.addAll(ApiConfig.get().getSourceBeanList());
+				SourceBean home = ApiConfig.get().getHomeSourceBean();
+				searchRequestList.remove(home);
+				searchRequestList.add(0, home);
+				ArrayList<String> siteKey = new ArrayList<>();
+				for (SourceBean bean : searchRequestList) {
+					if (!bean.isSearchable()) {
+						continue;
+					}
+					if (mCheckSources != null && !mCheckSources.containsKey(bean.getKey())) {
+						continue;
+					}
+					siteKey.add(bean.getKey());
+					allRunCount.incrementAndGet();
+				}
+				if (siteKey.size() <= 0) {
+					Toast.makeText(mContext, "没有指定搜索源", Toast.LENGTH_SHORT).show();
+					tv_history.setVisibility(View.VISIBLE);      //xuameng修复BUG
+					searchTips.setVisibility(View.VISIBLE);
+					return;
+				}    //xuameng修复不选择搜索源还进行搜索，还显示搜索动画完 
 
                         Bundle bundle = new Bundle();
                         bundle.putString("title", keyword);
@@ -435,29 +435,29 @@ public class SearchActivity extends BaseActivity {
                 etSearch.setText(content);
                 if (Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)) {
 
-        searchExecutorService = Executors.newFixedThreadPool(5);         //xuameng修复不选择搜索源还进行搜索，还显示搜索动画
-        List<SourceBean> searchRequestList = new ArrayList<>();
-        searchRequestList.addAll(ApiConfig.get().getSourceBeanList());
-        SourceBean home = ApiConfig.get().getHomeSourceBean();
-        searchRequestList.remove(home);
-        searchRequestList.add(0, home);
-        ArrayList<String> siteKey = new ArrayList<>();
-        for (SourceBean bean : searchRequestList) {
-            if (!bean.isSearchable()) {
-                continue;
-            }
-            if (mCheckSources != null && !mCheckSources.containsKey(bean.getKey())) {
-                continue;
-            }
-            siteKey.add(bean.getKey());
-            allRunCount.incrementAndGet();
-        }
-        if (siteKey.size() <= 0) {
-			Toast.makeText(mContext, "没有指定搜索源", Toast.LENGTH_SHORT).show();
-			tv_history.setVisibility(View.VISIBLE);      //xuameng修复BUG
-            searchTips.setVisibility(View.VISIBLE);
-            return;
-        }    //xuameng修复不选择搜索源还进行搜索，还显示搜索动画完 
+				searchExecutorService = Executors.newFixedThreadPool(5);         //xuameng修复不选择搜索源还进行搜索，还显示搜索动画
+				List<SourceBean> searchRequestList = new ArrayList<>();
+				searchRequestList.addAll(ApiConfig.get().getSourceBeanList());
+				SourceBean home = ApiConfig.get().getHomeSourceBean();
+				searchRequestList.remove(home);
+				searchRequestList.add(0, home);
+				ArrayList<String> siteKey = new ArrayList<>();
+				for (SourceBean bean : searchRequestList) {
+					if (!bean.isSearchable()) {
+						continue;
+					}
+					if (mCheckSources != null && !mCheckSources.containsKey(bean.getKey())) {
+						continue;
+					}
+					siteKey.add(bean.getKey());
+					allRunCount.incrementAndGet();
+				}
+				if (siteKey.size() <= 0) {
+					Toast.makeText(mContext, "没有指定搜索源", Toast.LENGTH_SHORT).show();
+					tv_history.setVisibility(View.VISIBLE);      //xuameng修复BUG
+					searchTips.setVisibility(View.VISIBLE);
+					return;
+				}    //xuameng修复不选择搜索源还进行搜索，还显示搜索动画完 
 
                     Bundle bundle = new Bundle();
                     bundle.putString("title", content);
@@ -532,29 +532,29 @@ public class SearchActivity extends BaseActivity {
             showLoading();
             if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)){
 
-        searchExecutorService = Executors.newFixedThreadPool(5);         //xuameng修复不选择搜索源还进行搜索，还显示搜索动画
-        List<SourceBean> searchRequestList = new ArrayList<>();
-        searchRequestList.addAll(ApiConfig.get().getSourceBeanList());
-        SourceBean home = ApiConfig.get().getHomeSourceBean();
-        searchRequestList.remove(home);
-        searchRequestList.add(0, home);
-        ArrayList<String> siteKey = new ArrayList<>();
-        for (SourceBean bean : searchRequestList) {
-            if (!bean.isSearchable()) {
-                continue;
-            }
-            if (mCheckSources != null && !mCheckSources.containsKey(bean.getKey())) {
-                continue;
-            }
-            siteKey.add(bean.getKey());
-            allRunCount.incrementAndGet();
-        }
-        if (siteKey.size() <= 0) {
-			Toast.makeText(mContext, "没有指定搜索源", Toast.LENGTH_SHORT).show();
-			tv_history.setVisibility(View.VISIBLE);      //xuameng修复BUG
-            searchTips.setVisibility(View.VISIBLE);
-            return;
-        }    //xuameng修复不选择搜索源还进行搜索，还显示搜索动画完 
+				searchExecutorService = Executors.newFixedThreadPool(5);         //xuameng修复不选择搜索源还进行搜索，还显示搜索动画
+				List<SourceBean> searchRequestList = new ArrayList<>();
+				searchRequestList.addAll(ApiConfig.get().getSourceBeanList());
+				SourceBean home = ApiConfig.get().getHomeSourceBean();
+				searchRequestList.remove(home);
+				searchRequestList.add(0, home);
+				ArrayList<String> siteKey = new ArrayList<>();
+				for (SourceBean bean : searchRequestList) {
+					if (!bean.isSearchable()) {
+						continue;
+					}
+					if (mCheckSources != null && !mCheckSources.containsKey(bean.getKey())) {
+						continue;
+					}
+					siteKey.add(bean.getKey());
+					allRunCount.incrementAndGet();
+				}
+				if (siteKey.size() <= 0) {
+					Toast.makeText(mContext, "没有指定搜索源", Toast.LENGTH_SHORT).show();
+					tv_history.setVisibility(View.VISIBLE);      //xuameng修复BUG
+					searchTips.setVisibility(View.VISIBLE);
+					return;
+				}    //xuameng修复不选择搜索源还进行搜索，还显示搜索动画完  
 
                 Bundle bundle = new Bundle();
                 bundle.putString("title", title);
@@ -606,29 +606,29 @@ public class SearchActivity extends BaseActivity {
             showLoading();
             if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)){
 
-        searchExecutorService = Executors.newFixedThreadPool(5);         //xuameng修复不选择搜索源还进行搜索，还显示搜索动画
-        List<SourceBean> searchRequestList = new ArrayList<>();
-        searchRequestList.addAll(ApiConfig.get().getSourceBeanList());
-        SourceBean home = ApiConfig.get().getHomeSourceBean();
-        searchRequestList.remove(home);
-        searchRequestList.add(0, home);
-        ArrayList<String> siteKey = new ArrayList<>();
-        for (SourceBean bean : searchRequestList) {
-            if (!bean.isSearchable()) {
-                continue;
-            }
-            if (mCheckSources != null && !mCheckSources.containsKey(bean.getKey())) {
-                continue;
-            }
-            siteKey.add(bean.getKey());
-            allRunCount.incrementAndGet();
-        }
-        if (siteKey.size() <= 0) {
-			Toast.makeText(mContext, "没有指定搜索源", Toast.LENGTH_SHORT).show();
-			tv_history.setVisibility(View.VISIBLE);      //xuameng修复BUG
-            searchTips.setVisibility(View.VISIBLE);
-            return;
-        }    //xuameng修复不选择搜索源还进行搜索，还显示搜索动画完 
+				searchExecutorService = Executors.newFixedThreadPool(5);         //xuameng修复不选择搜索源还进行搜索，还显示搜索动画
+				List<SourceBean> searchRequestList = new ArrayList<>();
+				searchRequestList.addAll(ApiConfig.get().getSourceBeanList());
+				SourceBean home = ApiConfig.get().getHomeSourceBean();
+				searchRequestList.remove(home);
+				searchRequestList.add(0, home);
+				ArrayList<String> siteKey = new ArrayList<>();
+				for (SourceBean bean : searchRequestList) {
+					if (!bean.isSearchable()) {
+						continue;
+					}
+					if (mCheckSources != null && !mCheckSources.containsKey(bean.getKey())) {
+						continue;
+					}
+					siteKey.add(bean.getKey());
+					allRunCount.incrementAndGet();
+				}
+				if (siteKey.size() <= 0) {
+					Toast.makeText(mContext, "没有指定搜索源", Toast.LENGTH_SHORT).show();
+					tv_history.setVisibility(View.VISIBLE);      //xuameng修复BUG
+					searchTips.setVisibility(View.VISIBLE);
+					return;
+				}    //xuameng修复不选择搜索源还进行搜索，还显示搜索动画完  
 
                 Bundle bundle = new Bundle();
                 bundle.putString("title", title);
@@ -775,7 +775,8 @@ public class SearchActivity extends BaseActivity {
         int count = allRunCount.decrementAndGet();
         if (count <= 0) {
             if (searchAdapter.getData().size() <= 0) {
-                showEmpty();
+   //             showEmpty();		//xuameng修复BUG
+				Toast.makeText(mContext, "没有搜索到数据，请重新搜索！", Toast.LENGTH_SHORT).show();
                 tv_history.setVisibility(View.VISIBLE);   //xuameng修复BUG
                 searchTips.setVisibility(View.VISIBLE);
             }
