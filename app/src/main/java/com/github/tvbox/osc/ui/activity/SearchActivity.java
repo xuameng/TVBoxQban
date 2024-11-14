@@ -265,8 +265,7 @@ public class SearchActivity extends BaseActivity {
             public void onClick(View v) {
                 FastClickCheckUtil.check(v);
                 etSearch.setText("");
-				wordAdapter.setNewData(hots);
-                mGridViewWord.smoothScrollToPosition(0);
+showHotSearchtext();
 				tv_history.setVisibility(View.VISIBLE);   //xuameng修复BUG
                 searchTips.setVisibility(View.VISIBLE);
                 tHotSearchText.setText("热门搜索");          //xuameng修复删除内容后，热门搜索为空
@@ -331,8 +330,7 @@ public class SearchActivity extends BaseActivity {
                         loadRec(text);
                     }
                     if (text.length() == 0) {
-                        wordAdapter.setNewData(hots);
-                        mGridViewWord.smoothScrollToPosition(0);
+showHotSearchtext();
                         tHotSearchText.setText("热门搜索");
 						tv_history.setVisibility(View.VISIBLE);   //xuameng修复BUG
 						searchTips.setVisibility(View.VISIBLE);
