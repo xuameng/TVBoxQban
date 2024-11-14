@@ -539,13 +539,6 @@ public class SearchActivity extends BaseActivity {
 		initSearchHistory();  //xuameng 搜索历史
 		showSuccess();  //xuameng 搜索历史
 		mGridView.setVisibility(View.GONE);
-
-        if (searchExecutorService != null) {
-            searchExecutorService.shutdownNow();
-            searchExecutorService = null;
-            JSEngine.getInstance().stopAll();
-            }
-
         if (intent != null && intent.hasExtra("title")) {
             String title = intent.getStringExtra("title");
             showLoading();
@@ -781,13 +774,16 @@ public class SearchActivity extends BaseActivity {
             }
             if (searchAdapter.getData().size() > 0) {
                 searchAdapter.addData(data);
-            } else {
                 showSuccess();   //xuameng搜索历史
                 mGridView.setVisibility(View.VISIBLE);
                 searchAdapter.setNewData(data);
                 tv_history.setVisibility(View.GONE);    //xuameng搜索历史
                 searchTips.setVisibility(View.GONE);  //xuameng搜索历史
 //                llWord.setVisibility(View.GONE);   //xuameng搜索历史
+            } else {
+                tv_history.setVisibility(View.VISIBLE);   //xuameng修复BUG
+                searchTips.setVisibility(View.VISIBLE);
+                mGridView.setVisibility(View.GONE);
             }
         }
 
