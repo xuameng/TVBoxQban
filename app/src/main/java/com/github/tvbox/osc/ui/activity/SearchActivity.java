@@ -456,6 +456,7 @@ public class SearchActivity extends BaseActivity {
 		mGridView.setVisibility(View.GONE);
 		tv_history.setVisibility(View.VISIBLE);      //xuameng修复BUG
 		searchTips.setVisibility(View.VISIBLE);
+		searchData(null);  //xuameng修复BUG
         if (intent != null && intent.hasExtra("title")) {
             String title = intent.getStringExtra("title");
             showLoading();
@@ -720,6 +721,11 @@ public class SearchActivity extends BaseActivity {
         setContentView(R.layout.loadsir_empty_layout);
         LinearLayout emptylayout = findViewById(R.id.empty_layout);
 		emptylayout.setVisibility(View.GONE);
+		initView();
+        initViewModel();
+        initData();
+        hasKeyBoard = true;
+        isSearchBack = false;
 	}
 
 }
