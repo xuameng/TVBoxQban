@@ -316,7 +316,7 @@ public class SearchActivity extends BaseActivity {
                 searchTips.setVisibility(View.VISIBLE);
                 tHotSearchText.setText("热门搜索");          //xuameng修复删除内容后，热门搜索为空
 				showSuccess();  //xuameng修复BUG
-				cancel();
+//				cancel();
             }
         });
 
@@ -606,6 +606,10 @@ public class SearchActivity extends BaseActivity {
     }
 
     private void search(String title) {
+        if (remoteDialog != null) {
+            remoteDialog.dismiss();
+            remoteDialog = null;
+        }
         cancel();
         searchExecutorService = Executors.newFixedThreadPool(5);         //xuameng修复不选择搜索源还进行搜索，还显示搜索动画
         List<SourceBean> searchRequestList = new ArrayList<>();
