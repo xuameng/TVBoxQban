@@ -265,10 +265,11 @@ public class SearchActivity extends BaseActivity {
             public void onClick(View v) {
                 FastClickCheckUtil.check(v);
                 etSearch.setText("");
-showHotSearchtext();
+				showHotSearchtext();     //xuameng修复清空后热门搜索为空
 				tv_history.setVisibility(View.VISIBLE);   //xuameng修复BUG
                 searchTips.setVisibility(View.VISIBLE);
                 tHotSearchText.setText("热门搜索");          //xuameng修复删除内容后，热门搜索为空
+				showEmptyXu();
 				cancel();
             }
         });
@@ -330,10 +331,11 @@ showHotSearchtext();
                         loadRec(text);
                     }
                     if (text.length() == 0) {
-showHotSearchtext();
+						showHotSearchtext();   //xuameng修复清空后热门搜索为空
                         tHotSearchText.setText("热门搜索");
 						tv_history.setVisibility(View.VISIBLE);   //xuameng修复BUG
 						searchTips.setVisibility(View.VISIBLE);
+						showEmptyXu();
                     }
                 } else if (pos == 0) {
                     RemoteDialog remoteDialog = new RemoteDialog(mContext);
@@ -452,6 +454,8 @@ showHotSearchtext();
 		initSearchHistory();  //xuameng 搜索历史
 		showSuccess();  //xuameng 搜索历史
 		mGridView.setVisibility(View.GONE);
+		tv_history.setVisibility(View.VISIBLE);      //xuameng修复BUG
+		searchTips.setVisibility(View.VISIBLE);
         if (intent != null && intent.hasExtra("title")) {
             String title = intent.getStringExtra("title");
             showLoading();
@@ -650,9 +654,12 @@ showHotSearchtext();
         int count = allRunCount.decrementAndGet();
         if (count <= 0) {
             if (searchAdapter.getData().size() <= 0) {
-                showEmpty();
-                tv_history.setVisibility(View.VISIBLE);   //xuameng修复BUG
-                searchTips.setVisibility(View.VISIBLE);
+			  if (tv_history.getVisibility() == View.GONE) {
+                 showEmpty();
+				} else{
+				tv_history.setVisibility(View.VISIBLE);      //xuameng修复BUG
+				searchTips.setVisibility(View.VISIBLE);
+				}
             }
             cancel();
         }
@@ -679,7 +686,7 @@ showHotSearchtext();
         EventBus.getDefault().unregister(this);
     }
 
-    public void showHotSearchtext() {
+    public void showHotSearchtext() {          //xuameng 热搜
         OkGo.<String>get("https://node.video.qq.com/x/api/hot_search")
 //        OkGo.<String>get("https://api.web.360kan.com/v1/rank")
 //                .params("cat", "1")
@@ -708,4 +715,11 @@ showHotSearchtext();
                     }
                 });
 		}
+
+	public void showEmptyXu() {
+        setContentView(R.layout.loadsir_empty_layout);
+        LinearLayout emptylayout = findViewById(R.id.empty_layout);
+		emptylayout.setVisibility(View.GONE)
+	}
+
 }
