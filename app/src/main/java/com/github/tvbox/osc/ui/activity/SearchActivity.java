@@ -319,6 +319,7 @@ public class SearchActivity extends BaseActivity {
 				tv_history.setVisibility(View.VISIBLE);   //xuameng修复BUG
                 searchTips.setVisibility(View.VISIBLE);
                 tHotSearchText.setText("热门搜索");          //xuameng修复删除内容后，热门搜索为空
+				showSuccess();  //xuameng修复BUG
 				cancel();
             }
         });
@@ -382,6 +383,7 @@ public class SearchActivity extends BaseActivity {
                     if (text.length() == 0) {
 						showHotSearchtext();   //xuameng修复清空后热门搜索为空
                         tHotSearchText.setText("热门搜索");
+						showSuccess();  //xuameng修复BUG
 						tv_history.setVisibility(View.VISIBLE);   //xuameng修复BUG
 						searchTips.setVisibility(View.VISIBLE);
                     }
@@ -775,8 +777,7 @@ public class SearchActivity extends BaseActivity {
         int count = allRunCount.decrementAndGet();
         if (count <= 0) {
             if (searchAdapter.getData().size() <= 0) {
-   //             showEmpty();		//xuameng修复BUG
-				Toast.makeText(mContext, "没有搜索到数据，请重新搜索！", Toast.LENGTH_SHORT).show();
+                showEmpty();		//xuameng修复BUG
                 tv_history.setVisibility(View.VISIBLE);   //xuameng修复BUG
                 searchTips.setVisibility(View.VISIBLE);
             }
