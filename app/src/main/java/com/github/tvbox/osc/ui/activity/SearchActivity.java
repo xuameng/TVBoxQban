@@ -320,6 +320,11 @@ public class SearchActivity extends BaseActivity {
                 searchTips.setVisibility(View.VISIBLE);
                 tHotSearchText.setText("热门搜索");          //xuameng修复删除内容后，热门搜索为空
 				showSuccess();  //xuameng修复BUG
+				if (searchExecutorService != null) {
+                searchExecutorService.shutdownNow();
+                searchExecutorService = null;
+                JSEngine.getInstance().stopAll();
+				}
 				cancel();
             }
         });
@@ -386,6 +391,11 @@ public class SearchActivity extends BaseActivity {
 						showSuccess();  //xuameng修复BUG
 						tv_history.setVisibility(View.VISIBLE);   //xuameng修复BUG
 						searchTips.setVisibility(View.VISIBLE);
+						if (searchExecutorService != null) {
+						searchExecutorService.shutdownNow();
+						searchExecutorService = null;
+						JSEngine.getInstance().stopAll();
+						}
                     }
                 } else if (pos == 0) {
                     RemoteDialog remoteDialog = new RemoteDialog(mContext);
