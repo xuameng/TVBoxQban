@@ -539,6 +539,13 @@ public class SearchActivity extends BaseActivity {
 		initSearchHistory();  //xuameng 搜索历史
 		showSuccess();  //xuameng 搜索历史
 		mGridView.setVisibility(View.GONE);
+
+        if (searchExecutorService != null) {
+            searchExecutorService.shutdownNow();
+            searchExecutorService = null;
+            JSEngine.getInstance().stopAll();
+            }
+
         if (intent != null && intent.hasExtra("title")) {
             String title = intent.getStringExtra("title");
             showLoading();
