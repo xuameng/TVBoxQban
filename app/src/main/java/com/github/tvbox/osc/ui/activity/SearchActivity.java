@@ -195,10 +195,10 @@ public class SearchActivity extends BaseActivity {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
 				keyword = wordAdapter.getItem(position);
+				loadingBug();  //XUAMENG载入动画BUG
 				String[] split = keyword.split("\uFEFF");
 				keyword = split[split.length - 1];
 				etSearch.setText(keyword);
-				loadingBug();       //xuameng  动画BUG
                 if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)){
                     Bundle bundle = new Bundle();
                     bundle.putString("title", keyword);
@@ -247,7 +247,7 @@ public class SearchActivity extends BaseActivity {
             public void onClick(View v) {
                 FastClickCheckUtil.check(v);
                 hasKeyBoard = true;
-				loadingBug();       //xuameng  动画BUG
+				loadingBug();  //XUAMENG载入动画BUG
 				if (!TextUtils.isEmpty(keyword)) {
                     if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)){
                         Bundle bundle = new Bundle();
@@ -385,7 +385,7 @@ public class SearchActivity extends BaseActivity {
         tv_history.setViews(historyList, new FlowLayout.OnItemClickListener() {
             public void onItemClick(String content) {
                 etSearch.setText(content);
-				loadingBug();       //xuameng  动画BUG
+				loadingBug();  //XUAMENG载入动画BUG
                 if (Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)) {
                     Bundle bundle = new Bundle();
                     bundle.putString("title", content);
@@ -455,9 +455,9 @@ public class SearchActivity extends BaseActivity {
 		initSearchHistory();  //xuameng 搜索历史
 		showSuccess();  //xuameng 搜索历史
 		mGridView.setVisibility(View.GONE);
-		loadingBug();       //xuameng  动画BUG
         if (intent != null && intent.hasExtra("title")) {
             String title = intent.getStringExtra("title");
+			loadingBug();  //XUAMENG载入动画BUG
             showLoading();
             if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)){
                 Bundle bundle = new Bundle();
@@ -507,7 +507,7 @@ public class SearchActivity extends BaseActivity {
     public void server(ServerEvent event) {
         if (event.type == ServerEvent.SERVER_SEARCH) {
             String title = (String) event.obj;
-			loadingBug();       //xuameng  动画BUG
+			loadingBug();  //XUAMENG载入动画BUG
             showLoading();
             if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)){
                 Bundle bundle = new Bundle();
@@ -541,7 +541,28 @@ public class SearchActivity extends BaseActivity {
 
     private void search(String title) {
         cancel();
-		loadingBug();       //xuameng  动画BUG
+        searchExecutorService = Executors.newFixedThreadPool(5);         //xuameng修复不选择搜索源还进行搜索，还显示搜索动画
+        List<SourceBean> searchRequestList = new ArrayList<>();
+        searchRequestList.addAll(ApiConfig.get().getSourceBeanList());
+        SourceBean home = ApiConfig.get().getHomeSourceBean();
+        searchRequestList.remove(home);
+        searchRequestList.add(0, home);
+        ArrayList<String> siteKey = new ArrayList<>();
+        for (SourceBean bean : searchRequestList) {
+            if (!bean.isSearchable()) {
+                continue;
+            }
+            if (mCheckSources != null && !mCheckSources.containsKey(bean.getKey())) {
+                continue;
+            }
+            siteKey.add(bean.getKey());
+            allRunCount.incrementAndGet();
+        }
+        if (siteKey.size() <= 0) {
+			Toast.makeText(mContext, "没有指定搜索源", Toast.LENGTH_SHORT).show();
+            return;
+        }           //xuameng修复不选择搜索源还进行搜索，还显示搜索动画完
+
         showLoading();        //xuameng 转圈动画
         etSearch.setText(title);
         this.searchTitle = title;
@@ -567,7 +588,31 @@ public class SearchActivity extends BaseActivity {
             searchAdapter.setNewData(new ArrayList<>());
             allRunCount.set(0);
         }
-		loadingBug();       //xuameng  动画BUG
+        searchExecutorService = Executors.newFixedThreadPool(5);
+        List<SourceBean> searchRequestList = new ArrayList<>();
+        searchRequestList.addAll(ApiConfig.get().getSourceBeanList());
+        SourceBean home = ApiConfig.get().getHomeSourceBean();
+        searchRequestList.remove(home);
+        searchRequestList.add(0, home);
+
+        ArrayList<String> siteKey = new ArrayList<>();
+        for (SourceBean bean : searchRequestList) {
+            if (!bean.isSearchable()) {
+                continue;
+            }
+            if (mCheckSources != null && !mCheckSources.containsKey(bean.getKey())) {
+                continue;
+            }
+            siteKey.add(bean.getKey());
+            allRunCount.incrementAndGet();
+        }
+        if (siteKey.size() <= 0) {
+            Toast.makeText(mContext, "没有指定搜索源", Toast.LENGTH_SHORT).show();
+   //         showEmpty();  //xuameng
+			tv_history.setVisibility(View.VISIBLE);      //xuameng修复BUG
+            searchTips.setVisibility(View.VISIBLE);
+            return;
+        }
         for (String key : siteKey) {
             searchExecutorService.execute(new Runnable() {
                 @Override
