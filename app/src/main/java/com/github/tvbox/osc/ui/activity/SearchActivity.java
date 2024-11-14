@@ -607,6 +607,28 @@ public class SearchActivity extends BaseActivity {
 
     private void search(String title) {
         cancel();
+        searchExecutorService = Executors.newFixedThreadPool(5);         //xuameng修复不选择搜索源还进行搜索，还显示搜索动画
+        List<SourceBean> searchRequestList = new ArrayList<>();
+        searchRequestList.addAll(ApiConfig.get().getSourceBeanList());
+        SourceBean home = ApiConfig.get().getHomeSourceBean();
+        searchRequestList.remove(home);
+        searchRequestList.add(0, home);
+        ArrayList<String> siteKey = new ArrayList<>();
+        for (SourceBean bean : searchRequestList) {
+            if (!bean.isSearchable()) {
+                continue;
+            }
+            if (mCheckSources != null && !mCheckSources.containsKey(bean.getKey())) {
+                continue;
+            }
+            siteKey.add(bean.getKey());
+            allRunCount.incrementAndGet();
+        }
+        if (siteKey.size() <= 0) {
+			Toast.makeText(mContext, "没有指定搜索源", Toast.LENGTH_SHORT).show();
+            return;
+        }           //xuameng修复不选择搜索源还进行搜索，还显示搜索动画完
+
         showLoading();        //xuameng 转圈动画
         etSearch.setText(title);
         this.searchTitle = title;
