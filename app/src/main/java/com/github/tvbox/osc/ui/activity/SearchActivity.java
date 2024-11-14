@@ -719,7 +719,7 @@ public class SearchActivity extends BaseActivity {
 	public void showEmptyXu() {
         setContentView(R.layout.loadsir_empty_layout);
         LinearLayout emptylayout = findViewById(R.id.empty_layout);
-		emptylayout.setVisibility(View.GONE)
+		emptylayout.setVisibility(View.GONE);
 	}
 
 }
