@@ -320,11 +320,6 @@ public class SearchActivity extends BaseActivity {
                 searchTips.setVisibility(View.VISIBLE);
                 tHotSearchText.setText("热门搜索");          //xuameng修复删除内容后，热门搜索为空
 				showSuccess();  //xuameng修复BUG
-				if (searchExecutorService != null) {
-                searchExecutorService.shutdownNow();
-                searchExecutorService = null;
-                JSEngine.getInstance().stopAll();
-				}
 				cancel();
             }
         });
@@ -391,11 +386,6 @@ public class SearchActivity extends BaseActivity {
 						showSuccess();  //xuameng修复BUG
 						tv_history.setVisibility(View.VISIBLE);   //xuameng修复BUG
 						searchTips.setVisibility(View.VISIBLE);
-						if (searchExecutorService != null) {
-						searchExecutorService.shutdownNow();
-						searchExecutorService = null;
-						JSEngine.getInstance().stopAll();
-						}
                     }
                 } else if (pos == 0) {
                     RemoteDialog remoteDialog = new RemoteDialog(mContext);
@@ -466,8 +456,6 @@ public class SearchActivity extends BaseActivity {
 				}
 				if (siteKey.size() <= 0) {
 					Toast.makeText(mContext, "没有指定搜索源", Toast.LENGTH_SHORT).show();
-					tv_history.setVisibility(View.VISIBLE);      //xuameng修复BUG
-					searchTips.setVisibility(View.VISIBLE);
 					return;
 				}    //xuameng修复不选择搜索源还进行搜索，还显示搜索动画完 
 
@@ -563,8 +551,6 @@ public class SearchActivity extends BaseActivity {
 				}
 				if (siteKey.size() <= 0) {
 					Toast.makeText(mContext, "没有指定搜索源", Toast.LENGTH_SHORT).show();
-					tv_history.setVisibility(View.VISIBLE);      //xuameng修复BUG
-					searchTips.setVisibility(View.VISIBLE);
 					return;
 				}    //xuameng修复不选择搜索源还进行搜索，还显示搜索动画完  
 
@@ -637,8 +623,6 @@ public class SearchActivity extends BaseActivity {
 				}
 				if (siteKey.size() <= 0) {
 					Toast.makeText(mContext, "没有指定搜索源", Toast.LENGTH_SHORT).show();
-					tv_history.setVisibility(View.VISIBLE);      //xuameng修复BUG
-					searchTips.setVisibility(View.VISIBLE);
 					return;
 				}    //xuameng修复不选择搜索源还进行搜索，还显示搜索动画完  
 
@@ -709,11 +693,6 @@ public class SearchActivity extends BaseActivity {
 
     private void searchResult() {
         try {
-            if (searchExecutorService != null) {
-                searchExecutorService.shutdownNow();
-                searchExecutorService = null;
-                JSEngine.getInstance().stopAll();
-            }
         } catch (Throwable th) {
             th.printStackTrace();
         } finally {
@@ -741,8 +720,6 @@ public class SearchActivity extends BaseActivity {
         if (siteKey.size() <= 0) {
             Toast.makeText(mContext, "没有指定搜索源", Toast.LENGTH_SHORT).show();
    //         showEmpty();  //xuameng
-			tv_history.setVisibility(View.VISIBLE);      //xuameng修复BUG
-            searchTips.setVisibility(View.VISIBLE);
             return;
         }
         for (String key : siteKey) {
@@ -787,7 +764,7 @@ public class SearchActivity extends BaseActivity {
         int count = allRunCount.decrementAndGet();
         if (count <= 0) {
             if (searchAdapter.getData().size() <= 0) {
-                showEmpty();		//xuameng修复BUG
+//                showEmpty();		//xuameng修复BUG
                 tv_history.setVisibility(View.VISIBLE);   //xuameng修复BUG
                 searchTips.setVisibility(View.VISIBLE);
             }
