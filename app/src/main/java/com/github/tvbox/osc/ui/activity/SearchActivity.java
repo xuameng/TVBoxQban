@@ -59,7 +59,11 @@ import android.text.Editable;		//xuameng搜索历史
 import com.github.tvbox.osc.data.SearchPresenter;  //xuameng搜索历史
 import com.github.tvbox.osc.cache.SearchHistory;   //xuameng搜索历史
 import androidx.constraintlayout.widget.ConstraintLayout; //xuameng搜索历史
-
+import com.google.gson.Gson;  //热门搜索
+import com.google.gson.JsonArray; //热门搜索
+import com.google.gson.JsonElement; //热门搜索
+import com.google.gson.JsonObject; //热门搜索
+import com.google.gson.JsonParser; //热门搜索
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -80,24 +84,25 @@ import java.util.Collections;   //xuameng搜索历史
 public class SearchActivity extends BaseActivity {
     private LinearLayout llLayout;
     private TvRecyclerView mGridView;
-    private TvRecyclerView mGridViewWord;
+    private TvRecyclerView mGridViewWord;    //xuameng热搜
     private SourceViewModel sourceViewModel;   //xuameng
     private RemoteDialog remoteDialog;
-    private EditText etSearch;
-    private TextView tvSearch;
-    private TextView tvClear;
-    private SearchKeyboard keyboard;
+    private EditText etSearch; //xuameng 请输入要搜索的内容
+    private TextView tvSearch;   //xuameng 搜索
+    private TextView tvClear;  //xuameng清空
+    private SearchKeyboard keyboard;   //xuameng搜索键盘
     private SearchAdapter searchAdapter;
     private PinyinAdapter wordAdapter;
     private String searchTitle = "";
-    private TextView tvSearchCheckboxBtn;
+    private TextView tvSearchCheckboxBtn;  //xuameng指定搜索源
 	private RelativeLayout searchTips;   //xuameng搜索历史
 	private LinearLayout llWord;   //xuameng搜索历史
 	private FlowLayout tv_history;    //xuameng搜索历史
 	public String keyword;  //xuameng搜索历史
 	private ImageView clearHistory;  //xuameng搜索历史
 	private SearchPresenter searchPresenter;  //xuameng搜索历史
-	private static ArrayList<String> hots = new ArrayList<>(); //xuameng搜索历史
+	private TextView tHotSearchText;  //xuameng热门搜索
+	private static ArrayList<String> hots = new ArrayList<>();  //xuameng热门搜索
 
     private static HashMap<String, String> mCheckSources = null;
     private SearchCheckboxDialog mSearchCheckboxDialog = null;
@@ -177,6 +182,7 @@ public class SearchActivity extends BaseActivity {
 		llWord = findViewById(R.id.llWord);	//xuameng搜索历史
 		tv_history = findViewById(R.id.tv_history);  //xuameng搜索历史
 		clearHistory = findViewById(R.id.clear_history);  //xuameng搜索历史
+		tHotSearchText = findViewById(R.id.mHotSearch_text);   //xuameng热门搜索
         tvClear = findViewById(R.id.tvClear);
         mGridView = findViewById(R.id.mGridView);
         keyboard = findViewById(R.id.keyBoardRoot);
@@ -189,9 +195,9 @@ public class SearchActivity extends BaseActivity {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
 				keyword = wordAdapter.getItem(position);
-				etSearch.setText(keyword);
 				String[] split = keyword.split("\uFEFF");
 				keyword = split[split.length - 1];
+				etSearch.setText(keyword);
                 if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)){
                     Bundle bundle = new Bundle();
                     bundle.putString("title", keyword);
@@ -254,11 +260,17 @@ public class SearchActivity extends BaseActivity {
                 }
             }
         });
-        tvClear.setOnClickListener(new View.OnClickListener() {
+        tvClear.setOnClickListener(new View.OnClickListener() {     
             @Override
             public void onClick(View v) {
                 FastClickCheckUtil.check(v);
                 etSearch.setText("");
+				wordAdapter.setNewData(hots);
+                mGridViewWord.smoothScrollToPosition(0);
+				tv_history.setVisibility(View.VISIBLE);   //xuameng修复BUG
+                searchTips.setVisibility(View.VISIBLE);
+                tHotSearchText.setText("热门搜索");          //xuameng修复删除内容后，热门搜索为空
+				cancel();
             }
         });
 
@@ -269,7 +281,7 @@ public class SearchActivity extends BaseActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
             }
 
-            public void afterTextChanged(Editable s) {
+            public void afterTextChanged(Editable s) {         //xuameng清空或删除关闭搜索内容显示搜索历史记录
                 keyword = s.toString().trim();
                 if (TextUtils.isEmpty(keyword)) {
                     cancel();
@@ -321,9 +333,12 @@ public class SearchActivity extends BaseActivity {
                     if (text.length() == 0) {
                         wordAdapter.setNewData(hots);
                         mGridViewWord.smoothScrollToPosition(0);
+                        tHotSearchText.setText("热门搜索");
+						tv_history.setVisibility(View.VISIBLE);   //xuameng修复BUG
+						searchTips.setVisibility(View.VISIBLE);
                     }
                 } else if (pos == 0) {
-                    remoteDialog = new RemoteDialog(mContext);
+                    RemoteDialog remoteDialog = new RemoteDialog(mContext);
                     remoteDialog.show();
                 }
             }
@@ -392,51 +407,35 @@ public class SearchActivity extends BaseActivity {
      * 拼音联想
      */
     private void loadRec(String key) {
-//        OkGo.<String>get("https://s.video.qq.com/smartbox")
-//                .params("plat", 2)
-//                .params("ver", 0)
-//                .params("num", 20)
-//                .params("otype", "json")
-//                .params("query", key)
-//                .execute(new AbsCallback<String>() {
-//                    @Override
-//                    public void onSuccess(Response<String> response) {
-//                        try {
-//                            ArrayList<String> hots = new ArrayList<>();
-//                            String result = response.body();
-//                            JsonObject json = JsonParser.parseString(result.substring(result.indexOf("{"), result.lastIndexOf("}") + 1)).getAsJsonObject();
-//                            JsonArray itemList = json.get("item").getAsJsonArray();
-//                            for (JsonElement ele : itemList) {
-//                                JsonObject obj = (JsonObject) ele;
-//                                hots.add(obj.get("word").getAsString().trim().replaceAll("<|>|《|》|-", "").split(" ")[0]);
-//                            }
-//                            wordAdapter.setNewData(hots);
-//                        } catch (Throwable th) {
-//                            th.printStackTrace();
-//                        }
-//                    }
-//
-//                    @Override
-//                    public String convertResponse(okhttp3.Response response) throws Throwable {
-//                        return response.body().string();
-//                    }
-//                });
-        OkGo.<String>get("https://suggest.video.iqiyi.com/")
-                .params("if", "mobile")
+        OkGo.get("https://tv.aiseet.atianqi.com/i-tvbin/qtv_video/search/get_search_smart_box")
+                .params("format", "json")
+                .params("page_num", 0)
+                .params("page_size", 50) //随便改
                 .params("key", key)
-                .execute(new AbsCallback<String>() {
+                .execute(new AbsCallback() {
                     @Override
-                    public void onSuccess(Response<String> response) {
+                    public void onSuccess(Response response) {
                         try {
-                            ArrayList<String> hots = new ArrayList<>();
-                            String result = response.body();
-                            JsonObject json = JsonParser.parseString(result).getAsJsonObject();
-                            JsonArray itemList = json.get("data").getAsJsonArray();
-                            for (JsonElement ele : itemList) {
-                                JsonObject obj = (JsonObject) ele;
-                                hots.add(obj.get("name").getAsString().trim().replaceAll("<|>|《|》|-", ""));
+                            ArrayList hots = new ArrayList<>();
+                            String result = (String) response.body();
+                            Gson gson = new Gson();
+                            JsonElement json = gson.fromJson(result, JsonElement.class);
+                            JsonArray groupDataArr = json.getAsJsonObject()
+                                    .get("data").getAsJsonObject()
+                                    .get("search_data").getAsJsonObject()
+                                    .get("vecGroupData").getAsJsonArray()
+                                    .get(0).getAsJsonObject()
+                                    .get("group_data").getAsJsonArray();
+                            for (JsonElement groupDataElement : groupDataArr) {
+                                JsonObject groupData = groupDataElement.getAsJsonObject();
+                                String keywordTxt = groupData.getAsJsonObject("dtReportInfo")
+                                        .getAsJsonObject("reportData")
+                                        .get("keyword_txt").getAsString();
+                                hots.add(keywordTxt.trim());
                             }
+                            tHotSearchText.setText("猜你想搜");
                             wordAdapter.setNewData(hots);
+                            mGridViewWord.smoothScrollToPosition(0);
                         } catch (Throwable th) {
                             th.printStackTrace();
                         }
@@ -468,6 +467,10 @@ public class SearchActivity extends BaseActivity {
             }
         }
         // 加载热词
+        if (hots.size() != 0) {
+            wordAdapter.setNewData(hots);
+            return;
+        }
         OkGo.<String>get("https://node.video.qq.com/x/api/hot_search")
 //        OkGo.<String>get("https://api.web.360kan.com/v1/rank")
 //                .params("cat", "1")
@@ -484,7 +487,7 @@ public class SearchActivity extends BaseActivity {
                                 JsonObject obj = (JsonObject) ele;
                                 hots.add(obj.get("title").getAsString().trim().replaceAll("<|>|《|》|-", "").split(" ")[0]);
                             }
-                            wordAdapter.setNewData(hots);
+							wordAdapter.setNewData(hots);   
                         } catch (Throwable th) {
                             th.printStackTrace();
                         }
@@ -535,11 +538,6 @@ public class SearchActivity extends BaseActivity {
 
     private void search(String title) {
         cancel();
-        if (remoteDialog != null) {
-            remoteDialog.dismiss();
-            remoteDialog = null;
-        }
-
         searchExecutorService = Executors.newFixedThreadPool(5);         //xuameng修复不选择搜索源还进行搜索，还显示搜索动画
         List<SourceBean> searchRequestList = new ArrayList<>();
         searchRequestList.addAll(ApiConfig.get().getSourceBeanList());
@@ -562,7 +560,7 @@ public class SearchActivity extends BaseActivity {
             return;
         }           //xuameng修复不选择搜索源还进行搜索，还显示搜索动画完
 
-        showLoading();
+        showLoading();        //xuameng 转圈动画
         etSearch.setText(title);
         this.searchTitle = title;
         mGridView.setVisibility(View.GONE); //xuameng 搜索历史
@@ -682,4 +680,34 @@ public class SearchActivity extends BaseActivity {
         }
         EventBus.getDefault().unregister(this);
     }
+
+    public void test() {
+        OkGo.<String>get("https://node.video.qq.com/x/api/hot_search")
+//        OkGo.<String>get("https://api.web.360kan.com/v1/rank")
+//                .params("cat", "1")
+                .params("channdlId", "0")
+                .params("_", System.currentTimeMillis())
+                .execute(new AbsCallback<String>() {
+                    @Override
+                    public void onSuccess(Response<String> response) {
+                        try {
+                            ArrayList<String> hots = new ArrayList<>();
+                            JsonArray itemList = JsonParser.parseString(response.body()).getAsJsonObject().get("data").getAsJsonObject().get("mapResult").getAsJsonObject().get("0").getAsJsonObject().get("listInfo").getAsJsonArray();
+//                            JsonArray itemList = JsonParser.parseString(response.body()).getAsJsonObject().get("data").getAsJsonArray();
+                            for (JsonElement ele : itemList) {
+                                JsonObject obj = (JsonObject) ele;
+                                hots.add(obj.get("title").getAsString().trim().replaceAll("<|>|《|》|-", "").split(" ")[0]);
+                            }
+							wordAdapter.setNewData(hots);   
+                        } catch (Throwable th) {
+                            th.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public String convertResponse(okhttp3.Response response) throws Throwable {
+                        return response.body().string();
+                    }
+                });
+		}
 }
