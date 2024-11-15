@@ -314,7 +314,6 @@ public class SearchActivity extends BaseActivity {
                 searchTips.setVisibility(View.VISIBLE);
                 tHotSearchText.setText("热门搜索");          //xuameng修复删除内容后，热门搜索为空
 				showSuccess();  //xuameng修复BUG
-				mGridView.setVisibility(View.GONE);
 				if (searchExecutorService != null) {
                 searchExecutorService.shutdownNow();
                 searchExecutorService = null;
@@ -386,7 +385,6 @@ public class SearchActivity extends BaseActivity {
 						showSuccess();  //xuameng修复BUG
 						tv_history.setVisibility(View.VISIBLE);   //xuameng修复BUG
 						searchTips.setVisibility(View.VISIBLE);
-						mGridView.setVisibility(View.GONE);
 						if (searchExecutorService != null) {
 							searchExecutorService.shutdownNow();
 							searchExecutorService = null;
@@ -543,8 +541,7 @@ public class SearchActivity extends BaseActivity {
             }else {
                 search(title);
             }
-        }else {Toast.makeText(mContext, "输入内容不能为空", Toast.LENGTH_SHORT).show();
-		 }
+        }
         // 加载热词
         if (hots.size() != 0) {
             wordAdapter.setNewData(hots);
@@ -749,16 +746,16 @@ public class SearchActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         cancel();
- //       try {
+        try {
             if (searchExecutorService != null) {
                 searchExecutorService.shutdownNow();
                 searchExecutorService = null;
                 JSEngine.getInstance().stopAll();
             }
-//        } catch (Throwable th) {
-//            th.printStackTrace();
-//        }
-//        EventBus.getDefault().unregister(this);
+        } catch (Throwable th) {
+            th.printStackTrace();
+        }
+        EventBus.getDefault().unregister(this);
     }
 
     public void showHotSearchtext() {          //xuameng 热搜
