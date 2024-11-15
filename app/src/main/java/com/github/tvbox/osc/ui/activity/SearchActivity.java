@@ -530,7 +530,7 @@ public class SearchActivity extends BaseActivity {
 		initSearchHistory();  //xuameng 搜索历史
 		showSuccess();  //xuameng 搜索历史
 		mGridView.setVisibility(View.GONE);
-        if (intent != null && intent.hasExtra("title")) {
+/*        if (intent != null && intent.hasExtra("title")) {
             String title = intent.getStringExtra("title");
             showLoading();
             if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)){
@@ -541,7 +541,7 @@ public class SearchActivity extends BaseActivity {
             }else {
                 search(title);
             }
-        }
+        }  */
         // 加载热词
         if (hots.size() != 0) {
             wordAdapter.setNewData(hots);
