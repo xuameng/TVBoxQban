@@ -41,6 +41,7 @@ import xyz.doikki.videoplayer.util.CutoutUtil;
 public abstract class BaseActivity extends AppCompatActivity implements CustomAdapt {
     protected Context mContext;
     private LoadService mLoadService;
+	private LoadSir mloadSir;
 
     private static float screenRatio = -100.0f;
 
@@ -137,8 +138,8 @@ public abstract class BaseActivity extends AppCompatActivity implements CustomAd
 
     protected void clearShowEmpty() {     //xuameng修复搜索BUG
         if (null != mLoadService) {
-            loadSir.removeCallback(EmptyCallback.class);
-			loadSir.clearCallback();
+            mloadSir.removeCallback(EmptyCallback.class);
+			mloadSir.clearCallback();
         }
     }
 
