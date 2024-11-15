@@ -542,9 +542,9 @@ public class SearchActivity extends BaseActivity {
                 jumpActivity(FastSearchActivity.class, bundle);
             }else {
                 search(title);
-          }else {Toast.makeText(mContext, "输入内容不能为空", Toast.LENGTH_SHORT).show();
+            }
+        }else {Toast.makeText(mContext, "输入内容不能为空", Toast.LENGTH_SHORT).show();
 		 }
-        }
         // 加载热词
         if (hots.size() != 0) {
             wordAdapter.setNewData(hots);
@@ -749,16 +749,16 @@ public class SearchActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         cancel();
-        try {
+ //       try {
             if (searchExecutorService != null) {
                 searchExecutorService.shutdownNow();
                 searchExecutorService = null;
                 JSEngine.getInstance().stopAll();
             }
-        } /* catch (Throwable th) {
-            th.printStackTrace();
-        }
-        EventBus.getDefault().unregister(this); */
+//        } catch (Throwable th) {
+//            th.printStackTrace();
+//        }
+//        EventBus.getDefault().unregister(this);
     }
 
     public void showHotSearchtext() {          //xuameng 热搜
