@@ -314,6 +314,7 @@ public class SearchActivity extends BaseActivity {
                 searchTips.setVisibility(View.VISIBLE);
                 tHotSearchText.setText("热门搜索");          //xuameng修复删除内容后，热门搜索为空
 				showSuccess();  //xuameng修复BUG
+				mGridView.setVisibility(View.GONE);
 				if (searchExecutorService != null) {
                 searchExecutorService.shutdownNow();
                 searchExecutorService = null;
@@ -385,6 +386,7 @@ public class SearchActivity extends BaseActivity {
 						showSuccess();  //xuameng修复BUG
 						tv_history.setVisibility(View.VISIBLE);   //xuameng修复BUG
 						searchTips.setVisibility(View.VISIBLE);
+						mGridView.setVisibility(View.GONE);
 						if (searchExecutorService != null) {
 							searchExecutorService.shutdownNow();
 							searchExecutorService = null;
@@ -530,7 +532,7 @@ public class SearchActivity extends BaseActivity {
 		initSearchHistory();  //xuameng 搜索历史
 		showSuccess();  //xuameng 搜索历史
 		mGridView.setVisibility(View.GONE);
-/*        if (intent != null && intent.hasExtra("title")) {
+        if (intent != null && intent.hasExtra("title")) {
             String title = intent.getStringExtra("title");
             showLoading();
             if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)){
@@ -540,8 +542,9 @@ public class SearchActivity extends BaseActivity {
                 jumpActivity(FastSearchActivity.class, bundle);
             }else {
                 search(title);
-            }
-        }  */
+          }else {Toast.makeText(mContext, "输入内容不能为空", Toast.LENGTH_SHORT).show();
+		 }
+        }
         // 加载热词
         if (hots.size() != 0) {
             wordAdapter.setNewData(hots);
@@ -752,10 +755,10 @@ public class SearchActivity extends BaseActivity {
                 searchExecutorService = null;
                 JSEngine.getInstance().stopAll();
             }
-        } catch (Throwable th) {
+        } /* catch (Throwable th) {
             th.printStackTrace();
         }
-        EventBus.getDefault().unregister(this);
+        EventBus.getDefault().unregister(this); */
     }
 
     public void showHotSearchtext() {          //xuameng 热搜
