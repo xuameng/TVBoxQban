@@ -310,8 +310,11 @@ public class SearchActivity extends BaseActivity {
                 FastClickCheckUtil.check(v);
                 etSearch.setText("");
 				showHotSearchtext();     //xuameng修复清空后热门搜索为空
+				tv_history.setVisibility(View.VISIBLE);   //xuameng修复BUG
+                searchTips.setVisibility(View.VISIBLE);
                 tHotSearchText.setText("热门搜索");          //xuameng修复删除内容后，热门搜索为空
 				showSuccess();  //xuameng修复BUG
+				mGridView.setVisibility(View.GONE);
 				if (searchExecutorService != null) {
                 searchExecutorService.shutdownNow();
                 searchExecutorService = null;
@@ -381,6 +384,9 @@ public class SearchActivity extends BaseActivity {
 						showHotSearchtext();   //xuameng修复清空后热门搜索为空
                         tHotSearchText.setText("热门搜索");
 						showSuccess();  //xuameng修复BUG
+						tv_history.setVisibility(View.VISIBLE);   //xuameng修复BUG
+						searchTips.setVisibility(View.VISIBLE);
+						mGridView.setVisibility(View.GONE);
 						if (searchExecutorService != null) {
 							searchExecutorService.shutdownNow();
 							searchExecutorService = null;
@@ -727,6 +733,10 @@ public class SearchActivity extends BaseActivity {
             if (searchAdapter.getData().size() <= 0) {
 				if (searchExecutorService != null) {
                 showEmpty();		//xuameng修复BUG
+				}else{
+				tv_history.setVisibility(View.VISIBLE);   //xuameng修复BUG
+				searchTips.setVisibility(View.VISIBLE);
+				mGridView.setVisibility(View.GONE); 
 				}
             }
             cancel();
