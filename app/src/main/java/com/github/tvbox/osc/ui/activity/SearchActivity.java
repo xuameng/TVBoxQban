@@ -318,7 +318,6 @@ public class SearchActivity extends BaseActivity {
                 searchExecutorService.shutdownNow();
                 searchExecutorService = null;
                 JSEngine.getInstance().stopAll();
-				JSEngine.getInstance().destroy();
 				}
 				cancel();
             }
@@ -390,7 +389,6 @@ public class SearchActivity extends BaseActivity {
 							searchExecutorService.shutdownNow();
 							searchExecutorService = null;
 							JSEngine.getInstance().stopAll();
-							JSEngine.getInstance().destroy();
 							}
                     }
                 } else if (pos == 0) {
@@ -753,7 +751,6 @@ public class SearchActivity extends BaseActivity {
                 searchExecutorService.shutdownNow();
                 searchExecutorService = null;
                 JSEngine.getInstance().stopAll();
-				JSEngine.getInstance().destroy();
             }
         } catch (Throwable th) {
             th.printStackTrace();
