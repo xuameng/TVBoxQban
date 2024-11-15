@@ -199,9 +199,8 @@ public class SearchActivity extends BaseActivity {
 				keyword = split[split.length - 1];
 				etSearch.setText(keyword);
                 if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)){
-
-				searchExecutorService = Executors.newFixedThreadPool(5);         //xuameng修复不选择搜索源还进行搜索，还显示搜索动画
-				List<SourceBean> searchRequestList = new ArrayList<>();
+    
+				List<SourceBean> searchRequestList = new ArrayList<>();  //xuameng修复不选择搜索源还进行搜索，还显示搜索动画
 				searchRequestList.addAll(ApiConfig.get().getSourceBeanList());
 				SourceBean home = ApiConfig.get().getHomeSourceBean();
 				searchRequestList.remove(home);
@@ -271,9 +270,8 @@ public class SearchActivity extends BaseActivity {
                 hasKeyBoard = true;
 				if (!TextUtils.isEmpty(keyword)) {
                     if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)){
-
-				searchExecutorService = Executors.newFixedThreadPool(5);         //xuameng修复不选择搜索源还进行搜索，还显示搜索动画
-				List<SourceBean> searchRequestList = new ArrayList<>();
+      
+				List<SourceBean> searchRequestList = new ArrayList<>();  //xuameng修复不选择搜索源还进行搜索，还显示搜索动画
 				searchRequestList.addAll(ApiConfig.get().getSourceBeanList());
 				SourceBean home = ApiConfig.get().getHomeSourceBean();
 				searchRequestList.remove(home);
@@ -433,8 +431,7 @@ public class SearchActivity extends BaseActivity {
                 etSearch.setText(content);
                 if (Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)) {
 
-				searchExecutorService = Executors.newFixedThreadPool(5);         //xuameng修复不选择搜索源还进行搜索，还显示搜索动画
-				List<SourceBean> searchRequestList = new ArrayList<>();
+				List<SourceBean> searchRequestList = new ArrayList<>();  //xuameng修复不选择搜索源还进行搜索，还显示搜索动画
 				searchRequestList.addAll(ApiConfig.get().getSourceBeanList());
 				SourceBean home = ApiConfig.get().getHomeSourceBean();
 				searchRequestList.remove(home);
@@ -610,9 +607,8 @@ public class SearchActivity extends BaseActivity {
             remoteDialog.dismiss();
             remoteDialog = null;
         }
-        cancel();
-        searchExecutorService = Executors.newFixedThreadPool(5);         //xuameng修复不选择搜索源还进行搜索，还显示搜索动画
-        List<SourceBean> searchRequestList = new ArrayList<>();
+        cancel();      
+        List<SourceBean> searchRequestList = new ArrayList<>();   //xuameng修复不选择搜索源还进行搜索，还显示搜索动画
         searchRequestList.addAll(ApiConfig.get().getSourceBeanList());
         SourceBean home = ApiConfig.get().getHomeSourceBean();
         searchRequestList.remove(home);
@@ -739,8 +735,8 @@ public class SearchActivity extends BaseActivity {
             if (searchExecutorService != null) {
                 searchExecutorService.shutdownNow();
                 searchExecutorService = null;
-                JSEngine.getInstance().stopAll();
-				JSEngine.getInstance().destroy();
+ //               JSEngine.getInstance().stopAll();
+//				JSEngine.getInstance().destroy();
             }
         } catch (Throwable th) {
             th.printStackTrace();
