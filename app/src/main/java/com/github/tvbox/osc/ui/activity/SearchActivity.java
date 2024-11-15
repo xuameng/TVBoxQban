@@ -59,7 +59,6 @@ import android.text.Editable;		//xuameng搜索历史
 import com.github.tvbox.osc.data.SearchPresenter;  //xuameng搜索历史
 import com.github.tvbox.osc.cache.SearchHistory;   //xuameng搜索历史
 import androidx.constraintlayout.widget.ConstraintLayout; //xuameng搜索历史
-import android.view.ViewTreeObserver;   //xuameng搜索图片宽度
 import com.google.gson.Gson;  //热门搜索
 import com.google.gson.JsonArray; //热门搜索
 import com.google.gson.JsonElement; //热门搜索
@@ -103,7 +102,6 @@ public class SearchActivity extends BaseActivity {
 	private ImageView clearHistory;  //xuameng搜索历史
 	private SearchPresenter searchPresenter;  //xuameng搜索历史
 	private TextView tHotSearchText;  //xuameng热门搜索
-	private int searchResultWidth;  //xuameng显示图片宽度
 	private static ArrayList<String> hots = new ArrayList<>();  //xuameng热门搜索
 
     private static HashMap<String, String> mCheckSources = null;
@@ -193,26 +191,6 @@ public class SearchActivity extends BaseActivity {
         mGridViewWord.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
         wordAdapter = new PinyinAdapter();
         mGridViewWord.setAdapter(wordAdapter);
-
-        searchResultWidth = Hawk.get(HawkConfig.SEARCH_RESULT_WIDTH, -1);
-        llLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                if (searchResultWidth != -1) {
-                    return;
-                }
-                int width = mGridView.getWidth();
-                if (width != 0) {
-                    // 计算item的宽度
-                    searchResultWidth = (width - 2 * (int) (App.getInstance().getResources().getDimension(R.dimen.vs_20))) / 3;
-                    Hawk.put(HawkConfig.SEARCH_RESULT_WIDTH, searchResultWidth);
-                    if (searchAdapter != null) {
-                        searchAdapter.notifyDataSetChanged();
-                    }
-                }
-            }
-        });
-
         wordAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
@@ -762,6 +740,7 @@ public class SearchActivity extends BaseActivity {
                 searchExecutorService.shutdownNow();
                 searchExecutorService = null;
                 JSEngine.getInstance().stopAll();
+				JSEngine.getInstance().destroy();
             }
         } catch (Throwable th) {
             th.printStackTrace();
