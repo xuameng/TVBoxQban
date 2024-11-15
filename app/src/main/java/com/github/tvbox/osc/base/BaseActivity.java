@@ -137,8 +137,8 @@ public abstract class BaseActivity extends AppCompatActivity implements CustomAd
 
     protected void clearShowEmpty() {     //xuameng修复搜索BUG
         if (null != mLoadService) {
-            mLoadService.removeCallback(EmptyCallback.class);
-			mLoadService.clearCallback();
+            loadSir.removeCallback(EmptyCallback.class);
+			loadSir.clearCallback();
         }
     }
 
