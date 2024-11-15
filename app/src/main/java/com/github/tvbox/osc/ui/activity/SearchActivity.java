@@ -122,7 +122,7 @@ public class SearchActivity extends BaseActivity {
         initData();
         hasKeyBoard = true;
         isSearchBack = false;
-		clearShowEmpty();
+		setLoadSir(mGridView);
     }
 
     /*
@@ -743,7 +743,7 @@ public class SearchActivity extends BaseActivity {
                 searchExecutorService = null;
                 JSEngine.getInstance().stopAll();
 				JSEngine.getInstance().destroy();
-				clearShowEmpty();
+				setLoadSir(mGridView);
             }
         } catch (Throwable th) {
             th.printStackTrace();
