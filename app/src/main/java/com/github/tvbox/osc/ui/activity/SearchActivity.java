@@ -122,7 +122,6 @@ public class SearchActivity extends BaseActivity {
         initData();
         hasKeyBoard = true;
         isSearchBack = false;
-		setLoadSir(mGridView);
     }
 
     /*
@@ -315,6 +314,12 @@ public class SearchActivity extends BaseActivity {
                 searchTips.setVisibility(View.VISIBLE);
                 tHotSearchText.setText("热门搜索");          //xuameng修复删除内容后，热门搜索为空
 				showSuccess();  //xuameng修复BUG
+				if (searchExecutorService != null) {
+                searchExecutorService.shutdownNow();
+                searchExecutorService = null;
+                JSEngine.getInstance().stopAll();
+				JSEngine.getInstance().destroy();
+				}
 				cancel();
             }
         });
@@ -381,6 +386,12 @@ public class SearchActivity extends BaseActivity {
 						showSuccess();  //xuameng修复BUG
 						tv_history.setVisibility(View.VISIBLE);   //xuameng修复BUG
 						searchTips.setVisibility(View.VISIBLE);
+						if (searchExecutorService != null) {
+							searchExecutorService.shutdownNow();
+							searchExecutorService = null;
+							JSEngine.getInstance().stopAll();
+							JSEngine.getInstance().destroy();
+							}
                     }
                 } else if (pos == 0) {
                     RemoteDialog remoteDialog = new RemoteDialog(mContext);
@@ -743,7 +754,6 @@ public class SearchActivity extends BaseActivity {
                 searchExecutorService = null;
                 JSEngine.getInstance().stopAll();
 				JSEngine.getInstance().destroy();
-				setLoadSir(mGridView);
             }
         } catch (Throwable th) {
             th.printStackTrace();
