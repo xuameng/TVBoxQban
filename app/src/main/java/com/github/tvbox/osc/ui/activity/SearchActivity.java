@@ -152,16 +152,15 @@ public class SearchActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-				if (searchExecutorService != null) {
-                searchExecutorService.shutdownNow();
-                searchExecutorService = null;
-                JSEngine.getInstance().stopAll();
-				pauseRunnable.clear();
-                pauseRunnable = null;
-		        showSuccess();  //xuameng修复BUG
-				}
-
-        
+        if (pauseRunnable != null && pauseRunnable.size() > 0) {
+            searchExecutorService = Executors.newFixedThreadPool(5);
+            allRunCount.set(pauseRunnable.size());
+            for (Runnable runnable : pauseRunnable) {
+                searchExecutorService.execute(runnable);
+            }
+            pauseRunnable.clear();
+            pauseRunnable = null;
+        }
         if (hasKeyBoard) {
             tvSearch.requestFocus();
             tvSearch.requestFocusFromTouch();
@@ -736,7 +735,9 @@ public class SearchActivity extends BaseActivity {
         int count = allRunCount.decrementAndGet();
         if (count <= 0) {
             if (searchAdapter.getData().size() <= 0) {
+				if (searchExecutorService != null) {
                 showEmpty();		//xuameng修复BUG
+				}
                 tv_history.setVisibility(View.VISIBLE);   //xuameng修复BUG
                 searchTips.setVisibility(View.VISIBLE);
             }
