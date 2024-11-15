@@ -310,18 +310,13 @@ public class SearchActivity extends BaseActivity {
                 FastClickCheckUtil.check(v);
                 etSearch.setText("");
 				showHotSearchtext();     //xuameng修复清空后热门搜索为空
-				tv_history.setVisibility(View.VISIBLE);   //xuameng修复BUG
-                searchTips.setVisibility(View.VISIBLE);
                 tHotSearchText.setText("热门搜索");          //xuameng修复删除内容后，热门搜索为空
 				showSuccess();  //xuameng修复BUG
-				mGridView.setVisibility(View.GONE);
-			for (int i = 0; i < 5; i++) {
 				if (searchExecutorService != null) {
                 searchExecutorService.shutdownNow();
                 searchExecutorService = null;
                 JSEngine.getInstance().stopAll();
 				}
-			}
 				cancel();
             }
         });
@@ -386,16 +381,11 @@ public class SearchActivity extends BaseActivity {
 						showHotSearchtext();   //xuameng修复清空后热门搜索为空
                         tHotSearchText.setText("热门搜索");
 						showSuccess();  //xuameng修复BUG
-						tv_history.setVisibility(View.VISIBLE);   //xuameng修复BUG
-						searchTips.setVisibility(View.VISIBLE);
-						mGridView.setVisibility(View.GONE);
-					for (int i = 0; i < 5; i++) {
 						if (searchExecutorService != null) {
-						searchExecutorService.shutdownNow();
-						searchExecutorService = null;
-						JSEngine.getInstance().stopAll();
-						}
-					}
+							searchExecutorService.shutdownNow();
+							searchExecutorService = null;
+							JSEngine.getInstance().stopAll();
+							}
                     }
                 } else if (pos == 0) {
                     RemoteDialog remoteDialog = new RemoteDialog(mContext);
@@ -738,8 +728,6 @@ public class SearchActivity extends BaseActivity {
 				if (searchExecutorService != null) {
                 showEmpty();		//xuameng修复BUG
 				}
-                tv_history.setVisibility(View.VISIBLE);   //xuameng修复BUG
-                searchTips.setVisibility(View.VISIBLE);
             }
             cancel();
         }
@@ -755,13 +743,11 @@ public class SearchActivity extends BaseActivity {
         super.onDestroy();
         cancel();
         try {
-			for (int i = 0; i < 20; i++) {
-				if (searchExecutorService != null) {
-				searchExecutorService.shutdownNow();
-				searchExecutorService = null;
-				JSEngine.getInstance().stopAll();
-				}
-			}
+            if (searchExecutorService != null) {
+                searchExecutorService.shutdownNow();
+                searchExecutorService = null;
+                JSEngine.getInstance().stopAll();
+            }
         } catch (Throwable th) {
             th.printStackTrace();
         }
