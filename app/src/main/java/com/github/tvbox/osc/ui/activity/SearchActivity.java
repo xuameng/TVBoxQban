@@ -152,8 +152,6 @@ public class SearchActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-				tv_history.setVisibility(View.VISIBLE);   //xuameng修复BUG
-                searchTips.setVisibility(View.VISIBLE);
         if (pauseRunnable != null && pauseRunnable.size() > 0) {
             searchExecutorService = Executors.newFixedThreadPool(5);
             allRunCount.set(pauseRunnable.size());
@@ -227,8 +225,6 @@ public class SearchActivity extends BaseActivity {
                     bundle.putString("title", keyword);
 					refreshSearchHistory(keyword);  //xuameng搜索历史
                     jumpActivity(FastSearchActivity.class, bundle);
-				tv_history.setVisibility(View.VISIBLE);   //xuameng修复BUG
-                searchTips.setVisibility(View.VISIBLE);
                 }else {
                     search(keyword);
                 }
@@ -300,8 +296,6 @@ public class SearchActivity extends BaseActivity {
                         bundle.putString("title", keyword);
 						refreshSearchHistory(keyword);  //xuameng搜索历史
                         jumpActivity(FastSearchActivity.class, bundle);
-				tv_history.setVisibility(View.VISIBLE);   //xuameng修复BUG
-                searchTips.setVisibility(View.VISIBLE);
                     }else {
                         search(keyword);
                     }
@@ -474,8 +468,6 @@ public class SearchActivity extends BaseActivity {
                     bundle.putString("title", content);
                     refreshSearchHistory(content);
                     jumpActivity(FastSearchActivity.class, bundle);
-				tv_history.setVisibility(View.VISIBLE);   //xuameng修复BUG
-                searchTips.setVisibility(View.VISIBLE);
                 } else {
                     search(content);
                     //etSearch.setSelection(etSearch.getText().length());
@@ -548,8 +540,6 @@ public class SearchActivity extends BaseActivity {
                 bundle.putString("title", title);
 				refreshSearchHistory(title);  //xuameng 搜索历史
                 jumpActivity(FastSearchActivity.class, bundle);
-				tv_history.setVisibility(View.VISIBLE);   //xuameng修复BUG
-                searchTips.setVisibility(View.VISIBLE);
             }else {
                 search(title);
             }
@@ -599,8 +589,6 @@ public class SearchActivity extends BaseActivity {
                 bundle.putString("title", title);
 				refreshSearchHistory(title);   //xuameng 搜索历史
                 jumpActivity(FastSearchActivity.class, bundle);
-				tv_history.setVisibility(View.VISIBLE);   //xuameng修复BUG
-                searchTips.setVisibility(View.VISIBLE);
             }else{
                 search(title);
             }
@@ -722,11 +710,10 @@ public class SearchActivity extends BaseActivity {
         return matchNum == arr.length ? true : false;
     }
 
-    private void searchData(AbsXml absXml) {
-		            if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)){
-						return;
-					}
-
+    private void searchData(AbsXml absXml) {  //xuameng重要BUG如果快速模式直接返回
+		if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)){
+			return;
+		}
         if (absXml != null && absXml.movie != null && absXml.movie.videoList != null && absXml.movie.videoList.size() > 0) {
             List<Movie.Video> data = new ArrayList<>();
             for (Movie.Video video : absXml.movie.videoList) {
