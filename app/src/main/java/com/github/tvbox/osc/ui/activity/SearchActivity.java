@@ -122,6 +122,7 @@ public class SearchActivity extends BaseActivity {
         initData();
         hasKeyBoard = true;
         isSearchBack = false;
+		clearShowEmpty();
     }
 
     /*
@@ -735,8 +736,9 @@ public class SearchActivity extends BaseActivity {
             if (searchExecutorService != null) {
                 searchExecutorService.shutdownNow();
                 searchExecutorService = null;
- //               JSEngine.getInstance().stopAll();
-//				JSEngine.getInstance().destroy();
+                JSEngine.getInstance().stopAll();
+				JSEngine.getInstance().destroy();
+				clearShowEmpty();
             }
         } catch (Throwable th) {
             th.printStackTrace();
