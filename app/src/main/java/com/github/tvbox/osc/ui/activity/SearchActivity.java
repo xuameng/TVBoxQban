@@ -644,6 +644,11 @@ public class SearchActivity extends BaseActivity {
 
     private void searchResult() {
         try {
+            if (searchExecutorService != null) {  //xuameng必须加防止内存溢出
+                searchExecutorService.shutdownNow();
+                searchExecutorService = null;
+                JSEngine.getInstance().stopAll();
+            }
         } catch (Throwable th) {
             th.printStackTrace();
         } finally {
