@@ -8,7 +8,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 26
         versionCode 1
-        versionName '20241116-2222'
+        versionName '20241114-2222'
         multiDexEnabled true
         //设置room的Schema的位置
         javaCompileOptions {
@@ -60,16 +60,6 @@ android {
 
 dependencies {
     api fileTree(dir: "libs", include: ["*.jar"])
-
-    constraints {             //xuameng编译警告
-        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.0") {
-            because("kotlin-stdlib-jdk7 is now a part of kotlin-stdlib")
-        }
-        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.0") {
-            because("kotlin-stdlib-jdk8 is now a part of kotlin-stdlib")
-        }
-    }
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"  //xuameng编译警告
 
     implementation 'org.nanohttpd:nanohttpd:2.3.1'
     implementation 'com.google.zxing:core:3.3.0'
