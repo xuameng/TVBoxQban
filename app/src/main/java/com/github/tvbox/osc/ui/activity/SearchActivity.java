@@ -714,7 +714,8 @@ public class SearchActivity extends BaseActivity {
 		if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)){
 			return;
 		}
-		if (searchExecutorService = null) {
+		if (searchExecutorService != null) {
+		}else{ 
 			return;
 		}
         if (absXml != null && absXml.movie != null && absXml.movie.videoList != null && absXml.movie.videoList.size() > 0) {
