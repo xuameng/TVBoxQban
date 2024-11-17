@@ -6,12 +6,10 @@
     <LinearLayout
         android:gravity="center"
         android:layout_gravity="center"
-        android:paddingTop="2.5mm"
-        android:paddingBottom="2.5mm"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content">
         <CheckBox
-            android:textSize="@dimen/ts_24"
+            android:textSize="@dimen/ts_22"
             android:gravity="center"
             android:id="@+id/oneSearchSource"
             android:background="@drawable/button_dialog_main"
