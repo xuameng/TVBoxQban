@@ -1110,6 +1110,9 @@ public class DetailActivity extends BaseActivity {
                 return;
             }
         }
+		if (seriesFlagFocus = null){
+			tvPlay.requestFocus();
+		}
         super.onBackPressed();
     }
 
