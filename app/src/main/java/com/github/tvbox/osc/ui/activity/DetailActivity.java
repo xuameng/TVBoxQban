@@ -478,6 +478,7 @@ public class DetailActivity extends BaseActivity {
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
 //                seriesSelect = false;
+				  seriesFlagFocus = itemView;
             }
 
             @Override
@@ -1105,8 +1106,7 @@ public class DetailActivity extends BaseActivity {
             return;
         }
         if (seriesSelect) {
-//            if (seriesFlagFocus != null && !seriesFlagFocus.isFocused()) {
-            if (seriesFlagFocus != null) {
+            if (seriesFlagFocus != null && !seriesFlagFocus.isFocused()) {
                 seriesFlagFocus.requestFocus();
                 return;
             }
