@@ -1105,7 +1105,8 @@ public class DetailActivity extends BaseActivity {
             return;
         }
         if (seriesSelect) {
-            if (seriesFlagFocus != null && !seriesFlagFocus.isFocused()) {
+//            if (seriesFlagFocus != null && !seriesFlagFocus.isFocused()) {
+            if (seriesFlagFocus != null) {
                 seriesFlagFocus.requestFocus();
                 return;
             }
