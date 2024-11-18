@@ -777,6 +777,7 @@ public class DetailActivity extends BaseActivity {
 
                     if (vodInfo.seriesMap != null && vodInfo.seriesMap.size() > 0) {
                         mGridViewFlag.setVisibility(View.VISIBLE);
+						mSeriesGroupView.setNextFocusUpId(R.id.mGridViewFlag);   //xuameng测试
                         mGridView.setVisibility(View.VISIBLE);
                         tvPlay.setVisibility(View.VISIBLE);
                         mEmptyPlayList.setVisibility(View.GONE);
@@ -1109,9 +1110,9 @@ public class DetailActivity extends BaseActivity {
                 seriesFlagFocus.requestFocus();
                 return;
             }
-        }
-		if (seriesFlagFocus = null){
+        }else {
 			tvPlay.requestFocus();
+			return;
 		}
         super.onBackPressed();
     }
