@@ -188,6 +188,9 @@ public class DetailActivity extends BaseActivity {
         this.mGridViewLayoutMgr = new V7GridLayoutManager(this.mContext, 6);
         mGridView.setLayoutManager(this.mGridViewLayoutMgr);
 //        mGridView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 0, false));
+
+		mSeriesGroupView.setNextFocusRightId(R.id.mGridViewFlag);   //xuameng测试
+
         seriesAdapter = new SeriesAdapter();
         mGridView.setAdapter(seriesAdapter);
         mGridViewFlag = findViewById(R.id.mGridViewFlag);
@@ -478,7 +481,6 @@ public class DetailActivity extends BaseActivity {
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
 //                seriesSelect = false;
-				  refresh(itemView, position);
             }
 
             @Override
@@ -1106,7 +1108,8 @@ public class DetailActivity extends BaseActivity {
             return;
         }
         if (seriesSelect) {
-            if (seriesFlagFocus != null && !seriesFlagFocus.isFocused()) {
+ //           if (seriesFlagFocus != null && !seriesFlagFocus.isFocused()) {
+	          if (vodInfo != null && vodInfo.seriesMap.size() > 0){
                 seriesFlagFocus.requestFocus();
                 return;
             }
