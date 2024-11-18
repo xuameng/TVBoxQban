@@ -216,14 +216,14 @@ public class ModelSettingFragment extends BaseLazyFragment {
                 List<SourceBean> sites = ApiConfig.get().getSourceBeanList();
                 if (sites.size() > 0) {
                     SelectDialog<SourceBean> dialog = new SelectDialog<>(mActivity);
-					TvRecyclerView tvRecyclerView = dialog.findViewById(R.id.list);
+					TvRecyclerView tvRecyclerView = dialog.findViewById(R.id.list);  //xuameng首页数据源显示优化
 					int spanCount;
 					spanCount = (int)Math.floor(sites.size()/60);
 					spanCount = Math.min(spanCount, 2);
 					tvRecyclerView.setLayoutManager(new V7GridLayoutManager(dialog.getContext(), spanCount+1));
 					ConstraintLayout cl_root = dialog.findViewById(R.id.cl_root);
 					ViewGroup.LayoutParams clp = cl_root.getLayoutParams();
-					clp.width = AutoSizeUtils.mm2px(dialog.getContext(), 380+200*spanCount);
+					clp.width = AutoSizeUtils.mm2px(dialog.getContext(), 380+200*spanCount);  //xuameng首页数据源显示优化完
                     dialog.setTip("请选择首页数据源");
                     dialog.setAdapter(new SelectDialogAdapter.SelectDialogInterface<SourceBean>() {
                         @Override
