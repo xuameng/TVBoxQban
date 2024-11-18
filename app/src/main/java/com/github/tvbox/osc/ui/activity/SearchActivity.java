@@ -58,7 +58,6 @@ import android.text.TextWatcher;  //xuameng搜索历史
 import android.text.Editable;		//xuameng搜索历史
 import com.github.tvbox.osc.data.SearchPresenter;  //xuameng搜索历史
 import com.github.tvbox.osc.cache.SearchHistory;   //xuameng搜索历史
-import androidx.constraintlayout.widget.ConstraintLayout; //xuameng搜索历史
 import com.google.gson.Gson;  //热门搜索
 import com.google.gson.JsonArray; //热门搜索
 import com.google.gson.JsonElement; //热门搜索
@@ -714,7 +713,7 @@ public class SearchActivity extends BaseActivity {
 		if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)){
 			return;
 		}
-		if (searchExecutorService != null) {
+		if (searchExecutorService != null) {   //xuameng点击清除或删除所有文字后还继续显示搜索结果
 		}else{ 
 			return;
 		}
