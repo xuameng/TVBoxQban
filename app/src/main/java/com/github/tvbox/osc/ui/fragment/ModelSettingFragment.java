@@ -28,9 +28,11 @@ import com.github.tvbox.osc.ui.dialog.SearchRemoteTvDialog;
 import com.github.tvbox.osc.ui.dialog.SelectDialog;
 import com.github.tvbox.osc.ui.dialog.XWalkInitDialog;      //xuamengXWalk
 import com.github.tvbox.osc.ui.dialog.ResetDialog;  //xuameng重置
-import com.owen.tvrecyclerview.widget.TvRecyclerView;  //优化首页数据源列表
-import com.owen.tvrecyclerview.widget.V7GridLayoutManager; //优化首页数据源列表
-import com.owen.tvrecyclerview.widget.V7LinearLayoutManager; //优化首页数据源列表
+import com.owen.tvrecyclerview.widget.TvRecyclerView;  //xuameng优化首页数据源列表
+import com.owen.tvrecyclerview.widget.V7GridLayoutManager; //xuameng优化首页数据源列表
+import com.owen.tvrecyclerview.widget.V7LinearLayoutManager; //xuameng优化首页数据源列表
+import androidx.constraintlayout.widget.ConstraintLayout;  //xuameng优化首页数据源列表
+import android.view.ViewGroup;   //xuameng优化首页数据源列表
 import com.github.tvbox.osc.util.FastClickCheckUtil;
 import com.github.tvbox.osc.util.FileUtils;
 import com.github.tvbox.osc.util.HawkConfig;
