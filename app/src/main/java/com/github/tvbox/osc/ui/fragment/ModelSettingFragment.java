@@ -28,6 +28,9 @@ import com.github.tvbox.osc.ui.dialog.SearchRemoteTvDialog;
 import com.github.tvbox.osc.ui.dialog.SelectDialog;
 import com.github.tvbox.osc.ui.dialog.XWalkInitDialog;      //xuamengXWalk
 import com.github.tvbox.osc.ui.dialog.ResetDialog;  //xuameng重置
+import com.owen.tvrecyclerview.widget.TvRecyclerView;  //优化首页数据源列表
+import com.owen.tvrecyclerview.widget.V7GridLayoutManager; //优化首页数据源列表
+import com.owen.tvrecyclerview.widget.V7LinearLayoutManager; //优化首页数据源列表
 import com.github.tvbox.osc.util.FastClickCheckUtil;
 import com.github.tvbox.osc.util.FileUtils;
 import com.github.tvbox.osc.util.HawkConfig;
@@ -210,6 +213,14 @@ public class ModelSettingFragment extends BaseLazyFragment {
                 List<SourceBean> sites = ApiConfig.get().getSourceBeanList();
                 if (sites.size() > 0) {
                     SelectDialog<SourceBean> dialog = new SelectDialog<>(mActivity);
+					TvRecyclerView tvRecyclerView = dialog.findViewById(R.id.list);
+					int spanCount;
+					spanCount = (int)Math.floor(sites.size()/60);
+					spanCount = Math.min(spanCount, 2);
+					tvRecyclerView.setLayoutManager(new V7GridLayoutManager(dialog.getContext(), spanCount+1));
+					ConstraintLayout cl_root = dialog.findViewById(R.id.cl_root);
+					ViewGroup.LayoutParams clp = cl_root.getLayoutParams();
+					clp.width = AutoSizeUtils.mm2px(dialog.getContext(), 380+200*spanCount);
                     dialog.setTip("请选择首页数据源");
                     dialog.setAdapter(new SelectDialogAdapter.SelectDialogInterface<SourceBean>() {
                         @Override
@@ -241,7 +252,9 @@ public class ModelSettingFragment extends BaseLazyFragment {
                         }
                     }, sites, sites.indexOf(ApiConfig.get().getHomeSourceBean()));
                     dialog.show();
-                }
+                } else {
+						Toast.makeText(mContext, "主页暂无数据！联系许大师吧！", Toast.LENGTH_LONG).show();
+				}
             }
         });
         findViewById(R.id.llDns).setOnClickListener(new View.OnClickListener() {
