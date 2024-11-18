@@ -188,9 +188,6 @@ public class DetailActivity extends BaseActivity {
         this.mGridViewLayoutMgr = new V7GridLayoutManager(this.mContext, 6);
         mGridView.setLayoutManager(this.mGridViewLayoutMgr);
 //        mGridView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 0, false));
-
-		mSeriesGroupView.setNextFocusRightId(R.id.mGridViewFlag);   //xuameng测试
-
         seriesAdapter = new SeriesAdapter();
         mGridView.setAdapter(seriesAdapter);
         mGridViewFlag = findViewById(R.id.mGridViewFlag);
