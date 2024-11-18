@@ -1109,11 +1109,11 @@ public class DetailActivity extends BaseActivity {
             if (seriesFlagFocus != null && !seriesFlagFocus.isFocused()) {
                 seriesFlagFocus.requestFocus();
                 return;
-            }
-        }else {
-			tvPlay.requestFocus();
-			return;
-		}
+            }else {
+				tvPlay.requestFocus();
+				return;
+			}
+        }
         super.onBackPressed();
     }
 
