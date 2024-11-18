@@ -453,7 +453,8 @@ public class DetailActivity extends BaseActivity {
         mGridViewFlag.setOnItemListener(new TvRecyclerView.OnItemListener() {
             private void refresh(View itemView, int position) {
                 String newFlag = seriesFlagAdapter.getData().get(position).name;
-                if (vodInfo != null && !vodInfo.playFlag.equals(newFlag)) {
+//                if (vodInfo != null && !vodInfo.playFlag.equals(newFlag)) {
+                if (vodInfo != null) {
                     for (int i = 0; i < vodInfo.seriesFlags.size(); i++) {
                         VodInfo.VodSeriesFlag flag = vodInfo.seriesFlags.get(i);
                         if (flag.name.equals(vodInfo.playFlag)) {
@@ -777,7 +778,6 @@ public class DetailActivity extends BaseActivity {
 
                     if (vodInfo.seriesMap != null && vodInfo.seriesMap.size() > 0) {
                         mGridViewFlag.setVisibility(View.VISIBLE);
-						mSeriesGroupView.setNextFocusUpId(R.id.mGridViewFlag);   //xuameng测试
                         mGridView.setVisibility(View.VISIBLE);
                         tvPlay.setVisibility(View.VISIBLE);
                         mEmptyPlayList.setVisibility(View.GONE);
