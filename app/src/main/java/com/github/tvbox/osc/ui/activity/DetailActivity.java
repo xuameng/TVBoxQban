@@ -816,7 +816,7 @@ public class DetailActivity extends BaseActivity {
                         setTextShow(tvPlayUrl, "播放地址：", vodInfo.seriesMap.get(vodInfo.playFlag).get(0).url);
                         seriesFlagAdapter.setNewData(vodInfo.seriesFlags);
                         mGridViewFlag.scrollToPosition(flagScrollTo);
-
+						tvPlay.setNextFocusUpId(R.id.mGridView); 
                         refreshList();
                         if (showPreview) {
                             jumpToPlay();
