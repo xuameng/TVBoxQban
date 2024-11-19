@@ -673,6 +673,7 @@ public class DetailActivity extends BaseActivity {
             @Override
             public void run() {
                 mGridView.smoothScrollToPosition(vodInfo.playIndex);
+				mGridView.requestFocus();
             }
         }, 100);
     }
@@ -819,7 +820,8 @@ public class DetailActivity extends BaseActivity {
 
                         refreshList();
 						tvPlay.setNextFocusUpId(R.id.mGridView); 
-						mGridView.requestFocus();
+						mSeriesGroupView.setNextFocusUpId(R.id.mGridViewFlag); 
+
                         if (showPreview) {
                             jumpToPlay();
                             llPlayerFragmentContainer.setVisibility(View.VISIBLE);
