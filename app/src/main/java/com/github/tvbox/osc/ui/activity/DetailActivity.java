@@ -675,18 +675,6 @@ public class DetailActivity extends BaseActivity {
                 mGridView.smoothScrollToPosition(vodInfo.playIndex);
             }
         }, 100);
-
-		
-mGridView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-    @Override
-    public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-        super.onScrollStateChanged(recyclerView, newState);
-        if (newState == mGridView.SCROLL_STATE_IDLE) {
-            // 滚动已经停止，执行你需要的操作
-            mGridView.requestFocus();
-        }
-    }
-});
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -831,6 +819,28 @@ mGridView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
                         refreshList();
 						tvPlay.setNextFocusUpId(R.id.mGridView); 
+						tvQuickSearch.setNextFocusUpId(R.id.mGridView); 
+						tvSort.setNextFocusUpId(R.id.mGridView); 
+						tvCollect.setNextFocusUpId(R.id.mGridView); 
+						tvDesc.setNextFocusUpId(R.id.mGridView); 
+						tvPush.setNextFocusUpId(R.id.mGridView); 
+						mGridView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+						@Override
+						public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+								super.onScrollStateChanged(recyclerView, newState);
+								if (newState == mGridView.SCROLL_STATE_IDLE) {
+								// 滚动已经停止，执行你需要的操作
+								mGridView.requestFocus();
+								mGridView.postDelayed(new Runnable() {
+									@Override
+									public void run() {
+										mGridView.removeOnScrollListener(this);
+									}
+								}, 100);
+								
+								}
+							}
+						});
 
                         if (showPreview) {
                             jumpToPlay();
@@ -1114,7 +1124,27 @@ mGridView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             if (playFragment.onBackPressed())
                 return;
             toggleFullPreview();
-            mGridView.requestFocus();
+
+            refreshList();
+			mGridView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+			@Override
+			public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+					super.onScrollStateChanged(recyclerView, newState);
+					if (newState == mGridView.SCROLL_STATE_IDLE) {
+					// 滚动已经停止，执行你需要的操作
+					mGridView.requestFocus();
+					mGridView.postDelayed(new Runnable() {
+						@Override
+						public void run() {
+							mGridView.removeOnScrollListener(this);
+						}
+					}, 100);
+								
+					}
+				}
+			});
+
+//            mGridView.requestFocus();
             List<VodInfo.VodSeries> list = vodInfo.seriesMap.get(vodInfo.playFlag);
             mSeriesGroupView.setVisibility(list.size()>GroupCount ? View.VISIBLE : View.GONE);
             return;
