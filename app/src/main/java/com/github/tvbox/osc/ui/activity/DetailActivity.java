@@ -187,7 +187,7 @@ public class DetailActivity extends BaseActivity {
         mGridView.setHasFixedSize(false);
         this.mGridViewLayoutMgr = new V7GridLayoutManager(this.mContext, 6);
         mGridView.setLayoutManager(this.mGridViewLayoutMgr);
-        mGridView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 0, false));
+//        mGridView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 0, false));
         seriesAdapter = new SeriesAdapter();
         mGridView.setAdapter(seriesAdapter);
         mGridViewFlag = findViewById(R.id.mGridViewFlag);
@@ -630,7 +630,6 @@ public class DetailActivity extends BaseActivity {
 
     @SuppressLint("NotifyDataSetChanged")
     void refreshList() {
-		vodInfo.playIndex = 0;
         if (vodInfo.seriesMap.get(vodInfo.playFlag).size() <= vodInfo.playIndex) {
             vodInfo.playIndex = 0;
         }
@@ -644,12 +643,6 @@ public class DetailActivity extends BaseActivity {
                 }
             }
             if(canSelect)vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).selected = true;
-			        mGridView.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mGridView.ScrollToPosition(vodInfo.playIndex);
-            }
-        }, 1000);
         }
 
         Paint pFont = new Paint();
@@ -676,7 +669,12 @@ public class DetailActivity extends BaseActivity {
 
         setSeriesGroupOptions();
 
-
+        mGridView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mGridView.smoothScrollToPosition(vodInfo.playIndex);
+            }
+        }, 100);
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -821,6 +819,7 @@ public class DetailActivity extends BaseActivity {
 
                         refreshList();
 						tvPlay.setNextFocusUpId(R.id.mGridView); 
+						mGridView.requestFocus();
                         if (showPreview) {
                             jumpToPlay();
                             llPlayerFragmentContainer.setVisibility(View.VISIBLE);
