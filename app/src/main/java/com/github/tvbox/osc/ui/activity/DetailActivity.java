@@ -672,7 +672,7 @@ public class DetailActivity extends BaseActivity {
         mGridView.postDelayed(new Runnable() {
             @Override
             public void run() {
-                mGridView.smoothScrollToPosition(vodInfo.playIndex);
+                mGridView.ScrollToPosition(vodInfo.playIndex);
             }
         }, 100);
     }
