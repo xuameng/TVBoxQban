@@ -462,7 +462,7 @@ public class DetailActivity extends BaseActivity {
                             seriesFlagAdapter.notifyItemChanged(i);
                             break;
                         }
-                    }W
+                    }
                     VodInfo.VodSeriesFlag flag = vodInfo.seriesFlags.get(position);
                     flag.selected = true;
                     // clean pre flag select status
