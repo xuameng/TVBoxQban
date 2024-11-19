@@ -817,7 +817,7 @@ public class DetailActivity extends BaseActivity {
                         seriesFlagAdapter.setNewData(vodInfo.seriesFlags);
                         mGridViewFlag.scrollToPosition(flagScrollTo);
 
-                        refreshList();
+              //          refreshList();
 						tvPlay.setNextFocusUpId(R.id.mGridView); 
 						mGridView.postDelayed(new Runnable() {
 						@Override
