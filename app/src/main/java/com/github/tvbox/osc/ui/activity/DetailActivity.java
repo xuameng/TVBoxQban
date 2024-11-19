@@ -675,6 +675,18 @@ public class DetailActivity extends BaseActivity {
                 mGridView.smoothScrollToPosition(vodInfo.playIndex);
             }
         }, 100);
+
+		
+mGridView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+    @Override
+    public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+        super.onScrollStateChanged(recyclerView, newState);
+        if (newState == mGridView.SCROLL_STATE_IDLE) {
+            // 滚动已经停止，执行你需要的操作
+            mGridView.requestFocus();
+        }
+    }
+});
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -817,14 +829,8 @@ public class DetailActivity extends BaseActivity {
                         seriesFlagAdapter.setNewData(vodInfo.seriesFlags);
                         mGridViewFlag.scrollToPosition(flagScrollTo);
 
-              //          refreshList();
+                        refreshList();
 						tvPlay.setNextFocusUpId(R.id.mGridView); 
-						mGridView.postDelayed(new Runnable() {
-						@Override
-						public void run() {
-						mGridView.requestFocus();
-						}
-						}, 1000);
 
                         if (showPreview) {
                             jumpToPlay();
