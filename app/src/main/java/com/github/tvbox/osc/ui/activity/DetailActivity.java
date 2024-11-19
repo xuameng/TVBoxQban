@@ -187,7 +187,7 @@ public class DetailActivity extends BaseActivity {
         mGridView.setHasFixedSize(false);
         this.mGridViewLayoutMgr = new V7GridLayoutManager(this.mContext, 6);
         mGridView.setLayoutManager(this.mGridViewLayoutMgr);
-        mGridView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 0, false));
+//        mGridView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 0, false));
         seriesAdapter = new SeriesAdapter();
         mGridView.setAdapter(seriesAdapter);
         mGridViewFlag = findViewById(R.id.mGridViewFlag);
@@ -542,7 +542,7 @@ public class DetailActivity extends BaseActivity {
                 txtView.setTextColor(mContext.getResources().getColor(R.color.color_02F8E1));
                 if (vodInfo != null && vodInfo.seriesMap.get(vodInfo.playFlag).size() > 0) {
                     int targetPos = position * GroupCount+1;
-                    mGridView.ScrollToPosition(targetPos);
+                    mGridView.smoothScrollToPosition(targetPos);
                 }
                 currentSeriesGroupView = itemView;
                 currentSeriesGroupView.isSelected();
@@ -560,7 +560,7 @@ public class DetailActivity extends BaseActivity {
                 if (vodInfo != null && vodInfo.seriesMap.get(vodInfo.playFlag).size() > 0) {
                     int targetPos =  position * GroupCount+1;
 //                    mGridView.scrollToPosition(targetPos);
-                    mGridView.ScrollToPosition(targetPos);
+                    mGridView.smoothScrollToPosition(targetPos);
                 }
                 if(currentSeriesGroupView != null) {
                     TextView txtView = currentSeriesGroupView.findViewById(R.id.tvSeriesGroup);
@@ -672,9 +672,9 @@ public class DetailActivity extends BaseActivity {
         mGridView.postDelayed(new Runnable() {
             @Override
             public void run() {
-                mGridView.ScrollToPosition(vodInfo.playIndex);
+                mGridView.smoothScrollToPosition(vodInfo.playIndex);
             }
-        }, 100);
+        }, 1000);
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -816,8 +816,9 @@ public class DetailActivity extends BaseActivity {
                         setTextShow(tvPlayUrl, "播放地址：", vodInfo.seriesMap.get(vodInfo.playFlag).get(0).url);
                         seriesFlagAdapter.setNewData(vodInfo.seriesFlags);
                         mGridViewFlag.scrollToPosition(flagScrollTo);
-						tvPlay.setNextFocusUpId(R.id.mGridView); 
+
                         refreshList();
+						tvPlay.setNextFocusUpId(R.id.mGridView); 
                         if (showPreview) {
                             jumpToPlay();
                             llPlayerFragmentContainer.setVisibility(View.VISIBLE);
