@@ -831,13 +831,7 @@ public class DetailActivity extends BaseActivity {
 								if (newState == mGridView.SCROLL_STATE_IDLE) {
 								// 滚动已经停止，执行你需要的操作
 								mGridView.requestFocus();
-								mGridView.postDelayed(new Runnable() {
-									@Override
-									public void run() {
-										mGridView.removeOnScrollListener(this);
-									}
-								}, 100);
-								
+								mGridView.removeOnScrollListener(this);
 								}
 							}
 						});
@@ -1133,13 +1127,7 @@ public class DetailActivity extends BaseActivity {
 					if (newState == mGridView.SCROLL_STATE_IDLE) {
 					// 滚动已经停止，执行你需要的操作
 					mGridView.requestFocus();
-					mGridView.postDelayed(new Runnable() {
-						@Override
-						public void run() {
-							mGridView.removeOnScrollListener(this);
-						}
-					}, 100);
-								
+					mGridView.removeOnScrollListener(this);								
 					}
 				}
 			});
