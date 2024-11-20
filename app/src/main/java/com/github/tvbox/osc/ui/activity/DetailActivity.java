@@ -183,7 +183,7 @@ public class DetailActivity extends BaseActivity {
         tvQuickSearch = findViewById(R.id.tvQuickSearch);
         mEmptyPlayList = findViewById(R.id.mEmptyPlaylist);
         mGridView = findViewById(R.id.mGridView);
-        mGridView.setHasFixedSize(true);
+//        mGridView.setHasFixedSize(true);  //xuameng固定大小用
         mGridView.setHasFixedSize(false);
         this.mGridViewLayoutMgr = new V7GridLayoutManager(this.mContext, 6);
         mGridView.setLayoutManager(this.mGridViewLayoutMgr);
@@ -453,8 +453,8 @@ public class DetailActivity extends BaseActivity {
         mGridViewFlag.setOnItemListener(new TvRecyclerView.OnItemListener() {
             private void refresh(View itemView, int position) {
                 String newFlag = seriesFlagAdapter.getData().get(position).name;
-                if (vodInfo != null && !vodInfo.playFlag.equals(newFlag)) {       //xuameng原语句
-//				  if (vodInfo != null) {										//xuameng修复点击播放列表（如阿里原阿里智栏）切换集数后，再点击相同的播放列表，不滚动到当前播放集数的问题
+//                if (vodInfo != null && !vodInfo.playFlag.equals(newFlag)) {       //xuameng原语句
+				  if (vodInfo != null) {										//xuameng修复点击播放列表（如阿里原阿里智栏）切换集数后，再点击相同的播放列表，不滚动到当前播放集数的问题
                     for (int i = 0; i < vodInfo.seriesFlags.size(); i++) {
                         VodInfo.VodSeriesFlag flag = vodInfo.seriesFlags.get(i);
                         if (flag.name.equals(vodInfo.playFlag)) {
@@ -1133,7 +1133,7 @@ public class DetailActivity extends BaseActivity {
 				}
 			});
 
-//            mGridView.requestFocus();
+//            mGridView.requestFocus(); 没用了
             List<VodInfo.VodSeries> list = vodInfo.seriesMap.get(vodInfo.playFlag);
             mSeriesGroupView.setVisibility(list.size()>GroupCount ? View.VISIBLE : View.GONE);
             return;
