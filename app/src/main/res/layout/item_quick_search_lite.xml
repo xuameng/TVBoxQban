@@ -10,7 +10,7 @@
         android:textColor="@color/color_FFFFFF"
         android:ellipsize="middle"
         android:gravity="center_vertical"
-        android:id="@id/tvName"
+        android:id="@+id/tvName"
         android:padding="@dimen/vs_10"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
