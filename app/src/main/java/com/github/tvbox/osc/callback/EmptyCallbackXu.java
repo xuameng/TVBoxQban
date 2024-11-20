@@ -8,7 +8,7 @@ import com.kingja.loadsir.callback.Callback;
  * @date :2020/12/24
  * @description:
  */
-public class EmptyCallback extends Callback {
+public class EmptyCallbackXu extends Callback {
     @Override
     protected int onCreateView() {
         return R.layout.loadsir_empty_layout_xu;
