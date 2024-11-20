@@ -118,7 +118,7 @@ public class SearchRemoteTvDialog extends BaseDialog{
 
     public void showEmpty() {
         if (null != mLoadService) {
-            mLoadService.showCallback(EmptyCallback.class);
+            mLoadService.showCallback(EmptyCallbackXu.class);
         }
     }
 
