@@ -4,12 +4,11 @@
     android:textColor="@color/color_FFFFFF"
     android:ellipsize="end"
     android:gravity="center_vertical"
-    android:id="@id/tvSearchWord"
+    android:id="@+id/tvSearchWord"
     android:background="@drawable/button_dialog_main"
     android:padding="@dimen/vs_10"
     android:focusable="true"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="@dimen/vs_10"
     android:singleLine="true"
-    xmlns:android="http://schemas.android.com/apk/res/android" />
+    xmlns:android="http://schemas.android.com/apk/res/android"/>
