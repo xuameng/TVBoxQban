@@ -10,7 +10,7 @@
         android:background="@drawable/shape_dialog_bg_main"
         android:padding="@dimen/vs_30"
         android:layout_width="@dimen/vs_960"
-        android:layout_height="@dimen/vs_480">
+        android:layout_height="496mm">
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="fill_parent"
