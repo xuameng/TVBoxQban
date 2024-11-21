@@ -442,6 +442,26 @@ public class SearchActivity extends BaseActivity {
                 etSearch.setText(content);
                 if (Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)) {
 
+				List<SourceBean> searchRequestList = new ArrayList<>();  //xuameng修复不选择搜索源还进行搜索，还显示搜索动画
+				searchRequestList.addAll(ApiConfig.get().getSourceBeanList());
+				SourceBean home = ApiConfig.get().getHomeSourceBean();
+				searchRequestList.remove(home);
+				searchRequestList.add(0, home);
+				ArrayList<String> siteKey = new ArrayList<>();
+				for (SourceBean bean : searchRequestList) {
+					if (!bean.isSearchable()) {
+						continue;
+					}
+					if (mCheckSources != null && !mCheckSources.containsKey(bean.getKey())) {
+						continue;
+					}
+					siteKey.add(bean.getKey());
+					allRunCount.incrementAndGet();
+				}
+				if (siteKey.size() <= 0) {
+					Toast.makeText(mContext, "没有指定搜索源", Toast.LENGTH_SHORT).show();
+					return;
+				}    //xuameng修复不选择搜索源还进行搜索，还显示搜索动画完 
 
                     Bundle bundle = new Bundle();
                     bundle.putString("title", content);
@@ -453,16 +473,6 @@ public class SearchActivity extends BaseActivity {
                 }
             }
         });
-
-		        tv_history.setViews(historyList, new FlowLayout.OnItemLongClickListener() {
-
-				public void onItemLongClick(String content) {
-historyList.remove(content);
- flowLayout.notifyDataChanged();
-            }
-        });
-
-
     }               //xuameng 搜索历史
 
     private void initViewModel() {
