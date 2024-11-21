@@ -669,25 +669,13 @@ public class DetailActivity extends BaseActivity {
 
         setSeriesGroupOptions();
 
-		
-
-private fun RecyclerView.fastSmoothScrollTo(pos: Int) {
-    val scroller = object : LinearSmoothScroller(context) {
-        override fun calculateSpeedPerPixel(displayMetrics: DisplayMetrics): Float {
-            // 减小这个值可以加快滚动速度
-            return 0.1f
-        }
-    }
-            mGridView.postDelayed(new Runnable() {
+        mGridView.postDelayed(new Runnable() {
             @Override
             public void run() {
-                mGridView.smoothScrollToPosition(vodInfo.playIndex,scroller);
+                mGridView.smoothScrollToPosition(vodInfo.playIndex);
             }
         }, 100);
     }
-}
-
-
 
     @SuppressLint("NotifyDataSetChanged")
     private void setSeriesGroupOptions(){
