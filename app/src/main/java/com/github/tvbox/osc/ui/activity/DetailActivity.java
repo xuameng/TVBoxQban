@@ -54,6 +54,7 @@ import com.github.tvbox.osc.util.SubtitleHelper;
 import com.github.tvbox.osc.ui.dialog.DescDialog;     //xuameng 内容简介
 import com.github.tvbox.osc.ui.dialog.PushDialog;    //xuameng远程推送
 import com.github.tvbox.osc.viewmodel.SourceViewModel;
+import android.support.v7.widget.LinearSmoothScroller;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
