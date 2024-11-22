@@ -628,9 +628,10 @@ public class DetailActivity extends BaseActivity {
         }
     }
 
+		boolean canSelectXu = true;
     @SuppressLint("NotifyDataSetChanged")
     void refreshList() {
-		boolean canSelectXu = true;
+
         if (vodInfo.seriesMap.get(vodInfo.playFlag).size() <= vodInfo.playIndex) {
             vodInfo.playIndex = 0;
 			canSelectXu = false;
