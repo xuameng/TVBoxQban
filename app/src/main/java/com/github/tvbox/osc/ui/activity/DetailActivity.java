@@ -196,7 +196,7 @@ mGridView.setLayoutManager(new V7LinearLayoutManager(this) {
             protected float calculateSpeedPerPixel(DisplayMetrics displayMetrics) {
                 // 返回的数值越大，滚动速度越快
                 return super.calculateSpeedPerPixel(displayMetrics) * 10;
-            }
+            };
 
     }
 });
