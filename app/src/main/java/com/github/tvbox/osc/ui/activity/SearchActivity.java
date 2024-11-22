@@ -477,7 +477,7 @@ public class SearchActivity extends BaseActivity {
 
 		
 
-	tv_history.setViews(historyList, new FlowLayout.OnItemLongClickListener() {
+		tv_history.setOnItemLongClickListener(onItemLongClickListener){
 
     public void onItemClick(String content) {
         // 处理长按事件
