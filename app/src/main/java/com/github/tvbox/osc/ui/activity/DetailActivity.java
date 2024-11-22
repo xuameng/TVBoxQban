@@ -138,7 +138,7 @@ public class DetailActivity extends BaseActivity {
     private boolean isReverse;
     private String preFlag="";
     private boolean firstReverse;
-    private V7GridLayoutManagerXu mGridViewLayoutMgr = null;
+    private V7GridLayoutManager mGridViewLayoutMgr = null;
     private HashMap<String, String> mCheckSources = null;
     private final ArrayList<String> seriesGroupOptions = new ArrayList<>();
     private View currentSeriesGroupView;
@@ -185,7 +185,7 @@ public class DetailActivity extends BaseActivity {
         mGridView = findViewById(R.id.mGridView);
 //        mGridView.setHasFixedSize(true);  //xuameng固定大小用
         mGridView.setHasFixedSize(false);
-        this.mGridViewLayoutMgr = new V7GridLayoutManagerXu(this.mContext, 6);
+        this.mGridViewLayoutMgr = new V7GridLayoutManager(this.mContext, 100);
         mGridView.setLayoutManager(this.mGridViewLayoutMgr);
 //        mGridView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 0, false));
         seriesAdapter = new SeriesAdapter();
@@ -1198,55 +1198,4 @@ public class DetailActivity extends BaseActivity {
         }
         EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_SUBTITLE_SIZE_CHANGE, subtitleTextSize));
     }
-
-
-
-	public class V7GridLayoutManagerXu extends V7GridLayoutManager {
- 
-    private int duration = 100; // 自定义的滚动时间，单位毫秒
- 
- 
-    @Override
-    public void smoothScrollToPosition(RecyclerView recyclerView, RecyclerView.State state, int position) {
-        RecyclerView.SmoothScroller smoothScroller = new RecyclerView.SmoothScroller(
-                new RecyclerView.SmoothScroller.ScrollVectorProvider() {
-                    @Override
-                    public PointF computeScrollVectorForPosition(int targetPosition) {
-                        return V7GridLayoutManagerXu.this.computeScrollVectorForPosition(targetPosition);
-                    }
- 
-                    @Nullable
-                    @Override
-                    public PointF computeScrollVectorForPosition(int targetPosition) {
-                        return V7GridLayoutManagerXu.this.computeScrollVectorForPosition(targetPosition);
-                    }
-                }) {
-            @Override
-            protected int getTargetPosition(RecyclerView.LayoutManager layoutManager, RecyclerView.State state) {
-                return super.getTargetPosition(layoutManager, state);
-            }
- 
-            @Override
-            protected float calculateSpeedPerPixel(DisplayMetrics displayMetrics) {
-                // 返回你想要的滚动速度
-                return super.calculateSpeedPerPixel(displayMetrics);
-            }
- 
-            @Override
-            protected void onTargetFound(View targetView, RecyclerView.State state, Action action) {
-                int dx = calculateDxToMakeVisible(targetView, getHorizontalSnapPreference());
-                int dy = calculateDyToMakeVisible(targetView, getVerticalSnapPreference());
-                int time = AnimationUtils.currentAnimationTimeMillis();
-                if (dx != 0) {
-                    mRecyclerView.smoothScrollBy(dx, 0, time);
-                } else if (dy != 0) {
-                    mRecyclerView.smoothScrollBy(0, dy, time);
-                }
-            }
-        };
- 
-        smoothScroller.setTargetPosition(position);
-        startSmoothScroll(smoothScroller);
-    }
-}
 }
