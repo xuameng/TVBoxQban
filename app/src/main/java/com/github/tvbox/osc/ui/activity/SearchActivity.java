@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;   //xuameng搜索历史
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -480,7 +481,7 @@ public class SearchActivity extends BaseActivity {
 
     public void onItemClick(String content) {
         // 处理长按事件
-        Toast.makeText(mcontext, "长按了第" + position + "个item", Toast.LENGTH_SHORT).show();
+		Toast.makeText(mContext, "没有指定搜索源", Toast.LENGTH_SHORT).show();
     }
 });
 
