@@ -55,7 +55,7 @@ import com.github.tvbox.osc.ui.dialog.DescDialog;     //xuameng 内容简介
 import com.github.tvbox.osc.ui.dialog.PushDialog;    //xuameng远程推送
 import com.github.tvbox.osc.viewmodel.SourceViewModel;
 import androidx.recyclerview.widget.LinearSmoothScroller;
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
