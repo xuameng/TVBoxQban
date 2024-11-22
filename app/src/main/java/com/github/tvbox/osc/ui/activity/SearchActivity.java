@@ -15,7 +15,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;   //xuameng搜索历史
-import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -474,17 +473,6 @@ public class SearchActivity extends BaseActivity {
                 }
             }
         });
-
-		
-
-		tv_history.setOnItemLongClickListener(onItemLongClickListener){
-
-    public void onItemClick(String content) {
-        // 处理长按事件
-		Toast.makeText(mContext, "没有指定搜索源", Toast.LENGTH_SHORT).show();
-    }
-});
-
     }               //xuameng 搜索历史
 
     private void initViewModel() {
