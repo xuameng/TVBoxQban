@@ -1211,21 +1211,7 @@ public class DetailActivity extends BaseActivity {
 public class SpeedyLinearLayoutManager extends V7LinearLayoutManager {
     private static final float MILLISECONDS_PER_INCH = 100f; // 控制速度
 
-    public SpeedyLinearLayoutManager(Context context) {
-        super(context);
-    }
-
-    @Override
-    public void smoothScrollToPosition(RecyclerView recyclerView, RecyclerView.State state, int position) {
-        LinearSmoothScroller smoothScroller = new LinearSmoothScroller(recyclerView.getContext()) {
-            @Override
-            protected float calculateSpeedPerPixel(DisplayMetrics displayMetrics) {
-                return MILLISECONDS_PER_INCH / displayMetrics.densityDpi;
-            }
-        };
-        smoothScroller.setTargetPosition(position);
-        startSmoothScroll(smoothScroller);
-    }
 }
+
 
 }
