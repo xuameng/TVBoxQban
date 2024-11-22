@@ -186,7 +186,7 @@ public class DetailActivity extends BaseActivity {
 //        mGridView.setHasFixedSize(true);  //xuameng固定大小用
         mGridView.setHasFixedSize(false);
         this.mGridViewLayoutMgr = new V7GridLayoutManager(this.mContext, 6);
-        mGridView.setLayoutManager(this.mGridViewLayoutMgr);
+        mGridView.setLayoutManager(CustomLinearLayoutManager);
 //        mGridView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 0, false));
         seriesAdapter = new SeriesAdapter();
         mGridView.setAdapter(seriesAdapter);
@@ -195,6 +195,25 @@ public class DetailActivity extends BaseActivity {
         mGridViewFlag.setLayoutManager(new V7LinearLayoutManager(this.mContext, 0, false));
         seriesFlagAdapter = new SeriesFlagAdapter();
         mGridViewFlag.setAdapter(seriesFlagAdapter);
+
+
+		public class CustomLinearLayoutManager extends V7LinearLayoutManager {
+    private int mDuration = 1500; // 滑动持续时间，单位为毫秒
+
+    public CustomLinearLayoutManager(Context context) {
+        super(context);
+    }
+
+    @Override
+    public void smoothScrollToPosition(RecyclerView recyclerView, RecyclerView.State state, int position) {
+        int dx = computeHorizontalOffset(position); // 计算水平偏移量
+        int dy = computeVerticalOffset(position); // 计算垂直偏移量
+        startScroll(0, 0, dx, dy, mDuration); // 开始平滑滚动，并设置持续时间
+    }
+}
+
+
+
         isReverse = false;
         firstReverse = false;
         preFlag = "";
