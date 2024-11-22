@@ -52,7 +52,6 @@ import com.github.tvbox.osc.util.SearchHelper;
 import com.github.tvbox.osc.util.SubtitleHelper;
 import com.github.tvbox.osc.ui.dialog.DescDialog;     //xuameng 内容简介
 import com.github.tvbox.osc.ui.dialog.PushDialog;    //xuameng远程推送
-import android.support.v7.widget.LinearSmoothScroller;
 import com.github.tvbox.osc.viewmodel.SourceViewModel;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -64,7 +63,6 @@ import com.orhanobut.hawk.Hawk;
 import com.owen.tvrecyclerview.widget.TvRecyclerView;
 import com.owen.tvrecyclerview.widget.V7GridLayoutManager;
 import com.owen.tvrecyclerview.widget.V7LinearLayoutManager;
-import com.owen.tvrecyclerview.widget.V7LinearSmoothScroller;
 import com.squareup.picasso.Picasso;
 
 import org.greenrobot.eventbus.EventBus;
@@ -194,15 +192,12 @@ public class DetailActivity extends BaseActivity {
 mGridView.setLayoutManager(new V7LinearLayoutManager(this) {
     @Override
     public void smoothScrollToPosition(RecyclerView recyclerView, RecyclerView.State state, int position) {
-        LinearSmoothScroller linearSmoothScroller = new LinearSmoothScroller(recyclerView.getContext()) {
-            @Override
+
             protected float calculateSpeedPerPixel(DisplayMetrics displayMetrics) {
                 // 返回的数值越大，滚动速度越快
                 return super.calculateSpeedPerPixel(displayMetrics) * 10;
             }
-        };
-        linearSmoothScroller.setTargetPosition(position);
-        startSmoothScroll(linearSmoothScroller);
+
     }
 });
 
