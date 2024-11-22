@@ -473,6 +473,17 @@ public class SearchActivity extends BaseActivity {
                 }
             }
         });
+
+		
+tv_history.setOnItemLongClickListener(new FlowLayout.OnItemLongClickListener() {
+
+    @Override
+    public void onItemLongClick(FlowLayout parent, View view, int position) {
+        // 处理长按事件
+        Toast.makeText(context, "长按了第" + position + "个item", Toast.LENGTH_SHORT).show();
+    }
+});
+
     }               //xuameng 搜索历史
 
     private void initViewModel() {
