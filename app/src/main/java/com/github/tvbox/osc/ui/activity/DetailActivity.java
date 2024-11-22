@@ -628,15 +628,14 @@ public class DetailActivity extends BaseActivity {
         }
     }
 
-		boolean canSelect = true;
     @SuppressLint("NotifyDataSetChanged")
     void refreshList() {
-
         if (vodInfo.seriesMap.get(vodInfo.playFlag).size() <= vodInfo.playIndex) {
             vodInfo.playIndex = 0;
         }
 
         if (vodInfo.seriesMap.get(vodInfo.playFlag) != null) {
+            boolean canSelect = true;
             for (int j = 0; j < vodInfo.seriesMap.get(vodInfo.playFlag).size(); j++) {
                 if(vodInfo.seriesMap.get(vodInfo.playFlag).get(j).selected){
                     canSelect = false;
@@ -668,17 +667,12 @@ public class DetailActivity extends BaseActivity {
         mGridViewLayoutMgr.setSpanCount(offset);
         seriesAdapter.setNewData(vodInfo.seriesMap.get(vodInfo.playFlag));
 
-		setSeriesGroupOptions();
+        setSeriesGroupOptions();
 
         mGridView.postDelayed(new Runnable() {
             @Override
             public void run() {
-				if(canSelect = false){
-					return;
-				}else{
                 mGridView.smoothScrollToPosition(vodInfo.playIndex);
-				}
-				
             }
         }, 100);
     }
