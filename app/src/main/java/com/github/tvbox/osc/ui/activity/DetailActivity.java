@@ -187,7 +187,7 @@ public class DetailActivity extends BaseActivity {
 //        mGridView.setHasFixedSize(true);  //xuameng固定大小用
         mGridView.setHasFixedSize(false);
         this.mGridViewLayoutMgr = new V7GridLayoutManager(this.mContext, 6);
-        mGridView.setLayoutManager(CustomLinearLayoutManager);
+        mGridView.setLayoutManager(new SpeedyLinearLayoutManager(this));
 //        mGridView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 0, false));
         seriesAdapter = new SeriesAdapter();
         mGridView.setAdapter(seriesAdapter);
@@ -1206,16 +1206,24 @@ public class DetailActivity extends BaseActivity {
         EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_SUBTITLE_SIZE_CHANGE, subtitleTextSize));
     }
 
-			public class CustomLinearLayoutManager extends V7LinearLayoutManager {
-    private int mDuration = 1500; // 滑动持续时间，单位为毫秒
+public class SpeedyLinearLayoutManager extends V7LinearLayoutManager {
+    private static final float MILLISECONDS_PER_INCH = 100f; // 控制速度
 
-    public CustomLinearLayoutManager(Context context) {
+    public SpeedyLinearLayoutManager(Context context) {
         super(context);
     }
 
     @Override
     public void smoothScrollToPosition(RecyclerView recyclerView, RecyclerView.State state, int position) {
-        startScroll(mDuration); // 开始平滑滚动，并设置持续时间
+        LinearSmoothScroller smoothScroller = new LinearSmoothScroller(recyclerView.getContext()) {
+            @Override
+            protected float calculateSpeedPerPixel(DisplayMetrics displayMetrics) {
+                return MILLISECONDS_PER_INCH / displayMetrics.densityDpi;
+            }
+        };
+        smoothScroller.setTargetPosition(position);
+        startSmoothScroll(smoothScroller);
     }
 }
+
 }
