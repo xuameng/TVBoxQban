@@ -197,20 +197,7 @@ public class DetailActivity extends BaseActivity {
         mGridViewFlag.setAdapter(seriesFlagAdapter);
 
 
-		public class CustomLinearLayoutManager extends V7LinearLayoutManager {
-    private int mDuration = 1500; // 滑动持续时间，单位为毫秒
 
-    public CustomLinearLayoutManager(Context context) {
-        super(context);
-    }
-
-    @Override
-    public void smoothScrollToPosition(RecyclerView recyclerView, RecyclerView.State state, int position) {
-        int dx = computeHorizontalOffset(position); // 计算水平偏移量
-        int dy = computeVerticalOffset(position); // 计算垂直偏移量
-        startScroll(0, 0, dx, dy, mDuration); // 开始平滑滚动，并设置持续时间
-    }
-}
 
 
 
@@ -1217,4 +1204,19 @@ public class DetailActivity extends BaseActivity {
         }
         EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_SUBTITLE_SIZE_CHANGE, subtitleTextSize));
     }
+
+			public class CustomLinearLayoutManager extends V7LinearLayoutManager {
+    private int mDuration = 1500; // 滑动持续时间，单位为毫秒
+
+    public CustomLinearLayoutManager(Context context) {
+        super(context);
+    }
+
+    @Override
+    public void smoothScrollToPosition(RecyclerView recyclerView, RecyclerView.State state, int position) {
+        int dx = computeHorizontalOffset(position); // 计算水平偏移量
+        int dy = computeVerticalOffset(position); // 计算垂直偏移量
+        startScroll(0, 0, dx, dy, mDuration); // 开始平滑滚动，并设置持续时间
+    }
+}
 }
