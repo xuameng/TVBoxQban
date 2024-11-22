@@ -21,7 +21,6 @@ import android.content.ClipboardManager;
 import android.content.ClipData;
 
 import android.view.animation.BounceInterpolator;   //xuameng动画
-import com.example.library.computeoffset.ComputeOffset;
 import android.content.Context;
 
 import androidx.fragment.app.FragmentContainerView;
@@ -1216,9 +1215,7 @@ public class DetailActivity extends BaseActivity {
 
     @Override
     public void smoothScrollToPosition(RecyclerView recyclerView, RecyclerView.State state, int position) {
-        int dx = computeHorizontalOffset(position); // 计算水平偏移量
-        int dy = computeVerticalOffset(position); // 计算垂直偏移量
-        startScroll(0, 0, dx, dy, mDuration); // 开始平滑滚动，并设置持续时间
+        startScroll(mDuration); // 开始平滑滚动，并设置持续时间
     }
 }
 }
