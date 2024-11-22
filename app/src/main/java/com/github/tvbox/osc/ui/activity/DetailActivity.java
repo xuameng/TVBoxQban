@@ -189,7 +189,7 @@ public class DetailActivity extends BaseActivity {
  //       mGridView.setLayoutManager(this.mGridViewLayoutMgr);
 //        mGridView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 0, false));
 
-mGridView.setLayoutManager(new LinearLayoutManager(this) {
+mGridView.setLayoutManager(new V7LinearLayoutManager(this) {
     @Override
     public void smoothScrollToPosition(RecyclerView recyclerView, RecyclerView.State state, int position) {
         LinearSmoothScroller linearSmoothScroller = new LinearSmoothScroller(recyclerView.getContext()) {
