@@ -62,7 +62,7 @@
                     style="@style/epg_window_btn">
                     <TextView
                         android:textStyle="bold"
-                        android:textSize="@dimen/vs_24"
+                        android:textSize="@dimen/ts_22"
                         android:textColor="@color/color_FFFFFF"
                         android:gravity="center"
                         android:id="@+id/tv_arrow0"
@@ -84,7 +84,7 @@
                         android:src="@drawable/scrollviewleft"/>
                     <TextView
                         android:textStyle="bold"
-                        android:textSize="@dimen/vs_24"
+                        android:textSize="@dimen/ts_22"
                         android:textColor="@color/color_FFFFFF"
                         android:gravity="center"
                         android:id="@+id/tv_arrow3"
@@ -138,7 +138,7 @@
                     style="@style/epg_window_btn">
                     <TextView
                         android:textStyle="bold"
-                        android:textSize="@dimen/vs_24"
+                        android:textSize="@dimen/ts_22"
                         android:textColor="@color/color_FFFFFF"
                         android:gravity="center"
                         android:id="@+id/tv_arrow"
@@ -160,7 +160,7 @@
                         android:src="@drawable/scrollview"/>
                     <TextView
                         android:textStyle="bold"
-                        android:textSize="@dimen/vs_24"
+                        android:textSize="@dimen/ts_22"
                         android:textColor="@color/color_FFFFFF"
                         android:gravity="center"
                         android:id="@+id/tv_arrow2"
