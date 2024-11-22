@@ -672,7 +672,11 @@ public class DetailActivity extends BaseActivity {
         mGridView.postDelayed(new Runnable() {
             @Override
             public void run() {
+				if(vodInfo.playIndex = 0){
+					return;
+				}else{
                 mGridView.smoothScrollToPosition(vodInfo.playIndex);
+				}
 				setSeriesGroupOptions();
 				
             }
