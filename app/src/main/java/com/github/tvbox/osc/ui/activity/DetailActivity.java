@@ -630,8 +630,10 @@ public class DetailActivity extends BaseActivity {
 
     @SuppressLint("NotifyDataSetChanged")
     void refreshList() {
+		boolean canSelectXu = true;
         if (vodInfo.seriesMap.get(vodInfo.playFlag).size() <= vodInfo.playIndex) {
             vodInfo.playIndex = 0;
+			canSelectXu = false;
         }
 
         if (vodInfo.seriesMap.get(vodInfo.playFlag) != null) {
@@ -667,17 +669,16 @@ public class DetailActivity extends BaseActivity {
         mGridViewLayoutMgr.setSpanCount(offset);
         seriesAdapter.setNewData(vodInfo.seriesMap.get(vodInfo.playFlag));
 
-		seriesGroupOptions.clear();
+		setSeriesGroupOptions();
 
         mGridView.postDelayed(new Runnable() {
             @Override
             public void run() {
-				if(vodInfo.playIndex = 0){
+				if(canSelectXu = false){
 					return;
 				}else{
                 mGridView.smoothScrollToPosition(vodInfo.playIndex);
 				}
-				setSeriesGroupOptions();
 				
             }
         }, 100);
@@ -713,7 +714,7 @@ public class DetailActivity extends BaseActivity {
             }
 //            if(vodInfo.reverseSort) Collections.reverse(seriesGroupOptions);
 
-            seriesGroupAdapter.notifyDataSetChanged();
+//            seriesGroupAdapter.notifyDataSetChanged();
         }else {
             mSeriesGroupView.setVisibility(View.GONE);
         }
