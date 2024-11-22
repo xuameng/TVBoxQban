@@ -628,17 +628,15 @@ public class DetailActivity extends BaseActivity {
         }
     }
 
-		boolean canSelectXu = true;
+		boolean canSelect = true;
     @SuppressLint("NotifyDataSetChanged")
     void refreshList() {
 
         if (vodInfo.seriesMap.get(vodInfo.playFlag).size() <= vodInfo.playIndex) {
             vodInfo.playIndex = 0;
-			canSelectXu = false;
         }
 
         if (vodInfo.seriesMap.get(vodInfo.playFlag) != null) {
-            boolean canSelect = true;
             for (int j = 0; j < vodInfo.seriesMap.get(vodInfo.playFlag).size(); j++) {
                 if(vodInfo.seriesMap.get(vodInfo.playFlag).get(j).selected){
                     canSelect = false;
