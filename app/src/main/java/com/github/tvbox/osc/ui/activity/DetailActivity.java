@@ -460,7 +460,6 @@ public class DetailActivity extends BaseActivity {
                         if (flag.name.equals(vodInfo.playFlag)) {
                             flag.selected = false;
                             seriesFlagAdapter.notifyItemChanged(i);
-							refreshList();
                             break;
                         }
                     }
@@ -472,7 +471,7 @@ public class DetailActivity extends BaseActivity {
                     }
                     vodInfo.playFlag = newFlag;
                     seriesFlagAdapter.notifyItemChanged(position);
-      //              refreshList();
+                    refreshList();
                 }
                 seriesFlagFocus = itemView;
             }
@@ -668,12 +667,14 @@ public class DetailActivity extends BaseActivity {
         mGridViewLayoutMgr.setSpanCount(offset);
         seriesAdapter.setNewData(vodInfo.seriesMap.get(vodInfo.playFlag));
 
-        setSeriesGroupOptions();
+		seriesGroupOptions.clear();
 
         mGridView.postDelayed(new Runnable() {
             @Override
             public void run() {
                 mGridView.smoothScrollToPosition(vodInfo.playIndex);
+				setSeriesGroupOptions();
+				
             }
         }, 100);
     }
