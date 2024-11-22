@@ -55,6 +55,7 @@ import com.github.tvbox.osc.ui.dialog.DescDialog;     //xuameng 内容简介
 import com.github.tvbox.osc.ui.dialog.PushDialog;    //xuameng远程推送
 import com.github.tvbox.osc.viewmodel.SourceViewModel;
 import androidx.recyclerview.widget.LinearSmoothScroller;
+import androidx.recyclerview.widget.LinearLayoutManager
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -1208,7 +1209,7 @@ public class DetailActivity extends BaseActivity {
         EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_SUBTITLE_SIZE_CHANGE, subtitleTextSize));
     }
 
-public class SpeedyLinearLayoutManager extends V7LinearLayoutManager {
+public class SpeedyLinearLayoutManager extends LinearLayoutManager {
     private static final float MILLISECONDS_PER_INCH = 100f; // 控制速度
 
 }
