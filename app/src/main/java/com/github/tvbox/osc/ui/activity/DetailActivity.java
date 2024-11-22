@@ -675,7 +675,7 @@ public class DetailActivity extends BaseActivity {
         mGridView.postDelayed(new Runnable() {
             @Override
             public void run() {
-				if(canSelectXu = false){
+				if(canSelect = false){
 					return;
 				}else{
                 mGridView.smoothScrollToPosition(vodInfo.playIndex);
@@ -715,7 +715,7 @@ public class DetailActivity extends BaseActivity {
             }
 //            if(vodInfo.reverseSort) Collections.reverse(seriesGroupOptions);
 
-//            seriesGroupAdapter.notifyDataSetChanged();
+            seriesGroupAdapter.notifyDataSetChanged();
         }else {
             mSeriesGroupView.setVisibility(View.GONE);
         }
