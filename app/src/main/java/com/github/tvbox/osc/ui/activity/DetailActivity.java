@@ -1205,11 +1205,11 @@ public class DetailActivity extends BaseActivity {
  
     private int duration = 100; // 自定义的滚动时间，单位毫秒
  
-    public V7GridLayoutManagerXu(Context context, int spanCount) {
+    public V7GridLayoutManager(Context context, int spanCount) {
         super(context, spanCount);
     }
  
-    public V7GridLayoutManagerXu(Context context, int spanCount, int orientation, boolean reverseLayout) {
+    public V7GridLayoutManager(Context context, int spanCount, int orientation, boolean reverseLayout) {
         super(context, spanCount, orientation, reverseLayout);
     }
  
