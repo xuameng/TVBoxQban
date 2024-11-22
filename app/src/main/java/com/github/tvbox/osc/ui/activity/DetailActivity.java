@@ -21,7 +21,6 @@ import android.content.ClipboardManager;
 import android.content.ClipData;
 
 import android.view.animation.BounceInterpolator;   //xuameng动画
-import android.content.Context;
 
 import androidx.fragment.app.FragmentContainerView;
 import androidx.lifecycle.Observer;
@@ -54,9 +53,6 @@ import com.github.tvbox.osc.util.SubtitleHelper;
 import com.github.tvbox.osc.ui.dialog.DescDialog;     //xuameng 内容简介
 import com.github.tvbox.osc.ui.dialog.PushDialog;    //xuameng远程推送
 import com.github.tvbox.osc.viewmodel.SourceViewModel;
-import androidx.recyclerview.widget.LinearSmoothScroller;
-import androidx.recyclerview.widget.LinearLayoutManager;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -190,7 +186,7 @@ public class DetailActivity extends BaseActivity {
 //        mGridView.setHasFixedSize(true);  //xuameng固定大小用
         mGridView.setHasFixedSize(false);
         this.mGridViewLayoutMgr = new V7GridLayoutManager(this.mContext, 6);
-        mGridView.setLayoutManager(new SpeedyLinearLayoutManager(this));
+        mGridView.setLayoutManager(this.mGridViewLayoutMgr);
 //        mGridView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 0, false));
         seriesAdapter = new SeriesAdapter();
         mGridView.setAdapter(seriesAdapter);
@@ -199,12 +195,6 @@ public class DetailActivity extends BaseActivity {
         mGridViewFlag.setLayoutManager(new V7LinearLayoutManager(this.mContext, 0, false));
         seriesFlagAdapter = new SeriesFlagAdapter();
         mGridViewFlag.setAdapter(seriesFlagAdapter);
-
-
-
-
-
-
         isReverse = false;
         firstReverse = false;
         preFlag = "";
@@ -1208,11 +1198,4 @@ public class DetailActivity extends BaseActivity {
         }
         EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_SUBTITLE_SIZE_CHANGE, subtitleTextSize));
     }
-
-public class SpeedyLinearLayoutManager extends LinearLayoutManager {
-    private static final float MILLISECONDS_PER_INCH = 100f; // 控制速度
-
-}
-
-
 }
