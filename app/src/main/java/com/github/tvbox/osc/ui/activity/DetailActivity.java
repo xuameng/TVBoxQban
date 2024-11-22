@@ -460,6 +460,7 @@ public class DetailActivity extends BaseActivity {
                         if (flag.name.equals(vodInfo.playFlag)) {
                             flag.selected = false;
                             seriesFlagAdapter.notifyItemChanged(i);
+							refreshList();
                             break;
                         }
                     }
@@ -471,7 +472,7 @@ public class DetailActivity extends BaseActivity {
                     }
                     vodInfo.playFlag = newFlag;
                     seriesFlagAdapter.notifyItemChanged(position);
-                    refreshList();
+      //              refreshList();
                 }
                 seriesFlagFocus = itemView;
             }
@@ -1119,18 +1120,6 @@ public class DetailActivity extends BaseActivity {
             if (playFragment.onBackPressed())
                 return;
             toggleFullPreview();
-
-                        int flagScrollTo = 0;
-                        for (int j = 0; j < vodInfo.seriesFlags.size(); j++) {
-                            VodInfo.VodSeriesFlag flag = vodInfo.seriesFlags.get(j);
-                            if (flag.name.equals(vodInfo.playFlag)) {
-                                flagScrollTo = j;
-                                flag.selected = true;
-                            } else
-                                flag.selected = false;
-                        }
-
-                        mGridViewFlag.scrollToPosition(flagScrollTo);
 
             refreshList();   //xuameng退出全屏播放增加滚动到当前播放剧集
 			mGridView.addOnScrollListener(new RecyclerView.OnScrollListener() {
