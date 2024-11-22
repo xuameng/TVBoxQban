@@ -186,22 +186,8 @@ public class DetailActivity extends BaseActivity {
 //        mGridView.setHasFixedSize(true);  //xuameng固定大小用
         mGridView.setHasFixedSize(false);
         this.mGridViewLayoutMgr = new V7GridLayoutManager(this.mContext, 6);
- //       mGridView.setLayoutManager(this.mGridViewLayoutMgr);
+        mGridView.setLayoutManager(this.mGridViewLayoutMgr);
 //        mGridView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 0, false));
-
-mGridView.setLayoutManager(new V7LinearLayoutManager(this) {
-    @Override
-    public void smoothScrollToPosition(RecyclerView recyclerView, RecyclerView.State state, int position) {
-
-            protected float calculateSpeedPerPixel(DisplayMetrics displayMetrics) {
-                // 返回的数值越大，滚动速度越快
-                return super.calculateSpeedPerPixel(displayMetrics) * 10;
-            }
-
-    };
-});
-
-
         seriesAdapter = new SeriesAdapter();
         mGridView.setAdapter(seriesAdapter);
         mGridViewFlag = findViewById(R.id.mGridViewFlag);
