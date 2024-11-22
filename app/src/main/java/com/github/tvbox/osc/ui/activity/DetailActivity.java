@@ -1120,6 +1120,18 @@ public class DetailActivity extends BaseActivity {
                 return;
             toggleFullPreview();
 
+                        int flagScrollTo = 0;
+                        for (int j = 0; j < vodInfo.seriesFlags.size(); j++) {
+                            VodInfo.VodSeriesFlag flag = vodInfo.seriesFlags.get(j);
+                            if (flag.name.equals(vodInfo.playFlag)) {
+                                flagScrollTo = j;
+                                flag.selected = true;
+                            } else
+                                flag.selected = false;
+                        }
+
+                        mGridViewFlag.scrollToPosition(flagScrollTo);
+
             refreshList();   //xuameng退出全屏播放增加滚动到当前播放剧集
 			mGridView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 			@Override
