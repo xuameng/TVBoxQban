@@ -687,11 +687,6 @@ public class PlayFragment extends BaseLazyFragment {
                 }
             }
         }
-		        if (trackInfo != null && trackInfo.getAudio().size()>0) {
-            List<TrackInfoBean> audioTrackList = trackInfo.getAudio();
-            int selectedIndex = trackInfo.getAudioSelected(false);
-            ((IjkMediaPlayer)(mVideoView.getMediaPlayer())).setTrack(audioTrackList.get(0).trackId);
-        }
     }
 
     private void initViewModel() {
