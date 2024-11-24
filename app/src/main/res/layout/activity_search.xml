@@ -158,7 +158,7 @@
                 android:src="@drawable/icon_delete"
                 android:layout_alignParentRight="true"/>
         </RelativeLayout>
-        <com.yang.flowlayoutlibrary.FlowLayout
+        <com.nex3z.flowlayout.FlowLayout
             android:id="@+id/tv_history"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
