@@ -162,14 +162,7 @@
             android:id="@+id/tv_history"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/vs_20"
-            app:backgroundResource="@drawable/shape_user_focus"
-            app:horizontalSpacing="@dimen/vs_20"
-            app:itemColor="@android:color/white"
-            app:itemSize="@dimen/vs_20"
-            app:textPaddingH="@dimen/vs_20"
-            app:textPaddingV="@dimen/vs_10"
-            app:verticalSpacing="@dimen/vs_20"/>
+            android:layout_marginTop="@dimen/vs_20"/>
         <com.owen.tvrecyclerview.widget.TvRecyclerView
             android:id="@+id/mGridView"
             android:visibility="invisible"
