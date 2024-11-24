@@ -53,8 +53,7 @@ import com.orhanobut.hawk.Hawk;
 import com.owen.tvrecyclerview.widget.TvRecyclerView;
 import com.owen.tvrecyclerview.widget.V7GridLayoutManager;
 import com.owen.tvrecyclerview.widget.V7LinearLayoutManager;
-//import com.yang.flowlayoutlibrary.FlowLayout;  //xuameng搜索历史
-import com.nex3z.flowlayout.FlowLayout;
+import com.yang.flowlayoutlibrary.FlowLayout;  //xuameng搜索历史
 import android.text.TextWatcher;  //xuameng搜索历史
 import android.text.Editable;		//xuameng搜索历史
 import com.github.tvbox.osc.data.SearchPresenter;  //xuameng搜索历史
