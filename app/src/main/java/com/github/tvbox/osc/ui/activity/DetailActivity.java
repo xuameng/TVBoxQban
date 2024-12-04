@@ -780,6 +780,7 @@ public class DetailActivity extends BaseActivity {
                         mGridViewFlag.setVisibility(View.VISIBLE);
                         mGridView.setVisibility(View.VISIBLE);
                         tvPlay.setVisibility(View.VISIBLE);
+						tvSort.setVisibility(View.VISIBLE);  //xuameng修复无播放数据倒序空指针
                         mEmptyPlayList.setVisibility(View.GONE);
 
                         VodInfo vodInfoRecord = RoomDataManger.getVodInfo(sourceKey, vodId);
