@@ -2225,10 +2225,9 @@ public class LivePlayActivity extends BaseActivity {
 
             @Override
             public void onItemClick(TvRecyclerView parent, View itemView, int position) {
-  //              if (isNeedInputPassword(position)) {
-  //                  showPasswordDialog(position, -1);
-  //              }
-				selectChannelGroup(position, true, -1);                //xuameng频道组
+                if (isNeedInputPassword(position)) {
+                    showPasswordDialog(position, -1);
+                }
             }
         });
 
@@ -2796,7 +2795,9 @@ public class LivePlayActivity extends BaseActivity {
                 if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
                     int groupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
                     liveChannelItemAdapter.setNewData(getLiveChannels(groupIndex));
-                }
+                }else{
+					loadChannelGroupDataAndPlay(groupIndex, liveChannelIndex);
+				}
             }
         });
         dialog.show();
