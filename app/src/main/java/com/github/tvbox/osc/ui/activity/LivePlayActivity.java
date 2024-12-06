@@ -2789,7 +2789,7 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public void onCancel() {
  //               if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
-                    int groupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
+//                    int groupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
                     liveChannelItemAdapter.setNewData(getLiveChannels(groupIndex));
  //               }
             }
