@@ -272,7 +272,7 @@ public class LivePlayActivity extends BaseActivity {
         imgLiveIcon = findViewById(R.id.img_live_icon);
         liveIconNullBg = findViewById(R.id.live_icon_null_bg);
         liveIconNullText = findViewById(R.id.live_icon_null_text);
-        imgLiveIcon.setVisibility(View.VISIBLE);    //xuameng默认显示频道图标
+        imgLiveIcon.setVisibility(View.INVISIBLE);
         liveIconNullText.setVisibility(View.VISIBLE);
         liveIconNullBg.setVisibility(View.INVISIBLE);
 
@@ -1964,6 +1964,9 @@ public class LivePlayActivity extends BaseActivity {
 
 			@Override
             public boolean DoublePress() {               //xuameng双击显示回看菜单并暂停
+				if (imgLiveIcon.getVisibility() == View.INVISIBLE) {     //xuameng频道空双击空指针
+					return true;
+				}
 				if(isBack){
 				   if(mVideoView.isPlaying()){
 					 showProgressBars(true);
@@ -2788,10 +2791,10 @@ public class LivePlayActivity extends BaseActivity {
 
             @Override
             public void onCancel() {
- //               if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
-//                    int groupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
+                if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
+                    int groupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
                     liveChannelItemAdapter.setNewData(getLiveChannels(groupIndex));
- //               }
+                }
             }
         });
         dialog.show();
