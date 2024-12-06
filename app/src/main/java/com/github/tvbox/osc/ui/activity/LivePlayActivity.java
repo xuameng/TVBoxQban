@@ -272,7 +272,7 @@ public class LivePlayActivity extends BaseActivity {
         imgLiveIcon = findViewById(R.id.img_live_icon);
         liveIconNullBg = findViewById(R.id.live_icon_null_bg);
         liveIconNullText = findViewById(R.id.live_icon_null_text);
-        imgLiveIcon.setVisibility(View.INVISIBLE);
+        imgLiveIcon.setVisibility(View.VISIBLE);    //xuameng默认显示频道图标
         liveIconNullText.setVisibility(View.VISIBLE);
         liveIconNullBg.setVisibility(View.INVISIBLE);
 
@@ -2770,8 +2770,8 @@ public class LivePlayActivity extends BaseActivity {
     };
 
     private void showPasswordDialog(int groupIndex, int liveChannelIndex) {
-        if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE)
-            tvLeftChannelListLayout.setVisibility(View.INVISIBLE);   //xuameng隐藏频道菜单，解决密码输入错误重新选择当前频道闪退
+//        if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE)
+//            tvLeftChannelListLayout.setVisibility(View.INVISIBLE);   //xuameng隐藏频道菜单，解决密码输入错误重新选择当前频道闪退
 
         LivePasswordDialog dialog = new LivePasswordDialog(this);
         dialog.setOnListener(new LivePasswordDialog.OnListener() {
@@ -2788,10 +2788,10 @@ public class LivePlayActivity extends BaseActivity {
 
             @Override
             public void onCancel() {
-                if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
+ //               if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
                     int groupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
                     liveChannelItemAdapter.setNewData(getLiveChannels(groupIndex));
-                }
+ //               }
             }
         });
         dialog.show();
