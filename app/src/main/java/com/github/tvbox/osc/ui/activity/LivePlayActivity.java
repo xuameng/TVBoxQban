@@ -2225,9 +2225,10 @@ public class LivePlayActivity extends BaseActivity {
 
             @Override
             public void onItemClick(TvRecyclerView parent, View itemView, int position) {
-                if (isNeedInputPassword(position)) {
-                    showPasswordDialog(position, -1);
-                }
+  //              if (isNeedInputPassword(position)) {
+  //                  showPasswordDialog(position, -1);
+  //              }
+				selectChannelGroup(position, true, -1);                //xuameng频道组
             }
         });
 
@@ -2773,8 +2774,9 @@ public class LivePlayActivity extends BaseActivity {
     };
 
     private void showPasswordDialog(int groupIndex, int liveChannelIndex) {
-//        if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE)
-//            tvLeftChannelListLayout.setVisibility(View.INVISIBLE);   //xuameng隐藏频道菜单，解决密码输入错误重新选择当前频道闪退
+        if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
+            mHideChannelListRunXu();   //xuameng隐藏频道菜单
+        }
 
         LivePasswordDialog dialog = new LivePasswordDialog(this);
         dialog.setOnListener(new LivePasswordDialog.OnListener() {
