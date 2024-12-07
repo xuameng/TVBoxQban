@@ -1318,7 +1318,8 @@ public class LivePlayActivity extends BaseActivity {
 		}
         if (tvLeftChannelListLayout.getVisibility() == View.INVISIBLE) {
             //重新载入上一次状态
-            liveChannelItemAdapter.setNewData(getLiveChannels(currentChannelGroupIndex));
+			loadChannelGroupDataAndPlay(currentChannelGroupIndex, currentLiveChannelIndex);
+  //          liveChannelItemAdapter.setNewData(getLiveChannels(currentChannelGroupIndex));
             if (currentLiveChannelIndex > -1)
                 mLiveChannelView.scrollToPosition(currentLiveChannelIndex);
                 mLiveChannelView.setSelection(currentLiveChannelIndex);
@@ -1328,7 +1329,7 @@ public class LivePlayActivity extends BaseActivity {
 			if (countDownTimer10 != null) {
                 countDownTimer10.cancel();
                 }
-			    countDownTimer10 = new CountDownTimer(5000, 50) {//底部epg隐藏时间设定
+			    countDownTimer10 = new CountDownTimer(100, 50) {//底部epg隐藏时间设定
 		        public void onTick(long j) {
                     }
                     public void onFinish() {
