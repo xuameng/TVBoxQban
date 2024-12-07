@@ -2776,8 +2776,8 @@ public class LivePlayActivity extends BaseActivity {
         if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
             mHideChannelListRunXu();   //xuameng隐藏频道菜单
         }
-                    int groupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
-                    liveChannelItemAdapter.setNewData(getLiveChannels(groupIndex));
+                    groupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex();
+                    liveChannelItemAdapter.setNewData(getLiveChannels(groupIndexXu));
 
         LivePasswordDialog dialog = new LivePasswordDialog(this);
         dialog.setOnListener(new LivePasswordDialog.OnListener() {
