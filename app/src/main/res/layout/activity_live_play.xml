@@ -496,7 +496,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginRight="@dimen/vs_0"
                 android:layout_marginBottom="@dimen/vs_0"
-                android:text="源 1/1"
+                android:text="[线路源1/1]"
                 android:layout_alignParentRight="true"/>
         </LinearLayout>
         <ProgressBar
