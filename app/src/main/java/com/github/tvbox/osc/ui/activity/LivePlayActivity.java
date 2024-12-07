@@ -1321,9 +1321,9 @@ public class LivePlayActivity extends BaseActivity {
             liveChannelItemAdapter.setNewData(getLiveChannels(currentChannelGroupIndex));
             if (currentLiveChannelIndex > -1)
                 mLiveChannelView.scrollToPosition(currentLiveChannelIndex);
-  //              mLiveChannelView.setSelection(currentLiveChannelIndex);
+                mLiveChannelView.setSelection(currentLiveChannelIndex);
                 mChannelGroupView.scrollToPosition(currentChannelGroupIndex);
-   //             mChannelGroupView.setSelection(currentChannelGroupIndex);
+                mChannelGroupView.setSelection(currentChannelGroupIndex);
 	//            epgListAdapter.getSelectedIndex();        //xuamengEPG打开菜单自动变颜色        
 			if (countDownTimer10 != null) {
                 countDownTimer10.cancel();
