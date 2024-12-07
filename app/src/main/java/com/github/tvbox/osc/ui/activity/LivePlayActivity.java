@@ -250,7 +250,7 @@ public class LivePlayActivity extends BaseActivity {
         view_line_XU = (View) findViewById(R.id.view_line); //xuameng横线
         divEpg = (LinearLayout) findViewById(R.id.divEPG);
         //右上角图片旋转
-        objectAnimator = ObjectAnimator.ofFloat(iv_circle_bg, "rotation", 360.0 f);
+        objectAnimator = ObjectAnimator.ofFloat(iv_circle_bg, "rotation", 360.0f);
         objectAnimator.setDuration(10000);
         objectAnimator.setRepeatCount(-1);
         objectAnimator.start();
@@ -2878,16 +2878,16 @@ public class LivePlayActivity extends BaseActivity {
             mSpeedTimeUp = System.currentTimeMillis();
         }
         if(System.currentTimeMillis() - mSpeedTimeUp < 3000) { //xuameng快进越来越快
-            simSlideOffset += (10000.0 f * dir);
+            simSlideOffset += (10000.0f * dir);
         }
         if(System.currentTimeMillis() - mSpeedTimeUp > 3000 && System.currentTimeMillis() - mSpeedTimeUp < 6000) {
-            simSlideOffset += (30000.0 f * dir);
+            simSlideOffset += (30000.0f * dir);
         }
         if(System.currentTimeMillis() - mSpeedTimeUp > 6000 && System.currentTimeMillis() - mSpeedTimeUp < 9000) {
-            simSlideOffset += (60000.0 f * dir);
+            simSlideOffset += (60000.0f * dir);
         }
         if(System.currentTimeMillis() - mSpeedTimeUp > 9000) {
-            simSlideOffset += (120000.0 f * dir);
+            simSlideOffset += (120000.0f * dir);
         }
         int currentPosition = (int) mVideoView.getCurrentPosition();
         int position = (int)(simSlideOffset + currentPosition);
