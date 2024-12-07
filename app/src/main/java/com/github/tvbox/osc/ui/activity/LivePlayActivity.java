@@ -1541,7 +1541,7 @@ public class LivePlayActivity extends BaseActivity {
             }
             @Override
             public void onItemClick(TvRecyclerView parent, View itemView, int position) {
-				if (isPass = true;){
+				if (isPass = true){
 					return;
 				}
                 currentChannelGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
@@ -1617,7 +1617,7 @@ public class LivePlayActivity extends BaseActivity {
         epgListAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-				if (isPass = true;){
+				if (isPass = true){
 					return;
 				}
                 currentChannelGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
@@ -1742,7 +1742,7 @@ public class LivePlayActivity extends BaseActivity {
             }
             @Override
             public void onItemClick(TvRecyclerView parent, View itemView, int position) {
-				if (isPass = true;){
+				if (isPass = true){
 					return;
 				}
                 mHideChannelListRunXu(); //xuameng隐藏频道菜单
@@ -1758,7 +1758,7 @@ public class LivePlayActivity extends BaseActivity {
         liveEpgDateAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-				if (isPass = true;){
+				if (isPass = true){
 					return;
 				}
                 FastClickCheckUtil.check(view);
@@ -2568,7 +2568,7 @@ public class LivePlayActivity extends BaseActivity {
         int groupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex(); //xuameng频道有密码先清空频道列表防止点击空指针
         liveChannelItemAdapter.setNewData(getLiveChannels(groupIndexXu)); //xuameng频道有密码先清空频道列表防止点击空指针
 		getEpg(new Date());
-		isPass = true;
+		isPass = true
         LivePasswordDialog dialog = new LivePasswordDialog(this);
         dialog.setOnListener(new LivePasswordDialog.OnListener() {
             @Override
