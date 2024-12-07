@@ -519,6 +519,34 @@ public class LivePlayActivity extends BaseActivity {
             epgListAdapter.setNewData(epgdata);
         }
     }
+    private void showEpgPass(Date date, ArrayList < Epginfo > arrayList) {
+            Epginfo epgbcinfo = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "00:00", "01:59", 0);
+            Epginfo epgbcinfo1 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "02:00", "03:59", 0);
+            Epginfo epgbcinfo2 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "04:00", "05:59", 0);
+            Epginfo epgbcinfo3 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "06:00", "07:59", 0);
+            Epginfo epgbcinfo4 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "08:00", "09:59", 0);
+            Epginfo epgbcinfo5 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "10:00", "11:59", 0);
+            Epginfo epgbcinfo6 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "12:00", "13:59", 0);
+            Epginfo epgbcinfo7 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "14:00", "15:59", 0);
+            Epginfo epgbcinfo8 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "16:00", "17:59", 0);
+            Epginfo epgbcinfo9 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "18:00", "19:59", 0);
+            Epginfo epgbcinfo10 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "20:00", "21:59", 0);
+            Epginfo epgbcinfo11 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "22:00", "23:59", 0);
+            arrayList.add(epgbcinfo);
+            arrayList.add(epgbcinfo1);
+            arrayList.add(epgbcinfo2);
+            arrayList.add(epgbcinfo3);
+            arrayList.add(epgbcinfo4);
+            arrayList.add(epgbcinfo5);
+            arrayList.add(epgbcinfo6);
+            arrayList.add(epgbcinfo7);
+            arrayList.add(epgbcinfo8);
+            arrayList.add(epgbcinfo9);
+            arrayList.add(epgbcinfo10);
+            arrayList.add(epgbcinfo11);
+            epgdata = arrayList;
+            epgListAdapter.setNewData(epgdata);
+    }
     public void getEpg(Date date) {
         String channelName = channel_Name.getChannelName();
         SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -1239,7 +1267,6 @@ public class LivePlayActivity extends BaseActivity {
         }
         if(tvLeftChannelListLayout.getVisibility() == View.INVISIBLE) {
             //重新载入上一次状态
-			isPass = false;
             liveChannelItemAdapter.setNewData(getLiveChannels(currentChannelGroupIndex));
             if(currentLiveChannelIndex > -1) mLiveChannelView.scrollToPosition(currentLiveChannelIndex); //xuameng先滚动再选择防止空指针
             mChannelGroupView.scrollToPosition(currentChannelGroupIndex); //xuameng先滚动再选择防止空指针
@@ -2076,7 +2103,6 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
                 selectChannelGroup(position, true, -1); //xuameng频道组
-				isPass = false;
             }
             @Override
             public void onItemClick(TvRecyclerView parent, View itemView, int position) {
@@ -2091,7 +2117,6 @@ public class LivePlayActivity extends BaseActivity {
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 FastClickCheckUtil.check(view);
                 selectChannelGroup(position, false, -1);
-				isPass = false;
             }
         });
     }
@@ -2136,6 +2161,7 @@ public class LivePlayActivity extends BaseActivity {
                 liveChannelGroupAdapter.setFocusedGroupIndex(-1);
                 liveChannelItemAdapter.setFocusedChannelIndex(position);
                 liveChannelItemAdapter.setSelectedChannelIndex(position);
+				isPass = false;
                 playChannelxu(liveChannelGroupAdapter.getSelectedGroupIndex(), liveChannelItemAdapter.getSelectedChannelIndex(), false); //xuameng换频道显示EPG
                 liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
                 mHideChannelListRunXu(); //xuameng隐藏频道菜单
@@ -2152,6 +2178,7 @@ public class LivePlayActivity extends BaseActivity {
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 FastClickCheckUtil.check(view);
                 clickLiveChannel(position);
+				isPass = false;
                 mHideChannelListRun(); //xuameng隐藏左侧频道菜单
             }
         });
@@ -2569,6 +2596,7 @@ public class LivePlayActivity extends BaseActivity {
         int groupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex(); //xuameng频道有密码先清空频道列表防止点击空指针
         liveChannelItemAdapter.setNewData(getLiveChannels(groupIndexXu)); //xuameng频道有密码先清空频道列表防止点击空指针
 		isPass = true;
+		showEpgPass(date, arrayList);
         LivePasswordDialog dialog = new LivePasswordDialog(this);
         dialog.setOnListener(new LivePasswordDialog.OnListener() {
             @Override
