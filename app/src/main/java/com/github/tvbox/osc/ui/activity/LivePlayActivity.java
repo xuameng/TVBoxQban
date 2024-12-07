@@ -2797,6 +2797,7 @@ public class LivePlayActivity extends BaseActivity {
                 if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
                     int groupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
                     liveChannelItemAdapter.setNewData(getLiveChannels(groupIndex));
+				}
             }
         });
         dialog.show();
