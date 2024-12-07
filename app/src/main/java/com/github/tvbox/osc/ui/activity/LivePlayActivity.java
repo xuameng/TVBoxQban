@@ -506,7 +506,7 @@ public class LivePlayActivity extends BaseActivity {
 			@Override
 			public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
 					super.onScrollStateChanged(recyclerView, newState);
-					if (newState == mGridView.SCROLL_STATE_IDLE) {    //xuameng剧集滚动完成后焦点选择为剧集
+					if (newState == mRightEpgList.SCROLL_STATE_IDLE) {    //xuameng剧集滚动完成后焦点选择为剧集
 					// 滚动已经停止，执行你需要的操作
 	            mRightEpgList.setSelectedPosition(i);
 				epgListAdapter.setSelectedEpgIndex(i);				
