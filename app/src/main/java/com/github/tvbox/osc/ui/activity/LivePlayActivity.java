@@ -1336,7 +1336,7 @@ public class LivePlayActivity extends BaseActivity {
                     }
                 };
                 countDownTimer100.start();
-        }
+        
         
 			if (countDownTimer10 != null) {
                 countDownTimer10.cancel();
