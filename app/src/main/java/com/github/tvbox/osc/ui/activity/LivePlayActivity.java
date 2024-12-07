@@ -508,8 +508,8 @@ public class LivePlayActivity extends BaseActivity {
 					super.onScrollStateChanged(recyclerView, newState);
 					if (newState == mRightEpgList.SCROLL_STATE_IDLE) {    //xuameng剧集滚动完成后焦点选择为剧集
 					// 滚动已经停止，执行你需要的操作
-	            mRightEpgList.setSelectedPosition(i);
-				epgListAdapter.setSelectedEpgIndex(i);				
+	            mRightEpgList.setSelectedPosition(finalI);
+				epgListAdapter.setSelectedEpgIndex(finalI);				
 					}
 				}
 			});
