@@ -184,6 +184,7 @@ public class LivePlayActivity extends BaseActivity {
     private static int shiyi_time_c;//时移时间差值
     public static String playUrl;
     private ImageView imgLiveIcon;
+	private ImageView imgLiveIconXu;
     private FrameLayout liveIconNullBg;
     private TextView liveIconNullText;
     SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -270,9 +271,11 @@ public class LivePlayActivity extends BaseActivity {
         mRightEpgList = (TvRecyclerView) findViewById(R.id.lv_epg);
         //EPG频道名称
         imgLiveIcon = findViewById(R.id.img_live_icon);
+		imgLiveIconXu = findViewById(R.id.img_live_icon_xu);
         liveIconNullBg = findViewById(R.id.live_icon_null_bg);
         liveIconNullText = findViewById(R.id.live_icon_null_text);
-        imgLiveIcon.setVisibility(View.INVISIBLE);
+        imgLiveIcon.setVisibility(View.GONE);
+		imgLiveIconXu.setVisibility(View.VISIBLE);
         liveIconNullText.setVisibility(View.VISIBLE);
         liveIconNullBg.setVisibility(View.INVISIBLE);
 
@@ -447,19 +450,6 @@ public class LivePlayActivity extends BaseActivity {
 //xuameng防止跳焦点                 mRightEpgList.setSelection(i);
                  epgListAdapter.setSelectedEpgIndex(i);
                  int finalI = i;
-
-			mRightEpgList.addOnScrollListener(new RecyclerView.OnScrollListener() {
-			@Override
-			public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-					super.onScrollStateChanged(recyclerView, newState);
-					if (newState == mRightEpgList.SCROLL_STATE_IDLE) {    //xuameng剧集滚动完成后焦点选择为剧集
-					// 滚动已经停止，执行你需要的操作
-	            mRightEpgList.setSelectedPosition(finalI);
-				epgListAdapter.setSelectedEpgIndex(finalI);
-				mRightEpgList.removeOnScrollListener(this);    //xuameng删除滚动监听
-					}
-				}
-			});
                  mRightEpgList.post(new Runnable() {
                      @Override
                      public void run() {
@@ -514,20 +504,8 @@ public class LivePlayActivity extends BaseActivity {
             i = size;
             if (i >= 0 && new Date().compareTo(epgdata.get(i).enddateTime) <= 0) {
                 int finalI = i;
-
-			mRightEpgList.addOnScrollListener(new RecyclerView.OnScrollListener() {
-			@Override
-			public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-					super.onScrollStateChanged(recyclerView, newState);
-					if (newState == mRightEpgList.SCROLL_STATE_IDLE) {    //xuameng剧集滚动完成后焦点选择为剧集
-					// 滚动已经停止，执行你需要的操作
-	            mRightEpgList.setSelectedPosition(finalI);
-				epgListAdapter.setSelectedEpgIndex(finalI);
-				mRightEpgList.removeOnScrollListener(this);    //xuameng删除滚动监听
-					}
-				}
-			});
-
+	            mRightEpgList.setSelectedPosition(i);
+				epgListAdapter.setSelectedEpgIndex(i);
                 mRightEpgList.post(new Runnable() {
                      @Override
                      public void run() {
@@ -903,10 +881,12 @@ public class LivePlayActivity extends BaseActivity {
             liveIconNullBg.setVisibility(View.VISIBLE);
             liveIconNullText.setVisibility(View.VISIBLE);
             imgLiveIcon.setVisibility(View.VISIBLE);
+			imgLiveIconXu.setVisibility(View.GONE);
 		    Picasso.get().load(logoUrl).placeholder(R.drawable.banner_xu).into(imgLiveIcon);	// xuameng内容空显示banner
             liveIconNullText.setVisibility(View.VISIBLE);liveIconNullText.setText("[频道编号" + channel_Name.getChannelNum() + "]");   // xuameng显示频道编号
         } else {
             imgLiveIcon.setVisibility(View.VISIBLE);
+			imgLiveIconXu.setVisibility(View.GONE);
             Picasso.get().load(logoUrl).placeholder(R.drawable.banner_xu).into(imgLiveIcon);	// xuameng内不空显示banner
             liveIconNullBg.setVisibility(View.VISIBLE);
             liveIconNullText.setVisibility(View.VISIBLE);
@@ -1345,8 +1325,8 @@ public class LivePlayActivity extends BaseActivity {
             //重新载入上一次状态
             liveChannelItemAdapter.setNewData(getLiveChannels(currentChannelGroupIndex));
             if (currentLiveChannelIndex > -1)
-                mLiveChannelView.scrollToPosition(currentLiveChannelIndex);
-                mChannelGroupView.scrollToPosition(currentChannelGroupIndex);       
+                mLiveChannelView.scrollToPosition(currentLiveChannelIndex);   //xuameng先滚动再选择防止空指针
+                mChannelGroupView.scrollToPosition(currentChannelGroupIndex);       //xuameng先滚动再选择防止空指针
 			if (countDownTimer10 != null) {
                 countDownTimer10.cancel();
                 }
@@ -1370,8 +1350,8 @@ public class LivePlayActivity extends BaseActivity {
                 }
 			    countDownTimer20 = new CountDownTimer(100, 50) {//底部epg隐藏时间设定
 		        public void onTick(long j) {
-					mChannelGroupView.setSelection(currentChannelGroupIndex);
-					mLiveChannelView.setSelection(currentLiveChannelIndex);
+					mChannelGroupView.setSelection(currentChannelGroupIndex);  //xuameng先滚动再选择防止空指针
+					mLiveChannelView.setSelection(currentLiveChannelIndex); //xuameng先滚动再选择防止空指针
 					epgListAdapter.getSelectedIndex();        //xuamengEPG打开菜单自动变颜色 
                     }
                     public void onFinish() {
@@ -1474,8 +1454,18 @@ public class LivePlayActivity extends BaseActivity {
             currentLiveChannelItem.setinclude_back(false);
         }
         showBottomEpg();         //XUAMENG重要点击频道播放，上面的不重新播放。只显示EPG
-                    getEpg(new Date());
 
+		if (countDownTimer30 != null) {
+                countDownTimer30.cancel();
+                }
+			    countDownTimer30 = new CountDownTimer(300, 50) {//底部epg隐藏时间设定
+		        public void onTick(long j) {
+                    }
+                    public void onFinish() {
+                    getEpg(new Date());
+                    }
+                };
+                countDownTimer30.start();
 	    liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
         backcontroller.setVisibility(View.GONE);
         ll_right_top_huikan.setVisibility(View.GONE);
@@ -1979,7 +1969,7 @@ public class LivePlayActivity extends BaseActivity {
 
 			@Override
             public boolean DoublePress() {               //xuameng双击显示回看菜单并暂停
-				if (imgLiveIcon.getVisibility() == View.INVISIBLE) {     //xuameng频道空双击空指针
+				if (imgLiveIcon.getVisibility() == View.GONE) {     //xuameng频道空双击空指针
 					return true;
 				}
 				if(isBack){
@@ -2791,8 +2781,8 @@ public class LivePlayActivity extends BaseActivity {
         if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
             mHideChannelListRunXu();   //xuameng隐藏频道菜单
         }
-                    int groupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex();
-                    liveChannelItemAdapter.setNewData(getLiveChannels(groupIndexXu));
+            int groupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex();   //xuameng频道有密码先清空频道列表防止点击空指针
+            liveChannelItemAdapter.setNewData(getLiveChannels(groupIndexXu));  //xuameng频道有密码先清空频道列表防止点击空指针
 
         LivePasswordDialog dialog = new LivePasswordDialog(this);
         dialog.setOnListener(new LivePasswordDialog.OnListener() {
