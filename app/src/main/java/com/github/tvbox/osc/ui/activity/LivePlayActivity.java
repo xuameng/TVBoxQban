@@ -198,6 +198,7 @@ public class LivePlayActivity extends BaseActivity {
 	private CountDownTimer countDownTimer21;
 	private CountDownTimer countDownTimer22;
 	private CountDownTimer countDownTimer30;
+	private CountDownTimer countDownTimer100;
     private int videoWidth = 1920;
     private int videoHeight = 1080;
     private TextView tv_currentpos;
@@ -1320,15 +1321,27 @@ public class LivePlayActivity extends BaseActivity {
             //重新载入上一次状态
             liveChannelItemAdapter.setNewData(getLiveChannels(currentChannelGroupIndex));
             if (currentLiveChannelIndex > -1)
-  //              mLiveChannelView.scrollToPosition(currentLiveChannelIndex);
-  //              mLiveChannelView.setSelection(currentLiveChannelIndex);
-  //              mChannelGroupView.scrollToPosition(currentChannelGroupIndex);
-   //             mChannelGroupView.setSelection(currentChannelGroupIndex);
-	//            epgListAdapter.getSelectedIndex();        //xuamengEPG打开菜单自动变颜色        
+				if (countDownTimer100 != null) {
+                countDownTimer100.cancel();
+                }
+			    countDownTimer100 = new CountDownTimer(100, 50) {//底部epg隐藏时间设定
+		        public void onTick(long j) {
+                    }
+                    public void onFinish() {
+						mLiveChannelView.scrollToPosition(currentLiveChannelIndex);
+						mLiveChannelView.setSelection(currentLiveChannelIndex);
+						mChannelGroupView.scrollToPosition(currentChannelGroupIndex);
+						mChannelGroupView.setSelection(currentChannelGroupIndex);
+						epgListAdapter.getSelectedIndex();        //xuamengEPG打开菜单自动变颜色
+                    }
+                };
+                countDownTimer100.start();
+        }
+        
 			if (countDownTimer10 != null) {
                 countDownTimer10.cancel();
                 }
-			    countDownTimer10 = new CountDownTimer(100, 50) {//底部epg隐藏时间设定
+			    countDownTimer10 = new CountDownTimer(200, 50) {//底部epg隐藏时间设定
 		        public void onTick(long j) {
                     }
                     public void onFinish() {
