@@ -2776,6 +2776,8 @@ public class LivePlayActivity extends BaseActivity {
         if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
             mHideChannelListRunXu();   //xuameng隐藏频道菜单
         }
+                    int groupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
+                    liveChannelItemAdapter.setNewData(getLiveChannels(groupIndex));
 
         LivePasswordDialog dialog = new LivePasswordDialog(this);
         dialog.setOnListener(new LivePasswordDialog.OnListener() {
@@ -2796,7 +2798,7 @@ public class LivePlayActivity extends BaseActivity {
                     int groupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
                     liveChannelItemAdapter.setNewData(getLiveChannels(groupIndex));
                 }else{
-					loadChannelGroupDataAndPlay(groupIndex, liveChannelIndex);
+					loadChannelGroupDataAndPlay(currentChannelGroupIndex, currentLiveChannelIndex);
 				}
             }
         });
