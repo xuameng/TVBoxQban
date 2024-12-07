@@ -447,6 +447,19 @@ public class LivePlayActivity extends BaseActivity {
 //xuameng防止跳焦点                 mRightEpgList.setSelection(i);
                  epgListAdapter.setSelectedEpgIndex(i);
                  int finalI = i;
+
+			mRightEpgList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+			@Override
+			public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+					super.onScrollStateChanged(recyclerView, newState);
+					if (newState == mRightEpgList.SCROLL_STATE_IDLE) {    //xuameng剧集滚动完成后焦点选择为剧集
+					// 滚动已经停止，执行你需要的操作
+	            mRightEpgList.setSelectedPosition(finalI);
+				epgListAdapter.setSelectedEpgIndex(finalI);
+				mRightEpgList.removeOnScrollListener(this);    //xuameng删除滚动监听
+					}
+				}
+			});
                  mRightEpgList.post(new Runnable() {
                      @Override
                      public void run() {
@@ -509,7 +522,8 @@ public class LivePlayActivity extends BaseActivity {
 					if (newState == mRightEpgList.SCROLL_STATE_IDLE) {    //xuameng剧集滚动完成后焦点选择为剧集
 					// 滚动已经停止，执行你需要的操作
 	            mRightEpgList.setSelectedPosition(finalI);
-				epgListAdapter.setSelectedEpgIndex(finalI);				
+				epgListAdapter.setSelectedEpgIndex(finalI);
+				mRightEpgList.removeOnScrollListener(this);    //xuameng删除滚动监听
 					}
 				}
 			});
