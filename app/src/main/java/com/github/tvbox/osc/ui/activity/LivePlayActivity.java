@@ -1321,10 +1321,10 @@ public class LivePlayActivity extends BaseActivity {
             liveChannelItemAdapter.setNewData(getLiveChannels(currentChannelGroupIndex));
             if (currentLiveChannelIndex > -1)
                 mLiveChannelView.scrollToPosition(currentLiveChannelIndex);
-                mLiveChannelView.setSelection(currentLiveChannelIndex);
+                
                 mChannelGroupView.scrollToPosition(currentChannelGroupIndex);
-                mChannelGroupView.setSelection(currentChannelGroupIndex);
-	//            epgListAdapter.getSelectedIndex();        //xuamengEPG打开菜单自动变颜色        
+
+	            epgListAdapter.getSelectedIndex();        //xuamengEPG打开菜单自动变颜色        
 			if (countDownTimer10 != null) {
                 countDownTimer10.cancel();
                 }
@@ -1346,8 +1346,10 @@ public class LivePlayActivity extends BaseActivity {
                 if (countDownTimer20 != null) {
                 countDownTimer20.cancel();
                 }
-			    countDownTimer20 = new CountDownTimer(100, 50) {//底部epg隐藏时间设定
+			    countDownTimer20 = new CountDownTimer(200, 100) {//底部epg隐藏时间设定
 		        public void onTick(long j) {
+															mLiveChannelView.setSelection(currentLiveChannelIndex);
+                mChannelGroupView.setSelection(currentChannelGroupIndex);
                     }
                     public void onFinish() {
                     mFocusCurrentChannelAndShowChannelListXu();
