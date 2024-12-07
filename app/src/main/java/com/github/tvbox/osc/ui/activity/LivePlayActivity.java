@@ -2568,7 +2568,7 @@ public class LivePlayActivity extends BaseActivity {
         int groupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex(); //xuameng频道有密码先清空频道列表防止点击空指针
         liveChannelItemAdapter.setNewData(getLiveChannels(groupIndexXu)); //xuameng频道有密码先清空频道列表防止点击空指针
 		getEpg(new Date());
-		isPass = true
+		isPass = true;
         LivePasswordDialog dialog = new LivePasswordDialog(this);
         dialog.setOnListener(new LivePasswordDialog.OnListener() {
             @Override
