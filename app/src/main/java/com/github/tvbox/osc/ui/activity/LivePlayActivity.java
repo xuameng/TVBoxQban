@@ -501,8 +501,19 @@ public class LivePlayActivity extends BaseActivity {
             i = size;
             if (i >= 0 && new Date().compareTo(epgdata.get(i).enddateTime) <= 0) {
                 int finalI = i;
+
+			mRightEpgList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+			@Override
+			public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+					super.onScrollStateChanged(recyclerView, newState);
+					if (newState == mGridView.SCROLL_STATE_IDLE) {    //xuameng剧集滚动完成后焦点选择为剧集
+					// 滚动已经停止，执行你需要的操作
 	            mRightEpgList.setSelectedPosition(i);
-				epgListAdapter.setSelectedEpgIndex(i);
+				epgListAdapter.setSelectedEpgIndex(i);				
+					}
+				}
+			});
+
                 mRightEpgList.post(new Runnable() {
                      @Override
                      public void run() {
@@ -1321,10 +1332,7 @@ public class LivePlayActivity extends BaseActivity {
             liveChannelItemAdapter.setNewData(getLiveChannels(currentChannelGroupIndex));
             if (currentLiveChannelIndex > -1)
                 mLiveChannelView.scrollToPosition(currentLiveChannelIndex);
-                
-                mChannelGroupView.scrollToPosition(currentChannelGroupIndex);
-
-	            epgListAdapter.getSelectedIndex();        //xuamengEPG打开菜单自动变颜色        
+                mChannelGroupView.scrollToPosition(currentChannelGroupIndex);       
 			if (countDownTimer10 != null) {
                 countDownTimer10.cancel();
                 }
@@ -1346,10 +1354,11 @@ public class LivePlayActivity extends BaseActivity {
                 if (countDownTimer20 != null) {
                 countDownTimer20.cancel();
                 }
-			    countDownTimer20 = new CountDownTimer(200, 100) {//底部epg隐藏时间设定
+			    countDownTimer20 = new CountDownTimer(100, 50) {//底部epg隐藏时间设定
 		        public void onTick(long j) {
-															mLiveChannelView.setSelection(currentLiveChannelIndex);
-                mChannelGroupView.setSelection(currentChannelGroupIndex);
+					mChannelGroupView.setSelection(currentChannelGroupIndex);
+					mLiveChannelView.setSelection(currentLiveChannelIndex);
+					epgListAdapter.getSelectedIndex();        //xuamengEPG打开菜单自动变颜色 
                     }
                     public void onFinish() {
                     mFocusCurrentChannelAndShowChannelListXu();
@@ -1451,18 +1460,8 @@ public class LivePlayActivity extends BaseActivity {
             currentLiveChannelItem.setinclude_back(false);
         }
         showBottomEpg();         //XUAMENG重要点击频道播放，上面的不重新播放。只显示EPG
-
-		if (countDownTimer30 != null) {
-                countDownTimer30.cancel();
-                }
-			    countDownTimer30 = new CountDownTimer(300, 50) {//底部epg隐藏时间设定
-		        public void onTick(long j) {
-                    }
-                    public void onFinish() {
                     getEpg(new Date());
-                    }
-                };
-                countDownTimer30.start();
+
 	    liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
         backcontroller.setVisibility(View.GONE);
         ll_right_top_huikan.setVisibility(View.GONE);
