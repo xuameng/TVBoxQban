@@ -2559,6 +2559,7 @@ public class LivePlayActivity extends BaseActivity {
                 if(password.equals(liveChannelGroupList.get(groupIndex).getGroupPassword())) {
                     channelGroupPasswordConfirmed.add(groupIndex);
                     loadChannelGroupDataAndPlay(groupIndex, liveChannelIndex);
+					Toast.makeText(App.getInstance(), "密码验证通过！已显示密码频道列表！", Toast.LENGTH_SHORT).show();
                 } else {
                     showPasswordDialog(groupIndex, liveChannelIndex); //xuameng 密码错误重新弹出密码输入窗口
                     Toast.makeText(App.getInstance(), "密码错误！请重新输入！", Toast.LENGTH_SHORT).show();
