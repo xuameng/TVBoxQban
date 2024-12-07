@@ -1239,6 +1239,7 @@ public class LivePlayActivity extends BaseActivity {
         }
         if(tvLeftChannelListLayout.getVisibility() == View.INVISIBLE) {
             //重新载入上一次状态
+			isPass = false;
             liveChannelItemAdapter.setNewData(getLiveChannels(currentChannelGroupIndex));
             if(currentLiveChannelIndex > -1) mLiveChannelView.scrollToPosition(currentLiveChannelIndex); //xuameng先滚动再选择防止空指针
             mChannelGroupView.scrollToPosition(currentChannelGroupIndex); //xuameng先滚动再选择防止空指针
@@ -1541,7 +1542,7 @@ public class LivePlayActivity extends BaseActivity {
             }
             @Override
             public void onItemClick(TvRecyclerView parent, View itemView, int position) {
-				if (isPass = true){
+				if (isPass){
 					return;
 				}
                 currentChannelGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
@@ -1617,7 +1618,7 @@ public class LivePlayActivity extends BaseActivity {
         epgListAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-				if (isPass = true){
+				if (isPass){
 					return;
 				}
                 currentChannelGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
@@ -1742,7 +1743,7 @@ public class LivePlayActivity extends BaseActivity {
             }
             @Override
             public void onItemClick(TvRecyclerView parent, View itemView, int position) {
-				if (isPass = true){
+				if (isPass){
 					return;
 				}
                 mHideChannelListRunXu(); //xuameng隐藏频道菜单
@@ -1758,7 +1759,7 @@ public class LivePlayActivity extends BaseActivity {
         liveEpgDateAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-				if (isPass = true){
+				if (isPass){
 					return;
 				}
                 FastClickCheckUtil.check(view);
