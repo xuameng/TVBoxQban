@@ -1328,7 +1328,7 @@ public class LivePlayActivity extends BaseActivity {
 			if (countDownTimer10 != null) {
                 countDownTimer10.cancel();
                 }
-			    countDownTimer10 = new CountDownTimer(100, 50) {//底部epg隐藏时间设定
+			    countDownTimer10 = new CountDownTimer(5000, 50) {//底部epg隐藏时间设定
 		        public void onTick(long j) {
                     }
                     public void onFinish() {
@@ -2797,9 +2797,6 @@ public class LivePlayActivity extends BaseActivity {
                 if (tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
                     int groupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
                     liveChannelItemAdapter.setNewData(getLiveChannels(groupIndex));
-                }else{
-					loadChannelGroupDataAndPlay(currentChannelGroupIndex, currentLiveChannelIndex);
-				}
             }
         });
         dialog.show();
