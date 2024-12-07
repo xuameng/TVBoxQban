@@ -1318,14 +1318,13 @@ public class LivePlayActivity extends BaseActivity {
 		}
         if (tvLeftChannelListLayout.getVisibility() == View.INVISIBLE) {
             //重新载入上一次状态
-			loadChannelGroupDataAndPlay(currentChannelGroupIndex, currentLiveChannelIndex);
-  //          liveChannelItemAdapter.setNewData(getLiveChannels(currentChannelGroupIndex));
+            liveChannelItemAdapter.setNewData(getLiveChannels(currentChannelGroupIndex));
             if (currentLiveChannelIndex > -1)
-                mLiveChannelView.scrollToPosition(currentLiveChannelIndex);
-                mLiveChannelView.setSelection(currentLiveChannelIndex);
-                mChannelGroupView.scrollToPosition(currentChannelGroupIndex);
-                mChannelGroupView.setSelection(currentChannelGroupIndex);
-	            epgListAdapter.getSelectedIndex();        //xuamengEPG打开菜单自动变颜色        
+  //              mLiveChannelView.scrollToPosition(currentLiveChannelIndex);
+  //              mLiveChannelView.setSelection(currentLiveChannelIndex);
+  //              mChannelGroupView.scrollToPosition(currentChannelGroupIndex);
+   //             mChannelGroupView.setSelection(currentChannelGroupIndex);
+	//            epgListAdapter.getSelectedIndex();        //xuamengEPG打开菜单自动变颜色        
 			if (countDownTimer10 != null) {
                 countDownTimer10.cancel();
                 }
