@@ -168,7 +168,6 @@ public class LivePlayActivity extends BaseActivity {
     private boolean isSHIYI = false;
     private boolean isBack = false;
 	private boolean isPass = false;  //xuameng密码频道判断
-	private boolean isInit = false;  //xuameng初次进入直播判断密码频道
 	private boolean isTouch = false;  //xuameng手机选择频道判断
     private boolean isVOD = false; //xuameng点播
     private boolean isKUAIJIN = false; //xuameng快进
@@ -837,11 +836,7 @@ public class LivePlayActivity extends BaseActivity {
     }
     //频道列表
     public void divLoadEpgRight(View view) {
-		if (isInit){
-			Toast.makeText(mContext, "当前未选择频道，无法查看频道信息！", Toast.LENGTH_SHORT).show();
-			return;
-		}
-		else if (isPass){
+		if (isPass){
 			Toast.makeText(mContext, "当前未选择频道，无法查看频道信息！", Toast.LENGTH_SHORT).show();
 			return;
 		}
@@ -1907,12 +1902,9 @@ public class LivePlayActivity extends BaseActivity {
             public void playStateChanged(int playState) {
                 switch(playState) {
                     case VideoView.STATE_IDLE:
-						isInit = true;
                     case VideoView.STATE_PAUSED:
-						isInit = false;
                         break;
                     case VideoView.STATE_PREPARED:
-						isInit = false;
                         if(mVideoView.getVideoSize().length >= 2) { //XUAMENG分辨率
                             tv_size.setText("[" + mVideoView.getVideoSize()[0] + " X " + mVideoView.getVideoSize()[1] + "]");
                         }
@@ -1942,16 +1934,12 @@ public class LivePlayActivity extends BaseActivity {
                         }
                         break;
                     case VideoView.STATE_BUFFERED:
-						isInit = false;
                     case VideoView.STATE_PLAYING:
-						isInit = false;
                         currentLiveChangeSourceTimes = 0;
                         mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
                         break;
                     case VideoView.STATE_ERROR:
-						isInit = false;
                     case VideoView.STATE_PLAYBACK_COMPLETED:
-						isInit = false;
                         if(isBack) {
                             mHandler.removeCallbacks(mConnectTimeoutChangeSourceRunBack);
                             mHandler.postDelayed(mConnectTimeoutChangeSourceRunBack, 5000); //xuameng回看超时5秒退出
@@ -1961,10 +1949,8 @@ public class LivePlayActivity extends BaseActivity {
                         mHandler.postDelayed(mConnectTimeoutChangeSourceRun, 10000); //xuameng播放超时10秒换源
                         break;
                     case VideoView.STATE_PREPARING:
-						isInit = false;
                         isVOD = false;
                     case VideoView.STATE_BUFFERING:
-						isInit = false;
                         mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
                         mHandler.postDelayed(mConnectTimeoutChangeSourceRun, (Hawk.get(HawkConfig.LIVE_CONNECT_TIMEOUT, 1) + 1) * 5000);
                         break;
