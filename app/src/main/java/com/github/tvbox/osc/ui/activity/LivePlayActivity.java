@@ -837,6 +837,7 @@ public class LivePlayActivity extends BaseActivity {
     //频道列表
     public void divLoadEpgRight(View view) {
 		if (isPass){
+			Toast.makeText(mContext, "无权查看频道信息，请输入正确密码！", Toast.LENGTH_SHORT).show();
 			return;
 		}
 		if (isTouch){
