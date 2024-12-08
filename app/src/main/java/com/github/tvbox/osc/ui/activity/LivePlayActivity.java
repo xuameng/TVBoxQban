@@ -841,7 +841,7 @@ public class LivePlayActivity extends BaseActivity {
 			return;
 		}
 		if (isTouch){
-			showChannelList();
+			showChannelListTouch();
 		}
         mChannelGroupView.setVisibility(View.GONE);
         divEpg.setVisibility(View.VISIBLE);
@@ -1265,6 +1265,23 @@ public class LivePlayActivity extends BaseActivity {
         } else {
             mHideChannelListRun();
         }
+    }
+    private void showChannelListTouch() {
+            //重新载入上一次状态
+            liveChannelItemAdapter.setNewData(getLiveChannels(currentChannelGroupIndex));
+            if(currentLiveChannelIndex > -1) mLiveChannelView.scrollToPosition(currentLiveChannelIndex); //xuameng先滚动再选择防止空指针
+            mChannelGroupView.scrollToPosition(currentChannelGroupIndex); //xuameng先滚动再选择防止空指针
+            if(countDownTimer10 != null) {
+                countDownTimer10.cancel();
+            }
+            countDownTimer10 = new CountDownTimer(100, 50) { //底部epg隐藏时间设定
+                public void onTick(long j) {}
+                public void onFinish() {
+                    mFocusCurrentChannelAndShowChannelList();
+                }
+            };
+            countDownTimer10.start();
+       
     }
     private void mFocusCurrentChannelAndShowChannelList() { //xuameng左侧菜单显示
         if(mChannelGroupView.isScrolling() || mLiveChannelView.isScrolling() || mChannelGroupView.isComputingLayout() || mLiveChannelView.isComputingLayout()) {
