@@ -392,7 +392,7 @@
                     android:id="@+id/img_live_icon_xu"
                     android:layout_width="@dimen/vs_200"
                     android:layout_height="@dimen/vs_100"
-                    android:src="@drawable/app_banner"
+                    android:src="@drawable/banner_xu"
                     android:scaleType="fitXY"/>
             </FrameLayout>
             <com.github.tvbox.osc.ui.tv.widget.MarqueeTextView
