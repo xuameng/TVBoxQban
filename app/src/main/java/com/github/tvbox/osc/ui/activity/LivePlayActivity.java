@@ -167,7 +167,8 @@ public class LivePlayActivity extends BaseActivity {
     public static Date nowday = new Date();
     private boolean isSHIYI = false;
     private boolean isBack = false;
-	private boolean isPass = false;
+	private boolean isPass = false;  //xuameng密码频道判断
+	private boolean isTouch = false;  //xuameng手机选择频道判断
     private boolean isVOD = false; //xuameng点播
     private boolean isKUAIJIN = false; //xuameng快进
     private boolean isSEEKBAR = false; //xuameng进入SEEKBAR
@@ -835,6 +836,12 @@ public class LivePlayActivity extends BaseActivity {
     }
     //频道列表
     public void divLoadEpgRight(View view) {
+		if (isPass){
+			return;
+		}
+		if (isTouch){
+			showChannelList();
+		}
         mChannelGroupView.setVisibility(View.GONE);
         divEpg.setVisibility(View.VISIBLE);
         divLoadEpgleft.setVisibility(View.VISIBLE);
@@ -1237,6 +1244,8 @@ public class LivePlayActivity extends BaseActivity {
         if(isVOD) {
             Mtv_left_top_xu.setVisibility(View.GONE);
         }
+		isPass = false;
+		isTouch = false;
         if(tvLeftChannelListLayout.getVisibility() == View.INVISIBLE) {
             //重新载入上一次状态
             liveChannelItemAdapter.setNewData(getLiveChannels(currentChannelGroupIndex));
@@ -1541,9 +1550,6 @@ public class LivePlayActivity extends BaseActivity {
             }
             @Override
             public void onItemClick(TvRecyclerView parent, View itemView, int position) {
-				if (isPass){
-					return;
-				}
                 currentChannelGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
                 currentLiveChannelIndex = liveChannelItemAdapter.getSelectedChannelIndex();
                 currentLiveChannelItem = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndex);
@@ -1617,9 +1623,6 @@ public class LivePlayActivity extends BaseActivity {
         epgListAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-				if (isPass){
-					return;
-				}
                 currentChannelGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
                 currentLiveChannelIndex = liveChannelItemAdapter.getSelectedChannelIndex();
                 currentLiveChannelItem = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndex);
@@ -1742,9 +1745,6 @@ public class LivePlayActivity extends BaseActivity {
             }
             @Override
             public void onItemClick(TvRecyclerView parent, View itemView, int position) {
-				if (isPass){
-					return;
-				}
                 mHideChannelListRunXu(); //xuameng隐藏频道菜单
                 liveEpgDateAdapter.setSelectedIndex(position);
                 currentChannelGroupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex(); //XUAMENG 7天EPG
@@ -1758,9 +1758,6 @@ public class LivePlayActivity extends BaseActivity {
         liveEpgDateAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-				if (isPass){
-					return;
-				}
                 FastClickCheckUtil.check(view);
                 mHideChannelListRunXu(); //xuameng隐藏频道菜单
                 liveEpgDateAdapter.setSelectedIndex(position);
@@ -2075,6 +2072,7 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
                 selectChannelGroup(position, true, -1); //xuameng频道组
+				isPass = false;
             }
             @Override
             public void onItemClick(TvRecyclerView parent, View itemView, int position) {
@@ -2089,6 +2087,8 @@ public class LivePlayActivity extends BaseActivity {
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 FastClickCheckUtil.check(view);
                 selectChannelGroup(position, false, -1);
+				isPass = false;
+				isTouch = true;
             }
         });
     }
