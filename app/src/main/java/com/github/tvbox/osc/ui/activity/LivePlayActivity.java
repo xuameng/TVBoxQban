@@ -2087,7 +2087,7 @@ public class LivePlayActivity extends BaseActivity {
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {}
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
-				isPass = false;
+//				isPass = false;
                 selectChannelGroup(position, true, -1); //xuameng频道组
             }
             @Override
@@ -2101,7 +2101,7 @@ public class LivePlayActivity extends BaseActivity {
         liveChannelGroupAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-				isPass = false;
+//				isPass = false;
                 FastClickCheckUtil.check(view);
                 selectChannelGroup(position, false, -1);
             }
