@@ -167,6 +167,7 @@ public class LivePlayActivity extends BaseActivity {
     public static Date nowday = new Date();
     private boolean isSHIYI = false;
     private boolean isBack = false;
+	private boolean isInit = false;  //xuameng判断是否是播放状态
 	private boolean isPass = false;  //xuameng密码频道判断
 	private boolean isTouch = false;  //xuameng手机选择频道判断
     private boolean isVOD = false; //xuameng点播
@@ -1400,6 +1401,7 @@ public class LivePlayActivity extends BaseActivity {
         simSeekPosition = 0; //XUAMENG重要,换视频时重新记录进度
         simSlideOffset = 0; //XUAMENG重要,换视频时重新记录进度
         mVideoView.start();
+		isInit = true;
         return true;
     }
     private boolean playChannelxu(int channelGroupIndex, int liveChannelIndex, boolean changeSource) { //xuameng播放
@@ -2087,7 +2089,9 @@ public class LivePlayActivity extends BaseActivity {
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {}
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
-//				isPass = false;
+				if (isInit){
+					isPass = false;
+				}				
                 selectChannelGroup(position, true, -1); //xuameng频道组
             }
             @Override
@@ -2101,7 +2105,9 @@ public class LivePlayActivity extends BaseActivity {
         liveChannelGroupAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-//				isPass = false;
+				if (isInit){
+					isPass = false;
+				}	
                 FastClickCheckUtil.check(view);
                 selectChannelGroup(position, false, -1);
             }
