@@ -1401,7 +1401,7 @@ public class LivePlayActivity extends BaseActivity {
         simSeekPosition = 0; //XUAMENG重要,换视频时重新记录进度
         simSlideOffset = 0; //XUAMENG重要,换视频时重新记录进度
         mVideoView.start();
-		isInit = true;
+		isInit = true;   //xuameng重要,有频道选中播放才可以显示EPG
         return true;
     }
     private boolean playChannelxu(int channelGroupIndex, int liveChannelIndex, boolean changeSource) { //xuameng播放
