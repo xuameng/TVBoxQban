@@ -837,10 +837,10 @@ public class LivePlayActivity extends BaseActivity {
     //频道列表
     public void divLoadEpgRight(View view) {
 		if (isPass){
-			Toast.makeText(mContext, "无权查看频道信息，请输入正确密码！", Toast.LENGTH_SHORT).show();
+			Toast.makeText(mContext, "当前未选择频道，无法查看频道信息！", Toast.LENGTH_SHORT).show();
 			return;
 		}
-		if (isTouch){
+		else if (isTouch){
 			showChannelListTouch();
 		}
         mChannelGroupView.setVisibility(View.GONE);
@@ -1245,8 +1245,6 @@ public class LivePlayActivity extends BaseActivity {
         if(isVOD) {
             Mtv_left_top_xu.setVisibility(View.GONE);
         }
-		isPass = false;
-		isTouch = false;
         if(tvLeftChannelListLayout.getVisibility() == View.INVISIBLE) {
             //重新载入上一次状态
             liveChannelItemAdapter.setNewData(getLiveChannels(currentChannelGroupIndex));
@@ -2089,8 +2087,8 @@ public class LivePlayActivity extends BaseActivity {
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {}
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
-                selectChannelGroup(position, true, -1); //xuameng频道组
 				isPass = false;
+                selectChannelGroup(position, true, -1); //xuameng频道组
             }
             @Override
             public void onItemClick(TvRecyclerView parent, View itemView, int position) {
@@ -2103,10 +2101,9 @@ public class LivePlayActivity extends BaseActivity {
         liveChannelGroupAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+				isPass = false;
                 FastClickCheckUtil.check(view);
                 selectChannelGroup(position, false, -1);
-				isPass = false;
-				isTouch = true;
             }
         });
     }
@@ -2122,6 +2119,7 @@ public class LivePlayActivity extends BaseActivity {
                 return;
             }
             loadChannelGroupDataAndPlay(groupIndex, liveChannelIndex);
+			isTouch = true;
         }
         if(tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
             mHideChannelListRunXu(); //xuameng隐藏频道菜单
