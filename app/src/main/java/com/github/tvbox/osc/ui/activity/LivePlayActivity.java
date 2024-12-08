@@ -2087,7 +2087,7 @@ public class LivePlayActivity extends BaseActivity {
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {}
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
-				isPass = false;
+//				isPass = false;
                 selectChannelGroup(position, true, -1); //xuameng频道组
             }
             @Override
@@ -2101,7 +2101,7 @@ public class LivePlayActivity extends BaseActivity {
         liveChannelGroupAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-				isPass = false;
+//				isPass = false;
                 FastClickCheckUtil.check(view);
                 selectChannelGroup(position, false, -1);
             }
@@ -2150,6 +2150,7 @@ public class LivePlayActivity extends BaseActivity {
                 liveChannelItemAdapter.setFocusedChannelIndex(position);
                 liveChannelItemAdapter.setSelectedChannelIndex(position);
 				isPass = false;
+				isTouch = false;
                 playChannelxu(liveChannelGroupAdapter.getSelectedGroupIndex(), liveChannelItemAdapter.getSelectedChannelIndex(), false); //xuameng换频道显示EPG
                 liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
                 mHideChannelListRunXu(); //xuameng隐藏频道菜单
@@ -2167,6 +2168,7 @@ public class LivePlayActivity extends BaseActivity {
                 FastClickCheckUtil.check(view);
                 clickLiveChannel(position);
 				isPass = false;
+				isTouch = false;
                 mHideChannelListRun(); //xuameng隐藏左侧频道菜单
             }
         });
