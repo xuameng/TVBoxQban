@@ -11,6 +11,11 @@ android {
     }
 
     buildTypes {
+        all {
+            ndk {
+                abiFilters 'armeabi-v7a'
+            }
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
