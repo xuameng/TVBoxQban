@@ -3,46 +3,14 @@ plugins {
 }
 
 android {
-//    ndkPath = "D:\\Android\\NDK\\android-ndk-r23b\\"
-    compileSdkVersion 30
+    compileSdk 30
 
     defaultConfig {
-        minSdkVersion 16
-        targetSdkVersion 26
-        externalNativeBuild {
-            cmake {
-                //abiFilters "armeabi-v7a"//, ""
-                abiFilters "arm64-v8a"
-            }
-        }
-    }
-
-    buildTypes {
-        all {
-            ndk {
-                //abiFilters "armeabi-v7a"//, ""
-                abiFilters "arm64-v8a"
-            }
-        }
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-
-        debug {
-        }
-    }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-    externalNativeBuild {
-        /*cmake {
-            path file('src/main/cpp/CMakeLists.txt')
-            version "3.10.2"
-        }*/
+        minSdk 16
+        targetSdk 26
     }
 }
 
 dependencies {
+    
 }
