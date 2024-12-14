@@ -31,6 +31,7 @@ import android.text.InputFilter; //xuameng导入依赖的package包/类
 import android.content.Intent;   //xuameng记忆播放频道组用
 import com.github.tvbox.osc.util.HawkUtils;  //xuameng记忆播放频道组用
 import com.github.tvbox.osc.util.JavaUtil;   //xuameng记忆播放频道组用
+import android.os.Bundle;   //xuameng记忆播放频道组用
 import kotlin.Pair;   //xuameng记忆播放频道组用
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.github.tvbox.osc.R;
