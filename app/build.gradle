@@ -103,7 +103,8 @@ dependencies {
  //   implementation 'com.github.getActivity:XXPermissions:13.6'
     implementation 'com.github.getActivity:XXPermissions:18.5'
     implementation 'org.jsoup:jsoup:1.14.1'
-    implementation 'com.github.hedzr:android-file-chooser:v1.2.0-final'
+//    implementation 'com.github.hedzr:android-file-chooser:v1.2.0-final'
+    implementation 'com.github.hedzr:android-file-chooser:v1.2.0'
     implementation 'commons-io:commons-io:2.11.0'
     implementation 'com.googlecode.juniversalchardet:juniversalchardet:1.0.3'
       //工具类
