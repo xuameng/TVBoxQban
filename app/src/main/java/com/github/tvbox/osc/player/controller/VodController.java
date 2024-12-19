@@ -192,7 +192,6 @@ public class VodController extends BaseController {
     LockRunnable lockRunnable = new LockRunnable();
     private boolean isLock = false;
 	private boolean isSEEKBAR = false;       //xuameng进入SEEKBAR
-	private boolean onBackPressedXu = false;       //xuameng判断退出
     Handler myHandle;
     Runnable myRunnable;
     int myHandleSeconds = 100000;            //闲置多少毫秒秒关闭底栏  默认100秒
@@ -238,7 +237,6 @@ public class VodController extends BaseController {
     @Override
     protected void initView() {
         super.initView();
-		onBackPressedXu = false;  //xuameng判断退出
         mCurrentTime = findViewById(R.id.curr_time);
         mTotalTime = findViewById(R.id.total_time);
         mPlayTitle = findViewById(R.id.tv_info_name);
@@ -1120,9 +1118,6 @@ public class VodController extends BaseController {
 			    animator9.start();						      //xuameng动画暂停菜单结束
                 break;
             case VideoView.STATE_PAUSED:
-				if (onBackPressedXu) {
-				return;
-			    }
                 //mTopRoot1.setVisibility(GONE);       //xuameng隐藏上面菜单
                 //mTopRoot2.setVisibility(GONE);       //xuameng隐藏上面菜单
                 //mPlayTitle.setVisibility(VISIBLE);   //xuameng显示上面菜单
@@ -1319,15 +1314,6 @@ public class VodController extends BaseController {
             return false;
         }
         if (super.onBackPressed()) {                                                                      //xuameng返回退出
-			onBackPressedXu = true;
-            mBottomRoot.setVisibility(GONE);	        //动画结束后隐藏下菜单
-            mTopRoot1.setVisibility(GONE);	            //动画结束后隐藏上菜单
-            mTopRoot2.setVisibility(GONE);              //动画结束后隐藏上菜单
-            mPlayPauseTimexu.setVisibility(GONE);       //xuameng隐藏上面时间
-            mPlayTitle.setVisibility(GONE);             //xuameng隐藏上面视频名称
-            backBtn.setVisibility(INVISIBLE);           //返回键隐藏菜单
-			mTvPausexu.setVisibility(GONE);				//隐藏暂停菜单
-			mLockView.setVisibility(INVISIBLE);         //xuameng隐藏屏幕锁
             return true;
         }
         if (isBottomVisible() && (System.currentTimeMillis() - DOUBLE_CLICK_TIME > 500)) {			      //xuameng按返回键退出
@@ -1335,14 +1321,11 @@ public class VodController extends BaseController {
             hideBottom();
             return true;
         }
-            mBottomRoot.setVisibility(GONE);	        //动画结束后隐藏下菜单
-            mTopRoot1.setVisibility(GONE);	            //动画结束后隐藏上菜单
-            mTopRoot2.setVisibility(GONE);              //动画结束后隐藏上菜单
-            mPlayPauseTimexu.setVisibility(GONE);       //xuameng隐藏上面时间
-            mPlayTitle.setVisibility(GONE);             //xuameng隐藏上面视频名称
-            backBtn.setVisibility(INVISIBLE);           //返回键隐藏菜单
-			mTvPausexu.setVisibility(GONE);				//隐藏暂停菜单
-			mLockView.setVisibility(INVISIBLE);         //xuameng隐藏屏幕锁
+		mPlayPauseTimexu.setVisibility(GONE);       //xuameng隐藏上面时间
+        mPlayTitle.setVisibility(GONE);             //xuameng隐藏上面视频名称
+        backBtn.setVisibility(INVISIBLE);           //返回键隐藏菜单
+	    mTvPausexu.setVisibility(GONE);				//隐藏暂停菜单
+		mLockView.setVisibility(INVISIBLE);         //xuameng隐藏屏幕锁
         return false;
     }
 
