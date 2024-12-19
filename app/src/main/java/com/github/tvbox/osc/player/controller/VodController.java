@@ -1309,10 +1309,19 @@ public class VodController extends BaseController {
             mPlayTitle.setVisibility(GONE);             //xuameng隐藏上面视频名称
             backBtn.setVisibility(INVISIBLE);           //返回键隐藏菜单
 			mTvPausexu.setVisibility(GONE);				//隐藏暂停菜单
+			mLockView.setVisibility(INVISIBLE);         //xuameng隐藏屏幕锁
             }
             return false;
         }
         if (super.onBackPressed()) {                                                                      //xuameng返回退出
+            mBottomRoot.setVisibility(GONE);	        //动画结束后隐藏下菜单
+            mTopRoot1.setVisibility(GONE);	            //动画结束后隐藏上菜单
+            mTopRoot2.setVisibility(GONE);              //动画结束后隐藏上菜单
+            mPlayPauseTimexu.setVisibility(GONE);       //xuameng隐藏上面时间
+            mPlayTitle.setVisibility(GONE);             //xuameng隐藏上面视频名称
+            backBtn.setVisibility(INVISIBLE);           //返回键隐藏菜单
+			mTvPausexu.setVisibility(GONE);				//隐藏暂停菜单
+			mLockView.setVisibility(INVISIBLE);         //xuameng隐藏屏幕锁
             return true;
         }
         if (isBottomVisible() && (System.currentTimeMillis() - DOUBLE_CLICK_TIME > 500)) {			      //xuameng按返回键退出
@@ -1320,10 +1329,14 @@ public class VodController extends BaseController {
             hideBottom();
             return true;
         }
-		mPlayPauseTimexu.setVisibility(GONE);       //xuameng隐藏上面时间
-        mPlayTitle.setVisibility(GONE);             //xuameng隐藏上面视频名称
-        backBtn.setVisibility(INVISIBLE);           //返回键隐藏菜单
-	    mTvPausexu.setVisibility(GONE);				//隐藏暂停菜单
+            mBottomRoot.setVisibility(GONE);	        //动画结束后隐藏下菜单
+            mTopRoot1.setVisibility(GONE);	            //动画结束后隐藏上菜单
+            mTopRoot2.setVisibility(GONE);              //动画结束后隐藏上菜单
+            mPlayPauseTimexu.setVisibility(GONE);       //xuameng隐藏上面时间
+            mPlayTitle.setVisibility(GONE);             //xuameng隐藏上面视频名称
+            backBtn.setVisibility(INVISIBLE);           //返回键隐藏菜单
+			mTvPausexu.setVisibility(GONE);				//隐藏暂停菜单
+			mLockView.setVisibility(INVISIBLE);         //xuameng隐藏屏幕锁
         return false;
     }
 
