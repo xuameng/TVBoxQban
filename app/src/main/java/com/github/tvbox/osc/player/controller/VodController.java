@@ -1121,7 +1121,7 @@ public class VodController extends BaseController {
                 break;
             case VideoView.STATE_PAUSED:
 				if (onBackPressedXu) {
-				return true;
+				return;
 			    }
                 //mTopRoot1.setVisibility(GONE);       //xuameng隐藏上面菜单
                 //mTopRoot2.setVisibility(GONE);       //xuameng隐藏上面菜单
