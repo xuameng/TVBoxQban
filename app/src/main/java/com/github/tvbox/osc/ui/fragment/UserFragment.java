@@ -26,6 +26,9 @@ import com.github.tvbox.osc.ui.activity.SettingActivity;
 import com.github.tvbox.osc.ui.adapter.HomeHotVodAdapter;
 import com.github.tvbox.osc.ui.dialog.xuamengAboutDialog;
 import com.github.tvbox.osc.util.FastClickCheckUtil;
+import com.github.tvbox.osc.ui.dialog.ApiDialog;  //xuameng长按重新加载
+import com.github.tvbox.osc.base.BaseActivity; //xuameng长按重新加载
+import com.github.tvbox.osc.ui.activity.HomeActivity;  //xuameng长按重新加载
 import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.util.UA;
 import com.google.gson.Gson;
@@ -179,7 +182,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
             }
         });
            //xuameng : Long press to trigger Delete Mode for VOD History on Home Page    
-                findViewById(R.id.tvxuameng).setOnClickListener(new View.OnClickListener() {
+            findViewById(R.id.tvxuameng).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 FastClickCheckUtil.check(v);
@@ -188,7 +191,17 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
             }
         });
 
-		       findViewById(R.id.tvxuameng).setOnFocusChangeListener(new View.OnFocusChangeListener() {
+		    findViewById(R.id.tvxuameng).setOnLongClickListener(new View.OnLongClickListener() {
+        	@Override
+            public boolean onLongClick(View v) {
+				FastClickCheckUtil.check(v);
+                ((BaseActivity) mActivity).hideSysBar();
+                EventBus.getDefault().unregister(dialog);
+                return HomeActivity.reHome(mContext);
+            }
+        });
+
+		    findViewById(R.id.tvxuameng).setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override         //xuameng许大师制作焦点变大
 	        public void onFocusChange(View v, boolean hasFocus){
             if (hasFocus){
