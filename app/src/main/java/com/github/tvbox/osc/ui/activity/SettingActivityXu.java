@@ -176,7 +176,7 @@ public class SettingActivityXu extends BaseActivity {
     }
 
     @Override
-    public void onBackPressed() {
+    public static void onBackPressed() {
 				AppManager.getInstance().finishAllActivity();
                 Bundle bundle = new Bundle();
                 bundle.putBoolean("useCache", true);
