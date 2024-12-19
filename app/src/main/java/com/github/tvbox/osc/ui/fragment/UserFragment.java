@@ -195,6 +195,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
         	@Override
             public boolean onLongClick(View v) {
 				FastClickCheckUtil.check(v);
+				ApiDialog dialog = new ApiDialog(mActivity);
                 ((BaseActivity) mActivity).hideSysBar();
                 EventBus.getDefault().unregister(dialog);
                 return HomeActivity.reHome(mContext);
