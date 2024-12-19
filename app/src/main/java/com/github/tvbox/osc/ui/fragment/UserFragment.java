@@ -198,6 +198,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
                 Bundle bundle = new Bundle();
                 bundle.putBoolean("useCache", true);
                 jumpActivity(HomeActivity.class, bundle);
+				return true;
             }
         });
 
