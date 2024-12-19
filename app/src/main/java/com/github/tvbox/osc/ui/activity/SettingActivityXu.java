@@ -175,8 +175,17 @@ public class SettingActivityXu extends BaseActivity {
         return super.dispatchKeyEvent(event);
     }
 
+	@Override
+    public static void reloadhome() {
+				AppManager.getInstance().finishAllActivity();
+                Bundle bundle = new Bundle();
+                bundle.putBoolean("useCache", true);
+                jumpActivity(HomeActivity.class, bundle);
+                super.onBackPressed();
+    }
+
     @Override
-    public static void onBackPressed() {
+    public void onBackPressed() {
 				AppManager.getInstance().finishAllActivity();
                 Bundle bundle = new Bundle();
                 bundle.putBoolean("useCache", true);
