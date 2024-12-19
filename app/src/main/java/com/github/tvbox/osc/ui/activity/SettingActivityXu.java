@@ -32,7 +32,7 @@ import java.util.List;
  * @date :2020/12/23
  * @description:
  */
-public class SettingActivity extends BaseActivity {
+public class SettingActivityXu extends BaseActivity {
     private TvRecyclerView mGridView;
     private ViewPager mViewPager;
     private SettingMenuAdapter sortAdapter;
