@@ -193,7 +193,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
         	@Override
             public boolean onLongClick(View v) {
 				FastClickCheckUtil.check(v);
-				SettingActivityXu.onBackPressed();
+				SettingActivityXu.reloadhome();
             }
         });
 
