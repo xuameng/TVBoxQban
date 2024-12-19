@@ -257,6 +257,16 @@ public class HomeActivity extends BaseActivity {
         //mHandler.postDelayed(mFindFocus, 500);
     }
 
+    public static boolean reHome(Context appContext) {        //xuameng重新加载主页
+        Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        Bundle bundle = new Bundle();
+        bundle.putBoolean("useCache", true);
+        intent.putExtras(bundle);
+        HomeActivity.this.startActivity(intent);
+        return true;
+    }
+
     private void initViewModel() {
         sourceViewModel = new ViewModelProvider(this).get(SourceViewModel.class);
         sourceViewModel.sortResult.observe(this, new Observer<AbsSortXml>() {
