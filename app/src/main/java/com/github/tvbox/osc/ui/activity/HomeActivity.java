@@ -198,10 +198,9 @@ public class HomeActivity extends BaseActivity {
                     }
                 }
             }
-        });
 
-		this.mGridView.setOnItemLongClickListener(new TvRecyclerView.OnItemLongClickListener() {
-		public void onItemLongClick(TvRecyclerView parent, View itemView, int position) {
+			@Override
+			public void onItemLongClick(TvRecyclerView parent, View itemView, int position) {
                 if (itemView != null && currentSelected == position) {
                     BaseLazyFragment baseLazyFragment = fragments.get(currentSelected);
                     if ((baseLazyFragment instanceof GridFragment) && !sortAdapter.getItem(position).filters.isEmpty()) {// 弹出筛选
@@ -210,9 +209,9 @@ public class HomeActivity extends BaseActivity {
                         jumpActivity(SettingActivity.class);		//xuameng加载慢跳转设置
                     }
                 }
-				return true; 
             }
         });
+
 
         this.mGridView.setOnInBorderKeyEventListener(new TvRecyclerView.OnInBorderKeyEventListener() {
             public final boolean onInBorderKeyEvent(int direction, View view) {
