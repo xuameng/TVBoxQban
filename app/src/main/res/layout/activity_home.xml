@@ -37,6 +37,7 @@
             android:textColor="@android:color/white"
             android:gravity="center|right"
             android:id="@+id/tvDate"
+			android:background="@drawable/button_home_sort_focus"
             android:focusable="false"
             android:focusableInTouchMode="false"
             android:layout_width="@dimen/vs_0"
