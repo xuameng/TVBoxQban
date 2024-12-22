@@ -200,7 +200,7 @@ public class HomeActivity extends BaseActivity {
             }
         });
 
-		this.mGridView.setOnItemLongClickListener(new TvRecyclerView.OnItemListener() {
+		this.mGridView.setOnItemLongClickListener(new TvRecyclerView.OnItemLongClickListener() {
 		public void onItemLongClick(TvRecyclerView parent, View itemView, int position) {
                 if (itemView != null && currentSelected == position) {
                     BaseLazyFragment baseLazyFragment = fragments.get(currentSelected);
