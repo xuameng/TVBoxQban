@@ -200,6 +200,7 @@ public class HomeActivity extends BaseActivity {
             }
         });
 
+		this.mGridView.setOnItemLongClickListener(new TvRecyclerView.OnItemListener() {
 		public void onItemLongClick(TvRecyclerView parent, View itemView, int position) {
                 if (itemView != null && currentSelected == position) {
                     BaseLazyFragment baseLazyFragment = fragments.get(currentSelected);
@@ -209,6 +210,7 @@ public class HomeActivity extends BaseActivity {
                         jumpActivity(SettingActivity.class);		//xuameng加载慢跳转设置
                     }
                 }
+				return true; 
             }
         });
 
@@ -265,16 +267,16 @@ public class HomeActivity extends BaseActivity {
                 return true;
             }
         });
-        setLoadSir(this.contentLayout);
-        //mHandler.postDelayed(mFindFocus, 500);
-    }
-
         tvDate.setOnClickListener(new View.OnClickListener() {    //xuameng点击系统时间跳转设置
             @Override
             public void onClick(View v) {
                 jumpActivity(SettingActivity.class);		//xuameng加载慢跳转设置               
             }
         });
+        setLoadSir(this.contentLayout);
+        //mHandler.postDelayed(mFindFocus, 500);
+    }
+
 
     private void initViewModel() {
         sourceViewModel = new ViewModelProvider(this).get(SourceViewModel.class);
