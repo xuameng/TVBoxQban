@@ -200,6 +200,18 @@ public class HomeActivity extends BaseActivity {
             }
         });
 
+		public void onItemLongClick(TvRecyclerView parent, View itemView, int position) {
+                if (itemView != null && currentSelected == position) {
+                    BaseLazyFragment baseLazyFragment = fragments.get(currentSelected);
+                    if ((baseLazyFragment instanceof GridFragment) && !sortAdapter.getItem(position).filters.isEmpty()) {// 弹出筛选
+                        ((GridFragment) baseLazyFragment).showFilter();
+                    } else if (baseLazyFragment instanceof UserFragment) {
+                        jumpActivity(SettingActivity.class);		//xuameng加载慢跳转设置
+                    }
+                }
+            }
+        });
+
         this.mGridView.setOnInBorderKeyEventListener(new TvRecyclerView.OnInBorderKeyEventListener() {
             public final boolean onInBorderKeyEvent(int direction, View view) {
                 if (direction != View.FOCUS_DOWN) {
@@ -256,6 +268,13 @@ public class HomeActivity extends BaseActivity {
         setLoadSir(this.contentLayout);
         //mHandler.postDelayed(mFindFocus, 500);
     }
+
+        tvDate.setOnClickListener(new View.OnClickListener() {    //xuameng点击系统时间跳转设置
+            @Override
+            public void onClick(View v) {
+                jumpActivity(SettingActivity.class);		//xuameng加载慢跳转设置               
+            }
+        });
 
     private void initViewModel() {
         sourceViewModel = new ViewModelProvider(this).get(SourceViewModel.class);
