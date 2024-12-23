@@ -26,7 +26,11 @@ import com.github.tvbox.osc.ui.activity.SettingActivity;
 import com.github.tvbox.osc.ui.adapter.HomeHotVodAdapter;
 import com.github.tvbox.osc.ui.dialog.xuamengAboutDialog;
 import com.github.tvbox.osc.util.FastClickCheckUtil;
-import com.github.tvbox.osc.util.DefaultConfig;  //xuameng长按重新加载
+import com.github.tvbox.osc.util.DefaultConfig;  //xuameng长按许大师制作重启APP
+import com.github.tvbox.osc.ui.activity.HomeActivity;  //xuameng长按历史键重新载入主页数据
+import android.content.Intent;		//xuameng长按历史键重新载入主页数据
+import android.os.Bundle;			//xuameng长按历史键重新载入主页数据
+
 import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.util.UA;
 import com.google.gson.Gson;
@@ -179,7 +183,22 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
                 }
             }
         });
-           //xuameng : Long press to trigger Delete Mode for VOD History on Home Page    
+           //xuameng : start
+		    findViewById(R.id.tvHistory).setOnLongClickListener(new View.OnLongClickListener() {       //xuameng长按历史键重载主页数据
+        	@Override
+            public boolean onLongClick(View v) {
+				FastClickCheckUtil.check(v);
+				Intent intent =new Intent(mContext, HomeActivity.class);
+				intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+				Bundle bundle = new Bundle();
+				bundle.putBoolean("useCache", true);
+				intent.putExtras(bundle);
+				startActivity(intent);
+				Toast.makeText(mContext, "重新加载主页数据！", Toast.LENGTH_SHORT).show(); 
+				return true;
+            }
+        });
+		
             findViewById(R.id.tvxuameng).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -189,7 +208,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
             }
         });
 
-		    findViewById(R.id.tvxuameng).setOnLongClickListener(new View.OnLongClickListener() {
+		    findViewById(R.id.tvxuameng).setOnLongClickListener(new View.OnLongClickListener() {       //xuameng长按许大师制作重启APP
         	@Override
             public boolean onLongClick(View v) {
 				FastClickCheckUtil.check(v);
