@@ -220,7 +220,9 @@ public class VodController extends BaseController {
 				iv_circle_bg.setVisibility(GONE);
 				}
 			}else{
+				if (iv_circle_bg.getVisibility() == View.GONE){
 				iv_circle_bg.setVisibility(VISIBLE);
+				}
 			}
 
 
