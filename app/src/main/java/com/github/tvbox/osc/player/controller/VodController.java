@@ -200,6 +200,8 @@ public class VodController extends BaseController {
     Handler myHandle;
     Runnable myRunnable;
     int myHandleSeconds = 100000;            //闲置多少毫秒秒关闭底栏  默认100秒
+	String width = 0;
+    String height = 0);
 
     int videoPlayState = 0;
 
@@ -212,12 +214,16 @@ public class VodController extends BaseController {
             String speed = PlayerHelper.getDisplaySpeed(mControlWrapper.getTcpSpeed());
             mPlayLoadNetSpeedRightTop.setText(speed);
             mPlayLoadNetSpeed.setText(speed);
-            String width = Integer.toString(mControlWrapper.getVideoSize()[0]);
-            String height = Integer.toString(mControlWrapper.getVideoSize()[1]);
-            mVideoSize.setText("[ " + width + " X " + height +" ]");
+//            String width = Integer.toString(mControlWrapper.getVideoSize()[0]);
+//            String height = Integer.toString(mControlWrapper.getVideoSize()[1]);
+			if (width.length() < 2 && height.length() < 2){
+				mVideoSize.setText("[ 0 X 0 ]");
+			else {
+				mVideoSize.setText("[ " + width + " X " + height +" ]");
+			}
             
 			if (mControlWrapper.isPlaying()){    //xuameng音乐播放时图标判断
-				if (width.length() > 1 && height.length() > 1){
+				if (width.length() > 2 && height.length() > 2){
 					if (iv_circle_bg.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
 					iv_circle_bg.setVisibility(GONE);
 					}
@@ -1192,6 +1198,8 @@ public class VodController extends BaseController {
                 mPlayLoadNetSpeed.setVisibility(GONE);
                 hideLiveAboutBtn();
                 listener.prepared();
+				String width = Integer.toString(mControlWrapper.getVideoSize()[0]);
+				String height = Integer.toString(mControlWrapper.getVideoSize()[1]);
                 break;
             case VideoView.STATE_BUFFERED:
                 mPlayLoadNetSpeed.setVisibility(GONE);
@@ -1204,8 +1212,6 @@ public class VodController extends BaseController {
 				if (iv_circle_bg.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
 					iv_circle_bg.setVisibility(GONE);
 					}
-				String width= null;
-				String height= null;
             case VideoView.STATE_BUFFERING:
                 if(mProgressRoot.getVisibility()==GONE)mPlayLoadNetSpeed.setVisibility(VISIBLE);
 				if (iv_circle_bg.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
