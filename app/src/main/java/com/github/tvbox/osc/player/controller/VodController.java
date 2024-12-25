@@ -201,7 +201,7 @@ public class VodController extends BaseController {
     Runnable myRunnable;
     int myHandleSeconds = 100000;            //闲置多少毫秒秒关闭底栏  默认100秒
 	String width = 0;
-    String height = 0);
+    String height = 0;
 
     int videoPlayState = 0;
 
@@ -218,7 +218,7 @@ public class VodController extends BaseController {
 //            String height = Integer.toString(mControlWrapper.getVideoSize()[1]);
 			if (width.length() < 2 && height.length() < 2){
 				mVideoSize.setText("[ 0 X 0 ]");
-			else {
+			}else {
 				mVideoSize.setText("[ " + width + " X " + height +" ]");
 			}
             
