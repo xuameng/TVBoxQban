@@ -211,7 +211,7 @@ public class VodController extends BaseController {
             String width = Integer.toString(mControlWrapper.getVideoSize()[0]);
             String height = Integer.toString(mControlWrapper.getVideoSize()[1]);
             mVideoSize.setText("[ " + width + " X " + height +" ]");
-			if (width.length() > 1 & heigh.length() > 1){
+			if (width.length() > 1 && height.length() > 1){
 				iv_circle_bg.setVisibility(GONE);
 			}else{
 				iv_circle_bg.setVisibility(VISIBLE);
