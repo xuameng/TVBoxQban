@@ -57,6 +57,7 @@ public class VodController extends BaseController {
                 switch (msg.what) {
                     case 1000: { // seek 刷新
                         mProgressRoot.setVisibility(VISIBLE);
+						iv_circle_bg.setVisibility(GONE);
                         break;
                     }
                     case 1001: { // seek 关闭
@@ -213,7 +214,7 @@ public class VodController extends BaseController {
             mVideoSize.setText("[ " + width + " X " + height +" ]");
 
 			if (mControlWrapper.isPlaying()){             
-				if (width.length() > 1 && height.length() > 1){
+				if (width.length() > 1 && height.length() > 1 || mProgressRoot.getVisibility() == View.VISIBLE){
 					iv_circle_bg.setVisibility(GONE);
 				}else{
 					iv_circle_bg.setVisibility(VISIBLE);
@@ -1018,7 +1019,6 @@ public class VodController extends BaseController {
     }
 
     public void tvSlideStart(int dir) {
-		iv_circle_bg.setVisibility(GONE);
 		mIsDragging = true;                 //xuamengsetProgress不监听
         mControlWrapper.stopProgress();		//xuameng结束进程
         mControlWrapper.stopFadeOut();
@@ -1055,7 +1055,6 @@ public class VodController extends BaseController {
     }
 
 	public void tvSlideStartXu(int dir) {
-		iv_circle_bg.setVisibility(GONE);
 		isSEEKBAR = true;
 		mIsDragging = true;                 //xuamengsetProgress不监听
         mControlWrapper.stopProgress();		//xuameng结束进程
@@ -1331,7 +1330,6 @@ public class VodController extends BaseController {
             backBtn.setVisibility(INVISIBLE);           //返回键隐藏菜单
 			mTvPausexu.setVisibility(GONE);				//隐藏暂停菜单
 			mLockView.setVisibility(INVISIBLE);         //xuameng隐藏屏幕锁
-			iv_circle_bg.setVisibility(GONE);
             }
             return false;
         }
@@ -1348,7 +1346,6 @@ public class VodController extends BaseController {
         backBtn.setVisibility(INVISIBLE);           //返回键隐藏菜单
 	    mTvPausexu.setVisibility(GONE);				//隐藏暂停菜单
 		mLockView.setVisibility(INVISIBLE);         //xuameng隐藏屏幕锁
-		iv_circle_bg.setVisibility(GONE);
         return false;
     }
 
