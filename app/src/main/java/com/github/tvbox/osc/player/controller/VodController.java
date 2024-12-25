@@ -57,8 +57,8 @@ public class VodController extends BaseController {
                 switch (msg.what) {
                     case 1000: { // seek 刷新
                         mProgressRoot.setVisibility(VISIBLE);
-						if (iv_circle_bg.getVisibility() == View.VISIBLE){
-						iv_circle_bg.setVisibility(GONE);
+						if (MxuamengMusic.getVisibility() == View.VISIBLE){
+						MxuamengMusic.setVisibility(GONE);
 						}
                         break;
                     }
@@ -177,6 +177,7 @@ public class VodController extends BaseController {
     TextView mPlayrefresh;
 	TextView mxuPlay;                         //xuameng 底部播放ID
 	private ImageView iv_circle_bg;
+	LinearLayout MxuamengMusic;
     public TextView mPlayerTimeStartEndText;
     public TextView mPlayerTimeStartBtn;
     public TextView mPlayerTimeSkipBtn;
@@ -215,16 +216,17 @@ public class VodController extends BaseController {
             String height = Integer.toString(mControlWrapper.getVideoSize()[1]);
             mVideoSize.setText("[ " + width + " X " + height +" ]");
             
-			if (width.length() > 1 && height.length() > 1 || mProgressRoot.getVisibility() == View.VISIBLE){
-				if (iv_circle_bg.getVisibility() == View.VISIBLE){
-				iv_circle_bg.setVisibility(GONE);
+			if (mControlWrapper.isPlaying()){
+				if (width.length() > 1 && height.length() > 1 || mProgressRoot.getVisibility() == View.VISIBLE){
+					if (MxuamengMusic.getVisibility() == View.VISIBLE){
+					MxuamengMusic.setVisibility(GONE);
+					}
+				}else{
+					if (MxuamengMusic.getVisibility() == View.GONE){
+					MxuamengMusic.setVisibility(VISIBLE);
+					}
 				}
-			}else{
-				if (iv_circle_bg.getVisibility() == View.GONE){
-				iv_circle_bg.setVisibility(VISIBLE);
-				}
-			}
-
+			}				 
 
             mHandler.postDelayed(this, 1000);
         }
@@ -283,6 +285,7 @@ public class VodController extends BaseController {
 		MxuamengView = findViewById(R.id.xuamengView);				   //XUAMENG防点击
 		mTvPausexu = findViewById(R.id.tv_pause_xu);				   //XUAMENG暂停动画
 		iv_circle_bg = (ImageView) findViewById(R.id.iv_circle_bg);
+		MxuamengMusic = findViewById(R.id.xuamengMusic);
         mPlayLoadNetSpeed = findViewById(R.id.tv_play_load_net_speed);
         mVideoSize = findViewById(R.id.tv_videosize);
         mSubtitleView = findViewById(R.id.subtitle_view);
