@@ -215,13 +215,8 @@ public class VodController extends BaseController {
             String width = Integer.toString(mControlWrapper.getVideoSize()[0]);
             String height = Integer.toString(mControlWrapper.getVideoSize()[1]);
             mVideoSize.setText("[ " + width + " X " + height +" ]");
-			if (mProgressRoot.getVisibility() == View.VISIBLE){
-				if (iv_circle_bg.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
-				iv_circle_bg.setVisibility(GONE);
-				}
-			}
             
-			if (mControlWrapper.isPlaying()){
+			if (mControlWrapper.isPlaying()){    //xuameng音乐播放时图标判断
 				if (width.length() > 1 && height.length() > 1){
 					if (iv_circle_bg.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
 					iv_circle_bg.setVisibility(GONE);
@@ -238,7 +233,7 @@ public class VodController extends BaseController {
 					}
 			}else {
 				iv_circle_bg.setVisibility(GONE);
-			}
+			}   //xuameng音乐播放时图标判断完
 				
 
             mHandler.postDelayed(this, 1000);
