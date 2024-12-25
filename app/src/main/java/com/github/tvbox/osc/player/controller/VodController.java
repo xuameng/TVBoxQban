@@ -173,6 +173,7 @@ public class VodController extends BaseController {
     TextView mPlayerRetry;
     TextView mPlayrefresh;
 	TextView mxuPlay;                         //xuameng 底部播放ID
+	private ImageView iv_circle_bg;
     public TextView mPlayerTimeStartEndText;
     public TextView mPlayerTimeStartBtn;
     public TextView mPlayerTimeSkipBtn;
@@ -210,6 +211,11 @@ public class VodController extends BaseController {
             String width = Integer.toString(mControlWrapper.getVideoSize()[0]);
             String height = Integer.toString(mControlWrapper.getVideoSize()[1]);
             mVideoSize.setText("[ " + width + " X " + height +" ]");
+			if (width < 1 & height < 1){
+				iv_circle_bg.setVisibility(VISIBLE);
+			}else{
+				iv_circle_bg.setVisibility(GONE);
+			}
 
             mHandler.postDelayed(this, 1000);
         }
@@ -267,6 +273,7 @@ public class VodController extends BaseController {
         mPlayPauseTimexu = findViewById(R.id.tv_sys_time_xu);          //XUAMENG的系统时间
 		MxuamengView = findViewById(R.id.xuamengView);				   //XUAMENG防点击
 		mTvPausexu = findViewById(R.id.tv_pause_xu);				   //XUAMENG暂停动画
+		iv_circle_bg = (ImageView) findViewById(R.id.iv_circle_bg);
         mPlayLoadNetSpeed = findViewById(R.id.tv_play_load_net_speed);
         mVideoSize = findViewById(R.id.tv_videosize);
         mSubtitleView = findViewById(R.id.subtitle_view);
@@ -275,6 +282,13 @@ public class VodController extends BaseController {
         mLandscapePortraitBtn = findViewById(R.id.landscape_portrait);
         backBtn = findViewById(R.id.tv_back);
 		mxuPlay = findViewById(R.id.mxuplay);		                  //xuameng  低菜单播放
+
+		//图片旋转
+        objectAnimator = ObjectAnimator.ofFloat(iv_circle_bg, "rotation", 360.0f);
+        objectAnimator.setDuration(10000);
+        objectAnimator.setRepeatCount(-1);
+        objectAnimator.start();
+
         backBtn.setOnClickListener(new OnClickListener() {            //xuameng  屏幕上的返回键
             @Override
             public void onClick(View view) {
@@ -1333,5 +1347,7 @@ public class VodController extends BaseController {
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         mHandler.removeCallbacks(myRunnable2);
+		mHandler.removeCallbacks(xuRunnable);
+		
     }
 }
