@@ -1192,6 +1192,8 @@ public class VodController extends BaseController {
                 mPlayLoadNetSpeed.setVisibility(GONE);
                 hideLiveAboutBtn();
                 listener.prepared();
+				String width= null;
+				String height= null;
                 break;
             case VideoView.STATE_BUFFERED:
                 mPlayLoadNetSpeed.setVisibility(GONE);
@@ -1200,6 +1202,9 @@ public class VodController extends BaseController {
 				simSeekPosition = 0;       //XUAMENG重要,换视频时重新记录进度
 				if (MxuamengMusic.getVisibility() == View.VISIBLE){  //xuameng播放音乐背景
 					MxuamengMusic.setVisibility(GONE);
+					}
+				if (iv_circle_bg.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
+					iv_circle_bg.setVisibility(GONE);
 					}
             case VideoView.STATE_BUFFERING:
                 if(mProgressRoot.getVisibility()==GONE)mPlayLoadNetSpeed.setVisibility(VISIBLE);
