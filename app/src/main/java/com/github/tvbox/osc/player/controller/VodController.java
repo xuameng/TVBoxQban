@@ -200,8 +200,8 @@ public class VodController extends BaseController {
     Handler myHandle;
     Runnable myRunnable;
     int myHandleSeconds = 100000;            //闲置多少毫秒秒关闭底栏  默认100秒
-	String width = 0;
-    String height = 0;
+	int width = 0;
+    int height = 0;
 
     int videoPlayState = 0;
 
@@ -1198,8 +1198,8 @@ public class VodController extends BaseController {
                 mPlayLoadNetSpeed.setVisibility(GONE);
                 hideLiveAboutBtn();
                 listener.prepared();
-				String width = Integer.toString(mControlWrapper.getVideoSize()[0]);
-				String height = Integer.toString(mControlWrapper.getVideoSize()[1]);
+				int width = mControlWrapper.getVideoSize()[0];
+				int height = mControlWrapper.getVideoSize()[1];
                 break;
             case VideoView.STATE_BUFFERED:
                 mPlayLoadNetSpeed.setVisibility(GONE);
