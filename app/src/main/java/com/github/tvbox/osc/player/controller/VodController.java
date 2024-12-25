@@ -57,7 +57,9 @@ public class VodController extends BaseController {
                 switch (msg.what) {
                     case 1000: { // seek 刷新
                         mProgressRoot.setVisibility(VISIBLE);
+						if (iv_circle_bg.getVisibility() == View.VISIBLE){
 						iv_circle_bg.setVisibility(GONE);
+						}
                         break;
                     }
                     case 1001: { // seek 关闭
@@ -212,16 +214,15 @@ public class VodController extends BaseController {
             String width = Integer.toString(mControlWrapper.getVideoSize()[0]);
             String height = Integer.toString(mControlWrapper.getVideoSize()[1]);
             mVideoSize.setText("[ " + width + " X " + height +" ]");
-
-			if (mControlWrapper.isPlaying()){             
-				if (width.length() > 1 && height.length() > 1 || mProgressRoot.getVisibility() == View.VISIBLE){
-					iv_circle_bg.setVisibility(GONE);
-				}else{
-					iv_circle_bg.setVisibility(VISIBLE);
-				}
-            }else{
+            
+			if (width.length() > 1 && height.length() > 1 || mProgressRoot.getVisibility() == View.VISIBLE){
+				if (iv_circle_bg.getVisibility() == View.VISIBLE){
 				iv_circle_bg.setVisibility(GONE);
+				}
+			}else{
+				iv_circle_bg.setVisibility(VISIBLE);
 			}
+
 
             mHandler.postDelayed(this, 1000);
         }
