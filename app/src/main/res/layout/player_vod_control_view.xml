@@ -12,6 +12,21 @@
         android:clickable="true"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"/>
+	<LinearLayout
+		android:enabled="true"
+		android:id="@+id/xuamengMusic"
+		android:visibility="gone"
+		android:background="@drawable/xumusic" 
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent">
+		<ImageView
+			android:layout_gravity="center"
+			android:id="@+id/iv_circle_bg"
+			android:padding="@dimen/vs_10"
+			android:layout_width="@dimen/vs_80"
+			android:layout_height="@dimen/vs_80"
+			android:src="@drawable/app_icon"/>
+	</LinearLayout>
     <LinearLayout
         android:orientation="vertical"
         android:id="@+id/tv_top_l_container"
@@ -600,12 +615,4 @@
         android:layout_height="@dimen/vs_80"
         android:src="@drawable/icon_unlock"
         android:paddingHorizontal="@dimen/vs_20"/>
-            <ImageView
-                android:layout_gravity="center"
-                android:id="@+id/iv_circle_bg"
-				android:visibility="gone"
-                android:padding="@dimen/vs_10"
-                android:layout_width="@dimen/vs_80"
-                android:layout_height="@dimen/vs_80"
-                android:src="@drawable/app_icon"/>
 </FrameLayout>
