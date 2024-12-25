@@ -211,10 +211,15 @@ public class VodController extends BaseController {
             String width = Integer.toString(mControlWrapper.getVideoSize()[0]);
             String height = Integer.toString(mControlWrapper.getVideoSize()[1]);
             mVideoSize.setText("[ " + width + " X " + height +" ]");
-			if (width.length() > 1 && height.length() > 1){
+
+			if (mControlWrapper.isPlaying()){             
+				if (width.length() > 1 && height.length() > 1){
+					iv_circle_bg.setVisibility(GONE);
+				}else{
+					iv_circle_bg.setVisibility(VISIBLE);
+				}
+            }else{
 				iv_circle_bg.setVisibility(GONE);
-			}else{
-				iv_circle_bg.setVisibility(VISIBLE);
 			}
 
             mHandler.postDelayed(this, 1000);
