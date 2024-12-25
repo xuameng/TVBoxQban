@@ -212,9 +212,6 @@ public class VodController extends BaseController {
             String speed = PlayerHelper.getDisplaySpeed(mControlWrapper.getTcpSpeed());
             mPlayLoadNetSpeedRightTop.setText(speed);
             mPlayLoadNetSpeed.setText(speed);
-			            integer a = 2;
-            String width = intger.toString(a);
-            String height = intger.toString(a);
             String width = Integer.toString(mControlWrapper.getVideoSize()[0]);
             String height = Integer.toString(mControlWrapper.getVideoSize()[1]);
             mVideoSize.setText("[ " + width + " X " + height +" ]");
@@ -1195,10 +1192,6 @@ public class VodController extends BaseController {
                 mPlayLoadNetSpeed.setVisibility(GONE);
                 hideLiveAboutBtn();
                 listener.prepared();
-            integer a = 2;
-            String width = intger.toString(a);
-            String height = intger.toString(a);
-
                 break;
             case VideoView.STATE_BUFFERED:
                 mPlayLoadNetSpeed.setVisibility(GONE);
