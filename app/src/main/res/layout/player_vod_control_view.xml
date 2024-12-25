@@ -600,4 +600,12 @@
         android:layout_height="@dimen/vs_80"
         android:src="@drawable/icon_unlock"
         android:paddingHorizontal="@dimen/vs_20"/>
+            <ImageView
+                android:layout_gravity="center"
+                android:id="@+id/iv_circle_bg"
+				android:visibility="gone"
+                android:padding="@dimen/vs_10"
+                android:layout_width="@dimen/vs_80"
+                android:layout_height="@dimen/vs_80"
+                android:src="@drawable/app_icon"/>
 </FrameLayout>
