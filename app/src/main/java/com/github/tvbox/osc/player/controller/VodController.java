@@ -1018,6 +1018,7 @@ public class VodController extends BaseController {
     }
 
     public void tvSlideStart(int dir) {
+		iv_circle_bg.setVisibility(GONE);
 		mIsDragging = true;                 //xuamengsetProgress不监听
         mControlWrapper.stopProgress();		//xuameng结束进程
         mControlWrapper.stopFadeOut();
@@ -1054,6 +1055,7 @@ public class VodController extends BaseController {
     }
 
 	public void tvSlideStartXu(int dir) {
+		iv_circle_bg.setVisibility(GONE);
 		isSEEKBAR = true;
 		mIsDragging = true;                 //xuamengsetProgress不监听
         mControlWrapper.stopProgress();		//xuameng结束进程
@@ -1329,6 +1331,7 @@ public class VodController extends BaseController {
             backBtn.setVisibility(INVISIBLE);           //返回键隐藏菜单
 			mTvPausexu.setVisibility(GONE);				//隐藏暂停菜单
 			mLockView.setVisibility(INVISIBLE);         //xuameng隐藏屏幕锁
+			iv_circle_bg.setVisibility(GONE);
             }
             return false;
         }
@@ -1345,6 +1348,7 @@ public class VodController extends BaseController {
         backBtn.setVisibility(INVISIBLE);           //返回键隐藏菜单
 	    mTvPausexu.setVisibility(GONE);				//隐藏暂停菜单
 		mLockView.setVisibility(INVISIBLE);         //xuameng隐藏屏幕锁
+		iv_circle_bg.setVisibility(GONE);
         return false;
     }
 
