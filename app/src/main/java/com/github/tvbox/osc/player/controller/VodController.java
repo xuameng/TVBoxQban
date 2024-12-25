@@ -57,8 +57,8 @@ public class VodController extends BaseController {
                 switch (msg.what) {
                     case 1000: { // seek 刷新
                         mProgressRoot.setVisibility(VISIBLE);
-						if (MxuamengMusic.getVisibility() == View.VISIBLE){
-						MxuamengMusic.setVisibility(GONE);
+						if (iv_circle_bg.getVisibility() == View.VISIBLE){
+						iv_circle_bg.setVisibility(GONE);
 						}
                         break;
                     }
@@ -218,15 +218,19 @@ public class VodController extends BaseController {
             
 			if (mControlWrapper.isPlaying()){
 				if (width.length() > 1 && height.length() > 1 || mProgressRoot.getVisibility() == View.VISIBLE){
-					if (MxuamengMusic.getVisibility() == View.VISIBLE){
-					MxuamengMusic.setVisibility(GONE);
+					if (iv_circle_bg.getVisibility() == View.VISIBLE){
+					iv_circle_bg.setVisibility(GONE);
 					}
 				}else{
-					if (MxuamengMusic.getVisibility() == View.GONE){
 					MxuamengMusic.setVisibility(VISIBLE);
+					if (iv_circle_bg.getVisibility() == View.GONE){
+					iv_circle_bg.setVisibility(VISIBLE);
 					}
 				}
-			}				 
+			}else {
+				iv_circle_bg.setVisibility(GONE);
+			}
+				
 
             mHandler.postDelayed(this, 1000);
         }
