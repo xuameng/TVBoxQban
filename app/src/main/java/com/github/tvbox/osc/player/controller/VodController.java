@@ -211,10 +211,10 @@ public class VodController extends BaseController {
             String width = Integer.toString(mControlWrapper.getVideoSize()[0]);
             String height = Integer.toString(mControlWrapper.getVideoSize()[1]);
             mVideoSize.setText("[ " + width + " X " + height +" ]");
-			if (width < 1 & height < 1){
-				iv_circle_bg.setVisibility(VISIBLE);
-			}else{
+			if (width.length() > 1 & heigh.length() > 1){
 				iv_circle_bg.setVisibility(GONE);
+			}else{
+				iv_circle_bg.setVisibility(VISIBLE);
 			}
 
             mHandler.postDelayed(this, 1000);
@@ -284,10 +284,10 @@ public class VodController extends BaseController {
 		mxuPlay = findViewById(R.id.mxuplay);		                  //xuameng  低菜单播放
 
 		//图片旋转
-        objectAnimator = ObjectAnimator.ofFloat(iv_circle_bg, "rotation", 360.0f);
-        objectAnimator.setDuration(10000);
-        objectAnimator.setRepeatCount(-1);
-        objectAnimator.start();
+        ObjectAnimator animator20 = ObjectAnimator.ofFloat(iv_circle_bg, "rotation", 360.0f);
+        animator20.setDuration(10000);
+        animator20.setRepeatCount(-1);
+        animator20.start();
 
         backBtn.setOnClickListener(new OnClickListener() {            //xuameng  屏幕上的返回键
             @Override
