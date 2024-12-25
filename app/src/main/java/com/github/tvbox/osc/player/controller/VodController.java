@@ -221,12 +221,17 @@ public class VodController extends BaseController {
 					if (iv_circle_bg.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
 					iv_circle_bg.setVisibility(GONE);
 					}
+					if (MxuamengMusic.getVisibility() == View.VISIBLE){  //xuameng播放音乐背景
+					MxuamengMusic.setVisibility(GONE);
+					}
 				}else{
 					if (MxuamengMusic.getVisibility() == View.GONE){  //xuameng播放音乐背景
 					MxuamengMusic.setVisibility(VISIBLE);
 					}
-					if (mProgressRoot.getVisibility() == View.VISIBLE){
+					if (mProgressRoot.getVisibility() == View.VISIBLE || mPlayLoadNetSpeed.getVisibility() == View.VISIBLE){
+						if (iv_circle_bg.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
 						iv_circle_bg.setVisibility(GONE);
+						}
 					}else {
 						iv_circle_bg.setVisibility(VISIBLE);
 						}
@@ -1193,6 +1198,9 @@ public class VodController extends BaseController {
                 break;
             case VideoView.STATE_PREPARING:
 				simSeekPosition = 0;       //XUAMENG重要,换视频时重新记录进度
+				if (MxuamengMusic.getVisibility() == View.VISIBLE){  //xuameng播放音乐背景
+					MxuamengMusic.setVisibility(GONE);
+					}
             case VideoView.STATE_BUFFERING:
                 if(mProgressRoot.getVisibility()==GONE)mPlayLoadNetSpeed.setVisibility(VISIBLE);
 				if (iv_circle_bg.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
