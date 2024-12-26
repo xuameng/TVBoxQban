@@ -425,8 +425,6 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
      * 是否处于未播放状态
      */
     protected boolean isInIdleState() {
-		mVideoSize[0] = 0;   //xuameng重要修复获取视频尺寸不刷新
-		mVideoSize[1] = 0;
         return mCurrentPlayState == STATE_IDLE;
     }
 
