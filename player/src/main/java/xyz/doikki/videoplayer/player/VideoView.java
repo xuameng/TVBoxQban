@@ -292,6 +292,8 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
             setOptions();
         }
         if (prepareDataSource()) {
+			mVideoSize[0] = 0;
+			mVideoSize[1] = 0;
             mMediaPlayer.prepareAsync();
             setPlayState(STATE_PREPARING);
             setPlayerState(isFullScreen() ? PLAYER_FULL_SCREEN : isTinyScreen() ? PLAYER_TINY_SCREEN : PLAYER_NORMAL);
