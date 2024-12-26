@@ -888,10 +888,13 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
         mVideoSize[0] = videoWidth;
         mVideoSize[1] = videoHeight;
 
-//        if (mRenderView != null) {
+        if (mRenderView != null) {
             mRenderView.setScaleType(mCurrentScreenScaleType);
             mRenderView.setVideoSize(videoWidth, videoHeight);
-//        }
+        }else{
+			mVideoSize[0] = 0;
+			mVideoSize[1] = 0;
+		}
     }
 
     /**
