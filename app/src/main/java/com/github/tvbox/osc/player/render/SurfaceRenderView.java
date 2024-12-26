@@ -48,10 +48,7 @@ public class SurfaceRenderView extends SurfaceView implements IRenderView, Surfa
         if (videoWidth > 0 && videoHeight > 0) {
             mMeasureHelper.setVideoSize(videoWidth, videoHeight);
             requestLayout();
-        }else {
-			mMeasureHelper.setVideoSize(0, 0);
-            requestLayout();
-		}
+        }
     }
 
     @Override
