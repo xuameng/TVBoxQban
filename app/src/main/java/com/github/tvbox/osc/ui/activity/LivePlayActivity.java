@@ -1916,7 +1916,7 @@ public class LivePlayActivity extends BaseActivity {
                     case VideoView.STATE_PAUSED:
                         break;
                     case VideoView.STATE_PREPARED:
-                        if(mVideoView.getVideoSize().length = 0) { //XUAMENG分辨率
+                        if(mVideoView.getVideoSize().length == 0 ||mVideoView.getVideoSize()== null) { //XUAMENG分辨率
 							tv_size.setText("[ 0 X 0 ]");
                             
                         }else{
