@@ -1916,12 +1916,10 @@ public class LivePlayActivity extends BaseActivity {
                     case VideoView.STATE_PAUSED:
                         break;
                     case VideoView.STATE_PREPARED:
-                        if(mVideoView.getVideoSize().length == 0 ||mVideoView.getVideoSize()== null) { //XUAMENG分辨率
-							tv_size.setText("[ 0 X 0 ]");
-                            
-                        }else{
-							tv_size.setText("[" + mVideoView.getVideoSize()[0] + " X " + mVideoView.getVideoSize()[1] + "]");
-						}
+						tv_size.setText("[ 0 X 0 ]");
+                        if(mVideoView.getVideoSize().length >= 2) { //XUAMENG分辨率
+                            tv_size.setText("[" + mVideoView.getVideoSize()[0] + " X " + mVideoView.getVideoSize()[1] + "]");
+                        }
                         int duration1 = (int) mVideoView.getDuration();
                         if(isBack) {
                             tv_right_top_type.setText("回看中");
