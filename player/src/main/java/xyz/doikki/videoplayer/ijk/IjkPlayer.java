@@ -259,7 +259,11 @@ public class IjkPlayer extends AbstractPlayer implements IMediaPlayer.OnErrorLis
         int videoHeight = mp.getVideoHeight();
         if (videoWidth != 0 && videoHeight != 0) {
             mPlayerEventListener.onVideoSizeChanged(videoWidth, videoHeight);
-        }
+        }else {
+			videoWidth = 0;
+			videoHeight = 0;
+			mPlayerEventListener.onVideoSizeChanged(videoWidth, videoHeight);
+		}
     }
 
     @Override
