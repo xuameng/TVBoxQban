@@ -147,7 +147,7 @@ public class DefaultConfig {
         return start > -1 ? fileName.substring(0, start) : fileName;
     }
 
-    private static final Pattern snifferMatch = Pattern.compile(
+    private static final Pattern snifferMatch = Pattern.compile(   //xuameng增加MP3支持
             "http((?!http).){12,}?\\.(m3u8|mp4|flv|avi|mkv|rm|wmv|mpg|m4a|mp3)\\?.*|" +
             "http((?!http).){12,}\\.(m3u8|mp4|flv|avi|mkv|rm|wmv|mpg|m4a|mp3)|" +
             "http((?!http).)*?video/tos*|" +
@@ -169,7 +169,9 @@ public class DefaultConfig {
         if (TextUtils.isEmpty(path)) {
             return false;
         }
-        if (snifferMatch.matcher(url).find()) return true;
+		if (snifferMatch.matcher(url).find()) {  //xuamengURL中有图片就加载
+            return !url.contains(".js") && !url.contains(".css") && !url.contains(".jpg") && !url.contains(".png") && !url.contains(".gif") && !url.contains(".ico") && !url.contains("rl=") && !url.contains(".html");
+        }
         return false;
     }
 
