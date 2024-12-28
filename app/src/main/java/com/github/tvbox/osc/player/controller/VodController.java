@@ -105,6 +105,7 @@ public class VodController extends BaseController {
 						public void onAnimationStart(Animator animation) {
                         super.onAnimationStart(animation);
                         MxuamengView.setVisibility(VISIBLE);		   //xuameng动画开始防点击
+						isAnimation = true;
 			            }
                         public void onAnimationEnd(Animator animation) {
                         super.onAnimationEnd(animation);
@@ -112,6 +113,7 @@ public class VodController extends BaseController {
 						mTopRoot1.setVisibility(GONE);				   //动画结束后隐藏上菜单
 						mTopRoot2.setVisibility(GONE);                 //动画结束后隐藏上菜单
 						MxuamengView.setVisibility(GONE);			   //xuameng动画结束可点击
+						isAnimation = false;
                         }
                         });
                         animator3.start();                          //XUAMENG隐藏底部菜单结束                        
@@ -201,6 +203,7 @@ public class VodController extends BaseController {
     private boolean isLock = false;
 	private boolean isSEEKBAR = false;       //xuameng进入SEEKBAR
 	private boolean isPlaying = false;  //xuameng判断暂停动画
+	private boolean isAnimation = false;  //xuameng判断隐藏菜单动画
     Handler myHandle;
     Runnable myRunnable;
     int myHandleSeconds = 100000;            //闲置多少毫秒秒关闭底栏  默认100秒
@@ -385,7 +388,10 @@ public class VodController extends BaseController {
         myRunnable = new Runnable() {
             @Override
             public void run() {
+				if(isAnimation || mBottomRoot.getVisibility() == GONE){
+				}else{
                 hideBottom();
+				}
             }
         };
 
@@ -415,7 +421,10 @@ public class VodController extends BaseController {
                 ApiConfig.get().setDefaultParse(parseBean);
                 parseAdapter.notifyItemChanged(position);
                 listener.changeParse(parseBean);
+				if(isAnimation || mBottomRoot.getVisibility() == GONE){
+				}else{
                 hideBottom();
+				}
             }
         });
         mGridView.setAdapter(parseAdapter);
@@ -496,21 +505,30 @@ public class VodController extends BaseController {
             @Override
             public void onClick(View v) {
                 listener.replay(true);
+				if(isAnimation || mBottomRoot.getVisibility() == GONE){
+				}else{
                 hideBottom();
+				}
             }
         });
         mPlayrefresh.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 listener.replay(false);
+				if(isAnimation || mBottomRoot.getVisibility() == GONE){
+				}else{
                 hideBottom();
+				}
             }
         });
         mNextBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 listener.playNext(false);
+				if(isAnimation || mBottomRoot.getVisibility() == GONE){
+				}else{
                 hideBottom();
+				}
             }
         });
 		mxuPlay.setOnClickListener(new OnClickListener() {			//xuameng 低菜单播放监听
@@ -532,7 +550,10 @@ public class VodController extends BaseController {
             @Override
             public void onClick(View view) {
                 listener.playPre();
+				if(isAnimation || mBottomRoot.getVisibility() == GONE){
+				}else{
                 hideBottom();
+				}
             }
         });
         mPlayerScaleBtn.setOnClickListener(new OnClickListener() {
@@ -614,7 +635,10 @@ public class VodController extends BaseController {
                     updatePlayerCfgView();
                     listener.updatePlayerCfg();
                     listener.replay(false);
-                    hideBottom();
+					if(isAnimation || mBottomRoot.getVisibility() == GONE){
+					}else{
+					hideBottom();
+					}
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -653,7 +677,10 @@ public class VodController extends BaseController {
                                     updatePlayerCfgView();
                                     listener.updatePlayerCfg();
                                     listener.replay(false);
-                                    hideBottom();
+									if(isAnimation || mBottomRoot.getVisibility() == GONE){
+									}else{
+									hideBottom();
+									}
                                 }
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -707,7 +734,10 @@ public class VodController extends BaseController {
                     updatePlayerCfgView();
                     listener.updatePlayerCfg();
                     listener.replay(false);
-                    hideBottom();
+					if(isAnimation || mBottomRoot.getVisibility() == GONE){
+					}else{
+					hideBottom();
+					}
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -796,7 +826,10 @@ public class VodController extends BaseController {
             public void onClick(View view) {
                 FastClickCheckUtil.check(view);
                 listener.selectSubtitle();
+				if(isAnimation || mBottomRoot.getVisibility() == GONE){
+				}else{
                 hideBottom();
+				}
             }
         });
         mZimuBtn.setOnLongClickListener(new OnLongClickListener() {
@@ -804,11 +837,17 @@ public class VodController extends BaseController {
             public boolean onLongClick(View view) {
 				FastClickCheckUtil.check(view);                   //xuameng 防播放打断动画
 				if (mSubtitleView.getVisibility() == View.GONE) {
+					if(isAnimation || mBottomRoot.getVisibility() == GONE){
+					}else{
 					hideBottom();
+					}
 					mSubtitleView.setVisibility(VISIBLE);
                     Toast.makeText(getContext(), "字幕已开启!", Toast.LENGTH_SHORT).show();
 				} else if (mSubtitleView.getVisibility() == View.VISIBLE){
+					if(isAnimation || mBottomRoot.getVisibility() == GONE){
+					}else{
 					hideBottom();
+					}
 					mSubtitleView.setVisibility(View.GONE);
 //                  mSubtitleView.destroy();
 //                  mSubtitleView.clearSubtitleCache();
@@ -823,7 +862,10 @@ public class VodController extends BaseController {
             public void onClick(View view) {
                 FastClickCheckUtil.check(view);
                 listener.selectAudioTrack();
+				if(isAnimation || mBottomRoot.getVisibility() == GONE){
+				}else{
                 hideBottom();
+				}
             }
         });
         mLandscapePortraitBtn.setOnClickListener(new OnClickListener() {
@@ -831,7 +873,10 @@ public class VodController extends BaseController {
             public void onClick(View view) {
                 FastClickCheckUtil.check(view);
                 setLandscapePortrait();
+				if(isAnimation || mBottomRoot.getVisibility() == GONE){
+				}else{
                 hideBottom();
+				}
             }
         });
         mxuPlay.setNextFocusRightId(R.id.seekBar);					//xuameng底部菜单播放右键是进度条
@@ -1164,7 +1209,10 @@ public class VodController extends BaseController {
 		        mxuPlay.setVisibility(View.VISIBLE);
                 mxuPlay.setTextColor(Color.WHITE);
                 mxuPlay.setText("暂停");               //xuameng底部菜单显示暂停
-				hideBottom();						   //xuameng隐藏菜单
+				if(isAnimation || mBottomRoot.getVisibility() == GONE){
+				}else{
+                hideBottom();
+				}
 			    ObjectAnimator animator9 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0,700);				//xuameng动画暂停菜单开始
                 animator9.setDuration(300);			//xuameng动画暂停菜单
                 animator9.addListener(new AnimatorListenerAdapter() {
@@ -1351,7 +1399,10 @@ public class VodController extends BaseController {
             // 闲置计时关闭
             myHandle.postDelayed(myRunnable, myHandleSeconds);
         } else {
+			if(isAnimation || mBottomRoot.getVisibility() == GONE){
+			}else{
             hideBottom();
+			}
         }
         return true;
     }
@@ -1391,7 +1442,10 @@ public class VodController extends BaseController {
         }
         if (isBottomVisible() && (System.currentTimeMillis() - DOUBLE_CLICK_TIME > 500)) {			      //xuameng按返回键退出
 			DOUBLE_CLICK_TIME = System.currentTimeMillis();
+			if(isAnimation || mBottomRoot.getVisibility() == GONE){
+			}else{
             hideBottom();
+			}
             return true;
         }
 		mPlayPauseTimexu.setVisibility(GONE);       //xuameng隐藏上面时间
