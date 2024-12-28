@@ -5,13 +5,7 @@
     android:layout_height="fill_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <LinearLayout
-        android:enabled="true"
-        android:id="@+id/xuamengMusic"
 
-        android:background="@drawable/xumusic"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"/>
     <xyz.doikki.videoplayer.player.VideoView
         android:id="@+id/mVideoView"
         android:layout_width="fill_parent"
@@ -948,4 +942,11 @@
         android:layout_width="@dimen/vs_80"
         android:layout_height="@dimen/vs_80"
         android:src="@drawable/app_icon"/>
+    <LinearLayout
+        android:enabled="true"
+        android:id="@+id/xuamengMusic"
+
+        android:background="@drawable/xumusic"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"/>
 </FrameLayout>
