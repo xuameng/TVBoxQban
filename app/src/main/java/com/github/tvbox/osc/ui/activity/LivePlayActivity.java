@@ -882,8 +882,8 @@ MxuamengMusic.setVisibility(View.VISIBLE);
             mHandler.removeCallbacks(mUpdateVodProgressXu);
             mHandler.removeCallbacks(mUpdateTimeRun);
             mHandler.removeCallbacks(mUpdateTimeRunXu);
-			iv_circle_bg_xu.setVisibility(View.GONE);  //xuameng音乐播放时图标
-			MxuamengMusic.setVisibility(View.GONE);  //xuameng播放音乐背景
+	//		iv_circle_bg_xu.setVisibility(View.GONE);  //xuameng音乐播放时图标
+	//		MxuamengMusic.setVisibility(View.GONE);  //xuameng播放音乐背景
             super.onBackPressed();
         } else {
             mExitTime = System.currentTimeMillis();
@@ -1927,12 +1927,12 @@ MxuamengMusic.setVisibility(View.VISIBLE);
                 switch(playState) {
                     case VideoView.STATE_IDLE:
 						tv_size.setText("[0 X 0]");  //XUAMENG分辨率
-						if (MxuamengMusic.getVisibility() == View.VISIBLE){  //xuameng播放音乐背景
+/*						if (MxuamengMusic.getVisibility() == View.VISIBLE){  //xuameng播放音乐背景
 							MxuamengMusic.setVisibility(View.GONE);
 							}
 						if (iv_circle_bg_xu.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
 							iv_circle_bg_xu.setVisibility(View.GONE);
-							}
+							} */
                     case VideoView.STATE_PAUSED:
                         break;
                     case VideoView.STATE_PREPARED:						
@@ -1987,9 +1987,9 @@ MxuamengMusic.setVisibility(View.VISIBLE);
                     case VideoView.STATE_BUFFERING:
                         mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
                         mHandler.postDelayed(mConnectTimeoutChangeSourceRun, (Hawk.get(HawkConfig.LIVE_CONNECT_TIMEOUT, 1) + 1) * 5000);
-						if (iv_circle_bg_xu.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
-							iv_circle_bg_xu.setVisibility(View.GONE);
-						}
+			//			if (iv_circle_bg_xu.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
+			//				iv_circle_bg_xu.setVisibility(View.GONE);
+			//			}
 						isBuffer = true;
                         break;
                 }
@@ -2600,7 +2600,7 @@ MxuamengMusic.setVisibility(View.VISIBLE);
             if(backcontroller.getVisibility() == View.GONE) {
                 isSEEKBAR = false;
             }
-            if(mVideoView.isPlaying()) {  //xuameng音乐播放时图标判断
+ /*           if(mVideoView.isPlaying()) {  //xuameng音乐播放时图标判断
 				if(mVideoView.getVideoSize().length >= 2) { //XUAMENG分辨率
 					if (iv_circle_bg_xu.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
 						iv_circle_bg_xu.setVisibility(View.GONE);
@@ -2628,7 +2628,7 @@ MxuamengMusic.setVisibility(View.VISIBLE);
 					}
 			}else {
 				iv_circle_bg_xu.setVisibility(View.GONE);
-			}   //xuameng音乐播放时图标判断完
+			}   //xuameng音乐播放时图标判断完  */
 
             int duration2 = (int) mVideoView.getDuration();
             if(duration2 > 0) {
