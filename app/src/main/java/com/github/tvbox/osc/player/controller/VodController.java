@@ -122,6 +122,8 @@ public class VodController extends BaseController {
                         animator5.setDuration(300);			
 		                animator5.start();                          //XUAMENG隐藏上面菜单2结束
                         backBtn.setVisibility(INVISIBLE);           //返回键隐藏菜单
+						if (mControlWrapper.isPlaying()){    //xuameng音乐播放时图标判断
+						}else{
 						mPlayTitle.setVisibility(VISIBLE);          //xuameng显示上面节目名称
 				        ObjectAnimator animator6 = ObjectAnimator.ofFloat(mPlayTitle, "translationY", -700,0);				//xuameng动画菜单
                         animator6.setDuration(300);				//xuameng动画菜单
@@ -130,6 +132,7 @@ public class VodController extends BaseController {
 				        ObjectAnimator animator7 = ObjectAnimator.ofFloat(mPlayPauseTimexu, "translationY", -700,0);	    //xuameng动画菜单
                         animator7.setDuration(300);				//xuameng动画菜单
 						animator7.start();						    //XUAMENG显示上面菜单的时间结束
+						}
                         break;
                     }
                     case 1004: { // 设置速度
