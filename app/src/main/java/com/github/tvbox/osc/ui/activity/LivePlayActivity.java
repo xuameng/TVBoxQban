@@ -2600,7 +2600,7 @@ public class LivePlayActivity extends BaseActivity {
                 isSEEKBAR = false;
             }
             if(mVideoView.isPlaying()) {  //xuameng音乐播放时图标判断
-				if(mVideoView.getVideoSize().length >= 1) { //XUAMENG分辨率
+				if(mVideoView.getVideoSize().length >= 2) { //XUAMENG分辨率
 					if (iv_circle_bg_xu.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
 						iv_circle_bg_xu.setVisibility(View.GONE);
 						}
