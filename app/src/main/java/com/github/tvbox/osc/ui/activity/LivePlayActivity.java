@@ -267,7 +267,7 @@ public class LivePlayActivity extends BaseActivity {
         animator1.setDuration(10000);
         animator1.setRepeatCount(-1);
         animator1.start();
-MxuamengMusic.setVisibility(View.VISIBLE);
+
         ObjectAnimator animator2 = ObjectAnimator.ofFloat(iv_circle_bg_xu, "rotation", 360.0f);
         animator2.setDuration(10000);
         animator2.setRepeatCount(-1);
@@ -2600,21 +2600,17 @@ MxuamengMusic.setVisibility(View.VISIBLE);
             if(backcontroller.getVisibility() == View.GONE) {
                 isSEEKBAR = false;
             }
- /*           if(mVideoView.isPlaying()) {  //xuameng音乐播放时图标判断
-				if(mVideoView.getVideoSize().length >= 2) { //XUAMENG分辨率
+            if(mVideoView.isPlaying()) {  //xuameng音乐播放时图标判断
+				    String width = Integer.toString(mVideoView.getVideoSize()[0]);
+					String height = Integer.toString(mVideoView.getVideoSize()[1]);
+				if (width.length() > 1 && height.length() > 1){ //XUAMENG分辨率
 					if (iv_circle_bg_xu.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
 						iv_circle_bg_xu.setVisibility(View.GONE);
 						}
 					if (MxuamengMusic.getVisibility() == View.VISIBLE){  //xuameng播放音乐背景
 						MxuamengMusic.setVisibility(View.GONE);
 						}
-					if (mVideoView.getVisibility() == View.GONE){
-						mVideoView.setVisibility(View.VISIBLE);
-					}
 					}else{
-						if (mVideoView.getVisibility() == View.VISIBLE){
-						mVideoView.setVisibility(View.GONE);
-						}
 						if (MxuamengMusic.getVisibility() == View.GONE){  //xuameng播放音乐背景
 						MxuamengMusic.setVisibility(View.VISIBLE);
 						}
@@ -2628,7 +2624,7 @@ MxuamengMusic.setVisibility(View.VISIBLE);
 					}
 			}else {
 				iv_circle_bg_xu.setVisibility(View.GONE);
-			}   //xuameng音乐播放时图标判断完  */
+			}   //xuameng音乐播放时图标判断完  
 
             int duration2 = (int) mVideoView.getDuration();
             if(duration2 > 0) {
