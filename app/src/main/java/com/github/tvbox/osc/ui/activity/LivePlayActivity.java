@@ -882,8 +882,8 @@ public class LivePlayActivity extends BaseActivity {
             mHandler.removeCallbacks(mUpdateVodProgressXu);
             mHandler.removeCallbacks(mUpdateTimeRun);
             mHandler.removeCallbacks(mUpdateTimeRunXu);
-	//		iv_circle_bg_xu.setVisibility(View.GONE);  //xuameng音乐播放时图标
-	//		MxuamengMusic.setVisibility(View.GONE);  //xuameng播放音乐背景
+			iv_circle_bg_xu.setVisibility(View.GONE);  //xuameng音乐播放时图标
+			MxuamengMusic.setVisibility(View.GONE);  //xuameng播放音乐背景
             super.onBackPressed();
         } else {
             mExitTime = System.currentTimeMillis();
@@ -1927,12 +1927,12 @@ public class LivePlayActivity extends BaseActivity {
                 switch(playState) {
                     case VideoView.STATE_IDLE:
 						tv_size.setText("[0 X 0]");  //XUAMENG分辨率
-/*						if (MxuamengMusic.getVisibility() == View.VISIBLE){  //xuameng播放音乐背景
+						if (MxuamengMusic.getVisibility() == View.VISIBLE){  //xuameng播放音乐背景
 							MxuamengMusic.setVisibility(View.GONE);
 							}
 						if (iv_circle_bg_xu.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
 							iv_circle_bg_xu.setVisibility(View.GONE);
-							} */
+							} 
                     case VideoView.STATE_PAUSED:
                         break;
                     case VideoView.STATE_PREPARED:						
@@ -1987,9 +1987,9 @@ public class LivePlayActivity extends BaseActivity {
                     case VideoView.STATE_BUFFERING:
                         mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
                         mHandler.postDelayed(mConnectTimeoutChangeSourceRun, (Hawk.get(HawkConfig.LIVE_CONNECT_TIMEOUT, 1) + 1) * 5000);
-			//			if (iv_circle_bg_xu.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
-			//				iv_circle_bg_xu.setVisibility(View.GONE);
-			//			}
+						if (iv_circle_bg_xu.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
+							iv_circle_bg_xu.setVisibility(View.GONE);
+						}
 						isBuffer = true;
                         break;
                 }
@@ -2645,7 +2645,7 @@ public class LivePlayActivity extends BaseActivity {
                     }
                 }
             }
-            mHandler.postDelayed(this, 200);
+            mHandler.postDelayed(this, 1000);
         }
     };
     private void showPasswordDialog(int groupIndex, int liveChannelIndex) {
