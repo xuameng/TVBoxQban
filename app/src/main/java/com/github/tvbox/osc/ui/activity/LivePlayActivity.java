@@ -881,8 +881,8 @@ public class LivePlayActivity extends BaseActivity {
             mHandler.removeCallbacks(mUpdateVodProgressXu);
             mHandler.removeCallbacks(mUpdateTimeRun);
             mHandler.removeCallbacks(mUpdateTimeRunXu);
-			iv_circle_bg_xu.setVisibility(GONE);  //xuameng音乐播放时图标
-			MxuamengMusic.setVisibility(GONE);  //xuameng播放音乐背景
+			iv_circle_bg_xu.setVisibility(View.GONE);  //xuameng音乐播放时图标
+			MxuamengMusic.setVisibility(View.GONE);  //xuameng播放音乐背景
             super.onBackPressed();
         } else {
             mExitTime = System.currentTimeMillis();
@@ -1927,10 +1927,10 @@ public class LivePlayActivity extends BaseActivity {
                     case VideoView.STATE_IDLE:
 						tv_size.setText("[0 X 0]");  //XUAMENG分辨率
 						if (MxuamengMusic.getVisibility() == View.VISIBLE){  //xuameng播放音乐背景
-							MxuamengMusic.setVisibility(GONE);
+							MxuamengMusic.setVisibility(View.GONE);
 							}
 						if (iv_circle_bg_xu.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
-							iv_circle_bg_xu.setVisibility(GONE);
+							iv_circle_bg_xu.setVisibility(View.GONE);
 							}
                     case VideoView.STATE_PAUSED:
                         break;
@@ -1987,7 +1987,7 @@ public class LivePlayActivity extends BaseActivity {
                         mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
                         mHandler.postDelayed(mConnectTimeoutChangeSourceRun, (Hawk.get(HawkConfig.LIVE_CONNECT_TIMEOUT, 1) + 1) * 5000);
 						if (iv_circle_bg.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
-							iv_circle_bg.setVisibility(GONE);
+							iv_circle_bg.setVisibility(View.GONE);
 						}
 						isBuffer = true;
                         break;
@@ -2602,25 +2602,25 @@ public class LivePlayActivity extends BaseActivity {
             if(mVideoView.isPlaying()) {  //xuameng音乐播放时图标判断
 				if(mVideoView.getVideoSize().length >= 1) { //XUAMENG分辨率
 					if (iv_circle_bg_xu.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
-						iv_circle_bg_xu.setVisibility(GONE);
+						iv_circle_bg_xu.setVisibility(View.GONE);
 						}
 					if (MxuamengMusic.getVisibility() == View.VISIBLE){  //xuameng播放音乐背景
-						MxuamengMusic.setVisibility(GONE);
+						MxuamengMusic.setVisibility(View.GONE);
 						}
 					}else{
 						if (MxuamengMusic.getVisibility() == View.GONE){  //xuameng播放音乐背景
-						MxuamengMusic.setVisibility(VISIBLE);
+						MxuamengMusic.setVisibility(View.VISIBLE);
 						}
 						if (isBuffer){
 							if (iv_circle_bg_xu.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
-							iv_circle_bg_xu.setVisibility(GONE);
+							iv_circle_bg_xu.setVisibility(View.GONE);
 							}
 						}else {
-							iv_circle_bg_xu.setVisibility(VISIBLE);
+							iv_circle_bg_xu.setVisibility(View.VISIBLE);
 						}
 					}
 			}else {
-				iv_circle_bg_xu.setVisibility(GONE);
+				iv_circle_bg_xu.setVisibility(View.GONE);
 			}   //xuameng音乐播放时图标判断完
 
             int duration2 = (int) mVideoView.getDuration();
