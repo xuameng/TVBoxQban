@@ -158,7 +158,7 @@ public class LivePlayActivity extends BaseActivity {
     private TextView tv_shownum;
     private TextView txtNoEpg;
     private ImageView iv_back_bg;
-    private ObjectAnimator objectAnimator;
+    //private ObjectAnimator objectAnimator;
     public String epgStringAddress = "";
     private TvRecyclerView mEpgDateGridView;
     private TvRecyclerView mRightEpgList;
@@ -263,15 +263,15 @@ public class LivePlayActivity extends BaseActivity {
 		MxuamengMusic = findViewById(R.id.xuamengMusic);  //xuameng播放音乐背景
         divEpg = (LinearLayout) findViewById(R.id.divEPG);
         //右上角图片旋转
-        objectAnimator = ObjectAnimator.ofFloat(iv_circle_bg, "rotation", 360.0f);
-        objectAnimator.setDuration(10000);
-        objectAnimator.setRepeatCount(-1);
-        objectAnimator.start();
+        ObjectAnimator animator10 = ObjectAnimator.ofFloat(iv_circle_bg, "rotation", 360.0f);
+        animator10.setDuration(10000);
+        animator10.setRepeatCount(-1);
+        animator10.start();
 
-        ObjectAnimator animator20 = ObjectAnimator.ofFloat(iv_circle_bg_Xu, "rotation", 360.0f);
-        animator20.setDuration(10000);
-        animator20.setRepeatCount(-1);
-        animator20.start();
+        ObjectAnimator animator11 = ObjectAnimator.ofFloat(iv_circle_bg_Xu, "rotation", 360.0f);
+        animator11.setDuration(10000);
+        animator11.setRepeatCount(-1);
+        animator11.start();
         //laodao 7day replay
         mEpgDateGridView = findViewById(R.id.mEpgDateGridView);
         Hawk.put(HawkConfig.NOW_DATE, formatDate.format(new Date()));
@@ -2605,18 +2605,18 @@ public class LivePlayActivity extends BaseActivity {
 						iv_circle_bg_Xu.setVisibility(View.VISIBLE);
 						}
 					if (MxuamengMusic.getVisibility() == View.VISIBLE){  //xuameng播放音乐背景
-						MxuamengMusic.setVisibility(View.GONE);
-						}
-					}else{
-						if (MxuamengMusic.getVisibility() == View.GONE){  //xuameng播放音乐背景
 						MxuamengMusic.setVisibility(View.VISIBLE);
 						}
-						if (isBuffer){
-							if (iv_circle_bg_Xu.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
-							iv_circle_bg_Xu.setVisibility(View.GONE);
-							}
-						}else {
-							iv_circle_bg_Xu.setVisibility(View.VISIBLE);
+				}else{
+					if (MxuamengMusic.getVisibility() == View.GONE){  //xuameng播放音乐背景
+						MxuamengMusic.setVisibility(View.VISIBLE);
+						}
+					if (isBuffer){
+						if (iv_circle_bg_Xu.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
+						iv_circle_bg_Xu.setVisibility(View.GONE);
+						}
+					}else {
+						iv_circle_bg_Xu.setVisibility(View.VISIBLE);
 						}
 					}
 			}else {
