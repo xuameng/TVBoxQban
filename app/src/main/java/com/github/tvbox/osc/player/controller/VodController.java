@@ -197,6 +197,7 @@ public class VodController extends BaseController {
     LockRunnable lockRunnable = new LockRunnable();
     private boolean isLock = false;
 	private boolean isSEEKBAR = false;       //xuameng进入SEEKBAR
+	private boolean isPlaying = false;  //xuameng判断暂停动画
     Handler myHandle;
     Runnable myRunnable;
     int myHandleSeconds = 100000;            //闲置多少毫秒秒关闭底栏  默认100秒
@@ -217,6 +218,26 @@ public class VodController extends BaseController {
             mVideoSize.setText("[ " + width + " X " + height +" ]");
             
 			if (mControlWrapper.isPlaying()){    //xuameng音乐播放时图标判断
+				if (isPlaying){
+				}else{
+					if (mTvPausexu.getVisibility() == View.VISIBLE){
+					ObjectAnimator animator10 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0,700);				//xuameng动画暂停菜单开始
+					animator10.setDuration(300);			//xuameng动画暂停菜单
+					animator10.addListener(new AnimatorListenerAdapter() {
+					@Override
+					public void onAnimationStart(Animator animation) {
+					super.onAnimationStart(animation);
+					MxuamengView.setVisibility(VISIBLE);		   //xuameng动画开始防点击
+					}
+					public void onAnimationEnd(Animator animation) {
+					super.onAnimationEnd(animation);
+					MxuamengView.setVisibility(GONE);			   //xuameng动画结束可点击
+					mTvPausexu.setVisibility(GONE);                //xuameng动画暂停菜单隐藏 
+					}
+					});
+					animator10.start();						      //xuameng动画暂停菜单结束
+					}
+				}
 				if (width.length() > 1 && height.length() > 1){
 					if (iv_circle_bg.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
 					iv_circle_bg.setVisibility(GONE);
@@ -768,12 +789,6 @@ public class VodController extends BaseController {
                 FastClickCheckUtil.check(view);
                 listener.selectSubtitle();
                 hideBottom();
-			if (mControlWrapper.isPlaying()){             //xuameng修复暂停时选字幕时显示暂停图标等问题
-                return;
-               }
-            else {
-               togglePlay();
-              }
             }
         });
         mZimuBtn.setOnLongClickListener(new OnLongClickListener() {
@@ -801,12 +816,6 @@ public class VodController extends BaseController {
                 FastClickCheckUtil.check(view);
                 listener.selectAudioTrack();
                 hideBottom();
-			if (mControlWrapper.isPlaying()){             //xuameng修复暂停时选音轨时显示暂停图标等问题
-                return;
-               }
-            else {
-               togglePlay();
-              }
             }
         });
         mLandscapePortraitBtn.setOnClickListener(new OnClickListener() {
@@ -1132,6 +1141,7 @@ public class VodController extends BaseController {
         videoPlayState = playState;
         switch (playState) {
             case VideoView.STATE_IDLE:
+				mxuPlay.setText("准备");
 				mVideoSize.setText("[ 0 X 0 ]");
 				if (MxuamengMusic.getVisibility() == View.VISIBLE){  //xuameng播放音乐背景
 					MxuamengMusic.setVisibility(GONE);
@@ -1154,11 +1164,13 @@ public class VodController extends BaseController {
 			    public void onAnimationStart(Animator animation) {
                 super.onAnimationStart(animation);
                 MxuamengView.setVisibility(VISIBLE);		   //xuameng动画开始防点击
+				isPlaying = true;  //xuameng动画开启
 			    }
                 public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
 			    MxuamengView.setVisibility(GONE);			   //xuameng动画结束可点击
 			    mTvPausexu.setVisibility(GONE);                //xuameng动画暂停菜单隐藏 
+				isPlaying = false;  //xuameng动画开启
                 }
                 });
 			    animator9.start();						      //xuameng动画暂停菜单结束
@@ -1194,6 +1206,7 @@ public class VodController extends BaseController {
                 break;
             case VideoView.STATE_ERROR:
                 listener.errReplay();
+				mxuPlay.setText("错误");
                 break;
             case VideoView.STATE_PREPARED:
                 mPlayLoadNetSpeed.setVisibility(GONE);
@@ -1205,6 +1218,7 @@ public class VodController extends BaseController {
                 break;
             case VideoView.STATE_PREPARING:
 				simSeekPosition = 0;       //XUAMENG重要,换视频时重新记录进度
+				mxuPlay.setText("准备");
             case VideoView.STATE_BUFFERING:
                 if(mProgressRoot.getVisibility()==GONE)mPlayLoadNetSpeed.setVisibility(VISIBLE);
 				if (iv_circle_bg.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
