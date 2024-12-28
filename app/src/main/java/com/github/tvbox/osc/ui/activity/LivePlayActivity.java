@@ -179,8 +179,11 @@ public class LivePlayActivity extends BaseActivity {
     private boolean isKUAIJIN = false; //xuameng快进
     private boolean isSEEKBAR = false; //xuameng进入SEEKBAR
     private boolean isTVNUM = false; //xuameng获取频道编号
+	private boolean isBuffer = false; //xuameng缓冲
     private int selectedChannelNumber = 0; // xuameng遥控器数字键输入的要切换的频道号码
     private TextView tvSelectedChannel; //xuameng频道编号
+	private ImageView iv_circle_bg_xu;  //xuameng音乐播放时图标
+	private LinearLayout MxuamengMusic;       //xuameng播放音乐背景
     private static Toast toast;
     private static String shiyi_time; //时移时间
     private static int shiyi_time_c; //时移时间差值
@@ -256,12 +259,19 @@ public class LivePlayActivity extends BaseActivity {
         divLoadEpg = (View) findViewById(R.id.divLoadEpg);
         divLoadEpgleft = (View) findViewById(R.id.divLoadEpgleft);
         view_line_XU = (View) findViewById(R.id.view_line); //xuameng横线
+		iv_circle_bg_xu = (ImageView) findViewById(R.id.iv_circle_bg_xu);  //xuameng音乐播放时图标
+		MxuamengMusic = findViewById(R.id.xuamengMusic);  //xuameng播放音乐背景
         divEpg = (LinearLayout) findViewById(R.id.divEPG);
         //右上角图片旋转
         objectAnimator = ObjectAnimator.ofFloat(iv_circle_bg, "rotation", 360.0f);
         objectAnimator.setDuration(10000);
         objectAnimator.setRepeatCount(-1);
         objectAnimator.start();
+
+        ObjectAnimator animator20 = ObjectAnimator.ofFloat(iv_circle_bg_xu, "rotation", 360.0f);
+        animator20.setDuration(10000);
+        animator20.setRepeatCount(-1);
+        animator20.start();
         //laodao 7day replay
         mEpgDateGridView = findViewById(R.id.mEpgDateGridView);
         Hawk.put(HawkConfig.NOW_DATE, formatDate.format(new Date()));
@@ -871,6 +881,8 @@ public class LivePlayActivity extends BaseActivity {
             mHandler.removeCallbacks(mUpdateVodProgressXu);
             mHandler.removeCallbacks(mUpdateTimeRun);
             mHandler.removeCallbacks(mUpdateTimeRunXu);
+			iv_circle_bg_xu.setVisibility(GONE);  //xuameng音乐播放时图标
+			MxuamengMusic.setVisibility(GONE);  //xuameng播放音乐背景
             super.onBackPressed();
         } else {
             mExitTime = System.currentTimeMillis();
@@ -1914,6 +1926,12 @@ public class LivePlayActivity extends BaseActivity {
                 switch(playState) {
                     case VideoView.STATE_IDLE:
 						tv_size.setText("[0 X 0]");  //XUAMENG分辨率
+						if (MxuamengMusic.getVisibility() == View.VISIBLE){  //xuameng播放音乐背景
+							MxuamengMusic.setVisibility(GONE);
+							}
+						if (iv_circle_bg_xu.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
+							iv_circle_bg_xu.setVisibility(GONE);
+							}
                     case VideoView.STATE_PAUSED:
                         break;
                     case VideoView.STATE_PREPARED:						
@@ -1951,6 +1969,7 @@ public class LivePlayActivity extends BaseActivity {
                     case VideoView.STATE_PLAYING:
                         currentLiveChangeSourceTimes = 0;
                         mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
+						isBuffer = false;
                         break;
                     case VideoView.STATE_ERROR:
                     case VideoView.STATE_PLAYBACK_COMPLETED:
@@ -1967,6 +1986,10 @@ public class LivePlayActivity extends BaseActivity {
                     case VideoView.STATE_BUFFERING:
                         mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
                         mHandler.postDelayed(mConnectTimeoutChangeSourceRun, (Hawk.get(HawkConfig.LIVE_CONNECT_TIMEOUT, 1) + 1) * 5000);
+						if (iv_circle_bg.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
+							iv_circle_bg.setVisibility(GONE);
+						}
+						isBuffer = true;
                         break;
                 }
             }
@@ -2578,7 +2601,31 @@ public class LivePlayActivity extends BaseActivity {
             }
             int duration2 = (int) mVideoView.getDuration();
             if(duration2 > 0) {
-                if(mVideoView.isPlaying()) {
+                if(mVideoView.isPlaying()) {  //xuameng音乐播放时图标判断
+					if(mVideoView.getVideoSize().length >= 1) { //XUAMENG分辨率
+						if (iv_circle_bg_xu.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
+						iv_circle_bg_xu.setVisibility(GONE);
+						}
+						if (MxuamengMusic.getVisibility() == View.VISIBLE){  //xuameng播放音乐背景
+						MxuamengMusic.setVisibility(GONE);
+						}
+					}else{
+						if (MxuamengMusic.getVisibility() == View.GONE){  //xuameng播放音乐背景
+						MxuamengMusic.setVisibility(VISIBLE);
+						}
+						if (isBuffer){
+							if (iv_circle_bg_xu.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
+							iv_circle_bg_xu.setVisibility(GONE);
+							}
+						}else {
+							iv_circle_bg_xu.setVisibility(VISIBLE);
+						}
+					}
+			}else {
+				iv_circle_bg_xu.setVisibility(GONE);
+			}   //xuameng音乐播放时图标判断完
+
+
                     iv_Play_Xu.setVisibility(View.GONE); //XUAMENG修复PLAY时关闭回看暂停图标
                     iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause)); //XUAMENG修复PLAY时关闭回看暂停图标
                     if(!isKUAIJIN && backcontroller.getVisibility() == View.VISIBLE) {
