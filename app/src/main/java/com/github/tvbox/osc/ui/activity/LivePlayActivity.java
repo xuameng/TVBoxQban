@@ -2599,14 +2599,12 @@ public class LivePlayActivity extends BaseActivity {
             if(backcontroller.getVisibility() == View.GONE) {
                 isSEEKBAR = false;
             }
-            int duration2 = (int) mVideoView.getDuration();
-            if(duration2 > 0) {
-                if(mVideoView.isPlaying()) {  //xuameng音乐播放时图标判断
-					if(mVideoView.getVideoSize().length >= 1) { //XUAMENG分辨率
-						if (iv_circle_bg_xu.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
+            if(mVideoView.isPlaying()) {  //xuameng音乐播放时图标判断
+				if(mVideoView.getVideoSize().length >= 1) { //XUAMENG分辨率
+					if (iv_circle_bg_xu.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
 						iv_circle_bg_xu.setVisibility(GONE);
 						}
-						if (MxuamengMusic.getVisibility() == View.VISIBLE){  //xuameng播放音乐背景
+					if (MxuamengMusic.getVisibility() == View.VISIBLE){  //xuameng播放音乐背景
 						MxuamengMusic.setVisibility(GONE);
 						}
 					}else{
@@ -2625,7 +2623,9 @@ public class LivePlayActivity extends BaseActivity {
 				iv_circle_bg_xu.setVisibility(GONE);
 			}   //xuameng音乐播放时图标判断完
 
-
+            int duration2 = (int) mVideoView.getDuration();
+            if(duration2 > 0) {
+				if(mVideoView.isPlaying()) {  //xuameng音乐播放时图标判断
                     iv_Play_Xu.setVisibility(View.GONE); //XUAMENG修复PLAY时关闭回看暂停图标
                     iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause)); //XUAMENG修复PLAY时关闭回看暂停图标
                     if(!isKUAIJIN && backcontroller.getVisibility() == View.VISIBLE) {
