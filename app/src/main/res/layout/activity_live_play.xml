@@ -12,7 +12,7 @@
     <LinearLayout
         android:enabled="true"
         android:id="@+id/xuamengMusic"
-        android:visibility="visible"
+        android:visibility="gone"
         android:background="@drawable/xumusic"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"/>
@@ -942,7 +942,7 @@
         android:inputType="number"/>
     <ImageView
         android:layout_gravity="center"
-        android:visibility="visible"
+        android:visibility="gone"
         android:id="@+id/iv_circle_bg_xu"
         android:padding="@dimen/vs_10"
         android:layout_width="@dimen/vs_80"
