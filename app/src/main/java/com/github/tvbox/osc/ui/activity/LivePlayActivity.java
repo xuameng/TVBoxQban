@@ -267,7 +267,11 @@ public class LivePlayActivity extends BaseActivity {
         animator1.setDuration(10000);
         animator1.setRepeatCount(-1);
         animator1.start();
-
+MxuamengMusic.setVisibility(View.VISIBLE);
+        ObjectAnimator animator2 = ObjectAnimator.ofFloat(iv_circle_bg_xu, "rotation", 360.0f);
+        animator2.setDuration(10000);
+        animator2.setRepeatCount(-1);
+        animator2.start();
 
         //laodao 7day replay
         mEpgDateGridView = findViewById(R.id.mEpgDateGridView);
@@ -1983,8 +1987,8 @@ public class LivePlayActivity extends BaseActivity {
                     case VideoView.STATE_BUFFERING:
                         mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
                         mHandler.postDelayed(mConnectTimeoutChangeSourceRun, (Hawk.get(HawkConfig.LIVE_CONNECT_TIMEOUT, 1) + 1) * 5000);
-						if (iv_circle_bg.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
-							iv_circle_bg.setVisibility(View.GONE);
+						if (iv_circle_bg_xu.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
+							iv_circle_bg_xu.setVisibility(View.GONE);
 						}
 						isBuffer = true;
                         break;
