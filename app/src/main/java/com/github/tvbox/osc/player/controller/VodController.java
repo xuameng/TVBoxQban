@@ -1194,7 +1194,7 @@ public class VodController extends BaseController {
         videoPlayState = playState;
         switch (playState) {
             case VideoView.STATE_IDLE:
-				if(!isPlaying || mTvPausexu.getVisibility() == VISIBLE){
+				if(!isPlaying){
 			    ObjectAnimator animator30 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0,700);				//xuameng动画暂停菜单开始
                 animator30.setDuration(300);			//xuameng动画暂停菜单
                 animator30.addListener(new AnimatorListenerAdapter() {
@@ -1282,7 +1282,7 @@ public class VodController extends BaseController {
             case VideoView.STATE_ERROR:
                 listener.errReplay();
 				mxuPlay.setText("错误");
-				if(!isPlaying || mTvPausexu.getVisibility() == VISIBLE){
+				if(!isPlaying){
 			    ObjectAnimator animator31 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0,700);				//xuameng动画暂停菜单开始
                 animator31.setDuration(300);			//xuameng动画暂停菜单
                 animator31.addListener(new AnimatorListenerAdapter() {
@@ -1313,7 +1313,7 @@ public class VodController extends BaseController {
             case VideoView.STATE_PREPARING:
 				simSeekPosition = 0;       //XUAMENG重要,换视频时重新记录进度
 				mxuPlay.setText("准备");
-				if(!isPlaying || mTvPausexu.getVisibility() == VISIBLE){
+				if(!isPlaying){
 			    ObjectAnimator animator32 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0,700);				//xuameng动画暂停菜单开始
                 animator32.setDuration(300);			//xuameng动画暂停菜单
                 animator32.addListener(new AnimatorListenerAdapter() {
