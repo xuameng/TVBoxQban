@@ -888,7 +888,7 @@ public class LivePlayActivity extends BaseActivity {
             mHandler.removeCallbacks(mUpdateTimeRunXu);
 			iv_circle_bg_xu.setVisibility(View.GONE);  //xuameng音乐播放时图标
 			MxuamengMusic.setVisibility(View.GONE);  //xuameng播放音乐背景
-			mLoading.setVisibility(View.GONE);
+			mLoading.setVisibility(View.GONE); //xuameng 播放音频时的缓冲动画
             super.onBackPressed();
         } else {
             mExitTime = System.currentTimeMillis();
@@ -1931,7 +1931,7 @@ public class LivePlayActivity extends BaseActivity {
             public void playStateChanged(int playState) {
                 switch(playState) {
                     case VideoView.STATE_IDLE:
-						mLoading.setVisibility(View.GONE);
+						mLoading.setVisibility(View.GONE); //xuameng 播放音频时的缓冲动画
 						tv_size.setText("[0 X 0]");  //XUAMENG分辨率
 						if (MxuamengMusic.getVisibility() == View.VISIBLE){  //xuameng播放音乐背景
 							MxuamengMusic.setVisibility(View.GONE);
@@ -1942,14 +1942,14 @@ public class LivePlayActivity extends BaseActivity {
                     case VideoView.STATE_PAUSED:
                         break;
                     case VideoView.STATE_PREPARED:
-						mLoading.setVisibility(View.GONE);
+						mLoading.setVisibility(View.GONE); //xuameng 播放音频时的缓冲动画
 					    String width = Integer.toString(mVideoView.getVideoSize()[0]);
 						String height = Integer.toString(mVideoView.getVideoSize()[1]);
 						tv_size.setText("[" + width + " X " + height +"]");
 						if (width.length() > 1 && height.length() > 1){
-							listenBuffer = false;
+							listenBuffer = false;  //xuameng音频缓冲
 							}else{
-							listenBuffer = true;
+							listenBuffer = true; //xuameng音频缓冲
 							}
                        
                         int duration1 = (int) mVideoView.getDuration();
@@ -1978,17 +1978,17 @@ public class LivePlayActivity extends BaseActivity {
                         }
                         break;
                     case VideoView.STATE_BUFFERED:
-						mLoading.setVisibility(View.GONE);
+						mLoading.setVisibility(View.GONE); //xuameng 播放音频时的缓冲动画
                     case VideoView.STATE_PLAYING:
-						mLoading.setVisibility(View.GONE);
+						mLoading.setVisibility(View.GONE); //xuameng 播放音频时的缓冲动画
                         currentLiveChangeSourceTimes = 0;
                         mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
 						isBuffer = false;
                         break;
                     case VideoView.STATE_ERROR:
-						mLoading.setVisibility(View.GONE);
+						mLoading.setVisibility(View.GONE); //xuameng 播放音频时的缓冲动画
                     case VideoView.STATE_PLAYBACK_COMPLETED:
-						mLoading.setVisibility(View.GONE);
+						mLoading.setVisibility(View.GONE); //xuameng 播放音频时的缓冲动画
                         if(isBack) {
                             mHandler.removeCallbacks(mConnectTimeoutChangeSourceRunBack);
                             mHandler.postDelayed(mConnectTimeoutChangeSourceRunBack, 5000); //xuameng回看超时5秒退出
@@ -1998,7 +1998,7 @@ public class LivePlayActivity extends BaseActivity {
                         mHandler.postDelayed(mConnectTimeoutChangeSourceRun, 10000); //xuameng播放超时10秒换源
                         break;
                     case VideoView.STATE_PREPARING:
-						mLoading.setVisibility(View.GONE);
+						mLoading.setVisibility(View.GONE); //xuameng 播放音频时的缓冲动画
                         isVOD = false;
                     case VideoView.STATE_BUFFERING:
                         mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
@@ -2006,10 +2006,10 @@ public class LivePlayActivity extends BaseActivity {
 						if (iv_circle_bg_xu.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
 							iv_circle_bg_xu.setVisibility(View.GONE);
 						}
-						if (listenBuffer){
-							mLoading.setVisibility(View.VISIBLE);
+						if (listenBuffer){ //xuameng音频缓冲
+							mLoading.setVisibility(View.VISIBLE); //xuameng 播放音频时的缓冲动画
 						}else {
-							mLoading.setVisibility(View.GONE);
+							mLoading.setVisibility(View.GONE); //xuameng 播放音频时的缓冲动画
 						}
 						isBuffer = true;
                         break;
