@@ -224,8 +224,7 @@ public class VodController extends BaseController {
             mVideoSize.setText("[ " + width + " X " + height +" ]");
             
 			if (mControlWrapper.isPlaying()){    //xuameng音乐播放时图标判断
-				if (isPlaying){
-				}else{
+				if (!isPlaying && mTvPausexu.getVisibility() == View.VISIBLE){
 					mxuPlay.setText("暂停");
 					if (mPlayPauseTimexu.getVisibility() == View.VISIBLE||mPlayTitle.getVisibility() == View.VISIBLE){
 					mPlayPauseTimexu.setVisibility(GONE);   //xuameng隐藏上面视频名称
@@ -247,8 +246,8 @@ public class VodController extends BaseController {
 					}
 					});
 					animator10.start();						      //xuameng动画暂停菜单结束
-					}
 				}
+
 				if (width.length() > 1 && height.length() > 1){
 					if (iv_circle_bg.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
 					iv_circle_bg.setVisibility(GONE);
@@ -388,9 +387,8 @@ public class VodController extends BaseController {
         myRunnable = new Runnable() {
             @Override
             public void run() {
-				if(isAnimation || mBottomRoot.getVisibility() == GONE){
-				}else{
-                hideBottom();
+				if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
+					hideBottom();
 				}
             }
         };
@@ -421,9 +419,8 @@ public class VodController extends BaseController {
                 ApiConfig.get().setDefaultParse(parseBean);
                 parseAdapter.notifyItemChanged(position);
                 listener.changeParse(parseBean);
-				if(isAnimation || mBottomRoot.getVisibility() == GONE){
-				}else{
-                hideBottom();
+				if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
+					hideBottom();
 				}
             }
         });
@@ -505,9 +502,8 @@ public class VodController extends BaseController {
             @Override
             public void onClick(View v) {
                 listener.replay(true);
-				if(isAnimation || mBottomRoot.getVisibility() == GONE){
-				}else{
-                hideBottom();
+				if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
+					hideBottom();
 				}
             }
         });
@@ -515,9 +511,8 @@ public class VodController extends BaseController {
             @Override
             public void onClick(View v) {
                 listener.replay(false);
-				if(isAnimation || mBottomRoot.getVisibility() == GONE){
-				}else{
-                hideBottom();
+				if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
+					hideBottom();
 				}
             }
         });
@@ -525,9 +520,8 @@ public class VodController extends BaseController {
             @Override
             public void onClick(View view) {
                 listener.playNext(false);
-				if(isAnimation || mBottomRoot.getVisibility() == GONE){
-				}else{
-                hideBottom();
+				if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
+					hideBottom();
 				}
             }
         });
@@ -550,9 +544,8 @@ public class VodController extends BaseController {
             @Override
             public void onClick(View view) {
                 listener.playPre();
-				if(isAnimation || mBottomRoot.getVisibility() == GONE){
-				}else{
-                hideBottom();
+				if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
+					hideBottom();
 				}
             }
         });
@@ -635,9 +628,8 @@ public class VodController extends BaseController {
                     updatePlayerCfgView();
                     listener.updatePlayerCfg();
                     listener.replay(false);
-					if(isAnimation || mBottomRoot.getVisibility() == GONE){
-					}else{
-					hideBottom();
+					if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
+						hideBottom();
 					}
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -677,9 +669,8 @@ public class VodController extends BaseController {
                                     updatePlayerCfgView();
                                     listener.updatePlayerCfg();
                                     listener.replay(false);
-									if(isAnimation || mBottomRoot.getVisibility() == GONE){
-									}else{
-									hideBottom();
+									if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
+										hideBottom();
 									}
                                 }
                             } catch (Exception e) {
@@ -734,9 +725,8 @@ public class VodController extends BaseController {
                     updatePlayerCfgView();
                     listener.updatePlayerCfg();
                     listener.replay(false);
-					if(isAnimation || mBottomRoot.getVisibility() == GONE){
-					}else{
-					hideBottom();
+					if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
+						hideBottom();
 					}
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -826,9 +816,8 @@ public class VodController extends BaseController {
             public void onClick(View view) {
                 FastClickCheckUtil.check(view);
                 listener.selectSubtitle();
-				if(isAnimation || mBottomRoot.getVisibility() == GONE){
-				}else{
-                hideBottom();
+				if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
+					hideBottom();
 				}
             }
         });
@@ -837,16 +826,14 @@ public class VodController extends BaseController {
             public boolean onLongClick(View view) {
 				FastClickCheckUtil.check(view);                   //xuameng 防播放打断动画
 				if (mSubtitleView.getVisibility() == View.GONE) {
-					if(isAnimation || mBottomRoot.getVisibility() == GONE){
-					}else{
-					hideBottom();
+					if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
+						hideBottom();
 					}
 					mSubtitleView.setVisibility(VISIBLE);
                     Toast.makeText(getContext(), "字幕已开启!", Toast.LENGTH_SHORT).show();
 				} else if (mSubtitleView.getVisibility() == View.VISIBLE){
-					if(isAnimation || mBottomRoot.getVisibility() == GONE){
-					}else{
-					hideBottom();
+					if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
+						hideBottom();
 					}
 					mSubtitleView.setVisibility(View.GONE);
 //                  mSubtitleView.destroy();
@@ -862,9 +849,8 @@ public class VodController extends BaseController {
             public void onClick(View view) {
                 FastClickCheckUtil.check(view);
                 listener.selectAudioTrack();
-				if(isAnimation || mBottomRoot.getVisibility() == GONE){
-				}else{
-                hideBottom();
+				if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
+					hideBottom();
 				}
             }
         });
@@ -873,9 +859,8 @@ public class VodController extends BaseController {
             public void onClick(View view) {
                 FastClickCheckUtil.check(view);
                 setLandscapePortrait();
-				if(isAnimation || mBottomRoot.getVisibility() == GONE){
-				}else{
-                hideBottom();
+				if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
+					hideBottom();
 				}
             }
         });
@@ -1194,7 +1179,7 @@ public class VodController extends BaseController {
         videoPlayState = playState;
         switch (playState) {
             case VideoView.STATE_IDLE:
-				if(!isPlaying){
+				if(!isPlaying && mTvPausexu.getVisibility() == View.VISIBLE){
 			    ObjectAnimator animator30 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0,700);				//xuameng动画暂停菜单开始
                 animator30.setDuration(300);			//xuameng动画暂停菜单
                 animator30.addListener(new AnimatorListenerAdapter() {
@@ -1228,9 +1213,8 @@ public class VodController extends BaseController {
 		        mxuPlay.setVisibility(View.VISIBLE);
                 mxuPlay.setTextColor(Color.WHITE);
                 mxuPlay.setText("暂停");               //xuameng底部菜单显示暂停
-				if(isAnimation || mBottomRoot.getVisibility() == GONE){
-				}else{
-                hideBottom();
+				if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
+					hideBottom();
 				}
 			    ObjectAnimator animator9 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0,700);				//xuameng动画暂停菜单开始
                 animator9.setDuration(300);			//xuameng动画暂停菜单
@@ -1282,7 +1266,7 @@ public class VodController extends BaseController {
             case VideoView.STATE_ERROR:
                 listener.errReplay();
 				mxuPlay.setText("错误");
-				if(!isPlaying){
+				if(!isPlaying && mTvPausexu.getVisibility() == View.VISIBLE){
 			    ObjectAnimator animator31 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0,700);				//xuameng动画暂停菜单开始
                 animator31.setDuration(300);			//xuameng动画暂停菜单
                 animator31.addListener(new AnimatorListenerAdapter() {
@@ -1313,7 +1297,7 @@ public class VodController extends BaseController {
             case VideoView.STATE_PREPARING:
 				simSeekPosition = 0;       //XUAMENG重要,换视频时重新记录进度
 				mxuPlay.setText("准备");
-				if(!isPlaying){
+				if(!isPlaying && mTvPausexu.getVisibility() == View.VISIBLE){
 			    ObjectAnimator animator32 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0,700);				//xuameng动画暂停菜单开始
                 animator32.setDuration(300);			//xuameng动画暂停菜单
                 animator32.addListener(new AnimatorListenerAdapter() {
@@ -1456,9 +1440,8 @@ public class VodController extends BaseController {
             // 闲置计时关闭
             myHandle.postDelayed(myRunnable, myHandleSeconds);
         } else {
-			if(isAnimation || mBottomRoot.getVisibility() == GONE){
-			}else{
-            hideBottom();
+			if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
+				hideBottom();
 			}
         }
         return true;
@@ -1499,9 +1482,8 @@ public class VodController extends BaseController {
         }
         if (isBottomVisible() && (System.currentTimeMillis() - DOUBLE_CLICK_TIME > 500)) {			      //xuameng按返回键退出
 			DOUBLE_CLICK_TIME = System.currentTimeMillis();
-			if(isAnimation || mBottomRoot.getVisibility() == GONE){
-			}else{
-            hideBottom();
+			if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
+				hideBottom();
 			}
             return true;
         }
