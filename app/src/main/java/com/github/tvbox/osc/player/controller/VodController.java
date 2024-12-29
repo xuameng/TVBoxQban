@@ -54,7 +54,9 @@ import com.lzy.okgo.model.Progress;
 import com.lzy.okgo.model.Response;
 import com.github.tvbox.osc.api.ApiConfig;
 import java.io.File;
-import androidx.core.content.ContextCompat;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import android.content.res.Resources;
 
 
 public class VodController extends BaseController {
@@ -249,7 +251,7 @@ public class VodController extends BaseController {
 					super.onAnimationStart(animation);
 					MxuamengView.setVisibility(VISIBLE);		   //xuameng动画开始防点击
 					File music = new File(getFilesDir().getAbsolutePath() + "/music");
-					MxuamengMusic.setBackground(ContextCompat.getDrawable(VodController.context, music));
+					MxuamengMusic.setBackground(getResources().getDrawable(music));
 					}
 					public void onAnimationEnd(Animator animation) {
 					super.onAnimationEnd(animation);
