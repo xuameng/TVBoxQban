@@ -1194,6 +1194,25 @@ public class VodController extends BaseController {
         videoPlayState = playState;
         switch (playState) {
             case VideoView.STATE_IDLE:
+				if(!isPlaying || mTvPausexu.getVisibility() == VISIBLE){
+			    ObjectAnimator animator30 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0,700);				//xuameng动画暂停菜单开始
+                animator30.setDuration(300);			//xuameng动画暂停菜单
+                animator30.addListener(new AnimatorListenerAdapter() {
+                @Override
+			    public void onAnimationStart(Animator animation) {
+                super.onAnimationStart(animation);
+                MxuamengView.setVisibility(VISIBLE);		   //xuameng动画开始防点击
+				isPlaying = true;  //xuameng动画开启
+			    }
+                public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+			    MxuamengView.setVisibility(GONE);			   //xuameng动画结束可点击
+			    mTvPausexu.setVisibility(GONE);                //xuameng动画暂停菜单隐藏 
+				isPlaying = false;  //xuameng动画开启
+                }
+                });
+			    animator30.start();						      //xuameng动画暂停菜单结束
+			    }
 				mxuPlay.setText("准备");
 				mVideoSize.setText("[ 0 X 0 ]");
 				if (MxuamengMusic.getVisibility() == View.VISIBLE){  //xuameng播放音乐背景
@@ -1263,6 +1282,25 @@ public class VodController extends BaseController {
             case VideoView.STATE_ERROR:
                 listener.errReplay();
 				mxuPlay.setText("错误");
+				if(!isPlaying || mTvPausexu.getVisibility() == VISIBLE){
+			    ObjectAnimator animator31 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0,700);				//xuameng动画暂停菜单开始
+                animator31.setDuration(300);			//xuameng动画暂停菜单
+                animator31.addListener(new AnimatorListenerAdapter() {
+                @Override
+			    public void onAnimationStart(Animator animation) {
+                super.onAnimationStart(animation);
+                MxuamengView.setVisibility(VISIBLE);		   //xuameng动画开始防点击
+				isPlaying = true;  //xuameng动画开启
+			    }
+                public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+			    MxuamengView.setVisibility(GONE);			   //xuameng动画结束可点击
+			    mTvPausexu.setVisibility(GONE);                //xuameng动画暂停菜单隐藏 
+				isPlaying = false;  //xuameng动画开启
+                }
+                });
+			    animator31.start();						      //xuameng动画暂停菜单结束
+			    }
                 break;
             case VideoView.STATE_PREPARED:
                 mPlayLoadNetSpeed.setVisibility(GONE);
@@ -1275,6 +1313,25 @@ public class VodController extends BaseController {
             case VideoView.STATE_PREPARING:
 				simSeekPosition = 0;       //XUAMENG重要,换视频时重新记录进度
 				mxuPlay.setText("准备");
+				if(!isPlaying || mTvPausexu.getVisibility() == VISIBLE){
+			    ObjectAnimator animator32 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0,700);				//xuameng动画暂停菜单开始
+                animator32.setDuration(300);			//xuameng动画暂停菜单
+                animator32.addListener(new AnimatorListenerAdapter() {
+                @Override
+			    public void onAnimationStart(Animator animation) {
+                super.onAnimationStart(animation);
+                MxuamengView.setVisibility(VISIBLE);		   //xuameng动画开始防点击
+				isPlaying = true;  //xuameng动画开启
+			    }
+                public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+			    MxuamengView.setVisibility(GONE);			   //xuameng动画结束可点击
+			    mTvPausexu.setVisibility(GONE);                //xuameng动画暂停菜单隐藏 
+				isPlaying = false;  //xuameng动画开启
+                }
+                });
+			    animator32.start();						      //xuameng动画暂停菜单结束
+			    }
             case VideoView.STATE_BUFFERING:
                 if(mProgressRoot.getVisibility()==GONE)mPlayLoadNetSpeed.setVisibility(VISIBLE);
 				if (iv_circle_bg.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
