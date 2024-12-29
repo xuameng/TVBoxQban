@@ -1213,7 +1213,7 @@ public class VodController extends BaseController {
 		        mxuPlay.setVisibility(View.VISIBLE);
                 mxuPlay.setTextColor(Color.WHITE);
                 mxuPlay.setText("暂停");               //xuameng底部菜单显示暂停
-				if (System.currentTimeMillis() - DOUBLE_CLICK_TIME_1) < 100){
+				if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME_1) < 100){
 					mTvPausexu.setVisibility(GONE); 
 					mBottomRoot.setVisibility(GONE);	        //动画结束后隐藏下菜单
 					mTopRoot1.setVisibility(GONE);	            //动画结束后隐藏上菜单
