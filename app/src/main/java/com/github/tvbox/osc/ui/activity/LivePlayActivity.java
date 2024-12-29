@@ -183,6 +183,7 @@ public class LivePlayActivity extends BaseActivity {
     private boolean isTVNUM = false; //xuameng获取频道编号
 	private boolean isBuffer = false; //xuameng缓冲
 	private boolean listenBuffer = false; //xuameng音频缓冲
+	private boolean isShowlist = false; //xuameng判断菜单显示
     private int selectedChannelNumber = 0; // xuameng遥控器数字键输入的要切换的频道号码
     private TextView tvSelectedChannel; //xuameng频道编号
 	private ImageView iv_circle_bg_xu;  //xuameng音乐播放时图标
@@ -1334,6 +1335,7 @@ public class LivePlayActivity extends BaseActivity {
         RecyclerView.ViewHolder holder = mLiveChannelView.findViewHolderForAdapterPosition(currentLiveChannelIndex);
         if(holder != null) holder.itemView.requestFocus();
         tvLeftChannelListLayout.setVisibility(View.VISIBLE);
+		isShowlist = true;
         ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) tvLeftChannelListLayout.getLayoutParams();
         if(countDownTimer5 != null) {
             countDownTimer5.cancel();
@@ -1348,6 +1350,7 @@ public class LivePlayActivity extends BaseActivity {
     }
     private void mHideChannelListRun() { //xuameng左侧菜单隐藏
         ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) tvLeftChannelListLayout.getLayoutParams();
+		isShowlist = false;
         if(tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
             tvLeftChannelListLayout.setVisibility(View.INVISIBLE);
         }
@@ -2635,7 +2638,7 @@ public class LivePlayActivity extends BaseActivity {
 						if (MxuamengMusic.getVisibility() == View.GONE){  //xuameng播放音乐背景
 						MxuamengMusic.setVisibility(View.VISIBLE);
 						}
-						if (isBuffer){
+						if (isBuffer ||isShowlist){
 							if (iv_circle_bg_xu.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
 							iv_circle_bg_xu.setVisibility(View.GONE);
 							}
