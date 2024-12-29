@@ -48,6 +48,15 @@ import xyz.doikki.videoplayer.player.VideoView;
 import xyz.doikki.videoplayer.util.PlayerUtils;
 import static xyz.doikki.videoplayer.util.PlayerUtils.stringForTime;
 
+import com.lzy.okgo.OkGo;
+import com.lzy.okgo.callback.FileCallback;
+import com.lzy.okgo.model.Progress;
+import com.lzy.okgo.model.Response;
+import com.github.tvbox.osc.api.ApiConfig;
+import java.io.File;
+import androidx.core.content.ContextCompat;
+
+
 public class VodController extends BaseController {
     public VodController(@NonNull @NotNull Context context) {
         super(context);
@@ -239,6 +248,8 @@ public class VodController extends BaseController {
 					public void onAnimationStart(Animator animation) {
 					super.onAnimationStart(animation);
 					MxuamengView.setVisibility(VISIBLE);		   //xuameng动画开始防点击
+					File music = new File(getFilesDir().getAbsolutePath() + "/music");
+					MxuamengMusic.setBackground(ContextCompat.getDrawable(VodController.context, music));
 					}
 					public void onAnimationEnd(Animator animation) {
 					super.onAnimationEnd(animation);
