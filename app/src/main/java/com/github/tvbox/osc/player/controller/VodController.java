@@ -504,6 +504,8 @@ public class VodController extends BaseController {
                 listener.replay(true);
 				if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
                 hideBottom();
+				mPlayPauseTimexu.setVisibility(GONE);       //xuameng隐藏上面时间
+				mPlayTitle.setVisibility(GONE);             //xuameng隐藏上面视频名称
 				}
             }
         });
@@ -513,6 +515,8 @@ public class VodController extends BaseController {
                 listener.replay(false);
 				if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
                 hideBottom();
+				mPlayPauseTimexu.setVisibility(GONE);       //xuameng隐藏上面时间
+				mPlayTitle.setVisibility(GONE);             //xuameng隐藏上面视频名称
 				}
             }
         });
@@ -522,6 +526,8 @@ public class VodController extends BaseController {
                 listener.playNext(false);
 				if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
                 hideBottom();
+				mPlayPauseTimexu.setVisibility(GONE);       //xuameng隐藏上面时间
+				mPlayTitle.setVisibility(GONE);             //xuameng隐藏上面视频名称
 				}
             }
         });
@@ -546,6 +552,8 @@ public class VodController extends BaseController {
                 listener.playPre();
 				if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
                 hideBottom();
+				mPlayPauseTimexu.setVisibility(GONE);       //xuameng隐藏上面时间
+				mPlayTitle.setVisibility(GONE);             //xuameng隐藏上面视频名称
 				}
             }
         });
@@ -671,6 +679,8 @@ public class VodController extends BaseController {
                                     listener.replay(false);
 									if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
 									hideBottom();
+									mPlayPauseTimexu.setVisibility(GONE);       //xuameng隐藏上面时间
+									mPlayTitle.setVisibility(GONE);             //xuameng隐藏上面视频名称
 									}
                                 }
                             } catch (Exception e) {
@@ -727,6 +737,8 @@ public class VodController extends BaseController {
                     listener.replay(false);
 					if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
 					hideBottom();
+					mPlayPauseTimexu.setVisibility(GONE);       //xuameng隐藏上面时间
+					mPlayTitle.setVisibility(GONE);             //xuameng隐藏上面视频名称
 					}
                 } catch (JSONException e) {
                     e.printStackTrace();
