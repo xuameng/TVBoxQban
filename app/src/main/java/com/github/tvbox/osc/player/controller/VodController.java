@@ -238,7 +238,7 @@ public class VodController extends BaseController {
 	private boolean isAnimation = false;  //xuameng判断隐藏菜单动画
     Handler myHandle;
     Runnable myRunnable;
-    int myHandleSeconds = 100000;            //闲置多少毫秒秒关闭底栏  默认100秒
+    int myHandleSeconds = 50000;            //闲置多少毫秒秒关闭底栏  默认100秒
 
     int videoPlayState = 0;
 
@@ -660,7 +660,7 @@ public class VodController extends BaseController {
                     listener.updatePlayerCfg();
                     listener.replay(false);
 					if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
-						hideBottom();
+						hideBottomXu();
 					}
                 } catch (JSONException e) {
                     e.printStackTrace();
