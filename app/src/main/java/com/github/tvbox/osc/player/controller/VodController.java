@@ -676,6 +676,7 @@ public class VodController extends BaseController {
                 myHandle.removeCallbacks(myRunnable);
                 myHandle.postDelayed(myRunnable, myHandleSeconds);
                 FastClickCheckUtil.check(view);
+				hideBottom();
                 try {
                     int playerType = mPlayerConfig.getInt("pl");
                     int defaultPos = 0;
