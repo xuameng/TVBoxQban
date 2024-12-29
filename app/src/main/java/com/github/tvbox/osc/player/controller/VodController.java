@@ -224,14 +224,12 @@ public class VodController extends BaseController {
             mVideoSize.setText("[ " + width + " X " + height +" ]");
             
 			if (mControlWrapper.isPlaying()){    //xuameng音乐播放时图标判断
-				if (isPlaying){
-				}else{
+				if (!isPlaying && mTvPausexu.getVisibility() == View.VISIBLE){			
 					mxuPlay.setText("暂停");
 					if (mPlayPauseTimexu.getVisibility() == View.VISIBLE||mPlayTitle.getVisibility() == View.VISIBLE){
 					mPlayPauseTimexu.setVisibility(GONE);   //xuameng隐藏上面视频名称
                     mPlayTitle.setVisibility(GONE);         //xuameng隐藏上面时间
-					}
-					if (mTvPausexu.getVisibility() == View.VISIBLE){
+					}				
 					ObjectAnimator animator10 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0,700);				//xuameng动画暂停菜单开始
 					animator10.setDuration(300);			//xuameng动画暂停菜单
 					animator10.addListener(new AnimatorListenerAdapter() {
@@ -246,9 +244,9 @@ public class VodController extends BaseController {
 					mTvPausexu.setVisibility(GONE);                //xuameng动画暂停菜单隐藏 
 					}
 					});
-					animator10.start();						      //xuameng动画暂停菜单结束
-					}
+					animator10.start();						      //xuameng动画暂停菜单结束					
 				}
+
 				if (width.length() > 1 && height.length() > 1){
 					if (iv_circle_bg.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
 					iv_circle_bg.setVisibility(GONE);
