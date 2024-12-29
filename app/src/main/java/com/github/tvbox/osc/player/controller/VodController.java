@@ -198,6 +198,7 @@ public class VodController extends BaseController {
     private View backBtn;//返回键
     private boolean isClickBackBtn;
 	private double DOUBLE_CLICK_TIME = 0L;    //xuameng返回键防连击1.5秒（为动画）
+	private double DOUBLE_CLICK_TIME_1 = 0L;    //xuameng返回键防连击1.5秒（为动画）
    
     LockRunnable lockRunnable = new LockRunnable();
     private boolean isLock = false;
@@ -1212,6 +1213,12 @@ public class VodController extends BaseController {
 		        mxuPlay.setVisibility(View.VISIBLE);
                 mxuPlay.setTextColor(Color.WHITE);
                 mxuPlay.setText("暂停");               //xuameng底部菜单显示暂停
+				if (System.currentTimeMillis() - DOUBLE_CLICK_TIME_1) < 100){
+					mTvPausexu.setVisibility(GONE); 
+					mBottomRoot.setVisibility(GONE);	        //动画结束后隐藏下菜单
+					mTopRoot1.setVisibility(GONE);	            //动画结束后隐藏上菜单
+					mTopRoot2.setVisibility(GONE);              //动画结束后隐藏上菜单
+				}else{
 				if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
                 hideBottom();
 				}
@@ -1232,8 +1239,10 @@ public class VodController extends BaseController {
                 }
                 });
 			    animator9.start();						      //xuameng动画暂停菜单结束
+				}
                 break;
             case VideoView.STATE_PAUSED:
+				DOUBLE_CLICK_TIME_1 = System.currentTimeMillis();
                 //mTopRoot1.setVisibility(GONE);       //xuameng隐藏上面菜单
                 //mTopRoot2.setVisibility(GONE);       //xuameng隐藏上面菜单
                 //mPlayTitle.setVisibility(VISIBLE);   //xuameng显示上面菜单
