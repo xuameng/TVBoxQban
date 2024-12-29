@@ -1942,6 +1942,7 @@ public class LivePlayActivity extends BaseActivity {
                     case VideoView.STATE_PAUSED:
                         break;
                     case VideoView.STATE_PREPARED:
+						mLoading.setVisibility(View.GONE);
 					    String width = Integer.toString(mVideoView.getVideoSize()[0]);
 						String height = Integer.toString(mVideoView.getVideoSize()[1]);
 						tv_size.setText("[" + width + " X " + height +"]");
@@ -1979,6 +1980,7 @@ public class LivePlayActivity extends BaseActivity {
                     case VideoView.STATE_BUFFERED:
 						mLoading.setVisibility(View.GONE);
                     case VideoView.STATE_PLAYING:
+						mLoading.setVisibility(View.GONE);
                         currentLiveChangeSourceTimes = 0;
                         mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
 						isBuffer = false;
@@ -1986,6 +1988,7 @@ public class LivePlayActivity extends BaseActivity {
                     case VideoView.STATE_ERROR:
 						mLoading.setVisibility(View.GONE);
                     case VideoView.STATE_PLAYBACK_COMPLETED:
+						mLoading.setVisibility(View.GONE);
                         if(isBack) {
                             mHandler.removeCallbacks(mConnectTimeoutChangeSourceRunBack);
                             mHandler.postDelayed(mConnectTimeoutChangeSourceRunBack, 5000); //xuameng回看超时5秒退出
@@ -1995,6 +1998,7 @@ public class LivePlayActivity extends BaseActivity {
                         mHandler.postDelayed(mConnectTimeoutChangeSourceRun, 10000); //xuameng播放超时10秒换源
                         break;
                     case VideoView.STATE_PREPARING:
+						mLoading.setVisibility(View.GONE);
                         isVOD = false;
                     case VideoView.STATE_BUFFERING:
                         mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
