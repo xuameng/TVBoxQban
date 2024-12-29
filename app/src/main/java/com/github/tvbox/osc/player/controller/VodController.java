@@ -66,6 +66,37 @@ public class VodController extends BaseController {
                         mProgressRoot.setVisibility(GONE);
                         break;
                     }
+
+                    case 1005: { // 隐藏底部菜单Xu
+		                ObjectAnimator animator3 = ObjectAnimator.ofFloat(mBottomRoot, "translationY", -0,700);				//xuameng向下划出屏外
+                        animator3.setDuration(300);				   //xuameng动画菜单        
+                        animator3.addListener(new AnimatorListenerAdapter() {
+                        @Override
+						public void onAnimationStart(Animator animation) {
+                        super.onAnimationStart(animation);
+                        MxuamengView.setVisibility(VISIBLE);		   //xuameng动画开始防点击
+						isAnimation = true;
+			            }
+                        public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        mBottomRoot.setVisibility(GONE);			   //动画结束后隐藏下菜单
+						mTopRoot1.setVisibility(GONE);				   //动画结束后隐藏上菜单
+						mTopRoot2.setVisibility(GONE);                 //动画结束后隐藏上菜单
+						MxuamengView.setVisibility(GONE);			   //xuameng动画结束可点击
+						isAnimation = false;
+                        }
+                        });
+                        animator3.start();                          //XUAMENG隐藏底部菜单结束                        
+				        ObjectAnimator animator4 = ObjectAnimator.ofFloat(mTopRoot1, "translationY", 0,-700);				//xuameng向上划出屏外
+                        animator4.setDuration(300);				//xuameng动画菜单				
+		                animator4.start();                          //XUAMENG隐藏上面菜单1结束
+						ObjectAnimator animator5 = ObjectAnimator.ofFloat(mTopRoot2, "translationY", 0,-700);				//xuameng向上划出屏外
+                        animator5.setDuration(300);			
+		                animator5.start();                          //XUAMENG隐藏上面菜单2结束
+                        backBtn.setVisibility(INVISIBLE);           //返回键隐藏菜单						
+                        break;
+                    }
+
                     case 1002: { // 显示底部菜单
                         mBottomRoot.setVisibility(VISIBLE);
 						ObjectAnimator animator = ObjectAnimator.ofFloat(mBottomRoot, "translationY", 700,0);				//xuameng动画菜单
@@ -503,11 +534,7 @@ public class VodController extends BaseController {
             public void onClick(View v) {
                 listener.replay(true);
 				if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
-                hideBottom();
-				animator6.cancel();
-				animator7.cancel();
-				mPlayPauseTimexu.setVisibility(GONE);       //xuameng隐藏上面时间
-				mPlayTitle.setVisibility(GONE);             //xuameng隐藏上面视频名称
+				hideBottomXu();
 				}
             }
         });
@@ -516,11 +543,7 @@ public class VodController extends BaseController {
             public void onClick(View v) {
                 listener.replay(false);
 				if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
-                hideBottom();
-				animator6.cancel();
-				animator7.cancel();
-				mPlayPauseTimexu.setVisibility(GONE);       //xuameng隐藏上面时间
-				mPlayTitle.setVisibility(GONE);             //xuameng隐藏上面视频名称
+				hideBottomXu();
 				}
             }
         });
@@ -529,11 +552,7 @@ public class VodController extends BaseController {
             public void onClick(View view) {
                 listener.playNext(false);
 				if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
-                hideBottom();
-				animator6.cancel();
-				animator7.cancel();
-				mPlayPauseTimexu.setVisibility(GONE);       //xuameng隐藏上面时间
-				mPlayTitle.setVisibility(GONE);             //xuameng隐藏上面视频名称
+				hideBottomXu();
 				}
             }
         });
@@ -557,11 +576,7 @@ public class VodController extends BaseController {
             public void onClick(View view) {
                 listener.playPre();
 				if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
-                hideBottom();
-				animator6.cancel();
-				animator7.cancel();
-				mPlayPauseTimexu.setVisibility(GONE);       //xuameng隐藏上面时间
-				mPlayTitle.setVisibility(GONE);             //xuameng隐藏上面视频名称
+				hideBottomXu();
 				}
             }
         });
@@ -686,11 +701,7 @@ public class VodController extends BaseController {
                                     listener.updatePlayerCfg();
                                     listener.replay(false);
 									if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
-									hideBottom();
-									animator6.cancel();
-									animator7.cancel();
-									mPlayPauseTimexu.setVisibility(GONE);       //xuameng隐藏上面时间
-									mPlayTitle.setVisibility(GONE);             //xuameng隐藏上面视频名称
+									hideBottomXu();
 									}
                                 }
                             } catch (Exception e) {
@@ -746,11 +757,7 @@ public class VodController extends BaseController {
                     listener.updatePlayerCfg();
                     listener.replay(false);
 					if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
-					hideBottom();
-					animator6.cancel();
-					animator7.cancel();
-					mPlayPauseTimexu.setVisibility(GONE);       //xuameng隐藏上面时间
-					mPlayTitle.setVisibility(GONE);             //xuameng隐藏上面视频名称
+					hideBottomXu();
 					}
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -1378,6 +1385,12 @@ public class VodController extends BaseController {
 		isSEEKBAR = false;        //XUAMENG隐藏菜单时修复进度条BUG
         mHandler.removeMessages(1002);
         mHandler.sendEmptyMessage(1003);
+    }
+
+    void hideBottomXu() {
+		isSEEKBAR = false;        //XUAMENG隐藏菜单时修复进度条BUG
+        mHandler.removeMessages(1002);
+        mHandler.sendEmptyMessage(1005);
     }
 
     @Override
