@@ -1942,8 +1942,8 @@ public class LivePlayActivity extends BaseActivity {
                     case VideoView.STATE_PAUSED:
                         break;
                     case VideoView.STATE_PREPARED:
-					    String width = Integer.toString(mControlWrapper.getVideoSize()[0]);
-						String height = Integer.toString(mControlWrapper.getVideoSize()[1]);
+					    String width = Integer.toString(mVideoView.getVideoSize()[0]);
+						String height = Integer.toString(mVideoView.getVideoSize()[1]);
 						tv_size.setText("[" + width + " X " + height +"]");
 						if (width.length() > 1 && height.length() > 1){
 							listenBuffer = false;
