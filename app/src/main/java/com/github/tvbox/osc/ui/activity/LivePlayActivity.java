@@ -33,6 +33,7 @@ import com.github.tvbox.osc.util.HawkUtils;  //xuameng记忆播放频道组用
 import com.github.tvbox.osc.util.JavaUtil;   //xuameng记忆播放频道组用
 import android.os.Bundle;   //xuameng记忆播放频道组用
 import kotlin.Pair;   //xuameng记忆播放频道组用
+import android.widget.ProgressBar;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.api.ApiConfig;
