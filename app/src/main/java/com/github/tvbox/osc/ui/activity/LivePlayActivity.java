@@ -110,6 +110,7 @@ public class LivePlayActivity extends BaseActivity {
     private long mExitTimeUp = 0; //xuameng上键间隔时间
     private long mExitTimeDown = 0; //xuameng下键间隔时间
     private long mSpeedTimeUp = 0; //xuameng上键间隔时间
+	protected ProgressBar mLoading;
     private LinearLayout tvRightSettingLayout;
     private TvRecyclerView mSettingGroupView;
     private TvRecyclerView mSettingItemView;
@@ -261,6 +262,7 @@ public class LivePlayActivity extends BaseActivity {
         view_line_XU = (View) findViewById(R.id.view_line); //xuameng横线
 		iv_circle_bg_xu = (ImageView) findViewById(R.id.iv_circle_bg_xu);  //xuameng音乐播放时图标
 		MxuamengMusic = findViewById(R.id.xuamengMusic);  //xuameng播放音乐背景
+		mLoading = findViewById(R.id.loading_xu);
         divEpg = (LinearLayout) findViewById(R.id.divEPG);
         //右上角图片旋转
         ObjectAnimator animator1 = ObjectAnimator.ofFloat(iv_circle_bg, "rotation", 360.0f);
@@ -884,6 +886,7 @@ public class LivePlayActivity extends BaseActivity {
             mHandler.removeCallbacks(mUpdateTimeRunXu);
 			iv_circle_bg_xu.setVisibility(View.GONE);  //xuameng音乐播放时图标
 			MxuamengMusic.setVisibility(View.GONE);  //xuameng播放音乐背景
+			mLoading.setVisibility(View.GONE);
             super.onBackPressed();
         } else {
             mExitTime = System.currentTimeMillis();
@@ -1926,6 +1929,7 @@ public class LivePlayActivity extends BaseActivity {
             public void playStateChanged(int playState) {
                 switch(playState) {
                     case VideoView.STATE_IDLE:
+						mLoading.setVisibility(View.GONE);
 						tv_size.setText("[0 X 0]");  //XUAMENG分辨率
 						if (MxuamengMusic.getVisibility() == View.VISIBLE){  //xuameng播放音乐背景
 							MxuamengMusic.setVisibility(View.GONE);
@@ -1934,8 +1938,10 @@ public class LivePlayActivity extends BaseActivity {
 							iv_circle_bg_xu.setVisibility(View.GONE);
 							} 
                     case VideoView.STATE_PAUSED:
+						mLoading.setVisibility(View.GONE);
                         break;
-                    case VideoView.STATE_PREPARED:						
+                    case VideoView.STATE_PREPARED:
+						mLoading.setVisibility(View.GONE);
                         if(mVideoView.getVideoSize().length >= 2) { //XUAMENG分辨率
                             tv_size.setText("[" + mVideoView.getVideoSize()[0] + " X " + mVideoView.getVideoSize()[1] + "]");
                         }else {
@@ -1967,29 +1973,34 @@ public class LivePlayActivity extends BaseActivity {
                         }
                         break;
                     case VideoView.STATE_BUFFERED:
+						mLoading.setVisibility(View.GONE);
                     case VideoView.STATE_PLAYING:
                         currentLiveChangeSourceTimes = 0;
                         mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
+						mLoading.setVisibility(View.GONE);
 						isBuffer = false;
                         break;
                     case VideoView.STATE_ERROR:
+						mLoading.setVisibility(View.GONE);
                     case VideoView.STATE_PLAYBACK_COMPLETED:
                         if(isBack) {
                             mHandler.removeCallbacks(mConnectTimeoutChangeSourceRunBack);
                             mHandler.postDelayed(mConnectTimeoutChangeSourceRunBack, 5000); //xuameng回看超时5秒退出
+							mLoading.setVisibility(View.GONE);
                             return;
                         }
                         mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
                         mHandler.postDelayed(mConnectTimeoutChangeSourceRun, 10000); //xuameng播放超时10秒换源
                         break;
                     case VideoView.STATE_PREPARING:
+						mLoading.setVisibility(View.GONE);
                         isVOD = false;
                     case VideoView.STATE_BUFFERING:
                         mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
                         mHandler.postDelayed(mConnectTimeoutChangeSourceRun, (Hawk.get(HawkConfig.LIVE_CONNECT_TIMEOUT, 1) + 1) * 5000);
 						if (iv_circle_bg_xu.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
 							iv_circle_bg_xu.setVisibility(View.GONE);
-							showLoading();
+							mLoading.setVisibility(View.VISIBLE);
 						}
 						isBuffer = true;
                         break;
