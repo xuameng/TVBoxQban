@@ -57,6 +57,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import android.content.res.Resources;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 
 
 public class VodController extends BaseController {
@@ -250,8 +252,9 @@ public class VodController extends BaseController {
 					public void onAnimationStart(Animator animation) {
 					super.onAnimationStart(animation);
 					MxuamengView.setVisibility(VISIBLE);		   //xuameng动画开始防点击
-					File music = new File(getFilesDir().getAbsolutePath() + "/music");
-					MxuamengMusic.setBackground(getResources().getDrawable(music));
+					File music = new File(requireActivity().getFilesDir().getAbsolutePath() + "/music");
+					globalmusic = new BitmapDrawable(BitmapFactory.decodeFile(music.getAbsolutePath(), opts));
+					MxuamengMusic.setBackground(getResources().getDrawable(globalmusic));
 					}
 					public void onAnimationEnd(Animator animation) {
 					super.onAnimationEnd(animation);
