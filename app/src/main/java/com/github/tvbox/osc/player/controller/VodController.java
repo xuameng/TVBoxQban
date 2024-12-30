@@ -1253,7 +1253,7 @@ public class VodController extends BaseController {
 		        mxuPlay.setVisibility(View.VISIBLE);
                 mxuPlay.setTextColor(Color.WHITE);
                 mxuPlay.setText("暂停");               //xuameng底部菜单显示暂停
-				if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME_1) < 300){
+				if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME_1) < 500){
 					ObjectAnimator animator8 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", 700,0);				//xuameng动画暂停菜单开始
 					ObjectAnimator animator = ObjectAnimator.ofFloat(mBottomRoot, "translationY", 700,0);				//xuameng动画菜单
 					ObjectAnimator animator1 = ObjectAnimator.ofFloat(mTopRoot1, "translationY", 700,0);				//xuameng动画菜单
