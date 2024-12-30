@@ -26,7 +26,6 @@ import xyz.doikki.videoplayer.controller.IControlComponent;
 import xyz.doikki.videoplayer.controller.IGestureComponent;
 import xyz.doikki.videoplayer.player.VideoView;
 import xyz.doikki.videoplayer.util.PlayerUtils;
-import com.github.tvbox.osc.util.FastClickCheckUtil;  //xuameng防过快点击
 
 public abstract class BaseController extends BaseVideoController implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener, View.OnTouchListener {
     private GestureDetector mGestureDetector;
