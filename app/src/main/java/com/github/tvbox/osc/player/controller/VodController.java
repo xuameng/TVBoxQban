@@ -1433,7 +1433,7 @@ public class VodController extends BaseController {
         int action = event.getAction();
         if (isBottomVisible()) {
             mHandler.removeMessages(1002);
-            mHandler.removeMessages(1003);
+         //   mHandler.removeMessages(1003);
             myHandle.postDelayed(myRunnable, myHandleSeconds);
             return super.dispatchKeyEvent(event);
         }
