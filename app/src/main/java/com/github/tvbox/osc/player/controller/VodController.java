@@ -1590,6 +1590,43 @@ public class VodController extends BaseController {
         if (super.onBackPressed()) {                                                                      //xuameng返回退出
 			iv_circle_bg.setVisibility(GONE);  //xuameng音乐播放时图标
 			MxuamengMusic.setVisibility(GONE);  //xuameng播放音乐背景
+			ObjectAnimator animator = ObjectAnimator.ofFloat(mBottomRoot, "translationY", 700,0);
+			ObjectAnimator animator1 = ObjectAnimator.ofFloat(mTopRoot1, "translationY", -700,0);
+			ObjectAnimator animator2 = ObjectAnimator.ofFloat(mTopRoot2, "translationY", -700,0);
+			ObjectAnimator animator3 = ObjectAnimator.ofFloat(mBottomRoot, "translationY", -0,700);
+			ObjectAnimator animator4 = ObjectAnimator.ofFloat(mTopRoot1, "translationY", 0,-700);
+			ObjectAnimator animator5 = ObjectAnimator.ofFloat(mTopRoot2, "translationY", 0,-700);
+			ObjectAnimator animator6 = ObjectAnimator.ofFloat(mPlayTitle, "translationY", -700,0);
+			ObjectAnimator animator7 = ObjectAnimator.ofFloat(mPlayPauseTimexu, "translationY", -700,0);
+			ObjectAnimator animator8 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", 1400,0);
+			ObjectAnimator animator9 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0,1400);	
+			ObjectAnimator animator10 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0,1400);
+			ObjectAnimator animator30 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0,1400);
+			ObjectAnimator animator31 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0,1400);
+			ObjectAnimator animator32 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0,1400);
+			animator.cancel();
+			animator1.cancel();
+			animator2.cancel();
+			animator3.cancel();
+			animator4.cancel();
+			animator5.cancel();
+			animator6.cancel();
+			animator7.cancel();
+			animator8.cancel();
+			animator9.cancel();
+			animator10.cancel();
+			animator30.cancel();
+			animator31.cancel();
+			animator32.cancel();
+            mBottomRoot.setVisibility(GONE);	        //动画结束后隐藏下菜单
+            mTopRoot1.setVisibility(GONE);	            //动画结束后隐藏上菜单
+            mTopRoot2.setVisibility(GONE);              //动画结束后隐藏上菜单
+            mPlayPauseTimexu.setVisibility(GONE);       //xuameng隐藏上面时间
+            mPlayTitle.setVisibility(GONE);             //xuameng隐藏上面视频名称
+            backBtn.setVisibility(INVISIBLE);           //返回键隐藏菜单
+			mTvPausexu.setVisibility(GONE);				//隐藏暂停菜单
+			mLockView.setVisibility(INVISIBLE);         //xuameng隐藏屏幕锁
+            }
             return true;
         }
         if (isBottomVisible() && (System.currentTimeMillis() - DOUBLE_CLICK_TIME > 500)) {			      //xuameng按返回键退出
