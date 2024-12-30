@@ -576,9 +576,6 @@ public class VodController extends BaseController {
 				DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
 				if (!isDisplay || !isAnimation){
 					togglePlay();
-				if(mTvPausexu.getVisibility() == View.VISIBLE ||isPlaying){
-				hideBottom();
-				}
 				}													//xuameng 低菜单播放监听
             }
         });
