@@ -259,12 +259,8 @@ public class VodController extends BaseController {
             mVideoSize.setText("[ " + width + " X " + height +" ]");
             
 			if (mControlWrapper.isPlaying()){    //xuameng音乐播放时图标判断
-				if (!isPlaying && mTvPausexu.getVisibility() == View.VISIBLE){			
-					mxuPlay.setText("暂停");
-					if (mPlayPauseTimexu.getVisibility() == View.VISIBLE||mPlayTitle.getVisibility() == View.VISIBLE){
-					mPlayPauseTimexu.setVisibility(GONE);   //xuameng隐藏上面视频名称
-                    mPlayTitle.setVisibility(GONE);         //xuameng隐藏上面时间
-					}				
+				mxuPlay.setText("暂停");
+				if (!isPlaying && mTvPausexu.getVisibility() == View.VISIBLE){						
 					ObjectAnimator animator10 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0,700);				//xuameng动画暂停菜单开始
 					animator10.setDuration(300);			//xuameng动画暂停菜单
 					animator10.addListener(new AnimatorListenerAdapter() {
@@ -281,6 +277,14 @@ public class VodController extends BaseController {
 					});
 					animator10.start();						      //xuameng动画暂停菜单结束					
 				}
+
+				if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
+					hideBottom();
+				}
+				if (mPlayPauseTimexu.getVisibility() == View.VISIBLE||mPlayTitle.getVisibility() == View.VISIBLE){
+					mPlayPauseTimexu.setVisibility(GONE);   //xuameng隐藏上面视频名称
+                    mPlayTitle.setVisibility(GONE);         //xuameng隐藏上面时间
+				}	
 
 				if (width.length() > 1 && height.length() > 1){
 					if (iv_circle_bg.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
@@ -1252,7 +1256,15 @@ public class VodController extends BaseController {
 		        mxuPlay.setVisibility(View.VISIBLE);
                 mxuPlay.setTextColor(Color.WHITE);
                 mxuPlay.setText("暂停");               //xuameng底部菜单显示暂停
-				if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME_1) < 500){
+				if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME_1) < 300){
+					ObjectAnimator animator8 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", 700,0);				//xuameng动画暂停菜单开始
+					ObjectAnimator animator = ObjectAnimator.ofFloat(mBottomRoot, "translationY", 700,0);				//xuameng动画菜单
+					ObjectAnimator animato1 = ObjectAnimator.ofFloat(mBottomRoot, "translationY", 700,0);				//xuameng动画菜单
+					ObjectAnimator animato2 = ObjectAnimator.ofFloat(mBottomRoot, "translationY", 700,0);				//xuameng动画菜单
+					animator8.cancel();
+					animator.cancel();
+					animator1.cancel();
+					animator2.cancel();
 					mTvPausexu.setVisibility(GONE); 
 					mBottomRoot.setVisibility(GONE);	        //动画结束后隐藏下菜单
 					mTopRoot1.setVisibility(GONE);	            //动画结束后隐藏上菜单
