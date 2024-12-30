@@ -244,9 +244,9 @@ public abstract class BaseController extends BaseVideoController implements Gest
     @Override
     public boolean onDoubleTap(MotionEvent e) {
 		if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 1000){                  //xuameng 防播放打断动画
-			DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
 			return true;
 			}
+		DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
         if (mIsDoubleTapTogglePlayEnabled && !isLocked() && isInPlaybackState()) togglePlay();
         return true;
     }
