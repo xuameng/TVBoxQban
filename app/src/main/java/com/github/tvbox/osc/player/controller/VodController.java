@@ -261,8 +261,8 @@ public class VodController extends BaseController {
 			if (mControlWrapper.isPlaying()){    //xuameng音乐播放时图标判断
 				mxuPlay.setText("暂停");
 				if (!isPlaying && mTvPausexu.getVisibility() == View.VISIBLE){						
-					ObjectAnimator animator10 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0,700);				//xuameng动画暂停菜单开始
-					animator10.setDuration(300);			//xuameng动画暂停菜单
+					ObjectAnimator animator10 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0,1400);				//xuameng动画暂停菜单开始
+					animator10.setDuration(500);			//xuameng动画暂停菜单
 					animator10.addListener(new AnimatorListenerAdapter() {
 					@Override
 					public void onAnimationStart(Animator animation) {
@@ -1254,10 +1254,10 @@ public class VodController extends BaseController {
                 mxuPlay.setTextColor(Color.WHITE);
                 mxuPlay.setText("暂停");               //xuameng底部菜单显示暂停
 				if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME_1) < 500){
-					ObjectAnimator animator8 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", 700,0);				//xuameng动画暂停菜单开始
+					ObjectAnimator animator8 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", 1400,0);				//xuameng动画暂停菜单开始
 					ObjectAnimator animator = ObjectAnimator.ofFloat(mBottomRoot, "translationY", 700,0);				//xuameng动画菜单
-					ObjectAnimator animator1 = ObjectAnimator.ofFloat(mTopRoot1, "translationY", 700,0);				//xuameng动画菜单
-					ObjectAnimator animator2 = ObjectAnimator.ofFloat(mTopRoot2, "translationY", 700,0);				//xuameng动画菜单
+					ObjectAnimator animator1 = ObjectAnimator.ofFloat(mTopRoot1, "translationY", -700,0);				//xuameng动画菜单
+					ObjectAnimator animator2 = ObjectAnimator.ofFloat(mTopRoot2, "translationY", -700,0);				//xuameng动画菜单
 					animator8.cancel();
 					animator.cancel();
 					animator1.cancel();
@@ -1295,8 +1295,8 @@ public class VodController extends BaseController {
                 //mTopRoot2.setVisibility(GONE);       //xuameng隐藏上面菜单
                 //mPlayTitle.setVisibility(VISIBLE);   //xuameng显示上面菜单
 			    mTvPausexu.setVisibility(VISIBLE);
-                ObjectAnimator animator8 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", 700,0);				//xuameng动画暂停菜单开始
-                animator8.setDuration(300);			//xuameng动画暂停菜单
+                ObjectAnimator animator8 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", 1400,0);				//xuameng动画暂停菜单开始
+                animator8.setDuration(500);			//xuameng动画暂停菜单
                 animator8.addListener(new AnimatorListenerAdapter() {
                 @Override
 			    public void onAnimationStart(Animator animation) {
