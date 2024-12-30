@@ -1259,8 +1259,8 @@ public class VodController extends BaseController {
 				if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME_1) < 300){
 					ObjectAnimator animator8 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", 700,0);				//xuameng动画暂停菜单开始
 					ObjectAnimator animator = ObjectAnimator.ofFloat(mBottomRoot, "translationY", 700,0);				//xuameng动画菜单
-					ObjectAnimator animato1 = ObjectAnimator.ofFloat(mBottomRoot, "translationY", 700,0);				//xuameng动画菜单
-					ObjectAnimator animato2 = ObjectAnimator.ofFloat(mBottomRoot, "translationY", 700,0);				//xuameng动画菜单
+					ObjectAnimator animator1 = ObjectAnimator.ofFloat(mTopRoot1, "translationY", 700,0);				//xuameng动画菜单
+					ObjectAnimator animator2 = ObjectAnimator.ofFloat(mTopRoot2, "translationY", 700,0);				//xuameng动画菜单
 					animator8.cancel();
 					animator.cancel();
 					animator1.cancel();
