@@ -1626,7 +1626,7 @@ public class VodController extends BaseController {
             backBtn.setVisibility(INVISIBLE);           //返回键隐藏菜单
 			mTvPausexu.setVisibility(GONE);				//隐藏暂停菜单
 			mLockView.setVisibility(INVISIBLE);         //xuameng隐藏屏幕锁
-            }
+            
             return true;
         }
         if (isBottomVisible() && (System.currentTimeMillis() - DOUBLE_CLICK_TIME > 500)) {			      //xuameng按返回键退出
