@@ -240,7 +240,6 @@ public class VodController extends BaseController {
 	private boolean isPlaying = false;  //xuameng判断暂停动画
 	private boolean isAnimation = false;  //xuameng判断隐藏菜单动画
 	private boolean isDisplay = false;  //xuameng判断显示菜单动画
-	private boolean isOnBack = false;
     Handler myHandle;
     Runnable myRunnable;
     int myHandleSeconds = 50000;            //闲置多少毫秒秒关闭底栏  默认100秒
@@ -1299,9 +1298,6 @@ public class VodController extends BaseController {
 				}
                 break;
             case VideoView.STATE_PAUSED:
-				if (isOnBack){
-				return;
-				}
 				DOUBLE_CLICK_TIME_1 = System.currentTimeMillis();
                 //mTopRoot1.setVisibility(GONE);       //xuameng隐藏上面菜单
                 //mTopRoot2.setVisibility(GONE);       //xuameng隐藏上面菜单
@@ -1564,7 +1560,6 @@ public class VodController extends BaseController {
             return false;
         }
         if (super.onBackPressed()) {                                                                      //xuameng返回退出
-			isOnBack = true;
 			iv_circle_bg.setVisibility(GONE);  //xuameng音乐播放时图标
 			MxuamengMusic.setVisibility(GONE);  //xuameng播放音乐背景
             return true;
