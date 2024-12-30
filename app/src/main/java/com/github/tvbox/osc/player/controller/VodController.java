@@ -575,7 +575,12 @@ public class VodController extends BaseController {
 				}
 				DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
 				if (!isDisplay || !isAnimation){
-					togglePlay();
+					if (!mControlWrapper.isPlaying()){
+						mPlayerControl.start();
+						hideBottom();
+					}else {
+						mPlayerControl.pause();
+					}
 				}													//xuameng 低菜单播放监听
             }
         });
