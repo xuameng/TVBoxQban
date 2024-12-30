@@ -240,6 +240,7 @@ public class VodController extends BaseController {
 	private boolean isPlaying = false;  //xuameng判断暂停动画
 	private boolean isAnimation = false;  //xuameng判断隐藏菜单动画
 	private boolean isDisplay = false;  //xuameng判断显示菜单动画
+	private boolean isOnBack = false;
     Handler myHandle;
     Runnable myRunnable;
     int myHandleSeconds = 50000;            //闲置多少毫秒秒关闭底栏  默认100秒
@@ -1298,6 +1299,9 @@ public class VodController extends BaseController {
 				}
                 break;
             case VideoView.STATE_PAUSED:
+				if (isOnBack){
+				return;
+				}
 				DOUBLE_CLICK_TIME_1 = System.currentTimeMillis();
                 //mTopRoot1.setVisibility(GONE);       //xuameng隐藏上面菜单
                 //mTopRoot2.setVisibility(GONE);       //xuameng隐藏上面菜单
@@ -1548,34 +1552,6 @@ public class VodController extends BaseController {
             isClickBackBtn = false;
             if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME) > 500) {                                //xuameng  屏幕上的返回键退出
             DOUBLE_CLICK_TIME = System.currentTimeMillis();
-			ObjectAnimator animator = ObjectAnimator.ofFloat(mBottomRoot, "translationY", 700,0);
-			ObjectAnimator animator1 = ObjectAnimator.ofFloat(mTopRoot1, "translationY", -700,0);
-			ObjectAnimator animator2 = ObjectAnimator.ofFloat(mTopRoot2, "translationY", -700,0);
-			ObjectAnimator animator3 = ObjectAnimator.ofFloat(mBottomRoot, "translationY", -0,700);
-			ObjectAnimator animator4 = ObjectAnimator.ofFloat(mTopRoot1, "translationY", 0,-700);
-			ObjectAnimator animator5 = ObjectAnimator.ofFloat(mTopRoot2, "translationY", 0,-700);
-			ObjectAnimator animator6 = ObjectAnimator.ofFloat(mPlayTitle, "translationY", -700,0);
-			ObjectAnimator animator7 = ObjectAnimator.ofFloat(mPlayPauseTimexu, "translationY", -700,0);
-			ObjectAnimator animator8 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", 1400,0);
-			ObjectAnimator animator9 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0,1400);	
-			ObjectAnimator animator10 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0,1400);
-			ObjectAnimator animator30 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0,1400);
-			ObjectAnimator animator31 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0,1400);
-			ObjectAnimator animator32 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0,1400);
-			animator.cancel();
-			animator1.cancel();
-			animator2.cancel();
-			animator3.cancel();
-			animator4.cancel();
-			animator5.cancel();
-			animator6.cancel();
-			animator7.cancel();
-			animator8.cancel();
-			animator9.cancel();
-			animator10.cancel();
-			animator30.cancel();
-			animator31.cancel();
-			animator32.cancel();
             mBottomRoot.setVisibility(GONE);	        //动画结束后隐藏下菜单
             mTopRoot1.setVisibility(GONE);	            //动画结束后隐藏上菜单
             mTopRoot2.setVisibility(GONE);              //动画结束后隐藏上菜单
@@ -1588,45 +1564,9 @@ public class VodController extends BaseController {
             return false;
         }
         if (super.onBackPressed()) {                                                                      //xuameng返回退出
+			isOnBack = true;
 			iv_circle_bg.setVisibility(GONE);  //xuameng音乐播放时图标
 			MxuamengMusic.setVisibility(GONE);  //xuameng播放音乐背景
-			ObjectAnimator animator = ObjectAnimator.ofFloat(mBottomRoot, "translationY", 700,0);
-			ObjectAnimator animator1 = ObjectAnimator.ofFloat(mTopRoot1, "translationY", -700,0);
-			ObjectAnimator animator2 = ObjectAnimator.ofFloat(mTopRoot2, "translationY", -700,0);
-			ObjectAnimator animator3 = ObjectAnimator.ofFloat(mBottomRoot, "translationY", -0,700);
-			ObjectAnimator animator4 = ObjectAnimator.ofFloat(mTopRoot1, "translationY", 0,-700);
-			ObjectAnimator animator5 = ObjectAnimator.ofFloat(mTopRoot2, "translationY", 0,-700);
-			ObjectAnimator animator6 = ObjectAnimator.ofFloat(mPlayTitle, "translationY", -700,0);
-			ObjectAnimator animator7 = ObjectAnimator.ofFloat(mPlayPauseTimexu, "translationY", -700,0);
-			ObjectAnimator animator8 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", 1400,0);
-			ObjectAnimator animator9 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0,1400);	
-			ObjectAnimator animator10 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0,1400);
-			ObjectAnimator animator30 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0,1400);
-			ObjectAnimator animator31 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0,1400);
-			ObjectAnimator animator32 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0,1400);
-			animator.cancel();
-			animator1.cancel();
-			animator2.cancel();
-			animator3.cancel();
-			animator4.cancel();
-			animator5.cancel();
-			animator6.cancel();
-			animator7.cancel();
-			animator8.cancel();
-			animator9.cancel();
-			animator10.cancel();
-			animator30.cancel();
-			animator31.cancel();
-			animator32.cancel();
-            mBottomRoot.setVisibility(GONE);	        //动画结束后隐藏下菜单
-            mTopRoot1.setVisibility(GONE);	            //动画结束后隐藏上菜单
-            mTopRoot2.setVisibility(GONE);              //动画结束后隐藏上菜单
-            mPlayPauseTimexu.setVisibility(GONE);       //xuameng隐藏上面时间
-            mPlayTitle.setVisibility(GONE);             //xuameng隐藏上面视频名称
-            backBtn.setVisibility(INVISIBLE);           //返回键隐藏菜单
-			mTvPausexu.setVisibility(GONE);				//隐藏暂停菜单
-			mLockView.setVisibility(INVISIBLE);         //xuameng隐藏屏幕锁
-            
             return true;
         }
         if (isBottomVisible() && (System.currentTimeMillis() - DOUBLE_CLICK_TIME > 500)) {			      //xuameng按返回键退出
@@ -1636,34 +1576,6 @@ public class VodController extends BaseController {
 			}
             return true;
         }
-		ObjectAnimator animator = ObjectAnimator.ofFloat(mBottomRoot, "translationY", 700,0);
-		ObjectAnimator animator1 = ObjectAnimator.ofFloat(mTopRoot1, "translationY", -700,0);
-		ObjectAnimator animator2 = ObjectAnimator.ofFloat(mTopRoot2, "translationY", -700,0);
-		ObjectAnimator animator3 = ObjectAnimator.ofFloat(mBottomRoot, "translationY", -0,700);
-		ObjectAnimator animator4 = ObjectAnimator.ofFloat(mTopRoot1, "translationY", 0,-700);
-		ObjectAnimator animator5 = ObjectAnimator.ofFloat(mTopRoot2, "translationY", 0,-700);
-		ObjectAnimator animator6 = ObjectAnimator.ofFloat(mPlayTitle, "translationY", -700,0);
-		ObjectAnimator animator7 = ObjectAnimator.ofFloat(mPlayPauseTimexu, "translationY", -700,0);
-		ObjectAnimator animator8 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", 1400,0);
-		ObjectAnimator animator9 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0,1400);	
-		ObjectAnimator animator10 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0,1400);
-		ObjectAnimator animator30 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0,1400);
-		ObjectAnimator animator31 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0,1400);
-		ObjectAnimator animator32 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0,1400);
-		animator.cancel();
-		animator1.cancel();
-		animator2.cancel();
-		animator3.cancel();
-		animator4.cancel();
-		animator5.cancel();
-		animator6.cancel();
-		animator7.cancel();
-		animator8.cancel();
-		animator9.cancel();
-		animator10.cancel();
-		animator30.cancel();
-		animator31.cancel();
-		animator32.cancel();
 		mPlayPauseTimexu.setVisibility(GONE);       //xuameng隐藏上面时间
         mPlayTitle.setVisibility(GONE);             //xuameng隐藏上面视频名称
         backBtn.setVisibility(INVISIBLE);           //返回键隐藏菜单
