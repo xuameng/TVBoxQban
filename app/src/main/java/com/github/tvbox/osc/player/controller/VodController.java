@@ -278,9 +278,6 @@ public class VodController extends BaseController {
 					animator10.start();						      //xuameng动画暂停菜单结束					
 				}
 
-				if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
-					hideBottom();
-				}
 				if (mPlayPauseTimexu.getVisibility() == View.VISIBLE||mPlayTitle.getVisibility() == View.VISIBLE){
 					mPlayPauseTimexu.setVisibility(GONE);   //xuameng隐藏上面视频名称
                     mPlayTitle.setVisibility(GONE);         //xuameng隐藏上面时间
