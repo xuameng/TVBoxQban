@@ -231,7 +231,8 @@ public class VodController extends BaseController {
     private View backBtn;//返回键
     private boolean isClickBackBtn;
 	private double DOUBLE_CLICK_TIME = 0L;    //xuameng返回键防连击1.5秒（为动画）
-	private double DOUBLE_CLICK_TIME_1 = 0L;    //xuameng返回键防连击1.5秒（为动画）
+	private double DOUBLE_CLICK_TIME_1 = 0L;    //xuameng点击本地字幕弹出菜单
+	private double DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();    //xuameng返回键防连击1.5秒（为动画）
    
     LockRunnable lockRunnable = new LockRunnable();
     private boolean isLock = false;
@@ -511,11 +512,14 @@ public class VodController extends BaseController {
                     }
                   }
 				if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
-					FastClickCheckUtilxu.check(view);                   //xuameng 防播放打断动画
-                if (isInPlayback) {
-					if (!isDisplay || !isAnimation){
-						togglePlay();
+					if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 1000){                  //xuameng 防播放打断动画
+						DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
+						return true;
 					}
+					if (isInPlayback) {
+						if (!isDisplay || !isAnimation){
+							togglePlay();
+						}
                 return true;
                    }
                  }
@@ -1433,11 +1437,14 @@ public class VodController extends BaseController {
                     return true;
                 }
             } else if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
-				FastClickCheckUtilxu.check(view);                   //xuameng 防播放打断动画
-                if (isInPlayback) {
-					if (!isDisplay || !isAnimation){
-						togglePlay();
+					if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 1000){                  //xuameng 防播放打断动画
+						DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
+						return true;
 					}
+					if (isInPlayback) {
+						if (!isDisplay || !isAnimation){
+							togglePlay();
+						}
                     return true;
                 }
             } else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN || keyCode == KeyEvent.KEYCODE_DPAD_UP || keyCode== KeyEvent.KEYCODE_MENU) {
