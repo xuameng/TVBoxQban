@@ -106,10 +106,12 @@ public class VodController extends BaseController {
 			            public void onAnimationStart(Animator animation) {
                         super.onAnimationStart(animation);
                         MxuamengView.setVisibility(VISIBLE);	//xuameng动画开始防点击
+						isDisplay = true;
 			            }
                         public void onAnimationEnd(Animator animation) {
                         super.onAnimationEnd(animation);
 			            MxuamengView.setVisibility(GONE);		//xuameng动画结束可点击
+						isDisplay = false;
                         }
                         });
                         animator.start();						//xuameng动画菜单
@@ -236,6 +238,7 @@ public class VodController extends BaseController {
 	private boolean isSEEKBAR = false;       //xuameng进入SEEKBAR
 	private boolean isPlaying = false;  //xuameng判断暂停动画
 	private boolean isAnimation = false;  //xuameng判断隐藏菜单动画
+	private boolean isDisplay = false;  //xuameng判断显示菜单动画
     Handler myHandle;
     Runnable myRunnable;
     int myHandleSeconds = 50000;            //闲置多少毫秒秒关闭底栏  默认100秒
@@ -508,7 +511,9 @@ public class VodController extends BaseController {
                   }
 				if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
                 if (isInPlayback) {
-                    togglePlay();
+					if (!isDisplay || !isAnimation){
+						togglePlay();
+					}
                 return true;
                    }
                  }
@@ -559,7 +564,9 @@ public class VodController extends BaseController {
 		mxuPlay.setOnClickListener(new OnClickListener() {			//xuameng 低菜单播放监听
             @Override												//xuameng 低菜单播放监听
             public void onClick(View view) {						//xuameng 低菜单播放监听
-                togglePlay();										//xuameng 低菜单播放监听
+				if (!isDisplay || !isAnimation){
+					togglePlay();
+				}													//xuameng 低菜单播放监听
 				FastClickCheckUtilxu.check(view);                   //xuameng 防播放打断动画
             }
         });
@@ -1245,7 +1252,7 @@ public class VodController extends BaseController {
 		        mxuPlay.setVisibility(View.VISIBLE);
                 mxuPlay.setTextColor(Color.WHITE);
                 mxuPlay.setText("暂停");               //xuameng底部菜单显示暂停
-				if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME_1) < 300){
+				if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME_1) < 500){
 					mTvPausexu.setVisibility(GONE); 
 					mBottomRoot.setVisibility(GONE);	        //动画结束后隐藏下菜单
 					mTopRoot1.setVisibility(GONE);	            //动画结束后隐藏上菜单
@@ -1417,7 +1424,9 @@ public class VodController extends BaseController {
                 }
             } else if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
                 if (isInPlayback) {
-                    togglePlay();
+					if (!isDisplay || !isAnimation){
+						togglePlay();
+					}
                     return true;
                 }
             } else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN || keyCode == KeyEvent.KEYCODE_DPAD_UP || keyCode== KeyEvent.KEYCODE_MENU) {
