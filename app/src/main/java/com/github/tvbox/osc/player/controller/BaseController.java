@@ -26,6 +26,7 @@ import xyz.doikki.videoplayer.controller.IControlComponent;
 import xyz.doikki.videoplayer.controller.IGestureComponent;
 import xyz.doikki.videoplayer.player.VideoView;
 import xyz.doikki.videoplayer.util.PlayerUtils;
+import com.github.tvbox.osc.util.FastClickCheckUtil;  //xuameng防过快点击
 
 public abstract class BaseController extends BaseVideoController implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener, View.OnTouchListener {
     private GestureDetector mGestureDetector;
@@ -42,6 +43,7 @@ public abstract class BaseController extends BaseVideoController implements Gest
     private boolean mEnableInNormal;
     private boolean mCanSlide;
     private int mCurPlayState;
+	private double DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();    //xuameng防连击0.5秒
 
     protected Handler mHandler;
 
@@ -242,6 +244,10 @@ public abstract class BaseController extends BaseVideoController implements Gest
      */
     @Override
     public boolean onDoubleTap(MotionEvent e) {
+		if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 1000){                  //xuameng 防播放打断动画
+			DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
+			return true;
+			}
         if (mIsDoubleTapTogglePlayEnabled && !isLocked() && isInPlaybackState()) togglePlay();
         return true;
     }
