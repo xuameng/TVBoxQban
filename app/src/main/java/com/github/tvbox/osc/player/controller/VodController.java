@@ -571,7 +571,7 @@ public class VodController extends BaseController {
             @Override												//xuameng 低菜单播放监听
             public void onClick(View view) {						//xuameng 低菜单播放监听
 				if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 500){                  //xuameng 防播放打断动画
-					return true;
+					return;
 				}
 				DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
 				if (!isDisplay || !isAnimation){
