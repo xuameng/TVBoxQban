@@ -47,6 +47,7 @@ import java.util.Date;
 import xyz.doikki.videoplayer.player.VideoView;
 import xyz.doikki.videoplayer.util.PlayerUtils;
 import static xyz.doikki.videoplayer.util.PlayerUtils.stringForTime;
+import com.github.tvbox.osc.ui.fragment.PlayFragment;
 
 public class VodController extends BaseController {
     public VodController(@NonNull @NotNull Context context) {
@@ -1575,6 +1576,7 @@ public class VodController extends BaseController {
         if (super.onBackPressed()) {                                                                      //xuameng返回退出
 			iv_circle_bg.setVisibility(GONE);  //xuameng音乐播放时图标
 			MxuamengMusic.setVisibility(GONE);  //xuameng播放音乐背景
+			PlayFragment.onRelease();
             return true;
         }
         if (isBottomVisible() && (System.currentTimeMillis() - DOUBLE_CLICK_TIME > 500)) {			      //xuameng按返回键退出
