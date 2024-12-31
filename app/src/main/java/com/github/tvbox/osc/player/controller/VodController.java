@@ -194,8 +194,8 @@ public class VodController extends BaseController {
     LinearLayout mProgressRoot;
     TextView mProgressText;
     ImageView mProgressIcon;
-    ImageView mLockView;
-    LinearLayout mBottomRoot;
+    public ImageView mLockView;
+    public LinearLayout mBottomRoot;
     LinearLayout mTopRoot1;
     LinearLayout mTopRoot2;
     LinearLayout mParseRoot;
@@ -228,7 +228,7 @@ public class VodController extends BaseController {
     TextView mZimuBtn;
     TextView mAudioTrackBtn;
     public TextView mLandscapePortraitBtn;
-    private View backBtn;//返回键
+    public View backBtn;//返回键
     private boolean isClickBackBtn;
 	private double DOUBLE_CLICK_TIME = 0L;    //xuameng返回键防连击1.5秒（为动画）
 	private double DOUBLE_CLICK_TIME_1 = 0L;    //xuameng点击本地字幕弹出菜单
