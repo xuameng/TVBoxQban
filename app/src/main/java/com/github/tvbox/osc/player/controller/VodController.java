@@ -387,7 +387,9 @@ public class VodController extends BaseController {
             @Override
             public void onClick(View view) {
                 if (getContext() instanceof Activity) {
-					if (!isDisplay || !isAnimation || !isPlaying){
+					if (isDisplay || isAnimation || isPlaying){
+						return;
+					}else{
                     isClickBackBtn = true;
                     ((Activity) getContext()).onBackPressed();
 					}
