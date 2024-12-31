@@ -118,7 +118,7 @@ import xyz.doikki.videoplayer.player.AbstractPlayer;
 import xyz.doikki.videoplayer.player.ProgressManager;
 
 public class PlayFragment extends BaseLazyFragment {
-    public MyVideoView mVideoView;
+    private MyVideoView mVideoView;
     private TextView mPlayLoadTip;
     private ImageView mPlayLoadErr;
     private ProgressBar mPlayLoading;
