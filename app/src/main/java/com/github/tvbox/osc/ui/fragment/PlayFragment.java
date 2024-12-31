@@ -835,10 +835,6 @@ public class PlayFragment extends BaseLazyFragment {
             mController.mLandscapePortraitBtn.setText("竖屏");
         }
         if (mController.onBackPressed()) {
-			        if (mVideoView != null) {
-            mVideoView.release();
-            mVideoView = null;
-        }
             return true;
         }
         return false;
