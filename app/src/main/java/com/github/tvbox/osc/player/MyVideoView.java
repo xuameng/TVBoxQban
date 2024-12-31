@@ -26,7 +26,7 @@ public class MyVideoView extends VideoView {
         return mMediaPlayer;
     }
 
-    public void release() {
+    public void release() {  //XUAMENG增加release调用
         super.release();
     }
 
