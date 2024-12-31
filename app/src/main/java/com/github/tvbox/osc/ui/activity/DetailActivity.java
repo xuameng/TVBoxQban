@@ -1117,8 +1117,9 @@ public class DetailActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
+		boolean showPreview = Hawk.get(HawkConfig.SHOW_PREVIEW, true);  //xuameng true是显示小窗口,false是不显示小窗口
         if (fullWindows) {
-            if (playFragment.onBackPressed())
+            if (playFragment.onBackPressed())  //xuameng上一级交给VODController控制
                 return;
             toggleFullPreview();
 
@@ -1140,7 +1141,7 @@ public class DetailActivity extends BaseActivity {
             mSeriesGroupView.setVisibility(list.size()>GroupCount ? View.VISIBLE : View.GONE);
             return;
         }
-        if (seriesSelect) {
+        else if (seriesSelect) {
             if (seriesFlagFocus != null && !seriesFlagFocus.isFocused()) {
                 seriesFlagFocus.requestFocus();
                 return;
@@ -1149,7 +1150,9 @@ public class DetailActivity extends BaseActivity {
 				return;
 			}
         }
-		playFragment.mVideoView.release();
+		else if (showPreview) {    //xuameng如果显示小窗口播放就释放视频，修复退出还显示暂停图标等图标的BUG
+            playFragment.mVideoView.release();
+        }
         super.onBackPressed();
     }
 
