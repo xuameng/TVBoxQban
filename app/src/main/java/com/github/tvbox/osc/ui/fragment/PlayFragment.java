@@ -866,6 +866,13 @@ public class PlayFragment extends BaseLazyFragment {
     }
 
     @Override
+    public static void onRelease() {
+        if (mVideoView != null) {
+            mVideoView.release();
+        }
+    }
+
+    @Override
     public void onHiddenChanged(boolean hidden) {
         if (hidden) {
             if (mVideoView != null) {
