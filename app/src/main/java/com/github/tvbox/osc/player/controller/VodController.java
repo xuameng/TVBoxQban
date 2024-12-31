@@ -47,9 +47,6 @@ import java.util.Date;
 import xyz.doikki.videoplayer.player.VideoView;
 import xyz.doikki.videoplayer.util.PlayerUtils;
 import static xyz.doikki.videoplayer.util.PlayerUtils.stringForTime;
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 public class VodController extends BaseController {
     public VodController(@NonNull @NotNull Context context) {
@@ -338,7 +335,6 @@ public class VodController extends BaseController {
 
     @Override
     protected void initView() {
-		EventBus.getDefault().register(this);
         super.initView();
         mCurrentTime = findViewById(R.id.curr_time);
         mTotalTime = findViewById(R.id.total_time);
@@ -1551,12 +1547,6 @@ public class VodController extends BaseController {
         }
     }
     
-	    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        EventBus.getDefault().unregister(this);
-    }
-
     @Override
     public boolean onBackPressed() {
 		if (isBottomVisible() && (System.currentTimeMillis() - DOUBLE_CLICK_TIME) < 500) {               //xuameng返回键防连击1.5秒（为动画,当动画显示时）
