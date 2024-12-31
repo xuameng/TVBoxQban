@@ -353,18 +353,6 @@ public class PlayFragment extends BaseLazyFragment {
         subtitleDialog.show();
     }
 
-	
-
-subtitleDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-    @Override
-    public void onDismiss(DialogInterface subtitleDialog) {
-        // Dialog关闭时的操作
-        Log.d("Dialog", "Dialog已关闭");
-    }
-});
-
-
-
     @SuppressLint("UseCompatLoadingForColorStateLists")
     void setSubtitleViewTextStyle(int style) {
         if (style == 0) {
