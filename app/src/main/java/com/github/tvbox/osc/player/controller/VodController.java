@@ -258,29 +258,6 @@ public class VodController extends BaseController {
             String width = Integer.toString(mControlWrapper.getVideoSize()[0]);
             String height = Integer.toString(mControlWrapper.getVideoSize()[1]);
             mVideoSize.setText("[ " + width + " X " + height +" ]");
-			if (!mControlWrapper.isPlaying()){    //xuameng音乐播放时图标判断
-				if (!isPlaying && mTvPausexu.getVisibility() == View.GONE){
-					mTvPausexu.setVisibility(VISIBLE);
-					ObjectAnimator animator40 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", 1400,0);				//xuameng动画暂停菜单开始
-					animator40.setDuration(500);			//xuameng动画暂停菜单
-					animator40.addListener(new AnimatorListenerAdapter() {
-					@Override
-					public void onAnimationStart(Animator animation) {
-					super.onAnimationStart(animation);
-					MxuamengView.setVisibility(VISIBLE);		   //xuameng动画开始防点击
-					isPlaying = true;  //xuameng动画开启
-					}
-					public void onAnimationEnd(Animator animation) {
-					super.onAnimationEnd(animation);
-					MxuamengView.setVisibility(GONE);			   //xuameng动画结束可点击
-					isPlaying = false;  //xuameng动画开启
-					}
-					});
-					animator40.start();						       //xuameng动画暂停菜单结束
-					mxuPlay.setVisibility(View.VISIBLE);
-					mxuPlay.setTextColor(Color.WHITE);	   //xuameng底部菜单显示播放颜色
-					mxuPlay.setText("播放");			   //xuameng底部菜单显示播放
-					}
             
 			if (mControlWrapper.isPlaying()){    //xuameng音乐播放时图标判断
 				mxuPlay.setText("暂停");
