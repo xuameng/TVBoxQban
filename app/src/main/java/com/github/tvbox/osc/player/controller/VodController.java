@@ -400,9 +400,10 @@ public class VodController extends BaseController {
         mLockView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-				if (!isDisplay || !isAnimation || !isPlaying){
-                isLock = !isLock;
+				if (isDisplay || isAnimation || isPlaying){
+					return;
 				}
+                isLock = !isLock;
                 mLockView.setImageResource(isLock ? R.drawable.icon_lock : R.drawable.icon_unlock);
                 if (isLock) {
 					if (mBottomRoot.getVisibility() == View.VISIBLE){
