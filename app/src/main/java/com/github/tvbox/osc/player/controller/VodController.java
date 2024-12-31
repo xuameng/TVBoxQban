@@ -258,9 +258,6 @@ public class VodController extends BaseController {
             String width = Integer.toString(mControlWrapper.getVideoSize()[0]);
             String height = Integer.toString(mControlWrapper.getVideoSize()[1]);
             mVideoSize.setText("[ " + width + " X " + height +" ]");
-			if (!mControlWrapper.isPlaying()){    //xuameng音乐播放时图标判断
-mTvPausexu.setVisibility(VISIBLE);
-			}
             
 			if (mControlWrapper.isPlaying()){    //xuameng音乐播放时图标判断
 				mxuPlay.setText("暂停");
@@ -1572,8 +1569,6 @@ mTvPausexu.setVisibility(VISIBLE);
             backBtn.setVisibility(INVISIBLE);           //返回键隐藏菜单
 			mTvPausexu.setVisibility(GONE);				//隐藏暂停菜单
 			mLockView.setVisibility(INVISIBLE);         //xuameng隐藏屏幕锁
-						        mHandler.removeCallbacks(myRunnable2);
-		mHandler.removeCallbacks(xuRunnable);
             }
             return false;
         }
@@ -1594,8 +1589,6 @@ mTvPausexu.setVisibility(VISIBLE);
         backBtn.setVisibility(INVISIBLE);           //返回键隐藏菜单
 	    mTvPausexu.setVisibility(GONE);				//隐藏暂停菜单
 		mLockView.setVisibility(INVISIBLE);         //xuameng隐藏屏幕锁
-					        mHandler.removeCallbacks(myRunnable2);
-		mHandler.removeCallbacks(xuRunnable);
         return false;
     }
 
