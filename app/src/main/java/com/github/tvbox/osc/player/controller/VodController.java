@@ -258,6 +258,9 @@ public class VodController extends BaseController {
             String width = Integer.toString(mControlWrapper.getVideoSize()[0]);
             String height = Integer.toString(mControlWrapper.getVideoSize()[1]);
             mVideoSize.setText("[ " + width + " X " + height +" ]");
+			if (!mControlWrapper.isPlaying()){    //xuameng音乐播放时图标判断
+mTvPausexu.setVisibility(VISIBLE);
+			}
             
 			if (mControlWrapper.isPlaying()){    //xuameng音乐播放时图标判断
 				mxuPlay.setText("暂停");
