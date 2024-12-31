@@ -174,6 +174,10 @@ public class PlayFragment extends BaseLazyFragment {
         return Math.max(rec, skip);
     }
 
+    public VodController getVodController() {
+        return mController;
+    }
+
     private void initView() {
         EventBus.getDefault().register(this);
         mHandler = new Handler(new Handler.Callback() {
