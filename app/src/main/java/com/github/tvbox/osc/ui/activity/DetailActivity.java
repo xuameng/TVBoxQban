@@ -1149,6 +1149,7 @@ public class DetailActivity extends BaseActivity {
 				return;
 			}
         }
+		playFragment.mVideoView.release();
         super.onBackPressed();
     }
 
