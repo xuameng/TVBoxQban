@@ -1572,14 +1572,14 @@ mTvPausexu.setVisibility(VISIBLE);
             backBtn.setVisibility(INVISIBLE);           //返回键隐藏菜单
 			mTvPausexu.setVisibility(GONE);				//隐藏暂停菜单
 			mLockView.setVisibility(INVISIBLE);         //xuameng隐藏屏幕锁
+						        mHandler.removeCallbacks(myRunnable2);
+		mHandler.removeCallbacks(xuRunnable);
             }
             return false;
         }
         if (super.onBackPressed()) {                                                                      //xuameng返回退出
 			iv_circle_bg.setVisibility(GONE);  //xuameng音乐播放时图标
 			MxuamengMusic.setVisibility(GONE);  //xuameng播放音乐背景
-			        mHandler.removeCallbacks(myRunnable2);
-		mHandler.removeCallbacks(xuRunnable);
             return true;
         }
         if (isBottomVisible() && (System.currentTimeMillis() - DOUBLE_CLICK_TIME > 500)) {			      //xuameng按返回键退出
@@ -1594,6 +1594,8 @@ mTvPausexu.setVisibility(VISIBLE);
         backBtn.setVisibility(INVISIBLE);           //返回键隐藏菜单
 	    mTvPausexu.setVisibility(GONE);				//隐藏暂停菜单
 		mLockView.setVisibility(INVISIBLE);         //xuameng隐藏屏幕锁
+					        mHandler.removeCallbacks(myRunnable2);
+		mHandler.removeCallbacks(xuRunnable);
         return false;
     }
 
