@@ -26,4 +26,8 @@ public class MyVideoView extends VideoView {
         return mMediaPlayer;
     }
 
+    public void release() {
+        super.release();
+    }
+
 }
