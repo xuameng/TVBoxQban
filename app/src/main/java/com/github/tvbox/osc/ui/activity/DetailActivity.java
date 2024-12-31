@@ -1121,7 +1121,9 @@ public class DetailActivity extends BaseActivity {
             if (playFragment.onBackPressed())
                 return;
             toggleFullPreview();
-
+			playFragment.getVodController().mBottomRoot.setVisibility(View.GONE);
+playFragment.getVodController().backBtn.setVisibility(View.GONE);
+playFragment.getVodController().mLockView.setVisibility(View.GONE);
             refreshList();   //xuameng退出全屏播放增加滚动到当前播放剧集
 			mGridView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 			@Override
