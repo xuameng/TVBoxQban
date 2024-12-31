@@ -30,7 +30,6 @@ import com.github.tvbox.osc.ui.adapter.SelectDialogAdapter;
 import com.github.tvbox.osc.ui.dialog.SelectDialog;
 import com.github.tvbox.osc.util.FastClickCheckUtil;
 import com.github.tvbox.osc.util.FastClickCheckUtilxu; //xuameng防连击1秒
-import com.github.tvbox.osc.ui.fragment.PlayFragment;
 import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.util.PlayerHelper;
 import com.github.tvbox.osc.util.ScreenUtils;
@@ -1574,7 +1573,6 @@ public class VodController extends BaseController {
             return false;
         }
         if (super.onBackPressed()) {                                                                      //xuameng返回退出
-			playFragment.mVideoView.release();
 			iv_circle_bg.setVisibility(GONE);  //xuameng音乐播放时图标
 			MxuamengMusic.setVisibility(GONE);  //xuameng播放音乐背景
             return true;
