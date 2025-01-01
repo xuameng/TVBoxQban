@@ -346,6 +346,12 @@ public class PlayFragment extends BaseLazyFragment {
                                 setSubtitle(path);//设置字幕
                             }
                         })
+        	.withOnCancelListener(new openLocalFileChooserDialog.OnCancelListener() {
+    			public void onCancel(openLocalFileChooserDialog dialog) {
+			        //Log.d("CANCEL", "CANCEL");
+			        dialog.cancel(); // MUST have
+    			}
+			})
                         .build()
                         .show();
             }
