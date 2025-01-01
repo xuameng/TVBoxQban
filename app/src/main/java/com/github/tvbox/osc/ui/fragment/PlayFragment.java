@@ -346,12 +346,6 @@ public class PlayFragment extends BaseLazyFragment {
                                 setSubtitle(path);//设置字幕
                             }
                         })
-        	.withOnCancelListener(new DialogInterface.OnCancelListener() {
-    			public void onCancel(DialogInterface dialog) {
-			        //Log.d("CANCEL", "CANCEL");
-			        dialog.cancel(); // MUST have
-    			}
-			})
                         .build()
                         .show();
             }
