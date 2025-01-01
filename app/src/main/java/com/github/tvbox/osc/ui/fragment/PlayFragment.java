@@ -336,8 +336,7 @@ public class PlayFragment extends BaseLazyFragment {
         subtitleDialog.setLocalFileChooserListener(new SubtitleDialog.LocalFileChooserListener() {
             @Override
             public void openLocalFileChooserDialog() {
-				ChooserDialog dialog = new ChooserDialog(getActivity)
-          
+                new ChooserDialog(getActivity())
                         .withFilter(false, false, "srt", "ass", "scc", "stl", "ttml")
                         .withStartFile("/storage/emulated/0/Download")
                         .withChosenListener(new ChooserDialog.Result() {
@@ -347,12 +346,6 @@ public class PlayFragment extends BaseLazyFragment {
                                 setSubtitle(path);//设置字幕
                             }
                         })
-        	.withOnCancelListener(new ChooserDialog.OnCancelListener() {
-    			public void onCancel(ChooserDialog dialog) {
-			        //Log.d("CANCEL", "CANCEL");
-			        dialog.cancel(); // MUST have
-    			}
-			})
                         .build()
                         .show();
             }
