@@ -346,21 +346,18 @@ public class PlayFragment extends BaseLazyFragment {
                                 setSubtitle(path);//设置字幕
                             }
                         })
+						.withOnCancelListener(new DialogInterface.OnCancelListener() {
+    			public void onCancel(DialogInterface dialog) {
+			        Log.d("CANCEL", "CANCEL");
+			        dialog.cancel(); // MUST have
+    			}
+			})
                         .build()
                         .show();
             }
         });
         subtitleDialog.show();
     }
-
-subtitleDialog.setLocalFileChooserOnDismissListener(new SubtitleDialog.LocalFileChooserOnDismissListener() {
-    @Override
-    public void onDismiss(DialogInterface dialog) {
-        // 对话框被关闭时的处理逻辑
-        Log.d("DialogClosed", "Dialog has been closed.");
-    }
-});
-
 
     @SuppressLint("UseCompatLoadingForColorStateLists")
     void setSubtitleViewTextStyle(int style) {
