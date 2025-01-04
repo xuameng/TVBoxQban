@@ -531,10 +531,12 @@ public class VodController extends BaseController {
 							if (mControlWrapper.isPlaying()){
 							togglePlay();
 							pauseIngXu();
+							return true;
 							}
 							if (!mControlWrapper.isPlaying()){
 							togglePlay();
 							playIngXu();
+							return true;
 							}
 						}
 					return true;
@@ -597,10 +599,12 @@ public class VodController extends BaseController {
 						if (mControlWrapper.isPlaying()){
 							togglePlay();
 							pauseIngXu();
+							return;
 						}
 						if (!mControlWrapper.isPlaying()){
 							togglePlay();
 							playIngXu();
+							return;
 						}
 					}													//xuameng 低菜单播放监听
 				}
@@ -1471,10 +1475,12 @@ public class VodController extends BaseController {
 							if (mControlWrapper.isPlaying()){
 							togglePlay();
 							pauseIngXu();
+							return true;
 							}
 							if (!mControlWrapper.isPlaying()){
 							togglePlay();
 							playIngXu();
+							return true;
 							}
 						}
                     return true;
@@ -1567,10 +1573,12 @@ public class VodController extends BaseController {
 				if (mControlWrapper.isPlaying()){
 				togglePlay();
 				pauseIngXu();
+				return true;
 				}
 				if (!mControlWrapper.isPlaying()){
 				togglePlay();
 				playIngXu();
+				return true;
 				}
 			}
 		}
