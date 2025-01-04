@@ -112,9 +112,6 @@ public class VodController extends BaseController {
                         super.onAnimationEnd(animation);
 			            MxuamengView.setVisibility(GONE);		//xuameng动画结束可点击
 						isDisplay = false;
-						mBottomRoot.requestLayout();
-						mTopRoot1.requestLayout();
-						mTopRoot2.requestLayout();
                         }
                         });
                         animator.start();						//xuameng动画菜单
@@ -1439,7 +1436,6 @@ public class VodController extends BaseController {
         super.onAnimationEnd(animation);
 		MxuamengView.setVisibility(GONE);			   //xuameng动画结束可点击
 		isPlaying = false;  //xuameng动画开启
-		mTvPausexu.requestLayout();
         }
         });
 		animator8.start();						       //xuameng动画暂停菜单结束
