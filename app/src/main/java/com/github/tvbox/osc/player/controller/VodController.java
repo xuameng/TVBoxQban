@@ -231,7 +231,6 @@ public class VodController extends BaseController {
     private View backBtn;//返回键
     private boolean isClickBackBtn;
 	private double DOUBLE_CLICK_TIME = 0L;    //xuameng返回键防连击1.5秒（为动画）
-	private double DOUBLE_CLICK_TIME_1 = 0L;    //xuameng点击本地字幕弹出菜单
 	private double DOUBLE_CLICK_TIME_2 = 0L;    //xuameng防连击1秒（为动画）
    
     LockRunnable lockRunnable = new LockRunnable();
@@ -262,8 +261,8 @@ public class VodController extends BaseController {
 			if (mControlWrapper.isPlaying()){    //xuameng音乐播放时图标判断
 				mxuPlay.setText("暂停");
 				if (!isPlaying && mTvPausexu.getVisibility() == View.VISIBLE){						
-					ObjectAnimator animator10 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0,1400);				//xuameng动画暂停菜单开始
-					animator10.setDuration(500);			//xuameng动画暂停菜单
+					ObjectAnimator animator10 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0,700);				//xuameng动画暂停菜单开始
+					animator10.setDuration(300);			//xuameng动画暂停菜单
 					animator10.addListener(new AnimatorListenerAdapter() {
 					@Override
 					public void onAnimationStart(Animator animation) {
@@ -523,15 +522,22 @@ public class VodController extends BaseController {
                     }
                   }
 				if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
-					if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 500){                  //xuameng 防播放打断动画
+					if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 300){                  //xuameng 防播放打断动画
 						return true;
 					}
 					DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
 					if (isInPlayback) {
 						if (!isDisplay || !isAnimation){
+							if (mControlWrapper.isPlaying()){
 							togglePlay();
+							pauseIngXu();
+							}
+							if (!mControlWrapper.isPlaying()){
+							togglePlay();
+							playIngXu();
+							}
 						}
-                return true;
+					return true;
                    }
                  }
 		    	}
@@ -582,13 +588,20 @@ public class VodController extends BaseController {
             @Override												//xuameng 低菜单播放监听
             public void onClick(View view) {						//xuameng 低菜单播放监听
 				boolean isInPlayback = isInPlaybackState();
-				if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 500){                  //xuameng 防播放打断动画
+				if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 300){                  //xuameng 防播放打断动画
 					return;
 				}
 				DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
 				if (isInPlayback) {
 					if (!isDisplay || !isAnimation){
-						togglePlay();
+						if (mControlWrapper.isPlaying()){
+							togglePlay();
+							pauseIngXu();
+						}
+						if (!mControlWrapper.isPlaying()){
+							togglePlay();
+							playIngXu();
+						}
 					}													//xuameng 低菜单播放监听
 				}
             }
@@ -1242,8 +1255,8 @@ public class VodController extends BaseController {
         switch (playState) {
             case VideoView.STATE_IDLE:
 				if(!isPlaying && mTvPausexu.getVisibility() == View.VISIBLE){
-			    ObjectAnimator animator30 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0,1400);				//xuameng动画暂停菜单开始
-                animator30.setDuration(500);			//xuameng动画暂停菜单
+			    ObjectAnimator animator30 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0,700);				//xuameng动画暂停菜单开始
+                animator30.setDuration(300);			//xuameng动画暂停菜单
                 animator30.addListener(new AnimatorListenerAdapter() {
                 @Override
 			    public void onAnimationStart(Animator animation) {
@@ -1272,83 +1285,20 @@ public class VodController extends BaseController {
             case VideoView.STATE_PLAYING:
                 initLandscapePortraitBtnInfo();
                 startProgress();
-		        mxuPlay.setVisibility(View.VISIBLE);
-                mxuPlay.setTextColor(Color.WHITE);
-                mxuPlay.setText("暂停");               //xuameng底部菜单显示暂停
-				if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME_1) < 500){
-					ObjectAnimator animator8 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", 1400,0);				//xuameng动画暂停菜单开始
-					ObjectAnimator animator = ObjectAnimator.ofFloat(mBottomRoot, "translationY", 700,0);				//xuameng动画菜单
-					ObjectAnimator animator1 = ObjectAnimator.ofFloat(mTopRoot1, "translationY", -700,0);				//xuameng动画菜单
-					ObjectAnimator animator2 = ObjectAnimator.ofFloat(mTopRoot2, "translationY", -700,0);				//xuameng动画菜单
-					animator8.cancel();
-					animator.cancel();
-					animator1.cancel();
-					animator2.cancel();
-					mTvPausexu.setVisibility(GONE); 
-					mBottomRoot.setVisibility(GONE);	        //动画结束后隐藏下菜单
-					mTopRoot1.setVisibility(GONE);	            //动画结束后隐藏上菜单
-					mTopRoot2.setVisibility(GONE);              //动画结束后隐藏上菜单
-				}else{
-				if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
-                hideBottom();
-				}
-			    ObjectAnimator animator9 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0,1400);				//xuameng动画暂停菜单开始
-                animator9.setDuration(500);			//xuameng动画暂停菜单
-                animator9.addListener(new AnimatorListenerAdapter() {
-                @Override
-			    public void onAnimationStart(Animator animation) {
-                super.onAnimationStart(animation);
-                MxuamengView.setVisibility(VISIBLE);		   //xuameng动画开始防点击
-				isPlaying = true;  //xuameng动画开启
-			    }
-                public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-			    MxuamengView.setVisibility(GONE);			   //xuameng动画结束可点击
-			    mTvPausexu.setVisibility(GONE);                //xuameng动画暂停菜单隐藏 
-				isPlaying = false;  //xuameng动画开启
-                }
-                });
-			    animator9.start();						      //xuameng动画暂停菜单结束
-				}
+				//playIngXu();	
                 break;
             case VideoView.STATE_PAUSED:
-				DOUBLE_CLICK_TIME_1 = System.currentTimeMillis();
                 //mTopRoot1.setVisibility(GONE);       //xuameng隐藏上面菜单
                 //mTopRoot2.setVisibility(GONE);       //xuameng隐藏上面菜单
                 //mPlayTitle.setVisibility(VISIBLE);   //xuameng显示上面菜单
-			    mTvPausexu.setVisibility(VISIBLE);
-                ObjectAnimator animator8 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", 1400,0);				//xuameng动画暂停菜单开始
-                animator8.setDuration(500);			//xuameng动画暂停菜单
-                animator8.addListener(new AnimatorListenerAdapter() {
-                @Override
-			    public void onAnimationStart(Animator animation) {
-                super.onAnimationStart(animation);
-                MxuamengView.setVisibility(VISIBLE);		   //xuameng动画开始防点击
-				isPlaying = true;  //xuameng动画开启
-			    }
-                public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-			    MxuamengView.setVisibility(GONE);			   //xuameng动画结束可点击
-				isPlaying = false;  //xuameng动画开启
-                }
-                });
-			    animator8.start();						       //xuameng动画暂停菜单结束
-			    mxuPlay.setVisibility(View.VISIBLE);
-                mxuPlay.setTextColor(Color.WHITE);	   //xuameng底部菜单显示播放颜色
-                mxuPlay.setText("播放");			   //xuameng底部菜单显示播放
-				mPlayPauseTimexu.setVisibility(GONE);  //xuameng隐藏上面时间
-                mPlayTitle.setVisibility(GONE);        //xuameng隐藏上面视频名称
-		        if (!isBottomVisible()) {              //xuameng如果没显示菜单就显示
-                    showBottom();
-                    myHandle.postDelayed(myRunnable, myHandleSeconds);
-                }
+			    //pauseIngXu();
                 break;
             case VideoView.STATE_ERROR:
                 listener.errReplay();
 				mxuPlay.setText("错误");
 				if(!isPlaying && mTvPausexu.getVisibility() == View.VISIBLE){
-			    ObjectAnimator animator31 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0,1400);				//xuameng动画暂停菜单开始
-                animator31.setDuration(500);			//xuameng动画暂停菜单
+			    ObjectAnimator animator31 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0,700);				//xuameng动画暂停菜单开始
+                animator31.setDuration(300);			//xuameng动画暂停菜单
                 animator31.addListener(new AnimatorListenerAdapter() {
                 @Override
 			    public void onAnimationStart(Animator animation) {
@@ -1378,8 +1328,8 @@ public class VodController extends BaseController {
 				simSeekPosition = 0;       //XUAMENG重要,换视频时重新记录进度
 				mxuPlay.setText("准备");
 				if(!isPlaying && mTvPausexu.getVisibility() == View.VISIBLE){
-			    ObjectAnimator animator32 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0,1400);				//xuameng动画暂停菜单开始
-                animator32.setDuration(500);			//xuameng动画暂停菜单
+			    ObjectAnimator animator32 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0,700);				//xuameng动画暂停菜单开始
+                animator32.setDuration(300);			//xuameng动画暂停菜单
                 animator32.addListener(new AnimatorListenerAdapter() {
                 @Override
 			    public void onAnimationStart(Animator animation) {
@@ -1434,6 +1384,62 @@ public class VodController extends BaseController {
         mHandler.sendEmptyMessage(1005);
     }
 
+	public void playIngXu() {
+		mxuPlay.setVisibility(View.VISIBLE);
+        mxuPlay.setTextColor(Color.WHITE);
+        mxuPlay.setText("暂停");               //xuameng底部菜单显示暂停
+		
+		if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
+			hideBottom();
+		}
+		ObjectAnimator animator9 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0,700);				//xuameng动画暂停菜单开始
+        animator9.setDuration(300);			//xuameng动画暂停菜单
+        animator9.addListener(new AnimatorListenerAdapter() {
+        @Override
+		public void onAnimationStart(Animator animation) {
+        super.onAnimationStart(animation);
+        MxuamengView.setVisibility(VISIBLE);		   //xuameng动画开始防点击
+		isPlaying = true;  //xuameng动画开启
+		}
+        public void onAnimationEnd(Animator animation) {
+        super.onAnimationEnd(animation);
+		MxuamengView.setVisibility(GONE);			   //xuameng动画结束可点击
+		mTvPausexu.setVisibility(GONE);                //xuameng动画暂停菜单隐藏 
+		isPlaying = false;  //xuameng动画开启
+        }
+        });
+		animator9.start();						      //xuameng动画暂停菜单结束
+    }
+
+	public void pauseIngXu() {
+		mTvPausexu.setVisibility(VISIBLE);
+        ObjectAnimator animator8 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", 700,0);				//xuameng动画暂停菜单开始
+        animator8.setDuration(300);			//xuameng动画暂停菜单
+        animator8.addListener(new AnimatorListenerAdapter() {
+        @Override
+		public void onAnimationStart(Animator animation) {
+        super.onAnimationStart(animation);
+        MxuamengView.setVisibility(VISIBLE);		   //xuameng动画开始防点击
+		isPlaying = true;  //xuameng动画开启
+		}
+        public void onAnimationEnd(Animator animation) {
+        super.onAnimationEnd(animation);
+		MxuamengView.setVisibility(GONE);			   //xuameng动画结束可点击
+		isPlaying = false;  //xuameng动画开启
+        }
+        });
+		animator8.start();						       //xuameng动画暂停菜单结束
+		mxuPlay.setVisibility(View.VISIBLE);
+        mxuPlay.setTextColor(Color.WHITE);	   //xuameng底部菜单显示播放颜色
+        mxuPlay.setText("播放");			   //xuameng底部菜单显示播放
+		mPlayPauseTimexu.setVisibility(GONE);  //xuameng隐藏上面时间
+        mPlayTitle.setVisibility(GONE);        //xuameng隐藏上面视频名称
+		if (!isBottomVisible()) {              //xuameng如果没显示菜单就显示
+            showBottom();
+            myHandle.postDelayed(myRunnable, myHandleSeconds);
+        }
+    }
+
     @Override
     public boolean onKeyEvent(KeyEvent event) {
         myHandle.removeCallbacks(myRunnable);
@@ -1456,18 +1462,25 @@ public class VodController extends BaseController {
                     return true;
                 }
             } else if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
-					if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 500){                  //xuameng 防播放打断动画					
+					if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 300){                  //xuameng 防播放打断动画					
 						return true;
 					}
 					DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
 					if (isInPlayback) {
 						if (!isDisplay || !isAnimation){
+							if (mControlWrapper.isPlaying()){
 							togglePlay();
+							pauseIngXu();
+							}
+							if (!mControlWrapper.isPlaying()){
+							togglePlay();
+							playIngXu();
+							}
 						}
                     return true;
                 }
             } else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN || keyCode == KeyEvent.KEYCODE_DPAD_UP || keyCode== KeyEvent.KEYCODE_MENU) {
-					if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 500){                  //xuameng 防播放打断动画					
+					if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 300){                  //xuameng 防播放打断动画					
 						return true;
 					}
 					DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
@@ -1544,12 +1557,23 @@ public class VodController extends BaseController {
     }
 
     @Override
-    public boolean onDoubleTap(MotionEvent e) {
-		if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 500){                  //xuameng 防播放打断动画
+    public boolean onDoubleTap(MotionEvent e) {      //xuameng双击
+		if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 300){                  //xuameng 防播放打断动画
 			return true;
 			}
 		DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
-        if (!isLock && isInPlaybackState()) togglePlay();
+        if (!isLock && isInPlaybackState()){
+			if (!isDisplay || !isAnimation){
+				if (mControlWrapper.isPlaying()){
+				togglePlay();
+				pauseIngXu();
+				}
+				if (!mControlWrapper.isPlaying()){
+				togglePlay();
+				playIngXu();
+				}
+			}
+		}
         return true;
     }
     
@@ -1562,17 +1586,17 @@ public class VodController extends BaseController {
     
     @Override
     public boolean onBackPressed() {
-		if (isBottomVisible() && (System.currentTimeMillis() - DOUBLE_CLICK_TIME) < 500) {               //xuameng返回键防连击1.5秒（为动画,当动画显示时）
+		if (isBottomVisible() && (System.currentTimeMillis() - DOUBLE_CLICK_TIME) < 300) {               //xuameng返回键防连击1.5秒（为动画,当动画显示时）
             DOUBLE_CLICK_TIME = System.currentTimeMillis();
             return true;
             }
-		if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 500){                  //xuameng 防播放打断动画					
+		if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 300){                  //xuameng 防播放打断动画					
 			return true;
 			}
 			DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
         if (isClickBackBtn) {
             isClickBackBtn = false;
-            if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME) > 500) {                                //xuameng  屏幕上的返回键退出
+            if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME) > 300) {                                //xuameng  屏幕上的返回键退出
             DOUBLE_CLICK_TIME = System.currentTimeMillis();
             mBottomRoot.setVisibility(GONE);	        //动画结束后隐藏下菜单
             mTopRoot1.setVisibility(GONE);	            //动画结束后隐藏上菜单
@@ -1590,7 +1614,7 @@ public class VodController extends BaseController {
 			MxuamengMusic.setVisibility(GONE);  //xuameng播放音乐背景
             return true;
         }
-        if (isBottomVisible() && (System.currentTimeMillis() - DOUBLE_CLICK_TIME > 500)) {			      //xuameng按返回键退出
+        if (isBottomVisible() && (System.currentTimeMillis() - DOUBLE_CLICK_TIME > 300)) {			      //xuameng按返回键退出
 			DOUBLE_CLICK_TIME = System.currentTimeMillis();
 			if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
               hideBottom();
