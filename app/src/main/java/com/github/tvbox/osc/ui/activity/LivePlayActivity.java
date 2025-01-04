@@ -1310,12 +1310,11 @@ public class LivePlayActivity extends BaseActivity {
        
     }
     private void mFocusCurrentChannelAndShowChannelList() { //xuameng左侧菜单显示
-		  tvLeftChannelListLayout.requestLayout();
 //        if(mChannelGroupView.isScrolling() || mLiveChannelView.isScrolling() || mChannelGroupView.isComputingLayout() || mLiveChannelView.isComputingLayout()) {
             if(countDownTimer20 != null) {
                 countDownTimer20.cancel();
             }
-            countDownTimer20 = new CountDownTimer(300, 151) { //底部epg隐藏时间设定
+            countDownTimer20 = new CountDownTimer(100, 80) { //底部epg隐藏时间设定
                 public void onTick(long j) {
                     mChannelGroupView.setSelection(currentChannelGroupIndex); //xuameng先滚动再选择防止空指针
                     mLiveChannelView.setSelection(currentLiveChannelIndex); //xuameng先滚动再选择防止空指针
@@ -1326,7 +1325,7 @@ public class LivePlayActivity extends BaseActivity {
                 }
             };
             countDownTimer20.start();
-   //     } else {
+  //      } else {
   //          mFocusCurrentChannelAndShowChannelListXu();
   //      }
     }
@@ -1513,21 +1512,20 @@ public class LivePlayActivity extends BaseActivity {
         }
     }
     private void mFocusAndShowSettingGroup() { //XUAMENG显示右侧菜单
-		  tvRightSettingLayout.requestLayout();
- //       if(mSettingGroupView.isScrolling() || mSettingItemView.isScrolling() || mSettingGroupView.isComputingLayout() || mSettingItemView.isComputingLayout()) {
+        if(mSettingGroupView.isScrolling() || mSettingItemView.isScrolling() || mSettingGroupView.isComputingLayout() || mSettingItemView.isComputingLayout()) {
             if(countDownTimer21 != null) {
                 countDownTimer21.cancel();
             }
-            countDownTimer21 = new CountDownTimer(300, 151) { //底部epg隐藏时间设定
+            countDownTimer21 = new CountDownTimer(100, 50) { //底部epg隐藏时间设定
                 public void onTick(long j) {}
                 public void onFinish() {
                     mFocusAndShowSettingGroupXu();
                 }
             };
             countDownTimer21.start();
-//        } else {
-//            mFocusAndShowSettingGroupXu();
-//        }
+        } else {
+            mFocusAndShowSettingGroupXu();
+        }
     }
     private void mFocusAndShowSettingGroupXu() { //XUAMENG显示右侧菜单
         RecyclerView.ViewHolder holder = mSettingGroupView.findViewHolderForAdapterPosition(0);
