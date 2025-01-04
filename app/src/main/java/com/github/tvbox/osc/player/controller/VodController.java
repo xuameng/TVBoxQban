@@ -522,7 +522,7 @@ public class VodController extends BaseController {
                     }
                   }
 				if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
-					if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 300){                  //xuameng 防播放打断动画
+					if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 350){                  //xuameng 防播放打断动画
 						return true;
 					}
 					DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
@@ -590,7 +590,7 @@ public class VodController extends BaseController {
             @Override												//xuameng 低菜单播放监听
             public void onClick(View view) {						//xuameng 低菜单播放监听
 				boolean isInPlayback = isInPlaybackState();
-				if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 300){                  //xuameng 防播放打断动画
+				if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 350){                  //xuameng 防播放打断动画
 					return;
 				}
 				DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
@@ -1419,6 +1419,10 @@ public class VodController extends BaseController {
 
 	public void pauseIngXu() {
 		mTvPausexu.setVisibility(VISIBLE);
+		if (mBottomRoot.getVisibility() == View.GONE && !isDisplay) {              //xuameng如果没显示菜单就显示
+            showBottom();
+            myHandle.postDelayed(myRunnable, myHandleSeconds);
+        }
         ObjectAnimator animator8 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", 700,0);				//xuameng动画暂停菜单开始
         animator8.setDuration(300);			//xuameng动画暂停菜单
         animator8.addListener(new AnimatorListenerAdapter() {
@@ -1440,10 +1444,6 @@ public class VodController extends BaseController {
         mxuPlay.setText("播放");			   //xuameng底部菜单显示播放
 		mPlayPauseTimexu.setVisibility(GONE);  //xuameng隐藏上面时间
         mPlayTitle.setVisibility(GONE);        //xuameng隐藏上面视频名称
-		if (!isBottomVisible()) {              //xuameng如果没显示菜单就显示
-            showBottom();
-            myHandle.postDelayed(myRunnable, myHandleSeconds);
-        }
     }
 
     @Override
@@ -1468,7 +1468,7 @@ public class VodController extends BaseController {
                     return true;
                 }
             } else if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
-					if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 300){                  //xuameng 防播放打断动画					
+					if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 350){                  //xuameng 防播放打断动画					
 						return true;
 					}
 					DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
@@ -1488,11 +1488,11 @@ public class VodController extends BaseController {
                     return true;
                 }
             } else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN || keyCode == KeyEvent.KEYCODE_DPAD_UP || keyCode== KeyEvent.KEYCODE_MENU) {
-					if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 300){                  //xuameng 防播放打断动画					
+					if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 350){                  //xuameng 防播放打断动画					
 						return true;
 					}
 					DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
-                if (!isBottomVisible()) {
+                if (mBottomRoot.getVisibility() == View.GONE && !isDisplay) {
                     showBottom();
                     myHandle.postDelayed(myRunnable, myHandleSeconds);
                     return true;
@@ -1552,7 +1552,7 @@ public class VodController extends BaseController {
     @Override
     public boolean onSingleTapConfirmed(MotionEvent e) {
         myHandle.removeCallbacks(myRunnable);
-        if (!isBottomVisible()) {
+        if (mBottomRoot.getVisibility() == View.GONE && !isDisplay) {
             showBottom();
             // 闲置计时关闭
             myHandle.postDelayed(myRunnable, myHandleSeconds);
@@ -1566,7 +1566,7 @@ public class VodController extends BaseController {
 
     @Override
     public boolean onDoubleTap(MotionEvent e) {      //xuameng双击
-		if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 300){                  //xuameng 防播放打断动画
+		if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 350){                  //xuameng 防播放打断动画
 			return true;
 			}
 		DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
@@ -1596,17 +1596,17 @@ public class VodController extends BaseController {
     
     @Override
     public boolean onBackPressed() {
-		if (isBottomVisible() && (System.currentTimeMillis() - DOUBLE_CLICK_TIME) < 300) {               //xuameng返回键防连击1.5秒（为动画,当动画显示时）
+		if (isBottomVisible() && (System.currentTimeMillis() - DOUBLE_CLICK_TIME) < 350) {               //xuameng返回键防连击1.5秒（为动画,当动画显示时）
             DOUBLE_CLICK_TIME = System.currentTimeMillis();
             return true;
             }
-		if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 300){                  //xuameng 防播放打断动画					
+		if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 350){                  //xuameng 防播放打断动画					
 			return true;
 			}
 			DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
         if (isClickBackBtn) {
             isClickBackBtn = false;
-            if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME) > 300) {                                //xuameng  屏幕上的返回键退出
+            if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME) > 350) {                                //xuameng  屏幕上的返回键退出
             DOUBLE_CLICK_TIME = System.currentTimeMillis();
             mBottomRoot.setVisibility(GONE);	        //动画结束后隐藏下菜单
             mTopRoot1.setVisibility(GONE);	            //动画结束后隐藏上菜单
@@ -1624,7 +1624,7 @@ public class VodController extends BaseController {
 			MxuamengMusic.setVisibility(GONE);  //xuameng播放音乐背景
             return true;
         }
-        if (isBottomVisible() && (System.currentTimeMillis() - DOUBLE_CLICK_TIME > 300)) {			      //xuameng按返回键退出
+        if (isBottomVisible() && (System.currentTimeMillis() - DOUBLE_CLICK_TIME > 350)) {			      //xuameng按返回键退出
 			DOUBLE_CLICK_TIME = System.currentTimeMillis();
 			if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
               hideBottom();
