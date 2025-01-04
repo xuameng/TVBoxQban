@@ -99,6 +99,7 @@ public class VodController extends BaseController {
 
                     case 1002: { // 显示底部菜单
                         mBottomRoot.setVisibility(VISIBLE);
+						mBottomRoot.requestLayout();
 						ObjectAnimator animator = ObjectAnimator.ofFloat(mBottomRoot, "translationY", 700,0);				//xuameng动画菜单
                         animator.setDuration(300);				//xuameng动画菜单
 						animator.addListener(new AnimatorListenerAdapter() {
@@ -116,10 +117,12 @@ public class VodController extends BaseController {
                         });
                         animator.start();						//xuameng动画菜单
                         mTopRoot1.setVisibility(VISIBLE);
+						mTopRoot1.requestLayout();
 						ObjectAnimator animator1 = ObjectAnimator.ofFloat(mTopRoot1, "translationY", -700,0);				//xuameng动画菜单
                         animator1.setDuration(300);			//xuameng动画菜单
                         animator1.start();						//xuameng动画菜单
                         mTopRoot2.setVisibility(VISIBLE);
+						mTopRoot2.requestLayout();
 						ObjectAnimator animator2 = ObjectAnimator.ofFloat(mTopRoot2, "translationY", -700,0);				//xuameng动画菜单
                         animator2.setDuration(300);			//xuameng动画菜单
                         animator2.start();						//xuameng动画菜单
@@ -1419,6 +1422,7 @@ public class VodController extends BaseController {
 
 	public void pauseIngXu() {
 		mTvPausexu.setVisibility(VISIBLE);
+		mTvPausexu.requestLayout();
 		if (mBottomRoot.getVisibility() == View.GONE && !isDisplay) {              //xuameng如果没显示菜单就显示
             showBottom();
             myHandle.postDelayed(myRunnable, myHandleSeconds);
