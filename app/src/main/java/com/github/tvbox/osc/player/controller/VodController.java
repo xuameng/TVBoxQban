@@ -1289,9 +1289,11 @@ public class VodController extends BaseController {
             case VideoView.STATE_PLAYING:
                 initLandscapePortraitBtnInfo();
                 startProgress();
+				mxuPlay.setText("暂停");               //xuameng底部菜单显示暂停
 				//playIngXu();	
                 break;
             case VideoView.STATE_PAUSED:
+				mxuPlay.setText("播放");			   //xuameng底部菜单显示播放
                 //mTopRoot1.setVisibility(GONE);       //xuameng隐藏上面菜单
                 //mTopRoot2.setVisibility(GONE);       //xuameng隐藏上面菜单
                 //mPlayTitle.setVisibility(VISIBLE);   //xuameng显示上面菜单
