@@ -581,13 +581,16 @@ public class VodController extends BaseController {
 		mxuPlay.setOnClickListener(new OnClickListener() {			//xuameng 低菜单播放监听
             @Override												//xuameng 低菜单播放监听
             public void onClick(View view) {						//xuameng 低菜单播放监听
+				boolean isInPlayback = isInPlaybackState();
 				if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 500){                  //xuameng 防播放打断动画
 					return;
 				}
 				DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
-				if (!isDisplay || !isAnimation){
-					togglePlay();
-				}													//xuameng 低菜单播放监听
+				if (isInPlayback) {
+					if (!isDisplay || !isAnimation){
+						togglePlay();
+					}													//xuameng 低菜单播放监听
+				}
             }
         });
 
