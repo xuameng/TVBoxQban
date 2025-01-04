@@ -1319,6 +1319,7 @@ public class LivePlayActivity extends BaseActivity {
                     mChannelGroupView.setSelection(currentChannelGroupIndex); //xuameng先滚动再选择防止空指针
                     mLiveChannelView.setSelection(currentLiveChannelIndex); //xuameng先滚动再选择防止空指针
                     epgListAdapter.getSelectedIndex(); //xuamengEPG打开菜单自动变颜色 
+					tvLeftChannelListLayout.requestLayout();
                 }
                 public void onFinish() {
                     mFocusCurrentChannelAndShowChannelListXu();
@@ -1517,7 +1518,7 @@ public class LivePlayActivity extends BaseActivity {
                 countDownTimer21.cancel();
             }
             countDownTimer21 = new CountDownTimer(100, 50) { //底部epg隐藏时间设定
-                public void onTick(long j) {}
+                public void onTick(long j) {tvRightSettingLayout.requestLayout();}
                 public void onFinish() {
                     mFocusAndShowSettingGroupXu();
                 }
