@@ -1539,6 +1539,16 @@ public class VodController extends BaseController {
         }
         return true;
     }
+
+    @Override
+    public boolean onDoubleTap(MotionEvent e) {
+		if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 500){                  //xuameng 防播放打断动画
+			return true;
+			}
+		DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
+        if (!isLock && isInPlaybackState()) togglePlay();
+        return true;
+    }
     
     private class LockRunnable implements Runnable {
         @Override
