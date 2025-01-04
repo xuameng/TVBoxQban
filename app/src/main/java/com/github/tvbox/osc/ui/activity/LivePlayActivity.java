@@ -1310,25 +1310,25 @@ public class LivePlayActivity extends BaseActivity {
        
     }
     private void mFocusCurrentChannelAndShowChannelList() { //xuameng左侧菜单显示
-        if(mChannelGroupView.isScrolling() || mLiveChannelView.isScrolling() || mChannelGroupView.isComputingLayout() || mLiveChannelView.isComputingLayout()) {
+		  tvLeftChannelListLayout.requestLayout();
+//        if(mChannelGroupView.isScrolling() || mLiveChannelView.isScrolling() || mChannelGroupView.isComputingLayout() || mLiveChannelView.isComputingLayout()) {
             if(countDownTimer20 != null) {
                 countDownTimer20.cancel();
             }
-            countDownTimer20 = new CountDownTimer(100, 50) { //底部epg隐藏时间设定
+            countDownTimer20 = new CountDownTimer(300, 151) { //底部epg隐藏时间设定
                 public void onTick(long j) {
                     mChannelGroupView.setSelection(currentChannelGroupIndex); //xuameng先滚动再选择防止空指针
                     mLiveChannelView.setSelection(currentLiveChannelIndex); //xuameng先滚动再选择防止空指针
                     epgListAdapter.getSelectedIndex(); //xuamengEPG打开菜单自动变颜色 
-					tvLeftChannelListLayout.requestLayout();
                 }
                 public void onFinish() {
                     mFocusCurrentChannelAndShowChannelListXu();
                 }
             };
             countDownTimer20.start();
-        } else {
-            mFocusCurrentChannelAndShowChannelListXu();
-        }
+   //     } else {
+  //          mFocusCurrentChannelAndShowChannelListXu();
+  //      }
     }
     private void mFocusCurrentChannelAndShowChannelListXu() { //xuameng左侧菜单显示
         liveChannelGroupAdapter.setSelectedGroupIndex(currentChannelGroupIndex);
@@ -1513,20 +1513,21 @@ public class LivePlayActivity extends BaseActivity {
         }
     }
     private void mFocusAndShowSettingGroup() { //XUAMENG显示右侧菜单
-        if(mSettingGroupView.isScrolling() || mSettingItemView.isScrolling() || mSettingGroupView.isComputingLayout() || mSettingItemView.isComputingLayout()) {
+		  tvRightSettingLayout.requestLayout();
+ //       if(mSettingGroupView.isScrolling() || mSettingItemView.isScrolling() || mSettingGroupView.isComputingLayout() || mSettingItemView.isComputingLayout()) {
             if(countDownTimer21 != null) {
                 countDownTimer21.cancel();
             }
-            countDownTimer21 = new CountDownTimer(100, 50) { //底部epg隐藏时间设定
-                public void onTick(long j) {tvRightSettingLayout.requestLayout();}
+            countDownTimer21 = new CountDownTimer(300, 151) { //底部epg隐藏时间设定
+                public void onTick(long j) {}
                 public void onFinish() {
                     mFocusAndShowSettingGroupXu();
                 }
             };
             countDownTimer21.start();
-        } else {
-            mFocusAndShowSettingGroupXu();
-        }
+//        } else {
+//            mFocusAndShowSettingGroupXu();
+//        }
     }
     private void mFocusAndShowSettingGroupXu() { //XUAMENG显示右侧菜单
         RecyclerView.ViewHolder holder = mSettingGroupView.findViewHolderForAdapterPosition(0);
