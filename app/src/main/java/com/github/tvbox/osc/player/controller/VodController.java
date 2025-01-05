@@ -47,6 +47,10 @@ import java.util.Date;
 import xyz.doikki.videoplayer.player.VideoView;
 import xyz.doikki.videoplayer.util.PlayerUtils;
 import static xyz.doikki.videoplayer.util.PlayerUtils.stringForTime;
+import com.squareup.picasso.Picasso;      //xuameng播放音频切换图片
+import com.squareup.picasso.MemoryPolicy;  //xuameng播放音频切换图片
+import com.squareup.picasso.NetworkPolicy;  //xuameng播放音频切换图片
+import com.github.tvbox.osc.api.ApiConfig;  //xuameng播放音频切换图片
 
 public class VodController extends BaseController {
     public VodController(@NonNull @NotNull Context context) {
@@ -215,7 +219,7 @@ public class VodController extends BaseController {
     TextView mPlayrefresh;
 	TextView mxuPlay;                         //xuameng 底部播放ID
 	private ImageView iv_circle_bg;  //xuameng音乐播放时图标
-	LinearLayout MxuamengMusic;       //xuameng播放音乐背景
+	ImageView MxuamengMusic;       //xuameng播放音乐背景
     public TextView mPlayerTimeStartEndText;
     public TextView mPlayerTimeStartBtn;
     public TextView mPlayerTimeSkipBtn;
@@ -313,6 +317,26 @@ public class VodController extends BaseController {
         }
     };
 
+	private Runnable myRunnableMusic = new Runnable() {  //xuameng播放音频切换图片
+        @Override
+        public void run() {
+			if (MxuamengMusic.getVisibility() == View.VISIBLE){
+				if (!ApiConfig.get().musicwallpaper.isEmpty()){
+				String Url = ApiConfig.get().musicwallpaper;
+				Picasso.get()
+				.load(Url)
+//				.placeholder(R.drawable.xumusic)
+				.resize(3840,2160)
+				.centerCrop()
+				.error(R.drawable.xumusic)
+				.memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
+	//			.networkPolicy(NetworkPolicy.NO_CACHE)
+				.into(MxuamengMusic); // xuameng内容空显示banner
+				}
+			}
+        mHandler.postDelayed(this, 15000);
+       }
+    };
 
    private Runnable xuRunnable = new Runnable() {                     //xuameng显示系统时间
         @Override
@@ -366,7 +390,7 @@ public class VodController extends BaseController {
 		MxuamengView = findViewById(R.id.xuamengView);				   //XUAMENG防点击
 		mTvPausexu = findViewById(R.id.tv_pause_xu);				   //XUAMENG暂停动画
 		iv_circle_bg = (ImageView) findViewById(R.id.iv_circle_bg);  //xuameng音乐播放时图标
-		MxuamengMusic = findViewById(R.id.xuamengMusic);  //xuameng播放音乐背景
+		MxuamengMusic = (ImageView) findViewById(R.id.xuamengMusic);  //xuameng播放音乐背景
         mPlayLoadNetSpeed = findViewById(R.id.tv_play_load_net_speed);
         mVideoSize = findViewById(R.id.tv_videosize);
         mSubtitleView = findViewById(R.id.subtitle_view);
@@ -381,7 +405,7 @@ public class VodController extends BaseController {
         animator20.setDuration(10000);
         animator20.setRepeatCount(-1);
         animator20.start();
-
+		
         backBtn.setOnClickListener(new OnClickListener() {            //xuameng  屏幕上的返回键
             @Override
             public void onClick(View view) {
@@ -443,6 +467,7 @@ public class VodController extends BaseController {
             @Override
             public void run() {
                 mHandler.post(myRunnable2);
+				mHandler.post(myRunnableMusic);  //xuameng播放音频切换图片
             }
         });
 
@@ -452,6 +477,7 @@ public class VodController extends BaseController {
                 mHandler.post(xuRunnable);
             }
         });
+
 
         mGridView.setLayoutManager(new V7LinearLayoutManager(getContext(), 0, false));
         ParseAdapter parseAdapter = new ParseAdapter();
