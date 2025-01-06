@@ -325,12 +325,13 @@ public class VodController extends BaseController {
 				String Url = ApiConfig.get().musicwallpaper;
 				Picasso.get()
 				.load(Url)
-//				.placeholder(R.drawable.xumusic)
+//				.placeholder(R.drawable.xumusic)   //xuameng默认的站位图
+				.noPlaceholder()   //不使用站位图，效果不好
 				.resize(3840,2160)
 				.centerCrop()
 				.error(R.drawable.xumusic)
 				.memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
-	//			.networkPolicy(NetworkPolicy.NO_CACHE)
+				.networkPolicy(NetworkPolicy.NO_CACHE)
 				.into(MxuamengMusic); // xuameng内容空显示banner
 				}
 			}
@@ -1648,6 +1649,9 @@ public class VodController extends BaseController {
         if (super.onBackPressed()) {                                                                      //xuameng返回退出
 			iv_circle_bg.setVisibility(GONE);  //xuameng音乐播放时图标
 			MxuamengMusic.setVisibility(GONE);  //xuameng播放音乐背景
+			mHandler.removeCallbacks(myRunnable2);
+			mHandler.removeCallbacks(xuRunnable);
+			mHandler.removeCallbacks(myRunnableMusic);	
             return true;
         }
         if (isBottomVisible() && (System.currentTimeMillis() - DOUBLE_CLICK_TIME > 350)) {			      //xuameng按返回键退出
@@ -1670,6 +1674,6 @@ public class VodController extends BaseController {
         super.onDetachedFromWindow();
         mHandler.removeCallbacks(myRunnable2);
 		mHandler.removeCallbacks(xuRunnable);
-		
+		mHandler.removeCallbacks(myRunnableMusic);		
     }
 }
