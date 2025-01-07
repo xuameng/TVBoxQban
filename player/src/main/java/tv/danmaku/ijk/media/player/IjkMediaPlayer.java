@@ -42,27 +42,15 @@ import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 
-import com.github.tvbox.osc.base.App;
-import com.github.tvbox.osc.util.FileUtils;
-
-import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import tv.danmaku.ijk.media.player.annotations.AccessedByNative;
 import tv.danmaku.ijk.media.player.annotations.CalledByNative;
@@ -199,16 +187,22 @@ public final class IjkMediaPlayer extends AbstractMediaPlayer {
             if (!mIsLibLoaded) {
                 if (libLoader == null)
                     libLoader = sLocalLibLoader;
-
                 try {
+                    //ff4
                     libLoader.loadLibrary("ijkffmpeg");
                     libLoader.loadLibrary("ijksdl");
-                    libLoader.loadLibrary("ijkplayer");
-                } catch (Throwable throwable) {
+                    libLoader.loadLibrary("player");
+
+                    //ff5
+//                    libLoader.loadLibrary("ffmpeg");
+//                    libLoader.loadLibrary("exoffmpeg");
+//                    libLoader.loadLibrary("ijksdl");
+//                    libLoader.loadLibrary("ijkplayer");
+                } catch (Throwable ignored) {
 
                 }
-                mIsLibLoaded = true;
 
+                mIsLibLoaded = true;
             }
         }
     }
@@ -406,85 +400,22 @@ public final class IjkMediaPlayer extends AbstractMediaPlayer {
      * Sets the data source (file-path or http/rtsp URL) to use.
      *
      * @param path the path of the file, or the http/rtsp URL of the stream you
-     * want to play
+     *             want to play
      * @throws IllegalStateException if it is called in an invalid state
      *
-     * <p>
-     * When <code>path</code> refers to a local file, the file may
-     * actually be opened by a process other than the calling
-     * application. This implies that the pathname should be an
-     * absolute path (as any other process runs with unspecified
-     * current working directory), and that the pathname should
-     * reference a world-readable file.
+     *                               <p>
+     *                               When <code>path</code> refers to a local file, the file may
+     *                               actually be opened by a process other than the calling
+     *                               application. This implies that the pathname should be an
+     *                               absolute path (as any other process runs with unspecified
+     *                               current working directory), and that the pathname should
+     *                               reference a world-readable file.
      */
-    private boolean over = false;
-
     @Override
     public void setDataSource(String path)
             throws IOException, IllegalArgumentException, SecurityException, IllegalStateException {
-        if (path.contains(".xml")) {
-            this.over = false;
-            new Thread() {
-                public void run() {
-                    try {
-                        HttpURLConnection httpURLConnection = (HttpURLConnection) new URL(path).openConnection();
-                        httpURLConnection.setRequestMethod("GET");
-                        httpURLConnection.setDoInput(true);
-                        httpURLConnection.setUseCaches(false);
-                        httpURLConnection.setConnectTimeout(10000);
-                        httpURLConnection.setReadTimeout(10000);
-                        httpURLConnection.connect();
-                        if (httpURLConnection.getResponseCode() == 200) {
-                            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
-                            String str = "";
-                            while (true) {
-                                String readLine = bufferedReader.readLine();
-                                if (readLine == null) {
-                                    break;
-                                }
-                                str = str + readLine + "\n";
-                            }
-                            if (str.length() >= 20) {
-                                mDataSource = xml2ffconcat(str);
-                            }
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    over = true;
-                }
-            }.start();
-
-            while (!this.over) {
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                }
-            }
-        }
         mDataSource = path;
         _setDataSource(path, null, null);
-    }
-
-    public static String xml2ffconcat(String str) {
-        String str2 = FileUtils.getCachePath() + "ijk-cache" + System.currentTimeMillis() + ".ffconcat";
-        try {
-            File file = new File(str2);
-            if (!file.exists()) {
-                file.createNewFile();
-            }
-            FileOutputStream fileOutputStream = new FileOutputStream(file);
-            Matcher matcher = Pattern.compile("<file><!\\[CDATA\\[(.*?)]]></file><seconds>(.*?)</seconds>").matcher(str);
-            String str3 = "ffconcat version 1.0\n";
-            fileOutputStream.write("ffconcat version 1.0\n".getBytes());
-            while (matcher.find()) {
-                str3 = str3 + "file '" + matcher.group(1) + "'\nduration " + matcher.group(2) + "\n";
-                fileOutputStream.write(("file '" + matcher.group(1) + "'\nduration " + matcher.group(2) + "\n").getBytes());
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return str2;
     }
 
     /**
@@ -506,7 +437,7 @@ public final class IjkMediaPlayer extends AbstractMediaPlayer {
                     sb.append(entry.getValue());
                 sb.append("\r\n");
                 setOption(OPT_CATEGORY_FORMAT, "headers", sb.toString());
-                setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "protocol_whitelist", "async,cache,crypto,file,http,https,ijkhttphook,ijkinject,ijklivehook,ijklongurl,ijksegment,ijktcphook,pipe,rtp,tcp,tls,udp,ijkurlhook,data");
+                setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "protocol_whitelist", "async,cache,crypto,file,dash,http,https,ijkhttphook,ijkinject,ijklivehook,ijklongurl,ijksegment,ijktcphook,pipe,rtp,tcp,tls,udp,ijkurlhook,data");
             }
         }
         setDataSource(path);
@@ -828,7 +759,7 @@ public final class IjkMediaPlayer extends AbstractMediaPlayer {
         _setPropertyFloat(FFP_PROP_FLOAT_PLAYBACK_RATE, speed);
     }
 
-    public float getSpeed() {
+    public float getSpeed(float speed) {
         return _getPropertyFloat(FFP_PROP_FLOAT_PLAYBACK_RATE, .0f);
     }
 
@@ -1118,8 +1049,26 @@ public final class IjkMediaPlayer extends AbstractMediaPlayer {
                     if (msg.obj == null) {
                         player.notifyOnTimedText(null);
                     } else {
-                        IjkTimedText text = new IjkTimedText(new Rect(0, 0, 1, 1), (String) msg.obj);
-                        player.notifyOnTimedText(text);
+                        String msg_text=(String) msg.obj;
+                        if(msg_text.contains("{\\fad")){
+                            player.notifyOnTimedText(null);
+                            return;
+                        }
+                        if (msg.arg1 == 0) {// normal
+                            IjkTimedText text = new IjkTimedText(new Rect(0, 0, 1, 1), msg_text);
+                            player.notifyOnTimedText(text);
+                        } else if (msg.arg1 == 1) { // ass
+                            IjkTimedText text = new IjkTimedText(new Rect(0, 0, 1, 1), msg_text);
+                            player.notifyOnTimedText(text);
+                        } else if (msg.arg1 == 2) { // bitmap
+                            IjkTimedText text;
+                            if (msg.arg2 > 0 && ((int[]) msg.obj).length == msg.arg2) {
+                                text = new IjkTimedText((int[]) msg.obj);
+                            } else {
+                                text = new IjkTimedText(null, "");
+                            }
+                            player.notifyOnTimedText(text);
+                        }
                     }
                     return;
                 case MEDIA_NOP: // interface test message - ignore
