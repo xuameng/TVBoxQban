@@ -34,6 +34,11 @@ public class EXOmPlayer extends ExoMediaPlayer {
                     TrackGroup group = groupArray.get(groupIndex);
                     for (int formatIndex = 0; formatIndex < group.length; formatIndex++) {
                         Format format = group.getFormat(formatIndex);
+
+
+        if (format == null || TextUtils.isEmpty(format))
+            format = "未知";
+    }
 						String originalString = format.sampleMimeType;   //xuameng显示字幕类型
 						String stringToReplace = "application/";  //xuameng过滤字幕类型里application/字符串
 						String replacementString = "";
