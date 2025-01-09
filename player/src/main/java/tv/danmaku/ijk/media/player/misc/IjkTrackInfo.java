@@ -87,7 +87,7 @@ public class IjkTrackInfo implements ITrackInfo {
   //              out.append(", ");
 				out.append("[");
 				out.append(mStreamMeta.mCodecName);
-				out.append("]");
+				out.append("字幕]");
                 break;
             case MEDIA_TRACK_TYPE_SUBTITLE:
                 out.append("SUBTITLE");
