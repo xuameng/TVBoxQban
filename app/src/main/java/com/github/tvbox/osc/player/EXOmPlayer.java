@@ -36,7 +36,7 @@ public class EXOmPlayer extends ExoMediaPlayer {
                         Format format = group.getFormat(formatIndex);
 
 
-        if (format == null || TextUtils.isEmpty(format))
+        if (format == null || TextUtils.isEmpty(format)){
             format = "未知";
     }
 						String originalString = format.sampleMimeType;   //xuameng显示字幕类型
