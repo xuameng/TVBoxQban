@@ -50,21 +50,23 @@ public class EXOmPlayer extends ExoMediaPlayer {
 							String trackName = (data.getAudio().size() + 1) + "：" + trackNameProvider.getTrackName(format) + "[" + (TextUtils.isEmpty(audioString)?format.sampleMimeType:audioString) + "]";
 							TrackInfoBean t = new TrackInfoBean();
 							t.name = trackName;
-						}else {
-							String trackName = (data.getAudio().size() + 1) + "：" + trackNameProvider.getTrackName(format) + "[" + (TextUtils.isEmpty(format.codecs)?format.sampleMimeType:format.codecs) + "]";
-							TrackInfoBean t = new TrackInfoBean();
-							t.name = trackName;
-						}
-
-
-							TrackInfoBean t = new TrackInfoBean();
-                            
                             t.language = "";
                             t.trackId = formatIndex;
                             t.selected = !StringUtils.isEmpty(audioId) && audioId.equals(format.id);
                             t.trackGroupId = groupIndex;
                             t.renderId = groupArrayIndex;
                             data.addAudio(t);
+						}else{
+							String trackName = (data.getAudio().size() + 1) + "：" + trackNameProvider.getTrackName(format) + "[" + (TextUtils.isEmpty(format.codecs)?format.sampleMimeType:format.codecs) + "]";
+							TrackInfoBean t = new TrackInfoBean();
+                            t.name = trackName;
+                            t.language = "";
+                            t.trackId = formatIndex;
+                            t.selected = !StringUtils.isEmpty(audioId) && audioId.equals(format.id);
+                            t.trackGroupId = groupIndex;
+                            t.renderId = groupArrayIndex;
+                            data.addAudio(t);
+						}
                         } else if (MimeTypes.isText(format.sampleMimeType)) {
 							String originalString = format.sampleMimeType;   //xuameng显示字幕类型
 							String stringToReplace = "application/";  //xuameng过滤字幕类型里application/字符串
