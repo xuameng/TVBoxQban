@@ -51,15 +51,15 @@ public class EXOmPlayer extends ExoMediaPlayer {
 							if(originalString.contains(stringToReplace)) {  //xuameng过滤字幕类型里application/字符串
 							originalString = originalString.replace(stringToReplace, replacementString);  //xuameng过滤字幕类型里application/字符串
 							}
-							String text = "text/x-";  //xuameng过滤字幕类型里application/字符串
-							String textString = "";
-							if(originalString.contains(text)) {  //xuameng过滤字幕类型里application/字符串
-							originalString = originalString.replace(text, textString);  //xuameng过滤字幕类型里application/字符串
+							String text2 = "text/x-";  //xuameng过滤字幕类型里application/字符串
+							String textString2 = "";
+							if(originalString.contains(text2)) {  //xuameng过滤字幕类型里application/字符串
+							originalString = originalString.replace(text2, textString2);  //xuameng过滤字幕类型里application/字符串
 							}
-							String text1 = "x-";  //xuameng过滤字幕类型里application/字符串
-							String textString1 = "";
-							if(originalString.contains(text1)) {  //xuameng过滤字幕类型里application/字符串
-							originalString = originalString.replace(text1, textString1);  //xuameng过滤字幕类型里application/字符串
+							String text3 = "x-";  //xuameng过滤字幕类型里application/字符串
+							String textString3 = "";
+							if(originalString.contains(text3)) {  //xuameng过滤字幕类型里application/字符串
+							originalString = originalString.replace(text3, textString3);  //xuameng过滤字幕类型里application/字符串
 							}
                         if (MimeTypes.isAudio(format.sampleMimeType)) {
 							String trackName = (data.getAudio().size() + 1) + "：" + trackNameProvider.getTrackName(format) + "[" + (TextUtils.isEmpty(format.codecs)?format.sampleMimeType:audioString) + "]";
