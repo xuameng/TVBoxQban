@@ -51,7 +51,7 @@ public class EXOmPlayer extends ExoMediaPlayer {
 							TrackInfoBean t = new TrackInfoBean();
 							t.name = trackName;
 						}else {
-							String audioString = "null"
+							String audioString = "null";
 							String trackName = (data.getAudio().size() + 1) + "：" + trackNameProvider.getTrackName(format) + "[" + (TextUtils.isEmpty(audioString)?format.sampleMimeType:audioString) + "]";
 							TrackInfoBean t = new TrackInfoBean();
 							t.name = trackName;
