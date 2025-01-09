@@ -46,7 +46,7 @@ public class IjkTrackInfo implements ITrackInfo {
         return mStreamMeta.mLanguage;
     }
 
-    @Override
+
     public String getMCodecName() {
         if (TextUtils.isEmpty(mStreamMeta.mCodecName))
             return "未知";
@@ -54,7 +54,7 @@ public class IjkTrackInfo implements ITrackInfo {
 		String text = "hdmv_pgs_subtitle";  //xuameng过滤字幕类型里application/字符串
 		String textString = "pgs";
 		if(zimuCodecs.contains(text)) {  //xuameng过滤字幕类型里application/字符串
-			zimuCodecs = audioString.replace(text, textString);  //xuameng过滤字幕类型里application/字符串
+			zimuCodecs = zimuCodecs.replace(text, textString);  //xuameng过滤字幕类型里application/字符串
 		}
         return zimuCodecs;
     }
