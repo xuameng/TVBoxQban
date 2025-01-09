@@ -142,10 +142,10 @@ public class IjkMediaPlayer extends IjkPlayer {
                 data.addAudio(a);
             }
             if (info.getTrackType() == ITrackInfo.MEDIA_TRACK_TYPE_TIMEDTEXT) {//内置字幕
-				String trackName = (data.getSubtitle().size() + 1) + "：" + info.getLanguage() + ", " + info.getInfoInline();
+				String trackName = (data.getSubtitle().size() + 1) + "：" + info.getInfoInline();
                 TrackInfoBean t = new TrackInfoBean();
                 t.name = trackName;
-  //              t.language = info.getLanguage();
+                t.language = info.getLanguage();
                 t.trackId = index;
                 t.selected = index == subtitleSelected;
                 data.addSubtitle(t);
