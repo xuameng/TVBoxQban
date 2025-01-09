@@ -76,20 +76,20 @@ public class IjkTrackInfo implements ITrackInfo {
             case MEDIA_TRACK_TYPE_AUDIO:
                 out.append("AUDIO");
                 out.append(", ");
-		out.append(getLanguage());  //xuameng显示语言
-		out.append(", ");
+				out.append(mStreamMeta.mLanguage);  //xuameng显示语言
+				out.append(", ");
                 out.append(mStreamMeta.getSampleRateInline());
-		out.append(", ");
+				out.append(", ");
                 out.append(mStreamMeta.getCodecShortNameInline());
                 out.append(", ");
                 out.append(mStreamMeta.getBitrateInline());
                 break;
             case MEDIA_TRACK_TYPE_TIMEDTEXT:
-                out.append(getLanguage());  //xuameng显示语言
+                out.append(mStreamMeta.mLanguage);  //xuameng显示语言
                 out.append(", ");
-		out.append("[");
-		out.append(mStreamMeta.mCodecName);
-		out.append("]");
+				out.append("[");
+				out.append(mStreamMeta.mCodecName);
+				out.append("]");
                 break;
             case MEDIA_TRACK_TYPE_SUBTITLE:
                 out.append("SUBTITLE");
