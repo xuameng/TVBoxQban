@@ -48,9 +48,11 @@ public class EXOmPlayer extends ExoMediaPlayer {
 							audioString = audioString.replace(text3, textString3);  //xuameng过滤字幕类型里application/字符串
 							}
 							String trackName = (data.getAudio().size() + 1) + "：" + trackNameProvider.getTrackName(format) + "[" + (TextUtils.isEmpty(format.codecs)?format.sampleMimeType:audioString) + "]";
+							TrackInfoBean t = new TrackInfoBean();
 							t.name = trackName;
 						}else {
 							String trackName = (data.getAudio().size() + 1) + "：" + trackNameProvider.getTrackName(format) + "[" + (TextUtils.isEmpty(format.codecs)?format.sampleMimeType:format.codecs) + "]";
+							TrackInfoBean t = new TrackInfoBean();
 							t.name = trackName;
 						}
 
