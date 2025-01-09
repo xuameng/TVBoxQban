@@ -319,7 +319,7 @@ public class IjkMediaPlayer extends IjkPlayer {
 					audioLanguage = audioLanguage.replace(tur, changetur);  //xuameng过滤字幕类型里application/字符串
 				}
 				String und = "und";  //xuameng过滤字幕类型里application/字符串
-				String changeund = "未知语";
+				String changeund = "未知";
 				if(audioLanguage.contains(und)) {  //xuameng过滤字幕类型里application/字符串
 					audioLanguage = audioLanguage.replace(und, changeund);  //xuameng过滤字幕类型里application/字符串
 				}
@@ -520,7 +520,7 @@ public class IjkMediaPlayer extends IjkPlayer {
 					zimuLanguage = zimuLanguage.replace(tur, changetur);  //xuameng过滤字幕类型里application/字符串
 				}
 				String und = "und";  //xuameng过滤字幕类型里application/字符串
-				String changeund = "未知语";
+				String changeund = "未知";
 				if(zimuLanguage.contains(und)) {  //xuameng过滤字幕类型里application/字符串
 					zimuLanguage = zimuLanguage.replace(und, changeund);  //xuameng过滤字幕类型里application/字符串
 				}
