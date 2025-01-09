@@ -129,7 +129,6 @@ public class IjkMediaPlayer extends IjkPlayer {
         TrackInfo data = new TrackInfo();
         int subtitleSelected = mMediaPlayer.getSelectedTrack(ITrackInfo.MEDIA_TRACK_TYPE_TIMEDTEXT);
         int audioSelected = mMediaPlayer.getSelectedTrack(ITrackInfo.MEDIA_TRACK_TYPE_AUDIO);
-		int subtitleType = ITrackInfo.MEDIA_TRACK_TYPE_SUBTITLE;
         int index = 0;
         for (IjkTrackInfo info : trackInfo) {
             if (info.getTrackType() == ITrackInfo.MEDIA_TRACK_TYPE_AUDIO) {//音轨信息
@@ -143,7 +142,7 @@ public class IjkMediaPlayer extends IjkPlayer {
                 data.addAudio(a);
             }
             if (info.getTrackType() == ITrackInfo.MEDIA_TRACK_TYPE_TIMEDTEXT) {//内置字幕
-				String trackName = (data.getSubtitle().size() + 1) + "：" + info.getInfoInline() + subtitleType;
+				String trackName = (data.getSubtitle().size() + 1) + "：" + info.getInfoInline();
                 TrackInfoBean t = new TrackInfoBean();
                 t.name = trackName;
                 t.language = info.getLanguage();
