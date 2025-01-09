@@ -34,9 +34,19 @@ public class EXOmPlayer extends ExoMediaPlayer {
                     TrackGroup group = groupArray.get(groupIndex);
                     for (int formatIndex = 0; formatIndex < group.length; formatIndex++) {
                         Format format = group.getFormat(formatIndex);
+						String audioString = format.codecs;   //xuameng显示字幕类型
                         if (MimeTypes.isAudio(format.sampleMimeType)) {
-							String audioString = format.codecs;   //xuameng显示字幕类型
-							if (audioString != null) {
+							if (audioString == null || TextUtils.isEmpty(audioString)) {
+							String trackName = (data.getAudio().size() + 1) + "：" + trackNameProvider.getTrackName(format) + "[" + (TextUtils.isEmpty(format.codecs)?format.sampleMimeType:format.codecs) + "]";
+							TrackInfoBean t = new TrackInfoBean();
+                            t.name = trackName;
+                            t.language = "";
+                            t.trackId = formatIndex;
+                            t.selected = !StringUtils.isEmpty(audioId) && audioId.equals(format.id);
+                            t.trackGroupId = groupIndex;
+                            t.renderId = groupArrayIndex;
+                            data.addAudio(t);
+						}else{
 							String text2 = "audio/";  //xuameng过滤字幕类型里application/字符串
 							String textString2 = "";
 							if(audioString.contains(text2)) {  //xuameng过滤字幕类型里application/字符串
@@ -50,16 +60,6 @@ public class EXOmPlayer extends ExoMediaPlayer {
 							String trackName = (data.getAudio().size() + 1) + "：" + trackNameProvider.getTrackName(format) + "[" + (TextUtils.isEmpty(audioString)?format.sampleMimeType:audioString) + "]";
 							TrackInfoBean t = new TrackInfoBean();
 							t.name = trackName;
-                            t.language = "";
-                            t.trackId = formatIndex;
-                            t.selected = !StringUtils.isEmpty(audioId) && audioId.equals(format.id);
-                            t.trackGroupId = groupIndex;
-                            t.renderId = groupArrayIndex;
-                            data.addAudio(t);
-						}else{
-							String trackName = (data.getAudio().size() + 1) + "：" + trackNameProvider.getTrackName(format) + "[" + (TextUtils.isEmpty(format.codecs)?format.sampleMimeType:format.codecs) + "]";
-							TrackInfoBean t = new TrackInfoBean();
-                            t.name = trackName;
                             t.language = "";
                             t.trackId = formatIndex;
                             t.selected = !StringUtils.isEmpty(audioId) && audioId.equals(format.id);
