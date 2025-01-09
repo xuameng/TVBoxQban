@@ -273,11 +273,6 @@ public class IjkMediaPlayer extends IjkPlayer {
 				if(audioLanguage.contains(rus)) {  //xuameng过滤字幕类型里application/字符串
 					audioLanguage = audioLanguage.replace(rus, changerus);  //xuameng过滤字幕类型里application/字符串
 				}
-				String lav = "lav";  //xuameng过滤字幕类型里application/字符串
-				String changelav = "拉脱维亚语";
-				if(audioLanguage.contains(lav)) {  //xuameng过滤字幕类型里application/字符串
-					audioLanguage = audioLanguage.replace(lav, changelav);  //xuameng过滤字幕类型里application/字符串
-				}
 				String slo = "slo";  //xuameng过滤字幕类型里application/字符串
 				String changeslo = "斯洛伐克语";
 				if(audioLanguage.contains(slo)) {  //xuameng过滤字幕类型里application/字符串
@@ -317,11 +312,6 @@ public class IjkMediaPlayer extends IjkPlayer {
 				String changevie = "越南语";
 				if(audioLanguage.contains(vie)) {  //xuameng过滤字幕类型里application/字符串
 					audioLanguage = audioLanguage.replace(vie, changevie);  //xuameng过滤字幕类型里application/字符串
-				}
-				String tur = "tur";  //xuameng过滤字幕类型里application/字符串
-				String changetur = "土耳其语";
-				if(audioLanguage.contains(tur)) {  //xuameng过滤字幕类型里application/字符串
-					audioLanguage = audioLanguage.replace(tur, changetur);  //xuameng过滤字幕类型里application/字符串
 				}
 				String tur = "tur";  //xuameng过滤字幕类型里application/字符串
 				String changetur = "土耳其语";
@@ -484,11 +474,6 @@ public class IjkMediaPlayer extends IjkPlayer {
 				if(zimuLanguage.contains(rus)) {  //xuameng过滤字幕类型里application/字符串
 					zimuLanguage = zimuLanguage.replace(rus, changerus);  //xuameng过滤字幕类型里application/字符串
 				}
-				String lav = "lav";  //xuameng过滤字幕类型里application/字符串
-				String changelav = "拉脱维亚语";
-				if(zimuLanguage.contains(lav)) {  //xuameng过滤字幕类型里application/字符串
-					zimuLanguage = zimuLanguage.replace(lav, changelav);  //xuameng过滤字幕类型里application/字符串
-				}
 				String slo = "slo";  //xuameng过滤字幕类型里application/字符串
 				String changeslo = "斯洛伐克语";
 				if(zimuLanguage.contains(slo)) {  //xuameng过滤字幕类型里application/字符串
@@ -528,11 +513,6 @@ public class IjkMediaPlayer extends IjkPlayer {
 				String changevie = "越南语";
 				if(zimuLanguage.contains(vie)) {  //xuameng过滤字幕类型里application/字符串
 					zimuLanguage = zimuLanguage.replace(vie, changevie);  //xuameng过滤字幕类型里application/字符串
-				}
-				String tur = "tur";  //xuameng过滤字幕类型里application/字符串
-				String changetur = "土耳其语";
-				if(zimuLanguage.contains(tur)) {  //xuameng过滤字幕类型里application/字符串
-					zimuLanguage = zimuLanguage.replace(tur, changetur);  //xuameng过滤字幕类型里application/字符串
 				}
 				String tur = "tur";  //xuameng过滤字幕类型里application/字符串
 				String changetur = "土耳其语";
