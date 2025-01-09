@@ -134,7 +134,7 @@ public class IjkMediaPlayer extends IjkPlayer {
 						String originalString = info.getLanguage();   //xuameng显示字幕类型
 						String ch = "ch";  //xuameng过滤字幕类型里application/字符串
 						String change = "中文";
-						if(originalString.contains(stringToReplace)) {  //xuameng过滤字幕类型里application/字符串
+						if(originalString.contains(ch)) {  //xuameng过滤字幕类型里application/字符串
 						originalString = originalString.replace(ch, change);  //xuameng过滤字幕类型里application/字符串
 						}
 
