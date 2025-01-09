@@ -34,7 +34,6 @@ public class EXOmPlayer extends ExoMediaPlayer {
                     TrackGroup group = groupArray.get(groupIndex);
                     for (int formatIndex = 0; formatIndex < group.length; formatIndex++) {
                         Format format = group.getFormat(formatIndex);
-                        if (MimeTypes.isAudio(format.sampleMimeType)) {
 							String audioString = format.codecs;   //xuameng显示字幕类型
 							String text = "audio/";  //xuameng过滤字幕类型里application/字符串
 							String textString = "";
@@ -46,16 +45,6 @@ public class EXOmPlayer extends ExoMediaPlayer {
 							if(audioString.contains(text1)) {  //xuameng过滤字幕类型里application/字符串
 							audioString = audioString.replace(text1, textString1);  //xuameng过滤字幕类型里application/字符串
 							}
-							String trackName = (data.getAudio().size() + 1) + "：" + trackNameProvider.getTrackName(format) + "[" + (TextUtils.isEmpty(format.codecs)?format.sampleMimeType:audioString) + "]";
-							TrackInfoBean t = new TrackInfoBean();
-                            t.name = trackName;
-                            t.language = "";
-                            t.trackId = formatIndex;
-                            t.selected = !StringUtils.isEmpty(audioId) && audioId.equals(format.id);
-                            t.trackGroupId = groupIndex;
-                            t.renderId = groupArrayIndex;
-                            data.addAudio(t);
-                        } else if (MimeTypes.isText(format.sampleMimeType)) {
 							String originalString = format.sampleMimeType;   //xuameng显示字幕类型
 							String stringToReplace = "application/";  //xuameng过滤字幕类型里application/字符串
 							String replacementString = "";
@@ -72,6 +61,17 @@ public class EXOmPlayer extends ExoMediaPlayer {
 							if(originalString.contains(text1)) {  //xuameng过滤字幕类型里application/字符串
 							originalString = originalString.replace(text1, textString1);  //xuameng过滤字幕类型里application/字符串
 							}
+                        if (MimeTypes.isAudio(format.sampleMimeType)) {
+							String trackName = (data.getAudio().size() + 1) + "：" + trackNameProvider.getTrackName(format) + "[" + (TextUtils.isEmpty(format.codecs)?format.sampleMimeType:audioString) + "]";
+							TrackInfoBean t = new TrackInfoBean();
+                            t.name = trackName;
+                            t.language = "";
+                            t.trackId = formatIndex;
+                            t.selected = !StringUtils.isEmpty(audioId) && audioId.equals(format.id);
+                            t.trackGroupId = groupIndex;
+                            t.renderId = groupArrayIndex;
+                            data.addAudio(t);
+                        } else if (MimeTypes.isText(format.sampleMimeType)) {
 							String trackName = (data.getSubtitle().size() + 1) + "：" + trackNameProvider.getTrackName(format) + "，"  + "[" + originalString  + "字幕]";  //xuameng显示字幕类型
                             TrackInfoBean t = new TrackInfoBean();
                             t.name = trackName;
