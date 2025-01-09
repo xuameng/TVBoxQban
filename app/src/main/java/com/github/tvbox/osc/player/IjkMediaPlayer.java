@@ -135,7 +135,7 @@ public class IjkMediaPlayer extends IjkPlayer {
 				String trackName = (data.getAudio().size() + 1) + "：" + info.getInfoInline();
                 TrackInfoBean a = new TrackInfoBean();
                 a.name = trackName;
-                a.language = info.getLanguage();
+    //            a.language = info.getLanguage();
                 a.trackId = index;
                 a.selected = index == audioSelected;
                 // 如果需要，还可以检查轨道的描述或标题以获取更多信息
@@ -145,7 +145,7 @@ public class IjkMediaPlayer extends IjkPlayer {
 				String trackName = (data.getSubtitle().size() + 1) + "：" + info.getInfoInline();
                 TrackInfoBean t = new TrackInfoBean();
                 t.name = trackName;
-                t.language = info.getLanguage();
+   //             t.language = info.getLanguage();
                 t.trackId = index;
                 t.selected = index == subtitleSelected;
                 data.addSubtitle(t);
