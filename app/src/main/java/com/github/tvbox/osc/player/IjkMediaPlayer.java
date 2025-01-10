@@ -353,7 +353,7 @@ public class IjkMediaPlayer extends IjkPlayer {
 				if(audioLanguage.contains(nob)) {  //xuameng过滤字幕类型里application/字符串
 					audioLanguage = audioLanguage.replace(nob, changenob);  //xuameng过滤字幕类型里application/字符串
 				}
-				String tur = "rum";  //xuameng过滤字幕类型里application/字符串
+				String rum = "rum";  //xuameng过滤字幕类型里application/字符串
 				String changerum = "罗马尼亚语";
 				if(audioLanguage.contains(rum)) {  //xuameng过滤字幕类型里application/字符串
 					audioLanguage = audioLanguage.replace(rum, changerum);  //xuameng过滤字幕类型里application/字符串
@@ -594,7 +594,7 @@ public class IjkMediaPlayer extends IjkPlayer {
 				if(zimuLanguage.contains(nob)) {  //xuameng过滤字幕类型里application/字符串
 					zimuLanguage = zimuLanguage.replace(nob, changenob);  //xuameng过滤字幕类型里application/字符串
 				}
-				String tur = "rum";  //xuameng过滤字幕类型里application/字符串
+				String rum = "rum";  //xuameng过滤字幕类型里application/字符串
 				String changerum = "罗马尼亚语";
 				if(zimuLanguage.contains(rum)) {  //xuameng过滤字幕类型里application/字符串
 					zimuLanguage = zimuLanguage.replace(rum, changerum);  //xuameng过滤字幕类型里application/字符串
