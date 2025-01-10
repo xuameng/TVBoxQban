@@ -48,7 +48,7 @@ public class IjkTrackInfo implements ITrackInfo {
 
 
     public String getMCodecName() {
-        if (TextUtils.isEmpty(mStreamMeta.mCodecName))
+        if (mStreamMeta.mCodecName == null || TextUtils.isEmpty(mStreamMeta.mCodecName))
             return "未知";
 		String zimuCodecs = mStreamMeta.mCodecName;   //xuameng显示字幕类型
 		String text = "hdmv_pgs_subtitle";  //xuameng过滤字幕类型里application/字符串
