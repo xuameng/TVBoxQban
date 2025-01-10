@@ -64,7 +64,7 @@ public class EXOmPlayer extends ExoMediaPlayer {
 							String trackName = (data.getSubtitle().size() + 1) + "：" + trackNameProvider.getTrackName(format) + "，"  + "[" + originalString  + "字幕]";  //xuameng显示字幕类型
                             TrackInfoBean t = new TrackInfoBean();
                             t.name = trackName;
-                            t.language = "";
+                            t.language = trackNameProvider.getTrackName(format);
                             t.trackId = formatIndex;
                             t.selected = !StringUtils.isEmpty(subtitleId) && subtitleId.equals(format.id);
                             t.trackGroupId = groupIndex;
