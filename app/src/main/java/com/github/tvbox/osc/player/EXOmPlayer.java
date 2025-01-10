@@ -35,10 +35,17 @@ public class EXOmPlayer extends ExoMediaPlayer {
                     for (int formatIndex = 0; formatIndex < group.length; formatIndex++) {
                         Format format = group.getFormat(formatIndex);
                         if (MimeTypes.isAudio(format.sampleMimeType)) {
+														String originalString = format.codecs;   //xuameng显示字幕类型
+							String stringToReplace = "audio/";  //xuameng过滤字幕类型里application/字符串
+							String replacementString = "";
+							if(originalString.contains(stringToReplace)) {  //xuameng过滤字幕类型里application/字符串
+							originalString = originalString.replace(stringToReplace, replacementString);  //xuameng过滤字幕类型里application/字符串
+							}
+
 							String trackName = (data.getAudio().size() + 1) + "：" + trackNameProvider.getTrackName(format) + "[" + (TextUtils.isEmpty(format.codecs)?format.sampleMimeType:format.codecs) + "]";
 							TrackInfoBean t = new TrackInfoBean();
                             t.name = trackName;
-                            t.language = "";
+                            t.language = originalString;
                             t.trackId = formatIndex;
                             t.selected = !StringUtils.isEmpty(audioId) && audioId.equals(format.id);
                             t.trackGroupId = groupIndex;
