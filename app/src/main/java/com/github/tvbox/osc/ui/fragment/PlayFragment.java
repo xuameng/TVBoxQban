@@ -668,6 +668,7 @@ public class PlayFragment extends BaseLazyFragment {
                                 hasCh=true;
                     //            if (selectedIndex != subtitleTrackInfoBean.trackId) {
                                     if (mVideoView.getMediaPlayer() instanceof IjkMediaPlayer){
+										AbstractPlayer mediaPlayer = mVideoView.getMediaPlayer();
                     mediaPlayer.pause();
                     long progress = mediaPlayer.getCurrentPosition();//XUAMENG保存当前进度，回退3秒
                         mController.mSubtitleView.destroy();
@@ -683,6 +684,7 @@ public class PlayFragment extends BaseLazyFragment {
 
                                         ((IjkMediaPlayer)(mVideoView.getMediaPlayer())).setTrack(subtitleTrackInfoBean.trackId);
                                     }else if (mVideoView.getMediaPlayer() instanceof EXOmPlayer){
+										AbstractPlayer mediaPlayer = mVideoView.getMediaPlayer();
                     mediaPlayer.pause();
                     long progress = mediaPlayer.getCurrentPosition();//XUAMENG保存当前进度，回退3秒
                         mController.mSubtitleView.destroy();
@@ -703,6 +705,7 @@ public class PlayFragment extends BaseLazyFragment {
                         }
                         if(!hasCh){
                             if (mVideoView.getMediaPlayer() instanceof IjkMediaPlayer){
+								AbstractPlayer mediaPlayer = mVideoView.getMediaPlayer();
                     mediaPlayer.pause();
                     long progress = mediaPlayer.getCurrentPosition();//XUAMENG保存当前进度，回退3秒
                         mController.mSubtitleView.destroy();
@@ -717,6 +720,7 @@ public class PlayFragment extends BaseLazyFragment {
                     
                                 ((IjkMediaPlayer)(mVideoView.getMediaPlayer())).setTrack(subtitleTrackList.get(0).trackId);
                             }else if (mVideoView.getMediaPlayer() instanceof EXOmPlayer){
+								AbstractPlayer mediaPlayer = mVideoView.getMediaPlayer();
                     mediaPlayer.pause();
                     long progress = mediaPlayer.getCurrentPosition();//XUAMENG保存当前进度，回退3秒
                         mController.mSubtitleView.destroy();
