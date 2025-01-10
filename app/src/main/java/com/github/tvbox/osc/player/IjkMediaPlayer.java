@@ -320,43 +320,43 @@ public class IjkMediaPlayer extends IjkPlayer {
 				}
 				String cat = "cat";  //xuameng过滤字幕类型里application/字符串
 				String changecat = "泰加罗尼亚语";
-				if(zimuLanguage.contains(cat)) {  //xuameng过滤字幕类型里application/字符串
-					zimuLanguage = zimuLanguage.replace(cat, changecat);  //xuameng过滤字幕类型里application/字符串
+				if(audioLanguage.contains(cat)) {  //xuameng过滤字幕类型里application/字符串
+					audioLanguage = audioLanguage.replace(cat, changecat);  //xuameng过滤字幕类型里application/字符串
 				}
 				String baq = "baq";  //xuameng过滤字幕类型里application/字符串
 				String changebaq = "巴基斯坦语";
-				if(zimuLanguage.contains(baq)) {  //xuameng过滤字幕类型里application/字符串
-					zimuLanguage = zimuLanguage.replace(baq, changebaq);  //xuameng过滤字幕类型里application/字符串
+				if(audioLanguage.contains(baq)) {  //xuameng过滤字幕类型里application/字符串
+					audioLanguage = audioLanguage.replace(baq, changebaq);  //xuameng过滤字幕类型里application/字符串
 				}
 				String fil = "fil";  //xuameng过滤字幕类型里application/字符串
 				String changefil = "菲律宾语";
-				if(zimuLanguage.contains(fil)) {  //xuameng过滤字幕类型里application/字符串
-					zimuLanguage = zimuLanguage.replace(fil, changefil);  //xuameng过滤字幕类型里application/字符串
+				if(audioLanguage.contains(fil)) {  //xuameng过滤字幕类型里application/字符串
+					audioLanguage = audioLanguage.replace(fil, changefil);  //xuameng过滤字幕类型里application/字符串
 				}
 				String glg = "glg";  //xuameng过滤字幕类型里application/字符串
 				String changeglg = "加利西亚语";
-				if(zimuLanguage.contains(glg)) {  //xuameng过滤字幕类型里application/字符串
-					zimuLanguage = zimuLanguage.replace(glg, changeglg);  //xuameng过滤字幕类型里application/字符串
+				if(audioLanguage.contains(glg)) {  //xuameng过滤字幕类型里application/字符串
+					audioLanguage = audioLanguage.replace(glg, changeglg);  //xuameng过滤字幕类型里application/字符串
 				}
 				String kan = "kan";  //xuameng过滤字幕类型里application/字符串
 				String changekan = "卡纳达语";
-				if(zimuLanguage.contains(kan)) {  //xuameng过滤字幕类型里application/字符串
-					zimuLanguage = zimuLanguage.replace(kan, changekan);  //xuameng过滤字幕类型里application/字符串
+				if(audioLanguage.contains(kan)) {  //xuameng过滤字幕类型里application/字符串
+					audioLanguage = audioLanguage.replace(kan, changekan);  //xuameng过滤字幕类型里application/字符串
 				}
 				String mal = "mal";  //xuameng过滤字幕类型里application/字符串
 				String changemal = "马拉雅拉姆语";
-				if(zimuLanguage.contains(mal)) {  //xuameng过滤字幕类型里application/字符串
-					zimuLanguage = zimuLanguage.replace(mal, changemal);  //xuameng过滤字幕类型里application/字符串
+				if(audioLanguage.contains(mal)) {  //xuameng过滤字幕类型里application/字符串
+					audioLanguage = audioLanguage.replace(mal, changemal);  //xuameng过滤字幕类型里application/字符串
 				}
 				String nob = "nob";  //xuameng过滤字幕类型里application/字符串
 				String changenob = "书面挪威语";
-				if(zimuLanguage.contains(nob)) {  //xuameng过滤字幕类型里application/字符串
-					zimuLanguage = zimuLanguage.replace(nob, changenob);  //xuameng过滤字幕类型里application/字符串
+				if(audioLanguage.contains(nob)) {  //xuameng过滤字幕类型里application/字符串
+					audioLanguage = audioLanguage.replace(nob, changenob);  //xuameng过滤字幕类型里application/字符串
 				}
 				String tur = "rum";  //xuameng过滤字幕类型里application/字符串
 				String changerum = "罗马尼亚语";
-				if(zimuLanguage.contains(rum)) {  //xuameng过滤字幕类型里application/字符串
-					zimuLanguage = zimuLanguage.replace(rum, changerum);  //xuameng过滤字幕类型里application/字符串
+				if(audioLanguage.contains(rum)) {  //xuameng过滤字幕类型里application/字符串
+					audioLanguage = audioLanguage.replace(rum, changerum);  //xuameng过滤字幕类型里application/字符串
 				}
 				String und = "und";  //xuameng过滤字幕类型里application/字符串
 				String changeund = "未知";
