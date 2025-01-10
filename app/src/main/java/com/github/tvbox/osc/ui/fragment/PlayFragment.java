@@ -509,7 +509,7 @@ public class PlayFragment extends BaseLazyFragment {
             public boolean areContentsTheSame(@NonNull @NotNull TrackInfoBean oldItem, @NonNull @NotNull TrackInfoBean newItem) {
                 return oldItem.trackId == newItem.trackId;
             }
-        }, bean, trackInfo.getSubtitleSelected(false));
+        }, bean, trackInfo.getSubtitleSelected(true));
         dialog.show();
     }
 
@@ -666,14 +666,14 @@ public class PlayFragment extends BaseLazyFragment {
                             String lowerLang = subtitleTrackInfoBean.language.toLowerCase();
                             if (lowerLang.contains("zh") || lowerLang.contains("ch") || lowerLang.contains("中文") || lowerLang.contains("中")){    //xuameng修复EXO播放器也可以默认选择中文字幕
                                 hasCh=true;
-                                if (selectedIndex != subtitleTrackInfoBean.trackId) {
+                      //          if (selectedIndex != subtitleTrackInfoBean.trackId) {
                                     if (mVideoView.getMediaPlayer() instanceof IjkMediaPlayer){
                                         ((IjkMediaPlayer)(mVideoView.getMediaPlayer())).setTrack(subtitleTrackInfoBean.trackId);
                                     }else if (mVideoView.getMediaPlayer() instanceof EXOmPlayer){
                                         ((EXOmPlayer)(mVideoView.getMediaPlayer())).selectExoTrack(subtitleTrackInfoBean);
                                     }
                                     break;
-                                }
+                       //         }
                             }
                         }
                         if(!hasCh){
