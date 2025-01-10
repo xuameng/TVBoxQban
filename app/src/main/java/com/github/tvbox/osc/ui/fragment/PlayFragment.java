@@ -664,12 +664,16 @@ public class PlayFragment extends BaseLazyFragment {
                         boolean hasCh =false;
                         for(TrackInfoBean subtitleTrackInfoBean : subtitleTrackList) {
                             String lowerLang = subtitleTrackInfoBean.language.toLowerCase();
-                            if (lowerLang.contains("zh") || lowerLang.contains("ch") || lowerLang.contains("中文")){    //xuameng修复EXO播放器也可以默认选择中文字幕
+                            if (lowerLang.contains("zh") || lowerLang.contains("ch") || lowerLang.contains("中文") || lowerLang.contains("中")){    //xuameng修复EXO播放器也可以默认选择中文字幕
                                 hasCh=true;
                        //         if (selectedIndex != subtitleTrackInfoBean.trackId) {
                                     if (mVideoView.getMediaPlayer() instanceof IjkMediaPlayer){
+						 mController.mSubtitleView.destroy();
+						 mController.mSubtitleView.clearSubtitleCache();
                                         ((IjkMediaPlayer)(mVideoView.getMediaPlayer())).setTrack(subtitleTrackInfoBean.trackId);
                                     }else if (mVideoView.getMediaPlayer() instanceof EXOmPlayer){
+						 mController.mSubtitleView.destroy();
+						 mController.mSubtitleView.clearSubtitleCache();
                                         ((EXOmPlayer)(mVideoView.getMediaPlayer())).selectExoTrack(subtitleTrackInfoBean);
                                     }
                                     break;
@@ -678,8 +682,12 @@ public class PlayFragment extends BaseLazyFragment {
                         }
                         if(!hasCh){
                             if (mVideoView.getMediaPlayer() instanceof IjkMediaPlayer){
+						 mController.mSubtitleView.destroy();
+						 mController.mSubtitleView.clearSubtitleCache();
                                 ((IjkMediaPlayer)(mVideoView.getMediaPlayer())).setTrack(subtitleTrackList.get(0).trackId);
                             }else if (mVideoView.getMediaPlayer() instanceof EXOmPlayer){
+						 mController.mSubtitleView.destroy();
+						 mController.mSubtitleView.clearSubtitleCache();
                                 ((EXOmPlayer)(mVideoView.getMediaPlayer())).selectExoTrack(subtitleTrackList.get(0));
                             }
                         }
