@@ -668,6 +668,7 @@ public class PlayFragment extends BaseLazyFragment {
                                 hasCh=true;
                                 if (selectedIndex = subtitleTrackInfoBean.trackId) {
 									return;
+								}
 								else{
                                     if (mVideoView.getMediaPlayer() instanceof IjkMediaPlayer){
                                         ((IjkMediaPlayer)(mVideoView.getMediaPlayer())).setTrack(subtitleTrackInfoBean.trackId);
@@ -676,7 +677,7 @@ public class PlayFragment extends BaseLazyFragment {
                                     }
                                     break;
 									}
-                                }
+                                
                             }
                         }
                         if(!hasCh){
