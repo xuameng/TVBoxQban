@@ -714,7 +714,7 @@ public class PlayFragment extends BaseLazyFragment {
                                 mediaPlayer.start();
                             }
                         }, 800);
-                    }
+                    
                                 ((IjkMediaPlayer)(mVideoView.getMediaPlayer())).setTrack(subtitleTrackList.get(0).trackId);
                             }else if (mVideoView.getMediaPlayer() instanceof EXOmPlayer){
                     mediaPlayer.pause();
@@ -728,7 +728,7 @@ public class PlayFragment extends BaseLazyFragment {
                                 mediaPlayer.start();
                             }
                         }, 800);
-                    }
+                    
                                 ((EXOmPlayer)(mVideoView.getMediaPlayer())).selectExoTrack(subtitleTrackList.get(0));
                             }
                         }
