@@ -660,7 +660,7 @@ public class PlayFragment extends BaseLazyFragment {
                     mController.mSubtitleView.isInternal = true;
                     if (trackInfo != null && !trackInfo.getSubtitle().isEmpty()) {
                         List<TrackInfoBean> subtitleTrackList = trackInfo.getSubtitle();
-                        int selectedIndex = trackInfo.getSubtitleSelected(false);
+                        int selectedIndex = trackInfo.getSubtitleSelected(true);
                         boolean hasCh =false;
                         for(TrackInfoBean subtitleTrackInfoBean : subtitleTrackList) {
                             String lowerLang = subtitleTrackInfoBean.language.toLowerCase();
