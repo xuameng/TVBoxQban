@@ -99,7 +99,6 @@ public class IjkTrackInfo implements ITrackInfo {
             case MEDIA_TRACK_TYPE_TIMEDTEXT:
   //              out.append(mStreamMeta.mLanguage);  //xuameng显示语言
   //              out.append(", ");
-out.append(mStreamMeta.mCodecLongName);
 				out.append("[");
 				out.append(getMCodecName());
 				out.append("字幕]");
