@@ -666,19 +666,19 @@ public class PlayFragment extends BaseLazyFragment {
                             String lowerLang = subtitleTrackInfoBean.language.toLowerCase();
                             if (lowerLang.contains("zh") || lowerLang.contains("ch") || lowerLang.contains("中文")){    //xuameng修复EXO播放器也可以默认选择中文字幕
                                 hasCh=true;
-                                if (subtitleTrackInfoBean.trackId != selectedIndex) {
+                  //              if (selectedIndex != subtitleTrackInfoBean.trackId) {
                                     if (mVideoView.getMediaPlayer() instanceof IjkMediaPlayer){
                                         ((IjkMediaPlayer)(mVideoView.getMediaPlayer())).setTrack(subtitleTrackInfoBean.trackId);
                                     }else if (mVideoView.getMediaPlayer() instanceof EXOmPlayer){
                                         ((EXOmPlayer)(mVideoView.getMediaPlayer())).selectExoTrack(subtitleTrackInfoBean);
                                     }
                                     break;
-                                }
+                 //               }
                             }
                         }
                         if(!hasCh){
                             if (mVideoView.getMediaPlayer() instanceof IjkMediaPlayer){
-                                ((IjkMediaPlayer)(mVideoView.getMediaPlayer())).setTrack(subtitleTrackList.get(0).trackId);
+                                ((IjkMediaPlayer)(mVideoView.getMediaPlayer())).setTrack(subtitleTrackList.get(0));
                             }else if (mVideoView.getMediaPlayer() instanceof EXOmPlayer){
                                 ((EXOmPlayer)(mVideoView.getMediaPlayer())).selectExoTrack(subtitleTrackList.get(0));
                             }
