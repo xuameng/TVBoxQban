@@ -664,9 +664,9 @@ public class PlayFragment extends BaseLazyFragment {
                         boolean hasCh =false;
                         for(TrackInfoBean subtitleTrackInfoBean : subtitleTrackList) {
                             String lowerLang = subtitleTrackInfoBean.language.toLowerCase();
-                            if (lowerLang.contains("zh") || lowerLang.contains("ch") || lowerLang.contains("中文")){
+                            if (lowerLang.contains("zh") || lowerLang.contains("ch") || lowerLang.contains("中文")){    //xuameng修复EXO播放器也可以默认选择中文字幕
                                 hasCh=true;
-                                if (selectedIndex != subtitleTrackInfoBean.trackId) {
+                                if (subtitleTrackInfoBean.trackId != selectedIndex) {
                                     if (mVideoView.getMediaPlayer() instanceof IjkMediaPlayer){
                                         ((IjkMediaPlayer)(mVideoView.getMediaPlayer())).setTrack(subtitleTrackInfoBean.trackId);
                                     }else if (mVideoView.getMediaPlayer() instanceof EXOmPlayer){
