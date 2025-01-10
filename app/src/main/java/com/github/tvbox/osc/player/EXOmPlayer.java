@@ -62,6 +62,11 @@ public class EXOmPlayer extends ExoMediaPlayer {
 							if(originalString.contains(text1)) {  //xuameng过滤字幕类型里application/字符串
 							originalString = originalString.replace(text1, textString1);  //xuameng过滤字幕类型里application/字符串
 							}
+							String text2 = "quicktime-";  //xuameng过滤字幕类型里application/字符串
+							String textString2 = "";
+							if(originalString.contains(text2)) {  //xuameng过滤字幕类型里application/字符串
+							originalString = originalString.replace(text2, textString2);  //xuameng过滤字幕类型里application/字符串
+							}
 							String trackName = "";  //xuameng显示字幕类型
                             TrackInfoBean t = new TrackInfoBean();
                             t.name = trackName;
