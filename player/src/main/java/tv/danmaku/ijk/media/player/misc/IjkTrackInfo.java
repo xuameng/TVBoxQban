@@ -56,6 +56,11 @@ public class IjkTrackInfo implements ITrackInfo {
 		if(zimuCodecs.contains(text)) {  //xuameng过滤字幕类型里application/字符串
 			zimuCodecs = zimuCodecs.replace(text, textString);  //xuameng过滤字幕类型里application/字符串
 		}
+		String text1 = "mov_text";  //xuameng过滤字幕类型里application/字符串
+		String textString1 = "tx3g";
+		if(zimuCodecs.contains(text1)) {  //xuameng过滤字幕类型里application/字符串
+			zimuCodecs = zimuCodecs.replace(text1, textString1);  //xuameng过滤字幕类型里application/字符串
+		}
         return zimuCodecs;
     }
 	
