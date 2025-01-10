@@ -509,7 +509,7 @@ public class PlayFragment extends BaseLazyFragment {
             public boolean areContentsTheSame(@NonNull @NotNull TrackInfoBean oldItem, @NonNull @NotNull TrackInfoBean newItem) {
                 return oldItem.trackId == newItem.trackId;
             }
-        }, bean, trackInfo.getSubtitleSelected(true));
+        }, bean, trackInfo.getSubtitleSelected(false));
         dialog.show();
     }
 
