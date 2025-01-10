@@ -391,7 +391,7 @@ public class PlayFragment extends BaseLazyFragment {
                         audio.selected = audio.trackId == value.trackId;
                     }
                     mediaPlayer.pause();
-                    long progress = mediaPlayer.getCurrentPosition() - 3000L;//XUAMENG保存当前进度，//XUAMENG保存当前进度，回退3秒
+                    long progress = mediaPlayer.getCurrentPosition();//XUAMENG保存当前进度，//XUAMENG保存当前进度，回退3秒
                     if (mediaPlayer instanceof IjkMediaPlayer) {
                         ((IjkMediaPlayer) mediaPlayer).setTrack(value.trackId);
                     }
@@ -462,7 +462,7 @@ public class PlayFragment extends BaseLazyFragment {
                         subtitle.selected = subtitle.trackId == value.trackId;
                     }
                     mediaPlayer.pause();
-                    long progress = mediaPlayer.getCurrentPosition() - 3000L;//XUAMENG保存当前进度，回退3秒
+                    long progress = mediaPlayer.getCurrentPosition();//XUAMENG保存当前进度，回退3秒
                     if (mediaPlayer instanceof IjkMediaPlayer) {
 						 mController.mSubtitleView.destroy();
 						 mController.mSubtitleView.clearSubtitleCache();
@@ -668,8 +668,33 @@ public class PlayFragment extends BaseLazyFragment {
                                 hasCh=true;
                     //            if (selectedIndex != subtitleTrackInfoBean.trackId) {
                                     if (mVideoView.getMediaPlayer() instanceof IjkMediaPlayer){
+                    mediaPlayer.pause();
+                    long progress = mediaPlayer.getCurrentPosition();//XUAMENG保存当前进度，回退3秒
+                        mController.mSubtitleView.destroy();
+                        mController.mSubtitleView.clearSubtitleCache();
+			new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                mediaPlayer.seekTo(progress);
+                                mediaPlayer.start();
+                            }
+                        }, 800);
+                    }
+
                                         ((IjkMediaPlayer)(mVideoView.getMediaPlayer())).setTrack(subtitleTrackInfoBean.trackId);
                                     }else if (mVideoView.getMediaPlayer() instanceof EXOmPlayer){
+                    mediaPlayer.pause();
+                    long progress = mediaPlayer.getCurrentPosition();//XUAMENG保存当前进度，回退3秒
+                        mController.mSubtitleView.destroy();
+                        mController.mSubtitleView.clearSubtitleCache();
+			new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                mediaPlayer.seekTo(progress);
+                                mediaPlayer.start();
+                            }
+                        }, 800);
+                    }
                                         ((EXOmPlayer)(mVideoView.getMediaPlayer())).selectExoTrack(subtitleTrackInfoBean);
                                     }
                                     break;
@@ -678,8 +703,32 @@ public class PlayFragment extends BaseLazyFragment {
                         }
                         if(!hasCh){
                             if (mVideoView.getMediaPlayer() instanceof IjkMediaPlayer){
+                    mediaPlayer.pause();
+                    long progress = mediaPlayer.getCurrentPosition();//XUAMENG保存当前进度，回退3秒
+                        mController.mSubtitleView.destroy();
+                        mController.mSubtitleView.clearSubtitleCache();
+			new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                mediaPlayer.seekTo(progress);
+                                mediaPlayer.start();
+                            }
+                        }, 800);
+                    }
                                 ((IjkMediaPlayer)(mVideoView.getMediaPlayer())).setTrack(subtitleTrackList.get(0).trackId);
                             }else if (mVideoView.getMediaPlayer() instanceof EXOmPlayer){
+                    mediaPlayer.pause();
+                    long progress = mediaPlayer.getCurrentPosition();//XUAMENG保存当前进度，回退3秒
+                        mController.mSubtitleView.destroy();
+                        mController.mSubtitleView.clearSubtitleCache();
+			new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                mediaPlayer.seekTo(progress);
+                                mediaPlayer.start();
+                            }
+                        }, 800);
+                    }
                                 ((EXOmPlayer)(mVideoView.getMediaPlayer())).selectExoTrack(subtitleTrackList.get(0));
                             }
                         }
