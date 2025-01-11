@@ -392,6 +392,9 @@ public class PlayFragment extends BaseLazyFragment {
                     }
                     mediaPlayer.pause();
                     long progress = mediaPlayer.getCurrentPosition() - 3000L;//XUAMENG保存当前进度，//XUAMENG保存当前进度，回退3秒
+					if (progress < 0L){
+						progress = 0L
+					}
                     if (mediaPlayer instanceof IjkMediaPlayer) {
                         ((IjkMediaPlayer) mediaPlayer).setTrack(value.trackId);
                     }
@@ -463,6 +466,9 @@ public class PlayFragment extends BaseLazyFragment {
                     }
                     mediaPlayer.pause();
                     long progress = mediaPlayer.getCurrentPosition() - 3000L;//XUAMENG保存当前进度，回退3秒
+					if (progress < 0L){
+						progress = 0L
+					}
                     if (mediaPlayer instanceof IjkMediaPlayer) {
 						 mController.mSubtitleView.destroy();
 						 mController.mSubtitleView.clearSubtitleCache();
@@ -664,16 +670,16 @@ public class PlayFragment extends BaseLazyFragment {
                         boolean hasCh =false;
                         for(TrackInfoBean subtitleTrackInfoBean : subtitleTrackList) {
                             String lowerLang = subtitleTrackInfoBean.language.toLowerCase();
-                            if (lowerLang.contains("zh") || lowerLang.contains("ch") || lowerLang.contains("中")){    //xuameng修复EXO播放器也可以默认选择中文字幕
-                                hasCh=true;
-                               if (selectedIndex != subtitleTrackInfoBean.trackId) {
+                            if (lowerLang.contains("zh") || lowerLang.contains("ch") || lowerLang.contains("中文")){    //xuameng修复EXO播放器也可以默认选择中文字幕
+                                hasCh=true;                               
                                     if (mVideoView.getMediaPlayer() instanceof IjkMediaPlayer){
+										if (selectedIndex != subtitleTrackInfoBean.trackId) {
                                         ((IjkMediaPlayer)(mVideoView.getMediaPlayer())).setTrack(subtitleTrackInfoBean.trackId);
-                                    }             }else if (mVideoView.getMediaPlayer() instanceof EXOmPlayer){
+										}
+                                    }else if (mVideoView.getMediaPlayer() instanceof EXOmPlayer){
                                         ((EXOmPlayer)(mVideoView.getMediaPlayer())).selectExoTrack(subtitleTrackInfoBean);
                                     }
                                     break;
-                  
                             }
                         }
                         if(!hasCh){
