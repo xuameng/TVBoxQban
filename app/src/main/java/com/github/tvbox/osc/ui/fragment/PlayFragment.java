@@ -540,7 +540,6 @@ public class PlayFragment extends BaseLazyFragment {
                 public void run() {
                     if (finish) {
                         Toast.makeText(mContext, err, Toast.LENGTH_SHORT).show();
-						finish();
                     } else {
                         setTip(err, false, true);
                     }
