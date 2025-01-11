@@ -39,12 +39,12 @@ public class EXOmPlayer extends ExoMediaPlayer {
 							if (TextUtils.isEmpty(formatCodecs)){
 								formatCodecs = "";
 							}
-							String text = "audio/";  //xuameng过滤字幕类型里application/字符串
+							String text = "audio";  //xuameng过滤字幕类型里application/字符串
 							String textString = "";
 							if(formatCodecs.contains(text)) {  //xuameng过滤字幕类型里application/字符串
 								formatCodecs = formatCodecs.replace(text, textString);  //xuameng过滤字幕类型里application/字符串
 							}
-							String trackName = (data.getAudio().size() + 1) + "：" + trackNameProvider.getTrackName(format) + "[" + (TextUtils.isEmpty(format.codecs)?format.sampleMimeType:formatCodecs) + "]";
+							String trackName = (data.getAudio().size() + 1) + "：" + trackNameProvider.getTrackName(format) + "[" + (TextUtils.isEmpty(formatCodecs)?format.formatCodecs:formatCodecs) + "]";
 							TrackInfoBean t = new TrackInfoBean();
                             t.name = trackName;
                             t.language = "";
