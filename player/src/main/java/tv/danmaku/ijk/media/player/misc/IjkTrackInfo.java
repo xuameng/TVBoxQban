@@ -18,7 +18,7 @@
 package tv.danmaku.ijk.media.player.misc;
 
 import android.text.TextUtils;
-import java.util.Locale;
+import java.util.Locale;     //xuameng getSampleRateInline依赖
 
 import tv.danmaku.ijk.media.player.IjkMediaMeta;
 
@@ -315,6 +315,11 @@ public class IjkTrackInfo implements ITrackInfo {
 		String textString2 = "vobsub";
 		if(zimuCodecs.contains(text2)) {  //xuameng过滤字幕类型里application/字符串
 			zimuCodecs = zimuCodecs.replace(text2, textString2);  //xuameng过滤字幕类型里application/字符串
+		}
+		String text3 = "truehd";  //xuameng过滤字幕类型里application/字符串
+		String textString3 = "TrueHD";
+		if(zimuCodecs.contains(text3)) {  //xuameng过滤字幕类型里application/字符串
+			zimuCodecs = zimuCodecs.replace(text3, textString3);  //xuameng过滤字幕类型里application/字符串
 		}
         return zimuCodecs;
     }
