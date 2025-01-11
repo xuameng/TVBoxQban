@@ -268,6 +268,11 @@ public class IjkTrackInfo implements ITrackInfo {
 				if(Language.contains(rum)) {  //xuameng过滤字幕类型里application/字符串
 					Language = Language.replace(rum, changerum);  //xuameng过滤字幕类型里application/字符串
 				}
+				String und = "und";  //xuameng过滤字幕类型里application/字符串
+				String changeund = "未知";
+				if(Language.contains(und)) {  //xuameng过滤字幕类型里application/字符串
+					Language = Language.replace(und, changeund);  //xuameng过滤字幕类型里application/字符串
+				}
         return Language;
     }
 
