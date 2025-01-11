@@ -263,6 +263,11 @@ public class VodController extends BaseController {
             mVideoSize.setText("[ " + width + " X " + height +" ]");
             
 			if (mControlWrapper.isPlaying()){    //xuameng音乐播放时图标判断
+				if (!mIsDragging) {
+					mControlWrapper.startProgress();    //xuameng启动进程
+					mControlWrapper.startFadeOut();
+				}
+
 				mxuPlay.setText("暂停");
 				if (!isPlaying && mTvPausexu.getVisibility() == View.VISIBLE){						
 					ObjectAnimator animator10 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0,700);				//xuameng动画暂停菜单开始
@@ -1136,7 +1141,7 @@ public class VodController extends BaseController {
         }
 		mCurrentTime.setText(PlayerUtils.stringForTime(position));        //xuameng当前进程时间
         mTotalTime.setText(PlayerUtils.stringForTime(duration));	   //xuameng总进程时间
-        if (duration >= 0) {
+        if (duration > 0) {
             mSeekBar.setEnabled(true);
             mSeekBar.setProgress(position);	 //xuameng当前进程
 			mSeekBar.setMax(duration);       //xuameng设置总进程必须
@@ -1316,8 +1321,6 @@ public class VodController extends BaseController {
             case VideoView.STATE_PLAYING:
                 initLandscapePortraitBtnInfo();
                 startProgress();
-				mControlWrapper.startProgress();    //xuameng启动进程
-				mControlWrapper.startFadeOut();
 				mxuPlay.setText("暂停");               //xuameng底部菜单显示暂停
 				//playIngXu();	
                 break;
