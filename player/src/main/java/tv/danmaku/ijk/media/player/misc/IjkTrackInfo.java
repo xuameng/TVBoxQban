@@ -18,6 +18,7 @@
 package tv.danmaku.ijk.media.player.misc;
 
 import android.text.TextUtils;
+import java.util.Locale;
 
 import tv.danmaku.ijk.media.player.IjkMediaMeta;
 
