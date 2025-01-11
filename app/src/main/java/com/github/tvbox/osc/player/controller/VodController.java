@@ -1136,7 +1136,7 @@ public class VodController extends BaseController {
         }
 		mCurrentTime.setText(PlayerUtils.stringForTime(position));        //xuameng当前进程时间
         mTotalTime.setText(PlayerUtils.stringForTime(duration));	   //xuameng总进程时间
-        if (duration > 0) {
+        if (duration >= 0) {
             mSeekBar.setEnabled(true);
             mSeekBar.setProgress(position);	 //xuameng当前进程
 			mSeekBar.setMax(duration);       //xuameng设置总进程必须
