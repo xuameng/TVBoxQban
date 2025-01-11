@@ -71,7 +71,7 @@ public class IjkTrackInfo implements ITrackInfo {
 			zimuCodecs = zimuCodecs.replace(text1, textString1);  //xuameng过滤字幕类型里application/字符串
 		}
 		String text2 = "dvd_subtitle";  //xuameng过滤字幕类型里application/字符串
-		String textString2 = "ssa";
+		String textString2 = "vobsub";
 		if(zimuCodecs.contains(text2)) {  //xuameng过滤字幕类型里application/字符串
 			zimuCodecs = zimuCodecs.replace(text2, textString2);  //xuameng过滤字幕类型里application/字符串
 		}
