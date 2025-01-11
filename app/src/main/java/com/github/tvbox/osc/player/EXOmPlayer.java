@@ -34,17 +34,28 @@ public class EXOmPlayer extends ExoMediaPlayer {
                     TrackGroup group = groupArray.get(groupIndex);
                     for (int formatIndex = 0; formatIndex < group.length; formatIndex++) {
                         Format format = group.getFormat(formatIndex);
-						String formatCodecs = format.sampleMimeType;
+						String audioCodecs = format.sampleMimeType;
+						String formatCodecs = format.codecs;
                         if (MimeTypes.isAudio(format.sampleMimeType)) {
+							if (TextUtils.isEmpty(audioCodecs)){
+								audioCodecs = "";
+							}
+							String text = "audio/";  //xuameng过滤字幕类型里application/字符串
+							String textString = "";
+							if(audioCodecs.contains(text)) {  //xuameng过滤字幕类型里application/字符串
+								audioCodecs = audioCodecs.replace(text, textString);  //xuameng过滤字幕类型里application/字符串
+							}
+
 							if (TextUtils.isEmpty(formatCodecs)){
 								formatCodecs = "";
 							}
-							String text = "audio";  //xuameng过滤字幕类型里application/字符串
-							String textString = "";
-							if(formatCodecs.contains(text)) {  //xuameng过滤字幕类型里application/字符串
-								formatCodecs = formatCodecs.replace(text, textString);  //xuameng过滤字幕类型里application/字符串
+							String text1 = ".40.2";  //xuameng过滤字幕类型里application/字符串
+							String textString1 = "";
+							if(formatCodecs.contains(text1)) {  //xuameng过滤字幕类型里application/字符串
+								formatCodecs = formatCodecs.replace(text1, textString1);  //xuameng过滤字幕类型里application/字符串
 							}
-							String trackName = (data.getAudio().size() + 1) + "：" + trackNameProvider.getTrackName(format) + "[" + (TextUtils.isEmpty(format.codecs)?formatCodecs:format.codecs) + "]";
+
+							String trackName = (data.getAudio().size() + 1) + "：" + trackNameProvider.getTrackName(format) + "[" + (TextUtils.isEmpty(format.codecs)?audioCodecs:formatCodecs) + "]";
 							TrackInfoBean t = new TrackInfoBean();
                             t.name = trackName;
                             t.language = "";
