@@ -54,6 +54,7 @@ public class IjkTrackInfo implements ITrackInfo {
         } else {
           return "null";
         }
+	}
 
     public String getMCodecName() {
         if (getCodecName == null || TextUtils.isEmpty(getCodecName))
@@ -68,6 +69,11 @@ public class IjkTrackInfo implements ITrackInfo {
 		String textString1 = "tx3g";
 		if(zimuCodecs.contains(text1)) {  //xuameng过滤字幕类型里application/字符串
 			zimuCodecs = zimuCodecs.replace(text1, textString1);  //xuameng过滤字幕类型里application/字符串
+		}
+		String text2 = "dvd_subtitle";  //xuameng过滤字幕类型里application/字符串
+		String textString2 = "ssa";
+		if(zimuCodecs.contains(text2)) {  //xuameng过滤字幕类型里application/字符串
+			zimuCodecs = zimuCodecs.replace(text2, textString2);  //xuameng过滤字幕类型里application/字符串
 		}
         return zimuCodecs;
     }
