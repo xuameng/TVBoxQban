@@ -34,7 +34,7 @@ public class EXOmPlayer extends ExoMediaPlayer {
                     TrackGroup group = groupArray.get(groupIndex);
                     for (int formatIndex = 0; formatIndex < group.length; formatIndex++) {
                         Format format = group.getFormat(formatIndex);
-						String formatCodecs = format.codecs;
+						String formatCodecs = format.sampleMimeType;
                         if (MimeTypes.isAudio(format.sampleMimeType)) {
 							if (TextUtils.isEmpty(formatCodecs)){
 								formatCodecs = "";
@@ -44,7 +44,7 @@ public class EXOmPlayer extends ExoMediaPlayer {
 							if(formatCodecs.contains(text)) {  //xuameng过滤字幕类型里application/字符串
 								formatCodecs = formatCodecs.replace(text, textString);  //xuameng过滤字幕类型里application/字符串
 							}
-							String trackName = (data.getAudio().size() + 1) + "：" + trackNameProvider.getTrackName(format) + "[" + (TextUtils.isEmpty(formatCodecs)?formatCodecs:formatCodecs) + "]";
+							String trackName = (data.getAudio().size() + 1) + "：" + trackNameProvider.getTrackName(format) + "[" + (TextUtils.isEmpty(format.codecs)?formatCodecs:format.codecs) + "]";
 							TrackInfoBean t = new TrackInfoBean();
                             t.name = trackName;
                             t.language = "";
