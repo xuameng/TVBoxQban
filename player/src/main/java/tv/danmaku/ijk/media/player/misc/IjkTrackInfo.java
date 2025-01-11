@@ -286,6 +286,16 @@ public class IjkTrackInfo implements ITrackInfo {
         }
 	}
 
+    public String getSampleRateInline() {       //XUAMENG显示K赫兹
+        if (mStreamMeta.mSampleRate <= 0) {
+            return "N/A";
+        } else if (mStreamMeta.mSampleRate < 1000) {
+				return String.format(Locale.US, "%d Hz", mStreamMeta.mSampleRate);
+	    } else {
+                return String.format(Locale.US, "%d KHz", mStreamMeta.mSampleRate / 1000);
+        }
+    }
+
     public String getMCodecName() {
         if (getCodecName() == null || TextUtils.isEmpty(getCodecName()))
             return "未知";
@@ -337,20 +347,20 @@ public class IjkTrackInfo implements ITrackInfo {
                 out.append(mStreamMeta.getResolutionInline());
                 break;
             case MEDIA_TRACK_TYPE_AUDIO:
-                out.append(getLanguage());
+                out.append(getLanguage());  //xuameng显示语言
                 out.append(", ");
-                out.append(getMCodecName());
+                out.append(getMCodecName()); //xuameng编码
                 out.append(", ");
                 out.append(mStreamMeta.getBitrateInline());
                 out.append(", ");
-                out.append(mStreamMeta.getSampleRateInline());
+                out.append(getSampleRateInline());  //XUAMENG显示K赫兹
                 break;
             case MEDIA_TRACK_TYPE_TIMEDTEXT:
 				out.append(getLanguage());
   //              out.append(mStreamMeta.mLanguage);  //xuameng显示语言
                 out.append(", ");
 				out.append("[");
-				out.append(getMCodecName());
+				out.append(getMCodecName()); //xuameng编码
 				out.append("字幕]");
                 break;
             case MEDIA_TRACK_TYPE_SUBTITLE:
