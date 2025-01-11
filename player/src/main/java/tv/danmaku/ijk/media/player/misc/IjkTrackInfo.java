@@ -46,9 +46,17 @@ public class IjkTrackInfo implements ITrackInfo {
         return mStreamMeta.mLanguage;
     }
 
+    public String getCodecName() {
+        if (!TextUtils.isEmpty(mStreamMeta.mCodecLongName)) {
+            return mStreamMeta.mCodecLongName;
+        } else if (!TextUtils.isEmpty(mStreamMeta.mCodecName)) {
+            return mStreamMeta.mCodecName;
+        } else {
+          return "null";
+        }
 
     public String getMCodecName() {
-        if (mStreamMeta.mCodecName == null || TextUtils.isEmpty(mStreamMeta.mCodecName))
+        if (getCodecName == null || TextUtils.isEmpty(getCodecName))
             return "未知";
 		String zimuCodecs = mStreamMeta.mCodecName;   //xuameng显示字幕类型
 		String text = "hdmv_pgs_subtitle";  //xuameng过滤字幕类型里application/字符串
@@ -95,8 +103,7 @@ public class IjkTrackInfo implements ITrackInfo {
             case MEDIA_TRACK_TYPE_AUDIO:
                 out.append("AUDIO");
                 out.append(", ");
-    //            out.append(mStreamMeta.getCodecShortNameInline());
-	out.append(mStreamMeta.getCodecLongNameInline());
+                out.append(getMCodecName());
                 out.append(", ");
                 out.append(mStreamMeta.getBitrateInline());
                 out.append(", ");
@@ -106,8 +113,7 @@ public class IjkTrackInfo implements ITrackInfo {
   //              out.append(mStreamMeta.mLanguage);  //xuameng显示语言
   //              out.append(", ");
 				out.append("[");
-//				out.append(getMCodecName());
-out.append(mStreamMeta.getCodecLongNameInline());
+				out.append(getMCodecName());
 				out.append("字幕]");
                 break;
             case MEDIA_TRACK_TYPE_SUBTITLE:
