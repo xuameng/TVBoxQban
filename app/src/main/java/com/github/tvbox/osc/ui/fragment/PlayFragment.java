@@ -391,7 +391,7 @@ public class PlayFragment extends BaseLazyFragment {
                         audio.selected = audio.trackId == value.trackId;
                     }
                     mediaPlayer.pause();
-                    long progress = mediaPlayer.getCurrentPosition();//XUAMENG保存当前进度，//XUAMENG保存当前进度，回退3秒
+                    long progress = mediaPlayer.getCurrentPosition() - 3000L;//XUAMENG保存当前进度，//XUAMENG保存当前进度，回退3秒
                     if (mediaPlayer instanceof IjkMediaPlayer) {
                         ((IjkMediaPlayer) mediaPlayer).setTrack(value.trackId);
                     }
@@ -462,7 +462,7 @@ public class PlayFragment extends BaseLazyFragment {
                         subtitle.selected = subtitle.trackId == value.trackId;
                     }
                     mediaPlayer.pause();
-                    long progress = mediaPlayer.getCurrentPosition();//XUAMENG保存当前进度，回退3秒
+                    long progress = mediaPlayer.getCurrentPosition() - 3000L;//XUAMENG保存当前进度，回退3秒
                     if (mediaPlayer instanceof IjkMediaPlayer) {
 						 mController.mSubtitleView.destroy();
 						 mController.mSubtitleView.clearSubtitleCache();
@@ -666,73 +666,20 @@ public class PlayFragment extends BaseLazyFragment {
                             String lowerLang = subtitleTrackInfoBean.language.toLowerCase();
                             if (lowerLang.contains("zh") || lowerLang.contains("ch") || lowerLang.contains("中")){    //xuameng修复EXO播放器也可以默认选择中文字幕
                                 hasCh=true;
-                    //            if (selectedIndex != subtitleTrackInfoBean.trackId) {
+                               if (selectedIndex != subtitleTrackInfoBean.trackId) {
                                     if (mVideoView.getMediaPlayer() instanceof IjkMediaPlayer){
-										AbstractPlayer mediaPlayer = mVideoView.getMediaPlayer();
-                    mediaPlayer.pause();
-                    long progress = mediaPlayer.getCurrentPosition();//XUAMENG保存当前进度，回退3秒
-                        mController.mSubtitleView.destroy();
-                        mController.mSubtitleView.clearSubtitleCache();
-			new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                mediaPlayer.seekTo(progress);
-                                mediaPlayer.start();
-                            }
-                        }, 800);
-                    
-
                                         ((IjkMediaPlayer)(mVideoView.getMediaPlayer())).setTrack(subtitleTrackInfoBean.trackId);
-                                    }else if (mVideoView.getMediaPlayer() instanceof EXOmPlayer){
-										AbstractPlayer mediaPlayer = mVideoView.getMediaPlayer();
-                    mediaPlayer.pause();
-                    long progress = mediaPlayer.getCurrentPosition();//XUAMENG保存当前进度，回退3秒
-                        mController.mSubtitleView.destroy();
-                        mController.mSubtitleView.clearSubtitleCache();
-			new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                mediaPlayer.seekTo(progress);
-                                mediaPlayer.start();
-                            }
-                        }, 800);
-                    
+                                    }             }else if (mVideoView.getMediaPlayer() instanceof EXOmPlayer){
                                         ((EXOmPlayer)(mVideoView.getMediaPlayer())).selectExoTrack(subtitleTrackInfoBean);
                                     }
                                     break;
-                     //           }
+                  
                             }
                         }
                         if(!hasCh){
                             if (mVideoView.getMediaPlayer() instanceof IjkMediaPlayer){
-								AbstractPlayer mediaPlayer = mVideoView.getMediaPlayer();
-                    mediaPlayer.pause();
-                    long progress = mediaPlayer.getCurrentPosition();//XUAMENG保存当前进度，回退3秒
-                        mController.mSubtitleView.destroy();
-                        mController.mSubtitleView.clearSubtitleCache();
-			new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                mediaPlayer.seekTo(progress);
-                                mediaPlayer.start();
-                            }
-                        }, 800);
-                    
                                 ((IjkMediaPlayer)(mVideoView.getMediaPlayer())).setTrack(subtitleTrackList.get(0).trackId);
                             }else if (mVideoView.getMediaPlayer() instanceof EXOmPlayer){
-								AbstractPlayer mediaPlayer = mVideoView.getMediaPlayer();
-                    mediaPlayer.pause();
-                    long progress = mediaPlayer.getCurrentPosition();//XUAMENG保存当前进度，回退3秒
-                        mController.mSubtitleView.destroy();
-                        mController.mSubtitleView.clearSubtitleCache();
-			new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                mediaPlayer.seekTo(progress);
-                                mediaPlayer.start();
-                            }
-                        }, 800);
-                    
                                 ((EXOmPlayer)(mVideoView.getMediaPlayer())).selectExoTrack(subtitleTrackList.get(0));
                             }
                         }
