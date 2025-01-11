@@ -36,7 +36,7 @@ public class EXOmPlayer extends ExoMediaPlayer {
                         Format format = group.getFormat(formatIndex);
 						String formatCodecs = format.codecs;
 						if (TextUtils.isEmpty(formatCodecs)){
-							formatCodecs = ""
+							formatCodecs = "";
 						}
 							String text = "audio/";  //xuameng过滤字幕类型里application/字符串
 							String textString = "";
