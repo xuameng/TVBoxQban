@@ -34,9 +34,9 @@ public class EXOmPlayer extends ExoMediaPlayer {
                     TrackGroup group = groupArray.get(groupIndex);
                     for (int formatIndex = 0; formatIndex < group.length; formatIndex++) {
                         Format format = group.getFormat(formatIndex);
-						String audioCodecs = format.sampleMimeType;
-						String formatCodecs = format.codecs;
                         if (MimeTypes.isAudio(format.sampleMimeType)) {
+							String audioCodecs = format.sampleMimeType;
+							String formatCodecs = format.codecs;
 							if (TextUtils.isEmpty(audioCodecs)){
 								audioCodecs = "";
 							}
