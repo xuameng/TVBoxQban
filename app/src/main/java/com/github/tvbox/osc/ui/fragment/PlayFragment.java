@@ -391,11 +391,7 @@ public class PlayFragment extends BaseLazyFragment {
                         audio.selected = audio.trackId == value.trackId;
                     }
                     mediaPlayer.pause();
-                    long progress = mediaPlayer.getCurrentPosition() - 3000L;//XUAMENG保存当前进度，//XUAMENG保存当前进度，回退3秒
-					long progress1 = progress;
-					if (progress1 < 0L){
-						progress1 = 0L;
-					}
+                    long progress = mediaPlayer.getCurrentPosition(); // - 3000L XUAMENG保存当前进度，//XUAMENG保存当前进度，回退3秒
                     if (mediaPlayer instanceof IjkMediaPlayer) {
                         ((IjkMediaPlayer) mediaPlayer).setTrack(value.trackId);
                     }
@@ -405,7 +401,7 @@ public class PlayFragment extends BaseLazyFragment {
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            mediaPlayer.seekTo(progress1);
+                            mediaPlayer.seekTo(progress);
                             mediaPlayer.start();
                         }
                     }, 800);
@@ -466,11 +462,7 @@ public class PlayFragment extends BaseLazyFragment {
                         subtitle.selected = subtitle.trackId == value.trackId;
                     }
                     mediaPlayer.pause();
-                    long progress = mediaPlayer.getCurrentPosition() - 3000L;//XUAMENG保存当前进度，回退3秒
-					long progress1 = progress;
-					if (progress1 < 0L){
-						progress1 = 0L;
-					}
+                    long progress = mediaPlayer.getCurrentPosition(); //- 3000L XUAMENG保存当前进度，回退3秒
                     if (mediaPlayer instanceof IjkMediaPlayer) {
 						 mController.mSubtitleView.destroy();
 						 mController.mSubtitleView.clearSubtitleCache();
@@ -479,7 +471,7 @@ public class PlayFragment extends BaseLazyFragment {
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                mediaPlayer.seekTo(progress1);
+                                mediaPlayer.seekTo(progress);
                                 mediaPlayer.start();
                             }
                         }, 800);
@@ -492,7 +484,7 @@ public class PlayFragment extends BaseLazyFragment {
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                mediaPlayer.seekTo(progress1);
+                                mediaPlayer.seekTo(progress);
                                 mediaPlayer.start();
                             }
                         }, 800);
