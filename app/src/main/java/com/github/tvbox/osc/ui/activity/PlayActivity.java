@@ -647,7 +647,7 @@ public class PlayActivity extends BaseActivity {
                         boolean hasCh =false;
                         for(TrackInfoBean subtitleTrackInfoBean : subtitleTrackList) {
                             String lowerLang = subtitleTrackInfoBean.language.toLowerCase();
-                            if (lowerLang.contains("zh") || lowerLang.contains("ch") || lowerLang.contains("中文")){    //xuameng修复EXO播放器也可以默认选择中文字幕
+                            if (lowerLang.contains("zh") || lowerLang.contains("ch") || lowerLang.contains("中文") || lowerLang.contains("简体") || lowerLang.contains("国语") || lowerLang.contains("国配")){    //xuameng修复EXO播放器也可以默认选择中文字幕
                                 hasCh=true;
                                 if (mVideoView.getMediaPlayer() instanceof IjkMediaPlayer){
 									if (selectedIndex != subtitleTrackInfoBean.trackId) {
