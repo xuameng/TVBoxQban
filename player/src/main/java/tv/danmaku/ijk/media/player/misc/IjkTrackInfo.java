@@ -95,7 +95,8 @@ public class IjkTrackInfo implements ITrackInfo {
             case MEDIA_TRACK_TYPE_AUDIO:
                 out.append("AUDIO");
                 out.append(", ");
-                out.append(mStreamMeta.getCodecShortNameInline());
+    //            out.append(mStreamMeta.getCodecShortNameInline());
+	out.append(mStreamMeta.getCodecLongNameInline());
                 out.append(", ");
                 out.append(mStreamMeta.getBitrateInline());
                 out.append(", ");
@@ -105,7 +106,8 @@ public class IjkTrackInfo implements ITrackInfo {
   //              out.append(mStreamMeta.mLanguage);  //xuameng显示语言
   //              out.append(", ");
 				out.append("[");
-				out.append(getMCodecName());
+//				out.append(getMCodecName());
+out.append(mStreamMeta.getCodecLongNameInline());
 				out.append("字幕]");
                 break;
             case MEDIA_TRACK_TYPE_SUBTITLE:
