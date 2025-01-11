@@ -45,6 +45,16 @@ public class EXOmPlayer extends ExoMediaPlayer {
 							if(audioCodecs.contains(text)) {  //xuameng过滤字幕类型里application/字符串
 								audioCodecs = audioCodecs.replace(text, textString);  //xuameng过滤字幕类型里application/字符串
 							}
+							String tex3 = "vnd.";  //xuameng过滤字幕类型里application/字符串
+							String textString3 = "";
+							if(audioCodecs.contains(tex3)) {  //xuameng过滤字幕类型里application/字符串
+								audioCodecs = audioCodecs.replace(tex3, textString3);  //xuameng过滤字幕类型里application/字符串
+							}
+							String tex4 = "true-hd";  //xuameng过滤字幕类型里application/字符串
+							String textString4 = "TrueHD";
+							if(audioCodecs.contains(tex4)) {  //xuameng过滤字幕类型里application/字符串
+								audioCodecs = audioCodecs.replace(tex4, textString4);  //xuameng过滤字幕类型里application/字符串
+							}
 
 							if (TextUtils.isEmpty(formatCodecs)){
 								formatCodecs = "";
