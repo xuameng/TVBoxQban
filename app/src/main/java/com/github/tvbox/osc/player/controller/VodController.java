@@ -1316,6 +1316,8 @@ public class VodController extends BaseController {
             case VideoView.STATE_PLAYING:
                 initLandscapePortraitBtnInfo();
                 startProgress();
+				mControlWrapper.startProgress();    //xuameng启动进程
+				mControlWrapper.startFadeOut();
 				mxuPlay.setText("暂停");               //xuameng底部菜单显示暂停
 				//playIngXu();	
                 break;
