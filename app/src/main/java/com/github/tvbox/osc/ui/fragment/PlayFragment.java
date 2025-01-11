@@ -392,8 +392,9 @@ public class PlayFragment extends BaseLazyFragment {
                     }
                     mediaPlayer.pause();
                     long progress = mediaPlayer.getCurrentPosition() - 3000L;//XUAMENG保存当前进度，//XUAMENG保存当前进度，回退3秒
-					if (progress < 0L){
-						progress = 0L;
+					long progress1 = progress;
+					if (progress1 < 0L){
+						progress1 = 0L;
 					}
                     if (mediaPlayer instanceof IjkMediaPlayer) {
                         ((IjkMediaPlayer) mediaPlayer).setTrack(value.trackId);
@@ -404,7 +405,7 @@ public class PlayFragment extends BaseLazyFragment {
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            mediaPlayer.seekTo(progress);
+                            mediaPlayer.seekTo(progress1);
                             mediaPlayer.start();
                         }
                     }, 800);
@@ -466,8 +467,9 @@ public class PlayFragment extends BaseLazyFragment {
                     }
                     mediaPlayer.pause();
                     long progress = mediaPlayer.getCurrentPosition() - 3000L;//XUAMENG保存当前进度，回退3秒
-					if (progress < 0L){
-						progress = 0L;
+					long progress1 = progress;
+					if (progress1 < 0L){
+						progress1 = 0L;
 					}
                     if (mediaPlayer instanceof IjkMediaPlayer) {
 						 mController.mSubtitleView.destroy();
@@ -477,7 +479,7 @@ public class PlayFragment extends BaseLazyFragment {
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                mediaPlayer.seekTo(progress);
+                                mediaPlayer.seekTo(progress1);
                                 mediaPlayer.start();
                             }
                         }, 800);
@@ -490,7 +492,7 @@ public class PlayFragment extends BaseLazyFragment {
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                mediaPlayer.seekTo(progress);
+                                mediaPlayer.seekTo(progress1);
                                 mediaPlayer.start();
                             }
                         }, 800);
