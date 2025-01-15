@@ -99,7 +99,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 import xyz.doikki.videoplayer.player.VideoView;
-public class LivePlayActivity extends BaseActivity {
+public class LivePlayActivity extends LiveController{
     public static Context context;
     private VideoView mVideoView;
     private TextView tvChannelInfo;
@@ -2067,7 +2067,7 @@ public class LivePlayActivity extends BaseActivity {
         controller.setEnableInNormal(true);
         controller.setGestureEnabled(true);
         controller.setDoubleTapTogglePlayEnabled(false);
-        mVideoView.setVideoController(controller);
+   //     mVideoView.setVideoController(controller);
         mVideoView.setProgressManager(null);
     }
     private Runnable mConnectTimeoutChangeSourceRun = new Runnable() {
