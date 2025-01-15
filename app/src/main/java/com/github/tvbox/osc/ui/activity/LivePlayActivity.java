@@ -277,9 +277,7 @@ public class LivePlayActivity extends BaseActivity {
         ObjectAnimator animator2 = ObjectAnimator.ofFloat(iv_circle_bg_xu, "rotation", 360.0f);
         animator2.setDuration(10000);
         animator2.setRepeatCount(-1);
-        animator2.start();
-
-	mVideoView.setZOrderMediaOverlay(true);    
+        animator2.start();   
         //laodao 7day replay
         mEpgDateGridView = findViewById(R.id.mEpgDateGridView);
         Hawk.put(HawkConfig.NOW_DATE, formatDate.format(new Date()));
