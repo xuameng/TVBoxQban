@@ -15,6 +15,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,6 +27,9 @@ import xyz.doikki.videoplayer.controller.IControlComponent;
 import xyz.doikki.videoplayer.controller.IGestureComponent;
 import xyz.doikki.videoplayer.player.VideoView;
 import xyz.doikki.videoplayer.util.PlayerUtils;
+
+import com.github.tvbox.osc.util.HawkConfig;    //xuameng 滑动亮度判断
+import com.orhanobut.hawk.Hawk; //xuameng 滑动亮度判断
 
 public abstract class BaseController extends BaseVideoController implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener, View.OnTouchListener {
     private GestureDetector mGestureDetector;
@@ -65,11 +69,16 @@ public abstract class BaseController extends BaseVideoController implements Gest
                     case 100: { // 亮度+音量调整
                         mSlideInfo.setVisibility(VISIBLE);
                         mSlideInfo.setText(msg.obj.toString());
+						if (music_iv_circle_bg.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
+							music_iv_circle_bg.setVisibility(GONE);
+						}
+						HawkConfig.MSLIDEINFO = true;  //xuameng判断滑动
                         break;
                     }
 
                     case 101: { // 亮度+音量调整 关闭
                         mSlideInfo.setVisibility(GONE);
+						HawkConfig.MSLIDEINFO = false;  //xuameng判断滑动
                         break;
                     }
                     default: {
@@ -95,6 +104,7 @@ public abstract class BaseController extends BaseVideoController implements Gest
     private ProgressBar mLoading;
     private ViewGroup mPauseRoot;
     private TextView mPauseTime;
+	private ImageView music_iv_circle_bg;  //xuameng音乐播放时图标
 
     @Override
     protected void initView() {
@@ -106,6 +116,7 @@ public abstract class BaseController extends BaseVideoController implements Gest
         mLoading = findViewWithTag("vod_control_loading");
         mPauseRoot = findViewWithTag("vod_control_pause");
         mPauseTime = findViewWithTag("vod_control_pause_t");
+		music_iv_circle_bg = findViewWithTag("music_iv_circle_bg");  //xuameng音乐播放时图标
     }
 
     @Override
