@@ -126,7 +126,6 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
      * {@link #mPlayerContainer}背景色，默认黑色
      */
     private int mPlayerBackgroundColor;
-	private int mPlayerBackgroundColorXu;
 
     public VideoView(@NonNull Context context) {
         this(context, null);
@@ -152,7 +151,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
         mEnableAudioFocus = a.getBoolean(R.styleable.VideoView_enableAudioFocus, mEnableAudioFocus);
         mIsLooping = a.getBoolean(R.styleable.VideoView_looping, false);
         mCurrentScreenScaleType = a.getInt(R.styleable.VideoView_screenScaleType, mCurrentScreenScaleType);
-        mPlayerBackgroundColorXu = a.getColor(R.styleable.VideoView_playerBackgroundColor, Color.argb(0, 0, 0, 0));  //xuameng背景为透明色
+ //       mPlayerBackgroundColor = a.getColor(R.styleable.VideoView_playerBackgroundColor, Color.argb(0, 0, 0, 0));  //xuameng背景为透明色
 		mPlayerBackgroundColor = a.getColor(R.styleable.VideoView_playerBackgroundColor, Color.BLACK);  //xuameng背景为透明色
         a.recycle();
 
@@ -532,15 +531,6 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
         if (mCurrentPosition > 0) {
             seekTo(mCurrentPosition);
         }
-		String width = Integer.toString(getVideoSize()[0]);
-		String height = Integer.toString(getVideoSize()[1]);
-		if (width.length() <= 1 && height.length() <= 1){
-		    mPlayerContainer = new FrameLayout(getContext());
-			mPlayerContainer.setBackgroundColor(mPlayerBackgroundColorXu);
-		}else{
-		    mPlayerContainer = new FrameLayout(getContext());
-			mPlayerContainer.setBackgroundColor(mPlayerBackgroundColor);
-		}
     }
 
     /**
