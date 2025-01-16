@@ -51,7 +51,7 @@ surfaceHolder.setFormat(PixelFormat.TRANSPARENT);
             mMeasureHelper.setVideoSize(videoWidth, videoHeight);
             requestLayout();
 					setZOrderOnTop(true);
-			//setZOrderMediaOverlay(true); 
+			setZOrderMediaOverlay(true); 
         }
     }
 
