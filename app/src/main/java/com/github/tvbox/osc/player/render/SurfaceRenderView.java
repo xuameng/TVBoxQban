@@ -60,6 +60,7 @@ public class SurfaceRenderView extends SurfaceView implements IRenderView, Surfa
 		else{
 						setZOrderOnTop(true);
 		setZOrderMediaOverlay(false); 
+		SurfaceHolder surfaceHolder = getHolder();
 		surfaceHolder.addCallback(this);
 			requestLayout();
 
