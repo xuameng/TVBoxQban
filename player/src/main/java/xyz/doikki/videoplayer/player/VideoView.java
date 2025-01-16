@@ -276,7 +276,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
         }
         mRenderView = mRenderViewFactory.createRenderView(getContext());
         mRenderView.attachToPlayer(mMediaPlayer);
-		if (mVideoSize[0] = 0 && mVideoSize[1] = 0){
+		if (mVideoSize[0].length() > 1 && mVideoSize[1].length() > 1){
 		    mPlayerContainer = new FrameLayout(getContext());
 			mPlayerContainer.setBackgroundColor(mPlayerBackgroundColor);
 		}
