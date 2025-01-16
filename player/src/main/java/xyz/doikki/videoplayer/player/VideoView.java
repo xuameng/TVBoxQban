@@ -126,6 +126,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
      * {@link #mPlayerContainer}背景色，默认黑色
      */
     private int mPlayerBackgroundColor;
+	private int mPlayerBackgroundColorXu;
 
     public VideoView(@NonNull Context context) {
         this(context, null);
