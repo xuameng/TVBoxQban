@@ -2149,9 +2149,6 @@ public class LivePlayActivity extends BaseActivity {
 
     public void setVideoControllerXu(@Nullable BaseVideoController mediaController) {
 		mVideoController = mediaController;
-        if (mediaController != null) {
-            mediaController.setMediaPlayer(this);
-        }
 
     }
 
