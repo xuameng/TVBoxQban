@@ -36,6 +36,7 @@ public class SurfaceRenderView extends SurfaceView implements IRenderView, Surfa
 
     {
 		setZOrderOnTop(true);
+		setZOrderMediaOverlay(true); 
 		SurfaceHolder surfaceHolder = getHolder();
 		surfaceHolder.setFormat(PixelFormat.TRANSPARENT);
         mMeasureHelper = new MeasureHelper();
@@ -52,12 +53,14 @@ public class SurfaceRenderView extends SurfaceView implements IRenderView, Surfa
     public void setVideoSize(int videoWidth, int videoHeight) {
         if (videoWidth > 1 && videoHeight > 1) {
             mMeasureHelper.setVideoSize(videoWidth, videoHeight);
-			setZOrderMediaOverlay(true); 
+
             requestLayout();
-			setZOrderMediaOverlay(true); 
+
         }
 		else{
 						setZOrderOnTop(true);
+		setZOrderMediaOverlay(false); 
+		surfaceHolder.addCallback(this);
 			requestLayout();
 
 		}
