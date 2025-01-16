@@ -36,13 +36,11 @@ public class SurfaceRenderView extends SurfaceView implements IRenderView, Surfa
 
     {
 		        SurfaceHolder surfaceHolder = getHolder();
-		
-					    String width = Integer.toString(mVideoView.getVideoSize()[0]);
-						String height = Integer.toString(mVideoView.getVideoSize()[1]);
-				if (width = 0 && height = 0) {
-}else{
-	setZOrderOnTop(true);
-}
+				String width = Integer.toString(mVideoView.getVideoSize()[0]);
+				String height = Integer.toString(mVideoView.getVideoSize()[1]);
+				if (width.length() =< 1 && height.length() =< 1){
+					setZOrderOnTop(true);
+				}
 
 surfaceHolder.setFormat(PixelFormat.TRANSPARENT);
         mMeasureHelper = new MeasureHelper();
