@@ -278,8 +278,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
         mRenderView.attachToPlayer(mMediaPlayer);
         LayoutParams params = new LayoutParams(
                 ViewGroup.LayoutParams.‌WRAP_CONTENT,
-                ViewGroup.LayoutParams.‌WRAP_CONTENT,
-                Gravity.CENTER);
+                ViewGroup.LayoutParams.‌WRAP_CONTENT);
         mPlayerContainer.addView(mRenderView.getView(), 0, params);
     }
 
