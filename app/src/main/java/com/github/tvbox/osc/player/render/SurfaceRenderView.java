@@ -53,6 +53,9 @@ surfaceHolder.setFormat(PixelFormat.TRANSPARENT);
 					setZOrderOnTop(true);
 			setZOrderMediaOverlay(true); 
         }
+		else{
+			setZOrderOnTop(true);
+		}
     }
 
     @Override
