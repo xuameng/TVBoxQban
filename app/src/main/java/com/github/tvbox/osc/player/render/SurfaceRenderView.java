@@ -51,13 +51,15 @@ public class SurfaceRenderView extends SurfaceView implements IRenderView, Surfa
     public void setVideoSize(int videoWidth, int videoHeight) {
         if (videoWidth > 1 && videoHeight > 1) {
             mMeasureHelper.setVideoSize(videoWidth, videoHeight);
+								setZOrderOnTop(true);
             requestLayout();
-					setZOrderOnTop(true);
+
 			setZOrderMediaOverlay(true); 
         }
 		else{
+						setZOrderOnTop(true);
 			requestLayout();
-			setZOrderOnTop(true);
+
 		}
     }
 
