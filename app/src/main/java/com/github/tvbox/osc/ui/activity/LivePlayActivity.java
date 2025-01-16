@@ -38,9 +38,6 @@ import com.squareup.picasso.Picasso;      //xuameng播放音频切换图片
 import com.squareup.picasso.MemoryPolicy;  //xuameng播放音频切换图片
 import com.squareup.picasso.NetworkPolicy;  //xuameng播放音频切换图片
 import com.github.tvbox.osc.api.ApiConfig;  //xuameng播放音频切换图片
-import xyz.doikki.videoplayer.controller.BaseVideoController;
-import androidx.annotation.Nullable;
-
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.api.ApiConfig;
@@ -114,8 +111,6 @@ public class LivePlayActivity extends BaseActivity {
     private TvRecyclerView mLiveChannelView;
     private LiveChannelGroupAdapter liveChannelGroupAdapter;
     private LiveChannelItemAdapter liveChannelItemAdapter;
-	private LiveController controllerxu;
-	private BaseVideoController mVideoController;//控制器
     private long mExitTime = 0; //xuameng返回键退出时间
     private long mExitTimeUp = 0; //xuameng上键间隔时间
     private long mExitTimeDown = 0; //xuameng下键间隔时间
@@ -1961,22 +1956,6 @@ public class LivePlayActivity extends BaseActivity {
 						mLoading.setVisibility(View.GONE); //xuameng 播放音频时的缓冲动画
 					    String width = Integer.toString(mVideoView.getVideoSize()[0]);
 						String height = Integer.toString(mVideoView.getVideoSize()[1]);
-						if (width.length() > 1 && height.length() > 1){
-							controller.setCanChangePosition(false);
-							controller.setEnableInNormal(true);
-							controller.setGestureEnabled(true);
-							controller.setDoubleTapTogglePlayEnabled(false);
-							mVideoView.setVideoController(controller);
-							setVideoControllerXu(null);
-						}else{
-							mVideoView.setVideoController(null);
-							controller.setCanChangePosition(false);
-							controller.setEnableInNormal(true);
-							controller.setGestureEnabled(true);
-							controller.setDoubleTapTogglePlayEnabled(false);
-							setVideoControllerXu(controller);
-						}
-
 						tv_size.setText("[" + width + " X " + height +"]");
 						if (width.length() > 1 && height.length() > 1){
 							listenBuffer = false;  //xuameng音频缓冲
@@ -2146,12 +2125,6 @@ public class LivePlayActivity extends BaseActivity {
         toast.setGravity(Gravity.CENTER, 0, 0); //xuameng 20为左右，0是上下
         toast.show();
     }
-
-    public void setVideoControllerXu(@Nullable BaseVideoController mediaController) {
-		mVideoController = mediaController;
-
-    }
-
     private Runnable mConnectTimeoutChangeSourceRunBack = new Runnable() { //xuameng为回看失败准备
         @Override
         public void run() {
