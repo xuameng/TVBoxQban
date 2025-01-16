@@ -34,11 +34,15 @@ public class SurfaceRenderView extends SurfaceView implements IRenderView, Surfa
     {
         mMeasureHelper = new MeasureHelper();
         SurfaceHolder surfaceHolder = getHolder();
-     //   setZOrderOnTop(true);
+     
         
-    //    surfaceHolder.setFormat(PixelFormat.TRANSPARENT);
-      //      surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-  
+        surfaceHolder.setFormat(PixelFormat.TRANSPARENT);
+           surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+  Canvas canvas = surfaceHolder.lockCanvas();
+                    canvas.drawColor(Color.TRANSPARENT);
+                    surfaceHolder.unlockCanvasAndPost(canvas);
+
+
         surfaceHolder.addCallback(this);
 
     }
