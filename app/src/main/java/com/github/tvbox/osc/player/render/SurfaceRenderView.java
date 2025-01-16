@@ -21,7 +21,7 @@ public class SurfaceRenderView extends SurfaceView implements IRenderView, Surfa
 	    private SurfaceView surfaceView;
     private SurfaceHolder surfaceHolder;
 
-
+	{
         setContentView(R.layout.test_root);
 
         surfaceView = findViewById(R.id.surfaceView);
