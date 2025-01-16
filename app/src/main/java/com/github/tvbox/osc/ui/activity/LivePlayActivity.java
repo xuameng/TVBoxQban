@@ -114,6 +114,7 @@ public class LivePlayActivity extends BaseActivity {
     private TvRecyclerView mLiveChannelView;
     private LiveChannelGroupAdapter liveChannelGroupAdapter;
     private LiveChannelItemAdapter liveChannelItemAdapter;
+	private LiveController controllerxu;
     private long mExitTime = 0; //xuameng返回键退出时间
     private long mExitTimeUp = 0; //xuameng上键间隔时间
     private long mExitTimeDown = 0; //xuameng下键间隔时间
@@ -2653,9 +2654,9 @@ public class LivePlayActivity extends BaseActivity {
 					}else{
 						if (MxuamengMusic.getVisibility() == View.GONE){  //xuameng播放音乐背景
 						MxuamengMusic.setVisibility(View.VISIBLE);
-						LiveController controller = new LiveController(this);
+
 mVideoView.setVideoController(null);
-setVideoControllerXu(controller);
+setVideoControllerXu(controllerxu);
 						}
 						if (isBuffer || isShowlist){
 							if (iv_circle_bg_xu.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
