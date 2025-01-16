@@ -18,19 +18,6 @@ public class SurfaceRenderView extends SurfaceView implements IRenderView, Surfa
     private MeasureHelper mMeasureHelper;
 
     private AbstractPlayer mMediaPlayer;
-	    private SurfaceView surfaceView;
-    private SurfaceHolder surfaceHolder;
-	    protected int getLayoutResID() {
-        return R.layout.xutest;
-    }
-
-	{
-
-
-        surfaceView = findViewById(R.id.surfaceView);
-        surfaceHolder = surfaceView.getHolder();
-        surfaceHolder.addCallback(this);
-    }
 
     public SurfaceRenderView(Context context) {
         super(context);
@@ -44,8 +31,12 @@ public class SurfaceRenderView extends SurfaceView implements IRenderView, Surfa
         super(context, attrs, defStyleAttr);
     }
 
-
-
+    {
+        mMeasureHelper = new MeasureHelper();
+        SurfaceHolder surfaceHolder = getHolder();
+        surfaceHolder.addCallback(this);
+        surfaceHolder.setFormat(PixelFormat.RGBA_8888);
+    }
 
     @Override
     public void attachToPlayer(@NonNull AbstractPlayer player) {
