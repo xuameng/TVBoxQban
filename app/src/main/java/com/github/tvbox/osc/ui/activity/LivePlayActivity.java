@@ -1974,7 +1974,7 @@ public class LivePlayActivity extends BaseActivity {
 							controller.setEnableInNormal(true);
 							controller.setGestureEnabled(true);
 							controller.setDoubleTapTogglePlayEnabled(false);
-							MxuamengMusic.setVideoControllerXu(controller);
+							setVideoControllerXu(controller);
 						}
 
 						tv_size.setText("[" + width + " X " + height +"]");
