@@ -114,7 +114,8 @@ public class LivePlayActivity extends BaseActivity {
     private TvRecyclerView mLiveChannelView;
     private LiveChannelGroupAdapter liveChannelGroupAdapter;
     private LiveChannelItemAdapter liveChannelItemAdapter;
-//	private LiveController controllerxu;
+	private LiveController controllerxu;
+	private BaseVideoController mVideoController;//控制器
     private long mExitTime = 0; //xuameng返回键退出时间
     private long mExitTimeUp = 0; //xuameng上键间隔时间
     private long mExitTimeDown = 0; //xuameng下键间隔时间
@@ -1961,7 +1962,6 @@ public class LivePlayActivity extends BaseActivity {
 					    String width = Integer.toString(mVideoView.getVideoSize()[0]);
 						String height = Integer.toString(mVideoView.getVideoSize()[1]);
 						if (width.length() > 1 && height.length() > 1){
-							LiveController controller = new LiveController(this);
 							controller.setCanChangePosition(false);
 							controller.setEnableInNormal(true);
 							controller.setGestureEnabled(true);
@@ -1969,7 +1969,6 @@ public class LivePlayActivity extends BaseActivity {
 							mVideoView.setVideoController(controller);
 							setVideoControllerXu(null);
 						}else{
-							LiveController controller = new LiveController(this);
 							mVideoView.setVideoController(null);
 							controller.setCanChangePosition(false);
 							controller.setEnableInNormal(true);
