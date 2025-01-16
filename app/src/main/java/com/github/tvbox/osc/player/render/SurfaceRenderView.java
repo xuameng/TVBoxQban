@@ -35,8 +35,11 @@ public class SurfaceRenderView extends SurfaceView implements IRenderView, Surfa
     }
 
     {
-
+		SurfaceHolder surfaceHolder = getHolder();
+		surfaceHolder.setFormat(PixelFormat.TRANSPARENT);
         mMeasureHelper = new MeasureHelper();
+        surfaceHolder.addCallback(this);
+        
     }
 
     @Override
@@ -48,23 +51,9 @@ public class SurfaceRenderView extends SurfaceView implements IRenderView, Surfa
     public void setVideoSize(int videoWidth, int videoHeight) {
         if (videoWidth > 1 && videoHeight > 1) {
             mMeasureHelper.setVideoSize(videoWidth, videoHeight);
-		setZOrderOnTop(true);
-		setZOrderMediaOverlay(true); 
-		SurfaceHolder surfaceHolder = getHolder();
-		surfaceHolder.setFormat(PixelFormat.TRANSPARENT);
-        
-        surfaceHolder.addCallback(this);
             requestLayout();
 
         }
-		else{
-						setZOrderOnTop(true);
-		setZOrderMediaOverlay(false); 
-		SurfaceHolder surfaceHolder = getHolder();
-		surfaceHolder.addCallback(this);
-			requestLayout();
-
-		}
     }
 
     @Override
@@ -102,12 +91,15 @@ public class SurfaceRenderView extends SurfaceView implements IRenderView, Surfa
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-
+		SurfaceHolder surfaceHolder = getHolder();
+		surfaceHolder.addCallback(this);
     }
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
         if (mMediaPlayer != null) {
+					SurfaceHolder surfaceHolder = getHolder();
+		surfaceHolder.addCallback(this);
             mMediaPlayer.setDisplay(holder);
         }
     }
