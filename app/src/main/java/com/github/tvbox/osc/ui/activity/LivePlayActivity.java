@@ -38,6 +38,8 @@ import com.squareup.picasso.Picasso;      //xuameng播放音频切换图片
 import com.squareup.picasso.MemoryPolicy;  //xuameng播放音频切换图片
 import com.squareup.picasso.NetworkPolicy;  //xuameng播放音频切换图片
 import com.github.tvbox.osc.api.ApiConfig;  //xuameng播放音频切换图片
+import xyz.doikki.videoplayer.controller.BaseVideoController;
+
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.api.ApiConfig;
@@ -2125,6 +2127,11 @@ public class LivePlayActivity extends BaseActivity {
         toast.setGravity(Gravity.CENTER, 0, 0); //xuameng 20为左右，0是上下
         toast.show();
     }
+
+    public void setVideoControllerXu(@Nullable BaseVideoController mediaController) {
+
+    }
+
     private Runnable mConnectTimeoutChangeSourceRunBack = new Runnable() { //xuameng为回看失败准备
         @Override
         public void run() {
@@ -2645,6 +2652,9 @@ public class LivePlayActivity extends BaseActivity {
 					}else{
 						if (MxuamengMusic.getVisibility() == View.GONE){  //xuameng播放音乐背景
 						MxuamengMusic.setVisibility(View.VISIBLE);
+						LiveController controller = new LiveController(this);
+mVideoView.setVideoController(null);
+setVideoControllerXu(controller);
 						}
 						if (isBuffer || isShowlist){
 							if (iv_circle_bg_xu.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
