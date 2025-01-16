@@ -13,12 +13,9 @@ import androidx.annotation.NonNull;
 import xyz.doikki.videoplayer.player.AbstractPlayer;
 import xyz.doikki.videoplayer.render.IRenderView;
 import xyz.doikki.videoplayer.render.MeasureHelper;
-import xyz.doikki.videoplayer.player.VideoView;
 
 public class SurfaceRenderView extends SurfaceView implements IRenderView, SurfaceHolder.Callback {
     private MeasureHelper mMeasureHelper;
-
-	private VideoView mVideoView;
 
     private AbstractPlayer mMediaPlayer;
 
@@ -36,6 +33,11 @@ public class SurfaceRenderView extends SurfaceView implements IRenderView, Surfa
 
     {
         mMeasureHelper = new MeasureHelper();
+        SurfaceHolder surfaceHolder = getHolder();
+        surfaceHolder.addCallback(this);
+        surfaceHolder.setFormat(PixelFormat.TRANSPARENT);
+		setZOrderOnTop(true);
+		setZOrderMediaOverlay(true); 
     }
 
     @Override
@@ -45,10 +47,9 @@ public class SurfaceRenderView extends SurfaceView implements IRenderView, Surfa
 
     @Override
     public void setVideoSize(int videoWidth, int videoHeight) {
-        if (videoWidth > 1 && videoHeight > 1) {
+        if (videoWidth > 0 && videoHeight > 0) {
             mMeasureHelper.setVideoSize(videoWidth, videoHeight);
             requestLayout();
-
         }
     }
 
@@ -87,22 +88,12 @@ public class SurfaceRenderView extends SurfaceView implements IRenderView, Surfa
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-				SurfaceHolder surfaceHolder = getHolder();
-		surfaceHolder.setFormat(PixelFormat.TRANSPARENT);
 
- 
-        
-				setZOrderOnTop(true);
-		setZOrderMediaOverlay(true); 
-
-		surfaceHolder.addCallback(this);
     }
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
         if (mMediaPlayer != null) {
-					SurfaceHolder surfaceHolder = getHolder();
-		surfaceHolder.addCallback(this);
             mMediaPlayer.setDisplay(holder);
         }
     }
