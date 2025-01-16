@@ -13,9 +13,12 @@ import androidx.annotation.NonNull;
 import xyz.doikki.videoplayer.player.AbstractPlayer;
 import xyz.doikki.videoplayer.render.IRenderView;
 import xyz.doikki.videoplayer.render.MeasureHelper;
+import xyz.doikki.videoplayer.player.VideoView;
 
 public class SurfaceRenderView extends SurfaceView implements IRenderView, SurfaceHolder.Callback {
     private MeasureHelper mMeasureHelper;
+
+	private VideoView mVideoView;
 
     private AbstractPlayer mMediaPlayer;
 
@@ -33,10 +36,14 @@ public class SurfaceRenderView extends SurfaceView implements IRenderView, Surfa
 
     {
 		        SurfaceHolder surfaceHolder = getHolder();
-				if (videoWidth > 0 && videoHeight > 0) {
+		
+					    String width = Integer.toString(mVideoView.getVideoSize()[0]);
+						String height = Integer.toString(mVideoView.getVideoSize()[1]);
+				if (width = 0 && height = 0) {
 }else{
 	setZOrderOnTop(true);
 }
+
 surfaceHolder.setFormat(PixelFormat.TRANSPARENT);
         mMeasureHelper = new MeasureHelper();
         surfaceHolder.addCallback(this);
