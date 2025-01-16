@@ -165,8 +165,8 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
         mPlayerContainer = new FrameLayout(getContext());
         mPlayerContainer.setBackgroundColor(mPlayerBackgroundColor);
         LayoutParams params = new LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT);
+                ViewGroup.LayoutParams.‌WRAP_CONTENT,
+                ViewGroup.LayoutParams.‌WRAP_CONTENT);
         this.addView(mPlayerContainer, params);
     }
 
@@ -277,8 +277,8 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
         mRenderView = mRenderViewFactory.createRenderView(getContext());
         mRenderView.attachToPlayer(mMediaPlayer);
         LayoutParams params = new LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.‌WRAP_CONTENT,
+                ViewGroup.LayoutParams.‌WRAP_CONTENT,
                 Gravity.CENTER);
         mPlayerContainer.addView(mRenderView.getView(), 0, params);
     }
