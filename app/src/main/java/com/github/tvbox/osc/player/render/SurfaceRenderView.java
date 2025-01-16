@@ -20,9 +20,12 @@ public class SurfaceRenderView extends SurfaceView implements IRenderView, Surfa
     private AbstractPlayer mMediaPlayer;
 	    private SurfaceView surfaceView;
     private SurfaceHolder surfaceHolder;
+	    protected int getLayoutResID() {
+        return R.layout.xutest;
+    }
 
 	{
-        setContentView(R.layout.test_root);
+
 
         surfaceView = findViewById(R.id.surfaceView);
         surfaceHolder = surfaceView.getHolder();
