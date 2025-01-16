@@ -275,6 +275,15 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
             mPlayerContainer.removeView(mRenderView.getView());
             mRenderView.release();
         }
+						String width = Integer.toString(getVideoSize()[0]);
+		String height = Integer.toString(getVideoSize()[1]);
+		if (width.length() <= 1 && height.length() <= 1){
+		    mPlayerContainer = new FrameLayout(getContext());
+			mPlayerContainer.setBackgroundColor(mPlayerBackgroundColorXu);
+		}else{
+		    mPlayerContainer = new FrameLayout(getContext());
+			mPlayerContainer.setBackgroundColor(mPlayerBackgroundColor);
+		}
         mRenderView = mRenderViewFactory.createRenderView(getContext());
         mRenderView.attachToPlayer(mMediaPlayer);
         LayoutParams params = new LayoutParams(
@@ -489,15 +498,6 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
      */
     @Override
     public boolean isPlaying() {
-				String width = Integer.toString(getVideoSize()[0]);
-		String height = Integer.toString(getVideoSize()[1]);
-		if (width.length() <= 1 && height.length() <= 1){
-		    mPlayerContainer = new FrameLayout(getContext());
-			mPlayerContainer.setBackgroundColor(mPlayerBackgroundColorXu);
-		}else{
-		    mPlayerContainer = new FrameLayout(getContext());
-			mPlayerContainer.setBackgroundColor(mPlayerBackgroundColor);
-		}
         return isInPlaybackState() && mMediaPlayer.isPlaying();
     }
 
