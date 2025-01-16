@@ -21,8 +21,7 @@ public class SurfaceRenderView extends SurfaceView implements IRenderView, Surfa
 	    private SurfaceView surfaceView;
     private SurfaceHolder surfaceHolder;
 
-		    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+
         setContentView(R.layout.test_root);
 
         surfaceView = findViewById(R.id.surfaceView);
