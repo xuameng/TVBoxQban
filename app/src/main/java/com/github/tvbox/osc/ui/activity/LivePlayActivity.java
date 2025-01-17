@@ -1829,7 +1829,13 @@ public class LivePlayActivity extends LiveController {
     private void initVideoView() {
    //     LiveController controller = new LiveController(this);
     //    controller.setListener(new LiveController.LiveControlListener() {
-            @Override
+		        controller.setCanChangePosition(false);
+        controller.setEnableInNormal(true);
+        controller.setGestureEnabled(true);
+        controller.setDoubleTapTogglePlayEnabled(false);
+    //    mVideoView.setVideoController(controller);
+        mVideoView.setProgressManager(null);
+
             public boolean singleTap() { //xuameng点击屏幕显示频道菜单
                 if(isBack) { //xuameng显示EPG和显示时移控制栏
                     if(backcontroller.getVisibility() == View.VISIBLE) {
@@ -2084,14 +2090,9 @@ public class LivePlayActivity extends LiveController {
                     liveSettingGroupAdapter.setSelectedGroupIndex(-1); //xuameng右菜单BUG修复
                 }
             }
-        });
-        controller.setCanChangePosition(false);
-        controller.setEnableInNormal(true);
-        controller.setGestureEnabled(true);
-        controller.setDoubleTapTogglePlayEnabled(false);
-    //    mVideoView.setVideoController(controller);
-        mVideoView.setProgressManager(null);
-    }
+        }
+
+    
     private Runnable mConnectTimeoutChangeSourceRun = new Runnable() {
         @Override
         public void run() {
