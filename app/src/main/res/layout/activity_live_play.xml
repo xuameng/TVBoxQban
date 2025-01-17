@@ -5,7 +5,6 @@
     android:layout_height="fill_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-
     <ImageView
         android:enabled="true"
         android:id="@+id/xuamengMusic"
@@ -14,10 +13,18 @@
 		android:scaleType="fitXY" 
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"/>
-		    <xyz.doikki.videoplayer.player.VideoView
+    <xyz.doikki.videoplayer.player.VideoView
         android:id="@+id/mVideoView"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"/>
+    <ImageView
+        android:layout_gravity="center"
+        android:visibility="gone"
+        android:id="@+id/iv_circle_bg_xu"
+        android:padding="@dimen/vs_10"
+        android:layout_width="@dimen/vs_80"
+        android:layout_height="@dimen/vs_80"
+        android:src="@drawable/app_icon"/>
     <LinearLayout
         android:gravity="center_vertical"
         android:layout_gravity="left"
@@ -942,21 +949,4 @@
         android:shadowRadius="2.0"
         android:digits=" 0123456789"
         android:inputType="number"/>
-    <ImageView
-        android:layout_gravity="center"
-        android:visibility="gone"
-        android:id="@+id/iv_circle_bg_xu"
-        android:padding="@dimen/vs_10"
-        android:layout_width="@dimen/vs_80"
-        android:layout_height="@dimen/vs_80"
-        android:src="@drawable/app_icon"/>
-    <ProgressBar
-        android:layout_gravity="center"
-        android:layout_width="@dimen/vs_50"
-        android:layout_height="@dimen/vs_50"
-		android:id="@+id/loading_xu"
-		android:visibility="gone"
-        android:indeterminateOnly="true"
-        android:indeterminateDrawable="@drawable/anim_loading"
-        android:indeterminateBehavior="repeat" />
 </FrameLayout>
