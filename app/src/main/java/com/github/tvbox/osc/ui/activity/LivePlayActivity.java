@@ -52,7 +52,6 @@ import com.github.tvbox.osc.bean.LivePlayerManager;
 import com.github.tvbox.osc.bean.LiveSettingGroup;
 import com.github.tvbox.osc.bean.LiveSettingItem;
 import com.github.tvbox.osc.player.controller.LiveController;
-import com.github.tvbox.osc.player.controller.BaseController;
 import com.github.tvbox.osc.ui.adapter.LiveChannelGroupAdapter;
 import com.github.tvbox.osc.ui.adapter.LiveChannelItemAdapter;
 import com.github.tvbox.osc.ui.adapter.LiveEpgAdapter;
@@ -100,7 +99,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 import xyz.doikki.videoplayer.player.VideoView;
-public class LivePlayActivity extends BaseController {
+public class LivePlayActivity extends BaseActivity {
     public static Context context;
     private VideoView mVideoView;
     private TextView tvChannelInfo;
