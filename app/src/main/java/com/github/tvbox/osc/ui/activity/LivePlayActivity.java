@@ -2091,7 +2091,7 @@ public class LivePlayActivity extends LiveController {
         controller.setDoubleTapTogglePlayEnabled(false);
     //    mVideoView.setVideoController(controller);
         mVideoView.setProgressManager(null);
- //   }
+    }
     private Runnable mConnectTimeoutChangeSourceRun = new Runnable() {
         @Override
         public void run() {
