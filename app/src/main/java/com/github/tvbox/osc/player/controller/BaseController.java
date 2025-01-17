@@ -28,6 +28,9 @@ import xyz.doikki.videoplayer.controller.IGestureComponent;
 import xyz.doikki.videoplayer.player.VideoView;
 import xyz.doikki.videoplayer.util.PlayerUtils;
 
+import com.github.tvbox.osc.util.HawkConfig;    //xuameng 滑动亮度判断
+import com.orhanobut.hawk.Hawk; //xuameng 滑动亮度判断
+
 public abstract class BaseController extends BaseVideoController implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener, View.OnTouchListener {
     private GestureDetector mGestureDetector;
     private AudioManager mAudioManager;
@@ -69,11 +72,13 @@ public abstract class BaseController extends BaseVideoController implements Gest
 						if (music_iv_circle_bg.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
 							music_iv_circle_bg.setVisibility(GONE);
 						}
+						HawkConfig.MSLIDEINFO = true;  //xuameng判断滑动
                         break;
                     }
 
                     case 101: { // 亮度+音量调整 关闭
                         mSlideInfo.setVisibility(GONE);
+						HawkConfig.MSLIDEINFO = false;  //xuameng判断滑动
                         break;
                     }
                     default: {
