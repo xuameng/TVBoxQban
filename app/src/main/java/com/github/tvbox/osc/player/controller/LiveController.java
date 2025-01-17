@@ -16,7 +16,7 @@ import org.json.JSONObject;
  * 直播控制器
  */
 
-public abstract class LiveController extends BaseController {
+public class LiveController extends BaseController {
     protected ProgressBar mLoading;
     private int minFlingDistance = 100;             //最小识别距离
     private int minFlingVelocity = 10;              //最小识别速度
