@@ -51,7 +51,7 @@ import com.github.tvbox.osc.bean.LiveEpgDate;
 import com.github.tvbox.osc.bean.LivePlayerManager;
 import com.github.tvbox.osc.bean.LiveSettingGroup;
 import com.github.tvbox.osc.bean.LiveSettingItem;
-import com.github.tvbox.osc.player.controller.LiveController ;
+import com.github.tvbox.osc.player.controller.LiveController;
 import com.github.tvbox.osc.ui.adapter.LiveChannelGroupAdapter;
 import com.github.tvbox.osc.ui.adapter.LiveChannelItemAdapter;
 import com.github.tvbox.osc.ui.adapter.LiveEpgAdapter;
@@ -103,7 +103,6 @@ public class LivePlayActivity extends BaseActivity {
     public static Context context;
     private VideoView mVideoView;
     private TextView tvChannelInfo;
-	private LiveController controller;
     private TextView tvTime;
     private TextView tvTime_xu; //xuameng的系统时间
     private TextView tvNetSpeed;
@@ -1988,7 +1987,6 @@ public class LivePlayActivity extends BaseActivity {
                             isVOD = false;
                             Mtv_left_top_xu.setVisibility(View.GONE); //xuameng返回键隐藏左上回看菜单
                         }
-						mVideoView.setVideoController(controller);
                         break;
                     case VideoView.STATE_BUFFERED:
 						mLoading.setVisibility(View.GONE); //xuameng 播放音频时的缓冲动画
