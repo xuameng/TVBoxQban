@@ -2608,6 +2608,33 @@ public class LivePlayActivity extends BaseActivity {
         @Override
         public void run() {
             if(mVideoView == null) return;
+            int duration2 = (int) mVideoView.getDuration();
+            if(duration2 > 0) {
+				if(mVideoView.isPlaying()) {  //xuameng音乐播放时图标判断
+                    iv_Play_Xu.setVisibility(View.GONE); //XUAMENG修复PLAY时关闭回看暂停图标
+                    iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause)); //XUAMENG修复PLAY时关闭回看暂停图标
+                    if(!isKUAIJIN) {
+                        sBar.setProgress((int) mVideoView.getCurrentPosition());
+                        int percent = mVideoView.getBufferedPercentage();
+                        int totalBuffer = percent * duration2;
+                        int SecondaryProgress = totalBuffer / 100;
+                        tv_currentpos.setText(durationToString((int) mVideoView.getCurrentPosition()));
+                        if(percent >= 98) {
+                            sBar.setSecondaryProgress(duration2);
+                        } else {
+                            sBar.setSecondaryProgress(SecondaryProgress); //xuameng缓冲进度
+                        }
+                    }
+                }
+            }
+            mHandler.postDelayed(this, 1000);
+        }
+    };
+
+    private Runnable mUpdateVodImageXu = new Runnable() {
+        @Override
+        public void run() {
+            if(mVideoView == null) return;
             if(backcontroller.getVisibility() == View.GONE) {
                 isSEEKBAR = false;
             }
@@ -2637,25 +2664,6 @@ public class LivePlayActivity extends BaseActivity {
 				iv_circle_bg_xu.setVisibility(View.GONE);
 			}   //xuameng音乐播放时图标判断完  
 
-            int duration2 = (int) mVideoView.getDuration();
-            if(duration2 > 0) {
-				if(mVideoView.isPlaying()) {  //xuameng音乐播放时图标判断
-                    iv_Play_Xu.setVisibility(View.GONE); //XUAMENG修复PLAY时关闭回看暂停图标
-                    iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause)); //XUAMENG修复PLAY时关闭回看暂停图标
-                    if(!isKUAIJIN) {
-                        sBar.setProgress((int) mVideoView.getCurrentPosition());
-                        int percent = mVideoView.getBufferedPercentage();
-                        int totalBuffer = percent * duration2;
-                        int SecondaryProgress = totalBuffer / 100;
-                        tv_currentpos.setText(durationToString((int) mVideoView.getCurrentPosition()));
-                        if(percent >= 98) {
-                            sBar.setSecondaryProgress(duration2);
-                        } else {
-                            sBar.setSecondaryProgress(SecondaryProgress); //xuameng缓冲进度
-                        }
-                    }
-                }
-            }
             mHandler.postDelayed(this, 100);
         }
     };
