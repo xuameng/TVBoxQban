@@ -102,6 +102,7 @@ import xyz.doikki.videoplayer.player.VideoView;
 public class LivePlayActivity extends LiveController {
     public static Context context;
     private VideoView mVideoView;
+	private LiveController controller
     private TextView tvChannelInfo;
     private TextView tvTime;
     private TextView tvTime_xu; //xuameng的系统时间
@@ -1828,9 +1829,9 @@ public class LivePlayActivity extends LiveController {
     }
     private void initVideoView() {
    //     LiveController controller = new LiveController(this);
-    //    controller.setListener(new LiveController.LiveControlListener() {
+        controller.setListener(LiveController.LiveControlListener() {
             @Override
-            public boolean onSingleTapConfirmed(MotionEvent e) { //xuameng点击屏幕显示频道菜单
+            public boolean singleTap() { //xuameng点击屏幕显示频道菜单
                 if(isBack) { //xuameng显示EPG和显示时移控制栏
                     if(backcontroller.getVisibility() == View.VISIBLE) {
                         backcontroller.setVisibility(View.GONE);
@@ -1867,7 +1868,7 @@ public class LivePlayActivity extends LiveController {
                 hideTimeXu(); //xuameng隐藏系统时间
                 hideNetSpeedXu(); //XUAMENG隐藏左上网速
                 return false; //XUAMENG如果true 就会默认执行
-            };
+            }
             @Override
             public void longPress() { //xuameng长按显示左边设置菜单
                 if(isBack) {
@@ -1882,7 +1883,7 @@ public class LivePlayActivity extends LiveController {
                 }
             }
             @Override
-            public boolean onDoubleTap(MotionEvent e) {   //xuameng双击显示回看菜单并暂停
+            public boolean DoublePress() { //xuameng双击显示回看菜单并暂停
                 if(imgLiveIcon.getVisibility() == View.GONE) { //xuameng频道空双击空指针
                     return true;
                 }
@@ -2084,14 +2085,14 @@ public class LivePlayActivity extends LiveController {
                     liveSettingGroupAdapter.setSelectedGroupIndex(-1); //xuameng右菜单BUG修复
                 }
             }
-        
-        setCanChangePosition(false);
-        setEnableInNormal(true);
-        setGestureEnabled(true);
-        setDoubleTapTogglePlayEnabled(false);
+        });
+        controller.setCanChangePosition(false);
+        controller.setEnableInNormal(true);
+        controller.setGestureEnabled(true);
+        controller.setDoubleTapTogglePlayEnabled(false);
     //    mVideoView.setVideoController(controller);
         mVideoView.setProgressManager(null);
-    }
+ //   }
     private Runnable mConnectTimeoutChangeSourceRun = new Runnable() {
         @Override
         public void run() {
