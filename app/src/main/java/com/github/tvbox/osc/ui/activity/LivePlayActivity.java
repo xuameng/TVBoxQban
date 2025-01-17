@@ -1867,7 +1867,7 @@ public class LivePlayActivity extends LiveController {
                 hideTimeXu(); //xuameng隐藏系统时间
                 hideNetSpeedXu(); //XUAMENG隐藏左上网速
                 return false; //XUAMENG如果true 就会默认执行
-            }
+            };
             @Override
             public void longPress() { //xuameng长按显示左边设置菜单
                 if(isBack) {
