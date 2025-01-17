@@ -1947,12 +1947,14 @@ public class LivePlayActivity extends BaseActivity {
 						if (iv_circle_bg_xu.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
 							iv_circle_bg_xu.setVisibility(View.GONE);
 							} 
+						iv_Play_Xu.setVisibility(View.GONE); //XUAMENG修复PLAY时关闭回看暂停图标
                     case VideoView.STATE_PAUSED:
                         break;
                     case VideoView.STATE_PREPARED:
 					    String width = Integer.toString(mVideoView.getVideoSize()[0]);
 						String height = Integer.toString(mVideoView.getVideoSize()[1]);
 						tv_size.setText("[" + width + " X " + height +"]");
+						iv_Play_Xu.setVisibility(View.GONE); //XUAMENG修复PLAY时关闭回看暂停图标
                        
                         int duration1 = (int) mVideoView.getDuration();
                         if(isBack) {
