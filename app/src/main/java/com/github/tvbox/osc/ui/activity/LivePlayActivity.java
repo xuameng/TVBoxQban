@@ -2084,14 +2084,14 @@ public class LivePlayActivity extends LiveController {
                     liveSettingGroupAdapter.setSelectedGroupIndex(-1); //xuameng右菜单BUG修复
                 }
             }
-        });
+        
         setCanChangePosition(false);
         setEnableInNormal(true);
         setGestureEnabled(true);
         setDoubleTapTogglePlayEnabled(false);
     //    mVideoView.setVideoController(controller);
         mVideoView.setProgressManager(null);
- //   }
+    }
     private Runnable mConnectTimeoutChangeSourceRun = new Runnable() {
         @Override
         public void run() {
