@@ -319,7 +319,7 @@ public class VodController extends BaseController {
 			}   //xuameng音乐播放时图标判断完
 				
 
-            mHandler.postDelayed(this, 1000);
+            mHandler.postDelayed(this, 100);
         }
     };
 
