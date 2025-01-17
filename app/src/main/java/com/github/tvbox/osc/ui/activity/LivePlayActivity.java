@@ -99,7 +99,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 import xyz.doikki.videoplayer.player.VideoView;
-public class LivePlayActivity extends LiveController {
+public class LivePlayActivity extends BaseController {
     public static Context context;
     private VideoView mVideoView;
     private TextView tvChannelInfo;
