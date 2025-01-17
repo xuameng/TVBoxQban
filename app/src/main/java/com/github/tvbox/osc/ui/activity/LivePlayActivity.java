@@ -431,6 +431,7 @@ public class LivePlayActivity extends BaseActivity {
         mHandler.post(mUpdateNetSpeedRunXu); //XUAMENG左上网速检测1秒钟一次
         mHandler.post(mUpdateVodProgressXu); //xuamengVOD BACK播放进度检测
 		mHandler.post(myRunnableMusic); //xuamengVOD BACK播放进度检测
+		mHandler.post(mUpdateVodImageXu); //xuamengVOD BACK播放进度检测
         iv_playpause.setNextFocusLeftId(R.id.pb_progressbar);
     }
     //获取EPG并存储 // 百川epg  DIYP epg   51zmt epg ------- 自建EPG格式输出格式请参考 51zmt
@@ -888,6 +889,7 @@ public class LivePlayActivity extends BaseActivity {
             mHandler.removeCallbacks(mUpdateNetSpeedRunXu);
             mHandler.removeCallbacks(mUpdateVodProgressXu);
 			mHandler.removeCallbacks(myRunnableMusic);
+			mHandler.removeCallbacks(mUpdateVodImageXu);
             mHandler.removeCallbacks(mUpdateTimeRun);
             mHandler.removeCallbacks(mUpdateTimeRunXu);
 			iv_circle_bg_xu.setVisibility(View.GONE);  //xuameng音乐播放时图标
