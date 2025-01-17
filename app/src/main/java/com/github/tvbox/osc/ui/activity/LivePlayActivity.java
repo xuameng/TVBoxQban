@@ -102,7 +102,6 @@ import xyz.doikki.videoplayer.player.VideoView;
 public class LivePlayActivity extends LiveController {
     public static Context context;
     private VideoView mVideoView;
-	private LiveController controller
     private TextView tvChannelInfo;
     private TextView tvTime;
     private TextView tvTime_xu; //xuameng的系统时间
@@ -1828,8 +1827,8 @@ public class LivePlayActivity extends LiveController {
         liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
     }
     private void initVideoView() {
-   //     LiveController controller = new LiveController(this);
-        controller.setListener(LiveController.LiveControlListener() {
+        LiveController controller = new LiveController(this);
+        controller.setListener(new LiveController.LiveControlListener() {
             @Override
             public boolean singleTap() { //xuameng点击屏幕显示频道菜单
                 if(isBack) { //xuameng显示EPG和显示时移控制栏
@@ -2090,9 +2089,9 @@ public class LivePlayActivity extends LiveController {
         controller.setEnableInNormal(true);
         controller.setGestureEnabled(true);
         controller.setDoubleTapTogglePlayEnabled(false);
-    //    mVideoView.setVideoController(controller);
+        mVideoView.setVideoController(controller);
         mVideoView.setProgressManager(null);
- //   }
+    }
     private Runnable mConnectTimeoutChangeSourceRun = new Runnable() {
         @Override
         public void run() {
