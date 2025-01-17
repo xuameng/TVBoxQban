@@ -151,8 +151,8 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
         mEnableAudioFocus = a.getBoolean(R.styleable.VideoView_enableAudioFocus, mEnableAudioFocus);
         mIsLooping = a.getBoolean(R.styleable.VideoView_looping, false);
         mCurrentScreenScaleType = a.getInt(R.styleable.VideoView_screenScaleType, mCurrentScreenScaleType);
-        mPlayerBackgroundColor = a.getColor(R.styleable.VideoView_playerBackgroundColor, Color.argb(0, 0, 0, 0));  //xuameng背景为透明色
-//		mPlayerBackgroundColor = a.getColor(R.styleable.VideoView_playerBackgroundColor, Color.BLACK);  //xuameng背景为透明色
+ //       mPlayerBackgroundColor = a.getColor(R.styleable.VideoView_playerBackgroundColor, Color.argb(0, 0, 0, 0));  //xuameng背景为透明色
+		mPlayerBackgroundColor = a.getColor(R.styleable.VideoView_playerBackgroundColor, Color.BLACK);  //xuameng背景为透明色
         a.recycle();
 
         initView();
@@ -273,15 +273,14 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
         if (mRenderView != null) {
             mPlayerContainer.removeView(mRenderView.getView());
             mRenderView.release();
-			        mRenderView = mRenderViewFactory.createRenderView(getContext());
+        }
+        mRenderView = mRenderViewFactory.createRenderView(getContext());
         mRenderView.attachToPlayer(mMediaPlayer);
         LayoutParams params = new LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 Gravity.CENTER);
         mPlayerContainer.addView(mRenderView.getView(), 0, params);
-        }
-
     }
 
     /**
@@ -532,6 +531,13 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
         if (mCurrentPosition > 0) {
             seekTo(mCurrentPosition);
         }
+		String width = Integer.toString(getVideoSize()[0]);
+		String height = Integer.toString(getVideoSize()[1]);
+		if (width.length() <= 1 && height.length() <= 1){
+	        if (mRenderView != null) {
+            mPlayerContainer.removeView(mRenderView.getView());
+        }
+		}
     }
 
     /**
