@@ -2089,7 +2089,7 @@ public class LivePlayActivity extends BaseActivity {
         controller.setEnableInNormal(true);
         controller.setGestureEnabled(true);
         controller.setDoubleTapTogglePlayEnabled(false);
-        mVideoView.setVideoController(controller);
+    //    mVideoView.setVideoController(controller);
         mVideoView.setProgressManager(null);
     }
     private Runnable mConnectTimeoutChangeSourceRun = new Runnable() {
