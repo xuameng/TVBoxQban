@@ -330,7 +330,7 @@ public class LivePlayActivity extends BaseActivity {
                     mVideoView.pause();
                     countDownTimer.cancel();
                     countDownTimer.start();
-             //       iv_Play_Xu.setVisibility(View.VISIBLE); //回看暂停图标
+                    iv_Play_Xu.setVisibility(View.VISIBLE); //回看暂停图标
                     iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
                 } else {
                     backcontroller.setVisibility(View.GONE); //XUAMENG底部回看菜单播放键点击播放隐藏菜单
@@ -390,7 +390,7 @@ public class LivePlayActivity extends BaseActivity {
                             mVideoView.pause();
                             countDownTimer.cancel();
                             countDownTimer.start();
-                     //       iv_Play_Xu.setVisibility(View.VISIBLE); //回看暂停图标
+                            iv_Play_Xu.setVisibility(View.VISIBLE); //回看暂停图标
                             iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
                         } else {
                             backcontroller.setVisibility(View.GONE); //XUAMENG底部回看菜单播放键点击播放隐藏菜单
@@ -1554,11 +1554,11 @@ public class LivePlayActivity extends BaseActivity {
         if(tvRightSettingLayout.getVisibility() == View.VISIBLE) {
             tvRightSettingLayout.setVisibility(View.INVISIBLE);
             liveSettingGroupAdapter.setSelectedGroupIndex(-1);
-        }
-        if(isVOD) {
-            if(!mVideoView.isPlaying()) {
-        //        iv_Play_Xu.setVisibility(View.VISIBLE); //回看暂停图标
-            }
+			if(isVOD) {
+				if(!mVideoView.isPlaying()) {
+					iv_Play_Xu.setVisibility(View.VISIBLE); //回看暂停图标
+				}
+			}
         }
     }
     private void mHideSettingLayoutRunXu() { //XUAMENG隐藏右侧延时5秒菜单
@@ -2889,7 +2889,7 @@ public class LivePlayActivity extends BaseActivity {
                     mVideoView.pause();
                     countDownTimer.cancel();
                     countDownTimer.start();
-             //       iv_Play_Xu.setVisibility(View.VISIBLE); //回看暂停图标
+                    iv_Play_Xu.setVisibility(View.VISIBLE); //回看暂停图标
                     iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
                 } else {
                     backcontroller.setVisibility(View.GONE); //XUAMENG底部回看菜单播放键点击播放隐藏菜单
@@ -2949,7 +2949,7 @@ public class LivePlayActivity extends BaseActivity {
                             mVideoView.pause();
                             countDownTimer.cancel();
                             countDownTimer.start();
-                     //       iv_Play_Xu.setVisibility(View.VISIBLE); //回看暂停图标
+                            iv_Play_Xu.setVisibility(View.VISIBLE); //回看暂停图标
                             iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
                         } else {
                             backcontroller.setVisibility(View.GONE); //XUAMENG底部回看菜单播放键点击播放隐藏菜单
