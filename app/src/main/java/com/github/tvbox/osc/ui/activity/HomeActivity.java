@@ -317,9 +317,7 @@ public class HomeActivity extends BaseActivity {
 									}else{
 										Toast.makeText(HomeActivity.this, "聚汇影视提示：jar加载成功！", Toast.LENGTH_SHORT).show();
 									}
-                                }else{
-									Toast.makeText(HomeActivity.this, "聚汇影视提示：缓存加载成功！", Toast.LENGTH_SHORT).show();
-								}
+                                }
 
                                 initData();
                             }
