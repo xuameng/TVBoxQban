@@ -310,6 +310,7 @@ public class ApiConfig {
         // wallpaper
         wallpaper = DefaultConfig.safeJsonString(infoJson, "wallpaper", "");
 		musicwallpaper = DefaultConfig.safeJsonString(infoJson, "musicwallpaper", "");
+		warningText = DefaultConfig.safeJsonString(infoJson, "warningText", "");
         // 远端站点源
         SourceBean firstSite = null;
         for (JsonElement opt : infoJson.get("sites").getAsJsonArray()) {
