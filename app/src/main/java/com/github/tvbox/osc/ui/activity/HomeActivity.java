@@ -315,7 +315,7 @@ public class HomeActivity extends BaseActivity {
 										String warningText = ApiConfig.get().warningText;
 										Toast.makeText(HomeActivity.this, (warningText), Toast.LENGTH_SHORT).show();
 									}else{
-										Toast.makeText(HomeActivity.this, "自定义jar加载成功！", Toast.LENGTH_SHORT).show();
+										Toast.makeText(HomeActivity.this, "聚汇影视提示：jar加载成功！", Toast.LENGTH_SHORT).show();
 									}
                                 }
 
@@ -335,7 +335,7 @@ public class HomeActivity extends BaseActivity {
                         mHandler.post(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(HomeActivity.this, "自定义jar加载失败！", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(HomeActivity.this, "聚汇影视提示：jar加载失败！", Toast.LENGTH_SHORT).show();
                                 initData();
                             }
                         });
