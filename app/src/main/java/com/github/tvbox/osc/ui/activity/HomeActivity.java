@@ -311,7 +311,12 @@ public class HomeActivity extends BaseActivity {
                                     if (Hawk.get(HawkConfig.HOME_DEFAULT_SHOW, false)) {         //xuameng直接进入直播
                                         jumpActivity(LivePlayActivity.class);
                                    }
-                                    Toast.makeText(HomeActivity.this, "自定义jar加载成功！", Toast.LENGTH_SHORT).show();
+									if (!ApiConfig.get().warningText.isEmpty()){
+										String warningText = ApiConfig.get().warningText;
+										Toast.makeText(HomeActivity.this, (warningText), Toast.LENGTH_SHORT).show();
+									}else{
+										Toast.makeText(HomeActivity.this, "自定义jar加载成功！", Toast.LENGTH_SHORT).show();
+									}
                                 }
 
                                 initData();
