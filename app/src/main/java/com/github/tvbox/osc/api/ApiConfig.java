@@ -62,6 +62,7 @@ public class ApiConfig {
     private String spider = null;
     public String wallpaper = "";
 	public String musicwallpaper = "";   //xuameng音乐背景图
+	public String warningText = "";   //xuameng版权提示
 
     private SourceBean emptyHome = new SourceBean();
 
