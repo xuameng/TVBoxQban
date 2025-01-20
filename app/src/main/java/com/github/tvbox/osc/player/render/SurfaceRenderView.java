@@ -17,7 +17,6 @@ import xyz.doikki.videoplayer.render.MeasureHelper;
 public class SurfaceRenderView extends SurfaceView implements IRenderView, SurfaceHolder.Callback {
     private MeasureHelper mMeasureHelper;
 
-    private boolean isSurfaceCreated=false;     //Surface是否被创建
     private AbstractPlayer mMediaPlayer;
 
     public SurfaceRenderView(Context context) {
@@ -87,7 +86,6 @@ public class SurfaceRenderView extends SurfaceView implements IRenderView, Surfa
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-		isSurfaceCreated=true;
 
     }
 
@@ -95,18 +93,11 @@ public class SurfaceRenderView extends SurfaceView implements IRenderView, Surfa
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
         if (mMediaPlayer != null) {
             mMediaPlayer.setDisplay(holder);
-			isSurfaceCreated=true;
         }
     }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-		if (isSurfaceCreated)
-					{
-			return;
-
-		}
-		isSurfaceCreated=false;
 
     }
 }
