@@ -271,8 +271,8 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
      */
     protected void addDisplay() {
         if (mRenderView != null) {
-    //        mPlayerContainer.removeView(mRenderView.getView());
-     //       mRenderView.release();
+            mPlayerContainer.removeView(mRenderView.getView());
+            mRenderView.release();
         }
         mRenderView = mRenderViewFactory.createRenderView(getContext());
         mRenderView.attachToPlayer(mMediaPlayer);
