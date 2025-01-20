@@ -96,5 +96,8 @@ public class SurfaceRenderView extends SurfaceView implements IRenderView, Surfa
         }
     }
 
+    @Override
+    public void surfaceDestroyed(SurfaceHolder holder) {
 
+    }
 }
