@@ -100,7 +100,7 @@ mMediaPlayer.start();
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-		if (mMediaPlayer ! = null && mMediaPlayer.isPlaying()) {
+		if (mMediaPlayer ! = null) {
 
       mMediaPlayer.pause();
 		}
