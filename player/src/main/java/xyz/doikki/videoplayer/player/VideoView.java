@@ -349,9 +349,11 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
      * 继续播放
      */
     public void resume() {
-        if (isInPlaybackState()) {
-			        initPlayer();
+					        initPlayer();
         addDisplay();
+		startPrepare(false);
+        if (isInPlaybackState()
+                && !mMediaPlayer.isPlaying()) {
             mMediaPlayer.start();
             setPlayState(STATE_PLAYING);
             if (mAudioFocusHelper != null && !isMute()) {
