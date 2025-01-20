@@ -321,7 +321,6 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
      * 播放状态下开始播放
      */
     protected void startInPlaybackState() {
-		mMediaPlayer.release();
         mMediaPlayer.start();
         setPlayState(STATE_PLAYING);
         if (mAudioFocusHelper != null && !isMute()) {
