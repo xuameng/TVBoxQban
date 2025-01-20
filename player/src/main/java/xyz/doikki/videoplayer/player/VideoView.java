@@ -182,12 +182,9 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
      */
     @Override
     public void start() {
-        if (isInIdleState()
-                || isInStartAbortState()) {
+
             startPlay();
-        } else if (isInPlaybackState()) {
-            startInPlaybackState();
-        }
+  
     }
 
     /**
