@@ -182,9 +182,12 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
      */
     @Override
     public void start() {
-
+        if (isInIdleState()
+                || isInStartAbortState()) {
             startPlay();
-  
+        } else if (isInPlaybackState()) {
+            startInPlaybackState();
+        }
     }
 
     /**
@@ -346,15 +349,14 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
      * 继续播放
      */
     public void resume() {
-        if (isInPlaybackState()
-                && !mMediaPlayer.isPlaying()) {
-            mMediaPlayer.start();
+
+            startPlay();
             setPlayState(STATE_PLAYING);
             if (mAudioFocusHelper != null && !isMute()) {
                 mAudioFocusHelper.requestFocus();
             }
             mPlayerContainer.setKeepScreenOn(true);
-        }
+        
     }
 
     /**
