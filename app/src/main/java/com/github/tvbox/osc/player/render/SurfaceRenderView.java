@@ -93,6 +93,7 @@ public class SurfaceRenderView extends SurfaceView implements IRenderView, Surfa
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
         if (mMediaPlayer != null) {
 			mMediaPlayer.reset();
+			mMediaPlayer.start();
             mMediaPlayer.setDisplay(holder);
         }
     }
