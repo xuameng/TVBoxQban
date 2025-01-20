@@ -1001,6 +1001,10 @@ public class LivePlayActivity extends BaseActivity {
         if(event.getAction() == KeyEvent.ACTION_DOWN) {
             int keyCode = event.getKeyCode();
 if(keyCode == KeyEvent.KEYCODE_HOME) {
+
+	                    mVideoView.release();
+                    mVideoView.setUrl(currentLiveChannelItem.getUrl());
+                    mVideoView.start();
 	isHOME = true;
 
 }
@@ -2644,10 +2648,10 @@ if(keyCode == KeyEvent.KEYCODE_HOME) {
             if(mVideoView == null) return;
 			if (isHOME)
 			{
-                    mVideoView.release();
-                    
+
+					                    mVideoView.release();
+                    mVideoView.setUrl(currentLiveChannelItem.getUrl());
                     mVideoView.start();
-					isHOME = false;
 
 			}
             if(backcontroller.getVisibility() == View.GONE) {
