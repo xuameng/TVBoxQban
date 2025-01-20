@@ -349,14 +349,15 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
      * 继续播放
      */
     public void resume() {
-
-            startPlay();
+        if (isInPlaybackState()) {
+                    initPlayer();
+        addDisplay();
             setPlayState(STATE_PLAYING);
             if (mAudioFocusHelper != null && !isMute()) {
                 mAudioFocusHelper.requestFocus();
             }
             mPlayerContainer.setKeepScreenOn(true);
-        
+        }
     }
 
     /**
