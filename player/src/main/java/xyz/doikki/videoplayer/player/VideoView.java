@@ -362,7 +362,8 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
 		if (width.length() <= 1 && height.length() <= 1){
 	        if (mRenderView != null) {
             mPlayerContainer.removeView(mRenderView.getView());      //xuameng重要当视频为空时释放当前VIDEO VIEW
-        }else {
+        }
+		}else {
 			addDisplay();
 			}
         }
