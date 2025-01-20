@@ -271,8 +271,8 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
      */
     protected void addDisplay() {
         if (mRenderView != null) {
-            mPlayerContainer.removeView(mRenderView.getView());
-            mRenderView.release();
+    //        mPlayerContainer.removeView(mRenderView.getView());
+     //       mRenderView.release();
         }
         mRenderView = mRenderViewFactory.createRenderView(getContext());
         mRenderView.attachToPlayer(mMediaPlayer);
@@ -357,15 +357,6 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
                 mAudioFocusHelper.requestFocus();
             }
             mPlayerContainer.setKeepScreenOn(true);
-					String width = Integer.toString(getVideoSize()[0]);
-		String height = Integer.toString(getVideoSize()[1]);
-		if (width.length() <= 1 && height.length() <= 1){
-	        if (mRenderView != null) {
-            mPlayerContainer.removeView(mRenderView.getView());      //xuameng重要当视频为空时释放当前VIDEO VIEW
-        }
-		}else {
-			addDisplay();
-			}
         }
     }
 
@@ -545,9 +536,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
 		if (width.length() <= 1 && height.length() <= 1){
 	        if (mRenderView != null) {
             mPlayerContainer.removeView(mRenderView.getView());      //xuameng重要当视频为空时释放当前VIDEO VIEW
-        }else {
-			addDisplay();
-		}
+        }
 		}
     }
 
