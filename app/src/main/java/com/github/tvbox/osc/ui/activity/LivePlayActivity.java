@@ -184,7 +184,6 @@ public class LivePlayActivity extends BaseActivity {
     private boolean isKUAIJIN = false; //xuameng快进
     private boolean isSEEKBAR = false; //xuameng进入SEEKBAR
     private boolean isTVNUM = false; //xuameng获取频道编号
-	private boolean isHOME = false; //xuameng获取频道编号
 	private boolean isBuffer = false; //xuameng缓冲
 	private boolean isShowlist = false; //xuameng判断菜单显示
     private int selectedChannelNumber = 0; // xuameng遥控器数字键输入的要切换的频道号码
@@ -1000,14 +999,6 @@ public class LivePlayActivity extends BaseActivity {
     public boolean dispatchKeyEvent(KeyEvent event) {
         if(event.getAction() == KeyEvent.ACTION_DOWN) {
             int keyCode = event.getKeyCode();
-if(keyCode == KeyEvent.KEYCODE_HOME) {
-
-	                    mVideoView.release();
-                    mVideoView.setUrl(currentLiveChannelItem.getUrl());
-                    mVideoView.start();
-	isHOME = true;
-
-}
             if(keyCode == KeyEvent.KEYCODE_MENU) { //xuameng回看时控制
                 if(isBack) {
                     Toast.makeText(mContext, "当前回看中，请按返回键退出回看！", Toast.LENGTH_SHORT).show();
@@ -2646,14 +2637,6 @@ if(keyCode == KeyEvent.KEYCODE_HOME) {
         @Override
         public void run() {
             if(mVideoView == null) return;
-			if (isHOME)
-			{
-
-					                    mVideoView.release();
-                    mVideoView.setUrl(currentLiveChannelItem.getUrl());
-                    mVideoView.start();
-
-			}
             if(backcontroller.getVisibility() == View.GONE) {
                 isSEEKBAR = false;
             }
