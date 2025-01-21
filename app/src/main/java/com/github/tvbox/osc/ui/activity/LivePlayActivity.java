@@ -1264,8 +1264,8 @@ new Handler().postDelayed(new Runnable() {
 							int Progress = (int) mVideoView.getCurrentPosition();    
 								mVideoView.release();
 							mVideoView.setUrl(currentLiveChannelItem.getUrl());
-						mVideoView.seekTo(Progress);
-						mVideoView.start();
+							mVideoView.start();
+							mVideoView.seekTo(Progress);
 						}
                         }
                         }
