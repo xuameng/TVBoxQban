@@ -44,8 +44,7 @@
 
         <activity
             android:name=".ui.activity.LivePlayActivity"
-			android:configChanges="orientation|keyboardHidden|keyboard"
-            android:screenOrientation="nosensor" />
+            android:screenOrientation="sensorLandscape" />
         <activity
             android:name=".ui.activity.DetailActivity"
             android:configChanges="orientation|screenSize"
