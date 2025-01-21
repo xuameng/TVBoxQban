@@ -142,7 +142,6 @@ public class LivePlayActivity extends BaseActivity {
     private View divLoadEpg;
     private View divLoadEpgleft;
     private LinearLayout divEpg;
-	private int Progress = 0;
     RelativeLayout ll_epg;
     TextView tv_channelnum;
     TextView tip_chname;
@@ -1250,32 +1249,7 @@ public class LivePlayActivity extends BaseActivity {
         super.onResume();
         if(mVideoView != null) {
             mVideoView.resume();
-  
-
-new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-							int renderType = Hawk.get(HawkConfig.PLAY_RENDER, 0);
-						if(mVideoView.isPlaying() && renderType == 1) {
-							int durationXu = (int) mVideoView.getDuration();
-							if(durationXu <= 0) {
-							mVideoView.release();
-							mVideoView.setUrl(currentLiveChannelItem.getUrl());
-							mVideoView.start();
-							}else{
-							int Progress = (int) mVideoView.getCurrentPosition();    
-								mVideoView.release();
-							
-							mVideoView.start();
-						}
-                        }
-                        }
-                    }, 800);
-
-				
-
-
-		}
+        }
     }
     @Override
     protected void onPause() {
@@ -2007,12 +1981,6 @@ new Handler().postDelayed(new Runnable() {
                         break;
                     case VideoView.STATE_BUFFERED:
                     case VideoView.STATE_PLAYING:
-						if (Progress > 0)
-						{
-						mVideoView.seekTo(Progress);
-												int Progress = 0;
-						}
-						
                         currentLiveChangeSourceTimes = 0;
                         mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
 						isBuffer = false;
