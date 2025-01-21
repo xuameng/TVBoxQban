@@ -464,7 +464,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
                     @Override
                     public void click(Integer value, int pos) {
                         Hawk.put(HawkConfig.PLAY_RENDER, value);
-						Hawk.put(HawkConfigXu.PLAY_RENDER, value);
+						Hawk.put(HawkConfigXu.PLAY_RENDER_XU, value);
                         tvRender.setText(PlayerHelper.getRenderName(value));
                         PlayerHelper.init();
                     }
