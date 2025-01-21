@@ -1250,13 +1250,13 @@ public class LivePlayActivity extends BaseActivity {
         if(mVideoView != null) {
             mVideoView.resume();
         }
-		int duration = mVideoView.getDuration();
+		int duration = (int) mVideoView.getDuration();
         if(duration <= 0) {
 			mVideoView.release();
 			mVideoView.setUrl(currentLiveChannelItem.getUrl());
 			mVideoView.start();
 		}else{
-		int Progress = mVideoView.getCurrentPosition();    
+		int Progress = (int) mVideoView.getCurrentPosition();    
 		    mVideoView.release();
             mVideoView.setUrl(currentLiveChannelItem.getUrl());
 		    mVideoView.seekTo(Progress);
