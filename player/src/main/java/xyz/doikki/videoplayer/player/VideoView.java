@@ -574,7 +574,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
             case AbstractPlayer.MEDIA_INFO_RENDERING_START: // 视频/音频开始渲染
                 setPlayState(STATE_PLAYING);
                 mPlayerContainer.setKeepScreenOn(true);
-				if (Progress > 0 && isSurface){   //xuameng surface读取播放进度
+				if (Progress > 0 && isSurface && !HawkConfigXu.intVod){   //xuameng surface读取播放进度
 					seekTo(Progress);
 					Progress = 0;
 					isSurface = false;
