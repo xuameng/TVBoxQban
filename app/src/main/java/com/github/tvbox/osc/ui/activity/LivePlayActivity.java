@@ -1947,6 +1947,7 @@ public class LivePlayActivity extends BaseActivity {
 						if (iv_circle_bg_xu.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
 							iv_circle_bg_xu.setVisibility(View.GONE);
 							} 
+							iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
                     case VideoView.STATE_PAUSED:
                         break;
                     case VideoView.STATE_PREPARED:
@@ -1986,6 +1987,7 @@ public class LivePlayActivity extends BaseActivity {
 						isBuffer = false;
                         break;
                     case VideoView.STATE_ERROR:
+						iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
                     case VideoView.STATE_PLAYBACK_COMPLETED:
                         if(isBack) {
                             mHandler.removeCallbacks(mConnectTimeoutChangeSourceRunBack);
