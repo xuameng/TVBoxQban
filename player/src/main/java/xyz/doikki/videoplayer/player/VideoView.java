@@ -17,7 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
-import com.orhanobut.hawk.Hawk;
+import com.orhanobut.hawk.Hawk;         //xuameng surfaceview判断用
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -35,7 +35,7 @@ import xyz.doikki.videoplayer.render.IRenderView;
 import xyz.doikki.videoplayer.render.RenderViewFactory;
 import xyz.doikki.videoplayer.util.L;
 import xyz.doikki.videoplayer.util.PlayerUtils;
-import xyz.doikki.videoplayer.controller.HawkConfigXu;
+import xyz.doikki.videoplayer.controller.HawkConfigXu;  //xuameng surfaceview判断用
 
 /**
  * 播放器
@@ -100,6 +100,9 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
 
     protected boolean mIsTinyScreen;//是否处于小屏状态
     protected int[] mTinyScreenSize = {0, 0};
+
+	private int Progress = 0;
+	private boolean isSurface = false;  //xuameng判断是否surface
 
     /**
      * 监听系统中音频焦点改变，见{@link #setEnableAudioFocus(boolean)}
@@ -351,11 +354,19 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
      * 继续播放
      */
     public void resume() {
-		int renderType = Hawk.get(HawkConfigXu.PLAY_RENDER, 0);
-		if (renderType == 1) {
+		int renderType = Hawk.get(HawkConfigXu.PLAY_RENDER, 0);  //xuameng surfaceview判断用
+		int duration = (int) getDuration();
+		String width = Integer.toString(getVideoSize()[0]);
+		String height = Integer.toString(getVideoSize()[1]);
+		if(duration > 130000) {
+			Progress = (int) getCurrentPosition();
+		}
+
+		if (renderType == 1 && width.length() > 1 && height.length() > 1) {
 		initPlayer();
         addDisplay();
 		startPrepare(false);
+		isSurface = true;
 		}
         if (isInPlaybackState()
                 && !mMediaPlayer.isPlaying()) {
@@ -563,6 +574,11 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
             case AbstractPlayer.MEDIA_INFO_RENDERING_START: // 视频/音频开始渲染
                 setPlayState(STATE_PLAYING);
                 mPlayerContainer.setKeepScreenOn(true);
+				if (Progress > 0 && isSurface){
+					seekTo(Progress);
+					Progress = 0;
+					isSurface = false;
+				}
                 break;
             case AbstractPlayer.MEDIA_INFO_VIDEO_ROTATION_CHANGED:
                 if (mRenderView != null) mRenderView.setVideoRotation(extra);
