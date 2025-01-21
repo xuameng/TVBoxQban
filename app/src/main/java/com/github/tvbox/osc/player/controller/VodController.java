@@ -51,6 +51,7 @@ import com.squareup.picasso.Picasso;      //xuameng播放音频切换图片
 import com.squareup.picasso.MemoryPolicy;  //xuameng播放音频切换图片
 import com.squareup.picasso.NetworkPolicy;  //xuameng播放音频切换图片
 import com.github.tvbox.osc.api.ApiConfig;  //xuameng播放音频切换图片
+import xyz.doikki.videoplayer.controller.HawkConfigXu;  //xuameng surfaceview判断用
 
 public class VodController extends BaseController {
     public VodController(@NonNull @NotNull Context context) {
@@ -258,7 +259,10 @@ public class VodController extends BaseController {
             mPlayPauseTime.setText(timeFormat.format(date));
             String speed = PlayerHelper.getDisplaySpeed(mControlWrapper.getTcpSpeed());
             mPlayLoadNetSpeedRightTop.setText(speed);
-            mPlayLoadNetSpeed.setText(speed);         				
+            mPlayLoadNetSpeed.setText(speed);
+            String width = Integer.toString(mControlWrapper.getVideoSize()[0]);
+            String height = Integer.toString(mControlWrapper.getVideoSize()[1]);
+            mVideoSize.setText("[ " + width + " X " + height +" ]");          				
             mHandler.postDelayed(this, 1000);
         }
     };
@@ -419,6 +423,8 @@ public class VodController extends BaseController {
         animator20.setDuration(10000);
         animator20.setRepeatCount(-1);
         animator20.start();
+
+		HawkConfigXu.intVod = true;  //xuameng判断进入播放
 		
         backBtn.setOnClickListener(new OnClickListener() {            //xuameng  屏幕上的返回键
             @Override
@@ -1367,9 +1373,6 @@ public class VodController extends BaseController {
                 mPlayLoadNetSpeed.setVisibility(GONE);
                 hideLiveAboutBtn();
                 listener.prepared();
-			    String width = Integer.toString(mControlWrapper.getVideoSize()[0]);
-				String height = Integer.toString(mControlWrapper.getVideoSize()[1]);
-				mVideoSize.setText("[ " + width + " X " + height +" ]"); 
                 break;
             case VideoView.STATE_BUFFERED:
                 mPlayLoadNetSpeed.setVisibility(GONE);
@@ -1670,6 +1673,7 @@ public class VodController extends BaseController {
 			mHandler.removeCallbacks(xuRunnable);
 			mHandler.removeCallbacks(myRunnableMusic);	
 			mHandler.removeCallbacks(myRunnableXu);
+			HawkConfigXu.intVod = false;  //xuameng判断进入播放
             return true;
         }
         if (isBottomVisible() && (System.currentTimeMillis() - DOUBLE_CLICK_TIME > 350)) {			      //xuameng按返回键退出
