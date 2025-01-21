@@ -21,6 +21,7 @@ import android.content.ClipboardManager;
 import android.content.ClipData;
 
 import android.view.animation.BounceInterpolator;   //xuameng动画
+import xyz.doikki.videoplayer.controller.HawkConfigXu;  //xuameng surfaceview判断用
 
 import androidx.fragment.app.FragmentContainerView;
 import androidx.lifecycle.Observer;
@@ -155,6 +156,7 @@ public class DetailActivity extends BaseActivity {
         initView();
         initViewModel();
         initData();
+		HawkConfigXu.intVod = true;  //xuameng判断进入播放
     }
 
     private void initView() {
@@ -1153,6 +1155,7 @@ public class DetailActivity extends BaseActivity {
 		else if (showPreview) {    //xuameng如果显示小窗口播放就释放视频，修复退出还显示暂停图标等图标的BUG
             playFragment.mVideoView.release();
         }
+		HawkConfigXu.intVod = false;  //xuameng判断进入播放
         super.onBackPressed();
     }
 
