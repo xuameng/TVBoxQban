@@ -18,7 +18,6 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import com.orhanobut.hawk.Hawk;
-import com.github.tvbox.osc.util.HawkConfig;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
