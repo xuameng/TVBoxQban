@@ -36,6 +36,7 @@ import xyz.doikki.videoplayer.render.IRenderView;
 import xyz.doikki.videoplayer.render.RenderViewFactory;
 import xyz.doikki.videoplayer.util.L;
 import xyz.doikki.videoplayer.util.PlayerUtils;
+import xyz.doikki.videoplayer.player.HawkConfigXu;
 
 /**
  * 播放器
@@ -351,7 +352,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
      * 继续播放
      */
     public void resume() {
-		int renderType = Hawk.get(HawkConfig.PLAY_RENDER, 0);
+		int renderType = Hawk.get(HawkConfigXu.PLAY_RENDER, 0);
 		if (renderType == 1) {
 		initPlayer();
         addDisplay();
