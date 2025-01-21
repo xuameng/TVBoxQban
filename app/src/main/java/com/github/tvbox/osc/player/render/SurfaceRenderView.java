@@ -86,10 +86,7 @@ public class SurfaceRenderView extends SurfaceView implements IRenderView, Surfa
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        mMeasureHelper = new MeasureHelper();
-        SurfaceHolder holder = getHolder();
-        holder.addCallback(this);
-        holder.setFormat(PixelFormat.RGBA_8888);
+
     }
 
     @Override
@@ -101,8 +98,6 @@ public class SurfaceRenderView extends SurfaceView implements IRenderView, Surfa
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-        SurfaceHolder holder = null;
-        holder.addCallback(this);
 
     }
 }
