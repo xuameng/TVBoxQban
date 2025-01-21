@@ -1249,30 +1249,31 @@ public class LivePlayActivity extends BaseActivity {
         super.onResume();
         if(mVideoView != null) {
             mVideoView.resume();
-			if(mVideoView.isPlaying()) {
-			int durationXu = (int) mVideoView.getDuration();
-				if(durationXu <= 0) {
-				mVideoView.release();
-                    new Handler().postDelayed(new Runnable() {
+  
+
+new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-						mVideoView.setUrl(currentLiveChannelItem.getUrl());
-						mVideoView.start();
-                        }
-                    }, 800);
-			}else{
-				int Progress = (int) mVideoView.getCurrentPosition();    
-				mVideoView.release();
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-						mVideoView.setUrl(currentLiveChannelItem.getUrl());
+						if(mVideoView.isPlaying()) {
+							int durationXu = (int) mVideoView.getDuration();
+							if(durationXu <= 0) {
+							mVideoView.release();
+							mVideoView.setUrl(currentLiveChannelItem.getUrl());
+							mVideoView.start();
+							}else{
+							int Progress = (int) mVideoView.getCurrentPosition();    
+								mVideoView.release();
+							mVideoView.setUrl(currentLiveChannelItem.getUrl());
 						mVideoView.seekTo(Progress);
 						mVideoView.start();
+						}
+                        }
                         }
                     }, 800);
-				}
-			}
+
+				
+
+
 		}
     }
     @Override
