@@ -1250,6 +1250,18 @@ public class LivePlayActivity extends BaseActivity {
         if(mVideoView != null) {
             mVideoView.resume();
         }
+		int duration = mVideoView.getDuration();
+        if(duration <= 0) {
+			mVideoView.release();
+			mVideoView.setUrl(currentLiveChannelItem.getUrl());
+			mVideoView.start();
+		}else{
+		int Progress = mVideoView.getCurrentPosition();    
+		    mVideoView.release();
+            mVideoView.setUrl(currentLiveChannelItem.getUrl());
+		    mVideoView.seekTo(Progress);
+            mVideoView.start();
+		}
     }
     @Override
     protected void onPause() {
