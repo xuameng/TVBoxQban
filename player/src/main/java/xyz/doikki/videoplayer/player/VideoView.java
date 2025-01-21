@@ -17,8 +17,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
-import com.orhanobut.hawk.Hawk;
-import com.github.tvbox.osc.util.HawkConfig;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -351,12 +349,9 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
      * 继续播放
      */
     public void resume() {
-		int renderType = Hawk.get(HawkConfig.PLAY_RENDER, 0);
-		if (renderType == 1) {
-		initPlayer();
+					        initPlayer();
         addDisplay();
 		startPrepare(false);
-		}
         if (isInPlaybackState()
                 && !mMediaPlayer.isPlaying()) {
             mMediaPlayer.start();
