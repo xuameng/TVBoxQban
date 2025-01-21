@@ -1249,12 +1249,14 @@ public class LivePlayActivity extends BaseActivity {
         super.onResume();
         if(mVideoView != null) {
             mVideoView.resume();
+        }
+		if(!mVideoView.isPlaying() || mVideoView.isPlaying()) {
 			int duration = (int) mVideoView.getDuration();
 			if(duration <= 0) {
 			mVideoView.release();
 			mVideoView.setUrl(currentLiveChannelItem.getUrl());
 			mVideoView.start();
-			}else{
+		}else{
 			int Progress = (int) mVideoView.getCurrentPosition();    
 		    mVideoView.release();
             mVideoView.setUrl(currentLiveChannelItem.getUrl());
