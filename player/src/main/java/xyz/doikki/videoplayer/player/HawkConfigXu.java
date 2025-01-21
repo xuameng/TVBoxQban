@@ -5,7 +5,7 @@ package com.github.tvbox.osc.util;
  * @date :2020/12/23
  * @description:
  */
-public class HawkConfig {
+public class HawkConfigXu {
     public static final String PUSH_TO_ADDR = "push_to_addr"; // xuameng推送到地址的IP
     public static final String PUSH_TO_PORT = "push_to_port"; // xuameng推送到地址的端口
     public static final String API_URL = "api_url";
