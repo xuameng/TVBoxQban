@@ -202,6 +202,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
      */
     protected boolean startPlay() {
 		Progress = 0; //xuameng清空进程记录
+		isSurface = false;
         //如果要显示移动网络提示则不继续播放
         if (showNetWarning()) {
             //中止播放
@@ -382,10 +383,10 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
 			int duration = (int) getDuration();
 			if(duration > 130000) {
 			Progress = (int) getCurrentPosition();
+			isSurface = true;
 			}
 		releaseXu();
 		startPlayXu();
-		isSurface = true;
 		}       //xuameng surfaceview判断完
         if (isInPlaybackState()
                 && !mMediaPlayer.isPlaying()) {
