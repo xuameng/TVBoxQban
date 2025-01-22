@@ -35,7 +35,7 @@ import xyz.doikki.videoplayer.render.IRenderView;
 import xyz.doikki.videoplayer.render.RenderViewFactory;
 import xyz.doikki.videoplayer.util.L;
 import xyz.doikki.videoplayer.util.PlayerUtils;
-import xyz.doikki.videoplayer.controller.HawkConfigXu;  //xuameng surfaceview判断用
+import com.github.tvbox.osc.util.HawkConfig;  //xuameng surfaceview判断用
 
 /**
  * 播放器
@@ -375,7 +375,6 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
      * 继续播放
      */
     public void resume() {
-		int renderType = Hawk.get(HawkConfigXu.PLAY_RENDER_XU, 0);  //xuameng surfaceview判断用
 		String width = Integer.toString(getVideoSize()[0]);
 		String height = Integer.toString(getVideoSize()[1]);
 
@@ -625,7 +624,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
             case AbstractPlayer.MEDIA_INFO_RENDERING_START: // 视频/音频开始渲染
                 setPlayState(STATE_PLAYING);
                 mPlayerContainer.setKeepScreenOn(true);
-				if (Progress > 0 && isSurface && !HawkConfigXu.intVod){   //xuameng surface读取播放进度
+				if (Progress > 0 && isSurface && !HawkConfig.intVod){   //xuameng surface读取播放进度
 					seekTo(Progress);
 					Progress = 0;
 					isSurface = false;
