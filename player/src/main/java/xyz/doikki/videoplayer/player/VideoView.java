@@ -201,6 +201,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
      * @return 是否成功开始播放
      */
     protected boolean startPlay() {
+		Progress = 0; //xuameng清空进程记录
         //如果要显示移动网络提示则不继续播放
         if (showNetWarning()) {
             //中止播放
@@ -358,11 +359,12 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
 		String width = Integer.toString(getVideoSize()[0]);
 		String height = Integer.toString(getVideoSize()[1]);
 
-		if (renderType == 1 && width.length() > 1 && height.length() > 1) {
+		if (width.length() > 1 && height.length() > 1) {
 			int duration = (int) getDuration();
 			if(duration > 130000) {
 			Progress = (int) getCurrentPosition();
 			}
+		release();
 		initPlayer();
         addDisplay();
 		startPrepare(false);
