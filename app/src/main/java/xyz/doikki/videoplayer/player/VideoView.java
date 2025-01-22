@@ -222,6 +222,26 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
         return true;
     }
 
+    protected boolean startPlayXu() {
+        //如果要显示移动网络提示则不继续播放
+        if (showNetWarning()) {
+            //中止播放
+            setPlayState(STATE_START_ABORT);
+            return false;
+        }
+        //监听音频焦点改变
+        if (mEnableAudioFocus) {
+            mAudioFocusHelper = new AudioFocusHelper(this);
+        }
+        //读取播放进度
+        if (mProgressManager != null) {
+            mCurrentPosition = mProgressManager.getSavedProgress(mProgressKey == null ? mUrl : mProgressKey);
+        }
+        initPlayer();
+        addDisplay();
+        startPrepare(false);
+        return true;
+    }
     /**
      * 是否显示移动网络提示，可在Controller中配置
      */
@@ -365,22 +385,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
 			Progress = (int) getCurrentPosition();
 			}
 		releaseXu();
-        if (showNetWarning()) {
-            //中止播放
-            setPlayState(STATE_START_ABORT);
-            return false;
-        }
-        //监听音频焦点改变
-        if (mEnableAudioFocus) {
-            mAudioFocusHelper = new AudioFocusHelper(this);
-        }
-        //读取播放进度
-        if (mProgressManager != null) {
-            mCurrentPosition = mProgressManager.getSavedProgress(mProgressKey == null ? mUrl : mProgressKey);
-        }
-		initPlayer();
-        addDisplay();
-		startPrepare(false);
+		startPlayXu();
 		isSurface = true;
 		}       //xuameng surfaceview判断完
         if (isInPlaybackState()
