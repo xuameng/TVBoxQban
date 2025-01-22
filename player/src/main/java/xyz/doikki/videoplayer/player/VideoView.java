@@ -364,7 +364,20 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
 			if(duration > 130000) {
 			Progress = (int) getCurrentPosition();
 			}
-		release();
+		releaseXu();
+        if (showNetWarning()) {
+            //中止播放
+            setPlayState(STATE_START_ABORT);
+            return false;
+        }
+        //监听音频焦点改变
+        if (mEnableAudioFocus) {
+            mAudioFocusHelper = new AudioFocusHelper(this);
+        }
+        //读取播放进度
+        if (mProgressManager != null) {
+            mCurrentPosition = mProgressManager.getSavedProgress(mProgressKey == null ? mUrl : mProgressKey);
+        }
 		initPlayer();
         addDisplay();
 		startPrepare(false);
@@ -421,6 +434,37 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
         }
     }
 
+    public void releaseXu() {
+        if (!isInIdleState()) {
+            //释放播放器
+            if (mMediaPlayer != null) {
+                mMediaPlayer.release();
+                mMediaPlayer = null;
+            }
+            //释放renderView
+            if (mRenderView != null) {
+                mPlayerContainer.removeView(mRenderView.getView());
+                mRenderView.release();
+                mRenderView = null;
+            }
+            //释放Assets资源
+            if (mAssetFileDescriptor != null) {
+                try {
+                    mAssetFileDescriptor.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            //关闭AudioFocus监听
+            if (mAudioFocusHelper != null) {
+                mAudioFocusHelper.abandonFocus();
+                mAudioFocusHelper = null;
+            }
+            saveProgress();
+            //切换转态
+            setPlayState(STATE_IDLE);
+        }
+    }
     /**
      * 保存播放进度
      */
