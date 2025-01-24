@@ -2006,6 +2006,7 @@ public class LivePlayActivity extends BaseActivity {
                     case VideoView.STATE_PLAYING:
                         currentLiveChangeSourceTimes = 0;
                         mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
+						isVideoplaying = true;
 						isBuffer = false;
                         break;
                     case VideoView.STATE_ERROR:
