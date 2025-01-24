@@ -600,14 +600,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
         }
         if (mCurrentPosition > 0) {
             seekTo(mCurrentPosition);
-        }
-		String width = Integer.toString(getVideoSize()[0]);
-		String height = Integer.toString(getVideoSize()[1]);
-		if (width.length() <= 1 && height.length() <= 1){
-	        if (mRenderView != null) {
-            mPlayerContainer.removeView(mRenderView.getView());      //xuameng重要当视频为空时释放当前VIDEO VIEW
-        }
-		}
+        }	
     }
 
     /**
@@ -630,6 +623,14 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
 					Progress = 0;
 					isSurface = false;
 				}
+
+		String width = Integer.toString(getVideoSize()[0]);
+		String height = Integer.toString(getVideoSize()[1]);
+		if (width.length() <= 1 && height.length() <= 1){
+	          if (mRenderView != null) {
+                     mPlayerContainer.removeView(mRenderView.getView());      //xuameng重要当视频为空时释放当前VIDEO VIEW
+                  }
+		}	
                 break;
             case AbstractPlayer.MEDIA_INFO_VIDEO_ROTATION_CHANGED:
                 if (mRenderView != null) mRenderView.setVideoRotation(extra);
