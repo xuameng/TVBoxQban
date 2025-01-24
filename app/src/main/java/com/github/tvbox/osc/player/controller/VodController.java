@@ -322,8 +322,8 @@ public class VodController extends BaseController {
 						if (isVideoplaying){
 							iv_circle_bg.setVisibility(VISIBLE);
 						}
-						}
 					}
+				}
 			}else {
 				iv_circle_bg.setVisibility(GONE);
 			}   //xuameng音乐播放时图标判断完
