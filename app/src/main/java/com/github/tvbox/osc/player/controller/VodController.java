@@ -261,9 +261,6 @@ public class VodController extends BaseController {
             mPlayLoadNetSpeedRightTop.setText(speed);
             mPlayLoadNetSpeed.setText(speed);         				
             mHandler.postDelayed(this, 1000);
-            String width = Integer.toString(mControlWrapper.getVideoSize()[0]);
-            String height = Integer.toString(mControlWrapper.getVideoSize()[1]);
-			mVideoSize.setText("[ " + width + " X " + height +" ]");
         }
     };
 
@@ -272,6 +269,7 @@ public class VodController extends BaseController {
         public void run() {
             String width = Integer.toString(mControlWrapper.getVideoSize()[0]);
             String height = Integer.toString(mControlWrapper.getVideoSize()[1]);
+			mVideoSize.setText("[ " + width + " X " + height +" ]");
 
 			if (mControlWrapper.isPlaying()){    //xuameng音乐播放时图标判断
 				if (!mIsDragging) {
