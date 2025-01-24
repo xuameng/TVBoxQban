@@ -261,6 +261,9 @@ public class VodController extends BaseController {
             mPlayLoadNetSpeedRightTop.setText(speed);
             mPlayLoadNetSpeed.setText(speed);         				
             mHandler.postDelayed(this, 1000);
+            String width = Integer.toString(mControlWrapper.getVideoSize()[0]);
+            String height = Integer.toString(mControlWrapper.getVideoSize()[1]);
+			mVideoSize.setText("[ " + width + " X " + height +" ]");
         }
     };
 
@@ -318,7 +321,9 @@ public class VodController extends BaseController {
 						iv_circle_bg.setVisibility(GONE);
 						}
 					}else {
-						iv_circle_bg.setVisibility(VISIBLE);
+						if (isVideoplaying){
+							iv_circle_bg.setVisibility(VISIBLE);
+						}
 						}
 					}
 			}else {
