@@ -50,6 +50,7 @@ import static xyz.doikki.videoplayer.util.PlayerUtils.stringForTime;
 import com.squareup.picasso.Picasso;      //xuameng播放音频切换图片
 import com.squareup.picasso.MemoryPolicy;  //xuameng播放音频切换图片
 import com.squareup.picasso.NetworkPolicy;  //xuameng播放音频切换图片
+import android.graphics.Bitmap;
 import com.github.tvbox.osc.api.ApiConfig;  //xuameng播放音频切换图片
 
 public class VodController extends BaseController {
