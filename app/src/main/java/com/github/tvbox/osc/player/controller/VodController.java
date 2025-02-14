@@ -351,6 +351,7 @@ public class VodController extends BaseController {
 				.memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
 				.networkPolicy(NetworkPolicy.NO_CACHE)
 				.into(MxuamengMusic); // xuameng内容空显示banner
+				mHandler.postDelayed(this, 15000);
 				return;
 				}
 			if (!ApiConfig.get().wallpaper.isEmpty()){
@@ -366,8 +367,21 @@ public class VodController extends BaseController {
 				.memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
 				.networkPolicy(NetworkPolicy.NO_CACHE)
 				.into(MxuamengMusic); // xuameng内容空显示banner
+				mHandler.postDelayed(this, 15000);
 				return;
 				}
+				String Url = "https://api.dzzui.com/api/cosplay";
+				Picasso.get()
+				.load(Url)
+//				.placeholder(R.drawable.xumusic)   //xuameng默认的站位图
+				.noPlaceholder()   //不使用站位图，效果不好
+				.resize(1920,1080)
+				.centerCrop()
+//				.error(R.drawable.xumusic)
+				.config(Bitmap.Config.RGB_565)
+				.memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
+				.networkPolicy(NetworkPolicy.NO_CACHE)
+				.into(MxuamengMusic); // xuameng内容空显示banner
 			}
         mHandler.postDelayed(this, 15000);
        }
