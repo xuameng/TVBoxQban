@@ -370,7 +370,7 @@ public class VodController extends BaseController {
 				mHandler.postDelayed(this, 15000);
 				return;
 				}
-				String Url = "https://api.dzzui.com/api/cosplay";
+				String Url = "https://api.miaomc.cn/image/get";
 				Picasso.get()
 				.load(Url)
 //				.placeholder(R.drawable.xumusic)   //xuameng默认的站位图
