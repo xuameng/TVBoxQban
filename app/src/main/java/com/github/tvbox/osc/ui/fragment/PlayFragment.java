@@ -357,7 +357,7 @@ public class PlayFragment extends BaseLazyFragment {
 			public void run() {
 			HawkConfig.intSubtitle = false;  //xuameng判断进入本地字幕
 			}
-		}, 800);
+		}, 2000);
     }
 
     @SuppressLint("UseCompatLoadingForColorStateLists")
