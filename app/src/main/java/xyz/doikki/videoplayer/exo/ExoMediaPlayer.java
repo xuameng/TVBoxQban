@@ -26,13 +26,6 @@ import com.google.android.exoplayer2.util.Clock;
 import com.google.android.exoplayer2.util.EventLogger;
 import com.google.android.exoplayer2.video.VideoSize;
 
-import androidx.annotation.NonNull;     //xuameng 直播优化
-import java.net.InetAddress; //xuameng 直播优化
-import java.net.UnknownHostException; //xuameng 直播优化
-import java.util.List; //xuameng 直播优化
-import okhttp3.Dns;  //xuameng 直播优化
-import okhttp3.OkHttpClient;  //xuameng 直播优化
-
 import java.util.Map;
 
 import xyz.doikki.videoplayer.player.AbstractPlayer;
@@ -58,33 +51,14 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 
     public ExoMediaPlayer(Context context) {
         mAppContext = context.getApplicationContext();
-		// xuameng初始化 ExoMediaSourceHelper 实例
         mMediaSourceHelper = ExoMediaSourceHelper.getInstance(context);
-        // xuameng构造自定义的 OkHttpClient，加入自定义 DNS 逻辑：
-        // xuameng当请求的域名以 "cache.ott" 开头时，使用 "base-v4-free-mghy.e.cdn.chinamobile.com" 解析
-        OkHttpClient customOkHttpClient = new OkHttpClient.Builder()
-                .dns(new Dns() {
-                    @Override
-                    public List<InetAddress> lookup(@NonNull String hostname) throws UnknownHostException {
-                        if (hostname.matches("^cache\\.ott\\..*\\.cmvideo\\.cn$")) {
-                            // xuameng这里将 hostname 强制解析为目标域名
-                            return Dns.SYSTEM.lookup("base-v4-free-mghy.e.cdn.chinamobile.com");
-                        }
-                        return Dns.SYSTEM.lookup(hostname);
-                    }
-                })
-                .build();
-        // xuameng注入自定义 OkHttpClient 到 ExoMediaSourceHelper 中
-        mMediaSourceHelper.setOkClient(customOkHttpClient);
     }
 
     @Override
     public void initPlayer() {
         mMediaPlayer = new SimpleExoPlayer.Builder(
                 mAppContext,
-                //mRenderersFactory == null ? mRenderersFactory = new DefaultRenderersFactory(mAppContext) : mRenderersFactory,
-                mRenderersFactory == null ? mRenderersFactory = new DefaultRenderersFactory(mAppContext).setEnableDecoderFallback(true)  // 启用解码器回退，避免硬件加速问题
-                .setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER) : mRenderersFactory,
+                mRenderersFactory == null ? mRenderersFactory = new DefaultRenderersFactory(mAppContext) : mRenderersFactory,
                 mTrackSelector == null ? mTrackSelector = new DefaultTrackSelector(mAppContext) : mTrackSelector,
                 new DefaultMediaSourceFactory(mAppContext),
                 mLoadControl == null ? mLoadControl = new DefaultLoadControl() : mLoadControl,
@@ -93,7 +67,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
                 .build();
         setOptions();
 
-        // 播放器日志（当开启日志且 mTrackSelector 为 MappingTrackSelector 时）
+        //播放器日志
         if (VideoViewManager.getConfig().mIsEnableLog && mTrackSelector instanceof MappingTrackSelector) {
             mMediaPlayer.addAnalyticsListener(new EventLogger((MappingTrackSelector) mTrackSelector, "ExoPlayer"));
         }
@@ -129,7 +103,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 
     @Override
     public void setDataSource(AssetFileDescriptor fd) {
-        // 不支持AssetFileDescriptor方式
+        //no support
     }
 
     @Override
