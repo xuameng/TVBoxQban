@@ -30,6 +30,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import okhttp3.OkHttpClient;
+import okhttp3.Call;  //xuameng exo
 
 public final class ExoMediaSourceHelper {
 
@@ -146,7 +147,8 @@ public final class ExoMediaSourceHelper {
      */
     private DataSource.Factory getHttpDataSourceFactory() {
         if (mHttpDataSourceFactory == null) {
-            mHttpDataSourceFactory = new OkHttpDataSource.Factory(mOkClient)
+            //mHttpDataSourceFactory = new OkHttpDataSource.Factory(mOkClient)
+			mHttpDataSourceFactory = new OkHttpDataSource.Factory((Call.Factory) mOkClient)   //xuameng
                     .setUserAgent(mUserAgent)/*
                     .setAllowCrossProtocolRedirects(true)*/;
         }
