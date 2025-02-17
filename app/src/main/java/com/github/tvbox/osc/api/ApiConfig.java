@@ -413,7 +413,10 @@ public class ApiConfig {
                 if(livesOBJ.has("playerType")){
                     String livePlayType =livesOBJ.get("playerType").getAsString();
                     Hawk.put(HawkConfig.LIVE_PLAY_TYPE,livePlayType);
-                }
+                }else{
+					String liveplaytype = Hawk.get(HawkConfig.PLAY_TYPE, 0);
+					Hawk.put(HawkConfig.LIVE_PLAY_TYPE,liveplaytype);
+				}
 
                 LiveChannelGroup liveChannelGroup = new LiveChannelGroup();
                 liveChannelGroup.setGroupName(url);
@@ -435,7 +438,10 @@ public class ApiConfig {
                         if(livesOBJ.has("playerType")){
                             String livePlayType =livesOBJ.get("playerType").getAsString();
                             Hawk.put(HawkConfig.LIVE_PLAY_TYPE,livePlayType);
-                        }
+                        }else{
+							String liveplaytype = Hawk.get(HawkConfig.PLAY_TYPE, 0);
+							Hawk.put(HawkConfig.LIVE_PLAY_TYPE,liveplaytype);
+						}
 
                         if(url.startsWith("http")){
                             url = Base64.encodeToString(url.getBytes("UTF-8"), Base64.DEFAULT | Base64.URL_SAFE | Base64.NO_WRAP);
