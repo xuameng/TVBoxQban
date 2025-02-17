@@ -414,7 +414,7 @@ public class ApiConfig {
                     String livePlayType =livesOBJ.get("playerType").getAsString();
                     Hawk.put(HawkConfig.LIVE_PLAY_TYPE,livePlayType);
                 }else{
-					String liveplaytype = Hawk.get(HawkConfig.PLAY_TYPE, 0);
+					int liveplaytype = Hawk.get(HawkConfig.PLAY_TYPE, 0);
 					Hawk.put(HawkConfig.LIVE_PLAY_TYPE,liveplaytype);
 				}
 
@@ -439,7 +439,7 @@ public class ApiConfig {
                             String livePlayType =livesOBJ.get("playerType").getAsString();
                             Hawk.put(HawkConfig.LIVE_PLAY_TYPE,livePlayType);
                         }else{
-							String liveplaytype = Hawk.get(HawkConfig.PLAY_TYPE, 0);
+							int liveplaytype = Hawk.get(HawkConfig.PLAY_TYPE, 0);
 							Hawk.put(HawkConfig.LIVE_PLAY_TYPE,liveplaytype);
 						}
 
