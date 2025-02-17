@@ -25,7 +25,7 @@ public class LivePlayerManager {
 			if (HawkConfig.intLIVEPLAYTYPE){
 				defaultPlayerConfig.put("pl", Hawk.get(HawkConfig.LIVE_PLAY_TYPE, 1));   //xuameng升级直播JSON中可以指定播放器类型
 			}else{
-            defaultPlayerConfig.put("pl", Hawk.get(HawkConfig.PLAY_TYPE, 0));  //xuameng升级直播JSON没有指定，默认跟随设置
+				defaultPlayerConfig.put("pl", Hawk.get(HawkConfig.PLAY_TYPE, 0));  //xuameng升级直播JSON没有指定，默认跟随设置
 			}
             defaultPlayerConfig.put("ijk", Hawk.get(HawkConfig.IJK_CODEC, "软解码"));
             defaultPlayerConfig.put("pr", Hawk.get(HawkConfig.PLAY_RENDER, 0));
