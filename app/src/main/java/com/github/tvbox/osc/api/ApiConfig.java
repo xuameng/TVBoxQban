@@ -409,6 +409,12 @@ public class ApiConfig {
                     Hawk.put(HawkConfig.EPG_URL,epg);
                 }
 
+                //xuameng直播播放器类型
+                if(livesOBJ.has("playerType")){
+                    String livePlayType =livesOBJ.get("playerType").getAsString();
+                    Hawk.put(HawkConfig.LIVE_PLAY_TYPE,livePlayType);
+                }
+
                 LiveChannelGroup liveChannelGroup = new LiveChannelGroup();
                 liveChannelGroup.setGroupName(url);
                 liveChannelGroupList.add(liveChannelGroup);
@@ -424,6 +430,11 @@ public class ApiConfig {
                         if(fengMiLives.has("epg")){
                             String epg =fengMiLives.get("epg").getAsString();
                             Hawk.put(HawkConfig.EPG_URL,epg);
+                        }
+                        //xuameng直播播放器类型
+                        if(livesOBJ.has("playerType")){
+                            String livePlayType =livesOBJ.get("playerType").getAsString();
+                            Hawk.put(HawkConfig.LIVE_PLAY_TYPE,livePlayType);
                         }
 
                         if(url.startsWith("http")){
