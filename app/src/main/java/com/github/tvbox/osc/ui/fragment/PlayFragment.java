@@ -337,7 +337,8 @@ public class PlayFragment extends BaseLazyFragment {
             @Override
             public void openLocalFileChooserDialog() {
 				HawkConfig.intSubtitle = true;  //xuameng判断进入本地字幕
-                new ChooserDialog(getActivity(),R.style.FileChooserXu)   ////xuameng本地字幕风格
+                new ChooserDialog(getActivity(),R.style.FileChooserXu)   //xuameng本地字幕风格
+						.withResources(R.string.title_choose_file,R.string.dialog_cancel)  //xuameng本地字幕风格
                         .withFilter(false, false, "srt", "ass", "scc", "stl", "ttml")
                         .withStartFile("/storage/emulated/0/Download")
                         .withChosenListener(new ChooserDialog.Result() {
