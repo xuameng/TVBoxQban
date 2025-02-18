@@ -1561,8 +1561,8 @@
 	<!--item间距-->
 		<item name="android:paddingBottom">@dimen/vs_0</item>
 		<item name="android:paddingTop">@dimen/vs_0</item>
-		<item name="android:paddingLeft">22.0sp</item>
-		<item name="android:paddingRight">22.0sp</item>
+		<item name="android:paddingLeft">23.0sp</item>
+		<item name="android:paddingRight">23.0sp</item>
     </style>
 	<!--xuameng文件夹名称颜色-->
     <style name="FileChooserTextNameStyle1" parent="FileChooserTextNameStyle">
@@ -1586,8 +1586,8 @@
 		<item name="android:textSize">15.0sp</item>
 		<item name="android:paddingBottom">10.0sp</item>
 		<item name="android:paddingTop">0.0sp</item>
-		<item name="android:paddingLeft">22.0sp</item>
-		<item name="android:paddingRight">22.0sp</item>
+		<item name="android:paddingLeft">24.0sp</item>
+		<item name="android:paddingRight">24.0sp</item>
     </style>
 <!-- xuameng选择器文件路径文字颜色样式结束   -->
 </resources>
