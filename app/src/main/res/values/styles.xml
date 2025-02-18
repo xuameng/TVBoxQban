@@ -1571,11 +1571,11 @@
     </style>
 	<!--xuameng文件夹日期颜色-->
     <style name="FileChooserTextSizeStyle1" parent="FileChooserTextSizeStyle">
-        <item name="android:textColor">@color/color_85000000</item>
+        <item name="android:textColor">@color/color_99000000</item>
     </style>
 	<!--xuameng文件夹时间颜色-->
     <style name="FileChooserTextDateStyle1" parent="FileChooserTextDateStyle">
-        <item name="android:textColor">@color/color_85000000</item>
+        <item name="android:textColor">@color/color_99000000</item>
     </style>
 <!-- 文件选择器条目样式结束-->
 
