@@ -1566,7 +1566,7 @@
     </style>
 	<!--xuameng文件夹名称颜色-->
     <style name="FileChooserTextNameStyle1" parent="FileChooserTextNameStyle">
-		<item name="android:textSize">13.0sp</item>
+		<item name="android:textSize">15.0sp</item>
         <item name="android:textColor">@color/color_85000000</item>
     </style>
 	<!--xuameng文件夹日期颜色-->
@@ -1583,6 +1583,7 @@
     <style name="FileChooserPathViewStyle1" parent="FileChooserPathViewStyle">
         <item name="android:background">@android:color/transparent</item>
         <item name="android:textColor">@color/color_85000000</item>
+		<item name="android:textSize">15.0sp</item>
 		<item name="android:paddingBottom">10.0sp</item>
 		<item name="android:paddingTop">0.0sp</item>
 		<item name="android:paddingLeft">22.0sp</item>
