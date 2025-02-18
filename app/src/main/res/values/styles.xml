@@ -1545,4 +1545,27 @@
         <item name="android:textColor">@color/black</item>
     </style>
 <!--    xuameng选择器弹窗样式结束-->
+<!--xuameng文件选择器条目样式开始-->
+    <style name="FileChooserListItemStyle1" parent="FileChooserListItemStyle">
+        <item name="fileChooserTextNameStyle">@style/FileChooserTextNameStyle1</item>
+        <item name="fileChooserTextSizeStyle">@style/FileChooserTextSizeStyle1</item>
+        <item name="fileChooserTextDateStyle">@style/FileChooserTextDateStyle1</item>
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+    <style name="FileChooserTextNameStyle1" parent="FileChooserTextNameStyle">
+        <item name="android:textColor">@color/color_1890FF</item>
+    </style>
+    <style name="FileChooserTextSizeStyle1" parent="FileChooserTextSizeStyle">
+        <item name="android:textColor">@color/colorPrimary</item>
+    </style>
+    <style name="FileChooserTextDateStyle1" parent="FileChooserTextDateStyle">
+        <item name="android:textColor">@color/colorPrimary</item>
+    </style>
+<!--    文件选择器条目样式结束-->
+
+    <!-- xuameng选择器文件路径样式   -->
+    <style name="FileChooserPathViewStyle1" parent="FileChooserPathViewStyle">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:textColor">@@color/color_99FFFFFF</item>
+    </style>
 </resources>
