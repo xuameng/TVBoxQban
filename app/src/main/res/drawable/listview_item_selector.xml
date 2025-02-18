@@ -1,12 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<selector
-    xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:state_focused="true"
-        android:drawable="@color/li_row_selector_xu" />
-    <item
-        android:state_focused="false"
-        android:drawable="@android:color/transparent" />
-    <item
-        android:drawable="@android:color/transparent" />
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_focused="true" android:state_pressed="true">
+        <shape>
+            android:drawable="@color/li_row_selector_xu" />
+        </shape>
+    </item>
+    <item android:state_focused="false" android:state_pressed="true">
+        <shape>
+            android:drawable="@color/li_row_selector_xu" />
+        </shape>
+    </item>
+    <item android:state_focused="true">
+        <shape>
+            android:drawable="@color/li_row_selector_xu" />
+        </shape>
+    </item>
+    <item android:state_focused="false" android:state_pressed="false">
+        <shape>
+            android:drawable="@android:color/transparent" />
+        </shape>
+    </item>
 </selector>
