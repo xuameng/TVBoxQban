@@ -1542,7 +1542,7 @@
         <item name="buttonBarButtonStyle">@style/FileChooserButtonStyle1</item>
     </style>
     <style name="FileChooserButtonStyle1" parent="FileChooserButtonStyle">
-        <item name="android:textColor">@color/black</item>
+        <item name="android:textColor">@color/85000000</item>
     </style>
 <!--    xuameng选择器弹窗样式结束-->
 <!--xuameng文件选择器条目样式开始-->
