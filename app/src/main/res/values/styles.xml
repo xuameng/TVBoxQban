@@ -1046,7 +1046,7 @@
         <item name="fileChooserTextDateStyle">@style/FileChooserTextDateStyle</item>
         <item name="fileChooserTextNameStyle">@style/FileChooserTextNameStyle</item>
         <item name="fileChooserTextSizeStyle">@style/FileChooserTextSizeStyle</item>
-        <item name="fileListItemFocusedDrawable">@drawable/listview_item_selector</item>
+        <item name="fileListItemFocusedDrawable">@drawable/shape_dialog_bg_main</item>
         <item name="fileListItemSelectedTint">@color/li_row_background_tint</item>
     </style>
     <style name="FileChooserNewFolderStyle">
@@ -1554,9 +1554,9 @@
         <item name="fileChooserTextSizeStyle">@style/FileChooserTextSizeStyle1</item>
         <item name="fileChooserTextDateStyle">@style/FileChooserTextDateStyle1</item>
 	<!--item选择颜色-->
-		<item name="fileListItemSelectedTint">@drawable/listview_item_selector</item>
+		<item name="fileListItemSelectedTint">@drawable/shape_dialog_bg_main</item>
 	<!--item预选颜色-->
-		<item name="fileListItemFocusedDrawable">@drawable/listview_item_selector</item>
+		<item name="fileListItemFocusedDrawable">@drawable/shape_dialog_bg_main</item>
         <item name="android:background">@android:color/transparent</item>
 	<!--item间距-->
 		<item name="android:paddingBottom">@dimen/vs_0</item>
