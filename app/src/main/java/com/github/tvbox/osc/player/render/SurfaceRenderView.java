@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import xyz.doikki.videoplayer.player.AbstractPlayer;
 import xyz.doikki.videoplayer.render.IRenderView;
 import xyz.doikki.videoplayer.render.MeasureHelper;
+import com.github.tvbox.osc.util.HawkConfig;
 
 public class SurfaceRenderView extends SurfaceView implements IRenderView, SurfaceHolder.Callback {
     private MeasureHelper mMeasureHelper;
@@ -98,6 +99,12 @@ public class SurfaceRenderView extends SurfaceView implements IRenderView, Surfa
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-
+		if (HawkConfig.intVod){ 
+			HawkConfig.intVod = false;  //xuameng判断选择播放器防止surface焦点丢失
+			return;
+		}
+        if (mMediaPlayer != null) {
+            mMediaPlayer.setDisplay(null);  //xuameng解决后台进前台黑屏问题
+        }
     }
 }
