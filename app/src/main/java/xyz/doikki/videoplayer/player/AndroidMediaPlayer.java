@@ -139,7 +139,7 @@ public class AndroidMediaPlayer extends AbstractPlayer implements MediaPlayer.On
                 try {
 					if(mediaPlayer != null) {  //xuameng修复空指针 
                     mediaPlayer.release();  
-					mediaPlayer = null;  //xuameng修复空指针 
+					MediaPlayer = null;  //xuameng修复空指针 
 					}
                 } catch (Exception e) {
                     e.printStackTrace();
