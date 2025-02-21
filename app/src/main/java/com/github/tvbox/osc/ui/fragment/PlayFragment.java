@@ -522,7 +522,10 @@ public class PlayFragment extends BaseLazyFragment {
                 mPlayLoadTip.setText(msg);
                 mPlayLoadTip.setVisibility(View.VISIBLE);
                 mPlayLoading.setVisibility(loading ? View.VISIBLE : View.GONE);
-                mPlayLoadErr.setVisibility(err ? View.VISIBLE : View.GONE);
+				if (!mVideoView.isPlaying()){
+					mPlayLoadErr.setVisibility(err ? View.VISIBLE : View.GONE);
+				}
+
             }
         });
     }
