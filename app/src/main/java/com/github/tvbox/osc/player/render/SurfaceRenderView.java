@@ -99,7 +99,6 @@ public class SurfaceRenderView extends SurfaceView implements IRenderView, Surfa
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-
         if (mMediaPlayer != null) {
             mMediaPlayer.setDisplay(null);  //xuameng解决后台进前台黑屏问题
         }
