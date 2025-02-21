@@ -448,9 +448,6 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
         if (resetPosition) {
             mCurrentPosition = 0;
         }
-		if (duration <= 0){    //xuameng视频总时长为0从头播放
-			mCurrentPosition = 0;
-		}
         addDisplay();
         startPrepare(true);
     }
@@ -533,10 +530,11 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
         if (!isMute() && mAudioFocusHelper != null) {
             mAudioFocusHelper.requestFocus();
         }
-        if (mCurrentPosition > 0) {
+		duration = (int) getDuration();   //xuameng获取视频时长
+        if (mCurrentPosition > 0 && duration > 0) {
             seekTo(mCurrentPosition);
         }
-		duration = (int) getDuration();   //xuameng获取视频时长
+
     }
 
     /**
@@ -554,7 +552,6 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
             case AbstractPlayer.MEDIA_INFO_RENDERING_START: // 视频/音频开始渲染
                 setPlayState(STATE_PLAYING);
                 mPlayerContainer.setKeepScreenOn(true);
-				duration = (int) getDuration(); //xuameng获取视频时长
 				String width = Integer.toString(getVideoSize()[0]);
 				String height = Integer.toString(getVideoSize()[1]);
 				if (width.length() <= 1 && height.length() <= 1){
