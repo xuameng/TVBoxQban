@@ -448,6 +448,9 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
         if (resetPosition) {
             mCurrentPosition = 0;
         }
+		if (duration <= 0){    //xuameng视频总时长为0从头播放
+			mCurrentPosition = 0;
+		}
         addDisplay();
         startPrepare(true);
     }
