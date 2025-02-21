@@ -99,7 +99,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
     protected boolean mIsTinyScreen;//是否处于小屏状态
     protected int[] mTinyScreenSize = {0, 0};
 
-	private int duration = 0;  //xuameng
+	private int duration = 0;  //xuameng获取视频时长
 
     /**
      * 监听系统中音频焦点改变，见{@link #setEnableAudioFocus(boolean)}
@@ -406,7 +406,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
      * 保存播放进度
      */
     protected void saveProgress() {
-        if (mProgressManager != null && mCurrentPosition > 0 && duration > 0) {
+        if (mProgressManager != null && mCurrentPosition > 0 && duration > 0) {  //xuameng视频时长大于0才记忆进度
             L.d("saveProgress: " + mCurrentPosition);
             mProgressManager.saveProgress(mProgressKey == null ? mUrl : mProgressKey, mCurrentPosition);
         }
@@ -533,6 +533,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
         if (mCurrentPosition > 0) {
             seekTo(mCurrentPosition);
         }
+		duration = (int) getDuration();   //xuameng获取视频时长
     }
 
     /**
@@ -550,7 +551,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
             case AbstractPlayer.MEDIA_INFO_RENDERING_START: // 视频/音频开始渲染
                 setPlayState(STATE_PLAYING);
                 mPlayerContainer.setKeepScreenOn(true);
-				duration = (int) getDuration();
+				duration = (int) getDuration(); //xuameng获取视频时长
 				String width = Integer.toString(getVideoSize()[0]);
 				String height = Integer.toString(getVideoSize()[1]);
 				if (width.length() <= 1 && height.length() <= 1){
