@@ -404,8 +404,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
      * 保存播放进度
      */
     protected void saveProgress() {
-		int duration = (int) getDuration();  //xuameng判断视频总长度，大于0才保持进度
-        if (mProgressManager != null && mCurrentPosition > 0 && duration > 0) {
+        if (mProgressManager != null && mCurrentPosition > 0) {
             L.d("saveProgress: " + mCurrentPosition);
             mProgressManager.saveProgress(mProgressKey == null ? mUrl : mProgressKey, mCurrentPosition);
         }
