@@ -129,10 +129,7 @@ public class AndroidMediaPlayer extends AbstractPlayer implements MediaPlayer.On
         mMediaPlayer.setOnBufferingUpdateListener(null);
         mMediaPlayer.setOnPreparedListener(null);
         mMediaPlayer.setOnVideoSizeChangedListener(null);
-        stop();
 		reset();
-        final MediaPlayer mediaPlayer = mMediaPlayer;
-        mMediaPlayer = null;
 
     }
 
