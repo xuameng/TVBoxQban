@@ -25,6 +25,7 @@ public class AndroidMediaPlayer extends AbstractPlayer implements MediaPlayer.On
     private int mBufferedPercent;
     private Context mAppContext;
     private boolean mIsPreparing;
+	protected SurfaceHolder holderXu;
 
     public AndroidMediaPlayer(Context context) {
         mAppContext = context.getApplicationContext();
@@ -131,8 +132,7 @@ public class AndroidMediaPlayer extends AbstractPlayer implements MediaPlayer.On
         mMediaPlayer.setOnVideoSizeChangedListener(null);
         stop();
         final MediaPlayer mediaPlayer = mMediaPlayer;
-		protected SurfaceHolder holder;
-		setDisplay(holder);
+		setDisplay(holderXu);
     //xuameng修复空指针    mMediaPlayer = null;
         new Thread() {
             @Override
