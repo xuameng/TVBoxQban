@@ -34,6 +34,7 @@ import xyz.doikki.videoplayer.render.IRenderView;
 import xyz.doikki.videoplayer.render.RenderViewFactory;
 import xyz.doikki.videoplayer.util.L;
 import xyz.doikki.videoplayer.util.PlayerUtils;
+import com.github.tvbox.osc.util.HawkConfig;  //xuameng surfaceview判断用
 
 /**
  * 播放器
@@ -352,16 +353,19 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
      */
     public void resume() {
         if (isInPlaybackState()
-                && !mMediaPlayer.isPlaying()) {
+                && !mMediaPlayer.isPlaying() &&!HawkConfig.intSYSplayer) {
             mMediaPlayer.start();
             setPlayState(STATE_PLAYING);
             if (mAudioFocusHelper != null && !isMute()) {
                 mAudioFocusHelper.requestFocus();
             }
             mPlayerContainer.setKeepScreenOn(true);
+
+			if (HawkConfig.intSYSplayer){
+				addDisplay();
+				startPrepare(true);
+			}
         }
-							        addDisplay();
-        startPrepare(true);
     }
 
     /**
