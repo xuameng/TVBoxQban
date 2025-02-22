@@ -42,7 +42,6 @@ public class AndroidMediaPlayer extends AbstractPlayer implements MediaPlayer.On
         mMediaPlayer.setOnBufferingUpdateListener(this);
         mMediaPlayer.setOnPreparedListener(this);
         mMediaPlayer.setOnVideoSizeChangedListener(this);
-		HawkConfig.intSYSplayer = true;  //xuameng判断进入系统播放器
     }
 
     @Override
@@ -94,6 +93,7 @@ public class AndroidMediaPlayer extends AbstractPlayer implements MediaPlayer.On
     public void prepareAsync() {
         try {
             mIsPreparing = true;
+			HawkConfig.intSYSplayer = true;  //xuameng判断进入系统播放器
             mMediaPlayer.prepareAsync();
         } catch (IllegalStateException e) {
             mPlayerEventListener.onError();
