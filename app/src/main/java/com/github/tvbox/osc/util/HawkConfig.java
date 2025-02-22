@@ -19,6 +19,7 @@ public class HawkConfig {
     public static final String PARSE_WEBVIEW = "parse_webview"; // true 系统 false xwalk
     public static final String IJK_CODEC = "ijk_codec";   //硬解软解
     public static final String PLAY_TYPE = "play_type";//0 系统 1 ijk 2 exo 10 MXPlayer
+	public static final String LIVE_PLAY_TYPE = "live_play_type";//0 系统 1 ijk 2 exo 10 MXPlayer     xuameng升级直播JSON中可以指定播放器类型
     public static final String PLAY_RENDER = "play_render"; //0 texture 2
     public static final String PLAY_SCALE = "play_scale"; //0 texture 2
     public static final String PLAY_TIME_STEP = "play_time_step"; //0 texture 2
@@ -43,6 +44,9 @@ public class HawkConfig {
 	public static final String HOME_DEFAULT_SHOW = "home_default_show";  //xuameng 启动时直接进直播的开关
 	public static final String LIVE_CHANNEL_GROUP = "last_live_channel_group_name";  //xuameng记忆上次播放频道组
 	public static boolean MSLIDEINFO = false;  //xuameng调节亮度声音
+	public static boolean intLIVEPLAYTYPE = false;  //xuameng是否有直播默认播放器
+	public static boolean intSYSplayer = false;  //xuameng是否进入系统播放器
 	public static boolean intVod = false;  //xuameng判断是否进入VOD界面
+
     public static boolean hotVodDelete;
 }
