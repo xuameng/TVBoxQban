@@ -554,7 +554,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
         if (mCurrentPosition > 0 && duration > 0) {  //xuameng视频时长大于0时载入播放进度，防止系统播放器播放直播视频问题
             seekTo(mCurrentPosition);
         }
-		if (Progress > 0 && !HawkConfig.intVod && HawkConfig.intSYSplayer){   //xuameng系统播放器读取播放进度
+		if (Progress > 0 && !HawkConfig.intVod && HawkConfig.intSYSplayer){   //xuameng系统播放器直播界面读取播放进度
 			seekTo(Progress);
 			Progress = 0;
 		}
