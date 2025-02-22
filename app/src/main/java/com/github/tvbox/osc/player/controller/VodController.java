@@ -1418,6 +1418,10 @@ public class VodController extends BaseController {
                 break;
             case VideoView.STATE_BUFFERED:
                 mPlayLoadNetSpeed.setVisibility(GONE);
+			if (HawkConfig.intSYSplayer){
+				togglePlay();
+			}
+			
                 break;
             case VideoView.STATE_PREPARING:
 				simSeekPosition = 0;       //XUAMENG重要,换视频时重新记录进度
