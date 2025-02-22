@@ -353,9 +353,11 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
      */
     public void resume() {
         if (isInPlaybackState()
-                && !mMediaPlayer.isPlaying() &&!HawkConfig.intSYSplayer) {
+                && !mMediaPlayer.isPlaying()) {
             mMediaPlayer.start();
             setPlayState(STATE_PLAYING);
+							addDisplay();
+				startPrepare(true);
             if (mAudioFocusHelper != null && !isMute()) {
                 mAudioFocusHelper.requestFocus();
             }
@@ -539,9 +541,6 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
 		duration = (int) getDuration();   //xuameng获取视频时长
         if (mCurrentPosition > 0 && duration > 0) {  //xuameng视频时长大于0时载入播放进度，防止系统播放器播放直播视频问题
             seekTo(mCurrentPosition);
-			if (HawkConfig.intSYSplayer){
-				startInPlaybackState();
-			}
         }
 
     }
