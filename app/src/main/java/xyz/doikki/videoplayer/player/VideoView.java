@@ -353,7 +353,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
      */
     public void resume() {
         if (isInPlaybackState()
-                && !mMediaPlayer.isPlaying() &&!HawkConfig.intSYSplayer) {
+                && !mMediaPlayer.isPlaying()) {
             mMediaPlayer.start();
             setPlayState(STATE_PLAYING);
             if (mAudioFocusHelper != null && !isMute()) {
