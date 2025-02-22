@@ -355,8 +355,8 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
         if (isInPlaybackState()
                 && !mMediaPlayer.isPlaying()) {
 					        addDisplay();
-        startPrepare(false);
-        //    mMediaPlayer.start();
+        startPrepare(true);
+            mMediaPlayer.start();
             setPlayState(STATE_PLAYING);
             if (mAudioFocusHelper != null && !isMute()) {
                 mAudioFocusHelper.requestFocus();
