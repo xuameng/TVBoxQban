@@ -364,7 +364,6 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
 			if (HawkConfig.intSYSplayer){
 				addDisplay();
 				startPrepare(true);
-				startInPlaybackState();
 			}
         }
     }
@@ -540,6 +539,9 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
 		duration = (int) getDuration();   //xuameng获取视频时长
         if (mCurrentPosition > 0 && duration > 0) {  //xuameng视频时长大于0时载入播放进度，防止系统播放器播放直播视频问题
             seekTo(mCurrentPosition);
+			if (!mMediaPlayer.isPlaying() && HawkConfig.intSYSplayer){
+				startInPlaybackState();
+			}
         }
 
     }
