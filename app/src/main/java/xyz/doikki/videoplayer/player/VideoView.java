@@ -364,6 +364,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
 			if (HawkConfig.intSYSplayer){
 				addDisplay();
 				startPrepare(true);
+				startInPlaybackState();
 			}
         }
     }
