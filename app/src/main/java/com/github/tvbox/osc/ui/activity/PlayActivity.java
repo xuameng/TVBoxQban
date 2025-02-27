@@ -335,7 +335,7 @@ public class PlayActivity extends BaseActivity {
         subtitleDialog.setLocalFileChooserListener(new SubtitleDialog.LocalFileChooserListener() {
             @Override
             public void openLocalFileChooserDialog() {
-                new ChooserDialog(getActivity(),R.style.FileChooserXu)   //xuameng本地字幕风格
+                new ChooserDialog(PlayActivity.this,R.style.FileChooserXu)   //xuameng本地字幕风格
 						.withResources(R.string.title_choose_file, R.string.title_choose, R.string.dialog_cancel)  //xuameng本地字幕风格
                         .withFilter(false, false, "srt", "ass", "scc", "stl", "ttml")
                         .withStartFile("/storage/emulated/0/Download")
