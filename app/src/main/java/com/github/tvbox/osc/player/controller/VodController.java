@@ -344,7 +344,7 @@ public class VodController extends BaseController {
 				.load(Url)
 //				.placeholder(R.drawable.xumusic)   //xuameng默认的站位图
 				.noPlaceholder()   //不使用站位图，效果不好
-				.resize(1920,1080)
+//				.resize(1920,1080)
 //				.centerCrop()
 //				.error(R.drawable.xumusic)
 				.config(Bitmap.Config.RGB_565)
@@ -1184,7 +1184,7 @@ public class VodController extends BaseController {
                 listener.playNext(true);
             }
         }
-		if (position < 0) position = 0 - position;   //xuameng系统播放器有时会有负进度的BUG
+		if (position < 0) position = 0;   //xuameng系统播放器有时会有负进度的BUG
 		mCurrentTime.setText(PlayerUtils.stringForTime(position));        //xuameng当前进程时间
         mTotalTime.setText(PlayerUtils.stringForTime(duration));	   //xuameng总进程时间
         if (duration > 0) {
