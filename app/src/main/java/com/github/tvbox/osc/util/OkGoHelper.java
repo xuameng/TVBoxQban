@@ -96,7 +96,7 @@ public class OkGoHelper {
     public static Map<String, String> myHosts = null;
 
     public static String getDohUrl(int type) {
-        String json=Hawk.get(HawkConfig.DOH_JSON,"");
+        String json=dnsConfigJson + Hawk.get(HawkConfig.DOH_JSON,"");
         if(json.isEmpty())json=dnsConfigJson;
         JsonArray jsonArray = JsonParser.parseString(json).getAsJsonArray();
         if (type >= 1 && type < dnsHttpsList.size()) {
@@ -141,7 +141,7 @@ public class OkGoHelper {
         JsonArray ips=null;
         try {
             dnsHttpsList.add("已关闭");
-            String json=Hawk.get(HawkConfig.DOH_JSON,"");
+            String json=dnsConfigJson + Hawk.get(HawkConfig.DOH_JSON,"");
             if(json.isEmpty())json=dnsConfigJson;
             JsonArray jsonArray = JsonParser.parseString(json).getAsJsonArray();
             if(dohSelector+1>jsonArray.size())Hawk.put(HawkConfig.DOH_URL, 0);
