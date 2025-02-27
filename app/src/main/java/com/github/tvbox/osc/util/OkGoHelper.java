@@ -108,7 +108,7 @@ public class OkGoHelper {
 
     public static void setDnsList() {
         dnsHttpsList.clear();
-        String json=Hawk.get(HawkConfig.DOH_JSON,"");
+        String json=dnsConfigJson + Hawk.get(HawkConfig.DOH_JSON,"");
         if(json.isEmpty())json=dnsConfigJson;
         JsonArray jsonArray = JsonParser.parseString(json).getAsJsonArray();
         dnsHttpsList.add("已关闭");
