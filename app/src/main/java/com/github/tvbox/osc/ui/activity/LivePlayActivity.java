@@ -61,9 +61,7 @@ import com.github.tvbox.osc.ui.adapter.LiveSettingGroupAdapter;
 import com.github.tvbox.osc.ui.adapter.LiveSettingItemAdapter;
 import com.github.tvbox.osc.ui.adapter.MyEpgAdapter;
 import com.github.tvbox.osc.ui.dialog.LivePasswordDialog;
-import com.github.tvbox.osc.ui.tv.widget.ChannelListView;
 import com.github.tvbox.osc.ui.tv.widget.ViewObj;
-import com.github.tvbox.osc.util.EpgNameFuzzyMatch;
 import com.github.tvbox.osc.util.EpgUtil;
 import com.github.tvbox.osc.util.FastClickCheckUtil;
 import com.github.tvbox.osc.util.HawkConfig;
@@ -72,8 +70,8 @@ import com.github.tvbox.osc.util.PlayerHelper;
 import com.github.tvbox.osc.util.live.TxtSubscribe;
 import com.github.tvbox.osc.util.urlhttp.CallBackUtil;
 import com.github.tvbox.osc.util.urlhttp.UrlHttpUtil;
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import org.apache.commons.lang3.StringUtils;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.AbsCallback;
@@ -84,8 +82,6 @@ import com.owen.tvrecyclerview.widget.V7LinearLayoutManager;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -1271,6 +1267,7 @@ public class LivePlayActivity extends BaseActivity {
         }
     }
     private void showChannelList() {
+		if(liveChannelGroupList.isEmpty()) return;
         if(tvRightSettingLayout.getVisibility() == View.VISIBLE) {
             mHideSettingLayoutRun();
             return;
@@ -2384,7 +2381,7 @@ public class LivePlayActivity extends BaseActivity {
             case 3: //超时换源
                 Hawk.put(HawkConfig.LIVE_CONNECT_TIMEOUT, position);
                 break;
-            case 4: //超时换源
+            case 4: //偏好设置
                 boolean select = false;
                 switch(position) {
                     case 0:
@@ -2408,12 +2405,30 @@ public class LivePlayActivity extends BaseActivity {
                 }
                 liveSettingItemAdapter.selectItem(position, select, false);
                 break;
+				case 5://多源切换
+                //TODO
+                if(position==Hawk.get(HawkConfig.LIVE_GROUP_INDEX, 0))break;
+                liveSettingItemAdapter.selectItem(position, true, true);
+                JsonArray live_groups=Hawk.get(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
+                JsonObject livesOBJ = live_groups.get(position).getAsJsonObject();
+                String type= livesOBJ.get("type").getAsString();
+                if(!type.equals("0")){
+                    Toast.makeText(App.getInstance(), "暂不支持该直播类型", Toast.LENGTH_SHORT).show();
+                    break;
+                }
+                Hawk.put(HawkConfig.LIVE_GROUP_INDEX, position);
+                mVideoView.release();
+                ApiConfig.get().loadLiveApi(livesOBJ);
+//                init();
+                recreate();
+                return;
         }
         mHideSettingLayoutRunXu();
     }
     private void initLiveChannelList() {
         List < LiveChannelGroup > list = ApiConfig.get().getChannelGroupList();
         if(list.isEmpty()) {
+			Hawk.put(HawkConfig.LIVE_GROUP_INDEX, 0);
             Toast.makeText(App.getInstance(), "聚汇影视提示您：频道列表为空！", Toast.LENGTH_SHORT).show();
             finish();
             return;
@@ -2437,6 +2452,8 @@ public class LivePlayActivity extends BaseActivity {
             return;
         }
         showLoading();
+
+		LOG.i("echo-live-url:"+url);
         OkGo. < String > get(url).execute(new AbsCallback < String > () {
             @Override
             public String convertResponse(okhttp3.Response response) throws Throwable {
@@ -2465,12 +2482,18 @@ public class LivePlayActivity extends BaseActivity {
                     }
                 });
             }
-			@Override
+            @Override
             public void onError(Response<String> response) {
-                super.onError(response);
-                Toast.makeText(App.getInstance(), "直播地址未找到！请联系许大师！", Toast.LENGTH_LONG).show();
-                finish();
-			}
+                Toast.makeText(App.getInstance(), "直播地址加载错误,请联系许大师！", Toast.LENGTH_SHORT).show();
+                Hawk.put(HawkConfig.LIVE_GROUP_INDEX, 0);
+				finish();
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        jumpActivity(HomeActivity.class);
+                    }
+                });
+            }
         });
     }
     private void initLiveState() {
@@ -2508,19 +2531,35 @@ public class LivePlayActivity extends BaseActivity {
         return iv_Play_Xu.getVisibility() == View.VISIBLE;
     }
     private void initLiveSettingGroupList() {
-        ArrayList < String > groupNames = new ArrayList < > (Arrays.asList("线路选择", "画面比例", "播放解码", "超时换源", "偏好设置"));
+        ArrayList<String> groupNames = new ArrayList<>(Arrays.asList("线路选择", "画面比例", "播放解码", "超时换源", "偏好设置", "多源切换"));  //xuameng 换源
         ArrayList < ArrayList < String >> itemsArrayList = new ArrayList < > ();
         ArrayList < String > sourceItems = new ArrayList < > ();
         ArrayList < String > scaleItems = new ArrayList < > (Arrays.asList("默认比例", "16:9比例", "4:3 比例", "填充比例", "原始比例", "裁剪比例"));
         ArrayList < String > playerDecoderItems = new ArrayList < > (Arrays.asList("系统解码", "IJK  硬解", "IJK  软解", "EXO 解码"));
         ArrayList < String > timeoutItems = new ArrayList < > (Arrays.asList("超时05秒", "超时10秒", "超时15秒", "超时20秒", "超时25秒", "超时30秒"));
         ArrayList < String > personalSettingItems = new ArrayList < > (Arrays.asList("显示时间", "显示网速", "换台反转", "跨选分类"));
+//        ArrayList<String> yumItems = new ArrayList<>(Arrays.asList("线路1", "线路2", "线路3"));
+        ArrayList<String> yumItems = new ArrayList<>();   //xuameng 换源
+
+        try {
+            JsonArray jsonArray = Hawk.get(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
+            for (int i=0; i< jsonArray.size();i++) {
+                JsonObject jsonObject = jsonArray.get(i).getAsJsonObject();
+                String name = jsonObject.has("name")?jsonObject.get("name").getAsString():"线路"+(i+1);
+                yumItems.add(name);
+            }
+
+        } catch (Exception e) {
+            // 捕获任何可能发生的异常
+            e.printStackTrace();
+        }
         itemsArrayList.add(sourceItems);
         itemsArrayList.add(scaleItems);
         itemsArrayList.add(playerDecoderItems);
         itemsArrayList.add(timeoutItems);
         itemsArrayList.add(personalSettingItems);
         liveSettingGroupList.clear();
+		itemsArrayList.add(yumItems); //xuameng 换源
         for(int i = 0; i < groupNames.size(); i++) {
             LiveSettingGroup liveSettingGroup = new LiveSettingGroup();
             ArrayList < LiveSettingItem > liveSettingItemList = new ArrayList < > ();
@@ -2540,6 +2579,7 @@ public class LivePlayActivity extends BaseActivity {
         liveSettingGroupList.get(4).getLiveSettingItems().get(1).setItemSelected(Hawk.get(HawkConfig.LIVE_SHOW_NET_SPEED, false));
         liveSettingGroupList.get(4).getLiveSettingItems().get(2).setItemSelected(Hawk.get(HawkConfig.LIVE_CHANNEL_REVERSE, false));
         liveSettingGroupList.get(4).getLiveSettingItems().get(3).setItemSelected(Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false));
+		liveSettingGroupList.get(5).getLiveSettingItems().get(Hawk.get(HawkConfig.LIVE_GROUP_INDEX, 0)).setItemSelected(true);  //xuameng换源
     }
     private void loadCurrentSourceList() {
         ArrayList < String > currentSourceNames = currentLiveChannelItem.getChannelSourceNames();
