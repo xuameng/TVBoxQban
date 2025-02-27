@@ -1185,7 +1185,7 @@ public class VodController extends BaseController {
             }
         }
 		if (position < 0) position = 0;   //xuameng系统播放器有时会有负进度的BUG
-        if (duration > 130000) {
+        if (duration > 1000) {
             mSeekBar.setEnabled(true);
             mSeekBar.setProgress(position);	 //xuameng当前进程
 			mSeekBar.setMax(duration);       //xuameng设置总进程必须
