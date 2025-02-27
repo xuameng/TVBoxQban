@@ -30,6 +30,10 @@ import com.github.tvbox.osc.ui.adapter.SelectDialogAdapter;
 import com.github.tvbox.osc.ui.dialog.SelectDialog;
 import com.github.tvbox.osc.util.FastClickCheckUtil;
 import com.github.tvbox.osc.util.FastClickCheckUtilxu; //xuameng防连击1秒
+import com.github.tvbox.osc.server.ControlManager;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import com.github.tvbox.osc.util.LOG;
 import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.util.PlayerHelper;
 import com.github.tvbox.osc.util.ScreenUtils;
@@ -1743,5 +1747,51 @@ public class VodController extends BaseController {
 		mHandler.removeCallbacks(xuRunnable);
 		mHandler.removeCallbacks(myRunnableMusic);		
 		mHandler.removeCallbacks(myRunnableXu);
+    }
+    //尝试去bom
+    public String getWebPlayUrlIfNeeded(String webPlayUrl) {
+        if (webPlayUrl != null && !webPlayUrl.contains("127.0.0.1:9978") &&  webPlayUrl.contains(".m3u8")) {
+            try {
+                String urlEncode = URLEncoder.encode(webPlayUrl, "UTF-8");
+                LOG.i("echo-BOM-------");
+                return ControlManager.get().getAddress(true) + "proxy?go=bom&url=" + urlEncode;
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+        }
+        return webPlayUrl;
+    }
+
+    public String encodeUrl(String url) {
+        try {
+            return URLEncoder.encode(url, "UTF-8");
+        } catch (Exception e) {
+            return url;
+        }
+    }
+
+    private static int switchPlayerCount=0;
+    public boolean switchPlayer(){
+        try {
+            int playerType= mPlayerConfig.getInt("pl");
+            int p_type = (playerType == 1) ? playerType + 1 : (playerType == 2) ? playerType - 1 : playerType;
+            if (p_type != playerType) {
+                LOG.i("echo-切换播放器");
+                mPlayerConfig.put("pl", p_type);
+                updatePlayerCfgView();
+                listener.updatePlayerCfg();
+                listener.replay(false);
+            }else {
+                return true;
+            }
+        }catch (Exception e){
+            return true;
+        }
+        if(switchPlayerCount==1) {
+            switchPlayerCount=0;
+            return true;
+        }
+        switchPlayerCount++;
+        return false;
     }
 }
