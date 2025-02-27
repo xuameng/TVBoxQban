@@ -111,7 +111,7 @@ public class OkGoHelper {
         String json=Hawk.get(HawkConfig.DOH_JSON,"");
         if(json.isEmpty())json=dnsConfigJson;
         JsonArray jsonArray = JsonParser.parseString(json).getAsJsonArray();
-        dnsHttpsList.add("已关闭");
+        dnsHttpsList.add("默认");
         for (int i = 0; i < jsonArray.size(); i++) {
             JsonObject dnsConfig = jsonArray.get(i).getAsJsonObject();
             String name = dnsConfig.has("name") ? dnsConfig.get("name").getAsString() : "Unknown Name";
@@ -140,7 +140,7 @@ public class OkGoHelper {
         Integer dohSelector=Hawk.get(HawkConfig.DOH_URL, 0);
         JsonArray ips=null;
         try {
-            dnsHttpsList.add("已关闭");
+            dnsHttpsList.add("默认");
             String json=Hawk.get(HawkConfig.DOH_JSON,"");
             if(json.isEmpty())json=dnsConfigJson;
             JsonArray jsonArray = JsonParser.parseString(json).getAsJsonArray();
