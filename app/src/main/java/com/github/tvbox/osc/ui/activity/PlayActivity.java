@@ -335,7 +335,8 @@ public class PlayActivity extends BaseActivity {
         subtitleDialog.setLocalFileChooserListener(new SubtitleDialog.LocalFileChooserListener() {
             @Override
             public void openLocalFileChooserDialog() {
-                new ChooserDialog(PlayActivity.this)
+                new ChooserDialog(getActivity(),R.style.FileChooserXu)   //xuameng本地字幕风格
+						.withResources(R.string.title_choose_file, R.string.title_choose, R.string.dialog_cancel)  //xuameng本地字幕风格
                         .withFilter(false, false, "srt", "ass", "scc", "stl", "ttml")
                         .withStartFile("/storage/emulated/0/Download")
                         .withChosenListener(new ChooserDialog.Result() {
@@ -1030,7 +1031,7 @@ public class PlayActivity extends BaseActivity {
     private String parseFlag;
     private String webUrl;
     private String webUserAgent;
-    private Map<String, String > webHeaderMap;
+    private HashMap<String, String > webHeaderMap;
 	private String webPlayUrl;
 
     private void initParse(String flag, boolean useParse, String playUrl, final String url) {
