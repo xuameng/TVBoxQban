@@ -948,6 +948,7 @@ public class PlayFragment extends BaseLazyFragment {
     }
 
     private int autoRetryCount = 0;
+	private long lastRetryTime = 0; // 记录上次调用时间（毫秒）
 
     boolean autoRetry() {
         long currentTime = System.currentTimeMillis();
@@ -1071,7 +1072,7 @@ public class PlayFragment extends BaseLazyFragment {
     private String parseFlag;
     private String webUrl;
     private String webUserAgent;
-    private Map<String, String > webHeaderMap;
+    private HashMap<String, String > webHeaderMap;
 	private String webPlayUrl;
 
     private void initParse(String flag, boolean useParse, String playUrl, final String url) {
