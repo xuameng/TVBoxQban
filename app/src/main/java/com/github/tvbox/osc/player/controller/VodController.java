@@ -1185,16 +1185,19 @@ public class VodController extends BaseController {
             }
         }
 		if (position < 0) position = 0;   //xuameng系统播放器有时会有负进度的BUG
-		mCurrentTime.setText(PlayerUtils.stringForTime(position));        //xuameng当前进程时间
-        mTotalTime.setText(PlayerUtils.stringForTime(duration));	   //xuameng总进程时间
         if (duration > 0) {
             mSeekBar.setEnabled(true);
             mSeekBar.setProgress(position);	 //xuameng当前进程
 			mSeekBar.setMax(duration);       //xuameng设置总进程必须
+		    mCurrentTime.setText(PlayerUtils.stringForTime(position));        //xuameng当前进程时间
+            mTotalTime.setText(PlayerUtils.stringForTime(duration));	   //xuameng总进程时间
         } else {
             mSeekBar.setEnabled(false);
-			position = 0;
-			mSeekBar.setProgress(position);	 //xuameng视频总长度为0重置进度条为0
+			duration = 0;
+			mSeekBar.setProgress(0);	 //xuameng视频总长度为0重置进度条为0
+			mSeekBar.setMax(duration);       //xuameng设置总进程必须
+		    mCurrentTime.setText(PlayerUtils.stringForTime(position));        //xuameng当前进程时间
+            mTotalTime.setText(PlayerUtils.stringForTime(duration));	   //xuameng总进程时间
         }
         int percent = mControlWrapper.getBufferedPercentage();
 		int totalBuffer = percent * duration;
