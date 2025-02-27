@@ -256,7 +256,19 @@ public class HomeActivity extends BaseActivity {
         tvDate.setOnClickListener(new View.OnClickListener() {    //xuameng点击系统时间跳转设置
             @Override
             public void onClick(View v) {
-                jumpActivity(SettingActivity.class);		//xuameng加载慢跳转设置               
+                if(dataInitOk && jarInitOk){           //xuameng MENU键显示主页源
+					showSiteSwitch(); 
+                }else{
+					jumpActivity(SettingActivity.class);		//xuameng加载慢跳转设置 
+				}
+            }
+        });
+
+        tvDate.setOnLongClickListener(new View.OnLongClickListener() {      //xuameng长按重新加载
+            @Override
+            public boolean onLongClick(View v) {
+				jumpActivity(SettingActivity.class);		//xuameng加载慢跳转设置   
+                return true;
             }
         });
         setLoadSir(this.contentLayout);
