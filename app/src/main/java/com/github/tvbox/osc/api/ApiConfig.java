@@ -379,7 +379,7 @@ public class ApiConfig {
         }
         // 直播源
         if(infoJson.has("lives")){
-//            Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
+            Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
             JsonArray lives_groups=infoJson.get("lives").getAsJsonArray();
             int live_group_index=Hawk.get(HawkConfig.LIVE_GROUP_INDEX,0);
             JsonObject livesOBJ = lives_groups.get(live_group_index).getAsJsonObject();
