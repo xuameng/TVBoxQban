@@ -13,7 +13,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
-import android.content.pm.ActivityInfo;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -147,6 +146,7 @@ public class PlayActivity extends BaseActivity {
         initView();
         initViewModel();
         initData();
+		Hawk.put(HawkConfig.PLAYER_IS_LIVE,false);
     }
 
     public long getSavedProgress(String url) {
@@ -228,8 +228,17 @@ public class PlayActivity extends BaseActivity {
 
             @Override
             public void replay(boolean replay) {
+                LOG.i("echo-replay");
                 autoRetryCount = 0;
-                play(replay);
+                if(replay){
+                    play(true);
+                }else {
+                    if(webPlayUrl!=null && !webPlayUrl.isEmpty()) {
+                        playUrl(webPlayUrl,webHeaderMap);
+                    }else {
+                        play(false);
+                    }
+                }
             }
 
             @Override
@@ -538,9 +547,8 @@ public class PlayActivity extends BaseActivity {
 
     void playUrl(String url, HashMap<String, String> headers) {
         LOG.i("playUrl:" + url);
-        if(autoRetryCount>1 && url.contains(".m3u8")){
+        if(autoRetryCount==0)webPlayUrl=url;
 			//xuameng没用了          url="http://home.jundie.top:666/unBom.php?m3u8="+url;//尝试去bom头再次播放
-        }
         final String finalUrl = url;
         runOnUiThread(new Runnable() {
             @Override
@@ -708,7 +716,7 @@ public class PlayActivity extends BaseActivity {
                                             break;
                                     }
                                     String filename = name + (name.toLowerCase().endsWith(ext) ? "" : ext);
-                                    url += "#" + URLEncoder.encode(filename);
+                                    url += "#" + mController.encodeUrl(filename);
                                 }
                                 playSubtitle = url;
                             } catch (Throwable th) {
@@ -725,6 +733,7 @@ public class PlayActivity extends BaseActivity {
                         HashMap<String, String> headers = null;
                         webUserAgent = null;
                         webHeaderMap = null;
+						webPlayUrl = null;
                         if (info.has("header")) {
                             try {
                                 JSONObject hds = new JSONObject(info.getString("header"));
@@ -754,7 +763,7 @@ public class PlayActivity extends BaseActivity {
                     } catch (Throwable th) {
                     }
                 } else {
-                    errorWithRetry("获取播放信息错误", true);
+                    setTip("获取播放信息错误", false, true);
                 }
             }
         });
@@ -898,15 +907,39 @@ public class PlayActivity extends BaseActivity {
     }
 
     private int autoRetryCount = 0;
+	private long lastRetryTime = 0; // 记录上次调用时间（毫秒）
 
     boolean autoRetry() {
-        if (loadFoundVideoUrls != null && loadFoundVideoUrls.size() > 0) {
+        long currentTime = System.currentTimeMillis();
+        // 如果距离上次重试超过 10 秒（10000 毫秒），重置重试次数
+        if (autoRetryCount < 2 && currentTime - lastRetryTime > 10_000) {
+            autoRetryCount = 0;
+        }
+        lastRetryTime = currentTime;  // 更新上次调用时间
+        if (loadFoundVideoUrls != null && !loadFoundVideoUrls.isEmpty()) {
             autoRetryFromLoadFoundVideoUrls();
             return true;
         }
-        if (autoRetryCount < 1) {
-            autoRetryCount++;
-            play(false);
+
+        if (autoRetryCount < 2) {
+            if(autoRetryCount==1){
+                //第二次重试时重新调用接口
+                play(false);
+                autoRetryCount++;
+            }else {
+                if(mController.switchPlayer()){
+                    autoRetryCount++;
+                    webPlayUrl=mController.getWebPlayUrlIfNeeded(webPlayUrl);
+                }else {
+//                    Toast.makeText(mContext, "自动切换播放器重试", Toast.LENGTH_SHORT).show();
+                }
+                //第一次重试直接带着原地址继续播放
+                if(webPlayUrl!=null){
+                    playUrl(webPlayUrl, webHeaderMap);
+                }else {
+                    play(false);
+                }
+            }
             return true;
         } else {
             autoRetryCount = 0;
@@ -943,6 +976,17 @@ public class PlayActivity extends BaseActivity {
         if (reset) {
             CacheManager.delete(MD5.string2MD5(progressKey), 0);
             CacheManager.delete(MD5.string2MD5(subtitleCacheKey), 0);
+        }else{
+            try{
+                int playerType = mVodPlayerCfg.getInt("pl");
+                if(playerType==1){
+                    mController.mSubtitleView.setVisibility(View.VISIBLE);
+                }else {
+                    mController.mSubtitleView.setVisibility(View.GONE);
+                }
+            }catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
 
         if(Jianpian.isJpUrl(vs.url)){//荐片地址特殊判断
@@ -987,6 +1031,7 @@ public class PlayActivity extends BaseActivity {
     private String webUrl;
     private String webUserAgent;
     private Map<String, String > webHeaderMap;
+	private String webPlayUrl;
 
     private void initParse(String flag, boolean useParse, String playUrl, final String url) {
         parseFlag = flag;
@@ -1063,14 +1108,6 @@ public class PlayActivity extends BaseActivity {
 
     ExecutorService parseThreadPool;
 
-    private String encodeUrl(String url) {
-        try {
-            return URLEncoder.encode(url, "UTF-8");
-        } catch (Exception e) {
-            return url;
-        }
-    }
-
     private void doParse(ParseBean pb) {
         stopParse();
         initParseLoadFound();
@@ -1119,7 +1156,7 @@ public class PlayActivity extends BaseActivity {
             } catch (Throwable e) {
                 e.printStackTrace();
             }
-            OkGo.<String>get(pb.getUrl() + encodeUrl(webUrl))
+            OkGo.<String>get(pb.getUrl() + mController.encodeUrl(webUrl))
                     .tag("json_jx")
                     .headers(reqHeaders)
                     .execute(new AbsCallback<String>() {
