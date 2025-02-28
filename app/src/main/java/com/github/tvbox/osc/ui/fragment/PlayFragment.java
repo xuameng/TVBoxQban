@@ -238,7 +238,6 @@ public class PlayFragment extends BaseLazyFragment {
             @Override
             public void replay(boolean replay) {
                 autoRetryCount = 0;
-				selectSubtitle();
                 if(replay){  //xuameng新增
                     play(true);
                 }else {
@@ -622,7 +621,7 @@ public class PlayFragment extends BaseLazyFragment {
             if (trackInfo != null && trackInfo.getSubtitle().size() > 0) {
                 mController.mSubtitleView.hasInternal = true;
             }else{
-				mController.mSubtitleView.hasInternal = false;
+				mController.mSubtitleView.hasInternal = false;   //xuameng修复切换播放器内置字幕不刷新
 			}
 
             ((IjkMediaPlayer)(mVideoView.getMediaPlayer())).setOnTimedTextListener(new IMediaPlayer.OnTimedTextListener() {
@@ -643,7 +642,7 @@ public class PlayFragment extends BaseLazyFragment {
             if (trackInfo != null && trackInfo.getSubtitle().size() > 0) {
                 mController.mSubtitleView.hasInternal = true;
             }else{
-				mController.mSubtitleView.hasInternal = false;
+				mController.mSubtitleView.hasInternal = false;  //xuameng修复切换播放器内置字幕不刷新
 			}
             ((EXOmPlayer) (mVideoView.getMediaPlayer())).setOnTimedTextListener(new Player.Listener() {
                 @Override
@@ -789,7 +788,7 @@ public class PlayFragment extends BaseLazyFragment {
 //                        Toast.makeText(mContext, "获取播放信息错误1", Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    setTip("获取播放信息错误", false, true);
+                    errorWithRetry("获取播放信息错误", true);
 //                    Toast.makeText(mContext, "获取播放信息错误", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -958,7 +957,7 @@ public class PlayFragment extends BaseLazyFragment {
 
     boolean autoRetry() {
         long currentTime = System.currentTimeMillis();
-        if (autoRetryCount<2 && currentTime - lastRetryTime > 10_000){
+        if (autoRetryCount<2 && currentTime - lastRetryTime > 10000){
             LOG.i("echo-reset-autoRetryCount");
             autoRetryCount = 0;
         }
@@ -971,6 +970,7 @@ public class PlayFragment extends BaseLazyFragment {
         if (autoRetryCount < 2) {
             if(autoRetryCount==1){
                 //第二次重试时重新调用接口
+				autoRetryCount++;
                 play(false);
  //xuameng暂时去除自动切换播放器               autoRetryCount++;
             }else {
