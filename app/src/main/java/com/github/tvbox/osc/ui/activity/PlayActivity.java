@@ -928,7 +928,6 @@ public class PlayActivity extends BaseActivity {
         if (autoRetryCount < 2) {
             if(autoRetryCount==1){
                 //第二次重试时重新调用接口
-				autoRetryCount++;
                 play(false);
    //xuameng暂时去除自动切换播放器              autoRetryCount++;
             }else {
@@ -946,6 +945,7 @@ public class PlayActivity extends BaseActivity {
                     play(false);
                 }
             }                 //xuameng新增完
+			autoRetryCount++;
             return true;
         } else {
             autoRetryCount = 0;
