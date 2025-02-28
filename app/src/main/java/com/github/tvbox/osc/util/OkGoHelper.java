@@ -2,15 +2,15 @@ package com.github.tvbox.osc.util;
 
 import android.graphics.Bitmap;
 
-import androidx.annotation.NonNull;
+import androidx.annotation.NonNull;  //xuameng新增
 
 import com.github.tvbox.osc.api.ApiConfig;
 import com.github.tvbox.osc.base.App;
 import com.github.tvbox.osc.picasso.MyOkhttpDownLoader;
 import com.github.tvbox.osc.util.SSL.SSLSocketFactoryCompat;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.JsonArray;  //xuameng新增
+import com.google.gson.JsonObject; //xuameng新增
+import com.google.gson.JsonParser; //xuameng新增
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.https.HttpsUtils;
 import com.lzy.okgo.interceptor.HttpLoggingInterceptor;
@@ -19,8 +19,8 @@ import com.orhanobut.hawk.Hawk;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
+import java.net.InetAddress;  //xuameng新增
+import java.net.UnknownHostException;  //xuameng新增
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,7 +39,7 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.X509TrustManager;
 
 import okhttp3.Cache;
-import okhttp3.Dns;
+import okhttp3.Dns;  //xuameng新增
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.dnsoverhttps.DnsOverHttps;
@@ -51,12 +51,12 @@ public class OkGoHelper {
     public static final long DEFAULT_MILLISECONDS = 6500;      //默认的超时时间
 
     // 内置doh json
-    private static final String dnsConfigJson = "["
+    private static final String dnsConfigJson = "["   //xuameng新增
             + "{\"name\": \"腾讯\", \"url\": \"https://doh.pub/dns-query\"},"
             + "{\"name\": \"阿里\", \"url\": \"https://dns.alidns.com/dns-query\"},"
             + "{\"name\": \"360\", \"url\": \"https://doh.360.cn/dns-query\"}"
             + "]";
-    static OkHttpClient ItvClient = null;
+    static OkHttpClient ItvClient = null;   //xuameng新增完
     static void initExoOkHttpClient() {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor("OkExoPlayer");
@@ -82,20 +82,20 @@ public class OkGoHelper {
         }
 
 //        builder.dns(dnsOverHttps);
-        builder.dns(new CustomDns());
+        builder.dns(new CustomDns());  //xuameng新增
         ItvClient=builder.build();
 
-        ExoMediaSourceHelper.getInstance(App.getInstance()).setOkClient(ItvClient);
+        ExoMediaSourceHelper.getInstance(App.getInstance()).setOkClient(ItvClient); //xuameng新增完
     }
 
     public static DnsOverHttps dnsOverHttps = null;
 
     public static ArrayList<String> dnsHttpsList = new ArrayList<>();
 
-    public static boolean is_doh = false;
-    public static Map<String, String> myHosts = null;
+    public static boolean is_doh = false;  //xuameng新增
+    public static Map<String, String> myHosts = null;  //xuameng新增
 
-    public static String getDohUrl(int type) {
+    public static String getDohUrl(int type) {  //xuameng新增
         String json=Hawk.get(HawkConfig.DOH_JSON,"");
         if(json.isEmpty())json=dnsConfigJson;
         JsonArray jsonArray = JsonParser.parseString(json).getAsJsonArray();
@@ -103,10 +103,10 @@ public class OkGoHelper {
             JsonObject dnsConfig = jsonArray.get(type - 1).getAsJsonObject();
             return dnsConfig.get("url").getAsString();  // 获取对应的 URL
         }
-        return "";
+        return ""; //xuameng新增完
     }
 
-    public static void setDnsList() {
+    public static void setDnsList() {  //xuameng新增
         dnsHttpsList.clear();
         String json=Hawk.get(HawkConfig.DOH_JSON,"");
         if(json.isEmpty())json=dnsConfigJson;
@@ -134,9 +134,9 @@ public class OkGoHelper {
             }
         }
         return inetAddresses;
-    }
+    }  //xuameng新增完
 
-    static void initDnsOverHttps() {
+    static void initDnsOverHttps() {   //xuameng新增
         Integer dohSelector=Hawk.get(HawkConfig.DOH_URL, 0);
         JsonArray ips=null;
         try {
@@ -170,10 +170,10 @@ public class OkGoHelper {
         } catch (Throwable th) {
             th.printStackTrace();
         }
-        builder.cache(new Cache(new File(App.getInstance().getCacheDir().getAbsolutePath(), "dohcache"), 100 * 1024 * 1024));
+        builder.cache(new Cache(new File(App.getInstance().getCacheDir().getAbsolutePath(), "dohcache"), 100 * 1024 * 1024));   //xuameng新增完
         OkHttpClient dohClient = builder.build();
         String dohUrl = getDohUrl(Hawk.get(HawkConfig.DOH_URL, 0));
-        if (!dohUrl.isEmpty()) is_doh = true;
+        if (!dohUrl.isEmpty()) is_doh = true;   //xuameng新增
 //        dnsOverHttps = new DnsOverHttps.Builder()
 //                .client(dohClient)
 //                .url(dohUrl.isEmpty() ? null : HttpUrl.get(dohUrl))
@@ -261,7 +261,7 @@ public class OkGoHelper {
             }
             return true;
         }
-    }
+    }  //xuameng新增完
 
     static OkHttpClient defaultClient = null;
     static OkHttpClient noRedirectClient = null;
