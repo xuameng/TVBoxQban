@@ -100,7 +100,7 @@ public class SourceViewModel extends ViewModel {
             Runnable waitResponse = new Runnable() {
                 @Override
                 public void run() {
-                    ExecutorService executor = Executors.newSingleThreadExecutor();
+                    ExecutorService executor = Executors.newSingleThreadExecutor();      
                     Future<String> future = executor.submit(new Callable<String>() {
                         @Override
                         public String call() throws Exception {
@@ -715,7 +715,7 @@ public class SourceViewModel extends ViewModel {
             spThreadPool.execute(new Runnable() {
                 @Override
                 public void run() {
-                    ExecutorService executor = Executors.newSingleThreadExecutor();
+                    ExecutorService executor = Executors.newSingleThreadExecutor();  //xuameng新增
                     Future<String> future = executor.submit(new Callable<String>() {
                         @Override
                         public String call() throws Exception {
@@ -755,7 +755,7 @@ public class SourceViewModel extends ViewModel {
                         LOG.i("echo--getPlay--error: " + e.getMessage());
                         playResult.postValue(null);
                     } finally {
-                        executor.shutdown();
+                        executor.shutdown();   //xuameng新增完
                     }
                 }
             });
