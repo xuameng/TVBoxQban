@@ -71,7 +71,7 @@ import com.github.tvbox.osc.util.live.TxtSubscribe;
 import com.github.tvbox.osc.util.urlhttp.CallBackUtil;
 import com.github.tvbox.osc.util.urlhttp.UrlHttpUtil;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
+import com.google.gson.JsonObject;  //xuameng新增
 import org.apache.commons.lang3.StringUtils;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.AbsCallback;
@@ -428,7 +428,7 @@ public class LivePlayActivity extends BaseActivity {
         initSettingItemView();
         initLiveChannelList();
         initLiveSettingGroupList();
-		Hawk.put(HawkConfig.PLAYER_IS_LIVE,true);
+		Hawk.put(HawkConfig.PLAYER_IS_LIVE,true);  //xuameng新增 
         mHandler.post(mUpdateNetSpeedRunXu); //XUAMENG左上网速检测1秒钟一次
         mHandler.post(mUpdateVodProgressXu); //xuamengVOD BACK播放进度检测
 		mHandler.post(myRunnableMusic); //xuamengVOD BACK播放进度检测
@@ -1268,7 +1268,7 @@ public class LivePlayActivity extends BaseActivity {
         }
     }
     private void showChannelList() {
-		if(liveChannelGroupList.isEmpty()) return;
+		if(liveChannelGroupList.isEmpty()) return;  //xuameng新增
         if(tvRightSettingLayout.getVisibility() == View.VISIBLE) {
             mHideSettingLayoutRun();
             return;
@@ -2406,7 +2406,7 @@ public class LivePlayActivity extends BaseActivity {
                 }
                 liveSettingItemAdapter.selectItem(position, select, false);
                 break;
-				case 5://多源切换
+				case 5://多源切换   //xuameng新增
                 //TODO
                 if(position==Hawk.get(HawkConfig.LIVE_GROUP_INDEX, 0))break;
                 liveSettingItemAdapter.selectItem(position, true, true);
@@ -2429,7 +2429,7 @@ public class LivePlayActivity extends BaseActivity {
     private void initLiveChannelList() {
         List < LiveChannelGroup > list = ApiConfig.get().getChannelGroupList();
         if(list.isEmpty()) {
-			Hawk.put(HawkConfig.LIVE_GROUP_INDEX, 0);
+			Hawk.put(HawkConfig.LIVE_GROUP_INDEX, 0);  //xuameng新增
             Toast.makeText(App.getInstance(), "聚汇影视提示您：频道列表为空！", Toast.LENGTH_SHORT).show();
             finish();
             return;
@@ -2454,7 +2454,7 @@ public class LivePlayActivity extends BaseActivity {
         }
         showLoading();
 
-		LOG.i("echo-live-url:"+url);
+		LOG.i("echo-live-url:"+url);  //xuameng新增
         OkGo. < String > get(url).execute(new AbsCallback < String > () {
             @Override
             public String convertResponse(okhttp3.Response response) throws Throwable {
@@ -2486,7 +2486,7 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public void onError(Response<String> response) {
                 super.onError(response);
-				Hawk.put(HawkConfig.LIVE_GROUP_INDEX, 0);
+				Hawk.put(HawkConfig.LIVE_GROUP_INDEX, 0);  //xuameng新增
                 Toast.makeText(App.getInstance(), "直播地址加载错误，请联系许大师！", Toast.LENGTH_LONG).show();
                 finish();
             }
@@ -2535,7 +2535,7 @@ public class LivePlayActivity extends BaseActivity {
         ArrayList < String > timeoutItems = new ArrayList < > (Arrays.asList("超时05秒", "超时10秒", "超时15秒", "超时20秒", "超时25秒", "超时30秒"));
         ArrayList < String > personalSettingItems = new ArrayList < > (Arrays.asList("显示时间", "显示网速", "换台反转", "跨选分类"));
 //        ArrayList<String> yumItems = new ArrayList<>(Arrays.asList("线路1", "线路2", "线路3"));
-        ArrayList<String> yumItems = new ArrayList<>();   //xuameng 换源
+        ArrayList<String> yumItems = new ArrayList<>();   //xuameng新增 换源
 
         try {
             JsonArray jsonArray = Hawk.get(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
@@ -2548,14 +2548,14 @@ public class LivePlayActivity extends BaseActivity {
         } catch (Exception e) {
             // 捕获任何可能发生的异常
             e.printStackTrace();
-        }
+        }      //xuameng新增 换源完
         itemsArrayList.add(sourceItems);
         itemsArrayList.add(scaleItems);
         itemsArrayList.add(playerDecoderItems);
         itemsArrayList.add(timeoutItems);
         itemsArrayList.add(personalSettingItems);
         liveSettingGroupList.clear();
-		itemsArrayList.add(yumItems); //xuameng 换源
+		itemsArrayList.add(yumItems); //xuameng新增 换源
         for(int i = 0; i < groupNames.size(); i++) {
             LiveSettingGroup liveSettingGroup = new LiveSettingGroup();
             ArrayList < LiveSettingItem > liveSettingItemList = new ArrayList < > ();
@@ -2575,7 +2575,7 @@ public class LivePlayActivity extends BaseActivity {
         liveSettingGroupList.get(4).getLiveSettingItems().get(1).setItemSelected(Hawk.get(HawkConfig.LIVE_SHOW_NET_SPEED, false));
         liveSettingGroupList.get(4).getLiveSettingItems().get(2).setItemSelected(Hawk.get(HawkConfig.LIVE_CHANNEL_REVERSE, false));
         liveSettingGroupList.get(4).getLiveSettingItems().get(3).setItemSelected(Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false));
-		liveSettingGroupList.get(5).getLiveSettingItems().get(Hawk.get(HawkConfig.LIVE_GROUP_INDEX, 0)).setItemSelected(true);  //xuameng换源
+		liveSettingGroupList.get(5).getLiveSettingItems().get(Hawk.get(HawkConfig.LIVE_GROUP_INDEX, 0)).setItemSelected(true);  //xuameng新增 换源
     }
     private void loadCurrentSourceList() {
         ArrayList < String > currentSourceNames = currentLiveChannelItem.getChannelSourceNames();
