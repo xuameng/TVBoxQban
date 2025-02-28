@@ -788,6 +788,7 @@ public class VodController extends BaseController {
                     updatePlayerCfgView();
                     listener.updatePlayerCfg();
                     listener.replay(false);
+					SubtitleDialog subtitleDialog = new SubtitleDialog(getActivity());
 					subtitleDialog.selectInternal.setVisibility(View.GONE);
 					if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
 						hideBottomXu();
@@ -831,6 +832,7 @@ public class VodController extends BaseController {
                                     updatePlayerCfgView();
                                     listener.updatePlayerCfg();
                                     listener.replay(false);
+									SubtitleDialog subtitleDialog = new SubtitleDialog(getActivity());
 									subtitleDialog.selectInternal.setVisibility(View.GONE);
 									if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
 									hideBottomXu();
