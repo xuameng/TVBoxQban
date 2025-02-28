@@ -944,8 +944,8 @@ public class PlayActivity extends BaseActivity {
                 }else {
                     play(false);
                 }
-            }                 //xuameng新增完
-			autoRetryCount++;
+            }                 
+			autoRetryCount++;    //xuameng新增完
             return true;
         } else {
             autoRetryCount = 0;
