@@ -385,7 +385,7 @@ public class ApiConfig {
             JsonObject livesOBJ = lives_groups.get(live_group_index).getAsJsonObject();
             Hawk.put(HawkConfig.LIVE_GROUP_LIST,lives_groups);
 
-			if (livesOBJ.has("live_group_index")){
+			if (livesOBJ.has(live_group_index)){
             loadLiveApi(livesOBJ);
 			}
         }    //xuameng新增完
