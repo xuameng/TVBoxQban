@@ -384,10 +384,7 @@ public class ApiConfig {
             int live_group_index=Hawk.get(HawkConfig.LIVE_GROUP_INDEX,0);
             JsonObject livesOBJ = lives_groups.get(live_group_index).getAsJsonObject();
             Hawk.put(HawkConfig.LIVE_GROUP_LIST,lives_groups);
-String str = String.valueOf(live_group_index);
-			if (livesOBJ.has(str)){
             loadLiveApi(livesOBJ);
-			}
         }    //xuameng新增完
 
         //video parse rule for host
