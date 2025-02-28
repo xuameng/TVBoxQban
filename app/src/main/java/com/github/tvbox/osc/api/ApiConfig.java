@@ -383,8 +383,9 @@ public class ApiConfig {
             JsonArray lives_groups=infoJson.get("lives").getAsJsonArray();
             int live_group_index=Hawk.get(HawkConfig.LIVE_GROUP_INDEX,0);
             JsonObject livesOBJ = lives_groups.get(live_group_index).getAsJsonObject();
+			String livesOBJ_XU = lives_groups.get(live_group_index).getAsJsonObject();
             Hawk.put(HawkConfig.LIVE_GROUP_LIST,lives_groups);
-			if (livesOBJ = null){
+			if (livesOBJ_XU.isEmpty()){
 				Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
                 JsonArray lives_groups1=infoJson.get("lives").getAsJsonArray();
                 int live_group_index1=Hawk.get(HawkConfig.LIVE_GROUP_INDEX,0);
