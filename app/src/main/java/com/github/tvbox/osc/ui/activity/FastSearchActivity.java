@@ -253,12 +253,12 @@ public class FastSearchActivity extends BaseActivity {
 
     private void filterResult(String spName) {
         if (spName == "全部") {
-            mGridView.setVisibility(View.VISIBLE);
+      //      mGridView.setVisibility(View.VISIBLE);
             mGridViewFilter.setVisibility(View.GONE);
             return;
         }
         mGridView.setVisibility(View.GONE);
-     //   mGridViewFilter.setVisibility(View.VISIBLE);
+   //     mGridViewFilter.setVisibility(View.VISIBLE);
         String key = spNames.get(spName);
         if (key.isEmpty()) return;
 
@@ -485,7 +485,7 @@ public class FastSearchActivity extends BaseActivity {
             } else {
                 showSuccess();
                 if (!isFilterMode)
-                    mGridView.setVisibility(View.VISIBLE);
+             //       mGridView.setVisibility(View.VISIBLE);
                 searchAdapter.setNewData(data);
             }
         }
