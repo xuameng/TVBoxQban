@@ -2420,8 +2420,8 @@ public class LivePlayActivity extends BaseActivity {
                 Hawk.put(HawkConfig.LIVE_GROUP_INDEX, position);
                 mVideoView.release();
                 ApiConfig.get().loadLiveApi(livesOBJ);
-                init();
- //               recreate();
+//                init();
+                recreate();
                 return;
         }
         mHideSettingLayoutRunXu();
