@@ -603,7 +603,9 @@ public class PlayActivity extends BaseActivity {
             trackInfo = ((IjkMediaPlayer)(mVideoView.getMediaPlayer())).getTrackInfo();
             if (trackInfo != null && trackInfo.getSubtitle().size() > 0) {
                 mController.mSubtitleView.hasInternal = true;
-            }
+            }else{
+				mController.mSubtitleView.hasInternal = false;  //xuameng修复切换播放器内置字幕不刷新
+			}
             ((IjkMediaPlayer)(mVideoView.getMediaPlayer())).setOnTimedTextListener(new IMediaPlayer.OnTimedTextListener() {
                 @Override
                 public void onTimedText(IMediaPlayer mp, IjkTimedText text) {
@@ -621,7 +623,9 @@ public class PlayActivity extends BaseActivity {
             trackInfo = ((EXOmPlayer) (mVideoView.getMediaPlayer())).getTrackInfo();
             if (trackInfo != null && trackInfo.getSubtitle().size() > 0) {
                 mController.mSubtitleView.hasInternal = true;
-            }
+            }else{
+				mController.mSubtitleView.hasInternal = false;  //xuameng修复切换播放器内置字幕不刷新
+			}
             ((EXOmPlayer) (mVideoView.getMediaPlayer())).setOnTimedTextListener(new Player.Listener() {
                 @Override
                 public void onCues(@NonNull List<Cue> cues) {
@@ -763,7 +767,7 @@ public class PlayActivity extends BaseActivity {
                     } catch (Throwable th) {
                     }
                 } else {
-                    setTip("获取播放信息错误", false, true);  //xuameng新增
+                    errorWithRetry("获取播放信息错误", true);
                 }
             }
         });
@@ -912,7 +916,7 @@ public class PlayActivity extends BaseActivity {
     boolean autoRetry() {
         long currentTime = System.currentTimeMillis();
         // 如果距离上次重试超过 10 秒（10000 毫秒），重置重试次数
-        if (autoRetryCount < 2 && currentTime - lastRetryTime > 10_000) {
+        if (autoRetryCount < 2 && currentTime - lastRetryTime > 100000) {
             autoRetryCount = 0;
         }
         lastRetryTime = currentTime;  // 更新上次调用时间
@@ -924,6 +928,7 @@ public class PlayActivity extends BaseActivity {
         if (autoRetryCount < 2) {
             if(autoRetryCount==1){
                 //第二次重试时重新调用接口
+				autoRetryCount++;
                 play(false);
    //xuameng暂时去除自动切换播放器              autoRetryCount++;
             }else {
