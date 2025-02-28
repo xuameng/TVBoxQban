@@ -5,16 +5,16 @@ import android.text.TextUtils;
 
 import com.github.tvbox.osc.api.ApiConfig;
 import com.github.tvbox.osc.bean.IJKCode;
-import com.github.tvbox.osc.server.ControlManager;
+import com.github.tvbox.osc.server.ControlManager;   //xuameng新增
 import com.github.tvbox.osc.util.FileUtils;
 import com.github.tvbox.osc.util.HawkConfig;
-import com.github.tvbox.osc.util.LOG;
+import com.github.tvbox.osc.util.LOG;  //xuameng新增
 import com.github.tvbox.osc.util.MD5;
 import com.orhanobut.hawk.Hawk;
 
 import java.io.File;
-import java.net.URI;
-import java.net.URLEncoder;
+import java.net.URI;  //xuameng新增
+import java.net.URLEncoder;  //xuameng新增
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -52,7 +52,7 @@ public class IjkMediaPlayer extends IjkPlayer {
                 }
             }
         }
-        mMediaPlayer.setOption(tv.danmaku.ijk.media.player.IjkMediaPlayer.OPT_CATEGORY_PLAYER, "max-fps", 60);
+        mMediaPlayer.setOption(tv.danmaku.ijk.media.player.IjkMediaPlayer.OPT_CATEGORY_PLAYER, "max-fps", 60);   //xuameng新增
 
         // 设置视频流格式
         mMediaPlayer.setOption(tv.danmaku.ijk.media.player.IjkMediaPlayer.OPT_CATEGORY_PLAYER, "overlay-format", tv.danmaku.ijk.media.player.IjkMediaPlayer.SDL_FCC_RV32);
@@ -63,9 +63,9 @@ public class IjkMediaPlayer extends IjkPlayer {
         mMediaPlayer.setOption(tv.danmaku.ijk.media.player.IjkMediaPlayer.OPT_CATEGORY_FORMAT, "dns_cache_clear", 1);
         mMediaPlayer.setOption(tv.danmaku.ijk.media.player.IjkMediaPlayer.OPT_CATEGORY_FORMAT, "dns_cache_timeout", -1);
 
-        mMediaPlayer.setOption(tv.danmaku.ijk.media.player.IjkMediaPlayer.OPT_CATEGORY_FORMAT,"safe",0);
+        mMediaPlayer.setOption(tv.danmaku.ijk.media.player.IjkMediaPlayer.OPT_CATEGORY_FORMAT,"safe",0);  //xuameng新增
 
-        if(Hawk.get(HawkConfig.PLAYER_IS_LIVE)){
+        if(Hawk.get(HawkConfig.PLAYER_IS_LIVE)){   //xuameng新增
             LOG.i("type-直播");
             mMediaPlayer.setOption(tv.danmaku.ijk.media.player.IjkMediaPlayer.OPT_CATEGORY_PLAYER, "packet-buffering", 0);
 //            mMediaPlayer.setOption(tv.danmaku.ijk.media.player.IjkMediaPlayer.OPT_CATEGORY_FORMAT, "fflags", "nobuffer"); // 减少协议层缓冲
@@ -75,13 +75,13 @@ public class IjkMediaPlayer extends IjkPlayer {
             mMediaPlayer.setOption(tv.danmaku.ijk.media.player.IjkMediaPlayer.OPT_CATEGORY_FORMAT, "infbuf", 0);
             mMediaPlayer.setOption(tv.danmaku.ijk.media.player.IjkMediaPlayer.OPT_CATEGORY_PLAYER, "min-frames", 5);
         }
-    }
+    }  //xuameng新增完
 
     private static final String ITV_TARGET_DOMAIN = "gslbserv.itv.cmvideo.cn";
     @Override
     public void setDataSource(String path, Map<String, String> headers) {
         try {
-            switch (getStreamType(path)) {
+            switch (getStreamType(path)) {  //xuameng新增
                 case RTSP_UDP_RTP:
                     mMediaPlayer.setOption(tv.danmaku.ijk.media.player.IjkMediaPlayer.OPT_CATEGORY_FORMAT, "infbuf", 1);
                     mMediaPlayer.setOption(tv.danmaku.ijk.media.player.IjkMediaPlayer.OPT_CATEGORY_FORMAT, "rtsp_transport", "tcp");
@@ -118,7 +118,7 @@ public class IjkMediaPlayer extends IjkPlayer {
                     break;
 
                 default:
-                    break;
+                    break;  //xuameng新增完
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -129,7 +129,7 @@ public class IjkMediaPlayer extends IjkPlayer {
     }
 
     /**
-     * 解析 URL
+     * 解析 URL  //xuameng新增
      */
     private static final int RTSP_UDP_RTP = 1;
     private static final int CACHE_VIDEO = 2;
@@ -153,7 +153,7 @@ public class IjkMediaPlayer extends IjkPlayer {
             return CACHE_VIDEO;
         }
         return OTHER;
-    }
+    }         //xuameng新增完
 
     private void setDataSourceHeader(Map<String, String> headers) {
         if (headers != null && !headers.isEmpty()) {
