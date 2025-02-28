@@ -146,7 +146,7 @@ public class PlayActivity extends BaseActivity {
         initView();
         initViewModel();
         initData();
-		Hawk.put(HawkConfig.PLAYER_IS_LIVE,false);
+		Hawk.put(HawkConfig.PLAYER_IS_LIVE,false);  //xuameng新增
     }
 
     public long getSavedProgress(String url) {
@@ -228,9 +228,9 @@ public class PlayActivity extends BaseActivity {
 
             @Override
             public void replay(boolean replay) {
-                LOG.i("echo-replay");
+                LOG.i("echo-replay");  //xuameng新增
                 autoRetryCount = 0;
-                if(replay){
+                if(replay){    //xuameng新增
                     play(true);
                 }else {
                     if(webPlayUrl!=null && !webPlayUrl.isEmpty()) {
@@ -238,7 +238,7 @@ public class PlayActivity extends BaseActivity {
                     }else {
                         play(false);
                     }
-                }
+                }   //xuameng新增完
             }
 
             @Override
@@ -548,8 +548,7 @@ public class PlayActivity extends BaseActivity {
 
     void playUrl(String url, HashMap<String, String> headers) {
         LOG.i("playUrl:" + url);
-        if(autoRetryCount==0)webPlayUrl=url;
-			//xuameng没用了          url="http://home.jundie.top:666/unBom.php?m3u8="+url;//尝试去bom头再次播放
+        if(autoRetryCount==0)webPlayUrl=url;  //xuameng新增
         final String finalUrl = url;
         runOnUiThread(new Runnable() {
             @Override
@@ -717,7 +716,7 @@ public class PlayActivity extends BaseActivity {
                                             break;
                                     }
                                     String filename = name + (name.toLowerCase().endsWith(ext) ? "" : ext);
-                                    url += "#" + mController.encodeUrl(filename);
+                                    url += "#" + mController.encodeUrl(filename);  //xuameng新增
                                 }
                                 playSubtitle = url;
                             } catch (Throwable th) {
@@ -734,7 +733,7 @@ public class PlayActivity extends BaseActivity {
                         HashMap<String, String> headers = null;
                         webUserAgent = null;
                         webHeaderMap = null;
-						webPlayUrl = null;
+						webPlayUrl = null;  //xuameng新增
                         if (info.has("header")) {
                             try {
                                 JSONObject hds = new JSONObject(info.getString("header"));
@@ -764,7 +763,7 @@ public class PlayActivity extends BaseActivity {
                     } catch (Throwable th) {
                     }
                 } else {
-                    setTip("获取播放信息错误", false, true);
+                    setTip("获取播放信息错误", false, true);  //xuameng新增
                 }
             }
         });
@@ -908,7 +907,7 @@ public class PlayActivity extends BaseActivity {
     }
 
     private int autoRetryCount = 0;
-	private long lastRetryTime = 0; // 记录上次调用时间（毫秒）
+	private long lastRetryTime = 0; // 记录上次调用时间（毫秒）    //xuameng新增
 
     boolean autoRetry() {
         long currentTime = System.currentTimeMillis();
@@ -926,21 +925,22 @@ public class PlayActivity extends BaseActivity {
             if(autoRetryCount==1){
                 //第二次重试时重新调用接口
                 play(false);
-                autoRetryCount++;
+   //xuameng暂时去除自动切换播放器              autoRetryCount++;
             }else {
+				/* xuameng暂时去除自动切换播放器   //切换播放器不占用重试次数
                 if(mController.switchPlayer()){
                     autoRetryCount++;
                     webPlayUrl=mController.getWebPlayUrlIfNeeded(webPlayUrl);
                 }else {
 //                    Toast.makeText(mContext, "自动切换播放器重试", Toast.LENGTH_SHORT).show();
-                }
+                }//xuameng暂时去除自动切换播放器完 */
                 //第一次重试直接带着原地址继续播放
                 if(webPlayUrl!=null){
                     playUrl(webPlayUrl, webHeaderMap);
                 }else {
                     play(false);
                 }
-            }
+            }                 //xuameng新增完
             return true;
         } else {
             autoRetryCount = 0;
@@ -977,17 +977,6 @@ public class PlayActivity extends BaseActivity {
         if (reset) {
             CacheManager.delete(MD5.string2MD5(progressKey), 0);
             CacheManager.delete(MD5.string2MD5(subtitleCacheKey), 0);
-        }else{
-            try{
-                int playerType = mVodPlayerCfg.getInt("pl");
-                if(playerType==1){
-                    mController.mSubtitleView.setVisibility(View.VISIBLE);
-                }else {
-                    mController.mSubtitleView.setVisibility(View.GONE);
-                }
-            }catch (JSONException e) {
-                e.printStackTrace();
-            }
         }
 
         if(Jianpian.isJpUrl(vs.url)){//荐片地址特殊判断
@@ -1157,7 +1146,7 @@ public class PlayActivity extends BaseActivity {
             } catch (Throwable e) {
                 e.printStackTrace();
             }
-            OkGo.<String>get(pb.getUrl() + mController.encodeUrl(webUrl))
+            OkGo.<String>get(pb.getUrl() + mController.encodeUrl(webUrl))  //xuameng新增
                     .tag("json_jx")
                     .headers(reqHeaders)
                     .execute(new AbsCallback<String>() {
