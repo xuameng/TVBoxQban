@@ -144,7 +144,7 @@ public class PlayFragment extends BaseLazyFragment {
         initView();
         initViewModel();
         initData();
-		Hawk.put(HawkConfig.PLAYER_IS_LIVE,false);
+		Hawk.put(HawkConfig.PLAYER_IS_LIVE,false);  //xuameng新增
     }
 
     public long getSavedProgress(String url) {
@@ -238,15 +238,15 @@ public class PlayFragment extends BaseLazyFragment {
             @Override
             public void replay(boolean replay) {
                 autoRetryCount = 0;
-                if(replay){
+                if(replay){  //xuameng新增
                     play(true);
                 }else {
                     if(webPlayUrl!=null && !webPlayUrl.isEmpty()) {
                         playUrl(webPlayUrl,webHeaderMap);
                     }else {
                         play(false);
-                    }
-                }
+                    }  
+                }  //xuameng新增完
             }
 
             @Override
@@ -948,7 +948,7 @@ public class PlayFragment extends BaseLazyFragment {
     }
 
     private int autoRetryCount = 0;
-	private long lastRetryTime = 0; // 记录上次调用时间（毫秒）
+	private long lastRetryTime = 0; // 记录上次调用时间（毫秒）  //xuameng新增
 
     boolean autoRetry() {
         long currentTime = System.currentTimeMillis();
@@ -966,22 +966,22 @@ public class PlayFragment extends BaseLazyFragment {
             if(autoRetryCount==1){
                 //第二次重试时重新调用接口
                 play(false);
-                autoRetryCount++;
+ //xuameng暂时去除自动切换播放器               autoRetryCount++;
             }else {
-                //切换播放器不占用重试次数
+             /* xuameng暂时去除自动切换播放器   //切换播放器不占用重试次数
                 if(mController.switchPlayer()){
                     webPlayUrl=mController.getWebPlayUrlIfNeeded(webPlayUrl);
                     autoRetryCount++;
                 }else {
 //                    Toast.makeText(mContext, "自动切换播放器重试", Toast.LENGTH_SHORT).show();
-                }
+                }  //xuameng暂时去除自动切换播放器完 */
                 //第一次重试直接带着原地址继续播放
                 if(webPlayUrl!=null){
                     playUrl(webPlayUrl, webHeaderMap);
                 }else {
                     play(false);
                 }
-            }
+            }       //xuameng新增完
             return true;
         } else {
             autoRetryCount = 0;
@@ -1018,17 +1018,6 @@ public class PlayFragment extends BaseLazyFragment {
         if (reset) {
             CacheManager.delete(MD5.string2MD5(progressKey), 0);
             CacheManager.delete(MD5.string2MD5(subtitleCacheKey), 0);
-        }else{
-            try{
-                int playerType = mVodPlayerCfg.getInt("pl");
-                if(playerType==1){
-                    mController.mSubtitleView.setVisibility(View.VISIBLE);
-                }else {
-                    mController.mSubtitleView.setVisibility(View.GONE);
-                }
-            }catch (JSONException e) {
-                e.printStackTrace();
-            }
         }
 
         if(Jianpian.isJpUrl(vs.url)){//荐片地址特殊判断
@@ -1200,7 +1189,7 @@ public class PlayFragment extends BaseLazyFragment {
             } catch (Throwable e) {
                 e.printStackTrace();
             }
-            OkGo.<String>get(pb.getUrl() + mController.encodeUrl(webUrl))
+            OkGo.<String>get(pb.getUrl() + mController.encodeUrl(webUrl))   //xuameng新增
                     .tag("json_jx")
                     .headers(reqHeaders)
                     .execute(new AbsCallback<String>() {
