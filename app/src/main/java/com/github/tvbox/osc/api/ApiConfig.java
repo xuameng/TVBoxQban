@@ -384,13 +384,13 @@ public class ApiConfig {
             int live_group_index=Hawk.get(HawkConfig.LIVE_GROUP_INDEX,0);
             JsonObject livesOBJ = lives_groups.get(live_group_index).getAsJsonObject();
             Hawk.put(HawkConfig.LIVE_GROUP_LIST,lives_groups);
-			if (livesOBJ.length() == 0){
+			if (livesOBJ = null){
 				Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
                 JsonArray lives_groups1=infoJson.get("lives").getAsJsonArray();
                 int live_group_index1=Hawk.get(HawkConfig.LIVE_GROUP_INDEX,0);
-                JsonObject livesOBJ = lives_groups1.get(live_group_index1).getAsJsonObject();
+                JsonObject livesOBJ1 = lives_groups1.get(live_group_index1).getAsJsonObject();
                 Hawk.put(HawkConfig.LIVE_GROUP_LIST,lives_groups1);
-				loadLiveApi(livesOBJ);
+				loadLiveApi(livesOBJ1);
 			}else{			
             loadLiveApi(livesOBJ);
 			}
