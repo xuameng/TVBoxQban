@@ -379,12 +379,15 @@ public class ApiConfig {
         }
         // 直播源xuameng新增
         if(infoJson.has("lives")){
-            Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);      //xuameng暂时修复
+     //       Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);      //xuameng暂时修复
             JsonArray lives_groups=infoJson.get("lives").getAsJsonArray();
             int live_group_index=Hawk.get(HawkConfig.LIVE_GROUP_INDEX,0);
             JsonObject livesOBJ = lives_groups.get(live_group_index).getAsJsonObject();
             Hawk.put(HawkConfig.LIVE_GROUP_LIST,lives_groups);
+String str = String.valueOf(live_group_index);
+			if (lives_groups.contains(str)){
             loadLiveApi(livesOBJ);
+			}
         }    //xuameng新增完
 
         //video parse rule for host
