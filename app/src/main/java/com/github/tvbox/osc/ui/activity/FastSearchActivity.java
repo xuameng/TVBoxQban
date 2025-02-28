@@ -258,7 +258,7 @@ public class FastSearchActivity extends BaseActivity {
             return;
         }
         mGridView.setVisibility(View.GONE);
-        mGridViewFilter.setVisibility(View.VISIBLE);
+     //   mGridViewFilter.setVisibility(View.VISIBLE);
         String key = spNames.get(spName);
         if (key.isEmpty()) return;
 
