@@ -2421,7 +2421,7 @@ public class LivePlayActivity extends BaseActivity {
                 mVideoView.release();
                 ApiConfig.get().loadLiveApi(livesOBJ);
 //                init();
-                recreate();
+ //               recreate();
                 return;
         }
         mHideSettingLayoutRunXu();
