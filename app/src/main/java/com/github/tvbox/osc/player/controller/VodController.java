@@ -56,7 +56,6 @@ import com.squareup.picasso.MemoryPolicy;  //xuameng播放音频切换图片
 import com.squareup.picasso.NetworkPolicy;  //xuameng播放音频切换图片
 import android.graphics.Bitmap;  //xuameng播放音频切换图片
 import com.github.tvbox.osc.api.ApiConfig;  //xuameng播放音频切换图片
-import com.github.tvbox.osc.ui.dialog.SubtitleDialog;  //xuameng内置字幕
 
 public class VodController extends BaseController {
     public VodController(@NonNull @NotNull Context context) {
@@ -788,8 +787,6 @@ public class VodController extends BaseController {
                     updatePlayerCfgView();
                     listener.updatePlayerCfg();
                     listener.replay(false);
-					SubtitleDialog subtitleDialog = new SubtitleDialog(getActivity());
-					subtitleDialog.selectInternal.setVisibility(View.GONE);
 					if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
 						hideBottomXu();
 					}
@@ -832,8 +829,6 @@ public class VodController extends BaseController {
                                     updatePlayerCfgView();
                                     listener.updatePlayerCfg();
                                     listener.replay(false);
-									SubtitleDialog subtitleDialog = new SubtitleDialog(getActivity());
-									subtitleDialog.selectInternal.setVisibility(View.GONE);
 									if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
 									hideBottomXu();
 									}
