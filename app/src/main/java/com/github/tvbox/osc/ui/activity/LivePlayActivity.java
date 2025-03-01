@@ -2422,8 +2422,6 @@ public class LivePlayActivity extends BaseActivity {
                 ApiConfig.get().loadLiveApi(livesOBJ);
                 if (mVideoView != null) {   //xuameng空指针
                     mVideoView.release();
-                    mVideoView.resume();
-                    mVideoView=null;
                 }
                 recreate();
                 return;
