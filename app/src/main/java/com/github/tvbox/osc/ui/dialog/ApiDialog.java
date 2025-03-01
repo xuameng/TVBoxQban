@@ -132,7 +132,7 @@ public class ApiDialog extends BaseDialog {
                 }
             }
         });
-       inputApi.setOnEditorActionListener(new TextView.OnEditorActionListener() {      //xuameng新增
+       inputApi.setOnEditorActionListener(new TextView.OnEditorActionListener() {      //xuameng新增配置地址软键盘确定直接确定配置地址。
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_SEARCH || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
