@@ -2420,10 +2420,11 @@ public class LivePlayActivity extends BaseActivity {
                 }
                 Hawk.put(HawkConfig.LIVE_GROUP_INDEX, position);
                 ApiConfig.get().loadLiveApi(livesOBJ);
+                recreate();
                 if (mVideoView != null) {   //xuameng空指针
                     mVideoView.release();
+                    mVideoView=null;
                 }
-                recreate();
                 return;
         }
         mHideSettingLayoutRunXu();
