@@ -384,10 +384,17 @@ public class ApiConfig {
         if(infoJson.has("lives")){
             JsonArray lives_groups=infoJson.get("lives").getAsJsonArray();
             int live_group_index=Hawk.get(HawkConfig.LIVE_GROUP_INDEX,0);
-			if(live_group_index>lives_groups.size()-1)Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);  //xuameng上次有两个直播源选中了第二个，下次进入第二个删除了，就会出错。判断一下，如果没有第二个，默认进第一个
-            JsonObject livesOBJ = lives_groups.get(live_group_index).getAsJsonObject();
+			if(live_group_index>lives_groups.size()-1){
+				Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);  //xuameng上次有两个直播源选中了第二个，下次进入第二个删除了，就会出错。判断一下，如果没有第二个，默认进第一个
+				int live_group_index_xu=Hawk.get(HawkConfig.LIVE_GROUP_INDEX,0);
+				JsonObject livesOBJ_xu = lives_groups.get(live_group_index_xu).getAsJsonObject();
+				Hawk.put(HawkConfig.LIVE_GROUP_LIST,lives_groups);
+				loadLiveApi(livesOBJ_xu);
+            }else{
+			JsonObject livesOBJ = lives_groups.get(live_group_index).getAsJsonObject();
             Hawk.put(HawkConfig.LIVE_GROUP_LIST,lives_groups);
             loadLiveApi(livesOBJ);
+			}
         }    //xuameng新增完
 
         //video parse rule for host
