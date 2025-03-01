@@ -734,8 +734,9 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
     public void setPlayerFactory(PlayerFactory<P> playerFactory) {
         if (playerFactory == null) {
             throw new IllegalArgumentException("PlayerFactory can not be null!");
-        }
+        }else{
         mPlayerFactory = playerFactory;
+		}
     }
 
     /**
