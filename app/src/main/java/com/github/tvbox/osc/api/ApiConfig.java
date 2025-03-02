@@ -555,7 +555,7 @@ public class ApiConfig {
     }
 
 
-    private final List<LiveSettingGroup> liveSettingGroupList = new ArrayList<>();
+    private final List<LiveSettingGroup> liveSettingGroupList = new ArrayList<>()
 
     private void initLiveSettings() {
 
