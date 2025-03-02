@@ -432,6 +432,7 @@ private final List<LiveSettingGroup> liveSettingGroupList = new ArrayList<>();
 
             JsonObject livesOBJ = lives_groups.get(live_group_index).getAsJsonObject();
             loadLiveApi(livesOBJ);
+			}
         }    //xuameng新增完
 
         //video parse rule for host
