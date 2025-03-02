@@ -62,6 +62,7 @@ public class ApiConfig {
     private SourceBean mHomeSource;
     private ParseBean mDefaultParse;
     private List<LiveChannelGroup> liveChannelGroupList;
+private final List<LiveSettingGroup> liveSettingGroupList = new ArrayList<>();
     private List<ParseBean> parseBeanList;
     private List<String> vipParseFlags;
     private List<IJKCode> ijkCodes;
@@ -555,7 +556,7 @@ public class ApiConfig {
     }
 
 
-    private final List<LiveSettingGroup> liveSettingGroupList = new ArrayList<>()
+
 
     private void initLiveSettings() {
 
