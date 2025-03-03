@@ -3082,7 +3082,7 @@ public class LivePlayActivity extends BaseActivity {
                 return false;
             }
         });
-		if(mVideoView == null) return true;
+		if(mVideoView == null) return;
         if(mVideoView.isPlaying()) {
             iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
         }
