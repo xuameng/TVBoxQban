@@ -323,6 +323,7 @@ public class LivePlayActivity extends BaseActivity {
         iv_playpause.setOnClickListener(new View.OnClickListener() { //xuameng回看暂停键
             @Override
             public void onClick(View arg0) {
+				if(mVideoView == null) return;
                 if(mVideoView.isPlaying()) {
                     mVideoView.pause();
                     countDownTimer.cancel();
@@ -345,7 +346,8 @@ public class LivePlayActivity extends BaseActivity {
             public void onStopTrackingTouch(SeekBar seekBar) {
                 long duration = mVideoView.getDuration();
                 long newPosition = (duration * seekBar.getProgress()) / sBar.getMax(); //xuameng停止触碰获取进度条进度
-                if(newPosition < 1000 && isVOD) { //xuameng主要解决某些M3U8文件不能快进到0
+                if(newPosition < 1000 && isVOD) { //xuameng主要解决某些M3U8文件不能快进到0\
+					if(mVideoView == null) return;
                     mVideoView.release();
                     mVideoView.setUrl(currentLiveChannelItem.getUrl());
                     mVideoView.start();
@@ -386,6 +388,7 @@ public class LivePlayActivity extends BaseActivity {
                     int keyCode = event.getKeyCode();
                     int action = event.getAction();
                     if(keycode == KeyEvent.KEYCODE_DPAD_CENTER || keycode == KeyEvent.KEYCODE_ENTER) {
+						if(mVideoView == null) return;
                         if(mVideoView.isPlaying()) {
                             mVideoView.pause();
                             countDownTimer.cancel();
@@ -1124,6 +1127,7 @@ public class LivePlayActivity extends BaseActivity {
                         break;
                     case KeyEvent.KEYCODE_DPAD_CENTER: //xuameng 修复回看时不能暂停，弹出菜单问题
                         if(isBack) {
+							if(mVideoView == null) return;
                             if(mVideoView.isPlaying()) {
                                 showProgressBars(true);
                                 showBottomEpgBack(); //xuameng回看EPG
@@ -1137,6 +1141,7 @@ public class LivePlayActivity extends BaseActivity {
                                 iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
                             }
                         } else if(isVOD) {
+							if(mVideoView == null) return;
                             if(backcontroller.getVisibility() == View.VISIBLE) {
                                 sBar.requestFocus();
                             } else if(!mVideoView.isPlaying()) {
@@ -1162,6 +1167,7 @@ public class LivePlayActivity extends BaseActivity {
                         break;
                     case KeyEvent.KEYCODE_ENTER: //xuameng 修复回看时不能暂停，弹出菜单问题
                         if(isBack) {
+							if(mVideoView == null) return;
                             if(mVideoView.isPlaying()) {
                                 showProgressBars(true);
                                 showBottomEpgBack(); //xuameng回看EPG
@@ -1175,6 +1181,7 @@ public class LivePlayActivity extends BaseActivity {
                                 iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
                             }
                         } else if(isVOD) {
+							if(mVideoView == null) return;
                             if(backcontroller.getVisibility() == View.VISIBLE) {
                                 sBar.requestFocus();
                             } else if(!mVideoView.isPlaying()) {
@@ -1200,6 +1207,7 @@ public class LivePlayActivity extends BaseActivity {
                         break;
                     case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE: //xuameng 修复回看时不能暂停，弹出菜单问题
                         if(isBack) {
+							if(mVideoView == null) return;
                             if(mVideoView.isPlaying()) {
                                 showProgressBars(true);
                                 showBottomEpgBack(); //xuameng回看EPG
@@ -1213,6 +1221,7 @@ public class LivePlayActivity extends BaseActivity {
                                 iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
                             }
                         } else if(isVOD) {
+							if(mVideoView == null) return;
                             if(backcontroller.getVisibility() == View.VISIBLE) {
                                 sBar.requestFocus();
                             } else if(!mVideoView.isPlaying()) {
@@ -1570,6 +1579,7 @@ public class LivePlayActivity extends BaseActivity {
         if(tvRightSettingLayout.getVisibility() == View.VISIBLE) {
             tvRightSettingLayout.setVisibility(View.INVISIBLE);
             liveSettingGroupAdapter.setSelectedGroupIndex(-1);
+			if(mVideoView == null) return;
 			if(isVOD) {
 				if(!mVideoView.isPlaying()) {
 					iv_Play_Xu.setVisibility(View.VISIBLE); //回看暂停图标
@@ -1641,6 +1651,7 @@ public class LivePlayActivity extends BaseActivity {
                 }
                 //                 epgListAdapter.setSelectedEpgIndex(position);        //xuameng取消电视手机点击无法回看的EPG节目源变色
                 if(now.compareTo(selectedData.startdateTime) >= 0 && now.compareTo(selectedData.enddateTime) <= 0) {
+					if(mVideoView == null) return;
                     mVideoView.release();
                     isSHIYI = false;
                     mVideoView.setUrl(currentLiveChannelItem.getUrl());
@@ -1656,6 +1667,7 @@ public class LivePlayActivity extends BaseActivity {
                 String shiyiUrl = currentLiveChannelItem.getUrl();
                 if(now.compareTo(selectedData.startdateTime) < 0) {} else if(shiyiUrl.indexOf("PLTV/") != -1) { //xuameng判断直播源URL中有没有PLTV字符，有才可以时移
                     mHideChannelListRun(); //xuameng点击EPG中的直播隐藏左菜单
+					if(mVideoView == null) return;
                     mVideoView.release();
                     shiyi_time = shiyiStartdate + "-" + shiyiEnddate;
                     isSHIYI = true;
@@ -1720,6 +1732,7 @@ public class LivePlayActivity extends BaseActivity {
                 }
                 //                epgListAdapter.setSelectedEpgIndex(position);   //xuameng取消电视手机点击无法回看的EPG节目源变色
                 if(now.compareTo(selectedData.startdateTime) >= 0 && now.compareTo(selectedData.enddateTime) <= 0) {
+					if(mVideoView == null) return;
                     mVideoView.release();
                     isSHIYI = false;
                     mVideoView.setUrl(currentLiveChannelItem.getUrl());
@@ -1735,6 +1748,7 @@ public class LivePlayActivity extends BaseActivity {
                 String shiyiUrl = currentLiveChannelItem.getUrl();
                 if(now.compareTo(selectedData.startdateTime) < 0) {} else if(shiyiUrl.indexOf("PLTV/") != -1) { //xuameng判断直播源URL中有没有PLTV字符，有才可以时移
                     mHideChannelListRun();
+					if(mVideoView == null) return;
                     mVideoView.release();
                     shiyi_time = shiyiStartdate + "-" + shiyiEnddate;
                     isSHIYI = true;
@@ -1913,6 +1927,7 @@ public class LivePlayActivity extends BaseActivity {
                     return true;
                 }
                 if(isBack) {
+					if(mVideoView == null) return;
                     if(mVideoView.isPlaying()) {
                         showProgressBars(true);
                         showBottomEpgBack(); //xuameng回看EPG
@@ -1931,6 +1946,7 @@ public class LivePlayActivity extends BaseActivity {
                     return true;
                 }
                 if(isVOD) {
+					if(mVideoView == null) return;
                     if(mVideoView.isPlaying()) {
                         showProgressBars(true);
                         mHideChannelListRun(); //xuameng显示EPG就隐藏左右菜单
@@ -2382,6 +2398,7 @@ public class LivePlayActivity extends BaseActivity {
                 livePlayerManager.changeLivePlayerScale(mVideoView, position, currentLiveChannelItem.getChannelName());
                 break;
             case 2: //播放解码
+			    if(mVideoView == null) return;
                 mVideoView.release();
                 livePlayerManager.changeLivePlayerType(mVideoView, position, currentLiveChannelItem.getChannelName());
                 mVideoView.setUrl(currentLiveChannelItem.getUrl());
@@ -2957,6 +2974,7 @@ public class LivePlayActivity extends BaseActivity {
         iv_playpause.setOnClickListener(new View.OnClickListener() { //xuameng回看播放按钮监听
             @Override
             public void onClick(View arg0) {
+				if(mVideoView == null) return;
                 if(mVideoView.isPlaying()) {
                     mVideoView.pause();
                     countDownTimer.cancel();
@@ -2980,6 +2998,7 @@ public class LivePlayActivity extends BaseActivity {
                 long duration = mVideoView.getDuration();
                 long newPosition = (duration * seekBar.getProgress()) / sBar.getMax(); //xuameng停止触碰获取进度条进度
                 if(newPosition < 1000 && isVOD) { //xuameng主要解决某些M3U8文件不能快进到0
+					if(mVideoView == null) return;
                     mVideoView.release();
                     mVideoView.setUrl(currentLiveChannelItem.getUrl());
                     mVideoView.start();
@@ -3020,6 +3039,7 @@ public class LivePlayActivity extends BaseActivity {
                     int keyCode = event.getKeyCode();
                     int action = event.getAction();
                     if(keycode == KeyEvent.KEYCODE_DPAD_CENTER || keycode == KeyEvent.KEYCODE_ENTER) {
+						if(mVideoView == null) return;
                         if(mVideoView.isPlaying()) {
                             mVideoView.pause();
                             countDownTimer.cancel();
@@ -3052,6 +3072,7 @@ public class LivePlayActivity extends BaseActivity {
                 return false;
             }
         });
+		if(mVideoView == null) return;
         if(mVideoView.isPlaying()) {
             iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
         }
@@ -3070,6 +3091,7 @@ public class LivePlayActivity extends BaseActivity {
         if(isVOD) {
             if(isSEEKBAR) {
                 if(simSeekPosition < 1000) { //xuameng主要解决某些M3U8文件不能快进到0
+					if(mVideoView == null) return;
                     mVideoView.release();
                     mVideoView.setUrl(currentLiveChannelItem.getUrl());
                     mVideoView.start();
@@ -3086,6 +3108,7 @@ public class LivePlayActivity extends BaseActivity {
                 mVideoView.seekTo(simSeekPosition);
             }
         }
+		if(mVideoView == null) return;
         if(!mVideoView.isPlaying())
             //xuameng快进暂停就暂停测试    mVideoView.start();  如果想暂停时快进自动播放取消注销
             simSlideStart = false;
