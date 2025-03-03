@@ -39,7 +39,7 @@ import com.squareup.picasso.MemoryPolicy;  //xuameng播放音频切换图片
 import com.squareup.picasso.NetworkPolicy;  //xuameng播放音频切换图片
 import android.graphics.Bitmap;  //xuameng播放音频切换图片
 import com.github.tvbox.osc.api.ApiConfig;  //xuameng播放音频切换图片
-import android.annotation.SuppressLint;    //xuamengEPG显示错误
+import android.annotation.SuppressLint; //xuamengEPG显示错误
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.api.ApiConfig;
@@ -569,7 +569,7 @@ public class LivePlayActivity extends BaseActivity {
         UrlHttpUtil.get(url, new CallBackUtil.CallBackString() {
             public void onFailure(int i, String str) {
                 showEpg(date, new ArrayList());
-                showBottomEpg();        
+                //               showBottomEpg();        
             }
             public void onResponse(String paramString) {
                 ArrayList arrayList = new ArrayList();
@@ -591,7 +591,7 @@ public class LivePlayActivity extends BaseActivity {
                 showEpg(date, arrayList);
                 String savedEpgKey = channelName + "_" + liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex()).getDatePresented();
                 if(!hsEpg.contains(savedEpgKey)) hsEpg.put(savedEpgKey, arrayList);
-                showBottomEpg(); //xuameng测试EPG刷新
+                showBottomEpgXU(); //xuameng测试EPG刷新
             }
         });
     }
@@ -639,37 +639,30 @@ public class LivePlayActivity extends BaseActivity {
         });
     }
     //显示底部EPG
-	@SuppressLint("SetTextI18n")    //xuameng乱码
+	@SuppressLint("SetTextI18n") //xuameng乱码
     private void showBottomEpg() {
-        if (isSHIYI)
-            return;
-        if (channel_Name.getChannelName() != null) {
-            tip_chname.setText(channel_Name.getChannelName());
-            tv_channelnum.setText("" + channel_Name.getChannelNum());
-            TextView tv_current_program_name = findViewById(R.id.tv_current_program_name);
-            TextView tv_next_program_name = findViewById(R.id.tv_next_program_name);
+        if(isSHIYI) return;
+        if(channel_Name.getChannelName() != null) {
+            ((TextView) findViewById(R.id.tv_channel_bar_name)).setText(channel_Name.getChannelName());
+            ((TextView) findViewById(R.id.tv_channel_bottom_number)).setText("" + channel_Name.getChannelNum());
             tip_epg1.setText("暂无当前节目单，聚汇直播欢迎您的观看！");
-            tv_current_program_name.setText("");
+            ((TextView) findViewById(R.id.tv_current_program_name)).setText("");
             tip_epg2.setText("许大师开发制作，请勿商用以及播放违法内容！");
-            tv_next_program_name.setText("");
+            ((TextView) findViewById(R.id.tv_next_program_name)).setText("");
             String savedEpgKey = channel_Name.getChannelName() + "_" + liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex()).getDatePresented();
-            if (hsEpg.containsKey(savedEpgKey)) {
+            if(hsEpg.containsKey(savedEpgKey)) {
                 String[] epgInfo = EpgUtil.getEpgInfo(channel_Name.getChannelName());
                 updateChannelIcon(channel_Name.getChannelName(), epgInfo == null ? null : epgInfo[0]);
                 ArrayList arrayList = (ArrayList) hsEpg.get(savedEpgKey);
-                if (arrayList != null && arrayList.size() > 0) {
-                    Date date = new Date();
+                if(arrayList != null && arrayList.size() > 0) {
                     int size = arrayList.size() - 1;
-                    while (size >= 0) {
-                        if (date.after(((Epginfo) arrayList.get(size)).startdateTime) & date.before(((Epginfo) arrayList.get(size)).enddateTime)) {
-                            tip_epg1.setText(((Epginfo) arrayList.get(size)).start + " - " + ((Epginfo) arrayList.get(size)).end);
-                            tv_current_program_name.setText(((Epginfo) arrayList.get(size)).title);
-                            if (size != arrayList.size() - 1) {
-                                tip_epg2.setText(((Epginfo) arrayList.get(size + 1)).start + " - " + ((Epginfo) arrayList.get(size + 1)).end);
-                                tv_next_program_name.setText(((Epginfo) arrayList.get(size + 1)).title);
-                            } else {
-                                tip_epg2.setText("00:00 - 23:59");
-                                tv_next_program_name.setText("No Information");
+                    while(size >= 0) {
+                        if(new Date().compareTo(((Epginfo) arrayList.get(size)).startdateTime) >= 0) {
+                            tip_epg1.setText(((Epginfo) arrayList.get(size)).start + "--" + ((Epginfo) arrayList.get(size)).end);
+                            ((TextView) findViewById(R.id.tv_current_program_name)).setText(((Epginfo) arrayList.get(size)).title);
+                            if(size != arrayList.size() - 1) {
+                                tip_epg2.setText(((Epginfo) arrayList.get(size + 1)).start + "--" + ((Epginfo) arrayList.get(size + 1)).end); //xuameng修复EPG低菜单下一个节目结束的时间
+                                ((TextView) findViewById(R.id.tv_next_program_name)).setText(((Epginfo) arrayList.get(size + 1)).title);
                             }
                             break;
                         } else {
@@ -738,38 +731,65 @@ public class LivePlayActivity extends BaseActivity {
         }
     }
 
-    //XUAMENG显示底部回看时的EPG
-	@SuppressLint("SetTextI18n")    //xuameng乱码
-    private void showBottomEpgBack() {
-        if (isSHIYI)
-            return;
-        if (channel_Name.getChannelName() != null) {
-            tip_chname.setText(channel_Name.getChannelName());
-            tv_channelnum.setText("" + channel_Name.getChannelNum());
-            TextView tv_current_program_name = findViewById(R.id.tv_current_program_name);
-            TextView tv_next_program_name = findViewById(R.id.tv_next_program_name);
-            tip_epg1.setText("暂无当前节目单，聚汇直播欢迎您的观看！");
-            tv_current_program_name.setText("");
-            tip_epg2.setText("许大师开发制作，请勿商用以及播放违法内容！");
-            tv_next_program_name.setText("");
+	@SuppressLint("SetTextI18n") //xuameng乱码
+    private void showBottomEpgXU() { //XUAMENG刷新EPG，要不不能自动刷新
+        if(isSHIYI) return;
+        if(channel_Name.getChannelName() != null) {
             String savedEpgKey = channel_Name.getChannelName() + "_" + liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex()).getDatePresented();
-            if (hsEpg.containsKey(savedEpgKey)) {
+            if(hsEpg.containsKey(savedEpgKey)) {
                 String[] epgInfo = EpgUtil.getEpgInfo(channel_Name.getChannelName());
                 updateChannelIcon(channel_Name.getChannelName(), epgInfo == null ? null : epgInfo[0]);
                 ArrayList arrayList = (ArrayList) hsEpg.get(savedEpgKey);
-                if (arrayList != null && arrayList.size() > 0) {
-                    Date date = new Date();
+                if(arrayList != null && arrayList.size() > 0) {
                     int size = arrayList.size() - 1;
-                    while (size >= 0) {
-                        if (date.after(((Epginfo) arrayList.get(size)).startdateTime) & date.before(((Epginfo) arrayList.get(size)).enddateTime)) {
-                            tip_epg1.setText(((Epginfo) arrayList.get(size)).start + " - " + ((Epginfo) arrayList.get(size)).end);
-                            tv_current_program_name.setText(((Epginfo) arrayList.get(size)).title);
-                            if (size != arrayList.size() - 1) {
-                                tip_epg2.setText(((Epginfo) arrayList.get(size + 1)).start + " - " + ((Epginfo) arrayList.get(size + 1)).end);
-                                tv_next_program_name.setText(((Epginfo) arrayList.get(size + 1)).title);
-                            } else {
-                                tip_epg2.setText("00:00 - 23:59");
-                                tv_next_program_name.setText("No Information");
+                    while(size >= 0) {
+                        if(new Date().compareTo(((Epginfo) arrayList.get(size)).startdateTime) >= 0) {
+                            tip_epg1.setText(((Epginfo) arrayList.get(size)).start + "--" + ((Epginfo) arrayList.get(size)).end);
+                            ((TextView) findViewById(R.id.tv_current_program_name)).setText(((Epginfo) arrayList.get(size)).title);
+                            if(size != arrayList.size() - 1) {
+                                tip_epg2.setText(((Epginfo) arrayList.get(size + 1)).start + "--" + ((Epginfo) arrayList.get(size + 1)).end); //xuameng修复EPG低菜单下一个节目结束的时间
+                                ((TextView) findViewById(R.id.tv_next_program_name)).setText(((Epginfo) arrayList.get(size + 1)).title);
+                            }
+                            break;
+                        } else {
+                            size--;
+                        }
+                    }
+                }
+                epgListAdapter.CanBack(currentLiveChannelItem.getinclude_back());
+                epgListAdapter.setNewData(arrayList);
+            } else {
+                int selectedIndex = liveEpgDateAdapter.getSelectedIndex();
+                if(selectedIndex < 0) getEpg(new Date());
+                else getEpg(liveEpgDateAdapter.getData().get(selectedIndex).getDateParamVal());
+            }
+        }
+    }
+
+    //XUAMENG显示底部回看时的EPG
+	@SuppressLint("SetTextI18n") //xuameng乱码
+    private void showBottomEpgBack() {
+        if(channel_Name.getChannelName() != null) {
+            ((TextView) findViewById(R.id.tv_channel_bar_name)).setText(channel_Name.getChannelName());
+            ((TextView) findViewById(R.id.tv_channel_bottom_number)).setText("" + channel_Name.getChannelNum());
+            tip_epg1.setText("暂无当前节目单，聚汇直播欢迎您的观看！");
+            ((TextView) findViewById(R.id.tv_current_program_name)).setText("");
+            tip_epg2.setText("许大师开发制作，请勿商用以及播放违法内容！");
+            ((TextView) findViewById(R.id.tv_next_program_name)).setText("");
+            String savedEpgKey = channel_Name.getChannelName() + "_" + liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex()).getDatePresented();
+            if(hsEpg.containsKey(savedEpgKey)) {
+                String[] epgInfo = EpgUtil.getEpgInfo(channel_Name.getChannelName());
+                updateChannelIcon(channel_Name.getChannelName(), epgInfo == null ? null : epgInfo[0]);
+                ArrayList arrayList = (ArrayList) hsEpg.get(savedEpgKey);
+                if(arrayList != null && arrayList.size() > 0) {
+                    int size = arrayList.size() - 1;
+                    while(size >= 0) {
+                        if(new Date().compareTo(((Epginfo) arrayList.get(size)).startdateTime) >= 0) {
+                            tip_epg1.setText(((Epginfo) arrayList.get(size)).start + "--" + ((Epginfo) arrayList.get(size)).end);
+                            ((TextView) findViewById(R.id.tv_current_program_name)).setText(((Epginfo) arrayList.get(size)).title);
+                            if(size != arrayList.size() - 1) {
+                                tip_epg2.setText(((Epginfo) arrayList.get(size + 1)).start + "--" + ((Epginfo) arrayList.get(size + 1)).end); //xuameng修复EPG低菜单下一个节目结束的时间
+                                ((TextView) findViewById(R.id.tv_next_program_name)).setText(((Epginfo) arrayList.get(size + 1)).title);
                             }
                             break;
                         } else {
@@ -1303,6 +1323,9 @@ public class LivePlayActivity extends BaseActivity {
     }
     private void mFocusCurrentChannelAndShowChannelList() { //xuameng左侧菜单显示
         if(mChannelGroupView.isScrolling() || mLiveChannelView.isScrolling() || mChannelGroupView.isComputingLayout() || mLiveChannelView.isComputingLayout()) {
+			Toast.makeText(App.getInstance(), "频道菜单加载中！请稍后重试", Toast.LENGTH_LONG).show();
+			return;
+		}else{
             if(countDownTimer20 != null) {
                 countDownTimer20.cancel();
             }
@@ -1310,20 +1333,18 @@ public class LivePlayActivity extends BaseActivity {
                 public void onTick(long j) {
                     mChannelGroupView.setSelection(currentChannelGroupIndex); //xuameng先滚动再选择防止空指针
                     mLiveChannelView.setSelection(currentLiveChannelIndex); //xuameng先滚动再选择防止空指针
-                    epgListAdapter.getSelectedIndex(); //xuamengEPG打开菜单自动变颜色 
                 }
                 public void onFinish() {
                     mFocusCurrentChannelAndShowChannelListXu();
                 }
             };
             countDownTimer20.start();
-        } else {
-            mFocusCurrentChannelAndShowChannelListXu();
         }
     }
     private void mFocusCurrentChannelAndShowChannelListXu() { //xuameng左侧菜单显示
         liveChannelGroupAdapter.setSelectedGroupIndex(currentChannelGroupIndex);
         liveChannelItemAdapter.setSelectedChannelIndex(currentLiveChannelIndex);
+		epgListAdapter.getSelectedIndex(); //xuamengEPG打开菜单自动变颜色 
         RecyclerView.ViewHolder holder = mLiveChannelView.findViewHolderForAdapterPosition(currentLiveChannelIndex);
         if(holder != null) holder.itemView.requestFocus();
         tvLeftChannelListLayout.setVisibility(View.VISIBLE);
@@ -1380,6 +1401,8 @@ public class LivePlayActivity extends BaseActivity {
             if(!isVOD) {
                 showBottomEpg();
                 getEpg(new Date());
+                mHideChannelListRun(); //xuameng显示EPG就隐藏左右菜单
+                mHideSettingLayoutRun(); //xuameng显示EPG就隐藏左右菜单
             }
             isSHIYI = false;
             isBack = false;
@@ -1404,6 +1427,8 @@ public class LivePlayActivity extends BaseActivity {
             currentLiveChannelItem.setinclude_back(false);
         }
         showBottomEpg(); //XUAMENG重要点击频道播放，上面的不重新播放。只显示EPG
+        mHideChannelListRun(); //xuameng显示EPG就隐藏左右菜单
+        mHideSettingLayoutRun(); //xuameng显示EPG就隐藏左右菜单
         if(countDownTimer30 != null) {
             countDownTimer30.cancel();
         }
@@ -2515,17 +2540,15 @@ public class LivePlayActivity extends BaseActivity {
     boolean isiv_Play_XuVisible() { //xuameng判断暂停动画是否显示
         return iv_Play_Xu.getVisibility() == View.VISIBLE;
     }
-
-    private void initLiveSettingGroupList() {
+    private void initLiveSettingGroupList() {      //xuameng
         liveSettingGroupList=ApiConfig.get().getLiveSettingGroupList();
         liveSettingGroupList.get(3).getLiveSettingItems().get(Hawk.get(HawkConfig.LIVE_CONNECT_TIMEOUT, 1)).setItemSelected(true);
         liveSettingGroupList.get(4).getLiveSettingItems().get(0).setItemSelected(Hawk.get(HawkConfig.LIVE_SHOW_TIME, false));
         liveSettingGroupList.get(4).getLiveSettingItems().get(1).setItemSelected(Hawk.get(HawkConfig.LIVE_SHOW_NET_SPEED, false));
         liveSettingGroupList.get(4).getLiveSettingItems().get(2).setItemSelected(Hawk.get(HawkConfig.LIVE_CHANNEL_REVERSE, false));
         liveSettingGroupList.get(4).getLiveSettingItems().get(3).setItemSelected(Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false));
-        liveSettingGroupList.get(5).getLiveSettingItems().get(Hawk.get(HawkConfig.LIVE_GROUP_INDEX, 0)).setItemSelected(true);
+        liveSettingGroupList.get(5).getLiveSettingItems().get(Hawk.get(HawkConfig.LIVE_GROUP_INDEX, 0)).setItemSelected(true);   //xuameng新增 换源
     }
-
     private void loadCurrentSourceList() {
         ArrayList < String > currentSourceNames = currentLiveChannelItem.getChannelSourceNames();
         ArrayList < LiveSettingItem > liveSettingItemList = new ArrayList < > ();
