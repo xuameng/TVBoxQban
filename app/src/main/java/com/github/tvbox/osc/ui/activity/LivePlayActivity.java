@@ -1326,8 +1326,7 @@ public class LivePlayActivity extends BaseActivity {
 			Toast.makeText(App.getInstance(), "频道菜单加载中！请稍后重试", Toast.LENGTH_LONG).show();
 			return;
 		}else{
-			                    mChannelGroupView.setSelection(currentChannelGroupIndex); //xuameng先滚动再选择防止空指针
-                    mLiveChannelView.setSelection(currentLiveChannelIndex); //xuameng先滚动再选择防止空指针
+	
             if(countDownTimer20 != null) {
                 countDownTimer20.cancel();
             }
