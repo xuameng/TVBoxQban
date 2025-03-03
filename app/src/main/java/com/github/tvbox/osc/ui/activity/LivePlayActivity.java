@@ -1381,7 +1381,8 @@ public class LivePlayActivity extends BaseActivity {
         };
         countDownTimer7.start();
     }
-    private boolean playChannel(int channelGroupIndex, int liveChannelIndex, boolean changeSource) { //xuameng播放
+    private boolean playChannel(int channelGroupIndex, int liveChannelIndex, boolean changeSource) { //xuameng播放\
+		if(mVideoView == null) return true; //XUAMENG可能会引起空指针问题的修复
         if((channelGroupIndex == currentChannelGroupIndex && liveChannelIndex == currentLiveChannelIndex && !changeSource) || (changeSource && currentLiveChannelItem.getSourceNum() == 1)) {
             // xuamengEPG日期自动选今天
             liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
@@ -1470,16 +1471,25 @@ public class LivePlayActivity extends BaseActivity {
         return true;
     }
     private void playNext() {
+        if(mVideoView == null) {
+            return;
+        }
         if(!isCurrentLiveChannelValid()) return;
         Integer[] groupChannelIndex = getNextChannel(1);
         playChannel(groupChannelIndex[0], groupChannelIndex[1], false);
     }
     private void playPrevious() {
+        if(mVideoView == null) {
+            return;
+        }
         if(!isCurrentLiveChannelValid()) return;
         Integer[] groupChannelIndex = getNextChannel(-1);
         playChannel(groupChannelIndex[0], groupChannelIndex[1], false);
     }
     public void playPreSource() {
+        if(mVideoView == null) {
+            return;
+        }
         if(!isCurrentLiveChannelValid()) return;
         currentLiveChannelItem.preSource();
         playChannel(currentChannelGroupIndex, currentLiveChannelIndex, true);
@@ -1493,6 +1503,9 @@ public class LivePlayActivity extends BaseActivity {
         playChannel(currentChannelGroupIndex, currentLiveChannelIndex, true);
     }
     public void playXuSource() {
+        if(mVideoView == null) {
+            return;
+        }
         if(!isCurrentLiveChannelValid()) return;
         currentLiveChannelItem.getUrl();
         playChannel(currentChannelGroupIndex, currentLiveChannelIndex, true);
@@ -2650,10 +2663,9 @@ public class LivePlayActivity extends BaseActivity {
     private Runnable mUpdateVodProgressXu = new Runnable() {
         @Override
         public void run() {
-            if(mVideoView == null) return;
             int duration2 = (int) mVideoView.getDuration();
             if(duration2 > 0) {
-				if(mVideoView.isPlaying()) {  //xuameng音乐播放时图标判断
+				if(mVideoView.isPlaying() && mVideoView != null) {  //xuameng音乐播放时图标判断
                    if(iv_Play_Xu.getVisibility() == View.VISIBLE) {
 						iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
 					}
@@ -2679,11 +2691,10 @@ public class LivePlayActivity extends BaseActivity {
     private Runnable mUpdateVodImageXu = new Runnable() {
         @Override
         public void run() {
-            if(mVideoView == null) return;
             if(backcontroller.getVisibility() == View.GONE) {
                 isSEEKBAR = false;
             }
-            if(mVideoView.isPlaying()) {  //xuameng音乐播放时图标判断
+            if(mVideoView.isPlaying() && mVideoView != null) {  //xuameng音乐播放时图标判断
 				    String width = Integer.toString(mVideoView.getVideoSize()[0]);
 					String height = Integer.toString(mVideoView.getVideoSize()[1]);
 				//	tv_size.setText("[" + width + " X " + height +"]");
