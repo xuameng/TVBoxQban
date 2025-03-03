@@ -344,9 +344,9 @@ public class LivePlayActivity extends BaseActivity {
         sBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() { //xuameng升级手机进程条
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
+				if(mVideoView == null) return;
                 long duration = mVideoView.getDuration();
                 long newPosition = (duration * seekBar.getProgress()) / sBar.getMax(); //xuameng停止触碰获取进度条进度
-				if(mVideoView == null) return;
                 if(newPosition < 1000 && isVOD) { //xuameng主要解决某些M3U8文件不能快进到0\
                     mVideoView.release();
                     mVideoView.setUrl(currentLiveChannelItem.getUrl());
@@ -1409,7 +1409,7 @@ public class LivePlayActivity extends BaseActivity {
             isBack = false;
             return true;
         }
-		if(mVideoView!=null)mVideoView.release();  //XUAMENG可能会引起空指针问题的修复
+		mVideoView.release();  //XUAMENG可能会引起空指针问题的修复
         if(!changeSource) {
             currentChannelGroupIndex = channelGroupIndex;
             currentLiveChannelIndex = liveChannelIndex;
@@ -1447,10 +1447,8 @@ public class LivePlayActivity extends BaseActivity {
         iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
         simSeekPosition = 0; //XUAMENG重要,换视频时重新记录进度
         simSlideOffset = 0; //XUAMENG重要,换视频时重新记录进度
-		if(mVideoView!=null){          //xuameng 空指针
-            mVideoView.setUrl(currentLiveChannelItem.getUrl());
-            mVideoView.start();
-        }
+        mVideoView.setUrl(currentLiveChannelItem.getUrl());
+        mVideoView.start();
 		if(iv_Play_Xu.getVisibility() == View.VISIBLE) {
            iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
         }
@@ -1653,11 +1651,10 @@ public class LivePlayActivity extends BaseActivity {
                 }
                 //                 epgListAdapter.setSelectedEpgIndex(position);        //xuameng取消电视手机点击无法回看的EPG节目源变色
                 if(now.compareTo(selectedData.startdateTime) >= 0 && now.compareTo(selectedData.enddateTime) <= 0) {
-					if(mVideoView!=null){ 
+					if(mVideoView == null) return; 
                     mVideoView.release();
 					mVideoView.setUrl(currentLiveChannelItem.getUrl());
                     mVideoView.start();
-					}
                     isSHIYI = false;
 					if(iv_Play_Xu.getVisibility() == View.VISIBLE) {
 						iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
@@ -2397,6 +2394,7 @@ public class LivePlayActivity extends BaseActivity {
                 playChannel(currentChannelGroupIndex, currentLiveChannelIndex, true);
                 break;
             case 1: //画面比例
+			    if(mVideoView == null) return;
                 livePlayerManager.changeLivePlayerScale(mVideoView, position, currentLiveChannelItem.getChannelName());
                 break;
             case 2: //播放解码
