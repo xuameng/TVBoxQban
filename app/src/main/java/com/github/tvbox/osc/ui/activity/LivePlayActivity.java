@@ -1548,7 +1548,7 @@ public class LivePlayActivity extends BaseActivity {
     }
     private void mFocusAndShowSettingGroup() { //XUAMENG显示右侧菜单
         if(mSettingGroupView.isScrolling() || mSettingItemView.isScrolling() || mSettingGroupView.isComputingLayout() || mSettingItemView.isComputingLayout()) {
-			Toast.makeText(App.getInstance(), "菜单加载中！请稍后重试!", Toast.LENGTH_LONG).show();
+			Toast.makeText(App.getInstance(), "设置菜单加载中！请稍后重试!", Toast.LENGTH_LONG).show();
 			return;
 		}else{
             mFocusAndShowSettingGroupXu();
