@@ -1338,8 +1338,11 @@ public class LivePlayActivity extends BaseActivity {
         if(holder != null) holder.itemView.requestFocus();
         tvLeftChannelListLayout.setVisibility(View.VISIBLE);
 		tvLeftChannelListLayout.requestLayout();   //xuameng surface按键不好使
-        mHideChannelListRun(); //xuameng显示EPG就隐藏左右菜单
-        mHideSettingLayoutRun(); //xuameng显示EPG就隐藏左右菜单
+        ll_epg.setVisibility(View.GONE); //xuameng下面EPG菜单隐藏
+        ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
+        backcontroller.setVisibility(View.GONE);
+        hideTimeXu(); //xuameng隐藏系统时间
+        hideNetSpeedXu(); //XUAMENG隐藏左上网速
 		isShowlist = true;
         ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) tvLeftChannelListLayout.getLayoutParams();
         if(countDownTimer5 != null) {
@@ -1545,8 +1548,11 @@ public class LivePlayActivity extends BaseActivity {
         if(holder != null) holder.itemView.requestFocus();
         tvRightSettingLayout.setVisibility(View.VISIBLE);
 		tvRightSettingLayout.requestLayout();  //xuameng surface按键不好使
-        mHideChannelListRun(); //xuameng显示EPG就隐藏左右菜单
-        mHideSettingLayoutRun(); //xuameng显示EPG就隐藏左右菜单
+        ll_epg.setVisibility(View.GONE); //xuameng下面EPG菜单隐藏
+        ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
+        backcontroller.setVisibility(View.GONE);
+        hideTimeXu(); //xuameng隐藏系统时间
+        hideNetSpeedXu(); //XUAMENG隐藏左上网速
         ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) tvRightSettingLayout.getLayoutParams();
         if(countDownTimer6 != null) {
             countDownTimer6.cancel();
@@ -2424,11 +2430,20 @@ public class LivePlayActivity extends BaseActivity {
 				liveSettingItemAdapter.selectItem(position, true, true);
                 Hawk.put(HawkConfig.LIVE_GROUP_INDEX, position);
                 ApiConfig.get().loadLiveApi(livesOBJ);
-                recreate();
+      //          recreate();
                 if (mVideoView != null) {   //xuameng空指针
                     mVideoView.release();
                     mVideoView=null;
                 }
+        initEpgDateView();
+        initEpgListView();
+        initDayList();
+        initChannelGroupView();
+        initLiveChannelView();
+        initSettingGroupView();
+        initSettingItemView();
+        initLiveChannelList();
+        initLiveSettingGroupList();
                 return;
         }
         mHideSettingLayoutRunXu();
