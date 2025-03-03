@@ -203,6 +203,7 @@ public class LivePlayActivity extends BaseActivity {
     private CountDownTimer countDownTimer5;
     private CountDownTimer countDownTimer7;
     private CountDownTimer countDownTimer8;
+    private CountDownTimer countDownTimer10;
     private CountDownTimer countDownTimer21;
     private CountDownTimer countDownTimer22;
     private CountDownTimer countDownTimer30;
@@ -1288,7 +1289,16 @@ public class LivePlayActivity extends BaseActivity {
             liveChannelItemAdapter.setNewData(getLiveChannels(currentChannelGroupIndex));
             if(currentLiveChannelIndex > -1) mLiveChannelView.scrollToPosition(currentLiveChannelIndex); //xuameng先滚动再选择防止空指针
             mChannelGroupView.scrollToPosition(currentChannelGroupIndex); //xuameng先滚动再选择防止空指针
-			mFocusCurrentChannelAndShowChannelList();
+            if(countDownTimer10 != null) {
+                countDownTimer10.cancel();
+            }
+            countDownTimer10 = new CountDownTimer(100, 50) { //底部epg隐藏时间设定
+                public void onTick(long j) {}
+                public void onFinish() {
+                    mFocusCurrentChannelAndShowChannelList();
+                }
+            };
+            countDownTimer10.start();
         } else {
             mHideChannelListRun();
         }
@@ -1298,7 +1308,17 @@ public class LivePlayActivity extends BaseActivity {
             liveChannelItemAdapter.setNewData(getLiveChannels(currentChannelGroupIndex));
             if(currentLiveChannelIndex > -1) mLiveChannelView.scrollToPosition(currentLiveChannelIndex); //xuameng先滚动再选择防止空指针
             mChannelGroupView.scrollToPosition(currentChannelGroupIndex); //xuameng先滚动再选择防止空指针
-			mFocusCurrentChannelAndShowChannelList();
+            if(countDownTimer10 != null) {
+                countDownTimer10.cancel();
+            }
+            countDownTimer10 = new CountDownTimer(100, 50) { //底部epg隐藏时间设定
+                public void onTick(long j) {}
+                public void onFinish() {
+                    mFocusCurrentChannelAndShowChannelList();
+                }
+            };
+            countDownTimer10.start();
+       
     }
     private void mFocusCurrentChannelAndShowChannelList() { //xuameng左侧菜单显示
         if(mChannelGroupView.isScrolling() || mLiveChannelView.isScrolling() || mChannelGroupView.isComputingLayout() || mLiveChannelView.isComputingLayout()) {
@@ -1318,6 +1338,8 @@ public class LivePlayActivity extends BaseActivity {
         if(holder != null) holder.itemView.requestFocus();
         tvLeftChannelListLayout.setVisibility(View.VISIBLE);
 		tvLeftChannelListLayout.requestLayout();   //xuameng surface按键不好使
+        mHideChannelListRun(); //xuameng显示EPG就隐藏左右菜单
+        mHideSettingLayoutRun(); //xuameng显示EPG就隐藏左右菜单
 		isShowlist = true;
         ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) tvLeftChannelListLayout.getLayoutParams();
         if(countDownTimer5 != null) {
@@ -1523,6 +1545,8 @@ public class LivePlayActivity extends BaseActivity {
         if(holder != null) holder.itemView.requestFocus();
         tvRightSettingLayout.setVisibility(View.VISIBLE);
 		tvRightSettingLayout.requestLayout();  //xuameng surface按键不好使
+        mHideChannelListRun(); //xuameng显示EPG就隐藏左右菜单
+        mHideSettingLayoutRun(); //xuameng显示EPG就隐藏左右菜单
         ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) tvRightSettingLayout.getLayoutParams();
         if(countDownTimer6 != null) {
             countDownTimer6.cancel();
