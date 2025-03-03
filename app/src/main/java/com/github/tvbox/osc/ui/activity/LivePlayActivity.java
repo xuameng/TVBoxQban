@@ -1548,17 +1548,9 @@ public class LivePlayActivity extends BaseActivity {
     }
     private void mFocusAndShowSettingGroup() { //XUAMENG显示右侧菜单
         if(mSettingGroupView.isScrolling() || mSettingItemView.isScrolling() || mSettingGroupView.isComputingLayout() || mSettingItemView.isComputingLayout()) {
-            if(countDownTimer21 != null) {
-                countDownTimer21.cancel();
-            }
-            countDownTimer21 = new CountDownTimer(100, 50) { //底部epg隐藏时间设定
-                public void onTick(long j) {}
-                public void onFinish() {
-                    mFocusAndShowSettingGroupXu();
-                }
-            };
-            countDownTimer21.start();
-        } else {
+			Toast.makeText(App.getInstance(), "菜单加载中！请稍后重试!", Toast.LENGTH_LONG).show();
+			return;
+		}else{
             mFocusAndShowSettingGroupXu();
         }
     }
