@@ -2430,20 +2430,11 @@ public class LivePlayActivity extends BaseActivity {
 				liveSettingItemAdapter.selectItem(position, true, true);
                 Hawk.put(HawkConfig.LIVE_GROUP_INDEX, position);
                 ApiConfig.get().loadLiveApi(livesOBJ);
-      //          recreate();
                 if (mVideoView != null) {   //xuameng空指针
                     mVideoView.release();
                     mVideoView=null;
                 }
-        initEpgDateView();
-        initEpgListView();
-        initDayList();
-        initChannelGroupView();
-        initLiveChannelView();
-        initSettingGroupView();
-        initSettingItemView();
-        initLiveChannelList();
-        initLiveSettingGroupList();
+                recreate();
                 return;
         }
         mHideSettingLayoutRunXu();
