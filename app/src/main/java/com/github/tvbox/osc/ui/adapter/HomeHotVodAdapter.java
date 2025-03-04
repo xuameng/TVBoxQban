@@ -18,6 +18,7 @@ import com.github.tvbox.osc.util.MD5;
 import com.orhanobut.hawk.Hawk;
 import com.squareup.picasso.Picasso;
 import com.github.tvbox.osc.util.Base64Img;   //xuameng base64图片
+import com.github.tvbox.osc.util.HawkConfig;
 
 import java.util.ArrayList;
 
@@ -26,7 +27,11 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 public class HomeHotVodAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder> {
 
     public HomeHotVodAdapter() {
-        super(R.layout.item_user_hot_vod, new ArrayList<>());
+		if(Hawk.get(HawkConfig.HOME_REC_STYLE, false)){
+			super(R.layout.item_user_hot_vod_xu, new ArrayList<>());      //xuameng
+		}else{
+			super(R.layout.item_user_hot_vod, new ArrayList<>());
+		}
     }
 
     @Override
