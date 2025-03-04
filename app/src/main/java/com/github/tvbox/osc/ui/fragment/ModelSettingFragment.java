@@ -102,7 +102,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
         tvm3u8AdText.setText(Hawk.get(HawkConfig.M3U8_PURIFY, false) ? "已开启" : "已关闭"); //xuameng去广告
         tvFastSearchText.setText(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false) ? "已开启" : "已关闭");
         tvRecStyleText = findViewById(R.id.showRecStyleText);
-        tvRecStyleText.setText(Hawk.get(HawkConfig.HOME_REC_STYLE, false) ? "否" : "是");
+        tvRecStyleText.setText(Hawk.get(HawkConfig.HOME_REC_STYLE, true) ? "已开启" : "已关闭");
         tvShowPreviewText = findViewById(R.id.showPreviewText);
         tvShowPreviewText.setText(Hawk.get(HawkConfig.SHOW_PREVIEW, true) ? "已开启" : "已关闭");
         tvDebugOpen = findViewById(R.id.tvDebugOpen);
@@ -653,7 +653,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
             public void onClick(View v) {
                 FastClickCheckUtil.check(v);
                 Hawk.put(HawkConfig.HOME_REC_STYLE, !Hawk.get(HawkConfig.HOME_REC_STYLE, false));
-                tvRecStyleText.setText(Hawk.get(HawkConfig.HOME_REC_STYLE, false) ? "否" : "是");
+                tvRecStyleText.setText(Hawk.get(HawkConfig.HOME_REC_STYLE, false) ? "已开启" : "已关闭");
             }
         });
 
