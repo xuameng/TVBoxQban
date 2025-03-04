@@ -2469,10 +2469,16 @@ public class LivePlayActivity extends BaseActivity {
     private void initLiveChannelList() {
         List < LiveChannelGroup > list = ApiConfig.get().getChannelGroupList();
         if(list.isEmpty()) {
-			Hawk.put(HawkConfig.LIVE_GROUP_INDEX, 0);  //xuameng新增
-            Toast.makeText(App.getInstance(), "聚汇影视提示您：频道列表为空！", Toast.LENGTH_SHORT).show();
-            finish();
-            return;
+            if(Hawk.get(HawkConfig.LIVE_GROUP_INDEX, 0)!=0){
+                Hawk.put(HawkConfig.LIVE_GROUP_INDEX, 0);
+                JsonArray live_groups=Hawk.get(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
+                JsonObject livesOBJ = live_groups.get(0).getAsJsonObject();
+                ApiConfig.get().loadLiveApi(livesOBJ);
+            }else {
+                Toast.makeText(App.getInstance(), "聚汇影视提示您：频道列表为空！", Toast.LENGTH_SHORT).show();
+                finish();
+                return;
+            }
         }
         if(list.size() == 1 && list.get(0).getGroupName().startsWith("http://127.0.0.1")) {
             loadProxyLives(list.get(0).getGroupName());
@@ -2488,7 +2494,7 @@ public class LivePlayActivity extends BaseActivity {
             Uri parsedUrl = Uri.parse(url);
             url = new String(Base64.decode(parsedUrl.getQueryParameter("ext"), Base64.DEFAULT | Base64.URL_SAFE | Base64.NO_WRAP), "UTF-8");
         } catch (Throwable th) {
-            Toast.makeText(App.getInstance(), "聚汇影视提示您：频道列表为空！", Toast.LENGTH_SHORT).show();
+            Toast.makeText(App.getInstance(), "聚汇影视提示您：频道列表获取错误！", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
