@@ -642,6 +642,9 @@ public class LivePlayActivity extends BaseActivity {
     //显示底部EPG
 	@SuppressLint("SetTextI18n") //xuameng乱码
     private void showBottomEpg() {
+		if(!isCurrentLiveChannelValid()){  //xuameng 未选择频道空指针问题
+			return;
+		}
         if(isSHIYI) return;
         if(channel_Name.getChannelName() != null) {
             ((TextView) findViewById(R.id.tv_channel_bar_name)).setText(channel_Name.getChannelName());
@@ -734,6 +737,9 @@ public class LivePlayActivity extends BaseActivity {
 
 	@SuppressLint("SetTextI18n") //xuameng乱码
     private void showBottomEpgXU() { //XUAMENG刷新EPG，要不不能自动刷新
+		if(!isCurrentLiveChannelValid()){  //xuameng 未选择频道空指针问题
+			return;
+		}
         if(isSHIYI) return;
         if(channel_Name.getChannelName() != null) {
             String savedEpgKey = channel_Name.getChannelName() + "_" + liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex()).getDatePresented();
@@ -770,6 +776,9 @@ public class LivePlayActivity extends BaseActivity {
     //XUAMENG显示底部回看时的EPG
 	@SuppressLint("SetTextI18n") //xuameng乱码
     private void showBottomEpgBack() {
+		if(!isCurrentLiveChannelValid()){  //xuameng 未选择频道空指针问题
+			return;
+		}
         if(channel_Name.getChannelName() != null) {
             ((TextView) findViewById(R.id.tv_channel_bar_name)).setText(channel_Name.getChannelName());
             ((TextView) findViewById(R.id.tv_channel_bottom_number)).setText("" + channel_Name.getChannelNum());
@@ -849,9 +858,6 @@ public class LivePlayActivity extends BaseActivity {
         }
     }
     private void updateChannelIcon(String channelName, String logoUrl) {
-		if(!isCurrentLiveChannelValid()){  //xuameng 未选择频道空指针问题
-			return;
-		}
         if(StringUtils.isEmpty(logoUrl)) {
             liveIconNullBg.setVisibility(View.VISIBLE);
             liveIconNullText.setVisibility(View.VISIBLE);
