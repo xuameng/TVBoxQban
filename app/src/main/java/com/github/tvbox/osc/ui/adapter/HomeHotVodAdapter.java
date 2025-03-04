@@ -28,9 +28,9 @@ public class HomeHotVodAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHol
 
     public HomeHotVodAdapter() {
 		if(Hawk.get(HawkConfig.HOME_REC_STYLE, false)){
-			super(R.layout.item_user_hot_vod_xu, new ArrayList<>());      //xuameng
+			R.layout.item_user_hot_vod_xu, new ArrayList<>();      //xuameng
 		}else{
-			super(R.layout.item_user_hot_vod, new ArrayList<>());
+			R.layout.item_user_hot_vod, new ArrayList<>();
 		}
     }
 
