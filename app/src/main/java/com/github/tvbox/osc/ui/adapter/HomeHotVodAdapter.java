@@ -61,7 +61,7 @@ public class HomeHotVodAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHol
         }
         helper.setText(R.id.tvName, item.name);
 		ImageView ivThumb = helper.getView(R.id.ivThumb);
-		if(Hawk.get(HawkConfig.HOME_REC_STYLE, false)){
+		if(!Hawk.get(HawkConfig.HOME_REC_STYLE, false)){
 		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(240, 291); // 宽度100dp，高度100dp
 		ivThumb.setLayoutParams(params);
 		}
