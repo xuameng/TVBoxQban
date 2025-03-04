@@ -637,19 +637,15 @@ public class ApiConfig {
         }
     }
 
-	public void loadLiveApi(JsonObject livesOBJ) {            //xuameng直播源新增
-        // 直播源
-        liveChannelGroupList.clear();           //修复从后台切换重复加载频道列表
+    public void loadLiveApi(JsonObject livesOBJ) {
         try {
-            String type= livesOBJ.get("type").getAsString();
             String lives = livesOBJ.toString();
             int index = lives.indexOf("proxy://");
+            String url;
             if (index != -1) {
                 int endIndex = lives.lastIndexOf("\"");
-                String url = lives.substring(index, endIndex);
+                url = lives.substring(index, endIndex);
                 url = DefaultConfig.checkReplaceProxy(url);
-
-                //clan
                 String extUrl = Uri.parse(url).getQueryParameter("ext");
                 if (extUrl != null && !extUrl.isEmpty()) {
                     String extUrlFix;
@@ -658,63 +654,42 @@ public class ApiConfig {
                     }else {
                         extUrlFix = new String(Base64.decode(extUrl, Base64.DEFAULT | Base64.URL_SAFE | Base64.NO_WRAP), "UTF-8");
                     }
-//                    System.out.println("extUrlFix :"+extUrlFix);
-//                    if (extUrlFix.startsWith("clan://")) {
-//                        extUrlFix = clanContentFix(clanToAddress(apiUrl), extUrlFix);
-//                    }
                     extUrlFix = Base64.encodeToString(extUrlFix.getBytes("UTF-8"), Base64.DEFAULT | Base64.URL_SAFE | Base64.NO_WRAP);
                     url = url.replace(extUrl, extUrlFix);
                 }
-//                System.out.println("urlLive :"+url);
-
-                //设置epg
-                if(livesOBJ.has("epg")){
-                    String epg =livesOBJ.get("epg").getAsString();
-                    Hawk.put(HawkConfig.EPG_URL,epg);
-                }
-
-                //xuameng直播播放器类型
-                if(livesOBJ.has("playerType")){
-                    String livePlayType =livesOBJ.get("playerType").getAsString();
-                    Hawk.put(HawkConfig.LIVE_PLAY_TYPE,livePlayType);
-					HawkConfig.intLIVEPLAYTYPE = true;   //xuameng是否有直播默认播放器
-
-                }else{
-					HawkConfig.intLIVEPLAYTYPE = false;   //xuameng是否有直播默认播放器
-				}
-
-                LiveChannelGroup liveChannelGroup = new LiveChannelGroup();
-                liveChannelGroup.setGroupName(url);
-                liveChannelGroupList.add(liveChannelGroup);
             } else {
-                   if(type.equals("0")){
-                        String url = livesOBJ.get("url").getAsString();
-                        //设置epg
-                        if(livesOBJ.has("epg")){
-                            String epg = livesOBJ.get("epg").getAsString();
-                            Hawk.put(HawkConfig.EPG_URL,epg);
-                        }
-                        //xuameng直播播放器类型
-                        if(livesOBJ.has("playerType")){
-                            String livePlayType =livesOBJ.get("playerType").getAsString();
-                            Hawk.put(HawkConfig.LIVE_PLAY_TYPE,livePlayType);
-							HawkConfig.intLIVEPLAYTYPE = true;   //xuameng是否有直播默认播放器
-                        }else{
-							HawkConfig.intLIVEPLAYTYPE = false;   //xuameng是否有直播默认播放器
-						}
-                        if(url.startsWith("http")){
-                            url = Base64.encodeToString(url.getBytes("UTF-8"), Base64.DEFAULT | Base64.URL_SAFE | Base64.NO_WRAP);
-                        }
-                        url ="http://127.0.0.1:9978/proxy?do=live&type=txt&ext="+url;
-                        LiveChannelGroup liveChannelGroup = new LiveChannelGroup();
-                        liveChannelGroup.setGroupName(url);
-                        liveChannelGroupList.add(liveChannelGroup);
+                String type= livesOBJ.get("type").getAsString();
+                if(type.equals("0")){
+                    url = livesOBJ.get("url").getAsString();
+                    if(url.startsWith("http")){
+                        url = Base64.encodeToString(url.getBytes("UTF-8"), Base64.DEFAULT | Base64.URL_SAFE | Base64.NO_WRAP);
+                    }
+                    url ="http://127.0.0.1:9978/proxy?do=live&type=txt&ext="+url;
+                }else {
+                    return;
                 }
             }
+            //设置epg
+            if(livesOBJ.has("epg")){
+                String epg =livesOBJ.get("epg").getAsString();
+                Hawk.put(HawkConfig.EPG_URL,epg);
+            }
+            //直播播放器类型
+            if(livesOBJ.has("playerType")){
+                String livePlayType =livesOBJ.get("playerType").getAsString();
+                Hawk.put(HawkConfig.LIVE_PLAY_TYPE,livePlayType);
+				HawkConfig.intLIVEPLAYTYPE = true;   //xuameng是否有直播默认播放器
+            }else{
+				HawkConfig.intLIVEPLAYTYPE = false;   //xuameng是否有直播默认播放器
+			}
+            LiveChannelGroup liveChannelGroup = new LiveChannelGroup();
+            liveChannelGroup.setGroupName(url);
+            liveChannelGroupList.clear();
+            liveChannelGroupList.add(liveChannelGroup);
         } catch (Throwable th) {
             th.printStackTrace();
         }
-	}   //xuameng直播源新增完
+    }
 
     public String getSpider() {
         return spider;
