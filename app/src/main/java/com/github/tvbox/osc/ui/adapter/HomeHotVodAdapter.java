@@ -64,7 +64,7 @@ public class HomeHotVodAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHol
 		if(Hawk.get(HawkConfig.HOME_REC_STYLE, false)){
 		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(240, 291); // 宽度100dp，高度100dp
 		ivThumb.setLayoutParams(params);
-		｝
+		}
         //由于部分电视机使用glide报错
         if (!TextUtils.isEmpty(item.pic)) {
             item.pic=item.pic.trim();
