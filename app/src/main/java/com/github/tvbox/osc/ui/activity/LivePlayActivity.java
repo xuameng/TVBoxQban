@@ -2477,13 +2477,11 @@ public class LivePlayActivity extends BaseActivity {
                 JsonArray live_groups=Hawk.get(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
                 JsonObject livesOBJ = live_groups.get(0).getAsJsonObject();
                 ApiConfig.get().loadLiveApi(livesOBJ);
-                if (mVideoView != null) {   //xuameng空指针
-                    mVideoView.release();
-                    mVideoView=null;
-                }
-                recreate();
             }else {
                 Toast.makeText(App.getInstance(), "聚汇影视提示您：频道列表为空！", Toast.LENGTH_SHORT).show();
+				if (isSwitch){
+					return;
+				}
                 finish();
                 return;
             }
@@ -2524,9 +2522,6 @@ public class LivePlayActivity extends BaseActivity {
                 List < LiveChannelGroup > list = ApiConfig.get().getChannelGroupList();
                 if(list.isEmpty()) {
                     Toast.makeText(App.getInstance(), "聚汇影视提示您：频道列表为空！", Toast.LENGTH_SHORT).show();
-					if (isSwitch){
-						return;
-					}
                     finish();
                     return;
                 }
