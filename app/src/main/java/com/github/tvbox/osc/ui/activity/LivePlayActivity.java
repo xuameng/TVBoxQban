@@ -175,7 +175,6 @@ public class LivePlayActivity extends BaseActivity {
     private boolean isSHIYI = false;
     private boolean isBack = false;
 	private boolean isTouch = false;  //xuameng手机选择频道判断
-	private boolean isSwitch = false;  //xuameng判断TV源切换
     private boolean isVOD = false; //xuameng点播
     private boolean isKUAIJIN = false; //xuameng快进
     private boolean isSEEKBAR = false; //xuameng进入SEEKBAR
@@ -909,7 +908,6 @@ public class LivePlayActivity extends BaseActivity {
             mHandler.removeCallbacks(mUpdateTimeRunXu);
 			iv_circle_bg_xu.setVisibility(View.GONE);  //xuameng音乐播放时图标
 			MxuamengMusic.setVisibility(View.GONE);  //xuameng播放音乐背景
-			isSwitch = false;
             super.onBackPressed();
         } else {
             mExitTime = System.currentTimeMillis();
@@ -2448,7 +2446,6 @@ public class LivePlayActivity extends BaseActivity {
                 break;
 				case 5://多源切换   //xuameng新增
                 //TODO
-				isSwitch = true;
                 if(position==Hawk.get(HawkConfig.LIVE_GROUP_INDEX, 0))break;
                 JsonArray live_groups=Hawk.get(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
                 JsonObject livesOBJ = live_groups.get(position).getAsJsonObject();
@@ -2472,19 +2469,10 @@ public class LivePlayActivity extends BaseActivity {
     private void initLiveChannelList() {
         List < LiveChannelGroup > list = ApiConfig.get().getChannelGroupList();
         if(list.isEmpty()) {
-            if(Hawk.get(HawkConfig.LIVE_GROUP_INDEX, 0)!=0){
-                Hawk.put(HawkConfig.LIVE_GROUP_INDEX, 0);
-                JsonArray live_groups=Hawk.get(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
-                JsonObject livesOBJ = live_groups.get(0).getAsJsonObject();
-                ApiConfig.get().loadLiveApi(livesOBJ);
-            }else {
-                Toast.makeText(App.getInstance(), "聚汇影视提示您：频道列表为空！", Toast.LENGTH_SHORT).show();
-				if (isSwitch){
-					return;
-				}
-                finish();
-                return;
-            }
+			Hawk.put(HawkConfig.LIVE_GROUP_INDEX, 0);  //xuameng新增
+            Toast.makeText(App.getInstance(), "聚汇影视提示您：频道列表为空！", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
         }
         if(list.size() == 1 && list.get(0).getGroupName().startsWith("http://127.0.0.1")) {
             loadProxyLives(list.get(0).getGroupName());
