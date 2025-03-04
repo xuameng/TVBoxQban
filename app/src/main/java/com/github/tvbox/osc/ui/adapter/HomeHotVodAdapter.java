@@ -18,6 +18,8 @@ import com.github.tvbox.osc.util.MD5;
 import com.orhanobut.hawk.Hawk;
 import com.squareup.picasso.Picasso;
 import com.github.tvbox.osc.util.Base64Img;   //xuameng base64图片
+import com.github.tvbox.osc.util.HawkConfig;  //xuameng
+import android.widget.LinearLayout;  //xuameng
 
 import java.util.ArrayList;
 
@@ -58,7 +60,11 @@ public class HomeHotVodAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHol
             tvNote.setVisibility(View.VISIBLE);      //xuameng显示主页聚汇热播左上小字
         }
         helper.setText(R.id.tvName, item.name);
-        ImageView ivThumb = helper.getView(R.id.ivThumb);
+		ImageView ivThumb = helper.getView(R.id.ivThumb);
+		if(Hawk.get(HawkConfig.HOME_REC_STYLE, false)){
+		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(240, 291); // 宽度100dp，高度100dp
+		ivThumb.setLayoutParams(params);
+		｝
         //由于部分电视机使用glide报错
         if (!TextUtils.isEmpty(item.pic)) {
             item.pic=item.pic.trim();
