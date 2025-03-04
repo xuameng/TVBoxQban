@@ -652,8 +652,8 @@ public class ModelSettingFragment extends BaseLazyFragment {
             @Override
             public void onClick(View v) {
                 FastClickCheckUtil.check(v);
-                Hawk.put(HawkConfig.HOME_REC_STYLE, !Hawk.get(HawkConfig.HOME_REC_STYLE, false));
-                tvRecStyleText.setText(Hawk.get(HawkConfig.HOME_REC_STYLE, false) ? "已开启" : "已关闭");
+                Hawk.put(HawkConfig.HOME_REC_STYLE, !Hawk.get(HawkConfig.HOME_REC_STYLE, true));
+                tvRecStyleText.setText(Hawk.get(HawkConfig.HOME_REC_STYLE, true) ? "已开启" : "已关闭");
             }
         });
 
