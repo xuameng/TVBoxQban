@@ -204,6 +204,8 @@ public class LivePlayActivity extends BaseActivity {
     private CountDownTimer countDownTimer7;
     private CountDownTimer countDownTimer8;
     private CountDownTimer countDownTimer10;
+	private CountDownTimer countDownTimer20;
+	private CountDownTimer countDownTimer21;
     private CountDownTimer countDownTimer22;
     private CountDownTimer countDownTimer30;
     private final int videoWidth = 1920;
@@ -1292,17 +1294,10 @@ public class LivePlayActivity extends BaseActivity {
         if(tvLeftChannelListLayout.getVisibility() == View.INVISIBLE) {
             //重新载入上一次状态
             liveChannelItemAdapter.setNewData(getLiveChannels(currentChannelGroupIndex));
-
-			        if(mChannelGroupView.isScrolling() || mLiveChannelView.isScrolling() || mChannelGroupView.isComputingLayout() || mLiveChannelView.isComputingLayout()) {
-		}else{
-            if(currentLiveChannelIndex > -1){
-				mLiveChannelView.scrollToPosition(currentLiveChannelIndex); //xuameng先滚动再选择防止空指针
-				mLiveChannelView.setSelection(currentLiveChannelIndex); //xuameng防止空指针
-			}
+            if(currentLiveChannelIndex > -1) mLiveChannelView.scrollToPosition(currentLiveChannelIndex); //xuameng先滚动再选择防止空指针
             mChannelGroupView.scrollToPosition(currentChannelGroupIndex); //xuameng先滚动再选择防止空指针
-			mChannelGroupView.setSelection(currentChannelGroupIndex); //xuameng防止空指针
-		}
-              
+            mChannelGroupView.setSelection(currentChannelGroupIndex); //xuameng先滚动再选择防止空指针
+            mLiveChannelView.setSelection(currentLiveChannelIndex); //xuameng先滚动再选择防止空指针
             if(countDownTimer10 != null) {
                 countDownTimer10.cancel();
             }
@@ -1322,8 +1317,8 @@ public class LivePlayActivity extends BaseActivity {
             liveChannelItemAdapter.setNewData(getLiveChannels(currentChannelGroupIndex));
             if(currentLiveChannelIndex > -1) mLiveChannelView.scrollToPosition(currentLiveChannelIndex); //xuameng先滚动再选择防止空指针
             mChannelGroupView.scrollToPosition(currentChannelGroupIndex); //xuameng先滚动再选择防止空指针
-						  mChannelGroupView.setSelection(currentChannelGroupIndex); //xuameng防止空指针
-              mLiveChannelView.setSelection(currentLiveChannelIndex); //xuameng防止空指针
+            mChannelGroupView.setSelection(currentChannelGroupIndex); //xuameng先滚动再选择防止空指针
+            mLiveChannelView.setSelection(currentLiveChannelIndex); //xuameng先滚动再选择防止空指针
             if(countDownTimer10 != null) {
                 countDownTimer10.cancel();
             }
@@ -1338,18 +1333,25 @@ public class LivePlayActivity extends BaseActivity {
     }
     private void mFocusCurrentChannelAndShowChannelList() { //xuameng左侧菜单显示
         if(mChannelGroupView.isScrolling() || mLiveChannelView.isScrolling() || mChannelGroupView.isComputingLayout() || mLiveChannelView.isComputingLayout()) {
-			Toast.makeText(App.getInstance(), "频道菜单加载中！请稍后重试!", Toast.LENGTH_LONG).show();
-			return;
-		}else{
-			//  mChannelGroupView.setSelection(currentChannelGroupIndex); //xuameng防止空指针
-            //  mLiveChannelView.setSelection(currentLiveChannelIndex); //xuameng防止空指针
+            if(countDownTimer20 != null) {
+                countDownTimer20.cancel();
+            }
+            countDownTimer20 = new CountDownTimer(100, 50) { //底部epg隐藏时间设定
+                public void onTick(long j) {
+                }
+                public void onFinish() {
+                    mFocusCurrentChannelAndShowChannelList();
+                }
+            };
+            countDownTimer20.start();
+        } else {
             mFocusCurrentChannelAndShowChannelListXu();
         }
     }
     private void mFocusCurrentChannelAndShowChannelListXu() { //xuameng左侧菜单显示
+        epgListAdapter.getSelectedIndex(); //xuamengEPG打开菜单自动变颜色 
         liveChannelGroupAdapter.setSelectedGroupIndex(currentChannelGroupIndex);
         liveChannelItemAdapter.setSelectedChannelIndex(currentLiveChannelIndex);
-		epgListAdapter.getSelectedIndex(); //xuamengEPG打开菜单自动变颜色 
         RecyclerView.ViewHolder holder = mLiveChannelView.findViewHolderForAdapterPosition(currentLiveChannelIndex);
         if(holder != null) holder.itemView.requestFocus();
         tvLeftChannelListLayout.setVisibility(View.VISIBLE);
@@ -1372,6 +1374,7 @@ public class LivePlayActivity extends BaseActivity {
         };
         countDownTimer5.start();
     }
+
     private void mHideChannelListRun() { //xuameng左侧菜单隐藏
         ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) tvLeftChannelListLayout.getLayoutParams();
 		isShowlist = false;
@@ -1556,9 +1559,17 @@ public class LivePlayActivity extends BaseActivity {
     }
     private void mFocusAndShowSettingGroup() { //XUAMENG显示右侧菜单
         if(mSettingGroupView.isScrolling() || mSettingItemView.isScrolling() || mSettingGroupView.isComputingLayout() || mSettingItemView.isComputingLayout()) {
-			Toast.makeText(App.getInstance(), "设置菜单加载中！请稍后重试!", Toast.LENGTH_LONG).show();
-			return;
-		}else{
+            if(countDownTimer21 != null) {
+                countDownTimer21.cancel();
+            }
+            countDownTimer21 = new CountDownTimer(100, 50) { //底部epg隐藏时间设定
+                public void onTick(long j) {}
+                public void onFinish() {
+                    mFocusAndShowSettingGroup();
+                }
+            };
+            countDownTimer21.start();
+        } else {
             mFocusAndShowSettingGroupXu();
         }
     }
