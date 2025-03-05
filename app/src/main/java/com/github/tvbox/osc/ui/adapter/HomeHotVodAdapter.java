@@ -18,8 +18,6 @@ import com.github.tvbox.osc.util.MD5;
 import com.orhanobut.hawk.Hawk;
 import com.squareup.picasso.Picasso;
 import com.github.tvbox.osc.util.Base64Img;   //xuameng base64图片
-import com.github.tvbox.osc.util.HawkConfig;  //xuameng
-import android.widget.LinearLayout;  //xuameng
 
 import java.util.ArrayList;
 
@@ -60,13 +58,7 @@ public class HomeHotVodAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHol
             tvNote.setVisibility(View.VISIBLE);      //xuameng显示主页聚汇热播左上小字
         }
         helper.setText(R.id.tvName, item.name);
-		ImageView ivThumb = helper.getView(R.id.ivThumb);
-
-		FrameLayout mItemFrame = helper.getView(R.id.mItemFrame);
-		if(!Hawk.get(HawkConfig.HOME_REC_STYLE, false)){
-		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(240, 291); // 宽度100dp，高度100dp
-		mItemFrame.setLayoutParams(params);
-		}
+        ImageView ivThumb = helper.getView(R.id.ivThumb);
         //由于部分电视机使用glide报错
         if (!TextUtils.isEmpty(item.pic)) {
             item.pic=item.pic.trim();
@@ -77,7 +69,7 @@ public class HomeHotVodAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHol
                 Picasso.get()
                         .load(DefaultConfig.checkReplaceProxy(item.pic))
                         .transform(new RoundTransformation(MD5.string2MD5(item.pic))
-                          //      .centerCorp(true)
+                                .centerCorp(true)
                                 .override(AutoSizeUtils.mm2px(mContext, 300), AutoSizeUtils.mm2px(mContext, 400))
                                 .roundRadius(AutoSizeUtils.mm2px(mContext, 10), RoundTransformation.RoundType.ALL))
                         .placeholder(R.drawable.img_loading_placeholder)
