@@ -92,7 +92,6 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
             tvHotList1.setVisibility(View.GONE);
             tvHotList2.setVisibility(View.VISIBLE);
 			tvHotList2.setHasFixedSize(true);      //xuameng不想显示单行
-            tvHotList2.setLayoutManager(new V7GridLayoutManager(this.mContext, 15));
         }
         super.onFragmentResume();
         if (Hawk.get(HawkConfig.HOME_REC, 0) == 2) {
