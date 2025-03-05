@@ -24,7 +24,6 @@ import com.github.tvbox.osc.ui.activity.PushActivity;
 import com.github.tvbox.osc.ui.activity.SearchActivity;
 import com.github.tvbox.osc.ui.activity.SettingActivity;
 import com.github.tvbox.osc.ui.adapter.HomeHotVodAdapter;
-import com.github.tvbox.osc.ui.adapter.HomeHotVodAdapterXu;
 import com.github.tvbox.osc.ui.dialog.xuamengAboutDialog;
 import com.github.tvbox.osc.util.FastClickCheckUtil;
 import com.github.tvbox.osc.util.DefaultConfig;  //xuameng长按许大师制作重启APP
@@ -64,13 +63,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
     private LinearLayout tvHistory;
     private LinearLayout tvCollect;
     private LinearLayout tvPush;
-	if(!Hawk.get(HawkConfig.HOME_REC_STYLE, false)){
-		public static HomeHotVodAdapter homeHotVodAdapter;
-	}else{
-		public static HomeHotVodAdapter homeHotVodAdapter;
-	}
-
-    
+    public static HomeHotVodAdapter homeHotVodAdapter;
     private List<Movie.Video> homeSourceRec;
     public static TvRecyclerView tvHotList1;
     public static TvRecyclerView tvHotList2;
