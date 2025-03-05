@@ -1297,7 +1297,7 @@ public class LivePlayActivity extends BaseActivity {
             liveChannelItemAdapter.setNewData(getLiveChannels(currentChannelGroupIndex));
             if(currentLiveChannelIndex > -1) mLiveChannelView.scrollToPosition(currentLiveChannelIndex); //xuameng先滚动再选择防止空指针
             mChannelGroupView.scrollToPosition(currentChannelGroupIndex); //xuameng先滚动再选择防止空指针
-     //       mChannelGroupView.setSelection(currentChannelGroupIndex); //xuameng先滚动再选择防止空指针
+            mChannelGroupView.setSelection(currentChannelGroupIndex); //xuameng先滚动再选择防止空指针
      //       mLiveChannelView.setSelection(currentLiveChannelIndex); //xuameng先滚动再选择防止空指针
             if(countDownTimer10 != null) {
                 countDownTimer10.cancel();
@@ -1318,8 +1318,8 @@ public class LivePlayActivity extends BaseActivity {
             liveChannelItemAdapter.setNewData(getLiveChannels(currentChannelGroupIndex));
             if(currentLiveChannelIndex > -1) mLiveChannelView.scrollToPosition(currentLiveChannelIndex); //xuameng先滚动再选择防止空指针
             mChannelGroupView.scrollToPosition(currentChannelGroupIndex); //xuameng先滚动再选择防止空指针
-            mChannelGroupView.setSelection(currentChannelGroupIndex); //xuameng先滚动再选择防止空指针
-            mLiveChannelView.setSelection(currentLiveChannelIndex); //xuameng先滚动再选择防止空指针
+    //        mChannelGroupView.setSelection(currentChannelGroupIndex); //xuameng先滚动再选择防止空指针
+    //        mLiveChannelView.setSelection(currentLiveChannelIndex); //xuameng先滚动再选择防止空指针
             if(countDownTimer10 != null) {
                 countDownTimer10.cancel();
             }
@@ -2230,13 +2230,13 @@ public class LivePlayActivity extends BaseActivity {
             liveChannelItemAdapter.setFocusedChannelIndex(-1); //xuameng修复频道名称移走焦点变色问题
         }
         if((groupIndex > -1 && groupIndex != liveChannelGroupAdapter.getSelectedGroupIndex()) || isNeedInputPassword(groupIndex)) {
+			isTouch = true;
             liveChannelGroupAdapter.setSelectedGroupIndex(groupIndex);
             if(isNeedInputPassword(groupIndex)) {
                 showPasswordDialog(groupIndex, liveChannelIndex);
                 return;
             }
             loadChannelGroupDataAndPlay(groupIndex, liveChannelIndex);
-			isTouch = true;
         }
         if(tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
             mHideChannelListRunXu(); //xuameng隐藏频道菜单
