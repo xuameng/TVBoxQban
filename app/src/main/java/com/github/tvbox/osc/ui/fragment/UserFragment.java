@@ -89,9 +89,6 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
             tvHotList1.setHasFixedSize(true);
             tvHotList1.setLayoutManager(new V7GridLayoutManager(this.mContext, 5));
         }else {
-			    TvRecyclerView.LayoutParams layoutParams = new RecyclerView.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-    layoutParams.width = 200; // 例如，宽度为200dp
-    tvHotList2.setLayoutParams(layoutParams);
             tvHotList1.setVisibility(View.GONE);
             tvHotList2.setVisibility(View.VISIBLE);
 		//	tvHotList2.setHasFixedSize(true);      //xuameng不想显示单行
