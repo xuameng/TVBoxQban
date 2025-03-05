@@ -1352,9 +1352,11 @@ public class LivePlayActivity extends BaseActivity {
         }
     }
     private void mFocusCurrentChannelAndShowChannelListXu() { //xuameng左侧菜单显示
+		if(currentLiveChannelIndex > -1){
         epgListAdapter.getSelectedIndex(); //xuamengEPG打开菜单自动变颜色 
         liveChannelGroupAdapter.setSelectedGroupIndex(currentChannelGroupIndex);
         liveChannelItemAdapter.setSelectedChannelIndex(currentLiveChannelIndex);
+		}
         RecyclerView.ViewHolder holder = mLiveChannelView.findViewHolderForAdapterPosition(currentLiveChannelIndex);
         if(holder != null) holder.itemView.requestFocus();
         tvLeftChannelListLayout.setVisibility(View.VISIBLE);
