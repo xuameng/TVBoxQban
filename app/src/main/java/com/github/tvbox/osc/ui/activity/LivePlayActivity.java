@@ -1298,9 +1298,9 @@ public class LivePlayActivity extends BaseActivity {
             if(currentLiveChannelIndex > -1){
 				mLiveChannelView.scrollToPosition(currentLiveChannelIndex); //xuameng先滚动再选择防止空指针
                 mLiveChannelView.setSelection(currentLiveChannelIndex); //xuameng先滚动再选择防止空指针
+                mChannelGroupView.scrollToPosition(currentChannelGroupIndex); //xuameng先滚动再选择防止空指针
+                mChannelGroupView.setSelection(currentChannelGroupIndex); //xuameng先滚动再选择防止空指针
 			}
-            mChannelGroupView.scrollToPosition(currentChannelGroupIndex); //xuameng先滚动再选择防止空指针
-            mChannelGroupView.setSelection(currentChannelGroupIndex); //xuameng先滚动再选择防止空指针
             if(countDownTimer10 != null) {
                 countDownTimer10.cancel();
             }
