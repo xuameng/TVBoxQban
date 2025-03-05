@@ -874,7 +874,8 @@ public class LivePlayActivity extends BaseActivity {
 		if (isPass){
 			Toast.makeText(mContext, "当前未选择频道，无法查看频道信息！", Toast.LENGTH_SHORT).show();
 			return;
-		if(!isCurrentLiveChannelValid()) return; //xuameng 未选择频道空指针问题
+		}else if(!isCurrentLiveChannelValid()){
+			return; //xuameng 未选择频道空指针问题
 		}
 		else if (isTouch){
 			showChannelListTouch();
