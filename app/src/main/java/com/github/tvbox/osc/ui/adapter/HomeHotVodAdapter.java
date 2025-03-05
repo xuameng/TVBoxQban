@@ -18,7 +18,6 @@ import com.github.tvbox.osc.util.MD5;
 import com.orhanobut.hawk.Hawk;
 import com.squareup.picasso.Picasso;
 import com.github.tvbox.osc.util.Base64Img;   //xuameng base64图片
-import android.content.Context;
 
 import java.util.ArrayList;
 
@@ -60,13 +59,6 @@ public class HomeHotVodAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHol
         }
         helper.setText(R.id.tvName, item.name);
         ImageView ivThumb = helper.getView(R.id.ivThumb);
-
-FrameLayout mItemFrameXu = helper.getView(R.id.mItemFrame);
-		FrameLayout mItemFrameXu = new FrameLayout(Context);
-FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(200, // 宽度
-                                                                 FrameLayout.LayoutParams.WRAP_CONTENT); // 高度
-mItemFrameXu.setLayoutParams(params);
-
         //由于部分电视机使用glide报错
         if (!TextUtils.isEmpty(item.pic)) {
             item.pic=item.pic.trim();
