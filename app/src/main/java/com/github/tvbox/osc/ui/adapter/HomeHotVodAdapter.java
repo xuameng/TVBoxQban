@@ -59,6 +59,13 @@ public class HomeHotVodAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHol
         }
         helper.setText(R.id.tvName, item.name);
         ImageView ivThumb = helper.getView(R.id.ivThumb);
+
+FrameLayout mItemFrame = helper.getView(R.id.mItemFrame);
+		FrameLayout mItemFrame = new FrameLayout(context);
+FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(200, // 宽度
+                                                                 FrameLayout.LayoutParams.WRAP_CONTENT); // 高度
+mItemFrame.setLayoutParams(params);
+
         //由于部分电视机使用glide报错
         if (!TextUtils.isEmpty(item.pic)) {
             item.pic=item.pic.trim();
