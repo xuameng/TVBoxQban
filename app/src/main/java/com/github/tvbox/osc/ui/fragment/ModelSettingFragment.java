@@ -752,8 +752,12 @@ public class ModelSettingFragment extends BaseLazyFragment {
 		boolean rec_style1=Hawk.get(HawkConfig.HOME_REC_STYLE, false);
 		boolean rec_style2 = rec_style == rec_style1;
 		if (!rec_style2){   //xuameng首页单行判断
-			DefaultConfig.restartApp();
-			return;
+           Intent intent =new Intent(mContext, HomeActivity.class);
+           intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+           Bundle bundle = new Bundle();
+           bundle.putBoolean("useCache", true);
+           intent.putExtras(bundle);
+           startActivity(intent);
 		}
         super.onDestroyView();
         SettingActivity.callback = null;		
