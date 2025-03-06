@@ -750,12 +750,13 @@ public class ModelSettingFragment extends BaseLazyFragment {
 
     @Override
     public void onDestroyView() {
-        super.onDestroyView();
-        SettingActivity.callback = null;
 		if (isSTYLE){   //xuameng首页单行
-			DefaultConfig.restartApp();
-		}
 			isSTYLE = false;
+			DefaultConfig.restartApp();
+			return;
+		}
+        super.onDestroyView();
+        SettingActivity.callback = null;		
     }
 
     String getHomeRecName(int type) {
