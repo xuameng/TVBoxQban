@@ -304,7 +304,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
         setDouBanData(adapter);
     }
 
-    private void initHomeHotVodXu(HomeHotVodAdapterxu adapter) {
+    private void initHomeHotVodXu(HomeHotVodAdapterXu adapter) {
         if (Hawk.get(HawkConfig.HOME_REC, 0) == 1) {
             if (homeSourceRec != null) {
                 adapter.setNewData(homeSourceRec);
@@ -361,7 +361,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
         }
     }
 
-    private void setDouBanDataXu(HomeHotVodAdapterxu adapter) {
+    private void setDouBanDataXu(HomeHotVodAdapterXu adapter) {
         try {
             Calendar cal = Calendar.getInstance();
             int year = cal.get(Calendar.YEAR);
