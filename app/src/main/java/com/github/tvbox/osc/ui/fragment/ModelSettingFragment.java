@@ -82,7 +82,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
     private TextView tvFastSearchText;
     private TextView tvRecStyleText;
     private TextView tvIjkCachePlay;
-	private boolean isSTYLE = false; //xuameng点播
+	private boolean rec_style=Hawk.get(HawkConfig.HOME_REC_STYLE, false);
 
     public static ModelSettingFragment newInstance() {
         return new ModelSettingFragment().setArguments();
@@ -656,7 +656,6 @@ public class ModelSettingFragment extends BaseLazyFragment {
                 FastClickCheckUtil.check(v);
                 Hawk.put(HawkConfig.HOME_REC_STYLE, !Hawk.get(HawkConfig.HOME_REC_STYLE, false));
                 tvRecStyleText.setText(Hawk.get(HawkConfig.HOME_REC_STYLE, false) ? "已开启" : "已关闭");
-				isSTYLE = true;  //xuameng首页单行
             }
         });
 
@@ -750,8 +749,9 @@ public class ModelSettingFragment extends BaseLazyFragment {
 
     @Override
     public void onDestroyView() {
-		if (isSTYLE){   //xuameng首页单行
-			isSTYLE = false;
+		boolean rec_style1=Hawk.get(HawkConfig.HOME_REC_STYLE, false);
+		boolean rec_style2 = rec_style == rec_style1;
+		if (!rec_style2){   //xuameng首页单行
 			DefaultConfig.restartApp();
 			return;
 		}
