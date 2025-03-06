@@ -24,6 +24,7 @@ import com.github.tvbox.osc.ui.activity.PushActivity;
 import com.github.tvbox.osc.ui.activity.SearchActivity;
 import com.github.tvbox.osc.ui.activity.SettingActivity;
 import com.github.tvbox.osc.ui.adapter.HomeHotVodAdapter;
+import com.github.tvbox.osc.ui.adapter.HomeHotVodAdapterXu;
 import com.github.tvbox.osc.ui.dialog.xuamengAboutDialog;
 import com.github.tvbox.osc.util.FastClickCheckUtil;
 import com.github.tvbox.osc.util.DefaultConfig;  //xuameng长按许大师制作重启APP
@@ -64,6 +65,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
     private LinearLayout tvCollect;
     private LinearLayout tvPush;
     public static HomeHotVodAdapter homeHotVodAdapter;
+	public static HomeHotVodAdapterXu homeHotVodAdapterxu;
     private List<Movie.Video> homeSourceRec;
     public static TvRecyclerView tvHotList1;
     public static TvRecyclerView tvHotList2;
@@ -261,7 +263,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
 
             }
         });
-        tvHotList1.setAdapter(homeHotVodAdapter);
+        tvHotList1.setAdapter(homeHotVodAdapterxu);
         tvHotList2.setOnItemListener(new TvRecyclerView.OnItemListener() {
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
