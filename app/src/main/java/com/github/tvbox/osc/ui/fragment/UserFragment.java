@@ -187,6 +187,48 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
                 }
             }
         });
+
+        homeHotVodAdapterxu = new HomeHotVodAdapterXu();
+        homeHotVodAdapterxu.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                if (ApiConfig.get().getSourceBeanList().isEmpty())
+                    return;
+                Movie.Video vod = ((Movie.Video) adapter.getItem(position));
+                
+                // takagen99: CHeck if in Delete Mode
+                if ((vod.id != null && !vod.id.isEmpty()) && (Hawk.get(HawkConfig.HOME_REC, 0) == 2) && HawkConfig.hotVodDelete) {
+                    homeHotVodAdapterxu.remove(position);
+                    VodInfo vodInfo = RoomDataManger.getVodInfo(vod.sourceKey, vod.id);
+                    RoomDataManger.deleteVodRecord(vod.sourceKey, vodInfo);
+                    Toast.makeText(mContext, "已删除当前记录", Toast.LENGTH_SHORT).show();
+               }  else if (vod.id != null && !vod.id.isEmpty()) {         //xuameng 修复首页聚汇推荐单击不能搜索的问题
+                    Bundle bundle = new Bundle();
+                    bundle.putString("id", vod.id);
+                    bundle.putString("sourceKey", vod.sourceKey);
+                    if (vod.id.startsWith("msearch:")) {
+                        bundle.putString("title", vod.name);
+                      if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)){
+                        jumpActivity(FastSearchActivity.class, bundle);
+                      }else {
+						jumpActivity(SearchActivity.class, bundle);
+					  }
+		              }else {
+                        jumpActivity(DetailActivity.class, bundle);
+                    }                           //xuameng 修复首页聚汇推荐单击不能搜索的问题结束
+                } else {
+                    Intent newIntent;
+                    if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)){
+                        newIntent = new Intent(mContext, FastSearchActivity.class);
+                    }else {
+                        newIntent = new Intent(mContext, SearchActivity.class);
+                    }
+                    newIntent.putExtra("title", vod.name);
+                    newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    mActivity.startActivity(newIntent);
+                }
+            }
+        });
            //xuameng : start
 		    findViewById(R.id.tvHistory).setOnLongClickListener(new View.OnLongClickListener() {       //xuameng长按历史键重载主页数据
         	@Override
@@ -242,6 +284,24 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
                 if ((vod.id != null && !vod.id.isEmpty()) && (Hawk.get(HawkConfig.HOME_REC, 0) == 2)) {
                     HawkConfig.hotVodDelete = !HawkConfig.hotVodDelete;
                     homeHotVodAdapter.notifyDataSetChanged();
+                } else {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("title", vod.name);
+                    jumpActivity(FastSearchActivity.class, bundle);                    
+                }
+                return true;
+            }    
+        });
+
+        homeHotVodAdapterxu.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(BaseQuickAdapter adapter, View view, int position) {
+                if (ApiConfig.get().getSourceBeanList().isEmpty()) return false;
+                Movie.Video vod = ((Movie.Video) adapter.getItem(position));
+                // Additional Check if : Home Rec 0=豆瓣, 1=推荐, 2=历史
+                if ((vod.id != null && !vod.id.isEmpty()) && (Hawk.get(HawkConfig.HOME_REC, 0) == 2)) {
+                    HawkConfig.hotVodDelete = !HawkConfig.hotVodDelete;
+                    homeHotVodAdapterxu.notifyDataSetChanged();
                 } else {
                     Bundle bundle = new Bundle();
                     bundle.putString("title", vod.name);
