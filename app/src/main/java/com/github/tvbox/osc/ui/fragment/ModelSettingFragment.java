@@ -755,9 +755,10 @@ public class ModelSettingFragment extends BaseLazyFragment {
            Intent intent =new Intent(mContext, HomeActivity.class);
            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
            Bundle bundle = new Bundle();
-           bundle.putBoolean("useCache", false);
+           bundle.putBoolean("useCache", true);
            intent.putExtras(bundle);
            startActivity(intent);
+		   return;
 		}
         super.onDestroyView();
         SettingActivity.callback = null;		
