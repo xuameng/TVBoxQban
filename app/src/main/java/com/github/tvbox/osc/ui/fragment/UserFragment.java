@@ -110,7 +110,11 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
                     vod.note = "上次看到" + vodInfo.playNote;
                 vodList.add(vod);
             }
-            homeHotVodAdapter.setNewData(vodList);
+			if(!Hawk.get(HawkConfig.HOME_REC_STYLE, false)){
+				homeHotVodAdapterxu.setNewData(vodList);
+			}else{
+				homeHotVodAdapter.setNewData(vodList);
+			}
         }
     }
 
@@ -263,7 +267,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
 
             }
         });
-        tvHotList1.setAdapter(homeHotVodAdapterxu);
+        tvHotList1.setAdapter(homeHotVodAdapter);
         tvHotList2.setOnItemListener(new TvRecyclerView.OnItemListener() {
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
@@ -280,7 +284,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
 
             }
         });
-        tvHotList2.setAdapter(homeHotVodAdapter);
+        tvHotList2.setAdapter(homeHotVodAdapterxu);
 
         initHomeHotVod(homeHotVodAdapter);
     }
