@@ -8,7 +8,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
     <FrameLayout
         android:id="@+id/mItemFrame"
-        android:layout_width="218mm"
+        android:layout_width="222mm"
         android:layout_height="291mm">
         <ImageView
             android:id="@+id/ivThumb"
