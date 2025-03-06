@@ -656,7 +656,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
                 FastClickCheckUtil.check(v);
                 Hawk.put(HawkConfig.HOME_REC_STYLE, !Hawk.get(HawkConfig.HOME_REC_STYLE, false));
                 tvRecStyleText.setText(Hawk.get(HawkConfig.HOME_REC_STYLE, false) ? "已开启" : "已关闭");
-				isSTYLE = true;
+				isSTYLE = true;  //xuameng首页单行
             }
         });
 
@@ -752,7 +752,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
     public void onDestroyView() {
         super.onDestroyView();
         SettingActivity.callback = null;
-		if (isSTYLE){
+		if (isSTYLE){   //xuameng首页单行
 			DefaultConfig.restartApp();
 		}
 			isSTYLE = false;
