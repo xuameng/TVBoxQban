@@ -483,7 +483,7 @@ public class HomeActivity extends BaseActivity {
         // takagen99: Add check for VOD Delete Mode
         if (HawkConfig.hotVodDelete) {
             HawkConfig.hotVodDelete = false;
-			if(!Hawk.get(HawkConfig.HOME_REC_STYLE, false)){
+			if(!Hawk.get(HawkConfig.HOME_REC_STYLE, false)){   //xuameng首页单行
 				UserFragment.homeHotVodAdapterxu.notifyDataSetChanged();
 			}else{
 				UserFragment.homeHotVodAdapter.notifyDataSetChanged();
