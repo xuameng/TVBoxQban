@@ -23,7 +23,7 @@ import java.util.ArrayList;
 
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
-public class HomeHotVodAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder> {
+public class HomeHotVodAdapterXu extends BaseQuickAdapter<Movie.Video, BaseViewHolder> {
 
     public HomeHotVodAdapter() {
         super(R.layout.item_user_hot_vod_xu, new ArrayList<>());
