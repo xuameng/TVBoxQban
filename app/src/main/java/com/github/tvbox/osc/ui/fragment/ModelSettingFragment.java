@@ -34,6 +34,7 @@ import com.owen.tvrecyclerview.widget.V7LinearLayoutManager; //xuameng优化首�
 import androidx.constraintlayout.widget.ConstraintLayout;  //xuameng优化首页数据源列表
 import android.view.ViewGroup;   //xuameng优化首页数据源列表
 import me.jessyan.autosize.utils.AutoSizeUtils;  //xuameng优化首页数据源列表
+import com.github.tvbox.osc.util.DefaultConfig;  //xuameng重启APP
 import com.github.tvbox.osc.util.FastClickCheckUtil;
 import com.github.tvbox.osc.util.FileUtils;
 import com.github.tvbox.osc.util.HawkConfig;
@@ -81,6 +82,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
     private TextView tvFastSearchText;
     private TextView tvRecStyleText;
     private TextView tvIjkCachePlay;
+	private boolean isSTYLE = false; //xuameng点播
 
     public static ModelSettingFragment newInstance() {
         return new ModelSettingFragment().setArguments();
@@ -654,6 +656,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
                 FastClickCheckUtil.check(v);
                 Hawk.put(HawkConfig.HOME_REC_STYLE, !Hawk.get(HawkConfig.HOME_REC_STYLE, false));
                 tvRecStyleText.setText(Hawk.get(HawkConfig.HOME_REC_STYLE, false) ? "已开启" : "已关闭");
+				isSTYLE = true;
             }
         });
 
@@ -749,6 +752,10 @@ public class ModelSettingFragment extends BaseLazyFragment {
     public void onDestroyView() {
         super.onDestroyView();
         SettingActivity.callback = null;
+		if (isSTYLE){
+			DefaultConfig.restartApp();
+		}
+			isSTYLE = false;
     }
 
     String getHomeRecName(int type) {
