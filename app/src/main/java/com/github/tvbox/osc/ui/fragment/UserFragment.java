@@ -285,8 +285,11 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
             }
         });
         tvHotList2.setAdapter(homeHotVodAdapterxu);
-
-        initHomeHotVod(homeHotVodAdapter);
+		if(!Hawk.get(HawkConfig.HOME_REC_STYLE, false)){
+			initHomeHotVodXu(homeHotVodAdapterxu);
+		else{
+			initHomeHotVod(homeHotVodAdapter);
+		}
     }
 
     private void initHomeHotVod(HomeHotVodAdapter adapter) {
@@ -301,7 +304,64 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
         setDouBanData(adapter);
     }
 
+    private void initHomeHotVodXu(HomeHotVodAdapterxu adapter) {
+        if (Hawk.get(HawkConfig.HOME_REC, 0) == 1) {
+            if (homeSourceRec != null) {
+                adapter.setNewData(homeSourceRec);
+                return;
+            }
+        } else if (Hawk.get(HawkConfig.HOME_REC, 0) == 2) {
+            return;
+        }
+        setDouBanDataXu(adapter);
+    }
+
     private void setDouBanData(HomeHotVodAdapter adapter) {
+        try {
+            Calendar cal = Calendar.getInstance();
+            int year = cal.get(Calendar.YEAR);
+            int month = cal.get(Calendar.MONTH) + 1;
+            int day = cal.get(Calendar.DATE);
+            String today = String.format("%d%d%d", year, month, day);
+            String requestDay = Hawk.get("home_hot_day", "");
+            if (requestDay.equals(today)) {
+                String json = Hawk.get("home_hot", "");
+                if (!json.isEmpty()) {
+                    ArrayList<Movie.Video> hotMovies = loadHots(json);
+                    if (hotMovies != null && hotMovies.size() > 0) {
+                        adapter.setNewData(hotMovies);
+                        return;
+                    }
+                }
+            }
+            String doubanUrl = "https://movie.douban.com/j/new_search_subjects?sort=U&range=0,10&tags=&playable=1&start=0&year_range=" + year + "," + year;
+            OkGo.<String>get(doubanUrl)
+                    .headers("User-Agent", UA.randomOne())
+                    .execute(new AbsCallback<String>() {
+                        @Override
+                        public void onSuccess(Response<String> response) {
+                            String netJson = response.body();
+                            Hawk.put("home_hot_day", today);
+                            Hawk.put("home_hot", netJson);
+                            mActivity.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    adapter.setNewData(loadHots(netJson));
+                                }
+                            });
+                        }
+
+                        @Override
+                        public String convertResponse(okhttp3.Response response) throws Throwable {
+                            return response.body().string();
+                        }
+                    });
+        } catch (Throwable th) {
+            th.printStackTrace();
+        }
+    }
+
+    private void setDouBanDataXu(HomeHotVodAdapterxu adapter) {
         try {
             Calendar cal = Calendar.getInstance();
             int year = cal.get(Calendar.YEAR);
