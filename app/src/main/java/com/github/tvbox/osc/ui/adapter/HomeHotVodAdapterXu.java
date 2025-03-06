@@ -25,7 +25,7 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 
 public class HomeHotVodAdapterXu extends BaseQuickAdapter<Movie.Video, BaseViewHolder> {
 
-    public HomeHotVodAdapter() {
+    public HomeHotVodAdapterXu() {
         super(R.layout.item_user_hot_vod_xu, new ArrayList<>());
     }
 
