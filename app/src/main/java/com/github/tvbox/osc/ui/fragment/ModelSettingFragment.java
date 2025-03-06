@@ -72,7 +72,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
     private TextView tvScale;
     private TextView tvApi;
     private TextView tvHomeApi;
-	private TextView tvHomeDefaultShow;       //xuameng
+	private TextView tvHomeDefaultShow;       //xuameng直接进入直播
 	private TextView tvm3u8AdText;  //xuameng去广告
     private TextView tvDns;
     private TextView tvHomeRec;
@@ -82,7 +82,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
     private TextView tvFastSearchText;
     private TextView tvRecStyleText;
     private TextView tvIjkCachePlay;
-	private boolean rec_style=Hawk.get(HawkConfig.HOME_REC_STYLE, false);
+	private boolean rec_style=Hawk.get(HawkConfig.HOME_REC_STYLE, false);  //首页多行判断
 
     public static ModelSettingFragment newInstance() {
         return new ModelSettingFragment().setArguments();
@@ -751,7 +751,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
     public void onDestroyView() {
 		boolean rec_style1=Hawk.get(HawkConfig.HOME_REC_STYLE, false);
 		boolean rec_style2 = rec_style == rec_style1;
-		if (!rec_style2){   //xuameng首页单行
+		if (!rec_style2){   //xuameng首页单行判断
 			DefaultConfig.restartApp();
 			return;
 		}
