@@ -278,7 +278,7 @@ public class HomeActivity extends BaseActivity {
     }
 
 
-    private void initViewModel() {
+    public void initViewModel() {
         sourceViewModel = new ViewModelProvider(this).get(SourceViewModel.class);
         sourceViewModel.sortResult.observe(this, new Observer<AbsSortXml>() {
             @Override
