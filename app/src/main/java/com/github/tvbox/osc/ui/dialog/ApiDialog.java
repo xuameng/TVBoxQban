@@ -114,7 +114,7 @@ public class ApiDialog extends BaseDialog {
                 if (history.contains(current))
                     idx = history.indexOf(current);
                 ApiHistoryDialog dialog = new ApiHistoryDialog(getContext());
-                dialog.setTip("历史直播播源");
+                dialog.setTip("历史直播源");
                 dialog.setAdapter(new ApiHistoryDialogAdapter.SelectDialogInterface() {
                     @Override
                     public void click(String value) {
