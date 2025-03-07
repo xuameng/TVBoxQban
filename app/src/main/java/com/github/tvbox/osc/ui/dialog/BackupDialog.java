@@ -19,6 +19,7 @@ import com.hjq.permissions.OnPermissionCallback;
 import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
 import com.owen.tvrecyclerview.widget.TvRecyclerView;
+import com.github.tvbox.osc.util.HawkConfig;  //xuameng存储权限
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
@@ -63,7 +64,7 @@ public class BackupDialog extends BaseDialog {
             @Override
             public void onClick(View v) {
                 if (XXPermissions.isGranted(getContext(), Permission.Group.STORAGE)) {
-                    Toast.makeText(getContext(), "已获得存储权限", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "已获得存储权限！", Toast.LENGTH_SHORT).show();
                 } else {
                     XXPermissions.with(getContext())
                             .permission(Permission.Group.STORAGE)
@@ -72,17 +73,19 @@ public class BackupDialog extends BaseDialog {
                                 public void onGranted(List<String> permissions, boolean all) {
                                     if (all) {
                                         adapter.setNewData(allBackup());
-                                        Toast.makeText(getContext(), "已获得存储权限", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getContext(), "已获得存储权限！", Toast.LENGTH_SHORT).show();
+										Hawk.put(HawkConfig.TV_STORAGE, true);        //xuameng存储权限
+										tvStorage.setText(Hawk.get(HawkConfig.TV_STORAGE, false) ? "已获取" : "未获取");
                                     }
                                 }
 
                                 @Override
                                 public void onDenied(List<String> permissions, boolean never) {
                                     if (never) {
-                                        Toast.makeText(getContext(), "获取存储权限失败,请在系统设置中开启", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getContext(), "获取存储权限失败,请在系统设置中开启！", Toast.LENGTH_SHORT).show();
                                         XXPermissions.startPermissionActivity((Activity) getContext(), permissions);
                                     } else {
-                                        Toast.makeText(getContext(), "获取存储权限失败", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getContext(), "获取存储权限失败！", Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             });
