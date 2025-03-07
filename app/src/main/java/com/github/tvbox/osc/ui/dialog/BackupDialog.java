@@ -35,6 +35,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class BackupDialog extends BaseDialog {
+	private TextView tvStorage;
 
     public BackupDialog(@NonNull @NotNull Context context) {
         super(context);
