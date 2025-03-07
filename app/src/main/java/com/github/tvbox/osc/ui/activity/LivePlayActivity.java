@@ -2554,10 +2554,14 @@ public class LivePlayActivity extends BaseActivity {
             }
             @Override
             public void onError(Response<String> response) {
-                super.onError(response);
-				Hawk.put(HawkConfig.LIVE_GROUP_INDEX, 0);  //xuameng新增
-                Toast.makeText(App.getInstance(), "聚汇影视提示您：直播地址加载错误！", Toast.LENGTH_LONG).show();
-                finish();
+                Toast.makeText(App.getInstance(), "聚汇影视提示您：频道列表加载错误！", Toast.LENGTH_SHORT).show();
+                Hawk.put(HawkConfig.LIVE_GROUP_INDEX, 0);
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        jumpActivity(HomeActivity.class);
+                    }
+                });
             }
         });
     }
