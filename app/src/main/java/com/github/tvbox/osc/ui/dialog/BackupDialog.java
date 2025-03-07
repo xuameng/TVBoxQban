@@ -19,9 +19,6 @@ import com.hjq.permissions.OnPermissionCallback;
 import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
 import com.owen.tvrecyclerview.widget.TvRecyclerView;
-import com.github.tvbox.osc.util.HawkConfig;  //xuameng存储权限
-import com.orhanobut.hawk.Hawk;  //xuameng存储权限
-import android.widget.TextView; //xuameng存储权限
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
@@ -36,7 +33,6 @@ import java.util.Iterator;
 import java.util.List;
 
 public class BackupDialog extends BaseDialog {
-	private TextView tvStorage;  //xuameng存储权限
 
     public BackupDialog(@NonNull @NotNull Context context) {
         super(context);
@@ -77,10 +73,6 @@ public class BackupDialog extends BaseDialog {
                                     if (all) {
                                         adapter.setNewData(allBackup());
                                         Toast.makeText(getContext(), "已获得存储权限！", Toast.LENGTH_SHORT).show();
-										setContentView(R.layout.fragment_model);
-										tvStorage = findViewById(R.id.storage);  //xuameng存储权限
-										Hawk.put(HawkConfig.TV_STORAGE, true);        //xuameng存储权限
-										tvStorage.setText(Hawk.get(HawkConfig.TV_STORAGE, false) ? "已获取" : "未获取");
                                     }
                                 }
 
