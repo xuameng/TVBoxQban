@@ -116,6 +116,8 @@ public class ApiDialog extends BaseDialog {
                                 public void onGranted(List<String> permissions, boolean all) {
                                     if (all) {
                                         Toast.makeText(getContext(), "已获得存储权限！", Toast.LENGTH_SHORT).show();
+										setContentView(R.layout.fragment_model);
+										tvStorage = findViewById(R.id.storage);  //xuameng存储权限
 										Hawk.put(HawkConfig.TV_STORAGE, true);        //xuameng存储权限
 										tvStorage.setText(Hawk.get(HawkConfig.TV_STORAGE, false) ? "已获取" : "未获取");
                                     }
