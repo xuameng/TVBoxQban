@@ -7,15 +7,15 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 
 import com.github.tvbox.osc.R;
-import com.github.tvbox.osc.ui.adapter.ApiHistoryDialogAdapter;
+import com.github.tvbox.osc.ui.adapter.ApiHistoryDialogAdapterxu;
 import com.owen.tvrecyclerview.widget.TvRecyclerView;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class ApiHistoryDialog extends BaseDialog {
-    public ApiHistoryDialog(@NonNull @NotNull Context context) {
+public class ApiHistoryDialogxu extends BaseDialog {
+    public ApiHistoryDialogxu(@NonNull @NotNull Context context) {
         super(context, R.style.CustomDialogStyleDim);
         setContentView(R.layout.dialog_api_history);
     }
@@ -29,8 +29,8 @@ public class ApiHistoryDialog extends BaseDialog {
         ((TextView) findViewById(R.id.title)).setText(tip);
     }
 
-    public void setAdapter(ApiHistoryDialogAdapter.SelectDialogInterface sourceBeanSelectDialogInterface, List<String> data, int select) {
-        ApiHistoryDialogAdapter adapter = new ApiHistoryDialogAdapter(sourceBeanSelectDialogInterface);
+    public void setAdapter(ApiHistoryDialogAdapterxu.SelectDialogInterface sourceBeanSelectDialogInterface, List<String> data, int select) {
+        ApiHistoryDialogAdapterxu adapter = new ApiHistoryDialogAdapterxu(sourceBeanSelectDialogInterface);
         adapter.setData(data, select);
         TvRecyclerView tvRecyclerView = ((TvRecyclerView) findViewById(R.id.list));
         tvRecyclerView.setAdapter(adapter);
