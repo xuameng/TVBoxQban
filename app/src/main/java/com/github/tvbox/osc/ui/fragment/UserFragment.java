@@ -345,11 +345,11 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
             }
         });
         tvHotList2.setAdapter(homeHotVodAdapterxu);
-		if(!Hawk.get(HawkConfig.HOME_REC_STYLE, false)){
+
 			initHomeHotVodXu(homeHotVodAdapterxu);
-		}else{
+
 			initHomeHotVod(homeHotVodAdapter);
-		}
+		
     }
 
     private void initHomeHotVod(HomeHotVodAdapter adapter) {
