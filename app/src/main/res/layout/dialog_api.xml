@@ -21,7 +21,7 @@
             android:focusable="false" />
 
         <LinearLayout
-            android:layout_width="@dimen/vs_520"
+            android:layout_width="520mm"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/vs_20"
             android:orientation="vertical"
