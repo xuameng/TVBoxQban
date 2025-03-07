@@ -22,6 +22,7 @@ import com.hjq.permissions.OnPermissionCallback;
 import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
 import com.orhanobut.hawk.Hawk;
+import com.github.tvbox.osc.ui.dialog.ApiHistoryDialog;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
