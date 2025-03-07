@@ -496,6 +496,7 @@ public class ApiConfig {
                 }
                 JsonObject livesOBJ = lives_groups.get(live_group_index).getAsJsonObject();
                 loadLiveApi(livesOBJ);
+				}
 			}
 
             myHosts = new HashMap<>();
