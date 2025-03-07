@@ -84,7 +84,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
     private TextView tvFastSearchText;
     private TextView tvRecStyleText;
     private TextView tvIjkCachePlay;
-	private TextView tvStorage;
+	private TextView tvStorage;   //xuameng存储权限
 
 
     public static ModelSettingFragment newInstance() {
@@ -120,8 +120,13 @@ public class ModelSettingFragment extends BaseLazyFragment {
         tvHomeApi = findViewById(R.id.tvHomeApi);
         tvDns = findViewById(R.id.tvDns);
         tvHomeRec = findViewById(R.id.tvHomeRec);
-		tvStorage = findViewById(R.id.storage);
-		tvStorage.setText(Hawk.get(HawkConfig.TV_STORAGE, false) ? "已获取" : "未获取");
+		tvStorage = findViewById(R.id.storage);  //xuameng存储权限
+		if (XXPermissions.isGranted(getContext(), Permission.Group.STORAGE)) {
+			Hawk.put(HawkConfig.TV_STORAGE, true);
+			tvStorage.setText(Hawk.get(HawkConfig.TV_STORAGE, false) ? "已获取" : "未获取");
+		}else{
+			tvStorage.setText(Hawk.get(HawkConfig.TV_STORAGE, false) ? "已获取" : "未获取");  //xuameng存储权限
+		}
         tvHistoryNum = findViewById(R.id.tvHistoryNum);
         tvSearchView = findViewById(R.id.tvSearchView);
         tvIjkCachePlay = findViewById(R.id.tvIjkCachePlay);
@@ -189,8 +194,8 @@ public class ModelSettingFragment extends BaseLazyFragment {
                                 public void onGranted(List<String> permissions, boolean all) {
                                     if (all) {
                                         Toast.makeText(getContext(), "已获得存储权限！", Toast.LENGTH_SHORT).show();
-                Hawk.put(HawkConfig.TV_STORAGE, !Hawk.get(HawkConfig.TV_STORAGE, false));
-                tvStorage.setText(Hawk.get(HawkConfig.TV_STORAGE, false) ? "已获取" : "未获取");
+										Hawk.put(HawkConfig.TV_STORAGE, true);
+										tvStorage.setText(Hawk.get(HawkConfig.TV_STORAGE, false) ? "已获取" : "未获取");
                                     }
                                 }
 
