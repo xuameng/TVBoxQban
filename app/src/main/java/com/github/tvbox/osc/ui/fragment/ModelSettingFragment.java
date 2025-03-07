@@ -84,6 +84,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
     private TextView tvFastSearchText;
     private TextView tvRecStyleText;
     private TextView tvIjkCachePlay;
+	private TextView tvStorage;
 
 
     public static ModelSettingFragment newInstance() {
@@ -119,6 +120,8 @@ public class ModelSettingFragment extends BaseLazyFragment {
         tvHomeApi = findViewById(R.id.tvHomeApi);
         tvDns = findViewById(R.id.tvDns);
         tvHomeRec = findViewById(R.id.tvHomeRec);
+		tvStorage = findViewById(R.id.storage);
+		tvStorage.setText(Hawk.get(HawkConfig.TV_STORAGE, false) ? "已获取" : "未获取");
         tvHistoryNum = findViewById(R.id.tvHistoryNum);
         tvSearchView = findViewById(R.id.tvSearchView);
         tvIjkCachePlay = findViewById(R.id.tvIjkCachePlay);
@@ -173,11 +176,11 @@ public class ModelSettingFragment extends BaseLazyFragment {
                 dialog.show();
             }
         });
-       findViewById(R.id.llAbout).setOnClickListener(new View.OnClickListener() {
+       findViewById(R.id.llAbout).setOnClickListener(new View.OnClickListener() {   //xuameng存储权限
             @Override
             public void onClick(View v) {
                 if (XXPermissions.isGranted(getContext(), Permission.Group.STORAGE)) {
-                    Toast.makeText(getContext(), "已获得存储权限", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "已获得存储权限！", Toast.LENGTH_SHORT).show();
                 } else {
                     XXPermissions.with(getContext())
                             .permission(Permission.Group.STORAGE)
@@ -185,17 +188,19 @@ public class ModelSettingFragment extends BaseLazyFragment {
                                 @Override
                                 public void onGranted(List<String> permissions, boolean all) {
                                     if (all) {
-                                        Toast.makeText(getContext(), "已获得存储权限", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getContext(), "已获得存储权限！", Toast.LENGTH_SHORT).show();
+                Hawk.put(HawkConfig.TV_STORAGE, !Hawk.get(HawkConfig.TV_STORAGE, false));
+                tvStorage.setText(Hawk.get(HawkConfig.TV_STORAGE, false) ? "已获取" : "未获取");
                                     }
                                 }
 
                                 @Override
                                 public void onDenied(List<String> permissions, boolean never) {
                                     if (never) {
-                                        Toast.makeText(getContext(), "获取存储权限失败,请在系统设置中开启", Toast.LENGTH_SHORT).show();
-                                        XXPermissions.startPermissionActivity(getContext(), permissions);
+                                        Toast.makeText(getContext(), "获取存储权限失败,请在系统设置中开启！", Toast.LENGTH_SHORT).show();
+                                        XXPermissions.startPermissionActivity(getContext(), permissions);      //xuameng Activity去掉
                                     } else {
-                                        Toast.makeText(getContext(), "获取存储权限失败", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getContext(), "获取存储权限失败！", Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             });
