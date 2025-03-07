@@ -21,6 +21,7 @@ import com.hjq.permissions.XXPermissions;
 import com.owen.tvrecyclerview.widget.TvRecyclerView;
 import com.github.tvbox.osc.util.HawkConfig;  //xuameng存储权限
 import com.orhanobut.hawk.Hawk;  //xuameng存储权限
+import android.widget.TextView; //xuameng存储权限
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
@@ -35,7 +36,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class BackupDialog extends BaseDialog {
-	private TextView tvStorage;
+	private TextView tvStorage;  //xuameng存储权限
 
     public BackupDialog(@NonNull @NotNull Context context) {
         super(context);
