@@ -16,6 +16,7 @@ import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.event.RefreshEvent;
 import com.github.tvbox.osc.server.ControlManager;
 import com.github.tvbox.osc.ui.adapter.ApiHistoryDialogAdapter;
+import com.github.tvbox.osc.ui.adapter.ApiHistoryDialogAdapterxu;
 import com.github.tvbox.osc.ui.tv.QRCodeGen;
 import com.github.tvbox.osc.util.HawkConfig;
 import com.hjq.permissions.OnPermissionCallback;
@@ -114,9 +115,9 @@ public class ApiDialog extends BaseDialog {
                 int idx = 0;
                 if (history.contains(current))
                     idx = history.indexOf(current);
-                ApiHistoryDialog dialog = new ApiHistoryDialog(getContext());
+                ApiHistoryDialogxu dialog = new ApiHistoryDialogxu(getContext());
                 dialog.setTip("历史直播播源");
-                dialog.setAdapter(new ApiHistoryDialogAdapter.SelectDialogInterface() {
+                dialog.setAdapter(new ApiHistoryDialogAdapterxu.SelectDialogInterface() {
                     @Override
                     public void click(String value) {
                         inputApiLive.setText(value);
