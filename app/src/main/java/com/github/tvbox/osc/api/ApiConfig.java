@@ -69,6 +69,8 @@ public class ApiConfig {
     private List<IJKCode> ijkCodes;
     private String spider = null;
     public String wallpaper = "";
+		public String musicwallpaper = "";   //xuameng音乐背景图
+	public String warningText = "";   //xuameng版权提示
 
     private SourceBean emptyHome = new SourceBean();
 
@@ -378,6 +380,8 @@ public class ApiConfig {
         spider = DefaultConfig.safeJsonString(infoJson, "spider", "");
         // wallpaper
         wallpaper = DefaultConfig.safeJsonString(infoJson, "wallpaper", "");
+				musicwallpaper = DefaultConfig.safeJsonString(infoJson, "musicwallpaper", "");    //xuameng音乐背景图
+		warningText = DefaultConfig.safeJsonString(infoJson, "warningText", "");  //xuameng警告
         // 远端站点源
         SourceBean firstSite = null;
         for (JsonElement opt : infoJson.get("sites").getAsJsonArray()) {
