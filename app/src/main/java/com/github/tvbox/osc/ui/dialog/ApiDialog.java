@@ -16,14 +16,12 @@ import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.event.RefreshEvent;
 import com.github.tvbox.osc.server.ControlManager;
 import com.github.tvbox.osc.ui.adapter.ApiHistoryDialogAdapter;
-import com.github.tvbox.osc.ui.adapter.ApiHistoryDialogAdapterxu;
 import com.github.tvbox.osc.ui.tv.QRCodeGen;
 import com.github.tvbox.osc.util.HawkConfig;
 import com.hjq.permissions.OnPermissionCallback;
 import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
 import com.orhanobut.hawk.Hawk;
-import com.github.tvbox.osc.ui.dialog.ApiHistoryDialog;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -115,9 +113,9 @@ public class ApiDialog extends BaseDialog {
                 int idx = 0;
                 if (history.contains(current))
                     idx = history.indexOf(current);
-                ApiHistoryDialogxu dialog = new ApiHistoryDialogxu(getContext());
+                ApiHistoryDialog dialog = new ApiHistoryDialog(getContext());
                 dialog.setTip("历史直播播源");
-                dialog.setAdapter(new ApiHistoryDialogAdapterxu.SelectDialogInterface() {
+                dialog.setAdapter(new ApiHistoryDialogAdapter.SelectDialogInterface() {
                     @Override
                     public void click(String value) {
                         inputApiLive.setText(value);
@@ -171,35 +169,6 @@ public class ApiDialog extends BaseDialog {
             }
         });
 
-        findViewById(R.id.storagePermission).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (XXPermissions.isGranted(getContext(), Permission.Group.STORAGE)) {
-                    Toast.makeText(getContext(), "已获得存储权限！", Toast.LENGTH_SHORT).show();
-                } else {
-                    XXPermissions.with(getContext())
-                            .permission(Permission.Group.STORAGE)
-                            .request(new OnPermissionCallback() {
-                                @Override
-                                public void onGranted(List<String> permissions, boolean all) {
-                                    if (all) {
-                                        Toast.makeText(getContext(), "已获得存储权限！", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-
-                                @Override
-                                public void onDenied(List<String> permissions, boolean never) {
-                                    if (never) {
-                                        Toast.makeText(getContext(), "获取存储权限失败,请在系统设置中开启！", Toast.LENGTH_SHORT).show();
-                                        XXPermissions.startPermissionActivity((Activity) getContext(), permissions);
-                                    } else {
-                                        Toast.makeText(getContext(), "获取存储权限失败！", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            });
-                }
-            }
-        });
         inputApi.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
