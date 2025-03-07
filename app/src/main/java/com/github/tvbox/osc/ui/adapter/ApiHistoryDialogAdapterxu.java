@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ApiHistoryDialogAdapter extends ListAdapter<String, ApiHistoryDialogAdapter.SelectViewHolder> {
+public class ApiHistoryDialogAdapterxu extends ListAdapter<String, ApiHistoryDialogAdapterxu.SelectViewHolder> {
 
     class SelectViewHolder extends RecyclerView.ViewHolder {
 
@@ -39,7 +39,7 @@ public class ApiHistoryDialogAdapter extends ListAdapter<String, ApiHistoryDialo
 
     private SelectDialogInterface dialogInterface = null;
 
-    public ApiHistoryDialogAdapter(SelectDialogInterface dialogInterface) {
+    public ApiHistoryDialogAdapterxu(SelectDialogInterface dialogInterface) {
         super(new DiffUtil.ItemCallback<String>() {
             @Override
             public boolean areItemsTheSame(@NonNull @NotNull String oldItem, @NonNull @NotNull String newItem) {
@@ -68,12 +68,12 @@ public class ApiHistoryDialogAdapter extends ListAdapter<String, ApiHistoryDialo
 
 
     @Override
-    public ApiHistoryDialogAdapter.SelectViewHolder onCreateViewHolder(@NonNull @NotNull ViewGroup parent, int viewType) {
-        return new ApiHistoryDialogAdapter.SelectViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_dialog_api_history, parent, false));
+    public ApiHistoryDialogAdapterxu.SelectViewHolder onCreateViewHolder(@NonNull @NotNull ViewGroup parent, int viewType) {
+        return new ApiHistoryDialogAdapterxu.SelectViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_dialog_api_history, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(@NonNull @NotNull ApiHistoryDialogAdapter.SelectViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull @NotNull ApiHistoryDialogAdapterxu.SelectViewHolder holder, int position) {
         String value = data.get(position);
         String name = value;
         if (select.equals(value))
