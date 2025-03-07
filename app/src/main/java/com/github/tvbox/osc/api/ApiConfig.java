@@ -69,7 +69,7 @@ public class ApiConfig {
     private List<IJKCode> ijkCodes;
     private String spider = null;
     public String wallpaper = "";
-		public String musicwallpaper = "";   //xuameng音乐背景图
+	public String musicwallpaper = "";   //xuameng音乐背景图
 	public String warningText = "";   //xuameng版权提示
 
     private SourceBean emptyHome = new SourceBean();
@@ -164,7 +164,7 @@ public class ApiConfig {
         return configUrl;
     }
     public void loadConfig(boolean useCache, LoadConfigCallback callback, Activity activity) {
-        String apiUrl = Hawk.get(HawkConfig.API_URL, "");
+        String apiUrl = Hawk.get(HawkConfig.API_URL, "http://xuameng.vicp.net:8082/tvbox/1/xu.json");
         //独立加载直播配置
         String liveApiUrl = Hawk.get(HawkConfig.LIVE_API_URL, "");
         String liveApiConfigUrl=configUrl(liveApiUrl);
@@ -194,7 +194,7 @@ public class ApiConfig {
                                         FileUtils.saveCache(live_cache,json);
                                     } catch (Throwable th) {
                                         th.printStackTrace();
-                                        callback.notice("解析直播配置失败");
+                                        callback.notice("聚汇影视提示您：解析直播配置失败！");
                                     }
                                 }
 
@@ -210,7 +210,7 @@ public class ApiConfig {
                                             th.printStackTrace();
                                         }
                                     }
-                                    callback.notice("直播配置拉取失败");
+                                    callback.notice("聚汇影视提示您：直播配置拉取失败！");
                                 }
 
                                 public String convertResponse(okhttp3.Response response) throws Throwable {
@@ -260,7 +260,7 @@ public class ApiConfig {
                             callback.success();
                         } catch (Throwable th) {
                             th.printStackTrace();
-                            callback.error("解析配置失败");
+                            callback.error("聚汇影视提示您：解析配置失败！");
                         }
                     }
 
@@ -276,7 +276,7 @@ public class ApiConfig {
                                 th.printStackTrace();
                             }
                         }
-                        callback.error("拉取配置失败\n" + (response.getException() != null ? response.getException().getMessage() : ""));
+                        callback.error("聚汇影视提示您：拉取配置失败！\n" + (response.getException() != null ? response.getException().getMessage() : ""));
                     }
 
                     public String convertResponse(okhttp3.Response response) throws Throwable {
@@ -380,7 +380,7 @@ public class ApiConfig {
         spider = DefaultConfig.safeJsonString(infoJson, "spider", "");
         // wallpaper
         wallpaper = DefaultConfig.safeJsonString(infoJson, "wallpaper", "");
-				musicwallpaper = DefaultConfig.safeJsonString(infoJson, "musicwallpaper", "");    //xuameng音乐背景图
+		musicwallpaper = DefaultConfig.safeJsonString(infoJson, "musicwallpaper", "");    //xuameng音乐背景图
 		warningText = DefaultConfig.safeJsonString(infoJson, "warningText", "");  //xuameng警告
         // 远端站点源
         SourceBean firstSite = null;
@@ -454,7 +454,8 @@ public class ApiConfig {
             if(infoJson.has("lives")){
                 JsonArray lives_groups=infoJson.get("lives").getAsJsonArray();
                 int live_group_index=Hawk.get(HawkConfig.LIVE_GROUP_INDEX,0);
-                if(live_group_index>lives_groups.size()-1)Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
+                if(live_group_index>lives_groups.size()-1){           //xuameng 重要BUG
+				Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
                 Hawk.put(HawkConfig.LIVE_GROUP_LIST,lives_groups);
                 //加载多源配置
                 try {
@@ -472,9 +473,32 @@ public class ApiConfig {
                     // 捕获任何可能发生的异常
                     e.printStackTrace();
                 }
+				int live_group_index_xu=Hawk.get(HawkConfig.LIVE_GROUP_INDEX,0);
+				JsonObject livesOBJ_xu = lives_groups.get(live_group_index_xu).getAsJsonObject();
+				loadLiveApi(livesOBJ_xu);
+				}else{
+					Hawk.put(HawkConfig.LIVE_GROUP_LIST,lives_groups);
+					//加载多源配置
+					try {
+						ArrayList<LiveSettingItem> liveSettingItemList = new ArrayList<>();
+						for (int i=0; i< lives_groups.size();i++) {
+							JsonObject jsonObject = lives_groups.get(i).getAsJsonObject();
+							String name = jsonObject.has("name")?jsonObject.get("name").getAsString():"线路"+(i+1);
+							LiveSettingItem liveSettingItem = new LiveSettingItem();
+							liveSettingItem.setItemIndex(i);
+							liveSettingItem.setItemName(name);
+							liveSettingItemList.add(liveSettingItem);
+						}
+						liveSettingGroupList.get(5).setLiveSettingItems(liveSettingItemList);
+					} catch (Exception e) {
+                    // 捕获任何可能发生的异常
+						e.printStackTrace();
+                }
                 JsonObject livesOBJ = lives_groups.get(live_group_index).getAsJsonObject();
                 loadLiveApi(livesOBJ);
-            }
+				}
+			}
+
             myHosts = new HashMap<>();
             if (infoJson.has("hosts")) {
                 JsonArray hostsArray = infoJson.getAsJsonArray("hosts");
@@ -656,14 +680,14 @@ public class ApiConfig {
 
     private final List<LiveSettingGroup> liveSettingGroupList = new ArrayList<>();
     private void initLiveSettings() {
-        ArrayList<String> groupNames = new ArrayList<>(Arrays.asList("线路选择", "画面比例", "播放解码", "超时换源", "偏好设置", "多源切换"));
-        ArrayList<ArrayList<String>> itemsArrayList = new ArrayList<>();
-        ArrayList<String> sourceItems = new ArrayList<>();
-        ArrayList<String> scaleItems = new ArrayList<>(Arrays.asList("默认", "16:9", "4:3", "填充", "原始", "裁剪"));
-        ArrayList<String> playerDecoderItems = new ArrayList<>(Arrays.asList("系统", "ijk硬解", "ijk软解", "exo"));
-        ArrayList<String> timeoutItems = new ArrayList<>(Arrays.asList("5s", "10s", "15s", "20s", "25s", "30s"));
-        ArrayList<String> personalSettingItems = new ArrayList<>(Arrays.asList("显示时间", "显示网速", "换台反转", "跨选分类"));
-        ArrayList<String> yumItems = new ArrayList<>();
+		ArrayList<String> groupNames = new ArrayList<>(Arrays.asList("线路选择", "画面比例", "播放解码", "超时换源", "偏好设置", "多源切换"));  //xuameng 换源
+        ArrayList < ArrayList < String >> itemsArrayList = new ArrayList < > ();
+        ArrayList < String > sourceItems = new ArrayList < > ();
+        ArrayList < String > scaleItems = new ArrayList < > (Arrays.asList("默认比例", "16:9比例", "4:3 比例", "填充比例", "原始比例", "裁剪比例"));
+        ArrayList < String > playerDecoderItems = new ArrayList < > (Arrays.asList("系统解码", "IJK  硬解", "IJK  软解", "EXO 解码"));
+        ArrayList < String > timeoutItems = new ArrayList < > (Arrays.asList("超时05秒", "超时10秒", "超时15秒", "超时20秒", "超时25秒", "超时30秒"));
+        ArrayList < String > personalSettingItems = new ArrayList < > (Arrays.asList("显示时间", "显示网速", "换台反转", "跨选分类"));
+        ArrayList<String> yumItems = new ArrayList<>();   //xuameng新增 换源
 
         itemsArrayList.add(sourceItems);
         itemsArrayList.add(scaleItems);
@@ -781,7 +805,10 @@ public class ApiConfig {
             if(livesOBJ.has("playerType")){
                 String livePlayType =livesOBJ.get("playerType").getAsString();
                 Hawk.put(HawkConfig.LIVE_PLAY_TYPE,livePlayType);
-            }
+				HawkConfig.intLIVEPLAYTYPE = true;   //xuameng是否有直播默认播放器
+            }else{
+				HawkConfig.intLIVEPLAYTYPE = false;   //xuameng是否有直播默认播放器
+			}
             LiveChannelGroup liveChannelGroup = new LiveChannelGroup();
             liveChannelGroup.setGroupName(url);
             liveChannelGroupList.clear();
