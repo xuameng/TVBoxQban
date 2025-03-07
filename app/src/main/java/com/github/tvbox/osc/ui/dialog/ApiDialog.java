@@ -42,6 +42,7 @@ public class ApiDialog extends BaseDialog {
     private ImageView ivQRCode;
     private TextView tvAddress;
     private EditText inputApi;
+	private TextView tvStorage;
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void refresh(RefreshEvent event) {
