@@ -143,7 +143,7 @@ public class ApiDialog extends BaseDialog {
                 int idx = 0;
                 if (history.contains(current))
                     idx = history.indexOf(current);
-                ApiHistoryDialog dialog = new ApiHistoryDialog(mActivity);
+                ApiHistoryDialog dialog = new ApiHistoryDialog(getContext());
                 dialog.setTip("历史点播源");
                 dialog.setAdapter(new ApiHistoryDialogAdapter.SelectDialogInterface() {
                     @Override
@@ -158,7 +158,6 @@ public class ApiDialog extends BaseDialog {
                             history.remove(30);
                         }
                         Hawk.put(HawkConfig.LIVE_API_HISTORY, history);
-                        tvApi.setText(value);
                         dialog.dismiss();
                     }
 
