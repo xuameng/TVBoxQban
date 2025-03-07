@@ -166,7 +166,7 @@ public class ApiConfig {
     public void loadConfig(boolean useCache, LoadConfigCallback callback, Activity activity) {
         String apiUrl = Hawk.get(HawkConfig.API_URL, "http://xuameng.vicp.net:8082/tvbox/1/xu.json");
         //独立加载直播配置
-        String liveApiUrl = Hawk.get(HawkConfig.LIVE_API_URL, "http://xuameng.vicp.net:8082/tvbox/1/xu.json");
+        String liveApiUrl = Hawk.get(HawkConfig.LIVE_API_URL, "");
         String liveApiConfigUrl=configUrl(liveApiUrl);
         if(!liveApiUrl.isEmpty() && !liveApiUrl.equals(apiUrl)){
             if(liveApiUrl.contains(".txt") || liveApiUrl.contains(".m3u") || liveApiUrl.contains("=txt") || liveApiUrl.contains("=m3u")){
@@ -194,7 +194,7 @@ public class ApiConfig {
                                         FileUtils.saveCache(live_cache,json);
                                     } catch (Throwable th) {
                                         th.printStackTrace();
-                                        callback.notice("解析直播配置失败");
+                                        callback.notice("解析直播配置失败！");
                                     }
                                 }
 
@@ -210,7 +210,7 @@ public class ApiConfig {
                                             th.printStackTrace();
                                         }
                                     }
-                                    callback.notice("直播配置拉取失败");
+                                    callback.notice("直播配置拉取失败！");
                                 }
 
                                 public String convertResponse(okhttp3.Response response) throws Throwable {
@@ -260,7 +260,7 @@ public class ApiConfig {
                             callback.success();
                         } catch (Throwable th) {
                             th.printStackTrace();
-                            callback.error("解析配置失败");
+                            callback.error("解析配置失败！");
                         }
                     }
 
@@ -454,7 +454,7 @@ public class ApiConfig {
             if(infoJson.has("lives")){
                 JsonArray lives_groups=infoJson.get("lives").getAsJsonArray();
                 int live_group_index=Hawk.get(HawkConfig.LIVE_GROUP_INDEX,0);
-                if(live_group_index>lives_groups.size()-1){
+                if(live_group_index>lives_groups.size()-1){           //xuameng 重要BUG
 				Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
                 Hawk.put(HawkConfig.LIVE_GROUP_LIST,lives_groups);
                 //加载多源配置
