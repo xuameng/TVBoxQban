@@ -34,7 +34,6 @@ import com.owen.tvrecyclerview.widget.V7LinearLayoutManager; //xuameng优化首�
 import androidx.constraintlayout.widget.ConstraintLayout;  //xuameng优化首页数据源列表
 import android.view.ViewGroup;   //xuameng优化首页数据源列表
 import me.jessyan.autosize.utils.AutoSizeUtils;  //xuameng优化首页数据源列表
-import com.github.tvbox.osc.util.DefaultConfig;  //xuameng重启APP
 import com.github.tvbox.osc.util.FastClickCheckUtil;
 import com.github.tvbox.osc.util.FileUtils;
 import com.github.tvbox.osc.util.HawkConfig;
@@ -82,7 +81,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
     private TextView tvFastSearchText;
     private TextView tvRecStyleText;
     private TextView tvIjkCachePlay;
-	private boolean rec_style=Hawk.get(HawkConfig.HOME_REC_STYLE, false);  //首页多行判断
+
 
     public static ModelSettingFragment newInstance() {
         return new ModelSettingFragment().setArguments();
@@ -749,12 +748,6 @@ public class ModelSettingFragment extends BaseLazyFragment {
 
     @Override
     public void onDestroyView() {
-		boolean rec_style1=Hawk.get(HawkConfig.HOME_REC_STYLE, false);
-		boolean rec_style2 = rec_style == rec_style1;
-		if (!rec_style2){   //xuameng首页单行判断
-			DefaultConfig.restartApp();
-			return;
-		}
         super.onDestroyView();
         SettingActivity.callback = null;		
     }
