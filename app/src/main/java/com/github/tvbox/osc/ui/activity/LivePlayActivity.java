@@ -2490,12 +2490,7 @@ public class LivePlayActivity extends BaseActivity {
                 }
             }else {
                 Toast.makeText(App.getInstance(), "聚汇影视提示您：频道列表为空！", Toast.LENGTH_SHORT).show();
-                    mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        jumpActivity(HomeActivity.class);
-                       }
-                    });
+                finish();
                 return;
             }
         }
@@ -2543,7 +2538,11 @@ public class LivePlayActivity extends BaseActivity {
                 List<LiveChannelGroup> list = ApiConfig.get().getChannelGroupList();
                 if (list.isEmpty()) {
                     Toast.makeText(App.getInstance(), "聚汇影视提示您：频道列表为空！", Toast.LENGTH_SHORT).show();
-                    finish();
+                    @Override
+                    public void run() {
+                        jumpActivity(HomeActivity.class);
+                    }
+                });
                     return;
                 }
                 liveChannelGroupList.clear();
