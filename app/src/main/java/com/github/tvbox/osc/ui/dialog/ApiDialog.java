@@ -172,6 +172,7 @@ public class ApiDialog extends BaseDialog {
                 dialog.show();
             }
         });
+		refreshQRCode();
 	}
 
     private void refreshQRCode() {
