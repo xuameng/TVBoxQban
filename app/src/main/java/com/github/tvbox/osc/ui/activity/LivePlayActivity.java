@@ -2485,7 +2485,12 @@ public class LivePlayActivity extends BaseActivity {
                     ApiConfig.get().loadLiveApi(livesOBJ);
                 }else {
                     Toast.makeText(App.getInstance(), "聚汇影视提示您：频道列表为空！", Toast.LENGTH_SHORT).show();
-                    finish();
+                    mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        jumpActivity(HomeActivity.class);
+                       }
+                    });
                     return;
                 }
             }else {
