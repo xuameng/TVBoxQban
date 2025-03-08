@@ -194,7 +194,7 @@ public class ApiConfig {
                                         FileUtils.saveCache(live_cache,json);
                                     } catch (Throwable th) {
                                         th.printStackTrace();
-                                        callback.notice("聚汇影视提示您：解析直播配置失败！");
+                                        callback.notice("聚汇影视提示您：解析直播配置失败！已清空直播配置！");
 										Hawk.put(HawkConfig.LIVE_API_URL, "");
 										Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
                                     }
@@ -212,7 +212,7 @@ public class ApiConfig {
                                             th.printStackTrace();
                                         }
                                     }
-                                    callback.notice("聚汇影视提示您：直播配置拉取失败！");
+                                    callback.notice("聚汇影视提示您：直播配置拉取失败！已清空直播配置！");
 									Hawk.put(HawkConfig.LIVE_API_URL, "");
 									Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
                                 }
