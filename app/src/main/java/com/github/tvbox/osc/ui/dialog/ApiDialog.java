@@ -99,7 +99,6 @@ public class ApiDialog extends BaseDialog {
                     Hawk.put(HawkConfig.LIVE_API_HISTORY, history);
                 }
                 Hawk.put(HawkConfig.LIVE_API_URL, newApi);
-				listener.onchange(newApi);
                 dismiss();
             }
         });
@@ -120,7 +119,6 @@ public class ApiDialog extends BaseDialog {
                     @Override
                     public void click(String value) {
                         inputApiLive.setText(value);
-						listener.onchange(value);
                         Hawk.put(HawkConfig.LIVE_API_URL, value);
                         dialog.dismiss();
                     }
