@@ -2537,12 +2537,12 @@ public class LivePlayActivity extends BaseActivity {
                 ApiConfig.get().loadLives(livesArray);
                 List<LiveChannelGroup> list = ApiConfig.get().getChannelGroupList();
                 if (list.isEmpty()) {
-					Hawk.put(HawkConfig.LIVE_GROUP_INDEX, 0);
+					Hawk.put(HawkConfig.LIVE_GROUP_INDEX, 0);   //xuameng bug
                     Toast.makeText(App.getInstance(), "聚汇影视提示您：频道列表为空！", Toast.LENGTH_SHORT).show();
 					mHandler.post(new Runnable() {
                     @Override
                     public void run() {
-                        jumpActivity(HomeActivity.class);
+                        jumpActivity(HomeActivity.class);   //xuameng bug
                     }
                 });
                     return;
