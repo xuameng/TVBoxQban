@@ -34,6 +34,7 @@ import com.owen.tvrecyclerview.widget.V7LinearLayoutManager; //xuameng优化首�
 import androidx.constraintlayout.widget.ConstraintLayout;  //xuameng优化首页数据源列表
 import android.view.ViewGroup;   //xuameng优化首页数据源列表
 import me.jessyan.autosize.utils.AutoSizeUtils;  //xuameng优化首页数据源列表
+import com.github.tvbox.osc.util.DefaultConfig;  //xuameng长按许大师制作重启APP
 import com.github.tvbox.osc.util.FastClickCheckUtil;
 import com.github.tvbox.osc.util.FileUtils;
 import com.github.tvbox.osc.util.HawkConfig;
@@ -772,6 +773,11 @@ public class ModelSettingFragment extends BaseLazyFragment {
 
     @Override
     public void onDestroyView() {
+		if (HawkConfig.ISrestore){
+			DefaultConfig.restartApp();
+			HawkConfig.ISrestore = false;  //xuameng恢复成功,请重启应用
+			return;
+		}
         super.onDestroyView();
         SettingActivity.callback = null;		
     }
