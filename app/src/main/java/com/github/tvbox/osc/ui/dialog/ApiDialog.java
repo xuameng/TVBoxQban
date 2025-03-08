@@ -99,6 +99,7 @@ public class ApiDialog extends BaseDialog {
                     Hawk.put(HawkConfig.LIVE_API_HISTORY, history);
                 }
                 Hawk.put(HawkConfig.LIVE_API_URL, newApi);
+				listener.onchange(newApi);
                 dismiss();
             }
         });
@@ -119,6 +120,7 @@ public class ApiDialog extends BaseDialog {
                     @Override
                     public void click(String value) {
                         inputApiLive.setText(value);
+						listener.onchange(value);
                         Hawk.put(HawkConfig.LIVE_API_URL, value);
                         dialog.dismiss();
                     }
@@ -149,6 +151,8 @@ public class ApiDialog extends BaseDialog {
                     public void click(String value) {
                         Hawk.put(HawkConfig.API_URL, value);
                         Hawk.put(HawkConfig.LIVE_API_URL, value);
+						inputApi.setText(value);
+                        listener.onchange(value);
                         ArrayList<String> history = Hawk.get(HawkConfig.LIVE_API_HISTORY, new ArrayList<String>());
                         if (!history.contains(value)) {
                             history.add(0, value);
@@ -168,34 +172,6 @@ public class ApiDialog extends BaseDialog {
                 dialog.show();
             }
         });
-
-        inputApi.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_SEARCH || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
-                    String newApi = inputApi.getText().toString().trim();
-                    if (!newApi.isEmpty()) {
-                        ArrayList<String> history = Hawk.get(HawkConfig.API_HISTORY, new ArrayList<String>());
-                        if (!history.contains(newApi))
-                            history.add(0, newApi);
-                        if (history.size() > 30)
-                            history.remove(30);
-                        Hawk.put(HawkConfig.API_HISTORY, history);
-
-                        if(!newApi.equals(Hawk.get(HawkConfig.API_URL, newApi))){
-                            inputApiLive.setText(newApi);
-                            Hawk.put(HawkConfig.LIVE_API_URL, newApi);
-                        }
-                    }
-                    listener.onchange(newApi);
-                    dismiss();
-                    return true;
-                }
-                return false;
-            }
-        });
-        refreshQRCode();
-    }
 
     private void refreshQRCode() {
         String address = ControlManager.get().getAddress(false);
