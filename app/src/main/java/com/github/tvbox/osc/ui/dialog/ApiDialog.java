@@ -172,6 +172,7 @@ public class ApiDialog extends BaseDialog {
                 dialog.show();
             }
         });
+	}
 
     private void refreshQRCode() {
         String address = ControlManager.get().getAddress(false);
