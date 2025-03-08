@@ -80,6 +80,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="点播"
+                    android:textColor="@color/color_CC000000"
                     android:cursorVisible="false"
                     android:paddingEnd="@dimen/vs_5"/>
                 <EditText
@@ -127,6 +128,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="直播"
+                    android:textColor="@color/color_CC000000"
                     android:cursorVisible="false"
                     android:paddingEnd="@dimen/vs_5"/>
                 <EditText
