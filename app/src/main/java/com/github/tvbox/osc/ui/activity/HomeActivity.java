@@ -447,7 +447,7 @@ public class HomeActivity extends BaseActivity {
                                 }
                             });
                         if (!dialog.isShowing()){
-			showSuccess()；
+			showSuccess();
                             dialog.show();
 				}
                     }
