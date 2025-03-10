@@ -426,7 +426,7 @@ public class HomeActivity extends BaseActivity {
                                         public void run() {
                                             initData();
                                             dialog.hide();
-					 finish();	
+					 dismiss();	
                                         }
                                     });
                                 }
