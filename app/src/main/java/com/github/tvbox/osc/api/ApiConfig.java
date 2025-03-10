@@ -196,7 +196,7 @@ public class ApiConfig {
                                         th.printStackTrace();
                                         callback.notice("聚汇影视提示您：解析直播配置失败！已清空直播配置！");
 									//	Hawk.put(HawkConfig.LIVE_API_URL, "");
-									//	Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
+										Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
                                     }
                                 }
 
@@ -214,7 +214,7 @@ public class ApiConfig {
                                     }
                                     callback.notice("聚汇影视提示您：直播配置拉取失败！已清空直播配置！");
 								//	Hawk.put(HawkConfig.LIVE_API_URL, "");
-								//	Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
+									Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
                                 }
 
                                 public String convertResponse(okhttp3.Response response) throws Throwable {
@@ -452,18 +452,20 @@ public class ApiConfig {
 
         // 直播源
         String live_api_url=Hawk.get(HawkConfig.LIVE_API_URL,"");
+	  Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");  
         if(live_api_url.isEmpty() || apiUrl.equals(live_api_url)){
             LOG.i("echo-load-config_live");
             
             if(infoJson.has("lives")){
 		    
                 JsonArray lives_groups=infoJson.get("lives").getAsJsonArray();
-		  if (lives_groups.size() > -1) {   
+		  if (lives_groups.size() > -1) {  
+		Hawk.put(HawkConfig.LIVE_GROUP_LIST,lives_groups);	  
 		initLiveSettings();	  
                 int live_group_index=Hawk.get(HawkConfig.LIVE_GROUP_INDEX,0);
                 if(live_group_index>lives_groups.size()-1){           //xuameng 重要BUG
 				Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
-                Hawk.put(HawkConfig.LIVE_GROUP_LIST,lives_groups);
+                
                 //加载多源配置
                 try {
                     ArrayList<LiveSettingItem> liveSettingItemList = new ArrayList<>();
@@ -644,11 +646,12 @@ public class ApiConfig {
     private void parseLiveJson(String apiUrl, String jsonStr) {
         JsonObject infoJson = gson.fromJson(jsonStr, JsonObject.class);
         // 直播源
-        
+        Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
         if(infoJson.has("lives")){
-		initLiveSettings();
+		
             JsonArray lives_groups=infoJson.get("lives").getAsJsonArray();
-
+      if (lives_groups.size() > -1) {  
+	   initLiveSettings();   
             int live_group_index=Hawk.get(HawkConfig.LIVE_GROUP_INDEX,0);
             if(live_group_index>lives_groups.size()-1)Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
             Hawk.put(HawkConfig.LIVE_GROUP_LIST,lives_groups);
@@ -672,6 +675,7 @@ public class ApiConfig {
             JsonObject livesOBJ = lives_groups.get(live_group_index).getAsJsonObject();
             loadLiveApi(livesOBJ);
         }
+		}
 
         myHosts = new HashMap<>();
         if (infoJson.has("hosts")) {
