@@ -456,8 +456,10 @@ public class ApiConfig {
             LOG.i("echo-load-config_live");
             
             if(infoJson.has("lives")){
-		initLiveSettings();    
+		    
                 JsonArray lives_groups=infoJson.get("lives").getAsJsonArray();
+		  if (lives_groups.size() > -1) {   
+		initLiveSettings();	  
                 int live_group_index=Hawk.get(HawkConfig.LIVE_GROUP_INDEX,0);
                 if(live_group_index>lives_groups.size()-1){           //xuameng 重要BUG
 				Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
@@ -503,6 +505,7 @@ public class ApiConfig {
                 loadLiveApi(livesOBJ);
 				}
 			}
+		    }
 
             myHosts = new HashMap<>();
             if (infoJson.has("hosts")) {
