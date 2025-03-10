@@ -446,8 +446,10 @@ public class HomeActivity extends BaseActivity {
                                     });
                                 }
                             });
-                        if (!dialog.isShowing())
+                        if (!dialog.isShowing()){
+			showSuccess()；
                             dialog.show();
+				}
                     }
                 });
             }
