@@ -264,7 +264,7 @@ public class ApiConfig {
                             callback.success();
                         } catch (Throwable th) {
                             th.printStackTrace();
-                            callback.error("聚汇影视提示您：解析配置失败！")"
+                            callback.error("聚汇影视提示您：解析配置失败！");
 				Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");    
                         }
                     }
