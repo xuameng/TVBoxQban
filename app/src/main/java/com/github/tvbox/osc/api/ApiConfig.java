@@ -195,8 +195,8 @@ public class ApiConfig {
                                     } catch (Throwable th) {
                                         th.printStackTrace();
                                         callback.notice("聚汇影视提示您：解析直播配置失败！已清空直播配置！");
-										Hawk.put(HawkConfig.LIVE_API_URL, "");
-										Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
+									//	Hawk.put(HawkConfig.LIVE_API_URL, "");
+									//	Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
                                     }
                                 }
 
@@ -213,8 +213,8 @@ public class ApiConfig {
                                         }
                                     }
                                     callback.notice("聚汇影视提示您：直播配置拉取失败！已清空直播配置！");
-									Hawk.put(HawkConfig.LIVE_API_URL, "");
-									Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
+								//	Hawk.put(HawkConfig.LIVE_API_URL, "");
+								//	Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
                                 }
 
                                 public String convertResponse(okhttp3.Response response) throws Throwable {
@@ -454,8 +454,9 @@ public class ApiConfig {
         String live_api_url=Hawk.get(HawkConfig.LIVE_API_URL,"");
         if(live_api_url.isEmpty() || apiUrl.equals(live_api_url)){
             LOG.i("echo-load-config_live");
-            initLiveSettings();
+            
             if(infoJson.has("lives")){
+		initLiveSettings();    
                 JsonArray lives_groups=infoJson.get("lives").getAsJsonArray();
                 int live_group_index=Hawk.get(HawkConfig.LIVE_GROUP_INDEX,0);
                 if(live_group_index>lives_groups.size()-1){           //xuameng 重要BUG
