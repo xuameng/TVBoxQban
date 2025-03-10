@@ -641,8 +641,9 @@ public class ApiConfig {
     private void parseLiveJson(String apiUrl, String jsonStr) {
         JsonObject infoJson = gson.fromJson(jsonStr, JsonObject.class);
         // 直播源
-        initLiveSettings();
+        
         if(infoJson.has("lives")){
+		initLiveSettings();
             JsonArray lives_groups=infoJson.get("lives").getAsJsonArray();
 
             int live_group_index=Hawk.get(HawkConfig.LIVE_GROUP_INDEX,0);
