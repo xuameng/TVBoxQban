@@ -412,7 +412,8 @@ public class HomeActivity extends BaseActivity {
                                         @Override
                                         public void run() {
                                             initData();
-                                            dialog.hide();
+                                         //   dialog.hide();
+						dialog.dismiss();
                                         }
                                     });
                                 }
@@ -425,7 +426,7 @@ public class HomeActivity extends BaseActivity {
                                         @Override
                                         public void run() {
                                             initData();
-                                            dialog.hide();
+                                        //    dialog.hide();
 					 dialog.dismiss();	
                                         }
                                     });
@@ -439,7 +440,8 @@ public class HomeActivity extends BaseActivity {
                                         @Override
                                         public void run() {
                                             initData();
-                                            dialog.hide();
+                                         //   dialog.hide();
+						dialog.dismiss();
                                         }
                                     });
                                 }
