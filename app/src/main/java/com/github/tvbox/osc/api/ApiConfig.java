@@ -504,9 +504,15 @@ public class ApiConfig {
                 loadLiveApi(livesOBJ);
 				}
 				}else{
+					initLiveSettings();
+					liveSettingGroupList.clear();
+				Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
+			}else{
+									initLiveSettings();
 					liveSettingGroupList.clear();
 				Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
 			}
+
 			}
 
             myHosts = new HashMap<>();
@@ -673,10 +679,15 @@ public class ApiConfig {
             JsonObject livesOBJ = lives_groups.get(live_group_index).getAsJsonObject();
             loadLiveApi(livesOBJ);
 			}else{
+				initLiveSettings();
 				liveSettingGroupList.clear();
 				Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
 			}
-        }
+        }else{
+			initLiveSettings();
+					liveSettingGroupList.clear();
+				Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
+		}
 
         myHosts = new HashMap<>();
         if (infoJson.has("hosts")) {
