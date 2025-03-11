@@ -507,12 +507,12 @@ public class ApiConfig {
 					initLiveSettings();
 					liveSettingGroupList.clear();
 				Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
-			}else{
-									initLiveSettings();
-					liveSettingGroupList.clear();
-				Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
 			}
 
+			}else{
+					initLiveSettings();
+					liveSettingGroupList.clear();
+				Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
 			}
 
             myHosts = new HashMap<>();
