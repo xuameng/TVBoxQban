@@ -177,7 +177,7 @@ public class ApiConfig {
                 File live_cache = new File(App.getInstance().getFilesDir().getAbsolutePath() + "/" + MD5.encode(liveApiUrl));
                 if (useCache && live_cache.exists()) {
                     try {
-                        parseLiveJson(liveApiUrl, live_cache);
+                   //     parseLiveJson(liveApiUrl, live_cache);
                     } catch (Throwable th) {
                         th.printStackTrace();
                     }
@@ -190,7 +190,7 @@ public class ApiConfig {
                                 public void onSuccess(Response<String> response) {
                                     try {
                                         String json = response.body();
-                               //         parseLiveJson(liveApiUrl, json);
+                                        parseLiveJson(liveApiUrl, json);
                                         FileUtils.saveCache(live_cache,json);
                                     } catch (Throwable th) {
                                         th.printStackTrace();
