@@ -189,6 +189,9 @@ public class ApiConfig {
                                 @Override
                                 public void onSuccess(Response<String> response) {
                                     try {
+												initLiveSettings();
+		liveSettingGroupList.clear();
+		Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
                                         String json = response.body();
                                         parseLiveJson(liveApiUrl, json);
                                         FileUtils.saveCache(live_cache,json);
@@ -641,9 +644,6 @@ public class ApiConfig {
         LOG.i("echo-default-config-----------load");
     }
     private void parseLiveJson(String apiUrl, File f) throws Throwable {
-					initLiveSettings();
-			liveSettingGroupList.clear();
-			Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
         BufferedReader bReader = new BufferedReader(new InputStreamReader(new FileInputStream(f), "UTF-8"));
         StringBuilder sb = new StringBuilder();
         String s = "";
