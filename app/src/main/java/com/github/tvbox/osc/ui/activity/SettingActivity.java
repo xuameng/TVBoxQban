@@ -179,7 +179,7 @@ public class SettingActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        if (currentApi.equals(Hawk.get(HawkConfig.API_URL, "")) || currentLiveApi.equals(Hawk.get(HawkConfig.LIVE_API_URL, "")) {
+        if (currentApi.equals(Hawk.get(HawkConfig.API_URL, "")) || currentLiveApi.equals(Hawk.get(HawkConfig.LIVE_API_URL, ""))) {  //xuameng修复直播API不刷新问题
             if(dnsOpt != Hawk.get(HawkConfig.DOH_URL, 0)){
                 AppManager.getInstance().finishAllActivity();
                 jumpActivity(HomeActivity.class, createBundle());
