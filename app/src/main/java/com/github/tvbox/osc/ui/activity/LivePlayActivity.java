@@ -2482,7 +2482,7 @@ public class LivePlayActivity extends BaseActivity {
             if(Hawk.get(HawkConfig.LIVE_GROUP_INDEX, 0)!=0){
                 Hawk.put(HawkConfig.LIVE_GROUP_INDEX, 0);
                 JsonArray live_groups=Hawk.get(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
-                if(!live_groups.isEmpty()){
+                if(live_groups.size() > 0){
                     JsonObject livesOBJ = live_groups.get(0).getAsJsonObject();
                     ApiConfig.get().loadLiveApi(livesOBJ);
                 }else {
@@ -2609,7 +2609,7 @@ public class LivePlayActivity extends BaseActivity {
     }
     private void initLiveSettingGroupList() {      //xuameng
         JsonArray live_groupsXu=Hawk.get(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
-        if(!live_groupsXu.isEmpty()){
+        if(live_groupsXu.size() > 0){
         liveSettingGroupList=ApiConfig.get().getLiveSettingGroupList();
         liveSettingGroupList.get(3).getLiveSettingItems().get(Hawk.get(HawkConfig.LIVE_CONNECT_TIMEOUT, 1)).setItemSelected(true);
         liveSettingGroupList.get(4).getLiveSettingItems().get(0).setItemSelected(Hawk.get(HawkConfig.LIVE_SHOW_TIME, false));
