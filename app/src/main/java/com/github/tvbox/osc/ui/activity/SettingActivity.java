@@ -184,7 +184,7 @@ public class SettingActivity extends BaseActivity {
                 AppManager.getInstance().finishAllActivity();
                 jumpActivity(HomeActivity.class, createBundle());
             }
-            else if ((homeSourceKey != null && !homeSourceKey.equals(Hawk.get(HawkConfig.HOME_API, "")))  || homeRec != Hawk.get(HawkConfig.HOME_REC, 0))) {
+            else if ((homeSourceKey != null && !homeSourceKey.equals(Hawk.get(HawkConfig.HOME_API, "")))  || homeRec != Hawk.get(HawkConfig.HOME_REC, 0)) {
                 jumpActivity(HomeActivity.class, createBundle());
             }
         } else {
