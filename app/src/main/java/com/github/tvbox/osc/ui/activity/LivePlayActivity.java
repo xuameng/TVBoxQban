@@ -2482,7 +2482,7 @@ public class LivePlayActivity extends BaseActivity {
             if(Hawk.get(HawkConfig.LIVE_GROUP_INDEX, 0)!=0){
                 Hawk.put(HawkConfig.LIVE_GROUP_INDEX, 0);
                 JsonArray live_groups=Hawk.get(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
-                if(!live_groups.isEmpty() && live_groups.size() > 0){
+                if(!live_groups.isEmpty()){
                     JsonObject livesOBJ = live_groups.get(0).getAsJsonObject();
                     ApiConfig.get().loadLiveApi(livesOBJ);
                 }else {
@@ -2614,7 +2614,10 @@ public class LivePlayActivity extends BaseActivity {
         liveSettingGroupList.get(4).getLiveSettingItems().get(1).setItemSelected(Hawk.get(HawkConfig.LIVE_SHOW_NET_SPEED, false));
         liveSettingGroupList.get(4).getLiveSettingItems().get(2).setItemSelected(Hawk.get(HawkConfig.LIVE_CHANNEL_REVERSE, false));
         liveSettingGroupList.get(4).getLiveSettingItems().get(3).setItemSelected(Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false));
+		                JsonArray live_groups=Hawk.get(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
+                if(!live_groups.isEmpty()){
         liveSettingGroupList.get(5).getLiveSettingItems().get(Hawk.get(HawkConfig.LIVE_GROUP_INDEX, 0)).setItemSelected(true);   //xuameng新增 换源
+				}
     }
     private void loadCurrentSourceList() {
         ArrayList < String > currentSourceNames = currentLiveChannelItem.getChannelSourceNames();
