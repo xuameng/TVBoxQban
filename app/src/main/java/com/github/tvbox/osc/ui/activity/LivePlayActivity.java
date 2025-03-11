@@ -888,6 +888,7 @@ public class LivePlayActivity extends BaseActivity {
         divLoadEpgleft.setVisibility(View.VISIBLE);
         divLoadEpg.setVisibility(View.GONE);
         epgListAdapter.getSelectedIndex(); //xuamengEPG打开菜单自动变颜色
+		mHideChannelListRunXu();  //xuameng BUG
     }
     //频道列表
     public void divLoadEpgLeft(View view) {
@@ -895,6 +896,7 @@ public class LivePlayActivity extends BaseActivity {
         divEpg.setVisibility(View.GONE);
         divLoadEpgleft.setVisibility(View.GONE);
         divLoadEpg.setVisibility(View.VISIBLE);
+		mHideChannelListRunXu();
     }
     private void xuexit() { //xuameng双击退出
         if(System.currentTimeMillis() - mExitTime < 2000) {
