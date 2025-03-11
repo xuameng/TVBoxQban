@@ -2608,8 +2608,8 @@ public class LivePlayActivity extends BaseActivity {
         return iv_Play_Xu.getVisibility() == View.VISIBLE;
     }
     private void initLiveSettingGroupList() {      //xuameng
-        JsonArray live_groupsXu=Hawk.get(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
-        if(live_groupsXu.size() > 0){
+        List<LiveChannelGroup> listxu = ApiConfig.get().getChannelGroupList();
+        if (!listxu.isEmpty()) {
         liveSettingGroupList=ApiConfig.get().getLiveSettingGroupList();
         liveSettingGroupList.get(3).getLiveSettingItems().get(Hawk.get(HawkConfig.LIVE_CONNECT_TIMEOUT, 1)).setItemSelected(true);
         liveSettingGroupList.get(4).getLiveSettingItems().get(0).setItemSelected(Hawk.get(HawkConfig.LIVE_SHOW_TIME, false));
