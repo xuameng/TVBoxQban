@@ -179,7 +179,7 @@ public class SettingActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        if (currentApi.equals(Hawk.get(HawkConfig.API_URL, ""))) {  //xuameng修复直播API不刷新问题
+        if (currentApi.equals(Hawk.get(HawkConfig.API_URL, ""))) {  
             if(dnsOpt != Hawk.get(HawkConfig.DOH_URL, 0)){
                 AppManager.getInstance().finishAllActivity();
                 jumpActivity(HomeActivity.class, createBundle());
@@ -187,7 +187,7 @@ public class SettingActivity extends BaseActivity {
             else if ((homeSourceKey != null && !homeSourceKey.equals(Hawk.get(HawkConfig.HOME_API, "")))  || homeRec != Hawk.get(HawkConfig.HOME_REC, 0)) {
                 jumpActivity(HomeActivity.class, createBundle());
             }
-			else if (!currentLiveApi.equals(Hawk.get(HawkConfig.LIVE_API_URL, ""))){
+			else if (!currentLiveApi.equals(Hawk.get(HawkConfig.LIVE_API_URL, ""))){    //xuameng修复直播API不刷新问题
             AppManager.getInstance().finishAllActivity();
             jumpActivity(HomeActivity.class);
 			}
