@@ -455,10 +455,10 @@ public class ApiConfig {
         String live_api_url=Hawk.get(HawkConfig.LIVE_API_URL,"");
         if(live_api_url.isEmpty() || apiUrl.equals(live_api_url)){
             LOG.i("echo-load-config_live");
-            initLiveSettings();
             if(infoJson.has("lives")){
                 JsonArray lives_groups=infoJson.get("lives").getAsJsonArray();
-				if (lives_groups.size() > 1) {  
+				if (lives_groups.size() > 0) {  
+                    initLiveSettings();
                 int live_group_index=Hawk.get(HawkConfig.LIVE_GROUP_INDEX,0);
                 if(live_group_index>lives_groups.size()-1){           //xuameng 重要BUG
 				Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
@@ -503,7 +503,9 @@ public class ApiConfig {
                 JsonObject livesOBJ = lives_groups.get(live_group_index).getAsJsonObject();
                 loadLiveApi(livesOBJ);
 				}
-				}
+				}else{
+				Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
+			}
 			}
 
             myHosts = new HashMap<>();
@@ -643,10 +645,10 @@ public class ApiConfig {
     private void parseLiveJson(String apiUrl, String jsonStr) {
         JsonObject infoJson = gson.fromJson(jsonStr, JsonObject.class);
         // 直播源
-        initLiveSettings();
         if(infoJson.has("lives")){
             JsonArray lives_groups=infoJson.get("lives").getAsJsonArray();
-if (lives_groups.size() > 1) { 
+			if (lives_groups.size() > 0) { 
+			initLiveSettings();
             int live_group_index=Hawk.get(HawkConfig.LIVE_GROUP_INDEX,0);
             if(live_group_index>lives_groups.size()-1)Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
             Hawk.put(HawkConfig.LIVE_GROUP_LIST,lives_groups);
@@ -669,7 +671,9 @@ if (lives_groups.size() > 1) {
 
             JsonObject livesOBJ = lives_groups.get(live_group_index).getAsJsonObject();
             loadLiveApi(livesOBJ);
-}
+			}else{
+				Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
+			}
         }
 
         myHosts = new HashMap<>();
