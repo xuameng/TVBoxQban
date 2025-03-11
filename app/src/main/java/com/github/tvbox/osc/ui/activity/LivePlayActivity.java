@@ -429,7 +429,7 @@ public class LivePlayActivity extends BaseActivity {
         initLiveChannelView();
         initSettingGroupView();
         initSettingItemView();
-        initLiveChannelList();
+    //    initLiveChannelList();
         initLiveSettingGroupList();
 		Hawk.put(HawkConfig.PLAYER_IS_LIVE,true);  //xuameng新增 
         mHandler.post(mUpdateNetSpeedRunXu); //XUAMENG左上网速检测1秒钟一次
