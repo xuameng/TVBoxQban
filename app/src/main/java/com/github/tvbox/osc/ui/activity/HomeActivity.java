@@ -412,8 +412,8 @@ public class HomeActivity extends BaseActivity {
                                         @Override
                                         public void run() {
                                             initData();
-                                         //   dialog.hide();
-						dialog.dismiss();
+                                            //dialog.hide();
+											dialog.dismiss();   //xuameng显示BUG
                                         }
                                     });
                                 }
@@ -426,8 +426,8 @@ public class HomeActivity extends BaseActivity {
                                         @Override
                                         public void run() {
                                             initData();
-                                        //    dialog.hide();
-					 dialog.dismiss();	
+                                            //dialog.hide();
+											dialog.dismiss();  //xuameng显示BUG
                                         }
                                     });
                                 }
@@ -440,16 +440,14 @@ public class HomeActivity extends BaseActivity {
                                         @Override
                                         public void run() {
                                             initData();
-                                         //   dialog.hide();
-						dialog.dismiss();
+                                            //dialog.hide();
+											dialog.dismiss();  //xuameng显示BUG
                                         }
                                     });
                                 }
                             });
-                        if (!dialog.isShowing()){
-			showSuccess();
+                        if (!dialog.isShowing())
                             dialog.show();
-				}
                     }
                 });
             }
