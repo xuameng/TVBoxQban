@@ -504,7 +504,7 @@ public class ApiConfig {
                 loadLiveApi(livesOBJ);
 				}
 				}else{
-				Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
+				Hawk.put(HawkConfig.LIVE_GROUP_LIST,lives_groups);
 			}
 			}
 
@@ -672,7 +672,7 @@ public class ApiConfig {
             JsonObject livesOBJ = lives_groups.get(live_group_index).getAsJsonObject();
             loadLiveApi(livesOBJ);
 			}else{
-				Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
+				Hawk.put(HawkConfig.LIVE_GROUP_LIST,lives_groups);
 			}
         }
 
