@@ -2482,7 +2482,7 @@ public class LivePlayActivity extends BaseActivity {
             if(Hawk.get(HawkConfig.LIVE_GROUP_INDEX, 0)!=0){
                 Hawk.put(HawkConfig.LIVE_GROUP_INDEX, 0);
                 JsonArray live_groups=Hawk.get(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
-                if(!live_groups.isEmpty()){
+                if(!live_groups.isEmpty() && !live_groups.length() == 0){
                     JsonObject livesOBJ = live_groups.get(0).getAsJsonObject();
                     ApiConfig.get().loadLiveApi(livesOBJ);
                 }else {
