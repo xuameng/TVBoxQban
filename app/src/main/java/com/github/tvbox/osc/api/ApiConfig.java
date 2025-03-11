@@ -189,11 +189,8 @@ public class ApiConfig {
                                 @Override
                                 public void onSuccess(Response<String> response) {
                                     try {
-												initLiveSettings();
-		liveSettingGroupList.clear();
-		Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
                                         String json = response.body();
-                                        parseLiveJson(liveApiUrl, json);
+                               //         parseLiveJson(liveApiUrl, json);
                                         FileUtils.saveCache(live_cache,json);
                                     } catch (Throwable th) {
                                         th.printStackTrace();
