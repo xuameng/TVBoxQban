@@ -177,7 +177,7 @@ public class ApiConfig {
                 File live_cache = new File(App.getInstance().getFilesDir().getAbsolutePath() + "/" + MD5.encode(liveApiUrl));
                 if (useCache && live_cache.exists()) {
                     try {
-                    //    parseLiveJson(liveApiUrl, live_cache);
+                        parseLiveJson(liveApiUrl, live_cache);
                     } catch (Throwable th) {
                         th.printStackTrace();
                     }
@@ -641,6 +641,9 @@ public class ApiConfig {
         LOG.i("echo-default-config-----------load");
     }
     private void parseLiveJson(String apiUrl, File f) throws Throwable {
+					initLiveSettings();
+			liveSettingGroupList.clear();
+			Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
         BufferedReader bReader = new BufferedReader(new InputStreamReader(new FileInputStream(f), "UTF-8"));
         StringBuilder sb = new StringBuilder();
         String s = "";
