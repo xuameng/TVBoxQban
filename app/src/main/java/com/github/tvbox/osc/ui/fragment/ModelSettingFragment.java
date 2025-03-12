@@ -773,11 +773,6 @@ public class ModelSettingFragment extends BaseLazyFragment {
 
     @Override
     public void onDestroyView() {
-		if (HawkConfig.ISrestore){
-			DefaultConfig.restartApp();
-			HawkConfig.ISrestore = false;  //xuameng恢复成功,请重启应用
-			return;
-		}
         super.onDestroyView();
         SettingActivity.callback = null;		
     }
