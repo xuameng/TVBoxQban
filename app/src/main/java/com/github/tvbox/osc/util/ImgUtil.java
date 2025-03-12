@@ -42,9 +42,9 @@ public class ImgUtil {
         if (drawableCache.containsKey(text)) {
             return drawableCache.get(text);
         }
-        int width = 2000, height = 200; // 设定图片大小
+        int width = 1500, height = 2000; // 设定图片大小
         int randomColor = getRandomColor();
-        float cornerRadius = AutoSizeUtils.mm2px(App.getInstance(), 5); // 圆角半径
+        float cornerRadius = AutoSizeUtils.mm2px(App.getInstance(), 4); // 圆角半径
 
         Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
