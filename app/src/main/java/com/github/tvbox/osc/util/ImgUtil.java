@@ -42,7 +42,7 @@ public class ImgUtil {
         if (drawableCache.containsKey(text)) {
             return drawableCache.get(text);
         }
-        int width = 150, height = 200; // 设定图片大小
+        int width = 2000, height = 200; // 设定图片大小
         int randomColor = getRandomColor();
         float cornerRadius = AutoSizeUtils.mm2px(App.getInstance(), 5); // 圆角半径
 
@@ -58,7 +58,7 @@ public class ImgUtil {
         paint.setTextSize(50); // 文字大小
         paint.setTextAlign(Paint.Align.CENTER);
         Paint.FontMetrics fontMetrics = paint.getFontMetrics();
-        float x = width;
+        float x = width / 2f;
         float y = (height - fontMetrics.bottom - fontMetrics.top) / 2f;
 
         canvas.drawText(text, x, y, paint);
