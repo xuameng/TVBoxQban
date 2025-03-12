@@ -179,6 +179,10 @@ public class ApiConfig {
                 File live_cache = new File(App.getInstance().getFilesDir().getAbsolutePath() + "/" + MD5.encode(liveApiUrl));
                 if (useCache && live_cache.exists()) {
                     try {
+						initLiveSettings();
+						liveSettingGroupList.clear();
+						Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
+						Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
                         parseLiveJson(liveApiUrl, live_cache);
                     } catch (Throwable th) {
                         th.printStackTrace();
@@ -193,7 +197,7 @@ public class ApiConfig {
                                     try {
                                         String json = response.body();
                                         parseLiveJson(liveApiUrl, json);
-                                        FileUtils.saveCache(live_cache,json);
+                                     //   FileUtils.saveCache(live_cache,json);
                                     } catch (Throwable th) {
                                         th.printStackTrace();
                                         callback.notice("聚汇影视提示您：解析直播配置失败！");
@@ -281,10 +285,10 @@ public class ApiConfig {
                         } catch (Throwable th) {
                             th.printStackTrace();
                             callback.error("聚汇影视提示您：解析配置失败！");
-										initLiveSettings();
-										liveSettingGroupList.clear();
-										Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
-										Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
+							initLiveSettings();
+							liveSettingGroupList.clear();
+							Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
+							Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
                         }
                     }
 
@@ -298,28 +302,28 @@ public class ApiConfig {
                                 return;
                             } catch (Throwable th) {
                                 th.printStackTrace();
-										initLiveSettings();
-										liveSettingGroupList.clear();
-										Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
-										Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
+								initLiveSettings();
+								liveSettingGroupList.clear();
+								Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
+								Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
 
                             }
                         }
                         callback.error("聚汇影视提示您：拉取配置失败！\n" + (response.getException() != null ? response.getException().getMessage() : ""));
-										initLiveSettings();
-										liveSettingGroupList.clear();
-										Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
-										Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
+						initLiveSettings();
+						liveSettingGroupList.clear();
+						Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
+						Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
                     }
 
                     public String convertResponse(okhttp3.Response response) throws Throwable {
                         String result = "";
                         if (response.body() == null) {
                             result = "";
-										initLiveSettings();
-										liveSettingGroupList.clear();
-										Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
-										Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
+							initLiveSettings();
+							liveSettingGroupList.clear();
+							Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
+							Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
                         } else {
                             result = FindResult(response.body().string(), TempKey);
                         }
