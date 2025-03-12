@@ -2484,15 +2484,7 @@ public class LivePlayActivity extends BaseActivity {
             if(Hawk.get(HawkConfig.LIVE_GROUP_INDEX, 0)!=0){
                 Hawk.put(HawkConfig.LIVE_GROUP_INDEX, 0);
 				return;
-			}else {
-                    Toast.makeText(App.getInstance(), "聚汇影视提示您：频道列表为空！", Toast.LENGTH_SHORT).show();
-                    finish();
-                    return;
-                }
-            }else {
-                Toast.makeText(App.getInstance(), "聚汇影视提示您：频道列表为空！", Toast.LENGTH_SHORT).show();
-                finish();
-                return;
+			}
             }
         
 
