@@ -694,7 +694,7 @@ public class HomeActivity extends BaseActivity {
     }
 
     void showSiteSwitch() {
-        List<SourceBean> sites = ApiConfig.get().getSwitchSourceBeanList();
+        List<SourceBean> sites = ApiConfig.get().getSourceBeanList();
         if (sites.size() > 0) {
             SelectDialog<SourceBean> dialog = new SelectDialog<>(HomeActivity.this);
             TvRecyclerView tvRecyclerView = dialog.findViewById(R.id.list);
