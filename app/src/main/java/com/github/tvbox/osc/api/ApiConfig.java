@@ -507,11 +507,13 @@ public class ApiConfig {
 					initLiveSettings();
 					liveSettingGroupList.clear();
 					Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
+					Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
 				}
 			}else{
 				initLiveSettings();
 				liveSettingGroupList.clear();
 				Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
+				Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
 			}
 
             myHosts = new HashMap<>();
@@ -659,58 +661,38 @@ public class ApiConfig {
 				if (lives_groups.size() > 0) { 
 				initLiveSettings();
 				int live_group_index=Hawk.get(HawkConfig.LIVE_GROUP_INDEX,0);
-					if(live_group_index>lives_groups.size()-1){           //xuameng 重要BUG
-						Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
-						Hawk.put(HawkConfig.LIVE_GROUP_LIST,lives_groups);
-				   		//加载多源配置
-						try {
-						ArrayList<LiveSettingItem> liveSettingItemList = new ArrayList<>();
-						for (int i=0; i< lives_groups.size();i++) {
-							JsonObject jsonObject = lives_groups.get(i).getAsJsonObject();
-							String name = jsonObject.has("name")?jsonObject.get("name").getAsString():"线路"+(i+1);
-							LiveSettingItem liveSettingItem = new LiveSettingItem();
-							liveSettingItem.setItemIndex(i);
-							liveSettingItem.setItemName(name);
-							liveSettingItemList.add(liveSettingItem);
-						}
-						liveSettingGroupList.get(5).setLiveSettingItems(liveSettingItemList);
-					} catch (Exception e) {
-						// 捕获任何可能发生的异常
-						e.printStackTrace();
+				if(live_group_index>lives_groups.size()-1)Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
+				Hawk.put(HawkConfig.LIVE_GROUP_LIST,lives_groups);
+				//加载多源配置
+				try {
+					ArrayList<LiveSettingItem> liveSettingItemList = new ArrayList<>();
+					for (int i=0; i< lives_groups.size();i++) {
+						JsonObject jsonObject = lives_groups.get(i).getAsJsonObject();
+						String name = jsonObject.has("name")?jsonObject.get("name").getAsString():"线路"+(i+1);
+						LiveSettingItem liveSettingItem = new LiveSettingItem();
+						liveSettingItem.setItemIndex(i);
+						liveSettingItem.setItemName(name);
+						liveSettingItemList.add(liveSettingItem);
 					}
-					int live_group_index_xu=Hawk.get(HawkConfig.LIVE_GROUP_INDEX,0);
-					JsonObject livesOBJ_xu = lives_groups.get(live_group_index_xu).getAsJsonObject();
-					loadLiveApi(livesOBJ_xu);
-					}else{
-						Hawk.put(HawkConfig.LIVE_GROUP_LIST,lives_groups);
-						//加载多源配置
-					try {
-						ArrayList<LiveSettingItem> liveSettingItemList = new ArrayList<>();
-						for (int i=0; i< lives_groups.size();i++) {
-							JsonObject jsonObject = lives_groups.get(i).getAsJsonObject();
-							String name = jsonObject.has("name")?jsonObject.get("name").getAsString():"线路"+(i+1);
-							LiveSettingItem liveSettingItem = new LiveSettingItem();
-							liveSettingItem.setItemIndex(i);
-							liveSettingItem.setItemName(name);
-							liveSettingItemList.add(liveSettingItem);
-						}
-						liveSettingGroupList.get(5).setLiveSettingItems(liveSettingItemList);
-					} catch (Exception e) {
+					liveSettingGroupList.get(5).setLiveSettingItems(liveSettingItemList);
+				} catch (Exception e) {
 					// 捕获任何可能发生的异常
-						e.printStackTrace();
-					}
-					JsonObject livesOBJ = lives_groups.get(live_group_index).getAsJsonObject();
-					loadLiveApi(livesOBJ);
-					}
+					e.printStackTrace();
+				}
+
+				JsonObject livesOBJ = lives_groups.get(live_group_index).getAsJsonObject();
+				loadLiveApi(livesOBJ);
 				}else{
 					initLiveSettings();
 					liveSettingGroupList.clear();
 					Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
+					Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
 				}
 			}else{
 				initLiveSettings();
 				liveSettingGroupList.clear();
 				Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
+				Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
 		}
 
         myHosts = new HashMap<>();
