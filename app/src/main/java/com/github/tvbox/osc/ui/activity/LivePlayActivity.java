@@ -429,7 +429,7 @@ public class LivePlayActivity extends BaseActivity {
         initLiveChannelView();
         initSettingGroupView();
         initSettingItemView();
-  //      initLiveChannelList();
+        initLiveChannelList();
         initLiveSettingGroupList();
 		Hawk.put(HawkConfig.PLAYER_IS_LIVE,true);  //xuameng新增 
         mHandler.post(mUpdateNetSpeedRunXu); //XUAMENG左上网速检测1秒钟一次
@@ -2483,6 +2483,7 @@ public class LivePlayActivity extends BaseActivity {
         if (list.isEmpty()) {
             if(Hawk.get(HawkConfig.LIVE_GROUP_INDEX, 0)!=0){
                 Hawk.put(HawkConfig.LIVE_GROUP_INDEX, 0);
+			}
                 JsonArray live_groups=Hawk.get(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
                 if(live_groups.size() > 0){
                     JsonObject livesOBJ = live_groups.get(0).getAsJsonObject();
@@ -2497,7 +2498,6 @@ public class LivePlayActivity extends BaseActivity {
                 finish();
                 return;
             }
-        }
 
         if (list.size() == 1 && list.get(0).getGroupName().startsWith("http://127.0.0.1")) {
             loadProxyLives(list.get(0).getGroupName());
