@@ -1807,6 +1807,10 @@ public class VodController extends BaseController {
         return false;
     }
     public void playM3u8(final String url, final HashMap<String, String> headers) {
+        if(url.contains("url=")){
+            listener.startPlayUrl(url, headers);
+            return;
+        }
         OkGo.getInstance().cancelTag("m3u8-1");
         OkGo.getInstance().cancelTag("m3u8-2");
         final HttpHeaders okGoHeaders = new HttpHeaders();
