@@ -2483,6 +2483,7 @@ public class LivePlayActivity extends BaseActivity {
         if (list.isEmpty()) {
             if(Hawk.get(HawkConfig.LIVE_GROUP_INDEX, 0)!=0){
                 Hawk.put(HawkConfig.LIVE_GROUP_INDEX, 0);
+				return;
                 JsonArray live_groups=Hawk.get(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
                 if(live_groups.size() > 0){
                     JsonObject livesOBJ = live_groups.get(0).getAsJsonObject();
