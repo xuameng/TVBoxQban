@@ -699,8 +699,9 @@ public class ApiConfig {
 					// 捕获任何可能发生的异常
 						e.printStackTrace();
 					}
-				JsonObject livesOBJ = lives_groups.get(live_group_index).getAsJsonObject();
-				loadLiveApi(livesOBJ);
+					JsonObject livesOBJ = lives_groups.get(live_group_index).getAsJsonObject();
+					loadLiveApi(livesOBJ);
+					}
 				}else{
 					initLiveSettings();
 					liveSettingGroupList.clear();
