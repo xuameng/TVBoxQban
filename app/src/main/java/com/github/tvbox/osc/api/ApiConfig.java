@@ -485,7 +485,6 @@ public class ApiConfig {
             if(infoJson.has("lives")){
                 JsonArray lives_groups=infoJson.get("lives").getAsJsonArray();
 				if (lives_groups.size() > 0) {  
-                    initLiveSettings();
 					int live_group_index=Hawk.get(HawkConfig.LIVE_GROUP_INDEX,0);
 					if(live_group_index>lives_groups.size()-1){           //xuameng 重要BUG
 						Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
@@ -530,17 +529,7 @@ public class ApiConfig {
 					JsonObject livesOBJ = lives_groups.get(live_group_index).getAsJsonObject();
 					loadLiveApi(livesOBJ);
 					}
-				}else{
-					initLiveSettings();
-					liveSettingGroupList.clear();
-					Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
-					Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
 				}
-			}else{
-				initLiveSettings();
-				liveSettingGroupList.clear();
-				Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
-				Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
 			}
 
             myHosts = new HashMap<>();
@@ -686,7 +675,6 @@ public class ApiConfig {
         if(infoJson.has("lives")){
             JsonArray lives_groups=infoJson.get("lives").getAsJsonArray();
 				if (lives_groups.size() > 0) { 
-				initLiveSettings();
 				int live_group_index=Hawk.get(HawkConfig.LIVE_GROUP_INDEX,0);
 					if(live_group_index>lives_groups.size()-1){           //xuameng 重要BUG
 						Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
@@ -731,18 +719,8 @@ public class ApiConfig {
 					JsonObject livesOBJ = lives_groups.get(live_group_index).getAsJsonObject();
 					loadLiveApi(livesOBJ);
 					}
-				}else{
-					initLiveSettings();
-					liveSettingGroupList.clear();
-					Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
-					Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
 				}
-			}else{
-				initLiveSettings();
-				liveSettingGroupList.clear();
-				Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
-				Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
-		}
+			}
 
         myHosts = new HashMap<>();
         if (infoJson.has("hosts")) {
