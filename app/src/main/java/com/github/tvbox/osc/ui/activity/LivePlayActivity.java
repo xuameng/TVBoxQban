@@ -1300,7 +1300,7 @@ public class LivePlayActivity extends BaseActivity {
             liveChannelItemAdapter.setNewData(getLiveChannels(currentChannelGroupIndex));
             if(currentLiveChannelIndex > -1) mLiveChannelView.scrollToPosition(currentLiveChannelIndex); //xuameng先滚动再选择防止空指针
             mChannelGroupView.scrollToPosition(currentChannelGroupIndex); //xuameng先滚动再选择防止空指针
-            mChannelGroupView.setSelection(currentChannelGroupIndex); //xuameng先滚动再选择防止空指针
+      //      mChannelGroupView.setSelection(currentChannelGroupIndex); //xuameng先滚动再选择防止空指针
      //       mLiveChannelView.setSelection(currentLiveChannelIndex); //xuameng先滚动再选择防止空指针
             if(countDownTimer10 != null) {
                 countDownTimer10.cancel();
@@ -1356,6 +1356,8 @@ public class LivePlayActivity extends BaseActivity {
         epgListAdapter.getSelectedIndex(); //xuamengEPG打开菜单自动变颜色 
         liveChannelGroupAdapter.setSelectedGroupIndex(currentChannelGroupIndex);
         liveChannelItemAdapter.setSelectedChannelIndex(currentLiveChannelIndex);
+		mChannelGroupView.setSelection(currentChannelGroupIndex); //xuameng先滚动再选择防止空指针
+		mLiveChannelView.setSelection(currentLiveChannelIndex); //xuameng先滚动再选择防止空指针
         RecyclerView.ViewHolder holder = mLiveChannelView.findViewHolderForAdapterPosition(currentLiveChannelIndex);
         if(holder != null) holder.itemView.requestFocus();
         tvLeftChannelListLayout.setVisibility(View.VISIBLE);
