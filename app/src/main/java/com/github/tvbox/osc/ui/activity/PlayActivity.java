@@ -628,7 +628,7 @@ public class PlayActivity extends BaseActivity {
 			}
             //默认选中第一个音轨 一般第一个音轨是国语
             if (trackInfo != null && trackInfo.getAudio().size() > 1) {
-                int firsIndex=trackInfo.getAudio().get(0).index;
+                int firsIndex=trackInfo.getAudio().get(0).trackId;
                 ((IjkMediaPlayer)(mVideoView.getMediaPlayer())).setTrack(firsIndex);
             }
             ((IjkMediaPlayer)(mVideoView.getMediaPlayer())).setOnTimedTextListener(new IMediaPlayer.OnTimedTextListener() {
