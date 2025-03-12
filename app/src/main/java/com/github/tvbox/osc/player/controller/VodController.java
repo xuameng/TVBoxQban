@@ -368,7 +368,7 @@ public class VodController extends BaseController {
 				mHandler.postDelayed(this, 15000);
 				return;
 				}
-			if (!ApiConfig.get().wallpaper.isEmpty()){
+			else if (!ApiConfig.get().wallpaper.isEmpty()){
 				String Url = ApiConfig.get().wallpaper;
 				Picasso.get()
 				.load(Url)
