@@ -9,6 +9,7 @@ import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.Base64;
+import android.view.ViewGroup;
 
 import com.github.tvbox.osc.base.App;
 
@@ -42,7 +43,7 @@ public class ImgUtil {
         if (drawableCache.containsKey(text)) {
             return drawableCache.get(text);
         }
-        int width = 800, height = 200; // 设定图片大小
+        int width = ViewGroup.LayoutParams.WRAP_CONTENT, height = ViewGroup.LayoutParams.WRAP_CONTENT; // 设定图片大小
         int randomColor = getRandomColor();
         float cornerRadius = AutoSizeUtils.mm2px(App.getInstance(), 7); // 圆角半径
 
