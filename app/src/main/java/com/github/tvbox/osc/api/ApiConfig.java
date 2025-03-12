@@ -197,10 +197,6 @@ public class ApiConfig {
                                     } catch (Throwable th) {
                                         th.printStackTrace();
                                         callback.notice("聚汇影视提示您：解析直播配置失败！");
-										initLiveSettings();
-										liveSettingGroupList.clear();
-										Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
-										Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
                                     }
                                 }
 
@@ -214,17 +210,9 @@ public class ApiConfig {
                                             return;
                                         } catch (Throwable th) {
                                             th.printStackTrace();
-											initLiveSettings();
-											liveSettingGroupList.clear();
-											Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
-											Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
                                         }
                                     }
                                     callback.notice("聚汇影视提示您：直播配置拉取失败！");
-									initLiveSettings();
-									liveSettingGroupList.clear();
-									Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
-									Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
 									//Hawk.put(HawkConfig.LIVE_API_URL, "");
 									//Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
                                 }
@@ -233,10 +221,6 @@ public class ApiConfig {
                                     String result = "";
                                     if (response.body() == null) {
                                         result = "";
-										initLiveSettings();
-										liveSettingGroupList.clear();
-										Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
-										Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
                                     }else {
                                         result = FindResult(response.body().string(), TempKey);
                                         if (liveApiUrl.startsWith("clan")) {
@@ -281,10 +265,6 @@ public class ApiConfig {
                         } catch (Throwable th) {
                             th.printStackTrace();
                             callback.error("聚汇影视提示您：解析配置失败！");
-							initLiveSettings();
-							liveSettingGroupList.clear();
-							Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
-							Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
                         }
                     }
 
@@ -298,28 +278,15 @@ public class ApiConfig {
                                 return;
                             } catch (Throwable th) {
                                 th.printStackTrace();
-								initLiveSettings();
-								liveSettingGroupList.clear();
-								Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
-								Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
-
                             }
                         }
                         callback.error("聚汇影视提示您：拉取配置失败！\n" + (response.getException() != null ? response.getException().getMessage() : ""));
-						initLiveSettings();
-						liveSettingGroupList.clear();
-						Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
-						Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
                     }
 
                     public String convertResponse(okhttp3.Response response) throws Throwable {
                         String result = "";
                         if (response.body() == null) {
                             result = "";
-							initLiveSettings();
-							liveSettingGroupList.clear();
-							Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
-							Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
                         } else {
                             result = FindResult(response.body().string(), TempKey);
                         }
@@ -1000,6 +967,16 @@ public class ApiConfig {
 
     public List<SourceBean> getSourceBeanList() {
         return new ArrayList<>(sourceBeanList.values());
+    }
+
+    public List<SourceBean> getSwitchSourceBeanList() {
+        List<SourceBean> filteredList = new ArrayList<>();
+        for (SourceBean bean : sourceBeanList.values()) {
+            if (bean.getFilterable() == 1) {
+                filteredList.add(bean);
+            }
+        }
+        return filteredList;
     }
 
     public List<ParseBean> getParseBeanList() {
