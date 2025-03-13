@@ -205,7 +205,7 @@ public class ApiConfig {
                                     super.onError(response);
                                     if (live_cache.exists()) {
                                         try {
-                                            parseLiveJson(liveApiUrl, live_cache);
+                                  //          parseLiveJson(liveApiUrl, live_cache);
                                             callback.success();
                                             return;
                                         } catch (Throwable th) {
