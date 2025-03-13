@@ -212,7 +212,7 @@ public class ApiConfig {
                                             th.printStackTrace();
                                         }
                                     }
-                                    callback.notice("聚汇影视提示您：直播配置拉取失败！");
+                               //     callback.notice("聚汇影视提示您：直播配置拉取失败！");
 									//Hawk.put(HawkConfig.LIVE_API_URL, "");
 									//Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
                                 }
