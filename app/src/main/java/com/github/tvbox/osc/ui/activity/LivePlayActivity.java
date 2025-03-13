@@ -911,6 +911,7 @@ public class LivePlayActivity extends BaseActivity {
             mHandler.removeCallbacks(mUpdateTimeRunXu);
 			iv_circle_bg_xu.setVisibility(View.GONE);  //xuameng音乐播放时图标
 			MxuamengMusic.setVisibility(View.GONE);  //xuameng播放音乐背景
+			finish();
             super.onBackPressed();
         } else {
             mExitTime = System.currentTimeMillis();
@@ -3130,14 +3131,14 @@ public class LivePlayActivity extends BaseActivity {
                 return false;
             }
         });
-		if(mVideoView == null) return;
-        if(mVideoView.isPlaying()) {
-            iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
-        }
         if(countDownTimer != null) {
             countDownTimer.cancel();
         }
         countDownTimer.start();
+		if(mVideoView == null) return;
+        if(mVideoView.isPlaying()) {
+            iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
+        }
     }
     private boolean simSlideStart = false;
     private int simSeekPosition = 0;
@@ -3166,7 +3167,6 @@ public class LivePlayActivity extends BaseActivity {
                 mVideoView.seekTo(simSeekPosition);
             }
         }
-		if(mVideoView == null) return;
         if(!mVideoView.isPlaying())
             //xuameng快进暂停就暂停测试    mVideoView.start();  如果想暂停时快进自动播放取消注销
             simSlideStart = false;
