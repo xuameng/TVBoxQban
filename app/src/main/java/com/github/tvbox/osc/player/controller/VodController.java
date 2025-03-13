@@ -27,6 +27,7 @@ import java.net.MalformedURLException; //xuameng新增广告过滤
 import java.net.URL;  //xuameng新增广告过滤
 import java.util.HashMap; //xuameng新增广告过滤
 import java.util.Map; //xuameng新增广告过滤
+import org.json.JSONArray;   //xuameng  b站
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -1928,5 +1929,20 @@ public class VodController extends BaseController {
             LOG.e("echo-resolveForwardUrl异常: " + e.getMessage());
             return line;
         }
+    }
+    public String firstUrlByArray(String url)      //xuameng B站
+    {
+        try {
+            JSONArray urlArray = new JSONArray(url);
+            for (int i = 0; i < urlArray.length(); i++) {
+                String item = urlArray.getString(i);
+                if (item.contains("http")) {
+                    url = item;
+                    break; // 找到第一个立即终止循环
+                }
+            }
+        } catch (JSONException e) {
+        }
+        return url;
     }
 }
