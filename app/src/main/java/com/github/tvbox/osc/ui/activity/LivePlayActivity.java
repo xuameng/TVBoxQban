@@ -911,7 +911,9 @@ public class LivePlayActivity extends BaseActivity {
             mHandler.removeCallbacks(mUpdateTimeRunXu);
 			iv_circle_bg_xu.setVisibility(View.GONE);  //xuameng音乐播放时图标
 			MxuamengMusic.setVisibility(View.GONE);  //xuameng播放音乐背景
+			if (mHandler != null) {
 			mHandler.removeCallbacksAndMessages(null);
+			}
             super.onBackPressed();
         } else {
             mExitTime = System.currentTimeMillis();
