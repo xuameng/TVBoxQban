@@ -205,13 +205,17 @@ public class ApiConfig {
                                     super.onError(response);
                                     if (live_cache.exists()) {
                                         try {
-                                  //          parseLiveJson(liveApiUrl, live_cache);
+                                            parseLiveJson(liveApiUrl, live_cache);
                                             callback.success();
                                             return;
                                         } catch (Throwable th) {
                                             th.printStackTrace();
                                         }
                                     }
+									Throwable ex = response.getException();
+									if (ex instanceof SocketTimeoutException) {
+                callback.notice("聚汇影视提示您：直播配置拉取失败！");
+            }
                                     callback.notice("聚汇影视提示您：直播配置拉取失败！");
 									//Hawk.put(HawkConfig.LIVE_API_URL, "");
 									//Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
