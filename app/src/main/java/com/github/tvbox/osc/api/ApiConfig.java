@@ -173,7 +173,7 @@ public class ApiConfig {
         if(!liveApiUrl.isEmpty() && !liveApiUrl.equals(apiUrl)){
             if(liveApiUrl.contains(".txt") || liveApiUrl.contains(".m3u") || liveApiUrl.contains("=txt") || liveApiUrl.contains("=m3u")){
                 initLiveSettings();
-                defaultLiveObjString = defaultLiveObjString.replace("汇聚直播",liveApiConfigUrl);
+                defaultLiveObjString = defaultLiveObjString.replace("txt_m3u_url",liveApiConfigUrl);
                 parseLiveJson(liveApiUrl,defaultLiveObjString);
             }else {
                 File live_cache = new File(App.getInstance().getFilesDir().getAbsolutePath() + "/" + MD5.encode(liveApiUrl));
@@ -967,6 +967,16 @@ public class ApiConfig {
 
     public List<SourceBean> getSourceBeanList() {
         return new ArrayList<>(sourceBeanList.values());
+    }
+
+    public List<SourceBean> getSwitchSourceBeanList() {
+        List<SourceBean> filteredList = new ArrayList<>();
+        for (SourceBean bean : sourceBeanList.values()) {
+            if (bean.getFilterable() == 1) {
+                filteredList.add(bean);
+            }
+        }
+        return filteredList;
     }
 
     public List<ParseBean> getParseBeanList() {
