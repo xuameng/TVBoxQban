@@ -404,7 +404,6 @@ public class ApiConfig {
     }
 
     private void parseJson(String apiUrl, String jsonStr) {
-		LOG.i("echo-parseJson"+jsonStr);
         JsonObject infoJson = gson.fromJson(jsonStr, JsonObject.class);
         // spider
         spider = DefaultConfig.safeJsonString(infoJson, "spider", "");
