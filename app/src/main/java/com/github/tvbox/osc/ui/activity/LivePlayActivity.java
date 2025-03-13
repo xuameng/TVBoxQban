@@ -914,7 +914,7 @@ public class LivePlayActivity extends BaseActivity {
 			if (mHandler != null) {
 			mHandler.removeCallbacksAndMessages(null);
 			}
-			OkGo.getInstance().cancelTag(this);
+			OkGo.getInstance().cancelTag("xuameng");
             super.onBackPressed();
         } else {
             mExitTime = System.currentTimeMillis();
@@ -1289,6 +1289,7 @@ public class LivePlayActivity extends BaseActivity {
             mVideoView.release();
             mVideoView = null;
         }
+		OkGo.getInstance().cancelTag("xuameng);
     }
     private void showChannelList() {
 		if(liveChannelGroupList.isEmpty()) return;  //xuameng新增
@@ -2521,7 +2522,7 @@ public class LivePlayActivity extends BaseActivity {
         showLoading();
 
         LOG.i("echo-live-url:"+url);
-        OkGo.<String>get(url).execute(new AbsCallback<String>() {
+        OkGo.<String>get(url).tag("xuameng").execute(new AbsCallback<String>() {
 
             @Override
             public String convertResponse(okhttp3.Response response) throws Throwable {
