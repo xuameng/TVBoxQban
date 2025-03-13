@@ -247,7 +247,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
                     SelectDialog<SourceBean> dialog = new SelectDialog<>(mActivity);
 					TvRecyclerView tvRecyclerView = dialog.findViewById(R.id.list);  //xuameng首页数据源显示优化
 					int spanCount;
-					spanCount = (int)Math.floor(sites.size()/60);
+					spanCount = (int)Math.floor(sites.size()/20);
 					spanCount = Math.min(spanCount, 2);
 					tvRecyclerView.setLayoutManager(new V7GridLayoutManager(dialog.getContext(), spanCount+1));
 					ConstraintLayout cl_root = dialog.findViewById(R.id.cl_root);
