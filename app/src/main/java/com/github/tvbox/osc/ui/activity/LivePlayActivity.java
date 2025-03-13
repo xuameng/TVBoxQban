@@ -914,6 +914,7 @@ public class LivePlayActivity extends BaseActivity {
 			if (mHandler != null) {
 			mHandler.removeCallbacksAndMessages(null);
 			}
+			OkGo.getInstance().cancelTag(this);
             super.onBackPressed();
         } else {
             mExitTime = System.currentTimeMillis();
