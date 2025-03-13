@@ -1289,7 +1289,7 @@ public class LivePlayActivity extends BaseActivity {
             mVideoView.release();
             mVideoView = null;
         }
-		OkGo.getInstance().cancelTag("xuameng);
+		OkGo.getInstance().cancelTag("xuameng");
     }
     private void showChannelList() {
 		if(liveChannelGroupList.isEmpty()) return;  //xuameng新增
