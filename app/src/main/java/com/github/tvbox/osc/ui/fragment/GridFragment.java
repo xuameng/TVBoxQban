@@ -215,9 +215,13 @@ public class GridFragment extends BaseLazyFragment {
                     bundle.putString("id", video.id);
                     bundle.putString("sourceKey", video.sourceKey);
                     bundle.putString("title", video.name);
-                    if(("12".indexOf(getUITag()) != -1) && (video.tag.equals("folder") || video.tag.equals("cover"))){
+                    if( video.tag !=null && (video.tag.equals("folder") || video.tag.equals("cover"))){
                         focusedView = view;
-                        changeView(video.id,video.tag.equals("folder"));
+                        if(("12".indexOf(getUITag()) != -1)){
+                            changeView(video.id,video.tag.equals("folder"));
+                        }else {
+                            changeView(video.id,false);
+                        }
                     }
                     else{
                         if(video.id == null || video.id.isEmpty() || video.id.startsWith("msearch:")){
@@ -268,8 +272,15 @@ public class GridFragment extends BaseLazyFragment {
                         gridAdapter.addData(absXml.movie.videoList);
                     }
                     page++;
-                    gridAdapter.loadMoreComplete();
-                    gridAdapter.setEnableLoadMore(true);
+                    maxPage = absXml.movie.pagecount;
+                    if (maxPage>0 && page > maxPage) {
+                        gridAdapter.loadMoreEnd();
+                        gridAdapter.setEnableLoadMore(false);
+                        if(page>2)Toast.makeText(getContext(), "没有更多了", Toast.LENGTH_SHORT).show();
+                    }else {
+                        gridAdapter.loadMoreComplete();
+                        gridAdapter.setEnableLoadMore(true);
+                    }
                 } else {
                     if (page == 1) {
                         showEmpty();
