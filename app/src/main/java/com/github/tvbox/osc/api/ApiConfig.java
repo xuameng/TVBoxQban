@@ -173,7 +173,7 @@ public class ApiConfig {
         if(!liveApiUrl.isEmpty() && !liveApiUrl.equals(apiUrl)){
             if(liveApiUrl.contains(".txt") || liveApiUrl.contains(".m3u") || liveApiUrl.contains("=txt") || liveApiUrl.contains("=m3u")){
                 initLiveSettings();
-                defaultLiveObjString = defaultLiveObjString.replace("txt_m3u_url",liveApiConfigUrl);
+                defaultLiveObjString = defaultLiveObjString.replace("汇聚直播",liveApiConfigUrl);
                 parseLiveJson(liveApiUrl,defaultLiveObjString);
             }else {
                 File live_cache = new File(App.getInstance().getFilesDir().getAbsolutePath() + "/" + MD5.encode(liveApiUrl));
