@@ -524,7 +524,7 @@ public class SearchActivity extends BaseActivity {
                     }
                 });
     }
-	private static ArrayList<String> hots;
+
     private void initData() {
         initCheckedSourcesForSearch();
         Intent intent = getIntent();
@@ -543,9 +543,8 @@ public class SearchActivity extends BaseActivity {
                 search(title);
             }
         }
-
         // 加载热词
-        if(hots!=null && !hots.isEmpty()){
+        if (hots.size() != 0) {
             wordAdapter.setNewData(hots);
             return;
         }
@@ -558,7 +557,7 @@ public class SearchActivity extends BaseActivity {
                     @Override
                     public void onSuccess(Response<String> response) {
                         try {
-                            hots = new ArrayList<String>();
+                            ArrayList<String> hots = new ArrayList<>();
                             JsonArray itemList = JsonParser.parseString(response.body()).getAsJsonObject().get("data").getAsJsonObject().get("mapResult").getAsJsonObject().get("0").getAsJsonObject().get("listInfo").getAsJsonArray();
 //                            JsonArray itemList = JsonParser.parseString(response.body()).getAsJsonObject().get("data").getAsJsonArray();
                             for (JsonElement ele : itemList) {
@@ -781,7 +780,7 @@ public class SearchActivity extends BaseActivity {
                     @Override
                     public void onSuccess(Response<String> response) {
                         try {
-                            hots = new ArrayList<String>();
+                            ArrayList<String> hots = new ArrayList<>();
                             JsonArray itemList = JsonParser.parseString(response.body()).getAsJsonObject().get("data").getAsJsonObject().get("mapResult").getAsJsonObject().get("0").getAsJsonObject().get("listInfo").getAsJsonArray();
 //                            JsonArray itemList = JsonParser.parseString(response.body()).getAsJsonObject().get("data").getAsJsonArray();
                             for (JsonElement ele : itemList) {
