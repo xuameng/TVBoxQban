@@ -212,7 +212,7 @@ public class ApiConfig {
                                             th.printStackTrace();
                                         }
                                     }
-                                    callback.notice("聚汇影视提示您：直播配置拉取失败！");
+                                    callback.error("聚汇影视提示您：直播配置拉取失败！");
 									//Hawk.put(HawkConfig.LIVE_API_URL, "");
 									//Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
                                 }
@@ -404,6 +404,7 @@ public class ApiConfig {
     }
 
     private void parseJson(String apiUrl, String jsonStr) {
+		LOG.i("echo-parseJson"+jsonStr);
         JsonObject infoJson = gson.fromJson(jsonStr, JsonObject.class);
         // spider
         spider = DefaultConfig.safeJsonString(infoJson, "spider", "");
