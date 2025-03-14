@@ -96,7 +96,7 @@ public class SearchCheckboxDialog extends BaseDialog{
             @Override
             public void onClick(View view) {
                 FastClickCheckUtil.check(view);    
-				mCheckSourcees = new HashMap<>()
+				mCheckSourcees = new HashMap<>();
                 for (SourceBean sourceBean : mSourceList) {
                 	if (!mCheckSourcees.containsKey(sourceBean.getKey())) {
                         mCheckSourcees.put(sourceBean.getKey(), "1");
