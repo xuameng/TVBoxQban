@@ -187,6 +187,8 @@ public class ApiConfig {
                     OkGo.<String>get(liveApiConfigUrl)
                             .headers("User-Agent", userAgent)
                             .headers("Accept", requestAccept)
+						    .setConnectTimeout(5_000) // 超时设置
+							//.setRetryCount(2); // 重试次数
                             .execute(new AbsCallback<String>() {
                                 @Override
                                 public void onSuccess(Response<String> response) {
