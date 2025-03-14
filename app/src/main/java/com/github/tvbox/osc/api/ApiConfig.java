@@ -185,8 +185,6 @@ public class ApiConfig {
                     }
                 }else {
                     OkGo.<String>get(liveApiConfigUrl)
-						.timeout(5000)  
-.retryCount(2)
                             .headers("User-Agent", userAgent)
                             .headers("Accept", requestAccept)
                             .execute(new AbsCallback<String>() {
