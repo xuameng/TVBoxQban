@@ -370,8 +370,7 @@ public class FastSearchActivity extends BaseActivity {
 			allRunCount.incrementAndGet();
 		}
 		if (siteKey.size() <= 0) {
-			Toast.makeText(FastSearchActivity.this, "没有指定搜索源", Toast.LENGTH_SHORT).show();
-			fenci();
+			Toast.makeText(FastSearchActivity.this, "聚汇影视提示：请指定搜索源！", Toast.LENGTH_SHORT).show();
 			showSuccess();
 			return;
 		}    //xuameng修复不选择搜索源还进行搜索，还显示搜索动画完 
