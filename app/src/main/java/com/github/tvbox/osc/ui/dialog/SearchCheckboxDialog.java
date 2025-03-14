@@ -106,20 +106,7 @@ public class SearchCheckboxDialog extends BaseDialog{
             }
         });
 
-        checkAll.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FastClickCheckUtil.check(view);
-                mCheckSourcees = new HashMap<>();
-
-                for(SourceBean sourceBean : mSourceList) {
-                    mCheckSourcees.put(sourceBean.getKey(), "1");
-                }
-                checkboxSearchAdapter.setData(mSourceList, mCheckSourcees);
-            }
-        });
-
-	        clearAll.setOnClickListener(new View.OnClickListener() {
+	    clearAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 FastClickCheckUtil.check(view);
@@ -128,6 +115,7 @@ public class SearchCheckboxDialog extends BaseDialog{
             }
         });
     }
+
     public void setMSourceList(List<SourceBean> SourceBeanList) {
         mSourceList = SourceBeanList;
         checkboxSearchAdapter.setData(mSourceList, mCheckSourcees);
