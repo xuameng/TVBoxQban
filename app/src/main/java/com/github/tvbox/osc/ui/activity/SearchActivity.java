@@ -402,14 +402,16 @@ public class SearchActivity extends BaseActivity {
         tvSearchCheckboxBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-				List<SourceBean> searchAbleSource = ApiConfig.get().getSearchSourceBeanList();
                 if (mSearchCheckboxDialog == null) {
-                    mSearchCheckboxDialog = new SearchCheckboxDialog(SearchActivity.this, searchAbleSource, mCheckSources);
-                }else {
-                    if(searchAbleSource.size()!=mSearchCheckboxDialog.mSourceList.size()){
-                        mSearchCheckboxDialog.setMSourceList(searchAbleSource);
+                    List<SourceBean> allSourceBean = ApiConfig.get().getSourceBeanList();
+                    List<SourceBean> searchAbleSource = new ArrayList<>();
+                    for(SourceBean sourceBean : allSourceBean) {
+                        if (sourceBean.isSearchable()) {
+                            searchAbleSource.add(sourceBean);
+                        }
                     }
-				}
+                    mSearchCheckboxDialog = new SearchCheckboxDialog(SearchActivity.this, searchAbleSource, mCheckSources);
+                }
                 mSearchCheckboxDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                     @Override
                     public void onDismiss(DialogInterface dialog) {
