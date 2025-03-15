@@ -95,6 +95,7 @@ public class GridAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder> {
         helper.setText(R.id.tvName, item.name);
         helper.setText(R.id.tvActor, item.actor);
         ImageView ivThumb = helper.getView(R.id.ivThumb);
+		ivThumb.setScaleType(ImageView.ScaleType.FIT_XY); 
         //由于部分电视机使用glide报错
         if (!TextUtils.isEmpty(item.pic)) {
             item.pic=item.pic.trim();
@@ -114,8 +115,8 @@ public class GridAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder> {
                         .into(ivThumb);
             }
         } else {
-            //ivThumb.setImageResource(R.drawable.img_loading_placeholder);
-			ivThumb.setImageDrawable(ImgUtil.createTextDrawable(item.name));
+            ivThumb.setImageResource(R.drawable.img_loading_placeholder);
+			//ivThumb.setImageDrawable(ImgUtil.createTextDrawable(item.name));
         }
     }
 }
