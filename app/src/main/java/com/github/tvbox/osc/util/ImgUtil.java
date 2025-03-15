@@ -54,9 +54,8 @@ public class ImgUtil {
         paint.setStyle(Paint.Style.FILL);
         RectF rectF = new RectF(0, 0, width, height);
         canvas.drawRoundRect(rectF, cornerRadius, cornerRadius, paint);
-Rect srcRect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight()); // 源区域为整个图像
-RectF dstRectF = new RectF(0, 0, targetWidth, targetHeight);          // 目标区域为 RectF
-canvas.drawBitmap(bitmap, srcRect, dstRectF, null);
+
+canvas.drawBitmap(bitmap, null, rectF, null);
         paint.setColor(Color.WHITE); // 文字颜色
         paint.setTextSize(50); // 文字大小
         paint.setTextAlign(Paint.Align.CENTER);
