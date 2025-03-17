@@ -2273,7 +2273,7 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
                 if(position < 0) return;
-				if(position >= liveChannelGroupList.size()) position = 0;
+				if position >= getLiveChannels(channelGroupIndex).size()) position = 0;
                 liveChannelGroupAdapter.setFocusedGroupIndex(-1);
                 liveChannelItemAdapter.setFocusedChannelIndex(position);
                 liveChannelItemAdapter.setSelectedChannelIndex(position);
