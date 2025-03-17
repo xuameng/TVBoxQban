@@ -321,7 +321,10 @@ public class HomeActivity extends BaseActivity {
                             public void run() {
                                 if (!useCacheConfig) {
                                     if (Hawk.get(HawkConfig.HOME_DEFAULT_SHOW, false)) {         //xuameng直接进入直播
-                                        jumpActivity(LivePlayActivity.class);
+										if (!HawkConfig.LIVEerror){      //xuameng防止直播源全部用问题
+											jumpActivity(LivePlayActivity.class);
+											HawkConfig.LIVEerror = false;
+										}
                                    }
 									if (!ApiConfig.get().warningText.isEmpty()){
 										String warningText = ApiConfig.get().warningText;
