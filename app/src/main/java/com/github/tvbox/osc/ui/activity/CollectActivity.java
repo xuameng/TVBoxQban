@@ -19,6 +19,7 @@ import com.github.tvbox.osc.ui.adapter.CollectAdapter;
 import com.github.tvbox.osc.ui.dialog.ConfirmClearDialog;
 import com.github.tvbox.osc.util.FastClickCheckUtil;
 import com.github.tvbox.osc.util.HawkConfig;
+import com.github.tvbox.osc.bean.SourceBean;
 import com.orhanobut.hawk.Hawk;
 import com.orhanobut.hawk.Hawk;
 import com.owen.tvrecyclerview.widget.TvRecyclerView;
@@ -118,7 +119,7 @@ public class CollectActivity extends BaseActivity {
                         RoomDataManger.deleteVodCollect(vodInfo.getId());
                     } else {
                         Bundle bundle = new Bundle();
-                        bundle.putString("id", vodInfo.id);
+                        bundle.putString("id", vodInfo.vodId);
                         bundle.putString("sourceKey", vodInfo.sourceKey);
                         SourceBean sourceBean = ApiConfig.get().getSource(vodInfo.sourceKey);
                         if(sourceBean!=null){
