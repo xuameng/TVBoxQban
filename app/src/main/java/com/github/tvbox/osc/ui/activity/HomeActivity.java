@@ -23,6 +23,7 @@ import android.graphics.Color;                          //xuameng获取颜色值
 import android.util.TypedValue;              //xuameng TypedValue依赖
 import android.view.LayoutInflater;			//xuameng LayoutInflater依赖
 import androidx.recyclerview.widget.RecyclerView;  //xuameng主页默认焦点
+import java.util.Objects;   //xuameng主页默认焦点
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
