@@ -2544,19 +2544,20 @@ public class LivePlayActivity extends BaseActivity {
 							@Override
 							public void run() {
 								jumpActivity(HomeActivity.class);
-								return;
 							}
 						});
+						return;
 					}else{
 						Toast.makeText(App.getInstance(), "聚汇影视提示您：频道列表为空！", Toast.LENGTH_SHORT).show();
 						mHandler.post(new Runnable() {
 						@Override
 							public void run() {
 								jumpActivity(HomeActivity.class);
-								return;
 							}
 						});
+						return;
 					}
+					return;
                 }
 
                 liveChannelGroupList.clear();
