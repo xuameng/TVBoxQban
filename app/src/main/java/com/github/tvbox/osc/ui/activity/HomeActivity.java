@@ -22,6 +22,7 @@ import android.widget.ImageView;						//xuameng
 import android.graphics.Color;                          //xuameng获取颜色值
 import android.util.TypedValue;              //xuameng TypedValue依赖
 import android.view.LayoutInflater;			//xuameng LayoutInflater依赖
+import androidx.recyclerview.widget.RecyclerView;  //xuameng主页默认焦点
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -140,6 +141,19 @@ public class HomeActivity extends BaseActivity {
         this.mGridView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 0, false));
         this.mGridView.setSpacingWithMargins(0, AutoSizeUtils.dp2px(this.mContext, 10.0f));
         this.mGridView.setAdapter(this.sortAdapter);
+        this.mGridView.setAdapter(this.sortAdapter);
+        sortAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {     //xuameng主页默认焦点
+            @Override
+            public void onChanged() {
+                mGridView.post(() -> {
+                    View firstChild = Objects.requireNonNull(mGridView.getLayoutManager()).findViewByPosition(0);
+                    if (firstChild != null) {
+                        mGridView.setSelectedPosition(0);
+                        firstChild.requestFocus();
+                    }
+                });
+            }
+        });
         this.mGridView.setOnItemListener(new TvRecyclerView.OnItemListener() {
             public void onItemPreSelected(TvRecyclerView tvRecyclerView, View view, int position) {
                 if (view != null && !HomeActivity.this.isDownOrUp) {
