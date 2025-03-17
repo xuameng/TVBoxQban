@@ -2546,7 +2546,6 @@ public class LivePlayActivity extends BaseActivity {
 								jumpActivity(HomeActivity.class);
 							}
 						});
-						return;
 					}else{
 						Toast.makeText(App.getInstance(), "聚汇影视提示您：频道列表为空！", Toast.LENGTH_SHORT).show();
 						mHandler.post(new Runnable() {
@@ -2555,7 +2554,6 @@ public class LivePlayActivity extends BaseActivity {
 								jumpActivity(HomeActivity.class);
 							}
 						});
-						return;
 					}
 					return;
                 }
