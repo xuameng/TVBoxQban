@@ -97,7 +97,7 @@ public class CollectActivity extends BaseActivity {
 
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
-                itemView.animate().scaleX(1.05f).scaleY(1.05f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
+                itemView.animate().scaleX(1.1f).scaleY(1.1f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
             }
 
             @Override
@@ -121,10 +121,12 @@ public class CollectActivity extends BaseActivity {
                             bundle.putString("sourceKey", vodInfo.sourceKey);
                             jumpActivity(DetailActivity.class, bundle);
                         } else {
-                            Intent newIntent = new Intent(mContext, SearchActivity.class);
-                            newIntent.putExtra("title", vodInfo.name);
-                            newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            startActivity(newIntent);
+							bundle.putString("title", vodInfo.name);
+                            if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)){
+                                jumpActivity(FastSearchActivity.class, bundle);
+                            }else {
+                                jumpActivity(SearchActivity.class, bundle);
+                            }
                         }
                     }
                 }
