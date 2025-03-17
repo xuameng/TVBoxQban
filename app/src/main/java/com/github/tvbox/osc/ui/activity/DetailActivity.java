@@ -765,7 +765,7 @@ public class DetailActivity extends BaseActivity {
                     if (!TextUtils.isEmpty(mVideo.pic)) {
                         Picasso.get()
                                 .load(DefaultConfig.checkReplaceProxy(mVideo.pic))
-                                .transform(new RoundTransformation(MD5.string2MD5(mVideo.pic + mVideo.name))
+                                .transform(new RoundTransformation(MD5.string2MD5(mVideo.pic))
                                         .centerCorp(true)
                                         .override(AutoSizeUtils.mm2px(mContext, 300), AutoSizeUtils.mm2px(mContext, 400))
                                         .roundRadius(AutoSizeUtils.mm2px(mContext, 10), RoundTransformation.RoundType.ALL))
