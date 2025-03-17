@@ -2274,7 +2274,7 @@ public class LivePlayActivity extends BaseActivity {
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
         int channelGroupIndex = currentChannelGroupIndex;
                 if(position < 0) return;
-				if (position >= getLiveChannels(channelGroupIndex).size()) position = 0;
+				if (position >= getLiveChannels(channelGroupIndex).size()-5) position = 0;
                 liveChannelGroupAdapter.setFocusedGroupIndex(-1);
                 liveChannelItemAdapter.setFocusedChannelIndex(position);
                 liveChannelItemAdapter.setSelectedChannelIndex(position);
