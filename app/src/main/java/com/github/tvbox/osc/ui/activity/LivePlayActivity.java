@@ -2275,7 +2275,7 @@ public class LivePlayActivity extends BaseActivity {
 				        int channelGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
         int liveChannelIndex = liveChannelItemAdapter.getSelectedChannelIndex();
 
-            if(liveChannelIndex >= getLiveChannels(channelGroupIndex).size()) position = 1;
+            if(liveChannelIndex >= getLiveChannels(channelGroupIndex).size()-5) position = 1;
 
                 if(position < 0) return;
                 liveChannelGroupAdapter.setFocusedGroupIndex(-1);
