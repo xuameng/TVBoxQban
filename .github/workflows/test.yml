@@ -125,6 +125,8 @@ jobs:
       - name: Release Note
         if: ${{ env.commit }}
         working-directory: TVBoxOSC
+
+      - name: Upload App To Artifact
         uses: actions/upload-artifact@v4
         if: ${{ env.commit }}
         with:
