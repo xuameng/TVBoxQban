@@ -125,7 +125,11 @@ jobs:
       - name: Release Note
         if: ${{ env.commit }}
         working-directory: TVBoxOSC
-
+        run: |
+          lastCommit=$(grep "${{ matrix.userName }}\/${{ matrix.repoName }}" ${{ github.workspace }}/README.md |grep -o '[a-z0-9]\{40\}')
+          export LESSCHARSET=utf-8
+          echo -e "Credit: [${{ matrix.userName }}](${{ env.upStream }})\nCommit: ${{ env.commit }}\nChangelog:\n\`\`\`" > apk/${{ matrix.userName }}-Release.log
+          
       - name: Upload App To Artifact
         uses: actions/upload-artifact@v4
         if: ${{ env.commit }}
