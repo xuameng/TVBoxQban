@@ -12,7 +12,8 @@
         <ImageView
             android:id="@+id/ivThumb"
             android:padding="@dimen/vs_1"
-            android:layout_width="fill_parent"
+            android:layout_width="0mm"
+			android:layout_weight="1"
             android:layout_height="fill_parent"
             android:scaleType="fitXY"/>
         <LinearLayout
