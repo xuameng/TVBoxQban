@@ -38,7 +38,6 @@ public class CollectActivity extends BaseActivity {
     private TvRecyclerView mGridView;
     public static CollectAdapter collectAdapter;
     private boolean delMode = false;
-	private int selected = 0; // xuameng
 
     @Override
     protected int getLayoutResID() {
@@ -96,12 +95,13 @@ public class CollectActivity extends BaseActivity {
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
                 itemView.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
+				itemView.notifyDataSetChanged();
             }
 
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
                 itemView.animate().scaleX(1.05f).scaleY(1.05f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
-				selected = position;
+				itemView.notifyDataSetChanged();
             }
 
             @Override
@@ -172,14 +172,6 @@ public class CollectActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-		collectAdapter.notifyDataSetChanged();
-		mGridView.scrollToPosition(selected);
-		mGridView.setSelection(selected);
     }
 
     @Override
