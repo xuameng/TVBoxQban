@@ -47,11 +47,11 @@ public class SearchAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder>
                         .placeholder(R.drawable.img_loading_placeholder)
                         .noFade()
                     //    .error(R.drawable.img_loading_placeholder)
-						.error(ImgUtil.createTextDrawable(item.name))
+						.error(ImgUtilXu.createTextDrawable(item.name))
                         .into(ivThumbXu);
             } else {
              //   ivThumbXu.setImageResource(R.drawable.img_loading_placeholder);
-				ivThumbXu.setImageDrawable(ImgUtil.createTextDrawable(item.name));
+				ivThumbXu.setImageDrawable(ImgUtilXu.createTextDrawable(item.name));
             }
         }
     }
