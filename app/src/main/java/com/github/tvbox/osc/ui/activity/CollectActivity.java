@@ -178,15 +178,14 @@ public class CollectActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-		collectAdapter.notifyDataSetChanged();
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
 		mGridView.scrollToPosition(selected);
 		mGridView.setSelection(selected);
-                        }
-                    }, 500);
-
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+              collectAdapter.notifyDataSetChanged();
+            }
+        }, 300);
     }
 
     @Override
