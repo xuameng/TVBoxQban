@@ -41,16 +41,7 @@ public class CollectAdapter extends BaseQuickAdapter<VodCollect, BaseViewHolder>
         helper.setVisible(R.id.tvLang, false);
         helper.setVisible(R.id.tvArea, false);
         helper.setVisible(R.id.tvNote, false);
-		
-
-TextView tvName = helper.getView(R.id.tvName);
-if(item.name.isEmpty()){
-tvName.setText("🥇聚汇影视");
-}else{
-	tvName.setText(item.name);
-}
-
-
+        helper.setText(R.id.tvName, item.name);
         TextView tvYear = helper.getView(R.id.tvYear);
         SourceBean source = ApiConfig.get().getSource(item.sourceKey);
         tvYear.setText(source!=null?source.getName():"🔍搜索影片");
