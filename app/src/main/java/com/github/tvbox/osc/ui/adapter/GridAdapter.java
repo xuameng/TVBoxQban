@@ -37,13 +37,13 @@ public class GridAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder> {
         if(this.mShowList) {
         if (TextUtils.isEmpty(item.note)) {
         //    helper.setVisible(R.id.tvNote, false);
-			helper.setText(R.id.tvNote, "🥇聚汇影视");
+			helper.setText(R.id.tvNote, "暂无信息");
         } else {
             helper.setVisible(R.id.tvNote, true);
             helper.setText(R.id.tvNote, item.note);
         }
         if (TextUtils.isEmpty(item.name)) {
-            helper.setText(R.id.tvName, "🥇聚汇影视");
+            helper.setText(R.id.tvName, "聚汇影视");
         } else {
             helper.setText(R.id.tvName, item.name);
         }
@@ -100,13 +100,13 @@ public class GridAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder> {
         }*/
         if (TextUtils.isEmpty(item.note)) {
         //    helper.setVisible(R.id.tvNote, false);
-			helper.setText(R.id.tvNote, "暂无评分");
+			helper.setText(R.id.tvNote, "暂无信息");
         } else {
             helper.setVisible(R.id.tvNote, true);
             helper.setText(R.id.tvNote, item.note);
         }
         if (TextUtils.isEmpty(item.name)) {
-            helper.setText(R.id.tvName, "🥇聚汇影视");
+            helper.setText(R.id.tvName, "聚汇影视");
         } else {
             helper.setText(R.id.tvName, item.name);
         }
