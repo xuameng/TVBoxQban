@@ -35,7 +35,13 @@ public class GridAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder> {
     @Override
     protected void convert(BaseViewHolder helper, Movie.Video item) {
         if(this.mShowList) {
+        if (TextUtils.isEmpty(item.note)) {
+        //    helper.setVisible(R.id.tvNote, false);
+			helper.setText(R.id.tvNote, "🥇聚汇影视");
+        } else {
+            helper.setVisible(R.id.tvNote, true);
             helper.setText(R.id.tvNote, item.note);
+        }
         if (TextUtils.isEmpty(item.name)) {
             helper.setText(R.id.tvName, "🥇聚汇影视");
         } else {
@@ -93,7 +99,8 @@ public class GridAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder> {
             tvArea.setVisibility(View.VISIBLE);
         }*/
         if (TextUtils.isEmpty(item.note)) {
-            helper.setVisible(R.id.tvNote, false);
+        //    helper.setVisible(R.id.tvNote, false);
+			helper.setText(R.id.tvNote, "暂无评分");
         } else {
             helper.setVisible(R.id.tvNote, true);
             helper.setText(R.id.tvNote, item.note);
