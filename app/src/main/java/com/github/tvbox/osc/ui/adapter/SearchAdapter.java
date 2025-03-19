@@ -13,7 +13,7 @@ import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.util.MD5;
 import com.orhanobut.hawk.Hawk;
 import com.squareup.picasso.Picasso;
-import com.github.tvbox.osc.util.ImgUtilXu;   //xuamengBASE64图片
+import com.github.tvbox.osc.util.ImgUtil;   //xuamengBASE64图片
 
 import java.util.ArrayList;
 
@@ -47,11 +47,11 @@ public class SearchAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder>
                         .placeholder(R.drawable.img_loading_placeholder)
                         .noFade()
                     //    .error(R.drawable.img_loading_placeholder)
-						.error(ImgUtilXu.createTextDrawable(item.name))
+						.error(ImgUtil.createTextDrawable(item.name))
                         .into(ivThumbXu);
             } else {
              //   ivThumbXu.setImageResource(R.drawable.img_loading_placeholder);
-				ivThumbXu.setImageDrawable(ImgUtilXu.createTextDrawable(item.name));
+				ivThumbXu.setImageDrawable(ImgUtil.createTextDrawable(item.name));
             }
         }
     }
