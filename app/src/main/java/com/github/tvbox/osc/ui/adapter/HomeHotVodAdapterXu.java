@@ -52,12 +52,19 @@ public class HomeHotVodAdapterXu extends BaseQuickAdapter<Movie.Video, BaseViewH
 
         TextView tvNote = helper.getView(R.id.tvNote);
         if (item.note == null || item.note.isEmpty()) {
-            tvNote.setVisibility(View.GONE);
+        //    tvNote.setVisibility(View.GONE);
+		    tvNote.setText("暂无评分");
+		    tvNote.setVisibility(View.VISIBLE);    
         } else {
             tvNote.setText(item.note);
-            tvNote.setVisibility(View.VISIBLE);      //xuameng显示主页聚汇热播左上小字
+            tvNote.setVisibility(View.VISIBLE);      
         }
-        helper.setText(R.id.tvName, item.name);
+        if (TextUtils.isEmpty(item.name)) {
+            helper.setText(R.id.tvName, "🥇聚汇影视");
+        } else {
+            helper.setText(R.id.tvName, item.name);
+        }
+     //   helper.setText(R.id.tvName, item.name);
         ImageView ivThumb = helper.getView(R.id.ivThumb);
         //由于部分电视机使用glide报错
         if (!TextUtils.isEmpty(item.pic)) {
