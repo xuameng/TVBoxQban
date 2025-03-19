@@ -36,7 +36,7 @@ public class ImgUtil {
     }
 
     public static Drawable createTextDrawable(String text) {
-        if(text.isEmpty())text="🏅聚汇影视";
+        if(text.isEmpty())text="聚汇影视";
         text=text.substring(0, 1);
         // 如果缓存中已存在，直接返回
         if (drawableCache.containsKey(text)) {
