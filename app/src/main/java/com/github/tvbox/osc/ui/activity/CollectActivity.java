@@ -63,7 +63,7 @@ public class CollectActivity extends BaseActivity {
         tvClear = findViewById(R.id.tvClear);
         tvDelTip = findViewById(R.id.tvDelTip);
         mGridView = findViewById(R.id.mGridView);
-        mGridView.setHasFixedSize(true);
+        mGridView.setHasFixedSize(false);
         mGridView.setLayoutManager(new V7GridLayoutManager(this.mContext, isBaseOnWidth() ? 5 : 6));
         collectAdapter = new CollectAdapter();
         mGridView.setAdapter(collectAdapter);
