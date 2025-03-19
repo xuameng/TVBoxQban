@@ -31,7 +31,7 @@ public class ImgUtil {
     public static Bitmap decodeBase64ToBitmap(String base64Str) {
         // 去掉 Base64 数据的头部前缀，例如 "data:image/png;base64,"
         String base64Data = base64Str.substring(base64Str.indexOf(",") + 1);
-        byte[] decodedBytes = Base64.decode(base64Data, Base64.DEFAULT);
+        byte[] decodedBytes = Base64.decode(base64Data, Base64.NO_WRAP);
         return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
     }
 
@@ -42,7 +42,7 @@ public class ImgUtil {
         if (drawableCache.containsKey(text)) {
             return drawableCache.get(text);
         }
-        int width = 150, height = 200; // 设定图片大小
+        int width = 200, height = 250; // 设定图片大小
         int randomColor = getRandomColor();
         float cornerRadius = AutoSizeUtils.mm2px(App.getInstance(), 3); // 圆角半径
 
