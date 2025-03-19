@@ -43,7 +43,7 @@ public class HomeHotVodAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHol
         if (Hawk.get(HawkConfig.HOME_REC, 0) == 2){
             tvRate.setText(ApiConfig.get().getSource(item.sourceKey).getName());
         }else if(Hawk.get(HawkConfig.HOME_REC, 0) == 0){
-            tvRate.setText("聚汇热播");
+            tvRate.setText("聚汇热播");          //xuameng显示主页聚汇热播左上小字
         }else if(Hawk.get(HawkConfig.HOME_REC, 0) == 1){
             tvRate.setText("聚汇推荐");
         }else {
@@ -52,12 +52,19 @@ public class HomeHotVodAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHol
 
         TextView tvNote = helper.getView(R.id.tvNote);
         if (item.note == null || item.note.isEmpty()) {
-            tvNote.setVisibility(View.GONE);
+        //    tvNote.setVisibility(View.GONE);
+		    tvNote.setText("暂无评分");
+		    tvNote.setVisibility(View.VISIBLE);    
         } else {
             tvNote.setText(item.note);
-            tvNote.setVisibility(View.VISIBLE);      //xuameng显示主页聚汇热播左上小字
+            tvNote.setVisibility(View.VISIBLE);      
         }
-        helper.setText(R.id.tvName, item.name);
+        if (TextUtils.isEmpty(item.name)) {
+            helper.setText(R.id.tvName, "🥇聚汇影视");
+        } else {
+            helper.setText(R.id.tvName, item.name);
+        }
+  //      helper.setText(R.id.tvName, item.name);
         ImageView ivThumb = helper.getView(R.id.ivThumb);
         //由于部分电视机使用glide报错
         if (!TextUtils.isEmpty(item.pic)) {
