@@ -178,7 +178,7 @@ public class CollectActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
 		collectAdapter.notifyDataSetChanged();
-		mGridView.scrollToPosition(selected);
+		mGridView.smoothScrollToPosition(selected);
     }
 
     @Override
