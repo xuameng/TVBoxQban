@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.animation.BounceInterpolator;
 import android.widget.TextView;
 import android.widget.ImageView;
-import android.os.Handler;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.github.tvbox.osc.R;
@@ -39,7 +38,6 @@ public class CollectActivity extends BaseActivity {
     private TvRecyclerView mGridView;
     public static CollectAdapter collectAdapter;
     private boolean delMode = false;
-	private int selected = 0; // xuameng
 
     @Override
     protected int getLayoutResID() {
@@ -102,7 +100,6 @@ public class CollectActivity extends BaseActivity {
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
                 itemView.animate().scaleX(1.05f).scaleY(1.05f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
-				selected = position;
             }
 
             @Override
@@ -173,19 +170,6 @@ public class CollectActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-		mGridView.scrollToPosition(selected);
-		mGridView.setSelection(selected);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-              collectAdapter.notifyDataSetChanged();
-            }
-        }, 300);
     }
 
     @Override
