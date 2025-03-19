@@ -11,7 +11,7 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.api.ApiConfig;
 import com.github.tvbox.osc.bean.SourceBean;
-import com.github.tvbox.osc.cache.VodCollect;
+import com.github.tvbox.osc.bean.VodInfo;
 import com.github.tvbox.osc.picasso.RoundTransformation;
 import com.github.tvbox.osc.util.DefaultConfig;
 import com.github.tvbox.osc.util.HawkConfig;
@@ -23,13 +23,13 @@ import java.util.ArrayList;
 
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
-public class CollectAdapter extends BaseQuickAdapter<VodCollect, BaseViewHolder> {
+public class CollectAdapter extends BaseQuickAdapter<VodInfo, BaseViewHolder> {
     public CollectAdapter() {
         super(R.layout.item_grid, new ArrayList<>());
     }
 
     @Override
-    protected void convert(BaseViewHolder helper, VodCollect item) {
+    protected void convert(BaseViewHolder helper, VodInfo item) {
     	// takagen99: Add Delete Mode
         FrameLayout tvDel = helper.getView(R.id.delFrameLayout);
         if (HawkConfig.hotVodDelete) {
