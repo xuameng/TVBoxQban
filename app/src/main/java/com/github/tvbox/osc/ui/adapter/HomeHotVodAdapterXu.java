@@ -53,14 +53,14 @@ public class HomeHotVodAdapterXu extends BaseQuickAdapter<Movie.Video, BaseViewH
         TextView tvNote = helper.getView(R.id.tvNote);
         if (item.note == null || item.note.isEmpty()) {
         //    tvNote.setVisibility(View.GONE);
-		    tvNote.setText("暂无评分");
+		    tvNote.setText("暂无信息");
 		    tvNote.setVisibility(View.VISIBLE);    
         } else {
             tvNote.setText(item.note);
             tvNote.setVisibility(View.VISIBLE);      
         }
         if (TextUtils.isEmpty(item.name)) {
-            helper.setText(R.id.tvName, "🥇聚汇影视");
+            helper.setText(R.id.tvName, "聚汇影视");
         } else {
             helper.setText(R.id.tvName, item.name);
         }
