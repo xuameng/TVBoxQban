@@ -89,6 +89,7 @@ public class ApiConfig {
         sourceBeanList = new LinkedHashMap<>();
         liveChannelGroupList = new ArrayList<>();
         parseBeanList = new ArrayList<>();
+		Hawk.put(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
         gson = new Gson();
         loadDefaultConfig();
     }
