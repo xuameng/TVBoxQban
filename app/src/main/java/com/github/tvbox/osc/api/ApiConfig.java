@@ -74,18 +74,19 @@ public class ApiConfig {
 	public String musicwallpaper = "";   //xuameng音乐背景图
 	public String warningText = "";   //xuameng版权提示
 
-    private SourceBean emptyHome = new SourceBean();
+    private final SourceBean emptyHome = new SourceBean();
 
-    private JarLoader jarLoader = new JarLoader();
-    private JsLoader jsLoader = new JsLoader();
-    private Gson gson;
+    private final JarLoader jarLoader = new JarLoader();
+    private final JsLoader jsLoader = new JsLoader();
+    private final Gson gson;
 
-    private String userAgent = "okhttp/3.15";
+    private final String userAgent = "okhttp/3.15";
 
-    private String requestAccept = "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9";
+    private final String requestAccept = "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9";
 
     private String defaultLiveObjString="{\"lives\":[{\"name\":\"txt_m3u\",\"type\":0,\"url\":\"txt_m3u_url\"}]}";
     private ApiConfig() {
+		jarLoader.clear();
         sourceBeanList = new LinkedHashMap<>();
         liveChannelGroupList = new ArrayList<>();
         parseBeanList = new ArrayList<>();
@@ -419,7 +420,7 @@ public class ApiConfig {
             SourceBean sb = new SourceBean();
             String siteKey = obj.get("key").getAsString().trim();
             sb.setKey(siteKey);
-            sb.setName(obj.get("name").getAsString().trim());
+            sb.setName(obj.has("name")?obj.get("name").getAsString().trim():siteKey);
             sb.setType(obj.get("type").getAsInt());
             sb.setApi(obj.get("api").getAsString().trim());
             sb.setSearchable(DefaultConfig.safeJsonInt(obj, "searchable", 1));
@@ -873,7 +874,7 @@ public class ApiConfig {
                         }
                         url ="http://127.0.0.1:9978/proxy?do=live&type=txt&ext="+url;
                     }
-                    LOG.i("echo-url:"+url);
+                    LOG.i("echo-live-proxy-url:"+url);
                 }else {
                     return;
                 }
@@ -919,7 +920,7 @@ public class ApiConfig {
         return jarLoader.getSpider(sourceBean.getKey(), sourceBean.getApi(), sourceBean.getExt(), sourceBean.getJar());
     }
 
-    public Object[] proxyLocal(Map param) {
+    public Object[] proxyLocal(Map<String,String> param) {
         return jarLoader.proxyInvoke(param);
     }
 
