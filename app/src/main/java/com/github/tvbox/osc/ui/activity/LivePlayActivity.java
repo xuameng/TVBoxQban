@@ -2511,13 +2511,13 @@ JsonArray live_groups=Hawk.get(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
 						if(Hawk.get(HawkConfig.LIVE_GROUP_INDEX,0)>live_groups.size()-1){
 						Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
 						            finish();
-
+			return;
 						}
 
 					}else{
 						Toast.makeText(App.getInstance(), "聚汇影视提示您：频道列表为空！", Toast.LENGTH_SHORT).show();
 						            finish();
-
+			return;
 						
 					}
 				
