@@ -2503,12 +2503,7 @@ public class LivePlayActivity extends BaseActivity {
     }
     private void initLiveChannelList() {
         List<LiveChannelGroup> list = ApiConfig.get().getChannelGroupList();
-		if(Hawk.get(HawkConfig.LIVE_GROUP_LIST,new JsonArray()).isEmpty()){
-           Toast.makeText(App.getInstance(), "聚汇影视提示您：频道列表为空！", Toast.LENGTH_SHORT).show();
-           finish();
-		   return;
-        }
-        else if (list.isEmpty()) {
+        if (list.isEmpty()) {
            JsonArray live_groups=Hawk.get(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
            if(live_groups.size() > 1){
               Toast.makeText(App.getInstance(), "聚汇影视提示您：频道列表为空！请重试！", Toast.LENGTH_SHORT).show();
@@ -2523,10 +2518,10 @@ public class LivePlayActivity extends BaseActivity {
 				}
 			});
 			HawkConfig.LIVEerror = true;
-		  }else{
-			Toast.makeText(App.getInstance(), "聚汇影视提示您：频道列表为空！", Toast.LENGTH_SHORT).show();
-			finish();		
-		  }	
+			return;
+		  }
+            Toast.makeText(App.getInstance(), "聚汇影视提示您：频道列表为空！", Toast.LENGTH_SHORT).show();
+            finish();
 			return;
         }
 
