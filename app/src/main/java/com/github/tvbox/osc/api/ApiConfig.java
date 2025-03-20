@@ -90,6 +90,7 @@ public class ApiConfig {
         liveChannelGroupList = new ArrayList<>();
         parseBeanList = new ArrayList<>();
         gson = new Gson();
+		Hawk.put(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
         loadDefaultConfig();
     }
 
@@ -481,7 +482,7 @@ public class ApiConfig {
         if(live_api_url.isEmpty() || apiUrl.equals(live_api_url)){
 			initLiveSettings();
 			liveSettingGroupList.clear();
-			Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
+			Hawk.put(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
             LOG.i("echo-load-config_live");
             if(infoJson.has("lives")){
                 JsonArray lives_groups=infoJson.get("lives").getAsJsonArray();
@@ -534,13 +535,13 @@ public class ApiConfig {
 				}else{
 					initLiveSettings();
 					liveSettingGroupList.clear();
-					Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
+					Hawk.put(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
 					Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
 				}
 			}else{
 				initLiveSettings();
 				liveSettingGroupList.clear();
-				Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
+				Hawk.put(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
 				Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
 			}
 
@@ -682,7 +683,7 @@ public class ApiConfig {
         JsonObject infoJson = gson.fromJson(jsonStr, JsonObject.class);
 		initLiveSettings();
 		liveSettingGroupList.clear();
-		Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
+		Hawk.put(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
         // 直播源
         if(infoJson.has("lives")){
             JsonArray lives_groups=infoJson.get("lives").getAsJsonArray();
@@ -735,13 +736,13 @@ public class ApiConfig {
 				}else{
 					initLiveSettings();
 					liveSettingGroupList.clear();
-					Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
+					Hawk.put(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
 					Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
 				}
 			}else{
 				initLiveSettings();
 				liveSettingGroupList.clear();
-				Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
+				Hawk.put(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
 				Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
 		}
 
