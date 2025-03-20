@@ -504,7 +504,11 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
     
         FastClickCheckUtil.check(v);
         if (v.getId() == R.id.tvLive) {
-            jumpActivity(LivePlayActivity.class);
+            if(Hawk.get(HawkConfig.LIVE_GROUP_LIST,new JsonArray()).isEmpty()){
+                Toast.makeText(mContext, "聚汇影视提示您：频道列表为空！", Toast.LENGTH_SHORT).show();
+            }else {
+                jumpActivity(LivePlayActivity.class);
+            }
         } else if (v.getId() == R.id.tvSearch) {
             jumpActivity(SearchActivity.class);
         } else if (v.getId() == R.id.tvSetting) {
