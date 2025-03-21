@@ -187,6 +187,7 @@ public class LivePlayActivity extends BaseActivity {
 	private boolean isBuffer = false; //xuameng缓冲
 	private boolean isShowlist = false; //xuameng判断菜单显示
 	private boolean isVideoplaying = false;  //xuameng判断视频开始播放
+	private boolean XuSource = false;  //xuameng退出回看
     private int selectedChannelNumber = 0; // xuameng遥控器数字键输入的要切换的频道号码
     private TextView tvSelectedChannel; //xuameng频道编号
 	private ImageView iv_circle_bg_xu;  //xuameng音乐播放时图标
@@ -928,6 +929,7 @@ public class LivePlayActivity extends BaseActivity {
     private void xubackexit() { //xuameng双击退出回看
         if(System.currentTimeMillis() - mExitTime < 2000) {
             isBack = false;
+			isSHIYI = false;
             Mtv_left_top_xu.setVisibility(View.GONE); //xuameng返回键隐藏左上回看菜单
             iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
             hideTimeXu(); //xuameng隐藏系统时间
@@ -1448,9 +1450,11 @@ public class LivePlayActivity extends BaseActivity {
 
     private boolean playChannel(int channelGroupIndex, int liveChannelIndex, boolean changeSource) { //xuameng播放
 		if(mVideoView == null) return true; //XUAMENG可能会引起空指针问题的修复
-        if((channelGroupIndex == currentChannelGroupIndex && liveChannelIndex == currentLiveChannelIndex && !changeSource) || (changeSource && currentLiveChannelItem.getSourceNum() == 1)) {
+        if((channelGroupIndex == currentChannelGroupIndex && liveChannelIndex == currentLiveChannelIndex && !changeSource) || (changeSource && currentLiveChannelItem.getSourceNum() == 1) && !XuSource) {
             // xuamengEPG日期自动选今天
             liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
+            isSHIYI = false;
+            isBack = false;
             if(isVOD) {
                 if(backcontroller.getVisibility() == View.GONE) {
                     showProgressBars(true);
@@ -1464,8 +1468,6 @@ public class LivePlayActivity extends BaseActivity {
                 mHideChannelListRun(); //xuameng显示EPG就隐藏左右菜单
                 mHideSettingLayoutRun(); //xuameng显示EPG就隐藏左右菜单
             }
-            isSHIYI = false;
-            isBack = false;
             return true;
         }
 		mVideoView.release();  //XUAMENG可能会引起空指针问题的修复
@@ -1481,6 +1483,7 @@ public class LivePlayActivity extends BaseActivity {
         channel_Name = currentLiveChannelItem;
         isSHIYI = false;
         isBack = false;
+		XuSource = false;
         if(hasCatchup || currentLiveChannelItem.getUrl().contains("PLTV/") || currentLiveChannelItem.getUrl().contains("TVOD/")){ //xuameng判断直播源URL中有没有PLTV字符，有才可以时移
             currentLiveChannelItem.setinclude_back(true);
         } else {
@@ -1568,14 +1571,10 @@ public class LivePlayActivity extends BaseActivity {
         if(mVideoView == null) {
             return;
         }
+		XuSource = true;
         if(!isCurrentLiveChannelValid()) return;
-		mVideoView.release();
-		mVideoView.setUrl(currentLiveChannelItem.getUrl(),liveWebHeader());
-        mVideoView.start();
-        showBottomEpg();
-        getEpg(new Date());
-        mHideChannelListRun(); //xuameng显示EPG就隐藏左右菜单
-        mHideSettingLayoutRun(); //xuameng显示EPG就隐藏左右菜单
+        currentLiveChannelItem.getUrl();
+        playChannel(currentChannelGroupIndex, currentLiveChannelIndex, true);
     }
     //显示设置列表
     private void showSettingGroup() {
