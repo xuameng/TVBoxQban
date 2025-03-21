@@ -182,7 +182,7 @@ public class PlayFragment extends BaseLazyFragment {
                 switch (msg.what) {
                     case 100:
                         stopParse();
-                        errorWithRetry("嗅探错误！", false);
+                        errorWithRetry("嗅探错误", false);
                         break;
                 }
                 return false;
@@ -247,7 +247,7 @@ public class PlayFragment extends BaseLazyFragment {
 
             @Override
             public void errReplay() {
-                errorWithRetry("视频播放错误！", false);
+                errorWithRetry("视频播放出错", false);
             }
 
             @Override
@@ -575,6 +575,7 @@ public class PlayFragment extends BaseLazyFragment {
     }
     public void goPlayUrl(String url, HashMap<String, String> headers) {
 		LOG.i("echo-goPlayUrl:" + url);
+		if(autoRetryCount==0)webPlayUrl=url;
         if (mActivity == null) return;
 		if (!isAdded()) return;
         LOG.i("playUrl:" + url);
@@ -726,6 +727,7 @@ public class PlayFragment extends BaseLazyFragment {
         sourceViewModel.playResult.observe(this, new Observer<JSONObject>() {
             @Override
             public void onChanged(JSONObject info) {
+				webPlayUrl = null;
                 if (info != null) {
                     try {
                         progressKey = info.optString("proKey", null);
@@ -980,6 +982,7 @@ public class PlayFragment extends BaseLazyFragment {
             LOG.i("echo-reset-autoRetryCount");
             autoRetryCount = 0;
         }
+
         lastRetryTime = currentTime;  // 更新上次调用时间
         if (loadFoundVideoUrls != null && loadFoundVideoUrls.size() > 0) {
             autoRetryFromLoadFoundVideoUrls();
@@ -991,13 +994,14 @@ public class PlayFragment extends BaseLazyFragment {
                 play(false);
                 autoRetryCount++;
             }else {
-				 //切换播放器不占用重试次数
+                //切换播放器不占用重试次数
                 if(mController.switchPlayer()){
-                    autoRetryCount++;
+					autoRetryCount++;
+					play(false);
+                }else {
+                    play(false);
                 }
-             play(false);
-			 autoRetryCount++;
-            }       
+            }
             return true;
         } else {
             autoRetryCount = 0;
@@ -1078,6 +1082,7 @@ public class PlayFragment extends BaseLazyFragment {
     private String webUrl;
     private String webUserAgent;
     private HashMap<String, String > webHeaderMap;
+	private String webPlayUrl;
 
     private void initParse(String flag, boolean useParse, String playUrl, final String url) {
         parseFlag = flag;
