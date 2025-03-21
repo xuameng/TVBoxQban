@@ -1422,7 +1422,7 @@ public class LivePlayActivity extends BaseActivity {
         countDownTimer7.start();
     }
 
-    private HashMap<String,String> liveWebHeader(){
+    private HashMap<String,String> liveWebHeader(){       //xuameng自定义UA
         return Hawk.get(HawkConfig.LIVE_WEB_HEADER);
     }
 
