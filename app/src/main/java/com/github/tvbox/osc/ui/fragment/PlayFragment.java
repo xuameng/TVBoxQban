@@ -241,14 +241,7 @@ public class PlayFragment extends BaseLazyFragment {
                 if(replay){  //xuameng新增
                     play(true);
                 }else {
-                    if(webPlayUrl!=null && !webPlayUrl.isEmpty()) {
-                        stopParse();
-                        initParseLoadFound();
-                        if(mVideoView!=null) mVideoView.release();
-                        goPlayUrl(webPlayUrl,webHeaderMap);
-                    }else {
-                        play(false);
-                    }  
+                    play(false);
                 }  //xuameng新增完
             }
 
@@ -989,7 +982,6 @@ public class PlayFragment extends BaseLazyFragment {
             LOG.i("echo-reset-autoRetryCount");
             autoRetryCount = 0;
         }
-
         lastRetryTime = currentTime;  // 更新上次调用时间
         if (loadFoundVideoUrls != null && loadFoundVideoUrls.size() > 0) {
             autoRetryFromLoadFoundVideoUrls();
@@ -1003,20 +995,9 @@ public class PlayFragment extends BaseLazyFragment {
             }else {
 				 //切换播放器不占用重试次数
                 if(mController.switchPlayer()){
- //                   webPlayUrl=mController.getWebPlayUrlIfNeeded(webPlayUrl);
                     autoRetryCount++;
-                }else {
-//                    Toast.makeText(mContext, "自动切换播放器重试", Toast.LENGTH_SHORT).show();
-                }  //xuameng自动切换播放器完 
-                //第一次重试直接带着原地址继续播放
-                if(webPlayUrl!=null){
-                    stopParse();
-                    initParseLoadFound();
-                    if(mVideoView!=null) mVideoView.release();
-                    playUrl(webPlayUrl, webHeaderMap);
-                }else {
-                    play(false);
                 }
+             play(false);
             }       
             return true;
         } else {
