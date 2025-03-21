@@ -1571,7 +1571,7 @@ public class LivePlayActivity extends BaseActivity {
         }
         if(!isCurrentLiveChannelValid()) return;
         currentLiveChannelItem.getUrl();
-        playChannel(currentChannelGroupIndex, currentLiveChannelIndex, true);
+        playChannel(currentChannelGroupIndex, currentLiveChannelIndex, false);
     }
     //显示设置列表
     private void showSettingGroup() {
