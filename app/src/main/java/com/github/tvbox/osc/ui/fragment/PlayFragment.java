@@ -995,10 +995,10 @@ public class PlayFragment extends BaseLazyFragment {
                 if(mController.switchPlayer()){
 					play(false);
                     autoRetryCount++;
-                }else{
-					play(false);
-					autoRetryCount++;
-				}
+					return true;
+                }
+             play(false);
+			 autoRetryCount++;
             }       
             return true;
         } else {
