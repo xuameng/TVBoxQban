@@ -1451,6 +1451,7 @@ public class LivePlayActivity extends BaseActivity {
         if((channelGroupIndex == currentChannelGroupIndex && liveChannelIndex == currentLiveChannelIndex && !changeSource) || (changeSource && currentLiveChannelItem.getSourceNum() == 1)) {
             // xuamengEPG日期自动选今天
             liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
+			Toast.makeText(mContext, "侧四侧四侧四侧四侧四！", Toast.LENGTH_SHORT).show();
             if(isVOD) {
                 if(backcontroller.getVisibility() == View.GONE) {
                     showProgressBars(true);
@@ -1503,7 +1504,6 @@ public class LivePlayActivity extends BaseActivity {
         backcontroller.setVisibility(View.GONE);
         ll_right_top_huikan.setVisibility(View.GONE);
         Mtv_left_top_xu.setVisibility(View.GONE); //xuameng直播时隐藏回看的菜单
-        iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
         simSeekPosition = 0; //XUAMENG重要,换视频时重新记录进度
         simSlideOffset = 0; //XUAMENG重要,换视频时重新记录进度
         if(liveWebHeader()!=null)LOG.i("echo-"+liveWebHeader().toString());
@@ -1571,7 +1571,7 @@ public class LivePlayActivity extends BaseActivity {
         }
         if(!isCurrentLiveChannelValid()) return;
         currentLiveChannelItem.getUrl();
-        playChannel(currentChannelGroupIndex, currentLiveChannelIndex, false);
+        playChannel(currentChannelGroupIndex, currentLiveChannelIndex, true);
     }
     //显示设置列表
     private void showSettingGroup() {
