@@ -993,9 +993,7 @@ public class PlayFragment extends BaseLazyFragment {
             }else {
 				 //切换播放器不占用重试次数
                 if(mController.switchPlayer()){
-					play(false);
                     autoRetryCount++;
-					return true;
                 }
              play(false);
 			 autoRetryCount++;
