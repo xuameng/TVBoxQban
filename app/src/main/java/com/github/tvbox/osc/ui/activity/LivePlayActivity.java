@@ -41,9 +41,6 @@ import android.graphics.Bitmap;  //xuameng播放音频切换图片
 import com.github.tvbox.osc.api.ApiConfig;  //xuameng播放音频切换图片
 import android.annotation.SuppressLint; //xuamengEPG显示错误
 import java.util.HashMap;   //XUAMENG自定义UA
-import java.util.Map;  //xuameng Catchup
-import java.util.regex.Matcher; //xuameng Catchup
-import java.util.regex.Pattern;  //xuameng Catchup
 import java.util.Objects;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.github.tvbox.osc.R;
@@ -187,7 +184,7 @@ public class LivePlayActivity extends BaseActivity {
 	private boolean isBuffer = false; //xuameng缓冲
 	private boolean isShowlist = false; //xuameng判断菜单显示
 	private boolean isVideoplaying = false;  //xuameng判断视频开始播放
-	private boolean XuSource = false;  //xuameng退出回看
+	private boolean XuSource = false; //xuameng退出回看
     private int selectedChannelNumber = 0; // xuameng遥控器数字键输入的要切换的频道号码
     private TextView tvSelectedChannel; //xuameng频道编号
 	private ImageView iv_circle_bg_xu;  //xuameng音乐播放时图标
@@ -1432,22 +1429,6 @@ public class LivePlayActivity extends BaseActivity {
         return Hawk.get(HawkConfig.LIVE_WEB_HEADER);
     }
 
-    private JsonObject catchup=null;
-    private Boolean hasCatchup=false;
-    private String logoUrl=null;
-    private void initLiveObj(){
-        int position=Hawk.get(HawkConfig.LIVE_GROUP_INDEX, 0);
-        JsonArray live_groups=Hawk.get(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
-        JsonObject livesOBJ = live_groups.get(position).getAsJsonObject();
-        String type = livesOBJ.has("type")?livesOBJ.get("type").getAsString():"0";
-
-        if(livesOBJ.has("catchup")){
-            catchup = livesOBJ.getAsJsonObject("catchup");
-            LOG.i("echo-catchup :"+ catchup.toString());
-            hasCatchup=true;
-        }
-    }
-
     private boolean playChannel(int channelGroupIndex, int liveChannelIndex, boolean changeSource) { //xuameng播放
 		if(mVideoView == null) return true; //XUAMENG可能会引起空指针问题的修复
         if((channelGroupIndex == currentChannelGroupIndex && liveChannelIndex == currentLiveChannelIndex && !changeSource) || (changeSource && currentLiveChannelItem.getSourceNum() == 1) && !XuSource) {
@@ -1484,7 +1465,7 @@ public class LivePlayActivity extends BaseActivity {
         isSHIYI = false;
         isBack = false;
 		XuSource = false;
-        if(hasCatchup || currentLiveChannelItem.getUrl().contains("PLTV/") || currentLiveChannelItem.getUrl().contains("TVOD/")){ //xuameng判断直播源URL中有没有PLTV字符，有才可以时移
+        if(currentLiveChannelItem.getUrl().indexOf("PLTV/") != -1) { //xuameng判断直播源URL中有没有PLTV字符，有才可以时移
             currentLiveChannelItem.setinclude_back(true);
         } else {
             currentLiveChannelItem.setinclude_back(false);
@@ -1525,8 +1506,6 @@ public class LivePlayActivity extends BaseActivity {
             liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
         }
         channel_NameXu = currentLiveChannelItemXu; //xuameng重要EPG名称
-        isSHIYI = false;
-        isBack = false;
         if(currentLiveChannelItemXu.getUrl().indexOf("PLTV/") != -1) { //xuameng判断直播源URL中有没有PLTV字符，有才可以时移
             currentLiveChannelItemXu.setinclude_back(true);
         } else {
@@ -1735,54 +1714,23 @@ public class LivePlayActivity extends BaseActivity {
                     return;
                 }
                 String shiyiUrl = currentLiveChannelItem.getUrl();
-                if(now.compareTo(selectedData.startdateTime) < 0) {
-				}else if(hasCatchup || shiyiUrl.contains("PLTV/") || shiyiUrl.contains("TVOD/")){//xuameng判断直播源URL中有没有PLTV字符，有才可以时移
-					shiyiUrl = shiyiUrl.replaceAll("/PLTV/", "/TVOD/");
+                if(now.compareTo(selectedData.startdateTime) < 0) {} else if(shiyiUrl.indexOf("PLTV/") != -1) { //xuameng判断直播源URL中有没有PLTV字符，有才可以时移
                     mHideChannelListRun(); //xuameng点击EPG中的直播隐藏左菜单
 					if(mVideoView == null) return;
                     mVideoView.release();
                     shiyi_time = shiyiStartdate + "-" + shiyiEnddate;
                     isSHIYI = true;
-                    if(hasCatchup){
-                        String replace=catchup.get("replace").getAsString();
-                        String source=catchup.get("source").getAsString();
-                        String[] parts = replace.split(",");
-                        String left = parts.length > 0 ? parts[0].trim() : "";
-                        String right = parts.length > 1 ? parts[1].trim() : "";
-                        shiyiUrl = shiyiUrl.replaceAll(left, right);
-                        // 已知参数
-                        String startHHmm = selectedData.originStart.replace(":", "");
-                        String endHHmm = selectedData.originEnd.replace(":", "");
-                        // 正则表达式：匹配 ${(b)...} 或 ${(e)...}
-                        Pattern pattern = Pattern.compile("\\$\\{\\((b|e)\\)(.*?)\\}");
-                        Matcher matcher = pattern.matcher(source);
-                        Map<String, String> valueMap = new HashMap<>();
-                        valueMap.put("b", targetDate + "T" + startHHmm);
-                        valueMap.put("e", targetDate + "T" + endHHmm);
-                        StringBuffer result = new StringBuffer();
-                        while (matcher.find()) {
-                            String type = matcher.group(1); // 捕获 b 或 e
-                            String patternPart = matcher.group(2);
-                            // 生成替换值（如 "20231023T1500"）
-                            String replacement = valueMap.get(type);
-                            // 将 ${(b)yyyyMMdd'T'HHmm} 替换为 "20231023T1500"
-                            assert replacement != null;
-                            matcher.appendReplacement(result, replacement);
-                        }
-                        matcher.appendTail(result);
-                        LOG.i("echo-shiyiurl:"+shiyiUrl);
-                        if(shiyiUrl.endsWith("&"))shiyiUrl=shiyiUrl.substring(0, shiyiUrl.length() - 1);
-                        shiyiUrl += result.toString();
-                    }else {
+                    if(shiyiUrl.contains("/PLTV/")) {
                         if(shiyiUrl.indexOf("?") <= 0) {
+                            shiyiUrl = shiyiUrl.replaceAll("/PLTV/", "/TVOD/");
                             shiyiUrl += "?playseek=" + shiyi_time;
                         } else if(shiyiUrl.indexOf("playseek") > 0) {
                             shiyiUrl = shiyiUrl.replaceAll("playseek=(.*)", "playseek=" + shiyi_time);
                         } else {
                             shiyiUrl += "&playseek=" + shiyi_time;
                         }
+                        Log.d("PLTV播放地址", "playUrl   " + shiyiUrl);
                     }
-                    Log.d("PLTV播放地址", "playUrl   " + shiyiUrl);
                     playUrl = shiyiUrl;
                     mVideoView.setUrl(playUrl,liveWebHeader());
                     mVideoView.start();
@@ -1847,53 +1795,23 @@ public class LivePlayActivity extends BaseActivity {
                     return;
                 }
                 String shiyiUrl = currentLiveChannelItem.getUrl();
-                if(now.compareTo(selectedData.startdateTime) < 0) {
-				} else if(hasCatchup || shiyiUrl.contains("PLTV/") || shiyiUrl.contains("TVOD/")){ //xuameng判断直播源URL中有没有PLTV字符，有才可以时移
-					shiyiUrl = shiyiUrl.replaceAll("/PLTV/", "/TVOD/");
+                if(now.compareTo(selectedData.startdateTime) < 0) {} else if(shiyiUrl.indexOf("PLTV/") != -1) { //xuameng判断直播源URL中有没有PLTV字符，有才可以时移
                     mHideChannelListRun();
 					if(mVideoView == null) return;
                     mVideoView.release();
                     shiyi_time = shiyiStartdate + "-" + shiyiEnddate;
                     isSHIYI = true;
-					if(hasCatchup){
-                       String replace=catchup.get("replace").getAsString();
-                       String source=catchup.get("source").getAsString();
-                       String[] parts = replace.split(",");
-                       String left = parts.length > 0 ? parts[0].trim() : "";
-                       String right = parts.length > 1 ? parts[1].trim() : "";
-                       shiyiUrl = shiyiUrl.replaceAll(left, right);
-                        String startHHmm = selectedData.originStart.replace(":", "");
-                        String endHHmm = selectedData.originEnd.replace(":", "");
-                        // 正则表达式：匹配 ${(b)...} 或 ${(e)...}
-                        Pattern pattern = Pattern.compile("\\$\\{\\((b|e)\\)(.*?)\\}");
-                        Matcher matcher = pattern.matcher(source);
-                        Map<String, String> valueMap = new HashMap<>();
-                        valueMap.put("b", targetDate + "T" + startHHmm);
-                        valueMap.put("e", targetDate + "T" + endHHmm);
-                        StringBuffer result = new StringBuffer();
-                        while (matcher.find()) {
-                            String type = matcher.group(1); // 捕获 b 或 e
-                            String patternPart = matcher.group(2);
-                            // 生成替换值（如 "20231023T1500"）
-                            String replacement = valueMap.get(type);
-                            // 将 ${(b)yyyyMMdd'T'HHmm} 替换为 "20231023T1500"
-                            assert replacement != null;
-                            matcher.appendReplacement(result, replacement);
-                        }
-                        matcher.appendTail(result);
-                        LOG.i("echo-shiyiurl:"+shiyiUrl);
-                        if(shiyiUrl.endsWith("&"))shiyiUrl=shiyiUrl.substring(0, shiyiUrl.length() - 1);
-                        shiyiUrl += result.toString();
-                    }else {
+                    if(shiyiUrl.contains("/PLTV/")) {
                         if(shiyiUrl.indexOf("?") <= 0) {
+                            shiyiUrl = shiyiUrl.replaceAll("/PLTV/", "/TVOD/");
                             shiyiUrl += "?playseek=" + shiyi_time;
                         } else if(shiyiUrl.indexOf("playseek") > 0) {
                             shiyiUrl = shiyiUrl.replaceAll("playseek=(.*)", "playseek=" + shiyi_time);
                         } else {
                             shiyiUrl += "&playseek=" + shiyi_time;
-                        }                
+                        }
+                        Log.d("PLTV播放地址", "playUrl   " + shiyiUrl);
                     }
-					Log.d("PLTV播放地址", "playUrl   " + shiyiUrl);
                     playUrl = shiyiUrl;
 					if(liveWebHeader()!=null)LOG.i("echo-liveWebHeader :"+ liveWebHeader().toString());
                     mVideoView.setUrl(playUrl,liveWebHeader());
@@ -2178,11 +2096,6 @@ public class LivePlayActivity extends BaseActivity {
                             mHandler.postDelayed(mConnectTimeoutChangeSourceRunBack, 5000); //xuameng回看超时5秒退出
                             return;
                         }
-						else if(isVOD){
-                            mHandler.removeCallbacks(mConnectTimeoutChangeSourceRunVod);
-                            mHandler.postDelayed(mConnectTimeoutChangeSourceRunVod, 5000); //xuameng回看超时5秒退出
-							return;
-						}
                         mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
                         mHandler.postDelayed(mConnectTimeoutChangeSourceRun, 10000); //xuameng播放超时10秒换源
                         break;
@@ -2308,7 +2221,6 @@ public class LivePlayActivity extends BaseActivity {
     private Runnable mConnectTimeoutChangeSourceRunVod = new Runnable() {
         @Override
         public void run() {
-            currentLiveChangeSourceTimes++;
             currentLiveChangeSourceTimes = 0;
             Integer[] groupChannelIndex = getNextChannel(Hawk.get(HawkConfig.LIVE_CHANNEL_REVERSE, false) ? -1 : 1);
             playChannel(groupChannelIndex[0], groupChannelIndex[1], false);
@@ -2622,8 +2534,6 @@ public class LivePlayActivity extends BaseActivity {
             finish();
 			return;
         }
-
-		initLiveObj();
 
         if (list.size() == 1 && list.get(0).getGroupName().startsWith("http://127.0.0.1")) {
             loadProxyLives(list.get(0).getGroupName());
