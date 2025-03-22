@@ -2096,6 +2096,11 @@ public class LivePlayActivity extends BaseActivity {
                             mHandler.postDelayed(mConnectTimeoutChangeSourceRunBack, 5000); //xuameng回看超时5秒退出
                             return;
                         }
+						else if(isVOD){
+                            mHandler.removeCallbacks(mConnectTimeoutChangeSourceRunVod);
+                            mHandler.postDelayed(mConnectTimeoutChangeSourceRunVod, 5000); //xuameng回看超时5秒退出
+							return;
+						}
                         mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
                         mHandler.postDelayed(mConnectTimeoutChangeSourceRun, 10000); //xuameng播放超时10秒换源
                         break;
