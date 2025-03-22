@@ -1,8 +1,3 @@
-<<<<<<<<<<<<<<json接口示例>>>>>>>>>>>>>
-# TVBox
-
-=== Source Code - Editing the app default settings ===
-
     //searchable:搜索开关	        0:关闭 1:启用
     //filterable:首页可选	        0:否 1:是
     //playerType:播放器类型	        0:系统 1:IJK 2:EXO
@@ -23,7 +18,7 @@
 	"rules": [],
 	"doh": [
 		{
-			"name": "騰訊",
+			"name": "腾讯",
 			"url": "https://doh.pub/dns-query"
 		},
 		{
