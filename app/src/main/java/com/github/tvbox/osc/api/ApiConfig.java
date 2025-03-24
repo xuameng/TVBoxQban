@@ -330,6 +330,7 @@ public class ApiConfig {
                 }
                 return;
             }
+		}
 
         boolean isJarInImg = jarUrl.startsWith("img+");
         jarUrl = jarUrl.replace("img+", "");
