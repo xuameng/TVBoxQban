@@ -25,6 +25,7 @@ import android.view.LayoutInflater;			//xuameng LayoutInflater依赖
 import androidx.recyclerview.widget.RecyclerView;  //xuameng主页默认焦点
 import java.util.Objects;   //xuameng主页默认焦点
 import com.github.tvbox.osc.util.FastClickCheckUtil;   //xuameng cache
+import com.github.tvbox.osc.util.MD5;  //xuameng cache
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -241,7 +242,7 @@ public class HomeActivity extends BaseActivity {
                 String cspCachePath = FileUtils.getFilePath()+"/csp/";
                 String jar=ApiConfig.get().getHomeSourceBean().getJar();
                 String jarUrl=!jar.isEmpty()?jar:ApiConfig.get().getSpider();
-				File cspCacheDir = new File(cspCachePath);
+                File cspCacheDir = new File(cspCachePath + MD5.string2MD5(jarUrl)+".jar");
 				File cacheDir = new File(cachePath);
 				if (!cacheDir.exists() && !cspCacheDir.exists()) return;
 				new Thread(() -> {
