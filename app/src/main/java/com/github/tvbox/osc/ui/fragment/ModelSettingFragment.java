@@ -764,6 +764,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
 				if(cacheDir.exists())FileUtils.cleanDirectory(cacheDir);
                 if(cspCacheDir.exists()){
                     FileUtils.cleanDirectory(cspCacheDir);
+					//ApiConfig.get().clearJarLoader();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
