@@ -29,6 +29,9 @@ public class Proxy {
                 //TODO
                 return null;
             }
+			else if (what.equals("SuperParse")) {
+                return SuperParse.loadHtml(params.get("flag"), params.get("url"));
+            }
 
         } catch (Throwable ignored) {
 
