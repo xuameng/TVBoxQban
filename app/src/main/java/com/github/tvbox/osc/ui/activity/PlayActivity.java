@@ -1616,9 +1616,14 @@ public class PlayActivity extends BaseActivity {
                 }else {
                     selector=click.trim();
                 }
-                String js="$(\""+ selector+"\").click();";
-				LOG.i("echo-javascript:" + js);
-                mSysWebView.loadUrl("javascript:"+js);
+                String js = selector;
+                if(!selector.contains("click()"))js+=".click();";
+                LOG.i("echo-javascript:" + js);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                    view.evaluateJavascript(js, null);
+                } else {
+                    view.loadUrl("javascript:" + js);
+                }
             }
         }
 
