@@ -1063,7 +1063,7 @@ public class ApiConfig {
     }
     private void addSuperParse(){
         ParseBean superPb = new ParseBean();
-        superPb.setName("超级解析");
+        superPb.setName("聚汇解析");
         superPb.setUrl("SuperParse");
         superPb.setExt("");
         superPb.setType(4);
