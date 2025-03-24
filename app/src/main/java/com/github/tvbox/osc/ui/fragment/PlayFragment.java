@@ -1377,11 +1377,12 @@ public class PlayFragment extends BaseLazyFragment {
                             }
                         }
                         if (rs.has("jxFrom")) {
-                            if(!isAdded())return;
+                          //  if(!isAdded())return;
                             requireActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
                                     Toast.makeText(mContext, "解析来自:" + rs.optString("jxFrom"), Toast.LENGTH_SHORT).show();
+									if(!isAdded())return;
                                 }
                             });
                         }
@@ -1662,21 +1663,30 @@ public class PlayFragment extends BaseLazyFragment {
 
         @Override
         public void onPageFinished(WebView view, String url) {
-            super.onPageFinished(view,url);
-            String click=sourceBean.getClickSelector();
+            super.onPageFinished(view, url);
+            String clickSelector = sourceBean.getClickSelector().trim();
             LOG.i("echo-onPageFinished url:" + url);
-
-            if(!click.isEmpty()){
+            if (!clickSelector.isEmpty()) {
                 String selector;
-                if(click.contains(";")){
-                    if(!url.contains(click.split(";")[0]))return;
-                    selector=click.split(";")[1];
-                }else {
-                    selector=click.trim();
+                if (clickSelector.contains(";") && !clickSelector.endsWith(";")) {
+                    String[] parts = clickSelector.split(";", 2);
+                    if (!url.contains(parts[0])) {
+                        return;
+                    }
+                    selector = parts[1].trim();
+                } else {
+                    selector = clickSelector.trim();
                 }
-                String js="$(\""+ selector+"\").click();";
+//                selector="document.getElementById('playleft').children[0].contentWindow.document.getElementById('start')";
+                // 构造点击的 JS 代码
+                String js = selector;
+                if(!selector.contains("click()"))js+=".click();";
                 LOG.i("echo-javascript:" + js);
-                mSysWebView.loadUrl("javascript:"+js);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                    view.evaluateJavascript(js, null);
+                } else {
+                    view.loadUrl("javascript:" + js);
+                }
             }
         }
 
