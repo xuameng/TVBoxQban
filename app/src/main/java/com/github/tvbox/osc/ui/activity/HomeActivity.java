@@ -241,7 +241,7 @@ public class HomeActivity extends BaseActivity {
                 String cspCachePath = FileUtils.getFilePath()+"/csp/";
                 String jar=ApiConfig.get().getHomeSourceBean().getJar();
                 String jarUrl=!jar.isEmpty()?jar:ApiConfig.get().getSpider();
-                File cspCacheDir = new File(cspCachePath + MD5.string2MD5(jarUrl)+".jar");
+				File cspCacheDir = new File(cspCachePath);
 				File cacheDir = new File(cachePath);
 				if (!cacheDir.exists() && !cspCacheDir.exists()) return;
 				new Thread(() -> {
