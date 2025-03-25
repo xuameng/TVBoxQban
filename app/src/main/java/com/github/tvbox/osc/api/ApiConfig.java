@@ -74,7 +74,7 @@ public class ApiConfig {
     private String spider = null;
     public String wallpaper = "";
 	public String musicwallpaper = "";   //xuameng音乐背景图
-	public String warningText = "";   //xuameng版权提示
+	public String JvhuiWarning = "";   //xuameng版权提示
 
     private final SourceBean emptyHome = new SourceBean();
 
@@ -429,7 +429,7 @@ public class ApiConfig {
         // wallpaper
         wallpaper = DefaultConfig.safeJsonString(infoJson, "wallpaper", "");
 		musicwallpaper = DefaultConfig.safeJsonString(infoJson, "musicwallpaper", "");    //xuameng音乐背景图
-		warningText = DefaultConfig.safeJsonString(infoJson, "warningText", "");  //xuameng警告
+		JvhuiWarning = DefaultConfig.safeJsonString(infoJson, "JvhuiWarning", "");  //xuameng警告
         // 远端站点源
         SourceBean firstSite = null;
         for (JsonElement opt : infoJson.get("sites").getAsJsonArray()) {
