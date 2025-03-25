@@ -7,8 +7,8 @@ import android.util.Base64;
 
 import com.github.catvod.crawler.JarLoader;
 import com.github.catvod.crawler.JsLoader;
-import com.github.catvod.crawler.Spider;
 import com.github.catvod.crawler.PyLoader;
+import com.github.catvod.crawler.Spider;
 import com.github.tvbox.osc.base.App;
 import com.github.tvbox.osc.bean.LiveChannelGroup;
 import com.github.tvbox.osc.bean.IJKCode;
@@ -36,6 +36,7 @@ import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.AbsCallback;
 import com.lzy.okgo.model.Response;
 import com.orhanobut.hawk.Hawk;
+import com.github.catvod.crawler.SpiderNull;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -62,11 +63,11 @@ import java.util.regex.Pattern;
  */
 public class ApiConfig {
     private static ApiConfig instance;
-    private final LinkedHashMap<String, SourceBean> sourceBeanList;
+    private LinkedHashMap<String, SourceBean> sourceBeanList;
     private SourceBean mHomeSource;
     private ParseBean mDefaultParse;
-    private final List<LiveChannelGroup> liveChannelGroupList;
-    private final List<ParseBean> parseBeanList;
+    private List<LiveChannelGroup> liveChannelGroupList;
+    private List<ParseBean> parseBeanList;
     private List<String> vipParseFlags;
     private Map<String,String> myHosts;
     private List<IJKCode> ijkCodes;
@@ -88,7 +89,7 @@ public class ApiConfig {
 
     private String defaultLiveObjString="{\"lives\":[{\"name\":\"txt_m3u\",\"type\":0,\"url\":\"txt_m3u_url\"}]}";
     private ApiConfig() {
-		clearLoader();
+		jarLoader.clear();
         sourceBeanList = new LinkedHashMap<>();
         liveChannelGroupList = new ArrayList<>();
         parseBeanList = new ArrayList<>();
@@ -419,8 +420,8 @@ public class ApiConfig {
     }
 	private static  String jarCache ="true";
     private void parseJson(String apiUrl, String jsonStr) {
-		LOG.i("echo-parseJson"+jsonStr);
 		pyLoader.setConfig(jsonStr);
+		LOG.i("echo-parseJson"+jsonStr);
         JsonObject infoJson = gson.fromJson(jsonStr, JsonObject.class);
         // spider
         spider = DefaultConfig.safeJsonString(infoJson, "spider", "");
@@ -936,19 +937,22 @@ public class ApiConfig {
     }
 
     public Spider getCSP(SourceBean sourceBean) {
-        if (sourceBean.getApi().endsWith(".js") || sourceBean.getApi().contains(".js?")){
-            return jsLoader.getSpider(sourceBean.getKey(), sourceBean.getApi(), sourceBean.getExt(), sourceBean.getJar());
+        boolean js = sourceBean.getApi().endsWith(".js") || sourceBean.getApi().contains(".js?");
+        if (js) return jsLoader.getSpider(sourceBean.getKey(), sourceBean.getApi(), sourceBean.getExt(), sourceBean.getJar());
+        if (sourceBean.getKey().startsWith("py_") || sourceBean.getApi().endsWith(".py")) {
+            try {
+                return pyLoader.getSpider(sourceBean.getKey(), sourceBean.getApi(), sourceBean.getExt());
+            } catch (Exception e) {
+                return new SpiderNull();
+            }
         }
-        else if (sourceBean.getKey().startsWith("py_")) {
-            return pyLoader.getSpider(sourceBean.getKey(), sourceBean.getApi(), sourceBean.getExt());
-        }
-        else return jarLoader.getSpider(sourceBean.getKey(), sourceBean.getApi(), sourceBean.getExt(), sourceBean.getJar());
+        return jarLoader.getSpider(sourceBean.getKey(), sourceBean.getApi(), sourceBean.getExt(), sourceBean.getJar());
     }
 
     public Object[] proxyLocal(Map<String,String> param) {
         SourceBean sourceBean = ApiConfig.get().getHomeSourceBean();
-        if (sourceBean.getKey().startsWith("py_")) {
-            return pyLoader.proxyInvoke(param,sourceBean.getKey(),sourceBean.getApi(),sourceBean.getExt());
+        if (sourceBean.getKey().startsWith("py_") || sourceBean.getApi().endsWith(".py")) {
+            return pyLoader.proxyInvoke(sourceBean.getKey(), getPyUrl(sourceBean), param);
         }else {
             return jarLoader.proxyInvoke(param);
         }
@@ -1085,8 +1089,14 @@ public class ApiConfig {
         superPb.setType(4);
         parseBeanList.add(0, superPb);
     }
-    public void clearLoader(){
-        jarLoader.clear();
-        pyLoader.clear();
+    private String getPyUrl(SourceBean sb)
+    {
+        String api = sb.getApi();
+        String ext = sb.getExt();
+        StringBuilder urlBuilder = new StringBuilder(api);
+        if (!ext.isEmpty()) {
+            urlBuilder.append(api.contains("?") ? "&" : "?").append("extend=").append(ext);
+        }
+        return urlBuilder.toString();
     }
 }
