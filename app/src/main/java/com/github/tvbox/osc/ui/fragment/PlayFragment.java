@@ -1096,7 +1096,7 @@ public class PlayFragment extends BaseLazyFragment {
                 parseBean.setType(0);
                 parseBean.setUrl(playUrl);
 				mController.showParse(false);
-				Toast.makeText(mContext, "解析站点未配置！", Toast.LENGTH_SHORT).show();
+				Toast.makeText(mContext, "解析站点未配置，直接嗅探播放！", Toast.LENGTH_SHORT).show();
             }else{
 				mController.showParse(useParse);
 			}
@@ -1365,6 +1365,7 @@ public class PlayFragment extends BaseLazyFragment {
                                 mHandler.removeMessages(100);
                                 mHandler.sendEmptyMessageDelayed(100, 20 * 1000);
                                 loadWebView(mixParseUrl);
+								Toast.makeText(mContext, "嗅探来自:" + finalExtendName, Toast.LENGTH_SHORT).show();
                             }
                         });
                     } else {
