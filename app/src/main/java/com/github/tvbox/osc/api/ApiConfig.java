@@ -8,6 +8,7 @@ import android.util.Base64;
 import com.github.catvod.crawler.JarLoader;
 import com.github.catvod.crawler.JsLoader;
 import com.github.catvod.crawler.Spider;
+import com.github.catvod.crawler.PyLoader;
 import com.github.tvbox.osc.base.App;
 import com.github.tvbox.osc.bean.LiveChannelGroup;
 import com.github.tvbox.osc.bean.IJKCode;
@@ -61,11 +62,11 @@ import java.util.regex.Pattern;
  */
 public class ApiConfig {
     private static ApiConfig instance;
-    private LinkedHashMap<String, SourceBean> sourceBeanList;
+    private final LinkedHashMap<String, SourceBean> sourceBeanList;
     private SourceBean mHomeSource;
     private ParseBean mDefaultParse;
-    private List<LiveChannelGroup> liveChannelGroupList;
-    private List<ParseBean> parseBeanList;
+    private final List<LiveChannelGroup> liveChannelGroupList;
+    private final List<ParseBean> parseBeanList;
     private List<String> vipParseFlags;
     private Map<String,String> myHosts;
     private List<IJKCode> ijkCodes;
@@ -78,6 +79,7 @@ public class ApiConfig {
 
     private final JarLoader jarLoader = new JarLoader();
     private final JsLoader jsLoader = new JsLoader();
+	private final PyLoader pyLoader = new PyLoader();
     private final Gson gson;
 
     private final String userAgent = "okhttp/3.15";
@@ -86,7 +88,7 @@ public class ApiConfig {
 
     private String defaultLiveObjString="{\"lives\":[{\"name\":\"txt_m3u\",\"type\":0,\"url\":\"txt_m3u_url\"}]}";
     private ApiConfig() {
-		jarLoader.clear();
+		clearLoader();
         sourceBeanList = new LinkedHashMap<>();
         liveChannelGroupList = new ArrayList<>();
         parseBeanList = new ArrayList<>();
@@ -418,6 +420,7 @@ public class ApiConfig {
 	private static  String jarCache ="true";
     private void parseJson(String apiUrl, String jsonStr) {
 		LOG.i("echo-parseJson"+jsonStr);
+		pyLoader.setConfig(jsonStr);
         JsonObject infoJson = gson.fromJson(jsonStr, JsonObject.class);
         // spider
         spider = DefaultConfig.safeJsonString(infoJson, "spider", "");
@@ -438,7 +441,11 @@ public class ApiConfig {
             sb.setApi(obj.get("api").getAsString().trim());
             sb.setSearchable(DefaultConfig.safeJsonInt(obj, "searchable", 1));
             sb.setQuickSearch(DefaultConfig.safeJsonInt(obj, "quickSearch", 1));
-            sb.setFilterable(DefaultConfig.safeJsonInt(obj, "filterable", 1));
+            if(siteKey.startsWith("py_")){
+                sb.setFilterable(1);
+            }else {
+                sb.setFilterable(DefaultConfig.safeJsonInt(obj, "filterable", 1));
+            }
             sb.setPlayerUrl(DefaultConfig.safeJsonString(obj, "playUrl", ""));
             if(obj.has("ext") && (obj.get("ext").isJsonObject() || obj.get("ext").isJsonArray())){
                 sb.setExt(obj.get("ext").toString());
@@ -929,13 +936,22 @@ public class ApiConfig {
     }
 
     public Spider getCSP(SourceBean sourceBean) {
-        boolean js = sourceBean.getApi().endsWith(".js") || sourceBean.getApi().contains(".js?");
-        if (js) return jsLoader.getSpider(sourceBean.getKey(), sourceBean.getApi(), sourceBean.getExt(), sourceBean.getJar());
-        return jarLoader.getSpider(sourceBean.getKey(), sourceBean.getApi(), sourceBean.getExt(), sourceBean.getJar());
+        if (sourceBean.getApi().endsWith(".js") || sourceBean.getApi().contains(".js?")){
+            return jsLoader.getSpider(sourceBean.getKey(), sourceBean.getApi(), sourceBean.getExt(), sourceBean.getJar());
+        }
+        else if (sourceBean.getKey().startsWith("py_")) {
+            return pyLoader.getSpider(sourceBean.getKey(), sourceBean.getApi(), sourceBean.getExt());
+        }
+        else return jarLoader.getSpider(sourceBean.getKey(), sourceBean.getApi(), sourceBean.getExt(), sourceBean.getJar());
     }
 
     public Object[] proxyLocal(Map<String,String> param) {
-        return jarLoader.proxyInvoke(param);
+        SourceBean sourceBean = ApiConfig.get().getHomeSourceBean();
+        if (sourceBean.getKey().startsWith("py_")) {
+            return pyLoader.proxyInvoke(param,sourceBean.getKey(),sourceBean.getApi(),sourceBean.getExt());
+        }else {
+            return jarLoader.proxyInvoke(param);
+        }
     }
 
     public JSONObject jsonExt(String key, LinkedHashMap<String, String> jxs, String url) {
@@ -1068,5 +1084,9 @@ public class ApiConfig {
         superPb.setExt("");
         superPb.setType(4);
         parseBeanList.add(0, superPb);
+    }
+    public void clearLoader(){
+        jarLoader.clear();
+        pyLoader.clear();
     }
 }
