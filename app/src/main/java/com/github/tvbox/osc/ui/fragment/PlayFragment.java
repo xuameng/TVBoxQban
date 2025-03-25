@@ -1089,7 +1089,6 @@ public class PlayFragment extends BaseLazyFragment {
         parseFlag = flag;
         webUrl = url;
         ParseBean parseBean = null;
-        mController.showParse(useParse);
         if (useParse) {
             parseBean = ApiConfig.get().getDefaultParse();
         } else {
@@ -1110,7 +1109,10 @@ public class PlayFragment extends BaseLazyFragment {
                 parseBean = new ParseBean();
                 parseBean.setType(0);
                 parseBean.setUrl(playUrl);
-            }
+				mController.showParse(false);
+            }else{
+				mController.showParse(useParse);
+			}
         }
         doParse(parseBean);
     }
