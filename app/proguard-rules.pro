@@ -197,15 +197,8 @@
 -keep class com.github.tvbox.osc.ui.tv.widget.ViewObj{
     <methods>;
 }
-# Python支持
--keep public class com.undcover.freedom.pyramid.** { *; }
--dontwarn com.undcover.freedom.pyramid.**
--keep public class com.chaquo.python.** { *; }
--dontwarn com.chaquo.python.**
+
 -keep class com.github.catvod.crawler.*{*;}
-# Cronet支持http3
--keep class com.google.net.cronet.**{*;}
--keep class org.chromium.net.**{*;}
 # 迅雷下载模块
 -keep class com.xunlei.downloadlib.** {*;}
 # quickjs引擎
@@ -218,3 +211,12 @@
     public static **[] values();
     public static ** valueOf(java.lang.String);
 }
+# Cronet支持http3
+-keep class com.google.net.cronet.**{*;}
+-keep class org.chromium.net.**{*;}
+
+# Python支持
+-keep public class com.undcover.freedom.pyramid.** { *; }
+-dontwarn com.undcover.freedom.pyramid.**
+-keep public class com.chaquo.python.** { *; }
+-dontwarn com.chaquo.python.**
