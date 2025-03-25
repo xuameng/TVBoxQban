@@ -202,8 +202,10 @@
 -dontwarn com.undcover.freedom.pyramid.**
 -keep public class com.chaquo.python.** { *; }
 -dontwarn com.chaquo.python.**
-
 -keep class com.github.catvod.crawler.*{*;}
+# Cronet支持http3
+-keep class com.google.net.cronet.**{*;}
+-keep class org.chromium.net.**{*;}
 # 迅雷下载模块
 -keep class com.xunlei.downloadlib.** {*;}
 # quickjs引擎
