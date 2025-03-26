@@ -1202,7 +1202,7 @@ public class VodController extends BaseController {
             }
         }
 		if (position < 0) position = 0;   //xuameng系统播放器有时会有负进度的BUG
-        if (duration > 1000) {
+        if (duration >= 1000 && duration <= 180000000){
             mSeekBar.setEnabled(true);
             mSeekBar.setProgress(position);	 //xuameng当前进程
 			mSeekBar.setMax(duration);       //xuameng设置总进程必须
@@ -1227,11 +1227,14 @@ public class VodController extends BaseController {
     }
 
     private boolean simSlideStart = false;
+	private boolean simSlideStartXu = false;
     private int simSeekPosition = 0;
     private long simSlideOffset = 0;
 	private long mSpeedTimeUp = 0;         //xuameng上键间隔时间
 
     public void tvSlideStop() {
+        int duration = (int) mControlWrapper.getDuration();
+        if (duration >= 1000 && duration <= 180000000){
 		mIsDragging = false;                //xuamengsetProgress监听
         mControlWrapper.startProgress();    //xuameng启动进程
         mControlWrapper.startFadeOut();
@@ -1244,6 +1247,7 @@ public class VodController extends BaseController {
         simSlideStart = false;
         //simSeekPosition = 0;  //XUAMENG重要要不然重0播放
         simSlideOffset = 0;
+		}
     }
 
     public void tvSlideStopXu() {           //xuameng修复SEEKBAR快进重新播放问题
@@ -1251,24 +1255,24 @@ public class VodController extends BaseController {
         mControlWrapper.startProgress();    //xuameng启动进程
         mControlWrapper.startFadeOut();
 		mSpeedTimeUp = 0;
-        if (!simSlideStart)
+        if (!simSlideStartXu)
             return;
 		if (isSEEKBAR){
         mControlWrapper.seekTo(simSeekPosition);
 		}
         if (!mControlWrapper.isPlaying())
         //xuameng快进暂停就暂停测试    mControlWrapper.start();    //测试成功，如果想暂停时快进自动播放取消注销
-        simSlideStart = false;
+        simSlideStartXu = false;
 //		simSeekPosition = 0;      //XUAMENG重要
         simSlideOffset = 0;
     }
 
     public void tvSlideStart(int dir) {
+        int duration = (int) mControlWrapper.getDuration();
+        if (duration >= 1000 && duration <= 180000000){
 		mIsDragging = true;                 //xuamengsetProgress不监听
         mControlWrapper.stopProgress();		//xuameng结束进程
         mControlWrapper.stopFadeOut();
-        int duration = (int) mControlWrapper.getDuration();
-        if (duration >= 1000){
         if (!simSlideStart) {
             simSlideStart = true;
         }
@@ -1305,9 +1309,8 @@ public class VodController extends BaseController {
         mControlWrapper.stopProgress();		//xuameng结束进程
         mControlWrapper.stopFadeOut();
         int duration = (int) mControlWrapper.getDuration();
-        if (duration >= 1000){
-        if (!simSlideStart) {
-            simSlideStart = true;
+        if (!simSlideStartXu) {
+            simSlideStartXu = true;
         }
         // 每次10秒
 		if (mSpeedTimeUp == 0){
@@ -1332,7 +1335,6 @@ public class VodController extends BaseController {
         simSeekPosition = position;
 		mSeekBar.setProgress(simSeekPosition);  //xuameng设置SEEKBAR当前进度
 		mCurrentTime.setText(PlayerUtils.stringForTime(simSeekPosition));  //xuameng设置SEEKBAR当前进度
-		}
     }
 
     @Override
