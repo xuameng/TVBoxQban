@@ -619,20 +619,20 @@
         android:src="@drawable/app_icon"/>
     <FrameLayout
         android:id="@+id/play_speed_3_container"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/vs_200"
+        android:layout_height="@dimen/vs_140"
         android:layout_gravity="center"
+		android:gravity="center"
         android:background="@drawable/bg_speed_indicator"
-        android:visibility="gone"
-        android:padding="8dp">
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/tv_speed_3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="3.0 X"
-            android:textColor="#FFFFFF"
-            android:textSize="18sp"
+            android:text="倍速播放"
+            android:textColor="@color/color_FFFFFF"
+            android:textSize="@dimen/ts_30"
             android:textStyle="bold" />
     </FrameLayout>
 </FrameLayout>
