@@ -1682,7 +1682,7 @@ public class VodController extends BaseController {
 
     private final Handler mmHandler = new Handler();
     private Runnable mLongPressRunnable;
-    private static final long LONG_PRESS_DELAY = 200;
+    private static final long LONG_PRESS_DELAY = 500;
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (isBottomVisible()) return super.onKeyDown(keyCode, event);
