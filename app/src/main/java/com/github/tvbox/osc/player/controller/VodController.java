@@ -261,6 +261,7 @@ public class VodController extends BaseController {
 	private boolean isAnimation = false;  //xuameng判断隐藏菜单动画
 	private boolean isDisplay = false;  //xuameng判断显示菜单动画
 	private boolean isVideoplaying = false;  //xuameng判断视频开始播放
+	private boolean isVideoPlay = false;  //xuameng判断视频开始播放
     Handler myHandle;
     Runnable myRunnable;
     int myHandleSeconds = 50000;            //闲置多少毫秒秒关闭底栏  默认100秒
@@ -1392,15 +1393,18 @@ public class VodController extends BaseController {
 					iv_circle_bg.setVisibility(GONE);
 					}
 				isVideoplaying = false;
+				isVideoPlay = false;
                 break;
             case VideoView.STATE_PLAYING:
                 initLandscapePortraitBtnInfo();
                 startProgress();
 				mxuPlay.setText("暂停");               //xuameng底部菜单显示暂停
 				isVideoplaying = true;
+				isVideoPlay = true;
 				//playIngXu();	
                 break;
             case VideoView.STATE_PAUSED:
+				isVideoPlay = false;
 				mxuPlay.setText("播放");			   //xuameng底部菜单显示播放
                 //mTopRoot1.setVisibility(GONE);       //xuameng隐藏上面菜单
                 //mTopRoot2.setVisibility(GONE);       //xuameng隐藏上面菜单
@@ -1409,6 +1413,7 @@ public class VodController extends BaseController {
                 break;
             case VideoView.STATE_ERROR:
                 listener.errReplay();
+				isVideoPlay = false;
 				mxuPlay.setText("准备");
 				if(!isPlaying && mTvPausexu.getVisibility() == View.VISIBLE){
 			    ObjectAnimator animator31 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0,700);				//xuameng动画暂停菜单开始
@@ -1437,13 +1442,16 @@ public class VodController extends BaseController {
 			    String width = Integer.toString(mControlWrapper.getVideoSize()[0]);
 				String height = Integer.toString(mControlWrapper.getVideoSize()[1]);
 				mVideoSize.setText("[ " + width + " X " + height +" ]"); 
+				isVideoPlay = false;
                 break;
             case VideoView.STATE_BUFFERED:
                 mPlayLoadNetSpeed.setVisibility(GONE);
+				isVideoPlay = false;
                 break;
             case VideoView.STATE_PREPARING:
 				simSeekPosition = 0;       //XUAMENG重要,换视频时重新记录进度
 				isVideoplaying = false;
+				isVideoPlay = false;
 				mxuPlay.setText("准备");
 				if(!isPlaying && mTvPausexu.getVisibility() == View.VISIBLE){
 			    ObjectAnimator animator32 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0,700);				//xuameng动画暂停菜单开始
@@ -1469,9 +1477,11 @@ public class VodController extends BaseController {
 				if (iv_circle_bg.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
 					iv_circle_bg.setVisibility(GONE);
 					}
+				isVideoPlay = false;
                 break;
             case VideoView.STATE_PLAYBACK_COMPLETED:
                 listener.playNext(true);
+				isVideoPlay = false;
                 break;
         }
     }
@@ -1626,6 +1636,7 @@ public class VodController extends BaseController {
     private float speed_old = 1.0f;
 
     private void speedPlayStart(){
+		if (isVideoPlay) {
         fromLongPress = true;
         try {
             speed_old = (float) mPlayerConfig.getDouble("sp");
@@ -1638,6 +1649,7 @@ public class VodController extends BaseController {
         } catch (JSONException f) {
             f.printStackTrace();
         }
+		}
     }
     private void speedPlayEnd(){
         if (fromLongPress) {
@@ -1656,9 +1668,7 @@ public class VodController extends BaseController {
     }
     @Override
     public void onLongPress(MotionEvent e) {
-        if (videoPlayState!=VideoView.STATE_PAUSED) {
             speedPlayStart();
-        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
