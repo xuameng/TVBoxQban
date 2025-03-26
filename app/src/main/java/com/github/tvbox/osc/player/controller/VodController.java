@@ -1636,7 +1636,7 @@ public class VodController extends BaseController {
     private float speed_old = 1.0f;
 
     private void speedPlayStart(){
-		if (isVideoPlay) {
+		if (isVideoPlay && mControlWrapper.isPlaying()) {
         fromLongPress = true;
         try {
             speed_old = (float) mPlayerConfig.getDouble("sp");
@@ -1682,7 +1682,7 @@ public class VodController extends BaseController {
 
     private final Handler mmHandler = new Handler();
     private Runnable mLongPressRunnable;
-    private static final long LONG_PRESS_DELAY = 800;
+    private static final long LONG_PRESS_DELAY = 200;
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (isBottomVisible()) return super.onKeyDown(keyCode, event);
