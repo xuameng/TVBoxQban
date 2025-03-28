@@ -1364,6 +1364,9 @@ public class VodController extends BaseController {
         mProgressText.setText(PlayerUtils.stringForTime(seekTo) + " / " + PlayerUtils.stringForTime(duration));
         mHandler.sendEmptyMessage(1000);
         mHandler.removeMessages(1001);
+        if (!simSlideStart) {
+            mHandler.sendEmptyMessageDelayed(1001, 100);
+        }
     }
 
     @Override
