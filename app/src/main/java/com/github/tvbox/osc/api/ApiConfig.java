@@ -417,7 +417,6 @@ public class ApiConfig {
     }
 	private static  String jarCache ="true";
     private void parseJson(String apiUrl, String jsonStr) {
-		pyLoader.setConfig(jsonStr);
 		LOG.i("echo-parseJson"+jsonStr);
         JsonObject infoJson = gson.fromJson(jsonStr, JsonObject.class);
         // spider
