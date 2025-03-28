@@ -1365,7 +1365,7 @@ public class VodController extends BaseController {
         mHandler.sendEmptyMessage(1000);
         mHandler.removeMessages(1001);
         if (!simSlideStart) {
-            mHandler.sendEmptyMessageDelayed(1001, 100);
+            mHandler.sendEmptyMessageDelayed(1001, 300);
         }
     }
 
