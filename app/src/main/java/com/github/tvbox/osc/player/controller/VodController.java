@@ -81,6 +81,12 @@ public class VodController extends BaseController {
 						if (iv_circle_bg.getVisibility() == View.VISIBLE){   //xuameng音乐播放时图标
 						iv_circle_bg.setVisibility(GONE);
 						}
+						if (tv_slide_progress_text.getVisibility() == View.VISIBLE){  //xuameng亮度图标
+							tv_slide_progress_text.setVisibility(View.GONE);
+						}
+						if (mPlayLoadNetSpeed.getVisibility() == View.VISIBLE){  //xuameng亮度图标
+							mPlayLoadNetSpeed.setVisibility(View.GONE);
+						}
                         break;
                     }
                     case 1001: { // seek 关闭
