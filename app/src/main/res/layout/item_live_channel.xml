@@ -14,7 +14,7 @@
     <TextView
         android:textSize="22.0mm"
         android:textColor="@android:color/white"
-        android:ellipsize="end"
+        android:ellipsize="marquee"
         android:gravity="center"
         android:id="@+id/tvChannelNum"
         android:layout_width="60.0mm"
@@ -24,7 +24,7 @@
     <TextView
         android:textSize="22.0mm"
         android:textColor="@android:color/white"
-        android:ellipsize="end"
+        android:ellipsize="marquee"
         android:gravity="left"
         android:focusableInTouchMode="true"
         android:id="@+id/tvChannelName"
