@@ -30,7 +30,7 @@
         <TextView
             android:textSize="@dimen/ts_16"
             android:textColor="@android:color/white"
-            android:ellipsize="end"
+            android:ellipsize="marquee"
             android:gravity="center|left"
             android:id="@+id/tv_epg_name"
             android:focusableInTouchMode="true"
