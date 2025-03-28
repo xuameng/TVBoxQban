@@ -17,6 +17,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.graphics.Color;                          //xuameng获取颜色值
+import android.widget.FrameLayout;  //xuameng倍速播放
 import com.github.tvbox.osc.server.RemoteServer;   //xuameng新增广告过滤
 import com.github.tvbox.osc.util.M3u8;  //xuameng新增广告过滤
 import com.lzy.okgo.OkGo;  //xuameng新增广告过滤
@@ -235,6 +236,7 @@ public class VodController extends BaseController {
     TextView mPlayrefresh;
 	TextView mxuPlay;                         //xuameng 底部播放ID
 	private ImageView iv_circle_bg;  //xuameng音乐播放时图标
+	private FrameLayout play_speed_3;  //xuameng倍速播放
 	private TextView tv_slide_progress_text;
 	ImageView MxuamengMusic;       //xuameng播放音乐背景
     public TextView mPlayerTimeStartEndText;
@@ -331,7 +333,7 @@ public class VodController extends BaseController {
 					if (MxuamengMusic.getVisibility() == View.GONE && isVideoplaying){  //xuameng播放音乐背景
 					MxuamengMusic.setVisibility(VISIBLE);
 					}
-					if (mProgressRoot.getVisibility() == View.VISIBLE || mPlayLoadNetSpeed.getVisibility() == View.VISIBLE || tv_slide_progress_text.getVisibility() == View.VISIBLE){
+					if (mProgressRoot.getVisibility() == View.VISIBLE || mPlayLoadNetSpeed.getVisibility() == View.VISIBLE || tv_slide_progress_text.getVisibility() == View.VISIBLE || play_speed_3.getVisibility() == View.VISIBLE){
 						if (iv_circle_bg.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
 						iv_circle_bg.setVisibility(GONE);
 						}
@@ -456,6 +458,7 @@ public class VodController extends BaseController {
 		mTvPausexu = findViewById(R.id.tv_pause_xu);				   //XUAMENG暂停动画
 		iv_circle_bg = (ImageView) findViewById(R.id.iv_circle_bg);  //xuameng音乐播放时图标
 		MxuamengMusic = (ImageView) findViewById(R.id.xuamengMusic);  //xuameng播放音乐背景
+		play_speed_3 = findViewById(R.id.play_speed_3_container);   //xuameng倍速播放
 		tv_slide_progress_text = findViewById(R.id.tv_slide_progress_text);
         mPlayLoadNetSpeed = findViewById(R.id.tv_play_load_net_speed);
         mVideoSize = findViewById(R.id.tv_videosize);
@@ -1645,6 +1648,12 @@ public class VodController extends BaseController {
             updatePlayerCfgView();
             listener.updatePlayerCfg();
             mControlWrapper.setSpeed(speed);
+			if (tv_slide_progress_text.getVisibility() == View.VISIBLE){
+				tv_slide_progress_text.setVisibility(View.GONE);
+			}
+			if (iv_circle_bg.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
+				iv_circle_bg.setVisibility(GONE);
+			}
             findViewById(R.id.play_speed_3_container).setVisibility(View.VISIBLE);
         } catch (JSONException f) {
             f.printStackTrace();
@@ -1682,7 +1691,7 @@ public class VodController extends BaseController {
 
     private final Handler mmHandler = new Handler();
     private Runnable mLongPressRunnable;
-    private static final long LONG_PRESS_DELAY = 500;
+    private static final long LONG_PRESS_DELAY = 300;
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (isBottomVisible()) return super.onKeyDown(keyCode, event);
