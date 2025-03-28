@@ -1259,6 +1259,7 @@ public class VodController extends BaseController {
         simSlideStart = false;
         //simSeekPosition = 0;  //XUAMENG重要要不然重0播放
         simSlideOffset = 0;
+		mHandler.sendEmptyMessageDelayed(1001, 300);
 		}
     }
 
@@ -1363,7 +1364,6 @@ public class VodController extends BaseController {
         mProgressText.setText(PlayerUtils.stringForTime(seekTo) + " / " + PlayerUtils.stringForTime(duration));
         mHandler.sendEmptyMessage(1000);
         mHandler.removeMessages(1001);
-        mHandler.sendEmptyMessageDelayed(1001, 300);
     }
 
     @Override
