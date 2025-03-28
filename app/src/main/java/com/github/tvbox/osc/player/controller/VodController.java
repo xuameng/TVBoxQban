@@ -87,6 +87,9 @@ public class VodController extends BaseController {
 						if (mPlayLoadNetSpeed.getVisibility() == View.VISIBLE){  //xuameng亮度图标
 							mPlayLoadNetSpeed.setVisibility(View.GONE);
 						}
+						if (XuLoading.getVisibility() == View.VISIBLE){  //xuameng loading
+							XuLoading.setVisibility(GONE);
+						}
                         break;
                     }
                     case 1001: { // seek 关闭
@@ -247,6 +250,7 @@ public class VodController extends BaseController {
 	private FrameLayout play_speed_3;  //xuameng倍速播放
 	private TextView tv_slide_progress_text;
 	ImageView MxuamengMusic;       //xuameng播放音乐背景
+	private ProgressBar XuLoading;   //xuameng  loading
     public TextView mPlayerTimeStartEndText;
     public TextView mPlayerTimeStartBtn;
     public TextView mPlayerTimeSkipBtn;
@@ -467,6 +471,7 @@ public class VodController extends BaseController {
 		iv_circle_bg = (ImageView) findViewById(R.id.iv_circle_bg);  //xuameng音乐播放时图标
 		MxuamengMusic = (ImageView) findViewById(R.id.xuamengMusic);  //xuameng播放音乐背景
 		play_speed_3 = findViewById(R.id.play_speed_3_container);   //xuameng倍速播放
+		XuLoading = findViewWithTag("vod_control_loading");  //xuameng  loading
 		tv_slide_progress_text = findViewById(R.id.tv_slide_progress_text);
         mPlayLoadNetSpeed = findViewById(R.id.tv_play_load_net_speed);
         mVideoSize = findViewById(R.id.tv_videosize);
