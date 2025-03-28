@@ -14,10 +14,10 @@
         android:layout_width="0mm"
         android:layout_height="60mm"
         android:layout_weight="1"
+        android:ellipsize="end"
         android:gravity="center"
         android:marqueeRepeatLimit="marquee_forever"
         android:singleLine="true"
-		android:ellipsize="end"
         android:textColor="@android:color/white"
         android:textSize="22mm" />
 </LinearLayout>
