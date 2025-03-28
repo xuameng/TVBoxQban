@@ -30,6 +30,7 @@
         <TextView
             android:textSize="@dimen/ts_16"
             android:textColor="@android:color/white"
+            android:ellipsize="end"
             android:gravity="center|left"
             android:id="@+id/tv_epg_name"
             android:focusableInTouchMode="true"
@@ -37,7 +38,6 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:singleLine="true"
-			android:ellipsize="end"
             android:marqueeRepeatLimit="marquee_forever" />
     </LinearLayout>
     <LinearLayout
