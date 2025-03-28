@@ -84,7 +84,9 @@ public class VodController extends BaseController {
                         break;
                     }
                     case 1001: { // seek 关闭
-                        mProgressRoot.setVisibility(GONE);
+						if (mProgressRoot.getVisibility() == View.VISIBLE){  //xuameng进程图标
+							mProgressRoot.setVisibility(GONE);
+						}
                         break;
                     }
 
@@ -1648,11 +1650,14 @@ public class VodController extends BaseController {
             updatePlayerCfgView();
             listener.updatePlayerCfg();
             mControlWrapper.setSpeed(speed);
-			if (tv_slide_progress_text.getVisibility() == View.VISIBLE){
+			if (tv_slide_progress_text.getVisibility() == View.VISIBLE){  //xuameng亮度图标
 				tv_slide_progress_text.setVisibility(View.GONE);
 			}
 			if (iv_circle_bg.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
 				iv_circle_bg.setVisibility(GONE);
+			}
+			if (mProgressRoot.getVisibility() == View.VISIBLE){  //xuameng进程图标
+				mProgressRoot.setVisibility(GONE);
 			}
             findViewById(R.id.play_speed_3_container).setVisibility(View.VISIBLE);
         } catch (JSONException f) {
