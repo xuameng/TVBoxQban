@@ -29,6 +29,7 @@ import java.net.URL;  //xuameng新增广告过滤
 import java.util.HashMap; //xuameng新增广告过滤
 import java.util.Map; //xuameng新增广告过滤
 import org.json.JSONArray;   //xuameng  b站
+import android.widget.ProgressBar;  //xuameng loading
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
