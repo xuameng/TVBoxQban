@@ -1489,6 +1489,7 @@ public class VodController extends BaseController {
 					iv_circle_bg.setVisibility(GONE);
 					}
 				isVideoPlay = false;
+				speedPlayEnd();
                 break;
             case VideoView.STATE_PLAYBACK_COMPLETED:
                 listener.playNext(true);
@@ -1669,8 +1670,6 @@ public class VodController extends BaseController {
         } catch (JSONException f) {
             f.printStackTrace();
         }
-		}else{
-			speedPlayEnd();
 		}
     }
     private void speedPlayEnd(){
