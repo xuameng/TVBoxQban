@@ -1259,7 +1259,7 @@ public class VodController extends BaseController {
         simSlideStart = false;
         //simSeekPosition = 0;  //XUAMENG重要要不然重0播放
         simSlideOffset = 0;
-		mHandler.sendEmptyMessageDelayed(1001, 300);
+		mHandler.sendEmptyMessageDelayed(1001, 100);
 		}
     }
 
