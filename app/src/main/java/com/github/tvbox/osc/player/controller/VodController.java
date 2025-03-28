@@ -1669,6 +1669,8 @@ public class VodController extends BaseController {
         } catch (JSONException f) {
             f.printStackTrace();
         }
+		}else{
+			speedPlayEnd();
 		}
     }
     private void speedPlayEnd(){
