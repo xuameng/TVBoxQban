@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 <LinearLayout
     android:orientation="horizontal"
     android:background="@drawable/shape_live_focus"
@@ -15,23 +14,23 @@
     <TextView
         android:textSize="22.0mm"
         android:textColor="@android:color/white"
+        android:ellipsize="end"
         android:gravity="center"
         android:id="@+id/tvChannelNum"
         android:layout_width="60.0mm"
         android:layout_height="60.0mm"
         android:singleLine="true"
-		android:ellipsize="end"
         android:marqueeRepeatLimit="marquee_forever"/>
     <TextView
         android:textSize="22.0mm"
         android:textColor="@android:color/white"
+        android:ellipsize="end"
         android:gravity="left"
         android:focusableInTouchMode="true"
         android:id="@+id/tvChannelName"
         android:layout_width="0.0mm"
         android:layout_height="60.0mm"
         android:singleLine="true"
-		android:ellipsize="end"
         android:layout_weight="1.0"
         android:marqueeRepeatLimit="marquee_forever"/>
 </LinearLayout>
