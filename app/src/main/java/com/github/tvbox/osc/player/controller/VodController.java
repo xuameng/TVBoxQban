@@ -1496,7 +1496,10 @@ public class VodController extends BaseController {
                 if(mProgressRoot.getVisibility()==GONE)mPlayLoadNetSpeed.setVisibility(VISIBLE);
 				if (iv_circle_bg.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
 					iv_circle_bg.setVisibility(GONE);
-					}
+				}
+				if (mProgressRoot.getVisibility() == View.VISIBLE){  //xuameng进程图标
+					mProgressRoot.setVisibility(GONE);
+				}
 				isVideoPlay = false;
 				speedPlayEnd();
                 break;
