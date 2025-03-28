@@ -14,7 +14,7 @@
         android:layout_width="0mm"
         android:layout_height="60mm"
         android:layout_weight="1"
-        android:ellipsize="end"
+        android:ellipsize="marquee"
         android:gravity="center"
         android:marqueeRepeatLimit="marquee_forever"
         android:singleLine="true"
