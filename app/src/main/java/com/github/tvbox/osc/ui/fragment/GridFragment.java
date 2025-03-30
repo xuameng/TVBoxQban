@@ -306,7 +306,7 @@ public class GridFragment extends BaseLazyFragment {
         sourceViewModel.getList(sortData, page);
     }
 
-    public void toggleFilterColor() {
+    private void toggleFilterColor() {
         if (sortData!=null && sortData.filters != null && !sortData.filters.isEmpty()) {
             int count = sortData.filterSelectCount();
             EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_FILTER_CHANGE, count));
