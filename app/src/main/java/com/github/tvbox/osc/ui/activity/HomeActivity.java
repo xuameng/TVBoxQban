@@ -195,6 +195,9 @@ public class HomeActivity extends BaseActivity {
                     if (!sortData.filters.isEmpty()) {
                         showFilterIcon(sortData.filterSelectCount());
                     }
+                    if (!sortData.filters.isEmpty()) {
+                        showFilterIcon(sortData.filterSelectCount());
+                    }
                     HomeActivity.this.sortFocusView = view;
                     HomeActivity.this.sortFocused = position;
                     mHandler.removeCallbacks(mDataRunnable);
