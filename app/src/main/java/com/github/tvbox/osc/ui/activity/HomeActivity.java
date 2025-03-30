@@ -196,7 +196,11 @@ public class HomeActivity extends BaseActivity {
                     if (!sortData.filters.isEmpty()) {
                         showFilterIcon(sortData.filterSelectCount());
                     }
-					gridFragment.toggleFilterColor();
+					                    BaseLazyFragment baseLazyFragment = fragments.get(sortFocused);
+                    if ((baseLazyFragment instanceof GridFragment)) {
+                        ((GridFragment) baseLazyFragment).toggleFilterColor();
+                    }
+					
                     HomeActivity.this.sortFocusView = view;
                     HomeActivity.this.sortFocused = position;
                     mHandler.removeCallbacks(mDataRunnable);
