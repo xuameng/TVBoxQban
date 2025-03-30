@@ -616,7 +616,6 @@ public class HomeActivity extends BaseActivity {
         } else if (event.type == RefreshEvent.TYPE_FILTER_CHANGE) {
             if (currentView != null) {
                 showFilterIcon((int) event.obj);
-				sortData.filterSelectCount();
             }
         }
     }
