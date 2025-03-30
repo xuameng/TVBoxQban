@@ -387,7 +387,6 @@ public class GridFragment extends BaseLazyFragment {
                     TextView valueTv = view.findViewById(R.id.filterValue);
                     valueTv.getPaint().setFakeBoldText(isBold);
                     valueTv.setTextColor(color);
-					toggleFilterColor();
                 }
             });
             adapter.setNewData(values);
