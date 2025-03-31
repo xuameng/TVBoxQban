@@ -90,7 +90,6 @@ public class HomeActivity extends BaseActivity {
     private SourceViewModel sourceViewModel;
     private SortAdapter sortAdapter;
     private HomePageAdapter pageAdapter;
-	private GridFragment gridFragment;
     private View currentView;
     private final List<BaseLazyFragment> fragments = new ArrayList<>();
     private boolean isDownOrUp = false;
@@ -195,10 +194,6 @@ public class HomeActivity extends BaseActivity {
                     MovieSort.SortData sortData = sortAdapter.getItem(position);
                     if (!sortData.filters.isEmpty()) {
                         showFilterIcon(sortData.filterSelectCount());
-                    }
-					                    BaseLazyFragment baseLazyFragment = fragments.get(sortFocused);
-                    if ((baseLazyFragment instanceof GridFragment)) {
-                        ((GridFragment) baseLazyFragment).initData();
                     }
                     HomeActivity.this.sortFocusView = view;
                     HomeActivity.this.sortFocused = position;
