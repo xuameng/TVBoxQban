@@ -193,7 +193,7 @@ public class HomeActivity extends BaseActivity {
                     textView.invalidate();
                     MovieSort.SortData sortData = sortAdapter.getItem(position);
                     if (!sortData.filters.isEmpty()) {
-                        showFilterIcon(sortData.filterSelectCountXu());
+                        showFilterIcon(sortData.filterSelectCount());
                     }
                     HomeActivity.this.sortFocusView = view;
                     HomeActivity.this.sortFocused = position;
