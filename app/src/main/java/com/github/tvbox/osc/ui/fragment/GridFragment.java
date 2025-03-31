@@ -298,7 +298,7 @@ public class GridFragment extends BaseLazyFragment {
         return isLoad || !mGrids.empty(); //如果有缓存页的话也可以认为是加载了数据的
     }
 
-    public void initData() {
+    private void initData() {
         showLoading();
         isLoad = false;
         scrollTop();
