@@ -273,7 +273,7 @@ public class HomeActivity extends BaseActivity {
                     Bundle bundle = new Bundle();
                     bundle.putBoolean("useCache", true);
                     intent.putExtras(bundle);
-					MovieSort.filterSelect.clear();
+					MovieSort.SortData.filterSelect.clear();
                     HomeActivity.this.startActivity(intent);
 					Toast.makeText(HomeActivity.this, "重新加载主页数据！", Toast.LENGTH_SHORT).show();   
                 }else {
