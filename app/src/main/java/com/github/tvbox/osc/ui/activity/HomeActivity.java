@@ -90,6 +90,7 @@ public class HomeActivity extends BaseActivity {
     private SourceViewModel sourceViewModel;
     private SortAdapter sortAdapter;
     private HomePageAdapter pageAdapter;
+	private GridFragment gridFragment;
     private View currentView;
     private final List<BaseLazyFragment> fragments = new ArrayList<>();
     private boolean isDownOrUp = false;
@@ -191,9 +192,10 @@ public class HomeActivity extends BaseActivity {
                     textView.getPaint().setFakeBoldText(true);
                     textView.setTextColor(HomeActivity.this.getResources().getColor(R.color.color_FFFFFF));
                     textView.invalidate();
-              //      MovieSort.SortData sortData = sortAdapter.getItem(position);
-                    if (!sortAdapter.getItem(position).filters.isEmpty()) {
-                        showFilterIcon(sortAdapter.getItem(position).filterSelectCount());
+                    MovieSort.SortData sortData = sortAdapter.getItem(position);
+                    if (!sortData.filters.isEmpty()) {
+                        showFilterIcon(sortData.filterSelectCount());
+						gridFragment.initData();
                     }
                     HomeActivity.this.sortFocusView = view;
                     HomeActivity.this.sortFocused = position;
