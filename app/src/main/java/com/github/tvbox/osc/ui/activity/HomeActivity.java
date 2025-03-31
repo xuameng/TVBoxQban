@@ -192,9 +192,12 @@ public class HomeActivity extends BaseActivity {
                     textView.setTextColor(HomeActivity.this.getResources().getColor(R.color.color_FFFFFF));
                     textView.invalidate();
                     MovieSort.SortData sortData = sortAdapter.getItem(position);
-           //         if (!sortData.filters.isEmpty()) {
-            //            showFilterIcon(sortData.filterSelectCount());
-             //       }
+                    if (!sortData.filters.isEmpty()) {
+						                        showFilterIcon(sortData.filterSelectCount());
+												int count = sortData.filterSelectCount();
+
+						showFilterIcon(sortData.count);
+                    }
                     HomeActivity.this.sortFocusView = view;
                     HomeActivity.this.sortFocused = position;
                     mHandler.removeCallbacks(mDataRunnable);
