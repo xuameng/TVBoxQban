@@ -268,7 +268,12 @@ public class HomeActivity extends BaseActivity {
             @Override
             public boolean onLongClick(View v) {
                 if(dataInitOk && jarInitOk){
-jumpActivity(HomeActivity.class);   //xuameng加载慢跳转设置
+                    Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    Bundle bundle = new Bundle();
+                    bundle.putBoolean("useCache", true);
+                    intent.putExtras(bundle);
+                    HomeActivity.this.startActivity(intent);
 					Toast.makeText(HomeActivity.this, "重新加载主页数据！", Toast.LENGTH_SHORT).show();   
                 }else {
                     jumpActivity(SettingActivity.class);   //xuameng加载慢跳转设置
