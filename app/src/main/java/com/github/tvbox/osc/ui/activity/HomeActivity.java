@@ -193,10 +193,7 @@ public class HomeActivity extends BaseActivity {
                     textView.invalidate();
                     MovieSort.SortData sortData = sortAdapter.getItem(position);
                     if (!sortData.filters.isEmpty()) {
-						                        showFilterIcon(sortData.filterSelectCount());
-												int count = sortData.filterSelectCount();
-
-						showFilterIcon(count);
+                        showFilterIcon(sortData.filterSelectCount());
                     }
                     HomeActivity.this.sortFocusView = view;
                     HomeActivity.this.sortFocused = position;
@@ -618,7 +615,7 @@ public class HomeActivity extends BaseActivity {
             }
         } else if (event.type == RefreshEvent.TYPE_FILTER_CHANGE) {
             if (currentView != null) {
-                showFilterIcon((int) event.obj);
+      //          showFilterIcon((int) event.obj);
             }
         }
     }
