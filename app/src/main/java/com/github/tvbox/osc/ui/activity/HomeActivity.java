@@ -97,7 +97,6 @@ public class HomeActivity extends BaseActivity {
     private int currentSelected = 0;
     private int sortFocused = 0;
 	private int PositionXu = 0;
-	private MovieSort.SortData sortDataXu = null;
     public View sortFocusView = null;
     private final Handler mHandler = new Handler();
     private long mExitTime = 0;
@@ -269,13 +268,7 @@ public class HomeActivity extends BaseActivity {
             @Override
             public boolean onLongClick(View v) {
                 if(dataInitOk && jarInitOk){
-                    Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    Bundle bundle = new Bundle();
-                    bundle.putBoolean("useCache", true);
-                    intent.putExtras(bundle);
-					sortDataXu.filterSelect.clear();
-                    HomeActivity.this.startActivity(intent);
+jumpActivity(HomeActivity.class);   //xuameng加载慢跳转设置
 					Toast.makeText(HomeActivity.this, "重新加载主页数据！", Toast.LENGTH_SHORT).show();   
                 }else {
                     jumpActivity(SettingActivity.class);   //xuameng加载慢跳转设置
