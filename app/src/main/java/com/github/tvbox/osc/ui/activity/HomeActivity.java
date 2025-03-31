@@ -96,6 +96,7 @@ public class HomeActivity extends BaseActivity {
     private boolean sortChange = false;
     private int currentSelected = 0;
     private int sortFocused = 0;
+	private int PositionXu = 0;
     public View sortFocusView = null;
     private final Handler mHandler = new Handler();
     private long mExitTime = 0;
@@ -191,6 +192,7 @@ public class HomeActivity extends BaseActivity {
                     textView.getPaint().setFakeBoldText(true);
                     textView.setTextColor(HomeActivity.this.getResources().getColor(R.color.color_FFFFFF));
                     textView.invalidate();
+					PositionXu = position;
                     MovieSort.SortData sortData = sortAdapter.getItem(position);
                     if (!sortData.filters.isEmpty()) {
                         showFilterIcon(sortData.filterSelectCount());
@@ -614,8 +616,12 @@ public class HomeActivity extends BaseActivity {
                 HomeActivity.this.startActivity(newIntent);
             }
         } else if (event.type == RefreshEvent.TYPE_FILTER_CHANGE) {
-            if (currentView != null) {
-                showFilterIcon((int) event.obj);
+            if (currentView != null && PositionXu !=0) {
+                    MovieSort.SortData sortData = sortAdapter.getItem(PositionXu);
+                    if (!sortData.filters.isEmpty()) {
+                        showFilterIcon(sortData.filterSelectCount());
+                    }
+          //      showFilterIcon((int) event.obj);
             }
         }
     }
