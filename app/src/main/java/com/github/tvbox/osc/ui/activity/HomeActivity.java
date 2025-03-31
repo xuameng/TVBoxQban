@@ -615,7 +615,7 @@ public class HomeActivity extends BaseActivity {
             }
         } else if (event.type == RefreshEvent.TYPE_FILTER_CHANGE) {
             if (currentView != null) {
-      //          showFilterIcon((int) event.obj);
+                showFilterIconXu((int) event.obj);
             }
         }
     }
@@ -624,6 +624,12 @@ public class HomeActivity extends BaseActivity {
         boolean visible = count > 0;
         currentView.findViewById(R.id.tvFilterColor).setVisibility(visible ? View.VISIBLE : View.GONE);
         currentView.findViewById(R.id.tvFilter).setVisibility(visible ? View.GONE : View.VISIBLE);
+    }
+
+    private void showFilterIconXu(int count) {
+        boolean visibleXu = count > 0;
+        currentView.findViewById(R.id.tvFilterColor).setVisibility(visibleXu ? View.VISIBLE : View.GONE);
+        currentView.findViewById(R.id.tvFilter).setVisibility(visibleXu ? View.GONE : View.VISIBLE);
     }
 
     private Runnable mDataRunnable = new Runnable() {
