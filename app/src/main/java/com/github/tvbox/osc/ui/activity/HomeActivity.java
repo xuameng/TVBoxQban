@@ -273,6 +273,7 @@ public class HomeActivity extends BaseActivity {
                     Bundle bundle = new Bundle();
                     bundle.putBoolean("useCache", true);
                     intent.putExtras(bundle);
+					MovieSort.filterSelect.clear();
                     HomeActivity.this.startActivity(intent);
 					Toast.makeText(HomeActivity.this, "重新加载主页数据！", Toast.LENGTH_SHORT).show();   
                 }else {
@@ -617,10 +618,10 @@ public class HomeActivity extends BaseActivity {
             }
         } else if (event.type == RefreshEvent.TYPE_FILTER_CHANGE) {
             if (currentView != null && PositionXu !=0) {
-                    MovieSort.SortData sortData = sortAdapter.getItem(PositionXu);
-                    if (!sortData.filters.isEmpty()) {
-                        showFilterIcon(sortData.filterSelectCount());
-                    }
+                MovieSort.SortData sortData = sortAdapter.getItem(PositionXu);
+                if (!sortData.filters.isEmpty()) {
+                    showFilterIcon(sortData.filterSelectCount());
+                }
           //      showFilterIcon((int) event.obj);
             }
         }
