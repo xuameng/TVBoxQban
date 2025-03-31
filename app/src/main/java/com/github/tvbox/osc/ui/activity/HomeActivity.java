@@ -196,7 +196,7 @@ public class HomeActivity extends BaseActivity {
 						                        showFilterIcon(sortData.filterSelectCount());
 												int count = sortData.filterSelectCount();
 
-						showFilterIcon(sortData.count);
+						showFilterIcon(count);
                     }
                     HomeActivity.this.sortFocusView = view;
                     HomeActivity.this.sortFocused = position;
