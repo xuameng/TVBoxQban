@@ -989,6 +989,7 @@ public class PlayActivity extends BaseActivity {
                     allowSwitchPlayer=true;
 					play(false);
                 }
+				play(false);
             }
             return true;
         } else {
