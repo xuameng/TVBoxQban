@@ -270,9 +270,8 @@ public class HomeActivity extends BaseActivity {
             public boolean onLongClick(View v) {
                 if(dataInitOk && jarInitOk){
 					sortDataXu.filterSelect.clear();
-					sortDataXu.filterSelect = 0;
                     Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                     Bundle bundle = new Bundle();
                     bundle.putBoolean("useCache", true);
                     intent.putExtras(bundle);
