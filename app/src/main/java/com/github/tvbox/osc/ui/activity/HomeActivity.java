@@ -269,7 +269,7 @@ public class HomeActivity extends BaseActivity {
             @Override
             public boolean onLongClick(View v) {
                 if(dataInitOk && jarInitOk){
-					if (sortDataXu.filterSelect == null || sortData.filterSelect.size() <= 0){
+					if (sortDataXu.filterSelect == null || sortDataXu.filterSelect.size() <= 0){
 						sortDataXu.filterSelect.clear();
 					}
                     Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
