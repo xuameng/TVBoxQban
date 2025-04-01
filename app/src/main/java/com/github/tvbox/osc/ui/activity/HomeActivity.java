@@ -523,7 +523,7 @@ public class HomeActivity extends BaseActivity {
 	@SuppressLint("NotifyDataSetChanged")
     @Override
     public void onBackPressed() {
-        if(isLoading() && dataInitOk && jarInitOk){
+        if(isLoading() && dataInitOk){
             refreshEmpty();
             return;
         }
@@ -800,5 +800,6 @@ public class HomeActivity extends BaseActivity {
         showSuccess();
         sortAdapter.setNewData(DefaultConfig.adjustSort(ApiConfig.get().getHomeSourceBean().getKey(), new ArrayList<>(), true));
         initViewPager(null);
+		Toast.makeText(HomeActivity.this, "聚汇影视提示：已打断当前源加载！", Toast.LENGTH_SHORT).show();
     }
 }
