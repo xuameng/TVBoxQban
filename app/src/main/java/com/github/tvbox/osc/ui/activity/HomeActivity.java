@@ -77,6 +77,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.HashMap;
 
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
@@ -97,7 +98,7 @@ public class HomeActivity extends BaseActivity {
     private int currentSelected = 0;
     private int sortFocused = 0;
 	private int PositionXu = 0;
-	private MovieSort.SortData sortDataXu = null;
+	private MovieSort.SortData sortDataXu;
     public View sortFocusView = null;
     private final Handler mHandler = new Handler();
     private long mExitTime = 0;
@@ -765,9 +766,8 @@ public class HomeActivity extends BaseActivity {
                     bundle.putBoolean("useCache", true);
                     intent.putExtras(bundle);
                     HomeActivity.this.startActivity(intent);
-							             
-															if (sortDataXu.filterSelect != null || sortDataXu.filterSelect.size() > 0){
-						sortDataXu.filterSelect.remove();
+					sortDataXu.filterSelect = new HashMap<>();
+	
 					}
                 }
 
