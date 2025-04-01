@@ -77,8 +77,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.HashMap;
-import org.json.JSONObject;
 
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
@@ -99,7 +97,6 @@ public class HomeActivity extends BaseActivity {
     private int currentSelected = 0;
     private int sortFocused = 0;
 	private int PositionXu = 0;
-	private MovieSort.SortData sortDataXu;
     public View sortFocusView = null;
     private final Handler mHandler = new Handler();
     private long mExitTime = 0;
@@ -314,7 +311,7 @@ public class HomeActivity extends BaseActivity {
             public void onChanged(AbsSortXml absXml) {
                 showSuccess();
                 if (absXml != null && absXml.classes != null && absXml.classes.sortList != null) {
-                    sortAdapter.setNewData(DefaultConfig.adjustSort(ApiConfig.get().getHomeSourceBean().getKey(), absXml.classes.sortList, true));
+                    sortAdapter.setNewData(DefaultConfig.adjustSort(ApiConfig.get().getHomeSourceBean().getKey(), new ArrayList<>(), true));
                 } else {
                     sortAdapter.setNewData(DefaultConfig.adjustSort(ApiConfig.get().getHomeSourceBean().getKey(), new ArrayList<>(), true));
                 }
@@ -767,9 +764,6 @@ public class HomeActivity extends BaseActivity {
                     bundle.putBoolean("useCache", true);
                     intent.putExtras(bundle);
                     HomeActivity.this.startActivity(intent);
-					sortDataXu.filterSelect = new HashMap<>();
-					sortDataXu.filterSelect.put(0, 0);
-					
                 }
 
                 @Override
