@@ -275,8 +275,8 @@ public class HomeActivity extends BaseActivity {
                     bundle.putBoolean("useCache", true);
                     intent.putExtras(bundle);
                     HomeActivity.this.startActivity(intent);
-										if (sortDataXu.filterSelect == null || sortDataXu.filterSelect.size() <= 0){
-						sortDataXu.filterSelect = new HashMap<>();
+										if (sortDataXu.filterSelect != null || sortDataXu.filterSelect.size() > 0){
+						sortDataXu.filterSelect.put(key, null);
 					}
 					Toast.makeText(HomeActivity.this, "重新加载主页数据！", Toast.LENGTH_SHORT).show();   
                 }else {
