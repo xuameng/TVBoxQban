@@ -767,8 +767,6 @@ public class HomeActivity extends BaseActivity {
                     intent.putExtras(bundle);
                     HomeActivity.this.startActivity(intent);
 					sortDataXu.filterSelect = new HashMap<>();
-	
-					}
                 }
 
                 @Override
