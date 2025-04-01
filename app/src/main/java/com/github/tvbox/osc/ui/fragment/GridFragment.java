@@ -325,17 +325,18 @@ public class GridFragment extends BaseLazyFragment {
     public void showFilter() {
         if (!sortData.filters.isEmpty() && gridFilterDialog == null) {
             gridFilterDialog = new GridFilterDialog(mContext);
-            gridFilterDialog.setData(sortData);
-   //         gridFilterDialog.setOnDismiss(new GridFilterDialog.Callback() {
-   //             @Override
-   //             public void change() {
-   //                 page = 1;
-   //                 initData();
-   //             }
-    //        });
+//            gridFilterDialog.setData(sortData);
+//            gridFilterDialog.setOnDismiss(new GridFilterDialog.Callback() {
+//                @Override
+//                public void change() {
+//                    page = 1;
+//                    initData();
+//                }
+//            });
             setFilterDialogData();
         }
         if (gridFilterDialog != null)
+			setFilterDialogData();
             gridFilterDialog.show();
     }
 
