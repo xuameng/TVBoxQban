@@ -122,10 +122,6 @@ public class HomeActivity extends BaseActivity {
 
     @Override
     protected void init() {
-		             
-															if (sortDataXu.filterSelect != null || sortDataXu.filterSelect.size() > 0){
-						sortDataXu.filterSelect.clear();
-					}
         EventBus.getDefault().register(this);
         ControlManager.get().startServer();
         initView();
@@ -769,6 +765,10 @@ public class HomeActivity extends BaseActivity {
                     bundle.putBoolean("useCache", true);
                     intent.putExtras(bundle);
                     HomeActivity.this.startActivity(intent);
+							             
+															if (sortDataXu.filterSelect != null || sortDataXu.filterSelect.size() > 0){
+						sortDataXu.filterSelect.clear();
+					}
                 }
 
                 @Override
