@@ -269,12 +269,7 @@ public class HomeActivity extends BaseActivity {
             public boolean onLongClick(View v) {
                 if(dataInitOk && jarInitOk){
 					AppManager.getInstance().finishAllActivity();
-                    Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    Bundle bundle = new Bundle();
-                    bundle.putBoolean("useCache", true);
-                    intent.putExtras(bundle);
-                    HomeActivity.this.startActivity(intent);
+jumpActivity(HomeActivity.class);
 					Toast.makeText(HomeActivity.this, "重新加载主页数据！", Toast.LENGTH_SHORT).show();   
                 }else {
                     jumpActivity(SettingActivity.class);   //xuameng加载慢跳转设置
@@ -786,5 +781,10 @@ public class HomeActivity extends BaseActivity {
         }else {
 			Toast.makeText(HomeActivity.this, "主页暂无数据！联系许大师吧！", Toast.LENGTH_SHORT).show();
 		}
+    }
+    private Bundle createBundle() {
+        Bundle bundle = new Bundle();
+        bundle.putBoolean("useCache", true);
+        return bundle;
     }
 }
