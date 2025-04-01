@@ -268,7 +268,7 @@ public class HomeActivity extends BaseActivity {
             @Override
             public boolean onLongClick(View v) {
                 if(dataInitOk && jarInitOk){
-          //       AppManager.getInstance().finishAllActivity();
+                 AppManager.getInstance().finishAllActivity();
                 jumpActivity(HomeActivity.class, createBundle());
 					Toast.makeText(HomeActivity.this, "重新加载主页数据！", Toast.LENGTH_SHORT).show();   
                 }else {
