@@ -767,7 +767,8 @@ public class HomeActivity extends BaseActivity {
                     bundle.putBoolean("useCache", true);
                     intent.putExtras(bundle);
                     HomeActivity.this.startActivity(intent);
-					sortDataXu.filterSelect = new JSONObject(sortDataXu.filterSelect).toString();
+					sortDataXu.filterSelect = new HashMap<>();
+					sortDataXu.filterSelect.put(0, 0);
 					
                 }
 
