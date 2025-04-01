@@ -347,7 +347,7 @@ public class GridFragment extends BaseLazyFragment {
         final int selectedColor = ContextCompat.getColor(context, R.color.color_02F8E1);
         // 遍历过滤条件数据
         for (MovieSort.SortFilter filter : sortData.filters) {
-            View line = inflater.inflate(R.layout.item_grid_filter, gridFilterDialog.filterRoot, null);
+            View line = inflater.inflate(R.layout.item_grid_filter, gridFilterDialog.filterRoot, false);
             TextView filterNameTv = line.findViewById(R.id.filterName);
             filterNameTv.setText(filter.name);
             TvRecyclerView gridView = line.findViewById(R.id.mFilterKv);
