@@ -276,7 +276,7 @@ public class HomeActivity extends BaseActivity {
                     intent.putExtras(bundle);
                     HomeActivity.this.startActivity(intent);
 										if (sortDataXu.filterSelect != null || sortDataXu.filterSelect.size() > 0){
-						sortDataXu.filterSelect.put(key, null);
+						sortDataXu.filterSelect.clear();
 					}
 					Toast.makeText(HomeActivity.this, "重新加载主页数据！", Toast.LENGTH_SHORT).show();   
                 }else {
