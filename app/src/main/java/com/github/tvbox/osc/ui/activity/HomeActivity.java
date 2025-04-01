@@ -77,6 +77,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.HashMap;
 
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
@@ -124,7 +125,7 @@ public class HomeActivity extends BaseActivity {
     protected void init() {
         EventBus.getDefault().register(this);
         ControlManager.get().startServer();
-		sortDataXu.filterSelect = "";
+		sortDataXu.filterSelect = new HashMap<>();
         initView();
         initViewModel();
         useCacheConfig = false;
