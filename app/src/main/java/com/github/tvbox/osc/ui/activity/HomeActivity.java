@@ -124,7 +124,7 @@ public class HomeActivity extends BaseActivity {
     protected void init() {
         EventBus.getDefault().register(this);
         ControlManager.get().startServer();
-		sortDataXu.filterSelect = null;
+		sortDataXu.filterSelect = "";
         initView();
         initViewModel();
         useCacheConfig = false;
