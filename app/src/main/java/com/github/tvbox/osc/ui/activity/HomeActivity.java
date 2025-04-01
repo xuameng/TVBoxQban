@@ -97,6 +97,7 @@ public class HomeActivity extends BaseActivity {
     private int currentSelected = 0;
     private int sortFocused = 0;
 	private int PositionXu = 0;
+	private MovieSort.SortData sortDataXu = null;
     public View sortFocusView = null;
     private final Handler mHandler = new Handler();
     private long mExitTime = 0;
@@ -268,6 +269,8 @@ public class HomeActivity extends BaseActivity {
             @Override
             public boolean onLongClick(View v) {
                 if(dataInitOk && jarInitOk){
+					sortDataXu.filterSelect.clear();
+					sortDataXu.filterSelect = 0;
                     Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     Bundle bundle = new Bundle();
