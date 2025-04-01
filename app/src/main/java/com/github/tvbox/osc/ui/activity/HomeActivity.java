@@ -767,7 +767,7 @@ public class HomeActivity extends BaseActivity {
                     HomeActivity.this.startActivity(intent);
 							             
 															if (sortDataXu.filterSelect != null || sortDataXu.filterSelect.size() > 0){
-						sortDataXu.filterSelect.clear();
+						sortDataXu.filterSelect.remove();
 					}
                 }
 
