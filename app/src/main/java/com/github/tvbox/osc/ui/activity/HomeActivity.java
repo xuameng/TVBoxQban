@@ -77,7 +77,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.HashMap;
 
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
@@ -276,7 +275,7 @@ public class HomeActivity extends BaseActivity {
                     bundle.putBoolean("useCache", true);
                     intent.putExtras(bundle);
                     HomeActivity.this.startActivity(intent);
-						sortDataXu.filterSelect = new HashMap<>();
+						sortDataXu.filterSelect.clear();
 					Toast.makeText(HomeActivity.this, "重新加载主页数据！", Toast.LENGTH_SHORT).show();   
                 }else {
                     jumpActivity(SettingActivity.class);   //xuameng加载慢跳转设置
