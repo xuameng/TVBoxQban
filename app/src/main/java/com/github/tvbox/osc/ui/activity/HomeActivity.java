@@ -269,7 +269,9 @@ public class HomeActivity extends BaseActivity {
             @Override
             public boolean onLongClick(View v) {
                 if(dataInitOk && jarInitOk){
-					sortDataXu.filterSelect.clear();
+					if (sortDataXu.filterSelect == null || sortData.filterSelect.size() <= 0){
+						sortDataXu.filterSelect.clear();
+					}
                     Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     Bundle bundle = new Bundle();
