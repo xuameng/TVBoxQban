@@ -78,6 +78,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.HashMap;
+import org.json.JSONObject;
 
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
@@ -766,7 +767,8 @@ public class HomeActivity extends BaseActivity {
                     bundle.putBoolean("useCache", true);
                     intent.putExtras(bundle);
                     HomeActivity.this.startActivity(intent);
-					sortDataXu.filterSelect = new HashMap<>();
+					sortDataXu.filterSelect = new JSONObject(sortDataXu.filterSelect).toString();
+					
                 }
 
                 @Override
