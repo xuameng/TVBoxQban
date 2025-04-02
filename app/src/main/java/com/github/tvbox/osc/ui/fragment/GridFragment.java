@@ -89,6 +89,10 @@ public class GridFragment extends BaseLazyFragment {
 
     @Override
     protected void init() {
+		if (HawkConfig.filterSelectXu){
+			sortData.filterSelect.clear();    //xuameng换源，刷新页面过滤BUG
+		}
+//		HawkConfig.filterSelectXu = false;
         initView();
         initViewModel();
         initData();
@@ -167,6 +171,10 @@ public class GridFragment extends BaseLazyFragment {
     }
 
     private void initView() {
+				if (HawkConfig.filterSelectXu){
+			sortData.filterSelect.clear();    //xuameng换源，刷新页面过滤BUG
+		}
+		HawkConfig.filterSelectXu = false;
         this.createView();
         mGridView.setAdapter(gridAdapter);
         if(isFolederMode()){
@@ -300,10 +308,6 @@ public class GridFragment extends BaseLazyFragment {
     }
 
     private void initData() {
-		if (HawkConfig.filterSelectXu){
-			sortData.filterSelect.clear();    //xuameng换源，刷新页面过滤BUG
-		}
-	//	HawkConfig.filterSelectXu = false;
         showLoading();
         isLoad = false;
         scrollTop();
