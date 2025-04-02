@@ -132,8 +132,6 @@ public class HomeActivity extends BaseActivity {
             useCacheConfig = bundle.getBoolean("useCache", false);
         }
         initData();
-                                findViewById(R.id.tvFilter).setVisibility(View.GONE);
-                                findViewById(R.id.tvFilterColor).setVisibility(View.GONE);
     }
 
     private void initView() {
