@@ -85,6 +85,8 @@ public class HomeActivity extends BaseActivity {
     private LinearLayout contentLayout;
     private TextView tvDate;
     private TextView tvName;
+	private ImageView tvFilter;
+	private ImageView tvFilterColor;
     private TvRecyclerView mGridView;
     private NoScrollViewPager mViewPager;
     private SourceViewModel sourceViewModel;
@@ -135,6 +137,10 @@ public class HomeActivity extends BaseActivity {
     }
 
     private void initView() {
+                               tvFilter = findViewById(R.id.tvFilter);
+                                tvFilterColor = findViewById(R.id.tvFilterColor);
+										tvFilter.setVisibility(View.GONE);
+tvFilterColor.setVisibility(View.GONE);
         this.topLayout = findViewById(R.id.topLayout);
         this.tvDate = findViewById(R.id.tvDate);
         this.tvName = findViewById(R.id.tvName);
