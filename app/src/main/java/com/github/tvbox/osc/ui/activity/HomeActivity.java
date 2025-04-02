@@ -627,11 +627,11 @@ public class HomeActivity extends BaseActivity {
             }
         } else if (event.type == RefreshEvent.TYPE_FILTER_CHANGE) {
             if (currentView != null && PositionXu !=0) {
-                MovieSort.SortData sortData = sortAdapter.getItem(PositionXu);
-                if (!sortData.filters.isEmpty()) {
-                    showFilterIcon(sortData.filterSelectCount());
-                }
-          //      showFilterIcon((int) event.obj);
+        //        MovieSort.SortData sortData = sortAdapter.getItem(PositionXu);
+         //       if (!sortData.filters.isEmpty()) {
+          //          showFilterIcon(sortData.filterSelectCount());
+           //     }
+                showFilterIcon((int) event.obj);
             }
         }
     }
