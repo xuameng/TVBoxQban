@@ -123,7 +123,7 @@ public class GridFragment extends BaseLazyFragment {
         info.maxPage = this.maxPage;
         info.isLoad = this.isLoad;
         info.focusedView = this.focusedView;
-        this.mGrids.push(info);
+     //   this.mGrids.push(info);
     }
     // 丢弃当前页面，将页面还原成上一个保存的页面
     public boolean restoreView(){
@@ -302,7 +302,6 @@ public class GridFragment extends BaseLazyFragment {
     private void initData() {
 		if (HawkConfig.filterSelectXu){
 			sortData.filterSelect.clear();    //xuameng换源，刷新页面过滤BUG
-			sortData.filterSelect = null;
 		}
 		HawkConfig.filterSelectXu = false;
         showLoading();
