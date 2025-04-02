@@ -259,7 +259,6 @@ public class ModelSettingFragment extends BaseLazyFragment {
                     dialog.setAdapter(new SelectDialogAdapter.SelectDialogInterface<SourceBean>() {
                         @Override
                         public void click(SourceBean value, int pos) {
-							HawkConfig.filterSelectXu = true;  //xuameng换源，刷新页面过滤BUG
                             ApiConfig.get().setSourceBean(value);
                             tvHomeApi.setText(ApiConfig.get().getHomeSourceBean().getName());
                             Intent intent =new Intent(mContext, HomeActivity.class);
