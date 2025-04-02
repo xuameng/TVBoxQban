@@ -234,6 +234,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
         	@Override
             public boolean onLongClick(View v) {
 				FastClickCheckUtil.check(v);
+				HawkConfig.filterSelectXu = true;  //xuameng换源，刷新页面过滤BUG
 				Intent intent =new Intent(mContext, HomeActivity.class);
 				intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
 				Bundle bundle = new Bundle();
