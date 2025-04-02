@@ -35,6 +35,7 @@ import com.orhanobut.hawk.Hawk;
 import com.owen.tvrecyclerview.widget.TvRecyclerView;
 import com.owen.tvrecyclerview.widget.V7GridLayoutManager;
 import com.owen.tvrecyclerview.widget.V7LinearLayoutManager;
+import com.github.tvbox.osc.util.HawkConfig;
 
 import java.util.ArrayList;
 import java.util.Stack;
@@ -325,6 +326,10 @@ public class GridFragment extends BaseLazyFragment {
     public void showFilter() {
         if (!sortData.filters.isEmpty() && gridFilterDialog == null) {
             gridFilterDialog = new GridFilterDialog(mContext);
+			if (HawkConfig.filterSelectXu){
+sortData.filterSelect.clear();
+			}
+			HawkConfig.filterSelectXu = false;
 //            gridFilterDialog.setData(sortData);
 //            gridFilterDialog.setOnDismiss(new GridFilterDialog.Callback() {
 //                @Override
