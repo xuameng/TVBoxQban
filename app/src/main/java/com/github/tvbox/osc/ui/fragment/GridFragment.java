@@ -35,7 +35,6 @@ import com.orhanobut.hawk.Hawk;
 import com.owen.tvrecyclerview.widget.TvRecyclerView;
 import com.owen.tvrecyclerview.widget.V7GridLayoutManager;
 import com.owen.tvrecyclerview.widget.V7LinearLayoutManager;
-import com.github.tvbox.osc.util.HawkConfig;
 
 import java.util.ArrayList;
 import java.util.Stack;
