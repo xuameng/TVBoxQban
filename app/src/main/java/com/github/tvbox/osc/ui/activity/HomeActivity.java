@@ -3,6 +3,8 @@ package com.github.tvbox.osc.ui.activity;
 import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.animation.IntEvaluator;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
@@ -25,7 +27,6 @@ import android.view.LayoutInflater;			//xuameng LayoutInflater依赖
 import androidx.recyclerview.widget.RecyclerView;  //xuameng主页默认焦点
 import java.util.Objects;   //xuameng主页默认焦点
 import com.github.tvbox.osc.util.FastClickCheckUtil;   //xuameng cache
-import com.github.tvbox.osc.ui.dialog.GridFilterDialog;
 import com.github.tvbox.osc.util.MD5;  //xuameng cache
 import android.widget.Toast;
 
@@ -91,7 +92,6 @@ public class HomeActivity extends BaseActivity {
     private SourceViewModel sourceViewModel;
     private SortAdapter sortAdapter;
     private HomePageAdapter pageAdapter;
-	private GridFilterDialog gridFilterDialog;
     private View currentView;
     private final List<BaseLazyFragment> fragments = new ArrayList<>();
     private boolean isDownOrUp = false;
@@ -99,7 +99,6 @@ public class HomeActivity extends BaseActivity {
     private int currentSelected = 0;
     private int sortFocused = 0;
 	private int PositionXu = 0;
-	private MovieSort.SortData sortDataXu = null;
     public View sortFocusView = null;
     private final Handler mHandler = new Handler();
     private long mExitTime = 0;
@@ -271,8 +270,6 @@ public class HomeActivity extends BaseActivity {
             @Override
             public boolean onLongClick(View v) {
                 if(dataInitOk && jarInitOk){
-					gridFilterDialog = new GridFilterDialog(mContext);
-					gridFilterDialog.setData(sortDataXu);
                     Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     Bundle bundle = new Bundle();
@@ -326,6 +323,9 @@ public class HomeActivity extends BaseActivity {
                     sortAdapter.setNewData(DefaultConfig.adjustSort(ApiConfig.get().getHomeSourceBean().getKey(), new ArrayList<>(), true));
                 }
                 initViewPager(absXml);
+                SourceBean home = ApiConfig.get().getHomeSourceBean();
+                if (home != null && home.getName() != null && !home.getName().isEmpty()) tvName.setText(home.getName());
+                tvName.clearAnimation();
             }
         });
     }
@@ -334,9 +334,9 @@ public class HomeActivity extends BaseActivity {
     private boolean jarInitOk = false;
 
     private void initData() {
-        SourceBean home = ApiConfig.get().getHomeSourceBean();
-        if (home != null && home.getName() != null && !home.getName().isEmpty())
-            tvName.setText(home.getName());
+ //       SourceBean home = ApiConfig.get().getHomeSourceBean();
+ //       if (home != null && home.getName() != null && !home.getName().isEmpty())
+ //           tvName.setText(home.getName());
         if (dataInitOk && jarInitOk) {
 //            showLoading();
             sourceViewModel.getSort(ApiConfig.get().getHomeSourceBean().getKey());
@@ -347,6 +347,7 @@ public class HomeActivity extends BaseActivity {
             }
             return;
         }
+		tvNameAnimation();
         showLoading();
         if (dataInitOk && !jarInitOk) {
             if (!ApiConfig.get().getSpider().isEmpty()) {
@@ -528,7 +529,8 @@ public class HomeActivity extends BaseActivity {
 	@SuppressLint("NotifyDataSetChanged")
     @Override
     public void onBackPressed() {
-        if(isLoading() && dataInitOk){
+      //  if(isLoading() && dataInitOk){
+			if(isLoading()){
             refreshEmpty();
             return;
         }
@@ -805,6 +807,15 @@ public class HomeActivity extends BaseActivity {
         showSuccess();
         sortAdapter.setNewData(DefaultConfig.adjustSort(ApiConfig.get().getHomeSourceBean().getKey(), new ArrayList<>(), true));
         initViewPager(null);
-		Toast.makeText(HomeActivity.this, "聚汇影视提示：已打断当前源加载！", Toast.LENGTH_SHORT).show();
+		tvName.clearAnimation();
+		Toast.makeText(HomeActivity.this, "聚汇影视提示：已打断加载当前源！", Toast.LENGTH_SHORT).show();
+    }
+    private void tvNameAnimation(){
+        AlphaAnimation blinkAnimation = new AlphaAnimation(0.0f, 1.0f);
+        blinkAnimation.setDuration(500);
+        blinkAnimation.setStartOffset(20);
+        blinkAnimation.setRepeatMode(Animation.REVERSE);
+        blinkAnimation.setRepeatCount(Animation.INFINITE);
+        tvName.startAnimation(blinkAnimation);
     }
 }
