@@ -300,11 +300,7 @@ public class GridFragment extends BaseLazyFragment {
     }
 
     private void initData() {
-		if (HawkConfig.filterSelectXu){
-			sortData.filterSelect.clear();    //xuameng换源，刷新页面过滤BUG
-			sortData.filters.clear(); 
-		}
-		HawkConfig.filterSelectXu = false;
+
         showLoading();
         isLoad = false;
         scrollTop();
@@ -353,6 +349,9 @@ public class GridFragment extends BaseLazyFragment {
         final int selectedColor = ContextCompat.getColor(context, R.color.color_02F8E1);
         // 遍历过滤条件数据
         for (MovieSort.SortFilter filter : sortData.filters) {
+
+			sortData.filterSelect.clear();    //xuameng换源，刷新页面过滤BUG
+
             View line = inflater.inflate(R.layout.item_grid_filter, gridFilterDialog.filterRoot, false);
             TextView filterNameTv = line.findViewById(R.id.filterName);
             filterNameTv.setText(filter.name);
