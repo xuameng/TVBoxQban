@@ -301,14 +301,7 @@ public class GridFragment extends BaseLazyFragment {
 
     private void initData() {
 		if (HawkConfig.filterSelectXu){
-        for (MovieSort.SortFilter filter : sortData.filters) {
-            final String key1 = filter.key;
-            final ArrayList<String> values1 = new ArrayList<>(filter.values.keySet());
-            final ArrayList<String> keys1 = new ArrayList<>(filter.values.values());
 			sortData.filterSelect.clear();    //xuameng换源，刷新页面过滤BUG
-values1.clear(); 
-	keys1.clear(); 
-	    }
 		}
 		HawkConfig.filterSelectXu = false;
         showLoading();
