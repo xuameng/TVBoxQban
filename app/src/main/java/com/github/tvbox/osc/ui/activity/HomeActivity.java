@@ -268,7 +268,7 @@ public class HomeActivity extends BaseActivity {
             @Override
             public boolean onLongClick(View v) {
                 if(dataInitOk && jarInitOk){
-					HawkConfig.filterSelectXu = true;
+					HawkConfig.filterSelectXu = true;  //xuameng换源，刷新页面过滤BUG
                     Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     Bundle bundle = new Bundle();
@@ -767,6 +767,7 @@ public class HomeActivity extends BaseActivity {
             dialog.setAdapter(new SelectDialogAdapter.SelectDialogInterface<SourceBean>() {
                 @Override
                 public void click(SourceBean value, int pos) {
+					HawkConfig.filterSelectXu = true;  //xuameng换源，刷新页面过滤BUG
                     ApiConfig.get().setSourceBean(value);
                     Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
