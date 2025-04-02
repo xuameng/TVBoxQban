@@ -255,13 +255,13 @@ public class ModelSettingFragment extends BaseLazyFragment {
 					clp.width = AutoSizeUtils.mm2px(dialog.getContext(), 380+200*spanCount);  //xuameng首页数据源显示优化完
                     dialog.setTip("请选择首页数据源");
 					int select = sites.indexOf(ApiConfig.get().getHomeSourceBean());
-					if (select<0) select = 0;
+					if (select < 0 || select >= sites.size()) select = 0;
                     dialog.setAdapter(new SelectDialogAdapter.SelectDialogInterface<SourceBean>() {
                         @Override
                         public void click(SourceBean value, int pos) {
+							HawkConfig.filterSelectXu = true;  //xuameng换源，刷新页面过滤BUG
                             ApiConfig.get().setSourceBean(value);
                             tvHomeApi.setText(ApiConfig.get().getHomeSourceBean().getName());
-
                             Intent intent =new Intent(mContext, HomeActivity.class);
                             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             Bundle bundle = new Bundle();
