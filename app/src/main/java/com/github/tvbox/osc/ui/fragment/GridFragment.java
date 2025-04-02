@@ -300,10 +300,11 @@ public class GridFragment extends BaseLazyFragment {
     }
 
     private void initData() {
-					if (HawkConfig.filterSelectXu){
-sortData.filterSelect.clear();
-			}
-			HawkConfig.filterSelectXu = false;
+		if (HawkConfig.filterSelectXu){
+			sortData.filterSelect.clear();    //xuameng换源，刷新页面过滤BUG
+			sortData.filterSelect = null;
+		}
+		HawkConfig.filterSelectXu = false;
         showLoading();
         isLoad = false;
         scrollTop();
