@@ -317,7 +317,7 @@ public class ApiConfig {
                 if (jarLoader.load(cache.getAbsolutePath())) {
                     callback.success();
                 } else {
-                    callback.error("");
+                    callback.error("md5缓存失效");
                 }
                 return;
             }
