@@ -300,6 +300,10 @@ public class GridFragment extends BaseLazyFragment {
     }
 
     private void initData() {
+					if (HawkConfig.filterSelectXu){
+sortData.filterSelect.clear();
+			}
+			HawkConfig.filterSelectXu = false;
         showLoading();
         isLoad = false;
         scrollTop();
@@ -326,10 +330,6 @@ public class GridFragment extends BaseLazyFragment {
     public void showFilter() {
         if (!sortData.filters.isEmpty() && gridFilterDialog == null) {
             gridFilterDialog = new GridFilterDialog(mContext);
-			if (HawkConfig.filterSelectXu){
-sortData.filterSelect.clear();
-			}
-			HawkConfig.filterSelectXu = false;
 //            gridFilterDialog.setData(sortData);
 //            gridFilterDialog.setOnDismiss(new GridFilterDialog.Callback() {
 //                @Override
