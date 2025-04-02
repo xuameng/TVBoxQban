@@ -264,10 +264,6 @@ public class PlayActivity extends BaseActivity {
             public void startPlayUrl(String url, HashMap<String, String> headers) {
                 goPlayUrl(url, headers);
             }
-            @Override
-            public void setAllowSwitchPlayer(boolean isAllow){
-				allowSwitchPlayer=isAllow;
-			}
         });
         mVideoView.setVideoController(mController);
     }
@@ -957,14 +953,12 @@ public class PlayActivity extends BaseActivity {
 
     private int autoRetryCount = 0;
 	private long lastRetryTime = 0; // 记录上次调用时间（毫秒）    //xuameng新增
-	private boolean allowSwitchPlayer = true;
 
     boolean autoRetry() {
         long currentTime = System.currentTimeMillis();
         if (currentTime - lastRetryTime > 60_000){
             LOG.i("echo-reset-autoRetryCount");
             autoRetryCount = 0;
-			allowSwitchPlayer = false;
         }
 
         lastRetryTime = currentTime;  // 更新上次调用时间
@@ -978,18 +972,12 @@ public class PlayActivity extends BaseActivity {
                 play(false);
                 autoRetryCount++;
             }else {
-                if(allowSwitchPlayer){
                 //切换播放器不占用重试次数
-					if(mController.switchPlayer()){
-						autoRetryCount++;
-						play(false);
-					}else {
-						play(false);
-					}
-				}else{
-                    autoRetryCount++;
-                    allowSwitchPlayer=true;
+                if(mController.switchPlayer()){
+					autoRetryCount++;
 					play(false);
+                }else {
+                    play(false);
                 }
             }
             return true;
