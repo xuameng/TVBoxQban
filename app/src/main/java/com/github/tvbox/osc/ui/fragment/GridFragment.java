@@ -328,7 +328,7 @@ public class GridFragment extends BaseLazyFragment {
             gridFilterDialog = new GridFilterDialog(mContext);
 			if (HawkConfig.filterSelectXu){
 sortData.filterSelect.clear();
-sortData.filters.clear();
+MovieSort.SortFilter.clear();
 			}
 			HawkConfig.filterSelectXu = false;
 //            gridFilterDialog.setData(sortData);
