@@ -816,7 +816,6 @@ public class VodController extends BaseController {
                     updatePlayerCfgView();
                     listener.updatePlayerCfg();
                     listener.replay(false);
-					listener.setAllowSwitchPlayer(false);
 					if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
 						hideBottomXu();
 					}
@@ -859,7 +858,6 @@ public class VodController extends BaseController {
                                     updatePlayerCfgView();
                                     listener.updatePlayerCfg();
                                     listener.replay(false);
-									listener.setAllowSwitchPlayer(false);
 									if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
 									hideBottomXu();
 									}
@@ -1192,8 +1190,6 @@ public class VodController extends BaseController {
         void selectAudioTrack();
 
 		void startPlayUrl(String url, HashMap<String, String> headers);  //xuameng广告过滤
-
-		void setAllowSwitchPlayer(boolean isAllow);
     }
 
     public void setListener(VodControlListener listener) {
