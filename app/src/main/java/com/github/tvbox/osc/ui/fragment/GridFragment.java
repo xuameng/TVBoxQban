@@ -336,8 +336,9 @@ public class GridFragment extends BaseLazyFragment {
             setFilterDialogData();
         }
         if (gridFilterDialog != null)
-          //  gridFilterDialog.show();
+			gridFilterDialog = new GridFilterDialog(mContext);
 		setFilterDialogData();
+		gridFilterDialog.show();
     }
 
     public void setFilterDialogData() {
