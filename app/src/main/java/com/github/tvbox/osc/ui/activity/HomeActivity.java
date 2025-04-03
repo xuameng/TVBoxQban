@@ -628,7 +628,7 @@ public class HomeActivity extends BaseActivity {
             if (currentView != null && PositionXu !=0) {
                 MovieSort.SortData sortData = sortAdapter.getItem(PositionXu);
                 if (!sortData.filters.isEmpty()) {
-                 //   showFilterIcon(sortData.filterSelectCount());
+                    showFilterIcon(sortData.filterSelectCount());
                 }
           //      showFilterIcon((int) event.obj);
             }
