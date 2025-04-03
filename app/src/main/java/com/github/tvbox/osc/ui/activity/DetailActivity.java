@@ -123,7 +123,6 @@ public class DetailActivity extends BaseActivity {
     private TvRecyclerView mGridViewFlag;    //选源
     private TvRecyclerView mGridView;            //选集
     private TvRecyclerView mSeriesGroupView;      //xuameng多集组
-	private boolean isScrollSettling = false;
     private LinearLayout mEmptyPlayList;
     private SourceViewModel sourceViewModel;
     private Movie.Video mVideo;
@@ -847,12 +846,8 @@ public class DetailActivity extends BaseActivity {
 								super.onScrollStateChanged(recyclerView, newState);
 								if (newState == mGridView.SCROLL_STATE_IDLE) {   //xuameng剧集滚动完成后焦点选择为剧集
 								// 滚动已经停止，执行你需要的操作
-								tvPlay.setFocusable(true);
 								mGridView.requestFocus();
 								mGridView.removeOnScrollListener(this);    //xuameng删除滚动监听
-								}
-								if (newState == mGridView.SCROLL_STATE_SETTLING){
-									tvPlay.setFocusable(false);
 								}
 							}
 						});
@@ -1149,15 +1144,9 @@ public class DetailActivity extends BaseActivity {
 					super.onScrollStateChanged(recyclerView, newState);
 					if (newState == mGridView.SCROLL_STATE_IDLE) {    //xuameng剧集滚动完成后焦点选择为剧集
 					// 滚动已经停止，执行你需要的操作
-					isScrollSettling = false;
-					tvPlay.setFocusable(true);
 					mGridView.requestFocus();
 					mGridView.removeOnScrollListener(this);				//xuameng删除滚动监听				
 					}
-								if (newState == mGridView.SCROLL_STATE_SETTLING){
-									tvPlay.setFocusable(false);
-									isScrollSettling = true;
-								}
 				}
 			});
 
@@ -1166,9 +1155,6 @@ public class DetailActivity extends BaseActivity {
             mSeriesGroupView.setVisibility(list.size()>GroupCount ? View.VISIBLE : View.GONE);
             return;
         }
-if (isScrollSettling){
-	return;
-}
         else if (seriesSelect) {
             if (seriesFlagFocus != null && !seriesFlagFocus.isFocused()) {
                 seriesFlagFocus.requestFocus();
