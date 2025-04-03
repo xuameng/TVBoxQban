@@ -120,9 +120,9 @@ public class DetailActivity extends BaseActivity {
     private TextView tvSort;
     private TextView tvQuickSearch;
     private TextView tvCollect;
-    private TvRecyclerView mGridViewFlag;
-    private TvRecyclerView mGridView;
-    private TvRecyclerView mSeriesGroupView;
+    private TvRecyclerView mGridViewFlag;    //选源
+    private TvRecyclerView mGridView;            //选集
+    private TvRecyclerView mSeriesGroupView;      //xuameng多集组
     private LinearLayout mEmptyPlayList;
     private SourceViewModel sourceViewModel;
     private Movie.Video mVideo;
@@ -452,6 +452,17 @@ public class DetailActivity extends BaseActivity {
             public void onItemClick(TvRecyclerView parent, View itemView, int position) {
             }
         });
+        mGridView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+             @Override
+             public void onFocusChange(View v, boolean hasFocus) {
+                 if (hasFocus && vodInfo.playIndex != -1) {
+                     // 当获得焦点且有目标位置时，执行滚动和聚焦
+                     LOG.i("echo-onFocusChange");
+                     mGridView.setSelection(vodInfo.playIndex);
+                 }
+             }
+         });
+
         mGridViewFlag.setOnItemListener(new TvRecyclerView.OnItemListener() {
             private void refresh(View itemView, int position) {
                 String newFlag = seriesFlagAdapter.getData().get(position).name;
@@ -474,6 +485,7 @@ public class DetailActivity extends BaseActivity {
                     vodInfo.playFlag = newFlag;
                     seriesFlagAdapter.notifyItemChanged(position);
                     refreshList();
+					mGridView.clearFocus();
                 }
                 seriesFlagFocus = itemView;
             }
@@ -692,6 +704,9 @@ public class DetailActivity extends BaseActivity {
             mSeriesGroupView.setVisibility(View.VISIBLE);
             int remainedOptionSize = listSize % GroupCount;
             int optionSize = listSize / GroupCount;
+			if(mGridViewFlag.getVisibility() == View.VISIBLE) {
+			mSeriesGroupView.setNextFocusUpId(R.id.mGridViewFlag); 
+			}
 
             for(int i = 0; i < optionSize; i++) {
                 if(vodInfo.reverseSort)
