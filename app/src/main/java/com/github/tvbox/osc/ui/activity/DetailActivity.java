@@ -704,7 +704,7 @@ public class DetailActivity extends BaseActivity {
             mSeriesGroupView.setVisibility(View.VISIBLE);
             int remainedOptionSize = listSize % GroupCount;
             int optionSize = listSize / GroupCount;
-			if(mGridViewFlag.getVisibility() == View.VISIBLE && (mSeriesGroupView.getVisibility() == View.VISIBLE) {
+			if(mGridViewFlag.getVisibility() == View.VISIBLE && mSeriesGroupView.getVisibility() == View.VISIBLE) {
 			mSeriesGroupView.setNextFocusUpId(R.id.mGridViewFlag); 
 			}
 
@@ -843,7 +843,7 @@ public class DetailActivity extends BaseActivity {
 						tvDesc.setNextFocusUpId(R.id.mGridView); 
 						tvPush.setNextFocusUpId(R.id.mGridView); 
 						mGridView.setNextFocusDownId(R.id.tvPlay);   //xuameng下面焦点是播放
-						if(mGridViewFlag.getVisibility() == View.VISIBLE && (mSeriesGroupView.getVisibility() == View.VISIBLE) {
+						if(mGridViewFlag.getVisibility() == View.VISIBLE && mSeriesGroupView.getVisibility() == View.VISIBLE) {
 							mSeriesGroupView.setNextFocusUpId(R.id.mGridViewFlag); 
 						}
 						mGridView.addOnScrollListener(new RecyclerView.OnScrollListener() {
