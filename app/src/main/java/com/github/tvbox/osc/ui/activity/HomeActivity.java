@@ -632,7 +632,10 @@ public class HomeActivity extends BaseActivity {
                 }
           //      showFilterIcon((int) event.obj);
             }
-        }
+        }else{
+			                                currentView.findViewById(R.id.tvFilter).setVisibility(View.GONE);
+                                currentView.findViewById(R.id.tvFilterColor).setVisibility(View.GONE);
+		}
     }
 
     private void showFilterIcon(int count) {
