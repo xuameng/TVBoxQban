@@ -129,7 +129,7 @@ public class DetailActivity extends BaseActivity {
     private VodInfo vodInfo;
     private SeriesFlagAdapter seriesFlagAdapter;
     private BaseQuickAdapter<String, BaseViewHolder> seriesGroupAdapter;
-    private SeriesAdapter seriesAdapter;
+    private SeriesAdapter seriesAdapter;  //选集列表
     public String vodId;
     public String sourceKey;
     public String firstsourceKey;
@@ -704,7 +704,7 @@ public class DetailActivity extends BaseActivity {
             mSeriesGroupView.setVisibility(View.VISIBLE);
             int remainedOptionSize = listSize % GroupCount;
             int optionSize = listSize / GroupCount;
-			if(mGridViewFlag.getVisibility() == View.VISIBLE) {
+			if(mGridViewFlag.getVisibility() == View.VISIBLE && (mSeriesGroupView.getVisibility() == View.VISIBLE) {
 			mSeriesGroupView.setNextFocusUpId(R.id.mGridViewFlag); 
 			}
 
@@ -843,6 +843,9 @@ public class DetailActivity extends BaseActivity {
 						tvDesc.setNextFocusUpId(R.id.mGridView); 
 						tvPush.setNextFocusUpId(R.id.mGridView); 
 						mGridView.setNextFocusDownId(R.id.tvPlay);   //xuameng下面焦点是播放
+						if(mGridViewFlag.getVisibility() == View.VISIBLE && (mSeriesGroupView.getVisibility() == View.VISIBLE) {
+							mSeriesGroupView.setNextFocusUpId(R.id.mGridViewFlag); 
+						}
 						mGridView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 						@Override
 						public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
@@ -1232,6 +1235,7 @@ public class DetailActivity extends BaseActivity {
         tvQuickSearch.setFocusable(!fullWindows);
 		tvDesc.setFocusable(!fullWindows);      //xuameng 内容简介
 		tvPush.setFocusable(!fullWindows);    //xuameng 远程推送
+		llPlayerFragmentContainerBlock.setFocusable(!fullWindows);
         toggleSubtitleTextSize();
     }
 
