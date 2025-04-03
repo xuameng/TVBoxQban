@@ -123,6 +123,7 @@ public class DetailActivity extends BaseActivity {
     private TvRecyclerView mGridViewFlag;    //选源
     private TvRecyclerView mGridView;            //选集
     private TvRecyclerView mSeriesGroupView;      //xuameng多集组
+	private boolean isScrollSettling = false;
     private LinearLayout mEmptyPlayList;
     private SourceViewModel sourceViewModel;
     private Movie.Video mVideo;
@@ -1136,7 +1137,6 @@ public class DetailActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
 		boolean showPreview = Hawk.get(HawkConfig.SHOW_PREVIEW, true);  //xuameng true是显示小窗口,false是不显示小窗口
-		boolean isScrollSettling = false;
         if (fullWindows) {
             if (playFragment.onBackPressed())  //xuameng上一级交给VODController控制
                 return;
