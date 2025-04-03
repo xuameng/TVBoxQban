@@ -310,7 +310,7 @@ public class GridFragment extends BaseLazyFragment {
     }
 
     private void toggleFilterColor() {
-		if (sortData.filterSelect = null || sortData.filterSelect.size() <= 0){
+		if (sortData.filterSelect == null || sortData.filterSelect.size() <= 0){
 			int count = 0;
             EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_FILTER_CHANGE, 0));
 			return;
