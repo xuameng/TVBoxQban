@@ -850,7 +850,7 @@ public class DetailActivity extends BaseActivity {
 								mGridView.requestFocus();
 								mGridView.removeOnScrollListener(this);    //xuameng删除滚动监听
 								}
-								if (newState == mGridView.SCROLL_STATE_SETTLING{
+								if (newState == mGridView.SCROLL_STATE_SETTLING){
 									tvPlay.setFocusable(false);
 								}
 							}
@@ -1154,7 +1154,7 @@ public class DetailActivity extends BaseActivity {
 					mGridView.requestFocus();
 					mGridView.removeOnScrollListener(this);				//xuameng删除滚动监听				
 					}
-								if (newState == mGridView.SCROLL_STATE_SETTLING{
+								if (newState == mGridView.SCROLL_STATE_SETTLING){
 									tvPlay.setFocusable(false);
 									isScrollSettling = true;
 								}
