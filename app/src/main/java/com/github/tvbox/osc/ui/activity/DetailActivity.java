@@ -189,7 +189,7 @@ public class DetailActivity extends BaseActivity {
         this.mGridViewLayoutMgr = new V7GridLayoutManager(this.mContext, 6);
         mGridView.setLayoutManager(this.mGridViewLayoutMgr);
 //        mGridView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 0, false));
-        seriesAdapter = new SeriesAdapter();
+        seriesAdapter = new SeriesAdapter(this.mGridViewLayoutMgr);
         mGridView.setAdapter(seriesAdapter);
         mGridViewFlag = findViewById(R.id.mGridViewFlag);
         mGridViewFlag.setHasFixedSize(true);
@@ -217,7 +217,12 @@ public class DetailActivity extends BaseActivity {
                 if (helper.getLayoutPosition() == getData().size() - 1) {
                     helper.itemView.setNextFocusRightId(R.id.tvPlay);
                 }
-				helper.itemView.setNextFocusUpId(R.id.mGridViewFlag);
+				if(mGridViewFlag.getVisibility() == View.VISIBLE) {
+					helper.itemView.setNextFocusUpId(R.id.mGridViewFlag);
+				}else{
+					helper.itemView.setNextFocusUpId(R.id.tvPlay);
+				}
+
             }
         };
         mSeriesGroupView.setAdapter(seriesGroupAdapter);
@@ -845,7 +850,6 @@ public class DetailActivity extends BaseActivity {
 						tvCollect.setNextFocusUpId(R.id.mGridView); 
 						tvDesc.setNextFocusUpId(R.id.mGridView); 
 						tvPush.setNextFocusUpId(R.id.mGridView); 
-						mGridView.setNextFocusDownId(R.id.tvPlay);   //xuameng下面焦点是播放
 
                         if (showPreview) {
                             jumpToPlay();
