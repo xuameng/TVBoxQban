@@ -1154,7 +1154,6 @@ public class DetailActivity extends BaseActivity {
 					}
 				}
 					
-				}
                 
                 return;
             }else {
