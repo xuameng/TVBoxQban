@@ -452,16 +452,6 @@ public class DetailActivity extends BaseActivity {
             public void onItemClick(TvRecyclerView parent, View itemView, int position) {
             }
         });
-        mGridView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-             @Override
-             public void onFocusChange(View v, boolean hasFocus) {
-                 if (hasFocus && vodInfo.playIndex != -1) {
-                     // 当获得焦点且有目标位置时，执行滚动和聚焦
-                     LOG.i("echo-onFocusChange");
-                     mGridView.setSelection(vodInfo.playIndex);
-                 }
-             }
-         });
 
         mGridViewFlag.setOnItemListener(new TvRecyclerView.OnItemListener() {
             private void refresh(View itemView, int position) {
@@ -485,7 +475,6 @@ public class DetailActivity extends BaseActivity {
                     vodInfo.playFlag = newFlag;
                     seriesFlagAdapter.notifyItemChanged(position);
                     refreshList();
-					mGridView.clearFocus();
                 }
                 seriesFlagFocus = itemView;
             }
@@ -832,6 +821,19 @@ public class DetailActivity extends BaseActivity {
                         seriesFlagAdapter.setNewData(vodInfo.seriesFlags);
                         mGridViewFlag.scrollToPosition(flagScrollTo);
 
+						mGridView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+						@Override
+						public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+								super.onScrollStateChanged(recyclerView, newState);
+								if (newState == mGridView.SCROLL_STATE_IDLE) {   //xuameng剧集滚动完成后焦点选择为剧集
+								// 滚动已经停止，执行你需要的操作
+								mGridView.requestFocus();
+								mGridView.setSelection(vodInfo.playIndex);
+								mGridView.removeOnScrollListener(this);    //xuameng删除滚动监听
+								}
+							}
+						});
+
                         refreshList();    //xuameng滚动到当前播放剧集
 						tvPlay.setNextFocusUpId(R.id.mGridView);   //xuameng上面焦点是选剧集
 						tvQuickSearch.setNextFocusUpId(R.id.mGridView); 
@@ -840,17 +842,6 @@ public class DetailActivity extends BaseActivity {
 						tvDesc.setNextFocusUpId(R.id.mGridView); 
 						tvPush.setNextFocusUpId(R.id.mGridView); 
 						mGridView.setNextFocusDownId(R.id.tvPlay);   //xuameng下面焦点是播放
-						mGridView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-						@Override
-						public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-								super.onScrollStateChanged(recyclerView, newState);
-								if (newState == mGridView.SCROLL_STATE_IDLE) {   //xuameng剧集滚动完成后焦点选择为剧集
-								// 滚动已经停止，执行你需要的操作
-								mGridView.requestFocus();
-								mGridView.removeOnScrollListener(this);    //xuameng删除滚动监听
-								}
-							}
-						});
 
                         if (showPreview) {
                             jumpToPlay();
@@ -1136,8 +1127,6 @@ public class DetailActivity extends BaseActivity {
             if (playFragment.onBackPressed())  //xuameng上一级交给VODController控制
                 return;
             toggleFullPreview();
-
-            refreshList();   //xuameng退出全屏播放增加滚动到当前播放剧集
 			mGridView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 			@Override
 			public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
@@ -1145,10 +1134,12 @@ public class DetailActivity extends BaseActivity {
 					if (newState == mGridView.SCROLL_STATE_IDLE) {    //xuameng剧集滚动完成后焦点选择为剧集
 					// 滚动已经停止，执行你需要的操作
 					mGridView.requestFocus();
+					mGridView.setSelection(vodInfo.playIndex);
 					mGridView.removeOnScrollListener(this);				//xuameng删除滚动监听				
 					}
 				}
 			});
+            refreshList();   //xuameng退出全屏播放增加滚动到当前播放剧集
 
 //            mGridView.requestFocus(); 没用了
             List<VodInfo.VodSeries> list = vodInfo.seriesMap.get(vodInfo.playFlag);
@@ -1156,8 +1147,11 @@ public class DetailActivity extends BaseActivity {
             return;
         }
         else if (seriesSelect) {
-            if (seriesFlagFocus != null && !seriesFlagFocus.isFocused()) {
-                seriesFlagFocus.requestFocus();
+            if (mGridViewFlag.getVisibility() = View.VISIBLE && !seriesFlagFocus.isFocused()) {
+				if (vodInfo.seriesFlags.size() > 1)
+				{seriesFlagFocus.requestFocus();
+				}
+                
                 return;
             }else {
 				tvPlay.requestFocus();        //xuameng修复播放退出到小窗口后再按返回键直接退出的问题，跳转到播放
