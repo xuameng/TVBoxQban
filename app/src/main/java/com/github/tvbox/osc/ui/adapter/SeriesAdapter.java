@@ -35,9 +35,10 @@ public class SeriesAdapter extends BaseQuickAdapter<VodInfo.VodSeries, BaseViewH
         }
         helper.setText(R.id.tvSeries, item.name);
 
-        if (getData().size() == 1 && helper.getLayoutPosition() == 0) {
+ /*       if (getData().size() == 1 && helper.getLayoutPosition() == 0) {
             helper.itemView.setNextFocusUpId(R.id.mGridViewFlag);
         }
+xuameng 选集列表*/ 
         int spanCount = mGridLayoutManager.getSpanCount();
         int position = helper.getLayoutPosition();
         int totalCount = getData().size();
