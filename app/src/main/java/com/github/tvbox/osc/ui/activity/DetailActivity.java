@@ -214,6 +214,10 @@ public class DetailActivity extends BaseActivity {
             protected void convert(BaseViewHolder helper, String item) {
                 TextView tvSeries = helper.getView(R.id.tvSeriesGroup);
                 tvSeries.setText(item);
+                if (helper.getLayoutPosition() == getData().size() - 1) {
+                    helper.itemView.setNextFocusRightId(R.id.tvPlay);
+                }
+				helper.itemView.setNextFocusUpId(R.id.mGridViewFlag);
             }
         };
         mSeriesGroupView.setAdapter(seriesGroupAdapter);
@@ -1147,14 +1151,8 @@ public class DetailActivity extends BaseActivity {
             return;
         }
         else if (seriesSelect) {
-            if (vodInfo.seriesFlags.size() > 0) {
-				if (mGridViewFlag.getVisibility() == View.VISIBLE){
-					if (!seriesFlagFocus.isFocused()){
-						seriesFlagFocus.requestFocus();
-					}
-				}
-					
-                
+            if (seriesFlagFocus != null && !seriesFlagFocus.isFocused()) {
+                seriesFlagFocus.requestFocus();
                 return;
             }else {
 				tvPlay.requestFocus();        //xuameng修复播放退出到小窗口后再按返回键直接退出的问题，跳转到播放
