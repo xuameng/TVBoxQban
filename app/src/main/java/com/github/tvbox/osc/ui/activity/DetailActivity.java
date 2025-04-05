@@ -239,11 +239,16 @@ public class DetailActivity extends BaseActivity {
             public void onClick(View v) {
                 if (vodInfo != null && vodInfo.seriesMap.size() > 0) {
                     vodInfo.reverseSort = !vodInfo.reverseSort;
-                    isReverse = !isReverse;
-					isReverseXu = true;
-					if (isReverseXu){
-						tvSort.setText(isReverse?"正序":"倒序");
+					if (vodInfo.reverseSort){
+						tvSort.setText("正序");
+					}else{
+						tvSort.setText("倒序");
 					}
+                    isReverse = !isReverse;
+		//			isReverseXu = true;
+		//			if (isReverseXu){
+		//				tvSort.setText(isReverse?"正序":"倒序");
+		//			}
                     vodInfo.reverse();
                     vodInfo.playIndex=(vodInfo.seriesMap.get(vodInfo.playFlag).size()-1)-vodInfo.playIndex;
 //                    insertVod(sourceKey, vodInfo);
