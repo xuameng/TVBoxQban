@@ -924,7 +924,7 @@ public class DetailActivity extends BaseActivity {
 							}
 						});
 
-                        refreshList();    //xuameng滚动到当前播放剧集
+                        refreshListXu();    //xuameng滚动到当前播放剧集
 						tvPlay.setNextFocusUpId(R.id.mGridView);   //xuameng上面焦点是选剧集
 						tvQuickSearch.setNextFocusUpId(R.id.mGridView); 
 						tvSort.setNextFocusUpId(R.id.mGridView); 
