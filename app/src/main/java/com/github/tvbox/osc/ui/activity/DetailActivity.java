@@ -305,6 +305,29 @@ public class DetailActivity extends BaseActivity {
             }
         });
 
+           //xuameng : 长按播放滚动
+		    tvPlay.setOnLongClickListener(new View.OnLongClickListener() {       //xuameng长按历史键重载主页数据
+        	@Override
+            public boolean onLongClick(View v) {
+				FastClickCheckUtil.check(v);
+				mGridView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+				@Override
+					public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+						super.onScrollStateChanged(recyclerView, newState);
+						if (newState == mGridView.SCROLL_STATE_IDLE) {    //xuameng剧集滚动完成后焦点选择为剧集
+						// 滚动已经停止，执行你需要的操作
+						mGridView.requestFocus();
+						mGridView.setSelection(vodInfo.playIndex);
+						mGridView.removeOnScrollListener(this);				//xuameng删除滚动监听				
+						}
+					}
+				});
+            refreshList();   //xuameng退出全屏播放增加滚动到当前播放剧集
+			Toast.makeText(DetailActivity.this, "滚动到当前播放剧集！", Toast.LENGTH_SHORT).show();
+			return true;
+            }
+        });
+
 		tvPlay.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override         //xuameng许大师制作焦点变大
 	        public void onFocusChange(View v, boolean hasFocus){
@@ -484,7 +507,6 @@ public class DetailActivity extends BaseActivity {
                     vodInfo.playFlag = newFlag;
                     seriesFlagAdapter.notifyItemChanged(position);
                     refreshList();
-					mGridView.clearFocus();
                 }
                 seriesFlagFocus = itemView;
             }
@@ -851,7 +873,7 @@ public class DetailActivity extends BaseActivity {
 						tvCollect.setNextFocusUpId(R.id.mGridView); 
 						tvDesc.setNextFocusUpId(R.id.mGridView); 
 						tvPush.setNextFocusUpId(R.id.mGridView); 
-						llPlayerFragmentContainerBlock.setNextFocusUpId(R.id.mGridView); 
+				//		llPlayerFragmentContainerBlock.setNextFocusUpId(R.id.mGridView); 
 
                         if (showPreview) {
                             jumpToPlay();
