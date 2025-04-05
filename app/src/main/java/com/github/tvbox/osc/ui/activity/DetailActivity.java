@@ -484,6 +484,7 @@ public class DetailActivity extends BaseActivity {
                     vodInfo.playFlag = newFlag;
                     seriesFlagAdapter.notifyItemChanged(position);
                     refreshList();
+					mGridView.clearFocus();
                 }
                 seriesFlagFocus = itemView;
             }
