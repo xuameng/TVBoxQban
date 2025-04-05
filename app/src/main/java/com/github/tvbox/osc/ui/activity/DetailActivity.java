@@ -900,6 +900,7 @@ public class DetailActivity extends BaseActivity {
 							tvSort.setText("正序");
                         }else{
 							tvSort.setText("倒序");
+						}
 
                         if (vodInfo.playFlag == null || !vodInfo.seriesMap.containsKey(vodInfo.playFlag))
                             vodInfo.playFlag = (String) vodInfo.seriesMap.keySet().toArray()[0];
