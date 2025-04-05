@@ -715,26 +715,11 @@ public class DetailActivity extends BaseActivity {
     @SuppressLint("NotifyDataSetChanged")
     void refreshListXu() {
 		VodInfo vodInfoRecord = RoomDataManger.getVodInfo(sourceKey, vodId);
-                        if (vodInfoRecord != null) {
-                            vodInfo.playIndex = Math.max(vodInfoRecord.playIndex, 0);
-                            vodInfo.playFlag = vodInfoRecord.playFlag;
-
-                        } else {
-                            vodInfo.playIndex = 0;
-                            vodInfo.playFlag = null;
-                        }
-                        if (vodInfo.playFlag == null || !vodInfo.seriesMap.containsKey(vodInfo.playFlag))
-                            vodInfo.playFlag = (String) vodInfo.seriesMap.keySet().toArray()[0];
-
-                        int flagScrollTo = 0;
-                        for (int j = 0; j < vodInfo.seriesFlags.size(); j++) {
-                            VodInfo.VodSeriesFlag flag = vodInfo.seriesFlags.get(j);
-                            if (flag.name.equals(vodInfo.playFlag)) {
-                                flagScrollTo = j;
-                                flag.selected = true;
-                            } else
-                                flag.selected = false;
-                        }
+        if (vodInfoRecord != null) {
+           vodInfo.playIndex = Math.max(vodInfoRecord.playIndex, 0);
+        } else {
+          vodInfo.playIndex = 0;
+        }
 
         if (vodInfo.seriesMap.get(vodInfo.playFlag).size() <= vodInfo.playIndex) {
             vodInfo.playIndex = 0;
