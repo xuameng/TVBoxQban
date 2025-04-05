@@ -198,7 +198,6 @@ public class DetailActivity extends BaseActivity {
         mGridViewFlag.setAdapter(seriesFlagAdapter);
         isReverse = false;
         firstReverse = false;
-		private isReverseXu = false;  //xuameng倒序了
         preFlag = "";
         if (showPreview) {
             playFragment = new PlayFragment();
@@ -240,7 +239,6 @@ public class DetailActivity extends BaseActivity {
                 if (vodInfo != null && vodInfo.seriesMap.size() > 0) {
                     vodInfo.reverseSort = !vodInfo.reverseSort;
                     isReverse = !isReverse;
-					isReverseXu = !isReverseXu;
 					tvSort.setText(isReverse?"正序":"倒序");
                     vodInfo.reverse();
                     vodInfo.playIndex=(vodInfo.seriesMap.get(vodInfo.playFlag).size()-1)-vodInfo.playIndex;
@@ -724,7 +722,9 @@ public class DetailActivity extends BaseActivity {
         } else {
           vodInfo.playIndex = 0;
         }
-		if(isReverseXu)vodInfo.reverse();
+        if (vodInfo.reverseSort) {
+            vodInfo.reverse();
+           }
 
         if (vodInfo.seriesMap.get(vodInfo.playFlag).size() <= vodInfo.playIndex) {
             vodInfo.playIndex = 0;
