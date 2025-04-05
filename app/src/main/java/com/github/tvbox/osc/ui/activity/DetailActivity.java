@@ -238,7 +238,7 @@ public class DetailActivity extends BaseActivity {
             public void onClick(View v) {
                 if (vodInfo != null && vodInfo.seriesMap.size() > 0) {
                     vodInfo.reverseSort = !vodInfo.reverseSort;
-					if (vodInfo.reverseSort){
+					if (vodInfo.reverseSort){    //XUAMENG读取记录后显示BUG
 						tvSort.setText("正序");
 					}else{
 						tvSort.setText("倒序");
@@ -250,7 +250,7 @@ public class DetailActivity extends BaseActivity {
                     firstReverse = true;
                     setSeriesGroupOptions();
                     seriesAdapter.notifyDataSetChanged();
-					insertVod(firstsourceKey, vodInfo);  //xuameng保存历史
+					insertVod(firstsourceKey, vodInfo);  //xuameng保存历史 解决换源列表大小不同BUG
                 }
             }
         });
@@ -321,13 +321,13 @@ public class DetailActivity extends BaseActivity {
 						super.onScrollStateChanged(recyclerView, newState);
 						if (newState == mGridView.SCROLL_STATE_IDLE) {    //xuameng剧集滚动完成后焦点选择为剧集
 						// 滚动已经停止，执行你需要的操作
-						mGridView.requestFocus();
+						mGridView.requestFocus();    //xuameng如果不满足滚动条件直接获得焦点
 						mGridView.setSelection(vodInfo.playIndex);
 						mGridView.removeOnScrollListener(this);				//xuameng删除滚动监听				
 						}
 					}
 				});
-			mGridView.requestFocus();
+			mGridView.requestFocus();  //xuameng如果不满足滚动条件直接获得焦点
 			mGridView.setSelection(vodInfo.playIndex);
             refreshListXu();   //xuameng退出全屏播放增加滚动到当前播放剧集
 			Toast.makeText(DetailActivity.this, "滚动到当前播放剧集！", Toast.LENGTH_SHORT).show();
@@ -720,10 +720,10 @@ public class DetailActivity extends BaseActivity {
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    void refreshListXu() {
+    void refreshListXu() {        //xuameng刷新滚动到剧集
 		VodInfo vodInfoRecord = RoomDataManger.getVodInfo(sourceKey, vodId);
         if (vodInfoRecord != null) {
-           vodInfo.playIndex = Math.max(vodInfoRecord.playIndex, 0);
+           vodInfo.playIndex = Math.max(vodInfoRecord.playIndex, 0);    //读取保存，换源节目列表size不一致默认选第一集BUG
         } else {
           vodInfo.playIndex = 0;
         }
@@ -895,7 +895,7 @@ public class DetailActivity extends BaseActivity {
                             vodInfo.reverseSort = false;
                         }
 
-                        if (vodInfo.reverseSort) {
+                        if (vodInfo.reverseSort) {      //XUAMENG读取记录后显示BUG
                             vodInfo.reverse();
 							tvSort.setText("正序");
                         }else{
@@ -1237,7 +1237,7 @@ public class DetailActivity extends BaseActivity {
 					}
 				}
 			});
-			mGridView.requestFocus();
+			mGridView.requestFocus();   //xuameng如果不满足滚动条件直接获得焦点
 			mGridView.setSelection(vodInfo.playIndex);
             refreshListXu();   //xuameng退出全屏播放增加滚动到当前播放剧集
 
