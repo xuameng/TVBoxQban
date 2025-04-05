@@ -329,7 +329,7 @@ public class DetailActivity extends BaseActivity {
 				});
 			mGridView.requestFocus();  //xuameng如果不满足滚动条件直接获得焦点
 			mGridView.setSelection(vodInfo.playIndex);
-            refreshListXu();   //xuameng退出全屏播放增加滚动到当前播放剧集
+            refreshListXuNew();   //xuameng退出全屏播放增加滚动到当前播放剧集
 			Toast.makeText(DetailActivity.this, "滚动到当前播放剧集！", Toast.LENGTH_SHORT).show();
 			return true;
             }
@@ -727,6 +727,80 @@ public class DetailActivity extends BaseActivity {
         } else {
           vodInfo.playIndex = 0;
         }
+
+        if (vodInfo.seriesMap.get(vodInfo.playFlag).size() <= vodInfo.playIndex) {
+            vodInfo.playIndex = 0;
+        }
+
+        if (vodInfo.seriesMap.get(vodInfo.playFlag) != null) {
+            boolean canSelect = true;
+            for (int j = 0; j < vodInfo.seriesMap.get(vodInfo.playFlag).size(); j++) {
+                if(vodInfo.seriesMap.get(vodInfo.playFlag).get(j).selected){
+                    canSelect = false;
+                    break;
+                }
+            }
+            if(canSelect)vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).selected = true;
+        }
+
+        Paint pFont = new Paint();
+//        pFont.setTypeface(Typeface.DEFAULT );
+        Rect rect = new Rect();
+
+        List<VodInfo.VodSeries> list = vodInfo.seriesMap.get(vodInfo.playFlag);
+        int listSize = list.size();
+        int w = 1;
+        for(int i =0; i < listSize; ++i){
+            String name = list.get(i).name;
+            pFont.getTextBounds(name, 0, name.length(), rect);
+            if(w < rect.width()){
+                w = rect.width();
+            }
+        }
+        w += 32;
+        int screenWidth = getWindowManager().getDefaultDisplay().getWidth()/3;
+        int offset = screenWidth/w;
+        if(offset <=2) offset =2;
+        if(offset > 6) offset =6;
+        mGridViewLayoutMgr.setSpanCount(offset);
+        seriesAdapter.setNewData(vodInfo.seriesMap.get(vodInfo.playFlag));
+
+        setSeriesGroupOptions();
+
+        mGridView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mGridView.smoothScrollToPosition(vodInfo.playIndex);
+            }
+        }, 100);
+    }
+
+    void refreshListXuNew() {        //xuameng刷新滚动到剧集
+		VodInfo vodInfoRecord = RoomDataManger.getVodInfo(sourceKey, vodId);
+                        if (vodInfoRecord != null) {
+                            vodInfo.playIndex = Math.max(vodInfoRecord.playIndex, 0);
+                            vodInfo.playFlag = vodInfoRecord.playFlag;
+                        } else {
+                            vodInfo.playIndex = 0;
+                            vodInfo.playFlag = null;
+                        }
+
+
+                        if (vodInfo.playFlag == null || !vodInfo.seriesMap.containsKey(vodInfo.playFlag))
+                            vodInfo.playFlag = (String) vodInfo.seriesMap.keySet().toArray()[0];
+
+                        int flagScrollTo = 0;
+                        for (int j = 0; j < vodInfo.seriesFlags.size(); j++) {
+                            VodInfo.VodSeriesFlag flag = vodInfo.seriesFlags.get(j);
+                            if (flag.name.equals(vodInfo.playFlag)) {
+                                flagScrollTo = j;
+                                flag.selected = true;
+                            } else
+                                flag.selected = false;
+                        }
+                        seriesFlagAdapter.setNewData(vodInfo.seriesFlags);
+						seriesFlagAdapter.notifyItemChanged(flagScrollTo);
+                        mGridViewFlag.scrollToPosition(flagScrollTo);
 
         if (vodInfo.seriesMap.get(vodInfo.playFlag).size() <= vodInfo.playIndex) {
             vodInfo.playIndex = 0;
@@ -1239,7 +1313,7 @@ public class DetailActivity extends BaseActivity {
 			});
 			mGridView.requestFocus();   //xuameng如果不满足滚动条件直接获得焦点
 			mGridView.setSelection(vodInfo.playIndex);
-            refreshListXu();   //xuameng退出全屏播放增加滚动到当前播放剧集
+            refreshListXuNew();   //xuameng退出全屏播放增加滚动到当前播放剧集
 
 //            mGridView.requestFocus(); 没用了
             List<VodInfo.VodSeries> list = vodInfo.seriesMap.get(vodInfo.playFlag);
