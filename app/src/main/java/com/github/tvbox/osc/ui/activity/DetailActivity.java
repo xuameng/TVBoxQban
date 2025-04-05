@@ -506,7 +506,7 @@ public class DetailActivity extends BaseActivity {
                     }
                     vodInfo.playFlag = newFlag;
                     seriesFlagAdapter.notifyItemChanged(position);
-                    refreshList();
+                    refreshListXu();   //xuameng退出全屏播放增加滚动到当前播放剧集
                 }
                 seriesFlagFocus = itemView;
             }
