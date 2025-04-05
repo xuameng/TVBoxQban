@@ -136,7 +136,6 @@ public class DetailActivity extends BaseActivity {
     boolean seriesSelect = false;
     private View seriesFlagFocus = null;
     private boolean isReverse;
-	private boolean isReverseXu = false;  //倒序文字
     private String preFlag="";
     private boolean firstReverse;
     private V7GridLayoutManager mGridViewLayoutMgr = null;
@@ -245,13 +244,9 @@ public class DetailActivity extends BaseActivity {
 						tvSort.setText("倒序");
 					}
                     isReverse = !isReverse;
-		//			isReverseXu = true;
-		//			if (isReverseXu){
 		//				tvSort.setText(isReverse?"正序":"倒序");
-		//			}
                     vodInfo.reverse();
                     vodInfo.playIndex=(vodInfo.seriesMap.get(vodInfo.playFlag).size()-1)-vodInfo.playIndex;
-//                    insertVod(sourceKey, vodInfo);
                     firstReverse = true;
                     setSeriesGroupOptions();
                     seriesAdapter.notifyDataSetChanged();
@@ -1264,7 +1259,6 @@ public class DetailActivity extends BaseActivity {
             playFragment.mVideoView.release();
         }
 		HawkConfig.intVod = false;  //xuameng判断进入播放
-		isReverseXu = false;
         super.onBackPressed();
     }
 
