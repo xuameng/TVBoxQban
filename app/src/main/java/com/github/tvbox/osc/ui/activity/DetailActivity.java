@@ -246,6 +246,7 @@ public class DetailActivity extends BaseActivity {
                     firstReverse = true;
                     setSeriesGroupOptions();
                     seriesAdapter.notifyDataSetChanged();
+					insertVod(firstsourceKey, vodInfo);  //xuameng保存历史
                 }
             }
         });
@@ -722,9 +723,6 @@ public class DetailActivity extends BaseActivity {
         } else {
           vodInfo.playIndex = 0;
         }
-        if (vodInfo.reverseSort) {
-            vodInfo.reverse();
-           }
 
         if (vodInfo.seriesMap.get(vodInfo.playFlag).size() <= vodInfo.playIndex) {
             vodInfo.playIndex = 0;
