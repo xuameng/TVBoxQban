@@ -722,30 +722,11 @@ public class DetailActivity extends BaseActivity {
     @SuppressLint("NotifyDataSetChanged")
     void refreshListXu() {        //xuameng刷新滚动到剧集
 		VodInfo vodInfoRecord = RoomDataManger.getVodInfo(sourceKey, vodId);
-                        if (vodInfoRecord != null) {
-                            vodInfo.playIndex = Math.max(vodInfoRecord.playIndex, 0);
-                            vodInfo.playFlag = vodInfoRecord.playFlag;
-                        } else {
-                            vodInfo.playIndex = 0;
-                            vodInfo.playFlag = null;
-                        }
-
-
-                        if (vodInfo.playFlag == null || !vodInfo.seriesMap.containsKey(vodInfo.playFlag))
-                            vodInfo.playFlag = (String) vodInfo.seriesMap.keySet().toArray()[0];
-
-                        int flagScrollTo = 0;
-                        for (int j = 0; j < vodInfo.seriesFlags.size(); j++) {
-                            VodInfo.VodSeriesFlag flag = vodInfo.seriesFlags.get(j);
-                            if (flag.name.equals(vodInfo.playFlag)) {
-                                flagScrollTo = j;
-                                flag.selected = true;
-                            } else
-                                flag.selected = false;
-                        }
-                        seriesFlagAdapter.setNewData(vodInfo.seriesFlags);
-						seriesFlagAdapter.notifyItemChanged(flagScrollTo);
-                        mGridViewFlag.scrollToPosition(flagScrollTo);
+        if (vodInfoRecord != null) {
+           vodInfo.playIndex = Math.max(vodInfoRecord.playIndex, 0);    //读取保存，换源节目列表size不一致默认选第一集BUG
+        } else {
+          vodInfo.playIndex = 0;
+        }
 
         if (vodInfo.seriesMap.get(vodInfo.playFlag).size() <= vodInfo.playIndex) {
             vodInfo.playIndex = 0;
