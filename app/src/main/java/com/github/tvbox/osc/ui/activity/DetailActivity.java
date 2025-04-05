@@ -665,6 +665,16 @@ public class DetailActivity extends BaseActivity {
 
     @SuppressLint("NotifyDataSetChanged")
     void refreshList() {
+		VodInfo vodInfoRecord = RoomDataManger.getVodInfo(sourceKey, vodId);
+                        if (vodInfoRecord != null) {
+                            vodInfo.playIndex = Math.max(vodInfoRecord.playIndex, 0);
+                            vodInfo.playFlag = vodInfoRecord.playFlag;
+
+                        } else {
+                            vodInfo.playIndex = 0;
+                            vodInfo.playFlag = null;
+                        }
+
         if (vodInfo.seriesMap.get(vodInfo.playFlag).size() <= vodInfo.playIndex) {
             vodInfo.playIndex = 0;
         }
