@@ -250,7 +250,7 @@ public class DetailActivity extends BaseActivity {
                     firstReverse = true;
                     setSeriesGroupOptions();
                     seriesAdapter.notifyDataSetChanged();
-					insertVod(firstsourceKey, vodInfo);  //xuameng保存历史 解决换源列表大小不同BUG
+		//			insertVod(firstsourceKey, vodInfo);  //xuameng保存历史 解决换源列表大小不同BUG
                 }
             }
         });
