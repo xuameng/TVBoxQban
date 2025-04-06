@@ -135,7 +135,7 @@ public class DetailActivity extends BaseActivity {
     public String firstsourceKey;
     boolean seriesSelect = false;
     private View seriesFlagFocus = null;
-    private boolean isReverse;
+    private boolean isReverse = false;
     private String preFlag="";
     private boolean firstReverse;
     private V7GridLayoutManager mGridViewLayoutMgr = null;
@@ -196,7 +196,6 @@ public class DetailActivity extends BaseActivity {
         mGridViewFlag.setLayoutManager(new V7LinearLayoutManager(this.mContext, 0, false));
         seriesFlagAdapter = new SeriesFlagAdapter();
         mGridViewFlag.setAdapter(seriesFlagAdapter);
-        isReverse = false;
         firstReverse = false;
         preFlag = "";
         if (showPreview) {
@@ -243,7 +242,7 @@ public class DetailActivity extends BaseActivity {
 					}else{
 						tvSort.setText("倒序");
 					}
-         //           isReverse = !isReverse;
+                    isReverse = true;
 		//				tvSort.setText(isReverse?"正序":"倒序");
                     vodInfo.reverse();
                     vodInfo.playIndex=(vodInfo.seriesMap.get(vodInfo.playFlag).size()-1)-vodInfo.playIndex;
@@ -727,6 +726,10 @@ public class DetailActivity extends BaseActivity {
         } else {
           vodInfo.playIndex = 0;
         }
+        if (isReverse) {      //XUAMENG读取记录后显示BUG
+            vodInfo.reverse();
+			isReverse = false;
+        }
 
         if (vodInfo.seriesMap.get(vodInfo.playFlag).size() <= vodInfo.playIndex) {
             vodInfo.playIndex = 0;
@@ -784,7 +787,10 @@ public class DetailActivity extends BaseActivity {
             vodInfo.playIndex = 0;
             vodInfo.playFlag = null;
         }
-
+        if (isReverse) {      //XUAMENG读取记录后显示BUG
+            vodInfo.reverse();
+			isReverse = false;
+        }
         if (vodInfo.playFlag == null || !vodInfo.seriesMap.containsKey(vodInfo.playFlag))  //xuameng切换播放源后刷新返回当前播放源
             vodInfo.playFlag = (String) vodInfo.seriesMap.keySet().toArray()[0];
 
