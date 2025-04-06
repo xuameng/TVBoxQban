@@ -731,7 +731,7 @@ public class DetailActivity extends BaseActivity {
         } else {
           vodInfo.playIndex = 0;
         }
-        if (isReverse) {      //XUAMENG读取记录后显示BUG
+        if (!isReverse) {      //XUAMENG读取记录后显示BUG
             vodInfo.reverse();
 			isReverse = !isReverse;
         }
@@ -792,7 +792,7 @@ public class DetailActivity extends BaseActivity {
             vodInfo.playIndex = 0;
             vodInfo.playFlag = null;
         }
-        if (isReverseXu) {      //XUAMENG读取记录后显示BUG
+        if (!isReverseXu) {      //XUAMENG读取记录后显示BUG
             vodInfo.reverse();
 			isReverseXu = !isReverseXu;
         }
