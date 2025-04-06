@@ -250,7 +250,9 @@ public class DetailActivity extends BaseActivity {
                     firstReverse = true;
                     setSeriesGroupOptions();
                     seriesAdapter.notifyDataSetChanged();
-					insertVod(firstsourceKey, vodInfo.reverseSort);  //xuameng保存历史 解决换源列表大小不同BUG
+				//	insertVod(firstsourceKey, vodInfo.reverseSort);  //xuameng保存历史 解决换源列表大小不同BUG
+					RoomDataManger.insertVodRecord(sourceKey, vodInfo.reverseSort);
+					EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_HISTORY_REFRESH));
                 }
             }
         });
