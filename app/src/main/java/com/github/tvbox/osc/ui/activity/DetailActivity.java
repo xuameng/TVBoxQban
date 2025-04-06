@@ -138,7 +138,7 @@ public class DetailActivity extends BaseActivity {
     private boolean isReverse;
     private String preFlag="";
     private boolean firstReverse;
-	private boolean reverseSortXu = false;
+	private boolean reverseSortXu;
     private V7GridLayoutManager mGridViewLayoutMgr = null;
     private HashMap<String, String> mCheckSources = null;
     private final ArrayList<String> seriesGroupOptions = new ArrayList<>();
@@ -731,7 +731,7 @@ public class DetailActivity extends BaseActivity {
 		  reverseSortXu = false;
         }
        if (reverseSortXu != vodInfo.reverseSort){
-		   reverseSortXu == vodInfo.reverseSort;
+		   reverseSortXu = !reverseSortXu;
            vodInfo.reverse();
 
        }
@@ -795,7 +795,7 @@ public class DetailActivity extends BaseActivity {
 			reverseSortXu = false;
         }
        if (reverseSortXu != vodInfo.reverseSort){
-		   reverseSortXu == vodInfo.reverseSort;
+		   reverseSortXu = !reverseSortXu;
            vodInfo.reverse();
        }
 
