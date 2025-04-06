@@ -138,6 +138,7 @@ public class DetailActivity extends BaseActivity {
     private boolean isReverse;
     private String preFlag="";
     private boolean firstReverse;
+	private boolean reverseSortXu = false;
     private V7GridLayoutManager mGridViewLayoutMgr = null;
     private HashMap<String, String> mCheckSources = null;
     private final ArrayList<String> seriesGroupOptions = new ArrayList<>();
