@@ -136,8 +136,6 @@ public class DetailActivity extends BaseActivity {
     boolean seriesSelect = false;
     private View seriesFlagFocus = null;
     private boolean isReverse;
-	private boolean isReverseXu;
-	private boolean isReverseXuRe;
     private String preFlag="";
     private boolean firstReverse;
     private V7GridLayoutManager mGridViewLayoutMgr = null;
@@ -199,8 +197,6 @@ public class DetailActivity extends BaseActivity {
         seriesFlagAdapter = new SeriesFlagAdapter();
         mGridViewFlag.setAdapter(seriesFlagAdapter);
         isReverse = false;
-		isReverseXu = false;
-		isReverseXuRe = false;
         firstReverse = false;
         preFlag = "";
         if (showPreview) {
@@ -247,7 +243,7 @@ public class DetailActivity extends BaseActivity {
 					}else{
 						tvSort.setText("倒序");
 					}
-                    isReverse = !isReverse;
+         //           isReverse = !isReverse;
 		//				tvSort.setText(isReverse?"正序":"倒序");
                     vodInfo.reverse();
                     vodInfo.playIndex=(vodInfo.seriesMap.get(vodInfo.playFlag).size()-1)-vodInfo.playIndex;
@@ -731,15 +727,6 @@ public class DetailActivity extends BaseActivity {
         } else {
           vodInfo.playIndex = 0;
         }
-        if (isReverse) {      //XUAMENG读取记录后显示BUG
-            vodInfo.reverse();
-			isReverse = !isReverse;
-			isReverseXu = !isReverseXu;
-        }
-		if (isReverseXuRe) {
-            vodInfo.reverse();
-			isReverseXuRe = !isReverseXuRe;
-		}
 
         if (vodInfo.seriesMap.get(vodInfo.playFlag).size() <= vodInfo.playIndex) {
             vodInfo.playIndex = 0;
@@ -797,15 +784,7 @@ public class DetailActivity extends BaseActivity {
             vodInfo.playIndex = 0;
             vodInfo.playFlag = null;
         }
-        if (isReverse) {      //XUAMENG读取记录后显示BUG
-            vodInfo.reverse();
-			isReverse = !isReverse;
-			isReverseXuRe = !isReverseXuRe;
-        }
-		if (isReverseXu) {
-            vodInfo.reverse();
-			isReverseXu = !isReverseXu;
-		}
+
         if (vodInfo.playFlag == null || !vodInfo.seriesMap.containsKey(vodInfo.playFlag))  //xuameng切换播放源后刷新返回当前播放源
             vodInfo.playFlag = (String) vodInfo.seriesMap.keySet().toArray()[0];
 
