@@ -136,6 +136,7 @@ public class DetailActivity extends BaseActivity {
     boolean seriesSelect = false;
     private View seriesFlagFocus = null;
     private boolean isReverse;
+	private boolean isReverseXu;
     private String preFlag="";
     private boolean firstReverse;
     private V7GridLayoutManager mGridViewLayoutMgr = null;
@@ -197,6 +198,7 @@ public class DetailActivity extends BaseActivity {
         seriesFlagAdapter = new SeriesFlagAdapter();
         mGridViewFlag.setAdapter(seriesFlagAdapter);
         isReverse = false;
+		isReverseXu = false;
         firstReverse = false;
         preFlag = "";
         if (showPreview) {
@@ -244,6 +246,7 @@ public class DetailActivity extends BaseActivity {
 						tvSort.setText("倒序");
 					}
                     isReverse = !isReverse;
+					isReverseXu = !isReverseXu;
 		//				tvSort.setText(isReverse?"正序":"倒序");
                     vodInfo.reverse();
                     vodInfo.playIndex=(vodInfo.seriesMap.get(vodInfo.playFlag).size()-1)-vodInfo.playIndex;
@@ -727,9 +730,9 @@ public class DetailActivity extends BaseActivity {
         } else {
           vodInfo.playIndex = 0;
         }
-        if (isReverse) {      //XUAMENG读取记录后显示BUG
+        if (isReverseXu) {      //XUAMENG读取记录后显示BUG
             vodInfo.reverse();
-			isReverse = !isReverse;
+			isReverseXu = !isReverseXu;
         }
         if (vodInfo.seriesMap.get(vodInfo.playFlag).size() <= vodInfo.playIndex) {
             vodInfo.playIndex = 0;
