@@ -731,9 +731,8 @@ public class DetailActivity extends BaseActivity {
         } else {
           vodInfo.playIndex = 0;
         }
-        if (!isReverse) {      //XUAMENG读取记录后显示BUG
+        if (isReverse) {      //XUAMENG读取记录后显示BUG
             vodInfo.reverse();
-			isReverse = !isReverse;
         }
 
         if (vodInfo.seriesMap.get(vodInfo.playFlag).size() <= vodInfo.playIndex) {
@@ -792,9 +791,8 @@ public class DetailActivity extends BaseActivity {
             vodInfo.playIndex = 0;
             vodInfo.playFlag = null;
         }
-        if (!isReverseXu) {      //XUAMENG读取记录后显示BUG
+        if (isReverseXu) {      //XUAMENG读取记录后显示BUG
             vodInfo.reverse();
-			isReverseXu = !isReverseXu;
         }
 
         if (vodInfo.playFlag == null || !vodInfo.seriesMap.containsKey(vodInfo.playFlag))  //xuameng切换播放源后刷新返回当前播放源
