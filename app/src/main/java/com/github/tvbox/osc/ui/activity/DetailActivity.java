@@ -243,14 +243,14 @@ public class DetailActivity extends BaseActivity {
 					}else{
 						tvSort.setText("倒序");
 					}
-                    isReverse = !isReverse;
+         //           isReverse = !isReverse;
 		//				tvSort.setText(isReverse?"正序":"倒序");
                     vodInfo.reverse();
                     vodInfo.playIndex=(vodInfo.seriesMap.get(vodInfo.playFlag).size()-1)-vodInfo.playIndex;
                     firstReverse = true;
                     setSeriesGroupOptions();
                     seriesAdapter.notifyDataSetChanged();
-					insertVod(firstsourceKey, vodInfo);  //xuameng保存历史 解决换源列表大小不同BUG
+		//			insertVod(firstsourceKey, vodInfo);  //xuameng保存历史
                 }
             }
         });
@@ -329,7 +329,7 @@ public class DetailActivity extends BaseActivity {
 				});
 			mGridView.requestFocus();  //xuameng如果不满足滚动条件直接获得焦点
 			mGridView.setSelection(vodInfo.playIndex);
-            refreshListXuNew();   //xuameng退出全屏播放增加滚动到当前播放剧集
+            refreshListXu();   //xuameng返回键、长按播放刷新滚动到剧集
 			Toast.makeText(DetailActivity.this, "滚动到当前播放剧集！", Toast.LENGTH_SHORT).show();
 			return true;
             }
@@ -513,7 +513,7 @@ public class DetailActivity extends BaseActivity {
                     }
                     vodInfo.playFlag = newFlag;
                     seriesFlagAdapter.notifyItemChanged(position);
-                    refreshListXu();   //xuameng退出全屏播放增加滚动到当前播放剧集
+                    refreshListFlag();   //xuameng换源时增加滚动到当前播放剧集
                 }
                 seriesFlagFocus = itemView;
             }
@@ -720,7 +720,7 @@ public class DetailActivity extends BaseActivity {
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    void refreshListXu() {        //xuameng刷新滚动到剧集
+    void refreshListFlag() {        //xuameng换源时增加滚动到当前播放剧集
 		VodInfo vodInfoRecord = RoomDataManger.getVodInfo(sourceKey, vodId);
         if (vodInfoRecord != null) {
            vodInfo.playIndex = Math.max(vodInfoRecord.playIndex, 0);    //读取保存，换源节目列表size不一致默认选第一集BUG
@@ -775,32 +775,36 @@ public class DetailActivity extends BaseActivity {
         }, 100);
     }
 
-    void refreshListXuNew() {        //xuameng刷新滚动到剧集
+    void refreshListXu() {        //xuameng返回键、长按播放刷新滚动到剧集
 		VodInfo vodInfoRecord = RoomDataManger.getVodInfo(sourceKey, vodId);
-                        if (vodInfoRecord != null) {
-                            vodInfo.playIndex = Math.max(vodInfoRecord.playIndex, 0);
-                            vodInfo.playFlag = vodInfoRecord.playFlag;
-                        } else {
-                            vodInfo.playIndex = 0;
-                            vodInfo.playFlag = null;
-                        }
+        if (vodInfoRecord != null) {
+            vodInfo.playIndex = Math.max(vodInfoRecord.playIndex, 0);   //读取保存，换源节目列表size不一致默认选第一集BUG
+            vodInfo.playFlag = vodInfoRecord.playFlag;
+			reverseSortXu = vodInfoRecord.reverseSort;
+        } else {
+            vodInfo.playIndex = 0;
+            vodInfo.playFlag = null;
+			reverseSortXu = false;
+        }
+       if (reverseSortXu != vodInfo.reverseSort){
+           vodInfo.reverse();
+       }
 
+        if (vodInfo.playFlag == null || !vodInfo.seriesMap.containsKey(vodInfo.playFlag))  //xuameng切换播放源后刷新返回当前播放源
+            vodInfo.playFlag = (String) vodInfo.seriesMap.keySet().toArray()[0];
 
-                        if (vodInfo.playFlag == null || !vodInfo.seriesMap.containsKey(vodInfo.playFlag))
-                            vodInfo.playFlag = (String) vodInfo.seriesMap.keySet().toArray()[0];
-
-                        int flagScrollTo = 0;
-                        for (int j = 0; j < vodInfo.seriesFlags.size(); j++) {
-                            VodInfo.VodSeriesFlag flag = vodInfo.seriesFlags.get(j);
-                            if (flag.name.equals(vodInfo.playFlag)) {
-                                flagScrollTo = j;
-                                flag.selected = true;
-                            } else
-                                flag.selected = false;
-                        }
-                        seriesFlagAdapter.setNewData(vodInfo.seriesFlags);
-						seriesFlagAdapter.notifyItemChanged(flagScrollTo);
-                        mGridViewFlag.scrollToPosition(flagScrollTo);
+        int flagScrollTo = 0;
+        for (int j = 0; j < vodInfo.seriesFlags.size(); j++) {
+            VodInfo.VodSeriesFlag flag = vodInfo.seriesFlags.get(j);
+            if (flag.name.equals(vodInfo.playFlag)) {
+                flagScrollTo = j;
+                flag.selected = true;
+            } else
+                flag.selected = false;
+        }
+        seriesFlagAdapter.setNewData(vodInfo.seriesFlags);
+		seriesFlagAdapter.notifyItemChanged(flagScrollTo);
+        mGridViewFlag.scrollToPosition(flagScrollTo);
 
         if (vodInfo.seriesMap.get(vodInfo.playFlag).size() <= vodInfo.playIndex) {
             vodInfo.playIndex = 0;
@@ -1313,7 +1317,7 @@ public class DetailActivity extends BaseActivity {
 			});
 			mGridView.requestFocus();   //xuameng如果不满足滚动条件直接获得焦点
 			mGridView.setSelection(vodInfo.playIndex);
-            refreshListXuNew();   //xuameng退出全屏播放增加滚动到当前播放剧集
+            refreshListXu();   //xuameng返回键、长按播放刷新滚动到剧集
 
 //            mGridView.requestFocus(); 没用了
             List<VodInfo.VodSeries> list = vodInfo.seriesMap.get(vodInfo.playFlag);
