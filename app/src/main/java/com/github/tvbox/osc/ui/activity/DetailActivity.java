@@ -138,7 +138,6 @@ public class DetailActivity extends BaseActivity {
     private boolean isReverse;
     private String preFlag="";
     private boolean firstReverse;
-	private String playFlagXu = null;
     private V7GridLayoutManager mGridViewLayoutMgr = null;
     private HashMap<String, String> mCheckSources = null;
     private final ArrayList<String> seriesGroupOptions = new ArrayList<>();
@@ -244,24 +243,14 @@ public class DetailActivity extends BaseActivity {
 					}else{
 						tvSort.setText("倒序");
 					}
-
-VodInfo vodInfoRecord = RoomDataManger.getVodInfo(sourceKey, vodId);
-                        if (vodInfoRecord != null) {
-                            playFlagXu = vodInfoRecord.playFlag;
-                        } else {
-                            playFlagXu = null;
-                        }
-						if(vodInfo.playFlag.equals(playFlagXu)){
-							insertVod(firstsourceKey, vodInfo);  //xuameng保存历史 解决换源列表大小不同BUG
-						}
-         //           isReverse = !isReverse;
+                    isReverse = !isReverse;
 		//				tvSort.setText(isReverse?"正序":"倒序");
                     vodInfo.reverse();
                     vodInfo.playIndex=(vodInfo.seriesMap.get(vodInfo.playFlag).size()-1)-vodInfo.playIndex;
                     firstReverse = true;
                     setSeriesGroupOptions();
                     seriesAdapter.notifyDataSetChanged();
-					
+					insertVod(firstsourceKey, vodInfo);  //xuameng保存历史 解决换源列表大小不同BUG
                 }
             }
         });
@@ -738,7 +727,10 @@ VodInfo vodInfoRecord = RoomDataManger.getVodInfo(sourceKey, vodId);
         } else {
           vodInfo.playIndex = 0;
         }
-
+        if (isReverse) {      //XUAMENG读取记录后显示BUG
+            vodInfo.reverse();
+			isReverse = !isReverse;
+        }
         if (vodInfo.seriesMap.get(vodInfo.playFlag).size() <= vodInfo.playIndex) {
             vodInfo.playIndex = 0;
         }
@@ -795,7 +787,10 @@ VodInfo vodInfoRecord = RoomDataManger.getVodInfo(sourceKey, vodId);
             vodInfo.playIndex = 0;
             vodInfo.playFlag = null;
         }
-
+        if (isReverse) {      //XUAMENG读取记录后显示BUG
+            vodInfo.reverse();
+			isReverse = !isReverse;
+        }
         if (vodInfo.playFlag == null || !vodInfo.seriesMap.containsKey(vodInfo.playFlag))  //xuameng切换播放源后刷新返回当前播放源
             vodInfo.playFlag = (String) vodInfo.seriesMap.keySet().toArray()[0];
 
