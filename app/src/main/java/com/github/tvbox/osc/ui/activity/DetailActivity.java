@@ -138,7 +138,6 @@ public class DetailActivity extends BaseActivity {
     private boolean isReverse;
     private String preFlag="";
     private boolean firstReverse;
-	private boolean reverseSortXu = false;
     private V7GridLayoutManager mGridViewLayoutMgr = null;
     private HashMap<String, String> mCheckSources = null;
     private final ArrayList<String> seriesGroupOptions = new ArrayList<>();
@@ -244,8 +243,7 @@ public class DetailActivity extends BaseActivity {
 					}else{
 						tvSort.setText("倒序");
 					}
-					reverseSortXu = false;
-         //           isReverse = !isReverse;
+                    isReverse = !isReverse;
 		//				tvSort.setText(isReverse?"正序":"倒序");
                     vodInfo.reverse();
                     vodInfo.playIndex=(vodInfo.seriesMap.get(vodInfo.playFlag).size()-1)-vodInfo.playIndex;
@@ -729,11 +727,8 @@ public class DetailActivity extends BaseActivity {
         } else {
           vodInfo.playIndex = 0;
         }
-		if (!reverseSortXu){
-           if (vodInfo.reverseSort) {      //XUAMENG读取记录后显示BUG
-              vodInfo.reverse();
-           }
-		}
+		if(isReverse)vodInfo.reverse();
+
         if (vodInfo.seriesMap.get(vodInfo.playFlag).size() <= vodInfo.playIndex) {
             vodInfo.playIndex = 0;
         }
@@ -790,11 +785,7 @@ public class DetailActivity extends BaseActivity {
             vodInfo.playIndex = 0;
             vodInfo.playFlag = null;
         }
-		if (!reverseSortXu){
-           if (vodInfo.reverseSort) {      //XUAMENG读取记录后显示BUG
-              vodInfo.reverse();
-           }
-		}
+		if(isReverse)vodInfo.reverse();
 
         if (vodInfo.playFlag == null || !vodInfo.seriesMap.containsKey(vodInfo.playFlag))  //xuameng切换播放源后刷新返回当前播放源
             vodInfo.playFlag = (String) vodInfo.seriesMap.keySet().toArray()[0];
@@ -981,7 +972,6 @@ public class DetailActivity extends BaseActivity {
 
                         if (vodInfo.reverseSort) {      //XUAMENG读取记录后显示BUG
                             vodInfo.reverse();
-							reverseSortXu = true;
 							tvSort.setText("正序");
                         }else{
 							tvSort.setText("倒序");
