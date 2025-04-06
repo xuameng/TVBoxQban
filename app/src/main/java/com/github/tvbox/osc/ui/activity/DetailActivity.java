@@ -731,9 +731,8 @@ public class DetailActivity extends BaseActivity {
 		  reverseSortXu = false;
         }
        if (reverseSortXu != vodInfo.reverseSort){
-		   reverseSortXu = !reverseSortXu;
            vodInfo.reverse();
-
+		   reverseSortXu = !reverseSortXu;
        }
 
         if (vodInfo.seriesMap.get(vodInfo.playFlag).size() <= vodInfo.playIndex) {
@@ -796,7 +795,7 @@ public class DetailActivity extends BaseActivity {
         }
        if (reverseSortXu1 != vodInfo.reverseSort){
            vodInfo.reverse();
-		   reverseSortXu1 == vodInfo.reverseSort;
+		   reverseSortXu1 = !reverseSortXu1;
        }
 
         if (vodInfo.playFlag == null || !vodInfo.seriesMap.containsKey(vodInfo.playFlag))  //xuameng切换播放源后刷新返回当前播放源
