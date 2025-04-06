@@ -725,9 +725,16 @@ public class DetailActivity extends BaseActivity {
 		VodInfo vodInfoRecord = RoomDataManger.getVodInfo(sourceKey, vodId);
         if (vodInfoRecord != null) {
            vodInfo.playIndex = Math.max(vodInfoRecord.playIndex, 0);    //读取保存，换源节目列表size不一致默认选第一集BUG
+		   reverseSortXu = vodInfoRecord.reverseSort;
         } else {
           vodInfo.playIndex = 0;
+		  reverseSortXu = false;
         }
+       if (reverseSortXu != vodInfo.reverseSort){
+		   reverseSortXu == vodInfo.reverseSort;
+           vodInfo.reverse();
+
+       }
 
         if (vodInfo.seriesMap.get(vodInfo.playFlag).size() <= vodInfo.playIndex) {
             vodInfo.playIndex = 0;
@@ -788,6 +795,7 @@ public class DetailActivity extends BaseActivity {
 			reverseSortXu = false;
         }
        if (reverseSortXu != vodInfo.reverseSort){
+		   reverseSortXu == vodInfo.reverseSort;
            vodInfo.reverse();
        }
 
