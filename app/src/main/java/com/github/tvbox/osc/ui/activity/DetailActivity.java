@@ -254,8 +254,8 @@ public class DetailActivity extends BaseActivity {
                     firstReverse = true;
                     setSeriesGroupOptions();
                     seriesAdapter.notifyDataSetChanged();
-					playFlagXuNew = vodInfo.playIndex;
-					playIndexNew = vodInfo.playFlag;
+					playIndexNew = vodInfo.playIndex;
+					playFlagXuNew = vodInfo.playFlag;
 					vodInfo.playIndex = playIndexXu;
 					vodInfo.playFlag = playFlagXu;
 					insertVod(firstsourceKey, vodInfo);  //xuameng保存历史 解决换源列表大小不同BUG
