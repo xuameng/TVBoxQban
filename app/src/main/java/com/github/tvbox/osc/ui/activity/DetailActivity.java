@@ -677,7 +677,7 @@ public class DetailActivity extends BaseActivity {
         //    vodInfo.playIndex = 0;
         }
 
-        if (vodInfo.seriesMap.get(vodInfo.playFlag) != null) {
+        if (vodInfo.seriesMap.get(vodInfo.playFlag) != null && vodInfo.seriesMap.get(vodInfo.playFlag).size() > vodInfo.playIndex) {
             boolean canSelect = true;
             for (int j = 0; j < vodInfo.seriesMap.get(vodInfo.playFlag).size(); j++) {
                 if(vodInfo.seriesMap.get(vodInfo.playFlag).get(j).selected){
@@ -711,7 +711,9 @@ public class DetailActivity extends BaseActivity {
         seriesAdapter.setNewData(vodInfo.seriesMap.get(vodInfo.playFlag));
 
         setSeriesGroupOptions();
-
+if (vodInfo.seriesMap.get(vodInfo.playFlag).size() <= vodInfo.playIndex) {
+	return;
+}
         mGridView.postDelayed(new Runnable() {
             @Override
             public void run() {
