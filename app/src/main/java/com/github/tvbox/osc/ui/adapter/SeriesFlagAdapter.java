@@ -31,7 +31,8 @@ public class SeriesFlagAdapter extends BaseQuickAdapter<VodInfo.VodSeriesFlag, B
         }
         helper.setText(R.id.tvSeriesFlag, item.name);
         if (helper.getLayoutPosition() == getData().size() - 1) {
-            helper.itemView.setNextFocusRightId(R.id.tvPlay);
+           // helper.itemView.setNextFocusRightId(R.id.tvPlay);
+			helper.itemView.setNextFocusRightId(View.NO_ID);   //xuameng 选集分组右边移动不出
         }
     }
 }
