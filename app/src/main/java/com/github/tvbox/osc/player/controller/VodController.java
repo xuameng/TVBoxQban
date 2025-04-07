@@ -1743,7 +1743,7 @@ public class VodController extends BaseController {
         if (isBottomVisible()) {
             if (keyCode == KeyEvent.KEYCODE_DPAD_UP ) {
                 if(mPlayerTimeStartBtn.hasFocus()){
-                    if(setMinPlayTimeChange("st",true)){
+                    if(setMinPlayTimeChange("st",true)){   //xuameng微调片头片尾
                         return true;
                     }
                 }
@@ -1752,7 +1752,7 @@ public class VodController extends BaseController {
                     return true;
                 }
             }
-            if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN ) {
+            if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN ) {   //xuameng微调片头片尾
                 if(mPlayerTimeStartBtn.hasFocus()){
                     if(setMinPlayTimeChange("st",false))return true;
                 }
