@@ -143,10 +143,6 @@ public class DetailActivity extends BaseActivity {
     private final ArrayList<String> seriesGroupOptions = new ArrayList<>();
     private View currentSeriesGroupView;
     private int GroupCount;
-	private int playIndexXu = 0;
-	private String playFlagXu = null;
-	private String playFlagXuNew = null;
-	private int playIndexNew = 0;
 
     @Override
     protected int getLayoutResID() {
@@ -254,14 +250,7 @@ public class DetailActivity extends BaseActivity {
                     firstReverse = true;
                     setSeriesGroupOptions();
                     seriesAdapter.notifyDataSetChanged();
-					playIndexNew = vodInfo.playIndex;
-					playFlagXuNew = vodInfo.playFlag;
-					vodInfo.playIndex = playIndexXu;
-					vodInfo.playFlag = playFlagXu;
 					insertVod(firstsourceKey, vodInfo);  //xuameng保存历史 解决换源列表大小不同BUG
-					vodInfo.playIndex = playIndexNew;
-					vodInfo.playFlag = playFlagXuNew;
-
                 }
             }
         });
@@ -647,8 +636,6 @@ public class DetailActivity extends BaseActivity {
             setTextShow(tvPlayUrl, "播放地址：", vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).url);
             Bundle bundle = new Bundle();
             //保存历史
-			playIndexXu = vodInfo.playIndex;
-			playFlagXu = vodInfo.playFlag;
             insertVod(firstsourceKey, vodInfo);
         //   insertVod(sourceKey, vodInfo);
             bundle.putString("sourceKey", sourceKey);
