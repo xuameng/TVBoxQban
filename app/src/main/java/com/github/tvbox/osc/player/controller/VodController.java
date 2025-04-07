@@ -1716,14 +1716,54 @@ public class VodController extends BaseController {
     private final Handler mmHandler = new Handler();
     private Runnable mLongPressRunnable;
     private static final long LONG_PRESS_DELAY = 300;
+
+    private boolean setMinPlayTimeChange(String typeEt,boolean increase){        //xuameng微调片头片尾
+        myHandle.removeCallbacks(myRunnable);
+        myHandle.postDelayed(myRunnable, myHandleSeconds);
+        try {
+            int currentValue = mPlayerConfig.optInt(typeEt, 0);
+            if(currentValue!=0){
+                int newValue = increase ? currentValue + 1 : currentValue - 1;
+                if(newValue < 0) {
+                    newValue = 0;
+                }
+                mPlayerConfig.put(typeEt,newValue);
+                updatePlayerCfgView();
+                listener.updatePlayerCfg();
+                return true;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (isBottomVisible()) return super.onKeyDown(keyCode, event);
+        if (isBottomVisible()) {
+            if (keyCode == KeyEvent.KEYCODE_DPAD_UP ) {
+                if(mPlayerTimeStartBtn.hasFocus()){
+                    if(setMinPlayTimeChange("st",true)){
+                        return true;
+                    }
+                }
+                View focusedView = mPlayBtnGroup.findFocus();
+                if (focusedView instanceof TextView) {
+                    return true;
+                }
+            }
+            if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN ) {
+                if(mPlayerTimeStartBtn.hasFocus()){
+                    if(setMinPlayTimeChange("st",false))return true;
+                }
+            }
+            return super.onKeyDown(keyCode, event);
+        }
         if ((keyCode == KeyEvent.KEYCODE_DPAD_UP) && event.getRepeatCount() == 0) {
             mLongPressRunnable = new Runnable() {
                 @Override
                 public void run() {
-                    speedPlayStart();
+                    speedPlayStart();          //xuameng长按上键快放
                 }
             };
             mmHandler.postDelayed(mLongPressRunnable, LONG_PRESS_DELAY);
