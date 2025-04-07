@@ -727,6 +727,7 @@ public class DetailActivity extends BaseActivity {
         } else {
             vodInfo.playFlag = null;
         }
+
         if (vodInfo.playFlag == null || !vodInfo.seriesMap.containsKey(vodInfo.playFlag))  //xuameng切换播放源后刷新返回当前播放源
             vodInfo.playFlag = (String) vodInfo.seriesMap.keySet().toArray()[0];
 
@@ -744,10 +745,11 @@ public class DetailActivity extends BaseActivity {
         mGridViewFlag.scrollToPosition(flagScrollTo);
 
         if (vodInfo.seriesMap.get(vodInfo.playFlag).size() <= vodInfo.playIndex) {
-            vodInfo.playIndex = 0;
+       //     vodInfo.playIndex = 0;
+
         }
 
-        if (vodInfo.seriesMap.get(vodInfo.playFlag) != null) {
+        if (vodInfo.seriesMap.get(vodInfo.playFlag) != null && vodInfo.seriesMap.get(vodInfo.playFlag).size() > vodInfo.playIndex) {
             boolean canSelect = true;
             for (int j = 0; j < vodInfo.seriesMap.get(vodInfo.playFlag).size(); j++) {
                 if(vodInfo.seriesMap.get(vodInfo.playFlag).get(j).selected){
@@ -756,7 +758,9 @@ public class DetailActivity extends BaseActivity {
                 }
             }
             if(canSelect)vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).selected = true;
-        }
+        }else{
+				   vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).selected = false;
+		}
 
         Paint pFont = new Paint();
 //        pFont.setTypeface(Typeface.DEFAULT );
