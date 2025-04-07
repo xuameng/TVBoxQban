@@ -729,7 +729,6 @@ public class DetailActivity extends BaseActivity {
         }
 if(isReverse){
 vodInfo.playIndex=(vodInfo.seriesMap.get(vodInfo.playFlag).size()-1)-vodInfo.playIndex;
-isReverse = !isReverse;
 }
 
         if (vodInfo.seriesMap.get(vodInfo.playFlag).size() <= vodInfo.playIndex) {
@@ -789,7 +788,6 @@ isReverse = !isReverse;
         }
 if(isReverse){
 vodInfo.playIndex=(vodInfo.seriesMap.get(vodInfo.playFlag).size()-1)-vodInfo.playIndex;
-isReverse = !isReverse;
 }
         if (vodInfo.playFlag == null || !vodInfo.seriesMap.containsKey(vodInfo.playFlag))  //xuameng切换播放源后刷新返回当前播放源
             vodInfo.playFlag = (String) vodInfo.seriesMap.keySet().toArray()[0];
