@@ -510,7 +510,7 @@ public class DetailActivity extends BaseActivity {
                     VodInfo.VodSeriesFlag flag = vodInfo.seriesFlags.get(position);
                     flag.selected = true;
                     // clean pre flag select status
-                    if (vodInfo.seriesMap.get(vodInfo.playFlag).size() > playFlagXu) {
+                    if (vodInfo.seriesMap.get(vodInfo.playFlag).size() > playFlagXu.size()) {
                         vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).selected = false;
                     }
 					playFlagXu = vodInfo.playFlag;
@@ -675,11 +675,11 @@ public class DetailActivity extends BaseActivity {
 
     @SuppressLint("NotifyDataSetChanged")
     void refreshList() {
-        if (vodInfo.seriesMap.get(vodInfo.playFlag).size() < playFlagXu) {
+        if (vodInfo.seriesMap.get(vodInfo.playFlag).size() < playFlagXu.size()) {
   //          vodInfo.playIndex = 0;
         }
 
-        if (vodInfo.seriesMap.get(vodInfo.playFlag) != null && vodInfo.seriesMap.get(vodInfo.playFlag).size() >= playFlagXu) {
+        if (vodInfo.seriesMap.get(vodInfo.playFlag) != null && vodInfo.seriesMap.get(vodInfo.playFlag).size() >= playFlagXu.size()) {
             boolean canSelect = true;
             for (int j = 0; j < vodInfo.seriesMap.get(vodInfo.playFlag).size(); j++) {
                 if(vodInfo.seriesMap.get(vodInfo.playFlag).get(j).selected){
@@ -713,7 +713,7 @@ public class DetailActivity extends BaseActivity {
         seriesAdapter.setNewData(vodInfo.seriesMap.get(vodInfo.playFlag));
 
         setSeriesGroupOptions();
-        if (vodInfo.seriesMap.get(vodInfo.playFlag).size() < playFlagXu) {
+        if (vodInfo.seriesMap.get(vodInfo.playFlag).size() < playFlagXu.size()) {
  return;
         }
         mGridView.postDelayed(new Runnable() {
