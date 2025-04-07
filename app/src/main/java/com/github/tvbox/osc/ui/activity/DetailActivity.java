@@ -779,7 +779,7 @@ public class DetailActivity extends BaseActivity {
         if(offset > 6) offset =6;
         mGridViewLayoutMgr.setSpanCount(offset);
         seriesAdapter.setNewData(vodInfo.seriesMap.get(vodInfo.playFlag));
-		setSeriesGroupOptionsXu();
+		setSeriesGroupOptions();
 
         mGridView.postDelayed(new Runnable() {
             @Override
