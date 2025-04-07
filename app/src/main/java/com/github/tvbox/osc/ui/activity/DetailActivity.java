@@ -758,9 +758,7 @@ public class DetailActivity extends BaseActivity {
                 }
             }
             if(canSelect)vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).selected = true;
-        }else{
-				   vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).selected = false;
-		}
+        }
 
         Paint pFont = new Paint();
 //        pFont.setTypeface(Typeface.DEFAULT );
