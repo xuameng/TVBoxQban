@@ -146,6 +146,7 @@ public class DetailActivity extends BaseActivity {
 	private int playIndexXu = 0;
 	private String playFlagXu = null;
 	private String playFlagXuNew = null;
+	private int playIndexNew = 0;
 
     @Override
     protected int getLayoutResID() {
@@ -257,6 +258,7 @@ public class DetailActivity extends BaseActivity {
 					vodInfo.playFlag = playFlagXu;
 					insertVod(firstsourceKey, vodInfo);  //xuameng保存历史 解决换源列表大小不同BUG
 					vodInfo.playFlag = playFlagXuNew;
+					vodInfo.playIndex = playIndexNew;
                 }
             }
         });
@@ -519,6 +521,7 @@ public class DetailActivity extends BaseActivity {
                     }
                     vodInfo.playFlag = newFlag;
 					playFlagXuNew = newFlag;
+					playIndexNew = vodInfo.playIndex;
                     seriesFlagAdapter.notifyItemChanged(position);
                     refreshListFlag();   //xuameng换源时增加滚动到当前播放剧集
                 }
