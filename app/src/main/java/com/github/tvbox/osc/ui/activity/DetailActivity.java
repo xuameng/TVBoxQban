@@ -215,7 +215,8 @@ public class DetailActivity extends BaseActivity {
                 TextView tvSeries = helper.getView(R.id.tvSeriesGroup);
                 tvSeries.setText(item);
                 if (helper.getLayoutPosition() == getData().size() - 1) {   //xuameng 选集分组
-                    helper.itemView.setNextFocusRightId(View.NO_ID); //xuameng 选集分组右边移动不出
+                   // helper.itemView.setNextFocusRightId(View.NO_ID); //xuameng 选集分组右边移动不出
+					helper.itemView.setNextFocusRightId(R.id.tvPlay);
                 }
 				if(mGridViewFlag.getVisibility() == View.VISIBLE) {
 					helper.itemView.setNextFocusUpId(R.id.mGridViewFlag);
