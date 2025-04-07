@@ -674,7 +674,7 @@ public class DetailActivity extends BaseActivity {
     @SuppressLint("NotifyDataSetChanged")
     void refreshList() {
         if (vodInfo.seriesMap.get(vodInfo.playFlag).size() <= vodInfo.playIndex) {
-            vodInfo.playIndex = 0;
+        //    vodInfo.playIndex = 0;
         }
 
         if (vodInfo.seriesMap.get(vodInfo.playFlag) != null) {
