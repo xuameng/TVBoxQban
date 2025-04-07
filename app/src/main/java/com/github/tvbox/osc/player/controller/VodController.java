@@ -234,6 +234,7 @@ public class VodController extends BaseController {
     LinearLayout mParseRoot;
 	LinearLayout MxuamengView;			      //xuameng防点击
     LinearLayout mTvPausexu;				  //xuameng暂停动画
+	LinearLayout mPlayBtnGroup;  //xuameng选集菜单条
     TvRecyclerView mGridView;
     TextView mPlayTitle;
     TextView mPlayTitle1;
@@ -451,6 +452,7 @@ public class VodController extends BaseController {
         mBottomRoot = findViewById(R.id.bottom_container);
         mTopRoot1 = findViewById(R.id.tv_top_l_container);
         mTopRoot2 = findViewById(R.id.tv_top_r_container);
+		mPlayBtnGroup = findViewById(R.id.play_btn_group);  //xuameng选集菜单条
         mParseRoot = findViewById(R.id.parse_root);
         mGridView = findViewById(R.id.mGridView);
         mPlayerRetry = findViewById(R.id.play_retry);
