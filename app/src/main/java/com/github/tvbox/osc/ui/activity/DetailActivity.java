@@ -250,7 +250,7 @@ public class DetailActivity extends BaseActivity {
                     firstReverse = true;
                     setSeriesGroupOptions();
                     seriesAdapter.notifyDataSetChanged();
-		//			insertVod(firstsourceKey, vodInfo);  //xuameng保存历史 解决换源列表大小不同BUG
+		//			insertVod(firstsourceKey, vodInfo);  //xuameng保存历史 
                 }
             }
         });
@@ -727,9 +727,9 @@ public class DetailActivity extends BaseActivity {
         } else {
           vodInfo.playIndex = 0;
         }
-if(isReverse){
-vodInfo.playIndex=(vodInfo.seriesMap.get(vodInfo.playFlag).size()-1)-vodInfo.playIndex;
-}
+        if(isReverse){
+           vodInfo.playIndex=(vodInfo.seriesMap.get(vodInfo.playFlag).size()-1)-vodInfo.playIndex;    //xuameng选中剧反转
+        }
 
         if (vodInfo.seriesMap.get(vodInfo.playFlag).size() <= vodInfo.playIndex) {
             vodInfo.playIndex = 0;
@@ -786,9 +786,9 @@ vodInfo.playIndex=(vodInfo.seriesMap.get(vodInfo.playFlag).size()-1)-vodInfo.pla
             vodInfo.playIndex = 0;
             vodInfo.playFlag = null;
         }
-if(isReverse){
-vodInfo.playIndex=(vodInfo.seriesMap.get(vodInfo.playFlag).size()-1)-vodInfo.playIndex;
-}
+        if(isReverse){
+           vodInfo.playIndex=(vodInfo.seriesMap.get(vodInfo.playFlag).size()-1)-vodInfo.playIndex; //xuameng选中剧反转
+        }
         if (vodInfo.playFlag == null || !vodInfo.seriesMap.containsKey(vodInfo.playFlag))  //xuameng切换播放源后刷新返回当前播放源
             vodInfo.playFlag = (String) vodInfo.seriesMap.keySet().toArray()[0];
 
