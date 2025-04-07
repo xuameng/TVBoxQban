@@ -767,7 +767,7 @@ public class DetailActivity extends BaseActivity {
         if(offset > 6) offset =6;
         mGridViewLayoutMgr.setSpanCount(offset);
         seriesAdapter.setNewData(vodInfo.seriesMap.get(vodInfo.playFlag));
-
+		setSeriesGroupOptionsXu();
 
         mGridView.postDelayed(new Runnable() {
             @Override
@@ -841,7 +841,7 @@ public class DetailActivity extends BaseActivity {
         if(offset > 6) offset =6;
         mGridViewLayoutMgr.setSpanCount(offset);
         seriesAdapter.setNewData(vodInfo.seriesMap.get(vodInfo.playFlag));
-
+		setSeriesGroupOptionsXu();
 
         mGridView.postDelayed(new Runnable() {
             @Override
@@ -874,6 +874,42 @@ public class DetailActivity extends BaseActivity {
             }
             if(remainedOptionSize > 0) {
                 if(vodInfo.reverseSort)
+//                    seriesGroupOptions.add(String.format("%d - %d", optionSize * GroupCount + remainedOptionSize, optionSize * GroupCount + 1));
+                    seriesGroupOptions.add(String.format("%d - %d", listSize - (optionSize * GroupCount + 1)+1, listSize - (optionSize * GroupCount + remainedOptionSize)+1));
+                else
+                    seriesGroupOptions.add(String.format("%d - %d", optionSize * GroupCount + 1, optionSize * GroupCount + remainedOptionSize));
+            }
+//            if(vodInfo.reverseSort) Collections.reverse(seriesGroupOptions);
+
+            seriesGroupAdapter.notifyDataSetChanged();
+        }else {
+            mSeriesGroupView.setVisibility(View.GONE);
+        }
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private void setSeriesGroupOptionsXu(){
+        List<VodInfo.VodSeries> list = vodInfo.seriesMap.get(vodInfo.playFlag);
+        int listSize = list.size();
+        int offset = mGridViewLayoutMgr.getSpanCount();
+        seriesGroupOptions.clear();
+        GroupCount=(offset==3 || offset==6)?30:20;
+        if(listSize>100 && listSize<=400)GroupCount=60;
+        if(listSize>400)GroupCount=120;
+        if(listSize > GroupCount) {
+            mSeriesGroupView.setVisibility(View.VISIBLE);
+            int remainedOptionSize = listSize % GroupCount;
+            int optionSize = listSize / GroupCount;
+
+            for(int i = 0; i < optionSize; i++) {
+                if(isReverse)
+//                    seriesGroupOptions.add(String.format("%d - %d", i * GroupCount + GroupCount, i * GroupCount + 1));
+                    seriesGroupOptions.add(String.format("%d - %d", listSize - (i * GroupCount + 1)+1, listSize - (i * GroupCount + GroupCount)+1));
+                else
+                    seriesGroupOptions.add(String.format("%d - %d", i * GroupCount + 1, i * GroupCount + GroupCount));
+            }
+            if(remainedOptionSize > 0) {
+                if(isReverse)
 //                    seriesGroupOptions.add(String.format("%d - %d", optionSize * GroupCount + remainedOptionSize, optionSize * GroupCount + 1));
                     seriesGroupOptions.add(String.format("%d - %d", listSize - (optionSize * GroupCount + 1)+1, listSize - (optionSize * GroupCount + remainedOptionSize)+1));
                 else
