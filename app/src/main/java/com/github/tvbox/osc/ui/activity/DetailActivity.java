@@ -674,7 +674,7 @@ public class DetailActivity extends BaseActivity {
     @SuppressLint("NotifyDataSetChanged")
     void refreshList() {
         if (vodInfo.seriesMap.get(vodInfo.playFlag).size() <= vodInfo.playIndex) {
-            vodInfo.playIndex = 0;
+     //       vodInfo.playIndex = 0;
         }
 
         if (vodInfo.seriesMap.get(vodInfo.playFlag) != null) {
@@ -711,7 +711,9 @@ public class DetailActivity extends BaseActivity {
         seriesAdapter.setNewData(vodInfo.seriesMap.get(vodInfo.playFlag));
 
         setSeriesGroupOptions();
-
+        if (vodInfo.seriesMap.get(vodInfo.playFlag).size() <= vodInfo.playIndex) {
+            return;
+        }
         mGridView.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -745,11 +747,10 @@ public class DetailActivity extends BaseActivity {
         mGridViewFlag.scrollToPosition(flagScrollTo);
 
         if (vodInfo.seriesMap.get(vodInfo.playFlag).size() <= vodInfo.playIndex) {
-       //     vodInfo.playIndex = 0;
-
+            vodInfo.playIndex = 0;
         }
 
-        if (vodInfo.seriesMap.get(vodInfo.playFlag) != null && vodInfo.seriesMap.get(vodInfo.playFlag).size() > vodInfo.playIndex) {
+        if (vodInfo.seriesMap.get(vodInfo.playFlag) != null) {
             boolean canSelect = true;
             for (int j = 0; j < vodInfo.seriesMap.get(vodInfo.playFlag).size(); j++) {
                 if(vodInfo.seriesMap.get(vodInfo.playFlag).get(j).selected){
