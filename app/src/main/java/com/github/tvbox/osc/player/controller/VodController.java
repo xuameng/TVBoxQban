@@ -234,7 +234,6 @@ public class VodController extends BaseController {
     LinearLayout mParseRoot;
 	LinearLayout MxuamengView;			      //xuameng防点击
     LinearLayout mTvPausexu;				  //xuameng暂停动画
-	LinearLayout mPlayBtnGroup;  //xuameng选集菜单条
     TvRecyclerView mGridView;
     TextView mPlayTitle;
     TextView mPlayTitle1;
@@ -452,7 +451,6 @@ public class VodController extends BaseController {
         mBottomRoot = findViewById(R.id.bottom_container);
         mTopRoot1 = findViewById(R.id.tv_top_l_container);
         mTopRoot2 = findViewById(R.id.tv_top_r_container);
-		mPlayBtnGroup = findViewById(R.id.play_btn_group);  //xuameng选集菜单条
         mParseRoot = findViewById(R.id.parse_root);
         mGridView = findViewById(R.id.mGridView);
         mPlayerRetry = findViewById(R.id.play_retry);
@@ -1749,10 +1747,6 @@ public class VodController extends BaseController {
                     if(setMinPlayTimeChange("st",true)){   //xuameng微调片头片尾
                         return true;
                     }
-                }
-                View focusedView = mPlayBtnGroup.findFocus();
-                if (focusedView instanceof TextView) {
-                    return true;
                 }
             }
             if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN ) {   //xuameng微调片头片尾
