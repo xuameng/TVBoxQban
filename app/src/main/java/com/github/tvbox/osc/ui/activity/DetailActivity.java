@@ -729,7 +729,7 @@ public class DetailActivity extends BaseActivity {
           vodInfo.playIndex = 0;
         }
        if (vodInfo.reverseSort){   //XUAMENG读取记录后显示BUG
-            vodInfo.reverse();
+         //   vodInfo.reverse();
         }
 
         if (vodInfo.seriesMap.get(vodInfo.playFlag).size() <= vodInfo.playIndex) {
@@ -789,7 +789,7 @@ public class DetailActivity extends BaseActivity {
             vodInfo.playFlag = null;
         }
        if (vodInfo.reverseSort){ //XUAMENG读取记录后显示BUG
-            vodInfo.reverse();
+         //   vodInfo.reverse();
         }
 
         if (vodInfo.playFlag == null || !vodInfo.seriesMap.containsKey(vodInfo.playFlag))  //xuameng切换播放源后刷新返回当前播放源
