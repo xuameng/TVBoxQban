@@ -1754,6 +1754,18 @@ public class VodController extends BaseController {
                     if(setMinPlayTimeChange("st",false))return true;
                 }
             }
+            if (keyCode == KeyEvent.KEYCODE_DPAD_UP ) {
+                if(mPlayerTimeSkipBtn.hasFocus()){
+                    if(setMinPlayTimeChange("st",true)){   //xuameng微调片头片尾
+                        return true;
+                    }
+                }
+            }
+            if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN ) {   //xuameng微调片头片尾
+                if(mPlayerTimeSkipBtn.hasFocus()){
+                    if(setMinPlayTimeChange("st",false))return true;
+                }
+            }
             return super.onKeyDown(keyCode, event);
         }
         if ((keyCode == KeyEvent.KEYCODE_DPAD_UP) && event.getRepeatCount() == 0) {
