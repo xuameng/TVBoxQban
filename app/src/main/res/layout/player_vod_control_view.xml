@@ -178,6 +178,7 @@
             android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+			android:id="@+id/play_btn_group"
             android:layout_marginBottom="@dimen/vs_10">
             <TextView
                 android:textSize="@dimen/ts_20"
