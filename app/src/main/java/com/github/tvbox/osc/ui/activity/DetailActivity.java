@@ -521,7 +521,6 @@ public class DetailActivity extends BaseActivity {
                     }
                     vodInfo.playFlag = newFlag;
 					playFlagXuNew = newFlag;
-					playIndexNew = vodInfo.playIndex;
                     seriesFlagAdapter.notifyItemChanged(position);
                     refreshListFlag();   //xuameng换源时增加滚动到当前播放剧集
                 }
@@ -1095,6 +1094,7 @@ public class DetailActivity extends BaseActivity {
                     seriesAdapter.notifyItemChanged(index);
                     mGridView.setSelection(index);
                     vodInfo.playIndex = index;
+					playIndexNew = index;
                     //保存历史
                     insertVod(firstsourceKey, vodInfo);
                      //   insertVod(sourceKey, vodInfo);
