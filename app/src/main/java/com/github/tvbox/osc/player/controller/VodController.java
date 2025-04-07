@@ -1493,7 +1493,8 @@ public class VodController extends BaseController {
 			    animator32.start();						      //xuameng动画暂停菜单结束
 			    }
             case VideoView.STATE_BUFFERING:
-                if(mProgressRoot.getVisibility()==GONE)mPlayLoadNetSpeed.setVisibility(VISIBLE);
+              //  if(mProgressRoot.getVisibility()==GONE)mPlayLoadNetSpeed.setVisibility(VISIBLE);
+			    mPlayLoadNetSpeed.setVisibility(VISIBLE);
 				if (iv_circle_bg.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
 					iv_circle_bg.setVisibility(GONE);
 				}
