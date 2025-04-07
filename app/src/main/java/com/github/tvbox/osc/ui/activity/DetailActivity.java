@@ -184,7 +184,7 @@ public class DetailActivity extends BaseActivity {
         tvQuickSearch = findViewById(R.id.tvQuickSearch);
         mEmptyPlayList = findViewById(R.id.mEmptyPlaylist);
         mGridView = findViewById(R.id.mGridView);
- //       mGridView.setHasFixedSize(true);  //xuameng固定大小用
+        mGridView.setHasFixedSize(true);  //xuameng固定大小用
         mGridView.setHasFixedSize(false);
         this.mGridViewLayoutMgr = new V7GridLayoutManager(this.mContext, 6);
         mGridView.setLayoutManager(this.mGridViewLayoutMgr);
@@ -215,7 +215,7 @@ public class DetailActivity extends BaseActivity {
                 TextView tvSeries = helper.getView(R.id.tvSeriesGroup);
                 tvSeries.setText(item);
                 if (helper.getLayoutPosition() == getData().size() - 1) {   //xuameng 选集分组
-                    helper.itemView.setNextFocusRightId(View.NO_ID);   //xuameng 选集分组右边移动不出
+                    helper.itemView.setNextFocusRightId(R.id.tvPlay);
                 }
 				if(mGridViewFlag.getVisibility() == View.VISIBLE) {
 					helper.itemView.setNextFocusUpId(R.id.mGridViewFlag);
@@ -243,14 +243,14 @@ public class DetailActivity extends BaseActivity {
 					}else{
 						tvSort.setText("倒序");
 					}
-                    isReverse = !isReverse;
+         //           isReverse = !isReverse;
 		//				tvSort.setText(isReverse?"正序":"倒序");
                     vodInfo.reverse();
                     vodInfo.playIndex=(vodInfo.seriesMap.get(vodInfo.playFlag).size()-1)-vodInfo.playIndex;
                     firstReverse = true;
                     setSeriesGroupOptions();
                     seriesAdapter.notifyDataSetChanged();
-		//			insertVod(firstsourceKey, vodInfo);  //xuameng保存历史 
+					insertVod(firstsourceKey, vodInfo);  //xuameng保存历史 解决换源列表大小不同BUG
                 }
             }
         });
@@ -727,9 +727,6 @@ public class DetailActivity extends BaseActivity {
         } else {
           vodInfo.playIndex = 0;
         }
-        if(isReverse){
-           vodInfo.playIndex=(vodInfo.seriesMap.get(vodInfo.playFlag).size()-1)-vodInfo.playIndex;    //xuameng选中剧反转
-        }
 
         if (vodInfo.seriesMap.get(vodInfo.playFlag).size() <= vodInfo.playIndex) {
             vodInfo.playIndex = 0;
@@ -767,7 +764,8 @@ public class DetailActivity extends BaseActivity {
         if(offset > 6) offset =6;
         mGridViewLayoutMgr.setSpanCount(offset);
         seriesAdapter.setNewData(vodInfo.seriesMap.get(vodInfo.playFlag));
-		setSeriesGroupOptionsXu();
+
+        setSeriesGroupOptions();
 
         mGridView.postDelayed(new Runnable() {
             @Override
@@ -786,9 +784,7 @@ public class DetailActivity extends BaseActivity {
             vodInfo.playIndex = 0;
             vodInfo.playFlag = null;
         }
-        if(isReverse){
-           vodInfo.playIndex=(vodInfo.seriesMap.get(vodInfo.playFlag).size()-1)-vodInfo.playIndex; //xuameng选中剧反转
-        }
+
         if (vodInfo.playFlag == null || !vodInfo.seriesMap.containsKey(vodInfo.playFlag))  //xuameng切换播放源后刷新返回当前播放源
             vodInfo.playFlag = (String) vodInfo.seriesMap.keySet().toArray()[0];
 
@@ -841,7 +837,8 @@ public class DetailActivity extends BaseActivity {
         if(offset > 6) offset =6;
         mGridViewLayoutMgr.setSpanCount(offset);
         seriesAdapter.setNewData(vodInfo.seriesMap.get(vodInfo.playFlag));
-		setSeriesGroupOptionsXu();
+
+        setSeriesGroupOptions();
 
         mGridView.postDelayed(new Runnable() {
             @Override
@@ -874,42 +871,6 @@ public class DetailActivity extends BaseActivity {
             }
             if(remainedOptionSize > 0) {
                 if(vodInfo.reverseSort)
-//                    seriesGroupOptions.add(String.format("%d - %d", optionSize * GroupCount + remainedOptionSize, optionSize * GroupCount + 1));
-                    seriesGroupOptions.add(String.format("%d - %d", listSize - (optionSize * GroupCount + 1)+1, listSize - (optionSize * GroupCount + remainedOptionSize)+1));
-                else
-                    seriesGroupOptions.add(String.format("%d - %d", optionSize * GroupCount + 1, optionSize * GroupCount + remainedOptionSize));
-            }
-//            if(vodInfo.reverseSort) Collections.reverse(seriesGroupOptions);
-
-            seriesGroupAdapter.notifyDataSetChanged();
-        }else {
-            mSeriesGroupView.setVisibility(View.GONE);
-        }
-    }
-
-    @SuppressLint("NotifyDataSetChanged")
-    private void setSeriesGroupOptionsXu(){
-        List<VodInfo.VodSeries> list = vodInfo.seriesMap.get(vodInfo.playFlag);
-        int listSize = list.size();
-        int offset = mGridViewLayoutMgr.getSpanCount();
-        seriesGroupOptions.clear();
-        GroupCount=(offset==3 || offset==6)?30:20;
-        if(listSize>100 && listSize<=400)GroupCount=60;
-        if(listSize>400)GroupCount=120;
-        if(listSize > GroupCount) {
-            mSeriesGroupView.setVisibility(View.VISIBLE);
-            int remainedOptionSize = listSize % GroupCount;
-            int optionSize = listSize / GroupCount;
-
-            for(int i = 0; i < optionSize; i++) {
-                if(isReverse)
-//                    seriesGroupOptions.add(String.format("%d - %d", i * GroupCount + GroupCount, i * GroupCount + 1));
-                    seriesGroupOptions.add(String.format("%d - %d", listSize - (i * GroupCount + 1)+1, listSize - (i * GroupCount + GroupCount)+1));
-                else
-                    seriesGroupOptions.add(String.format("%d - %d", i * GroupCount + 1, i * GroupCount + GroupCount));
-            }
-            if(remainedOptionSize > 0) {
-                if(isReverse)
 //                    seriesGroupOptions.add(String.format("%d - %d", optionSize * GroupCount + remainedOptionSize, optionSize * GroupCount + 1));
                     seriesGroupOptions.add(String.format("%d - %d", listSize - (optionSize * GroupCount + 1)+1, listSize - (optionSize * GroupCount + remainedOptionSize)+1));
                 else
