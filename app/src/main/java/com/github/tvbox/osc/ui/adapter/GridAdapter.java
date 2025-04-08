@@ -29,7 +29,7 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
  */
 public class GridAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder> {
     private boolean mShowList ;
-     private int defaultWidth = 301;
+     private int defaultWidth = 240;
      private final Style style; // 动态风格，传入时调整图片宽高比
 
     /**
@@ -53,8 +53,6 @@ public class GridAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder> {
         this.mShowList = showList;
         if(style!=null ){
             if(style.type.equals("list"))this.mShowList=true;
-            if(style.ratio<1)this.defaultWidth=233;
-            if(style.ratio>1.7)this.defaultWidth=412;
         }
         this.style = style;
     }
