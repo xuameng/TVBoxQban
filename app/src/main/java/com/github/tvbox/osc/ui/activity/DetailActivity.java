@@ -344,9 +344,11 @@ public class DetailActivity extends BaseActivity {
 						}
 					}
 				});
-			mGridView.requestFocus();  //xuameng如果不满足滚动条件直接获得焦点
-			mGridView.setSelection(vodInfo.playIndex);
             refreshList();   //xuameng返回键、长按播放刷新滚动到剧集
+			if(!mGridView.isScrolling() && !mGridView.isComputingLayout()) {
+			   mGridView.requestFocus();  //xuameng如果不满足滚动条件直接获得焦点
+			   mGridView.setSelection(vodInfo.playIndex);
+			}
 			Toast.makeText(DetailActivity.this, "滚动到当前播放剧集！", Toast.LENGTH_SHORT).show();
 			return true;
             }
