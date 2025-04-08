@@ -905,8 +905,11 @@ public class DetailActivity extends BaseActivity {
 								}
 							}
 						});
-
-                        refreshList();    //xuameng滚动到当前播放剧集
+                       refreshList();   //xuameng返回键、长按播放刷新滚动到剧集
+			           if(!mGridView.isScrolling() && !mGridView.isComputingLayout()) {
+			              mGridView.requestFocus();  //xuameng如果不满足滚动条件直接获得焦点
+			              mGridView.setSelection(vodInfo.playIndex);
+			           }
 						tvPlay.setNextFocusUpId(R.id.mGridView);   //xuameng上面焦点是选剧集
 						tvQuickSearch.setNextFocusUpId(R.id.mGridView); 
 						tvSort.setNextFocusUpId(R.id.mGridView); 
@@ -1211,9 +1214,11 @@ public class DetailActivity extends BaseActivity {
 					}
 				}
 			});
-            refreshList();   //xuameng退出全屏播放增加滚动到当前播放剧集
-			mGridView.requestFocus();   //xuameng如果不满足滚动条件直接获得焦点
-			mGridView.setSelection(vodInfo.playIndex);
+            refreshList();   //xuameng返回键、长按播放刷新滚动到剧集
+			if(!mGridView.isScrolling() && !mGridView.isComputingLayout()) {
+			   mGridView.requestFocus();  //xuameng如果不满足滚动条件直接获得焦点
+			   mGridView.setSelection(vodInfo.playIndex);
+			}
 //            mGridView.requestFocus(); 没用了
             List<VodInfo.VodSeries> list = vodInfo.seriesMap.get(vodInfo.playFlag);
             mSeriesGroupView.setVisibility(list.size()>GroupCount ? View.VISIBLE : View.GONE);
