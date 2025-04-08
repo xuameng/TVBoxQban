@@ -29,7 +29,7 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
  */
 public class GridAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder> {
     private boolean mShowList ;
-     private int defaultWidth = 300;
+     private int defaultWidth = 301;
      private final Style style; // 动态风格，传入时调整图片宽高比
 
     /**
@@ -185,7 +185,7 @@ public class GridAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder> {
             int height = (int) (width / style.ratio);
             ViewGroup.LayoutParams containerParams = container.getLayoutParams();
             containerParams.height = AutoSizeUtils.mm2px(mContext, height); // 高度
-            containerParams.width = AutoSizeUtils.mm2px(mContext, width); // 宽度
+            containerParams.width = ViewGroup.LayoutParams.MATCH_PARENT; // 宽度
             container.setLayoutParams(containerParams);
         }
     }
