@@ -21,6 +21,9 @@ import android.content.ClipboardManager;
 import android.content.ClipData;
 
 import android.view.animation.BounceInterpolator;   //xuameng动画
+import android.graphics.PointF;
+import android.util.DisplayMetrics;
+import androidx.recyclerview.widget.LinearSmoothScroller;
 
 import androidx.fragment.app.FragmentContainerView;
 import androidx.lifecycle.Observer;
@@ -130,6 +133,7 @@ public class DetailActivity extends BaseActivity {
     private SeriesFlagAdapter seriesFlagAdapter;
     private BaseQuickAdapter<String, BaseViewHolder> seriesGroupAdapter;
     private SeriesAdapter seriesAdapter;  //选集列表
+	private LinearSmoothScroller smoothScroller;
     public String vodId;
     public String sourceKey;
     public String firstsourceKey;
@@ -189,6 +193,18 @@ public class DetailActivity extends BaseActivity {
         this.mGridViewLayoutMgr = new V7GridLayoutManager(this.mContext, 6);
         mGridView.setLayoutManager(this.mGridViewLayoutMgr);
 //        mGridView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 0, false));
+
+        smoothScroller = new LinearSmoothScroller(mContext) {
+             @Override
+             protected float calculateSpeedPerPixel(DisplayMetrics displayMetrics) {
+                 return 100f / displayMetrics.densityDpi;
+             }
+             @Override
+             public PointF computeScrollVectorForPosition(int targetPosition) {
+                 return mGridViewLayoutMgr.computeScrollVectorForPosition(targetPosition);
+             }
+         };
+
         seriesAdapter = new SeriesAdapter(this.mGridViewLayoutMgr);
         mGridView.setAdapter(seriesAdapter);
         mGridViewFlag = findViewById(R.id.mGridViewFlag);
@@ -585,7 +601,7 @@ public class DetailActivity extends BaseActivity {
                 txtView.setTextColor(mContext.getResources().getColor(R.color.color_02F8E1));
                 if (vodInfo != null && vodInfo.seriesMap.get(vodInfo.playFlag).size() > 0) {
                     int targetPos = position * GroupCount+1;
-                    mGridView.smoothScrollToPosition(targetPos);
+                    customSeriesScrollPos(targetPos);
                 }
                 currentSeriesGroupView = itemView;
                 currentSeriesGroupView.isSelected();
@@ -603,7 +619,7 @@ public class DetailActivity extends BaseActivity {
                 if (vodInfo != null && vodInfo.seriesMap.get(vodInfo.playFlag).size() > 0) {
                     int targetPos =  position * GroupCount+1;
 //                    mGridView.scrollToPosition(targetPos);
-                    mGridView.smoothScrollToPosition(targetPos);
+                    customSeriesScrollPos(targetPos);
                 }
                 if(currentSeriesGroupView != null) {
                     TextView txtView = currentSeriesGroupView.findViewById(R.id.tvSeriesGroup);
@@ -618,6 +634,17 @@ public class DetailActivity extends BaseActivity {
 
         setLoadSir(llLayout);
     }
+
+    //解决类似海贼王的超长动漫 焦点滚动失败的问题
+     void customSeriesScrollPos(int targetPos)
+     {
+         mGridViewLayoutMgr.scrollToPositionWithOffset(targetPos>10?targetPos - 10:0, 0);
+         mGridView.postDelayed(() -> {
+             this.smoothScroller.setTargetPosition(targetPos);
+             mGridViewLayoutMgr.startSmoothScroll(smoothScroller);
+             mGridView.smoothScrollToPosition(targetPos);
+         }, 50);
+     }
 
     private void onGridViewFocusChange(View view, boolean hasFocus) {
         if (llPlayerFragmentContainerBlock.getVisibility() != View.VISIBLE) return;
@@ -715,7 +742,7 @@ public class DetailActivity extends BaseActivity {
         mGridView.postDelayed(new Runnable() {
             @Override
             public void run() {
-                mGridView.smoothScrollToPosition(vodInfo.playIndex);
+                customSeriesScrollPos(vodInfo.playIndex);
             }
         }, 100);
     }
