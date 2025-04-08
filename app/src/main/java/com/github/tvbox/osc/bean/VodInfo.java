@@ -86,7 +86,7 @@ public class VodInfo implements Serializable {
             for (VodSeriesFlag flag : seriesFlags) {
                 List<VodSeries> list = tempSeriesMap.get(flag.name);
                 assert list != null;
-                if(seriesFlags.size()<=5){
+                if(seriesFlags.size()<=5){    //节目源小于等于5排序
                     if(isReverse(list))Collections.reverse(list);
                 }
                 seriesMap.put(flag.name, list);
@@ -102,7 +102,7 @@ public class VodInfo implements Serializable {
         return 0;
     }
     private boolean isReverse(List<VodInfo.VodSeries> list) {
-        if (list.size() > 300) {
+        if (list.size() > 300) {      //xuameng集数大于300返回
             return false;
         }
         int ascCount = 0, descCount = 0;
