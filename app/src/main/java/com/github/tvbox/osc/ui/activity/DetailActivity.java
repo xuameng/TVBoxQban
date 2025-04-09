@@ -843,10 +843,12 @@ public class DetailActivity extends BaseActivity {
                                         .roundRadius(AutoSizeUtils.mm2px(mContext, 10), RoundTransformation.RoundType.ALL))
                                 .placeholder(R.drawable.img_loading_placeholder)
                                 .noFade()
-                                .error(R.drawable.img_loading_placeholder)
+                             //   .error(R.drawable.img_loading_placeholder)
+						        .error(ImgUtil.createTextDrawable(mVideo.pic))
                                 .into(ivThumb);
                     } else {
-                        ivThumb.setImageResource(R.drawable.img_loading_placeholder);
+                     //   ivThumb.setImageResource(R.drawable.img_loading_placeholder);
+						ivThumb.setImageDrawable(ImgUtil.createTextDrawable(mVideo.pic));
                     }
 
                     if (vodInfo.seriesMap != null && vodInfo.seriesMap.size() > 0) {
@@ -1238,6 +1240,7 @@ public class DetailActivity extends BaseActivity {
             playFragment.mVideoView.release();
         }
 		HawkConfig.intVod = false;  //xuameng判断进入播放
+		else if(showPreview && playFragment!=null)playFragment.setPlayTitle(false);
         super.onBackPressed();
     }
 
