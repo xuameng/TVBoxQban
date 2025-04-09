@@ -64,7 +64,6 @@ public class GridFragment extends BaseLazyFragment {
     private boolean isLoad = false;
     private boolean isTop = true;
     private View focusedView = null;
-	private String bStyle="";
     private static class GridInfo{
         public String sortID="";
         public TvRecyclerView mGridView;
@@ -102,7 +101,7 @@ public class GridFragment extends BaseLazyFragment {
 
     private void changeView(String id,Boolean isFolder){
         if(isFolder){
-            this.sortData.flag =bStyle.isEmpty()?"1":"2"; // 修改sortData.flag
+            this.sortData.flag =style==null?"1":"2"; // 修改sortData.flag
         }else {
             this.sortData.flag ="2"; // 修改sortData.flag
         }
