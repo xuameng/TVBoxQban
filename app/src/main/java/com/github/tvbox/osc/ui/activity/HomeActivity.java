@@ -242,7 +242,6 @@ public class HomeActivity extends BaseActivity {
                 if(dataInitOk && jarInitOk){
 				String cachePath = FileUtils.getCachePath();          //xuameng点击清空缓存
                 String cspCachePath = FileUtils.getFilePath()+"/csp/";
-                String jar=ApiConfig.get().getHomeSourceBean().getJar();
 				File cspCacheDir = new File(cspCachePath);
 				File cacheDir = new File(cachePath);
 				if (!cacheDir.exists() && !cspCacheDir.exists()) return;
