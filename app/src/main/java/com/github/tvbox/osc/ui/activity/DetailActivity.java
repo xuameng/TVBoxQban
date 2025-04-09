@@ -1236,11 +1236,13 @@ public class DetailActivity extends BaseActivity {
 				return;
 			}
         }
+		else if(showPreview && playFragment!=null){
+			playFragment.setPlayTitle(false);
+		}
 		else if (showPreview) {    //xuameng如果显示小窗口播放就释放视频，修复退出还显示暂停图标等图标的BUG
             playFragment.mVideoView.release();
         }
 		HawkConfig.intVod = false;  //xuameng判断进入播放
-		else if(showPreview && playFragment!=null)playFragment.setPlayTitle(false);
         super.onBackPressed();
     }
 
