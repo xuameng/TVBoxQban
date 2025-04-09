@@ -39,7 +39,6 @@ public class HomeHotVodAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHol
             this.defaultWidth=ImgUtil.getStyleDefaultWidth(style);
         }
         this.style=style;
-        this.tvRateValue=tvRate;
     }
 
     @Override
