@@ -251,7 +251,8 @@ public class HomeActivity extends BaseActivity {
 					try {
 						if(cacheDir.exists())FileUtils.cleanDirectory(cacheDir);
 						if(cspCacheDir.exists()){
-							FileUtils.deleteFile(cspCacheDir);
+					//		FileUtils.deleteFile(cspCacheDir);
+					       FileUtils.cleanDirectory(cspCacheDir);
 						}
                        // ApiConfig.get().clearJarLoader();
 					} catch (Exception e) {
