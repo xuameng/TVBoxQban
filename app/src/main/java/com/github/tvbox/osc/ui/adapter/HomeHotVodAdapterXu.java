@@ -33,7 +33,7 @@ public class HomeHotVodAdapterXu extends BaseQuickAdapter<Movie.Video, BaseViewH
     /**
      * style 数据结构：ratio 指定宽高比（宽 / 高），type 表示风格（例如 rect、list）
      */
-    public HomeHotVodAdapterXu(ImgUtil.Style style,String tvRate) {
+    public HomeHotVodAdapterXu(ImgUtil.Style style) {
         super(R.layout.item_user_hot_vod_xu, new ArrayList<>());
         if(style!=null){
             this.defaultWidth=ImgUtil.getStyleDefaultWidth(style);
