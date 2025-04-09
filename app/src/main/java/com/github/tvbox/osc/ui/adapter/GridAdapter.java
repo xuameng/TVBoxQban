@@ -29,32 +29,16 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
  */
 public class GridAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder> {
     private boolean mShowList ;
-     private int defaultWidth = 350;
-     private final Style style; // 动态风格，传入时调整图片宽高比
-
-    /**
-     * style 数据结构：ratio 指定宽高比（宽 / 高），type 表示风格（例如 rect、list）
-     */
-    public static class Style {
-        public float ratio;
-        public String type;
-
-        public Style(float ratio, String type) {
-            this.ratio = ratio;
-            this.type = type;
-        }
-    }
 
     /**
      * 如果 style 传 null，则采用 item_grid.xml 中的默认尺寸
      */
-    public GridAdapter(boolean showList, Style style) {
+    public GridAdapter(boolean showList, ImgUtil.Style style) {
         super( showList ? R.layout.item_list:R.layout.item_grid, new ArrayList<>());
         this.mShowList = showList;
         if(style!=null ){
             if(style.type.equals("list"))this.mShowList=true;
-            if(style.ratio<1)this.defaultWidth=300;
-            if(style.ratio>1.7)this.defaultWidth=400;
+			this.defaultWidth=ImgUtil.getStyleDefaultWidth(style);
         }
         this.style = style;
     }
@@ -90,8 +74,8 @@ public class GridAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder> {
  //           helper.setText(R.id.tvName, item.name);
             ImageView ivThumb = helper.getView(R.id.ivThumb);
 
-        int newWidth = 300;
-        int newHeight = 400;
+        int newWidth = ImgUtil.defaultWidth;
+        int newHeight = ImgUtil.defaultHeight;
         if(style!=null){
              newWidth = defaultWidth;
              newHeight = (int)(newWidth / style.ratio);
@@ -190,9 +174,9 @@ public class GridAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder> {
      * 根据传入的 style 动态设置 ImageView 的高度：高度 = 宽度 / ratio
      */
     private void applyStyleToImage(final ImageView ivThumb) {
-        ViewGroup container = (ViewGroup) ivThumb.getParent();
-        int width = defaultWidth;
         if(style!=null){
+            ViewGroup container = (ViewGroup) ivThumb.getParent();
+            int width = defaultWidth;
             int height = (int) (width / style.ratio);
             ViewGroup.LayoutParams containerParams = container.getLayoutParams();
             containerParams.height = AutoSizeUtils.mm2px(mContext, height); // 高度
