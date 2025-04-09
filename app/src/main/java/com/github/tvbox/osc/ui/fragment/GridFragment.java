@@ -31,6 +31,7 @@ import com.github.tvbox.osc.util.FastClickCheckUtil;
 import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.util.LOG;
 import com.github.tvbox.osc.viewmodel.SourceViewModel;
+import com.github.tvbox.osc.util.ImgUtil;
 import com.orhanobut.hawk.Hawk;
 import com.owen.tvrecyclerview.widget.TvRecyclerView;
 import com.owen.tvrecyclerview.widget.V7GridLayoutManager;
@@ -94,7 +95,6 @@ public class GridFragment extends BaseLazyFragment {
 		if (sortData.filterSelect != null || sortData.filterSelect.size() > 0){
 			sortData.filterSelect.clear();    //xuameng换源，刷新页面过滤BUG
 		}
-		bStyle=ApiConfig.get().getHomeSourceBean().getStyle();
         initView();
         initViewModel();
         initData();
@@ -150,7 +150,7 @@ public class GridFragment extends BaseLazyFragment {
         return true;
     }
 
-	private GridAdapter.Style style;
+	private ImgUtil.Style style;
     // 更改当前页面
     private void createView(){
         this.saveCurrentView(); // 保存当前页面
@@ -168,16 +168,7 @@ public class GridFragment extends BaseLazyFragment {
             mGridView.setVisibility(View.VISIBLE);
         }
         mGridView.setHasFixedSize(true);
-         if(!bStyle.isEmpty()){
-             try {
-                 JSONObject jsonObject = new JSONObject(bStyle);
-                 float ratio = (float) jsonObject.getDouble("ratio");
-                 String type = jsonObject.getString("type");
-                 style = new GridAdapter.Style(ratio, type);
-             }catch (JSONException e){
- 
-             }
-         }
+		style=ImgUtil.initStyle();
          gridAdapter = new GridAdapter(isFolederMode(), style);
         this.page =1;
         this.maxPage =1;
@@ -190,19 +181,15 @@ public class GridFragment extends BaseLazyFragment {
         if(isFolederMode()){
             mGridView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
         }else{
-            int spanCount = isBaseOnWidth()?5:6;
-            if(!bStyle.isEmpty() && style!=null){
-                if ("rect".equals(style.type)) {
-                    if (style.ratio >= 1.7) {
-                        spanCount = 3; // 横图
-                    } else if (style.ratio >= 1.3) {
-                        spanCount = 4; // 4:3
-                    }
-                } else if ("list".equals(style.type)) {
-                    spanCount = 1;
-                }
+            int spanCount = isBaseOnWidth() ? 5 : 6;
+            if (style != null) {
+                spanCount = ImgUtil.spanCountByStyle(style, spanCount);
             }
-            mGridView.setLayoutManager(new V7GridLayoutManager(this.mContext, spanCount));
+            if (spanCount == 1) {
+                mGridView.setLayoutManager(new V7LinearLayoutManager(mContext, spanCount, false));
+            } else {
+                mGridView.setLayoutManager(new V7GridLayoutManager(mContext, spanCount));
+            }
         }
 
         gridAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
