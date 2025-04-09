@@ -14,6 +14,7 @@ import com.github.tvbox.osc.util.MD5;
 import com.orhanobut.hawk.Hawk;
 import com.squareup.picasso.Picasso;
 import com.github.tvbox.osc.util.ImgUtilXu;   //xuamengBASE64图片
+import com.github.tvbox.osc.util.ImgUtil;   //xuamengBASE64图片
 
 import java.util.ArrayList;
 
