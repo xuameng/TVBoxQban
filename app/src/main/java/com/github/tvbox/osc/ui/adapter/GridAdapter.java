@@ -29,6 +29,8 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
  */
 public class GridAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder> {
     private boolean mShowList ;
+	private int defaultWidth;
+    public ImgUtil.Style style; // 动态风格，传入时调整图片宽高比
 
     /**
      * 如果 style 传 null，则采用 item_grid.xml 中的默认尺寸
