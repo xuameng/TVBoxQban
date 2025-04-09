@@ -28,7 +28,6 @@ public class HomeHotVodAdapterXu extends BaseQuickAdapter<Movie.Video, BaseViewH
 
     private int defaultWidth;
     private final ImgUtil.Style style;
-    private String  tvRateValue;
 
     /**
      * style 数据结构：ratio 指定宽高比（宽 / 高），type 表示风格（例如 rect、list）
