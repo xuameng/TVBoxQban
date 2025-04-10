@@ -2533,7 +2533,6 @@ public class LivePlayActivity extends BaseActivity {
             if(!url.startsWith("http://127.0.0.1")){
                 setDefaultLiveChannelList();
                 Toast.makeText(App.getInstance(), "聚汇影视提示您：直播列表为空！", Toast.LENGTH_SHORT).show();
-                finish();
                 return;
             }
         }
@@ -2553,7 +2552,7 @@ public class LivePlayActivity extends BaseActivity {
                 JsonArray livesArray;
                 LinkedHashMap<String, LinkedHashMap<String, ArrayList<String>>> linkedHashMap = new LinkedHashMap<>();
                 TxtSubscribe.parse(linkedHashMap, response.body());
-                livesArray = TxtSubscribe.live2JsonArray(linkedHashMap);
+				JsonArray livesArray = TxtSubscribe.live2JsonArray(linkedHashMap);
 
                 ApiConfig.get().loadLives(livesArray);
                 List<LiveChannelGroup> list = ApiConfig.get().getChannelGroupList();
@@ -3233,7 +3232,7 @@ public class LivePlayActivity extends BaseActivity {
         defaultChannel.setChannelNum(1);
         ArrayList<String> defaultSourceNames = new ArrayList<>();
         ArrayList<String> defaultSourceUrls = new ArrayList<>();
-        defaultSourceNames.add("default source");
+        defaultSourceNames.add("源1");
         defaultSourceUrls.add("http://default.play.url/stream");
         defaultChannel.setChannelSourceNames(defaultSourceNames);
         defaultChannel.setChannelUrls(defaultSourceUrls);
