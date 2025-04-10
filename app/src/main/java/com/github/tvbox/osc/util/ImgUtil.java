@@ -77,9 +77,9 @@ public class ImgUtil {
     }
 
     public static int getStyleDefaultWidth(Style style){
-        int styleDefaultWidth = 285;
-        if(style.ratio<1)styleDefaultWidth=225;
-        if(style.ratio>1.7)styleDefaultWidth=385;
+        int styleDefaultWidth = 280;
+        if(style.ratio<1)styleDefaultWidth=220;
+        if(style.ratio>1.7)styleDefaultWidth=380;
         return styleDefaultWidth;
     }
 
