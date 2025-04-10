@@ -556,19 +556,19 @@ public class ApiConfig {
 				Hawk.put(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
 				Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
 			}
-
-            myHosts = new HashMap<>();
-            if (infoJson.has("hosts")) {
-                JsonArray hostsArray = infoJson.getAsJsonArray("hosts");
-                for (int i = 0; i < hostsArray.size(); i++) {
-                    String entry = hostsArray.get(i).getAsString();
-                    String[] parts = entry.split("=", 2); // 只分割一次，防止 value 里有 =
-                    if (parts.length == 2) {
-                        myHosts.put(parts[0], parts[1]);
-                    }
-                }
-            }
         }
+
+         myHosts = new HashMap<>();
+         if (infoJson.has("hosts")) {
+             JsonArray hostsArray = infoJson.getAsJsonArray("hosts");
+             for (int i = 0; i < hostsArray.size(); i++) {
+                 String entry = hostsArray.get(i).getAsString();
+                 String[] parts = entry.split("=", 2); // 只分割一次，防止 value 里有 =
+                 if (parts.length == 2) {
+                     myHosts.put(parts[0], parts[1]);
+                 }
+             }
+         }
 
         //video parse rule for host
         if (infoJson.has("rules")) {
