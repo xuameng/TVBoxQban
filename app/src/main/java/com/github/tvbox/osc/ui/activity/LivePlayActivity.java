@@ -2562,6 +2562,7 @@ public class LivePlayActivity extends BaseActivity {
                             @Override
                             public void run() {
                                 setDefaultLiveChannelList();
+								Toast.makeText(App.getInstance(), "聚汇影视提示您：直播列表为空！", Toast.LENGTH_SHORT).show();
                             }
                         });
                         return;
