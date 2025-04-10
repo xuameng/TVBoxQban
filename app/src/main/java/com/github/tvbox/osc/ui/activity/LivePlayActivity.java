@@ -2514,7 +2514,7 @@ public class LivePlayActivity extends BaseActivity {
            JsonArray live_groups=Hawk.get(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
            if(live_groups.size() > 1){
             setDefaultLiveChannelList();
-			Toast.makeText(App.getInstance(), "聚汇影视提示您：直播列表为空！", Toast.LENGTH_SHORT).show();
+			Toast.makeText(App.getInstance(), "聚汇影视提示您：直播列表为空！请切换线路！", Toast.LENGTH_SHORT).show();
             return;
 		  }
             Toast.makeText(App.getInstance(), "聚汇影视提示您：频道列表为空！", Toast.LENGTH_SHORT).show();
@@ -2537,8 +2537,14 @@ public class LivePlayActivity extends BaseActivity {
             url = new String(Base64.decode(parsedUrl.getQueryParameter("ext"), Base64.DEFAULT | Base64.URL_SAFE | Base64.NO_WRAP), "UTF-8");
         } catch (Throwable th) {
             if(!url.startsWith("http://127.0.0.1")){
-                setDefaultLiveChannelList();
-                Toast.makeText(App.getInstance(), "聚汇影视提示您：直播文件错误！", Toast.LENGTH_SHORT).show();
+				JsonArray live_groups=Hawk.get(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
+				if(live_groups.size() > 1){
+					setDefaultLiveChannelList();
+					Toast.makeText(App.getInstance(), "聚汇影视提示您：直播文件错误！请切换线路！", Toast.LENGTH_SHORT).show();
+				}else{
+					setDefaultLiveChannelList();
+					Toast.makeText(App.getInstance(), "聚汇影视提示您：直播文件错误！", Toast.LENGTH_SHORT).show();
+				}
                 return;
             }
         }
@@ -2558,15 +2564,20 @@ public class LivePlayActivity extends BaseActivity {
                 LinkedHashMap<String, LinkedHashMap<String, ArrayList<String>>> linkedHashMap = new LinkedHashMap<>();
                 TxtSubscribe.parse(linkedHashMap, response.body());
 				JsonArray livesArray = TxtSubscribe.live2JsonArray(linkedHashMap);
-
+				JsonArray live_groups=Hawk.get(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
                 ApiConfig.get().loadLives(livesArray);
                 List<LiveChannelGroup> list = ApiConfig.get().getChannelGroupList();
                     if (list.isEmpty()) {
                         mHandler.post(new Runnable() {
                             @Override
                             public void run() {
-                                setDefaultLiveChannelList();
-								Toast.makeText(App.getInstance(), "聚汇影视提示您：直播列表为空！", Toast.LENGTH_SHORT).show();
+								if(live_groups.size() > 1){
+									setDefaultLiveChannelList();
+									Toast.makeText(App.getInstance(), "聚汇影视提示您：直播列表为空！请切换线路！", Toast.LENGTH_SHORT).show();
+								}else{
+									setDefaultLiveChannelList();
+									Toast.makeText(App.getInstance(), "聚汇影视提示您：直播列表为空！", Toast.LENGTH_SHORT).show();
+								}
                             }
                         });
                         return;
@@ -2585,11 +2596,17 @@ public class LivePlayActivity extends BaseActivity {
             }
             @Override
             public void onError(Response<String> response) {
+				JsonArray live_groups=Hawk.get(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {
-                        setDefaultLiveChannelList();
-						Toast.makeText(App.getInstance(), "聚汇影视提示您：直播列表获取错误！", Toast.LENGTH_SHORT).show();
+						if(live_groups.size() > 1){
+                            setDefaultLiveChannelList();
+						    Toast.makeText(App.getInstance(), "聚汇影视提示您：直播列表获取错误！请切换线路！", Toast.LENGTH_SHORT).show();
+						}else{
+				            setDefaultLiveChannelList();
+						    Toast.makeText(App.getInstance(), "聚汇影视提示您：直播列表获取错误！", Toast.LENGTH_SHORT).show();
+						}
                     }
                 });
             }
