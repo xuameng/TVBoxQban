@@ -2511,9 +2511,15 @@ public class LivePlayActivity extends BaseActivity {
     private void initLiveChannelList() {
         List<LiveChannelGroup> list = ApiConfig.get().getChannelGroupList();
         if (list.isEmpty()) {
+           JsonArray live_groups=Hawk.get(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
+           if(live_groups.size() > 1){
             setDefaultLiveChannelList();
 			Toast.makeText(App.getInstance(), "聚汇影视提示您：直播列表为空！", Toast.LENGTH_SHORT).show();
             return;
+		  }
+            Toast.makeText(App.getInstance(), "聚汇影视提示您：频道列表为空！", Toast.LENGTH_SHORT).show();
+            finish();
+			return;
         }
 
         if (list.size() == 1 && list.get(0).getGroupName().startsWith("http://127.0.0.1")) {
@@ -2531,8 +2537,8 @@ public class LivePlayActivity extends BaseActivity {
             url = new String(Base64.decode(parsedUrl.getQueryParameter("ext"), Base64.DEFAULT | Base64.URL_SAFE | Base64.NO_WRAP), "UTF-8");
         } catch (Throwable th) {
             if(!url.startsWith("http://127.0.0.1")){
-                Toast.makeText(App.getInstance(), "聚汇影视提示您：直播列表为空！", Toast.LENGTH_SHORT).show();
-                finish();
+                setDefaultLiveChannelList();
+                Toast.makeText(App.getInstance(), "聚汇影视提示您：直播文件错误！", Toast.LENGTH_SHORT).show();
                 return;
             }
         }
