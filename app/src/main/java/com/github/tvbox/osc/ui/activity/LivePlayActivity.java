@@ -3254,7 +3254,7 @@ public class LivePlayActivity extends BaseActivity {
         defaultChannel.setChannelNum(1);
         ArrayList<String> defaultSourceNames = new ArrayList<>();
         ArrayList<String> defaultSourceUrls = new ArrayList<>();
-        defaultSourceNames.add("源1");
+        defaultSourceNames.add("默认源1");
         defaultSourceUrls.add("http://default.play.url/stream");
         defaultChannel.setChannelSourceNames(defaultSourceNames);
         defaultChannel.setChannelUrls(defaultSourceUrls);
