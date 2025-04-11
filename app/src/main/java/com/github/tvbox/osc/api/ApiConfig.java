@@ -508,9 +508,9 @@ public class ApiConfig {
 						for (int i=0; i< lives_groups.size();i++) {
 							JsonObject jsonObject = lives_groups.get(i).getAsJsonObject();
 							String name = jsonObject.has("name")?jsonObject.get("name").getAsString():"线路"+(i+1);
-				if(name == null || name.isEmpty()){
-					name = "聚汇影视";
-				}
+							if(name == null || name.isEmpty()){
+								name = "聚汇影视";
+							}
 							LiveSettingItem liveSettingItem = new LiveSettingItem();
 							liveSettingItem.setItemIndex(i);
 							liveSettingItem.setItemName(name);
@@ -532,9 +532,9 @@ public class ApiConfig {
 							for (int i=0; i< lives_groups.size();i++) {
 							JsonObject jsonObject = lives_groups.get(i).getAsJsonObject();
 							String name = jsonObject.has("name")?jsonObject.get("name").getAsString():"线路"+(i+1);
-											if(name == null || name.isEmpty()){
-					name = "聚汇影视";
-				}
+							if(name == null || name.isEmpty()){
+								name = "聚汇影视";
+							}
 							LiveSettingItem liveSettingItem = new LiveSettingItem();
 							liveSettingItem.setItemIndex(i);
 							liveSettingItem.setItemName(name);
@@ -713,9 +713,9 @@ public class ApiConfig {
 						for (int i=0; i< lives_groups.size();i++) {
 							JsonObject jsonObject = lives_groups.get(i).getAsJsonObject();
 							String name = jsonObject.has("name")?jsonObject.get("name").getAsString():"线路"+(i+1);
-											if(name == null || name.isEmpty()){
-					name = "聚汇影视";
-				}
+							if(name == null || name.isEmpty()){
+								name = "聚汇影视";
+							}
 							LiveSettingItem liveSettingItem = new LiveSettingItem();
 							liveSettingItem.setItemIndex(i);
 							liveSettingItem.setItemName(name);
@@ -737,9 +737,9 @@ public class ApiConfig {
 						for (int i=0; i< lives_groups.size();i++) {
 							JsonObject jsonObject = lives_groups.get(i).getAsJsonObject();
 							String name = jsonObject.has("name")?jsonObject.get("name").getAsString():"线路"+(i+1);
-											if(name == null || name.isEmpty()){
-					name = "聚汇影视";
-				}
+							if(name == null || name.isEmpty()){
+								name = "聚汇影视";
+							}
 							LiveSettingItem liveSettingItem = new LiveSettingItem();
 							liveSettingItem.setItemIndex(i);
 							liveSettingItem.setItemName(name);
@@ -897,6 +897,8 @@ public class ApiConfig {
                     LOG.i("echo-live-proxy-url:"+url);
                 }else {
 					liveChannelGroupList.clear();
+				initLiveSettings();
+				liveSettingGroupList.clear();
                     return;
                 }
             }
