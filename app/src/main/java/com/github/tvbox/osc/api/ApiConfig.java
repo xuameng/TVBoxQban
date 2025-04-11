@@ -879,7 +879,7 @@ public class ApiConfig {
                 String type= livesOBJ.get("type").getAsString();
 				String name= livesOBJ.get("name").getAsString();
 				if(name == null || name.isEmpty()){
-					name = "聚汇影视"
+					name = "聚汇影视";
 				}
 
                 if(type.equals("0")){
