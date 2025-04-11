@@ -499,6 +499,7 @@ public class ApiConfig {
             if(infoJson.has("lives")){
                 JsonArray lives_groups=infoJson.get("lives").getAsJsonArray();
 				if (lives_groups.size() > 0) {  
+                    initLiveSettings();
 					int live_group_index=Hawk.get(HawkConfig.LIVE_GROUP_INDEX,0);
 					if(live_group_index>lives_groups.size()-1){           //xuameng 重要BUG
 						Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
@@ -544,11 +545,13 @@ public class ApiConfig {
 					loadLiveApi(livesOBJ);
 					}
 				}else{
+					initLiveSettings();
 					liveSettingGroupList.clear();
 					Hawk.put(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
 					Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
 				}
 			}else{
+				initLiveSettings();
 				liveSettingGroupList.clear();
 				Hawk.put(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
 				Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
@@ -697,6 +700,7 @@ public class ApiConfig {
         if(infoJson.has("lives")){
             JsonArray lives_groups=infoJson.get("lives").getAsJsonArray();
 				if (lives_groups.size() > 0) { 
+				initLiveSettings();
 				int live_group_index=Hawk.get(HawkConfig.LIVE_GROUP_INDEX,0);
 					if(live_group_index>lives_groups.size()-1){           //xuameng 重要BUG
 						Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
@@ -742,11 +746,13 @@ public class ApiConfig {
 					loadLiveApi(livesOBJ);
 					}
 				}else{
+					initLiveSettings();
 					liveSettingGroupList.clear();
 					Hawk.put(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
 					Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
 				}
 			}else{
+				initLiveSettings();
 				liveSettingGroupList.clear();
 				Hawk.put(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
 				Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
@@ -883,6 +889,9 @@ public class ApiConfig {
                     LOG.i("echo-live-proxy-url:"+url);
                 }else {
 					liveChannelGroupList.clear();
+					liveSettingGroupList.clear();
+					Hawk.put(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
+					Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
                     return;
                 }
             }
