@@ -877,6 +877,11 @@ public class ApiConfig {
                 }
             } else {
                 String type= livesOBJ.get("type").getAsString();
+				String name= livesOBJ.get("name").getAsString();
+				if(name == null || name.isEmpty()){
+					name = "聚汇影视"
+				}
+
                 if(type.equals("0")){
                     url = livesOBJ.has("url")?livesOBJ.get("url").getAsString():"";
                     if(url.isEmpty())url=livesOBJ.has("api")?livesOBJ.get("api").getAsString():"";
@@ -889,9 +894,6 @@ public class ApiConfig {
                     LOG.i("echo-live-proxy-url:"+url);
                 }else {
 					liveChannelGroupList.clear();
-					liveSettingGroupList.clear();
-					Hawk.put(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
-					Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
                     return;
                 }
             }
