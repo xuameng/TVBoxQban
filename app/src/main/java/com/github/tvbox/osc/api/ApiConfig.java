@@ -904,6 +904,7 @@ public class ApiConfig {
                         }
                         url ="http://127.0.0.1:9978/proxy?do=live&type=txt&ext="+url;
                     }
+                }
             }
             //设置epg
             if(livesOBJ.has("epg")){
