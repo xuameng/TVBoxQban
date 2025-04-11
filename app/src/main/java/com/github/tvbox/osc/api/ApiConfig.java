@@ -550,13 +550,11 @@ public class ApiConfig {
 					}
 				}else{
 					initLiveSettings();
-					liveSettingGroupList.clear();
 					Hawk.put(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
 					Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
 				}
 			}else{
 				initLiveSettings();
-				liveSettingGroupList.clear();
 				Hawk.put(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
 				Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
 			}
@@ -755,13 +753,11 @@ public class ApiConfig {
 					}
 				}else{
 					initLiveSettings();
-					liveSettingGroupList.clear();
 					Hawk.put(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
 					Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
 				}
 			}else{
 				initLiveSettings();
-				liveSettingGroupList.clear();
 				Hawk.put(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
 				Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
 		}
@@ -884,7 +880,7 @@ public class ApiConfig {
                     url = url.replace(extUrl, extUrlFix);
                 }
             } else {
-                String type = livesOBJ.has("type")?livesOBJ.get("type").getAsString():"0";
+                String type= livesOBJ.get("type").getAsString();
                 if(type.equals("0")){
                     url = livesOBJ.has("url")?livesOBJ.get("url").getAsString():"";
                     if(url.isEmpty())url=livesOBJ.has("api")?livesOBJ.get("api").getAsString():"";
@@ -896,14 +892,8 @@ public class ApiConfig {
                     }
                     LOG.i("echo-live-proxy-url:"+url);
                 }else {
-                    url = livesOBJ.has("url")?livesOBJ.get("url").getAsString():"";
-                    if(url.isEmpty())url=livesOBJ.has("api")?livesOBJ.get("api").getAsString():"";
-                    if(!url.startsWith("http://127.0.0.1")){
-                        if(url.startsWith("http")){
-                            url = Base64.encodeToString(url.getBytes("UTF-8"), Base64.DEFAULT | Base64.URL_SAFE | Base64.NO_WRAP);
-                        }
-                        url ="http://127.0.0.1:9978/proxy?do=live&type=txt&ext="+url;
-                    }
+					liveChannelGroupList.clear();
+                    return;
                 }
             }
             //设置epg
