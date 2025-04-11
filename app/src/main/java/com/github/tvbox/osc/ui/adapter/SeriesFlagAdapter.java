@@ -31,11 +31,11 @@ public class SeriesFlagAdapter extends BaseQuickAdapter<VodInfo.VodSeriesFlag, B
         }
         helper.setText(R.id.tvSeriesFlag, item.name);
         if (helper.getLayoutPosition() == getData().size() - 1) {
-			helper.itemView.setNextFocusUpId(R.id.tvPlay);
             if (helper.itemView.getId() == View.NO_ID) {
                 helper.itemView.setId(View.generateViewId());
             }
             helper.itemView.setNextFocusRightId(helper.itemView.getId());
         }
+		helper.itemView.setNextFocusUpId(R.id.tvPlay);
     }
 }
