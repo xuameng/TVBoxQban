@@ -493,8 +493,6 @@ public class ApiConfig {
         String live_api_url=Hawk.get(HawkConfig.LIVE_API_URL,"");
         if(live_api_url.isEmpty() || apiUrl.equals(live_api_url)){
 			initLiveSettings();
-			liveSettingGroupList.clear();
-			Hawk.put(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
             LOG.i("echo-load-config_live");
             if(infoJson.has("lives")){
                 JsonArray lives_groups=infoJson.get("lives").getAsJsonArray();
@@ -510,6 +508,9 @@ public class ApiConfig {
 						for (int i=0; i< lives_groups.size();i++) {
 							JsonObject jsonObject = lives_groups.get(i).getAsJsonObject();
 							String name = jsonObject.has("name")?jsonObject.get("name").getAsString():"线路"+(i+1);
+				if(name == null || name.isEmpty()){
+					name = "聚汇影视";
+				}
 							LiveSettingItem liveSettingItem = new LiveSettingItem();
 							liveSettingItem.setItemIndex(i);
 							liveSettingItem.setItemName(name);
@@ -531,6 +532,9 @@ public class ApiConfig {
 							for (int i=0; i< lives_groups.size();i++) {
 							JsonObject jsonObject = lives_groups.get(i).getAsJsonObject();
 							String name = jsonObject.has("name")?jsonObject.get("name").getAsString():"线路"+(i+1);
+											if(name == null || name.isEmpty()){
+					name = "聚汇影视";
+				}
 							LiveSettingItem liveSettingItem = new LiveSettingItem();
 							liveSettingItem.setItemIndex(i);
 							liveSettingItem.setItemName(name);
@@ -694,8 +698,6 @@ public class ApiConfig {
     private void parseLiveJson(String apiUrl, String jsonStr) {
         JsonObject infoJson = gson.fromJson(jsonStr, JsonObject.class);
 		initLiveSettings();
-		liveSettingGroupList.clear();
-		Hawk.put(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
         // 直播源
         if(infoJson.has("lives")){
             JsonArray lives_groups=infoJson.get("lives").getAsJsonArray();
@@ -711,6 +713,9 @@ public class ApiConfig {
 						for (int i=0; i< lives_groups.size();i++) {
 							JsonObject jsonObject = lives_groups.get(i).getAsJsonObject();
 							String name = jsonObject.has("name")?jsonObject.get("name").getAsString():"线路"+(i+1);
+											if(name == null || name.isEmpty()){
+					name = "聚汇影视";
+				}
 							LiveSettingItem liveSettingItem = new LiveSettingItem();
 							liveSettingItem.setItemIndex(i);
 							liveSettingItem.setItemName(name);
@@ -732,6 +737,9 @@ public class ApiConfig {
 						for (int i=0; i< lives_groups.size();i++) {
 							JsonObject jsonObject = lives_groups.get(i).getAsJsonObject();
 							String name = jsonObject.has("name")?jsonObject.get("name").getAsString():"线路"+(i+1);
+											if(name == null || name.isEmpty()){
+					name = "聚汇影视";
+				}
 							LiveSettingItem liveSettingItem = new LiveSettingItem();
 							liveSettingItem.setItemIndex(i);
 							liveSettingItem.setItemName(name);
@@ -877,11 +885,6 @@ public class ApiConfig {
                 }
             } else {
                 String type= livesOBJ.get("type").getAsString();
-				String name= livesOBJ.get("name").getAsString();
-				if(name == null || name.isEmpty()){
-					name = "聚汇影视";
-				}
-
                 if(type.equals("0")){
                     url = livesOBJ.has("url")?livesOBJ.get("url").getAsString():"";
                     if(url.isEmpty())url=livesOBJ.has("api")?livesOBJ.get("api").getAsString():"";
