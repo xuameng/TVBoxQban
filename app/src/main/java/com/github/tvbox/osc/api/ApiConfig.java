@@ -884,7 +884,7 @@ public class ApiConfig {
                     url = url.replace(extUrl, extUrlFix);
                 }
             } else {
-                String type= livesOBJ.get("type").getAsString();
+                String type = livesOBJ.has("type")?livesOBJ.get("type").getAsString():"0";
                 if(type.equals("0")){
                     url = livesOBJ.has("url")?livesOBJ.get("url").getAsString():"";
                     if(url.isEmpty())url=livesOBJ.has("api")?livesOBJ.get("api").getAsString():"";
