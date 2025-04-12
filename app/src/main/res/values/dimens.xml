@@ -248,6 +248,7 @@
     <dimen name="vs_270">270.0mm</dimen>
     <dimen name="vs_28">28.0mm</dimen>
     <dimen name="vs_280">280.0mm</dimen>
+	<dimen name="vs_293">293.0mm</dimen>
     <dimen name="vs_3">3.0mm</dimen>
     <dimen name="vs_30">30.0mm</dimen>
     <dimen name="vs_300">300.0mm</dimen>
@@ -283,6 +284,7 @@
     <dimen name="vs_76">76.0mm</dimen>
     <dimen name="vs_8">8.0mm</dimen>
     <dimen name="vs_80">80.0mm</dimen>
+	<dimen name="vs_9">9.0mm</dimen>
     <dimen name="vs_90">90.0mm</dimen>
     <dimen name="vs_960">960.0mm</dimen>
     <dimen name="vs_xu">30.899994mm</dimen>
