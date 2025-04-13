@@ -910,8 +910,8 @@ public class DetailActivity extends BaseActivity {
 						});
                        refreshList();   //xuameng返回键、长按播放刷新滚动到剧集
 			           if(!mGridView.isScrolling() && !mGridView.isComputingLayout()) {
-			          //    mGridView.requestFocus();  //xuameng如果不满足滚动条件直接获得焦点
-			          //    mGridView.setSelection(vodInfo.playIndex);
+			              mGridView.requestFocus();  //xuameng如果不满足滚动条件直接获得焦点
+			              mGridView.setSelection(vodInfo.playIndex);
 			           }
 						tvPlay.setNextFocusUpId(R.id.mGridView);   //xuameng上面焦点是选剧集
 						tvQuickSearch.setNextFocusUpId(R.id.mGridView); 
