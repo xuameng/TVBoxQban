@@ -348,7 +348,7 @@ public class DetailActivity extends BaseActivity {
             refreshList();   //xuameng返回键、长按播放刷新滚动到剧集
 			if(mGridView.isScrolling() || mGridView.isComputingLayout()) {
 			}else{
-				mGridView.requestFocus();  //xuameng如果不满足滚动条件直接获得焦点
+			//	mGridView.requestFocus();  //xuameng如果不满足滚动条件直接获得焦点
 			    mGridView.setSelection(vodInfo.playIndex);
 			}
 			Toast.makeText(DetailActivity.this, "滚动到当前播放剧集！", Toast.LENGTH_SHORT).show();
@@ -1218,7 +1218,7 @@ public class DetailActivity extends BaseActivity {
             refreshList();   //xuameng返回键、长按播放刷新滚动到剧集
 			if(mGridView.isScrolling() || mGridView.isComputingLayout()) {
 			}else{
-				mGridView.requestFocus();  //xuameng如果不满足滚动条件直接获得焦点
+			//	mGridView.requestFocus();  //xuameng如果不满足滚动条件直接获得焦点
 			    mGridView.setSelection(vodInfo.playIndex);
 			}
 //            mGridView.requestFocus(); 没用了
