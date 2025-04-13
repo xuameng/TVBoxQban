@@ -903,15 +903,15 @@ public class DetailActivity extends BaseActivity {
 								if (newState == mGridView.SCROLL_STATE_IDLE) {   //xuameng剧集滚动完成后焦点选择为剧集
 								// 滚动已经停止，执行你需要的操作
 								mGridView.requestFocus();
-								mGridView.setSelection(vodInfo.playIndex);
+							//	mGridView.setSelection(vodInfo.playIndex);
 								mGridView.removeOnScrollListener(this);    //xuameng删除滚动监听
 								}
 							}
 						});
                        refreshList();   //xuameng返回键、长按播放刷新滚动到剧集
 			           if(!mGridView.isScrolling() && !mGridView.isComputingLayout()) {
-			              mGridView.requestFocus();  //xuameng如果不满足滚动条件直接获得焦点
-			              mGridView.setSelection(vodInfo.playIndex);
+			          //    mGridView.requestFocus();  //xuameng如果不满足滚动条件直接获得焦点
+			          //    mGridView.setSelection(vodInfo.playIndex);
 			           }
 						tvPlay.setNextFocusUpId(R.id.mGridView);   //xuameng上面焦点是选剧集
 						tvQuickSearch.setNextFocusUpId(R.id.mGridView); 
