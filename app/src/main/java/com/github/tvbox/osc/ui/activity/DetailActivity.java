@@ -339,7 +339,7 @@ public class DetailActivity extends BaseActivity {
 						super.onScrollStateChanged(recyclerView, newState);
 						if (newState == mGridView.SCROLL_STATE_IDLE) {    //xuameng剧集滚动完成后焦点选择为剧集
 						// 滚动已经停止，执行你需要的操作
-						mGridView.requestFocus();    //xuameng如果不满足滚动条件直接获得焦点
+				//		mGridView.requestFocus();    //xuameng如果不满足滚动条件直接获得焦点
 						mGridView.setSelection(vodInfo.playIndex);
 						mGridView.removeOnScrollListener(this);				//xuameng删除滚动监听				
 						}
@@ -903,7 +903,7 @@ public class DetailActivity extends BaseActivity {
 								super.onScrollStateChanged(recyclerView, newState);
 								if (newState == mGridView.SCROLL_STATE_IDLE) {   //xuameng剧集滚动完成后焦点选择为剧集
 								// 滚动已经停止，执行你需要的操作
-								mGridView.requestFocus();
+							//	mGridView.requestFocus();
 								mGridView.setSelection(vodInfo.playIndex);
 								mGridView.removeOnScrollListener(this);    //xuameng删除滚动监听
 								}
@@ -1209,7 +1209,7 @@ public class DetailActivity extends BaseActivity {
 					super.onScrollStateChanged(recyclerView, newState);
 					if (newState == mGridView.SCROLL_STATE_IDLE) {    //xuameng剧集滚动完成后焦点选择为剧集
 					// 滚动已经停止，执行你需要的操作
-					mGridView.requestFocus();
+				//	mGridView.requestFocus();
 					mGridView.setSelection(vodInfo.playIndex);
 					mGridView.removeOnScrollListener(this);				//xuameng删除滚动监听				
 					}
