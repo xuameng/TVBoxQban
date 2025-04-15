@@ -1414,6 +1414,7 @@ public class VodController extends BaseController {
 					}
 				isVideoplaying = false;
 				isVideoPlay = false;
+				mSeekBar.setEnabled(false);
                 break;
             case VideoView.STATE_PLAYING:
                 initLandscapePortraitBtnInfo();
@@ -1454,6 +1455,7 @@ public class VodController extends BaseController {
                 });
 			    animator31.start();						      //xuameng动画暂停菜单结束
 			    }
+				mSeekBar.setEnabled(false);
                 break;
             case VideoView.STATE_PREPARED:
                 mPlayLoadNetSpeed.setVisibility(GONE);
@@ -1473,6 +1475,7 @@ public class VodController extends BaseController {
 				isVideoplaying = false;
 				isVideoPlay = false;
 				mxuPlay.setText("准备");
+				mSeekBar.setEnabled(false);
 				if(!isPlaying && mTvPausexu.getVisibility() == View.VISIBLE){
 			    ObjectAnimator animator32 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0,700);				//xuameng动画暂停菜单开始
                 animator32.setDuration(300);			//xuameng动画暂停菜单
