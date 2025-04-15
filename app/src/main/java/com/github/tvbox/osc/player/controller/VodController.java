@@ -822,8 +822,8 @@ public class VodController extends BaseController {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-             //   mPlayerBtn.requestFocus();
-             //   mPlayerBtn.requestFocusFromTouch();
+                mPlayerBtn.requestFocus();
+                mPlayerBtn.requestFocusFromTouch();
             }
         });
 
@@ -865,8 +865,8 @@ public class VodController extends BaseController {
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
-                        //    mPlayerBtn.requestFocus();
-                        //    mPlayerBtn.requestFocusFromTouch();
+                            mPlayerBtn.requestFocus();
+                            mPlayerBtn.requestFocusFromTouch();
                         }
 
                         @Override
@@ -920,8 +920,8 @@ public class VodController extends BaseController {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-            //    mPlayerIJKBtn.requestFocus();
-             //   mPlayerIJKBtn.requestFocusFromTouch();
+                mPlayerIJKBtn.requestFocus();
+                mPlayerIJKBtn.requestFocusFromTouch();
             }
         });
 //        增加播放页面片头片尾时间重置
@@ -1153,6 +1153,12 @@ public class VodController extends BaseController {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+						                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+mxuPlay.requestFocus();				    //底部菜单默认焦点为播放
+                        }
+                    }, 2000);
     }
 
     public void setTitle(String playTitleInfo) {
