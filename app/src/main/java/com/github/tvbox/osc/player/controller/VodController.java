@@ -1384,6 +1384,9 @@ public class VodController extends BaseController {
         videoPlayState = playState;
         switch (playState) {
             case VideoView.STATE_IDLE:
+				if (isBottomVisible()) {
+					mxuPlay.requestFocus();				    //底部菜单默认焦点为播放
+				}
 				if(!isPlaying && mTvPausexu.getVisibility() == View.VISIBLE){
 			    ObjectAnimator animator30 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0,700);				//xuameng动画暂停菜单开始
                 animator30.setDuration(300);			//xuameng动画暂停菜单
@@ -1435,6 +1438,9 @@ public class VodController extends BaseController {
 			    //pauseIngXu();
                 break;
             case VideoView.STATE_ERROR:
+				if (isBottomVisible()) {
+					mxuPlay.requestFocus();				    //底部菜单默认焦点为播放
+				}
                 listener.errReplay();
 				isVideoPlay = false;
 				mxuPlay.setText("准备");
@@ -1472,6 +1478,9 @@ public class VodController extends BaseController {
 				isVideoPlay = true;
                 break;
             case VideoView.STATE_PREPARING:
+				if (isBottomVisible()) {
+					mxuPlay.requestFocus();				    //底部菜单默认焦点为播放
+				}
 				simSeekPosition = 0;       //XUAMENG重要,换视频时重新记录进度
 				isVideoplaying = false;
 				isVideoPlay = false;
