@@ -1642,12 +1642,12 @@ public class VodController extends BaseController {
 						return true;
 					}
 					DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
-                if (mBottomRoot.getVisibility() == View.GONE && !isDisplay) {
-                    showBottom();
-                    myHandle.postDelayed(myRunnable, myHandleSeconds);
-                    return true;
-                }
-            }      
+                    if (mBottomRoot.getVisibility() == View.GONE && !isDisplay) {
+                        showBottom();
+                        myHandle.postDelayed(myRunnable, myHandleSeconds);
+                        return true;
+                    }
+                }      
             } else if (action == KeyEvent.ACTION_UP) {
             if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
                 if (isInPlayback) {
