@@ -1153,9 +1153,7 @@ public class VodController extends BaseController {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-		if (isBottomVisible()) {
 		    mxuPlay.requestFocus();				    //底部菜单默认焦点为播放
-		}
     }
 
     public void setTitle(String playTitleInfo) {
