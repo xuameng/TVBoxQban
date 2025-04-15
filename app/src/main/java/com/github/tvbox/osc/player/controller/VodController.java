@@ -625,12 +625,15 @@ public class VodController extends BaseController {
 			    int keyCode = event.getKeyCode();
                 int action = event.getAction();
 				boolean isInPlayback = isInPlaybackState();
-                    if(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT){
-		              if (isInPlayback) {
-                      tvSlideStartXu(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT ? 1 : -1);
-                return true;
-                    }
-                  }
+                if(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT){
+		           if (isInPlayback) {
+                       tvSlideStartXu(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT ? 1 : -1);
+                       return true;
+                   }else{
+					   mSeekBar.setEnabled(false);
+					   return true;
+				   }
+                }
 				if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
 					if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 350){                  //xuameng 防播放打断动画
 						return true;
@@ -651,19 +654,19 @@ public class VodController extends BaseController {
 						}
 					return true;
                    }
-                 }
-		    	}
+                }
+		    }
                 if(event.getAction()==KeyEvent.ACTION_UP){
                 int keyCode = event.getKeyCode();
                 int action = event.getAction();
                 boolean isInPlayback = isInPlaybackState();
 		            if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
                        if (isInPlayback) {
-                       tvSlideStopXu();			//xuameng修复SEEKBAR快进重新播放问题
-                return true;
-                    }
-                  }	
-                }
+                          tvSlideStopXu();			//xuameng修复SEEKBAR快进重新播放问题
+                          return true;
+                       }
+                   }	
+               }
                return false;
 		    }
         });
@@ -1414,7 +1417,6 @@ public class VodController extends BaseController {
 					}
 				isVideoplaying = false;
 				isVideoPlay = false;
-				mSeekBar.setEnabled(false);
                 break;
             case VideoView.STATE_PLAYING:
                 initLandscapePortraitBtnInfo();
@@ -1455,7 +1457,6 @@ public class VodController extends BaseController {
                 });
 			    animator31.start();						      //xuameng动画暂停菜单结束
 			    }
-				mSeekBar.setEnabled(false);
                 break;
             case VideoView.STATE_PREPARED:
                 mPlayLoadNetSpeed.setVisibility(GONE);
@@ -1475,7 +1476,6 @@ public class VodController extends BaseController {
 				isVideoplaying = false;
 				isVideoPlay = false;
 				mxuPlay.setText("准备");
-				mSeekBar.setEnabled(false);
 				if(!isPlaying && mTvPausexu.getVisibility() == View.VISIBLE){
 			    ObjectAnimator animator32 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0,700);				//xuameng动画暂停菜单开始
                 animator32.setDuration(300);			//xuameng动画暂停菜单
@@ -1930,14 +1930,15 @@ public class VodController extends BaseController {
                 mPlayerConfig.put("pl", p_type);
                 updatePlayerCfgView();
                 listener.updatePlayerCfg();
-		        if (isBottomVisible()) {
-			        new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
+			    new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+						if (isBottomVisible()) {
 					        mxuPlay.requestFocus();				    //底部菜单默认焦点为播放
-                        }
-                    }, 1500);
-		        }
+						}
+                    }
+                }, 1500);
+		        
             }else {
                 return true;
             }
