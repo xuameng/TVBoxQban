@@ -1153,12 +1153,6 @@ public class VodController extends BaseController {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-						                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-mxuPlay.requestFocus();				    //底部菜单默认焦点为播放
-                        }
-                    }, 2000);
     }
 
     public void setTitle(String playTitleInfo) {
@@ -1933,6 +1927,14 @@ mxuPlay.requestFocus();				    //底部菜单默认焦点为播放
                 mPlayerConfig.put("pl", p_type);
                 updatePlayerCfgView();
                 listener.updatePlayerCfg();
+		        if (isBottomVisible()) {
+			        new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+					        mxuPlay.requestFocus();				    //底部菜单默认焦点为播放
+                        }
+                    }, 1500);
+		        }
             }else {
                 return true;
             }
