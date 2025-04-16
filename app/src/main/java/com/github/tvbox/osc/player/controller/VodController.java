@@ -1438,9 +1438,9 @@ public class VodController extends BaseController {
 			    //pauseIngXu();
                 break;
             case VideoView.STATE_ERROR:
-				if (isBottomVisible()) {
-					mxuPlay.requestFocus();				    //底部菜单默认焦点为播放
-				}
+			//	if (isBottomVisible()) {
+			//		mxuPlay.requestFocus();				    //底部菜单默认焦点为播放
+			//	}
                 listener.errReplay();
 				isVideoPlay = false;
 				mxuPlay.setText("准备");
@@ -1934,16 +1934,7 @@ public class VodController extends BaseController {
                 Toast.makeText(getContext(), "切换到"+(p_type==1?"IJK":"EXO")+"播放器重试！", Toast.LENGTH_SHORT).show();
                 mPlayerConfig.put("pl", p_type);
                 updatePlayerCfgView();
-                listener.updatePlayerCfg();
-			    new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-						if (isBottomVisible()) {
-					        mxuPlay.requestFocus();				    //底部菜单默认焦点为播放
-						}
-                    }
-                }, 1500);
-		        
+                listener.updatePlayerCfg();		        
             }else {
                 return true;
             }
