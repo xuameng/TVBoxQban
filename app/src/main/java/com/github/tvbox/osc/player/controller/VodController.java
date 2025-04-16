@@ -2020,12 +2020,12 @@ public class VodController extends BaseController {
     private void processM3u8Content(String url, String content, HashMap<String, String> headers) {
         String basePath = getBasePath(url);
         RemoteServer.m3u8Content = M3u8.purify(basePath, content);
-        if (RemoteServer.m3u8Content == null) {
+        if (RemoteServer.m3u8Content == null || M3u8.currentAdCount==0) {
             LOG.i("echo-m3u8内容解析：未检测到广告");
             listener.startPlayUrl(url, headers);
         } else {
             listener.startPlayUrl(ControlManager.get().getAddress(true) + "proxyM3u8", headers);
-            Toast.makeText(getContext(), "聚汇影视已为您移除视频广告！", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "聚汇影视已为您移除 "+M3u8.currentAdCount+" 条视频广告！", Toast.LENGTH_SHORT).show();
         }
     }
 
