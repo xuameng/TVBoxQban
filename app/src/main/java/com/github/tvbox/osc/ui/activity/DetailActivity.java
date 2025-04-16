@@ -245,6 +245,11 @@ public class DetailActivity extends BaseActivity {
 				}else{
 					helper.itemView.setNextFocusUpId(R.id.tvPlay);
 				}
+				if(mGridView != null && mGridView.getVisibility() == View.VISIBLE) {
+				    helper.itemView.setNextFocusDownId(R.id.mGridView);
+				}else{
+					helper.itemView.setNextFocusDownId(R.id.tvPlay);
+				}
 
             }
         };
