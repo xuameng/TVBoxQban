@@ -240,7 +240,7 @@ public class DetailActivity extends BaseActivity {
                 }else {
                     helper.itemView.setNextFocusRightId(View.NO_ID);   //xuameng不超出item
                 }
-				if(mGridViewFlag.getVisibility() == View.VISIBLE) {
+				if(mGridViewFlag != null && mGridViewFlag.getVisibility() == View.VISIBLE) {
 					helper.itemView.setNextFocusUpId(R.id.mGridViewFlag);
 				}else{
 					helper.itemView.setNextFocusUpId(R.id.tvPlay);
