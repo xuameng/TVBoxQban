@@ -36,13 +36,13 @@ public class SeriesAdapter extends BaseQuickAdapter<VodInfo.VodSeries, BaseViewH
         }
         helper.setText(R.id.tvSeries, item.name);
 
-        if (getData().size() == 1 && helper.getLayoutPosition() == 0) {
-            helper.itemView.setNextFocusUpId(R.id.mGridViewFlag);
-        }
-
+        View mGridViewFlag = ((Activity) helper.itemView.getContext()).findViewById(R.id.mGridViewFlag);
         View mSeriesGroupView = ((Activity) helper.itemView.getContext()).findViewById(R.id.mSeriesGroupView);
+        if (mGridViewFlag != null && mGridViewFlag.getVisibility() == View.VISIBLE && mSeriesGroupView.getVisibility() == View.GONE) {
+            helper.itemView.setNextFocusUpId(R.id.mGridViewFlag);
+		}
         if (getData().size()>1 && mSeriesGroupView != null && mSeriesGroupView.getVisibility() == View.VISIBLE) {
-                helper.itemView.setNextFocusUpId(R.id.mSeriesGroupView);
+            helper.itemView.setNextFocusUpId(R.id.mSeriesGroupView);
         }
 
         int spanCount = mGridLayoutManager.getSpanCount();
