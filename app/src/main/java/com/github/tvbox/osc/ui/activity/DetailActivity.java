@@ -986,7 +986,9 @@ public class DetailActivity extends BaseActivity {
                     }
                     seriesAdapter.getData().get(index).selected = true;
                     seriesAdapter.notifyItemChanged(index);
-                    mGridView.setSelection(index);
+					if (!fullWindows){
+                        mGridView.setSelection(index);
+					}
                     vodInfo.playIndex = index;
                     //保存历史
                     insertVod(firstsourceKey, vodInfo);
