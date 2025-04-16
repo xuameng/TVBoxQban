@@ -17,6 +17,7 @@ import java.util.ArrayList;
  * @author pj567
  * @date :2020/12/22
  * @description:
+ *  xuameng选集列表
  */
 public class SeriesAdapter extends BaseQuickAdapter<VodInfo.VodSeries, BaseViewHolder> {
     private V7GridLayoutManager mGridLayoutManager;
@@ -35,10 +36,15 @@ public class SeriesAdapter extends BaseQuickAdapter<VodInfo.VodSeries, BaseViewH
         }
         helper.setText(R.id.tvSeries, item.name);
 
- /*       if (getData().size() == 1 && helper.getLayoutPosition() == 0) {
+        if (getData().size() == 1 && helper.getLayoutPosition() == 0) {
             helper.itemView.setNextFocusUpId(R.id.mGridViewFlag);
         }
-xuameng 选集列表*/ 
+
+        View mSeriesGroupView = ((Activity) helper.itemView.getContext()).findViewById(R.id.mSeriesGroupView);
+        if (getData().size()>1 && mSeriesGroupView != null && mSeriesGroupView.getVisibility() == View.VISIBLE) {
+                helper.itemView.setNextFocusUpId(R.id.mSeriesGroupView);
+        }
+
         int spanCount = mGridLayoutManager.getSpanCount();
         int position = helper.getLayoutPosition();
         int totalCount = getData().size();
