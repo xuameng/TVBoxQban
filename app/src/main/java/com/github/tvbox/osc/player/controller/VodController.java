@@ -2025,7 +2025,7 @@ public class VodController extends BaseController {
             listener.startPlayUrl(url, headers);
         } else {
             listener.startPlayUrl(ControlManager.get().getAddress(true) + "proxyM3u8", headers);
-            Toast.makeText(getContext(), "聚汇影视已为您移除 "+M3u8.currentAdCount+" 条视频广告！", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "聚汇影视已移除"+M3u8.currentAdCount+"条视频广告！", Toast.LENGTH_SHORT).show();
         }
     }
 
