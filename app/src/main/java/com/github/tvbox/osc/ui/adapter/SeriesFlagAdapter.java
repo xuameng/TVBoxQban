@@ -30,9 +30,12 @@ public class SeriesFlagAdapter extends BaseQuickAdapter<VodInfo.VodSeriesFlag, B
             select.setVisibility(View.GONE);
         }
         helper.setText(R.id.tvSeriesFlag, item.name);
-     //   if (helper.getLayoutPosition() == getData().size() - 1) {
-          //  helper.itemView.setNextFocusRightId(R.id.tvPlay);
-     //   }
+        View mSeriesGroupView = ((Activity) helper.itemView.getContext()).findViewById(R.id.mSeriesGroupView);
+        if (mSeriesGroupView != null && mSeriesGroupView.getVisibility() == View.VISIBLE) {
+            helper.itemView.setNextFocusDownId(R.id.mSeriesGroupView);
+        }else {
+            helper.itemView.setNextFocusDownId(R.id.mGridView);
+        }
         if (helper.getLayoutPosition() == getData().size() - 1) {
             helper.itemView.setId(View.generateViewId());
             helper.itemView.setNextFocusRightId(helper.itemView.getId());  
