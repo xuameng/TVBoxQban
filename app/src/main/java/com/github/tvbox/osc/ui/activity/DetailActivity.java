@@ -231,9 +231,15 @@ public class DetailActivity extends BaseActivity {
             protected void convert(BaseViewHolder helper, String item) {
                 TextView tvSeries = helper.getView(R.id.tvSeriesGroup);
                 tvSeries.setText(item);
-                if (helper.getLayoutPosition() == getData().size() - 1) {   //xuameng 选集分组
+        //        if (helper.getLayoutPosition() == getData().size() - 1) {   //xuameng 选集分组
                    // helper.itemView.setNextFocusRightId(View.NO_ID); //xuameng 选集分组右边移动不出
-					helper.itemView.setNextFocusRightId(R.id.tvPlay);
+		//			helper.itemView.setNextFocusRightId(R.id.tvPlay);
+        //        }
+                if (helper.getLayoutPosition() == getData().size() - 1) {
+                    helper.itemView.setId(View.generateViewId());
+                    helper.itemView.setNextFocusRightId(helper.itemView.getId());
+                }else {
+                    helper.itemView.setNextFocusRightId(View.NO_ID);
                 }
 				if(mGridViewFlag.getVisibility() == View.VISIBLE) {
 					helper.itemView.setNextFocusUpId(R.id.mGridViewFlag);
@@ -248,7 +254,13 @@ public class DetailActivity extends BaseActivity {
         //禁用播放地址焦点
         tvPlayUrl.setFocusable(false);
 
-        llPlayerFragmentContainerBlock.setOnClickListener((view -> toggleFullPreview()));
+        llPlayerFragmentContainerBlock.setOnClickListener(v -> {
+            toggleFullPreview();
+            if (firstReverse) {
+                jumpToPlay();
+                firstReverse=false;
+            }
+        });
 
         tvSort.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("NotifyDataSetChanged")
@@ -986,9 +998,9 @@ public class DetailActivity extends BaseActivity {
                     }
                     seriesAdapter.getData().get(index).selected = true;
                     seriesAdapter.notifyItemChanged(index);
-					if (!fullWindows){
-                        mGridView.setSelection(index);
-					}
+			//xuameng解决焦点丢失		if (!fullWindows){
+            //            mGridView.setSelection(index);
+			//		}
                     vodInfo.playIndex = index;
                     //保存历史
                     insertVod(firstsourceKey, vodInfo);
