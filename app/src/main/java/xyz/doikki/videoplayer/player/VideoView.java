@@ -580,7 +580,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
 				String height = Integer.toString(getVideoSize()[1]);
 				if (width.length() <= 1 && height.length() <= 1){
 					if (mRenderView != null) {
-					mPlayerContainer.removeView(mRenderView.getView());      //xuameng重要当视频为空时释放当前VIDEO VIEW
+					    mPlayerContainer.removeView(mRenderView.getView());      //xuameng重要当视频为空时释放当前VIDEO VIEW
 					}
 				}
                 break;
@@ -925,7 +925,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
     public void onVideoSizeChanged(int videoWidth, int videoHeight) {
 		String cleanUrl = mUrl.split("\\?")[0];
 		if (cleanUrl.endsWith(".mp3") || cleanUrl.endsWith(".m4a") || cleanUrl.endsWith(".wma") || cleanUrl.endsWith(".wav") || cleanUrl.endsWith(".flac") || cleanUrl.endsWith(".aac") || cleanUrl.endsWith(".mid")) {
-			mVideoSize[0] = 0;   //xuameng重要修复获取视频尺寸不刷新
+			mVideoSize[0] = 0;   //xuameng如果是上述音频文件执行
 			mVideoSize[1] = 0;
         }else{
             mVideoSize[0] = videoWidth;
@@ -933,7 +933,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
 		}
         if (mRenderView != null) {
             mRenderView.setScaleType(mCurrentScreenScaleType);
-            mRenderView.setVideoSize(videoWidth, videoHeight);
+            mRenderView.setVideoSize(mVideoSize[0], mVideoSize[1]);
         }
     }
 
