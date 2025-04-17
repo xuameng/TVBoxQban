@@ -147,6 +147,7 @@ public class IjkMediaPlayer extends IjkPlayer {
     private static final int RTSP_UDP_RTP = 1;
     private static final int CACHE_VIDEO = 2;
     private static final int M3U8 = 3;
+	private static final int CACHE_AUDIO = 4;
     private static final int OTHER = 0;
 
     private int getStreamType(String path) {
