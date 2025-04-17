@@ -1056,7 +1056,7 @@ public class VodController extends BaseController {
 				if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
                     hideBottom();
 				}
-				String playTitleInfo = playFragment.getSetTitle;
+				String playTitleInfo = playFragment.getSetTitle();
 				setTitle(playTitleInfo);
             }
         });
