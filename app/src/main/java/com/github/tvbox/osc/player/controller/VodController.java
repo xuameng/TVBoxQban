@@ -1168,6 +1168,7 @@ if (playTitleInfo.length() > 5) { // 假设我们限制为20个字符
         mPlayTitle1.setText(playTitleInfo);
 		return;
 }
+		}
         mPlayTitle.setText(playTitleInfo);
         mPlayTitle1.setText(playTitleInfo);
     }
