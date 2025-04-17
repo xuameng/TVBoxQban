@@ -18,7 +18,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.graphics.Color;                          //xuameng获取颜色值
 import android.widget.FrameLayout;  //xuameng倍速播放
-import com.github.tvbox.osc.ui.fragment.PlayFragment;
 import com.github.tvbox.osc.server.RemoteServer;   //xuameng新增广告过滤
 import com.github.tvbox.osc.util.M3u8;  //xuameng新增广告过滤
 import com.lzy.okgo.OkGo;  //xuameng新增广告过滤
@@ -269,7 +268,6 @@ public class VodController extends BaseController {
     private boolean isClickBackBtn;
 	private double DOUBLE_CLICK_TIME = 0L;    //xuameng返回键防连击1.5秒（为动画）
 	private double DOUBLE_CLICK_TIME_2 = 0L;    //xuameng防连击1秒（为动画）
-	private PlayFragment playFragment;
    
     LockRunnable lockRunnable = new LockRunnable();
     private boolean isLock = false;
@@ -1056,8 +1054,6 @@ public class VodController extends BaseController {
 				if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
                     hideBottom();
 				}
-				String playTitleInfo = playFragment.getSetTitle();
-				setTitle(playTitleInfo);
             }
         });
         mxuPlay.setNextFocusRightId(R.id.seekBar);					//xuameng底部菜单播放右键是进度条
@@ -1163,15 +1159,6 @@ public class VodController extends BaseController {
     }
 
     public void setTitle(String playTitleInfo) {
-        int requestedOrientation = mActivity.getRequestedOrientation();
-        if (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT) {
-if (playTitleInfo.length() > 5) { // 假设我们限制为20个字符
-    playTitleInfo = playTitleInfo.substring(0, 5) + "..."; // 截断并添加省略号
-	        mPlayTitle.setText(playTitleInfo);
-        mPlayTitle1.setText(playTitleInfo);
-		return;
-}
-		}
         mPlayTitle.setText(playTitleInfo);
         mPlayTitle1.setText(playTitleInfo);
     }
