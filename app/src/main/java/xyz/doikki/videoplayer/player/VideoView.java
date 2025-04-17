@@ -923,17 +923,17 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
 
     @Override
     public void onVideoSizeChanged(int videoWidth, int videoHeight) {
-        mVideoSize[0] = videoWidth;
-        mVideoSize[1] = videoHeight;
-
+		String cleanUrl = mUrl.split("\\?")[0];
+		if (cleanUrl.endsWith(".mp3") || cleanUrl.endsWith(".m4a") || cleanUrl.endsWith(".wma") || cleanUrl.endsWith(".wav") || cleanUrl.endsWith(".flac") || cleanUrl.endsWith(".aac") || cleanUrl.endsWith(".mid")) {
+			mVideoSize[0] = 0;   //xuameng重要修复获取视频尺寸不刷新
+			mVideoSize[1] = 0;
+        }else{
+            mVideoSize[0] = videoWidth;
+            mVideoSize[1] = videoHeight;
+		}
         if (mRenderView != null) {
             mRenderView.setScaleType(mCurrentScreenScaleType);
             mRenderView.setVideoSize(videoWidth, videoHeight);
-        }
-		String cleanUrl = mUrl.split("\\?")[0];
-		if (cleanUrl.endsWith(".mp3")) {
-			mVideoSize[0] = 0;   //xuameng重要修复获取视频尺寸不刷新
-			mVideoSize[1] = 0;
         }
     }
 
