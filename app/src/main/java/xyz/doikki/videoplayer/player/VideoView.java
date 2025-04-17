@@ -216,7 +216,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
             mCurrentPosition = mProgressManager.getSavedProgress(mProgressKey == null ? mUrl : mProgressKey);
         }
         initPlayer();
-        addDisplay();
+        
         startPrepare(false);
         return true;
     }
@@ -472,7 +472,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
         if (resetPosition) {
             mCurrentPosition = 0;
         }
-        addDisplay();
+        
         startPrepare(true);
     }
 
@@ -551,6 +551,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
     @Override
     public void onPrepared() {
         setPlayState(STATE_PREPARED);
+		addDisplay();
         if (!isMute() && mAudioFocusHelper != null) {
             mAudioFocusHelper.requestFocus();
         }
