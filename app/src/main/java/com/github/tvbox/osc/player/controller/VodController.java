@@ -1054,6 +1054,7 @@ public class VodController extends BaseController {
 				if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
                     hideBottom();
 				}
+				setTitle(playTitleInfo);
             }
         });
         mxuPlay.setNextFocusRightId(R.id.seekBar);					//xuameng底部菜单播放右键是进度条
@@ -1159,6 +1160,14 @@ public class VodController extends BaseController {
     }
 
     public void setTitle(String playTitleInfo) {
+        int requestedOrientation = mActivity.getRequestedOrientation();
+        if (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
+if (playTitleInfo.length() > 5) { // 假设我们限制为20个字符
+    playTitleInfo = playTitleInfo.substring(0, 5) + "..."; // 截断并添加省略号
+	        mPlayTitle.setText(playTitleInfo);
+        mPlayTitle1.setText(playTitleInfo);
+		return;
+}
         mPlayTitle.setText(playTitleInfo);
         mPlayTitle1.setText(playTitleInfo);
     }
