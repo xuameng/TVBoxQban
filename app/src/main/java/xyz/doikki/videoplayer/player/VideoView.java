@@ -951,6 +951,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
             LayoutParams params = new LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT);
+ViewGroup.setBackgroundResource(R.drawable.xubackground);
             mPlayerContainer.addView(mVideoController, params);
         }
     }
