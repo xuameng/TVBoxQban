@@ -89,6 +89,8 @@ public class SurfaceRenderView extends SurfaceView implements IRenderView, Surfa
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
+		surfaceHolder.setFormat(PixelFormat.TRANSPARENT); // 或 PixelFormat.TRANSLUCENT 
+
 
     }
 
