@@ -41,8 +41,7 @@ public class SurfaceRenderView extends SurfaceView implements IRenderView, Surfa
 		setZOrderOnTop(true);
 
 // 或者：作为媒体层覆盖（适用于视频播放场景）
-setZOrderMediaOverlay(true); ‌
-
+setZOrderMediaOverlay(true);
     }
 
     @Override
