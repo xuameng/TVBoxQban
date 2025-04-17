@@ -1056,7 +1056,8 @@ public class VodController extends BaseController {
 				if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
                     hideBottom();
 				}
-				setTitleXu;
+				String playTitleInfo = playFragment.getSetTitle;
+				setTitle(playTitleInfo);
             }
         });
         mxuPlay.setNextFocusRightId(R.id.seekBar);					//xuameng底部菜单播放右键是进度条
@@ -1162,21 +1163,6 @@ public class VodController extends BaseController {
     }
 
     public void setTitle(String playTitleInfo) {
-        int requestedOrientation = mActivity.getRequestedOrientation();
-        if (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT) {
-if (playTitleInfo.length() > 5) { // 假设我们限制为20个字符
-    playTitleInfo = playTitleInfo.substring(0, 5) + "..."; // 截断并添加省略号
-	        mPlayTitle.setText(playTitleInfo);
-        mPlayTitle1.setText(playTitleInfo);
-		return;
-}
-		}
-        mPlayTitle.setText(playTitleInfo);
-        mPlayTitle1.setText(playTitleInfo);
-    }
-
-    public void setTitleXu(String playTitleInfo) {
-		String playTitleInfo = playFragment.getSetTitle;
         int requestedOrientation = mActivity.getRequestedOrientation();
         if (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT) {
 if (playTitleInfo.length() > 5) { // 假设我们限制为20个字符
