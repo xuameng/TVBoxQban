@@ -127,7 +127,6 @@ public class IjkMediaPlayer extends IjkPlayer {
 
                 case CACHE_AUDIO:
         mMediaPlayer.setOption(tv.danmaku.ijk.media.player.IjkMediaPlayer.OPT_CATEGORY_PLAYER,  "vn", 1); // 禁用视频流
-        mMediaPlayer.setOption(tv.danmaku.ijk.media.player.IjkMediaPlayer.OPT_CATEGORY_PLAYER, "an", 1);  // 启用音频流
                     break;
 
                 default:
