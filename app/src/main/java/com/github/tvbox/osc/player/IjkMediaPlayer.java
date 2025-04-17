@@ -62,10 +62,6 @@ public class IjkMediaPlayer extends IjkPlayer {
         mMediaPlayer.setOption(tv.danmaku.ijk.media.player.IjkMediaPlayer.OPT_CATEGORY_FORMAT, "dns_cache_clear", 1);
         mMediaPlayer.setOption(tv.danmaku.ijk.media.player.IjkMediaPlayer.OPT_CATEGORY_FORMAT, "dns_cache_timeout", -1);
         mMediaPlayer.setOption(tv.danmaku.ijk.media.player.IjkMediaPlayer.OPT_CATEGORY_FORMAT,"safe",0);  //xuameng新增
-        if (cleanUrl.endsWith(".mp3")) {
-        mMediaPlayer.setOption(tv.danmaku.ijk.media.player.IjkMediaPlayer.OPT_CATEGORY_PLAYER,  "vn", 1); // 禁用视频流
-        mMediaPlayer.setOption(tv.danmaku.ijk.media.player.IjkMediaPlayer.OPT_CATEGORY_PLAYER, "an", 1);  // 启用音频流
-        }
 
         if(Hawk.get(HawkConfig.PLAYER_IS_LIVE)){   //xuameng新增
             LOG.i("type-直播");
@@ -129,6 +125,11 @@ public class IjkMediaPlayer extends IjkPlayer {
                     }
                     break;
 
+                case CACHE_AUDIO:
+        mMediaPlayer.setOption(tv.danmaku.ijk.media.player.IjkMediaPlayer.OPT_CATEGORY_PLAYER,  "vn", 1); // 禁用视频流
+        mMediaPlayer.setOption(tv.danmaku.ijk.media.player.IjkMediaPlayer.OPT_CATEGORY_PLAYER, "an", 1);  // 启用音频流
+                    break;
+
                 default:
                     break;  //xuameng新增完
             }
@@ -163,6 +164,9 @@ public class IjkMediaPlayer extends IjkPlayer {
         }
         if (cleanUrl.endsWith(".mp4") || cleanUrl.endsWith(".mkv") || cleanUrl.endsWith(".avi")) {
             return CACHE_VIDEO;
+        }
+        if (cleanUrl.endsWith(".mp3")) {
+	        return CACHE_AUDIO;
         }
         return OTHER;
     }         //xuameng新增完
