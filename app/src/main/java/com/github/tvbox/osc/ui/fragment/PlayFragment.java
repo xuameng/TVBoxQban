@@ -876,8 +876,6 @@ public class PlayFragment extends BaseLazyFragment {
         if (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT) {
             requireActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
             mController.mLandscapePortraitBtn.setText("竖屏");
-			setPlayTitle(true);
-
         }
         if (mController.onBackPressed()) {
             return true;
@@ -1057,14 +1055,6 @@ public class PlayFragment extends BaseLazyFragment {
         }else {
             mController.setTitle("");
         }
-    }
-
-    public String getSetTitle() {
-            String playTitleInfo= "";
-            if(mVodInfo!=null){
-                playTitleInfo = mVodInfo.name + " " + mVodInfo.seriesMap.get(mVodInfo.playFlag).get(mVodInfo.playIndex).name;
-            }
-			 return playTitleInfo;
     }
 
     public void play(boolean reset) {
