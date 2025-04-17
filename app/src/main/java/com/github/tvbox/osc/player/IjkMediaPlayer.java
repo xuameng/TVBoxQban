@@ -125,11 +125,6 @@ public class IjkMediaPlayer extends IjkPlayer {
                     }
                     break;
 
-                case CACHE_AUDIO:
-					mMediaPlayer.setOption(tv.danmaku.ijk.media.player.IjkMediaPlayer.OPT_CATEGORY_SWS,  "dstw", 0); // 视频宽度
-				    mMediaPlayer.setOption(tv.danmaku.ijk.media.player.IjkMediaPlayer.OPT_CATEGORY_SWS,  "dsth", 0); // 视频高度
-                    break;
-
                 default:
                     break;  //xuameng新增完
             }
@@ -147,7 +142,6 @@ public class IjkMediaPlayer extends IjkPlayer {
     private static final int RTSP_UDP_RTP = 1;
     private static final int CACHE_VIDEO = 2;
     private static final int M3U8 = 3;
-	private static final int CACHE_AUDIO = 4;
     private static final int OTHER = 0;
 
     private int getStreamType(String path) {
@@ -165,9 +159,6 @@ public class IjkMediaPlayer extends IjkPlayer {
         }
         if (cleanUrl.endsWith(".mp4") || cleanUrl.endsWith(".mkv") || cleanUrl.endsWith(".avi")) {
             return CACHE_VIDEO;
-        }
-        if (cleanUrl.endsWith(".mp3")) {
-	        return CACHE_AUDIO;
         }
         return OTHER;
     }         //xuameng新增完
