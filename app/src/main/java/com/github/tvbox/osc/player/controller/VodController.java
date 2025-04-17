@@ -43,6 +43,7 @@ import com.github.tvbox.osc.ui.adapter.SelectDialogAdapter;
 import com.github.tvbox.osc.ui.dialog.SelectDialog;
 import com.github.tvbox.osc.util.FastClickCheckUtil;
 import com.github.tvbox.osc.util.FastClickCheckUtilxu; //xuameng防连击1秒
+import com.github.tvbox.osc.ui.fragment.PlayFragment;
 import com.github.tvbox.osc.server.ControlManager;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -268,6 +269,7 @@ public class VodController extends BaseController {
     private boolean isClickBackBtn;
 	private double DOUBLE_CLICK_TIME = 0L;    //xuameng返回键防连击1.5秒（为动画）
 	private double DOUBLE_CLICK_TIME_2 = 0L;    //xuameng防连击1秒（为动画）
+	private PlayFragment playFragment = null;
    
     LockRunnable lockRunnable = new LockRunnable();
     private boolean isLock = false;
@@ -1054,7 +1056,7 @@ public class VodController extends BaseController {
 				if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
                     hideBottom();
 				}
-				setTitle(playTitleInfo);
+				playFragment.setPlayTitle(true);
             }
         });
         mxuPlay.setNextFocusRightId(R.id.seekBar);					//xuameng底部菜单播放右键是进度条
