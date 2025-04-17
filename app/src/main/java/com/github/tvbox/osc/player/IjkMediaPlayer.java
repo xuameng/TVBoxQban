@@ -126,7 +126,8 @@ public class IjkMediaPlayer extends IjkPlayer {
                     break;
 
                 case CACHE_AUDIO:
-        mMediaPlayer.setOption(tv.danmaku.ijk.media.player.IjkMediaPlayer.OPT_CATEGORY_PLAYER,  "nodisp", 1); // 禁用视频流
+					mMediaPlayer.setOption(tv.danmaku.ijk.media.player.IjkMediaPlayer.OPT_CATEGORY_SWS,  "dstw", 0); // 视频宽度
+				    mMediaPlayer.setOption(tv.danmaku.ijk.media.player.IjkMediaPlayer.OPT_CATEGORY_SWS,  "dsth", 0); // 视频高度
                     break;
 
                 default:
