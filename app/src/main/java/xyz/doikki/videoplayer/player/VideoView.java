@@ -279,6 +279,10 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
             mPlayerContainer.removeView(mRenderView.getView());
             mRenderView.release();
         }
+		String cleanUrl = mUrl.split("\\?")[0];
+		if (cleanUrl.endsWith(".mp3") || cleanUrl.endsWith(".m4a") || cleanUrl.endsWith(".wma") || cleanUrl.endsWith(".wav") || cleanUrl.endsWith(".flac") || cleanUrl.endsWith(".aac") || cleanUrl.endsWith(".mid")) {
+			return;
+		}
         mRenderView = mRenderViewFactory.createRenderView(getContext());
         mRenderView.attachToPlayer(mMediaPlayer);
         LayoutParams params = new LayoutParams(
@@ -933,7 +937,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
 		}
         if (mRenderView != null) {
             mRenderView.setScaleType(mCurrentScreenScaleType);
-            mRenderView.setVideoSize(mVideoSize[0], mVideoSize[1]);
+            mRenderView.setVideoSize(videoWidth, videoHeight);
         }
     }
 
