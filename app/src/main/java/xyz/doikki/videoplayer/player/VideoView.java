@@ -930,6 +930,11 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
             mRenderView.setScaleType(mCurrentScreenScaleType);
             mRenderView.setVideoSize(videoWidth, videoHeight);
         }
+		String cleanUrl = mUrl.split("\\?")[0];
+		if (cleanUrl.endsWith(".mp3")) {
+			mVideoSize[0] = 0;   //xuameng重要修复获取视频尺寸不刷新
+			mVideoSize[1] = 0;
+        }
     }
 
     /**
