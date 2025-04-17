@@ -1059,6 +1059,14 @@ public class PlayFragment extends BaseLazyFragment {
         }
     }
 
+    public String getSetTitle() {
+            String playTitleInfo= "";
+            if(mVodInfo!=null){
+                playTitleInfo = mVodInfo.name + " " + mVodInfo.seriesMap.get(mVodInfo.playFlag).get(mVodInfo.playIndex).name;
+            }
+			 return playTitleInfo;
+    }
+
     public void play(boolean reset) {
         if(mVodInfo==null)return;
         VodInfo.VodSeries vs = mVodInfo.seriesMap.get(mVodInfo.playFlag).get(mVodInfo.playIndex);
