@@ -93,7 +93,8 @@ import android.text.TextPaint;
 import androidx.annotation.NonNull;
 import android.graphics.Typeface;
 import androidx.recyclerview.widget.RecyclerView;
-
+import com.github.tvbox.osc.util.ImgUtilXude;   //xuameng base64图片
+import com.github.tvbox.osc.util.ImgUtil;   //xuameng base64图片
 /**
  * @author pj567
  * @date :2020/12/22
@@ -230,14 +231,24 @@ public class DetailActivity extends BaseActivity {
             protected void convert(BaseViewHolder helper, String item) {
                 TextView tvSeries = helper.getView(R.id.tvSeriesGroup);
                 tvSeries.setText(item);
-                if (helper.getLayoutPosition() == getData().size() - 1) {   //xuameng 选集分组
-                   // helper.itemView.setNextFocusRightId(View.NO_ID); //xuameng 选集分组右边移动不出
-					helper.itemView.setNextFocusRightId(R.id.tvPlay);
+        //        if (helper.getLayoutPosition() == getData().size() - 1) {   //xuameng 选集分组
+		//			helper.itemView.setNextFocusRightId(R.id.tvPlay);
+        //        }
+                if (helper.getLayoutPosition() == getData().size() - 1) {
+                    helper.itemView.setId(View.generateViewId());
+                    helper.itemView.setNextFocusRightId(helper.itemView.getId()); 
+                }else {
+                    helper.itemView.setNextFocusRightId(View.NO_ID);   //xuameng不超出item
                 }
-				if(mGridViewFlag.getVisibility() == View.VISIBLE) {
+				if(mGridViewFlag != null && mGridViewFlag.getVisibility() == View.VISIBLE) {
 					helper.itemView.setNextFocusUpId(R.id.mGridViewFlag);
 				}else{
 					helper.itemView.setNextFocusUpId(R.id.tvPlay);
+				}
+				if(mGridView != null && mGridView.getVisibility() == View.VISIBLE) {
+				    helper.itemView.setNextFocusDownId(R.id.mGridView);
+				}else{
+					helper.itemView.setNextFocusDownId(R.id.tvPlay);
 				}
 
             }
@@ -247,7 +258,13 @@ public class DetailActivity extends BaseActivity {
         //禁用播放地址焦点
         tvPlayUrl.setFocusable(false);
 
-        llPlayerFragmentContainerBlock.setOnClickListener((view -> toggleFullPreview()));
+        llPlayerFragmentContainerBlock.setOnClickListener(v -> {
+            toggleFullPreview();
+            if (firstReverse) {     //倒叙不刷新播放时存储列表解决
+                jumpToPlay();
+                firstReverse=false;
+            }
+        });
 
         tvSort.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("NotifyDataSetChanged")
@@ -338,16 +355,17 @@ public class DetailActivity extends BaseActivity {
 						super.onScrollStateChanged(recyclerView, newState);
 						if (newState == mGridView.SCROLL_STATE_IDLE) {    //xuameng剧集滚动完成后焦点选择为剧集
 						// 滚动已经停止，执行你需要的操作
-						mGridView.requestFocus();    //xuameng如果不满足滚动条件直接获得焦点
+				//		mGridView.requestFocus();    //xuameng如果不满足滚动条件直接获得焦点
 						mGridView.setSelection(vodInfo.playIndex);
 						mGridView.removeOnScrollListener(this);				//xuameng删除滚动监听				
 						}
 					}
 				});
             refreshList();   //xuameng返回键、长按播放刷新滚动到剧集
-			if(!mGridView.isScrolling() && !mGridView.isComputingLayout()) {
-			   mGridView.requestFocus();  //xuameng如果不满足滚动条件直接获得焦点
-			   mGridView.setSelection(vodInfo.playIndex);
+			if(mGridView.isScrolling() || mGridView.isComputingLayout()) {
+			}else{
+			//	mGridView.requestFocus();  //xuameng如果不满足滚动条件直接获得焦点
+			    mGridView.setSelection(vodInfo.playIndex);
 			}
 			Toast.makeText(DetailActivity.this, "滚动到当前播放剧集！", Toast.LENGTH_SHORT).show();
 			return true;
@@ -838,14 +856,16 @@ public class DetailActivity extends BaseActivity {
                                 .load(DefaultConfig.checkReplaceProxy(mVideo.pic))
                                 .transform(new RoundTransformation(MD5.string2MD5(mVideo.pic))
                                         .centerCorp(true)
-                                        .override(AutoSizeUtils.mm2px(mContext, 300), AutoSizeUtils.mm2px(mContext, 400))
+                                        .override(AutoSizeUtils.mm2px(mContext, ImgUtil.defaultWidth), AutoSizeUtils.mm2px(mContext, ImgUtil.defaultHeight))
                                         .roundRadius(AutoSizeUtils.mm2px(mContext, 10), RoundTransformation.RoundType.ALL))
                                 .placeholder(R.drawable.img_loading_placeholder)
                                 .noFade()
-                                .error(R.drawable.img_loading_placeholder)
+                            //    .error(R.drawable.img_loading_placeholder)
+						        .error(ImgUtilXude.createTextDrawable(mVideo.name))
                                 .into(ivThumb);
                     } else {
-                        ivThumb.setImageResource(R.drawable.img_loading_placeholder);
+                      //  ivThumb.setImageResource(R.drawable.img_loading_placeholder);
+						ivThumb.setImageDrawable(ImgUtilXude.createTextDrawable(mVideo.name));
                     }
 
                     if (vodInfo.seriesMap != null && vodInfo.seriesMap.size() > 0) {
@@ -899,17 +919,14 @@ public class DetailActivity extends BaseActivity {
 								super.onScrollStateChanged(recyclerView, newState);
 								if (newState == mGridView.SCROLL_STATE_IDLE) {   //xuameng剧集滚动完成后焦点选择为剧集
 								// 滚动已经停止，执行你需要的操作
-								mGridView.requestFocus();
+							//	mGridView.requestFocus();
 								mGridView.setSelection(vodInfo.playIndex);
 								mGridView.removeOnScrollListener(this);    //xuameng删除滚动监听
 								}
 							}
 						});
                        refreshList();   //xuameng返回键、长按播放刷新滚动到剧集
-			           if(!mGridView.isScrolling() && !mGridView.isComputingLayout()) {
-			              mGridView.requestFocus();  //xuameng如果不满足滚动条件直接获得焦点
-			              mGridView.setSelection(vodInfo.playIndex);
-			           }
+
 						tvPlay.setNextFocusUpId(R.id.mGridView);   //xuameng上面焦点是选剧集
 						tvQuickSearch.setNextFocusUpId(R.id.mGridView); 
 						tvSort.setNextFocusUpId(R.id.mGridView); 
@@ -985,7 +1002,9 @@ public class DetailActivity extends BaseActivity {
                     }
                     seriesAdapter.getData().get(index).selected = true;
                     seriesAdapter.notifyItemChanged(index);
-                    mGridView.setSelection(index);
+			//xuameng解决焦点丢失		if (!fullWindows){
+            //            mGridView.setSelection(index);
+			//		}
                     vodInfo.playIndex = index;
                     //保存历史
                     insertVod(firstsourceKey, vodInfo);
@@ -1208,16 +1227,17 @@ public class DetailActivity extends BaseActivity {
 					super.onScrollStateChanged(recyclerView, newState);
 					if (newState == mGridView.SCROLL_STATE_IDLE) {    //xuameng剧集滚动完成后焦点选择为剧集
 					// 滚动已经停止，执行你需要的操作
-					mGridView.requestFocus();
+				//	mGridView.requestFocus();
 					mGridView.setSelection(vodInfo.playIndex);
 					mGridView.removeOnScrollListener(this);				//xuameng删除滚动监听				
 					}
 				}
 			});
             refreshList();   //xuameng返回键、长按播放刷新滚动到剧集
-			if(!mGridView.isScrolling() && !mGridView.isComputingLayout()) {
-			   mGridView.requestFocus();  //xuameng如果不满足滚动条件直接获得焦点
-			   mGridView.setSelection(vodInfo.playIndex);
+			if(mGridView.isScrolling() || mGridView.isComputingLayout()) {
+			}else{
+			//	mGridView.requestFocus();  //xuameng如果不满足滚动条件直接获得焦点
+			    mGridView.setSelection(vodInfo.playIndex);
 			}
 //            mGridView.requestFocus(); 没用了
             List<VodInfo.VodSeries> list = vodInfo.seriesMap.get(vodInfo.playFlag);
@@ -1233,7 +1253,8 @@ public class DetailActivity extends BaseActivity {
 				return;
 			}
         }
-		else if (showPreview) {    //xuameng如果显示小窗口播放就释放视频，修复退出还显示暂停图标等图标的BUG
+		else if (showPreview && playFragment!=null) {    //xuameng如果显示小窗口播放就释放视频，修复退出还显示暂停图标等图标的BUG
+			playFragment.setPlayTitle(false);
             playFragment.mVideoView.release();
         }
 		HawkConfig.intVod = false;  //xuameng判断进入播放
