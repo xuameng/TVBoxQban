@@ -62,6 +62,12 @@ public class GridAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder> {
         } else {
             helper.setText(R.id.tvName, item.name);
         }
+        TextView tvArea = helper.getView(R.id.tvArea);
+        tvArea.setVisibility(View.GONE);
+        TextView tvLang = helper.getView(R.id.tvLang);
+        tvLang.setVisibility(View.GONE);
+        TextView tvYear = helper.getView(R.id.tvYear);
+        tvYear.setVisibility(View.GONE);
         
 		ImageView ivThumb = helper.getView(R.id.ivThumb);
         int newWidth = ImgUtil.defaultWidth;
@@ -134,7 +140,7 @@ public class GridAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder> {
             helper.setText(R.id.tvName, item.name);
         }
  //       helper.setText(R.id.tvName, item.name);
-        helper.setText(R.id.tvActor, item.actor);
+ //       helper.setText(R.id.tvActor, item.actor);
         int newWidth = ImgUtil.defaultWidth;
         int newHeight = ImgUtil.defaultHeight;
         if(style!=null){
