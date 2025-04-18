@@ -62,8 +62,8 @@ public class GridAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder> {
         } else {
             helper.setText(R.id.tvName, item.name);
         }
-            ImageView ivThumb = helper.getView(R.id.ivThumb);
-
+        
+		ImageView ivThumb = helper.getView(R.id.ivThumb);
         int newWidth = ImgUtil.defaultWidth;
         int newHeight = ImgUtil.defaultHeight;
         if(style!=null){
