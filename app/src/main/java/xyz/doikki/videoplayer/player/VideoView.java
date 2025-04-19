@@ -217,7 +217,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
         }
         initPlayer();
         addDisplay();
-        startPrepare(true);
+        startPrepare(false);
         return true;
     }
 
@@ -297,7 +297,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
      */
     protected void startPrepare(boolean reset) {
         if (reset) {
-            mMediaPlayer.release();
+            mMediaPlayer.reset();
             //重新设置option，media player reset之后，option会失效
             setOptions();
         }
