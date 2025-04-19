@@ -1449,7 +1449,7 @@ public class LivePlayActivity extends BaseActivity {
                 mHideChannelListRun(); //xuameng显示EPG就隐藏左右菜单
                 mHideSettingLayoutRun(); //xuameng显示EPG就隐藏左右菜单
             }
-      //      return true;
+            return true;
         }
 		mVideoView.release();  //XUAMENG可能会引起空指针问题的修复
         if(!changeSource) {
