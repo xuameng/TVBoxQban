@@ -302,8 +302,8 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
             setOptions();
         }
         if (prepareDataSource()) {
-		//	mVideoSize[0] = 0;   //xuameng重要修复获取视频尺寸不刷新
-	//		mVideoSize[1] = 0;
+			mVideoSize[0] = 0;   //xuameng重要修复获取视频尺寸不刷新
+			mVideoSize[1] = 0;
             mMediaPlayer.prepareAsync();
             setPlayState(STATE_PREPARING);
             setPlayerState(isFullScreen() ? PLAYER_FULL_SCREEN : isTinyScreen() ? PLAYER_TINY_SCREEN : PLAYER_NORMAL);
@@ -564,13 +564,13 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
 		}
 		String width = Integer.toString(getVideoSize()[0]);
 		String height = Integer.toString(getVideoSize()[1]);
-	/*	if (width.length() <= 1 && height.length() <= 1){
+		if (width.length() <= 1 && height.length() <= 1){
 			if (mRenderView != null) {
 				mPlayerContainer.removeView(mRenderView.getView());      //xuameng重要当视频为空时释放当前VIDEO VIEW
                 mRenderView.release();
                 mRenderView = null;
 			}
-		}  */
+		}
     }
 
     /**
