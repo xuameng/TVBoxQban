@@ -917,6 +917,10 @@ public class LivePlayActivity extends BaseActivity {
 			mHandler.removeCallbacksAndMessages(null);
 			}
 			OkGo.getInstance().cancelTag("xuameng");
+        if(mVideoView != null) {
+            mVideoView.release();
+            mVideoView = null;
+        }
             super.onBackPressed();
         } else {
             mExitTime = System.currentTimeMillis();
