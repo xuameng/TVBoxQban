@@ -917,6 +917,10 @@ public class LivePlayActivity extends BaseActivity {
 			mHandler.removeCallbacksAndMessages(null);
 			}
 			OkGo.getInstance().cancelTag("xuameng");
+					        if(mVideoView != null) {
+            mVideoView.release();
+            mVideoView = null;
+        }
             super.onBackPressed();
         } else {
             mExitTime = System.currentTimeMillis();
@@ -1283,25 +1287,28 @@ public class LivePlayActivity extends BaseActivity {
     }
     @Override
     protected void onResume() {
-        super.onResume();
-        if(mVideoView != null) {
+		        if(mVideoView != null) {
             mVideoView.resume();
         }
+        super.onResume();
+
     }
     @Override
     protected void onPause() {
-        super.onPause();
-        if(mVideoView != null) {
+		        if(mVideoView != null) {
             mVideoView.pause();
         }
+        super.onPause();
+
     }
     @Override
     protected void onDestroy() {
-        super.onDestroy();
-        if(mVideoView != null) {
+		        if(mVideoView != null) {
             mVideoView.release();
             mVideoView = null;
         }
+        super.onDestroy();
+
 		OkGo.getInstance().cancelTag("xuameng");
     }
     private void showChannelList() {
