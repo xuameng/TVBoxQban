@@ -84,7 +84,7 @@ public final class ExoMediaSourceHelper {
         int contentType = inferContentType(uri);
         DataSource.Factory factory;
         if (isCache) {
-            factory = getDataSourceFactory();
+            factory = getCacheDataSourceFactory();
         } else {
             factory = getDataSourceFactory();
         }
