@@ -1430,7 +1430,6 @@ public class LivePlayActivity extends BaseActivity {
     }
 
     private boolean playChannel(int channelGroupIndex, int liveChannelIndex, boolean changeSource) { //xuameng播放
-		if(mVideoView == null) return true; //XUAMENG可能会引起空指针问题的修复
         if((channelGroupIndex == currentChannelGroupIndex && liveChannelIndex == currentLiveChannelIndex && !changeSource) || (changeSource && currentLiveChannelItem.getSourceNum() == 1) && !XuSource) {
             // xuamengEPG日期自动选今天
             liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
@@ -1451,10 +1450,8 @@ public class LivePlayActivity extends BaseActivity {
             }
             return true;
         }
-		                if (mVideoView != null) {
-                    mVideoView.release();
-                    mVideoView=null;
-                }
+		if(mVideoView == null) return true; //XUAMENG可能会引起空指针问题的修复
+		mVideoView.release();  //XUAMENG可能会引起空指针问题的修复
         if(!changeSource) {
             currentChannelGroupIndex = channelGroupIndex;
             currentLiveChannelIndex = liveChannelIndex;
@@ -1494,7 +1491,7 @@ public class LivePlayActivity extends BaseActivity {
         simSlideOffset = 0; //XUAMENG重要,换视频时重新记录进度
         if(liveWebHeader()!=null)LOG.i("echo-"+liveWebHeader().toString());
         mVideoView.setUrl(currentLiveChannelItem.getUrl(),liveWebHeader());
-        mVideoView.start();
+        mVideoView.startPlay();
 		if(iv_Play_Xu.getVisibility() == View.VISIBLE) {
            iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
         }
