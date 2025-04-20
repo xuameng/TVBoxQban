@@ -917,10 +917,6 @@ public class LivePlayActivity extends BaseActivity {
 			mHandler.removeCallbacksAndMessages(null);
 			}
 			OkGo.getInstance().cancelTag("xuameng");
-					        if(mVideoView != null) {
-            mVideoView.release();
-            mVideoView = null;
-        }
             super.onBackPressed();
         } else {
             mExitTime = System.currentTimeMillis();
@@ -1287,28 +1283,25 @@ public class LivePlayActivity extends BaseActivity {
     }
     @Override
     protected void onResume() {
-		        if(mVideoView != null) {
+        super.onResume();
+        if(mVideoView != null) {
             mVideoView.resume();
         }
-        super.onResume();
-
     }
     @Override
     protected void onPause() {
-		        if(mVideoView != null) {
+        super.onPause();
+        if(mVideoView != null) {
             mVideoView.pause();
         }
-        super.onPause();
-
     }
     @Override
     protected void onDestroy() {
-		        if(mVideoView != null) {
+        super.onDestroy();
+        if(mVideoView != null) {
             mVideoView.release();
             mVideoView = null;
         }
-        super.onDestroy();
-
 		OkGo.getInstance().cancelTag("xuameng");
     }
     private void showChannelList() {
@@ -1458,7 +1451,7 @@ public class LivePlayActivity extends BaseActivity {
             return true;
         }
 		if(mVideoView == null) return true; //XUAMENG可能会引起空指针问题的修复
-
+		mVideoView.release();  //XUAMENG可能会引起空指针问题的修复
         if(!changeSource) {
             currentChannelGroupIndex = channelGroupIndex;
             currentLiveChannelIndex = liveChannelIndex;
@@ -1497,7 +1490,6 @@ public class LivePlayActivity extends BaseActivity {
         simSeekPosition = 0; //XUAMENG重要,换视频时重新记录进度
         simSlideOffset = 0; //XUAMENG重要,换视频时重新记录进度
         if(liveWebHeader()!=null)LOG.i("echo-"+liveWebHeader().toString());
-				mVideoView.release();  //XUAMENG可能会引起空指针问题的修复
         mVideoView.setUrl(currentLiveChannelItem.getUrl(),liveWebHeader());
         mVideoView.start();
 		if(iv_Play_Xu.getVisibility() == View.VISIBLE) {
