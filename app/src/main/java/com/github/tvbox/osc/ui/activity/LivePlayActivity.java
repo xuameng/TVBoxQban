@@ -1451,7 +1451,10 @@ public class LivePlayActivity extends BaseActivity {
             }
             return true;
         }
-		mVideoView.release();  //XUAMENG可能会引起空指针问题的修复
+		                if (mVideoView != null) {
+                    mVideoView.release();
+                    mVideoView=null;
+                }
         if(!changeSource) {
             currentChannelGroupIndex = channelGroupIndex;
             currentLiveChannelIndex = liveChannelIndex;
@@ -1491,12 +1494,6 @@ public class LivePlayActivity extends BaseActivity {
         simSlideOffset = 0; //XUAMENG重要,换视频时重新记录进度
         if(liveWebHeader()!=null)LOG.i("echo-"+liveWebHeader().toString());
         mVideoView.setUrl(currentLiveChannelItem.getUrl(),liveWebHeader());
-        mVideoView.start();
-		                if (mVideoView != null) {
-                    mVideoView.release();
-                    mVideoView=null;
-                }
-        mVideoView.setUrl(currentLiveChannelItem.getUrl());
         mVideoView.start();
 		if(iv_Play_Xu.getVisibility() == View.VISIBLE) {
            iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
