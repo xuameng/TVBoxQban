@@ -1451,7 +1451,7 @@ public class LivePlayActivity extends BaseActivity {
             return true;
         }
 		if(mVideoView == null) return true; //XUAMENG可能会引起空指针问题的修复
-		mVideoView.release();  //XUAMENG可能会引起空指针问题的修复
+
         if(!changeSource) {
             currentChannelGroupIndex = channelGroupIndex;
             currentLiveChannelIndex = liveChannelIndex;
@@ -1490,8 +1490,9 @@ public class LivePlayActivity extends BaseActivity {
         simSeekPosition = 0; //XUAMENG重要,换视频时重新记录进度
         simSlideOffset = 0; //XUAMENG重要,换视频时重新记录进度
         if(liveWebHeader()!=null)LOG.i("echo-"+liveWebHeader().toString());
+				mVideoView.release();  //XUAMENG可能会引起空指针问题的修复
         mVideoView.setUrl(currentLiveChannelItem.getUrl(),liveWebHeader());
-        mVideoView.startPlay();
+        mVideoView.start();
 		if(iv_Play_Xu.getVisibility() == View.VISIBLE) {
            iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
         }
