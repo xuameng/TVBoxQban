@@ -166,6 +166,16 @@ public class VodController extends BaseController {
                         showLockView();
 						mPlayPauseTimexu.setVisibility(GONE);   //xuameng隐藏上面视频名称
                         mPlayTitle.setVisibility(GONE);         //xuameng隐藏上面时间
+                       if (mLandscapePortraitBtn.getVisibility() == View.VISIBLE){ 
+                           int requestedOrientation = mActivity.getRequestedOrientation();
+                           if (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
+                               mLandscapePortraitBtn.setText("横屏");
+                               mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
+                           } else if (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT) {
+                               mLandscapePortraitBtn.setText("竖屏");
+                               mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+                           }
+                       }
                         break;
                     }
                     case 1003: { // 隐藏底部菜单
