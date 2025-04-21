@@ -1336,7 +1336,7 @@ public class DetailActivity extends BaseActivity {
     }
     private void setTvPlayUrl(String url){
 		if (url == null || url.isEmpty()) {
-			url = "聚汇影视提示您：播放地址为空！"
+			url = "聚汇影视提示您：播放地址为空！";
 		}	
         setTextShow(tvPlayUrl, "播放地址：", url);
     }
