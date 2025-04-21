@@ -59,7 +59,7 @@ public class App extends MultiDexApplication {
                 .setSupportSubunits(Subunits.MM);
         PlayerHelper.init();
         QuickJSLoader.init();
-        FileUtils.cleanPlayerCache();        xuameng
+        FileUtils.cleanPlayerCache();        //xuameng
 		String cachePath = FileUtils.getCachePath();       //xuameng清空缓存
 			File cacheDir = new File(cachePath);
 			if (!cacheDir.exists()) return;
