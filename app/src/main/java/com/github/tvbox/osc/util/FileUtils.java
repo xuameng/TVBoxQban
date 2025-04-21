@@ -2,8 +2,17 @@ package com.github.tvbox.osc.util;
 
 import android.os.Environment;
 import android.text.TextUtils;
+import android.util.Base64;
 
 import com.github.tvbox.osc.base.App;
+
+import com.github.tvbox.osc.server.ControlManager;
+import com.github.tvbox.osc.util.urlhttp.OkHttpUtil;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.orhanobut.hawk.Hawk;
+ 
+ import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -15,6 +24,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class FileUtils {
 
@@ -274,4 +287,148 @@ public class FileUtils {
             th.printStackTrace();
         }
     }
+
+   //JS  工具方法
+     public static String loadModule(String name) {
+         try {
+             if (name.contains("gbk.js")) {
+                 name = "gbk.js";
+             } else if (name.contains("模板.js")) {
+                 name = "模板.js";
+             } else if (name.contains("cat.js")) {
+                 name = "cat.js";
+             }
+             Matcher m = URL_JOIN.matcher(name);
+             if (m.find()) {
+                 if (!Hawk.get(HawkConfig.DEBUG_OPEN, false)) {
+                     String cache = getCache(MD5.encode(name));
+                     if (StringUtils.isEmpty(cache)) {
+                         String netStr = get(name);
+                         if (!TextUtils.isEmpty(netStr)) {
+                             setCache(604800, MD5.encode(name), netStr);
+                         }
+                         return netStr;
+                     }
+                     return cache;
+                 } else {
+                     return get(name);
+                 }
+             } else if (name.startsWith("assets://")) {
+                 return getAsOpen(name.substring(9));
+             } else if (isAsFile(name, "js/lib")) {
+                 return getAsOpen("js/lib/" + name);
+             } else if (name.startsWith("file://")) {
+                 return get(ControlManager.get()
+                         .getAddress(true) + "file/" + name.replace("file:///", "")
+                         .replace("file://", ""));
+             } else if (name.startsWith("clan://localhost/")) {
+                 return get(ControlManager.get()
+                         .getAddress(true) + "file/" + name.replace("clan://localhost/", ""));
+             } else if (name.startsWith("clan://")) {
+                 String substring = name.substring(7);
+                 int indexOf = substring.indexOf(47);
+                 return get("http://" + substring.substring(0, indexOf) + "/file/" + substring.substring(indexOf + 1));
+             }
+         } catch (Exception e) {
+             e.printStackTrace();
+             return name;
+         }
+         return name;
+     }
+ 
+     public static boolean isAsFile(String name, String path) {
+         try {
+             for (String f_name : App.getInstance().getAssets().list(path)) {
+                 if (f_name.equals(name.trim())) {
+                     return true;
+                 }
+             }
+         } catch (Exception e) {
+             e.printStackTrace();
+         }
+         return false;
+     }
+ 
+     public static String getAsOpen(String name) {
+         try {
+             InputStream is = App.getInstance().getAssets().open(name);
+             byte[] data = new byte[is.available()];
+             is.read(data);
+             return new String(data, "UTF-8");
+         } catch (Exception e) {
+             e.printStackTrace();
+         }
+         return "";
+     }
+ 
+     public static String getCache(String name) {
+         try {
+             String code = "";
+             File file = open(name);
+             if (file.exists()) {
+                 code = new String(readSimple(file));
+             }
+             if (TextUtils.isEmpty(code)) {
+                 return "";
+             }
+             JsonObject asJsonObject = (new Gson().fromJson(code, JsonObject.class)).getAsJsonObject();
+             if (((long) asJsonObject.get("expires").getAsInt()) > System.currentTimeMillis() / 1000) {
+                 return asJsonObject.get("data").getAsString();
+             }
+             recursiveDelete(open(name));
+             return "";
+         } catch (Exception e4) {
+             return "";
+         }
+     }
+ 
+     public static void setCache(int time, String name, String data) {
+         try {
+             JSONObject jSONObject = new JSONObject();
+             jSONObject.put("expires", (int) (time + (System.currentTimeMillis() / 1000)));
+             jSONObject.put("data", data);
+             writeSimple(jSONObject.toString().getBytes(), open(name));
+         } catch (Exception e) {
+             e.printStackTrace();
+         }
+     }
+ 
+     public static void setCacheByte(String name, byte[] data) {
+         try {
+             writeSimple(byteMerger("//DRPY".getBytes(), Base64.encode(data, Base64.URL_SAFE)), open("B_" + name));
+         } catch (Exception e) {
+             e.printStackTrace();
+         }
+     }
+ 
+     public static byte[] byteMerger(byte[] bt1, byte[] bt2){
+         byte[] bt3 = new byte[bt1.length+bt2.length];
+         System.arraycopy(bt1, 0, bt3, 0, bt1.length);
+         System.arraycopy(bt2, 0, bt3, bt1.length, bt2.length);
+         return bt3;
+     }
+ 
+     public static String get(String str) {
+         return get(str, null);
+     }
+ 
+     public static String get(String str, Map<String, String> headerMap) {
+         if (headerMap == null) {
+             headerMap=new HashMap<>();
+             headerMap.put("User-Agent",str.startsWith("https://gitcode.net/") ? UA.random() : "okhttp/3.15");
+         }
+         return OkHttpUtil.string(str,headerMap);
+     }
+ 
+     private static final Pattern URL_JOIN = Pattern.compile("^http.*\\.(js|txt|json|m3u)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+     public static File open(String str) {
+         return new File(getExternalCachePath() + "/qjscache_" + str + ".js");
+     }
+     public static String getExternalCachePath() {
+         File externalCacheDir = App.getInstance().getExternalCacheDir();
+         if (externalCacheDir == null){
+             return getCachePath();
+         }
+         return externalCacheDir.getAbsolutePath();
+     }
 }
