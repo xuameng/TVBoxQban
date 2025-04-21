@@ -171,7 +171,7 @@ public class ApiDialog extends BaseDialog {
                     @Override
                     public void del(String value, ArrayList<String> data) {
                         Hawk.put(HawkConfig.API_HISTORY, data);
-						ApiHistoryDialogAdapter.notifyDataSetChanged();
+						notifyDataSetChanged();
                     }
                 }, history, idx);
                 dialog.show();
