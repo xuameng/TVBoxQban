@@ -1115,7 +1115,12 @@ public class VodController extends BaseController {
             double screenSqrt = ScreenUtils.getSqrt(mActivity);
             if (screenSqrt < 10.0 && width <= height) {
                 mLandscapePortraitBtn.setVisibility(View.VISIBLE);
-                mLandscapePortraitBtn.setText("竖屏");
+                int requestedOrientation = mActivity.getRequestedOrientation();          //xuameng 横竖屏显示BUG
+                if (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
+                    mLandscapePortraitBtn.setText("竖屏");
+                } else if (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT) {
+                    mLandscapePortraitBtn.setText("横屏");
+                }
             }else {
                 mLandscapePortraitBtn.setVisibility(View.GONE);
 			}
@@ -1133,7 +1138,7 @@ public class VodController extends BaseController {
         }
     }
 
-    void setLandscapePortraitXu() {
+    void setLandscapePortraitXu() {        //xuameng 横竖屏显示BUG
         int requestedOrientation = mActivity.getRequestedOrientation();
         if (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
             mLandscapePortraitBtn.setText("竖屏");
