@@ -43,6 +43,7 @@ public class ApiDialog extends BaseDialog {
     private TextView tvAddress;
     private EditText inputApi;
     private EditText inputApiLive;
+	public static ApiHistoryDialogAdapter historyDialogAdapter;
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void refresh(RefreshEvent event) {
@@ -171,6 +172,7 @@ public class ApiDialog extends BaseDialog {
                     @Override
                     public void del(String value, ArrayList<String> data) {
                         Hawk.put(HawkConfig.API_HISTORY, data);
+						historyDialogAdapter.notifyDataSetChanged();
                     }
                 }, history, idx);
                 dialog.show();
