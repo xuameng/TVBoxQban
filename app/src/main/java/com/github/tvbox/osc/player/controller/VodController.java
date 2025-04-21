@@ -167,7 +167,7 @@ public class VodController extends BaseController {
 						mPlayPauseTimexu.setVisibility(GONE);   //xuameng隐藏上面视频名称
                         mPlayTitle.setVisibility(GONE);         //xuameng隐藏上面时间
 						if (mLandscapePortraitBtn.getVisibility() == View.VISIBLE){ 
-						setLandscapePortrait();      //xuameng 横竖屏显示BUG
+						setLandscapePortraitXu();      //xuameng 横竖屏显示BUG
 						}
                         break;
                     }
@@ -1116,7 +1116,9 @@ public class VodController extends BaseController {
             if (screenSqrt < 10.0 && width <= height) {
                 mLandscapePortraitBtn.setVisibility(View.VISIBLE);
                 mLandscapePortraitBtn.setText("竖屏");
-            }
+            }else {
+                mLandscapePortraitBtn.setVisibility(View.GONE);
+			}
         }
     }
 
@@ -1128,6 +1130,15 @@ public class VodController extends BaseController {
         } else if (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT) {
             mLandscapePortraitBtn.setText("竖屏");
             mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+        }
+    }
+
+    void setLandscapePortraitXu() {
+        int requestedOrientation = mActivity.getRequestedOrientation();
+        if (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
+            mLandscapePortraitBtn.setText("竖屏");
+        } else if (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT) {
+            mLandscapePortraitBtn.setText("横屏");
         }
     }
 
