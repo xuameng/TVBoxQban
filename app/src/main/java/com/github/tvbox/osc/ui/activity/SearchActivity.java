@@ -342,13 +342,27 @@ public class SearchActivity extends BaseActivity {
             }
         });
 
-        etSearch.setOnClickListener(new View.OnClickListener() {
+        // 监听遥控器
+        etSearch.setOnKeyListener(new View.OnKeyListener() {
             @Override
-            public void onClick(View v) {
-//                Toast.makeText(mContext,"点击",Toast.LENGTH_SHORT).show();
-                if (!hasKeyBoard) enableKeyboard(SearchActivity.this);
-                openSystemKeyBoard();//再次尝试拉起键盘
-                SearchActivity.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (event.getAction() == KeyEvent.ACTION_DOWN && (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    String wd = etSearch.getText().toString().trim();
+                    if (!TextUtils.isEmpty(wd)) {
+                        if (Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)) {
+                            Bundle bundle = new Bundle();
+                            bundle.putString("title", wd);
+                            jumpActivity(FastSearchActivity.class, bundle);
+                        } else {
+                            hiddenImm();
+                            search(wd);
+                        }
+                    } else {
+                        Toast.makeText(mContext, "输入内容不能为空！", Toast.LENGTH_SHORT).show();
+                    }
+                    return true;
+                }
+                return false;
             }
         });
 
@@ -801,5 +815,11 @@ public class SearchActivity extends BaseActivity {
                     }
                 });
 		} 
-
+    private void hiddenImm()
+    {
+        InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null) {
+            imm.hideSoftInputFromWindow(etSearch.getWindowToken(), 0);
+        }
+    }
 }
