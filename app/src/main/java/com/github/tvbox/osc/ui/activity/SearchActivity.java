@@ -336,7 +336,7 @@ public class SearchActivity extends BaseActivity {
                             search(wd);
                         }
                     } else {
-                        Toast.makeText(mContext, "输入内容不能为空！", Toast.LENGTH_SHORT).show();
+                     //   Toast.makeText(mContext, "输入内容不能为空！", Toast.LENGTH_SHORT).show();
                     }
                     return true;
                 }
