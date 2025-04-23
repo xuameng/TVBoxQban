@@ -249,7 +249,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
                 int select = sites.indexOf(ApiConfig.get().getHomeSourceBean());
                 if (select < 0 || select >= sites.size()) select = 0;
                 if (mSiteSwitchDialog == null) {
-                    mSiteSwitchDialog = new SelectDialog<>(HomeActivity.this);
+					mSiteSwitchDialog = new SelectDialog<>(mActivity);
                     TvRecyclerView tvRecyclerView = mSiteSwitchDialog.findViewById(R.id.list);
                     // 根据 sites 数量动态计算列数
                     int spanCount = (int) Math.floor(sites.size() / 20.0);
@@ -265,12 +265,12 @@ public class ModelSettingFragment extends BaseLazyFragment {
                     @Override
                     public void click(SourceBean value, int pos) {
                         ApiConfig.get().setSourceBean(value);
-                        Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+                        Intent intent =new Intent(mContext, HomeActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         Bundle bundle = new Bundle();
                         bundle.putBoolean("useCache", true);
                         intent.putExtras(bundle);
-                        HomeActivity.this.startActivity(intent);
+                        startActivity(intent);
                     }
                     @Override
                     public String getDisplay(SourceBean val) {
