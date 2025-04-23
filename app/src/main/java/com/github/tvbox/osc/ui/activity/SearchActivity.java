@@ -123,19 +123,6 @@ public class SearchActivity extends BaseActivity {
         isSearchBack = false;
     }
 
-    /*
-     * 启用软键盘
-     * @param activity Activity
-     */
-    public static void enableKeyboard(Activity activity) {
-        hasKeyBoard = true;
-        activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
-    }
-
-    public void openSystemKeyBoard() {
-        InputMethodManager imm = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.showSoftInput(this.getCurrentFocus(), InputMethodManager.SHOW_FORCED);
-    }
 
     private List<Runnable> pauseRunnable = null;
 
@@ -314,33 +301,34 @@ public class SearchActivity extends BaseActivity {
             }
         });
 
-        this.etSearch.addTextChangedListener(new TextWatcher() {   //xuameng搜索历史
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            public void afterTextChanged(Editable s) {         //xuameng清空或删除关闭搜索内容显示搜索历史记录
-                keyword = s.toString().trim();
-                if (TextUtils.isEmpty(keyword)) {
-                    cancel();
-                    tv_history.setVisibility(View.VISIBLE);
-                    searchTips.setVisibility(View.VISIBLE);
-  //                  llWord.setVisibility(View.VISIBLE);
-                    mGridView.setVisibility(View.GONE);
-                }
-            }
-        });
-
-        // 监听遥控器
         etSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Toast.makeText(mContext,"点击",Toast.LENGTH_SHORT).show();
-                if (!hasKeyBoard) enableKeyboard(SearchActivity.this);
-                openSystemKeyBoard();//再次尝试拉起键盘
-                SearchActivity.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+                showImm();
+            }
+        });
+
+        // 监听搜索框
+        etSearch.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (event.getAction() == KeyEvent.ACTION_DOWN && (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    String wd = etSearch.getText().toString().trim();
+                    if (!TextUtils.isEmpty(wd)) {
+                        if (Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)) {
+                            Bundle bundle = new Bundle();
+                            bundle.putString("title", wd);
+                            jumpActivity(FastSearchActivity.class, bundle);
+                        } else {
+                            hiddenImm();
+                            search(wd);
+                        }
+                    } else {
+                     //   Toast.makeText(mContext, "输入内容不能为空！", Toast.LENGTH_SHORT).show();
+                    }
+                    return true;
+                }
+                return false;
             }
         });
 
@@ -406,6 +394,7 @@ public class SearchActivity extends BaseActivity {
                     @Override
                     public void onDismiss(DialogInterface dialog) {
                         dialog.dismiss();
+						hiddenImm();
                     }
                 });
                 mSearchCheckboxDialog.show();
@@ -791,11 +780,19 @@ public class SearchActivity extends BaseActivity {
                     }
                 });
 		} 
-    private void hiddenImm()
-    {
+    private void hiddenImm(){
         InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
         if (imm != null) {
             imm.hideSoftInputFromWindow(etSearch.getWindowToken(), 0);
         }
     }
+
+    private void showImm(){
+	    InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null) {
+            imm.showSoftInput(etSearch, 0); // 显示软键盘
+			hasKeyBoard = true;
+        }
+	}
+
 }
