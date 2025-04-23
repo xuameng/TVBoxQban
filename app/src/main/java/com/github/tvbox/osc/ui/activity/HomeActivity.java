@@ -746,7 +746,7 @@ public class HomeActivity extends BaseActivity {
 
     void showSiteSwitch() {
         List<SourceBean> sites = ApiConfig.get().getSwitchSourceBeanList();
-        if (sites.isEmpty()) return;
+        if (!sites.isEmpty()){
         int select = sites.indexOf(ApiConfig.get().getHomeSourceBean());
         if (select < 0 || select >= sites.size()) select = 0;
         if (mSiteSwitchDialog == null) {
