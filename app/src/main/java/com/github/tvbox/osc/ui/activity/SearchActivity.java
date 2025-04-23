@@ -790,7 +790,7 @@ public class SearchActivity extends BaseActivity {
     private void showImm(){
 	    InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
         if (imm != null) {
-            imm.showSoftInput(etSearch, 0); // 显示软键盘
+            imm.showSoftInput(this.getCurrentFocus(), InputMethodManager.SHOW_FORCED);// 显示软键盘
 			hasKeyBoard = true;
         }
 	}
