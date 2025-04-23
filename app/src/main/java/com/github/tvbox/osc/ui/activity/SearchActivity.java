@@ -499,7 +499,6 @@ public class SearchActivity extends BaseActivity {
 		mGridView.setVisibility(View.GONE);
         if (intent != null && intent.hasExtra("title")) {
             String title = intent.getStringExtra("title");
-            showLoading();
             if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)){
                 Bundle bundle = new Bundle();
                 bundle.putString("title", title);
@@ -507,6 +506,7 @@ public class SearchActivity extends BaseActivity {
                 jumpActivity(FastSearchActivity.class, bundle);
             }else {
                 search(title);
+				showLoading();
             }
         }
         // 加载热词
@@ -548,7 +548,6 @@ public class SearchActivity extends BaseActivity {
     public void server(ServerEvent event) {
         if (event.type == ServerEvent.SERVER_SEARCH) {
             String title = (String) event.obj;
-            showLoading();
             if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)){
                 Bundle bundle = new Bundle();
                 bundle.putString("title", title);
@@ -556,6 +555,7 @@ public class SearchActivity extends BaseActivity {
                 jumpActivity(FastSearchActivity.class, bundle);
             }else{
                 search(title);
+				showLoading();
             }
         }
     }
