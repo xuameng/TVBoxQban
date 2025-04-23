@@ -403,7 +403,7 @@ public class SearchActivity extends BaseActivity {
             historyList.add(history.searchKeyWords);
         }
         Collections.reverse(historyList);
-        tv_history.setOnItemClickListener(historyList, new FlowLayout.OnItemClickListener() {
+        tv_history.setViews(historyList, new FlowLayout.OnItemClickListener() {
             public void onItemClick(String content) {
                 etSearch.setText(content);
                 if (Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)) {
