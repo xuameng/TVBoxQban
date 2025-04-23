@@ -339,7 +339,7 @@ public class SearchActivity extends BaseActivity {
             public void onClick(View v) {
 //                Toast.makeText(mContext,"点击",Toast.LENGTH_SHORT).show();
                 if (!hasKeyBoard) enableKeyboard(SearchActivity.this);
-            //    openSystemKeyBoard();//再次尝试拉起键盘
+                openSystemKeyBoard();//再次尝试拉起键盘
                 SearchActivity.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
             }
         });
