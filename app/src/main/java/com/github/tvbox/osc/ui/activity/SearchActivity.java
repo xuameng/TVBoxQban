@@ -123,6 +123,28 @@ public class SearchActivity extends BaseActivity {
         isSearchBack = false;
     }
 
+    /*
+     * 禁止软键盘
+     * @param activity Activity
+     */
+    public static void disableKeyboard(Activity activity) {
+        hasKeyBoard = false;
+        activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
+    }
+
+    /*
+     * 启用软键盘
+     * @param activity Activity
+     */
+    public static void enableKeyboard(Activity activity) {
+        hasKeyBoard = true;
+        activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
+    }
+
+    public void openSystemKeyBoard() {
+        InputMethodManager imm = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(this.getCurrentFocus(), InputMethodManager.SHOW_FORCED);
+    }
 
     private List<Runnable> pauseRunnable = null;
 
@@ -298,6 +320,36 @@ public class SearchActivity extends BaseActivity {
                 JsLoader.stopAll();
 				}
 				cancel();
+            }
+        });
+
+        this.etSearch.addTextChangedListener(new TextWatcher() {   //xuameng搜索历史
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            public void afterTextChanged(Editable s) {         //xuameng清空或删除关闭搜索内容显示搜索历史记录
+                keyword = s.toString().trim();
+                if (TextUtils.isEmpty(keyword)) {
+                    cancel();
+                    tv_history.setVisibility(View.VISIBLE);
+                    searchTips.setVisibility(View.VISIBLE);
+  //                  llWord.setVisibility(View.VISIBLE);
+                    mGridView.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        // 监听搜索框
+        etSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                Toast.makeText(mContext,"点击",Toast.LENGTH_SHORT).show();
+                if (!hasKeyBoard) enableKeyboard(SearchActivity.this);
+                openSystemKeyBoard();//再次尝试拉起键盘
+                SearchActivity.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
             }
         });
 
@@ -749,19 +801,11 @@ public class SearchActivity extends BaseActivity {
                     }
                 });
 		} 
-    private void hiddenImm(){
+    private void hiddenImm()
+    {
         InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
         if (imm != null) {
             imm.hideSoftInputFromWindow(etSearch.getWindowToken(), 0);
         }
     }
-
-    private void showImm(){
-	    InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (imm != null) {
-            imm.showSoftInput(this.getCurrentFocus(), InputMethodManager.SHOW_FORCED);// 显示软键盘
-			hasKeyBoard = true;
-        }
-	}
-
 }
