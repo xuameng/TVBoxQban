@@ -85,6 +85,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
     private TextView tvFastSearchText;
     private TextView tvRecStyleText;
     private TextView tvIjkCachePlay;
+	private SelectDialog<SourceBean> mSiteSwitchDialog;
 
 
     public static ModelSettingFragment newInstance() {
@@ -238,8 +239,6 @@ public class ModelSettingFragment extends BaseLazyFragment {
 				Toast.makeText(mContext, "壁纸已重置！", Toast.LENGTH_LONG).show();
             }
         });
-
-		private SelectDialog<SourceBean> mSiteSwitchDialog;
 
         findViewById(R.id.llHomeApi).setOnClickListener(new View.OnClickListener() {
             @Override
