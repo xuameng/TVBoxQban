@@ -208,7 +208,6 @@ public class LivePlayActivity extends BaseActivity {
 	private CountDownTimer countDownTimer20;
 	private CountDownTimer countDownTimer21;
     private CountDownTimer countDownTimer22;
-    private CountDownTimer countDownTimer30;
     private final int videoWidth = 1920;
     private final int videoHeight = 1080;
     private TextView tv_currentpos;
@@ -1472,19 +1471,10 @@ public class LivePlayActivity extends BaseActivity {
         } else {
             currentLiveChannelItem.setinclude_back(false);
         }
+		getEpg(new Date());
         showBottomEpg(); //XUAMENG重要点击频道播放，上面的不重新播放。只显示EPG
         mHideChannelListRun(); //xuameng显示EPG就隐藏左右菜单
         mHideSettingLayoutRun(); //xuameng显示EPG就隐藏左右菜单
-        if(countDownTimer30 != null) {
-            countDownTimer30.cancel();
-        }
-        countDownTimer30 = new CountDownTimer(300, 50) { //底部epg隐藏时间设定
-            public void onTick(long j) {}
-            public void onFinish() {
-                getEpg(new Date());
-            }
-        };
-        countDownTimer30.start();
         liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
         backcontroller.setVisibility(View.GONE);
         ll_right_top_huikan.setVisibility(View.GONE);
