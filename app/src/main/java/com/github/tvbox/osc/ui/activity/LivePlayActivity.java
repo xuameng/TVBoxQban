@@ -185,6 +185,7 @@ public class LivePlayActivity extends BaseActivity {
 	private boolean isShowlist = false; //xuameng判断菜单显示
 	private boolean isVideoplaying = false;  //xuameng判断视频开始播放
 	private boolean XuSource = false; //xuameng退出回看
+	private boolean isScrollingXu = false;  //xuameng判断EPG是否正在滚动
     private int selectedChannelNumber = 0; // xuameng遥控器数字键输入的要切换的频道号码
     private TextView tvSelectedChannel; //xuameng频道编号
 	private ImageView iv_circle_bg_xu;  //xuameng音乐播放时图标
@@ -460,13 +461,16 @@ public class LivePlayActivity extends BaseActivity {
                 //xuameng防止跳焦点                 mRightEpgList.setSelection(i);
                 epgListAdapter.setSelectedEpgIndex(i);
                 int finalI = i;
-				mRightEpgList.scrollToPositionWithOffset(finalI, 0);
-                mRightEpgList.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-						mRightEpgList.smoothScrollToPosition(finalI);
-                    }
-                }, 50);
+				if (!isScrollingXu){
+					isScrollingXu = true;
+				    mRightEpgList.scrollToPositionWithOffset(finalI, 0);
+                    mRightEpgList.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+						    mRightEpgList.smoothScrollToPosition(finalI);
+                        }
+                    }, 50);
+				}
             }
         } else { //xuameng无EPG时提示信息
             Epginfo epgbcinfo = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "00:00", "01:59", 0);
@@ -515,13 +519,16 @@ public class LivePlayActivity extends BaseActivity {
                 int finalI = i;
                 mRightEpgList.setSelectedPosition(i);
                 epgListAdapter.setSelectedEpgIndex(i);
-				mRightEpgList.scrollToPositionWithOffset(finalI, 0);
-                mRightEpgList.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-						mRightEpgList.smoothScrollToPosition(finalI);
-                    }
-                }, 50);
+				if (!isScrollingXu){
+					isScrollingXu = true;
+				    mRightEpgList.scrollToPositionWithOffset(finalI, 0);
+                    mRightEpgList.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+						    mRightEpgList.smoothScrollToPosition(finalI);
+                        }
+                    }, 50);
+				}
             }
         } else { //xuameng无EPG时提示信息
             Epginfo epgbcinfo = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "00:00", "01:59", 0);
@@ -1654,6 +1661,9 @@ public class LivePlayActivity extends BaseActivity {
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 mHideChannelListRunXu();
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    isScrollingXu = false; // xuameng滚动完成后重置状态
+                }
             }
         });
         //电视
