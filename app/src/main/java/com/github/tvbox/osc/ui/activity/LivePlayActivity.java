@@ -189,7 +189,6 @@ public class LivePlayActivity extends BaseActivity {
     private TextView tvSelectedChannel; //xuameng频道编号
 	private ImageView iv_circle_bg_xu;  //xuameng音乐播放时图标
 	private ImageView MxuamengMusic;       //xuameng播放音乐背景
-	private String channelNameOld = "XUAMENG_1980"; //防止EPG重复显示
     private static Toast toast;
     private static String shiyi_time; //时移时间
     private static int shiyi_time_c; //时移时间差值
@@ -519,7 +518,7 @@ public class LivePlayActivity extends BaseActivity {
                 mRightEpgList.post(new Runnable() {
                     @Override
                     public void run() {
-                        mRightEpgList.smoothScrollToPosition(finalI);
+                        mRightEpgList.ScrollToPosition(finalI);
                     }
                 });
             }
@@ -602,11 +601,6 @@ public class LivePlayActivity extends BaseActivity {
     }
     public void getEpgxu(Date date) {
         String channelName = channel_NameXu.getChannelName();
-		if (!channelNameOld.equals(channelName)){
-		    channelNameOld = channelName;
-		}else{
-			return;
-		}
         SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd");
         timeFormat.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
         String[] epgInfo = EpgUtil.getEpgInfo(channelName);
