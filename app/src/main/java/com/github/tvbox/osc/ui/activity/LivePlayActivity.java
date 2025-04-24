@@ -464,7 +464,7 @@ public class LivePlayActivity extends BaseActivity {
                 mRightEpgList.post(new Runnable() {
                     @Override
                     public void run() {
-                        mRightEpgList.scrollToPosition(finalI);
+                        mRightEpgList.scrollToPositionWithOffset(finalI, 0);
                     }
                 });
             }
@@ -518,7 +518,7 @@ public class LivePlayActivity extends BaseActivity {
                 mRightEpgList.post(new Runnable() {
                     @Override
                     public void run() {
-                        mRightEpgList.scrollToPosition(finalI);
+                        mRightEpgList.scrollToPositionWithOffset(finalI, 0);
                     }
                 });
             }
