@@ -469,7 +469,7 @@ public class LivePlayActivity extends BaseActivity {
                     mRightEpgList.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-						    mRightEpgList.scrollToPosition(finalI);
+						    mRightEpgList.smoothScrollToPosition(finalI);
                         }
                     }, 50);
 				}
@@ -527,7 +527,7 @@ public class LivePlayActivity extends BaseActivity {
                     mRightEpgList.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-						    mRightEpgList.scrollToPosition(finalI);
+						    mRightEpgList.smoothScrollToPosition(finalI);
                         }
                     }, 50);
 				}
@@ -1663,9 +1663,9 @@ public class LivePlayActivity extends BaseActivity {
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 mHideChannelListRunXu();
-             //   if (newState == mRightEpgList.SCROLL_STATE_IDLE) {
-              //      isScrollingXu = false; // xuameng滚动完成后重置状态
-              //  }
+                if (newState == mRightEpgList.SCROLL_STATE_IDLE) {
+                    isScrollingXu = false; // xuameng滚动完成后重置状态
+                }
             }
         });
         //电视
