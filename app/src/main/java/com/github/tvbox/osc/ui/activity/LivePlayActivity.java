@@ -1660,9 +1660,9 @@ public class LivePlayActivity extends BaseActivity {
         mRightEpgList.setOnItemListener(new TvRecyclerView.OnItemListener() {
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
-                if(mRightEpgList.isScrolling() || mRightEpgList.isComputingLayout()) { //xuameng如果EPG正在滚动返回，解决BUG
-                    return;
-                } else epgListAdapter.setFocusedEpgIndex(-1);
+                if(!mRightEpgList.isScrolling() && !mRightEpgList.isComputingLayout()) { //xuameng如果EPG正在滚动返回，解决BUG
+                    epgListAdapter.setFocusedEpgIndex(-1);
+                }
             }
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
