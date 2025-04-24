@@ -189,7 +189,7 @@ public class LivePlayActivity extends BaseActivity {
     private TextView tvSelectedChannel; //xuameng频道编号
 	private ImageView iv_circle_bg_xu;  //xuameng音乐播放时图标
 	private ImageView MxuamengMusic;       //xuameng播放音乐背景
-	private String channelNameOld = XUAMENG_1980; //时移时间
+	private String channelNameOld = "XUAMENG_1980"; //防止EPG重复显示
     private static Toast toast;
     private static String shiyi_time; //时移时间
     private static int shiyi_time_c; //时移时间差值
