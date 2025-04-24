@@ -187,6 +187,8 @@ public class LivePlayActivity extends BaseActivity {
 	private boolean XuSource = false; //xuameng退出回看
 	private boolean isScrollingXu = false;  //xuameng判断EPG是否正在滚动
     private int selectedChannelNumber = 0; // xuameng遥控器数字键输入的要切换的频道号码
+	private int ChannelPosition = -100; // xuameng Channel Position
+	private int ChannelGroupPosition = -100; // xuameng ChannelGroup Position
     private TextView tvSelectedChannel; //xuameng频道编号
 	private ImageView iv_circle_bg_xu;  //xuameng音乐播放时图标
 	private ImageView MxuamengMusic;       //xuameng播放音乐背景
@@ -1661,7 +1663,7 @@ public class LivePlayActivity extends BaseActivity {
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 mHideChannelListRunXu();
-                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                if (newState == mRightEpgList.SCROLL_STATE_IDLE) {
                     isScrollingXu = false; // xuameng滚动完成后重置状态
                 }
             }
@@ -2252,6 +2254,10 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {				
                 selectChannelGroup(position, true, -1); //xuameng频道组
+				if (ChannelGroupPosition != position){
+					ChannelGroupPosition = position;
+					isScrollingXu = false;
+				}
             }
             @Override
             public void onItemClick(TvRecyclerView parent, View itemView, int position) {
@@ -2266,6 +2272,10 @@ public class LivePlayActivity extends BaseActivity {
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 FastClickCheckUtil.check(view);
                 selectChannelGroup(position, false, -1);
+				if (ChannelGroupPosition != position){
+					ChannelGroupPosition = position;
+					isScrollingXu = false;
+				}
             }
         });
     }
@@ -2307,6 +2317,10 @@ public class LivePlayActivity extends BaseActivity {
             }
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
+				if (ChannelPosition != position){
+					ChannelPosition = position;
+					isScrollingXu = false;
+				}
                 if(position < 0) return;
                 liveChannelGroupAdapter.setFocusedGroupIndex(-1);
                 liveChannelItemAdapter.setFocusedChannelIndex(position);
@@ -2326,6 +2340,10 @@ public class LivePlayActivity extends BaseActivity {
         liveChannelItemAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+				if (ChannelPosition != position){
+					ChannelPosition = position;
+					isScrollingXu = false;
+				}
                 FastClickCheckUtil.check(view);
                 clickLiveChannel(position);
 				isTouch = false;
