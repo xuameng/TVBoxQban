@@ -466,7 +466,7 @@ public class LivePlayActivity extends BaseActivity {
                     public void run() {
                         mRightEpgList.scrollToPositionWithOffset(finalI, 0);
                     }
-                }800);
+                }, 150);
             }
         } else { //xuameng无EPG时提示信息
             Epginfo epgbcinfo = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "00:00", "01:59", 0);
@@ -520,7 +520,7 @@ public class LivePlayActivity extends BaseActivity {
                     public void run() {
                         mRightEpgList.scrollToPositionWithOffset(finalI, 0);
                     }
-                }800);
+                }, 150);
             }
         } else { //xuameng无EPG时提示信息
             Epginfo epgbcinfo = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "00:00", "01:59", 0);
