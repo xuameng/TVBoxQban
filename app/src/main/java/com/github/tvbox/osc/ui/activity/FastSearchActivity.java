@@ -317,9 +317,7 @@ public class FastSearchActivity extends BaseActivity {
         if (intent != null && intent.hasExtra("title")) {
             String title = intent.getStringExtra("title");
             search(title);
-        }else{
-			Toast.makeText(mContext, "输入内容不能为空！", Toast.LENGTH_SHORT).show();
-		}
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
