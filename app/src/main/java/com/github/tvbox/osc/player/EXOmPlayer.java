@@ -164,7 +164,7 @@ public class EXOmPlayer extends ExoMediaPlayer {
             }
             // 缓存到 map：下次同一路径播放时使用
             if (currentPlayPath != null) {
-                mTrackOverrideCache.put(currentPlayPath, Pair.create(trackGroupId, trackId));
+                mTrackOverrideCache.put(currentPlayPath, Pair.create(TrackInfoBean, videoTrackBean));
             }
         }
     }
@@ -180,11 +180,11 @@ public class EXOmPlayer extends ExoMediaPlayer {
         if (audioRendererIndex == C.INDEX_UNSET) return;
 
         TrackGroupArray audioGroups = mappedInfo.getTrackGroups(audioRendererIndex);
-        int trackGroupId = pair.first;
-        int trackId = pair.second;
-        if (!isTrackIndexValid(audioGroups, trackGroupId, trackId)) return;
+        int groupIndex = pair.first;
+        int trackIndex = pair.second;
+        if (!isTrackIndexValid(audioGroups, groupIndex, trackIndex)) return;
 
-        DefaultTrackSelector.SelectionOverride override = new DefaultTrackSelector.SelectionOverride(trackGroupId, trackId);
+        DefaultTrackSelector.SelectionOverride override = new DefaultTrackSelector.SelectionOverride(groupIndex, trackIndex);
 
         DefaultTrackSelector.ParametersBuilder builder = trackSelector.buildUponParameters();
         builder.clearSelectionOverrides(audioRendererIndex);
@@ -206,13 +206,13 @@ public class EXOmPlayer extends ExoMediaPlayer {
     /**
      * 验证音轨索引是否有效
      */
-    private boolean isTrackIndexValid(TrackGroupArray groups, int trackGroupId, int trackId) {
-        if (trackGroupId < 0 || trackGroupId >= groups.length) {
+    private boolean isTrackIndexValid(TrackGroupArray groups, int groupIndex, int trackIndex) {
+        if (groupIndex < 0 || groupIndex >= groups.length) {
             return false;
         }
 
-        TrackGroup group = groups.get(trackGroupId);
-        return trackId >= 0 && trackId < group.length;
+        TrackGroup group = groups.get(groupIndex);
+        return trackIndex >= 0 && trackIndex < group.length;
     }
     public void setOnTimedTextListener(Player.Listener listener) {
         mMediaPlayer.addListener(listener);
