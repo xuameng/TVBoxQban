@@ -48,6 +48,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     private TrackSelector mTrackSelector;
 	protected ExoTrackNameProvider trackNameProvider;
     protected TrackSelectionArray mTrackSelections;
+	protected String currentPlayPath;
 
     public ExoMediaPlayer(Context context) {
         mAppContext = context.getApplicationContext();
@@ -99,6 +100,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     @Override
     public void setDataSource(String path, Map<String, String> headers) {
         mMediaSource = mMediaSourceHelper.getMediaSource(path, headers);
+		currentPlayPath = path;
     }
 
     @Override
