@@ -176,28 +176,6 @@ public class SearchActivity extends BaseActivity {
 				keyword = split[split.length - 1];
 				etSearch.setText(keyword);
                 if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)){
-    
-				List<SourceBean> searchRequestList = new ArrayList<>();  //xuameng修复不选择搜索源还进行搜索，还显示搜索动画
-				searchRequestList.addAll(ApiConfig.get().getSourceBeanList());
-				SourceBean home = ApiConfig.get().getHomeSourceBean();
-				searchRequestList.remove(home);
-				searchRequestList.add(0, home);
-				ArrayList<String> siteKey = new ArrayList<>();
-				for (SourceBean bean : searchRequestList) {
-					if (!bean.isSearchable()) {
-						continue;
-					}
-					if (mCheckSources != null && !mCheckSources.containsKey(bean.getKey())) {
-						continue;
-					}
-					siteKey.add(bean.getKey());
-					allRunCount.incrementAndGet();
-				}
-				if (siteKey.size() <= 0) {
-					Toast.makeText(mContext, "聚汇影视提示：请指定搜索源！", Toast.LENGTH_SHORT).show();
-					return;
-				}    //xuameng修复不选择搜索源还进行搜索，还显示搜索动画完 
-
                     Bundle bundle = new Bundle();
                     bundle.putString("title", keyword);
 					refreshSearchHistory(keyword);  //xuameng搜索历史
@@ -247,28 +225,6 @@ public class SearchActivity extends BaseActivity {
                 hasKeyBoard = true;
 				if (!TextUtils.isEmpty(keyword)) {
                     if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)){
-      
-				List<SourceBean> searchRequestList = new ArrayList<>();  //xuameng修复不选择搜索源还进行搜索，还显示搜索动画
-				searchRequestList.addAll(ApiConfig.get().getSourceBeanList());
-				SourceBean home = ApiConfig.get().getHomeSourceBean();
-				searchRequestList.remove(home);
-				searchRequestList.add(0, home);
-				ArrayList<String> siteKey = new ArrayList<>();
-				for (SourceBean bean : searchRequestList) {
-					if (!bean.isSearchable()) {
-						continue;
-					}
-					if (mCheckSources != null && !mCheckSources.containsKey(bean.getKey())) {
-						continue;
-					}
-					siteKey.add(bean.getKey());
-					allRunCount.incrementAndGet();
-				}
-				if (siteKey.size() <= 0) {
-					Toast.makeText(mContext, "聚汇影视提示：请指定搜索源！", Toast.LENGTH_SHORT).show();
-					return;
-				}    //xuameng修复不选择搜索源还进行搜索，还显示搜索动画完 
-
                         Bundle bundle = new Bundle();
                         bundle.putString("title", keyword);
 						refreshSearchHistory(keyword);  //xuameng搜索历史
@@ -407,28 +363,6 @@ public class SearchActivity extends BaseActivity {
             public void onItemClick(String content) {
                 etSearch.setText(content);
                 if (Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)) {
-
-				List<SourceBean> searchRequestList = new ArrayList<>();  //xuameng修复不选择搜索源还进行搜索，还显示搜索动画
-				searchRequestList.addAll(ApiConfig.get().getSourceBeanList());
-				SourceBean home = ApiConfig.get().getHomeSourceBean();
-				searchRequestList.remove(home);
-				searchRequestList.add(0, home);
-				ArrayList<String> siteKey = new ArrayList<>();
-				for (SourceBean bean : searchRequestList) {
-					if (!bean.isSearchable()) {
-						continue;
-					}
-					if (mCheckSources != null && !mCheckSources.containsKey(bean.getKey())) {
-						continue;
-					}
-					siteKey.add(bean.getKey());
-					allRunCount.incrementAndGet();
-				}
-				if (siteKey.size() <= 0) {
-					Toast.makeText(mContext, "聚汇影视提示：请指定搜索源！", Toast.LENGTH_SHORT).show();
-					return;
-				}    //xuameng修复不选择搜索源还进行搜索，还显示搜索动画完 
-
                     Bundle bundle = new Bundle();
                     bundle.putString("title", content);
                     refreshSearchHistory(content);
@@ -499,10 +433,6 @@ public class SearchActivity extends BaseActivity {
 		mGridView.setVisibility(View.GONE);
         if (intent != null && intent.hasExtra("title")) {
             String title = intent.getStringExtra("title");
-		    if (TextUtils.isEmpty(title)){
-			    Toast.makeText(mContext, "输入内容不能为空！", Toast.LENGTH_SHORT).show();
-			    return;
-		    }
             if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)){
                 Bundle bundle = new Bundle();
                 bundle.putString("title", title);
@@ -510,7 +440,6 @@ public class SearchActivity extends BaseActivity {
                 jumpActivity(FastSearchActivity.class, bundle);
             }else {
                 search(title);
-				showLoading();
             }
         }
         // 加载热词
@@ -552,10 +481,6 @@ public class SearchActivity extends BaseActivity {
     public void server(ServerEvent event) {
         if (event.type == ServerEvent.SERVER_SEARCH) {
             String title = (String) event.obj;
-		    if (TextUtils.isEmpty(title)){
-			    Toast.makeText(mContext, "输入内容不能为空！", Toast.LENGTH_SHORT).show();
-			    return;
-		    }
             if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)){
                 Bundle bundle = new Bundle();
                 bundle.putString("title", title);
@@ -563,7 +488,6 @@ public class SearchActivity extends BaseActivity {
                 jumpActivity(FastSearchActivity.class, bundle);
             }else{
                 search(title);
-				showLoading();
             }
         }
     }
