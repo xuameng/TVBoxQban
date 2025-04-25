@@ -661,7 +661,7 @@ public class PlayFragment extends BaseLazyFragment {
         }
 
      if (mVideoView.getMediaPlayer() instanceof EXOmPlayer) {
-		 ((EXOmPlayer)mediaPlayer).loadDefaultTrack();
+		 ((EXOmPlayer) (mVideoView.getMediaPlayer())).loadDefaultTrack();
             trackInfo = ((EXOmPlayer) (mVideoView.getMediaPlayer())).getTrackInfo();
             if (trackInfo != null && trackInfo.getSubtitle().size() > 0) {
                 mController.mSubtitleView.hasInternal = true;
