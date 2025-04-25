@@ -16,6 +16,7 @@ import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.util.MimeTypes;
 import xyz.doikki.videoplayer.exo.ExoMediaPlayer;
+import android.util.Pair;
 public class EXOmPlayer extends ExoMediaPlayer {
     private String audioId = "";
     private String subtitleId = "";
