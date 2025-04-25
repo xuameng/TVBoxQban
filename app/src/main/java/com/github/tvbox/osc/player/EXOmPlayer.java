@@ -117,6 +117,10 @@ public class EXOmPlayer extends ExoMediaPlayer {
         }
         return data;
     }
+
+    /** 缓存：key=播放地址，value=已选的 {groupIndex, trackIndex} */
+    private static final Map<String, Pair<Integer, Integer>> mTrackOverrideCache = new HashMap<>();
+
     @SuppressLint("UnsafeOptInUsageError")
     private void getExoSelectedTrack(TrackSelectionArray trackSelections) {
         audioId = "";
@@ -154,7 +158,34 @@ public class EXOmPlayer extends ExoMediaPlayer {
                 parametersBuilder.setSelectionOverride(videoTrackBean.renderId, trackGroupArray, override);
                 getTrackSelector().setParameters(parametersBuilder);
             }
+            // 缓存到 map：下次同一路径播放时使用
+            if (currentPlayPath != null) {
+                mTrackOverrideCache.put(currentPlayPath, Pair.create(groupIndex, trackIndex));
+            }
         }
+    }
+    //加载上一次选中的音轨
+    public void loadDefaultTrack() {
+        Pair<Integer, Integer> pair = mTrackOverrideCache.get(currentPlayPath);
+        if (pair == null) return;
+
+        MappingTrackSelector.MappedTrackInfo mappedInfo = trackSelector.getCurrentMappedTrackInfo();
+        if (mappedInfo == null) return;
+
+        int audioRendererIndex = findAudioRendererIndex(mappedInfo);
+        if (audioRendererIndex == C.INDEX_UNSET) return;
+
+        TrackGroupArray audioGroups = mappedInfo.getTrackGroups(audioRendererIndex);
+        int groupIndex = pair.first;
+        int trackIndex = pair.second;
+        if (!isTrackIndexValid(audioGroups, groupIndex, trackIndex)) return;
+
+        DefaultTrackSelector.SelectionOverride override = new DefaultTrackSelector.SelectionOverride(groupIndex, trackIndex);
+
+        DefaultTrackSelector.ParametersBuilder builder = trackSelector.buildUponParameters();
+        builder.clearSelectionOverrides(audioRendererIndex);
+        builder.setSelectionOverride(audioRendererIndex, audioGroups, override);
+        trackSelector.setParameters(builder.build());
     }
     public void setOnTimedTextListener(Player.Listener listener) {
         mMediaPlayer.addListener(listener);
