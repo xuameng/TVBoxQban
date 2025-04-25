@@ -130,7 +130,7 @@ public class SearchActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         if (pauseRunnable != null && pauseRunnable.size() > 0) {
-            searchExecutorService = Executors.newFixedThreadPool(5);
+            searchExecutorService = Executors.newFixedThreadPool(10);
             allRunCount.set(pauseRunnable.size());
             for (Runnable runnable : pauseRunnable) {
                 searchExecutorService.execute(runnable);
@@ -580,35 +580,15 @@ public class SearchActivity extends BaseActivity {
     }
 
     private void search(String title) {
+		if (TextUtils.isEmpty(title){
+			Toast.makeText(mContext, "输入内容不能为空！", Toast.LENGTH_SHORT).show();
+			return;
+		}
+        cancel();   
         if (remoteDialog != null) {
             remoteDialog.dismiss();
             remoteDialog = null;
         }
-        cancel();      
-        List<SourceBean> searchRequestList = new ArrayList<>();   //xuameng修复不选择搜索源还进行搜索，还显示搜索动画
-        searchRequestList.addAll(ApiConfig.get().getSourceBeanList());
-        SourceBean home = ApiConfig.get().getHomeSourceBean();
-        searchRequestList.remove(home);
-        searchRequestList.add(0, home);
-        ArrayList<String> siteKey = new ArrayList<>();
-        for (SourceBean bean : searchRequestList) {
-            if (!bean.isSearchable()) {
-                continue;
-            }
-            if (mCheckSources != null && !mCheckSources.containsKey(bean.getKey())) {
-                continue;
-            }
-            siteKey.add(bean.getKey());
-            allRunCount.incrementAndGet();
-        }
-        if (siteKey.size() <= 0) {
-			Toast.makeText(mContext, "聚汇影视提示：请指定搜索源！", Toast.LENGTH_SHORT).show();
-			showSuccess();
-
-            return;
-        }           //xuameng修复不选择搜索源还进行搜索，还显示搜索动画完
-
-        showLoading();        //xuameng 转圈动画
         etSearch.setText(title);
         this.searchTitle = title;
         mGridView.setVisibility(View.GONE); //xuameng 搜索历史
@@ -633,7 +613,7 @@ public class SearchActivity extends BaseActivity {
             searchAdapter.setNewData(new ArrayList<>());
             allRunCount.set(0);
         }
-        searchExecutorService = Executors.newFixedThreadPool(5);
+        searchExecutorService = Executors.newFixedThreadPool(10);
         List<SourceBean> searchRequestList = new ArrayList<>();
         searchRequestList.addAll(ApiConfig.get().getSourceBeanList());
         SourceBean home = ApiConfig.get().getHomeSourceBean();
@@ -656,6 +636,7 @@ public class SearchActivity extends BaseActivity {
    //         showEmpty();  //xuameng
             return;
         }
+        showLoading();        //xuameng 转圈动画
         for (String key : siteKey) {
             searchExecutorService.execute(new Runnable() {
                 @Override
