@@ -57,7 +57,8 @@ public class SearchHelper {
 
         if(isAll){
             if (mCheckSourcesForApi == null) return;
-            if (mCheckSourcesForApi.containsKey(api)) mCheckSourcesForApi.remove(api);
+                mCheckSources = getSources();
+				mCheckSourcesForApi.put(api, mCheckSources);
         }else {
             if (mCheckSourcesForApi == null) mCheckSourcesForApi = new HashMap<>();
             mCheckSourcesForApi.put(api, mCheckSources);
