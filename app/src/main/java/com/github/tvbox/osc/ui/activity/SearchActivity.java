@@ -499,7 +499,7 @@ public class SearchActivity extends BaseActivity {
 		mGridView.setVisibility(View.GONE);
         if (intent != null && intent.hasExtra("title")) {
             String title = intent.getStringExtra("title");
-		    if (TextUtils.isEmpty(title){
+		    if (TextUtils.isEmpty(title)){
 			    Toast.makeText(mContext, "输入内容不能为空！", Toast.LENGTH_SHORT).show();
 			    return;
 		    }
@@ -552,7 +552,7 @@ public class SearchActivity extends BaseActivity {
     public void server(ServerEvent event) {
         if (event.type == ServerEvent.SERVER_SEARCH) {
             String title = (String) event.obj;
-		    if (TextUtils.isEmpty(title){
+		    if (TextUtils.isEmpty(title)){
 			    Toast.makeText(mContext, "输入内容不能为空！", Toast.LENGTH_SHORT).show();
 			    return;
 		    }
@@ -588,7 +588,7 @@ public class SearchActivity extends BaseActivity {
     }
 
     private void search(String title) {
-		if (TextUtils.isEmpty(title){
+		if (TextUtils.isEmpty(title)){
 			Toast.makeText(mContext, "输入内容不能为空！", Toast.LENGTH_SHORT).show();
 			return;
 		}
