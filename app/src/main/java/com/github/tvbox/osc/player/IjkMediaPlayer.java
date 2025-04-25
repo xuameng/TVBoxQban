@@ -246,7 +246,7 @@ public class IjkMediaPlayer extends IjkPlayer {
          Integer trackIndex = mTrackIndexCache.get(currentPlayPath);
          if (trackIndex == null) {
              if(trackInfo!=null && trackInfo.getAudio().size()>1){
-                 int firsIndex=trackInfo.getAudio().get(0).index;
+				 int firsIndex=trackInfo.getAudio().get(0).trackId;
                  setTrack(firsIndex);
              }
              return;
