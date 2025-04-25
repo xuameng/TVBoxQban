@@ -426,7 +426,7 @@ public class SearchActivity extends BaseActivity {
     }
 
     private void initData() {
-        setCheckedSourcesForSearch();
+        initCheckedSourcesForSearch();
         Intent intent = getIntent();
 		initSearchHistory();  //xuameng 搜索历史
 		showSuccess();  //xuameng 搜索历史
