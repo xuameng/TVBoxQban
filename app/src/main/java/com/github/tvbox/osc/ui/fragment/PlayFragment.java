@@ -642,11 +642,8 @@ public class PlayFragment extends BaseLazyFragment {
             }else{
 				mController.mSubtitleView.hasInternal = false;   //xuameng修复切换播放器内置字幕不刷新
 			}
-            //默认选中第一个音轨 一般第一个音轨是国语
-            if (trackInfo != null && trackInfo.getAudio().size() > 1) {
-                int firsIndex=trackInfo.getAudio().get(0).trackId;
-                ((IjkMediaPlayer)(mVideoView.getMediaPlayer())).setTrack(firsIndex);
-            }
+            //xuameng默认选中第一个音轨 一般第一个音轨是国语 && 加载上一次选中的
+            ((IjkMediaPlayer)(mVideoView.getMediaPlayer())).loadDefaultTrack(trackInfo);
             ((IjkMediaPlayer)(mVideoView.getMediaPlayer())).setOnTimedTextListener(new IMediaPlayer.OnTimedTextListener() {
                 @Override
                 public void onTimedText(IMediaPlayer mp, IjkTimedText text) {
@@ -661,7 +658,7 @@ public class PlayFragment extends BaseLazyFragment {
         }
 
      if (mVideoView.getMediaPlayer() instanceof EXOmPlayer) {
-		 ((EXOmPlayer) (mVideoView.getMediaPlayer())).loadDefaultTrack();
+		    ((EXOmPlayer) (mVideoView.getMediaPlayer())).loadDefaultTrack();      //xuameng记忆选择音轨
             trackInfo = ((EXOmPlayer) (mVideoView.getMediaPlayer())).getTrackInfo();
             if (trackInfo != null && trackInfo.getSubtitle().size() > 0) {
                 mController.mSubtitleView.hasInternal = true;
