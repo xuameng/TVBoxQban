@@ -189,7 +189,7 @@ public class EXOmPlayer extends ExoMediaPlayer {
         DefaultTrackSelector.ParametersBuilder builder = getTrackSelector().buildUponParameters();
         builder.clearSelectionOverrides(audioRendererIndex);
         builder.setSelectionOverride(audioRendererIndex, audioGroups, override);
-        getTrackSelector.setParameters(builder.build());
+        getTrackSelector().setParameters(builder.build());
     }
     /**
      * 查找音频渲染器索引
