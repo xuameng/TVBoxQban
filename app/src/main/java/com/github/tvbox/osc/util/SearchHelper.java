@@ -24,9 +24,9 @@ public class SearchHelper {
         } catch (Exception e) {
             return null;
         }
-        if (mCheckSources == null || mCheckSources.isEmpty()) {
-            mCheckSources = getSources();
-        }
+   //     if (mCheckSources == null || mCheckSources.isEmpty()) {
+   //         mCheckSources = getSources();
+   //     }
 //        else {
 //            HashMap<String, String> newSources = getSources();
 //            for (Map.Entry<String, String> entry : newSources.entrySet()) {
