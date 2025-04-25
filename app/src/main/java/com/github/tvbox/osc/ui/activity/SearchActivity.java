@@ -441,7 +441,9 @@ public class SearchActivity extends BaseActivity {
             }else {
                 search(title);
             }
-        }
+        }else{
+			Toast.makeText(mContext, "输入内容不能为空！", Toast.LENGTH_SHORT).show();
+		}
         // 加载热词
         if (hots.size() != 0) {
             wordAdapter.setNewData(hots);
