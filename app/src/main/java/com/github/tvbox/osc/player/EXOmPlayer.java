@@ -164,7 +164,7 @@ public class EXOmPlayer extends ExoMediaPlayer {
             }
             // 缓存到 map：下次同一路径播放时使用
             if (currentPlayPath != null) {
-                mTrackOverrideCache.put(currentPlayPath, Pair.create(TrackInfoBean, videoTrackBean));
+                mTrackOverrideCache.put(currentPlayPath, Pair.create(videoTrackBean.trackGroupId, videoTrackBean.trackId));
             }
         }
     }
@@ -173,7 +173,7 @@ public class EXOmPlayer extends ExoMediaPlayer {
         Pair<Integer, Integer> pair = mTrackOverrideCache.get(currentPlayPath);
         if (pair == null) return;
 
-        MappingTrackSelector.MappedTrackInfo mappedInfo = trackSelector.getCurrentMappedTrackInfo();
+        MappingTrackSelector.MappedTrackInfo mappedInfo = getTrackSelector().getCurrentMappedTrackInfo();
         if (mappedInfo == null) return;
 
         int audioRendererIndex = findAudioRendererIndex(mappedInfo);
@@ -186,10 +186,10 @@ public class EXOmPlayer extends ExoMediaPlayer {
 
         DefaultTrackSelector.SelectionOverride override = new DefaultTrackSelector.SelectionOverride(groupIndex, trackIndex);
 
-        DefaultTrackSelector.ParametersBuilder builder = trackSelector.buildUponParameters();
+        DefaultTrackSelector.ParametersBuilder builder = getTrackSelector().buildUponParameters();
         builder.clearSelectionOverrides(audioRendererIndex);
         builder.setSelectionOverride(audioRendererIndex, audioGroups, override);
-        trackSelector.setParameters(builder.build());
+        getTrackSelector.setParameters(builder.build());
     }
     /**
      * 查找音频渲染器索引
