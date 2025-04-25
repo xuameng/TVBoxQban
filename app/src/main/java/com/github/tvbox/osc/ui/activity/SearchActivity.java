@@ -426,7 +426,7 @@ public class SearchActivity extends BaseActivity {
     }
 
     private void initData() {
-        initCheckedSourcesForSearch();
+        setCheckedSourcesForSearch();
         Intent intent = getIntent();
 		initSearchHistory();  //xuameng 搜索历史
 		showSuccess();  //xuameng 搜索历史
@@ -441,9 +441,7 @@ public class SearchActivity extends BaseActivity {
             }else {
                 search(title);
             }
-        }else{
-			Toast.makeText(mContext, "输入内容不能为空！", Toast.LENGTH_SHORT).show();
-		}
+        }
         // 加载热词
         if (hots.size() != 0) {
             wordAdapter.setNewData(hots);
