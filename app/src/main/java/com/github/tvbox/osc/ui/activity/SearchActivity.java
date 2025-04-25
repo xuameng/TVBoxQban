@@ -499,6 +499,10 @@ public class SearchActivity extends BaseActivity {
 		mGridView.setVisibility(View.GONE);
         if (intent != null && intent.hasExtra("title")) {
             String title = intent.getStringExtra("title");
+		    if (TextUtils.isEmpty(title){
+			    Toast.makeText(mContext, "输入内容不能为空！", Toast.LENGTH_SHORT).show();
+			    return;
+		    }
             if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)){
                 Bundle bundle = new Bundle();
                 bundle.putString("title", title);
@@ -548,6 +552,10 @@ public class SearchActivity extends BaseActivity {
     public void server(ServerEvent event) {
         if (event.type == ServerEvent.SERVER_SEARCH) {
             String title = (String) event.obj;
+		    if (TextUtils.isEmpty(title){
+			    Toast.makeText(mContext, "输入内容不能为空！", Toast.LENGTH_SHORT).show();
+			    return;
+		    }
             if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)){
                 Bundle bundle = new Bundle();
                 bundle.putString("title", title);
