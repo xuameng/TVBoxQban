@@ -48,7 +48,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     private TrackSelector mTrackSelector;
 	protected ExoTrackNameProvider trackNameProvider;
     protected TrackSelectionArray mTrackSelections;
-	protected String currentPlayPath;
+	protected String currentPlayPath;  //xuameng记忆选择音轨
 
     public ExoMediaPlayer(Context context) {
         mAppContext = context.getApplicationContext();
@@ -100,7 +100,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     @Override
     public void setDataSource(String path, Map<String, String> headers) {
         mMediaSource = mMediaSourceHelper.getMediaSource(path, headers);
-		currentPlayPath = path;
+		currentPlayPath = path;    // xuameng 缓存到 map：下次同一路径播放时使用  //xuameng记忆选择音轨
     }
 
     @Override
