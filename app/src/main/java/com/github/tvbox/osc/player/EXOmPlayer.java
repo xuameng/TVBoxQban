@@ -164,7 +164,7 @@ public class EXOmPlayer extends ExoMediaPlayer {
         }
     }
 
-    public void selectExoTrackAudio(@Nullable TrackInfoBean videoTrackBean,String playKey) {
+    public void selectExoTrackAudio(@Nullable TrackInfoBean videoTrackBean,String playKey) {     //xuameng记忆选择音轨
         MappingTrackSelector.MappedTrackInfo trackInfo = getTrackSelector().getCurrentMappedTrackInfo();
         if (trackInfo != null) {
             if (videoTrackBean == null) {
