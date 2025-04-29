@@ -79,7 +79,7 @@ public class ExoTrackNameProvider {
     private String buildLanguageString(Format format) {
         @Nullable String language = format.language;
         if (TextUtils.isEmpty(language) || C.LANGUAGE_UNDETERMINED.equals(language)) {
-            return "未知";
+            return "未知";     //xuameng language为空
         }
         Locale languageLocale =
                 Util.SDK_INT >= 21 ? Locale.forLanguageTag(language) : new Locale(language);
@@ -87,7 +87,7 @@ public class ExoTrackNameProvider {
                 Util.SDK_INT >= 24 ? Locale.getDefault(Locale.Category.DISPLAY) : Locale.getDefault();
         String languageName = languageLocale.getDisplayName(displayLocale);
         if (TextUtils.isEmpty(languageName)) {
-            return "未知";
+            return "未知";  //xuameng language为空
         }
         try {
             // Capitalize the first letter. See: https://github.com/google/ExoPlayer/issues/9452.
