@@ -249,7 +249,7 @@ public class IjkMediaPlayer extends IjkPlayer {
         if(trackInfo!=null && trackInfo.getAudio().size()>1){
             Integer trackIndex = memory.ijkLoad(playKey);
             if (trackIndex == -1) {
-                int firsIndex=trackInfo.getAudio().get(0).index;
+                int firsIndex=trackInfo.getAudio().get(0).trackId;
                 setTrack(firsIndex);
                 return;
             };
