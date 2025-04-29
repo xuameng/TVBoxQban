@@ -406,7 +406,7 @@ public class PlayFragment extends BaseLazyFragment {
                         ((IjkMediaPlayer)mediaPlayer).setTrack(value.trackId,progressKey);
                     }
                     if (mediaPlayer instanceof EXOmPlayer) {
-                        ((EXOmPlayer) mediaPlayer).selectExoTrack(value,progressKey);
+                        ((EXOmPlayer) mediaPlayer).selectExoTrackAudio(value,progressKey);
                     }
                     new Handler().postDelayed(new Runnable() {
                         @Override
