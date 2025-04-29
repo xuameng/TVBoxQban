@@ -17,14 +17,16 @@ import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.util.MimeTypes;
 import xyz.doikki.videoplayer.exo.ExoMediaPlayer;
 import android.util.Pair;      //xuameng记忆选择音轨
-import java.util.HashMap;   //xuameng记忆选择音轨
 import java.util.Map;   //xuameng记忆选择音轨
+import com.github.tvbox.osc.util.AudioTrackMemory;  //xuameng记忆选择音轨
 
 public class EXOmPlayer extends ExoMediaPlayer {
     private String audioId = "";
     private String subtitleId = "";
+	private static AudioTrackMemory memory;    //xuameng记忆选择音轨
     public EXOmPlayer(Context context) {
         super(context);
+		memory = AudioTrackMemory.getInstance(context);  //xuameng记忆选择音轨
     }
     @SuppressLint("UnsafeOptInUsageError")
     public TrackInfo getTrackInfo() {
@@ -122,9 +124,6 @@ public class EXOmPlayer extends ExoMediaPlayer {
         return data;
     }
 
-    //xuameng记忆选择音轨
-    private static final Map<String, Pair<Integer, Integer>> mTrackOverrideCache = new HashMap<>();
-
     @SuppressLint("UnsafeOptInUsageError")
     private void getExoSelectedTrack(TrackSelectionArray trackSelections) {
         audioId = "";
@@ -142,7 +141,7 @@ public class EXOmPlayer extends ExoMediaPlayer {
             }
         }
     }
-    public void selectExoTrack(@Nullable TrackInfoBean videoTrackBean) {
+    public void selectExoTrack(@Nullable TrackInfoBean videoTrackBean,String playKey) {
         MappingTrackSelector.MappedTrackInfo trackInfo = getTrackSelector().getCurrentMappedTrackInfo();
         if (trackInfo != null) {
             if (videoTrackBean == null) {
@@ -162,15 +161,15 @@ public class EXOmPlayer extends ExoMediaPlayer {
                 parametersBuilder.setSelectionOverride(videoTrackBean.renderId, trackGroupArray, override);
                 getTrackSelector().setParameters(parametersBuilder);
                 //xuameng记忆选择音轨
-                if (currentPlayPath != null) {
-                    mTrackOverrideCache.put(currentPlayPath, Pair.create(videoTrackBean.trackGroupId, videoTrackBean.trackId));
+                if (!playKey.isEmpty()) {
+                    memory.save(playKey,videoTrackBean.trackGroupId, videoTrackBean.trackId);
                 }
             }
         }
     }
     //xuameng记忆选择音轨
-    public void loadDefaultTrack() {    
-        Pair<Integer, Integer> pair = mTrackOverrideCache.get(currentPlayPath);
+    public void loadDefaultTrack(String playKey) {
+        Pair<Integer, Integer> pair = memory.exoLoad(playKey);
         if (pair == null) return;
 
         MappingTrackSelector.MappedTrackInfo mappedInfo = getTrackSelector().getCurrentMappedTrackInfo();
