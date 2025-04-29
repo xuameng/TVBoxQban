@@ -61,6 +61,11 @@ public class EXOmPlayer extends ExoMediaPlayer {
 							if(audioCodecs.contains(tex4)) {  //xuameng过滤字幕类型里application/字符串
 								audioCodecs = audioCodecs.replace(tex4, textString4);  //xuameng过滤字幕类型里application/字符串
 							}
+							String tex5 = "-L2";  //xuameng过滤字幕类型里application/字符串
+							String textString5 = "";
+							if(audioCodecs.contains(tex5)) {  //xuameng过滤字幕类型里application/字符串
+								audioCodecs = audioCodecs.replace(tex5, textString5);  //xuameng过滤字幕类型里application/字符串
+							}
 
 							if (TextUtils.isEmpty(formatCodecs)){
 								formatCodecs = "";
