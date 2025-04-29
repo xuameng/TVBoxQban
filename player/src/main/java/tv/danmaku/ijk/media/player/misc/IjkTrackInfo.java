@@ -331,6 +331,11 @@ public class IjkTrackInfo implements ITrackInfo {
 		if(zimuCodecs.contains(text4)) {  //xuameng过滤字幕类型里application/字符串
 			zimuCodecs = zimuCodecs.replace(text4, textString4);  //xuameng过滤字幕类型里application/字符串
 		}
+		String text5 = "_s24le";  //xuameng过滤字幕类型里application/字符串
+		String textString5 = "";
+		if(zimuCodecs.contains(text5)) {  //xuameng过滤字幕类型里application/字符串
+			zimuCodecs = zimuCodecs.replace(text5, textString5);  //xuameng过滤字幕类型里application/字符串
+		}
         return zimuCodecs;
     }
 	
