@@ -1712,13 +1712,13 @@ public class PlayActivity extends BaseActivity {
                     loadFoundVideoUrlsHeader.put(url, headers);
                     LOG.i("echo-loadFoundVideoUrl:" + url );
                     if (loadFoundCount.incrementAndGet() == 1) {
-                        url = loadFoundVideoUrls.poll();
+                        stopLoadWebView(false);
+						SuperParse.stopJsonJx();
                         mHandler.removeMessages(100);
+                        url = loadFoundVideoUrls.poll();
                         String cookie = CookieManager.getInstance().getCookie(url);
                         if(!TextUtils.isEmpty(cookie))headers.put("Cookie", " " + cookie);//携带cookie
                         playUrl(url, headers);
-                        stopLoadWebView(false);
-						SuperParse.stopJsonJx();
                     }
                 }
             }
@@ -1900,13 +1900,13 @@ public class PlayActivity extends BaseActivity {
                     loadFoundVideoUrlsHeader.put(url, webHeaders);
                     LOG.i("echo-loadFoundVideoUrl:" + url );
                     if (loadFoundCount.incrementAndGet() == 1) {
+                        stopLoadWebView(false);
+                        SuperParse.stopJsonJx();
                         mHandler.removeMessages(100);
                         url = loadFoundVideoUrls.poll();
                         String cookie = CookieManager.getInstance().getCookie(url);
                         if(!TextUtils.isEmpty(cookie))webHeaders.put("Cookie", " " + cookie);//携带cookie
                         playUrl(url, webHeaders);
-                        stopLoadWebView(false);
-						SuperParse.stopJsonJx();
                     }
                 }
             }
