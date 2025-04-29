@@ -230,7 +230,7 @@ public class IjkMediaPlayer extends IjkPlayer {
             mMediaPlayer.selectTrack(trackIndex);
         }
     }
-    public void setTrack(int trackIndex,String playKey) {
+    public void setTrack(int trackIndex,String playKey) {     //xuameng记忆选择音轨
         int audioSelected = mMediaPlayer.getSelectedTrack(ITrackInfo.MEDIA_TRACK_TYPE_AUDIO);
         if (trackIndex!=audioSelected){
             if (!playKey.isEmpty()) {
