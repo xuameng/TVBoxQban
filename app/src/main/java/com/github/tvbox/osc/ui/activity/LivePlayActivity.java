@@ -2321,6 +2321,10 @@ public class LivePlayActivity extends BaseActivity {
 					ChannelPosition = position;
 					isScrollingXu = false;
 				}
+								int channelGroupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex();
+				 if(position >= getLiveChannels(channelGroupIndexXu).size()) {
+					 position = 0;
+				 }
                 if(position < 0) return;
                 liveChannelGroupAdapter.setFocusedGroupIndex(-1);
                 liveChannelItemAdapter.setFocusedChannelIndex(position);
