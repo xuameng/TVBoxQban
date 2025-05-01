@@ -2254,7 +2254,7 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {				
                 selectChannelGroup(position, true, -1); //xuameng频道组
-				if (ChannelGroupPosition != position){
+				if (ChannelGroupPosition != position){  //xuameng判断是否第一次选择，如不是就不滚动了
 					ChannelGroupPosition = position;
 					isScrollingXu = false;
 				}
@@ -2272,7 +2272,7 @@ public class LivePlayActivity extends BaseActivity {
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 FastClickCheckUtil.check(view);
                 selectChannelGroup(position, false, -1);
-				if (ChannelGroupPosition != position){
+				if (ChannelGroupPosition != position){  //xuameng判断是否第一次选择，如不是就不滚动了
 					ChannelGroupPosition = position;
 					isScrollingXu = false;
 				}
@@ -2317,21 +2317,18 @@ public class LivePlayActivity extends BaseActivity {
             }
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
-				if (ChannelPosition != position){
+				if (ChannelPosition != position){    //xuameng判断是否第一次选择，如不是就不滚动了
 					ChannelPosition = position;
 					isScrollingXu = false;
 				}
                 if(position < 0) return;
-
-int channelGroupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex();
-         if(position == getLiveChannels(channelGroupIndexXu).size()-1){
-            itemView.setId(View.generateViewId());
-            itemView.setNextFocusDownId(itemView.getId());  
-			mLiveChannelView.scrollToPositionWithOffset(0, 0);
-        }else {
-            itemView.setNextFocusDownId(View.NO_ID);  //xuameng不超出item
-        }
-
+                int channelGroupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex();  //xuameng当前选定的频道组
+                if(position == getLiveChannels(channelGroupIndexXu).size()-1){    //xuameng判断是否是最后一个item
+                   itemView.setId(View.generateViewId());
+                   itemView.setNextFocusDownId(itemView.getId());    //xuameng不超出item
+                }else {
+                   itemView.setNextFocusDownId(View.NO_ID);  
+                }
                 liveChannelGroupAdapter.setFocusedGroupIndex(-1);
                 liveChannelItemAdapter.setFocusedChannelIndex(position);
                 liveChannelItemAdapter.setSelectedChannelIndex(position);
@@ -2350,7 +2347,7 @@ int channelGroupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex();
         liveChannelItemAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-				if (ChannelPosition != position){
+				if (ChannelPosition != position){  //xuameng判断是否第一次选择，如不是就不滚动了
 					ChannelPosition = position;
 					isScrollingXu = false;
 				}
