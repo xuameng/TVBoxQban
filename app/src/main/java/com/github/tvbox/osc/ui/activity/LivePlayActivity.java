@@ -2322,11 +2322,14 @@ public class LivePlayActivity extends BaseActivity {
 					isScrollingXu = false;
 				}
 								int channelGroupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex();
-                if(position < 0 || position >= getLiveChannels(channelGroupIndexXu).size()) return;
+                if(position < 0 || position >= getLiveChannels(channelGroupIndexXu).size()) {
+position = 0;
+									mLiveChannelView.smoothScrollToPosition(position);
+
+				}
                 liveChannelGroupAdapter.setFocusedGroupIndex(-1);
                 liveChannelItemAdapter.setFocusedChannelIndex(position);
                 liveChannelItemAdapter.setSelectedChannelIndex(position);
-				mLiveChannelView.scrollToPosition(position);
 				isTouch = false;
                 playChannelxu(liveChannelGroupAdapter.getSelectedGroupIndex(), liveChannelItemAdapter.getSelectedChannelIndex(), false); //xuameng换频道显示EPG
                 liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
