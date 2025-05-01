@@ -2307,28 +2307,13 @@ public class LivePlayActivity extends BaseActivity {
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 mHideChannelListRunXu(); //xuameng隐藏频道菜单
-	V7LinearLayoutManager layoutManager = (V7LinearLayoutManager) mLiveChannelView.getLayoutManager();
-							int channelGroupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex();  //xuameng当前选定的频道组
-if (layoutManager != null) {
-    int lastVisiblePosition = layoutManager.findLastVisibleItemPosition();
-	        if (lastVisiblePosition == getLiveChannels(channelGroupIndexXu).size()-1) {
-            mLiveChannelView.scrollToPositionWithOffset(0, 0); // 精准滚动到顶部
-        }
-}
-
-
-        // 判断是否滚动到底部
-
             }
         });
         //电视
         mLiveChannelView.setOnItemListener(new TvRecyclerView.OnItemListener() {
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
-				                if(!mLiveChannelView.isScrolling() && !mLiveChannelView.isComputingLayout()) { //xuameng如果EPG正在滚动返回，解决BUG
-            //      liveChannelItemAdapter.setFocusedChannelIndex(-1); //xuameng修复频道名称移走焦点变色问题
-                }
-                
+                liveChannelItemAdapter.setFocusedChannelIndex(-1); //xuameng修复频道名称移走焦点变色问题
             }
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
@@ -2345,8 +2330,8 @@ if (layoutManager != null) {
                    itemView.setNextFocusDownId(View.NO_ID);  
                 }
                 liveChannelGroupAdapter.setFocusedGroupIndex(-1);
-         //       liveChannelItemAdapter.setFocusedChannelIndex(position);
-          //      liveChannelItemAdapter.setSelectedChannelIndex(position);
+                liveChannelItemAdapter.setFocusedChannelIndex(position);
+                liveChannelItemAdapter.setSelectedChannelIndex(position);
 				isTouch = false;
                 playChannelxu(liveChannelGroupAdapter.getSelectedGroupIndex(), liveChannelItemAdapter.getSelectedChannelIndex(), false); //xuameng换频道显示EPG
                 liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
