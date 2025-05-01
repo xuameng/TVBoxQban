@@ -2313,30 +2313,18 @@ public class LivePlayActivity extends BaseActivity {
         mLiveChannelView.setOnItemListener(new TvRecyclerView.OnItemListener() {
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
-												int channelGroupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex();
-                if(position < 0 || position >= getLiveChannels(channelGroupIndexXu).size()) return;
-                liveChannelItemAdapter.setFocusedChannelIndex(-1); //xuameng修复频道名称移走焦点变色问题
             }
+
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
-				if (ChannelPosition != position){
-					ChannelPosition = position;
-					isScrollingXu = false;
-				}
-								int channelGroupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex();
-                if(position < 0 || position >= getLiveChannels(channelGroupIndexXu).size()) return;
+                if (position < 0) return;
                 liveChannelGroupAdapter.setFocusedGroupIndex(-1);
                 liveChannelItemAdapter.setFocusedChannelIndex(position);
-                liveChannelItemAdapter.setSelectedChannelIndex(position);
-				isTouch = false;
-                playChannelxu(liveChannelGroupAdapter.getSelectedGroupIndex(), liveChannelItemAdapter.getSelectedChannelIndex(), false); //xuameng换频道显示EPG
-                liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
-                mHideChannelListRunXu(); //xuameng隐藏频道菜单
             }
+
             @Override
-            public void onItemClick(TvRecyclerView parent, View itemView, int position) { //选中播放就隐藏左侧频道菜单
+            public void onItemClick(TvRecyclerView parent, View itemView, int position) {
                 clickLiveChannel(position);
-                mHideChannelListRun(); //xuameng隐藏左侧频道菜单
             }
         });
         //手机/模拟器
