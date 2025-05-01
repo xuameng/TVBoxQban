@@ -2322,7 +2322,7 @@ public class LivePlayActivity extends BaseActivity {
 					isScrollingXu = false;
 				}
                 if(position < 0) return;
-
+int channelGroupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex();
          if(position == getLiveChannels(channelGroupIndexXu).size()-1){
             itemView.setId(View.generateViewId());
             itemView.setNextFocusDownId(itemView.getId());  
