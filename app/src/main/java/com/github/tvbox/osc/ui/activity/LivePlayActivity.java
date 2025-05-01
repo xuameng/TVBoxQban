@@ -2308,15 +2308,17 @@ public class LivePlayActivity extends BaseActivity {
                 super.onScrollStateChanged(recyclerView, newState);
                 mHideChannelListRunXu(); //xuameng隐藏频道菜单
 	V7LinearLayoutManager layoutManager = (V7LinearLayoutManager) mLiveChannelView.getLayoutManager();
+							int channelGroupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex();  //xuameng当前选定的频道组
 if (layoutManager != null) {
     int lastVisiblePosition = layoutManager.findLastVisibleItemPosition();
-}
-						int channelGroupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex();  //xuameng当前选定的频道组
-
-        // 判断是否滚动到底部
-        if (lastVisiblePosition == getLiveChannels(channelGroupIndexXu).size()-1) {
+	        if (lastVisiblePosition == getLiveChannels(channelGroupIndexXu).size()-1) {
             mLiveChannelView.scrollToPositionWithOffset(0, 0); // 精准滚动到顶部
         }
+}
+
+
+        // 判断是否滚动到底部
+
             }
         });
         //电视
