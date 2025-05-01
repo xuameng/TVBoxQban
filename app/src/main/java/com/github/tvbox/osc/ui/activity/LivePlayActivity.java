@@ -2313,6 +2313,8 @@ public class LivePlayActivity extends BaseActivity {
         mLiveChannelView.setOnItemListener(new TvRecyclerView.OnItemListener() {
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
+												int channelGroupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex();
+                if(position < 0 || position >= getLiveChannels(channelGroupIndexXu).size()) return;
                 liveChannelItemAdapter.setFocusedChannelIndex(-1); //xuameng修复频道名称移走焦点变色问题
             }
             @Override
@@ -2321,7 +2323,8 @@ public class LivePlayActivity extends BaseActivity {
 					ChannelPosition = position;
 					isScrollingXu = false;
 				}
-                if(position < 0) return;
+								int channelGroupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex();
+                if(position < 0 || position >= getLiveChannels(channelGroupIndexXu).size()) return;
                 liveChannelGroupAdapter.setFocusedGroupIndex(-1);
                 liveChannelItemAdapter.setFocusedChannelIndex(position);
                 liveChannelItemAdapter.setSelectedChannelIndex(position);
