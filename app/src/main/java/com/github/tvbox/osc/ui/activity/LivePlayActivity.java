@@ -2325,7 +2325,10 @@ if (layoutManager != null) {
         mLiveChannelView.setOnItemListener(new TvRecyclerView.OnItemListener() {
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
-                liveChannelItemAdapter.setFocusedChannelIndex(-1); //xuameng修复频道名称移走焦点变色问题
+				                if(!mLiveChannelView.isScrolling() && !mLiveChannelView.isComputingLayout()) { //xuameng如果EPG正在滚动返回，解决BUG
+                  liveChannelItemAdapter.setFocusedChannelIndex(-1); //xuameng修复频道名称移走焦点变色问题
+                }
+                
             }
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
