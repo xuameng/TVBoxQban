@@ -2325,7 +2325,6 @@ public class LivePlayActivity extends BaseActivity {
 				 if(position >= getLiveChannels(channelGroupIndexXu).size()-1) {
 					 position = 0;
 					 mLiveChannelView.scrollToPosition(position);
-					 mLiveChannelView.setSelection(position); //xuameng先滚动再选择防止空指针
 				 }
                 if(position < 0) return;
                 liveChannelGroupAdapter.setFocusedGroupIndex(-1);
