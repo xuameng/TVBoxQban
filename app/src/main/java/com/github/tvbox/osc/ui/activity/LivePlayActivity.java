@@ -2322,7 +2322,7 @@ public class LivePlayActivity extends BaseActivity {
 					isScrollingXu = false;
 				}
 								int channelGroupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex();
-                if(position < 0 || position >= getLiveChannels(channelGroupIndexXu).size()) {
+                if(position < 0 || position >= getLiveChannels(channelGroupIndexXu).size()-1) {
 position = 0;
 									mLiveChannelView.smoothScrollToPosition(position);
 
