@@ -2307,7 +2307,10 @@ public class LivePlayActivity extends BaseActivity {
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 mHideChannelListRunXu(); //xuameng隐藏频道菜单
-				        int lastVisiblePosition = mLiveChannelView.findLastVisibleItemPosition();
+	V7LinearLayoutManager layoutManager = (V7LinearLayoutManager) mLiveChannelView.getLayoutManager();
+if (layoutManager != null) {
+    int lastVisiblePosition = layoutManager.findLastVisibleItemPosition();
+}
 						int channelGroupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex();  //xuameng当前选定的频道组
 
         // 判断是否滚动到底部
