@@ -2326,7 +2326,7 @@ if (layoutManager != null) {
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
 				                if(!mLiveChannelView.isScrolling() && !mLiveChannelView.isComputingLayout()) { //xuameng如果EPG正在滚动返回，解决BUG
-                  liveChannelItemAdapter.setFocusedChannelIndex(-1); //xuameng修复频道名称移走焦点变色问题
+            //      liveChannelItemAdapter.setFocusedChannelIndex(-1); //xuameng修复频道名称移走焦点变色问题
                 }
                 
             }
@@ -2345,8 +2345,8 @@ if (layoutManager != null) {
                    itemView.setNextFocusDownId(View.NO_ID);  
                 }
                 liveChannelGroupAdapter.setFocusedGroupIndex(-1);
-                liveChannelItemAdapter.setFocusedChannelIndex(position);
-                liveChannelItemAdapter.setSelectedChannelIndex(position);
+         //       liveChannelItemAdapter.setFocusedChannelIndex(position);
+          //      liveChannelItemAdapter.setSelectedChannelIndex(position);
 				isTouch = false;
                 playChannelxu(liveChannelGroupAdapter.getSelectedGroupIndex(), liveChannelItemAdapter.getSelectedChannelIndex(), false); //xuameng换频道显示EPG
                 liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
