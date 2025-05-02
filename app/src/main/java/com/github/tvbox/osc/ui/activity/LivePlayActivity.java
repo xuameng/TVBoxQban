@@ -2676,6 +2676,7 @@ public class LivePlayActivity extends BaseActivity {
     private void initLiveSettingGroupList() {      //xuameng
  //       List<LiveChannelGroup> listxu = ApiConfig.get().getChannelGroupList();
  //       if (!listxu.isEmpty()) {
+	 if(currentLiveChannelItem == null) return;
         liveSettingGroupList=ApiConfig.get().getLiveSettingGroupList();
         liveSettingGroupList.get(3).getLiveSettingItems().get(Hawk.get(HawkConfig.LIVE_CONNECT_TIMEOUT, 1)).setItemSelected(true);
         liveSettingGroupList.get(4).getLiveSettingItems().get(0).setItemSelected(Hawk.get(HawkConfig.LIVE_SHOW_TIME, false));
