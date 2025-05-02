@@ -75,6 +75,7 @@ import com.github.tvbox.osc.util.urlhttp.CallBackUtil;
 import com.github.tvbox.osc.util.urlhttp.UrlHttpUtil;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;  //xuameng新增
+import com.google.gson.JsonElement;
 import org.apache.commons.lang3.StringUtils;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.AbsCallback;
@@ -2540,6 +2541,17 @@ public class LivePlayActivity extends BaseActivity {
         if (list.isEmpty()) {
            JsonArray live_groups=Hawk.get(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
            if(live_groups.size() > 1){
+
+if (live_groups != null) {  
+    for (JsonElement element : live_groups) {  
+        if (element.isJsonNull()) {  
+            System.out.println("存在空值");  
+            break;  
+			            finish();
+			return;
+        }  
+    }  
+} 
             setDefaultLiveChannelList();
 			Toast.makeText(App.getInstance(), "聚汇影视提示您：直播列表为空！请切换线路！", Toast.LENGTH_SHORT).show();
             return;
@@ -2674,17 +2686,16 @@ public class LivePlayActivity extends BaseActivity {
         return iv_Play_Xu.getVisibility() == View.VISIBLE;
     }
     private void initLiveSettingGroupList() {      //xuameng
-//        List<LiveChannelGroup> listxu = ApiConfig.get().getChannelGroupList();
-//        if (!listxu.isEmpty()) {
+        List<LiveChannelGroup> listxu = ApiConfig.get().getChannelGroupList();
+        if (!listxu.isEmpty()) {
         liveSettingGroupList=ApiConfig.get().getLiveSettingGroupList();
         liveSettingGroupList.get(3).getLiveSettingItems().get(Hawk.get(HawkConfig.LIVE_CONNECT_TIMEOUT, 1)).setItemSelected(true);
         liveSettingGroupList.get(4).getLiveSettingItems().get(0).setItemSelected(Hawk.get(HawkConfig.LIVE_SHOW_TIME, false));
         liveSettingGroupList.get(4).getLiveSettingItems().get(1).setItemSelected(Hawk.get(HawkConfig.LIVE_SHOW_NET_SPEED, false));
         liveSettingGroupList.get(4).getLiveSettingItems().get(2).setItemSelected(Hawk.get(HawkConfig.LIVE_CHANNEL_REVERSE, false));
         liveSettingGroupList.get(4).getLiveSettingItems().get(3).setItemSelected(Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false));
-		if(currentLiveChannelItem == null) return; 
         liveSettingGroupList.get(5).getLiveSettingItems().get(Hawk.get(HawkConfig.LIVE_GROUP_INDEX, 0)).setItemSelected(true);   //xuameng新增 换源
-//		}
+		}
     }
     private void loadCurrentSourceList() {
         ArrayList < String > currentSourceNames = currentLiveChannelItem.getChannelSourceNames();
