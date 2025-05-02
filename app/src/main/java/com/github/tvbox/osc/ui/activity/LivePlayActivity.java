@@ -437,6 +437,7 @@ public class LivePlayActivity extends BaseActivity {
         initLiveChannelList();
         initLiveSettingGroupList();
 		Hawk.put(HawkConfig.PLAYER_IS_LIVE,true);  //xuameng新增 
+        mHandler.post(mUpdateNetSpeedRunXu); //XUAMENG左上网速检测1秒钟一次
         mHandler.post(mUpdateVodProgressXu); //xuamengVOD BACK播放进度检测
 		mHandler.post(myRunnableMusic); //xuamengVOD BACK播放进度检测
 		mHandler.post(mUpdateVodImageXu); //xuamengVOD BACK播放进度检测
@@ -2783,12 +2784,10 @@ public class LivePlayActivity extends BaseActivity {
         }
     };
     private void showNetSpeedXu() {
-		mHandler.post(mUpdateNetSpeedRunXu);
         tv_right_top_tipnetspeed.setVisibility(View.VISIBLE); //xuameng右上网络速度
         tvNetSpeed.setVisibility(View.GONE);
     }
     private void hideNetSpeedXu() {
-		mHandler.removeCallbacks(mUpdateNetSpeedRunXu);
         tv_right_top_tipnetspeed.setVisibility(View.GONE); //xuameng右上网络速度
 		if(tvRightSettingLayout.getVisibility() == View.VISIBLE) {
 			return;
