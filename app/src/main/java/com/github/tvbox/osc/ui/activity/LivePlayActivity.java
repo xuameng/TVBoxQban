@@ -437,7 +437,6 @@ public class LivePlayActivity extends BaseActivity {
         initLiveChannelList();
         initLiveSettingGroupList();
 		Hawk.put(HawkConfig.PLAYER_IS_LIVE,true);  //xuameng新增 
-        mHandler.post(mUpdateNetSpeedRunXu); //XUAMENG左上网速检测1秒钟一次
         mHandler.post(mUpdateVodProgressXu); //xuamengVOD BACK播放进度检测
 		mHandler.post(myRunnableMusic); //xuamengVOD BACK播放进度检测
 		mHandler.post(mUpdateVodImageXu); //xuamengVOD BACK播放进度检测
@@ -2746,17 +2745,18 @@ public class LivePlayActivity extends BaseActivity {
         tvTime.setVisibility(View.GONE);
     }
     void hideTimeXu() { //xuameng的系统时间
-		if(tvRightSettingLayout.getVisibility() == View.GONE) {
-            mHandler.removeCallbacks(mUpdateTimeRunXu);
-            tvTime_xu.setVisibility(View.GONE);
-            if(Hawk.get(HawkConfig.LIVE_SHOW_TIME, false)) {
-                mHandler.post(mUpdateTimeRun);
-                tvTime.setVisibility(View.VISIBLE);
-            } else {
-                mHandler.removeCallbacks(mUpdateTimeRun);
-                tvTime.setVisibility(View.GONE);
-            }
+        mHandler.removeCallbacks(mUpdateTimeRunXu);
+        tvTime_xu.setVisibility(View.GONE);
+		if(tvRightSettingLayout.getVisibility() == View.VISIBLE) {
+			return;
 		}
+        if(Hawk.get(HawkConfig.LIVE_SHOW_TIME, false)) {
+            mHandler.post(mUpdateTimeRun);
+            tvTime.setVisibility(View.VISIBLE);
+        } else {
+            mHandler.removeCallbacks(mUpdateTimeRun);
+            tvTime.setVisibility(View.GONE);
+        }
     }
     private void showNetSpeed() {
         if(Hawk.get(HawkConfig.LIVE_SHOW_NET_SPEED, false)) {
@@ -2783,23 +2783,21 @@ public class LivePlayActivity extends BaseActivity {
         }
     };
     private void showNetSpeedXu() {
-        tv_right_top_tipnetspeed.setVisibility(View.VISIBLE); //xuameng右上网络速度，这行无所谓
-		mHandler.post(mUpdateNetSpeedRunXu); //XUAMENG左上网速检测1秒钟一次
+		mHandler.post(mUpdateNetSpeedRunXu);
+        tv_right_top_tipnetspeed.setVisibility(View.VISIBLE); //xuameng右上网络速度
         tvNetSpeed.setVisibility(View.GONE);
-        mHandler.removeCallbacks(mUpdateNetSpeedRun);
     }
     private void hideNetSpeedXu() {
-		if(tvRightSettingLayout.getVisibility() == View.GONE) {
-			mHandler.removeCallbacks(mUpdateNetSpeedRunXu);
-            tv_right_top_tipnetspeed.setVisibility(View.GONE); //xuameng右上网络速度，这行无所谓
-            if(Hawk.get(HawkConfig.LIVE_SHOW_NET_SPEED, false)) {
-                tvNetSpeed.setVisibility(View.VISIBLE);
-				mHandler.post(mUpdateNetSpeedRun);
-            } else {
-                tvNetSpeed.setVisibility(View.GONE);
-				mHandler.removeCallbacks(mUpdateNetSpeedRun);
-            }
+		mHandler.removeCallbacks(mUpdateNetSpeedRunXu);
+        tv_right_top_tipnetspeed.setVisibility(View.GONE); //xuameng右上网络速度
+		if(tvRightSettingLayout.getVisibility() == View.VISIBLE) {
+			return;
 		}
+        if(Hawk.get(HawkConfig.LIVE_SHOW_NET_SPEED, false)) {
+            tvNetSpeed.setVisibility(View.VISIBLE);
+        } else {
+            tvNetSpeed.setVisibility(View.GONE);
+        }
     }
     private Runnable mUpdateNetSpeedRunXu = new Runnable() {
         @Override
