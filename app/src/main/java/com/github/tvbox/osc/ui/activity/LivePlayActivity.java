@@ -1612,6 +1612,8 @@ public class LivePlayActivity extends BaseActivity {
         backcontroller.setVisibility(View.GONE);
         hideTimeXu(); //xuameng隐藏系统时间
         hideNetSpeedXu(); //XUAMENG隐藏左上网速
+        hideNetSpeed();   //xuameng隐藏右下网速
+        hideTime();    //xuameng隐藏右下系统时间
         ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) tvRightSettingLayout.getLayoutParams();
         if(countDownTimer6 != null) {
             countDownTimer6.cancel();
@@ -1629,6 +1631,8 @@ public class LivePlayActivity extends BaseActivity {
         if(tvRightSettingLayout.getVisibility() == View.VISIBLE) {
             tvRightSettingLayout.setVisibility(View.INVISIBLE);
             liveSettingGroupAdapter.setSelectedGroupIndex(-1);
+            showTime();  //XUAMENG显示右下时间
+            showNetSpeed();  //XUAMENG显示右下网速
 			if(mVideoView == null) return;
 			if(isVOD) {
 				if(!mVideoView.isPlaying()) {
@@ -2670,8 +2674,8 @@ public class LivePlayActivity extends BaseActivity {
         return iv_Play_Xu.getVisibility() == View.VISIBLE;
     }
     private void initLiveSettingGroupList() {      //xuameng
-        List<LiveChannelGroup> listxu = ApiConfig.get().getChannelGroupList();
-        if (!listxu.isEmpty()) {
+ //       List<LiveChannelGroup> listxu = ApiConfig.get().getChannelGroupList();
+ //       if (!listxu.isEmpty()) {
         liveSettingGroupList=ApiConfig.get().getLiveSettingGroupList();
         liveSettingGroupList.get(3).getLiveSettingItems().get(Hawk.get(HawkConfig.LIVE_CONNECT_TIMEOUT, 1)).setItemSelected(true);
         liveSettingGroupList.get(4).getLiveSettingItems().get(0).setItemSelected(Hawk.get(HawkConfig.LIVE_SHOW_TIME, false));
@@ -2679,7 +2683,7 @@ public class LivePlayActivity extends BaseActivity {
         liveSettingGroupList.get(4).getLiveSettingItems().get(2).setItemSelected(Hawk.get(HawkConfig.LIVE_CHANNEL_REVERSE, false));
         liveSettingGroupList.get(4).getLiveSettingItems().get(3).setItemSelected(Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false));
         liveSettingGroupList.get(5).getLiveSettingItems().get(Hawk.get(HawkConfig.LIVE_GROUP_INDEX, 0)).setItemSelected(true);   //xuameng新增 换源
-		}
+//		}
     }
     private void loadCurrentSourceList() {
         ArrayList < String > currentSourceNames = currentLiveChannelItem.getChannelSourceNames();
@@ -2700,6 +2704,12 @@ public class LivePlayActivity extends BaseActivity {
             mHandler.removeCallbacks(mUpdateTimeRun);
             tvTime.setVisibility(View.GONE);
         }
+    }
+    void hideTime() { //xuameng右下角系统时间
+		if(tvTime.getVisibility() == View.VISIBLE) {
+            mHandler.removeCallbacks(mUpdateTimeRun);
+            tvTime.setVisibility(View.GONE);
+		}
     }
     private Runnable mUpdateTimeRun = new Runnable() {
         @Override
@@ -2744,6 +2754,12 @@ public class LivePlayActivity extends BaseActivity {
             mHandler.removeCallbacks(mUpdateNetSpeedRun);
             tvNetSpeed.setVisibility(View.GONE);
         }
+    }
+    private void hideNetSpeed() {  //xuameng右下角网速
+		if(tvNetSpeed.getVisibility() == View.VISIBLE) {
+          mHandler.removeCallbacks(mUpdateNetSpeedRun);
+          tvNetSpeed.setVisibility(View.GONE);
+		}
     }
     private Runnable mUpdateNetSpeedRun = new Runnable() {
         @Override
