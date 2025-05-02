@@ -75,6 +75,7 @@ import com.github.tvbox.osc.util.urlhttp.CallBackUtil;
 import com.github.tvbox.osc.util.urlhttp.UrlHttpUtil;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;  //xuameng新增
+import com.google.gson.JsonElement; //xuameng新增
 import org.apache.commons.lang3.StringUtils;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.AbsCallback;
@@ -2683,12 +2684,14 @@ public class LivePlayActivity extends BaseActivity {
         liveSettingGroupList.get(4).getLiveSettingItems().get(1).setItemSelected(Hawk.get(HawkConfig.LIVE_SHOW_NET_SPEED, false));
         liveSettingGroupList.get(4).getLiveSettingItems().get(2).setItemSelected(Hawk.get(HawkConfig.LIVE_CHANNEL_REVERSE, false));
         liveSettingGroupList.get(4).getLiveSettingItems().get(3).setItemSelected(Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false));
-        for (JsonElement element : live_groups) {  
-            if (element.isJsonNull()) {  
-				Toast.makeText(mContext, "聚汇直播提示您：直播列表读取有错误！请检查JSON中lives的配置！", Toast.LENGTH_SHORT).show();
-			    return;
+		if (live_groups != null) {  
+            for (JsonElement element : live_groups) {  
+                if (element.isJsonNull()) {  
+				    Toast.makeText(mContext, "聚汇直播提示您：直播列表读取有错误！请检查JSON中lives的配置！", Toast.LENGTH_SHORT).show();
+			        return;
+                }  
             }  
-        }  
+		}
         liveSettingGroupList.get(5).getLiveSettingItems().get(Hawk.get(HawkConfig.LIVE_GROUP_INDEX, 0)).setItemSelected(true);   //xuameng新增 换源
 		}
     }
