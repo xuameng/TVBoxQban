@@ -75,7 +75,6 @@ import com.github.tvbox.osc.util.urlhttp.CallBackUtil;
 import com.github.tvbox.osc.util.urlhttp.UrlHttpUtil;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;  //xuameng新增
-import com.google.gson.JsonElement;
 import org.apache.commons.lang3.StringUtils;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.AbsCallback;
@@ -2541,17 +2540,6 @@ public class LivePlayActivity extends BaseActivity {
         if (list.isEmpty()) {
            JsonArray live_groups=Hawk.get(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
            if(live_groups.size() > 1){
-
-if (live_groups != null) {  
-    for (JsonElement element : live_groups) {  
-        if (element.isJsonNull()) {  
-            System.out.println("存在空值");  
-            break;  
-			            finish();
-			return;
-        }  
-    }  
-} 
             setDefaultLiveChannelList();
 			Toast.makeText(App.getInstance(), "聚汇影视提示您：直播列表为空！请切换线路！", Toast.LENGTH_SHORT).show();
             return;
