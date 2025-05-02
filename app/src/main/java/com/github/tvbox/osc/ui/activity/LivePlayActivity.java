@@ -2746,15 +2746,17 @@ public class LivePlayActivity extends BaseActivity {
         tvTime.setVisibility(View.GONE);
     }
     void hideTimeXu() { //xuameng的系统时间
-        mHandler.removeCallbacks(mUpdateTimeRunXu);
-        tvTime_xu.setVisibility(View.GONE);
-        if(Hawk.get(HawkConfig.LIVE_SHOW_TIME, false)) {
-            mHandler.post(mUpdateTimeRun);
-            tvTime.setVisibility(View.VISIBLE);
-        } else {
-            mHandler.removeCallbacks(mUpdateTimeRun);
-            tvTime.setVisibility(View.GONE);
-        }
+		if(tvRightSettingLayout.getVisibility() == View.GONE) {
+            mHandler.removeCallbacks(mUpdateTimeRunXu);
+            tvTime_xu.setVisibility(View.GONE);
+            if(Hawk.get(HawkConfig.LIVE_SHOW_TIME, false)) {
+                mHandler.post(mUpdateTimeRun);
+                tvTime.setVisibility(View.VISIBLE);
+            } else {
+                mHandler.removeCallbacks(mUpdateTimeRun);
+                tvTime.setVisibility(View.GONE);
+            }
+		}
     }
     private void showNetSpeed() {
         if(Hawk.get(HawkConfig.LIVE_SHOW_NET_SPEED, false)) {
@@ -2782,15 +2784,22 @@ public class LivePlayActivity extends BaseActivity {
     };
     private void showNetSpeedXu() {
         tv_right_top_tipnetspeed.setVisibility(View.VISIBLE); //xuameng右上网络速度，这行无所谓
+		mHandler.post(mUpdateNetSpeedRunXu); //XUAMENG左上网速检测1秒钟一次
         tvNetSpeed.setVisibility(View.GONE);
+        mHandler.removeCallbacks(mUpdateNetSpeedRun);
     }
     private void hideNetSpeedXu() {
-        tv_right_top_tipnetspeed.setVisibility(View.GONE); //xuameng右上网络速度，这行无所谓
-        if(Hawk.get(HawkConfig.LIVE_SHOW_NET_SPEED, false)) {
-            tvNetSpeed.setVisibility(View.VISIBLE);
-        } else {
-            tvNetSpeed.setVisibility(View.GONE);
-        }
+		if(tvRightSettingLayout.getVisibility() == View.GONE) {
+			mHandler.removeCallbacks(mUpdateNetSpeedRunXu);
+            tv_right_top_tipnetspeed.setVisibility(View.GONE); //xuameng右上网络速度，这行无所谓
+            if(Hawk.get(HawkConfig.LIVE_SHOW_NET_SPEED, false)) {
+                tvNetSpeed.setVisibility(View.VISIBLE);
+				mHandler.post(mUpdateNetSpeedRun);
+            } else {
+                tvNetSpeed.setVisibility(View.GONE);
+				mHandler.removeCallbacks(mUpdateNetSpeedRun);
+            }
+		}
     }
     private Runnable mUpdateNetSpeedRunXu = new Runnable() {
         @Override
