@@ -201,6 +201,9 @@ public class ApiConfig {
                                     } catch (Throwable th) {
                                         th.printStackTrace();
                                         callback.notice("聚汇影视提示您：解析直播配置失败！");
+					                    initLiveSettings();
+					                    Hawk.put(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
+					                    Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
                                     }
                                 }
 
@@ -217,8 +220,9 @@ public class ApiConfig {
                                         }
                                     }
                                     callback.notice("聚汇影视提示您：直播配置拉取失败！");
-									//Hawk.put(HawkConfig.LIVE_API_URL, "");
-									//Hawk.put(HawkConfig.LIVE_GROUP_LIST,"");
+					                initLiveSettings();
+					                Hawk.put(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
+					                Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
                                 }
 
                                 public String convertResponse(okhttp3.Response response) throws Throwable {
