@@ -506,7 +506,6 @@ if (lives_groups != null) {
 								Hawk.put(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
 					Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
 								return;
-            break;  
 
 
         }  
@@ -741,7 +740,6 @@ if (lives_groups != null) {
 								Hawk.put(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
 					Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
 								return;
-            break;  
 
 
         }  
