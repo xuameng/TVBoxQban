@@ -498,6 +498,19 @@ public class ApiConfig {
             LOG.i("echo-load-config_live");
             if(infoJson.has("lives")){
                 JsonArray lives_groups=infoJson.get("lives").getAsJsonArray();
+
+if (lives_groups != null) {  
+    for (JsonElement element : lives_groups) {  
+        if (element.isJsonNull()) {  
+			initLiveSettings();
+								Hawk.put(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
+					Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
+            break;  
+
+			return;
+        }  
+    }  
+} 
 				if (lives_groups.size() > 0) {  
                     initLiveSettings();
 					int live_group_index=Hawk.get(HawkConfig.LIVE_GROUP_INDEX,0);
@@ -720,6 +733,18 @@ public class ApiConfig {
         // 直播源
         if(infoJson.has("lives")){
             JsonArray lives_groups=infoJson.get("lives").getAsJsonArray();
+			if (lives_groups != null) {  
+    for (JsonElement element : lives_groups) {  
+        if (element.isJsonNull()) {  
+			initLiveSettings();
+								Hawk.put(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
+					Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
+            break;  
+
+			return;
+        }  
+    }  
+} 
 				if (lives_groups.size() > 0) { 
 				initLiveSettings();
 				int live_group_index=Hawk.get(HawkConfig.LIVE_GROUP_INDEX,0);
