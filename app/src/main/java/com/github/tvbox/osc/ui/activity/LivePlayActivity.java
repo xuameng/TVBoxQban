@@ -2611,7 +2611,6 @@ public class LivePlayActivity extends BaseActivity {
 				  jumpActivity(HomeActivity.class);
 				  }
 			  });
-			  HawkConfig.LIVEerror = true;
 			  return;
 		  }
             Toast.makeText(App.getInstance(), "聚汇影视提示您：频道列表为空！", Toast.LENGTH_SHORT).show();
@@ -2676,7 +2675,6 @@ public class LivePlayActivity extends BaseActivity {
 								jumpActivity(HomeActivity.class);
 							}
 						});
-						HawkConfig.LIVEerror = true;
 					}else{
 						Toast.makeText(App.getInstance(), "聚汇影视提示您：频道列表为空！", Toast.LENGTH_SHORT).show();
 						mHandler.post(new Runnable() {
@@ -2685,7 +2683,7 @@ public class LivePlayActivity extends BaseActivity {
 								jumpActivity(HomeActivity.class);
 							}
 						});
-						HawkConfig.LIVEerror = true;
+			
 					}
 					return;
                 }
@@ -2719,7 +2717,7 @@ public class LivePlayActivity extends BaseActivity {
                         jumpActivity(HomeActivity.class);
                     }
                 });
-				HawkConfig.LIVEerror = true;
+		
             }
         });
     }
