@@ -41,9 +41,6 @@ import android.graphics.Bitmap;  //xuameng播放音频切换图片
 import com.github.tvbox.osc.api.ApiConfig;  //xuameng播放音频切换图片
 import android.annotation.SuppressLint; //xuamengEPG显示错误
 import java.util.HashMap;   //XUAMENG自定义UA
-import java.util.Map;  //xuameng Catchup
-import java.util.regex.Matcher; //xuameng Catchup
-import java.util.regex.Pattern;  //xuameng Catchup
 import java.util.Objects;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.github.tvbox.osc.R;
@@ -78,6 +75,7 @@ import com.github.tvbox.osc.util.urlhttp.CallBackUtil;
 import com.github.tvbox.osc.util.urlhttp.UrlHttpUtil;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;  //xuameng新增
+import com.google.gson.JsonElement; //xuameng新增
 import org.apache.commons.lang3.StringUtils;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.AbsCallback;
@@ -187,8 +185,11 @@ public class LivePlayActivity extends BaseActivity {
 	private boolean isBuffer = false; //xuameng缓冲
 	private boolean isShowlist = false; //xuameng判断菜单显示
 	private boolean isVideoplaying = false;  //xuameng判断视频开始播放
-	private boolean XuSource = false;  //xuameng退出回看
+	private boolean XuSource = false; //xuameng退出回看
+	private boolean isScrollingXu = false;  //xuameng判断EPG是否正在滚动
     private int selectedChannelNumber = 0; // xuameng遥控器数字键输入的要切换的频道号码
+	private int ChannelPosition = -100; // xuameng Channel Position
+	private int ChannelGroupPosition = -100; // xuameng ChannelGroup Position
     private TextView tvSelectedChannel; //xuameng频道编号
 	private ImageView iv_circle_bg_xu;  //xuameng音乐播放时图标
 	private ImageView MxuamengMusic;       //xuameng播放音乐背景
@@ -211,7 +212,6 @@ public class LivePlayActivity extends BaseActivity {
 	private CountDownTimer countDownTimer20;
 	private CountDownTimer countDownTimer21;
     private CountDownTimer countDownTimer22;
-    private CountDownTimer countDownTimer30;
     private final int videoWidth = 1920;
     private final int videoHeight = 1080;
     private TextView tv_currentpos;
@@ -464,12 +464,16 @@ public class LivePlayActivity extends BaseActivity {
                 //xuameng防止跳焦点                 mRightEpgList.setSelection(i);
                 epgListAdapter.setSelectedEpgIndex(i);
                 int finalI = i;
-                mRightEpgList.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mRightEpgList.smoothScrollToPosition(finalI);
-                    }
-                });
+				if (!isScrollingXu){
+					isScrollingXu = true;
+				    mRightEpgList.scrollToPositionWithOffset(finalI, 0);
+                    mRightEpgList.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+						    mRightEpgList.smoothScrollToPosition(finalI);
+                        }
+                    }, 50);
+				}
             }
         } else { //xuameng无EPG时提示信息
             Epginfo epgbcinfo = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "00:00", "01:59", 0);
@@ -518,12 +522,16 @@ public class LivePlayActivity extends BaseActivity {
                 int finalI = i;
                 mRightEpgList.setSelectedPosition(i);
                 epgListAdapter.setSelectedEpgIndex(i);
-                mRightEpgList.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mRightEpgList.smoothScrollToPosition(finalI);
-                    }
-                });
+				if (!isScrollingXu){
+					isScrollingXu = true;
+				    mRightEpgList.scrollToPositionWithOffset(finalI, 0);
+                    mRightEpgList.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+						    mRightEpgList.smoothScrollToPosition(finalI);
+                        }
+                    }, 50);
+				}
             }
         } else { //xuameng无EPG时提示信息
             Epginfo epgbcinfo = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "00:00", "01:59", 0);
@@ -1432,23 +1440,7 @@ public class LivePlayActivity extends BaseActivity {
         return Hawk.get(HawkConfig.LIVE_WEB_HEADER);
     }
 
-    private JsonObject catchup=null;
-    private Boolean hasCatchup=false;
-    private String logoUrl=null;
-    private void initLiveObj(){
-        int position=Hawk.get(HawkConfig.LIVE_GROUP_INDEX, 0);
-        JsonArray live_groups=Hawk.get(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
-        JsonObject livesOBJ = live_groups.get(position).getAsJsonObject();
-
-        if(livesOBJ.has("catchup")){
-            catchup = livesOBJ.getAsJsonObject("catchup");
-            LOG.i("echo-catchup :"+ catchup.toString());
-            hasCatchup=true;
-        }
-    }
-
     private boolean playChannel(int channelGroupIndex, int liveChannelIndex, boolean changeSource) { //xuameng播放
-		if(mVideoView == null) return true; //XUAMENG可能会引起空指针问题的修复
         if((channelGroupIndex == currentChannelGroupIndex && liveChannelIndex == currentLiveChannelIndex && !changeSource) || (changeSource && currentLiveChannelItem.getSourceNum() == 1) && !XuSource) {
             // xuamengEPG日期自动选今天
             liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
@@ -1469,6 +1461,7 @@ public class LivePlayActivity extends BaseActivity {
             }
             return true;
         }
+		if(mVideoView == null) return true; //XUAMENG可能会引起空指针问题的修复
 		mVideoView.release();  //XUAMENG可能会引起空指针问题的修复
         if(!changeSource) {
             currentChannelGroupIndex = channelGroupIndex;
@@ -1483,24 +1476,15 @@ public class LivePlayActivity extends BaseActivity {
         isSHIYI = false;
         isBack = false;
 		XuSource = false;
-        if(hasCatchup || currentLiveChannelItem.getUrl().contains("PLTV/") || currentLiveChannelItem.getUrl().contains("TVOD/")){ //xuameng判断直播源URL中有没有PLTV字符，有才可以时移
+        if(currentLiveChannelItem.getUrl().indexOf("PLTV/") != -1) { //xuameng判断直播源URL中有没有PLTV字符，有才可以时移
             currentLiveChannelItem.setinclude_back(true);
         } else {
             currentLiveChannelItem.setinclude_back(false);
         }
+		getEpg(new Date());
         showBottomEpg(); //XUAMENG重要点击频道播放，上面的不重新播放。只显示EPG
         mHideChannelListRun(); //xuameng显示EPG就隐藏左右菜单
         mHideSettingLayoutRun(); //xuameng显示EPG就隐藏左右菜单
-        if(countDownTimer30 != null) {
-            countDownTimer30.cancel();
-        }
-        countDownTimer30 = new CountDownTimer(300, 50) { //底部epg隐藏时间设定
-            public void onTick(long j) {}
-            public void onFinish() {
-                getEpg(new Date());
-            }
-        };
-        countDownTimer30.start();
         liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
         backcontroller.setVisibility(View.GONE);
         ll_right_top_huikan.setVisibility(View.GONE);
@@ -1524,7 +1508,7 @@ public class LivePlayActivity extends BaseActivity {
             liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
         }
         channel_NameXu = currentLiveChannelItemXu; //xuameng重要EPG名称
-        if(hasCatchup || currentLiveChannelItem.getUrl().contains("PLTV/") || currentLiveChannelItem.getUrl().contains("TVOD/")){ //xuameng判断直播源URL中有没有PLTV字符，有才可以时移
+        if(currentLiveChannelItemXu.getUrl().indexOf("PLTV/") != -1) { //xuameng判断直播源URL中有没有PLTV字符，有才可以时移
             currentLiveChannelItemXu.setinclude_back(true);
         } else {
             currentLiveChannelItemXu.setinclude_back(false);
@@ -1629,6 +1613,8 @@ public class LivePlayActivity extends BaseActivity {
         backcontroller.setVisibility(View.GONE);
         hideTimeXu(); //xuameng隐藏系统时间
         hideNetSpeedXu(); //XUAMENG隐藏左上网速
+        hideNetSpeed();   //xuameng隐藏右下网速
+        hideTime();    //xuameng隐藏右下系统时间
         ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) tvRightSettingLayout.getLayoutParams();
         if(countDownTimer6 != null) {
             countDownTimer6.cancel();
@@ -1646,6 +1632,8 @@ public class LivePlayActivity extends BaseActivity {
         if(tvRightSettingLayout.getVisibility() == View.VISIBLE) {
             tvRightSettingLayout.setVisibility(View.INVISIBLE);
             liveSettingGroupAdapter.setSelectedGroupIndex(-1);
+            showTime();  //XUAMENG显示右下时间
+            showNetSpeed();  //XUAMENG显示右下网速
 			if(mVideoView == null) return;
 			if(isVOD) {
 				if(!mVideoView.isPlaying()) {
@@ -1680,15 +1668,18 @@ public class LivePlayActivity extends BaseActivity {
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 mHideChannelListRunXu();
+                if (newState == mRightEpgList.SCROLL_STATE_IDLE) {
+                    isScrollingXu = false; // xuameng滚动完成后重置状态
+                }
             }
         });
         //电视
         mRightEpgList.setOnItemListener(new TvRecyclerView.OnItemListener() {
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
-                if(mRightEpgList.isScrolling() || mRightEpgList.isComputingLayout()) { //xuameng如果EPG正在滚动返回，解决BUG
-                    return;
-                } else epgListAdapter.setFocusedEpgIndex(-1);
+                if(!mRightEpgList.isScrolling() && !mRightEpgList.isComputingLayout()) { //xuameng如果EPG正在滚动返回，解决BUG
+                    epgListAdapter.setFocusedEpgIndex(-1);
+                }
             }
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
@@ -1732,54 +1723,23 @@ public class LivePlayActivity extends BaseActivity {
                     return;
                 }
                 String shiyiUrl = currentLiveChannelItem.getUrl();
-                if(now.compareTo(selectedData.startdateTime) < 0) {
-				}else if(hasCatchup || shiyiUrl.contains("PLTV/") || shiyiUrl.contains("TVOD/")){//xuameng判断直播源URL中有没有PLTV字符，有才可以时移
-					shiyiUrl = shiyiUrl.replaceAll("/PLTV/", "/TVOD/");
+                if(now.compareTo(selectedData.startdateTime) < 0) {} else if(shiyiUrl.indexOf("PLTV/") != -1) { //xuameng判断直播源URL中有没有PLTV字符，有才可以时移
                     mHideChannelListRun(); //xuameng点击EPG中的直播隐藏左菜单
 					if(mVideoView == null) return;
                     mVideoView.release();
                     shiyi_time = shiyiStartdate + "-" + shiyiEnddate;
                     isSHIYI = true;
-                    if(hasCatchup){
-                        String replace=catchup.get("replace").getAsString();
-                        String source=catchup.get("source").getAsString();
-                        String[] parts = replace.split(",");
-                        String left = parts.length > 0 ? parts[0].trim() : "";
-                        String right = parts.length > 1 ? parts[1].trim() : "";
-                        shiyiUrl = shiyiUrl.replaceAll(left, right);
-                        // 已知参数
-                        String startHHmm = selectedData.originStart.replace(":", "");
-                        String endHHmm = selectedData.originEnd.replace(":", "");
-                        // 正则表达式：匹配 ${(b)...} 或 ${(e)...}
-                        Pattern pattern = Pattern.compile("\\$\\{\\((b|e)\\)(.*?)\\}");
-                        Matcher matcher = pattern.matcher(source);
-                        Map<String, String> valueMap = new HashMap<>();
-                        valueMap.put("b", targetDate + "T" + startHHmm);
-                        valueMap.put("e", targetDate + "T" + endHHmm);
-                        StringBuffer result = new StringBuffer();
-                        while (matcher.find()) {
-                            String type = matcher.group(1); // 捕获 b 或 e
-                            String patternPart = matcher.group(2);
-                            // 生成替换值（如 "20231023T1500"）
-                            String replacement = valueMap.get(type);
-                            // 将 ${(b)yyyyMMdd'T'HHmm} 替换为 "20231023T1500"
-                            assert replacement != null;
-                            matcher.appendReplacement(result, replacement);
-                        }
-                        matcher.appendTail(result);
-                        LOG.i("echo-shiyiurl:"+shiyiUrl);
-                        if(shiyiUrl.endsWith("&"))shiyiUrl=shiyiUrl.substring(0, shiyiUrl.length() - 1);
-                        shiyiUrl += result.toString();
-                    }else {
+                    if(shiyiUrl.contains("/PLTV/")) {
                         if(shiyiUrl.indexOf("?") <= 0) {
+                            shiyiUrl = shiyiUrl.replaceAll("/PLTV/", "/TVOD/");
                             shiyiUrl += "?playseek=" + shiyi_time;
                         } else if(shiyiUrl.indexOf("playseek") > 0) {
                             shiyiUrl = shiyiUrl.replaceAll("playseek=(.*)", "playseek=" + shiyi_time);
                         } else {
                             shiyiUrl += "&playseek=" + shiyi_time;
                         }
+                        Log.d("PLTV播放地址", "playUrl   " + shiyiUrl);
                     }
-                    Log.d("PLTV播放地址", "playUrl   " + shiyiUrl);
                     playUrl = shiyiUrl;
                     mVideoView.setUrl(playUrl,liveWebHeader());
                     mVideoView.start();
@@ -1844,53 +1804,23 @@ public class LivePlayActivity extends BaseActivity {
                     return;
                 }
                 String shiyiUrl = currentLiveChannelItem.getUrl();
-                if(now.compareTo(selectedData.startdateTime) < 0) {
-				} else if(hasCatchup || shiyiUrl.contains("PLTV/") || shiyiUrl.contains("TVOD/")){ //xuameng判断直播源URL中有没有PLTV字符，有才可以时移
-					shiyiUrl = shiyiUrl.replaceAll("/PLTV/", "/TVOD/");
+                if(now.compareTo(selectedData.startdateTime) < 0) {} else if(shiyiUrl.indexOf("PLTV/") != -1) { //xuameng判断直播源URL中有没有PLTV字符，有才可以时移
                     mHideChannelListRun();
 					if(mVideoView == null) return;
                     mVideoView.release();
                     shiyi_time = shiyiStartdate + "-" + shiyiEnddate;
                     isSHIYI = true;
-					if(hasCatchup){
-                       String replace=catchup.get("replace").getAsString();
-                       String source=catchup.get("source").getAsString();
-                       String[] parts = replace.split(",");
-                       String left = parts.length > 0 ? parts[0].trim() : "";
-                       String right = parts.length > 1 ? parts[1].trim() : "";
-                       shiyiUrl = shiyiUrl.replaceAll(left, right);
-                        String startHHmm = selectedData.originStart.replace(":", "");
-                        String endHHmm = selectedData.originEnd.replace(":", "");
-                        // 正则表达式：匹配 ${(b)...} 或 ${(e)...}
-                        Pattern pattern = Pattern.compile("\\$\\{\\((b|e)\\)(.*?)\\}");
-                        Matcher matcher = pattern.matcher(source);
-                        Map<String, String> valueMap = new HashMap<>();
-                        valueMap.put("b", targetDate + "T" + startHHmm);
-                        valueMap.put("e", targetDate + "T" + endHHmm);
-                        StringBuffer result = new StringBuffer();
-                        while (matcher.find()) {
-                            String type = matcher.group(1); // 捕获 b 或 e
-                            String patternPart = matcher.group(2);
-                            // 生成替换值（如 "20231023T1500"）
-                            String replacement = valueMap.get(type);
-                            // 将 ${(b)yyyyMMdd'T'HHmm} 替换为 "20231023T1500"
-                            assert replacement != null;
-                            matcher.appendReplacement(result, replacement);
-                        }
-                        matcher.appendTail(result);
-                        LOG.i("echo-shiyiurl:"+shiyiUrl);
-                        if(shiyiUrl.endsWith("&"))shiyiUrl=shiyiUrl.substring(0, shiyiUrl.length() - 1);
-                        shiyiUrl += result.toString();
-                    }else {
+                    if(shiyiUrl.contains("/PLTV/")) {
                         if(shiyiUrl.indexOf("?") <= 0) {
+                            shiyiUrl = shiyiUrl.replaceAll("/PLTV/", "/TVOD/");
                             shiyiUrl += "?playseek=" + shiyi_time;
                         } else if(shiyiUrl.indexOf("playseek") > 0) {
                             shiyiUrl = shiyiUrl.replaceAll("playseek=(.*)", "playseek=" + shiyi_time);
                         } else {
                             shiyiUrl += "&playseek=" + shiyi_time;
-                        }                
+                        }
+                        Log.d("PLTV播放地址", "playUrl   " + shiyiUrl);
                     }
-					Log.d("PLTV播放地址", "playUrl   " + shiyiUrl);
                     playUrl = shiyiUrl;
 					if(liveWebHeader()!=null)LOG.i("echo-liveWebHeader :"+ liveWebHeader().toString());
                     mVideoView.setUrl(playUrl,liveWebHeader());
@@ -2329,6 +2259,10 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {				
                 selectChannelGroup(position, true, -1); //xuameng频道组
+				if (ChannelGroupPosition != position){  //xuameng判断是否第一次选择，如不是就不滚动了
+					ChannelGroupPosition = position;
+					isScrollingXu = false;
+				}
             }
             @Override
             public void onItemClick(TvRecyclerView parent, View itemView, int position) {
@@ -2343,6 +2277,10 @@ public class LivePlayActivity extends BaseActivity {
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 FastClickCheckUtil.check(view);
                 selectChannelGroup(position, false, -1);
+				if (ChannelGroupPosition != position){  //xuameng判断是否第一次选择，如不是就不滚动了
+					ChannelGroupPosition = position;
+					isScrollingXu = false;
+				}
             }
         });
     }
@@ -2384,7 +2322,18 @@ public class LivePlayActivity extends BaseActivity {
             }
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
+				if (ChannelPosition != position){    //xuameng判断是否第一次选择，如不是就不滚动了
+					ChannelPosition = position;
+					isScrollingXu = false;
+				}
                 if(position < 0) return;
+                int channelGroupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex();  //xuameng当前选定的频道组
+                if(position == getLiveChannels(channelGroupIndexXu).size()-1){    //xuameng判断是否是最后一个item
+                   itemView.setId(View.generateViewId());
+                   itemView.setNextFocusDownId(itemView.getId());    //xuameng不超出item
+                }else {
+                   itemView.setNextFocusDownId(View.NO_ID);  
+                }
                 liveChannelGroupAdapter.setFocusedGroupIndex(-1);
                 liveChannelItemAdapter.setFocusedChannelIndex(position);
                 liveChannelItemAdapter.setSelectedChannelIndex(position);
@@ -2403,6 +2352,10 @@ public class LivePlayActivity extends BaseActivity {
         liveChannelItemAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+				if (ChannelPosition != position){  //xuameng判断是否第一次选择，如不是就不滚动了
+					ChannelPosition = position;
+					isScrollingXu = false;
+				}
                 FastClickCheckUtil.check(view);
                 clickLiveChannel(position);
 				isTouch = false;
@@ -2568,28 +2521,16 @@ public class LivePlayActivity extends BaseActivity {
                 break;
 				case 5://多源切换   //xuameng新增
                 //TODO
-                if(position==Hawk.get(HawkConfig.LIVE_GROUP_INDEX, 0))break;
-                JsonArray live_groups=Hawk.get(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
-                JsonObject livesOBJ = live_groups.get(position).getAsJsonObject();
-                if(livesOBJ.has("type")){
-                    String type= livesOBJ.get("type").getAsString();
-                    if(!type.equals("0")){
-                        Toast.makeText(App.getInstance(), "聚汇影视提示您：暂不支持该直播类型！", Toast.LENGTH_SHORT).show();
-                        break;
-                    }
-                }else {
-                    if(!livesOBJ.has("channels")){
-                        Toast.makeText(App.getInstance(), "聚汇影视提示您：暂不支持该直播类型！", Toast.LENGTH_SHORT).show();
-                        break;
-                    }
-                }
-                liveSettingItemAdapter.selectItem(position, true, true);
-                Hawk.put(HawkConfig.LIVE_GROUP_INDEX, position);
-                ApiConfig.get().loadLiveApi(livesOBJ);
                 if (mVideoView != null) {
                     mVideoView.release();
                     mVideoView=null;
                 }
+                if(position==Hawk.get(HawkConfig.LIVE_GROUP_INDEX, 0))break;
+                JsonArray live_groups=Hawk.get(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
+                JsonObject livesOBJ = live_groups.get(position).getAsJsonObject();
+                liveSettingItemAdapter.selectItem(position, true, true);
+                Hawk.put(HawkConfig.LIVE_GROUP_INDEX, position);
+                ApiConfig.get().loadLiveApi(livesOBJ);
                 recreate();
                 return;
         }
@@ -2600,31 +2541,18 @@ public class LivePlayActivity extends BaseActivity {
         if (list.isEmpty()) {
            JsonArray live_groups=Hawk.get(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
            if(live_groups.size() > 1){
-              Toast.makeText(App.getInstance(), "聚汇影视提示您：频道列表为空！请重试！", Toast.LENGTH_SHORT).show();
-              Hawk.put(HawkConfig.LIVE_GROUP_INDEX,Hawk.get(HawkConfig.LIVE_GROUP_INDEX,0)+1);
-			  if(Hawk.get(HawkConfig.LIVE_GROUP_INDEX,0)>live_groups.size()-1){
-				  Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
-			  }
-			  mHandler.post(new Runnable() {
-               @Override
-			   public void run() {
-				  jumpActivity(HomeActivity.class);
-				  }
-			  });
-	
-			  return;
+            setDefaultLiveChannelList();
+			Toast.makeText(App.getInstance(), "聚汇影视提示您：直播列表为空！请切换线路！", Toast.LENGTH_SHORT).show();
+            return;
 		  }
             Toast.makeText(App.getInstance(), "聚汇影视提示您：频道列表为空！", Toast.LENGTH_SHORT).show();
             finish();
 			return;
         }
 
-		initLiveObj();
-
         if (list.size() == 1 && list.get(0).getGroupName().startsWith("http://127.0.0.1")) {
             loadProxyLives(list.get(0).getGroupName());
-        }
-        else {
+        }else {
             liveChannelGroupList.clear();
             liveChannelGroupList.addAll(list);
             showSuccess();
@@ -2637,8 +2565,14 @@ public class LivePlayActivity extends BaseActivity {
             url = new String(Base64.decode(parsedUrl.getQueryParameter("ext"), Base64.DEFAULT | Base64.URL_SAFE | Base64.NO_WRAP), "UTF-8");
         } catch (Throwable th) {
             if(!url.startsWith("http://127.0.0.1")){
-                Toast.makeText(App.getInstance(), "聚汇影视提示您：直播文件错误！", Toast.LENGTH_SHORT).show();
-                finish();
+				JsonArray live_groups=Hawk.get(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
+				if(live_groups.size() > 1){
+					setDefaultLiveChannelList();
+					Toast.makeText(App.getInstance(), "聚汇影视提示您：直播文件错误！请切换线路！", Toast.LENGTH_SHORT).show();
+				}else{
+					setDefaultLiveChannelList();
+					Toast.makeText(App.getInstance(), "聚汇影视提示您：直播文件错误！", Toast.LENGTH_SHORT).show();
+				}
                 return;
             }
         }
@@ -2655,40 +2589,27 @@ public class LivePlayActivity extends BaseActivity {
 
             @Override
             public void onSuccess(Response<String> response) {
-                JsonArray livesArray;
                 LinkedHashMap<String, LinkedHashMap<String, ArrayList<String>>> linkedHashMap = new LinkedHashMap<>();
                 TxtSubscribe.parse(linkedHashMap, response.body());
-                livesArray = TxtSubscribe.live2JsonArray(linkedHashMap);
+				JsonArray livesArray = TxtSubscribe.live2JsonArray(linkedHashMap);
 				JsonArray live_groups=Hawk.get(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
-
                 ApiConfig.get().loadLives(livesArray);
                 List<LiveChannelGroup> list = ApiConfig.get().getChannelGroupList();
-                if (list.isEmpty()) {
-					if(live_groups.size() > 1){
-						Toast.makeText(App.getInstance(), "聚汇影视提示您：频道列表为空！请重试！", Toast.LENGTH_SHORT).show();
-						Hawk.put(HawkConfig.LIVE_GROUP_INDEX,Hawk.get(HawkConfig.LIVE_GROUP_INDEX,0)+1);
-						if(Hawk.get(HawkConfig.LIVE_GROUP_INDEX,0)>live_groups.size()-1){
-						Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
-						}
-						mHandler.post(new Runnable() {
-							@Override
-							public void run() {
-								jumpActivity(HomeActivity.class);
-							}
-						});
-						
-					}else{
-						Toast.makeText(App.getInstance(), "聚汇影视提示您：频道列表为空！", Toast.LENGTH_SHORT).show();
-						mHandler.post(new Runnable() {
-						@Override
-							public void run() {
-								jumpActivity(HomeActivity.class);
-							}
-						});
-						
-					}
-					return;
-                }
+                    if (list.isEmpty()) {
+                        mHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+								if(live_groups.size() > 1){
+									setDefaultLiveChannelList();
+									Toast.makeText(App.getInstance(), "聚汇影视提示您：直播列表为空！请切换线路！", Toast.LENGTH_SHORT).show();
+								}else{
+									setDefaultLiveChannelList();
+									Toast.makeText(App.getInstance(), "聚汇影视提示您：直播列表为空！", Toast.LENGTH_SHORT).show();
+								}
+                            }
+                        });
+                        return;
+                    }
 
                 liveChannelGroupList.clear();
                 liveChannelGroupList.addAll(list);
@@ -2703,23 +2624,19 @@ public class LivePlayActivity extends BaseActivity {
             }
             @Override
             public void onError(Response<String> response) {
-                JsonArray live_groups=Hawk.get(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
-				if(live_groups.size() > 1){
-					Toast.makeText(App.getInstance(), "聚汇影视提示您：直播源加载错误，请重试！", Toast.LENGTH_SHORT).show();
-					Hawk.put(HawkConfig.LIVE_GROUP_INDEX,Hawk.get(HawkConfig.LIVE_GROUP_INDEX,0)+1);
-					if(Hawk.get(HawkConfig.LIVE_GROUP_INDEX,0)>live_groups.size()-1){
-                    Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
-					}
-				}else{
-					Toast.makeText(App.getInstance(), "聚汇影视提示您：直播源加载错误！", Toast.LENGTH_SHORT).show();
-				}
+				JsonArray live_groups=Hawk.get(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {
-                        jumpActivity(HomeActivity.class);
+						if(live_groups.size() > 1){
+                            setDefaultLiveChannelList();
+						    Toast.makeText(App.getInstance(), "聚汇影视提示您：直播列表获取错误！请切换线路！", Toast.LENGTH_SHORT).show();
+						}else{
+				            setDefaultLiveChannelList();
+						    Toast.makeText(App.getInstance(), "聚汇影视提示您：直播列表获取错误！", Toast.LENGTH_SHORT).show();
+						}
                     }
                 });
-				
             }
         });
     }
@@ -2759,14 +2676,23 @@ public class LivePlayActivity extends BaseActivity {
     }
     private void initLiveSettingGroupList() {      //xuameng
         List<LiveChannelGroup> listxu = ApiConfig.get().getChannelGroupList();
-        if (!listxu.isEmpty()) {
+		JsonArray live_groups=Hawk.get(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
         liveSettingGroupList=ApiConfig.get().getLiveSettingGroupList();
         liveSettingGroupList.get(3).getLiveSettingItems().get(Hawk.get(HawkConfig.LIVE_CONNECT_TIMEOUT, 1)).setItemSelected(true);
         liveSettingGroupList.get(4).getLiveSettingItems().get(0).setItemSelected(Hawk.get(HawkConfig.LIVE_SHOW_TIME, false));
         liveSettingGroupList.get(4).getLiveSettingItems().get(1).setItemSelected(Hawk.get(HawkConfig.LIVE_SHOW_NET_SPEED, false));
         liveSettingGroupList.get(4).getLiveSettingItems().get(2).setItemSelected(Hawk.get(HawkConfig.LIVE_CHANNEL_REVERSE, false));
         liveSettingGroupList.get(4).getLiveSettingItems().get(3).setItemSelected(Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false));
-        liveSettingGroupList.get(5).getLiveSettingItems().get(Hawk.get(HawkConfig.LIVE_GROUP_INDEX, 0)).setItemSelected(true);   //xuameng新增 换源
+        if (!listxu.isEmpty()) {
+		    if (live_groups != null) {  
+                for (JsonElement element : live_groups) {  
+                    if (element.isJsonNull()) {  
+				        Toast.makeText(mContext, "聚汇直播提示您：直播列表读取有错误！请检查JSON中lives的配置！", Toast.LENGTH_SHORT).show();
+			            return;
+                    }  
+                }  
+		    }
+            liveSettingGroupList.get(5).getLiveSettingItems().get(Hawk.get(HawkConfig.LIVE_GROUP_INDEX, 0)).setItemSelected(true);   //xuameng新增 换源
 		}
     }
     private void loadCurrentSourceList() {
@@ -2788,6 +2714,12 @@ public class LivePlayActivity extends BaseActivity {
             mHandler.removeCallbacks(mUpdateTimeRun);
             tvTime.setVisibility(View.GONE);
         }
+    }
+    void hideTime() { //xuameng右下角系统时间
+		if(tvTime.getVisibility() == View.VISIBLE) {
+            mHandler.removeCallbacks(mUpdateTimeRun);
+            tvTime.setVisibility(View.GONE);
+		}
     }
     private Runnable mUpdateTimeRun = new Runnable() {
         @Override
@@ -2816,6 +2748,9 @@ public class LivePlayActivity extends BaseActivity {
     void hideTimeXu() { //xuameng的系统时间
         mHandler.removeCallbacks(mUpdateTimeRunXu);
         tvTime_xu.setVisibility(View.GONE);
+		if(tvRightSettingLayout.getVisibility() == View.VISIBLE) {
+			return;
+		}
         if(Hawk.get(HawkConfig.LIVE_SHOW_TIME, false)) {
             mHandler.post(mUpdateTimeRun);
             tvTime.setVisibility(View.VISIBLE);
@@ -2833,6 +2768,12 @@ public class LivePlayActivity extends BaseActivity {
             tvNetSpeed.setVisibility(View.GONE);
         }
     }
+    private void hideNetSpeed() {  //xuameng右下角网速
+		if(tvNetSpeed.getVisibility() == View.VISIBLE) {
+          mHandler.removeCallbacks(mUpdateNetSpeedRun);
+          tvNetSpeed.setVisibility(View.GONE);
+		}
+    }
     private Runnable mUpdateNetSpeedRun = new Runnable() {
         @Override
         public void run() {
@@ -2843,11 +2784,14 @@ public class LivePlayActivity extends BaseActivity {
         }
     };
     private void showNetSpeedXu() {
-        tv_right_top_tipnetspeed.setVisibility(View.VISIBLE); //xuameng右上网络速度，这行无所谓
+        tv_right_top_tipnetspeed.setVisibility(View.VISIBLE); //xuameng右上网络速度
         tvNetSpeed.setVisibility(View.GONE);
     }
     private void hideNetSpeedXu() {
-        tv_right_top_tipnetspeed.setVisibility(View.GONE); //xuameng右上网络速度，这行无所谓
+        tv_right_top_tipnetspeed.setVisibility(View.GONE); //xuameng右上网络速度
+		if(tvRightSettingLayout.getVisibility() == View.VISIBLE) {
+			return;
+		}
         if(Hawk.get(HawkConfig.LIVE_SHOW_NET_SPEED, false)) {
             tvNetSpeed.setVisibility(View.VISIBLE);
         } else {
@@ -3348,5 +3292,34 @@ public class LivePlayActivity extends BaseActivity {
         simSeekPosition = position;
         sBar.setProgress(simSeekPosition);
         tv_currentpos.setText(durationToString(simSeekPosition));
+    }
+    /**
+     * 当播放列表为空或加载失败时，设置一个默认的播放列表，保证播放界面不会崩溃
+     */
+    private void setDefaultLiveChannelList() {
+        liveChannelGroupList.clear();
+        // 创建默认直播分组
+        LiveChannelGroup defaultGroup = new LiveChannelGroup();
+        defaultGroup.setGroupIndex(0);
+        defaultGroup.setGroupName("聚汇直播");
+        defaultGroup.setGroupPassword("");
+        LiveChannelItem defaultChannel = new LiveChannelItem();
+        defaultChannel.setChannelName("暂无频道");
+        defaultChannel.setChannelIndex(0);
+        defaultChannel.setChannelNum(1);
+        ArrayList<String> defaultSourceNames = new ArrayList<>();
+        ArrayList<String> defaultSourceUrls = new ArrayList<>();
+        defaultSourceNames.add("默认源1");
+        defaultSourceUrls.add("http://default.play.url/stream");
+        defaultChannel.setChannelSourceNames(defaultSourceNames);
+        defaultChannel.setChannelUrls(defaultSourceUrls);
+        // 将默认频道添加到分组内
+        ArrayList<LiveChannelItem> channels = new ArrayList<>();
+        channels.add(defaultChannel);
+        defaultGroup.setLiveChannels(channels);
+        // 添加分组到全局列表
+        liveChannelGroupList.add(defaultGroup);
+        showSuccess();
+        initLiveState();
     }
 }
