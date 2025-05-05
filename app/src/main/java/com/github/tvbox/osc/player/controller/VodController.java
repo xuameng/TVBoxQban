@@ -1836,7 +1836,7 @@ public class VodController extends BaseController {
     @Override
     public boolean onSingleTapConfirmed(MotionEvent e) {
         myHandle.removeCallbacks(myRunnable);
-        if (mBottomRoot.getVisibility() == View.GONE && !isDisplay && !isAnimation) {
+        if (mBottomRoot.getVisibility() == View.GONE && !isDisplay) {
             showBottom();
             // 闲置计时关闭
             myHandle.postDelayed(myRunnable, myHandleSeconds);
@@ -1892,9 +1892,9 @@ public class VodController extends BaseController {
             isClickBackBtn = false;
             if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME) > 350) {                                //xuameng  屏幕上的返回键退出
             DOUBLE_CLICK_TIME = System.currentTimeMillis();
-            mBottomRoot.setVisibility(GONE);	        //动画结束后隐藏下菜单
-            mTopRoot1.setVisibility(GONE);	            //动画结束后隐藏上菜单
-            mTopRoot2.setVisibility(GONE);              //动画结束后隐藏上菜单
+			if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
+                hideBottom();
+			}
             mPlayPauseTimexu.setVisibility(GONE);       //xuameng隐藏上面时间
             mPlayTitle.setVisibility(GONE);             //xuameng隐藏上面视频名称
             backBtn.setVisibility(INVISIBLE);           //返回键隐藏菜单
@@ -1906,10 +1906,6 @@ public class VodController extends BaseController {
         if (super.onBackPressed()) {                                                                      //xuameng返回退出
 			iv_circle_bg.setVisibility(GONE);  //xuameng音乐播放时图标
 			MxuamengMusic.setVisibility(GONE);  //xuameng播放音乐背景
-			mHandler.removeCallbacks(myRunnable2);
-			mHandler.removeCallbacks(xuRunnable);
-			mHandler.removeCallbacks(myRunnableMusic);	
-			mHandler.removeCallbacks(myRunnableXu);
             return true;
         }
         if (isBottomVisible() && (System.currentTimeMillis() - DOUBLE_CLICK_TIME > 350)) {			      //xuameng按返回键退出
