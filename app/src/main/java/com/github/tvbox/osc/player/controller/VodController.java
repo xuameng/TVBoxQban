@@ -1893,7 +1893,7 @@ public class VodController extends BaseController {
             if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME) > 350) {                                //xuameng  屏幕上的返回键退出
             DOUBLE_CLICK_TIME = System.currentTimeMillis();
 			if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
-                hideBottom();
+                hideBottomXu();
 			}
             mPlayPauseTimexu.setVisibility(GONE);       //xuameng隐藏上面时间
             mPlayTitle.setVisibility(GONE);             //xuameng隐藏上面视频名称
