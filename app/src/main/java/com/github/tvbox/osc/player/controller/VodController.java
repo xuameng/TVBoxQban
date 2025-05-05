@@ -1836,6 +1836,9 @@ public class VodController extends BaseController {
     @Override
     public boolean onSingleTapConfirmed(MotionEvent e) {
         myHandle.removeCallbacks(myRunnable);
+		if (isClickBackBtn) {
+			return false;
+		}
         if (mBottomRoot.getVisibility() == View.GONE && !isDisplay) {
             showBottom();
             // 闲置计时关闭
@@ -1889,12 +1892,17 @@ public class VodController extends BaseController {
 			}
 			DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
         if (isClickBackBtn) {
-            isClickBackBtn = false;
+			new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                  isClickBackBtn = false;
+                }
+            }, 350);
             if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME) > 350) {                                //xuameng  屏幕上的返回键退出
             DOUBLE_CLICK_TIME = System.currentTimeMillis();
-			if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
-                hideBottomXu();
-			}
+            mBottomRoot.setVisibility(GONE);	        //动画结束后隐藏下菜单
+            mTopRoot1.setVisibility(GONE);	            //动画结束后隐藏上菜单
+            mTopRoot2.setVisibility(GONE);              //动画结束后隐藏上菜单
             mPlayPauseTimexu.setVisibility(GONE);       //xuameng隐藏上面时间
             mPlayTitle.setVisibility(GONE);             //xuameng隐藏上面视频名称
             backBtn.setVisibility(INVISIBLE);           //返回键隐藏菜单
@@ -1906,6 +1914,10 @@ public class VodController extends BaseController {
         if (super.onBackPressed()) {                                                                      //xuameng返回退出
 			iv_circle_bg.setVisibility(GONE);  //xuameng音乐播放时图标
 			MxuamengMusic.setVisibility(GONE);  //xuameng播放音乐背景
+			mHandler.removeCallbacks(myRunnable2);
+			mHandler.removeCallbacks(xuRunnable);
+			mHandler.removeCallbacks(myRunnableMusic);	
+			mHandler.removeCallbacks(myRunnableXu);
             return true;
         }
         if (isBottomVisible() && (System.currentTimeMillis() - DOUBLE_CLICK_TIME > 350)) {			      //xuameng按返回键退出
