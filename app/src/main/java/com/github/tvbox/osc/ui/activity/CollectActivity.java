@@ -120,6 +120,7 @@ public class CollectActivity extends BaseActivity {
                         Bundle bundle = new Bundle();
                         bundle.putString("id", vodInfo.vodId);
                         bundle.putString("sourceKey", vodInfo.sourceKey);
+						bundle.putString("picture", vodInfo.pic);
                         SourceBean sourceBean = ApiConfig.get().getSource(vodInfo.sourceKey);
                         if(sourceBean!=null){
                             jumpActivity(DetailActivity.class, bundle);
