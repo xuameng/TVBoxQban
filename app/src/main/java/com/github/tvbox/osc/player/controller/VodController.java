@@ -109,6 +109,8 @@ public class VodController extends BaseController {
                     }
 
                     case 1005: { // 隐藏底部菜单Xu
+						backBtn.setFocusable(false);
+                        backBtn.setVisibility(INVISIBLE);           //返回键隐藏菜单
 		                ObjectAnimator animator3 = ObjectAnimator.ofFloat(mBottomRoot, "translationY", -0,700);				//xuameng向下划出屏外
                         animator3.setDuration(300);				   //xuameng动画菜单        
                         animator3.addListener(new AnimatorListenerAdapter() {
@@ -133,8 +135,7 @@ public class VodController extends BaseController {
 		                animator4.start();                          //XUAMENG隐藏上面菜单1结束
 						ObjectAnimator animator5 = ObjectAnimator.ofFloat(mTopRoot2, "translationY", 0,-700);				//xuameng向上划出屏外
                         animator5.setDuration(300);			
-		                animator5.start();                          //XUAMENG隐藏上面菜单2结束
-                        backBtn.setVisibility(INVISIBLE);           //返回键隐藏菜单						
+		                animator5.start();                          //XUAMENG隐藏上面菜单2结束						
                         break;
                     }
 
@@ -166,6 +167,7 @@ public class VodController extends BaseController {
                         animator2.start();						//xuameng动画菜单
                         mxuPlay.requestFocus();				    //底部菜单默认焦点为播放
                         backBtn.setVisibility(ScreenUtils.isTv(context) ? INVISIBLE : VISIBLE);
+						backBtn.setFocusable(true);
                         showLockView();
 						mPlayPauseTimexu.setVisibility(GONE);   //xuameng隐藏上面视频名称
                         mPlayTitle.setVisibility(GONE);         //xuameng隐藏上面时间
@@ -175,6 +177,8 @@ public class VodController extends BaseController {
                         break;
                     }
                     case 1003: { // 隐藏底部菜单
+						backBtn.setFocusable(false);
+                        backBtn.setVisibility(INVISIBLE);           //返回键隐藏菜单
 		                ObjectAnimator animator3 = ObjectAnimator.ofFloat(mBottomRoot, "translationY", -0,700);				//xuameng向下划出屏外
                         animator3.setDuration(300);				   //xuameng动画菜单        
                         animator3.addListener(new AnimatorListenerAdapter() {
@@ -200,7 +204,6 @@ public class VodController extends BaseController {
 						ObjectAnimator animator5 = ObjectAnimator.ofFloat(mTopRoot2, "translationY", 0,-700);				//xuameng向上划出屏外
                         animator5.setDuration(300);			
 		                animator5.start();                          //XUAMENG隐藏上面菜单2结束
-                        backBtn.setVisibility(INVISIBLE);           //返回键隐藏菜单
 						if (mControlWrapper.isPlaying()){    //xuameng音乐播放时图标判断
 						}else{
 						mPlayTitle.setVisibility(VISIBLE);          //xuameng显示上面节目名称
