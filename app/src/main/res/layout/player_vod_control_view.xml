@@ -613,6 +613,7 @@
         android:layout_width="@dimen/vs_80"
         android:layout_height="@dimen/vs_80"
         android:src="@drawable/icon_back"
+		android:background="@drawable/button_dialog_vod"
         android:paddingHorizontal="@dimen/vs_20"/>
     <ImageView
         android:layout_gravity="center|right"
@@ -625,6 +626,7 @@
         android:layout_width="@dimen/vs_80"
         android:layout_height="@dimen/vs_80"
         android:src="@drawable/icon_unlock"
+		android:background="@drawable/button_dialog_vod"
         android:paddingHorizontal="@dimen/vs_20"/>
     <ImageView
         android:layout_gravity="center"
