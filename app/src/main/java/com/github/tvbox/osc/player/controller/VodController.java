@@ -1835,10 +1835,10 @@ public class VodController extends BaseController {
 
     @Override
     public boolean onSingleTapConfirmed(MotionEvent e) {
-        myHandle.removeCallbacks(myRunnable);
 		if (isClickBackBtn) {
 			return false;
 		}
+        myHandle.removeCallbacks(myRunnable);
         if (mBottomRoot.getVisibility() == View.GONE && !isDisplay) {
             showBottom();
             // 闲置计时关闭
