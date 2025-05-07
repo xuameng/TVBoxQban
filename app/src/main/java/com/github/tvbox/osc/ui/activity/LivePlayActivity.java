@@ -2708,8 +2708,8 @@ public class LivePlayActivity extends BaseActivity {
     private void initLiveSettingGroupList() {      //xuameng
         List<LiveChannelGroup> listxu = ApiConfig.get().getChannelGroupList();
         JsonArray live_groups=Hawk.get(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
-        if (!listxu.isEmpty()) {
         liveSettingGroupList=ApiConfig.get().getLiveSettingGroupList();
+        if (!listxu.isEmpty()) {
         liveSettingGroupList.get(3).getLiveSettingItems().get(Hawk.get(HawkConfig.LIVE_CONNECT_TIMEOUT, 1)).setItemSelected(true);
         liveSettingGroupList.get(4).getLiveSettingItems().get(0).setItemSelected(Hawk.get(HawkConfig.LIVE_SHOW_TIME, false));
         liveSettingGroupList.get(4).getLiveSettingItems().get(1).setItemSelected(Hawk.get(HawkConfig.LIVE_SHOW_NET_SPEED, false));
@@ -2723,7 +2723,7 @@ public class LivePlayActivity extends BaseActivity {
                     }  
                 }  
             }
-            liveSettingGroupList.get(5).getLiveSettingItems().get(Hawk.get(HawkConfig.LIVE_GROUP_INDEX, 0)).setItemSelected(true);   //xuameng新增 换源
+        liveSettingGroupList.get(5).getLiveSettingItems().get(Hawk.get(HawkConfig.LIVE_GROUP_INDEX, 0)).setItemSelected(true);   //xuameng新增 换源
         }
     }
     private void loadCurrentSourceList() {
