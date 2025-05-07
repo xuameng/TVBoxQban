@@ -503,7 +503,6 @@ public class ApiConfig {
             if(infoJson.has("lives")){
                 JsonArray lives_groups=infoJson.get("lives").getAsJsonArray();
 				if (lives_groups.size() > 0) {  
-                    initLiveSettings();
 					int live_group_index=Hawk.get(HawkConfig.LIVE_GROUP_INDEX,0);
 					if(live_group_index>lives_groups.size()-1){           //xuameng 重要BUG
 						Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
@@ -725,7 +724,6 @@ public class ApiConfig {
         if(infoJson.has("lives")){
             JsonArray lives_groups=infoJson.get("lives").getAsJsonArray();
 				if (lives_groups.size() > 0) { 
-				initLiveSettings();
 				int live_group_index=Hawk.get(HawkConfig.LIVE_GROUP_INDEX,0);
 					if(live_group_index>lives_groups.size()-1){           //xuameng 重要BUG
 						Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
