@@ -792,12 +792,6 @@ public class ModelSettingFragment extends BaseLazyFragment {
     public void onDestroyView() {
 		if (HawkConfig.isGetWp){
 			OkGo.getInstance().cancelTag("xuameng");   //xuameng打断下载
-            File wp = new File(requireActivity().getFilesDir().getAbsolutePath() + "/wp");
-            if (wp.exists()){
-                wp.delete();
-			}
-			((BaseActivity) requireActivity()).changeWallpaper(true);
-			Toast.makeText(mContext, "壁纸更换被打断！壁纸已重置！", Toast.LENGTH_LONG).show();
 		}
         super.onDestroyView();
         SettingActivity.callback = null;
