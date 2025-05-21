@@ -792,7 +792,6 @@ public class ModelSettingFragment extends BaseLazyFragment {
     public void onDestroyView() {
 		if (HawkConfig.isGetWp){
 			OkGo.getInstance().cancelTag("xuameng");   //xuameng打断下载
-			HawkConfig.isGetWp = false;  //xuameng下载壁纸
             File wp = new File(requireActivity().getFilesDir().getAbsolutePath() + "/wp");
             if (wp.exists()){
                 wp.delete();
