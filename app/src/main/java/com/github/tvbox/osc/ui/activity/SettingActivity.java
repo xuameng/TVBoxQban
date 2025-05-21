@@ -188,10 +188,11 @@ public class SettingActivity extends BaseActivity {
             AppManager.getInstance().finishAllActivity();
             jumpActivity(HomeActivity.class);
 			}
-			else if (HawkConfig.ISrestore){
+			else if (HawkConfig.ISrestore || HawkConfig.isGetWp){    //xuameng下载壁纸
             AppManager.getInstance().finishAllActivity();
             jumpActivity(HomeActivity.class);
 			HawkConfig.ISrestore = false;  //xuameng恢复成功,请重启应用
+			HawkConfig.isGetWp = false;  //xuameng下载壁纸
 			}
             else if ((homeSourceKey != null && !homeSourceKey.equals(Hawk.get(HawkConfig.HOME_API, "")))  || homeRec != Hawk.get(HawkConfig.HOME_REC, 0)) {
                 jumpActivity(HomeActivity.class, createBundle());
