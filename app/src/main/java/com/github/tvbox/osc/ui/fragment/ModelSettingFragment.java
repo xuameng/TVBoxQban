@@ -790,8 +790,6 @@ public class ModelSettingFragment extends BaseLazyFragment {
 
     @Override
     public void onDestroyView() {
-        super.onDestroyView();
-        SettingActivity.callback = null;
 		if (HawkConfig.isGetWp){
 			OkGo.getInstance().cancelTag("xuameng");   //xuameng打断下载
 			HawkConfig.isGetWp = false;  //xuameng下载壁纸
@@ -801,6 +799,8 @@ public class ModelSettingFragment extends BaseLazyFragment {
 			}
 			Toast.makeText(mContext, "壁纸更换被打断！壁纸已重置！", Toast.LENGTH_LONG).show();
 		}
+        super.onDestroyView();
+        SettingActivity.callback = null;
     }
 
     String getHomeRecName(int type) {
