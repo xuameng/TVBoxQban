@@ -86,7 +86,6 @@ public class ModelSettingFragment extends BaseLazyFragment {
     private TextView tvRecStyleText;
     private TextView tvIjkCachePlay;
 	private SelectDialog<SourceBean> mSiteSwitchDialog;
-	private boolean isGetWp = false; //xuameng下载壁纸
 
 
     public static ModelSettingFragment newInstance() {
@@ -210,21 +209,21 @@ public class ModelSettingFragment extends BaseLazyFragment {
             public void onClick(View v) {
                 FastClickCheckUtil.check(v);
                 if (!ApiConfig.get().wallpaper.isEmpty()){
-				isGetWp = true;  //xuameng下载壁纸
+				HawkConfig.isGetWp = true;  //xuameng下载壁纸
 	            Toast.makeText(mContext, "壁纸更换中！", Toast.LENGTH_SHORT).show();   //xuameng
                     OkGo.<File>get(ApiConfig.get().wallpaper).tag("xuameng").execute(new FileCallback(requireActivity().getFilesDir().getAbsolutePath(), "wp") {  //xuameng增加tag以便打断下载
                         @Override
                         public void onSuccess(Response<File> response) {
-							if (isGetWp){
+							if (HawkConfig.isGetWp){
 							   ((BaseActivity) requireActivity()).changeWallpaper(true);
-							   isGetWp = false;  //xuameng下载壁纸
+							   HawkConfig.isGetWp = false;  //xuameng下载壁纸
 							}
                         }
 
                         @Override
                         public void onError(Response<File> response) {
                             super.onError(response);
-							isGetWp = false;  //xuameng下载壁纸
+							HawkConfig.isGetWp = false;  //xuameng下载壁纸
                         }
 
                         @Override
@@ -793,21 +792,14 @@ public class ModelSettingFragment extends BaseLazyFragment {
     public void onDestroyView() {
         super.onDestroyView();
         SettingActivity.callback = null;
-		if (isGetWp){
+		if (HawkConfig.isGetWp){
 			OkGo.getInstance().cancelTag("xuameng");   //xuameng打断下载
-			isGetWp = false;  //xuameng下载壁纸
+			HawkConfig.isGetWp = false;  //xuameng下载壁纸
             File wp = new File(requireActivity().getFilesDir().getAbsolutePath() + "/wp");
             if (wp.exists()){
                 wp.delete();
 			}
-            ((BaseActivity) requireActivity()).changeWallpaper(true);
 			Toast.makeText(mContext, "壁纸更换被打断！壁纸已重置！", Toast.LENGTH_LONG).show();
-            Intent intent =new Intent(mContext, HomeActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            Bundle bundle = new Bundle();
-            bundle.putBoolean("useCache", true);
-            intent.putExtras(bundle);
-            startActivity(intent);
 		}
     }
 
