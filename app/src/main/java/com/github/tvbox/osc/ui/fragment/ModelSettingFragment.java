@@ -209,8 +209,8 @@ public class ModelSettingFragment extends BaseLazyFragment {
             @Override
             public void onClick(View v) {
                 FastClickCheckUtil.check(v);
+                if (!ApiConfig.get().wallpaper.isEmpty()){
 				isGetWp = true;  //xuameng下载壁纸
-                if (!ApiConfig.get().wallpaper.isEmpty())
 	            Toast.makeText(mContext, "壁纸更换中！", Toast.LENGTH_SHORT).show();   //xuameng
                     OkGo.<File>get(ApiConfig.get().wallpaper).tag("xuameng").execute(new FileCallback(requireActivity().getFilesDir().getAbsolutePath(), "wp") {  //xuameng增加tag以便打断下载
                         @Override
@@ -232,6 +232,9 @@ public class ModelSettingFragment extends BaseLazyFragment {
                             super.downloadProgress(progress);
                         }
                     });
+				}else{
+					Toast.makeText(mContext, "壁纸站点未配置！", Toast.LENGTH_SHORT).show();   //xuameng
+				}
             }
         });
         findViewById(R.id.llWpRecovery).setOnClickListener(new View.OnClickListener() {
@@ -799,6 +802,12 @@ public class ModelSettingFragment extends BaseLazyFragment {
 			}
             ((BaseActivity) requireActivity()).changeWallpaper(true);
 			Toast.makeText(mContext, "壁纸更换被打断！壁纸已重置！", Toast.LENGTH_LONG).show();
+            Intent intent =new Intent(mContext, HomeActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            Bundle bundle = new Bundle();
+            bundle.putBoolean("useCache", true);
+            intent.putExtras(bundle);
+            startActivity(intent);
 		}
     }
 
