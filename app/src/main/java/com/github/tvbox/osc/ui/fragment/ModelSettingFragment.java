@@ -209,13 +209,15 @@ public class ModelSettingFragment extends BaseLazyFragment {
             @Override
             public void onClick(View v) {
                 FastClickCheckUtil.check(v);
+				isGetWp = true;  //xuameng下载壁纸
                 if (!ApiConfig.get().wallpaper.isEmpty())
 	            Toast.makeText(mContext, "壁纸更换中！", Toast.LENGTH_SHORT).show();   //xuameng
                     OkGo.<File>get(ApiConfig.get().wallpaper).tag("xuameng").execute(new FileCallback(requireActivity().getFilesDir().getAbsolutePath(), "wp") {  //xuameng增加tag以便打断下载
                         @Override
                         public void onSuccess(Response<File> response) {
-                            ((BaseActivity) requireActivity()).changeWallpaper(true);
-							isGetWp = false;
+							if (isGetWp){
+							   ((BaseActivity) requireActivity()).changeWallpaper(true);
+							}
                         }
 
                         @Override
@@ -226,7 +228,6 @@ public class ModelSettingFragment extends BaseLazyFragment {
                         @Override
                         public void downloadProgress(Progress progress) {
                             super.downloadProgress(progress);
-							isGetWp = true;
                         }
                     });
             }
@@ -787,14 +788,8 @@ public class ModelSettingFragment extends BaseLazyFragment {
     public void onDestroyView() {
         super.onDestroyView();
         SettingActivity.callback = null;
-		if (isGetWp){
-			OkGo.getInstance().cancelTag("xuameng");   //xuameng打断下载
-            File wp = new File(requireActivity().getFilesDir().getAbsolutePath() + "/wp");
-            if (wp.exists()){
-                wp.delete();
-			}
-            ((BaseActivity) requireActivity()).changeWallpaper(true);
-			Toast.makeText(mContext, "壁纸更换被打断！壁纸已重置！", Toast.LENGTH_LONG).show();
+		isGetWp = false;  //xuameng下载壁纸
+		OkGo.getInstance().cancelTag("xuameng");   //xuameng打断下载
 		}
     }
 
