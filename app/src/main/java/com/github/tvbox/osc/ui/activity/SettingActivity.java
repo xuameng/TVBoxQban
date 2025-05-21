@@ -200,14 +200,9 @@ public class SettingActivity extends BaseActivity {
                     wp.delete();
 			    }
 			    changeWallpaper(true);
+                AppManager.getInstance().finishAllActivity();
+                jumpActivity(HomeActivity.class);
 			    HawkConfig.isGetWp = false;  //xuameng下载壁纸
-			    new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                    AppManager.getInstance().finishAllActivity();
-                    jumpActivity(HomeActivity.class);
-                    }
-                }, 350);
 			}
             else if ((homeSourceKey != null && !homeSourceKey.equals(Hawk.get(HawkConfig.HOME_API, "")))  || homeRec != Hawk.get(HawkConfig.HOME_REC, 0)) {
                 jumpActivity(HomeActivity.class, createBundle());
