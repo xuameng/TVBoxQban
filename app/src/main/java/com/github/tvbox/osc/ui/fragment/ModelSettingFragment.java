@@ -210,7 +210,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
                 FastClickCheckUtil.check(v);
                 if (!ApiConfig.get().wallpaper.isEmpty())
 	            Toast.makeText(mContext, "壁纸更换中！", Toast.LENGTH_SHORT).show();   //xuameng
-                    OkGo.<File>get(ApiConfig.get().wallpaper).execute(new FileCallback(requireActivity().getFilesDir().getAbsolutePath(), "wp") {
+                    OkGo.<File>get(ApiConfig.get().wallpaper).tag("xuameng").execute(new FileCallback(requireActivity().getFilesDir().getAbsolutePath(), "wp") {
                         @Override
                         public void onSuccess(Response<File> response) {
                             ((BaseActivity) requireActivity()).changeWallpaper(true);
@@ -783,7 +783,8 @@ public class ModelSettingFragment extends BaseLazyFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        SettingActivity.callback = null;		
+        SettingActivity.callback = null;
+		OkGo.getInstance().cancelTag("xuameng");
     }
 
     String getHomeRecName(int type) {
