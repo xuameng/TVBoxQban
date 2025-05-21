@@ -790,7 +790,6 @@ public class ModelSettingFragment extends BaseLazyFragment {
         SettingActivity.callback = null;
 		isGetWp = false;  //xuameng下载壁纸
 		OkGo.getInstance().cancelTag("xuameng");   //xuameng打断下载
-		}
     }
 
     String getHomeRecName(int type) {
