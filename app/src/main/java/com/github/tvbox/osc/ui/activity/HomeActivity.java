@@ -598,7 +598,7 @@ public class HomeActivity extends BaseActivity {
     @Override
     protected void onResume() {
 		if (HawkConfig.isGetWp){   //xuameng下载壁纸
-			((BaseActivity) requireActivity()).changeWallpaper(true);
+			changeWallpaper(true);
 		}
         super.onResume();
         mHandler.post(mRunnable);
