@@ -86,6 +86,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
     private TextView tvRecStyleText;
     private TextView tvIjkCachePlay;
 	private SelectDialog<SourceBean> mSiteSwitchDialog;
+	private boolean isGetWp = false; //xuameng下载壁纸
 
 
     public static ModelSettingFragment newInstance() {
@@ -210,10 +211,11 @@ public class ModelSettingFragment extends BaseLazyFragment {
                 FastClickCheckUtil.check(v);
                 if (!ApiConfig.get().wallpaper.isEmpty())
 	            Toast.makeText(mContext, "壁纸更换中！", Toast.LENGTH_SHORT).show();   //xuameng
-                    OkGo.<File>get(ApiConfig.get().wallpaper).tag("xuameng").execute(new FileCallback(requireActivity().getFilesDir().getAbsolutePath(), "wp") {
+                    OkGo.<File>get(ApiConfig.get().wallpaper).tag("xuameng").execute(new FileCallback(requireActivity().getFilesDir().getAbsolutePath(), "wp") {  //xuameng增加tag以便打断下载
                         @Override
                         public void onSuccess(Response<File> response) {
                             ((BaseActivity) requireActivity()).changeWallpaper(true);
+							isGetWp = false;
                         }
 
                         @Override
@@ -224,6 +226,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
                         @Override
                         public void downloadProgress(Progress progress) {
                             super.downloadProgress(progress);
+							isGetWp = true;
                         }
                     });
             }
@@ -784,7 +787,15 @@ public class ModelSettingFragment extends BaseLazyFragment {
     public void onDestroyView() {
         super.onDestroyView();
         SettingActivity.callback = null;
-		OkGo.getInstance().cancelTag("xuameng");
+		if (isGetWp){
+			OkGo.getInstance().cancelTag("xuameng");   //xuameng打断下载
+            File wp = new File(requireActivity().getFilesDir().getAbsolutePath() + "/wp");
+            if (wp.exists()){
+                wp.delete();
+			}
+            ((BaseActivity) requireActivity()).changeWallpaper(true);
+			Toast.makeText(mContext, "壁纸更换被打断！壁纸已重置！", Toast.LENGTH_LONG).show();
+		}
     }
 
     String getHomeRecName(int type) {
