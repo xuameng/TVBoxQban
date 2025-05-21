@@ -217,12 +217,14 @@ public class ModelSettingFragment extends BaseLazyFragment {
                         public void onSuccess(Response<File> response) {
 							if (isGetWp){
 							   ((BaseActivity) requireActivity()).changeWallpaper(true);
+							   isGetWp = false;  //xuameng下载壁纸
 							}
                         }
 
                         @Override
                         public void onError(Response<File> response) {
                             super.onError(response);
+							isGetWp = false;  //xuameng下载壁纸
                         }
 
                         @Override
@@ -788,8 +790,16 @@ public class ModelSettingFragment extends BaseLazyFragment {
     public void onDestroyView() {
         super.onDestroyView();
         SettingActivity.callback = null;
-		isGetWp = false;  //xuameng下载壁纸
-		OkGo.getInstance().cancelTag("xuameng");   //xuameng打断下载
+		if (isGetWp){
+			OkGo.getInstance().cancelTag("xuameng");   //xuameng打断下载
+			isGetWp = false;  //xuameng下载壁纸
+            File wp = new File(requireActivity().getFilesDir().getAbsolutePath() + "/wp");
+            if (wp.exists()){
+                wp.delete();
+			}
+            ((BaseActivity) requireActivity()).changeWallpaper(true);
+			Toast.makeText(mContext, "壁纸更换被打断！壁纸已重置！", Toast.LENGTH_LONG).show();
+		}
     }
 
     String getHomeRecName(int type) {
