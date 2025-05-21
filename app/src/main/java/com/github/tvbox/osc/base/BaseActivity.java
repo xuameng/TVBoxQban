@@ -32,7 +32,6 @@ import java.io.InputStreamReader;
 import me.jessyan.autosize.AutoSizeCompat;
 import me.jessyan.autosize.internal.CustomAdapt;
 import xyz.doikki.videoplayer.util.CutoutUtil;
-import com.github.tvbox.osc.util.HawkConfig;   //xuameng下载壁纸
 
 /**
  * @author pj567
@@ -70,11 +69,7 @@ public abstract class BaseActivity extends AppCompatActivity implements CustomAd
     protected void onResume() {
         super.onResume();
         hideSysBar();
-		if (HawkConfig.isGetWp){   //xuameng下载壁纸
-			changeWallpaper(true);
-		}else{
-            changeWallpaper(false);
-		}
+        changeWallpaper(false);
     }
 
     public void hideSysBar() {
