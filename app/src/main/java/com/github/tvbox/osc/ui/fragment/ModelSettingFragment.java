@@ -796,6 +796,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
             if (wp.exists()){
                 wp.delete();
 			}
+			((BaseActivity) requireActivity()).changeWallpaper(true);
 			Toast.makeText(mContext, "壁纸更换被打断！壁纸已重置！", Toast.LENGTH_LONG).show();
 		}
         super.onDestroyView();
