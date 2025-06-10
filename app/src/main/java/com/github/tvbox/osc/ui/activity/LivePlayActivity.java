@@ -1822,18 +1822,7 @@ public class LivePlayActivity extends BaseActivity {
                     isSHIYI = true;
                     mVideoView.setUrl(currentLiveChannelItem.getUrl() + "?playseek=" + shiyi_time,liveWebHeader());
                     mVideoView.start();
-					if(iv_Play_Xu.getVisibility() == View.VISIBLE) {
-						iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
-					}
-                    ViewGroup.LayoutParams lp = iv_play.getLayoutParams();
-                    lp.width = videoHeight / 7;
-                    lp.height = videoHeight / 7;
-                    showProgressBars(true); //xuameng然后再显示
-                    showBottomEpgBack(); //xuameng回看EPG
-                    isBack = true;
-                    isVOD = false;
-                    tv_right_top_type.setText("回看中");
-                    iv_play_pause.setText("回看暂停中！聚汇直播欢迎您的收看！");
+
                 }
             }
         });
