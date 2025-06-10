@@ -2060,6 +2060,11 @@ public class LivePlayActivity extends BaseActivity {
                        
                         int duration1 = (int) mVideoView.getDuration();
                         if(isBack) {
+                            sBar = (SeekBar) findViewById(R.id.pb_progressbar);
+                            sBar.setMax(duration1);
+                            sBar.setProgress((int) mVideoView.getCurrentPosition());
+                            tv_currentpos.setText(durationToString((int) mVideoView.getCurrentPosition()));
+                            tv_duration.setText(durationToString(duration1));
                             tv_right_top_type.setText("回看中");
                             iv_play_pause.setText("回看暂停中！聚汇直播欢迎您的收看！");
                             isVOD = false;
