@@ -1720,7 +1720,6 @@ public class LivePlayActivity extends BaseActivity {
                 currentLiveChannelIndex = liveChannelItemAdapter.getSelectedChannelIndex();
                 currentLiveChannelItem = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndex);
                 Hawk.put(HawkConfig.LIVE_CHANNEL, currentLiveChannelItem.getChannelName());
-                livePlayerManager.getLiveChannelPlayer(mVideoView, currentLiveChannelItem.getChannelName());
                 liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
                 channel_Name = currentLiveChannelItem; //xuameng重要EPG名称
                 String channelName = channel_Name.getChannelName();
@@ -1785,7 +1784,6 @@ public class LivePlayActivity extends BaseActivity {
                 currentLiveChannelIndex = liveChannelItemAdapter.getSelectedChannelIndex();
                 currentLiveChannelItem = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndex);
                 Hawk.put(HawkConfig.LIVE_CHANNEL, currentLiveChannelItem.getChannelName());
-                livePlayerManager.getLiveChannelPlayer(mVideoView, currentLiveChannelItem.getChannelName());
                 liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
                 channel_Name = currentLiveChannelItem; //xuameng重要EPG名称
                 String channelName = channel_Name.getChannelName();
