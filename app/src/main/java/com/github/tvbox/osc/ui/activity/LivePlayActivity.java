@@ -196,7 +196,6 @@ public class LivePlayActivity extends BaseActivity {
 	private ImageView MxuamengMusic;       //xuameng播放音乐背景
     private static Toast toast;
     private static String shiyi_time; //时移时间
-    private static int shiyi_time_c; //时移时间差值
     private ImageView imgLiveIcon;
     private ImageView imgLiveIconXu;
     private FrameLayout liveIconNullBg;
@@ -1763,7 +1762,6 @@ public class LivePlayActivity extends BaseActivity {
 					if(iv_Play_Xu.getVisibility() == View.VISIBLE) {
 						iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
 					}
-                    shiyi_time_c = (int) getTime(formatDate.format(nowday) + " " + selectedData.start + ":" + "30", formatDate.format(nowday) + " " + selectedData.end + ":" + "30");
                     ViewGroup.LayoutParams lp = iv_play.getLayoutParams();
                     lp.width = videoHeight / 7;
                     lp.height = videoHeight / 7;
@@ -1827,7 +1825,6 @@ public class LivePlayActivity extends BaseActivity {
 					if(iv_Play_Xu.getVisibility() == View.VISIBLE) {
 						iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
 					}
-                    shiyi_time_c = (int) getTime(formatDate.format(nowday) + " " + selectedData.start + ":" + "30", formatDate.format(nowday) + " " + selectedData.end + ":" + "30");
                     ViewGroup.LayoutParams lp = iv_play.getLayoutParams();
                     lp.width = videoHeight / 7;
                     lp.height = videoHeight / 7;
