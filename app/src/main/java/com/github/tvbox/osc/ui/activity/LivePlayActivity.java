@@ -197,7 +197,6 @@ public class LivePlayActivity extends BaseActivity {
     private static Toast toast;
     private static String shiyi_time; //时移时间
     private static int shiyi_time_c; //时移时间差值
-    public static String playUrl;
     private ImageView imgLiveIcon;
     private ImageView imgLiveIconXu;
     private FrameLayout liveIconNullBg;
@@ -1733,7 +1732,7 @@ public class LivePlayActivity extends BaseActivity {
                 String shiyiStartdate = targetDate + selectedData.originStart.replace(":", "") + "30";
                 String shiyiEnddate = targetDate + selectedData.originEnd.replace(":", "") + "30";
                 Date now = new Date();
-                if(new Date().compareTo(selectedData.startdateTime) < 0) {
+                if (now.compareTo(selectedData.startdateTime) < 0) {
                     return;
                 }
                 //                 epgListAdapter.setSelectedEpgIndex(position);        //xuameng取消电视手机点击无法回看的EPG节目源变色
@@ -1751,26 +1750,14 @@ public class LivePlayActivity extends BaseActivity {
                     showBottomEpg(); //xuameng显示EPG和上面菜单
                     return;
                 }
-                String shiyiUrl = currentLiveChannelItem.getUrl();
-                if(now.compareTo(selectedData.startdateTime) < 0) {} else if(shiyiUrl.indexOf("PLTV/") != -1) { //xuameng判断直播源URL中有没有PLTV字符，有才可以时移
+                if (now.compareTo(selectedData.startdateTime) < 0) {
+                } else { 
                     mHideChannelListRun(); //xuameng点击EPG中的直播隐藏左菜单
 					if(mVideoView == null) return;
                     mVideoView.release();
                     shiyi_time = shiyiStartdate + "-" + shiyiEnddate;
                     isSHIYI = true;
-                    if(shiyiUrl.contains("/PLTV/")) {
-                        if(shiyiUrl.indexOf("?") <= 0) {
-                            shiyiUrl = shiyiUrl.replaceAll("/PLTV/", "/TVOD/");
-                            shiyiUrl += "?playseek=" + shiyi_time;
-                        } else if(shiyiUrl.indexOf("playseek") > 0) {
-                            shiyiUrl = shiyiUrl.replaceAll("playseek=(.*)", "playseek=" + shiyi_time);
-                        } else {
-                            shiyiUrl += "&playseek=" + shiyi_time;
-                        }
-                        Log.d("PLTV播放地址", "playUrl   " + shiyiUrl);
-                    }
-                    playUrl = shiyiUrl;
-                    mVideoView.setUrl(playUrl,liveWebHeader());
+					mVideoView.setUrl(currentLiveChannelItem.getUrl() + "?playseek=" + shiyi_time,liveWebHeader());
                     mVideoView.start();
 					if(iv_Play_Xu.getVisibility() == View.VISIBLE) {
 						iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
@@ -1814,7 +1801,7 @@ public class LivePlayActivity extends BaseActivity {
                 String shiyiStartdate = targetDate + selectedData.originStart.replace(":", "") + "30";
                 String shiyiEnddate = targetDate + selectedData.originEnd.replace(":", "") + "30";
                 Date now = new Date();
-                if(new Date().compareTo(selectedData.startdateTime) < 0) {
+                if (now.compareTo(selectedData.startdateTime) < 0) {
                     return;
                 }
                 //                epgListAdapter.setSelectedEpgIndex(position);   //xuameng取消电视手机点击无法回看的EPG节目源变色
@@ -1832,27 +1819,14 @@ public class LivePlayActivity extends BaseActivity {
                     showBottomEpg(); //xuameng显示EPG和上面菜单            
                     return;
                 }
-                String shiyiUrl = currentLiveChannelItem.getUrl();
-                if(now.compareTo(selectedData.startdateTime) < 0) {} else if(shiyiUrl.indexOf("PLTV/") != -1) { //xuameng判断直播源URL中有没有PLTV字符，有才可以时移
-                    mHideChannelListRun();
+                if (now.compareTo(selectedData.startdateTime) < 0) {
+                } else { 
+                    mHideChannelListRun(); //xuameng点击EPG中的直播隐藏左菜单
 					if(mVideoView == null) return;
                     mVideoView.release();
                     shiyi_time = shiyiStartdate + "-" + shiyiEnddate;
                     isSHIYI = true;
-                    if(shiyiUrl.contains("/PLTV/")) {
-                        if(shiyiUrl.indexOf("?") <= 0) {
-                            shiyiUrl = shiyiUrl.replaceAll("/PLTV/", "/TVOD/");
-                            shiyiUrl += "?playseek=" + shiyi_time;
-                        } else if(shiyiUrl.indexOf("playseek") > 0) {
-                            shiyiUrl = shiyiUrl.replaceAll("playseek=(.*)", "playseek=" + shiyi_time);
-                        } else {
-                            shiyiUrl += "&playseek=" + shiyi_time;
-                        }
-                        Log.d("PLTV播放地址", "playUrl   " + shiyiUrl);
-                    }
-                    playUrl = shiyiUrl;
-					if(liveWebHeader()!=null)LOG.i("echo-liveWebHeader :"+ liveWebHeader().toString());
-                    mVideoView.setUrl(playUrl,liveWebHeader());
+					mVideoView.setUrl(currentLiveChannelItem.getUrl() + "?playseek=" + shiyi_time,liveWebHeader());
                     mVideoView.start();
 					if(iv_Play_Xu.getVisibility() == View.VISIBLE) {
 						iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
