@@ -2099,6 +2099,9 @@ public class LivePlayActivity extends BaseActivity {
                             iv_play_pause.setText("回看暂停中！聚汇直播欢迎您的收看！");
                             isVOD = false;
                             if(duration1 < 130000) {
+                               if(mVideoView != null) {
+                                  mVideoView.release();
+                               }
                                isBack = false;
 	                           isSHIYI = false;
                                Mtv_left_top_xu.setVisibility(View.GONE); //xuameng返回键隐藏左上回看菜单
