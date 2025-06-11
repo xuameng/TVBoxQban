@@ -196,7 +196,6 @@ public class LivePlayActivity extends BaseActivity {
 	private ImageView MxuamengMusic;       //xuameng播放音乐背景
     private static Toast toast;
     private static String shiyi_time; //时移时间
-    private static int shiyi_time_c; //时移时间差值
     private ImageView imgLiveIcon;
     private ImageView imgLiveIconXu;
     private FrameLayout liveIconNullBg;
@@ -1760,6 +1759,14 @@ public class LivePlayActivity extends BaseActivity {
         epgListAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                currentChannelGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
+                currentLiveChannelIndex = liveChannelItemAdapter.getSelectedChannelIndex();
+                currentLiveChannelItem = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndex);
+                Hawk.put(HawkConfig.LIVE_CHANNEL, currentLiveChannelItem.getChannelName());
+                livePlayerManager.getLiveChannelPlayer(mVideoView, currentLiveChannelItem.getChannelName());
+                channel_Name = currentLiveChannelItem; //xuameng重要EPG名称
+                String channelName = channel_Name.getChannelName();
+                liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
                 Date date = liveEpgDateAdapter.getSelectedIndex() < 0 ? new Date() :
                         liveEpgDateAdapter.getData().get(liveEpgDateAdapter.getSelectedIndex()).getDateParamVal();
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
