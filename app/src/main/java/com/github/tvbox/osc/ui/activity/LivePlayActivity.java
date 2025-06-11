@@ -837,6 +837,7 @@ public class LivePlayActivity extends BaseActivity {
                 if(arrayList != null && arrayList.size() > 0) {
                     int size = arrayList.size() - 1;
                     while(size >= 0) {
+ 
                             tip_epg1.setText(((Epginfo) arrayList.get(size)).start + "--" + ((Epginfo) arrayList.get(size)).end);
                             ((TextView) findViewById(R.id.tv_current_program_name)).setText(((Epginfo) arrayList.get(size)).title);
                             if(size != arrayList.size() - 1) {
@@ -844,7 +845,7 @@ public class LivePlayActivity extends BaseActivity {
                                 ((TextView) findViewById(R.id.tv_next_program_name)).setText(((Epginfo) arrayList.get(size + 1)).title);
                             }
                             break;
-                        }
+
                     }
                 }
                 epgListAdapter.CanBack(currentLiveChannelItem.getinclude_back());
@@ -1742,7 +1743,7 @@ public class LivePlayActivity extends BaseActivity {
 						iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
 					}
                  //   epgListAdapter.setShiyiSelection(-1, false, timeFormat.format(date));
-			//		liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
+				//	liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
                     getEpg(new Date());
                     showBottomEpg(); //xuameng显示EPG和上面菜单 
                     return;
@@ -1770,7 +1771,7 @@ public class LivePlayActivity extends BaseActivity {
 					if(iv_Play_Xu.getVisibility() == View.VISIBLE) {
 						iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
 					}
-			//		liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
+				//	liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
 					shiyi_time_c = (int)getTime(formatDate.format(nowday) +" " + selectedData.start + ":" +"00", formatDate.format(nowday) +" " + selectedData.end + ":" +"00");
                     ViewGroup.LayoutParams lp = iv_play.getLayoutParams();
                     lp.width = videoHeight / 7;
@@ -1816,7 +1817,7 @@ public class LivePlayActivity extends BaseActivity {
 						iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
 					}
                  //   epgListAdapter.setShiyiSelection(-1, false, timeFormat.format(date));
-				 //   liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
+				//    liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
                     getEpg(new Date());
                     showBottomEpg(); //xuameng显示EPG和上面菜单 				
                     return;
