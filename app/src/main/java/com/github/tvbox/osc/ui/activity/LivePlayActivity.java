@@ -1833,23 +1833,20 @@ public class LivePlayActivity extends BaseActivity {
                 }
                 String shiyiUrl = currentLiveChannelItem.getUrl();
                 if(now.compareTo(selectedData.startdateTime) < 0) {
-				} else {
+				}else if(shiyiUrl.contains("PLTV/") || shiyiUrl.contains("TVOD/")){
                     mHideChannelListRun();
 					if(mVideoView == null) return;
                     mVideoView.release();
                     shiyi_time = shiyiStartdate + "-" + shiyiEnddate;
                     isSHIYI = true;
-                    if(shiyiUrl.contains("/PLTV/")) {
-                        if(shiyiUrl.indexOf("?") <= 0) {
-                            shiyiUrl = shiyiUrl.replaceAll("/PLTV/", "/TVOD/");
-                            shiyiUrl += "?playseek=" + shiyi_time;
-                        } else if(shiyiUrl.indexOf("playseek") > 0) {
-                            shiyiUrl = shiyiUrl.replaceAll("playseek=(.*)", "playseek=" + shiyi_time);
-                        } else {
-                            shiyiUrl += "&playseek=" + shiyi_time;
-                        }
-                        Log.d("PLTV播放地址", "playUrl   " + shiyiUrl);
+                    if (shiyiUrl.indexOf("?") <= 0) {
+                        shiyiUrl += "?playseek=" + shiyi_time;
+                    } else if (shiyiUrl.indexOf("playseek") > 0) {
+                        shiyiUrl = shiyiUrl.replaceAll("playseek=(.*)", "playseek=" + shiyi_time);
+                    } else {
+                        shiyiUrl += "&playseek=" + shiyi_time;
                     }
+					LOG.i("echo-回看地址playUrl :"+ shiyiUrl);
                     playUrl = shiyiUrl;
 					if(liveWebHeader()!=null)LOG.i("echo-liveWebHeader :"+ liveWebHeader().toString());
                     mVideoView.setUrl(playUrl,liveWebHeader());
@@ -1857,7 +1854,7 @@ public class LivePlayActivity extends BaseActivity {
 					if(iv_Play_Xu.getVisibility() == View.VISIBLE) {
 						iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
 					}
-                    shiyi_time_c = (int) getTime(formatDate.format(nowday) + " " + selectedData.start + ":" + "30", formatDate.format(nowday) + " " + selectedData.end + ":" + "30");
+					shiyi_time_c = (int)getTime(formatDate.format(nowday) +" " + selectedData.start + ":" +"00", formatDate.format(nowday) +" " + selectedData.end + ":" +"00");
                     ViewGroup.LayoutParams lp = iv_play.getLayoutParams();
                     lp.width = videoHeight / 7;
                     lp.height = videoHeight / 7;
