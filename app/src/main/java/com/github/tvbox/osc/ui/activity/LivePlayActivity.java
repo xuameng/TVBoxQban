@@ -2079,8 +2079,8 @@ public class LivePlayActivity extends BaseActivity {
                         sBar = (SeekBar) findViewById(R.id.pb_progressbar);
                         sBar.setMax(0);
                         sBar.setProgress(0);
-                        tv_currentpos.setText(00:00);
-                        tv_duration.setText(00:00);
+                        tv_currentpos.setText("00:00");
+                        tv_duration.setText("00:00");
                     case VideoView.STATE_PAUSED:
                         break;
                     case VideoView.STATE_PREPARED:
