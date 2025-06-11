@@ -2397,6 +2397,7 @@ public class LivePlayActivity extends BaseActivity {
 				if (ChannelPosition != position){  //xuameng判断是否第一次选择，如不是就不滚动了
 					ChannelPosition = position;
 					isScrollingXu = false;
+					mRightEpgList.stopScroll(); // 强制停止平滑滚动
 				}
                 FastClickCheckUtil.check(view);
                 clickLiveChannel(position);
