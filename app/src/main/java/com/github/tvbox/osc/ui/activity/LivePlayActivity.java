@@ -124,16 +124,13 @@ public class LivePlayActivity extends BaseActivity {
     private List < LiveSettingGroup > liveSettingGroupList = new ArrayList < > ();
     public static int currentChannelGroupIndex = 0;
     public static int currentChannelGroupIndexXu = 0;
-	public static int currentChannelGroupIndexEpg = 0;
     private Handler mHandler = new Handler();
     private List < LiveChannelGroup > liveChannelGroupList = new ArrayList < > ();
     private int currentLiveChannelIndex = -1;
     private int currentLiveChannelIndexXu = -1;
-	private int currentLiveChannelIndexEpg = -1;
     private int currentLiveChangeSourceTimes = 0;
     private LiveChannelItem currentLiveChannelItem = null;
     private LiveChannelItem currentLiveChannelItemXu = null;
-	private LiveChannelItem currentLiveChannelItemEpg = null;
     private LivePlayerManager livePlayerManager = new LivePlayerManager();
     private ArrayList < Integer > channelGroupPasswordConfirmed = new ArrayList < > ();
     private static LiveChannelItem channel_Name = null;
@@ -199,6 +196,8 @@ public class LivePlayActivity extends BaseActivity {
 	private ImageView MxuamengMusic;       //xuameng播放音乐背景
     private static Toast toast;
     private static String shiyi_time; //时移时间
+    private static int shiyi_time_c; //时移时间差值
+    public static String playUrl;
     private ImageView imgLiveIcon;
     private ImageView imgLiveIconXu;
     private FrameLayout liveIconNullBg;
@@ -1726,8 +1725,7 @@ public class LivePlayActivity extends BaseActivity {
                 liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
                 channel_Name = currentLiveChannelItem; //xuameng重要EPG名称
                 String channelName = channel_Name.getChannelName();
-                Date date = liveEpgDateAdapter.getSelectedIndex() < 0 ? new Date() :
-                        liveEpgDateAdapter.getData().get(liveEpgDateAdapter.getSelectedIndex()).getDateParamVal();
+                Date date = liveEpgDateAdapter.getSelectedIndex() < 0 ? new Date() : liveEpgDateAdapter.getData().get(liveEpgDateAdapter.getSelectedIndex()).getDateParamVal();
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
                 dateFormat.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
                 Epginfo selectedData = epgListAdapter.getItem(position);
@@ -1735,26 +1733,64 @@ public class LivePlayActivity extends BaseActivity {
                 String shiyiStartdate = targetDate + selectedData.originStart.replace(":", "") + "30";
                 String shiyiEnddate = targetDate + selectedData.originEnd.replace(":", "") + "30";
                 Date now = new Date();
-                if (now.compareTo(selectedData.startdateTime) < 0) {
+                if(new Date().compareTo(selectedData.startdateTime) < 0) {
                     return;
                 }
-				//                 epgListAdapter.setSelectedEpgIndex(position);        //xuameng取消电视手机点击无法回看的EPG节目源变色
-                if (now.compareTo(selectedData.startdateTime) >= 0 && now.compareTo(selectedData.enddateTime) <= 0) {
+                //                 epgListAdapter.setSelectedEpgIndex(position);        //xuameng取消电视手机点击无法回看的EPG节目源变色
+                if(now.compareTo(selectedData.startdateTime) >= 0 && now.compareTo(selectedData.enddateTime) <= 0) {
+					if(mVideoView == null) return; 
                     mVideoView.release();
-                    isSHIYI = false;
-                    mVideoView.setUrl(currentLiveChannelItem.getUrl(),liveWebHeader());
+					mVideoView.setUrl(currentLiveChannelItem.getUrl(),liveWebHeader());
                     mVideoView.start();
-
+                    isSHIYI = false;
+					if(iv_Play_Xu.getVisibility() == View.VISIBLE) {
+						iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
+					}
+                    //                  epgListAdapter.setShiyiSelection(-1, false,timeFormat.format(date));    //XUAMENG没用了
+                    getEpg(new Date());
+                    showBottomEpg(); //xuameng显示EPG和上面菜单
+                    return;
                 }
-                if (now.compareTo(selectedData.startdateTime) < 0) {
-
-                } else {
+                String shiyiUrl = currentLiveChannelItem.getUrl();
+                if(now.compareTo(selectedData.startdateTime) < 0) {} else if(shiyiUrl.indexOf("PLTV/") != -1) { //xuameng判断直播源URL中有没有PLTV字符，有才可以时移
+                    mHideChannelListRun(); //xuameng点击EPG中的直播隐藏左菜单
+					if(mVideoView == null) return;
                     mVideoView.release();
                     shiyi_time = shiyiStartdate + "-" + shiyiEnddate;
                     isSHIYI = true;
-                    mVideoView.setUrl(currentLiveChannelItem.getUrl() + "?playseek=" + shiyi_time,liveWebHeader());
+                    if(shiyiUrl.contains("/PLTV/")) {
+                        if(shiyiUrl.indexOf("?") <= 0) {
+                            shiyiUrl = shiyiUrl.replaceAll("/PLTV/", "/TVOD/");
+                            shiyiUrl += "?playseek=" + shiyi_time;
+                        } else if(shiyiUrl.indexOf("playseek") > 0) {
+                            shiyiUrl = shiyiUrl.replaceAll("playseek=(.*)", "playseek=" + shiyi_time);
+                        } else {
+                            shiyiUrl += "&playseek=" + shiyi_time;
+                        }
+                        Log.d("PLTV播放地址", "playUrl   " + shiyiUrl);
+                    }
+                    playUrl = shiyiUrl;
+                    mVideoView.setUrl(playUrl,liveWebHeader());
                     mVideoView.start();
-
+					if(iv_Play_Xu.getVisibility() == View.VISIBLE) {
+						iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
+					}
+                    shiyi_time_c = (int) getTime(formatDate.format(nowday) + " " + selectedData.start + ":" + "30", formatDate.format(nowday) + " " + selectedData.end + ":" + "30");
+                    ViewGroup.LayoutParams lp = iv_play.getLayoutParams();
+                    lp.width = videoHeight / 7;
+                    lp.height = videoHeight / 7;
+                    int duration = (int) mVideoView.getDuration();
+                    sBar = (SeekBar) findViewById(R.id.pb_progressbar);
+                    sBar.setMax(shiyi_time_c * 1000);
+                    sBar.setProgress((int) mVideoView.getCurrentPosition());
+                    tv_currentpos.setText(durationToString((int) mVideoView.getCurrentPosition()));
+                    tv_duration.setText(durationToString(shiyi_time_c * 1000));
+                    showProgressBars(true); //xuameng然后再显示
+                    showBottomEpgBack(); //xuameng回看EPG
+                    isBack = true;
+                    isVOD = false;
+                    tv_right_top_type.setText("回看中");
+                    iv_play_pause.setText("回看暂停中！聚汇直播欢迎您的收看！");
                 }
             }
         });
@@ -1762,15 +1798,13 @@ public class LivePlayActivity extends BaseActivity {
         epgListAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                currentChannelGroupIndexEpg = liveChannelGroupAdapter.getSelectedGroupIndex();
-                currentLiveChannelIndexEpg = liveChannelItemAdapter.getSelectedChannelIndex();
-                currentLiveChannelItemEpg = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndex);
-                Hawk.put(HawkConfig.LIVE_CHANNEL, currentLiveChannelItemEpg.getChannelName());
-                channel_Name = currentLiveChannelItemEpg; //xuameng重要EPG名称
+                currentChannelGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
+                currentLiveChannelIndex = liveChannelItemAdapter.getSelectedChannelIndex();
+                currentLiveChannelItem = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndex);
+                Hawk.put(HawkConfig.LIVE_CHANNEL, currentLiveChannelItem.getChannelName());
+                channel_Name = currentLiveChannelItem; //xuameng重要EPG名称
                 String channelName = channel_Name.getChannelName();
-                liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
-                Date date = liveEpgDateAdapter.getSelectedIndex() < 0 ? new Date() :
-                        liveEpgDateAdapter.getData().get(liveEpgDateAdapter.getSelectedIndex()).getDateParamVal();
+                Date date = liveEpgDateAdapter.getSelectedIndex() < 0 ? new Date() : liveEpgDateAdapter.getData().get(liveEpgDateAdapter.getSelectedIndex()).getDateParamVal();
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
                 dateFormat.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
                 Epginfo selectedData = epgListAdapter.getItem(position);
@@ -1778,26 +1812,67 @@ public class LivePlayActivity extends BaseActivity {
                 String shiyiStartdate = targetDate + selectedData.originStart.replace(":", "") + "30";
                 String shiyiEnddate = targetDate + selectedData.originEnd.replace(":", "") + "30";
                 Date now = new Date();
-                if (now.compareTo(selectedData.startdateTime) < 0) {
+                if(new Date().compareTo(selectedData.startdateTime) < 0) {
                     return;
                 }
-                epgListAdapter.setSelectedEpgIndex(position);
-                if (now.compareTo(selectedData.startdateTime) >= 0 && now.compareTo(selectedData.enddateTime) <= 0) {
+                //                epgListAdapter.setSelectedEpgIndex(position);   //xuameng取消电视手机点击无法回看的EPG节目源变色
+                if(now.compareTo(selectedData.startdateTime) >= 0 && now.compareTo(selectedData.enddateTime) <= 0) {
+					if(mVideoView == null) return;
                     mVideoView.release();
                     isSHIYI = false;
                     mVideoView.setUrl(currentLiveChannelItem.getUrl(),liveWebHeader());
                     mVideoView.start();
-
+					if(iv_Play_Xu.getVisibility() == View.VISIBLE) {
+						iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
+					}
+					liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
+                    epgListAdapter.setShiyiSelection(-1, false, timeFormat.format(date));
+                    getEpg(new Date());
+                    showBottomEpg(); //xuameng显示EPG和上面菜单            
+                    return;
                 }
-                if (now.compareTo(selectedData.startdateTime) < 0) {
-
-                } else {
+                String shiyiUrl = currentLiveChannelItem.getUrl();
+                if(now.compareTo(selectedData.startdateTime) < 0) {} else if(shiyiUrl.indexOf("PLTV/") != -1) { //xuameng判断直播源URL中有没有PLTV字符，有才可以时移
+                    mHideChannelListRun();
+					if(mVideoView == null) return;
                     mVideoView.release();
                     shiyi_time = shiyiStartdate + "-" + shiyiEnddate;
                     isSHIYI = true;
-                    mVideoView.setUrl(currentLiveChannelItem.getUrl() + "?playseek=" + shiyi_time,liveWebHeader());
+                    if(shiyiUrl.contains("/PLTV/")) {
+                        if(shiyiUrl.indexOf("?") <= 0) {
+                            shiyiUrl = shiyiUrl.replaceAll("/PLTV/", "/TVOD/");
+                            shiyiUrl += "?playseek=" + shiyi_time;
+                        } else if(shiyiUrl.indexOf("playseek") > 0) {
+                            shiyiUrl = shiyiUrl.replaceAll("playseek=(.*)", "playseek=" + shiyi_time);
+                        } else {
+                            shiyiUrl += "&playseek=" + shiyi_time;
+                        }
+                        Log.d("PLTV播放地址", "playUrl   " + shiyiUrl);
+                    }
+                    playUrl = shiyiUrl;
+					if(liveWebHeader()!=null)LOG.i("echo-liveWebHeader :"+ liveWebHeader().toString());
+                    mVideoView.setUrl(playUrl,liveWebHeader());
                     mVideoView.start();
-
+					if(iv_Play_Xu.getVisibility() == View.VISIBLE) {
+						iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
+					}
+					liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
+                    shiyi_time_c = (int) getTime(formatDate.format(nowday) + " " + selectedData.start + ":" + "30", formatDate.format(nowday) + " " + selectedData.end + ":" + "30");
+                    ViewGroup.LayoutParams lp = iv_play.getLayoutParams();
+                    lp.width = videoHeight / 7;
+                    lp.height = videoHeight / 7;
+                    int duration = (int) mVideoView.getDuration();
+                    sBar = (SeekBar) findViewById(R.id.pb_progressbar);
+                    sBar.setMax(shiyi_time_c * 1000);
+                    sBar.setProgress((int) mVideoView.getCurrentPosition());
+                    tv_currentpos.setText(durationToString((int) mVideoView.getCurrentPosition()));
+                    tv_duration.setText(durationToString(shiyi_time_c * 1000));
+                    showProgressBars(true);
+                    showBottomEpgBack(); //xuameng回看EPG
+                    isBack = true;
+                    isVOD = false;
+                    tv_right_top_type.setText("回看中");
+                    iv_play_pause.setText("回看暂停中！聚汇直播欢迎您的收看！");
                 }
             }
         });
