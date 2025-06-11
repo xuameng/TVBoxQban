@@ -1864,6 +1864,7 @@ public class LivePlayActivity extends BaseActivity {
                     isVOD = false;
                     tv_right_top_type.setText("回看中");
                     iv_play_pause.setText("回看暂停中！聚汇直播欢迎您的收看！");
+					liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
                 }
             }
         });
@@ -2098,20 +2099,6 @@ public class LivePlayActivity extends BaseActivity {
                             tv_right_top_type.setText("回看中");
                             iv_play_pause.setText("回看暂停中！聚汇直播欢迎您的收看！");
                             isVOD = false;
-                            if(duration1 < 130000) {
-                               if(mVideoView != null) {
-                                  mVideoView.release();
-                               }
-                               isBack = false;
-	                           isSHIYI = false;
-                               Mtv_left_top_xu.setVisibility(View.GONE); //xuameng返回键隐藏左上回看菜单
-                               iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
-                               hideTimeXu(); //xuameng隐藏系统时间
-                               hideNetSpeedXu(); //XUAMENG隐藏左上网速
-                               liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
-                               playXuSource();
-	                           showToastXu();
-                            }
                             return;
                         }
                         if(duration1 > 130000 && duration1 < 180000000) {  //xuameng处理某些播放器时长获取不准确问题
@@ -2140,6 +2127,22 @@ public class LivePlayActivity extends BaseActivity {
                         mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
 						isVideoplaying = true;
 						isBuffer = false;
+						if(isBack) {
+                            if(duration1 < 130000) {
+                               if(mVideoView != null) {
+                                  mVideoView.release();
+                               }
+                               isBack = false;
+	                           isSHIYI = false;
+                               Mtv_left_top_xu.setVisibility(View.GONE); //xuameng返回键隐藏左上回看菜单
+                               iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
+                               hideTimeXu(); //xuameng隐藏系统时间
+                               hideNetSpeedXu(); //XUAMENG隐藏左上网速
+                               liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
+                               playXuSource();
+	                           showToastXu();
+                            }
+                        }
                         break;
                     case VideoView.STATE_ERROR:
 						iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
