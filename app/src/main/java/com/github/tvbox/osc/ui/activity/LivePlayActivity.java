@@ -2128,6 +2128,7 @@ public class LivePlayActivity extends BaseActivity {
 						isVideoplaying = true;
 						isBuffer = false;
 						if(isBack) {
+							int duration1 = (int) mVideoView.getDuration();
                             if(duration1 < 130000) {
                                if(mVideoView != null) {
                                   mVideoView.release();
