@@ -1809,8 +1809,8 @@ public class LivePlayActivity extends BaseActivity {
                 dateFormat.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
                 Epginfo selectedData = epgListAdapter.getItem(position);
                 String targetDate = dateFormat.format(date);
-                String shiyiStartdate = targetDate + selectedData.originStart.replace(":", "") + "30";
-                String shiyiEnddate = targetDate + selectedData.originEnd.replace(":", "") + "30";
+                String shiyiStartdate = targetDate + selectedData.originStart.replace(":", "") + "00";
+                String shiyiEnddate = targetDate + selectedData.originEnd.replace(":", "") + "00";
                 Date now = new Date();
                 if(new Date().compareTo(selectedData.startdateTime) < 0) {
                     return;
@@ -1858,12 +1858,6 @@ public class LivePlayActivity extends BaseActivity {
                     ViewGroup.LayoutParams lp = iv_play.getLayoutParams();
                     lp.width = videoHeight / 7;
                     lp.height = videoHeight / 7;
-                    int duration = (int) mVideoView.getDuration();
-                    sBar = (SeekBar) findViewById(R.id.pb_progressbar);
-                    sBar.setMax(shiyi_time_c * 1000);
-                    sBar.setProgress((int) mVideoView.getCurrentPosition());
-                    tv_currentpos.setText(durationToString((int) mVideoView.getCurrentPosition()));
-                    tv_duration.setText(durationToString(shiyi_time_c * 1000));
                     showProgressBars(true);
                     showBottomEpgBack(); //xuameng回看EPG
                     isBack = true;
@@ -2082,6 +2076,11 @@ public class LivePlayActivity extends BaseActivity {
 							} 
 							iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
 						isVideoplaying = false;
+                        sBar = (SeekBar) findViewById(R.id.pb_progressbar);
+                        sBar.setMax(0);
+                        sBar.setProgress(0);
+                        tv_currentpos.setText(00:00);
+                        tv_duration.setText(00:00);
                     case VideoView.STATE_PAUSED:
                         break;
                     case VideoView.STATE_PREPARED:
@@ -2091,9 +2090,25 @@ public class LivePlayActivity extends BaseActivity {
                        
                         int duration1 = (int) mVideoView.getDuration();
                         if(isBack) {
+                            sBar = (SeekBar) findViewById(R.id.pb_progressbar);
+                            sBar.setMax(duration1);
+                            sBar.setProgress((int) mVideoView.getCurrentPosition());
+                            tv_currentpos.setText(durationToString((int) mVideoView.getCurrentPosition()));
+                            tv_duration.setText(durationToString(duration1));
                             tv_right_top_type.setText("回看中");
                             iv_play_pause.setText("回看暂停中！聚汇直播欢迎您的收看！");
                             isVOD = false;
+                            if(duration1 < 130000) {
+                               isBack = false;
+	                           isSHIYI = false;
+                               Mtv_left_top_xu.setVisibility(View.GONE); //xuameng返回键隐藏左上回看菜单
+                               iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
+                               hideTimeXu(); //xuameng隐藏系统时间
+                               hideNetSpeedXu(); //XUAMENG隐藏左上网速
+                               liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
+                               playXuSource();
+	                           showToastXu();
+                            }
                             return;
                         }
                         if(duration1 > 130000 && duration1 < 180000000) {  //xuameng处理某些播放器时长获取不准确问题
