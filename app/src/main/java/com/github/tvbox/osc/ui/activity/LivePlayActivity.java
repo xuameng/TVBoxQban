@@ -124,13 +124,16 @@ public class LivePlayActivity extends BaseActivity {
     private List < LiveSettingGroup > liveSettingGroupList = new ArrayList < > ();
     public static int currentChannelGroupIndex = 0;
     public static int currentChannelGroupIndexXu = 0;
+	public static int currentChannelGroupIndexEpg = 0;
     private Handler mHandler = new Handler();
     private List < LiveChannelGroup > liveChannelGroupList = new ArrayList < > ();
     private int currentLiveChannelIndex = -1;
     private int currentLiveChannelIndexXu = -1;
+	private int currentLiveChannelIndexEpg = -1;
     private int currentLiveChangeSourceTimes = 0;
     private LiveChannelItem currentLiveChannelItem = null;
     private LiveChannelItem currentLiveChannelItemXu = null;
+	private LiveChannelItem currentLiveChannelItemEpg = null;
     private LivePlayerManager livePlayerManager = new LivePlayerManager();
     private ArrayList < Integer > channelGroupPasswordConfirmed = new ArrayList < > ();
     private static LiveChannelItem channel_Name = null;
@@ -1759,12 +1762,11 @@ public class LivePlayActivity extends BaseActivity {
         epgListAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                currentChannelGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
-                currentLiveChannelIndex = liveChannelItemAdapter.getSelectedChannelIndex();
-                currentLiveChannelItem = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndex);
-                Hawk.put(HawkConfig.LIVE_CHANNEL, currentLiveChannelItem.getChannelName());
-                livePlayerManager.getLiveChannelPlayer(mVideoView, currentLiveChannelItem.getChannelName());
-                channel_Name = currentLiveChannelItem; //xuameng重要EPG名称
+                currentChannelGroupIndexEpg = liveChannelGroupAdapter.getSelectedGroupIndex();
+                currentLiveChannelIndexEpg = liveChannelItemAdapter.getSelectedChannelIndex();
+                currentLiveChannelItemEpg = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndex);
+                Hawk.put(HawkConfig.LIVE_CHANNEL, currentLiveChannelItemEpg.getChannelName());
+                channel_Name = currentLiveChannelItemEpg; //xuameng重要EPG名称
                 String channelName = channel_Name.getChannelName();
                 liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
                 Date date = liveEpgDateAdapter.getSelectedIndex() < 0 ? new Date() :
