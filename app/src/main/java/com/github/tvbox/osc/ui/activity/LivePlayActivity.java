@@ -467,6 +467,7 @@ public class LivePlayActivity extends BaseActivity {
                 int finalI = i;
 				if (!isScrollingXu){
 					isScrollingXu = true;
+					mRightEpgList.setFocusable(false);                  // 禁用常规焦点获取
 				    mRightEpgList.scrollToPositionWithOffset(finalI, 0);
                     mRightEpgList.postDelayed(new Runnable() {
                         @Override
@@ -525,6 +526,7 @@ public class LivePlayActivity extends BaseActivity {
                 epgListAdapter.setSelectedEpgIndex(i);
 				if (!isScrollingXu){
 					isScrollingXu = true;
+					mRightEpgList.setFocusable(false);                  // 禁用常规焦点获取
 				    mRightEpgList.scrollToPositionWithOffset(finalI, 0);
                     mRightEpgList.postDelayed(new Runnable() {
                         @Override
@@ -1699,6 +1701,7 @@ public class LivePlayActivity extends BaseActivity {
                 mHideChannelListRunXu();
                 if (newState == mRightEpgList.SCROLL_STATE_IDLE) {
                     isScrollingXu = false; // xuameng滚动完成后重置状态
+					mRightEpgList.setFocusable(true);                  // xuameng焦点获取
                 }
             }
         });
@@ -2300,6 +2303,7 @@ public class LivePlayActivity extends BaseActivity {
 				if (ChannelGroupPosition != position){  //xuameng判断是否第一次选择，如不是就不滚动了
 					ChannelGroupPosition = position;
 					isScrollingXu = false;
+					mRightEpgList.stopScroll(); // 强制停止平滑滚动
 				}
             }
             @Override
@@ -2318,6 +2322,7 @@ public class LivePlayActivity extends BaseActivity {
 				if (ChannelGroupPosition != position){  //xuameng判断是否第一次选择，如不是就不滚动了
 					ChannelGroupPosition = position;
 					isScrollingXu = false;
+					mRightEpgList.stopScroll(); // 强制停止平滑滚动
 				}
             }
         });
@@ -2363,6 +2368,7 @@ public class LivePlayActivity extends BaseActivity {
 				if (ChannelPosition != position){    //xuameng判断是否第一次选择，如不是就不滚动了
 					ChannelPosition = position;
 					isScrollingXu = false;
+					mRightEpgList.stopScroll(); // 强制停止平滑滚动
 				}
                 if(position < 0) return;
                 int channelGroupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex();  //xuameng当前选定的频道组
@@ -2393,6 +2399,7 @@ public class LivePlayActivity extends BaseActivity {
 				if (ChannelPosition != position){  //xuameng判断是否第一次选择，如不是就不滚动了
 					ChannelPosition = position;
 					isScrollingXu = false;
+					mRightEpgList.stopScroll(); // 强制停止平滑滚动
 				}
                 FastClickCheckUtil.check(view);
                 clickLiveChannel(position);
