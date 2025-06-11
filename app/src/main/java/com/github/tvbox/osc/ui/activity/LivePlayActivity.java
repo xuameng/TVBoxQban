@@ -1505,8 +1505,7 @@ public class LivePlayActivity extends BaseActivity {
         isSHIYI = false;
         isBack = false;
 		XuSource = false;
-      //  if(currentLiveChannelItem.getUrl().contains("PLTV/") || currentLiveChannelItem.getUrl().contains("TVOD/")){ //xuameng判断直播源URL中有没有PLTV字符，有才可以时移
-		if(currentLiveChannelItemXu.getUrl().indexOf("PLTV/") != -1 || currentLiveChannelItemXu.getUrl().indexOf("TVOD/") != -1) { //xuameng判断直播源URL中有没有PLTV字符，有才可以时移
+        if(currentLiveChannelItem.getUrl().contains("PLTV/") || currentLiveChannelItem.getUrl().contains("TVOD/")){ //xuameng判断直播源URL中有没有PLTV字符，有才可以时移
             currentLiveChannelItem.setinclude_back(true);
         } else {
             currentLiveChannelItem.setinclude_back(false);
@@ -1538,8 +1537,7 @@ public class LivePlayActivity extends BaseActivity {
             liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
         }
         channel_NameXu = currentLiveChannelItemXu; //xuameng重要EPG名称
-    //    if(currentLiveChannelItem.getUrl().contains("PLTV/") || currentLiveChannelItem.getUrl().contains("TVOD/")){ //xuameng判断直播源URL中有没有PLTV字符，有才可以时移
-		if(currentLiveChannelItemXu.getUrl().indexOf("PLTV/") != -1 || currentLiveChannelItemXu.getUrl().indexOf("TVOD/") != -1) { //xuameng判断直播源URL中有没有PLTV字符，有才可以时移
+        if(currentLiveChannelItemXu.getUrl().contains("PLTV/") || currentLiveChannelItemXu.getUrl().contains("TVOD/")){ //xuameng判断直播源URL中有没有PLTV字符，有才可以时移
             currentLiveChannelItemXu.setinclude_back(true);
         } else {
             currentLiveChannelItemXu.setinclude_back(false);
