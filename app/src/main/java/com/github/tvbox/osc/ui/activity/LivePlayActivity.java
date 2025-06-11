@@ -464,7 +464,6 @@ public class LivePlayActivity extends BaseActivity {
                 mRightEpgList.setSelectedPosition(i);
                 //xuameng防止跳焦点                 mRightEpgList.setSelection(i);
                 epgListAdapter.setSelectedEpgIndex(i);
-				epgListAdapter.notifyDataSetChanged();
                 int finalI = i;
 				if (!isScrollingXu){
 					isScrollingXu = true;
@@ -524,7 +523,6 @@ public class LivePlayActivity extends BaseActivity {
                 int finalI = i;
                 mRightEpgList.setSelectedPosition(i);
                 epgListAdapter.setSelectedEpgIndex(i);
-				epgListAdapter.notifyDataSetChanged();
 				if (!isScrollingXu){
 					isScrollingXu = true;
 				    mRightEpgList.scrollToPositionWithOffset(finalI, 0);
@@ -1414,7 +1412,6 @@ public class LivePlayActivity extends BaseActivity {
     }
     private void mFocusCurrentChannelAndShowChannelListXu() { //xuameng左侧菜单显示
         epgListAdapter.getSelectedIndex(); //xuamengEPG打开菜单自动变颜色 
-		epgListAdapter.notifyDataSetChanged();
         liveChannelGroupAdapter.setSelectedGroupIndex(currentChannelGroupIndex);
         liveChannelItemAdapter.setSelectedChannelIndex(currentLiveChannelIndex);
 		mChannelGroupView.setSelection(currentChannelGroupIndex); //xuameng先滚动再选择防止空指针
@@ -2366,7 +2363,6 @@ public class LivePlayActivity extends BaseActivity {
 				if (ChannelPosition != position){    //xuameng判断是否第一次选择，如不是就不滚动了
 					ChannelPosition = position;
 					isScrollingXu = false;
-					mRightEpgList.stopScroll(); // 强制停止平滑滚动
 				}
                 if(position < 0) return;
                 int channelGroupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex();  //xuameng当前选定的频道组
@@ -2397,7 +2393,6 @@ public class LivePlayActivity extends BaseActivity {
 				if (ChannelPosition != position){  //xuameng判断是否第一次选择，如不是就不滚动了
 					ChannelPosition = position;
 					isScrollingXu = false;
-					mRightEpgList.stopScroll(); // 强制停止平滑滚动
 				}
                 FastClickCheckUtil.check(view);
                 clickLiveChannel(position);
