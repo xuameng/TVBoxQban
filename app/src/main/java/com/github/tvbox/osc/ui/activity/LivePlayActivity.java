@@ -1415,6 +1415,7 @@ public class LivePlayActivity extends BaseActivity {
     }
     private void mFocusCurrentChannelAndShowChannelListXu() { //xuameng左侧菜单显示
         epgListAdapter.getSelectedIndex(); //xuamengEPG打开菜单自动变颜色 
+		mRightEpgList.scrollToPosition(epgListAdapter.getSelectedIndex());
         liveChannelGroupAdapter.setSelectedGroupIndex(currentChannelGroupIndex);
         liveChannelItemAdapter.setSelectedChannelIndex(currentLiveChannelIndex);
 		mChannelGroupView.setSelection(currentChannelGroupIndex); //xuameng先滚动再选择防止空指针
