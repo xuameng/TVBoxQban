@@ -472,7 +472,7 @@ public class LivePlayActivity extends BaseActivity {
                     mRightEpgList.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-						    mRightEpgList.scrollToPosition(finalI);
+						    mRightEpgList.smoothScrollToPosition(finalI);
                         }
                     }, 50);
 				}
@@ -531,7 +531,7 @@ public class LivePlayActivity extends BaseActivity {
                     mRightEpgList.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-						    mRightEpgList.scrollToPosition(finalI);
+						    mRightEpgList.smoothScrollToPosition(finalI);
                         }
                     }, 50);
 				}
@@ -660,6 +660,9 @@ public class LivePlayActivity extends BaseActivity {
                     jSONException.printStackTrace();
                 }
                 showEpgxu(date, arrayList);
+                String savedEpgKey = channelName + "_" + liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex()).getDatePresented();
+                if(!hsEpg.contains(savedEpgKey)) hsEpg.put(savedEpgKey, arrayList);
+				showBottomEpgBack(); //xuameng回看EPG
             }
         });
     }
@@ -936,12 +939,7 @@ public class LivePlayActivity extends BaseActivity {
 		mHideChannelListRunXu();  //xuameng BUG
 		epgListAdapter.notifyDataSetChanged();
 		mRightEpgList.scrollToPositionWithOffset(epgListAdapter.getSelectedIndex(), 0);
-        mRightEpgList.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mRightEpgList.scrollToPosition(epgListAdapter.getSelectedIndex());
-            }
-        }, 50);
+		mRightEpgList.smoothScrollToPosition(epgListAdapter.getSelectedIndex());
     }
     //频道列表
     public void divLoadEpgLeft(View view) {
@@ -1424,12 +1422,7 @@ public class LivePlayActivity extends BaseActivity {
     private void mFocusCurrentChannelAndShowChannelListXu() { //xuameng左侧菜单显示
         epgListAdapter.getSelectedIndex(); //xuamengEPG打开菜单自动变颜色 
         mRightEpgList.scrollToPositionWithOffset(epgListAdapter.getSelectedIndex(), 0);
-        mRightEpgList.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mRightEpgList.scrollToPosition(epgListAdapter.getSelectedIndex());
-            }
-        }, 50);
+		mRightEpgList.scrollToPosition(epgListAdapter.getSelectedIndex());
         liveChannelGroupAdapter.setSelectedGroupIndex(currentChannelGroupIndex);
         liveChannelItemAdapter.setSelectedChannelIndex(currentLiveChannelIndex);
 		mChannelGroupView.setSelection(currentChannelGroupIndex); //xuameng先滚动再选择防止空指针
@@ -1797,8 +1790,8 @@ public class LivePlayActivity extends BaseActivity {
                     ViewGroup.LayoutParams lp = iv_play.getLayoutParams();
                     lp.width = videoHeight / 7;
                     lp.height = videoHeight / 7;
-					getEpg(new Date());
                     showProgressBars(true);
+					getEpgxu(new Date());
                     showBottomEpgBack(); //xuameng回看EPG
                     isBack = true;
                     isVOD = false;
@@ -1874,7 +1867,7 @@ public class LivePlayActivity extends BaseActivity {
                     lp.width = videoHeight / 7;
                     lp.height = videoHeight / 7;
                     showProgressBars(true);
-					getEpg(new Date());
+					getEpgxu(new Date());
                     showBottomEpgBack(); //xuameng回看EPG
                     isBack = true;
                     isVOD = false;
