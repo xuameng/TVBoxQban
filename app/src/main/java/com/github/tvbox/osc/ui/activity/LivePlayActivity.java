@@ -1512,6 +1512,7 @@ public class LivePlayActivity extends BaseActivity {
 			return;
 		}
 		liveEpgDateAdapter.setSelectedIndex(1);
+		liveEpgDateAdapter.getData().get(liveEpgDateAdapter.getSelectedIndex()).getDateParamVal();
     }
     private void mHideChannelListRunXu() { //xuameng左侧菜单延时5秒隐藏
         if(countDownTimer7 != null) {
