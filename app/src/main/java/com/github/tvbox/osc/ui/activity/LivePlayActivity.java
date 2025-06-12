@@ -920,6 +920,7 @@ public class LivePlayActivity extends BaseActivity {
         }
     }
     //频道列表
+	@SuppressLint("NotifyDataSetChanged")
     public void divLoadEpgRight(View view) {
 		if(!isCurrentLiveChannelValid()) return;  //xuameng 未选择频道空指针问题
 		if (isTouch){
@@ -931,6 +932,8 @@ public class LivePlayActivity extends BaseActivity {
         divLoadEpg.setVisibility(View.GONE);
         epgListAdapter.getSelectedIndex(); //xuamengEPG打开菜单自动变颜色
 		mHideChannelListRunXu();  //xuameng BUG
+        mRightEpgList.setSelectedPosition(epgListAdapter.getSelectedIndex());
+        epgListAdapter.notifyDataSetChanged();
     }
     //频道列表
     public void divLoadEpgLeft(View view) {
@@ -1715,6 +1718,7 @@ public class LivePlayActivity extends BaseActivity {
                 mHideChannelListRunXu();
                 epgListAdapter.setFocusedEpgIndex(position);
             }
+			@SuppressLint("NotifyDataSetChanged")
             @Override
             public void onItemClick(TvRecyclerView parent, View itemView, int position) {
                 currentChannelGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
@@ -1790,6 +1794,7 @@ public class LivePlayActivity extends BaseActivity {
         });
         //手机/模拟器
         epgListAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+			@SuppressLint("NotifyDataSetChanged")
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 currentChannelGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
