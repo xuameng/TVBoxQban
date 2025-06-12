@@ -474,7 +474,7 @@ public class LivePlayActivity extends BaseActivity {
                         public void run() {
 						    mRightEpgList.scrollToPosition(finalI);
                         }
-                    }, 100);
+                    }, 50);
 				}
             }
         } else { //xuameng无EPG时提示信息
@@ -533,7 +533,7 @@ public class LivePlayActivity extends BaseActivity {
                         public void run() {
 						    mRightEpgList.scrollToPosition(finalI);
                         }
-                    }, 100);
+                    }, 50);
 				}
             }
         } else { //xuameng无EPG时提示信息
@@ -941,7 +941,7 @@ public class LivePlayActivity extends BaseActivity {
             public void run() {
                 mRightEpgList.scrollToPosition(epgListAdapter.getSelectedIndex());
             }
-        }, 100);
+        }, 50);
     }
     //频道列表
     public void divLoadEpgLeft(View view) {
@@ -1429,7 +1429,7 @@ public class LivePlayActivity extends BaseActivity {
             public void run() {
                 mRightEpgList.scrollToPosition(epgListAdapter.getSelectedIndex());
             }
-        }, 100);
+        }, 50);
         liveChannelGroupAdapter.setSelectedGroupIndex(currentChannelGroupIndex);
         liveChannelItemAdapter.setSelectedChannelIndex(currentLiveChannelIndex);
 		mChannelGroupView.setSelection(currentChannelGroupIndex); //xuameng先滚动再选择防止空指针
@@ -2393,6 +2393,12 @@ public class LivePlayActivity extends BaseActivity {
                    itemView.setNextFocusDownId(itemView.getId());    //xuameng不超出item
                 }else {
                    itemView.setNextFocusDownId(View.NO_ID);  
+                }
+                if (isScrollingXu){    //xuameng如果EPG滚动
+                   itemView.setId(View.generateViewId());
+                   itemView.setNextFocusRightId(itemView.getId());    //xuameng右侧无ID
+                }else {
+                   itemView.setNextFocusRightId(View.NO_ID);  
                 }
                 liveChannelGroupAdapter.setFocusedGroupIndex(-1);
                 liveChannelItemAdapter.setFocusedChannelIndex(position);
