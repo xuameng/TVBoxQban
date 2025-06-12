@@ -1820,7 +1820,7 @@ public class LivePlayActivity extends BaseActivity {
 					}
                  //   epgListAdapter.setShiyiSelection(-1, false, timeFormat.format(date));
 				    liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
-                    getEpg(new Date());
+                    getEpg(date);
                     showBottomEpg(); //xuameng显示EPG和上面菜单 				
                     return;
                 }
@@ -1852,6 +1852,7 @@ public class LivePlayActivity extends BaseActivity {
                     ViewGroup.LayoutParams lp = iv_play.getLayoutParams();
                     lp.width = videoHeight / 7;
                     lp.height = videoHeight / 7;
+					getEpg(date);
                     showProgressBars(true);
                     showBottomEpgBack(); //xuameng回看EPG
                     isBack = true;
