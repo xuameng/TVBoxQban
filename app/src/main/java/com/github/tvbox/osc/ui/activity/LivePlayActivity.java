@@ -891,7 +891,7 @@ public class LivePlayActivity extends BaseActivity {
                             ((TextView) findViewById(R.id.tv_current_program_name)).setText("正在直播：" + ((Epginfo) arrayList.get(size)).title);
                             if(size != arrayList.size() - 1) {
                                 tip_epg2.setText(((Epginfo) arrayList.get(size + 1)).start + "--" + ((Epginfo) arrayList.get(size + 1)).end); //xuameng修复EPG低菜单下一个节目结束的时间
-                                ((TextView) findViewById(R.id.tv_next_program_name)).setText("将要直播："((Epginfo) arrayList.get(size + 1)).title);
+                                ((TextView) findViewById(R.id.tv_next_program_name)).setText("将要直播：" + ((Epginfo) arrayList.get(size + 1)).title);
                             }
                             break;
                         } else {
