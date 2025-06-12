@@ -981,9 +981,6 @@ public class LivePlayActivity extends BaseActivity {
         divLoadEpg.setVisibility(View.GONE);
         epgListAdapter.getSelectedIndex(); //xuamengEPG打开菜单自动变颜色
 		mHideChannelListRunXu();  //xuameng BUG
-		epgListAdapter.notifyDataSetChanged();
-		mRightEpgList.scrollToPositionWithOffset(epgListAdapter.getSelectedIndex(), 0);
-		mRightEpgList.scrollToPosition(epgListAdapter.getSelectedIndex());
     }
     //频道列表
     public void divLoadEpgLeft(View view) {
@@ -1465,13 +1462,6 @@ public class LivePlayActivity extends BaseActivity {
     }
     private void mFocusCurrentChannelAndShowChannelListXu() { //xuameng左侧菜单显示
         epgListAdapter.getSelectedIndex(); //xuamengEPG打开菜单自动变颜色 
-        mRightEpgList.scrollToPositionWithOffset(epgListAdapter.getSelectedIndex(), 0);
-        mRightEpgList.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mRightEpgList.scrollToPosition(epgListAdapter.getSelectedIndex());
-            }
-        }, 100);
         liveChannelGroupAdapter.setSelectedGroupIndex(currentChannelGroupIndex);
         liveChannelItemAdapter.setSelectedChannelIndex(currentLiveChannelIndex);
 		mChannelGroupView.setSelection(currentChannelGroupIndex); //xuameng先滚动再选择防止空指针
@@ -1480,6 +1470,7 @@ public class LivePlayActivity extends BaseActivity {
         if(holder != null) holder.itemView.requestFocus();
         tvLeftChannelListLayout.setVisibility(View.VISIBLE);
 		tvLeftChannelListLayout.requestLayout();   //xuameng surface按键不好使
+		epgListAdapter.notifyDataSetChanged();
         ll_epg.setVisibility(View.GONE); //xuameng下面EPG菜单隐藏
         ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
         backcontroller.setVisibility(View.GONE);
@@ -1487,6 +1478,13 @@ public class LivePlayActivity extends BaseActivity {
         hideNetSpeedXu(); //XUAMENG隐藏左上网速
 		isShowlist = true;
         ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) tvLeftChannelListLayout.getLayoutParams();
+        mRightEpgList.scrollToPositionWithOffset(epgListAdapter.getSelectedIndex(), 0);
+        mRightEpgList.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mRightEpgList.smoothScrollToPosition(epgListAdapter.getSelectedIndex());
+            }
+        }, 100);
         if(countDownTimer5 != null) {
             countDownTimer5.cancel();
         }
