@@ -464,7 +464,7 @@ public class LivePlayActivity extends BaseActivity {
                 mRightEpgList.setSelectedPosition(i);
                 //xuameng防止跳焦点                 mRightEpgList.setSelection(i);
                 epgListAdapter.setSelectedEpgIndex(i);
-				epgListAdapter.notifyDataSetChanged();
+//				epgListAdapter.notifyDataSetChanged();
                 int finalI = i;
 				if (!isScrollingXu){
 					isScrollingXu = true;
@@ -524,7 +524,7 @@ public class LivePlayActivity extends BaseActivity {
                 int finalI = i;
                 mRightEpgList.setSelectedPosition(i);
                 epgListAdapter.setSelectedEpgIndex(i);
-				epgListAdapter.notifyDataSetChanged();
+//				epgListAdapter.notifyDataSetChanged();
 				if (!isScrollingXu){
 					isScrollingXu = true;
 				    mRightEpgList.scrollToPositionWithOffset(finalI, 0);
@@ -1506,9 +1506,6 @@ public class LivePlayActivity extends BaseActivity {
         if(isVOD) {
             Mtv_left_top_xu.setVisibility(View.VISIBLE);
         }
-		if(!isCurrentLiveChannelValid()){  //xuameng 未选择频道空指针问题
-			return;
-		}
     }
     private void mHideChannelListRunXu() { //xuameng左侧菜单延时5秒隐藏
         if(countDownTimer7 != null) {
