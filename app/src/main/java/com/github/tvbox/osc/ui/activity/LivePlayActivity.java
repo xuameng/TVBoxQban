@@ -1483,8 +1483,8 @@ public class LivePlayActivity extends BaseActivity {
                 }
             }
             if(!isVOD) {
-                showBottomEpg();
                 getEpg(new Date());
+                showBottomEpg();
                 mHideChannelListRun(); //xuameng显示EPG就隐藏左右菜单
                 mHideSettingLayoutRun(); //xuameng显示EPG就隐藏左右菜单
             }
@@ -1778,6 +1778,7 @@ public class LivePlayActivity extends BaseActivity {
                     ViewGroup.LayoutParams lp = iv_play.getLayoutParams();
                     lp.width = videoHeight / 7;
                     lp.height = videoHeight / 7;
+					getEpg(new Date());
                     showProgressBars(true);
                     showBottomEpgBack(); //xuameng回看EPG
                     isBack = true;
@@ -1820,7 +1821,7 @@ public class LivePlayActivity extends BaseActivity {
 					}
                  //   epgListAdapter.setShiyiSelection(-1, false, timeFormat.format(date));
 				    liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
-                    getEpg(date);
+                    getEpg(new Date());
                     showBottomEpg(); //xuameng显示EPG和上面菜单 				
                     return;
                 }
@@ -1852,8 +1853,8 @@ public class LivePlayActivity extends BaseActivity {
                     ViewGroup.LayoutParams lp = iv_play.getLayoutParams();
                     lp.width = videoHeight / 7;
                     lp.height = videoHeight / 7;
-					getEpg(date);
                     showProgressBars(true);
+					getEpg(new Date());
                     showBottomEpgBack(); //xuameng回看EPG
                     isBack = true;
                     isVOD = false;
