@@ -464,6 +464,7 @@ public class LivePlayActivity extends BaseActivity {
                 mRightEpgList.setSelectedPosition(i);
                 //xuameng防止跳焦点                 mRightEpgList.setSelection(i);
                 epgListAdapter.setSelectedEpgIndex(i);
+				epgListAdapter.notifyDataSetChanged();
                 int finalI = i;
 				if (!isScrollingXu){
 					isScrollingXu = true;
@@ -523,6 +524,7 @@ public class LivePlayActivity extends BaseActivity {
                 int finalI = i;
                 mRightEpgList.setSelectedPosition(i);
                 epgListAdapter.setSelectedEpgIndex(i);
+				epgListAdapter.notifyDataSetChanged();
 				if (!isScrollingXu){
 					isScrollingXu = true;
 				    mRightEpgList.scrollToPositionWithOffset(finalI, 0);
@@ -932,8 +934,14 @@ public class LivePlayActivity extends BaseActivity {
         divLoadEpg.setVisibility(View.GONE);
         epgListAdapter.getSelectedIndex(); //xuamengEPG打开菜单自动变颜色
 		mHideChannelListRunXu();  //xuameng BUG
-		mRightEpgList.scrollToPosition(epgListAdapter.getSelectedIndex());
-        epgListAdapter.notifyDataSetChanged();
+		epgListAdapter.notifyDataSetChanged();
+		mRightEpgList.scrollToPositionWithOffset(epgListAdapter.getSelectedIndex(), 0);
+        mRightEpgList.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mRightEpgList.scrollToPosition(epgListAdapter.getSelectedIndex());
+            }
+        }, 100);
     }
     //频道列表
     public void divLoadEpgLeft(View view) {
@@ -1415,7 +1423,13 @@ public class LivePlayActivity extends BaseActivity {
     }
     private void mFocusCurrentChannelAndShowChannelListXu() { //xuameng左侧菜单显示
         epgListAdapter.getSelectedIndex(); //xuamengEPG打开菜单自动变颜色 
-		mRightEpgList.scrollToPosition(epgListAdapter.getSelectedIndex());
+        mRightEpgList.scrollToPositionWithOffset(epgListAdapter.getSelectedIndex(), 0);
+        mRightEpgList.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mRightEpgList.scrollToPosition(epgListAdapter.getSelectedIndex());
+            }
+        }, 100);
         liveChannelGroupAdapter.setSelectedGroupIndex(currentChannelGroupIndex);
         liveChannelItemAdapter.setSelectedChannelIndex(currentLiveChannelIndex);
 		mChannelGroupView.setSelection(currentChannelGroupIndex); //xuameng先滚动再选择防止空指针
