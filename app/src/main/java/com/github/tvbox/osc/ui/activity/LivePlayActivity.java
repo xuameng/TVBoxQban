@@ -981,6 +981,15 @@ public class LivePlayActivity extends BaseActivity {
         divLoadEpg.setVisibility(View.GONE);
         epgListAdapter.getSelectedIndex(); //xuamengEPG打开菜单自动变颜色
 		mHideChannelListRunXu();  //xuameng BUG
+        mRightEpgList.scrollToPositionWithOffset(epgListAdapter.getSelectedIndex(), 0);
+        mRightEpgList.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mRightEpgList.smoothScrollToPosition(epgListAdapter.getSelectedIndex());
+            }
+        }, 100);
+		mChannelGroupView.setSelection(currentChannelGroupIndex); //xuameng先滚动再选择防止空指针
+		mLiveChannelView.setSelection(currentLiveChannelIndex); //xuameng先滚动再选择防止空指针
     }
     //频道列表
     public void divLoadEpgLeft(View view) {
@@ -1478,13 +1487,6 @@ public class LivePlayActivity extends BaseActivity {
         hideNetSpeedXu(); //XUAMENG隐藏左上网速
 		isShowlist = true;
         ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) tvLeftChannelListLayout.getLayoutParams();
-        mRightEpgList.scrollToPositionWithOffset(epgListAdapter.getSelectedIndex(), 0);
-        mRightEpgList.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mRightEpgList.smoothScrollToPosition(epgListAdapter.getSelectedIndex());
-            }
-        }, 100);
         if(countDownTimer5 != null) {
             countDownTimer5.cancel();
         }
@@ -1506,6 +1508,10 @@ public class LivePlayActivity extends BaseActivity {
         if(isVOD) {
             Mtv_left_top_xu.setVisibility(View.VISIBLE);
         }
+		if(!isCurrentLiveChannelValid()){  //xuameng 未选择频道空指针问题
+			return;
+		}
+		liveEpgDateAdapter.setSelectedIndex(1);
     }
     private void mHideChannelListRunXu() { //xuameng左侧菜单延时5秒隐藏
         if(countDownTimer7 != null) {
