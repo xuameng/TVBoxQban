@@ -1480,14 +1480,6 @@ public class LivePlayActivity extends BaseActivity {
         if(holder != null) holder.itemView.requestFocus();
         tvLeftChannelListLayout.setVisibility(View.VISIBLE);
 		tvLeftChannelListLayout.requestLayout();   //xuameng surface按键不好使
-		epgListAdapter.notifyDataSetChanged();
-		mRightEpgList.scrollToPositionWithOffset(epgListAdapter.getSelectedIndex(), 0);
-        mRightEpgList.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mRightEpgList.scrollToPosition(epgListAdapter.getSelectedIndex());
-            }
-        }, 50);
         ll_epg.setVisibility(View.GONE); //xuameng下面EPG菜单隐藏
         ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
         backcontroller.setVisibility(View.GONE);
@@ -1505,6 +1497,18 @@ public class LivePlayActivity extends BaseActivity {
             }
         };
         countDownTimer5.start();
+		if(!isCurrentLiveChannelValid()){  //xuameng 未选择频道空指针问题
+			return;
+		}
+		liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
+		epgListAdapter.notifyDataSetChanged();
+		mRightEpgList.scrollToPositionWithOffset(epgListAdapter.getSelectedIndex(), 0);
+        mRightEpgList.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mRightEpgList.scrollToPosition(epgListAdapter.getSelectedIndex());
+            }
+        }, 50);
     }
 
     private void mHideChannelListRun() { //xuameng左侧菜单隐藏
