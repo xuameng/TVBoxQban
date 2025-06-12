@@ -717,8 +717,7 @@ public class LivePlayActivity extends BaseActivity {
 			return;
 		}
         if(isSHIYI) return;
-		        liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
-	playChannel(currentChannelGroupIndex, currentLiveChannelIndex, false);
+		liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
         if(channel_Name.getChannelName() != null) {
             ((TextView) findViewById(R.id.tv_channel_bar_name)).setText(channel_Name.getChannelName());
             ((TextView) findViewById(R.id.tv_channel_bottom_number)).setText("" + channel_Name.getChannelNum());
