@@ -982,13 +982,6 @@ public class LivePlayActivity extends BaseActivity {
         divLoadEpg.setVisibility(View.GONE);
         epgListAdapter.getSelectedIndex(); //xuamengEPG打开菜单自动变颜色
 		mHideChannelListRunXu();  //xuameng BUG
-        mRightEpgList.scrollToPositionWithOffset(epgListAdapter.getSelectedIndex(), 0);
-        mRightEpgList.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mRightEpgList.smoothScrollToPosition(epgListAdapter.getSelectedIndex());
-            }
-        }, 100);
     }
     //频道列表
     public void divLoadEpgLeft(View view) {
