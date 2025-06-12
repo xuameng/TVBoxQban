@@ -2398,7 +2398,12 @@ public class LivePlayActivity extends BaseActivity {
                 liveChannelItemAdapter.setFocusedChannelIndex(position);
                 liveChannelItemAdapter.setSelectedChannelIndex(position);
 				isTouch = false;
-                playChannelxu(liveChannelGroupAdapter.getSelectedGroupIndex(), liveChannelItemAdapter.getSelectedChannelIndex(), false); //xuameng换频道显示EPG
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        playChannelxu(liveChannelGroupAdapter.getSelectedGroupIndex(), liveChannelItemAdapter.getSelectedChannelIndex(), false); //xuameng换频道显示EPG
+                    }
+                }, 100);
                 liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
                 mHideChannelListRunXu(); //xuameng隐藏频道菜单
             }
