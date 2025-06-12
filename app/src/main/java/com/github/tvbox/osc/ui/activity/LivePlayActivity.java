@@ -932,7 +932,7 @@ public class LivePlayActivity extends BaseActivity {
         divLoadEpg.setVisibility(View.GONE);
         epgListAdapter.getSelectedIndex(); //xuamengEPG打开菜单自动变颜色
 		mHideChannelListRunXu();  //xuameng BUG
-        mRightEpgList.setSelectedPosition(epgListAdapter.getSelectedIndex());
+		mRightEpgList.scrollToPosition(epgListAdapter.getSelectedIndex());
         epgListAdapter.notifyDataSetChanged();
     }
     //频道列表
