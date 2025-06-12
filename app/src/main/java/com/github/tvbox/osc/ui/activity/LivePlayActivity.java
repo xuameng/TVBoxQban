@@ -989,8 +989,6 @@ public class LivePlayActivity extends BaseActivity {
                 mRightEpgList.smoothScrollToPosition(epgListAdapter.getSelectedIndex());
             }
         }, 100);
-		mChannelGroupView.setSelection(currentChannelGroupIndex); //xuameng先滚动再选择防止空指针
-		mLiveChannelView.setSelection(currentLiveChannelIndex); //xuameng先滚动再选择防止空指针
     }
     //频道列表
     public void divLoadEpgLeft(View view) {
@@ -1497,18 +1495,6 @@ public class LivePlayActivity extends BaseActivity {
             }
         };
         countDownTimer5.start();
-		if(!isCurrentLiveChannelValid()){  //xuameng 未选择频道空指针问题
-			return;
-		}
-		liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
-		epgListAdapter.notifyDataSetChanged();
-		mRightEpgList.scrollToPositionWithOffset(epgListAdapter.getSelectedIndex(), 0);
-        mRightEpgList.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mRightEpgList.scrollToPosition(epgListAdapter.getSelectedIndex());
-            }
-        }, 50);
     }
 
     private void mHideChannelListRun() { //xuameng左侧菜单隐藏
