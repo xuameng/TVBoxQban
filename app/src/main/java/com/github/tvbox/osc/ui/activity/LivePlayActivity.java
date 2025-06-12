@@ -983,12 +983,7 @@ public class LivePlayActivity extends BaseActivity {
 		mHideChannelListRunXu();  //xuameng BUG
 		epgListAdapter.notifyDataSetChanged();
 		mRightEpgList.scrollToPositionWithOffset(epgListAdapter.getSelectedIndex(), 0);
-        mRightEpgList.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mRightEpgList.scrollToPosition(epgListAdapter.getSelectedIndex());
-            }
-        }, 50);
+		mRightEpgList.scrollToPosition(epgListAdapter.getSelectedIndex());
     }
     //频道列表
     public void divLoadEpgLeft(View view) {
@@ -1476,7 +1471,7 @@ public class LivePlayActivity extends BaseActivity {
             public void run() {
                 mRightEpgList.scrollToPosition(epgListAdapter.getSelectedIndex());
             }
-        }, 50);
+        }, 100);
         liveChannelGroupAdapter.setSelectedGroupIndex(currentChannelGroupIndex);
         liveChannelItemAdapter.setSelectedChannelIndex(currentLiveChannelIndex);
 		mChannelGroupView.setSelection(currentChannelGroupIndex); //xuameng先滚动再选择防止空指针
