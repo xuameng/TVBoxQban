@@ -1481,6 +1481,12 @@ public class LivePlayActivity extends BaseActivity {
         tvLeftChannelListLayout.setVisibility(View.VISIBLE);
 		tvLeftChannelListLayout.requestLayout();   //xuameng surface按键不好使
 		epgListAdapter.notifyDataSetChanged();
+        mRightEpgList.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mRightEpgList.scrollToPosition(epgListAdapter.getSelectedIndex());
+            }
+        }, 50);
         ll_epg.setVisibility(View.GONE); //xuameng下面EPG菜单隐藏
         ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
         backcontroller.setVisibility(View.GONE);
