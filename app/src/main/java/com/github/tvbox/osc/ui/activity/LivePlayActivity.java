@@ -660,8 +660,6 @@ public class LivePlayActivity extends BaseActivity {
                     jSONException.printStackTrace();
                 }
                 showEpgxu(date, arrayList);
-                String savedEpgKey = channelName + "_" + liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex()).getDatePresented();
-                if(!hsEpg.contains(savedEpgKey)) hsEpg.put(savedEpgKey, arrayList);
             }
         });
     }
@@ -719,6 +717,8 @@ public class LivePlayActivity extends BaseActivity {
 			return;
 		}
         if(isSHIYI) return;
+		        liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
+	playChannel(currentChannelGroupIndex, currentLiveChannelIndex, false);
         if(channel_Name.getChannelName() != null) {
             ((TextView) findViewById(R.id.tv_channel_bar_name)).setText(channel_Name.getChannelName());
             ((TextView) findViewById(R.id.tv_channel_bottom_number)).setText("" + channel_Name.getChannelNum());
