@@ -471,9 +471,9 @@ public class LivePlayActivity extends BaseActivity {
                     mRightEpgList.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-						    mRightEpgList.smoothScrollToPosition(finalI);
+						    mRightEpgList.scrollToPosition(finalI);
                         }
-                    }, 50);
+                    }, 100);
 				}
             }
         } else { //xuameng无EPG时提示信息
@@ -529,9 +529,9 @@ public class LivePlayActivity extends BaseActivity {
                     mRightEpgList.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-						    mRightEpgList.smoothScrollToPosition(finalI);
+						    mRightEpgList.scrollToPosition(finalI);
                         }
-                    }, 50);
+                    }, 100);
 				}
             }
         } else { //xuameng无EPG时提示信息
