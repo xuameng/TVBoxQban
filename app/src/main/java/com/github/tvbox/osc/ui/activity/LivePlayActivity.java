@@ -2394,22 +2394,11 @@ public class LivePlayActivity extends BaseActivity {
                 }else {
                    itemView.setNextFocusDownId(View.NO_ID);  
                 }
-                if (isScrollingXu){    //xuameng如果EPG滚动
-                   itemView.setId(View.generateViewId());
-                   itemView.setNextFocusRightId(itemView.getId());    //xuameng右侧无ID
-                }else {
-                   itemView.setNextFocusRightId(View.NO_ID);  
-                }
                 liveChannelGroupAdapter.setFocusedGroupIndex(-1);
                 liveChannelItemAdapter.setFocusedChannelIndex(position);
                 liveChannelItemAdapter.setSelectedChannelIndex(position);
 				isTouch = false;
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        playChannelxu(liveChannelGroupAdapter.getSelectedGroupIndex(), liveChannelItemAdapter.getSelectedChannelIndex(), false); //xuameng换频道显示EPG
-                    }
-                }, 100);
+                playChannelxu(liveChannelGroupAdapter.getSelectedGroupIndex(), liveChannelItemAdapter.getSelectedChannelIndex(), false); //xuameng换频道显示EPG
                 liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
                 mHideChannelListRunXu(); //xuameng隐藏频道菜单
             }
