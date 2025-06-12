@@ -1182,6 +1182,7 @@ public class LivePlayActivity extends BaseActivity {
                             hideNetSpeedXu(); //XUAMENG隐藏左上网速
                         } else if(!isLl_epgVisible()) {
                             mExitTimeUp = System.currentTimeMillis();
+							getEpg(new Date());
                             showBottomEpg(); //xuameng显示EPG和上面菜单
                         }
                         break;
@@ -1222,6 +1223,7 @@ public class LivePlayActivity extends BaseActivity {
                             hideNetSpeedXu(); //XUAMENG隐藏左上网速					    
                         } else if(!isLl_epgVisible()) {
                             mExitTimeDown = System.currentTimeMillis();
+							getEpg(new Date());
                             showBottomEpg(); //xuameng显示EPG和上面菜单
                         }
                         break;
@@ -1508,11 +1510,6 @@ public class LivePlayActivity extends BaseActivity {
         if(isVOD) {
             Mtv_left_top_xu.setVisibility(View.VISIBLE);
         }
-		if(!isCurrentLiveChannelValid()){  //xuameng 未选择频道空指针问题
-			return;
-		}
-		liveEpgDateAdapter.setSelectedIndex(1);
-		liveEpgDateAdapter.getData().get(liveEpgDateAdapter.getSelectedIndex()).getDateParamVal();
     }
     private void mHideChannelListRunXu() { //xuameng左侧菜单延时5秒隐藏
         if(countDownTimer7 != null) {
@@ -2120,6 +2117,7 @@ public class LivePlayActivity extends BaseActivity {
                     mHideChannelListRun(); //xuameng显示EPG就隐藏左右菜单
                     mHideSettingLayoutRun(); //xuameng显示EPG就隐藏左右菜单
                 } else if(!isLl_epgVisible()) {
+					getEpg(new Date());
                     showBottomEpg(); //xuameng显示EPG和上面菜单
                     mHideChannelListRun(); //xuameng显示EPG就隐藏左右菜单
                     mHideSettingLayoutRun(); //xuameng显示EPG就隐藏左右菜单
