@@ -717,6 +717,7 @@ public class LivePlayActivity extends BaseActivity {
 			return;
 		}
         if(isSHIYI) return;
+				liveEpgDateAdapter.setSelectedIndex(1);
         if(channel_Name.getChannelName() != null) {
             ((TextView) findViewById(R.id.tv_channel_bar_name)).setText(channel_Name.getChannelName());
             ((TextView) findViewById(R.id.tv_channel_bottom_number)).setText("" + channel_Name.getChannelNum());
@@ -724,7 +725,7 @@ public class LivePlayActivity extends BaseActivity {
             ((TextView) findViewById(R.id.tv_current_program_name)).setText("");
             tip_epg2.setText("许大师开发制作，请勿商用以及播放违法内容！");
             ((TextView) findViewById(R.id.tv_next_program_name)).setText("");
-            String savedEpgKey = channel_Name.getChannelName() + "_" + liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex()).getDatePresented();
+            String savedEpgKey = channel_Name.getChannelName() + "_" + liveEpgDateAdapter.getSelectedIndex()).getDatePresented();
             if(hsEpg.containsKey(savedEpgKey)) {
                 String[] epgInfo = EpgUtil.getEpgInfo(channel_Name.getChannelName());
 				if (logoUrl==null || logoUrl.isEmpty()){
@@ -1182,7 +1183,6 @@ public class LivePlayActivity extends BaseActivity {
                             hideNetSpeedXu(); //XUAMENG隐藏左上网速
                         } else if(!isLl_epgVisible()) {
                             mExitTimeUp = System.currentTimeMillis();
-							getEpg(new Date());
                             showBottomEpg(); //xuameng显示EPG和上面菜单
                         }
                         break;
@@ -1223,7 +1223,6 @@ public class LivePlayActivity extends BaseActivity {
                             hideNetSpeedXu(); //XUAMENG隐藏左上网速					    
                         } else if(!isLl_epgVisible()) {
                             mExitTimeDown = System.currentTimeMillis();
-							getEpg(new Date());
                             showBottomEpg(); //xuameng显示EPG和上面菜单
                         }
                         break;
@@ -1510,6 +1509,9 @@ public class LivePlayActivity extends BaseActivity {
         if(isVOD) {
             Mtv_left_top_xu.setVisibility(View.VISIBLE);
         }
+		if(!isCurrentLiveChannelValid()){  //xuameng 未选择频道空指针问题
+			return;
+		}
     }
     private void mHideChannelListRunXu() { //xuameng左侧菜单延时5秒隐藏
         if(countDownTimer7 != null) {
@@ -2117,7 +2119,6 @@ public class LivePlayActivity extends BaseActivity {
                     mHideChannelListRun(); //xuameng显示EPG就隐藏左右菜单
                     mHideSettingLayoutRun(); //xuameng显示EPG就隐藏左右菜单
                 } else if(!isLl_epgVisible()) {
-					getEpg(new Date());
                     showBottomEpg(); //xuameng显示EPG和上面菜单
                     mHideChannelListRun(); //xuameng显示EPG就隐藏左右菜单
                     mHideSettingLayoutRun(); //xuameng显示EPG就隐藏左右菜单
