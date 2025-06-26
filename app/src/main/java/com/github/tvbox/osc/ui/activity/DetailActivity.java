@@ -130,6 +130,7 @@ public class DetailActivity extends BaseActivity {
     private LinearLayout mEmptyPlayList;
     private SourceViewModel sourceViewModel;
     private Movie.Video mVideo;
+	private Movie.Video.name VideoNameXu;
     private VodInfo vodInfo;
     private SeriesFlagAdapter seriesFlagAdapter;
     private BaseQuickAdapter<String, BaseViewHolder> seriesGroupAdapter;
@@ -830,7 +831,6 @@ public class DetailActivity extends BaseActivity {
                         showEmpty();
                         return;
                     }
-					VideoNameXu = mVideo.name;
 					if (TextUtils.isEmpty(VideoNameXu))VideoNameXu = "🥇聚汇影视";
                     mVideo = absXml.movie.videoList.get(0);
                     mVideo.id = vodId;
