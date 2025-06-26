@@ -213,6 +213,7 @@ public class SearchActivity extends BaseActivity {
                     isSearchBack = true;
                     Bundle bundle = new Bundle();
                     bundle.putString("id", video.id);
+					bundle.putString("picture", video.pic);
                     bundle.putString("sourceKey", video.sourceKey);
                     jumpActivity(DetailActivity.class, bundle);
                 }
