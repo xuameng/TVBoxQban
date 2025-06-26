@@ -832,7 +832,8 @@ public class DetailActivity extends BaseActivity {
                     }
                     mVideo = absXml.movie.videoList.get(0);
                     mVideo.id = vodId;
-                    if (TextUtils.isEmpty(mVideo.name))mVideo.name = "🥇聚汇影视";
+					if (TextUtils.isEmpty(Movie.Video.name))mVideo.name = "🥇聚汇影视";
+                    if (TextUtils.isEmpty(mVideo.name))mVideo.name = Movie.Video.name;
                     vodInfo = new VodInfo();
                     if((mVideo.pic==null || mVideo.pic.isEmpty()) && !vod_picture.isEmpty()){    //xuameng某些网站图片部显示
                         mVideo.pic=vod_picture;
