@@ -214,7 +214,6 @@ public class SearchActivity extends BaseActivity {
                     Bundle bundle = new Bundle();
                     bundle.putString("id", video.id);
 					bundle.putString("picture", video.pic);   //xuameng某些网站图片部显示
-					bundle.putString("name", video.name);   //xuameng某些网站图片部显示
                     bundle.putString("sourceKey", video.sourceKey);
                     jumpActivity(DetailActivity.class, bundle);
                 }
