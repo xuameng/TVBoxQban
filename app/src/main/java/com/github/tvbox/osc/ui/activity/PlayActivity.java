@@ -566,7 +566,7 @@ public class PlayActivity extends BaseActivity {
     }
     void goPlayUrl(String url, HashMap<String, String> headers) {
         LOG.i("echo-goPlayUrl:" + url);
-        if(autoRetryCount==0)webPlayUrl=url;  //xuameng新增
+//        if(autoRetryCount==0)webPlayUrl=url;  //xuameng新增
         final String finalUrl = url;
         runOnUiThread(new Runnable() {
             @Override
