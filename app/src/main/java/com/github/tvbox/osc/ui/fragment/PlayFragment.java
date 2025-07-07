@@ -581,7 +581,7 @@ public class PlayFragment extends BaseLazyFragment {
     }
     public void goPlayUrl(String url, HashMap<String, String> headers) {
 		LOG.i("echo-goPlayUrl:" + url);
-		if(autoRetryCount==0)webPlayUrl=url;
+//		if(autoRetryCount==0)webPlayUrl=url;
         if (mActivity == null) return;
 		if (!isAdded()) return;
         LOG.i("playUrl:" + url);
