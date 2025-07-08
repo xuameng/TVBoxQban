@@ -129,6 +129,7 @@ public class PlayActivity extends BaseActivity {
     private Handler mHandler;
 
     private long videoDuration = -1;
+	private boolean isJianpian = false;  //xuameng判断视频是否为荐片
 
     @Override
     protected int getLayoutResID() {
@@ -712,7 +713,7 @@ public class PlayActivity extends BaseActivity {
         sourceViewModel.playResult.observe(this, new Observer<JSONObject>() {
             @Override
             public void onChanged(JSONObject info) {
-				webPlayUrl = null;
+//				webPlayUrl = null;
                 if (info != null) {
                     try {
                         progressKey = info.optString("proKey", null);
@@ -973,6 +974,11 @@ public class PlayActivity extends BaseActivity {
                 play(false);
                 autoRetryCount++;
             }else {
+				if (isJianpian){
+					autoRetryCount++;
+					play(false);
+					return true;
+				}
                 //切换播放器不占用重试次数
                 if(mController.switchPlayer()){
 					autoRetryCount++;
@@ -1002,6 +1008,7 @@ public class PlayActivity extends BaseActivity {
 
     public void play(boolean reset) {
 		if(mVodInfo==null)return;
+		isJianpian = false;
         VodInfo.VodSeries vs = mVodInfo.seriesMap.get(mVodInfo.playFlag).get(mVodInfo.playIndex);
         EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_REFRESH, mVodInfo.playIndex));
         setTip("正在获取播放信息", true, false);
@@ -1025,8 +1032,10 @@ public class PlayActivity extends BaseActivity {
             mController.showParse(false);
             if(vs.url.startsWith("tvbox-xg:")){
                 playUrl(Jianpian.JPUrlDec(jp_url.substring(9)), null);
+				isJianpian = true;
             }else {
                 playUrl(Jianpian.JPUrlDec(jp_url), null);
+				isJianpian = true;
             }
             return;
         }
@@ -1062,7 +1071,7 @@ public class PlayActivity extends BaseActivity {
     private String webUrl;
     private String webUserAgent;
     private HashMap<String, String > webHeaderMap;
-	private String webPlayUrl;
+//	private String webPlayUrl;
 
     private void initParse(String flag, boolean useParse, String playUrl, final String url) {
         parseFlag = flag;
