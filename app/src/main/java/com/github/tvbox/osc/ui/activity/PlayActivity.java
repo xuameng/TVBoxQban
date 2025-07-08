@@ -975,6 +975,7 @@ public class PlayActivity extends BaseActivity {
                 autoRetryCount++;
             }else {
 				if (isJianpian){
+					Toast.makeText(mContext, "播放失败！正在重试！", Toast.LENGTH_SHORT).show();
 					autoRetryCount++;
 					play(false);
 					return true;
