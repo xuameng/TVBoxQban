@@ -1085,6 +1085,18 @@ public class PlayFragment extends BaseLazyFragment {
         if(Jianpian.isJpUrl(vs.url)){//荐片地址特殊判断
             String jp_url= vs.url;
             mController.showParse(false);
+
+				String cachePath = FileUtils.getCachePath();          //xuameng点击清空缓存
+				File cacheDir = new File(cachePath);
+				if (!cacheDir.exists()) return;
+				new Thread(() -> {
+					try {
+						if(cacheDir.exists())FileUtils.cleanDirectory(cacheDir);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}).start();
+
             if(vs.url.startsWith("tvbox-xg:")){
                 playUrl(Jianpian.JPUrlDec(jp_url.substring(9)), null);
 				isJianpian = true;
