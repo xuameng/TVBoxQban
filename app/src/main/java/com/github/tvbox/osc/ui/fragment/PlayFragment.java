@@ -1091,7 +1091,7 @@ public class PlayFragment extends BaseLazyFragment {
 				if (!cacheDir.exists()) return;
 				new Thread(() -> {
 					try {
-						if(cacheDir.exists())FileUtils.cleanDirectory(cacheDir);
+						if(cacheDir.exists())FileUtils.deleteFile(cacheDir);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
