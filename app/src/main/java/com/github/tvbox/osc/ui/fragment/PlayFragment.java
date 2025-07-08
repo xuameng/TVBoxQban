@@ -1075,7 +1075,7 @@ public class PlayFragment extends BaseLazyFragment {
 		mController.stopOther();
         if(mVideoView!= null) mVideoView.release();
         subtitleCacheKey = mVodInfo.sourceKey + "-" + mVodInfo.id + "-" + mVodInfo.playFlag + "-" + mVodInfo.playIndex+ "-" + vs.name + "-subt";
-        progressKey = mVodInfo.sourceKey + mVodInfo.id + mVodInfo.playFlag + mVodInfo.playIndex + vs.name;
+        progressKey = mVodInfo.sourceKey + mVodInfo.id + mVodInfo.playFlag + mVodInfo.playIndex;
         //重新播放清除现有进度
         if (reset) {
             CacheManager.delete(MD5.string2MD5(progressKey), 0);
@@ -1085,18 +1085,6 @@ public class PlayFragment extends BaseLazyFragment {
         if(Jianpian.isJpUrl(vs.url)){//荐片地址特殊判断
             String jp_url= vs.url;
             mController.showParse(false);
-
-				String cachePath = FileUtils.getCachePath();          //xuameng点击清空缓存
-				File cacheDir = new File(cachePath);
-				if (!cacheDir.exists()) return;
-				new Thread(() -> {
-					try {
-						if(cacheDir.exists())FileUtils.deleteFile(cacheDir);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}).start();
-
             if(vs.url.startsWith("tvbox-xg:")){
                 playUrl(Jianpian.JPUrlDec(jp_url.substring(9)), null);
 				isJianpian = true;
