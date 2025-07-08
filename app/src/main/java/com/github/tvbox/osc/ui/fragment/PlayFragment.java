@@ -1016,7 +1016,7 @@ public class PlayFragment extends BaseLazyFragment {
                 autoRetryCount++;
             }else {
 				if (isJianpian){
-					Toast.makeText(mContext, "播放失败！正在重试！", Toast.LENGTH_SHORT).show();
+					Toast.makeText(mContext, "播放失败！重试一次！", Toast.LENGTH_SHORT).show();
 					autoRetryCount++;
 					play(false);
 					return true;
@@ -1075,7 +1075,7 @@ public class PlayFragment extends BaseLazyFragment {
 		mController.stopOther();
         if(mVideoView!= null) mVideoView.release();
         subtitleCacheKey = mVodInfo.sourceKey + "-" + mVodInfo.id + "-" + mVodInfo.playFlag + "-" + mVodInfo.playIndex+ "-" + vs.name + "-subt";
-        progressKey = mVodInfo.sourceKey + mVodInfo.id + mVodInfo.playFlag + mVodInfo.playIndex;
+        progressKey = mVodInfo.sourceKey + mVodInfo.id + mVodInfo.playFlag + mVodInfo.playIndex + vs.name;
         //重新播放清除现有进度
         if (reset) {
             CacheManager.delete(MD5.string2MD5(progressKey), 0);
