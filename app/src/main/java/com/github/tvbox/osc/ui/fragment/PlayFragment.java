@@ -1015,7 +1015,7 @@ public class PlayFragment extends BaseLazyFragment {
                 play(false);
                 autoRetryCount++;
             }else {
-				if (isJianpian){
+                  if (isJianpian){
                     String jpaCachePath = FileUtils.getCachePath() + "/jpali";     //xuameng 清空jp缓存
                     File jpaCachePathDir = new File(jpaCachePath); 
                     new Thread(() -> {
@@ -1031,17 +1031,17 @@ public class PlayFragment extends BaseLazyFragment {
                     new Handler().postDelayed(new Runnable() {
                     @Override
                         public void run() {
-					        play(false);
+                           play(false);
                         }
                     }, 200);
 					return true;
 				}
                 //切换播放器不占用重试次数
                 if(mController.switchPlayer()){
-					autoRetryCount++;
-					play(false);
+                   autoRetryCount++;
+                   play(false);
                 }else {
-                    play(false);
+                   play(false);
                 }
             }
             return true;
@@ -1078,7 +1078,7 @@ public class PlayFragment extends BaseLazyFragment {
 
     public void play(boolean reset) {
         if(mVodInfo==null)return;
-		isJianpian = false;
+        isJianpian = false;
         VodInfo.VodSeries vs = mVodInfo.seriesMap.get(mVodInfo.playFlag).get(mVodInfo.playIndex);
         EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_REFRESH, mVodInfo.playIndex));
         setTip("正在获取播放信息", true, false);
@@ -1102,10 +1102,10 @@ public class PlayFragment extends BaseLazyFragment {
             mController.showParse(false);
             if(vs.url.startsWith("tvbox-xg:")){
                 playUrl(Jianpian.JPUrlDec(jp_url.substring(9)), null);
-				isJianpian = true;
+                isJianpian = true;
             }else {
                 playUrl(Jianpian.JPUrlDec(jp_url), null);
-				isJianpian = true;
+                isJianpian = true;
             }
             return;
         }
