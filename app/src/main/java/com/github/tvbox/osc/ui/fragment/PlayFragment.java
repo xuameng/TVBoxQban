@@ -1021,7 +1021,7 @@ public class PlayFragment extends BaseLazyFragment {
 				if (!jpaCachePathDir.exists()) return true;
 				new Thread(() -> {
 					try {
-						if(jpaCachePathDir.exists())FileUtils.cleanDirectory(jpaCachePathDir);
+						if(jpaCachePathDir.exists())FileUtils.deleteFile(jpaCachePathDir);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
