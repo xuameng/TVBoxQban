@@ -1062,7 +1062,13 @@ public class PlayFragment extends BaseLazyFragment {
     }
 
     public void play(boolean reset) {
-        if(mVodInfo==null)return;
+        
+		        mVodInfo = App.getInstance().getVodInfo();
+				if(mVodInfo==null)return;
+        sourceKey = bundle.getString("sourceKey");
+        sourceBean = ApiConfig.get().getSource(sourceKey);
+        initPlayerCfg();
+
 		isJianpian = false;
         VodInfo.VodSeries vs = mVodInfo.seriesMap.get(mVodInfo.playFlag).get(mVodInfo.playIndex);
         EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_REFRESH, mVodInfo.playIndex));
@@ -1070,9 +1076,11 @@ public class PlayFragment extends BaseLazyFragment {
         String playTitleInfo = mVodInfo.name + " " + vs.name;
         mController.setTitle(playTitleInfo);
 
+
+
         stopParse();
         initParseLoadFound();
-//		mController.stopOther();
+		mController.stopOther();
         if(mVideoView!= null) mVideoView.release();
         subtitleCacheKey = mVodInfo.sourceKey + "-" + mVodInfo.id + "-" + mVodInfo.playFlag + "-" + mVodInfo.playIndex+ "-" + vs.name + "-subt";
         progressKey = mVodInfo.sourceKey + mVodInfo.id + mVodInfo.playFlag + mVodInfo.playIndex + vs.name;
