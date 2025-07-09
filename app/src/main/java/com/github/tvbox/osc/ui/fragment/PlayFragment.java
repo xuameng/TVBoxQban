@@ -1062,21 +1062,13 @@ public class PlayFragment extends BaseLazyFragment {
     }
 
     public void play(boolean reset) {
-        
-		        mVodInfo = App.getInstance().getVodInfo();
-				if(mVodInfo==null)return;
-        sourceKey = bundle.getString("sourceKey");
-        sourceBean = ApiConfig.get().getSource(sourceKey);
-        initPlayerCfg();
-
+        if(mVodInfo==null)return;
 		isJianpian = false;
         VodInfo.VodSeries vs = mVodInfo.seriesMap.get(mVodInfo.playFlag).get(mVodInfo.playIndex);
         EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_REFRESH, mVodInfo.playIndex));
         setTip("正在获取播放信息", true, false);
         String playTitleInfo = mVodInfo.name + " " + vs.name;
         mController.setTitle(playTitleInfo);
-
-
 
         stopParse();
         initParseLoadFound();
@@ -1090,16 +1082,10 @@ public class PlayFragment extends BaseLazyFragment {
             CacheManager.delete(MD5.string2MD5(subtitleCacheKey), 0);
         }
 
-        if(Jianpian.isJpUrl(vs.url)){//荐片地址特殊判断
-            String jp_url= vs.url;
-            mController.showParse(false);
-            if(vs.url.startsWith("tvbox-xg:")){
-                playUrl(Jianpian.JPUrlDec(jp_url.substring(9)), null);
-				isJianpian = true;
-            }else {
-                playUrl(Jianpian.JPUrlDec(jp_url), null);
-				isJianpian = true;
-            }
+if (vs.url.startsWith("tvbox-xg:") && !TextUtils.isEmpty(vs.url.substring(9))) {
+            this.mController.showParse(false);
+			isJianpian = true;
+            playUrl(Jianpian.JPUrlDec(vs.url.substring(9)), null);
             return;
         }
         if (Thunder.play(vs.url, new Thunder.ThunderCallback() {
