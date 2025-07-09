@@ -1083,6 +1083,18 @@ public class PlayFragment extends BaseLazyFragment {
         }
 
 if (vs.url.startsWith("tvbox-xg:") && !TextUtils.isEmpty(vs.url.substring(9))) {
+				
+					String jpaCachePath = FileUtils.getCachePath() + "jpali";     //xuameng jp缓存
+				File jpaCachePathDir = new File(jpaCachePath + File.separator + "Downloads"); 
+				if (!jpaCachePathDir.exists()) return;
+				new Thread(() -> {
+					try {
+						if(jpaCachePathDir.exists())FileUtils.deleteFile(jpaCachePathDir);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}).start();
+
             this.mController.showParse(false);
 			isJianpian = true;
             playUrl(Jianpian.JPUrlDec(vs.url.substring(9)), null);
