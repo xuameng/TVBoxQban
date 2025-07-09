@@ -1017,11 +1017,11 @@ public class PlayFragment extends BaseLazyFragment {
             }else {
 				if (isJianpian){
 					String jpaCachePath = FileUtils.getCachePath() + "jpali";     //xuameng jp缓存
-				File jpaCachePathDir = new File(jpaCachePath + File.separator + "Downloads"); 
+				File jpaCachePathDir = new File(jpaCachePath); 
 				if (!jpaCachePathDir.exists()) return true;
 				new Thread(() -> {
 					try {
-						if(jpaCachePathDir.exists())FileUtils.deleteFile(jpaCachePathDir);
+						if(jpaCachePathDir.exists())FileUtils.cleanDirectory(jpaCachePathDir);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
