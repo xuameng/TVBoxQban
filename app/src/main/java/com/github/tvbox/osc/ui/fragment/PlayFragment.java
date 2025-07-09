@@ -415,7 +415,7 @@ public class PlayFragment extends BaseLazyFragment {
                             mediaPlayer.seekTo(progress);
                             mediaPlayer.start();
                         }
-                    }, 800);
+                    }, 500);
                     dialog.dismiss();
                 } catch (Exception e) {
                     LOG.e("切换音轨出错");
@@ -485,7 +485,7 @@ public class PlayFragment extends BaseLazyFragment {
                                 mediaPlayer.seekTo(progress);
                                 mediaPlayer.start();
                             }
-                        }, 800);
+                        }, 500);
                     }
                     if (mediaPlayer instanceof EXOmPlayer) {
                         mController.mSubtitleView.destroy();
@@ -498,7 +498,7 @@ public class PlayFragment extends BaseLazyFragment {
                                 mediaPlayer.seekTo(progress);
                                 mediaPlayer.start();
                             }
-                        }, 800);
+                        }, 500);
                     }
                     dialog.dismiss();
                 } catch (Exception e) {
@@ -1016,9 +1016,24 @@ public class PlayFragment extends BaseLazyFragment {
                 autoRetryCount++;
             }else {
 				if (isJianpian){
-					Toast.makeText(mContext, "播放失败！重试一次！", Toast.LENGTH_SHORT).show();
+										String jpaCachePath = FileUtils.getCachePath() + "jpali";     //xuameng jp缓存
+				File jpaCachePathDir = new File(jpaCachePath); 
+				if (!jpaCachePathDir.exists()) return;
+				new Thread(() -> {
+					try {
+						if(jpaCachePathDir.exists())FileUtils.deleteFile(jpaCachePathDir);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}).start();
 					autoRetryCount++;
+					                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
 					play(false);
+                            }
+                        }, 200);
+
 					return true;
 				}
                 //切换播放器不占用重试次数
@@ -1084,16 +1099,6 @@ public class PlayFragment extends BaseLazyFragment {
 
 if (vs.url.startsWith("tvbox-xg:") && !TextUtils.isEmpty(vs.url.substring(9))) {
 				
-					String jpaCachePath = FileUtils.getCachePath() + "jpali";     //xuameng jp缓存
-				File jpaCachePathDir = new File(jpaCachePath + File.separator + "Downloads"); 
-				if (!jpaCachePathDir.exists()) return;
-				new Thread(() -> {
-					try {
-						if(jpaCachePathDir.exists())FileUtils.deleteFile(jpaCachePathDir);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}).start();
 
             this.mController.showParse(false);
 			isJianpian = true;
