@@ -907,6 +907,7 @@ public class PlayActivity extends BaseActivity {
             mVideoView.release();
             mVideoView = null;
         }
+        mController.stopOther();
         String CachePath = FileUtils.getCachePath();     //xuameng 清空缓存
         File CachePathDir = new File(CachePath); 
         new Thread(() -> {
@@ -918,7 +919,6 @@ public class PlayActivity extends BaseActivity {
         }).start();
         stopLoadWebView(true);
         stopParse();
-		mController.stopOther();
     }
 
     private VodInfo mVodInfo;
