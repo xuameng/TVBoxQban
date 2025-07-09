@@ -1016,17 +1016,17 @@ public class PlayFragment extends BaseLazyFragment {
                 autoRetryCount++;
             }else {
                   if (isJianpian){
-                    String jpaCachePath = FileUtils.getCachePath() + "/jpali";     //xuameng 清空jp缓存
-                    File jpaCachePathDir = new File(jpaCachePath); 
+                    String CachePath = FileUtils.getCachePath();     //xuameng 清空缓存
+                    File CachePathDir = new File(CachePath); 
                     new Thread(() -> {
                     try {
-                        if(jpaCachePathDir.exists())FileUtils.cleanDirectory(jpaCachePathDir);
+                        if(CachePathDir.exists())FileUtils.cleanDirectory(CachePathDir);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                     }).start();
 
-                    Toast.makeText(mContext, "播放失败！立即清空荐片缓存！重试！", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, "播放失败！立即清空缓存！重试！", Toast.LENGTH_SHORT).show();
                     autoRetryCount++;
                     new Handler().postDelayed(new Runnable() {
                     @Override
