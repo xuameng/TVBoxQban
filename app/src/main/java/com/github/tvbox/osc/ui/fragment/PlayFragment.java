@@ -1016,26 +1016,24 @@ public class PlayFragment extends BaseLazyFragment {
                 autoRetryCount++;
             }else {
 				if (isJianpian){
-				String cachePath = FileUtils.getCachePath();          //xuameng点击清空缓存
-				File cacheDir = new File(cachePath);
-				new Thread(() -> {
-					try {
-						if(cacheDir.exists())FileUtils.cleanDirectory(cacheDir);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}).start();
+                    String jpaCachePath = FileUtils.getCachePath() + "/jpali";     //xuameng 清空jp缓存
+                    File jpaCachePathDir = new File(jpaCachePath); 
+                    new Thread(() -> {
+                    try {
+                        if(jpaCachePathDir.exists())FileUtils.cleanDirectory(jpaCachePathDir);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    }).start();
 
-
-					Toast.makeText(mContext, "清空荐片缓存！重试一次！", Toast.LENGTH_SHORT).show();
-					autoRetryCount++;
-					                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-					play(false);
-                            }
-                        }, 200);
-
+                    Toast.makeText(mContext, "播放失败！立即清空荐片缓存！重试！", Toast.LENGTH_SHORT).show();
+                    autoRetryCount++;
+                    new Handler().postDelayed(new Runnable() {
+                    @Override
+                        public void run() {
+					        play(false);
+                        }
+                    }, 200);
 					return true;
 				}
                 //切换播放器不占用重试次数
@@ -1089,7 +1087,7 @@ public class PlayFragment extends BaseLazyFragment {
 
         stopParse();
         initParseLoadFound();
-
+        mController.stopOther();
         if(mVideoView!= null) mVideoView.release();
         subtitleCacheKey = mVodInfo.sourceKey + "-" + mVodInfo.id + "-" + mVodInfo.playFlag + "-" + mVodInfo.playIndex+ "-" + vs.name + "-subt";
         progressKey = mVodInfo.sourceKey + mVodInfo.id + mVodInfo.playFlag + mVodInfo.playIndex + vs.name;
@@ -1099,14 +1097,19 @@ public class PlayFragment extends BaseLazyFragment {
             CacheManager.delete(MD5.string2MD5(subtitleCacheKey), 0);
         }
 
-if (vs.url.startsWith("tvbox-xg:") && !TextUtils.isEmpty(vs.url.substring(9))) {
-				
-
-            this.mController.showParse(false);
-			isJianpian = true;
-            playUrl(Jianpian.JPUrlDec(vs.url.substring(9)), null);
+        if(Jianpian.isJpUrl(vs.url)){//荐片地址特殊判断
+            String jp_url= vs.url;
+            mController.showParse(false);
+            if(vs.url.startsWith("tvbox-xg:")){
+                playUrl(Jianpian.JPUrlDec(jp_url.substring(9)), null);
+				isJianpian = true;
+            }else {
+                playUrl(Jianpian.JPUrlDec(jp_url), null);
+				isJianpian = true;
+            }
             return;
         }
+
         if (Thunder.play(vs.url, new Thunder.ThunderCallback() {
             @Override
             public void status(int code, String info) {
