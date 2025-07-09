@@ -948,6 +948,15 @@ public class PlayFragment extends BaseLazyFragment {
             mVideoView.release();
             mVideoView = null;
         }
+        String CachePath = FileUtils.getCachePath();     //xuameng 清空缓存
+        File CachePathDir = new File(CachePath); 
+        new Thread(() -> {
+        try {
+            if(CachePathDir.exists())FileUtils.cleanDirectory(CachePathDir);
+        } catch (Exception e) {
+              e.printStackTrace();
+        }
+        }).start();
         stopLoadWebView(true);
         stopParse();
 		mController.stopOther();
