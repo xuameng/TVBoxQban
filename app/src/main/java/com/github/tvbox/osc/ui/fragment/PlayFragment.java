@@ -126,7 +126,6 @@ public class PlayFragment extends BaseLazyFragment {
     private SourceViewModel sourceViewModel;
     private Handler mHandler;
 	private boolean isJianpian = false;  //xuameng判断视频是否为荐片
-	private boolean FirstInt = true;  //xuameng判断首次进入
 
     private final long videoDuration = -1;
 
@@ -1111,33 +1110,11 @@ public class PlayFragment extends BaseLazyFragment {
             String jp_url= vs.url;
             mController.showParse(false);
             if(vs.url.startsWith("tvbox-xg:")){
-				if (FirstInt){
-					FirstInt = false;
-                    new Handler().postDelayed(new Runnable() {
-                    @Override
-                        public void run() {
-                          playUrl(Jianpian.JPUrlDec(jp_url.substring(9)), null);
-                          isJianpian = true;
-                        }
-                    }, 200);
-				}else {
-                      playUrl(Jianpian.JPUrlDec(jp_url.substring(9)), null);
-                      isJianpian = true;
-				}
+                playUrl(Jianpian.JPUrlDec(jp_url.substring(9)), null);
+                isJianpian = true;
             }else {
-				if (FirstInt){
-					FirstInt = false;
-                    new Handler().postDelayed(new Runnable() {
-                    @Override
-                        public void run() {
-                          playUrl(Jianpian.JPUrlDec(jp_url.substring(9)), null);
-                          isJianpian = true;
-                        }
-                    }, 200);
-				}else {
-                      playUrl(Jianpian.JPUrlDec(jp_url.substring(9)), null);
-                      isJianpian = true;
-				}
+                playUrl(Jianpian.JPUrlDec(jp_url), null);
+                isJianpian = true;
             }
             return;
         }
