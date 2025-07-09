@@ -1018,7 +1018,6 @@ public class PlayFragment extends BaseLazyFragment {
 				if (isJianpian){
 					String jpaCachePath = FileUtils.getCachePath() + "jpali";     //xuameng jp缓存
 				File jpaCachePathDir = new File(jpaCachePath); 
-				if (!jpaCachePathDir.exists()) return true;
 				new Thread(() -> {
 					try {
 						if(jpaCachePathDir.exists())FileUtils.deleteFile(jpaCachePathDir);
