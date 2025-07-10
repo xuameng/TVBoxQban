@@ -1141,6 +1141,16 @@ public class PlayFragment extends BaseLazyFragment {
             mController.showParse(false);
             return;
         }
+		mController.stopOther();
+        String CachePath = FileUtils.getCachePath();     //xuameng 清空缓存
+        File CachePathDir = new File(CachePath); 
+        new Thread(() -> {
+        try {
+            if(CachePathDir.exists())FileUtils.cleanDirectory(CachePathDir);
+        } catch (Exception e) {
+              e.printStackTrace();
+        }
+        }).start();
         sourceViewModel.getPlay(sourceKey, mVodInfo.playFlag, progressKey, vs.url, subtitleCacheKey);
     }
 
