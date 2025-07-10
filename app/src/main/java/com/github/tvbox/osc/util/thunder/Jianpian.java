@@ -29,7 +29,8 @@ public class Jianpian {
                     App.getp2p()
                         .P2Pdoxadd(replace.getBytes("GBK"));
                 } else if (replace.equals(App.burl)) {
-
+                    App.getp2p()
+                        .P2Pdoxstart(replace.getBytes("GBK"));
                 } else {
                     App.getp2p()
                         .P2Pdoxpause(App.burl.getBytes("GBK"));
