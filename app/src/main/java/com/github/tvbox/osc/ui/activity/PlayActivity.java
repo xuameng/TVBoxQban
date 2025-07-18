@@ -530,9 +530,7 @@ public class PlayActivity extends BaseActivity {
                 mPlayLoadTip.setText(msg);
                 mPlayLoadTip.setVisibility(View.VISIBLE);
                 mPlayLoading.setVisibility(loading ? View.VISIBLE : View.GONE);
-				if (!mVideoView.isPlaying()){       //xuameng修复播放成功也显示错误
-					mPlayLoadErr.setVisibility(err ? View.VISIBLE : View.GONE);
-				}
+                mPlayLoadErr.setVisibility(err ? View.VISIBLE : View.GONE);
             }
         });
     }
