@@ -765,7 +765,7 @@ public class VodController extends BaseController {
             }
         });
 
-        mPlayrender.setOnClickListener(new OnClickListener() {
+        mPlayrender.setOnClickListener(new OnClickListener() {        //xuameng渲染选择
             @Override
             public void onClick(View view) {
                if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 350){                  //xuameng 防播放打断动画
