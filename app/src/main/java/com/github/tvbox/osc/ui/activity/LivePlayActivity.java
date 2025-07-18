@@ -2516,7 +2516,7 @@ public class LivePlayActivity extends BaseActivity {
                 liveSettingItemAdapter.selectItem(livePlayerManager.getLivePlayerType(), true, true);
                 break;
             case 6:
-                liveSettingItemAdapter.selectItem(livePlayerManager.getLivePlayrender(), true, true);  //xuameng 渲染方式
+                liveSettingItemAdapter.selectItem(livePlayerManager.getLivePlayrender(), true, true);  //xuameng 获取渲染方式
                 break;
 
         }
@@ -2635,7 +2635,7 @@ public class LivePlayActivity extends BaseActivity {
                 if(position == liveSettingItemAdapter.getSelectedItemIndex()) return;
 			    if(mVideoView == null) return;
                 mVideoView.release();
-                livePlayerManager.changeLivePlayerRender(mVideoView, position, currentLiveChannelItem.getChannelName());
+                livePlayerManager.changeLivePlayerRender(mVideoView, position, currentLiveChannelItem.getChannelName());    //xuameng 设置渲染方式
                 mVideoView.setUrl(currentLiveChannelItem.getUrl(),liveWebHeader());
                 mVideoView.start();
 				liveSettingItemAdapter.selectItem(position, true, true);
