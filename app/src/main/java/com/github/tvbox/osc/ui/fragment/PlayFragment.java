@@ -253,6 +253,19 @@ public class PlayFragment extends BaseLazyFragment {
             }
 
             @Override
+            public void hideTipXu() {
+               if (mPlayLoadTip.getVisibility() == View.VISIBLE){
+                   mPlayLoadTip.setVisibility(View.GONE);
+               }
+               if (mPlayLoading.getVisibility() == View.VISIBLE){
+                   mPlayLoading.setVisibility(View.GONE);
+               }
+               if (mPlayLoadErr.getVisibility() == View.VISIBLE){
+                   mPlayLoadErr.setVisibility(View.GONE);
+               }
+            }
+
+            @Override
             public void selectSubtitle() {
                 try {
                     selectMySubtitle();
@@ -532,10 +545,7 @@ public class PlayFragment extends BaseLazyFragment {
                 mPlayLoadTip.setText(msg);
                 mPlayLoadTip.setVisibility(View.VISIBLE);
                 mPlayLoading.setVisibility(loading ? View.VISIBLE : View.GONE);
-				if (!mVideoView.isPlaying()){
-					mPlayLoadErr.setVisibility(err ? View.VISIBLE : View.GONE);
-				}
-
+                mPlayLoadErr.setVisibility(err ? View.VISIBLE : View.GONE);
             }
         });
     }
