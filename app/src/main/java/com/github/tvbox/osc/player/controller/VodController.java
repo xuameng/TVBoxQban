@@ -744,7 +744,12 @@ public class VodController extends BaseController {
 					return;
 				}
 				DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
-                int pr = mPlayerConfig.getInt("pr");
+				int pr = Hawk.get(HawkConfig.PLAY_RENDER, 0);
+        try {
+            pr = mPlayerConfig.getInt("pr");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 				if (pr == 0){
 				    if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
 				        hideBottomXu();
