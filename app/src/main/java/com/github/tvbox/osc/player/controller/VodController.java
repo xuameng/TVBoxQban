@@ -744,8 +744,9 @@ public class VodController extends BaseController {
                     return;
                }
                DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
+               int pr = Hawk.get(HawkConfig.PLAY_RENDER, 0);
                try {
-                   int pr = mPlayerConfig.getInt("pr");
+                   pr = mPlayerConfig.getInt("pr");
                } catch (JSONException e) {
                    e.printStackTrace();
                }
