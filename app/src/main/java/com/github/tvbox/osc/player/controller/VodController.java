@@ -1222,6 +1222,8 @@ public class VodController extends BaseController {
 
         void selectAudioTrack();
 
+		void hideTipXu();  //xuameng隐藏错误信息
+
 		void startPlayUrl(String url, HashMap<String, String> headers);  //xuameng广告过滤
     }
 
@@ -1454,7 +1456,7 @@ public class VodController extends BaseController {
                 break;
             case VideoView.STATE_PLAYING:
                 initLandscapePortraitBtnInfo();
-                hideTipXu();          //xuameng 只要播放就隐藏错误信息
+                listener.hideTipXu();          //xuameng 只要播放就隐藏错误信息
                 startProgress();
 				mxuPlay.setText("暂停");               //xuameng底部菜单显示暂停
 				isVideoplaying = true;
