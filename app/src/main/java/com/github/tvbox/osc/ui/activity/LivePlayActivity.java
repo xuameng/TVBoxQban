@@ -2617,6 +2617,7 @@ public class LivePlayActivity extends BaseActivity {
                 liveSettingItemAdapter.selectItem(position, select, false);
                 break;
 				case 5://多源切换   //xuameng新增
+				if(position == liveSettingItemAdapter.getSelectedItemIndex()) return;
                 //TODO
                 if (mVideoView != null) {
                     mVideoView.release();
@@ -2630,6 +2631,17 @@ public class LivePlayActivity extends BaseActivity {
                 ApiConfig.get().loadLiveApi(livesOBJ);
                 recreate();
                 return;
+            case 6: //xuameng渲染方式
+                if(position == liveSettingItemAdapter.getSelectedItemIndex()) return;
+			    if(mVideoView == null) return;
+                mVideoView.release();
+                livePlayerManager.changeLivePlayerRender(mVideoView, position, currentLiveChannelItem.getChannelName());
+                mVideoView.setUrl(currentLiveChannelItem.getUrl(),liveWebHeader());
+                mVideoView.start();
+				if(iv_Play_Xu.getVisibility() == View.VISIBLE) {
+					iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
+				}
+                break;
         }
         mHideSettingLayoutRunXu();
     }
