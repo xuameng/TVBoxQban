@@ -769,8 +769,11 @@ public class VodController extends BaseController {
             @Override
             public void onClick(View view) {
                FastClickCheckUtil.check(view);
-               if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 350){                  //xuameng 防播放打断动画
+               if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 350 || isAnimation){                  //xuameng 防播放打断动画
                     return;
+               }
+               if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
+                  hideBottomXu();
                }
                DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
                int pr = Hawk.get(HawkConfig.PLAY_RENDER, 0);
@@ -780,9 +783,6 @@ public class VodController extends BaseController {
                    e.printStackTrace();
                }
                if (pr == 0){
-                   if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
-                      hideBottomXu();
-                   }
   	              try {
                       mPlayerConfig.put("pr", 1);
                   } catch (JSONException e) {
@@ -792,9 +792,6 @@ public class VodController extends BaseController {
                   listener.updatePlayerCfg();
                   listener.replay(false);
               }else{
-                   if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
-                      hideBottomXu();
-                   }
                   try {
                        mPlayerConfig.put("pr", 0);
                   } catch (JSONException e) {
