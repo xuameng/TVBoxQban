@@ -1159,7 +1159,6 @@ public class VodController extends BaseController {
         mSeekBar.setNextFocusLeftId(R.id.mxuplay);					//xuameng底部菜单进度条左键是播放
         mNextBtn.setNextFocusLeftId(R.id.audio_track_select);       //xuameng底部菜单下一集左键是音轨
 		mxuPlay.setNextFocusLeftId(R.id.seekBar);                   //xuameng底部菜单播放左键是进度条
-		mAudioTrackBtn.setNextFocusRightId(R.id.play_next);         //xuameng底部菜音轨右键是下一集
         mxuPlay.setNextFocusDownId(R.id.play_next);                 //xuameng底部菜单所有键上键都是播放
 		mSeekBar.setNextFocusDownId(R.id.play_next);
 		mNextBtn.setNextFocusUpId(R.id.mxuplay);
@@ -1175,6 +1174,7 @@ public class VodController extends BaseController {
 		mPlayerTimeSkipBtn.setNextFocusUpId(R.id.mxuplay);
 		mPlayerTimeResetBtn.setNextFocusUpId(R.id.mxuplay);
 		mZimuBtn.setNextFocusUpId(R.id.mxuplay);
+        mAudioTrackBtn.setNextFocusRightId(R.id.play_next);
 		mAudioTrackBtn.setNextFocusUpId(R.id.mxuplay);				//xuameng底部菜单所有键上键都是播放完
 		mPlayrender.setNextFocusUpId(R.id.mxuplay);	
     }
@@ -1207,6 +1207,8 @@ public class VodController extends BaseController {
             double screenSqrt = ScreenUtils.getSqrt(mActivity);
             if (screenSqrt < 10.0 && width <= height) {
                 mLandscapePortraitBtn.setVisibility(View.VISIBLE);
+				mAudioTrackBtn.setNextFocusRightId(R.id.landscape_portrait);
+                mLandscapePortraitBtn.setNextFocusRightId(R.id.play_next);         //xuameng底部菜音轨右键是下一集
                 int requestedOrientation = mActivity.getRequestedOrientation();          //xuameng 横竖屏显示BUG
                 if (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
                     mLandscapePortraitBtn.setText("竖屏");
@@ -1215,6 +1217,7 @@ public class VodController extends BaseController {
                 }
             }else {
                 mLandscapePortraitBtn.setVisibility(View.GONE);
+                mAudioTrackBtn.setNextFocusRightId(R.id.play_next);         //xuameng底部菜音轨右键是下一集
 			}
         }
     }
