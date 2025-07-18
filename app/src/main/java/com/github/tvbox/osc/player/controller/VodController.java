@@ -740,19 +740,29 @@ public class VodController extends BaseController {
         mPlayrender.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+				if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 350){                  //xuameng 防播放打断动画
+					return;
+				}
+				DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
                 int pr = mPlayerConfig.getInt("pr");
 				if (pr == 0){
+				    if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
+				        hideBottomXu();
+				    }
 					mPlayerConfig.put("pr", 1);
 					mPlayrender.setText("S渲染");
 					listener.updatePlayerCfg();
 					listener.replay(false);
 				}else{
+				    if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
+				        hideBottomXu();
+				    }
 					mPlayerConfig.put("pr", 0);
 					mPlayrender.setText("T渲染");
 					listener.updatePlayerCfg();
 					listener.replay(false);
 				}
-
+			}
 
         });
 
