@@ -2638,6 +2638,7 @@ public class LivePlayActivity extends BaseActivity {
                 livePlayerManager.changeLivePlayerRender(mVideoView, position, currentLiveChannelItem.getChannelName());
                 mVideoView.setUrl(currentLiveChannelItem.getUrl(),liveWebHeader());
                 mVideoView.start();
+				liveSettingItemAdapter.selectItem(position, true, true);
 				if(iv_Play_Xu.getVisibility() == View.VISIBLE) {
 					iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
 				}
