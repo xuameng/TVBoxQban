@@ -304,7 +304,7 @@ public class VodController extends BaseController {
             SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
             mPlayPauseTime.setText(timeFormat.format(date));
             String speed = PlayerHelper.getDisplaySpeed(mControlWrapper.getTcpSpeed());
-            mPlayLoadNetSpeedRightTop.setText(speed);
+            mPlayLoadNetSpeedRightTop.setText("[ " + speed + " ]");
             mPlayLoadNetSpeed.setText(speed);         				
             mHandler.postDelayed(this, 1000);
         }
@@ -315,7 +315,7 @@ public class VodController extends BaseController {
         public void run() {
             String width = Integer.toString(mControlWrapper.getVideoSize()[0]);
             String height = Integer.toString(mControlWrapper.getVideoSize()[1]);
-			mVideoSize.setText("[ " + width + " X " + height +" ]");
+			mVideoSize.setText("[ " + width + " X " + height + " ]");
 
 			if (mControlWrapper.isPlaying()){    //xuameng音乐播放时图标判断
 				if (!mIsDragging) {
@@ -1595,7 +1595,7 @@ public class VodController extends BaseController {
                 listener.prepared();
 			    String width = Integer.toString(mControlWrapper.getVideoSize()[0]);
 				String height = Integer.toString(mControlWrapper.getVideoSize()[1]);
-				mVideoSize.setText("[ " + width + " X " + height +" ]"); 
+				mVideoSize.setText("[ " + width + " X " + height + " ]"); 
 				isVideoPlay = false;
                 break;
             case VideoView.STATE_BUFFERED:
