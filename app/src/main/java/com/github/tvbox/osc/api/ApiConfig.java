@@ -809,7 +809,7 @@ public class ApiConfig {
         ArrayList < String > timeoutItems = new ArrayList < > (Arrays.asList("超时05秒", "超时10秒", "超时15秒", "超时20秒", "超时25秒", "超时30秒"));
         ArrayList < String > personalSettingItems = new ArrayList < > (Arrays.asList("显示时间", "显示网速", "换台反转", "跨选分类"));
         ArrayList<String> yumItems = new ArrayList<>();   //xuameng新增 换源
-		ArrayList < String > PlayrenderSettingItems = new ArrayList < > (Arrays.asList("TextureView", "SurfaceView"));
+		ArrayList < String > PlayrenderSettingItems = new ArrayList < > (Arrays.asList("TextureView", "SurfaceView"));   //xuameng渲染方式
 
         itemsArrayList.add(sourceItems);
         itemsArrayList.add(scaleItems);
@@ -817,7 +817,7 @@ public class ApiConfig {
         itemsArrayList.add(timeoutItems);
         itemsArrayList.add(personalSettingItems);
         itemsArrayList.add(yumItems);
-		itemsArrayList.add(PlayrenderSettingItems);
+		itemsArrayList.add(PlayrenderSettingItems);   //xuameng渲染方式
 
         liveSettingGroupList.clear();
         for (int i = 0; i < groupNames.size(); i++) {
