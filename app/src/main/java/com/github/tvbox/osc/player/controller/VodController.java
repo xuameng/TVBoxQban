@@ -740,35 +740,43 @@ public class VodController extends BaseController {
         mPlayrender.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-				if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 350){                  //xuameng 防播放打断动画
-					return;
-				}
-				DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
-				int pr = Hawk.get(HawkConfig.PLAY_RENDER, 0);
-        try {
-            pr = mPlayerConfig.getInt("pr");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-				if (pr == 0){
-				    if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
-				        hideBottomXu();
-				    }
-					mPlayerConfig.put("pr", 1);
-					mPlayrender.setText("S渲染");
-					listener.updatePlayerCfg();
-					listener.replay(false);
-				}else{
-				    if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
-				        hideBottomXu();
-				    }
-					mPlayerConfig.put("pr", 0);
-					mPlayrender.setText("T渲染");
-					listener.updatePlayerCfg();
-					listener.replay(false);
+               if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 350){                  //xuameng 防播放打断动画
+                    return;
+               }
+               DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
+               try {
+                   int pr = mPlayerConfig.getInt("pr");
+               } catch (JSONException e) {
+                   e.printStackTrace();
+               }
+               if (pr == 0){
+                   if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
+                      hideBottomXu();
+                   }
+  	          try {
+                  mPlayerConfig.put("pr", 1);
+              } catch (JSONException e) {
+                  e.printStackTrace();
+              }
+					
+              mPlayrender.setText("S渲染");
+              listener.updatePlayerCfg();
+              listener.replay(false);
+              }else{
+                   if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
+                      hideBottomXu();
+                   }
+              try {
+                   mPlayerConfig.put("pr", 0);
+              } catch (JSONException e) {
+                   e.printStackTrace();
+              }
+					
+              mPlayrender.setText("T渲染");
+              listener.updatePlayerCfg();
+              listener.replay(false);
 				}
 			}
-
         });
 
 	   mxuPlay.setOnFocusChangeListener(new View.OnFocusChangeListener() {          //XUAMENG播放键预选取消SEEKBAR进度
