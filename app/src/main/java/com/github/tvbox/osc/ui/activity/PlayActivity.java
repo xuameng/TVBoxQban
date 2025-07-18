@@ -243,6 +243,18 @@ public class PlayActivity extends BaseActivity {
                 errorWithRetry("视频播放出错", false);
             }
 
+            public void hideTipXu() {        //xuameng隐藏错误信息
+               if (mPlayLoadTip.getVisibility() == View.VISIBLE){
+                   mPlayLoadTip.setVisibility(View.GONE);
+               }
+               if (mPlayLoading.getVisibility() == View.VISIBLE){
+                   mPlayLoading.setVisibility(View.GONE);
+               }
+               if (mPlayLoadErr.getVisibility() == View.VISIBLE){
+                   mPlayLoadErr.setVisibility(View.GONE);
+               }
+            }
+
             @Override
             public void selectSubtitle() {
                 try {
