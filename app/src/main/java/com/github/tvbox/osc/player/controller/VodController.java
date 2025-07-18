@@ -258,6 +258,7 @@ public class VodController extends BaseController {
     TextView mPlayerRetry;
     TextView mPlayrefresh;
 	TextView mxuPlay;                         //xuameng 底部播放ID
+	TextView mPlayrender; 
 	private ImageView iv_circle_bg;  //xuameng音乐播放时图标
 	private FrameLayout play_speed_3;  //xuameng倍速播放
 	private TextView tv_slide_progress_text;
@@ -493,6 +494,7 @@ public class VodController extends BaseController {
         mLandscapePortraitBtn = findViewById(R.id.landscape_portrait);
         backBtn = findViewById(R.id.tv_back);
 		mxuPlay = findViewById(R.id.mxuplay);		                  //xuameng  低菜单播放
+		mPlayrender = findViewById(R.id.play_render);
 
 		//xuameng音乐播放时图标
         ObjectAnimator animator20 = ObjectAnimator.ofFloat(iv_circle_bg, "rotation", 360.0f);
@@ -733,6 +735,25 @@ public class VodController extends BaseController {
 					}													//xuameng 低菜单播放监听
 				}
             }
+        });
+
+        mPlayrender.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int pr = mPlayerConfig.getInt("pr");
+				if (pr == 0){
+					mPlayerConfig.put("pr", 1);
+					mPlayrender.setText("S渲染");
+					listener.updatePlayerCfg();
+					listener.replay(false);
+				}else{
+					mPlayerConfig.put("pr", 0);
+					mPlayrender.setText("T渲染");
+					listener.updatePlayerCfg();
+					listener.replay(false);
+				}
+
+
         });
 
 	   mxuPlay.setOnFocusChangeListener(new View.OnFocusChangeListener() {          //XUAMENG播放键预选取消SEEKBAR进度
@@ -1088,6 +1109,7 @@ public class VodController extends BaseController {
 		mPlayerTimeResetBtn.setNextFocusUpId(R.id.mxuplay);
 		mZimuBtn.setNextFocusUpId(R.id.mxuplay);
 		mAudioTrackBtn.setNextFocusUpId(R.id.mxuplay);				//xuameng底部菜单所有键上键都是播放完
+		mPlayrender.setNextFocusUpId(R.id.mxuplay);	
     }
 
     private void hideLiveAboutBtn() {
@@ -1183,6 +1205,8 @@ public class VodController extends BaseController {
             mPlayerTimeStartBtn.setText(PlayerUtils.stringForTime(mPlayerConfig.getInt("st") * 1000));
             mPlayerTimeSkipBtn.setText(PlayerUtils.stringForTime(mPlayerConfig.getInt("et") * 1000));
             mAudioTrackBtn.setVisibility((playerType == 1||playerType == 2) ? VISIBLE : GONE);
+            int pr = mPlayerConfig.getInt("pr");
+            mPlayrender.setText((pr == 0) ? "T渲染" : "S渲染");
         } catch (JSONException e) {
             e.printStackTrace();
         }
