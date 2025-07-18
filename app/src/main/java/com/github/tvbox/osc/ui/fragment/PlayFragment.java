@@ -252,8 +252,7 @@ public class PlayFragment extends BaseLazyFragment {
                 errorWithRetry("视频播放出错", false);
             }
 
-            @Override
-            public void hideTipXu() {
+            public void hideTipXu() {        //xuameng隐藏错误信息
                if (mPlayLoadTip.getVisibility() == View.VISIBLE){
                    mPlayLoadTip.setVisibility(View.GONE);
                }
