@@ -2515,6 +2515,10 @@ public class LivePlayActivity extends BaseActivity {
             case 2:
                 liveSettingItemAdapter.selectItem(livePlayerManager.getLivePlayerType(), true, true);
                 break;
+            case 6:
+                liveSettingItemAdapter.selectItem(livePlayerManager.getLivePlayrender(), true, true);  //xuameng 渲染方式
+                break;
+
         }
         int scrollToPosition = liveSettingItemAdapter.getSelectedItemIndex();
         if(scrollToPosition < 0) scrollToPosition = 0;
