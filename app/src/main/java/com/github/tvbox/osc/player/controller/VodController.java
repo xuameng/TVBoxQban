@@ -693,6 +693,7 @@ public class VodController extends BaseController {
             mSeekBarhasFocus = true;       //xuameng进入SEEKBAR
 			if (!hasFocus) {
                mSeekBarhasFocus = false;       //xuameng进入SEEKBAR
+			   isSEEKBAR = false;       //xuameng SEEKBAR 失去焦点
 			}
 	    }
 	    });
@@ -1506,7 +1507,7 @@ public class VodController extends BaseController {
         videoPlayState = playState;
         switch (playState) {
             case VideoView.STATE_IDLE:
-				if (isBottomVisible() && mSeekBarhasFocus) {
+				if (isBottomVisible() && mSeekBarhasFocus) {    //xuameng假如焦点在SeekBar
 					mxuPlay.requestFocus();				    //底部菜单默认焦点为播放
 				}
 				mLandscapePortraitBtn.setVisibility(View.GONE);
@@ -1562,7 +1563,7 @@ public class VodController extends BaseController {
 			    //pauseIngXu();
                 break;
             case VideoView.STATE_ERROR:
-				if (isBottomVisible() && mSeekBarhasFocus) {
+				if (isBottomVisible() && mSeekBarhasFocus) {  //xuameng假如焦点在SeekBar
 					mxuPlay.requestFocus();				    //底部菜单默认焦点为播放
 				}
                 listener.errReplay();
@@ -1602,7 +1603,7 @@ public class VodController extends BaseController {
 				isVideoPlay = true;
                 break;
             case VideoView.STATE_PREPARING:
-				if (isBottomVisible() && mSeekBarhasFocus) {
+				if (isBottomVisible() && mSeekBarhasFocus) {  //xuameng假如焦点在SeekBar
 					mxuPlay.requestFocus();				    //底部菜单默认焦点为播放
 				}
 				mLandscapePortraitBtn.setVisibility(View.GONE);
