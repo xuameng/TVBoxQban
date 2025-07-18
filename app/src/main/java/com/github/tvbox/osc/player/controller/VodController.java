@@ -689,7 +689,7 @@ public class VodController extends BaseController {
         mPlayerRetry.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-				FastClickCheckUtil.check(view);
+				FastClickCheckUtil.check(v);
                 listener.replay(true);
 				if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
 				    hideBottomXu();
@@ -699,7 +699,7 @@ public class VodController extends BaseController {
         mPlayrefresh.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-				FastClickCheckUtil.check(view);
+				FastClickCheckUtil.check(v);
                 listener.replay(false);
 				if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
 				    hideBottomXu();
@@ -992,7 +992,7 @@ public class VodController extends BaseController {
         mPlayerTimeResetBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-				FastClickCheckUtil.check(view);
+				FastClickCheckUtil.check(v);
                 myHandle.removeCallbacks(myRunnable);
                 myHandle.postDelayed(myRunnable, myHandleSeconds);
                 try {
