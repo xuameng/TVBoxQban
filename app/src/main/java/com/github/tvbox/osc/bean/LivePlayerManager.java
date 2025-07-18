@@ -104,6 +104,15 @@ public class LivePlayerManager {
         return 0;
     }
 
+    public int getLivePlayrender() {   //xuameng 渲染方式
+        try {
+            return currentPlayerConfig.getInt("pr");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
     public void changeLivePlayerType(VideoView videoView, int playerType, String channelName) {
         JSONObject playerConfig = currentPlayerConfig;
         try {
