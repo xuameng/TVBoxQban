@@ -163,4 +163,28 @@ public class LivePlayerManager {
 
         currentPlayerConfig = playerConfig;
     }
+
+    public void changeLivePlayerRender(VideoView videoView, int RenderType, String channelName) {
+        JSONObject playerConfig = currentPlayerConfig;
+        try {
+            switch (RenderType) {
+                case 0:
+                    playerConfig.put("pr", 0);
+                    break;
+                case 1:
+                    playerConfig.put("pr", 1);
+                    break;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        PlayerHelper.updateCfg(videoView, playerConfig);
+
+        if (playerConfig.toString().equals(defaultPlayerConfig.toString()))
+            Hawk.delete(channelName);
+        else
+            Hawk.put(channelName, playerConfig);
+
+        currentPlayerConfig = playerConfig;
+    }
 }
