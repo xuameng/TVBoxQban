@@ -1093,9 +1093,13 @@ public class PlayFragment extends BaseLazyFragment {
         setTip("正在获取播放信息", true, false);
         String playTitleInfo = mVodInfo.name + " " + vs.name;
         int lengthplayTitleInfo = playTitleInfo.length();
-		if (lengthplayTitleInfo <= 14 ){
-            mController.setTitle("您正在观看的影片是：" + playTitleInfo);
-		}else{
+		if (lengthplayTitleInfo <= 6 ){
+            mController.setTitle("您正在观看影片：" + playTitleInfo);
+		}else if (lengthplayTitleInfo > 6 && <= 10 ){
+			mController.setTitle("正在观看：" + playTitleInfo);
+        }else if (lengthplayTitleInfo > 10 && <= 12 ){
+			mController.setTitle("影片：" + playTitleInfo);
+        }else{
             mController.setTitle(playTitleInfo);
         }
         stopParse();
