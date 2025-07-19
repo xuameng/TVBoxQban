@@ -311,7 +311,7 @@ public class VodController extends BaseController {
             mPlayLoadNetSpeed.setText(speed);      
             long position = mControlWrapper.getCurrentPosition();
             if (position < 0) position = 0;   //xuameng系统播放器有时会有负进度的BUG
-            long TimeRemaining = mControlWrapper.getDuration() - mControlWrapper.getCurrentPosition();
+            long TimeRemaining = mControlWrapper.getDuration() - position;
             long duration = mControlWrapper.getDuration();
             Calendar dateXu = Calendar.getInstance();
             long t = dateXu.getTimeInMillis();
