@@ -323,8 +323,6 @@ public class VodController extends BaseController {
                 }else{
                     mPlayTimeEnd.setVisibility(GONE);
                 }
-            }else{
-                 mPlayTimeEnd.setVisibility(GONE);
             }
             mHandler.postDelayed(this, 1000);
         }
