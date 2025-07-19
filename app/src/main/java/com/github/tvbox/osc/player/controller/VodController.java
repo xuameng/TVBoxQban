@@ -309,7 +309,7 @@ public class VodController extends BaseController {
             String speed = PlayerHelper.getDisplaySpeed(mControlWrapper.getTcpSpeed());
             mPlayLoadNetSpeedRightTop.setText("[ " + speed + " ]");
             mPlayLoadNetSpeed.setText(speed);      
-            int long = mControlWrapper.getCurrentPosition();
+            long = mControlWrapper.getCurrentPosition();
             if (position >= 0){
                 long TimeRemaining = mControlWrapper.getDuration() - mControlWrapper.getCurrentPosition();
                 long duration = mControlWrapper.getDuration();
@@ -323,6 +323,8 @@ public class VodController extends BaseController {
                 }else{
                     mPlayTimeEnd.setVisibility(GONE);
                 }
+            }else{
+                 mPlayTimeEnd.setVisibility(GONE);
             }
             mHandler.postDelayed(this, 1000);
         }
