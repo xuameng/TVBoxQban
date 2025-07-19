@@ -1042,9 +1042,9 @@ public class PlayActivity extends BaseActivity {
         int lengthplayTitleInfo = playTitleInfo.length();
 		if (lengthplayTitleInfo <= 6 ){
             mController.setTitle("您正在观看影片：" + playTitleInfo);
-		}else if (lengthplayTitleInfo > 6 && <= 10 ){
+		}else if (lengthplayTitleInfo > 6 && lengthplayTitleInfo <= 10 ){
 			mController.setTitle("正在观看：" + playTitleInfo);
-        }else if (lengthplayTitleInfo > 10 && <= 12 ){
+        }else if (lengthplayTitleInfo > 10 && lengthplayTitleInfo <= 12 ){
 			mController.setTitle("影片：" + playTitleInfo);
         }else{
             mController.setTitle(playTitleInfo);
