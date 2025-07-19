@@ -2668,7 +2668,7 @@ public class LivePlayActivity extends BaseActivity {
                     mVideoView.release();
                     mVideoView=null;
                 }
-				ExitLiveOnSetting;
+				ExitLiveOnSetting();
                 break;
         }
         mHideSettingLayoutRunXu();
