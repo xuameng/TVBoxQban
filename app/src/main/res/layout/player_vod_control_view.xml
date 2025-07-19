@@ -140,7 +140,7 @@
             android:layout_weight="1.0"
             android:layout_marginEnd="@dimen/vs_5"/>
         <TextView
-            android:textSize="@dimen/vs_30"
+            android:textSize="@dimen/vs_25"
             android:textColor="@color/color_FFFFFF"
             android:id="@+id/play_time_end_xu"
             android:visibility="gone"
@@ -150,7 +150,7 @@
             android:layout_marginRight="@dimen/vs_0"
             android:text="影片剩余时间"
             android:singleLine="true"
-            android:layout_marginBottom="@dimen/vs_25"/>
+            android:layout_marginBottom="@dimen/vs_10"/>
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="fill_parent"
