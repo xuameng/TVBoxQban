@@ -1094,9 +1094,6 @@ public class PlayFragment extends BaseLazyFragment {
 		String playTitleInfo= "聚汇影视祝您：观影愉快！";
         if(mVodInfo!=null){
            playTitleInfo = mVodInfo.name + " " + vs.name;
-		   if (playTitleInfo.isEmpty){
-               mController.setTitle("聚汇影视祝您：观影愉快！");
-		   }
            int lengthplayTitleInfo = playTitleInfo.length();
 		   if (lengthplayTitleInfo <=6 ){
                mController.setTitle("您正在观看的影片是：" + playTitleInfo);
