@@ -150,7 +150,7 @@
             android:layout_marginRight="@dimen/vs_0"
             android:text="影片剩余时间"
             android:singleLine="true"
-            android:layout_marginBottom="@dimen/vs_10"/>
+            android:layout_marginBottom="@dimen/vs_8"/>
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="fill_parent"
