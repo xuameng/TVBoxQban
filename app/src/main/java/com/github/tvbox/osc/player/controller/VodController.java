@@ -314,7 +314,7 @@ public class VodController extends BaseController {
             long t = dateXu.getTimeInMillis();
             Date afterAdd = new Date(t + TimeRemaining);
             SimpleDateFormat timeEnd = new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH);
-            mPlayTimeEnd.setText("影片剩余时间： + PlayerUtils.stringForTime((int) TimeRemaining) + " | " + "影片结束时间：" + timeEnd.format(afterAdd));
+            mPlayTimeEnd.setText("影片剩余时间：" + PlayerUtils.stringForTime((int) TimeRemaining) + " || " + "影片结束时间：" + timeEnd.format(afterAdd));
             mHandler.postDelayed(this, 1000);
         }
     };
