@@ -310,19 +310,18 @@ public class VodController extends BaseController {
             mPlayLoadNetSpeedRightTop.setText("[ " + speed + " ]");
             mPlayLoadNetSpeed.setText(speed);      
             long position = mControlWrapper.getCurrentPosition();
-            if (position >= 0){
-                long TimeRemaining = mControlWrapper.getDuration() - mControlWrapper.getCurrentPosition();
-                long duration = mControlWrapper.getDuration();
-                Calendar dateXu = Calendar.getInstance();
-                long t = dateXu.getTimeInMillis();
-                Date afterAdd = new Date(t + TimeRemaining);
-                SimpleDateFormat timeEnd = new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH);
-                if (isInPlaybackState() && duration >= 1000 && duration <= 180000000){
-				    mPlayTimeEnd.setVisibility(VISIBLE);
-                    mPlayTimeEnd.setText("影片剩余时间" + " " + PlayerUtils.stringForTime((int) TimeRemaining) + "  |  " + "影片结束时间" + " " + timeEnd.format(afterAdd));
-                }else{
-                    mPlayTimeEnd.setVisibility(GONE);
-                }
+            if (position < 0) position = 0;   //xuameng系统播放器有时会有负进度的BUG
+            long TimeRemaining = mControlWrapper.getDuration() - mControlWrapper.getCurrentPosition();
+            long duration = mControlWrapper.getDuration();
+            Calendar dateXu = Calendar.getInstance();
+            long t = dateXu.getTimeInMillis();
+            Date afterAdd = new Date(t + TimeRemaining);
+            SimpleDateFormat timeEnd = new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH);
+            if (isInPlaybackState() && duration >= 1000 && duration <= 180000000){
+                mPlayTimeEnd.setVisibility(VISIBLE);
+                mPlayTimeEnd.setText("影片剩余时间" + " " + PlayerUtils.stringForTime((int) TimeRemaining) + "  |  " + "影片结束时间" + " " + timeEnd.format(afterAdd));
+            }else{
+                mPlayTimeEnd.setVisibility(GONE);
             }
             mHandler.postDelayed(this, 1000);
         }
