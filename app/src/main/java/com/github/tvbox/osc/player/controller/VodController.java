@@ -64,7 +64,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Date;
-import java.util.Calendar;
+import java.util.Calendar;   //xuameng 获取时间
+import java.util.Locale;  //xuameng 获取时间
 import xyz.doikki.videoplayer.player.VideoView;
 import xyz.doikki.videoplayer.util.PlayerUtils;
 import static xyz.doikki.videoplayer.util.PlayerUtils.stringForTime;
