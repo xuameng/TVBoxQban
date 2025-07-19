@@ -308,13 +308,13 @@ public class VodController extends BaseController {
             mPlayPauseTime.setText(timeFormat.format(date));
             String speed = PlayerHelper.getDisplaySpeed(mControlWrapper.getTcpSpeed());
             mPlayLoadNetSpeedRightTop.setText("[ " + speed + " ]");
-            mPlayLoadNetSpeed.setText(speed);      
-
+            mPlayLoadNetSpeed.setText(speed); 
+			
+            long duration = mControlWrapper.getDuration();
             if (isInPlaybackState() && duration >= 1000 && duration <= 180000000){
                 long position = mControlWrapper.getCurrentPosition();
                 if (position < 0) position = 0;   //xuameng系统播放器有时会有负进度的BUG
                 long TimeRemaining = mControlWrapper.getDuration() - position;
-                long duration = mControlWrapper.getDuration();
                 Calendar dateXu = Calendar.getInstance();
                 long t = dateXu.getTimeInMillis();
                 Date afterAdd = new Date(t + TimeRemaining);
