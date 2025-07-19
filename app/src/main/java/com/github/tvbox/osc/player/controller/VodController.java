@@ -319,7 +319,7 @@ public class VodController extends BaseController {
                 SimpleDateFormat timeEnd = new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH);
                 if (isInPlaybackState() && duration >= 1000 && duration <= 180000000){
 				    mPlayTimeEnd.setVisibility(VISIBLE);
-                    mPlayTimeEnd.setText("影片剩余时间：" + PlayerUtils.stringForTime((int) TimeRemaining) + "  |  " + "影片结束时间：" + timeEnd.format(afterAdd));
+                    mPlayTimeEnd.setText("影片剩余时间" + " " + PlayerUtils.stringForTime((int) TimeRemaining) + "  |  " + "影片结束时间" + " " + timeEnd.format(afterAdd));
                 }else{
                     mPlayTimeEnd.setVisibility(GONE);
                 }
