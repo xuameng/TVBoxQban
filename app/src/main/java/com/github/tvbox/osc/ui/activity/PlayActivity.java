@@ -1039,8 +1039,12 @@ public class PlayActivity extends BaseActivity {
         EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_REFRESH, mVodInfo.playIndex));
         setTip("正在获取播放信息", true, false);
         String playTitleInfo = mVodInfo.name + " " + vs.name;
-        mController.setTitle(playTitleInfo);
-
+        int lengthplayTitleInfo = playTitleInfo.length();
+		if (lengthplayTitleInfo <= 14 ){
+            mController.setTitle("您正在观看的影片是：" + playTitleInfo);
+		}else{
+            mController.setTitle(playTitleInfo);
+        }
         stopParse();
         initParseLoadFound();
 //xuameng某些设备有问题        mController.stopOther();
