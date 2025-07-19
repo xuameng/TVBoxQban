@@ -143,13 +143,14 @@
             android:textSize="@dimen/vs_30"
             android:textColor="@color/color_FFFFFF"
             android:id="@+id/play_time_end_xu"
+            android:visibility="gone"
             android:layout_gravity="right"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="@dimen/vs_0"
             android:text="影片剩余时间"
             android:singleLine="true"
-            android:layout_marginBottom="@dimen/vs_20"/>
+            android:layout_marginBottom="@dimen/vs_25"/>
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="fill_parent"
