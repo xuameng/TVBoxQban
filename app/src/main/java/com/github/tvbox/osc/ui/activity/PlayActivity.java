@@ -1040,9 +1040,9 @@ public class PlayActivity extends BaseActivity {
         setTip("正在获取播放信息", true, false);
         String playTitleInfo = mVodInfo.name + " " + vs.name;
         int lengthplayTitleInfo = playTitleInfo.length();
-		if (lengthplayTitleInfo <= 6 ){
+		if (lengthplayTitleInfo <= 7 ){
             mController.setTitle("您正在观看影片：" + playTitleInfo);
-		}else if (lengthplayTitleInfo > 6 && lengthplayTitleInfo <= 10 ){
+		}else if (lengthplayTitleInfo > 8 && lengthplayTitleInfo <= 10 ){
 			mController.setTitle("正在观看：" + playTitleInfo);
         }else if (lengthplayTitleInfo > 10 && lengthplayTitleInfo <= 12 ){
 			mController.setTitle("影片：" + playTitleInfo);
