@@ -318,7 +318,7 @@ public class VodController extends BaseController {
                 Calendar dateXu = Calendar.getInstance();
                 long t = dateXu.getTimeInMillis();
                 Date afterAdd = new Date(t + TimeRemaining);
-                SimpleDateFormat timeEnd = new SimpleDateFormat("dd日HH:mm:ss", Locale.ENGLISH);
+                SimpleDateFormat timeEnd = new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH);
                 mPlayTimeEnd.setVisibility(VISIBLE);
                 mPlayTimeEnd.setText("影片剩余时间" + " " + PlayerUtils.stringForTime((int) TimeRemaining) + "  |  " + "影片结束时间" + " " + timeEnd.format(afterAdd));
             }else{
