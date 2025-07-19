@@ -1556,7 +1556,6 @@ public class VodController extends BaseController {
 				//playIngXu();	
                 break;
             case VideoView.STATE_PAUSED:
-				listener.errReplay();
 				isVideoPlay = false;
 				mxuPlay.setText("播放");			   //xuameng底部菜单显示播放
                 //mTopRoot1.setVisibility(GONE);       //xuameng隐藏上面菜单
