@@ -1075,13 +1075,13 @@ public class PlayFragment extends BaseLazyFragment {
     public void setPlayTitle(boolean show)    //XUAMENG全屏TITLE问题
     {
         if(show){
-            String playTitleInfo= "聚汇影视祝您：观影愉快！";
+            String playTitleInfo= "";
             if(mVodInfo!=null){
                 playTitleInfo = mVodInfo.name + " " + mVodInfo.seriesMap.get(mVodInfo.playFlag).get(mVodInfo.playIndex).name;
             }
             mController.setTitle(playTitleInfo);
         }else {
-            mController.setTitle(playTitleInfo);
+            mController.setTitle("聚汇影视祝您：观影愉快！");
         }
     }
 
@@ -1094,6 +1094,9 @@ public class PlayFragment extends BaseLazyFragment {
 		String playTitleInfo= "聚汇影视祝您：观影愉快！";
         if(mVodInfo!=null){
            playTitleInfo = mVodInfo.name + " " + vs.name;
+		   if (playTitleInfo.isEmpty){
+               mController.setTitle("聚汇影视祝您：观影愉快！");
+		   }
            int lengthplayTitleInfo = playTitleInfo.length();
 		   if (lengthplayTitleInfo <=6 ){
                mController.setTitle("您正在观看的影片是：" + playTitleInfo);
