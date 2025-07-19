@@ -309,15 +309,16 @@ public class VodController extends BaseController {
             String speed = PlayerHelper.getDisplaySpeed(mControlWrapper.getTcpSpeed());
             mPlayLoadNetSpeedRightTop.setText("[ " + speed + " ]");
             mPlayLoadNetSpeed.setText(speed);      
-            long position = mControlWrapper.getCurrentPosition();
-            if (position < 0) position = 0;   //xuameng系统播放器有时会有负进度的BUG
-            long TimeRemaining = mControlWrapper.getDuration() - position;
-            long duration = mControlWrapper.getDuration();
-            Calendar dateXu = Calendar.getInstance();
-            long t = dateXu.getTimeInMillis();
-            Date afterAdd = new Date(t + TimeRemaining);
-            SimpleDateFormat timeEnd = new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH);
+
             if (isInPlaybackState() && duration >= 1000 && duration <= 180000000){
+                long position = mControlWrapper.getCurrentPosition();
+                if (position < 0) position = 0;   //xuameng系统播放器有时会有负进度的BUG
+                long TimeRemaining = mControlWrapper.getDuration() - position;
+                long duration = mControlWrapper.getDuration();
+                Calendar dateXu = Calendar.getInstance();
+                long t = dateXu.getTimeInMillis();
+                Date afterAdd = new Date(t + TimeRemaining);
+                SimpleDateFormat timeEnd = new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH);
                 mPlayTimeEnd.setVisibility(VISIBLE);
                 mPlayTimeEnd.setText("影片剩余时间" + " " + PlayerUtils.stringForTime((int) TimeRemaining) + "  |  " + "影片结束时间" + " " + timeEnd.format(afterAdd));
             }else{
