@@ -1135,9 +1135,7 @@ public class ApiConfig {
     public void LoadapiUrlXu(){
         String apiUrlXu = Hawk.get(HawkConfig.API_URL, "");
         if (apiUrlXu == null || apiUrlXu.isEmpty() ||apiUrlXu.length() == 0){
-           if (Hawk.contains("API_URL")) {
-               Hawk.delete("API_URL"); // 安全删除
-           }
+           Hawk.clear();
         }
     }
 }
