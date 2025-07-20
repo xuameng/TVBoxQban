@@ -676,14 +676,14 @@ public class VodController extends BaseController {
 					    if (isInPlayback) {
 						    if (!isDisplay || !isAnimation){
 							    if (mControlWrapper.isPlaying()){
-							    togglePlay();
-							    pauseIngXu();
-							    return true;
+                                    pauseIngXu();
+							        togglePlay();
+							        return true;
 							    }
 							    if (!mControlWrapper.isPlaying()){
-							    togglePlay();
-							    playIngXu();
-							    return true;
+                                    playIngXu();
+							        togglePlay();
+							        return true;
 							    }
 						    }
 					    return true;
@@ -725,10 +725,10 @@ public class VodController extends BaseController {
 				}
 				DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
 				FastClickCheckUtil.check(v);
+                if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
+                   hideBottomXu();
+                }
                 listener.replay(true);
-				if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
-				    hideBottomXu();
-				}
             }
         });
         mPlayrefresh.setOnClickListener(new OnClickListener() {
@@ -739,10 +739,10 @@ public class VodController extends BaseController {
 				}
 				DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
 				FastClickCheckUtil.check(v);
+                if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
+            	   hideBottomXu();
+                }
                 listener.replay(false);
-				if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
-				    hideBottomXu();
-				}
             }
         });
         mNextBtn.setOnClickListener(new OnClickListener() {
@@ -753,10 +753,10 @@ public class VodController extends BaseController {
 				}
 				DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
 				FastClickCheckUtil.check(view);
+                if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
+                   hideBottomXu();
+                }
                 listener.playNext(false);
-				if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
-				    hideBottomXu();
-				}
             }
         });
 		mxuPlay.setOnClickListener(new OnClickListener() {			//xuameng 低菜单播放监听
@@ -770,13 +770,13 @@ public class VodController extends BaseController {
 				if (isInPlayback) {
 					if (!isDisplay || !isAnimation){
 						if (mControlWrapper.isPlaying()){
-							togglePlay();
 							pauseIngXu();
+							togglePlay();
 							return;
 						}
 						if (!mControlWrapper.isPlaying()){
-							togglePlay();
 							playIngXu();
+							togglePlay();
 							return;
 						}
 					}													//xuameng 低菜单播放监听
@@ -838,10 +838,10 @@ public class VodController extends BaseController {
 				}
 				DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
 				FastClickCheckUtil.check(view);
-                listener.playPre();
-				if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
-				   hideBottomXu();
+                if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
+                   hideBottomXu();
 				}
+                listener.playPre();
             }
         });
         mPlayerScaleBtn.setOnClickListener(new OnClickListener() {
@@ -907,6 +907,9 @@ public class VodController extends BaseController {
 				}
 				DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
 				FastClickCheckUtil.check(view);
+                if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
+                   hideBottomXu();
+				}
                 myHandle.removeCallbacks(myRunnable);
                 myHandle.postDelayed(myRunnable, myHandleSeconds);
                 try {
@@ -928,14 +931,11 @@ public class VodController extends BaseController {
                     updatePlayerCfgView();
                     listener.updatePlayerCfg();
                     listener.replay(false);
-					if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
-						hideBottomXu();
-					}
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                mPlayerBtn.requestFocus();
-                mPlayerBtn.requestFocusFromTouch();
+          //      mPlayerBtn.requestFocus();
+          //      mPlayerBtn.requestFocusFromTouch();
             }
         });
 
@@ -1007,11 +1007,14 @@ public class VodController extends BaseController {
         mPlayerIJKBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-				FastClickCheckUtil.check(view);
 				if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 300 || isAnimation || isDisplay){                  //xuameng 防播放打断动画
 					return;
 				}
 				DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
+                FastClickCheckUtil.check(view);
+                if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
+                   hideBottomXu();
+                }
                 myHandle.removeCallbacks(myRunnable);
                 myHandle.postDelayed(myRunnable, myHandleSeconds);
                 try {
@@ -1031,9 +1034,6 @@ public class VodController extends BaseController {
                     updatePlayerCfgView();
                     listener.updatePlayerCfg();
                     listener.replay(false);
-					if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
-					   hideBottomXu();
-					}
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -1776,14 +1776,14 @@ public class VodController extends BaseController {
 					if (isInPlayback) {
 						if (!isDisplay || !isAnimation){
 							if (mControlWrapper.isPlaying()){
-							togglePlay();
-							pauseIngXu();
-							return true;
+								pauseIngXu();
+							    togglePlay();
+							    return true;
 							}
 							if (!mControlWrapper.isPlaying()){
-							togglePlay();
-							playIngXu();
-							return true;
+								playIngXu();
+							    togglePlay();
+							    return true;
 							}
 						}
                     return true;
@@ -1981,14 +1981,14 @@ public class VodController extends BaseController {
         if (!isLock && isInPlaybackState()){
 			if (!isDisplay || !isAnimation){
 				if (mControlWrapper.isPlaying()){
-				togglePlay();
-				pauseIngXu();
-				return true;
+					pauseIngXu();
+				    togglePlay();
+				    return true;
 				}
 				if (!mControlWrapper.isPlaying()){
-				togglePlay();
-				playIngXu();
-				return true;
+					playIngXu();
+				    togglePlay();
+				    return true;
 				}
 			}
 		}
