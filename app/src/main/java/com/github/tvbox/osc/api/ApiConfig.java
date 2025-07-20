@@ -171,7 +171,7 @@ public class ApiConfig {
         return configUrl;
     }
     public void loadConfig(boolean useCache, LoadConfigCallback callback, Activity activity) {
-        String apiUrl = Hawk.get(HawkConfig.API_URL, "");
+        String apiUrl = Hawk.get(HawkConfig.API_URL, "http://xuameng.vicp.net:8082/tvbox/1/xu.json");
         //独立加载直播配置
         String liveApiUrl = Hawk.get(HawkConfig.LIVE_API_URL, "");
         String liveApiConfigUrl=configUrl(liveApiUrl);
@@ -1134,8 +1134,10 @@ public class ApiConfig {
 
     public void LoadapiUrlXu(){
         String apiUrlXu = Hawk.get(HawkConfig.API_URL, "");
-		if (apiUrlXu == null || apiUrlXu.isEmpty() ||apiUrlXu.length() == 0){
-			Hawk.put(HawkConfig.API_URL, "http://xuameng.vicp.net:8082/tvbox/1/xu.json");
-		}
+        if (apiUrlXu == null || apiUrlXu.isEmpty() ||apiUrlXu.length() == 0){
+           if (Hawk.contains("API_URL")) {
+               Hawk.delete("API_URL"); // 安全删除
+           }
+        }
     }
 }
