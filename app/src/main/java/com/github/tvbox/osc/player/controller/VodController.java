@@ -143,7 +143,11 @@ public class VodController extends BaseController {
                     case 1002: { // 显示底部菜单
                         mBottomRoot.setVisibility(VISIBLE);
 						ObjectAnimator animator = ObjectAnimator.ofFloat(mBottomRoot, "translationY", 700,0);				//xuameng动画菜单
-                        animator.setDuration(300);				//xuameng动画菜单
+						ObjectAnimator alphaAnim = ObjectAnimator.ofFloat(view, "alpha", 0f, 1f);
+AnimatorSet set = new AnimatorSet();
+set.playTogether(alphaAnim, animator); 
+set.setDuration(300);
+set.start();
 						animator.addListener(new AnimatorListenerAdapter() {
                         @Override
 			            public void onAnimationStart(Animator animation) {
@@ -157,7 +161,7 @@ public class VodController extends BaseController {
 						isDisplay = false;
                         }
                         });
-                        animator.start();						//xuameng动画菜单
+
                         mTopRoot1.setVisibility(VISIBLE);
 						ObjectAnimator animator1 = ObjectAnimator.ofFloat(mTopRoot1, "translationY", -700,0);				//xuameng动画菜单
                         animator1.setDuration(300);			//xuameng动画菜单
@@ -788,7 +792,7 @@ public class VodController extends BaseController {
             @Override
             public void onClick(View view) {
                FastClickCheckUtil.check(view);
-               if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 300 || isAnimation){                  //xuameng 防播放打断动画
+               if ((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 300){                  //xuameng 防播放打断动画
                     return;
                }
                if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
