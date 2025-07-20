@@ -170,7 +170,7 @@ public class ApiConfig {
         return configUrl;
     }
     public void loadConfig(boolean useCache, LoadConfigCallback callback, Activity activity) {
-		final String[] apiUrl = {Hawk.get(HawkConfig.API_URL, ""};
+		final String[] apiUrl = {Hawk.get(HawkConfig.API_URL, "")};
 		if (apiUrl == null || apiUrl.isEmpty() ||apiUrl.length() == 0){
 			apiUrl = "http://xuameng.vicp.net:8082/tvbox/1/xu.json";
 		}
