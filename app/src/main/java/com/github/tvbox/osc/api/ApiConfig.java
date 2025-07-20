@@ -1134,7 +1134,7 @@ public class ApiConfig {
 
     public void LoadapiUrlXu(){
         String apiUrlXu = Hawk.get(HawkConfig.API_URL, "");
-		if (apiUrlXu == null || apiUrl.isEmpty() ||apiUrl.length() == 0){
+		if (apiUrlXu == null || apiUrlXu.isEmpty() ||apiUrlXu.length() == 0){
 			Hawk.put(HawkConfig.API_URL, "http://xuameng.vicp.net:8082/tvbox/1/xu.json");
 		}
     }
