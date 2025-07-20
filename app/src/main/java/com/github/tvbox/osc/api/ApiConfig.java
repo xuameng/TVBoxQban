@@ -88,6 +88,7 @@ public class ApiConfig {
     private String defaultLiveObjString="{\"lives\":[{\"name\":\"txt_m3u\",\"type\":0,\"url\":\"txt_m3u_url\"}]}";
     private ApiConfig() {
 		clearJarLoader();
+		LoadapiUrlXu();
         sourceBeanList = new LinkedHashMap<>();
         liveChannelGroupList = new ArrayList<>();
         parseBeanList = new ArrayList<>();
@@ -170,10 +171,7 @@ public class ApiConfig {
         return configUrl;
     }
     public void loadConfig(boolean useCache, LoadConfigCallback callback, Activity activity) {
-		final String[] apiUrl = {Hawk.get(HawkConfig.API_URL, "")};
-		if (apiUrl == null || apiUrl.isEmpty() ||apiUrl.length() == 0){
-			apiUrl = "http://xuameng.vicp.net:8082/tvbox/1/xu.json";
-		}
+        String apiUrl = Hawk.get(HawkConfig.API_URL, "http://xuameng.vicp.net:8082/tvbox/1/xu.json");
         //独立加载直播配置
         String liveApiUrl = Hawk.get(HawkConfig.LIVE_API_URL, "");
         String liveApiConfigUrl=configUrl(liveApiUrl);
@@ -1132,5 +1130,12 @@ public class ApiConfig {
         superPb.setExt("");
         superPb.setType(4);
         parseBeanList.add(0, superPb);
+    }
+
+    public void LoadapiUrlXu(){
+        String apiUrlXu = Hawk.get(HawkConfig.API_URL, "");
+		if (apiUrlXu == null || apiUrl.isEmpty() ||apiUrl.length() == 0){
+			Hawk.put(HawkConfig.API_URL, "http://xuameng.vicp.net:8082/tvbox/1/xu.json");
+		}
     }
 }
