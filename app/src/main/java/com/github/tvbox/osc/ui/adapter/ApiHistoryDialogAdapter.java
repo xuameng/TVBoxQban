@@ -95,10 +95,9 @@ public class ApiHistoryDialogAdapter extends ListAdapter<String, ApiHistoryDialo
             public void onClick(View v) {
                 if (select.equals(value))
                     return;
-       //         notifyItemRemoved(data.indexOf(value));
                 data.remove(value);
+                notifyItemRemoved(data.indexOf(value));
                 dialogInterface.del(value, data);
-				notifyDataSetChanged();
             }
         });
     }
