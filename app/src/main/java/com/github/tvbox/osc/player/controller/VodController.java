@@ -333,7 +333,7 @@ public class VodController extends BaseController {
         public void run() {
             String width = Integer.toString(mControlWrapper.getVideoSize()[0]);
             String height = Integer.toString(mControlWrapper.getVideoSize()[1]);
-			if (isInPlaybackState()){
+			if (isInPlaybackState()){      //xuameng 重新选择解析视频大小不刷新
 			    mVideoSize.setText("[ " + width + " X " + height + " ]");
 			}
 
@@ -614,7 +614,6 @@ public class VodController extends BaseController {
 				if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
                    hideBottom();
 				}
-                mVideoSize.setText("[ 0 X 0 ]");    //xuameng 重新选择解析视频大小不刷新
             }
         });
         mGridView.setAdapter(parseAdapter);
