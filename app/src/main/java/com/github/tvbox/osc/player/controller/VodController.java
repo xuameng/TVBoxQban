@@ -610,8 +610,9 @@ public class VodController extends BaseController {
                 parseAdapter.notifyItemChanged(position);
                 listener.changeParse(parseBean);
 				if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE){
-                hideBottom();
+                   hideBottom();
 				}
+                mVideoSize.setText("[ 0 X 0 ]");    //xuameng 重新选择解析视频大小不刷新
             }
         });
         mGridView.setAdapter(parseAdapter);
