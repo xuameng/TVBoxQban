@@ -2,6 +2,7 @@ package com.github.tvbox.osc.player.controller;
 import android.animation.Animator;                      //xuameng动画
 import android.animation.AnimatorListenerAdapter;       //xuameng动画
 import android.animation.ObjectAnimator;                //xuameng动画
+import android.animation.AnimatorSet;
 import android.app.Activity;
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -143,7 +144,7 @@ public class VodController extends BaseController {
                     case 1002: { // 显示底部菜单
                         mBottomRoot.setVisibility(VISIBLE);
 						ObjectAnimator animator = ObjectAnimator.ofFloat(mBottomRoot, "translationY", 700,0);				//xuameng动画菜单
-						ObjectAnimator alphaAnim = ObjectAnimator.ofFloat(view, "alpha", 0f, 1f);
+						ObjectAnimator alphaAnim = ObjectAnimator.ofFloat(mBottomRoot, "alpha", 0f, 1f);
 AnimatorSet set = new AnimatorSet();
 set.playTogether(alphaAnim, animator); 
 set.setDuration(300);
