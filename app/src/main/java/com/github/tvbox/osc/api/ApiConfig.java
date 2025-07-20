@@ -88,7 +88,7 @@ public class ApiConfig {
     private String defaultLiveObjString="{\"lives\":[{\"name\":\"txt_m3u\",\"type\":0,\"url\":\"txt_m3u_url\"}]}";
     private ApiConfig() {
 		clearJarLoader();
-		LoadapiUrlXu();
+		LoadapiUrlXu();  //xuameng 如果点播源url为空，清除API_URL键值。回复内置接口
         sourceBeanList = new LinkedHashMap<>();
         liveChannelGroupList = new ArrayList<>();
         parseBeanList = new ArrayList<>();
@@ -1131,8 +1131,8 @@ public class ApiConfig {
         superPb.setType(4);
         parseBeanList.add(0, superPb);
     }
-Hawk.delete(HawkConfig.API_URL);
-    public void LoadapiUrlXu(){
+
+    public void LoadapiUrlXu(){    //xuameng 如果点播源url为空，清除API_URL键值。回复内置接口
         String apiUrlXu = Hawk.get(HawkConfig.API_URL, "");
         if (apiUrlXu == null || apiUrlXu.isEmpty() ||apiUrlXu.length() == 0){
            if (Hawk.contains(HawkConfig.API_URL)) {
@@ -1140,4 +1140,5 @@ Hawk.delete(HawkConfig.API_URL);
            }
         }
     }
+	
 }
