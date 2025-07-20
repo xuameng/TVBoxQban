@@ -82,8 +82,8 @@ public class ApiHistoryDialogAdapter extends ListAdapter<String, ApiHistoryDialo
         holder.itemView.findViewById(R.id.tvName).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (select.equals(value))
-                    return;
+ //               if (select.equals(value))      //xuameng 当前选择与新选择一样就返回BUG因为 源可以为空
+ //                   return;
                 notifyItemChanged(data.indexOf(select));
                 select = value;
                 notifyItemChanged(data.indexOf(value));
@@ -93,8 +93,8 @@ public class ApiHistoryDialogAdapter extends ListAdapter<String, ApiHistoryDialo
         holder.itemView.findViewById(R.id.tvDel).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (select.equals(value))
-                    return;
+  //              if (select.equals(value))   //xuameng 可以删除最后一个源BUG因为 源可以为空
+  //                  return;
   //              notifyItemRemoved(data.indexOf(value));         //xuameng页面高度不刷新
                 data.remove(value);
                 dialogInterface.del(value, data);
