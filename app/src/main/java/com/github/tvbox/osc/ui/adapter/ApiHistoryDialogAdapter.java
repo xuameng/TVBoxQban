@@ -99,7 +99,7 @@ public class ApiHistoryDialogAdapter extends ListAdapter<String, ApiHistoryDialo
                 data.remove(value);
                 dialogInterface.del(value, data);
         data.clear();
-        data.addAll(newData);
+        data.addAll(data);
         notifyDataSetChanged();
             }
         });
