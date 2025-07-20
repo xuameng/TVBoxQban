@@ -1131,11 +1131,13 @@ public class ApiConfig {
         superPb.setType(4);
         parseBeanList.add(0, superPb);
     }
-
+Hawk.delete(HawkConfig.API_URL);
     public void LoadapiUrlXu(){
         String apiUrlXu = Hawk.get(HawkConfig.API_URL, "");
         if (apiUrlXu == null || apiUrlXu.isEmpty() ||apiUrlXu.length() == 0){
-Hawk.delete(HawkConfig.API_URL);
+           if (Hawk.contains(HawkConfig.API_URL)) {
+               Hawk.delete(HawkConfig.API_URL); // 安全删除
+           }
         }
     }
 }
