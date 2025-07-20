@@ -95,9 +95,10 @@ public class ApiHistoryDialogAdapter extends ListAdapter<String, ApiHistoryDialo
             public void onClick(View v) {
                 if (select.equals(value))
                     return;
+  //              notifyItemRemoved(data.indexOf(value));         //xuameng页面高度不刷新
                 data.remove(value);
-                notifyItemRemoved(data.indexOf(value));
                 dialogInterface.del(value, data);
+                notifyDataSetChanged(); //xuameng解决页面高度不刷新
             }
         });
     }
