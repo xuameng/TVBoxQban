@@ -61,6 +61,13 @@ public class ApiHistoryDialogAdapter extends ListAdapter<String, ApiHistoryDialo
         notifyDataSetChanged();
     }
 
+    public void setDataXu(List<String> newData, String defaultSelect) {
+        data.clear();
+        data.addAll(newData);
+        select = data.get(defaultSelect);
+        notifyDataSetChanged();
+    }
+
     @Override
     public int getItemCount() {
         return data.size();
@@ -98,7 +105,7 @@ public class ApiHistoryDialogAdapter extends ListAdapter<String, ApiHistoryDialo
                 notifyItemRemoved(data.indexOf(value));
                 data.remove(value);
                 dialogInterface.del(value, data);
-				setData(data, select);
+				setDataXu(data, select);
             }
         });
     }
