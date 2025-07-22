@@ -2298,6 +2298,10 @@ public class LivePlayActivity extends BaseActivity {
         public void run() {
             currentLiveChangeSourceTimes++;
             if(currentLiveChannelItem.getSourceNum() == currentLiveChangeSourceTimes) {
+                if (liveChannelGroupList.size() - 1 <= 1){
+                    playXuSource();
+                    return;
+                }
                 currentLiveChangeSourceTimes = 0;
                 Integer[] groupChannelIndex = getNextChannel(Hawk.get(HawkConfig.LIVE_CHANNEL_REVERSE, false) ? -1 : 1);
                 if(Hawk.get(HawkConfig.LIVE_CHANNEL_REVERSE, false)){ 
