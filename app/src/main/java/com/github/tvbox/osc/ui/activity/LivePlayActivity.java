@@ -353,16 +353,7 @@ public class LivePlayActivity extends BaseActivity {
 				if(mVideoView == null) return;
                 long duration = mVideoView.getDuration();
                 long newPosition = (duration * seekBar.getProgress()) / sBar.getMax(); //xuameng停止触碰获取进度条进度
-                if(newPosition < 1000 && isVOD) { //xuameng主要解决某些M3U8文件不能快进到0
-                    mVideoView.release();
-                    mVideoView.setUrl(currentLiveChannelItem.getUrl(),liveWebHeader());
-                    mVideoView.start();
-					if(iv_Play_Xu.getVisibility() == View.VISIBLE) {
-						iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
-					}
-                } else {
-                    mVideoView.seekTo((int) newPosition); //xuameng当前进度播放
-                }
+                mVideoView.seekTo((int) newPosition); //xuameng当前进度播放
                 isKUAIJIN = false;
             }
             @Override
@@ -2136,6 +2127,10 @@ public class LivePlayActivity extends BaseActivity {
             public void playStateChanged(int playState) {
                 switch(playState) {
                     case VideoView.STATE_IDLE:
+						isVideoplaying = false;
+                        isVOD = false;
+                        isBack = false;
+	                    isSHIYI = false;
 						tv_size.setText("[0 X 0]");  //XUAMENG分辨率
 						if (MxuamengMusic.getVisibility() == View.VISIBLE){  //xuameng播放音乐背景
 							MxuamengMusic.setVisibility(View.GONE);
@@ -2144,7 +2139,6 @@ public class LivePlayActivity extends BaseActivity {
 							iv_circle_bg_xu.setVisibility(View.GONE);
 							} 
 							iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
-						isVideoplaying = false;
                         sBar = (SeekBar) findViewById(R.id.pb_progressbar);       //xuameng重置进度条
                         sBar.setMax(0);
                         sBar.setProgress(0);
@@ -2211,7 +2205,8 @@ public class LivePlayActivity extends BaseActivity {
                         }
                         break;
                     case VideoView.STATE_ERROR:
-						iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
+                         iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
+                         Mtv_left_top_xu.setVisibility(View.GONE); //xuameng返回键隐藏左上回看菜单
                     case VideoView.STATE_PLAYBACK_COMPLETED:
                         if(isBack) {
                             mHandler.removeCallbacks(mConnectTimeoutChangeSourceRunBack);
@@ -2227,8 +2222,6 @@ public class LivePlayActivity extends BaseActivity {
                         mHandler.postDelayed(mConnectTimeoutChangeSourceRun, 10000); //xuameng播放超时10秒换源
                         break;
                     case VideoView.STATE_PREPARING:
-						isVideoplaying = false;
-                        isVOD = false;
                     case VideoView.STATE_BUFFERING:
                         mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
                         mHandler.postDelayed(mConnectTimeoutChangeSourceRun, (Hawk.get(HawkConfig.LIVE_CONNECT_TIMEOUT, 1) + 1) * 5000);
@@ -2994,20 +2987,20 @@ public class LivePlayActivity extends BaseActivity {
 					if (MxuamengMusic.getVisibility() == View.VISIBLE){  //xuameng播放音乐背景
 						MxuamengMusic.setVisibility(View.GONE);
 						}
-					}else{
-						if (MxuamengMusic.getVisibility() == View.GONE && isVideoplaying){  //xuameng播放音乐背景
-						MxuamengMusic.setVisibility(View.VISIBLE);
+				}else{
+					if (MxuamengMusic.getVisibility() == View.GONE && isVideoplaying){  //xuameng播放音乐背景
+					MxuamengMusic.setVisibility(View.VISIBLE);
+					}
+					if (isBuffer || isShowlist || HawkConfig.MSLIDEINFO){  //xuameng缓冲时，显示左菜单时，显示亮度音量时
+						if (iv_circle_bg_xu.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
+						    iv_circle_bg_xu.setVisibility(View.GONE);
 						}
-						if (isBuffer || isShowlist || HawkConfig.MSLIDEINFO){  //xuameng缓冲时，显示左菜单时，显示亮度音量时
-							if (iv_circle_bg_xu.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
-							iv_circle_bg_xu.setVisibility(View.GONE);
-							}
-						}else {
-							if (isVideoplaying){
-							iv_circle_bg_xu.setVisibility(View.VISIBLE);
-							}
+					}else {
+						if (isVideoplaying){
+						iv_circle_bg_xu.setVisibility(View.VISIBLE);
 						}
 					}
+				}
 			}else {
 				iv_circle_bg_xu.setVisibility(View.GONE);
 			}   //xuameng音乐播放时图标判断完  
@@ -3285,16 +3278,7 @@ public class LivePlayActivity extends BaseActivity {
 				if(mVideoView == null) return;
                 long duration = mVideoView.getDuration();
                 long newPosition = (duration * seekBar.getProgress()) / sBar.getMax(); //xuameng停止触碰获取进度条进度
-                if(newPosition < 1000 && isVOD) { //xuameng主要解决某些M3U8文件不能快进到0
-                    mVideoView.release();
-                    mVideoView.setUrl(currentLiveChannelItem.getUrl(),liveWebHeader());
-                    mVideoView.start();
-					if(iv_Play_Xu.getVisibility() == View.VISIBLE) {
-						iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
-					}
-                } else {
-                    mVideoView.seekTo((int) newPosition); //xuameng当前进度播放
-                }
+                mVideoView.seekTo((int) newPosition); //xuameng当前进度播放
                 isKUAIJIN = false;
             }
             @Override
@@ -3372,40 +3356,23 @@ public class LivePlayActivity extends BaseActivity {
     private int simSeekPosition = 0;
     private long simSlideOffset = 0;
     public void tvSlideStop() {
-        isKUAIJIN = false;
-        mSpeedTimeUp = 0;
-        if(!simSlideStart) return;
-		if(mVideoView == null) return;
-        if(isVOD) {
-            if(isSEEKBAR) {
-                if(simSeekPosition < 1000) { //xuameng主要解决某些M3U8文件不能快进到0
-                    mVideoView.release();
-                    mVideoView.setUrl(currentLiveChannelItem.getUrl(),liveWebHeader());
-                    mVideoView.start();
-					if(iv_Play_Xu.getVisibility() == View.VISIBLE) {
-						iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
-					}
-                } else if(simSeekPosition >= 1000) {
-                    mVideoView.seekTo(simSeekPosition);
-                }
-            }
+        if(!simSlideStart || mVideoView == null) return;
+        if(isSEEKBAR) {
+           mVideoView.seekTo(simSeekPosition);
         }
-        if(isBack) {
-            if(isSEEKBAR) {
-                mVideoView.seekTo(simSeekPosition);
-            }
-        }
-        if(!mVideoView.isPlaying())
+//        if(!mVideoView.isPlaying())
             //xuameng快进暂停就暂停测试    mVideoView.start();  如果想暂停时快进自动播放取消注销
-            simSlideStart = false;
-        //        simSeekPosition = 0;    //XUAMENG重要
-        simSlideOffset = 0;
+			//        simSeekPosition = 0;    //XUAMENG重要
+        isKUAIJIN = false;
+        simSlideStart = false;
+        simSlideOffset = 0;  //快进步数
+        mSpeedTimeUp = 0;   //xuameng按住按键开始计时
     }
     public void tvSlideStart(int dir) {
-        isSEEKBAR = true;
-        isKUAIJIN = true;
         int duration = (int) mVideoView.getDuration();
         if(duration <= 0) return;
+        isSEEKBAR = true;
+        isKUAIJIN = true;
         if(!simSlideStart) {
             simSlideStart = true;
         }
