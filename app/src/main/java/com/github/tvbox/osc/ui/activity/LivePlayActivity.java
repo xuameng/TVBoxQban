@@ -28,19 +28,19 @@ import android.graphics.Color; //xuameng获取颜色值
 import android.util.TypedValue; //xuameng TypedValue依赖
 import android.view.LayoutInflater; //xuameng LayoutInflater依赖
 import android.text.InputFilter; //xuameng导入依赖的package包/类
-import android.content.Intent;   //xuameng记忆播放频道组用
-import com.github.tvbox.osc.util.HawkUtils;  //xuameng记忆播放频道组用
-import com.github.tvbox.osc.util.JavaUtil;   //xuameng记忆播放频道组用
-import android.os.Bundle;   //xuameng记忆播放频道组用
-import kotlin.Pair;   //xuameng记忆播放频道组用
-import android.widget.ProgressBar;   //xuameng 播放音频时的缓冲动画
-import com.squareup.picasso.Picasso;      //xuameng播放音频切换图片
-import com.squareup.picasso.MemoryPolicy;  //xuameng播放音频切换图片
-import com.squareup.picasso.NetworkPolicy;  //xuameng播放音频切换图片
-import android.graphics.Bitmap;  //xuameng播放音频切换图片
-import com.github.tvbox.osc.api.ApiConfig;  //xuameng播放音频切换图片
+import android.content.Intent; //xuameng记忆播放频道组用
+import com.github.tvbox.osc.util.HawkUtils; //xuameng记忆播放频道组用
+import com.github.tvbox.osc.util.JavaUtil; //xuameng记忆播放频道组用
+import android.os.Bundle; //xuameng记忆播放频道组用
+import kotlin.Pair; //xuameng记忆播放频道组用
+import android.widget.ProgressBar; //xuameng 播放音频时的缓冲动画
+import com.squareup.picasso.Picasso; //xuameng播放音频切换图片
+import com.squareup.picasso.MemoryPolicy; //xuameng播放音频切换图片
+import com.squareup.picasso.NetworkPolicy; //xuameng播放音频切换图片
+import android.graphics.Bitmap; //xuameng播放音频切换图片
+import com.github.tvbox.osc.api.ApiConfig; //xuameng播放音频切换图片
 import android.annotation.SuppressLint; //xuamengEPG显示错误
-import java.util.HashMap;   //XUAMENG自定义UA
+import java.util.HashMap; //XUAMENG自定义UA
 import java.util.Objects;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.github.tvbox.osc.R;
@@ -74,7 +74,7 @@ import com.github.tvbox.osc.util.live.TxtSubscribe;
 import com.github.tvbox.osc.util.urlhttp.CallBackUtil;
 import com.github.tvbox.osc.util.urlhttp.UrlHttpUtil;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;  //xuameng新增
+import com.google.gson.JsonObject; //xuameng新增
 import com.google.gson.JsonElement; //xuameng新增
 import org.apache.commons.lang3.StringUtils;
 import com.lzy.okgo.OkGo;
@@ -115,7 +115,7 @@ public class LivePlayActivity extends BaseActivity {
     private long mExitTimeUp = 0; //xuameng上键间隔时间
     private long mExitTimeDown = 0; //xuameng下键间隔时间
     private long mSpeedTimeUp = 0; //xuameng上键间隔时间
-	private String logoUrl=null;
+    private String logoUrl = null;
     private LinearLayout tvRightSettingLayout;
     private TvRecyclerView mSettingGroupView;
     private TvRecyclerView mSettingItemView;
@@ -164,7 +164,7 @@ public class LivePlayActivity extends BaseActivity {
     private TextView tv_shownum;
     private TextView txtNoEpg;
     private ImageView iv_back_bg;
-   // private ObjectAnimator objectAnimator;
+    // private ObjectAnimator objectAnimator;
     public String epgStringAddress = "";
     private TvRecyclerView mEpgDateGridView;
     private TvRecyclerView mRightEpgList;
@@ -178,22 +178,22 @@ public class LivePlayActivity extends BaseActivity {
     public static Date nowday = new Date();
     private boolean isSHIYI = false;
     private boolean isBack = false;
-	private boolean isTouch = false;  //xuameng手机选择频道判断
+    private boolean isTouch = false; //xuameng手机选择频道判断
     private boolean isVOD = false; //xuameng点播
     private boolean isKUAIJIN = false; //xuameng快进
     private boolean isSEEKBAR = false; //xuameng进入SEEKBAR
     private boolean isTVNUM = false; //xuameng获取频道编号
-	private boolean isBuffer = false; //xuameng缓冲
-	private boolean isShowlist = false; //xuameng判断菜单显示
-	private boolean isVideoplaying = false;  //xuameng判断视频开始播放
-	private boolean XuSource = false; //xuameng退出回看
-	private boolean isScrollingXu = false;  //xuameng判断EPG是否正在滚动
+    private boolean isBuffer = false; //xuameng缓冲
+    private boolean isShowlist = false; //xuameng判断菜单显示
+    private boolean isVideoplaying = false; //xuameng判断视频开始播放
+    private boolean XuSource = false; //xuameng退出回看
+    private boolean isScrollingXu = false; //xuameng判断EPG是否正在滚动
     private int selectedChannelNumber = 0; // xuameng遥控器数字键输入的要切换的频道号码
-	private int ChannelPosition = -100; // xuameng Channel Position
-	private int ChannelGroupPosition = -100; // xuameng ChannelGroup Position
+    private int ChannelPosition = -100; // xuameng Channel Position
+    private int ChannelGroupPosition = -100; // xuameng ChannelGroup Position
     private TextView tvSelectedChannel; //xuameng频道编号
-	private ImageView iv_circle_bg_xu;  //xuameng音乐播放时图标
-	private ImageView MxuamengMusic;       //xuameng播放音乐背景
+    private ImageView iv_circle_bg_xu; //xuameng音乐播放时图标
+    private ImageView MxuamengMusic; //xuameng播放音乐背景
     private static Toast toast;
     private static String shiyi_time; //时移时间
     private static int shiyi_time_c; //时移时间差值
@@ -210,8 +210,8 @@ public class LivePlayActivity extends BaseActivity {
     private CountDownTimer countDownTimer7;
     private CountDownTimer countDownTimer8;
     private CountDownTimer countDownTimer10;
-	private CountDownTimer countDownTimer20;
-	private CountDownTimer countDownTimer21;
+    private CountDownTimer countDownTimer20;
+    private CountDownTimer countDownTimer21;
     private CountDownTimer countDownTimer22;
     private final int videoWidth = 1920;
     private final int videoHeight = 1080;
@@ -268,20 +268,18 @@ public class LivePlayActivity extends BaseActivity {
         divLoadEpg = (View) findViewById(R.id.divLoadEpg);
         divLoadEpgleft = (View) findViewById(R.id.divLoadEpgleft);
         view_line_XU = (View) findViewById(R.id.view_line); //xuameng横线
-		iv_circle_bg_xu = (ImageView) findViewById(R.id.iv_circle_bg_xu);  //xuameng音乐播放时图标
-		MxuamengMusic = (ImageView) findViewById(R.id.xuamengMusic);  //xuameng播放音乐背景
+        iv_circle_bg_xu = (ImageView) findViewById(R.id.iv_circle_bg_xu); //xuameng音乐播放时图标
+        MxuamengMusic = (ImageView) findViewById(R.id.xuamengMusic); //xuameng播放音乐背景
         divEpg = (LinearLayout) findViewById(R.id.divEPG);
         //右上角图片旋转
-        ObjectAnimator animator1 = ObjectAnimator.ofFloat(iv_circle_bg, "rotation", 360.0f);
+        ObjectAnimator animator1 = ObjectAnimator.ofFloat(iv_circle_bg, "rotation", 360.0 f);
         animator1.setDuration(10000);
         animator1.setRepeatCount(-1);
         animator1.start();
-
-        ObjectAnimator animator2 = ObjectAnimator.ofFloat(iv_circle_bg_xu, "rotation", 360.0f);
+        ObjectAnimator animator2 = ObjectAnimator.ofFloat(iv_circle_bg_xu, "rotation", 360.0 f);
         animator2.setDuration(10000);
         animator2.setRepeatCount(-1);
         animator2.start();
-
         //laodao 7day replay
         mEpgDateGridView = findViewById(R.id.mEpgDateGridView);
         Hawk.put(HawkConfig.NOW_DATE, formatDate.format(new Date()));
@@ -329,7 +327,7 @@ public class LivePlayActivity extends BaseActivity {
         iv_playpause.setOnClickListener(new View.OnClickListener() { //xuameng回看暂停键
             @Override
             public void onClick(View arg0) {
-				if(mVideoView == null) return;
+                if(mVideoView == null) return;
                 if(mVideoView.isPlaying()) {
                     mVideoView.pause();
                     countDownTimer.cancel();
@@ -350,7 +348,7 @@ public class LivePlayActivity extends BaseActivity {
         sBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() { //xuameng升级手机进程条
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-				if(mVideoView == null) return;
+                if(mVideoView == null) return;
                 long duration = mVideoView.getDuration();
                 long newPosition = (duration * seekBar.getProgress()) / sBar.getMax(); //xuameng停止触碰获取进度条进度
                 mVideoView.seekTo((int) newPosition); //xuameng当前进度播放
@@ -385,7 +383,7 @@ public class LivePlayActivity extends BaseActivity {
                     int keyCode = event.getKeyCode();
                     int action = event.getAction();
                     if(keycode == KeyEvent.KEYCODE_DPAD_CENTER || keycode == KeyEvent.KEYCODE_ENTER) {
-						if(mVideoView == null) return true;
+                        if(mVideoView == null) return true;
                         if(mVideoView.isPlaying()) {
                             mVideoView.pause();
                             countDownTimer.cancel();
@@ -428,11 +426,11 @@ public class LivePlayActivity extends BaseActivity {
         initSettingItemView();
         initLiveChannelList();
         initLiveSettingGroupList();
-		Hawk.put(HawkConfig.PLAYER_IS_LIVE,true);  //xuameng新增 
+        Hawk.put(HawkConfig.PLAYER_IS_LIVE, true); //xuameng新增 
         mHandler.post(mUpdateNetSpeedRunXu); //XUAMENG左上网速检测1秒钟一次
         mHandler.post(mUpdateVodProgressXu); //xuamengVOD BACK播放进度检测
-		mHandler.post(myRunnableMusic); //xuamengVOD BACK播放进度检测
-		mHandler.post(mUpdateVodImageXu); //xuamengVOD BACK播放进度检测
+        mHandler.post(myRunnableMusic); //xuamengVOD BACK播放进度检测
+        mHandler.post(mUpdateVodImageXu); //xuamengVOD BACK播放进度检测
         iv_playpause.setNextFocusLeftId(R.id.pb_progressbar);
     }
     //获取EPG并存储 // 百川epg  DIYP epg   51zmt epg ------- 自建EPG格式输出格式请参考 51zmt
@@ -455,18 +453,18 @@ public class LivePlayActivity extends BaseActivity {
                 mRightEpgList.setSelectedPosition(i);
                 //xuameng防止跳焦点                 mRightEpgList.setSelection(i);
                 epgListAdapter.setSelectedEpgIndex(i);
-//				epgListAdapter.notifyDataSetChanged();
+                //				epgListAdapter.notifyDataSetChanged();
                 int finalI = i;
-				if (!isScrollingXu){
-					isScrollingXu = true;
-				    mRightEpgList.scrollToPositionWithOffset(finalI, 0);
+                if(!isScrollingXu) {
+                    isScrollingXu = true;
+                    mRightEpgList.scrollToPositionWithOffset(finalI, 0);
                     mRightEpgList.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-						    mRightEpgList.smoothScrollToPosition(finalI);
+                            mRightEpgList.smoothScrollToPosition(finalI);
                         }
                     }, 50);
-				}
+                }
             }
         } else { //xuameng无EPG时提示信息
             Epginfo epgbcinfo = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "00:00", "01:59", 0);
@@ -515,17 +513,17 @@ public class LivePlayActivity extends BaseActivity {
                 int finalI = i;
                 mRightEpgList.setSelectedPosition(i);
                 epgListAdapter.setSelectedEpgIndex(i);
-//				epgListAdapter.notifyDataSetChanged();
-				if (!isScrollingXu){
-					isScrollingXu = true;
-				    mRightEpgList.scrollToPositionWithOffset(finalI, 0);
+                //				epgListAdapter.notifyDataSetChanged();
+                if(!isScrollingXu) {
+                    isScrollingXu = true;
+                    mRightEpgList.scrollToPositionWithOffset(finalI, 0);
                     mRightEpgList.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-						    mRightEpgList.smoothScrollToPosition(finalI);
+                            mRightEpgList.smoothScrollToPosition(finalI);
                         }
                     }, 50);
-				}
+                }
             }
         } else { //xuameng无EPG时提示信息
             Epginfo epgbcinfo = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "00:00", "01:59", 0);
@@ -562,12 +560,12 @@ public class LivePlayActivity extends BaseActivity {
         timeFormat.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
         String[] epgInfo = EpgUtil.getEpgInfo(channelName);
         String epgTagName = channelName;
-		if (logoUrl==null || logoUrl.isEmpty()){     
-            updateChannelIcon(channelName, epgInfo == null ? null : epgInfo[0]);   //xuameng自带logo
-		}else if(logoUrl.equals("false")){
+        if(logoUrl == null || logoUrl.isEmpty()) {
+            updateChannelIcon(channelName, epgInfo == null ? null : epgInfo[0]); //xuameng自带logo
+        } else if(logoUrl.equals("false")) {
             updateChannelIcon(channelName, null);
-		}else {
-            String logo= logoUrl.replace("{name}",channelName);  //xuameng支持logourl
+        } else {
+            String logo = logoUrl.replace("{name}", channelName); //xuameng支持logourl
             updateChannelIcon(channelName, logo);
         }
         if(epgInfo != null && !epgInfo[1].isEmpty()) {
@@ -654,7 +652,6 @@ public class LivePlayActivity extends BaseActivity {
             }
         });
     }
-
     public void getEpgxuBack(Date date) {
         String channelName = channel_Name.getChannelName();
         SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -697,18 +694,18 @@ public class LivePlayActivity extends BaseActivity {
                 showEpg(date, arrayList);
                 String savedEpgKey = channelName + "_" + liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex()).getDatePresented();
                 if(!hsEpg.contains(savedEpgKey)) hsEpg.put(savedEpgKey, arrayList);
-				showBottomEpgBack(); //xuameng回看EPG
+                showBottomEpgBack(); //xuameng回看EPG
             }
         });
     }
     //显示底部EPG
-	@SuppressLint("SetTextI18n") //xuameng乱码
+    @SuppressLint("SetTextI18n") //xuameng乱码
     private void showBottomEpg() {
-		if(!isCurrentLiveChannelValid()){  //xuameng 未选择频道空指针问题
-			return;
-		}
+        if(!isCurrentLiveChannelValid()) { //xuameng 未选择频道空指针问题
+            return;
+        }
         if(isSHIYI) return;
-		liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
+        liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
         if(channel_Name.getChannelName() != null) {
             ((TextView) findViewById(R.id.tv_channel_bar_name)).setText(channel_Name.getChannelName());
             ((TextView) findViewById(R.id.tv_channel_bottom_number)).setText("" + channel_Name.getChannelNum());
@@ -719,13 +716,13 @@ public class LivePlayActivity extends BaseActivity {
             String savedEpgKey = channel_Name.getChannelName() + "_" + liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex()).getDatePresented();
             if(hsEpg.containsKey(savedEpgKey)) {
                 String[] epgInfo = EpgUtil.getEpgInfo(channel_Name.getChannelName());
-				if (logoUrl==null || logoUrl.isEmpty()){
-		            updateChannelIcon(channel_Name.getChannelName(), epgInfo == null ? null : epgInfo[0]);  //xuameng自带url
-		        }else if(logoUrl.equals("false")){
+                if(logoUrl == null || logoUrl.isEmpty()) {
+                    updateChannelIcon(channel_Name.getChannelName(), epgInfo == null ? null : epgInfo[0]); //xuameng自带url
+                } else if(logoUrl.equals("false")) {
                     updateChannelIcon(channel_Name.getChannelName(), null);
-		        }else {
-                    String logo= logoUrl.replace("{name}",channel_Name.getChannelName());
-                    updateChannelIcon(channel_Name.getChannelName(), logo);   //xuameng支持logourl
+                } else {
+                    String logo = logoUrl.replace("{name}", channel_Name.getChannelName());
+                    updateChannelIcon(channel_Name.getChannelName(), logo); //xuameng支持logourl
                 }
                 ArrayList arrayList = (ArrayList) hsEpg.get(savedEpgKey);
                 if(arrayList != null && arrayList.size() > 0) {
@@ -804,24 +801,23 @@ public class LivePlayActivity extends BaseActivity {
             tv_right_top_epg_name.setText(channel_Name.getChannelName());
         }
     }
-
-	@SuppressLint("SetTextI18n") //xuameng乱码
+    @SuppressLint("SetTextI18n") //xuameng乱码
     private void showBottomEpgXU() { //XUAMENG刷新EPG，要不不能自动刷新
-		if(!isCurrentLiveChannelValid()){  //xuameng 未选择频道空指针问题
-			return;
-		}
+        if(!isCurrentLiveChannelValid()) { //xuameng 未选择频道空指针问题
+            return;
+        }
         if(isSHIYI) return;
         if(channel_Name.getChannelName() != null) {
             String savedEpgKey = channel_Name.getChannelName() + "_" + liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex()).getDatePresented();
             if(hsEpg.containsKey(savedEpgKey)) {
                 String[] epgInfo = EpgUtil.getEpgInfo(channel_Name.getChannelName());
-                if (logoUrl==null || logoUrl.isEmpty()){
-		            updateChannelIcon(channel_Name.getChannelName(), epgInfo == null ? null : epgInfo[0]);  //xuameng自带logo
-		        }else if(logoUrl.equals("false")){
+                if(logoUrl == null || logoUrl.isEmpty()) {
+                    updateChannelIcon(channel_Name.getChannelName(), epgInfo == null ? null : epgInfo[0]); //xuameng自带logo
+                } else if(logoUrl.equals("false")) {
                     updateChannelIcon(channel_Name.getChannelName(), null);
-		        }else {
-                    String logo= logoUrl.replace("{name}",channel_Name.getChannelName());
-                    updateChannelIcon(channel_Name.getChannelName(), logo);   //xuameng支持logourl
+                } else {
+                    String logo = logoUrl.replace("{name}", channel_Name.getChannelName());
+                    updateChannelIcon(channel_Name.getChannelName(), logo); //xuameng支持logourl
                 }
                 ArrayList arrayList = (ArrayList) hsEpg.get(savedEpgKey);
                 if(arrayList != null && arrayList.size() > 0) {
@@ -849,13 +845,12 @@ public class LivePlayActivity extends BaseActivity {
             }
         }
     }
-
     //XUAMENG显示底部回看时的EPG
-	@SuppressLint("SetTextI18n") //xuameng乱码
+    @SuppressLint("SetTextI18n") //xuameng乱码
     private void showBottomEpgBack() {
-		if(!isCurrentLiveChannelValid()){  //xuameng 未选择频道空指针问题
-			return;
-		}
+        if(!isCurrentLiveChannelValid()) { //xuameng 未选择频道空指针问题
+            return;
+        }
         if(channel_Name.getChannelName() != null) {
             ((TextView) findViewById(R.id.tv_channel_bar_name)).setText(channel_Name.getChannelName());
             ((TextView) findViewById(R.id.tv_channel_bottom_number)).setText("" + channel_Name.getChannelNum());
@@ -866,13 +861,13 @@ public class LivePlayActivity extends BaseActivity {
             String savedEpgKey = channel_Name.getChannelName() + "_" + liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex()).getDatePresented();
             if(hsEpg.containsKey(savedEpgKey)) {
                 String[] epgInfo = EpgUtil.getEpgInfo(channel_Name.getChannelName());
-			    if (logoUrl==null || logoUrl.isEmpty()){
-		            updateChannelIcon(channel_Name.getChannelName(), epgInfo == null ? null : epgInfo[0]);  //xuameng自带logo
-		        }else if(logoUrl.equals("false")){
+                if(logoUrl == null || logoUrl.isEmpty()) {
+                    updateChannelIcon(channel_Name.getChannelName(), epgInfo == null ? null : epgInfo[0]); //xuameng自带logo
+                } else if(logoUrl.equals("false")) {
                     updateChannelIcon(channel_Name.getChannelName(), null);
-		        }else {
-                    String logo= logoUrl.replace("{name}",channel_Name.getChannelName());
-                    updateChannelIcon(channel_Name.getChannelName(), logo);   //xuameng支持logourl
+                } else {
+                    String logo = logoUrl.replace("{name}", channel_Name.getChannelName());
+                    updateChannelIcon(channel_Name.getChannelName(), logo); //xuameng支持logourl
                 }
                 ArrayList arrayList = (ArrayList) hsEpg.get(savedEpgKey);
                 if(arrayList != null && arrayList.size() > 0) {
@@ -961,18 +956,18 @@ public class LivePlayActivity extends BaseActivity {
         }
     }
     //频道列表
-	@SuppressLint("NotifyDataSetChanged")
+    @SuppressLint("NotifyDataSetChanged")
     public void divLoadEpgRight(View view) {
-		if(!isCurrentLiveChannelValid()) return;  //xuameng 未选择频道空指针问题
-		if (isTouch){
-			showChannelListTouch();
-		}
+        if(!isCurrentLiveChannelValid()) return; //xuameng 未选择频道空指针问题
+        if(isTouch) {
+            showChannelListTouch();
+        }
         mChannelGroupView.setVisibility(View.GONE);
         divEpg.setVisibility(View.VISIBLE);
         divLoadEpgleft.setVisibility(View.VISIBLE);
         divLoadEpg.setVisibility(View.GONE);
         epgListAdapter.getSelectedIndex(); //xuamengEPG打开菜单自动变颜色
-		mHideChannelListRunXu();  //xuameng BUG
+        mHideChannelListRunXu(); //xuameng BUG
     }
     //频道列表
     public void divLoadEpgLeft(View view) {
@@ -980,7 +975,7 @@ public class LivePlayActivity extends BaseActivity {
         divEpg.setVisibility(View.GONE);
         divLoadEpgleft.setVisibility(View.GONE);
         divLoadEpg.setVisibility(View.VISIBLE);
-		mHideChannelListRunXu();
+        mHideChannelListRunXu();
     }
     private void xuexit() { //xuameng双击退出
         if(System.currentTimeMillis() - mExitTime < 2000) {
@@ -989,16 +984,16 @@ public class LivePlayActivity extends BaseActivity {
             mHandler.removeCallbacks(mUpdateNetSpeedRun);
             mHandler.removeCallbacks(mUpdateNetSpeedRunXu);
             mHandler.removeCallbacks(mUpdateVodProgressXu);
-			mHandler.removeCallbacks(myRunnableMusic);
-			mHandler.removeCallbacks(mUpdateVodImageXu);
+            mHandler.removeCallbacks(myRunnableMusic);
+            mHandler.removeCallbacks(mUpdateVodImageXu);
             mHandler.removeCallbacks(mUpdateTimeRun);
             mHandler.removeCallbacks(mUpdateTimeRunXu);
-			iv_circle_bg_xu.setVisibility(View.GONE);  //xuameng音乐播放时图标
-			MxuamengMusic.setVisibility(View.GONE);  //xuameng播放音乐背景
-			if (mHandler != null) {
-			mHandler.removeCallbacksAndMessages(null);
-			}
-			OkGo.getInstance().cancelTag("xuameng");
+            iv_circle_bg_xu.setVisibility(View.GONE); //xuameng音乐播放时图标
+            MxuamengMusic.setVisibility(View.GONE); //xuameng播放音乐背景
+            if(mHandler != null) {
+                mHandler.removeCallbacksAndMessages(null);
+            }
+            OkGo.getInstance().cancelTag("xuameng");
             super.onBackPressed();
         } else {
             mExitTime = System.currentTimeMillis();
@@ -1008,7 +1003,7 @@ public class LivePlayActivity extends BaseActivity {
     private void xubackexit() { //xuameng双击退出回看
         if(System.currentTimeMillis() - mExitTime < 2000) {
             isBack = false;
-			isSHIYI = false;
+            isSHIYI = false;
             Mtv_left_top_xu.setVisibility(View.GONE); //xuameng返回键隐藏左上回看菜单
             iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
             hideTimeXu(); //xuameng隐藏系统时间
@@ -1042,7 +1037,6 @@ public class LivePlayActivity extends BaseActivity {
             xuexit(); //xuameng双击退出
         }
     }
-
     private void ExitLiveOnSetting() { //xuameng设置中推出直播
         mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
         mHandler.removeCallbacks(mConnectTimeoutChangeSourceRunBack);
@@ -1053,15 +1047,14 @@ public class LivePlayActivity extends BaseActivity {
         mHandler.removeCallbacks(mUpdateVodImageXu);
         mHandler.removeCallbacks(mUpdateTimeRun);
         mHandler.removeCallbacks(mUpdateTimeRunXu);
-        iv_circle_bg_xu.setVisibility(View.GONE);  //xuameng音乐播放时图标
-        MxuamengMusic.setVisibility(View.GONE);  //xuameng播放音乐背景
-        if (mHandler != null) {
-			mHandler.removeCallbacksAndMessages(null);
+        iv_circle_bg_xu.setVisibility(View.GONE); //xuameng音乐播放时图标
+        MxuamengMusic.setVisibility(View.GONE); //xuameng播放音乐背景
+        if(mHandler != null) {
+            mHandler.removeCallbacksAndMessages(null);
         }
         OkGo.getInstance().cancelTag("xuameng");
         super.onBackPressed();
     }
-
     private final Runnable mPlaySelectedChannel = new Runnable() {
         @Override
         public void run() {
@@ -1127,25 +1120,25 @@ public class LivePlayActivity extends BaseActivity {
             int keyCode = event.getKeyCode();
             if(keyCode == KeyEvent.KEYCODE_MENU) { //xuameng回看时控制
                 if(isBack) {
-                   if(backcontroller.getVisibility() == View.VISIBLE) {
-                      backcontroller.setVisibility(View.GONE);
-                      ll_epg.setVisibility(View.GONE); //xuameng下面EPG菜单隐藏
-                      hideTimeXu(); //xuameng隐藏系统时间
-                      hideNetSpeedXu(); //XUAMENG隐藏左上网速
-                   } else {
-                      showProgressBars(true);
-                      showBottomEpgBack(); //xuameng回看EPG
+                    if(backcontroller.getVisibility() == View.VISIBLE) {
+                        backcontroller.setVisibility(View.GONE);
+                        ll_epg.setVisibility(View.GONE); //xuameng下面EPG菜单隐藏
+                        hideTimeXu(); //xuameng隐藏系统时间
+                        hideNetSpeedXu(); //XUAMENG隐藏左上网速
+                    } else {
+                        showProgressBars(true);
+                        showBottomEpgBack(); //xuameng回看EPG
                     }
                     return true;
                 } else {
-					showSettingGroup();
-					ll_epg.setVisibility(View.GONE); //xuameng下面EPG菜单隐藏
-					ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
-					backcontroller.setVisibility(View.GONE);
-					hideTimeXu(); //xuameng隐藏系统时间
-					hideNetSpeedXu(); //XUAMENG隐藏左上网速
-					return false;
-				}
+                    showSettingGroup();
+                    ll_epg.setVisibility(View.GONE); //xuameng下面EPG菜单隐藏
+                    ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
+                    backcontroller.setVisibility(View.GONE);
+                    hideTimeXu(); //xuameng隐藏系统时间
+                    hideNetSpeedXu(); //XUAMENG隐藏左上网速
+                    return false;
+                }
             } else if(!isListOrSettingLayoutVisible()) {
                 switch(keyCode) {
                     case KeyEvent.KEYCODE_DPAD_UP:
@@ -1253,7 +1246,7 @@ public class LivePlayActivity extends BaseActivity {
                         }
                         break;
                     case KeyEvent.KEYCODE_DPAD_CENTER: //xuameng 修复回看时不能暂停，弹出菜单问题
-					    if(mVideoView == null) return true;
+                        if(mVideoView == null) return true;
                         if(isBack) {
                             if(mVideoView.isPlaying()) {
                                 showProgressBars(true);
@@ -1269,7 +1262,7 @@ public class LivePlayActivity extends BaseActivity {
                             }
                         } else if(isVOD) {
                             if(backcontroller.getVisibility() == View.VISIBLE) {
-                                sBar.requestFocus();
+                                iv_playpause.requestFocus();
                             } else if(!mVideoView.isPlaying()) {
                                 mVideoView.start();
                                 iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
@@ -1292,7 +1285,7 @@ public class LivePlayActivity extends BaseActivity {
                         }
                         break;
                     case KeyEvent.KEYCODE_ENTER: //xuameng 修复回看时不能暂停，弹出菜单问题
-					    if(mVideoView == null) return true;
+                        if(mVideoView == null) return true;
                         if(isBack) {
                             if(mVideoView.isPlaying()) {
                                 showProgressBars(true);
@@ -1308,7 +1301,7 @@ public class LivePlayActivity extends BaseActivity {
                             }
                         } else if(isVOD) {
                             if(backcontroller.getVisibility() == View.VISIBLE) {
-                                sBar.requestFocus();
+                                iv_playpause.requestFocus();
                             } else if(!mVideoView.isPlaying()) {
                                 mVideoView.start();
                                 iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
@@ -1331,7 +1324,7 @@ public class LivePlayActivity extends BaseActivity {
                         }
                         break;
                     case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE: //xuameng 修复回看时不能暂停，弹出菜单问题
-					    if(mVideoView == null) return true;
+                        if(mVideoView == null) return true;
                         if(isBack) {
                             if(mVideoView.isPlaying()) {
                                 showProgressBars(true);
@@ -1347,7 +1340,7 @@ public class LivePlayActivity extends BaseActivity {
                             }
                         } else if(isVOD) {
                             if(backcontroller.getVisibility() == View.VISIBLE) {
-                                sBar.requestFocus();
+                                iv_playpause.requestFocus();
                             } else if(!mVideoView.isPlaying()) {
                                 mVideoView.start();
                                 iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
@@ -1404,14 +1397,14 @@ public class LivePlayActivity extends BaseActivity {
             mVideoView.release();
             mVideoView = null;
         }
-		OkGo.getInstance().cancelTag("xuameng");
+        OkGo.getInstance().cancelTag("xuameng");
     }
     private void showChannelList() {
-		if(liveChannelGroupList.isEmpty()) return;  //xuameng新增
+        if(liveChannelGroupList.isEmpty()) return; //xuameng新增
         if(tvRightSettingLayout.getVisibility() == View.VISIBLE) {
             mHideSettingLayoutRun();
             return;
-        }	
+        }
         if(isVOD) {
             Mtv_left_top_xu.setVisibility(View.GONE);
         }
@@ -1420,8 +1413,8 @@ public class LivePlayActivity extends BaseActivity {
             liveChannelItemAdapter.setNewData(getLiveChannels(currentChannelGroupIndex));
             if(currentLiveChannelIndex > -1) mLiveChannelView.scrollToPosition(currentLiveChannelIndex); //xuameng先滚动再选择防止空指针
             mChannelGroupView.scrollToPosition(currentChannelGroupIndex); //xuameng先滚动再选择防止空指针
-      //      mChannelGroupView.setSelection(currentChannelGroupIndex); //xuameng先滚动再选择防止空指针
-     //       mLiveChannelView.setSelection(currentLiveChannelIndex); //xuameng先滚动再选择防止空指针
+            //      mChannelGroupView.setSelection(currentChannelGroupIndex); //xuameng先滚动再选择防止空指针
+            //       mLiveChannelView.setSelection(currentLiveChannelIndex); //xuameng先滚动再选择防止空指针
             if(countDownTimer10 != null) {
                 countDownTimer10.cancel();
             }
@@ -1437,23 +1430,22 @@ public class LivePlayActivity extends BaseActivity {
         }
     }
     private void showChannelListTouch() {
-            //重新载入上一次状态
-            liveChannelItemAdapter.setNewData(getLiveChannels(currentChannelGroupIndex));
-            if(currentLiveChannelIndex > -1) mLiveChannelView.scrollToPosition(currentLiveChannelIndex); //xuameng先滚动再选择防止空指针
-            mChannelGroupView.scrollToPosition(currentChannelGroupIndex); //xuameng先滚动再选择防止空指针
-    //        mChannelGroupView.setSelection(currentChannelGroupIndex); //xuameng先滚动再选择防止空指针
-    //        mLiveChannelView.setSelection(currentLiveChannelIndex); //xuameng先滚动再选择防止空指针
-            if(countDownTimer10 != null) {
-                countDownTimer10.cancel();
+        //重新载入上一次状态
+        liveChannelItemAdapter.setNewData(getLiveChannels(currentChannelGroupIndex));
+        if(currentLiveChannelIndex > -1) mLiveChannelView.scrollToPosition(currentLiveChannelIndex); //xuameng先滚动再选择防止空指针
+        mChannelGroupView.scrollToPosition(currentChannelGroupIndex); //xuameng先滚动再选择防止空指针
+        //        mChannelGroupView.setSelection(currentChannelGroupIndex); //xuameng先滚动再选择防止空指针
+        //        mLiveChannelView.setSelection(currentLiveChannelIndex); //xuameng先滚动再选择防止空指针
+        if(countDownTimer10 != null) {
+            countDownTimer10.cancel();
+        }
+        countDownTimer10 = new CountDownTimer(100, 50) { //底部epg隐藏时间设定
+            public void onTick(long j) {}
+            public void onFinish() {
+                mFocusCurrentChannelAndShowChannelList();
             }
-            countDownTimer10 = new CountDownTimer(100, 50) { //底部epg隐藏时间设定
-                public void onTick(long j) {}
-                public void onFinish() {
-                    mFocusCurrentChannelAndShowChannelList();
-                }
-            };
-            countDownTimer10.start();
-       
+        };
+        countDownTimer10.start();
     }
     private void mFocusCurrentChannelAndShowChannelList() { //xuameng左侧菜单显示
         if(mChannelGroupView.isScrolling() || mLiveChannelView.isScrolling() || mChannelGroupView.isComputingLayout() || mLiveChannelView.isComputingLayout()) {
@@ -1461,8 +1453,7 @@ public class LivePlayActivity extends BaseActivity {
                 countDownTimer20.cancel();
             }
             countDownTimer20 = new CountDownTimer(100, 50) { //底部epg隐藏时间设定
-                public void onTick(long j) {
-                }
+                public void onTick(long j) {}
                 public void onFinish() {
                     mFocusCurrentChannelAndShowChannelList();
                 }
@@ -1476,18 +1467,18 @@ public class LivePlayActivity extends BaseActivity {
         epgListAdapter.getSelectedIndex(); //xuamengEPG打开菜单自动变颜色 
         liveChannelGroupAdapter.setSelectedGroupIndex(currentChannelGroupIndex);
         liveChannelItemAdapter.setSelectedChannelIndex(currentLiveChannelIndex);
-		mChannelGroupView.setSelection(currentChannelGroupIndex); //xuameng先滚动再选择防止空指针
-		mLiveChannelView.setSelection(currentLiveChannelIndex); //xuameng先滚动再选择防止空指针
+        mChannelGroupView.setSelection(currentChannelGroupIndex); //xuameng先滚动再选择防止空指针
+        mLiveChannelView.setSelection(currentLiveChannelIndex); //xuameng先滚动再选择防止空指针
         RecyclerView.ViewHolder holder = mLiveChannelView.findViewHolderForAdapterPosition(currentLiveChannelIndex);
         if(holder != null) holder.itemView.requestFocus();
         tvLeftChannelListLayout.setVisibility(View.VISIBLE);
-		tvLeftChannelListLayout.requestLayout();   //xuameng surface按键不好使
+        tvLeftChannelListLayout.requestLayout(); //xuameng surface按键不好使
         ll_epg.setVisibility(View.GONE); //xuameng下面EPG菜单隐藏
         ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
         backcontroller.setVisibility(View.GONE);
         hideTimeXu(); //xuameng隐藏系统时间
         hideNetSpeedXu(); //XUAMENG隐藏左上网速
-		isShowlist = true;
+        isShowlist = true;
         ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) tvLeftChannelListLayout.getLayoutParams();
         if(countDownTimer5 != null) {
             countDownTimer5.cancel();
@@ -1500,10 +1491,9 @@ public class LivePlayActivity extends BaseActivity {
         };
         countDownTimer5.start();
     }
-
     private void mHideChannelListRun() { //xuameng左侧菜单隐藏
         ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) tvLeftChannelListLayout.getLayoutParams();
-		isShowlist = false;
+        isShowlist = false;
         if(tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
             tvLeftChannelListLayout.setVisibility(View.INVISIBLE);
         }
@@ -1526,11 +1516,9 @@ public class LivePlayActivity extends BaseActivity {
         };
         countDownTimer7.start();
     }
-
-    private HashMap<String,String> liveWebHeader(){       //xuameng自定义UA
+    private HashMap < String, String > liveWebHeader() { //xuameng自定义UA
         return Hawk.get(HawkConfig.LIVE_WEB_HEADER);
     }
-
     private boolean playChannel(int channelGroupIndex, int liveChannelIndex, boolean changeSource) { //xuameng播放
         if((channelGroupIndex == currentChannelGroupIndex && liveChannelIndex == currentLiveChannelIndex && !changeSource) || (changeSource && currentLiveChannelItem.getSourceNum() == 1) && !XuSource) {
             // xuamengEPG日期自动选今天
@@ -1552,27 +1540,27 @@ public class LivePlayActivity extends BaseActivity {
             }
             return true;
         }
-		if(mVideoView == null) return true; //XUAMENG可能会引起空指针问题的修复
-		mVideoView.release();  //XUAMENG可能会引起空指针问题的修复
+        if(mVideoView == null) return true; //XUAMENG可能会引起空指针问题的修复
+        mVideoView.release(); //XUAMENG可能会引起空指针问题的修复
         if(!changeSource) {
             currentChannelGroupIndex = channelGroupIndex;
             currentLiveChannelIndex = liveChannelIndex;
             currentLiveChannelItem = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndex);
             Hawk.put(HawkConfig.LIVE_CHANNEL, currentLiveChannelItem.getChannelName());
-			HawkUtils.setLastLiveChannelGroup(liveChannelGroupList.get(currentChannelGroupIndex).getGroupName());     //xuameng记忆频道组
+            HawkUtils.setLastLiveChannelGroup(liveChannelGroupList.get(currentChannelGroupIndex).getGroupName()); //xuameng记忆频道组
             livePlayerManager.getLiveChannelPlayer(mVideoView, currentLiveChannelItem.getChannelName());
             liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
         }
         channel_Name = currentLiveChannelItem;
         isSHIYI = false;
         isBack = false;
-		XuSource = false;
-        if(currentLiveChannelItem.getUrl().contains("PLTV/") || currentLiveChannelItem.getUrl().contains("TVOD/")){ //xuameng判断直播源URL中有没有PLTV字符，有才可以时移
+        XuSource = false;
+        if(currentLiveChannelItem.getUrl().contains("PLTV/") || currentLiveChannelItem.getUrl().contains("TVOD/")) { //xuameng判断直播源URL中有没有PLTV字符，有才可以时移
             currentLiveChannelItem.setinclude_back(true);
         } else {
             currentLiveChannelItem.setinclude_back(false);
         }
-		getEpg(new Date());
+        getEpg(new Date());
         showBottomEpg(); //XUAMENG重要点击频道播放，上面的不重新播放。只显示EPG
         mHideChannelListRun(); //xuameng显示EPG就隐藏左右菜单
         mHideSettingLayoutRun(); //xuameng显示EPG就隐藏左右菜单
@@ -1582,11 +1570,11 @@ public class LivePlayActivity extends BaseActivity {
         Mtv_left_top_xu.setVisibility(View.GONE); //xuameng直播时隐藏回看的菜单
         simSeekPosition = 0; //XUAMENG重要,换视频时重新记录进度
         simSlideOffset = 0; //XUAMENG重要,换视频时重新记录进度
-        if(liveWebHeader()!=null)LOG.i("echo-"+liveWebHeader().toString());
-        mVideoView.setUrl(currentLiveChannelItem.getUrl(),liveWebHeader());
+        if(liveWebHeader() != null) LOG.i("echo-" + liveWebHeader().toString());
+        mVideoView.setUrl(currentLiveChannelItem.getUrl(), liveWebHeader());
         mVideoView.start();
-		if(iv_Play_Xu.getVisibility() == View.VISIBLE) {
-           iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
+        if(iv_Play_Xu.getVisibility() == View.VISIBLE) {
+            iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
         }
         return true;
     }
@@ -1599,7 +1587,7 @@ public class LivePlayActivity extends BaseActivity {
             liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
         }
         channel_NameXu = currentLiveChannelItemXu; //xuameng重要EPG名称
-        if(currentLiveChannelItemXu.getUrl().contains("PLTV/") || currentLiveChannelItemXu.getUrl().contains("TVOD/")){ //xuameng判断直播源URL中有没有PLTV字符，有才可以时移
+        if(currentLiveChannelItemXu.getUrl().contains("PLTV/") || currentLiveChannelItemXu.getUrl().contains("TVOD/")) { //xuameng判断直播源URL中有没有PLTV字符，有才可以时移
             currentLiveChannelItemXu.setinclude_back(true);
         } else {
             currentLiveChannelItemXu.setinclude_back(false);
@@ -1643,7 +1631,7 @@ public class LivePlayActivity extends BaseActivity {
         if(mVideoView == null) {
             return;
         }
-		XuSource = true;
+        XuSource = true;
         if(!isCurrentLiveChannelValid()) return;
         currentLiveChannelItem.getUrl();
         playChannel(currentChannelGroupIndex, currentLiveChannelIndex, true);
@@ -1698,14 +1686,14 @@ public class LivePlayActivity extends BaseActivity {
         RecyclerView.ViewHolder holder = mSettingGroupView.findViewHolderForAdapterPosition(0);
         if(holder != null) holder.itemView.requestFocus();
         tvRightSettingLayout.setVisibility(View.VISIBLE);
-		tvRightSettingLayout.requestLayout();  //xuameng surface按键不好使
+        tvRightSettingLayout.requestLayout(); //xuameng surface按键不好使
         ll_epg.setVisibility(View.GONE); //xuameng下面EPG菜单隐藏
         ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
         backcontroller.setVisibility(View.GONE);
         hideTimeXu(); //xuameng隐藏系统时间
         hideNetSpeedXu(); //XUAMENG隐藏左上网速
-        hideNetSpeed();   //xuameng隐藏右下网速
-        hideTime();    //xuameng隐藏右下系统时间
+        hideNetSpeed(); //xuameng隐藏右下网速
+        hideTime(); //xuameng隐藏右下系统时间
         ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) tvRightSettingLayout.getLayoutParams();
         if(countDownTimer6 != null) {
             countDownTimer6.cancel();
@@ -1723,14 +1711,14 @@ public class LivePlayActivity extends BaseActivity {
         if(tvRightSettingLayout.getVisibility() == View.VISIBLE) {
             tvRightSettingLayout.setVisibility(View.INVISIBLE);
             liveSettingGroupAdapter.setSelectedGroupIndex(-1);
-            showTime();  //XUAMENG显示右下时间
-            showNetSpeed();  //XUAMENG显示右下网速
-			if(mVideoView == null) return;
-			if(isVOD) {
-				if(!mVideoView.isPlaying()) {
-					iv_Play_Xu.setVisibility(View.VISIBLE); //回看暂停图标
-				}
-			}
+            showTime(); //XUAMENG显示右下时间
+            showNetSpeed(); //XUAMENG显示右下网速
+            if(mVideoView == null) return;
+            if(isVOD) {
+                if(!mVideoView.isPlaying()) {
+                    iv_Play_Xu.setVisibility(View.VISIBLE); //回看暂停图标
+                }
+            }
         }
     }
     private void mHideSettingLayoutRunXu() { //XUAMENG隐藏右侧延时5秒菜单
@@ -1759,7 +1747,7 @@ public class LivePlayActivity extends BaseActivity {
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 mHideChannelListRunXu();
-                if (newState == mRightEpgList.SCROLL_STATE_IDLE) {
+                if(newState == mRightEpgList.SCROLL_STATE_IDLE) {
                     isScrollingXu = false; // xuameng滚动完成后重置状态
                 }
             }
@@ -1777,7 +1765,7 @@ public class LivePlayActivity extends BaseActivity {
                 mHideChannelListRunXu();
                 epgListAdapter.setFocusedEpgIndex(position);
             }
-			@SuppressLint("NotifyDataSetChanged")
+            @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onItemClick(TvRecyclerView parent, View itemView, int position) {
                 currentChannelGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
@@ -1799,50 +1787,49 @@ public class LivePlayActivity extends BaseActivity {
                 }
                 //                epgListAdapter.setSelectedEpgIndex(position);   //xuameng取消电视手机点击无法回看的EPG节目源变色
                 if(now.compareTo(selectedData.startdateTime) >= 0 && now.compareTo(selectedData.enddateTime) <= 0) {
-					if(mVideoView == null) return;
+                    if(mVideoView == null) return;
                     mVideoView.release();
                     isSHIYI = false;
-                    mVideoView.setUrl(currentLiveChannelItem.getUrl(),liveWebHeader());
+                    mVideoView.setUrl(currentLiveChannelItem.getUrl(), liveWebHeader());
                     mVideoView.start();
-					if(iv_Play_Xu.getVisibility() == View.VISIBLE) {
-						iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
-					}
-                 //   epgListAdapter.setShiyiSelection(-1, false, timeFormat.format(date));
-					liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
+                    if(iv_Play_Xu.getVisibility() == View.VISIBLE) {
+                        iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
+                    }
+                    //   epgListAdapter.setShiyiSelection(-1, false, timeFormat.format(date));
+                    liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
                     getEpg(new Date());
                     showBottomEpg(); //xuameng显示EPG和上面菜单 
                     return;
                 }
                 String shiyiUrl = currentLiveChannelItem.getUrl();
-                if(now.compareTo(selectedData.startdateTime) < 0) {
-				}else if(shiyiUrl.contains("PLTV/") || shiyiUrl.contains("TVOD/")){
+                if(now.compareTo(selectedData.startdateTime) < 0) {} else if(shiyiUrl.contains("PLTV/") || shiyiUrl.contains("TVOD/")) {
                     mHideChannelListRun();
-					if(mVideoView == null) return;
+                    if(mVideoView == null) return;
                     mVideoView.release();
                     shiyi_time = shiyiStartdate + "-" + shiyiEnddate;
                     isSHIYI = true;
-                    if (shiyiUrl.indexOf("?") <= 0) {
+                    if(shiyiUrl.indexOf("?") <= 0) {
                         shiyiUrl += "?playseek=" + shiyi_time;
-                    } else if (shiyiUrl.indexOf("playseek") > 0) {
+                    } else if(shiyiUrl.indexOf("playseek") > 0) {
                         shiyiUrl = shiyiUrl.replaceAll("playseek=(.*)", "playseek=" + shiyi_time);
                     } else {
                         shiyiUrl += "&playseek=" + shiyi_time;
                     }
-					LOG.i("echo-回看地址playUrl :"+ shiyiUrl);
+                    LOG.i("echo-回看地址playUrl :" + shiyiUrl);
                     playUrl = shiyiUrl;
-					if(liveWebHeader()!=null)LOG.i("echo-liveWebHeader :"+ liveWebHeader().toString());
-                    mVideoView.setUrl(playUrl,liveWebHeader());
+                    if(liveWebHeader() != null) LOG.i("echo-liveWebHeader :" + liveWebHeader().toString());
+                    mVideoView.setUrl(playUrl, liveWebHeader());
                     mVideoView.start();
-					if(iv_Play_Xu.getVisibility() == View.VISIBLE) {
-						iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
-					}
-					liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
-					shiyi_time_c = (int)getTime(formatDate.format(nowday) +" " + selectedData.start + ":" +"00", formatDate.format(nowday) +" " + selectedData.end + ":" +"00");
+                    if(iv_Play_Xu.getVisibility() == View.VISIBLE) {
+                        iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
+                    }
+                    liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
+                    shiyi_time_c = (int) getTime(formatDate.format(nowday) + " " + selectedData.start + ":" + "00", formatDate.format(nowday) + " " + selectedData.end + ":" + "00");
                     ViewGroup.LayoutParams lp = iv_play.getLayoutParams();
                     lp.width = videoHeight / 7;
                     lp.height = videoHeight / 7;
                     showProgressBars(true);
-					getEpgxuBack(new Date());
+                    getEpgxuBack(new Date());
                     showBottomEpgBack(); //xuameng回看EPG
                     isBack = true;
                     isVOD = false;
@@ -1853,7 +1840,7 @@ public class LivePlayActivity extends BaseActivity {
         });
         //手机/模拟器
         epgListAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-			@SuppressLint("NotifyDataSetChanged")
+            @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 currentChannelGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
@@ -1875,50 +1862,49 @@ public class LivePlayActivity extends BaseActivity {
                 }
                 //                epgListAdapter.setSelectedEpgIndex(position);   //xuameng取消电视手机点击无法回看的EPG节目源变色
                 if(now.compareTo(selectedData.startdateTime) >= 0 && now.compareTo(selectedData.enddateTime) <= 0) {
-					if(mVideoView == null) return;
+                    if(mVideoView == null) return;
                     mVideoView.release();
                     isSHIYI = false;
-                    mVideoView.setUrl(currentLiveChannelItem.getUrl(),liveWebHeader());
+                    mVideoView.setUrl(currentLiveChannelItem.getUrl(), liveWebHeader());
                     mVideoView.start();
-					if(iv_Play_Xu.getVisibility() == View.VISIBLE) {
-						iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
-					}
-                 //   epgListAdapter.setShiyiSelection(-1, false, timeFormat.format(date));
-				    liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
+                    if(iv_Play_Xu.getVisibility() == View.VISIBLE) {
+                        iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
+                    }
+                    //   epgListAdapter.setShiyiSelection(-1, false, timeFormat.format(date));
+                    liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
                     getEpg(new Date());
                     showBottomEpg(); //xuameng显示EPG和上面菜单 				
                     return;
                 }
                 String shiyiUrl = currentLiveChannelItem.getUrl();
-                if(now.compareTo(selectedData.startdateTime) < 0) {
-				}else if(shiyiUrl.contains("PLTV/") || shiyiUrl.contains("TVOD/")){
+                if(now.compareTo(selectedData.startdateTime) < 0) {} else if(shiyiUrl.contains("PLTV/") || shiyiUrl.contains("TVOD/")) {
                     mHideChannelListRun();
-					if(mVideoView == null) return;
+                    if(mVideoView == null) return;
                     mVideoView.release();
                     shiyi_time = shiyiStartdate + "-" + shiyiEnddate;
                     isSHIYI = true;
-                    if (shiyiUrl.indexOf("?") <= 0) {
+                    if(shiyiUrl.indexOf("?") <= 0) {
                         shiyiUrl += "?playseek=" + shiyi_time;
-                    } else if (shiyiUrl.indexOf("playseek") > 0) {
+                    } else if(shiyiUrl.indexOf("playseek") > 0) {
                         shiyiUrl = shiyiUrl.replaceAll("playseek=(.*)", "playseek=" + shiyi_time);
                     } else {
                         shiyiUrl += "&playseek=" + shiyi_time;
                     }
-					LOG.i("echo-回看地址playUrl :"+ shiyiUrl);
+                    LOG.i("echo-回看地址playUrl :" + shiyiUrl);
                     playUrl = shiyiUrl;
-					if(liveWebHeader()!=null)LOG.i("echo-liveWebHeader :"+ liveWebHeader().toString());
-                    mVideoView.setUrl(playUrl,liveWebHeader());
+                    if(liveWebHeader() != null) LOG.i("echo-liveWebHeader :" + liveWebHeader().toString());
+                    mVideoView.setUrl(playUrl, liveWebHeader());
                     mVideoView.start();
-					if(iv_Play_Xu.getVisibility() == View.VISIBLE) {
-						iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
-					}
-					liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
-					shiyi_time_c = (int)getTime(formatDate.format(nowday) +" " + selectedData.start + ":" +"00", formatDate.format(nowday) +" " + selectedData.end + ":" +"00");
+                    if(iv_Play_Xu.getVisibility() == View.VISIBLE) {
+                        iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
+                    }
+                    liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
+                    shiyi_time_c = (int) getTime(formatDate.format(nowday) + " " + selectedData.start + ":" + "00", formatDate.format(nowday) + " " + selectedData.end + ":" + "00");
                     ViewGroup.LayoutParams lp = iv_play.getLayoutParams();
                     lp.width = videoHeight / 7;
                     lp.height = videoHeight / 7;
                     showProgressBars(true);
-					getEpgxuBack(new Date());
+                    getEpgxuBack(new Date());
                     showBottomEpgBack(); //xuameng回看EPG
                     isBack = true;
                     isVOD = false;
@@ -2050,14 +2036,14 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public void longPress() { //xuameng长按显示左边设置菜单
                 if(isBack) {
-                   if(backcontroller.getVisibility() == View.VISIBLE) {
-                      backcontroller.setVisibility(View.GONE);
-                      ll_epg.setVisibility(View.GONE); //xuameng下面EPG菜单隐藏
-                      hideTimeXu(); //xuameng隐藏系统时间
-                      hideNetSpeedXu(); //XUAMENG隐藏左上网速
-                   } else {
-                      showProgressBars(true);
-                      showBottomEpgBack(); //xuameng回看EPG
+                    if(backcontroller.getVisibility() == View.VISIBLE) {
+                        backcontroller.setVisibility(View.GONE);
+                        ll_epg.setVisibility(View.GONE); //xuameng下面EPG菜单隐藏
+                        hideTimeXu(); //xuameng隐藏系统时间
+                        hideNetSpeedXu(); //XUAMENG隐藏左上网速
+                    } else {
+                        showProgressBars(true);
+                        showBottomEpgBack(); //xuameng回看EPG
                     }
                 } else {
                     showSettingGroup();
@@ -2070,7 +2056,7 @@ public class LivePlayActivity extends BaseActivity {
             }
             @Override
             public boolean DoublePress() { //xuameng双击显示回看菜单并暂停
-				if(mVideoView == null) return true;
+                if(mVideoView == null) return true;
                 if(isBack) {
                     if(mVideoView.isPlaying()) {
                         showProgressBars(true);
@@ -2127,19 +2113,19 @@ public class LivePlayActivity extends BaseActivity {
             public void playStateChanged(int playState) {
                 switch(playState) {
                     case VideoView.STATE_IDLE:
-						isVideoplaying = false;
+                        isVideoplaying = false;
                         isVOD = false;
                         isBack = false;
-	                    isSHIYI = false;
-						tv_size.setText("[0 X 0]");  //XUAMENG分辨率
-						if (MxuamengMusic.getVisibility() == View.VISIBLE){  //xuameng播放音乐背景
-							MxuamengMusic.setVisibility(View.GONE);
-							}
-						if (iv_circle_bg_xu.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
-							iv_circle_bg_xu.setVisibility(View.GONE);
-							} 
-							iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
-                        sBar = (SeekBar) findViewById(R.id.pb_progressbar);       //xuameng重置进度条
+                        isSHIYI = false;
+                        tv_size.setText("[0 X 0]"); //XUAMENG分辨率
+                        if(MxuamengMusic.getVisibility() == View.VISIBLE) { //xuameng播放音乐背景
+                            MxuamengMusic.setVisibility(View.GONE);
+                        }
+                        if(iv_circle_bg_xu.getVisibility() == View.VISIBLE) { //xuameng音乐播放时图标
+                            iv_circle_bg_xu.setVisibility(View.GONE);
+                        }
+                        iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
+                        sBar = (SeekBar) findViewById(R.id.pb_progressbar); //xuameng重置进度条
                         sBar.setMax(0);
                         sBar.setProgress(0);
                         tv_currentpos.setText("00:00");
@@ -2147,27 +2133,26 @@ public class LivePlayActivity extends BaseActivity {
                     case VideoView.STATE_PAUSED:
                         break;
                     case VideoView.STATE_PREPARED:
-					    String width = Integer.toString(mVideoView.getVideoSize()[0]);
-						String height = Integer.toString(mVideoView.getVideoSize()[1]);
-						tv_size.setText("[" + width + " X " + height +"]");
-                       
+                        String width = Integer.toString(mVideoView.getVideoSize()[0]);
+                        String height = Integer.toString(mVideoView.getVideoSize()[1]);
+                        tv_size.setText("[" + width + " X " + height + "]");
                         int duration1 = (int) mVideoView.getDuration();
                         if(isBack) {
-                            sBar = (SeekBar) findViewById(R.id.pb_progressbar);  //xuameng回看进度条
+                            sBar = (SeekBar) findViewById(R.id.pb_progressbar); //xuameng回看进度条
                             sBar.setMax(duration1);
                             sBar.setProgress((int) mVideoView.getCurrentPosition());
                             tv_currentpos.setText(durationToString((int) mVideoView.getCurrentPosition()));
                             tv_duration.setText(durationToString(duration1));
                             return;
                         }
-                        if(duration1 > 130000 && duration1 < 180000000) {  //xuameng处理某些播放器时长获取不准确问题
+                        if(duration1 > 130000 && duration1 < 180000000) { //xuameng处理某些播放器时长获取不准确问题
                             isVOD = true;
                             if(countDownTimer != null) {
                                 countDownTimer.cancel();
                             }
-							if(isLl_epgVisible()){  //xuameng修复
-								showProgressBars(true);   
-							}
+                            if(isLl_epgVisible()) { //xuameng修复
+                                showProgressBars(true);
+                            }
                             sBar = (SeekBar) findViewById(R.id.pb_progressbar);
                             sBar.setMax(duration1);
                             sBar.setProgress((int) mVideoView.getCurrentPosition());
@@ -2184,40 +2169,39 @@ public class LivePlayActivity extends BaseActivity {
                     case VideoView.STATE_PLAYING:
                         currentLiveChangeSourceTimes = 0;
                         mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
-						isVideoplaying = true;
-						isBuffer = false;
-						if(isBack) {          //xuameng 回看不成功返回直播
-							int durationXu = (int) mVideoView.getDuration();
+                        isVideoplaying = true;
+                        isBuffer = false;
+                        if(isBack) { //xuameng 回看不成功返回直播
+                            int durationXu = (int) mVideoView.getDuration();
                             if(durationXu < 60000) {
-                               if(mVideoView != null) {
-                                  mVideoView.release();
-                               }
-                               isBack = false;
-	                           isSHIYI = false;
-                               Mtv_left_top_xu.setVisibility(View.GONE); //xuameng返回键隐藏左上回看菜单
-                               iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
-                               hideTimeXu(); //xuameng隐藏系统时间
-                               hideNetSpeedXu(); //XUAMENG隐藏左上网速
-                               liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
-                               playXuSource();
-	                           showToastXu();
+                                if(mVideoView != null) {
+                                    mVideoView.release();
+                                }
+                                isBack = false;
+                                isSHIYI = false;
+                                Mtv_left_top_xu.setVisibility(View.GONE); //xuameng返回键隐藏左上回看菜单
+                                iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
+                                hideTimeXu(); //xuameng隐藏系统时间
+                                hideNetSpeedXu(); //XUAMENG隐藏左上网速
+                                liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
+                                playXuSource();
+                                showToastXu();
                             }
                         }
                         break;
                     case VideoView.STATE_ERROR:
-                         iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
-                         Mtv_left_top_xu.setVisibility(View.GONE); //xuameng返回键隐藏左上回看菜单
+                        iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
+                        Mtv_left_top_xu.setVisibility(View.GONE); //xuameng返回键隐藏左上回看菜单
                     case VideoView.STATE_PLAYBACK_COMPLETED:
                         if(isBack) {
                             mHandler.removeCallbacks(mConnectTimeoutChangeSourceRunBack);
                             mHandler.postDelayed(mConnectTimeoutChangeSourceRunBack, 5000); //xuameng回看超时5秒退出
                             return;
-                        }
-						else if(isVOD){
+                        } else if(isVOD) {
                             mHandler.removeCallbacks(mConnectTimeoutChangeSourceRunVod);
                             mHandler.postDelayed(mConnectTimeoutChangeSourceRunVod, 5000); //xuameng回看超时5秒退出
-							return;
-						}
+                            return;
+                        }
                         mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
                         mHandler.postDelayed(mConnectTimeoutChangeSourceRun, 10000); //xuameng播放超时10秒换源
                         break;
@@ -2225,10 +2209,10 @@ public class LivePlayActivity extends BaseActivity {
                     case VideoView.STATE_BUFFERING:
                         mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
                         mHandler.postDelayed(mConnectTimeoutChangeSourceRun, (Hawk.get(HawkConfig.LIVE_CONNECT_TIMEOUT, 1) + 1) * 5000);
-						if (iv_circle_bg_xu.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
-							iv_circle_bg_xu.setVisibility(View.GONE);
-						}
-						isBuffer = true;
+                        if(iv_circle_bg_xu.getVisibility() == View.VISIBLE) { //xuameng音乐播放时图标
+                            iv_circle_bg_xu.setVisibility(View.GONE);
+                        }
+                        isBuffer = true;
                         break;
                 }
             }
@@ -2334,8 +2318,8 @@ public class LivePlayActivity extends BaseActivity {
     private Runnable mConnectTimeoutChangeSourceRunBack = new Runnable() { //xuameng为回看失败准备
         @Override
         public void run() {
-             playXuSource();
-             showToastXu();
+            playXuSource();
+            showToastXu();
         }
     };
     private Runnable mConnectTimeoutChangeSourceRunVod = new Runnable() {
@@ -2363,12 +2347,12 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {}
             @Override
-            public void onItemSelected(TvRecyclerView parent, View itemView, int position) {				
+            public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
                 selectChannelGroup(position, true, -1); //xuameng频道组
-				if (ChannelGroupPosition != position){  //xuameng判断是否第一次选择，如不是就不滚动了
-					ChannelGroupPosition = position;
-					isScrollingXu = false;
-				}
+                if(ChannelGroupPosition != position) { //xuameng判断是否第一次选择，如不是就不滚动了
+                    ChannelGroupPosition = position;
+                    isScrollingXu = false;
+                }
             }
             @Override
             public void onItemClick(TvRecyclerView parent, View itemView, int position) {
@@ -2383,10 +2367,10 @@ public class LivePlayActivity extends BaseActivity {
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 FastClickCheckUtil.check(view);
                 selectChannelGroup(position, false, -1);
-				if (ChannelGroupPosition != position){  //xuameng判断是否第一次选择，如不是就不滚动了
-					ChannelGroupPosition = position;
-					isScrollingXu = false;
-				}
+                if(ChannelGroupPosition != position) { //xuameng判断是否第一次选择，如不是就不滚动了
+                    ChannelGroupPosition = position;
+                    isScrollingXu = false;
+                }
             }
         });
     }
@@ -2396,7 +2380,7 @@ public class LivePlayActivity extends BaseActivity {
             liveChannelItemAdapter.setFocusedChannelIndex(-1); //xuameng修复频道名称移走焦点变色问题
         }
         if((groupIndex > -1 && groupIndex != liveChannelGroupAdapter.getSelectedGroupIndex()) || isNeedInputPassword(groupIndex)) {
-			isTouch = true;
+            isTouch = true;
             liveChannelGroupAdapter.setSelectedGroupIndex(groupIndex);
             if(isNeedInputPassword(groupIndex)) {
                 showPasswordDialog(groupIndex, liveChannelIndex);
@@ -2428,22 +2412,22 @@ public class LivePlayActivity extends BaseActivity {
             }
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
-				if (ChannelPosition != position){    //xuameng判断是否第一次选择，如不是就不滚动了
-					ChannelPosition = position;
-					isScrollingXu = false;
-				}
+                if(ChannelPosition != position) { //xuameng判断是否第一次选择，如不是就不滚动了
+                    ChannelPosition = position;
+                    isScrollingXu = false;
+                }
                 if(position < 0) return;
-                int channelGroupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex();  //xuameng当前选定的频道组
-                if(position == getLiveChannels(channelGroupIndexXu).size()-1){    //xuameng判断是否是最后一个item
-                   itemView.setId(View.generateViewId());
-                   itemView.setNextFocusDownId(itemView.getId());    //xuameng不超出item
-                }else {
-                   itemView.setNextFocusDownId(View.NO_ID);  
+                int channelGroupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex(); //xuameng当前选定的频道组
+                if(position == getLiveChannels(channelGroupIndexXu).size() - 1) { //xuameng判断是否是最后一个item
+                    itemView.setId(View.generateViewId());
+                    itemView.setNextFocusDownId(itemView.getId()); //xuameng不超出item
+                } else {
+                    itemView.setNextFocusDownId(View.NO_ID);
                 }
                 liveChannelGroupAdapter.setFocusedGroupIndex(-1);
                 liveChannelItemAdapter.setFocusedChannelIndex(position);
                 liveChannelItemAdapter.setSelectedChannelIndex(position);
-				isTouch = false;
+                isTouch = false;
                 playChannelxu(liveChannelGroupAdapter.getSelectedGroupIndex(), liveChannelItemAdapter.getSelectedChannelIndex(), false); //xuameng换频道显示EPG
                 liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
                 mHideChannelListRunXu(); //xuameng隐藏频道菜单
@@ -2458,13 +2442,13 @@ public class LivePlayActivity extends BaseActivity {
         liveChannelItemAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-				if (ChannelPosition != position){  //xuameng判断是否第一次选择，如不是就不滚动了
-					ChannelPosition = position;
-					isScrollingXu = false;
-				}
+                if(ChannelPosition != position) { //xuameng判断是否第一次选择，如不是就不滚动了
+                    ChannelPosition = position;
+                    isScrollingXu = false;
+                }
                 FastClickCheckUtil.check(view);
                 clickLiveChannel(position);
-				isTouch = false;
+                isTouch = false;
                 mHideChannelListRun(); //xuameng隐藏左侧频道菜单
             }
         });
@@ -2529,9 +2513,8 @@ public class LivePlayActivity extends BaseActivity {
                 liveSettingItemAdapter.selectItem(livePlayerManager.getLivePlayerType(), true, true);
                 break;
             case 6:
-                liveSettingItemAdapter.selectItem(livePlayerManager.getLivePlayrender(), true, true);  //xuameng 获取渲染方式
+                liveSettingItemAdapter.selectItem(livePlayerManager.getLivePlayrender(), true, true); //xuameng 获取渲染方式
                 break;
-
         }
         int scrollToPosition = liveSettingItemAdapter.getSelectedItemIndex();
         if(scrollToPosition < 0) scrollToPosition = 0;
@@ -2589,18 +2572,18 @@ public class LivePlayActivity extends BaseActivity {
                 playChannel(currentChannelGroupIndex, currentLiveChannelIndex, true);
                 break;
             case 1: //画面比例
-			    if(mVideoView == null) return;
+                if(mVideoView == null) return;
                 livePlayerManager.changeLivePlayerScale(mVideoView, position, currentLiveChannelItem.getChannelName());
                 break;
             case 2: //播放解码
-			    if(mVideoView == null) return;
+                if(mVideoView == null) return;
                 mVideoView.release();
                 livePlayerManager.changeLivePlayerType(mVideoView, position, currentLiveChannelItem.getChannelName());
-                mVideoView.setUrl(currentLiveChannelItem.getUrl(),liveWebHeader());
+                mVideoView.setUrl(currentLiveChannelItem.getUrl(), liveWebHeader());
                 mVideoView.start();
-				if(iv_Play_Xu.getVisibility() == View.VISIBLE) {
-					iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
-				}
+                if(iv_Play_Xu.getVisibility() == View.VISIBLE) {
+                    iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
+                }
                 break;
             case 3: //超时换源
                 Hawk.put(HawkConfig.LIVE_CONNECT_TIMEOUT, position);
@@ -2629,15 +2612,15 @@ public class LivePlayActivity extends BaseActivity {
                 }
                 liveSettingItemAdapter.selectItem(position, select, false);
                 break;
-				case 5://多源切换   //xuameng新增
-				if(position == liveSettingItemAdapter.getSelectedItemIndex()) return;
+            case 5: //多源切换   //xuameng新增
+                if(position == liveSettingItemAdapter.getSelectedItemIndex()) return;
                 //TODO
-                if (mVideoView != null) {
+                if(mVideoView != null) {
                     mVideoView.release();
-                    mVideoView=null;
+                    mVideoView = null;
                 }
-                if(position==Hawk.get(HawkConfig.LIVE_GROUP_INDEX, 0))break;
-                JsonArray live_groups=Hawk.get(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
+                if(position == Hawk.get(HawkConfig.LIVE_GROUP_INDEX, 0)) break;
+                JsonArray live_groups = Hawk.get(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
                 JsonObject livesOBJ = live_groups.get(position).getAsJsonObject();
                 liveSettingItemAdapter.selectItem(position, true, true);
                 Hawk.put(HawkConfig.LIVE_GROUP_INDEX, position);
@@ -2646,46 +2629,44 @@ public class LivePlayActivity extends BaseActivity {
                 return;
             case 6: //xuameng渲染方式
                 if(position == liveSettingItemAdapter.getSelectedItemIndex()) return;
-			    if(mVideoView == null) return;
+                if(mVideoView == null) return;
                 mVideoView.release();
-                livePlayerManager.changeLivePlayerRender(mVideoView, position, currentLiveChannelItem.getChannelName());    //xuameng 设置渲染方式
-                mVideoView.setUrl(currentLiveChannelItem.getUrl(),liveWebHeader());
+                livePlayerManager.changeLivePlayerRender(mVideoView, position, currentLiveChannelItem.getChannelName()); //xuameng 设置渲染方式
+                mVideoView.setUrl(currentLiveChannelItem.getUrl(), liveWebHeader());
                 mVideoView.start();
-				liveSettingItemAdapter.selectItem(position, true, true);
-				if(iv_Play_Xu.getVisibility() == View.VISIBLE) {
-					iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
-				}
+                liveSettingItemAdapter.selectItem(position, true, true);
+                if(iv_Play_Xu.getVisibility() == View.VISIBLE) {
+                    iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
+                }
                 break;
             case 7: //xuameng退出直播
                 mHideSettingLayoutRun();
-                if (mVideoView != null) {
+                if(mVideoView != null) {
                     mVideoView.release();
-                    mVideoView=null;
+                    mVideoView = null;
                 }
-				ExitLiveOnSetting();
+                ExitLiveOnSetting();
                 break;
         }
         mHideSettingLayoutRunXu();
     }
     private void initLiveChannelList() {
-        List<LiveChannelGroup> list = ApiConfig.get().getChannelGroupList();
-        if (list.isEmpty()) {
-           JsonArray live_groups=Hawk.get(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
-           if(live_groups.size() > 1){
-            setDefaultLiveChannelList();
-			Toast.makeText(App.getInstance(), "聚汇影视提示您：直播列表为空！请切换线路！", Toast.LENGTH_SHORT).show();
-            return;
-		  }
+        List < LiveChannelGroup > list = ApiConfig.get().getChannelGroupList();
+        if(list.isEmpty()) {
+            JsonArray live_groups = Hawk.get(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
+            if(live_groups.size() > 1) {
+                setDefaultLiveChannelList();
+                Toast.makeText(App.getInstance(), "聚汇影视提示您：直播列表为空！请切换线路！", Toast.LENGTH_SHORT).show();
+                return;
+            }
             Toast.makeText(App.getInstance(), "聚汇影视提示您：频道列表为空！", Toast.LENGTH_SHORT).show();
             finish();
-			return;
+            return;
         }
-
-		initLiveObj();   //xuameng 直播配置里有没有logo配置
-
-        if (list.size() == 1 && list.get(0).getGroupName().startsWith("http://127.0.0.1")) {
+        initLiveObj(); //xuameng 直播配置里有没有logo配置
+        if(list.size() == 1 && list.get(0).getGroupName().startsWith("http://127.0.0.1")) {
             loadProxyLives(list.get(0).getGroupName());
-        }else {
+        } else {
             liveChannelGroupList.clear();
             liveChannelGroupList.addAll(list);
             showSuccess();
@@ -2697,56 +2678,51 @@ public class LivePlayActivity extends BaseActivity {
             Uri parsedUrl = Uri.parse(url);
             url = new String(Base64.decode(parsedUrl.getQueryParameter("ext"), Base64.DEFAULT | Base64.URL_SAFE | Base64.NO_WRAP), "UTF-8");
         } catch (Throwable th) {
-            if(!url.startsWith("http://127.0.0.1")){
-				JsonArray live_groups=Hawk.get(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
-				if(live_groups.size() > 1){
-					setDefaultLiveChannelList();
-					Toast.makeText(App.getInstance(), "聚汇影视提示您：直播文件错误！请切换线路！", Toast.LENGTH_SHORT).show();
-				}else{
-					setDefaultLiveChannelList();
-					Toast.makeText(App.getInstance(), "聚汇影视提示您：直播文件错误！", Toast.LENGTH_SHORT).show();
-				}
+            if(!url.startsWith("http://127.0.0.1")) {
+                JsonArray live_groups = Hawk.get(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
+                if(live_groups.size() > 1) {
+                    setDefaultLiveChannelList();
+                    Toast.makeText(App.getInstance(), "聚汇影视提示您：直播文件错误！请切换线路！", Toast.LENGTH_SHORT).show();
+                } else {
+                    setDefaultLiveChannelList();
+                    Toast.makeText(App.getInstance(), "聚汇影视提示您：直播文件错误！", Toast.LENGTH_SHORT).show();
+                }
                 return;
             }
         }
         showLoading();
-
-        LOG.i("echo-live-url:"+url);
-        OkGo.<String>get(url).tag("xuameng").execute(new AbsCallback<String>() {
-
+        LOG.i("echo-live-url:" + url);
+        OkGo. < String > get(url).tag("xuameng").execute(new AbsCallback < String > () {
             @Override
             public String convertResponse(okhttp3.Response response) throws Throwable {
                 assert response.body() != null;
                 return response.body().string();
             }
-
             @Override
-            public void onSuccess(Response<String> response) {
-                LinkedHashMap<String, LinkedHashMap<String, ArrayList<String>>> linkedHashMap = new LinkedHashMap<>();
+            public void onSuccess(Response < String > response) {
+                LinkedHashMap < String, LinkedHashMap < String, ArrayList < String >>> linkedHashMap = new LinkedHashMap < > ();
                 TxtSubscribe.parse(linkedHashMap, response.body());
-				JsonArray livesArray = TxtSubscribe.live2JsonArray(linkedHashMap);
-				JsonArray live_groups=Hawk.get(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
+                JsonArray livesArray = TxtSubscribe.live2JsonArray(linkedHashMap);
+                JsonArray live_groups = Hawk.get(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
                 ApiConfig.get().loadLives(livesArray);
-                List<LiveChannelGroup> list = ApiConfig.get().getChannelGroupList();
-                    if (list.isEmpty()) {
-                        mHandler.post(new Runnable() {
-                            @Override
-                            public void run() {
-								if(live_groups.size() > 1){
-									setDefaultLiveChannelList();
-									Toast.makeText(App.getInstance(), "聚汇影视提示您：直播列表为空！请切换线路！", Toast.LENGTH_SHORT).show();
-								}else{
-									setDefaultLiveChannelList();
-									Toast.makeText(App.getInstance(), "聚汇影视提示您：直播列表为空！", Toast.LENGTH_SHORT).show();
-								}
+                List < LiveChannelGroup > list = ApiConfig.get().getChannelGroupList();
+                if(list.isEmpty()) {
+                    mHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            if(live_groups.size() > 1) {
+                                setDefaultLiveChannelList();
+                                Toast.makeText(App.getInstance(), "聚汇影视提示您：直播列表为空！请切换线路！", Toast.LENGTH_SHORT).show();
+                            } else {
+                                setDefaultLiveChannelList();
+                                Toast.makeText(App.getInstance(), "聚汇影视提示您：直播列表为空！", Toast.LENGTH_SHORT).show();
                             }
-                        });
-                        return;
-                    }
-
+                        }
+                    });
+                    return;
+                }
                 liveChannelGroupList.clear();
                 liveChannelGroupList.addAll(list);
-
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {
@@ -2756,37 +2732,36 @@ public class LivePlayActivity extends BaseActivity {
                 });
             }
             @Override
-            public void onError(Response<String> response) {
-				JsonArray live_groups=Hawk.get(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
+            public void onError(Response < String > response) {
+                JsonArray live_groups = Hawk.get(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {
-						if(live_groups.size() > 1){
+                        if(live_groups.size() > 1) {
                             setDefaultLiveChannelList();
-						    Toast.makeText(App.getInstance(), "聚汇影视提示您：直播列表获取错误！请切换线路！", Toast.LENGTH_SHORT).show();
-						}else{
-				            setDefaultLiveChannelList();
-						    Toast.makeText(App.getInstance(), "聚汇影视提示您：直播列表获取错误！", Toast.LENGTH_SHORT).show();
-						}
+                            Toast.makeText(App.getInstance(), "聚汇影视提示您：直播列表获取错误！请切换线路！", Toast.LENGTH_SHORT).show();
+                        } else {
+                            setDefaultLiveChannelList();
+                            Toast.makeText(App.getInstance(), "聚汇影视提示您：直播列表获取错误！", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
             }
         });
     }
     private void initLiveState() {
-        int lastChannelGroupIndex = -1;     //xuameng记忆上次播放频道组开始
+        int lastChannelGroupIndex = -1; //xuameng记忆上次播放频道组开始
         int lastLiveChannelIndex = -1;
         Intent intent = getIntent();
-        if (intent != null && intent.getExtras() != null) {
+        if(intent != null && intent.getExtras() != null) {
             Bundle bundle = intent.getExtras();
             lastChannelGroupIndex = bundle.getInt("groupIndex", 0);
             lastLiveChannelIndex = bundle.getInt("channelIndex", 0);
         } else {
-            Pair<Integer, Integer> lastChannel = JavaUtil.findLiveLastChannel(liveChannelGroupList);
+            Pair < Integer, Integer > lastChannel = JavaUtil.findLiveLastChannel(liveChannelGroupList);
             lastChannelGroupIndex = lastChannel.getFirst();
             lastLiveChannelIndex = lastChannel.getSecond();
-		}                    //xuameng记忆上次播放频道组结束
-
+        } //xuameng记忆上次播放频道组结束
         livePlayerManager.init(mVideoView);
         showTime();
         showNetSpeed();
@@ -2807,25 +2782,25 @@ public class LivePlayActivity extends BaseActivity {
     boolean isiv_Play_XuVisible() { //xuameng判断暂停动画是否显示
         return iv_Play_Xu.getVisibility() == View.VISIBLE;
     }
-    private void initLiveSettingGroupList() {      //xuameng
-        List<LiveChannelGroup> listxu = ApiConfig.get().getChannelGroupList();
-        JsonArray live_groups=Hawk.get(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
-        liveSettingGroupList=ApiConfig.get().getLiveSettingGroupList();
-        if (!listxu.isEmpty()) {
-        liveSettingGroupList.get(3).getLiveSettingItems().get(Hawk.get(HawkConfig.LIVE_CONNECT_TIMEOUT, 1)).setItemSelected(true);
-        liveSettingGroupList.get(4).getLiveSettingItems().get(0).setItemSelected(Hawk.get(HawkConfig.LIVE_SHOW_TIME, false));
-        liveSettingGroupList.get(4).getLiveSettingItems().get(1).setItemSelected(Hawk.get(HawkConfig.LIVE_SHOW_NET_SPEED, false));
-        liveSettingGroupList.get(4).getLiveSettingItems().get(2).setItemSelected(Hawk.get(HawkConfig.LIVE_CHANNEL_REVERSE, false));
-        liveSettingGroupList.get(4).getLiveSettingItems().get(3).setItemSelected(Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false));
-            if (live_groups != null) {  
-                for (JsonElement element : live_groups) {  
-                    if (element.isJsonNull()) {  
+    private void initLiveSettingGroupList() { //xuameng
+        List < LiveChannelGroup > listxu = ApiConfig.get().getChannelGroupList();
+        JsonArray live_groups = Hawk.get(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
+        liveSettingGroupList = ApiConfig.get().getLiveSettingGroupList();
+        if(!listxu.isEmpty()) {
+            liveSettingGroupList.get(3).getLiveSettingItems().get(Hawk.get(HawkConfig.LIVE_CONNECT_TIMEOUT, 1)).setItemSelected(true);
+            liveSettingGroupList.get(4).getLiveSettingItems().get(0).setItemSelected(Hawk.get(HawkConfig.LIVE_SHOW_TIME, false));
+            liveSettingGroupList.get(4).getLiveSettingItems().get(1).setItemSelected(Hawk.get(HawkConfig.LIVE_SHOW_NET_SPEED, false));
+            liveSettingGroupList.get(4).getLiveSettingItems().get(2).setItemSelected(Hawk.get(HawkConfig.LIVE_CHANNEL_REVERSE, false));
+            liveSettingGroupList.get(4).getLiveSettingItems().get(3).setItemSelected(Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false));
+            if(live_groups != null) {
+                for(JsonElement element: live_groups) {
+                    if(element.isJsonNull()) {
                         Toast.makeText(mContext, "聚汇直播提示您：直播列表读取有错误！请检查JSON中lives的配置！", Toast.LENGTH_SHORT).show();
                         return;
-                    }  
-                }  
+                    }
+                }
             }
-        liveSettingGroupList.get(5).getLiveSettingItems().get(Hawk.get(HawkConfig.LIVE_GROUP_INDEX, 0)).setItemSelected(true);   //xuameng新增 换源
+            liveSettingGroupList.get(5).getLiveSettingItems().get(Hawk.get(HawkConfig.LIVE_GROUP_INDEX, 0)).setItemSelected(true); //xuameng新增 换源
         }
     }
     private void loadCurrentSourceList() {
@@ -2849,10 +2824,10 @@ public class LivePlayActivity extends BaseActivity {
         }
     }
     void hideTime() { //xuameng右下角系统时间
-		if(tvTime.getVisibility() == View.VISIBLE) {
+        if(tvTime.getVisibility() == View.VISIBLE) {
             mHandler.removeCallbacks(mUpdateTimeRun);
             tvTime.setVisibility(View.GONE);
-		}
+        }
     }
     private Runnable mUpdateTimeRun = new Runnable() {
         @Override
@@ -2881,9 +2856,9 @@ public class LivePlayActivity extends BaseActivity {
     void hideTimeXu() { //xuameng的系统时间
         mHandler.removeCallbacks(mUpdateTimeRunXu);
         tvTime_xu.setVisibility(View.GONE);
-		if(tvRightSettingLayout.getVisibility() == View.VISIBLE) {
-			return;
-		}
+        if(tvRightSettingLayout.getVisibility() == View.VISIBLE) {
+            return;
+        }
         if(Hawk.get(HawkConfig.LIVE_SHOW_TIME, false)) {
             mHandler.post(mUpdateTimeRun);
             tvTime.setVisibility(View.VISIBLE);
@@ -2901,11 +2876,11 @@ public class LivePlayActivity extends BaseActivity {
             tvNetSpeed.setVisibility(View.GONE);
         }
     }
-    private void hideNetSpeed() {  //xuameng右下角网速
-		if(tvNetSpeed.getVisibility() == View.VISIBLE) {
-          mHandler.removeCallbacks(mUpdateNetSpeedRun);
-          tvNetSpeed.setVisibility(View.GONE);
-		}
+    private void hideNetSpeed() { //xuameng右下角网速
+        if(tvNetSpeed.getVisibility() == View.VISIBLE) {
+            mHandler.removeCallbacks(mUpdateNetSpeedRun);
+            tvNetSpeed.setVisibility(View.GONE);
+        }
     }
     private Runnable mUpdateNetSpeedRun = new Runnable() {
         @Override
@@ -2922,9 +2897,9 @@ public class LivePlayActivity extends BaseActivity {
     }
     private void hideNetSpeedXu() {
         tv_right_top_tipnetspeed.setVisibility(View.GONE); //xuameng右上网络速度
-		if(tvRightSettingLayout.getVisibility() == View.VISIBLE) {
-			return;
-		}
+        if(tvRightSettingLayout.getVisibility() == View.VISIBLE) {
+            return;
+        }
         if(Hawk.get(HawkConfig.LIVE_SHOW_NET_SPEED, false)) {
             tvNetSpeed.setVisibility(View.VISIBLE);
         } else {
@@ -2943,13 +2918,13 @@ public class LivePlayActivity extends BaseActivity {
     private Runnable mUpdateVodProgressXu = new Runnable() {
         @Override
         public void run() {
-			if(mVideoView == null) return;
+            if(mVideoView == null) return;
             int duration2 = (int) mVideoView.getDuration();
             if(duration2 > 0) {
-				if(mVideoView.isPlaying()) {  //xuameng音乐播放时图标判断
-                   if(iv_Play_Xu.getVisibility() == View.VISIBLE) {
-						iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
-					}
+                if(mVideoView.isPlaying()) { //xuameng音乐播放时图标判断
+                    if(iv_Play_Xu.getVisibility() == View.VISIBLE) {
+                        iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
+                    }
                     iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause)); //XUAMENG修复PLAY时关闭回看暂停图标
                     if(!isKUAIJIN) {
                         sBar.setProgress((int) mVideoView.getCurrentPosition());
@@ -2968,101 +2943,83 @@ public class LivePlayActivity extends BaseActivity {
             mHandler.postDelayed(this, 1000);
         }
     };
-
     private Runnable mUpdateVodImageXu = new Runnable() {
         @Override
         public void run() {
             if(backcontroller.getVisibility() == View.GONE) {
                 isSEEKBAR = false;
             }
-			if(mVideoView == null) return;
-            if(mVideoView.isPlaying()) {  //xuameng音乐播放时图标判断
-				    String width = Integer.toString(mVideoView.getVideoSize()[0]);
-					String height = Integer.toString(mVideoView.getVideoSize()[1]);
-				//	tv_size.setText("[" + width + " X " + height +"]");
-				if (width.length() > 1 && height.length() > 1){ //XUAMENG分辨率
-					if (iv_circle_bg_xu.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
-						iv_circle_bg_xu.setVisibility(View.GONE);
-						}
-					if (MxuamengMusic.getVisibility() == View.VISIBLE){  //xuameng播放音乐背景
-						MxuamengMusic.setVisibility(View.GONE);
-						}
-				}else{
-					if (MxuamengMusic.getVisibility() == View.GONE && isVideoplaying){  //xuameng播放音乐背景
-					MxuamengMusic.setVisibility(View.VISIBLE);
-					}
-					if (isBuffer || isShowlist || HawkConfig.MSLIDEINFO){  //xuameng缓冲时，显示左菜单时，显示亮度音量时
-						if (iv_circle_bg_xu.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
-						    iv_circle_bg_xu.setVisibility(View.GONE);
-						}
-					}else {
-						if (isVideoplaying){
-						iv_circle_bg_xu.setVisibility(View.VISIBLE);
-						}
-					}
-				}
-			}else {
-				iv_circle_bg_xu.setVisibility(View.GONE);
-			}   //xuameng音乐播放时图标判断完  
-
+            if(mVideoView == null) return;
+            if(mVideoView.isPlaying()) { //xuameng音乐播放时图标判断
+                String width = Integer.toString(mVideoView.getVideoSize()[0]);
+                String height = Integer.toString(mVideoView.getVideoSize()[1]);
+                //	tv_size.setText("[" + width + " X " + height +"]");
+                if(width.length() > 1 && height.length() > 1) { //XUAMENG分辨率
+                    if(iv_circle_bg_xu.getVisibility() == View.VISIBLE) { //xuameng音乐播放时图标
+                        iv_circle_bg_xu.setVisibility(View.GONE);
+                    }
+                    if(MxuamengMusic.getVisibility() == View.VISIBLE) { //xuameng播放音乐背景
+                        MxuamengMusic.setVisibility(View.GONE);
+                    }
+                } else {
+                    if(MxuamengMusic.getVisibility() == View.GONE && isVideoplaying) { //xuameng播放音乐背景
+                        MxuamengMusic.setVisibility(View.VISIBLE);
+                    }
+                    if(isBuffer || isShowlist || HawkConfig.MSLIDEINFO) { //xuameng缓冲时，显示左菜单时，显示亮度音量时
+                        if(iv_circle_bg_xu.getVisibility() == View.VISIBLE) { //xuameng音乐播放时图标
+                            iv_circle_bg_xu.setVisibility(View.GONE);
+                        }
+                    } else {
+                        if(isVideoplaying) {
+                            iv_circle_bg_xu.setVisibility(View.VISIBLE);
+                        }
+                    }
+                }
+            } else {
+                iv_circle_bg_xu.setVisibility(View.GONE);
+            } //xuameng音乐播放时图标判断完  
             mHandler.postDelayed(this, 100);
         }
     };
-
-	private Runnable myRunnableMusic = new Runnable() {  //xuameng播放音频切换图片
+    private Runnable myRunnableMusic = new Runnable() { //xuameng播放音频切换图片
         @Override
         public void run() {
-			if (MxuamengMusic.getVisibility() == View.VISIBLE){
-				if (!ApiConfig.get().musicwallpaper.isEmpty()){
-				String Url = ApiConfig.get().musicwallpaper;
-				Picasso.get()
-				.load(Url)
-//				.placeholder(R.drawable.xumusic)  //xuameng默认的站位图
-				.noPlaceholder()   //不使用站位图，效果不好
-				.resize(1920,1080)
-//				.centerCrop()
-//				.error(R.drawable.xumusic)
-				.config(Bitmap.Config.RGB_565)
-				.memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
-				.networkPolicy(NetworkPolicy.NO_CACHE)
-				.into(MxuamengMusic); // xuameng内容空显示banner
-				mHandler.postDelayed(this, 15000);
-				return;
-				}
-				else if (!ApiConfig.get().wallpaper.isEmpty()){
-				String Url = ApiConfig.get().wallpaper;
-				Picasso.get()
-				.load(Url)
-//				.placeholder(R.drawable.xumusic)   //xuameng默认的站位图
-				.noPlaceholder()   //不使用站位图，效果不好
-				.resize(1920,1080)
-//				.centerCrop()
-//				.error(R.drawable.xumusic)
-				.config(Bitmap.Config.RGB_565)
-				.memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
-				.networkPolicy(NetworkPolicy.NO_CACHE)
-				.into(MxuamengMusic); // xuameng内容空显示banner
-				mHandler.postDelayed(this, 15000);
-				return;
-				}
-				String Url = "https://api.miaomc.cn/image/get";
-				Picasso.get()
-				.load(Url)
-//				.placeholder(R.drawable.xumusic)   //xuameng默认的站位图
-				.noPlaceholder()   //不使用站位图，效果不好
-				.resize(1920,1080)
-//				.centerCrop()
-//				.error(R.drawable.xumusic)
-				.config(Bitmap.Config.RGB_565)
-				.memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
-				.networkPolicy(NetworkPolicy.NO_CACHE)
-				.into(MxuamengMusic); // xuameng内容空显示banner
-			}
-        mHandler.postDelayed(this, 15000);
-       }
+            if(MxuamengMusic.getVisibility() == View.VISIBLE) {
+                if(!ApiConfig.get().musicwallpaper.isEmpty()) {
+                    String Url = ApiConfig.get().musicwallpaper;
+                    Picasso.get().load(Url)
+                        //				.placeholder(R.drawable.xumusic)  //xuameng默认的站位图
+                        .noPlaceholder() //不使用站位图，效果不好
+                        .resize(1920, 1080)
+                        //				.centerCrop()
+                        //				.error(R.drawable.xumusic)
+                        .config(Bitmap.Config.RGB_565).memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE).networkPolicy(NetworkPolicy.NO_CACHE).into(MxuamengMusic); // xuameng内容空显示banner
+                    mHandler.postDelayed(this, 15000);
+                    return;
+                } else if(!ApiConfig.get().wallpaper.isEmpty()) {
+                    String Url = ApiConfig.get().wallpaper;
+                    Picasso.get().load(Url)
+                        //				.placeholder(R.drawable.xumusic)   //xuameng默认的站位图
+                        .noPlaceholder() //不使用站位图，效果不好
+                        .resize(1920, 1080)
+                        //				.centerCrop()
+                        //				.error(R.drawable.xumusic)
+                        .config(Bitmap.Config.RGB_565).memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE).networkPolicy(NetworkPolicy.NO_CACHE).into(MxuamengMusic); // xuameng内容空显示banner
+                    mHandler.postDelayed(this, 15000);
+                    return;
+                }
+                String Url = "https://api.miaomc.cn/image/get";
+                Picasso.get().load(Url)
+                    //				.placeholder(R.drawable.xumusic)   //xuameng默认的站位图
+                    .noPlaceholder() //不使用站位图，效果不好
+                    .resize(1920, 1080)
+                    //				.centerCrop()
+                    //				.error(R.drawable.xumusic)
+                    .config(Bitmap.Config.RGB_565).memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE).networkPolicy(NetworkPolicy.NO_CACHE).into(MxuamengMusic); // xuameng内容空显示banner
+            }
+            mHandler.postDelayed(this, 15000);
+        }
     };
-
-
     private void showPasswordDialog(int groupIndex, int liveChannelIndex) {
         if(tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
             mHideChannelListRunXu(); //xuameng隐藏频道菜单
@@ -3076,7 +3033,7 @@ public class LivePlayActivity extends BaseActivity {
                 if(password.equals(liveChannelGroupList.get(groupIndex).getGroupPassword())) {
                     channelGroupPasswordConfirmed.add(groupIndex);
                     loadChannelGroupDataAndPlay(groupIndex, liveChannelIndex);
-					Toast.makeText(App.getInstance(), "密码验证通过！已显示密码频道列表！", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(App.getInstance(), "密码验证通过！已显示密码频道列表！", Toast.LENGTH_SHORT).show();
                 } else {
                     showPasswordDialog(groupIndex, liveChannelIndex); //xuameng 密码错误重新弹出密码输入窗口
                     Toast.makeText(App.getInstance(), "密码错误！请重新输入！", Toast.LENGTH_SHORT).show();
@@ -3230,7 +3187,7 @@ public class LivePlayActivity extends BaseActivity {
             backcontroller.setVisibility(View.VISIBLE); //xuameng显示回看下方菜单
             showTimeXu(); //xuameng系统显示时间
             showNetSpeedXu(); //XUAMENG显示右下网速
-            //iv_playpause.requestFocus();     //xuameng默认焦点
+            iv_playpause.requestFocus();     //xuameng默认焦点
             Mtv_left_top_xu.setVisibility(View.VISIBLE); //xuameng显示回看上图标
             ll_epg.setVisibility(View.VISIBLE); //xuameng下面EPG菜单显示
             ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
@@ -3254,7 +3211,7 @@ public class LivePlayActivity extends BaseActivity {
         iv_playpause.setOnClickListener(new View.OnClickListener() { //xuameng回看播放按钮监听
             @Override
             public void onClick(View arg0) {
-				if(mVideoView == null) return;
+                if(mVideoView == null) return;
                 if(mVideoView.isPlaying()) {
                     mVideoView.pause();
                     countDownTimer.cancel();
@@ -3275,7 +3232,7 @@ public class LivePlayActivity extends BaseActivity {
         sBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() { //xuameng升级手机进程条
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-				if(mVideoView == null) return;
+                if(mVideoView == null) return;
                 long duration = mVideoView.getDuration();
                 long newPosition = (duration * seekBar.getProgress()) / sBar.getMax(); //xuameng停止触碰获取进度条进度
                 mVideoView.seekTo((int) newPosition); //xuameng当前进度播放
@@ -3310,7 +3267,7 @@ public class LivePlayActivity extends BaseActivity {
                     int keyCode = event.getKeyCode();
                     int action = event.getAction();
                     if(keycode == KeyEvent.KEYCODE_DPAD_CENTER || keycode == KeyEvent.KEYCODE_ENTER) {
-						if(mVideoView == null) return true;
+                        if(mVideoView == null) return true;
                         if(mVideoView.isPlaying()) {
                             mVideoView.pause();
                             countDownTimer.cancel();
@@ -3347,7 +3304,7 @@ public class LivePlayActivity extends BaseActivity {
             countDownTimer.cancel();
         }
         countDownTimer.start();
-		if(mVideoView == null) return;
+        if(mVideoView == null) return;
         if(mVideoView.isPlaying()) {
             iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
         }
@@ -3358,15 +3315,15 @@ public class LivePlayActivity extends BaseActivity {
     public void tvSlideStop() {
         if(!simSlideStart || mVideoView == null) return;
         if(isSEEKBAR) {
-           mVideoView.seekTo(simSeekPosition);
+            mVideoView.seekTo(simSeekPosition);
         }
-//        if(!mVideoView.isPlaying())
-            //xuameng快进暂停就暂停测试    mVideoView.start();  如果想暂停时快进自动播放取消注销
-			//        simSeekPosition = 0;    //XUAMENG重要
+        //        if(!mVideoView.isPlaying())
+        //xuameng快进暂停就暂停测试    mVideoView.start();  如果想暂停时快进自动播放取消注销
+        //        simSeekPosition = 0;    //XUAMENG重要
         isKUAIJIN = false;
         simSlideStart = false;
-        simSlideOffset = 0;  //快进步数
-        mSpeedTimeUp = 0;   //xuameng按住按键开始计时
+        simSlideOffset = 0; //快进步数
+        mSpeedTimeUp = 0; //xuameng按住按键开始计时
     }
     public void tvSlideStart(int dir) {
         int duration = (int) mVideoView.getDuration();
@@ -3381,16 +3338,16 @@ public class LivePlayActivity extends BaseActivity {
             mSpeedTimeUp = System.currentTimeMillis();
         }
         if(System.currentTimeMillis() - mSpeedTimeUp < 3000) { //xuameng快进越来越快
-            simSlideOffset += (10000.0f * dir);
+            simSlideOffset += (10000.0 f * dir);
         }
         if(System.currentTimeMillis() - mSpeedTimeUp > 3000 && System.currentTimeMillis() - mSpeedTimeUp < 6000) {
-            simSlideOffset += (30000.0f * dir);
+            simSlideOffset += (30000.0 f * dir);
         }
         if(System.currentTimeMillis() - mSpeedTimeUp > 6000 && System.currentTimeMillis() - mSpeedTimeUp < 9000) {
-            simSlideOffset += (60000.0f * dir);
+            simSlideOffset += (60000.0 f * dir);
         }
         if(System.currentTimeMillis() - mSpeedTimeUp > 9000) {
-            simSlideOffset += (120000.0f * dir);
+            simSlideOffset += (120000.0 f * dir);
         }
         int currentPosition = (int) mVideoView.getCurrentPosition();
         int position = (int)(simSlideOffset + currentPosition);
@@ -3414,14 +3371,14 @@ public class LivePlayActivity extends BaseActivity {
         defaultChannel.setChannelName("暂无频道");
         defaultChannel.setChannelIndex(0);
         defaultChannel.setChannelNum(1);
-        ArrayList<String> defaultSourceNames = new ArrayList<>();
-        ArrayList<String> defaultSourceUrls = new ArrayList<>();
+        ArrayList < String > defaultSourceNames = new ArrayList < > ();
+        ArrayList < String > defaultSourceUrls = new ArrayList < > ();
         defaultSourceNames.add("默认源1");
         defaultSourceUrls.add("http://default.play.url/stream");
         defaultChannel.setChannelSourceNames(defaultSourceNames);
         defaultChannel.setChannelUrls(defaultSourceUrls);
         // 将默认频道添加到分组内
-        ArrayList<LiveChannelItem> channels = new ArrayList<>();
+        ArrayList < LiveChannelItem > channels = new ArrayList < > ();
         channels.add(defaultChannel);
         defaultGroup.setLiveChannels(channels);
         // 添加分组到全局列表
@@ -3429,12 +3386,12 @@ public class LivePlayActivity extends BaseActivity {
         showSuccess();
         initLiveState();
     }
-    private void initLiveObj(){
-        int position=Hawk.get(HawkConfig.LIVE_GROUP_INDEX, 0);
-        JsonArray live_groups=Hawk.get(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
+    private void initLiveObj() {
+        int position = Hawk.get(HawkConfig.LIVE_GROUP_INDEX, 0);
+        JsonArray live_groups = Hawk.get(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
         JsonObject livesOBJ = live_groups.get(position).getAsJsonObject();
-        if(livesOBJ.has("logo")){
-            logoUrl = livesOBJ.get("logo").getAsString();    //xuameng 直播配置里有没有logo配置
+        if(livesOBJ.has("logo")) {
+            logoUrl = livesOBJ.get("logo").getAsString(); //xuameng 直播配置里有没有logo配置
         }
     }
 }
