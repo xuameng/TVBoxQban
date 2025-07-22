@@ -1607,12 +1607,8 @@ public class LivePlayActivity extends BaseActivity {
         getEpgxu(new Date()); //xuameng重要EPG名称
         return true;
     }
-    private void playNext() {    //xuameng 下一个频道
+    private void playNext() {
         if(mVideoView == null) {
-            return;
-        }
-        if (liveChannelGroupList.size() - 1 <= 1){   //如果只有一个频道组就播放当前频道，不胯下胯下跨选频道组
-            playXuSource();
             return;
         }
         if(!isCurrentLiveChannelValid()) return;
@@ -1621,10 +1617,6 @@ public class LivePlayActivity extends BaseActivity {
     }
     private void playPrevious() {
         if(mVideoView == null) {
-            return;
-        }
-        if (liveChannelGroupList.size() - 1 <= 1){   //如果只有一个频道组就播放当前频道，不胯下胯下跨选频道组
-            playXuSource();
             return;
         }
         if(!isCurrentLiveChannelValid()) return;
@@ -2305,16 +2297,20 @@ public class LivePlayActivity extends BaseActivity {
         @Override
         public void run() {
             currentLiveChangeSourceTimes++;
-            if(currentLiveChannelItem.getSourceNum() == currentLiveChangeSourceTimes) {       //xuameng如果只有一个源就换频道
+            if(currentLiveChannelItem.getSourceNum() == currentLiveChangeSourceTimes) {
+                if (liveChannelGroupList.size() - 1 < 1){
+                    playXuSource();
+                    return;
+                }
                 currentLiveChangeSourceTimes = 0;
                 Integer[] groupChannelIndex = getNextChannel(Hawk.get(HawkConfig.LIVE_CHANNEL_REVERSE, false) ? -1 : 1);
-                if(Hawk.get(HawkConfig.LIVE_CHANNEL_REVERSE, false)){   //xuameng换台反转
-					playPrevious();  //xuameng上一个频道
+                if(Hawk.get(HawkConfig.LIVE_CHANNEL_REVERSE, false)){ 
+					playPrevious();
                 }else{ 
-					playNext();  //xuameng下一个频道
+					playNext();
 				}
             } else {
-                   playNextSource();  //xuameng换源
+                   playNextSource();
             }
         }
     };
