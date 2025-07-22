@@ -2306,7 +2306,12 @@ public class LivePlayActivity extends BaseActivity {
 					playNext();
 				}
             } else {
-                playNextSource();
+                int channelGroupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex();  //xuameng当前选定的频道组
+                if(getLiveChannels(channelGroupIndexXu).size()-1 <= 1){    //xuameng判断是否是只有一个频道
+                   playXuSource();
+				}else{
+                   playNextSource();
+				}
             }
         }
     };
