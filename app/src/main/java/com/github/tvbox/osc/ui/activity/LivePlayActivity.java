@@ -2300,7 +2300,11 @@ public class LivePlayActivity extends BaseActivity {
             if(currentLiveChannelItem.getSourceNum() == currentLiveChangeSourceTimes) {
                 currentLiveChangeSourceTimes = 0;
                 Integer[] groupChannelIndex = getNextChannel(Hawk.get(HawkConfig.LIVE_CHANNEL_REVERSE, false) ? -1 : 1);
-                playChannel(groupChannelIndex[0], groupChannelIndex[1], false);
+                if(Hawk.get(HawkConfig.LIVE_CHANNEL_REVERSE, false)){ 
+					playPrevious();
+                }else{ 
+					playNext();
+				}
             } else {
                 playNextSource();
             }
