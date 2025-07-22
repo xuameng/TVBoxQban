@@ -2213,11 +2213,6 @@ public class LivePlayActivity extends BaseActivity {
                             mHandler.postDelayed(mConnectTimeoutChangeSourceRunBack, 5000); //xuameng回看超时5秒退出
                             return;
                         }
-						else if(isVOD){
-                            mHandler.removeCallbacks(mConnectTimeoutChangeSourceRunVod);
-                            mHandler.postDelayed(mConnectTimeoutChangeSourceRunVod, 5000); //xuameng回看超时5秒退出
-							return;
-						}
                         mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
                         mHandler.postDelayed(mConnectTimeoutChangeSourceRun, 10000); //xuameng播放超时10秒换源
                         break;
@@ -2336,14 +2331,6 @@ public class LivePlayActivity extends BaseActivity {
         public void run() {
              playXuSource();
              showToastXu();
-        }
-    };
-    private Runnable mConnectTimeoutChangeSourceRunVod = new Runnable() {
-        @Override
-        public void run() {
-            currentLiveChangeSourceTimes = 0;
-            Integer[] groupChannelIndex = getNextChannel(Hawk.get(HawkConfig.LIVE_CHANNEL_REVERSE, false) ? -1 : 1);
-            playChannel(groupChannelIndex[0], groupChannelIndex[1], false);
         }
     };
     private void initChannelGroupView() {
