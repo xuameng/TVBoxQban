@@ -1611,12 +1611,20 @@ public class LivePlayActivity extends BaseActivity {
         if(mVideoView == null) {
             return;
         }
+        if (liveChannelGroupList.size() - 1 < 1){
+            playXuSource();
+            return;
+        }
         if(!isCurrentLiveChannelValid()) return;
         Integer[] groupChannelIndex = getNextChannel(1);
         playChannel(groupChannelIndex[0], groupChannelIndex[1], false);
     }
     private void playPrevious() {
         if(mVideoView == null) {
+            return;
+        }
+        if (liveChannelGroupList.size() - 1 < 1){
+            playXuSource();
             return;
         }
         if(!isCurrentLiveChannelValid()) return;
@@ -2298,10 +2306,6 @@ public class LivePlayActivity extends BaseActivity {
         public void run() {
             currentLiveChangeSourceTimes++;
             if(currentLiveChannelItem.getSourceNum() == currentLiveChangeSourceTimes) {
-                if (liveChannelGroupList.size() - 1 <= 1){
-                    playXuSource();
-                    return;
-                }
                 currentLiveChangeSourceTimes = 0;
                 Integer[] groupChannelIndex = getNextChannel(Hawk.get(HawkConfig.LIVE_CHANNEL_REVERSE, false) ? -1 : 1);
                 if(Hawk.get(HawkConfig.LIVE_CHANNEL_REVERSE, false)){ 
