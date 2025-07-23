@@ -2627,6 +2627,10 @@ public class LivePlayActivity extends BaseActivity {
                         Hawk.put(HawkConfig.LIVE_CHANNEL_REVERSE, select);
                         break;
                     case 3:
+                        if (liveChannelGroupList.size() - 1 < 1){
+                            Toast.makeText(App.getInstance(), "只有一个频道组！不能跨选分类！", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
                         select = !Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false);
                         Hawk.put(HawkConfig.LIVE_CROSS_GROUP, select);
                         break;
@@ -2816,6 +2820,9 @@ public class LivePlayActivity extends BaseActivity {
         JsonArray live_groups=Hawk.get(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
         liveSettingGroupList=ApiConfig.get().getLiveSettingGroupList();
         if (!listxu.isEmpty()) {
+            if (liveChannelGroupList.size() - 1 < 1){
+                Hawk.put(HawkConfig.LIVE_CROSS_GROUP, false);
+            }
         liveSettingGroupList.get(3).getLiveSettingItems().get(Hawk.get(HawkConfig.LIVE_CONNECT_TIMEOUT, 1)).setItemSelected(true);
         liveSettingGroupList.get(4).getLiveSettingItems().get(0).setItemSelected(Hawk.get(HawkConfig.LIVE_SHOW_TIME, false));
         liveSettingGroupList.get(4).getLiveSettingItems().get(1).setItemSelected(Hawk.get(HawkConfig.LIVE_SHOW_NET_SPEED, false));
@@ -3137,10 +3144,6 @@ public class LivePlayActivity extends BaseActivity {
             if(liveChannelIndex >= getLiveChannels(channelGroupIndex).size()) {
                 liveChannelIndex = 0;
                 if(Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false)) {
-                    if (liveChannelGroupList.size() - 1 < 1){
-                        Toast.makeText(App.getInstance(), "只有一个频道组！", Toast.LENGTH_SHORT).show();
-						return true;
-                    }
                     do {
                         channelGroupIndex++;
                         if(channelGroupIndex >= liveChannelGroupList.size()) channelGroupIndex = 0;
@@ -3151,10 +3154,6 @@ public class LivePlayActivity extends BaseActivity {
             liveChannelIndex--;
             if(liveChannelIndex < 0) {
                 if(Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false)) {
-                    if (liveChannelGroupList.size() - 1 < 1){
-                        Toast.makeText(App.getInstance(), "只有一个频道组！", Toast.LENGTH_SHORT).show();
-						return true;
-                    }
                     do {
                         channelGroupIndex--;
                         if(channelGroupIndex < 0) channelGroupIndex = liveChannelGroupList.size() - 1;
