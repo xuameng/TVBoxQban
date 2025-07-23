@@ -2142,6 +2142,8 @@ public class LivePlayActivity extends BaseActivity {
                         isVOD = false;
                         isBack = false;
 	                    isSHIYI = false;
+                        Mtv_left_top_xu.setVisibility(View.GONE); //xuameng隐藏左上回看图标
+                        iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
 						tv_size.setText("[0 X 0]");  //XUAMENG分辨率
 						if (MxuamengMusic.getVisibility() == View.VISIBLE){  //xuameng播放音乐背景
 							MxuamengMusic.setVisibility(View.GONE);
@@ -2216,8 +2218,12 @@ public class LivePlayActivity extends BaseActivity {
                         }
                         break;
                     case VideoView.STATE_ERROR:
-                         iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
-                         Mtv_left_top_xu.setVisibility(View.GONE); //xuameng返回键隐藏左上回看菜单
+						isVideoplaying = false;
+                        isVOD = false;
+                        isBack = false;
+	                    isSHIYI = false;
+                        Mtv_left_top_xu.setVisibility(View.GONE); //xuameng隐藏左上回看图标
+                        iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
                     case VideoView.STATE_PLAYBACK_COMPLETED:
                         if(isBack) {
                             mHandler.removeCallbacks(mConnectTimeoutChangeSourceRunBack);
@@ -3137,6 +3143,10 @@ public class LivePlayActivity extends BaseActivity {
             if(liveChannelIndex >= getLiveChannels(channelGroupIndex).size()) {
                 liveChannelIndex = 0;
                 if(Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false)) {
+                    if (liveChannelGroupList.size() - 1 < 1){
+                        Toast.makeText(App.getInstance(), "只有一个频道组！", Toast.LENGTH_SHORT).show();
+						return;
+                    }
                     do {
                         channelGroupIndex++;
                         if(channelGroupIndex >= liveChannelGroupList.size()) channelGroupIndex = 0;
@@ -3147,6 +3157,10 @@ public class LivePlayActivity extends BaseActivity {
             liveChannelIndex--;
             if(liveChannelIndex < 0) {
                 if(Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false)) {
+                    if (liveChannelGroupList.size() - 1 < 1){
+                        Toast.makeText(App.getInstance(), "只有一个频道组！", Toast.LENGTH_SHORT).show();
+						return;
+                    }
                     do {
                         channelGroupIndex--;
                         if(channelGroupIndex < 0) channelGroupIndex = liveChannelGroupList.size() - 1;
