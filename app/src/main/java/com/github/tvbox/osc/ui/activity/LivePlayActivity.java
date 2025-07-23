@@ -437,6 +437,7 @@ public class LivePlayActivity extends BaseActivity {
 		Hawk.put(HawkConfig.PLAYER_IS_LIVE,true);  //xuameng新增 
         mHandler.post(mUpdateNetSpeedRunXu); //XUAMENG左上网速检测1秒钟一次
         mHandler.post(mUpdateVodProgressXu); //xuamengVOD BACK播放进度检测
+		mHandler.post(mUpdateBUG); //xuamengVOD BACK播放进度检测
 		mHandler.post(myRunnableMusic); //xuamengVOD BACK播放进度检测
 		mHandler.post(mUpdateVodImageXu); //xuamengVOD BACK播放进度检测
         iv_playpause.setNextFocusLeftId(R.id.pb_progressbar);
@@ -999,6 +1000,7 @@ public class LivePlayActivity extends BaseActivity {
             mHandler.removeCallbacks(mUpdateNetSpeedRun);
             mHandler.removeCallbacks(mUpdateNetSpeedRunXu);
             mHandler.removeCallbacks(mUpdateVodProgressXu);
+			mHandler.removeCallbacks(mUpdateBUG);  //xuameng罕见BUG
 			mHandler.removeCallbacks(myRunnableMusic);
 			mHandler.removeCallbacks(mUpdateVodImageXu);
             mHandler.removeCallbacks(mUpdateTimeRun);
@@ -1059,6 +1061,7 @@ public class LivePlayActivity extends BaseActivity {
         mHandler.removeCallbacks(mUpdateNetSpeedRun);
         mHandler.removeCallbacks(mUpdateNetSpeedRunXu);
         mHandler.removeCallbacks(mUpdateVodProgressXu);
+		mHandler.removeCallbacks(mUpdateBUG);  //xuameng罕见BUG
         mHandler.removeCallbacks(myRunnableMusic);
         mHandler.removeCallbacks(mUpdateVodImageXu);
         mHandler.removeCallbacks(mUpdateTimeRun);
@@ -2994,17 +2997,22 @@ public class LivePlayActivity extends BaseActivity {
             mHandler.postDelayed(this, 1000);
         }
     };
+    private Runnable mUpdateBUG = new Runnable() {  //xuameng罕见BUG
+        @Override
+        public void run() {
+			if (!isVOD && !isBack){
+				backcontroller.setVisibility(View.GONE);
+                if(isLl_epgVisible()){
+                   view_line_XU.setVisibility(View.VISIBLE); //xuamengEPG中的横线
+				}
+			}
+			mHandler.postDelayed(this, 100);
+        }
+    };
     private Runnable mUpdateVodProgressXu = new Runnable() {
         @Override
         public void run() {
 			if(mVideoView == null) return;
-			if (!isVOD && !isBack){
-				backcontroller.setVisibility(View.GONE);
-                if(isLl_epgVisible){
-                   view_line_XU.setVisibility(View.VISIBLE); //xuamengEPG中的横线
-				}
-			}
-
             int duration2 = (int) mVideoView.getDuration();
             if(duration2 > 0) {
 				if(mVideoView.isPlaying()) {  //xuameng音乐播放时图标判断
