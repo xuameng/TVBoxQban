@@ -765,6 +765,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginRight="@dimen/vs_5"
                 android:text="许大师占位"
+                android:visibility="gone"
                 android:singleLine="true"
                 android:layout_weight="1.0"
                 android:layout_marginEnd="@dimen/vs_5"/>
