@@ -1611,10 +1611,6 @@ public class LivePlayActivity extends BaseActivity {
         if(mVideoView == null) {
             return;
         }
-        if (liveChannelGroupList.size() - 1 < 1){   //如果只有一个频道组就播放当前频道，不胯下胯下跨选频道组
-            playXuSource();
-            return;
-        }
         if(!isCurrentLiveChannelValid()) return;
         Integer[] groupChannelIndex = getNextChannel(1);
         playChannel(groupChannelIndex[0], groupChannelIndex[1], false);
@@ -1623,13 +1619,6 @@ public class LivePlayActivity extends BaseActivity {
         if(mVideoView == null) {
             return;
         }
-        int channelGroupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex();  //xuameng当前选定的频道组
-        currentLiveChangeSourceTimes++;
-        if(currentLiveChannelItem.getSourceNum() == currentLiveChangeSourceTimes  && liveChannelGroupList.size() - 1 < 1 && getLiveChannels(channelGroupIndexXu).size()-1 < 1) {   //xuameng如果只有一个源就换频道
-           currentLiveChangeSourceTimes = 0;
-           Toast.makeText(App.getInstance(), "聚汇影视提示您：只有一个频道！", Toast.LENGTH_SHORT).show();
-           return;
-        } 
         if(!isCurrentLiveChannelValid()) return;
         Integer[] groupChannelIndex = getNextChannel(-1);
         playChannel(groupChannelIndex[0], groupChannelIndex[1], false);
@@ -2319,6 +2308,11 @@ public class LivePlayActivity extends BaseActivity {
                 currentLiveChangeSourceTimes = 0;
                 if (liveChannelGroupList.size() - 1 < 1 && getLiveChannels(channelGroupIndexXu).size()-1 < 1){   //如果只有一个频道组就播放当前频道，不胯下胯下跨选频道组
 					Toast.makeText(App.getInstance(), "聚汇影视提示您：只有一个频道！", Toast.LENGTH_SHORT).show();
+                    playXuSource();
+                    return;
+                }
+				if(!Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false) && getLiveChannels(channelGroupIndexXu).size()-1 < 1) {
+					Toast.makeText(App.getInstance(), "聚汇影视提示您：未跨选分类且本组只有一个频道！", Toast.LENGTH_SHORT).show();
                     playXuSource();
                     return;
                 }
@@ -3145,7 +3139,7 @@ public class LivePlayActivity extends BaseActivity {
                 if(Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false)) {
                     if (liveChannelGroupList.size() - 1 < 1){
                         Toast.makeText(App.getInstance(), "只有一个频道组！", Toast.LENGTH_SHORT).show();
-						return;
+						return true;
                     }
                     do {
                         channelGroupIndex++;
@@ -3159,7 +3153,7 @@ public class LivePlayActivity extends BaseActivity {
                 if(Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false)) {
                     if (liveChannelGroupList.size() - 1 < 1){
                         Toast.makeText(App.getInstance(), "只有一个频道组！", Toast.LENGTH_SHORT).show();
-						return;
+						return true;
                     }
                     do {
                         channelGroupIndex--;
