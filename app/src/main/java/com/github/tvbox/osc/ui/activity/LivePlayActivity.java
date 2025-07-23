@@ -138,7 +138,6 @@ public class LivePlayActivity extends BaseActivity {
     private static Hashtable hsEpg = new Hashtable();
     private CountDownTimer countDownTimer;
     private View ll_right_top_loading; //xuameng左上图标
-    private View ll_right_top_huikan;
     private View view_line_XU;
     private View divLoadEpg;
     private View divLoadEpgleft;
@@ -264,7 +263,6 @@ public class LivePlayActivity extends BaseActivity {
         tv_shownum = (TextView) findViewById(R.id.tv_shownum);
         txtNoEpg = (TextView) findViewById(R.id.txtNoEpg);
         ll_right_top_loading = findViewById(R.id.ll_right_top_loading);
-        ll_right_top_huikan = findViewById(R.id.ll_right_top_huikan);
         divLoadEpg = (View) findViewById(R.id.divLoadEpg);
         divLoadEpgleft = (View) findViewById(R.id.divLoadEpgleft);
         view_line_XU = (View) findViewById(R.id.view_line); //xuameng横线
@@ -1253,7 +1251,6 @@ public class LivePlayActivity extends BaseActivity {
                         }
                         break;
                     case KeyEvent.KEYCODE_DPAD_CENTER: //xuameng 修复回看时不能暂停，弹出菜单问题
-					    if(mVideoView == null) return true;
                         if(isBack) {
                             if(mVideoView.isPlaying()) {
                                 showProgressBars(true);
@@ -1292,7 +1289,6 @@ public class LivePlayActivity extends BaseActivity {
                         }
                         break;
                     case KeyEvent.KEYCODE_ENTER: //xuameng 修复回看时不能暂停，弹出菜单问题
-					    if(mVideoView == null) return true;
                         if(isBack) {
                             if(mVideoView.isPlaying()) {
                                 showProgressBars(true);
@@ -1331,7 +1327,6 @@ public class LivePlayActivity extends BaseActivity {
                         }
                         break;
                     case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE: //xuameng 修复回看时不能暂停，弹出菜单问题
-					    if(mVideoView == null) return true;
                         if(isBack) {
                             if(mVideoView.isPlaying()) {
                                 showProgressBars(true);
@@ -1578,7 +1573,6 @@ public class LivePlayActivity extends BaseActivity {
         mHideSettingLayoutRun(); //xuameng显示EPG就隐藏左右菜单
         liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
         backcontroller.setVisibility(View.GONE);
-        ll_right_top_huikan.setVisibility(View.GONE);
         Mtv_left_top_xu.setVisibility(View.GONE); //xuameng直播时隐藏回看的菜单
         simSeekPosition = 0; //XUAMENG重要,换视频时重新记录进度
         simSlideOffset = 0; //XUAMENG重要,换视频时重新记录进度
@@ -1613,11 +1607,11 @@ public class LivePlayActivity extends BaseActivity {
         }
         int channelGroupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex();  //xuameng当前选定的频道组
         if (liveChannelGroupList.size() - 1 < 1 && getLiveChannels(channelGroupIndexXu).size()-1 < 1){   //如果只有一个频道组就播放当前频道，不胯下胯下跨选频道组
-            Toast.makeText(App.getInstance(), "聚汇影视提示您：只有一个频道！正在重播！", Toast.LENGTH_SHORT).show();
+            Toast.makeText(App.getInstance(), "聚汇影视提示您：只有一个频道！", Toast.LENGTH_SHORT).show();
             return;
         }
         if(!Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false) && getLiveChannels(channelGroupIndexXu).size()-1 < 1) {
-            Toast.makeText(App.getInstance(), "聚汇影视提示您：未跨选分类且本组只有一个频道！正在重播！", Toast.LENGTH_SHORT).show();
+            Toast.makeText(App.getInstance(), "聚汇影视提示您：未选择跨选分类且本组只有一个频道！", Toast.LENGTH_SHORT).show();
             return;
         }
         if(!isCurrentLiveChannelValid()) return;
@@ -1630,11 +1624,11 @@ public class LivePlayActivity extends BaseActivity {
         }
         int channelGroupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex();  //xuameng当前选定的频道组
         if (liveChannelGroupList.size() - 1 < 1 && getLiveChannels(channelGroupIndexXu).size()-1 < 1){   //如果只有一个频道组就播放当前频道，不胯下胯下跨选频道组
-            Toast.makeText(App.getInstance(), "聚汇影视提示您：只有一个频道！正在重播！", Toast.LENGTH_SHORT).show();
+            Toast.makeText(App.getInstance(), "聚汇影视提示您：只有一个频道！", Toast.LENGTH_SHORT).show();
             return;
         }
         if(!Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false) && getLiveChannels(channelGroupIndexXu).size()-1 < 1) {
-            Toast.makeText(App.getInstance(), "聚汇影视提示您：未跨选分类且本组只有一个频道！正在重播！", Toast.LENGTH_SHORT).show();
+            Toast.makeText(App.getInstance(), "聚汇影视提示您：未选择跨选分类且本组只有一个频道！", Toast.LENGTH_SHORT).show();
             return;
         }
         if(!isCurrentLiveChannelValid()) return;
@@ -2151,6 +2145,7 @@ public class LivePlayActivity extends BaseActivity {
 	                    isSHIYI = false;
                         Mtv_left_top_xu.setVisibility(View.GONE); //xuameng隐藏左上回看图标
                         iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
+						backcontroller.setVisibility(View.GONE);
 						tv_size.setText("[0 X 0]");  //XUAMENG分辨率
 						if (MxuamengMusic.getVisibility() == View.VISIBLE){  //xuameng播放音乐背景
 							MxuamengMusic.setVisibility(View.GONE);
@@ -2231,6 +2226,8 @@ public class LivePlayActivity extends BaseActivity {
 	                    isSHIYI = false;
                         Mtv_left_top_xu.setVisibility(View.GONE); //xuameng隐藏左上回看图标
                         iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
+						backcontroller.setVisibility(View.GONE);
+						Toast.makeText(App.getInstance(), "聚汇影视提示您：播放错误", Toast.LENGTH_SHORT).show();
                     case VideoView.STATE_PLAYBACK_COMPLETED:
                         if(isBack) {
                             mHandler.removeCallbacks(mConnectTimeoutChangeSourceRunBack);
@@ -2330,7 +2327,7 @@ public class LivePlayActivity extends BaseActivity {
                     return;
                 }
 				if(!Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false) && getLiveChannels(channelGroupIndexXu).size()-1 < 1) {
-					Toast.makeText(App.getInstance(), "聚汇影视提示您：未跨选分类且本组只有一个频道！正在重播！", Toast.LENGTH_SHORT).show();
+					Toast.makeText(App.getInstance(), "聚汇影视提示您：未选择跨选分类且本组只有一个频道！正在重播！", Toast.LENGTH_SHORT).show();
                     playXuSource();
                     return;
                 }
