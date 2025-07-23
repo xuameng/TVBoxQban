@@ -1193,6 +1193,7 @@ public class LivePlayActivity extends BaseActivity {
                             ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
                             hideTimeXu(); //xuameng隐藏系统时间
                             hideNetSpeedXu(); //XUAMENG隐藏左上网速
+							backcontroller.setVisibility(View.GONE); //XUAMENG底部回看菜单播放键点击播放隐藏菜单
                         } else if(!isLl_epgVisible()) {
                             mExitTimeUp = System.currentTimeMillis();
                             showBottomEpg(); //xuameng显示EPG和上面菜单
@@ -1232,7 +1233,8 @@ public class LivePlayActivity extends BaseActivity {
                             ll_epg.setVisibility(View.GONE); //xuameng返回键隐藏下面EPG菜单隐藏
                             ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
                             hideTimeXu(); //xuameng隐藏系统时间
-                            hideNetSpeedXu(); //XUAMENG隐藏左上网速					    
+                            hideNetSpeedXu(); //XUAMENG隐藏左上网速	
+							backcontroller.setVisibility(View.GONE); //XUAMENG底部回看菜单播放键点击播放隐藏菜单
                         } else if(!isLl_epgVisible()) {
                             mExitTimeDown = System.currentTimeMillis();
                             showBottomEpg(); //xuameng显示EPG和上面菜单
@@ -2140,6 +2142,7 @@ public class LivePlayActivity extends BaseActivity {
                     hideNetSpeedXu(); //XUAMENG隐藏左上网速
                     mHideChannelListRun(); //xuameng显示EPG就隐藏左右菜单
                     mHideSettingLayoutRun(); //xuameng显示EPG就隐藏左右菜单
+					backcontroller.setVisibility(View.GONE); //XUAMENG底部回看菜单播放键点击播放隐藏菜单
                 } else if(!isLl_epgVisible()) {
                     showBottomEpg(); //xuameng显示EPG和上面菜单
                     mHideChannelListRun(); //xuameng显示EPG就隐藏左右菜单
@@ -2995,6 +2998,13 @@ public class LivePlayActivity extends BaseActivity {
         @Override
         public void run() {
 			if(mVideoView == null) return;
+			if (!isVOD && !isBack){
+				backcontroller.setVisibility(View.GONE);
+                if(isLl_epgVisible){
+                   view_line_XU.setVisibility(View.VISIBLE); //xuamengEPG中的横线
+				}
+			}
+
             int duration2 = (int) mVideoView.getDuration();
             if(duration2 > 0) {
 				if(mVideoView.isPlaying()) {  //xuameng音乐播放时图标判断
