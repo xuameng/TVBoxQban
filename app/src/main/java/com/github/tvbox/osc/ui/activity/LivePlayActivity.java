@@ -2375,6 +2375,7 @@ public class LivePlayActivity extends BaseActivity {
         @Override
         public void run() {
              playXuSource();
+			 showToastXu();
         }
     };
     private void initChannelGroupView() {
