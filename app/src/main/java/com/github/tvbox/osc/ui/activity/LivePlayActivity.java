@@ -2199,6 +2199,7 @@ public class LivePlayActivity extends BaseActivity {
                     case VideoView.STATE_PLAYING:
                         currentLiveChangeSourceTimes = 0;
                         mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
+						mHandler.removeCallbacks(mConnectTimeoutChangeSourceRunBuffer);
 						isVideoplaying = true;
 						isBuffer = false;
 						if(isBack) {          //xuameng 回看不成功返回直播
@@ -2238,17 +2239,17 @@ public class LivePlayActivity extends BaseActivity {
                         break;
                     case VideoView.STATE_PREPARING:
                     case VideoView.STATE_BUFFERING:
-                        if(isBack) {
-                            mHandler.removeCallbacks(mConnectTimeoutChangeSourceRunBack);
-                            mHandler.postDelayed(mConnectTimeoutChangeSourceRunBack, (Hawk.get(HawkConfig.LIVE_CONNECT_TIMEOUT, 1) + 1) * 5000); //xuameng回看超时
-                            return;
-                        }
-                        mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
-                        mHandler.postDelayed(mConnectTimeoutChangeSourceRun, (Hawk.get(HawkConfig.LIVE_CONNECT_TIMEOUT, 1) + 1) * 5000);
 						if (iv_circle_bg_xu.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
 							iv_circle_bg_xu.setVisibility(View.GONE);
 						}
 						isBuffer = true;
+                        if(isBack) {
+                            mHandler.removeCallbacks(mConnectTimeoutChangeSourceRunBuffer);
+                            mHandler.postDelayed(mConnectTimeoutChangeSourceRunBuffer, (Hawk.get(HawkConfig.LIVE_CONNECT_TIMEOUT, 1) + 1) * 5000); //xuameng回看超时
+                            return;
+                        }
+                        mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
+                        mHandler.postDelayed(mConnectTimeoutChangeSourceRun, (Hawk.get(HawkConfig.LIVE_CONNECT_TIMEOUT, 1) + 1) * 5000);
                         break;
                 }
             }
@@ -2369,6 +2370,13 @@ public class LivePlayActivity extends BaseActivity {
              showToastXu();
         }
     };
+
+    private Runnable mConnectTimeoutChangeSourceRunBuffer = new Runnable() { //xuameng为回看失败准备
+        @Override
+        public void run() {
+             playXuSource();
+        }
+    };
     private void initChannelGroupView() {
         mChannelGroupView.setHasFixedSize(true);
         mChannelGroupView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
@@ -2455,6 +2463,7 @@ public class LivePlayActivity extends BaseActivity {
 					ChannelPosition = position;
 					isScrollingXu = false;
 				}
+				isTouch = false;
                 if(position < 0) return;
                 int channelGroupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex();  //xuameng当前选定的频道组
                 if(position == getLiveChannels(channelGroupIndexXu).size()-1){    //xuameng判断是否是最后一个item
@@ -2466,7 +2475,6 @@ public class LivePlayActivity extends BaseActivity {
                 liveChannelGroupAdapter.setFocusedGroupIndex(-1);
                 liveChannelItemAdapter.setFocusedChannelIndex(position);
                 liveChannelItemAdapter.setSelectedChannelIndex(position);
-				isTouch = false;
                 playChannelxu(liveChannelGroupAdapter.getSelectedGroupIndex(), liveChannelItemAdapter.getSelectedChannelIndex(), false); //xuameng换频道显示EPG
                 liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
                 mHideChannelListRunXu(); //xuameng隐藏频道菜单
@@ -3305,11 +3313,11 @@ public class LivePlayActivity extends BaseActivity {
         sBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() { //xuameng升级手机进程条
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
+				isKUAIJIN = false;
 				if(mVideoView == null) return;
                 long duration = mVideoView.getDuration();
                 long newPosition = (duration * seekBar.getProgress()) / sBar.getMax(); //xuameng停止触碰获取进度条进度
                 mVideoView.seekTo((int) newPosition); //xuameng当前进度播放
-                isKUAIJIN = false;
             }
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
