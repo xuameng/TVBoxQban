@@ -2227,11 +2227,10 @@ public class LivePlayActivity extends BaseActivity {
                         Mtv_left_top_xu.setVisibility(View.GONE); //xuameng隐藏左上回看图标
                         iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
 						backcontroller.setVisibility(View.GONE);
-						Toast.makeText(App.getInstance(), "聚汇影视提示您：播放错误", Toast.LENGTH_SHORT).show();
                     case VideoView.STATE_PLAYBACK_COMPLETED:
                         if(isBack) {
                             mHandler.removeCallbacks(mConnectTimeoutChangeSourceRunBack);
-                            mHandler.postDelayed(mConnectTimeoutChangeSourceRunBack, 5000); //xuameng回看超时5秒退出
+                            mHandler.postDelayed(mConnectTimeoutChangeSourceRunBack, 5000); //xuameng回看完毕5秒退出
                             return;
                         }
                         mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
@@ -2239,6 +2238,11 @@ public class LivePlayActivity extends BaseActivity {
                         break;
                     case VideoView.STATE_PREPARING:
                     case VideoView.STATE_BUFFERING:
+                        if(isBack) {
+                            mHandler.removeCallbacks(mConnectTimeoutChangeSourceRunBack);
+                            mHandler.postDelayed(mConnectTimeoutChangeSourceRunBack, (Hawk.get(HawkConfig.LIVE_CONNECT_TIMEOUT, 1) + 1) * 5000); //xuameng回看超时
+                            return;
+                        }
                         mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
                         mHandler.postDelayed(mConnectTimeoutChangeSourceRun, (Hawk.get(HawkConfig.LIVE_CONNECT_TIMEOUT, 1) + 1) * 5000);
 						if (iv_circle_bg_xu.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
