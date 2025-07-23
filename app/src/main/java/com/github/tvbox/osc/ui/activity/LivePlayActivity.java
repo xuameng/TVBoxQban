@@ -1623,10 +1623,13 @@ public class LivePlayActivity extends BaseActivity {
         if(mVideoView == null) {
             return;
         }
-        if (liveChannelGroupList.size() - 1 < 1){   //如果只有一个频道组就播放当前频道，不胯下胯下跨选频道组
-            playXuSource();
-            return;
-        }
+        int channelGroupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex();  //xuameng当前选定的频道组
+        currentLiveChangeSourceTimes++;
+        if(currentLiveChannelItem.getSourceNum() == currentLiveChangeSourceTimes  && liveChannelGroupList.size() - 1 < 1 && getLiveChannels(channelGroupIndexXu).size()-1 < 1) {   //xuameng如果只有一个源就换频道
+           currentLiveChangeSourceTimes = 0;
+           Toast.makeText(App.getInstance(), "聚汇影视提示您：只有一个频道！", Toast.LENGTH_SHORT).show();
+           return;
+        } 
         if(!isCurrentLiveChannelValid()) return;
         Integer[] groupChannelIndex = getNextChannel(-1);
         playChannel(groupChannelIndex[0], groupChannelIndex[1], false);
@@ -2305,19 +2308,18 @@ public class LivePlayActivity extends BaseActivity {
         @Override
         public void run() {
             currentLiveChangeSourceTimes++;
-            if(currentLiveChannelItem.getSourceNum() == currentLiveChangeSourceTimes) {       //xuameng如果只有一个源就换频道
+			int channelGroupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex();  //xuameng当前选定的频道组
+            if(currentLiveChannelItem.getSourceNum() == currentLiveChangeSourceTimes) {   //xuameng如果只有一个源就换频道
                 currentLiveChangeSourceTimes = 0;
-                if (liveChannelGroupList.size() - 1 < 1){   //如果只有一个频道组就播放当前频道，不胯下胯下跨选频道组
+                if (liveChannelGroupList.size() - 1 < 1 && getLiveChannels(channelGroupIndexXu).size()-1 < 1){   //如果只有一个频道组就播放当前频道，不胯下胯下跨选频道组
+					Toast.makeText(App.getInstance(), "聚汇影视提示您：只有一个频道！", Toast.LENGTH_SHORT).show();
                     playXuSource();
                     return;
                 }
-                if(Hawk.get(HawkConfig.LIVE_CHANNEL_REVERSE, false)){   //xuameng换台反转
-					playPrevious();  //xuameng上一个频道
-                }else{ 
-					playNext();  //xuameng下一个频道
-				}
+                Integer[] groupChannelIndex = getNextChannel(Hawk.get(HawkConfig.LIVE_CHANNEL_REVERSE, false) ? -1 : 1);   //xuameng换台反转与跨选分类
+                playChannel(groupChannelIndex[0], groupChannelIndex[1], false);
             } else {
-                   playNextSource();  //xuameng换源
+                playNextSource();
             }
         }
     };
