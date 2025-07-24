@@ -398,6 +398,10 @@ public class LivePlayActivity extends BaseActivity {
                     }
                     if(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
                         tvSlideStart(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT ? 1 : -1);
+                        if(countDownTimer != null) {
+                            countDownTimer.cancel();
+                        }
+                        countDownTimer.start();
                         return true;
                     }
                 }
@@ -1054,7 +1058,7 @@ public class LivePlayActivity extends BaseActivity {
                         if(isBack) {
                             if(mVideoView.isPlaying()) {
                                 showProgressBars(true);
-                                mVideoView.pause();
+                                iv_playpause.requestFocus();
                                 iv_playpause.setText("播放"); 
                             } else {
                                 HideBottomEpg();
@@ -1062,7 +1066,19 @@ public class LivePlayActivity extends BaseActivity {
                                 iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
                                 iv_playpause.setText("暂停"); 
                             }
-                        }else{
+                        } else if(isVOD) {
+                            if(backcontroller.getVisibility() == View.VISIBLE) {
+                                iv_playpause.requestFocus();
+                                iv_playpause.setText("播放"); 
+                            } else if(!mVideoView.isPlaying()) {
+                                mVideoView.start();
+                                iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
+                                iv_playpause.setText("暂停"); 
+                            } else {
+                                showChannelList();
+                                HideBottomEpg();
+                            }
+                        } else {
                             showChannelList();
                             HideBottomEpg();
                         }
@@ -1071,15 +1087,27 @@ public class LivePlayActivity extends BaseActivity {
                         if(isBack) {
                             if(mVideoView.isPlaying()) {
                                 showProgressBars(true);
-                                mVideoView.pause();
+                                iv_playpause.requestFocus();
                                 iv_playpause.setText("播放"); 
                             } else {
                                 HideBottomEpg();
                                 mVideoView.start();
-                                iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
                                 iv_playpause.setText("暂停"); 
+                                iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
                             }
-                        }else{
+                        } else if(isVOD) {
+                            if(backcontroller.getVisibility() == View.VISIBLE) {
+                                iv_playpause.requestFocus();
+                                iv_playpause.setText("播放"); 
+                            } else if(!mVideoView.isPlaying()) {
+                                mVideoView.start();
+                                iv_playpause.setText("暂停"); 
+                                iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
+                            } else {
+                                showChannelList();
+                                HideBottomEpg();
+                            }
+                        } else {
                             showChannelList();
                             HideBottomEpg();
                         }
@@ -1088,7 +1116,7 @@ public class LivePlayActivity extends BaseActivity {
                         if(isBack) {
                             if(mVideoView.isPlaying()) {
                                 showProgressBars(true);
-                                mVideoView.pause();
+                                iv_playpause.requestFocus();
                                 iv_playpause.setText("播放"); 
                             } else {
                                 HideBottomEpg();
@@ -1096,7 +1124,19 @@ public class LivePlayActivity extends BaseActivity {
                                 iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
                                 iv_playpause.setText("暂停"); 
                             }
-                        }else{
+                        } else if(isVOD) {
+                            if(backcontroller.getVisibility() == View.VISIBLE) {
+                                iv_playpause.requestFocus();
+                                iv_playpause.setText("播放"); 
+                            } else if(!mVideoView.isPlaying()) {
+                                mVideoView.start();
+                                iv_playpause.setText("暂停"); 
+                                iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
+                            } else {
+                                showChannelList();
+                                HideBottomEpg();
+                            }
+                        } else {
                             showChannelList();
                             HideBottomEpg();
                         }
@@ -2926,7 +2966,7 @@ public class LivePlayActivity extends BaseActivity {
             backcontroller.setVisibility(View.VISIBLE); //xuameng显示回看下方菜单
             showTimeXu(); //xuameng系统显示时间
             showNetSpeedXu(); //XUAMENG显示右下网速
-            iv_playpause.requestFocus();     //xuameng默认焦点
+            //   iv_playpause.requestFocus();     //xuameng默认焦点
             Mtv_left_top_xu.setVisibility(View.VISIBLE); //xuameng显示回看上图标
             ll_epg.setVisibility(View.VISIBLE); //xuameng下面EPG菜单显示
             ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
@@ -3023,6 +3063,10 @@ public class LivePlayActivity extends BaseActivity {
                     }
                     if(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
                         tvSlideStart(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT ? 1 : -1);
+                        if(countDownTimer != null) {
+                            countDownTimer.cancel();
+                        }
+                        countDownTimer.start();
                         return true;
                     }
                 }
@@ -3050,7 +3094,8 @@ public class LivePlayActivity extends BaseActivity {
     private int simSeekPosition = 0;
     private long simSlideOffset = 0;
     public void tvSlideStop() {
-        if(!simSlideStart || mVideoView == null) return;
+        if(!simSlideStart) return;
+		if(mVideoView == null) return;
         if(isSEEKBAR) {
             mVideoView.seekTo(simSeekPosition);
         }
