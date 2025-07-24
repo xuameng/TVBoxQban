@@ -3083,8 +3083,7 @@ public class LivePlayActivity extends BaseActivity {
     private int simSeekPosition = 0;
     private long simSlideOffset = 0;
     public void tvSlideStop() {
-        if(!simSlideStart) return;
-		if(mVideoView == null) return;
+        if(!simSlideStart || mVideoView == null) return;
         if(isSEEKBAR) {
             mVideoView.seekTo(simSeekPosition);
         }
