@@ -1058,7 +1058,18 @@ public class LivePlayActivity extends BaseActivity {
                                 iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
                                 iv_playpause.setText("暂停"); 
                             }
-                        }else {
+                        } else if(isVOD) {
+                            if(backcontroller.getVisibility() == View.VISIBLE) {
+                                iv_playpause.setText("播放"); 
+                            } else if(!mVideoView.isPlaying()) {
+                                mVideoView.start();
+                                iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
+                                iv_playpause.setText("暂停"); 
+                            } else {
+                                showChannelList();
+                                HideBottomEpg();
+                            }
+                        } else {
                             showChannelList();
                             HideBottomEpg();
                         }
@@ -1075,7 +1086,18 @@ public class LivePlayActivity extends BaseActivity {
                                 iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
                                 iv_playpause.setText("暂停"); 
                             }
-                        }else {
+                        } else if(isVOD) {
+                            if(backcontroller.getVisibility() == View.VISIBLE) {
+                                iv_playpause.setText("播放"); 
+                            } else if(!mVideoView.isPlaying()) {
+                                mVideoView.start();
+                                iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
+                                iv_playpause.setText("暂停"); 
+                            } else {
+                                showChannelList();
+                                HideBottomEpg();
+                            }
+                        } else {
                             showChannelList();
                             HideBottomEpg();
                         }
@@ -1092,7 +1114,18 @@ public class LivePlayActivity extends BaseActivity {
                                 iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
                                 iv_playpause.setText("暂停"); 
                             }
-                        }else {
+                        } else if(isVOD) {
+                            if(backcontroller.getVisibility() == View.VISIBLE) {
+                                iv_playpause.setText("播放"); 
+                            } else if(!mVideoView.isPlaying()) {
+                                mVideoView.start();
+                                iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
+                                iv_playpause.setText("暂停"); 
+                            } else {
+                                showChannelList();
+                                HideBottomEpg();
+                            }
+                        } else {
                             showChannelList();
                             HideBottomEpg();
                         }
