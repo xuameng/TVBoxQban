@@ -203,7 +203,6 @@ public class LivePlayActivity extends BaseActivity {
     private TextView liveIconNullText;
     SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd");
     private View backcontroller;
-    private CountDownTimer countDownTimer3;
     private CountDownTimer countDownTimer6;
     private CountDownTimer countDownTimer5;
     private CountDownTimer countDownTimer7;
@@ -326,6 +325,10 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public void onClick(View arg0) {
                 if(mVideoView == null) return;
+                if(countDownTimer != null) {
+                   countDownTimer.cancel();
+                }
+                    countDownTimer.start();
                 if(mVideoView.isPlaying()) {
                     mVideoView.pause();
                     iv_Play_Xu.setVisibility(View.VISIBLE); //回看暂停图标
@@ -335,10 +338,6 @@ public class LivePlayActivity extends BaseActivity {
                     mVideoView.start();
                     iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
                     iv_playpause.setText("暂停"); 
-                }
-                if(countDownTimer != null) {
-                    countDownTimer.cancel();
-				    countDownTimer.start();
                 }
             }
         });
@@ -367,9 +366,9 @@ public class LivePlayActivity extends BaseActivity {
                         tv_currentpos.setText(durationToString((int) newPosition)); //xuameng文字显示进度
                     }
                     if(countDownTimer != null) {
-                        countDownTimer.cancel();
-				        countDownTimer.start();
+                       countDownTimer.cancel();
                     }
+                    countDownTimer.start();
                 }
             }
         });
@@ -381,6 +380,10 @@ public class LivePlayActivity extends BaseActivity {
                     int action = event.getAction();
                     if(keycode == KeyEvent.KEYCODE_DPAD_CENTER || keycode == KeyEvent.KEYCODE_ENTER) {
                         if(mVideoView == null) return true;
+                        if(countDownTimer != null) {
+                           countDownTimer.cancel();
+                        }
+                        countDownTimer.start();
                         if(mVideoView.isPlaying()) {
                             mVideoView.pause();
                             iv_Play_Xu.setVisibility(View.VISIBLE); //回看暂停图标
@@ -391,17 +394,14 @@ public class LivePlayActivity extends BaseActivity {
                             iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
                             iv_playpause.setText("暂停"); 
                         }
-                        if(countDownTimer != null) {
-                           countDownTimer.cancel();
-				           countDownTimer.start();
-                        }
                     }
                     if(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+                        if(mVideoView == null) return true;
                         tvSlideStart(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT ? 1 : -1);
                         if(countDownTimer != null) {
                            countDownTimer.cancel();
-				           countDownTimer.start();
                         }
+                        countDownTimer.start();
                         return true;
                     }
                 }
@@ -432,6 +432,12 @@ public class LivePlayActivity extends BaseActivity {
         mHandler.post(myRunnableMusic); //xuamengVOD BACK播放进度检测
         mHandler.post(mUpdateVodImageXu); //xuamengVOD BACK播放进度检测
         iv_playpause.setNextFocusLeftId(R.id.pb_progressbar);
+        countDownTimer = new CountDownTimer(10000, 1000) { //底部epg隐藏时间设定
+            public void onTick(long j) {}
+            public void onFinish() {
+                HideBottomEpg();
+            }
+        };
     }
     //获取EPG并存储 // 百川epg  DIYP epg   51zmt epg ------- 自建EPG格式输出格式请参考 51zmt
     private List < Epginfo > epgdata = new ArrayList < > ();
@@ -702,6 +708,10 @@ public class LivePlayActivity extends BaseActivity {
                 if(selectedIndex < 0) getEpg(new Date());
                 else getEpg(liveEpgDateAdapter.getData().get(selectedIndex).getDateParamVal());
             }
+            if(countDownTimer != null) {
+               countDownTimer.cancel();
+            }
+            countDownTimer.start();
             ll_epg.setVisibility(View.VISIBLE); //xuameng下面EPG菜单显示
             ll_right_top_loading.setVisibility(View.VISIBLE); //xuameng右上菜单显示
             showTimeXu(); //xuameng显示系统时间
@@ -711,16 +721,6 @@ public class LivePlayActivity extends BaseActivity {
             Mtv_left_top_xu.setVisibility(View.GONE); //xuameng直播时隐藏回看左上图标
             mHideChannelListRun(); //xuameng显示EPG就隐藏左右菜单
             mHideSettingLayoutRun(); //xuameng显示EPG就隐藏左右菜单
-            countDownTimer = new CountDownTimer(10000, 1000) { //底部epg隐藏时间设定
-                public void onTick(long j) {}
-                public void onFinish() {
-                    HideBottomEpg();
-                }
-            };
-            if(countDownTimer != null) {
-                countDownTimer.cancel();
-				countDownTimer.start();
-            }
             if(channel_Name == null || channel_Name.getSourceNum() <= 1) {
                 ((TextView) findViewById(R.id.tv_source)).setText("[线路源1/1]");
             } else {
@@ -833,6 +833,30 @@ public class LivePlayActivity extends BaseActivity {
                 mHandler.removeCallbacksAndMessages(null);
             }
             OkGo.getInstance().cancelTag("xuameng");
+if(countDownTimer != null) {
+   countDownTimer.cancel();
+}
+if(countDownTimer6 != null) {
+   countDownTimer6.cancel();
+}
+if(countDownTimer5 != null) {
+   countDownTimer5.cancel();
+}
+if(countDownTimer7 != null) {
+   countDownTimer7.cancel();
+}
+if(countDownTimer8 != null) {
+   countDownTimer8.cancel();
+}
+if(countDownTimer10 != null) {
+   countDownTimer10.cancel();
+}
+if(countDownTimer20 != null) {
+   countDownTimer20.cancel();
+}
+if(countDownTimer21 != null) {
+   countDownTimer21.cancel();
+}
             super.onBackPressed();
         } else {
             mExitTime = System.currentTimeMillis();
@@ -889,6 +913,30 @@ public class LivePlayActivity extends BaseActivity {
             mHandler.removeCallbacksAndMessages(null);
         }
         OkGo.getInstance().cancelTag("xuameng");
+if(countDownTimer != null) {
+   countDownTimer.cancel();
+}
+if(countDownTimer6 != null) {
+   countDownTimer6.cancel();
+}
+if(countDownTimer5 != null) {
+   countDownTimer5.cancel();
+}
+if(countDownTimer7 != null) {
+   countDownTimer7.cancel();
+}
+if(countDownTimer8 != null) {
+   countDownTimer8.cancel();
+}
+if(countDownTimer10 != null) {
+   countDownTimer10.cancel();
+}
+if(countDownTimer20 != null) {
+   countDownTimer20.cancel();
+}
+if(countDownTimer21 != null) {
+   countDownTimer21.cancel();
+}
         super.onBackPressed();
     }
     private final Runnable mPlaySelectedChannel = new Runnable() {
@@ -2919,9 +2967,9 @@ public class LivePlayActivity extends BaseActivity {
             public void onClick(View arg0) {
                 if(mVideoView == null) return;
                 if(countDownTimer != null) {
-                    countDownTimer.cancel();
-				    countDownTimer.start();
+                   countDownTimer.cancel();
                 }
+                countDownTimer.start();
                 if(mVideoView.isPlaying()) {
                     mVideoView.pause();
                     iv_Play_Xu.setVisibility(View.VISIBLE); //回看暂停图标
@@ -2960,8 +3008,8 @@ public class LivePlayActivity extends BaseActivity {
                     }
                     if(countDownTimer != null) {
                        countDownTimer.cancel();
-				       countDownTimer.start();
                     }
+                    countDownTimer.start();
                 }
             }
         });
@@ -2973,6 +3021,10 @@ public class LivePlayActivity extends BaseActivity {
                     int action = event.getAction();
                     if(keycode == KeyEvent.KEYCODE_DPAD_CENTER || keycode == KeyEvent.KEYCODE_ENTER) {
                         if(mVideoView == null) return true;
+                        if(countDownTimer != null) {
+                            countDownTimer.cancel();
+                        }
+                            countDownTimer.start();
                         if(mVideoView.isPlaying()) {
                             mVideoView.pause();
                             iv_Play_Xu.setVisibility(View.VISIBLE); //回看暂停图标
@@ -2983,17 +3035,14 @@ public class LivePlayActivity extends BaseActivity {
                             iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
                             iv_playpause.setText("暂停"); 
                         }
-		                if(countDownTimer != null) {
-                           countDownTimer.cancel();
-				           countDownTimer.start();
-                        }
                     }
                     if(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+                        if(mVideoView == null) return true;
                         tvSlideStart(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT ? 1 : -1);
-		                if(countDownTimer != null) {
+                        if(countDownTimer != null) {
                            countDownTimer.cancel();
-				           countDownTimer.start();
                         }
+                        countDownTimer.start();
                         return true;
                     }
                 }
@@ -3009,10 +3058,9 @@ public class LivePlayActivity extends BaseActivity {
             }
         });
         if(countDownTimer != null) {
-            countDownTimer.cancel();
-            countDownTimer.start();
+           countDownTimer.cancel();
         }
-        
+        countDownTimer.start();
         if(mVideoView == null) return;
         if(mVideoView.isPlaying()) {
             iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
