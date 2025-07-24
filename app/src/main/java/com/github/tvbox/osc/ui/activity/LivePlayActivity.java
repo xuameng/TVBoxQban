@@ -328,6 +328,12 @@ public class LivePlayActivity extends BaseActivity {
                 if(countDownTimer != null) {
                    countDownTimer.cancel();
                 }
+            countDownTimer = new CountDownTimer(10000, 1000) { //底部epg隐藏时间设定
+                public void onTick(long j) {}
+                public void onFinish() {
+                    HideBottomEpg();
+                }
+            };
                     countDownTimer.start();
                 if(mVideoView.isPlaying()) {
                     mVideoView.pause();
@@ -1134,6 +1140,9 @@ public class LivePlayActivity extends BaseActivity {
         if(mVideoView != null) {
             mVideoView.release();
             mVideoView = null;
+        }
+        if(countDownTimer != null) {
+           countDownTimer.cancel();
         }
         OkGo.getInstance().cancelTag("xuameng");
     }
