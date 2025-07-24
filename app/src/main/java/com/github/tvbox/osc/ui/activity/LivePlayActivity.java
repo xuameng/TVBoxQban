@@ -712,8 +712,8 @@ public class LivePlayActivity extends BaseActivity {
             view_line_XU.setVisibility(View.VISIBLE); //xuamengEPG中的横线
             backcontroller.setVisibility(View.GONE);    //xuameng 隐藏进度条
             Mtv_left_top_xu.setVisibility(View.GONE); //xuameng直播时隐藏回看左上图标
-            tvLeftChannelListLayout.setVisibility(View.INVISIBLE); //xuameng显示EPG就隐藏左右菜单
-            tvRightSettingLayout.setVisibility(View.INVISIBLE); //xuameng显示EPG就隐藏左右菜单
+            mHideChannelListRun(); //xuameng显示EPG就隐藏左右菜单
+            mHideSettingLayoutRun(); //xuameng显示EPG就隐藏左右菜单
             countDownTimer = new CountDownTimer(10000, 1000) { //底部epg隐藏时间设定
                 public void onTick(long j) {}
                 public void onFinish() {
@@ -961,7 +961,6 @@ public class LivePlayActivity extends BaseActivity {
                     return true;
                 } else {
                     showSettingGroup();
-                    HideBottomEpg();
                     return false;
                 }
             } else if(!isListOrSettingLayoutVisible()) {
@@ -983,13 +982,9 @@ public class LivePlayActivity extends BaseActivity {
                             if(backcontroller.getVisibility() == View.VISIBLE) {
                                 mExitTimeUp = System.currentTimeMillis();
                                 HideBottomEpg();
-                                mHideChannelListRun(); //xuameng显示EPG就隐藏左右菜单
-                                mHideSettingLayoutRun(); //xuameng显示EPG就隐藏左右菜单
                             } else if(backcontroller.getVisibility() == View.GONE) {
                                 mExitTimeUp = System.currentTimeMillis();
                                 showProgressBars(true);
-                                mHideChannelListRun(); //xuameng显示EPG就隐藏左右菜单
-                                mHideSettingLayoutRun(); //xuameng显示EPG就隐藏左右菜单
                             }
                         } else if(isLl_epgVisible()) {
                             mExitTimeUp = System.currentTimeMillis();
@@ -1016,13 +1011,9 @@ public class LivePlayActivity extends BaseActivity {
                             if(backcontroller.getVisibility() == View.VISIBLE) {
                                 mExitTimeDown = System.currentTimeMillis();
                                 HideBottomEpg();
-                                mHideChannelListRun(); //xuameng显示EPG就隐藏左右菜单
-                                mHideSettingLayoutRun(); //xuameng显示EPG就隐藏左右菜单
                             } else if(backcontroller.getVisibility() == View.GONE) {
                                 mExitTimeDown = System.currentTimeMillis();
                                 showProgressBars(true);
-                                mHideChannelListRun(); //xuameng显示EPG就隐藏左右菜单
-                                mHideSettingLayoutRun(); //xuameng显示EPG就隐藏左右菜单
                             }
                         } else if(isLl_epgVisible()) {
                             mExitTimeDown = System.currentTimeMillis();
@@ -1060,11 +1051,9 @@ public class LivePlayActivity extends BaseActivity {
                             if(backcontroller.getVisibility() == View.VISIBLE) {}
 							else {
                                 showChannelList();
-                                HideBottomEpg();
                             }
                         } else {
                             showChannelList();
-                            HideBottomEpg();
                         }
                         break;
                     case KeyEvent.KEYCODE_ENTER: //xuameng 修复回看时不能暂停，弹出菜单问题
@@ -1081,11 +1070,9 @@ public class LivePlayActivity extends BaseActivity {
                             if(backcontroller.getVisibility() == View.VISIBLE) {}
 							else {
                                 showChannelList();
-                                HideBottomEpg();
                             }
                         } else {
                             showChannelList();
-                            HideBottomEpg();
                         }
                         break;
                     case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE: //xuameng 修复回看时不能暂停，弹出菜单问题
@@ -1102,11 +1089,9 @@ public class LivePlayActivity extends BaseActivity {
                             if(backcontroller.getVisibility() == View.VISIBLE) {}
 							else {
                                 showChannelList();
-                                HideBottomEpg();
                             }
                         } else {
                             showChannelList();
-                            HideBottomEpg();
                         }
                         break;
                     default:
@@ -1271,15 +1256,11 @@ public class LivePlayActivity extends BaseActivity {
             if(isVOD) {
                 if(backcontroller.getVisibility() == View.GONE) {
                     showProgressBars(true);
-                    mHideChannelListRun(); //xuameng显示EPG就隐藏左右菜单
-                    mHideSettingLayoutRun(); //xuameng显示EPG就隐藏左右菜单
                 }
             }
             if(!isVOD) {
                 getEpg(new Date());
                 showBottomEpg();
-                mHideChannelListRun(); //xuameng显示EPG就隐藏左右菜单
-                mHideSettingLayoutRun(); //xuameng显示EPG就隐藏左右菜单
             }
             return true;
         }
@@ -1306,8 +1287,6 @@ public class LivePlayActivity extends BaseActivity {
         }
         getEpg(new Date());
         showBottomEpg(); //XUAMENG重要点击频道播放，上面的不重新播放。只显示EPG
-        mHideChannelListRun(); //xuameng显示EPG就隐藏左右菜单
-        mHideSettingLayoutRun(); //xuameng显示EPG就隐藏左右菜单
         liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
         simSeekPosition = 0; //XUAMENG重要,换视频时重新记录进度
         simSlideOffset = 0; //XUAMENG重要,换视频时重新记录进度
@@ -1558,7 +1537,6 @@ public class LivePlayActivity extends BaseActivity {
                 }
                 String shiyiUrl = currentLiveChannelItem.getUrl();
                 if(now.compareTo(selectedData.startdateTime) < 0) {} else if(shiyiUrl.contains("PLTV/") || shiyiUrl.contains("TVOD/")) {
-                    mHideChannelListRun();
                     if(mVideoView == null) return;
                     mVideoView.release();
                     shiyi_time = shiyiStartdate + "-" + shiyiEnddate;
@@ -1631,7 +1609,6 @@ public class LivePlayActivity extends BaseActivity {
                 }
                 String shiyiUrl = currentLiveChannelItem.getUrl();
                 if(now.compareTo(selectedData.startdateTime) < 0) {} else if(shiyiUrl.contains("PLTV/") || shiyiUrl.contains("TVOD/")) {
-                    mHideChannelListRun();
                     if(mVideoView == null) return;
                     mVideoView.release();
                     shiyi_time = shiyiStartdate + "-" + shiyiEnddate;
@@ -1758,15 +1735,12 @@ public class LivePlayActivity extends BaseActivity {
                 if(isVOD) {
                     if(backcontroller.getVisibility() == View.VISIBLE) {
                         showChannelList();
-                        HideBottomEpg();
                     } else {
                         showChannelList();
-                        HideBottomEpg();
                     }
                     return true;
                 } else {
                     showChannelList();
-                    HideBottomEpg();
                 }
                 return false; //XUAMENG如果true 就会默认执行
             }
@@ -1780,7 +1754,6 @@ public class LivePlayActivity extends BaseActivity {
                     }
                 } else {
                     showSettingGroup();
-                    HideBottomEpg();
                 }
             }
             @Override
@@ -1803,8 +1776,6 @@ public class LivePlayActivity extends BaseActivity {
                 if(isVOD) {
                     if(mVideoView.isPlaying()) {
                         showProgressBars(true);
-                        mHideChannelListRun(); //xuameng显示EPG就隐藏左右菜单
-                        mHideSettingLayoutRun(); //xuameng显示EPG就隐藏左右菜单
                         mVideoView.pause();
                         iv_Play_Xu.setVisibility(View.VISIBLE); //回看暂停图标
                         iv_playpause.setText("播放"); 
@@ -1819,12 +1790,8 @@ public class LivePlayActivity extends BaseActivity {
                     return true;
                 } else if(isLl_epgVisible()) {
                     HideBottomEpg();
-                    mHideChannelListRun(); //xuameng显示EPG就隐藏左右菜单
-                    mHideSettingLayoutRun(); //xuameng显示EPG就隐藏左右菜单
                 } else if(!isLl_epgVisible()) {
                     showBottomEpg(); //xuameng显示EPG和上面菜单
-                    mHideChannelListRun(); //xuameng显示EPG就隐藏左右菜单
-                    mHideSettingLayoutRun(); //xuameng显示EPG就隐藏左右菜单
                 }
                 return false;
             }
@@ -1953,12 +1920,8 @@ public class LivePlayActivity extends BaseActivity {
                     } else if(isVOD) {
                     if(backcontroller.getVisibility() == View.VISIBLE) {
                         HideBottomEpg();
-                        mHideChannelListRun(); //xuameng显示EPG就隐藏左右菜单
-                        mHideSettingLayoutRun(); //xuameng显示EPG就隐藏左右菜单
                     } else if(backcontroller.getVisibility() == View.GONE) {
                         showProgressBars(true);
-                        mHideChannelListRun(); //xuameng显示EPG就隐藏左右菜单
-                        mHideSettingLayoutRun(); //xuameng显示EPG就隐藏左右菜单
                     }
                 } else {
                     playNextSource();
@@ -1973,12 +1936,8 @@ public class LivePlayActivity extends BaseActivity {
                     } else if(isVOD) {
                     if(backcontroller.getVisibility() == View.VISIBLE) {
                         HideBottomEpg();
-                        mHideChannelListRun(); //xuameng显示EPG就隐藏左右菜单
-                        mHideSettingLayoutRun(); //xuameng显示EPG就隐藏左右菜单
                     } else if(backcontroller.getVisibility() == View.GONE) {
                         showProgressBars(true);
-                        mHideChannelListRun(); //xuameng显示EPG就隐藏左右菜单
-                        mHideSettingLayoutRun(); //xuameng显示EPG就隐藏左右菜单
                     }
                 } else {
                     playPreSource();
