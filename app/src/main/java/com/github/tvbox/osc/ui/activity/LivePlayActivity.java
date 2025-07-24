@@ -833,30 +833,9 @@ public class LivePlayActivity extends BaseActivity {
                 mHandler.removeCallbacksAndMessages(null);
             }
             OkGo.getInstance().cancelTag("xuameng");
-if(countDownTimer != null) {
-   countDownTimer.cancel();
-}
-if(countDownTimer6 != null) {
-   countDownTimer6.cancel();
-}
-if(countDownTimer5 != null) {
-   countDownTimer5.cancel();
-}
-if(countDownTimer7 != null) {
-   countDownTimer7.cancel();
-}
-if(countDownTimer8 != null) {
-   countDownTimer8.cancel();
-}
-if(countDownTimer10 != null) {
-   countDownTimer10.cancel();
-}
-if(countDownTimer20 != null) {
-   countDownTimer20.cancel();
-}
-if(countDownTimer21 != null) {
-   countDownTimer21.cancel();
-}
+            if(countDownTimer != null) {
+               countDownTimer.cancel();
+            }
             super.onBackPressed();
         } else {
             mExitTime = System.currentTimeMillis();
@@ -913,30 +892,9 @@ if(countDownTimer21 != null) {
             mHandler.removeCallbacksAndMessages(null);
         }
         OkGo.getInstance().cancelTag("xuameng");
-if(countDownTimer != null) {
-   countDownTimer.cancel();
-}
-if(countDownTimer6 != null) {
-   countDownTimer6.cancel();
-}
-if(countDownTimer5 != null) {
-   countDownTimer5.cancel();
-}
-if(countDownTimer7 != null) {
-   countDownTimer7.cancel();
-}
-if(countDownTimer8 != null) {
-   countDownTimer8.cancel();
-}
-if(countDownTimer10 != null) {
-   countDownTimer10.cancel();
-}
-if(countDownTimer20 != null) {
-   countDownTimer20.cancel();
-}
-if(countDownTimer21 != null) {
-   countDownTimer21.cancel();
-}
+        if(countDownTimer != null) {
+           countDownTimer.cancel();
+        }
         super.onBackPressed();
     }
     private final Runnable mPlaySelectedChannel = new Runnable() {
