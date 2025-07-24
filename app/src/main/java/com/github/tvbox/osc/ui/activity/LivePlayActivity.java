@@ -432,12 +432,6 @@ public class LivePlayActivity extends BaseActivity {
         mHandler.post(myRunnableMusic); //xuamengVOD BACK播放进度检测
         mHandler.post(mUpdateVodImageXu); //xuamengVOD BACK播放进度检测
         iv_playpause.setNextFocusLeftId(R.id.pb_progressbar);
-        countDownTimer = new CountDownTimer(10000, 1000) { //底部epg隐藏时间设定
-            public void onTick(long j) {}
-            public void onFinish() {
-                HideBottomEpg();
-            }
-        };
     }
     //获取EPG并存储 // 百川epg  DIYP epg   51zmt epg ------- 自建EPG格式输出格式请参考 51zmt
     private List < Epginfo > epgdata = new ArrayList < > ();
@@ -711,6 +705,12 @@ public class LivePlayActivity extends BaseActivity {
             if(countDownTimer != null) {
                countDownTimer.cancel();
             }
+            countDownTimer = new CountDownTimer(10000, 1000) { //底部epg隐藏时间设定
+                public void onTick(long j) {}
+                public void onFinish() {
+                    HideBottomEpg();
+                }
+            };
             countDownTimer.start();
             ll_epg.setVisibility(View.VISIBLE); //xuameng下面EPG菜单显示
             ll_right_top_loading.setVisibility(View.VISIBLE); //xuameng右上菜单显示
