@@ -398,10 +398,6 @@ public class LivePlayActivity extends BaseActivity {
                     }
                     if(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
                         tvSlideStart(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT ? 1 : -1);
-                        if(countDownTimer != null) {
-                            countDownTimer.cancel();
-                        }
-                        countDownTimer.start();
                         return true;
                     }
                 }
@@ -3027,10 +3023,6 @@ public class LivePlayActivity extends BaseActivity {
                     }
                     if(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
                         tvSlideStart(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT ? 1 : -1);
-                        if(countDownTimer != null) {
-                            countDownTimer.cancel();
-                        }
-                        countDownTimer.start();
                         return true;
                     }
                 }
