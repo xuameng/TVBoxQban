@@ -270,11 +270,11 @@ public class LivePlayActivity extends BaseActivity {
         MxuamengMusic = (ImageView) findViewById(R.id.xuamengMusic); //xuameng播放音乐背景
         divEpg = (LinearLayout) findViewById(R.id.divEPG);
         //右上角图片旋转
-        ObjectAnimator animator1 = ObjectAnimator.ofFloat(iv_circle_bg, "rotation", 360.0 f);
+        ObjectAnimator animator1 = ObjectAnimator.ofFloat(iv_circle_bg, "rotation", 360.0f);
         animator1.setDuration(10000);
         animator1.setRepeatCount(-1);
         animator1.start();
-        ObjectAnimator animator2 = ObjectAnimator.ofFloat(iv_circle_bg_xu, "rotation", 360.0 f);
+        ObjectAnimator animator1 = ObjectAnimator.ofFloat(iv_circle_bg, "rotation", 360.0f);
         animator2.setDuration(10000);
         animator2.setRepeatCount(-1);
         animator2.start();
@@ -2052,6 +2052,16 @@ public class LivePlayActivity extends BaseActivity {
         toast.setGravity(Gravity.CENTER, 0, 0); //xuameng 20为左右，0是上下
         toast.show();
     }
+    public void showToastError() {
+        LayoutInflater inflater = getLayoutInflater();
+        View customToastView = inflater.inflate(R.layout.review_toast_error, null);
+        ImageView imageView = customToastView.findViewById(R.id.toastImage);
+        Toast toast = new Toast(getApplicationContext());
+        toast.setDuration(Toast.LENGTH_LONG);
+        toast.setView(customToastView);
+        toast.setGravity(Gravity.CENTER, 0, 0); //xuameng 20为左右，0是上下
+        toast.show();
+    }
     public void showLiveXu() {
         LayoutInflater inflater = getLayoutInflater();
         View customToastView = inflater.inflate(R.layout.live_toast, null);
@@ -2073,7 +2083,7 @@ public class LivePlayActivity extends BaseActivity {
         @Override
         public void run() {
             playXuSource();
-            showToastXu();
+            showToastError();
         }
     };
     private void initChannelGroupView() {
