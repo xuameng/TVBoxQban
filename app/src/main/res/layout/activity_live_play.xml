@@ -784,6 +784,9 @@
                 <ImageView
                     android:id="@+id/iv_playpause"
                     android:background="@drawable/vod_pause"
+                    android:focusable="true"
+                    android:background="@drawable/button_dialog_vod"
+                    android:focusableInTouchMode="true"
                     android:layout_width="@dimen/vs_35"
                     android:layout_height="@dimen/vs_35"/>
                 <TextView
