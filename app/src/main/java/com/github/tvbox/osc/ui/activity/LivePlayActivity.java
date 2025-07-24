@@ -1043,7 +1043,7 @@ public class LivePlayActivity extends BaseActivity {
                         if(isBack || isVOD) {
                             showProgressBars(true);
                         } else {
-                            playNextSource() //xuameng 直播时按右键把弹出菜单改为换源
+                            playNextSource(); //xuameng 直播时按右键把弹出菜单改为换源
                         }
                         break;
                     case KeyEvent.KEYCODE_DPAD_CENTER: //xuameng 修复回看时不能暂停，弹出菜单问题
