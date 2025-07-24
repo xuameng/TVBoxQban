@@ -1040,10 +1040,10 @@ public class LivePlayActivity extends BaseActivity {
                     case KeyEvent.KEYCODE_DPAD_CENTER: //xuameng 修复回看时不能暂停，弹出菜单问题
                         if(mVideoView == null) return true;
                         if(isBack) {
-                            if(mVideoView.isPlaying()) {
+                            if(backcontroller.getVisibility() == View.VISIBLE) {
+                            }else if(mVideoView.isPlaying()) {
                                 showProgressBars(true);
-                            } else {
-                                HideBottomEpg();
+                            }else{
                                 mVideoView.start();
                                 iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
                             }
@@ -1059,10 +1059,10 @@ public class LivePlayActivity extends BaseActivity {
                     case KeyEvent.KEYCODE_ENTER: //xuameng 修复回看时不能暂停，弹出菜单问题
                         if(mVideoView == null) return true;
                         if(isBack) {
-                            if(mVideoView.isPlaying()) {
+                            if(backcontroller.getVisibility() == View.VISIBLE) {
+                            }else if(mVideoView.isPlaying()) {
                                 showProgressBars(true);
-                            } else {
-                                HideBottomEpg();
+                            }else{
                                 mVideoView.start();
                                 iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
                             }
@@ -1078,10 +1078,10 @@ public class LivePlayActivity extends BaseActivity {
                     case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE: //xuameng 修复回看时不能暂停，弹出菜单问题
                         if(mVideoView == null) return true;
                         if(isBack) {
-                            if(mVideoView.isPlaying()) {
+                            if(backcontroller.getVisibility() == View.VISIBLE) {
+                            }else if(mVideoView.isPlaying()) {
                                 showProgressBars(true);
-                            } else {
-                                HideBottomEpg();
+                            }else{
                                 mVideoView.start();
                                 iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
                             }
