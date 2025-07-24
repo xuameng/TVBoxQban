@@ -659,7 +659,6 @@ public class LivePlayActivity extends BaseActivity {
             return;
         }
         if(isSHIYI) return;
-        HideBack();
         liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
         if(channel_Name.getChannelName() != null) {
             ((TextView) findViewById(R.id.tv_channel_bar_name)).setText(channel_Name.getChannelName());
@@ -711,6 +710,8 @@ public class LivePlayActivity extends BaseActivity {
             showTimeXu(); //xuameng显示系统时间
             showNetSpeedXu(); //XUAMENG显示左上网速 
             view_line_XU.setVisibility(View.VISIBLE); //xuamengEPG中的横线
+            backcontroller.setVisibility(View.GONE);    //xuameng 隐藏进度条
+            Mtv_left_top_xu.setVisibility(View.GONE); //xuameng直播时隐藏回看左上图标
             tvLeftChannelListLayout.setVisibility(View.INVISIBLE); //xuameng显示EPG就隐藏左右菜单
             tvRightSettingLayout.setVisibility(View.INVISIBLE); //xuameng显示EPG就隐藏左右菜单
             countDownTimer = new CountDownTimer(10000, 1000) { //底部epg隐藏时间设定
