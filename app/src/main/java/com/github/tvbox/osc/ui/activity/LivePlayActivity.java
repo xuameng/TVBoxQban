@@ -1055,10 +1055,10 @@ public class LivePlayActivity extends BaseActivity {
                         }
                         break;
                     case KeyEvent.KEYCODE_DPAD_CENTER: //xuameng 修复回看时不能暂停，弹出菜单问题
+                        if(mVideoView == null) return true;
                         if(isBack) {
                             if(mVideoView.isPlaying()) {
                                 showProgressBars(true);
-                                iv_playpause.requestFocus();
                                 iv_playpause.setText("播放"); 
                             } else {
                                 HideBottomEpg();
@@ -1068,7 +1068,6 @@ public class LivePlayActivity extends BaseActivity {
                             }
                         } else if(isVOD) {
                             if(backcontroller.getVisibility() == View.VISIBLE) {
-                                iv_playpause.requestFocus();
                                 iv_playpause.setText("播放"); 
                             } else if(!mVideoView.isPlaying()) {
                                 mVideoView.start();
@@ -1084,25 +1083,24 @@ public class LivePlayActivity extends BaseActivity {
                         }
                         break;
                     case KeyEvent.KEYCODE_ENTER: //xuameng 修复回看时不能暂停，弹出菜单问题
+                        if(mVideoView == null) return true;
                         if(isBack) {
                             if(mVideoView.isPlaying()) {
                                 showProgressBars(true);
-                                iv_playpause.requestFocus();
                                 iv_playpause.setText("播放"); 
                             } else {
                                 HideBottomEpg();
                                 mVideoView.start();
-                                iv_playpause.setText("暂停"); 
                                 iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
+                                iv_playpause.setText("暂停"); 
                             }
                         } else if(isVOD) {
                             if(backcontroller.getVisibility() == View.VISIBLE) {
-                                iv_playpause.requestFocus();
                                 iv_playpause.setText("播放"); 
                             } else if(!mVideoView.isPlaying()) {
                                 mVideoView.start();
-                                iv_playpause.setText("暂停"); 
                                 iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
+                                iv_playpause.setText("暂停"); 
                             } else {
                                 showChannelList();
                                 HideBottomEpg();
@@ -1113,10 +1111,10 @@ public class LivePlayActivity extends BaseActivity {
                         }
                         break;
                     case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE: //xuameng 修复回看时不能暂停，弹出菜单问题
+                        if(mVideoView == null) return true;
                         if(isBack) {
                             if(mVideoView.isPlaying()) {
                                 showProgressBars(true);
-                                iv_playpause.requestFocus();
                                 iv_playpause.setText("播放"); 
                             } else {
                                 HideBottomEpg();
@@ -1126,12 +1124,11 @@ public class LivePlayActivity extends BaseActivity {
                             }
                         } else if(isVOD) {
                             if(backcontroller.getVisibility() == View.VISIBLE) {
-                                iv_playpause.requestFocus();
                                 iv_playpause.setText("播放"); 
                             } else if(!mVideoView.isPlaying()) {
                                 mVideoView.start();
-                                iv_playpause.setText("暂停"); 
                                 iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
+                                iv_playpause.setText("暂停"); 
                             } else {
                                 showChannelList();
                                 HideBottomEpg();
