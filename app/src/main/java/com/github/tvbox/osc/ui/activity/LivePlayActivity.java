@@ -217,7 +217,7 @@ public class LivePlayActivity extends BaseActivity {
     private TextView tv_currentpos;
     private TextView tv_duration;
     private SeekBar sBar;
-    private View iv_playpause;
+    private TextView iv_playpause;
     private View iv_play;
     private boolean show = false;
     @Override
@@ -333,12 +333,12 @@ public class LivePlayActivity extends BaseActivity {
                     }
                     countDownTimer.start();
                     iv_Play_Xu.setVisibility(View.VISIBLE); //回看暂停图标
-                    iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
+                    iv_playpause.setText("播放"); 
                 } else {
                     HideBottomEpg();
                     mVideoView.start();
                     iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
-                    iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
+                    iv_playpause.setText("暂停"); 
                 }
             }
         });
@@ -388,12 +388,12 @@ public class LivePlayActivity extends BaseActivity {
                             }
                             countDownTimer.start();
                             iv_Play_Xu.setVisibility(View.VISIBLE); //回看暂停图标
-                            iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
+                            iv_playpause.setText("播放"); 
                         } else {
                             HideBottomEpg();
                             mVideoView.start();
                             iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
-                            iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
+                            iv_playpause.setText("暂停"); 
                         }
                     }
                     if(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
@@ -1059,19 +1059,21 @@ public class LivePlayActivity extends BaseActivity {
                             if(mVideoView.isPlaying()) {
                                 showProgressBars(true);
                                 iv_playpause.requestFocus();
+                                iv_playpause.setText("播放"); 
                             } else {
                                 HideBottomEpg();
                                 mVideoView.start();
                                 iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
-                                iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
+                                iv_playpause.setText("暂停"); 
                             }
                         } else if(isVOD) {
                             if(backcontroller.getVisibility() == View.VISIBLE) {
                                 iv_playpause.requestFocus();
+                                iv_playpause.setText("播放"); 
                             } else if(!mVideoView.isPlaying()) {
                                 mVideoView.start();
                                 iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
-                                iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
+                                iv_playpause.setText("暂停"); 
                             } else {
                                 showChannelList();
                                 HideBottomEpg();
@@ -1086,19 +1088,21 @@ public class LivePlayActivity extends BaseActivity {
                             if(mVideoView.isPlaying()) {
                                 showProgressBars(true);
                                 iv_playpause.requestFocus();
+                                iv_playpause.setText("播放"); 
                             } else {
                                 HideBottomEpg();
                                 mVideoView.start();
+                                iv_playpause.setText("暂停"); 
                                 iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
-                                iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
                             }
                         } else if(isVOD) {
                             if(backcontroller.getVisibility() == View.VISIBLE) {
                                 iv_playpause.requestFocus();
+                                iv_playpause.setText("播放"); 
                             } else if(!mVideoView.isPlaying()) {
                                 mVideoView.start();
+                                iv_playpause.setText("暂停"); 
                                 iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
-                                iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
                             } else {
                                 showChannelList();
                                 HideBottomEpg();
@@ -1113,19 +1117,21 @@ public class LivePlayActivity extends BaseActivity {
                             if(mVideoView.isPlaying()) {
                                 showProgressBars(true);
                                 iv_playpause.requestFocus();
+                                iv_playpause.setText("播放"); 
                             } else {
                                 HideBottomEpg();
                                 mVideoView.start();
                                 iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
-                                iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
+                                iv_playpause.setText("暂停"); 
                             }
                         } else if(isVOD) {
                             if(backcontroller.getVisibility() == View.VISIBLE) {
                                 iv_playpause.requestFocus();
+                                iv_playpause.setText("播放"); 
                             } else if(!mVideoView.isPlaying()) {
                                 mVideoView.start();
+                                iv_playpause.setText("暂停"); 
                                 iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
-                                iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
                             } else {
                                 showChannelList();
                                 HideBottomEpg();
@@ -1817,12 +1823,12 @@ public class LivePlayActivity extends BaseActivity {
                         showProgressBars(true);
                         mVideoView.pause();
                         iv_Play_Xu.setVisibility(View.VISIBLE); //回看暂停图标
-                        iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
+                        iv_playpause.setText("播放"); 
                     } else {
                         HideBottomEpg();
                         mVideoView.start();
                         iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
-                        iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
+                        iv_playpause.setText("暂停"); 
                     }
                     return true;
                 }
@@ -1833,14 +1839,14 @@ public class LivePlayActivity extends BaseActivity {
                         mHideSettingLayoutRun(); //xuameng显示EPG就隐藏左右菜单
                         mVideoView.pause();
                         iv_Play_Xu.setVisibility(View.VISIBLE); //回看暂停图标
-                        iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
+                        iv_playpause.setText("播放"); 
                     } else {
                         HideBottomEpg();
                         mHideChannelListRun(); //xuameng显示EPG就隐藏左右菜单
                         mHideSettingLayoutRun(); //xuameng显示EPG就隐藏左右菜单
                         mVideoView.start();
                         iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
-                        iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
+                        iv_playpause.setText("暂停"); 
                     }
                     return true;
                 } else if(isLl_epgVisible()) {
@@ -2689,7 +2695,7 @@ public class LivePlayActivity extends BaseActivity {
                     if(iv_Play_Xu.getVisibility() == View.VISIBLE) {
                         iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
                     }
-                    iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause)); //XUAMENG修复PLAY时关闭回看暂停图标
+                    iv_playpause.setText("暂停"); 
                     if(!isKUAIJIN) {
                         sBar.setProgress((int) mVideoView.getCurrentPosition());
                         int percent = mVideoView.getBufferedPercentage();
@@ -2992,12 +2998,12 @@ public class LivePlayActivity extends BaseActivity {
                     }
                     countDownTimer.start();
                     iv_Play_Xu.setVisibility(View.VISIBLE); //回看暂停图标
-                    iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
+                    iv_playpause.setText("播放"); 
                 } else {
                     HideBottomEpg();
                     mVideoView.start();
                     iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
-                    iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
+                    iv_playpause.setText("暂停");
                 }
             }
         });
@@ -3047,12 +3053,12 @@ public class LivePlayActivity extends BaseActivity {
                             }
                             countDownTimer.start();
                             iv_Play_Xu.setVisibility(View.VISIBLE); //回看暂停图标
-                            iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.icon_play));
+                            iv_playpause.setText("播放"); 
                         } else {
                             HideBottomEpg();
                             mVideoView.start();
                             iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
-                            iv_playpause.setBackground(ContextCompat.getDrawable(LivePlayActivity.context, R.drawable.vod_pause));
+                            iv_playpause.setText("暂停"); 
                         }
                     }
                     if(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
