@@ -1033,25 +1033,17 @@ public class LivePlayActivity extends BaseActivity {
                         }
                         break;
                     case KeyEvent.KEYCODE_DPAD_LEFT:
-                        if(isBack) {
+                        if(isBack || isVOD) {
                             showProgressBars(true);
-                        } else if(isVOD) {
-                            showProgressBars(true);
-                            mHideChannelListRun(); //xuameng显示EPG就隐藏左右菜单
-                            mHideSettingLayoutRun(); //xuameng显示EPG就隐藏左右菜单
                         } else {
                             playPreSource(); //xuameng 直播时按左键把弹出菜单改为换源
                         }
                         break;
                     case KeyEvent.KEYCODE_DPAD_RIGHT:
-                        if(isBack) {
+                        if(isBack || isVOD) {
                             showProgressBars(true);
-                        } else if(isVOD) {
-                            showProgressBars(true);
-                            mHideChannelListRun(); //xuameng显示EPG就隐藏左右菜单
-                            mHideSettingLayoutRun(); //xuameng显示EPG就隐藏左右菜单
                         } else {
-                            playNextSource();
+                            playPreSource(); //xuameng 直播时按左键把弹出菜单改为换源
                         }
                         break;
                     case KeyEvent.KEYCODE_DPAD_CENTER: //xuameng 修复回看时不能暂停，弹出菜单问题
@@ -1066,18 +1058,7 @@ public class LivePlayActivity extends BaseActivity {
                                 iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
                                 iv_playpause.setText("暂停"); 
                             }
-                        } else if(isVOD) {
-                            if(backcontroller.getVisibility() == View.VISIBLE) {
-                                iv_playpause.setText("播放"); 
-                            } else if(!mVideoView.isPlaying()) {
-                                mVideoView.start();
-                                iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
-                                iv_playpause.setText("暂停"); 
-                            } else {
-                                showChannelList();
-                                HideBottomEpg();
-                            }
-                        } else {
+                        }else {
                             showChannelList();
                             HideBottomEpg();
                         }
@@ -1094,18 +1075,7 @@ public class LivePlayActivity extends BaseActivity {
                                 iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
                                 iv_playpause.setText("暂停"); 
                             }
-                        } else if(isVOD) {
-                            if(backcontroller.getVisibility() == View.VISIBLE) {
-                                iv_playpause.setText("播放"); 
-                            } else if(!mVideoView.isPlaying()) {
-                                mVideoView.start();
-                                iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
-                                iv_playpause.setText("暂停"); 
-                            } else {
-                                showChannelList();
-                                HideBottomEpg();
-                            }
-                        } else {
+                        }else {
                             showChannelList();
                             HideBottomEpg();
                         }
@@ -1122,18 +1092,7 @@ public class LivePlayActivity extends BaseActivity {
                                 iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
                                 iv_playpause.setText("暂停"); 
                             }
-                        } else if(isVOD) {
-                            if(backcontroller.getVisibility() == View.VISIBLE) {
-                                iv_playpause.setText("播放"); 
-                            } else if(!mVideoView.isPlaying()) {
-                                mVideoView.start();
-                                iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
-                                iv_playpause.setText("暂停"); 
-                            } else {
-                                showChannelList();
-                                HideBottomEpg();
-                            }
-                        } else {
+                        }else {
                             showChannelList();
                             HideBottomEpg();
                         }
@@ -2963,7 +2922,7 @@ public class LivePlayActivity extends BaseActivity {
             backcontroller.setVisibility(View.VISIBLE); //xuameng显示回看下方菜单
             showTimeXu(); //xuameng系统显示时间
             showNetSpeedXu(); //XUAMENG显示右下网速
-            //   iv_playpause.requestFocus();     //xuameng默认焦点
+            iv_playpause.requestFocus();     //xuameng默认焦点
             Mtv_left_top_xu.setVisibility(View.VISIBLE); //xuameng显示回看上图标
             ll_epg.setVisibility(View.VISIBLE); //xuameng下面EPG菜单显示
             ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
@@ -2974,8 +2933,8 @@ public class LivePlayActivity extends BaseActivity {
             backcontroller.setVisibility(View.GONE);
             Mtv_left_top_xu.setVisibility(View.GONE);
             iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
-            tvLeftChannelListLayout.setVisibility(View.INVISIBLE); //xuameng显示EPG就隐藏左右菜单
-            tvRightSettingLayout.setVisibility(View.INVISIBLE); //xuameng显示EPG就隐藏左右菜单
+            mHideChannelListRun(); //xuameng显示EPG就隐藏左右菜单
+            mHideSettingLayoutRun(); //xuameng显示EPG就隐藏左右菜单
             if(!tip_epg1.getText().equals("暂无当前节目单，聚汇直播欢迎您的观看！")) {
                 ll_epg.setVisibility(View.VISIBLE); //xuameng下面EPG菜单显示
                 ll_right_top_loading.setVisibility(View.VISIBLE); //xuameng右上菜单显示
