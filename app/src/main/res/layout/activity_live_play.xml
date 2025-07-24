@@ -781,15 +781,17 @@
                 android:layout_marginLeft="@dimen/vs_0"
                 android:layout_marginRight="@dimen/vs_0"
                 android:layout_marginBottom="@dimen/vs_0">
-                <ImageView
+                <TextView
+                    android:textSize="@dimen/ts_20"
+                    android:textColor="@color/color_FFFFFF"
                     android:id="@+id/iv_playpause"
-                    android:src="@drawable/vod_pause"
+                    android:background="@drawable/button_dialog_main_1"
+                    android:padding="@dimen/vs_10"
                     android:focusable="true"
-                    android:background="@drawable/button_dialog_vod"
-                    android:focusableInTouchMode="true"
-                    android:padding="@dimen/vs_5"
-                    android:layout_width="@dimen/vs_35"
-                    android:layout_height="@dimen/vs_35"/>
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="暂停"
+                    android:singleLine="true"/>
                 <TextView
                     android:textColor="#ffffffff"
                     android:id="@+id/tv_currentpos"
