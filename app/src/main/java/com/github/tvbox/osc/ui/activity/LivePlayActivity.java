@@ -328,12 +328,12 @@ public class LivePlayActivity extends BaseActivity {
                 if(countDownTimer != null) {
                    countDownTimer.cancel();
                 }
-            countDownTimer = new CountDownTimer(10000, 1000) { //底部epg隐藏时间设定
-                public void onTick(long j) {}
-                public void onFinish() {
-                    HideBottomEpg();
-                }
-            };
+                countDownTimer = new CountDownTimer(10000, 1000) { //底部epg隐藏时间设定
+                    public void onTick(long j) {}
+                    public void onFinish() {
+                        HideBottomEpg();
+                    }
+                };
                     countDownTimer.start();
                 if(mVideoView.isPlaying()) {
                     mVideoView.pause();
@@ -374,6 +374,12 @@ public class LivePlayActivity extends BaseActivity {
                     if(countDownTimer != null) {
                        countDownTimer.cancel();
                     }
+                    countDownTimer = new CountDownTimer(10000, 1000) { //底部epg隐藏时间设定
+                        public void onTick(long j) {}
+                        public void onFinish() {
+                            HideBottomEpg();
+                        }
+                    };
                     countDownTimer.start();
                 }
             }
@@ -389,6 +395,12 @@ public class LivePlayActivity extends BaseActivity {
                         if(countDownTimer != null) {
                            countDownTimer.cancel();
                         }
+                        countDownTimer = new CountDownTimer(10000, 1000) { //底部epg隐藏时间设定
+                            public void onTick(long j) {}
+                            public void onFinish() {
+                                HideBottomEpg();
+                            }
+                        };
                         countDownTimer.start();
                         if(mVideoView.isPlaying()) {
                             mVideoView.pause();
@@ -407,6 +419,12 @@ public class LivePlayActivity extends BaseActivity {
                         if(countDownTimer != null) {
                            countDownTimer.cancel();
                         }
+                        countDownTimer = new CountDownTimer(10000, 1000) { //底部epg隐藏时间设定
+                            public void onTick(long j) {}
+                            public void onFinish() {
+                                HideBottomEpg();
+                            }
+                        };
                         countDownTimer.start();
                         return true;
                     }
@@ -841,6 +859,7 @@ public class LivePlayActivity extends BaseActivity {
             OkGo.getInstance().cancelTag("xuameng");
             if(countDownTimer != null) {
                countDownTimer.cancel();
+               countDownTimer = null;
             }
             super.onBackPressed();
         } else {
@@ -900,6 +919,7 @@ public class LivePlayActivity extends BaseActivity {
         OkGo.getInstance().cancelTag("xuameng");
         if(countDownTimer != null) {
            countDownTimer.cancel();
+           countDownTimer = null;
         }
         super.onBackPressed();
     }
@@ -1143,6 +1163,7 @@ public class LivePlayActivity extends BaseActivity {
         }
         if(countDownTimer != null) {
            countDownTimer.cancel();
+           countDownTimer = null;
         }
         OkGo.getInstance().cancelTag("xuameng");
     }
@@ -2936,6 +2957,12 @@ public class LivePlayActivity extends BaseActivity {
                 if(countDownTimer != null) {
                    countDownTimer.cancel();
                 }
+                countDownTimer = new CountDownTimer(10000, 1000) { //底部epg隐藏时间设定
+                    public void onTick(long j) {}
+                    public void onFinish() {
+                        HideBottomEpg();
+                    }
+                };
                 countDownTimer.start();
                 if(mVideoView.isPlaying()) {
                     mVideoView.pause();
@@ -2976,6 +3003,12 @@ public class LivePlayActivity extends BaseActivity {
                     if(countDownTimer != null) {
                        countDownTimer.cancel();
                     }
+                    countDownTimer = new CountDownTimer(10000, 1000) { //底部epg隐藏时间设定
+                        public void onTick(long j) {}
+                        public void onFinish() {
+                            HideBottomEpg();
+                        }
+                    };
                     countDownTimer.start();
                 }
             }
@@ -2991,7 +3024,13 @@ public class LivePlayActivity extends BaseActivity {
                         if(countDownTimer != null) {
                             countDownTimer.cancel();
                         }
-                            countDownTimer.start();
+                        countDownTimer = new CountDownTimer(10000, 1000) { //底部epg隐藏时间设定
+                            public void onTick(long j) {}
+                            public void onFinish() {
+                                HideBottomEpg();
+                            }
+                        };
+                        countDownTimer.start();
                         if(mVideoView.isPlaying()) {
                             mVideoView.pause();
                             iv_Play_Xu.setVisibility(View.VISIBLE); //回看暂停图标
@@ -3009,6 +3048,12 @@ public class LivePlayActivity extends BaseActivity {
                         if(countDownTimer != null) {
                            countDownTimer.cancel();
                         }
+                        countDownTimer = new CountDownTimer(10000, 1000) { //底部epg隐藏时间设定
+                            public void onTick(long j) {}
+                            public void onFinish() {
+                                HideBottomEpg();
+                            }
+                        };
                         countDownTimer.start();
                         return true;
                     }
@@ -3027,6 +3072,12 @@ public class LivePlayActivity extends BaseActivity {
         if(countDownTimer != null) {
            countDownTimer.cancel();
         }
+        countDownTimer = new CountDownTimer(10000, 1000) { //底部epg隐藏时间设定
+        public void onTick(long j) {}
+            public void onFinish() {
+              HideBottomEpg();
+            }
+        };
         countDownTimer.start();
         if(mVideoView == null) return;
         if(mVideoView.isPlaying()) {
