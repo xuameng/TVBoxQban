@@ -297,7 +297,7 @@ public class LivePlayActivity extends BaseActivity {
         tv_currentpos = (TextView) findViewById(R.id.tv_currentpos);
         backcontroller = (View) findViewById(R.id.backcontroller);
         tv_duration = (TextView) findViewById(R.id.tv_duration);
-        iv_playpause = findViewById(R.id.iv_playpause);
+        iv_playpause = (TextView) findViewById(R.id.iv_playpause);
         iv_play = findViewById(R.id.iv_play);
         if(show) {
             backcontroller.setVisibility(View.VISIBLE);
