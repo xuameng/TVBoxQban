@@ -2936,6 +2936,14 @@ public class LivePlayActivity extends BaseActivity {
             view_line_XU.setVisibility(View.INVISIBLE); //xuamengEPG中的横线
             mHideChannelListRun(); //xuameng显示EPG就隐藏左右菜单
             mHideSettingLayoutRun(); //xuameng显示EPG就隐藏左右菜单
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                   if(!iv_playpause.hasFocus()){
+                      iv_playpause.requestFocus();
+                   }
+                }
+            }, 200);
         } else {
             backcontroller.setVisibility(View.GONE);
             Mtv_left_top_xu.setVisibility(View.GONE);
