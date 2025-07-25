@@ -316,7 +316,7 @@ public class LivePlayActivity extends BaseActivity {
             tvRightSettingLayout.setVisibility(View.INVISIBLE); //xuameng显示EPG就隐藏左右菜单
             ll_epg.setVisibility(View.VISIBLE); //xuameng下面EPG菜单显示
             ll_right_top_loading.setVisibility(View.VISIBLE); //xuameng右上菜单显示
-		//	iv_playpause.requestFocus(); //xuameng回看菜单默认焦点为播放
+			iv_playpause.requestFocus(); //xuameng回看菜单默认焦点为播放
             showTimeXu(); //xuameng显示系统时间
             showNetSpeedXu(); //XUAMENG显示右下网速
             view_line_XU.setVisibility(View.VISIBLE); //xuamengEPG中的横线
@@ -1012,14 +1012,20 @@ public class LivePlayActivity extends BaseActivity {
                         break;
                     case KeyEvent.KEYCODE_DPAD_LEFT:
                         if(isBack || isVOD) {
-                            showProgressBars(true);
+                            if(backcontroller.getVisibility() == View.VISIBLE) {   //xuameng左右键与seekbar调节进度冲突
+                            }else{
+                               showProgressBars(true);
+						    }
                         } else {
                             playPreSource(); //xuameng 直播时按左键把弹出菜单改为换源
                         }
                         break;
                     case KeyEvent.KEYCODE_DPAD_RIGHT:
                         if(isBack || isVOD) {
-                            showProgressBars(true);
+                            if(backcontroller.getVisibility() == View.VISIBLE) {    //xuameng左右键与seekbar调节进度冲突
+                            }else{
+                               showProgressBars(true);
+						    }
                         } else {
                             playNextSource(); //xuameng 直播时按右键把弹出菜单改为换源
                         }
@@ -1027,7 +1033,7 @@ public class LivePlayActivity extends BaseActivity {
                     case KeyEvent.KEYCODE_DPAD_CENTER: //xuameng 修复回看时不能暂停，弹出菜单问题
                         if(mVideoView == null) return true;
                         if(isBack) {
-                            if(backcontroller.getVisibility() == View.VISIBLE) {
+                            if(backcontroller.getVisibility() == View.VISIBLE) {   //xuameng确认键与暂停键冲突
                             }else if(mVideoView.isPlaying()) {
                                 showProgressBars(true);
                             }else{
@@ -1035,8 +1041,8 @@ public class LivePlayActivity extends BaseActivity {
                                 iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
                             }
                         } else if(isVOD) {
-                            if(backcontroller.getVisibility() == View.VISIBLE) {}
-							else {
+                            if(backcontroller.getVisibility() == View.VISIBLE) {
+                            }else {
                                 showChannelList();
                             }
                         } else {
@@ -1046,7 +1052,7 @@ public class LivePlayActivity extends BaseActivity {
                     case KeyEvent.KEYCODE_ENTER: //xuameng 修复回看时不能暂停，弹出菜单问题
                         if(mVideoView == null) return true;
                         if(isBack) {
-                            if(backcontroller.getVisibility() == View.VISIBLE) {
+                            if(backcontroller.getVisibility() == View.VISIBLE) {   //xuameng确认键与暂停键冲突
                             }else if(mVideoView.isPlaying()) {
                                 showProgressBars(true);
                             }else{
@@ -1054,8 +1060,8 @@ public class LivePlayActivity extends BaseActivity {
                                 iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
                             }
                         } else if(isVOD) {
-                            if(backcontroller.getVisibility() == View.VISIBLE) {}
-							else {
+                            if(backcontroller.getVisibility() == View.VISIBLE) {
+                            }else {
                                 showChannelList();
                             }
                         } else {
@@ -1065,7 +1071,7 @@ public class LivePlayActivity extends BaseActivity {
                     case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE: //xuameng 修复回看时不能暂停，弹出菜单问题
                         if(mVideoView == null) return true;
                         if(isBack) {
-                            if(backcontroller.getVisibility() == View.VISIBLE) {
+                            if(backcontroller.getVisibility() == View.VISIBLE) {   //xuameng确认键与暂停键冲突
                             }else if(mVideoView.isPlaying()) {
                                 showProgressBars(true);
                             }else{
@@ -1073,8 +1079,8 @@ public class LivePlayActivity extends BaseActivity {
                                 iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
                             }
                         } else if(isVOD) {
-                            if(backcontroller.getVisibility() == View.VISIBLE) {}
-							else {
+                            if(backcontroller.getVisibility() == View.VISIBLE) {
+                            }else {
                                 showChannelList();
                             }
                         } else {
@@ -2879,14 +2885,7 @@ public class LivePlayActivity extends BaseActivity {
         return result;
     }
     public void showProgressBars(boolean show) { //显示回看菜单
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                   if(!iv_playpause.hasFocus()){
-                      iv_playpause.requestFocus();
-                   }
-                }
-            }, 200);
+        //        sBar.requestFocus();                            //xuameng回看菜单默认焦点为播放
         if(show) {
             backcontroller.setVisibility(View.VISIBLE); //xuameng显示回看下方菜单
             showTimeXu(); //xuameng系统显示时间
@@ -2898,6 +2897,14 @@ public class LivePlayActivity extends BaseActivity {
             view_line_XU.setVisibility(View.INVISIBLE); //xuamengEPG中的横线
             mHideChannelListRun(); //xuameng显示EPG就隐藏左右菜单
             mHideSettingLayoutRun(); //xuameng显示EPG就隐藏左右菜单
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                   if(!iv_playpause.hasFocus()){
+                      iv_playpause.requestFocus();
+                   }
+                }
+            }, 200);
         } else {
             backcontroller.setVisibility(View.GONE);
             Mtv_left_top_xu.setVisibility(View.GONE);
