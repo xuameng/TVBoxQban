@@ -308,6 +308,7 @@ public class LivePlayActivity extends BaseActivity {
             view_line_XU.setVisibility(View.INVISIBLE); //xuamengEPG中的横线
             mHideChannelListRun(); //xuameng显示EPG就隐藏左右菜单
             mHideSettingLayoutRun(); //xuameng显示EPG就隐藏左右菜单
+            iv_playpause.requestFocus(); //xuameng回看菜单默认焦点为播放		
         } else {
             backcontroller.setVisibility(View.GONE);
             Mtv_left_top_xu.setVisibility(View.GONE); //xuameng隐藏左上回看图标
@@ -316,7 +317,6 @@ public class LivePlayActivity extends BaseActivity {
             tvRightSettingLayout.setVisibility(View.INVISIBLE); //xuameng显示EPG就隐藏左右菜单
             ll_epg.setVisibility(View.VISIBLE); //xuameng下面EPG菜单显示
             ll_right_top_loading.setVisibility(View.VISIBLE); //xuameng右上菜单显示
-			iv_playpause.requestFocus(); //xuameng回看菜单默认焦点为播放
             showTimeXu(); //xuameng显示系统时间
             showNetSpeedXu(); //XUAMENG显示右下网速
             view_line_XU.setVisibility(View.VISIBLE); //xuamengEPG中的横线
