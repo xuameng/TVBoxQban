@@ -1943,6 +1943,9 @@ public class VodController extends BaseController {
         mHandler.removeCallbacks(xuRunnable);
         mHandler.removeCallbacks(myRunnableMusic);
         mHandler.removeCallbacks(myRunnableXu);
+        if(mHandler != null) {
+            mHandler.removeCallbacksAndMessages(null);
+        }
     }
     //尝试去bom
     public String getWebPlayUrlIfNeeded(String webPlayUrl) {
