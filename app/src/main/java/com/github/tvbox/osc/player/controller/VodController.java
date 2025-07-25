@@ -276,8 +276,8 @@ public class VodController extends BaseController {
     public TextView mLandscapePortraitBtn;
     private View backBtn; //返回键
     private boolean isClickBackBtn;
-    private double DOUBLE_CLICK_TIME = 0 L; //xuameng返回键防连击1.5秒（为动画）
-    private double DOUBLE_CLICK_TIME_2 = 0 L; //xuameng防连击1秒（为动画）
+    private double DOUBLE_CLICK_TIME = 0L; //xuameng返回键防连击1.5秒（为动画）
+    private double DOUBLE_CLICK_TIME_2 = 0L; //xuameng防连击1秒（为动画）
     LockRunnable lockRunnable = new LockRunnable();
     private boolean isLock = false;
     private boolean isSEEKBAR = false; //xuameng进入SEEKBAR
@@ -820,8 +820,8 @@ public class VodController extends BaseController {
                 myHandle.postDelayed(myRunnable, myHandleSeconds);
                 try {
                     float speed = (float) mPlayerConfig.getDouble("sp");
-                    speed += 0.25 f;
-                    if(speed > 3) speed = 0.5 f;
+                    speed += 0.25f;
+                    if(speed > 3) speed = 0.5f;
                     mPlayerConfig.put("sp", speed);
                     updatePlayerCfgView();
                     listener.updatePlayerCfg();
