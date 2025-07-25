@@ -835,6 +835,10 @@ public class PlayFragment extends BaseLazyFragment {
         mVodInfo = App.getInstance().getVodInfo();
         sourceKey = bundle.getString("sourceKey");
         sourceBean = ApiConfig.get().getSource(sourceKey);
+		if (sourceBean == null){
+			Toast.makeText(requireContext(), "没有源！", Toast.LENGTH_SHORT).show();
+			return;
+		}
         initPlayerCfg();
         play(false);
     }
