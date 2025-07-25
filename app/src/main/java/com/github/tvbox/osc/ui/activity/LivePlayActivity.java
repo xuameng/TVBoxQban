@@ -316,7 +316,7 @@ public class LivePlayActivity extends BaseActivity {
             tvRightSettingLayout.setVisibility(View.INVISIBLE); //xuameng显示EPG就隐藏左右菜单
             ll_epg.setVisibility(View.VISIBLE); //xuameng下面EPG菜单显示
             ll_right_top_loading.setVisibility(View.VISIBLE); //xuameng右上菜单显示
-			iv_playpause.requestFocus(); //xuameng回看菜单默认焦点为播放
+		//	iv_playpause.requestFocus(); //xuameng回看菜单默认焦点为播放
             showTimeXu(); //xuameng显示系统时间
             showNetSpeedXu(); //XUAMENG显示右下网速
             view_line_XU.setVisibility(View.VISIBLE); //xuamengEPG中的横线
@@ -2879,7 +2879,14 @@ public class LivePlayActivity extends BaseActivity {
         return result;
     }
     public void showProgressBars(boolean show) { //显示回看菜单
-        //        sBar.requestFocus();                            //xuameng回看菜单默认焦点为播放
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                   if(!iv_playpause.hasFocus()){
+                      iv_playpause.requestFocus();
+                   }
+                }
+            }, 200);
         if(show) {
             backcontroller.setVisibility(View.VISIBLE); //xuameng显示回看下方菜单
             showTimeXu(); //xuameng系统显示时间
@@ -2891,14 +2898,6 @@ public class LivePlayActivity extends BaseActivity {
             view_line_XU.setVisibility(View.INVISIBLE); //xuamengEPG中的横线
             mHideChannelListRun(); //xuameng显示EPG就隐藏左右菜单
             mHideSettingLayoutRun(); //xuameng显示EPG就隐藏左右菜单
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                   if(!iv_playpause.hasFocus()){
-                      iv_playpause.requestFocus();
-                   }
-                }
-            }, 200);
         } else {
             backcontroller.setVisibility(View.GONE);
             Mtv_left_top_xu.setVisibility(View.GONE);
