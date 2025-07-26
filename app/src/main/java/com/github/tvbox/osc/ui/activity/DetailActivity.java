@@ -996,6 +996,7 @@ public class DetailActivity extends BaseActivity {
             if (sourceBeanXu == null){
                 Toast.makeText(DetailActivity.this, "本地没有此数据源！已为您跳转搜索！", Toast.LENGTH_SHORT).show();
                 mEmptyPlayList.setVisibility(View.VISIBLE);
+                Bundle bundle = new Bundle();
                 bundle.putString("title", vodId);
                 if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)){
                    jumpActivity(FastSearchActivity.class, bundle);
