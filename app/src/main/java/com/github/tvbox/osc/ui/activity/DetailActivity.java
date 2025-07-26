@@ -137,9 +137,8 @@ public class DetailActivity extends BaseActivity {
 	private LinearSmoothScroller smoothScroller;
     public String vodId;
     public String sourceKey;
-	private SourceBean sourceBeanXu;
-	private SourceBean sourceBeanXu1;
     public String firstsourceKey;
+	private SourceBean sourceBeanXu;  //xuameng判断sourceKey为空
     boolean seriesSelect = false;
     private View seriesFlagFocus = null;
     private boolean isReverse;
@@ -839,16 +838,6 @@ public class DetailActivity extends BaseActivity {
                         showEmpty();
                         return;
                     }
-													sourceBeanXu = ApiConfig.get().getSource(sourceKey);
-			sourceBeanXu1 = ApiConfig.get().getSource(firstsourceKey);
-			if (sourceBeanXu == null){
-				Toast.makeText(DetailActivity.this, "没有源1", Toast.LENGTH_SHORT).show();
-				return;
-			}
-			if (sourceBeanXu1 == null){
-				Toast.makeText(DetailActivity.this, "没有源2", Toast.LENGTH_SHORT).show();
-				return;
-			}
                     mVideo = absXml.movie.videoList.get(0);
                     mVideo.id = vodId;
                     if (TextUtils.isEmpty(mVideo.name))mVideo.name = "🥇聚汇影视";
@@ -859,8 +848,6 @@ public class DetailActivity extends BaseActivity {
                     vodInfo.setVideo(mVideo);
                     vodInfo.sourceKey = mVideo.sourceKey;
                     sourceKey = mVideo.sourceKey;
-
-
 
                     tvName.setText(mVideo.name);
                     setTextShow(tvSite, "来源：", ApiConfig.get().getSource(firstsourceKey).getName());
@@ -1006,15 +993,17 @@ public class DetailActivity extends BaseActivity {
             sourceKey = key;
             firstsourceKey = key;
 			sourceBeanXu = ApiConfig.get().getSource(sourceKey);
-			sourceBeanXu1 = ApiConfig.get().getSource(firstsourceKey);
-			if (sourceBeanXu == null){
-				Toast.makeText(DetailActivity.this, "没有源3", Toast.LENGTH_SHORT).show();
-				return;
-			}
-			if (sourceBeanXu1 == null){
-				Toast.makeText(DetailActivity.this, "没有源4", Toast.LENGTH_SHORT).show();
-				return;
-			}
+            if (sourceBeanXu == null){
+                Toast.makeText(DetailActivity.this, "本地没有此数据源！已为您跳转搜索！", Toast.LENGTH_SHORT).show();
+                mEmptyPlayList.setVisibility(View.VISIBLE);
+                bundle.putString("title", vodId);
+                if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)){
+                   jumpActivity(FastSearchActivity.class, bundle);
+                }else {
+                   jumpActivity(SearchActivity.class, bundle);
+                }
+                return;
+            }
             showLoading();
             sourceViewModel.getDetail(sourceKey, vodId);
             boolean isVodCollect = RoomDataManger.isVodCollect(sourceKey, vodId);
