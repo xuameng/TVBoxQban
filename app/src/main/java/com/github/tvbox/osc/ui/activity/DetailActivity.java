@@ -991,6 +991,11 @@ public class DetailActivity extends BaseActivity {
             vodId = vid;
             sourceKey = key;
             firstsourceKey = key;
+			sourceBeanXu = ApiConfig.get().getSource(sourceKey);
+			if (sourceBeanXu == null){
+				Toast.makeText(DetailActivity.this, "没有源", Toast.LENGTH_SHORT).show();
+				return;
+			}
             showLoading();
             sourceViewModel.getDetail(sourceKey, vodId);
             boolean isVodCollect = RoomDataManger.isVodCollect(sourceKey, vodId);
