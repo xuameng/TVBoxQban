@@ -137,6 +137,7 @@ public class DetailActivity extends BaseActivity {
 	private LinearSmoothScroller smoothScroller;
     public String vodId;
     public String sourceKey;
+	public String sourceBeanXu;
     public String firstsourceKey;
     boolean seriesSelect = false;
     private View seriesFlagFocus = null;
