@@ -839,6 +839,16 @@ public class DetailActivity extends BaseActivity {
                         showEmpty();
                         return;
                     }
+													sourceBeanXu = ApiConfig.get().getSource(sourceKey);
+			sourceBeanXu1 = ApiConfig.get().getSource(firstsourceKey);
+			if (sourceBeanXu == null){
+				Toast.makeText(DetailActivity.this, "没有源", Toast.LENGTH_SHORT).show();
+				return;
+			}
+			if (sourceBeanXu1 == null){
+				Toast.makeText(DetailActivity.this, "没有源", Toast.LENGTH_SHORT).show();
+				return;
+			}
                     mVideo = absXml.movie.videoList.get(0);
                     mVideo.id = vodId;
                     if (TextUtils.isEmpty(mVideo.name))mVideo.name = "🥇聚汇影视";
@@ -850,16 +860,7 @@ public class DetailActivity extends BaseActivity {
                     vodInfo.sourceKey = mVideo.sourceKey;
                     sourceKey = mVideo.sourceKey;
 
-								sourceBeanXu = ApiConfig.get().getSource(sourceKey);
-			sourceBeanXu1 = ApiConfig.get().getSource(firstsourceKey);
-			if (sourceBeanXu == null){
-				Toast.makeText(DetailActivity.this, "没有源", Toast.LENGTH_SHORT).show();
-				return;
-			}
-			if (sourceBeanXu1 == null){
-				Toast.makeText(DetailActivity.this, "没有源", Toast.LENGTH_SHORT).show();
-				return;
-			}
+
 
                     tvName.setText(mVideo.name);
                     setTextShow(tvSite, "来源：", ApiConfig.get().getSource(firstsourceKey).getName());
