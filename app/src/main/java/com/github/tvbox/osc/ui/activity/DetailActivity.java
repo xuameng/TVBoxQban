@@ -992,7 +992,7 @@ public class DetailActivity extends BaseActivity {
             vodId = vid;
             sourceKey = key;
             firstsourceKey = key;
-            sourceBeanXu = ApiConfig.get().getSource(sourceKey);
+            sourceBeanXu = ApiConfig.get().getSource(sourceKey);  //xuameng判断sourceKey为空 远程推送BUG
             if (sourceBeanXu == null){
                 Toast.makeText(DetailActivity.this, "推送结果：本地没有此数据源！请同步数据源！", Toast.LENGTH_LONG).show();
                 showEmpty();
