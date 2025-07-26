@@ -137,7 +137,8 @@ public class DetailActivity extends BaseActivity {
 	private LinearSmoothScroller smoothScroller;
     public String vodId;
     public String sourceKey;
-	public String sourceBeanXu;
+	private SourceBean sourceBeanXu;
+	private SourceBean sourceBeanXu1;
     public String firstsourceKey;
     boolean seriesSelect = false;
     private View seriesFlagFocus = null;
@@ -849,6 +850,17 @@ public class DetailActivity extends BaseActivity {
                     vodInfo.sourceKey = mVideo.sourceKey;
                     sourceKey = mVideo.sourceKey;
 
+								sourceBeanXu = ApiConfig.get().getSource(sourceKey);
+			sourceBeanXu1 = ApiConfig.get().getSource(firstsourceKey);
+			if (sourceBeanXu == null){
+				Toast.makeText(DetailActivity.this, "没有源", Toast.LENGTH_SHORT).show();
+				return;
+			}
+			if (sourceBeanXu1 == null){
+				Toast.makeText(DetailActivity.this, "没有源", Toast.LENGTH_SHORT).show();
+				return;
+			}
+
                     tvName.setText(mVideo.name);
                     setTextShow(tvSite, "来源：", ApiConfig.get().getSource(firstsourceKey).getName());
                     setTextShow(tvYear, "年份：", mVideo.year == 0 ? "" : String.valueOf(mVideo.year));
@@ -993,7 +1005,12 @@ public class DetailActivity extends BaseActivity {
             sourceKey = key;
             firstsourceKey = key;
 			sourceBeanXu = ApiConfig.get().getSource(sourceKey);
+			sourceBeanXu1 = ApiConfig.get().getSource(firstsourceKey);
 			if (sourceBeanXu == null){
+				Toast.makeText(DetailActivity.this, "没有源", Toast.LENGTH_SHORT).show();
+				return;
+			}
+			if (sourceBeanXu1 == null){
 				Toast.makeText(DetailActivity.this, "没有源", Toast.LENGTH_SHORT).show();
 				return;
 			}
