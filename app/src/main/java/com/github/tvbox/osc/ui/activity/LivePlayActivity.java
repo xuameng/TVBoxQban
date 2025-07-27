@@ -449,12 +449,7 @@ public class LivePlayActivity extends BaseActivity {
                 if(!isScrollingXu) {
                     isScrollingXu = true;
                     mRightEpgList.scrollToPositionWithOffset(finalI, 0);
-                    mRightEpgList.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            mRightEpgList.smoothScrollToPosition(finalI);
-                        }
-                    }, 50);
+
                 }
             }
         } else { //xuameng无EPG时提示信息
@@ -568,12 +563,7 @@ public class LivePlayActivity extends BaseActivity {
                 if(!isScrollingXu) {
                     isScrollingXu = true;
                     mRightEpgList.scrollToPositionWithOffset(finalI, 0);
-                    mRightEpgList.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            mRightEpgList.smoothScrollToPosition(finalI);
-                        }
-                    }, 50);
+
                 }
             }
         } else { //xuameng无EPG时提示信息
@@ -631,13 +621,6 @@ public class LivePlayActivity extends BaseActivity {
         } else {
             url = epgStringAddress + "?ch=" + URLEncoder.encode(epgTagName) + "&date=" + timeFormat.format(date);
         }
-CallBackUtil.CallBackString callback = new CallBackUtil.CallBackString() {
-    @Override
-    public void onFailure(int i, String str) {
-    }
-};
-callback.cancel();
-
         UrlHttpUtil.get(url, new CallBackUtil.CallBackString() {
             public void onFailure(int i, String str) {
                 showEpg(date, new ArrayList());
@@ -687,7 +670,7 @@ callback.cancel();
         }
         UrlHttpUtil.get(url, new CallBackUtil.CallBackString() {
             public void onFailure(int i, String str) {
-                showEpgxu(date, new ArrayList());
+                showEpg(date, new ArrayList());
             }
             public void onResponse(String paramString) {
                 ArrayList arrayList = new ArrayList();
@@ -706,7 +689,7 @@ callback.cancel();
                 } catch (JSONException jSONException) {
                     jSONException.printStackTrace();
                 }
-                showEpgxu(date, arrayList);
+                showEpg(date, arrayList);
                 String savedEpgKey = channelName + "_" + liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex()).getDatePresented();
                 if(!hsEpg.contains(savedEpgKey)) hsEpg.put(savedEpgKey, arrayList);
             }
