@@ -436,9 +436,7 @@ public class LivePlayActivity extends BaseActivity {
             i = size;
             if(i >= 0 && new Date().compareTo(epgdata.get(i).enddateTime) <= 0) {
                 int finalI = i;
-                mRightEpgList.setSelectedPosition(i);
                 //xuameng防止跳焦点                 mRightEpgList.setSelection(i);
-                epgListAdapter.setSelectedEpgIndex(i);
                 //				epgListAdapter.notifyDataSetChanged();
                 if(mRightEpgList.isScrolling() || mRightEpgList.isComputingLayout()) { //xuameng如果EPG正在滚动返回，解决BUG
                    mRightEpgList.stopScroll();
@@ -448,6 +446,8 @@ public class LivePlayActivity extends BaseActivity {
                     @Override
                     public void run() {
                         mRightEpgList.smoothScrollToPosition(finalI);
+                        mRightEpgList.setSelectedPosition(i);
+                        epgListAdapter.setSelectedEpgIndex(i);
                     }
                 }, 100);
             }
@@ -496,8 +496,6 @@ public class LivePlayActivity extends BaseActivity {
             i = size;
             if(i >= 0 && new Date().compareTo(epgdata.get(i).enddateTime) <= 0) {
                 int finalI = i;
-                mRightEpgList.setSelectedPosition(i);
-                epgListAdapter.setSelectedEpgIndex(i);
                 //				epgListAdapter.notifyDataSetChanged();
                 if(mRightEpgList.isScrolling() || mRightEpgList.isComputingLayout()) { //xuameng如果EPG正在滚动返回，解决BUG
                    mRightEpgList.stopScroll();
@@ -508,6 +506,8 @@ public class LivePlayActivity extends BaseActivity {
                     @Override
                     public void run() {
                         mRightEpgList.smoothScrollToPosition(finalI);
+                        mRightEpgList.setSelectedPosition(i);
+                        epgListAdapter.setSelectedEpgIndex(i);
                     }
                 }, 100);
             }
@@ -1477,6 +1477,7 @@ public class LivePlayActivity extends BaseActivity {
                 super.onScrollStateChanged(recyclerView, newState);
                 mHideChannelListRunXu();
                 if(newState == mRightEpgList.SCROLL_STATE_IDLE) {
+                   mRightEpgList.notifyDataSetChanged();
                    mRightEpgList.requestLayout();
                 }
             }
