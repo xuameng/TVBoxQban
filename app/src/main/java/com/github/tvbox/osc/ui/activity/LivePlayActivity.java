@@ -446,12 +446,6 @@ public class LivePlayActivity extends BaseActivity {
                 if(!isScrollingXu) {
                     isScrollingXu = true;
                     mRightEpgList.scrollToPositionWithOffset(finalI, 0);
-                    mRightEpgList.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            mRightEpgList.smoothScrollToPosition(finalI);
-                        }
-                    }, 50);
                 }
             }
         } else { //xuameng无EPG时提示信息
@@ -1134,6 +1128,9 @@ public class LivePlayActivity extends BaseActivity {
             mHideSettingLayoutRun();
             return;
         }
+        if(mRightEpgList.isScrolling() || mRightEpgList.isComputingLayout()) { //xuameng如果EPG正在滚动返回，解决BUG
+           mRightEpgList.stopScroll();
+        }
         if(isVOD) {
             Mtv_left_top_xu.setVisibility(View.GONE);
         }
@@ -1493,6 +1490,9 @@ public class LivePlayActivity extends BaseActivity {
             }
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
+                if(mRightEpgList.isScrolling() || mRightEpgList.isComputingLayout()) { //xuameng如果EPG正在滚动返回，解决BUG
+                   mRightEpgList.stopScroll();
+                }
                 mHideChannelListRunXu();
                 epgListAdapter.setFocusedEpgIndex(position);
             }
