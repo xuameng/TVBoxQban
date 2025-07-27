@@ -637,7 +637,8 @@ CallBackUtil.CallBackString callback = new CallBackUtil.CallBackString() {
     }
 };
 callback.cancel();
-        UrlHttpUtil.get(url, callback() {
+
+        UrlHttpUtil.get(url, new CallBackUtil.CallBackString() {
             public void onFailure(int i, String str) {
                 showEpg(date, new ArrayList());
                 //               showBottomEpg();        
