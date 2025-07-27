@@ -1477,7 +1477,7 @@ public class LivePlayActivity extends BaseActivity {
                 super.onScrollStateChanged(recyclerView, newState);
                 mHideChannelListRunXu();
                 if(newState == mRightEpgList.SCROLL_STATE_IDLE) {
-                   mRightEpgList.notifyDataSetChanged();
+                   epgListAdapter.notifyDataSetChanged();
                    mRightEpgList.requestLayout();
                 }
             }
