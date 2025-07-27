@@ -1492,9 +1492,6 @@ public class LivePlayActivity extends BaseActivity {
             }
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
-                if(mRightEpgList.isScrolling() || mRightEpgList.isComputingLayout()) { //xuameng如果EPG正在滚动返回，解决BUG
-                   mRightEpgList.stopScroll();
-                }
                 mHideChannelListRunXu();
                 epgListAdapter.setFocusedEpgIndex(position);
             }
@@ -1690,6 +1687,9 @@ public class LivePlayActivity extends BaseActivity {
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
                 mHideChannelListRunXu(); //xuameng隐藏频道菜单
                 liveEpgDateAdapter.setFocusedIndex(position);
+                if(mRightEpgList.isScrolling() || mRightEpgList.isComputingLayout()) { //xuameng如果EPG正在滚动返回，解决BUG
+                   mRightEpgList.stopScroll();
+                }
             }
             @Override
             public void onItemClick(TvRecyclerView parent, View itemView, int position) {
