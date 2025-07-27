@@ -123,9 +123,12 @@ public class LiveEpgAdapter extends BaseQuickAdapter<Epginfo, BaseViewHolder> {
         return focusedEpgIndex;
     }
 
-    public void setFocusedEpgIndex(int focusedEpgIndex) {
-        this.focusedEpgIndex = focusedEpgIndex;
-        if (this.focusedEpgIndex != -1)
+    public void setFocusedEpgIndex(int focusedEpgIndex) {   //xuamengEPG选中时白色，不选中时蓝色
+      int prefocusedEpgIndex = this.focusedEpgIndex;   
+      this.focusedEpgIndex = focusedEpgIndex;
+          if (prefocusedEpgIndex != -1)
+            notifyItemChanged(prefocusedEpgIndex);   
+          if (this.focusedEpgIndex != -1)
             notifyItemChanged(this.focusedEpgIndex);
     }
 }
