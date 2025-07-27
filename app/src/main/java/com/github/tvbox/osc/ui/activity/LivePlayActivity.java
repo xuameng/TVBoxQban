@@ -1814,7 +1814,16 @@ public class LivePlayActivity extends BaseActivity {
                 mHideChannelListRunXu(); //xuameng隐藏频道菜单
                 liveEpgDateAdapter.setFocusedIndex(position);
                 mRightEpgList.stopScroll();
-				mRightEpgList.clearOnScrollListeners();
+				removeOnScrollListener(mRightEpgList);
+                mRightEpgList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                    @Override
+                    public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                        super.onScrollStateChanged(recyclerView, newState);
+                        if(newState == mRightEpgList.SCROLL_STATE_IDLE) {
+                            isScrollingXu = false; // xuameng滚动完成后重置状态
+                        }
+                    }
+                });
             }
             @Override
             public void onItemClick(TvRecyclerView parent, View itemView, int position) {
