@@ -426,7 +426,7 @@ public class LivePlayActivity extends BaseActivity {
     private void showEpg(Date date, ArrayList < Epginfo > arrayList) {
         String savedEpgKey = channel_Name.getChannelName() + "_" + liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex()).getDatePresented();
         if(hsEpg.containsKey(savedEpgKey)) {
-           ArrayList arrayList = (ArrayList) hsEpg.get(savedEpgKey);
+           arrayList = (ArrayList) hsEpg.get(savedEpgKey);
         if(arrayList != null && arrayList.size() > 0) {
             epgdata = arrayList;
             epgListAdapter.CanBack(currentLiveChannelItem.getinclude_back());
@@ -700,6 +700,8 @@ public class LivePlayActivity extends BaseActivity {
                     jSONException.printStackTrace();
                 }
                 showEpgxu(date, arrayList);
+                String savedEpgKey = channelName + "_" + liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex()).getDatePresented();
+                if(!hsEpg.contains(savedEpgKey)) hsEpg.put(savedEpgKey, arrayList);
             }
         });
     }
