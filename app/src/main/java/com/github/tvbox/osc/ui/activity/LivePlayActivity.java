@@ -449,6 +449,12 @@ public class LivePlayActivity extends BaseActivity {
                   if(!isScrollingXu) {
                      isScrollingXu = true;
                      mRightEpgList.scrollToPositionWithOffset(finalI, 0);
+                     mRightEpgList.postDelayed(new Runnable() {
+                         @Override
+                         public void run() {
+                             mRightEpgList.smoothScrollToPosition(finalI);
+                         }
+                     }, 50);
                   }
               }
            } else { //xuameng无EPG时提示信息
