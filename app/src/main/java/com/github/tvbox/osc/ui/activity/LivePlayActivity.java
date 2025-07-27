@@ -446,8 +446,8 @@ public class LivePlayActivity extends BaseActivity {
                     @Override
                     public void run() {
                         mRightEpgList.smoothScrollToPosition(finalI);
-                        mRightEpgList.setSelectedPosition(i);
-                        epgListAdapter.setSelectedEpgIndex(i);
+                        mRightEpgList.setSelectedPosition(finalI);
+                        epgListAdapter.setSelectedEpgIndex(finalI);
                     }
                 }, 100);
             }
@@ -506,8 +506,8 @@ public class LivePlayActivity extends BaseActivity {
                     @Override
                     public void run() {
                         mRightEpgList.smoothScrollToPosition(finalI);
-                        mRightEpgList.setSelectedPosition(i);
-                        epgListAdapter.setSelectedEpgIndex(i);
+                        mRightEpgList.setSelectedPosition(finalI);
+                        epgListAdapter.setSelectedEpgIndex(finalI);
                     }
                 }, 100);
             }
