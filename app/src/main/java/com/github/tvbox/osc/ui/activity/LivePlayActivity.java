@@ -1488,7 +1488,7 @@ public class LivePlayActivity extends BaseActivity {
                 super.onScrollStateChanged(recyclerView, newState);
                 mHideChannelListRunXu();
                 if(newState == mRightEpgList.SCROLL_STATE_IDLE) {
-                    isScrollingXu = false; // xuameng滚动完成后重置状态
+              //      isScrollingXu = false; // xuameng滚动完成后重置状态
                 }
             }
         });
@@ -1496,7 +1496,9 @@ public class LivePlayActivity extends BaseActivity {
         mRightEpgList.setOnItemListener(new TvRecyclerView.OnItemListener() {
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
-                epgListAdapter.setFocusedEpgIndex(-1);
+                if(!mRightEpgList.isScrolling() && !mRightEpgList.isComputingLayout()) { //xuameng如果EPG正在滚动返回，解决BUG
+                    epgListAdapter.setFocusedEpgIndex(-1);
+                }
             }
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
