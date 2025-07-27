@@ -631,7 +631,13 @@ public class LivePlayActivity extends BaseActivity {
         } else {
             url = epgStringAddress + "?ch=" + URLEncoder.encode(epgTagName) + "&date=" + timeFormat.format(date);
         }
-        UrlHttpUtil.get(url, new CallBackUtil.CallBackString() {
+CallBackUtil.CallBackString callback = new CallBackUtil.CallBackString() {
+    @Override
+    public void onFailure(int i, String str) {
+    }
+};
+callback.cancel();
+        UrlHttpUtil.get(url, callback() {
             public void onFailure(int i, String str) {
                 showEpg(date, new ArrayList());
                 //               showBottomEpg();        
