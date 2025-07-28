@@ -30,7 +30,7 @@ public class LiveEpgAdapter extends BaseQuickAdapter<Epginfo, BaseViewHolder> {
     SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd");
     public LiveEpgAdapter() {
         super(R.layout.epglist_item, new ArrayList<>());
-        this.closeLoadAnimation(false);  // 禁用所有动画
+        this.closeLoadAnimation();  // 禁用所有动画
     }
 
     public void CanBack( Boolean source_include_back){
