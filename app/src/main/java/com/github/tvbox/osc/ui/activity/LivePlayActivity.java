@@ -693,10 +693,10 @@ public class LivePlayActivity extends BaseActivity {
                 } catch (JSONException jSONException) {
                     jSONException.printStackTrace();
                 }
-                showEpg(date, arrayList);
                 String savedEpgKey = channelName + "_" + liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex()).getDatePresented();
                 if(!hsEpg.contains(savedEpgKey)) hsEpg.put(savedEpgKey, arrayList);
                 showBottomEpgXU(); //xuameng测试EPG刷新
+                showEpg(date, arrayList);
             }
         });
     }
