@@ -444,7 +444,7 @@ public class LivePlayActivity extends BaseActivity {
                   mRightEpgList.setSelectedPosition(i);
                   //xuameng防止跳焦点                 mRightEpgList.setSelection(i);
                   epgListAdapter.setSelectedEpgIndex(i);
-                  //				epgListAdapter.notifyDataSetChanged();
+                  epgListAdapter.notifyDataSetChanged();
                   int finalI = i;
                   if(!isScrollingXu) {
                      isScrollingXu = true;
@@ -497,12 +497,11 @@ public class LivePlayActivity extends BaseActivity {
                   mRightEpgList.setSelectedPosition(i);
                   //xuameng防止跳焦点                 mRightEpgList.setSelection(i);
                   epgListAdapter.setSelectedEpgIndex(i);
-                  //				epgListAdapter.notifyDataSetChanged();
+                  epgListAdapter.notifyDataSetChanged();
                   int finalI = i;
                   if(!isScrollingXu) {
                      isScrollingXu = true;
                      mRightEpgList.scrollToPositionWithOffset(finalI, 0);
-                     
                   }
               }
            } else { //xuameng无EPG时提示信息
@@ -553,14 +552,13 @@ public class LivePlayActivity extends BaseActivity {
               }
               i = size;
               if(i >= 0 && new Date().compareTo(epgdata.get(i).enddateTime) <= 0) {
-		 epgListAdapter.notifyDataSetChanged();     
+                 epgListAdapter.notifyDataSetChanged();
                  mRightEpgList.setSelectedPosition(i);
                  epgListAdapter.setSelectedEpgIndex(i);
                  int finalI = i;
                  if(!isScrollingXu) {
                     isScrollingXu = true;
-                    mRightEpgList.scrollToPositionWithOffset(finalI, 20);
-
+                    mRightEpgList.scrollToPositionWithOffset(finalI, 0);
                  }
               }
            } else { //xuameng无EPG时提示信息
@@ -606,14 +604,13 @@ public class LivePlayActivity extends BaseActivity {
               }
               i = size;
               if(i >= 0 && new Date().compareTo(epgdata.get(i).enddateTime) <= 0) {
-		epgListAdapter.notifyDataSetChanged();      
+                 epgListAdapter.notifyDataSetChanged();
                  mRightEpgList.setSelectedPosition(i);
                  epgListAdapter.setSelectedEpgIndex(i);
                  int finalI = i;
                  if(!isScrollingXu) {
                     isScrollingXu = true;
-                    mRightEpgList.scrollToPositionWithOffset(finalI, 20);
-
+                    mRightEpgList.scrollToPositionWithOffset(finalI, 0);
                  }
               }
            } else { //xuameng无EPG时提示信息
@@ -1794,7 +1791,6 @@ public class LivePlayActivity extends BaseActivity {
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
                 mHideChannelListRunXu(); //xuameng隐藏频道菜单
                 liveEpgDateAdapter.setFocusedIndex(position);
-           
             }
             @Override
             public void onItemClick(TvRecyclerView parent, View itemView, int position) {
