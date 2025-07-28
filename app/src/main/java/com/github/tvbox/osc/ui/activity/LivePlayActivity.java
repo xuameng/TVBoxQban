@@ -417,8 +417,6 @@ public class LivePlayActivity extends BaseActivity {
         mHandler.post(myRunnableMusic); //xuamengVOD BACK播放进度检测
         mHandler.post(mUpdateVodImageXu); //xuamengVOD BACK播放进度检测
         iv_playpause.setNextFocusLeftId(R.id.pb_progressbar);  //xuameng左右焦点
-        mRightEpgList.setNextFocusLeftId(R.id.mEpgDateGridView);   //xuameng左右焦点
-        mRightEpgList.setNextFocusRightId(R.id.mEpgDateGridView);  //xuameng左右焦点
     }
     //获取EPG并存储 // 百川epg  DIYP epg   51zmt epg ------- 自建EPG格式输出格式请参考 51zmt
     private List < Epginfo > epgdata = new ArrayList < > ();
