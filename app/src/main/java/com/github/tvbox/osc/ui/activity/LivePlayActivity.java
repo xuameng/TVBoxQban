@@ -903,6 +903,9 @@ public class LivePlayActivity extends BaseActivity {
         divEpg.setVisibility(View.VISIBLE);
         divLoadEpgleft.setVisibility(View.VISIBLE);
         divLoadEpg.setVisibility(View.GONE);
+        if(finalI >= 0 && finalI < epgListAdapter.getItemCount()) {
+           mRightEpgList.scrollToPositionWithOffset(finalI, 0);
+        }
         epgListAdapter.getSelectedIndex(); //xuamengEPG打开菜单自动变颜色
         mHideChannelListRunXu(); //xuameng BUG
     }
@@ -1600,7 +1603,9 @@ public class LivePlayActivity extends BaseActivity {
                 super.onScrollStateChanged(recyclerView, newState);
                 mHideChannelListRunXu();
                 if(newState == mRightEpgList.SCROLL_STATE_IDLE) {
-                    mRightEpgList.scrollToPositionWithOffset(finalI, 0);
+                    if(finalI >= 0 && finalI < epgListAdapter.getItemCount()) {
+                       mRightEpgList.scrollToPositionWithOffset(finalI, 0);
+                    }
                     isScrollingXu = false; // xuameng滚动完成后重置状态
                 }
             }
