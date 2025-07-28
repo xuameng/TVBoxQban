@@ -451,7 +451,9 @@ mRightEpgList.setItemAnimator(null);
                   int finalI = i;
                   if(!isScrollingXu) {
                      isScrollingXu = true;
-                     mRightEpgList.scrollToPositionWithOffset(finalI, 0);
+                 mRightEpgList.post(() -> {
+    mRightEpgList.scrollToPositionWithOffset(finalI, 0);
+}); 
                   }
               }
            } else { //xuameng无EPG时提示信息
@@ -507,7 +509,9 @@ mRightEpgList.setItemAnimator(null);
                   int finalI = i;
                   if(!isScrollingXu) {
                      isScrollingXu = true;
-                     mRightEpgList.scrollToPositionWithOffset(finalI, 0);
+                   mRightEpgList.post(() -> {
+    mRightEpgList.scrollToPositionWithOffset(finalI, 0);
+}); 
                   }
               }
            } else { //xuameng无EPG时提示信息
@@ -567,7 +571,9 @@ mRightEpgList.setItemAnimator(null);
                  int finalI = i;
                  if(!isScrollingXu) {
                     isScrollingXu = true;
-                    mRightEpgList.scrollToPositionWithOffset(finalI, 0);
+                   mRightEpgList.post(() -> {
+    mRightEpgList.scrollToPositionWithOffset(finalI, 0);
+}); 
                  }
               }
            } else { //xuameng无EPG时提示信息
@@ -622,7 +628,9 @@ mRightEpgList.setItemAnimator(null);
                  int finalI = i;
                  if(!isScrollingXu) {
                     isScrollingXu = true;
-                    mRightEpgList.scrollToPositionWithOffset(finalI, 0);
+                    mRightEpgList.post(() -> {
+    mRightEpgList.scrollToPositionWithOffset(finalI, 0);
+}); 
                  }
               }
            } else { //xuameng无EPG时提示信息
