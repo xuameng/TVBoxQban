@@ -448,7 +448,7 @@ public class LivePlayActivity extends BaseActivity {
                       if(finalI >= 0 && finalI < epgListAdapter.getItemCount()) {
                          mRightEpgList.scrollToPositionWithOffset(finalI, 0);
                       }
-                  }, 500); 
+                  }, 200); 
               }
            } else { //xuameng无EPG时提示信息
                Epginfo epgbcinfo = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "00:00", "01:59", 0);
@@ -502,7 +502,7 @@ public class LivePlayActivity extends BaseActivity {
                       if(finalI >= 0 && finalI < epgListAdapter.getItemCount()) {
                          mRightEpgList.scrollToPositionWithOffset(finalI, 0);
                       }
-                  }, 500); 
+                  }, 200); 
               }
            } else { //xuameng无EPG时提示信息
                Epginfo epgbcinfo = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "00:00", "01:59", 0);
@@ -560,7 +560,7 @@ public class LivePlayActivity extends BaseActivity {
                      if(finalI >= 0 && finalI < epgListAdapter.getItemCount()) {
                         mRightEpgList.scrollToPositionWithOffset(finalI, 0);
                      }
-                 }, 500); 
+                 }, 200); 
               }
            } else { //xuameng无EPG时提示信息
                Epginfo epgbcinfo = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "00:00", "01:59", 0);
@@ -613,7 +613,7 @@ public class LivePlayActivity extends BaseActivity {
                      if(finalI >= 0 && finalI < epgListAdapter.getItemCount()) {
                         mRightEpgList.scrollToPositionWithOffset(finalI, 0);
                      }
-                 }, 500); 
+                 }, 200); 
               }
            } else { //xuameng无EPG时提示信息
                Epginfo epgbcinfo = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "00:00", "01:59", 0);
@@ -892,7 +892,7 @@ public class LivePlayActivity extends BaseActivity {
             if(finalI >= 0 && finalI < epgListAdapter.getItemCount()) {
                mRightEpgList.scrollToPositionWithOffset(finalI, 0);
             }
-        }, 500); 
+        }, 200); 
         epgListAdapter.getSelectedIndex(); //xuamengEPG打开菜单自动变颜色
         mHideChannelListRunXu(); //xuameng BUG
     }
@@ -1581,7 +1581,6 @@ public class LivePlayActivity extends BaseActivity {
     private void initEpgListView() {
         mRightEpgList.setHasFixedSize(true);
         mRightEpgList.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
-        mRightEpgList.setItemAnimator(null); 
         epgListAdapter = new LiveEpgAdapter();
         mRightEpgList.setAdapter(epgListAdapter);
         mRightEpgList.addOnScrollListener(new RecyclerView.OnScrollListener() {
