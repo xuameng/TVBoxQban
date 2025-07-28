@@ -169,6 +169,7 @@ public class LivePlayActivity extends BaseActivity {
     private TvRecyclerView mRightEpgList;
     private LiveEpgDateAdapter liveEpgDateAdapter;
     private LiveEpgAdapter epgListAdapter;
+	epgListAdapter.setAnimationEnable(false); 
     private List < LiveDayListGroup > liveDayList = new ArrayList < > ();
     //laodao 7day replay
     public static SimpleDateFormat formatDate = new SimpleDateFormat("yyyy-MM-dd");
@@ -445,13 +446,14 @@ public class LivePlayActivity extends BaseActivity {
                   //xuameng防止跳焦点                 mRightEpgList.setSelection(i);
                   epgListAdapter.setSelectedEpgIndex(i);
                   epgListAdapter.notifyDataSetChanged();
-                  mRightEpgList.requestLayout();
                   int finalI = i;
                   if(!isScrollingXu) {
-                     isScrollingXu = true;
-                 mRightEpgList.post(() -> {
-    mRightEpgList.scrollToPositionWithOffset(finalI, 0);
-}); 
+                      isScrollingXu = true;
+                      mRightEpgList.post(() -> {
+                          if(finalI >= 0 && finalI < epgListAdapter.getItemCount()) {
+                             mRightEpgList.scrollToPositionWithOffset(finalI, 0);
+                          }
+                      }); 
                   }
               }
            } else { //xuameng无EPG时提示信息
@@ -501,13 +503,14 @@ public class LivePlayActivity extends BaseActivity {
                   //xuameng防止跳焦点                 mRightEpgList.setSelection(i);
                   epgListAdapter.setSelectedEpgIndex(i);
                   epgListAdapter.notifyDataSetChanged();
-                  mRightEpgList.requestLayout();
                   int finalI = i;
                   if(!isScrollingXu) {
-                     isScrollingXu = true;
-                   mRightEpgList.post(() -> {
-    mRightEpgList.scrollToPositionWithOffset(finalI, 0);
-}); 
+                      isScrollingXu = true;
+                      mRightEpgList.post(() -> {
+                          if(finalI >= 0 && finalI < epgListAdapter.getItemCount()) {
+                             mRightEpgList.scrollToPositionWithOffset(finalI, 0);
+                          }
+                      });
                   }
               }
            } else { //xuameng无EPG时提示信息
@@ -559,15 +562,16 @@ public class LivePlayActivity extends BaseActivity {
               i = size;
               if(i >= 0 && new Date().compareTo(epgdata.get(i).enddateTime) <= 0) {
                  epgListAdapter.notifyDataSetChanged();
-                 mRightEpgList.requestLayout();
                  mRightEpgList.setSelectedPosition(i);
                  epgListAdapter.setSelectedEpgIndex(i);
                  int finalI = i;
                  if(!isScrollingXu) {
                     isScrollingXu = true;
-                   mRightEpgList.post(() -> {
-    mRightEpgList.scrollToPositionWithOffset(finalI, 0);
-}); 
+                    mRightEpgList.post(() -> {
+                        if(finalI >= 0 && finalI < epgListAdapter.getItemCount()) {
+                           mRightEpgList.scrollToPositionWithOffset(finalI, 0);
+                        }
+                    });
                  }
               }
            } else { //xuameng无EPG时提示信息
@@ -614,15 +618,16 @@ public class LivePlayActivity extends BaseActivity {
               i = size;
               if(i >= 0 && new Date().compareTo(epgdata.get(i).enddateTime) <= 0) {
                  epgListAdapter.notifyDataSetChanged();
-                 mRightEpgList.requestLayout();
                  mRightEpgList.setSelectedPosition(i);
                  epgListAdapter.setSelectedEpgIndex(i);
                  int finalI = i;
                  if(!isScrollingXu) {
                     isScrollingXu = true;
                     mRightEpgList.post(() -> {
-    mRightEpgList.scrollToPositionWithOffset(finalI, 0);
-}); 
+                        if(finalI >= 0 && finalI < epgListAdapter.getItemCount()) {
+                           mRightEpgList.scrollToPositionWithOffset(finalI, 0);
+                        }
+                    }); 
                  }
               }
            } else { //xuameng无EPG时提示信息
