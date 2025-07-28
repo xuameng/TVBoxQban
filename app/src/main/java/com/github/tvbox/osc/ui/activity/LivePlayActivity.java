@@ -553,12 +553,13 @@ public class LivePlayActivity extends BaseActivity {
               }
               i = size;
               if(i >= 0 && new Date().compareTo(epgdata.get(i).enddateTime) <= 0) {
+		 epgListAdapter.notifyDataSetChanged();     
                  mRightEpgList.setSelectedPosition(i);
                  epgListAdapter.setSelectedEpgIndex(i);
                  int finalI = i;
                  if(!isScrollingXu) {
                     isScrollingXu = true;
-                    mRightEpgList.scrollToPositionWithOffset(finalI, 0);
+                    mRightEpgList.scrollToPositionWithOffset(finalI, 20);
 
                  }
               }
@@ -605,12 +606,13 @@ public class LivePlayActivity extends BaseActivity {
               }
               i = size;
               if(i >= 0 && new Date().compareTo(epgdata.get(i).enddateTime) <= 0) {
+		epgListAdapter.notifyDataSetChanged();      
                  mRightEpgList.setSelectedPosition(i);
                  epgListAdapter.setSelectedEpgIndex(i);
                  int finalI = i;
                  if(!isScrollingXu) {
                     isScrollingXu = true;
-                    mRightEpgList.scrollToPositionWithOffset(finalI, 0);
+                    mRightEpgList.scrollToPositionWithOffset(finalI, 20);
 
                  }
               }
