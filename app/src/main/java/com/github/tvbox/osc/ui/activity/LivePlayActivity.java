@@ -3226,9 +3226,5 @@ public class NoScrollRecyclerView extends RecyclerView {
     public void smoothScrollToPosition(int position) {
         // 禁用平滑滚动动画
     }
-    @Override
-    public boolean onTouchEvent(MotionEvent e) {
-        return false; // 禁用触摸滚动
-    }
 }
 }
