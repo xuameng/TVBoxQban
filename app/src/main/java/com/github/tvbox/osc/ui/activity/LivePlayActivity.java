@@ -441,10 +441,13 @@ public class LivePlayActivity extends BaseActivity {
               }
               i = size;
               if(i >= 0 && new Date().compareTo(epgdata.get(i).enddateTime) <= 0) {
+mRightEpgList.setLayoutManager(new LinearLayoutManager(context));
+mRightEpgList.setItemAnimator(null); 
                   mRightEpgList.setSelectedPosition(i);
                   //xuameng防止跳焦点                 mRightEpgList.setSelection(i);
                   epgListAdapter.setSelectedEpgIndex(i);
                   epgListAdapter.notifyDataSetChanged();
+                  mRightEpgList.requestLayout();
                   int finalI = i;
                   if(!isScrollingXu) {
                      isScrollingXu = true;
@@ -494,10 +497,13 @@ public class LivePlayActivity extends BaseActivity {
               }
               i = size;
               if(i >= 0 && new Date().compareTo(epgdata.get(i).enddateTime) <= 0) {
+mRightEpgList.setLayoutManager(new LinearLayoutManager(context));
+mRightEpgList.setItemAnimator(null); 
                   mRightEpgList.setSelectedPosition(i);
                   //xuameng防止跳焦点                 mRightEpgList.setSelection(i);
                   epgListAdapter.setSelectedEpgIndex(i);
                   epgListAdapter.notifyDataSetChanged();
+                  mRightEpgList.requestLayout();
                   int finalI = i;
                   if(!isScrollingXu) {
                      isScrollingXu = true;
@@ -552,7 +558,10 @@ public class LivePlayActivity extends BaseActivity {
               }
               i = size;
               if(i >= 0 && new Date().compareTo(epgdata.get(i).enddateTime) <= 0) {
+mRightEpgList.setLayoutManager(new LinearLayoutManager(context));
+mRightEpgList.setItemAnimator(null); 
                  epgListAdapter.notifyDataSetChanged();
+                 mRightEpgList.requestLayout();
                  mRightEpgList.setSelectedPosition(i);
                  epgListAdapter.setSelectedEpgIndex(i);
                  int finalI = i;
@@ -604,7 +613,10 @@ public class LivePlayActivity extends BaseActivity {
               }
               i = size;
               if(i >= 0 && new Date().compareTo(epgdata.get(i).enddateTime) <= 0) {
+mRightEpgList.setLayoutManager(new LinearLayoutManager(context));
+mRightEpgList.setItemAnimator(null); 
                  epgListAdapter.notifyDataSetChanged();
+                 mRightEpgList.requestLayout();
                  mRightEpgList.setSelectedPosition(i);
                  epgListAdapter.setSelectedEpgIndex(i);
                  int finalI = i;
