@@ -448,7 +448,7 @@ public class LivePlayActivity extends BaseActivity {
                   mRightEpgList.removeCallbacks(null);
                   mRightEpgList.post(() -> {
                       if(finalI >= 0 && finalI < epgListAdapter.getItemCount()) {
-                         mRightEpgList.scrollToPositionWithOffsetXu(finalI, 0);
+                         scrollToPositionWithOffsetXu(finalI, 0);
                       }
                   }); 
               }
@@ -503,7 +503,7 @@ public class LivePlayActivity extends BaseActivity {
                   mRightEpgList.removeCallbacks(null);
                   mRightEpgList.post(() -> {
                       if(finalI >= 0 && finalI < epgListAdapter.getItemCount()) {
-                         mRightEpgList.scrollToPositionWithOffsetXu(finalI, 0);
+                         scrollToPositionWithOffsetXu(finalI, 0);
                       }
                   }); 
               }
@@ -562,7 +562,7 @@ public class LivePlayActivity extends BaseActivity {
                  mRightEpgList.removeCallbacks(null);
                  mRightEpgList.post(() -> {
                      if(finalI >= 0 && finalI < epgListAdapter.getItemCount()) {
-                        mRightEpgList.scrollToPositionWithOffsetXu(finalI, 0);
+                        scrollToPositionWithOffsetXu(finalI, 0);
                      }
                  }); 
               }
@@ -616,7 +616,7 @@ public class LivePlayActivity extends BaseActivity {
                  mRightEpgList.removeCallbacks(null);
                  mRightEpgList.post(() -> {
                      if(finalI >= 0 && finalI < epgListAdapter.getItemCount()) {
-                        mRightEpgList.scrollToPositionWithOffsetXu(finalI, 0);
+                        scrollToPositionWithOffsetXu(finalI, 0);
                      }
                  }); 
               }
@@ -896,7 +896,7 @@ public class LivePlayActivity extends BaseActivity {
         mRightEpgList.removeCallbacks(null);
         mRightEpgList.post(() -> {
             if(finalI >= 0 && finalI < epgListAdapter.getItemCount()) {
-               mRightEpgList.scrollToPositionWithOffsetXu(finalI, 0);    //xuameng解决第一次显示菜单EPG不滚动问题
+               scrollToPositionWithOffsetXu(finalI, 0);    //xuameng解决第一次显示菜单EPG不滚动问题
             }
         }); 
         epgListAdapter.getSelectedIndex(); //xuamengEPG打开菜单自动变颜色
