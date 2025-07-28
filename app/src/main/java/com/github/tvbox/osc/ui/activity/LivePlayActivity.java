@@ -167,7 +167,7 @@ public class LivePlayActivity extends BaseActivity {
     // private ObjectAnimator objectAnimator;
     public String epgStringAddress = "";
     private TvRecyclerView mEpgDateGridView;
-    private NoScrollRecyclerView mRightEpgList;
+    private TvRecyclerView mRightEpgList;
     private LiveEpgDateAdapter liveEpgDateAdapter;
     private LiveEpgAdapter epgListAdapter;
     private List < LiveDayListGroup > liveDayList = new ArrayList < > ();
@@ -440,14 +440,15 @@ public class LivePlayActivity extends BaseActivity {
               i = size;
               if(i >= 0 && new Date().compareTo(epgdata.get(i).enddateTime) <= 0) {
                   epgListAdapter.notifyDataSetChanged();
-                  mRightEpgList.setSelectedPosition(i);
-                  //xuameng防止跳焦点                 mRightEpgList.setSelection(i);
-                  epgListAdapter.setSelectedEpgIndex(i);
+
                   finalI = i;
                   mRightEpgList.removeCallbacks(null);
                   mRightEpgList.post(() -> {
                       if(finalI >= 0 && finalI < epgListAdapter.getItemCount()) {
                          mRightEpgList.scrollToPositionWithOffset(finalI, 0);
+						                   mRightEpgList.setSelectedPosition(i);
+                  //xuameng防止跳焦点                 mRightEpgList.setSelection(i);
+                  epgListAdapter.setSelectedEpgIndex(i);
                       }
                   }); 
               }
@@ -495,14 +496,15 @@ public class LivePlayActivity extends BaseActivity {
               i = size;
               if(i >= 0 && new Date().compareTo(epgdata.get(i).enddateTime) <= 0) {
                   epgListAdapter.notifyDataSetChanged();
-                  mRightEpgList.setSelectedPosition(i);
-                  //xuameng防止跳焦点                 mRightEpgList.setSelection(i);
-                  epgListAdapter.setSelectedEpgIndex(i);
+
                   finalI = i;
                   mRightEpgList.removeCallbacks(null);
                   mRightEpgList.post(() -> {
                       if(finalI >= 0 && finalI < epgListAdapter.getItemCount()) {
                          mRightEpgList.scrollToPositionWithOffset(finalI, 0);
+						                   mRightEpgList.setSelectedPosition(i);
+                  //xuameng防止跳焦点                 mRightEpgList.setSelection(i);
+                  epgListAdapter.setSelectedEpgIndex(i);
                       }
                   }); 
               }
@@ -555,13 +557,14 @@ public class LivePlayActivity extends BaseActivity {
               i = size;
               if(i >= 0 && new Date().compareTo(epgdata.get(i).enddateTime) <= 0) {
                  epgListAdapter.notifyDataSetChanged();
-                 mRightEpgList.setSelectedPosition(i);
-                 epgListAdapter.setSelectedEpgIndex(i);
+
                  finalI = i;
                  mRightEpgList.removeCallbacks(null);
                  mRightEpgList.post(() -> {
                      if(finalI >= 0 && finalI < epgListAdapter.getItemCount()) {
                         mRightEpgList.scrollToPositionWithOffset(finalI, 0);
+						                 mRightEpgList.setSelectedPosition(i);
+                 epgListAdapter.setSelectedEpgIndex(i);
                      }
                  }); 
               }
@@ -609,13 +612,14 @@ public class LivePlayActivity extends BaseActivity {
               i = size;
               if(i >= 0 && new Date().compareTo(epgdata.get(i).enddateTime) <= 0) {
                  epgListAdapter.notifyDataSetChanged();
-                 mRightEpgList.setSelectedPosition(i);
-                 epgListAdapter.setSelectedEpgIndex(i);
+
                  finalI = i;
                  mRightEpgList.removeCallbacks(null);
                  mRightEpgList.post(() -> {
                      if(finalI >= 0 && finalI < epgListAdapter.getItemCount()) {
                         mRightEpgList.scrollToPositionWithOffset(finalI, 0);
+						                 mRightEpgList.setSelectedPosition(i);
+                 epgListAdapter.setSelectedEpgIndex(i);
                      }
                  }); 
               }
@@ -3217,14 +3221,4 @@ public class LivePlayActivity extends BaseActivity {
         };
         countDownTimer.start();
     }
-
-public class NoScrollRecyclerView extends RecyclerView {
-    public NoScrollRecyclerView(Context context) {
-        super(context);
-    }
-    @Override
-    public void smoothScrollToPosition(int position) {
-        // 禁用平滑滚动动画
-    }
-}
 }
