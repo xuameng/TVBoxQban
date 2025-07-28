@@ -418,9 +418,6 @@ public class LivePlayActivity extends BaseActivity {
         mHandler.post(myRunnableMusic); //xuamengVOD BACK播放进度检测
         mHandler.post(mUpdateVodImageXu); //xuamengVOD BACK播放进度检测
         iv_playpause.setNextFocusLeftId(R.id.pb_progressbar);
-		epgListAdapter.setAnimationEnable(false);
-		epgListAdapter.setAnimationFirstOnly(false);  
-		epgListAdapter.setAnimationWithDefault(false); 
     }
     //获取EPG并存储 // 百川epg  DIYP epg   51zmt epg ------- 自建EPG格式输出格式请参考 51zmt
     private List < Epginfo > epgdata = new ArrayList < > ();
@@ -432,6 +429,10 @@ public class LivePlayActivity extends BaseActivity {
               epgdata = arrayList;
               epgListAdapter.CanBack(currentLiveChannelItem.getinclude_back());
               epgListAdapter.setNewData(epgdata);
+			  		epgListAdapter.setAnimationEnable(false);
+		epgListAdapter.setAnimationFirstOnly(false);  
+		epgListAdapter.setAnimationWithDefault(false); 
+		epgListAdapter.setItemAnimator(null);
               int i = -1;
               int size = epgdata.size() - 1;
               while(size >= 0) {
