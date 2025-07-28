@@ -439,16 +439,23 @@ public class LivePlayActivity extends BaseActivity {
               }
               i = size;
               if(i >= 0 && new Date().compareTo(epgdata.get(i).enddateTime) <= 0) {
+                  epgListAdapter.notifyDataSetChanged();
                   mRightEpgList.setSelectedPosition(i);
                   //xuameng防止跳焦点                 mRightEpgList.setSelection(i);
                   epgListAdapter.setSelectedEpgIndex(i);
-                  epgListAdapter.notifyDataSetChanged();
+
+mRightEpgList.setFocusable(false);
+mRightEpgList.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+mRightEpgList.setFocusableInTouchMode(false);
+mRightEpgList.postDelayed(() -> {
+    mRightEpgList.setFocusable(true);
+}, 1000); 
                   finalI = i;
-                  mRightEpgList.postDelayed(() -> {
+                  mRightEpgList.post(() -> {
                       if(finalI >= 0 && finalI < epgListAdapter.getItemCount()) {
                          mRightEpgList.scrollToPositionWithOffset(finalI, 0);
                       }
-                  }, 50); 
+                  }); 
               }
            } else { //xuameng无EPG时提示信息
                Epginfo epgbcinfo = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "00:00", "01:59", 0);
@@ -493,16 +500,23 @@ public class LivePlayActivity extends BaseActivity {
               }
               i = size;
               if(i >= 0 && new Date().compareTo(epgdata.get(i).enddateTime) <= 0) {
+                  epgListAdapter.notifyDataSetChanged();
                   mRightEpgList.setSelectedPosition(i);
                   //xuameng防止跳焦点                 mRightEpgList.setSelection(i);
                   epgListAdapter.setSelectedEpgIndex(i);
-                  epgListAdapter.notifyDataSetChanged();
+mRightEpgList.setFocusable(false);
+mRightEpgList.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+mRightEpgList.setFocusableInTouchMode(false);
+mRightEpgList.postDelayed(() -> {
+    mRightEpgList.setFocusable(true);
+}, 1000);
+
                   finalI = i;
-                  mRightEpgList.postDelayed(() -> {
+                  mRightEpgList.post(() -> {
                       if(finalI >= 0 && finalI < epgListAdapter.getItemCount()) {
                          mRightEpgList.scrollToPositionWithOffset(finalI, 0);
                       }
-                  }, 50); 
+                  }); 
               }
            } else { //xuameng无EPG时提示信息
                Epginfo epgbcinfo = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "00:00", "01:59", 0);
@@ -555,12 +569,18 @@ public class LivePlayActivity extends BaseActivity {
                  epgListAdapter.notifyDataSetChanged();
                  mRightEpgList.setSelectedPosition(i);
                  epgListAdapter.setSelectedEpgIndex(i);
+mRightEpgList.setFocusable(false);
+mRightEpgList.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+mRightEpgList.setFocusableInTouchMode(false);
+mRightEpgList.postDelayed(() -> {
+    mRightEpgList.setFocusable(true);
+}, 1000);
                  finalI = i;
-                 mRightEpgList.postDelayed(() -> {
+                 mRightEpgList.post(() -> {
                      if(finalI >= 0 && finalI < epgListAdapter.getItemCount()) {
                         mRightEpgList.scrollToPositionWithOffset(finalI, 0);
                      }
-                 }, 50); 
+                 }); 
               }
            } else { //xuameng无EPG时提示信息
                Epginfo epgbcinfo = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "00:00", "01:59", 0);
@@ -608,12 +628,18 @@ public class LivePlayActivity extends BaseActivity {
                  epgListAdapter.notifyDataSetChanged();
                  mRightEpgList.setSelectedPosition(i);
                  epgListAdapter.setSelectedEpgIndex(i);
+mRightEpgList.setFocusable(false);
+mRightEpgList.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+mRightEpgList.setFocusableInTouchMode(false);
+mRightEpgList.postDelayed(() -> {
+    mRightEpgList.setFocusable(true);
+}, 1000);
                  finalI = i;
-                 mRightEpgList.postDelayed(() -> {
+                 mRightEpgList.post(() -> {
                      if(finalI >= 0 && finalI < epgListAdapter.getItemCount()) {
                         mRightEpgList.scrollToPositionWithOffset(finalI, 0);
                      }
-                 }, 50); 
+                 }); 
               }
            } else { //xuameng无EPG时提示信息
                Epginfo epgbcinfo = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "00:00", "01:59", 0);
@@ -888,11 +914,17 @@ public class LivePlayActivity extends BaseActivity {
         divEpg.setVisibility(View.VISIBLE);
         divLoadEpgleft.setVisibility(View.VISIBLE);
         divLoadEpg.setVisibility(View.GONE);
-        mRightEpgList.postDelayed(() -> {
+mRightEpgList.setFocusable(false);
+mRightEpgList.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+mRightEpgList.setFocusableInTouchMode(false);
+mRightEpgList.postDelayed(() -> {
+    mRightEpgList.setFocusable(true);
+}, 1000);
+        mRightEpgList.post(() -> {
             if(finalI >= 0 && finalI < epgListAdapter.getItemCount()) {
                mRightEpgList.scrollToPositionWithOffset(finalI, 0);    //xuameng解决第一次显示菜单EPG不滚动问题
             }
-        }, 50); 
+        }); 
         epgListAdapter.getSelectedIndex(); //xuamengEPG打开菜单自动变颜色
         mHideChannelListRunXu(); //xuameng BUG
     }
