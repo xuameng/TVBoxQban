@@ -439,7 +439,7 @@ public class LivePlayActivity extends BaseActivity {
               i = size;
               if(i >= 0 && new Date().compareTo(epgdata.get(i).enddateTime) <= 0) {
                   epgListAdapter.notifyDataSetChanged();
-                  final targetPos = i;  // 使用final保证线程安全
+                  final int targetPos = i;  // 使用final保证线程安全
                   mRightEpgList.removeCallbacks(null);
                   mRightEpgList.post(() -> {
                       if(targetPos >= 0 && targetPos < epgListAdapter.getItemCount()) {
@@ -493,6 +493,8 @@ public class LivePlayActivity extends BaseActivity {
               }
               i = size;
               if(i >= 0 && new Date().compareTo(epgdata.get(i).enddateTime) <= 0) {
+                  epgListAdapter.notifyDataSetChanged();
+                  final int targetPos = i;  // 使用final保证线程安全
                   mRightEpgList.removeCallbacks(null);
                   mRightEpgList.post(() -> {
                       if(targetPos >= 0 && targetPos < epgListAdapter.getItemCount()) {
@@ -551,7 +553,7 @@ public class LivePlayActivity extends BaseActivity {
               i = size;
               if(i >= 0 && new Date().compareTo(epgdata.get(i).enddateTime) <= 0) {
                   epgListAdapter.notifyDataSetChanged();
-                  final targetPos = i;  // 使用final保证线程安全
+                  final int targetPos = i;  // 使用final保证线程安全
                   mRightEpgList.removeCallbacks(null);
                   mRightEpgList.post(() -> {
                       if(targetPos >= 0 && targetPos < epgListAdapter.getItemCount()) {
@@ -559,7 +561,7 @@ public class LivePlayActivity extends BaseActivity {
                          mRightEpgList.scrollToPositionWithOffset(targetPos, 0);
                          mRightEpgList.setSelectedPosition(targetPos);
                       }
-                  }); 
+                  });
               }
            } else { //xuameng无EPG时提示信息
                Epginfo epgbcinfo = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "00:00", "01:59", 0);
@@ -605,7 +607,7 @@ public class LivePlayActivity extends BaseActivity {
               i = size;
               if(i >= 0 && new Date().compareTo(epgdata.get(i).enddateTime) <= 0) {
                   epgListAdapter.notifyDataSetChanged();
-                  final targetPos = i;  // 使用final保证线程安全
+                  final int targetPos = i;  // 使用final保证线程安全
                   mRightEpgList.removeCallbacks(null);
                   mRightEpgList.post(() -> {
                       if(targetPos >= 0 && targetPos < epgListAdapter.getItemCount()) {
@@ -613,7 +615,7 @@ public class LivePlayActivity extends BaseActivity {
                          mRightEpgList.scrollToPositionWithOffset(targetPos, 0);
                          mRightEpgList.setSelectedPosition(targetPos);
                       }
-                  }); 
+                  });
               }
            } else { //xuameng无EPG时提示信息
                Epginfo epgbcinfo = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "00:00", "01:59", 0);
