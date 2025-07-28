@@ -83,6 +83,7 @@ import com.lzy.okgo.model.Response;
 import com.orhanobut.hawk.Hawk;
 import com.owen.tvrecyclerview.widget.TvRecyclerView;
 import com.owen.tvrecyclerview.widget.V7LinearLayoutManager;
+import android.view.ViewTreeObserver;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -3232,15 +3233,16 @@ public void smoothScrollToPositionXu(int targetPos) {
     if (mRightEpgList.isLaidOut()) {
         safeScrollToPosition(targetPos);
     } else {
-        mRightEpgList.getViewTreeObserver().addOnPreDrawListener(
-            new ViewTreeObserver.OnPreDrawListener() {
-                @Override
-                public boolean onPreDraw() {
-                    mRightEpgList.getViewTreeObserver().removeOnPreDrawListener(this);
-                    safeScrollToPosition(targetPos);
-                    return true;
-                }
-            });
+mRightEpgList.getViewTreeObserver().addOnPreDrawListener(
+    new ViewTreeObserver.OnPreDrawListener() {
+        @Override
+        public boolean onPreDraw() {
+            mRightEpgList.getViewTreeObserver().removeOnPreDrawListener(this);
+            safeScrollToPosition(targetPos);
+            return true; //必须返回true继续绘制
+        }
+    }
+);
     }
 }
 }
