@@ -1585,7 +1585,7 @@ public class LivePlayActivity extends BaseActivity {
     //laodao 7天Epg数据绑定和展示
     private void initEpgListView() {
         mRightEpgList.setHasFixedSize(true);
-        mRightEpgList.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
+        mRightEpgList.setLayoutManager(new NoScrollLinearLayoutManager(this.mContext, 1, false));
         epgListAdapter = new LiveEpgAdapter();
         mRightEpgList.setAdapter(epgListAdapter);
         mRightEpgList.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -3217,4 +3217,19 @@ public class LivePlayActivity extends BaseActivity {
         };
         countDownTimer.start();
     }
+
+	public class NoScrollLinearLayoutManager extends LinearLayoutManager {
+    public NoScrollLinearLayoutManager(Context context) {
+        super(context);
+    }
+    @Override
+    public boolean canScrollVertically() {
+        return false; // 禁用垂直滚动
+    }
+    @Override
+    public boolean canScrollHorizontally() {
+        return false; // 禁用水平滚动
+    }
+}
+
 }
