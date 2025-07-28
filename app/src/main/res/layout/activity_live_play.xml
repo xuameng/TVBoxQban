@@ -227,8 +227,6 @@
                     android:paddingBottom="10.0mm"
                     android:visibility="visible"
                     android:scrollbars="vertical"
-                    android:nextFocusLeft="@id/mEpgDateGridView" 
-                    android:nextFocusRight="@id/mEpgDateGridView"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:listSelector="@drawable/item_bg_selector_right"
