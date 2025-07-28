@@ -197,6 +197,7 @@
                 android:orientation="horizontal"
                 android:id="@+id/divEPG"
                 android:visibility="gone"
+				android:descendantFocusability="blocksDescendants"
                 android:layout_width="@dimen/vs_480"
                 android:layout_height="fill_parent">
                 <com.owen.tvrecyclerview.widget.TvRecyclerView
