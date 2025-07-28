@@ -429,10 +429,6 @@ public class LivePlayActivity extends BaseActivity {
               epgdata = arrayList;
               epgListAdapter.CanBack(currentLiveChannelItem.getinclude_back());
               epgListAdapter.setNewData(epgdata);
-			  		epgListAdapter.setAnimationEnable(false);
-		epgListAdapter.setAnimationFirstOnly(false);  
-		epgListAdapter.setAnimationWithDefault(false); 
-		epgListAdapter.setItemAnimator(null);
               int i = -1;
               int size = epgdata.size() - 1;
               while(size >= 0) {
