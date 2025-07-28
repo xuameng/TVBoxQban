@@ -217,7 +217,6 @@ public class LivePlayActivity extends BaseActivity {
     private TextView iv_playpause;
     private View iv_play;
     private boolean show = false;
-	private int lastPosition = -1;
     @Override
     protected int getLayoutResID() {
         return R.layout.activity_live_play;
@@ -448,7 +447,7 @@ public class LivePlayActivity extends BaseActivity {
                   mRightEpgList.removeCallbacks(null);
                   mRightEpgList.post(() -> {
                       if(finalI >= 0 && finalI < epgListAdapter.getItemCount()) {
-                         scrollToPositionWithOffsetXu(finalI, 0);
+                      //   mRightEpgList.scrollToPositionWithOffset(finalI, 0);
                       }
                   }); 
               }
@@ -503,7 +502,7 @@ public class LivePlayActivity extends BaseActivity {
                   mRightEpgList.removeCallbacks(null);
                   mRightEpgList.post(() -> {
                       if(finalI >= 0 && finalI < epgListAdapter.getItemCount()) {
-                         scrollToPositionWithOffsetXu(finalI, 0);
+                        // mRightEpgList.scrollToPositionWithOffset(finalI, 0);
                       }
                   }); 
               }
@@ -562,7 +561,7 @@ public class LivePlayActivity extends BaseActivity {
                  mRightEpgList.removeCallbacks(null);
                  mRightEpgList.post(() -> {
                      if(finalI >= 0 && finalI < epgListAdapter.getItemCount()) {
-                        scrollToPositionWithOffsetXu(finalI, 0);
+                      //  mRightEpgList.scrollToPositionWithOffset(finalI, 0);
                      }
                  }); 
               }
@@ -616,7 +615,7 @@ public class LivePlayActivity extends BaseActivity {
                  mRightEpgList.removeCallbacks(null);
                  mRightEpgList.post(() -> {
                      if(finalI >= 0 && finalI < epgListAdapter.getItemCount()) {
-                        scrollToPositionWithOffsetXu(finalI, 0);
+                     //   mRightEpgList.scrollToPositionWithOffset(finalI, 0);
                      }
                  }); 
               }
@@ -896,7 +895,7 @@ public class LivePlayActivity extends BaseActivity {
         mRightEpgList.removeCallbacks(null);
         mRightEpgList.post(() -> {
             if(finalI >= 0 && finalI < epgListAdapter.getItemCount()) {
-               scrollToPositionWithOffsetXu(finalI, 0);    //xuameng解决第一次显示菜单EPG不滚动问题
+             //  mRightEpgList.scrollToPositionWithOffset(finalI, 0);    //xuameng解决第一次显示菜单EPG不滚动问题
             }
         }); 
         epgListAdapter.getSelectedIndex(); //xuamengEPG打开菜单自动变颜色
@@ -1602,14 +1601,14 @@ public class LivePlayActivity extends BaseActivity {
         mRightEpgList.setOnItemListener(new TvRecyclerView.OnItemListener() {
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
-             //   if(!mRightEpgList.isScrolling() && !mRightEpgList.isComputingLayout()) { //xuameng如果EPG正在滚动返回，解决BUG
-               //     epgListAdapter.setFocusedEpgIndex(-1);
-               // }
+                if(!mRightEpgList.isScrolling() && !mRightEpgList.isComputingLayout()) { //xuameng如果EPG正在滚动返回，解决BUG
+                    epgListAdapter.setFocusedEpgIndex(-1);
+                }
             }
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
                 mHideChannelListRunXu();
-              //  epgListAdapter.setFocusedEpgIndex(position);
+                epgListAdapter.setFocusedEpgIndex(position);
             }
             @SuppressLint("NotifyDataSetChanged")
             @Override
@@ -3217,11 +3216,5 @@ public class LivePlayActivity extends BaseActivity {
             }
         };
         countDownTimer.start();
-    }
-    public void scrollToPositionWithOffsetXu(int position, int offset) {
-        if (position != lastPosition) {
-            mRightEpgList.scrollToPositionWithOffset(position, offset);
-            lastPosition = position;
-        }
     }
 }
