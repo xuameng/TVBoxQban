@@ -893,7 +893,7 @@ public class LivePlayActivity extends BaseActivity {
         mRightEpgList.removeCallbacks(null);
         mRightEpgList.post(() -> {
            int SelectedIndexEpg = epgListAdapter.getSelectedIndex();
-           if (SelectedIndexEpg ! = -1){
+           if (SelectedIndexEpg != -1){
                mRightEpgList.scrollToPositionWithOffset(epgListAdapter.getSelectedIndex(), 0);
 		       epgListAdapter.getSelectedIndex(); //xuamengEPG打开菜单自动变颜色
 		   }
@@ -1639,7 +1639,7 @@ public class LivePlayActivity extends BaseActivity {
                     if(iv_Play_Xu.getVisibility() == View.VISIBLE) {
                         iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
                     }
-                    //   epgListAdapter.setShiyiSelection(-1, false, timeFormat.format(date));
+                    epgListAdapter.setSelectedEpgIndex(position);
                     liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
                     getEpg(new Date());
                     showBottomEpg(); //xuameng显示EPG和上面菜单 
@@ -1711,6 +1711,7 @@ public class LivePlayActivity extends BaseActivity {
                     if(iv_Play_Xu.getVisibility() == View.VISIBLE) {
                         iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
                     }
+					epgListAdapter.setSelectedEpgIndex(position);
                     //   epgListAdapter.setShiyiSelection(-1, false, timeFormat.format(date));
                     liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
                     getEpg(new Date());
