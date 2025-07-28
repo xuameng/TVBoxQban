@@ -892,9 +892,12 @@ public class LivePlayActivity extends BaseActivity {
         divLoadEpg.setVisibility(View.GONE);
         mRightEpgList.removeCallbacks(null);
         mRightEpgList.post(() -> {
-           mRightEpgList.scrollToPositionWithOffset(epgListAdapter.getSelectedIndex(), 0);
-        });
-        epgListAdapter.getSelectedIndex(); //xuamengEPG打开菜单自动变颜色
+           int SelectedIndexEpg = epgListAdapter.getSelectedIndex();
+           if (SelectedIndexEpg ! = -1){
+               mRightEpgList.scrollToPositionWithOffset(epgListAdapter.getSelectedIndex(), 0);
+		       epgListAdapter.getSelectedIndex(); //xuamengEPG打开菜单自动变颜色
+		   }
+        }); 
         mHideChannelListRunXu(); //xuameng BUG
     }
     //频道列表
