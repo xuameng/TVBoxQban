@@ -443,14 +443,8 @@ public class LivePlayActivity extends BaseActivity {
                   mRightEpgList.setSelectedPosition(i);
                   //xuameng防止跳焦点                 mRightEpgList.setSelection(i);
                   epgListAdapter.setSelectedEpgIndex(i);
-
-mRightEpgList.setFocusable(false);
-mRightEpgList.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
-mRightEpgList.setFocusableInTouchMode(false);
-mRightEpgList.postDelayed(() -> {
-    mRightEpgList.setFocusable(true);
-}, 1000); 
                   finalI = i;
+                  mRightEpgList.removeCallbacks(null);
                   mRightEpgList.post(() -> {
                       if(finalI >= 0 && finalI < epgListAdapter.getItemCount()) {
                          mRightEpgList.scrollToPositionWithOffset(finalI, 0);
@@ -504,14 +498,8 @@ mRightEpgList.postDelayed(() -> {
                   mRightEpgList.setSelectedPosition(i);
                   //xuameng防止跳焦点                 mRightEpgList.setSelection(i);
                   epgListAdapter.setSelectedEpgIndex(i);
-mRightEpgList.setFocusable(false);
-mRightEpgList.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
-mRightEpgList.setFocusableInTouchMode(false);
-mRightEpgList.postDelayed(() -> {
-    mRightEpgList.setFocusable(true);
-}, 1000);
-
                   finalI = i;
+                  mRightEpgList.removeCallbacks(null);
                   mRightEpgList.post(() -> {
                       if(finalI >= 0 && finalI < epgListAdapter.getItemCount()) {
                          mRightEpgList.scrollToPositionWithOffset(finalI, 0);
@@ -569,13 +557,8 @@ mRightEpgList.postDelayed(() -> {
                  epgListAdapter.notifyDataSetChanged();
                  mRightEpgList.setSelectedPosition(i);
                  epgListAdapter.setSelectedEpgIndex(i);
-mRightEpgList.setFocusable(false);
-mRightEpgList.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
-mRightEpgList.setFocusableInTouchMode(false);
-mRightEpgList.postDelayed(() -> {
-    mRightEpgList.setFocusable(true);
-}, 1000);
                  finalI = i;
+                 mRightEpgList.removeCallbacks(null);
                  mRightEpgList.post(() -> {
                      if(finalI >= 0 && finalI < epgListAdapter.getItemCount()) {
                         mRightEpgList.scrollToPositionWithOffset(finalI, 0);
@@ -628,13 +611,8 @@ mRightEpgList.postDelayed(() -> {
                  epgListAdapter.notifyDataSetChanged();
                  mRightEpgList.setSelectedPosition(i);
                  epgListAdapter.setSelectedEpgIndex(i);
-mRightEpgList.setFocusable(false);
-mRightEpgList.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
-mRightEpgList.setFocusableInTouchMode(false);
-mRightEpgList.postDelayed(() -> {
-    mRightEpgList.setFocusable(true);
-}, 1000);
                  finalI = i;
+                 mRightEpgList.removeCallbacks(null);
                  mRightEpgList.post(() -> {
                      if(finalI >= 0 && finalI < epgListAdapter.getItemCount()) {
                         mRightEpgList.scrollToPositionWithOffset(finalI, 0);
@@ -914,12 +892,7 @@ mRightEpgList.postDelayed(() -> {
         divEpg.setVisibility(View.VISIBLE);
         divLoadEpgleft.setVisibility(View.VISIBLE);
         divLoadEpg.setVisibility(View.GONE);
-mRightEpgList.setFocusable(false);
-mRightEpgList.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
-mRightEpgList.setFocusableInTouchMode(false);
-mRightEpgList.postDelayed(() -> {
-    mRightEpgList.setFocusable(true);
-}, 1000);
+        mRightEpgList.removeCallbacks(null);
         mRightEpgList.post(() -> {
             if(finalI >= 0 && finalI < epgListAdapter.getItemCount()) {
                mRightEpgList.scrollToPositionWithOffset(finalI, 0);    //xuameng解决第一次显示菜单EPG不滚动问题
