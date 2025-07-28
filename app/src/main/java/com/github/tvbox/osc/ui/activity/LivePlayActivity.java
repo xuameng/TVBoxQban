@@ -3218,17 +3218,13 @@ public class LivePlayActivity extends BaseActivity {
         countDownTimer.start();
     }
 
-	public class NoScrollLinearLayoutManager extends LinearLayoutManager {
+	public class NoScrollLinearLayoutManager extends V7LinearLayoutManager {
     public NoScrollLinearLayoutManager(Context context) {
         super(context);
     }
     @Override
     public boolean canScrollVertically() {
         return false; // 禁用垂直滚动
-    }
-    @Override
-    public boolean canScrollHorizontally() {
-        return false; // 禁用水平滚动
     }
 }
 
