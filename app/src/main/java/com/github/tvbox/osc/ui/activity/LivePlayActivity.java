@@ -217,6 +217,7 @@ public class LivePlayActivity extends BaseActivity {
     private TextView iv_playpause;
     private View iv_play;
     private boolean show = false;
+	private int lastPosition = -1;
     @Override
     protected int getLayoutResID() {
         return R.layout.activity_live_play;
@@ -3216,5 +3217,11 @@ public class LivePlayActivity extends BaseActivity {
             }
         };
         countDownTimer.start();
+    }
+    public void scrollToPositionWithOffset(int position, int offset) {
+        if (position != lastPosition) {
+            super.scrollToPositionWithOffset(position, offset);
+            lastPosition = position;
+        }
     }
 }
