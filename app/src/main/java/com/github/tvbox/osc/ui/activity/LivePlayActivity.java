@@ -129,7 +129,7 @@ public class LivePlayActivity extends BaseActivity {
     private int currentLiveChannelIndex = -1;
     private int currentLiveChannelIndexXu = -1;
     private int currentLiveChangeSourceTimes = 0;
-	private int finalI = -1;
+    private int finalI = -1;   //xuameng EPG最终滚动位置
     private LiveChannelItem currentLiveChannelItem = null;
     private LiveChannelItem currentLiveChannelItemXu = null;
     private LivePlayerManager livePlayerManager = new LivePlayerManager();
@@ -423,7 +423,7 @@ public class LivePlayActivity extends BaseActivity {
     private List < Epginfo > epgdata = new ArrayList < > ();
     private void showEpg(Date date, ArrayList < Epginfo > arrayList) {
         String savedEpgKey = channel_Name.getChannelName() + "_" + liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex()).getDatePresented();
-        if(hsEpg.containsKey(savedEpgKey)) {
+        if(hsEpg.containsKey(savedEpgKey)) {    //xuameng如果已获取该EPG直接读取缓存
            arrayList = (ArrayList) hsEpg.get(savedEpgKey);
            if(arrayList != null && arrayList.size() > 0) {
               epgdata = arrayList;
@@ -739,9 +739,9 @@ public class LivePlayActivity extends BaseActivity {
                 } catch (JSONException jSONException) {
                     jSONException.printStackTrace();
                 }
-                showEpgxu(date, arrayList);
                 String savedEpgKey = channelName + "_" + liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex()).getDatePresented();
                 if(!hsEpg.contains(savedEpgKey)) hsEpg.put(savedEpgKey, arrayList);
+                showEpgxu(date, arrayList);  //xuameng先保存EPG再显示EPG
             }
         });
     }
@@ -890,7 +890,7 @@ public class LivePlayActivity extends BaseActivity {
         divLoadEpg.setVisibility(View.GONE);
         mRightEpgList.postDelayed(() -> {
             if(finalI >= 0 && finalI < epgListAdapter.getItemCount()) {
-               mRightEpgList.scrollToPositionWithOffset(finalI, 0);
+               mRightEpgList.scrollToPositionWithOffset(finalI, 0);    //xuameng解决第一次显示菜单EPG不滚动问题
             }
         }, 200); 
         epgListAdapter.getSelectedIndex(); //xuamengEPG打开菜单自动变颜色
