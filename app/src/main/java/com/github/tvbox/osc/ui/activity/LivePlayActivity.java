@@ -449,12 +449,6 @@ public class LivePlayActivity extends BaseActivity {
                   if(!isScrollingXu) {
                      isScrollingXu = true;
                      mRightEpgList.scrollToPositionWithOffset(finalI, 0);
-                     mRightEpgList.postDelayed(new Runnable() {
-                         @Override
-                         public void run() {
-                             mRightEpgList.smoothScrollToPosition(finalI);
-                         }
-                     }, 50);
                   }
               }
            } else { //xuameng无EPG时提示信息
@@ -508,12 +502,7 @@ public class LivePlayActivity extends BaseActivity {
                   if(!isScrollingXu) {
                      isScrollingXu = true;
                      mRightEpgList.scrollToPositionWithOffset(finalI, 0);
-                     mRightEpgList.postDelayed(new Runnable() {
-                         @Override
-                         public void run() {
-                             mRightEpgList.smoothScrollToPosition(finalI);
-                         }
-                     }, 50);
+                     
                   }
               }
            } else { //xuameng无EPG时提示信息
@@ -570,12 +559,7 @@ public class LivePlayActivity extends BaseActivity {
                  if(!isScrollingXu) {
                     isScrollingXu = true;
                     mRightEpgList.scrollToPositionWithOffset(finalI, 0);
-                    mRightEpgList.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            mRightEpgList.smoothScrollToPosition(finalI);
-                        }
-                    }, 50);
+
                  }
               }
            } else { //xuameng无EPG时提示信息
@@ -627,12 +611,7 @@ public class LivePlayActivity extends BaseActivity {
                  if(!isScrollingXu) {
                     isScrollingXu = true;
                     mRightEpgList.scrollToPositionWithOffset(finalI, 0);
-                    mRightEpgList.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            mRightEpgList.smoothScrollToPosition(finalI);
-                        }
-                    }, 50);
+
                  }
               }
            } else { //xuameng无EPG时提示信息
@@ -1813,17 +1792,7 @@ public class LivePlayActivity extends BaseActivity {
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
                 mHideChannelListRunXu(); //xuameng隐藏频道菜单
                 liveEpgDateAdapter.setFocusedIndex(position);
-                mRightEpgList.stopScroll();
-				removeOnScrollListener(mRightEpgList);
-                mRightEpgList.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                    @Override
-                    public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                        super.onScrollStateChanged(recyclerView, newState);
-                        if(newState == mRightEpgList.SCROLL_STATE_IDLE) {
-                            isScrollingXu = false; // xuameng滚动完成后重置状态
-                        }
-                    }
-                });
+           
             }
             @Override
             public void onItemClick(TvRecyclerView parent, View itemView, int position) {
