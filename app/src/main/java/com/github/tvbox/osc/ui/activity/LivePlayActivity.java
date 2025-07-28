@@ -129,6 +129,7 @@ public class LivePlayActivity extends BaseActivity {
     private int currentLiveChannelIndex = -1;
     private int currentLiveChannelIndexXu = -1;
     private int currentLiveChangeSourceTimes = 0;
+	private int finalI = -1;
     private LiveChannelItem currentLiveChannelItem = null;
     private LiveChannelItem currentLiveChannelItemXu = null;
     private LivePlayerManager livePlayerManager = new LivePlayerManager();
@@ -169,7 +170,6 @@ public class LivePlayActivity extends BaseActivity {
     private TvRecyclerView mRightEpgList;
     private LiveEpgDateAdapter liveEpgDateAdapter;
     private LiveEpgAdapter epgListAdapter;
-	epgListAdapter.setAnimationEnable(false); 
     private List < LiveDayListGroup > liveDayList = new ArrayList < > ();
     //laodao 7day replay
     public static SimpleDateFormat formatDate = new SimpleDateFormat("yyyy-MM-dd");
@@ -446,12 +446,12 @@ public class LivePlayActivity extends BaseActivity {
                   //xuameng防止跳焦点                 mRightEpgList.setSelection(i);
                   epgListAdapter.setSelectedEpgIndex(i);
                   epgListAdapter.notifyDataSetChanged();
-                  int finalI = i;
+                  finalI = i;
                   if(!isScrollingXu) {
                       isScrollingXu = true;
                       mRightEpgList.post(() -> {
                           if(finalI >= 0 && finalI < epgListAdapter.getItemCount()) {
-                             mRightEpgList.scrollToPositionWithOffset(finalI, 0);
+                             mRightEpgList.scrollToPosition(finalI);
                           }
                       }); 
                   }
@@ -503,12 +503,12 @@ public class LivePlayActivity extends BaseActivity {
                   //xuameng防止跳焦点                 mRightEpgList.setSelection(i);
                   epgListAdapter.setSelectedEpgIndex(i);
                   epgListAdapter.notifyDataSetChanged();
-                  int finalI = i;
+                  finalI = i;
                   if(!isScrollingXu) {
                       isScrollingXu = true;
                       mRightEpgList.post(() -> {
                           if(finalI >= 0 && finalI < epgListAdapter.getItemCount()) {
-                             mRightEpgList.scrollToPositionWithOffset(finalI, 0);
+                             mRightEpgList.scrollToPosition(finalI);
                           }
                       });
                   }
@@ -564,12 +564,12 @@ public class LivePlayActivity extends BaseActivity {
                  epgListAdapter.notifyDataSetChanged();
                  mRightEpgList.setSelectedPosition(i);
                  epgListAdapter.setSelectedEpgIndex(i);
-                 int finalI = i;
+                 finalI = i;
                  if(!isScrollingXu) {
                     isScrollingXu = true;
                     mRightEpgList.post(() -> {
                         if(finalI >= 0 && finalI < epgListAdapter.getItemCount()) {
-                           mRightEpgList.scrollToPositionWithOffset(finalI, 0);
+                           mRightEpgList.scrollToPosition(finalI);
                         }
                     });
                  }
@@ -620,12 +620,12 @@ public class LivePlayActivity extends BaseActivity {
                  epgListAdapter.notifyDataSetChanged();
                  mRightEpgList.setSelectedPosition(i);
                  epgListAdapter.setSelectedEpgIndex(i);
-                 int finalI = i;
+                 finalI = i;
                  if(!isScrollingXu) {
                     isScrollingXu = true;
                     mRightEpgList.post(() -> {
                         if(finalI >= 0 && finalI < epgListAdapter.getItemCount()) {
-                           mRightEpgList.scrollToPositionWithOffset(finalI, 0);
+                           mRightEpgList.scrollToPosition(finalI);
                         }
                     }); 
                  }
@@ -1600,6 +1600,7 @@ public class LivePlayActivity extends BaseActivity {
                 super.onScrollStateChanged(recyclerView, newState);
                 mHideChannelListRunXu();
                 if(newState == mRightEpgList.SCROLL_STATE_IDLE) {
+                    mRightEpgList.scrollToPositionWithOffset(finalI, 0);
                     isScrollingXu = false; // xuameng滚动完成后重置状态
                 }
             }
