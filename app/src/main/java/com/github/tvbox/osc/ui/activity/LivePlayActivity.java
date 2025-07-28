@@ -167,7 +167,7 @@ public class LivePlayActivity extends BaseActivity {
     // private ObjectAnimator objectAnimator;
     public String epgStringAddress = "";
     private TvRecyclerView mEpgDateGridView;
-    private TvRecyclerView mRightEpgList;
+    private NoScrollRecyclerView mRightEpgList;
     private LiveEpgDateAdapter liveEpgDateAdapter;
     private LiveEpgAdapter epgListAdapter;
     private List < LiveDayListGroup > liveDayList = new ArrayList < > ();
@@ -1585,7 +1585,7 @@ public class LivePlayActivity extends BaseActivity {
     //laodao 7天Epg数据绑定和展示
     private void initEpgListView() {
         mRightEpgList.setHasFixedSize(true);
-        mRightEpgList.setLayoutManager(new NoScrollLinearLayoutManager(this.mContext, 1, false));
+        mRightEpgList.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
         epgListAdapter = new LiveEpgAdapter();
         mRightEpgList.setAdapter(epgListAdapter);
         mRightEpgList.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -3218,14 +3218,17 @@ public class LivePlayActivity extends BaseActivity {
         countDownTimer.start();
     }
 
-	public class NoScrollLinearLayoutManager extends V7LinearLayoutManager {
-    public NoScrollLinearLayoutManager(Context context) {
+public class NoScrollRecyclerView extends RecyclerView {
+    public NoScrollRecyclerView(Context context) {
         super(context);
     }
     @Override
-    public boolean canScrollVertically() {
-        return false; // 禁用垂直滚动
+    public void smoothScrollToPosition(int position) {
+        // 禁用平滑滚动动画
+    }
+    @Override
+    public boolean onTouchEvent(MotionEvent e) {
+        return false; // 禁用触摸滚动
     }
 }
-
 }
