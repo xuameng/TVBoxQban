@@ -444,10 +444,9 @@ public class LivePlayActivity extends BaseActivity {
                   epgListAdapter.setSelectedEpgIndex(i);
                   epgListAdapter.notifyDataSetChanged();
                   finalI = i;
-                  mRightEpgList.scrollToPosition(finalI);
                   mRightEpgList.post(() -> {
                       if(finalI >= 0 && finalI < epgListAdapter.getItemCount()) {
-                         mRightEpgList.scrollToPositionWithOffset(finalI, 0);
+                         mRightEpgList.scrollToPosition(finalI);
                       }
                   }); 
               }
@@ -499,10 +498,9 @@ public class LivePlayActivity extends BaseActivity {
                   epgListAdapter.setSelectedEpgIndex(i);
                   epgListAdapter.notifyDataSetChanged();
                   finalI = i;
-                  mRightEpgList.scrollToPosition(finalI);
                   mRightEpgList.post(() -> {
                       if(finalI >= 0 && finalI < epgListAdapter.getItemCount()) {
-                         mRightEpgList.scrollToPositionWithOffset(finalI, 0);
+                         mRightEpgList.scrollToPosition(finalI);
                       }
                   }); 
               }
@@ -558,10 +556,9 @@ public class LivePlayActivity extends BaseActivity {
                  mRightEpgList.setSelectedPosition(i);
                  epgListAdapter.setSelectedEpgIndex(i);
                  finalI = i;
-                 mRightEpgList.scrollToPosition(finalI);
                  mRightEpgList.post(() -> {
                      if(finalI >= 0 && finalI < epgListAdapter.getItemCount()) {
-                        mRightEpgList.scrollToPositionWithOffset(finalI, 0);
+                        mRightEpgList.scrollToPosition(finalI);
                      }
                  }); 
               }
@@ -612,10 +609,9 @@ public class LivePlayActivity extends BaseActivity {
                  mRightEpgList.setSelectedPosition(i);
                  epgListAdapter.setSelectedEpgIndex(i);
                  finalI = i;
-                  mRightEpgList.scrollToPosition(finalI);
                   mRightEpgList.post(() -> {
                       if(finalI >= 0 && finalI < epgListAdapter.getItemCount()) {
-                         mRightEpgList.scrollToPositionWithOffset(finalI, 0);
+                         mRightEpgList.scrollToPosition(finalI);
                       }
                   }); 
               }
@@ -893,7 +889,7 @@ public class LivePlayActivity extends BaseActivity {
         divLoadEpgleft.setVisibility(View.VISIBLE);
         divLoadEpg.setVisibility(View.GONE);
         if(finalI >= 0 && finalI < epgListAdapter.getItemCount()) {
-           mRightEpgList.scrollToPositionWithOffset(finalI, 0);
+           mRightEpgList.scrollToPosition(finalI);
         }
         epgListAdapter.getSelectedIndex(); //xuamengEPG打开菜单自动变颜色
         mHideChannelListRunXu(); //xuameng BUG
