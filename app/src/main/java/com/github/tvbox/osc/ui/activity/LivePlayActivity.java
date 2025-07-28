@@ -613,12 +613,8 @@ public class LivePlayActivity extends BaseActivity {
                   mRightEpgList.removeCallbacks(null);
                   mRightEpgList.setSelectedPosition(targetPos);
                   epgListAdapter.setSelectedEpgIndex(targetPos);
-                  mRightEpgList.post(() -> {
-                      if(targetPos >= 0 && targetPos < epgListAdapter.getItemCount()) {
-                         mRightEpgList.scrollToPositionWithOffset(targetPos, 0);
-                         //xuameng防止跳焦点                 mRightEpgList.setSelection(finalI);
-                      }
-                  }); 
+				  smoothScrollToPositionXu(targetPos);
+
               }
            } else { //xuameng无EPG时提示信息
                Epginfo epgbcinfo = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "00:00", "01:59", 0);
@@ -3218,4 +3214,33 @@ public class LivePlayActivity extends BaseActivity {
         };
         countDownTimer.start();
     }
+
+	private void safeScrollToPosition(int pos) {
+    if (pos >= 0 && pos < epgListAdapter.getItemCount()) {
+        mRightEpgList.scrollToPositionWithOffset(pos, 0);
+    }
+}
+
+public void smoothScrollToPositionXu(int targetPos) {
+    if (mRightEpgList == null || epgListAdapter == null) return;
+    
+    epgListAdapter.notifyDataSetChanged();
+    mRightEpgList.removeCallbacks(null);
+    epgListAdapter.setSelectedEpgIndex(targetPos);
+    mRightEpgList.setSelectedPosition(targetPos);
+
+    if (mRightEpgList.isLaidOut()) {
+        safeScrollToPosition(targetPos);
+    } else {
+        mRightEpgList.getViewTreeObserver().addOnPreDrawListener(
+            new ViewTreeObserver.OnPreDrawListener() {
+                @Override
+                public boolean onPreDraw() {
+                    mRightEpgList.getViewTreeObserver().removeOnPreDrawListener(this);
+                    safeScrollToPosition(targetPos);
+                    return true;
+                }
+            });
+    }
+}
 }
