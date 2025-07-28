@@ -1589,9 +1589,11 @@ public class LivePlayActivity extends BaseActivity {
                 super.onScrollStateChanged(recyclerView, newState);
                 mHideChannelListRunXu();
                 if(newState == mRightEpgList.SCROLL_STATE_IDLE) {
-                   mRightEpgList.setFocusable(true);  // 滚动停止恢复焦点
+                   mRightEpgList.setFocusable(true);  // xuameng滚动停止恢复焦点
                 }else{
-                   mRightEpgList.setFocusable(false); // 滚动中禁用焦点
+                   if(!mRightEpgList.hasFocus()){   //xuameng没有拥有焦点时
+                       mRightEpgList.setFocusable(false); // xuameng滚动中禁用焦点
+                   }
                 }
             }
         });
