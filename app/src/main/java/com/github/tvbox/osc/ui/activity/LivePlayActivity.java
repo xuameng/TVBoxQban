@@ -441,8 +441,6 @@ public class LivePlayActivity extends BaseActivity {
               }
               i = size;
               if(i >= 0 && new Date().compareTo(epgdata.get(i).enddateTime) <= 0) {
-mRightEpgList.setLayoutManager(new V7LinearLayoutManager(context));
-mRightEpgList.setItemAnimator(null); 
                   mRightEpgList.setSelectedPosition(i);
                   //xuameng防止跳焦点                 mRightEpgList.setSelection(i);
                   epgListAdapter.setSelectedEpgIndex(i);
@@ -499,8 +497,6 @@ mRightEpgList.setItemAnimator(null);
               }
               i = size;
               if(i >= 0 && new Date().compareTo(epgdata.get(i).enddateTime) <= 0) {
-mRightEpgList.setLayoutManager(new V7LinearLayoutManager(context));
-mRightEpgList.setItemAnimator(null); 
                   mRightEpgList.setSelectedPosition(i);
                   //xuameng防止跳焦点                 mRightEpgList.setSelection(i);
                   epgListAdapter.setSelectedEpgIndex(i);
@@ -562,8 +558,6 @@ mRightEpgList.setItemAnimator(null);
               }
               i = size;
               if(i >= 0 && new Date().compareTo(epgdata.get(i).enddateTime) <= 0) {
-mRightEpgList.setLayoutManager(new V7LinearLayoutManager(context));
-mRightEpgList.setItemAnimator(null); 
                  epgListAdapter.notifyDataSetChanged();
                  mRightEpgList.requestLayout();
                  mRightEpgList.setSelectedPosition(i);
@@ -619,8 +613,6 @@ mRightEpgList.setItemAnimator(null);
               }
               i = size;
               if(i >= 0 && new Date().compareTo(epgdata.get(i).enddateTime) <= 0) {
-mRightEpgList.setLayoutManager(new V7LinearLayoutManager(context));
-mRightEpgList.setItemAnimator(null); 
                  epgListAdapter.notifyDataSetChanged();
                  mRightEpgList.requestLayout();
                  mRightEpgList.setSelectedPosition(i);
@@ -1594,6 +1586,7 @@ mRightEpgList.setItemAnimator(null);
     private void initEpgListView() {
         mRightEpgList.setHasFixedSize(true);
         mRightEpgList.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
+        mRightEpgList.setItemAnimator(null); 
         epgListAdapter = new LiveEpgAdapter();
         mRightEpgList.setAdapter(epgListAdapter);
         mRightEpgList.addOnScrollListener(new RecyclerView.OnScrollListener() {
