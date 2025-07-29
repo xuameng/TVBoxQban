@@ -448,8 +448,7 @@ public class LivePlayActivity extends BaseActivity {
                 }
             }
         } else { //xuameng无EPG时提示信息
-            String channelName = channel_Name.getChannelName();
-            String savedEpgKey = channelName + "_" + Objects.requireNonNull(liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex())).getDatePresented();
+            String savedEpgKey = channel_Name.getChannelName() + "_" + Objects.requireNonNull(liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex())).getDatePresented();
             Epginfo epgbcinfo = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "00:00", "01:59", 0);
             Epginfo epgbcinfo1 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "02:00", "03:59", 0);
             Epginfo epgbcinfo2 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "04:00", "05:59", 0);
@@ -477,6 +476,28 @@ public class LivePlayActivity extends BaseActivity {
             epgdata = arrayList;
             epgListAdapter.setNewData(epgdata);
             hsEpg.put(savedEpgKey, arrayList);
+            int i = -1;
+            int size = epgdata.size() - 1;
+            while(size >= 0) {
+                if(new Date().compareTo(((Epginfo) epgdata.get(size)).startdateTime) >= 0) {
+                    break;
+                }
+                size--;
+            }
+            i = size;
+            if(i >= 0 && new Date().compareTo(epgdata.get(i).enddateTime) <= 0) {
+                epgListAdapter.notifyDataSetChanged();
+                final int targetPos = i; // 使用final保证线程安全
+                mRightEpgList.removeCallbacks(null);
+       //些方法有滚动效果会产生焦点乱跳         mRightEpgList.setSelectedPosition(targetPos);  
+                epgListAdapter.setSelectedEpgIndex(targetPos);
+                if(targetPos >= 0 && targetPos < epgListAdapter.getItemCount()) {
+                   mRightEpgList.post(() -> {
+                   mRightEpgList.scrollToPositionWithOffset(targetPos, 0);
+                        //xuameng防止跳焦点                 mRightEpgList.setSelection(finalI);
+                   });
+                }
+            }
         }
     }
     private void showEpgxu(Date date, ArrayList < Epginfo > arrayList) {
