@@ -1229,6 +1229,8 @@ public class LivePlayActivity extends BaseActivity {
     private void mHideChannelListRun() { //xuameng左侧菜单隐藏
         ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) tvLeftChannelListLayout.getLayoutParams();
         isShowlist = false;
+        liveEpgDateAdapter.setSelectedIndex(1);   //xuameng频道EPG日期自动选今天
+        getEpg(new Date());
         if(tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
             tvLeftChannelListLayout.setVisibility(View.INVISIBLE);
         }
@@ -1264,6 +1266,7 @@ public class LivePlayActivity extends BaseActivity {
                 if(backcontroller.getVisibility() == View.GONE) {
                     showProgressBars(true);
                 }
+               getEpg(new Date());
             }
             if(!isVOD) {
                 getEpg(new Date());
@@ -1280,7 +1283,6 @@ public class LivePlayActivity extends BaseActivity {
             Hawk.put(HawkConfig.LIVE_CHANNEL, currentLiveChannelItem.getChannelName());
             HawkUtils.setLastLiveChannelGroup(liveChannelGroupList.get(currentChannelGroupIndex).getGroupName()); //xuameng记忆频道组
             livePlayerManager.getLiveChannelPlayer(mVideoView, currentLiveChannelItem.getChannelName());
-            liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
         }
         channel_Name = currentLiveChannelItem;
         isSHIYI = false;
