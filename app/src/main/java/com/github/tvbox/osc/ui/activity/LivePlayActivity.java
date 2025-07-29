@@ -554,8 +554,8 @@ public class LivePlayActivity extends BaseActivity {
         epgListAdapter.CanBack(currentLiveChannelItem.getinclude_back());
         //epgListAdapter.updateData(date, new ArrayList<>());
 		String savedEpgKey = channelName + "_" + Objects.requireNonNull(liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex())).getDatePresented();
-        if(hsEpg.containsKey(savedEpgKeyXu)) {
-           arrayListXu = (ArrayList) hsEpg.get(savedEpgKeyXu);
+        if(hsEpg.containsKey(savedEpgKey)) {
+        
            showEpgxu(date, hsEpg.get(savedEpgKey));
            showBottomEpgXU(); //xuameng测试EPG刷新
            return;
@@ -607,8 +607,8 @@ public class LivePlayActivity extends BaseActivity {
         epgListAdapter.CanBack(currentLiveChannelItemXu.getinclude_back()); //xuameng重要EPG滚动菜单检测可不可以回看
         //epgListAdapter.updateData(date, new ArrayList<>());
 		String savedEpgKey = channelName + "_" + Objects.requireNonNull(liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex())).getDatePresented();
-        if(hsEpg.containsKey(savedEpgKeyXu)) {
-           arrayListXu = (ArrayList) hsEpg.get(savedEpgKeyXu);
+        if(hsEpg.containsKey(savedEpgKey)) {
+        
            showEpgxu(date, hsEpg.get(savedEpgKey));
            return;
         }
