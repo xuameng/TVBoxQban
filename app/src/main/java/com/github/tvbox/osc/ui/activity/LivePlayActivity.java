@@ -781,13 +781,12 @@ public class LivePlayActivity extends BaseActivity {
         if(isTouch) {
             showChannelListTouch();
         }
-        liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
         mChannelGroupView.setVisibility(View.GONE);
         divEpg.setVisibility(View.VISIBLE);
         divLoadEpgleft.setVisibility(View.VISIBLE);
         divLoadEpg.setVisibility(View.GONE);
         int SelectedIndexEpg = epgListAdapter.getSelectedIndex(); //xuameng当前选中的EPG
-        if (SelectedIndexEpg != -1){  //xuameng不等于-1代表已有选中的EPG，防空指针
+        if (SelectedIndexEpg >= 0  && SelectedIndexEpg < epgListAdapter.getItemCount()){  //xuameng不等于-1代表已有选中的EPG，防空指针
 	        mRightEpgList.post(() -> {
             mRightEpgList.removeCallbacks(null);
             mRightEpgList.scrollToPositionWithOffset(SelectedIndexEpg, 0);
@@ -1203,15 +1202,7 @@ public class LivePlayActivity extends BaseActivity {
         }
     }
     private void mFocusCurrentChannelAndShowChannelListXu() { //xuameng左侧菜单显示
-        liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
-        int SelectedIndexEpg = epgListAdapter.getSelectedIndex(); //xuameng当前选中的EPG
-        if (SelectedIndexEpg != -1){  //xuameng不等于-1代表已有选中的EPG，防空指针
-	        mRightEpgList.post(() -> {
-            mRightEpgList.removeCallbacks(null);
-            mRightEpgList.scrollToPositionWithOffset(SelectedIndexEpg, 0);
-            epgListAdapter.getSelectedIndex(); //xuamengEPG打开菜单自动变颜色
-            }); 
-        }
+        epgListAdapter.getSelectedIndex(); //xuamengEPG打开菜单自动变颜色 
         liveChannelGroupAdapter.setSelectedGroupIndex(currentChannelGroupIndex);
         liveChannelItemAdapter.setSelectedChannelIndex(currentLiveChannelIndex);
         mChannelGroupView.setSelection(currentChannelGroupIndex); //xuameng先滚动再选择防止空指针
