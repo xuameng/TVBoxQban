@@ -440,7 +440,7 @@ public class LivePlayActivity extends BaseActivity {
                 mRightEpgList.removeCallbacks(null);
                 mRightEpgList.setSelectedPosition(targetPos);
                 epgListAdapter.setSelectedEpgIndex(targetPos);
-                mRightEpgList.post(() - > {
+                mRightEpgList.post(() -> {
                     if(targetPos >= 0 && targetPos < epgListAdapter.getItemCount()) {
                         mRightEpgList.scrollToPositionWithOffset(targetPos, 0);
                         //xuameng防止跳焦点                 mRightEpgList.setSelection(finalI);
@@ -496,7 +496,7 @@ public class LivePlayActivity extends BaseActivity {
                 mRightEpgList.removeCallbacks(null);
                 mRightEpgList.setSelectedPosition(targetPos);
                 epgListAdapter.setSelectedEpgIndex(targetPos);
-                mRightEpgList.post(() - > {
+                mRightEpgList.post(() -> {
                     if(targetPos >= 0 && targetPos < epgListAdapter.getItemCount()) {
                         mRightEpgList.scrollToPositionWithOffset(targetPos, 0);
                         //xuameng防止跳焦点                 mRightEpgList.setSelection(finalI);
