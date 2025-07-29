@@ -438,7 +438,7 @@ public class LivePlayActivity extends BaseActivity {
                 epgListAdapter.notifyDataSetChanged();
                 final int targetPos = i; // 使用final保证线程安全
                 mRightEpgList.removeCallbacks(null);
-                mRightEpgList.setSelectedPosition(targetPos);
+            //    mRightEpgList.setSelectedPosition(targetPos);
                 epgListAdapter.setSelectedEpgIndex(targetPos);
                 mRightEpgList.post(() -> {
                     if(targetPos >= 0 && targetPos < epgListAdapter.getItemCount()) {
@@ -487,7 +487,7 @@ public class LivePlayActivity extends BaseActivity {
                 epgListAdapter.notifyDataSetChanged();
                 final int targetPos = i; // 使用final保证线程安全
                 mRightEpgList.removeCallbacks(null);
-                mRightEpgList.setSelectedPosition(targetPos);
+            //    mRightEpgList.setSelectedPosition(targetPos);
                 epgListAdapter.setSelectedEpgIndex(targetPos);
                 mRightEpgList.post(() -> {
                     if(targetPos >= 0 && targetPos < epgListAdapter.getItemCount()) {
@@ -516,7 +516,7 @@ public class LivePlayActivity extends BaseActivity {
                 epgListAdapter.notifyDataSetChanged();
                 final int targetPos = i; // 使用final保证线程安全
                 mRightEpgList.removeCallbacks(null);
-                mRightEpgList.setSelectedPosition(targetPos);
+            //    mRightEpgList.setSelectedPosition(targetPos);
                 epgListAdapter.setSelectedEpgIndex(targetPos);
                 mRightEpgList.post(() -> {
                     if(targetPos >= 0 && targetPos < epgListAdapter.getItemCount()) {
@@ -565,7 +565,7 @@ public class LivePlayActivity extends BaseActivity {
                 epgListAdapter.notifyDataSetChanged();
                 final int targetPos = i; // 使用final保证线程安全
                 mRightEpgList.removeCallbacks(null);
-                mRightEpgList.setSelectedPosition(targetPos);
+            //    mRightEpgList.setSelectedPosition(targetPos);
                 epgListAdapter.setSelectedEpgIndex(targetPos);
                 mRightEpgList.post(() -> {
                     if(targetPos >= 0 && targetPos < epgListAdapter.getItemCount()) {
