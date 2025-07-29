@@ -1215,6 +1215,9 @@ public class LivePlayActivity extends BaseActivity {
         if(countDownTimer5 != null) {
             countDownTimer5.cancel();
         }
+        if(countDownTimer7 != null) {
+            countDownTimer7.cancel();
+        }
         countDownTimer5 = new CountDownTimer(5000, 1000) { //底部epg隐藏时间设定
             public void onTick(long j) {}
             public void onFinish() {
@@ -1435,6 +1438,9 @@ public class LivePlayActivity extends BaseActivity {
         ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) tvRightSettingLayout.getLayoutParams();
         if(countDownTimer6 != null) {
             countDownTimer6.cancel();
+        }
+        if(countDownTimer8 != null) {
+            countDownTimer8.cancel();
         }
         countDownTimer6 = new CountDownTimer(5000, 1000) { //XUAMENG时间设定
             public void onTick(long j) {}
