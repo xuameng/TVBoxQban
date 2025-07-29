@@ -440,12 +440,12 @@ public class LivePlayActivity extends BaseActivity {
                 mRightEpgList.removeCallbacks(null);
        //些方法有滚动效果会产生焦点乱跳         mRightEpgList.setSelectedPosition(targetPos);  
                 epgListAdapter.setSelectedEpgIndex(targetPos);
-                mRightEpgList.post(() -> {
-                    if(targetPos >= 0 && targetPos < epgListAdapter.getItemCount()) {
-                        mRightEpgList.scrollToPositionWithOffset(targetPos, 0);
+                if(targetPos >= 0 && targetPos < epgListAdapter.getItemCount()) {
+                   mRightEpgList.post(() -> {
+                   mRightEpgList.scrollToPositionWithOffset(targetPos, 0);
                         //xuameng防止跳焦点                 mRightEpgList.setSelection(finalI);
-                    }
-                });
+                   });
+                }
             }
         } else { //xuameng无EPG时提示信息
             Epginfo epgbcinfo = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "00:00", "01:59", 0);
@@ -496,12 +496,12 @@ public class LivePlayActivity extends BaseActivity {
                 mRightEpgList.removeCallbacks(null);
              //些方法有滚动效果会产生焦点乱跳   mRightEpgList.setSelectedPosition(targetPos);
                 epgListAdapter.setSelectedEpgIndex(targetPos);
-                mRightEpgList.post(() -> {
-                    if(targetPos >= 0 && targetPos < epgListAdapter.getItemCount()) {
-                        mRightEpgList.scrollToPositionWithOffset(targetPos, 0);
+                if(targetPos >= 0 && targetPos < epgListAdapter.getItemCount()) {
+                   mRightEpgList.post(() -> {
+                   mRightEpgList.scrollToPositionWithOffset(targetPos, 0);
                         //xuameng防止跳焦点                 mRightEpgList.setSelection(finalI);
-                    }
-                });
+                   });
+                }
             }
         } else { //xuameng无EPG时提示信息
             Epginfo epgbcinfo = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "00:00", "01:59", 0);
@@ -567,7 +567,7 @@ public class LivePlayActivity extends BaseActivity {
         UrlHttpUtil.get(url, new CallBackUtil.CallBackString() {
             public void onFailure(int i, String str) {
                 showEpg(date, new ArrayList());
-                //               showBottomEpg();        
+                showBottomEpgXU(); //xuameng测试EPG刷新        
             }
             public void onResponse(String paramString) {
                 ArrayList arrayList = new ArrayList();
@@ -840,6 +840,7 @@ public class LivePlayActivity extends BaseActivity {
             liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
             mHandler.removeCallbacks(mConnectTimeoutChangeSourceRunBuffer);
             mHandler.removeCallbacks(mConnectTimeoutChangeSourceRunBack);
+            mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
             playXuSource();
         } else {
             mExitTime = System.currentTimeMillis();
@@ -1860,6 +1861,7 @@ public class LivePlayActivity extends BaseActivity {
                     case VideoView.STATE_PLAYING:
                         currentLiveChangeSourceTimes = 0;
                         mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
+                        mHandler.removeCallbacks(mConnectTimeoutChangeSourceRunBack);
                         mHandler.removeCallbacks(mConnectTimeoutChangeSourceRunBuffer);
                         isVideoplaying = true;
                         isBuffer = false;
@@ -2307,6 +2309,9 @@ public class LivePlayActivity extends BaseActivity {
                 liveSettingItemAdapter.selectItem(position, true, true);
                 Hawk.put(HawkConfig.LIVE_GROUP_INDEX, position);
                 ApiConfig.get().loadLiveApi(livesOBJ);
+                mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);  //xuameng BUG
+                mHandler.removeCallbacks(mConnectTimeoutChangeSourceRunBack);  //xuameng BUG
+                mHandler.removeCallbacks(mConnectTimeoutChangeSourceRunBuffer);  //xuameng BUG
                 recreate();
                 return;
             case 6: //xuameng渲染方式
