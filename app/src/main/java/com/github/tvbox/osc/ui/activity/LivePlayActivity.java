@@ -448,6 +448,7 @@ public class LivePlayActivity extends BaseActivity {
                 }
             }
         } else { //xuameng无EPG时提示信息
+            String savedEpgKey = channelName + "_" + Objects.requireNonNull(liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex())).getDatePresented();
             Epginfo epgbcinfo = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "00:00", "01:59", 0);
             Epginfo epgbcinfo1 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "02:00", "03:59", 0);
             Epginfo epgbcinfo2 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "04:00", "05:59", 0);
@@ -474,6 +475,7 @@ public class LivePlayActivity extends BaseActivity {
             arrayList.add(epgbcinfo11);
             epgdata = arrayList;
             epgListAdapter.setNewData(epgdata);
+            hsEpg.put(savedEpgKey, epgdata);
         }
     }
     private void showEpgxu(Date date, ArrayList < Epginfo > arrayList) {
@@ -587,8 +589,8 @@ public class LivePlayActivity extends BaseActivity {
                     jSONException.printStackTrace();
                 }
                 hsEpg.put(savedEpgKey, arrayList);
-                showBottomEpgXU(); //xuameng测试EPG刷新
                 showEpg(date, arrayList);
+                showBottomEpgXU(); //xuameng测试EPG刷新
             }
         });
     }
