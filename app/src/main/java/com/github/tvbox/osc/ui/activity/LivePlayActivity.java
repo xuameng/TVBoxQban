@@ -135,7 +135,7 @@ public class LivePlayActivity extends BaseActivity {
     private ArrayList < Integer > channelGroupPasswordConfirmed = new ArrayList < > ();
     private static LiveChannelItem channel_Name = null;
     private static LiveChannelItem channel_NameXu = null;
-    private static Hashtable hsEpg = new Hashtable();
+    private static Hashtable<String, ArrayList<Epginfo>> hsEpg = new Hashtable<>();
     private CountDownTimer countDownTimer;
     private View ll_right_top_loading; //xuameng左上图标
     private View view_line_XU;
@@ -555,7 +555,7 @@ public class LivePlayActivity extends BaseActivity {
         //epgListAdapter.updateData(date, new ArrayList<>());
 		String savedEpgKey = channelName + "_" + Objects.requireNonNull(liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex())).getDatePresented();
         if(hsEpg.containsKey(savedEpgKey)) {
-           showEpgxu(date, hsEpg.get(savedEpgKey));
+           showEpg(date, hsEpg.get(savedEpgKey));
            showBottomEpgXU(); //xuameng测试EPG刷新
            return;
         }
