@@ -438,7 +438,7 @@ public class LivePlayActivity extends BaseActivity {
                 epgListAdapter.notifyDataSetChanged();
                 final int targetPos = i; // 使用final保证线程安全
                 mRightEpgList.removeCallbacks(null);
-            //    mRightEpgList.setSelectedPosition(targetPos);
+       //些方法有滚动效果会产生焦点乱跳         mRightEpgList.setSelectedPosition(targetPos);  
                 epgListAdapter.setSelectedEpgIndex(targetPos);
                 mRightEpgList.post(() -> {
                     if(targetPos >= 0 && targetPos < epgListAdapter.getItemCount()) {
@@ -474,28 +474,6 @@ public class LivePlayActivity extends BaseActivity {
             arrayList.add(epgbcinfo11);
             epgdata = arrayList;
             epgListAdapter.setNewData(epgdata);
-            int i = -1;
-            int size = epgdata.size() - 1;
-            while(size >= 0) {
-                if(new Date().compareTo(((Epginfo) epgdata.get(size)).startdateTime) >= 0) {
-                    break;
-                }
-                size--;
-            }
-            i = size;
-            if(i >= 0 && new Date().compareTo(epgdata.get(i).enddateTime) <= 0) {
-                epgListAdapter.notifyDataSetChanged();
-                final int targetPos = i; // 使用final保证线程安全
-                mRightEpgList.removeCallbacks(null);
-            //    mRightEpgList.setSelectedPosition(targetPos);
-                epgListAdapter.setSelectedEpgIndex(targetPos);
-                mRightEpgList.post(() -> {
-                    if(targetPos >= 0 && targetPos < epgListAdapter.getItemCount()) {
-                        mRightEpgList.scrollToPositionWithOffset(targetPos, 0);
-                        //xuameng防止跳焦点                 mRightEpgList.setSelection(finalI);
-                    }
-                });
-            }
         }
     }
     private void showEpgxu(Date date, ArrayList < Epginfo > arrayList) {
@@ -516,7 +494,7 @@ public class LivePlayActivity extends BaseActivity {
                 epgListAdapter.notifyDataSetChanged();
                 final int targetPos = i; // 使用final保证线程安全
                 mRightEpgList.removeCallbacks(null);
-            //    mRightEpgList.setSelectedPosition(targetPos);
+             //些方法有滚动效果会产生焦点乱跳   mRightEpgList.setSelectedPosition(targetPos);
                 epgListAdapter.setSelectedEpgIndex(targetPos);
                 mRightEpgList.post(() -> {
                     if(targetPos >= 0 && targetPos < epgListAdapter.getItemCount()) {
@@ -552,28 +530,6 @@ public class LivePlayActivity extends BaseActivity {
             arrayList.add(epgbcinfo11);
             epgdata = arrayList;
             epgListAdapter.setNewData(epgdata);
-            int i = -1;
-            int size = epgdata.size() - 1;
-            while(size >= 0) {
-                if(new Date().compareTo(((Epginfo) epgdata.get(size)).startdateTime) >= 0) {
-                    break;
-                }
-                size--;
-            }
-            i = size;
-            if(i >= 0 && new Date().compareTo(epgdata.get(i).enddateTime) <= 0) {
-                epgListAdapter.notifyDataSetChanged();
-                final int targetPos = i; // 使用final保证线程安全
-                mRightEpgList.removeCallbacks(null);
-            //    mRightEpgList.setSelectedPosition(targetPos);
-                epgListAdapter.setSelectedEpgIndex(targetPos);
-                mRightEpgList.post(() -> {
-                    if(targetPos >= 0 && targetPos < epgListAdapter.getItemCount()) {
-                        mRightEpgList.scrollToPositionWithOffset(targetPos, 0);
-                        //xuameng防止跳焦点                 mRightEpgList.setSelection(finalI);
-                    }
-                });
-            }
         }
     }
 
@@ -825,18 +781,19 @@ public class LivePlayActivity extends BaseActivity {
         if(isTouch) {
             showChannelListTouch();
         }
+        liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
         mChannelGroupView.setVisibility(View.GONE);
         divEpg.setVisibility(View.VISIBLE);
         divLoadEpgleft.setVisibility(View.VISIBLE);
         divLoadEpg.setVisibility(View.GONE);
-        mRightEpgList.removeCallbacks(null);
-        mRightEpgList.post(() -> {
-           int SelectedIndexEpg = epgListAdapter.getSelectedIndex(); //xuameng当前选中的EPG
-           if (SelectedIndexEpg != -1){  //xuameng不等于-1代表已有选中的EPG，防空指针
-               mRightEpgList.scrollToPositionWithOffset(epgListAdapter.getSelectedIndex(), 0);
-		       epgListAdapter.getSelectedIndex(); //xuamengEPG打开菜单自动变颜色
-		   }
-        }); 
+        int SelectedIndexEpg = epgListAdapter.getSelectedIndex(); //xuameng当前选中的EPG
+        if (SelectedIndexEpg != -1){  //xuameng不等于-1代表已有选中的EPG，防空指针
+	        mRightEpgList.post(() -> {
+            mRightEpgList.removeCallbacks(null);
+            mRightEpgList.scrollToPositionWithOffset(SelectedIndexEpg, 0);
+            epgListAdapter.getSelectedIndex(); //xuamengEPG打开菜单自动变颜色
+            }); 
+        }
         mHideChannelListRunXu(); //xuameng BUG
     }
     //频道列表
@@ -1246,7 +1203,15 @@ public class LivePlayActivity extends BaseActivity {
         }
     }
     private void mFocusCurrentChannelAndShowChannelListXu() { //xuameng左侧菜单显示
-        epgListAdapter.getSelectedIndex(); //xuamengEPG打开菜单自动变颜色 
+        liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
+        int SelectedIndexEpg = epgListAdapter.getSelectedIndex(); //xuameng当前选中的EPG
+        if (SelectedIndexEpg != -1){  //xuameng不等于-1代表已有选中的EPG，防空指针
+	        mRightEpgList.post(() -> {
+            mRightEpgList.removeCallbacks(null);
+            mRightEpgList.scrollToPositionWithOffset(SelectedIndexEpg, 0);
+            epgListAdapter.getSelectedIndex(); //xuamengEPG打开菜单自动变颜色
+            }); 
+        }
         liveChannelGroupAdapter.setSelectedGroupIndex(currentChannelGroupIndex);
         liveChannelItemAdapter.setSelectedChannelIndex(currentLiveChannelIndex);
         mChannelGroupView.setSelection(currentChannelGroupIndex); //xuameng先滚动再选择防止空指针
