@@ -474,6 +474,28 @@ public class LivePlayActivity extends BaseActivity {
             arrayList.add(epgbcinfo11);
             epgdata = arrayList;
             epgListAdapter.setNewData(epgdata);
+            int i = -1;
+            int size = epgdata.size() - 1;
+            while(size >= 0) {
+                if(new Date().compareTo(((Epginfo) epgdata.get(size)).startdateTime) >= 0) {
+                    break;
+                }
+                size--;
+            }
+            i = size;
+            if(i >= 0 && new Date().compareTo(epgdata.get(i).enddateTime) <= 0) {
+                epgListAdapter.notifyDataSetChanged();
+                final int targetPos = i; // 使用final保证线程安全
+                mRightEpgList.removeCallbacks(null);
+                mRightEpgList.setSelectedPosition(targetPos);
+                epgListAdapter.setSelectedEpgIndex(targetPos);
+                mRightEpgList.post(() -> {
+                    if(targetPos >= 0 && targetPos < epgListAdapter.getItemCount()) {
+                        mRightEpgList.scrollToPositionWithOffset(targetPos, 0);
+                        //xuameng防止跳焦点                 mRightEpgList.setSelection(finalI);
+                    }
+                });
+            }
         }
     }
     private void showEpgxu(Date date, ArrayList < Epginfo > arrayList) {
@@ -530,6 +552,28 @@ public class LivePlayActivity extends BaseActivity {
             arrayList.add(epgbcinfo11);
             epgdata = arrayList;
             epgListAdapter.setNewData(epgdata);
+            int i = -1;
+            int size = epgdata.size() - 1;
+            while(size >= 0) {
+                if(new Date().compareTo(((Epginfo) epgdata.get(size)).startdateTime) >= 0) {
+                    break;
+                }
+                size--;
+            }
+            i = size;
+            if(i >= 0 && new Date().compareTo(epgdata.get(i).enddateTime) <= 0) {
+                epgListAdapter.notifyDataSetChanged();
+                final int targetPos = i; // 使用final保证线程安全
+                mRightEpgList.removeCallbacks(null);
+                mRightEpgList.setSelectedPosition(targetPos);
+                epgListAdapter.setSelectedEpgIndex(targetPos);
+                mRightEpgList.post(() -> {
+                    if(targetPos >= 0 && targetPos < epgListAdapter.getItemCount()) {
+                        mRightEpgList.scrollToPositionWithOffset(targetPos, 0);
+                        //xuameng防止跳焦点                 mRightEpgList.setSelection(finalI);
+                    }
+                });
+            }
         }
     }
 
