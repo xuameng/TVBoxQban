@@ -438,13 +438,9 @@ public class LivePlayActivity extends BaseActivity {
             final int targetPos = i; // 使用final保证线程安全
             mRightEpgList.removeCallbacks(null);
        //些方法有滚动效果会产生焦点乱跳         mRightEpgList.setSelectedPosition(targetPos);  
-            epgListAdapter.setSelectedEpgIndex(targetPos);
-            if(targetPos >= 0 && targetPos < epgListAdapter.getItemCount()) {
-               mRightEpgList.post(() -> {
-               mRightEpgList.scrollToPositionWithOffset(targetPos, 0);
-                    //xuameng防止跳焦点                 mRightEpgList.setSelection(finalI);
-               });
-            }
+            
+scrollToPositionExact(mRightEpgList,targetPos);
+epgListAdapter.setSelectedEpgIndex(targetPos);
         }
     } 
     private void showEpgxu(Date date, ArrayList < Epginfo > arrayList) {
@@ -466,12 +462,8 @@ public class LivePlayActivity extends BaseActivity {
             mRightEpgList.removeCallbacks(null);
              //些方法有滚动效果会产生焦点乱跳   mRightEpgList.setSelectedPosition(targetPos);
             epgListAdapter.setSelectedEpgIndex(targetPos);
-            if(targetPos >= 0 && targetPos < epgListAdapter.getItemCount()) {
-               mRightEpgList.post(() -> {
-               mRightEpgList.scrollToPositionWithOffset(targetPos, 0);
-                    //xuameng防止跳焦点                 mRightEpgList.setSelection(finalI);
-               });
-            }
+scrollToPositionExact(mRightEpgList,targetPos);
+epgListAdapter.setSelectedEpgIndex(targetPos);
         }
     } 
 
@@ -845,13 +837,8 @@ public class LivePlayActivity extends BaseActivity {
         divLoadEpgleft.setVisibility(View.VISIBLE);
         divLoadEpg.setVisibility(View.GONE);
         int SelectedIndexEpg = epgListAdapter.getSelectedIndex(); //xuameng当前选中的EPG
-        if (SelectedIndexEpg >= 0  && SelectedIndexEpg < epgListAdapter.getItemCount()){  //xuameng不等于-1代表已有选中的EPG，防空指针
-            mRightEpgList.removeCallbacks(null);
-	        mRightEpgList.post(() -> {
-            mRightEpgList.scrollToPositionWithOffset(SelectedIndexEpg, 0);
-            epgListAdapter.getSelectedIndex(); //xuamengEPG打开菜单自动变颜色
-            }); 
-        }
+		mRightEpgList.removeCallbacks(null);
+scrollToPositionExact(mRightEpgList,SelectedIndexEpg);
         mHideChannelListRunXu(); //xuameng BUG
     }
     //频道列表
@@ -3174,4 +3161,47 @@ public class LivePlayActivity extends BaseActivity {
         };
         countDownTimer.start();
     }
+
+
+    
+ 
+
+private static final int MAX_RETRY_COUNT = 3;
+private static final int RETRY_DELAY_MS = 50;
+
+public static void scrollToPositionExact(TvRecyclerView recyclerView, int targetPos) {
+    if (recyclerView == null || 
+        recyclerView.getAdapter() == null || 
+        targetPos < 0 || 
+        targetPos >= recyclerView.getAdapter().getItemCount()) {
+        return;
+    }
+
+    V7LinearLayoutManager layoutManager = (V7LinearLayoutManager) recyclerView.getLayoutManager();
+    recyclerView.post(() -> executeCenterScroll(recyclerView, layoutManager, targetPos, 0));
+}
+
+private static void executeCenterScroll(RecyclerView rv, 
+                                     V7LinearLayoutManager layoutManager,
+                                     int pos, 
+                                     int retryCount) {
+    if (retryCount >= MAX_RETRY_COUNT) return;
+    
+    View targetView = layoutManager.findViewByPosition(pos);
+    if (targetView == null) {
+        layoutManager.scrollToPositionWithOffset(pos, rv.getHeight()/2);
+        rv.postDelayed(() -> executeCenterScroll(rv, layoutManager, pos, retryCount + 1), RETRY_DELAY_MS);
+        return;
+    }
+
+    int screenCenter = rv.getHeight() / 2;
+    int itemCenter = targetView.getTop() + targetView.getHeight() / 2;
+    int scrollDistance = itemCenter - screenCenter;
+    
+    if (Math.abs(scrollDistance) > 1) {
+        rv.smoothScrollBy(0, scrollDistance);
+    }
+}
+
+
 }
