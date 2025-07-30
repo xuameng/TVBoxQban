@@ -850,8 +850,8 @@ public class LivePlayActivity extends BaseActivity {
         if (SelectedIndexEpg >= 0  && SelectedIndexEpg < epgListAdapter.getItemCount()){  //xuameng不等于-1代表已有选中的EPG，防空指针
             mRightEpgList.removeCallbacks(null);
 	        mRightEpgList.post(() -> {
-            mRightEpgList.scrollToPositionWithOffset(Math.max(getSelectedIndex-6, 0), 0);
-            mRightEpgList.scrollToPositionWithOffset(getSelectedIndex, 0);
+            mRightEpgList.scrollToPositionWithOffset(Math.max(SelectedIndexEpg-6, 0), 0);
+            mRightEpgList.scrollToPositionWithOffset(SelectedIndexEpg, 0);
             epgListAdapter.getSelectedIndex(); //xuamengEPG打开菜单自动变颜色
             }); 
         }
