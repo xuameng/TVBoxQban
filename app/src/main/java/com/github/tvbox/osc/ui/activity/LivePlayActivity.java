@@ -447,36 +447,7 @@ public class LivePlayActivity extends BaseActivity {
                    });
                 }
             }
-        } else { //xuameng无EPG时提示信息
-            String savedEpgKey = channel_Name.getChannelName() + "_" + Objects.requireNonNull(liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex())).getDatePresented();
-            Epginfo epgbcinfo = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "00:00", "01:59", 0);
-            Epginfo epgbcinfo1 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "02:00", "03:59", 1);
-            Epginfo epgbcinfo2 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "04:00", "05:59", 2);
-            Epginfo epgbcinfo3 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "06:00", "07:59", 3);
-            Epginfo epgbcinfo4 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "08:00", "09:59", 4);
-            Epginfo epgbcinfo5 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "10:00", "11:59", 5);
-            Epginfo epgbcinfo6 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "12:00", "13:59", 6);
-            Epginfo epgbcinfo7 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "14:00", "15:59", 7);
-            Epginfo epgbcinfo8 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "16:00", "17:59", 8);
-            Epginfo epgbcinfo9 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "18:00", "19:59", 9);
-            Epginfo epgbcinfo10 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "20:00", "21:59", 10);
-            Epginfo epgbcinfo11 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "22:00", "23:59", 11);
-            arrayList.add(epgbcinfo);
-            arrayList.add(epgbcinfo1);
-            arrayList.add(epgbcinfo2);
-            arrayList.add(epgbcinfo3);
-            arrayList.add(epgbcinfo4);
-            arrayList.add(epgbcinfo5);
-            arrayList.add(epgbcinfo6);
-            arrayList.add(epgbcinfo7);
-            arrayList.add(epgbcinfo8);
-            arrayList.add(epgbcinfo9);
-            arrayList.add(epgbcinfo10);
-            arrayList.add(epgbcinfo11);
-            epgdata = arrayList;
-            epgListAdapter.setNewData(epgdata);
-            hsEpg.put(savedEpgKey, arrayList);
-        }
+        } 
     }
     private void showEpgxu(Date date, ArrayList < Epginfo > arrayList) {
         if(arrayList != null && arrayList.size() > 0) {
@@ -505,36 +476,7 @@ public class LivePlayActivity extends BaseActivity {
                    });
                 }
             }
-        } else { //xuameng无EPG时提示信息
-            String savedEpgKey = channel_Name.getChannelName() + "_" + Objects.requireNonNull(liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex())).getDatePresented();
-            Epginfo epgbcinfo = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "00:00", "01:59", 0);
-            Epginfo epgbcinfo1 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "02:00", "03:59", 1);
-            Epginfo epgbcinfo2 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "04:00", "05:59", 2);
-            Epginfo epgbcinfo3 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "06:00", "07:59", 3);
-            Epginfo epgbcinfo4 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "08:00", "09:59", 4);
-            Epginfo epgbcinfo5 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "10:00", "11:59", 5);
-            Epginfo epgbcinfo6 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "12:00", "13:59", 6);
-            Epginfo epgbcinfo7 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "14:00", "15:59", 7);
-            Epginfo epgbcinfo8 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "16:00", "17:59", 8);
-            Epginfo epgbcinfo9 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "18:00", "19:59", 9);
-            Epginfo epgbcinfo10 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "20:00", "21:59", 10);
-            Epginfo epgbcinfo11 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "22:00", "23:59", 11);
-            arrayList.add(epgbcinfo);
-            arrayList.add(epgbcinfo1);
-            arrayList.add(epgbcinfo2);
-            arrayList.add(epgbcinfo3);
-            arrayList.add(epgbcinfo4);
-            arrayList.add(epgbcinfo5);
-            arrayList.add(epgbcinfo6);
-            arrayList.add(epgbcinfo7);
-            arrayList.add(epgbcinfo8);
-            arrayList.add(epgbcinfo9);
-            arrayList.add(epgbcinfo10);
-            arrayList.add(epgbcinfo11);
-            epgdata = arrayList;
-            epgListAdapter.setNewData(epgdata);
-            hsEpg.put(savedEpgKey, arrayList);
-        }
+        } 
     }
 
     public void getEpg(Date date) {
@@ -570,7 +512,35 @@ public class LivePlayActivity extends BaseActivity {
         }
         UrlHttpUtil.get(url, new CallBackUtil.CallBackString() {
             public void onFailure(int i, String str) {
-                showEpg(date, new ArrayList());
+                ArrayList arrayList = new ArrayList();
+                Epginfo epgbcinfo = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "00:00", "01:59", 0);
+                Epginfo epgbcinfo1 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "02:00", "03:59", 1);
+                Epginfo epgbcinfo2 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "04:00", "05:59", 2);
+                Epginfo epgbcinfo3 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "06:00", "07:59", 3);
+                Epginfo epgbcinfo4 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "08:00", "09:59", 4);
+                Epginfo epgbcinfo5 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "10:00", "11:59", 5);
+                Epginfo epgbcinfo6 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "12:00", "13:59", 6);
+                Epginfo epgbcinfo7 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "14:00", "15:59", 7);
+                Epginfo epgbcinfo8 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "16:00", "17:59", 8);
+                Epginfo epgbcinfo9 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "18:00", "19:59", 9);
+                Epginfo epgbcinfo10 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "20:00", "21:59", 10);
+                Epginfo epgbcinfo11 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "22:00", "23:59", 11);
+                arrayList.add(epgbcinfo);
+                arrayList.add(epgbcinfo1);
+                arrayList.add(epgbcinfo2);
+                arrayList.add(epgbcinfo3);
+                arrayList.add(epgbcinfo4);
+                arrayList.add(epgbcinfo5);
+                arrayList.add(epgbcinfo6);
+                arrayList.add(epgbcinfo7);
+                arrayList.add(epgbcinfo8);
+                arrayList.add(epgbcinfo9);
+                arrayList.add(epgbcinfo10);
+                arrayList.add(epgbcinfo11);
+                epgdata = arrayList;
+                epgListAdapter.setNewData(epgdata);
+                hsEpg.put(savedEpgKey, arrayList);
+                showEpg(date, arrayList);
                 showBottomEpgXU(); //xuameng测试EPG刷新        
             }
             public void onResponse(String paramString) {
@@ -620,7 +590,35 @@ public class LivePlayActivity extends BaseActivity {
         }
         UrlHttpUtil.get(url, new CallBackUtil.CallBackString() {
             public void onFailure(int i, String str) {
-                showEpgxu(date, new ArrayList());
+                ArrayList arrayList = new ArrayList();
+                Epginfo epgbcinfo = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "00:00", "01:59", 0);
+                Epginfo epgbcinfo1 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "02:00", "03:59", 1);
+                Epginfo epgbcinfo2 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "04:00", "05:59", 2);
+                Epginfo epgbcinfo3 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "06:00", "07:59", 3);
+                Epginfo epgbcinfo4 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "08:00", "09:59", 4);
+                Epginfo epgbcinfo5 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "10:00", "11:59", 5);
+                Epginfo epgbcinfo6 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "12:00", "13:59", 6);
+                Epginfo epgbcinfo7 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "14:00", "15:59", 7);
+                Epginfo epgbcinfo8 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "16:00", "17:59", 8);
+                Epginfo epgbcinfo9 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "18:00", "19:59", 9);
+                Epginfo epgbcinfo10 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "20:00", "21:59", 10);
+                Epginfo epgbcinfo11 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "22:00", "23:59", 11);
+                arrayList.add(epgbcinfo);
+                arrayList.add(epgbcinfo1);
+                arrayList.add(epgbcinfo2);
+                arrayList.add(epgbcinfo3);
+                arrayList.add(epgbcinfo4);
+                arrayList.add(epgbcinfo5);
+                arrayList.add(epgbcinfo6);
+                arrayList.add(epgbcinfo7);
+                arrayList.add(epgbcinfo8);
+                arrayList.add(epgbcinfo9);
+                arrayList.add(epgbcinfo10);
+                arrayList.add(epgbcinfo11);
+                epgdata = arrayList;
+                epgListAdapter.setNewData(epgdata);
+                hsEpg.put(savedEpgKey, arrayList);
+                showEpgxu(date, arrayList);
             }
             public void onResponse(String paramString) {
                 ArrayList arrayList = new ArrayList();
