@@ -439,7 +439,12 @@ public class LivePlayActivity extends BaseActivity {
             mRightEpgList.removeCallbacks(null);
        //些方法有滚动效果会产生焦点乱跳         mRightEpgList.setSelectedPosition(targetPos);  
             epgListAdapter.setSelectedEpgIndex(targetPos);
-scrollToPositionExact(mRightEpgList,targetPos);
+            if(targetPos >= 0 && targetPos < epgListAdapter.getItemCount()) {
+               mRightEpgList.post(() -> {
+               mRightEpgList.scrollToPositionWithOffset(targetPos, 0);
+                    //xuameng防止跳焦点                 mRightEpgList.setSelection(finalI);
+               });
+            }
         }
     } 
     private void showEpgxu(Date date, ArrayList < Epginfo > arrayList) {
@@ -461,7 +466,12 @@ scrollToPositionExact(mRightEpgList,targetPos);
             mRightEpgList.removeCallbacks(null);
              //些方法有滚动效果会产生焦点乱跳   mRightEpgList.setSelectedPosition(targetPos);
             epgListAdapter.setSelectedEpgIndex(targetPos);
-scrollToPositionExact(mRightEpgList,targetPos);
+            if(targetPos >= 0 && targetPos < epgListAdapter.getItemCount()) {
+               mRightEpgList.post(() -> {
+               mRightEpgList.scrollToPositionWithOffset(targetPos, 0);
+                    //xuameng防止跳焦点                 mRightEpgList.setSelection(finalI);
+               });
+            }
         }
     } 
 
@@ -835,8 +845,13 @@ scrollToPositionExact(mRightEpgList,targetPos);
         divLoadEpgleft.setVisibility(View.VISIBLE);
         divLoadEpg.setVisibility(View.GONE);
         int SelectedIndexEpg = epgListAdapter.getSelectedIndex(); //xuameng当前选中的EPG
-		mRightEpgList.removeCallbacks(null);
-scrollToPositionExact(mRightEpgList,SelectedIndexEpg);
+        if (SelectedIndexEpg >= 0  && SelectedIndexEpg < epgListAdapter.getItemCount()){  //xuameng不等于-1代表已有选中的EPG，防空指针
+            mRightEpgList.removeCallbacks(null);
+	        mRightEpgList.post(() -> {
+            mRightEpgList.scrollToPositionWithOffset(SelectedIndexEpg, 0);
+            epgListAdapter.getSelectedIndex(); //xuamengEPG打开菜单自动变颜色
+            }); 
+        }
         mHideChannelListRunXu(); //xuameng BUG
     }
     //频道列表
@@ -3159,66 +3174,4 @@ scrollToPositionExact(mRightEpgList,SelectedIndexEpg);
         };
         countDownTimer.start();
     }
-
-
-    
- 
-
-        private static final int MAX_RETRY_COUNT = 3;
-    private static final int RETRY_DELAY_MS = 50;
-    public static void scrollToPositionExact(TvRecyclerView recyclerView, int targetPos) {
-        if (recyclerView == null || 
-            recyclerView.getAdapter() == null || 
-            targetPos < 0 || 
-            targetPos >= recyclerView.getAdapter().getItemCount()) {
-            return;
-        }
-
-        V7LinearLayoutManager layoutManager = (V7LinearLayoutManager) recyclerView.getLayoutManager();
-        recyclerView.post(() -> executeScrollWithRetry(recyclerView, layoutManager, targetPos, 0));
-    }
-
-    private static void executeScrollWithRetry(RecyclerView rv, 
-                                             V7LinearLayoutManager layoutManager,
-                                             int pos, 
-                                             int retryCount) {
-        if (retryCount >= MAX_RETRY_COUNT) return;
-        
-        int firstVisiblePos = layoutManager.findFirstVisibleItemPosition();
-        int lastVisiblePos = layoutManager.findLastVisibleItemPosition();
-
-        if (pos < firstVisiblePos) {
-            // 目标在可视区域上方
-            layoutManager.scrollToPositionWithOffset(pos, 0);
-            rv.postDelayed(() -> fineTunePosition(rv, layoutManager, pos, retryCount + 1), RETRY_DELAY_MS);
-        } else if (pos > lastVisiblePos) {
-            // 目标在可视区域下方
-            layoutManager.scrollToPositionWithOffset(pos, 0);
-            rv.postDelayed(() -> fineTunePosition(rv, layoutManager, pos, retryCount + 1), RETRY_DELAY_MS);
-        } else {
-            // 目标已在可视区域内
-            View targetView = layoutManager.findViewByPosition(pos);
-            if (targetView != null) {
-                int scrollDistance = targetView.getTop() - rv.getPaddingTop();
-                if (Math.abs(scrollDistance) > 1) {
-                    rv.smoothScrollBy(0, scrollDistance);
-                }
-            }
-        }
-    }
-
-    private static void fineTunePosition(RecyclerView rv, 
-                                       V7LinearLayoutManager layoutManager,
-                                       int pos, 
-                                       int retryCount) {
-        View targetView = layoutManager.findViewByPosition(pos);
-        if (targetView == null) return;
-        
-        int offset = targetView.getTop() - rv.getPaddingTop();
-        if (Math.abs(offset) > 1) {
-            rv.smoothScrollBy(0, offset);
-        }
-    }
-
-
 }
