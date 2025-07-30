@@ -437,7 +437,6 @@ public class LivePlayActivity extends BaseActivity {
             epgListAdapter.notifyDataSetChanged();
             final int targetPos = i; // 使用final保证线程安全
             mRightEpgList.removeCallbacks(null);
-            mRightEpgList.setItemAnimator(null); 
        //些方法有滚动效果会产生焦点乱跳         mRightEpgList.setSelectedPosition(targetPos);  
             epgListAdapter.setSelectedEpgIndex(targetPos);
             if(targetPos >= 0 && targetPos < epgListAdapter.getItemCount()) {
@@ -465,7 +464,6 @@ public class LivePlayActivity extends BaseActivity {
             epgListAdapter.notifyDataSetChanged();
             final int targetPos = i; // 使用final保证线程安全
             mRightEpgList.removeCallbacks(null);
-            mRightEpgList.setItemAnimator(null); 
              //些方法有滚动效果会产生焦点乱跳   mRightEpgList.setSelectedPosition(targetPos);
             epgListAdapter.setSelectedEpgIndex(targetPos);
             if(targetPos >= 0 && targetPos < epgListAdapter.getItemCount()) {
@@ -849,7 +847,6 @@ public class LivePlayActivity extends BaseActivity {
         int SelectedIndexEpg = epgListAdapter.getSelectedIndex(); //xuameng当前选中的EPG
         if (SelectedIndexEpg >= 0  && SelectedIndexEpg < epgListAdapter.getItemCount()){  //xuameng不等于-1代表已有选中的EPG，防空指针
             mRightEpgList.removeCallbacks(null);
-            mRightEpgList.setItemAnimator(null); 
 	        mRightEpgList.post(() -> {
             mRightEpgList.scrollToPositionWithOffset(SelectedIndexEpg, 0);
             epgListAdapter.getSelectedIndex(); //xuamengEPG打开菜单自动变颜色
@@ -1548,6 +1545,7 @@ public class LivePlayActivity extends BaseActivity {
     //laodao 7天Epg数据绑定和展示
     private void initEpgListView() {
         mRightEpgList.setHasFixedSize(true);
+        mRightEpgList.setItemAnimator(null);   //xuameng禁用TVRecyclerView动画
         mRightEpgList.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
         epgListAdapter = new LiveEpgAdapter();
         mRightEpgList.setAdapter(epgListAdapter);
@@ -1727,6 +1725,7 @@ public class LivePlayActivity extends BaseActivity {
     //kens 7天回放数据绑定和展示
     private void initEpgDateView() {
         mEpgDateGridView.setHasFixedSize(true);
+        mEpgDateGridView.setItemAnimator(null);   //xuameng禁用TVRecyclerView动画
         mEpgDateGridView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
         liveEpgDateAdapter = new LiveEpgDateAdapter();
         Calendar calendar = Calendar.getInstance();
@@ -2092,6 +2091,7 @@ public class LivePlayActivity extends BaseActivity {
     };
     private void initChannelGroupView() {
         mChannelGroupView.setHasFixedSize(true);
+        mChannelGroupView.setItemAnimator(null);   //xuameng禁用TVRecyclerView动画
         mChannelGroupView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
         liveChannelGroupAdapter = new LiveChannelGroupAdapter();
         mChannelGroupView.setAdapter(liveChannelGroupAdapter);
@@ -2146,6 +2146,7 @@ public class LivePlayActivity extends BaseActivity {
     }
     private void initLiveChannelView() {
         mLiveChannelView.setHasFixedSize(true);
+        mLiveChannelView.setItemAnimator(null);   //xuameng禁用TVRecyclerView动画
         mLiveChannelView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
         liveChannelItemAdapter = new LiveChannelItemAdapter();
         mLiveChannelView.setAdapter(liveChannelItemAdapter);
@@ -2207,6 +2208,7 @@ public class LivePlayActivity extends BaseActivity {
     }
     private void initSettingGroupView() {
         mSettingGroupView.setHasFixedSize(true);
+        mSettingGroupView.setItemAnimator(null);   //xuameng禁用TVRecyclerView动画
         mSettingGroupView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
         liveSettingGroupAdapter = new LiveSettingGroupAdapter();
         mSettingGroupView.setAdapter(liveSettingGroupAdapter);
@@ -2267,6 +2269,7 @@ public class LivePlayActivity extends BaseActivity {
     }
     private void initSettingItemView() {
         mSettingItemView.setHasFixedSize(true);
+        mSettingItemView.setItemAnimator(null);   //xuameng禁用TVRecyclerView动画
         mSettingItemView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
         liveSettingItemAdapter = new LiveSettingItemAdapter();
         mSettingItemView.setAdapter(liveSettingItemAdapter);
