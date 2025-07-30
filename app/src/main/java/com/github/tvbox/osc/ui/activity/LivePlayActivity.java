@@ -3120,7 +3120,9 @@ public class LivePlayActivity extends BaseActivity {
         countDownTimer.start();
     }
 
-    public static String getCurrentDay() {
-        return new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+
+    public static Date getCurrentDay(String dateString) throws ParseException {
+       SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+       return format.parse(dateString); // String → Date
     }
 }
