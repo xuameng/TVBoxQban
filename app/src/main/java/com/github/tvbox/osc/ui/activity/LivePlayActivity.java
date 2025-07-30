@@ -3162,7 +3162,7 @@ scrollToPositionExact(SelectedIndexEpg);
 
     private static final int MAX_RETRY_COUNT = 3;
     
-    public static void scrollToPositionExact(TvRecyclerView recyclerView, int targetPos) {
+    public static void scrollToPositionExact(int targetPos) {
         if (recyclerView == null || 
             recyclerView.getAdapter() == null || 
             targetPos < 0 || 
