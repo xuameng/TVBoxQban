@@ -436,15 +436,21 @@ public class LivePlayActivity extends BaseActivity {
         if(i >= 0 && new Date().compareTo(epgdata.get(i).enddateTime) <= 0) {
             epgListAdapter.notifyDataSetChanged();
             final int targetPos = i; // 使用final保证线程安全
-            mRightEpgList.removeCallbacks(null);
        //些方法有滚动效果会产生焦点乱跳         mRightEpgList.setSelectedPosition(targetPos);  
+            mRightEpgList.removeCallbacks(null);
             epgListAdapter.setSelectedEpgIndex(targetPos);
             if(targetPos >= 0 && targetPos < epgListAdapter.getItemCount()) {
                mRightEpgList.post(() -> {
                mRightEpgList.scrollToPositionWithOffset(Math.max(targetPos-6, 0), 0);
-               mRightEpgList.scrollToPositionWithOffset(targetPos, 0);
                     //xuameng防止跳焦点                 mRightEpgList.setSelection(finalI);
                });
+            }
+            mRightEpgList.removeCallbacks(null);
+            if(targetPos >= 0 && targetPos < epgListAdapter.getItemCount()) {
+               mRightEpgList.postDelayed(() -> {
+               mRightEpgList.scrollToPositionWithOffset(targetPos, 0);
+                    //xuameng防止跳焦点                 mRightEpgList.setSelection(finalI);
+               }, 50);
             }
         }
     } 
@@ -464,15 +470,21 @@ public class LivePlayActivity extends BaseActivity {
         if(i >= 0 && new Date().compareTo(epgdata.get(i).enddateTime) <= 0) {
             epgListAdapter.notifyDataSetChanged();
             final int targetPos = i; // 使用final保证线程安全
-            mRightEpgList.removeCallbacks(null);
              //些方法有滚动效果会产生焦点乱跳   mRightEpgList.setSelectedPosition(targetPos);
+            mRightEpgList.removeCallbacks(null);
             epgListAdapter.setSelectedEpgIndex(targetPos);
             if(targetPos >= 0 && targetPos < epgListAdapter.getItemCount()) {
                mRightEpgList.post(() -> {
                mRightEpgList.scrollToPositionWithOffset(Math.max(targetPos-6, 0), 0);
-               mRightEpgList.scrollToPositionWithOffset(targetPos, 0);
                     //xuameng防止跳焦点                 mRightEpgList.setSelection(finalI);
                });
+            }
+            mRightEpgList.removeCallbacks(null);
+            if(targetPos >= 0 && targetPos < epgListAdapter.getItemCount()) {
+               mRightEpgList.postDelayed(() -> {
+               mRightEpgList.scrollToPositionWithOffset(targetPos, 0);
+                    //xuameng防止跳焦点                 mRightEpgList.setSelection(finalI);
+               }, 50);
             }
         }
     } 
@@ -851,9 +863,15 @@ public class LivePlayActivity extends BaseActivity {
             mRightEpgList.removeCallbacks(null);
 	        mRightEpgList.post(() -> {
             mRightEpgList.scrollToPositionWithOffset(Math.max(SelectedIndexEpg-6, 0), 0);
-            mRightEpgList.scrollToPositionWithOffset(SelectedIndexEpg, 0);
             epgListAdapter.getSelectedIndex(); //xuamengEPG打开菜单自动变颜色
             }); 
+        }
+        if (SelectedIndexEpg >= 0  && SelectedIndexEpg < epgListAdapter.getItemCount()){  //xuameng不等于-1代表已有选中的EPG，防空指针
+            mRightEpgList.removeCallbacks(null);
+	        mRightEpgList.postDelayed(() -> {
+            mRightEpgList.scrollToPositionWithOffset(SelectedIndexEpg, 0);
+            epgListAdapter.getSelectedIndex(); //xuamengEPG打开菜单自动变颜色
+            }, 50); 
         }
         mHideChannelListRunXu(); //xuameng BUG
     }
