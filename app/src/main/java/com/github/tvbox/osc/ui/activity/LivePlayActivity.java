@@ -653,6 +653,7 @@ public class LivePlayActivity extends BaseActivity {
                 showEpgxu(date, arrayList);   //xuameng先保存EPG再显示EPG
             }
             public void onResponse(String paramString) {
+                ArrayList arrayList = new ArrayList();
 			////xuameng 空指针 	Log.d("返回的EPG信息", paramString != null ? paramString : "暂无当前节目单，聚汇直播欢迎您的观看！");
                 try {
                     if(paramString != null && paramString.contains("epg_data")) {   //xuameng 空指针
