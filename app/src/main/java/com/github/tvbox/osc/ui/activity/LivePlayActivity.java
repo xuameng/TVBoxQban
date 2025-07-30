@@ -439,12 +439,7 @@ public class LivePlayActivity extends BaseActivity {
             mRightEpgList.removeCallbacks(null);
        //些方法有滚动效果会产生焦点乱跳         mRightEpgList.setSelectedPosition(targetPos);  
             epgListAdapter.setSelectedEpgIndex(targetPos);
-            if(targetPos >= 0 && targetPos < epgListAdapter.getItemCount()) {
-               mRightEpgList.post(() -> {
-               mRightEpgList.scrollToPositionWithOffset(targetPos, 0);
-                    //xuameng防止跳焦点                 mRightEpgList.setSelection(finalI);
-               });
-            }
+scrollToPositionExact(targetPos);
         }
     } 
     private void showEpgxu(Date date, ArrayList < Epginfo > arrayList) {
@@ -466,12 +461,7 @@ public class LivePlayActivity extends BaseActivity {
             mRightEpgList.removeCallbacks(null);
              //些方法有滚动效果会产生焦点乱跳   mRightEpgList.setSelectedPosition(targetPos);
             epgListAdapter.setSelectedEpgIndex(targetPos);
-            if(targetPos >= 0 && targetPos < epgListAdapter.getItemCount()) {
-               mRightEpgList.post(() -> {
-               mRightEpgList.scrollToPositionWithOffset(targetPos, 0);
-                    //xuameng防止跳焦点                 mRightEpgList.setSelection(finalI);
-               });
-            }
+scrollToPositionExact(targetPos);
         }
     } 
 
@@ -845,13 +835,7 @@ public class LivePlayActivity extends BaseActivity {
         divLoadEpgleft.setVisibility(View.VISIBLE);
         divLoadEpg.setVisibility(View.GONE);
         int SelectedIndexEpg = epgListAdapter.getSelectedIndex(); //xuameng当前选中的EPG
-        if (SelectedIndexEpg >= 0  && SelectedIndexEpg < epgListAdapter.getItemCount()){  //xuameng不等于-1代表已有选中的EPG，防空指针
-            mRightEpgList.removeCallbacks(null);
-	        mRightEpgList.post(() -> {
-            mRightEpgList.scrollToPositionWithOffset(targetPos, 0);
-            epgListAdapter.getSelectedIndex(); //xuamengEPG打开菜单自动变颜色
-            }); 
-        }
+scrollToPositionExact(SelectedIndexEpg);
         mHideChannelListRunXu(); //xuameng BUG
     }
     //频道列表
@@ -3174,4 +3158,65 @@ public class LivePlayActivity extends BaseActivity {
         };
         countDownTimer.start();
     }
+
+
+    private static final int MAX_RETRY_COUNT = 3;
+    
+    public static void scrollToPositionExact(TvRecyclerView recyclerView, int targetPos) {
+        if (recyclerView == null || 
+            recyclerView.getAdapter() == null || 
+            targetPos < 0 || 
+            targetPos >= recyclerView.getAdapter().getItemCount()) {
+            return;
+        }
+
+        V7LinearLayoutManager mRightEpgList = (V7LinearLayoutManager) recyclerView.getLayoutManager();
+        recyclerView.post(() -> executeScrollWithRetry(recyclerView, mRightEpgList, targetPos, 0));
+    }
+
+    private static void executeScrollWithRetry(RecyclerView rv, 
+                                             V7LinearLayoutManager mRightEpgList,
+                                             int pos, 
+                                             int retryCount) {
+        if (retryCount >= MAX_RETRY_COUNT) return;
+        
+        int first = mRightEpgList.findFirstVisibleItemPosition();
+        int last = mRightEpgList.findLastVisibleItemPosition();
+
+        if (pos < first) {
+            mRightEpgList.scrollToPositionWithOffset(pos, 0);
+            rv.post(() -> fineTunePosition(rv, mRightEpgList, pos, retryCount + 1));
+        } else if (pos <= last) {
+            View target = rv.getChildAt(pos - first);
+            if (target != null) {
+                int scrollDistance = target.getTop() - rv.getPaddingTop();
+                if (Math.abs(scrollDistance) > 1) {
+                    rv.smoothScrollBy(0, scrollDistance);
+                }
+            }
+        } else {
+            mRightEpgList.scrollToPositionWithOffset(pos, 0);
+            rv.postDelayed(() -> fineTunePosition(rv, mRightEpgList, pos, retryCount + 1), 50);
+        }
+    }
+
+    private static void fineTunePosition(RecyclerView rv, 
+                                       V7LinearLayoutManager mRightEpgList,
+                                       int pos, 
+                                       int retryCount) {
+        View target = mRightEpgList.findViewByPosition(pos);
+        if (target == null) {
+            executeScrollWithRetry(rv, mRightEpgList, pos, retryCount);
+            return;
+        }
+
+        int visibleHeight = rv.getHeight() - rv.getPaddingTop() - rv.getPaddingBottom();
+        int targetMiddle = target.getTop() + target.getHeight() / 2;
+        int desiredMiddle = rv.getPaddingTop() + visibleHeight / 2;
+        
+        if (Math.abs(targetMiddle - desiredMiddle) > 1) {
+            rv.smoothScrollBy(0, targetMiddle - desiredMiddle);
+        }
+    }
+
 }
