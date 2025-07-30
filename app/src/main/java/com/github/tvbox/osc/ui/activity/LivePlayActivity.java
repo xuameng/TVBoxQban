@@ -3161,22 +3161,35 @@ public class LivePlayActivity extends BaseActivity {
         countDownTimer.start();
     }
 
-    private static final int MAX_RETRY_COUNT = 5;
-    private static final int RETRY_DELAY_MS = 50;
-    public static void scrollToPositionExact(TvRecyclerView recyclerView, int targetPos) {      //xuameng精准滚动方法
-        if(recyclerView == null || recyclerView.getAdapter() == null || targetPos < 0 || targetPos >= recyclerView.getAdapter().getItemCount()) {
-            return;
-        }
-        V7LinearLayoutManager layoutManager = (V7LinearLayoutManager) recyclerView.getLayoutManager();
-        recyclerView.post(() - > executeCenterScroll(recyclerView, layoutManager, targetPos, 0));
+
+private static final int MAX_RETRY_COUNT = 3;
+private static final int RETRY_DELAY_MS = 50;
+
+public static void scrollToPositionExact(TvRecyclerView recyclerView, int targetPos) {
+    if (recyclerView == null || 
+        recyclerView.getAdapter() == null || 
+        targetPos < 0 || 
+        targetPos >= recyclerView.getAdapter().getItemCount()) {
+        return;
     }
-    private static void executeCenterScroll(RecyclerView rv, V7LinearLayoutManager layoutManager, int pos, int retryCount) {
-        if(retryCount >= MAX_RETRY_COUNT) return;
-        View targetView = layoutManager.findViewByPosition(pos);
-        if(targetView == null) {
-            layoutManager.scrollToPositionWithOffset(pos, 0);
-            rv.postDelayed(() - > executeCenterScroll(rv, layoutManager, pos, retryCount + 1), RETRY_DELAY_MS);
-            return;
-        }
+
+    V7LinearLayoutManager layoutManager = (V7LinearLayoutManager) recyclerView.getLayoutManager();
+    recyclerView.post(() -> executeCenterScroll(recyclerView, layoutManager, targetPos, 0));
+}
+
+private static void executeCenterScroll(RecyclerView rv, 
+                                     V7LinearLayoutManager layoutManager,
+                                     int pos, 
+                                     int retryCount) {
+    if (retryCount >= MAX_RETRY_COUNT) return;
+    
+    View targetView = layoutManager.findViewByPosition(pos);
+    if (targetView == null) {
+        layoutManager.scrollToPositionWithOffset(pos,0);
+        rv.postDelayed(() -> executeCenterScroll(rv, layoutManager, pos, retryCount + 1), RETRY_DELAY_MS);
+        return;
     }
+
+}
+
 }
