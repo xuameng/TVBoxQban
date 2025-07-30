@@ -3166,7 +3166,8 @@ scrollToPositionExact(mRightEpgList,SelectedIndexEpg);
     
  
 
-private static final int MAX_RETRY_COUNT = 3;
+
+private static final int MAX_RETRY_COUNT = 5;
 private static final int RETRY_DELAY_MS = 50;
 
 public static void scrollToPositionExact(TvRecyclerView recyclerView, int targetPos) {
@@ -3199,7 +3200,8 @@ private static void executeCenterScroll(RecyclerView rv,
     int scrollDistance = itemCenter - screenCenter;
     
     if (Math.abs(scrollDistance) > 1) {
-        rv.smoothScrollBy(0, scrollDistance);
+        int newOffset = layoutManager.getTopDecorationHeight(targetView) - scrollDistance;
+        layoutManager.scrollToPositionWithOffset(pos, newOffset);
     }
 }
 
