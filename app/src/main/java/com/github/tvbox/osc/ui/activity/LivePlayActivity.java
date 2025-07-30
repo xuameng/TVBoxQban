@@ -835,7 +835,8 @@ scrollToPositionExact(mRightEpgList,targetPos);
         divLoadEpgleft.setVisibility(View.VISIBLE);
         divLoadEpg.setVisibility(View.GONE);
         int SelectedIndexEpg = epgListAdapter.getSelectedIndex(); //xuameng当前选中的EPG
-scrollToPositionExact(SelectedIndexEpg,targetPos);
+		mRightEpgList.removeCallbacks(null);
+scrollToPositionExact(mRightEpgList,SelectedIndexEpg);
         mHideChannelListRunXu(); //xuameng BUG
     }
     //频道列表
