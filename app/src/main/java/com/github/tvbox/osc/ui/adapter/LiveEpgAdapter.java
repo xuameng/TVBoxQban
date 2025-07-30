@@ -55,16 +55,16 @@ public class LiveEpgAdapter extends BaseQuickAdapter<Epginfo, BaseViewHolder> {
             shiyi.setBackgroundColor(Color.YELLOW);
             shiyi.setText("直播中");
             shiyi.setTextColor(Color.RED);
-        } else if (new Date().compareTo(value.enddateTime) > 0 && source_include_back ) {
-            shiyi.setVisibility(View.VISIBLE);
-            shiyi.setBackgroundColor(Color.rgb(80, 80, 80));
-            shiyi.setTextColor(Color.WHITE);
-            shiyi.setText("回看");
         } else if (new Date().compareTo(value.startdateTime) < 0) {
             shiyi.setVisibility(View.VISIBLE);
             shiyi.setBackgroundColor(Color.rgb(8, 157, 1));
             shiyi.setTextColor(Color.WHITE);
             shiyi.setText("预告");
+        } else if (new Date().compareTo(value.enddateTime) > 0 && source_include_back ) {
+            shiyi.setVisibility(View.VISIBLE);
+            shiyi.setBackgroundColor(Color.rgb(80, 80, 80));
+            shiyi.setTextColor(Color.WHITE);
+            shiyi.setText("回看");
         } else {
             shiyi.setVisibility(View.GONE);
         }
