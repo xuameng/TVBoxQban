@@ -439,7 +439,7 @@ public class LivePlayActivity extends BaseActivity {
             mRightEpgList.removeCallbacks(null);
        //些方法有滚动效果会产生焦点乱跳         mRightEpgList.setSelectedPosition(targetPos);  
             epgListAdapter.setSelectedEpgIndex(targetPos);
-scrollToPositionExact(targetPos);
+RecyclerViewScrollHelper(mRightEpgList,targetPos);
         }
     } 
     private void showEpgxu(Date date, ArrayList < Epginfo > arrayList) {
@@ -461,7 +461,7 @@ scrollToPositionExact(targetPos);
             mRightEpgList.removeCallbacks(null);
              //些方法有滚动效果会产生焦点乱跳   mRightEpgList.setSelectedPosition(targetPos);
             epgListAdapter.setSelectedEpgIndex(targetPos);
-scrollToPositionExact(targetPos);
+RecyclerViewScrollHelper(mRightEpgList,targetPos);
         }
     } 
 
@@ -835,7 +835,7 @@ scrollToPositionExact(targetPos);
         divLoadEpgleft.setVisibility(View.VISIBLE);
         divLoadEpg.setVisibility(View.GONE);
         int SelectedIndexEpg = epgListAdapter.getSelectedIndex(); //xuameng当前选中的EPG
-scrollToPositionExact(SelectedIndexEpg);
+RecyclerViewScrollHelper(SelectedIndexEpg,targetPos);
         mHideChannelListRunXu(); //xuameng BUG
     }
     //频道列表
@@ -3160,9 +3160,13 @@ scrollToPositionExact(SelectedIndexEpg);
     }
 
 
-    private static final int MAX_RETRY_COUNT = 3;
     
-    public static void scrollToPositionExact(int targetPos) {
+ 
+public class RecyclerViewScrollHelper {
+    private static final int MAX_RETRY_COUNT = 3;
+    private static final int RETRY_DELAY_MS = 50;
+    
+    public static void scrollToPositionExact(RecyclerView recyclerView, int targetPos) {
         if (recyclerView == null || 
             recyclerView.getAdapter() == null || 
             targetPos < 0 || 
@@ -3170,53 +3174,51 @@ scrollToPositionExact(SelectedIndexEpg);
             return;
         }
 
-        V7LinearLayoutManager mRightEpgList = (V7LinearLayoutManager) recyclerView.getLayoutManager();
-        recyclerView.post(() -> executeScrollWithRetry(recyclerView, mRightEpgList, targetPos, 0));
+        LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+        recyclerView.post(() -> executeScrollWithRetry(recyclerView, layoutManager, targetPos, 0));
     }
 
     private static void executeScrollWithRetry(RecyclerView rv, 
-                                             V7LinearLayoutManager mRightEpgList,
+                                             LinearLayoutManager layoutManager,
                                              int pos, 
                                              int retryCount) {
         if (retryCount >= MAX_RETRY_COUNT) return;
         
-        int first = mRightEpgList.findFirstVisibleItemPosition();
-        int last = mRightEpgList.findLastVisibleItemPosition();
+        int firstVisiblePos = layoutManager.findFirstVisibleItemPosition();
+        int lastVisiblePos = layoutManager.findLastVisibleItemPosition();
 
-        if (pos < first) {
-            mRightEpgList.scrollToPositionWithOffset(pos, 0);
-            rv.post(() -> fineTunePosition(rv, mRightEpgList, pos, retryCount + 1));
-        } else if (pos <= last) {
-            View target = rv.getChildAt(pos - first);
-            if (target != null) {
-                int scrollDistance = target.getTop() - rv.getPaddingTop();
+        if (pos < firstVisiblePos) {
+            // 目标在可视区域上方
+            layoutManager.scrollToPositionWithOffset(pos, 0);
+            rv.postDelayed(() -> fineTunePosition(rv, layoutManager, pos, retryCount + 1), RETRY_DELAY_MS);
+        } else if (pos > lastVisiblePos) {
+            // 目标在可视区域下方
+            layoutManager.scrollToPositionWithOffset(pos, 0);
+            rv.postDelayed(() -> fineTunePosition(rv, layoutManager, pos, retryCount + 1), RETRY_DELAY_MS);
+        } else {
+            // 目标已在可视区域内
+            View targetView = layoutManager.findViewByPosition(pos);
+            if (targetView != null) {
+                int scrollDistance = targetView.getTop() - rv.getPaddingTop();
                 if (Math.abs(scrollDistance) > 1) {
                     rv.smoothScrollBy(0, scrollDistance);
                 }
             }
-        } else {
-            mRightEpgList.scrollToPositionWithOffset(pos, 0);
-            rv.postDelayed(() -> fineTunePosition(rv, mRightEpgList, pos, retryCount + 1), 50);
         }
     }
 
     private static void fineTunePosition(RecyclerView rv, 
-                                       V7LinearLayoutManager mRightEpgList,
+                                       LinearLayoutManager layoutManager,
                                        int pos, 
                                        int retryCount) {
-        View target = mRightEpgList.findViewByPosition(pos);
-        if (target == null) {
-            executeScrollWithRetry(rv, mRightEpgList, pos, retryCount);
-            return;
-        }
-
-        int visibleHeight = rv.getHeight() - rv.getPaddingTop() - rv.getPaddingBottom();
-        int targetMiddle = target.getTop() + target.getHeight() / 2;
-        int desiredMiddle = rv.getPaddingTop() + visibleHeight / 2;
+        View targetView = layoutManager.findViewByPosition(pos);
+        if (targetView == null) return;
         
-        if (Math.abs(targetMiddle - desiredMiddle) > 1) {
-            rv.smoothScrollBy(0, targetMiddle - desiredMiddle);
+        int offset = targetView.getTop() - rv.getPaddingTop();
+        if (Math.abs(offset) > 1) {
+            rv.smoothScrollBy(0, offset);
         }
     }
+
 
 }
