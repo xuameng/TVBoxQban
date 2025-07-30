@@ -3163,7 +3163,8 @@ scrollToPositionExact(SelectedIndexEpg,targetPos);
     
  
 
-    
+        private static final int MAX_RETRY_COUNT = 3;
+    private static final int RETRY_DELAY_MS = 50;
     public static void scrollToPositionExact(TvRecyclerView recyclerView, int targetPos) {
         if (recyclerView == null || 
             recyclerView.getAdapter() == null || 
@@ -3172,7 +3173,7 @@ scrollToPositionExact(SelectedIndexEpg,targetPos);
             return;
         }
 
-        LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+        V7LinearLayoutManager layoutManager = (V7LinearLayoutManager) recyclerView.getLayoutManager();
         recyclerView.post(() -> executeScrollWithRetry(recyclerView, layoutManager, targetPos, 0));
     }
 
