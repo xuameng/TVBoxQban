@@ -439,7 +439,7 @@ public class LivePlayActivity extends BaseActivity {
             mRightEpgList.removeCallbacks(null);
        //些方法有滚动效果会产生焦点乱跳         mRightEpgList.setSelectedPosition(targetPos);  
             epgListAdapter.setSelectedEpgIndex(targetPos);
-RecyclerViewScrollHelper(mRightEpgList,targetPos);
+scrollToPositionExact(mRightEpgList,targetPos);
         }
     } 
     private void showEpgxu(Date date, ArrayList < Epginfo > arrayList) {
@@ -461,7 +461,7 @@ RecyclerViewScrollHelper(mRightEpgList,targetPos);
             mRightEpgList.removeCallbacks(null);
              //些方法有滚动效果会产生焦点乱跳   mRightEpgList.setSelectedPosition(targetPos);
             epgListAdapter.setSelectedEpgIndex(targetPos);
-RecyclerViewScrollHelper(mRightEpgList,targetPos);
+scrollToPositionExact(mRightEpgList,targetPos);
         }
     } 
 
@@ -835,7 +835,7 @@ RecyclerViewScrollHelper(mRightEpgList,targetPos);
         divLoadEpgleft.setVisibility(View.VISIBLE);
         divLoadEpg.setVisibility(View.GONE);
         int SelectedIndexEpg = epgListAdapter.getSelectedIndex(); //xuameng当前选中的EPG
-RecyclerViewScrollHelper(SelectedIndexEpg,targetPos);
+scrollToPositionExact(SelectedIndexEpg,targetPos);
         mHideChannelListRunXu(); //xuameng BUG
     }
     //频道列表
@@ -3162,11 +3162,9 @@ RecyclerViewScrollHelper(SelectedIndexEpg,targetPos);
 
     
  
-public class RecyclerViewScrollHelper {
-    private static final int MAX_RETRY_COUNT = 3;
-    private static final int RETRY_DELAY_MS = 50;
+
     
-    public static void scrollToPositionExact(RecyclerView recyclerView, int targetPos) {
+    public static void scrollToPositionExact(TvRecyclerView recyclerView, int targetPos) {
         if (recyclerView == null || 
             recyclerView.getAdapter() == null || 
             targetPos < 0 || 
