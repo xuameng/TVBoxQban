@@ -3177,7 +3177,7 @@ scrollToPositionExact(SelectedIndexEpg,targetPos);
     }
 
     private static void executeScrollWithRetry(RecyclerView rv, 
-                                             LinearLayoutManager layoutManager,
+                                             V7LinearLayoutManager layoutManager,
                                              int pos, 
                                              int retryCount) {
         if (retryCount >= MAX_RETRY_COUNT) return;
@@ -3206,7 +3206,7 @@ scrollToPositionExact(SelectedIndexEpg,targetPos);
     }
 
     private static void fineTunePosition(RecyclerView rv, 
-                                       LinearLayoutManager layoutManager,
+                                       V7LinearLayoutManager layoutManager,
                                        int pos, 
                                        int retryCount) {
         View targetView = layoutManager.findViewByPosition(pos);
