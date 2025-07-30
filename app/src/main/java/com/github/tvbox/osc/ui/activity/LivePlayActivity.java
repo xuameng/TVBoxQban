@@ -437,6 +437,7 @@ public class LivePlayActivity extends BaseActivity {
             epgListAdapter.notifyDataSetChanged();
             final int targetPos = i; // 使用final保证线程安全
             mRightEpgList.removeCallbacks(null);
+            mRightEpgList.setItemAnimator(null); 
        //些方法有滚动效果会产生焦点乱跳         mRightEpgList.setSelectedPosition(targetPos);  
             epgListAdapter.setSelectedEpgIndex(targetPos);
             if(targetPos >= 0 && targetPos < epgListAdapter.getItemCount()) {
@@ -464,6 +465,7 @@ public class LivePlayActivity extends BaseActivity {
             epgListAdapter.notifyDataSetChanged();
             final int targetPos = i; // 使用final保证线程安全
             mRightEpgList.removeCallbacks(null);
+            mRightEpgList.setItemAnimator(null); 
              //些方法有滚动效果会产生焦点乱跳   mRightEpgList.setSelectedPosition(targetPos);
             epgListAdapter.setSelectedEpgIndex(targetPos);
             if(targetPos >= 0 && targetPos < epgListAdapter.getItemCount()) {
@@ -847,6 +849,7 @@ public class LivePlayActivity extends BaseActivity {
         int SelectedIndexEpg = epgListAdapter.getSelectedIndex(); //xuameng当前选中的EPG
         if (SelectedIndexEpg >= 0  && SelectedIndexEpg < epgListAdapter.getItemCount()){  //xuameng不等于-1代表已有选中的EPG，防空指针
             mRightEpgList.removeCallbacks(null);
+            mRightEpgList.setItemAnimator(null); 
 	        mRightEpgList.post(() -> {
             mRightEpgList.scrollToPositionWithOffset(SelectedIndexEpg, 0);
             epgListAdapter.getSelectedIndex(); //xuamengEPG打开菜单自动变颜色
