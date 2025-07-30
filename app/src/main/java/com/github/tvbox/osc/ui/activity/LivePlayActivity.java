@@ -3170,12 +3170,12 @@ public class LivePlayActivity extends BaseActivity {
         V7LinearLayoutManager layoutManager = (V7LinearLayoutManager) recyclerView.getLayoutManager();
         recyclerView.post(() - > executeCenterScroll(recyclerView, layoutManager, targetPos, 0));
     }
-    private static void executeCenterScroll(RecyclerView, V7LinearLayoutManager layoutManager, int pos, int retryCount) {
+    private static void executeCenterScroll(RecyclerView rv, V7LinearLayoutManager layoutManager, int pos, int retryCount) {
         if(retryCount >= MAX_RETRY_COUNT) return;
         View targetView = layoutManager.findViewByPosition(pos);
         if(targetView == null) {
             layoutManager.scrollToPositionWithOffset(pos, 0);
-            recyclerView.postDelayed(() - > executeCenterScroll(recyclerView, layoutManager, pos, retryCount + 1), RETRY_DELAY_MS);
+            rv.postDelayed(() - > executeCenterScroll(rv, layoutManager, pos, retryCount + 1), RETRY_DELAY_MS);
             return;
         }
     }
