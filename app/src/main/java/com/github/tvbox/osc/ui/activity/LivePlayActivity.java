@@ -496,8 +496,9 @@ public class LivePlayActivity extends BaseActivity {
         //epgListAdapter.updateData(date, new ArrayList<>());
 		String savedEpgKey = channelName + "_" + Objects.requireNonNull(liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex())).getDatePresented();
         if(hsEpg.containsKey(savedEpgKey)) {  //xuameng如果有缓存EPG直接显示
-	       ArrayList arrayListXu = (ArrayList) hsEpg.get(savedEpgKey);
-	       if(!(Epginfo) arrayListXu.get(0).title.contains("聚汇影视")) { 	
+ArrayList<Epginfo> arrayListXu = (ArrayList<Epginfo>) hsEpg.get(savedEpgKey);
+    String title = arrayListXu.get(0).title;
+    if (!title.contains("聚汇影视")) { 	
            showEpg(date, hsEpg.get(savedEpgKey));
            showBottomEpgXU(); //xuameng测试EPG刷新
            return;
@@ -610,12 +611,14 @@ public class LivePlayActivity extends BaseActivity {
         //epgListAdapter.updateData(date, new ArrayList<>());
 		String savedEpgKey = channelName + "_" + Objects.requireNonNull(liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex())).getDatePresented();
         if(hsEpg.containsKey(savedEpgKey)) {   //xuameng如果有缓存EPG直接显示
-	       ArrayList arrayListXu = (ArrayList) hsEpg.get(savedEpgKey);
-if(!(Epginfo) arrayListXu.get(0).title.contains("聚汇影视")) { 	
-           showEpgxu(date, hsEpg.get(savedEpgKey));        
+ArrayList<Epginfo> arrayListXu = (ArrayList<Epginfo>) hsEpg.get(savedEpgKey);
+    String title = arrayListXu.get(0).title;
+    if (!title.contains("聚汇影视")) {
+                  showEpgxu(date, hsEpg.get(savedEpgKey));        
            return;
-		}	
-        }
+    }
+}
+
         String url;
         if(epgStringAddress.contains("{name}") && epgStringAddress.contains("{date}")) {
             url = epgStringAddress.replace("{name}", URLEncoder.encode(epgTagName)).replace("{date}", timeFormat.format(date));
