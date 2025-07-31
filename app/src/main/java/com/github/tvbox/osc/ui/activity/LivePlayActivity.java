@@ -495,14 +495,14 @@ public class LivePlayActivity extends BaseActivity {
         epgListAdapter.CanBack(currentLiveChannelItem.getinclude_back());
         //epgListAdapter.updateData(date, new ArrayList<>());
 		String savedEpgKey = channelName + "_" + Objects.requireNonNull(liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex())).getDatePresented();
-        if(hsEpg.containsKey(savedEpgKey)) {  //xuameng如果有缓存EPG直接显示
-ArrayList<Epginfo> arrayListXu = (ArrayList<Epginfo>) hsEpg.get(savedEpgKey);
-    String title = arrayListXu.get(0).title;
-    if (!title.contains("聚汇影视")) { 	
-           showEpg(date, hsEpg.get(savedEpgKey));
-           showBottomEpgXU(); //xuameng测试EPG刷新
-           return;
-	 }
+        if(hsEpg.containsKey(savedEpgKey)) {   //xuameng如果有缓存EPG
+           ArrayList<Epginfo> arrayListJudge = (ArrayList<Epginfo>) hsEpg.get(savedEpgKey);
+           String title = arrayListJudge.get(0).title;      //0中EPG第一行的名称
+           if (!title.contains("聚汇直播")) {   //xuameng再次判断如果缓存EPG中有聚汇直播字样说明是在线获取EPG失败则继续重试
+              showEpg(date, hsEpg.get(savedEpgKey));   //xuameng如果成功就直接显示缓存EPG   
+              showBottomEpgXU(); //xuameng测试EPG刷新 
+              return;
+           }
         }
         String url;
         if(epgStringAddress.contains("{name}") && epgStringAddress.contains("{date}")) {
@@ -610,15 +610,14 @@ ArrayList<Epginfo> arrayListXu = (ArrayList<Epginfo>) hsEpg.get(savedEpgKey);
         epgListAdapter.CanBack(currentLiveChannelItemXu.getinclude_back()); //xuameng重要EPG滚动菜单检测可不可以回看
         //epgListAdapter.updateData(date, new ArrayList<>());
 		String savedEpgKey = channelName + "_" + Objects.requireNonNull(liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex())).getDatePresented();
-        if(hsEpg.containsKey(savedEpgKey)) {   //xuameng如果有缓存EPG直接显示
-ArrayList<Epginfo> arrayListXu = (ArrayList<Epginfo>) hsEpg.get(savedEpgKey);
-    String title = arrayListXu.get(0).title;
-    if (!title.contains("聚汇影视")) {
-                  showEpgxu(date, hsEpg.get(savedEpgKey));        
-           return;
-    }
-}
-
+        if(hsEpg.containsKey(savedEpgKey)) {   //xuameng如果有缓存EPG
+           ArrayList<Epginfo> arrayListJudge = (ArrayList<Epginfo>) hsEpg.get(savedEpgKey);
+           String title = arrayListJudge.get(0).title;   //0中EPG第一行的名称
+           if (!title.contains("聚汇直播")) {   //xuameng再次判断如果缓存EPG中有聚汇直播字样说明是在线获取EPG失败则继续重试
+              showEpgxu(date, hsEpg.get(savedEpgKey));     //xuameng如果成功就直接显示缓存EPG   
+              return;
+           }
+        }
         String url;
         if(epgStringAddress.contains("{name}") && epgStringAddress.contains("{date}")) {
             url = epgStringAddress.replace("{name}", URLEncoder.encode(epgTagName)).replace("{date}", timeFormat.format(date));
