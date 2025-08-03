@@ -1040,7 +1040,7 @@ public class VodController extends BaseController {
                 try {
                     int current = (int) mControlWrapper.getCurrentPosition();
                     int duration = (int) mControlWrapper.getDuration();
-                    if(current < duration / 2) return;
+                    if(current < duration / 2  || duration <= 1) return;
                     mPlayerConfig.put("et", (duration - current) / 1000);
                     updatePlayerCfgView();
                     listener.updatePlayerCfg();
@@ -1225,7 +1225,8 @@ public class VodController extends BaseController {
             mPlayerSpeedBtn.setText("x" + mPlayerConfig.getDouble("sp"));
             mPlayerTimeStartBtn.setText(PlayerUtils.stringForTime(mPlayerConfig.getInt("st") * 1000));
             mPlayerTimeSkipBtn.setText(PlayerUtils.stringForTime(mPlayerConfig.getInt("et") * 1000));
-            mAudioTrackBtn.setVisibility((playerType == 1 || playerType == 2) ? VISIBLE : GONE);
+  //          mAudioTrackBtn.setVisibility((playerType == 1 || playerType == 2) ? VISIBLE : GONE);     //xuameng不判断音轨了全部显示
+            mAudioTrackBtn.setVisibility(View.VISIBLE);
             int pr = mPlayerConfig.getInt("pr");
             mPlayrender.setText((pr == 0) ? "T渲染" : "S渲染"); //xuameng INT 渲染
         } catch (JSONException e) {
