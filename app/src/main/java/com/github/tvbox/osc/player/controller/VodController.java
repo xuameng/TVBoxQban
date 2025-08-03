@@ -1040,7 +1040,7 @@ public class VodController extends BaseController {
                 try {
                     int current = (int) mControlWrapper.getCurrentPosition();
                     int duration = (int) mControlWrapper.getDuration();
-                    if(current < duration / 2  || duration <= 1) return;
+                    if(current < duration / 2  || duration <= 1) return;     //xuameng 防止负数BUG
                     mPlayerConfig.put("et", (duration - current) / 1000);
                     updatePlayerCfgView();
                     listener.updatePlayerCfg();
