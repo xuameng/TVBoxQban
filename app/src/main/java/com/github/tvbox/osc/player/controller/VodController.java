@@ -1140,7 +1140,7 @@ public class VodController extends BaseController {
         mPlayrender.setNextFocusUpId(R.id.mxuplay);
     }
     private void hideLiveAboutBtn() {
-        if(mControlWrapper != null && mControlWrapper.getDuration() == 0) {
+        if(mControlWrapper != null && mControlWrapper.getDuration() <= 1) {
             mPlayerSpeedBtn.setVisibility(GONE);
             mPlayerTimeStartEndText.setVisibility(GONE);
             mPlayerTimeStartBtn.setVisibility(GONE);
