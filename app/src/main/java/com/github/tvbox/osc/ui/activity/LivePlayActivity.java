@@ -1309,7 +1309,7 @@ public class LivePlayActivity extends BaseActivity {
         if(isVOD) {
             Mtv_left_top_xu.setVisibility(View.VISIBLE);
         }
-        if(!isCurrentLiveChannelValid()) return;
+        if(!isCurrentLiveChannelValid()) return;    //xuameng 空指针修复
         liveEpgDateAdapter.setSelectedIndex(1);   //xuameng频道EPG日期自动选今天
         getEpg(new Date());
     }
@@ -1401,14 +1401,14 @@ public class LivePlayActivity extends BaseActivity {
         if(mVideoView == null) {
             return;
         }
-        if(!isCurrentLiveChannelValid()) return;
+        if(!isCurrentLiveChannelValid()) return;   //xuameng 空指针修复
         int channelGroupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex(); //xuameng当前选定的频道组
         if(liveChannelGroupList.size() - 1 < 1 && getLiveChannels(channelGroupIndexXu).size() - 1 < 1) { //如果只有一个频道组就播放当前频道，不胯下胯下跨选频道组
             Toast.makeText(App.getInstance(), "聚汇影视提示您：只有一个频道！", Toast.LENGTH_SHORT).show();
             return;
         }
         if(!Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false) && getLiveChannels(channelGroupIndexXu).size() - 1 < 1) {
-            Toast.makeText(App.getInstance(), "聚汇影视提示您：未选择跨选分类且本组只有一个频道！", Toast.LENGTH_SHORT).show();
+            Toast.makeText(App.getInstance(), "聚汇影视提示您：未选择跨选分类且本组只有一个频道或没有选择频道！", Toast.LENGTH_SHORT).show();
             return;
         }
         Integer[] groupChannelIndex = getNextChannel(1);
@@ -1418,7 +1418,7 @@ public class LivePlayActivity extends BaseActivity {
         if(mVideoView == null) {
             return;
         }
-        if(!isCurrentLiveChannelValid()) return;
+        if(!isCurrentLiveChannelValid()) return;    //xuameng 空指针修复
         int channelGroupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex(); //xuameng当前选定的频道组
         if(liveChannelGroupList.size() - 1 < 1 && getLiveChannels(channelGroupIndexXu).size() - 1 < 1) { //如果只有一个频道组就播放当前频道，不胯下胯下跨选频道组
             Toast.makeText(App.getInstance(), "聚汇影视提示您：只有一个频道！", Toast.LENGTH_SHORT).show();
@@ -3170,20 +3170,23 @@ public class LivePlayActivity extends BaseActivity {
     }
 
     public void HideBottomEpg() {  //隐藏底部菜单
-       if(!isCurrentLiveChannelValid()) return;
        ll_epg.setVisibility(View.GONE); //xuameng下面EPG菜单隐藏
        ll_right_top_loading.setVisibility(View.GONE); //xuameng直播左上图标隐藏
        backcontroller.setVisibility(View.GONE);  //xuameng 隐藏进度条
        hideTimeXu(); //xuameng隐藏系统时间
        hideNetSpeedXu(); //XUAMENG隐藏右下网速
        view_line_XU.setVisibility(View.INVISIBLE); //xuamengEPG中的横线
+       if(!isCurrentLiveChannelValid()) return;   //xuameng 空指针修复
+       if(countDownTimer == null) {   //xuameng 空指针修复
+          return;
+       }
        if(countDownTimer != null) {
           countDownTimer.cancel();
        }
     }
 
     public void HideBottomEpgTimer() {    //隐藏底部菜单到计时
-        if(!isCurrentLiveChannelValid()) return;
+        if(!isCurrentLiveChannelValid()) return;   //xuameng 空指针修复
         if(countDownTimer != null) {
            countDownTimer.cancel();
         }
