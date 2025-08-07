@@ -3182,14 +3182,12 @@ public class LivePlayActivity extends BaseActivity {
        hideTimeXu(); //xuameng隐藏系统时间
        hideNetSpeedXu(); //XUAMENG隐藏右下网速
        view_line_XU.setVisibility(View.INVISIBLE); //xuamengEPG中的横线
-       if(!isCurrentLiveChannelValidXu()) return;   //xuameng 空指针修复
        if(countDownTimer != null) {
           countDownTimer.cancel();
        }
     }
 
     public void HideBottomEpgTimer() {    //隐藏底部菜单到计时
-        if(!isCurrentLiveChannelValidXu()) return;   //xuameng 空指针修复
         if(countDownTimer != null) {
            countDownTimer.cancel();
         }
