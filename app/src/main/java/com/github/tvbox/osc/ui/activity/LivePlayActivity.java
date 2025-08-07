@@ -970,10 +970,10 @@ public class LivePlayActivity extends BaseActivity {
             int getMin = 1;
             int getMax;
             for(int j = 0; j < liveChannelGroupList.size(); j++) { //xuameng循环频道组
-            if(isNeedInputPassword(j)) {
-				liveChannelItemAdapter.setNewData(getLiveChannelsXu(j));
-            }
-                getMax = getMin + getLiveChannels(j).size() - 1;
+                if(isNeedInputPassword(j)) {
+                   liveChannelItemAdapter.setNewData(getLiveChannelsXu(j));
+                }
+                getMax = getMin + getLiveChannelsXu(j).size() - 1;
                 if(selectedChannelNumber >= getMin && selectedChannelNumber <= getMax) {
                     grpIndx = j;
                     chaIndx = selectedChannelNumber - getMin + 1;
@@ -990,7 +990,7 @@ public class LivePlayActivity extends BaseActivity {
                     return;
                 }
             if(isNeedInputPassword(grpIndx)) {
-                                    Toast.makeText(mContext, "聚汇直播提示您：此为加密频道！", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, "聚汇直播提示您：此为加密频道！", Toast.LENGTH_SHORT).show();
                 return;
             }
                 playChannel(grpIndx, chaIndx - 1, false); //xuameng获取到编号播放
@@ -2869,10 +2869,8 @@ public class LivePlayActivity extends BaseActivity {
         }
     }
 
-	    private ArrayList < LiveChannelItem > getLiveChannelsXu(int groupIndex) {
-
-            return liveChannelGroupList.get(groupIndex).getLiveChannels();
-
+	private ArrayList < LiveChannelItem > getLiveChannelsXu(int groupIndex) {
+        return liveChannelGroupList.get(groupIndex).getLiveChannels();
     }
     private Integer[] getNextChannel(int direction) {
         int channelGroupIndex = currentChannelGroupIndex;
