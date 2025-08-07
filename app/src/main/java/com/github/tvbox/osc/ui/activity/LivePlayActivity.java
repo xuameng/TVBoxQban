@@ -3203,7 +3203,7 @@ public class LivePlayActivity extends BaseActivity {
 
 private int getPasswordChannelSize() {
     LinkedHashMap<String, LinkedHashMap<String, ArrayList<String>>> linkedHashMap = new LinkedHashMap<>();
-    TxtSubscribe.parse(linkedHashMap, response.body());
+    TxtSubscribe.parse(linkedHashMap);
     JsonArray livesArray = TxtSubscribe.live2JsonArray(linkedHashMap);
 
     int countProtectedChannels = 0;
