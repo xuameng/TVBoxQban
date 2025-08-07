@@ -865,6 +865,11 @@ public class ApiConfig {
                 LiveChannelItem liveChannelItem = new LiveChannelItem();
                 liveChannelItem.setChannelName(obj.get("name").getAsString().trim());
                 liveChannelItem.setChannelIndex(channelIndex++);
+    if (!groupName.contains("_")) { // 新增条件判断
+        liveChannelItem.setChannelNum(++channelNum);
+    } else {
+        liveChannelItem.setChannelNum(-1); // 特殊标记或跳过
+    }
                 liveChannelItem.setChannelNum(++channelNum);
                 ArrayList<String> urls = DefaultConfig.safeJsonStringList(obj, "urls");
                 ArrayList<String> sourceNames = new ArrayList<>();
