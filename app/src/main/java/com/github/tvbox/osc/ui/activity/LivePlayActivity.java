@@ -848,6 +848,7 @@ public class LivePlayActivity extends BaseActivity {
     //频道列表
     @SuppressLint("NotifyDataSetChanged")
     public void divLoadEpgRight(View view) {
+        mHideChannelListRunXu(); //xuameng BUG
         if(!isCurrentLiveChannelValid()) return; //xuameng 未选择频道空指针问题
         if(isTouch) {
             showChannelListTouch();
@@ -864,7 +865,6 @@ public class LivePlayActivity extends BaseActivity {
             epgListAdapter.getSelectedIndex(); //xuamengEPG打开菜单自动变颜色
             }); 
         }
-        mHideChannelListRunXu(); //xuameng BUG
     }
     //频道列表
     public void divLoadEpgLeft(View view) {
@@ -3183,9 +3183,6 @@ public class LivePlayActivity extends BaseActivity {
        hideNetSpeedXu(); //XUAMENG隐藏右下网速
        view_line_XU.setVisibility(View.INVISIBLE); //xuamengEPG中的横线
        if(!isCurrentLiveChannelValidXu()) return;   //xuameng 空指针修复
-       if(countDownTimer == null) {   //xuameng 空指针修复
-          return;
-       }
        if(countDownTimer != null) {
           countDownTimer.cancel();
        }
