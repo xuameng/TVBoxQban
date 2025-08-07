@@ -784,7 +784,7 @@ public class LivePlayActivity extends BaseActivity {
     }
     @SuppressLint("SetTextI18n") //xuameng乱码
     private void showBottomEpgXU() { //XUAMENG刷新EPG，要不不能自动刷新
-        if(!isCurrentLiveChannelValid()) { //xuameng 未选择频道空指针问题
+        if(!isCurrentLiveChannelValidXu()) { //xuameng 未选择频道空指针问题
             return;
         }
         if(isSHIYI) return;
@@ -1309,7 +1309,7 @@ public class LivePlayActivity extends BaseActivity {
         if(isVOD) {
             Mtv_left_top_xu.setVisibility(View.VISIBLE);
         }
-        if(!isCurrentLiveChannelValid()) return;    //xuameng 空指针修复
+        if(!isCurrentLiveChannelValidXu()) return;    //xuameng 空指针修复
         liveEpgDateAdapter.setSelectedIndex(1);   //xuameng频道EPG日期自动选今天
         getEpg(new Date());
     }
@@ -2905,6 +2905,12 @@ public class LivePlayActivity extends BaseActivity {
         }
         return true;
     }
+    private boolean isCurrentLiveChannelValidXu() {
+        if(currentLiveChannelItem == null) {
+            return false;
+        }
+        return true;
+    }
     //计算两个时间相差的秒数
     public static long getTime(String startTime, String endTime) {
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -3176,7 +3182,7 @@ public class LivePlayActivity extends BaseActivity {
        hideTimeXu(); //xuameng隐藏系统时间
        hideNetSpeedXu(); //XUAMENG隐藏右下网速
        view_line_XU.setVisibility(View.INVISIBLE); //xuamengEPG中的横线
-       if(!isCurrentLiveChannelValid()) return;   //xuameng 空指针修复
+       if(!isCurrentLiveChannelValidXu()) return;   //xuameng 空指针修复
        if(countDownTimer == null) {   //xuameng 空指针修复
           return;
        }
@@ -3186,7 +3192,7 @@ public class LivePlayActivity extends BaseActivity {
     }
 
     public void HideBottomEpgTimer() {    //隐藏底部菜单到计时
-        if(!isCurrentLiveChannelValid()) return;   //xuameng 空指针修复
+        if(!isCurrentLiveChannelValidXu()) return;   //xuameng 空指针修复
         if(countDownTimer != null) {
            countDownTimer.cancel();
         }
