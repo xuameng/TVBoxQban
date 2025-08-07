@@ -129,6 +129,7 @@ public class LivePlayActivity extends BaseActivity {
     private int currentLiveChannelIndex = -1;
     private int currentLiveChannelIndexXu = -1;  //xuameng item显示EPG用
     private int currentLiveChangeSourceTimes = 0;
+	private int countProtectedChannels = 0;
     private LiveChannelItem currentLiveChannelItem = null;
     private LiveChannelItem currentLiveChannelItemXu = null;  //xuameng item显示EPG用
     private LivePlayerManager livePlayerManager = new LivePlayerManager();   //xuameng切换播放器渲染等
@@ -968,8 +969,8 @@ public class LivePlayActivity extends BaseActivity {
             int chaIndx = 0;
             int getMin = 1;
             int getMax;
-            for(int j = 0; j < liveChannelGroupList.size(); j++) { //xuameng循环频道组
-                getMax = getMin + getLiveChannels(j).size() - 1;
+            for(int j = 0; j < liveChannelGroupList.size() + countProtectedChannels; j++) { //xuameng循环频道组
+                getMax = getMin + getLiveChannels(j).size() + countProtectedChannels - 1;
                 if(selectedChannelNumber >= getMin && selectedChannelNumber <= getMax) {
                     grpIndx = j;
                     chaIndx = selectedChannelNumber - getMin + 1;
@@ -1014,7 +1015,6 @@ public class LivePlayActivity extends BaseActivity {
         isTVNUM = false;
         mHandler.removeCallbacks(mPlaySelectedChannel);
         mHandler.postDelayed(mPlaySelectedChannel, 2500);
-		selectedChannelNumber = selectedChannelNumber - getPasswordChannelSize();
     }
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
@@ -2498,6 +2498,14 @@ public class LivePlayActivity extends BaseActivity {
                         initLiveState();
                     }
                 });
+
+    for (JsonElement groupElement : livesArray) {
+        String groupName = ((JsonObject) groupElement).get("group").getAsString();
+        if (groupName.contains("_")) {
+            countProtectedChannels += ((JsonObject) groupElement)
+                .get("channels").getAsJsonArray().size();
+        }
+    }
             }
             @Override
             public void onError(Response < String > response) {
@@ -3200,21 +3208,4 @@ public class LivePlayActivity extends BaseActivity {
         };
         countDownTimer.start();
     }
-
-private int getPasswordChannelSize() {
-    LinkedHashMap<String, LinkedHashMap<String, ArrayList<String>>> linkedHashMap = new LinkedHashMap<>();
-    TxtSubscribe.parse(linkedHashMap);
-    JsonArray livesArray = TxtSubscribe.live2JsonArray(linkedHashMap);
-
-    int countProtectedChannels = 0;
-    for (JsonElement groupElement : livesArray) {
-        String groupName = ((JsonObject) groupElement).get("group").getAsString();
-        if (groupName.contains("_")) {
-            countProtectedChannels += ((JsonObject) groupElement)
-                .get("channels").getAsJsonArray().size();
-        }
-    }
-    return countProtectedChannels;
-}
-
 }
