@@ -986,6 +986,10 @@ public class LivePlayActivity extends BaseActivity {
                     selectedChannelNumber = 0;
                     return;
                 }
+            if(isNeedInputPassword(grpIndx)) {
+                                    Toast.makeText(mContext, "聚汇直播提示您：此为加密频道！", Toast.LENGTH_SHORT).show();
+                return;
+            }
                 playChannel(grpIndx, chaIndx - 1, false); //xuameng获取到编号播放
             } else {
                 Toast.makeText(mContext, "聚汇直播提示您：无此频道编号！", Toast.LENGTH_SHORT).show(); //xuameng编号为0
