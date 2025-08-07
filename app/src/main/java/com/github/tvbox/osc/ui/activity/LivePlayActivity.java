@@ -971,7 +971,7 @@ public class LivePlayActivity extends BaseActivity {
             int getMax;
             for(int j = 0; j < liveChannelGroupList.size(); j++) { //xuameng循环频道组
             if(isNeedInputPassword(j)) {
-				liveChannelItemAdapter.setNewData(liveChannelGroupList.get(j).getLiveChannels());
+				liveChannelItemAdapter.setNewData(getLiveChannelsXu(j));
             }
                 getMax = getMin + getLiveChannels(j).size() - 1;
                 if(selectedChannelNumber >= getMin && selectedChannelNumber <= getMax) {
@@ -2867,6 +2867,12 @@ public class LivePlayActivity extends BaseActivity {
         } else {
             return new ArrayList < > ();
         }
+    }
+
+	    private ArrayList < LiveChannelItem > getLiveChannelsXu(int groupIndex) {
+
+            return liveChannelGroupList.get(groupIndex).getLiveChannels();
+
     }
     private Integer[] getNextChannel(int direction) {
         int channelGroupIndex = currentChannelGroupIndex;
