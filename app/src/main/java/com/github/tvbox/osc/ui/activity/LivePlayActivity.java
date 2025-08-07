@@ -1014,6 +1014,7 @@ public class LivePlayActivity extends BaseActivity {
         isTVNUM = false;
         mHandler.removeCallbacks(mPlaySelectedChannel);
         mHandler.postDelayed(mPlaySelectedChannel, 2500);
+		selectedChannelNumber = selectedChannelNumber - getPasswordChannelSize();
     }
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
@@ -3199,4 +3200,21 @@ public class LivePlayActivity extends BaseActivity {
         };
         countDownTimer.start();
     }
+
+private int getPasswordChannelSize() {
+    LinkedHashMap<String, LinkedHashMap<String, ArrayList<String>>> linkedHashMap = new LinkedHashMap<>();
+    TxtSubscribe.parse(linkedHashMap, response.body());
+    JsonArray livesArray = TxtSubscribe.live2JsonArray(linkedHashMap);
+
+    int countProtectedChannels = 0;
+    for (JsonElement groupElement : livesArray) {
+        String groupName = ((JsonObject) groupElement).get("group").getAsString();
+        if (groupName.contains("_")) {
+            countProtectedChannels += ((JsonObject) groupElement)
+                .get("channels").getAsJsonArray().size();
+        }
+    }
+    return countProtectedChannels;
+}
+
 }
