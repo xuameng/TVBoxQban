@@ -971,7 +971,7 @@ public class LivePlayActivity extends BaseActivity {
             int getMax;
             for(int j = 0; j < liveChannelGroupList.size(); j++) { //xuameng循环频道组
             if(isNeedInputPassword(j)) {
-				liveChannelItemAdapter.setNewData(getLiveChannels(grpIndx));
+				liveChannelItemAdapter.setNewData(getLiveChannels(j));
             }
                 getMax = getMin + getLiveChannels(j).size() - 1;
                 if(selectedChannelNumber >= getMin && selectedChannelNumber <= getMax) {
