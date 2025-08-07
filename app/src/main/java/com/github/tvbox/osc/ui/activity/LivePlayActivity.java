@@ -1425,7 +1425,7 @@ public class LivePlayActivity extends BaseActivity {
             return;
         }
         if(!Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false) && getLiveChannels(channelGroupIndexXu).size() - 1 < 1) {
-            Toast.makeText(App.getInstance(), "聚汇影视提示您：未选择跨选分类且本组只有一个频道！", Toast.LENGTH_SHORT).show();
+            Toast.makeText(App.getInstance(), "聚汇影视提示您：未选择跨选分类且本组只有一个频道或没有选择频道！", Toast.LENGTH_SHORT).show();
             return;
         }
         Integer[] groupChannelIndex = getNextChannel(-1);
