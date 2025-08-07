@@ -1303,14 +1303,15 @@ public class LivePlayActivity extends BaseActivity {
     private void mHideChannelListRun() { //xuameng左侧菜单隐藏
         ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) tvLeftChannelListLayout.getLayoutParams();
         isShowlist = false;
-        liveEpgDateAdapter.setSelectedIndex(1);   //xuameng频道EPG日期自动选今天
-        getEpg(new Date());
         if(tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
             tvLeftChannelListLayout.setVisibility(View.INVISIBLE);
         }
         if(isVOD) {
             Mtv_left_top_xu.setVisibility(View.VISIBLE);
         }
+        if(!isCurrentLiveChannelValid()) return;
+        liveEpgDateAdapter.setSelectedIndex(1);   //xuameng频道EPG日期自动选今天
+        getEpg(new Date());
     }
     private void mHideChannelListRunXu() { //xuameng左侧菜单延时5秒隐藏
         if(countDownTimer7 != null) {
@@ -3169,6 +3170,7 @@ public class LivePlayActivity extends BaseActivity {
     }
 
     public void HideBottomEpg() {  //隐藏底部菜单
+       if(!isCurrentLiveChannelValid()) return;
        ll_epg.setVisibility(View.GONE); //xuameng下面EPG菜单隐藏
        ll_right_top_loading.setVisibility(View.GONE); //xuameng直播左上图标隐藏
        backcontroller.setVisibility(View.GONE);  //xuameng 隐藏进度条
@@ -3181,6 +3183,7 @@ public class LivePlayActivity extends BaseActivity {
     }
 
     public void HideBottomEpgTimer() {    //隐藏底部菜单到计时
+        if(!isCurrentLiveChannelValid()) return;
         if(countDownTimer != null) {
            countDownTimer.cancel();
         }
