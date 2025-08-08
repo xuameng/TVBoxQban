@@ -219,6 +219,8 @@ public class ModelSettingFragment extends BaseLazyFragment {
 							       ((BaseActivity) requireActivity()).changeWallpaper(true);      
                                    HawkConfig.isGetWp = false;  //xuameng下载壁纸 
 								   Toast.makeText(mContext, "壁纸更换成功！", Toast.LENGTH_SHORT).show();   //xuameng
+                                }else{
+                                   Toast.makeText(mContext, "壁纸文件类型错误！已重置壁纸！", Toast.LENGTH_SHORT).show();   //xuameng
                                 }
 							}
                         }
