@@ -2084,6 +2084,7 @@ public class LivePlayActivity extends BaseActivity {
         toast.show();
     }
     public void showLiveXu() {
+        if(toast != null) toast.cancel();
         LayoutInflater inflater = getLayoutInflater();
         View customToastView = inflater.inflate(R.layout.live_toast, null);
         ImageView imageView = customToastView.findViewById(R.id.toastImage);
