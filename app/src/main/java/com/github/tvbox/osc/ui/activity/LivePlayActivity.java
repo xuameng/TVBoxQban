@@ -2084,10 +2084,10 @@ public class LivePlayActivity extends BaseActivity {
         toast.show();
     }
     public void showLiveXu() {
-        if(toast != null) toast.cancel();
         LayoutInflater inflater = getLayoutInflater();
         View customToastView = inflater.inflate(R.layout.live_toast, null);
         ImageView imageView = customToastView.findViewById(R.id.toastImage);
+        Toast toast = new Toast(getApplicationContext());
         toast.setDuration(Toast.LENGTH_SHORT);
         toast.setView(customToastView);
         toast.setGravity(Gravity.CENTER, 0, 0); //xuameng 20为左右，0是上下
@@ -2909,8 +2909,7 @@ public class LivePlayActivity extends BaseActivity {
     }
     private boolean isCurrentLiveChannelValid() {
         if(currentLiveChannelItem == null) {
-            if(toast != null) toast.cancel();
-            toast.makeText(App.getInstance(), "聚汇影视提示您：请先选择频道！", Toast.LENGTH_SHORT).show();
+            Toast.makeText(App.getInstance(), "聚汇影视提示您：请先选择频道！", Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;
