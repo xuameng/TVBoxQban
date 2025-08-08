@@ -209,15 +209,16 @@ public class ModelSettingFragment extends BaseLazyFragment {
             public void onClick(View v) {
                 FastClickCheckUtil.check(v);
                 if (!ApiConfig.get().wallpaper.isEmpty()){
-	            Toast.makeText(mContext, "壁纸更换中！", Toast.LENGTH_SHORT).show();   //xuameng
+				HawkConfig.isGetWp = true;  //xuameng下载壁纸
                     OkGo.<File>get(ApiConfig.get().wallpaper).tag("xuameng").execute(new FileCallback(requireActivity().getFilesDir().getAbsolutePath(), "wp") {  //xuameng增加tag以便打断下载
                         @Override
                         public void onSuccess(Response<File> response) {
                             if (HawkConfig.isGetWp){
                                 String mimeType = response.headers().get("Content-Type");
                                 if (mimeType != null && mimeType.startsWith("image/")) {   // 确认是图片文件
-							       ((BaseActivity) requireActivity()).changeWallpaper(true);
-							       HawkConfig.isGetWp = false;  //xuameng下载壁纸            
+							       ((BaseActivity) requireActivity()).changeWallpaper(true);      
+                                   HawkConfig.isGetWp = false;  //xuameng下载壁纸 
+								   Toast.makeText(mContext, "壁纸更换成功！", Toast.LENGTH_SHORT).show();   //xuameng
                                 }
 							}
                         }
@@ -226,11 +227,11 @@ public class ModelSettingFragment extends BaseLazyFragment {
                         public void onError(Response<File> response) {
                             super.onError(response);
 							HawkConfig.isGetWp = false;  //xuameng下载壁纸
+                            Toast.makeText(mContext, "壁纸更换失败！", Toast.LENGTH_SHORT).show();   //xuameng
                         }
 
                         @Override
                         public void downloadProgress(Progress progress) {
-                            HawkConfig.isGetWp = true;  //xuameng下载壁纸
                             super.downloadProgress(progress);
                         }
                     });
