@@ -211,6 +211,7 @@ public class SettingActivity extends BaseActivity {
             AppManager.getInstance().finishAllActivity();
             jumpActivity(HomeActivity.class);
         }
+        App.HideToast();  //xuameng HideToast
         super.onBackPressed();
     }
 
