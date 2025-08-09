@@ -1328,7 +1328,7 @@ public class PlayActivity extends BaseActivity {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    App.showToastShort(mContext, "解析来自:" + rs.optString("jxFrom");
+                                    App.showToastShort(mContext, "解析来自:" + rs.optString("jxFrom"));
                                 }
                             });
                         }
@@ -1450,7 +1450,7 @@ public class PlayActivity extends BaseActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    App.showToastShort(mContext, "解析来自:" + rs.optString("jxFrom");
+                    App.showToastShort(mContext, "解析来自:" + rs.optString("jxFrom"));
                 }
             });
         }
