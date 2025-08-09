@@ -24,6 +24,7 @@ import com.github.tvbox.osc.util.HawkConfig;
 import com.orhanobut.hawk.Hawk;
 import com.owen.tvrecyclerview.widget.TvRecyclerView;
 import com.owen.tvrecyclerview.widget.V7LinearLayoutManager;
+import com.lzy.okgo.OkGo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -181,7 +182,9 @@ public class SettingActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
 		if (HawkConfig.isGetWp){ 
-			Toast.makeText(mContext, "壁纸更换中！请稍后！", Toast.LENGTH_SHORT).show();   //xuameng
+            OkGo.getInstance().cancelTag("wallpaperDown");   //xuameng打断下载
+            HawkConfig.isGetWp = false; 
+			Toast.makeText(mContext, "壁纸更换已被打断！", Toast.LENGTH_SHORT).show();   //xuameng
 			return;
 		}
         if (currentApi.equals(Hawk.get(HawkConfig.API_URL, ""))) {   //xuameng 如何配置地址没变
