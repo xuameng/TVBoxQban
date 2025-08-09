@@ -37,7 +37,6 @@ import me.jessyan.autosize.utils.AutoSizeUtils;  //xuameng优化首页数据源�
 import com.github.tvbox.osc.util.DefaultConfig;  //xuameng长按许大师制作重启APP
 import com.github.tvbox.osc.base.App;  //xuameng showtoast
 import com.github.tvbox.osc.util.FastClickCheckUtil;
-import com.github.tvbox.osc.util.FastClickCheckUtilxu;
 import com.github.tvbox.osc.util.FileUtils;
 import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.util.HistoryHelper;
@@ -209,7 +208,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
         findViewById(R.id.llWp).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FastClickCheckUtilxu.check(v);  //xuameng 2秒
+                FastClickCheckUtil.check(v);  //xuameng 2秒
                 if (!ApiConfig.get().wallpaper.isEmpty()){
 				    HawkConfig.isGetWp = true;  //xuameng下载壁纸
                     App.showToastShort(getContext(), "壁纸更换中！");
