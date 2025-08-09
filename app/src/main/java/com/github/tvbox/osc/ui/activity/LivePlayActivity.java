@@ -2083,6 +2083,9 @@ public class LivePlayActivity extends BaseActivity {
         toast.show();
     }
     public void showLiveXu() {
+		        if(toast != null) {
+            toast.cancel(); // 取消前一个Toast
+        }
         LayoutInflater inflater = getLayoutInflater();
         View customToastView = inflater.inflate(R.layout.live_toast, null);
         ImageView imageView = customToastView.findViewById(R.id.toastImage);
@@ -2919,7 +2922,10 @@ public class LivePlayActivity extends BaseActivity {
     }
     private boolean isCurrentLiveChannelValid() {
         if(currentLiveChannelItem == null) {
-            Toast.makeText(App.getInstance(), "聚汇影视提示您：请先选择频道！", Toast.LENGTH_SHORT).show();
+        if(toast != null) {
+            toast.cancel(); // 取消前一个Toast
+        }
+            toast.makeText(App.getInstance(), "聚汇影视提示您：请先选择频道！", Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;
