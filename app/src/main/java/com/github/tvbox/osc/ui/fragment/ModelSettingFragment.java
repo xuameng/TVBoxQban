@@ -36,6 +36,7 @@ import android.view.ViewGroup;   //xuameng优化首页数据源列表
 import me.jessyan.autosize.utils.AutoSizeUtils;  //xuameng优化首页数据源列表
 import com.github.tvbox.osc.util.DefaultConfig;  //xuameng长按许大师制作重启APP
 import com.github.tvbox.osc.util.FastClickCheckUtil;
+import com.github.tvbox.osc.util.FastClickCheckUtilxu;
 import com.github.tvbox.osc.util.FileUtils;
 import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.util.HistoryHelper;
@@ -207,7 +208,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
         findViewById(R.id.llWp).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FastClickCheckUtil.check(v);
+                FastClickCheckUtilxu.check(v);
                 if (!ApiConfig.get().wallpaper.isEmpty()){
                     Toast.makeText(mContext, "壁纸更换中！", Toast.LENGTH_SHORT).show();   //xuameng
                     OkGo.<File>get(ApiConfig.get().wallpaper).tag("xuameng").execute(new FileCallback(requireActivity().getFilesDir().getAbsolutePath(), "wp") {  //xuameng增加tag以便打断下载
@@ -218,7 +219,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
 							   ((BaseActivity) requireActivity()).changeWallpaper(true);      
                                Toast.makeText(mContext, "壁纸更换成功！", Toast.LENGTH_SHORT).show();   //xuameng
                             }else{
-                               File wp = new File(getFilesDir().getAbsolutePath() + "/wp");
+                               File wp = new File(requireActivity().getFilesDir().getAbsolutePath() + "/wp");
                                if (wp.exists()){
                                    wp.delete();
                                }
