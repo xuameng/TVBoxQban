@@ -915,7 +915,7 @@ public class LivePlayActivity extends BaseActivity {
             playXuSource();
         } else {
             mExitTime = System.currentTimeMillis();
-            App.showToastShort(mContext, "当前回看中，再按一次返回键退出回看！");
+            showToastBack();   //xuameng 退出回看
         }
     }
     @Override
@@ -2061,7 +2061,7 @@ public class LivePlayActivity extends BaseActivity {
             }
         }
     };
-    public void showToastXu() {
+    public void showToastXu() {   //xuameng回看完成
         App.HideToast();  //xuameng HideToast
         LayoutInflater inflater = getLayoutInflater();
         View customToastView = inflater.inflate(R.layout.review_toast, null);
@@ -2072,7 +2072,7 @@ public class LivePlayActivity extends BaseActivity {
         toast.setGravity(Gravity.CENTER, 0, 0); //xuameng 20为左右，0是上下
         toast.show();
     }
-    public void showToastError() {
+    public void showToastError() {  //xuameng回看错误
         App.HideToast();   //xuameng HideToast
         LayoutInflater inflater = getLayoutInflater();
         View customToastView = inflater.inflate(R.layout.review_toast_error, null);
@@ -2083,13 +2083,24 @@ public class LivePlayActivity extends BaseActivity {
         toast.setGravity(Gravity.CENTER, 0, 0); //xuameng 20为左右，0是上下
         toast.show();
     }
-    public void showLiveXu() {
+    public void showLiveXu() {  //xuameng退出直播
         App.HideToast();   //xuameng HideToast
         LayoutInflater inflater = getLayoutInflater();
         View customToastView = inflater.inflate(R.layout.live_toast, null);
         ImageView imageView = customToastView.findViewById(R.id.toastImage);
         Toast toast = new Toast(getApplicationContext());
         toast.setDuration(Toast.LENGTH_SHORT);
+        toast.setView(customToastView);
+        toast.setGravity(Gravity.CENTER, 0, 0); //xuameng 20为左右，0是上下
+        toast.show();
+    }
+    public void showToastBack() {    //xuameng退出回看
+        App.HideToast();  //xuameng HideToast
+        LayoutInflater inflater = getLayoutInflater();
+        View customToastView = inflater.inflate(R.layout.review_toast_back, null);
+        ImageView imageView = customToastView.findViewById(R.id.toastImage);
+        Toast toast = new Toast(getApplicationContext());
+        toast.setDuration(Toast.LENGTH_LONG);
         toast.setView(customToastView);
         toast.setGravity(Gravity.CENTER, 0, 0); //xuameng 20为左右，0是上下
         toast.show();
