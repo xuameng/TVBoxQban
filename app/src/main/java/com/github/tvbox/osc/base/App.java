@@ -164,4 +164,12 @@ public class App extends MultiDexApplication {
         }
         mToast.show();
     }
+
+	
+    public static void HideToast() {   //xuameeng HideToast
+        if (mToast != null) {
+            mToast.cancel();
+            mToast = null;  // 释放引用避免内存泄漏
+        }
+    }
 }
