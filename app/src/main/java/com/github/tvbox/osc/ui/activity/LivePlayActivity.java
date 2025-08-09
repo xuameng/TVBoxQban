@@ -190,7 +190,6 @@ public class LivePlayActivity extends BaseActivity {
     private TextView tvSelectedChannel; //xuameng频道编号
     private ImageView iv_circle_bg_xu; //xuameng音乐播放时图标
     private ImageView MxuamengMusic; //xuameng播放音乐背景
-    private static Toast toast;
     private static String shiyi_time; //时移时间
     private static int shiyi_time_c; //时移时间差值
     public static String playUrl;
@@ -916,7 +915,7 @@ public class LivePlayActivity extends BaseActivity {
             playXuSource();
         } else {
             mExitTime = System.currentTimeMillis();
-            Toast.makeText(mContext, "当前回看中，再按一次返回键退出回看！", Toast.LENGTH_SHORT).show();
+            App.showToastShort(mContext, "当前回看中，再按一次返回键退出回看！");
         }
     }
     @Override
@@ -980,18 +979,18 @@ public class LivePlayActivity extends BaseActivity {
             }
             if(selectedChannelNumber > 0) {
                 if(!isTVNUM) { //xuameng没获取到频道编号
-                    Toast.makeText(mContext, "聚汇直播提示您：无此频道编号！", Toast.LENGTH_SHORT).show();
                     selectedChannelNumber = 0;
+                    App.showToastShort(mContext, "聚汇直播提示您：无此频道编号！");
                     return;
                 }
                 if(isNeedInputPassword(grpIndx)) {
-                    Toast.makeText(mContext, "聚汇直播提示您：此为加密频道！", Toast.LENGTH_SHORT).show();
                     selectedChannelNumber = 0;
+                    App.showToastShort(mContext, "聚汇直播提示您：此为加密频道！");
                     return;
                 }
                 playChannel(grpIndx, chaIndx - 1, false); //xuameng获取到编号播放
             } else {
-                Toast.makeText(mContext, "聚汇直播提示您：无此频道编号！", Toast.LENGTH_SHORT).show(); //xuameng编号为0
+                App.showToastShort(mContext, "聚汇直播提示您：无此频道编号！");    //xuameng编号为0
             }
             selectedChannelNumber = 0;
         }
@@ -1408,11 +1407,11 @@ public class LivePlayActivity extends BaseActivity {
         if(!isCurrentLiveChannelValid()) return;   //xuameng 空指针修复
         int channelGroupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex(); //xuameng当前选定的频道组
         if(liveChannelGroupList.size() - 1 < 1 && getLiveChannels(channelGroupIndexXu).size() - 1 < 1) { //如果只有一个频道组就播放当前频道，不胯下胯下跨选频道组
-            Toast.makeText(App.getInstance(), "聚汇影视提示您：只有一个频道！", Toast.LENGTH_SHORT).show();
+            App.showToastShort(mContext, "聚汇影视提示您：只有一个频道！");
             return;
         }
         if(!Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false) && getLiveChannels(channelGroupIndexXu).size() - 1 < 1) {
-            Toast.makeText(App.getInstance(), "聚汇影视提示您：未选择跨选分类且本组只有一个频道或没有选择频道！", Toast.LENGTH_SHORT).show();
+            App.showToastShort(mContext, "聚汇影视提示您：未选择跨选分类且本组只有一个频道或没有选择频道！");
             return;
         }
         Integer[] groupChannelIndex = getNextChannel(1);
@@ -1425,11 +1424,11 @@ public class LivePlayActivity extends BaseActivity {
         if(!isCurrentLiveChannelValid()) return;    //xuameng 空指针修复
         int channelGroupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex(); //xuameng当前选定的频道组
         if(liveChannelGroupList.size() - 1 < 1 && getLiveChannels(channelGroupIndexXu).size() - 1 < 1) { //如果只有一个频道组就播放当前频道，不胯下胯下跨选频道组
-            Toast.makeText(App.getInstance(), "聚汇影视提示您：只有一个频道！", Toast.LENGTH_SHORT).show();
+            App.showToastShort(mContext, "聚汇影视提示您：只有一个频道！");
             return;
         }
         if(!Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false) && getLiveChannels(channelGroupIndexXu).size() - 1 < 1) {
-            Toast.makeText(App.getInstance(), "聚汇影视提示您：未选择跨选分类且本组只有一个频道或没有选择频道！", Toast.LENGTH_SHORT).show();
+            App.showToastShort(mContext, "聚汇影视提示您：未选择跨选分类且本组只有一个频道或没有选择频道！");
             return;
         }
         Integer[] groupChannelIndex = getNextChannel(-1);
@@ -2046,13 +2045,13 @@ public class LivePlayActivity extends BaseActivity {
             if(currentLiveChannelItem.getSourceNum() == currentLiveChangeSourceTimes) { //xuameng如果只有一个源就换频道
                 currentLiveChangeSourceTimes = 0;
                 if(liveChannelGroupList.size() - 1 < 1 && getLiveChannels(channelGroupIndexXu).size() - 1 < 1) { //如果只有一个频道组就播放当前频道，不胯下胯下跨选频道组
-                    Toast.makeText(App.getInstance(), "聚汇影视提示您：只有一个频道！正在重播！", Toast.LENGTH_SHORT).show();
                     playXuSource();
+                    App.showToastShort(mContext, "聚汇影视提示您：只有一个频道！正在重播！");
                     return;
                 }
                 if(!Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false) && getLiveChannels(channelGroupIndexXu).size() - 1 < 1) {
-                    Toast.makeText(App.getInstance(), "聚汇影视提示您：未选择跨选分类且本组只有一个频道！正在重播！", Toast.LENGTH_SHORT).show();
                     playXuSource();
+                    App.showToastShort(mContext, "聚汇影视提示您：未选择跨选分类且本组只有一个频道！正在重播！");
                     return;
                 }
                 Integer[] groupChannelIndex = getNextChannel(Hawk.get(HawkConfig.LIVE_CHANNEL_REVERSE, false) ? -1 : 1); //xuameng换台反转与跨选分类
@@ -2371,7 +2370,7 @@ public class LivePlayActivity extends BaseActivity {
                         break;
                     case 3:
                         if(liveChannelGroupList.size() - 1 < 1) { //xuameng 只有一个频道组跨选分类BUG
-                            Toast.makeText(App.getInstance(), "只有一个频道组！不能跨选分类！", Toast.LENGTH_SHORT).show();
+                            App.showToastShort(mContext, "聚汇影视提示您：只有一个频道组！不能跨选分类！");
                             return;
                         }
                         select = !Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false);
@@ -2427,10 +2426,10 @@ public class LivePlayActivity extends BaseActivity {
             JsonArray live_groups = Hawk.get(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
             if(live_groups.size() > 1) {
                 setDefaultLiveChannelList();
-                Toast.makeText(App.getInstance(), "聚汇影视提示您：直播列表为空！请切换线路！", Toast.LENGTH_SHORT).show();
+                App.showToastShort(mContext, "聚汇影视提示您：直播列表为空！请切换线路！");
                 return;
             }
-            Toast.makeText(App.getInstance(), "聚汇影视提示您：频道列表为空！", Toast.LENGTH_SHORT).show();
+            App.showToastShort(mContext, "聚汇影视提示您：频道列表为空！");
             finish();
             return;
         }
@@ -2453,10 +2452,10 @@ public class LivePlayActivity extends BaseActivity {
                 JsonArray live_groups = Hawk.get(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
                 if(live_groups.size() > 1) {
                     setDefaultLiveChannelList();
-                    Toast.makeText(App.getInstance(), "聚汇影视提示您：直播文件错误！请切换线路！", Toast.LENGTH_SHORT).show();
+                    App.showToastShort(mContext, "聚汇影视提示您：直播文件错误！请切换线路！");
                 } else {
                     setDefaultLiveChannelList();
-                    Toast.makeText(App.getInstance(), "聚汇影视提示您：直播文件错误！", Toast.LENGTH_SHORT).show();
+                    App.showToastShort(mContext, "聚汇影视提示您：直播文件错误！");
                 }
                 return;
             }
@@ -2483,10 +2482,10 @@ public class LivePlayActivity extends BaseActivity {
                         public void run() {
                             if(live_groups.size() > 1) {
                                 setDefaultLiveChannelList();
-                                Toast.makeText(App.getInstance(), "聚汇影视提示您：直播列表为空！请切换线路！", Toast.LENGTH_SHORT).show();
+                                App.showToastShort(mContext, "聚汇影视提示您：直播列表为空！请切换线路！");
                             } else {
                                 setDefaultLiveChannelList();
-                                Toast.makeText(App.getInstance(), "聚汇影视提示您：直播列表为空！", Toast.LENGTH_SHORT).show();
+                                App.showToastShort(mContext, "聚汇影视提示您：直播列表为空！");
                             }
                         }
                     });
@@ -2510,10 +2509,10 @@ public class LivePlayActivity extends BaseActivity {
                     public void run() {
                         if(live_groups.size() > 1) {
                             setDefaultLiveChannelList();
-                            Toast.makeText(App.getInstance(), "聚汇影视提示您：直播列表获取错误！请切换线路！", Toast.LENGTH_SHORT).show();
+                            App.showToastShort(mContext, "聚汇影视提示您：直播列表获取错误！请切换线路！");
                         } else {
                             setDefaultLiveChannelList();
-                            Toast.makeText(App.getInstance(), "聚汇影视提示您：直播列表获取错误！", Toast.LENGTH_SHORT).show();
+                            App.showToastShort(mContext, "聚汇影视提示您：直播列表获取错误！");
                         }
                     }
                 });
@@ -2569,7 +2568,7 @@ public class LivePlayActivity extends BaseActivity {
             if(live_groups != null) {
                 for(JsonElement element: live_groups) {
                     if(element.isJsonNull()) {
-                        Toast.makeText(mContext, "聚汇直播提示您：直播列表读取有错误！请检查JSON中lives的配置！", Toast.LENGTH_SHORT).show();
+                        App.showToastShort(mContext, "聚汇直播提示您：直播列表读取有错误！请检查JSON中lives的配置！");
                         return;
                     }
                 }
@@ -2823,10 +2822,10 @@ public class LivePlayActivity extends BaseActivity {
                 if(password.equals(liveChannelGroupList.get(groupIndex).getGroupPassword())) {
                     channelGroupPasswordConfirmed.add(groupIndex);
                     loadChannelGroupDataAndPlay(groupIndex, liveChannelIndex);
-                    Toast.makeText(App.getInstance(), "密码验证通过！已显示密码频道列表！", Toast.LENGTH_SHORT).show();
+                    App.showToastShort(mContext, "密码验证通过！已显示密码频道列表！");
                 } else {
                     showPasswordDialog(groupIndex, liveChannelIndex); //xuameng 密码错误重新弹出密码输入窗口
-                    Toast.makeText(App.getInstance(), "密码错误！请重新输入！", Toast.LENGTH_SHORT).show();
+                    App.showToastShort(mContext, "密码错误！请重新输入！");
                 }
             }
             @Override
@@ -2915,7 +2914,7 @@ public class LivePlayActivity extends BaseActivity {
     }
     private boolean isCurrentLiveChannelValid() {
         if(currentLiveChannelItem == null) {
-           Toast.makeText(App.getInstance(), "聚汇影视提示您：请先选择频道！", Toast.LENGTH_SHORT).show();
+           App.showToastShort(mContext, "聚汇影视提示您：请先选择频道！");
            return false;
         }
         return true;
