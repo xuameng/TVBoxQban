@@ -827,16 +827,16 @@ public class LivePlayActivity extends BaseActivity {
     }
     private void updateChannelIcon(String channelName, String logoUrl) {
         if(StringUtils.isEmpty(logoUrl)) {
+            imgLiveIconXu.setVisibility(View.GONE);
             liveIconNullBg.setVisibility(View.VISIBLE);
             liveIconNullText.setVisibility(View.VISIBLE);
             imgLiveIcon.setVisibility(View.VISIBLE);
-            imgLiveIconXu.setVisibility(View.GONE);
             Picasso.get().load(logoUrl).placeholder(R.drawable.banner_xu).into(imgLiveIcon); // xuameng内容空显示banner
             liveIconNullText.setVisibility(View.VISIBLE);
             liveIconNullText.setText("[频道编号" + channel_Name.getChannelNum() + "]"); // xuameng显示频道编号
         } else {
-            imgLiveIcon.setVisibility(View.VISIBLE);
             imgLiveIconXu.setVisibility(View.GONE);
+            imgLiveIcon.setVisibility(View.VISIBLE);
             Picasso.get().load(logoUrl).placeholder(R.drawable.banner_xu).into(imgLiveIcon); // xuameng内不空显示banner
             liveIconNullBg.setVisibility(View.VISIBLE);
             liveIconNullText.setVisibility(View.VISIBLE);
@@ -853,9 +853,9 @@ public class LivePlayActivity extends BaseActivity {
             showChannelListTouch();
         }
         mChannelGroupView.setVisibility(View.GONE);
+        divLoadEpg.setVisibility(View.GONE);
         divEpg.setVisibility(View.VISIBLE);
         divLoadEpgleft.setVisibility(View.VISIBLE);
-        divLoadEpg.setVisibility(View.GONE);
         int SelectedIndexEpg = epgListAdapter.getSelectedIndex(); //xuameng当前选中的EPG
         if (SelectedIndexEpg >= 0  && SelectedIndexEpg < epgListAdapter.getItemCount()){  //xuameng不等于-1代表已有选中的EPG，防空指针
             mRightEpgList.removeCallbacks(null);
@@ -867,9 +867,9 @@ public class LivePlayActivity extends BaseActivity {
     }
     //频道列表
     public void divLoadEpgLeft(View view) {
-        mChannelGroupView.setVisibility(View.VISIBLE);
         divEpg.setVisibility(View.GONE);
         divLoadEpgleft.setVisibility(View.GONE);
+        mChannelGroupView.setVisibility(View.VISIBLE);
         divLoadEpg.setVisibility(View.VISIBLE);
         mHideChannelListRunXu();
     }
@@ -2625,8 +2625,8 @@ public class LivePlayActivity extends BaseActivity {
     void showTimeXu() { //xuameng的系统时间
         mHandler.removeCallbacks(mUpdateTimeRunXu);
         mHandler.post(mUpdateTimeRunXu);
-        tvTime_xu.setVisibility(View.VISIBLE);
         tvTime.setVisibility(View.GONE);
+        tvTime_xu.setVisibility(View.VISIBLE);
     }
     void hideTimeXu() { //xuameng的系统时间
         if(tvTime_xu.getVisibility() == View.VISIBLE) {
@@ -2670,8 +2670,8 @@ public class LivePlayActivity extends BaseActivity {
     private void showNetSpeedXu() {
         mHandler.removeCallbacks(mUpdateNetSpeedRunXu);
         mHandler.post(mUpdateNetSpeedRunXu); //XUAMENG左上网速检测1秒钟一次
-        tv_right_top_tipnetspeed.setVisibility(View.VISIBLE); //xuameng右上网络速度
         tvNetSpeed.setVisibility(View.GONE);
+        tv_right_top_tipnetspeed.setVisibility(View.VISIBLE); //xuameng右上网络速度
     }
     private void hideNetSpeedXu() {
         if(tv_right_top_tipnetspeed.getVisibility() == View.VISIBLE) {
