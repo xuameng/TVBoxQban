@@ -7,6 +7,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.viewpager.widget.ViewPager;
 
@@ -26,7 +27,6 @@ import com.owen.tvrecyclerview.widget.V7LinearLayoutManager;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.io.File;
 
 /**
  * @author pj567
@@ -180,21 +180,24 @@ public class SettingActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        if (currentApi.equals(Hawk.get(HawkConfig.API_URL, ""))) {  
-            if(dnsOpt != Hawk.get(HawkConfig.DOH_URL, 0)){
+		if (HawkConfig.isGetWp){ 
+			Toast.makeText(mContext, "壁纸更换中！请稍后", Toast.LENGTH_SHORT).show();   //xuameng
+			return;
+		}
+        if (currentApi.equals(Hawk.get(HawkConfig.API_URL, ""))) {   //xuameng 如何配置地址没变
+            if(dnsOpt != Hawk.get(HawkConfig.DOH_URL, 0)){     //xuameng DNS更改重启
                 AppManager.getInstance().finishAllActivity();
                 jumpActivity(HomeActivity.class, createBundle());
-            }
-			else if (!currentLiveApi.equals(Hawk.get(HawkConfig.LIVE_API_URL, ""))){    //xuameng修复直播API不刷新问题
+            }else if (!currentLiveApi.equals(Hawk.get(HawkConfig.LIVE_API_URL, ""))){    //xuameng修复直播API不刷新问题   重启
                 AppManager.getInstance().finishAllActivity();
                 jumpActivity(HomeActivity.class);
-			}
-			else if (HawkConfig.ISrestore){    
+            }else if (HawkConfig.ISrestore){     //xuameng 恢复重启
                 AppManager.getInstance().finishAllActivity();
                 jumpActivity(HomeActivity.class);
-			    HawkConfig.ISrestore = false;  //xuameng恢复成功,请重启应用
-			}
-			else if (HawkConfig.isGetWp){  //xuameng下载壁纸
+                HawkConfig.ISrestore = false;  //xuameng恢复成功,请重启应用
+            }else if ((homeSourceKey != null && !homeSourceKey.equals(Hawk.get(HawkConfig.HOME_API, "")))  || homeRec != Hawk.get(HawkConfig.HOME_REC, 0)) { //xuameng 更改数据源或首页推荐
+                jumpActivity(HomeActivity.class, createBundle());
+            }else if (HawkConfig.isGetWp){  //xuameng下载壁纸
 				File wp = new File(getFilesDir().getAbsolutePath() + "/wp");
                 if (wp.exists()){
                     wp.delete();
@@ -204,9 +207,6 @@ public class SettingActivity extends BaseActivity {
                 jumpActivity(HomeActivity.class);
 			    HawkConfig.isGetWp = false;  //xuameng下载壁纸
 			}
-            else if ((homeSourceKey != null && !homeSourceKey.equals(Hawk.get(HawkConfig.HOME_API, "")))  || homeRec != Hawk.get(HawkConfig.HOME_REC, 0)) {
-                jumpActivity(HomeActivity.class, createBundle());
-            }
         } else {
             AppManager.getInstance().finishAllActivity();
             jumpActivity(HomeActivity.class);
