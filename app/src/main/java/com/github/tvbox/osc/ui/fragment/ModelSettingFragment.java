@@ -209,19 +209,23 @@ public class ModelSettingFragment extends BaseLazyFragment {
             public void onClick(View v) {
                 FastClickCheckUtil.check(v);
                 if (!ApiConfig.get().wallpaper.isEmpty()){
-				    HawkConfig.isGetWp = true;  //xuameng下载壁纸
+                    HawkConfig.isGetWp = true;  //xuameng下载壁纸
+// 1. 先验证文件类型
+OkGo.<String>head(ApiConfig.get().wallpaper)
+    .execute(new StringCallback() {
+        @Override
+        public void onSuccess(Response<String> response) {
+            if(response.headers().get("Content-Type").startsWith("image/")){
+                // 2. 确认是图片后开始下载
                     OkGo.<File>get(ApiConfig.get().wallpaper).tag("xuameng").execute(new FileCallback(requireActivity().getFilesDir().getAbsolutePath(), "wp") {  //xuameng增加tag以便打断下载
                         @Override
                         public void onSuccess(Response<File> response) {
                             if (HawkConfig.isGetWp){
-                                String mimeType = response.headers().get("Content-Type");
-                                if (mimeType != null && mimeType.startsWith("image/")) {   // 确认是图片文件
+             
 							       ((BaseActivity) requireActivity()).changeWallpaper(true);      
                                    HawkConfig.isGetWp = false;  //xuameng下载壁纸 
 								   Toast.makeText(mContext, "壁纸更换成功！", Toast.LENGTH_SHORT).show();   //xuameng
-                                }else{
-                                   Toast.makeText(mContext, "壁纸文件类型错误！已重置壁纸！", Toast.LENGTH_SHORT).show();   //xuameng
-                                }
+                               
 							}
                         }
 
@@ -237,6 +241,14 @@ public class ModelSettingFragment extends BaseLazyFragment {
                             super.downloadProgress(progress);
                         }
                     });
+				}else{
+					Toast.makeText(mContext, "壁纸站点未配置！", Toast.LENGTH_SHORT).show();   //xuameng
+				}
+            }
+        });
+            }
+        }
+    });
 				}else{
 					Toast.makeText(mContext, "壁纸站点未配置！", Toast.LENGTH_SHORT).show();   //xuameng
 				}
