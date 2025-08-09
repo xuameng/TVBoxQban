@@ -162,10 +162,10 @@ public class SettingActivity extends BaseActivity {
             mHandler.removeCallbacks(mDataRunnable);
             int keyCode = event.getKeyCode();
             switch (keyCode) {
-                case KeyEvent.KEYCODE_0:
+                case KeyEvent.KEYCODE_2:
                     mHandler.removeCallbacks(mDevModeRun);
-                    devMode += "0";
-                    mHandler.postDelayed(mDevModeRun, 200);
+                    devMode += "2";
+                    mHandler.postDelayed(mDevModeRun, 400);
                     if (devMode.length() >= 4) {
                         if (callback != null) {
                             callback.onChange();
@@ -174,7 +174,7 @@ public class SettingActivity extends BaseActivity {
                     break;
             }
         } else if (event.getAction() == KeyEvent.ACTION_UP) {
-            mHandler.postDelayed(mDataRunnable, 200);
+            mHandler.postDelayed(mDataRunnable, 400);
         }
         return super.dispatchKeyEvent(event);
     }
@@ -183,8 +183,13 @@ public class SettingActivity extends BaseActivity {
     public void onBackPressed() {
 		if (HawkConfig.isGetWp){ 
             OkGo.getInstance().cancelTag("wallpaperDown");   //xuameng打断下载
+            File wp = new File(getFilesDir().getAbsolutePath() + "/wp");
+            if (wp.exists()){
+                wp.delete();
+            }
+            changeWallpaper(true);
             HawkConfig.isGetWp = false; 
-			Toast.makeText(mContext, "壁纸更换已被打断！", Toast.LENGTH_SHORT).show();   //xuameng
+			Toast.makeText(mContext, "壁纸更换已被打断！壁纸已重置！", Toast.LENGTH_SHORT).show();   //xuameng
 			return;
 		}
         if (currentApi.equals(Hawk.get(HawkConfig.API_URL, ""))) {   //xuameng 如何配置地址没变
