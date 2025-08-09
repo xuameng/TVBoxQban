@@ -2083,9 +2083,6 @@ public class LivePlayActivity extends BaseActivity {
         toast.show();
     }
     public void showLiveXu() {
-		        if(toast != null) {
-            toast.cancel(); // 取消前一个Toast
-        }
         LayoutInflater inflater = getLayoutInflater();
         View customToastView = inflater.inflate(R.layout.live_toast, null);
         ImageView imageView = customToastView.findViewById(R.id.toastImage);
@@ -2629,6 +2626,7 @@ public class LivePlayActivity extends BaseActivity {
         mHandler.removeCallbacks(mUpdateTimeRunXu);
         mHandler.post(mUpdateTimeRunXu);
         tvTime_xu.setVisibility(View.VISIBLE);
+        tvTime.setVisibility(View.GONE);
     }
     void hideTimeXu() { //xuameng的系统时间
         if(tvTime_xu.getVisibility() == View.VISIBLE) {
@@ -2676,6 +2674,7 @@ public class LivePlayActivity extends BaseActivity {
         mHandler.removeCallbacks(mUpdateNetSpeedRunXu);
         mHandler.post(mUpdateNetSpeedRunXu); //XUAMENG左上网速检测1秒钟一次
         tv_right_top_tipnetspeed.setVisibility(View.VISIBLE); //xuameng右上网络速度
+        tvNetSpeed.setVisibility(View.GONE);
     }
     private void hideNetSpeedXu() {
         if(tv_right_top_tipnetspeed.getVisibility() == View.VISIBLE) {
@@ -2922,11 +2921,8 @@ public class LivePlayActivity extends BaseActivity {
     }
     private boolean isCurrentLiveChannelValid() {
         if(currentLiveChannelItem == null) {
-        if(toast != null) {
-            toast.cancel(); // 取消前一个Toast
-        }
-            toast.makeText(App.getInstance(), "聚汇影视提示您：请先选择频道！", Toast.LENGTH_SHORT).show();
-            return false;
+           Toast.makeText(App.getInstance(), "聚汇影视提示您：请先选择频道！", Toast.LENGTH_SHORT).show();
+           return false;
         }
         return true;
     }
