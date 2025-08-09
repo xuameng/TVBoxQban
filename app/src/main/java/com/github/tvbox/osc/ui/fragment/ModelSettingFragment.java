@@ -222,10 +222,10 @@ public class ModelSettingFragment extends BaseLazyFragment {
                                    HawkConfig.isGetWp = false;  //xuameng下载壁纸 
 								   Toast.makeText(mContext, "壁纸更换成功！", Toast.LENGTH_SHORT).show();   //xuameng
                                 }else{
-                                   HawkConfig.isGetWp = false;  //xuameng下载壁纸
                                    File wp = new File(requireActivity().getFilesDir().getAbsolutePath() + "/wp");
                                    if (wp.exists()) wp.delete();
                                    ((BaseActivity) requireActivity()).changeWallpaper(true);
+                                   HawkConfig.isGetWp = false;  //xuameng下载壁纸
                                    Toast.makeText(mContext, "壁纸文件类型错误！已重置壁纸！", Toast.LENGTH_SHORT).show();   //xuameng
                                 }
 							}
@@ -822,9 +822,5 @@ public class ModelSettingFragment extends BaseLazyFragment {
         } else {
             return "缩略图";
         }
-    }
-
-    public void OkGoCancelTag() {
-        OkGo.getInstance().cancelTag("xuameng");   //xuameng打断下载
     }
 }
