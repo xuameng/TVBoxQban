@@ -763,15 +763,15 @@ public class LivePlayActivity extends BaseActivity {
                 else getEpg(liveEpgDateAdapter.getData().get(selectedIndex).getDateParamVal());
             }
             HideBottomEpgTimer();  //隐藏底部菜单到计时
-            ll_epg.setVisibility(View.VISIBLE); //xuameng下面EPG菜单显示
-            ll_right_top_loading.setVisibility(View.VISIBLE); //xuameng右上菜单显示
-            showTimeXu(); //xuameng显示系统时间
-            showNetSpeedXu(); //XUAMENG显示左上网速 
-            view_line_XU.setVisibility(View.VISIBLE); //xuamengEPG中的横线
             backcontroller.setVisibility(View.GONE);    //xuameng 隐藏进度条
             Mtv_left_top_xu.setVisibility(View.GONE); //xuameng直播时隐藏回看左上图标
             mHideChannelListRun(); //xuameng显示EPG就隐藏左右菜单
             mHideSettingLayoutRun(); //xuameng显示EPG就隐藏左右菜单
+            ll_epg.setVisibility(View.VISIBLE); //xuameng下面EPG菜单显示
+            ll_right_top_loading.setVisibility(View.VISIBLE); //xuameng右上菜单显示
+            view_line_XU.setVisibility(View.VISIBLE); //xuamengEPG中的横线
+            showTimeXu(); //xuameng显示系统时间
+            showNetSpeedXu(); //XUAMENG显示左上网速 
             if(channel_Name == null || channel_Name.getSourceNum() <= 1) {
                 ((TextView) findViewById(R.id.tv_source)).setText("[线路源1/1]");
             } else {
