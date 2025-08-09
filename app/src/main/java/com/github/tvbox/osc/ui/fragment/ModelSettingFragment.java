@@ -51,7 +51,7 @@ import com.orhanobut.hawk.Hawk;
 import com.hjq.permissions.OnPermissionCallback;
 import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
-import android.os.Handler;
+import android.content.Context;
 
 import org.greenrobot.eventbus.EventBus;
 import org.jetbrains.annotations.NotNull;
