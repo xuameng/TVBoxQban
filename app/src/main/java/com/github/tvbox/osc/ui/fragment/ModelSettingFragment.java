@@ -799,9 +799,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
 
     @Override
     public void onDestroyView() {
-		if (HawkConfig.isGetWp){
-			OkGo.getInstance().cancelTag("xuameng");   //xuameng打断下载
-		}
+        OkGo.getInstance().cancelTag("xuameng");   //xuameng打断下载
         super.onDestroyView();
         SettingActivity.callback = null;
     }
