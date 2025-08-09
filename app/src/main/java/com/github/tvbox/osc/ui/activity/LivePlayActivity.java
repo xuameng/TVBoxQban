@@ -2075,7 +2075,7 @@ public class LivePlayActivity extends BaseActivity {
         View customToastView = inflater.inflate(R.layout.review_toast, null);
         ImageView imageView = customToastView.findViewById(R.id.toastImage);
         xToast = new Toast(getApplicationContext());
-        xToast.setDuration(Toast.LENGTH_LONG);
+        xToast.setDuration(Toast.LENGTH_SHORT);
         xToast.setView(customToastView);
         xToast.setGravity(Gravity.CENTER, 0, 0); //xuameng 20为左右，0是上下
         xToast.show();
@@ -2111,7 +2111,7 @@ public class LivePlayActivity extends BaseActivity {
         View customToastView = inflater.inflate(R.layout.review_toast_back, null);
         ImageView imageView = customToastView.findViewById(R.id.toastImage);
         xToast = new Toast(getApplicationContext());
-        xToast.setDuration(Toast.LENGTH_LONG);
+        xToast.setDuration(Toast.LENGTH_SHORT);
         xToast.setView(customToastView);
         xToast.setGravity(Gravity.CENTER, 0, 0); //xuameng 20为左右，0是上下
         xToast.show();
