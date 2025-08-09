@@ -32,6 +32,7 @@ import com.lzy.okgo.OkGo;
 import com.owen.tvrecyclerview.widget.TvRecyclerView;
 import com.owen.tvrecyclerview.widget.V7GridLayoutManager;
 import com.owen.tvrecyclerview.widget.V7LinearLayoutManager;
+import com.github.tvbox.osc.base.App;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -90,9 +91,8 @@ public class FastSearchActivity extends BaseActivity {
                     filterResult(sb);
                 }
             } catch (Exception e) {
-                Toast.makeText(FastSearchActivity.this, e.toString(), Toast.LENGTH_SHORT).show();
+                App.showToastShort(FastSearchActivity.this, e.toString());
             }
-
         }
     };
 
@@ -355,7 +355,7 @@ public class FastSearchActivity extends BaseActivity {
 
     private void search(String title) {
 		if (TextUtils.isEmpty(title)){
-			Toast.makeText(mContext, "输入内容不能为空！", Toast.LENGTH_SHORT).show();
+            App.showToastShort(FastSearchActivity.this, "输入内容不能为空！");
 			return;
 		}
         cancel();
@@ -415,7 +415,7 @@ public class FastSearchActivity extends BaseActivity {
             allRunCount.incrementAndGet();
         }
 		if (siteKey.size() <= 0) {
-			Toast.makeText(FastSearchActivity.this, "聚汇影视提示：请指定搜索源！", Toast.LENGTH_SHORT).show();
+            App.showToastShort(FastSearchActivity.this, "聚汇影视提示：请指定搜索源！");
 			return;
 		}    //xuameng修复不选择搜索源还进行搜索，还显示搜索动画完 
 
