@@ -296,16 +296,16 @@ public class LivePlayActivity extends BaseActivity {
         iv_playpause = (TextView) findViewById(R.id.iv_playpause);
         iv_play = findViewById(R.id.iv_play);
         if(show) {
-            backcontroller.setVisibility(View.VISIBLE);   //xuameng底部进度条
-            showTimeXu(); //xuameng系统显示时间
-            showNetSpeedXu(); //XUAMENG显示右下网速
-            Mtv_left_top_xu.setVisibility(View.VISIBLE); //xuameng显示左上回看图标
-            ll_epg.setVisibility(View.VISIBLE); //xuameng下面EPG菜单显示
             ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
             view_line_XU.setVisibility(View.INVISIBLE); //xuamengEPG中的横线
             mHideChannelListRun(); //xuameng显示EPG就隐藏左右菜单
             mHideSettingLayoutRun(); //xuameng显示EPG就隐藏左右菜单
-            iv_playpause.requestFocus(); //xuameng回看菜单默认焦点为播放		
+            iv_playpause.requestFocus(); //xuameng回看菜单默认焦点为播放	
+            backcontroller.setVisibility(View.VISIBLE);   //xuameng底部进度条
+            showTimeXu(); //xuameng系统显示时间
+            showNetSpeedXu(); //XUAMENG显示右下网速
+            Mtv_left_top_xu.setVisibility(View.VISIBLE); //xuameng显示左上回看图标
+            ll_epg.setVisibility(View.VISIBLE); //xuameng下面EPG菜单显示	
         } else {
             backcontroller.setVisibility(View.GONE);  //xuameng底部进度条
             Mtv_left_top_xu.setVisibility(View.GONE); //xuameng隐藏左上回看图标
@@ -2984,16 +2984,16 @@ public class LivePlayActivity extends BaseActivity {
     public void showProgressBars(boolean show) { //显示回看菜单
         //        sBar.requestFocus();                            //xuameng回看菜单默认焦点为播放
         if(show) {
+            ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
+            view_line_XU.setVisibility(View.INVISIBLE); //xuamengEPG中的横线
+            mHideChannelListRun(); //xuameng显示EPG就隐藏左右菜单
+            mHideSettingLayoutRun(); //xuameng显示EPG就隐藏左右菜单
             backcontroller.setVisibility(View.VISIBLE); //xuameng显示回看下方菜单
             showTimeXu(); //xuameng系统显示时间
             showNetSpeedXu(); //XUAMENG显示右下网速
         //    iv_playpause.requestFocus();     //xuameng默认焦点
             Mtv_left_top_xu.setVisibility(View.VISIBLE); //xuameng显示回看上图标
             ll_epg.setVisibility(View.VISIBLE); //xuameng下面EPG菜单显示
-            ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
-            view_line_XU.setVisibility(View.INVISIBLE); //xuamengEPG中的横线
-            mHideChannelListRun(); //xuameng显示EPG就隐藏左右菜单
-            mHideSettingLayoutRun(); //xuameng显示EPG就隐藏左右菜单
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
