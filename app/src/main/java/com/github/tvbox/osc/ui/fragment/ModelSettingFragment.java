@@ -213,7 +213,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
                 FastClickCheckUtil.check(v);  //xuameng 2秒
                 if (!ApiConfig.get().wallpaper.isEmpty()){
 				    HawkConfig.isGetWp = true;  //xuameng下载壁纸
-                    showToast(this, "壁纸更换中！");
+                    showToast(getContext(), "壁纸更换中！");
                     OkGo.<File>get(ApiConfig.get().wallpaper).tag("wallpaperDown").execute(new FileCallback(requireActivity().getFilesDir().getAbsolutePath(), "wp") {  //xuameng增加tag以便打断下载
                         @Override
                         public void onSuccess(Response<File> response) {
@@ -222,13 +222,13 @@ public class ModelSettingFragment extends BaseLazyFragment {
                                 if (mimeType != null && mimeType.startsWith("image/")) {   // 确认是图片文件
 							       ((BaseActivity) requireActivity()).changeWallpaper(true);      
                                    HawkConfig.isGetWp = false;  //xuameng下载壁纸 
-                                   showToast(this, "壁纸更换成功！");
+                                   showToast(getContext(), "壁纸更换成功！");
                                 }else{
                                    File wp = new File(requireActivity().getFilesDir().getAbsolutePath() + "/wp");
                                    if (wp.exists()) wp.delete();
                                    ((BaseActivity) requireActivity()).changeWallpaper(true);
                                    HawkConfig.isGetWp = false;  //xuameng下载壁纸
-                                   showToast(this, "壁纸文件类型错误！已重置壁纸！");
+                                   showToast(getContext(), "壁纸文件类型错误！已重置壁纸！");
                                 }
 							}
                         }
