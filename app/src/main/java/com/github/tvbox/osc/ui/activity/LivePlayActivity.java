@@ -115,6 +115,7 @@ public class LivePlayActivity extends BaseActivity {
     private long mExitTimeUp = 0; //xuameng上键间隔时间
     private long mExitTimeDown = 0; //xuameng下键间隔时间
     private long mSpeedTimeUp = 0; //xuameng上键间隔时间
+    private static Toast xToast;   //xuameng  Toast
     private String logoUrl = null; 
     private LinearLayout tvRightSettingLayout;
     private TvRecyclerView mSettingGroupView;
@@ -894,6 +895,8 @@ public class LivePlayActivity extends BaseActivity {
                countDownTimer.cancel();
                countDownTimer = null;
             }
+            App.HideToast();  //xuameng HideToast
+            cancelxToast();
             super.onBackPressed();
         } else {
             mExitTime = System.currentTimeMillis();
@@ -955,6 +958,8 @@ public class LivePlayActivity extends BaseActivity {
            countDownTimer.cancel();
            countDownTimer = null;
         }
+        App.HideToast();  //xuameng HideToast
+        cancelxToast();
         super.onBackPressed();
     }
     private final Runnable mPlaySelectedChannel = new Runnable() {
@@ -2063,47 +2068,51 @@ public class LivePlayActivity extends BaseActivity {
     };
     public void showToastXu() {   //xuameng回看完成
         App.HideToast();  //xuameng HideToast
+        cancelxToast();
         LayoutInflater inflater = getLayoutInflater();
         View customToastView = inflater.inflate(R.layout.review_toast, null);
         ImageView imageView = customToastView.findViewById(R.id.toastImage);
-        Toast toast = new Toast(getApplicationContext());
-        toast.setDuration(Toast.LENGTH_LONG);
-        toast.setView(customToastView);
-        toast.setGravity(Gravity.CENTER, 0, 0); //xuameng 20为左右，0是上下
-        toast.show();
+        xToast = new Toast(getApplicationContext());
+        xToast.setDuration(Toast.LENGTH_LONG);
+        xToast.setView(customToastView);
+        xToast.setGravity(Gravity.CENTER, 0, 0); //xuameng 20为左右，0是上下
+        xToast.show();
     }
     public void showToastError() {  //xuameng回看错误
         App.HideToast();   //xuameng HideToast
+        cancelxToast();
         LayoutInflater inflater = getLayoutInflater();
         View customToastView = inflater.inflate(R.layout.review_toast_error, null);
         ImageView imageView = customToastView.findViewById(R.id.toastImage);
-        Toast toast = new Toast(getApplicationContext());
-        toast.setDuration(Toast.LENGTH_LONG);
-        toast.setView(customToastView);
-        toast.setGravity(Gravity.CENTER, 0, 0); //xuameng 20为左右，0是上下
-        toast.show();
+        xToast = new Toast(getApplicationContext());
+        xToast.setDuration(Toast.LENGTH_LONG);
+        xToast.setView(customToastView);
+        xToast.setGravity(Gravity.CENTER, 0, 0); //xuameng 20为左右，0是上下
+        xToast.show();
     }
     public void showLiveXu() {  //xuameng退出直播
         App.HideToast();   //xuameng HideToast
+        cancelxToast();
         LayoutInflater inflater = getLayoutInflater();
         View customToastView = inflater.inflate(R.layout.live_toast, null);
         ImageView imageView = customToastView.findViewById(R.id.toastImage);
-        Toast toast = new Toast(getApplicationContext());
-        toast.setDuration(Toast.LENGTH_SHORT);
-        toast.setView(customToastView);
-        toast.setGravity(Gravity.CENTER, 0, 0); //xuameng 20为左右，0是上下
-        toast.show();
+        xToast = new Toast(getApplicationContext());
+        xToast.setDuration(Toast.LENGTH_SHORT);
+        xToast.setView(customToastView);
+        xToast.setGravity(Gravity.CENTER, 0, 0); //xuameng 20为左右，0是上下
+        xToast.show();
     }
     public void showToastBack() {    //xuameng退出回看
         App.HideToast();  //xuameng HideToast
+        cancelxToast();
         LayoutInflater inflater = getLayoutInflater();
         View customToastView = inflater.inflate(R.layout.review_toast_back, null);
         ImageView imageView = customToastView.findViewById(R.id.toastImage);
-        Toast toast = new Toast(getApplicationContext());
-        toast.setDuration(Toast.LENGTH_LONG);
-        toast.setView(customToastView);
-        toast.setGravity(Gravity.CENTER, 0, 0); //xuameng 20为左右，0是上下
-        toast.show();
+        xToast = new Toast(getApplicationContext());
+        xToast.setDuration(Toast.LENGTH_LONG);
+        xToast.setView(customToastView);
+        xToast.setGravity(Gravity.CENTER, 0, 0); //xuameng 20为左右，0是上下
+        xToast.show();
     }
     private Runnable mConnectTimeoutChangeSourceRunBack = new Runnable() { //xuameng为回看失败准备
         @Override
@@ -3226,5 +3235,12 @@ public class LivePlayActivity extends BaseActivity {
             }
         };
         countDownTimer.start();
+    }
+
+    private void cancelxToast() {   //xuameng清除toast
+        if (xToast != null) {
+            xToast.cancel();
+            xToast = null;
+        }
     }
 }
