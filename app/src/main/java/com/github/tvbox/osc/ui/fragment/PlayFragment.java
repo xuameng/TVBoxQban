@@ -1384,7 +1384,7 @@ public class PlayFragment extends BaseLazyFragment {
                             requireActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    App.showToastShort(mContext, "解析来自:" + rs.optString("jxFrom");
+                                    App.showToastShort(mContext, "解析来自:" + rs.optString("jxFrom"));
                                 }
                             });
                         }
@@ -1517,7 +1517,7 @@ public class PlayFragment extends BaseLazyFragment {
             requireActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-					App.showToastShort(mContext, "解析来自:" + rs.optString("jxFrom");
+					App.showToastShort(mContext, "解析来自:" + rs.optString("jxFrom"));
                 }
             });
         }
