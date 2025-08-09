@@ -24,6 +24,7 @@ import com.github.tvbox.osc.util.HawkConfig;
 import com.orhanobut.hawk.Hawk;
 import com.owen.tvrecyclerview.widget.TvRecyclerView;
 import com.owen.tvrecyclerview.widget.V7LinearLayoutManager;
+import com.github.tvbox.osc.base.App;  //xuameng showtoast
 import com.lzy.okgo.OkGo;
 import java.io.File;
 import java.util.ArrayList;
@@ -189,7 +190,7 @@ public class SettingActivity extends BaseActivity {
             }
             changeWallpaper(true);
             HawkConfig.isGetWp = false; 
-			Toast.makeText(mContext, "壁纸更换已被打断！壁纸已重置！", Toast.LENGTH_SHORT).show();   //xuameng
+            App.showToastShort(getContext(), "壁纸更换已被打断！壁纸已重置！");
 			return;
 		}
         if (currentApi.equals(Hawk.get(HawkConfig.API_URL, ""))) {   //xuameng 如何配置地址没变
