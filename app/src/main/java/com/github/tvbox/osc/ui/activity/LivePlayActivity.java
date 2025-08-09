@@ -412,7 +412,6 @@ public class LivePlayActivity extends BaseActivity {
         initLiveChannelList();
         initLiveSettingGroupList();
         Hawk.put(HawkConfig.PLAYER_IS_LIVE, true); //xuameng新增 
-        mHandler.post(mUpdateNetSpeedRunXu); //XUAMENG左上网速检测1秒钟一次
         mHandler.post(mUpdateVodProgressXu); //xuamengVOD BACK播放进度检测
         mHandler.post(myRunnableMusic); //xuamengVOD BACK播放进度检测
         mHandler.post(mUpdateVodImageXu); //xuamengVOD BACK播放进度检测
@@ -2591,6 +2590,7 @@ public class LivePlayActivity extends BaseActivity {
     }
     void showTime() {
         if(Hawk.get(HawkConfig.LIVE_SHOW_TIME, false)) {
+            mHandler.removeCallbacks(mUpdateTimeRun);
             mHandler.post(mUpdateTimeRun);
             tvTime.setVisibility(View.VISIBLE);
         } else {
@@ -2623,18 +2623,20 @@ public class LivePlayActivity extends BaseActivity {
         }
     };
     void showTimeXu() { //xuameng的系统时间
+        mHandler.removeCallbacks(mUpdateTimeRunXu);
         mHandler.post(mUpdateTimeRunXu);
         tvTime_xu.setVisibility(View.VISIBLE);
-        mHandler.removeCallbacks(mUpdateTimeRun);
-        tvTime.setVisibility(View.GONE);
     }
     void hideTimeXu() { //xuameng的系统时间
-        mHandler.removeCallbacks(mUpdateTimeRunXu);
-        tvTime_xu.setVisibility(View.GONE);
+        if(tvTime_xu.getVisibility() == View.VISIBLE) {
+           mHandler.removeCallbacks(mUpdateTimeRunXu);
+           tvTime_xu.setVisibility(View.GONE);
+        }
         if(tvRightSettingLayout.getVisibility() == View.VISIBLE) {
             return;
         }
         if(Hawk.get(HawkConfig.LIVE_SHOW_TIME, false)) {
+            mHandler.removeCallbacks(mUpdateTimeRun);
             mHandler.post(mUpdateTimeRun);
             tvTime.setVisibility(View.VISIBLE);
         } else {
@@ -2644,6 +2646,7 @@ public class LivePlayActivity extends BaseActivity {
     }
     private void showNetSpeed() {
         if(Hawk.get(HawkConfig.LIVE_SHOW_NET_SPEED, false)) {
+            mHandler.removeCallbacks(mUpdateNetSpeedRun);
             mHandler.post(mUpdateNetSpeedRun);
             tvNetSpeed.setVisibility(View.VISIBLE);
         } else {
@@ -2667,17 +2670,24 @@ public class LivePlayActivity extends BaseActivity {
         }
     };
     private void showNetSpeedXu() {
+        mHandler.removeCallbacks(mUpdateNetSpeedRunXu);
+        mHandler.post(mUpdateNetSpeedRunXu); //XUAMENG左上网速检测1秒钟一次
         tv_right_top_tipnetspeed.setVisibility(View.VISIBLE); //xuameng右上网络速度
-        tvNetSpeed.setVisibility(View.GONE);
     }
     private void hideNetSpeedXu() {
-        tv_right_top_tipnetspeed.setVisibility(View.GONE); //xuameng右上网络速度
+        if(tv_right_top_tipnetspeed.getVisibility() == View.VISIBLE) {
+           mHandler.removeCallbacks(mUpdateNetSpeedRunXu);
+           tv_right_top_tipnetspeed.setVisibility(View.GONE); //xuameng右上网络速度
+        }
         if(tvRightSettingLayout.getVisibility() == View.VISIBLE) {
             return;
         }
         if(Hawk.get(HawkConfig.LIVE_SHOW_NET_SPEED, false)) {
+            mHandler.removeCallbacks(mUpdateNetSpeedRun);
+            mHandler.post(mUpdateNetSpeedRun);
             tvNetSpeed.setVisibility(View.VISIBLE);
         } else {
+            mHandler.removeCallbacks(mUpdateNetSpeedRun);
             tvNetSpeed.setVisibility(View.GONE);
         }
     }
