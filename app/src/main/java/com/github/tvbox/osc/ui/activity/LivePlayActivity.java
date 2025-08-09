@@ -2633,9 +2633,6 @@ public class LivePlayActivity extends BaseActivity {
            mHandler.removeCallbacks(mUpdateTimeRunXu);
            tvTime_xu.setVisibility(View.GONE);
         }
-        if(tvRightSettingLayout.getVisibility() == View.VISIBLE) {
-            return;
-        }
         if(Hawk.get(HawkConfig.LIVE_SHOW_TIME, false)) {
             mHandler.removeCallbacks(mUpdateTimeRun);
             mHandler.post(mUpdateTimeRun);
@@ -2680,9 +2677,6 @@ public class LivePlayActivity extends BaseActivity {
         if(tv_right_top_tipnetspeed.getVisibility() == View.VISIBLE) {
            mHandler.removeCallbacks(mUpdateNetSpeedRunXu);
            tv_right_top_tipnetspeed.setVisibility(View.GONE); //xuameng右上网络速度
-        }
-        if(tvRightSettingLayout.getVisibility() == View.VISIBLE) {
-            return;
         }
         if(Hawk.get(HawkConfig.LIVE_SHOW_NET_SPEED, false)) {
             mHandler.removeCallbacks(mUpdateNetSpeedRun);
