@@ -208,27 +208,29 @@ public class ModelSettingFragment extends BaseLazyFragment {
         findViewById(R.id.llWp).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FastClickCheckUtilxu.check(v);
+                FastClickCheckUtilxu.check(v);  //xuameng 2秒
                 if (!ApiConfig.get().wallpaper.isEmpty()){
+				    HawkConfig.isGetWp = true;  //xuameng下载壁纸
                     Toast.makeText(mContext, "壁纸更换中！", Toast.LENGTH_SHORT).show();   //xuameng
                     OkGo.<File>get(ApiConfig.get().wallpaper).tag("xuameng").execute(new FileCallback(requireActivity().getFilesDir().getAbsolutePath(), "wp") {  //xuameng增加tag以便打断下载
                         @Override
                         public void onSuccess(Response<File> response) {
-                            String mimeType = response.headers().get("Content-Type");
-                            if (mimeType != null && mimeType.startsWith("image/")) {   // 确认是图片文件
-							   ((BaseActivity) requireActivity()).changeWallpaper(true);      
-                               Toast.makeText(mContext, "壁纸更换成功！", Toast.LENGTH_SHORT).show();   //xuameng
-                            }else{
-                               File wp = new File(requireActivity().getFilesDir().getAbsolutePath() + "/wp");
-                               if (wp.exists()){
-                                   wp.delete();
-                               }
-                              ((BaseActivity) requireActivity()).changeWallpaper(true); 
-                               Toast.makeText(mContext, "壁纸文件类型错误！已重置壁纸！", Toast.LENGTH_SHORT).show();   //xuameng
-                            }
+                            if (HawkConfig.isGetWp){
+                                String mimeType = response.headers().get("Content-Type");
+                                if (mimeType != null && mimeType.startsWith("image/")) {   // 确认是图片文件
+							       ((BaseActivity) requireActivity()).changeWallpaper(true);      
+                                   HawkConfig.isGetWp = false;  //xuameng下载壁纸 
+								   Toast.makeText(mContext, "壁纸更换成功！", Toast.LENGTH_SHORT).show();   //xuameng
+                                }else{
+                                   HawkConfig.isGetWp = true;  //xuameng下载壁纸
+                                   Toast.makeText(mContext, "壁纸文件类型错误！已重置壁纸！", Toast.LENGTH_SHORT).show();   //xuameng
+                                }
+							}
                         }
+
                         @Override
                         public void onError(Response<File> response) {
+							HawkConfig.isGetWp = false;  //xuameng下载壁纸
                             Toast.makeText(mContext, "壁纸更换失败！", Toast.LENGTH_SHORT).show();   //xuameng
                             super.onError(response);
                         }
@@ -797,7 +799,9 @@ public class ModelSettingFragment extends BaseLazyFragment {
 
     @Override
     public void onDestroyView() {
-        OkGo.getInstance().cancelTag("xuameng");   //xuameng打断下载
+		if (HawkConfig.isGetWp){
+			OkGo.getInstance().cancelTag("xuameng");   //xuameng打断下载
+		}
         super.onDestroyView();
         SettingActivity.callback = null;
     }
