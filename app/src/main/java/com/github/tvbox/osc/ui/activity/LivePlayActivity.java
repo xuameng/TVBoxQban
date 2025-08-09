@@ -915,6 +915,8 @@ public class LivePlayActivity extends BaseActivity {
             mHandler.removeCallbacks(mConnectTimeoutChangeSourceRunBuffer);
             mHandler.removeCallbacks(mConnectTimeoutChangeSourceRunBack);
             mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
+            cancelxToast();
+            App.HideToast();  //xuameng HideToast
             playXuSource();
         } else {
             mExitTime = System.currentTimeMillis();
