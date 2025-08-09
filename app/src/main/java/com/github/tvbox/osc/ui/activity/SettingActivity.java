@@ -197,16 +197,7 @@ public class SettingActivity extends BaseActivity {
                 HawkConfig.ISrestore = false;  //xuameng恢复成功,请重启应用
             }else if ((homeSourceKey != null && !homeSourceKey.equals(Hawk.get(HawkConfig.HOME_API, "")))  || homeRec != Hawk.get(HawkConfig.HOME_REC, 0)) { //xuameng 更改数据源或首页推荐
                 jumpActivity(HomeActivity.class, createBundle());
-            }else if (HawkConfig.isGetWp){  //xuameng下载壁纸
-				File wp = new File(getFilesDir().getAbsolutePath() + "/wp");
-                if (wp.exists()){
-                    wp.delete();
-			    }
-			    changeWallpaper(true);
-                AppManager.getInstance().finishAllActivity();
-                jumpActivity(HomeActivity.class);
-			    HawkConfig.isGetWp = false;  //xuameng下载壁纸
-			}
+            }
         } else {
             AppManager.getInstance().finishAllActivity();
             jumpActivity(HomeActivity.class);
