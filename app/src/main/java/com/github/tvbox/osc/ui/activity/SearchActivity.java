@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;   //xuameng搜索历史
 import android.widget.TextView;
 import android.widget.Toast;
+import com.github.tvbox.osc.base.App;
 
 import androidx.lifecycle.ViewModelProvider;
 
@@ -234,7 +235,7 @@ public class SearchActivity extends BaseActivity {
                         search(keyword);
                     }
                 } else {
-                    Toast.makeText(mContext, "输入内容不能为空！", Toast.LENGTH_SHORT).show();
+                    App.showToastShort(mContext, "输入内容不能为空！");
                 }
             }
         });
@@ -514,7 +515,7 @@ public class SearchActivity extends BaseActivity {
 
     private void search(String title) {
 		if (TextUtils.isEmpty(title)){
-			Toast.makeText(mContext, "输入内容不能为空！", Toast.LENGTH_SHORT).show();
+            App.showToastShort(mContext, "输入内容不能为空！");
 			return;
 		}
         cancel();   
@@ -565,7 +566,7 @@ public class SearchActivity extends BaseActivity {
             allRunCount.incrementAndGet();
         }
         if (siteKey.size() <= 0) {
-            Toast.makeText(mContext, "聚汇影视提示：请指定搜索源！", Toast.LENGTH_SHORT).show();
+            App.showToastShort(mContext, "聚汇影视提示：请指定搜索源！");
    //         showEmpty();  //xuameng
             return;
         }
@@ -640,6 +641,7 @@ public class SearchActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         cancel();
+        App.HideToast();
         try {
             if (searchExecutorService != null) {
                 searchExecutorService.shutdownNow();
