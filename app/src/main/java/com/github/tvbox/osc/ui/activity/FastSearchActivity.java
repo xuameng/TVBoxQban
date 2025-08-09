@@ -513,6 +513,7 @@ public class FastSearchActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        App.HideToast();
         cancel();
         try {
             if (searchExecutorService != null) {
