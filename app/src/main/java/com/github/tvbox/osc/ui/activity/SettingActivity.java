@@ -48,6 +48,7 @@ public class SettingActivity extends BaseActivity {
     private int homeRec;
     private int dnsOpt;
     private String currentLiveApi;
+	private ModelSettingFragment XuModelSettingFragment;
 
     @Override
     protected int getLayoutResID() {
@@ -180,8 +181,10 @@ public class SettingActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-		if (HawkConfig.isGetWp){ 
-			Toast.makeText(mContext, "壁纸更换中！请稍后", Toast.LENGTH_SHORT).show();   //xuameng
+		if (HawkConfig.isGetWp){
+            XuModelSettingFragment.OkGoCancelTag();
+			HawkConfig.isGetWp = false;
+			Toast.makeText(mContext, "壁纸更换被打断！", Toast.LENGTH_SHORT).show();   //xuameng
 			return;
 		}
         if (currentApi.equals(Hawk.get(HawkConfig.API_URL, ""))) {   //xuameng 如何配置地址没变
