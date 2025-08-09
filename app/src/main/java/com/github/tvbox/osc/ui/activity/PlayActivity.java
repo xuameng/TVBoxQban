@@ -857,6 +857,7 @@ public class PlayActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
+        App.HideToast();
         if (mController.onBackPressed()) {
             return;
         }
