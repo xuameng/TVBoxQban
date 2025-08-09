@@ -210,6 +210,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
                 FastClickCheckUtil.check(v);
                 if (!ApiConfig.get().wallpaper.isEmpty()){
                     HawkConfig.isGetWp = true;  //xuameng下载壁纸
+
 // 1. 先验证文件类型
 OkGo.<String>head(ApiConfig.get().wallpaper)
     .execute(new StringCallback() {
@@ -221,12 +222,10 @@ OkGo.<String>head(ApiConfig.get().wallpaper)
                         @Override
                         public void onSuccess(Response<File> response) {
                             if (HawkConfig.isGetWp){
-             
 							       ((BaseActivity) requireActivity()).changeWallpaper(true);      
                                    HawkConfig.isGetWp = false;  //xuameng下载壁纸 
 								   Toast.makeText(mContext, "壁纸更换成功！", Toast.LENGTH_SHORT).show();   //xuameng
-                               
-							}
+				}
                         }
 
                         @Override
@@ -241,11 +240,7 @@ OkGo.<String>head(ApiConfig.get().wallpaper)
                             super.downloadProgress(progress);
                         }
                     });
-				}else{
-					Toast.makeText(mContext, "壁纸站点未配置！", Toast.LENGTH_SHORT).show();   //xuameng
-				}
-            }
-        });
+				
             }
         }
     });
