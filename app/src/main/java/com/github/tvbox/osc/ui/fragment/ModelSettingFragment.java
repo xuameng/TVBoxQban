@@ -212,7 +212,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
                 if (!ApiConfig.get().wallpaper.isEmpty()){
 				    HawkConfig.isGetWp = true;  //xuameng下载壁纸
                     Toast.makeText(mContext, "壁纸更换中！", Toast.LENGTH_SHORT).show();   //xuameng
-                    OkGo.<File>get(ApiConfig.get().wallpaper).tag("xuameng").execute(new FileCallback(requireActivity().getFilesDir().getAbsolutePath(), "wp") {  //xuameng增加tag以便打断下载
+                    OkGo.<File>get(ApiConfig.get().wallpaper).tag("wallpaperDown").execute(new FileCallback(requireActivity().getFilesDir().getAbsolutePath(), "wp") {  //xuameng增加tag以便打断下载
                         @Override
                         public void onSuccess(Response<File> response) {
                             if (HawkConfig.isGetWp){
@@ -801,7 +801,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
 
     @Override
     public void onDestroyView() {
-        OkGo.getInstance().cancelTag("xuameng");   //xuameng打断下载
+        OkGo.getInstance().cancelTag("wallpaperDown");   //xuameng打断下载
         super.onDestroyView();
         SettingActivity.callback = null;
     }
