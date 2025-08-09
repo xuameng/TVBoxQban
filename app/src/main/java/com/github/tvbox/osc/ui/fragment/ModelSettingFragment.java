@@ -797,6 +797,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
 
     @Override
     public void onDestroyView() {
+        OkGo.getInstance().cancelTag("xuameng");   //xuameng打断下载
         super.onDestroyView();
         SettingActivity.callback = null;
     }
