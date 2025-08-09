@@ -2062,6 +2062,7 @@ public class LivePlayActivity extends BaseActivity {
         }
     };
     public void showToastXu() {
+        App.HideToast();  //xuameng HideToast
         LayoutInflater inflater = getLayoutInflater();
         View customToastView = inflater.inflate(R.layout.review_toast, null);
         ImageView imageView = customToastView.findViewById(R.id.toastImage);
@@ -2072,6 +2073,7 @@ public class LivePlayActivity extends BaseActivity {
         toast.show();
     }
     public void showToastError() {
+        App.HideToast();   //xuameng HideToast
         LayoutInflater inflater = getLayoutInflater();
         View customToastView = inflater.inflate(R.layout.review_toast_error, null);
         ImageView imageView = customToastView.findViewById(R.id.toastImage);
@@ -2082,6 +2084,7 @@ public class LivePlayActivity extends BaseActivity {
         toast.show();
     }
     public void showLiveXu() {
+        App.HideToast();   //xuameng HideToast
         LayoutInflater inflater = getLayoutInflater();
         View customToastView = inflater.inflate(R.layout.live_toast, null);
         ImageView imageView = customToastView.findViewById(R.id.toastImage);
