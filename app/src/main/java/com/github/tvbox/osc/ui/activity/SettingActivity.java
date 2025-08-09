@@ -190,7 +190,7 @@ public class SettingActivity extends BaseActivity {
             }
             changeWallpaper(true);
             HawkConfig.isGetWp = false; 
-            App.showToastShort(mContext "壁纸更换已被打断！壁纸已重置！");
+            App.showToastShort(mContext, "壁纸更换已被打断！壁纸已重置！");
 			return;
 		}
         if (currentApi.equals(Hawk.get(HawkConfig.API_URL, ""))) {   //xuameng 如何配置地址没变
