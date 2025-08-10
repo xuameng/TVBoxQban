@@ -5,8 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.animation.BounceInterpolator;
 import android.widget.LinearLayout;
-import android.widget.Toast;
-
+import com.github.tvbox.osc.base.App;  //xuameng toast
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.api.ApiConfig;
@@ -167,7 +166,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
                     homeHotVodAdapter.remove(position);
                     VodInfo vodInfo = RoomDataManger.getVodInfo(vod.sourceKey, vod.id);
                     RoomDataManger.deleteVodRecord(vod.sourceKey, vodInfo);
-                    Toast.makeText(mContext, "已删除当前记录", Toast.LENGTH_SHORT).show();
+                    App.showToastShort(mContext, "已删除当前记录！");
                }  else if (vod.id != null && !vod.id.isEmpty()) {         //xuameng 修复首页聚汇推荐单击不能搜索的问题
                     Bundle bundle = new Bundle();
                     bundle.putString("id", vod.id);
@@ -210,7 +209,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
                     homeHotVodAdapterxu.remove(position);
                     VodInfo vodInfo = RoomDataManger.getVodInfo(vod.sourceKey, vod.id);
                     RoomDataManger.deleteVodRecord(vod.sourceKey, vodInfo);
-                    Toast.makeText(mContext, "已删除当前记录", Toast.LENGTH_SHORT).show();
+                    App.showToastShort(mContext, "已删除当前记录！");
                }  else if (vod.id != null && !vod.id.isEmpty()) {         //xuameng 修复首页聚汇推荐单击不能搜索的问题
                     Bundle bundle = new Bundle();
                     bundle.putString("id", vod.id);
@@ -250,7 +249,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
 				bundle.putBoolean("useCache", true);
 				intent.putExtras(bundle);
 				startActivity(intent);
-				Toast.makeText(mContext, "重新加载主页数据！", Toast.LENGTH_SHORT).show(); 
+                App.showToastShort(mContext, "重新加载主页数据！");
 				return true;
             }
         });
