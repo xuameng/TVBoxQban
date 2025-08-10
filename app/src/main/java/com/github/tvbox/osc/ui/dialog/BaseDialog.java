@@ -38,6 +38,7 @@ public class BaseDialog extends Dialog {
 
     @Override
     public void dismiss() {
+	    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
         super.dismiss(); // XUAMENG必须调用父类方法
     }
 
