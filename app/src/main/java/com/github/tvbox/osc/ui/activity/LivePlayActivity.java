@@ -1925,7 +1925,11 @@ public class LivePlayActivity extends BaseActivity {
                             sBar.setProgress((int) mVideoView.getCurrentPosition());
                             tv_currentpos.setText(durationToString((int) mVideoView.getCurrentPosition()));
                             tv_duration.setText(durationToString(duration1));
-                            if(duration1 <= 0) {
+                            if(duration1 <= 50000) {
+                                if(mVideoView != null) {
+                                   mVideoView.release();
+                                   mVideoView = null;
+                                }
                                 Mtv_left_top_xu.setVisibility(View.GONE); //xuameng返回键隐藏左上回看菜单
                                 iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
                                 hideTimeXu(); //xuameng隐藏系统时间
