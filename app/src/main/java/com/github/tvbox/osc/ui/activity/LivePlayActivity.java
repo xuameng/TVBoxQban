@@ -112,6 +112,7 @@ public class LivePlayActivity extends BaseActivity {
     private LiveChannelGroupAdapter liveChannelGroupAdapter;
     private LiveChannelItemAdapter liveChannelItemAdapter;
     private long mExitTime = 0; //xuameng返回键退出时间
+	private long mExitTimeBack = 0; //xuameng回看返回键退出时间
     private long mExitTimeUp = 0; //xuameng上键间隔时间
     private long mExitTimeDown = 0; //xuameng下键间隔时间
     private long mSpeedTimeUp = 0; //xuameng上键间隔时间
@@ -355,6 +356,7 @@ public class LivePlayActivity extends BaseActivity {
                 }
                 if(fromuser) {
                     long duration = mVideoView.getDuration();
+                    if(duration <= 0) return;
                     long newPosition = (duration * progress) / sBar.getMax(); //xuameng触碰进度变化获取
                     if(tv_currentpos != null) {
                         tv_currentpos.setText(durationToString((int) newPosition)); //xuameng文字显示进度
@@ -904,7 +906,7 @@ public class LivePlayActivity extends BaseActivity {
         }
     }
     private void xubackexit() { //xuameng双击退出回看
-        if(System.currentTimeMillis() - mExitTime < 2000) {
+        if(System.currentTimeMillis() - mExitTimeBack < 2000) {
             isBack = false;
             isSHIYI = false;
             Mtv_left_top_xu.setVisibility(View.GONE); //xuameng返回键隐藏左上回看菜单
@@ -919,7 +921,7 @@ public class LivePlayActivity extends BaseActivity {
             App.HideToast();  //xuameng HideToast
             playXuSource();
         } else {
-            mExitTime = System.currentTimeMillis();
+            mExitTimeBack = System.currentTimeMillis();
             showToastBack();   //xuameng 退出回看
         }
     }
@@ -1921,13 +1923,21 @@ public class LivePlayActivity extends BaseActivity {
                             sBar.setProgress((int) mVideoView.getCurrentPosition());
                             tv_currentpos.setText(durationToString((int) mVideoView.getCurrentPosition()));
                             tv_duration.setText(durationToString(duration1));
+                            if(duration1 <= 0) {
+                                isBack = false;
+                                isSHIYI = false;
+                                Mtv_left_top_xu.setVisibility(View.GONE); //xuameng返回键隐藏左上回看菜单
+                                iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
+                                hideTimeXu(); //xuameng隐藏系统时间
+                                hideNetSpeedXu(); //XUAMENG隐藏左上网速
+                                liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
+                                playXuSource();
+                                showToastXu();
+                            }
                             return;
                         }
                         if(duration1 > 130000 && duration1 < 180000000) { //xuameng处理某些播放器时长获取不准确问题
                             isVOD = true;
-                            if(countDownTimer != null) {
-                                countDownTimer.cancel();
-                            }
                             if(isLl_epgVisible()) { //xuameng修复
                                 showProgressBars(true);
                             }
@@ -1951,23 +1961,6 @@ public class LivePlayActivity extends BaseActivity {
                         mHandler.removeCallbacks(mConnectTimeoutChangeSourceRunBuffer);
                         isVideoplaying = true;
                         isBuffer = false;
-                        if(isBack) { //xuameng 回看不成功返回直播
-                            int durationXu = (int) mVideoView.getDuration();
-                            if(durationXu < 60000) {
-                                if(mVideoView != null) {
-                                    mVideoView.release();
-                                }
-                                isBack = false;
-                                isSHIYI = false;
-                                Mtv_left_top_xu.setVisibility(View.GONE); //xuameng返回键隐藏左上回看菜单
-                                iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
-                                hideTimeXu(); //xuameng隐藏系统时间
-                                hideNetSpeedXu(); //XUAMENG隐藏左上网速
-                                liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
-                                playXuSource();
-                                showToastXu();
-                            }
-                        }
                         break;
                     case VideoView.STATE_ERROR:
                         isVideoplaying = false;
@@ -3077,6 +3070,7 @@ public class LivePlayActivity extends BaseActivity {
                 }
                 if(fromuser) {
                     long duration = mVideoView.getDuration();
+                    if(duration <= 0) return;
                     long newPosition = (duration * progress) / sBar.getMax(); //xuameng触碰进度变化获取
                     if(tv_currentpos != null) {
                         tv_currentpos.setText(durationToString((int) newPosition)); //xuameng文字显示进度
@@ -3242,6 +3236,7 @@ public class LivePlayActivity extends BaseActivity {
     private void cancelxToast() {   //xuameng清除toast
         if (xToast != null) {
             xToast.cancel();
+            xToast = null;
         }
     }
 }
