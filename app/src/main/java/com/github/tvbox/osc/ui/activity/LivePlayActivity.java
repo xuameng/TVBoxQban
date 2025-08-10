@@ -1965,7 +1965,7 @@ public class LivePlayActivity extends BaseActivity {
                         iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
                     case VideoView.STATE_PLAYBACK_COMPLETED:
                         if(isBack) {
-                       //     mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);     //xuameng清除回调修复BUG
+                            mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);     //xuameng清除回调修复BUG
                             mHandler.removeCallbacks(mConnectTimeoutChangeSourceRunBack);
                             mHandler.postDelayed(mConnectTimeoutChangeSourceRunBack, 5000); //xuameng回看完毕5秒退出
                             return;
@@ -1980,7 +1980,7 @@ public class LivePlayActivity extends BaseActivity {
                         }
                         isBuffer = true;
                         if(isBack) {
-                    //        mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);   //xuameng清除回调修复BUG
+                            mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);   //xuameng清除回调修复BUG
                             mHandler.removeCallbacks(mConnectTimeoutChangeSourceRunBuffer);
                             mHandler.postDelayed(mConnectTimeoutChangeSourceRunBuffer, (Hawk.get(HawkConfig.LIVE_CONNECT_TIMEOUT, 1) + 1) * 5000); //xuameng回看超时
                             return;
