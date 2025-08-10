@@ -177,7 +177,6 @@ public class LivePlayActivity extends BaseActivity {
     public static SimpleDateFormat formatDate1 = new SimpleDateFormat("MM-dd");
     public static String day = formatDate.format(new Date());
     public static Date nowday = new Date();
-    private boolean isSHIYI = false;
     private boolean isBack = false;
     private boolean isTouch = false; //xuameng手机选择频道判断
     private boolean isVOD = false; //xuameng点播
@@ -725,7 +724,7 @@ public class LivePlayActivity extends BaseActivity {
         if(!isCurrentLiveChannelValid()) { //xuameng 未选择频道空指针问题
             return;
         }
-        if(isSHIYI) return;
+        if(isBack) return;
         liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
         if(channel_Name.getChannelName() != null) {
             ((TextView) findViewById(R.id.tv_channel_bar_name)).setText(channel_Name.getChannelName());
@@ -793,7 +792,7 @@ public class LivePlayActivity extends BaseActivity {
         if(!isCurrentLiveChannelValidXu()) { //xuameng 未选择频道空指针问题
             return;
         }
-        if(isSHIYI) return;
+        if(isBack) return;
         if(channel_Name.getChannelName() != null) {
             String savedEpgKey = channel_Name.getChannelName() + "_" + Objects.requireNonNull(liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex())).getDatePresented();
             if(hsEpg.containsKey(savedEpgKey)) {
@@ -913,7 +912,6 @@ public class LivePlayActivity extends BaseActivity {
     private void xubackexit() { //xuameng双击退出回看
         if(System.currentTimeMillis() - mExitTimeBack < 2000) {
             isBack = false;
-            isSHIYI = false;
             Mtv_left_top_xu.setVisibility(View.GONE); //xuameng返回键隐藏左上回看菜单
             iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
             hideTimeXu(); //xuameng隐藏系统时间
@@ -1352,8 +1350,6 @@ public class LivePlayActivity extends BaseActivity {
         if((channelGroupIndex == currentChannelGroupIndex && liveChannelIndex == currentLiveChannelIndex && !changeSource) || (changeSource && currentLiveChannelItem.getSourceNum() == 1) && !XuSource) {
             // xuamengEPG日期自动选今天
             liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
-            isSHIYI = false;
-            isBack = false;
             getEpg(new Date());
             if(isVOD) {
                 if(backcontroller.getVisibility() == View.GONE) {
@@ -1375,9 +1371,9 @@ public class LivePlayActivity extends BaseActivity {
             livePlayerManager.getLiveChannelPlayer(mVideoView, currentLiveChannelItem.getChannelName());
         }
         channel_Name = currentLiveChannelItem;
-        isSHIYI = false;
         isBack = false;
         XuSource = false;
+        isVOD = false;
         HideBottomEpg(); //隐藏底部菜单
         if(currentLiveChannelItem.getUrl().contains("PLTV/") || currentLiveChannelItem.getUrl().contains("TVOD/")) { //xuameng判断直播源URL中有没有PLTV字符，有才可以时移
             currentLiveChannelItem.setinclude_back(true);
@@ -1625,7 +1621,6 @@ public class LivePlayActivity extends BaseActivity {
                 if(now.compareTo(selectedData.startdateTime) >= 0 && now.compareTo(selectedData.enddateTime) <= 0) {
                     if(mVideoView == null) return;
                     mVideoView.release();
-                    isSHIYI = false;
                     mVideoView.setUrl(currentLiveChannelItem.getUrl(), liveWebHeader());
                     mVideoView.start();
                     if(iv_Play_Xu.getVisibility() == View.VISIBLE) {
@@ -1639,7 +1634,6 @@ public class LivePlayActivity extends BaseActivity {
                     if(mVideoView == null) return;
                     mVideoView.release();
                     shiyi_time = shiyiStartdate + "-" + shiyiEnddate;
-                    isSHIYI = true;
                     if(shiyiUrl.indexOf("?") <= 0) {
                         shiyiUrl += "?playseek=" + shiyi_time;
                     } else if(shiyiUrl.indexOf("playseek") > 0) {
@@ -1694,7 +1688,6 @@ public class LivePlayActivity extends BaseActivity {
                 if(now.compareTo(selectedData.startdateTime) >= 0 && now.compareTo(selectedData.enddateTime) <= 0) {
                     if(mVideoView == null) return;
                     mVideoView.release();
-                    isSHIYI = false;
                     mVideoView.setUrl(currentLiveChannelItem.getUrl(), liveWebHeader());
                     mVideoView.start();
                     if(iv_Play_Xu.getVisibility() == View.VISIBLE) {
@@ -1709,7 +1702,6 @@ public class LivePlayActivity extends BaseActivity {
                     if(mVideoView == null) return;
                     mVideoView.release();
                     shiyi_time = shiyiStartdate + "-" + shiyiEnddate;
-                    isSHIYI = true;
                     if(shiyiUrl.indexOf("?") <= 0) {
                         shiyiUrl += "?playseek=" + shiyi_time;
                     } else if(shiyiUrl.indexOf("playseek") > 0) {
