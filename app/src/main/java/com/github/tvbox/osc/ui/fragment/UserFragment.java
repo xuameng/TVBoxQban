@@ -166,7 +166,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
                     homeHotVodAdapter.remove(position);
                     VodInfo vodInfo = RoomDataManger.getVodInfo(vod.sourceKey, vod.id);
                     RoomDataManger.deleteVodRecord(vod.sourceKey, vodInfo);
-                    App.showToastShort(mContext, "已删除当前记录！");
+                    App.showToastShort(getApplicationContext(), "已删除当前记录！");
                }  else if (vod.id != null && !vod.id.isEmpty()) {         //xuameng 修复首页聚汇推荐单击不能搜索的问题
                     Bundle bundle = new Bundle();
                     bundle.putString("id", vod.id);
@@ -209,7 +209,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
                     homeHotVodAdapterxu.remove(position);
                     VodInfo vodInfo = RoomDataManger.getVodInfo(vod.sourceKey, vod.id);
                     RoomDataManger.deleteVodRecord(vod.sourceKey, vodInfo);
-                    App.showToastShort(mContext, "已删除当前记录！");
+                    App.showToastShort(getApplicationContext(), "已删除当前记录！");
                }  else if (vod.id != null && !vod.id.isEmpty()) {         //xuameng 修复首页聚汇推荐单击不能搜索的问题
                     Bundle bundle = new Bundle();
                     bundle.putString("id", vod.id);
@@ -243,13 +243,13 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
         	@Override
             public boolean onLongClick(View v) {
 				FastClickCheckUtil.check(v);
-				Intent intent =new Intent(mContext, HomeActivity.class);
+				Intent intent =new Intent(getApplicationContext(), HomeActivity.class);
 				intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
 				Bundle bundle = new Bundle();
 				bundle.putBoolean("useCache", true);
 				intent.putExtras(bundle);
 				startActivity(intent);
-                App.showToastShort(mContext, "重新加载主页数据！");
+                App.showToastShort(getApplicationContext(), "重新加载主页数据！");
 				return true;
             }
         });
