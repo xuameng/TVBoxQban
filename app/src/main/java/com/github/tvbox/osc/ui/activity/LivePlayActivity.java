@@ -1966,11 +1966,11 @@ public class LivePlayActivity extends BaseActivity {
                     case VideoView.STATE_PLAYBACK_COMPLETED:
                         if(isBack) {
                             mHandler.removeCallbacks(mConnectTimeoutChangeSourceRunBack);
-                            mHandler.postDelayed(mConnectTimeoutChangeSourceRunBack, 5000); //xuameng回看完毕5秒退出
+                            mHandler.postDelayed(mConnectTimeoutChangeSourceRunBack, 6000); //xuameng回看完毕5秒退出
                             return;
                         }
-                   //     mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
-                    //    mHandler.postDelayed(mConnectTimeoutChangeSourceRun, 10000); //xuameng播放超时10秒换源
+                        mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
+                        mHandler.postDelayed(mConnectTimeoutChangeSourceRun, 10000); //xuameng播放超时10秒换源
                         break;
                     case VideoView.STATE_PREPARING:
                     case VideoView.STATE_BUFFERING:
@@ -1983,8 +1983,8 @@ public class LivePlayActivity extends BaseActivity {
                             mHandler.postDelayed(mConnectTimeoutChangeSourceRunBuffer, (Hawk.get(HawkConfig.LIVE_CONNECT_TIMEOUT, 1) + 1) * 5000); //xuameng回看超时
                             return;
                         }
-                     //   mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
-                     //   mHandler.postDelayed(mConnectTimeoutChangeSourceRun, (Hawk.get(HawkConfig.LIVE_CONNECT_TIMEOUT, 1) + 1) * 5000);
+                        mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
+                        mHandler.postDelayed(mConnectTimeoutChangeSourceRun, (Hawk.get(HawkConfig.LIVE_CONNECT_TIMEOUT, 1) + 1) * 5000);
                         break;
                 }
             }
