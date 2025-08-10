@@ -16,7 +16,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;   //xuameng搜索历史
 import android.widget.TextView;
-import android.widget.Toast;
 import com.github.tvbox.osc.base.App;
 
 import androidx.lifecycle.ViewModelProvider;
