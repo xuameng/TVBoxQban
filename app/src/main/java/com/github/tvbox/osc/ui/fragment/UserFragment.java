@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.animation.BounceInterpolator;
 import android.widget.LinearLayout;
 import com.github.tvbox.osc.base.App;  //xuameng toast
+import android.content.Context;  //xuameng toast
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.api.ApiConfig;
