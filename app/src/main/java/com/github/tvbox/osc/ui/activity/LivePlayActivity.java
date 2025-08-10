@@ -1925,18 +1925,6 @@ public class LivePlayActivity extends BaseActivity {
                             sBar.setProgress((int) mVideoView.getCurrentPosition());
                             tv_currentpos.setText(durationToString((int) mVideoView.getCurrentPosition()));
                             tv_duration.setText(durationToString(duration1));
-                            if(duration1 <= 50000) {
-                                if(mVideoView != null) {
-                                   mVideoView.release();
-                                }
-                                Mtv_left_top_xu.setVisibility(View.GONE); //xuameng返回键隐藏左上回看菜单
-                                iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
-                                hideTimeXu(); //xuameng隐藏系统时间
-                                hideNetSpeedXu(); //XUAMENG隐藏左上网速
-                                liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
-                                playXuSource();
-                                showToastXu();
-                            }
                             return;
                         }
                         if(duration1 > 130000 && duration1 < 180000000) { //xuameng处理某些播放器时长获取不准确问题
@@ -1964,6 +1952,21 @@ public class LivePlayActivity extends BaseActivity {
                         mHandler.removeCallbacks(mConnectTimeoutChangeSourceRunBuffer);
                         isVideoplaying = true;
                         isBuffer = false;
+                        if(isBack) { //xuameng 回看不成功返回直播
+                            int durationXu = (int) mVideoView.getDuration();
+                            if(durationXu < 60000) {
+                                if(mVideoView != null) {
+                                    mVideoView.release();
+                                }
+                                Mtv_left_top_xu.setVisibility(View.GONE); //xuameng返回键隐藏左上回看菜单
+                                iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
+                                hideTimeXu(); //xuameng隐藏系统时间
+                                hideNetSpeedXu(); //XUAMENG隐藏左上网速
+                                liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
+                                playXuSource();
+                                showToastXu();
+                            }
+                        }
                         break;
                     case VideoView.STATE_ERROR:
                         isVideoplaying = false;
