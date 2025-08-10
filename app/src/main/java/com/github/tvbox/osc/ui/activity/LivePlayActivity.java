@@ -1470,7 +1470,7 @@ public class LivePlayActivity extends BaseActivity {
         }
         if(!isCurrentLiveChannelValid()) return;
         XuSource = true;
-        currentLiveChannelItem.currentSource();
+        currentLiveChannelItem.getSourceIndex();
         playChannel(currentChannelGroupIndex, currentLiveChannelIndex, true);
     }
     //显示设置列表
