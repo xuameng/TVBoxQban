@@ -15,7 +15,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.graphics.Color; //xuameng获取颜色值
 import android.widget.FrameLayout; //xuameng倍速播放
 import com.github.tvbox.osc.server.RemoteServer; //xuameng新增广告过滤
