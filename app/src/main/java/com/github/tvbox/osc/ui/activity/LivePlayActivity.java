@@ -924,7 +924,7 @@ public class LivePlayActivity extends BaseActivity {
             mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
             cancelxToast();
             App.HideToast();  //xuameng HideToast
-            playXuSource();
+            playCurrentSource();
         } else {
             mExitTimeBack = System.currentTimeMillis();
             showToastBack();   //xuameng 退出回看
@@ -1464,13 +1464,13 @@ public class LivePlayActivity extends BaseActivity {
         currentLiveChannelItem.nextSource();
         playChannel(currentChannelGroupIndex, currentLiveChannelIndex, true);
     }
-    public void playXuSource() {
+    public void playCurrentSource() {
         if(mVideoView == null) {
             return;
         }
         if(!isCurrentLiveChannelValid()) return;
         XuSource = true;
-        currentLiveChannelItem.getUrl();
+        currentLiveChannelItem.currentSource();
         playChannel(currentChannelGroupIndex, currentLiveChannelIndex, true);
     }
     //显示设置列表
@@ -1963,7 +1963,7 @@ public class LivePlayActivity extends BaseActivity {
                                 hideTimeXu(); //xuameng隐藏系统时间
                                 hideNetSpeedXu(); //XUAMENG隐藏左上网速
                                 liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
-                                playXuSource();
+                                playCurrentSource();
                                 showToastXu();
                             }
                         }
@@ -2048,12 +2048,12 @@ public class LivePlayActivity extends BaseActivity {
             if(currentLiveChannelItem.getSourceNum() == currentLiveChangeSourceTimes) { //xuameng如果只有一个源就换频道
                 currentLiveChangeSourceTimes = 0;
                 if(liveChannelGroupList.size() - 1 < 1 && getLiveChannels(channelGroupIndexXu).size() - 1 < 1) { //如果只有一个频道组就播放当前频道，不胯下胯下跨选频道组
-                    playXuSource();
+                    playCurrentSource();
                     App.showToastShort(mContext, "聚汇影视提示您：只有一个频道！正在重播！");
                     return;
                 }
                 if(!Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false) && getLiveChannels(channelGroupIndexXu).size() - 1 < 1) {
-                    playXuSource();
+                    playCurrentSource();
                     App.showToastShort(mContext, "聚汇影视提示您：未选择跨选分类且本组只有一个频道！正在重播！");
                     return;
                 }
@@ -2115,14 +2115,14 @@ public class LivePlayActivity extends BaseActivity {
     private Runnable mConnectTimeoutChangeSourceRunBack = new Runnable() { //xuameng为回看失败准备
         @Override
         public void run() {
-            playXuSource();
+            playCurrentSource();
             showToastXu();
         }
     };
     private Runnable mConnectTimeoutChangeSourceRunBuffer = new Runnable() { //xuameng为回看失败准备
         @Override
         public void run() {
-            playXuSource();
+            playCurrentSource();
             showToastError();
         }
     };
