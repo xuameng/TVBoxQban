@@ -1965,8 +1965,9 @@ public class LivePlayActivity extends BaseActivity {
                         iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
                     case VideoView.STATE_PLAYBACK_COMPLETED:
                         if(isBack) {
+                            mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
                             mHandler.removeCallbacks(mConnectTimeoutChangeSourceRunBack);
-                            mHandler.postDelayed(mConnectTimeoutChangeSourceRunBack, 6000); //xuameng回看完毕5秒退出
+                            mHandler.postDelayed(mConnectTimeoutChangeSourceRunBack, 5000); //xuameng回看完毕5秒退出
                             return;
                         }
                         mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
