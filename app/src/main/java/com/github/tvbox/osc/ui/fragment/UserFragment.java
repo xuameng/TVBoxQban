@@ -70,6 +70,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
     private List<Movie.Video> homeSourceRec;
     public static TvRecyclerView tvHotList1;
     public static TvRecyclerView tvHotList2;
+	private Context appContext = getApplicationContext();
 
     public static UserFragment newInstance() {
         return new UserFragment();
@@ -167,7 +168,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
                     homeHotVodAdapter.remove(position);
                     VodInfo vodInfo = RoomDataManger.getVodInfo(vod.sourceKey, vod.id);
                     RoomDataManger.deleteVodRecord(vod.sourceKey, vodInfo);
-                    App.showToastShort(getApplicationContext(), "已删除当前记录！");
+                    App.showToastShort(appContext, "已删除当前记录！");
                }  else if (vod.id != null && !vod.id.isEmpty()) {         //xuameng 修复首页聚汇推荐单击不能搜索的问题
                     Bundle bundle = new Bundle();
                     bundle.putString("id", vod.id);
@@ -210,7 +211,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
                     homeHotVodAdapterxu.remove(position);
                     VodInfo vodInfo = RoomDataManger.getVodInfo(vod.sourceKey, vod.id);
                     RoomDataManger.deleteVodRecord(vod.sourceKey, vodInfo);
-                    App.showToastShort(getApplicationContext(), "已删除当前记录！");
+                    App.showToastShort(appContext, "已删除当前记录！");
                }  else if (vod.id != null && !vod.id.isEmpty()) {         //xuameng 修复首页聚汇推荐单击不能搜索的问题
                     Bundle bundle = new Bundle();
                     bundle.putString("id", vod.id);
@@ -244,7 +245,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
         	@Override
             public boolean onLongClick(View v) {
 				FastClickCheckUtil.check(v);
-				Intent intent =new Intent(getApplicationContext(), HomeActivity.class);
+				Intent intent =new Intent(appContext, HomeActivity.class);
 				intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
 				Bundle bundle = new Bundle();
 				bundle.putBoolean("useCache", true);
