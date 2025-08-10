@@ -31,7 +31,6 @@ import android.webkit.WebViewClient;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 import com.github.tvbox.osc.util.parser.SuperParse;
 
 import androidx.annotation.NonNull;
