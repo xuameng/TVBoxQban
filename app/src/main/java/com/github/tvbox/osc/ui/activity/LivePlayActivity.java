@@ -356,7 +356,6 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromuser) {
                 if(mVideoView == null) return;
-                if(duration <= 0) return;
                 if(!fromuser) {
                     return;
                 }
