@@ -639,9 +639,9 @@ public class SearchActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
-        cancel();
         App.HideToast();
+        super.onDestroy();
+        cancel();     
         try {
             if (searchExecutorService != null) {
                 searchExecutorService.shutdownNow();
