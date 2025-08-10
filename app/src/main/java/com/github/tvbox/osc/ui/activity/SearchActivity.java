@@ -518,10 +518,13 @@ public class SearchActivity extends BaseActivity {
 			return;
 		}
         cancel();   
-        if (remoteDialog != null) {
-            remoteDialog.dismiss();
-            remoteDialog = null;
-        }
+
+		getActivity().runOnUiThread(() -> {
+    if (remoteDialog != null) {
+        remoteDialog.dismiss();
+        remoteDialog = null; // 清除引用
+    }
+});
         etSearch.setText(title);
         this.searchTitle = title;
         mGridView.setVisibility(View.GONE); //xuameng 搜索历史
