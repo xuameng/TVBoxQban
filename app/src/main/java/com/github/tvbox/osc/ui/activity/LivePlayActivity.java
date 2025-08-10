@@ -341,16 +341,22 @@ public class LivePlayActivity extends BaseActivity {
             public void onStopTrackingTouch(SeekBar seekBar) {
                 if(mVideoView == null) return;
                 long duration = mVideoView.getDuration();
+                if(duration <= 0) return;
                 long newPosition = (duration * seekBar.getProgress()) / sBar.getMax(); //xuameng停止触碰获取进度条进度
                 mVideoView.seekTo((int) newPosition); //xuameng当前进度播放
                 isKUAIJIN = false;  //xuameng快进判断
             }
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
+                if(mVideoView == null) return;
+                long duration = mVideoView.getDuration();
+                if(duration <= 0) return;
                 isKUAIJIN = true;   //xuameng快进判断
             }
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromuser) {
+                if(mVideoView == null) return;
+                if(duration <= 0) return;
                 if(!fromuser) {
                     return;
                 }
@@ -1893,9 +1899,6 @@ public class LivePlayActivity extends BaseActivity {
                 switch(playState) {
                     case VideoView.STATE_IDLE:
                         isVideoplaying = false;
-                        isVOD = false;
-                        isBack = false;
-                        isSHIYI = false;
                         iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
                         tv_size.setText("[0 X 0]"); //XUAMENG分辨率
                         if(MxuamengMusic.getVisibility() == View.VISIBLE) { //xuameng播放音乐背景
@@ -1924,8 +1927,6 @@ public class LivePlayActivity extends BaseActivity {
                             tv_currentpos.setText(durationToString((int) mVideoView.getCurrentPosition()));
                             tv_duration.setText(durationToString(duration1));
                             if(duration1 <= 0) {
-                                isBack = false;
-                                isSHIYI = false;
                                 Mtv_left_top_xu.setVisibility(View.GONE); //xuameng返回键隐藏左上回看菜单
                                 iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
                                 hideTimeXu(); //xuameng隐藏系统时间
@@ -1964,9 +1965,6 @@ public class LivePlayActivity extends BaseActivity {
                         break;
                     case VideoView.STATE_ERROR:
                         isVideoplaying = false;
-                        isVOD = false;
-                        isBack = false;
-                        isSHIYI = false;
                         iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
                     case VideoView.STATE_PLAYBACK_COMPLETED:
                         if(isBack) {
@@ -3053,18 +3051,23 @@ public class LivePlayActivity extends BaseActivity {
         sBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() { //xuameng升级手机进程条
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                isKUAIJIN = false;  //xuameng快进判断
                 if(mVideoView == null) return;
                 long duration = mVideoView.getDuration();
+                if(duration <= 0) return;
                 long newPosition = (duration * seekBar.getProgress()) / sBar.getMax(); //xuameng停止触碰获取进度条进度
                 mVideoView.seekTo((int) newPosition); //xuameng当前进度播放
+                isKUAIJIN = false;  //xuameng快进判断
             }
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
+                if(mVideoView == null) return;
+                long duration = mVideoView.getDuration();
+                if(duration <= 0) return;
                 isKUAIJIN = true;  //xuameng快进判断
             }
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromuser) {
+                if(mVideoView == null) return;
                 if(!fromuser) {
                     return;
                 }
