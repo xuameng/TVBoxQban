@@ -74,6 +74,10 @@ public class LiveChannelItem {
         if (sourceIndex == sourceNum) sourceIndex = 0;
     }
 
+    public void currentSource() {    //xuameng 当前源
+        sourceIndex;
+    }
+
     public void setSourceIndex(int sourceIndex) {
         this.sourceIndex = sourceIndex;
     }
