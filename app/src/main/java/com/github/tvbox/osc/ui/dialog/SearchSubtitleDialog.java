@@ -7,7 +7,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.view.KeyEvent;       //xuameng 键盘问题
 import com.github.tvbox.osc.base.App;  //xuameng toast
 
