@@ -512,7 +512,6 @@ public class FastSearchActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        App.HideToast();
         cancel();
         try {
             if (searchExecutorService != null) {
@@ -524,5 +523,11 @@ public class FastSearchActivity extends BaseActivity {
             th.printStackTrace();
         }
         EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    public void onBackPressed() {
+        App.HideToast();  //xuameng HideToast
+        super.onBackPressed();
     }
 }
