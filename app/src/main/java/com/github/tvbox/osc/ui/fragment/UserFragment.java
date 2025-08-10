@@ -28,7 +28,6 @@ import com.github.tvbox.osc.ui.dialog.xuamengAboutDialog;
 import com.github.tvbox.osc.util.FastClickCheckUtil;
 import com.github.tvbox.osc.util.DefaultConfig;  //xuameng长按许大师制作重启APP
 import com.github.tvbox.osc.ui.activity.HomeActivity;  //xuameng长按历史键重新载入主页数据
-import android.content.Context;
 import com.github.tvbox.osc.util.ImgUtil;
 
 import com.github.tvbox.osc.util.HawkConfig;
@@ -101,7 +100,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
         }
         super.onFragmentResume();
         if (Hawk.get(HawkConfig.HOME_REC, 0) == 2) {
-            List<VodInfo> allVodRecord = RoomDataManger.getAllVodRecord(30);
+            List<VodInfo> allVodRecord = RoomDataManger.getAllVodRecord(100);    //xuameng首页历史条数
             List<Movie.Video> vodList = new ArrayList<>();
             for (VodInfo vodInfo : allVodRecord) {
                 Movie.Video vod = new Movie.Video();
@@ -167,10 +166,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
                     homeHotVodAdapter.remove(position);
                     VodInfo vodInfo = RoomDataManger.getVodInfo(vod.sourceKey, vod.id);
                     RoomDataManger.deleteVodRecord(vod.sourceKey, vodInfo);
-                    if (getActivity() != null){
-					    Context appContext = getActivity().getApplicationContext();
-                        App.showToastShort(appContext, "已删除当前记录！");
-                    }
+                    App.showToastShort(mContext, "已删除当前记录！");
                }  else if (vod.id != null && !vod.id.isEmpty()) {         //xuameng 修复首页聚汇推荐单击不能搜索的问题
                     Bundle bundle = new Bundle();
                     bundle.putString("id", vod.id);
@@ -213,10 +209,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
                     homeHotVodAdapterxu.remove(position);
                     VodInfo vodInfo = RoomDataManger.getVodInfo(vod.sourceKey, vod.id);
                     RoomDataManger.deleteVodRecord(vod.sourceKey, vodInfo);
-                    if (getActivity() != null){
-					    Context appContext = getActivity().getApplicationContext();
-                        App.showToastShort(appContext, "已删除当前记录！");
-                    }
+                    App.showToastShort(mContext, "已删除当前记录！");
                }  else if (vod.id != null && !vod.id.isEmpty()) {         //xuameng 修复首页聚汇推荐单击不能搜索的问题
                     Bundle bundle = new Bundle();
                     bundle.putString("id", vod.id);
@@ -256,10 +249,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
 				bundle.putBoolean("useCache", true);
 				intent.putExtras(bundle);
 				startActivity(intent);
-                if (getActivity() != null){
-                    Context appContext = getActivity().getApplicationContext();
-                    App.showToastShort(appContext, "重新加载主页数据！");
-                }
+                App.showToastShort(mContext, "重新加载主页数据！");
 				return true;
             }
         });
