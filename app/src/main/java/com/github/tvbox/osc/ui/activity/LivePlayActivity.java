@@ -1928,7 +1928,6 @@ public class LivePlayActivity extends BaseActivity {
                             if(duration1 <= 50000) {
                                 if(mVideoView != null) {
                                    mVideoView.release();
-                                   mVideoView = null;
                                 }
                                 Mtv_left_top_xu.setVisibility(View.GONE); //xuameng返回键隐藏左上回看菜单
                                 iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
