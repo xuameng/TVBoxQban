@@ -1632,6 +1632,8 @@ public class LivePlayActivity extends BaseActivity {
                 String shiyiUrl = currentLiveChannelItem.getUrl();
                 if(now.compareTo(selectedData.startdateTime) < 0) {} else if(shiyiUrl.contains("PLTV/") || shiyiUrl.contains("TVOD/")) {
                     if(mVideoView == null) return;
+                    isBack = true;
+                    isVOD = false;
                     mVideoView.release();
                     shiyi_time = shiyiStartdate + "-" + shiyiEnddate;
                     if(shiyiUrl.indexOf("?") <= 0) {
@@ -1655,8 +1657,6 @@ public class LivePlayActivity extends BaseActivity {
                     lp.width = videoHeight / 7;
                     lp.height = videoHeight / 7;
                     showProgressBars(true);
-                    isBack = true;
-                    isVOD = false;
                     tv_right_top_type.setText("回看中");
                     iv_play_pause.setText("回看暂停中！聚汇直播欢迎您的收看！");
                 }
@@ -1700,6 +1700,8 @@ public class LivePlayActivity extends BaseActivity {
                 String shiyiUrl = currentLiveChannelItem.getUrl();
                 if(now.compareTo(selectedData.startdateTime) < 0) {} else if(shiyiUrl.contains("PLTV/") || shiyiUrl.contains("TVOD/")) {
                     if(mVideoView == null) return;
+                    isBack = true;
+                    isVOD = false;
                     mVideoView.release();
                     shiyi_time = shiyiStartdate + "-" + shiyiEnddate;
                     if(shiyiUrl.indexOf("?") <= 0) {
@@ -1723,8 +1725,6 @@ public class LivePlayActivity extends BaseActivity {
                     lp.width = videoHeight / 7;
                     lp.height = videoHeight / 7;
                     showProgressBars(true);;
-                    isBack = true;
-                    isVOD = false;
                     tv_right_top_type.setText("回看中");
                     iv_play_pause.setText("回看暂停中！聚汇直播欢迎您的收看！");
                 }
@@ -1965,7 +1965,7 @@ public class LivePlayActivity extends BaseActivity {
                         iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
                     case VideoView.STATE_PLAYBACK_COMPLETED:
                         if(isBack) {
-                            mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
+                       //     mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);     //xuameng清除回调修复BUG
                             mHandler.removeCallbacks(mConnectTimeoutChangeSourceRunBack);
                             mHandler.postDelayed(mConnectTimeoutChangeSourceRunBack, 5000); //xuameng回看完毕5秒退出
                             return;
@@ -1980,7 +1980,7 @@ public class LivePlayActivity extends BaseActivity {
                         }
                         isBuffer = true;
                         if(isBack) {
-                            mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
+                    //        mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);   //xuameng清除回调修复BUG
                             mHandler.removeCallbacks(mConnectTimeoutChangeSourceRunBuffer);
                             mHandler.postDelayed(mConnectTimeoutChangeSourceRunBuffer, (Hawk.get(HawkConfig.LIVE_CONNECT_TIMEOUT, 1) + 1) * 5000); //xuameng回看超时
                             return;
