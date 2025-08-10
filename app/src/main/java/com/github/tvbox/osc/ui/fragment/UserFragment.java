@@ -67,8 +67,8 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
     public static HomeHotVodAdapter homeHotVodAdapter;
 	public static HomeHotVodAdapterXu homeHotVodAdapterxu;  //xuameng首页单行
     private List<Movie.Video> homeSourceRec;
-    public static TvRecyclerView tvHotList1;
-    public static TvRecyclerView tvHotList2;
+    public static TvRecyclerView tvHotList1;   
+    public static TvRecyclerView tvHotList2;   //xuameng首页单行
 
     public static UserFragment newInstance() {
         return new UserFragment();
@@ -196,8 +196,8 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
             }
         });
 
-        homeHotVodAdapterxu = new HomeHotVodAdapterXu(style);
-        homeHotVodAdapterxu.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+        homeHotVodAdapterxu = new HomeHotVodAdapterXu(style); 
+        homeHotVodAdapterxu.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {   //xuameng首页单行
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 if (ApiConfig.get().getSourceBeanList().isEmpty())
@@ -353,11 +353,11 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
 
             }
         });
-        tvHotList2.setAdapter(homeHotVodAdapterxu);
+        tvHotList2.setAdapter(homeHotVodAdapterxu);   //xuameng首页单行
 
-			initHomeHotVodXu(homeHotVodAdapterxu);
+        initHomeHotVodXu(homeHotVodAdapterxu);   //xuameng首页单行
 
-			initHomeHotVod(homeHotVodAdapter);
+        initHomeHotVod(homeHotVodAdapter);
 		
     }
 
@@ -373,7 +373,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
         setDouBanData(adapter);
     }
 
-    private void initHomeHotVodXu(HomeHotVodAdapterXu adapter) {
+    private void initHomeHotVodXu(HomeHotVodAdapterXu adapter) {  //xuameng首页单行
         if (Hawk.get(HawkConfig.HOME_REC, 0) == 1) {
             if (homeSourceRec != null) {
                 adapter.setNewData(homeSourceRec);
