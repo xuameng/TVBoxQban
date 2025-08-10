@@ -146,7 +146,6 @@ public class App extends MultiDexApplication {
     }
 
     public static void showToastShort(Context context, String msg) {  //xuameeng showtoast
-        if (context == null) return;
         if (mToast != null) {
             mToast.setText(msg);
         } else {
@@ -156,7 +155,6 @@ public class App extends MultiDexApplication {
     }
 
     public static void showToastLong(Context context, String msg) {  //xuameeng showtoast
-        if (context == null) return;
         if (mToast != null) {
             mToast.setText(msg);
         } else {
