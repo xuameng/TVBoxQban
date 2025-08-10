@@ -438,10 +438,8 @@ public class SearchActivity extends BaseActivity {
                 Bundle bundle = new Bundle();
                 bundle.putString("title", title);
 				refreshSearchHistory(title);  //xuameng 搜索历史
-                remoteDialog.dismiss();
                 jumpActivity(FastSearchActivity.class, bundle);
             }else {
-                remoteDialog.dismiss();
                 search(title);
             }
         }
