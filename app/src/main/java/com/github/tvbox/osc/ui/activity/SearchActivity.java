@@ -318,7 +318,7 @@ public class SearchActivity extends BaseActivity {
 							}
                     }
                 } else if (pos == 0) {
-                    RemoteDialog remoteDialog = new RemoteDialog(mContext);
+ //                   RemoteDialog remoteDialog = new RemoteDialog(mContext);
                     remoteDialog.show();
                 }
             }
@@ -518,13 +518,10 @@ public class SearchActivity extends BaseActivity {
 			return;
 		}
         cancel();   
-
-		getActivity().runOnUiThread(() -> {
-    if (remoteDialog != null) {
-        remoteDialog.dismiss();
-        remoteDialog = null; // 清除引用
-    }
-});
+        if (remoteDialog != null) {
+            remoteDialog.dismiss();
+            remoteDialog = null;
+        }
         etSearch.setText(title);
         this.searchTitle = title;
         mGridView.setVisibility(View.GONE); //xuameng 搜索历史
