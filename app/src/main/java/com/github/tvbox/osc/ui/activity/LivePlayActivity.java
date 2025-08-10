@@ -1980,6 +1980,7 @@ public class LivePlayActivity extends BaseActivity {
                         }
                         isBuffer = true;
                         if(isBack) {
+                            mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
                             mHandler.removeCallbacks(mConnectTimeoutChangeSourceRunBuffer);
                             mHandler.postDelayed(mConnectTimeoutChangeSourceRunBuffer, (Hawk.get(HawkConfig.LIVE_CONNECT_TIMEOUT, 1) + 1) * 5000); //xuameng回看超时
                             return;
