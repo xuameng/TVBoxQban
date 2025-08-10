@@ -28,6 +28,7 @@ import com.github.tvbox.osc.ui.dialog.xuamengAboutDialog;
 import com.github.tvbox.osc.util.FastClickCheckUtil;
 import com.github.tvbox.osc.util.DefaultConfig;  //xuameng长按许大师制作重启APP
 import com.github.tvbox.osc.ui.activity.HomeActivity;  //xuameng长按历史键重新载入主页数据
+import android.content.Context;
 import com.github.tvbox.osc.util.ImgUtil;
 
 import com.github.tvbox.osc.util.HawkConfig;
@@ -166,7 +167,8 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
                     homeHotVodAdapter.remove(position);
                     VodInfo vodInfo = RoomDataManger.getVodInfo(vod.sourceKey, vod.id);
                     RoomDataManger.deleteVodRecord(vod.sourceKey, vodInfo);
-                    App.showToastShort(mContext, "已删除当前记录！");
+					Context appContext = getActivity().getApplicationContext();
+                    App.showToastShort(appContext, "已删除当前记录！");
                }  else if (vod.id != null && !vod.id.isEmpty()) {         //xuameng 修复首页聚汇推荐单击不能搜索的问题
                     Bundle bundle = new Bundle();
                     bundle.putString("id", vod.id);
