@@ -9,6 +9,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.view.KeyEvent;       //xuameng 键盘问题
+import com.github.tvbox.osc.base.App;  //xuameng toast
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LifecycleOwner;
@@ -84,7 +85,7 @@ public class SearchSubtitleDialog extends BaseDialog {
                         subtitleViewModel.getSearchResultSubtitleUrls(subtitle);
                     } else {        //xuameng搜索在线字幕重复点击相同字幕文件空指针问题
                         if (TextUtils.isEmpty(subtitle.getUrl())){
-                            Toast.makeText(getContext(), "网络链接已失效,请重新搜索!", Toast.LENGTH_SHORT).show();
+                            App.showToastShort(getContext(), "网络链接已失效,请重新搜索！");
                             return;
                         }
                         loadSubtitle(subtitle);
@@ -149,7 +150,7 @@ public class SearchSubtitleDialog extends BaseDialog {
             searchWord = wd;
             subtitleViewModel.searchResult(wd, page = 1);
         } else {
-            Toast.makeText(getContext(), "输入内容不能为空", Toast.LENGTH_SHORT).show();
+            App.showToastShort(getContext(), "输入内容不能为空！");
         }
     }
 
@@ -165,7 +166,7 @@ public class SearchSubtitleDialog extends BaseDialog {
                     mGridView.post(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(getContext(), "未查询到匹配字幕", Toast.LENGTH_SHORT).show();
+                            App.showToastShort(getContext(), "输入内容不能为空！");
                         }
                     });
                     return;
@@ -231,6 +232,4 @@ public class SearchSubtitleDialog extends BaseDialog {
         }
         dismiss();
     }
-
-
 }
