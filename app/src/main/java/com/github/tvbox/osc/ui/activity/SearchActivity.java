@@ -319,7 +319,7 @@ public class SearchActivity extends BaseActivity {
                     }
                 } else if (pos == 0) {
                     if (remoteDialog == null) {
-                        remoteDialog = new RemoteDialog(mContext); // 成员变量
+                        remoteDialog = new RemoteDialog(mContext); // XUAMENG成员变量    解决远程搜索remoteDialog不关闭的问题
                     }
                     remoteDialog.show();
                 }
