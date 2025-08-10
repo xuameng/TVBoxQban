@@ -318,8 +318,12 @@ public class SearchActivity extends BaseActivity {
 							}
                     }
                 } else if (pos == 0) {
-                    RemoteDialog remoteDialog = new RemoteDialog(SearchActivity.this);
+                    RemoteDialog remoteDialog = new RemoteDialog(mContext);
                     remoteDialog.show();
+					        if (remoteDialog != null) {
+            remoteDialog.dismiss();
+            remoteDialog = null;
+        }
                 }
             }
         });
