@@ -639,9 +639,8 @@ public class SearchActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
-        App.HideToast();
         super.onDestroy();
-        cancel();     
+        cancel();
         try {
             if (searchExecutorService != null) {
                 searchExecutorService.shutdownNow();
@@ -652,6 +651,12 @@ public class SearchActivity extends BaseActivity {
             th.printStackTrace();
         }
         EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    public void onBackPressed() {
+        App.HideToast();  //xuameng HideToast
+        super.onBackPressed();
     }
 
     public void showHotSearchtext() {          //xuameng 热搜
