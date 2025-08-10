@@ -3242,7 +3242,6 @@ public class LivePlayActivity extends BaseActivity {
     private void cancelxToast() {   //xuameng清除toast
         if (xToast != null) {
             xToast.cancel();
-            xToast = null;
         }
     }
 }
