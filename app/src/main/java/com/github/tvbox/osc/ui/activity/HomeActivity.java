@@ -23,7 +23,7 @@ import android.graphics.Color;                          //xuameng获取颜色值
 import android.util.TypedValue;              //xuameng TypedValue依赖
 import android.view.LayoutInflater;			//xuameng LayoutInflater依赖
 import androidx.recyclerview.widget.RecyclerView;  //xuameng主页默认焦点
-import com.lzy.okgo.OkGo;
+import com.lzy.okgo.OkGo;   //xuameng 打断加载用
 import java.util.Objects;   //xuameng主页默认焦点
 import com.github.tvbox.osc.util.FastClickCheckUtil;   //xuameng cache
 import com.github.tvbox.osc.util.MD5;  //xuameng cache
@@ -98,7 +98,7 @@ public class HomeActivity extends BaseActivity {
     private boolean sortChange = false;
     private int currentSelected = 0;
     private int sortFocused = 0;
-	private int PositionXu = 0;
+	private int PositionXu = 0;  //xuameng 分类筛选BUG修复变色问题
     public View sortFocusView = null;
     private final Handler mHandler = new Handler();
     private long mExitTime = 0;
@@ -524,7 +524,7 @@ public class HomeActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         if(isLoading()){
-            refreshEmpty();
+            refreshEmpty();     //xuameng打断加载优化
             return;
         }
 
@@ -624,7 +624,7 @@ public class HomeActivity extends BaseActivity {
                 HomeActivity.this.startActivity(newIntent);
             }
         } else if (event.type == RefreshEvent.TYPE_FILTER_CHANGE) {
-            if (currentView != null && PositionXu !=0) {
+            if (currentView != null && PositionXu !=0) {   //xuameng 分类筛选BUG修复变色问题
                 MovieSort.SortData sortData = sortAdapter.getItem(PositionXu);
                 if (!sortData.filters.isEmpty()) {
                     showFilterIcon(sortData.filterSelectCount());
@@ -797,8 +797,8 @@ public class HomeActivity extends BaseActivity {
             App.showToastLong(HomeActivity.this, "主页暂无数据！联系许大师吧！");
 		}
     }
-    private void refreshEmpty(){
-        OkGo.getInstance().cancelTag("loadjar");
+    private void refreshEmpty(){   //xuameng打断加载优化
+        OkGo.getInstance().cancelTag("loadjar");    //xuameng打断加载
         jarInitOk = true;
         dataInitOk = true;
         skipNextUpdate=true;
