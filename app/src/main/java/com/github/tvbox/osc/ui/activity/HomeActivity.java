@@ -274,7 +274,6 @@ public class HomeActivity extends BaseActivity {
                     bundle.putBoolean("useCache", true);
                     intent.putExtras(bundle);
                     HomeActivity.this.startActivity(intent);
-                    App.HideToast();
                     App.showToastShort(HomeActivity.this, "重新加载主页数据！");
                 }else {
                     jumpActivity(SettingActivity.class);   //xuameng加载慢跳转设置
@@ -585,6 +584,7 @@ public class HomeActivity extends BaseActivity {
     private void exit() {
         if (System.currentTimeMillis() - mExitTime < 2000) {
             //这一段借鉴来自 q群老哥 IDCardWeb
+            App.HideToast();
 			AppManager.getInstance().finishAllActivity();
             EventBus.getDefault().unregister(this);
 		//	AppManager.getInstance().appExit(0);
@@ -792,7 +792,7 @@ public class HomeActivity extends BaseActivity {
         }, sites, select);
         mSiteSwitchDialog.show();
     }else {
-            App.showToastShort(HomeActivity.this, "主页暂无数据！联系许大师吧！");
+            App.showToastLong(HomeActivity.this, "主页暂无数据！联系许大师吧！");
 		}
     }
     private void refreshEmpty(){
