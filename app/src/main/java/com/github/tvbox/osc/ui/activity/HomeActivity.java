@@ -804,6 +804,7 @@ File cspCacheDir = new File(cspCachePath);
 if(cspCacheDir.exists()){
 //		FileUtils.deleteFile(cspCacheDir);
 FileUtils.cleanDirectory(cspCacheDir);
+}
         skipNextUpdate=true;
         showSuccess();
         sortAdapter.setNewData(DefaultConfig.adjustSort(ApiConfig.get().getHomeSourceBean().getKey(), new ArrayList<>(), true));
