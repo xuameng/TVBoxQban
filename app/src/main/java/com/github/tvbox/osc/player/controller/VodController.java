@@ -1943,14 +1943,13 @@ public class VodController extends BaseController {
                 return false;
             }
         }
-        HideAllMenu();
-        return false;
-
         if(super.onBackPressed()) { //xuameng返回退出
             iv_circle_bg.setVisibility(GONE); //xuameng音乐播放时图标
             MxuamengMusic.setVisibility(GONE); //xuameng播放音乐背景
             return true;
         }
+        HideAllMenu();
+        return false;
     }
     @Override
     protected void onDetachedFromWindow() {
