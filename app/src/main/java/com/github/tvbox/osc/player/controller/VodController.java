@@ -1895,13 +1895,13 @@ public class VodController extends BaseController {
     }
     @Override
     public boolean onBackPressed() {
-        if (isBottomVisible() && System.currentTimeMillis() - DOUBLE_CLICK_TIME) < 300) {
+        if (isBottomVisible() && (System.currentTimeMillis() - DOUBLE_CLICK_TIME < 300)) {
             return true;
-        } else if (isAnimation) {
+        } 
+        if (isAnimation || isDisplay) {
             return true;
-        } else if (isDisplay) {
-            return true;
-        }else{
+        }
+        if (isBottomVisible()){
             hideBottom();
             DOUBLE_CLICK_TIME = System.currentTimeMillis();
             return true;
