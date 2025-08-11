@@ -73,6 +73,8 @@ import com.squareup.picasso.MemoryPolicy; //xuameng播放音频切换图片
 import com.squareup.picasso.NetworkPolicy; //xuameng播放音频切换图片
 import android.graphics.Bitmap; //xuameng播放音频切换图片
 import com.github.tvbox.osc.api.ApiConfig; //xuameng播放音频切换图片
+import android.widget.Toast;
+import android.view.LayoutInflater; //xuameng LayoutInflater依赖
 import android.os.Build;
 import android.webkit.WebView;
 import com.github.tvbox.osc.bean.SourceBean;
@@ -287,6 +289,8 @@ public class VodController extends BaseController {
     private boolean isVideoPlay = false; //xuameng判断视频开始播放
     private boolean isLongClick = false; //xuameng判断长按
     private boolean mSeekBarhasFocus = false; //xuameng seekbar是否拥有焦点
+	private boolean showPreview = Hawk.get(HawkConfig.SHOW_PREVIEW, true); //xuameng true 开启 false 关闭
+	private static Toast xToast;   //xuameng  Toast
     Handler myHandle;
     Runnable myRunnable;
     int myHandleSeconds = 50000; //闲置多少毫秒秒关闭底栏  默认100秒
@@ -1898,6 +1902,32 @@ public class VodController extends BaseController {
         }
         DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
         if(isClickBackBtn) { //xuameng 罕见BUG
+if (!showPreview) {
+    if((System.currentTimeMillis() - DOUBLE_CLICK_TIME) > 2000) {
+		DOUBLE_CLICK_TIME = System.currentTimeMillis();
+			showToastXu();
+			return true;
+	}else {
+		            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    isClickBackBtn = false;
+                }
+            }, 300);
+            if((System.currentTimeMillis() - DOUBLE_CLICK_TIME) > 300) { //xuameng  屏幕上的返回键退出
+                DOUBLE_CLICK_TIME = System.currentTimeMillis();
+                mBottomRoot.setVisibility(GONE); //动画结束后隐藏下菜单
+                mTopRoot1.setVisibility(GONE); //动画结束后隐藏上菜单
+                mTopRoot2.setVisibility(GONE); //动画结束后隐藏上菜单
+                mPlayPauseTimexu.setVisibility(GONE); //xuameng隐藏上面时间
+                mPlayTitle.setVisibility(GONE); //xuameng隐藏上面视频名称
+                backBtn.setVisibility(INVISIBLE); //返回键隐藏菜单
+                mTvPausexu.setVisibility(GONE); //隐藏暂停菜单
+                mLockView.setVisibility(INVISIBLE); //xuameng隐藏屏幕锁
+            }
+            return false;
+	}
+
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -2149,5 +2179,17 @@ public class VodController extends BaseController {
         Thunder.stop(false); //停止磁力下载
         Jianpian.finish(); //停止p2p下载
         App.getInstance().setDashData(null);
+    }
+
+    public void showToastXu() {   //xuameng回看完成
+        App.HideToast();  //xuameng HideToast
+        LayoutInflater inflater = getLayoutInflater();
+        View customToastView = inflater.inflate(R.layout.review_toast, null);
+        ImageView imageView = customToastView.findViewById(R.id.toastImage);
+        xToast = new Toast(getApplicationContext());
+        xToast.setDuration(Toast.LENGTH_SHORT);
+        xToast.setView(customToastView);
+        xToast.setGravity(Gravity.CENTER, 0, 0); //xuameng 20为左右，0是上下
+        xToast.show();
     }
 }
