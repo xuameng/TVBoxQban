@@ -1927,6 +1927,7 @@ if (!showPreview) {
             }
             return false;
 	}
+}
 
             new Handler().postDelayed(new Runnable() {
                 @Override
