@@ -798,7 +798,7 @@ public class HomeActivity extends BaseActivity {
 		}
     }
     private void refreshEmpty(){
-        OkGo.App.getInstance().cancelTag("loadjar");
+        OkGo.getInstance().cancelTag("loadjar");
 String cspCachePath = FileUtils.getFilePath()+"/csp/";
 File cspCacheDir = new File(cspCachePath);
 if(cspCacheDir.exists()){
