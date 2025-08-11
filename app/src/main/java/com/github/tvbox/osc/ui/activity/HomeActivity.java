@@ -799,18 +799,29 @@ public class HomeActivity extends BaseActivity {
     }
     private void refreshEmpty(){
         OkGo.getInstance().cancelTag("loadjar");
-String cspCachePath = FileUtils.getFilePath()+"/csp/";
+
+}
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+						String cspCachePath = FileUtils.getFilePath()+"/csp/";
 File cspCacheDir = new File(cspCachePath);
 if(cspCacheDir.exists()){
 //		FileUtils.deleteFile(cspCacheDir);
 FileUtils.cleanDirectory(cspCacheDir);
 }
-                        jarInitOk = true;
+						                        jarInitOk = true;
 						dataInitOk = true;
-        skipNextUpdate=true;
-        showSuccess();
+						        skipNextUpdate=true;
+
         sortAdapter.setNewData(DefaultConfig.adjustSort(ApiConfig.get().getHomeSourceBean().getKey(), new ArrayList<>(), true));
         initViewPager(null);
+                        initData();
+						        showSuccess();
+                    }
+                }, 50);
+
+
         App.showToastShort(HomeActivity.this, "聚汇影视提示：已打断当前源加载！");
     }
 }
