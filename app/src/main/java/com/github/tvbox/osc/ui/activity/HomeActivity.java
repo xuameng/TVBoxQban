@@ -798,13 +798,15 @@ public class HomeActivity extends BaseActivity {
 		}
     }
     private void refreshEmpty(){
-        OkGo.getInstance().cancelTag("loadjar");
+        OkGo.App.getInstance().cancelTag("loadjar");
 String cspCachePath = FileUtils.getFilePath()+"/csp/";
 File cspCacheDir = new File(cspCachePath);
 if(cspCacheDir.exists()){
 //		FileUtils.deleteFile(cspCacheDir);
 FileUtils.cleanDirectory(cspCacheDir);
 }
+                        jarInitOk = true;
+						dataInitOk = true;
         skipNextUpdate=true;
         showSuccess();
         sortAdapter.setNewData(DefaultConfig.adjustSort(ApiConfig.get().getHomeSourceBean().getKey(), new ArrayList<>(), true));
