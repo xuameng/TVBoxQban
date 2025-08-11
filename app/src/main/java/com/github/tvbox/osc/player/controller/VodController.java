@@ -491,7 +491,7 @@ public class VodController extends BaseController {
                 isLock = !isLock;
                 mLockView.setImageResource(isLock ? R.drawable.icon_lock : R.drawable.icon_unlock);
                 if(isLock) {
-                    if(mBottomRoot.getVisibility() == View.VISIBLE) {
+                    if(isBottomVisible()) {
                         Message obtain = Message.obtain();
                         obtain.what = 1003; //隐藏底部菜单
                         mHandler.sendMessage(obtain);
@@ -517,7 +517,7 @@ public class VodController extends BaseController {
         myRunnable = new Runnable() {
             @Override
             public void run() {
-                if(mBottomRoot.getVisibility() == View.VISIBLE) {
+                if(isBottomVisible()) {
                     hideBottom();
                 }
             }
@@ -548,7 +548,7 @@ public class VodController extends BaseController {
                 ApiConfig.get().setDefaultParse(parseBean);
                 parseAdapter.notifyItemChanged(position);
                 listener.changeParse(parseBean);
-                if(mBottomRoot.getVisibility() == View.VISIBLE) {
+                if(isBottomVisible()) {
                     hideBottom();
                 }
             }
@@ -657,7 +657,7 @@ public class VodController extends BaseController {
                 }
                 DOUBLE_CLICK_TIME = System.currentTimeMillis();
                 FastClickCheckUtil.check(v);
-                if(mBottomRoot.getVisibility() == View.VISIBLE) {
+                if(isBottomVisible()) {
                     hideBottomXu();
                 }
                 listener.replay(true);
@@ -671,7 +671,7 @@ public class VodController extends BaseController {
                 }
                 DOUBLE_CLICK_TIME = System.currentTimeMillis();
                 FastClickCheckUtil.check(v);
-                if(mBottomRoot.getVisibility() == View.VISIBLE) {
+                if(isBottomVisible()) {
                     hideBottomXu();
                 }
                 listener.replay(false);
@@ -685,7 +685,7 @@ public class VodController extends BaseController {
                 }
                 DOUBLE_CLICK_TIME = System.currentTimeMillis();
                 FastClickCheckUtil.check(view);
-                if(mBottomRoot.getVisibility() == View.VISIBLE) {
+                if(isBottomVisible()) {
                     hideBottomXu();
                 }
                 listener.playNext(false);
@@ -723,7 +723,7 @@ public class VodController extends BaseController {
                     return;
                 }
                 DOUBLE_CLICK_TIME = System.currentTimeMillis();
-                if(mBottomRoot.getVisibility() == View.VISIBLE) {
+                if(isBottomVisible()) {
                     hideBottomXu();
                 }
                 int pr = Hawk.get(HawkConfig.PLAY_RENDER, 0);
@@ -769,7 +769,7 @@ public class VodController extends BaseController {
                 }
                 DOUBLE_CLICK_TIME = System.currentTimeMillis();
                 FastClickCheckUtil.check(view);
-                if(mBottomRoot.getVisibility() == View.VISIBLE) {
+                if(isBottomVisible()) {
                     hideBottomXu();
                 }
                 listener.playPre();
@@ -835,7 +835,7 @@ public class VodController extends BaseController {
                 }
                 DOUBLE_CLICK_TIME = System.currentTimeMillis();
                 FastClickCheckUtil.check(view);
-                if(mBottomRoot.getVisibility() == View.VISIBLE) {
+                if(isBottomVisible()) {
                     hideBottomXu();
                 }
                 myHandle.removeCallbacks(myRunnable);
@@ -897,7 +897,7 @@ public class VodController extends BaseController {
                                     updatePlayerCfgView();
                                     listener.updatePlayerCfg();
                                     listener.replay(false);
-                                    if(mBottomRoot.getVisibility() == View.VISIBLE) {
+                                    if(isBottomVisible()) {
                                         hideBottomXu();
                                     }
                                 }
@@ -937,7 +937,7 @@ public class VodController extends BaseController {
                 }
                 DOUBLE_CLICK_TIME = System.currentTimeMillis();
                 FastClickCheckUtil.check(view);
-                if(mBottomRoot.getVisibility() == View.VISIBLE) {
+                if(isBottomVisible()) {
                     hideBottomXu();
                 }
                 myHandle.removeCallbacks(myRunnable);
@@ -1047,7 +1047,7 @@ public class VodController extends BaseController {
             public void onClick(View view) {
                 FastClickCheckUtil.check(view);
                 listener.selectSubtitle();
-                if(mBottomRoot.getVisibility() == View.VISIBLE) {
+                if(isBottomVisible()) {
                     hideBottom();
                 }
             }
@@ -1058,13 +1058,13 @@ public class VodController extends BaseController {
                 FastClickCheckUtil.check(view); //xuameng 防播放打断动画
                 isLongClick = true;
                 if(mSubtitleView.getVisibility() == View.GONE) {
-                    if(mBottomRoot.getVisibility() == View.VISIBLE) {
+                    if(isBottomVisible()) {
                         hideBottom();
                     }
                     mSubtitleView.setVisibility(VISIBLE);
                     App.showToastShort(getContext(), "字幕已开启！");
                 } else if(mSubtitleView.getVisibility() == View.VISIBLE) {
-                    if(mBottomRoot.getVisibility() == View.VISIBLE) {
+                    if(isBottomVisible()) {
                         hideBottom();
                     }
                     mSubtitleView.setVisibility(View.GONE);
@@ -1081,7 +1081,7 @@ public class VodController extends BaseController {
             public void onClick(View view) {
                 FastClickCheckUtil.check(view);
                 listener.selectAudioTrack();
-                if(mBottomRoot.getVisibility() == View.VISIBLE) {
+                if(isBottomVisible()) {
                     hideBottom();
                 }
             }
@@ -1091,7 +1091,7 @@ public class VodController extends BaseController {
             public void onClick(View view) {
                 FastClickCheckUtil.check(view);
                 setLandscapePortrait();
-                if(mBottomRoot.getVisibility() == View.VISIBLE) {
+                if(isBottomVisible()) {
                     hideBottom();
                 }
             }
@@ -1548,7 +1548,7 @@ public class VodController extends BaseController {
         mxuPlay.setVisibility(View.VISIBLE);
         mxuPlay.setTextColor(Color.WHITE);
         mxuPlay.setText("暂停"); //xuameng底部菜单显示暂停
-        if(mBottomRoot.getVisibility() == View.VISIBLE) {
+        if(isBottomVisible()) {
             hideBottom();
         }
         ObjectAnimator animator9 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0, 700); //xuameng动画暂停菜单开始
@@ -1838,7 +1838,7 @@ public class VodController extends BaseController {
             // 闲置计时关闭
             myHandle.postDelayed(myRunnable, myHandleSeconds);
         } else {
-            if(mBottomRoot.getVisibility() == View.VISIBLE) {
+            if(isBottomVisible()) {
                 hideBottom();
             }
         }
