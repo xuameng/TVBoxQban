@@ -75,6 +75,7 @@ import android.graphics.Bitmap; //xuameng播放音频切换图片
 import com.github.tvbox.osc.api.ApiConfig; //xuameng播放音频切换图片
 import android.widget.Toast;
 import android.view.LayoutInflater; //xuameng LayoutInflater依赖
+import android.view.Gravity;
 import android.os.Build;
 import android.webkit.WebView;
 import com.github.tvbox.osc.bean.SourceBean;
@@ -2184,10 +2185,10 @@ if (!showPreview) {
 
     public void showToastXu() {   //xuameng回看完成
         App.HideToast();  //xuameng HideToast
-        LayoutInflater inflater = getLayoutInflater();
+		LayoutInflater inflater = LayoutInflater.from(getContext()); 
         View customToastView = inflater.inflate(R.layout.review_toast, null);
         ImageView imageView = customToastView.findViewById(R.id.toastImage);
-        xToast = new Toast(getApplicationContext());
+        xToast = new Toast(getContext());
         xToast.setDuration(Toast.LENGTH_SHORT);
         xToast.setView(customToastView);
         xToast.setGravity(Gravity.CENTER, 0, 0); //xuameng 20为左右，0是上下
