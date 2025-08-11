@@ -1827,11 +1827,14 @@ public class VodController extends BaseController {
         return super.onKeyUp(keyCode, event);
     }
     @Override
-    public boolean onSingleTapConfirmed(MotionEvent e) { //延时回调,延迟时间是 300 ms,
-        if((System.currentTimeMillis() - DOUBLE_CLICK_TIME) < 300) { //xuameng 防止300ms内点击返回键，又会弹击菜单				
+    public boolean onSingleTapConfirmed(MotionEvent e) { //延时回调,延迟时间是 180 ms,
+        if((System.currentTimeMillis() - DOUBLE_CLICK_TIME) < 300) { //xuameng 防止180ms内点击返回键，又会弹击菜单				
             return false;
         }
         DOUBLE_CLICK_TIME = System.currentTimeMillis();
+        if(isClickBackBtn) { //xuameng 罕见BUG  防止180ms内点击BackBtn键，又会弹击菜单	
+            return false;
+        }
         myHandle.removeCallbacks(myRunnable);
         if(mBottomRoot.getVisibility() == View.GONE) {
             showBottom();
@@ -1896,6 +1899,13 @@ public class VodController extends BaseController {
                    return false;
                }
            }
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    isClickBackBtn = false;
+                }
+            }, 300);
             HideAllMenu();
             return false;
         }
