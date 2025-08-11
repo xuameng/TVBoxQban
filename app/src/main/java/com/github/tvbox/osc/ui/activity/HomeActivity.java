@@ -274,6 +274,7 @@ public class HomeActivity extends BaseActivity {
                     bundle.putBoolean("useCache", true);
                     intent.putExtras(bundle);
                     HomeActivity.this.startActivity(intent);
+                    App.HideToast();
                     App.showToastShort(HomeActivity.this, "重新加载主页数据！");
                 }else {
                     jumpActivity(SettingActivity.class);   //xuameng加载慢跳转设置
@@ -521,7 +522,7 @@ public class HomeActivity extends BaseActivity {
 	@SuppressLint("NotifyDataSetChanged")
     @Override
     public void onBackPressed() {
-        if(isLoading() && dataInitOk){
+        if(isLoading()){
             refreshEmpty();
             return;
         }
@@ -796,6 +797,7 @@ public class HomeActivity extends BaseActivity {
 		}
     }
     private void refreshEmpty(){
+        OkGo.getInstance().cancelTag("loadjar");
         skipNextUpdate=true;
         showSuccess();
         sortAdapter.setNewData(DefaultConfig.adjustSort(ApiConfig.get().getHomeSourceBean().getKey(), new ArrayList<>(), true));
