@@ -800,7 +800,6 @@ public class HomeActivity extends BaseActivity {
     private void refreshEmpty(){
         OkGo.getInstance().cancelTag("loadjar");
 
-}
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
