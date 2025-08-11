@@ -1895,7 +1895,11 @@ public class VodController extends BaseController {
     }
     @Override
     public boolean onBackPressed() {
-        if((isBottomVisible() && System.currentTimeMillis() - DOUBLE_CLICK_TIME) < 300 || isAnimation || isDisplay) { //xuameng 防播放打断动画					
+        if (isBottomVisible() && System.currentTimeMillis() - DOUBLE_CLICK_TIME) < 300) {
+            return true;
+        } else if (isAnimation) {
+            return true;
+        } else if (isDisplay) {
             return true;
         }else{
             hideBottom();
@@ -1910,20 +1914,9 @@ public class VodController extends BaseController {
                    exitPlayback();
                    return true;
                } else {
-                   new Handler().postDelayed(new Runnable() {
-                       @Override
-                       public void run() {
-                           isClickBackBtn = false;
-                       }
-                   }, 300);
-                   mBottomRoot.setVisibility(GONE); //动画结束后隐藏下菜单
-                   mTopRoot1.setVisibility(GONE); //动画结束后隐藏上菜单
-                   mTopRoot2.setVisibility(GONE); //动画结束后隐藏上菜单
-                   mPlayPauseTimexu.setVisibility(GONE); //xuameng隐藏上面时间
-                   mPlayTitle.setVisibility(GONE); //xuameng隐藏上面视频名称
-                   backBtn.setVisibility(INVISIBLE); //返回键隐藏菜单
-                   mTvPausexu.setVisibility(GONE); //隐藏暂停菜单
-                   mLockView.setVisibility(INVISIBLE); //xuameng隐藏屏幕锁
+                   HideAllMenu();
+                   App.HideToast();  //xuameng HideToast
+                   cancelxToast();
                    return false;
                }
            }
@@ -1934,14 +1927,7 @@ public class VodController extends BaseController {
                     isClickBackBtn = false;
                 }
             }, 300);
-            mBottomRoot.setVisibility(GONE); //动画结束后隐藏下菜单
-            mTopRoot1.setVisibility(GONE); //动画结束后隐藏上菜单
-            mTopRoot2.setVisibility(GONE); //动画结束后隐藏上菜单
-            mPlayPauseTimexu.setVisibility(GONE); //xuameng隐藏上面时间
-            mPlayTitle.setVisibility(GONE); //xuameng隐藏上面视频名称
-            backBtn.setVisibility(INVISIBLE); //返回键隐藏菜单
-            mTvPausexu.setVisibility(GONE); //隐藏暂停菜单
-            mLockView.setVisibility(INVISIBLE); //xuameng隐藏屏幕锁
+            HideAllMenu();
             return false;
         }
 
@@ -1951,19 +1937,13 @@ public class VodController extends BaseController {
                 exitPlayback();
                 return true;
             } else {
-                mPlayPauseTimexu.setVisibility(GONE); //xuameng隐藏上面时间
-                mPlayTitle.setVisibility(GONE); //xuameng隐藏上面视频名称
-                backBtn.setVisibility(INVISIBLE); //返回键隐藏菜单
-                mTvPausexu.setVisibility(GONE); //隐藏暂停菜单
-                mLockView.setVisibility(INVISIBLE); //xuameng隐藏屏幕锁
+                HideAllMenu();
+                App.HideToast();  //xuameng HideToast
+                cancelxToast();
                 return false;
             }
         }
-        mPlayPauseTimexu.setVisibility(GONE); //xuameng隐藏上面时间
-        mPlayTitle.setVisibility(GONE); //xuameng隐藏上面视频名称
-        backBtn.setVisibility(INVISIBLE); //返回键隐藏菜单
-        mTvPausexu.setVisibility(GONE); //隐藏暂停菜单
-        mLockView.setVisibility(INVISIBLE); //xuameng隐藏屏幕锁
+        HideAllMenu();
         return false;
 
         if(super.onBackPressed()) { //xuameng返回退出
@@ -2189,6 +2169,7 @@ public class VodController extends BaseController {
 
     public void exitPlayback() {   //xuameng回看完成
         App.HideToast();  //xuameng HideToast
+        cancelxToast();
 		LayoutInflater inflater = LayoutInflater.from(getContext()); 
         View customToastView = inflater.inflate(R.layout.exit_playback, null);
         ImageView imageView = customToastView.findViewById(R.id.toastImage);
@@ -2197,5 +2178,22 @@ public class VodController extends BaseController {
         xToast.setView(customToastView);
         xToast.setGravity(Gravity.CENTER, 0, 0); //xuameng 20为左右，0是上下
         xToast.show();
+    }
+
+    private void cancelxToast() {   //xuameng清除toast
+        if (xToast != null) {
+            xToast.cancel();
+            xToast = null;
+        }
+    }
+    public void HideAllMenu() {  //xuamen隐藏所有菜单
+        mBottomRoot.setVisibility(GONE); //xuamen动画结束后隐藏下菜单
+        mTopRoot1.setVisibility(GONE); //xuamen动画结束后隐藏上菜单
+        mTopRoot2.setVisibility(GONE); //xuamen动画结束后隐藏上菜单
+        mPlayPauseTimexu.setVisibility(GONE); //xuameng隐藏上面时间
+        mPlayTitle.setVisibility(GONE); //xuameng隐藏上面视频名称
+        backBtn.setVisibility(INVISIBLE); //返回键隐藏菜单
+        mTvPausexu.setVisibility(GONE); //xuamen隐藏暂停菜单
+        mLockView.setVisibility(INVISIBLE); //xuameng隐藏屏幕锁
     }
 }
