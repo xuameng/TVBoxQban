@@ -479,7 +479,6 @@ public class VodController extends BaseController {
             @Override
             public void onClick(View view) {
                 if(getContext() instanceof Activity) {
-                    DOUBLE_CLICK_TIME = System.currentTimeMillis();    //xuameng重要必须判断时间  单击有延时300毫秒会有BUG
                     isClickBackBtn = true;
                     ((Activity) getContext()).onBackPressed();
                 }
