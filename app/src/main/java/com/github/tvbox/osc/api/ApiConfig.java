@@ -342,6 +342,7 @@ public class ApiConfig {
         OkGo.<File>get(jarUrl)
                 .headers("User-Agent", userAgent)
                 .headers("Accept", requestAccept)
+                .tag("loadjar")
                 .execute(new AbsCallback<File>() {
 
                     @Override
