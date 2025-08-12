@@ -42,8 +42,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.ArrayBlockingQueue;   //xuameng 线程池
+import java.util.concurrent.ThreadPoolExecutor;  //xuameng 线程池
+import java.util.concurrent.TimeUnit;   //xuameng 线程池
 
 /**
  * @author pj567
@@ -115,7 +117,16 @@ public class FastSearchActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         if (pauseRunnable != null && pauseRunnable.size() > 0) {
-            searchExecutorService = Executors.newFixedThreadPool(5);
+            searchExecutorService = new ThreadPoolExecutor(
+                Runtime.getRuntime().availableProcessors() + 1, // xuameng动态核心线程数
+                (Runtime.getRuntime().availableProcessors() + 1) * 2,  // xuameng最大线程数
+                10L, 
+                TimeUnit.SECONDS,
+                new ArrayBlockingQueue<>(1000), // xuameng任务队列容量
+                new ThreadPoolExecutor.CallerRunsPolicy() // xuameng降级策略
+            );
+            ((ThreadPoolExecutor)searchExecutorService).prestartAllCoreThreads();  // xuameng预热线程
+            ThreadPoolPreheater.preheat(searchExecutorService, 100);   //xuameng预热池 100个
             allRunCount.set(pauseRunnable.size());
             for (Runnable runnable : pauseRunnable) {
                 searchExecutorService.execute(runnable);
@@ -372,7 +383,7 @@ public class FastSearchActivity extends BaseActivity {
         searchResult();
     }
 
-    private ExecutorService searchExecutorService = null;
+    private ExecutorService searchExecutorService = null;   //xuameng全局声明
     private AtomicInteger allRunCount = new AtomicInteger(0);
 
     private void searchResult() {
@@ -389,7 +400,17 @@ public class FastSearchActivity extends BaseActivity {
             searchAdapterFilter.setNewData(new ArrayList<>());
             allRunCount.set(0);
         }
-        searchExecutorService = Executors.newFixedThreadPool(5);
+        searchExecutorService = new ThreadPoolExecutor(
+            Runtime.getRuntime().availableProcessors() + 1, // xuameng动态核心线程数
+            (Runtime.getRuntime().availableProcessors() + 1) * 2,  // xuameng最大线程数, 
+            10L, 
+            TimeUnit.SECONDS,
+            new ArrayBlockingQueue<>(1000), // xuameng任务队列容量
+			new ThreadPoolExecutor.CallerRunsPolicy() // xuameng降级策略
+
+        );
+        ((ThreadPoolExecutor)searchExecutorService).prestartAllCoreThreads();  // xuameng预热线程
+        ThreadPoolPreheater.preheat(searchExecutorService, 100);   //xuameng预热池 100个
         List<SourceBean> searchRequestList = new ArrayList<>();
         searchRequestList.addAll(ApiConfig.get().getSourceBeanList());
         SourceBean home = ApiConfig.get().getHomeSourceBean();
@@ -507,6 +528,15 @@ public class FastSearchActivity extends BaseActivity {
 
     private void cancel() {
         OkGo.getInstance().cancelTag("search");
+    }
+
+    public class ThreadPoolPreheater {     //xuameng预热池
+        public static void preheat(ThreadPoolExecutor pool, int queueSize) {
+            pool.prestartAllCoreThreads();  // 预热核心线程
+            for (int i = 0; i < queueSize; i++) {
+                pool.execute(() -> {});  // 填充空任务占位
+            }
+        }
     }
 
     @Override
