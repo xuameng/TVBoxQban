@@ -151,11 +151,11 @@ public class SearchActivity extends BaseActivity {
         }
         if (hasKeyBoard) {
             tvSearch.requestFocus();
-       //     tvSearch.requestFocusFromTouch();
+       //     tvSearch.requestFocusFromTouch();     //xuameng 触碰时不获得焦点
         }else {
             if(!isSearchBack){
                 etSearch.requestFocus();
-         //       etSearch.requestFocusFromTouch();
+         //       etSearch.requestFocusFromTouch();  //xuameng 触碰时不获得焦点
             }
         }
     }
