@@ -570,7 +570,7 @@ public class SearchActivity extends BaseActivity {
 
         );
         ((ThreadPoolExecutor)searchExecutorService).prestartAllCoreThreads();  // xuameng预热线程
-		ThreadPoolPreheater.preheat(searchExecutorService, 100);   //xuameng预热池 100个
+        ThreadPoolPreheater.preheat(searchExecutorService, 100);   //xuameng预热池 100个
         List<SourceBean> searchRequestList = new ArrayList<>();
         searchRequestList.addAll(ApiConfig.get().getSourceBeanList());
         SourceBean home = ApiConfig.get().getHomeSourceBean();
