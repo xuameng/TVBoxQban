@@ -151,11 +151,11 @@ public class SearchActivity extends BaseActivity {
         }
         if (hasKeyBoard) {
             tvSearch.requestFocus();
-            tvSearch.requestFocusFromTouch();
+       //     tvSearch.requestFocusFromTouch();
         }else {
             if(!isSearchBack){
                 etSearch.requestFocus();
-                etSearch.requestFocusFromTouch();
+         //       etSearch.requestFocusFromTouch();
             }
         }
     }
