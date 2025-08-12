@@ -383,7 +383,7 @@ public class SearchActivity extends BaseActivity {
                     jumpActivity(FastSearchActivity.class, bundle);
                 } else {
                     search(content);
-                    //etSearch.setSelection(etSearch.getText().length());
+                    tvSearch.requestFocus();    //xuameng 点击搜索历史文字后的默认焦点
                 }
             }
         });
