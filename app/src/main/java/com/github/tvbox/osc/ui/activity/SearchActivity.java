@@ -132,17 +132,15 @@ public class SearchActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         if (pauseRunnable != null && pauseRunnable.size() > 0) {
-ThreadPoolExecutor searchExecutorService = new ThreadPoolExecutor(
-    Runtime.getRuntime().availableProcessors() + 1,  // 核心线程数
-    (Runtime.getRuntime().availableProcessors() + 1) * 2,  // 最大线程数
-    15L,  // 缩短空闲回收时间
-    TimeUnit.SECONDS,
-    new ArrayBlockingQueue<>(300),  // 缩小队列容量
-    new CustomThreadFactory("SearchPool"),  // 自定义线程工厂
-    new ThreadPoolExecutor.DiscardOldestPolicy()  // 拒绝策略
-);
-// 预热线程
-searchExecutorService.prestartAllCoreThreads();
+            ThreadPoolExecutor searchExecutorService = new ThreadPoolExecutor(
+                Runtime.getRuntime().availableProcessors() + 1, // 动态核心线程数
+                Runtime.getRuntime().availableProcessors() + 1) * 2,  // 最大线程数, 
+                10L, 
+                TimeUnit.SECONDS,
+                new ArrayBlockingQueue<>(500), // 任务队列容量
+                new ThreadPoolExecutor.DiscardOldestPolicy()  // 拒绝策略
+            );
+            searchExecutorService.prestartAllCoreThreads();   // 预热线程
             allRunCount.set(pauseRunnable.size());
             for (Runnable runnable : pauseRunnable) {
                 searchExecutorService.execute(runnable);
@@ -560,17 +558,15 @@ searchExecutorService.prestartAllCoreThreads();
             searchAdapter.setNewData(new ArrayList<>());
             allRunCount.set(0);
         }
-ThreadPoolExecutor searchExecutorService = new ThreadPoolExecutor(
-    Runtime.getRuntime().availableProcessors() + 1,  // 核心线程数
-    (Runtime.getRuntime().availableProcessors() + 1) * 2,  // 最大线程数
-    15L,  // 缩短空闲回收时间
-    TimeUnit.SECONDS,
-    new ArrayBlockingQueue<>(300),  // 缩小队列容量
-    new CustomThreadFactory("SearchPool"),  // 自定义线程工厂
-    new ThreadPoolExecutor.DiscardOldestPolicy()  // 拒绝策略
-);
-// 预热线程
-searchExecutorService.prestartAllCoreThreads();
+        ThreadPoolExecutor searchExecutorService = new ThreadPoolExecutor(
+            Runtime.getRuntime().availableProcessors() + 1, // 动态核心线程数
+            Runtime.getRuntime().availableProcessors() + 1) * 2,  // 最大线程数, 
+            10L, 
+            TimeUnit.SECONDS,
+            new ArrayBlockingQueue<>(500), // 任务队列容量
+            new ThreadPoolExecutor.DiscardOldestPolicy()  // 拒绝策略
+        );
+        searchExecutorService.prestartAllCoreThreads();   // 预热线程
         List<SourceBean> searchRequestList = new ArrayList<>();
         searchRequestList.addAll(ApiConfig.get().getSourceBeanList());
         SourceBean home = ApiConfig.get().getHomeSourceBean();
