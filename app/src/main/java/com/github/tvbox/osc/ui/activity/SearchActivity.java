@@ -134,14 +134,14 @@ public class SearchActivity extends BaseActivity {
         super.onResume();
         if (pauseRunnable != null && pauseRunnable.size() > 0) {
             searchExecutorService = new ThreadPoolExecutor(
-                Runtime.getRuntime().availableProcessors() + 1, // 动态核心线程数
-                (Runtime.getRuntime().availableProcessors() + 1) * 2,  // 最大线程数
+                Runtime.getRuntime().availableProcessors() + 1, // xuameng动态核心线程数
+                (Runtime.getRuntime().availableProcessors() + 1) * 2,  // xuameng最大线程数
                 10L, 
                 TimeUnit.SECONDS,
-                new ArrayBlockingQueue<>(200), // 任务队列容量
-                new ThreadPoolExecutor.CallerRunsPolicy() // 降级策略
+                new ArrayBlockingQueue<>(200), // xuameng任务队列容量
+                new ThreadPoolExecutor.CallerRunsPolicy() // xuameng降级策略
             );
-            ((ThreadPoolExecutor)searchExecutorService).prestartAllCoreThreads();  // 预热线程
+            ((ThreadPoolExecutor)searchExecutorService).prestartAllCoreThreads();  // xuameng预热线程
             allRunCount.set(pauseRunnable.size());
             for (Runnable runnable : pauseRunnable) {
                 searchExecutorService.execute(runnable);
@@ -543,7 +543,7 @@ public class SearchActivity extends BaseActivity {
         searchResult();
     }
 
-    private ExecutorService searchExecutorService = null;
+    private ExecutorService searchExecutorService = null;   //xuameng全局声明
     private AtomicInteger allRunCount = new AtomicInteger(0);
 
     private void searchResult() {
@@ -560,15 +560,15 @@ public class SearchActivity extends BaseActivity {
             allRunCount.set(0);
         }
         searchExecutorService = new ThreadPoolExecutor(
-            Runtime.getRuntime().availableProcessors() + 1, // 动态核心线程数
-            (Runtime.getRuntime().availableProcessors() + 1) * 2,  // 最大线程数, 
+            Runtime.getRuntime().availableProcessors() + 1, // xuameng动态核心线程数
+            (Runtime.getRuntime().availableProcessors() + 1) * 2,  // xuameng最大线程数, 
             10L, 
             TimeUnit.SECONDS,
-            new ArrayBlockingQueue<>(200), // 任务队列容量
-			new ThreadPoolExecutor.CallerRunsPolicy() // 降级策略
+            new ArrayBlockingQueue<>(200), // xuameng任务队列容量
+			new ThreadPoolExecutor.CallerRunsPolicy() // xuameng降级策略
 
         );
-        ((ThreadPoolExecutor)searchExecutorService).prestartAllCoreThreads();  // 预热线程
+        ((ThreadPoolExecutor)searchExecutorService).prestartAllCoreThreads();  // xuameng预热线程
         List<SourceBean> searchRequestList = new ArrayList<>();
         searchRequestList.addAll(ApiConfig.get().getSourceBeanList());
         SourceBean home = ApiConfig.get().getHomeSourceBean();
