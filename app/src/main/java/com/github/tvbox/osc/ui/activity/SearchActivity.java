@@ -70,13 +70,10 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.Collections;   //xuameng搜索历史
-import java.util.concurrent.ArrayBlockingQueue;   //xuameng 线程池
-import java.util.concurrent.ThreadPoolExecutor;  //xuameng 线程池
-import java.util.concurrent.TimeUnit;   //xuameng 线程池
 
 /**
  * @author pj567
@@ -133,15 +130,7 @@ public class SearchActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         if (pauseRunnable != null && pauseRunnable.size() > 0) {
-            searchExecutorService = new ThreadPoolExecutor(
-                Runtime.getRuntime().availableProcessors() + 1, // xuameng动态核心线程数
-                (Runtime.getRuntime().availableProcessors() + 1) * 2,  // xuameng最大线程数
-                10L, 
-                TimeUnit.SECONDS,
-                new ArrayBlockingQueue<>(200), // xuameng任务队列容量
-                new ThreadPoolExecutor.CallerRunsPolicy() // xuameng降级策略
-            );
-            ((ThreadPoolExecutor)searchExecutorService).prestartAllCoreThreads();  // xuameng预热线程
+            searchExecutorService = Executors.newFixedThreadPool(5);
             allRunCount.set(pauseRunnable.size());
             for (Runnable runnable : pauseRunnable) {
                 searchExecutorService.execute(runnable);
@@ -543,7 +532,7 @@ public class SearchActivity extends BaseActivity {
         searchResult();
     }
 
-    private ExecutorService searchExecutorService = null;   //xuameng全局声明
+    private ExecutorService searchExecutorService = null;
     private AtomicInteger allRunCount = new AtomicInteger(0);
 
     private void searchResult() {
@@ -559,16 +548,7 @@ public class SearchActivity extends BaseActivity {
             searchAdapter.setNewData(new ArrayList<>());
             allRunCount.set(0);
         }
-        searchExecutorService = new ThreadPoolExecutor(
-            Runtime.getRuntime().availableProcessors() + 1, // xuameng动态核心线程数
-            (Runtime.getRuntime().availableProcessors() + 1) * 2,  // xuameng最大线程数, 
-            10L, 
-            TimeUnit.SECONDS,
-            new ArrayBlockingQueue<>(200), // xuameng任务队列容量
-			new ThreadPoolExecutor.CallerRunsPolicy() // xuameng降级策略
-
-        );
-        ((ThreadPoolExecutor)searchExecutorService).prestartAllCoreThreads();  // xuameng预热线程
+        searchExecutorService = Executors.newFixedThreadPool(5);
         List<SourceBean> searchRequestList = new ArrayList<>();
         searchRequestList.addAll(ApiConfig.get().getSourceBeanList());
         SourceBean home = ApiConfig.get().getHomeSourceBean();
@@ -617,9 +597,10 @@ public class SearchActivity extends BaseActivity {
 		if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)){
 			return;
 		}
-        if (searchExecutorService == null) {  //xuameng点击清除或删除所有文字后还继续显示搜索结果
-            return;
-        }
+		if (searchExecutorService != null) {   //xuameng点击清除或删除所有文字后还继续显示搜索结果
+		}else{ 
+			return;
+		}
         if (absXml != null && absXml.movie != null && absXml.movie.videoList != null && absXml.movie.videoList.size() > 0) {
             List<Movie.Video> data = new ArrayList<>();
             for (Movie.Video video : absXml.movie.videoList) {
