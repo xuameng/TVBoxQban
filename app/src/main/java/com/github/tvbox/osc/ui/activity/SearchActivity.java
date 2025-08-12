@@ -142,7 +142,7 @@ public class SearchActivity extends BaseActivity {
                 new ThreadPoolExecutor.CallerRunsPolicy() // xuameng降级策略
             );
             ((ThreadPoolExecutor)searchExecutorService).prestartAllCoreThreads();  // xuameng预热线程
-            ThreadPoolPreheater.preheat((ThreadPoolExecutor)searchExecutorService, 100);   //xuameng预热池 100个
+            ThreadPoolPreheater((ThreadPoolExecutor)searchExecutorService, 100);   //xuameng预热池 100个   //xuameng预热池 100个
             allRunCount.set(pauseRunnable.size());
             for (Runnable runnable : pauseRunnable) {
                 searchExecutorService.execute(runnable);
@@ -570,7 +570,7 @@ public class SearchActivity extends BaseActivity {
 
         );
         ((ThreadPoolExecutor)searchExecutorService).prestartAllCoreThreads();  // xuameng预热线程
-        ThreadPoolPreheater.preheat((ThreadPoolExecutor)searchExecutorService, 100);   //xuameng预热池 100个
+        ThreadPoolPreheater((ThreadPoolExecutor)searchExecutorService, 100);   //xuameng预热池 100个   //xuameng预热池 100个
         List<SourceBean> searchRequestList = new ArrayList<>();
         searchRequestList.addAll(ApiConfig.get().getSourceBeanList());
         SourceBean home = ApiConfig.get().getHomeSourceBean();
@@ -655,13 +655,10 @@ public class SearchActivity extends BaseActivity {
     }
 
 
-    public final class ThreadPoolPreheater {    //xuameng预热池
-        private ThreadPoolPreheater() {}
-        public static void preheat(ThreadPoolExecutor pool, int preheatCount) {
-            pool.prestartAllCoreThreads();
-            for (int i = 0; i < preheatCount; i++) {
-                pool.execute(() -> {});
-            }
+    private void ThreadPoolPreheater(ThreadPoolExecutor pool, int preheatCount) {  //xuameng预热池
+        pool.prestartAllCoreThreads();
+        for (int i = 0; i < preheatCount; i++) {
+            pool.execute(() -> {});
         }
     }
 
