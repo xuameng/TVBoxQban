@@ -138,7 +138,7 @@ public class SearchActivity extends BaseActivity {
                 10L, 
                 TimeUnit.SECONDS,
                 new ArrayBlockingQueue<>(500), // 任务队列容量
-                new ThreadPoolExecutor.DiscardOldestPolicy()  // 拒绝策略
+                new ThreadPoolExecutor.CallerRunsPolicy() // 降级策略
             );
             searchExecutorService.prestartAllCoreThreads();   // 预热线程
             allRunCount.set(pauseRunnable.size());
@@ -565,6 +565,8 @@ public class SearchActivity extends BaseActivity {
             TimeUnit.SECONDS,
             new ArrayBlockingQueue<>(500), // 任务队列容量
             new ThreadPoolExecutor.DiscardOldestPolicy()  // 拒绝策略
+			new ThreadPoolExecutor.CallerRunsPolicy() // 降级策略
+
         );
         searchExecutorService.prestartAllCoreThreads();   // 预热线程
         List<SourceBean> searchRequestList = new ArrayList<>();
