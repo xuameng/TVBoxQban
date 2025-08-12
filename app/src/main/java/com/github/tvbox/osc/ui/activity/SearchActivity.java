@@ -132,14 +132,17 @@ public class SearchActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         if (pauseRunnable != null && pauseRunnable.size() > 0) {
-            ThreadPoolExecutor searchExecutorService = new ThreadPoolExecutor(
-                Runtime.getRuntime().availableProcessors(), // 动态核心线程数
-                Runtime.getRuntime().availableProcessors() * 4, // 最大扩展线程数
-                30L, 
-                TimeUnit.SECONDS,
-                new ArrayBlockingQueue<>(1000), // 任务队列容量
-                new ThreadPoolExecutor.CallerRunsPolicy() // 队列满时由调用线程执行
-            );
+ThreadPoolExecutor searchExecutorService = new ThreadPoolExecutor(
+    Runtime.getRuntime().availableProcessors() + 1,  // 核心线程数
+    (Runtime.getRuntime().availableProcessors() + 1) * 2,  // 最大线程数
+    15L,  // 缩短空闲回收时间
+    TimeUnit.SECONDS,
+    new ArrayBlockingQueue<>(300),  // 缩小队列容量
+    new CustomThreadFactory("SearchPool"),  // 自定义线程工厂
+    new ThreadPoolExecutor.DiscardOldestPolicy()  // 拒绝策略
+);
+// 预热线程
+searchExecutorService.prestartAllCoreThreads();
             allRunCount.set(pauseRunnable.size());
             for (Runnable runnable : pauseRunnable) {
                 searchExecutorService.execute(runnable);
@@ -557,14 +560,17 @@ public class SearchActivity extends BaseActivity {
             searchAdapter.setNewData(new ArrayList<>());
             allRunCount.set(0);
         }
-        ThreadPoolExecutor searchExecutorService = new ThreadPoolExecutor(
-            Runtime.getRuntime().availableProcessors(), // 动态核心线程数
-            Runtime.getRuntime().availableProcessors() * 4, // 最大扩展线程数
-            30L, 
-            TimeUnit.SECONDS,
-            new ArrayBlockingQueue<>(1000), // 任务队列容量
-            new ThreadPoolExecutor.CallerRunsPolicy() // 队列满时由调用线程执行
-        );
+ThreadPoolExecutor searchExecutorService = new ThreadPoolExecutor(
+    Runtime.getRuntime().availableProcessors() + 1,  // 核心线程数
+    (Runtime.getRuntime().availableProcessors() + 1) * 2,  // 最大线程数
+    15L,  // 缩短空闲回收时间
+    TimeUnit.SECONDS,
+    new ArrayBlockingQueue<>(300),  // 缩小队列容量
+    new CustomThreadFactory("SearchPool"),  // 自定义线程工厂
+    new ThreadPoolExecutor.DiscardOldestPolicy()  // 拒绝策略
+);
+// 预热线程
+searchExecutorService.prestartAllCoreThreads();
         List<SourceBean> searchRequestList = new ArrayList<>();
         searchRequestList.addAll(ApiConfig.get().getSourceBeanList());
         SourceBean home = ApiConfig.get().getHomeSourceBean();
@@ -613,10 +619,9 @@ public class SearchActivity extends BaseActivity {
 		if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)){
 			return;
 		}
-		if (searchExecutorService != null) {   //xuameng点击清除或删除所有文字后还继续显示搜索结果
-		}else{ 
-			return;
-		}
+        if (searchExecutorService == null) {  //xuameng点击清除或删除所有文字后还继续显示搜索结果
+            return;
+        }
         if (absXml != null && absXml.movie != null && absXml.movie.videoList != null && absXml.movie.videoList.size() > 0) {
             List<Movie.Video> data = new ArrayList<>();
             for (Movie.Video video : absXml.movie.videoList) {
