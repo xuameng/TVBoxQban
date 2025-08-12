@@ -134,7 +134,7 @@ public class SearchActivity extends BaseActivity {
         if (pauseRunnable != null && pauseRunnable.size() > 0) {
             ThreadPoolExecutor searchExecutorService = new ThreadPoolExecutor(
                 Runtime.getRuntime().availableProcessors() + 1, // 动态核心线程数
-                Runtime.getRuntime().availableProcessors() + 1) * 2,  // 最大线程数, 
+                (Runtime.getRuntime().availableProcessors() + 1) * 2,  // 最大线程数
                 10L, 
                 TimeUnit.SECONDS,
                 new ArrayBlockingQueue<>(500), // 任务队列容量
@@ -560,7 +560,7 @@ public class SearchActivity extends BaseActivity {
         }
         ThreadPoolExecutor searchExecutorService = new ThreadPoolExecutor(
             Runtime.getRuntime().availableProcessors() + 1, // 动态核心线程数
-            Runtime.getRuntime().availableProcessors() + 1) * 2,  // 最大线程数, 
+            (Runtime.getRuntime().availableProcessors() + 1) * 2,  // 最大线程数, 
             10L, 
             TimeUnit.SECONDS,
             new ArrayBlockingQueue<>(500), // 任务队列容量
