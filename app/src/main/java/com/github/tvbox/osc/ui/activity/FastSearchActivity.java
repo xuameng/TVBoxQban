@@ -126,7 +126,7 @@ public class FastSearchActivity extends BaseActivity {
                 new ThreadPoolExecutor.CallerRunsPolicy() // xuameng降级策略
             );
             ((ThreadPoolExecutor)searchExecutorService).prestartAllCoreThreads();  // xuameng预热线程
-            ThreadPoolPreheater.preheat(searchExecutorService, 100);   //xuameng预热池 100个
+            ThreadPoolPreheater.preheat((ThreadPoolExecutor)searchExecutorService, 100);   //xuameng预热池 100个
             allRunCount.set(pauseRunnable.size());
             for (Runnable runnable : pauseRunnable) {
                 searchExecutorService.execute(runnable);
@@ -410,7 +410,7 @@ public class FastSearchActivity extends BaseActivity {
 
         );
         ((ThreadPoolExecutor)searchExecutorService).prestartAllCoreThreads();  // xuameng预热线程
-        ThreadPoolPreheater.preheat(searchExecutorService, 100);   //xuameng预热池 100个
+        ThreadPoolPreheater.preheat((ThreadPoolExecutor)searchExecutorService, 100);   //xuameng预热池 100个
         List<SourceBean> searchRequestList = new ArrayList<>();
         searchRequestList.addAll(ApiConfig.get().getSourceBeanList());
         SourceBean home = ApiConfig.get().getHomeSourceBean();
@@ -530,11 +530,12 @@ public class FastSearchActivity extends BaseActivity {
         OkGo.getInstance().cancelTag("search");
     }
 
-    public class ThreadPoolPreheater {     //xuameng预热池
-        public static void preheat(ThreadPoolExecutor pool, int queueSize) {
-            pool.prestartAllCoreThreads();  // 预热核心线程
-            for (int i = 0; i < queueSize; i++) {
-                pool.execute(() -> {});  // 填充空任务占位
+    public final class ThreadPoolPreheater {    //xuameng预热池
+        private ThreadPoolPreheater() {}
+        public static void preheat(ThreadPoolExecutor pool, int preheatCount) {
+            pool.prestartAllCoreThreads();
+            for (int i = 0; i < preheatCount; i++) {
+                pool.execute(() -> {});
             }
         }
     }
