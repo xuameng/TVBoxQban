@@ -132,12 +132,12 @@ public class SearchActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         if (pauseRunnable != null && pauseRunnable.size() > 0) {
-            ThreadPoolExecutor searchExecutorService = new ThreadPoolExecutor(
+            searchExecutorService = new ThreadPoolExecutor(
                 Runtime.getRuntime().availableProcessors() + 1, // 动态核心线程数
                 (Runtime.getRuntime().availableProcessors() + 1) * 2,  // 最大线程数
                 10L, 
                 TimeUnit.SECONDS,
-                new ArrayBlockingQueue<>(500), // 任务队列容量
+                new ArrayBlockingQueue<>(100), // 任务队列容量
                 new ThreadPoolExecutor.CallerRunsPolicy() // 降级策略
             );
             searchExecutorService.prestartAllCoreThreads();   // 预热线程
@@ -558,12 +558,12 @@ public class SearchActivity extends BaseActivity {
             searchAdapter.setNewData(new ArrayList<>());
             allRunCount.set(0);
         }
-        ThreadPoolExecutor searchExecutorService = new ThreadPoolExecutor(
+        searchExecutorService = new ThreadPoolExecutor(
             Runtime.getRuntime().availableProcessors() + 1, // 动态核心线程数
             (Runtime.getRuntime().availableProcessors() + 1) * 2,  // 最大线程数, 
             10L, 
             TimeUnit.SECONDS,
-            new ArrayBlockingQueue<>(500), // 任务队列容量
+            new ArrayBlockingQueue<>(100), // 任务队列容量
 			new ThreadPoolExecutor.CallerRunsPolicy() // 降级策略
 
         );
