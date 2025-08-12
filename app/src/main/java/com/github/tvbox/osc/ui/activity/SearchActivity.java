@@ -142,7 +142,6 @@ public class SearchActivity extends BaseActivity {
                 new ThreadPoolExecutor.CallerRunsPolicy() // xuameng降级策略
             );
             ((ThreadPoolExecutor)searchExecutorService).prestartAllCoreThreads();  // xuameng预热线程
-            ThreadPoolPreheater((ThreadPoolExecutor)searchExecutorService, 100);   //xuameng预热池 100个   //xuameng预热池 100个
             allRunCount.set(pauseRunnable.size());
             for (Runnable runnable : pauseRunnable) {
                 searchExecutorService.execute(runnable);
@@ -441,19 +440,6 @@ public class SearchActivity extends BaseActivity {
     }
 
     private void initData() {
-
-		        searchExecutorService = new ThreadPoolExecutor(
-            Runtime.getRuntime().availableProcessors() + 1, // xuameng动态核心线程数
-            (Runtime.getRuntime().availableProcessors() + 1) * 2,  // xuameng最大线程数, 
-            10L, 
-            TimeUnit.SECONDS,
-            new ArrayBlockingQueue<>(1000), // xuameng任务队列容量
-			new ThreadPoolExecutor.CallerRunsPolicy() // xuameng降级策略
-
-        );
-        ((ThreadPoolExecutor)searchExecutorService).prestartAllCoreThreads();  // xuameng预热线程
-        ThreadPoolPreheater((ThreadPoolExecutor)searchExecutorService, 100);   //xuameng预热池 100个   //xuameng预热池 100个
-
         initCheckedSourcesForSearch();
         Intent intent = getIntent();
 		initSearchHistory();  //xuameng 搜索历史
@@ -573,7 +559,16 @@ public class SearchActivity extends BaseActivity {
             searchAdapter.setNewData(new ArrayList<>());
             allRunCount.set(0);
         }
+        searchExecutorService = new ThreadPoolExecutor(
+            Runtime.getRuntime().availableProcessors() + 1, // xuameng动态核心线程数
+            (Runtime.getRuntime().availableProcessors() + 1) * 2,  // xuameng最大线程数, 
+            10L, 
+            TimeUnit.SECONDS,
+            new ArrayBlockingQueue<>(1000), // xuameng任务队列容量
+			new ThreadPoolExecutor.CallerRunsPolicy() // xuameng降级策略
 
+        );
+        ((ThreadPoolExecutor)searchExecutorService).prestartAllCoreThreads();  // xuameng预热线程
         List<SourceBean> searchRequestList = new ArrayList<>();
         searchRequestList.addAll(ApiConfig.get().getSourceBeanList());
         SourceBean home = ApiConfig.get().getHomeSourceBean();
@@ -657,12 +652,6 @@ public class SearchActivity extends BaseActivity {
         }
     }
 
-    private void ThreadPoolPreheater(ThreadPoolExecutor pool, int preheatCount) {  //xuameng预热池
-        pool.prestartAllCoreThreads();
-        for (int i = 0; i < preheatCount; i++) {
-            pool.execute(() -> {});
-        }
-    }
 
     private void cancel() {
         OkGo.getInstance().cancelTag("search");
