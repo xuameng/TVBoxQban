@@ -122,7 +122,7 @@ public class FastSearchActivity extends BaseActivity {
                 (Runtime.getRuntime().availableProcessors() + 1) * 2,  // xuameng最大线程数
                 10L, 
                 TimeUnit.SECONDS,
-                new ArrayBlockingQueue<>(200), // xuameng任务队列容量
+                new ArrayBlockingQueue<>(1000), // xuameng任务队列容量
                 new ThreadPoolExecutor.CallerRunsPolicy() // xuameng降级策略
             );
             ((ThreadPoolExecutor)searchExecutorService).prestartAllCoreThreads();  // xuameng预热线程
@@ -401,10 +401,10 @@ public class FastSearchActivity extends BaseActivity {
         }
         searchExecutorService = new ThreadPoolExecutor(
             Runtime.getRuntime().availableProcessors() + 1, // xuameng动态核心线程数
-            (Runtime.getRuntime().availableProcessors() + 1) * 2,  xuameng// 最大线程数, 
+            (Runtime.getRuntime().availableProcessors() + 1) * 2,  // xuameng最大线程数, 
             10L, 
             TimeUnit.SECONDS,
-            new ArrayBlockingQueue<>(200), // xuameng任务队列容量
+            new ArrayBlockingQueue<>(1000), // xuameng任务队列容量
 			new ThreadPoolExecutor.CallerRunsPolicy() // xuameng降级策略
 
         );
