@@ -288,9 +288,7 @@ public class SourceViewModel extends ViewModel {
                                 sortResult.postValue(null);
                             }
                         });
-            }else if (type == 8) {
-				sortResult.postValue(null);
-			}else {
+            }else {
                 try {
                     Map<String, String> params = new HashMap<>();
                     params.put("filter","true");
