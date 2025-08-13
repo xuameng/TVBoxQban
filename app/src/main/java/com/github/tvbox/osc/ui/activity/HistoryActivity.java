@@ -108,6 +108,17 @@ public class HistoryActivity extends BaseActivity {
 
             }
         });
+
+        private View.OnFocusChangeListener focusChangeListener = new View.OnFocusChangeListener() {     //xuameng 触碰变大
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus)
+                    v.animate().scaleX(1.05f).scaleY(1.05f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
+                else
+                    v.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
+            }
+        };
+
         historyAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
