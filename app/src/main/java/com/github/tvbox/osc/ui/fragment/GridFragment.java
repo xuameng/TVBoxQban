@@ -222,17 +222,6 @@ public class GridFragment extends BaseLazyFragment {
                 return false;
             }
         });
-
-        private View.OnFocusChangeListener focusChangeListener = new View.OnFocusChangeListener() {     //xuameng 触碰变大
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus)
-                    v.animate().scaleX(1.05f).scaleY(1.05f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
-                else
-                    v.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
-            }
-        };
-
         gridAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
@@ -367,6 +356,16 @@ public class GridFragment extends BaseLazyFragment {
         if (gridFilterDialog != null)
             gridFilterDialog.show();
     }
+
+    private View.OnFocusChangeListener focusChangeListener = new View.OnFocusChangeListener() {
+        @Override
+        public void onFocusChange(View v, boolean hasFocus) {
+            if (hasFocus)
+                v.animate().scaleX(1.05f).scaleY(1.05f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
+            else
+                v.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
+        }
+    };
 
     public void setFilterDialogData() {
         Context context = getContext();
