@@ -2695,6 +2695,7 @@ public class LivePlayActivity extends BaseActivity {
     private Runnable mUpdateVodProgressXu = new Runnable() {
         @Override
         public void run() {
+            if(mVideoView == null) return;
             int duration2 = (int) mVideoView.getDuration();
             if(duration2 > 0) {
                 if(mVideoView.isPlaying()) { //xuameng音乐播放时图标判断
@@ -2725,6 +2726,7 @@ public class LivePlayActivity extends BaseActivity {
             if(backcontroller.getVisibility() == View.GONE) {
                 isSEEKBAR = false;  //xuameng 焦点进入SEEKBAR判断
             }
+            if(mVideoView == null) return;
             if(mVideoView.isPlaying()) { //xuameng音乐播放时图标判断
                 String width = Integer.toString(mVideoView.getVideoSize()[0]);
                 String height = Integer.toString(mVideoView.getVideoSize()[1]);
