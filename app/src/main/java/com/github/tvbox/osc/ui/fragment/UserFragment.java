@@ -148,6 +148,8 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
         tvHistory.setOnFocusChangeListener(focusChangeListener);
         tvPush.setOnFocusChangeListener(focusChangeListener);
         tvCollect.setOnFocusChangeListener(focusChangeListener);
+        tvHotList1.setOnFocusChangeListener(focusChangeListener);
+        tvHotList2.setOnFocusChangeListener(focusChangeListener);
         tvHotList1 = findViewById(R.id.tvHotList1);
         tvHotList2 = findViewById(R.id.tvHotList2);
         if (Hawk.get(HawkConfig.HOME_REC, 0) == 1 && homeSourceRec!=null) {
