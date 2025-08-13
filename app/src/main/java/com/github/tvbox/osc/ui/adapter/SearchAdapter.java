@@ -47,6 +47,9 @@ public class SearchAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder>
                                 .roundRadius(AutoSizeUtils.mm2px(mContext, 10), RoundTransformation.RoundType.ALL))
                         .placeholder(R.drawable.img_loading_placeholder)
                         .noFade()
+					    .resize(800, 1000)  // 强制限制显示尺寸
+                        .onlyScaleDown()     // 仅缩小不放大
+                        .config(Bitmap.Config.RGB_565)  // 更改色彩模式
                     //    .error(R.drawable.img_loading_placeholder)
 						.error(ImgUtilXu.createTextDrawable(item.name))
                         .into(ivThumb);
