@@ -15,9 +15,6 @@ import com.orhanobut.hawk.Hawk;
 import com.squareup.picasso.Picasso;
 import com.github.tvbox.osc.util.ImgUtilXu;   //xuamengBASE64图片
 import com.github.tvbox.osc.util.ImgUtil;   //xuamengBASE64图片
-import android.graphics.Bitmap; //xuameng播放音频切换图片
-import com.squareup.picasso.MemoryPolicy; //xuameng播放音频切换图片
-import com.squareup.picasso.NetworkPolicy; //xuameng播放音频切换图片
 
 import java.util.ArrayList;
 
@@ -50,10 +47,6 @@ public class SearchAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder>
                                 .roundRadius(AutoSizeUtils.mm2px(mContext, 10), RoundTransformation.RoundType.ALL))
                         .placeholder(R.drawable.img_loading_placeholder)
                         .noFade()
-					    .resize(1024, 768)  // xuameng强制限制显示尺寸
-                        .onlyScaleDown()     // xuameng仅缩小不放大
-                        .config(Bitmap.Config.RGB_565)  // xuameng更改色彩模式
-                        .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
                     //    .error(R.drawable.img_loading_placeholder)
 						.error(ImgUtilXu.createTextDrawable(item.name))
                         .into(ivThumb);
