@@ -2434,10 +2434,6 @@ public class LivePlayActivity extends BaseActivity {
                 break;
             case 7: //xuameng退出直播
                 mHideSettingLayoutRun();
-                if(mVideoView != null) {
-                    mVideoView.release();
-                    mVideoView = null;
-                }
                 ExitLiveOnSetting();
                 break;
         }
