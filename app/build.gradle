@@ -6,7 +6,7 @@ android {
     compileSdkVersion 30
 
     defaultConfig {
-        applicationId 'com.jvhuiys.player'
+        applicationId 'com.github.tvbox.osc'
         minSdkVersion 16
         targetSdkVersion 26
         versionCode 1
@@ -126,6 +126,7 @@ dependencies {
     api "com.google.android.exoplayer:extension-rtmp:2.14.2"
     api "com.google.android.exoplayer:extension-okhttp:2.14.2"
 }
+
 
 
 
