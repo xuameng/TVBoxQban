@@ -22,15 +22,6 @@ android {
         }
     }
 
-    kotlinOptions {
-        jvmTarget = '1.8'
-        freeCompilerArgs += [
-            '-Xno-param-assertions',
-            '-Xno-call-assertions',
-            '-Xno-receiver-assertions'
-        ]
-    }
-
     packagingOptions {
         exclude 'META-INF/DEPENDENCIES'
     }
@@ -132,3 +123,4 @@ dependencies {
     api "com.google.android.exoplayer:extension-rtmp:2.14.2"
     api "com.google.android.exoplayer:extension-okhttp:2.14.2"
 }
+
