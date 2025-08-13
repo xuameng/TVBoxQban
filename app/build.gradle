@@ -78,7 +78,6 @@ dependencies {
     api fileTree(dir: "libs", include: ["*.jar"])
     
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"  // 最后支持API 16的稳定版
     implementation "org.jetbrains.kotlin:kotlin-reflect:1.5.31"
     implementation 'org.nanohttpd:nanohttpd:2.3.1'
     implementation 'com.google.zxing:core:3.3.0'
@@ -137,3 +136,8 @@ dependencies {
     api "com.google.android.exoplayer:extension-rtmp:2.14.2"
     api "com.google.android.exoplayer:extension-okhttp:2.14.2"
 }
+
+
+
+
+
