@@ -77,6 +77,8 @@ import java.util.Collections;   //xuameng搜索历史
 import java.util.concurrent.ArrayBlockingQueue;   //xuameng 线程池
 import java.util.concurrent.ThreadPoolExecutor;  //xuameng 线程池
 import java.util.concurrent.TimeUnit;   //xuameng 线程池
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author pj567
