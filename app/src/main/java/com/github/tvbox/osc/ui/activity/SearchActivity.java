@@ -84,6 +84,7 @@ import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
+import android.util.Log;
 
 
 /**
@@ -558,6 +559,11 @@ public class SearchActivity extends BaseActivity {
 private volatile ExecutorService searchExecutorService;
 private final AtomicInteger allRunCount = new AtomicInteger(0);
 
+
+private volatile ExecutorService searchExecutorService;
+private final AtomicInteger allRunCount = new AtomicInteger(0);
+private static final String TAG = "SearchActivity";  //xuameng 线程池
+
 private void searchResult() {
     // 1. 资源清理（增加volatile保证可见性）
     try {
@@ -618,6 +624,7 @@ private void searchResult() {
                 sourceViewModel.getSearch(key, searchTitle);
                 return null;
             } catch (Exception e) {
+                Log.e(TAG, "搜索异常: " + key, e);
                 return null;
             }
         });
@@ -628,6 +635,7 @@ private void searchResult() {
         for (int i = 0; i < siteKey.size(); i++) {
             Future<Void> future = completionService.poll(3, TimeUnit.SECONDS);
             if (future == null) {
+                Log.w(TAG, "部分搜索请求超时");
                 continue;
             }
             future.get();
@@ -635,8 +643,10 @@ private void searchResult() {
     } catch (InterruptedException e) {
         Thread.currentThread().interrupt();
     } catch (ExecutionException e) {
+        Log.e(TAG, "搜索执行异常", e);
     }
 }
+
 
 
 
