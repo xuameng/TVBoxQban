@@ -77,13 +77,8 @@ import java.util.Collections;   //xuameng搜索历史
 import java.util.concurrent.ArrayBlockingQueue;   //xuameng 线程池
 import java.util.concurrent.ThreadPoolExecutor;  //xuameng 线程池
 import java.util.concurrent.TimeUnit;   //xuameng 线程池
-import java.util.concurrent.CompletableFuture;  //xuameng 线程池
 import java.util.concurrent.CountDownLatch;  //xuameng 线程池
 import android.util.Log;
-import java.util.concurrent.LinkedBlockingQueue;  //xuameng 线程池
-import java.util.concurrent.Future;   //xuameng 线程池
-import java.util.concurrent.TimeoutException;  //xuameng 线程池
-import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.stream.Collectors;
 import com.google.common.collect.Lists;
@@ -610,7 +605,7 @@ private void searchResult() {
         ));
 
     if (batches.isEmpty()) {
-        App.showToastShort(mContext, "聚汇影视提示：请指定搜索源！");
+        App.showToastShort(mContext, "请指定有效搜索源");
         return;
     }
 
@@ -640,33 +635,6 @@ private void searchResult() {
         }
     });
 }
-
-    showLoading();
-    batches.forEach(batch -> {
-        CountDownLatch batchLatch = new CountDownLatch(batch.size());
-        batch.forEach(key -> {
-            try {
-                searchExecutorService.execute(() -> {
-                    try {
-                        sourceViewModel.getSearch(key, searchTitle);
-                    } finally {
-                        batchLatch.countDown();
-                    }
-                });
-            } catch (RejectedExecutionException e) {
-                batchLatch.countDown();
-                Log.w(TAG, "线程池过载，跳过任务: " + key);
-            }
-        });
-        
-        try {
-            batchLatch.await(30, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-    });
-}
-
 
     private void updateSearchResults() {
         runOnUiThread(() -> {
