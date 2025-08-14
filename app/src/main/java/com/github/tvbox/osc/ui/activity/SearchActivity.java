@@ -110,6 +110,7 @@ public class SearchActivity extends BaseActivity {
 	private SearchPresenter searchPresenter;  //xuameng搜索历史
 	private TextView tHotSearchText;  //xuameng热门搜索
 	private static ArrayList<String> hots = new ArrayList<>();  //xuameng热门搜索
+	private static final String TAG = "SearchActivity"
 
     private static HashMap<String, String> mCheckSources = null;
     private SearchCheckboxDialog mSearchCheckboxDialog = null;
