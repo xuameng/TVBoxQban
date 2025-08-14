@@ -77,8 +77,9 @@ import java.util.Collections;   //xuameng搜索历史
 import java.util.concurrent.ArrayBlockingQueue;   //xuameng 线程池
 import java.util.concurrent.ThreadPoolExecutor;  //xuameng 线程池
 import java.util.concurrent.TimeUnit;   //xuameng 线程池
-import java.util.concurrent.Semaphore;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CountDownLatch;
+
 
 /**
  * @author pj567
@@ -549,10 +550,15 @@ public class SearchActivity extends BaseActivity {
     private AtomicInteger allRunCount = new AtomicInteger(0);
 
 
+
 private void searchResult() {
+    // 1. 清理前次搜索资源
     try {
         if (searchExecutorService != null) {
             searchExecutorService.shutdownNow();
+            if (!searchExecutorService.awaitTermination(2, TimeUnit.SECONDS)) {
+                Log.w(TAG, "线程池未完全终止");
+            }
             searchExecutorService = null;
             JsLoader.stopAll();
         }
@@ -563,18 +569,19 @@ private void searchResult() {
         allRunCount.set(0);
     }
 
+    // 2. 优化线程池配置
+    int corePoolSize = Math.min(4, Runtime.getRuntime().availableProcessors());
+    int maxPoolSize = corePoolSize * 2;
     searchExecutorService = new ThreadPoolExecutor(
-        Runtime.getRuntime().availableProcessors() + 1,
-        (Runtime.getRuntime().availableProcessors() + 1) * 2,
-        10L,
-        TimeUnit.SECONDS,
-        new ArrayBlockingQueue<>(1000),
-        new ThreadPoolExecutor.CallerRunsPolicy()
+        corePoolSize,
+        maxPoolSize,
+        30L, TimeUnit.SECONDS,
+        new LinkedBlockingQueue<>(50),
+        new ThreadPoolExecutor.DiscardOldestPolicy()
     );
-    ((ThreadPoolExecutor)searchExecutorService).prestartAllCoreThreads();
 
-    List<SourceBean> searchRequestList = new ArrayList<>();
-    searchRequestList.addAll(ApiConfig.get().getSourceBeanList());
+    // 3. 准备搜索源
+    List<SourceBean> searchRequestList = new ArrayList<>(ApiConfig.get().getSourceBeanList());
     SourceBean home = ApiConfig.get().getHomeSourceBean();
     searchRequestList.remove(home);
     searchRequestList.add(0, home);
@@ -587,37 +594,48 @@ private void searchResult() {
         allRunCount.incrementAndGet();
     }
 
-    if (siteKey.size() <= 0) {
-        App.showToastShort(mContext, "聚汇影视提示：请指定搜索源！");
+    if (siteKey.isEmpty()) {
+        App.showToastShort(mContext, "请指定搜索源！");
         return;
     }
 
+    // 4. 使用CountDownLatch控制并发
 //    showLoading();
-    final int BATCH_SIZE = 10;
-    Semaphore semaphore = new Semaphore(BATCH_SIZE);
-    List<CompletableFuture<Void>> futures = new ArrayList<>();
+    CountDownLatch latch = new CountDownLatch(siteKey.size());
+    AtomicInteger successCount = new AtomicInteger(0);
 
     for (String key : siteKey) {
+        searchExecutorService.execute(() -> {
+            try {
+                sourceViewModel.getSearch(key, searchTitle);
+                successCount.incrementAndGet();
+            } catch (Exception e) {
+                Log.e(TAG, "搜索异常: " + key, e);
+            } finally {
+                latch.countDown();
+            }
+        });
+    }
+
+    // 5. 异步等待结果
+    CompletableFuture.runAsync(() -> {
         try {
-            semaphore.acquire();
-            futures.add(CompletableFuture.runAsync(() -> {
-                try {
-                    sourceViewModel.getSearch(key, searchTitle);
-                } finally {
-                    semaphore.release();
+            if (!latch.await(10, TimeUnit.SECONDS)) {
+                runOnUiThread(() -> 
+                    App.showToastShort(mContext, "部分搜索超时"));
+            }
+            runOnUiThread(() -> {
+                if (successCount.get() == 0) {
+                    showEmptyView();
                 }
-            }, searchExecutorService));
+                hideLoading();
+            });
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
-    }
-
-    CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
-        .exceptionally(ex -> {
-            ex.printStackTrace();
-            return null;
-        });
+    });
 }
+
 
 
     private boolean matchSearchResult(String name, String searchTitle) {
