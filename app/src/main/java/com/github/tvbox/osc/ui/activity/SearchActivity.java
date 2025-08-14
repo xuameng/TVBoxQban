@@ -110,7 +110,7 @@ public class SearchActivity extends BaseActivity {
 	private SearchPresenter searchPresenter;  //xuameng搜索历史
 	private TextView tHotSearchText;  //xuameng热门搜索
 	private static ArrayList<String> hots = new ArrayList<>();  //xuameng热门搜索
-	private static final String TAG = "SearchActivity"
+	private static final String TAG = "SearchActivity";
 
     private static HashMap<String, String> mCheckSources = null;
     private SearchCheckboxDialog mSearchCheckboxDialog = null;
@@ -598,7 +598,7 @@ private void searchResult() {
     }
 
     if (siteKey.isEmpty()) {
-        App.showToastShort(mContext, "请指定搜索源！");
+        App.showToastShort(mContext, "聚汇影视提示您：请指定搜索源！");
         return;
     }
 
@@ -625,7 +625,7 @@ private void searchResult() {
         try {
             if (!latch.await(10, TimeUnit.SECONDS)) {
                 runOnUiThread(() -> 
-                    App.showToastShort(mContext, "部分搜索超时"));
+                    App.showToastShort(mContext, "聚汇影视提示您：部分搜索超时！"));
             }
             runOnUiThread(() -> {
                 if (successCount.get() == 0) {
