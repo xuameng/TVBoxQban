@@ -83,6 +83,9 @@ import android.util.Log;
 import java.util.concurrent.LinkedBlockingQueue;  //xuameng 线程池
 import java.util.concurrent.Future;   //xuameng 线程池
 import java.util.concurrent.TimeoutException;  //xuameng 线程池
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.stream.Collectors;
 
 
 /**
@@ -554,11 +557,6 @@ public class SearchActivity extends BaseActivity {
     private volatile ExecutorService searchExecutorService;  //xuameng全局声明
     private final AtomicInteger allRunCount = new AtomicInteger(0);
     private static final int MAX_THREADS = 8; // 硬性限制最大线程数
-
-    
-private static final int MAX_THREADS = 8; // 硬性限制最大线程数
-private volatile ExecutorService searchExecutorService;
-private final AtomicInteger allRunCount = new AtomicInteger(0);
 
 private void searchResult() {
     // 1. 资源清理（增加线程中断检查）
