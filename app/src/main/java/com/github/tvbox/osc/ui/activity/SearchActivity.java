@@ -546,61 +546,77 @@ public class SearchActivity extends BaseActivity {
     private ExecutorService searchExecutorService = null;   //xuameng全局声明
     private AtomicInteger allRunCount = new AtomicInteger(0);
 
-    private void searchResult() {
+
+private void searchResult() {
+    try {
+        if (searchExecutorService != null) {
+            searchExecutorService.shutdownNow();
+            searchExecutorService = null;
+            JsLoader.stopAll();
+        }
+    } catch (Throwable th) {
+        th.printStackTrace();
+    } finally {
+        searchAdapter.setNewData(new ArrayList<>());
+        allRunCount.set(0);
+    }
+
+    searchExecutorService = new ThreadPoolExecutor(
+        Runtime.getRuntime().availableProcessors() + 1,
+        (Runtime.getRuntime().availableProcessors() + 1) * 2,
+        10L,
+        TimeUnit.SECONDS,
+        new ArrayBlockingQueue<>(1000),
+        new ThreadPoolExecutor.CallerRunsPolicy()
+    );
+    ((ThreadPoolExecutor)searchExecutorService).prestartAllCoreThreads();
+
+    List<SourceBean> searchRequestList = new ArrayList<>();
+    searchRequestList.addAll(ApiConfig.get().getSourceBeanList());
+    SourceBean home = ApiConfig.get().getHomeSourceBean();
+    searchRequestList.remove(home);
+    searchRequestList.add(0, home);
+
+    ArrayList<String> siteKey = new ArrayList<>();
+    for (SourceBean bean : searchRequestList) {
+        if (!bean.isSearchable()) continue;
+        if (mCheckSources != null && !mCheckSources.containsKey(bean.getKey())) continue;
+        siteKey.add(bean.getKey());
+        allRunCount.incrementAndGet();
+    }
+
+    if (siteKey.size() <= 0) {
+        App.showToastShort(mContext, "聚汇影视提示：请指定搜索源！");
+        return;
+    }
+
+//    showLoading();
+    final int BATCH_SIZE = 10;
+    Semaphore semaphore = new Semaphore(BATCH_SIZE);
+    List<CompletableFuture<Void>> futures = new ArrayList<>();
+
+    for (String key : siteKey) {
         try {
-            if (searchExecutorService != null) {  //xuameng必须加防止内存溢出
-                searchExecutorService.shutdownNow();
-                searchExecutorService = null;
-                JsLoader.stopAll();
-            }
-        } catch (Throwable th) {
-            th.printStackTrace();
-        } finally {
-            searchAdapter.setNewData(new ArrayList<>());
-            allRunCount.set(0);
-        }
-        searchExecutorService = new ThreadPoolExecutor(
-            Runtime.getRuntime().availableProcessors() + 1, // xuameng动态核心线程数
-            (Runtime.getRuntime().availableProcessors() + 1) * 2,  // xuameng最大线程数, 
-            10L, 
-            TimeUnit.SECONDS,
-            new ArrayBlockingQueue<>(1000), // xuameng任务队列容量
-			new ThreadPoolExecutor.CallerRunsPolicy() // xuameng降级策略
-
-        );
-        ((ThreadPoolExecutor)searchExecutorService).prestartAllCoreThreads();  // xuameng预热线程
-        List<SourceBean> searchRequestList = new ArrayList<>();
-        searchRequestList.addAll(ApiConfig.get().getSourceBeanList());
-        SourceBean home = ApiConfig.get().getHomeSourceBean();
-        searchRequestList.remove(home);
-        searchRequestList.add(0, home);
-
-        ArrayList<String> siteKey = new ArrayList<>();
-        for (SourceBean bean : searchRequestList) {
-            if (!bean.isSearchable()) {
-                continue;
-            }
-            if (mCheckSources != null && !mCheckSources.containsKey(bean.getKey())) {
-                continue;
-            }
-            siteKey.add(bean.getKey());
-            allRunCount.incrementAndGet();
-        }
-        if (siteKey.size() <= 0) {
-            App.showToastShort(mContext, "聚汇影视提示：请指定搜索源！");
-   //         showEmpty();  //xuameng
-            return;
-        }
-        showLoading();        //xuameng 转圈动画
-        for (String key : siteKey) {
-            searchExecutorService.execute(new Runnable() {
-                @Override
-                public void run() {
+            semaphore.acquire();
+            futures.add(CompletableFuture.runAsync(() -> {
+                try {
                     sourceViewModel.getSearch(key, searchTitle);
+                } finally {
+                    semaphore.release();
                 }
-            });
+            }, searchExecutorService));
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
     }
+
+    CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
+        .exceptionally(ex -> {
+            ex.printStackTrace();
+            return null;
+        });
+}
+
 
     private boolean matchSearchResult(String name, String searchTitle) {
         if (TextUtils.isEmpty(name) || TextUtils.isEmpty(searchTitle)) return false;
