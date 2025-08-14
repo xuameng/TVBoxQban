@@ -576,14 +576,12 @@ private void searchResult() {
     }
 
     // 2. 优化线程池配置
-    int corePoolSize = Math.min(4, Runtime.getRuntime().availableProcessors());
-    int maxPoolSize = corePoolSize * 2;
     searchExecutorService = new ThreadPoolExecutor(
-        corePoolSize,
-        maxPoolSize,
+        Runtime.getRuntime().availableProcessors() + 1, // xuameng动态核心线程数
+        (Runtime.getRuntime().availableProcessors() + 1) * 2,  // xuameng最大线程数, 
         30L, TimeUnit.SECONDS,
-        new LinkedBlockingQueue<>(50),
-        new ThreadPoolExecutor.DiscardOldestPolicy()
+        new LinkedBlockingQueue<>(1000),
+        new ThreadPoolExecutor.CallerRunsPolicy() // xuameng降级策略
     );
 
     // 3. 准备搜索源
