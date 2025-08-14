@@ -77,13 +77,10 @@ import java.util.Collections;   //xuameng搜索历史
 import java.util.concurrent.ArrayBlockingQueue;   //xuameng 线程池
 import java.util.concurrent.ThreadPoolExecutor;  //xuameng 线程池
 import java.util.concurrent.TimeUnit;   //xuameng 线程池
-import java.util.concurrent.CountDownLatch;  //xuameng 线程池
-import java.util.concurrent.Semaphore; //xuameng 线程池
-import android.util.Log; //xuameng 线程池
-import java.util.concurrent.RejectedExecutionException; //xuameng 线程池
-import java.util.stream.Collectors;  //xuameng 线程池
-import com.google.common.collect.Lists; //xuameng 线程池
-
+import java.util.concurrent.Future;  //xuameng 线程池
+import java.util.concurrent.TimeoutException;  //xuameng 线程池
+import java.util.concurrent.LinkedBlockingQueue;  //xuameng 线程池
+import android.util.Log;  //xuameng log
 
 /**
  * @author pj567
@@ -112,7 +109,6 @@ public class SearchActivity extends BaseActivity {
 	private SearchPresenter searchPresenter;  //xuameng搜索历史
 	private TextView tHotSearchText;  //xuameng热门搜索
 	private static ArrayList<String> hots = new ArrayList<>();  //xuameng热门搜索
-	private static final String TAG = "SearchActivity";  //xuameng 线程池
 
     private static HashMap<String, String> mCheckSources = null;
     private SearchCheckboxDialog mSearchCheckboxDialog = null;
@@ -141,15 +137,15 @@ public class SearchActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         if (pauseRunnable != null && pauseRunnable.size() > 0) {
-            searchExecutorService = new ThreadPoolExecutor(
-                Runtime.getRuntime().availableProcessors() + 1, // xuameng动态核心线程数
-                (Runtime.getRuntime().availableProcessors() + 1) * 2,  // xuameng最大线程数
-                10L, 
-                TimeUnit.SECONDS,
-                new ArrayBlockingQueue<>(1000), // xuameng任务队列容量
-                new ThreadPoolExecutor.CallerRunsPolicy() // xuameng降级策略
-            );
-            ((ThreadPoolExecutor)searchExecutorService).prestartAllCoreThreads();  // xuameng预热线程
+    int corePoolSize = Math.min(4, Runtime.getRuntime().availableProcessors()); // xuameng动态核心线程数
+    int maxPoolSize = corePoolSize * 2;    // xuameng最大线程数, 
+    searchExecutorService = new ThreadPoolExecutor(
+        corePoolSize,
+        maxPoolSize,
+        30L, TimeUnit.SECONDS,
+        new LinkedBlockingQueue<>(50),  // xuameng任务队列容量
+        new ThreadPoolExecutor.CallerRunsPolicy()  // xuameng降级策略
+    );
             allRunCount.set(pauseRunnable.size());
             for (Runnable runnable : pauseRunnable) {
                 searchExecutorService.execute(runnable);
@@ -551,100 +547,109 @@ public class SearchActivity extends BaseActivity {
         searchResult();
     }
 
-    private static final int MAX_THREADS = Math.min(8, 
-    Runtime.getRuntime().availableProcessors() * 2); // 动态计算上限
-    private final Semaphore taskSemaphore = new Semaphore(MAX_THREADS * 3); // 流量控制
-    private volatile ExecutorService searchExecutorService;  //xuameng全局声明
+    private ExecutorService searchExecutorService = null;   //xuameng全局声明
     private AtomicInteger allRunCount = new AtomicInteger(0);
+    private static final String TAG = "SearchActivity";  //xuameng log
 
 
 private void searchResult() {
-    // 1. 资源清理（增强中断处理）
+    // 1. 清理前次搜索资源
     try {
         if (searchExecutorService != null) {
             searchExecutorService.shutdownNow();
-            if (!searchExecutorService.awaitTermination(1, TimeUnit.SECONDS)) {
-                Log.w(TAG, "强制终止残留线程");
+            if (!searchExecutorService.awaitTermination(2, TimeUnit.SECONDS)) {
+                Log.w(TAG, "线程池未完全终止");
             }
+            searchExecutorService = null;
             JsLoader.stopAll();
         }
     } catch (Throwable th) {
-        Log.e(TAG, "资源清理异常", th);
+        th.printStackTrace();
     } finally {
         searchAdapter.setNewData(new ArrayList<>());
-        taskSemaphore.drainPermits(); // 重置信号量
+        allRunCount.set(0);
     }
 
-    // 2. 安全线程池配置（改用有界队列）
+    // 2. 优化线程池配置
+    int corePoolSize = Math.min(4, Runtime.getRuntime().availableProcessors()); // xuameng动态核心线程数
+    int maxPoolSize = corePoolSize * 2;    // xuameng最大线程数, 
     searchExecutorService = new ThreadPoolExecutor(
-        Math.min(4, Runtime.getRuntime().availableProcessors()),
-        MAX_THREADS,
+        corePoolSize,
+        maxPoolSize,
         30L, TimeUnit.SECONDS,
-        new ArrayBlockingQueue<>(MAX_THREADS * 3), // 缓冲队列
-        new ThreadPoolExecutor.CallerRunsPolicy() { // 降级策略
-            @Override
-            public void rejectedExecution(Runnable r, ThreadPoolExecutor e) {
-                Log.w(TAG, "触发降级策略，当前活跃线程: " + e.getActiveCount());
-                super.rejectedExecution(r, e);
-            }
-        }
+        new LinkedBlockingQueue<>(50),  // xuameng任务队列容量
+        new ThreadPoolExecutor.CallerRunsPolicy()  // xuameng降级策略
     );
 
-    // 3. 准备搜索源（原逻辑不变）
+    // 3. 准备搜索源
     List<SourceBean> searchRequestList = new ArrayList<>(ApiConfig.get().getSourceBeanList());
     SourceBean home = ApiConfig.get().getHomeSourceBean();
     searchRequestList.remove(home);
     searchRequestList.add(0, home);
 
-    // 4. 分批执行策略（增加流量控制）
-    List<List<String>> batches = searchRequestList.stream()
-        .filter(bean -> bean.isSearchable())
-        .filter(bean -> mCheckSources == null || mCheckSources.containsKey(bean.getKey()))
-        .map(SourceBean::getKey)
-        .collect(Collectors.collectingAndThen(
-            Collectors.toList(),
-            list -> Lists.partition(list, Math.min(MAX_THREADS * 2, list.size()))
-        ));
+    ArrayList<String> siteKey = new ArrayList<>();
+    for (SourceBean bean : searchRequestList) {
+        if (!bean.isSearchable()) continue;
+        if (mCheckSources != null && !mCheckSources.containsKey(bean.getKey())) continue;
+        siteKey.add(bean.getKey());
+        allRunCount.incrementAndGet();
+    }
 
-    if (batches.isEmpty()) {
-        App.showToastShort(mContext, "请指定有效搜索源");
+    if (siteKey.isEmpty()) {
+        App.showToastShort(mContext, "聚汇影视提示您：请指定搜索源！");
         return;
     }
 
+    // 4. 使用CountDownLatch控制并发
     showLoading();
-    batches.forEach(batch -> {
-        CountDownLatch batchLatch = new CountDownLatch(batch.size());
-        batch.forEach(key -> {
+    CountDownLatch latch = new CountDownLatch(siteKey.size());
+    AtomicInteger successCount = new AtomicInteger(0);
+    List<Future<?>> taskFutures = new ArrayList<>();
+
+    for (String key : siteKey) {
+        Future<?> future = searchExecutorService.submit(() -> {
             try {
-                taskSemaphore.acquire(); // 流量控制
-                searchExecutorService.execute(() -> {
-                    try {
-                        sourceViewModel.getSearch(key, searchTitle);
-                    } finally {
-                        batchLatch.countDown();
-                        taskSemaphore.release();
-                    }
-                });
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                batchLatch.countDown();
+                // 使用CompletableFuture包装任务，设置10秒超时
+                CompletableFuture.runAsync(() -> {
+                    sourceViewModel.getSearch(key, searchTitle);
+                }).get(10, TimeUnit.SECONDS);
+                
+                successCount.incrementAndGet();
+            } catch (TimeoutException e) {
+                Log.w(TAG, "搜索超时: " + key);
+            } catch (Exception e) {
+                Log.e(TAG, "搜索异常: " + key, e);
+            } finally {
+                latch.countDown();
             }
         });
+        taskFutures.add(future);
+    }
+
+    // 5. 异步等待结果
+    CompletableFuture.runAsync(() -> {
         try {
-            batchLatch.await(30, TimeUnit.SECONDS);
+            // 等待所有任务完成（包括超时和被取消的任务）
+            latch.await();
+            
+            runOnUiThread(() -> {
+                if (successCount.get() == 0) {
+                    showEmpty();
+                } else {
+                    updateSearchResults();
+                }
+            });
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
     });
 }
 
-    private void updateSearchResults() {
-        runOnUiThread(() -> {
-            if (searchAdapter != null) {
-                searchAdapter.notifyDataSetChanged();
-            }
-        });
-    }
+private void updateSearchResults() {
+    // 更新UI显示搜索结果
+    runOnUiThread(() -> searchAdapter.notifyDataSetChanged());
+}
+
 
     private boolean matchSearchResult(String name, String searchTitle) {
         if (TextUtils.isEmpty(name) || TextUtils.isEmpty(searchTitle)) return false;
