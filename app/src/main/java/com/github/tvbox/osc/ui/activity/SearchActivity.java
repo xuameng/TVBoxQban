@@ -79,6 +79,8 @@ import java.util.concurrent.ThreadPoolExecutor;  //xuameng 线程池
 import java.util.concurrent.TimeUnit;   //xuameng 线程池
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
+import android.util.Log;
+import java.util.concurrent.LinkedBlockingQueue;
 
 
 /**
@@ -600,7 +602,7 @@ private void searchResult() {
     }
 
     // 4. 使用CountDownLatch控制并发
-//    showLoading();
+    showLoading();
     CountDownLatch latch = new CountDownLatch(siteKey.size());
     AtomicInteger successCount = new AtomicInteger(0);
 
@@ -626,9 +628,9 @@ private void searchResult() {
             }
             runOnUiThread(() -> {
                 if (successCount.get() == 0) {
-                    showEmptyView();
+                    showEmpty();
                 }
-                hideLoading();
+                showSuccess(); 
             });
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
