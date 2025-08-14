@@ -555,6 +555,7 @@ public class SearchActivity extends BaseActivity {
     Runtime.getRuntime().availableProcessors() * 2); // 动态计算上限
     private final Semaphore taskSemaphore = new Semaphore(MAX_THREADS * 3); // 流量控制
     private volatile ExecutorService searchExecutorService;  //xuameng全局声明
+    private AtomicInteger allRunCount = new AtomicInteger(0);
 
 
 private void searchResult() {
