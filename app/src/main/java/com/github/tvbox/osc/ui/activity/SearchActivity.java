@@ -86,6 +86,7 @@ import java.util.concurrent.TimeoutException;  //xuameng 线程池
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.stream.Collectors;
+import com.google.common.collect.Lists;
 
 
 /**
@@ -554,12 +555,14 @@ public class SearchActivity extends BaseActivity {
         searchResult();
     }
 
+    private static final int MAX_THREADS = Math.min(8, 
+    Runtime.getRuntime().availableProcessors() * 2); // 动态计算上限
+    private final Semaphore taskSemaphore = new Semaphore(MAX_THREADS * 3); // 流量控制
     private volatile ExecutorService searchExecutorService;  //xuameng全局声明
-    private final AtomicInteger allRunCount = new AtomicInteger(0);
-    private static final int MAX_THREADS = 8; // 硬性限制最大线程数
+
 
 private void searchResult() {
-    // 1. 资源清理（增加线程中断检查）
+    // 1. 资源清理（增强中断处理）
     try {
         if (searchExecutorService != null) {
             searchExecutorService.shutdownNow();
@@ -572,20 +575,20 @@ private void searchResult() {
         Log.e(TAG, "资源清理异常", th);
     } finally {
         searchAdapter.setNewData(new ArrayList<>());
-        allRunCount.set(0);
+        taskSemaphore.drainPermits(); // 重置信号量
     }
 
-    // 2. 安全线程池配置
-    int availableProcessors = Math.max(2, Runtime.getRuntime().availableProcessors());
+    // 2. 安全线程池配置（改用有界队列）
     searchExecutorService = new ThreadPoolExecutor(
-        Math.min(4, availableProcessors), // 核心线程
-        MAX_THREADS, // 硬限制
+        Math.min(4, Runtime.getRuntime().availableProcessors()),
+        MAX_THREADS,
         30L, TimeUnit.SECONDS,
-        new SynchronousQueue<>(), // 无缓冲队列
-        new ThreadPoolExecutor.DiscardPolicy() { // 自定义拒绝策略
+        new ArrayBlockingQueue<>(MAX_THREADS * 3), // 缓冲队列
+        new ThreadPoolExecutor.CallerRunsPolicy() { // 降级策略
             @Override
             public void rejectedExecution(Runnable r, ThreadPoolExecutor e) {
-                Log.w(TAG, "任务被拒绝，当前活跃线程: " + e.getActiveCount());
+                Log.w(TAG, "触发降级策略，当前活跃线程: " + e.getActiveCount());
+                super.rejectedExecution(r, e);
             }
         }
     );
@@ -596,21 +599,47 @@ private void searchResult() {
     searchRequestList.remove(home);
     searchRequestList.add(0, home);
 
-    // 4. 分批执行策略
-    int batchSize = Math.min(MAX_THREADS * 2, searchRequestList.size());
-    List<List<String>> batches = Lists.partition(
-        searchRequestList.stream()
-            .filter(bean -> bean.isSearchable())
-            .filter(bean -> mCheckSources == null || mCheckSources.containsKey(bean.getKey()))
-            .map(SourceBean::getKey)
-            .collect(Collectors.toList()),
-        batchSize
-    );
+    // 4. 分批执行策略（增加流量控制）
+    List<List<String>> batches = searchRequestList.stream()
+        .filter(bean -> bean.isSearchable())
+        .filter(bean -> mCheckSources == null || mCheckSources.containsKey(bean.getKey()))
+        .map(SourceBean::getKey)
+        .collect(Collectors.collectingAndThen(
+            Collectors.toList(),
+            list -> Lists.partition(list, Math.min(MAX_THREADS * 2, list.size()))
+        ));
 
     if (batches.isEmpty()) {
         App.showToastShort(mContext, "聚汇影视提示：请指定搜索源！");
         return;
     }
+
+    showLoading();
+    batches.forEach(batch -> {
+        CountDownLatch batchLatch = new CountDownLatch(batch.size());
+        batch.forEach(key -> {
+            try {
+                taskSemaphore.acquire(); // 流量控制
+                searchExecutorService.execute(() -> {
+                    try {
+                        sourceViewModel.getSearch(key, searchTitle);
+                    } finally {
+                        batchLatch.countDown();
+                        taskSemaphore.release();
+                    }
+                });
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                batchLatch.countDown();
+            }
+        });
+        try {
+            batchLatch.await(30, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    });
+}
 
     showLoading();
     batches.forEach(batch -> {
