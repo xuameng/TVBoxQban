@@ -78,10 +78,11 @@ import java.util.concurrent.ArrayBlockingQueue;   //xuameng 线程池
 import java.util.concurrent.ThreadPoolExecutor;  //xuameng 线程池
 import java.util.concurrent.TimeUnit;   //xuameng 线程池
 import java.util.concurrent.CountDownLatch;  //xuameng 线程池
-import android.util.Log;
-import java.util.concurrent.RejectedExecutionException;
-import java.util.stream.Collectors;
-import com.google.common.collect.Lists;
+import java.util.concurrent.Semaphore; //xuameng 线程池
+import android.util.Log; //xuameng 线程池
+import java.util.concurrent.RejectedExecutionException; //xuameng 线程池
+import java.util.stream.Collectors;  //xuameng 线程池
+import com.google.common.collect.Lists; //xuameng 线程池
 
 
 /**
