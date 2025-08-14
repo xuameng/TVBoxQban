@@ -77,12 +77,12 @@ import java.util.Collections;   //xuameng搜索历史
 import java.util.concurrent.ArrayBlockingQueue;   //xuameng 线程池
 import java.util.concurrent.ThreadPoolExecutor;  //xuameng 线程池
 import java.util.concurrent.TimeUnit;   //xuameng 线程池
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.CompletableFuture;  //xuameng 线程池
+import java.util.concurrent.CountDownLatch;  //xuameng 线程池
 import android.util.Log;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.LinkedBlockingQueue;  //xuameng 线程池
+import java.util.concurrent.Future;   //xuameng 线程池
+import java.util.concurrent.TimeoutException;  //xuameng 线程池
 
 
 /**
@@ -112,7 +112,7 @@ public class SearchActivity extends BaseActivity {
 	private SearchPresenter searchPresenter;  //xuameng搜索历史
 	private TextView tHotSearchText;  //xuameng热门搜索
 	private static ArrayList<String> hots = new ArrayList<>();  //xuameng热门搜索
-	private static final String TAG = "SearchActivity";
+	private static final String TAG = "SearchActivity";  //xuameng 线程池
 
     private static HashMap<String, String> mCheckSources = null;
     private SearchCheckboxDialog mSearchCheckboxDialog = null;
@@ -551,97 +551,89 @@ public class SearchActivity extends BaseActivity {
         searchResult();
     }
 
-    private ExecutorService searchExecutorService = null;   //xuameng全局声明
-    private AtomicInteger allRunCount = new AtomicInteger(0);
+    private volatile ExecutorService searchExecutorService;  //xuameng全局声明
+    private final AtomicInteger allRunCount = new AtomicInteger(0);
+    private static final int MAX_THREADS = 8; // 硬性限制最大线程数
 
-
-
+    
+private static final int MAX_THREADS = 8; // 硬性限制最大线程数
+private volatile ExecutorService searchExecutorService;
+private final AtomicInteger allRunCount = new AtomicInteger(0);
 
 private void searchResult() {
-    // 1. 清理前次搜索资源
+    // 1. 资源清理（增加线程中断检查）
     try {
         if (searchExecutorService != null) {
             searchExecutorService.shutdownNow();
-            if (!searchExecutorService.awaitTermination(2, TimeUnit.SECONDS)) {
-                Log.w(TAG, "线程池未完全终止");
+            if (!searchExecutorService.awaitTermination(1, TimeUnit.SECONDS)) {
+                Log.w(TAG, "强制终止残留线程");
             }
-            searchExecutorService = null;
             JsLoader.stopAll();
         }
     } catch (Throwable th) {
-        th.printStackTrace();
+        Log.e(TAG, "资源清理异常", th);
     } finally {
         searchAdapter.setNewData(new ArrayList<>());
         allRunCount.set(0);
     }
 
-    // 2. 优化线程池配置
+    // 2. 安全线程池配置
+    int availableProcessors = Math.max(2, Runtime.getRuntime().availableProcessors());
     searchExecutorService = new ThreadPoolExecutor(
-        Runtime.getRuntime().availableProcessors() + 1, // xuameng动态核心线程数
-        (Runtime.getRuntime().availableProcessors() + 1) * 2,  // xuameng最大线程数, 
+        Math.min(4, availableProcessors), // 核心线程
+        MAX_THREADS, // 硬限制
         30L, TimeUnit.SECONDS,
-        new LinkedBlockingQueue<>(1000),
-        new ThreadPoolExecutor.CallerRunsPolicy() // xuameng降级策略
+        new SynchronousQueue<>(), // 无缓冲队列
+        new ThreadPoolExecutor.DiscardPolicy() { // 自定义拒绝策略
+            @Override
+            public void rejectedExecution(Runnable r, ThreadPoolExecutor e) {
+                Log.w(TAG, "任务被拒绝，当前活跃线程: " + e.getActiveCount());
+            }
+        }
     );
 
-    // 3. 准备搜索源
+    // 3. 准备搜索源（原逻辑不变）
     List<SourceBean> searchRequestList = new ArrayList<>(ApiConfig.get().getSourceBeanList());
     SourceBean home = ApiConfig.get().getHomeSourceBean();
     searchRequestList.remove(home);
     searchRequestList.add(0, home);
 
-    ArrayList<String> siteKey = new ArrayList<>();
-    for (SourceBean bean : searchRequestList) {
-        if (!bean.isSearchable()) continue;
-        if (mCheckSources != null && !mCheckSources.containsKey(bean.getKey())) continue;
-        siteKey.add(bean.getKey());
-        allRunCount.incrementAndGet();
-    }
+    // 4. 分批执行策略
+    int batchSize = Math.min(MAX_THREADS * 2, searchRequestList.size());
+    List<List<String>> batches = Lists.partition(
+        searchRequestList.stream()
+            .filter(bean -> bean.isSearchable())
+            .filter(bean -> mCheckSources == null || mCheckSources.containsKey(bean.getKey()))
+            .map(SourceBean::getKey)
+            .collect(Collectors.toList()),
+        batchSize
+    );
 
-    if (siteKey.isEmpty()) {
-        App.showToastShort(mContext, "聚汇影视提示您：请指定搜索源！");
+    if (batches.isEmpty()) {
+        App.showToastShort(mContext, "聚汇影视提示：请指定搜索源！");
         return;
     }
 
-    // 4. 使用CountDownLatch控制并发
     showLoading();
-    CountDownLatch latch = new CountDownLatch(siteKey.size());
-    AtomicInteger successCount = new AtomicInteger(0);
-    List<Future<?>> taskFutures = new ArrayList<>();
-
-    for (String key : siteKey) {
-        Future<?> future = searchExecutorService.submit(() -> {
+    batches.forEach(batch -> {
+        CountDownLatch batchLatch = new CountDownLatch(batch.size());
+        batch.forEach(key -> {
             try {
-                // 使用CompletableFuture包装任务，设置10秒超时
-                CompletableFuture.runAsync(() -> {
-                    sourceViewModel.getSearch(key, searchTitle);
-                }).get(20, TimeUnit.SECONDS);
-                
-                successCount.incrementAndGet();
-            } catch (TimeoutException e) {
-                Log.w(TAG, "搜索超时: " + key);
-            } catch (Exception e) {
-                Log.e(TAG, "搜索异常: " + key, e);
-            } finally {
-                latch.countDown();
+                searchExecutorService.execute(() -> {
+                    try {
+                        sourceViewModel.getSearch(key, searchTitle);
+                    } finally {
+                        batchLatch.countDown();
+                    }
+                });
+            } catch (RejectedExecutionException e) {
+                batchLatch.countDown();
+                Log.w(TAG, "线程池过载，跳过任务: " + key);
             }
         });
-        taskFutures.add(future);
-    }
-
-    // 5. 异步等待结果
-    CompletableFuture.runAsync(() -> {
+        
         try {
-            // 等待所有任务完成（包括超时和被取消的任务）
-            latch.await();
-            
-            runOnUiThread(() -> {
-                if (successCount.get() == 0) {
-                    showEmpty();
-                } else {
-                    updateSearchResults();
-                }
-            });
+            batchLatch.await(30, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
