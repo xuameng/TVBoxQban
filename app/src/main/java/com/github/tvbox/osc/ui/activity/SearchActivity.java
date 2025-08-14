@@ -554,6 +554,7 @@ public class SearchActivity extends BaseActivity {
 
 
 
+
 private void searchResult() {
     // 1. 清理前次搜索资源
     try {
@@ -606,38 +607,47 @@ private void searchResult() {
     showLoading();
     CountDownLatch latch = new CountDownLatch(siteKey.size());
     AtomicInteger successCount = new AtomicInteger(0);
+    List<Future<?>> taskFutures = new ArrayList<>();
 
     for (String key : siteKey) {
-        searchExecutorService.execute(() -> {
+        Future<?> future = searchExecutorService.submit(() -> {
             try {
-                sourceViewModel.getSearch(key, searchTitle);
+                // 使用CompletableFuture包装任务，设置10秒超时
+                CompletableFuture.runAsync(() -> {
+                    sourceViewModel.getSearch(key, searchTitle);
+                }).get(10, TimeUnit.SECONDS);
+                
                 successCount.incrementAndGet();
+            } catch (TimeoutException e) {
+                Log.w(TAG, "搜索超时: " + key);
             } catch (Exception e) {
                 Log.e(TAG, "搜索异常: " + key, e);
             } finally {
                 latch.countDown();
             }
         });
+        taskFutures.add(future);
     }
 
     // 5. 异步等待结果
     CompletableFuture.runAsync(() -> {
         try {
-            if (!latch.await(10, TimeUnit.SECONDS)) {
-                runOnUiThread(() -> 
-                    App.showToastShort(mContext, "聚汇影视提示您：部分搜索超时！"));
-            }
+            // 等待所有任务完成（包括超时和被取消的任务）
+            latch.await();
+            
             runOnUiThread(() -> {
                 if (successCount.get() == 0) {
                     showEmpty();
+                } else {
+                    updateSearchResults();
                 }
-                showSuccess(); 
             });
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
     });
 }
+
 
 
 
