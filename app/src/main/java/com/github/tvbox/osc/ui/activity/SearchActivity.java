@@ -81,6 +81,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import android.util.Log;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeoutException;
 
 
 /**
@@ -615,7 +617,7 @@ private void searchResult() {
                 // 使用CompletableFuture包装任务，设置10秒超时
                 CompletableFuture.runAsync(() -> {
                     sourceViewModel.getSearch(key, searchTitle);
-                }).get(10, TimeUnit.SECONDS);
+                }).get(20, TimeUnit.SECONDS);
                 
                 successCount.incrementAndGet();
             } catch (TimeoutException e) {
@@ -649,7 +651,13 @@ private void searchResult() {
 }
 
 
-
+    private void updateSearchResults() {
+        runOnUiThread(() -> {
+            if (searchAdapter != null) {
+                searchAdapter.notifyDataSetChanged();
+            }
+        });
+    }
 
     private boolean matchSearchResult(String name, String searchTitle) {
         if (TextUtils.isEmpty(name) || TextUtils.isEmpty(searchTitle)) return false;
