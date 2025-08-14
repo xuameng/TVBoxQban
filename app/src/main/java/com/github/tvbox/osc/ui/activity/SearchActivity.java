@@ -79,12 +79,11 @@ import java.util.concurrent.Future;  //xuameng 线程池
 import java.util.concurrent.ArrayBlockingQueue;   //xuameng 线程池
 import java.util.concurrent.CountDownLatch;  //xuameng 线程池
 import java.util.concurrent.SynchronousQueue;
-
-// 必需导入
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import android.util.Log;
+import java.util.concurrent.ExecutionException;
 
 
 /**
@@ -553,16 +552,7 @@ public class SearchActivity extends BaseActivity {
 
     private ExecutorService searchExecutorService = null;   //xuameng全局声明
     private AtomicInteger allRunCount = new AtomicInteger(0);
-
- 
-
-private volatile ExecutorService searchExecutorService;
-private final AtomicInteger allRunCount = new AtomicInteger(0);
-
-
-private volatile ExecutorService searchExecutorService;
-private final AtomicInteger allRunCount = new AtomicInteger(0);
-private static final String TAG = "SearchActivity";  //xuameng 线程池
+    private static final String TAG = "SearchActivity";  //xuameng 线程池
 
 private void searchResult() {
     // 1. 资源清理（增加volatile保证可见性）
