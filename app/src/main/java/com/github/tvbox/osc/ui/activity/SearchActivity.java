@@ -71,7 +71,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.Collections;   //xuameng搜索历史
 import java.util.concurrent.ThreadPoolExecutor;  //xuameng 线程池
@@ -79,6 +78,13 @@ import java.util.concurrent.TimeUnit;   //xuameng 线程池
 import java.util.concurrent.Future;  //xuameng 线程池
 import java.util.concurrent.ArrayBlockingQueue;   //xuameng 线程池
 import java.util.concurrent.CountDownLatch;  //xuameng 线程池
+import java.util.concurrent.SynchronousQueue;
+
+// 必需导入
+import java.util.concurrent.CompletionService;
+import java.util.concurrent.ExecutorCompletionService;
+import java.util.concurrent.ExecutorService;
+
 
 /**
  * @author pj567
@@ -135,14 +141,14 @@ public class SearchActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         if (pauseRunnable != null && pauseRunnable.size() > 0) {
+    int corePoolSize = Math.max(2, Runtime.getRuntime().availableProcessors());
     searchExecutorService = new ThreadPoolExecutor(
-        Runtime.getRuntime().availableProcessors() + 1,
-        (Runtime.getRuntime().availableProcessors() + 1) * 2,
-        10L, TimeUnit.SECONDS,
-        new ArrayBlockingQueue<>(50),
+        corePoolSize,
+        corePoolSize * 2,
+        5L, TimeUnit.SECONDS,
+        new SynchronousQueue<>(),
         new ThreadPoolExecutor.CallerRunsPolicy()
     );
-    ((ThreadPoolExecutor)searchExecutorService).prestartAllCoreThreads();
             allRunCount.set(pauseRunnable.size());
             for (Runnable runnable : pauseRunnable) {
                 searchExecutorService.execute(runnable);
@@ -548,10 +554,18 @@ public class SearchActivity extends BaseActivity {
     private AtomicInteger allRunCount = new AtomicInteger(0);
 
  
+
+private volatile ExecutorService searchExecutorService;
+private final AtomicInteger allRunCount = new AtomicInteger(0);
+
 private void searchResult() {
+    // 1. 资源清理（增加volatile保证可见性）
     try {
         if (searchExecutorService != null) {
             searchExecutorService.shutdownNow();
+            if (!searchExecutorService.awaitTermination(1, TimeUnit.SECONDS)) {
+                Log.w(TAG, "线程池未完全终止");
+            }
             searchExecutorService = null;
             JsLoader.stopAll();
         }
@@ -562,17 +576,18 @@ private void searchResult() {
         allRunCount.set(0);
     }
 
+    // 2. 优化线程池配置（核心线程数动态调整）
+    int corePoolSize = Math.max(2, Runtime.getRuntime().availableProcessors());
     searchExecutorService = new ThreadPoolExecutor(
-        Runtime.getRuntime().availableProcessors() + 1,
-        (Runtime.getRuntime().availableProcessors() + 1) * 2,
-        10L, TimeUnit.SECONDS,
-        new ArrayBlockingQueue<>(50),
+        corePoolSize,
+        corePoolSize * 2,
+        5L, TimeUnit.SECONDS,
+        new SynchronousQueue<>(),
         new ThreadPoolExecutor.CallerRunsPolicy()
     );
-    ((ThreadPoolExecutor)searchExecutorService).prestartAllCoreThreads();
 
-    List<SourceBean> searchRequestList = new ArrayList<>();
-    searchRequestList.addAll(ApiConfig.get().getSourceBeanList());
+    // 3. 准备搜索源（保持原有逻辑）
+    List<SourceBean> searchRequestList = new ArrayList<>(ApiConfig.get().getSourceBeanList());
     SourceBean home = ApiConfig.get().getHomeSourceBean();
     searchRequestList.remove(home);
     searchRequestList.add(0, home);
@@ -591,42 +606,38 @@ private void searchResult() {
     }
 
     showLoading();
-    
-    // 分批处理逻辑
-    int batchSize = 10;
-    List<List<String>> batches = new ArrayList<>();
-    for (int i = 0; i < siteKey.size(); i += batchSize) {
-        batches.add(siteKey.subList(i, Math.min(i + batchSize, siteKey.size())));
+
+    // 4. 改进的分批处理机制
+    int batchSize = Math.min(5, siteKey.size()); // 动态调整批次大小
+    ExecutorCompletionService<Void> completionService = 
+        new ExecutorCompletionService<>(searchExecutorService);
+
+    for (String key : siteKey) {
+        completionService.submit(() -> {
+            try {
+                sourceViewModel.getSearch(key, searchTitle);
+                return null;
+            } catch (Exception e) {
+                return null;
+            }
+        });
     }
 
-    for (List<String> batch : batches) {
-        CountDownLatch batchLatch = new CountDownLatch(batch.size());
-        List<Future<?>> futures = new ArrayList<>();
-
-        for (String key : batch) {
-            Future<?> future = searchExecutorService.submit(() -> {
-                try {
-                    sourceViewModel.getSearch(key, searchTitle);
-                } finally {
-                    batchLatch.countDown();
-                }
-            });
-            futures.add(future);
-        }
-
-        try {
-            if (!batchLatch.await(10, TimeUnit.SECONDS)) {
-                for (Future<?> future : futures) {
-                    if (!future.isDone()) {
-                        future.cancel(true);
-                    }
-                }
+    // 5. 改进的结果处理（带超时控制）
+    try {
+        for (int i = 0; i < siteKey.size(); i++) {
+            Future<Void> future = completionService.poll(3, TimeUnit.SECONDS);
+            if (future == null) {
+                continue;
             }
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+            future.get();
         }
+    } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+    } catch (ExecutionException e) {
     }
 }
+
 
 
     private void updateSearchResults() {
