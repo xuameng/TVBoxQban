@@ -140,11 +140,11 @@ public class SearchActivity extends BaseActivity {
         if (pauseRunnable != null && pauseRunnable.size() > 0) {
 // 改进后的线程池配置
 searchExecutorService = new ThreadPoolExecutor(
-    Math.min(4, Runtime.getRuntime().availableProcessors()), // 核心线程数
-    Math.min(16, Runtime.getRuntime().availableProcessors() * 4), // 最大线程数
+    Math.min(2, Runtime.getRuntime().availableProcessors()), // 核心线程数
+    Math.min(4, Runtime.getRuntime().availableProcessors() * 2), // 最大线程数
     60L, TimeUnit.SECONDS, // 延长空闲线程存活时间
     new LinkedBlockingQueue<>(50), // 设置合理队列容量
-    new ThreadPoolExecutor.DiscardOldestPolicy() // 队列满时丢弃最旧任务
+    new ThreadPoolExecutor.CallerRunsPolicy()  // 由调用线程直接执行被拒绝任务
 );
 
             allRunCount.set(pauseRunnable.size());
@@ -568,11 +568,11 @@ private void searchResult() {
     }
 
 searchExecutorService = new ThreadPoolExecutor(
-    Math.min(4, Runtime.getRuntime().availableProcessors()), // 核心线程数
-    Math.min(16, Runtime.getRuntime().availableProcessors() * 4), // 最大线程数
+    Math.min(2, Runtime.getRuntime().availableProcessors()), // 核心线程数
+    Math.min(4, Runtime.getRuntime().availableProcessors() * 2), // 最大线程数
     60L, TimeUnit.SECONDS, // 延长空闲线程存活时间
     new LinkedBlockingQueue<>(50), // 设置合理队列容量
-    new ThreadPoolExecutor.DiscardOldestPolicy() // 队列满时丢弃最旧任务
+    new ThreadPoolExecutor.CallerRunsPolicy()  // 由调用线程直接执行被拒绝任务
 );
 
     List<SourceBean> searchRequestList = new ArrayList<>();
