@@ -77,8 +77,6 @@ import java.util.Collections;   //xuameng搜索历史
 import java.util.concurrent.ArrayBlockingQueue;   //xuameng 线程池
 import java.util.concurrent.ThreadPoolExecutor;  //xuameng 线程池
 import java.util.concurrent.TimeUnit;   //xuameng 线程池
-import java.util.concurrent.LinkedBlockingQueue;
-
 
 /**
  * @author pj567
@@ -135,15 +133,14 @@ public class SearchActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         if (pauseRunnable != null && pauseRunnable.size() > 0) {
-        searchExecutorService = new ThreadPoolExecutor(
-            Runtime.getRuntime().availableProcessors(), // xuameng动态核心线程数
-            (Runtime.getRuntime().availableProcessors() * 1.5),  // xuameng最大线程数, 
-            10L, 
-            TimeUnit.SECONDS,
-            new LinkedBlockingQueue<>(100),
-			new ThreadPoolExecutor.CallerRunsPolicy() // xuameng降级策略
-
-        );
+            searchExecutorService = new ThreadPoolExecutor(
+                Runtime.getRuntime().availableProcessors() + 1, // xuameng动态核心线程数
+                (Runtime.getRuntime().availableProcessors() + 1) * 1.5,  // xuameng最大线程数
+                10L, 
+                TimeUnit.SECONDS,
+                new ArrayBlockingQueue<>(100), // xuameng任务队列容量
+                new ThreadPoolExecutor.CallerRunsPolicy() // xuameng降级策略
+            );
             ((ThreadPoolExecutor)searchExecutorService).prestartAllCoreThreads();  // xuameng预热线程
             allRunCount.set(pauseRunnable.size());
             for (Runnable runnable : pauseRunnable) {
@@ -563,11 +560,11 @@ public class SearchActivity extends BaseActivity {
             allRunCount.set(0);
         }
         searchExecutorService = new ThreadPoolExecutor(
-            Runtime.getRuntime().availableProcessors(), // xuameng动态核心线程数
-            (Runtime.getRuntime().availableProcessors() * 1.5),  // xuameng最大线程数, 
+            Runtime.getRuntime().availableProcessors() + 1, // xuameng动态核心线程数
+            (Runtime.getRuntime().availableProcessors() + 1) * 1.5,  // xuameng最大线程数, 
             10L, 
             TimeUnit.SECONDS,
-            new LinkedBlockingQueue<>(100),
+            new ArrayBlockingQueue<>(100), // xuameng任务队列容量
 			new ThreadPoolExecutor.CallerRunsPolicy() // xuameng降级策略
 
         );
