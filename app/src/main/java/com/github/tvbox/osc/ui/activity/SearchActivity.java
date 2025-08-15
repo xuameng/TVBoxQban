@@ -138,14 +138,17 @@ public class SearchActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         if (pauseRunnable != null && pauseRunnable.size() > 0) {
-// 改进后的线程池配置
-searchExecutorService = new ThreadPoolExecutor(
-    Math.min(2, Runtime.getRuntime().availableProcessors()), // 核心线程数
-    Math.min(4, Runtime.getRuntime().availableProcessors() * 2), // 最大线程数
-    60L, TimeUnit.SECONDS, // 延长空闲线程存活时间
-    new LinkedBlockingQueue<>(10), // 设置合理队列容量
-    new ThreadPoolExecutor.CallerRunsPolicy()  // 由调用线程直接执行被拒绝任务
-);
+        // 动态计算线程池参数
+        int corePoolSize = Math.min(Math.max(2, availableProcessors), 8);
+        int maxPoolSize = Math.min(availableProcessors * 4, 16);
+        // 创建新线程池处理当前批次
+        searchExecutorService = new ThreadPoolExecutor(
+            corePoolSize,
+            maxPoolSize,
+            30L, TimeUnit.SECONDS,
+            new LinkedBlockingQueue<>(20),
+            new ThreadPoolExecutor.CallerRunsPolicy()
+        );
 
             allRunCount.set(pauseRunnable.size());
             for (Runnable runnable : pauseRunnable) {
@@ -598,12 +601,16 @@ private void searchResult() {
         int end = Math.min(i + batchSize, siteKey.size());
         List<String> batch = siteKey.subList(i, end);
         
+
+        // 动态计算线程池参数
+        int corePoolSize = Math.min(Math.max(2, availableProcessors), 8);
+        int maxPoolSize = Math.min(availableProcessors * 4, 16);
         // 创建新线程池处理当前批次
         searchExecutorService = new ThreadPoolExecutor(
-            Math.min(2, Runtime.getRuntime().availableProcessors()),
-            Math.min(4, Runtime.getRuntime().availableProcessors() * 2),
-            60L, TimeUnit.SECONDS,
-            new LinkedBlockingQueue<>(10),
+            corePoolSize,
+            maxPoolSize,
+            30L, TimeUnit.SECONDS,
+            new LinkedBlockingQueue<>(20),
             new ThreadPoolExecutor.CallerRunsPolicy()
         );
 
