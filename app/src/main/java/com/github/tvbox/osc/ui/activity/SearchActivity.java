@@ -138,7 +138,7 @@ searchExecutorService = new ThreadPoolExecutor(
     Runtime.getRuntime().availableProcessors(), // 核心线程数
     Runtime.getRuntime().availableProcessors(), // 最大线程数=核心数
     0, TimeUnit.MILLISECONDS,
-    new LinkedBlockingQueue<>(),           // 设置队列容量
+    new LinkedBlockingQueue<>(50),           // 设置队列容量
     new ThreadPoolExecutor.AbortPolicy()  // 必须添加拒绝策略
 );
             ((ThreadPoolExecutor)searchExecutorService).prestartAllCoreThreads();  // xuameng预热线程
@@ -563,7 +563,7 @@ searchExecutorService = new ThreadPoolExecutor(
     Runtime.getRuntime().availableProcessors(), // 核心线程数
     Runtime.getRuntime().availableProcessors(), // 最大线程数=核心数
     0, TimeUnit.MILLISECONDS,
-    new LinkedBlockingQueue<>(),           // 设置队列容量
+    new LinkedBlockingQueue<>(50),           // 设置队列容量
     new ThreadPoolExecutor.AbortPolicy()  // 必须添加拒绝策略
 );
 
