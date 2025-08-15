@@ -79,6 +79,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;  //xuameng 线程池
 import java.util.concurrent.TimeUnit;   //xuameng 线程池
 import java.util.concurrent.SynchronousQueue;
+import android.util.Log;
 
 /**
  * @author pj567
@@ -545,62 +546,76 @@ searchExecutorService = new ThreadPoolExecutor(
 
     private ExecutorService searchExecutorService = null;   //xuameng全局声明
     private AtomicInteger allRunCount = new AtomicInteger(0);
+    private static final String TAG = "SearchActivity";
 
-    private void searchResult() {
-        try {
-            if (searchExecutorService != null) {  //xuameng必须加防止内存溢出
-                searchExecutorService.shutdownNow();
-                searchExecutorService = null;
-                JsLoader.stopAll();
-            }
-        } catch (Throwable th) {
-            th.printStackTrace();
-        } finally {
-            searchAdapter.setNewData(new ArrayList<>());
-            allRunCount.set(0);
-        }
-searchExecutorService = new ThreadPoolExecutor(
-    Math.min(8, Runtime.getRuntime().availableProcessors() * 2), // 动态核心数
-    50, // 提高最大线程数
-    30L, TimeUnit.SECONDS,
-    new SynchronousQueue<>(), // 无界队列易OOM，改用同步队列
-    new ThreadPoolExecutor.CallerRunsPolicy() // 降级策略
-);
 
-        List<SourceBean> searchRequestList = new ArrayList<>();
-        searchRequestList.addAll(ApiConfig.get().getSourceBeanList());
-        SourceBean home = ApiConfig.get().getHomeSourceBean();
-        searchRequestList.remove(home);
-        searchRequestList.add(0, home);
-
-        ArrayList<String> siteKey = new ArrayList<>();
-        for (SourceBean bean : searchRequestList) {
-            if (!bean.isSearchable()) {
-                continue;
-            }
-            if (mCheckSources != null && !mCheckSources.containsKey(bean.getKey())) {
-                continue;
-            }
-            siteKey.add(bean.getKey());
-            allRunCount.incrementAndGet();
-        }
-        if (siteKey.size() <= 0) {
-            App.showToastShort(mContext, "聚汇影视提示：请指定搜索源！");
-   //         showEmpty();  //xuameng
-            return;
-        }
-        showLoading();        //xuameng 转圈动画
-        for (String key : siteKey) {
-searchExecutorService.execute(() -> {
+private void searchResult() {
     try {
-        sourceViewModel.getSearch(key, searchTitle);
-    } catch (Exception e) {
-        Log.e(TAG, "Search failed: " + key, e);
+        if (searchExecutorService != null) {
+            searchExecutorService.shutdownNow();
+            searchExecutorService = null;
+            JsLoader.stopAll();
+        }
+    } catch (Throwable th) {
+        th.printStackTrace();
+    } finally {
+        searchAdapter.setNewData(new ArrayList<>());
+        allRunCount.set(0);
     }
-});
 
+    searchExecutorService = new ThreadPoolExecutor(
+        Math.min(8, Runtime.getRuntime().availableProcessors() * 2),
+        50,
+        30L, TimeUnit.SECONDS,
+        new SynchronousQueue<>(),
+        new ThreadPoolExecutor.CallerRunsPolicy()
+    );
+
+    List<SourceBean> searchRequestList = new ArrayList<>();
+    searchRequestList.addAll(ApiConfig.get().getSourceBeanList());
+    SourceBean home = ApiConfig.get().getHomeSourceBean();
+    searchRequestList.remove(home);
+    searchRequestList.add(0, home);
+
+    ArrayList<String> siteKey = new ArrayList<>();
+    for (SourceBean bean : searchRequestList) {
+        if (!bean.isSearchable()) {
+            continue;
+        }
+        if (mCheckSources != null && !mCheckSources.containsKey(bean.getKey())) {
+            continue;
+        }
+        siteKey.add(bean.getKey());
+        allRunCount.incrementAndGet();
+    }
+    
+    if (siteKey.size() <= 0) {
+        App.showToastShort(mContext, "聚汇影视提示：请指定搜索源！");
+        return;
+    }
+    
+    showLoading();
+    
+    for (String key : siteKey) {
+        try {
+            searchExecutorService.execute(() -> {
+                try {
+                    sourceViewModel.getSearch(key, searchTitle);
+                } catch (Exception e) {
+                    Log.e(TAG, "Search processor crashed: " + key, e);
+                }
+            });
+        } catch (RejectedExecutionException e) {
+            Log.w(TAG, "Thread pool overload, executing on caller thread: " + key);
+            try {
+                sourceViewModel.getSearch(key, searchTitle);
+            } catch (Exception ex) {
+                Log.e(TAG, "Fallback search failed: " + key, ex);
+            }
         }
     }
+}
+
 
     private boolean matchSearchResult(String name, String searchTitle) {
         if (TextUtils.isEmpty(name) || TextUtils.isEmpty(searchTitle)) return false;
