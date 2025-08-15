@@ -75,6 +75,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.Collections;   //xuameng搜索历史
 import java.util.concurrent.ArrayBlockingQueue;   //xuameng 线程池
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;  //xuameng 线程池
 import java.util.concurrent.TimeUnit;   //xuameng 线程池
 
@@ -134,12 +135,8 @@ public class SearchActivity extends BaseActivity {
         super.onResume();
         if (pauseRunnable != null && pauseRunnable.size() > 0) {
             searchExecutorService = new ThreadPoolExecutor(
-                Runtime.getRuntime().availableProcessors() + 1, // xuameng动态核心线程数
-                (Runtime.getRuntime().availableProcessors() + 1) * 1.5,  // xuameng最大线程数
-                10L, 
-                TimeUnit.SECONDS,
-                new ArrayBlockingQueue<>(100), // xuameng任务队列容量
-                new ThreadPoolExecutor.CallerRunsPolicy() // xuameng降级策略
+                Runtime.getRuntime().availableProcessors(), // xuameng动态核心线程数
+                new LinkedBlockingQueue<>(), // xuameng任务队列容量
             );
             ((ThreadPoolExecutor)searchExecutorService).prestartAllCoreThreads();  // xuameng预热线程
             allRunCount.set(pauseRunnable.size());
@@ -560,12 +557,8 @@ public class SearchActivity extends BaseActivity {
             allRunCount.set(0);
         }
         searchExecutorService = new ThreadPoolExecutor(
-            Runtime.getRuntime().availableProcessors() + 1, // xuameng动态核心线程数
-            (Runtime.getRuntime().availableProcessors() + 1) * 1.5,  // xuameng最大线程数, 
-            10L, 
-            TimeUnit.SECONDS,
-            new ArrayBlockingQueue<>(100), // xuameng任务队列容量
-			new ThreadPoolExecutor.CallerRunsPolicy() // xuameng降级策略
+            Runtime.getRuntime().availableProcessors(), // xuameng动态核心线程数
+            new LinkedBlockingQueue<>(), // xuameng任务队列容量
 
         );
         ((ThreadPoolExecutor)searchExecutorService).prestartAllCoreThreads();  // xuameng预热线程
