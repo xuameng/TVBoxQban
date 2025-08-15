@@ -77,6 +77,8 @@ import java.util.Collections;   //xuameng搜索历史
 import java.util.concurrent.ArrayBlockingQueue;   //xuameng 线程池
 import java.util.concurrent.ThreadPoolExecutor;  //xuameng 线程池
 import java.util.concurrent.TimeUnit;   //xuameng 线程池
+import java.util.concurrent.LinkedBlockingQueue;
+
 
 /**
  * @author pj567
@@ -135,10 +137,10 @@ public class SearchActivity extends BaseActivity {
         if (pauseRunnable != null && pauseRunnable.size() > 0) {
         searchExecutorService = new ThreadPoolExecutor(
             Runtime.getRuntime().availableProcessors(), // xuameng动态核心线程数
-            Runtime.getRuntime().availableProcessors() * 1.5,  // xuameng最大线程数, 
+            (Runtime.getRuntime().availableProcessors() * 1.5),  // xuameng最大线程数, 
             10L, 
             TimeUnit.SECONDS,
-            new ArrayBlockingQueue<>(100),
+            new LinkedBlockingQueue<>(100),
 			new ThreadPoolExecutor.CallerRunsPolicy() // xuameng降级策略
 
         );
@@ -562,10 +564,10 @@ public class SearchActivity extends BaseActivity {
         }
         searchExecutorService = new ThreadPoolExecutor(
             Runtime.getRuntime().availableProcessors(), // xuameng动态核心线程数
-            Runtime.getRuntime().availableProcessors() * 1.5,  // xuameng最大线程数, 
+            (Runtime.getRuntime().availableProcessors() * 1.5),  // xuameng最大线程数, 
             10L, 
             TimeUnit.SECONDS,
-            new ArrayBlockingQueue<>(100),
+            new LinkedBlockingQueue<>(100),
 			new ThreadPoolExecutor.CallerRunsPolicy() // xuameng降级策略
 
         );
