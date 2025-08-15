@@ -143,7 +143,7 @@ searchExecutorService = new ThreadPoolExecutor(
     Math.min(2, Runtime.getRuntime().availableProcessors()), // 核心线程数
     Math.min(4, Runtime.getRuntime().availableProcessors() * 2), // 最大线程数
     60L, TimeUnit.SECONDS, // 延长空闲线程存活时间
-    new LinkedBlockingQueue<>(500), // 设置合理队列容量
+    new LinkedBlockingQueue<>(10), // 设置合理队列容量
     new ThreadPoolExecutor.CallerRunsPolicy()  // 由调用线程直接执行被拒绝任务
 );
 
@@ -553,6 +553,7 @@ searchExecutorService = new ThreadPoolExecutor(
     private static final String TAG = "SearchActivity";
 
 
+
 private void searchResult() {
     try {
         if (searchExecutorService != null) {
@@ -566,14 +567,6 @@ private void searchResult() {
         searchAdapter.setNewData(new ArrayList<>());
         allRunCount.set(0);
     }
-
-searchExecutorService = new ThreadPoolExecutor(
-    Math.min(2, Runtime.getRuntime().availableProcessors()), // 核心线程数
-    Math.min(4, Runtime.getRuntime().availableProcessors() * 2), // 最大线程数
-    60L, TimeUnit.SECONDS, // 延长空闲线程存活时间
-    new LinkedBlockingQueue<>(500), // 设置合理队列容量
-    new ThreadPoolExecutor.CallerRunsPolicy()  // 由调用线程直接执行被拒绝任务
-);
 
     List<SourceBean> searchRequestList = new ArrayList<>();
     searchRequestList.addAll(ApiConfig.get().getSourceBeanList());
@@ -590,7 +583,6 @@ searchExecutorService = new ThreadPoolExecutor(
             continue;
         }
         siteKey.add(bean.getKey());
-        allRunCount.incrementAndGet();
     }
     
     if (siteKey.size() <= 0) {
@@ -600,25 +592,57 @@ searchExecutorService = new ThreadPoolExecutor(
     
     showLoading();
     
-    for (String key : siteKey) {
-        try {
-            searchExecutorService.execute(() -> {
+    // 分批处理（每批10个源）
+    int batchSize = 10;
+    for (int i = 0; i < siteKey.size(); i += batchSize) {
+        int end = Math.min(i + batchSize, siteKey.size());
+        List<String> batch = siteKey.subList(i, end);
+        
+        // 创建新线程池处理当前批次
+        searchExecutorService = new ThreadPoolExecutor(
+            Math.min(2, Runtime.getRuntime().availableProcessors()),
+            Math.min(4, Runtime.getRuntime().availableProcessors() * 2),
+            60L, TimeUnit.SECONDS,
+            new LinkedBlockingQueue<>(10),
+            new ThreadPoolExecutor.CallerRunsPolicy()
+        );
+
+        // 执行当前批次任务
+        for (String key : batch) {
+            try {
+                searchExecutorService.execute(() -> {
+                    try {
+                        sourceViewModel.getSearch(key, searchTitle);
+                    } catch (Exception e) {
+                        Log.e(TAG, "Search processor crashed: " + key, e);
+                    }
+                });
+            } catch (RejectedExecutionException e) {
+                Log.w(TAG, "Thread pool overload, executing on caller thread: " + key);
                 try {
                     sourceViewModel.getSearch(key, searchTitle);
-                } catch (Exception e) {
-                    Log.e(TAG, "Search processor crashed: " + key, e);
+                } catch (Exception ex) {
+                    Log.e(TAG, "Fallback search failed: " + key, ex);
                 }
-            });
-        } catch (RejectedExecutionException e) {
-            Log.w(TAG, "Thread pool overload, executing on caller thread: " + key);
-            try {
-                sourceViewModel.getSearch(key, searchTitle);
-            } catch (Exception ex) {
-                Log.e(TAG, "Fallback search failed: " + key, ex);
             }
+        }
+        
+        // 等待当前批次完成
+        try {
+            searchExecutorService.shutdown();
+            if (!searchExecutorService.awaitTermination(60, TimeUnit.SECONDS)) {
+                searchExecutorService.shutdownNow();
+            }
+        } catch (InterruptedException ie) {
+            searchExecutorService.shutdownNow();
+            Thread.currentThread().interrupt();
+        } finally {
+            searchExecutorService = null;
+            JsLoader.stopAll();
         }
     }
 }
+
 
 
     private boolean matchSearchResult(String name, String searchTitle) {
