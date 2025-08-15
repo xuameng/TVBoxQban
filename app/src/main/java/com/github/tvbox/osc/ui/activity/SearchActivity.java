@@ -138,7 +138,8 @@ public class SearchActivity extends BaseActivity {
                 (Runtime.getRuntime().availableProcessors() + 1) * 2,  // xuameng最大线程数
                 10L, 
                 TimeUnit.SECONDS,
-                new ArrayBlockingQueue<>(1000) // xuameng任务队列容量
+                new ArrayBlockingQueue<>(1000), // xuameng任务队列容量
+                new ThreadPoolExecutor.CallerRunsPolicy() // xuameng降级策略
             );
             ((ThreadPoolExecutor)searchExecutorService).prestartAllCoreThreads();  // xuameng预热线程
             allRunCount.set(pauseRunnable.size());
@@ -563,7 +564,8 @@ public class SearchActivity extends BaseActivity {
             (Runtime.getRuntime().availableProcessors() + 1) * 2,  // xuameng最大线程数, 
             10L, 
             TimeUnit.SECONDS,
-            new ArrayBlockingQueue<>(1000) // xuameng任务队列容量
+            new ArrayBlockingQueue<>(1000), // xuameng任务队列容量
+			new ThreadPoolExecutor.CallerRunsPolicy() // xuameng降级策略
 
         );
         ((ThreadPoolExecutor)searchExecutorService).prestartAllCoreThreads();  // xuameng预热线程
