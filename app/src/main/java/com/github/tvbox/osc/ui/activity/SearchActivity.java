@@ -139,6 +139,7 @@ public class SearchActivity extends BaseActivity {
         super.onResume();
         if (pauseRunnable != null && pauseRunnable.size() > 0) {
         // 动态计算线程池参数
+        int availableProcessors = Runtime.getRuntime().availableProcessors();
         int corePoolSize = Math.min(Math.max(2, availableProcessors), 8);
         int maxPoolSize = Math.min(availableProcessors * 4, 16);
         // 创建新线程池处理当前批次
@@ -603,6 +604,7 @@ private void searchResult() {
         
 
         // 动态计算线程池参数
+        int availableProcessors = Runtime.getRuntime().availableProcessors();
         int corePoolSize = Math.min(Math.max(2, availableProcessors), 8);
         int maxPoolSize = Math.min(availableProcessors * 4, 16);
         // 创建新线程池处理当前批次
