@@ -188,9 +188,10 @@ public class CollectActivity extends BaseActivity {
         super.onResume();
         if(mGridView != null){
            mGridView.postDelayed(() -> {
+               mGridView.setSelection(0);  // 选择第一项
                mGridView.requestFocus();
                mGridView.requestFocusFromTouch();
-           }, 100); // 延迟100ms确保渲染完成  默认焦点丢失问题
+           }, 200); // 延迟200ms确保渲染完成  默认焦点丢失问题
         }
     }
 
