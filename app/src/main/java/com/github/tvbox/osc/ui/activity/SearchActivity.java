@@ -78,6 +78,7 @@ import java.util.concurrent.ArrayBlockingQueue;   //xuameng 线程池
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;  //xuameng 线程池
 import java.util.concurrent.TimeUnit;   //xuameng 线程池
+import java.util.concurrent.SynchronousQueue;
 
 /**
  * @author pj567
@@ -135,13 +136,12 @@ public class SearchActivity extends BaseActivity {
         super.onResume();
         if (pauseRunnable != null && pauseRunnable.size() > 0) {
 searchExecutorService = new ThreadPoolExecutor(
-    Runtime.getRuntime().availableProcessors(), // 核心线程数
-    Runtime.getRuntime().availableProcessors(), // 最大线程数=核心数
-    0, TimeUnit.MILLISECONDS,
-    new LinkedBlockingQueue<>(50),           // 设置队列容量
-    new ThreadPoolExecutor.AbortPolicy()  // 必须添加拒绝策略
+    Math.min(8, Runtime.getRuntime().availableProcessors() * 2), // 动态核心数
+    50, // 提高最大线程数
+    30L, TimeUnit.SECONDS,
+    new SynchronousQueue<>(), // 无界队列易OOM，改用同步队列
+    new ThreadPoolExecutor.CallerRunsPolicy() // 降级策略
 );
-            ((ThreadPoolExecutor)searchExecutorService).prestartAllCoreThreads();  // xuameng预热线程
             allRunCount.set(pauseRunnable.size());
             for (Runnable runnable : pauseRunnable) {
                 searchExecutorService.execute(runnable);
@@ -560,14 +560,13 @@ searchExecutorService = new ThreadPoolExecutor(
             allRunCount.set(0);
         }
 searchExecutorService = new ThreadPoolExecutor(
-    Runtime.getRuntime().availableProcessors(), // 核心线程数
-    Runtime.getRuntime().availableProcessors(), // 最大线程数=核心数
-    0, TimeUnit.MILLISECONDS,
-    new LinkedBlockingQueue<>(50),           // 设置队列容量
-    new ThreadPoolExecutor.AbortPolicy()  // 必须添加拒绝策略
+    Math.min(8, Runtime.getRuntime().availableProcessors() * 2), // 动态核心数
+    50, // 提高最大线程数
+    30L, TimeUnit.SECONDS,
+    new SynchronousQueue<>(), // 无界队列易OOM，改用同步队列
+    new ThreadPoolExecutor.CallerRunsPolicy() // 降级策略
 );
 
-        ((ThreadPoolExecutor)searchExecutorService).prestartAllCoreThreads();  // xuameng预热线程
         List<SourceBean> searchRequestList = new ArrayList<>();
         searchRequestList.addAll(ApiConfig.get().getSourceBeanList());
         SourceBean home = ApiConfig.get().getHomeSourceBean();
@@ -592,12 +591,14 @@ searchExecutorService = new ThreadPoolExecutor(
         }
         showLoading();        //xuameng 转圈动画
         for (String key : siteKey) {
-            searchExecutorService.execute(new Runnable() {
-                @Override
-                public void run() {
-                    sourceViewModel.getSearch(key, searchTitle);
-                }
-            });
+searchExecutorService.execute(() -> {
+    try {
+        sourceViewModel.getSearch(key, searchTitle);
+    } catch (Exception e) {
+        Log.e(TAG, "Search failed: " + key, e);
+    }
+});
+
         }
     }
 
