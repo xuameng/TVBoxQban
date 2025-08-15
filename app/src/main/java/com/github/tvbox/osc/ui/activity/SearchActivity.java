@@ -135,8 +135,10 @@ public class SearchActivity extends BaseActivity {
         super.onResume();
         if (pauseRunnable != null && pauseRunnable.size() > 0) {
             searchExecutorService = new ThreadPoolExecutor(
-                Runtime.getRuntime().availableProcessors(), // xuameng动态核心线程数
-                new LinkedBlockingQueue<>(), // xuameng任务队列容量
+    Runtime.getRuntime().availableProcessors(), // 核心线程数
+    Runtime.getRuntime().availableProcessors(), // 最大线程数=核心数（固定大小）
+    0, TimeUnit.MILLISECONDS,                  // 非核心线程立即回收（实际不会触发）
+    new LinkedBlockingQueue<>(),           // 建议设置队列容量
             );
             ((ThreadPoolExecutor)searchExecutorService).prestartAllCoreThreads();  // xuameng预热线程
             allRunCount.set(pauseRunnable.size());
@@ -556,11 +558,13 @@ public class SearchActivity extends BaseActivity {
             searchAdapter.setNewData(new ArrayList<>());
             allRunCount.set(0);
         }
-        searchExecutorService = new ThreadPoolExecutor(
-            Runtime.getRuntime().availableProcessors(), // xuameng动态核心线程数
-            new LinkedBlockingQueue<>(), // xuameng任务队列容量
+    searchExecutorService = new ThreadPoolExecutor(
+    Runtime.getRuntime().availableProcessors(), // 核心线程数
+    Runtime.getRuntime().availableProcessors(), // 最大线程数=核心数（固定大小）
+    0, TimeUnit.MILLISECONDS,                  // 非核心线程立即回收（实际不会触发）
+    new LinkedBlockingQueue<>(),           // 建议设置队列容量
+            );
 
-        );
         ((ThreadPoolExecutor)searchExecutorService).prestartAllCoreThreads();  // xuameng预热线程
         List<SourceBean> searchRequestList = new ArrayList<>();
         searchRequestList.addAll(ApiConfig.get().getSourceBeanList());
