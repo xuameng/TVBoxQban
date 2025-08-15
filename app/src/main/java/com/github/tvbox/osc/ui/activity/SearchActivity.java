@@ -75,13 +75,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.Collections;   //xuameng搜索历史
 import java.util.concurrent.ArrayBlockingQueue;   //xuameng 线程池
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;  //xuameng 线程池
 import java.util.concurrent.TimeUnit;   //xuameng 线程池
-import java.util.concurrent.SynchronousQueue;
-import android.util.Log;
-import java.util.concurrent.RejectedExecutionException;
-
 
 /**
  * @author pj567
@@ -138,14 +133,15 @@ public class SearchActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         if (pauseRunnable != null && pauseRunnable.size() > 0) {
-// 改进后的线程池配置
-searchExecutorService = new ThreadPoolExecutor(
-    Math.min(3, Runtime.getRuntime().availableProcessors()), // 核心线程数
-    Math.min(5, Runtime.getRuntime().availableProcessors() * 2), // 最大线程数
-    0L, TimeUnit.SECONDS, // 延长空闲线程存活时间
-    new LinkedBlockingQueue<>()
-);
-
+            searchExecutorService = new ThreadPoolExecutor(
+                Runtime.getRuntime().availableProcessors() + 1, // xuameng动态核心线程数
+                (Runtime.getRuntime().availableProcessors() + 1) * 2,  // xuameng最大线程数
+                10L, 
+                TimeUnit.SECONDS,
+                new ArrayBlockingQueue<>(1000), // xuameng任务队列容量
+                new ThreadPoolExecutor.CallerRunsPolicy() // xuameng降级策略
+            );
+            ((ThreadPoolExecutor)searchExecutorService).prestartAllCoreThreads();  // xuameng预热线程
             allRunCount.set(pauseRunnable.size());
             for (Runnable runnable : pauseRunnable) {
                 searchExecutorService.execute(runnable);
@@ -549,99 +545,62 @@ searchExecutorService = new ThreadPoolExecutor(
 
     private ExecutorService searchExecutorService = null;   //xuameng全局声明
     private AtomicInteger allRunCount = new AtomicInteger(0);
-    private static final String TAG = "SearchActivity";
 
-
-
-private void searchResult() {
-    try {
-        if (searchExecutorService != null) {
-            searchExecutorService.shutdownNow();
-            searchExecutorService = null;
-            JsLoader.stopAll();
-        }
-    } catch (Throwable th) {
-        th.printStackTrace();
-    } finally {
-        searchAdapter.setNewData(new ArrayList<>());
-        allRunCount.set(0);
-    }
-
-    List<SourceBean> searchRequestList = new ArrayList<>();
-    searchRequestList.addAll(ApiConfig.get().getSourceBeanList());
-    SourceBean home = ApiConfig.get().getHomeSourceBean();
-    searchRequestList.remove(home);
-    searchRequestList.add(0, home);
-
-    ArrayList<String> siteKey = new ArrayList<>();
-    for (SourceBean bean : searchRequestList) {
-        if (!bean.isSearchable()) {
-            continue;
-        }
-        if (mCheckSources != null && !mCheckSources.containsKey(bean.getKey())) {
-            continue;
-        }
-        siteKey.add(bean.getKey());
-    }
-    
-    if (siteKey.size() <= 0) {
-        App.showToastShort(mContext, "聚汇影视提示：请指定搜索源！");
-        return;
-    }
-    
-    showLoading();
-    
-    // 分批处理（每批10个源）
-    int batchSize = 10;
-    for (int i = 0; i < siteKey.size(); i += batchSize) {
-        int end = Math.min(i + batchSize, siteKey.size());
-        List<String> batch = siteKey.subList(i, end);
-        
-        // 创建新线程池处理当前批次
-        searchExecutorService = new ThreadPoolExecutor(
-    Math.min(3, Runtime.getRuntime().availableProcessors()), // 核心线程数
-    Math.min(5, Runtime.getRuntime().availableProcessors() * 2), // 最大线程数
-            0L, TimeUnit.SECONDS,
-            new LinkedBlockingQueue<>()
-        );
-
-        // 执行当前批次任务
-        for (String key : batch) {
-            try {
-                searchExecutorService.execute(() -> {
-                    try {
-                        sourceViewModel.getSearch(key, searchTitle);
-                    } catch (Exception e) {
-                        Log.e(TAG, "Search processor crashed: " + key, e);
-                    }
-                });
-            } catch (RejectedExecutionException e) {
-                Log.w(TAG, "Thread pool overload, executing on caller thread: " + key);
-                try {
-                    sourceViewModel.getSearch(key, searchTitle);
-                } catch (Exception ex) {
-                    Log.e(TAG, "Fallback search failed: " + key, ex);
-                }
-            }
-        }
-        
-        // 等待当前批次完成
+    private void searchResult() {
         try {
-            searchExecutorService.shutdown();
-            if (!searchExecutorService.awaitTermination(60, TimeUnit.SECONDS)) {
+            if (searchExecutorService != null) {  //xuameng必须加防止内存溢出
                 searchExecutorService.shutdownNow();
+                searchExecutorService = null;
+                JsLoader.stopAll();
             }
-        } catch (InterruptedException ie) {
-            searchExecutorService.shutdownNow();
-            Thread.currentThread().interrupt();
+        } catch (Throwable th) {
+            th.printStackTrace();
         } finally {
-            searchExecutorService = null;
-            JsLoader.stopAll();
+            searchAdapter.setNewData(new ArrayList<>());
+            allRunCount.set(0);
+        }
+        searchExecutorService = new ThreadPoolExecutor(
+            Runtime.getRuntime().availableProcessors() + 1, // xuameng动态核心线程数
+            (Runtime.getRuntime().availableProcessors() + 1) * 2,  // xuameng最大线程数, 
+            10L, 
+            TimeUnit.SECONDS,
+            new ArrayBlockingQueue<>(1000), // xuameng任务队列容量
+			new ThreadPoolExecutor.CallerRunsPolicy() // xuameng降级策略
+
+        );
+        ((ThreadPoolExecutor)searchExecutorService).prestartAllCoreThreads();  // xuameng预热线程
+        List<SourceBean> searchRequestList = new ArrayList<>();
+        searchRequestList.addAll(ApiConfig.get().getSourceBeanList());
+        SourceBean home = ApiConfig.get().getHomeSourceBean();
+        searchRequestList.remove(home);
+        searchRequestList.add(0, home);
+
+        ArrayList<String> siteKey = new ArrayList<>();
+        for (SourceBean bean : searchRequestList) {
+            if (!bean.isSearchable()) {
+                continue;
+            }
+            if (mCheckSources != null && !mCheckSources.containsKey(bean.getKey())) {
+                continue;
+            }
+            siteKey.add(bean.getKey());
+            allRunCount.incrementAndGet();
+        }
+        if (siteKey.size() <= 0) {
+            App.showToastShort(mContext, "聚汇影视提示：请指定搜索源！");
+   //         showEmpty();  //xuameng
+            return;
+        }
+        showLoading();        //xuameng 转圈动画
+        for (String key : siteKey) {
+            searchExecutorService.execute(new Runnable() {
+                @Override
+                public void run() {
+                    sourceViewModel.getSearch(key, searchTitle);
+                }
+            });
         }
     }
-}
-
-
 
     private boolean matchSearchResult(String name, String searchTitle) {
         if (TextUtils.isEmpty(name) || TextUtils.isEmpty(searchTitle)) return false;
