@@ -183,7 +183,7 @@ public class HistoryActivity extends BaseActivity {
         if(mGridView != null){
            mGridView.postDelayed(() -> {
                mGridView.requestFocus();
-               mGridView.requestFocusFromTouch();
+           //    mGridView.requestFocusFromTouch();
            }, 100); // 延迟100ms确保渲染完成  默认焦点丢失问题
         }
     }
