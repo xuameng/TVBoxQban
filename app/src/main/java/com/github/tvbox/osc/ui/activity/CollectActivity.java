@@ -186,7 +186,12 @@ public class CollectActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if(mGridView != null) mGridView.requestFocus();      //xuameng 默认焦点丢失问题
+        if(mGridView != null){
+           mGridView.postDelayed(() -> {
+               mGridView.requestFocus();
+               mGridView.requestFocusFromTouch();
+           }, 100); // 延迟100ms确保渲染完成  默认焦点丢失问题
+        }
     }
 
     @Override
