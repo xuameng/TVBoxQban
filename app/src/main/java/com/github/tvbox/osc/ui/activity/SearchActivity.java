@@ -80,6 +80,8 @@ import java.util.concurrent.ThreadPoolExecutor;  //xuameng 线程池
 import java.util.concurrent.TimeUnit;   //xuameng 线程池
 import java.util.concurrent.SynchronousQueue;
 import android.util.Log;
+import java.util.concurrent.RejectedExecutionException;
+
 
 /**
  * @author pj567
@@ -136,13 +138,15 @@ public class SearchActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         if (pauseRunnable != null && pauseRunnable.size() > 0) {
+// 改进后的线程池配置
 searchExecutorService = new ThreadPoolExecutor(
-    Math.min(8, Runtime.getRuntime().availableProcessors() * 2), // 动态核心数
-    50, // 提高最大线程数
-    30L, TimeUnit.SECONDS,
-    new SynchronousQueue<>(), // 无界队列易OOM，改用同步队列
-    new ThreadPoolExecutor.CallerRunsPolicy() // 降级策略
+    Math.min(4, Runtime.getRuntime().availableProcessors()), // 核心线程数
+    Math.min(16, Runtime.getRuntime().availableProcessors() * 4), // 最大线程数
+    60L, TimeUnit.SECONDS, // 延长空闲线程存活时间
+    new LinkedBlockingQueue<>(50), // 设置合理队列容量
+    new ThreadPoolExecutor.DiscardOldestPolicy() // 队列满时丢弃最旧任务
 );
+
             allRunCount.set(pauseRunnable.size());
             for (Runnable runnable : pauseRunnable) {
                 searchExecutorService.execute(runnable);
@@ -563,13 +567,13 @@ private void searchResult() {
         allRunCount.set(0);
     }
 
-    searchExecutorService = new ThreadPoolExecutor(
-        Math.min(8, Runtime.getRuntime().availableProcessors() * 2),
-        50,
-        30L, TimeUnit.SECONDS,
-        new SynchronousQueue<>(),
-        new ThreadPoolExecutor.CallerRunsPolicy()
-    );
+searchExecutorService = new ThreadPoolExecutor(
+    Math.min(4, Runtime.getRuntime().availableProcessors()), // 核心线程数
+    Math.min(16, Runtime.getRuntime().availableProcessors() * 4), // 最大线程数
+    60L, TimeUnit.SECONDS, // 延长空闲线程存活时间
+    new LinkedBlockingQueue<>(50), // 设置合理队列容量
+    new ThreadPoolExecutor.DiscardOldestPolicy() // 队列满时丢弃最旧任务
+);
 
     List<SourceBean> searchRequestList = new ArrayList<>();
     searchRequestList.addAll(ApiConfig.get().getSourceBeanList());
