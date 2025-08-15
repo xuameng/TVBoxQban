@@ -134,12 +134,13 @@ public class SearchActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         if (pauseRunnable != null && pauseRunnable.size() > 0) {
-            searchExecutorService = new ThreadPoolExecutor(
+searchExecutorService = new ThreadPoolExecutor(
     Runtime.getRuntime().availableProcessors(), // 核心线程数
-    Runtime.getRuntime().availableProcessors(), // 最大线程数=核心数（固定大小）
-    0, TimeUnit.MILLISECONDS,                  // 非核心线程立即回收（实际不会触发）
-    new LinkedBlockingQueue<>(),           // 建议设置队列容量
-            );
+    Runtime.getRuntime().availableProcessors(), // 最大线程数=核心数
+    0, TimeUnit.MILLISECONDS,
+    new LinkedBlockingQueue<>(),           // 设置队列容量
+    new ThreadPoolExecutor.AbortPolicy()  // 必须添加拒绝策略
+);
             ((ThreadPoolExecutor)searchExecutorService).prestartAllCoreThreads();  // xuameng预热线程
             allRunCount.set(pauseRunnable.size());
             for (Runnable runnable : pauseRunnable) {
@@ -558,12 +559,13 @@ public class SearchActivity extends BaseActivity {
             searchAdapter.setNewData(new ArrayList<>());
             allRunCount.set(0);
         }
-    searchExecutorService = new ThreadPoolExecutor(
+searchExecutorService = new ThreadPoolExecutor(
     Runtime.getRuntime().availableProcessors(), // 核心线程数
-    Runtime.getRuntime().availableProcessors(), // 最大线程数=核心数（固定大小）
-    0, TimeUnit.MILLISECONDS,                  // 非核心线程立即回收（实际不会触发）
-    new LinkedBlockingQueue<>(),           // 建议设置队列容量
-            );
+    Runtime.getRuntime().availableProcessors(), // 最大线程数=核心数
+    0, TimeUnit.MILLISECONDS,
+    new LinkedBlockingQueue<>(),           // 设置队列容量
+    new ThreadPoolExecutor.AbortPolicy()  // 必须添加拒绝策略
+);
 
         ((ThreadPoolExecutor)searchExecutorService).prestartAllCoreThreads();  // xuameng预热线程
         List<SourceBean> searchRequestList = new ArrayList<>();
