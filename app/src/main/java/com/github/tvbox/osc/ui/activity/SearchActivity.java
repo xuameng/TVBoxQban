@@ -143,8 +143,7 @@ searchExecutorService = new ThreadPoolExecutor(
     Math.min(3, Runtime.getRuntime().availableProcessors()), // 核心线程数
     Math.min(5, Runtime.getRuntime().availableProcessors() * 2), // 最大线程数
     0L, TimeUnit.SECONDS, // 延长空闲线程存活时间
-    new LinkedBlockingQueue<>(), // 设置合理队列容量
-    new ThreadPoolExecutor.CallerRunsPolicy()  // 由调用线程直接执行被拒绝任务
+    new LinkedBlockingQueue<>()
 );
 
             allRunCount.set(pauseRunnable.size());
@@ -603,8 +602,7 @@ private void searchResult() {
     Math.min(3, Runtime.getRuntime().availableProcessors()), // 核心线程数
     Math.min(5, Runtime.getRuntime().availableProcessors() * 2), // 最大线程数
             0L, TimeUnit.SECONDS,
-            new LinkedBlockingQueue<>(),
-            new ThreadPoolExecutor.CallerRunsPolicy()
+            new LinkedBlockingQueue<>()
         );
 
         // 执行当前批次任务
