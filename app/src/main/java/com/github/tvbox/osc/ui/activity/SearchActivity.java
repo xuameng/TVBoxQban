@@ -71,12 +71,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.Collections;   //xuameng搜索历史
-import java.util.concurrent.ArrayBlockingQueue;   //xuameng 线程池
 import java.util.concurrent.ThreadPoolExecutor;  //xuameng 线程池
 import java.util.concurrent.TimeUnit;   //xuameng 线程池
+import java.util.concurrent.Future;  //xuameng 线程池
+import java.util.concurrent.ArrayBlockingQueue;   //xuameng 线程池
+import java.util.concurrent.CountDownLatch;  //xuameng 线程池
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.CompletionService;
+import java.util.concurrent.ExecutorCompletionService;
+import java.util.concurrent.ExecutorService;
+import android.util.Log;
+import java.util.concurrent.ExecutionException;
+
 
 /**
  * @author pj567
@@ -133,15 +141,13 @@ public class SearchActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         if (pauseRunnable != null && pauseRunnable.size() > 0) {
-            searchExecutorService = new ThreadPoolExecutor(
-                Runtime.getRuntime().availableProcessors(), // xuameng动态核心线程数
-                Runtime.getRuntime().availableProcessors() * 2,  // xuameng最大线程数
-                10L, 
-                TimeUnit.SECONDS,
-                new ArrayBlockingQueue<>(1000), // xuameng任务队列容量
-                new ThreadPoolExecutor.CallerRunsPolicy() // xuameng降级策略
-            );
-            ((ThreadPoolExecutor)searchExecutorService).prestartAllCoreThreads();  // xuameng预热线程
+    searchExecutorService = new ThreadPoolExecutor(
+        2,                              // 固定核心线程
+        5,                              // 适度最大线程
+        30L, TimeUnit.SECONDS,
+        new ArrayBlockingQueue<>(10),   // 控制任务堆积
+        new ThreadPoolExecutor.CallerRunsPolicy()
+    );
             allRunCount.set(pauseRunnable.size());
             for (Runnable runnable : pauseRunnable) {
                 searchExecutorService.execute(runnable);
@@ -543,64 +549,111 @@ public class SearchActivity extends BaseActivity {
         searchResult();
     }
 
-    private ExecutorService searchExecutorService = null;   //xuameng全局声明
+    private volatile ThreadPoolExecutor searchExecutorService = null;   //xuameng全局声明
     private AtomicInteger allRunCount = new AtomicInteger(0);
+    private static final String TAG = "SearchActivity";  //xuameng 线程池
 
-    private void searchResult() {
-        try {
-            if (searchExecutorService != null) {  //xuameng必须加防止内存溢出
-                searchExecutorService.shutdownNow();
-                searchExecutorService = null;
-                JsLoader.stopAll();
+private void searchResult() {
+    // 1. 改进的资源清理（增加原子性保证）
+    try {
+        ThreadPoolExecutor oldExecutor = searchExecutorService;
+        if (oldExecutor != null) {
+            oldExecutor.shutdownNow();
+            if (!oldExecutor.awaitTermination(1, TimeUnit.SECONDS)) {
+                Log.w(TAG, "线程池未完全终止");
             }
-        } catch (Throwable th) {
-            th.printStackTrace();
-        } finally {
-            searchAdapter.setNewData(new ArrayList<>());
-            allRunCount.set(0);
+            JsLoader.stopAll();
         }
-        searchExecutorService = new ThreadPoolExecutor(
-            Runtime.getRuntime().availableProcessors(), // xuameng动态核心线程数
-            Runtime.getRuntime().availableProcessors() * 2,  // xuameng最大线程数, 
-            10L, 
-            TimeUnit.SECONDS,
-            new ArrayBlockingQueue<>(1000), // xuameng任务队列容量
-			new ThreadPoolExecutor.CallerRunsPolicy() // xuameng降级策略
+    } catch (Throwable th) {
+        th.printStackTrace();
+    } finally {
+        searchAdapter.setNewData(new ArrayList<>());
+        allRunCount.set(0);
+    }
 
-        );
-        ((ThreadPoolExecutor)searchExecutorService).prestartAllCoreThreads();  // xuameng预热线程
-        List<SourceBean> searchRequestList = new ArrayList<>();
-        searchRequestList.addAll(ApiConfig.get().getSourceBeanList());
-        SourceBean home = ApiConfig.get().getHomeSourceBean();
-        searchRequestList.remove(home);
-        searchRequestList.add(0, home);
+    // 2. 优化线程池配置（固定核心线程+有界队列）
+    searchExecutorService = new ThreadPoolExecutor(
+        2,                              // 固定核心线程
+        5,                              // 适度最大线程
+        30L, TimeUnit.SECONDS,
+        new ArrayBlockingQueue<>(10),   // 控制任务堆积
+        new ThreadPoolExecutor.CallerRunsPolicy()
+    );
 
-        ArrayList<String> siteKey = new ArrayList<>();
-        for (SourceBean bean : searchRequestList) {
-            if (!bean.isSearchable()) {
-                continue;
-            }
-            if (mCheckSources != null && !mCheckSources.containsKey(bean.getKey())) {
-                continue;
-            }
-            siteKey.add(bean.getKey());
-            allRunCount.incrementAndGet();
-        }
-        if (siteKey.size() <= 0) {
-            App.showToastShort(mContext, "聚汇影视提示：请指定搜索源！");
-   //         showEmpty();  //xuameng
-            return;
-        }
-        showLoading();        //xuameng 转圈动画
-        for (String key : siteKey) {
-            searchExecutorService.execute(new Runnable() {
-                @Override
-                public void run() {
+    // 3. 准备搜索源（保持原有逻辑）
+    List<SourceBean> searchRequestList = new ArrayList<>(ApiConfig.get().getSourceBeanList());
+    SourceBean home = ApiConfig.get().getHomeSourceBean();
+    searchRequestList.remove(home);
+    searchRequestList.add(0, home);
+
+    ArrayList<String> siteKey = new ArrayList<>();
+    for (SourceBean bean : searchRequestList) {
+        if (!bean.isSearchable()) continue;
+        if (mCheckSources != null && !mCheckSources.containsKey(bean.getKey())) continue;
+        siteKey.add(bean.getKey());
+        allRunCount.incrementAndGet();
+    }
+
+    if (siteKey.isEmpty()) {
+        App.showToastShort(mContext, "聚汇影视提示：请指定搜索源！");
+        return;
+    }
+
+    showLoading();
+
+    // 4. 改进的分批处理机制（动态批次+异步回调）
+    int batchSize = Math.min(5, siteKey.size());
+    ExecutorCompletionService<Void> completionService = 
+        new ExecutorCompletionService<>(searchExecutorService);
+
+    // 分批提交任务
+    for (int i = 0; i < siteKey.size(); i += batchSize) {
+        final int end = Math.min(i + batchSize, siteKey.size());
+        List<String> batch = siteKey.subList(i, end);
+        
+        for (String key : batch) {
+            completionService.submit(() -> {
+                try {
                     sourceViewModel.getSearch(key, searchTitle);
+                    runOnUiThread(() -> updateSearchResult(key));
+                } catch (Exception e) {
+                    Log.e(TAG, "搜索异常: " + key, e);
                 }
+                return null;
             });
         }
+
+        // 动态超时控制
+        try {
+            for (int j = 0; j < batch.size(); j++) {
+                long timeout = Math.max(1L, 10L / batchSize);
+                Future<Void> future = completionService.poll(timeout, TimeUnit.SECONDS);
+                if (future != null) future.get();
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            Thread.currentThread().interrupt();
+            Log.e(TAG, "任务执行中断", e);
+        }
     }
+}
+
+// UI更新回调方法
+private void updateSearchResult(String sourceKey) {
+    // 实现单个搜索源结果的UI更新
+    allRunCount.decrementAndGet();
+    if (allRunCount.get() == 0) {
+        showEmpty();		
+    }
+}
+
+
+
+
+    private void updateSearchResults() {
+        // 更新UI显示搜索结果
+        runOnUiThread(() -> searchAdapter.notifyDataSetChanged());
+    }
+
 
     private boolean matchSearchResult(String name, String searchTitle) {
         if (TextUtils.isEmpty(name) || TextUtils.isEmpty(searchTitle)) return false;
