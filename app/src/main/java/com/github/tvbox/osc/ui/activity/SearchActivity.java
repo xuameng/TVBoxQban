@@ -138,18 +138,14 @@ public class SearchActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         if (pauseRunnable != null && pauseRunnable.size() > 0) {
-        // 动态计算线程池参数
-        int availableProcessors = Runtime.getRuntime().availableProcessors();
-        int corePoolSize = Math.min(Math.max(2, availableProcessors), 8);
-        int maxPoolSize = Math.min(availableProcessors * 4, 16);
-        // 创建新线程池处理当前批次
-        searchExecutorService = new ThreadPoolExecutor(
-            corePoolSize,
-            maxPoolSize,
-            30L, TimeUnit.SECONDS,
-            new LinkedBlockingQueue<>(20),
-            new ThreadPoolExecutor.CallerRunsPolicy()
-        );
+// 改进后的线程池配置
+searchExecutorService = new ThreadPoolExecutor(
+    Math.min(10, Runtime.getRuntime().availableProcessors() * 3), // 核心线程数
+    Math.min(16, Runtime.getRuntime().availableProcessors() * 4), // 最大线程数
+    60L, TimeUnit.SECONDS, // 延长空闲线程存活时间
+    new LinkedBlockingQueue<>(20), // 设置合理队列容量
+    new ThreadPoolExecutor.CallerRunsPolicy()  // 由调用线程直接执行被拒绝任务
+);
 
             allRunCount.set(pauseRunnable.size());
             for (Runnable runnable : pauseRunnable) {
@@ -602,16 +598,11 @@ private void searchResult() {
         int end = Math.min(i + batchSize, siteKey.size());
         List<String> batch = siteKey.subList(i, end);
         
-
-        // 动态计算线程池参数
-        int availableProcessors = Runtime.getRuntime().availableProcessors();
-        int corePoolSize = Math.min(Math.max(2, availableProcessors), 8);
-        int maxPoolSize = Math.min(availableProcessors * 4, 16);
         // 创建新线程池处理当前批次
         searchExecutorService = new ThreadPoolExecutor(
-            corePoolSize,
-            maxPoolSize,
-            30L, TimeUnit.SECONDS,
+    Math.min(10, Runtime.getRuntime().availableProcessors() * 3), // 核心线程数
+    Math.min(16, Runtime.getRuntime().availableProcessors() * 4), // 最大线程数
+            60L, TimeUnit.SECONDS,
             new LinkedBlockingQueue<>(20),
             new ThreadPoolExecutor.CallerRunsPolicy()
         );
