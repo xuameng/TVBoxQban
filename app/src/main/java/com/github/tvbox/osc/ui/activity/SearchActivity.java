@@ -560,8 +560,8 @@ public class SearchActivity extends BaseActivity {
             allRunCount.set(0);
         }
         searchExecutorService = new ThreadPoolExecutor(
-            Runtime.getRuntime().availableProcessors() + 1, // xuameng动态核心线程数
-            (Runtime.getRuntime().availableProcessors() + 1) * 2,  // xuameng最大线程数, 
+            Runtime.getRuntime().availableProcessors(), // xuameng动态核心线程数
+            Runtime.getRuntime().availableProcessors() * 2,  // xuameng最大线程数, 
             10L, 
             TimeUnit.SECONDS,
             new ArrayBlockingQueue<>(1000), // xuameng任务队列容量
