@@ -24,7 +24,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import android.view.MotionEvent;
 
 public class CheckboxSearchAdapter extends ListAdapter<SourceBean, CheckboxSearchAdapter.ViewHolder> {
 
@@ -62,92 +61,29 @@ public class CheckboxSearchAdapter extends ListAdapter<SourceBean, CheckboxSearc
         return data.size();
     }
 
-
-@Override
-public void onBindViewHolder(ViewHolder holder, int position) {
-    // 数据绑定
-    int pos = holder.getAdapterPosition();
-    SourceBean sourceBean = data.get(pos);
-    holder.oneSearchSource.setText(sourceBean.getName());
-    holder.oneSearchSource.setTag(sourceBean);
-
-    // 重置焦点状态（关键修改1）
-    holder.oneSearchSource.setFocusableInTouchMode(true);
-    holder.oneSearchSource.setFocusable(true);
-    holder.oneSearchSource.clearFocus();
-    
-    // 初始化选中状态
-    if (mCheckedSources != null) {
-        holder.oneSearchSource.setChecked(mCheckedSources.containsKey(sourceBean.getKey()));
-    }
-
-    // 全新的焦点控制方案（关键修改2）
-    holder.itemView.setOnTouchListener((v, event) -> {
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            v.postDelayed(() -> {
-                if (!holder.oneSearchSource.isFocused()) {
-                    holder.oneSearchSource.requestFocusFromTouch();
-                    holder.oneSearchSource.setSelected(true);
+    @Override
+    public void onBindViewHolder(ViewHolder holder, int position) {
+        int pos = holder.getAdapterPosition();
+        SourceBean sourceBean = data.get(pos);
+        holder.oneSearchSource.setText(sourceBean.getName());
+        holder.oneSearchSource.setOnCheckedChangeListener(null);
+        if (mCheckedSources != null) {
+            holder.oneSearchSource.setChecked(mCheckedSources.containsKey(sourceBean.getKey()));
+        }
+        holder.oneSearchSource.setTag(sourceBean);
+        holder.oneSearchSource.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    mCheckedSources.put(sourceBean.getKey(), "1");
+                } else {
+                    mCheckedSources.remove(sourceBean.getKey());
                 }
-            }, 50); // 50ms延迟确保视图层级就绪
-            return true;
-        }
-        return false;
-    });
-
-    // 优化点击处理（关键修改3）
-    holder.itemView.setOnClickListener(v -> {
-        if (holder.oneSearchSource.isFocused()) {
-            holder.oneSearchSource.toggle();
-        } else {
-            holder.oneSearchSource.requestFocus();
-        }
-    });
-
-    // 状态变更监听
-    holder.oneSearchSource.setOnCheckedChangeListener((buttonView, isChecked) -> {
-        if (mCheckedSources != null) {
-            if (isChecked) {
-                mCheckedSources.put(sourceBean.getKey(), "1");
-            } else {
-                mCheckedSources.remove(sourceBean.getKey());
+                notifyItemChanged(pos);
             }
-        }
-        notifyItemChanged(pos);
-    });
-}
+        });
 
-
-
-private void setupClickListener(ViewHolder holder) {
-    holder.itemView.setOnClickListener(v -> {
-        if (holder.oneSearchSource.isFocused()) {
-            holder.oneSearchSource.toggle();
-        }
-    });
-}
-
-private void setupCheckedChangeListener(ViewHolder holder, int pos, SourceBean sourceBean) {
-    holder.oneSearchSource.setOnCheckedChangeListener((buttonView, isChecked) -> {
-        if (mCheckedSources != null) {
-            if (isChecked) {
-                mCheckedSources.put(sourceBean.getKey(), "1");
-            } else {
-                mCheckedSources.remove(sourceBean.getKey());
-            }
-        }
-        notifyItemChanged(pos);
-    });
-}
-
-@Override
-public void onViewRecycled(ViewHolder holder) {
-    // 清理资源
-    holder.itemView.setOnTouchListener(null);
-    holder.itemView.setOnClickListener(null);
-    holder.oneSearchSource.setOnCheckedChangeListener(null);
-}
-
+    }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public CheckBox oneSearchSource;
