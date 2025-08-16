@@ -24,7 +24,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import android.view.MotionEvent;
 
 public class CheckboxSearchAdapter extends ListAdapter<SourceBean, CheckboxSearchAdapter.ViewHolder> {
 
@@ -63,63 +62,88 @@ public class CheckboxSearchAdapter extends ListAdapter<SourceBean, CheckboxSearc
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        int pos = holder.getAdapterPosition();
-        SourceBean sourceBean = data.get(pos);
-    // 初始状态禁止焦点
+@Override
+public void onBindViewHolder(ViewHolder holder, int position) {
+    // 数据绑定
+    int pos = holder.getAdapterPosition();
+    SourceBean sourceBean = data.get(pos);
+    holder.oneSearchSource.setText(sourceBean.getName());
+    holder.oneSearchSource.setTag(sourceBean);
+    
+    // 初始化视图状态
+    initViewState(holder, sourceBean);
+    
+    // 设置触摸事件处理
+    setupTouchListener(holder);
+    
+    // 设置点击事件处理
+    setupClickListener(holder);
+    
+    // 设置选中状态监听
+    setupCheckedChangeListener(holder, pos, sourceBean);
+}
+
+private void initViewState(ViewHolder holder, SourceBean sourceBean) {
+    // 重置所有交互状态
     holder.oneSearchSource.setFocusable(false);
     holder.oneSearchSource.setFocusableInTouchMode(false);
+    holder.oneSearchSource.clearFocus();
+    holder.oneSearchSource.setSelected(false);
+    holder.oneSearchSource.setOnCheckedChangeListener(null);
+    
+    // 初始化选中状态
+    if (mCheckedSources != null) {
+        boolean isChecked = mCheckedSources.containsKey(sourceBean.getKey());
+        holder.oneSearchSource.setChecked(isChecked);
+    }
+}
 
-        holder.oneSearchSource.setText(sourceBean.getName());
-        holder.oneSearchSource.setOnCheckedChangeListener(null);
-        if (mCheckedSources != null) {
-            holder.oneSearchSource.setChecked(mCheckedSources.containsKey(sourceBean.getKey()));
-        }
-        holder.oneSearchSource.setTag(sourceBean);
-
-// 焦点控制终极方案
+private void setupTouchListener(ViewHolder holder) {
     holder.itemView.setOnTouchListener((v, event) -> {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            // 双重焦点保障机制
-            holder.oneSearchSource.post(() -> {
+            v.post(() -> {
                 holder.oneSearchSource.setFocusable(true);
                 holder.oneSearchSource.setFocusableInTouchMode(true);
-                holder.oneSearchSource.requestFocus();
-                
-                // 添加焦点变化监听确保状态同步
-                holder.oneSearchSource.setOnFocusChangeListener((view, hasFocus) -> {
-                    if (hasFocus) {
-                        view.postDelayed(() -> {
-                            if (view.isFocused()) {
-                                view.performClick();
-                            }
-                        }, 150); // 符合人类反应时间的延迟
-                    }
-                });
+                if (!holder.oneSearchSource.requestFocus()) {
+                    holder.itemView.requestFocusFromTouch();
+                }
+                holder.oneSearchSource.setSelected(true);
             });
-            return true;
+            return true; // 消费事件阻止立即触发点击
         }
         return false;
     });
+}
 
-        holder.oneSearchSource.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    mCheckedSources.put(sourceBean.getKey(), "1");
-                } else {
-                    mCheckedSources.remove(sourceBean.getKey());
-                }
-                notifyItemChanged(pos);
-        buttonView.postDelayed(() -> {
-            buttonView.setFocusable(false);
-            buttonView.setFocusableInTouchMode(false);
-            buttonView.setOnFocusChangeListener(null); // 清除监听防内存泄漏
-        }, 100);
+private void setupClickListener(ViewHolder holder) {
+    holder.itemView.setOnClickListener(v -> {
+        if (holder.oneSearchSource.isFocused()) {
+            holder.oneSearchSource.toggle();
+        }
+    });
+}
+
+private void setupCheckedChangeListener(ViewHolder holder, int pos, SourceBean sourceBean) {
+    holder.oneSearchSource.setOnCheckedChangeListener((buttonView, isChecked) -> {
+        if (mCheckedSources != null) {
+            if (isChecked) {
+                mCheckedSources.put(sourceBean.getKey(), "1");
+            } else {
+                mCheckedSources.remove(sourceBean.getKey());
             }
-        });
+        }
+        notifyItemChanged(pos);
+    });
+}
 
-    }
+@Override
+public void onViewRecycled(ViewHolder holder) {
+    // 清理资源
+    holder.itemView.setOnTouchListener(null);
+    holder.itemView.setOnClickListener(null);
+    holder.oneSearchSource.setOnCheckedChangeListener(null);
+}
+
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public CheckBox oneSearchSource;
