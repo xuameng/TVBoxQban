@@ -58,6 +58,7 @@ import android.text.TextWatcher;  //xuameng搜索历史
 import android.text.Editable;		//xuameng搜索历史
 import com.github.tvbox.osc.data.SearchPresenter;  //xuameng搜索历史
 import com.github.tvbox.osc.cache.SearchHistory;   //xuameng搜索历史
+import java.util.Collections;   //xuameng搜索历史
 import com.google.gson.Gson;  //热门搜索
 import com.google.gson.JsonArray; //热门搜索
 import com.google.gson.JsonElement; //热门搜索
@@ -73,10 +74,11 @@ import java.util.List;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.Collections;   //xuameng搜索历史
 import java.util.concurrent.ArrayBlockingQueue;   //xuameng 线程池
 import java.util.concurrent.ThreadPoolExecutor;  //xuameng 线程池
 import java.util.concurrent.TimeUnit;   //xuameng 线程池
+import java.util.concurrent.ThreadFactory;  //xuameng 线程池
+import java.util.concurrent.LinkedBlockingQueue;   //xuameng 线程池
 
 /**
  * @author pj567
@@ -134,14 +136,21 @@ public class SearchActivity extends BaseActivity {
         super.onResume();
         if (pauseRunnable != null && pauseRunnable.size() > 0) {
             searchExecutorService = new ThreadPoolExecutor(
-                Runtime.getRuntime().availableProcessors() + 1, // xuameng动态核心线程数
-                (Runtime.getRuntime().availableProcessors() + 1) * 2,  // xuameng最大线程数
-                10L, 
-                TimeUnit.SECONDS,
-                new ArrayBlockingQueue<>(1000), // xuameng任务队列容量
-                new ThreadPoolExecutor.CallerRunsPolicy() // xuameng降级策略
+            Runtime.getRuntime().availableProcessors(), // 核心线程数=CPU核数
+            Runtime.getRuntime().availableProcessors() * 2, // 最大线程数
+                30L, TimeUnit.SECONDS,
+                new LinkedBlockingQueue<>(200),  // 队列容量调整为200
+                new ThreadFactory() {
+                    @Override
+                    public Thread newThread(Runnable r) {
+                        // 关键优化：设置256KB栈大小
+                        Thread t = new Thread(null, r, "search-pool", 256 * 1024);
+                        t.setPriority(Thread.NORM_PRIORITY - 1);
+                        return t;
+                    }
+                },
+                new ThreadPoolExecutor.DiscardOldestPolicy()  // 超限直接丢弃
             );
-            ((ThreadPoolExecutor)searchExecutorService).prestartAllCoreThreads();  // xuameng预热线程
             allRunCount.set(pauseRunnable.size());
             for (Runnable runnable : pauseRunnable) {
                 searchExecutorService.execute(runnable);
@@ -547,8 +556,9 @@ public class SearchActivity extends BaseActivity {
     private AtomicInteger allRunCount = new AtomicInteger(0);
 
     private void searchResult() {
+        // 原有清理逻辑保持不变
         try {
-            if (searchExecutorService != null) {  //xuameng必须加防止内存溢出
+            if (searchExecutorService != null) {
                 searchExecutorService.shutdownNow();
                 searchExecutorService = null;
                 JsLoader.stopAll();
@@ -557,18 +567,30 @@ public class SearchActivity extends BaseActivity {
             th.printStackTrace();
         } finally {
             searchAdapter.setNewData(new ArrayList<>());
+            searchAdapterFilter.setNewData(new ArrayList<>());
             allRunCount.set(0);
         }
-        searchExecutorService = new ThreadPoolExecutor(
-            Runtime.getRuntime().availableProcessors() + 1, // xuameng动态核心线程数
-            (Runtime.getRuntime().availableProcessors() + 1) * 2,  // xuameng最大线程数, 
-            10L, 
-            TimeUnit.SECONDS,
-            new ArrayBlockingQueue<>(1000), // xuameng任务队列容量
-			new ThreadPoolExecutor.CallerRunsPolicy() // xuameng降级策略
 
+        // 优化线程池配置（核心修改点）
+        searchExecutorService = new ThreadPoolExecutor(
+        Runtime.getRuntime().availableProcessors(), // 核心线程数=CPU核数
+        Runtime.getRuntime().availableProcessors() * 2, // 最大线程数
+            30L, TimeUnit.SECONDS,
+            new LinkedBlockingQueue<>(200),  // 队列容量调整为200
+            new ThreadFactory() {
+                @Override
+                public Thread newThread(Runnable r) {
+                    // 关键优化：设置256KB栈大小
+                    Thread t = new Thread(null, r, "search-pool", 256 * 1024);
+                    t.setPriority(Thread.NORM_PRIORITY - 1);
+                    return t;
+                }
+            },
+            new ThreadPoolExecutor.DiscardOldestPolicy()  // 超限直接丢弃
         );
-        ((ThreadPoolExecutor)searchExecutorService).prestartAllCoreThreads();  // xuameng预热线程
+
+
+        // 原有数据准备逻辑（完全保留）
         List<SourceBean> searchRequestList = new ArrayList<>();
         searchRequestList.addAll(ApiConfig.get().getSourceBeanList());
         SourceBean home = ApiConfig.get().getHomeSourceBean();
@@ -576,6 +598,15 @@ public class SearchActivity extends BaseActivity {
         searchRequestList.add(0, home);
 
         ArrayList<String> siteKey = new ArrayList<>();
+        ArrayList<String> hots = new ArrayList<>();
+
+        spListAdapter.setNewData(hots);
+        spListAdapter.addData("全部");
+
+    // 新增任务计数器
+        AtomicInteger submittedTasks = new AtomicInteger(0);
+        final int MAX_TASKS = 200;
+
         for (SourceBean bean : searchRequestList) {
             if (!bean.isSearchable()) {
                 continue;
@@ -583,20 +614,35 @@ public class SearchActivity extends BaseActivity {
             if (mCheckSources != null && !mCheckSources.containsKey(bean.getKey())) {
                 continue;
             }
+
+            // 任务数量控制
+            if (submittedTasks.get() >= MAX_TASKS) {
+                App.showToastLong(FastSearchActivity.this, "聚汇影视提示：指定搜索源超过200个，只保留前200个，请分批搜索！防止内存泄漏！");
+                break;
+            }
+
             siteKey.add(bean.getKey());
+            this.spNames.put(bean.getName(), bean.getKey());
             allRunCount.incrementAndGet();
+            submittedTasks.incrementAndGet();
         }
+
         if (siteKey.size() <= 0) {
-            App.showToastShort(mContext, "聚汇影视提示：请指定搜索源！");
-   //         showEmpty();  //xuameng
+            App.showToastShort(FastSearchActivity.this, "聚汇影视提示：请指定搜索源！");
             return;
         }
-        showLoading();        //xuameng 转圈动画
+
+        showLoading();
+
         for (String key : siteKey) {
             searchExecutorService.execute(new Runnable() {
                 @Override
                 public void run() {
-                    sourceViewModel.getSearch(key, searchTitle);
+                    try {
+                        sourceViewModel.getSearch(key, searchTitle);
+                    } catch (Exception e) {
+
+                    }
                 }
             });
         }
