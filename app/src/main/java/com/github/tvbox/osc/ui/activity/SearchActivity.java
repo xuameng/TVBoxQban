@@ -567,7 +567,6 @@ public class SearchActivity extends BaseActivity {
             th.printStackTrace();
         } finally {
             searchAdapter.setNewData(new ArrayList<>());
-            searchAdapterFilter.setNewData(new ArrayList<>());
             allRunCount.set(0);
         }
 
@@ -598,10 +597,6 @@ public class SearchActivity extends BaseActivity {
         searchRequestList.add(0, home);
 
         ArrayList<String> siteKey = new ArrayList<>();
-        ArrayList<String> hots = new ArrayList<>();
-
-        spListAdapter.setNewData(hots);
-        spListAdapter.addData("全部");
 
     // 新增任务计数器
         AtomicInteger submittedTasks = new AtomicInteger(0);
@@ -617,18 +612,17 @@ public class SearchActivity extends BaseActivity {
 
             // 任务数量控制
             if (submittedTasks.get() >= MAX_TASKS) {
-                App.showToastLong(FastSearchActivity.this, "聚汇影视提示：指定搜索源超过200个，只保留前200个，请分批搜索！防止内存泄漏！");
+                App.showToastLong(mContext, "聚汇影视提示：指定搜索源超过200个，只保留前200个，请分批搜索！防止内存泄漏！");
                 break;
             }
 
             siteKey.add(bean.getKey());
-            this.spNames.put(bean.getName(), bean.getKey());
             allRunCount.incrementAndGet();
             submittedTasks.incrementAndGet();
         }
 
         if (siteKey.size() <= 0) {
-            App.showToastShort(FastSearchActivity.this, "聚汇影视提示：请指定搜索源！");
+            App.showToastShort(mContext, "聚汇影视提示：请指定搜索源！");
             return;
         }
 
