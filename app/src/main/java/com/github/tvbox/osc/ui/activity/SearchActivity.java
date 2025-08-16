@@ -569,7 +569,6 @@ public class SearchActivity extends BaseActivity {
             searchAdapter.setNewData(new ArrayList<>());
             allRunCount.set(0);
         }
-
         // 优化线程池配置（核心修改点）
         searchExecutorService = new ThreadPoolExecutor(
         Runtime.getRuntime().availableProcessors(), // 核心线程数=CPU核数
@@ -587,21 +586,16 @@ public class SearchActivity extends BaseActivity {
             },
             new ThreadPoolExecutor.DiscardOldestPolicy()  // 超限直接丢弃
         );
-
-
         // 原有数据准备逻辑（完全保留）
         List<SourceBean> searchRequestList = new ArrayList<>();
         searchRequestList.addAll(ApiConfig.get().getSourceBeanList());
         SourceBean home = ApiConfig.get().getHomeSourceBean();
         searchRequestList.remove(home);
         searchRequestList.add(0, home);
-
         ArrayList<String> siteKey = new ArrayList<>();
-
     // 新增任务计数器
         AtomicInteger submittedTasks = new AtomicInteger(0);
         final int MAX_TASKS = 200;
-
         for (SourceBean bean : searchRequestList) {
             if (!bean.isSearchable()) {
                 continue;
@@ -609,25 +603,20 @@ public class SearchActivity extends BaseActivity {
             if (mCheckSources != null && !mCheckSources.containsKey(bean.getKey())) {
                 continue;
             }
-
             // 任务数量控制
             if (submittedTasks.get() >= MAX_TASKS) {
                 App.showToastLong(mContext, "聚汇影视提示：指定搜索源超过200个，只保留前200个，请分批搜索！防止内存泄漏！");
                 break;
             }
-
             siteKey.add(bean.getKey());
             allRunCount.incrementAndGet();
             submittedTasks.incrementAndGet();
         }
-
         if (siteKey.size() <= 0) {
             App.showToastShort(mContext, "聚汇影视提示：请指定搜索源！");
             return;
         }
-
         showLoading();
-
         for (String key : siteKey) {
             searchExecutorService.execute(new Runnable() {
                 @Override
