@@ -71,44 +71,31 @@ public void onBindViewHolder(ViewHolder holder, int position) {
     holder.oneSearchSource.setText(sourceBean.getName());
     holder.oneSearchSource.setTag(sourceBean);
 
-    // 强制重置焦点状态（关键修复1）
-    holder.oneSearchSource.setFocusable(false);
-    holder.oneSearchSource.setFocusableInTouchMode(false);
+    // 重置焦点状态（关键修改1）
+    holder.oneSearchSource.setFocusableInTouchMode(true);
+    holder.oneSearchSource.setFocusable(true);
     holder.oneSearchSource.clearFocus();
-    holder.oneSearchSource.setSelected(false);
-
+    
     // 初始化选中状态
     if (mCheckedSources != null) {
         holder.oneSearchSource.setChecked(mCheckedSources.containsKey(sourceBean.getKey()));
     }
 
-    // 全新的焦点控制方案（关键修复2）
-    holder.itemView.setOnTouchListener(new View.OnTouchListener() {
-        private long lastTouchTime = 0;
-        
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-            if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                // 防抖处理（300ms内不重复响应）
-                if (System.currentTimeMillis() - lastTouchTime < 300) {
-                    return true;
-                }
-                lastTouchTime = System.currentTimeMillis();
-                
-                // 确保焦点获取
-                v.post(() -> {
-                    holder.oneSearchSource.setFocusable(true);
-                    holder.oneSearchSource.setFocusableInTouchMode(true);
+    // 全新的焦点控制方案（关键修改2）
+    holder.itemView.setOnTouchListener((v, event) -> {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            v.postDelayed(() -> {
+                if (!holder.oneSearchSource.isFocused()) {
                     holder.oneSearchSource.requestFocusFromTouch();
                     holder.oneSearchSource.setSelected(true);
-                });
-                return true;
-            }
-            return false;
+                }
+            }, 50); // 50ms延迟确保视图层级就绪
+            return true;
         }
+        return false;
     });
 
-    // 点击事件处理（关键修复3）
+    // 优化点击处理（关键修改3）
     holder.itemView.setOnClickListener(v -> {
         if (holder.oneSearchSource.isFocused()) {
             holder.oneSearchSource.toggle();
@@ -129,6 +116,7 @@ public void onBindViewHolder(ViewHolder holder, int position) {
         notifyItemChanged(pos);
     });
 }
+
 
 
 private void setupClickListener(ViewHolder holder) {
