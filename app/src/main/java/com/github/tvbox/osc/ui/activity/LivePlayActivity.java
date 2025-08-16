@@ -40,7 +40,6 @@ import com.squareup.picasso.NetworkPolicy; //xuameng播放音频切换图片
 import android.graphics.Bitmap; //xuameng播放音频切换图片
 import com.github.tvbox.osc.api.ApiConfig; //xuameng播放音频切换图片
 import android.annotation.SuppressLint; //xuamengEPG显示错误
-import android.view.animation.BounceInterpolator;
 import java.util.HashMap; //XUAMENG自定义UA
 import java.util.Objects;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -2186,7 +2185,6 @@ public class LivePlayActivity extends BaseActivity {
     }
     private void initLiveChannelView() {
         mLiveChannelView.setHasFixedSize(true);
-		mLiveChannelView.setFocusableInTouchMode(false);
         mLiveChannelView.setItemAnimator(null);   //xuameng禁用TVRecyclerView动画
         mLiveChannelView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
         liveChannelItemAdapter = new LiveChannelItemAdapter();
@@ -2196,7 +2194,6 @@ public class LivePlayActivity extends BaseActivity {
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 mHideChannelListRunXu(); //xuameng隐藏频道菜单
-				mLiveChannelView.setFocusableInTouchMode(false);
             }
         });
         //电视
@@ -2208,7 +2205,6 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
                 isTouch = false;
-				mLiveChannelView.setFocusableInTouchMode(true);
                 if(position < 0) return;
                 int channelGroupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex(); //xuameng当前选定的频道组
                 if(position == getLiveChannels(channelGroupIndexXu).size() - 1) { //xuameng判断是否是最后一个item
