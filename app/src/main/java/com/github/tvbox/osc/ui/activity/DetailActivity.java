@@ -157,11 +157,11 @@ public class DetailActivity extends BaseActivity {
     @Override
     protected void init() {
         EventBus.getDefault().register(this);
+		HawkConfig.intVod = true;  //xuameng判断进入播放
+        HawkConfig.saveHistory = false;  //xuameng判断存储历史记录
         initView();
         initViewModel();
         initData();
-		HawkConfig.intVod = true;  //xuameng判断进入播放
-        HawkConfig.saveHistory = false;  //xuameng判断存储历史记录
     }
 
     private void initView() {
