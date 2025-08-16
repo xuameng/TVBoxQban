@@ -124,7 +124,7 @@ public class FastSearchActivity extends BaseActivity {
             Runtime.getRuntime().availableProcessors(), // 核心线程数=CPU核数
             Runtime.getRuntime().availableProcessors() * 2, // 最大线程数
                 30L, TimeUnit.SECONDS,
-                new LinkedBlockingQueue<>(100),  // 队列容量调整为1000
+                new LinkedBlockingQueue<>(20),  // 队列容量调整为1000
                 new ThreadFactory() {
                     @Override
                     public Thread newThread(Runnable r) {
@@ -396,13 +396,40 @@ public class FastSearchActivity extends BaseActivity {
     private ExecutorService searchExecutorService = null;   //xuameng全局声明
     private AtomicInteger allRunCount = new AtomicInteger(0);
 
+private void searchResult() {
+    // 原有清理逻辑保持不变
+    try {
+        if (searchExecutorService != null) {
+            searchExecutorService.shutdownNow();
+            searchExecutorService = null;
+            JsLoader.stopAll();
+        }
+    } catch (Throwable th) {
+        th.printStackTrace();
+    } finally {
+        searchAdapter.setNewData(new ArrayList<>());
+        searchAdapterFilter.setNewData(new ArrayList<>());
+        allRunCount.set(0);
+    }
+
+    // 准备搜索源数据（完全保留原有逻辑）
+    List<SourceBean> searchRequestList = new ArrayList<>();
+    searchRequestList.addAll(ApiConfig.get().getSourceBeanList());
+    SourceBean home = ApiConfig.get().getHomeSourceBean();
+    searchRequestList.remove(home);
+    searchRequestList.add(0, home);
+    
+    // 分批执行搜索任务
+    batchSearch(searchRequestList, 0);
+}
+
 private void batchSearch(List<SourceBean> allSources, int startIndex) {
     // 初始化线程池（每批新建）
     searchExecutorService = new ThreadPoolExecutor(
         Runtime.getRuntime().availableProcessors(),
         Runtime.getRuntime().availableProcessors() * 2,
         30L, TimeUnit.SECONDS,
-        new LinkedBlockingQueue<>(100),
+        new LinkedBlockingQueue<>(20),
         new ThreadFactory() {
             @Override
             public Thread newThread(Runnable r) {
@@ -478,7 +505,6 @@ private void batchSearch(List<SourceBean> allSources, int startIndex) {
                 batchSearch(allSources, endIndex);
             }
         } catch (Exception e) {
-
         }
     }).start();
 }
