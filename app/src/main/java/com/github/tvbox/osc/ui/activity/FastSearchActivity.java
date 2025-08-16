@@ -48,6 +48,11 @@ import java.util.concurrent.ThreadPoolExecutor;  //xuameng 线程池
 import java.util.concurrent.TimeUnit;   //xuameng 线程池
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.LinkedBlockingQueue;   //xuameng 线程池
+import android.app.ActivityManager;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
+import java.util.concurrent.RejectedExecutionException;
 
 /**
  * @author pj567
@@ -413,22 +418,26 @@ private void searchResult() {
 
     // 优化线程池配置（核心修改点）
     searchExecutorService = new ThreadPoolExecutor(
-    Runtime.getRuntime().availableProcessors(), // 核心线程数=CPU核数
-    Runtime.getRuntime().availableProcessors() * 2, // 最大线程数
+        Math.max(2, Runtime.getRuntime().availableProcessors() - 1), // 核心线程数=CPU核数-1（最低2）
+        Runtime.getRuntime().availableProcessors() * 2, // 最大线程数
         30L, TimeUnit.SECONDS,
-        new LinkedBlockingQueue<>(200),  // 队列容量调整为500
+        new LinkedBlockingQueue<>(300),  // 队列容量调整为300（平衡值）
         new ThreadFactory() {
             @Override
             public Thread newThread(Runnable r) {
-                // 关键优化：设置256KB栈大小
-                Thread t = new Thread(null, r, "search-pool", 256 * 1024);
+                // 优化栈大小设置（根据设备内存动态调整）
+                int stackSize = 256 * 1024; // 基础256KB
+                if (getApplicationContext().getSystemService(ActivityManager.class)
+                    .getMemoryInfo(new ActivityManager.MemoryInfo()).lowMemory) {
+                    stackSize = 128 * 1024; // 低内存设备用128KB
+                }
+                Thread t = new Thread(null, r, "search-pool", stackSize);
                 t.setPriority(Thread.NORM_PRIORITY - 1);
                 return t;
             }
         },
-        new ThreadPoolExecutor.DiscardOldestPolicy()  // 超限直接丢弃
+        new ThreadPoolExecutor.CallerRunsPolicy()  // 改为由调用线程执行策略
     );
-
 
     // 原有数据准备逻辑（完全保留）
     List<SourceBean> searchRequestList = new ArrayList<>();
@@ -443,8 +452,8 @@ private void searchResult() {
     spListAdapter.setNewData(hots);
     spListAdapter.addData("全部");
 
-    // 新增任务计数器
-    AtomicInteger submittedTasks = new AtomicInteger(0);
+    // 新增任务计数器（优化为final变量）
+    final AtomicInteger submittedTasks = new AtomicInteger(0);
     final int MAX_TASKS = 500;
 
     for (SourceBean bean : searchRequestList) {
@@ -455,8 +464,9 @@ private void searchResult() {
             continue;
         }
 
-        // 任务数量控制
+        // 任务数量控制（增加日志输出）
         if (submittedTasks.get() >= MAX_TASKS) {
+            Log.w("TaskLimit", "Reached max tasks limit: " + MAX_TASKS);
             break;
         }
 
@@ -472,19 +482,26 @@ private void searchResult() {
     }
 
     showLoading();
-        for (String key : siteKey) {
-            searchExecutorService.execute(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        sourceViewModel.getSearch(key, searchTitle);
-                    } catch (Exception e) {
-
-                    }
+    // 添加任务执行异常处理
+    for (String key : siteKey) {
+        try {
+            searchExecutorService.execute(() -> {
+                try {
+                    sourceViewModel.getSearch(key, searchTitle);
+                } catch (Exception e) {
+                    Log.e("SearchTask", "Failed to search: " + key, e);
+                } finally {
+                    allRunCount.decrementAndGet();
                 }
             });
+        } catch (RejectedExecutionException e) {
+            Log.w("RejectedTask", "Execute search task in main thread: " + key);
+            new Handler(Looper.getMainLooper()).post(() -> 
+                sourceViewModel.getSearch(key, searchTitle));
         }
+    }
 }
+
 
 
     // 向过滤栏添加有结果的spname
