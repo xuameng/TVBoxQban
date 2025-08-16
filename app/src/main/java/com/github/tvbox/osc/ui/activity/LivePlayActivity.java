@@ -857,11 +857,6 @@ public class LivePlayActivity extends BaseActivity {
         if(!isCurrentLiveChannelValid()) return; //xuameng 未选择频道空指针问题
         if(isTouch) {
             showChannelListTouch();
-            mChannelGroupView.setVisibility(View.GONE);
-            divLoadEpg.setVisibility(View.GONE);
-            divEpg.setVisibility(View.VISIBLE);
-            divLoadEpgleft.setVisibility(View.VISIBLE);
-            return;
         }
         mChannelGroupView.setVisibility(View.GONE);
         divLoadEpg.setVisibility(View.GONE);
@@ -1305,8 +1300,8 @@ public class LivePlayActivity extends BaseActivity {
         epgListAdapter.getSelectedIndex(); //xuamengEPG打开菜单自动变颜色 
         liveChannelGroupAdapter.setSelectedGroupIndex(currentChannelGroupIndex);
         liveChannelItemAdapter.setSelectedChannelIndex(currentLiveChannelIndex);
-  //      mChannelGroupView.setSelection(currentChannelGroupIndex); //xuameng先滚动再选择防止空指针
-  //      mLiveChannelView.setSelection(currentLiveChannelIndex); //xuameng先滚动再选择防止空指针
+        mChannelGroupView.setSelection(currentChannelGroupIndex); //xuameng先滚动再选择防止空指针
+        mLiveChannelView.setSelection(currentLiveChannelIndex); //xuameng先滚动再选择防止空指针
         RecyclerView.ViewHolder holder = mLiveChannelView.findViewHolderForAdapterPosition(currentLiveChannelIndex);
         if(holder != null) holder.itemView.requestFocus();
         tvLeftChannelListLayout.setVisibility(View.VISIBLE);
@@ -2171,12 +2166,12 @@ public class LivePlayActivity extends BaseActivity {
         });
     }
     private void selectChannelGroup(int groupIndex, boolean focus, int liveChannelIndex) {
+        isTouch = true;
         if(focus) {
             liveChannelGroupAdapter.setFocusedGroupIndex(groupIndex);
             liveChannelItemAdapter.setFocusedChannelIndex(-1); //xuameng修复频道名称移走焦点变色问题
         }
         if((groupIndex > -1 && groupIndex != liveChannelGroupAdapter.getSelectedGroupIndex()) || isNeedInputPassword(groupIndex)) {
-            isTouch = true;
             liveChannelGroupAdapter.setSelectedGroupIndex(groupIndex);
             if(isNeedInputPassword(groupIndex)) {
                 showPasswordDialog(groupIndex, liveChannelIndex);
