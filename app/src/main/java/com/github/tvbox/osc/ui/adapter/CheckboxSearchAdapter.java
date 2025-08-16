@@ -76,14 +76,24 @@ public class CheckboxSearchAdapter extends ListAdapter<SourceBean, CheckboxSearc
         }
         holder.oneSearchSource.setTag(sourceBean);
 
-    // 父容器触摸监听
+// 焦点控制优化
     holder.itemView.setOnTouchListener((v, event) -> {
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            // 触摸时启用焦点
-            holder.oneSearchSource.setFocusableInTouchMode(true);
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                // 启用焦点但不立即处理点击
+                holder.oneSearchSource.setFocusableInTouchMode(true);
+                v.getParent().requestDisallowInterceptTouchEvent(true); // 阻止父容器拦截
+                return true; // 消费事件
+            
+            case MotionEvent.ACTION_UP:
+                // 仅在获得焦点后处理点击
+                if (holder.oneSearchSource.isFocused()) {
+                    holder.oneSearchSource.performClick();
+                }
+                break;
         }
         return false;
-    });
+    })
 
         holder.oneSearchSource.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -95,6 +105,11 @@ public class CheckboxSearchAdapter extends ListAdapter<SourceBean, CheckboxSearc
                 }
                 notifyItemChanged(pos);
             // 操作后恢复无焦点状态
+        // 延迟恢复无焦点状态
+        buttonView.post(() -> {
+            buttonView.setFocusable(false);
+            buttonView.setFocusableInTouchMode(false);
+        });
             }
         });
 
