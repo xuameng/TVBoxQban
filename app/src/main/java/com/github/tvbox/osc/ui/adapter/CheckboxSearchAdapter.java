@@ -67,7 +67,6 @@ public class CheckboxSearchAdapter extends ListAdapter<SourceBean, CheckboxSearc
         int pos = holder.getAdapterPosition();
         SourceBean sourceBean = data.get(pos);
     // 初始状态禁止焦点
-    holder.oneSearchSource.setFocusable(false);
     holder.oneSearchSource.setFocusableInTouchMode(false);
 
         holder.oneSearchSource.setText(sourceBean.getName());
@@ -82,7 +81,6 @@ public class CheckboxSearchAdapter extends ListAdapter<SourceBean, CheckboxSearc
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             // 触摸时启用焦点
             holder.oneSearchSource.setFocusableInTouchMode(true);
-            holder.oneSearchSource.requestFocus();
         }
         return false;
     });
@@ -97,8 +95,6 @@ public class CheckboxSearchAdapter extends ListAdapter<SourceBean, CheckboxSearc
                 }
                 notifyItemChanged(pos);
             // 操作后恢复无焦点状态
-            buttonView.setFocusable(false);
-            buttonView.setFocusableInTouchMode(false);
             }
         });
 
