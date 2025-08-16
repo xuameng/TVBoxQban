@@ -53,6 +53,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import java.util.concurrent.RejectedExecutionException;
+import android.content.Context;
 
 /**
  * @author pj567
@@ -124,22 +125,33 @@ public class FastSearchActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         if (pauseRunnable != null && pauseRunnable.size() > 0) {
-    searchExecutorService = new ThreadPoolExecutor(
-    Runtime.getRuntime().availableProcessors(), // 核心线程数=CPU核数
-    Runtime.getRuntime().availableProcessors() * 2, // 最大线程数
-        30L, TimeUnit.SECONDS,
-        new LinkedBlockingQueue<>(200),  // 队列容量调整为500
-        new ThreadFactory() {
-            @Override
-            public Thread newThread(Runnable r) {
-                // 关键优化：设置256KB栈大小
-                Thread t = new Thread(null, r, "search-pool", 256 * 1024);
-                t.setPriority(Thread.NORM_PRIORITY - 1);
-                return t;
+searchExecutorService = new ThreadPoolExecutor(
+    Math.max(2, Runtime.getRuntime().availableProcessors() - 1),
+    Runtime.getRuntime().availableProcessors() * 2,
+    30L, TimeUnit.SECONDS,
+    new LinkedBlockingQueue<>(300),
+    new ThreadFactory() {
+        @Override
+        public Thread newThread(Runnable r) {
+            int stackSize = 256 * 1024; // 默认256KB
+            
+            // 修正后的内存检测逻辑
+            ActivityManager activityManager = (ActivityManager) getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
+            if (activityManager != null) {
+                ActivityManager.MemoryInfo memoryInfo = new ActivityManager.MemoryInfo();
+                activityManager.getMemoryInfo(memoryInfo); // 先获取内存信息
+                if (memoryInfo.lowMemory) {
+                    stackSize = 128 * 1024; // 低内存时128KB
+                }
             }
-        },
-        new ThreadPoolExecutor.DiscardOldestPolicy()  // 超限直接丢弃
-    );
+            
+            Thread t = new Thread(null, r, "search-pool", stackSize);
+            t.setPriority(Thread.NORM_PRIORITY - 1);
+            return t;
+        }
+    },
+    new ThreadPoolExecutor.CallerRunsPolicy()
+);
          
             allRunCount.set(pauseRunnable.size());
             for (Runnable runnable : pauseRunnable) {
@@ -417,27 +429,34 @@ private void searchResult() {
     }
 
     // 优化线程池配置（核心修改点）
-    searchExecutorService = new ThreadPoolExecutor(
-        Math.max(2, Runtime.getRuntime().availableProcessors() - 1), // 核心线程数=CPU核数-1（最低2）
-        Runtime.getRuntime().availableProcessors() * 2, // 最大线程数
-        30L, TimeUnit.SECONDS,
-        new LinkedBlockingQueue<>(300),  // 队列容量调整为300（平衡值）
-        new ThreadFactory() {
-            @Override
-            public Thread newThread(Runnable r) {
-                // 优化栈大小设置（根据设备内存动态调整）
-                int stackSize = 256 * 1024; // 基础256KB
-                if (getApplicationContext().getSystemService(ActivityManager.class)
-                    .getMemoryInfo(new ActivityManager.MemoryInfo()).lowMemory) {
-                    stackSize = 128 * 1024; // 低内存设备用128KB
+searchExecutorService = new ThreadPoolExecutor(
+    Math.max(2, Runtime.getRuntime().availableProcessors() - 1),
+    Runtime.getRuntime().availableProcessors() * 2,
+    30L, TimeUnit.SECONDS,
+    new LinkedBlockingQueue<>(300),
+    new ThreadFactory() {
+        @Override
+        public Thread newThread(Runnable r) {
+            int stackSize = 256 * 1024; // 默认256KB
+            
+            // 修正后的内存检测逻辑
+            ActivityManager activityManager = (ActivityManager) getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
+            if (activityManager != null) {
+                ActivityManager.MemoryInfo memoryInfo = new ActivityManager.MemoryInfo();
+                activityManager.getMemoryInfo(memoryInfo); // 先获取内存信息
+                if (memoryInfo.lowMemory) {
+                    stackSize = 128 * 1024; // 低内存时128KB
                 }
-                Thread t = new Thread(null, r, "search-pool", stackSize);
-                t.setPriority(Thread.NORM_PRIORITY - 1);
-                return t;
             }
-        },
-        new ThreadPoolExecutor.CallerRunsPolicy()  // 改为由调用线程执行策略
-    );
+            
+            Thread t = new Thread(null, r, "search-pool", stackSize);
+            t.setPriority(Thread.NORM_PRIORITY - 1);
+            return t;
+        }
+    },
+    new ThreadPoolExecutor.CallerRunsPolicy()
+);
+
 
     // 原有数据准备逻辑（完全保留）
     List<SourceBean> searchRequestList = new ArrayList<>();
