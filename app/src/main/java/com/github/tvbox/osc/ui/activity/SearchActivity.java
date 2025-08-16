@@ -139,7 +139,7 @@ public class SearchActivity extends BaseActivity {
             Runtime.getRuntime().availableProcessors(), // 核心线程数=CPU核数
             Runtime.getRuntime().availableProcessors() * 2, // 最大线程数
                 30L, TimeUnit.SECONDS,
-                new LinkedBlockingQueue<>(200),  // 队列容量调整为200
+                new LinkedBlockingQueue<>(1000),  // 队列容量调整为1000
                 new ThreadFactory() {
                     @Override
                     public Thread newThread(Runnable r) {
@@ -576,7 +576,7 @@ public class SearchActivity extends BaseActivity {
         Runtime.getRuntime().availableProcessors(), // 核心线程数=CPU核数
         Runtime.getRuntime().availableProcessors() * 2, // 最大线程数
             30L, TimeUnit.SECONDS,
-            new LinkedBlockingQueue<>(200),  // 队列容量调整为200
+            new LinkedBlockingQueue<>(1000),  // 队列容量调整为1000
             new ThreadFactory() {
                 @Override
                 public Thread newThread(Runnable r) {
