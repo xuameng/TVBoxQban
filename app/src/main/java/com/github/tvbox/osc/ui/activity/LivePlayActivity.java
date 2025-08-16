@@ -2194,6 +2194,7 @@ public class LivePlayActivity extends BaseActivity {
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 mHideChannelListRunXu(); //xuameng隐藏频道菜单
+				mLiveChannelView.clearFocus();
             }
         });
         //电视
@@ -2205,7 +2206,7 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
                 isTouch = false;
-                if(position < 0) return;
+                if(position < 0 || position > getLiveChannels(channelGroupIndexXu).size() - 1) return;
                 int channelGroupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex(); //xuameng当前选定的频道组
                 if(position == getLiveChannels(channelGroupIndexXu).size() - 1) { //xuameng判断是否是最后一个item
                     itemView.setId(View.generateViewId());
