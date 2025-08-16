@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import android.view.MotionEvent;
 
 public class CheckboxSearchAdapter extends ListAdapter<SourceBean, CheckboxSearchAdapter.ViewHolder> {
 
@@ -61,7 +62,7 @@ public class CheckboxSearchAdapter extends ListAdapter<SourceBean, CheckboxSearc
         return data.size();
     }
 
-    @Override
+
 @Override
 public void onBindViewHolder(ViewHolder holder, int position) {
     // 数据绑定
