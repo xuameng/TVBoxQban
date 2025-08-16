@@ -2166,12 +2166,12 @@ public class LivePlayActivity extends BaseActivity {
         });
     }
     private void selectChannelGroup(int groupIndex, boolean focus, int liveChannelIndex) {
-        isTouch = true;
         if(focus) {
             liveChannelGroupAdapter.setFocusedGroupIndex(groupIndex);
             liveChannelItemAdapter.setFocusedChannelIndex(-1); //xuameng修复频道名称移走焦点变色问题
         }
         if((groupIndex > -1 && groupIndex != liveChannelGroupAdapter.getSelectedGroupIndex()) || isNeedInputPassword(groupIndex)) {
+            isTouch = true;
             liveChannelGroupAdapter.setSelectedGroupIndex(groupIndex);
             if(isNeedInputPassword(groupIndex)) {
                 showPasswordDialog(groupIndex, liveChannelIndex);
@@ -2194,12 +2194,6 @@ public class LivePlayActivity extends BaseActivity {
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 mHideChannelListRunXu(); //xuameng隐藏频道菜单
-                mLiveChannelView.clearFocus();
-                if(divLoadEpgleft.getVisibility() == View.VISIBLE) {
-                   if (divLoadEpgleft.hasFocus()) return;
-                   divLoadEpgleft.requestFocus();
-                   divLoadEpgleft.requestFocusFromTouch();
-				}
             }
         });
         //电视
@@ -2210,8 +2204,9 @@ public class LivePlayActivity extends BaseActivity {
             }
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
+                isTouch = false;
+                if(position < 0) return;
                 int channelGroupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex(); //xuameng当前选定的频道组
-                if(position < 0 || position > getLiveChannels(channelGroupIndexXu).size() - 1) return;   //xuameng 小于0大于频道列表
                 if(position == getLiveChannels(channelGroupIndexXu).size() - 1) { //xuameng判断是否是最后一个item
                     itemView.setId(View.generateViewId());
                     itemView.setNextFocusDownId(itemView.getId()); //xuameng不超出item
@@ -2221,10 +2216,7 @@ public class LivePlayActivity extends BaseActivity {
                 liveChannelGroupAdapter.setFocusedGroupIndex(-1);
                 liveChannelItemAdapter.setFocusedChannelIndex(position);
                 liveChannelItemAdapter.setSelectedChannelIndex(position);
-                if(!isTouch){
-                   playChannelxu(liveChannelGroupAdapter.getSelectedGroupIndex(), liveChannelItemAdapter.getSelectedChannelIndex(), false); //xuameng换频道显示EPG
-                }
-                isTouch = false;
+                playChannelxu(liveChannelGroupAdapter.getSelectedGroupIndex(), liveChannelItemAdapter.getSelectedChannelIndex(), false); //xuameng换频道显示EPG
                 liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
                 mHideChannelListRunXu(); //xuameng隐藏频道菜单
             }
