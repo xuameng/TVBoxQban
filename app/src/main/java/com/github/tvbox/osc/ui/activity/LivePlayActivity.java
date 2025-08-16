@@ -2186,6 +2186,7 @@ public class LivePlayActivity extends BaseActivity {
     }
     private void initLiveChannelView() {
         mLiveChannelView.setHasFixedSize(true);
+		mLiveChannelView.setFocusableInTouchMode(false);
         mLiveChannelView.setItemAnimator(null);   //xuameng禁用TVRecyclerView动画
         mLiveChannelView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
         liveChannelItemAdapter = new LiveChannelItemAdapter();
@@ -2195,6 +2196,7 @@ public class LivePlayActivity extends BaseActivity {
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 mHideChannelListRunXu(); //xuameng隐藏频道菜单
+				mLiveChannelView.setFocusableInTouchMode(false);
             }
         });
         //电视
@@ -2206,6 +2208,7 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
                 isTouch = false;
+				mLiveChannelView.setFocusableInTouchMode(true);
                 if(position < 0) return;
                 int channelGroupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex(); //xuameng当前选定的频道组
                 if(position == getLiveChannels(channelGroupIndexXu).size() - 1) { //xuameng判断是否是最后一个item
@@ -3247,13 +3250,4 @@ public class LivePlayActivity extends BaseActivity {
             xToast = null;
         }
     }
-    private View.OnFocusChangeListener focusChangeListener = new View.OnFocusChangeListener() {     //xuameng 触碰变大
-        @Override
-        public void onFocusChange(View v, boolean hasFocus) {
-            if (hasFocus)
-                v.animate().scaleX(1.05f).scaleY(1.05f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
-            else
-                v.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
-        }
-    };
 }
