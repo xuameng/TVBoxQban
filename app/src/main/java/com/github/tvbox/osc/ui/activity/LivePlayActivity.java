@@ -40,6 +40,7 @@ import com.squareup.picasso.NetworkPolicy; //xuameng播放音频切换图片
 import android.graphics.Bitmap; //xuameng播放音频切换图片
 import com.github.tvbox.osc.api.ApiConfig; //xuameng播放音频切换图片
 import android.annotation.SuppressLint; //xuamengEPG显示错误
+import android.view.animation.BounceInterpolator;
 import java.util.HashMap; //XUAMENG自定义UA
 import java.util.Objects;
 import com.chad.library.adapter.base.BaseQuickAdapter;
