@@ -67,6 +67,7 @@ public class CheckboxSearchAdapter extends ListAdapter<SourceBean, CheckboxSearc
         int pos = holder.getAdapterPosition();
         SourceBean sourceBean = data.get(pos);
     // 初始状态禁止焦点
+    holder.oneSearchSource.setFocusable(false);
     holder.oneSearchSource.setFocusableInTouchMode(false);
 
         holder.oneSearchSource.setText(sourceBean.getName());
@@ -76,21 +77,27 @@ public class CheckboxSearchAdapter extends ListAdapter<SourceBean, CheckboxSearc
         }
         holder.oneSearchSource.setTag(sourceBean);
 
-// 焦点控制优化
+// 焦点控制终极方案
     holder.itemView.setOnTouchListener((v, event) -> {
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                // 启用焦点但不立即处理点击
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            // 双重焦点保障机制
+            holder.oneSearchSource.post(() -> {
+                holder.oneSearchSource.setFocusable(true);
                 holder.oneSearchSource.setFocusableInTouchMode(true);
-                v.getParent().requestDisallowInterceptTouchEvent(true); // 阻止父容器拦截
-                return true; // 消费事件
-            
-            case MotionEvent.ACTION_UP:
-                // 仅在获得焦点后处理点击
-                if (holder.oneSearchSource.isFocused()) {
-                    holder.oneSearchSource.performClick();
-                }
-                break;
+                holder.oneSearchSource.requestFocus();
+                
+                // 添加焦点变化监听确保状态同步
+                holder.oneSearchSource.setOnFocusChangeListener((view, hasFocus) -> {
+                    if (hasFocus) {
+                        view.postDelayed(() -> {
+                            if (view.isFocused()) {
+                                view.performClick();
+                            }
+                        }, 150); // 符合人类反应时间的延迟
+                    }
+                });
+            });
+            return true;
         }
         return false;
     });
@@ -104,12 +111,11 @@ public class CheckboxSearchAdapter extends ListAdapter<SourceBean, CheckboxSearc
                     mCheckedSources.remove(sourceBean.getKey());
                 }
                 notifyItemChanged(pos);
-            // 操作后恢复无焦点状态
-        // 延迟恢复无焦点状态
-        buttonView.post(() -> {
+        buttonView.postDelayed(() -> {
             buttonView.setFocusable(false);
             buttonView.setFocusableInTouchMode(false);
-        });
+            buttonView.setOnFocusChangeListener(null); // 清除监听防内存泄漏
+        }, 100);
             }
         });
 
