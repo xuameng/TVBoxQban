@@ -118,14 +118,23 @@ public class FastSearchActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         if (pauseRunnable != null && pauseRunnable.size() > 0) {
-            searchExecutorService = new ThreadPoolExecutor(
-                Runtime.getRuntime().availableProcessors() + 1, // xuameng动态核心线程数
-                (Runtime.getRuntime().availableProcessors() + 1) * 2,  // xuameng最大线程数
-                10L, 
-                TimeUnit.SECONDS,
-                new ArrayBlockingQueue<>(1000), // xuameng任务队列容量
-                new ThreadPoolExecutor.CallerRunsPolicy() // xuameng降级策略
-            );
+    int cpuCores = Runtime.getRuntime().availableProcessors();
+    searchExecutorService = new ThreadPoolExecutor(
+        Math.min(16, cpuCores * 2),  // 核心线程数
+        Math.min(32, cpuCores * 4),  // 最大线程数
+        30L, TimeUnit.SECONDS,
+        new ArrayBlockingQueue<>(500),  // 队列容量调整为500
+        new ThreadFactory() {
+            @Override
+            public Thread newThread(Runnable r) {
+                // 关键优化：设置256KB栈大小
+                Thread t = new Thread(null, r, "search-pool", 256 * 1024);
+                t.setPriority(Thread.NORM_PRIORITY - 1);
+                return t;
+            }
+        },
+        new ThreadPoolExecutor.DiscardPolicy()  // 超限直接丢弃
+    );
             ((ThreadPoolExecutor)searchExecutorService).prestartAllCoreThreads();  // xuameng预热线程
             allRunCount.set(pauseRunnable.size());
             for (Runnable runnable : pauseRunnable) {
@@ -466,19 +475,18 @@ private void searchResult() {
     }
 
     showLoading();
-    for (String key : siteKey) {
-        try {
-            searchExecutorService.execute(() -> {
-                try {
-                    sourceViewModel.getSearch(key, searchTitle);
-                } catch (Exception e) {
-                    // 保留原有空异常处理
+        for (String key : siteKey) {
+            searchExecutorService.execute(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        sourceViewModel.getSearch(key, searchTitle);
+                    } catch (Exception e) {
+
+                    }
                 }
             });
-        } catch (Exception e) {
-            // 丢弃超限任务不处理
         }
-    }
 }
 
 
