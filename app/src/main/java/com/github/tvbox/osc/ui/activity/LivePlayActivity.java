@@ -1300,8 +1300,8 @@ public class LivePlayActivity extends BaseActivity {
         epgListAdapter.getSelectedIndex(); //xuamengEPG打开菜单自动变颜色 
         liveChannelGroupAdapter.setSelectedGroupIndex(currentChannelGroupIndex);
         liveChannelItemAdapter.setSelectedChannelIndex(currentLiveChannelIndex);
-        mChannelGroupView.setSelection(currentChannelGroupIndex); //xuameng先滚动再选择防止空指针
-        mLiveChannelView.setSelection(currentLiveChannelIndex); //xuameng先滚动再选择防止空指针
+   //     mChannelGroupView.setSelection(currentChannelGroupIndex); //xuameng先滚动再选择防止空指针
+   //     mLiveChannelView.setSelection(currentLiveChannelIndex); //xuameng先滚动再选择防止空指针
         RecyclerView.ViewHolder holder = mLiveChannelView.findViewHolderForAdapterPosition(currentLiveChannelIndex);
         if(holder != null) holder.itemView.requestFocus();
         tvLeftChannelListLayout.setVisibility(View.VISIBLE);
@@ -2200,7 +2200,7 @@ public class LivePlayActivity extends BaseActivity {
         mLiveChannelView.setOnItemListener(new TvRecyclerView.OnItemListener() {
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
-                liveChannelItemAdapter.setFocusedChannelIndex(-1); //xuameng修复频道名称移走焦点变色问题
+           //     liveChannelItemAdapter.setFocusedChannelIndex(-1); //xuameng修复频道名称移走焦点变色问题
             }
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
