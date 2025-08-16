@@ -2206,8 +2206,9 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
                 isTouch = false;
+int channelGroupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex(); //xuameng当前选定的频道组
                 if(position < 0 || position > getLiveChannels(channelGroupIndexXu).size() - 1) return;
-                int channelGroupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex(); //xuameng当前选定的频道组
+                
                 if(position == getLiveChannels(channelGroupIndexXu).size() - 1) { //xuameng判断是否是最后一个item
                     itemView.setId(View.generateViewId());
                     itemView.setNextFocusDownId(itemView.getId()); //xuameng不超出item
