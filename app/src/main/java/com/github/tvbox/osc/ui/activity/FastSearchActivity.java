@@ -47,6 +47,7 @@ import java.util.concurrent.ArrayBlockingQueue;   //xuameng 线程池
 import java.util.concurrent.ThreadPoolExecutor;  //xuameng 线程池
 import java.util.concurrent.TimeUnit;   //xuameng 线程池
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.LinkedBlockingQueue;   //xuameng 线程池
 
 /**
  * @author pj567
@@ -118,12 +119,11 @@ public class FastSearchActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         if (pauseRunnable != null && pauseRunnable.size() > 0) {
-    int cpuCores = Runtime.getRuntime().availableProcessors();
     searchExecutorService = new ThreadPoolExecutor(
-        Math.min(16, cpuCores * 2),  // 核心线程数
-        Math.min(32, cpuCores * 4),  // 最大线程数
+    Runtime.getRuntime().availableProcessors(), // 核心线程数=CPU核数
+    Runtime.getRuntime().availableProcessors() * 2, // 最大线程数
         30L, TimeUnit.SECONDS,
-        new ArrayBlockingQueue<>(500),  // 队列容量调整为500
+        new LinkedBlockingQueue<>(200),  // 队列容量调整为500
         new ThreadFactory() {
             @Override
             public Thread newThread(Runnable r) {
@@ -133,9 +133,9 @@ public class FastSearchActivity extends BaseActivity {
                 return t;
             }
         },
-        new ThreadPoolExecutor.DiscardPolicy()  // 超限直接丢弃
+        new ThreadPoolExecutor.DiscardOldestPolicy()  // 超限直接丢弃
     );
-            ((ThreadPoolExecutor)searchExecutorService).prestartAllCoreThreads();  // xuameng预热线程
+         
             allRunCount.set(pauseRunnable.size());
             for (Runnable runnable : pauseRunnable) {
                 searchExecutorService.execute(runnable);
@@ -412,12 +412,11 @@ private void searchResult() {
     }
 
     // 优化线程池配置（核心修改点）
-    int cpuCores = Runtime.getRuntime().availableProcessors();
     searchExecutorService = new ThreadPoolExecutor(
-        Math.min(16, cpuCores * 2),  // 核心线程数
-        Math.min(32, cpuCores * 4),  // 最大线程数
+    Runtime.getRuntime().availableProcessors(), // 核心线程数=CPU核数
+    Runtime.getRuntime().availableProcessors() * 2, // 最大线程数
         30L, TimeUnit.SECONDS,
-        new ArrayBlockingQueue<>(500),  // 队列容量调整为500
+        new LinkedBlockingQueue<>(200),  // 队列容量调整为500
         new ThreadFactory() {
             @Override
             public Thread newThread(Runnable r) {
@@ -427,11 +426,9 @@ private void searchResult() {
                 return t;
             }
         },
-        new ThreadPoolExecutor.DiscardPolicy()  // 超限直接丢弃
+        new ThreadPoolExecutor.DiscardOldestPolicy()  // 超限直接丢弃
     );
 
-    // 原有预热逻辑
-    ((ThreadPoolExecutor)searchExecutorService).prestartAllCoreThreads();
 
     // 原有数据准备逻辑（完全保留）
     List<SourceBean> searchRequestList = new ArrayList<>();
