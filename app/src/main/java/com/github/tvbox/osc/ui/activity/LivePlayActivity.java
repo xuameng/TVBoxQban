@@ -1403,6 +1403,7 @@ public class LivePlayActivity extends BaseActivity {
     }
     private boolean playChannelxu(int channelGroupIndex, int liveChannelIndex, boolean changeSource) { //xuameng播放
         if(mVideoView == null) return true; //XUAMENG可能会引起空指针问题的修复
+        if(isTouch)  return true;   //xuameng 手机焦点问题不会刷新EPG
         if(!changeSource) {
             currentChannelGroupIndexXu = channelGroupIndex; //xuameng重要频道组
             currentLiveChannelIndexXu = liveChannelIndex; //xuameng重要频道名称
@@ -2196,6 +2197,7 @@ public class LivePlayActivity extends BaseActivity {
                 mHideChannelListRunXu(); //xuameng隐藏频道菜单
                 mLiveChannelView.clearFocus();
                 if(divLoadEpgleft.getVisibility() == View.VISIBLE) {
+                   if (divLoadEpgleft.hasFocus()) return;
                    divLoadEpgleft.requestFocus();
                    divLoadEpgleft.requestFocusFromTouch();
 				}
