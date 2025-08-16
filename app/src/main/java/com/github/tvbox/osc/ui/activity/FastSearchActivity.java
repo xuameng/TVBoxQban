@@ -46,14 +46,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.ArrayBlockingQueue;   //xuameng 线程池
 import java.util.concurrent.ThreadPoolExecutor;  //xuameng 线程池
 import java.util.concurrent.TimeUnit;   //xuameng 线程池
-import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadFactory;   //xuameng 线程池
 import java.util.concurrent.LinkedBlockingQueue;   //xuameng 线程池
-import android.app.ActivityManager;
-import android.os.Handler;
-import android.os.Looper;
-import android.util.Log;
-import java.util.concurrent.RejectedExecutionException;
-import android.content.Context;
 
 /**
  * @author pj567
@@ -125,33 +119,22 @@ public class FastSearchActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         if (pauseRunnable != null && pauseRunnable.size() > 0) {
-searchExecutorService = new ThreadPoolExecutor(
-    Math.max(2, Runtime.getRuntime().availableProcessors() - 1),
-    Runtime.getRuntime().availableProcessors() * 2,
-    30L, TimeUnit.SECONDS,
-    new LinkedBlockingQueue<>(200),
-    new ThreadFactory() {
-        @Override
-        public Thread newThread(Runnable r) {
-            int stackSize = 256 * 1024; // 默认256KB
-            
-            // 修正后的内存检测逻辑
-            ActivityManager activityManager = (ActivityManager) getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
-            if (activityManager != null) {
-                ActivityManager.MemoryInfo memoryInfo = new ActivityManager.MemoryInfo();
-                activityManager.getMemoryInfo(memoryInfo); // 先获取内存信息
-                if (memoryInfo.lowMemory) {
-                    stackSize = 128 * 1024; // 低内存时128KB
-                }
-            }
-            
-            Thread t = new Thread(null, r, "search-pool", stackSize);
-            t.setPriority(Thread.NORM_PRIORITY - 1);
-            return t;
-        }
-    },
-    new ThreadPoolExecutor.CallerRunsPolicy()
-);
+            searchExecutorService = new ThreadPoolExecutor(
+            Runtime.getRuntime().availableProcessors(), // 核心线程数=CPU核数
+            Runtime.getRuntime().availableProcessors() * 2, // 最大线程数
+                30L, TimeUnit.SECONDS,
+                new LinkedBlockingQueue<>(200),  // 队列容量调整为200
+                new ThreadFactory() {
+                    @Override
+                    public Thread newThread(Runnable r) {
+                        // 关键优化：设置256KB栈大小
+                        Thread t = new Thread(null, r, "search-pool", 256 * 1024);
+                        t.setPriority(Thread.NORM_PRIORITY - 1);
+                        return t;
+                    }
+                },
+                new ThreadPoolExecutor.DiscardOldestPolicy()  // 超限直接丢弃
+            );
          
             allRunCount.set(pauseRunnable.size());
             for (Runnable runnable : pauseRunnable) {
@@ -412,116 +395,98 @@ searchExecutorService = new ThreadPoolExecutor(
     private ExecutorService searchExecutorService = null;   //xuameng全局声明
     private AtomicInteger allRunCount = new AtomicInteger(0);
 
-private void searchResult() {
-    // 原有清理逻辑保持不变
-    try {
-        if (searchExecutorService != null) {
-            searchExecutorService.shutdownNow();
-            searchExecutorService = null;
-            JsLoader.stopAll();
-        }
-    } catch (Throwable th) {
-        th.printStackTrace();
-    } finally {
-        searchAdapter.setNewData(new ArrayList<>());
-        searchAdapterFilter.setNewData(new ArrayList<>());
-        allRunCount.set(0);
-    }
-
-    // 优化线程池配置（核心修改点）
-searchExecutorService = new ThreadPoolExecutor(
-    Math.max(2, Runtime.getRuntime().availableProcessors() - 1),
-    Runtime.getRuntime().availableProcessors() * 2,
-    30L, TimeUnit.SECONDS,
-    new LinkedBlockingQueue<>(200),
-    new ThreadFactory() {
-        @Override
-        public Thread newThread(Runnable r) {
-            int stackSize = 256 * 1024; // 默认256KB
-            
-            // 修正后的内存检测逻辑
-            ActivityManager activityManager = (ActivityManager) getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
-            if (activityManager != null) {
-                ActivityManager.MemoryInfo memoryInfo = new ActivityManager.MemoryInfo();
-                activityManager.getMemoryInfo(memoryInfo); // 先获取内存信息
-                if (memoryInfo.lowMemory) {
-                    stackSize = 128 * 1024; // 低内存时128KB
-                }
-            }
-            
-            Thread t = new Thread(null, r, "search-pool", stackSize);
-            t.setPriority(Thread.NORM_PRIORITY - 1);
-            return t;
-        }
-    },
-    new ThreadPoolExecutor.CallerRunsPolicy()
-);
-
-
-    // 原有数据准备逻辑（完全保留）
-    List<SourceBean> searchRequestList = new ArrayList<>();
-    searchRequestList.addAll(ApiConfig.get().getSourceBeanList());
-    SourceBean home = ApiConfig.get().getHomeSourceBean();
-    searchRequestList.remove(home);
-    searchRequestList.add(0, home);
-
-    ArrayList<String> siteKey = new ArrayList<>();
-    ArrayList<String> hots = new ArrayList<>();
-
-    spListAdapter.setNewData(hots);
-    spListAdapter.addData("全部");
-
-    // 新增任务计数器（优化为final变量）
-    final AtomicInteger submittedTasks = new AtomicInteger(0);
-    final int MAX_TASKS = 200;
-
-    for (SourceBean bean : searchRequestList) {
-        if (!bean.isSearchable()) {
-            continue;
-        }
-        if (mCheckSources != null && !mCheckSources.containsKey(bean.getKey())) {
-            continue;
-        }
-
-        // 任务数量控制（增加日志输出）
-        if (submittedTasks.get() >= MAX_TASKS) {
-            Log.w("TaskLimit", "Reached max tasks limit: " + MAX_TASKS);
-            App.showToastShort(FastSearchActivity.this, "聚汇影视提示：指定搜索源超过200个，只保留前200个，请分批搜索！防止内存泄漏！");
-            break;
-        }
-
-        siteKey.add(bean.getKey());
-        this.spNames.put(bean.getName(), bean.getKey());
-        allRunCount.incrementAndGet();
-        submittedTasks.incrementAndGet();
-    }
-
-    if (siteKey.size() <= 0) {
-        App.showToastShort(FastSearchActivity.this, "聚汇影视提示：请指定搜索源！");
-        return;
-    }
-
-    showLoading();
-    // 添加任务执行异常处理
-    for (String key : siteKey) {
+    private void searchResult() {
+        // 原有清理逻辑保持不变
         try {
-            searchExecutorService.execute(() -> {
-                try {
-                    sourceViewModel.getSearch(key, searchTitle);
-                } catch (Exception e) {
-                    Log.e("SearchTask", "Failed to search: " + key, e);
-                } finally {
-                    allRunCount.decrementAndGet();
+            if (searchExecutorService != null) {
+                searchExecutorService.shutdownNow();
+                searchExecutorService = null;
+                JsLoader.stopAll();
+            }
+        } catch (Throwable th) {
+            th.printStackTrace();
+        } finally {
+            searchAdapter.setNewData(new ArrayList<>());
+            searchAdapterFilter.setNewData(new ArrayList<>());
+            allRunCount.set(0);
+        }
+
+        // 优化线程池配置（核心修改点）
+        searchExecutorService = new ThreadPoolExecutor(
+        Runtime.getRuntime().availableProcessors(), // 核心线程数=CPU核数
+        Runtime.getRuntime().availableProcessors() * 2, // 最大线程数
+            30L, TimeUnit.SECONDS,
+            new LinkedBlockingQueue<>(200),  // 队列容量调整为200
+            new ThreadFactory() {
+                @Override
+                public Thread newThread(Runnable r) {
+                    // 关键优化：设置256KB栈大小
+                    Thread t = new Thread(null, r, "search-pool", 256 * 1024);
+                    t.setPriority(Thread.NORM_PRIORITY - 1);
+                    return t;
+                }
+            },
+            new ThreadPoolExecutor.DiscardOldestPolicy()  // 超限直接丢弃
+        );
+
+
+        // 原有数据准备逻辑（完全保留）
+        List<SourceBean> searchRequestList = new ArrayList<>();
+        searchRequestList.addAll(ApiConfig.get().getSourceBeanList());
+        SourceBean home = ApiConfig.get().getHomeSourceBean();
+        searchRequestList.remove(home);
+        searchRequestList.add(0, home);
+
+        ArrayList<String> siteKey = new ArrayList<>();
+        ArrayList<String> hots = new ArrayList<>();
+
+        spListAdapter.setNewData(hots);
+        spListAdapter.addData("全部");
+
+    // 新增任务计数器
+        AtomicInteger submittedTasks = new AtomicInteger(0);
+        final int MAX_TASKS = 200;
+
+        for (SourceBean bean : searchRequestList) {
+            if (!bean.isSearchable()) {
+                continue;
+            }
+            if (mCheckSources != null && !mCheckSources.containsKey(bean.getKey())) {
+                continue;
+            }
+
+            // 任务数量控制
+            if (submittedTasks.get() >= MAX_TASKS) {
+                App.showToastLong(FastSearchActivity.this, "聚汇影视提示：指定搜索源超过200个，只保留前200个，请分批搜索！防止内存泄漏！");
+                break;
+            }
+
+            siteKey.add(bean.getKey());
+            this.spNames.put(bean.getName(), bean.getKey());
+            allRunCount.incrementAndGet();
+            submittedTasks.incrementAndGet();
+        }
+
+        if (siteKey.size() <= 0) {
+            App.showToastShort(FastSearchActivity.this, "聚汇影视提示：请指定搜索源！");
+            return;
+        }
+
+        showLoading();
+
+        for (String key : siteKey) {
+            searchExecutorService.execute(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        sourceViewModel.getSearch(key, searchTitle);
+                    } catch (Exception e) {
+
+                    }
                 }
             });
-        } catch (RejectedExecutionException e) {
-            Log.w("RejectedTask", "Execute search task in main thread: " + key);
-            new Handler(Looper.getMainLooper()).post(() -> 
-                sourceViewModel.getSearch(key, searchTitle));
         }
     }
-}
-
 
 
     // 向过滤栏添加有结果的spname
