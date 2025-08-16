@@ -129,7 +129,7 @@ searchExecutorService = new ThreadPoolExecutor(
     Math.max(2, Runtime.getRuntime().availableProcessors() - 1),
     Runtime.getRuntime().availableProcessors() * 2,
     30L, TimeUnit.SECONDS,
-    new LinkedBlockingQueue<>(300),
+    new LinkedBlockingQueue<>(200),
     new ThreadFactory() {
         @Override
         public Thread newThread(Runnable r) {
@@ -433,7 +433,7 @@ searchExecutorService = new ThreadPoolExecutor(
     Math.max(2, Runtime.getRuntime().availableProcessors() - 1),
     Runtime.getRuntime().availableProcessors() * 2,
     30L, TimeUnit.SECONDS,
-    new LinkedBlockingQueue<>(300),
+    new LinkedBlockingQueue<>(200),
     new ThreadFactory() {
         @Override
         public Thread newThread(Runnable r) {
@@ -473,7 +473,7 @@ searchExecutorService = new ThreadPoolExecutor(
 
     // 新增任务计数器（优化为final变量）
     final AtomicInteger submittedTasks = new AtomicInteger(0);
-    final int MAX_TASKS = 500;
+    final int MAX_TASKS = 200;
 
     for (SourceBean bean : searchRequestList) {
         if (!bean.isSearchable()) {
@@ -486,6 +486,7 @@ searchExecutorService = new ThreadPoolExecutor(
         // 任务数量控制（增加日志输出）
         if (submittedTasks.get() >= MAX_TASKS) {
             Log.w("TaskLimit", "Reached max tasks limit: " + MAX_TASKS);
+            App.showToastShort(FastSearchActivity.this, "聚汇影视提示：指定搜索源超过200个，只保留前200个，请分批搜索！防止内存泄漏！");
             break;
         }
 
