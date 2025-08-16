@@ -93,7 +93,7 @@ public class CheckboxSearchAdapter extends ListAdapter<SourceBean, CheckboxSearc
                 break;
         }
         return false;
-    })
+    });
 
         holder.oneSearchSource.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
