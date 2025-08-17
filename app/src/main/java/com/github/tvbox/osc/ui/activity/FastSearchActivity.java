@@ -141,7 +141,7 @@ public class FastSearchActivity extends BaseActivity {
                 return t;
             }
         },
-        new ThreadPoolExecutor.DiscardOldestPolicy()
+        new ThreadPoolExecutor.CallerRunsPolicy()
     );
          
             allRunCount.set(pauseRunnable.size());
@@ -438,7 +438,7 @@ private void searchResult() {
                 return t;
             }
         },
-        new ThreadPoolExecutor.DiscardOldestPolicy()
+        new ThreadPoolExecutor.CallerRunsPolicy()
     );
     
     // 原有数据准备逻辑（保持不变）
@@ -505,8 +505,8 @@ new Thread(() -> {
                         );
                         
                         try {
-                            // 设置5秒超时控制
-                            future.get(5, TimeUnit.SECONDS);
+                            // 设置20秒超时控制
+                            future.get(20, TimeUnit.SECONDS);
                             completedTasks.incrementAndGet();
                         } catch (TimeoutException e) {
                             future.cancel(true);  // 强制取消超时任务
