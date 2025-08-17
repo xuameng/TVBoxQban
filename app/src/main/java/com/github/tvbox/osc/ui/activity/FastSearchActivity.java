@@ -397,7 +397,7 @@ public class FastSearchActivity extends BaseActivity {
     private AtomicInteger allRunCount = new AtomicInteger(0);
 
 private void searchResult() {
-    // 原有清理逻辑保持不变
+    // 保持原有清理逻辑
     try {
         if (searchExecutorService != null) {
             searchExecutorService.shutdownNow();
@@ -412,25 +412,24 @@ private void searchResult() {
         allRunCount.set(0);
     }
 
-    // 优化线程池配置（核心修改点）
+    // 保持原有线程池配置
     searchExecutorService = new ThreadPoolExecutor(
-        Runtime.getRuntime().availableProcessors(), // 核心线程数=CPU核数
-        Runtime.getRuntime().availableProcessors() * 2, // 最大线程数
+        Runtime.getRuntime().availableProcessors(),
+        Runtime.getRuntime().availableProcessors() * 2,
         30L, TimeUnit.SECONDS,
-        new LinkedBlockingQueue<>(1000),  // 队列容量调整为1000
+        new LinkedBlockingQueue<>(1000),
         new ThreadFactory() {
             @Override
             public Thread newThread(Runnable r) {
-                // 关键优化：设置256KB栈大小
                 Thread t = new Thread(null, r, "search-pool", 256 * 1024);
                 t.setPriority(Thread.NORM_PRIORITY - 1);
                 return t;
             }
         },
-        new ThreadPoolExecutor.DiscardOldestPolicy()  // 超限直接丢弃
+        new ThreadPoolExecutor.DiscardOldestPolicy()
     );
     
-    // 原有数据准备逻辑（完全保留）
+    // 保持原有数据准备逻辑
     List<SourceBean> searchRequestList = new ArrayList<>();
     searchRequestList.addAll(ApiConfig.get().getSourceBeanList());
     SourceBean home = ApiConfig.get().getHomeSourceBean();
@@ -441,15 +440,12 @@ private void searchResult() {
     spListAdapter.setNewData(hots);
     spListAdapter.addData("全部");
     
-    // 新增任务计数器
+    // 保持原有任务计数逻辑
     AtomicInteger submittedTasks = new AtomicInteger(0);
     for (SourceBean bean : searchRequestList) {
-        if (!bean.isSearchable()) {
-            continue;
-        }
-        if (mCheckSources != null && !mCheckSources.containsKey(bean.getKey())) {
-            continue;
-        }
+        if (!bean.isSearchable()) continue;
+        if (mCheckSources != null && !mCheckSources.containsKey(bean.getKey())) continue;
+        
         siteKey.add(bean.getKey());
         this.spNames.put(bean.getName(), bean.getKey());
         allRunCount.incrementAndGet();
@@ -463,72 +459,76 @@ private void searchResult() {
     
     showLoading();
     
-    // 新增分批执行逻辑
+    // 优化后的分批执行逻辑（仅修改异常处理部分）
     new Thread(() -> {
         try {
-            int batchSize = 10; // 每批任务数量
+            int batchSize = 10;
             int totalTasks = siteKey.size();
             int currentIndex = 0;
             
             while (currentIndex < totalTasks) {
-                int endIndex = Math.min(currentIndex + batchSize, totalTasks);
-                List<String> batch = siteKey.subList(currentIndex, endIndex);
+                List<String> batch = siteKey.subList(
+                    currentIndex, 
+                    Math.min(currentIndex + batchSize, totalTasks)
+                );
                 
-                // 创建计数器跟踪本批任务完成情况
                 CountDownLatch batchLatch = new CountDownLatch(batch.size());
                 AtomicInteger failedTasks = new AtomicInteger(0);
                 
-                // 提交本批任务
                 for (String key : batch) {
                     searchExecutorService.execute(() -> {
                         try {
                             sourceViewModel.getSearch(key, searchTitle);
                         } catch (Exception e) {
+                            // 非致命错误处理（新增错误类型识别）
+                            String errorType = e instanceof TimeoutException ? "超时" : 
+                                             e instanceof NetworkException ? "网络" : "业务";
+                            runOnUiThread(() -> 
+                                App.showToastShort(FastSearchActivity.this,
+                                    String.format("搜索源[%s]发生%s错误", key, errorType))
+                            );
                             failedTasks.incrementAndGet();
-                            e.printStackTrace();
+                        } catch (Error e) {
+                            // 致命错误不做处理直接抛出
+                            throw e;
                         } finally {
                             batchLatch.countDown();
                         }
                     });
                 }
                 
-                // 等待本批任务完成或超时
                 try {
                     if (!batchLatch.await(10, TimeUnit.SECONDS)) {
-                        // 超时处理：取消未完成的任务
-                        App.showToastShort(FastSearchActivity.this, 
-                            "聚汇影视提示：部分搜索任务超时，已取消未完成的任务");
-                    }
-                    
-                    if (failedTasks.get() > 0) {
-                        App.showToastShort(FastSearchActivity.this, 
-                            "聚汇影视提示：" + failedTasks.get() + "个搜索任务失败");
+                        runOnUiThread(() -> 
+                            App.showToastShort(FastSearchActivity.this,
+                                "部分任务超时已跳过")
+                        );
                     }
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
-                    App.showToastShort(FastSearchActivity.this, 
-                        "聚汇影视提示：当前批次搜索被中断，继续下一批次");
+                    // 保持中断恢复逻辑不变
                 }
                 
-                currentIndex = endIndex;
+                currentIndex += batchSize;
             }
             
-            // 所有批次完成
-            runOnUiThread(() -> {
-                App.showToastShort(FastSearchActivity.this, 
-                    "聚汇影视提示：所有搜索任务已完成");
-            });
+            runOnUiThread(() -> 
+                App.showToastShort(FastSearchActivity.this,
+                    String.format("完成%d/%d个搜索任务", 
+                        submittedTasks.get() - failedTasks.get(), 
+                        submittedTasks.get()))
+            );
             
         } catch (Exception e) {
-            // 捕获所有异常防止崩溃
-            e.printStackTrace();
-            runOnUiThread(() -> {
-                App.showToastShort(FastSearchActivity.this, 
-                    "聚汇影视提示：搜索过程中发生非致命错误，已继续完成剩余任务");
-            });
+            // 外层异常捕获保持流程继续
+            runOnUiThread(() -> 
+                App.showToastShort(FastSearchActivity.this,
+                    "搜索任务继续执行")
+            );
         }
     }).start();
 }
+
 
 
 
