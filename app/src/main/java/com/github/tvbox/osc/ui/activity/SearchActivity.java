@@ -223,6 +223,9 @@ public class SearchActivity extends BaseActivity {
                             searchExecutorService = null;
                             JsLoader.stopAll();
                         }
+		if(monitorExecutor != null && !monitorExecutor.isShutdown()) {
+           monitorExecutor.shutdown();
+        }
                     } catch (Throwable th) {
                         th.printStackTrace();
                     }
@@ -271,6 +274,9 @@ public class SearchActivity extends BaseActivity {
                 searchExecutorService = null;
                 JsLoader.stopAll();
 				}
+						if(monitorExecutor != null && !monitorExecutor.isShutdown()) {
+           monitorExecutor.shutdown();
+        }
 				cancel();
             }
         });
@@ -333,6 +339,9 @@ public class SearchActivity extends BaseActivity {
 							searchExecutorService = null;
 							JsLoader.stopAll();
 							}
+									if(monitorExecutor != null && !monitorExecutor.isShutdown()) {
+           monitorExecutor.shutdown();
+        }
                     }
                 } else if (pos == 0) {
                     if (remoteDialog == null) {
@@ -563,7 +572,7 @@ private void searchResult() {
             searchExecutorService = null;
             JsLoader.stopAll();
         }
-        if(monitorExecutor != null) {
+		if(monitorExecutor != null && !monitorExecutor.isShutdown()) {
            monitorExecutor.shutdown();
         }
     } catch (Throwable th) {
@@ -728,6 +737,9 @@ private void searchResult() {
                 searchExecutorService = null;
                 JsLoader.stopAll();
             }
+					if(monitorExecutor != null && !monitorExecutor.isShutdown()) {
+           monitorExecutor.shutdown();
+        }
         } catch (Throwable th) {
             th.printStackTrace();
         }
