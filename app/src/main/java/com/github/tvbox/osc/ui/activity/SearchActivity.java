@@ -270,9 +270,9 @@ public class SearchActivity extends BaseActivity {
 				showSuccess();  //xuameng修复BUG
 				mGridView.setVisibility(View.GONE);
 				if (searchExecutorService != null) {
-                searchExecutorService.shutdownNow();
-                searchExecutorService = null;
-                JsLoader.stopAll();
+                   searchExecutorService.shutdownNow();
+                   searchExecutorService = null;
+                   JsLoader.stopAll();
 				}
 				cancel();
             }
@@ -602,7 +602,6 @@ public class SearchActivity extends BaseActivity {
             }
             siteKey.add(bean.getKey());
             allRunCount.incrementAndGet();
-            submittedTasks.incrementAndGet();
         }
         if (siteKey.size() <= 0) {
             App.showToastShort(mContext, "聚汇影视提示：请指定搜索源！");
