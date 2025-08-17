@@ -567,6 +567,7 @@ private void searchResult() {
     } finally {
         searchAdapter.setNewData(new ArrayList<>());
         allRunCount.set(0);
+        monitorExecutor.shutdown(); 
     }
 
     // 优化线程池配置（增加监控线程池）
@@ -632,6 +633,7 @@ private void searchResult() {
         monitorExecutor.schedule(() -> {
             if (!future.isDone()) {
                 future.cancel(true);
+                App.showToastShort(mContext, key + "源搜索超时！");
                 Log.w("TaskMonitor", "Search task timeout: " + key);
             }
         }, TASK_TIMEOUT_MS, TimeUnit.MILLISECONDS);
@@ -644,6 +646,26 @@ private void searchResult() {
             searchExecutorService.shutdownNow();
         }
     }));
+
+    new Thread(() -> {
+        try {
+            // 等待所有任务完成（含超时处理）
+            boolean isNormalFinish = searchExecutorService.awaitTermination(2, TimeUnit.MINUTES);
+            
+            runOnUiThread(() -> {
+                if (isNormalFinish) {
+                    App.showToastShort(mContext, "已完成全部" + siteKey.size() + "个源的搜索");
+                } else {
+                    App.showToastShort(mContext, "搜索已完成（部分任务超时终止）！");
+                }
+            });
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            runOnUiThread(() -> {
+                App.showToastShort(mContext, "搜索被意外中断！");
+            });
+        }
+    }).start();
 }
 
 
