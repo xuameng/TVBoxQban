@@ -438,20 +438,12 @@ public class FastSearchActivity extends BaseActivity {
         ArrayList<String> hots = new ArrayList<>();
         spListAdapter.setNewData(hots);
         spListAdapter.addData("全部");
-    // 新增任务计数器
-        AtomicInteger submittedTasks = new AtomicInteger(0);
-        final int MAX_TASKS = 200;
         for (SourceBean bean : searchRequestList) {
             if (!bean.isSearchable()) {
                 continue;
             }
             if (mCheckSources != null && !mCheckSources.containsKey(bean.getKey())) {
                 continue;
-            }
-            // 任务数量控制
-            if (submittedTasks.get() >= MAX_TASKS) {
-                App.showToastLong(FastSearchActivity.this, "聚汇影视提示：指定搜索源超过200个，只保留前200个，请分批搜索！防止内存泄漏！");
-                break;
             }
             siteKey.add(bean.getKey());
             this.spNames.put(bean.getName(), bean.getKey());
