@@ -49,6 +49,9 @@ import java.util.concurrent.TimeUnit;   //xuameng 线程池
 import java.util.concurrent.ThreadFactory;   //xuameng 线程池
 import java.util.concurrent.LinkedBlockingQueue;   //xuameng 线程池
 import java.util.concurrent.CountDownLatch;
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
+import java.net.ConnectException;
 
 /**
  * @author pj567
@@ -465,6 +468,7 @@ private void searchResult() {
             int batchSize = 10;
             int totalTasks = siteKey.size();
             int currentIndex = 0;
+            AtomicInteger failedTasks = new AtomicInteger(0);
             
             while (currentIndex < totalTasks) {
                 List<String> batch = siteKey.subList(
@@ -473,7 +477,6 @@ private void searchResult() {
                 );
                 
                 CountDownLatch batchLatch = new CountDownLatch(batch.size());
-                AtomicInteger failedTasks = new AtomicInteger(0);
                 
                 for (String key : batch) {
                     searchExecutorService.execute(() -> {
@@ -481,8 +484,10 @@ private void searchResult() {
                             sourceViewModel.getSearch(key, searchTitle);
                         } catch (Exception e) {
                             // 非致命错误处理（新增错误类型识别）
-                            String errorType = e instanceof TimeoutException ? "超时" : 
-                                             e instanceof NetworkException ? "网络" : "业务";
+                            String errorType = (e instanceof SocketTimeoutException) ? "超时" : 
+                                 (e instanceof UnknownHostException || 
+                                  e instanceof ConnectException) ? "网络" : "业务";
+
                             runOnUiThread(() -> 
                                 App.showToastShort(FastSearchActivity.this,
                                     String.format("搜索源[%s]发生%s错误", key, errorType))
