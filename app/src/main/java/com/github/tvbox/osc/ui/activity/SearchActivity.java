@@ -551,6 +551,8 @@ public class SearchActivity extends BaseActivity {
 
     private ExecutorService searchExecutorService = null;   //xuameng全局声明
     private AtomicInteger allRunCount = new AtomicInteger(0);
+    private static final AtomicInteger submittedTasks = new AtomicInteger(0);
+
 
 private void searchResult() {
     // 原有清理逻辑保持不变
@@ -614,7 +616,7 @@ private void searchResult() {
     
     // 创建监控线程池（新增）
     ScheduledExecutorService monitorExecutor = Executors.newSingleThreadScheduledExecutor();
-    final long TASK_TIMEOUT_MS = 30_000;
+    final long TASK_TIMEOUT_MS = 20_000;
     
     // 任务提交改造（增加Future获取）
     for (String key : siteKey) {
