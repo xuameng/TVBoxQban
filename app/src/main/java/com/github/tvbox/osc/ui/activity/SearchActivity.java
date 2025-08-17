@@ -552,6 +552,7 @@ public class SearchActivity extends BaseActivity {
     private ExecutorService searchExecutorService = null;   //xuameng全局声明
     private AtomicInteger allRunCount = new AtomicInteger(0);
     private static final AtomicInteger submittedTasks = new AtomicInteger(0);
+    private ScheduledExecutorService monitorExecutor = Executors.newSingleThreadScheduledExecutor();
 
 
 private void searchResult() {
@@ -562,11 +563,15 @@ private void searchResult() {
             searchExecutorService = null;
             JsLoader.stopAll();
         }
+        if(monitorExecutor != null) {
+           monitorExecutor.shutdown();
+        }
     } catch (Throwable th) {
         th.printStackTrace();
     } finally {
         searchAdapter.setNewData(new ArrayList<>());
         allRunCount.set(0);
+        monitorExecutor.shutdown(); 
     }
 
     // 优化线程池配置（增加监控线程池）
@@ -614,8 +619,6 @@ private void searchResult() {
 
     showLoading();
     
-    // 创建监控线程池（新增）
-    ScheduledExecutorService monitorExecutor = Executors.newSingleThreadScheduledExecutor();
     final long TASK_TIMEOUT_MS = 20_000;
     
     // 任务提交改造（增加Future获取）
