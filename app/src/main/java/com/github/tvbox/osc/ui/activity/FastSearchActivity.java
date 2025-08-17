@@ -507,8 +507,7 @@ private void searchResult() {
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                     App.showToastShort(FastSearchActivity.this, 
-                        "聚汇影视提示：搜索任务被中断");
-                    return;
+                        "聚汇影视提示：当前批次搜索被中断，继续下一批次");
                 }
                 
                 currentIndex = endIndex;
@@ -525,7 +524,7 @@ private void searchResult() {
             e.printStackTrace();
             runOnUiThread(() -> {
                 App.showToastShort(FastSearchActivity.this, 
-                    "聚汇影视提示：搜索过程中发生错误");
+                    "聚汇影视提示：搜索过程中发生非致命错误，已继续完成剩余任务");
             });
         }
     }).start();
