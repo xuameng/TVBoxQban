@@ -49,6 +49,8 @@ import java.util.concurrent.TimeUnit;   //xuameng 线程池
 import java.util.concurrent.ThreadFactory;   //xuameng 线程池
 import java.util.concurrent.LinkedBlockingQueue;   //xuameng 线程池
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.Future;
 import android.util.Log;
 
 /**
@@ -557,7 +559,7 @@ new Thread(() -> {
         
         // 最终完成通知（增加超时和失败统计）
         runOnUiThread(() -> {
-            App.showToastShort(
+            App.showToastLong(
                 FastSearchActivity.this,
                 String.format("完成! 成功:%d 超时:%d 失败:%d",
                     completedTasks.get(),
@@ -572,7 +574,7 @@ new Thread(() -> {
         runOnUiThread(() -> {
             App.showToastShort(
                 FastSearchActivity.this,
-                "搜索异常终止，请查看日志"
+                "已完成部分任务，现已出现异常！正在继续搜索任务！"
             );
         });
     }
