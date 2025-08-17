@@ -482,28 +482,26 @@ new Thread(() -> {
         final int totalTasks = siteKey.size();
         int currentIndex = 0;
         
-        // 使用线程安全的计数器组
+        // 使用线程安全的计数器组（升级为LongAdder）
         class BatchCounters {
-            final AtomicInteger completed = new AtomicInteger(0);
-            final AtomicInteger timeouts = new AtomicInteger(0);
-            final AtomicInteger errors = new AtomicInteger(0);
+            final LongAdder completed = new LongAdder();
+            final LongAdder timeouts = new LongAdder();
+            final LongAdder errors = new LongAdder();
             
-            // 原子性状态更新方法
             void recordSuccess() {
-                completed.incrementAndGet();
+                completed.increment();
             }
             
             void recordTimeout() {
-                timeouts.incrementAndGet();
+                timeouts.increment();
             }
             
             void recordError() {
-                errors.incrementAndGet();
+                errors.increment();
             }
             
-            // 获取已处理任务数（线程安全）
             int getProcessedCount() {
-                return completed.get() + timeouts.get() + errors.get();
+                return completed.intValue() + timeouts.intValue() + errors.intValue();
             }
         }
         
@@ -512,58 +510,53 @@ new Thread(() -> {
         // 批次处理循环
         while (currentIndex < totalTasks) {
             int endIndex = Math.min(currentIndex + batchSize, totalTasks);
-            List<String> batch = siteKey.subList(currentIndex, endIndex);
+            List<String> batch = new ArrayList<>(siteKey.subList(currentIndex, endIndex)); // 防御性复制
             
-            // 使用Phaser+CountDownLatch双重同步
+            // 同步控制优化：Phaser+CountDownLatch组合
             Phaser batchPhaser = new Phaser(1);
             CountDownLatch taskLatch = new CountDownLatch(batch.size());
 
-            // 提交批次任务
+            // 提交批次任务（使用独立线程避免嵌套提交）
             for (String key : batch) {
-                batchPhaser.register();
-                searchExecutorService.execute(() -> {
+                new Thread(() -> {
                     try {
                         Future<?> future = searchExecutorService.submit(() -> 
                             sourceViewModel.getSearch(key, searchTitle)
                         );
                         
                         try {
-                            future.get(5, TimeUnit.SECONDS); // 单任务超时控制
+                            future.get(20, TimeUnit.SECONDS);
                             counters.recordSuccess();
                         } catch (TimeoutException e) {
                             future.cancel(true);
                             counters.recordTimeout();
-                            runOnUiThread(() -> 
-                                App.showToastShort(FastSearchActivity.this, "任务超时: " + key)
-                            );
+                            safeShowToast("任务超时: " + key);
                         }
                     } catch (Exception e) {
                         counters.recordError();
-                        runOnUiThread(() -> 
-                            App.showToastShort(FastSearchActivity.this, "任务失败: " + key)
-                        );
+                        safeShowToast("任务失败: " + key);
                         Log.e("SearchTask", "搜索失败: " + key, e);
                     } finally {
                         batchPhaser.arriveAndDeregister();
                         taskLatch.countDown();
                     }
-                });
+                }).start();
             }
 
             // 批次等待逻辑（双重保障）
             try {
-                // 第一重：Phaser等待
+                // 第一重：Phaser动态超时（max(5s, 任务数)）
                 batchPhaser.awaitAdvanceInterruptibly(
                     batchPhaser.arrive(),
-                    Math.max(5, batchSize),
+                    Math.max(5, batch.size()),
                     TimeUnit.SECONDS
                 );
                 
-                // 第二重：CountDownLatch兜底
+                // 第二重：CountDownLatch兜底等待
                 if (!taskLatch.await(2, TimeUnit.SECONDS)) {
                     int remaining = batch.size() - counters.getProcessedCount();
                     if (remaining > 0) {
-                        counters.timeouts.addAndGet(remaining);
+                        counters.timeouts.add(remaining);
                         Log.w("Batch", "补偿超时任务: " + remaining);
                     }
                 }
@@ -572,42 +565,35 @@ new Thread(() -> {
                 Log.w("SearchBatch", "批次等待被中断");
             }
 
-            // 进度更新（线程安全）
-            runOnUiThread(() -> {
-                App.showToastShort(
-                    FastSearchActivity.this,
-                    String.format("进度: %d/%d (超时:%d 失败:%d)",
-                        counters.completed.get(),
-                        totalTasks,
-                        counters.timeouts.get(),
-                        counters.errors.get())
-                );
-            });
+            // 安全更新UI进度
+            safeShowToast(String.format("进度: %d/%d (超时:%d 失败:%d)",
+                counters.completed.sum(),
+                totalTasks,
+                counters.timeouts.sum(),
+                counters.errors.sum()));
 
             currentIndex = endIndex;
         }
 
         // 最终结果展示
-        runOnUiThread(() -> {
-            App.showToastLong(
-                FastSearchActivity.this,
-                String.format("完成! 成功:%d 超时:%d 失败:%d",
-                    counters.completed.get(),
-                    counters.timeouts.get(),
-                    counters.errors.get())
-            );
-        });
+        safeShowToast(String.format("完成! 成功:%d 超时:%d 失败:%d",
+            counters.completed.sum(),
+            counters.timeouts.sum(),
+            counters.errors.sum()));
 
     } catch (Exception e) {
         Log.e("SearchMaster", "任务调度异常", e);
-        runOnUiThread(() -> {
-            App.showToastShort(
-                FastSearchActivity.this,
-                "任务异常终止！已完成进度已保存"
-            );
-        });
+        safeShowToast("任务异常终止！已完成进度已保存");
     }
 }).start();
+
+// UI安全操作封装方法
+private void safeShowToast(String message) {
+    if (!isFinishing() && !isDestroyed()) {
+        runOnUiThread(() -> App.showToastShort(FastSearchActivity.this, message));
+    }
+}
+
 
 
     }
