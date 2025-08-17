@@ -448,7 +448,6 @@ public class FastSearchActivity extends BaseActivity {
             siteKey.add(bean.getKey());
             this.spNames.put(bean.getName(), bean.getKey());
             allRunCount.incrementAndGet();
-            submittedTasks.incrementAndGet();
         }
         if (siteKey.size() <= 0) {
             App.showToastShort(FastSearchActivity.this, "聚汇影视提示：请指定搜索源！");
@@ -468,7 +467,6 @@ public class FastSearchActivity extends BaseActivity {
             });
         }
     }
-
 
     // 向过滤栏添加有结果的spname
     private String addWordAdapterIfNeed(String key) {
