@@ -47,12 +47,9 @@ import java.util.concurrent.ThreadPoolExecutor;  //xuameng 线程池
 import java.util.concurrent.TimeUnit;   //xuameng 线程池
 import java.util.concurrent.ThreadFactory;   //xuameng 线程池
 import java.util.concurrent.LinkedBlockingQueue;   //xuameng 线程池
-import java.util.concurrent.CountDownLatch; //xuameng 线程池
 import java.util.concurrent.TimeoutException; //xuameng 线程池
 import android.util.Log; //xuameng 线程池
 import java.util.concurrent.Phaser; //xuameng 线程池
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Future;
 
 /**
  * @author pj567
@@ -475,127 +472,107 @@ public class FastSearchActivity extends BaseActivity {
     
         showLoading();
     
-new Thread(() -> {
-    try {
-        // 初始化参数（使用final保证线程安全）
-        final int batchSize = 10;
-        final int totalTasks = siteKey.size();
-        int currentIndex = 0;
-        
-        // 使用线程安全的计数器组（升级为LongAdder）
-        class BatchCounters {
-            final LongAdder completed = new LongAdder();
-            final LongAdder timeouts = new LongAdder();
-            final LongAdder errors = new LongAdder();
-            
-            void recordSuccess() {
-                completed.increment();
-            }
-            
-            void recordTimeout() {
-                timeouts.increment();
-            }
-            
-            void recordError() {
-                errors.increment();
-            }
-            
-            int getProcessedCount() {
-                return completed.intValue() + timeouts.intValue() + errors.intValue();
-            }
-        }
-        
-        final BatchCounters counters = new BatchCounters();
-
-        // 批次处理循环
-        while (currentIndex < totalTasks) {
-            int endIndex = Math.min(currentIndex + batchSize, totalTasks);
-            List<String> batch = new ArrayList<>(siteKey.subList(currentIndex, endIndex)); // 防御性复制
-            
-            // 同步控制优化：Phaser+CountDownLatch组合
-            Phaser batchPhaser = new Phaser(1);
-            CountDownLatch taskLatch = new CountDownLatch(batch.size());
-
-            // 提交批次任务（使用独立线程避免嵌套提交）
-            for (String key : batch) {
-                new Thread(() -> {
-                    try {
-                        Future<?> future = searchExecutorService.submit(() -> 
-                            sourceViewModel.getSearch(key, searchTitle)
-                        );
-                        
-                        try {
-                            future.get(20, TimeUnit.SECONDS);
-                            counters.recordSuccess();
-                        } catch (TimeoutException e) {
-                            future.cancel(true);
-                            counters.recordTimeout();
-                            safeShowToast("任务超时: " + key);
-                        }
-                    } catch (Exception e) {
-                        counters.recordError();
-                        safeShowToast("任务失败: " + key);
-                        Log.e("SearchTask", "搜索失败: " + key, e);
-                    } finally {
-                        batchPhaser.arriveAndDeregister();
-                        taskLatch.countDown();
-                    }
-                }).start();
-            }
-
-            // 批次等待逻辑（双重保障）
+        // 改进版分批执行逻辑（修正进度统计问题）
+        new Thread(() -> {
             try {
-                // 第一重：Phaser动态超时（max(5s, 任务数)）
-                batchPhaser.awaitAdvanceInterruptibly(
-                    batchPhaser.arrive(),
-                    Math.max(5, batch.size()),
-                    TimeUnit.SECONDS
-                );
-                
-                // 第二重：CountDownLatch兜底等待
-                if (!taskLatch.await(2, TimeUnit.SECONDS)) {
-                    int remaining = batch.size() - counters.getProcessedCount();
-                    if (remaining > 0) {
-                        counters.timeouts.add(remaining);
-                        Log.w("Batch", "补偿超时任务: " + remaining);
+                // 初始化批次参数
+                final int batchSize = 10;
+                final int totalTasks = siteKey.size();
+                int currentIndex = 0;
+                AtomicInteger completedTasks = new AtomicInteger(0);
+                AtomicInteger timeoutTasks = new AtomicInteger(0);
+                AtomicInteger errorTasks = new AtomicInteger(0);
+        
+                // 批次任务循环
+                while (currentIndex < totalTasks) {
+                    // 计算当前批次范围
+                    int endIndex = Math.min(currentIndex + batchSize, totalTasks);
+                    List<String> batch = siteKey.subList(currentIndex, endIndex);
+            
+                    // 创建批次同步控制器（关键修改：使用Phaser替代CountDownLatch）
+                    Phaser batchPhaser = new Phaser(1); // 注册主线程
+            
+                    // 提交批次任务（移除嵌套submit）
+                    for (String key : batch) {
+                        batchPhaser.register(); // 注册每个任务
+                        searchExecutorService.execute(() -> {
+                            try {
+                                // 直接执行搜索
+                                sourceViewModel.getSearch(key, searchTitle);
+                                completedTasks.incrementAndGet();
+                            } catch (Exception e) {  // 修改点1：统一异常处理
+                                if (e.getCause() instanceof TimeoutException) {
+                                    timeoutTasks.incrementAndGet();
+                                    runOnUiThread(() -> 
+                                        App.showToastShort(FastSearchActivity.this, "任务超时: " + key)
+                                    );
+                                } else {
+                                    errorTasks.incrementAndGet();
+                                    runOnUiThread(() -> 
+                                        App.showToastShort(FastSearchActivity.this, "任务失败: " + key)
+                                    );
+                                    Log.e("SearchTask", "搜索源[" + key + "]失败: " + e.getMessage());
+                                }
+                            } finally {
+                                batchPhaser.arriveAndDeregister(); // 任务完成
+                            }
+                        });
                     }
+            
+                    // 等待批次完成（动态超时控制）
+                    try {
+                        int dynamicTimeout = Math.max(5, batchSize); // 最小5秒，每任务1秒基准
+                            batchPhaser.awaitAdvanceInterruptibly(
+                            batchPhaser.arrive(),
+                            dynamicTimeout,
+                            TimeUnit.SECONDS
+                        );
+                
+                        // 准确的进度统计（同步块保证原子性）
+                        synchronized(completedTasks) {
+                            runOnUiThread(() -> 
+                                App.showToastShort(
+                                    FastSearchActivity.this,
+                                    String.format("批次进度: %d/%d (失败:%d 超时:%d)",
+                                        completedTasks.get(),
+                                        totalTasks,
+                                        errorTasks.get(),
+                                        timeoutTasks.get())
+                                )
+                            );
+                        }
+                    } catch (TimeoutException e) {
+                        Log.w("SearchBatch", "批次整体超时，强制继续");
+                        timeoutTasks.addAndGet(batchSize - completedTasks.get());
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        Log.w("SearchBatch", "批次等待被中断");
+                    }
+            
+                    currentIndex = endIndex;
                 }
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                Log.w("SearchBatch", "批次等待被中断");
+        
+                // 最终完成通知
+                runOnUiThread(() -> {
+                    App.showToastLong(
+                        FastSearchActivity.this,
+                        String.format("完成! 成功:%d 超时:%d 失败:%d",
+                            completedTasks.get(),
+                            timeoutTasks.get(),
+                            errorTasks.get())
+                    );
+                });
+        
+            } catch (Exception e) {
+                Log.e("SearchMaster", "主调度线程异常", e);
+                runOnUiThread(() -> {
+                    App.showToastShort(
+                        FastSearchActivity.this,
+                        "搜索任务异常终止！已完成进度将保留！"
+                    );
+                });
             }
-
-            // 安全更新UI进度
-            safeShowToast(String.format("进度: %d/%d (超时:%d 失败:%d)",
-                counters.completed.sum(),
-                totalTasks,
-                counters.timeouts.sum(),
-                counters.errors.sum()));
-
-            currentIndex = endIndex;
-        }
-
-        // 最终结果展示
-        safeShowToast(String.format("完成! 成功:%d 超时:%d 失败:%d",
-            counters.completed.sum(),
-            counters.timeouts.sum(),
-            counters.errors.sum()));
-
-    } catch (Exception e) {
-        Log.e("SearchMaster", "任务调度异常", e);
-        safeShowToast("任务异常终止！已完成进度已保存");
-    }
-}).start();
-
-// UI安全操作封装方法
-private void safeShowToast(String message) {
-    if (!isFinishing() && !isDestroyed()) {
-        runOnUiThread(() -> App.showToastShort(FastSearchActivity.this, message));
-    }
-}
-
-
-
+        }).start();
     }
 
 
