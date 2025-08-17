@@ -50,8 +50,8 @@ import java.util.concurrent.ThreadFactory;   //xuameng 线程池
 import java.util.concurrent.LinkedBlockingQueue;   //xuameng 线程池
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeoutException;
-import java.util.concurrent.Future;
 import android.util.Log;
+import java.util.concurrent.Phaser;
 
 /**
  * @author pj567
