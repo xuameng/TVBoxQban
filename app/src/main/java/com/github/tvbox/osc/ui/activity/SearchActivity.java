@@ -254,7 +254,7 @@ public class SearchActivity extends BaseActivity {
                         search(keyword);
                     }
                 } else {
-                    App.showToastShort(mContext, "输入内容不能为空！");
+                    App.showToastShort(SearchActivity.this, "输入内容不能为空！");
                 }
             }
         });
@@ -536,7 +536,7 @@ public class SearchActivity extends BaseActivity {
 
     private void search(String title) {
 		if (TextUtils.isEmpty(title)){
-            App.showToastShort(mContext, "输入内容不能为空！");
+            App.showToastShort(SearchActivity.this, "输入内容不能为空！");
 			return;
 		}
         cancel();   
@@ -611,7 +611,7 @@ public class SearchActivity extends BaseActivity {
             allRunCount.incrementAndGet();
         }
         if (siteKey.size() <= 0) {
-            App.showToastShort(mContext, "聚汇影视提示：请指定搜索源！");
+            App.showToastShort(SearchActivity.this, "聚汇影视提示：请指定搜索源！");
             return;
         }
         showLoading();
@@ -626,8 +626,8 @@ public class SearchActivity extends BaseActivity {
                     // 任务完成计数（新增）
                     if (!isActivityDestroyed && completedCount.incrementAndGet() == totalTasks) { //xuameng 退出就不统计搜索成功了
                         runOnUiThread(() -> {
-                            App.showToastShort(FastSearchActivity.this, 
-                                "所有搜索任务已完成！共处理" + totalTasks + "个源");
+                            App.showToastLong(SearchActivity.this, 
+                                "所有搜索任务已完成！共处理" + totalTasks + "个搜索源！");
                         });
                     }
                 }
