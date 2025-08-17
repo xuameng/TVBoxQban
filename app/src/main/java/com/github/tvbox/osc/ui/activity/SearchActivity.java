@@ -72,7 +72,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import java.util.concurrent.*;  //xuameng 线程池
+
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.*;   //xuameng 线程池
 
 /**
  * @author pj567
