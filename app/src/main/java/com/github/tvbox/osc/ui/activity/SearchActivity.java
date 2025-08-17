@@ -593,6 +593,12 @@ public class SearchActivity extends BaseActivity {
         searchRequestList.remove(home);
         searchRequestList.add(0, home);
         ArrayList<String> siteKey = new ArrayList<>();
+        // 创建计数器（新增）
+        final AtomicInteger completedCount = new AtomicInteger(0);
+        final int totalTasks = searchRequestList.stream().filter(bean -> 
+            bean.isSearchable() && 
+            (mCheckSources == null || mCheckSources.containsKey(bean.getKey()))
+        ).mapToInt(b -> 1).sum();
         for (SourceBean bean : searchRequestList) {
             if (!bean.isSearchable()) {
                 continue;
@@ -608,14 +614,18 @@ public class SearchActivity extends BaseActivity {
             return;
         }
         showLoading();
+        // 执行搜索任务（添加完成回调）
         for (String key : siteKey) {
-            searchExecutorService.execute(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        sourceViewModel.getSearch(key, searchTitle);
-                    } catch (Exception e) {
-
+            searchExecutorService.execute(() -> {
+                try {
+                    sourceViewModel.getSearch(key, searchTitle);
+                } finally {
+                    // 任务完成计数（新增）
+                    if (completedCount.incrementAndGet() == totalTasks) {
+                        runOnUiThread(() -> {
+                            App.showToastShort(FastSearchActivity.this, 
+                                "所有搜索任务已完成！共处理" + totalTasks + "个源");
+                        });
                     }
                 }
             });
