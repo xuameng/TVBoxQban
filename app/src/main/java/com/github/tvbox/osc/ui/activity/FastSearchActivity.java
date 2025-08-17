@@ -123,22 +123,26 @@ public class FastSearchActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         if (pauseRunnable != null && pauseRunnable.size() > 0) {
-            searchExecutorService = new ThreadPoolExecutor(
-            Runtime.getRuntime().availableProcessors(), // 核心线程数=CPU核数
-            Runtime.getRuntime().availableProcessors() * 2, // 最大线程数
-                30L, TimeUnit.SECONDS,
-                new LinkedBlockingQueue<>(1000),  // 队列容量调整为1000
-                new ThreadFactory() {
-                    @Override
-                    public Thread newThread(Runnable r) {
-                        // 关键优化：设置256KB栈大小
-                        Thread t = new Thread(null, r, "search-pool", 256 * 1024);
-                        t.setPriority(Thread.NORM_PRIORITY - 1);
-                        return t;
-                    }
-                },
-                new ThreadPoolExecutor.DiscardOldestPolicy()  // 超限直接丢弃
-            );
+searchExecutorService = new ThreadPoolExecutor(
+    Runtime.getRuntime().availableProcessors() * 2,
+    30L, TimeUnit.SECONDS,
+    new LinkedBlockingQueue<>(1000),
+    new ThreadFactory() {
+        @Override
+        public Thread newThread(Runnable r) {
+            Thread t = new Thread(null, r, "search-pool", 256 * 1024);
+            t.setPriority(Thread.NORM_PRIORITY - 1);
+            // 关键修改：添加全局异常捕获
+            t.setUncaughtExceptionHandler((thread, ex) -> {
+            System.err.println("Thread[" + thread.getName() + "] crashed");
+            ex.printStackTrace();
+            });
+            return t;
+        }
+    },
+    // 关键修改：替换为CallerRunsPolicy
+    new ThreadPoolExecutor.CallerRunsPolicy()
+);
          
             allRunCount.set(pauseRunnable.size());
             for (Runnable runnable : pauseRunnable) {
@@ -415,7 +419,8 @@ private void searchResult() {
         allRunCount.set(0);
     }
 
-    // 线程池配置（保持不变）
+// 防闪退优化版线程池
+searchExecutorService = new ThreadPoolExecutor(
     Runtime.getRuntime().availableProcessors() * 2,
     30L, TimeUnit.SECONDS,
     new LinkedBlockingQueue<>(1000),
@@ -500,8 +505,8 @@ new Thread(() -> {
                         );
                         
                         try {
-                            // 设置5秒超时控制
-                            future.get(5, TimeUnit.SECONDS);
+                            // 设置20秒超时控制
+                            future.get(20, TimeUnit.SECONDS);
                             completedTasks.incrementAndGet();
                         } catch (TimeoutException e) {
                             future.cancel(true);  // 强制取消超时任务
