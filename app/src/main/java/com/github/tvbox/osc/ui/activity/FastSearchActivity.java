@@ -541,9 +541,15 @@ public class FastSearchActivity extends BaseActivity {
                                 )
                             );
                         }
-                    } catch (TimeoutException e) {
-                        Log.w("SearchBatch", "批次整体超时，强制继续");
-                        timeoutTasks.addAndGet(batchSize - completedTasks.get());
+                    }catch (TimeoutException e) {
+                        // 修复负值问题的核心逻辑
+                        int remainingTasks = batchSize - completedTasks.get();
+                        if (remainingTasks > 0) {
+                            timeoutTasks.addAndGet(remainingTasks);
+                        } else {
+                            Log.w("Counter", "无效剩余任务数: " + remainingTasks);
+                        }
+                        Log.w("SearchBatch", "批次整体超时，已处理剩余任务");
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
                         Log.w("SearchBatch", "批次等待被中断");
