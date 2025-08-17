@@ -75,6 +75,7 @@ import java.util.List;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.*;   //xuameng 线程池
+import android.util.Log;  
 
 /**
  * @author pj567
@@ -592,18 +593,12 @@ private void searchResult() {
     ArrayList<String> siteKey = new ArrayList<>();
     
     // 新增任务计数器
-    AtomicInteger submittedTasks = new AtomicInteger(0);
-    final int MAX_TASKS = 1000;
     for (SourceBean bean : searchRequestList) {
         if (!bean.isSearchable()) {
             continue;
         }
         if (mCheckSources != null && !mCheckSources.containsKey(bean.getKey())) {
             continue;
-        }
-        if (submittedTasks.get() >= MAX_TASKS) {
-            App.showToastLong(mContext, "聚汇影视提示：指定搜索源超过1000个，只保留前1000个，请分批搜索！防止内存泄漏！");
-            break;
         }
         siteKey.add(bean.getKey());
         allRunCount.incrementAndGet();
