@@ -567,7 +567,6 @@ private void searchResult() {
     } finally {
         searchAdapter.setNewData(new ArrayList<>());
         allRunCount.set(0);
-        monitorExecutor.shutdown(); 
     }
 
     // 优化线程池配置（增加监控线程池）
