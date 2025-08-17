@@ -554,6 +554,7 @@ public class SearchActivity extends BaseActivity {
 
     private ExecutorService searchExecutorService = null;   //xuameng全局声明
     private AtomicInteger allRunCount = new AtomicInteger(0);
+    private volatile boolean isActivityDestroyed = false; //xuameng 退出就不统计搜索成功了
 
     private void searchResult() {
         // 原有清理逻辑保持不变
@@ -618,10 +619,12 @@ public class SearchActivity extends BaseActivity {
         for (String key : siteKey) {
             searchExecutorService.execute(() -> {
                 try {
-                    sourceViewModel.getSearch(key, searchTitle);
+                    if (!isActivityDestroyed) { //xuameng 退出就不统计搜索成功了
+                        sourceViewModel.getSearch(key, searchTitle);
+                    }
                 } finally {
                     // 任务完成计数（新增）
-                    if (completedCount.incrementAndGet() == totalTasks) {
+                    if (!isActivityDestroyed && completedCount.incrementAndGet() == totalTasks) { //xuameng 退出就不统计搜索成功了
                         runOnUiThread(() -> {
                             App.showToastShort(FastSearchActivity.this, 
                                 "所有搜索任务已完成！共处理" + totalTasks + "个源");
@@ -690,6 +693,7 @@ public class SearchActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        isActivityDestroyed = true; //xuameng 退出就不统计搜索成功了
         cancel();
         try {
             if (searchExecutorService != null) {
@@ -705,7 +709,17 @@ public class SearchActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
+        isActivityDestroyed = true;   //xuameng 退出就不统计搜索成功了
         App.HideToast();  //xuameng HideToast
+        try {
+            if (searchExecutorService != null) {
+                searchExecutorService.shutdownNow();
+                searchExecutorService = null;
+                JsLoader.stopAll();
+            }
+        } catch (Throwable th) {
+            th.printStackTrace();
+        }
         super.onBackPressed();
     }
 
