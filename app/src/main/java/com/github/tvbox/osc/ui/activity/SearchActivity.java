@@ -638,14 +638,6 @@ private void searchResult() {
             }
         }, TASK_TIMEOUT_MS, TimeUnit.MILLISECONDS);
     }
-    
-    // 添加线程池关闭钩子（新增）
-    Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-        monitorExecutor.shutdownNow();
-        if (searchExecutorService != null) {
-            searchExecutorService.shutdownNow();
-        }
-    }));
 
     new Thread(() -> {
         try {
