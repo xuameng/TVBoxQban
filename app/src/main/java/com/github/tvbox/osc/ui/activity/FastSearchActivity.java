@@ -521,10 +521,9 @@ public class FastSearchActivity extends BaseActivity {
             
                     // 等待批次完成（动态超时控制）
                     try {
-                        int dynamicTimeout = Math.max(5, batchSize); // 最小5秒，每任务1秒基准
-                            batchPhaser.awaitAdvanceInterruptibly(
+                        batchPhaser.awaitAdvanceInterruptibly(
                             batchPhaser.arrive(),
-                            dynamicTimeout,
+                            Math.max(20, batchSize * 2),
                             TimeUnit.SECONDS
                         );
                 
@@ -544,9 +543,10 @@ public class FastSearchActivity extends BaseActivity {
                     }catch (TimeoutException e) {
                         // 修复负值问题的核心逻辑
                         int remainingTasks = batchSize - completedTasks.get();
-                        if (remainingTasks > 0) {
+                        if (remainingTasks >= 0) {
                             timeoutTasks.addAndGet(remainingTasks);
                         } else {
+                             timeoutTasks.addAndGet(-remainingTasks);
                             Log.w("Counter", "无效剩余任务数: " + remainingTasks);
                         }
                         Log.w("SearchBatch", "批次整体超时，已处理剩余任务");
