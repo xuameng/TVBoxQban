@@ -416,21 +416,25 @@ private void searchResult() {
     }
 
     // 线程池配置（保持不变）
-    searchExecutorService = new ThreadPoolExecutor(
-        Runtime.getRuntime().availableProcessors(),
-        Runtime.getRuntime().availableProcessors() * 2,
-        30L, TimeUnit.SECONDS,
-        new LinkedBlockingQueue<>(1000),
-        new ThreadFactory() {
-            @Override
-            public Thread newThread(Runnable r) {
-                Thread t = new Thread(null, r, "search-pool", 256 * 1024);
-                t.setPriority(Thread.NORM_PRIORITY - 1);
-                return t;
-            }
-        },
-        new ThreadPoolExecutor.DiscardOldestPolicy()
-    );
+    Runtime.getRuntime().availableProcessors() * 2,
+    30L, TimeUnit.SECONDS,
+    new LinkedBlockingQueue<>(1000),
+    new ThreadFactory() {
+        @Override
+        public Thread newThread(Runnable r) {
+            Thread t = new Thread(null, r, "search-pool", 256 * 1024);
+            t.setPriority(Thread.NORM_PRIORITY - 1);
+            // 关键修改：添加全局异常捕获
+            t.setUncaughtExceptionHandler((thread, ex) -> {
+            System.err.println("Thread[" + thread.getName() + "] crashed");
+            ex.printStackTrace();
+            });
+            return t;
+        }
+    },
+    // 关键修改：替换为CallerRunsPolicy
+    new ThreadPoolExecutor.CallerRunsPolicy()
+);
     
     // 原有数据准备逻辑（保持不变）
     List<SourceBean> searchRequestList = new ArrayList<>();
