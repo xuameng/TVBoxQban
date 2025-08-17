@@ -49,9 +49,7 @@ import java.util.concurrent.TimeUnit;   //xuameng 线程池
 import java.util.concurrent.ThreadFactory;   //xuameng 线程池
 import java.util.concurrent.LinkedBlockingQueue;   //xuameng 线程池
 import java.util.concurrent.CountDownLatch;
-import java.net.SocketTimeoutException;
-import java.net.UnknownHostException;
-import java.net.ConnectException;
+import android.util.Log;
 
 /**
  * @author pj567
@@ -400,7 +398,7 @@ public class FastSearchActivity extends BaseActivity {
     private AtomicInteger allRunCount = new AtomicInteger(0);
 
 private void searchResult() {
-    // 保持原有清理逻辑
+    // 原有清理逻辑保持不变
     try {
         if (searchExecutorService != null) {
             searchExecutorService.shutdownNow();
@@ -415,7 +413,7 @@ private void searchResult() {
         allRunCount.set(0);
     }
 
-    // 保持原有线程池配置
+    // 线程池配置（保持不变）
     searchExecutorService = new ThreadPoolExecutor(
         Runtime.getRuntime().availableProcessors(),
         Runtime.getRuntime().availableProcessors() * 2,
@@ -432,7 +430,7 @@ private void searchResult() {
         new ThreadPoolExecutor.DiscardOldestPolicy()
     );
     
-    // 保持原有数据准备逻辑
+    // 原有数据准备逻辑（保持不变）
     List<SourceBean> searchRequestList = new ArrayList<>();
     searchRequestList.addAll(ApiConfig.get().getSourceBeanList());
     SourceBean home = ApiConfig.get().getHomeSourceBean();
@@ -443,12 +441,15 @@ private void searchResult() {
     spListAdapter.setNewData(hots);
     spListAdapter.addData("全部");
     
-    // 保持原有任务计数逻辑
+    // 任务计数器
     AtomicInteger submittedTasks = new AtomicInteger(0);
     for (SourceBean bean : searchRequestList) {
-        if (!bean.isSearchable()) continue;
-        if (mCheckSources != null && !mCheckSources.containsKey(bean.getKey())) continue;
-        
+        if (!bean.isSearchable()) {
+            continue;
+        }
+        if (mCheckSources != null && !mCheckSources.containsKey(bean.getKey())) {
+            continue;
+        }
         siteKey.add(bean.getKey());
         this.spNames.put(bean.getName(), bean.getKey());
         allRunCount.incrementAndGet();
@@ -462,74 +463,88 @@ private void searchResult() {
     
     showLoading();
     
-    // 优化后的分批执行逻辑（仅修改异常处理部分）
+    // 改进的分批执行逻辑（核心修改部分）
     new Thread(() -> {
         try {
             int batchSize = 10;
             int totalTasks = siteKey.size();
             int currentIndex = 0;
-            AtomicInteger failedTasks = new AtomicInteger(0);
+            AtomicInteger completedTasks = new AtomicInteger(0);
             
             while (currentIndex < totalTasks) {
-                List<String> batch = siteKey.subList(
-                    currentIndex, 
-                    Math.min(currentIndex + batchSize, totalTasks)
-                );
-                
+                int endIndex = Math.min(currentIndex + batchSize, totalTasks);
+                List<String> batch = siteKey.subList(currentIndex, endIndex);
                 CountDownLatch batchLatch = new CountDownLatch(batch.size());
+                AtomicInteger failedTasks = new AtomicInteger(0);
                 
+                // 提交本批任务（增加任务重试机制）
                 for (String key : batch) {
                     searchExecutorService.execute(() -> {
-                        try {
-                            sourceViewModel.getSearch(key, searchTitle);
-                        } catch (Exception e) {
-                            // 非致命错误处理（新增错误类型识别）
-                            String errorType = (e instanceof SocketTimeoutException) ? "超时" : 
-                                 (e instanceof UnknownHostException || 
-                                  e instanceof ConnectException) ? "网络" : "业务";
-
-                            runOnUiThread(() -> 
-                                App.showToastShort(FastSearchActivity.this,
-                                    String.format("搜索源[%s]发生%s错误", key, errorType))
-                            );
-                            failedTasks.incrementAndGet();
-                        } catch (Error e) {
-                            // 致命错误不做处理直接抛出
-                            throw e;
-                        } finally {
-                            batchLatch.countDown();
-                        }
+                        boolean retry = false;
+                        int retryCount = 0;
+                        final int MAX_RETRY = 2;
+                        
+                        do {
+                            try {
+                                sourceViewModel.getSearch(key, searchTitle);
+                                completedTasks.incrementAndGet();
+                                retry = false;
+                            } catch (Exception e) {
+                                if (retryCount++ < MAX_RETRY) {
+                                    retry = true;
+                                    try {
+                                        Thread.sleep(500); // 重试间隔
+                                    } catch (InterruptedException ie) {
+                                        Thread.currentThread().interrupt();
+                                    }
+                                } else {
+                                    failedTasks.incrementAndGet();
+                                    Log.e("SearchTask", "搜索源["+key+"]失败", e);
+                                }
+                            }
+                        } while (retry);
+                        
+                        batchLatch.countDown();
                     });
                 }
                 
+                // 等待本批任务完成（增加弹性超时时间）
                 try {
-                    if (!batchLatch.await(10, TimeUnit.SECONDS)) {
+                    long timeout = Math.max(15, batchSize * 3); // 动态超时
+                    if (!batchLatch.await(timeout, TimeUnit.SECONDS)) {
+                        Log.w("SearchBatch", "批次超时，继续下一批次");
+                    }
+                    
+                    // 失败任务通知（优化UI线程安全）
+                    final int currentFailed = failedTasks.get();
+                    if (currentFailed > 0) {
                         runOnUiThread(() -> 
                             App.showToastShort(FastSearchActivity.this,
-                                "部分任务超时已跳过")
+                                String.format("已完成%d/%d，失败%d个",
+                                    completedTasks.get(), totalTasks, currentFailed))
                         );
                     }
                 } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    // 保持中断恢复逻辑不变
+                    Log.w("SearchBatch", "批次等待被中断", e);
+                    // 不中断整体流程，继续下一批次
                 }
                 
-                currentIndex += batchSize;
+                currentIndex = endIndex;
             }
             
-            runOnUiThread(() -> 
+            // 最终完成通知
+            runOnUiThread(() -> {
                 App.showToastShort(FastSearchActivity.this,
-                    String.format("完成%d/%d个搜索任务", 
-                        submittedTasks.get() - failedTasks.get(), 
-                        submittedTasks.get()))
-            );
+                    String.format("搜索完成！总计%d个任务", completedTasks.get()));
+            });
             
         } catch (Exception e) {
-            // 外层异常捕获保持流程继续
-            runOnUiThread(() -> 
+            // 全局异常捕获（确保不会中断）
+            Log.e("SearchMaster", "主调度线程异常", e);
+            runOnUiThread(() -> {
                 App.showToastShort(FastSearchActivity.this,
-                    "搜索任务继续执行")
-            );
+                    "搜索已完成部分结果");
+            });
         }
     }).start();
 }
