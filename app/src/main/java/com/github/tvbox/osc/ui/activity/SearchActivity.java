@@ -598,6 +598,7 @@ public class SearchActivity extends BaseActivity {
                     }
                 } finally {
                     // 实时进度更新（每完成10%或最后一项）
+                    int current = completedCount.incrementAndGet();
                     if (!isActivityDestroyed && 
                        (current % Math.max(1, totalTasks/10) == 0 || current == totalTasks)) {
                         runOnUiThread(() -> updateProgress(current, totalTasks));
@@ -607,13 +608,18 @@ public class SearchActivity extends BaseActivity {
         }
     }
 
-    private void updateProgress(int current, int total) {     // xuameng任务完成计数（新增）
+    private void updateProgress(int current, int total) {   // xuameng任务完成计数（新增）
         String message = (current == total) 
             ? String.format(Locale.getDefault(), 
-                "所有搜索任务已完成！共处理 %d 个搜索源 (100%%)", total)
+                "所有任务已完成！共处理 %d 个搜索源 (100%%)", total)
             : String.format(Locale.getDefault(), 
                 "搜索进度: %d/%d (%.1f%%)", current, total, current * 100f / total);
-        App.showToastShort(FastSearchActivity.this, message);
+        // 根据完成状态选择Toast时长
+        if (current == total) {
+            App.showToastLong(FastSearchActivity.this, message);
+        } else {
+            App.showToastShort(FastSearchActivity.this, message);
+        }
     }
 
     private boolean matchSearchResult(String name, String searchTitle) {
