@@ -616,9 +616,9 @@ public class SearchActivity extends BaseActivity {
                 "搜索进度: %d/%d (%.1f%%)", current, total, current * 100f / total);
         // 根据完成状态选择Toast时长
         if (current == total) {
-            App.showToastLong(FastSearchActivity.this, message);
+            App.showToastLong(SearchActivity.this, message);
         } else {
-            App.showToastShort(FastSearchActivity.this, message);
+            App.showToastShort(SearchActivity.this, message);
         }
     }
 
