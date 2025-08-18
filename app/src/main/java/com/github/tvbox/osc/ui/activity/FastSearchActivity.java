@@ -48,6 +48,7 @@ import java.util.concurrent.ThreadPoolExecutor;  //xuameng 线程池
 import java.util.concurrent.TimeUnit;   //xuameng 线程池
 import java.util.concurrent.ThreadFactory;   //xuameng 线程池
 import java.util.concurrent.LinkedBlockingQueue;   //xuameng 线程池
+import java.util.Locale;   //xuameng 统计进度用
 
 /**
  * @author pj567
@@ -584,6 +585,7 @@ public class FastSearchActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         isActivityDestroyed = true; //xuameng 退出就不统计搜索成功了
+        cancel();
         App.HideToast();  //xuameng HideToast
         try {
             if (searchExecutorService != null) {
