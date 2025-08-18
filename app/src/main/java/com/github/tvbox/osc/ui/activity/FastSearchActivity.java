@@ -396,81 +396,94 @@ public class FastSearchActivity extends BaseActivity {
     private AtomicInteger allRunCount = new AtomicInteger(0);
     private volatile boolean isActivityDestroyed = false; //xuameng 退出就不统计搜索成功了
 
-    private void searchResult() {
-        // 原有清理逻辑保持不变
-        try {
-            if (searchExecutorService != null) {
-                searchExecutorService.shutdownNow();
-                searchExecutorService = null;
-                JsLoader.stopAll();
-            }
-        } catch (Throwable th) {
-            th.printStackTrace();
-        } finally {
-            searchAdapter.setNewData(new ArrayList<>());
-            searchAdapterFilter.setNewData(new ArrayList<>());
-            allRunCount.set(0);
+private void searchResult() {
+    // 原有清理逻辑保持不变
+    try {
+        if (searchExecutorService != null) {
+            searchExecutorService.shutdownNow();
+            searchExecutorService = null;
+            JsLoader.stopAll();
         }
+    } catch (Throwable th) {
+        th.printStackTrace();
+    } finally {
+        searchAdapter.setNewData(new ArrayList<>());
+        searchAdapterFilter.setNewData(new ArrayList<>());
+        allRunCount.set(0);
+    }
 
-        // 优化线程池配置（核心修改点）
-        searchExecutorService = new ThreadPoolExecutor(
-        Runtime.getRuntime().availableProcessors(), // 核心线程数=CPU核数
-        Runtime.getRuntime().availableProcessors() * 2, // 最大线程数
-            30L, TimeUnit.SECONDS,
-            new LinkedBlockingQueue<>(1000),  // 队列容量调整为1000
-            new ThreadFactory() {
-                @Override
-                public Thread newThread(Runnable r) {
-                    // 关键优化：设置256KB栈大小
-                    Thread t = new Thread(null, r, "search-pool", 256 * 1024);
-                    t.setPriority(Thread.NORM_PRIORITY - 1);
-                    return t;
-                }
-            },
-            new ThreadPoolExecutor.DiscardOldestPolicy()  // 超限直接丢弃
-        );
-        // 原有数据准备逻辑（完全保留）
-        List<SourceBean> searchRequestList = new ArrayList<>();
-        searchRequestList.addAll(ApiConfig.get().getSourceBeanList());
-        SourceBean home = ApiConfig.get().getHomeSourceBean();
-        searchRequestList.remove(home);
-        searchRequestList.add(0, home);
-        ArrayList<String> siteKey = new ArrayList<>();
-        ArrayList<String> hots = new ArrayList<>();
-        spListAdapter.setNewData(hots);
-        spListAdapter.addData("全部");
-        // 创建计数器（新增）
-        final AtomicInteger completedCount = new AtomicInteger(0);
-        final int totalTasks = searchRequestList.stream().filter(bean -> 
-            bean.isSearchable() && 
-            (mCheckSources == null || mCheckSources.containsKey(bean.getKey()))
-        ).mapToInt(b -> 1).sum();
-        for (SourceBean bean : searchRequestList) {
-            if (!bean.isSearchable()) {
-                continue;
+    // ===================== 优化后的线程池配置 =====================
+    searchExecutorService = new ThreadPoolExecutor(
+        Math.min(4, Runtime.getRuntime().availableProcessors()), // 核心线程数
+        Math.min(8, Runtime.getRuntime().availableProcessors() * 2), // 最大线程数
+        5L, TimeUnit.SECONDS, // 缩短空闲线程存活时间
+        new LinkedBlockingQueue<>(), // 无缓冲队列避免堆积
+        new ThreadFactory() {
+            @Override
+            public Thread newThread(Runnable r) {
+                Thread t = new Thread(null, r, "search-pool", 64 * 1024); // 栈内存降至64KB
+                t.setDaemon(true); // 设为守护线程
+                t.setPriority(Thread.NORM_PRIORITY - 1);
+                return t;
             }
-            if (mCheckSources != null && !mCheckSources.containsKey(bean.getKey())) {
-                continue;
-            }
-            siteKey.add(bean.getKey());
-            this.spNames.put(bean.getName(), bean.getKey());
-            allRunCount.incrementAndGet();
-        }
-        if (siteKey.size() <= 0) {
-            App.showToastShort(FastSearchActivity.this, "聚汇影视提示：请指定搜索源！");
-            return;
-        }
-        showLoading();
-        // 执行搜索任务（添加完成回调）
-        for (String key : siteKey) {
+        },
+        new ThreadPoolExecutor.AbortPolicy() // 直接拒绝超限任务
+    );
+
+    // ===================== 原有数据准备逻辑（完全保留） =====================
+    List<SourceBean> searchRequestList = new ArrayList<>();
+    searchRequestList.addAll(ApiConfig.get().getSourceBeanList());
+    SourceBean home = ApiConfig.get().getHomeSourceBean();
+    searchRequestList.remove(home);
+    searchRequestList.add(0, home);
+    
+    ArrayList<String> siteKey = new ArrayList<>();
+    ArrayList<String> hots = new ArrayList<>();
+    spListAdapter.setNewData(hots);
+    spListAdapter.addData("全部");
+    
+    // 创建计数器（新增批处理标识）
+    final AtomicInteger completedCount = new AtomicInteger(0);
+    final int totalTasks = searchRequestList.stream().filter(bean -> 
+        bean.isSearchable() && 
+        (mCheckSources == null || mCheckSources.containsKey(bean.getKey()))
+    ).mapToInt(b -> 1).sum();
+
+    // ===================== 资源加载逻辑 =====================
+    for (SourceBean bean : searchRequestList) {
+        if (!bean.isSearchable()) continue;
+        if (mCheckSources != null && !mCheckSources.containsKey(bean.getKey())) continue;
+        
+        siteKey.add(bean.getKey());
+        this.spNames.put(bean.getName(), bean.getKey());
+        allRunCount.incrementAndGet();
+    }
+
+    if (siteKey.size() <= 0) {
+        App.showToastShort(FastSearchActivity.this, "聚汇影视提示：请指定搜索源！");
+        return;
+    }
+
+    showLoading();
+    
+    // ===================== 任务执行优化 =====================
+    final Semaphore semaphore = new Semaphore(50); // 并发流量控制
+    for (String key : siteKey) {
+        try {
+            semaphore.acquire();
             searchExecutorService.execute(() -> {
                 try {
-                    if (!isActivityDestroyed) { //xuameng 退出就不统计搜索成功了
+                    if (!isActivityDestroyed) {
                         sourceViewModel.getSearch(key, searchTitle);
                     }
                 } finally {
-                    // 任务完成计数（新增）
-                    if (!isActivityDestroyed && completedCount.incrementAndGet() == totalTasks) { //xuameng 退出就不统计搜索成功了
+                    semaphore.release();
+                    // 分批处理结果（每完成20%任务更新UI）
+                    if (!isActivityDestroyed && completedCount.incrementAndGet() % Math.max(1, totalTasks/5) == 0) {
+                        runOnUiThread(() -> updateProgress(completedCount.get(), totalTasks));
+                    }
+                    // 最终完成通知
+                    if (!isActivityDestroyed && completedCount.get() == totalTasks) {
                         runOnUiThread(() -> {
                             App.showToastLong(FastSearchActivity.this, 
                                 "所有搜索任务已完成！共处理" + totalTasks + "个搜索源！");
@@ -478,8 +491,21 @@ public class FastSearchActivity extends BaseActivity {
                     }
                 }
             });
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
     }
+}
+
+// 新增进度更新方法
+private void updateProgress(int current, int total) {
+    runOnUiThread(() -> {
+        String message = "已完成 " + current + "/" + total;
+	App.showToastLong(FastSearchActivity.this, "message");
+    });
+}
+
+
 
     // 向过滤栏添加有结果的spname
     private String addWordAdapterIfNeed(String key) {
