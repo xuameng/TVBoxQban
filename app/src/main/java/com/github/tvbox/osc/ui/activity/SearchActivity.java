@@ -704,7 +704,7 @@ public class SearchActivity extends BaseActivity {
                     @Override
                     public void onSuccess(Response<String> response) {
                         try {
-//xuameng已全局声明                            ArrayList<String> hots = new ArrayList<>();
+//xuameng已声明类成员变量                            ArrayList<String> hots = new ArrayList<>();
                             JsonArray itemList = JsonParser.parseString(response.body()).getAsJsonObject().get("data").getAsJsonObject().get("mapResult").getAsJsonObject().get("0").getAsJsonObject().get("listInfo").getAsJsonArray();
                             for (JsonElement ele : itemList) {
                                 JsonObject obj = (JsonObject) ele;
