@@ -48,6 +48,7 @@ import java.util.concurrent.ThreadPoolExecutor;  //xuameng 线程池
 import java.util.concurrent.TimeUnit;   //xuameng 线程池
 import java.util.concurrent.ThreadFactory;   //xuameng 线程池
 import java.util.concurrent.LinkedBlockingQueue;   //xuameng 线程池
+import java.util.concurrent.SynchronousQueue;
 
 /**
  * @author pj567
@@ -123,6 +124,7 @@ public class FastSearchActivity extends BaseActivity {
             Runtime.getRuntime().availableProcessors(), // 核心线程数=CPU核数
             Runtime.getRuntime().availableProcessors() * 2, // 最大线程数
                 30L, TimeUnit.SECONDS,
+                new LinkedBlockingQueue<>(1000),  // 队列容量调整为1000
                 new ThreadFactory() {
                     @Override
                     public Thread newThread(Runnable r) {
@@ -131,7 +133,8 @@ public class FastSearchActivity extends BaseActivity {
                         t.setPriority(Thread.NORM_PRIORITY - 1);
                         return t;
                     }
-                }
+                },
+                new ThreadPoolExecutor.DiscardOldestPolicy()  // 超限直接丢弃
             );
          
             allRunCount.set(pauseRunnable.size());
@@ -412,9 +415,10 @@ public class FastSearchActivity extends BaseActivity {
 
         // 优化线程池配置（核心修改点）
         searchExecutorService = new ThreadPoolExecutor(
-        Runtime.getRuntime().availableProcessors(), // 核心线程数=CPU核数
-        Runtime.getRuntime().availableProcessors() * 2, // 最大线程数
-            30L, TimeUnit.SECONDS,
+    Math.min(4, Runtime.getRuntime().availableProcessors()), // 降低核心线程数
+    Math.min(16, Runtime.getRuntime().availableProcessors() * 2), // 限制最大线程
+            5L, TimeUnit.SECONDS, // 缩短闲置回收时间
+            new SynchronousQueue<>(), // 无缓冲队列（强制拒绝超限请求）
             new ThreadFactory() {
                 @Override
                 public Thread newThread(Runnable r) {
@@ -423,7 +427,8 @@ public class FastSearchActivity extends BaseActivity {
                     t.setPriority(Thread.NORM_PRIORITY - 1);
                     return t;
                 }
-            }
+            },
+            new ThreadPoolExecutor.CallerRunsPolicy() // 让调用线程直接执行
         );
         // 原有数据准备逻辑（完全保留）
         List<SourceBean> searchRequestList = new ArrayList<>();
