@@ -484,7 +484,7 @@ public class FastSearchActivity extends BaseActivity {
     private void updateProgress(int current, int total) {   // xuameng任务完成计数（新增）
         String message = (current == total) 
             ? String.format(Locale.getDefault(), 
-                "所有任务已完成！共处理 %d 个搜索源 (100%%)", total)
+                "所有任务已完成！共处理%d个搜索源 (100%%)", total)
             : String.format(Locale.getDefault(), 
                 "搜索进度: %d/%d (%.1f%%)", current, total, current * 100f / total);
         // 根据完成状态选择Toast时长
