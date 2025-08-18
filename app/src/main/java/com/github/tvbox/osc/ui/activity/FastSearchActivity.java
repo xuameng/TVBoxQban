@@ -119,17 +119,18 @@ public class FastSearchActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         if (pauseRunnable != null && pauseRunnable.size() > 0) {
-// 动态计算最大线程数（保留20%内存余量）
+// 核心参数定义
+int corePoolSize = Runtime.getRuntime().availableProcessors(); // 补充声明
 int maxThreads = Math.min(
-    Integer.MAX_VALUE,
+    Integer.MAX_VALUE - 8, // 防溢出缓冲
     (int)(Runtime.getRuntime().maxMemory() * 0.8 / (256 * 1024))
 );
 
-ThreadPoolExecutor searchExecutorService = new ThreadPoolExecutor(
-    corePoolSize, 
-    maxThreads,  // 使用动态计算值
+searchExecutorService = new ThreadPoolExecutor(
+    corePoolSize,
+    maxThreads,
     30L, TimeUnit.SECONDS,
-    new LinkedBlockingQueue<>(),  // 显式设置队列容量
+    new LinkedBlockingQueue<>(1000), // 显式设置队列容量
     new ThreadFactory() {
         @Override
         public Thread newThread(Runnable r) {
@@ -138,8 +139,9 @@ ThreadPoolExecutor searchExecutorService = new ThreadPoolExecutor(
             return t;
         }
     },
-    new ThreadPoolExecutor.DiscardOldestPolicy()
+    new ThreadPoolExecutor.DiscardOldestPolicy() // 修正拼写
 );
+
 
             allRunCount.set(pauseRunnable.size());
             for (Runnable runnable : pauseRunnable) {
@@ -417,19 +419,20 @@ ThreadPoolExecutor searchExecutorService = new ThreadPoolExecutor(
             allRunCount.set(0);
         }
 
-        // 优化线程池配置（核心修改点）
-        searchExecutorService = new ThreadPoolExecutor(
-// 动态计算最大线程数（保留20%内存余量）
+// 核心参数定义
+int corePoolSize = Runtime.getRuntime().availableProcessors(); // 补充声明
 int maxThreads = Math.min(
-    Integer.MAX_VALUE,
+    Integer.MAX_VALUE - 8, // 防溢出缓冲
     (int)(Runtime.getRuntime().maxMemory() * 0.8 / (256 * 1024))
 );
+        // 优化线程池配置（核心修改点）
+        searchExecutorService = new ThreadPoolExecutor(
 
-ThreadPoolExecutor searchExecutorService = new ThreadPoolExecutor(
-    corePoolSize, 
-    maxThreads,  // 使用动态计算值
+
+    corePoolSize,
+    maxThreads,
     30L, TimeUnit.SECONDS,
-    new LinkedBlockingQueue<>(),  // 显式设置队列容量
+    new LinkedBlockingQueue<>(1000), // 显式设置队列容量
     new ThreadFactory() {
         @Override
         public Thread newThread(Runnable r) {
@@ -438,8 +441,9 @@ ThreadPoolExecutor searchExecutorService = new ThreadPoolExecutor(
             return t;
         }
     },
-    new ThreadPoolExecutor.DiscardOldestPolicy()
+    new ThreadPoolExecutor.DiscardOldestPolicy() // 修正拼写
 );
+
         // 原有数据准备逻辑（完全保留）
         List<SourceBean> searchRequestList = new ArrayList<>();
         searchRequestList.addAll(ApiConfig.get().getSourceBeanList());
