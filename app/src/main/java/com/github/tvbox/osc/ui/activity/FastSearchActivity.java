@@ -123,7 +123,6 @@ public class FastSearchActivity extends BaseActivity {
             Runtime.getRuntime().availableProcessors(), // 核心线程数=CPU核数
             Runtime.getRuntime().availableProcessors() * 2, // 最大线程数
                 30L, TimeUnit.SECONDS,
-                new LinkedBlockingQueue<>(1000),  // 队列容量调整为1000
                 new ThreadFactory() {
                     @Override
                     public Thread newThread(Runnable r) {
@@ -132,8 +131,7 @@ public class FastSearchActivity extends BaseActivity {
                         t.setPriority(Thread.NORM_PRIORITY - 1);
                         return t;
                     }
-                },
-                new ThreadPoolExecutor.DiscardOldestPolicy()  // 超限直接丢弃
+                }
             );
          
             allRunCount.set(pauseRunnable.size());
@@ -417,7 +415,6 @@ public class FastSearchActivity extends BaseActivity {
         Runtime.getRuntime().availableProcessors(), // 核心线程数=CPU核数
         Runtime.getRuntime().availableProcessors() * 2, // 最大线程数
             30L, TimeUnit.SECONDS,
-            new LinkedBlockingQueue<>(1000),  // 队列容量调整为1000
             new ThreadFactory() {
                 @Override
                 public Thread newThread(Runnable r) {
@@ -426,8 +423,7 @@ public class FastSearchActivity extends BaseActivity {
                     t.setPriority(Thread.NORM_PRIORITY - 1);
                     return t;
                 }
-            },
-            new ThreadPoolExecutor.DiscardOldestPolicy()  // 超限直接丢弃
+            }
         );
         // 原有数据准备逻辑（完全保留）
         List<SourceBean> searchRequestList = new ArrayList<>();
