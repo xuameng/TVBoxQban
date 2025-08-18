@@ -414,8 +414,8 @@ public class FastSearchActivity extends BaseActivity {
 
         // 优化线程池配置（核心修改点）
         searchExecutorService = new ThreadPoolExecutor(
-        Runtime.getRuntime().availableProcessors() -2, // 核心线程数=CPU核数
-        Runtime.getRuntime().availableProcessors(), // 最大线程数
+        Runtime.getRuntime().availableProcessors(), // 核心线程数=CPU核数
+        Runtime.getRuntime().availableProcessors() * 2, // 最大线程数
             30L, TimeUnit.SECONDS,
             new LinkedBlockingQueue<>(1000),  // 队列容量调整为1000
             new ThreadFactory() {
