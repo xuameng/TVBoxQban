@@ -593,7 +593,7 @@ public class SearchActivity extends BaseActivity {
         for (String key : siteKey) {
             searchExecutorService.execute(() -> {
                 try {
-                    if (!isActivityDestroyed) { //xuameng 退出就不统计搜索成功了
+                    if (!isActivityDestroyed) { //xuameng 退出就不搜索了
                         sourceViewModel.getSearch(key, searchTitle);
                     }
                 } finally {
