@@ -2189,10 +2189,14 @@ private void initVisualizer(int sessionId) {
         
         // 设置FFT数据回调
         visualizer.setDataCaptureListener(new Visualizer.OnDataCaptureListener()  {
+    @Override
+    public void onWaveFormDataCapture(Visualizer v, byte[] waveform, int rate) {
+        // 必须实现的空方法
+    }
             @Override
-            public void onFftDataCapture(byte[] fft) {
+            public void onFftDataCapture(Visualizer visualizer, byte[] fft, int samplingRate) {
                 new Handler(Looper.getMainLooper()).post(() -> {
-                    if (customVisualizer != null) {
+                    if (customVisualizer != null && fft != null) {
                         // 双重数据转发机制
                         customVisualizer.updateVisualizer(fft);  // 标准FFT接口
                         customVisualizer.onRawDataReceived(fft); // 兼容原始数据接口
