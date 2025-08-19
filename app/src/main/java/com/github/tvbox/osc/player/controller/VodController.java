@@ -2175,6 +2175,7 @@ public class VodController extends BaseController {
  * 版本：v2.3（2025-08-19）
  */
 private void initVisualizer() {
+		visualizer.setEnabled(false);  // 先禁用
     releaseVisualizer();
 		int sessionId = mControlWrapper.getAudioSessionId();
     if (sessionId <= 0 || getContext() == null) return;
@@ -2222,6 +2223,7 @@ visualizer.setDataCaptureListener(
  */
 private void releaseVisualizer() {
     try {
+					mVisualizer.setEnabled(false); 
         if (visualizerRef != null) {
             Visualizer v = visualizerRef.get();
             if (v != null) {
@@ -2233,6 +2235,7 @@ private void releaseVisualizer() {
                 }
             }
             visualizerRef.clear();
+
         }
     } catch (Exception e) {
         Log.w(TAG, "Visualizer release exception", e);
