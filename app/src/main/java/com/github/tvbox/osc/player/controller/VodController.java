@@ -2185,22 +2185,28 @@ private void initVisualizer() {
 
         
         // 设置FFT数据回调
-        visualizer.setDataCaptureListener(new Visualizer.OnDataCaptureListener()  {
-    @Override
-    public void onWaveFormDataCapture(Visualizer v, byte[] waveform, int rate) {
-        // 必须实现的空方法
-    }
-            @Override
-            public void onFftDataCapture(Visualizer visualizer, byte[] fft, int samplingRate) {
-                new Handler(Looper.getMainLooper()).post(() -> {
+visualizer.setDataCaptureListener(
+    new Visualizer.OnDataCaptureListener() {
+        @Override
+        public void onWaveFormDataCapture(Visualizer viz, byte[] bytes, int rate) {
+            // 波形数据处理
+        }
+        
+        @Override
+        public void onFftDataCapture(Visualizer viz, byte[] bytes, int rate) {
+                    new Handler(Looper.getMainLooper()).post(() -> {
                     if (customVisualizer != null && fft != null) {
                         // 双重数据转发机制
                         customVisualizer.updateVisualizer(fft);  // 标准FFT接口
                         customVisualizer.onRawDataReceived(fft); // 兼容原始数据接口
                     }
                 });
-            }
-        });
+        }
+    },
+    Visualizer.getMaxCaptureRate() / 2, // 采样率
+    true,  // 捕获波形数据
+    true  // 不捕获FFT数据
+);
         
         visualizer.setEnabled(true);
     } catch (Exception e) {
