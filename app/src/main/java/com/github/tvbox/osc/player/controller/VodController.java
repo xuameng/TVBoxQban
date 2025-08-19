@@ -295,6 +295,7 @@ public class VodController extends BaseController {
     private WeakReference<BlastVisualizer> visualizerRef;  //xuameng音乐播放动画
     private MusicVisualizerView customVisualizer; //xuameng音乐播放动画
     private int audioSessionId = -1; // 使用-1表示未初始化状态 //xuameng音乐播放动画
+	private static final String TAG = "VodController";  //xuameng音乐播放动画
     Handler myHandle;
     Runnable myRunnable;
     int myHandleSeconds = 50000; //闲置多少毫秒秒关闭底栏  默认100秒
@@ -2167,55 +2168,74 @@ public class VodController extends BaseController {
         App.getInstance().setDashData(null);
     }
 
+/**
+ * 音频可视化控制器
+ * 功能：管理BlastVisualizer与自定义MusicVisualizerView的协同工作
+ * 版本：v2.3（2025-08-19）
+ */
 private void initVisualizer(int sessionId) {
     releaseVisualizer();
-    if(sessionId <= 0) return;
+    if (sessionId <= 0 || getContext() == null) return;
 
     try {
-        // 初始化可视化器
+        // 初始化可视化组件
         BlastVisualizer visualizer = new BlastVisualizer(getContext());
         visualizerRef = new WeakReference<>(visualizer);
         
-        // 基础配置
-        visualizer.setColor(Color.parseColor("#FF5722")); // 橙色可视化
-        visualizer.setType(BlastVisualizer.BAR); // 条形图样式
-        visualizer.setDensity(8f); // 密度值
-        
-        // 音频会话绑定
+        // 配置可视化类型
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            visualizer.setType(BlastVisualizer.TYPE_BAR);
+        }
+
+        // 绑定音频会话
         visualizer.setAudioSessionId(sessionId);
         
-        // 数据回调（兼容0.9.2的API）
-        visualizer.setPlayer(new AudioPlayer() {
+        // 设置FFT数据回调
+        visualizer.setVisualizationListener(new BlastVisualizer.VisualizationListener() {
             @Override
-            public void onDataReceived(byte[] waveform) {
+            public void onFftDataCapture(byte[] fft) {
                 new Handler(Looper.getMainLooper()).post(() -> {
-                    if(customVisualizer != null) {
-                        customVisualizer.onRawDataReceived(waveform);
+                    if (customVisualizer != null) {
+                        // 双重数据转发机制
+                        customVisualizer.updateVisualizer(fft);  // 标准FFT接口
+                        customVisualizer.onRawDataReceived(fft); // 兼容原始数据接口
                     }
                 });
             }
-            
-            @Override public void onStart() {}
-            @Override public void onStop() {}
         });
-
+        
         visualizer.setEnabled(true);
     } catch (Exception e) {
-        Log.e(TAG, "Visualizer init failed", e);
+        Log.e(TAG, "Visualizer initialization failed", e);
+        releaseVisualizer();
     }
 }
 
-
+/**
+ * 安全释放可视化资源
+ */
 private void releaseVisualizer() {
-    if(visualizerRef != null) {
-        BlastVisualizer v = visualizerRef.get();
-        if(v != null) {
-            v.setEnabled(false);
-            v.release();
+    try {
+        if (visualizerRef != null) {
+            BlastVisualizer v = visualizerRef.get();
+            if (v != null) {
+                // 清理回调引用
+                v.setVisualizationListener(null);
+                // 释放系统资源
+                v.release();
+                // 重置自定义视图
+                if (customVisualizer != null) {
+                    customVisualizer.reset();
+                }
+            }
+            visualizerRef.clear();
         }
+    } catch (Exception e) {
+        Log.w(TAG, "Visualizer release exception", e);
     }
-    audioSessionId = -1;
 }
+
+
 
 
 }
