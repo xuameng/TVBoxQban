@@ -166,16 +166,4 @@ public class MusicVisualizerView extends View {
     /**
      * FFT数据处理接口
      */
-    public void updateVisualizer(byte[] fft) {
-        if (fft == null || fft.length < 66) return;
-
-        for (int i = 0; i < BAR_COUNT; i++) {
-            int idx = 2 + i * 4;
-            if (idx < fft.length - 1) {
-                float magnitude = (fft[idx] * fft[idx] + fft[idx+1] * fft[idx+1]);
-                mTargetHeights[i] = (magnitude * getHeight()) / (MAX_AMPLITUDE * 4);
-            }
-        }
-        startAnimation();
-    }
 }
