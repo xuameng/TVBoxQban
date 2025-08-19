@@ -371,7 +371,9 @@ public class VodController extends BaseController {
                         MxuamengMusic.setVisibility(GONE);
                     }
                 } else {
+
         initVisualizer();
+
                 if(customVisualizer.getVisibility() == View.GONE && isVideoplaying) { //xuameng播放音乐背景
                     customVisualizer.setVisibility(VISIBLE);
                 }
@@ -2171,7 +2173,7 @@ public class VodController extends BaseController {
  * 版本：v2.3（2025-08-19）
  */
 private void initVisualizer() {
-    releaseVisualizer();
+  //  releaseVisualizer();
 		int sessionId = mControlWrapper.getAudioSessionId();
     if (sessionId <= 0 || getContext() == null) return;
     try {
@@ -2195,12 +2197,12 @@ visualizer.setDataCaptureListener(
                     new Handler(Looper.getMainLooper()).post(() -> {
            if (customVisualizer != null && fftData != null) {
                 customVisualizer.updateVisualizer(fftData);  // 标准FFT接口
-                customVisualizer.onRawDataReceived(fftData); // 兼容原始数据接口
+             //   customVisualizer.onRawDataReceived(fftData); // 兼容原始数据接口
             }
                 });
         }
     },
-    Visualizer.getMaxCaptureRate() / 2, // 采样率
+    Visualizer.getMaxCaptureRate(), // 采样率
     true,  // 捕获波形数据
     true  // 捕获FFT数据
 );
