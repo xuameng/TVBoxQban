@@ -75,8 +75,6 @@ import android.graphics.Bitmap; //xuameng播放音频切换图片
 import com.github.tvbox.osc.api.ApiConfig; //xuameng播放音频切换图片
 import com.github.tvbox.osc.ui.tv.widget.MusicVisualizerView;  //xuameng音乐播放动画
 import com.gauravk.audiovisualizer.visualizer.BlastVisualizer;
-import com.gauravk.audiovisualizer.visualizer.BlastVisualizer.BAR; //xuameng音乐播放动画
-import com.gauravk.audiovisualizer.visualizer.AudioPlayer;  //xuameng音乐播放动画
 import java.lang.ref.WeakReference;   //xuameng音乐播放动画
 import android.util.Log; //xuameng音乐播放动画
 import android.os.Looper; //xuameng音乐播放动画
@@ -376,6 +374,9 @@ public class VodController extends BaseController {
     if(newSessionId != audioSessionId) { // 避免重复初始化
         initVisualizer(newSessionId);
     }
+                if(customVisualizer.getVisibility() == View.GONE && isVideoplaying) { //xuameng播放音乐背景
+                    customVisualizer.setVisibility(VISIBLE);
+                }
                     if(MxuamengMusic.getVisibility() == View.GONE && isVideoplaying) { //xuameng播放音乐背景
                         MxuamengMusic.setVisibility(VISIBLE);
                     }
