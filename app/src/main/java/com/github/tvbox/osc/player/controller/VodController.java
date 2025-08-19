@@ -73,6 +73,8 @@ import com.squareup.picasso.MemoryPolicy; //xuameng播放音频切换图片
 import com.squareup.picasso.NetworkPolicy; //xuameng播放音频切换图片
 import android.graphics.Bitmap; //xuameng播放音频切换图片
 import com.github.tvbox.osc.api.ApiConfig; //xuameng播放音频切换图片
+import com.github.tvbox.osc.ui.tv.widget.MusicVisualizerView;  //xuameng音乐播放动画
+import android.media.Visualizer;
 import android.os.Build;
 import android.webkit.WebView;
 import com.github.tvbox.osc.bean.SourceBean;
@@ -287,6 +289,9 @@ public class VodController extends BaseController {
     private boolean isVideoPlay = false; //xuameng判断视频开始播放
     private boolean isLongClick = false; //xuameng判断长按
     private boolean mSeekBarhasFocus = false; //xuameng seekbar是否拥有焦点
+private WeakReference<Visualizer> visualizerRef;
+private MusicVisualizerView customVisualizer;
+private int audioSessionId = -1; // 使用-1表示未初始化状态
     Handler myHandle;
     Runnable myRunnable;
     int myHandleSeconds = 50000; //闲置多少毫秒秒关闭底栏  默认100秒
@@ -362,6 +367,10 @@ public class VodController extends BaseController {
                         MxuamengMusic.setVisibility(GONE);
                     }
                 } else {
+    int newSessionId = mControlWrapper.getAudioSessionId();
+    if(newSessionId != audioSessionId) { // 避免重复初始化
+        initVisualizer(newSessionId);
+    }
                     if(MxuamengMusic.getVisibility() == View.GONE && isVideoplaying) { //xuameng播放音乐背景
                         MxuamengMusic.setVisibility(VISIBLE);
                     }
@@ -471,7 +480,8 @@ public class VodController extends BaseController {
         iv_circle_bg = (ImageView) findViewById(R.id.iv_circle_bg); //xuameng音乐播放时图标
         MxuamengMusic = (ImageView) findViewById(R.id.xuamengMusic); //xuameng播放音乐背景
         play_speed_3 = findViewById(R.id.play_speed_3_container); //xuameng倍速播放
-        XuLoading = findViewWithTag("vod_control_loading"); //xuameng  loading
+        XuLoading = findViewWithTag("vod_control_loading"); //xuameng  loading 
+        customVisualizer = findViewById(R.id.visualizer_view);  //xuameng音乐播放动画
         tv_slide_progress_text = findViewById(R.id.tv_slide_progress_text);
         mPlayLoadNetSpeed = findViewById(R.id.tv_play_load_net_speed);
         mVideoSize = findViewById(R.id.tv_videosize);
@@ -1946,6 +1956,7 @@ public class VodController extends BaseController {
         if(mHandler != null) {
             mHandler.removeCallbacksAndMessages(null);
         }
+		releaseVisualizer();
     }
     //尝试去bom
     public String getWebPlayUrlIfNeeded(String webPlayUrl) {
@@ -2144,10 +2155,71 @@ public class VodController extends BaseController {
             }
         }
     }
-    public void stopOther() //xuameng停止磁力下载
-    {
+    public void stopOther() //xuameng停止磁力下载{
         Thunder.stop(false); //停止磁力下载
         Jianpian.finish(); //停止p2p下载
         App.getInstance().setDashData(null);
     }
+
+private void initVisualizer(int sessionId) {
+    // 清理现有实例
+    releaseVisualizer();
+    
+    try {
+        // 参数校验
+        if(sessionId <= 0) return;
+        
+        // 创建Visualizer实例
+        Visualizer visualizer = new Visualizer(sessionId);
+        visualizerRef = new WeakReference<>(visualizer);
+        
+        // 配置参数（必须在启用前设置）
+        visualizer.setEnabled(false);
+        visualizer.setCaptureSize(Visualizer.getCaptureSizeRange()[1]);
+        
+        // 设置数据监听
+        visualizer.setDataCaptureListener(
+            new Visualizer.OnDataCaptureListener() {
+                @Override
+                public void onFftDataCapture(Visualizer v, byte[] fft, int sr) {
+                    if(customVisualizer != null) {
+                        runOnUiThread(() -> customVisualizer.updateVisualizer(fft));
+                    }
+                }
+                
+                @Override
+                public void onWaveFormDataCapture(Visualizer v, byte[] waveform, int sr) {
+                    // 可选实现
+                }
+            },
+            Visualizer.getMaxCaptureRate() / 2,
+            false,  // 禁用波形捕获
+            true    // 启用FFT捕获
+        );
+        
+        // 绑定自定义视图
+        if(customVisualizer != null) {
+            customVisualizer.link(sessionId);
+        }
+        
+        // 最后启用采集
+        visualizer.setEnabled(true);
+        audioSessionId = sessionId;
+        
+    } catch (Exception e) {
+        Log.e("Visualizer", "初始化异常", e);
+        releaseVisualizer();
+    }
+}
+
+// 3. 释放资源方法（必须实现）
+private void releaseVisualizer() {
+    if(visualizerRef != null && visualizerRef.get() != null) {
+        Visualizer v = visualizerRef.get();
+        v.setEnabled(false);
+        v.release();
+    }
+    audioSessionId = -1;
+}
+
 }
