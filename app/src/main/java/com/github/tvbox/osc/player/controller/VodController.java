@@ -2239,7 +2239,7 @@ private void releaseVisualizer() {
     }
 }
 
-byte[] generateTestFFT() {
+private void generateTestFFT() {
     byte[] fft = new byte[66];
     // 设置3个不同频率分量（第3/5/7柱状图）
     for(int i : new int[]{3,5,7}) {
