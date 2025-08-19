@@ -2176,14 +2176,14 @@ public class VodController extends BaseController {
  * 版本：v2.3（2025-08-19）
  */
 private void initVisualizer() {
-
+    releaseVisualizer();
 		int sessionId = mControlWrapper.getAudioSessionId();
     if (sessionId <= 0 || getContext() == null) return;
     try {
 
         // 初始化可视化组件
         Visualizer visualizer = new Visualizer(sessionId);
-    releaseVisualizer();
+
         
         // 设置FFT数据回调
 visualizer.setDataCaptureListener(
@@ -2206,8 +2206,8 @@ visualizer.setDataCaptureListener(
         }
     },
     Visualizer.getMaxCaptureRate() / 2, // 采样率
-    false,  // 捕获波形数据
-    true  // 不捕获FFT数据
+    false,  // 不捕获波形数据
+    true  // 捕获FFT数据
 );
         
         visualizer.setEnabled(true);
