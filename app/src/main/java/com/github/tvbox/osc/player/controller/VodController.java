@@ -374,15 +374,6 @@ public class VodController extends BaseController {
 
         initVisualizer();
 // 改进建议：增加多频率分量模拟
-byte[] generateTestFFT() {
-    byte[] fft = new byte[66];
-    // 设置3个不同频率分量（第3/5/7柱状图）
-    for(int i : new int[]{3,5,7}) {
-        fft[2 + i*4] = (byte)(30 + i*10);   // 实部强度递增
-        fft[2 + i*4 +1] = (byte)(20 + i*5); // 虚部相位变化
-    }
-    return fft;
-}
 
 		customVisualizer.updateVisualizer(generateTestFFT); 
 
@@ -2248,7 +2239,15 @@ private void releaseVisualizer() {
     }
 }
 
-
+byte[] generateTestFFT() {
+    byte[] fft = new byte[66];
+    // 设置3个不同频率分量（第3/5/7柱状图）
+    for(int i : new int[]{3,5,7}) {
+        fft[2 + i*4] = (byte)(30 + i*10);   // 实部强度递增
+        fft[2 + i*4 +1] = (byte)(20 + i*5); // 虚部相位变化
+    }
+    return fft;
+}
 
 
 }
