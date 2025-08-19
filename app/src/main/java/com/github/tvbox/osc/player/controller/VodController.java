@@ -75,6 +75,8 @@ import android.graphics.Bitmap; //xuameng播放音频切换图片
 import com.github.tvbox.osc.api.ApiConfig; //xuameng播放音频切换图片
 import com.github.tvbox.osc.ui.tv.widget.MusicVisualizerView;  //xuameng音乐播放动画
 import com.gauravk.audiovisualizer.visualizer.BlastVisualizer;
+import android.media.audiofx.Visualizer;
+import android.media.audiofx.Visualizer.OnDataCaptureListener;
 import java.lang.ref.WeakReference;   //xuameng音乐播放动画
 import android.util.Log; //xuameng音乐播放动画
 import android.os.Looper; //xuameng音乐播放动画
@@ -2186,7 +2188,7 @@ private void initVisualizer(int sessionId) {
         visualizer.setAudioSessionId(sessionId);
         
         // 设置FFT数据回调
-        visualizer.setListener(new BlastVisualizer.Listener() {
+        visualizer.setDataCaptureListener(new Visualizer.OnDataCaptureListener()  {
             @Override
             public void onFftDataCapture(byte[] fft) {
                 new Handler(Looper.getMainLooper()).post(() -> {
