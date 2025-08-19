@@ -205,6 +205,11 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     }
 
     @Override
+    public int getAudioSessionId() {       //XUAMENG 获取音频ID
+        return mMediaPlayer.getAudioSessionId();
+    }
+
+    @Override
     public void setSurface(Surface surface) {
         if (mMediaPlayer != null) {
             mMediaPlayer.setVideoSurface(surface);
