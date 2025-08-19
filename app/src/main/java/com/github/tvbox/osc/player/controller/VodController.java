@@ -373,7 +373,7 @@ public class VodController extends BaseController {
                 } else {
     int newSessionId = mControlWrapper.getAudioSessionId();   //xuameng音乐播放动画
     if(newSessionId != audioSessionId) { // 避免重复初始化
-        initVisualizer(newSessionId);
+        initVisualizer();
     }
                 if(customVisualizer.getVisibility() == View.GONE && isVideoplaying) { //xuameng播放音乐背景
                     customVisualizer.setVisibility(VISIBLE);
@@ -2173,12 +2173,12 @@ public class VodController extends BaseController {
  * 功能：管理BlastVisualizer与自定义MusicVisualizerView的协同工作
  * 版本：v2.3（2025-08-19）
  */
-private void initVisualizer(int sessionId) {
+private void initVisualizer() {
     releaseVisualizer();
-    if (sessionId <= 0 || getContext() == null) return;
-
-    try {
 		int sessionId = mControlWrapper.getAudioSessionId();
+    if (sessionId <= 0 || getContext() == null) return;
+    try {
+
         // 初始化可视化组件
         Visualizer visualizer = new Visualizer(sessionId);
         visualizerRef = new WeakReference<>(visualizer);
