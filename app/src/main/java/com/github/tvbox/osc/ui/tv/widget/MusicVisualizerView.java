@@ -50,7 +50,7 @@ public class MusicVisualizerView extends View {
      * 初始化组件默认参数
      */
     private void init() {
-        mBarPaint.setColor(Color.parseColor("#4CAF50")); // 默认绿色
+        mBarPaint.setColor(Color.parseColor("#FF0000")); // 默认绿色
         mBarPaint.setStyle(Paint.Style.FILL);
     }
 
