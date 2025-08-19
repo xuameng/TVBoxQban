@@ -373,7 +373,7 @@ public class VodController extends BaseController {
                 } else {
 
         initVisualizer();
-
+customVisualizer.updateVisualizer(5000);
                 if(customVisualizer.getVisibility() == View.GONE && isVideoplaying) { //xuameng播放音乐背景
                     customVisualizer.setVisibility(VISIBLE);
                 }
@@ -2240,3 +2240,4 @@ private void releaseVisualizer() {
 
 
 }
+
