@@ -2171,7 +2171,7 @@ private void initVisualizer(int sessionId) {
         if(sessionId <= 0) return;
         
         // 创建Visualizer实例
-        BlastVisualizer visualizer = new Visualizer(sessionId);
+		BlastVisualizer visualizer = new BlastVisualizer(sessionId);
         visualizerRef = new WeakReference<>(visualizer);
         
         // 配置参数（必须在启用前设置）
