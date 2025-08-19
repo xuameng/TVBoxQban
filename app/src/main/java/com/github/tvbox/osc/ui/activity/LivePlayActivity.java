@@ -40,6 +40,11 @@ import com.squareup.picasso.NetworkPolicy; //xuameng播放音频切换图片
 import android.graphics.Bitmap; //xuameng播放音频切换图片
 import com.github.tvbox.osc.api.ApiConfig; //xuameng播放音频切换图片
 import android.annotation.SuppressLint; //xuamengEPG显示错误
+import com.github.tvbox.osc.ui.tv.widget.MusicVisualizerView;  //xuameng音乐播放动画
+import android.media.audiofx.Visualizer;
+import java.lang.ref.WeakReference;   //xuameng音乐播放动画
+import android.util.Log; //xuameng音乐播放动画
+import android.os.Looper; //xuameng音乐播放动画
 import java.util.HashMap; //XUAMENG自定义UA
 import java.util.Objects;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -216,6 +221,10 @@ public class LivePlayActivity extends BaseActivity {
     private TextView iv_playpause;
     private View iv_play;
     private boolean show = false;
+    private WeakReference<Visualizer> visualizerRef;  //xuameng音乐播放动画
+    private MusicVisualizerView customVisualizer; //xuameng音乐播放动画
+    private int audioSessionId = -1; // 使用-1表示未初始化状态 //xuameng音乐播放动画
+	private static final String TAG = "VodController";  //xuameng音乐播放动画
     @Override
     protected int getLayoutResID() {
         return R.layout.activity_live_play;
@@ -264,6 +273,7 @@ public class LivePlayActivity extends BaseActivity {
         view_line_XU = (View) findViewById(R.id.view_line); //xuameng横线
         iv_circle_bg_xu = (ImageView) findViewById(R.id.iv_circle_bg_xu); //xuameng音乐播放时图标
         MxuamengMusic = (ImageView) findViewById(R.id.xuamengMusic); //xuameng播放音乐背景
+		customVisualizer = findViewById(R.id.visualizer_view);  //xuameng音乐播放动画
         divEpg = (LinearLayout) findViewById(R.id.divEPG);
         //右上角图片旋转
         ObjectAnimator animator1 = ObjectAnimator.ofFloat(iv_circle_bg, "rotation", 360.0f);
@@ -2762,6 +2772,10 @@ public class LivePlayActivity extends BaseActivity {
                         MxuamengMusic.setVisibility(View.GONE);
                     }
                 } else {
+					initVisualizer();
+					                if(customVisualizer.getVisibility() == View.GONE && isVideoplaying) { //xuameng播放音乐背景
+                    customVisualizer.setVisibility(VISIBLE);
+                }
                     if(MxuamengMusic.getVisibility() == View.GONE && isVideoplaying) { //xuameng播放音乐背景
                         MxuamengMusic.setVisibility(View.VISIBLE);
                     }
@@ -3246,4 +3260,70 @@ public class LivePlayActivity extends BaseActivity {
             xToast = null;
         }
     }
+
+	private void initVisualizer() {
+  //  releaseVisualizer();
+		int sessionId = mControlWrapper.getAudioSessionId();
+    if (sessionId <= 0 || getContext() == null) return;
+    try {
+
+        // 初始化可视化组件
+        Visualizer visualizer = new Visualizer(sessionId);
+		// 设置捕获大小（建议范围1024-8192）
+        visualizer.setCaptureSize(Visualizer.getCaptureSizeRange()[1]);
+        visualizerRef = new WeakReference<>(visualizer);
+
+        
+        // 设置FFT数据回调
+visualizer.setDataCaptureListener(
+    new Visualizer.OnDataCaptureListener() {
+        @Override
+        public void onWaveFormDataCapture(Visualizer viz, byte[] bytes, int rate) {
+            // 波形数据处理
+        }
+        
+        @Override
+        public void onFftDataCapture(Visualizer visualizer, byte[] fftData, int samplingRate) {
+
+                    new Handler(Looper.getMainLooper()).post(() -> {
+           if (customVisualizer != null && fftData != null && fftData != null && fftData.length >= 66) {
+                customVisualizer.updateVisualizer(fftData);  // 标准FFT接口
+                customVisualizer.onRawDataReceived(fftData); // 兼容原始数据接口
+            }
+                });
+        }
+    },
+    Visualizer.getMaxCaptureRate() / 2, // 采样率
+    false,  // 捕获波形数据
+    true  // 捕获FFT数据
+);
+        
+        visualizer.setEnabled(true);
+    } catch (Exception e) {
+        Log.e(TAG, "Visualizer initialization failed", e);
+        releaseVisualizer();
+    }
+}
+
+/**
+ * 安全释放可视化资源
+ */
+private void releaseVisualizer() {
+    try {
+        if (visualizerRef != null) {
+            Visualizer v = visualizerRef.get();
+            if (v != null) {
+                // 释放系统资源
+                v.release();
+                // 重置自定义视图
+                if (customVisualizer != null) {
+                    customVisualizer.reset();
+                }
+            }
+            visualizerRef.clear();
+        }
+    } catch (Exception e) {
+        Log.w(TAG, "Visualizer release exception", e);
+    }
+}
 }
