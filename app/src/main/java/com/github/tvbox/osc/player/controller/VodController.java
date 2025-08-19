@@ -2155,7 +2155,7 @@ private int audioSessionId = -1; // 使用-1表示未初始化状态
             }
         }
     }
-    public void stopOther() //xuameng停止磁力下载{
+    public void stopOther(){ //xuameng停止磁力下载
         Thunder.stop(false); //停止磁力下载
         Jianpian.finish(); //停止p2p下载
         App.getInstance().setDashData(null);
