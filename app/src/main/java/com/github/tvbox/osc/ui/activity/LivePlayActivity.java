@@ -3264,13 +3264,13 @@ public class LivePlayActivity extends BaseActivity {
 	private void initVisualizer() {
   //  releaseVisualizer();
 		int sessionId = mVideoView.getAudioSessionId();
-    if (sessionId <= 0) return;
     try {
 
         // 初始化可视化组件
         Visualizer visualizer = new Visualizer(sessionId);
 		// 设置捕获大小（建议范围1024-8192）
         visualizer.setCaptureSize(Visualizer.getCaptureSizeRange()[1]);
+		visualizer.setCaptureSize(8192); 
         visualizerRef = new WeakReference<>(visualizer);
 
         
