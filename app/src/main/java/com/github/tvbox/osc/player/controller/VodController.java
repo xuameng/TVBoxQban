@@ -74,9 +74,7 @@ import com.squareup.picasso.NetworkPolicy; //xuameng播放音频切换图片
 import android.graphics.Bitmap; //xuameng播放音频切换图片
 import com.github.tvbox.osc.api.ApiConfig; //xuameng播放音频切换图片
 import com.github.tvbox.osc.ui.tv.widget.MusicVisualizerView;  //xuameng音乐播放动画
-import com.gauravk.audiovisualizer.visualizer.BarVisualizer;
 import android.media.audiofx.Visualizer;
-import android.media.audiofx.Visualizer.OnDataCaptureListener
 import com.gauravk.audiovisualizer.base.BaseVisualizer;;
 import java.lang.ref.WeakReference;   //xuameng音乐播放动画
 import android.util.Log; //xuameng音乐播放动画
