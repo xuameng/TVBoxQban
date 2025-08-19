@@ -3263,7 +3263,7 @@ public class LivePlayActivity extends BaseActivity {
 
 	private void initVisualizer() {
   //  releaseVisualizer();
-		int sessionId = mControlWrapper.getAudioSessionId();
+		int sessionId = mVideoView.getAudioSessionId();
     if (sessionId <= 0 || getContext() == null) return;
     try {
 
