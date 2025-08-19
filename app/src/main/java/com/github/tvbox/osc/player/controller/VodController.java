@@ -2175,8 +2175,7 @@ public class VodController extends BaseController {
  * 版本：v2.3（2025-08-19）
  */
 private void initVisualizer() {
-		visualizer.setEnabled(false);  // 先禁用
-    releaseVisualizer();
+
 		int sessionId = mControlWrapper.getAudioSessionId();
     if (sessionId <= 0 || getContext() == null) return;
     try {
@@ -2184,7 +2183,8 @@ private void initVisualizer() {
         // 初始化可视化组件
         Visualizer visualizer = new Visualizer(sessionId);
         visualizerRef = new WeakReference<>(visualizer);
-
+		visualizer.setEnabled(false);  // 先禁用
+    releaseVisualizer();
         
         // 设置FFT数据回调
 visualizer.setDataCaptureListener(
@@ -2223,7 +2223,6 @@ visualizer.setDataCaptureListener(
  */
 private void releaseVisualizer() {
     try {
-					mVisualizer.setEnabled(false); 
         if (visualizerRef != null) {
             Visualizer v = visualizerRef.get();
             if (v != null) {
