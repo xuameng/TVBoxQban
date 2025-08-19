@@ -3270,7 +3270,6 @@ public class LivePlayActivity extends BaseActivity {
         Visualizer visualizer = new Visualizer(sessionId);
 		// 设置捕获大小（建议范围1024-8192）
         visualizer.setCaptureSize(Visualizer.getCaptureSizeRange()[1]);
-		visualizer.setCaptureSize(8192); 
         visualizerRef = new WeakReference<>(visualizer);
 
         
