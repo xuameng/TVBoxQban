@@ -387,7 +387,7 @@ public class VodController extends BaseController {
         initVisualizer();
 // 改进建议：增加多频率分量模拟
 
-		customVisualizer.updateVisualizer(generateTestFFT); 
+		customVisualizer.updateVisualizer(generateTestFFT());
 
                 if(customVisualizer.getVisibility() == View.GONE && isVideoplaying) { //xuameng播放音乐背景
                     customVisualizer.setVisibility(VISIBLE);
