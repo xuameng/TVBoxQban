@@ -74,7 +74,7 @@ import com.squareup.picasso.NetworkPolicy; //xuameng播放音频切换图片
 import android.graphics.Bitmap; //xuameng播放音频切换图片
 import com.github.tvbox.osc.api.ApiConfig; //xuameng播放音频切换图片
 import com.github.tvbox.osc.ui.tv.widget.MusicVisualizerView;  //xuameng音乐播放动画
-import com.gauravk.audiovisualizer.visualizer.BaseVisualizer;
+import com.gauravk.audiovisualizer.visualizer.BarVisualizer;
 import android.media.audiofx.Visualizer;
 import android.media.audiofx.Visualizer.OnDataCaptureListener;
 import java.lang.ref.WeakReference;   //xuameng音乐播放动画
@@ -294,7 +294,7 @@ public class VodController extends BaseController {
     private boolean isVideoPlay = false; //xuameng判断视频开始播放
     private boolean isLongClick = false; //xuameng判断长按
     private boolean mSeekBarhasFocus = false; //xuameng seekbar是否拥有焦点
-    private WeakReference<BaseVisualizer> visualizerRef;  //xuameng音乐播放动画
+    private WeakReference<BarVisualizer> visualizerRef;  //xuameng音乐播放动画
     private MusicVisualizerView customVisualizer; //xuameng音乐播放动画
     private int audioSessionId = -1; // 使用-1表示未初始化状态 //xuameng音乐播放动画
 	private static final String TAG = "VodController";  //xuameng音乐播放动画
@@ -2181,7 +2181,7 @@ private void initVisualizer(int sessionId) {
 
     try {
         // 初始化可视化组件
-        BaseVisualizer visualizer = new BaseVisualizer(getContext());
+        BarVisualizer visualizer = new BarVisualizer(getContext());
         visualizerRef = new WeakReference<>(visualizer);
 
         // 绑定音频会话
@@ -2218,7 +2218,7 @@ private void initVisualizer(int sessionId) {
 private void releaseVisualizer() {
     try {
         if (visualizerRef != null) {
-            BaseVisualizer v = visualizerRef.get();
+            BarVisualizer v = visualizerRef.get();
             if (v != null) {
                 // 清理回调引用
                 v.setVisualizationListener(null);
