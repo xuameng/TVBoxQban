@@ -3285,10 +3285,10 @@ visualizer.setDataCaptureListener(
         @Override
         public void onFftDataCapture(Visualizer visualizer, byte[] fftData, int samplingRate) {
 
-                    new Handler(Looper.getMainLooper()).post(() -> {
+      
                 customVisualizer.updateVisualizer(fftData);  // 标准FFT接口
                 customVisualizer.onRawDataReceived(fftData); // 兼容原始数据接口
-                });
+
         }
     },
     Visualizer.getMaxCaptureRate() / 2, // 采样率
