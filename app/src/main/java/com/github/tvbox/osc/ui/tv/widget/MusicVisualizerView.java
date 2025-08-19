@@ -19,7 +19,7 @@ import android.animation.ValueAnimator;
  */
 public class MusicVisualizerView extends View {
     // 常量定义
-    private static final int MAX_AMPLITUDE = 382767;   // 最大振幅值（16位有符号整数范围）
+    private static final int MAX_AMPLITUDE = 196602;   // 最大振幅值（16位有符号整数范围）
     private static final int BAR_COUNT = 16;          // 柱状图数量
     private static final int ANIMATION_DURATION = 200;// 动画时长(ms)
 
