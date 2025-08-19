@@ -2198,10 +2198,10 @@ visualizer.setDataCaptureListener(
         public void onFftDataCapture(Visualizer visualizer, byte[] fftData, int samplingRate) {
 
                     new Handler(Looper.getMainLooper()).post(() -> {
-                    if (customVisualizer != null && fft != null) {
+                    if (customVisualizer != null && fftData != null) {
                         // 双重数据转发机制
-                        customVisualizer.updateVisualizer(fft);  // 标准FFT接口
-                        customVisualizer.onRawDataReceived(fft); // 兼容原始数据接口
+                customVisualizer.updateVisualizer(fftData);  // 标准FFT接口
+                customVisualizer.onRawDataReceived(fftData); // 兼容原始数据接口
                     }
                 });
         }
