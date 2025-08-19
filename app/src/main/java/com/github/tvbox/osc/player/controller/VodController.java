@@ -2171,8 +2171,9 @@ private void initVisualizer(int sessionId) {
         if(sessionId <= 0) return;
         
         // 创建Visualizer实例
-		BlastVisualizer visualizer = new BlastVisualizer(sessionId);
+		BlastVisualizer visualizer = new BlastVisualizer(getContext());
         visualizerRef = new WeakReference<>(visualizer);
+        visualizer.setAudioSessionId(sessionId);
         
         // 配置参数（必须在启用前设置）
         visualizer.setEnabled(false);
