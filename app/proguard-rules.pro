@@ -219,5 +219,4 @@
 -keep class fi.iki.elonen.** { *; }
 # xuameng支持音频动画
 -keep class com.gauravk.audiovisualizer.** { *; }
--keep class * implements com.gauravk.audiovisualizer.visualizer.AudioPlayer { *; }
 
