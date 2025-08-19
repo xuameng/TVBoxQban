@@ -76,6 +76,7 @@ import com.github.tvbox.osc.api.ApiConfig; //xuameng播放音频切换图片
 import com.github.tvbox.osc.ui.tv.widget.MusicVisualizerView;  //xuameng音乐播放动画
 import com.gauravk.audiovisualizer.visualizer.BlastVisualizer;
 import java.lang.ref.WeakReference;   //xuameng音乐播放动画
+import android.util.Log; //xuameng音乐播放动画
 import android.os.Build;
 import android.webkit.WebView;
 import com.github.tvbox.osc.bean.SourceBean;
@@ -2163,44 +2164,30 @@ public class VodController extends BaseController {
     }
 
 private void initVisualizer(int sessionId) {
-    // 清理现有实例
     releaseVisualizer();
-    
+    if(sessionId <= 0) return;
+
     try {
-        // 参数校验
-        if(sessionId <= 0) return;
-        
-        // 创建BlastVisualizer实例（必须传入Context）
-        BlastVisualizer visualizer = new BlastVisualizer(requireContext()); // Fragment中使用requireContext()
+        BlastVisualizer visualizer = new BlastVisualizer(getContext());
         visualizerRef = new WeakReference<>(visualizer);
         
-        // 配置参数（必须在启用前设置）
-        visualizer.setColor(ContextCompat.getColor(requireContext(), R.color.visualizer_color)); // 设置颜色
-        visualizer.setDensity(10f); // 设置密度
-        visualizer.setType(BlastVisualizer.Type.BAR); // 设置可视化类型
-        
-        // 绑定音频会话（关键修改点）
-        visualizer.setAudioSessionId(sessionId); 
-        
-        // 设置数据监听（使用BlastVisualizer的专用监听器）
-        visualizer.setPlayer(new BlastVisualizer.AudioPlayer() {
-            @Override
-            public void onVisualization(byte[] waveform, int samplingRate) {
+        // 配置参数
+        visualizer.setColor(Color.CYAN);
+        visualizer.setDensity(10f);
+        visualizer.setRendererType(RendererType.BAR);
+        visualizer.setAudioSessionId(sessionId);
+
+        // 数据回调
+        visualizer.setAudioDataListener(fftData -> 
+            new Handler(Looper.getMainLooper()).post(() -> {
                 if(customVisualizer != null) {
-                    runOnUiThread(() -> customVisualizer.updateVisualizer(waveform));
+                    customVisualizer.updateVisualizer(fftData);
                 }
-            }
-        });
-        
-        // 绑定自定义视图
-        if(customVisualizer != null) {
-            customVisualizer.link(sessionId);
-        }
-        
-        // 启用可视化器
+            })
+        );
+
         visualizer.setEnabled(true);
         audioSessionId = sessionId;
-        
     } catch (Exception e) {
         Log.e("Visualizer", "初始化异常", e);
         releaseVisualizer();
@@ -2208,10 +2195,12 @@ private void initVisualizer(int sessionId) {
 }
 
 private void releaseVisualizer() {
-    if(visualizerRef != null && visualizerRef.get() != null) {
+    if(visualizerRef != null) {
         BlastVisualizer v = visualizerRef.get();
-        v.setEnabled(false);
-        v.releasePlayer(); // 注意：BlastVisualizer使用releasePlayer()而非release()
+        if(v != null) {
+            v.setEnabled(false);
+            v.release();
+        }
     }
     audioSessionId = -1;
 }
