@@ -373,7 +373,9 @@ public class VodController extends BaseController {
                 } else {
 
         initVisualizer();
-customVisualizer.updateVisualizer(5000);
+		byte[] audioData = new byte[1024]; 
+		customVisualizer.updateVisualizer(audioData); 
+
                 if(customVisualizer.getVisibility() == View.GONE && isVideoplaying) { //xuameng播放音乐背景
                     customVisualizer.setVisibility(VISIBLE);
                 }
@@ -2197,7 +2199,7 @@ visualizer.setDataCaptureListener(
                     new Handler(Looper.getMainLooper()).post(() -> {
            if (customVisualizer != null && fftData != null) {
                 customVisualizer.updateVisualizer(fftData);  // 标准FFT接口
-             //   customVisualizer.onRawDataReceived(fftData); // 兼容原始数据接口
+                customVisualizer.onRawDataReceived(fftData); // 兼容原始数据接口
             }
                 });
         }
@@ -2240,4 +2242,3 @@ private void releaseVisualizer() {
 
 
 }
-
