@@ -2774,7 +2774,7 @@ public class LivePlayActivity extends BaseActivity {
                 } else {
 					initVisualizer();
 					                if(customVisualizer.getVisibility() == View.GONE && isVideoplaying) { //xuameng播放音乐背景
-                    customVisualizer.setVisibility(VISIBLE);
+                    customVisualizer.setVisibility(View.VISIBLE);
                 }
                     if(MxuamengMusic.getVisibility() == View.GONE && isVideoplaying) { //xuameng播放音乐背景
                         MxuamengMusic.setVisibility(View.VISIBLE);
@@ -3264,7 +3264,7 @@ public class LivePlayActivity extends BaseActivity {
 	private void initVisualizer() {
   //  releaseVisualizer();
 		int sessionId = mVideoView.getAudioSessionId();
-    if (sessionId <= 0 || getContext() == null) return;
+    if (sessionId <= 0) return;
     try {
 
         // 初始化可视化组件
@@ -3286,10 +3286,8 @@ visualizer.setDataCaptureListener(
         public void onFftDataCapture(Visualizer visualizer, byte[] fftData, int samplingRate) {
 
                     new Handler(Looper.getMainLooper()).post(() -> {
-           if (customVisualizer != null && fftData != null && fftData != null && fftData.length >= 66) {
                 customVisualizer.updateVisualizer(fftData);  // 标准FFT接口
                 customVisualizer.onRawDataReceived(fftData); // 兼容原始数据接口
-            }
                 });
         }
     },
