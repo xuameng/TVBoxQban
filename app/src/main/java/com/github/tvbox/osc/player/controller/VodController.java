@@ -326,17 +326,6 @@ public class VodController extends BaseController {
             mHandler.postDelayed(this, 1000);
         }
     };
-
-	public byte[] generateTestFFT() {  // 移除void改为byte[]
-    byte[] fft = new byte[66];
-    for(int i : new int[]{3,5,7}) {
-        fft[2 + i*4] = (byte)(30 + i*10);
-        fft[2 + i*4 +1] = (byte)(20 + i*5);
-    }
-    return fft; // 现在合法返回
-}
-
-
     private Runnable myRunnableXu = new Runnable() {
         @Override
         public void run() {
@@ -382,12 +371,10 @@ public class VodController extends BaseController {
                         MxuamengMusic.setVisibility(GONE);
                     }
                 } else {
-
+    int newSessionId = mControlWrapper.getAudioSessionId();   //xuameng音乐播放动画
+    if(newSessionId != audioSessionId) { // 避免重复初始化
         initVisualizer();
-// 改进建议：增加多频率分量模拟
-
-		customVisualizer.updateVisualizer(generateTestFFT());
-
+    }
                 if(customVisualizer.getVisibility() == View.GONE && isVideoplaying) { //xuameng播放音乐背景
                     customVisualizer.setVisibility(VISIBLE);
                 }
@@ -1466,6 +1453,7 @@ public class VodController extends BaseController {
                 if(isBottomVisible() && mSeekBarhasFocus) { //xuameng假如焦点在SeekBar
                     mxuPlay.requestFocus(); //底部菜单默认焦点为播放
                 }
+				releaseVisualizer();
                 mLandscapePortraitBtn.setVisibility(View.GONE);
                 if(!isPlaying && mTvPausexu.getVisibility() == View.VISIBLE) {
                     ObjectAnimator animator30 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0, 700); //xuameng动画暂停菜单开始
@@ -2187,15 +2175,13 @@ public class VodController extends BaseController {
  * 版本：v2.3（2025-08-19）
  */
 private void initVisualizer() {
-  //  releaseVisualizer();
+    releaseVisualizer();
 		int sessionId = mControlWrapper.getAudioSessionId();
     if (sessionId <= 0 || getContext() == null) return;
     try {
 
         // 初始化可视化组件
         Visualizer visualizer = new Visualizer(sessionId);
-		// 设置捕获大小（建议范围1024-8192）
-        visualizer.setCaptureSize(Visualizer.getCaptureSizeRange()[1]);
         visualizerRef = new WeakReference<>(visualizer);
 
         
@@ -2211,16 +2197,17 @@ visualizer.setDataCaptureListener(
         public void onFftDataCapture(Visualizer visualizer, byte[] fftData, int samplingRate) {
 
                     new Handler(Looper.getMainLooper()).post(() -> {
-           if (customVisualizer != null && fftData != null && fftData != null && fftData.length >= 66) {
-                customVisualizer.updateVisualizer(fftData);  // 标准FFT接口
-                customVisualizer.onRawDataReceived(fftData); // 兼容原始数据接口
-            }
+                    if (customVisualizer != null && fft != null) {
+                        // 双重数据转发机制
+                        customVisualizer.updateVisualizer(fft);  // 标准FFT接口
+                        customVisualizer.onRawDataReceived(fft); // 兼容原始数据接口
+                    }
                 });
         }
     },
     Visualizer.getMaxCaptureRate() / 2, // 采样率
     false,  // 捕获波形数据
-    true  // 捕获FFT数据
+    true  // 不捕获FFT数据
 );
         
         visualizer.setEnabled(true);
