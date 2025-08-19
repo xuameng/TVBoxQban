@@ -371,10 +371,7 @@ public class VodController extends BaseController {
                         MxuamengMusic.setVisibility(GONE);
                     }
                 } else {
-    int newSessionId = mControlWrapper.getAudioSessionId();   //xuameng音乐播放动画
-    if(newSessionId != audioSessionId) { // 避免重复初始化
         initVisualizer();
-    }
                 if(customVisualizer.getVisibility() == View.GONE && isVideoplaying) { //xuameng播放音乐背景
                     customVisualizer.setVisibility(VISIBLE);
                 }
@@ -2205,7 +2202,7 @@ visualizer.setDataCaptureListener(
     },
     Visualizer.getMaxCaptureRate() / 2, // 采样率
     true,  // 捕获波形数据
-    true  // 不捕获FFT数据
+    true  // 捕获FFT数据
 );
         
         visualizer.setEnabled(true);
