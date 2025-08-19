@@ -2183,7 +2183,8 @@ private void initVisualizer() {
 
         // 初始化可视化组件
         Visualizer visualizer = new Visualizer(sessionId);
-
+visualizer.setScalingMode(Visualizer.SCALING_MODE_NORMALIZED);
+visualizer.setMeasurementMode(Visualizer.MEASUREMENT_MODE_PEAK_RMS);
         
         // 设置FFT数据回调
 visualizer.setDataCaptureListener(
