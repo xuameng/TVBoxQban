@@ -327,6 +327,17 @@ public class VodController extends BaseController {
             mHandler.postDelayed(this, 1000);
         }
     };
+
+	public byte[] generateTestFFT() {  // 移除void改为byte[]
+    byte[] fft = new byte[66];
+    for(int i : new int[]{3,5,7}) {
+        fft[2 + i*4] = (byte)(30 + i*10);
+        fft[2 + i*4 +1] = (byte)(20 + i*5);
+    }
+    return fft; // 现在合法返回
+}
+
+
     private Runnable myRunnableXu = new Runnable() {
         @Override
         public void run() {
@@ -373,7 +384,7 @@ public class VodController extends BaseController {
                     }
                 } else {
 
-        initVisualizer(myVideoView.getAudioSessionId());
+        initVisualizer();
 // 改进建议：增加多频率分量模拟
 
 		customVisualizer.updateVisualizer(generateTestFFT); 
@@ -2184,6 +2195,8 @@ private void initVisualizer() {
 
         // 初始化可视化组件
         Visualizer visualizer = new Visualizer(sessionId);
+		// 设置捕获大小（建议范围1024-8192）
+        visualizer.setCaptureSize(Visualizer.getCaptureSizeRange()[1]);
         visualizerRef = new WeakReference<>(visualizer);
 
         
@@ -2240,14 +2253,7 @@ private void releaseVisualizer() {
     }
 }
 
-private byte[] generateTestFFT() {  // 移除void改为byte[]
-    byte[] fft = new byte[66];
-    for(int i : new int[]{3,5,7}) {
-        fft[2 + i*4] = (byte)(30 + i*10);
-        fft[2 + i*4 +1] = (byte)(20 + i*5);
-    }
-    return fft; // 现在合法返回
-}
+
 
 
 }
