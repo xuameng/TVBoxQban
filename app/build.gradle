@@ -4,12 +4,12 @@ plugins {
 }
 
 android {
-    compileSdkVersion 33
+    compileSdkVersion 30
 
     defaultConfig {
         applicationId 'com.jvhuiys.player'
-        minSdkVersion 19
-        targetSdkVersion 30
+        minSdkVersion 16
+        targetSdkVersion 26
         versionCode 1
         versionName '20250818-2222'
         multiDexEnabled true
@@ -64,7 +64,7 @@ repositories {
 
 dependencies {
     api fileTree(dir: "libs", include: ["*.jar"])
-    implementation 'androidx.media:media:1.6.0'   //xuameng动画
+    implementation 'com.gauravk.audiovisualizer:audiovisualizer:0.9.2'   //xuameng动画
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.3'  //xuameng 启用Java 8脱糖
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "org.jetbrains.kotlin:kotlin-annotations-jvm:$kotlin_version"
