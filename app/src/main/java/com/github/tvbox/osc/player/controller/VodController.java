@@ -2170,41 +2170,34 @@ private void initVisualizer(int sessionId) {
         // 参数校验
         if(sessionId <= 0) return;
         
-        // 创建Visualizer实例
-		BlastVisualizer visualizer = new BlastVisualizer(getContext());
+        // 创建BlastVisualizer实例（必须传入Context）
+        BlastVisualizer visualizer = new BlastVisualizer(requireContext()); // Fragment中使用requireContext()
         visualizerRef = new WeakReference<>(visualizer);
-        visualizer.setAudioSessionId(sessionId);
         
         // 配置参数（必须在启用前设置）
-        visualizer.setEnabled(false);
-        visualizer.setCaptureSize(Visualizer.getCaptureSizeRange()[1]);
+        visualizer.setColor(ContextCompat.getColor(requireContext(), R.color.visualizer_color)); // 设置颜色
+        visualizer.setDensity(10f); // 设置密度
+        visualizer.setType(BlastVisualizer.Type.BAR); // 设置可视化类型
         
-        // 设置数据监听
-        visualizer.setDataCaptureListener(
-            new Visualizer.OnDataCaptureListener() {
-                @Override
-                public void onFftDataCapture(Visualizer v, byte[] fft, int sr) {
-                    if(customVisualizer != null) {
-                        runOnUiThread(() -> customVisualizer.updateVisualizer(fft));
-                    }
+        // 绑定音频会话（关键修改点）
+        visualizer.setAudioSessionId(sessionId); 
+        
+        // 设置数据监听（使用BlastVisualizer的专用监听器）
+        visualizer.setPlayer(new BlastVisualizer.AudioPlayer() {
+            @Override
+            public void onVisualization(byte[] waveform, int samplingRate) {
+                if(customVisualizer != null) {
+                    runOnUiThread(() -> customVisualizer.updateVisualizer(waveform));
                 }
-                
-                @Override
-                public void onWaveFormDataCapture(Visualizer v, byte[] waveform, int sr) {
-                    // 可选实现
-                }
-            },
-            Visualizer.getMaxCaptureRate() / 2,
-            false,  // 禁用波形捕获
-            true    // 启用FFT捕获
-        );
+            }
+        });
         
         // 绑定自定义视图
         if(customVisualizer != null) {
             customVisualizer.link(sessionId);
         }
         
-        // 最后启用采集
+        // 启用可视化器
         visualizer.setEnabled(true);
         audioSessionId = sessionId;
         
@@ -2214,14 +2207,14 @@ private void initVisualizer(int sessionId) {
     }
 }
 
-// 3. 释放资源方法（必须实现）
 private void releaseVisualizer() {
     if(visualizerRef != null && visualizerRef.get() != null) {
-        Visualizer v = visualizerRef.get();
+        BlastVisualizer v = visualizerRef.get();
         v.setEnabled(false);
-        v.release();
+        v.releasePlayer(); // 注意：BlastVisualizer使用releasePlayer()而非release()
     }
     audioSessionId = -1;
 }
+
 
 }
