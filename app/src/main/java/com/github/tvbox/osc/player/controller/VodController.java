@@ -294,7 +294,6 @@ public class VodController extends BaseController {
     private boolean mSeekBarhasFocus = false; //xuameng seekbar是否拥有焦点
     private WeakReference<Visualizer> visualizerRef;  //xuameng音乐播放动画
     private MusicVisualizerView customVisualizer; //xuameng音乐播放动画
-	private VideoView myVideoView;
     private int audioSessionId = -1; // 使用-1表示未初始化状态 //xuameng音乐播放动画
 	private static final String TAG = "VodController";  //xuameng音乐播放动画
     Handler myHandle;
@@ -2189,7 +2188,7 @@ public class VodController extends BaseController {
  */
 private void initVisualizer() {
   //  releaseVisualizer();
-		int sessionId = myVideoView.getAudioSessionId();
+		int sessionId = mControlWrapper.getAudioSessionId();
     if (sessionId <= 0 || getContext() == null) return;
     try {
 
@@ -2212,7 +2211,7 @@ visualizer.setDataCaptureListener(
         public void onFftDataCapture(Visualizer visualizer, byte[] fftData, int samplingRate) {
 
                     new Handler(Looper.getMainLooper()).post(() -> {
-           if (customVisualizer != null && fftData != null) {
+           if (customVisualizer != null && fftData != null && fftData != null && fftData.length >= 66) {
                 customVisualizer.updateVisualizer(fftData);  // 标准FFT接口
                 customVisualizer.onRawDataReceived(fftData); // 兼容原始数据接口
             }
