@@ -74,8 +74,8 @@ import com.squareup.picasso.NetworkPolicy; //xuameng播放音频切换图片
 import android.graphics.Bitmap; //xuameng播放音频切换图片
 import com.github.tvbox.osc.api.ApiConfig; //xuameng播放音频切换图片
 import com.github.tvbox.osc.ui.tv.widget.MusicVisualizerView;  //xuameng音乐播放动画
-import android.media.Visualizer;
-import java.lang.ref.WeakReference; 
+import com.gauravk.audiovisualizer.visualizer.BlastVisualizer;
+import java.lang.ref.WeakReference;   //xuameng音乐播放动画
 import android.os.Build;
 import android.webkit.WebView;
 import com.github.tvbox.osc.bean.SourceBean;
@@ -290,9 +290,9 @@ public class VodController extends BaseController {
     private boolean isVideoPlay = false; //xuameng判断视频开始播放
     private boolean isLongClick = false; //xuameng判断长按
     private boolean mSeekBarhasFocus = false; //xuameng seekbar是否拥有焦点
-private WeakReference<Visualizer> visualizerRef;
-private MusicVisualizerView customVisualizer;
-private int audioSessionId = -1; // 使用-1表示未初始化状态
+    private WeakReference<BlastVisualizer> visualizerRef;  //xuameng音乐播放动画
+    private MusicVisualizerView customVisualizer; //xuameng音乐播放动画
+    private int audioSessionId = -1; // 使用-1表示未初始化状态 //xuameng音乐播放动画
     Handler myHandle;
     Runnable myRunnable;
     int myHandleSeconds = 50000; //闲置多少毫秒秒关闭底栏  默认100秒
@@ -368,7 +368,7 @@ private int audioSessionId = -1; // 使用-1表示未初始化状态
                         MxuamengMusic.setVisibility(GONE);
                     }
                 } else {
-    int newSessionId = mControlWrapper.getAudioSessionId();
+    int newSessionId = mControlWrapper.getAudioSessionId();   //xuameng音乐播放动画
     if(newSessionId != audioSessionId) { // 避免重复初始化
         initVisualizer(newSessionId);
     }
@@ -2171,7 +2171,7 @@ private void initVisualizer(int sessionId) {
         if(sessionId <= 0) return;
         
         // 创建Visualizer实例
-        Visualizer visualizer = new Visualizer(sessionId);
+        BlastVisualizer visualizer = new Visualizer(sessionId);
         visualizerRef = new WeakReference<>(visualizer);
         
         // 配置参数（必须在启用前设置）
