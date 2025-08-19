@@ -2183,7 +2183,7 @@ private void initVisualizer() {
 
         // 初始化可视化组件
         Visualizer visualizer = new Visualizer(sessionId);
-		visualizerRef.setEnabled(false);  // 先禁用
+		visualizer.setEnabled(false);  // 先禁用
     releaseVisualizer();
         
         // 设置FFT数据回调
@@ -2223,7 +2223,7 @@ visualizer.setDataCaptureListener(
  */
 private void releaseVisualizer() {
     try {
-		visualizerRef.setEnabled(false);  // 先禁用 // 先禁用
+		Visualizer.setEnabled(false);  // 先禁用
         if (visualizerRef != null) {
             Visualizer v = visualizerRef.get();
             if (v != null) {
