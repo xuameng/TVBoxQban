@@ -75,8 +75,11 @@ import android.graphics.Bitmap; //xuameng播放音频切换图片
 import com.github.tvbox.osc.api.ApiConfig; //xuameng播放音频切换图片
 import com.github.tvbox.osc.ui.tv.widget.MusicVisualizerView;  //xuameng音乐播放动画
 import com.gauravk.audiovisualizer.visualizer.BlastVisualizer;
+import com.gauravk.audiovisualizer.visualizer.BlastVisualizer.BAR; //xuameng音乐播放动画
+import com.gauravk.audiovisualizer.visualizer.AudioPlayer;  //xuameng音乐播放动画
 import java.lang.ref.WeakReference;   //xuameng音乐播放动画
 import android.util.Log; //xuameng音乐播放动画
+import android.os.Looper; //xuameng音乐播放动画
 import android.os.Build;
 import android.webkit.WebView;
 import com.github.tvbox.osc.bean.SourceBean;
@@ -2168,31 +2171,39 @@ private void initVisualizer(int sessionId) {
     if(sessionId <= 0) return;
 
     try {
+        // 初始化可视化器
         BlastVisualizer visualizer = new BlastVisualizer(getContext());
         visualizerRef = new WeakReference<>(visualizer);
         
-        // 配置参数
-        visualizer.setColor(Color.CYAN);
-        visualizer.setDensity(10f);
-        visualizer.setRendererType(RendererType.BAR);
+        // 基础配置
+        visualizer.setColor(Color.parseColor("#FF5722")); // 橙色可视化
+        visualizer.setType(BlastVisualizer.BAR); // 条形图样式
+        visualizer.setDensity(8f); // 密度值
+        
+        // 音频会话绑定
         visualizer.setAudioSessionId(sessionId);
-
-        // 数据回调
-        visualizer.setAudioDataListener(fftData -> 
-            new Handler(Looper.getMainLooper()).post(() -> {
-                if(customVisualizer != null) {
-                    customVisualizer.updateVisualizer(fftData);
-                }
-            })
-        );
+        
+        // 数据回调（兼容0.9.2的API）
+        visualizer.setPlayer(new AudioPlayer() {
+            @Override
+            public void onDataReceived(byte[] waveform) {
+                new Handler(Looper.getMainLooper()).post(() -> {
+                    if(customVisualizer != null) {
+                        customVisualizer.onRawDataReceived(waveform);
+                    }
+                });
+            }
+            
+            @Override public void onStart() {}
+            @Override public void onStop() {}
+        });
 
         visualizer.setEnabled(true);
-        audioSessionId = sessionId;
     } catch (Exception e) {
-        Log.e("Visualizer", "初始化异常", e);
-        releaseVisualizer();
+        Log.e(TAG, "Visualizer init failed", e);
     }
 }
+
 
 private void releaseVisualizer() {
     if(visualizerRef != null) {
