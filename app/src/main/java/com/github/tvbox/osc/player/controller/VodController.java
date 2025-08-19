@@ -2191,7 +2191,7 @@ private void initVisualizer(int sessionId) {
         visualizer.setAudioSessionId(sessionId);
         
         // 设置FFT数据回调
-        visualizer.setVisualizationListener(new BlastVisualizer.VisualizationListener() {
+        visualizer.setOnDataCaptureListener(new BlastVisualizer.OnDataCaptureListener() {
             @Override
             public void onFftDataCapture(byte[] fft) {
                 new Handler(Looper.getMainLooper()).post(() -> {
