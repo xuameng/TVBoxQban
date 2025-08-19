@@ -371,10 +371,7 @@ public class VodController extends BaseController {
                         MxuamengMusic.setVisibility(GONE);
                     }
                 } else {
-    int newSessionId = mControlWrapper.getAudioSessionId();   //xuameng音乐播放动画
-    if(newSessionId != audioSessionId) { // 避免重复初始化
-        initVisualizer();
-    }
+
                 if(customVisualizer.getVisibility() == View.GONE && isVideoplaying) { //xuameng播放音乐背景
                     customVisualizer.setVisibility(VISIBLE);
                 }
@@ -1497,6 +1494,10 @@ public class VodController extends BaseController {
                 isVideoplaying = true;
                 isVideoPlay = true;
                 //playIngXu();	
+				    int newSessionId = mControlWrapper.getAudioSessionId();   //xuameng音乐播放动画
+    if(newSessionId != audioSessionId) { // 避免重复初始化
+        initVisualizer();
+    }
                 break;
             case VideoView.STATE_PAUSED:
                 isVideoPlay = false;
