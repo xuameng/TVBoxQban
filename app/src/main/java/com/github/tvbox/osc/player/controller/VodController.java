@@ -2181,17 +2181,12 @@ private void initVisualizer(int sessionId) {
         // 初始化可视化组件
         BlastVisualizer visualizer = new BlastVisualizer(getContext());
         visualizerRef = new WeakReference<>(visualizer);
-        
-        // 配置可视化类型
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            visualizer.setType(BlastVisualizer.TYPE_BAR);
-        }
 
         // 绑定音频会话
         visualizer.setAudioSessionId(sessionId);
         
         // 设置FFT数据回调
-        visualizer.setOnDataCaptureListener(new BlastVisualizer.OnDataCaptureListener() {
+        visualizer.setListener(new BlastVisualizer.Listener() {
             @Override
             public void onFftDataCapture(byte[] fft) {
                 new Handler(Looper.getMainLooper()).post(() -> {
