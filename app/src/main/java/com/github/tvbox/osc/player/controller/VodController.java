@@ -2219,8 +2219,8 @@ visualizer.setDataCaptureListener(
                 });
         }
     },
-    Visualizer.getMaxCaptureRate(), // 采样率
-    true,  // 捕获波形数据
+    Visualizer.getMaxCaptureRate() / 2, // 采样率
+    false,  // 捕获波形数据
     true  // 捕获FFT数据
 );
         
