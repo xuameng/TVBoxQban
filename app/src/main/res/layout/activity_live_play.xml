@@ -962,4 +962,12 @@
         android:shadowRadius="2.0"
         android:digits=" 0123456789"
         android:inputType="number"/>
+    <com.github.tvbox.osc.ui.tv.widget.MusicVisualizerView
+        android:id="@+id/visualizer_view"
+        android:layout_width="match_parent"
+        android:layout_height="150mm"
+        android:layout_centerInParent="true"
+        android:visibility="gone"
+        android:layout_margin="16dp"
+        android:background="#212121"/>
 </FrameLayout>
