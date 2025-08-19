@@ -2193,13 +2193,13 @@ visualizer.setDataCaptureListener(
         }
         
         @Override
-        public void onFftDataCapture(Visualizer viz, byte[] bytes, int rate) {
+        public void onFftDataCapture(Visualizer visualizer, byte[] fftData, int samplingRate) {
+
                     new Handler(Looper.getMainLooper()).post(() -> {
-                    if (customVisualizer != null && fft != null) {
-                        // 双重数据转发机制
-                        customVisualizer.updateVisualizer(fft);  // 标准FFT接口
-                        customVisualizer.onRawDataReceived(fft); // 兼容原始数据接口
-                    }
+           if (customVisualizer != null && fftData != null) {
+                customVisualizer.updateVisualizer(fftData);  // 标准FFT接口
+                customVisualizer.onRawDataReceived(fftData); // 兼容原始数据接口
+            }
                 });
         }
     },
@@ -2223,8 +2223,6 @@ private void releaseVisualizer() {
         if (visualizerRef != null) {
             Visualizer v = visualizerRef.get();
             if (v != null) {
-                // 清理回调引用
-                v.setVisualizationListener(null);
                 // 释放系统资源
                 v.release();
                 // 重置自定义视图
