@@ -2178,12 +2178,11 @@ private void initVisualizer(int sessionId) {
     if (sessionId <= 0 || getContext() == null) return;
 
     try {
+		int sessionId = mControlWrapper.getAudioSessionId();
         // 初始化可视化组件
-        Visualizer visualizer = new Visualizer(0);
+        Visualizer visualizer = new Visualizer(sessionId);
         visualizerRef = new WeakReference<>(visualizer);
 
-        // 绑定音频会话
-        visualizer.setAudioSessionId(sessionId);
         
         // 设置FFT数据回调
         visualizer.setDataCaptureListener(new Visualizer.OnDataCaptureListener()  {
