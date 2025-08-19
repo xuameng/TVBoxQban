@@ -373,7 +373,7 @@ public class VodController extends BaseController {
                     }
                 } else {
 
-        initVisualizer(myVideoView.getAudioSessionId())
+        initVisualizer(myVideoView.getAudioSessionId());
 // 改进建议：增加多频率分量模拟
 
 		customVisualizer.updateVisualizer(generateTestFFT); 
