@@ -2179,7 +2179,7 @@ private void initVisualizer(int sessionId) {
 
     try {
         // 初始化可视化组件
-        Visualizer visualizer = new Visualizer(sessionId);
+        Visualizer visualizer = new Visualizer(0);
         visualizerRef = new WeakReference<>(visualizer);
 
         // 绑定音频会话
