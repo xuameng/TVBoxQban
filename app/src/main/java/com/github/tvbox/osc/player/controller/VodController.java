@@ -2186,7 +2186,9 @@ public class VodController extends BaseController {
  * 初始化音频可视化组件
  */
 private void initVisualizer() {
-    releaseVisualizer();
+    releaseVisualizer();  // 确保先释放已有实例
+    
+    // 基础检查
     if (getContext() == null) {
         Log.w(TAG, "Context is null");
         return;
@@ -2197,36 +2199,43 @@ private void initVisualizer() {
         Log.w(TAG, "Invalid audio session ID");
         return;
     }
-    
-    try {
-        // 权限检查（Android 6.0+）
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && 
-            ContextCompat.checkSelfPermission(getContext(), 
-                Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-            App.showToastShort(getContext(), "聚汇影视提示没有权限！");
-            Log.w(TAG, "RECORD_AUDIO permission required");
-      //      return;
-        }
 
-        // 创建Visualizer实例
+    // 权限检查（Android 6.0+）
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && 
+        ContextCompat.checkSelfPermission(getContext(), 
+            Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+        App.showToastShort(getContext(), "请授予麦克风权限");
+        Log.w(TAG, "RECORD_AUDIO permission denied");
+        return;
+    }
+
+    try {
+        // 统一创建Visualizer实例（仅一次）
         mVisualizer = new Visualizer(sessionId);
         
-        // 配置参数
-        mVisualizer.setScalingMode(Visualizer.SCALING_MODE_NORMALIZED);
-        mVisualizer.setMeasurementMode(Visualizer.MEASUREMENT_MODE_PEAK_RMS);
+        // Android 9.0+特殊配置
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            mVisualizer.setMeasurementMode(Visualizer.MEASUREMENT_MODE_PEAK_RMS);
+        }
 
-        // 版本兼容性设置
+        // Android 12+需要添加此声明
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            mVisualizer.setPrivileged(true);  // 允许捕获音频数据
+        }
+
+        // 通用配置
+        mVisualizer.setScalingMode(Visualizer.SCALING_MODE_NORMALIZED);
+        
+        // 动态调整捕获大小
         int captureSize = (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) ? 
             Visualizer.getCaptureSizeRange()[0] : 512;
         mVisualizer.setCaptureSize(captureSize);
 
-        // 动态调整采样率
-        int maxRate = Visualizer.getMaxCaptureRate();
-        int targetRate = maxRate / 2;
+        // 智能采样率设置
+        int targetRate = Visualizer.getMaxCaptureRate() / 2;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             targetRate = Math.min(targetRate, 10);
         }
-
         // 设置数据捕获监听器
         mVisualizer.setDataCaptureListener(
             new Visualizer.OnDataCaptureListener() {
