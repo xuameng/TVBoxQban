@@ -28,9 +28,14 @@ import java.util.Objects;   //xuameng主页默认焦点
 import com.github.tvbox.osc.util.FastClickCheckUtil;   //xuameng cache
 import com.github.tvbox.osc.util.MD5;  //xuameng cache
 import android.util.Log; //xuameng音乐权限
-import android.widget.Toast;
-import com.github.tvbox.osc.base.App;
+import android.os.Build; //xuameng音乐权限
+import android.content.pm.PackageManager; //xuameng音乐权限
+import android.provider.Settings; //xuameng音乐权限
+import android.net.Uri; //xuameng音乐权限
+import androidx.appcompat.app.AlertDialog; //xuameng音乐权限
 
+import com.github.tvbox.osc.base.App;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.Observer;
@@ -815,7 +820,8 @@ public class HomeActivity extends BaseActivity {
 
     // 触发权限检查的入口方法
     public void checkMicrophonePermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        final int MARSHMALLOW = 23;
+        if (Build.VERSION.SDK_INT >= MARSHMALLOW) {
             if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) 
                 != PackageManager.PERMISSION_GRANTED) {
                 
