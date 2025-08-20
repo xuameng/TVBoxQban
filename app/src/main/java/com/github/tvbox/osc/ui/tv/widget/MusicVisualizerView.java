@@ -20,7 +20,7 @@ import android.animation.ValueAnimator;
 public class MusicVisualizerView extends View {
     // 常量定义
     private static final int MAX_AMPLITUDE = 7000;
-    private static final int BAR_COUNT = 16;
+    private static final int BAR_COUNT = 22;
     private static final int ANIMATION_DURATION = 200;
     
     private static final int[] COLOR_SPECTRUM = {
@@ -62,7 +62,7 @@ public class MusicVisualizerView extends View {
 
         // 修改采样策略：前1/3柱子重点采样低频，后2/3均匀采样中高频
         for (int i = 0; i < BAR_COUNT; i++) {
-           int barIndex;
+            int barIndex;
             if (i < BAR_COUNT / 3) {
                 // 低频段密集采样（每2点取1）
                 barIndex = 2 + i * 2;
@@ -70,20 +70,36 @@ public class MusicVisualizerView extends View {
                 // 中高频段间隔采样（每4点取1）
                 barIndex = 2 + (BAR_COUNT / 3) * 2 + (i - BAR_COUNT / 3) * 4;
             }
-        
+    
             if (barIndex < fft.length - 1) {
                 byte rfk = fft[barIndex];
                 byte ifk = fft[barIndex + 1];
                 float magnitude = (rfk * rfk + ifk * ifk);
+        
+                // 改进的频率加权策略（三段式加权）
+                float weight;
+                if (i < BAR_COUNT / 4) {
+                    // 超低频段(0-200Hz)衰减40%
+                    weight = 0.6f;
+                } else if (i < BAR_COUNT / 2) {
+                    // 中低频段(200-800Hz)基准值
+                    weight = 1.2f;
+                } else {
+                    // 高频段(800Hz+)指数增强
+                    float freqFactor = (float) Math.pow(1.5, (i - BAR_COUNT / 2) / 2.0);
+                    weight = 1.8f * freqFactor;
+                }
             
-                // 添加频率加权（低频衰减系数）
-                float weight = i < BAR_COUNT/3 ? 0.7f : 1.2f;
-                mTargetHeights[i] = (magnitude * getHeight() * weight) / MAX_AMPLITUDE;
+                mTargetHeights[i] = Math.min(
+                    (magnitude * getHeight() * weight) / MAX_AMPLITUDE,
+                    getHeight() * 0.95f
+                );
                 mAmplitudeLevels[i] = Math.min(magnitude / MAX_AMPLITUDE, 1.0f);
             }
         }
         startAnimation();
     }
+
 
     private void startAnimation() {
         if (mAnimator != null) {
