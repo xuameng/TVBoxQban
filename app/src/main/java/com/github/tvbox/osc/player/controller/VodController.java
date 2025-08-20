@@ -2214,21 +2214,8 @@ private void initVisualizer() {
 
 try {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-int generateAudioSessionId() {
-    int sessionId;
-    do {
-        sessionId = new Random().nextInt(0xFFFF) + 1; // 限制范围更安全
-    } while (sessionId == -1); // 仍规避ERROR值
-    return sessionId;
-}
-// 动态缓冲区计算
-int calculateBufferSize(int sampleRate) {
-    int minSize = AudioRecord.getMinBufferSize(
-        sampleRate,
-        AudioFormat.CHANNEL_IN_MONO,
-        AudioFormat.ENCODING_PCM_16BIT);
-    return Math.max(minSize * 4, 4096); // 保证不小于4KB
-}
+
+
 
 // 音频录制构建器优化
 audioRecord = new AudioRecord.Builder()
@@ -2415,5 +2402,21 @@ private synchronized void releaseVisualizer() {
 }
 
 
+    // 安全生成音频会话ID
+    public static int generateAudioSessionId() {
+        int sessionId;
+        do {
+            sessionId = new Random().nextInt(0x7FFF) + 1; // 限制范围0x0001-0x7FFF
+        } while (sessionId == -1); // 规避系统保留值
+        return sessionId;
+    }
+// 动态缓冲区计算
+public static int calculateBufferSize(int sampleRate) {
+    int minSize = AudioRecord.getMinBufferSize(
+        sampleRate,
+        AudioFormat.CHANNEL_IN_MONO,
+        AudioFormat.ENCODING_PCM_16BIT);
+    return Math.max(minSize * 4, 4096); // 保证不小于4KB
+}
 
 }
