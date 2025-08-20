@@ -35,8 +35,7 @@
         android:usesCleartextTraffic="true">
 
         <service android:name=".AudioVisualizerService"
-            android:foregroundServiceType="microphone"
-            android:exported="false"/>
+            android:foregroundServiceType="mediaProjection"/>
 
         <activity
             android:name=".ui.activity.HomeActivity"
