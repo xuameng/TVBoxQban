@@ -25,7 +25,7 @@ public class MusicVisualizerView extends View {
     
     private static final int[] COLOR_SPECTRUM = {
         Color.parseColor("#DBDB70"), // 黄色
-        Color.parseColor("#FF9900"), // 橙黄
+        Color.parseColor("#FF8400"), // 橙黄
         Color.parseColor("#FF3300")  // 橙红
     };
 
@@ -83,11 +83,11 @@ public class MusicVisualizerView extends View {
                     weight = 0.6f;
                 } else if (i < BAR_COUNT / 2) {
                     // 中低频段(200-800Hz)基准值
-                    weight = 2.4f;
+                    weight = 3.0f;
                 } else {
                     // 高频段(800Hz+)指数增强
                     float freqFactor = (float) Math.pow(1.5, (i - BAR_COUNT / 2) / 2.0);
-                    weight = 4.8f * freqFactor;
+                    weight = 9.0f * freqFactor;
                 }
             
                 mTargetHeights[i] = Math.min(
