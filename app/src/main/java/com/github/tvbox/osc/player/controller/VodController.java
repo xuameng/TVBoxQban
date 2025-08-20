@@ -2231,7 +2231,7 @@ try {
 
     // 设置会话ID（兼容方案）
         audioRecord.startRecording();
-        int audioSessionId = generateAudioSessionId();
+        int audioSessionId = createVirtualSession(context);;
         if (audioSessionId <= 0) {
             Log.w(TAG, "audioRecord Invalid audio session ID");
             audioRecord.release(); // 释放资源
