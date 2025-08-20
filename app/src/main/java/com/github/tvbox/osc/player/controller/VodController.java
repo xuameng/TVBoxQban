@@ -2190,12 +2190,14 @@ private void initVisualizer() {
     
     // 基础检查
     if (getContext() == null) {
+		 App.showToastShort(getContext(), "字幕已开启1");
         Log.w(TAG, "Context is null");
         return;
     }
     
     int sessionId = mControlWrapper != null ? mControlWrapper.getAudioSessionId() : 0;
     if (sessionId <= 0) {
+		 App.showToastShort(getContext(), "字幕已开启2");
         Log.w(TAG, "Invalid audio session ID");
         return;
     }
@@ -2212,6 +2214,7 @@ private void initVisualizer() {
     try {
         // 统一创建Visualizer实例（仅一次）
         mVisualizer = new Visualizer(sessionId);
+		 App.showToastShort(getContext(), "字幕已开启3");
         
         // Android 9.0+特殊配置
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -2297,3 +2300,4 @@ private synchronized void releaseVisualizer() {
 }
 
 }
+
