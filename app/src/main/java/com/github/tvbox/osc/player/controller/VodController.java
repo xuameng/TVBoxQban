@@ -2217,12 +2217,6 @@ private void initVisualizer() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             mVisualizer.setMeasurementMode(Visualizer.MEASUREMENT_MODE_PEAK_RMS);
         }
-
-        // Android 12+需要添加此声明
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            mVisualizer.setPrivileged(true);  // 允许捕获音频数据
-        }
-
         // 通用配置
         mVisualizer.setScalingMode(Visualizer.SCALING_MODE_NORMALIZED);
         
