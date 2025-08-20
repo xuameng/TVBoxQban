@@ -2247,7 +2247,7 @@ private void initVisualizer() {
                     }
                 }
             },
-            targetRate,
+        
             false,  // 不捕获波形数据
             true    // 捕获FFT数据
         );
