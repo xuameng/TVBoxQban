@@ -297,7 +297,7 @@ public class VodController extends BaseController {
     private boolean isVideoPlay = false; //xuameng判断视频开始播放
     private boolean isLongClick = false; //xuameng判断长按
     private boolean mSeekBarhasFocus = false; //xuameng seekbar是否拥有焦点
-    private WeakReference<Visualizer> visualizerRef;  //xuameng音乐播放动画
+    private Visualizer mVisualizer;  //xuameng音乐播放动画
     private MusicVisualizerView customVisualizer; //xuameng音乐播放动画
     private int audioSessionId = -1; // 使用-1表示未初始化状态 //xuameng音乐播放动画
 	private static final String TAG = "VodController";  //xuameng音乐播放动画
@@ -2180,99 +2180,138 @@ public class VodController extends BaseController {
         App.getInstance().setDashData(null);
     }
 
-/**
- * 音频可视化控制器
- * 功能：管理BlastVisualizer与自定义MusicVisualizerView的协同工作
- * 版本：v2.3（2025-08-19）
- */
+private static final int AUDIO_PERMISSION_REQUEST_CODE = 1001;
+
+private void initVisualizerWithPermission() {
+    if (checkAudioPermission()) {
+        initVisualizer();
+    } else {
+        requestAudioPermission();
+    }
+}
+
+private boolean checkAudioPermission() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        return ContextCompat.checkSelfPermission(getContext(),
+                Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
+    }
+    return true; // 6.0以下默认有权限
+}
+
+private void requestAudioPermission() {
+    if (getContext() instanceof Activity) {
+        ActivityCompat.requestPermissions((Activity) getContext(),
+                new String[]{Manifest.permission.RECORD_AUDIO},
+                AUDIO_PERMISSION_REQUEST_CODE);
+    } else {
+        Log.e(TAG, "Context is not an Activity instance");
+    }
+}
+
 private void initVisualizer() {
     releaseVisualizer();
+    if (getContext() == null) return;
+    
     int sessionId = mControlWrapper.getAudioSessionId();
-    if (sessionId <= 0 || getContext() == null) return;
+    if (sessionId <= 0) return;
     
     try {
-        // Android 6.0+需要检查权限
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ContextCompat.checkSelfPermission(getContext(), 
+        // 权限检查（Android 6.0+）
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && 
+            ContextCompat.checkSelfPermission(getContext(), 
                 Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-                Log.e(TAG, "RECORD_AUDIO permission not granted");
-                return;
-            }
+            App.showToastShort(getContext(), "聚汇影视提示没有权限！");
+            Log.w(TAG, "RECORD_AUDIO permission required");
+            return;
         }
 
-        Visualizer visualizer = new Visualizer(sessionId);
-        visualizer.setScalingMode(Visualizer.SCALING_MODE_NORMALIZED);
-        visualizer.setMeasurementMode(Visualizer.MEASUREMENT_MODE_PEAK_RMS);
-        
-        // 调整采样率以适应不同Android版本
-        int captureRate = Visualizer.getMaxCaptureRate() / 2;
+        mVisualizer = new Visualizer(sessionId);
+        mVisualizer.setScalingMode(Visualizer.SCALING_MODE_NORMALIZED);
+        mVisualizer.setMeasurementMode(Visualizer.MEASUREMENT_MODE_PEAK_RMS);
+
+        // 版本兼容性设置
+        int captureSize = (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) ? 
+            Visualizer.getCaptureSizeRange()[0] : 512;
+        mVisualizer.setCaptureSize(captureSize);
+
+        // 动态调整采样率
+        int maxRate = Visualizer.getMaxCaptureRate();
+        int targetRate = maxRate / 2;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            captureRate = Math.min(captureRate, 10); // Android 10+限制采样率
+            targetRate = Math.min(targetRate, 10);
         }
-        
-        visualizer.setDataCaptureListener(
+
+        mVisualizer.setDataCaptureListener(
             new Visualizer.OnDataCaptureListener() {
                 @Override
-                public void onWaveFormDataCapture(Visualizer viz, byte[] bytes, int rate) {}
+                public void onWaveFormDataCapture(Visualizer viz, byte[] bytes, int rate) {
+                    // 可选择性实现
+                }
                 
                 @Override
                 public void onFftDataCapture(Visualizer visualizer, byte[] fftData, int samplingRate) {
-                    if (Looper.myLooper() != Looper.getMainLooper()) {
-                        new Handler(Looper.getMainLooper()).post(() -> {
-                            updateVisualizerUI(fftData);
-                        });
+                    if (fftData == null || customVisualizer == null) return;
+                    
+                    Runnable updateTask = () -> {
+                        try {
+                            customVisualizer.updateVisualizer(fftData);
+                        } catch (Exception e) {
+                            Log.e(TAG, "Visualizer update error", e);
+                        }
+                    };
+                    
+                    if (Looper.myLooper() == Looper.getMainLooper()) {
+                        updateTask.run();
                     } else {
-                        updateVisualizerUI(fftData);
+                        new Handler(Looper.getMainLooper()).post(updateTask);
                     }
                 }
             },
-            captureRate,
-            false,
-            true
+            targetRate,
+            false,  // waveform
+            true    // FFT
         );
         
-        visualizer.setEnabled(true);
+        mVisualizer.setEnabled(true);
+    } catch (IllegalStateException e) {
+        Log.e(TAG, "Visualizer state error", e);
+    } catch (UnsupportedOperationException e) {
+        Log.e(TAG, "Device doesn't support Visualizer", e);
     } catch (Exception e) {
-        Log.e(TAG, "Visualizer initialization failed", e);
+        Log.e(TAG, "Visualizer init failed", e);
         releaseVisualizer();
     }
 }
 
+
+// 原有方法保持不变
 private void updateVisualizerUI(byte[] fftData) {
-    if (customVisualizer != null && fftData != null) {
-        try {
+    if (fftData == null || customVisualizer == null) return;  
+    try {
+        if (Looper.myLooper() == Looper.getMainLooper()) {
             customVisualizer.updateVisualizer(fftData);
-        } catch (Exception e) {
-            Log.e(TAG, "Visualizer update failed", e);
+        } else {
+            new Handler(Looper.getMainLooper()).post(() -> {
+                if (customVisualizer != null) {
+                    customVisualizer.updateVisualizer(fftData);
+                }
+            });
         }
+    } catch (Exception e) {
+        Log.e(TAG, "Visualizer UI update failed", e);
     }
 }
+
 
 
 /**
  * 安全释放可视化资源
  */
 private void releaseVisualizer() {
-    try {
-        if (visualizerRef != null) {
-            Visualizer v = visualizerRef.get();
-            if (v != null) {
-                // 释放系统资源
-                v.release();
-                // 重置自定义视图
-                if (customVisualizer != null) {
-                    customVisualizer.reset();
-                }
-            }
-            visualizerRef.clear();
-
-        }
-    } catch (Exception e) {
-        Log.w(TAG, "Visualizer release exception", e);
+    if(mVisualizer != null) {
+        mVisualizer.setEnabled(false);
+        mVisualizer.release();
+        mVisualizer = null;
     }
 }
-
-
-
-
 }
