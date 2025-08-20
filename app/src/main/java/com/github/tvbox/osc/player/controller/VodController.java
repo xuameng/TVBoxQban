@@ -85,8 +85,8 @@ import android.media.AudioRecord;   //xuameng音乐播放动画
 import android.media.AudioFormat; //xuameng音乐播放动画
 import android.media.MediaRecorder; //xuameng音乐播放动画
 import android.media.AudioManager;
-import android.media.AudioSystem;
 import android.os.Build;
+import java.util.Random;
 
 
 
@@ -2214,24 +2214,34 @@ private void initVisualizer() {
 
 try {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-        audioRecord = new AudioRecord.Builder()
-            .setAudioSource(MediaRecorder.AudioSource.MIC)
-            .setAudioFormat(new AudioFormat.Builder()
-                .setEncoding(AudioFormat.ENCODING_PCM_16BIT)
-                .setSampleRate(44100)
-                .setChannelMask(AudioFormat.CHANNEL_IN_MONO)
-                .build())
-            .setBufferSizeInBytes(AudioRecord.getMinBufferSize(44100, 
-                AudioFormat.CHANNEL_IN_MONO, 
-                AudioFormat.ENCODING_PCM_16BIT) * 4)
-            .setAudioSessionId(AudioManager.AUDIO_SESSION_ID_GENERATE) // 关键修改点
-            .build();
+int generateAudioSessionId() {
+        AudioManager am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+        return am.generateAudioSessionId(); // 系统分配的合法ID
+}
+// 动态缓冲区计算
+int calculateBufferSize(int sampleRate) {
+    int minSize = AudioRecord.getMinBufferSize(
+        sampleRate,
+        AudioFormat.CHANNEL_IN_MONO,
+        AudioFormat.ENCODING_PCM_16BIT);
+    return Math.max(minSize * 4, 4096); // 保证不小于4KB
+}
+
+// 音频录制构建器优化
+audioRecord = new AudioRecord.Builder()
+    .setAudioSource(MediaRecorder.AudioSource.MIC)
+    .setAudioFormat(new AudioFormat.Builder()
+        .setEncoding(AudioFormat.ENCODING_PCM_16BIT)
+        .setSampleRate(44100)
+        .setChannelMask(AudioFormat.CHANNEL_IN_MONO)
+        .build())
+    .setBufferSizeInBytes(calculateBufferSize(44100)) // 封装计算方法
+    .setAudioSessionId(generateAudioSessionId())
+    .build();
+
 
         audioRecord.startRecording();
         int audioSessionId = audioRecord.getAudioSessionId();
-        if (audioSessionId == AudioManager.ERROR) {
-            throw new IllegalStateException("Failed to get valid session ID");
-            }
         if (audioSessionId <= 0) {
             Log.w(TAG, "audioRecord Invalid audio session ID");
             audioRecord.release(); // 释放资源
