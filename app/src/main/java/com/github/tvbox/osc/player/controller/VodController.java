@@ -2209,50 +2209,47 @@ private void initVisualizer() {
 
 
 try {
-if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-int sampleRate = 44100; // 采样率（Hz）
-int channelConfig = AudioFormat.CHANNEL_IN_MONO; // 单声道
-int audioFormat = AudioFormat.ENCODING_PCM_16BIT; // 16位PCM
-int bufferSize = AudioRecord.getMinBufferSize(sampleRate, channelConfig, audioFormat);
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        int sampleRate = 44100;
+        int channelConfig = AudioFormat.CHANNEL_IN_MONO;
+        int audioFormat = AudioFormat.ENCODING_PCM_16BIT;
+        int bufferSize = AudioRecord.getMinBufferSize(sampleRate, channelConfig, audioFormat);
 
-AudioRecord audioRecord = new AudioRecord(
-    MediaRecorder.AudioSource.MIC, // 音频源（麦克风）
-    sampleRate,
-    channelConfig,
-    audioFormat,
-    bufferSize
-);
-// 启动AudioRecord以获取会话ID
-audioRecord.startRecording();
-int audioSessionId = audioRecord.getAudioSessionId();
-    if (audioSessionId <= 0) {
-        Log.w(TAG, "Invalid audio session ID");
-        return;
-    }
-mVisualizer = new Visualizer(audioSessionId);
+        AudioRecord audioRecord = new AudioRecord(
+            MediaRecorder.AudioSource.MIC,
+            sampleRate,
+            channelConfig,
+            audioFormat,
+            bufferSize * 4
+        );
+        
+        audioRecord.startRecording();
+        int audioSessionId = audioRecord.getAudioSessionId();
+        if (audioSessionId <= 0) {
+            Log.w(TAG, "Invalid audio session ID");
+            audioRecord.release(); // 释放资源
+            return;
+        }
+
+        mVisualizer = new Visualizer(audioSessionId);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             mVisualizer.setMeasurementMode(Visualizer.MEASUREMENT_MODE_PEAK_RMS);
         }
-        // 通用配置
         mVisualizer.setScalingMode(Visualizer.SCALING_MODE_NORMALIZED);
         
-        // 动态调整捕获大小
         int captureSize = (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) ? 
             Visualizer.getCaptureSizeRange()[0] : 512;
         mVisualizer.setCaptureSize(captureSize);
 
-        // 智能采样率设置
         int targetRate = Visualizer.getMaxCaptureRate() / 2;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             targetRate = Math.min(targetRate, 10);
         }
-        // 设置数据捕获监听器
+
         mVisualizer.setDataCaptureListener(
             new Visualizer.OnDataCaptureListener() {
                 @Override
-                public void onWaveFormDataCapture(Visualizer viz, byte[] bytes, int rate) {
-                    // 可选波形数据捕获
-                }
+                public void onWaveFormDataCapture(Visualizer viz, byte[] bytes, int rate) {}
                 
                 @Override
                 public void onFftDataCapture(Visualizer visualizer, byte[] fftData, int samplingRate) {
@@ -2276,23 +2273,23 @@ mVisualizer = new Visualizer(audioSessionId);
                 }
             },
             targetRate,
-            false,  // 不捕获波形数据
-            true    // 捕获FFT数据
+            false,
+            true
         );
-        
         mVisualizer.setEnabled(true);
-    } catch (IllegalStateException e) {
-        Log.e(TAG, "Visualizer state error", e);
-        releaseVisualizer();
-    } catch (UnsupportedOperationException e) {
-        Log.e(TAG, "Device doesn't support Visualizer", e);
-        releaseVisualizer();
-    } catch (Exception e) {
-        Log.e(TAG, "Visualizer init failed", e);
-        releaseVisualizer();
     }
-	return;
+} catch (IllegalStateException e) {
+    Log.e(TAG, "Visualizer state error", e);
+    releaseVisualizer();
+} catch (UnsupportedOperationException e) {
+    Log.e(TAG, "Device doesn't support Visualizer", e);
+    releaseVisualizer();
+} catch (Exception e) {
+    Log.e(TAG, "Visualizer init failed", e);
+    releaseVisualizer();
 }
+return;
+
 
     int sessionId = mControlWrapper != null ? mControlWrapper.getAudioSessionId() : 0;
     if (sessionId <= 0) {
@@ -2384,6 +2381,20 @@ private synchronized void releaseVisualizer() {
     } catch (Exception e) {
         Log.e(TAG, "Error releasing visualizer", e);
     }
+
+	if (audioRecord != null) {
+    try {
+        if (audioRecord.getRecordingState() == AudioRecord.RECORDSTATE_RECORDING) {
+            audioRecord.stop(); // 先停止录制
+        }
+        audioRecord.release(); // 释放资源
+    } catch (IllegalStateException e) {
+        Log.e("AudioRecord", "状态异常: " + e.getMessage());
+    } finally {
+        audioRecord = null; // 显式置空防止重复操作:ml-citation{ref="3" data="citationList"}
+    }
+}
+
 }
 
 }
