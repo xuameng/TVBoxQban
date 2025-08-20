@@ -302,6 +302,7 @@ public class VodController extends BaseController {
     private boolean isLongClick = false; //xuameng判断长按
     private boolean mSeekBarhasFocus = false; //xuameng seekbar是否拥有焦点
     private Visualizer mVisualizer;  //xuameng音乐播放动画
+	private AudioRecord audioRecord //xuameng音乐播放动画
     private MusicVisualizerView customVisualizer; //xuameng音乐播放动画
     private int audioSessionId = -1; // 使用-1表示未初始化状态 //xuameng音乐播放动画
 	private static final String TAG = "VodController";  //xuameng音乐播放动画
@@ -2213,9 +2214,9 @@ try {
         int sampleRate = 44100;
         int channelConfig = AudioFormat.CHANNEL_IN_MONO;
         int audioFormat = AudioFormat.ENCODING_PCM_16BIT;
-        int bufferSize = AudioRecord.getMinBufferSize(sampleRate, channelConfig, audioFormat);
+        int bufferSize = audioRecord.getMinBufferSize(sampleRate, channelConfig, audioFormat);
 
-        AudioRecord audioRecord = new AudioRecord(
+        audioRecord = new AudioRecord(
             MediaRecorder.AudioSource.MIC,
             sampleRate,
             channelConfig,
@@ -2226,7 +2227,7 @@ try {
         audioRecord.startRecording();
         int audioSessionId = audioRecord.getAudioSessionId();
         if (audioSessionId <= 0) {
-            Log.w(TAG, "Invalid audio session ID");
+            Log.w(TAG, "audioRecord Invalid audio session ID");
             audioRecord.release(); // 释放资源
             return;
         }
@@ -2388,13 +2389,12 @@ private synchronized void releaseVisualizer() {
             audioRecord.stop(); // 先停止录制
         }
         audioRecord.release(); // 释放资源
-    } catch (IllegalStateException e) {
-        Log.e("AudioRecord", "状态异常: " + e.getMessage());
-    } finally {
-        audioRecord = null; // 显式置空防止重复操作:ml-citation{ref="3" data="citationList"}
+        } catch (IllegalStateException e) {
+            Log.e(TAG, "AudioRecord", "状态异常: " + e.getMessage());
+        } finally {
+            audioRecord = null; // 显式置空防止重复操作:ml-citation{ref="3" data="citationList"}
+        }
     }
-}
-
 }
 
 }
