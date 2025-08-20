@@ -2188,12 +2188,13 @@ public class VodController extends BaseController {
 private void initVisualizer() {
     releaseVisualizer();  // 确保先释放已有实例
     
-    // 基础检查
+    // 基础环境检查
     if (getContext() == null) {
         Log.w(TAG, "Context is null");
         return;
     }
     
+    // 获取音频会话ID
     int sessionId = mControlWrapper != null ? mControlWrapper.getAudioSessionId() : 0;
     if (sessionId <= 0) {
         Log.w(TAG, "Invalid audio session ID");
@@ -2210,37 +2211,48 @@ private void initVisualizer() {
     }
 
     try {
-        // 统一创建Visualizer实例（仅一次）
+        // 创建Visualizer实例
         mVisualizer = new Visualizer(sessionId);
         
-        // Android 9.0+特殊配置
+        // Android 9.0+特殊配置（PEAK_RMS测量模式）
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             mVisualizer.setMeasurementMode(Visualizer.MEASUREMENT_MODE_PEAK_RMS);
         }
-        // 通用配置
+        
+        // 标准化数据输出范围（0-1）
         mVisualizer.setScalingMode(Visualizer.SCALING_MODE_NORMALIZED);
         
-        // 动态调整捕获大小
+        // 动态调整捕获大小：旧设备使用最小尺寸，新设备使用512
         int captureSize = (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) ? 
             Visualizer.getCaptureSizeRange()[0] : 512;
         mVisualizer.setCaptureSize(captureSize);
 
-        // 智能采样率设置
+        // 智能采样率设置（Android 10+限制为10Hz）
         int targetRate = Visualizer.getMaxCaptureRate() / 2;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             targetRate = Math.min(targetRate, 10);
         }
+
+        // 帧率控制变量
+        final long[] lastUpdateTime = {0};
+        final int TARGET_FPS = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q ? 10 : 30;
+        
         // 设置数据捕获监听器
         mVisualizer.setDataCaptureListener(
             new Visualizer.OnDataCaptureListener() {
                 @Override
                 public void onWaveFormDataCapture(Visualizer viz, byte[] bytes, int rate) {
-                    // 可选波形数据捕获
+                    // 留空不处理波形数据
                 }
                 
                 @Override
                 public void onFftDataCapture(Visualizer visualizer, byte[] fftData, int samplingRate) {
                     if (fftData == null || customVisualizer == null) return;
+                    
+                    // 帧率控制检查
+                    long currentTime = System.currentTimeMillis();
+                    if (currentTime - lastUpdateTime[0] < 1000 / TARGET_FPS) return;
+                    lastUpdateTime[0] = currentTime;
                     
                     Runnable updateTask = () -> {
                         try {
@@ -2252,6 +2264,7 @@ private void initVisualizer() {
                         }
                     };
                     
+                    // 智能线程切换
                     if (Looper.myLooper() == Looper.getMainLooper()) {
                         updateTask.run();
                     } else {
@@ -2274,29 +2287,6 @@ private void initVisualizer() {
     } catch (Exception e) {
         Log.e(TAG, "Visualizer init failed", e);
         releaseVisualizer();
-    }
-}
-
-/**
- * 更新可视化UI
- */
-private void updateVisualizerUI(byte[] fftData) {
-    if (fftData == null || customVisualizer == null) return;
-    
-    try {
-        if (Looper.myLooper() == Looper.getMainLooper()) {
-            if (customVisualizer != null) {
-                customVisualizer.updateVisualizer(fftData);
-            }
-        } else {
-            new Handler(Looper.getMainLooper()).post(() -> {
-                if (customVisualizer != null) {
-                    customVisualizer.updateVisualizer(fftData);
-                }
-            });
-        }
-    } catch (Exception e) {
-        Log.e(TAG, "Visualizer UI update failed", e);
     }
 }
 
