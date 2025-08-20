@@ -27,6 +27,7 @@ import com.lzy.okgo.OkGo;   //xuameng 打断加载用
 import java.util.Objects;   //xuameng主页默认焦点
 import com.github.tvbox.osc.util.FastClickCheckUtil;   //xuameng cache
 import com.github.tvbox.osc.util.MD5;  //xuameng cache
+import android.util.Log; //xuameng音乐权限
 import android.widget.Toast;
 import com.github.tvbox.osc.base.App;
 
@@ -102,6 +103,8 @@ public class HomeActivity extends BaseActivity {
     public View sortFocusView = null;
     private final Handler mHandler = new Handler();
     private long mExitTime = 0;
+    private static final int REQUEST_CODE_RECORD_AUDIO = 1001; //xuameng获取音频权限
+    private static final String TAG = "PermissionHelper";//xuameng获取音频权限
     private final Runnable mRunnable = new Runnable() {
         @SuppressLint({"DefaultLocale", "SetTextI18n"})
         @Override
@@ -134,6 +137,7 @@ public class HomeActivity extends BaseActivity {
             useCacheConfig = bundle.getBoolean("useCache", false);
         }
         initData();
+		checkMicrophonePermission();  //xuameng音频权限
     }
 
     private void initView() {
@@ -807,5 +811,42 @@ public class HomeActivity extends BaseActivity {
         sortAdapter.setNewData(DefaultConfig.adjustSort(ApiConfig.get().getHomeSourceBean().getKey(), new ArrayList<>(), true));
         initViewPager(null);
         App.showToastShort(HomeActivity.this, "聚汇影视提示：已打断当前源加载！");
+    }
+
+    // 触发权限检查的入口方法
+    public void checkMicrophonePermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) 
+                != PackageManager.PERMISSION_GRANTED) {
+                
+                // 直接跳转系统设置的简化方案
+                if (shouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO)) {
+                    showPermissionDeniedDialog(); // 首次拒绝后显示引导
+                } else {
+                    launchSystemSettings(); // 非首次拒绝直接跳转
+                }
+            }
+            // 已有权限时不作任何处理
+        }
+    }
+
+    // 跳转系统设置页
+    private void launchSystemSettings() {
+        try {
+            startActivity(new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                .setData(Uri.fromParts("package", getPackageName(), null)));
+        } catch (Exception e) {
+            Log.e(TAG, "Open settings failed: " + e.getMessage());
+        }
+    }
+
+    // 保留基础引导弹窗（可选）
+    private void showPermissionDeniedDialog() {
+        new AlertDialog.Builder(this)
+            .setTitle("功能权限提醒")
+            .setMessage("音频相关功能需要麦克风权限")
+            .setPositiveButton("立即开启", (d, w) -> launchSystemSettings())
+            .setNegativeButton("暂不处理", null)
+            .show();
     }
 }
