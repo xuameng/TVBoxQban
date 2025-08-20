@@ -81,13 +81,6 @@ import android.os.Looper; //xuameng音乐播放动画
 import android.Manifest; //xuameng音乐播放动画
 import android.content.pm.PackageManager; //xuameng音乐播放动画
 import androidx.core.content.ContextCompat; //xuameng音乐播放动画
-import android.media.AudioRecord;   //xuameng音乐播放动画
-import android.media.AudioFormat; //xuameng音乐播放动画
-import android.media.MediaRecorder; //xuameng音乐播放动画
-import android.media.AudioManager;
-import android.os.Build;
-import java.util.Random;
-
 
 
 import android.os.Build;
@@ -305,7 +298,6 @@ public class VodController extends BaseController {
     private boolean isLongClick = false; //xuameng判断长按
     private boolean mSeekBarhasFocus = false; //xuameng seekbar是否拥有焦点
     private Visualizer mVisualizer;  //xuameng音乐播放动画
-	private AudioRecord audioRecord; //xuameng音乐播放动画
     private MusicVisualizerView customVisualizer; //xuameng音乐播放动画
     private int audioSessionId = -1; // 使用-1表示未初始化状态 //xuameng音乐播放动画
 	private static final String TAG = "VodController";  //xuameng音乐播放动画
@@ -2195,7 +2187,20 @@ public class VodController extends BaseController {
  */
 private void initVisualizer() {
     releaseVisualizer();  // 确保先释放已有实例
-        // 权限检查（Android 6.0+）
+    
+    // 基础检查
+    if (getContext() == null) {
+        Log.w(TAG, "Context is null");
+        return;
+    }
+    
+    int sessionId = mControlWrapper != null ? mControlWrapper.getAudioSessionId() : 0;
+    if (sessionId <= 0) {
+        Log.w(TAG, "Invalid audio session ID");
+        return;
+    }
+
+    // 权限检查（Android 6.0+）
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && 
         ContextCompat.checkSelfPermission(getContext(), 
             Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
@@ -2203,109 +2208,7 @@ private void initVisualizer() {
         Log.w(TAG, "RECORD_AUDIO permission denied");
         return;
     }
-    // 基础检查
-    if (getContext() == null) {
-        Log.w(TAG, "Context is null");
-        return;
-    }
-    
 
-
-
-try {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-    
-    // 配置音频参数
-    int sampleRate = 44100;
-    int channelConfig = AudioFormat.CHANNEL_IN_MONO;
-    int audioFormat = AudioFormat.ENCODING_PCM_16BIT;
-    int bufferSize = calculateBufferSize(sampleRate);
-
-    // 创建录音实例
-    audioRecord = new AudioRecord(
-            MediaRecorder.AudioSource.MIC,
-            sampleRate,
-            channelConfig,
-            audioFormat,
-            bufferSize);
-
-    // 设置会话ID（兼容方案）
-        audioRecord.startRecording();
-        int audioSessionId = createVirtualSession(getContext());
-        if (audioSessionId <= 0) {
-            Log.w(TAG, "audioRecord Invalid audio session ID");
-            audioRecord.release(); // 释放资源
-            return;
-        }
-
-        mVisualizer = new Visualizer(audioSessionId);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            mVisualizer.setMeasurementMode(Visualizer.MEASUREMENT_MODE_PEAK_RMS);
-        }
-        mVisualizer.setScalingMode(Visualizer.SCALING_MODE_NORMALIZED);
-        
-        int captureSize = (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) ? 
-            Visualizer.getCaptureSizeRange()[0] : 512;
-        mVisualizer.setCaptureSize(captureSize);
-
-        int targetRate = Visualizer.getMaxCaptureRate() / 2;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            targetRate = Math.min(targetRate, 10);
-        }
-
-        mVisualizer.setDataCaptureListener(
-            new Visualizer.OnDataCaptureListener() {
-                @Override
-                public void onWaveFormDataCapture(Visualizer viz, byte[] bytes, int rate) {}
-                
-                @Override
-                public void onFftDataCapture(Visualizer visualizer, byte[] fftData, int samplingRate) {
-                    if (fftData == null || customVisualizer == null) return;
-                    
-                    Runnable updateTask = () -> {
-                        try {
-                            if (customVisualizer != null) {
-                                customVisualizer.updateVisualizer(fftData);
-                            }
-                        } catch (Exception e) {
-                            Log.e(TAG, "Visualizer update error", e);
-                        }
-                    };
-                    
-                    if (Looper.myLooper() == Looper.getMainLooper()) {
-                        updateTask.run();
-                    } else {
-                        new Handler(Looper.getMainLooper()).post(updateTask);
-                    }
-                }
-            },
-            targetRate,
-            false,
-            true
-        );
-        mVisualizer.setEnabled(true);
-        return;
-    }
-} catch (IllegalStateException e) {
-    Log.e(TAG, "Visualizer state error", e);
-    releaseVisualizer();
-    return;
-} catch (UnsupportedOperationException e) {
-    Log.e(TAG, "Device doesn't support Visualizer", e);
-    releaseVisualizer();
-    return;
-} catch (Exception e) {
-    Log.e(TAG, "Visualizer init failed", e);
-    releaseVisualizer();
-    return;
-}
-
-
-    int sessionId = mControlWrapper != null ? mControlWrapper.getAudioSessionId() : 0;
-    if (sessionId <= 0) {
-        Log.w(TAG, "Invalid audio session ID");
-        return;
-    }
     try {
         // 统一创建Visualizer实例（仅一次）
         mVisualizer = new Visualizer(sessionId);
@@ -2380,6 +2283,7 @@ try {
 private synchronized void releaseVisualizer() {
     try {
         if (mVisualizer != null) {
+            mVisualizer.setEnabled(false);
             mVisualizer.release();
             mVisualizer = null;
             Log.d(TAG, "Visualizer released successfully");
@@ -2388,40 +2292,8 @@ private synchronized void releaseVisualizer() {
             customVisualizer.release();
         }
     } catch (Exception e) {
-        Log.e(TAG, "Visualizer Release error", e);
-    }
-
-    if (audioRecord != null) {
-        try {
-            audioRecord.release();
-        } catch (Exception e) {
-            Log.e(TAG, "AudioRecord release error", e);
-        }
-        audioRecord = null;
+        Log.e(TAG, "Error releasing visualizer", e);
     }
 }
 
-
-    // 安全生成音频会话ID
-    public static int generateAudioSessionId() {
-        int sessionId;
-        do {
-            sessionId = new Random().nextInt(0x7FFF) + 1; // 限制范围0x0001-0x7FFF
-        } while (sessionId == -1); // 规避系统保留值
-        return sessionId;
-    }
-// 动态缓冲区计算
-public static int calculateBufferSize(int sampleRate) {
-    int minSize = AudioRecord.getMinBufferSize(
-        sampleRate,
-        AudioFormat.CHANNEL_IN_MONO,
-        AudioFormat.ENCODING_PCM_16BIT);
-    return Math.max(minSize * 4, 4096); // 保证不小于4KB
-}
-
-    private int createVirtualSession(Context context) {
-        // Android 11+需创建虚拟会话
-        AudioManager am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-        return am.generateAudioSessionId(); // API 30+新增方法
-    }
 }
