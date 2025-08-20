@@ -81,6 +81,10 @@ import android.os.Looper; //xuameng音乐播放动画
 import android.Manifest; //xuameng音乐播放动画
 import android.content.pm.PackageManager; //xuameng音乐播放动画
 import androidx.core.content.ContextCompat; //xuameng音乐播放动画
+import android.media.AudioRecord;   //xuameng音乐播放动画
+import android.media.AudioFormat; //xuameng音乐播放动画
+import android.media.MediaRecorder; //xuameng音乐播放动画
+
 
 
 import android.os.Build;
@@ -380,7 +384,7 @@ public class VodController extends BaseController {
                     }
                 } else {
                     if(customVisualizer.getVisibility() == View.GONE && isVideoplaying) { //xuameng播放音乐动画
-               //        customVisualizer.setVisibility(VISIBLE);
+                       customVisualizer.setVisibility(VISIBLE);
                     }
                     if(MxuamengMusic.getVisibility() == View.GONE && isVideoplaying) { //xuameng播放音乐背景
                         MxuamengMusic.setVisibility(VISIBLE);
@@ -2188,13 +2192,12 @@ public class VodController extends BaseController {
 private void initVisualizer() {
     releaseVisualizer();  // 确保先释放已有实例
     
-    // 基础环境检查
+    // 基础检查
     if (getContext() == null) {
         Log.w(TAG, "Context is null");
         return;
     }
     
-    // 获取音频会话ID
     int sessionId = mControlWrapper != null ? mControlWrapper.getAudioSessionId() : 0;
     if (sessionId <= 0) {
         Log.w(TAG, "Invalid audio session ID");
@@ -2211,61 +2214,130 @@ private void initVisualizer() {
     }
 
     try {
-        // 创建Visualizer实例
-        mVisualizer = new Visualizer(sessionId);
-        
-        // Android 9.0+特殊配置（PEAK_RMS测量模式）
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M{
+int sampleRate = 44100; // 采样率（Hz）
+int channelConfig = AudioFormat.CHANNEL_IN_MONO; // 单声道
+int audioFormat = AudioFormat.ENCODING_PCM_16BIT; // 16位PCM
+int bufferSize = AudioRecord.getMinBufferSize(sampleRate, channelConfig, audioFormat);
+
+AudioRecord audioRecord = new AudioRecord(
+    MediaRecorder.AudioSource.MIC, // 音频源（麦克风）
+    sampleRate,
+    channelConfig,
+    audioFormat,
+    bufferSize
+);
+// 启动AudioRecord以获取会话ID
+audioRecord.startRecording();
+int audioSessionId = audioRecord.getAudioSessionId();
+
+Visualizer visualizer = new Visualizer(audioSessionId);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             mVisualizer.setMeasurementMode(Visualizer.MEASUREMENT_MODE_PEAK_RMS);
         }
-        
-        // 标准化数据输出范围（0-1）
+        // 通用配置
         mVisualizer.setScalingMode(Visualizer.SCALING_MODE_NORMALIZED);
         
-        // 动态调整捕获大小：旧设备使用最小尺寸，新设备使用512
+        // 动态调整捕获大小
         int captureSize = (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) ? 
             Visualizer.getCaptureSizeRange()[0] : 512;
         mVisualizer.setCaptureSize(captureSize);
 
-        // 智能采样率设置（Android 10+限制为10Hz）
+        // 智能采样率设置
         int targetRate = Visualizer.getMaxCaptureRate() / 2;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             targetRate = Math.min(targetRate, 10);
         }
-
-        // 帧率控制变量
-        final long[] lastUpdateTime = {0};
-        final int TARGET_FPS = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q ? 10 : 30;
-        
         // 设置数据捕获监听器
         mVisualizer.setDataCaptureListener(
             new Visualizer.OnDataCaptureListener() {
                 @Override
                 public void onWaveFormDataCapture(Visualizer viz, byte[] bytes, int rate) {
-                    // 留空不处理波形数据
+                    // 可选波形数据捕获
                 }
                 
                 @Override
                 public void onFftDataCapture(Visualizer visualizer, byte[] fftData, int samplingRate) {
                     if (fftData == null || customVisualizer == null) return;
                     
-                    // 帧率控制检查
-                    long currentTime = System.currentTimeMillis();
-                    if (currentTime - lastUpdateTime[0] < 1000 / TARGET_FPS) return;
-                    lastUpdateTime[0] = currentTime;
-                    
                     Runnable updateTask = () -> {
                         try {
                             if (customVisualizer != null) {
                                 customVisualizer.updateVisualizer(fftData);
-								customVisualizer.setVisibility(VISIBLE);
                             }
                         } catch (Exception e) {
                             Log.e(TAG, "Visualizer update error", e);
                         }
                     };
                     
-                    // 智能线程切换
+                    if (Looper.myLooper() == Looper.getMainLooper()) {
+                        updateTask.run();
+                    } else {
+                        new Handler(Looper.getMainLooper()).post(updateTask);
+                    }
+                }
+            },
+            targetRate,
+            false,  // 不捕获波形数据
+            true    // 捕获FFT数据
+        );
+        
+        mVisualizer.setEnabled(true);
+    } catch (IllegalStateException e) {
+        Log.e(TAG, "Visualizer state error", e);
+        releaseVisualizer();
+    } catch (UnsupportedOperationException e) {
+        Log.e(TAG, "Device doesn't support Visualizer", e);
+        releaseVisualizer();
+    } catch (Exception e) {
+        Log.e(TAG, "Visualizer init failed", e);
+        releaseVisualizer();
+    }
+	return;
+}
+
+        // 统一创建Visualizer实例（仅一次）
+        mVisualizer = new Visualizer(sessionId);
+        
+        // Android 9.0+特殊配置
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            mVisualizer.setMeasurementMode(Visualizer.MEASUREMENT_MODE_PEAK_RMS);
+        }
+        // 通用配置
+        mVisualizer.setScalingMode(Visualizer.SCALING_MODE_NORMALIZED);
+        
+        // 动态调整捕获大小
+        int captureSize = (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) ? 
+            Visualizer.getCaptureSizeRange()[0] : 512;
+        mVisualizer.setCaptureSize(captureSize);
+
+        // 智能采样率设置
+        int targetRate = Visualizer.getMaxCaptureRate() / 2;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            targetRate = Math.min(targetRate, 10);
+        }
+        // 设置数据捕获监听器
+        mVisualizer.setDataCaptureListener(
+            new Visualizer.OnDataCaptureListener() {
+                @Override
+                public void onWaveFormDataCapture(Visualizer viz, byte[] bytes, int rate) {
+                    // 可选波形数据捕获
+                }
+                
+                @Override
+                public void onFftDataCapture(Visualizer visualizer, byte[] fftData, int samplingRate) {
+                    if (fftData == null || customVisualizer == null) return;
+                    
+                    Runnable updateTask = () -> {
+                        try {
+                            if (customVisualizer != null) {
+                                customVisualizer.updateVisualizer(fftData);
+                            }
+                        } catch (Exception e) {
+                            Log.e(TAG, "Visualizer update error", e);
+                        }
+                    };
+                    
                     if (Looper.myLooper() == Looper.getMainLooper()) {
                         updateTask.run();
                     } else {
