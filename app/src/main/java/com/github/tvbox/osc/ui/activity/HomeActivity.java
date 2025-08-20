@@ -33,6 +33,7 @@ import android.content.pm.PackageManager; //xuameng音乐权限
 import android.provider.Settings; //xuameng音乐权限
 import android.net.Uri; //xuameng音乐权限
 import androidx.appcompat.app.AlertDialog; //xuameng音乐权限
+import android.Manifest;  //xuameng音乐权限
 
 import com.github.tvbox.osc.base.App;
 import android.widget.Toast;
@@ -110,6 +111,7 @@ public class HomeActivity extends BaseActivity {
     private long mExitTime = 0;
     private static final int REQUEST_CODE_RECORD_AUDIO = 1001; //xuameng获取音频权限
     private static final String TAG = "PermissionHelper";//xuameng获取音频权限
+    private static final int MARSHMALLOW = Build.VERSION_CODES.M;  //xuameng获取音频权限
     private final Runnable mRunnable = new Runnable() {
         @SuppressLint({"DefaultLocale", "SetTextI18n"})
         @Override
@@ -429,7 +431,6 @@ public class HomeActivity extends BaseActivity {
                     @Override
                     public void run() {
                         initData();
-                        checkMicrophonePermission();  //xuameng音频权限
                     }
                 }, 50);
             }
@@ -443,7 +444,6 @@ public class HomeActivity extends BaseActivity {
                             dataInitOk = true;
                             jarInitOk = true;
                             initData();
-                            checkMicrophonePermission();  //xuameng音频权限
                         }
                     });
                     return;
@@ -823,39 +823,94 @@ public class HomeActivity extends BaseActivity {
 
     // 触发权限检查的入口方法
     public void checkMicrophonePermission() {
-        final int MARSHMALLOW = 23;
         if (Build.VERSION.SDK_INT >= MARSHMALLOW) {
             if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) 
                 != PackageManager.PERMISSION_GRANTED) {
                 
-                // 直接跳转系统设置的简化方案
                 if (shouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO)) {
-                    showPermissionDeniedDialog(); // 首次拒绝后显示引导
+                    // 用户已拒绝过权限，显示解释弹窗
+                    showPermissionDeniedDialog();
                 } else {
-                    launchSystemSettings(); // 非首次拒绝直接跳转
+                    // 首次请求或永久拒绝时发起标准权限请求
+                    requestRecordAudioPermission();
+                }
+            } else {
+                Log.d(TAG, "麦克风权限已授予");
+            }
+        } else {
+            // 6.0以下版本默认视为已授权
+        }
+    }
+
+    /**
+     * 标准权限请求方法
+     */
+    private void requestRecordAudioPermission() {
+        ActivityCompat.requestPermissions(
+            this,
+            new String[]{Manifest.permission.RECORD_AUDIO},
+            REQUEST_CODE_RECORD_AUDIO
+        );
+    }
+
+    /**
+     * 权限请求结果回调
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, 
+            String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        
+        if (requestCode == REQUEST_CODE_RECORD_AUDIO) {
+            if (grantResults.length > 0 && 
+                grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            } else {
+                if (!shouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO)) {
+                    // 用户勾选"不再询问"后的处理
+                    showPermanentDenialDialog();
                 }
             }
-            // 已有权限时不作任何处理
         }
     }
 
-    // 跳转系统设置页
-    private void launchSystemSettings() {
-        try {
-            startActivity(new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                .setData(Uri.fromParts("package", getPackageName(), null)));
-        } catch (Exception e) {
-            Log.e(TAG, "Open settings failed: " + e.getMessage());
-        }
+    /**
+     * 权限被永久拒绝时的提示
+     */
+    private void showPermanentDenialDialog() {
+        new AlertDialog.Builder(this)
+            .setTitle("权限被永久禁用")
+            .setMessage("您已永久拒绝麦克风权限，请前往设置手动开启")
+            .setPositiveButton("去设置", (dialog, which) -> launchSystemSettings())
+            .setNegativeButton("取消", null)
+            .setCancelable(false)
+            .show();
     }
 
-    // 保留基础引导弹窗（可选）
+    /**
+     * 权限拒绝后的解释弹窗
+     */
     private void showPermissionDeniedDialog() {
         new AlertDialog.Builder(this)
-            .setTitle("功能权限提醒")
-            .setMessage("音频相关功能需要麦克风权限")
-            .setPositiveButton("立即开启", (d, w) -> launchSystemSettings())
-            .setNegativeButton("暂不处理", null)
+            .setTitle("功能需要权限")
+            .setMessage("音频可视化功能需要访问麦克风\n\n我们将仅用于实时音频分析，不会存储录音内容")
+            .setPositiveButton("再次请求", (dialog, which) -> requestRecordAudioPermission())
+            .setNegativeButton("取消", null)
             .show();
+    }
+
+    /**
+     * 跳转应用设置页面
+     */
+    private void launchSystemSettings() {
+        try {
+            Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                .setData(Uri.fromParts("package", getPackageName(), null))
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        } catch (Exception e) {
+            Log.e(TAG, "跳转设置失败: " + e.getMessage());
+            // 备用方案：跳转到应用列表
+            startActivity(new Intent(Settings.ACTION_APPLICATION_SETTINGS));
+        }
     }
 }
