@@ -2371,7 +2371,6 @@ return;
 private synchronized void releaseVisualizer() {
     try {
         if (mVisualizer != null) {
-            mVisualizer.setEnabled(false);
             mVisualizer.release();
             mVisualizer = null;
             Log.d(TAG, "Visualizer released successfully");
@@ -2380,21 +2379,19 @@ private synchronized void releaseVisualizer() {
             customVisualizer.release();
         }
     } catch (Exception e) {
-        Log.e(TAG, "Error releasing visualizer", e);
+        Log.e(TAG, "Visualizer Release error", e);
     }
 
-	if (audioRecord != null) {
-    try {
-        if (audioRecord.getRecordingState() == AudioRecord.RECORDSTATE_RECORDING) {
-            audioRecord.stop(); // 先停止录制
+    if (audioRecord != null) {
+        try {
+            audioRecord.release();
+        } catch (Exception e) {
+            Log.e(TAG, "AudioRecord release error", e);
         }
-        audioRecord.release(); // 释放资源
-        } catch (IllegalStateException e) {
-            Log.e(TAG, "AudioRecord", "状态异常: " + e.getMessage());
-        } finally {
-            audioRecord = null; // 显式置空防止重复操作:ml-citation{ref="3" data="citationList"}
-        }
+        audioRecord = null;
     }
 }
+
+
 
 }
