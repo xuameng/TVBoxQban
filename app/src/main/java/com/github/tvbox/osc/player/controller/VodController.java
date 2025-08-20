@@ -74,7 +74,7 @@ import com.squareup.picasso.NetworkPolicy; //xuameng播放音频切换图片
 import android.graphics.Bitmap; //xuameng播放音频切换图片
 import com.github.tvbox.osc.api.ApiConfig; //xuameng播放音频切换图片
 import com.github.tvbox.osc.ui.tv.widget.MusicVisualizerView;  //xuameng音乐播放动画
-import android.media.audiofx.Visualizer;
+import android.media.audiofx.Visualizer;  //xuameng音乐播放动画
 import java.lang.ref.WeakReference;   //xuameng音乐播放动画
 import android.util.Log; //xuameng音乐播放动画
 import android.os.Looper; //xuameng音乐播放动画
@@ -375,11 +375,13 @@ public class VodController extends BaseController {
                     if(MxuamengMusic.getVisibility() == View.VISIBLE) { //xuameng播放音乐背景
                         MxuamengMusic.setVisibility(GONE);
                     }
+                    if(customVisualizer.getVisibility() == View.VISIBLE) { //xuameng播放音乐背景
+                        customVisualizer.setVisibility(GONE);
+                    }
                 } else {
-
-                if(customVisualizer.getVisibility() == View.GONE && isVideoplaying) { //xuameng播放音乐背景
-                    customVisualizer.setVisibility(VISIBLE);
-                }
+                    if(customVisualizer.getVisibility() == View.GONE && isVideoplaying) { //xuameng播放音乐动画
+                       customVisualizer.setVisibility(VISIBLE);
+                    }
                     if(MxuamengMusic.getVisibility() == View.GONE && isVideoplaying) { //xuameng播放音乐背景
                         MxuamengMusic.setVisibility(VISIBLE);
                     }
@@ -1455,7 +1457,6 @@ public class VodController extends BaseController {
                 if(isBottomVisible() && mSeekBarhasFocus) { //xuameng假如焦点在SeekBar
                     mxuPlay.requestFocus(); //底部菜单默认焦点为播放
                 }
-				releaseVisualizer();
                 mLandscapePortraitBtn.setVisibility(View.GONE);
                 if(!isPlaying && mTvPausexu.getVisibility() == View.VISIBLE) {
                     ObjectAnimator animator30 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0, 700); //xuameng动画暂停菜单开始
@@ -1488,9 +1489,10 @@ public class VodController extends BaseController {
                 if(iv_circle_bg.getVisibility() == View.VISIBLE) { //xuameng音乐播放时图标
                     iv_circle_bg.setVisibility(GONE);
                 }
-				                if(customVisualizer.getVisibility() == View.VISIBLE) { //xuameng播放音乐背景
+                if(customVisualizer.getVisibility() == View.VISIBLE) { //xuameng播放音乐背景
                     customVisualizer.setVisibility(GONE);
                 }
+				releaseVisualizer();  //xuameng播放音乐背景
                 isVideoplaying = false;
                 isVideoPlay = false;
                 break;
@@ -1546,11 +1548,11 @@ public class VodController extends BaseController {
                 String height = Integer.toString(mControlWrapper.getVideoSize()[1]);
                 mVideoSize.setText("[ " + width + " X " + height + " ]");
                 isVideoPlay = false;
-				if(width.length() <= 1 && height.length() <= 1 ) {
-				    int newSessionId = mControlWrapper.getAudioSessionId();   //xuameng音乐播放动画
-    if(newSessionId != audioSessionId) { // 避免重复初始化
-        initVisualizer();
-    }
+                if(width.length() <= 1 && height.length() <= 1 ) {
+                   int newSessionId = mControlWrapper.getAudioSessionId();   //xuameng音乐播放动画
+                   if(newSessionId != audioSessionId) { // 避免重复初始化
+                      initVisualizer();  //xuameng音乐播放动画
+                   }
 				}
                 break;
             case VideoView.STATE_BUFFERED:
@@ -1975,7 +1977,7 @@ public class VodController extends BaseController {
         if(mHandler != null) {
             mHandler.removeCallbacksAndMessages(null);
         }
-		releaseVisualizer();
+        releaseVisualizer();  //xuameng音乐播放动画
     }
     //尝试去bom
     public String getWebPlayUrlIfNeeded(String webPlayUrl) {
@@ -2179,34 +2181,6 @@ public class VodController extends BaseController {
         Jianpian.finish(); //停止p2p下载
         App.getInstance().setDashData(null);
     }
-
-private static final int AUDIO_PERMISSION_REQUEST_CODE = 1001;
-
-private void initVisualizerWithPermission() {
-    if (checkAudioPermission()) {
-        initVisualizer();
-    } else {
-        requestAudioPermission();
-    }
-}
-
-private boolean checkAudioPermission() {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-        return ContextCompat.checkSelfPermission(getContext(),
-                Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
-    }
-    return true; // 6.0以下默认有权限
-}
-
-private void requestAudioPermission() {
-    if (getContext() instanceof Activity) {
-        ActivityCompat.requestPermissions((Activity) getContext(),
-                new String[]{Manifest.permission.RECORD_AUDIO},
-                AUDIO_PERMISSION_REQUEST_CODE);
-    } else {
-        Log.e(TAG, "Context is not an Activity instance");
-    }
-}
 
 /**
  * 初始化音频可视化组件
