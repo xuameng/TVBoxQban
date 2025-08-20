@@ -2214,24 +2214,24 @@ private void initVisualizer() {
 
 try {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+    
+    // 配置音频参数
+    int sampleRate = 44100;
+    int channelConfig = AudioFormat.CHANNEL_IN_MONO;
+    int audioFormat = AudioFormat.ENCODING_PCM_16BIT;
+    int bufferSize = calculateBufferSize(sampleRate);
 
+    // 创建录音实例
+    recorder = new AudioRecord(
+            MediaRecorder.AudioSource.MIC,
+            sampleRate,
+            channelConfig,
+            audioFormat,
+            bufferSize);
 
-
-// 音频录制构建器优化
-audioRecord = new AudioRecord.Builder()
-    .setAudioSource(MediaRecorder.AudioSource.MIC)
-    .setAudioFormat(new AudioFormat.Builder()
-        .setEncoding(AudioFormat.ENCODING_PCM_16BIT)
-        .setSampleRate(44100)
-        .setChannelMask(AudioFormat.CHANNEL_IN_MONO)
-        .build())
-    .setBufferSizeInBytes(calculateBufferSize(44100)) // 封装计算方法
-    .setAudioSessionId(generateAudioSessionId())
-    .build();
-
-
+    // 设置会话ID（兼容方案）
         audioRecord.startRecording();
-        int audioSessionId = audioRecord.getAudioSessionId();
+        int audioSessionId = generateAudioSessionId();
         if (audioSessionId <= 0) {
             Log.w(TAG, "audioRecord Invalid audio session ID");
             audioRecord.release(); // 释放资源
