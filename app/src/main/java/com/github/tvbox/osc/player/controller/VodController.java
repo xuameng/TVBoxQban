@@ -2215,8 +2215,11 @@ private void initVisualizer() {
 try {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 int generateAudioSessionId() {
-        AudioManager am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-        return am.generateAudioSessionId(); // 系统分配的合法ID
+    int sessionId;
+    do {
+        sessionId = new Random().nextInt(0xFFFF) + 1; // 限制范围更安全
+    } while (sessionId == -1); // 仍规避ERROR值
+    return sessionId;
 }
 // 动态缓冲区计算
 int calculateBufferSize(int sampleRate) {
