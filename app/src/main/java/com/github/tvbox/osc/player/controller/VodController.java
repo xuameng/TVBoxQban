@@ -302,7 +302,7 @@ public class VodController extends BaseController {
     private boolean isLongClick = false; //xuameng判断长按
     private boolean mSeekBarhasFocus = false; //xuameng seekbar是否拥有焦点
     private Visualizer mVisualizer;  //xuameng音乐播放动画
-	private AudioRecord audioRecord //xuameng音乐播放动画
+	private AudioRecord audioRecord; //xuameng音乐播放动画
     private MusicVisualizerView customVisualizer; //xuameng音乐播放动画
     private int audioSessionId = -1; // 使用-1表示未初始化状态 //xuameng音乐播放动画
 	private static final String TAG = "VodController";  //xuameng音乐播放动画
