@@ -2205,7 +2205,7 @@ private void initVisualizer() {
                 Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             App.showToastShort(getContext(), "聚汇影视提示没有权限！");
             Log.w(TAG, "RECORD_AUDIO permission required");
-            return;
+      //      return;
         }
 
         // 创建Visualizer实例
