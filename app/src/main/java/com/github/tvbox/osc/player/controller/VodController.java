@@ -2213,11 +2213,23 @@ private void initVisualizer() {
         // 统一创建Visualizer实例（仅一次）
         mVisualizer = new Visualizer(sessionId);
         
-
+        // Android 9.0+特殊配置
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            mVisualizer.setMeasurementMode(Visualizer.MEASUREMENT_MODE_PEAK_RMS);
+        }
         // 通用配置
         mVisualizer.setScalingMode(Visualizer.SCALING_MODE_NORMALIZED);
         
+        // 动态调整捕获大小
+        int captureSize = (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) ? 
+            Visualizer.getCaptureSizeRange()[0] : 512;
+        mVisualizer.setCaptureSize(captureSize);
 
+        // 智能采样率设置
+        int targetRate = Visualizer.getMaxCaptureRate() / 2;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            targetRate = Math.min(targetRate, 10);
+        }
         // 设置数据捕获监听器
         mVisualizer.setDataCaptureListener(
             new Visualizer.OnDataCaptureListener() {
@@ -2230,24 +2242,10 @@ private void initVisualizer() {
                 public void onFftDataCapture(Visualizer visualizer, byte[] fftData, int samplingRate) {
                     if (fftData == null || customVisualizer == null) return;
                     
-                    Runnable updateTask = () -> {
-                        try {
-                            if (customVisualizer != null) {
-                                customVisualizer.updateVisualizer(fftData);
-                            }
-                        } catch (Exception e) {
-                            Log.e(TAG, "Visualizer update error", e);
-                        }
-                    };
-                    
-                    if (Looper.myLooper() == Looper.getMainLooper()) {
-                        updateTask.run();
-                    } else {
-                        new Handler(Looper.getMainLooper()).post(updateTask);
-                    }
+ customVisualizer.updateVisualizer(fftData);
                 }
             },
-        
+            targetRate,
             false,  // 不捕获波形数据
             true    // 捕获FFT数据
         );
