@@ -2278,18 +2278,21 @@ try {
             true
         );
         mVisualizer.setEnabled(true);
+        return;
     }
 } catch (IllegalStateException e) {
     Log.e(TAG, "Visualizer state error", e);
     releaseVisualizer();
+    return;
 } catch (UnsupportedOperationException e) {
     Log.e(TAG, "Device doesn't support Visualizer", e);
     releaseVisualizer();
+    return;
 } catch (Exception e) {
     Log.e(TAG, "Visualizer init failed", e);
     releaseVisualizer();
+  return;
 }
-return;
 
 
     int sessionId = mControlWrapper != null ? mControlWrapper.getAudioSessionId() : 0;
