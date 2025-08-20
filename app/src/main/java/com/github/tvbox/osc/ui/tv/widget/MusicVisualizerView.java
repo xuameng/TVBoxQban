@@ -13,14 +13,14 @@ import android.animation.ValueAnimator;
 /**
  * 音乐可视化视图组件（带振幅颜色渐变）
  * 新增特性：
- * 1. 振幅越大颜色越红（蓝->紫->红渐变）
+ * 1. 振幅越大颜色越红（黄色->橙黄->红渐变）
  * 2. 保持原有动画平滑性
  * 3. 完全兼容原有接口
  */
 public class MusicVisualizerView extends View {
     // 常量定义
     private static final int MAX_AMPLITUDE = 7000;
-    private static final int BAR_COUNT = 20;
+    private static final int BAR_COUNT = 16;
     private static final int ANIMATION_DURATION = 200;
     
     private static final int[] COLOR_SPECTRUM = {
@@ -58,17 +58,28 @@ public class MusicVisualizerView extends View {
     }
 
     public void updateVisualizer(byte[] fft) {
-        if (fft == null || fft.length < 66) return;
+        if (fft == null || fft.length < BAR_COUNT * 2 + 2) return;
 
+        // 修改采样策略：前1/3柱子重点采样低频，后2/3均匀采样中高频
         for (int i = 0; i < BAR_COUNT; i++) {
-            int barIndex = 2 + i * 4;
+           int barIndex;
+            if (i < BAR_COUNT / 3) {
+                // 低频段密集采样（每2点取1）
+                barIndex = 2 + i * 2;
+            } else {
+                // 中高频段间隔采样（每4点取1）
+                barIndex = 2 + (BAR_COUNT / 3) * 2 + (i - BAR_COUNT / 3) * 4;
+            }
+        
             if (barIndex < fft.length - 1) {
                 byte rfk = fft[barIndex];
                 byte ifk = fft[barIndex + 1];
                 float magnitude = (rfk * rfk + ifk * ifk);
-                
-                mTargetHeights[i] = (magnitude * getHeight()) / (MAX_AMPLITUDE * 2);
-                mAmplitudeLevels[i] = Math.min(magnitude / MAX_AMPLITUDE, 1.0f); // 标准化振幅强度
+            
+                // 添加频率加权（低频衰减系数）
+                float weight = i < BAR_COUNT/3 ? 0.7f : 1.2f;
+                mTargetHeights[i] = (magnitude * getHeight() * weight) / MAX_AMPLITUDE;
+                mAmplitudeLevels[i] = Math.min(magnitude / MAX_AMPLITUDE, 1.0f);
             }
         }
         startAnimation();
