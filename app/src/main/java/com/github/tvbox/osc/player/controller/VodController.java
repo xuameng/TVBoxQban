@@ -2231,7 +2231,7 @@ AudioRecord audioRecord = new AudioRecord(
 audioRecord.startRecording();
 int audioSessionId = audioRecord.getAudioSessionId();
 
-Visualizer visualizer = new Visualizer(audioSessionId);
+mVisualizer = new Visualizer(audioSessionId);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             mVisualizer.setMeasurementMode(Visualizer.MEASUREMENT_MODE_PEAK_RMS);
         }
