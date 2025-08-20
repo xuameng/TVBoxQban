@@ -2208,12 +2208,21 @@ private void requestAudioPermission() {
     }
 }
 
+/**
+ * 初始化音频可视化组件
+ */
 private void initVisualizer() {
     releaseVisualizer();
-    if (getContext() == null) return;
+    if (getContext() == null) {
+        Log.w(TAG, "Context is null");
+        return;
+    }
     
-    int sessionId = mControlWrapper.getAudioSessionId();
-    if (sessionId <= 0) return;
+    int sessionId = mControlWrapper != null ? mControlWrapper.getAudioSessionId() : 0;
+    if (sessionId <= 0) {
+        Log.w(TAG, "Invalid audio session ID");
+        return;
+    }
     
     try {
         // 权限检查（Android 6.0+）
@@ -2225,7 +2234,10 @@ private void initVisualizer() {
             return;
         }
 
+        // 创建Visualizer实例
         mVisualizer = new Visualizer(sessionId);
+        
+        // 配置参数
         mVisualizer.setScalingMode(Visualizer.SCALING_MODE_NORMALIZED);
         mVisualizer.setMeasurementMode(Visualizer.MEASUREMENT_MODE_PEAK_RMS);
 
@@ -2241,11 +2253,12 @@ private void initVisualizer() {
             targetRate = Math.min(targetRate, 10);
         }
 
+        // 设置数据捕获监听器
         mVisualizer.setDataCaptureListener(
             new Visualizer.OnDataCaptureListener() {
                 @Override
                 public void onWaveFormDataCapture(Visualizer viz, byte[] bytes, int rate) {
-                    // 可选择性实现
+                    // 可选波形数据捕获
                 }
                 
                 @Override
@@ -2254,7 +2267,9 @@ private void initVisualizer() {
                     
                     Runnable updateTask = () -> {
                         try {
-                            customVisualizer.updateVisualizer(fftData);
+                            if (customVisualizer != null) {
+                                customVisualizer.updateVisualizer(fftData);
+                            }
                         } catch (Exception e) {
                             Log.e(TAG, "Visualizer update error", e);
                         }
@@ -2268,28 +2283,34 @@ private void initVisualizer() {
                 }
             },
             targetRate,
-            false,  // waveform
-            true    // FFT
+            false,  // 不捕获波形数据
+            true    // 捕获FFT数据
         );
         
         mVisualizer.setEnabled(true);
     } catch (IllegalStateException e) {
         Log.e(TAG, "Visualizer state error", e);
+        releaseVisualizer();
     } catch (UnsupportedOperationException e) {
         Log.e(TAG, "Device doesn't support Visualizer", e);
+        releaseVisualizer();
     } catch (Exception e) {
         Log.e(TAG, "Visualizer init failed", e);
         releaseVisualizer();
     }
 }
 
-
-// 原有方法保持不变
+/**
+ * 更新可视化UI
+ */
 private void updateVisualizerUI(byte[] fftData) {
-    if (fftData == null || customVisualizer == null) return;  
+    if (fftData == null || customVisualizer == null) return;
+    
     try {
         if (Looper.myLooper() == Looper.getMainLooper()) {
-            customVisualizer.updateVisualizer(fftData);
+            if (customVisualizer != null) {
+                customVisualizer.updateVisualizer(fftData);
+            }
         } else {
             new Handler(Looper.getMainLooper()).post(() -> {
                 if (customVisualizer != null) {
@@ -2302,16 +2323,20 @@ private void updateVisualizerUI(byte[] fftData) {
     }
 }
 
-
-
 /**
  * 安全释放可视化资源
  */
-private void releaseVisualizer() {
-    if(mVisualizer != null) {
-        mVisualizer.setEnabled(false);
-        mVisualizer.release();
-        mVisualizer = null;
+private synchronized void releaseVisualizer() {
+    try {
+        if (mVisualizer != null) {
+            mVisualizer.setEnabled(false);
+            mVisualizer.release();
+            mVisualizer = null;
+            Log.d(TAG, "Visualizer released successfully");
+        }
+    } catch (Exception e) {
+        Log.e(TAG, "Error releasing visualizer", e);
     }
 }
+
 }
