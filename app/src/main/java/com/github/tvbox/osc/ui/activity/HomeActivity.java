@@ -34,6 +34,7 @@ import android.provider.Settings; //xuameng音乐权限
 import android.net.Uri; //xuameng音乐权限
 import androidx.appcompat.app.AlertDialog; //xuameng音乐权限
 import android.Manifest;  //xuameng音乐权限
+import androidx.core.app.ActivityCompat;  //xuameng音乐权限
 
 import com.github.tvbox.osc.base.App;
 import android.widget.Toast;
