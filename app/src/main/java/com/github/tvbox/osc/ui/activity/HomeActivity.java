@@ -142,7 +142,6 @@ public class HomeActivity extends BaseActivity {
             useCacheConfig = bundle.getBoolean("useCache", false);
         }
         initData();
-		checkMicrophonePermission();  //xuameng音频权限
     }
 
     private void initView() {
@@ -375,6 +374,7 @@ public class HomeActivity extends BaseActivity {
                                 }
 
                                 initData();
+                                checkMicrophonePermission();  //xuameng音频权限
                             }
                         }, 50);
                     }
@@ -398,6 +398,7 @@ public class HomeActivity extends BaseActivity {
                             public void run() {
                                 App.showToastShort(HomeActivity.this, "聚汇影视提示：jar加载失败！");
                                 initData();
+                                checkMicrophonePermission();  //xuameng音频权限
                             }
                         });
                     }
@@ -428,6 +429,7 @@ public class HomeActivity extends BaseActivity {
                     @Override
                     public void run() {
                         initData();
+                        checkMicrophonePermission();  //xuameng音频权限
                     }
                 }, 50);
             }
@@ -441,6 +443,7 @@ public class HomeActivity extends BaseActivity {
                             dataInitOk = true;
                             jarInitOk = true;
                             initData();
+                            checkMicrophonePermission();  //xuameng音频权限
                         }
                     });
                     return;
