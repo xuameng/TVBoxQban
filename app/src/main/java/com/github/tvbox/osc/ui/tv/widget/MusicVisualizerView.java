@@ -19,16 +19,16 @@ import android.animation.ValueAnimator;
  */
 public class MusicVisualizerView extends View {
     // 常量定义
-    private static final int MAX_AMPLITUDE = 8000;
-    private static final int BAR_COUNT = 16;
+    private static final int MAX_AMPLITUDE = 7000;
+    private static final int BAR_COUNT = 20;
     private static final int ANIMATION_DURATION = 200;
     
     // 颜色渐变参数
     private static final int[] COLOR_SPECTRUM = {
-        Color.parseColor("#3366FF"), // 淡蓝
-        Color.parseColor("#AA00FF"), // 紫色
+        Color.parseColor("#DBDB70"), // 黄色
+        Color.parseColor("#FF9900"), // 橙黄
         Color.parseColor("#FF3300")  // 橙红
-    };
+    };‌
 
     // 绘图工具
     private final Paint mBarPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
