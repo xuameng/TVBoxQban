@@ -1502,10 +1502,6 @@ public class VodController extends BaseController {
                 isVideoplaying = true;
                 isVideoPlay = true;
                 //playIngXu();	
-								    int newSessionId = mControlWrapper.getAudioSessionId();   //xuameng音乐播放动画
-    if(newSessionId != audioSessionId) { // 避免重复初始化
-        initVisualizer();
-    }
                 break;
             case VideoView.STATE_PAUSED:
                 isVideoPlay = false;
@@ -1550,6 +1546,12 @@ public class VodController extends BaseController {
                 String height = Integer.toString(mControlWrapper.getVideoSize()[1]);
                 mVideoSize.setText("[ " + width + " X " + height + " ]");
                 isVideoPlay = false;
+				if(width.length() <= 1 && height.length() <= 1 ) {
+				    int newSessionId = mControlWrapper.getAudioSessionId();   //xuameng音乐播放动画
+    if(newSessionId != audioSessionId) { // 避免重复初始化
+        initVisualizer();
+    }
+				}
                 break;
             case VideoView.STATE_BUFFERED:
                 mPlayLoadNetSpeed.setVisibility(GONE);
