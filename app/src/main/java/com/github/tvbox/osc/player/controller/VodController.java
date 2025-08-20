@@ -2211,21 +2211,8 @@ private void initVisualizer() {
 
 try {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-        int sampleRate = 44100;
-        int channelConfig = AudioFormat.CHANNEL_IN_MONO;
-        int audioFormat = AudioFormat.ENCODING_PCM_16BIT;
-        int bufferSize = audioRecord.getMinBufferSize(sampleRate, channelConfig, audioFormat);
 
-        audioRecord = new AudioRecord(
-            MediaRecorder.AudioSource.MIC,
-            sampleRate,
-            channelConfig,
-            audioFormat,
-            bufferSize * 4
-        );
-        
-        audioRecord.startRecording();
-        int audioSessionId = audioRecord.getAudioSessionId();
+        int audioSessionId = getValidAudioSessionId();
         if (audioSessionId <= 0) {
             Log.w(TAG, "audioRecord Invalid audio session ID");
             audioRecord.release(); // 释放资源
@@ -2368,6 +2355,39 @@ try {
     }
 }
 
+
+private int getValidAudioSessionId() {
+    MediaRecorder tempRecorder = null;
+    try {
+        // 1. 优先通过MediaRecorder获取会话ID
+        tempRecorder = new MediaRecorder();
+        tempRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        tempRecorder.setOutputFormat(MediaRecorder.OutputFormat.DEFAULT);
+        tempRecorder.prepare(); // 必须调用prepare()才能生成有效ID
+        int sessionId = tempRecorder.getAudioSessionId();
+
+        // 2. 验证ID有效性（Android 11需额外检查）
+        if (sessionId != AudioRecord.ERROR_BAD_VALUE && sessionId != 0) {
+            return sessionId;
+        }
+    } catch (Exception e) {
+        Log.e(TAG, "MediaRecorder sessionId failed", e);
+    } finally {
+        if (tempRecorder != null) {
+            tempRecorder.release();
+        }
+    }
+
+    // 3. 回退方案：使用AudioRecord原生方法
+    try {
+        return new AudioRecord.Builder()
+                .setAudioSource(MediaRecorder.AudioSource.MIC)
+                .build().getAudioSessionId();
+    } catch (Exception e) {
+        Log.e(TAG, "AudioRecord sessionId failed", e);
+        return -1;
+    }
+}
 /**
  * 安全释放可视化资源
  */
