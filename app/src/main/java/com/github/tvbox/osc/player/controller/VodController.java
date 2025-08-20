@@ -1504,7 +1504,6 @@ public class VodController extends BaseController {
                 isVideoplaying = true;
                 isVideoPlay = true;
                 //playIngXu();	
-				initVisualizer();  //xuameng音乐播放动画
                 break;
             case VideoView.STATE_PAUSED:
                 isVideoPlay = false;
@@ -2311,6 +2310,9 @@ private synchronized void releaseVisualizer() {
             mVisualizer.release();
             mVisualizer = null;
             Log.d(TAG, "Visualizer released successfully");
+        }
+        if (customVisualizer != null) {
+            customVisualizer.release();
         }
     } catch (Exception e) {
         Log.e(TAG, "Error releasing visualizer", e);
