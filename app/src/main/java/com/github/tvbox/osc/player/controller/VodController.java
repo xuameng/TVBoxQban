@@ -1504,6 +1504,7 @@ public class VodController extends BaseController {
                 isVideoplaying = true;
                 isVideoPlay = true;
                 //playIngXu();	
+				initVisualizer();  //xuameng音乐播放动画
                 break;
             case VideoView.STATE_PAUSED:
                 isVideoPlay = false;
@@ -2204,7 +2205,7 @@ private void initVisualizer() {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && 
         ContextCompat.checkSelfPermission(getContext(), 
             Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-        App.showToastShort(getContext(), "请授予麦克风权限");
+        App.showToastShort(getContext(), "请授予麦克风权限！");
         Log.w(TAG, "RECORD_AUDIO permission denied");
         return;
     }
