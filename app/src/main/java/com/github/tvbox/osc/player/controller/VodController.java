@@ -2182,39 +2182,49 @@ public class VodController extends BaseController {
  */
 private void initVisualizer() {
     releaseVisualizer();
-		int sessionId = mControlWrapper.getAudioSessionId();
+    int sessionId = mControlWrapper.getAudioSessionId();
     if (sessionId <= 0 || getContext() == null) return;
+    
     try {
+        // Android 6.0+需要检查权限
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(getContext(), 
+                Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+                Log.e(TAG, "RECORD_AUDIO permission not granted");
+                return;
+            }
+        }
 
-        // 初始化可视化组件
         Visualizer visualizer = new Visualizer(sessionId);
-visualizer.setScalingMode(Visualizer.SCALING_MODE_NORMALIZED);
-visualizer.setMeasurementMode(Visualizer.MEASUREMENT_MODE_PEAK_RMS);
+        visualizer.setScalingMode(Visualizer.SCALING_MODE_NORMALIZED);
+        visualizer.setMeasurementMode(Visualizer.MEASUREMENT_MODE_PEAK_RMS);
         
-        // 设置FFT数据回调
-visualizer.setDataCaptureListener(
-    new Visualizer.OnDataCaptureListener() {
-        @Override
-        public void onWaveFormDataCapture(Visualizer viz, byte[] bytes, int rate) {
-            // 波形数据处理
+        // 调整采样率以适应不同Android版本
+        int captureRate = Visualizer.getMaxCaptureRate() / 2;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            captureRate = Math.min(captureRate, 10); // Android 10+限制采样率
         }
         
-        @Override
-        public void onFftDataCapture(Visualizer visualizer, byte[] fftData, int samplingRate) {
-
-                    new Handler(Looper.getMainLooper()).post(() -> {
-                    if (customVisualizer != null && fftData != null) {
-                        // 双重数据转发机制
-                customVisualizer.updateVisualizer(fftData);  // 标准FFT接口
-             //   customVisualizer.onRawDataReceived(fftData); // 兼容原始数据接口
+        visualizer.setDataCaptureListener(
+            new Visualizer.OnDataCaptureListener() {
+                @Override
+                public void onWaveFormDataCapture(Visualizer viz, byte[] bytes, int rate) {}
+                
+                @Override
+                public void onFftDataCapture(Visualizer visualizer, byte[] fftData, int samplingRate) {
+                    if (Looper.myLooper() != Looper.getMainLooper()) {
+                        new Handler(Looper.getMainLooper()).post(() -> {
+                            updateVisualizerUI(fftData);
+                        });
+                    } else {
+                        updateVisualizerUI(fftData);
                     }
-                });
-        }
-    },
-    Visualizer.getMaxCaptureRate() / 2, // 采样率
-    false,  // 不捕获波形数据
-    true  // 捕获FFT数据
-);
+                }
+            },
+            captureRate,
+            false,
+            true
+        );
         
         visualizer.setEnabled(true);
     } catch (Exception e) {
@@ -2222,6 +2232,17 @@ visualizer.setDataCaptureListener(
         releaseVisualizer();
     }
 }
+
+private void updateVisualizerUI(byte[] fftData) {
+    if (customVisualizer != null && fftData != null) {
+        try {
+            customVisualizer.updateVisualizer(fftData);
+        } catch (Exception e) {
+            Log.e(TAG, "Visualizer update failed", e);
+        }
+    }
+}
+
 
 /**
  * 安全释放可视化资源
