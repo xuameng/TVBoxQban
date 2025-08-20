@@ -2213,8 +2213,8 @@ private void initVisualizer() {
         return;
     }
 
-    try {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M{
+try {
+if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M{
 int sampleRate = 44100; // 采样率（Hz）
 int channelConfig = AudioFormat.CHANNEL_IN_MONO; // 单声道
 int audioFormat = AudioFormat.ENCODING_PCM_16BIT; // 16位PCM
@@ -2230,7 +2230,6 @@ AudioRecord audioRecord = new AudioRecord(
 // 启动AudioRecord以获取会话ID
 audioRecord.startRecording();
 int audioSessionId = audioRecord.getAudioSessionId();
-
 mVisualizer = new Visualizer(audioSessionId);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             mVisualizer.setMeasurementMode(Visualizer.MEASUREMENT_MODE_PEAK_RMS);
@@ -2295,7 +2294,7 @@ mVisualizer = new Visualizer(audioSessionId);
     }
 	return;
 }
-
+    try {
         // 统一创建Visualizer实例（仅一次）
         mVisualizer = new Visualizer(sessionId);
         
