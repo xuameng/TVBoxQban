@@ -87,7 +87,7 @@ public class MusicVisualizerView extends View {
                 } else {
                     // 高频段(800Hz+)指数增强
                     float freqFactor = (float) Math.pow(1.5, (i - BAR_COUNT / 2) / 2.0);
-                    weight = 3.6f * freqFactor;
+                    weight = 2.4f * freqFactor;
                 }
             
                 mTargetHeights[i] = Math.min(
