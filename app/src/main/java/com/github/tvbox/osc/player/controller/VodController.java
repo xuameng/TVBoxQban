@@ -2191,20 +2191,7 @@ public class VodController extends BaseController {
  */
 private void initVisualizer() {
     releaseVisualizer();  // 确保先释放已有实例
-    
-    // 基础检查
-    if (getContext() == null) {
-        Log.w(TAG, "Context is null");
-        return;
-    }
-    
-    int sessionId = mControlWrapper != null ? mControlWrapper.getAudioSessionId() : 0;
-    if (sessionId <= 0) {
-        Log.w(TAG, "Invalid audio session ID");
-        return;
-    }
-
-    // 权限检查（Android 6.0+）
+        // 权限检查（Android 6.0+）
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && 
         ContextCompat.checkSelfPermission(getContext(), 
             Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
@@ -2212,9 +2199,17 @@ private void initVisualizer() {
         Log.w(TAG, "RECORD_AUDIO permission denied");
         return;
     }
+    // 基础检查
+    if (getContext() == null) {
+        Log.w(TAG, "Context is null");
+        return;
+    }
+    
+
+
 
 try {
-if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M{
+if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
 int sampleRate = 44100; // 采样率（Hz）
 int channelConfig = AudioFormat.CHANNEL_IN_MONO; // 单声道
 int audioFormat = AudioFormat.ENCODING_PCM_16BIT; // 16位PCM
@@ -2230,6 +2225,10 @@ AudioRecord audioRecord = new AudioRecord(
 // 启动AudioRecord以获取会话ID
 audioRecord.startRecording();
 int audioSessionId = audioRecord.getAudioSessionId();
+    if (audioSessionId <= 0) {
+        Log.w(TAG, "Invalid audio session ID");
+        return;
+    }
 mVisualizer = new Visualizer(audioSessionId);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             mVisualizer.setMeasurementMode(Visualizer.MEASUREMENT_MODE_PEAK_RMS);
@@ -2294,6 +2293,12 @@ mVisualizer = new Visualizer(audioSessionId);
     }
 	return;
 }
+
+    int sessionId = mControlWrapper != null ? mControlWrapper.getAudioSessionId() : 0;
+    if (sessionId <= 0) {
+        Log.w(TAG, "Invalid audio session ID");
+        return;
+    }
     try {
         // 统一创建Visualizer实例（仅一次）
         mVisualizer = new Visualizer(sessionId);
