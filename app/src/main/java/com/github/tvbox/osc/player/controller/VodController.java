@@ -2222,7 +2222,7 @@ try {
     int bufferSize = calculateBufferSize(sampleRate);
 
     // 创建录音实例
-    recorder = new AudioRecord(
+    audioRecord = new AudioRecord(
             MediaRecorder.AudioSource.MIC,
             sampleRate,
             channelConfig,
