@@ -380,7 +380,7 @@ public class VodController extends BaseController {
                     }
                 } else {
                     if(customVisualizer.getVisibility() == View.GONE && isVideoplaying) { //xuameng播放音乐动画
-                       customVisualizer.setVisibility(VISIBLE);
+               //        customVisualizer.setVisibility(VISIBLE);
                     }
                     if(MxuamengMusic.getVisibility() == View.GONE && isVideoplaying) { //xuameng播放音乐背景
                         MxuamengMusic.setVisibility(VISIBLE);
@@ -2258,6 +2258,7 @@ private void initVisualizer() {
                         try {
                             if (customVisualizer != null) {
                                 customVisualizer.updateVisualizer(fftData);
+								customVisualizer.setVisibility(VISIBLE);
                             }
                         } catch (Exception e) {
                             Log.e(TAG, "Visualizer update error", e);
