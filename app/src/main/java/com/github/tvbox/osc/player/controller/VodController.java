@@ -2242,7 +2242,21 @@ private void initVisualizer() {
                 public void onFftDataCapture(Visualizer visualizer, byte[] fftData, int samplingRate) {
                     if (fftData == null || customVisualizer == null) return;
                     
- customVisualizer.updateVisualizer(fftData);
+                    Runnable updateTask = () -> {
+                        try {
+                            if (customVisualizer != null) {
+                                customVisualizer.updateVisualizer(fftData);
+                            }
+                        } catch (Exception e) {
+                            Log.e(TAG, "Visualizer update error", e);
+                        }
+                    };
+                    
+                    if (Looper.myLooper() == Looper.getMainLooper()) {
+                        updateTask.run();
+                    } else {
+                        new Handler(Looper.getMainLooper()).post(updateTask);
+                    }
                 }
             },
             targetRate,
