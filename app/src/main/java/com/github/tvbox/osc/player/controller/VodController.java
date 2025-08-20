@@ -78,6 +78,11 @@ import android.media.audiofx.Visualizer;
 import java.lang.ref.WeakReference;   //xuameng音乐播放动画
 import android.util.Log; //xuameng音乐播放动画
 import android.os.Looper; //xuameng音乐播放动画
+import android.Manifest; //xuameng音乐播放动画
+import android.content.pm.PackageManager; //xuameng音乐播放动画
+import androidx.core.content.ContextCompat; //xuameng音乐播放动画
+
+
 import android.os.Build;
 import android.webkit.WebView;
 import com.github.tvbox.osc.bean.SourceBean;
@@ -1497,6 +1502,10 @@ public class VodController extends BaseController {
                 isVideoplaying = true;
                 isVideoPlay = true;
                 //playIngXu();	
+								    int newSessionId = mControlWrapper.getAudioSessionId();   //xuameng音乐播放动画
+    if(newSessionId != audioSessionId) { // 避免重复初始化
+        initVisualizer();
+    }
                 break;
             case VideoView.STATE_PAUSED:
                 isVideoPlay = false;
@@ -1541,12 +1550,6 @@ public class VodController extends BaseController {
                 String height = Integer.toString(mControlWrapper.getVideoSize()[1]);
                 mVideoSize.setText("[ " + width + " X " + height + " ]");
                 isVideoPlay = false;
-				if(width.length() <= 0 && height.length() <= 0 ) {
-				    int newSessionId = mControlWrapper.getAudioSessionId();   //xuameng音乐播放动画
-    if(newSessionId != audioSessionId) { // 避免重复初始化
-        initVisualizer();
-    }
-				}
                 break;
             case VideoView.STATE_BUFFERED:
                 mPlayLoadNetSpeed.setVisibility(GONE);
