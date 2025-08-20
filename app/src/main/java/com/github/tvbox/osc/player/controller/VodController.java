@@ -84,6 +84,9 @@ import androidx.core.content.ContextCompat; //xuameng音乐播放动画
 import android.media.AudioRecord;   //xuameng音乐播放动画
 import android.media.AudioFormat; //xuameng音乐播放动画
 import android.media.MediaRecorder; //xuameng音乐播放动画
+import android.media.AudioManager;
+import android.media.AudioSystem;
+import android.os.Build;
 
 
 
