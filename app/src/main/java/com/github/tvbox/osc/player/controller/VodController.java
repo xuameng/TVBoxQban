@@ -1483,6 +1483,9 @@ public class VodController extends BaseController {
                 if(iv_circle_bg.getVisibility() == View.VISIBLE) { //xuameng音乐播放时图标
                     iv_circle_bg.setVisibility(GONE);
                 }
+				                if(customVisualizer.getVisibility() == View.VISIBLE) { //xuameng播放音乐背景
+                    customVisualizer.setVisibility(GONE);
+                }
                 isVideoplaying = false;
                 isVideoPlay = false;
                 break;
@@ -1494,10 +1497,6 @@ public class VodController extends BaseController {
                 isVideoplaying = true;
                 isVideoPlay = true;
                 //playIngXu();	
-				    int newSessionId = mControlWrapper.getAudioSessionId();   //xuameng音乐播放动画
-    if(newSessionId != audioSessionId) { // 避免重复初始化
-        initVisualizer();
-    }
                 break;
             case VideoView.STATE_PAUSED:
                 isVideoPlay = false;
@@ -1542,6 +1541,12 @@ public class VodController extends BaseController {
                 String height = Integer.toString(mControlWrapper.getVideoSize()[1]);
                 mVideoSize.setText("[ " + width + " X " + height + " ]");
                 isVideoPlay = false;
+				if(width.length() <= 0 && height.length() <= 0 ) {
+				    int newSessionId = mControlWrapper.getAudioSessionId();   //xuameng音乐播放动画
+    if(newSessionId != audioSessionId) { // 避免重复初始化
+        initVisualizer();
+    }
+				}
                 break;
             case VideoView.STATE_BUFFERED:
                 mPlayLoadNetSpeed.setVisibility(GONE);
@@ -2201,7 +2206,7 @@ visualizer.setDataCaptureListener(
                     if (customVisualizer != null && fftData != null) {
                         // 双重数据转发机制
                 customVisualizer.updateVisualizer(fftData);  // 标准FFT接口
-                customVisualizer.onRawDataReceived(fftData); // 兼容原始数据接口
+             //   customVisualizer.onRawDataReceived(fftData); // 兼容原始数据接口
                     }
                 });
         }
