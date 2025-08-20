@@ -2419,4 +2419,9 @@ public static int calculateBufferSize(int sampleRate) {
     return Math.max(minSize * 4, 4096); // 保证不小于4KB
 }
 
+    private int createVirtualSession(Context context) {
+        // Android 11+需创建虚拟会话
+        AudioManager am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+        return am.generateAudioSessionId(); // API 30+新增方法
+    }
 }
