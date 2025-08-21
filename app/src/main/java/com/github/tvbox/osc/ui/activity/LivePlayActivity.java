@@ -3278,10 +3278,11 @@ public class LivePlayActivity extends BaseActivity {
     private void initVisualizer() {   //xuameng播放音乐柱状图
         releaseVisualizer();  // 确保先释放已有实例
         // 基础检查
-        if (mContext() == null) {
-            Log.w(TAG, "Context is null");
+        if (this == null || isFinishing() || isDestroyed()) {
+            Log.w(TAG, "Activity context unavailable");
             return;
         }
+
         int sessionId = mVideoView != null ? mVideoView.getAudioSessionId() : 0;
         if (sessionId <= 0) {
             Log.w(TAG, "Invalid audio session ID");
