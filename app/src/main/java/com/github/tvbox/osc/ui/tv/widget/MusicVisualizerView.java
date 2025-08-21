@@ -25,8 +25,8 @@ public class MusicVisualizerView extends View {
     
     private static final int[] COLOR_SPECTRUM = {
         Color.parseColor("#DBDB70"), // 黄色
-        Color.parseColor("#FF8400"), // 橙黄
-        Color.parseColor("#FF3300")  // 橙红
+        Color.parseColor("#FF8A00"), // 橙黄
+        Color.parseColor("#FF0000")  // 橙红
     };
 
     // 绘图工具
