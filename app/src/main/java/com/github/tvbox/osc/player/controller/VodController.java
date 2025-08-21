@@ -1088,6 +1088,7 @@ public class VodController extends BaseController {
             @Override
             public void onClick(View view) {
                 FastClickCheckUtil.check(view);
+				initVisualizer();  //xuameng音乐播放动画
                 listener.selectSubtitle();
                 if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
                     hideBottom();
@@ -1550,7 +1551,7 @@ public class VodController extends BaseController {
                 String height = Integer.toString(mControlWrapper.getVideoSize()[1]);
                 mVideoSize.setText("[ " + width + " X " + height + " ]");
                 isVideoPlay = false;
-				initVisualizer();  //xuameng音乐播放动画
+				
 
                 break;
             case VideoView.STATE_BUFFERED:
@@ -2205,26 +2206,6 @@ private void initVisualizer() {
     try {
         // 统一创建Visualizer实例（仅一次）
 
-        
-        // Android 9.0+特殊配置
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            mVisualizer.setMeasurementMode(Visualizer.MEASUREMENT_MODE_PEAK_RMS);
-			 App.showToastShort(getContext(), "字幕已开启88");
-        }
-        // 通用配置
-        mVisualizer.setScalingMode(Visualizer.SCALING_MODE_NORMALIZED);
-        
-        // 动态调整捕获大小
-        int captureSize = (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) ? 
-            Visualizer.getCaptureSizeRange()[0] : 512;
-        mVisualizer.setCaptureSize(captureSize);
-
-        // 智能采样率设置
-        int targetRate = Visualizer.getMaxCaptureRate() / 2;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            targetRate = Math.min(targetRate, 10);
-			 App.showToastShort(getContext(), "字幕已开启99");
-        }
         // 设置数据捕获监听器
         mVisualizer.setDataCaptureListener(
             new Visualizer.OnDataCaptureListener() {
