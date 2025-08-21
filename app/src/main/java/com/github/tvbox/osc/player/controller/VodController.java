@@ -334,10 +334,9 @@ public class VodController extends BaseController {
     private Runnable myRunnableXu = new Runnable() {
         @Override
         public void run() {
-										int newSessionId = mControlWrapper.getAudioSessionId();   //xuameng音乐播放动画
-App.showToastShort(getContext(), "ID是");
+				int newSessionId = mControlWrapper.getAudioSessionId();   //xuameng音乐播放动画
+            App.showToastShort(getContext(), "ID是");
 				App.showToastShort(getContext(), "ID是" + String.valueOf(newSessionId));
-                      initVisualizer();  //xuameng音乐播放动画
             String width = Integer.toString(mControlWrapper.getVideoSize()[0]);
             String height = Integer.toString(mControlWrapper.getVideoSize()[1]);
             if(isInPlaybackState()) { //xuameng 重新选择解析视频大小不刷新
@@ -402,7 +401,7 @@ App.showToastShort(getContext(), "ID是");
             } else {
                 iv_circle_bg.setVisibility(GONE);
             } //xuameng音乐播放时图标判断完
-            mHandler.postDelayed(this, 5000);
+            mHandler.postDelayed(this, 100);
         }
     };
     private Runnable myRunnableMusic = new Runnable() { //xuameng播放音频切换图片
@@ -753,8 +752,6 @@ App.showToastShort(getContext(), "ID是");
                         if(!mControlWrapper.isPlaying()) {
                             playIngXu();
                             togglePlay();
-
-  
                             return;
                         }
                     } //xuameng 低菜单播放监听
@@ -1510,6 +1507,7 @@ App.showToastShort(getContext(), "ID是");
                 isVideoplaying = true;
                 isVideoPlay = true;
                 //playIngXu();	
+				initVisualizer();  //xuameng音乐播放动画
                 break;
             case VideoView.STATE_PAUSED:
                 isVideoPlay = false;
@@ -1554,6 +1552,7 @@ App.showToastShort(getContext(), "ID是");
                 String height = Integer.toString(mControlWrapper.getVideoSize()[1]);
                 mVideoSize.setText("[ " + width + " X " + height + " ]");
                 isVideoPlay = false;
+
                 break;
             case VideoView.STATE_BUFFERED:
                 mPlayLoadNetSpeed.setVisibility(GONE);
@@ -2195,12 +2194,12 @@ private void initVisualizer() {
         return;
     }
     
-    int sessionId = mControlWrapper.getAudioSessionId();
-    if (sessionId <= 0) {
-		 App.showToastShort(getContext(), "字幕已关" + String.valueOf(sessionId));
-        Log.w(TAG, "Invalid audio session ID");
-        return;
-    }
+    int sessionId = mControlWrapper != null ? mControlWrapper.getAudioSessionId() : 0;
+  //  if (sessionId <= 0) {
+	//	 App.showToastShort(getContext(), "字幕已开启2");
+   //     Log.w(TAG, "Invalid audio session ID");
+      //  return;
+   // }
 App.showToastShort(getContext(), String.valueOf(sessionId)); 
     // 权限检查（Android 6.0+）
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && 
@@ -2210,11 +2209,11 @@ App.showToastShort(getContext(), String.valueOf(sessionId));
         Log.w(TAG, "RECORD_AUDIO permission denied");
         return;
     }
-
+        mVisualizer = new Visualizer(sessionId);
+		// App.showToastShort(getContext(), sessionId);
+		App.showToastShort(getContext(), "ID是新新" + String.valueOf(sessionId));
     try {
         // 统一创建Visualizer实例（仅一次）
-				App.showToastShort(getContext(), "ID是新" + String.valueOf(sessionId));
-        mVisualizer = new Visualizer(sessionId);
 
         
         // Android 9.0+特殊配置
