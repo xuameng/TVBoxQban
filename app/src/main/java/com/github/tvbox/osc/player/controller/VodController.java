@@ -2202,7 +2202,7 @@ private void initVisualizer() {
    // }
    		App.showToastShort(getContext(), "ID是新新" + String.valueOf(sessionId));
         mVisualizer = new Visualizer(sessionId);
-
+int targetRate = Visualizer.getMaxCaptureRate() / 2;
     try {
         // 统一创建Visualizer实例（仅一次）
 
