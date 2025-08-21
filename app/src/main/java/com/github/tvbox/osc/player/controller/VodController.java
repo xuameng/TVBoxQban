@@ -2284,6 +2284,7 @@ private void initVisualizer() {
  * 安全释放可视化资源
  */
 private synchronized void releaseVisualizer() {
+	 App.showToastShort(getContext(), "字幕已开启555");
     try {
         if (mVisualizer != null) {
             mVisualizer.setEnabled(false);
@@ -2300,4 +2301,5 @@ private synchronized void releaseVisualizer() {
 }
 
 }
+
 
