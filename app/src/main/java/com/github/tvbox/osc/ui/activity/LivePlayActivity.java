@@ -915,6 +915,7 @@ public class LivePlayActivity extends BaseActivity {
                mVideoView.release();
                mVideoView = null;
            }
+            releaseVisualizer();  //xuameng音乐播放动画
             App.HideToast();  //xuameng HideToast
             cancelxToast();
             super.onBackPressed();
@@ -983,6 +984,7 @@ public class LivePlayActivity extends BaseActivity {
             mVideoView.release();
             mVideoView = null;
         }
+        releaseVisualizer();  //xuameng音乐播放动画
         App.HideToast();  //xuameng HideToast
         cancelxToast();
         super.onBackPressed();
@@ -1919,6 +1921,7 @@ public class LivePlayActivity extends BaseActivity {
                         if(customVisualizer.getVisibility() == View.VISIBLE) { //xuameng播放音乐柱状图
                            customVisualizer.setVisibility(View.GONE);
                         }
+				        releaseVisualizer();  //xuameng播放音乐背景
                         iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
                         sBar = (SeekBar) findViewById(R.id.pb_progressbar); //xuameng重置进度条
                         sBar.setMax(0);
@@ -3275,11 +3278,11 @@ public class LivePlayActivity extends BaseActivity {
     private void initVisualizer() {   //xuameng播放音乐柱状图
         releaseVisualizer();  // 确保先释放已有实例
         // 基础检查
-        if (getContext() == null) {
+        if (mContext() == null) {
             Log.w(TAG, "Context is null");
             return;
         }
-        int sessionId = mControlWrapper != null ? mVideoView.getAudioSessionId() : 0;
+        int sessionId = mVideoView != null ? mVideoView.getAudioSessionId() : 0;
         if (sessionId <= 0) {
             Log.w(TAG, "Invalid audio session ID");
             return;
