@@ -334,7 +334,6 @@ public class VodController extends BaseController {
     private Runnable myRunnableXu = new Runnable() {
         @Override
         public void run() {
-
             String width = Integer.toString(mControlWrapper.getVideoSize()[0]);
             String height = Integer.toString(mControlWrapper.getVideoSize()[1]);
             if(isInPlaybackState()) { //xuameng 重新选择解析视频大小不刷新
@@ -399,7 +398,7 @@ public class VodController extends BaseController {
             } else {
                 iv_circle_bg.setVisibility(GONE);
             } //xuameng音乐播放时图标判断完
-            mHandler.postDelayed(this, 2000);
+            mHandler.postDelayed(this, 100);
         }
     };
     private Runnable myRunnableMusic = new Runnable() { //xuameng播放音频切换图片
@@ -1087,7 +1086,6 @@ public class VodController extends BaseController {
             @Override
             public void onClick(View view) {
                 FastClickCheckUtil.check(view);
-				initVisualizer();  //xuameng音乐播放动画
                 listener.selectSubtitle();
                 if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
                     hideBottom();
@@ -1494,6 +1492,7 @@ public class VodController extends BaseController {
                 if(customVisualizer.getVisibility() == View.VISIBLE) { //xuameng播放音乐背景
                     customVisualizer.setVisibility(GONE);
                 }
+				releaseVisualizer();  //xuameng播放音乐背景
                 isVideoplaying = false;
                 isVideoPlay = false;
                 break;
@@ -1505,7 +1504,6 @@ public class VodController extends BaseController {
                 isVideoplaying = true;
                 isVideoPlay = true;
                 //playIngXu();	
-				
                 break;
             case VideoView.STATE_PAUSED:
                 isVideoPlay = false;
@@ -1550,9 +1548,13 @@ public class VodController extends BaseController {
                 String height = Integer.toString(mControlWrapper.getVideoSize()[1]);
                 mVideoSize.setText("[ " + width + " X " + height + " ]");
                 isVideoPlay = false;
-				App.showToastShort(getContext(), "ID是空");
-				int newSessionId = mControlWrapper.getAudioSessionId();   //xuameng音乐播放动画
-				App.showToastShort(getContext(), "ID是" + String.valueOf(newSessionId));
+                if(width.length() <= 1 && height.length() <= 1 ) {
+                   int newSessionId = mControlWrapper.getAudioSessionId();   //xuameng音乐播放动画
+				   App.showToastShort(getContext(), "ID是buffer" + String.valueOf(newSessionId));
+                   if(newSessionId != audioSessionId) { // 避免重复初始化
+                      initVisualizer();  //xuameng音乐播放动画
+                   }
+				}
                 break;
             case VideoView.STATE_BUFFERED:
                 mPlayLoadNetSpeed.setVisibility(GONE);
@@ -2185,27 +2187,26 @@ public class VodController extends BaseController {
  * 初始化音频可视化组件
  */
 private void initVisualizer() {
-  //  releaseVisualizer();  // 确保先释放已有实例
+    releaseVisualizer();  // 确保先释放已有实例
     
     // 基础检查
     if (getContext() == null) {
-		 App.showToastShort(getContext(), "字幕已开启1");
         Log.w(TAG, "Context is null");
         return;
     }
     
-    int sessionId = mControlWrapper.getAudioSessionId();
-  //  if (sessionId <= 0) {
-	//	 App.showToastShort(getContext(), "字幕已开启2");
-   //     Log.w(TAG, "Invalid audio session ID");
-      //  return;
-   // }
-   		App.showToastShort(getContext(), "ID是新新" + String.valueOf(sessionId));
-        mVisualizer = new Visualizer(sessionId);
-int targetRate = Visualizer.getMaxCaptureRate() / 2;
+    int sessionId = mControlWrapper != null ? mControlWrapper.getAudioSessionId() : 0;
+    if (sessionId <= 0) {
+        Log.w(TAG, "Invalid audio session ID");
+        return;
+    }
+
     try {
         // 统一创建Visualizer实例（仅一次）
-
+		App.showToastShort(getContext(), "ID是新新" + String.valueOf(sessionId));
+        mVisualizer = new Visualizer(sessionId);
+        // 智能采样率设置
+        int targetRate = Visualizer.getMaxCaptureRate() / 2;
         // 设置数据捕获监听器
         mVisualizer.setDataCaptureListener(
             new Visualizer.OnDataCaptureListener() {
@@ -2244,14 +2245,11 @@ int targetRate = Visualizer.getMaxCaptureRate() / 2;
     } catch (IllegalStateException e) {
         Log.e(TAG, "Visualizer state error", e);
         releaseVisualizer();
-		 App.showToastShort(getContext(), "字幕已开启22");
     } catch (UnsupportedOperationException e) {
         Log.e(TAG, "Device doesn't support Visualizer", e);
-		 App.showToastShort(getContext(), "字幕已开启333");
         releaseVisualizer();
     } catch (Exception e) {
         Log.e(TAG, "Visualizer init failed", e);
-		 App.showToastShort(getContext(), "字幕已开启444");
         releaseVisualizer();
     }
 }
@@ -2260,7 +2258,6 @@ int targetRate = Visualizer.getMaxCaptureRate() / 2;
  * 安全释放可视化资源
  */
 private synchronized void releaseVisualizer() {
-	 App.showToastShort(getContext(), "字幕已开启555");
     try {
         if (mVisualizer != null) {
             mVisualizer.setEnabled(false);
@@ -2277,9 +2274,3 @@ private synchronized void releaseVisualizer() {
 }
 
 }
-
-
-
-
-
-
