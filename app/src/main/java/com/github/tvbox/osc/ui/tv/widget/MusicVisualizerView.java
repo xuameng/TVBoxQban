@@ -10,7 +10,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.animation.ValueAnimator;
 
-/**
+/** xuameng
  * 音乐可视化视图组件（带振幅颜色渐变）
  * 新增特性：
  * 1. 振幅越大颜色越红（黄色->橙黄->红渐变）
@@ -76,7 +76,7 @@ public class MusicVisualizerView extends View {
                 byte ifk = fft[barIndex + 1];
                 float magnitude = (rfk * rfk + ifk * ifk);
         
-                // 改进的频率加权策略（三段式加权）
+                // xuameng改进的频率加权策略（三段式加权）
                 float weight;
                 if (i < BAR_COUNT / 4) {
                     // 超低频段(0-200Hz)衰减40%
@@ -163,12 +163,6 @@ public class MusicVisualizerView extends View {
         int green = (int)(Color.green(startColor) + (Color.green(endColor) - Color.green(startColor)) * ratio);
         int blue = (int)(Color.blue(startColor) + (Color.blue(endColor) - Color.blue(startColor)) * ratio);
         return Color.argb(alpha, red, green, blue);
-    }
-
-    // 保留原有方法不变
-    public void setBarColor(int color) {
-        mBarPaint.setColor(color);
-        postInvalidate();
     }
 
     public void reset() {
