@@ -340,9 +340,6 @@ public class VodController extends BaseController {
                 mVideoSize.setText("[ " + width + " X " + height + " ]");
             }
             if(mControlWrapper.isPlaying()) { //xuameng音乐播放时图标判断
-				int newSessionId = mControlWrapper.getAudioSessionId();   //xuameng音乐播放动画
-App.showToastShort(getContext(), "ID是");
-				App.showToastShort(getContext(), "ID是" + String.valueOf(newSessionId));
                 if(!mIsDragging) {
                     mControlWrapper.startProgress(); //xuameng启动进程
                     mControlWrapper.startFadeOut();
@@ -752,6 +749,11 @@ App.showToastShort(getContext(), "ID是");
                         if(!mControlWrapper.isPlaying()) {
                             playIngXu();
                             togglePlay();
+							int newSessionId = mControlWrapper.getAudioSessionId();   //xuameng音乐播放动画
+App.showToastShort(getContext(), "ID是");
+				App.showToastShort(getContext(), "ID是" + String.valueOf(newSessionId));
+                      initVisualizer();  //xuameng音乐播放动画
+  
                             return;
                         }
                     } //xuameng 低菜单播放监听
@@ -1551,15 +1553,6 @@ App.showToastShort(getContext(), "ID是");
                 String height = Integer.toString(mControlWrapper.getVideoSize()[1]);
                 mVideoSize.setText("[ " + width + " X " + height + " ]");
                 isVideoPlay = false;
-int newSessionId = mControlWrapper.getAudioSessionId();   //xuameng音乐播放动画
-App.showToastShort(getContext(), "ID是");
-				App.showToastShort(getContext(), "ID是" + String.valueOf(newSessionId));
-                if(width.length() <= 1 && height.length() <= 1 ) {
-                   int newSessionId11 = mControlWrapper.getAudioSessionId();   //xuameng音乐播放动画
-                   if(newSessionId11 != audioSessionId) { // 避免重复初始化
-                      initVisualizer();  //xuameng音乐播放动画
-                   }
-				}
                 break;
             case VideoView.STATE_BUFFERED:
                 mPlayLoadNetSpeed.setVisibility(GONE);
@@ -2201,9 +2194,9 @@ private void initVisualizer() {
         return;
     }
     
-    int sessionId = mControlWrapper != null ? mControlWrapper.getAudioSessionId() : 0;
+    int sessionId = mControlWrapper.getAudioSessionId();
     if (sessionId <= 0) {
-		 App.showToastShort(getContext(), "字幕已开启2");
+		 App.showToastShort(getContext(), "字幕已关" + String.valueOf(sessionId));
         Log.w(TAG, "Invalid audio session ID");
         return;
     }
@@ -2219,9 +2212,9 @@ App.showToastShort(getContext(), String.valueOf(sessionId));
 
     try {
         // 统一创建Visualizer实例（仅一次）
+				App.showToastShort(getContext(), "ID是新" + String.valueOf(sessionId));
         mVisualizer = new Visualizer(sessionId);
-		// App.showToastShort(getContext(), sessionId);
-		App.showToastShort(getContext(), "ID是" + String.valueOf(sessionId));
+
         
         // Android 9.0+特殊配置
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
