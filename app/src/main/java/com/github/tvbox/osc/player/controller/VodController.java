@@ -2214,11 +2214,12 @@ private void initVisualizer() {
     try {
         // 统一创建Visualizer实例（仅一次）
         mVisualizer = new Visualizer(sessionId);
-		 App.showToastShort(getContext(), "字幕已开启3");
+		 App.showToastShort(getContext(), sessionId);
         
         // Android 9.0+特殊配置
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             mVisualizer.setMeasurementMode(Visualizer.MEASUREMENT_MODE_PEAK_RMS);
+			 App.showToastShort(getContext(), "字幕已开启88");
         }
         // 通用配置
         mVisualizer.setScalingMode(Visualizer.SCALING_MODE_NORMALIZED);
@@ -2232,6 +2233,7 @@ private void initVisualizer() {
         int targetRate = Visualizer.getMaxCaptureRate() / 2;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             targetRate = Math.min(targetRate, 10);
+			 App.showToastShort(getContext(), "字幕已开启99");
         }
         // 设置数据捕获监听器
         mVisualizer.setDataCaptureListener(
@@ -2271,11 +2273,14 @@ private void initVisualizer() {
     } catch (IllegalStateException e) {
         Log.e(TAG, "Visualizer state error", e);
         releaseVisualizer();
+		 App.showToastShort(getContext(), "字幕已开启22");
     } catch (UnsupportedOperationException e) {
         Log.e(TAG, "Device doesn't support Visualizer", e);
+		 App.showToastShort(getContext(), "字幕已开启333");
         releaseVisualizer();
     } catch (Exception e) {
         Log.e(TAG, "Visualizer init failed", e);
+		 App.showToastShort(getContext(), "字幕已开启444");
         releaseVisualizer();
     }
 }
@@ -2301,5 +2306,6 @@ private synchronized void releaseVisualizer() {
 }
 
 }
+
 
 
