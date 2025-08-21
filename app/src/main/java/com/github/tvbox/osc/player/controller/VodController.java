@@ -2201,7 +2201,7 @@ private void initVisualizer() {
         Log.w(TAG, "Invalid audio session ID");
         return;
     }
-
+App.showToastShort(getContext(), String.valueOf(sessionId)); 
     // 权限检查（Android 6.0+）
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && 
         ContextCompat.checkSelfPermission(getContext(), 
@@ -2307,6 +2307,7 @@ private synchronized void releaseVisualizer() {
 }
 
 }
+
 
 
 
