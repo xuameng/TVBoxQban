@@ -2214,7 +2214,8 @@ private void initVisualizer() {
     try {
         // 统一创建Visualizer实例（仅一次）
         mVisualizer = new Visualizer(sessionId);
-		 App.showToastShort(getContext(), sessionId);
+		// App.showToastShort(getContext(), sessionId);
+		App.showToastShort(getContext(), String.valueOf(sessionId));
         
         // Android 9.0+特殊配置
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -2306,6 +2307,7 @@ private synchronized void releaseVisualizer() {
 }
 
 }
+
 
 
 
