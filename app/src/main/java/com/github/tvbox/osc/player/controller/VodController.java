@@ -334,6 +334,10 @@ public class VodController extends BaseController {
     private Runnable myRunnableXu = new Runnable() {
         @Override
         public void run() {
+										int newSessionId = mControlWrapper.getAudioSessionId();   //xuameng音乐播放动画
+App.showToastShort(getContext(), "ID是");
+				App.showToastShort(getContext(), "ID是" + String.valueOf(newSessionId));
+                      initVisualizer();  //xuameng音乐播放动画
             String width = Integer.toString(mControlWrapper.getVideoSize()[0]);
             String height = Integer.toString(mControlWrapper.getVideoSize()[1]);
             if(isInPlaybackState()) { //xuameng 重新选择解析视频大小不刷新
@@ -398,7 +402,7 @@ public class VodController extends BaseController {
             } else {
                 iv_circle_bg.setVisibility(GONE);
             } //xuameng音乐播放时图标判断完
-            mHandler.postDelayed(this, 100);
+            mHandler.postDelayed(this, 5000);
         }
     };
     private Runnable myRunnableMusic = new Runnable() { //xuameng播放音频切换图片
@@ -749,10 +753,7 @@ public class VodController extends BaseController {
                         if(!mControlWrapper.isPlaying()) {
                             playIngXu();
                             togglePlay();
-							int newSessionId = mControlWrapper.getAudioSessionId();   //xuameng音乐播放动画
-App.showToastShort(getContext(), "ID是");
-				App.showToastShort(getContext(), "ID是" + String.valueOf(newSessionId));
-                      initVisualizer();  //xuameng音乐播放动画
+
   
                             return;
                         }
