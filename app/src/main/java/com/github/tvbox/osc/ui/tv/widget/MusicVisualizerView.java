@@ -19,7 +19,7 @@ import android.animation.ValueAnimator;
  */
 public class MusicVisualizerView extends View {
     // 常量定义
-    private static final int MAX_AMPLITUDE = 7000;
+    private static final int MAX_AMPLITUDE = 10000;
     private static final int BAR_COUNT = 22;
     private static final int ANIMATION_DURATION = 200;
     
@@ -83,11 +83,11 @@ public class MusicVisualizerView extends View {
                     weight = 0.6f;
                 } else if (i < BAR_COUNT / 2) {
                     // 中低频段(200-800Hz)基准值
-                    weight = 3.0f;
+                    weight = 1.8f;
                 } else {
                     // 高频段(800Hz+)指数增强
                     float freqFactor = (float) Math.pow(1.5, (i - BAR_COUNT / 2) / 2.0);
-                    weight = 6.0f * freqFactor;
+                    weight = 3.0f * freqFactor;
                 }
             
                 mTargetHeights[i] = Math.min(
