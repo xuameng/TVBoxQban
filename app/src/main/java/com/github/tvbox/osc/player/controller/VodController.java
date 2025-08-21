@@ -334,8 +334,7 @@ public class VodController extends BaseController {
     private Runnable myRunnableXu = new Runnable() {
         @Override
         public void run() {
-				int newSessionId = mControlWrapper.getAudioSessionId();   //xuameng音乐播放动画
-				App.showToastShort(getContext(), "ID是" + String.valueOf(newSessionId));
+
             String width = Integer.toString(mControlWrapper.getVideoSize()[0]);
             String height = Integer.toString(mControlWrapper.getVideoSize()[1]);
             if(isInPlaybackState()) { //xuameng 重新选择解析视频大小不刷新
@@ -1551,8 +1550,9 @@ public class VodController extends BaseController {
                 String height = Integer.toString(mControlWrapper.getVideoSize()[1]);
                 mVideoSize.setText("[ " + width + " X " + height + " ]");
                 isVideoPlay = false;
-				
-
+				App.showToastShort(getContext(), "ID是空");
+				int newSessionId = mControlWrapper.getAudioSessionId();   //xuameng音乐播放动画
+				App.showToastShort(getContext(), "ID是" + String.valueOf(newSessionId));
                 break;
             case VideoView.STATE_BUFFERED:
                 mPlayLoadNetSpeed.setVisibility(GONE);
