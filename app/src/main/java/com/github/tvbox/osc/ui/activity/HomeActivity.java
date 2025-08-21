@@ -35,6 +35,8 @@ import android.net.Uri; //xuameng音乐权限
 import androidx.appcompat.app.AlertDialog; //xuameng音乐权限
 import android.Manifest;  //xuameng音乐权限
 import androidx.core.app.ActivityCompat;  //xuameng音乐权限
+import android.content.SharedPreferences;  //xuameng音乐权限
+import android.content.Context; //xuameng音乐权限
 
 import com.github.tvbox.osc.base.App;
 import android.widget.Toast;
@@ -113,6 +115,8 @@ public class HomeActivity extends BaseActivity {
     private static final int REQUEST_CODE_RECORD_AUDIO = 1001; //xuameng获取音频权限
     private static final String TAG = "PermissionHelper";//xuameng获取音频权限
     private static final int MARSHMALLOW = Build.VERSION_CODES.M;  //xuameng获取音频权限
+    private static final String PREF_PERMISSION_DIALOG = "permission_prefs";   //xuameng获取音频权限
+    private static final String KEY_DIALOG_SHOWN = "dialog_shown";  //xuameng获取音频权限
     private final Runnable mRunnable = new Runnable() {
         @SuppressLint({"DefaultLocale", "SetTextI18n"})
         @Override
@@ -878,11 +882,21 @@ public class HomeActivity extends BaseActivity {
      * 权限被永久拒绝时的提示
      */
     private void showPermanentDenialDialog() {
+        SharedPreferences prefs = getSharedPreferences(PREF_PERMISSION_DIALOG, MODE_PRIVATE);
+    
+        // 检查是否已经显示过
+        if (prefs.getBoolean(KEY_DIALOG_SHOWN, false)) {
+            return;
+        }
+
         new AlertDialog.Builder(this)
             .setTitle("权限被永久禁用")
-            .setMessage("您已永久拒绝麦克风权限，请前往设置手动开启")
+            .setMessage("聚汇影视提示您：您已永久拒绝麦克风权限，请前往设置手动开启！\n\n如点击取消后将不再提示，音频柱状图功能也将无法使用！")
             .setPositiveButton("去设置", (dialog, which) -> launchSystemSettings())
-            .setNegativeButton("取消", null)
+            .setNegativeButton("取消", (dialog, which) -> {
+                // 用户点击取消时记录状态
+                prefs.edit().putBoolean(KEY_DIALOG_SHOWN, true).apply();
+            })
             .setCancelable(false)
             .show();
     }
@@ -893,7 +907,7 @@ public class HomeActivity extends BaseActivity {
     private void showPermissionDeniedDialog() {
         new AlertDialog.Builder(this)
             .setTitle("功能需要权限")
-            .setMessage("音频可视化功能需要访问麦克风\n\n我们将仅用于实时音频分析，不会存储录音内容")
+            .setMessage("聚汇影视提示您：音频柱状图功能需要访问麦克风！请授权！")
             .setPositiveButton("再次请求", (dialog, which) -> requestRecordAudioPermission())
             .setNegativeButton("取消", null)
             .show();
