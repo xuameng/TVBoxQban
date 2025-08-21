@@ -340,6 +340,9 @@ public class VodController extends BaseController {
                 mVideoSize.setText("[ " + width + " X " + height + " ]");
             }
             if(mControlWrapper.isPlaying()) { //xuameng音乐播放时图标判断
+				int newSessionId = mControlWrapper.getAudioSessionId();   //xuameng音乐播放动画
+App.showToastShort(getContext(), "ID是");
+				App.showToastShort(getContext(), "ID是" + String.valueOf(newSessionId));
                 if(!mIsDragging) {
                     mControlWrapper.startProgress(); //xuameng启动进程
                     mControlWrapper.startFadeOut();
@@ -1549,6 +1552,7 @@ public class VodController extends BaseController {
                 mVideoSize.setText("[ " + width + " X " + height + " ]");
                 isVideoPlay = false;
 int newSessionId = mControlWrapper.getAudioSessionId();   //xuameng音乐播放动画
+App.showToastShort(getContext(), "ID是");
 				App.showToastShort(getContext(), "ID是" + String.valueOf(newSessionId));
                 if(width.length() <= 1 && height.length() <= 1 ) {
                    int newSessionId11 = mControlWrapper.getAudioSessionId();   //xuameng音乐播放动画
