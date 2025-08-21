@@ -1548,9 +1548,11 @@ public class VodController extends BaseController {
                 String height = Integer.toString(mControlWrapper.getVideoSize()[1]);
                 mVideoSize.setText("[ " + width + " X " + height + " ]");
                 isVideoPlay = false;
+int newSessionId = mControlWrapper.getAudioSessionId();   //xuameng音乐播放动画
+				App.showToastShort(getContext(), "ID是" + String.valueOf(newSessionId));
                 if(width.length() <= 1 && height.length() <= 1 ) {
-                   int newSessionId = mControlWrapper.getAudioSessionId();   //xuameng音乐播放动画
-                   if(newSessionId != audioSessionId) { // 避免重复初始化
+                   int newSessionId11 = mControlWrapper.getAudioSessionId();   //xuameng音乐播放动画
+                   if(newSessionId11 != audioSessionId) { // 避免重复初始化
                       initVisualizer();  //xuameng音乐播放动画
                    }
 				}
