@@ -69,8 +69,6 @@ public class MusicVisualizerView extends View {
 
     public void updateVisualizer(byte[] fft, float volumeLevel) {
         if (fft == null || fft.length < BAR_COUNT * 2 + 2) return;
-        // 计算音量级别（线性版本）
-        float volumeLevel = calculateVolumeLevel(fft);
         // 修改采样策略：前1/3柱子重点采样低频，后2/3均匀采样中高频
         for (int i = 0; i < BAR_COUNT; i++) {
             int barIndex;
@@ -96,10 +94,12 @@ public class MusicVisualizerView extends View {
                     float freqFactor = (float) Math.pow(1.5, (i - BAR_COUNT / 2) / 2.0);   //xuameng 高频段(800Hz+)指数增强
                     weight = 3.0f * freqFactor;
                 }
-                // 应用音量缩放因子
-                final float scaledWeight = weight * volumeLevel * 3f;
+        // 新增音量控制层（不影响原有加权）
+                final float scaledWeight = weight * volumeLevel;
+                scaledWeight = Math.min(scaledWeight, 10f);
+                scaledWeight = Math.max(scaledWeight, 0.1f);
                 mTargetHeights[i] = Math.min(
-                    (magnitude * getHeight() * weight) / MAX_AMPLITUDE,
+                    (magnitude * getHeight() * scaledWeight) / MAX_AMPLITUDE,
                     getHeight() * 0.95f
                 );
                 mAmplitudeLevels[i] = Math.min(magnitude / MAX_AMPLITUDE, 1.0f);
@@ -197,23 +197,5 @@ public class MusicVisualizerView extends View {
             mAnimator.removeAllUpdateListeners();
         }
         reset();
-    }
-
-    public void onRawDataReceived(byte[] rawData) {
-        if (rawData == null) return;
-        
-        byte[] simulatedFFT = new byte[66];
-        System.arraycopy(rawData, 0, simulatedFFT, 2, 
-            Math.min(rawData.length, simulatedFFT.length - 2));
-        updateVisualizer(simulatedFFT);
-    }
-
-    // 音量计算方法（线性版本）
-    private float calculateVolumeLevel(byte[] fftData) {
-        float max = 0f;
-        for (byte b : fftData) {
-            max = Math.max(max, Math.abs(b));
-        }
-        return max / 128f; // 归一化处理
     }
 }
