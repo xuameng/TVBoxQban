@@ -35,7 +35,7 @@ public class MusicVisualizerView extends View {
         {Color.parseColor("#9400D3"), Color.parseColor("#00FA9A"), Color.parseColor("#FF6347")}   // 紫罗兰-春绿-番茄红
     };
    // private static final long COLOR_CYCLE_DURATION = 10 * 60 * 1000; // 10分钟
-	private static final long COLOR_CYCLE_DURATION = (long)(0.2 * 60 * 1000); // 正确写法
+	private static final long COLOR_CYCLE_DURATION = (long)(0.2 * 60 * 1000); // 12秒切换
     private int currentSchemeIndex = 0;
     private long lastSwitchTime = 0;
 
@@ -87,7 +87,7 @@ public class MusicVisualizerView extends View {
                 if (i < BAR_COUNT / 4) {
                     weight = 1.0f;      //xuameng 增益
                 } else if (i < BAR_COUNT / 2) {
-                    weight = 2.0f;
+                    weight = 2.5f;
                 } else {
                     float freqFactor = (float) Math.pow(1.5, (i - BAR_COUNT / 2) / 2.0);
                     weight = 3.0f * freqFactor;
