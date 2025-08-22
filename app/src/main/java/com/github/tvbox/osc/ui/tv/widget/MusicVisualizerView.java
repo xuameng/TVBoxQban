@@ -67,7 +67,7 @@ public class MusicVisualizerView extends View {
         mBarPaint.setStyle(Paint.Style.FILL);
     }
 
-    public void updateVisualizer(byte[] fft) {
+    public void updateVisualizer(byte[] fft, float volumeLevel) {
         if (fft == null || fft.length < BAR_COUNT * 2 + 2) return;
         // 计算音量级别（线性版本）
         float volumeLevel = calculateVolumeLevel(fft);
