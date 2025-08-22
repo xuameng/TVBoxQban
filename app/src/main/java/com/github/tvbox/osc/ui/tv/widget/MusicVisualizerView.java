@@ -140,7 +140,7 @@ public class MusicVisualizerView extends View {
     }
 
     @Override
-    protected void onDraw(Canvas canvas) {
+     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         if (mBarHeights == null) return;
 
@@ -158,14 +158,17 @@ public class MusicVisualizerView extends View {
             float right = left + barUnitWidth;
             float barHeight = Math.min(mBarHeights[i], height * 0.9f);
             float top = height - barHeight;
-            
-            // 根据当前颜色方案和振幅强度计算颜色
-			int color = getDynamicColor(mAmplitudeLevels, colorSchemes[currentSchemeIndex]);
+        
+            // 修正后的颜色计算
+            int color = getDynamicColor(
+                mAmplitudeLevels[i],  // 单个振幅值
+                colorSchemes[currentSchemeIndex]); // 颜色方案
+        
             mBarPaint.setColor(color);
-            
             canvas.drawRect(left, top, right, height, mBarPaint);
         }
     }
+
     /**
      * 根据振幅强度计算渐变颜色
      */
