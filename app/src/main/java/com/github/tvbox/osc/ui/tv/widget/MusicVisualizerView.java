@@ -35,6 +35,7 @@ public class MusicVisualizerView extends View {
                 Color.HSVToColor(new float[]{(baseHue + 240) % 360, 1f, 1f})
             };
         }
+        postInvalidate(); // 新增：立即刷新视图
     }
 
     // 修改调用方式
@@ -43,11 +44,8 @@ public class MusicVisualizerView extends View {
         if (now - lastSwitchTime > COLOR_CYCLE_DURATION) {
             currentSchemeIndex = (currentSchemeIndex + 1) % colorSchemes.length;
             lastSwitchTime = now;
-        
-            // 添加颜色方案刷新逻辑
-            if (currentSchemeIndex == 0) {
+            // 优化刷新逻辑（不再需要currentSchemeIndex检查）
             refreshColorSchemes();
-            }
         }
     }
 
@@ -82,6 +80,7 @@ public class MusicVisualizerView extends View {
 
     private void init() {
         mBarPaint.setStyle(Paint.Style.FILL);
+        refreshColorSchemes();  // 新增：初始化时预加载颜色方案
     }
 
     public void updateVisualizer(byte[] fft) {
