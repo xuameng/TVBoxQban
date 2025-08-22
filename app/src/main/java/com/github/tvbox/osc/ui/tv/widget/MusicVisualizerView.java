@@ -158,9 +158,11 @@ public class MusicVisualizerView extends View {
             float right = left + barUnitWidth;
             float barHeight = Math.min(mBarHeights[i], height * 0.9f);
             float top = height - barHeight;
-            
-            // 根据当前颜色方案和振幅强度计算颜色
-			int color = getDynamicColor(mAmplitudeLevels, colorSchemes[currentSchemeIndex]);
+            // 修改调用方式（遍历每个柱状图的振幅）
+            for (int i = 0; i < BAR_COUNT; i++) {
+                int color = getDynamicColor(mAmplitudeLevels[i], colorSchemes[currentSchemeIndex]);
+                 // 使用color进行绘制...
+            }
             mBarPaint.setColor(color);
             
             canvas.drawRect(left, top, right, height, mBarPaint);
