@@ -172,6 +172,7 @@ public class MusicVisualizerView extends View {
      * 根据振幅强度计算渐变颜色
      */
     private int getDynamicColor(float amplitude, int[] currentScheme) {
+        amplitude = Math.max(0.0f, Math.min(1.0f, amplitude));  // 确保振幅在有效范围内
         if (amplitude < 0.3f) {
             return interpolateColor(amplitude / 0.3f, currentScheme[0], currentScheme[1]);
         } else {
