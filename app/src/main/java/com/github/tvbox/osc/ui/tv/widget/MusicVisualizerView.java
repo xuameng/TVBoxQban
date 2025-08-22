@@ -69,14 +69,16 @@ public class MusicVisualizerView extends View {
 
     public void updateVisualizer(byte[] fft) {
         if (fft == null || fft.length < BAR_COUNT * 2 + 2) return;
+        // 计算音量级别（线性版本）
+        float volumeLevel = calculateVolumeLevel(fft);
         // 修改采样策略：前1/3柱子重点采样低频，后2/3均匀采样中高频
         for (int i = 0; i < BAR_COUNT; i++) {
             int barIndex;
             if (i < BAR_COUNT / 3) {
-           // 低频段密集采样（每2点取1）
+            // 低频段密集采样（每2点取1）
                 barIndex = 2 + i * 2;
             } else {
-           // 中高频段间隔采样（每4点取1）
+                // 中高频段间隔采样（每4点取1）
                 barIndex = 2 + (BAR_COUNT / 3) * 2 + (i - BAR_COUNT / 3) * 4;
             }
     
@@ -84,7 +86,7 @@ public class MusicVisualizerView extends View {
                 byte rfk = fft[barIndex];
                 byte ifk = fft[barIndex + 1];
                 float magnitude = (rfk * rfk + ifk * ifk);
-           // xuameng改进的频率加权策略（三段式加权）
+                // xuameng改进的频率加权策略（三段式加权）
                 float weight;
                 if (i < BAR_COUNT / 4) {
                     weight = 1.0f;      //xuameng 超低频段(0-200Hz)增益
@@ -94,7 +96,8 @@ public class MusicVisualizerView extends View {
                     float freqFactor = (float) Math.pow(1.5, (i - BAR_COUNT / 2) / 2.0);   //xuameng 高频段(800Hz+)指数增强
                     weight = 3.0f * freqFactor;
                 }
-            
+                // 应用音量缩放因子
+                final float scaledWeight = weight * volumeLevel * 3f;
                 mTargetHeights[i] = Math.min(
                     (magnitude * getHeight() * weight) / MAX_AMPLITUDE,
                     getHeight() * 0.95f
@@ -203,5 +206,14 @@ public class MusicVisualizerView extends View {
         System.arraycopy(rawData, 0, simulatedFFT, 2, 
             Math.min(rawData.length, simulatedFFT.length - 2));
         updateVisualizer(simulatedFFT);
+    }
+
+    // 音量计算方法（线性版本）
+    private float calculateVolumeLevel(byte[] fftData) {
+        float max = 0f;
+        for (byte b : fftData) {
+            max = Math.max(max, Math.abs(b));
+        }
+        return max / 128f; // 归一化处理
     }
 }
