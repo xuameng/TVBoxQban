@@ -18,7 +18,7 @@ import android.animation.ValueAnimator;
  * 3. 完全兼容原有接口
  */
 public class MusicVisualizerView extends View {
-    private static final int MAX_AMPLITUDE = 5000; // 基础值
+    private static final int MAX_AMPLITUDE = 10000; // 基础值
     private static final int BAR_COUNT = 22;
     private static final int ANIMATION_DURATION = 200;
     
@@ -69,8 +69,20 @@ public class MusicVisualizerView extends View {
 
     public void updateVisualizer(byte[] fft, float volumeLevel) {
         if (fft == null || fft.length < BAR_COUNT * 2 + 2) return;
-        // 新增动态振幅计算
+        // 新增全局静音状态判断
+        boolean isMuted = (volumeLevel <= 0.0f);
+        // 当静音时直接重置所有音柱
+        if (isMuted) {
+            for (int i = 0; i < BAR_COUNT; i++) {
+                mTargetHeights[i] = 0;
+                mAmplitudeLevels[i] = 0;
+            }
+            startAnimation();
+            return;
+        }
+    // 新增振幅平滑处理（防止数值突变）
         float currentMaxAmp = calculateMaxAmplitude(fft);
+        currentMaxAmp = Math.max(currentMaxAmp, 1f); // 防止除零
         // 音量有效性检查（新增）
         boolean isVolumeActive = (volumeLevel > 0.01f); // 设置0.01f为最小有效阈值
         // 修改采样策略：前1/3柱子重点采样低频，后2/3均匀采样中高频
@@ -98,21 +110,19 @@ public class MusicVisualizerView extends View {
                     float freqFactor = (float) Math.pow(1.5, (i - BAR_COUNT / 2) / 2.0);   //xuameng 高频段(800Hz+)指数增强
                     weight = 3.0f * freqFactor;
                 }
-                // 新增音量控制层（不影响原有加权）
-                float scaledWeight = weight * volumeLevel;
-                scaledWeight = Math.min(scaledWeight, 10f);
-                scaledWeight = Math.max(scaledWeight, 0.1f);
-                if (isVolumeActive) {
-                    mTargetHeights[i] = Math.min(
-                        (magnitude * getHeight() * scaledWeight) / currentMaxAmp,
-                        getHeight() * 0.95f
-                    );
-                    mAmplitudeLevels[i] = Math.min(magnitude / currentMaxAmp, 1.0f);
-                } else {
-                    // 音量关闭时重置音柱
-                    mTargetHeights[i] = 0;
-                    mAmplitudeLevels[i] = 0;
-                }
+            // 强化音量控制
+            // 音量控制层（新增增益系数）
+            float audioGain = 3.0f; // 可调节系数
+            float effectiveVolume = Math.max(volumeLevel, 0.01f);
+            float scaledWeight = weight * effectiveVolume * audioGain;;
+            scaledWeight = Math.min(scaledWeight, 10f);
+            scaledWeight = Math.max(scaledWeight, 0.1f);
+            
+            mTargetHeights[i] = Math.min(
+                (magnitude * getHeight() * scaledWeight) / currentMaxAmp,
+                getHeight() * 0.95f
+            );
+            mAmplitudeLevels[i] = Math.min(magnitude / currentMaxAmp, 1.0f);
             }
         }
         startAnimation();
