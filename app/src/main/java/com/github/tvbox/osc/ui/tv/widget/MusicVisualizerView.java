@@ -18,7 +18,7 @@ import android.animation.ValueAnimator;
  * 3. 完全兼容原有接口
  */
 public class MusicVisualizerView extends View {
-    private static final int MAX_AMPLITUDE = 10000;
+    private static final int MAX_AMPLITUDE = 5000; // 基础值
     private static final int BAR_COUNT = 22;
     private static final int ANIMATION_DURATION = 200;
     
@@ -69,6 +69,10 @@ public class MusicVisualizerView extends View {
 
     public void updateVisualizer(byte[] fft, float volumeLevel) {
         if (fft == null || fft.length < BAR_COUNT * 2 + 2) return;
+        // 新增动态振幅计算
+        float currentMaxAmp = calculateMaxAmplitude(fft);
+        // 音量有效性检查（新增）
+        boolean isVolumeActive = (volumeLevel > 0.01f); // 设置0.01f为最小有效阈值
         // 修改采样策略：前1/3柱子重点采样低频，后2/3均匀采样中高频
         for (int i = 0; i < BAR_COUNT; i++) {
             int barIndex;
@@ -94,15 +98,21 @@ public class MusicVisualizerView extends View {
                     float freqFactor = (float) Math.pow(1.5, (i - BAR_COUNT / 2) / 2.0);   //xuameng 高频段(800Hz+)指数增强
                     weight = 3.0f * freqFactor;
                 }
-        // 新增音量控制层（不影响原有加权）
+                // 新增音量控制层（不影响原有加权）
                 float scaledWeight = weight * volumeLevel;
                 scaledWeight = Math.min(scaledWeight, 10f);
                 scaledWeight = Math.max(scaledWeight, 0.1f);
-                mTargetHeights[i] = Math.min(
-                    (magnitude * getHeight() * scaledWeight) / MAX_AMPLITUDE,
-                    getHeight() * 0.95f
-                );
-                mAmplitudeLevels[i] = Math.min(magnitude / MAX_AMPLITUDE, 1.0f);
+                if (isVolumeActive) {
+                    mTargetHeights[i] = Math.min(
+                        (magnitude * getHeight() * scaledWeight) / currentMaxAmp,
+                        getHeight() * 0.95f
+                    );
+                    mAmplitudeLevels[i] = Math.min(magnitude / currentMaxAmp, 1.0f);
+                } else {
+                    // 音量关闭时重置音柱
+                    mTargetHeights[i] = 0;
+                    mAmplitudeLevels[i] = 0;
+                }
             }
         }
         startAnimation();
@@ -197,5 +207,13 @@ public class MusicVisualizerView extends View {
             mAnimator.removeAllUpdateListeners();
         }
         reset();
+    }
+    private float calculateMaxAmplitude(byte[] fft) {
+        float max = 0;
+        for(int i=0; i<fft.length-1; i+=2) {
+            float mag = fft[i]*fft[i] + fft[i+1]*fft[i+1];
+            max = Math.max(max, mag);
+        }
+        return Math.max(max, MAX_AMPLITUDE); // 确保不低于基础值
     }
 }
