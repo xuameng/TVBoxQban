@@ -2237,12 +2237,12 @@ public class VodController extends BaseController {
         }
     }
 
-    // 音量计算方法（对数压缩版本）
+    // 改进方案2：直接使用线性音量（备选）
     private float calculateVolumeLevel(byte[] fftData) {
-        float max = 0f;
+        float sum = 0f;
         for (byte b : fftData) {
-            max = Math.max(max, Math.abs(b));
+            sum += Math.abs(b);
         }
-        return (float) Math.log(max + 1) / 7f; // 对数压缩曲线
+        return sum / fftData.length; // 简单平均音量
     }
 }
