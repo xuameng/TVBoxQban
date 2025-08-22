@@ -69,12 +69,14 @@ public class MusicVisualizerView extends View {
 
     public void updateVisualizer(byte[] fft) {
         if (fft == null || fft.length < BAR_COUNT * 2 + 2) return;
-
+        // 修改采样策略：前1/3柱子重点采样低频，后2/3均匀采样中高频
         for (int i = 0; i < BAR_COUNT; i++) {
             int barIndex;
             if (i < BAR_COUNT / 3) {
+           // 低频段密集采样（每2点取1）
                 barIndex = 2 + i * 2;
             } else {
+           // 中高频段间隔采样（每4点取1）
                 barIndex = 2 + (BAR_COUNT / 3) * 2 + (i - BAR_COUNT / 3) * 4;
             }
     
@@ -82,14 +84,14 @@ public class MusicVisualizerView extends View {
                 byte rfk = fft[barIndex];
                 byte ifk = fft[barIndex + 1];
                 float magnitude = (rfk * rfk + ifk * ifk);
-        
+           // xuameng改进的频率加权策略（三段式加权）
                 float weight;
                 if (i < BAR_COUNT / 4) {
-                    weight = 1.0f;      //xuameng 增益
+                    weight = 1.0f;      //xuameng 超低频段(0-200Hz)增益
                 } else if (i < BAR_COUNT / 2) {
-                    weight = 2.5f;
+                    weight = 2.5f;  //xuameng 中低频段(200-800Hz)基准值增益
                 } else {
-                    float freqFactor = (float) Math.pow(1.5, (i - BAR_COUNT / 2) / 2.0);
+                    float freqFactor = (float) Math.pow(1.5, (i - BAR_COUNT / 2) / 2.0);   //xuameng 高频段(800Hz+)指数增强
                     weight = 3.0f * freqFactor;
                 }
             
@@ -156,7 +158,9 @@ public class MusicVisualizerView extends View {
             lastSwitchTime = now;
         }
     }
-
+    /**
+     * 根据振幅强度计算渐变颜色
+     */
     private int getDynamicColor(float amplitude, int[] currentScheme) {
         if (amplitude < 0.3f) {
             return interpolateColor(amplitude / 0.3f, currentScheme[0], currentScheme[1]);
@@ -164,7 +168,9 @@ public class MusicVisualizerView extends View {
             return interpolateColor((amplitude - 0.3f) / 0.7f, currentScheme[1], currentScheme[2]);
         }
     }
-
+    /**
+     * 颜色插值计算
+     */
     private int interpolateColor(float ratio, int startColor, int endColor) {
         int alpha = (int)(Color.alpha(startColor) + (Color.alpha(endColor) - Color.alpha(startColor)) * ratio);
         int red = (int)(Color.red(startColor) + (Color.red(endColor) - Color.red(startColor)) * ratio);
