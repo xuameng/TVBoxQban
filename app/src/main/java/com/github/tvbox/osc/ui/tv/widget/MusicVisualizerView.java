@@ -25,8 +25,8 @@ public class MusicVisualizerView extends View {
     // 新增：多组颜色方案
     private static final int[][] COLOR_SCHEMES = {
         {Color.parseColor("#DBDB70"), Color.parseColor("#FF8A00"), Color.parseColor("#FF0000")}, // 黄-橙-红
-        {Color.parseColor("#70DBDB"), Color.parseColor("#00FF8A"), Color.parseColor("#00FFFF")}, // 青-绿-青蓝
-        {Color.parseColor("#DB70DB"), Color.parseColor("#FF00FF"), Color.parseColor("#FF00FF")},  // 紫-品红-品红
+        {Color.parseColor("#FF8C00"), Color.parseColor("#00FF7F"), Color.parseColor("#8A2BE2")}, // 橙-绿-紫
+        {Color.parseColor("#FF0000"), Color.parseColor("#FFFF00"), Color.parseColor("#0000FF")}, // 红-黄-蓝
         {Color.parseColor("#FF5733"), Color.parseColor("#33FF57"), Color.parseColor("#3357FF")}, // 橙红-亮绿-亮蓝
         {Color.parseColor("#FFD700"), Color.parseColor("#FF00FF"), Color.parseColor("#00CED1")},  // 金色-品红-深绿松石
         {Color.parseColor("#FF4500"), Color.parseColor("#32CD32"), Color.parseColor("#FFD700")}, // 橙红-酸橙绿-金色
