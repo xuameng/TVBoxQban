@@ -18,11 +18,11 @@ import android.animation.ValueAnimator;
  * 3. 完全兼容原有接口
  */
 public class MusicVisualizerView extends View {
-    private static final int MAX_AMPLITUDE = 32767;
+    private static final int MAX_AMPLITUDE = 10000;
     private static final int BAR_COUNT = 22;
     private static final int ANIMATION_DURATION = 200;
     
-    // 新增：三组颜色方案
+    // 新增：多组颜色方案
     private static final int[][] COLOR_SCHEMES = {
         {Color.parseColor("#DBDB70"), Color.parseColor("#FF8A00"), Color.parseColor("#FF0000")}, // 黄-橙-红
         {Color.parseColor("#70DBDB"), Color.parseColor("#00FF8A"), Color.parseColor("#00FFFF")}, // 青-绿-青蓝
@@ -85,12 +85,12 @@ public class MusicVisualizerView extends View {
         
                 float weight;
                 if (i < BAR_COUNT / 4) {
-                    weight = 1.0f;
+                    weight = 1.0f;      //xuameng 增益
                 } else if (i < BAR_COUNT / 2) {
-                    weight = 1.0f;
+                    weight = 2.0f;
                 } else {
                     float freqFactor = (float) Math.pow(1.5, (i - BAR_COUNT / 2) / 2.0);
-                    weight = 1.0f * freqFactor;
+                    weight = 3.0f * freqFactor;
                 }
             
                 mTargetHeights[i] = Math.min(
