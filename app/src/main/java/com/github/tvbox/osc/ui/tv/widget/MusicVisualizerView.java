@@ -22,35 +22,20 @@ public class MusicVisualizerView extends View {
     private static final int BAR_COUNT = 22;
     private static final int ANIMATION_DURATION = 200;
     
-    // 改为非静态变量实现动态刷新
-    private int[][] colorSchemes = new int[3][3];
-
-    // 新增颜色方案刷新方法
-    private void refreshColorSchemes() {
-        for (int i = 0; i < 3; i++) {
-            float baseHue = (float) (Math.random() * 360);
-            colorSchemes[i] = new int[]{
-                Color.HSVToColor(new float[]{baseHue, 1f, 1f}),
-                Color.HSVToColor(new float[]{(baseHue + 120) % 360, 1f, 1f}),
-                Color.HSVToColor(new float[]{(baseHue + 240) % 360, 1f, 1f})
-            };
-        }
-        postInvalidate(); // 新增：立即刷新视图
-    }
-
-    // 修改调用方式
-    private void checkColorCycleSwitch() {
-        long now = System.currentTimeMillis();
-        if (now - lastSwitchTime > COLOR_CYCLE_DURATION) {
-            currentSchemeIndex = (currentSchemeIndex + 1) % colorSchemes.length;
-            lastSwitchTime = now;
-            // 优化刷新逻辑（不再需要currentSchemeIndex检查）
-            refreshColorSchemes();
-        }
-    }
-
+    // 新增：多组颜色方案
+    private static final int[][] COLOR_SCHEMES = {
+        {Color.parseColor("#DBDB70"), Color.parseColor("#FF8A00"), Color.parseColor("#FF0000")}, // 黄-橙-红
+        {Color.parseColor("#FF8C00"), Color.parseColor("#00FF7F"), Color.parseColor("#8A2BE2")}, // 橙-绿-紫
+        {Color.parseColor("#FF0000"), Color.parseColor("#FFFF00"), Color.parseColor("#0000FF")}, // 红-黄-蓝
+        {Color.parseColor("#FF5733"), Color.parseColor("#33FF57"), Color.parseColor("#3357FF")}, // 橙红-亮绿-亮蓝
+        {Color.parseColor("#FFD700"), Color.parseColor("#FF00FF"), Color.parseColor("#00CED1")},  // 金色-品红-深绿松石
+        {Color.parseColor("#FF4500"), Color.parseColor("#32CD32"), Color.parseColor("#FFD700")}, // 橙红-酸橙绿-金色
+        {Color.parseColor("#FF0000"), Color.parseColor("#00FF00"), Color.parseColor("#0000FF")}, // 纯红-纯绿-纯蓝
+        {Color.parseColor("#FF00FF"), Color.parseColor("#00FFFF"), Color.parseColor("#FFFF00")},  // 品红-青柠-亮黄
+        {Color.parseColor("#9400D3"), Color.parseColor("#00FA9A"), Color.parseColor("#FF6347")}   // 紫罗兰-春绿-番茄红
+    };
    // private static final long COLOR_CYCLE_DURATION = 10 * 60 * 1000; // 10分钟
-	private static final long COLOR_CYCLE_DURATION = (long)(0.1 * 60 * 1000); // 12秒切换
+	private static final long COLOR_CYCLE_DURATION = (long)(0.1 * 60 * 1000); // 6秒切换
     private int currentSchemeIndex = 0;
     private long lastSwitchTime = 0;
 
@@ -80,7 +65,6 @@ public class MusicVisualizerView extends View {
 
     private void init() {
         mBarPaint.setStyle(Paint.Style.FILL);
-        refreshColorSchemes();  // 新增：初始化时预加载颜色方案
     }
 
     public void updateVisualizer(byte[] fft, float volumeLevel) {
@@ -89,10 +73,10 @@ public class MusicVisualizerView extends View {
         for (int i = 0; i < BAR_COUNT; i++) {
             int barIndex;
             if (i < BAR_COUNT / 3) {
-           // 低频段密集采样（每2点取1）
+            // 低频段密集采样（每2点取1）
                 barIndex = 2 + i * 2;
             } else {
-           // 中高频段间隔采样（每4点取1）
+                // 中高频段间隔采样（每4点取1）
                 barIndex = 2 + (BAR_COUNT / 3) * 2 + (i - BAR_COUNT / 3) * 4;
             }
     
@@ -100,7 +84,7 @@ public class MusicVisualizerView extends View {
                 byte rfk = fft[barIndex];
                 byte ifk = fft[barIndex + 1];
                 float magnitude = (rfk * rfk + ifk * ifk);
-           // xuameng改进的频率加权策略（三段式加权）
+                // xuameng改进的频率加权策略（三段式加权）
                 float weight;
                 if (i < BAR_COUNT / 4) {
                     weight = 1.0f;      //xuameng 超低频段(0-200Hz)增益
@@ -111,7 +95,7 @@ public class MusicVisualizerView extends View {
                     weight = 3.0f * freqFactor;
                 }
                 // 新增音量控制层（不影响原有加权）
-                float scaledWeight = Math.max(0f, Math.min(1f, weight * (volumeLevel / 10f)));
+				float scaledWeight = Math.max(0f, Math.min(1f, weight * (volumeLevel / 3f)));
                 scaledWeight = Math.min(scaledWeight, 10f);
                 scaledWeight = Math.max(scaledWeight, 0.1f);
                 mTargetHeights[i] = Math.min(
@@ -120,7 +104,6 @@ public class MusicVisualizerView extends View {
                 );
                 mAmplitudeLevels[i] = Math.min(magnitude / MAX_AMPLITUDE, 1.0f);
             }
-        }
         }
         startAnimation();
     }
@@ -143,7 +126,7 @@ public class MusicVisualizerView extends View {
     }
 
     @Override
-     protected void onDraw(Canvas canvas) {
+    protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         if (mBarHeights == null) return;
 
@@ -161,17 +144,23 @@ public class MusicVisualizerView extends View {
             float right = left + barUnitWidth;
             float barHeight = Math.min(mBarHeights[i], height * 0.9f);
             float top = height - barHeight;
-        
-            // 修正后的颜色计算
-            int color = getDynamicColor(
-                mAmplitudeLevels[i],  // 单个振幅值
-                colorSchemes[currentSchemeIndex]); // 颜色方案
-        
+            
+            // 根据当前颜色方案和振幅强度计算颜色
+            int color = getDynamicColor(mAmplitudeLevels[i], COLOR_SCHEMES[currentSchemeIndex]);
             mBarPaint.setColor(color);
+            
             canvas.drawRect(left, top, right, height, mBarPaint);
         }
     }
 
+    // 新增：检查是否需要切换颜色方案
+    private void checkColorCycleSwitch() {
+        long now = System.currentTimeMillis();
+        if (now - lastSwitchTime > COLOR_CYCLE_DURATION) {
+            currentSchemeIndex = (currentSchemeIndex + 1) % COLOR_SCHEMES.length;
+            lastSwitchTime = now;
+        }
+    }
     /**
      * 根据振幅强度计算渐变颜色
      */
