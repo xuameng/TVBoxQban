@@ -18,16 +18,43 @@ import android.animation.ValueAnimator;
  * 3. 完全兼容原有接口
  */
 public class MusicVisualizerView extends View {
-    // 常量定义
     private static final int MAX_AMPLITUDE = 10000;
     private static final int BAR_COUNT = 22;
     private static final int ANIMATION_DURATION = 200;
     
-    private static final int[] COLOR_SPECTRUM = {
-        Color.parseColor("#DBDB70"), // 黄色
-        Color.parseColor("#FF8A00"), // 橙黄
-        Color.parseColor("#FF0000")  // 橙红
-    };
+    // 改为非静态变量实现动态刷新
+    private int[][] colorSchemes = new int[3][3];
+
+    // 新增颜色方案刷新方法
+    private void refreshColorSchemes() {
+        for (int i = 0; i < 3; i++) {
+            float baseHue = (float) (Math.random() * 360);
+            colorSchemes[i] = new int[]{
+                Color.HSVToColor(new float[]{baseHue, 1f, 1f}),
+                Color.HSVToColor(new float[]{(baseHue + 120) % 360, 1f, 1f}),
+                Color.HSVToColor(new float[]{(baseHue + 240) % 360, 1f, 1f})
+            };
+        }
+    }
+
+    // 修改调用方式
+    private void checkColorCycleSwitch() {
+        long now = System.currentTimeMillis();
+        if (now - lastSwitchTime > COLOR_CYCLE_DURATION) {
+            currentSchemeIndex = (currentSchemeIndex + 1) % colorSchemes.length;
+            lastSwitchTime = now;
+        
+            // 添加颜色方案刷新逻辑
+            if (currentSchemeIndex == 0) {
+            refreshColorSchemes();
+            }
+        }
+    }
+
+   // private static final long COLOR_CYCLE_DURATION = 10 * 60 * 1000; // 10分钟
+	private static final long COLOR_CYCLE_DURATION = (long)(0.1 * 60 * 1000); // 12秒切换
+    private int currentSchemeIndex = 0;
+    private long lastSwitchTime = 0;
 
     // 绘图工具
     private final Paint mBarPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -59,15 +86,14 @@ public class MusicVisualizerView extends View {
 
     public void updateVisualizer(byte[] fft) {
         if (fft == null || fft.length < BAR_COUNT * 2 + 2) return;
-
         // 修改采样策略：前1/3柱子重点采样低频，后2/3均匀采样中高频
         for (int i = 0; i < BAR_COUNT; i++) {
             int barIndex;
             if (i < BAR_COUNT / 3) {
-                // 低频段密集采样（每2点取1）
+           // 低频段密集采样（每2点取1）
                 barIndex = 2 + i * 2;
             } else {
-                // 中高频段间隔采样（每4点取1）
+           // 中高频段间隔采样（每4点取1）
                 barIndex = 2 + (BAR_COUNT / 3) * 2 + (i - BAR_COUNT / 3) * 4;
             }
     
@@ -75,18 +101,14 @@ public class MusicVisualizerView extends View {
                 byte rfk = fft[barIndex];
                 byte ifk = fft[barIndex + 1];
                 float magnitude = (rfk * rfk + ifk * ifk);
-        
-                // xuameng改进的频率加权策略（三段式加权）
+           // xuameng改进的频率加权策略（三段式加权）
                 float weight;
                 if (i < BAR_COUNT / 4) {
-                    // 超低频段(0-200Hz)衰减40%
-                    weight = 0.6f;
+                    weight = 1.0f;      //xuameng 超低频段(0-200Hz)增益
                 } else if (i < BAR_COUNT / 2) {
-                    // 中低频段(200-800Hz)基准值
-                    weight = 1.8f;
+                    weight = 2.5f;  //xuameng 中低频段(200-800Hz)基准值增益
                 } else {
-                    // 高频段(800Hz+)指数增强
-                    float freqFactor = (float) Math.pow(1.5, (i - BAR_COUNT / 2) / 2.0);
+                    float freqFactor = (float) Math.pow(1.5, (i - BAR_COUNT / 2) / 2.0);   //xuameng 高频段(800Hz+)指数增强
                     weight = 3.0f * freqFactor;
                 }
             
@@ -99,7 +121,6 @@ public class MusicVisualizerView extends View {
         }
         startAnimation();
     }
-
 
     private void startAnimation() {
         if (mAnimator != null) {
@@ -123,6 +144,9 @@ public class MusicVisualizerView extends View {
         super.onDraw(canvas);
         if (mBarHeights == null) return;
 
+        // 检查是否需要切换颜色方案
+        checkColorCycleSwitch();
+
         final int width = getWidth();
         final int height = getHeight();
         final float barWidth = width / (float) BAR_COUNT;
@@ -135,25 +159,23 @@ public class MusicVisualizerView extends View {
             float barHeight = Math.min(mBarHeights[i], height * 0.9f);
             float top = height - barHeight;
             
-            // 根据振幅强度计算颜色
-            int color = getDynamicColor(mAmplitudeLevels[i]);
+            // 根据当前颜色方案和振幅强度计算颜色
+			int color = getDynamicColor(mAmplitudeLevels, colorSchemes[currentSchemeIndex]);
             mBarPaint.setColor(color);
             
             canvas.drawRect(left, top, right, height, mBarPaint);
         }
     }
-
     /**
      * 根据振幅强度计算渐变颜色
      */
-    private int getDynamicColor(float amplitude) {
+    private int getDynamicColor(float amplitude, int[] currentScheme) {
         if (amplitude < 0.3f) {
-            return interpolateColor(amplitude / 0.3f, COLOR_SPECTRUM[0], COLOR_SPECTRUM[1]);
+            return interpolateColor(amplitude / 0.3f, currentScheme[0], currentScheme[1]);
         } else {
-            return interpolateColor((amplitude - 0.3f) / 0.7f, COLOR_SPECTRUM[1], COLOR_SPECTRUM[2]);
+            return interpolateColor((amplitude - 0.3f) / 0.7f, currentScheme[1], currentScheme[2]);
         }
     }
-
     /**
      * 颜色插值计算
      */
