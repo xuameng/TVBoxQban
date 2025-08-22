@@ -22,35 +22,34 @@ public class MusicVisualizerView extends View {
     private static final int BAR_COUNT = 22;
     private static final int ANIMATION_DURATION = 200;
     
-    // 新增：随机颜色方案
-// 改为非静态变量实现动态刷新
-private int[][] colorSchemes = new int[3][3];
+    // 改为非静态变量实现动态刷新
+    private int[][] colorSchemes = new int[3][3];
 
-// 新增颜色方案刷新方法
-private void refreshColorSchemes() {
-    for (int i = 0; i < 3; i++) {
-        float baseHue = (float) (Math.random() * 360);
-        colorSchemes[i] = new int[]{
-            Color.HSVToColor(new float[]{baseHue, 1f, 1f}),
-            Color.HSVToColor(new float[]{(baseHue + 120) % 360, 1f, 1f}),
-            Color.HSVToColor(new float[]{(baseHue + 240) % 360, 1f, 1f})
-        };
-    }
-}
-
-// 修改调用方式
-private void checkColorCycleSwitch() {
-    long now = System.currentTimeMillis();
-    if (now - lastSwitchTime > COLOR_CYCLE_DURATION) {
-        currentSchemeIndex = (currentSchemeIndex + 1) % colorSchemes.length;
-        lastSwitchTime = now;
-        
-        // 添加颜色方案刷新逻辑
-        if (currentSchemeIndex == 0) {
-            refreshColorSchemes();
+    // 新增颜色方案刷新方法
+    private void refreshColorSchemes() {
+        for (int i = 0; i < 3; i++) {
+            float baseHue = (float) (Math.random() * 360);
+            colorSchemes[i] = new int[]{
+                Color.HSVToColor(new float[]{baseHue, 1f, 1f}),
+                Color.HSVToColor(new float[]{(baseHue + 120) % 360, 1f, 1f}),
+                Color.HSVToColor(new float[]{(baseHue + 240) % 360, 1f, 1f})
+            };
         }
     }
-}
+
+    // 修改调用方式
+    private void checkColorCycleSwitch() {
+        long now = System.currentTimeMillis();
+        if (now - lastSwitchTime > COLOR_CYCLE_DURATION) {
+            currentSchemeIndex = (currentSchemeIndex + 1) % colorSchemes.length;
+            lastSwitchTime = now;
+        
+            // 添加颜色方案刷新逻辑
+            if (currentSchemeIndex == 0) {
+            refreshColorSchemes();
+            }
+        }
+    }
 
    // private static final long COLOR_CYCLE_DURATION = 10 * 60 * 1000; // 10分钟
 	private static final long COLOR_CYCLE_DURATION = (long)(0.1 * 60 * 1000); // 12秒切换
@@ -161,19 +160,10 @@ private void checkColorCycleSwitch() {
             float top = height - barHeight;
             
             // 根据当前颜色方案和振幅强度计算颜色
-			int color = getDynamicColor(amplitudeLevel, colorSchemes[currentSchemeIndex]);
+			int color = getDynamicColor(mAmplitudeLevels, colorSchemes[currentSchemeIndex]);
             mBarPaint.setColor(color);
             
             canvas.drawRect(left, top, right, height, mBarPaint);
-        }
-    }
-
-    // 新增：检查是否需要切换颜色方案
-    private void checkColorCycleSwitch() {
-        long now = System.currentTimeMillis();
-        if (now - lastSwitchTime > COLOR_CYCLE_DURATION) {
-            currentSchemeIndex = (currentSchemeIndex + 1) % colorSchemes.length;
-            lastSwitchTime = now;
         }
     }
     /**
