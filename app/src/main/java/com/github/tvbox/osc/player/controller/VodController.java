@@ -2186,10 +2186,12 @@ public class VodController extends BaseController {
                     @Override
                     public void onFftDataCapture(Visualizer visualizer, byte[] fftData, int samplingRate) {
                         if (fftData == null || customVisualizer == null) return;
+                         // 1. 计算当前音量级别（0-1范围）
+                        float volumeLevel = calculateVolumeLevel(fftData);
                         Runnable updateTask = () -> {
                             try {
                                 if (customVisualizer != null) {
-                                    customVisualizer.updateVisualizer(fftData);
+                                    customVisualizer.updateVisualizer(fftData, volumeLevel);
                                 }
                             } catch (Exception e) {
                                 Log.e(TAG, "Visualizer update error", e);
@@ -2233,5 +2235,14 @@ public class VodController extends BaseController {
         } catch (Exception e) {
             Log.e(TAG, "Error releasing visualizer", e);
         }
+    }
+
+    // 音量计算方法（线性版本）
+    private float calculateVolumeLevel(byte[] fftData) {
+        float max = 0f;
+        for (byte b : fftData) {
+            max = Math.max(max, Math.abs(b));
+        }
+        return max / 128f; // 归一化处理
     }
 }
