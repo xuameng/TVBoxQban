@@ -95,7 +95,7 @@ public class MusicVisualizerView extends View {
                     weight = 3.0f * freqFactor;
                 }
         // 新增音量控制层（不影响原有加权）
-                final float scaledWeight = weight * volumeLevel;
+                float scaledWeight = weight * volumeLevel;
                 scaledWeight = Math.min(scaledWeight, 10f);
                 scaledWeight = Math.max(scaledWeight, 0.1f);
                 mTargetHeights[i] = Math.min(
