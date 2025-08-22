@@ -101,27 +101,30 @@ public class ImgUtil {
         int randomColor = getRandomColor();
         float cornerRadius = AutoSizeUtils.mm2px(App.getInstance(), 8); // 圆角半径
 
-        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        // 画圆角背景
-        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paint.setColor(randomColor);
-        paint.setStyle(Paint.Style.FILL);
-        RectF rectF = new RectF(0, 0, width, height);
-        canvas.drawRoundRect(rectF, cornerRadius, cornerRadius, paint);
-        paint.setColor(Color.WHITE); // 文字颜色
-        paint.setTextSize(60); // 文字大小
-        paint.setTextAlign(Paint.Align.CENTER);
-        Paint.FontMetrics fontMetrics = paint.getFontMetrics();
-        float x = width / 2f;
-        float y = (height - fontMetrics.bottom - fontMetrics.top) / 2f;
-
-        canvas.drawText(text, x, y, paint);
-        Drawable drawable = new BitmapDrawable(bitmap);
-        drawableCache.put(text, drawable);
-        return drawable;
-
-    }
+    // 创建一个Path对象来表示圆角矩形
+    Path path = new Path();
+    RectF rect = new RectF(0, 0, width, height);
+    path.addRoundRect(rect, cornerRadius, cornerRadius);
+    
+    // 创建BitmapShader
+    int randomColor = getRandomColor();
+    BitmapShader shader = new BitmapShader(
+        Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888), 
+        Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
+    
+    Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    paint.setShader(shader);
+    paint.setStyle(Paint.Style.FILL);
+    
+    // 创建BitmapDrawable
+    Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+    Canvas canvas = new Canvas(bitmap);
+    canvas.drawPath(path, paint);
+    Drawable drawable = new BitmapDrawable(bitmap);
+    
+    drawableCache.put(text, drawable);
+    return drawable;
+}
     public static int getRandomColor() {
         Random random = new Random();
         return Color.argb(255, random.nextInt(256), random.nextInt(256), random.nextInt(256));
