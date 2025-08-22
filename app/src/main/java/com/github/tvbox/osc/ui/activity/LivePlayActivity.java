@@ -3359,6 +3359,6 @@ public class LivePlayActivity extends BaseActivity {
         for (byte b : fftData) {
             max = Math.max(max, Math.abs(b));
         }
-        return (float) Math.log(max + 1) / 7f; // 对数压缩曲线
+        return (float) Math.log(max + 1) / 3f; // 对数压缩曲线
     }
 }
