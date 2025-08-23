@@ -9,7 +9,6 @@ import android.graphics.Shader;
 import android.util.AttributeSet;
 import android.view.View;
 import android.animation.ValueAnimator;
-import android.graphics.Path;
 
 /** xuameng
  * 音乐可视化视图组件（带振幅颜色渐变）
@@ -24,13 +23,6 @@ public class MusicVisualizerView extends View {
     private static final int MAX_AMPLITUDE = 6222;
     private static final int BAR_COUNT = 22;
     private static final int ANIMATION_DURATION = 200;
-	private static final float FLAME_VISIBILITY_THRESHOLD = 0.7f; // 音柱高度阈值
-
-    // 火焰效果配置
-    private final Paint mFlamePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private final Path[] mFlamePaths = new Path[BAR_COUNT];
-    private final float[] mFlameAlphas = new float[BAR_COUNT];
-    private final float[] mFlameScales = new float[BAR_COUNT];
     
     // 改为非静态变量实现动态刷新
     private int[][] colorSchemes = new int[3][3];
@@ -80,34 +72,7 @@ public class MusicVisualizerView extends View {
     private void init() {
         mBarPaint.setStyle(Paint.Style.FILL);
         refreshColorSchemes();  // 新增：初始化时预加载颜色方案
-        // 初始化火焰画笔
-        mFlamePaint.setStyle(Paint.Style.FILL);
-        mFlamePaint.setColor(Color.argb(180, 255, 100, 0));
-        mFlamePaint.setShader(new LinearGradient(0, 0, 0, 100, 
-            new int[]{Color.YELLOW, Color.RED, Color.TRANSPARENT}, 
-            new float[]{0f, 0.5f, 1f}, Shader.TileMode.CLAMP));
-
-        // 初始化音柱画笔
-        mBarPaint.setStyle(Paint.Style.FILL);
-        mBarPaint.setColor(Color.parseColor("#4CAF50"));
-        
-        // 初始化火焰路径
-        for (int i = 0; i < BAR_COUNT; i++) {
-            mFlamePaths[i] = createFlamePath();
-            mFlameAlphas[i] = 0f;
-            mFlameScales[i] = 0f;
-        }
     }
-
-	    private Path createFlamePath() {
-        Path path = new Path();
-        path.moveTo(0, 0);
-        path.quadTo(10, -30, 0, -60);
-        path.quadTo(-10, -30, 0, 0);
-        return path;
-    }
-
-
 
     public void updateVisualizer(byte[] fft, float volumeLevel) {
         if (fft == null || fft.length < BAR_COUNT * 2 + 2) return;
@@ -146,19 +111,8 @@ public class MusicVisualizerView extends View {
                 mAmplitudeLevels[i] = Math.min(magnitude / MAX_AMPLITUDE, 1.0f);
             }
         }
-
-        for (int i = 0; i < BAR_COUNT; i++) {
-            mTargetHeights[i] = (float)(fft[i] & 0xFF) / 255f * getHeight();
-            
-            // 更新火焰状态
-            boolean shouldShowFlame = mTargetHeights[i] > getHeight() * FLAME_VISIBILITY_THRESHOLD;
-            mFlameAlphas[i] = shouldShowFlame ? 1f : 0f;
-            mFlameScales[i] = shouldShowFlame ? 1f + (float)Math.random() * 0.3f : 0f;
-        }
-        postInvalidate();
         startAnimation();
     }		
-
 
     private void startAnimation() {
         if (mAnimator != null) {
@@ -201,26 +155,6 @@ public class MusicVisualizerView extends View {
             int color = getDynamicColor(mAmplitudeLevels[i],colorSchemes[currentSchemeIndex]); 
             mBarPaint.setColor(color);
             canvas.drawRect(left, top, right, height, mBarPaint);
-        }
-
-        // 绘制音柱
-        for (int i = 0; i < BAR_COUNT; i++) {
-            float left = i * barWidth + barWidth * 0.2f;
-            float right = (i + 1) * barWidth - barWidth * 0.2f;
-            float bottom = getHeight();
-            float top = bottom - mBarHeights[i];
-            
-            canvas.drawRect(left, top, right, bottom, mBarPaint);
-            
-            // 绘制火焰效果
-            if (mFlameAlphas[i] > 0) {
-                mFlamePaint.setAlpha((int)(180 * mFlameAlphas[i]));
-                canvas.save();
-                canvas.translate(left + (right-left)/2, top);
-                canvas.scale(mFlameScales[i], mFlameScales[i]);
-                canvas.drawPath(mFlamePaths[i], mFlamePaint);
-                canvas.restore();
-            }
         }
     }
 
