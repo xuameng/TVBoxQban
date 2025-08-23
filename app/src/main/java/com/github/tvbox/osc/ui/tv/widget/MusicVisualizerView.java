@@ -20,7 +20,7 @@ import android.animation.ValueAnimator;
  * 5. 三种颜色随机变化
  */
 public class MusicVisualizerView extends View {
-    private static final int MAX_AMPLITUDE = 15000;
+    private static final int MAX_AMPLITUDE = 32768;
     private static final int BAR_COUNT = 22;
     private static final int ANIMATION_DURATION = 200;
     
@@ -74,65 +74,46 @@ public class MusicVisualizerView extends View {
         refreshColorSchemes();  // 新增：初始化时预加载颜色方案
     }
 
-public void updateVisualizer(byte[] fft, float volumeLevel) {
-    if (fft == null || fft.length < BAR_COUNT * 2 + 2) return;
+    public void updateVisualizer(byte[] fft, float volumeLevel) {
+        if (fft == null || fft.length < BAR_COUNT * 2 + 2) return;
+        // 修改采样策略：前1/3柱子重点采样低频，后2/3均匀采样中高频
+        for (int i = 0; i < BAR_COUNT; i++) {
+            int barIndex;
+            if (i < BAR_COUNT / 3) {
+                // 低频段密集采样（每2点取1）
+                barIndex = 2 + i * 2;
+            } else {
+                // 中高频段间隔采样（每4点取1）
+                barIndex = 2 + (BAR_COUNT / 3) * 2 + (i - BAR_COUNT / 3) * 4;
+            }
     
-    // 动态振幅检测（新增）
-    float dynamicMax = detectDynamicMax(fft);
-    
-    // 感知音量映射（改造）
-    float perceptibleVolume = mapToLogarithmicScale(volumeLevel);
-    
-    for (int i = 0; i < BAR_COUNT; i++) {
-        int barIndex;
-        if (i < BAR_COUNT / 3) {
-            barIndex = 2 + i * 2;
-        } else {
-            barIndex = 2 + (BAR_COUNT / 3) * 2 + (i - BAR_COUNT / 3) * 4;
+            if (barIndex < fft.length - 1) {
+                byte rfk = fft[barIndex];
+                byte ifk = fft[barIndex + 1];
+                float magnitude = (rfk * rfk + ifk * ifk);
+                // xuameng改进的频率加权策略（三段式加权）
+                float weight;
+                if (i < BAR_COUNT / 4) {
+                    weight = 1.0f;      //xuameng 超低频段(0-200Hz)增益
+                } else if (i < BAR_COUNT / 2) {
+                    weight = 2.5f;  //xuameng 中低频段(200-800Hz)基准值增益
+                } else {
+                    float freqFactor = (float) Math.pow(1.5, (i - BAR_COUNT / 2) / 2.0);   //xuameng 高频段(800Hz+)指数增强
+                    weight = 3.0f * freqFactor;
+                }
+                // 新增音量控制层（不影响原有加权）
+                float scaledWeight = Math.max(0f, Math.min(1f, weight * (volumeLevel / 10f)));
+                scaledWeight = Math.min(scaledWeight, 10f);
+                scaledWeight = Math.max(scaledWeight, 0.1f);
+                mTargetHeights[i] = Math.min(
+                    (magnitude * getHeight() * scaledWeight) / MAX_AMPLITUDE,
+                    getHeight() * 0.95f
+                );
+                mAmplitudeLevels[i] = Math.min(magnitude / MAX_AMPLITUDE, 1.0f);
+            }
         }
-    
-        if (barIndex < fft.length - 1) {
-            byte rfk = fft[barIndex];
-            byte ifk = fft[barIndex + 1];
-            float magnitude = (rfk * rfk + ifk * ifk);
-            
-            // 三段式频率补偿（优化）
-            float freqCompensation = i < BAR_COUNT / 4 ? 
-                0.8f : 
-                (i < BAR_COUNT / 2 ? 1.2f : 
-                (float)(1.8 + Math.pow(1.2, (i - BAR_COUNT/2)*2)));
-            
-            // 音量-振幅非线性映射
-            float volumeImpact = (float)Math.pow(perceptibleVolume, 1.5f);
-            
-            // 动态高度计算
-            mTargetHeights[i] = Math.min(
-                (magnitude * getHeight() * freqCompensation * volumeImpact) / dynamicMax,
-                getHeight() * 0.95f
-            );
-            
-            mAmplitudeLevels[i] = Math.min(magnitude / dynamicMax, 1.0f);
-        }
+        startAnimation();
     }
-    startAnimation();
-}
-
-// 动态振幅检测方法
-private float detectDynamicMax(byte[] fft) {
-    float max = 0f;
-    for (int i = 2; i < fft.length - 1; i += 2) {
-        float mag = (fft[i]*fft[i] + fft[i+1]*fft[i+1]);
-        max = Math.max(max, mag);
-    }
-    return Math.min(max, MAX_AMPLITUDE); // 增加上限约束
-}
-
-// 对数音量映射
-private float mapToLogarithmicScale(float level) {
-    return Math.max(0f, (float)(Math.log(level * 100 + 1) / Math.log(101)));
-}
-
-
 
     private void startAnimation() {
         if (mAnimator != null) {
