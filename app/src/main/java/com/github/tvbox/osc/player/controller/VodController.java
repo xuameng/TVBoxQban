@@ -78,7 +78,6 @@ import android.media.audiofx.Visualizer;  //xuameng音乐播放动画
 import android.util.Log; //xuameng音乐播放动画
 import android.os.Looper; //xuameng音乐播放动画
 import android.media.AudioManager;  //xuameng音乐播放动画
-import android.view.ViewGroup;  //xuameng音乐播放动画
 
 import android.os.Build;
 import android.webkit.WebView;
@@ -2265,27 +2264,22 @@ public class VodController extends BaseController {
         return (float) Math.round(volumePercent * 100) / 100.0f;
     }
 	
-    public static boolean toggleViewSize(ViewGroup parent, boolean currentState) {   //xuameng缩放所有子视图
-        ViewGroup.LayoutParams params = parent.getLayoutParams();
-        float scaleFactor = currentState ? 0.25f : 4f;
-        // 缩放父容器
-        params.width = (int)(parent.getWidth() * scaleFactor);
-        params.height = (int)(parent.getHeight() * scaleFactor);
-        parent.setLayoutParams(params);
-        // 递归缩放所有子视图
-        for (int i = 0; i < parent.getChildCount(); i++) {
-            View child = parent.getChildAt(i);
-            if (child instanceof ViewGroup) {
-                toggleViewSize((ViewGroup) child, currentState);
-            } else {
-                child.setScaleX(scaleFactor);
-                child.setScaleY(scaleFactor);
-                child.setPivotX(0);
-                child.setPivotY(0);
-            }
-        }
-        return !currentState;
-    }
+
+public static boolean toggleViewSize(View view, boolean currentState) {
+    float scaleFactor = currentState ? 1f/3f : 3f;
+    
+    // 视觉缩放
+    view.setScaleX(scaleFactor);
+    view.setScaleY(scaleFactor);
+    
+    // 保持居中缩放 - 使用传入的view参数
+    view.setPivotX(view.getWidth()/2f);
+    view.setPivotY(view.getHeight()/2f);
+    
+    return !currentState;
+}
+
+
 
 
 
