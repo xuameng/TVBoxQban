@@ -124,7 +124,7 @@ private float detectDynamicMax(byte[] fft) {
         float mag = (fft[i]*fft[i] + fft[i+1]*fft[i+1]);
         max = Math.max(max, mag);
     }
-    return max; // 保留30%余量
+    return Math.min(max, MAX_AMPLITUDE); // 增加上限约束
 }
 
 // 对数音量映射
