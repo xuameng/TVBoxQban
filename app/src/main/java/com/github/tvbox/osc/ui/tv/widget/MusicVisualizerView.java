@@ -124,9 +124,11 @@ public void updateVisualizer(byte[] fft, float volumeLevel) {
 // 等响曲线补偿方法
 private float applyLoudnessCompensation(float level) {
     return level > 0.5f ? 
-           level * (1 + (level - 0.5f)*2) :  // 中高音量补偿
-           level * (1 - Math.pow(0.5f - level, 2)*2);  // 低音量补偿
+           level * (1f + (level - 0.5f)*2f) :  // 中高音量补偿
+           level * (1f - (float)Math.pow(0.5f - level, 2)*2f);  // 低音量补偿
 }
+
+
 
     private void startAnimation() {
         if (mAnimator != null) {
