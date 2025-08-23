@@ -298,6 +298,7 @@ public class VodController extends BaseController {
     private MusicVisualizerView customVisualizer; //xuameng播放音乐柱状图
     private int audioSessionId = -1; // 使用-1表示未初始化状态 //xuameng音乐播放动画
 	private boolean isOriginalSize = true;   //xuameng播放音乐柱状图
+	private boolean isTvPausexu = true; //暂停图标用
 	private static final String TAG = "VodController";  //xuameng音乐播放动画
     Handler myHandle;
     Runnable myRunnable;
@@ -1921,8 +1922,14 @@ public class VodController extends BaseController {
                 mPlayPauseTimexu.setVisibility(GONE); //xuameng隐藏上面时间
                 mPlayTitle.setVisibility(GONE); //xuameng隐藏上面视频名称
                 backBtn.setVisibility(INVISIBLE); //返回键隐藏菜单
-                mTvPausexu.setVisibility(GONE); //隐藏暂停菜单
+            //    mTvPausexu.setVisibility(GONE); //隐藏暂停菜单
                 mLockView.setVisibility(INVISIBLE); //xuameng隐藏屏幕锁
+                if(customVisualizer.getVisibility() == View.VISIBLE) { //xuameng播放音乐柱状图
+                   isOriginalSize = toggleViewSize(customVisualizer, isOriginalSize);
+                }
+                if(mTvPausexu.getVisibility() == View.VISIBLE) { //xuameng暂停图标
+                   isTvPausexu = toggleViewSize(mTvPausexu, isTvPausexu);
+                }
             }
             return false;
         }
@@ -1942,11 +1949,14 @@ public class VodController extends BaseController {
         mPlayPauseTimexu.setVisibility(GONE); //xuameng隐藏上面时间
         mPlayTitle.setVisibility(GONE); //xuameng隐藏上面视频名称
         backBtn.setVisibility(INVISIBLE); //返回键隐藏菜单
-        mTvPausexu.setVisibility(GONE); //隐藏暂停菜单
+   //     mTvPausexu.setVisibility(GONE); //隐藏暂停菜单
         mLockView.setVisibility(INVISIBLE); //xuameng隐藏屏幕锁
-		if(customVisualizer.getVisibility() == View.VISIBLE) { //xuameng播放音乐柱状图
-		   isOriginalSize = toggleViewSize(customVisualizer, isOriginalSize);
-		}
+        if(customVisualizer.getVisibility() == View.VISIBLE) { //xuameng播放音乐柱状图
+           isOriginalSize = toggleViewSize(customVisualizer, isOriginalSize);
+        }
+        if(mTvPausexu.getVisibility() == View.VISIBLE) { //xuameng暂停图标
+           isTvPausexu = toggleViewSize(mTvPausexu, isTvPausexu);
+        }
         return false;
     }
     @Override
