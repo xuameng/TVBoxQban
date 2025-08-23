@@ -2186,9 +2186,12 @@ public class VodController extends BaseController {
                     @Override
                     public void onFftDataCapture(Visualizer visualizer, byte[] fftData, int samplingRate) {
                         if (fftData == null || customVisualizer == null) return;
-                         // 1. 计算当前音量级别（0-1范围）
-                        float volumeLevel = calculateVolumeLevel(fftData);
-						App.showToastShort(getContext(), String.valueOf(volumeLevel));
+
+
+float rawVolume = Math.max(0, Math.abs(fftData[0])); // 双重边界保护
+float volumeLevel = (float) (Math.round(Math.min(10f, Math.log10(rawVolume + 1) * 2.5f) * 10) / 10.0);
+App.showToastShort(getContext(), String.valueOf(volumeLevel));
+
 
                         Runnable updateTask = () -> {
                             try {
