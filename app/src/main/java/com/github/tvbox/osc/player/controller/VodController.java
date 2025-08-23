@@ -2188,6 +2188,8 @@ public class VodController extends BaseController {
                         if (fftData == null || customVisualizer == null) return;
                          // 1. 计算当前音量级别（0-1范围）
                         float volumeLevel = calculateVolumeLevel(fftData);
+						App.showToastShort(getContext(), String.valueOf(volumeLevel));
+
                         Runnable updateTask = () -> {
                             try {
                                 if (customVisualizer != null) {
