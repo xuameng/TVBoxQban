@@ -124,13 +124,14 @@ private float detectDynamicMax(byte[] fft) {
         float mag = (fft[i]*fft[i] + fft[i+1]*fft[i+1]);
         max = Math.max(max, mag);
     }
-    return max * 0.7f; // 保留30%余量
+    return max; // 保留30%余量
 }
 
 // 对数音量映射
 private float mapToLogarithmicScale(float level) {
-    return (float)(Math.log(level * 100 + 1) / Math.log(101));
+    return Math.max(0f, (float)(Math.log(level * 100 + 1) / Math.log(101)));
 }
+
 
 
     private void startAnimation() {
