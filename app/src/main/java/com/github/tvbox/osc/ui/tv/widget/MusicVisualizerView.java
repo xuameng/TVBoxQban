@@ -23,6 +23,15 @@ public class MusicVisualizerView extends View {
     private static final int MAX_AMPLITUDE = 6222;
     private static final int BAR_COUNT = 22;
     private static final int ANIMATION_DURATION = 200;
+
+	    // 火焰效果相关变量
+    private final Paint mFlamePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final float[] mFlamePositions = new float[BAR_COUNT];
+    private final float[] mFlameTargets = new float[BAR_COUNT];
+    private final float[] mFlameAmplitudes = new float[BAR_COUNT];
+    private final float[] mFlameColors = new float[BAR_COUNT * 2];
+    private int flameAnimationDuration = 300;
+    private long lastFlameTime = 0;
     
     // 改为非静态变量实现动态刷新
     private int[][] colorSchemes = new int[3][3];
@@ -53,6 +62,7 @@ public class MusicVisualizerView extends View {
 
     // 动画控制器
     private ValueAnimator mAnimator;
+    private ValueAnimator mAnimatorXu;
 
     public MusicVisualizerView(Context context) {
         super(context);
@@ -72,6 +82,15 @@ public class MusicVisualizerView extends View {
     private void init() {
         mBarPaint.setStyle(Paint.Style.FILL);
         refreshColorSchemes();  // 新增：初始化时预加载颜色方案
+        initFlameEffect();
+    }
+
+    private void initFlameEffect() {
+        mFlamePaint.setStyle(Paint.Style.FILL);
+        mFlamePaint.setAntiAlias(true);
+        mFlamePaint.setFilterBitmap(true);
+        mFlamePaint.setStrokeWidth(3);
+        mFlamePaint.setStrokeCap(Paint.Cap.ROUND);
     }
 
     public void updateVisualizer(byte[] fft, float volumeLevel) {
@@ -111,8 +130,40 @@ public class MusicVisualizerView extends View {
                 mAmplitudeLevels[i] = Math.min(magnitude / MAX_AMPLITUDE, 1.0f);
             }
         }
+
+        // 更新火焰状态
+        for (int i = 0; i < BAR_COUNT; i++) {
+            if (mTargetHeights[i] > mFlameAmplitudes[i]) {
+                mFlameAmplitudes[i] = mTargetHeights[i];
+                mFlameTargets[i] = mTargetHeights[i];
+                lastFlameTime = System.currentTimeMillis();
+                
+                // 随机火焰颜色（10-50度色相范围）
+                mFlameColors[i * 2] = (float)(Math.random() * 40 + 10);
+                mFlameColors[i * 2 + 1] = (float)(Math.random() * 0.4f + 0.6f);
+            }
+        }
         startAnimation();
+        startFlameAnimation();
     }		
+
+    private void startFlameAnimation() {
+        if (mAnimatorXu != null) {
+            mAnimatorXu.cancel();
+        }
+        mAnimatorXu = ValueAnimator.ofFloat(0f, 1f);
+        mAnimatorXu.setDuration(flameAnimationDuration);
+        mAnimatorXu.setInterpolator(new DecelerateInterpolator());
+        mAnimatorXu.addUpdateListener(animation -> {
+            float value = (float) animation.getAnimatedValue();
+            for (int i = 0; i < BAR_COUNT; i++) {
+                mFlamePositions[i] = mFlameAmplitudes[i] + 
+                    (mFlameTargets[i] - mFlameAmplitudes[i]) * value;
+            }
+            postInvalidate();
+        });
+        mAnimatorXu.start();
+    }
 
     private void startAnimation() {
         if (mAnimator != null) {
@@ -155,6 +206,33 @@ public class MusicVisualizerView extends View {
             int color = getDynamicColor(mAmplitudeLevels[i],colorSchemes[currentSchemeIndex]); 
             mBarPaint.setColor(color);
             canvas.drawRect(left, top, right, height, mBarPaint);
+        }
+
+        // 绘制火焰效果
+        for (int i = 0; i < BAR_COUNT; i++) {
+            float flameX = barWidth * i + barWidth / 2;
+            float flameY = mFlamePositions[i];
+            
+            // 火焰颜色渐变（橙红到黄）
+            float hue = mFlameColors[i * 2];
+            float alpha = mFlameColors[i * 2 + 1];
+            mFlamePaint.setColor(Color.HSVToColor((int)(alpha * 255), 
+                new float[]{hue, 1f, 1f}));
+            
+            // 三层火焰叠加
+            for (int layer = 0; layer < 3; layer++) {
+                float size = 18 - layer * 4;
+                canvas.drawCircle(flameX, flameY - layer * 3, size, mFlamePaint);
+            }
+            
+            // 火焰粒子效果
+            if (System.currentTimeMillis() - lastFlameTime < 150) {
+                for (int p = 0; p < 4; p++) {
+                    float px = flameX + (float)(Math.random() * 12 - 6);
+                    float py = flameY + (float)(Math.random() * 8 - 10);
+                    canvas.drawCircle(px, py, 2 + (float)Math.random() * 3, mFlamePaint);
+                }
+            }
         }
     }
 
@@ -204,6 +282,10 @@ public class MusicVisualizerView extends View {
         if (mAnimator != null) {
             mAnimator.cancel();
             mAnimator.removeAllUpdateListeners();
+        }
+        if (mAnimatorXu != null) {
+            mAnimatorXu.cancel();
+            mAnimatorXu.removeAllUpdateListeners();
         }
         reset();
     }
