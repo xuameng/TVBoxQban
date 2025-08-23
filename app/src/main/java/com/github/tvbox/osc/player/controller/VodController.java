@@ -2264,17 +2264,29 @@ public class VodController extends BaseController {
         // 保留一位小数
         return (float) Math.round(volumePercent * 100) / 100.0f;
     }
-
-    public static boolean toggleViewSize(View view, boolean currentState) {
-        ViewGroup.LayoutParams params = view.getLayoutParams();
-        if (currentState) {
-            params.width = view.getWidth() / 4;
-            params.height = view.getHeight() / 4;
-        } else {
-            params.width = view.getWidth() * 4;
-            params.height = view.getHeight() * 4;
+	
+    public static boolean toggleViewSize(ViewGroup parent, boolean currentState) {   //xuameng缩放所有子视图
+        ViewGroup.LayoutParams params = parent.getLayoutParams();
+        float scaleFactor = currentState ? 0.25f : 4f;
+        // 缩放父容器
+        params.width = (int)(parent.getWidth() * scaleFactor);
+        params.height = (int)(parent.getHeight() * scaleFactor);
+        parent.setLayoutParams(params);
+        // 递归缩放所有子视图
+        for (int i = 0; i < parent.getChildCount(); i++) {
+            View child = parent.getChildAt(i);
+            if (child instanceof ViewGroup) {
+                toggleViewSize((ViewGroup) child, currentState);
+            } else {
+                child.setScaleX(scaleFactor);
+                child.setScaleY(scaleFactor);
+                child.setPivotX(0);
+                child.setPivotY(0);
+            }
         }
-        view.setLayoutParams(params);
         return !currentState;
-    }  
+    }
+
+
+
 }
