@@ -9,6 +9,7 @@ import android.graphics.Shader;
 import android.util.AttributeSet;
 import android.view.View;
 import android.animation.ValueAnimator;
+import android.view.animation.DecelerateInterpolator;
 
 /** xuameng
  * 音乐可视化视图组件（带振幅颜色渐变）
@@ -20,7 +21,7 @@ import android.animation.ValueAnimator;
  * 5. 三种颜色随机变化
  */
 public class MusicVisualizerView extends View {
-    private static final int MAX_AMPLITUDE = 6222;
+    private static final int MAX_AMPLITUDE = 6000;
     private static final int BAR_COUNT = 22;
     private static final int ANIMATION_DURATION = 200;
 
