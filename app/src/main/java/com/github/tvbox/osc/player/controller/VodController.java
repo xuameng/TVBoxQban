@@ -2245,22 +2245,25 @@ public class VodController extends BaseController {
  * @return 标准化音量值(0.0-1.0)
  */
 private float calculateVolumeLevel(byte[] pcmData) {
+    // 1. 转换为16位PCM样本
     short[] samples = new short[pcmData.length / 2];
     for (int i = 0; i < samples.length; i++) {
         samples[i] = (short)((pcmData[i*2] & 0xFF) | (pcmData[i*2+1] << 8));
     }
 
+    // 2. 计算RMS值
     double sumSquares = 0.0;
     for (short sample : samples) {
         sumSquares += sample * sample;
     }
     double rms = Math.sqrt(sumSquares / samples.length);
 
-    final float MIN_DB = -60f; // 最小可听阈值
-    float dB = (float) (20 * Math.log10(rms / 32768.0)); // 16位PCM最大值32768
-    
-    // 修正后的标准化
-    return Math.min(1, (dB - MIN_DB) / (0 - MIN_DB));  // 静音=0, 最大音量=1
+    // 3. 直接映射到0.1-1范围（方案二）
+    float normalizedRms = (float) Math.min(1f, rms / 32768.0);
+
+    // 4. 四舍五入保留一位小数
+    return Math.round(Math.max(0.1f, normalizedRms) * 10) / 10f;
 }
+
 
 }
