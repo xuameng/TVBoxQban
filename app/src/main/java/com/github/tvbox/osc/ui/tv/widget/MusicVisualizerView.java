@@ -74,46 +74,59 @@ public class MusicVisualizerView extends View {
         refreshColorSchemes();  // 新增：初始化时预加载颜色方案
     }
 
-    public void updateVisualizer(byte[] fft, float volumeLevel) {
-        if (fft == null || fft.length < BAR_COUNT * 2 + 2) return;
-        // 修改采样策略：前1/3柱子重点采样低频，后2/3均匀采样中高频
-        for (int i = 0; i < BAR_COUNT; i++) {
-            int barIndex;
-            if (i < BAR_COUNT / 3) {
-                // 低频段密集采样（每2点取1）
-                barIndex = 2 + i * 2;
-            } else {
-                // 中高频段间隔采样（每4点取1）
-                barIndex = 2 + (BAR_COUNT / 3) * 2 + (i - BAR_COUNT / 3) * 4;
-            }
+public void updateVisualizer(byte[] fft, float volumeLevel) {
+    if (fft == null || fft.length < BAR_COUNT * 2 + 2) return;
     
-            if (barIndex < fft.length - 1) {
-                byte rfk = fft[barIndex];
-                byte ifk = fft[barIndex + 1];
-                float magnitude = (rfk * rfk + ifk * ifk);
-                // xuameng改进的频率加权策略（三段式加权）
-                float weight;
-                if (i < BAR_COUNT / 4) {
-                    weight = 1.0f;      //xuameng 超低频段(0-200Hz)增益
-                } else if (i < BAR_COUNT / 2) {
-                    weight = 2.5f;  //xuameng 中低频段(200-800Hz)基准值增益
-                } else {
-                    float freqFactor = (float) Math.pow(1.5, (i - BAR_COUNT / 2) / 2.0);   //xuameng 高频段(800Hz+)指数增强
-                    weight = 3.0f * freqFactor;
-                }
-                // 新增音量控制层（不影响原有加权）
-                float scaledWeight = Math.max(0f, Math.min(1f, weight * volumeLevel));
-                scaledWeight = Math.min(scaledWeight, 10f);
-                scaledWeight = Math.max(scaledWeight, 0.1f);
-                mTargetHeights[i] = Math.min(
-                    (magnitude * getHeight() * scaledWeight) / MAX_AMPLITUDE,
-                    getHeight() * 0.95f
-                );
-                mAmplitudeLevels[i] = Math.min(magnitude / MAX_AMPLITUDE, 1.0f);
-            }
+    // 应用等响曲线补偿
+    float volumeLevelAdjusted = applyLoudnessCompensation(volumeLevel);
+    
+    for (int i = 0; i < BAR_COUNT; i++) {
+        int barIndex;
+        if (i < BAR_COUNT / 3) {
+            // 低频段密集采样
+            barIndex = 2 + i * 2;
+        } else {
+            // 中高频段间隔采样
+            barIndex = 2 + (BAR_COUNT / 3) * 2 + (i - BAR_COUNT / 3) * 4;
         }
-        startAnimation();
+    
+        if (barIndex < fft.length - 1) {
+            byte rfk = fft[barIndex];
+            byte ifk = fft[barIndex + 1];
+            float magnitude = (rfk * rfk + ifk * ifk);
+            
+            // 频率加权策略
+            float weight;
+            if (i < BAR_COUNT / 4) {
+                weight = 1.0f;      // 超低频段
+            } else if (i < BAR_COUNT / 2) {
+                weight = 2.5f;      // 中低频段
+            } else {
+                float freqFactor = (float) Math.pow(1.5, (i - BAR_COUNT / 2) / 2.0);
+                weight = 3.0f * freqFactor; // 高频段
+            }
+            
+            // 音量控制层
+            float volumeControl = (float)Math.pow(volumeLevelAdjusted, 0.3f);
+            
+            // 合成最终高度
+            mTargetHeights[i] = Math.min(
+                (magnitude * getHeight() * weight * volumeControl) / MAX_AMPLITUDE,
+                getHeight() * 0.95f
+            );
+            
+            mAmplitudeLevels[i] = Math.min(magnitude / MAX_AMPLITUDE, 1.0f);
+        }
     }
+    startAnimation();
+}
+
+// 等响曲线补偿方法
+private float applyLoudnessCompensation(float level) {
+    return level > 0.5f ? 
+           level * (1 + (level - 0.5f)*2) :  // 中高音量补偿
+           level * (1 - Math.pow(0.5f - level, 2)*2);  // 低音量补偿
+}
 
     private void startAnimation() {
         if (mAnimator != null) {
