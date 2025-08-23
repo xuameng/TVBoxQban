@@ -296,8 +296,6 @@ public class VodController extends BaseController {
     private Visualizer mVisualizer;  //xuameng音乐播放动画
     private MusicVisualizerView customVisualizer; //xuameng播放音乐柱状图
     private int audioSessionId = -1; // 使用-1表示未初始化状态 //xuameng音乐播放动画
-	private boolean isOriginalSize = true;   //xuameng播放音乐柱状图
-	private boolean isTvPausexu = true; //暂停图标用
 	private static final String TAG = "VodController";  //xuameng音乐播放动画
     Handler myHandle;
     Runnable myRunnable;
@@ -1921,14 +1919,8 @@ public class VodController extends BaseController {
                 mPlayPauseTimexu.setVisibility(GONE); //xuameng隐藏上面时间
                 mPlayTitle.setVisibility(GONE); //xuameng隐藏上面视频名称
                 backBtn.setVisibility(INVISIBLE); //返回键隐藏菜单
-            //    mTvPausexu.setVisibility(GONE); //隐藏暂停菜单
+                mTvPausexu.setVisibility(GONE); //隐藏暂停菜单
                 mLockView.setVisibility(INVISIBLE); //xuameng隐藏屏幕锁
-                if(customVisualizer.getVisibility() == View.VISIBLE) { //xuameng播放音乐柱状图
-                   isOriginalSize = toggleViewSize(customVisualizer, isOriginalSize);
-                }
-                if(mTvPausexu.getVisibility() == View.VISIBLE) { //xuameng暂停图标
-                   isTvPausexu = toggleViewSize(mTvPausexu, isTvPausexu);
-                }
             }
             return false;
         }
@@ -1948,14 +1940,8 @@ public class VodController extends BaseController {
         mPlayPauseTimexu.setVisibility(GONE); //xuameng隐藏上面时间
         mPlayTitle.setVisibility(GONE); //xuameng隐藏上面视频名称
         backBtn.setVisibility(INVISIBLE); //返回键隐藏菜单
-   //     mTvPausexu.setVisibility(GONE); //隐藏暂停菜单
+        mTvPausexu.setVisibility(GONE); //隐藏暂停菜单
         mLockView.setVisibility(INVISIBLE); //xuameng隐藏屏幕锁
-        if(customVisualizer.getVisibility() == View.VISIBLE) { //xuameng播放音乐柱状图
-           isOriginalSize = toggleViewSize(customVisualizer, isOriginalSize);
-        }
-        if(mTvPausexu.getVisibility() == View.VISIBLE) { //xuameng暂停图标
-           isTvPausexu = toggleViewSize(mTvPausexu, isTvPausexu);
-        }
         return false;
     }
     @Override
@@ -2263,24 +2249,4 @@ public class VodController extends BaseController {
         // 保留一位小数
         return (float) Math.round(volumePercent * 100) / 100.0f;
     }
-	
-
-public static boolean toggleViewSize(View view, boolean currentState) {
-    float scaleFactor = currentState ? 1f/3f : 3f;
-    
-    // 视觉缩放
-    view.setScaleX(scaleFactor);
-    view.setScaleY(scaleFactor);
-    
-    // 保持居中缩放 - 使用传入的view参数
-    view.setPivotX(view.getWidth()/2f);
-    view.setPivotY(view.getHeight()/2f);
-    
-    return !currentState;
-}
-
-
-
-
-
 }
