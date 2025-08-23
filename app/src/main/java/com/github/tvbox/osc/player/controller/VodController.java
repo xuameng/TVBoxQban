@@ -2174,6 +2174,7 @@ public class VodController extends BaseController {
         try {
         // 统一创建Visualizer实例（仅一次）
             mVisualizer = new Visualizer(sessionId);
+            mVisualizer.setCaptureSize(Visualizer.getCaptureSizeRange()[1]); // 使用最大采样窗口
             // 智能采样率设置
             int targetRate = Visualizer.getMaxCaptureRate() / 2;
             // 设置数据捕获监听器
@@ -2186,12 +2187,9 @@ public class VodController extends BaseController {
                     @Override
                     public void onFftDataCapture(Visualizer visualizer, byte[] fftData, int samplingRate) {
                         if (fftData == null || customVisualizer == null) return;
-
-
-float rawVolume = Math.max(0, Math.abs(fftData[0])); // 双重边界保护
-float volumeLevel = (float) (Math.round(Math.min(10f, Math.log10(rawVolume + 1) * 2.5f) * 10) / 10.0);
-App.showToastShort(getContext(), String.valueOf(volumeLevel));
-
+                         // 1. 计算当前音量级别（0-1范围）
+                        float volumeLevel = calculateVolumeLevel(fftData);
+						App.showToastShort(getContext(), String.valueOf(volumeLevel));
 
                         Runnable updateTask = () -> {
                             try {
@@ -2242,16 +2240,11 @@ App.showToastShort(getContext(), String.valueOf(volumeLevel));
         }
     }
 
-/**
- * 改进版音量计算方法（支持16位PCM+对数压缩优化）
- * @param pcmData 音频数据(16位PCM格式)
- * @return 标准化音量值(0.0-1.0)
- */
 private float calculateVolumeLevel(byte[] pcmData) {
     // 1. 转换为16位PCM样本
     short[] samples = new short[pcmData.length / 2];
     for (int i = 0; i < samples.length; i++) {
-        samples[i] = (short)((pcmData[i*2] & 0xFF) | (pcmData[i*2+1] << 8));
+        samples[i] = (short)(((pcmData[i*2+1] & 0xFF) << 8) | (pcmData[i*2] & 0xFF));
     }
 
     // 2. 计算RMS值
@@ -2261,12 +2254,14 @@ private float calculateVolumeLevel(byte[] pcmData) {
     }
     double rms = Math.sqrt(sumSquares / samples.length);
 
-    // 3. 直接映射到0.1-1范围（方案二）
-    float normalizedRms = (float) Math.min(1f, rms / 32768.0);
-
-    // 4. 四舍五入保留一位小数
-    return Math.round(Math.max(0.1f, normalizedRms) * 10) / 10f;
+    // 3. 归一化处理（0-1范围）
+    float level = (float) Math.min(1.0f, rms / 32768.0f); // 32768是16位PCM最大值
+    
+    // 4. 格式化输出（保留一位小数）
+    return (float) Math.round(level * 10) / 10.0f;
 }
+
+
 
 
 }
