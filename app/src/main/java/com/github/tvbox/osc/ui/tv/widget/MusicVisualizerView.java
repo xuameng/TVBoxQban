@@ -77,16 +77,17 @@ public class MusicVisualizerView extends View {
 public void updateVisualizer(byte[] fft, float volumeLevel) {
     if (fft == null || fft.length < BAR_COUNT * 2 + 2) return;
     
-    // 应用等响曲线补偿
-    float volumeLevelAdjusted = applyLoudnessCompensation(volumeLevel);
+    // 动态振幅检测（新增）
+    float dynamicMax = detectDynamicMax(fft);
+    
+    // 感知音量映射（改造）
+    float perceptibleVolume = mapToLogarithmicScale(volumeLevel);
     
     for (int i = 0; i < BAR_COUNT; i++) {
         int barIndex;
         if (i < BAR_COUNT / 3) {
-            // 低频段密集采样
             barIndex = 2 + i * 2;
         } else {
-            // 中高频段间隔采样
             barIndex = 2 + (BAR_COUNT / 3) * 2 + (i - BAR_COUNT / 3) * 4;
         }
     
@@ -95,39 +96,41 @@ public void updateVisualizer(byte[] fft, float volumeLevel) {
             byte ifk = fft[barIndex + 1];
             float magnitude = (rfk * rfk + ifk * ifk);
             
-            // 频率加权策略
-            float weight;
-            if (i < BAR_COUNT / 4) {
-                weight = 1.0f;      // 超低频段
-            } else if (i < BAR_COUNT / 2) {
-                weight = 2.5f;      // 中低频段
-            } else {
-                float freqFactor = (float) Math.pow(1.5, (i - BAR_COUNT / 2) / 2.0);
-                weight = 3.0f * freqFactor; // 高频段
-            }
+            // 三段式频率补偿（优化）
+            float freqCompensation = i < BAR_COUNT / 4 ? 
+                0.8f : 
+                (i < BAR_COUNT / 2 ? 1.2f : 
+                (float)(1.8 + Math.pow(1.2, (i - BAR_COUNT/2)*2)));
             
-            // 音量控制层
-            float volumeControl = (float)Math.pow(volumeLevelAdjusted, 0.3f);
+            // 音量-振幅非线性映射
+            float volumeImpact = (float)Math.pow(perceptibleVolume, 1.5f);
             
-            // 合成最终高度
+            // 动态高度计算
             mTargetHeights[i] = Math.min(
-                (magnitude * getHeight() * weight * volumeControl) / MAX_AMPLITUDE,
+                (magnitude * getHeight() * freqCompensation * volumeImpact) / dynamicMax,
                 getHeight() * 0.95f
             );
             
-            mAmplitudeLevels[i] = Math.min(magnitude / MAX_AMPLITUDE, 1.0f);
+            mAmplitudeLevels[i] = Math.min(magnitude / dynamicMax, 1.0f);
         }
     }
     startAnimation();
 }
 
-// 等响曲线补偿方法
-private float applyLoudnessCompensation(float level) {
-    return level > 0.5f ? 
-           level * (1f + (level - 0.5f)*2f) :  // 中高音量补偿
-           level * (1f - (float)Math.pow(0.5f - level, 2)*2f);  // 低音量补偿
+// 动态振幅检测方法
+private float detectDynamicMax(byte[] fft) {
+    float max = 0f;
+    for (int i = 2; i < fft.length - 1; i += 2) {
+        float mag = (fft[i]*fft[i] + fft[i+1]*fft[i+1]);
+        max = Math.max(max, mag);
+    }
+    return max * 0.7f; // 保留30%余量
 }
 
+// 对数音量映射
+private float mapToLogarithmicScale(float level) {
+    return (float)(Math.log(level * 100 + 1) / Math.log(101));
+}
 
 
     private void startAnimation() {
