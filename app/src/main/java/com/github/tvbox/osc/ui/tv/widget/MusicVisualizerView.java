@@ -20,7 +20,7 @@ import android.animation.ValueAnimator;
  * 5. 三种颜色随机变化
  */
 public class MusicVisualizerView extends View {
-    private static final int MAX_AMPLITUDE = 20000;
+    private static final int MAX_AMPLITUDE = 15000;
     private static final int BAR_COUNT = 22;
     private static final int ANIMATION_DURATION = 200;
     
