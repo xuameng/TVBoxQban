@@ -3305,7 +3305,7 @@ public class LivePlayActivity extends BaseActivity {
                     public void onFftDataCapture(Visualizer visualizer, byte[] fftData, int samplingRate) {
                         if (fftData == null || customVisualizer == null) return;
                          // 1. 计算当前音量级别（0-1范围）
-                        float volumeLevel = calculateVolumeLevel(fftData);
+                        float volumeLevel = calculateVolumeLevel(this);
                         Runnable updateTask = () -> {
                             try {
                                 if (customVisualizer != null) {
