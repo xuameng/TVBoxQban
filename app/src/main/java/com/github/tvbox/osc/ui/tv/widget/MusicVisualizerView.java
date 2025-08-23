@@ -13,7 +13,7 @@ import android.animation.ValueAnimator;
 /** xuameng
  * 音乐可视化视图组件（带振幅颜色渐变）
  * 新增特性：
- * 1. 振幅大小颜色三种颜色变化
+ * 1. 颜色随振幅大小变化
  * 2. 保持原有动画平滑性
  * 3. 完全兼容原有接口
  * 4. 振幅随音量大小变化
@@ -76,6 +76,9 @@ public class MusicVisualizerView extends View {
 
     public void updateVisualizer(byte[] fft, float volumeLevel) {
         if (fft == null || fft.length < BAR_COUNT * 2 + 2) return;
+        if (volumeLevel == 0f || volumeLevel == 0.0f) {
+            reset();   //xuameng处理静音状态重置音柱
+        }
         // 修改采样策略：前1/3柱子重点采样低频，后2/3均匀采样中高频
         for (int i = 0; i < BAR_COUNT; i++) {
             int barIndex;
