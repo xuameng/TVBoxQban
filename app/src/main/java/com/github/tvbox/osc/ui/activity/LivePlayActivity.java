@@ -45,6 +45,7 @@ import com.github.tvbox.osc.ui.tv.widget.MusicVisualizerView;  //xuameng音乐�
 import android.media.audiofx.Visualizer;  //xuameng音乐播放动画
 import android.util.Log; //xuameng音乐播放动画
 import android.os.Looper; //xuameng音乐播放动画
+import android.media.AudioManager;  //xuameng音乐播放动画
 import java.util.Objects;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.github.tvbox.osc.R;
