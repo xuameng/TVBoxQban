@@ -2247,19 +2247,23 @@ private float calculateVolumeLevel(byte[] pcmData) {
         samples[i] = (short)(((pcmData[i*2+1] & 0xFF) << 8) | (pcmData[i*2] & 0xFF));
     }
 
-    // 2. 计算RMS值
-    double sumSquares = 0.0;
-    for (short sample : samples) {
-        sumSquares += sample * sample;
-    }
-    double rms = Math.sqrt(sumSquares / samples.length);
+    // 2. 计算动态阈值（根据样本长度自动调整）
+    final int dynamicThreshold = (int) (samples.length * 0.01); // 1%样本数作为触发点
 
-    // 3. 归一化处理（0-1范围）
-    float level = (float) Math.min(1.0f, rms / 32768.0f); // 32768是16位PCM最大值
-    
-    // 4. 格式化输出（保留一位小数）
-    return (float) Math.round(level * 10) / 10.0f;
+    // 3. 检测有效振幅
+    double maxAbs = Arrays.stream(samples)
+                          .mapToDouble(Math::abs)
+                          .max()
+                          .orElse(0.0);
+
+    // 4. 分段映射（0.0-1.0）
+    if (maxAbs == 0.0) return 0.0f; // 静音
+
+    // 动态范围压缩（对数特性）
+    double scaledValue = Math.log10(maxAbs + 1) * 3.0; // 系数2.0可根据实际调整
+    return (float) Math.min(1.0f, scaledValue / 4.0f); // 对数归一化
 }
+
 
 
 
