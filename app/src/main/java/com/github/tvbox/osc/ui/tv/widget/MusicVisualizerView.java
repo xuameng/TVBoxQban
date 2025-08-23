@@ -13,12 +13,14 @@ import android.animation.ValueAnimator;
 /** xuameng
  * 音乐可视化视图组件（带振幅颜色渐变）
  * 新增特性：
- * 1. 振幅越大颜色越红（黄色->橙黄->红渐变）
+ * 1. 振幅大小颜色三种颜色变化
  * 2. 保持原有动画平滑性
  * 3. 完全兼容原有接口
+ * 4. 振幅随音量大小变化
+ * 5. 三种颜色随机变化
  */
 public class MusicVisualizerView extends View {
-    private static final int MAX_AMPLITUDE = 30000;
+    private static final int MAX_AMPLITUDE = 150000;
     private static final int BAR_COUNT = 22;
     private static final int ANIMATION_DURATION = 200;
     
@@ -38,19 +40,8 @@ public class MusicVisualizerView extends View {
         postInvalidate(); // 新增：立即刷新视图
     }
 
-    // 修改调用方式
-    private void checkColorCycleSwitch() {
-        long now = System.currentTimeMillis();
-        if (now - lastSwitchTime > COLOR_CYCLE_DURATION) {
-            currentSchemeIndex = (currentSchemeIndex + 1) % colorSchemes.length;
-            lastSwitchTime = now;
-            // 优化刷新逻辑（不再需要currentSchemeIndex检查）
-            refreshColorSchemes();
-        }
-    }
-
    // private static final long COLOR_CYCLE_DURATION = 10 * 60 * 1000; // 10分钟
-	private static final long COLOR_CYCLE_DURATION = (long)(0.1 * 60 * 1000); // 12秒切换
+    private static final long COLOR_CYCLE_DURATION = (long)(0.1 * 60 * 1000); // 6秒切换
     private int currentSchemeIndex = 0;
     private long lastSwitchTime = 0;
 
@@ -111,7 +102,7 @@ public class MusicVisualizerView extends View {
                     weight = 3.0f * freqFactor;
                 }
                 // 新增音量控制层（不影响原有加权）
-                float scaledWeight = Math.max(0f, Math.min(1f, weight * (volumeLevel / 3f)));
+                float scaledWeight = Math.max(0f, Math.min(1f, weight * volumeLevel));
                 scaledWeight = Math.min(scaledWeight, 10f);
                 scaledWeight = Math.max(scaledWeight, 0.1f);
                 mTargetHeights[i] = Math.min(
@@ -161,13 +152,21 @@ public class MusicVisualizerView extends View {
             float barHeight = Math.min(mBarHeights[i], height * 0.9f);
             float top = height - barHeight;
         
-            // 修正后的颜色计算
-            int color = getDynamicColor(
-                mAmplitudeLevels[i],  // 单个振幅值
-                colorSchemes[currentSchemeIndex]); // 颜色方案
-        
+            // 根据当前颜色方案和振幅强度计算颜色
+            int color = getDynamicColor(mAmplitudeLevels[i],colorSchemes[currentSchemeIndex]); 
             mBarPaint.setColor(color);
             canvas.drawRect(left, top, right, height, mBarPaint);
+        }
+    }
+
+    // 修改调用方式
+    private void checkColorCycleSwitch() {
+        long now = System.currentTimeMillis();
+        if (now - lastSwitchTime > COLOR_CYCLE_DURATION) {
+            currentSchemeIndex = (currentSchemeIndex + 1) % colorSchemes.length;
+            lastSwitchTime = now;
+            // 优化刷新逻辑（不再需要currentSchemeIndex检查）
+            refreshColorSchemes();
         }
     }
 
