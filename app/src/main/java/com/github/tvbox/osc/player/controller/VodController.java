@@ -2189,8 +2189,7 @@ public class VodController extends BaseController {
                         if (fftData == null || customVisualizer == null) return;
                          // 1. 计算当前音量级别（0-1范围）
                         float volumeLevel = calculateVolumeLevel(getContext());
-						App.showToastShort(getContext(), String.valueOf(volumeLevel));
-
+                        App.showToastShort(getContext(), String.valueOf(volumeLevel));
                         Runnable updateTask = () -> {
                             try {
                                 if (customVisualizer != null) {
@@ -2240,8 +2239,7 @@ public class VodController extends BaseController {
         }
     }
 
-
-    public static float calculateVolumeLevel(Context context) {
+    public static float calculateVolumeLevel(Context context) {  //系统音量监控
         AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         int currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
         int maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
@@ -2252,8 +2250,4 @@ public class VodController extends BaseController {
         // 保留一位小数
         return (float) Math.round(volumePercent * 10) / 10.0f;
     }
-
-
-
-
 }
