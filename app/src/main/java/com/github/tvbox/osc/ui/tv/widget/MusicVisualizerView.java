@@ -20,7 +20,7 @@ import android.animation.ValueAnimator;
  * 5. 三种颜色随机变化
  */
 public class MusicVisualizerView extends View {
-    private static final int MAX_AMPLITUDE = 8000;
+    private static final int MAX_AMPLITUDE = 5000;
     private static final int BAR_COUNT = 22;
     private static final int ANIMATION_DURATION = 200;
     
@@ -76,7 +76,7 @@ public class MusicVisualizerView extends View {
 
     public void updateVisualizer(byte[] fft, float volumeLevel) {
         if (fft == null || fft.length < BAR_COUNT * 2 + 2) return;
-        if (volumeLevel == 0f || volumeLevel == 0.0f) {
+        if (volumeLevel == 0f || volumeLevel == 0.0f || volumeLevel == 0.00f) {
             reset();   //xuameng处理静音状态重置音柱
         }
         // 修改采样策略：前1/3柱子重点采样低频，后2/3均匀采样中高频
@@ -99,10 +99,10 @@ public class MusicVisualizerView extends View {
                 if (i < BAR_COUNT / 4) {
                     weight = 1.0f;      //xuameng 超低频段(0-200Hz)增益
                 } else if (i < BAR_COUNT / 2) {
-                    weight = 1.5f;  //xuameng 中低频段(200-800Hz)基准值增益
+                    weight = 2.5f;  //xuameng 中低频段(200-800Hz)基准值增益
                 } else {
                     float freqFactor = (float) Math.pow(1.5, (i - BAR_COUNT / 2) / 2.0);   //xuameng 高频段(800Hz+)指数增强
-                    weight = 2.0f * freqFactor;
+                    weight = 4.0f * freqFactor;
                 }
                 mTargetHeights[i] = Math.min(
                     (magnitude * getHeight() * weight * volumeLevel) / MAX_AMPLITUDE,    //xuameng判断音量大小
