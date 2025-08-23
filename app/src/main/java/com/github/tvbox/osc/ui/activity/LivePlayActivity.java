@@ -3354,6 +3354,7 @@ public class LivePlayActivity extends BaseActivity {
             Log.e(TAG, "Error releasing visualizer", e);
         }
     }
+
     public static float calculateVolumeLevel(Context context) {  //系统音量监控
         AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         int currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
@@ -3363,6 +3364,6 @@ public class LivePlayActivity extends BaseActivity {
         float volumePercent = (float) currentVolume / maxVolume;
         
         // 保留一位小数
-        return (float) Math.round(volumePercent * 10) / 10.0f;
+        return (float) Math.round(volumePercent * 100) / 100.0f;
     }
 }
