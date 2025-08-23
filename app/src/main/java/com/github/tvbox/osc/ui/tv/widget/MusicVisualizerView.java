@@ -20,7 +20,7 @@ import android.animation.ValueAnimator;
  * 5. 三种颜色随机变化
  */
 public class MusicVisualizerView extends View {
-    private static final int MAX_AMPLITUDE = 32768;
+    private static final int MAX_AMPLITUDE = 15000;
     private static final int BAR_COUNT = 22;
     private static final int ANIMATION_DURATION = 200;
     
@@ -102,7 +102,7 @@ public class MusicVisualizerView extends View {
                     weight = 3.0f * freqFactor;
                 }
                 // 新增音量控制层（不影响原有加权）
-                float scaledWeight = Math.max(0f, Math.min(1f, weight * (volumeLevel / 10f)));
+                float scaledWeight = Math.max(0f, Math.min(1f, weight * volumeLevel));
                 scaledWeight = Math.min(scaledWeight, 10f);
                 scaledWeight = Math.max(scaledWeight, 0.1f);
                 mTargetHeights[i] = Math.min(
