@@ -3353,30 +3353,15 @@ public class LivePlayActivity extends BaseActivity {
             Log.e(TAG, "Error releasing visualizer", e);
         }
     }
-/**
- * 改进版音量计算方法（支持16位PCM+对数压缩优化）
- * @param pcmData 音频数据(16位PCM格式)
- * @return 标准化音量值(0.0-1.0)
- */
-private float calculateVolumeLevel(byte[] pcmData) {
-    // 1. 转换为16位PCM样本
-    short[] samples = new short[pcmData.length / 2];
-    for (int i = 0; i < samples.length; i++) {
-        samples[i] = (short)((pcmData[i*2] & 0xFF) | (pcmData[i*2+1] << 8));
+    public static float calculateVolumeLevel(Context context) {  //系统音量监控
+        AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+        int currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+        int maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        
+        // 计算0-1范围的百分比
+        float volumePercent = (float) currentVolume / maxVolume;
+        
+        // 保留一位小数
+        return (float) Math.round(volumePercent * 10) / 10.0f;
     }
-
-    // 2. 计算RMS值
-    double sumSquares = 0.0;
-    for (short sample : samples) {
-        sumSquares += sample * sample;
-    }
-    double rms = Math.sqrt(sumSquares / samples.length);
-
-    // 3. 对数压缩处理
-    final float MIN_DB = -60f; // 最小可听阈值
-    float dB = (float) (20 * Math.log10(rms / 32768.0)); // 16位PCM最大值32768
-    
-    // 4. 标准化到0-1范围
-    return Math.max(0, (dB - MIN_DB) / -MIN_DB);
-}
 }
