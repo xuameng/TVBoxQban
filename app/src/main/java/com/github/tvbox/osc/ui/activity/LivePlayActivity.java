@@ -1938,9 +1938,13 @@ public class LivePlayActivity extends BaseActivity {
                         if(width.length() <= 1 && height.length() <= 1 ) {
                            int newSessionId = mVideoView.getAudioSessionId();   //xuameng音乐播放动画
                            if(newSessionId != audioSessionId) { // 避免重复初始化
+                              Hawk.put(HawkConfig.LIVE_MUSIC_ANIMATION, true);
                               initVisualizer();  //xuameng音乐播放动画
                            }
-				        }
+				        }else{
+                           Hawk.put(HawkConfig.LIVE_MUSIC_ANIMATION, false);
+                           releaseVisualizer();  //xuameng音乐播放动画
+                        }
                         int duration1 = (int) mVideoView.getDuration();
                         if(isBack) {
                             sBar = (SeekBar) findViewById(R.id.pb_progressbar); //xuameng回看进度条
@@ -2469,9 +2473,19 @@ public class LivePlayActivity extends BaseActivity {
                 if(position == liveSettingItemAdapter.getSelectedItemIndex()) return;
                 if(mVideoView == null) return;
                 if (position == 0){
-                    Hawk.put(HawkConfig.LIVE_MUSIC_ANIMATION, true);
+                    if (isVideoplaying){
+                        Hawk.put(HawkConfig.LIVE_MUSIC_ANIMATION, true);
+                        int newSessionId = mVideoView.getAudioSessionId();   //xuameng音乐播放动画
+                        if(newSessionId != audioSessionId) { // 避免重复初始化
+                           initVisualizer();  //xuameng音乐播放动画
+                        }
+                    }else{
+                        App.showToastShort(mContext, "聚汇影视提示您：当前不是播放状态！请进入播放状态再选择！");
+                        return;
+					}
                 }else{
                     Hawk.put(HawkConfig.LIVE_MUSIC_ANIMATION, false);
+                    releaseVisualizer();  //xuameng音乐播放动画
                 }
                 liveSettingItemAdapter.selectItem(position, true, true);
                 break;
@@ -2803,15 +2817,31 @@ public class LivePlayActivity extends BaseActivity {
                     if(MxuamengMusic.getVisibility() == View.VISIBLE) { //xuameng播放音乐背景
                         MxuamengMusic.setVisibility(View.GONE);
                     }
-                    if(customVisualizer.getVisibility() == View.VISIBLE) { //xuameng播放音乐柱状图
-                        customVisualizer.setVisibility(View.GONE);
+                    boolean showMusic = false;
+                    showMusic = Hawk.get(HawkConfig.LIVE_MUSIC_ANIMATION, false);
+                    if (showMusic){
+                        if(customVisualizer.getVisibility() == View.GONE) { //xuameng播放音乐柱状图
+                            customVisualizer.setVisibility(View.VISIBLE);
+                        }
+                    }else{
+                        if(customVisualizer.getVisibility() == View.VISIBLE) { //xuameng播放音乐柱状图
+                            customVisualizer.setVisibility(View.GONE);
+                        }
                     }
                 } else {
                     if(MxuamengMusic.getVisibility() == View.GONE) { //xuameng播放音乐背景
                         MxuamengMusic.setVisibility(View.VISIBLE);
                     }
-                    if(customVisualizer.getVisibility() == View.GONE) { //xuameng播放音乐柱状图
-                       customVisualizer.setVisibility(View.VISIBLE);
+                    boolean showMusicXu = false;
+                    showMusicXu = Hawk.get(HawkConfig.LIVE_MUSIC_ANIMATION, false);
+					if (showMusicXu){
+                        if(customVisualizer.getVisibility() == View.GONE) { //xuameng播放音乐柱状图
+                           customVisualizer.setVisibility(View.VISIBLE);
+                        }
+					}else{
+                        if(customVisualizer.getVisibility() == View.VISIBLE) { //xuameng播放音乐柱状图
+                            customVisualizer.setVisibility(View.GONE);
+                        }
                     }
                     if(isBuffer || isShowlist || HawkConfig.MSLIDEINFO) { //xuameng缓冲时，显示左菜单时，显示亮度音量时
                         if(iv_circle_bg_xu.getVisibility() == View.VISIBLE) { //xuameng音乐播放时图标
