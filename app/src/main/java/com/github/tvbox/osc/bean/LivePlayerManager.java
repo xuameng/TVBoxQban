@@ -30,7 +30,7 @@ public class LivePlayerManager {
             defaultPlayerConfig.put("ijk", Hawk.get(HawkConfig.IJK_CODEC, "软解码"));
             defaultPlayerConfig.put("pr", Hawk.get(HawkConfig.PLAY_RENDER, 0));
             defaultPlayerConfig.put("sc", Hawk.get(HawkConfig.PLAY_SCALE, 0));
-            defaultPlayerConfig.put("music", Hawk.get(HawkConfig.LIVE_MUSIC_ANIMATION, 0));   //xuameng音乐播放动画设置
+            defaultPlayerConfig.put("music", Hawk.get(HawkConfig.LIVE_MUSIC_ANIMATION, false));   //xuameng音乐播放动画设置
         } catch (JSONException e) {
             e.printStackTrace();
         }
