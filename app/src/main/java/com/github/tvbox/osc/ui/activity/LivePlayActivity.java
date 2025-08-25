@@ -1935,22 +1935,17 @@ public class LivePlayActivity extends BaseActivity {
                         String width = Integer.toString(mVideoView.getVideoSize()[0]);
                         String height = Integer.toString(mVideoView.getVideoSize()[1]);
                         tv_size.setText("[" + width + " X " + height + "]");
-                        if(width.length() <= 1 && height.length() <= 1 ) {
-                           int newSessionId = mVideoView.getAudioSessionId();   //xuameng音乐播放动画
-                           if(newSessionId != audioSessionId) { // 避免重复初始化
-                              Hawk.put(HawkConfig.LIVE_MUSIC_ANIMATION, true);
-                              initVisualizer();  //xuameng音乐播放动画
-                           }
-				        }else{
+
                            boolean selectMusic = false;
                            selectMusic = Hawk.get(HawkConfig.LIVE_MUSIC_ANIMATION, false);
                            if (selectMusic){
                                int newSessionId = mVideoView.getAudioSessionId();   //xuameng音乐播放动画
+App.showToastShort(mContext, "动画开启");
                                if(newSessionId != audioSessionId) { // 避免重复初始化
                                   initVisualizer();  //xuameng音乐播放动画
                                }
                            }
-                        }
+
                         int duration1 = (int) mVideoView.getDuration();
                         if(isBack) {
                             sBar = (SeekBar) findViewById(R.id.pb_progressbar); //xuameng回看进度条
@@ -2335,12 +2330,12 @@ public class LivePlayActivity extends BaseActivity {
                 liveSettingItemAdapter.selectItem(livePlayerManager.getLivePlayrender(), true, true); //xuameng 获取渲染方式
                 break;
             case 7:
-                boolean selectXu = false;
+                boolean selectXu = false;     ////xuameng 音柱动画 加载设置
                 selectXu = Hawk.get(HawkConfig.LIVE_MUSIC_ANIMATION, false);
                 if (selectXu){
-                    liveSettingItemAdapter.selectItem(0, true, true);  //xuameng 音频动画
+                    liveSettingItemAdapter.selectItem(0, true, true);  //xuameng 音柱动画开
                 }else{
-                    liveSettingItemAdapter.selectItem(1, true, true);  //xuameng 音频动画
+                    liveSettingItemAdapter.selectItem(1, true, true);  //xuameng 音柱动画关
                 }
                 break;
         }
@@ -2475,7 +2470,7 @@ public class LivePlayActivity extends BaseActivity {
                     iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
                 }
                 break;
-            case 7: //xuameng音频动画
+            case 7: //xuameng音柱动画 点击
                 if(position == liveSettingItemAdapter.getSelectedItemIndex()) return;
                 if(mVideoView == null) return;
                 if (position == 0){
@@ -2818,6 +2813,7 @@ public class LivePlayActivity extends BaseActivity {
                     boolean showMusic = false;
                     showMusic = Hawk.get(HawkConfig.LIVE_MUSIC_ANIMATION, false);
                     if (showMusic){
+						App.showToastShort(mContext, "动画开启11");
                         if(customVisualizer.getVisibility() == View.GONE) { //xuameng播放音乐柱状图
                             customVisualizer.setVisibility(View.VISIBLE);
                         }
