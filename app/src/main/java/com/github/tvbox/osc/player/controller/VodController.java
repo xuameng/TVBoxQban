@@ -373,7 +373,7 @@ public class VodController extends BaseController {
                     if(MxuamengMusic.getVisibility() == View.VISIBLE) { //xuameng播放音乐背景
                         MxuamengMusic.setVisibility(GONE);
                     }
-                    musicAnimation = Hawk.get(HawkConfig.VOD_MUSIC_ANIMATION, false);
+                    musicAnimation = mPlayerConfig.getBoolean("music");
                     if (musicAnimation){
                         if(customVisualizer.getVisibility() == View.GONE) { //xuameng播放音乐柱状图
                             customVisualizer.setVisibility(VISIBLE);
@@ -384,7 +384,7 @@ public class VodController extends BaseController {
                         }
                     }
                 } else {
-                    musicAnimation = Hawk.get(HawkConfig.VOD_MUSIC_ANIMATION, false);
+                    musicAnimation = mPlayerConfig.getBoolean("music");
 					if (musicAnimation){
                         if(customVisualizer.getVisibility() == View.GONE) { //xuameng播放音乐柱状图
                            customVisualizer.setVisibility(VISIBLE);
@@ -819,7 +819,6 @@ public class VodController extends BaseController {
                 }
                 DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
 
-                musicAnimation = Hawk.get(HawkConfig.VOD_MUSIC_ANIMATION, false);
                 try {
 					musicAnimation = mPlayerConfig.getBoolean("music");
                 } catch (JSONException e) {
@@ -831,8 +830,8 @@ public class VodController extends BaseController {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    releaseVisualizer();  //xuameng音乐播放动画
                     mPlayanimation.setText("音柱已关");
+                    releaseVisualizer();  //xuameng音乐播放动画
                     listener.updatePlayerCfg();
                 } else {
                     try {
@@ -848,8 +847,9 @@ public class VodController extends BaseController {
                 musicAnimation = Hawk.get(HawkConfig.VOD_MUSIC_ANIMATION, false);
                 if (musicAnimation){
                     Hawk.put(HawkConfig.VOD_MUSIC_ANIMATION, false);
-                    releaseVisualizer();  //xuameng音乐播放动画
                     mPlayanimation.setText("音柱已关");
+                    releaseVisualizer();  //xuameng音乐播放动画
+                    listener.updatePlayerCfg();
                 }else{
                     Hawk.put(HawkConfig.VOD_MUSIC_ANIMATION, true);
                     mPlayanimation.setText("音柱已开");
@@ -1301,7 +1301,6 @@ public class VodController extends BaseController {
         updatePlayerCfgView();
     }
     void updatePlayerCfgView() {
-        musicAnimation = Hawk.get(HawkConfig.VOD_MUSIC_ANIMATION, false);
         try {
 			musicAnimation = mPlayerConfig.getBoolean("music");
             int playerType = mPlayerConfig.getInt("pl");
@@ -1617,7 +1616,6 @@ public class VodController extends BaseController {
                 String height = Integer.toString(mControlWrapper.getVideoSize()[1]);
                 mVideoSize.setText("[ " + width + " X " + height + " ]");
                 isVideoPlay = false;
-                musicAnimation = Hawk.get(HawkConfig.VOD_MUSIC_ANIMATION, false);
                 try {
 					musicAnimation = mPlayerConfig.getBoolean("music");
                 } catch (JSONException e) {
