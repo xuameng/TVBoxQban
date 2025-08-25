@@ -818,6 +818,34 @@ public class VodController extends BaseController {
                     hideBottomXu();
                 }
                 DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
+
+                musicAnimation = Hawk.get(HawkConfig.VOD_MUSIC_ANIMATION, false);
+                try {
+                    musicAnimation = mPlayerConfig.getInt("music");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                if(musicAnimation) {
+                    try {
+                        mPlayerConfig.put("music", false);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    Hawk.put(HawkConfig.VOD_MUSIC_ANIMATION, false);
+                    releaseVisualizer();  //xuameng音乐播放动画
+                    mPlayanimation.setText("音柱已关");
+                } else {
+                    try {
+                        mPlayerConfig.put("music", true);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    Hawk.put(HawkConfig.VOD_MUSIC_ANIMATION, true);
+                    mPlayanimation.setText("音柱已开");
+                    listener.updatePlayerCfg();
+                    listener.replay(false);
+                }
+/*
                 musicAnimation = Hawk.get(HawkConfig.VOD_MUSIC_ANIMATION, false);
                 if (musicAnimation){
                     Hawk.put(HawkConfig.VOD_MUSIC_ANIMATION, false);
@@ -828,7 +856,7 @@ public class VodController extends BaseController {
                     mPlayanimation.setText("音柱已开");
                     listener.updatePlayerCfg();
                     listener.replay(false);
-                }
+                }   */
             }
         });
 
@@ -1275,7 +1303,7 @@ public class VodController extends BaseController {
     }
     void updatePlayerCfgView() {
         try {
-			musicAnimation = Hawk.get(HawkConfig.VOD_MUSIC_ANIMATION, false);
+			musicAnimation = mPlayerConfig.getInt("music");
             int playerType = mPlayerConfig.getInt("pl");
             int pr = mPlayerConfig.getInt("pr");
             mPlayerBtn.setText(PlayerHelper.getPlayerName(playerType));
