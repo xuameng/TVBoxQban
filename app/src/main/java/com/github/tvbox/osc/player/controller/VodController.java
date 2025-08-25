@@ -834,6 +834,7 @@ public class VodController extends BaseController {
                     Hawk.put(HawkConfig.VOD_MUSIC_ANIMATION, false);
                     releaseVisualizer();  //xuameng音乐播放动画
                     mPlayanimation.setText("音柱已关");
+                    listener.updatePlayerCfg();
                 } else {
                     try {
                         mPlayerConfig.put("music", true);
