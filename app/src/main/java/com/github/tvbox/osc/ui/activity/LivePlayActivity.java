@@ -2466,10 +2466,13 @@ public class LivePlayActivity extends BaseActivity {
                 }
                 break;
             case 7: //xuameng音频动画
-                boolean select = false;
                 if(position == liveSettingItemAdapter.getSelectedItemIndex()) return;
                 if(mVideoView == null) return;
-                Hawk.put(HawkConfig.LIVE_MUSIC_ANIMATION, true);
+                if (position == 0){
+                    Hawk.put(HawkConfig.LIVE_MUSIC_ANIMATION, true);
+                }else{
+                    Hawk.put(HawkConfig.LIVE_MUSIC_ANIMATION, false);
+                }
                 liveSettingItemAdapter.selectItem(position, true, true);
                 break;
             case 8: //xuameng退出直播
