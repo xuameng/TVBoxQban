@@ -1937,7 +1937,7 @@ public class LivePlayActivity extends BaseActivity {
                         String height = Integer.toString(mVideoView.getVideoSize()[1]);
                         tv_size.setText("[" + width + " X " + height + "]");
 
-                        musicAnimation = Hawk.get(HawkConfig.LIVE_MUSIC_ANIMATION, false);
+                        musicAnimation = livePlayerManager.getLivePlaymusic();
                         if (musicAnimation){
                             int newSessionId = mVideoView.getAudioSessionId();   //xuameng音乐播放动画
                             if(newSessionId != audioSessionId) { // 避免重复初始化
@@ -2329,7 +2329,7 @@ public class LivePlayActivity extends BaseActivity {
                 liveSettingItemAdapter.selectItem(livePlayerManager.getLivePlayrender(), true, true); //xuameng 获取渲染方式
                 break;
             case 7:
-                musicAnimation = Hawk.get(HawkConfig.LIVE_MUSIC_ANIMATION, false);
+                musicAnimation = livePlayerManager.getLivePlaymusic();
                 if (musicAnimation){
                     liveSettingItemAdapter.selectItem(0, true, true);  //xuameng 音柱动画开
                 }else{
@@ -2471,11 +2471,13 @@ public class LivePlayActivity extends BaseActivity {
             case 7: //xuameng音柱动画 点击
                 if(position == liveSettingItemAdapter.getSelectedItemIndex()) return;
                 if(mVideoView == null) return;
+                livePlayerManager.changeLivePlayerMusic(mVideoView, position, currentLiveChannelItem.getChannelName()); 
                 if (position == 0){
-                    Hawk.put(HawkConfig.LIVE_MUSIC_ANIMATION, true);
                     playXuSource();
+                    if(iv_Play_Xu.getVisibility() == View.VISIBLE) {
+                        iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
+                    }
                 }else{
-                    Hawk.put(HawkConfig.LIVE_MUSIC_ANIMATION, false);
                     releaseVisualizer();  //xuameng音乐播放动画
                 }
                 liveSettingItemAdapter.selectItem(position, true, true);
@@ -2801,6 +2803,16 @@ public class LivePlayActivity extends BaseActivity {
                 String width = Integer.toString(mVideoView.getVideoSize()[0]);
                 String height = Integer.toString(mVideoView.getVideoSize()[1]);
                 //	tv_size.setText("[" + width + " X " + height +"]");
+                musicAnimation = livePlayerManager.getLivePlaymusic();
+                if (musicAnimation){
+                    if(customVisualizer.getVisibility() == View.GONE) { //xuameng播放音乐柱状图
+                        customVisualizer.setVisibility(View.VISIBLE);
+                    }
+                }else{
+                    if(customVisualizer.getVisibility() == View.VISIBLE) { //xuameng播放音乐柱状图
+                        customVisualizer.setVisibility(View.GONE);
+                    }
+                }
                 if(width.length() > 1 && height.length() > 1) { //XUAMENG分辨率
                     if(iv_circle_bg_xu.getVisibility() == View.VISIBLE) { //xuameng音乐播放时图标
                         iv_circle_bg_xu.setVisibility(View.GONE);
@@ -2808,29 +2820,9 @@ public class LivePlayActivity extends BaseActivity {
                     if(MxuamengMusic.getVisibility() == View.VISIBLE) { //xuameng播放音乐背景
                         MxuamengMusic.setVisibility(View.GONE);
                     }
-                    musicAnimation = Hawk.get(HawkConfig.LIVE_MUSIC_ANIMATION, false);
-                    if (musicAnimation){
-                        if(customVisualizer.getVisibility() == View.GONE) { //xuameng播放音乐柱状图
-                            customVisualizer.setVisibility(View.VISIBLE);
-                        }
-                    }else{
-                        if(customVisualizer.getVisibility() == View.VISIBLE) { //xuameng播放音乐柱状图
-                            customVisualizer.setVisibility(View.GONE);
-                        }
-                    }
                 } else {
                     if(MxuamengMusic.getVisibility() == View.GONE) { //xuameng播放音乐背景
                         MxuamengMusic.setVisibility(View.VISIBLE);
-                    }
-                    musicAnimation = Hawk.get(HawkConfig.LIVE_MUSIC_ANIMATION, false);
-					if (musicAnimation){
-                        if(customVisualizer.getVisibility() == View.GONE) { //xuameng播放音乐柱状图
-                           customVisualizer.setVisibility(View.VISIBLE);
-                        }
-					}else{
-                        if(customVisualizer.getVisibility() == View.VISIBLE) { //xuameng播放音乐柱状图
-                            customVisualizer.setVisibility(View.GONE);
-                        }
                     }
                     if(isBuffer || isShowlist || HawkConfig.MSLIDEINFO) { //xuameng缓冲时，显示左菜单时，显示亮度音量时
                         if(iv_circle_bg_xu.getVisibility() == View.VISIBLE) { //xuameng音乐播放时图标
