@@ -2473,7 +2473,9 @@ public class LivePlayActivity extends BaseActivity {
                 if(mVideoView == null) return;
                 livePlayerManager.changeLivePlayerMusic(mVideoView, position, currentLiveChannelItem.getChannelName()); 
                 if (position == 0){
-                    playXuSource();
+                    mVideoView.release();
+                    mVideoView.setUrl(currentLiveChannelItem.getUrl(), liveWebHeader());
+                    mVideoView.start();
                     if(iv_Play_Xu.getVisibility() == View.VISIBLE) {
                         iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
                     }
