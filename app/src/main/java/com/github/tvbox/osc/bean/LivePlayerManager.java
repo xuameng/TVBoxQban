@@ -114,7 +114,7 @@ public class LivePlayerManager {
         return 0;
     }
 
-    public boolean getLivePlaymusic() {   //xuameng 柱状图
+    public boolean getLivePlaymusic() {   //xuameng 获取柱状图设置
         try {
             return currentPlayerConfig.getBoolean("music");
         } catch (JSONException e) {
@@ -179,10 +179,10 @@ public class LivePlayerManager {
         try {
             switch (RenderType) {
                 case 0:
-                    playerConfig.put("pr", 0);
+                    playerConfig.put("pr", 0);   //xuameng Texture
                     break;
                 case 1:
-                    playerConfig.put("pr", 1);
+                    playerConfig.put("pr", 1);  //xuameng surface
                     break;
             }
         } catch (JSONException e) {
@@ -203,10 +203,10 @@ public class LivePlayerManager {
         try {
             switch (MusicType) {
                 case 0:
-                    playerConfig.put("music", true);
+                    playerConfig.put("music", true);  //xuameng 柱状图打开
                     break;
                 case 1:
-                    playerConfig.put("music", false);
+                    playerConfig.put("music", false);  //xuameng 柱状图关闭
                     break;
             }
         } catch (JSONException e) {
