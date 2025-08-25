@@ -821,7 +821,7 @@ public class VodController extends BaseController {
 
                 musicAnimation = Hawk.get(HawkConfig.VOD_MUSIC_ANIMATION, false);
                 try {
-                    musicAnimation = mPlayerConfig.getInt("music");
+					musicAnimation = mVodPlayerCfg.optBoolean("music");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -1303,7 +1303,7 @@ public class VodController extends BaseController {
     }
     void updatePlayerCfgView() {
         try {
-			musicAnimation = mPlayerConfig.getInt("music");
+			musicAnimation = mVodPlayerCfg.optBoolean("music");
             int playerType = mPlayerConfig.getInt("pl");
             int pr = mPlayerConfig.getInt("pr");
             mPlayerBtn.setText(PlayerHelper.getPlayerName(playerType));
