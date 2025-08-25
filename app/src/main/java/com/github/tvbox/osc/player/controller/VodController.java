@@ -1302,6 +1302,7 @@ public class VodController extends BaseController {
         updatePlayerCfgView();
     }
     void updatePlayerCfgView() {
+        musicAnimation = Hawk.get(HawkConfig.VOD_MUSIC_ANIMATION, false);
         try {
 			musicAnimation = mPlayerConfig.getBoolean("music");
             int playerType = mPlayerConfig.getInt("pl");
@@ -1618,6 +1619,11 @@ public class VodController extends BaseController {
                 mVideoSize.setText("[ " + width + " X " + height + " ]");
                 isVideoPlay = false;
                 musicAnimation = Hawk.get(HawkConfig.VOD_MUSIC_ANIMATION, false);
+                try {
+					musicAnimation = mPlayerConfig.getBoolean("music");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 if (musicAnimation){
                     int newSessionId = mControlWrapper.getAudioSessionId();   //xuameng音乐播放动画
                     if(newSessionId != audioSessionId) { // 避免重复初始化
