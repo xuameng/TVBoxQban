@@ -831,7 +831,6 @@ public class VodController extends BaseController {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    Hawk.put(HawkConfig.VOD_MUSIC_ANIMATION, false);
                     releaseVisualizer();  //xuameng音乐播放动画
                     mPlayanimation.setText("音柱已关");
                     listener.updatePlayerCfg();
@@ -841,7 +840,6 @@ public class VodController extends BaseController {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    Hawk.put(HawkConfig.VOD_MUSIC_ANIMATION, true);
                     mPlayanimation.setText("音柱已开");
                     listener.updatePlayerCfg();
                     listener.replay(false);
