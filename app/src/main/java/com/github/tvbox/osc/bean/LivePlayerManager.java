@@ -30,6 +30,7 @@ public class LivePlayerManager {
             defaultPlayerConfig.put("ijk", Hawk.get(HawkConfig.IJK_CODEC, "软解码"));
             defaultPlayerConfig.put("pr", Hawk.get(HawkConfig.PLAY_RENDER, 0));
             defaultPlayerConfig.put("sc", Hawk.get(HawkConfig.PLAY_SCALE, 0));
+            defaultPlayerConfig.put("music", Hawk.get(HawkConfig.LIVE_MUSIC_ANIMATION, 0));   //xuameng音乐播放动画设置
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -113,6 +114,15 @@ public class LivePlayerManager {
         return 0;
     }
 
+    public boolean getLivePlaymusic() {   //xuameng 柱状图
+        try {
+            return currentPlayerConfig.getBoolean("music");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public void changeLivePlayerType(VideoView videoView, int playerType, String channelName) {
         JSONObject playerConfig = currentPlayerConfig;
         try {
@@ -179,6 +189,29 @@ public class LivePlayerManager {
             e.printStackTrace();
         }
         PlayerHelper.updateCfg(videoView, playerConfig);
+
+        if (playerConfig.toString().equals(defaultPlayerConfig.toString()))
+            Hawk.delete(channelName);
+        else
+            Hawk.put(channelName, playerConfig);
+
+        currentPlayerConfig = playerConfig;
+    }
+
+    public void changeLivePlayerMusic(VideoView videoView, int MusicType, String channelName) {  //xuameng 柱状图
+        JSONObject playerConfig = currentPlayerConfig;
+        try {
+            switch (MusicType) {
+                case 0:
+                    playerConfig.put("music", true);
+                    break;
+                case 1:
+                    playerConfig.put("music", false);
+                    break;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
         if (playerConfig.toString().equals(defaultPlayerConfig.toString()))
             Hawk.delete(channelName);
