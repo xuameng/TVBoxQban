@@ -707,7 +707,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
                 FastClickCheckUtil.check(v);
                 boolean is_musicdb=Hawk.get(HawkConfig.VOD_MUSIC_ANIMATION, false);
                 Hawk.put(HawkConfig.VOD_MUSIC_ANIMATION, !is_musicdb);
-                tvm3u8AdText.setText(!is_musicdb ? "已开启" : "已关闭");
+                tvShowMusicDb.setText(!is_musicdb ? "已开启" : "已关闭");
             }
         });
         findViewById(R.id.llMusiczb).setOnClickListener(new View.OnClickListener() {   //xuameng点播动画
@@ -716,7 +716,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
                 FastClickCheckUtil.check(v);
                 boolean is_musiczb=Hawk.get(HawkConfig.LIVE_MUSIC_ANIMATION, false);
                 Hawk.put(HawkConfig.LIVE_MUSIC_ANIMATION, !is_musiczb);
-                tvm3u8AdText.setText(!is_musiczb ? "已开启" : "已关闭");
+                tvShowMusicZb.setText(!is_musiczb ? "已开启" : "已关闭");
             }
         });
         findViewById(R.id.llHomeRecStyle).setOnClickListener(new View.OnClickListener() {
