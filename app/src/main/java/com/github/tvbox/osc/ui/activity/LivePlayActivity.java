@@ -2325,9 +2325,9 @@ public class LivePlayActivity extends BaseActivity {
                 liveSettingItemAdapter.selectItem(livePlayerManager.getLivePlayrender(), true, true); //xuameng 获取渲染方式
                 break;
             case 7:
-                boolean select = false;
-                select = Hawk.get(HawkConfig.LIVE_MUSIC_ANIMATION, false);
-                if (select){
+                boolean selectXu = false;
+                selectXu = Hawk.get(HawkConfig.LIVE_MUSIC_ANIMATION, false);
+                if (selectXu){
                     liveSettingItemAdapter.selectItem(0, true, true);  //xuameng 音频动画
                 }else{
                     liveSettingItemAdapter.selectItem(1, true, true);  //xuameng 音频动画
