@@ -2324,6 +2324,15 @@ public class LivePlayActivity extends BaseActivity {
             case 6:
                 liveSettingItemAdapter.selectItem(livePlayerManager.getLivePlayrender(), true, true); //xuameng 获取渲染方式
                 break;
+            case 7:
+                boolean select = false;
+                select = Hawk.get(HawkConfig.LIVE_MUSIC_ANIMATION, false);
+                if (select){
+                    liveSettingItemAdapter.selectItem(0, true, true);  //xuameng 音频动画
+                }else{
+                    liveSettingItemAdapter.selectItem(1, true, true);  //xuameng 音频动画
+                }
+                break;
         }
         int scrollToPosition = liveSettingItemAdapter.getSelectedItemIndex();
         if(scrollToPosition < 0) scrollToPosition = 0;
@@ -2456,7 +2465,14 @@ public class LivePlayActivity extends BaseActivity {
                     iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
                 }
                 break;
-            case 7: //xuameng退出直播
+            case 7: //xuameng音频动画
+                boolean select = false;
+                if(position == liveSettingItemAdapter.getSelectedItemIndex()) return;
+                if(mVideoView == null) return;
+                Hawk.put(HawkConfig.LIVE_MUSIC_ANIMATION, true);
+                liveSettingItemAdapter.selectItem(position, true, true);
+                break;
+            case 8: //xuameng退出直播
                 mHideSettingLayoutRun();
                 ExitLiveOnSetting();
                 break;
