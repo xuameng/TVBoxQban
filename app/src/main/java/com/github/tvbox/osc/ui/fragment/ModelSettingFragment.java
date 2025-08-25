@@ -79,7 +79,6 @@ public class ModelSettingFragment extends BaseLazyFragment {
 	private TextView tvm3u8AdText;  //xuameng去广告
     private TextView tvShowMusicZb;  //xuameng 直播动画
     private TextView tvShowMusicDb;  //xuameng 点播动画
-    private TextView tvFastSearchText;
     private TextView tvDns;
     private TextView tvHomeRec;
     private TextView tvHistoryNum;
