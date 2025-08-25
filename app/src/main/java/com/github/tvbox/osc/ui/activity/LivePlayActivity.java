@@ -215,6 +215,7 @@ public class LivePlayActivity extends BaseActivity {
     private CountDownTimer countDownTimer22;  //xuameng显示设置菜单用
     private Visualizer mVisualizer;  //xuameng音乐播放动画
     private MusicVisualizerView customVisualizer; //xuameng播放音乐柱状图
+    private boolean musicAnimation = false;     ////xuameng 音柱动画 加载设置
     private int audioSessionId = -1; // 使用-1表示未初始化状态 //xuameng音乐播放动画
 	private static final String TAG = "LivePlayActivity";  //xuameng音乐播放动画
     private final int videoWidth = 1920;
@@ -1936,15 +1937,13 @@ public class LivePlayActivity extends BaseActivity {
                         String height = Integer.toString(mVideoView.getVideoSize()[1]);
                         tv_size.setText("[" + width + " X " + height + "]");
 
-                           boolean selectMusic = false;
-                           selectMusic = Hawk.get(HawkConfig.LIVE_MUSIC_ANIMATION, false);
-                           if (selectMusic){
-                               int newSessionId = mVideoView.getAudioSessionId();   //xuameng音乐播放动画
-App.showToastShort(mContext, "动画开启");
-                               if(newSessionId != audioSessionId) { // 避免重复初始化
-                                  initVisualizer();  //xuameng音乐播放动画
-                               }
-                           }
+                        musicAnimation = Hawk.get(HawkConfig.LIVE_MUSIC_ANIMATION, false);
+                        if (musicAnimation){
+                            int newSessionId = mVideoView.getAudioSessionId();   //xuameng音乐播放动画
+                            if(newSessionId != audioSessionId) { // 避免重复初始化
+                               initVisualizer();  //xuameng音乐播放动画
+                            }
+                        }
 
                         int duration1 = (int) mVideoView.getDuration();
                         if(isBack) {
@@ -2330,9 +2329,8 @@ App.showToastShort(mContext, "动画开启");
                 liveSettingItemAdapter.selectItem(livePlayerManager.getLivePlayrender(), true, true); //xuameng 获取渲染方式
                 break;
             case 7:
-                boolean selectXu = false;     ////xuameng 音柱动画 加载设置
-                selectXu = Hawk.get(HawkConfig.LIVE_MUSIC_ANIMATION, false);
-                if (selectXu){
+                musicAnimation = Hawk.get(HawkConfig.LIVE_MUSIC_ANIMATION, false);
+                if (musicAnimation){
                     liveSettingItemAdapter.selectItem(0, true, true);  //xuameng 音柱动画开
                 }else{
                     liveSettingItemAdapter.selectItem(1, true, true);  //xuameng 音柱动画关
@@ -2810,10 +2808,8 @@ App.showToastShort(mContext, "动画开启");
                     if(MxuamengMusic.getVisibility() == View.VISIBLE) { //xuameng播放音乐背景
                         MxuamengMusic.setVisibility(View.GONE);
                     }
-                    boolean showMusic = false;
-                    showMusic = Hawk.get(HawkConfig.LIVE_MUSIC_ANIMATION, false);
-                    if (showMusic){
-						App.showToastShort(mContext, "动画开启11");
+                    musicAnimation = Hawk.get(HawkConfig.LIVE_MUSIC_ANIMATION, false);
+                    if (musicAnimation){
                         if(customVisualizer.getVisibility() == View.GONE) { //xuameng播放音乐柱状图
                             customVisualizer.setVisibility(View.VISIBLE);
                         }
@@ -2826,9 +2822,8 @@ App.showToastShort(mContext, "动画开启");
                     if(MxuamengMusic.getVisibility() == View.GONE) { //xuameng播放音乐背景
                         MxuamengMusic.setVisibility(View.VISIBLE);
                     }
-                    boolean showMusicXu = false;
-                    showMusicXu = Hawk.get(HawkConfig.LIVE_MUSIC_ANIMATION, false);
-					if (showMusicXu){
+                    musicAnimation = Hawk.get(HawkConfig.LIVE_MUSIC_ANIMATION, false);
+					if (musicAnimation){
                         if(customVisualizer.getVisibility() == View.GONE) { //xuameng播放音乐柱状图
                            customVisualizer.setVisibility(View.VISIBLE);
                         }
@@ -3392,6 +3387,9 @@ App.showToastShort(mContext, "动画开启");
             }
             if (customVisualizer != null) {
                 customVisualizer.release();
+            }
+            if(customVisualizer.getVisibility() == View.VISIBLE) { //xuameng播放音乐柱状图
+                customVisualizer.setVisibility(View.GONE);
             }
         } catch (Exception e) {
             Log.e(TAG, "Error releasing visualizer", e);
