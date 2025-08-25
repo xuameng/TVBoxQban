@@ -820,7 +820,7 @@ public class VodController extends BaseController {
                 }
                 if(musicAnimation) {
                     try {
-                        mPlayerConfig.put("music", false);  //xuameng音乐播放动画设置
+                        mPlayerConfig.put("music", false);  //xuameng音乐播放动画关闭
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -829,7 +829,7 @@ public class VodController extends BaseController {
                     releaseVisualizer();  //xuameng音乐播放动画
                 } else {
                     try {
-                        mPlayerConfig.put("music", true);   //xuameng音乐播放动画设置
+                        mPlayerConfig.put("music", true);   //xuameng音乐播放动画开启
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -1297,7 +1297,7 @@ public class VodController extends BaseController {
   //          mAudioTrackBtn.setVisibility((playerType == 1 || playerType == 2) ? VISIBLE : GONE);     //xuameng不判断音轨了全部显示
             mAudioTrackBtn.setVisibility(View.VISIBLE);
             mPlayrender.setText((pr == 0) ? "T渲染" : "S渲染"); //xuameng 渲染
-            mPlayanimation.setText(musicAnimation ? "音柱已开" : "音柱已关");  //xuameng音乐播放动画
+            mPlayanimation.setText(musicAnimation ? "音柱已开" : "音柱已关");  //xuameng音乐播放动画获取状态
         } catch (JSONException e) {
             e.printStackTrace();
         }
