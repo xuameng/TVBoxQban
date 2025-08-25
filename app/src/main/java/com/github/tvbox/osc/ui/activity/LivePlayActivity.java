@@ -1942,8 +1942,14 @@ public class LivePlayActivity extends BaseActivity {
                               initVisualizer();  //xuameng音乐播放动画
                            }
 				        }else{
-                           Hawk.put(HawkConfig.LIVE_MUSIC_ANIMATION, false);
-                           releaseVisualizer();  //xuameng音乐播放动画
+                           boolean selectMusic = false;
+                           selectMusic = Hawk.get(HawkConfig.LIVE_MUSIC_ANIMATION, false);
+                           if (selectMusic){
+                               int newSessionId = mVideoView.getAudioSessionId();   //xuameng音乐播放动画
+                               if(newSessionId != audioSessionId) { // 避免重复初始化
+                                  initVisualizer();  //xuameng音乐播放动画
+                               }
+                           }
                         }
                         int duration1 = (int) mVideoView.getDuration();
                         if(isBack) {
@@ -2473,16 +2479,8 @@ public class LivePlayActivity extends BaseActivity {
                 if(position == liveSettingItemAdapter.getSelectedItemIndex()) return;
                 if(mVideoView == null) return;
                 if (position == 0){
-                    if (isVideoplaying){
-                        Hawk.put(HawkConfig.LIVE_MUSIC_ANIMATION, true);
-                        int newSessionId = mVideoView.getAudioSessionId();   //xuameng音乐播放动画
-                        if(newSessionId != audioSessionId) { // 避免重复初始化
-                           initVisualizer();  //xuameng音乐播放动画
-                        }
-                    }else{
-                        App.showToastShort(mContext, "聚汇影视提示您：当前不是播放状态！请进入播放状态再选择！");
-                        return;
-					}
+                    Hawk.put(HawkConfig.LIVE_MUSIC_ANIMATION, true);
+                    playXuSource();
                 }else{
                     Hawk.put(HawkConfig.LIVE_MUSIC_ANIMATION, false);
                     releaseVisualizer();  //xuameng音乐播放动画
