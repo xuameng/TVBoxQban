@@ -367,7 +367,7 @@ public class VodController extends BaseController {
                     mPlayTitle.setVisibility(GONE); //xuameng隐藏上面时间
                 }
                 try {
-                    musicAnimation = mPlayerConfig.getBoolean("music");
+                    musicAnimation = mPlayerConfig.getBoolean("music");  //xuameng音乐播放动画获取设置
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -814,13 +814,13 @@ public class VodController extends BaseController {
                 DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
 
                 try {
-					musicAnimation = mPlayerConfig.getBoolean("music");
+					musicAnimation = mPlayerConfig.getBoolean("music");   //xuameng音乐播放动画获取设置
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
                 if(musicAnimation) {
                     try {
-                        mPlayerConfig.put("music", false);
+                        mPlayerConfig.put("music", false);  //xuameng音乐播放动画设置
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -829,7 +829,7 @@ public class VodController extends BaseController {
                     releaseVisualizer();  //xuameng音乐播放动画
                 } else {
                     try {
-                        mPlayerConfig.put("music", true);
+                        mPlayerConfig.put("music", true);   //xuameng音乐播放动画设置
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -1283,7 +1283,7 @@ public class VodController extends BaseController {
     }
     void updatePlayerCfgView() {
         try {
-			musicAnimation = mPlayerConfig.getBoolean("music");
+			musicAnimation = mPlayerConfig.getBoolean("music");   //xuameng音乐播放动画设置
             int playerType = mPlayerConfig.getInt("pl");
             int pr = mPlayerConfig.getInt("pr");
             mPlayerBtn.setText(PlayerHelper.getPlayerName(playerType));
@@ -1296,8 +1296,8 @@ public class VodController extends BaseController {
             mPlayerTimeSkipBtn.setText(PlayerUtils.stringForTime(mPlayerConfig.getInt("et") * 1000));
   //          mAudioTrackBtn.setVisibility((playerType == 1 || playerType == 2) ? VISIBLE : GONE);     //xuameng不判断音轨了全部显示
             mAudioTrackBtn.setVisibility(View.VISIBLE);
-            mPlayrender.setText((pr == 0) ? "T渲染" : "S渲染"); //xuameng INT 渲染
-            mPlayanimation.setText(musicAnimation ? "音柱已开" : "音柱已关");
+            mPlayrender.setText((pr == 0) ? "T渲染" : "S渲染"); //xuameng 渲染
+            mPlayanimation.setText(musicAnimation ? "音柱已开" : "音柱已关");  //xuameng音乐播放动画
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -1598,7 +1598,7 @@ public class VodController extends BaseController {
                 mVideoSize.setText("[ " + width + " X " + height + " ]");
                 isVideoPlay = false;
                 try {
-					musicAnimation = mPlayerConfig.getBoolean("music");
+					musicAnimation = mPlayerConfig.getBoolean("music");  //xuameng音乐播放动画获取设置
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
