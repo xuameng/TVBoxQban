@@ -14,6 +14,10 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:scaleType="fitXY"/>
+    <xyz.doikki.videoplayer.player.VideoView
+        android:id="@+id/mVideoView"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"/>
     <com.github.tvbox.osc.ui.tv.widget.MusicVisualizerView
         android:id="@+id/visualizer_view"
         android:layout_width="400mm"
@@ -22,10 +26,6 @@
         android:visibility="gone"
         android:layout_margin="16dp"
         android:background="@android:color/transparent"/>
-    <xyz.doikki.videoplayer.player.VideoView
-        android:id="@+id/mVideoView"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"/>
     <ImageView
         android:layout_gravity="center"
         android:id="@+id/iv_circle_bg_xu"
