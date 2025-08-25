@@ -705,9 +705,9 @@ public class ModelSettingFragment extends BaseLazyFragment {
             @Override
             public void onClick(View v) {
                 FastClickCheckUtil.check(v);
-                boolean is_musicdb=Hawk.get(HawkConfig.VOD_MUSIC_ANIMATION, false);
-                Hawk.put(HawkConfig.VOD_MUSIC_ANIMATION, !is_musicdb);
-                tvShowMusicDb.setText(!is_musicdb ? "已开启" : "已关闭");
+                boolean musicdb=Hawk.get(HawkConfig.VOD_MUSIC_ANIMATION, false);
+                Hawk.put(HawkConfig.VOD_MUSIC_ANIMATION, !musicdb);
+                tvShowMusicDb.setText(!musicdb ? "已开启" : "已关闭");
             }
         });
         findViewById(R.id.llMusiczb).setOnClickListener(new View.OnClickListener() {   //xuameng点播动画
