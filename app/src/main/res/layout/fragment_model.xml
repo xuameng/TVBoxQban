@@ -513,6 +513,8 @@
                             android:textColor="@android:color/white"
                             android:id="@+id/tvRenderType"
                             android:maxEms="4"
+                            android:ellipsize="end"
+                            android:singleLine="true"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"/>
                         <TextView
