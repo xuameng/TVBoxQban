@@ -39,13 +39,11 @@ public class PlayerHelper {
         int renderType = Hawk.get(HawkConfig.PLAY_RENDER, 0);
         String ijkCode = Hawk.get(HawkConfig.IJK_CODEC, "软解码");
         int scale = Hawk.get(HawkConfig.PLAY_SCALE, 0);
-        boolean musicType = Hawk.get(HawkConfig.LIVE_MUSIC_ANIMATION, false);
         try {
             playerType = playerCfg.getInt("pl");
             renderType = playerCfg.getInt("pr");
             ijkCode = playerCfg.getString("ijk");
             scale = playerCfg.getInt("sc");
-			musicType = playerCfg.getBoolean("music");
         } catch (JSONException e) {
             e.printStackTrace();
         }
