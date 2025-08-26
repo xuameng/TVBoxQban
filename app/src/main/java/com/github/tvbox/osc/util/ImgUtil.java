@@ -90,51 +90,38 @@ public class ImgUtil {
         return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
     }
 
-public static Drawable createTextDrawable(String text) {
-    if(text.isEmpty()) text = "聚";
-    text = text.substring(0, 1);
-    
-    // 如果缓存中已存在，直接返回
-    if (drawableCache.containsKey(text)) {
-        return drawableCache.get(text);
+    public static Drawable createTextDrawable(String text) {
+        if(text.isEmpty())text="聚";
+        text=text.substring(0, 1);
+        // 如果缓存中已存在，直接返回
+        if (drawableCache.containsKey(text)) {
+            return drawableCache.get(text);
+        }
+        int width = 240, height = 320; // 设定图片大小
+        int randomColor = getRandomColor();
+        float cornerRadius = AutoSizeUtils.mm2px(App.getInstance(), 8); // 圆角半径
+
+        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        // 画圆角背景
+        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paint.setColor(randomColor);
+        paint.setStyle(Paint.Style.FILL);
+        RectF rectF = new RectF(0, 0, width, height);
+        canvas.drawRoundRect(rectF, cornerRadius, cornerRadius, paint);
+        paint.setColor(Color.WHITE); // 文字颜色
+        paint.setTextSize(60); // 文字大小
+        paint.setTextAlign(Paint.Align.CENTER);
+        Paint.FontMetrics fontMetrics = paint.getFontMetrics();
+        float x = width / 2f;
+        float y = (height - fontMetrics.bottom - fontMetrics.top) / 2f;
+
+        canvas.drawText(text, x, y, paint);
+        Drawable drawable = new BitmapDrawable(bitmap);
+        drawableCache.put(text, drawable);
+        return drawable;
+
     }
-
-    // 设置基础尺寸
-    int baseWidth = 240;
-    int baseHeight = 320;
-    
-    // 创建矢量绘制画布
-    Bitmap bitmap = Bitmap.createBitmap(baseWidth, baseHeight, Bitmap.Config.ARGB_8888);
-    Canvas canvas = new Canvas(bitmap);
-    
-    // 画圆角背景
-    Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    int randomColor = getRandomColor();
-    paint.setColor(randomColor);
-    paint.setStyle(Paint.Style.FILL);
-    
-    // 计算动态圆角半径
-    float cornerRadius = Math.min(baseWidth/2f, baseHeight/2f) * 0.1f;
-    RectF rectF = new RectF(0, 0, baseWidth, baseHeight);
-    canvas.drawRoundRect(rectF, cornerRadius, cornerRadius, paint);
-    
-    // 绘制文字
-    paint.setColor(Color.WHITE);
-    paint.setTextSize(baseWidth * 0.25f);  // 文字大小根据宽度比例调整
-    
-    // 计算文字位置
-    Paint.FontMetrics fontMetrics = paint.getFontMetrics();
-    float x = baseWidth / 2f;
-    float y = (baseHeight - fontMetrics.bottom - fontMetrics.top) / 2f;
-    
-    canvas.drawText(text, x, y, paint);
-    
-    // 创建Drawable并缓存
-    Drawable drawable = new BitmapDrawable(bitmap);
-    drawableCache.put(text, drawable);
-    return drawable;
-}
-
     public static int getRandomColor() {
         Random random = new Random();
         return Color.argb(255, random.nextInt(256), random.nextInt(256), random.nextInt(256));
