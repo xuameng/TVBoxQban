@@ -2472,11 +2472,7 @@ public class LivePlayActivity extends BaseActivity {
                 if(position == liveSettingItemAdapter.getSelectedItemIndex()) return;
                 if(mVideoView == null) return;
                 livePlayerManager.changeLivePlayerMusic(mVideoView, position, currentLiveChannelItem.getChannelName()); 
-                if (position == 0){
-                    initVisualizer();  //xuameng音乐播放动画
-                }else{
-                    releaseVisualizer();  //xuameng音乐播放动画
-                }
+                position == 0 ? initVisualizer() : releaseVisualizer();  //xuameng音乐播放动画
                 liveSettingItemAdapter.selectItem(position, true, true);
                 break;
             case 8: //xuameng退出直播
