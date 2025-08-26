@@ -852,21 +852,21 @@ public class PlayFragment extends BaseLazyFragment {
             mVodPlayerCfg = new JSONObject();
         }
         try {
-       //     if (!mVodPlayerCfg.has("pl")) {
-       //         mVodPlayerCfg.put("pl", (sourceBean.getPlayerType() == -1) ? (int)Hawk.get(HawkConfig.PLAY_TYPE, 1) : sourceBean.getPlayerType());
-       //     }
+            if (!mVodPlayerCfg.has("pl")) {
+                mVodPlayerCfg.put("pl", (sourceBean.getPlayerType() == -1) ? (int)Hawk.get(HawkConfig.PLAY_TYPE, 1) : sourceBean.getPlayerType());
+            }
        //     if (!mVodPlayerCfg.has("pr")) {
        //         mVodPlayerCfg.put("pr", Hawk.get(HawkConfig.PLAY_RENDER, 0));
        //     }
        //     if (!mVodPlayerCfg.has("music")) {    //xuameng音频柱状图
        //         mVodPlayerCfg.put("music", Hawk.get(HawkConfig.VOD_MUSIC_ANIMATION, false));
        //     }
-       //     if (!mVodPlayerCfg.has("ijk")) {
-       //         mVodPlayerCfg.put("ijk", Hawk.get(HawkConfig.IJK_CODEC, ""));
-       //     }
-      //      if (!mVodPlayerCfg.has("sc")) {
-      //          mVodPlayerCfg.put("sc", Hawk.get(HawkConfig.PLAY_SCALE, 0));
-      //      }
+            if (!mVodPlayerCfg.has("ijk")) {
+                mVodPlayerCfg.put("ijk", Hawk.get(HawkConfig.IJK_CODEC, ""));
+            }
+            if (!mVodPlayerCfg.has("sc")) {
+                mVodPlayerCfg.put("sc", Hawk.get(HawkConfig.PLAY_SCALE, 0));
+            }
             if (!mVodPlayerCfg.has("sp")) {
                 mVodPlayerCfg.put("sp", 1.0f);
             }
