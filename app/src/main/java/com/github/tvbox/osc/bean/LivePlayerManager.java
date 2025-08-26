@@ -106,16 +106,17 @@ public class LivePlayerManager {
     }
 
     public int getLivePlayrender() {   //xuameng 获取渲染方式
+        int pr = Hawk.get(HawkConfig.PLAY_RENDER, 0);
         try {
             return currentPlayerConfig.getInt("pr");
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return 0;
+        return pr;
     }
 
     public boolean getLivePlaymusic() {   //xuameng 获取柱状图设置
-        boolean musicType = Hawk.get(HawkConfig.LIVE_MUSIC_ANIMATION, false)
+        boolean musicType = Hawk.get(HawkConfig.LIVE_MUSIC_ANIMATION, false);
         try {
             return currentPlayerConfig.getBoolean("music");
         } catch (JSONException e) {
