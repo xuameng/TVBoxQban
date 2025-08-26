@@ -835,7 +835,7 @@ public class VodController extends BaseController {
                     }
                     updatePlayerCfgView();
                     listener.updatePlayerCfg();
-                    initVisualizer();
+                    initVisualizer();  //xuameng音乐播放动画
                 }
             }
         });
