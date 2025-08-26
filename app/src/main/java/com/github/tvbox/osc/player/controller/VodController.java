@@ -366,7 +366,6 @@ public class VodController extends BaseController {
                     mPlayPauseTimexu.setVisibility(GONE); //xuameng隐藏上面视频名称
                     mPlayTitle.setVisibility(GONE); //xuameng隐藏上面时间
                 }
-                musicAnimation = Hawk.get(HawkConfig.VOD_MUSIC_ANIMATION, false);
                 try {
                     musicAnimation = mPlayerConfig.getBoolean("music");  //xuameng音乐播放动画获取设置
                 } catch (JSONException e) {
@@ -814,7 +813,6 @@ public class VodController extends BaseController {
                 }
                 DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
 
-                musicAnimation = Hawk.get(HawkConfig.VOD_MUSIC_ANIMATION, false);
                 try {
 					musicAnimation = mPlayerConfig.getBoolean("music");   //xuameng音乐播放动画获取设置
                 } catch (JSONException e) {
@@ -837,7 +835,7 @@ public class VodController extends BaseController {
                     }
                     updatePlayerCfgView();
                     listener.updatePlayerCfg();
-                    initVisualizer();  //xuameng音乐播放动画
+                    initVisualizer();
                 }
             }
         });
@@ -1284,7 +1282,6 @@ public class VodController extends BaseController {
         updatePlayerCfgView();
     }
     void updatePlayerCfgView() {
-        musicAnimation = Hawk.get(HawkConfig.VOD_MUSIC_ANIMATION, false);
         try {
 			musicAnimation = mPlayerConfig.getBoolean("music");   //xuameng音乐播放动画设置
             int playerType = mPlayerConfig.getInt("pl");
@@ -1600,7 +1597,6 @@ public class VodController extends BaseController {
                 String height = Integer.toString(mControlWrapper.getVideoSize()[1]);
                 mVideoSize.setText("[ " + width + " X " + height + " ]");
                 isVideoPlay = false;
-                musicAnimation = Hawk.get(HawkConfig.VOD_MUSIC_ANIMATION, false);
                 try {
 					musicAnimation = mPlayerConfig.getBoolean("music");  //xuameng音乐播放动画获取设置
                 } catch (JSONException e) {
