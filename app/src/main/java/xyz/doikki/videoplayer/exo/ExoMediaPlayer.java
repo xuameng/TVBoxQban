@@ -25,6 +25,7 @@ import com.google.android.exoplayer2.util.NonNullApi;
 import com.google.android.exoplayer2.util.Clock;
 import com.google.android.exoplayer2.util.EventLogger;
 import com.google.android.exoplayer2.video.VideoSize;
+import com.google.android.exoplayer2.ext.ffmpeg.FfmpegAudioRenderer;
 
 import java.util.Map;
 
@@ -54,13 +55,23 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
         mMediaSourceHelper = ExoMediaSourceHelper.getInstance(context);
     }
 
+	FfmpegAudioRenderer audioRenderer = new FfmpegAudioRenderer(
+    /* eventHandler= */ handler,
+    /* eventListener= */ null,
+    /* audioProcessors= */ new AudioProcessor[0]
+);
+
+	DefaultExtractorsFactory extractorsFactory = new DefaultExtractorsFactory()
+    .setConstantBitrateSeekingEnabled(true)
+    .setFfmpegExtractorEnabled(true);
+
     @Override
     public void initPlayer() {
         mMediaPlayer = new SimpleExoPlayer.Builder(
                 mAppContext,
                 mRenderersFactory == null ? mRenderersFactory = new DefaultRenderersFactory(mAppContext) : mRenderersFactory,
                 mTrackSelector == null ? mTrackSelector = new DefaultTrackSelector(mAppContext) : mTrackSelector,
-                new DefaultMediaSourceFactory(mAppContext),
+                extractorsFactory(mAppContext),
                 mLoadControl == null ? mLoadControl = new DefaultLoadControl() : mLoadControl,
                 DefaultBandwidthMeter.getSingletonInstance(mAppContext),
                 new AnalyticsCollector(Clock.DEFAULT))
