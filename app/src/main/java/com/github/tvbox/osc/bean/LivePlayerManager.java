@@ -58,7 +58,7 @@ public class LivePlayerManager {
 
         try {
             if (playerConfig.getInt("pl") == currentPlayerConfig.getInt("pl")
-                    && playerConfig.getInt("pr") == currentPlayerConfig.getInt("pr")
+                    && playerConfig.getInt("pr") == currentPlayerConfig.getInt("pr") && playerConfig.getBoolean("music") == currentPlayerConfig.getBoolean("music")
                     && playerConfig.getString("ijk").equals(currentPlayerConfig.getString("ijk"))) {
                 videoView.setScreenScaleType(playerConfig.getInt("sc"));
             } else {
@@ -212,6 +212,7 @@ public class LivePlayerManager {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        PlayerHelper.updateCfg(videoView, playerConfig);
 
         if (playerConfig.toString().equals(defaultPlayerConfig.toString()))
             Hawk.delete(channelName);
