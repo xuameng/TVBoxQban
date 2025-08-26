@@ -117,6 +117,7 @@ dependencies {
     implementation 'com.blankj:utilcodex:1.31.0'
     implementation 'com.github.alidili:FlowLayout:v1.5'  //xuameng搜索历史
     //xuameng exo
+    implementation 'com.google.android.exoplayer:exoplayer-ffmpeg:2.14.2'
     api "com.google.android.exoplayer:exoplayer-core:2.14.2"
     api "com.google.android.exoplayer:exoplayer-dash:2.14.2"
     api "com.google.android.exoplayer:exoplayer-hls:2.14.2"
