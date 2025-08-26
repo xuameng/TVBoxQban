@@ -214,6 +214,7 @@ public class LivePlayerManager {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        PlayerHelper.updateCfg(videoView, playerConfig);
 
         if (playerConfig.toString().equals(defaultPlayerConfig.toString()))
             Hawk.delete(channelName);
