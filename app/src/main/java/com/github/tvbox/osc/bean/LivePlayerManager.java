@@ -115,12 +115,13 @@ public class LivePlayerManager {
     }
 
     public boolean getLivePlaymusic() {   //xuameng 获取柱状图设置
+        boolean musicType = Hawk.get(HawkConfig.LIVE_MUSIC_ANIMATION, false)
         try {
             return currentPlayerConfig.getBoolean("music");
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return false;
+        return musicType;
     }
 
     public void changeLivePlayerType(VideoView videoView, int playerType, String channelName) {
@@ -212,7 +213,6 @@ public class LivePlayerManager {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        PlayerHelper.updateCfg(videoView, playerConfig);
 
         if (playerConfig.toString().equals(defaultPlayerConfig.toString()))
             Hawk.delete(channelName);
