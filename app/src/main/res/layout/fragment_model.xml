@@ -587,7 +587,7 @@
                             android:textColor="@android:color/white"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="点播动画"/>
+                            android:text="点播音柱"/>
                         <Space
                             android:layout_width="0.0dip"
                             android:layout_height="wrap_content"
@@ -623,7 +623,7 @@
                             android:textColor="@android:color/white"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="直播动画"/>
+                            android:text="直播音柱"/>
                         <Space
                             android:layout_width="0.0dip"
                             android:layout_height="wrap_content"
