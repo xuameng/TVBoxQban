@@ -50,6 +50,8 @@ import com.orhanobut.hawk.Hawk;
 import com.hjq.permissions.OnPermissionCallback;
 import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 
 import org.greenrobot.eventbus.EventBus;
 import org.jetbrains.annotations.NotNull;
@@ -701,24 +703,52 @@ public class ModelSettingFragment extends BaseLazyFragment {
                 tvm3u8AdText.setText(!is_purify ? "已开启" : "已关闭");
             }
         });
-        findViewById(R.id.llMusicdb).setOnClickListener(new View.OnClickListener() {   //xuameng点播动画
-            @Override
-            public void onClick(View v) {
-                FastClickCheckUtil.check(v);
-                boolean musicdb=Hawk.get(HawkConfig.VOD_MUSIC_ANIMATION, false);
-                Hawk.put(HawkConfig.VOD_MUSIC_ANIMATION, !musicdb);
-                tvShowMusicDb.setText(!musicdb ? "已开启" : "已关闭");
-            }
-        });
-        findViewById(R.id.llMusiczb).setOnClickListener(new View.OnClickListener() {   //xuameng点播动画
-            @Override
-            public void onClick(View v) {
-                FastClickCheckUtil.check(v);
-                boolean is_musiczb=Hawk.get(HawkConfig.LIVE_MUSIC_ANIMATION, false);
-                Hawk.put(HawkConfig.LIVE_MUSIC_ANIMATION, !is_musiczb);
-                tvShowMusicZb.setText(!is_musiczb ? "已开启" : "已关闭");
-            }
-        });
+findViewById(R.id.llMusicdb).setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onClick(View v) {
+        FastClickCheckUtil.check(v);
+        showAnimationSettingsDialog();
+    }
+});
+
+findViewById(R.id.llMusiczb).setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onClick(View v) {
+        FastClickCheckUtil.check(v);
+        showAnimationSettingsDialog();
+    }
+});
+
+private void showAnimationSettingsDialog() {
+    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    builder.setTitle("动画设置");
+
+    // 定义两个设置项：点播动画和直播动画
+    final boolean[] isChecked = new boolean[]{Hawk.get(HawkConfig.VOD_MUSIC_ANIMATION, false), Hawk.get(HawkConfig.LIVE_MUSIC_ANIMATION, false)};
+    final String[] titles = {"点播动画", "直播动画"};
+    final String[] descriptions = {"已开启", "已关闭"};
+
+    // 创建复选框列表
+    builder.setMultiChoiceItems(titles, isChecked, (dialog, which, isChecked) -> {
+        isChecked[which] = isChecked;
+        descriptions[which] = isChecked[which] ? "已开启" : "已关闭";
+    });
+
+    // 设置确定按钮
+    builder.setPositiveButton("确定", (dialog, which) -> {
+        Hawk.put(HawkConfig.VOD_MUSIC_ANIMATION, isChecked[0]);
+        Hawk.put(HawkConfig.LIVE_MUSIC_ANIMATION, isChecked[1]);
+        tvShowMusicDb.setText(descriptions[0]);
+        tvShowMusicZb.setText(descriptions[1]);
+    });
+
+    // 设置取消按钮
+    builder.setNegativeButton("取消", null);
+
+    // 显示对话框
+    builder.create().show();
+}
+
         findViewById(R.id.llHomeRecStyle).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
