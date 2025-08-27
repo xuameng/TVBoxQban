@@ -126,7 +126,7 @@ public class LivePlayerManager {
                 return currentPlayerConfig.getBoolean("music");
             }
         } catch (JSONException e) {
-            Log.w("PlayerConfig", "JSON解析异常，回退Hawk配置", e);
+            e.printStackTrace();
         }
         return musicType;
     }
