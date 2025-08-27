@@ -116,14 +116,21 @@ public class LivePlayerManager {
     }
 
     public boolean getLivePlaymusic() {   //xuameng 获取柱状图设置
+        // 优先使用Hawk配置
         boolean musicType = Hawk.get(HawkConfig.LIVE_MUSIC_ANIMATION, false);
         try {
-            return currentPlayerConfig.getBoolean("music");
+            // 严格校验JSON结构
+            if (currentPlayerConfig != null && 
+                currentPlayerConfig.has("music") &&
+                currentPlayerConfig.get("music") instanceof Boolean) {
+                return currentPlayerConfig.getBoolean("music");
+            }
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.w("PlayerConfig", "JSON解析异常，回退Hawk配置", e);
         }
         return musicType;
     }
+
 
     public void changeLivePlayerType(VideoView videoView, int playerType, String channelName) {
         JSONObject playerConfig = currentPlayerConfig;
