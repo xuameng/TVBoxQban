@@ -25,6 +25,7 @@ import com.google.android.exoplayer2.util.NonNullApi;
 import com.google.android.exoplayer2.util.Clock;
 import com.google.android.exoplayer2.util.EventLogger;
 import com.google.android.exoplayer2.video.VideoSize;
+import com.google.android.exoplayer2.ext.ffmpeg.FFMPEGRenderFactory;
 
 import java.util.Map;
 
@@ -56,9 +57,8 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 
     @Override
     public void initPlayer() {
-        // 在构建前配置RenderersFactory
-        mRenderersFactory = new DefaultRenderersFactory(mAppContext)
-        .setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER);  // [!code ++]
+        mRenderersFactory = new FFMPEGRenderFactory(mAppContext);
+        mRenderersFactory.setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER); 
 
         mMediaPlayer = new SimpleExoPlayer.Builder(
                 mAppContext,
