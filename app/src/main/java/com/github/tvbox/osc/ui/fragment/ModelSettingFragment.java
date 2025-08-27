@@ -50,8 +50,6 @@ import com.orhanobut.hawk.Hawk;
 import com.hjq.permissions.OnPermissionCallback;
 import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 
 import org.greenrobot.eventbus.EventBus;
 import org.jetbrains.annotations.NotNull;
@@ -720,33 +718,53 @@ findViewById(R.id.llMusiczb).setOnClickListener(new View.OnClickListener() {
 });
 
 private void showAnimationSettingsDialog() {
-    AlertDialog.Builder builder = new AlertDialog.Builder(this);
-    builder.setTitle("动画设置");
+    // 1. 准备数据
+    boolean[] isChecked = {
+        Hawk.get(HawkConfig.VOD_MUSIC_ANIMATION, false),
+        Hawk.get(HawkConfig.LIVE_MUSIC_ANIMATION, false)
+    };
+    String[] titles = {"点播动画", "直播动画"};
 
-    // 定义两个设置项：点播动画和直播动画
-    final boolean[] isChecked = new boolean[]{Hawk.get(HawkConfig.VOD_MUSIC_ANIMATION, false), Hawk.get(HawkConfig.LIVE_MUSIC_ANIMATION, false)};
-    final String[] titles = {"点播动画", "直播动画"};
-    final String[] descriptions = {"已开启", "已关闭"};
+    // 2. 创建SelectDialog
+    SelectDialog<String> dialog = new SelectDialog<>(mActivity);
+    dialog.setTip("动画设置");
 
-    // 创建复选框列表
-    builder.setMultiChoiceItems(titles, isChecked, (dialog, which, isChecked) -> {
-        isChecked[which] = isChecked;
-        descriptions[which] = isChecked[which] ? "已开启" : "已关闭";
-    });
+    // 3. 设置Adapter
+    dialog.setAdapter(new SelectDialogAdapter.SelectDialogInterface<String>() {
+        @Override
+        public void onBindViewHolder(SelectDialogAdapter.Holder holder, int position) {
+            holder.setTitle(titles[position]);
+            holder.setDescription(isChecked[position] ? "已开启" : "已关闭");
+            holder.setChecked(isChecked[position]);
+        }
 
-    // 设置确定按钮
-    builder.setPositiveButton("确定", (dialog, which) -> {
+        @Override
+        public int getItemCount() {
+            return titles.length;
+        }
+    }, new DiffUtil.ItemCallback<String>() {
+        @Override
+        public boolean areItemsTheSame(@NotNull String oldItem, @NotNull String newItem) {
+            return oldItem.equals(newItem);
+        }
+
+        @Override
+        public boolean areContentsTheSame(@NotNull String oldItem, @NotNull String newItem) {
+            return oldItem.equals(newItem);
+        }
+    }, new String[] {}, 0);
+
+    // 4. 设置点击事件
+    dialog.setOnOkListener(() -> {
+        // 更新状态和UI
         Hawk.put(HawkConfig.VOD_MUSIC_ANIMATION, isChecked[0]);
         Hawk.put(HawkConfig.LIVE_MUSIC_ANIMATION, isChecked[1]);
-        tvShowMusicDb.setText(descriptions[0]);
-        tvShowMusicZb.setText(descriptions[1]);
+        tvShowMusicDb.setText(isChecked[0] ? "已开启" : "已关闭");
+        tvShowMusicZb.setText(isChecked[1] ? "已开启" : "已关闭");
     });
 
-    // 设置取消按钮
-    builder.setNegativeButton("取消", null);
-
     // 显示对话框
-    builder.create().show();
+    dialog.show();
 }
 
         findViewById(R.id.llHomeRecStyle).setOnClickListener(new View.OnClickListener() {
