@@ -717,55 +717,7 @@ findViewById(R.id.llMusiczb).setOnClickListener(new View.OnClickListener() {
     }
 });
 
-private void showAnimationSettingsDialog() {
-    // 1. 准备数据
-    boolean[] isChecked = {
-        Hawk.get(HawkConfig.VOD_MUSIC_ANIMATION, false),
-        Hawk.get(HawkConfig.LIVE_MUSIC_ANIMATION, false)
-    };
-    String[] titles = {"点播动画", "直播动画"};
 
-    // 2. 创建SelectDialog
-    SelectDialog<String> dialog = new SelectDialog<>(mActivity);
-    dialog.setTip("动画设置");
-
-    // 3. 设置Adapter
-    dialog.setAdapter(new SelectDialogAdapter.SelectDialogInterface<String>() {
-        @Override
-        public void onBindViewHolder(SelectDialogAdapter.Holder holder, int position) {
-            holder.setTitle(titles[position]);
-            holder.setDescription(isChecked[position] ? "已开启" : "已关闭");
-            holder.setChecked(isChecked[position]);
-        }
-
-        @Override
-        public int getItemCount() {
-            return titles.length;
-        }
-    }, new DiffUtil.ItemCallback<String>() {
-        @Override
-        public boolean areItemsTheSame(@NotNull String oldItem, @NotNull String newItem) {
-            return oldItem.equals(newItem);
-        }
-
-        @Override
-        public boolean areContentsTheSame(@NotNull String oldItem, @NotNull String newItem) {
-            return oldItem.equals(newItem);
-        }
-    }, new String[] {}, 0);
-
-    // 4. 设置点击事件
-    dialog.setOnOkListener(() -> {
-        // 更新状态和UI
-        Hawk.put(HawkConfig.VOD_MUSIC_ANIMATION, isChecked[0]);
-        Hawk.put(HawkConfig.LIVE_MUSIC_ANIMATION, isChecked[1]);
-        tvShowMusicDb.setText(isChecked[0] ? "已开启" : "已关闭");
-        tvShowMusicZb.setText(isChecked[1] ? "已开启" : "已关闭");
-    });
-
-    // 显示对话框
-    dialog.show();
-}
 
         findViewById(R.id.llHomeRecStyle).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -894,4 +846,54 @@ private void showAnimationSettingsDialog() {
             return "缩略图";
         }
     }
+
+	private void showAnimationSettingsDialog() {
+    // 1. 准备数据
+    boolean[] isChecked = {
+        Hawk.get(HawkConfig.VOD_MUSIC_ANIMATION, false),
+        Hawk.get(HawkConfig.LIVE_MUSIC_ANIMATION, false)
+    };
+    String[] titles = {"点播动画", "直播动画"};
+
+    // 2. 创建SelectDialog
+    SelectDialog<String> dialog = new SelectDialog<>(mActivity);
+    dialog.setTip("动画设置");
+
+    // 3. 设置Adapter
+    dialog.setAdapter(new SelectDialogAdapter.SelectDialogInterface<String>() {
+        @Override
+        public void onBindViewHolder(SelectDialogAdapter.Holder holder, int position) {
+            holder.setTitle(titles[position]);
+            holder.setDescription(isChecked[position] ? "已开启" : "已关闭");
+            holder.setChecked(isChecked[position]);
+        }
+
+        @Override
+        public int getItemCount() {
+            return titles.length;
+        }
+    }, new DiffUtil.ItemCallback<String>() {
+        @Override
+        public boolean areItemsTheSame(@NotNull String oldItem, @NotNull String newItem) {
+            return oldItem.equals(newItem);
+        }
+
+        @Override
+        public boolean areContentsTheSame(@NotNull String oldItem, @NotNull String newItem) {
+            return oldItem.equals(newItem);
+        }
+    }, new String[] {}, 0);
+
+    // 4. 设置点击事件
+    dialog.setOnOkListener(() -> {
+        // 更新状态和UI
+        Hawk.put(HawkConfig.VOD_MUSIC_ANIMATION, isChecked[0]);
+        Hawk.put(HawkConfig.LIVE_MUSIC_ANIMATION, isChecked[1]);
+        tvShowMusicDb.setText(isChecked[0] ? "已开启" : "已关闭");
+        tvShowMusicZb.setText(isChecked[1] ? "已开启" : "已关闭");
+    });
+
+    // 显示对话框
+    dialog.show();
+}
 }
