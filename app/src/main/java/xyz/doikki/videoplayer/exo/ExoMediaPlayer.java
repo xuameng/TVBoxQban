@@ -56,8 +56,8 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     public void initPlayer() {
         mRenderersFactory = new FFMPEGRenderFactory(mAppContext);
 
-		mRenderersFactory = new DefaultRenderersFactory(mAppContext)
-			.setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER);
+     //   mRenderersFactory = new DefaultRenderersFactory(mAppContext)
+     //       .setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER);
 
 
         mMediaPlayer = new SimpleExoPlayer.Builder(
