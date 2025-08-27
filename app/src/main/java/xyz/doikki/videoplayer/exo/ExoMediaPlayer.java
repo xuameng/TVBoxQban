@@ -56,14 +56,18 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 
     @Override
     public void initPlayer() {
-    // 在构建前配置RenderersFactory
-    mRenderersFactory = new DefaultRenderersFactory(mAppContext)
+        // 在构建前配置RenderersFactory
+        mRenderersFactory = new DefaultRenderersFactory(mAppContext)
         .setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER);  // [!code ++]
 
-    mMediaPlayer = new SimpleExoPlayer.Builder(
-            mAppContext,
-            mRenderersFactory,  // 使用已配置的实例
-            mTrackSelector == null ? mTrackSelector = new DefaultTrackSelector(mAppContext) : mTrackSelector,
+        mMediaPlayer = new SimpleExoPlayer.Builder(
+                mAppContext,
+                mRenderersFactory,  // 使用已配置的实例
+                mTrackSelector == null ? mTrackSelector = new DefaultTrackSelector(mAppContext) : mTrackSelector,
+                new DefaultMediaSourceFactory(mAppContext),
+                mLoadControl == null ? mLoadControl = new DefaultLoadControl() : mLoadControl,
+                DefaultBandwidthMeter.getSingletonInstance(mAppContext),
+                new AnalyticsCollector(Clock.DEFAULT))
             // ...其他参数保持原样
             ).build();
         setOptions();
