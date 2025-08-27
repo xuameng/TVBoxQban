@@ -851,18 +851,20 @@ findViewById(R.id.llMusiczb).setOnClickListener(new View.OnClickListener() {
     }
 
 private void showAnimationSettingsDialog() {
-    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    // 使用Activity的Context创建Dialog
+    AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
     builder.setTitle("动画设置");
 
     // 定义两个设置项：点播动画和直播动画
-    final boolean[] isChecked = new boolean[]{Hawk.get(HawkConfig.VOD_MUSIC_ANIMATION, false), Hawk.get(HawkConfig.LIVE_MUSIC_ANIMATION, false)};
+    final boolean[] isChecked = new boolean[]{Hawk.get(HawkConfig.VOD_MUSIC_ANIMATION, false), 
+                                             Hawk.get(HawkConfig.LIVE_MUSIC_ANIMATION, false)};
     final String[] titles = {"点播动画", "直播动画"};
     final String[] descriptions = {"已开启", "已关闭"};
 
     // 创建复选框列表
-    builder.setMultiChoiceItems(titles, isChecked, (dialog, which, isChecked) -> {
-        isChecked[which] = isChecked;
-        descriptions[which] = isChecked[which] ? "已开启" : "已关闭";
+    builder.setMultiChoiceItems(titles, isChecked, (dialog, which, isChecked_) -> {
+        isChecked[which] = isChecked_;
+        descriptions[which] = isChecked_ ? "已开启" : "已关闭";
     });
 
     // 设置确定按钮
@@ -879,5 +881,6 @@ private void showAnimationSettingsDialog() {
     // 显示对话框
     builder.create().show();
 }
+
 
 }
