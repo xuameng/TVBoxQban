@@ -18,10 +18,35 @@ public class FFMPEGRenderFactory extends DefaultRenderersFactory {
         super(context);
     }
 
-    @Override
-    protected void buildAudioRenderers(Context context, int extensionRendererMode, MediaCodecSelector mediaCodecSelector, @Nullable DrmSessionManager drmSessionManager, boolean playClearSamplesWithoutKeys, AudioProcessor[] audioProcessors, Handler eventHandler, AudioRendererEventListener eventListener, ArrayList<Renderer> out) {
-        super.buildAudioRenderers(context, extensionRendererMode, mediaCodecSelector, drmSessionManager, playClearSamplesWithoutKeys, audioProcessors, eventHandler, eventListener, out);
-        out.add(new FfmpegAudioRenderer());
-    }
+@Override
+protected void buildAudioRenderers(
+    Context context,
+    int extensionRendererMode,
+    MediaCodecSelector mediaCodecSelector,
+    boolean playClearSamplesWithoutKeys,
+    AudioSink audioSink,
+    Handler eventHandler,
+    AudioRendererEventListener eventListener,
+    ArrayList<Renderer> out) {
+
+    // 1. 调用父类方法构建基础渲染器
+    super.buildAudioRenderers(
+        context,
+        extensionRendererMode,
+        mediaCodecSelector,
+        playClearSamplesWithoutKeys,
+        audioSink,
+        eventHandler,
+        eventListener,
+        out);
+
+    // 2. 创建FFmpeg音频渲染器实例
+    out.add(new FfmpegAudioRenderer(
+        eventHandler, 
+        eventListener,
+        audioSink
+    ));
+}
+
 }
 
