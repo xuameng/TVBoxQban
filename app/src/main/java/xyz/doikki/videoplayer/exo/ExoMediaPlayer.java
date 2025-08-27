@@ -25,7 +25,6 @@ import com.google.android.exoplayer2.util.NonNullApi;
 import com.google.android.exoplayer2.util.Clock;
 import com.google.android.exoplayer2.util.EventLogger;
 import com.google.android.exoplayer2.video.VideoSize;
-import com.google.android.exoplayer2.ext.ffmpeg.FFMPEGRenderFactory;
 
 import java.util.Map;
 
@@ -39,8 +38,11 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     protected SimpleExoPlayer mMediaPlayer;
     protected MediaSource mMediaSource;
     protected ExoMediaSourceHelper mMediaSourceHelper;
+
     private PlaybackParameters mSpeedPlaybackParameters;
+
     private boolean mIsPreparing;
+
     private LoadControl mLoadControl;
     private RenderersFactory mRenderersFactory;
     private TrackSelector mTrackSelector;
@@ -54,15 +56,9 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 
     @Override
     public void initPlayer() {
-        mRenderersFactory = new FFMPEGRenderFactory(mAppContext);
-
-     //   mRenderersFactory = new DefaultRenderersFactory(mAppContext)
-     //       .setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER);
-
-
         mMediaPlayer = new SimpleExoPlayer.Builder(
                 mAppContext,
-                mRenderersFactory,  // 使用已配置的实例
+                mRenderersFactory == null ? mRenderersFactory = new DefaultRenderersFactory(mAppContext) : mRenderersFactory,
                 mTrackSelector == null ? mTrackSelector = new DefaultTrackSelector(mAppContext) : mTrackSelector,
                 new DefaultMediaSourceFactory(mAppContext),
                 mLoadControl == null ? mLoadControl = new DefaultLoadControl() : mLoadControl,
