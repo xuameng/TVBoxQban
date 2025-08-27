@@ -61,6 +61,9 @@ import java.util.List;
 import okhttp3.HttpUrl;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+
 /**
  * @author pj567
  * @date :2020/12/23
@@ -848,52 +851,33 @@ findViewById(R.id.llMusiczb).setOnClickListener(new View.OnClickListener() {
     }
 
 private void showAnimationSettingsDialog() {
-    // 1. 准备数据
-    boolean[] isChecked = {
-        Hawk.get(HawkConfig.VOD_MUSIC_ANIMATION, false),
-        Hawk.get(HawkConfig.LIVE_MUSIC_ANIMATION, false)
-    };
-    String[] titles = {"点播动画", "直播动画"};
+    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    builder.setTitle("动画设置");
 
-    // 2. 创建SelectDialog
-    SelectDialog<String> dialog = new SelectDialog<>(this);
-    dialog.setTip("动画设置");
+    // 定义两个设置项：点播动画和直播动画
+    final boolean[] isChecked = new boolean[]{Hawk.get(HawkConfig.VOD_MUSIC_ANIMATION, false), Hawk.get(HawkConfig.LIVE_MUSIC_ANIMATION, false)};
+    final String[] titles = {"点播动画", "直播动画"};
+    final String[] descriptions = {"已开启", "已关闭"};
 
-    // 3. 设置Adapter
-    dialog.setAdapter(new SelectDialogAdapter.SelectDialogInterface<String>() {
-        @Override
-        public void click(String value, int pos) {
-            // 处理点击事件（本例中不需要）
-        }
-
-        @Override
-        public String getDisplay(String val) {
-            return val;
-        }
-
-        @Override
-        public void onBindViewHolder(SelectDialogAdapter.SelectViewHolder holder, int position) {
-            holder.itemView.findViewById(R.id.tvName).setText(titles[position]);
-            holder.itemView.findViewById(R.id.tvName).setTextColor(
-                position == 0 ? 0xff02f8e1 : Color.WHITE
-            );
-            holder.itemView.findViewById(R.id.tvName).setTypeface(
-                position == 0 ? Typeface.defaultFromStyle(Typeface.BOLD) : Typeface.defaultFromStyle(Typeface.NORMAL)
-            );
-        }
-    }, stringDiff, Arrays.asList(titles), 0);
-
-    // 4. 设置点击事件
-    dialog.setOnOkListener(() -> {
-        // 更新状态和UI
-        Hawk.put(HawkConfig.VOD_MUSIC_ANIMATION, isChecked[0]);
-        Hawk.put(HawkConfig.LIVE_MUSIC_ANIMATION, isChecked[1]);
-        tvShowMusicDb.setText(isChecked[0] ? "已开启" : "已关闭");
-        tvShowMusicZb.setText(isChecked[1] ? "已开启" : "已关闭");
+    // 创建复选框列表
+    builder.setMultiChoiceItems(titles, isChecked, (dialog, which, isChecked) -> {
+        isChecked[which] = isChecked;
+        descriptions[which] = isChecked[which] ? "已开启" : "已关闭";
     });
 
+    // 设置确定按钮
+    builder.setPositiveButton("确定", (dialog, which) -> {
+        Hawk.put(HawkConfig.VOD_MUSIC_ANIMATION, isChecked[0]);
+        Hawk.put(HawkConfig.LIVE_MUSIC_ANIMATION, isChecked[1]);
+        tvShowMusicDb.setText(descriptions[0]);
+        tvShowMusicZb.setText(descriptions[1]);
+    });
+
+    // 设置取消按钮
+    builder.setNegativeButton("取消", null);
+
     // 显示对话框
-    dialog.show();
+    builder.create().show();
 }
 
 }
