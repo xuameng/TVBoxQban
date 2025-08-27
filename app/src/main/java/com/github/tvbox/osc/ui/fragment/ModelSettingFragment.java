@@ -847,7 +847,7 @@ findViewById(R.id.llMusiczb).setOnClickListener(new View.OnClickListener() {
         }
     }
 
-	private void showAnimationSettingsDialog() {
+private void showAnimationSettingsDialog() {
     // 1. 准备数据
     boolean[] isChecked = {
         Hawk.get(HawkConfig.VOD_MUSIC_ANIMATION, false),
@@ -856,33 +856,32 @@ findViewById(R.id.llMusiczb).setOnClickListener(new View.OnClickListener() {
     String[] titles = {"点播动画", "直播动画"};
 
     // 2. 创建SelectDialog
-    SelectDialog<String> dialog = new SelectDialog<>(mActivity);
+    SelectDialog<String> dialog = new SelectDialog<>(this);
     dialog.setTip("动画设置");
 
     // 3. 设置Adapter
     dialog.setAdapter(new SelectDialogAdapter.SelectDialogInterface<String>() {
         @Override
-        public void onBindViewHolder(SelectDialogAdapter.Holder holder, int position) {
-            holder.setTitle(titles[position]);
-            holder.setDescription(isChecked[position] ? "已开启" : "已关闭");
-            holder.setChecked(isChecked[position]);
+        public void click(String value, int pos) {
+            // 处理点击事件（本例中不需要）
         }
 
         @Override
-        public int getItemCount() {
-            return titles.length;
-        }
-    }, new DiffUtil.ItemCallback<String>() {
-        @Override
-        public boolean areItemsTheSame(@NotNull String oldItem, @NotNull String newItem) {
-            return oldItem.equals(newItem);
+        public String getDisplay(String val) {
+            return val;
         }
 
         @Override
-        public boolean areContentsTheSame(@NotNull String oldItem, @NotNull String newItem) {
-            return oldItem.equals(newItem);
+        public void onBindViewHolder(SelectDialogAdapter.SelectViewHolder holder, int position) {
+            holder.itemView.findViewById(R.id.tvName).setText(titles[position]);
+            holder.itemView.findViewById(R.id.tvName).setTextColor(
+                position == 0 ? 0xff02f8e1 : Color.WHITE
+            );
+            holder.itemView.findViewById(R.id.tvName).setTypeface(
+                position == 0 ? Typeface.defaultFromStyle(Typeface.BOLD) : Typeface.defaultFromStyle(Typeface.NORMAL)
+            );
         }
-    }, new String[] {}, 0);
+    }, stringDiff, Arrays.asList(titles), 0);
 
     // 4. 设置点击事件
     dialog.setOnOkListener(() -> {
@@ -896,4 +895,5 @@ findViewById(R.id.llMusiczb).setOnClickListener(new View.OnClickListener() {
     // 显示对话框
     dialog.show();
 }
+
 }
