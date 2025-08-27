@@ -68,8 +68,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
                 mLoadControl == null ? mLoadControl = new DefaultLoadControl() : mLoadControl,
                 DefaultBandwidthMeter.getSingletonInstance(mAppContext),
                 new AnalyticsCollector(Clock.DEFAULT))
-            // ...其他参数保持原样
-            ).build();
+                .build();
         setOptions();
 
         //播放器日志
