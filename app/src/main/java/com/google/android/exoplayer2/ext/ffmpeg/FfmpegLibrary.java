@@ -15,24 +15,27 @@
  */
 package com.google.android.exoplayer2.ext.ffmpeg;
 
-import android.support.annotation.Nullable;
-
+import androidx.annotation.Nullable;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlayerLibraryInfo;
 import com.google.android.exoplayer2.util.LibraryLoader;
+import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.MimeTypes;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 
-/**
- * Configures and queries the underlying native library.
- */
+/** Configures and queries the underlying native library. */
 public final class FfmpegLibrary {
 
   static {
     ExoPlayerLibraryInfo.registerModule("goog.exo.ffmpeg");
   }
 
-  private static final LibraryLoader LOADER =
-      new LibraryLoader("avutil", "avresample", "avcodec", "ffmpeg");
+  private static final String TAG = "FfmpegLibrary";
+
+  private static final LibraryLoader LOADER = new LibraryLoader("ffmpegJNI");
+
+  private static @MonotonicNonNull String version;
+  private static int inputBufferPaddingSize = C.LENGTH_UNSET;
 
   private FfmpegLibrary() {}
 
@@ -55,29 +58,57 @@ public final class FfmpegLibrary {
   }
 
   /** Returns the version of the underlying library if available, or null otherwise. */
-  public static @Nullable String getVersion() {
-    return isAvailable() ? ffmpegGetVersion() : null;
+  @Nullable
+  public static String getVersion() {
+    if (!isAvailable()) {
+      return null;
+    }
+    if (version == null) {
+      version = ffmpegGetVersion();
+    }
+    return version;
+  }
+
+  /**
+   * Returns the required amount of padding for input buffers in bytes, or {@link C#LENGTH_UNSET} if
+   * the underlying library is not available.
+   */
+  public static int getInputBufferPaddingSize() {
+    if (!isAvailable()) {
+      return C.LENGTH_UNSET;
+    }
+    if (inputBufferPaddingSize == C.LENGTH_UNSET) {
+      inputBufferPaddingSize = ffmpegGetInputBufferPaddingSize();
+    }
+    return inputBufferPaddingSize;
   }
 
   /**
    * Returns whether the underlying library supports the specified MIME type.
    *
    * @param mimeType The MIME type to check.
-   * @param encoding The PCM encoding for raw audio.
    */
-  public static boolean supportsFormat(String mimeType, @C.PcmEncoding int encoding) {
+  public static boolean supportsFormat(String mimeType) {
     if (!isAvailable()) {
       return false;
     }
-    String codecName = getCodecName(mimeType, encoding);
-    return codecName != null && ffmpegHasDecoder(codecName);
+    @Nullable String codecName = getCodecName(mimeType);
+    if (codecName == null) {
+      return false;
+    }
+    if (!ffmpegHasDecoder(codecName)) {
+      Log.w(TAG, "No " + codecName + " decoder available. Check the FFmpeg build configuration.");
+      return false;
+    }
+    return true;
   }
 
   /**
    * Returns the name of the FFmpeg decoder that could be used to decode the format, or {@code null}
    * if it's unsupported.
    */
-  /* package */ static @Nullable String getCodecName(String mimeType, @C.PcmEncoding int encoding) {
+  @Nullable
+  /* package */ static String getCodecName(String mimeType) {
     switch (mimeType) {
       case MimeTypes.AUDIO_AAC:
         return "aac";
@@ -107,20 +138,18 @@ public final class FfmpegLibrary {
         return "flac";
       case MimeTypes.AUDIO_ALAC:
         return "alac";
-      case MimeTypes.AUDIO_RAW:
-        if (encoding == C.ENCODING_PCM_MU_LAW) {
-          return "pcm_mulaw";
-        } else if (encoding == C.ENCODING_PCM_A_LAW) {
-          return "pcm_alaw";
-        } else {
-          return null;
-        }
+      case MimeTypes.AUDIO_MLAW:
+        return "pcm_mulaw";
+      case MimeTypes.AUDIO_ALAW:
+        return "pcm_alaw";
       default:
         return null;
     }
   }
 
   private static native String ffmpegGetVersion();
-  private static native boolean ffmpegHasDecoder(String codecName);
 
+  private static native int ffmpegGetInputBufferPaddingSize();
+
+  private static native boolean ffmpegHasDecoder(String codecName);
 }
