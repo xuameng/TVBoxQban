@@ -31,18 +31,10 @@ protected void buildAudioRenderers(
     AudioRendererEventListener eventListener,
     ArrayList<Renderer> out) {
 
-    // 1. 调用父类方法构建基础渲染器
-    super.buildAudioRenderers(
-        context,
-        extensionRendererMode,
-        mediaCodecSelector,
-        playClearSamplesWithoutKeys,
-        audioSink,
-        eventHandler,
-        eventListener,
-        out);
+    // 1. 清空父类添加的渲染器
+    out.clear();
 
-    // 2. 创建FFmpeg音频渲染器实例
+    // 2. 强制使用FFmpeg渲染器
     out.add(new FfmpegAudioRenderer(
         eventHandler, 
         eventListener,
@@ -51,5 +43,3 @@ protected void buildAudioRenderers(
 }
 
 }
-
-
