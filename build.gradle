@@ -4,7 +4,6 @@ buildscript {
     repositories {
         gradlePluginPortal()
         google()
-        jcenter()
         mavenCentral()
         maven { url "https://jitpack.io" }
         maven { url "https://maven.aliyun.com/repository/releases" }
@@ -33,6 +32,7 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
 
 
 
