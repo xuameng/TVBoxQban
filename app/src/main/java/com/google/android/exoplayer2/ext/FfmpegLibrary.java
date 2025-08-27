@@ -16,16 +16,14 @@
 package com.google.android.exoplayer2.ext.ffmpeg;
 
 import androidx.annotation.Nullable;
-
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlayerLibraryInfo;
 import com.google.android.exoplayer2.util.LibraryLoader;
 import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.MimeTypes;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 
-/**
- * Configures and queries the underlying native library.
- */
+/** Configures and queries the underlying native library. */
 public final class FfmpegLibrary {
 
   static {
@@ -34,15 +32,9 @@ public final class FfmpegLibrary {
 
   private static final String TAG = "FfmpegLibrary";
 
-  private static final LibraryLoader LOADER =
-      new LibraryLoader("ffmpeg_jni", "swresample", "avutil", "avcodec") {
-        @Override
-        protected void loadLibrary(String name) {
-          System.loadLibrary(name);
-        }
-      };
+  private static final LibraryLoader LOADER = new LibraryLoader("ffmpegJNI");
 
-  private static String version;
+  private static @MonotonicNonNull String version;
   private static int inputBufferPaddingSize = C.LENGTH_UNSET;
 
   private FfmpegLibrary() {}
@@ -150,10 +142,6 @@ public final class FfmpegLibrary {
         return "pcm_mulaw";
       case MimeTypes.AUDIO_ALAW:
         return "pcm_alaw";
-      case MimeTypes.VIDEO_H264:
-        return "h264";
-      case MimeTypes.VIDEO_H265:
-        return "hevc";
       default:
         return null;
     }
