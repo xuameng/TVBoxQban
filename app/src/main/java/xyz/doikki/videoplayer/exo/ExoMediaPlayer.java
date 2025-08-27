@@ -39,11 +39,8 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     protected SimpleExoPlayer mMediaPlayer;
     protected MediaSource mMediaSource;
     protected ExoMediaSourceHelper mMediaSourceHelper;
-
     private PlaybackParameters mSpeedPlaybackParameters;
-
     private boolean mIsPreparing;
-
     private LoadControl mLoadControl;
     private RenderersFactory mRenderersFactory;
     private TrackSelector mTrackSelector;
@@ -58,7 +55,10 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     @Override
     public void initPlayer() {
         mRenderersFactory = new FFMPEGRenderFactory(mAppContext);
-        mRenderersFactory.setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER); 
+
+		mRenderersFactory = new DefaultRenderersFactory(mAppContext)
+			.setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER);
+
 
         mMediaPlayer = new SimpleExoPlayer.Builder(
                 mAppContext,
