@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package xyz.doikki.videoplayer.exo;
+package com.google.android.exoplayer2.ext.okhttp;
 
 import static com.google.android.exoplayer2.upstream.HttpUtil.buildRangeRequestHeader;
 import static com.google.android.exoplayer2.util.Util.castNonNull;
