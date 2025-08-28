@@ -122,5 +122,4 @@ dependencies {
     api "com.google.android.exoplayer:exoplayer-hls:2.16.0"
     api "com.google.android.exoplayer:exoplayer-rtsp:2.16.0"
     api "com.google.android.exoplayer:extension-rtmp:2.16.0"
-    api "com.google.android.exoplayer:extension-okhttp:2.16.0"
 }
