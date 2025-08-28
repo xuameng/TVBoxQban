@@ -277,7 +277,6 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
         lastTimeStamp = time;
         //当前总接收量存到上次接收总量这个变量，供下次计算用
         lastTotalRxBytes = total;
-        LOG.e("TcpSpeed",speed * 1024 + "");
         return speed * 1024;
     }
 
