@@ -23,6 +23,9 @@ import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
+import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
+import com.google.android.exoplayer2.analytics.AnalyticsCollector;
 
 import com.google.android.exoplayer2.video.VideoSize;
 import com.orhanobut.hawk.Hawk;
@@ -66,7 +69,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
             mLoadControl =new DefaultLoadControl();
         }
         mTrackSelector.setParameters(mTrackSelector.getParameters().buildUpon().setTunnelingEnabled(true));
-        /*mMediaPlayer = new SimpleExoPlayer.Builder(
+        mMediaPlayer = new SimpleExoPlayer.Builder(
                 mAppContext,
                 mRenderersFactory,
                 mTrackSelector,
@@ -74,11 +77,11 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
                 mLoadControl,
                 DefaultBandwidthMeter.getSingletonInstance(mAppContext),
                 new AnalyticsCollector(Clock.DEFAULT))
-                .build();*/
-        mMediaPlayer = new ExoPlayer.Builder(mAppContext)
+                .build();
+    /*    mMediaPlayer = new ExoPlayer.Builder(mAppContext)
                 .setLoadControl(mLoadControl)
                 .setRenderersFactory(mRenderersFactory)
-                .setTrackSelector(mTrackSelector).build();
+                .setTrackSelector(mTrackSelector).build();  */
 
         setOptions();
 
