@@ -117,11 +117,11 @@ dependencies {
     implementation 'com.blankj:utilcodex:1.31.0'
     implementation 'com.github.alidili:FlowLayout:v1.5'  //xuameng搜索历史
     //xuameng exo
-    api "com.google.android.exoplayer:exoplayer-core:2.14.2"
-    api "com.google.android.exoplayer:exoplayer-dash:2.14.2"
-    api "com.google.android.exoplayer:exoplayer-hls:2.14.2"
-    api "com.google.android.exoplayer:exoplayer-rtsp:2.14.2"
-    api "com.google.android.exoplayer:extension-rtmp:2.14.2"
+    api "com.google.android.exoplayer:exoplayer-core:2.16.0"
+    api "com.google.android.exoplayer:exoplayer-dash:2.16.0"
+    api "com.google.android.exoplayer:exoplayer-hls:2.16.0"
+    api "com.google.android.exoplayer:exoplayer-rtsp:2.16.0"
+    api "com.google.android.exoplayer:extension-rtmp:2.16.0"
     api "com.google.android.exoplayer:extension-okhttp:2.14.2"
 }
 
