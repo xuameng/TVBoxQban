@@ -38,13 +38,11 @@ public class PlayerHelper {
         int playerType = Hawk.get(HawkConfig.PLAY_TYPE, 0);
         int renderType = Hawk.get(HawkConfig.PLAY_RENDER, 0);
         String ijkCode = Hawk.get(HawkConfig.IJK_CODEC, "软解码");
-		boolean exoCode = Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false);      //xuameng exo解码
         int scale = Hawk.get(HawkConfig.PLAY_SCALE, 0);
         try {
             playerType = playerCfg.getInt("pl");
             renderType = playerCfg.getInt("pr");
             ijkCode = playerCfg.getString("ijk");
-            exoCode = playerCfg.getBoolean("exocode");    //xuameng exo解码
             scale = playerCfg.getInt("sc");
         } catch (JSONException e) {
             e.printStackTrace();
@@ -301,21 +299,5 @@ public class PlayerHelper {
             return (speed / 1024) + "Kb/s";
         else
             return speed > 0?speed + "B/s":"0.00B/s";
-    }
-
-    public boolean getExoCode() {   //xuameng EXO解码
-        // 优先使用Hawk配置
-        boolean ExoCode = Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false);
-        try {
-            // 严格校验JSON结构
-            if (playerCfg != null && 
-                playerCfg.has("exocode") &&
-                playerCfg.get("exocode") instanceof Boolean) {
-                return playerCfg.getBoolean("exocode");
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return ExoCode;
     }
 }
