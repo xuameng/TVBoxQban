@@ -16,6 +16,8 @@ import com.google.android.exoplayer2.analytics.AnalyticsCollector;
 import com.google.android.exoplayer2.source.DefaultMediaSourceFactory;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
+import com.google.android.exoplayer2.TrackGroup;
+import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
@@ -25,6 +27,7 @@ import com.google.android.exoplayer2.util.NonNullApi;
 import com.google.android.exoplayer2.util.Clock;
 import com.google.android.exoplayer2.util.EventLogger;
 import com.google.android.exoplayer2.video.VideoSize;
+import com.google.android.exoplayer2.selection.SelectionOverride;
 
 import java.util.Map;
 
@@ -67,33 +70,31 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
         // xuameng轨道选择器配置
         if (mTrackSelector == null) {
             mTrackSelector = new DefaultTrackSelector(mAppContext);
-        }
-        // 添加音轨选择监听器
-        mTrackSelector.addListener(new DefaultTrackSelector.Listener() {
-            @Override
-            public void onTrackSelectionRequested(DefaultTrackSelector trackSelector, TrackGroupArray trackGroups) {
-                // 手动选择中文音轨
-                for (int i = 0; i < trackGroups.length; i++) {
-                    TrackGroup group = trackGroups.get(i);
-                    for (int j = 0; j < group.length; j++) {
-                        Format format = group.getFormat(j);
-                        if (format.language != null && (
-                            "zh".equalsIgnoreCase(format.language) ||
-                            "ch".equalsIgnoreCase(format.language) ||
-                            "zho".equalsIgnoreCase(format.language) ||
-                            "chi".equalsIgnoreCase(format.language) ||
-                            "cmn".equalsIgnoreCase(format.language))) {
-                            trackSelector.setParameters(
-                                trackSelector.getParameters()
-                                    .buildUpon()
-                                    .setSelectionOverride(1, group, new SelectionOverride(1, group, j))
-                                    .build()
-                            );
+            mTrackSelector.addListener(new DefaultTrackSelector.Listener() {
+                @Override
+                public void onTrackSelectionRequested(DefaultTrackSelector trackSelector, TrackGroupArray trackGroups) {
+                    for (int i = 0; i < trackGroups.length; i++) {
+                        TrackGroup group = trackGroups.get(i);
+                        for (int j = 0; j < group.length; j++) {
+                            Format format = group.getFormat(j);
+                            if (format.language != null) {
+                                Set<String> chineseCodes = new HashSet<>(Arrays.asList(
+                                    "zh", "ch", "zho", "chi", "cmn", "ZH", "ZHO", "CH", "CHI"
+                                ));
+                                if (chineseCodes.contains(format.language.toLowerCase())) {
+                                    trackSelector.setParameters(
+                                        trackSelector.getParameters()
+                                            .buildUpon()
+                                            .setSelectionOverride(1, group, new SelectionOverride(1, group, j))
+                                            .build()
+                                    );
+                                }
+                            }
                         }
                     }
                 }
-            }
-        });
+            });
+        }
         //xuameng加载策略控制
         if (mLoadControl == null) {   
             mLoadControl = new DefaultLoadControl();
