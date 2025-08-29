@@ -416,7 +416,7 @@
                             android:textColor="@android:color/white"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="EXO 解码"/>
+                            android:text="EXO解码"/>
                         <Space
                             android:layout_width="0.0dip"
                             android:layout_height="wrap_content"
