@@ -862,9 +862,19 @@ public class VodController extends BaseController {
                 }
                 if(exoselect == 0) {
                     if (!exocode){
-                        Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 2);
+                        try {
+                            mPlayerConfig.put("exocode", 2);
+                            Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 2);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }else{
-                        Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 1);
+                        try {
+                            mPlayerConfig.put("exocode", 1);
+                            Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 1);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
 				}
                 updatePlayerCfgView();
@@ -1318,7 +1328,7 @@ public class VodController extends BaseController {
         try {
 			musicAnimation = mPlayerConfig.getBoolean("music");   //xuameng音乐播放动画设置
             boolean exoCode=Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false); //xuameng EXO解码
-			int exoSelect = Hawk.get(HawkConfig.EXO_PLAY_SELECTCODE, 0); //xuameng EXO选择
+			int exoSelect = mPlayerConfig.getInt("exocode");
             int playerType = mPlayerConfig.getInt("pl");
             int pr = mPlayerConfig.getInt("pr");
             mPlayerBtn.setText(PlayerHelper.getPlayerName(playerType));
