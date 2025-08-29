@@ -245,44 +245,40 @@ public class IjkMediaPlayer extends IjkPlayer {
         mMediaPlayer.setOnTimedTextListener(listener);
     }
 
-    //xuameng默认选中文音轨 && 加载上一次选中的
-public void loadDefaultTrack(TrackInfo trackInfo, String playKey) {
+    //xuameng有上次选中的加载上次选中的，没有选中默认选中文音轨，没有中文音轨，默认第一条音轨
+    public void loadDefaultTrack(TrackInfo trackInfo, String playKey) {
     // 基础参数校验
-    if (trackInfo == null || trackInfo.getAudio().isEmpty()) {
-        return;
-    }
-
-    // 1. 优先从缓存加载已选音轨
-    Integer trackIndex = memory.ijkLoad(playKey);
-    if (trackIndex != -1) {
-        setTrack(trackIndex);
-        return;
-    }
-
-    // 2. 智能中文检测
-    List<TrackInfoBean> audioTracks = trackInfo.getAudio();
-    for (TrackInfoBean track : audioTracks) {
-        if (isChineseTrack(track, trackInfo)) {
-            setTrack(track.trackId);
+        if (trackInfo == null || trackInfo.getAudio().isEmpty()) {
             return;
         }
+        // 1. 优先加载上次选中的
+        Integer trackIndex = memory.ijkLoad(playKey);
+        if (trackIndex != -1) {
+            setTrack(trackIndex);
+            memory.save(playKey, track.trackId);
+            return;
+        }
+        // 2. 智能中文音轨检测
+        List<TrackInfoBean> audioTracks = trackInfo.getAudio();
+        for (TrackInfoBean track : audioTracks) {
+            if (isChineseTrack(track, trackInfo)) {
+                setTrack(track.trackId);
+                return;
+            }
+        }
+        // 3. 默认选择第一条
+        setTrack(audioTracks.get(0).trackId);
     }
 
-    // 3. 默认选择第一条
-    setTrack(audioTracks.get(0).trackId);
-}
-
-private boolean isChineseTrack(TrackInfoBean track, TrackInfo trackInfo) {
-    // 基础语言匹配
-    String language = track.language != null ? track.language.toLowerCase() : "";
-    String name = track.name != null ? track.name.toLowerCase() : "";
-
-    // 名称关键词匹配（中文常见标识）
-    if (name.contains("中文") || name.contains("国语") || name.contains("简体")) {
+    private boolean isChineseTrack(TrackInfoBean track, TrackInfo trackInfo) {   //xuameng 音轨语言名称匹配
+        // 基础语言匹配
+        String language = track.language != null ? track.language.toLowerCase() : "";
+        String name = track.name != null ? track.name.toLowerCase() : "";
+        // 名称关键词匹配（中文常见标识）
+        if (name.contains("中文") || name.contains("国语") || name.contains("简体")) {
         return true;
+        }
+        // 语言代码扩展（多语言标准支持）
+        return language.matches("zh|chi|zho|cn|chinese|中文|国语|简体|国配");
     }
-
-    // 语言代码扩展（多语言标准支持）
-    return language.matches("zh|chi|zho|cn|chinese|中文|国语|简体|国配");
-}
 }
