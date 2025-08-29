@@ -374,7 +374,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="播放器"
-                            android:letterSpacing="0.4"//>
+                            android:letterSpacing="0.4"/>
                         <Space
                             android:layout_width="0.0dip"
                             android:layout_height="wrap_content"
