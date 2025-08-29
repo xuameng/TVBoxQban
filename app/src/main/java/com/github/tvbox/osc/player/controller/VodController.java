@@ -1358,7 +1358,13 @@ public class VodController extends BaseController {
             mPlayrender.setText((pr == 0) ? "T渲染" : "S渲染"); //xuameng 渲染
             mPlayanimation.setText(musicAnimation ? "音柱已开" : "音柱已关");  //xuameng音乐播放动画获取状态
             if (exoSelect > 0){
-                mPlayerEXOBtn.setText(exoSelect == 1 ? "硬解码" : "软解码");  //xuameng EXO解码
+                mPlayerEXOBtn.setText(exoSelect == 1 ? "硬解码" : "软解码");  //xuameng EXO解码  Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 1);
+                // 存储选择状态
+                if (exoSelect == 1) {
+                    Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 1);  // 硬解码标记存储
+                } else {
+                    Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 2);  // 软解码标记存储
+                }
             }else {
                 mPlayerEXOBtn.setText(exoCode ? "软解码" : "硬解码");  //xuameng EXO解码
             }
