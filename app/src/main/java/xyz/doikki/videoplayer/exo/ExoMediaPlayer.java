@@ -82,7 +82,6 @@ mTrackSelector.setParameters(
     mTrackSelector.getParameters().buildUpon()
         .setPreferredTextLanguage("zh")  // 设置首选字幕语言为中文
         .setPreferredAudioLanguage("zh") // 设置首选音频语言为中文
-        .setTunnelingEnabled(true)       // 启用隧道模式
         .build()                         // 必须调用build()完成构建
 );
         mMediaPlayer = new SimpleExoPlayer.Builder(
