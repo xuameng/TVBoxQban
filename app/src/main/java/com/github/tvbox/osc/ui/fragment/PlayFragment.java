@@ -862,7 +862,7 @@ public class PlayFragment extends BaseLazyFragment {
                 mVodPlayerCfg.put("music", Hawk.get(HawkConfig.VOD_MUSIC_ANIMATION, false));
             }
             if (!mVodPlayerCfg.has("exocode")) {    //xuameng exo解码
-                mVodPlayerCfg.put("exocode", Hawk.get(HawkConfig.VOD_MUSIC_ANIMATION, false));
+                mVodPlayerCfg.put("exocode", Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false));
             }
             if (!mVodPlayerCfg.has("ijk")) {
                 mVodPlayerCfg.put("ijk", Hawk.get(HawkConfig.IJK_CODEC, ""));
