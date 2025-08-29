@@ -53,17 +53,35 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 
     @Override
     public void initPlayer() {
+        // xuameng释放旧实例
+        if (mMediaPlayer != null) {
+            mMediaPlayer.release();
+            mMediaPlayer.removeListener(this);
+        }
+        // xuameng渲染器配置
+        if (mRenderersFactory == null) {
+            mRenderersFactory = new DefaultRenderersFactory(mAppContext);
+        }
 
-        mRenderersFactory = new DefaultRenderersFactory(mAppContext)
-            .setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF);   //xuameng扩展优先
+        // xuameng轨道选择器配置
+        if (mTrackSelector == null) {
+            mTrackSelector = new DefaultTrackSelector(mAppContext);
+        }
+        //xuameng加载策略控制
+        if (mLoadControl == null) {   
+            mLoadControl = new DefaultLoadControl();
+        }
 
+      //  mTrackSelector.setParameters(mTrackSelector.getParameters().buildUpon()   //xuameng默认中文
+        //    .setPreferredTextLanguage("zh")
+          //  .setPreferredAudioLanguage("zh"));
 
         mMediaPlayer = new SimpleExoPlayer.Builder(
                 mAppContext,
-                mRenderersFactory,  // 使用已配置的实例
-                mTrackSelector == null ? mTrackSelector = new DefaultTrackSelector(mAppContext) : mTrackSelector,
+                mRenderersFactory,  // xuameng使用已配置的实例
+                mTrackSelector,
                 new DefaultMediaSourceFactory(mAppContext),
-                mLoadControl == null ? mLoadControl = new DefaultLoadControl() : mLoadControl,
+                mLoadControl,
                 DefaultBandwidthMeter.getSingletonInstance(mAppContext),
                 new AnalyticsCollector(Clock.DEFAULT))
                 .build();
@@ -309,6 +327,3 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
         }
     }
 }
-
-
-
