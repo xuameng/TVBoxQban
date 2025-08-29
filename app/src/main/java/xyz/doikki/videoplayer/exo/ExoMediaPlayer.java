@@ -55,12 +55,11 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     public void initPlayer() {
 
         mRenderersFactory = new DefaultRenderersFactory(mAppContext)
-            .setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER);   //xuameng扩展优先
+            .setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON);   //xuameng扩展优先
 
         mTrackSelector.setParameters(mTrackSelector.getParameters().buildUpon()   //默认中文
             .setPreferredTextLanguage("zh")
-            .setPreferredAudioLanguage("zh")
-            .setTunnelingEnabled(true));
+            .setPreferredAudioLanguage("zh"));
 
         mMediaPlayer = new SimpleExoPlayer.Builder(
                 mAppContext,
@@ -313,3 +312,4 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
         }
     }
 }
+
