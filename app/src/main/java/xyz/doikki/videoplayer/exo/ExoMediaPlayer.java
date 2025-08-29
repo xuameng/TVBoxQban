@@ -25,6 +25,8 @@ import com.google.android.exoplayer2.util.NonNullApi;
 import com.google.android.exoplayer2.util.Clock;
 import com.google.android.exoplayer2.util.EventLogger;
 import com.google.android.exoplayer2.video.VideoSize;
+import com.github.tvbox.osc.util.HawkConfig;  //xuameng EXO解码
+import com.orhanobut.hawk.Hawk; //xuameng EXO解码
 
 import java.util.Map;
 
