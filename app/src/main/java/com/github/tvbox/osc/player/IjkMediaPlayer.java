@@ -254,7 +254,6 @@ public class IjkMediaPlayer extends IjkPlayer {
         // 1. 优先加载上次选中的
         Integer trackIndex = memory.ijkLoad(playKey);
         if (trackIndex != -1) {
-            setTrack(trackIndex);
             memory.save(playKey, track.trackId);
             return;
         }
@@ -263,6 +262,7 @@ public class IjkMediaPlayer extends IjkPlayer {
         for (TrackInfoBean track : audioTracks) {
             if (isChineseTrack(track, trackInfo)) {
                 setTrack(track.trackId);
+                memory.save(playKey, track.trackId);   //xuameng保存选择
                 return;
             }
         }
