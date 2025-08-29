@@ -27,7 +27,7 @@ import com.google.android.exoplayer2.util.Clock;
 import com.google.android.exoplayer2.util.EventLogger;
 import com.google.android.exoplayer2.video.VideoSize;
 import com.google.android.exoplayer2.source.TrackGroup;
-import com.google.android.exoplayer2.trackselection.SelectionOverride;
+import com.google.android.exoplayer2.trackselection.TrackSelectionOverrides;
 
 import java.util.Map;
 
