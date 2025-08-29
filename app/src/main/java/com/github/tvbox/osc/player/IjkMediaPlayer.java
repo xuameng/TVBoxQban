@@ -79,6 +79,7 @@ public class IjkMediaPlayer extends IjkPlayer {
             LOG.i("type-点播");
 			// 降低延迟
             mMediaPlayer.setOption(tv.danmaku.ijk.media.player.IjkMediaPlayer.OPT_CATEGORY_PLAYER, "max_cached_duration", 3000);
+            mMediaPlayer.setOption(tv.danmaku.ijk.media.player.IjkMediaPlayer.OPT_CATEGORY_PLAYER, "audio-language", "chi");   //xuameng默认中文
             mMediaPlayer.setOption(tv.danmaku.ijk.media.player.IjkMediaPlayer.OPT_CATEGORY_FORMAT, "infbuf", 0);
       //      mMediaPlayer.setOption(tv.danmaku.ijk.media.player.IjkMediaPlayer.OPT_CATEGORY_PLAYER, "min-frames", 5);
             mMediaPlayer.setOption(tv.danmaku.ijk.media.player.IjkMediaPlayer.OPT_CATEGORY_CODEC, "threads", "2");
@@ -249,8 +250,8 @@ public class IjkMediaPlayer extends IjkPlayer {
         if(trackInfo!=null && trackInfo.getAudio().size()>1){
             Integer trackIndex = memory.ijkLoad(playKey);
             if (trackIndex == -1) {
-                int firsIndex=trackInfo.getAudio().get(0).trackId;
-                setTrack(firsIndex);
+               // int firsIndex=trackInfo.getAudio().get(0).trackId;
+               // setTrack(firsIndex);
                 return;
             };
             setTrack(trackIndex);
