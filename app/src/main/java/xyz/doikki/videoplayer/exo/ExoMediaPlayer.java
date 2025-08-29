@@ -27,6 +27,7 @@ import com.google.android.exoplayer2.util.EventLogger;
 import com.google.android.exoplayer2.video.VideoSize;
 import com.github.tvbox.osc.util.HawkConfig;  //xuameng EXO解码
 import com.orhanobut.hawk.Hawk; //xuameng EXO解码
+import com.github.tvbox.osc.util.PlayerHelper;  //xuameng EXO解码
 
 import java.util.Map;
 
@@ -62,7 +63,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
         }
         // xuameng渲染器配置
         if (mRenderersFactory == null) {
-            boolean exodecode=Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false);
+            boolean exodecode=PlayerHelper.getExoCode();   //xuameng 获取EXO解码状态
             mRenderersFactory = new DefaultRenderersFactory(mAppContext)
             .setExtensionRendererMode(
             exodecode ? DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER    //xuameng EXO软解
