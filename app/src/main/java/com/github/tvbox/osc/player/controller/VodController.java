@@ -876,7 +876,21 @@ public class VodController extends BaseController {
                             e.printStackTrace();
                         }
                     }
-				}
+				}else if(exoselect == 1) {
+                        try {
+                            mPlayerConfig.put("exocode", 2);
+                            Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 2);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                }else if(exoselect == 2) {
+                        try {
+                            mPlayerConfig.put("exocode", 1);
+                            Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 1);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
                 updatePlayerCfgView();
                 listener.updatePlayerCfg();
                 listener.replay(false);
