@@ -80,8 +80,8 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 
         mTrackSelector.setParameters(
         mTrackSelector.getParameters().buildUpon()
-        .setPreferredTextLanguages("zh", "zho", "chi", "en")           // 设置首选字幕语言为中文
-        .setPreferredAudioLanguages("zh", "zho", "chi", "en")                        // 设置首选音频语言为中文
+        .setPreferredTextLanguages("ch", "chi", "zh", "zho", "en")           // 设置首选字幕语言为中文
+        .setPreferredAudioLanguages("ch", "chi", "zh", "zho", "en")                        // 设置首选音频语言为中文
         .build());                         // 必须调用build()完成构建
 
         mMediaPlayer = new SimpleExoPlayer.Builder(
