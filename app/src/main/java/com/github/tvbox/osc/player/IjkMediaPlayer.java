@@ -19,7 +19,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.HashMap;  //xuameng记忆选择音轨
 import com.github.tvbox.osc.util.AudioTrackMemory;  //xuameng记忆选择音轨
-import java.util.List;
+import java.util.List;  //默认选中文音轨
 
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.misc.ITrackInfo;
@@ -245,28 +245,25 @@ public class IjkMediaPlayer extends IjkPlayer {
         mMediaPlayer.setOnTimedTextListener(listener);
     }
 
-    //xuameng默认选中第一个音轨 一般第一个音轨是国语 && 加载上一次选中的
-public void loadDefaultTrack(TrackInfo trackInfo, String playKey) {
-    if (trackInfo == null || trackInfo.getAudio().isEmpty()) return;
-
-    // 1. 优先从缓存加载已选音轨
-    Integer trackIndex = memory.ijkLoad(playKey);
-    if (trackIndex != -1) {
-        setTrack(trackIndex);
-        return;
-    }
-
-    // 2. 遍历音轨寻找中文（支持多种语言代码变体）
-    List<TrackInfoBean> audioTracks = trackInfo.getAudio();
-    for (TrackInfoBean track : audioTracks) {
-        String language = track.language != null ? track.language.toLowerCase() : "";
-        if (language.matches("zh|chi|zho|cn|chinese")) {
-            setTrack(track.trackId);
+    //xuameng默认选中文音轨 && 加载上一次选中的
+    public void loadDefaultTrack(TrackInfo trackInfo, String playKey) {
+        if (trackInfo == null || trackInfo.getAudio().isEmpty()) return;
+        // 1. 优先从缓存加载已选音轨
+        Integer trackIndex = memory.ijkLoad(playKey);
+        if (trackIndex != -1) {
+            setTrack(trackIndex);
             return;
         }
+        // 2. 遍历音轨寻找中文（支持多种语言代码变体）
+        List<TrackInfoBean> audioTracks = trackInfo.getAudio();
+        for (TrackInfoBean track : audioTracks) {
+            String language = track.language != null ? track.language.toLowerCase() : "";
+            if (language.matches("zh|chi|zho|cn|chinese|中文|国语|简体|国配")) {
+                setTrack(track.trackId);
+                return;
+            }
+        }
+        // 3. 默认选择第一条音轨
+        setTrack(audioTracks.get(0).trackId);
     }
-
-    // 3. 默认选择第一条音轨
-    setTrack(audioTracks.get(0).trackId);
-}
 }
