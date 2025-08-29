@@ -61,25 +61,26 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
             mMediaPlayer.removeListener(this);
         }
         // xuameng渲染器配置
-        if (mRenderersFactory == null) {
+          if (mRenderersFactory == null) {
             boolean exoDecode = Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false);
             int exoSelect = Hawk.get(HawkConfig.EXO_PLAY_SELECTCODE, 0);
-    
-            // 解码模式选择逻辑
-            ExtensionRendererMode mode;
+
+            // ExoPlayer2 解码模式选择逻辑
+            int rendererMode;
             if (exoSelect > 0) {
                 // 选择器优先
-                mode = (exoSelect == 1) 
-                    ? ExtensionRendererMode.OFF    // 硬解
-                    : ExtensionRendererMode.PREFER; // 软解
+                rendererMode = (exoSelect == 1) 
+                    ? DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF    // 硬解
+                    : DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER; // 软解
             } else {
                 // 使用exoDecode配置
-                mode = exoDecode 
-                    ? ExtensionRendererMode.PREFER // 软解（exoDecode=true）
-                    : ExtensionRendererMode.OFF;   // 硬解（exoDecode=false）
+                rendererMode = exoDecode 
+                    ? DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER // 软解
+                    : DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF;   // 硬解
             }
+    
             mRenderersFactory = new DefaultRenderersFactory(mAppContext)
-                .setExtensionRendererMode(mode);
+                .setExtensionRendererMode(rendererMode);
         }
 
         // xuameng轨道选择器配置
