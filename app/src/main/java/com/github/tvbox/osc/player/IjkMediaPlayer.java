@@ -254,7 +254,7 @@ public class IjkMediaPlayer extends IjkPlayer {
         // 1. 优先加载上次选中的
         Integer trackIndex = memory.ijkLoad(playKey);
         if (trackIndex != -1) {
-            memory.save(playKey, track.trackId);
+            setTrack(trackIndex);
             return;
         }
         // 2. 智能中文音轨检测
