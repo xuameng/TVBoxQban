@@ -258,7 +258,7 @@ public class VodController extends BaseController {
     public TextView mPlayerSpeedBtn;
     TextView mPlayerBtn;
     TextView mPlayerIJKBtn;
-    TextView mPlayerEXOBtn  //exo解码
+    TextView mPlayerEXOBtn;  //exo解码
     TextView mPlayerRetry;
     TextView mPlayrefresh;
     TextView mxuPlay; //xuameng 底部播放ID
