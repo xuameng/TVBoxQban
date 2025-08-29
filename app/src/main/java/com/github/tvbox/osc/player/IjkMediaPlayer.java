@@ -19,6 +19,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.HashMap;  //xuameng记忆选择音轨
 import com.github.tvbox.osc.util.AudioTrackMemory;  //xuameng记忆选择音轨
+import java.util.List;
 
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.misc.ITrackInfo;
@@ -79,7 +80,6 @@ public class IjkMediaPlayer extends IjkPlayer {
             LOG.i("type-点播");
 			// 降低延迟
             mMediaPlayer.setOption(tv.danmaku.ijk.media.player.IjkMediaPlayer.OPT_CATEGORY_PLAYER, "max_cached_duration", 3000);
-            mMediaPlayer.setOption(tv.danmaku.ijk.media.player.IjkMediaPlayer.OPT_CATEGORY_PLAYER, "audio-language", "chi");   //xuameng默认中文
             mMediaPlayer.setOption(tv.danmaku.ijk.media.player.IjkMediaPlayer.OPT_CATEGORY_FORMAT, "infbuf", 0);
       //      mMediaPlayer.setOption(tv.danmaku.ijk.media.player.IjkMediaPlayer.OPT_CATEGORY_PLAYER, "min-frames", 5);
             mMediaPlayer.setOption(tv.danmaku.ijk.media.player.IjkMediaPlayer.OPT_CATEGORY_CODEC, "threads", "2");
@@ -246,15 +246,27 @@ public class IjkMediaPlayer extends IjkPlayer {
     }
 
     //xuameng默认选中第一个音轨 一般第一个音轨是国语 && 加载上一次选中的
-    public void loadDefaultTrack(TrackInfo trackInfo,String playKey) {
-        if(trackInfo!=null && trackInfo.getAudio().size()>1){
-            Integer trackIndex = memory.ijkLoad(playKey);
-            if (trackIndex == -1) {
-               // int firsIndex=trackInfo.getAudio().get(0).trackId;
-               // setTrack(firsIndex);
-                return;
-            };
-            setTrack(trackIndex);
+public void loadDefaultTrack(TrackInfo trackInfo, String playKey) {
+    if (trackInfo == null || trackInfo.getAudio().isEmpty()) return;
+
+    // 1. 优先从缓存加载已选音轨
+    Integer trackIndex = memory.ijkLoad(playKey);
+    if (trackIndex != -1) {
+        setTrack(trackIndex);
+        return;
+    }
+
+    // 2. 遍历音轨寻找中文（支持多种语言代码变体）
+    List<AudioTrack> audioTracks = trackInfo.getAudio();
+    for (AudioTrack track : audioTracks) {
+        String language = track.language != null ? track.language.toLowerCase() : "";
+        if (language.matches("zh|chi|zho|cn|chinese")) {
+            setTrack(track.trackId);
+            return;
         }
     }
+
+    // 3. 默认选择第一条音轨
+    setTrack(audioTracks.get(0).trackId);
+}
 }
