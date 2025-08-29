@@ -68,18 +68,36 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
         if (mTrackSelector == null) {
             mTrackSelector = new DefaultTrackSelector(mAppContext);
         }
+        // 添加音轨选择监听器
+        mTrackSelector.addListener(new DefaultTrackSelector.Listener() {
+            @Override
+            public void onTrackSelectionRequested(DefaultTrackSelector trackSelector, TrackGroupArray trackGroups) {
+                // 手动选择中文音轨
+                for (int i = 0; i < trackGroups.length; i++) {
+                    TrackGroup group = trackGroups.get(i);
+                    for (int j = 0; j < group.length; j++) {
+                        Format format = group.getFormat(j);
+                        if (format.language != null && (
+                            "zh".equalsIgnoreCase(format.language) ||
+                            "ch".equalsIgnoreCase(format.language) ||
+                            "zho".equalsIgnoreCase(format.language) ||
+                            "chi".equalsIgnoreCase(format.language) ||
+                            "cmn".equalsIgnoreCase(format.language))) {
+                            trackSelector.setParameters(
+                                trackSelector.getParameters()
+                                    .buildUpon()
+                                    .setSelectionOverride(1, group, new SelectionOverride(1, group, j))
+                                    .build()
+                            );
+                        }
+                    }
+                }
+            }
+        });
         //xuameng加载策略控制
         if (mLoadControl == null) {   
             mLoadControl = new DefaultLoadControl();
         }
-
-mTrackSelector.setParameters(
-    new DefaultTrackSelector.ParametersBuilder(mAppContext)
-	.setPreferredTextLanguage("zh")
-        .setPreferredAudioLanguage("zh")
-        .build()
-);
-
 
         mMediaPlayer = new SimpleExoPlayer.Builder(
                 mAppContext,
