@@ -890,7 +890,7 @@ public class VodController extends BaseController {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-
+                }
                 updatePlayerCfgView();
                 listener.updatePlayerCfg();
                 listener.replay(false);
