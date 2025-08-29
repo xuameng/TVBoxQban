@@ -733,10 +733,8 @@ public class ModelSettingFragment extends BaseLazyFragment {
                 decodeModes.add(new Pair<>("软解码", true));
                 // 当前选中项
                 int defaultPos = 0;
-                boolean isHardware = Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false);
-                String currentMode = isHardware ? "硬解码" : "软解码";
                 for (int i = 0; i < decodeModes.size(); i++) {
-                    if (currentMode.equals(decodeModes.get(i).first)) {
+                    if (Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false) == decodeModes.get(i).second) {
                         defaultPos = i;
                         break;
                     }
