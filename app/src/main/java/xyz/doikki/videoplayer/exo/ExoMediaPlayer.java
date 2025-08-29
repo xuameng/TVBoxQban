@@ -16,7 +16,6 @@ import com.google.android.exoplayer2.analytics.AnalyticsCollector;
 import com.google.android.exoplayer2.source.DefaultMediaSourceFactory;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
-import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
@@ -26,8 +25,6 @@ import com.google.android.exoplayer2.util.NonNullApi;
 import com.google.android.exoplayer2.util.Clock;
 import com.google.android.exoplayer2.util.EventLogger;
 import com.google.android.exoplayer2.video.VideoSize;
-import com.google.android.exoplayer2.source.TrackGroup;
-import com.google.android.exoplayer2.trackselection.TrackSelectionOverrides;
 
 import java.util.Map;
 
@@ -63,37 +60,16 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
         }
         // xuameng渲染器配置
         if (mRenderersFactory == null) {
+            boolean exodecode=Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false);
             mRenderersFactory = new DefaultRenderersFactory(mAppContext)
-            .setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER);   //xuameng扩展优先
+            .setExtensionRendererMode(
+            exodecode ? DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER    //xuameng EXO软解
+            : DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF);   //xuameng EXO硬解
         }
 
         // xuameng轨道选择器配置
         if (mTrackSelector == null) {
             mTrackSelector = new DefaultTrackSelector(mAppContext);
-            mTrackSelector.addListener(new DefaultTrackSelector.Listener() {
-                @Override
-                public void onTrackSelectionRequested(DefaultTrackSelector trackSelector, TrackGroupArray trackGroups) {
-                    for (int i = 0; i < trackGroups.length; i++) {
-                        TrackGroup group = trackGroups.get(i);
-                        for (int j = 0; j < group.length; j++) {
-                            Format format = group.getFormat(j);
-                            if (format.language != null) {
-                                Set<String> chineseCodes = new HashSet<>(Arrays.asList(
-                                    "zh", "ch", "zho", "chi", "cmn", "ZH", "ZHO", "CH", "CHI"
-                                ));
-                                if (chineseCodes.contains(format.language.toLowerCase())) {
-                                    trackSelector.setParameters(
-                                        trackSelector.getParameters()
-                                            .buildUpon()
-                                            .setSelectionOverride(1, group, new SelectionOverride(1, group, j))
-                                            .build()
-                                    );
-                                }
-                            }
-                        }
-                    }
-                }
-            });
         }
         //xuameng加载策略控制
         if (mLoadControl == null) {   
