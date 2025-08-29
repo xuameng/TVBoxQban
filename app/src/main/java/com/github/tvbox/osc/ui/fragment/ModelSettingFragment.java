@@ -723,57 +723,52 @@ public class ModelSettingFragment extends BaseLazyFragment {
                 tvShowMusicZb.setText(!is_musiczb ? "已开启" : "已关闭");
             }
         });
-findViewById(R.id.llExodecode).setOnClickListener(new View.OnClickListener() {
-    @Override
-    public void onClick(View v) {
-        FastClickCheckUtil.check(v);
-
-        // 获取解码模式选项（模拟数据源）
-        List<Pair<String, Boolean>> decodeModes = new ArrayList<>();
-        decodeModes.add(new Pair<>("硬解码", true));
-        decodeModes.add(new Pair<>("软解码", false));
-
-        // 当前选中项
-        int defaultPos = 0;
-        boolean isHardware = Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false);
-        String currentMode = isHardware ? "硬解码" : "软解码";
-
-        for (int i = 0; i < decodeModes.size(); i++) {
-            if (currentMode.equals(decodeModes.get(i).first)) {
-                defaultPos = i;
-                break;
-            }
-        }
-
-        // 创建选择对话框
-        SelectDialog<Pair<String, Boolean>> dialog = new SelectDialog<>(mActivity);
-        dialog.setTip("请选择EXO解码");
-        dialog.setAdapter(new SelectDialogAdapter.SelectDialogInterface<Pair<String, Boolean>>() {
+        findViewById(R.id.llExodecode).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void click(Pair<String, Boolean> value, int pos) {
-                tvExodecode.setText(value.first);
-                Hawk.put(HawkConfig.EXO_PLAYER_DECODE, value.second);
-            }
+            public void onClick(View v) {
+                FastClickCheckUtil.check(v);
+                // 获取解码模式选项（模拟数据源）
+                List<Pair<String, Boolean>> decodeModes = new ArrayList<>();
+                decodeModes.add(new Pair<>("硬解码", false));
+                decodeModes.add(new Pair<>("软解码", true));
+                // 当前选中项
+                int defaultPos = 0;
+                boolean isHardware = Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false);
+                String currentMode = isHardware ? "软解码" : "硬解码";
+                for (int i = 0; i < decodeModes.size(); i++) {
+                    if (currentMode.equals(decodeModes.get(i).first)) {
+                        defaultPos = i;
+                        break;
+                    }
+                }
+                // 创建选择对话框
+                SelectDialog<Pair<String, Boolean>> dialog = new SelectDialog<>(mActivity);
+                dialog.setTip("请选择EXO解码");
+                dialog.setAdapter(new SelectDialogAdapter.SelectDialogInterface<Pair<String, Boolean>>() {
+                    @Override
+                    public void click(Pair<String, Boolean> value, int pos) {
+                        tvExodecode.setText(value.first);
+                        Hawk.put(HawkConfig.EXO_PLAYER_DECODE, value.second);
+                    }
 
-            @Override
-            public String getDisplay(Pair<String, Boolean> val) {
-                return val.first;
-            }
-        }, new DiffUtil.ItemCallback<Pair<String, Boolean>>() {
-            @Override
-            public boolean areItemsTheSame(@NonNull Pair<String, Boolean> oldItem, @NonNull Pair<String, Boolean> newItem) {
-                return oldItem == newItem;
-            }
+                    @Override
+                    public String getDisplay(Pair<String, Boolean> val) {
+                        return val.first;
+                    }
+                }, new DiffUtil.ItemCallback<Pair<String, Boolean>>() {
+                    @Override
+                    public boolean areItemsTheSame(@NonNull Pair<String, Boolean> oldItem, @NonNull Pair<String, Boolean> newItem) {
+                        return oldItem == newItem;
+                    }
 
-            @Override
-            public boolean areContentsTheSame(@NonNull Pair<String, Boolean> oldItem, @NonNull Pair<String, Boolean> newItem) {
-                return oldItem.first.equals(newItem.first);
+                    @Override
+                    public boolean areContentsTheSame(@NonNull Pair<String, Boolean> oldItem, @NonNull Pair<String, Boolean> newItem) {
+                        return oldItem.first.equals(newItem.first);
+                    }
+                }, decodeModes, defaultPos);
+                dialog.show();
             }
-        }, decodeModes, defaultPos);
-        dialog.show();
-    }
-});
-
+        });
         findViewById(R.id.llHomeRecStyle).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
