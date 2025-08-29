@@ -35,6 +35,7 @@ import android.view.ViewGroup;   //xuameng优化首页数据源列表
 import me.jessyan.autosize.utils.AutoSizeUtils;  //xuameng优化首页数据源列表
 import com.github.tvbox.osc.util.DefaultConfig;  //xuameng长按许大师制作重启APP
 import com.github.tvbox.osc.base.App;  //xuameng showtoast
+import android.util.Pair;  //xuameng exo解码用
 import com.github.tvbox.osc.util.FastClickCheckUtil;
 import com.github.tvbox.osc.util.FileUtils;
 import com.github.tvbox.osc.util.HawkConfig;
