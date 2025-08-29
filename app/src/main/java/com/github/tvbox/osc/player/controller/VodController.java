@@ -862,17 +862,9 @@ public class VodController extends BaseController {
                 }
                 if(exoselect == 0) {
                     if (!exocode){
-                        try {
-                            mPlayerConfig.put("exocode", 2);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                        Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 2);
                     }else{
-                        try {
-                            mPlayerConfig.put("exocode", 1);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                        Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 1);
                     }
 				}
                 updatePlayerCfgView();
