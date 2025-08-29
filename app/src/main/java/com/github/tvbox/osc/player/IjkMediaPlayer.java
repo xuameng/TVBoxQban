@@ -257,8 +257,8 @@ public void loadDefaultTrack(TrackInfo trackInfo, String playKey) {
     }
 
     // 2. 遍历音轨寻找中文（支持多种语言代码变体）
-    List<AudioTrack> audioTracks = trackInfo.getAudio();
-    for (AudioTrack track : audioTracks) {
+    List<TrackInfoBean> audioTracks = trackInfo.getAudio();
+    for (TrackInfoBean track : audioTracks) {
         String language = track.language != null ? track.language.toLowerCase() : "";
         if (language.matches("zh|chi|zho|cn|chinese")) {
             setTrack(track.trackId);
