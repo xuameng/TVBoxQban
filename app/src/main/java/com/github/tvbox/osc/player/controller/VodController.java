@@ -854,8 +854,29 @@ public class VodController extends BaseController {
                 }
                 DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
                 boolean exocode=Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false);
-                Hawk.put(HawkConfig.EXO_PLAYER_DECODE, !exocode);
+                int exoselect = Hawk.get(HawkConfig.EXO_PLAY_SELECTCODE, 0);
+                try {
+                    exoselect = mPlayerConfig.getInt("exocode");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                if(exoselect == 0) {
+                    if (!exocode){
+                        try {
+                            mPlayerConfig.put("exocode", 2);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }else{
+                        try {
+                            mPlayerConfig.put("exocode", 1);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+				}
                 updatePlayerCfgView();
+                listener.updatePlayerCfg();
                 listener.replay(false);
             }
         });
@@ -1305,6 +1326,7 @@ public class VodController extends BaseController {
         try {
 			musicAnimation = mPlayerConfig.getBoolean("music");   //xuameng音乐播放动画设置
             boolean exoCode=Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false); //xuameng EXO解码
+			int exoSelect = mPlayerConfig.getInt("exocode");
             int playerType = mPlayerConfig.getInt("pl");
             int pr = mPlayerConfig.getInt("pr");
             mPlayerBtn.setText(PlayerHelper.getPlayerName(playerType));
@@ -1319,7 +1341,11 @@ public class VodController extends BaseController {
             mAudioTrackBtn.setVisibility(View.VISIBLE);
             mPlayrender.setText((pr == 0) ? "T渲染" : "S渲染"); //xuameng 渲染
             mPlayanimation.setText(musicAnimation ? "音柱已开" : "音柱已关");  //xuameng音乐播放动画获取状态
-            mPlayerEXOBtn.setText(exoCode ? "软解码" : "硬解码");  //xuameng EXO解码
+            if (exoSelect > 0){
+                mPlayerEXOBtn.setText(exoSelect == 1 ? "硬解码" : "软解码");  //xuameng EXO解码
+            }else {
+                mPlayerEXOBtn.setText(exoCode ? "软解码" : "硬解码");  //xuameng EXO解码
+            }
             mPlayerEXOBtn.setVisibility(playerType == 2 ? VISIBLE : GONE);  //xuameng EXO解码
         } catch (JSONException e) {
             e.printStackTrace();
