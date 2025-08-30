@@ -416,48 +416,17 @@ public class PlayFragment extends BaseLazyFragment {
                     long progress = mediaPlayer.getCurrentPosition() - 3000L;//XUAMENG保存当前进度，//XUAMENG保存当前进度，回退3秒
                     if (mediaPlayer instanceof IjkMediaPlayer) {
                         ((IjkMediaPlayer)mediaPlayer).setTrack(value.trackId,progressKey);
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                mediaPlayer.seekTo(progress);
-                                mediaPlayer.start();
-                            }
-                        }, 500);
                     }
                     if (mediaPlayer instanceof EXOmPlayer) {
                         ((EXOmPlayer) mediaPlayer).selectExoTrackAudio(value,progressKey);
-                        boolean exocode=Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false);
-                        int exoselect = Hawk.get(HawkConfig.EXO_PLAY_SELECTCODE, 0);
-                        try {
-                            exoselect = mVodPlayerCfg.getInt("exocode");
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        if (exocode && exoselect == 0){
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    play(false);
-                                }
-                            }, 500);
-                        }else if (exoselect == 2){
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    play(false);
-                                }
-                            }, 500);
-                        }else{
-                            mediaPlayer.pause();
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    mediaPlayer.seekTo(progress);
-                                    mediaPlayer.start();
-                                }
-                            }, 800);
-                        }
                     }
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            mediaPlayer.seekTo(progress);
+                            mediaPlayer.start();
+                        }
+                    }, 500);
                     dialog.dismiss();
                 } catch (Exception e) {
                     LOG.e("切换音轨出错");
