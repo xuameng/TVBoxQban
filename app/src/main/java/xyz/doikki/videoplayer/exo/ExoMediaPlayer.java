@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.view.Surface;
 import android.view.SurfaceHolder;
-import com.google.android.exoplayer2.PlaybackException;
+import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.LoadControl;
@@ -21,12 +21,12 @@ import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
+import com.google.android.exoplayer2.util.NonNullApi;
 import com.google.android.exoplayer2.util.Clock;
 import com.google.android.exoplayer2.util.EventLogger;
 import com.google.android.exoplayer2.video.VideoSize;
 import com.github.tvbox.osc.util.HawkConfig;  //xuameng EXO解码
 import com.orhanobut.hawk.Hawk; //xuameng EXO解码
-import androidx.annotation.NonNull;
 
 import java.util.Map;
 
@@ -117,13 +117,21 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
         mMediaPlayer.addListener(this);
     }
     public DefaultTrackSelector getTrackSelector() {
-        return mTrackSelector;
+        return (DefaultTrackSelector) mTrackSelector;
     }
-
     @Override
-    public void onTracksChanged(@NonNull TrackGroupArray trackGroups, @NonNull TrackSelectionArray trackSelections) {
+    public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
+        Player.Listener.super.onTracksChanged(trackGroups, trackSelections);
         trackNameProvider = new ExoTrackNameProvider(mAppContext.getResources());
         mTrackSelections = trackSelections;
+    }
+
+    public void setTrackSelector(TrackSelector trackSelector) {
+        mTrackSelector = trackSelector;
+    }
+
+    public void setRenderersFactory(RenderersFactory renderersFactory) {
+        mRenderersFactory = renderersFactory;
     }
 
     public void setLoadControl(LoadControl loadControl) {
@@ -167,7 +175,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
             return;
         if (mMediaSource == null) return;
         if (mSpeedPlaybackParameters != null) {
-            mMediaPlayer.setPlaybackParameters(mSpeedPlaybackParameters);
+			mMediaPlayer.setPlaybackParameters(mSpeedPlaybackParameters);
         }
         mIsPreparing = true;
         mMediaPlayer.setMediaSource(mMediaSource);
@@ -325,14 +333,14 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     }
 
     @Override
-    public void onPlayerError(@NonNull PlaybackException error) {
+    public void onPlayerError(ExoPlaybackException error) {
         if (mPlayerEventListener != null) {
             mPlayerEventListener.onError();
         }
     }
 
     @Override
-    public void onVideoSizeChanged(@NonNull VideoSize videoSize) {
+    public void onVideoSizeChanged(VideoSize videoSize) {
         if (mPlayerEventListener != null) {
             mPlayerEventListener.onVideoSizeChanged(videoSize.width, videoSize.height);
             if (videoSize.unappliedRotationDegrees > 0) {
