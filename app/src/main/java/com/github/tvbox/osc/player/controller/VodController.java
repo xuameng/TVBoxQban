@@ -300,7 +300,6 @@ public class VodController extends BaseController {
     private int audioSessionId = -1; // 使用-1表示未初始化状态 //xuameng音乐播放动画
     private boolean musicAnimation = false;     ////xuameng 音柱动画 加载设置
 	private static final String TAG = "VodController";  //xuameng音乐播放动画
-    private SourceBean sourceBean;        //xuameng清除动态设置用
     Handler myHandle;
     Runnable myRunnable;
     int myHandleSeconds = 50000; //闲置多少毫秒秒关闭底栏  默认100秒
@@ -911,7 +910,6 @@ public class VodController extends BaseController {
                     mPlayerConfig.put("sp", 1.0f);
                     mPlayerConfig.put("st", 0);
                     mPlayerConfig.put("et", 0);
-                    mPlayerConfig.put("pl", (sourceBean.getPlayerType() == -1) ? (int)Hawk.get(HawkConfig.PLAY_TYPE, 1) : sourceBean.getPlayerType());
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
