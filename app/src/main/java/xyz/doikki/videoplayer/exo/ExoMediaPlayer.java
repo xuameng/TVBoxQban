@@ -21,7 +21,6 @@ import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
-import com.google.android.exoplayer2.util.NonNullApi;
 import com.google.android.exoplayer2.util.Clock;
 import com.google.android.exoplayer2.util.EventLogger;
 import com.google.android.exoplayer2.video.VideoSize;
@@ -175,7 +174,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
             return;
         if (mMediaSource == null) return;
         if (mSpeedPlaybackParameters != null) {
-			mMediaPlayer.setPlaybackParameters(mSpeedPlaybackParameters);
+            mMediaPlayer.setPlaybackParameters(mSpeedPlaybackParameters);
         }
         mIsPreparing = true;
         mMediaPlayer.setMediaSource(mMediaSource);
