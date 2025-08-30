@@ -422,7 +422,7 @@ public class PlayFragment extends BaseLazyFragment {
                                 mediaPlayer.seekTo(progress);
                                 mediaPlayer.start();
                             }
-                        }, 300);
+                        }, 500);
                     }
                     if (mediaPlayer instanceof EXOmPlayer) {
                         ((EXOmPlayer) mediaPlayer).selectExoTrackAudio(value,progressKey);
@@ -433,13 +433,20 @@ public class PlayFragment extends BaseLazyFragment {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        if (exocode || exoselect == 2){
+                        if (exocode && exoselect == 0){
                             new Handler().postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
                                     play(false);
                                 }
-                            }, 300);
+                            }, 500);
+                        }else if (exoselect == 2){
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    play(false);
+                                }
+                            }, 500);
                         }else{
                             new Handler().postDelayed(new Runnable() {
                                 @Override
@@ -447,7 +454,7 @@ public class PlayFragment extends BaseLazyFragment {
                                     mediaPlayer.seekTo(progress);
                                     mediaPlayer.start();
                                 }
-                            }, 300);
+                            }, 500);
                         }
                     }
                     dialog.dismiss();
@@ -519,7 +526,7 @@ public class PlayFragment extends BaseLazyFragment {
                                 mediaPlayer.seekTo(progress);
                                 mediaPlayer.start();
                             }
-                        }, 300);
+                        }, 500);
                     }
                     if (mediaPlayer instanceof EXOmPlayer) {
                         mController.mSubtitleView.destroy();
@@ -532,7 +539,7 @@ public class PlayFragment extends BaseLazyFragment {
                                 mediaPlayer.seekTo(progress);
                                 mediaPlayer.start();
                             }
-                        }, 300);
+                        }, 500);
                     }
                     dialog.dismiss();
                 } catch (Exception e) {
