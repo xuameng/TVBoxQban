@@ -897,30 +897,6 @@ public class VodController extends BaseController {
             }
         });
 
-        mxuPlay.setOnLongClickListener(new OnLongClickListener() {      //xuameng 重置EXO动态选择
-            @Override
-            public boolean onLongClick(View view) {
-                FastClickCheckUtil.check(view); //xuameng 防播放打断动画
-                try {
-                    mPlayerConfig.put("exocode", 0); 
-                    mPlayerConfig.put("music", Hawk.get(HawkConfig.VOD_MUSIC_ANIMATION, false));
-                    mPlayerConfig.put("pr", Hawk.get(HawkConfig.PLAY_RENDER, 0));
-                    mPlayerConfig.put("ijk", Hawk.get(HawkConfig.IJK_CODEC, ""));
-                    mPlayerConfig.put("sc", Hawk.get(HawkConfig.PLAY_SCALE, 0));
-                    mPlayerConfig.put("sp", 1.0f);
-                    mPlayerConfig.put("st", 0);
-                    mPlayerConfig.put("et", 0);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                updatePlayerCfgView();
-                listener.updatePlayerCfg();
-                listener.replay(false);
-                App.showToastShort(getContext(), "聚汇影视提示您：已重置此点播源所有动态设置！");
-                return true;
-            }
-        });
-
         mxuPlay.setOnFocusChangeListener(new View.OnFocusChangeListener() { //XUAMENG播放键预选取消SEEKBAR进度
             @Override //xuameng进入SEEKBAR
             public void onFocusChange(View v, boolean hasFocus) {
