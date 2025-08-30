@@ -115,26 +115,12 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     public DefaultTrackSelector getTrackSelector() {
         return mTrackSelector;
     }
-@Override
-public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
-    super.onTracksChanged(trackGroups, trackSelections);
-    
-    // 检查音轨是否切换成功
-    if (trackGroups.length > 0 && trackSelections.length > 0) {
+    @Override
+    public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
+        Player.Listener.super.onTracksChanged(trackGroups, trackSelections);
         trackNameProvider = new ExoTrackNameProvider(mAppContext.getResources());
         mTrackSelections = trackSelections;
-        
-        // 若切换失败，回退到默认轨道
-        if (mTrackSelections.get(0).getLength() == 0) {
-            mTrackSelector.setParameters(
-                mTrackSelector.getParameters().buildUpon()
-                    .setAudioTrackSelectionOverride(null) // 取消强制选择
-                    .build()
-            );
-        }
     }
-}
-
 
     @Override
     public void setDataSource(String path, Map<String, String> headers) {
