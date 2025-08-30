@@ -84,9 +84,9 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
         }
 
         // xuameng轨道选择器配置
-        if (mTrackSelector == null) {
+     //   if (mTrackSelector == null) {
             mTrackSelector = new DefaultTrackSelector(mAppContext);
-        }
+       // }
         //xuameng加载策略控制
         if (mLoadControl == null) {   
             mLoadControl = new DefaultLoadControl();
