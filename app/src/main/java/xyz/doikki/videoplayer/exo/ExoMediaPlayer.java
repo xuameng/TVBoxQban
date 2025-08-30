@@ -2,51 +2,51 @@ package xyz.doikki.videoplayer.exo;
 
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
+import android.net.TrafficStats;
 import android.view.Surface;
 import android.view.SurfaceHolder;
-import com.google.android.exoplayer2.PlaybackException;
+
+import androidx.annotation.NonNull;
+
+import com.github.tvbox.osc.base.App;
+import com.github.tvbox.osc.util.HawkConfig;
+import com.github.tvbox.osc.util.LOG;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
+import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.LoadControl;
+import com.google.android.exoplayer2.PlaybackException;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.RenderersFactory;
-import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.analytics.AnalyticsCollector;
-import com.google.android.exoplayer2.source.DefaultMediaSourceFactory;
+
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
-import com.google.android.exoplayer2.trackselection.TrackSelector;
-import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
-import com.google.android.exoplayer2.util.NonNullApi;
-import com.google.android.exoplayer2.util.Clock;
-import com.google.android.exoplayer2.util.EventLogger;
+
 import com.google.android.exoplayer2.video.VideoSize;
-import com.github.tvbox.osc.util.HawkConfig;  //xuameng EXO解码
-import com.orhanobut.hawk.Hawk; //xuameng EXO解码
+import com.orhanobut.hawk.Hawk;
 
 import java.util.Map;
 
 import xyz.doikki.videoplayer.player.AbstractPlayer;
-import xyz.doikki.videoplayer.player.VideoViewManager;
-import xyz.doikki.videoplayer.util.PlayerUtils;
+
 
 public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 
     protected Context mAppContext;
-    protected SimpleExoPlayer mMediaPlayer;
+    protected ExoPlayer mMediaPlayer;
     protected MediaSource mMediaSource;
     protected ExoMediaSourceHelper mMediaSourceHelper;
+    protected ExoTrackNameProvider trackNameProvider;
+    protected TrackSelectionArray mTrackSelections;
     private PlaybackParameters mSpeedPlaybackParameters;
     private boolean mIsPreparing;
+
     private LoadControl mLoadControl;
-    private RenderersFactory mRenderersFactory;
+    private DefaultRenderersFactory mRenderersFactory;
     private DefaultTrackSelector mTrackSelector;
-	protected ExoTrackNameProvider trackNameProvider;
-    protected TrackSelectionArray mTrackSelections;
+
 
     public ExoMediaPlayer(Context context) {
         mAppContext = context.getApplicationContext();
@@ -55,83 +55,38 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 
     @Override
     public void initPlayer() {
-        // xuameng释放旧实例
-        if (mMediaPlayer != null) {
-            mMediaPlayer.release();
-            mMediaPlayer.removeListener(this);
+        if (mRenderersFactory == null) {
+            mRenderersFactory = new DefaultRenderersFactory(mAppContext);
         }
-        // xuameng渲染器配置
-          if (mRenderersFactory == null) {
-            boolean exoDecode = Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false);
-            int exoSelect = Hawk.get(HawkConfig.EXO_PLAY_SELECTCODE, 0);
-
-            // ExoPlayer2 解码模式选择逻辑
-            int rendererMode;
-            if (exoSelect > 0) {
-                // 选择器优先
-                rendererMode = (exoSelect == 1) 
-                    ? DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF    // 硬解
-                    : DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER; // 软解
-            } else {
-                // 使用exoDecode配置
-                rendererMode = exoDecode 
-                    ? DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER // 软解
-                    : DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF;   // 硬解
-            }
-    
-            mRenderersFactory = new DefaultRenderersFactory(mAppContext)
-                .setExtensionRendererMode(rendererMode);
-        }
-
-        // xuameng轨道选择器配置
+        mRenderersFactory.setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER);
         if (mTrackSelector == null) {
             mTrackSelector = new DefaultTrackSelector(mAppContext);
         }
-        //xuameng加载策略控制
-        if (mLoadControl == null) {   
-            mLoadControl = new DefaultLoadControl();
+        if (mLoadControl == null) {
+            mLoadControl =new DefaultLoadControl();
         }
-
-        mTrackSelector.setParameters(
-        mTrackSelector.getParameters().buildUpon()
-        .setPreferredTextLanguages("ch", "chi", "zh", "zho", "en")           // 设置首选字幕语言为中文
-        .setPreferredAudioLanguages("ch", "chi", "zh", "zho", "en")                        // 设置首选音频语言为中文
-        .build());                         // 必须调用build()完成构建
-
-        mMediaPlayer = new SimpleExoPlayer.Builder(
+        mTrackSelector.setParameters(mTrackSelector.getParameters().buildUpon().setTunnelingEnabled(true));
+        /*mMediaPlayer = new SimpleExoPlayer.Builder(
                 mAppContext,
-                mRenderersFactory,  // xuameng使用已配置的实例
+                mRenderersFactory,
                 mTrackSelector,
                 new DefaultMediaSourceFactory(mAppContext),
                 mLoadControl,
                 DefaultBandwidthMeter.getSingletonInstance(mAppContext),
                 new AnalyticsCollector(Clock.DEFAULT))
-                .build();
-        setOptions();
+                .build();*/
+        mMediaPlayer = new ExoPlayer.Builder(mAppContext)
+                .setLoadControl(mLoadControl)
+                .setRenderersFactory(mRenderersFactory)
+                .setTrackSelector(mTrackSelector).build();
 
-        //播放器日志
-        if (VideoViewManager.getConfig().mIsEnableLog && mTrackSelector instanceof MappingTrackSelector) {
-            mMediaPlayer.addAnalyticsListener(new EventLogger((MappingTrackSelector) mTrackSelector, "ExoPlayer"));
-        }
+        setOptions();
 
         mMediaPlayer.addListener(this);
     }
+
     public DefaultTrackSelector getTrackSelector() {
         return mTrackSelector;
-    }
-    @Override
-    public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
-        Player.Listener.super.onTracksChanged(trackGroups, trackSelections);
-        trackNameProvider = new ExoTrackNameProvider(mAppContext.getResources());
-        mTrackSelections = trackSelections;
-    }
-
-    public void setRenderersFactory(RenderersFactory renderersFactory) {
-        mRenderersFactory = renderersFactory;
-    }
-
-    public void setLoadControl(LoadControl loadControl) {
-        mLoadControl = loadControl;
     }
 
     @Override
@@ -171,7 +126,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
             return;
         if (mMediaSource == null) return;
         if (mSpeedPlaybackParameters != null) {
-			mMediaPlayer.setPlaybackParameters(mSpeedPlaybackParameters);
+            mMediaPlayer.setPlaybackParameters(mSpeedPlaybackParameters);
         }
         mIsPreparing = true;
         mMediaPlayer.setMediaSource(mMediaSource);
@@ -218,7 +173,8 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
             mMediaPlayer.release();
             mMediaPlayer = null;
         }
-
+        lastTotalRxBytes = 0;
+        lastTimeStamp = 0;
         mIsPreparing = false;
         mSpeedPlaybackParameters = null;
     }
@@ -240,11 +196,6 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     @Override
     public int getBufferedPercentage() {
         return mMediaPlayer == null ? 0 : mMediaPlayer.getBufferedPercentage();
-    }
-
-    @Override
-    public int getAudioSessionId() {       //XUAMENG 获取音频ID
-        return mMediaPlayer.getAudioSessionId();
     }
 
     @Override
@@ -270,7 +221,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 
     @Override
     public void setLooping(boolean isLooping) {
-       if (mMediaPlayer != null)
+        if (mMediaPlayer != null)
             mMediaPlayer.setRepeatMode(isLooping ? Player.REPEAT_MODE_ALL : Player.REPEAT_MODE_OFF);
     }
 
@@ -297,9 +248,38 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
         return 1f;
     }
 
+    private long lastTotalRxBytes = 0;
+
+    private long lastTimeStamp = 0;
+
+    private boolean unsupported() {
+        return TrafficStats.getUidRxBytes(App.getInstance().getApplicationInfo().uid) == TrafficStats.UNSUPPORTED;
+    }
+
     @Override
     public long getTcpSpeed() {
-        return PlayerUtils.getNetSpeed(mAppContext);
+        if (mAppContext == null || unsupported()) {
+            return 0;
+        }
+        //使用getUidRxBytes方法获取该进程总接收量
+        long total = TrafficStats.getTotalRxBytes();
+        //记录当前的时间
+        long time = System.currentTimeMillis();
+        //数据接收量除以数据接收的时间，就计算网速了。
+        long diff = total - lastTotalRxBytes;
+        long speed = diff / Math.max(time - lastTimeStamp, 1);
+        //当前时间存到上次时间这个变量，供下次计算用
+        lastTimeStamp = time;
+        //当前总接收量存到上次接收总量这个变量，供下次计算用
+        lastTotalRxBytes = total;
+        LOG.e("TcpSpeed",speed * 1024 + "");
+        return speed * 1024;
+    }
+
+    @Override
+    public void onTracksChanged(@NonNull TrackGroupArray trackGroups, @NonNull TrackSelectionArray trackSelections) {
+        trackNameProvider = new ExoTrackNameProvider(mAppContext.getResources());
+        mTrackSelections = trackSelections;
     }
 
     @Override
@@ -323,21 +303,20 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
             case Player.STATE_ENDED:
                 mPlayerEventListener.onCompletion();
                 break;
-		    case Player.STATE_IDLE:
+            case Player.STATE_IDLE:
                 break;
         }
     }
 
-
     @Override
-    public void onPlayerError(PlaybackException error) {
+    public void onPlayerError(@NonNull PlaybackException error) {
         if (mPlayerEventListener != null) {
             mPlayerEventListener.onError();
         }
     }
 
     @Override
-    public void onVideoSizeChanged(VideoSize videoSize) {
+    public void onVideoSizeChanged(@NonNull VideoSize videoSize) {
         if (mPlayerEventListener != null) {
             mPlayerEventListener.onVideoSizeChanged(videoSize.width, videoSize.height);
             if (videoSize.unappliedRotationDegrees > 0) {
@@ -345,4 +324,6 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
             }
         }
     }
+
+
 }
