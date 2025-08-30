@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.view.Surface;
 import android.view.SurfaceHolder;
-import com.google.android.exoplayer2.ExoPlaybackException;
+import com.google.android.exoplayer2.PlaybackException;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.LoadControl;
@@ -21,10 +21,12 @@ import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
-import com.google.android.exoplayer2.util.NonNullApi;
 import com.google.android.exoplayer2.util.Clock;
 import com.google.android.exoplayer2.util.EventLogger;
 import com.google.android.exoplayer2.video.VideoSize;
+import com.github.tvbox.osc.util.HawkConfig;  //xuameng EXO解码
+import com.orhanobut.hawk.Hawk; //xuameng EXO解码
+import androidx.annotation.NonNull;
 
 import java.util.Map;
 
@@ -38,14 +40,11 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     protected SimpleExoPlayer mMediaPlayer;
     protected MediaSource mMediaSource;
     protected ExoMediaSourceHelper mMediaSourceHelper;
-
     private PlaybackParameters mSpeedPlaybackParameters;
-
     private boolean mIsPreparing;
-
     private LoadControl mLoadControl;
-    private RenderersFactory mRenderersFactory;
-    private TrackSelector mTrackSelector;
+    private DefaultRenderersFactory mRenderersFactory;
+    private DefaultTrackSelector mTrackSelector;
 	protected ExoTrackNameProvider trackNameProvider;
     protected TrackSelectionArray mTrackSelections;
 
@@ -56,12 +55,55 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 
     @Override
     public void initPlayer() {
+        // xuameng释放旧实例
+        if (mMediaPlayer != null) {
+            mMediaPlayer.release();
+            mMediaPlayer.removeListener(this);
+        }
+        // xuameng渲染器配置
+          if (mRenderersFactory == null) {
+            boolean exoDecode = Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false);
+            int exoSelect = Hawk.get(HawkConfig.EXO_PLAY_SELECTCODE, 0);
+
+            // ExoPlayer2 解码模式选择逻辑
+            int rendererMode;
+            if (exoSelect > 0) {
+                // 选择器优先
+                rendererMode = (exoSelect == 1) 
+                    ? DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF    // 硬解
+                    : DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER; // 软解
+            } else {
+                // 使用exoDecode配置
+                rendererMode = exoDecode 
+                    ? DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER // 软解
+                    : DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF;   // 硬解
+            }
+    
+            mRenderersFactory = new DefaultRenderersFactory(mAppContext)
+                .setExtensionRendererMode(rendererMode);
+        }
+
+        // xuameng轨道选择器配置
+        if (mTrackSelector == null) {
+            mTrackSelector = new DefaultTrackSelector(mAppContext);
+        }
+        //xuameng加载策略控制
+        if (mLoadControl == null) {   
+            mLoadControl = new DefaultLoadControl();
+        }
+
+        mTrackSelector.setParameters(
+        mTrackSelector.getParameters().buildUpon()
+        .setPreferredTextLanguages("ch", "chi", "zh", "zho", "en")           // 设置首选字幕语言为中文
+        .setPreferredAudioLanguages("ch", "chi", "zh", "zho", "en")                        // 设置首选音频语言为中文
+        .build());                         // 必须调用build()完成构建
+
         mMediaPlayer = new SimpleExoPlayer.Builder(
                 mAppContext,
-                mRenderersFactory == null ? mRenderersFactory = new DefaultRenderersFactory(mAppContext) : mRenderersFactory,
-                mTrackSelector == null ? mTrackSelector = new DefaultTrackSelector(mAppContext) : mTrackSelector,
+                mRenderersFactory,  // xuameng使用已配置的实例
+                mTrackSelector,
                 new DefaultMediaSourceFactory(mAppContext),
-                mLoadControl == null ? mLoadControl = new DefaultLoadControl() : mLoadControl,
+                mLoadControl,
                 DefaultBandwidthMeter.getSingletonInstance(mAppContext),
                 new AnalyticsCollector(Clock.DEFAULT))
                 .build();
@@ -75,11 +117,11 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
         mMediaPlayer.addListener(this);
     }
     public DefaultTrackSelector getTrackSelector() {
-        return (DefaultTrackSelector) mTrackSelector;
+        return mTrackSelector;
     }
+
     @Override
-    public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
-        Player.Listener.super.onTracksChanged(trackGroups, trackSelections);
+    public void onTracksChanged(@NonNull TrackGroupArray trackGroups, @NonNull TrackSelectionArray trackSelections) {
         trackNameProvider = new ExoTrackNameProvider(mAppContext.getResources());
         mTrackSelections = trackSelections;
     }
@@ -133,7 +175,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
             return;
         if (mMediaSource == null) return;
         if (mSpeedPlaybackParameters != null) {
-			mMediaPlayer.setPlaybackParameters(mSpeedPlaybackParameters);
+            mMediaPlayer.setPlaybackParameters(mSpeedPlaybackParameters);
         }
         mIsPreparing = true;
         mMediaPlayer.setMediaSource(mMediaSource);
@@ -290,14 +332,15 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
         }
     }
 
-    public void onPlayerError(ExoPlaybackException error) {
+    @Override
+    public void onPlayerError(@NonNull PlaybackException error) {
         if (mPlayerEventListener != null) {
             mPlayerEventListener.onError();
         }
     }
 
     @Override
-    public void onVideoSizeChanged(VideoSize videoSize) {
+    public void onVideoSizeChanged(@NonNull VideoSize videoSize) {
         if (mPlayerEventListener != null) {
             mPlayerEventListener.onVideoSizeChanged(videoSize.width, videoSize.height);
             if (videoSize.unappliedRotationDegrees > 0) {
