@@ -428,7 +428,6 @@ public class PlayFragment extends BaseLazyFragment {
                         ((EXOmPlayer) mediaPlayer).selectExoTrackAudio(value,progressKey);
                         play(false);
                     }
-
                     dialog.dismiss();
                 } catch (Exception e) {
                     LOG.e("切换音轨出错");
