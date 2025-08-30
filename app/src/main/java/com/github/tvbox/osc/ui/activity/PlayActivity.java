@@ -402,10 +402,17 @@ public class PlayActivity extends BaseActivity {
                     }
 					long progress = mediaPlayer.getCurrentPosition() - 3000L;//XUAMENG保存当前进度，//XUAMENG保存当前进度，回退3秒
                     if (mediaPlayer instanceof IjkMediaPlayer) {
-						((IjkMediaPlayer)mediaPlayer).setTrack(value.trackId,progressKey);
+                        ((IjkMediaPlayer)mediaPlayer).setTrack(value.trackId,progressKey);
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                mediaPlayer.seekTo(progress);
+                            }
+                        }, 300);
                     }
 					if (mediaPlayer instanceof EXOmPlayer) {
 						((EXOmPlayer) mediaPlayer).selectExoTrackAudio(value,progressKey);
+                        play(false);      //xuameng EXO偶尔切换出错
 					}
                     new Handler().postDelayed(new Runnable() {
                         @Override
