@@ -451,6 +451,7 @@ public class PlayFragment extends BaseLazyFragment {
                             new Handler().postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
+                                    mediaPlayer.pause();
                                     mediaPlayer.seekTo(progress);
                                     mediaPlayer.start();
                                 }
