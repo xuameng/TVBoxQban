@@ -55,7 +55,6 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 
     @Override
     public void initPlayer() {
-
         // xuameng渲染器配置
           if (mRenderersFactory == null) {
             boolean exoDecode = Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false);
@@ -79,7 +78,14 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
                 .setExtensionRendererMode(rendererMode);
         }
 
-
+        // xuameng轨道选择器配置
+        if (mTrackSelector == null) {
+            mTrackSelector = new DefaultTrackSelector(mAppContext);
+        }
+        //xuameng加载策略控制
+        if (mLoadControl == null) {   
+            mLoadControl = new DefaultLoadControl();
+        }
 
         mTrackSelector.setParameters(
         mTrackSelector.getParameters().buildUpon()
@@ -89,10 +95,10 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 
         mMediaPlayer = new SimpleExoPlayer.Builder(
                 mAppContext,
-                mRenderersFactory,
-                mTrackSelector == null ? mTrackSelector = new DefaultTrackSelector(mAppContext) : mTrackSelector,
+                mRenderersFactory,  // xuameng使用已配置的实例
+                mTrackSelector,
                 new DefaultMediaSourceFactory(mAppContext),
-                mLoadControl == null ? mLoadControl = new DefaultLoadControl() : mLoadControl,
+                mLoadControl,
                 DefaultBandwidthMeter.getSingletonInstance(mAppContext),
                 new AnalyticsCollector(Clock.DEFAULT))
                 .build();
