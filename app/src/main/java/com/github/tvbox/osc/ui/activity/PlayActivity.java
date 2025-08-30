@@ -400,7 +400,6 @@ public class PlayActivity extends BaseActivity {
                     for (TrackInfoBean audio : bean) {
                         audio.selected = audio.trackId == value.trackId;
                     }
-                    mediaPlayer.pause();
 					long progress = mediaPlayer.getCurrentPosition() - 3000L;//XUAMENG保存当前进度，//XUAMENG保存当前进度，回退3秒
                     if (mediaPlayer instanceof IjkMediaPlayer) {
 						((IjkMediaPlayer)mediaPlayer).setTrack(value.trackId,progressKey);
@@ -412,9 +411,8 @@ public class PlayActivity extends BaseActivity {
                         @Override
                         public void run() {
                             mediaPlayer.seekTo(progress);
-                            mediaPlayer.start();
                         }
-                    }, 800);
+                    }, 300);
                     dialog.dismiss();
                 } catch (Exception e) {
                     LOG.e("切换音轨出错");
@@ -470,7 +468,6 @@ public class PlayActivity extends BaseActivity {
                     for (TrackInfoBean subtitle : bean) {
                         subtitle.selected = subtitle.trackId == value.trackId;
                     }
-                    mediaPlayer.pause();
                     long progress = mediaPlayer.getCurrentPosition() - 3000L;//XUAMENG保存当前进度，//XUAMENG保存当前进度，回退3秒
                     if (mediaPlayer instanceof IjkMediaPlayer) {
                         mController.mSubtitleView.destroy();
@@ -481,9 +478,8 @@ public class PlayActivity extends BaseActivity {
                             @Override
                             public void run() {
                                 mediaPlayer.seekTo(progress);
-                                mediaPlayer.start();
                             }
-                        }, 800);
+                        }, 300);
                     }
 				   if (mediaPlayer instanceof EXOmPlayer) {
                         mController.mSubtitleView.destroy();
@@ -494,9 +490,8 @@ public class PlayActivity extends BaseActivity {
                             @Override
                             public void run() {
                                 mediaPlayer.seekTo(progress);
-                                mediaPlayer.start();
                             }
-                        }, 800);
+                        }, 300);
                     }
                     dialog.dismiss();
                 } catch (Exception e) {
