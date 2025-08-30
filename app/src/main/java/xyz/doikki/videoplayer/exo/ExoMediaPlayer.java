@@ -7,7 +7,6 @@ import android.view.SurfaceHolder;
 import com.google.android.exoplayer2.PlaybackException;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
-import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -39,7 +38,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     protected ExoMediaSourceHelper mMediaSourceHelper;
     private PlaybackParameters mSpeedPlaybackParameters;
     private boolean mIsPreparing;
-    private LoadControl mLoadControl;
+    private DefaultLoadControl mLoadControl;
     private DefaultRenderersFactory mRenderersFactory;
     private DefaultTrackSelector mTrackSelector;
 	protected ExoTrackNameProvider trackNameProvider;
@@ -121,10 +120,6 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
         Player.Listener.super.onTracksChanged(trackGroups, trackSelections);
         trackNameProvider = new ExoTrackNameProvider(mAppContext.getResources());
         mTrackSelections = trackSelections;
-    }
-
-    public void setLoadControl(LoadControl loadControl) {
-        mLoadControl = loadControl;
     }
 
     @Override
