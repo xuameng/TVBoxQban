@@ -91,7 +91,10 @@ public class LivePlayerManager {
                     boolean exocode=Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false);  //xuameng exo解码默认设置
                     int exoSelect = Hawk.get(HawkConfig.EXO_PLAY_SELECTCODE, 0);  //xuameng exo解码动态选择
                     try {
-                        exoSelect = currentPlayerConfig.getInt("exocode");    //xuameng exo解码动态选择 0默认设置 1硬解 2软解
+                        // 安全获取配置值
+                        if (currentPlayerConfig.has("exocode")) {
+                            exoSelect = currentPlayerConfig.getInt("exocode");     //xuameng exo解码动态选择 0默认设置 1硬解 2软解
+                        }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
