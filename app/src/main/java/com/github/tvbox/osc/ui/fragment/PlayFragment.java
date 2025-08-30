@@ -448,14 +448,14 @@ public class PlayFragment extends BaseLazyFragment {
                                 }
                             }, 500);
                         }else{
+                            mediaPlayer.pause();
                             new Handler().postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
-                                    mediaPlayer.pause();
                                     mediaPlayer.seekTo(progress);
                                     mediaPlayer.start();
                                 }
-                            }, 500);
+                            }, 800);
                         }
                     }
                     dialog.dismiss();
