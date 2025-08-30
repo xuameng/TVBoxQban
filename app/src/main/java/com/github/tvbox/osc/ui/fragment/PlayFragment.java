@@ -429,15 +429,15 @@ public class PlayFragment extends BaseLazyFragment {
                         boolean exocode=Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false);
                         int exoselect = Hawk.get(HawkConfig.EXO_PLAY_SELECTCODE, 0);
                         try {
-                            exoselect = mPlayerConfig.getInt("exocode");
+                            exoselect = mVodPlayerCfg.getInt("exocode");
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        if (exocode || exoselect = 2){
+                        if (exocode || exoselect == 2){
                             new Handler().postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
-                                    replay(false);
+                                    play(false);
                                 }
                             }, 300);
                         }else{
