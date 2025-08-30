@@ -28,9 +28,9 @@ public class LivePlayerManager {
                 defaultPlayerConfig.put("pl", Hawk.get(HawkConfig.PLAY_TYPE, 0));  //xuameng升级直播JSON没有指定，默认跟随设置
             }
             defaultPlayerConfig.put("ijk", Hawk.get(HawkConfig.IJK_CODEC, "软解码"));
-            defaultPlayerConfig.put("pr", Hawk.get(HawkConfig.PLAY_RENDER, 0));
+            defaultPlayerConfig.put("pr", Hawk.get(HawkConfig.PLAY_RENDER, 0));  //xuameng 渲染设置
             defaultPlayerConfig.put("sc", Hawk.get(HawkConfig.PLAY_SCALE, 0));
-			defaultPlayerConfig.put("exocode", 0);
+            defaultPlayerConfig.put("exocode", 0);      //xuameng exo动态解码
             defaultPlayerConfig.put("music", Hawk.get(HawkConfig.LIVE_MUSIC_ANIMATION, false));   //xuameng音乐播放动画设置
         } catch (JSONException e) {
             e.printStackTrace();
@@ -99,13 +99,13 @@ public class LivePlayerManager {
                         // xuameng EXO 动态选择解码 存储选择状态
                         if (exoSelect == 1) {
                             Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 1);  // 硬解码标记存储
-					        playerTypeIndex = 3;
+                            playerTypeIndex = 3;
                         } else {
                             Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 2);  // 软解码标记存储
-					        playerTypeIndex = 4;
+                            playerTypeIndex = 4;
                         }
                     }else {
-                        playerTypeIndex = exocode ? 4 : 3;
+                        playerTypeIndex = exocode ? 4 : 3;         //xuameng EXO获取默认设置
                     }
                     break;
             }
@@ -156,11 +156,11 @@ public class LivePlayerManager {
         try {
             switch (playerType) {
                 case 0:
-                    playerConfig.put("pl", 0);
+                    playerConfig.put("pl", 0);      //xuameng系统播放器
                     playerConfig.put("ijk", "软解码");
                     break;
                 case 1:
-                    playerConfig.put("pl", 1);
+                    playerConfig.put("pl", 1);     //xuamengijk播放器
                     playerConfig.put("ijk", "硬解码");
                     break;
                 case 2:
@@ -168,14 +168,14 @@ public class LivePlayerManager {
                     playerConfig.put("ijk", "软解码");
                     break;
                 case 3:
-                    playerConfig.put("pl", 2);
-                    playerConfig.put("exocode", 1);
+                    playerConfig.put("pl", 2);         //exo 播放器
+                    playerConfig.put("exocode", 1);   //xuameng EXO硬解 动态设置
                     Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 1);
                     playerConfig.put("ijk", "软解码");
                     break;
                 case 4:
                     playerConfig.put("pl", 2);
-                    playerConfig.put("exocode", 2);
+                    playerConfig.put("exocode", 2);       //xuameng EXO软解 动态设置
                     Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 2);
                     playerConfig.put("ijk", "软解码");
                     break;
