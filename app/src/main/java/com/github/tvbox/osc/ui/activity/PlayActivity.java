@@ -401,20 +401,21 @@ public class PlayActivity extends BaseActivity {
                         audio.selected = audio.trackId == value.trackId;
                     }
                     mediaPlayer.pause();
-					long progress = mediaPlayer.getCurrentPosition() - 3000L;//XUAMENG保存当前进度，//XUAMENG保存当前进度，回退3秒
+                    long progress = mediaPlayer.getCurrentPosition() - 3000L;//XUAMENG保存当前进度，//XUAMENG保存当前进度，回退3秒
                     if (mediaPlayer instanceof IjkMediaPlayer) {
-						((IjkMediaPlayer)mediaPlayer).setTrack(value.trackId,progressKey);
+                        ((IjkMediaPlayer)mediaPlayer).setTrack(value.trackId,progressKey);
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                mediaPlayer.seekTo(progress);
+                                mediaPlayer.start();
+                            }
+                        }, 300);
                     }
-					if (mediaPlayer instanceof EXOmPlayer) {
-						((EXOmPlayer) mediaPlayer).selectExoTrackAudio(value,progressKey);
-					}
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            mediaPlayer.seekTo(progress);
-                            mediaPlayer.start();
-                        }
-                    }, 500);
+                    if (mediaPlayer instanceof EXOmPlayer) {
+                        ((EXOmPlayer) mediaPlayer).selectExoTrackAudio(value,progressKey);
+                        play(false);
+                    }
                     dialog.dismiss();
                 } catch (Exception e) {
                     LOG.e("切换音轨出错");
@@ -483,7 +484,7 @@ public class PlayActivity extends BaseActivity {
                                 mediaPlayer.seekTo(progress);
                                 mediaPlayer.start();
                             }
-                        }, 500);
+                        }, 300);
                     }
 				   if (mediaPlayer instanceof EXOmPlayer) {
                         mController.mSubtitleView.destroy();
@@ -496,7 +497,7 @@ public class PlayActivity extends BaseActivity {
                                 mediaPlayer.seekTo(progress);
                                 mediaPlayer.start();
                             }
-                        }, 500);
+                        }, 300);
                     }
                     dialog.dismiss();
                 } catch (Exception e) {
