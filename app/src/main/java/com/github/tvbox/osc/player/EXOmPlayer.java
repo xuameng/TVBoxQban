@@ -153,7 +153,7 @@ public class EXOmPlayer extends ExoMediaPlayer {
                 for (int renderIndex = 0; renderIndex < trackInfo.getRendererCount(); renderIndex++) {
                     if (trackInfo.getRendererType(renderIndex) == C.TRACK_TYPE_TEXT) {
                         DefaultTrackSelector.ParametersBuilder parametersBuilder = getTrackSelector().getParameters().buildUpon();
-                        parametersBuilder.setRendererDisabled(renderIndex, true);
+                        parametersBuilder.setRendererDisabled(renderIndex, false);
                         getTrackSelector().setParameters(parametersBuilder);
                         break;
                     }
