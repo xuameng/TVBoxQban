@@ -775,7 +775,7 @@ public class VodController extends BaseController {
                     hideBottomXu();
                 }
                 DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
-                int pr = Hawk.get(HawkConfig.PLAY_RENDER, 0);
+                int pr = Hawk.get(HawkConfig.PLAY_RENDER, 0);      //xuameng pr 0 text渲染 1 sur渲染
                 try {
                     pr = mPlayerConfig.getInt("pr");
                 } catch (JSONException e) {
@@ -853,17 +853,17 @@ public class VodController extends BaseController {
                     hideBottomXu();
                 }
                 DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
-                boolean exocode=Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false);
-                int exoselect = Hawk.get(HawkConfig.EXO_PLAY_SELECTCODE, 0);
+                boolean exocode=Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false);  //xuameng exo解码默认设置
+                int exoselect = Hawk.get(HawkConfig.EXO_PLAY_SELECTCODE, 0);  //xuameng exo解码动态选择
                 try {
-                    exoselect = mPlayerConfig.getInt("exocode");
+                    exoselect = mPlayerConfig.getInt("exocode");    //xuameng exo解码动态选择 0默认设置 1硬解 2软解
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
                 if(exoselect == 0) {
                     if (!exocode){
                         try {
-                            mPlayerConfig.put("exocode", 2);
+                            mPlayerConfig.put("exocode", 2); 
                             Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 2);
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -876,20 +876,20 @@ public class VodController extends BaseController {
                             e.printStackTrace();
                         }
                     }
-				}else if(exoselect == 1) {
-                        try {
-                            mPlayerConfig.put("exocode", 2);
-                            Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 2);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                }else if(exoselect == 1) {
+                    try {
+                        mPlayerConfig.put("exocode", 2);
+                        Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 2);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }else if(exoselect == 2) {
-                        try {
-                            mPlayerConfig.put("exocode", 1);
-                            Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 1);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                    try {
+                        mPlayerConfig.put("exocode", 1);
+                        Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 1);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
                 updatePlayerCfgView();
                 listener.updatePlayerCfg();
@@ -1341,10 +1341,10 @@ public class VodController extends BaseController {
     void updatePlayerCfgView() {
         try {
 			musicAnimation = mPlayerConfig.getBoolean("music");   //xuameng音乐播放动画设置
-            boolean exoCode=Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false); //xuameng EXO解码
-			int exoSelect = mPlayerConfig.getInt("exocode");
-            int playerType = mPlayerConfig.getInt("pl");
-            int pr = mPlayerConfig.getInt("pr");
+            boolean exoCode=Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false); //xuameng EXO默认设置解码
+			int exoSelect = mPlayerConfig.getInt("exocode");  //xuameng exo解码动态选择
+            int playerType = mPlayerConfig.getInt("pl");   //xuameng播放器选择
+            int pr = mPlayerConfig.getInt("pr");  //xuameng渲染选择
             mPlayerBtn.setText(PlayerHelper.getPlayerName(playerType));
             mPlayerScaleBtn.setText(PlayerHelper.getScaleName(mPlayerConfig.getInt("sc")));
             mPlayerIJKBtn.setText(mPlayerConfig.getString("ijk"));
@@ -1359,7 +1359,7 @@ public class VodController extends BaseController {
             mPlayanimation.setText(musicAnimation ? "音柱已开" : "音柱已关");  //xuameng音乐播放动画获取状态
             if (exoSelect > 0){
                 mPlayerEXOBtn.setText(exoSelect == 1 ? "硬解码" : "软解码");  //xuameng EXO解码 
-                // 存储选择状态
+                // xuameng EXO 动态选择解码 存储选择状态
                 if (exoSelect == 1) {
                     Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 1);  // 硬解码标记存储
                 } else {
