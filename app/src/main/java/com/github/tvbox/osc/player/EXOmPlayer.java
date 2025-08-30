@@ -185,7 +185,7 @@ public class EXOmPlayer extends ExoMediaPlayer {
                 TrackGroupArray trackGroupArray = trackInfo.getTrackGroups(videoTrackBean.renderId);
                 DefaultTrackSelector.SelectionOverride override = new DefaultTrackSelector.SelectionOverride(videoTrackBean.trackGroupId, videoTrackBean.trackId);
                 DefaultTrackSelector.ParametersBuilder parametersBuilder = getTrackSelector().buildUponParameters();
-                parametersBuilder.setRendererDisabled(videoTrackBean.renderId, false);
+                parametersBuilder.setRendererDisabled(videoTrackBean.renderId, true);
                 parametersBuilder.setSelectionOverride(videoTrackBean.renderId, trackGroupArray, override);
                 getTrackSelector().setParameters(parametersBuilder);
                 //xuameng记忆选择音轨
