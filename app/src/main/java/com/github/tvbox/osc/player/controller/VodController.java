@@ -300,6 +300,7 @@ public class VodController extends BaseController {
     private int audioSessionId = -1; // 使用-1表示未初始化状态 //xuameng音乐播放动画
     private boolean musicAnimation = false;     ////xuameng 音柱动画 加载设置
 	private static final String TAG = "VodController";  //xuameng音乐播放动画
+    private SourceBean sourceBean;        //xuameng清除动态设置用
     Handler myHandle;
     Runnable myRunnable;
     int myHandleSeconds = 50000; //闲置多少毫秒秒关闭底栏  默认100秒
@@ -894,6 +895,27 @@ public class VodController extends BaseController {
                 updatePlayerCfgView();
                 listener.updatePlayerCfg();
                 listener.replay(false);
+            }
+        });
+
+        mxuPlay.setOnLongClickListener(new OnLongClickListener() {      //xuameng 重置EXO动态选择
+            @Override
+            public boolean onLongClick(View view) {
+                FastClickCheckUtil.check(view); //xuameng 防播放打断动画
+                mPlayerConfig.put("exocode", 0); 
+                mPlayerConfig.put("music", Hawk.get(HawkConfig.VOD_MUSIC_ANIMATION, false));
+                mPlayerConfig.put("pr", Hawk.get(HawkConfig.PLAY_RENDER, 0));
+                mPlayerConfig.put("ijk", Hawk.get(HawkConfig.IJK_CODEC, ""));
+                mPlayerConfig.put("sc", Hawk.get(HawkConfig.PLAY_SCALE, 0));
+                mPlayerConfig.put("sp", 1.0f);
+                mPlayerConfig.put("st", 0);
+                mPlayerConfig.put("et", 0);
+                mPlayerConfig.put("pl", (sourceBean.getPlayerType() == -1) ? (int)Hawk.get(HawkConfig.PLAY_TYPE, 1) : sourceBean.getPlayerType());
+                updatePlayerCfgView();
+                listener.updatePlayerCfg();
+                listener.replay(false);
+                App.showToastShort(getContext(), "聚汇影视提示您：已重置此点播源所有动态设置！");
+                return true;
             }
         });
 
