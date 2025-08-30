@@ -25,8 +25,6 @@ import com.google.android.exoplayer2.util.NonNullApi;
 import com.google.android.exoplayer2.util.Clock;
 import com.google.android.exoplayer2.util.EventLogger;
 import com.google.android.exoplayer2.video.VideoSize;
-import com.github.tvbox.osc.util.HawkConfig;  //xuameng EXO解码
-import com.orhanobut.hawk.Hawk; //xuameng EXO解码
 
 import java.util.Map;
 
@@ -40,8 +38,11 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     protected SimpleExoPlayer mMediaPlayer;
     protected MediaSource mMediaSource;
     protected ExoMediaSourceHelper mMediaSourceHelper;
+
     private PlaybackParameters mSpeedPlaybackParameters;
+
     private boolean mIsPreparing;
+
     private LoadControl mLoadControl;
     private RenderersFactory mRenderersFactory;
     private TrackSelector mTrackSelector;
@@ -55,55 +56,12 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 
     @Override
     public void initPlayer() {
-        // xuameng释放旧实例
-        if (mMediaPlayer != null) {
-            mMediaPlayer.release();
-            mMediaPlayer.removeListener(this);
-        }
-        // xuameng渲染器配置
-          if (mRenderersFactory == null) {
-            boolean exoDecode = Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false);
-            int exoSelect = Hawk.get(HawkConfig.EXO_PLAY_SELECTCODE, 0);
-
-            // ExoPlayer2 解码模式选择逻辑
-            int rendererMode;
-            if (exoSelect > 0) {
-                // 选择器优先
-                rendererMode = (exoSelect == 1) 
-                    ? DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF    // 硬解
-                    : DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER; // 软解
-            } else {
-                // 使用exoDecode配置
-                rendererMode = exoDecode 
-                    ? DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER // 软解
-                    : DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF;   // 硬解
-            }
-    
-            mRenderersFactory = new DefaultRenderersFactory(mAppContext)
-                .setExtensionRendererMode(rendererMode);
-        }
-
-        // xuameng轨道选择器配置
-        if (mTrackSelector == null) {
-            mTrackSelector = new DefaultTrackSelector(mAppContext);
-        }
-        //xuameng加载策略控制
-        if (mLoadControl == null) {   
-            mLoadControl = new DefaultLoadControl();
-        }
-
-        mTrackSelector.setParameters(
-        mTrackSelector.getParameters().buildUpon()
-        .setPreferredTextLanguages("ch", "chi", "zh", "zho", "en")           // 设置首选字幕语言为中文
-        .setPreferredAudioLanguages("ch", "chi", "zh", "zho", "en")                        // 设置首选音频语言为中文
-        .build());                         // 必须调用build()完成构建
-
         mMediaPlayer = new SimpleExoPlayer.Builder(
                 mAppContext,
-                mRenderersFactory,  // xuameng使用已配置的实例
-                mTrackSelector,
+                mRenderersFactory == null ? mRenderersFactory = new DefaultRenderersFactory(mAppContext) : mRenderersFactory,
+                mTrackSelector == null ? mTrackSelector = new DefaultTrackSelector(mAppContext) : mTrackSelector,
                 new DefaultMediaSourceFactory(mAppContext),
-                mLoadControl,
+                mLoadControl == null ? mLoadControl = new DefaultLoadControl() : mLoadControl,
                 DefaultBandwidthMeter.getSingletonInstance(mAppContext),
                 new AnalyticsCollector(Clock.DEFAULT))
                 .build();
@@ -332,7 +290,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
         }
     }
 
-
+    @Override
     public void onPlayerError(ExoPlaybackException error) {
         if (mPlayerEventListener != null) {
             mPlayerEventListener.onError();
