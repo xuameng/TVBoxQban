@@ -42,8 +42,8 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     private PlaybackParameters mSpeedPlaybackParameters;
     private boolean mIsPreparing;
     private LoadControl mLoadControl;
-    private RenderersFactory mRenderersFactory;
-    private TrackSelector mTrackSelector;
+    private DefaultRenderersFactory mRenderersFactory;
+    private DefaultTrackSelector mTrackSelector;
 	protected ExoTrackNameProvider trackNameProvider;
     protected TrackSelectionArray mTrackSelections;
 
@@ -116,7 +116,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
         mMediaPlayer.addListener(this);
     }
     public DefaultTrackSelector getTrackSelector() {
-        return (DefaultTrackSelector) mTrackSelector;
+        return mTrackSelector;
     }
     @Override
     public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
