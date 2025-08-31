@@ -18,7 +18,7 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
-import com.google.android.exoplayer2.C;
+import com.google.android.exoplayer2.C;  //xuameng 判断播放错误用
 import com.google.android.exoplayer2.util.Clock;
 import com.google.android.exoplayer2.util.EventLogger;
 import com.google.android.exoplayer2.video.VideoSize;
@@ -324,12 +324,8 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 
     @Override
     public void onPlayerError(PlaybackException error) {
-mTrackSelector.setParameters(
-    mTrackSelector.getParameters().buildUpon()
-        .setRendererDisabled(C.TRACK_TYPE_AUDIO, true)
-.build());  
         if (path != null) {
-			reset();
+			initPlayer();
             setDataSource(path, headers);
             path = null;
             prepareAsync();
