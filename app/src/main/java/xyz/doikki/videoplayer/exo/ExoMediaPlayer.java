@@ -320,44 +320,40 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
         }
     }
 
-    @Override
-    public void onPlayerError(PlaybackException error) {
-        if (mPlayerEventListener != null) {
-            mPlayerEventListener.onError();
-        }
-    }
 
 @Override
 public void onPlayerError(PlaybackException error) {
-    // 1. 检查是否为目标异常类型（使用实际存在的异常类）
-    if (error instanceof ExoPlaybackException && 
-        (error.getCause() instanceof MediaCodecVideoRendererException || 
-         error.getCause() instanceof MediaCodecAudioRendererException)) {
-        
-        // 2. 获取当前音频轨道配置（使用正确的方法）
-        TrackSelectionArray selections = mTrackSelections;
-        TrackGroupArray audioGroups = selections.getAudioGroups();
-        
-        // 3. 取消音轨选择（使用正确的常量）
-        mTrackSelector.setParameters(
-            mTrackSelector.getParameters()
-                .setPreferredTrackGroupId(PlayerConstants.TRACK_GROUP_ID_NONE)
-                .build()
-        );
-        
-        // 4. 恢复播放逻辑
-        if (path != null) {
-            setDataSource(path, headers);
-            path = null;
-            prepareAsync();
-            start();
-        } else {
-            if (mPlayerEventListener != null) {
-                mPlayerEventListener.onError();
+    // 1. 检查是否为目标异常类型（使用ExoPlayer 2.16.0的API）
+    if (error instanceof ExoPlaybackException) {
+        Throwable cause = error.getCause();
+        if (cause instanceof MediaCodecRenderer.DecoderInitializationException ||
+            cause instanceof MediaCodecRenderer.FormatException) {
+            
+            // 2. 获取当前音频轨道配置
+            TrackSelectionArray selections = mTrackSelections;
+            TrackGroupArray audioGroups = selections.getTrackGroups();
+            
+            // 3. 取消音轨选择（使用ExoPlayer 2.16.0的常量）
+            TrackGroupArray selectedAudioGroups = selections.getTrackGroups();
+            if (selectedAudioGroups.length > 0) {
+                mTrackSelector.setParameters(
+                    mTrackSelector.getParameters()
+                        .setPreferredTrackGroupId(selectedAudioGroups.get(0).id)
+                        .build()
+                );
+            }
+            
+            // 4. 恢复播放逻辑
+            if (path != null) {
+                setDataSource(path, headers);
+                path = null;
+                prepareAsync();
+                start();
             }
         }
     }
 }
+
 
 
 
