@@ -44,7 +44,6 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 	protected ExoTrackNameProvider trackNameProvider;
     protected TrackSelectionArray mTrackSelections;
 
-    private int errorCode = -100;
     private String path;
     private Map<String, String> headers;
 
@@ -130,10 +129,8 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     public void setDataSource(String path, Map<String, String> headers) {
         this.path = path;
         this.headers = headers;
-        mMediaSource = mMediaSourceHelper.getMediaSource(path, headers, false, errorCode);
-        errorCode = -1;
+        mMediaSource = mMediaSourceHelper.getMediaSource(path, headers);
     }
-
     @Override
     public void setDataSource(AssetFileDescriptor fd) {
         //no support
@@ -332,18 +329,19 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 
 @Override
 public void onPlayerError(PlaybackException error) {
-    // 1. 检查是否为目标异常类型
-    if (error instanceof MediaCodecVideoDecoderException || 
-        error.getCause() instanceof MediaCodecVideoRendererException ||
-        error.getCause() instanceof MediaCodecAudioRendererException) {
+    // 1. 检查是否为目标异常类型（使用实际存在的异常类）
+    if (error instanceof ExoPlaybackException && 
+        (error.getCause() instanceof MediaCodecVideoRendererException || 
+         error.getCause() instanceof MediaCodecAudioRendererException)) {
         
-        // 2. 获取当前音频轨道配置
-        TrackGroupArray audioGroups = mTrackSelections.getAudioGroups();
+        // 2. 获取当前音频轨道配置（使用正确的方法）
+        TrackSelectionArray selections = mTrackSelections;
+        TrackGroupArray audioGroups = selections.getAudioGroups();
         
-        // 3. 取消音轨选择
+        // 3. 取消音轨选择（使用正确的常量）
         mTrackSelector.setParameters(
             mTrackSelector.getParameters()
-                .setPreferredTrackGroupId(C.TRACK_GROUP_ID_NONE)
+                .setPreferredTrackGroupId(PlayerConstants.TRACK_GROUP_ID_NONE)
                 .build()
         );
         
@@ -360,6 +358,8 @@ public void onPlayerError(PlaybackException error) {
         }
     }
 }
+
+
 
 
 
