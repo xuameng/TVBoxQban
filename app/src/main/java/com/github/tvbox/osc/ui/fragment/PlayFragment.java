@@ -408,12 +408,17 @@ public class PlayFragment extends BaseLazyFragment {
         dialog.setAdapter(new SelectDialogAdapter.SelectDialogInterface<TrackInfoBean>() {
             @Override
             public void click(TrackInfoBean value, int pos) {
-    TrackInfoBean selectedTrackXu = trackInfo.getAudioSelected(false);
-if (selectedTrackXu == null) {
-    App.showToastShort(mContext, "当前解码方式不支持当前音轨！");
-    
+    if (value == null || value.trackId == -1) { // 假设-1表示无效ID
+        App.showToastShort(mContext, "当前解码方式不支持当前音轨！");
+        return;
+    }
+    		int selectedId = trackInfo.getAudioSelected(false);
+if (selectedId == -1) { // 假设-1表示未选中
+    App.showToastShort(mContext, "当前解码方式不支持当前音轨sdfsdfdsf！");
+    return;
 }
-     try {
+  
+                try {
                     for (TrackInfoBean audio : bean) {
                         audio.selected = audio.trackId == value.trackId;
                     }
@@ -455,15 +460,6 @@ if (selectedTrackXu == null) {
                 return oldItem.trackId == newItem.trackId;
             }
         }, bean, trackInfo.getAudioSelected(false));
-
-		// 判断是否有选中项
-TrackInfoBean selectedTrack = trackInfo.getAudioSelected(false);
-if (selectedTrack == null) {
-    // 没有选中项时，禁用所有选项
-    dialog.setSelectable(false);
-    dialog.setItemEnabled(true); // 确保所有项都是禁用状态
-    dialog.setTip("请先选择有效音轨");
-}
         dialog.show();
     }
 
