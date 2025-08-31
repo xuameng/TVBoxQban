@@ -397,7 +397,7 @@ public class PlayActivity extends BaseActivity {
             @Override
             public void click(TrackInfoBean value, int pos) {
                 if (selectedId == 99999) { // xuameng99999表示未选中
-                    App.showToastShort(mContext, "当前解码方式不支持此音轨！请切换解码方式！");
+                    App.showToastShort(mContext, "切换音轨失败！请切换解码方式或刷新重试！");
                     return;
                 }
                 try {
