@@ -324,11 +324,10 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 
     @Override
     public void onPlayerError(PlaybackException error) {
-
+release();
 mTrackSelector.setParameters(
     mTrackSelector.getParameters().buildUpon()
         .setRendererDisabled(C.TRACK_TYPE_AUDIO, true)
-	.setRendererDisabled(C.TRACK_TYPE_VIDEO, false)
 .build());  
         mMediaPlayer = new SimpleExoPlayer.Builder(
                 mAppContext,
@@ -341,7 +340,6 @@ mTrackSelector.setParameters(
                 .build();
         setOptions();
         if (path != null) {
-			initPlayer();
             setDataSource(path, headers);
             path = null;
             prepareAsync();
