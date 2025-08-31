@@ -44,10 +44,6 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 	protected ExoTrackNameProvider trackNameProvider;
     protected TrackSelectionArray mTrackSelections;
 
-    private String path;
-    private Map<String, String> headers;
-	private int errorCode = -100;
-
     public ExoMediaPlayer(Context context) {
         mAppContext = context.getApplicationContext();
         mMediaSourceHelper = ExoMediaSourceHelper.getInstance(context);
@@ -128,10 +124,9 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 
     @Override
     public void setDataSource(String path, Map<String, String> headers) {
-        this.path = path;
-        this.headers = headers;
         mMediaSource = mMediaSourceHelper.getMediaSource(path, headers);
     }
+
     @Override
     public void setDataSource(AssetFileDescriptor fd) {
         //no support
@@ -321,42 +316,19 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
         }
     }
 
-
 @Override
 public void onPlayerError(PlaybackException error) {
-	errorCode = error.errorCode;
-    // 1. 检查是否为目标异常类型（使用ExoPlayer 2.16.0的API）
-    if (errorCode instanceof MediaCodecVideoRendererException || errorCode instanceof MediaCodecAudioRendererException){ 
-            
-        // 获取当前音轨选择
-        TrackSelectionArray selections = mPlayer.getCurrentTrackSelections();
-        TrackGroupArray audioGroups = selections.getTrackGroups(C.TRACK_TYPE_AUDIO);
-
-        // 禁用问题音轨
-        DefaultTrackSelector.Parameters params = new DefaultTrackSelector.Parameters();
-        for (int i = 0; i < audioGroups.length; i++) {
-            params.setForceDisabled(C.TRACK_TYPE_AUDIO, true);  // 强制禁用所有音频轨道
+    if (error.getCause() instanceof DecoderException) {
+        TrackSelectionArray audioTracks = mMediaPlayer.getCurrentTrackSelections(C.TRACK_TYPE_AUDIO);
+        if (audioTracks.length > 0) {
+            mTrackSelector.setParameters(
+                mTrackSelector.getParameters().buildUpon()
+                    .setForceDisabled(C.TRACK_TYPE_AUDIO, true)  // 强制禁用音频轨道
+                    .build()
+            );
         }
-        getTrackSelector().setParameters(params);
-
-            // 4. 恢复播放逻辑
-            if (path != null) {
-                setDataSource(path, headers);
-                path = null;
-                prepareAsync();
-                start();
-            }
     }
 }
-
-
-
-
-
-
-
-
-
 
 
     @Override
