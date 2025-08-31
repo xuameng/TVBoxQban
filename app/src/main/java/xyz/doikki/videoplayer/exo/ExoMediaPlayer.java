@@ -18,7 +18,6 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
-import com.google.android.exoplayer2.C;  //xuameng 判断播放错误用
 import com.google.android.exoplayer2.util.Clock;
 import com.google.android.exoplayer2.util.EventLogger;
 import com.google.android.exoplayer2.video.VideoSize;
@@ -44,9 +43,6 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     private DefaultTrackSelector mTrackSelector;
 	protected ExoTrackNameProvider trackNameProvider;
     protected TrackSelectionArray mTrackSelections;
-
-    private String path;
-    private Map<String, String> headers;
 
     public ExoMediaPlayer(Context context) {
         mAppContext = context.getApplicationContext();
@@ -128,8 +124,6 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 
     @Override
     public void setDataSource(String path, Map<String, String> headers) {
-        this.path = path;
-        this.headers = headers;
         mMediaSource = mMediaSourceHelper.getMediaSource(path, headers);
     }
 
@@ -324,34 +318,8 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 
     @Override
     public void onPlayerError(PlaybackException error) {
-        if (mMediaPlayer != null) {
-            mMediaPlayer.release();
-            mMediaPlayer.removeListener(this);
-        }
-mTrackSelector.setParameters(
-    mTrackSelector.getParameters().buildUpon()
-        .setRendererDisabled(C.TRACK_TYPE_AUDIO, true)
-.build());  
-        mMediaPlayer = new SimpleExoPlayer.Builder(
-                mAppContext,
-                mRenderersFactory,  // xuameng使用已配置的实例
-                mTrackSelector,
-                new DefaultMediaSourceFactory(mAppContext),
-                mLoadControl,
-                DefaultBandwidthMeter.getSingletonInstance(mAppContext),
-                new AnalyticsCollector(Clock.DEFAULT))
-                .build();
-				mMediaPlayer.addListener(this);
-        if (path != null) {
-            setDataSource(path, headers);
-            path = null;
-            prepareAsync();
-            start();
-			
-        } else {
-            if (mPlayerEventListener != null) {
-                mPlayerEventListener.onError();
-            }
+        if (mPlayerEventListener != null) {
+            mPlayerEventListener.onError();
         }
     }
 
