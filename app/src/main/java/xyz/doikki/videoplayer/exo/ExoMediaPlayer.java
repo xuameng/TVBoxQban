@@ -316,20 +316,12 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
         }
     }
 
-@Override
-public void onPlayerError(PlaybackException error) {
-    if (error.getCause() instanceof DecoderException) {
-        TrackSelectionArray audioTracks = mMediaPlayer.getCurrentTrackSelections(C.TRACK_TYPE_AUDIO);
-        if (audioTracks.length > 0) {
-            mTrackSelector.setParameters(
-                mTrackSelector.getParameters().buildUpon()
-                    .setForceDisabled(C.TRACK_TYPE_AUDIO, true)  // 强制禁用音频轨道
-                    .build()
-            );
+    @Override
+    public void onPlayerError(PlaybackException error) {
+        if (mPlayerEventListener != null) {
+            mPlayerEventListener.onError();
         }
     }
-}
-
 
     @Override
     public void onVideoSizeChanged(VideoSize videoSize) {
