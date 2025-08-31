@@ -46,6 +46,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 
     private String path;
     private Map<String, String> headers;
+	private int errorCode = -100;
 
     public ExoMediaPlayer(Context context) {
         mAppContext = context.getApplicationContext();
@@ -323,11 +324,9 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 
 @Override
 public void onPlayerError(PlaybackException error) {
+	errorCode = error.errorCode;
     // 1. 检查是否为目标异常类型（使用ExoPlayer 2.16.0的API）
-    if (error instanceof ExoPlaybackException) {
-        Throwable cause = error.getCause();
-        if (cause instanceof MediaCodecRenderer.DecoderInitializationException ||
-            cause instanceof MediaCodecRenderer.FormatException) {
+    if (errorCode instanceof MediaCodecVideoRendererException || errorCode instanceof MediaCodecAudioRendererException){ 
             
             // 2. 获取当前音频轨道配置
             TrackSelectionArray selections = mTrackSelections;
@@ -353,6 +352,32 @@ public void onPlayerError(PlaybackException error) {
         }
     }
 }
+
+
+@Override
+public void onPlayerError(PlaybackException error) {
+    if (error.getCause() instanceof MediaCodecDecoderException) {
+        // 获取当前音轨选择
+        TrackSelectionArray selections = mPlayer.getCurrentTrackSelections();
+        TrackGroupArray audioGroups = selections.getTrackGroups(C.TRACK_TYPE_AUDIO);
+
+        // 禁用问题音轨
+        DefaultTrackSelector.Parameters params = new DefaultTrackSelector.Parameters();
+        for (int i = 0; i < audioGroups.length; i++) {
+            params.setForceDisabled(C.TRACK_TYPE_AUDIO, true);  // 强制禁用所有音频轨道:ml-citation{ref="6,7" data="citationList"}
+        }
+        getTrackSelector().setParameters(params);
+
+            // 4. 恢复播放逻辑
+            if (path != null) {
+                setDataSource(path, headers);
+                path = null;
+                prepareAsync();
+                start();
+            }
+    }
+}
+
 
 
 
