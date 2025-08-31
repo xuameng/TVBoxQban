@@ -403,19 +403,16 @@ public class PlayFragment extends BaseLazyFragment {
             App.showToastShort(mContext, "没有内置音轨！");
 			return;
 		}
-		 	final int selectedId = trackInfo.getAudioSelected(false);
+
+        final int selectedId = trackInfo.getAudioSelected(false);
         SelectDialog<TrackInfoBean> dialog = new SelectDialog<>(getActivity());
         dialog.setTip("切换音轨");
         dialog.setAdapter(new SelectDialogAdapter.SelectDialogInterface<TrackInfoBean>() {
             @Override
             public void click(TrackInfoBean value, int pos) {
-            if (value == null || selectedId == 99999) { // 假设-1表示未选中
-				App.showToastShort(mContext, "当前解码方式不支持当前音轨！");
-            return;
-        }
-
-  
-  
+                if (selectedId == 99999) { // xuameng99999表示未选中
+                    App.showToastShort(mContext, "当前解码方式不支持此音轨！请切换解码方式！");
+                return;
                 try {
                     for (TrackInfoBean audio : bean) {
                         audio.selected = audio.trackId == value.trackId;
@@ -423,17 +420,16 @@ public class PlayFragment extends BaseLazyFragment {
                     long progress = mediaPlayer.getCurrentPosition() - 3000L;//XUAMENG保存当前进度，//XUAMENG保存当前进度，回退3秒
                     if (mediaPlayer instanceof IjkMediaPlayer) {
                         ((IjkMediaPlayer)mediaPlayer).setTrack(value.trackId,progressKey);
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                mediaPlayer.seekTo(progress);
-                            }
-                        }, 300);
                     }
                     if (mediaPlayer instanceof EXOmPlayer) {
                         ((EXOmPlayer) mediaPlayer).selectExoTrackAudio(value,progressKey);
-                        play(false);   //xuameng EXO偶尔切换出错
                     }
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            mediaPlayer.seekTo(progress);
+                        }
+                    }, 300);
                     dialog.dismiss();
                 } catch (Exception e) {
                     LOG.e("切换音轨出错");
@@ -457,7 +453,7 @@ public class PlayFragment extends BaseLazyFragment {
             public boolean areContentsTheSame(@NonNull @NotNull TrackInfoBean oldItem, @NonNull @NotNull TrackInfoBean newItem) {
                 return oldItem.trackId == newItem.trackId;
             }
-        }, bean, selectedId);
+        }, bean, trackInfo.getAudioSelected(false));
         dialog.show();
     }
 
