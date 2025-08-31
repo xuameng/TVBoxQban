@@ -44,6 +44,9 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 	protected ExoTrackNameProvider trackNameProvider;
     protected TrackSelectionArray mTrackSelections;
 
+    private String path;
+    private Map<String, String> headers;
+
     public ExoMediaPlayer(Context context) {
         mAppContext = context.getApplicationContext();
         mMediaSourceHelper = ExoMediaSourceHelper.getInstance(context);
@@ -124,6 +127,8 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 
     @Override
     public void setDataSource(String path, Map<String, String> headers) {
+        this.path = path;
+        this.headers = headers;
         mMediaSource = mMediaSourceHelper.getMediaSource(path, headers);
     }
 
@@ -318,8 +323,20 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 
     @Override
     public void onPlayerError(PlaybackException error) {
-        if (mPlayerEventListener != null) {
-            mPlayerEventListener.onError();
+mTrackSelector.setParameters(
+    mTrackSelector.getParameters().buildUpon()
+        .setRendererDisabled(C.TRACK_TYPE_AUDIO, true)
+.build());  
+        if (path != null) {
+			reset();
+            setDataSource(path, headers);
+            path = null;
+            prepareAsync();
+            start();
+        } else {
+            if (mPlayerEventListener != null) {
+                mPlayerEventListener.onError();
+            }
         }
     }
 
