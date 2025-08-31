@@ -338,7 +338,6 @@ mTrackSelector.setParameters(
                 DefaultBandwidthMeter.getSingletonInstance(mAppContext),
                 new AnalyticsCollector(Clock.DEFAULT))
                 .build();
-        setOptions();
         if (path != null) {
             setDataSource(path, headers);
             path = null;
