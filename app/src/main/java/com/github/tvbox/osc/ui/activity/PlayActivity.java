@@ -391,6 +391,8 @@ public class PlayActivity extends BaseActivity {
 			App.showToastShort(mContext, "没有内置音轨！");
 			return;
 		}
+
+        final int selectedId = trackInfo.getAudioSelected(false);
         SelectDialog<TrackInfoBean> dialog = new SelectDialog<>(PlayActivity.this);
         dialog.setTip("切换音轨");
         dialog.setAdapter(new SelectDialogAdapter.SelectDialogInterface<TrackInfoBean>() {
