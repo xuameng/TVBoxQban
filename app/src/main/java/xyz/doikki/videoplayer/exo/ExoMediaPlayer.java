@@ -328,35 +328,6 @@ public void onPlayerError(PlaybackException error) {
     // 1. 检查是否为目标异常类型（使用ExoPlayer 2.16.0的API）
     if (errorCode instanceof MediaCodecVideoRendererException || errorCode instanceof MediaCodecAudioRendererException){ 
             
-            // 2. 获取当前音频轨道配置
-            TrackSelectionArray selections = mTrackSelections;
-            TrackGroupArray audioGroups = selections.getTrackGroups();
-            
-            // 3. 取消音轨选择（使用ExoPlayer 2.16.0的常量）
-            TrackGroupArray selectedAudioGroups = selections.getTrackGroups();
-            if (selectedAudioGroups.length > 0) {
-                mTrackSelector.setParameters(
-                    mTrackSelector.getParameters()
-                        .setPreferredTrackGroupId(selectedAudioGroups.get(0).id)
-                        .build()
-                );
-            }
-            
-            // 4. 恢复播放逻辑
-            if (path != null) {
-                setDataSource(path, headers);
-                path = null;
-                prepareAsync();
-                start();
-            }
-        }
-    }
-}
-
-
-@Override
-public void onPlayerError(PlaybackException error) {
-    if (error.getCause() instanceof MediaCodecDecoderException) {
         // 获取当前音轨选择
         TrackSelectionArray selections = mPlayer.getCurrentTrackSelections();
         TrackGroupArray audioGroups = selections.getTrackGroups(C.TRACK_TYPE_AUDIO);
@@ -364,7 +335,7 @@ public void onPlayerError(PlaybackException error) {
         // 禁用问题音轨
         DefaultTrackSelector.Parameters params = new DefaultTrackSelector.Parameters();
         for (int i = 0; i < audioGroups.length; i++) {
-            params.setForceDisabled(C.TRACK_TYPE_AUDIO, true);  // 强制禁用所有音频轨道:ml-citation{ref="6,7" data="citationList"}
+            params.setForceDisabled(C.TRACK_TYPE_AUDIO, true);  // 强制禁用所有音频轨道
         }
         getTrackSelector().setParameters(params);
 
@@ -377,6 +348,10 @@ public void onPlayerError(PlaybackException error) {
             }
     }
 }
+
+
+
+
 
 
 
