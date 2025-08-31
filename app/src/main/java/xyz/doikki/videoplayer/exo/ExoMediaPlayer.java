@@ -44,6 +44,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 	protected ExoTrackNameProvider trackNameProvider;
     protected TrackSelectionArray mTrackSelections;
 
+    private int errorCode = -100;
     private String path;
     private Map<String, String> headers;
 
@@ -333,22 +334,20 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 public void onPlayerError(PlaybackException error) {
     // 1. 检查是否为目标异常类型
     if (error instanceof MediaCodecVideoDecoderException || 
-        error.getCause() instanceof MediaCodecVideoRendererException) {
+        error.getCause() instanceof MediaCodecVideoRendererException ||
+        error.getCause() instanceof MediaCodecAudioRendererException) {
         
         // 2. 获取当前音频轨道配置
         TrackGroupArray audioGroups = mTrackSelections.getAudioGroups();
-        int currentAudioIndex = mTrackSelector.getParameters().preferredTrackGroup;
         
-        // 3. 计算下一个可用音轨索引
-        int nextAudioIndex = (currentAudioIndex + 1) % audioGroups.length;
-        
-        // 4. 切换音轨并恢复播放
+        // 3. 取消音轨选择
         mTrackSelector.setParameters(
             mTrackSelector.getParameters()
-                .setPreferredTrackGroupId(audioGroups.get(nextAudioIndex).id)
+                .setPreferredTrackGroupId(C.TRACK_GROUP_ID_NONE)
                 .build()
         );
         
+        // 4. 恢复播放逻辑
         if (path != null) {
             setDataSource(path, headers);
             path = null;
@@ -361,6 +360,7 @@ public void onPlayerError(PlaybackException error) {
         }
     }
 }
+
 
 
     @Override
