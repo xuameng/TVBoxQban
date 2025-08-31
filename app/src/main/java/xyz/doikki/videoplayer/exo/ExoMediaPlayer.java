@@ -324,12 +324,22 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 
     @Override
     public void onPlayerError(PlaybackException error) {
-		initPlayer();
+
 mTrackSelector.setParameters(
     mTrackSelector.getParameters().buildUpon()
         .setRendererDisabled(C.TRACK_TYPE_AUDIO, true)
 	.setRendererDisabled(C.TRACK_TYPE_VIDEO, false)
 .build());  
+        mMediaPlayer = new SimpleExoPlayer.Builder(
+                mAppContext,
+                mRenderersFactory,  // xuameng使用已配置的实例
+                mTrackSelector,
+                new DefaultMediaSourceFactory(mAppContext),
+                mLoadControl,
+                DefaultBandwidthMeter.getSingletonInstance(mAppContext),
+                new AnalyticsCollector(Clock.DEFAULT))
+                .build();
+        setOptions();
         if (path != null) {
 			initPlayer();
             setDataSource(path, headers);
