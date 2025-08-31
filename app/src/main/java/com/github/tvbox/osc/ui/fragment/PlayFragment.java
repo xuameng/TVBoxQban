@@ -409,7 +409,7 @@ public class PlayFragment extends BaseLazyFragment {
         dialog.setAdapter(new SelectDialogAdapter.SelectDialogInterface<TrackInfoBean>() {
             @Override
             public void click(TrackInfoBean value, int pos) {
-            if (value == null || selectedId == -1) { // 假设-1表示未选中
+            if (value == null || selectedId == 99999) { // 假设-1表示未选中
 				App.showToastShort(mContext, "当前解码方式不支持当前音轨！");
             return;
         }
