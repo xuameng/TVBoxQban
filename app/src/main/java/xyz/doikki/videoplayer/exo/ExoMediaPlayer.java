@@ -44,6 +44,9 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 	protected ExoTrackNameProvider trackNameProvider;
     protected TrackSelectionArray mTrackSelections;
 
+    private String path;
+    private Map<String, String> headers;
+
     public ExoMediaPlayer(Context context) {
         mAppContext = context.getApplicationContext();
         mMediaSourceHelper = ExoMediaSourceHelper.getInstance(context);
@@ -124,7 +127,10 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 
     @Override
     public void setDataSource(String path, Map<String, String> headers) {
-        mMediaSource = mMediaSourceHelper.getMediaSource(path, headers);
+        this.path = path;
+        this.headers = headers;
+        mMediaSource = mMediaSourceHelper.getMediaSource(path, headers, false, errorCode);
+        errorCode = -1;
     }
 
     @Override
@@ -322,6 +328,40 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
             mPlayerEventListener.onError();
         }
     }
+
+@Override
+public void onPlayerError(PlaybackException error) {
+    // 1. 检查是否为目标异常类型
+    if (error instanceof MediaCodecVideoDecoderException || 
+        error.getCause() instanceof MediaCodecVideoRendererException) {
+        
+        // 2. 获取当前音频轨道配置
+        TrackGroupArray audioGroups = mTrackSelections.getAudioGroups();
+        int currentAudioIndex = mTrackSelector.getParameters().preferredTrackGroup;
+        
+        // 3. 计算下一个可用音轨索引
+        int nextAudioIndex = (currentAudioIndex + 1) % audioGroups.length;
+        
+        // 4. 切换音轨并恢复播放
+        mTrackSelector.setParameters(
+            mTrackSelector.getParameters()
+                .setPreferredTrackGroupId(audioGroups.get(nextAudioIndex).id)
+                .build()
+        );
+        
+        if (path != null) {
+            setDataSource(path, headers);
+            path = null;
+            prepareAsync();
+            start();
+        } else {
+            if (mPlayerEventListener != null) {
+                mPlayerEventListener.onError();
+            }
+        }
+    }
+}
+
 
     @Override
     public void onVideoSizeChanged(VideoSize videoSize) {
