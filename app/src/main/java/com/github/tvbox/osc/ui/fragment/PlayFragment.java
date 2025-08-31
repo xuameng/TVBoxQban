@@ -403,20 +403,18 @@ public class PlayFragment extends BaseLazyFragment {
             App.showToastShort(mContext, "没有内置音轨！");
 			return;
 		}
+		 	final int selectedId = trackInfo.getAudioSelected(false);
         SelectDialog<TrackInfoBean> dialog = new SelectDialog<>(getActivity());
         dialog.setTip("切换音轨");
         dialog.setAdapter(new SelectDialogAdapter.SelectDialogInterface<TrackInfoBean>() {
             @Override
             public void click(TrackInfoBean value, int pos) {
-    if (value == null || value.trackId == -1) { // 假设-1表示无效ID
-        App.showToastShort(mContext, "当前解码方式不支持当前音轨！");
-        return;
-    }
-    		int selectedId = trackInfo.getAudioSelected(false);
-if (selectedId == -1) { // 假设-1表示未选中
-    App.showToastShort(mContext, "当前解码方式不支持当前音轨sdfsdfdsf！");
-    return;
-}
+            if (value == null || selectedId == -1) { // 假设-1表示未选中
+				App.showToastShort(mContext, "当前解码方式不支持当前音轨！");
+            return;
+        }
+
+  
   
                 try {
                     for (TrackInfoBean audio : bean) {
