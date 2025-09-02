@@ -103,7 +103,6 @@ SimpleExoPlayer mMediaPlayer = new SimpleExoPlayer.Builder(mAppContext)
                 .setLoadControl(mLoadControl)
                 .setRenderersFactory(mRenderersFactory)
                 .setTrackSelector(mTrackSelector).build();
-    .build();
 
 
 
