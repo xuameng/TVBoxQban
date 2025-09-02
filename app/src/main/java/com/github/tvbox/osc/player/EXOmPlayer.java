@@ -182,12 +182,10 @@ public class EXOmPlayer extends ExoMediaPlayer {
                     }
                 }
             } else {
-				int audioRendererIndexXu = findAudioRendererIndex(trackInfo);
                 TrackGroupArray trackGroupArray = trackInfo.getTrackGroups(videoTrackBean.renderId);
                 DefaultTrackSelector.SelectionOverride override = new DefaultTrackSelector.SelectionOverride(videoTrackBean.trackGroupId, videoTrackBean.trackId);
                 DefaultTrackSelector.ParametersBuilder parametersBuilder = getTrackSelector().buildUponParameters();
                 parametersBuilder.setRendererDisabled(videoTrackBean.renderId, false);
-				parametersBuilder.clearSelectionOverrides(audioRendererIndexXu);
                 parametersBuilder.setSelectionOverride(videoTrackBean.renderId, trackGroupArray, override);
                 getTrackSelector().setParameters(parametersBuilder);
                 //xuameng记忆选择音轨
