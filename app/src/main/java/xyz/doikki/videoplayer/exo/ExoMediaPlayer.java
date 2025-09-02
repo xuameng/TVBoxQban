@@ -24,6 +24,7 @@ import com.google.android.exoplayer2.util.EventLogger;
 import com.google.android.exoplayer2.video.VideoSize;
 import com.github.tvbox.osc.util.HawkConfig;  //xuameng EXO解码
 import com.orhanobut.hawk.Hawk; //xuameng EXO解码
+import com.github.tvbox.osc.util.AudioTrackMemory;  //xuameng记忆选择音轨
 
 import java.util.Map;
 
@@ -44,6 +45,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     private DefaultTrackSelector mTrackSelector;
 	protected ExoTrackNameProvider trackNameProvider;
     protected TrackSelectionArray mTrackSelections;
+    private static AudioTrackMemory memory;    //xuameng记忆选择音轨
 
     private int errorCode = -100;   //xuameng错误日志
     private String path;
@@ -327,9 +329,11 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 
     @Override
     public void onPlayerError(PlaybackException error) {
+        String progressKey = Hawk.get(HawkConfig.EXO_PROGRESS_KEY, "");
         errorCode = error.errorCode;
         Log.e("EXOPLAYER", "" + error.errorCode);      //xuameng视频音频出错后尝试重播
         if (errorCode == 5001 && path != null || errorCode == 5002 && path != null || errorCode == 4001 && path != null && mRetryCount < MAX_RETRIES){
+            memory.getInstance(mAppContext).deleteExoTrack(progressKey);
             mRetryCount++;  // 计数器加一    重试三次
             setDataSource(path, headers);
             prepareAsync();
