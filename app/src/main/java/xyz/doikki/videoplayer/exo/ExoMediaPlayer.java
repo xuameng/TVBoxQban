@@ -327,7 +327,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     public void onPlayerError(PlaybackException error) {
         errorCode = error.errorCode;
         Log.e("EXOPLAYER", "" + error.errorCode);      //xuameng视频音频出错后尝试重播
-        if (errorCode >= 1000 && errorCode < 6010 && path != null){
+        if (errorCode == 5001 && path != null || errorCode == 5002 && path != null || errorCode == 4001 && path != null){
             setDataSource(path, headers);
             prepareAsync();
             start();
