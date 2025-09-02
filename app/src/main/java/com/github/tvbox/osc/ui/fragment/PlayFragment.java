@@ -1083,7 +1083,7 @@ public class PlayFragment extends BaseLazyFragment {
                             Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 2);  // 硬解码标记存储
                             App.showToastShort(mContext, "播放出错！自动切换EXO软解");
                             mRetryCount++;
-                        } else {
+                        } else if (exoSelect == 2){
                             try {
                                 mVodPlayerCfg.put("exocode", 1);  //xuameng默认选择，大于0为选择
                             } catch (JSONException e) {
@@ -1093,7 +1093,7 @@ public class PlayFragment extends BaseLazyFragment {
                             App.showToastShort(mContext, "播放出错！自动切换EXO硬解");
                             mRetryCount++;
                         }
-                    }else {
+                    }else if (exoSelect == 0){
                         if (exoCode){
                             try {
                                 mVodPlayerCfg.put("exocode", 1);  //xuameng默认选择，大于0为选择
