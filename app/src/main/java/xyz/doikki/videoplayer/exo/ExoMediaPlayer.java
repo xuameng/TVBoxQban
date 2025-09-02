@@ -330,7 +330,7 @@ if (errorCode == 5001 || errorCode == 4003)
 	prepareAsync();
 long pos = getCurrentPosition();
 seekTo(pos);
-start;
+start();
 }else{
 
 
