@@ -1023,6 +1023,7 @@ public class PlayFragment extends BaseLazyFragment {
 	private long lastRetryTime = 0; // 记录上次调用时间（毫秒）  //xuameng新增
 
     boolean autoRetry() {
+        AbstractPlayer mediaPlayer = mVideoView.getMediaPlayer();
         long currentTime = System.currentTimeMillis();
         if (currentTime - lastRetryTime > 60_000){
             LOG.i("echo-reset-autoRetryCount");
@@ -1066,7 +1067,7 @@ public class PlayFragment extends BaseLazyFragment {
                         mVodPlayerCfg = new JSONObject();
                     }
 		            boolean exoCode=Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false); //xuameng EXO默认设置解码
-			        int exoSelect = mPlayerConfig.getInt("exocode");  //xuameng exo解码动态选择
+			        int exoSelect = mVodPlayerCfg.getInt("exocode");  //xuameng exo解码动态选择
                     if (exoSelect > 0){
                         if (exoSelect == 1) {
                             mVodPlayerCfg.put("exocode", 2);  //xuameng默认选择，大于0为选择
