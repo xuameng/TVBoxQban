@@ -339,13 +339,13 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
             if (exoSelectXu > 0 && exoSelectXu == 1) {
                 memory.getInstance(mAppContext).deleteExoTrack(progressKey);   //xuameng删除记忆音轨
                 resetInitPlayer();
-                App.showToastShort(mContext, "音频获取错误！正在尝试切换可用音轨！如仍未成功请选择其它解码方式！");
+                App.showToastShort(mAppContext, "音频获取错误！正在尝试切换可用音轨！如仍未成功请选择其它解码方式！");
                 mRetryCount++;  // 计数器加一    重试十次
                 setDataSource(path, headers);
                 prepareAsync();
                 start();
             }else if (exoSelectXu > 0 && exoSelectXu == 2) {
-                App.showToastShort(mContext, "音频获取错误！正在重试！如仍未成功请选择其它解码方式！");
+                App.showToastShort(mAppContext, "音频获取错误！正在重试！如仍未成功请选择其它解码方式！");
                 mRetryCount++;  // 计数器加一    重试十次
                 setDataSource(path, headers);
                 prepareAsync();
@@ -353,14 +353,14 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
             }else{
                 if(exoDecodeXu){
                    mRetryCount++;  // 计数器加一    重试十次
-                   App.showToastShort(mContext, "音频获取错误！正在重试！如仍未成功请选择其它解码方式！");
+                   App.showToastShort(mAppContext, "音频获取错误！正在重试！如仍未成功请选择其它解码方式！");
                    setDataSource(path, headers);
                    prepareAsync();
                    start();
                 }else{
                    memory.getInstance(mAppContext).deleteExoTrack(progressKey);   //xuameng删除记忆音轨
                    resetInitPlayer();
-                   App.showToastShort(mContext, "音频获取错误！正在尝试切换可用音轨！如仍未成功请选择其它解码方式！");
+                   App.showToastShort(mAppContext, "音频获取错误！正在尝试切换可用音轨！如仍未成功请选择其它解码方式！");
                    mRetryCount++;  // 计数器加一    重试十次
                    setDataSource(path, headers);
                    prepareAsync();
