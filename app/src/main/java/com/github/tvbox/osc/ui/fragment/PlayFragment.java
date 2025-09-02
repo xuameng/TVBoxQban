@@ -1067,24 +1067,44 @@ public class PlayFragment extends BaseLazyFragment {
                         mVodPlayerCfg = new JSONObject();
                     }
 		            boolean exoCode=Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false); //xuameng EXO默认设置解码
-			        int exoSelect = mVodPlayerCfg.getInt("exocode");  //xuameng exo解码动态选择
+                    try {
+			            int exoSelect = mVodPlayerCfg.getInt("exocode");  //xuameng exo解码动态选择
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                     if (exoSelect > 0){
                         if (exoSelect == 1) {
-                            mVodPlayerCfg.put("exocode", 2);  //xuameng默认选择，大于0为选择
+                            try {
+                                mVodPlayerCfg.put("exocode", 2);  //xuameng默认选择，大于0为选择
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
                             Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 2);  // 硬解码标记存储
                             mRetryCount++;
                         } else {
-                            mVodPlayerCfg.put("exocode", 1);  //xuameng默认选择，大于0为选择
+                            try {
+                                mVodPlayerCfg.put("exocode", 1);  //xuameng默认选择，大于0为选择
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
                             Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 1);  // 软解码标记存储
                             mRetryCount++;
                         }
                     }else {
                         if (exoCode){
-                            mVodPlayerCfg.put("exocode", 1);  //xuameng默认选择，大于0为选择
+                            try {
+                                mVodPlayerCfg.put("exocode", 1);  //xuameng默认选择，大于0为选择
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
                             Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 1);  // 软解码标记存储
                             mRetryCount++;
                         }else{
-                            mVodPlayerCfg.put("exocode", 2);  //xuameng默认选择，大于0为选择
+                            try {
+                                mVodPlayerCfg.put("exocode", 2);  //xuameng默认选择，大于0为选择
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
                             Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 2);  // 软解码标记存储
                             mRetryCount++;
                         }
