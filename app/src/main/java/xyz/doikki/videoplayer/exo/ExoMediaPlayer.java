@@ -24,6 +24,8 @@ import com.google.android.exoplayer2.util.EventLogger;
 import com.google.android.exoplayer2.video.VideoSize;
 import com.github.tvbox.osc.util.HawkConfig;  //xuameng EXO解码
 import com.orhanobut.hawk.Hawk; //xuameng EXO解码
+private int mRetryCount = 0;  //xuameng播放出错重试三次
+private static final int MAX_RETRIES = 3;  //xuameng播放出错重试三次
 
 import java.util.Map;
 
@@ -327,11 +329,13 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     public void onPlayerError(PlaybackException error) {
         errorCode = error.errorCode;
         Log.e("EXOPLAYER", "" + error.errorCode);      //xuameng视频音频出错后尝试重播
-        if (errorCode == 5001 && path != null || errorCode == 5002 && path != null || errorCode == 4001 && path != null){
+        if (errorCode == 5001 && path != null || errorCode == 5002 && path != null || errorCode == 4001 && path != null && mRetryCount < MAX_RETRIES){
+            mRetryCount++;  // 计数器加一    重试三次
             setDataSource(path, headers);
             prepareAsync();
             start();
         }else{
+            mRetryCount = 0; // 重置计数器
             if (mPlayerEventListener != null) {
                 mPlayerEventListener.onError();
             }
