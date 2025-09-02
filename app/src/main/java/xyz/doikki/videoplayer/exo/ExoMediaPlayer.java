@@ -46,6 +46,8 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     protected TrackSelectionArray mTrackSelections;
 
     private int errorCode = -100;
+    private String path;
+    private Map<String, String> headers;
 
     public ExoMediaPlayer(Context context) {
         mAppContext = context.getApplicationContext();
@@ -127,6 +129,8 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 
     @Override
     public void setDataSource(String path, Map<String, String> headers) {
+        this.path = path;
+        this.headers = headers;
         mMediaSource = mMediaSourceHelper.getMediaSource(path, headers);
     }
 
@@ -323,21 +327,16 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     public void onPlayerError(PlaybackException error) {
         errorCode = error.errorCode;
         Log.e("EXOPLAYER", "" + error.errorCode);
-if (errorCode == 5001 || errorCode == 4003)
-{
-	initPlayer();
-				reset();
-	prepareAsync();
-long pos = getCurrentPosition();
-seekTo(pos);
-start();
-}else{
-
-
-        if (mPlayerEventListener != null) {
-            mPlayerEventListener.onError();
+        if (errorCode == 5001 && path != null || errorCode == 5002 && path != null || errorCode == 4003 && path != null){
+            setDataSource(path, headers);
+            path = null;
+            prepareAsync();
+            start();
+        }else{
+            if (mPlayerEventListener != null) {
+                mPlayerEventListener.onError();
+            }
         }
-}
     }
 
     @Override
