@@ -323,9 +323,21 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     public void onPlayerError(PlaybackException error) {
         errorCode = error.errorCode;
         Log.e("EXOPLAYER", "" + error.errorCode);
+if (errorCode == 5001 || errorCode == 4003)
+{
+	initPlayer();
+				reset();
+	prepareAsync();
+long pos = getCurrentPosition();
+seekTo(pos);
+start;
+}else{
+
+
         if (mPlayerEventListener != null) {
             mPlayerEventListener.onError();
         }
+}
     }
 
     @Override
