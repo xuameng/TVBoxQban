@@ -46,8 +46,6 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     protected TrackSelectionArray mTrackSelections;
 
     private int errorCode = -100;
-    private String path;    //xuameng错误恢复
-    private Map<String, String> headers;  //xuameng错误恢复
 
     public ExoMediaPlayer(Context context) {
         mAppContext = context.getApplicationContext();
@@ -99,15 +97,16 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
         .setPreferredAudioLanguages("ch", "chi", "zh", "zho", "en")                        // 设置首选音频语言为中文
         .build());                         // 必须调用build()完成构建
 
-mMediaPlayer = new SimpleExoPlayer.Builder(
-                mAppContext,  // 直接使用变量名
-                mRenderersFactory,
+        mMediaPlayer = new SimpleExoPlayer.Builder(
+                mAppContext,
+                mRenderersFactory,  // xuameng使用已配置的实例
                 mTrackSelector,
-                mLoadControl)
+                new DefaultMediaSourceFactory(mAppContext),
+                mLoadControl,
+                DefaultBandwidthMeter.getSingletonInstance(mAppContext),
+                new AnalyticsCollector(Clock.DEFAULT))
                 .build();
-
         setOptions();
-
 
         //播放器日志
         if (VideoViewManager.getConfig().mIsEnableLog && mTrackSelector instanceof MappingTrackSelector) {
@@ -128,8 +127,6 @@ mMediaPlayer = new SimpleExoPlayer.Builder(
 
     @Override
     public void setDataSource(String path, Map<String, String> headers) {
-        this.path = path;
-        this.headers = headers;
         mMediaSource = mMediaSourceHelper.getMediaSource(path, headers);
     }
 
@@ -326,15 +323,8 @@ mMediaPlayer = new SimpleExoPlayer.Builder(
     public void onPlayerError(PlaybackException error) {
         errorCode = error.errorCode;
         Log.e("EXOPLAYER", "" + error.errorCode);
-        if (path != null) {
-            setDataSource(path, headers);
-            path = null;
-            prepareAsync();
-            start();
-        } else {
-            if (mPlayerEventListener != null) {
-                mPlayerEventListener.onError();
-            }
+        if (mPlayerEventListener != null) {
+            mPlayerEventListener.onError();
         }
     }
 
