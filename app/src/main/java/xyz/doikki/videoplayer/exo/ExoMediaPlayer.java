@@ -351,7 +351,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
                 setDataSource(path, headers);
                 prepareAsync();
                 start();
-            }else{
+            }else if(exoSelectXu == 0) {{
                 if(exoDecodeXu){
                    memory.getInstance(mAppContext).deleteExoTrack(progressKey);   //xuameng删除记忆音轨
                    mRetryCount++;  // 计数器加一    重试3次
