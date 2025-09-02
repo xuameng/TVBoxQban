@@ -1120,6 +1120,7 @@ public class PlayFragment extends BaseLazyFragment {
                 }
                 //切换播放器不占用重试次数
                 if(mController.switchPlayer()){
+                   mRetryCount = 0; // 重置计数器
                    autoRetryCount++;
                    play(false);
                 }else {
