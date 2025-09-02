@@ -45,9 +45,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 	protected ExoTrackNameProvider trackNameProvider;
     protected TrackSelectionArray mTrackSelections;
 
-    private int errorCode = -100;   //xuameng错误日志
-    private String path;
-    private Map<String, String> headers;
+    private int errorCode = -100;
 
     public ExoMediaPlayer(Context context) {
         mAppContext = context.getApplicationContext();
@@ -129,8 +127,6 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 
     @Override
     public void setDataSource(String path, Map<String, String> headers) {
-        this.path = path;
-        this.headers = headers;
         mMediaSource = mMediaSourceHelper.getMediaSource(path, headers);
     }
 
@@ -326,15 +322,9 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     @Override
     public void onPlayerError(PlaybackException error) {
         errorCode = error.errorCode;
-        Log.e("EXOPLAYER", "" + error.errorCode);      //xuameng视频音频出错后尝试重播
-        if (errorCode == 5001 && path != null || errorCode == 5002 && path != null || errorCode == 4003 && path != null){
-            setDataSource(path, headers);
-            prepareAsync();
-            start();
-        }else{
-            if (mPlayerEventListener != null) {
-                mPlayerEventListener.onError();
-            }
+        Log.e("EXOPLAYER", "" + error.errorCode);
+        if (mPlayerEventListener != null) {
+            mPlayerEventListener.onError();
         }
     }
 
