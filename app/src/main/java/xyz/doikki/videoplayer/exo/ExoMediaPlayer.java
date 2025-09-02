@@ -97,14 +97,16 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
         .setPreferredAudioLanguages("ch", "chi", "zh", "zho", "en")                        // 设置首选音频语言为中文
         .build());                         // 必须调用build()完成构建
 
-        mMediaPlayer = new SimpleExoPlayer.Builder(
-                mAppContext,
-                mRenderersFactory,  // xuameng使用已配置的实例
-                mTrackSelector,
-                new DefaultMediaSourceFactory(mAppContext),
-                mLoadControl,
-                DefaultBandwidthMeter.getSingletonInstance(mAppContext))
-                .build();
+
+
+SimpleExoPlayer mMediaPlayer = new SimpleExoPlayer.Builder(mAppContext)
+                .setLoadControl(mLoadControl)
+                .setRenderersFactory(mRenderersFactory)
+                .setTrackSelector(mTrackSelector).build();
+    .build();
+
+
+
         setOptions();
 
         //播放器日志
