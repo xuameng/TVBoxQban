@@ -336,7 +336,10 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
             memory.getInstance(mAppContext).deleteExoTrack(progressKey);   //xuameng删除记忆音轨
             boolean exoDecode = Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false);
             int exoSelect = Hawk.get(HawkConfig.EXO_PLAY_SELECTCODE, 0);
-
+        if (mMediaPlayer != null) {
+            mMediaPlayer.release();
+            mMediaPlayer.removeListener(this);
+        }
             // ExoPlayer2 解码模式选择逻辑
             int rendererMode;
             if (exoSelect > 0) {
@@ -371,6 +374,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
                 new AnalyticsCollector(Clock.DEFAULT))
                 .build();
         setOptions();
+		mMediaPlayer.addListener(this);
             mRetryCount++;  // 计数器加一    重试三次
             setDataSource(path, headers);
             prepareAsync();
