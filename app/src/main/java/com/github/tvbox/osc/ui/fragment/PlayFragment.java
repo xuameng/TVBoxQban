@@ -1081,6 +1081,7 @@ public class PlayFragment extends BaseLazyFragment {
                                 e.printStackTrace();
                             }
                             Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 2);  // 硬解码标记存储
+                            App.showToastShort(mContext, "播放出错！自动切换EXO软解");
                             mRetryCount++;
                         } else {
                             try {
@@ -1089,6 +1090,7 @@ public class PlayFragment extends BaseLazyFragment {
                                 e.printStackTrace();
                             }
                             Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 1);  // 软解码标记存储
+                            App.showToastShort(mContext, "播放出错！自动切换EXO硬解");
                             mRetryCount++;
                         }
                     }else {
@@ -1099,6 +1101,7 @@ public class PlayFragment extends BaseLazyFragment {
                                 e.printStackTrace();
                             }
                             Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 1);  // 软解码标记存储
+                            App.showToastShort(mContext, "播放出错！自动切换EXO硬解");
                             mRetryCount++;
                         }else{
                             try {
@@ -1107,6 +1110,7 @@ public class PlayFragment extends BaseLazyFragment {
                                 e.printStackTrace();
                             }
                             Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 2);  // 软解码标记存储
+                            App.showToastShort(mContext, "播放出错！自动切换EXO软解");
                             mRetryCount++;
                         }
                     }
