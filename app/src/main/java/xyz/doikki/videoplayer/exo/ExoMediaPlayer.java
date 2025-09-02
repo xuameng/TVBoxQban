@@ -334,7 +334,43 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
         Log.e("EXOPLAYER", "" + error.errorCode);      //xuameng视频音频出错后尝试重播
         if (errorCode == 5001 && path != null || errorCode == 5002 && path != null || errorCode == 4001 && path != null && mRetryCount < MAX_RETRIES){
             memory.getInstance(mAppContext).deleteExoTrack(progressKey);   //xuameng删除记忆音轨
-			initPlayer();
+            boolean exoDecode = Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false);
+            int exoSelect = Hawk.get(HawkConfig.EXO_PLAY_SELECTCODE, 0);
+
+            // ExoPlayer2 解码模式选择逻辑
+            int rendererMode;
+            if (exoSelect > 0) {
+                // 选择器优先
+                rendererMode = (exoSelect == 1) 
+                    ? DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF    // 硬解
+                    : DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER; // 软解
+            } else {
+                // 使用exoDecode配置
+                rendererMode = exoDecode 
+                    ? DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER // 软解
+                    : DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF;   // 硬解
+            }
+    
+            mRenderersFactory = new DefaultRenderersFactory(mAppContext)
+                .setExtensionRendererMode(rendererMode);
+			mTrackSelector = new DefaultTrackSelector(mAppContext);
+			mLoadControl = new DefaultLoadControl();
+        mTrackSelector.setParameters(
+        mTrackSelector.getParameters().buildUpon()
+        .setPreferredTextLanguages("ch", "chi", "zh", "zho", "en")           // 设置首选字幕语言为中文
+        .setPreferredAudioLanguages("ch", "chi", "zh", "zho", "en")                        // 设置首选音频语言为中文
+        .build());                         // 必须调用build()完成构建
+
+        mMediaPlayer = new SimpleExoPlayer.Builder(
+                mAppContext,
+                mRenderersFactory,  // xuameng使用已配置的实例
+                mTrackSelector,
+                new DefaultMediaSourceFactory(mAppContext),
+                mLoadControl,
+                DefaultBandwidthMeter.getSingletonInstance(mAppContext),
+                new AnalyticsCollector(Clock.DEFAULT))
+                .build();
+        setOptions();
             mRetryCount++;  // 计数器加一    重试三次
             setDataSource(path, headers);
             prepareAsync();
