@@ -25,6 +25,7 @@ import com.google.android.exoplayer2.video.VideoSize;
 import com.github.tvbox.osc.util.HawkConfig;  //xuameng EXO解码
 import com.orhanobut.hawk.Hawk; //xuameng EXO解码
 import com.github.tvbox.osc.util.AudioTrackMemory;  //xuameng记忆选择音轨
+import com.github.tvbox.osc.base.App;  //xuameng 提示消息
 
 import java.util.Map;
 
@@ -50,8 +51,8 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     private int errorCode = -100;   //xuameng错误日志
     private String path;
     private Map<String, String> headers;
-    private int mRetryCount = 0;  //xuameng播放出错重试三次
-    private static final int MAX_RETRIES = 3;  //xuameng播放出错重试三次
+    private int mRetryCount = 0;  //xuameng播放出错重试十次
+    private static final int MAX_RETRIES = 10;  //xuameng播放出错重试十次
 
     public ExoMediaPlayer(Context context) {
         mAppContext = context.getApplicationContext();
@@ -331,54 +332,41 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     public void onPlayerError(PlaybackException error) {
         String progressKey = Hawk.get(HawkConfig.EXO_PROGRESS_KEY, "");
         errorCode = error.errorCode;
-        Log.e("EXOPLAYER", "" + error.errorCode);      //xuameng视频音频出错后尝试重播
+        Log.e("EXOPLAYER", "" + error.errorCode);      //xuameng音频出错后尝试重播
         if (errorCode == 5001 && path != null || errorCode == 5002 && path != null || errorCode == 4001 && path != null && mRetryCount < MAX_RETRIES){
-            memory.getInstance(mAppContext).deleteExoTrack(progressKey);   //xuameng删除记忆音轨
-            boolean exoDecode = Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false);
-            int exoSelect = Hawk.get(HawkConfig.EXO_PLAY_SELECTCODE, 0);
-        if (mMediaPlayer != null) {
-            mMediaPlayer.release();
-            mMediaPlayer.removeListener(this);
-        }
-            // ExoPlayer2 解码模式选择逻辑
-            int rendererMode;
-            if (exoSelect > 0) {
-                // 选择器优先
-                rendererMode = (exoSelect == 1) 
-                    ? DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF    // 硬解
-                    : DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER; // 软解
-            } else {
-                // 使用exoDecode配置
-                rendererMode = exoDecode 
-                    ? DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER // 软解
-                    : DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF;   // 硬解
-            }
-    
-            mRenderersFactory = new DefaultRenderersFactory(mAppContext)
-                .setExtensionRendererMode(rendererMode);
-			mTrackSelector = new DefaultTrackSelector(mAppContext);
-			mLoadControl = new DefaultLoadControl();
-        mTrackSelector.setParameters(
-        mTrackSelector.getParameters().buildUpon()
-        .setPreferredTextLanguages("ch", "chi", "zh", "zho", "en")           // 设置首选字幕语言为中文
-        .setPreferredAudioLanguages("ch", "chi", "zh", "zho", "en")                        // 设置首选音频语言为中文
-        .build());                         // 必须调用build()完成构建
-
-        mMediaPlayer = new SimpleExoPlayer.Builder(
-                mAppContext,
-                mRenderersFactory,  // xuameng使用已配置的实例
-                mTrackSelector,
-                new DefaultMediaSourceFactory(mAppContext),
-                mLoadControl,
-                DefaultBandwidthMeter.getSingletonInstance(mAppContext),
-                new AnalyticsCollector(Clock.DEFAULT))
-                .build();
-        setOptions();
-		mMediaPlayer.addListener(this);
-            mRetryCount++;  // 计数器加一    重试三次
-            setDataSource(path, headers);
-            prepareAsync();
-            start();
+            boolean exoDecodeXu = Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false);
+            int exoSelectXu = Hawk.get(HawkConfig.EXO_PLAY_SELECTCODE, 0);
+            if (exoSelectXu > 0 && exoSelectXu == 1) {
+                memory.getInstance(mAppContext).deleteExoTrack(progressKey);   //xuameng删除记忆音轨
+                resetInitPlayer();
+                App.showToastShort(mContext, "音频获取错误！正在尝试切换可用音轨！如仍未成功请选择其它解码方式！");
+                mRetryCount++;  // 计数器加一    重试十次
+                setDataSource(path, headers);
+                prepareAsync();
+                start();
+            }else if (exoSelectXu > 0 && exoSelectXu == 2) {
+                App.showToastShort(mContext, "音频获取错误！正在重试！如仍未成功请选择其它解码方式！");
+                mRetryCount++;  // 计数器加一    重试十次
+                setDataSource(path, headers);
+                prepareAsync();
+                start();
+            }else{
+                if(exoDecodeXu){
+                   mRetryCount++;  // 计数器加一    重试十次
+                   App.showToastShort(mContext, "音频获取错误！正在重试！如仍未成功请选择其它解码方式！");
+                   setDataSource(path, headers);
+                   prepareAsync();
+                   start();
+                }else{
+                   memory.getInstance(mAppContext).deleteExoTrack(progressKey);   //xuameng删除记忆音轨
+                   resetInitPlayer();
+                   App.showToastShort(mContext, "音频获取错误！正在尝试切换可用音轨！如仍未成功请选择其它解码方式！");
+                   mRetryCount++;  // 计数器加一    重试十次
+                   setDataSource(path, headers);
+                   prepareAsync();
+                   start();
+                }
+	        }
         }else{
             mRetryCount = 0; // 重置计数器
             if (mPlayerEventListener != null) {
@@ -395,5 +383,47 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
                 mPlayerEventListener.onInfo(MEDIA_INFO_VIDEO_ROTATION_CHANGED, videoSize.unappliedRotationDegrees);
             }
         }
+    }
+
+    public void resetInitPlayer() {
+        boolean exoDecode = Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false);
+        int exoSelect = Hawk.get(HawkConfig.EXO_PLAY_SELECTCODE, 0);
+        if (mMediaPlayer != null) {
+            mMediaPlayer.release();
+            mMediaPlayer.removeListener(this);
+        }
+        // ExoPlayer2 解码模式选择逻辑
+        int rendererMode;
+        if (exoSelect > 0) {
+            // 选择器优先
+            rendererMode = (exoSelect == 1) 
+                ? DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF    // 硬解
+                : DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER; // 软解
+        } else {
+            // 使用exoDecode配置
+            rendererMode = exoDecode 
+                ? DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER // 软解
+                : DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF;   // 硬解
+        }
+        mRenderersFactory = new DefaultRenderersFactory(mAppContext)
+            .setExtensionRendererMode(rendererMode);
+        mTrackSelector = new DefaultTrackSelector(mAppContext);
+        mTrackSelector.setParameters(
+        mTrackSelector.getParameters().buildUpon()
+        .setPreferredTextLanguages("ch", "chi", "zh", "zho", "en")           // 设置首选字幕语言为中文
+        .setPreferredAudioLanguages("ch", "chi", "zh", "zho", "en")                        // 设置首选音频语言为中文
+        .build());                         // 必须调用build()完成构建
+        mLoadControl = new DefaultLoadControl();
+        mMediaPlayer = new SimpleExoPlayer.Builder(
+                mAppContext,
+                mRenderersFactory,  // xuameng使用已配置的实例
+                mTrackSelector,
+                new DefaultMediaSourceFactory(mAppContext),
+                mLoadControl,
+                DefaultBandwidthMeter.getSingletonInstance(mAppContext),
+                new AnalyticsCollector(Clock.DEFAULT))
+                .build();
+        setOptions();
+		mMediaPlayer.addListener(this);
     }
 }
