@@ -24,8 +24,6 @@ import com.google.android.exoplayer2.util.EventLogger;
 import com.google.android.exoplayer2.video.VideoSize;
 import com.github.tvbox.osc.util.HawkConfig;  //xuameng EXO解码
 import com.orhanobut.hawk.Hawk; //xuameng EXO解码
-private int mRetryCount = 0;  //xuameng播放出错重试三次
-private static final int MAX_RETRIES = 3;  //xuameng播放出错重试三次
 
 import java.util.Map;
 
@@ -50,6 +48,8 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     private int errorCode = -100;   //xuameng错误日志
     private String path;
     private Map<String, String> headers;
+    private int mRetryCount = 0;  //xuameng播放出错重试三次
+    private static final int MAX_RETRIES = 3;  //xuameng播放出错重试三次
 
     public ExoMediaPlayer(Context context) {
         mAppContext = context.getApplicationContext();
