@@ -1111,7 +1111,6 @@ public class PlayFragment extends BaseLazyFragment {
                         }
                     }
                     mController.setPlayerConfig(mVodPlayerCfg);
-					mController.updatePlayerCfg();
                     play(false);
 					return true;
                 }
