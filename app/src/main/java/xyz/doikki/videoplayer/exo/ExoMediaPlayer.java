@@ -1,340 +1,249 @@
-package xyz.doikki.videoplayer.exo;
-
+package com.github.tvbox.osc.player;
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.res.AssetFileDescriptor;
-import android.util.Log;  //xuameng 错误日志
-import android.view.Surface;
-import android.view.SurfaceHolder;
-import com.google.android.exoplayer2.PlaybackException;
-import com.google.android.exoplayer2.DefaultLoadControl;
-import com.google.android.exoplayer2.DefaultRenderersFactory;
-import com.google.android.exoplayer2.PlaybackParameters;
+import android.text.TextUtils;
+import androidx.annotation.Nullable;
+import com.blankj.utilcode.util.LogUtils;
+import com.github.tvbox.osc.util.StringUtils;
+import com.google.android.exoplayer2.C;
+import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.analytics.AnalyticsCollector;
-import com.google.android.exoplayer2.source.DefaultMediaSourceFactory;
-import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.TrackGroup;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
+import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
-import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
-import com.google.android.exoplayer2.util.Clock;
-import com.google.android.exoplayer2.util.EventLogger;
-import com.google.android.exoplayer2.video.VideoSize;
-import com.github.tvbox.osc.util.HawkConfig;  //xuameng EXO解码
-import com.orhanobut.hawk.Hawk; //xuameng EXO解码
+import com.google.android.exoplayer2.util.MimeTypes;
+import xyz.doikki.videoplayer.exo.ExoMediaPlayer;
+import android.util.Pair;      //xuameng记忆选择音轨
+import java.util.Map;   //xuameng记忆选择音轨
+import com.github.tvbox.osc.util.AudioTrackMemory;  //xuameng记忆选择音轨
 
-import java.util.Map;
+public class EXOmPlayer extends ExoMediaPlayer {
+    private String audioId = "";
+    private String subtitleId = "";
+	private static AudioTrackMemory memory;    //xuameng记忆选择音轨
+    public EXOmPlayer(Context context) {
+        super(context);
+		memory = AudioTrackMemory.getInstance(context);  //xuameng记忆选择音轨
+    }
+    @SuppressLint("UnsafeOptInUsageError")
+    public TrackInfo getTrackInfo() {
+        TrackInfo data = new TrackInfo();
+        MappingTrackSelector.MappedTrackInfo trackInfo = getTrackSelector().getCurrentMappedTrackInfo();
+        if (trackInfo != null) {
+            getExoSelectedTrack(mTrackSelections);
+            for (int groupArrayIndex = 0; groupArrayIndex < trackInfo.getRendererCount(); groupArrayIndex++) {
+                TrackGroupArray groupArray = trackInfo.getTrackGroups(groupArrayIndex);
+                for (int groupIndex = 0; groupIndex < groupArray.length; groupIndex++) {
+                    TrackGroup group = groupArray.get(groupIndex);
+                    for (int formatIndex = 0; formatIndex < group.length; formatIndex++) {
+                        Format format = group.getFormat(formatIndex);
+                        if (MimeTypes.isAudio(format.sampleMimeType)) {
+							String audioCodecs = format.sampleMimeType;
+							String formatCodecs = format.codecs;
+							if (TextUtils.isEmpty(audioCodecs)){
+								audioCodecs = "";
+							}
+							String text = "audio/";  //xuameng过滤字幕类型里application/字符串
+							String textString = "";
+							if(audioCodecs.contains(text)) {  //xuameng过滤字幕类型里application/字符串
+								audioCodecs = audioCodecs.replace(text, textString);  //xuameng过滤字幕类型里application/字符串
+							}
+							String tex3 = "vnd.";  //xuameng过滤字幕类型里application/字符串
+							String textString3 = "";
+							if(audioCodecs.contains(tex3)) {  //xuameng过滤字幕类型里application/字符串
+								audioCodecs = audioCodecs.replace(tex3, textString3);  //xuameng过滤字幕类型里application/字符串
+							}
+							String tex4 = "true-hd";  //xuameng过滤字幕类型里application/字符串
+							String textString4 = "TrueHD";
+							if(audioCodecs.contains(tex4)) {  //xuameng过滤字幕类型里application/字符串
+								audioCodecs = audioCodecs.replace(tex4, textString4);  //xuameng过滤字幕类型里application/字符串
+							}
+							String tex5 = "-L2";  //xuameng过滤字幕类型里application/字符串
+							String textString5 = "";
+							if(audioCodecs.contains(tex5)) {  //xuameng过滤字幕类型里application/字符串
+								audioCodecs = audioCodecs.replace(tex5, textString5);  //xuameng过滤字幕类型里application/字符串
+							}
 
-import xyz.doikki.videoplayer.player.AbstractPlayer;
-import xyz.doikki.videoplayer.player.VideoViewManager;
-import xyz.doikki.videoplayer.util.PlayerUtils;
+							if (TextUtils.isEmpty(formatCodecs)){
+								formatCodecs = "";
+							}
+							String text1 = ".40.2";  //xuameng过滤字幕类型里application/字符串
+							String textString1 = "";
+							if(formatCodecs.contains(text1)) {  //xuameng过滤字幕类型里application/字符串
+								formatCodecs = formatCodecs.replace(text1, textString1);  //xuameng过滤字幕类型里application/字符串
+							}
 
-public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
-
-    protected Context mAppContext;
-    protected SimpleExoPlayer mMediaPlayer;
-    protected MediaSource mMediaSource;
-    protected ExoMediaSourceHelper mMediaSourceHelper;
-    private PlaybackParameters mSpeedPlaybackParameters;
-    private boolean mIsPreparing;
-    private DefaultLoadControl mLoadControl;
-    private DefaultRenderersFactory mRenderersFactory;
-    private DefaultTrackSelector mTrackSelector;
-	protected ExoTrackNameProvider trackNameProvider;
-    protected TrackSelectionArray mTrackSelections;
-
-    private int errorCode = -100;
-
-    public ExoMediaPlayer(Context context) {
-        mAppContext = context.getApplicationContext();
-        mMediaSourceHelper = ExoMediaSourceHelper.getInstance(context);
+							String trackName = (data.getAudio().size() + 1) + "：" + trackNameProvider.getTrackName(format) + "[" + (TextUtils.isEmpty(format.codecs)?audioCodecs:formatCodecs) + "]";
+							TrackInfoBean t = new TrackInfoBean();
+                            t.name = trackName;
+                            t.language = "";
+                            t.trackId = formatIndex;
+                            t.selected = !StringUtils.isEmpty(audioId) && audioId.equals(format.id);
+                            t.trackGroupId = groupIndex;
+                            t.renderId = groupArrayIndex;
+                            data.addAudio(t);
+                        } else if (MimeTypes.isText(format.sampleMimeType)) {
+							String originalString = format.sampleMimeType;   //xuameng显示字幕类型
+							String stringToReplace = "application/";  //xuameng过滤字幕类型里application/字符串
+							String replacementString = "";
+							if(originalString.contains(stringToReplace)) {  //xuameng过滤字幕类型里application/字符串
+							originalString = originalString.replace(stringToReplace, replacementString);  //xuameng过滤字幕类型里application/字符串
+							}
+							String text = "text/x-";  //xuameng过滤字幕类型里application/字符串
+							String textString = "";
+							if(originalString.contains(text)) {  //xuameng过滤字幕类型里application/字符串
+							originalString = originalString.replace(text, textString);  //xuameng过滤字幕类型里application/字符串
+							}
+							String text1 = "x-";  //xuameng过滤字幕类型里application/字符串
+							String textString1 = "";
+							if(originalString.contains(text1)) {  //xuameng过滤字幕类型里application/字符串
+							originalString = originalString.replace(text1, textString1);  //xuameng过滤字幕类型里application/字符串
+							}
+							String text2 = "quicktime-";  //xuameng过滤字幕类型里application/字符串
+							String textString2 = "";
+							if(originalString.contains(text2)) {  //xuameng过滤字幕类型里application/字符串
+							originalString = originalString.replace(text2, textString2);  //xuameng过滤字幕类型里application/字符串
+							}
+							String text3 = "-608";  //xuameng过滤字幕类型里application/字符串
+							String textString3 = "";
+							if(originalString.contains(text3)) {  //xuameng过滤字幕类型里application/字符串
+							originalString = originalString.replace(text3, textString3);  //xuameng过滤字幕类型里application/字符串
+							}
+							String trackName = "";  //xuameng显示字幕类型
+                            TrackInfoBean t = new TrackInfoBean();
+                            t.name = trackName;
+                            t.language = (data.getSubtitle().size() + 1) + "：" + trackNameProvider.getTrackName(format) + "，"  + "[" + originalString  + "字幕]";  //xuameng显示字幕类型
+                            t.trackId = formatIndex;
+                            t.selected = !StringUtils.isEmpty(subtitleId) && subtitleId.equals(format.id);
+                            t.trackGroupId = groupIndex;
+                            t.renderId = groupArrayIndex;
+                            data.addSubtitle(t);
+                        }
+                    }
+                }
+            }
+        }
+        return data;
     }
 
-    @Override
-    public void initPlayer() {
-        // xuameng释放旧实例
-        if (mMediaPlayer != null) {
-            mMediaPlayer.release();
-            mMediaPlayer.removeListener(this);
+    @SuppressLint("UnsafeOptInUsageError")
+    private void getExoSelectedTrack(TrackSelectionArray trackSelections) {
+        audioId = "";
+        subtitleId = "";
+        for (TrackSelection selection : trackSelections.getAll()) {
+            if (selection == null) continue;
+            for(int trackIndex = 0; trackIndex < selection.length(); trackIndex++) {
+                Format format = selection.getFormat(trackIndex);
+                if (MimeTypes.isAudio(format.sampleMimeType)) {
+                    audioId = format.id;
+                }
+                if (MimeTypes.isText(format.sampleMimeType)) {
+                    subtitleId = format.id;
+                }
+            }
         }
-        // xuameng渲染器配置
-          if (mRenderersFactory == null) {
-            boolean exoDecode = Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false);
-            int exoSelect = Hawk.get(HawkConfig.EXO_PLAY_SELECTCODE, 0);
-
-            // ExoPlayer2 解码模式选择逻辑
-            int rendererMode;
-            if (exoSelect > 0) {
-                // 选择器优先
-                rendererMode = (exoSelect == 1) 
-                    ? DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF    // 硬解
-                    : DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER; // 软解
+    }
+    public void selectExoTrack(@Nullable TrackInfoBean videoTrackBean) {
+        MappingTrackSelector.MappedTrackInfo trackInfo = getTrackSelector().getCurrentMappedTrackInfo();
+        if (trackInfo != null) {
+            if (videoTrackBean == null) {
+                for (int renderIndex = 0; renderIndex < trackInfo.getRendererCount(); renderIndex++) {
+                    if (trackInfo.getRendererType(renderIndex) == C.TRACK_TYPE_TEXT) {
+                        DefaultTrackSelector.ParametersBuilder parametersBuilder = getTrackSelector().getParameters().buildUpon();
+                        parametersBuilder.setRendererDisabled(renderIndex, true);
+                        getTrackSelector().setParameters(parametersBuilder);
+                        break;
+                    }
+                }
             } else {
-                // 使用exoDecode配置
-                rendererMode = exoDecode 
-                    ? DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER // 软解
-                    : DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF;   // 硬解
+                TrackGroupArray trackGroupArray = trackInfo.getTrackGroups(videoTrackBean.renderId);
+                DefaultTrackSelector.SelectionOverride override = new DefaultTrackSelector.SelectionOverride(videoTrackBean.trackGroupId, videoTrackBean.trackId);
+                DefaultTrackSelector.ParametersBuilder parametersBuilder = getTrackSelector().buildUponParameters();
+                parametersBuilder.setRendererDisabled(videoTrackBean.renderId, false);
+                parametersBuilder.setSelectionOverride(videoTrackBean.renderId, trackGroupArray, override);
+                getTrackSelector().setParameters(parametersBuilder);
             }
-    
-            mRenderersFactory = new DefaultRenderersFactory(mAppContext)
-                .setExtensionRendererMode(rendererMode);
-        }
-
-        // xuameng轨道选择器配置
-        if (mTrackSelector == null) {
-            mTrackSelector = new DefaultTrackSelector(mAppContext);
-        }
-        //xuameng加载策略控制
-        if (mLoadControl == null) {   
-            mLoadControl = new DefaultLoadControl();
-        }
-
-        mTrackSelector.setParameters(
-        mTrackSelector.getParameters().buildUpon()
-        .setPreferredTextLanguages("ch", "chi", "zh", "zho", "en")           // 设置首选字幕语言为中文
-        .setPreferredAudioLanguages("ch", "chi", "zh", "zho", "en")                        // 设置首选音频语言为中文
-        .build());                         // 必须调用build()完成构建
-
-        mMediaPlayer = new SimpleExoPlayer.Builder(
-                mAppContext,
-                mRenderersFactory,  // xuameng使用已配置的实例
-                mTrackSelector,
-                new DefaultMediaSourceFactory(mAppContext),
-                mLoadControl,
-                DefaultBandwidthMeter.getSingletonInstance(mAppContext),
-                new AnalyticsCollector(Clock.DEFAULT))
-                .build();
-        setOptions();
-
-        //播放器日志
-        if (VideoViewManager.getConfig().mIsEnableLog && mTrackSelector instanceof MappingTrackSelector) {
-            mMediaPlayer.addAnalyticsListener(new EventLogger((MappingTrackSelector) mTrackSelector, "ExoPlayer"));
-        }
-
-        mMediaPlayer.addListener(this);
-    }
-    public DefaultTrackSelector getTrackSelector() {
-        return mTrackSelector;
-    }
-    @Override
-    public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
-        Player.Listener.super.onTracksChanged(trackGroups, trackSelections);
-        trackNameProvider = new ExoTrackNameProvider(mAppContext.getResources());
-        mTrackSelections = trackSelections;
-    }
-
-    @Override
-    public void setDataSource(String path, Map<String, String> headers) {
-        mMediaSource = mMediaSourceHelper.getMediaSource(path, headers);
-    }
-
-    @Override
-    public void setDataSource(AssetFileDescriptor fd) {
-        //no support
-    }
-
-    @Override
-    public void start() {
-        if (mMediaPlayer == null)
-            return;
-        mMediaPlayer.setPlayWhenReady(true);
-    }
-
-    @Override
-    public void pause() {
-        if (mMediaPlayer == null)
-            return;
-        mMediaPlayer.setPlayWhenReady(false);
-    }
-
-    @Override
-    public void stop() {
-        if (mMediaPlayer == null)
-            return;
-        mMediaPlayer.stop();
-    }
-
-    @Override
-    public void prepareAsync() {
-        if (mMediaPlayer == null)
-            return;
-        if (mMediaSource == null) return;
-        if (mSpeedPlaybackParameters != null) {
-            mMediaPlayer.setPlaybackParameters(mSpeedPlaybackParameters);
-        }
-        mIsPreparing = true;
-        mMediaPlayer.setMediaSource(mMediaSource);
-        mMediaPlayer.prepare();
-    }
-
-    @Override
-    public void reset() {
-        if (mMediaPlayer != null) {
-            mMediaPlayer.stop();
-            mMediaPlayer.clearMediaItems();
-            mMediaPlayer.setVideoSurface(null);
-            mIsPreparing = false;
         }
     }
 
-    @Override
-    public boolean isPlaying() {
-        if (mMediaPlayer == null)
+    public void selectExoTrackAudio(@Nullable TrackInfoBean videoTrackBean,String playKey) {     //xuameng记忆选择音轨
+        MappingTrackSelector.MappedTrackInfo trackInfo = getTrackSelector().getCurrentMappedTrackInfo();
+        if (trackInfo != null) {
+            if (videoTrackBean == null) {
+                for (int renderIndex = 0; renderIndex < trackInfo.getRendererCount(); renderIndex++) {
+                    if (trackInfo.getRendererType(renderIndex) == C.TRACK_TYPE_TEXT) {
+                        DefaultTrackSelector.ParametersBuilder parametersBuilder = getTrackSelector().getParameters().buildUpon();
+                        parametersBuilder.setRendererDisabled(renderIndex, true);
+                        getTrackSelector().setParameters(parametersBuilder);
+                        break;
+                    }
+                }
+            } else {
+				int audioRendererIndexXu = findAudioRendererIndex(trackInfo);
+                TrackGroupArray trackGroupArray = trackInfo.getTrackGroups(videoTrackBean.renderId);
+                DefaultTrackSelector.SelectionOverride override = new DefaultTrackSelector.SelectionOverride(videoTrackBean.trackGroupId, videoTrackBean.trackId);
+                DefaultTrackSelector.ParametersBuilder parametersBuilder = getTrackSelector().buildUponParameters();
+                parametersBuilder.setRendererDisabled(videoTrackBean.renderId, false);
+				parametersBuilder.clearSelectionOverrides(audioRendererIndexXu);
+                parametersBuilder.setSelectionOverride(videoTrackBean.renderId, trackGroupArray, override);
+                getTrackSelector().setParameters(parametersBuilder);
+                //xuameng记忆选择音轨
+                if (!playKey.isEmpty()) {
+                    memory.save(playKey,videoTrackBean.trackGroupId, videoTrackBean.trackId);
+                }
+            }
+        }
+    }
+    //xuameng记忆选择音轨
+    public void loadDefaultTrack(String playKey) {
+        Pair<Integer, Integer> pair = memory.exoLoad(playKey);
+        if (pair == null) return;
+
+        MappingTrackSelector.MappedTrackInfo mappedInfo = getTrackSelector().getCurrentMappedTrackInfo();
+        if (mappedInfo == null) return;
+
+        int audioRendererIndex = findAudioRendererIndex(mappedInfo);
+        if (audioRendererIndex == C.INDEX_UNSET) return;
+
+        TrackGroupArray audioGroups = mappedInfo.getTrackGroups(audioRendererIndex);
+        int groupIndex = pair.first;
+        int trackIndex = pair.second;
+        if (!isTrackIndexValid(audioGroups, groupIndex, trackIndex)) return;
+
+        DefaultTrackSelector.SelectionOverride override = new DefaultTrackSelector.SelectionOverride(groupIndex, trackIndex);
+
+        DefaultTrackSelector.ParametersBuilder builder = getTrackSelector().buildUponParameters();
+        builder.clearSelectionOverrides(audioRendererIndex);
+        builder.setSelectionOverride(audioRendererIndex, audioGroups, override);
+        getTrackSelector().setParameters(builder.build());
+    }
+    /**
+     * 查找音频渲染器索引   //xuameng记忆选择音轨
+     */
+    private int findAudioRendererIndex(MappingTrackSelector.MappedTrackInfo mappedInfo) {
+        for (int i = 0; i < mappedInfo.getRendererCount(); i++) {
+            if (mappedInfo.getRendererType(i) == C.TRACK_TYPE_AUDIO) {
+                return i;
+            }
+        }
+        return C.INDEX_UNSET;
+    }
+
+    /**
+     * 验证音轨索引是否有效   //xuameng记忆选择音轨
+     */
+    private boolean isTrackIndexValid(TrackGroupArray groups, int groupIndex, int trackIndex) {
+        if (groupIndex < 0 || groupIndex >= groups.length) {
             return false;
-        int state = mMediaPlayer.getPlaybackState();
-        switch (state) {
-            case Player.STATE_BUFFERING:
-            case Player.STATE_READY:
-                return mMediaPlayer.getPlayWhenReady();
-            case Player.STATE_IDLE:
-            case Player.STATE_ENDED:
-            default:
-                return false;
-        }
-    }
-
-    @Override
-    public void seekTo(long time) {
-        if (mMediaPlayer == null)
-            return;
-        mMediaPlayer.seekTo(time);
-    }
-
-    @Override
-    public void release() {
-        if (mMediaPlayer != null) {
-            mMediaPlayer.removeListener(this);
-            mMediaPlayer.release();
-            mMediaPlayer = null;
         }
 
-        mIsPreparing = false;
-        mSpeedPlaybackParameters = null;
+        TrackGroup group = groups.get(groupIndex);
+        return trackIndex >= 0 && trackIndex < group.length;
     }
-
-    @Override
-    public long getCurrentPosition() {
-        if (mMediaPlayer == null)
-            return 0;
-        return mMediaPlayer.getCurrentPosition();
-    }
-
-    @Override
-    public long getDuration() {
-        if (mMediaPlayer == null)
-            return 0;
-        return mMediaPlayer.getDuration();
-    }
-
-    @Override
-    public int getBufferedPercentage() {
-        return mMediaPlayer == null ? 0 : mMediaPlayer.getBufferedPercentage();
-    }
-
-    @Override
-    public int getAudioSessionId() {       //XUAMENG 获取音频ID
-        return mMediaPlayer.getAudioSessionId();
-    }
-
-    @Override
-    public void setSurface(Surface surface) {
-        if (mMediaPlayer != null) {
-            mMediaPlayer.setVideoSurface(surface);
-        }
-    }
-
-    @Override
-    public void setDisplay(SurfaceHolder holder) {
-        if (holder == null)
-            setSurface(null);
-        else
-            setSurface(holder.getSurface());
-    }
-
-    @Override
-    public void setVolume(float leftVolume, float rightVolume) {
-        if (mMediaPlayer != null)
-            mMediaPlayer.setVolume((leftVolume + rightVolume) / 2);
-    }
-
-    @Override
-    public void setLooping(boolean isLooping) {
-       if (mMediaPlayer != null)
-            mMediaPlayer.setRepeatMode(isLooping ? Player.REPEAT_MODE_ALL : Player.REPEAT_MODE_OFF);
-    }
-
-    @Override
-    public void setOptions() {
-        //准备好就开始播放
-        mMediaPlayer.setPlayWhenReady(true);
-    }
-
-    @Override
-    public void setSpeed(float speed) {
-        PlaybackParameters playbackParameters = new PlaybackParameters(speed);
-        mSpeedPlaybackParameters = playbackParameters;
-        if (mMediaPlayer != null) {
-            mMediaPlayer.setPlaybackParameters(playbackParameters);
-        }
-    }
-
-    @Override
-    public float getSpeed() {
-        if (mSpeedPlaybackParameters != null) {
-            return mSpeedPlaybackParameters.speed;
-        }
-        return 1f;
-    }
-
-    @Override
-    public long getTcpSpeed() {
-        return PlayerUtils.getNetSpeed(mAppContext);
-    }
-
-    @Override
-    public void onPlaybackStateChanged(int playbackState) {
-        if (mPlayerEventListener == null) return;
-        if (mIsPreparing) {
-            if (playbackState == Player.STATE_READY) {
-                mPlayerEventListener.onPrepared();
-                mPlayerEventListener.onInfo(MEDIA_INFO_RENDERING_START, 0);
-                mIsPreparing = false;
-            }
-            return;
-        }
-        switch (playbackState) {
-            case Player.STATE_BUFFERING:
-                mPlayerEventListener.onInfo(MEDIA_INFO_BUFFERING_START, getBufferedPercentage());
-                break;
-            case Player.STATE_READY:
-                mPlayerEventListener.onInfo(MEDIA_INFO_BUFFERING_END, getBufferedPercentage());
-                break;
-            case Player.STATE_ENDED:
-                mPlayerEventListener.onCompletion();
-                break;
-		    case Player.STATE_IDLE:
-                break;
-        }
-    }
-
-    @Override
-    public void onPlayerError(PlaybackException error) {
-        errorCode = error.errorCode;
-        Log.e("EXOPLAYER", "" + error.errorCode);
-        if (mPlayerEventListener != null) {
-            mPlayerEventListener.onError();
-        }
-    }
-
-    @Override
-    public void onVideoSizeChanged(VideoSize videoSize) {
-        if (mPlayerEventListener != null) {
-            mPlayerEventListener.onVideoSizeChanged(videoSize.width, videoSize.height);
-            if (videoSize.unappliedRotationDegrees > 0) {
-                mPlayerEventListener.onInfo(MEDIA_INFO_VIDEO_ROTATION_CHANGED, videoSize.unappliedRotationDegrees);
-            }
-        }
+    public void setOnTimedTextListener(Player.Listener listener) {
+        mMediaPlayer.addListener(listener);
     }
 }
