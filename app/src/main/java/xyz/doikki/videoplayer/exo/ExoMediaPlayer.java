@@ -2,9 +2,10 @@ package xyz.doikki.videoplayer.exo;
 
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
+import android.util.Log;  //xuameng 错误日志
 import android.view.Surface;
 import android.view.SurfaceHolder;
-import com.google.android.exoplayer2.ExoPlaybackException;
+import com.google.android.exoplayer2.PlaybackException;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.PlaybackParameters;
@@ -43,6 +44,8 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     private DefaultTrackSelector mTrackSelector;
 	protected ExoTrackNameProvider trackNameProvider;
     protected TrackSelectionArray mTrackSelections;
+
+    private int errorCode = -100;
 
     public ExoMediaPlayer(Context context) {
         mAppContext = context.getApplicationContext();
@@ -317,7 +320,9 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     }
 
     @Override
-    public void onPlayerError(ExoPlaybackException error) {
+    public void onPlayerError(PlaybackException error) {
+        errorCode = error.errorCode;
+        Log.e("EXOPLAYER", "" + error.errorCode);
         if (mPlayerEventListener != null) {
             mPlayerEventListener.onError();
         }
