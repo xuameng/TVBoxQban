@@ -1404,7 +1404,7 @@ public class VodController extends BaseController {
         this.listener = listener;
     }
 
-    public void updatePlayerCfg() {
+    public void updatePlayerCfg() {    //xuameng新增变更更新方法
         if (listener != null) {
             listener.updatePlayerCfg();
         }
