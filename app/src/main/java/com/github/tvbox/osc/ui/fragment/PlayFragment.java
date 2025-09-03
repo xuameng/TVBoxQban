@@ -129,7 +129,7 @@ public class PlayFragment extends BaseLazyFragment {
 
     private int mRetryCountExo = 0;  //xuameng播放出错计数器
     private int mRetryCountIjk = 0;  //xuameng播放出错计数器
-    private static final int MAX_RETRIES = 2;  //xuameng播放出错切换1次
+    private static final int MAX_RETRIES = 2;  //xuameng播放出错切换2次
 
     private final long videoDuration = -1;
 
@@ -1156,18 +1156,24 @@ public class PlayFragment extends BaseLazyFragment {
                 //第一次重试直接带着原地址继续播放
                  if(allowSwitchPlayer){  //xuameng切换播放器
                      //切换播放器不占用重试次数
+                     mRetryCountExo = 0;  //xuameng播放出错计数器重置
+                     mRetryCountIjk = 0;
                      if(mController.switchPlayer())autoRetryCount++;
                  }else {
+                     mRetryCountExo = 0;  //xuameng播放出错计数器重置
+                     mRetryCountIjk = 0;
                      autoRetryCount++;
                      allowSwitchPlayer=true;  //xuameng切换播放器
                  }
                  play(false);
+                 mRetryCountExo = 0;  //xuameng播放出错计数器重置
+                 mRetryCountIjk = 0;
                  autoRetryCount++;
             }    
             return true;
         } else {
             mRetryCountExo = 0;  //xuameng播放出错计数器重置
-            mRetryCountIjk = 0;  //xuameng播放出错计数器重置
+            mRetryCountIjk = 0;
             autoRetryCount = 0;
             return false;
         }
@@ -2134,7 +2140,7 @@ public class PlayFragment extends BaseLazyFragment {
                     LOG.i("echo-loadFoundVideoUrl:" + url );
                     if (loadFoundCount.incrementAndGet() == 1) {
                         stopLoadWebView(false);
-						SuperParse.stopJsonJx();
+                        SuperParse.stopJsonJx();
                         mHandler.removeMessages(100);
                         url = loadFoundVideoUrls.poll();
                         String cookie = CookieManager.getInstance().getCookie(url);
