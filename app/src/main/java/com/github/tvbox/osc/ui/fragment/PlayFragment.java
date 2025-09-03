@@ -1056,6 +1056,7 @@ public class PlayFragment extends BaseLazyFragment {
         if (autoRetryCount < 2) {
             if(autoRetryCount==1){
                 play(false);
+				App.showToastShort(mContext, "等于11111111111");
                 autoRetryCount = 0;
                 mRetryCountExo = 0;  //xuameng播放出错计数器重置
                 mRetryCountIjk = 0;
@@ -1081,6 +1082,7 @@ public class PlayFragment extends BaseLazyFragment {
                       return true;
                   }
                   if (playerType == 1 && mRetryCountIjk < MAX_RETRIES) {     //xuameng播放出错计数器
+					  App.showToastShort(mContext, String.valueOf("重试IJK" + mRetryCountIjk));
                       try {
                           String ijk = mVodPlayerCfg.getString("ijk");
                           List < IJKCode > codecs = ApiConfig.get().getIjkCodes();
@@ -1105,7 +1107,7 @@ public class PlayFragment extends BaseLazyFragment {
                       }
                   }
                   if (playerType == 2 && mRetryCountExo < MAX_RETRIES) {     //xuameng播放出错计数器
-					  App.showToastShort(mContext, String.valueOf("重试" + mRetryCountExo));
+					  App.showToastShort(mContext, String.valueOf("重试EXO" + mRetryCountExo));
                       try {
                           exoSelect = mVodPlayerCfg.getInt("exocode");  //xuameng exo解码动态选择
                       } catch (JSONException e) {
@@ -1154,37 +1156,40 @@ public class PlayFragment extends BaseLazyFragment {
                       mController.updatePlayerCfg();  //xuameng更新变更
                       play(false);
                       return true;
-                }
+                 }        
                 //第一次重试直接带着原地址继续播放
-                if(allowSwitchPlayer){  //xuameng切换播放器
-                    //切换播放器不占用重试次数
+                 if(allowSwitchPlayer){  //xuameng切换播放器
+                     //切换播放器不占用重试次数
                      mRetryCountExo = 0;  //xuameng播放出错计数器重置
                      mRetryCountIjk = 0;
-                    if(mController.switchPlayer())autoRetryCount++;
-                }else {
-                    mRetryCountExo = 0;  //xuameng播放出错计数器重置
-                    mRetryCountIjk = 0;
-                    autoRetryCount++;
-                    allowSwitchPlayer=true;  //xuameng切换播放器
-                }
-                play(false);
-                mRetryCountExo = 0;  //xuameng播放出错计数器重置
-                mRetryCountIjk = 0;
-                autoRetryCount++;
-            }
+                     if(mController.switchPlayer())autoRetryCount++;
+                 }else {
+                     mRetryCountExo = 0;  //xuameng播放出错计数器重置
+                     mRetryCountIjk = 0;
+                     autoRetryCount++;
+                     allowSwitchPlayer=true;  //xuameng切换播放器
+                 }
+                 play(false);
+                 mRetryCountExo = 0;  //xuameng播放出错计数器重置
+                 mRetryCountIjk = 0;
+                 autoRetryCount++;
+            }    
             return true;
         } else {
             if (mRetryCountExo < MAX_RETRIES){
                 autoRetryCount = 0;
+App.showToastShort(mContext, String.valueOf("最后重试EXO" + mRetryCountExo));
 	            return true;
             }
             if (mRetryCountIjk < MAX_RETRIES){
                 autoRetryCount = 0;
+				App.showToastShort(mContext, String.valueOf("最后重试IJK" + mRetryCountIjk));
 	            return true;
             }
             mRetryCountExo = 0;  //xuameng播放出错计数器重置
             mRetryCountIjk = 0;
             autoRetryCount = 0;
+			App.showToastShort(mContext, String.valueOf("完成了"));
             return false;
         }
     }
