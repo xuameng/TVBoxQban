@@ -1053,15 +1053,10 @@ public class PlayFragment extends BaseLazyFragment {
         }
         if (autoRetryCount < 2) {
             if(autoRetryCount==1){
-                if (playerType == 2) { 
-                    play(false);
-                    autoRetryCount = 0;
-                    mRetryCount = 0;  //xuameng播放出错计数器重置
-                    return true;
-                }
-                //第二次重试时重新调用接口
                 play(false);
-                autoRetryCount++;
+                autoRetryCount = 0;
+                mRetryCount = 0;  //xuameng播放出错计数器重置
+                return true;
             }else {
                   if (isJianpian){
                       String CachePath = FileUtils.getCachePath();     //xuameng 清空缓存
@@ -1081,6 +1076,30 @@ public class PlayFragment extends BaseLazyFragment {
                           }
                       }, 400);
                       return true;
+                  }
+                  if (playerType == 1 && mRetryCount < MAX_RETRIES) {     //xuameng播放出错计数器
+                      try {
+                          String ijk = mPlayerConfig.getString("ijk");
+                          List < IJKCode > codecs = ApiConfig.get().getIjkCodes();
+                          for(int i = 0; i < codecs.size(); i++) {
+                              if(ijk.equals(codecs.get(i).getName())) {
+                                  if(i >= codecs.size() - 1) ijk = codecs.get(0).getName();
+                                  else {
+                                      ijk = codecs.get(i + 1).getName();
+                                  }
+                                  break;
+                              }
+                          }
+                          mVodPlayerCfg.put("ijk", ijk);
+                          App.showToastShort(mContext, "播放出错！自动切换IJK解码bbbbbb");
+                          mRetryCount++;   //xuameng播放出错计数器
+                          mController.setPlayerConfig(mVodPlayerCfg);   //xuameng更新变更
+                          mController.updatePlayerCfg();  //xuameng更新变更
+                          play(false);
+                          return true;
+                      } catch (JSONException e) {
+                          e.printStackTrace();
+                      }
                   }
                   if (playerType == 2 && mRetryCount < MAX_RETRIES) {     //xuameng播放出错计数器
 					  App.showToastShort(mContext, String.valueOf("重试" + mRetryCount));
@@ -1149,6 +1168,9 @@ public class PlayFragment extends BaseLazyFragment {
             }
             return true;
         } else {
+            if (mRetryCount < MAX_RETRIES){
+	            return true;
+            }
             mRetryCount = 0;  //xuameng播放出错计数器重置
             autoRetryCount = 0;
             return false;
