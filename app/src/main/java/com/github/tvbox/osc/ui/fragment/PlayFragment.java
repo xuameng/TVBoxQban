@@ -1064,7 +1064,7 @@ public class PlayFragment extends BaseLazyFragment {
                 } catch (Throwable th) {
                     mVodPlayerCfg = new JSONObject();
                 }
-				int playerType = 0;
+                int playerType = 0;
                 try {
 			        playerType = mVodPlayerCfg.getInt("pl");
                 } catch (JSONException e) {
@@ -1078,7 +1078,7 @@ public class PlayFragment extends BaseLazyFragment {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    if (exoSelect == 1) {
+                    if (exoSelect == 1 && mRetryCount < MAX_RETRIES) {
                         try {
                             mVodPlayerCfg.put("exocode", 2);  //xuameng默认选择，大于0为选择
                         } catch (JSONException e) {
@@ -1091,7 +1091,7 @@ public class PlayFragment extends BaseLazyFragment {
                         play(false);
 					    return true;
                     }
-                    if (exoSelect == 2){
+                    if (exoSelect == 2 && mRetryCount < MAX_RETRIES){
                         try {
                             mVodPlayerCfg.put("exocode", 1);  //xuameng默认选择，大于0为选择
                         } catch (JSONException e) {
@@ -1104,7 +1104,7 @@ public class PlayFragment extends BaseLazyFragment {
                         play(false);
 					    return true;
                     } 
-                    if (exoSelect == 0){
+                    if (exoSelect == 0 && mRetryCount < MAX_RETRIES){
                         if (exoCode){
                             try {
                                 mVodPlayerCfg.put("exocode", 1);  //xuameng默认选择，大于0为选择
