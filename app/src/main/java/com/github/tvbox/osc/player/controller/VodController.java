@@ -298,7 +298,8 @@ public class VodController extends BaseController {
     private Visualizer mVisualizer;  //xuameng音乐播放动画
     private MusicVisualizerView customVisualizer; //xuameng播放音乐柱状图
     private int audioSessionId = -1; // 使用-1表示未初始化状态 //xuameng音乐播放动画
-    private boolean musicAnimation = false;     ////xuameng 音柱动画 加载设置
+    private boolean musicAnimation = Hawk.get(HawkConfig.VOD_MUSIC_ANIMATION, false);     //xuameng 音柱动画 加载设置
+	
 	private static final String TAG = "VodController";  //xuameng音乐播放动画
     Handler myHandle;
     Runnable myRunnable;
@@ -814,7 +815,6 @@ public class VodController extends BaseController {
                     hideBottomXu();
                 }
                 DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
-
                 try {
 					musicAnimation = mPlayerConfig.getBoolean("music");   //xuameng音乐播放动画获取设置
                 } catch (JSONException e) {
@@ -2386,7 +2386,7 @@ public class VodController extends BaseController {
         // 计算0-1范围的百分比
         float volumePercent = (float) currentVolume / maxVolume;
         
-        // 保留一位小数
+        // 保留两位小数
         return (float) Math.round(volumePercent * 100) / 100.0f;
     }
 }
