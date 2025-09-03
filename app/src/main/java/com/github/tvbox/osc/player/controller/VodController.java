@@ -1402,6 +1402,13 @@ public class VodController extends BaseController {
     public void setListener(VodControlListener listener) {
         this.listener = listener;
     }
+
+    public void updatePlayerCfg() {
+        if (listener != null) {
+            listener.updatePlayerCfg();
+        }
+    }
+
     private VodControlListener listener;
     private boolean skipEnd = true;
     @Override
