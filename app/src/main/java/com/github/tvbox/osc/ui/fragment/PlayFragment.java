@@ -1074,7 +1074,7 @@ public class PlayFragment extends BaseLazyFragment {
             	
                     
                     try {
-					        exoSelect = mPlayerConfig.getInt("exocode");	
+					        exoSelect = mVodPlayerCfg.getInt("exocode");	
 			             //xuameng exo解码动态选择
                     } catch (JSONException e) {
                         e.printStackTrace();
