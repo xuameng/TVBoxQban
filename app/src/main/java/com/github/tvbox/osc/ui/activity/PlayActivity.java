@@ -982,6 +982,7 @@ public class PlayActivity extends BaseActivity {
 
     private int autoRetryCount = 0;
 	private long lastRetryTime = 0; // 记录上次调用时间（毫秒）    //xuameng新增
+    private boolean allowSwitchPlayer = true;  //xuameng切换播放器
 
     boolean autoRetry() {
         long currentTime = System.currentTimeMillis();
