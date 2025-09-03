@@ -230,6 +230,7 @@ public class PlayFragment extends BaseLazyFragment {
             @Override
             public void changeParse(ParseBean pb) {
                 autoRetryCount = 0;
+				mRetryCount = 0;
                 doParse(pb);
             }
 
@@ -242,6 +243,7 @@ public class PlayFragment extends BaseLazyFragment {
             @Override
             public void replay(boolean replay) {
                 autoRetryCount = 0;
+			mRetryCount = 0;	
                 if(replay){  //xuameng新增
                     play(true);
                 }else {
