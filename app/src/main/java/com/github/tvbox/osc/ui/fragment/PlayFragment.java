@@ -1079,6 +1079,7 @@ public class PlayFragment extends BaseLazyFragment {
                       e.printStackTrace();
                   }
                   if (playerType == 2 && mRetryCount < MAX_RETRIES) {     //xuameng播放出错计数器
+            autoRetryCount = 0;
                       try {
                           exoSelect = mVodPlayerCfg.getInt("exocode");  //xuameng exo解码动态选择
                       } catch (JSONException e) {
