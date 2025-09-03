@@ -44,7 +44,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     private DefaultLoadControl mLoadControl;
     private DefaultRenderersFactory mRenderersFactory;
     private DefaultTrackSelector mTrackSelector;
-	protected ExoTrackNameProvider trackNameProvider;
+    protected ExoTrackNameProvider trackNameProvider;
     protected TrackSelectionArray mTrackSelections;
     private static AudioTrackMemory memory;    //xuameng记忆选择音轨
 
