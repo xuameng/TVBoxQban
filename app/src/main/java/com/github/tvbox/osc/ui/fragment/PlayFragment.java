@@ -127,7 +127,7 @@ public class PlayFragment extends BaseLazyFragment {
     private boolean isJianpian = false;  //xuameng判断视频是否为荐片
 
     private int mRetryCount = 0;  //xuameng播放出错计数器
-    private static final int MAX_RETRIES = 1;  //xuameng播放出错切换1次
+    private static final int MAX_RETRIES = 10;  //xuameng播放出错切换1次
 
     private final long videoDuration = -1;
 
@@ -1027,6 +1027,8 @@ public class PlayFragment extends BaseLazyFragment {
     private boolean allowSwitchPlayer = true;  //xuameng切换播放器
 
     boolean autoRetry() {
+		App.showToastShort(mContext, String.valueOf("重试" + mRetryCount));
+
         AbstractPlayer mediaPlayer = mVideoView.getMediaPlayer();
         boolean exoCode=Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false); //xuameng EXO默认设置解码
         int exoSelect = Hawk.get(HawkConfig.EXO_PLAY_SELECTCODE, 0);  //xuameng exo解码动态选择
@@ -1047,84 +1049,84 @@ public class PlayFragment extends BaseLazyFragment {
                 //第二次重试时重新调用接口
                 play(false);
                 autoRetryCount++;
+                mRetryCount = 0;  //xuameng播放出错计数器重置
             }else {
                   if (isJianpian){
-                    String CachePath = FileUtils.getCachePath();     //xuameng 清空缓存
-                    File CachePathDir = new File(CachePath); 
-                    new Thread(() -> {
-                    try {
-                        if(CachePathDir.exists())FileUtils.cleanDirectory(CachePathDir);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    }).start();
-                    App.showToastShort(mContext, "播放失败！立即清空缓存！重试！");
-                    new Handler().postDelayed(new Runnable() {
-                    @Override
-                        public void run() {
-                           play(false);
-                        }
-                    }, 400);
-                    return true;
-                }
-                int playerType = 0;
-                try {
-                    if (mVodPlayerCfg.has("pl")) {
-                        playerType = mVodPlayerCfg.getInt("pl");     //xuameng 获取播放器类型
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-                if (playerType == 2 && mRetryCount < MAX_RETRIES) {     //xuameng播放出错计数器
-                    try {
-                        exoSelect = mVodPlayerCfg.getInt("exocode");  //xuameng exo解码动态选择
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    if (exoSelect == 1 && mRetryCount < MAX_RETRIES) {
-                        try {
-                            mVodPlayerCfg.put("exocode", 2);  //xuameng默认选择，大于0为选择
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 2);  // 硬解码标记存储
-                        App.showToastShort(mContext, "播放出错！自动切换EXO软解aaaaaaaa");
-                        mRetryCount++;   //xuameng播放出错计数器
-                    } else if (exoSelect == 2 && mRetryCount < MAX_RETRIES){
-                        try {
-                            mVodPlayerCfg.put("exocode", 1);  //xuameng默认选择，大于0为选择
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 1);  // 软解码标记存储
-                        App.showToastShort(mContext, "播放出错！自动切换EXO硬解bbbbbb");
-                        mRetryCount++;   //xuameng播放出错计数器
-                    } else if (exoSelect == 0 && mRetryCount < MAX_RETRIES){
-                        if (exoCode){
-                            try {
-                                mVodPlayerCfg.put("exocode", 1);  //xuameng默认选择，大于0为选择
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                            Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 1);  // 软解码标记存储
-                            App.showToastShort(mContext, "播放出错！自动切换EXO硬解cccccc");
-                            mRetryCount++;  //xuameng播放出错计数器
-                        }else{
-                            try {
-                                mVodPlayerCfg.put("exocode", 2);  //xuameng默认选择，大于0为选择
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                            Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 2);  // 软解码标记存储
-                            App.showToastShort(mContext, "播放出错！自动切换EXO软解dddddd");
-                            mRetryCount++;  //xuameng播放出错计数器
-                        }
-                    }
-                    mController.setPlayerConfig(mVodPlayerCfg);   //xuameng更新变更
-                    mController.updatePlayerCfg();  //xuameng更新变更
-                    play(false);
-                    return true;
+                      String CachePath = FileUtils.getCachePath();     //xuameng 清空缓存
+                      File CachePathDir = new File(CachePath); 
+                      new Thread(() -> {
+                          try {
+                              if(CachePathDir.exists())FileUtils.cleanDirectory(CachePathDir);
+                          } catch (Exception e) {
+                              e.printStackTrace();
+                          }
+                      }).start();
+                      App.showToastShort(mContext, "播放失败！立即清空缓存！重试！");
+                      new Handler().postDelayed(new Runnable() {
+                      @Override
+                          public void run() {
+                             play(false);
+                          }
+                      }, 400);
+                      return true;
+                  }
+                  int playerType = 0;
+                  try {
+                      if (mVodPlayerCfg.has("pl")) {
+                          playerType = mVodPlayerCfg.getInt("pl");     //xuameng 获取播放器类型
+                      }
+                  } catch (JSONException e) {
+                      e.printStackTrace();
+                  }
+                  if (playerType == 2 && mRetryCount < MAX_RETRIES) {     //xuameng播放出错计数器
+                      try {
+                          exoSelect = mVodPlayerCfg.getInt("exocode");  //xuameng exo解码动态选择
+                      } catch (JSONException e) {
+                          e.printStackTrace();
+                      }
+                      if (exoSelect == 1 && mRetryCount < MAX_RETRIES) {
+                          try {
+                              mVodPlayerCfg.put("exocode", 2);  //xuameng默认选择，大于0为选择
+                          } catch (JSONException e) {
+                              e.printStackTrace();
+                          }
+                          Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 2);  // 硬解码标记存储
+                          App.showToastShort(mContext, "播放出错！自动切换EXO软解aaaaaaaa");
+                          mRetryCount++;   //xuameng播放出错计数器
+                      } else if (exoSelect == 2 && mRetryCount < MAX_RETRIES){
+                          try {
+                              mVodPlayerCfg.put("exocode", 1);  //xuameng默认选择，大于0为选择
+                          } catch (JSONException e) {
+                              e.printStackTrace();
+                          }
+                          Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 1);  // 软解码标记存储
+                          App.showToastShort(mContext, "播放出错！自动切换EXO硬解bbbbbb");
+                          mRetryCount++;   //xuameng播放出错计数器
+                      } else if (exoSelect == 0 && mRetryCount < MAX_RETRIES){
+                          if (exoCode){
+                              try {
+                                  mVodPlayerCfg.put("exocode", 1);  //xuameng默认选择，大于0为选择
+                              } catch (JSONException e) {
+                                  e.printStackTrace();
+                              }
+                              Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 1);  // 软解码标记存储
+                              App.showToastShort(mContext, "播放出错！自动切换EXO硬解cccccc");
+                              mRetryCount++;  //xuameng播放出错计数器
+                          }else{
+                              try {
+                                  mVodPlayerCfg.put("exocode", 2);  //xuameng默认选择，大于0为选择
+                              } catch (JSONException e) {
+                                  e.printStackTrace();
+                              }
+                              Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 2);  // 软解码标记存储
+                              App.showToastShort(mContext, "播放出错！自动切换EXO软解dddddd");
+                              mRetryCount++;  //xuameng播放出错计数器
+                          }
+                      }
+                      mController.setPlayerConfig(mVodPlayerCfg);   //xuameng更新变更
+                      mController.updatePlayerCfg();  //xuameng更新变更
+                      play(false);
+                      return true;
                 }
                 //第一次重试直接带着原地址继续播放
                 if(allowSwitchPlayer){  //xuameng切换播放器
