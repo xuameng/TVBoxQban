@@ -127,7 +127,7 @@ public class PlayFragment extends BaseLazyFragment {
 	private boolean isJianpian = false;  //xuameng判断视频是否为荐片
 
     private int mRetryCount = 0;  //xuameng播放出错计数器
-    private static final int MAX_RETRIES = 4;  //xuameng播放出错重试2次
+    private static final int MAX_RETRIES = 1;  //xuameng播放出错切换1次
 
     private final long videoDuration = -1;
 
