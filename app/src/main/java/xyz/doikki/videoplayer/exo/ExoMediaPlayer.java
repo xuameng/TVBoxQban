@@ -49,8 +49,6 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     private static AudioTrackMemory memory;    //xuameng记忆选择音轨
 
     private int errorCode = -100;   //xuameng错误日志
-    private String path;
-    private Map<String, String> headers;
     private int mRetryCount = 0;  //xuameng播放出错重试十次
     private static final int MAX_RETRIES = 3;  //xuameng播放出错重试3次
 
@@ -134,8 +132,6 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 
     @Override
     public void setDataSource(String path, Map<String, String> headers) {
-        this.path = path;
-        this.headers = headers;
         mMediaSource = mMediaSourceHelper.getMediaSource(path, headers);
     }
 
@@ -333,10 +329,10 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
         String progressKey = Hawk.get(HawkConfig.EXO_PROGRESS_KEY, "");
         errorCode = error.errorCode;
         Log.e("EXOPLAYER", "" + error.errorCode);      //xuameng音频出错后尝试重播
-        if (errorCode == 5001 && path != null || errorCode == 5002 && path != null || errorCode == 4001 && path != null && mRetryCount < MAX_RETRIES){
+        if (errorCode == 5001 && mRetryCount < MAX_RETRIES || errorCode == 5002 && mRetryCount < MAX_RETRIES || errorCode == 4001 && mRetryCount < MAX_RETRIES){
             boolean exoDecodeXu = Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false);
             int exoSelectXu = Hawk.get(HawkConfig.EXO_PLAY_SELECTCODE, 0);
-            if (exoSelectXu == 1) {
+            if (exoSelectXu == 1 && mRetryCount < MAX_RETRIES) {
                 memory.getInstance(mAppContext).deleteExoTrack(progressKey);   //xuameng删除记忆音轨
                 resetInitPlayer();
                 App.showToastShort(mAppContext, "音频获取错误！正在尝试切换可用音轨！如仍未成功请选择其它解码方式！");
@@ -344,14 +340,18 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
                 setDataSource(path, headers);
                 prepareAsync();
                 start();
-            }else if (exoSelectXu == 2 && mRetryCount < MAX_RETRIES){
+                return;
+            }
+            if (exoSelectXu == 2 && mRetryCount < MAX_RETRIES) {
                 memory.getInstance(mAppContext).deleteExoTrack(progressKey);   //xuameng删除记忆音轨
                 App.showToastShort(mAppContext, "音频获取错误！正在重试！如仍未成功请选择其它解码方式！");
                 mRetryCount++;  // 计数器加一    重试3次
                 setDataSource(path, headers);
                 prepareAsync();
                 start();
-            }else if(exoSelectXu == 0) {
+                return;
+            }
+            if(exoSelectXu == 0 && mRetryCount < MAX_RETRIES) {
                 if(exoDecodeXu){
                    memory.getInstance(mAppContext).deleteExoTrack(progressKey);   //xuameng删除记忆音轨
                    mRetryCount++;  // 计数器加一    重试3次
@@ -359,6 +359,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
                    setDataSource(path, headers);
                    prepareAsync();
                    start();
+                   return;
                 }else{
                    memory.getInstance(mAppContext).deleteExoTrack(progressKey);   //xuameng删除记忆音轨
                    resetInitPlayer();
@@ -367,6 +368,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
                    setDataSource(path, headers);
                    prepareAsync();
                    start();
+                   return;
                 }
 	        }
         }else{
@@ -429,4 +431,3 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 		mMediaPlayer.addListener(this);
     }
 }
-
