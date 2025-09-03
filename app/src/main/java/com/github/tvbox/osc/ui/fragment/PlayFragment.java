@@ -1096,7 +1096,7 @@ public class PlayFragment extends BaseLazyFragment {
                               }
                           }
                           mVodPlayerCfg.put("ijk", ijk);
-                          App.showToastShort(mContext, "播放出错！自动切换IJK解码bbbbbb");
+                          App.showToastShort(mContext, String.valueOf("重试IJK解码" + ijk));
                           mRetryCountIjk++;   //xuameng播放出错计数器
                           mController.setPlayerConfig(mVodPlayerCfg);   //xuameng更新变更
                           mController.updatePlayerCfg();  //xuameng更新变更
@@ -1176,16 +1176,6 @@ public class PlayFragment extends BaseLazyFragment {
             }    
             return true;
         } else {
-            if (mRetryCountExo < MAX_RETRIES){
-                autoRetryCount = 0;
-App.showToastShort(mContext, String.valueOf("最后重试EXO" + mRetryCountExo));
-	            return true;
-            }
-            if (mRetryCountIjk < MAX_RETRIES){
-                autoRetryCount = 0;
-				App.showToastShort(mContext, String.valueOf("最后重试IJK" + mRetryCountIjk));
-	            return true;
-            }
             mRetryCountExo = 0;  //xuameng播放出错计数器重置
             mRetryCountIjk = 0;
             autoRetryCount = 0;
