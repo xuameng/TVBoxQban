@@ -408,42 +408,45 @@ public class VodController extends BaseController {
             mHandler.postDelayed(this, 100);
         }
     };
-
-    private Runnable myRunnableMusic = new Runnable() {     //xuameng 播放音频切换图片
+    private Runnable myRunnableMusic = new Runnable() { //xuameng播放音频切换图片
         @Override
         public void run() {
-            if(MxuamengMusic.getVisibility() != View.VISIBLE) {
-                mHandler.postDelayed(this, 15000);
-                return;
-            }
-
-            String imageUrl = !ApiConfig.get().musicwallpaper.isEmpty() ? ApiConfig.get().musicwallpaper
-                    : !ApiConfig.get().wallpaper.isEmpty() ? ApiConfig.get().wallpaper
-                    : "https://api.miaomc.cn/image/get";
-
-            Picasso.get().load(imageUrl)
-                 //   .placeholder(R.drawable.xumusic) // 恢复默认占位图
-                 //   .error(R.drawable.xumusic) // 添加错误图
+            if(MxuamengMusic.getVisibility() == View.VISIBLE) {
+                if(!ApiConfig.get().musicwallpaper.isEmpty()) {
+                    String Url = ApiConfig.get().musicwallpaper;
+                    Picasso.get().load(Url)
+                        //				.placeholder(R.drawable.xumusic)   //xuameng默认的站位图
+                        .noPlaceholder() //不使用站位图，效果不好
+                        //				.resize(1920,1080)
+                        //				.centerCrop()
+                        //				.error(R.drawable.xumusic)
+                        .config(Bitmap.Config.RGB_565).memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE).networkPolicy(NetworkPolicy.NO_CACHE).into(MxuamengMusic); // xuameng内容空显示banner
+                    mHandler.postDelayed(this, 15000);
+                    return;
+                } else if(!ApiConfig.get().wallpaper.isEmpty()) {
+                    String Url = ApiConfig.get().wallpaper;
+                    Picasso.get().load(Url)
+                        //				.placeholder(R.drawable.xumusic)   //xuameng默认的站位图
+                        .noPlaceholder() //不使用站位图，效果不好
+                        .resize(1920, 1080)
+                        //				.centerCrop()
+                        //				.error(R.drawable.xumusic)
+                        .config(Bitmap.Config.RGB_565).memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE).networkPolicy(NetworkPolicy.NO_CACHE).into(MxuamengMusic); // xuameng内容空显示banner
+                    mHandler.postDelayed(this, 15000);
+                    return;
+                }
+                String Url = "https://api.miaomc.cn/image/get";
+                Picasso.get().load(Url)
+                    //				.placeholder(R.drawable.xumusic)   //xuameng默认的站位图
                     .noPlaceholder() //不使用站位图，效果不好
                     .resize(1920, 1080)
-                 //   .centerCrop()
-                    .config(Bitmap.Config.RGB_565)
-                    .memoryPolicy(MemoryPolicy.NO_CACHE) // 保留不缓存内存
-                    .networkPolicy(NetworkPolicy.NO_CACHE) // 保留不缓存网络
-                    .into(MxuamengMusic, new Callback() {
-                        @Override
-                        public void onSuccess() {
-                            mHandler.postDelayed(myRunnableMusic, 15000);
-                        }
-    
-                        @Override
-                        public void onError(Exception e) {
-                            mHandler.postDelayed(myRunnableMusic, 15000);
-                        }
-                    });
+                    //				.centerCrop()
+                    //				.error(R.drawable.xumusic)
+                    .config(Bitmap.Config.RGB_565).memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE).networkPolicy(NetworkPolicy.NO_CACHE).into(MxuamengMusic); // xuameng内容空显示banner
+            }
+            mHandler.postDelayed(this, 15000);
         }
     };
-
     private Runnable xuRunnable = new Runnable() { //xuameng显示系统时间
         @Override
         public void run() {
