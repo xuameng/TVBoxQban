@@ -337,7 +337,6 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
                 resetInitPlayer();
                 App.showToastShort(mAppContext, "音频获取错误！正在尝试切换可用音轨！如仍未成功请选择其它解码方式！");
                 mRetryCount++;  // 计数器加一    重试3次
-                setDataSource(path, headers);
                 prepareAsync();
                 start();
                 return;
@@ -346,7 +345,6 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
                 memory.getInstance(mAppContext).deleteExoTrack(progressKey);   //xuameng删除记忆音轨
                 App.showToastShort(mAppContext, "音频获取错误！正在重试！如仍未成功请选择其它解码方式！");
                 mRetryCount++;  // 计数器加一    重试3次
-                setDataSource(path, headers);
                 prepareAsync();
                 start();
                 return;
@@ -356,7 +354,6 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
                    memory.getInstance(mAppContext).deleteExoTrack(progressKey);   //xuameng删除记忆音轨
                    mRetryCount++;  // 计数器加一    重试3次
                    App.showToastShort(mAppContext, "音频获取错误！正在重试！如仍未成功请选择其它解码方式！");
-                   setDataSource(path, headers);
                    prepareAsync();
                    start();
                    return;
@@ -365,7 +362,6 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
                    resetInitPlayer();
                    App.showToastShort(mAppContext, "音频获取错误！正在尝试切换可用音轨！如仍未成功请选择其它解码方式！");
                    mRetryCount++;  // 计数器加一    重试3次
-                   setDataSource(path, headers);
                    prepareAsync();
                    start();
                    return;
