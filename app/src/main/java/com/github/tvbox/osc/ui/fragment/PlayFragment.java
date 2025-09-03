@@ -1069,9 +1069,13 @@ public class PlayFragment extends BaseLazyFragment {
                         mVodPlayerCfg = new JSONObject();
                     }
 		            boolean exoCode=Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false); //xuameng EXO默认设置解码
-                    int exoSelect = mVodPlayerCfg.get("exocode"); // 默认值声明
+				       int exoSelect = Hawk.get(HawkConfig.EXO_PLAY_SELECTCODE, 0);  //xuameng exo解码动态选择
+                
+            	
+                    
                     try {
-			            exoSelect = mVodPlayerCfg.getInt("exocode");  //xuameng exo解码动态选择
+					        exoSelect = mPlayerConfig.getInt("exocode");	
+			             //xuameng exo解码动态选择
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
