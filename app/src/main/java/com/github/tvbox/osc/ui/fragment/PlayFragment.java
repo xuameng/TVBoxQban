@@ -1156,18 +1156,12 @@ public class PlayFragment extends BaseLazyFragment {
                 //第一次重试直接带着原地址继续播放
                  if(allowSwitchPlayer){  //xuameng切换播放器
                      //切换播放器不占用重试次数
-                     mRetryCountExo = 0;  //xuameng播放出错计数器重置
-                     mRetryCountIjk = 0;
                      if(mController.switchPlayer())autoRetryCount++;
                  }else {
-                     mRetryCountExo = 0;  //xuameng播放出错计数器重置
-                     mRetryCountIjk = 0;
                      autoRetryCount++;
                      allowSwitchPlayer=true;  //xuameng切换播放器
                  }
                  play(false);
-                 mRetryCountExo = 0;  //xuameng播放出错计数器重置
-                 mRetryCountIjk = 0;
                  autoRetryCount++;
             }    
             return true;
