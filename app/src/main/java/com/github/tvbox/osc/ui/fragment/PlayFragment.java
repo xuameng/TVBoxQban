@@ -1067,11 +1067,6 @@ public class PlayFragment extends BaseLazyFragment {
                     }, 400);
                     return true;
                 }
-                try {
-                    mVodPlayerCfg = new JSONObject(mVodInfo.playerCfg);
-                } catch (Throwable th) {
-                    mVodPlayerCfg = new JSONObject();
-                }
                 int playerType = 0;
                 try {
                     if (mVodPlayerCfg.has("pl")) {
