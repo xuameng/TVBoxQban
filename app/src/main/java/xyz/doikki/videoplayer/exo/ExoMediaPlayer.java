@@ -344,7 +344,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
                 setDataSource(path, headers);
                 prepareAsync();
                 start();
-            }else if (exoSelectXu == 2) {
+            }else if (exoSelectXu == 2 && mRetryCount < MAX_RETRIES){
                 memory.getInstance(mAppContext).deleteExoTrack(progressKey);   //xuameng删除记忆音轨
                 App.showToastShort(mAppContext, "音频获取错误！正在重试！如仍未成功请选择其它解码方式！");
                 mRetryCount++;  // 计数器加一    重试3次
@@ -429,3 +429,4 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 		mMediaPlayer.addListener(this);
     }
 }
+
