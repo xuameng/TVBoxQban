@@ -1023,7 +1023,6 @@ public class PlayFragment extends BaseLazyFragment {
 	private long lastRetryTime = 0; // 记录上次调用时间（毫秒）  //xuameng新增
 
     boolean autoRetry() {
-        AbstractPlayer mediaPlayer = mVideoView.getMediaPlayer();
         long currentTime = System.currentTimeMillis();
         if (currentTime - lastRetryTime > 60_000){
             LOG.i("echo-reset-autoRetryCount");
@@ -1060,12 +1059,18 @@ public class PlayFragment extends BaseLazyFragment {
                     }, 400);
 					return true;
 				}
-                if (mediaPlayer instanceof EXOmPlayer  && mRetryCount < MAX_RETRIES) {
-                    try {
-                        mVodPlayerCfg = new JSONObject(mVodInfo.playerCfg);
-                    } catch (Throwable th) {
-                        mVodPlayerCfg = new JSONObject();
-                    }
+                try {
+                    mVodPlayerCfg = new JSONObject(mVodInfo.playerCfg);
+                } catch (Throwable th) {
+                    mVodPlayerCfg = new JSONObject();
+                }
+				int playerType = 0;
+                try {
+			        playerType = mVodPlayerCfg.getInt("pl");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                if (playerType == 2 && mRetryCount < MAX_RETRIES) {
 		            boolean exoCode=Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false); //xuameng EXO默认设置解码
                     int exoSelect = Hawk.get(HawkConfig.EXO_PLAY_SELECTCODE, 0);  //xuameng exo解码动态选择
                     try {
