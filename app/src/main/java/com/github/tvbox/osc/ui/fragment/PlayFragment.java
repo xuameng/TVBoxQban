@@ -1093,7 +1093,7 @@ public class PlayFragment extends BaseLazyFragment {
                               }
                           }
                           mVodPlayerCfg.put("ijk", ijk);
-                          App.showToastShort(mContext, String.valueOf("播放出错！自动切换" + ijk));
+                          App.showToastShort(mContext, String.valueOf("播放出错！自动切换IJK" + ijk));
                           mRetryCountIjk++;   //xuameng播放出错计数器
                           mController.setPlayerConfig(mVodPlayerCfg);   //xuameng更新变更
                           mController.updatePlayerCfg();  //xuameng更新变更
@@ -1116,7 +1116,7 @@ public class PlayFragment extends BaseLazyFragment {
                               e.printStackTrace();
                           }
                           Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 2);  // 硬解码标记存储
-                          App.showToastShort(mContext, "播放出错！自动切换EXO软解");
+                          App.showToastShort(mContext, "播放出错！自动切换EXO软解码");
                           mRetryCountExo++;   //xuameng播放出错计数器
                       } else if (exoSelect == 2 && mRetryCountExo < MAX_RETRIES){
                           try {
@@ -1125,7 +1125,7 @@ public class PlayFragment extends BaseLazyFragment {
                               e.printStackTrace();
                           }
                           Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 1);  // 软解码标记存储
-                          App.showToastShort(mContext, "播放出错！自动切换EXO硬解");
+                          App.showToastShort(mContext, "播放出错！自动切换EXO硬解码");
                           mRetryCountExo++;   //xuameng播放出错计数器
                       } else if (exoSelect == 0 && mRetryCountExo < MAX_RETRIES){
                           if (exoCode){
@@ -1135,7 +1135,7 @@ public class PlayFragment extends BaseLazyFragment {
                                   e.printStackTrace();
                               }
                               Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 1);  // 软解码标记存储
-                              App.showToastShort(mContext, "播放出错！自动切换EXO硬解");
+                              App.showToastShort(mContext, "播放出错！自动切换EXO硬解码");
                               mRetryCountExo++;  //xuameng播放出错计数器
                           }else{
                               try {
@@ -1144,7 +1144,7 @@ public class PlayFragment extends BaseLazyFragment {
                                   e.printStackTrace();
                               }
                               Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 2);  // 软解码标记存储
-                              App.showToastShort(mContext, "播放出错！自动切换EXO软解");
+                              App.showToastShort(mContext, "播放出错！自动切换EXO软解码");
                               mRetryCountExo++;  //xuameng播放出错计数器
                           }
                       }
