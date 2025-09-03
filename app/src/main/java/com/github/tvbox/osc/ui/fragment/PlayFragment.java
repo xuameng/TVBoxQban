@@ -124,7 +124,7 @@ public class PlayFragment extends BaseLazyFragment {
     private VodController mController;
     private SourceViewModel sourceViewModel;
     private Handler mHandler;
-	private boolean isJianpian = false;  //xuameng判断视频是否为荐片
+    private boolean isJianpian = false;  //xuameng判断视频是否为荐片
 
     private int mRetryCount = 0;  //xuameng播放出错计数器
     private static final int MAX_RETRIES = 1;  //xuameng播放出错切换1次
@@ -148,7 +148,7 @@ public class PlayFragment extends BaseLazyFragment {
         initView();
         initViewModel();
         initData();
-		Hawk.put(HawkConfig.PLAYER_IS_LIVE,false);  //xuameng新增
+        Hawk.put(HawkConfig.PLAYER_IS_LIVE,false);  //xuameng新增
     }
 
     public long getSavedProgress(String url) {
@@ -203,7 +203,7 @@ public class PlayFragment extends BaseLazyFragment {
         ProgressManager progressManager = new ProgressManager() {
             @Override
             public void saveProgress(String url, long progress) {
-				if (videoDuration ==0) return;
+                if (videoDuration ==0) return;    //xuameng 不save
                 CacheManager.save(MD5.string2MD5(url), progress);
             }
 
@@ -308,7 +308,7 @@ public class PlayFragment extends BaseLazyFragment {
 
     void selectMySubtitle() throws Exception {
         SubtitleDialog subtitleDialog = new SubtitleDialog(getActivity());
-		int playerType = mVodPlayerCfg.getInt("pl");
+        int playerType = mVodPlayerCfg.getInt("pl");
         if (mController.mSubtitleView.hasInternal && playerType == 1 ||mController.mSubtitleView.hasInternal && playerType == 2) {
             subtitleDialog.selectInternal.setVisibility(View.VISIBLE);
         } else {
@@ -365,7 +365,7 @@ public class PlayFragment extends BaseLazyFragment {
             @Override
             public void openLocalFileChooserDialog() {
                 new ChooserDialog(getActivity(),R.style.FileChooserXu)   //xuameng本地字幕风格
-						.withResources(R.string.title_choose_file, R.string.title_choose, R.string.dialog_cancel)  //xuameng本地字幕风格
+                        .withResources(R.string.title_choose_file, R.string.title_choose, R.string.dialog_cancel)  //xuameng本地字幕风格
                         .withFilter(false, false, "srt", "ass", "scc", "stl", "ttml")
                         .withStartFile("/storage/emulated/0/Download")
                         .withChosenListener(new ChooserDialog.Result() {
@@ -408,8 +408,8 @@ public class PlayFragment extends BaseLazyFragment {
         List<TrackInfoBean> bean = trackInfo.getAudio();
         if (bean.size() < 1){
             App.showToastShort(mContext, "没有内置音轨！");
-			return;
-		}
+            return;
+        }
 
         final int selectedId = trackInfo.getAudioSelected(false);   //xuameng判断音轨选择
         SelectDialog<TrackInfoBean> dialog = new SelectDialog<>(getActivity());
@@ -449,7 +449,7 @@ public class PlayFragment extends BaseLazyFragment {
                 String name = val.name.replace("AUDIO,", "");
                 name = name.replace("N/A,", "");
                 name = name.replace(" ", "");
-				return name + (StringUtils.isEmpty(val.language) ? "" : " " + val.language);
+                return name + (StringUtils.isEmpty(val.language) ? "" : " " + val.language);
             }
         }, new DiffUtil.ItemCallback<TrackInfoBean>() {
             @Override
@@ -482,23 +482,23 @@ public class PlayFragment extends BaseLazyFragment {
         List<TrackInfoBean> bean = trackInfo.getSubtitle();
         if (bean.size() < 1) {
             App.showToastShort(mContext, "没有内置字幕！");
-			return;
-		}
+            return;
+        }
         SelectDialog<TrackInfoBean> dialog = new SelectDialog<>(mActivity);
         dialog.setTip("切换内置字幕");
         dialog.setAdapter(new SelectDialogAdapter.SelectDialogInterface<TrackInfoBean>() {
             @Override
             public void click(TrackInfoBean value, int pos) {
-				mController.mSubtitleView.setVisibility(View.VISIBLE);
+                mController.mSubtitleView.setVisibility(View.VISIBLE);
                 try {
                     for (TrackInfoBean subtitle : bean) {
                         subtitle.selected = subtitle.trackId == value.trackId;
                     }
                     long progress = mediaPlayer.getCurrentPosition() - 3000L;//XUAMENG保存当前进度，回退3秒
                     if (mediaPlayer instanceof IjkMediaPlayer) {
-						 mController.mSubtitleView.destroy();
-						 mController.mSubtitleView.clearSubtitleCache();
-						 mController.mSubtitleView.isInternal = true;
+                        mController.mSubtitleView.destroy();
+                        mController.mSubtitleView.clearSubtitleCache();
+                        mController.mSubtitleView.isInternal = true;
                         ((IjkMediaPlayer)mediaPlayer).setTrack(value.trackId);
                         new Handler().postDelayed(new Runnable() {
                             @Override
@@ -527,7 +527,7 @@ public class PlayFragment extends BaseLazyFragment {
 
             @Override
             public String getDisplay(TrackInfoBean val) {
-				return val.name + (StringUtils.isEmpty(val.language) ? "" : " " + val.language);
+                return val.name + (StringUtils.isEmpty(val.language) ? "" : " " + val.language);
             }
         }, new DiffUtil.ItemCallback<TrackInfoBean>() {
             @Override
@@ -569,7 +569,7 @@ public class PlayFragment extends BaseLazyFragment {
                 @Override
                 public void run() {
                     if (finish) {
-						setTip(err, false, true);
+                        setTip(err, false, true);
                         App.showToastShort(mContext, err);
                     } else {
                         setTip(err, false, true);
@@ -580,7 +580,7 @@ public class PlayFragment extends BaseLazyFragment {
     }
 
     void playUrl(String url, HashMap<String, String> headers) {
-		if(!url.startsWith("data:application"))EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_REFRESH, url));//更新播放地址
+        if(!url.startsWith("data:application"))EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_REFRESH, url));//更新播放地址
         if (!Hawk.get(HawkConfig.M3U8_PURIFY, false)) {
             goPlayUrl(url,headers);
             return;
@@ -597,12 +597,12 @@ public class PlayFragment extends BaseLazyFragment {
         mController.playM3u8(url,headers);
     }
     public void goPlayUrl(String url, HashMap<String, String> headers) {
-		LOG.i("echo-goPlayUrl:" + url);
+        LOG.i("echo-goPlayUrl:" + url);
 //		if(autoRetryCount==0)webPlayUrl=url;
         if (mActivity == null) return;
-		if (!isAdded()) return;
+        if (!isAdded()) return;
         LOG.i("playUrl:" + url);
-		final String finalUrl = url;
+        final String finalUrl = url;
         requireActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -610,7 +610,7 @@ public class PlayFragment extends BaseLazyFragment {
                 if (mVideoView != null) {
                     mVideoView.release();
                     if (finalUrl != null) {
-						String url = finalUrl;
+                        String url = finalUrl;
                         try {
                             int playerType = mVodPlayerCfg.getInt("pl");
                             if (playerType >= 10) {
@@ -619,7 +619,7 @@ public class PlayFragment extends BaseLazyFragment {
                                 setTip("调用外部播放器" + PlayerHelper.getPlayerName(playerType) + "进行播放", true, false);
                                 boolean callResult = false;
                                 long progress = getSavedProgress(progressKey);
-								callResult = PlayerHelper.runExternalPlayer(playerType, requireActivity(), url, playTitle, playSubtitle, headers, progress);
+                                callResult = PlayerHelper.runExternalPlayer(playerType, requireActivity(), url, playTitle, playSubtitle, headers, progress);
                                 setTip("调用外部播放器" + PlayerHelper.getPlayerName(playerType) + (callResult ? "成功" : "失败"), callResult, !callResult);
                                 return;
                             }
@@ -657,8 +657,8 @@ public class PlayFragment extends BaseLazyFragment {
             if (trackInfo != null && trackInfo.getSubtitle().size() > 0) {
                 mController.mSubtitleView.hasInternal = true;
             }else{
-				mController.mSubtitleView.hasInternal = false;   //xuameng修复切换播放器内置字幕不刷新
-			}
+                mController.mSubtitleView.hasInternal = false;   //xuameng修复切换播放器内置字幕不刷新
+            }
             final int selectedIdIjk = trackInfo.getAudioSelected(false);  //xuameng判断选中的音轨
             if (selectedIdIjk != 99999) { // xuameng99999表示未选中
                ((IjkMediaPlayer)(mVideoView.getMediaPlayer())).loadDefaultTrack(trackInfo,progressKey);      //xuameng记忆选择音轨  如果未选中音轨就不选择记忆音轨
@@ -666,7 +666,7 @@ public class PlayFragment extends BaseLazyFragment {
             ((IjkMediaPlayer)(mVideoView.getMediaPlayer())).setOnTimedTextListener(new IMediaPlayer.OnTimedTextListener() {
                 @Override
                 public void onTimedText(IMediaPlayer mp, IjkTimedText text) {
-					if(text==null)return;   //xuameng
+                    if(text==null)return;   //xuameng
                     if (mController.mSubtitleView.isInternal) {
                         com.github.tvbox.osc.subtitle.model.Subtitle subtitle = new com.github.tvbox.osc.subtitle.model.Subtitle();
                         subtitle.content = text.getText();
@@ -681,12 +681,12 @@ public class PlayFragment extends BaseLazyFragment {
             if (trackInfo != null && trackInfo.getSubtitle().size() > 0) {
                 mController.mSubtitleView.hasInternal = true;
             }else{
-				mController.mSubtitleView.hasInternal = false;  //xuameng修复切换播放器内置字幕不刷新
-			}
+                mController.mSubtitleView.hasInternal = false;  //xuameng修复切换播放器内置字幕不刷新
+            }
             final int selectedIdExo = trackInfo.getAudioSelected(false);  //xuameng判断选中的音轨
             Hawk.put(HawkConfig.EXO_PROGRESS_KEY, progressKey);  //xuameng存储进程KEY
             if (selectedIdExo != 99999) { // xuameng99999表示未选中
-		        ((EXOmPlayer) (mVideoView.getMediaPlayer())).loadDefaultTrack(progressKey);      //xuameng记忆选择音轨  如果未选中音轨就不选择记忆音轨
+               ((EXOmPlayer) (mVideoView.getMediaPlayer())).loadDefaultTrack(progressKey);      //xuameng记忆选择音轨  如果未选中音轨就不选择记忆音轨
             }
             ((EXOmPlayer) (mVideoView.getMediaPlayer())).setOnTimedTextListener(new Player.Listener() {
                 @Override
@@ -727,7 +727,7 @@ public class PlayFragment extends BaseLazyFragment {
                             if (lowerLang.contains("zh") || lowerLang.contains("ch") || lowerLang.contains("中文") || lowerLang.contains("简体") || lowerLang.contains("国语") || lowerLang.contains("国配")){    //xuameng修复EXO播放器也可以默认选择中文字幕
                                 hasCh=true;                               
                                     if (mVideoView.getMediaPlayer() instanceof IjkMediaPlayer){
-										if (selectedIndex != subtitleTrackInfoBean.trackId) {
+                                        if (selectedIndex != subtitleTrackInfoBean.trackId) {
                                         ((IjkMediaPlayer)(mVideoView.getMediaPlayer())).setTrack(subtitleTrackInfoBean.trackId);
 										}
                                     }else if (mVideoView.getMediaPlayer() instanceof EXOmPlayer){
@@ -754,7 +754,6 @@ public class PlayFragment extends BaseLazyFragment {
         sourceViewModel.playResult.observe(this, new Observer<JSONObject>() {
             @Override
             public void onChanged(JSONObject info) {
-//				webPlayUrl = null;
                 if (info != null) {
                     try {
                         progressKey = info.optString("proKey", null);
@@ -835,7 +834,7 @@ public class PlayFragment extends BaseLazyFragment {
 //                        Toast.makeText(mContext, "获取播放信息错误1", Toast.LENGTH_SHORT).show();
                     }
                 } else {
-					//   获取播放信息错误后只需再重试一次
+                  //   获取播放信息错误后只需再重试一次
                     errorWithRetry("获取播放信息错误", true);
 //                    Toast.makeText(mContext, "获取播放信息错误", Toast.LENGTH_SHORT).show();
                 }
@@ -1024,7 +1023,7 @@ public class PlayFragment extends BaseLazyFragment {
     }
 
     private int autoRetryCount = 0;
-	private long lastRetryTime = 0; // 记录上次调用时间（毫秒）  //xuameng新增
+    private long lastRetryTime = 0; // 记录上次调用时间（毫秒）  //xuameng新增
     private boolean allowSwitchPlayer = true;  //xuameng切换播放器
 
     boolean autoRetry() {
@@ -1068,12 +1067,21 @@ public class PlayFragment extends BaseLazyFragment {
                     }, 400);
                     return true;
                 }
-                if (mediaPlayer instanceof EXOmPlayer && mRetryCount < MAX_RETRIES) {     //xuameng播放出错计数器
-                    try {
-                        mVodPlayerCfg = new JSONObject(mVodInfo.playerCfg);
-                    } catch (Throwable th) {
-                        mVodPlayerCfg = new JSONObject();
+                try {
+                    mVodPlayerCfg = new JSONObject(mVodInfo.playerCfg);
+                } catch (Throwable th) {
+                    mVodPlayerCfg = new JSONObject();
+                }
+                int playerType = 0;
+                try {
+                    if (mVodPlayerCfg.has("pl")) {
+                        playerType = mVodPlayerCfg.getInt("pl");     //xuameng 获取播放器类型
                     }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                if (playerType == 2 && mRetryCount < MAX_RETRIES) {     //xuameng播放出错计数器
                     try {
                         exoSelect = mVodPlayerCfg.getInt("exocode");  //xuameng exo解码动态选择
                     } catch (JSONException e) {
@@ -1157,8 +1165,7 @@ public class PlayFragment extends BaseLazyFragment {
         loadFoundVideoUrlsHeader = new HashMap<String, HashMap<String, String>>();
     }
 
-    public void setPlayTitle(boolean show)    //XUAMENG全屏TITLE问题
-    {
+    public void setPlayTitle(boolean show){   //XUAMENG全屏TITLE问题
         if(show){
             String playTitleInfo= "";
             if(mVodInfo!=null){
@@ -1178,12 +1185,12 @@ public class PlayFragment extends BaseLazyFragment {
         setTip("正在获取播放信息", true, false);
         String playTitleInfo = mVodInfo.name + " " + vs.name;
         int lengthplayTitleInfo = playTitleInfo.length();
-		if (lengthplayTitleInfo <= 7 ){
+         if (lengthplayTitleInfo <= 7 ){
             mController.setTitle("您正在观看影片：" + playTitleInfo);
-		}else if (lengthplayTitleInfo > 7 && lengthplayTitleInfo <= 10 ){
-			mController.setTitle("正在观看：" + playTitleInfo);
+         }else if (lengthplayTitleInfo > 7 && lengthplayTitleInfo <= 10 ){
+             mController.setTitle("正在观看：" + playTitleInfo);
         }else if (lengthplayTitleInfo > 10 && lengthplayTitleInfo <= 12 ){
-			mController.setTitle("影片：" + playTitleInfo);
+            mController.setTitle("影片：" + playTitleInfo);
         }else{
             mController.setTitle(playTitleInfo);
         }
@@ -1246,7 +1253,6 @@ public class PlayFragment extends BaseLazyFragment {
     private String webUrl;
     private String webUserAgent;
     private HashMap<String, String > webHeaderMap;
-//	private String webPlayUrl;
 
     private void initParse(String flag, boolean useParse, String playUrl, final String url) {
         parseFlag = flag;
@@ -1258,11 +1264,11 @@ public class PlayFragment extends BaseLazyFragment {
                 parseBean = new ParseBean();
                 parseBean.setType(0);
                 parseBean.setUrl(playUrl);
-				mController.showParse(false);
+                mController.showParse(false);
                 App.showToastShort(mContext, "解析站点未配置，直接嗅探播放！");
             }else{
-				mController.showParse(useParse);
-			}
+                mController.showParse(useParse);
+            }
         } else {
             if (playUrl.startsWith("json:")) {
                 parseBean = new ParseBean();
@@ -1335,7 +1341,7 @@ public class PlayFragment extends BaseLazyFragment {
     private void doParse(ParseBean pb) {
         stopParse();
         initParseLoadFound();
-		mVideoView.release();            //XUAMENG修复嗅探换源闪退
+        mVideoView.release();            //XUAMENG修复嗅探换源闪退
         if (pb.getType() == 4) {
             parseMix(pb,true);
         }
@@ -1604,7 +1610,7 @@ public class PlayFragment extends BaseLazyFragment {
             requireActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-					App.showToastShort(mContext, "解析来自:" + rs.optString("jxFrom"));
+                    App.showToastShort(mContext, "解析来自:" + rs.optString("jxFrom"));
                 }
             });
         }
@@ -1917,7 +1923,7 @@ public class PlayFragment extends BaseLazyFragment {
                     LOG.i("echo-loadFoundVideoUrl:" + url );
                     if (loadFoundCount.incrementAndGet() == 1) {
                         stopLoadWebView(false);
-						SuperParse.stopJsonJx();
+                        SuperParse.stopJsonJx();
                         url = loadFoundVideoUrls.poll();
                         mHandler.removeMessages(100);
                         String cookie = CookieManager.getInstance().getCookie(url);
@@ -2134,7 +2140,7 @@ public class PlayFragment extends BaseLazyFragment {
     }
 
     public void ClearOtherCache() {    //xuameng清空荐片迅雷缓存
-		mController.stopOther();
+        mController.stopOther();
         String CachePath = FileUtils.getCachePath();     //xuameng 清空缓存
         File CachePathDir = new File(CachePath); 
         new Thread(() -> {
