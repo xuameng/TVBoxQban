@@ -1398,6 +1398,7 @@ public class VodController extends BaseController {
         void selectAudioTrack();
         void hideTipXu(); //xuameng隐藏错误信息
         void startPlayUrl(String url, HashMap < String, String > headers); //xuameng广告过滤
+        void setAllowSwitchPlayer(boolean isAllow);   //xuameng切换播放器
     }
     public void setListener(VodControlListener listener) {
         this.listener = listener;
