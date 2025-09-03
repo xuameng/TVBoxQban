@@ -1056,7 +1056,7 @@ public class PlayFragment extends BaseLazyFragment {
                 if (playerType == 2) { 
                     play(false);
                     autoRetryCount = 2;
-                    return;
+                    return true;
                 }
                 //第二次重试时重新调用接口
                 play(false);
