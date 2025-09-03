@@ -1342,7 +1342,8 @@ public class VodController extends BaseController {
         try {
 			musicAnimation = mPlayerConfig.getBoolean("music");   //xuameng音乐播放动画设置
             boolean exoCode=Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false); //xuameng EXO默认设置解码
-			int exoSelect = mPlayerConfig.getInt("exocode");  //xuameng exo解码动态选择
+            int exoSelect = Hawk.get(HawkConfig.EXO_PLAY_SELECTCODE, 0);  //xuameng exo解码动态选择
+            exoSelect = mPlayerConfig.getInt("exocode");  //xuameng exo解码动态选择
             int playerType = mPlayerConfig.getInt("pl");   //xuameng播放器选择
             int pr = mPlayerConfig.getInt("pr");  //xuameng渲染选择
             mPlayerBtn.setText(PlayerHelper.getPlayerName(playerType));
