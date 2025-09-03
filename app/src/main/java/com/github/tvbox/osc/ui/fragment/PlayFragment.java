@@ -126,7 +126,8 @@ public class PlayFragment extends BaseLazyFragment {
     private Handler mHandler;
     private boolean isJianpian = false;  //xuameng判断视频是否为荐片
 
-    private int mRetryCount = 0;  //xuameng播放出错计数器
+    private int mRetryCountExo = 0;  //xuameng播放出错计数器
+    private int mRetryCountIjk = 0;  //xuameng播放出错计数器
     private static final int MAX_RETRIES = 2;  //xuameng播放出错切换1次
 
     private final long videoDuration = -1;
@@ -1055,7 +1056,8 @@ public class PlayFragment extends BaseLazyFragment {
             if(autoRetryCount==1){
                 play(false);
                 autoRetryCount = 0;
-                mRetryCount = 0;  //xuameng播放出错计数器重置
+                mRetryCountExo = 0;  //xuameng播放出错计数器重置
+                mRetryCountIjk = 0;
                 return true;
             }else {
                   if (isJianpian){
@@ -1077,7 +1079,7 @@ public class PlayFragment extends BaseLazyFragment {
                       }, 400);
                       return true;
                   }
-                  if (playerType == 1 && mRetryCount < MAX_RETRIES) {     //xuameng播放出错计数器
+                  if (playerType == 1 && mRetryCountIjk < MAX_RETRIES) {     //xuameng播放出错计数器
                       try {
                           String ijk = mPlayerConfig.getString("ijk");
                           List < IJKCode > codecs = ApiConfig.get().getIjkCodes();
@@ -1092,7 +1094,7 @@ public class PlayFragment extends BaseLazyFragment {
                           }
                           mVodPlayerCfg.put("ijk", ijk);
                           App.showToastShort(mContext, "播放出错！自动切换IJK解码bbbbbb");
-                          mRetryCount++;   //xuameng播放出错计数器
+                          mRetryCountIjk++;   //xuameng播放出错计数器
                           mController.setPlayerConfig(mVodPlayerCfg);   //xuameng更新变更
                           mController.updatePlayerCfg();  //xuameng更新变更
                           play(false);
@@ -1101,14 +1103,14 @@ public class PlayFragment extends BaseLazyFragment {
                           e.printStackTrace();
                       }
                   }
-                  if (playerType == 2 && mRetryCount < MAX_RETRIES) {     //xuameng播放出错计数器
-					  App.showToastShort(mContext, String.valueOf("重试" + mRetryCount));
+                  if (playerType == 2 && mRetryCountExo < MAX_RETRIES) {     //xuameng播放出错计数器
+					  App.showToastShort(mContext, String.valueOf("重试" + mRetryCountExo));
                       try {
                           exoSelect = mVodPlayerCfg.getInt("exocode");  //xuameng exo解码动态选择
                       } catch (JSONException e) {
                           e.printStackTrace();
                       }
-                      if (exoSelect == 1 && mRetryCount < MAX_RETRIES) {
+                      if (exoSelect == 1 && mRetryCountExo < MAX_RETRIES) {
                           try {
                               mVodPlayerCfg.put("exocode", 2);  //xuameng默认选择，大于0为选择
                           } catch (JSONException e) {
@@ -1116,8 +1118,8 @@ public class PlayFragment extends BaseLazyFragment {
                           }
                           Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 2);  // 硬解码标记存储
                           App.showToastShort(mContext, "播放出错！自动切换EXO软解aaaaaaaa");
-                          mRetryCount++;   //xuameng播放出错计数器
-                      } else if (exoSelect == 2 && mRetryCount < MAX_RETRIES){
+                          mRetryCountExo++;   //xuameng播放出错计数器
+                      } else if (exoSelect == 2 && mRetryCountExo < MAX_RETRIES){
                           try {
                               mVodPlayerCfg.put("exocode", 1);  //xuameng默认选择，大于0为选择
                           } catch (JSONException e) {
@@ -1125,8 +1127,8 @@ public class PlayFragment extends BaseLazyFragment {
                           }
                           Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 1);  // 软解码标记存储
                           App.showToastShort(mContext, "播放出错！自动切换EXO硬解bbbbbb");
-                          mRetryCount++;   //xuameng播放出错计数器
-                      } else if (exoSelect == 0 && mRetryCount < MAX_RETRIES){
+                          mRetryCountExo++;   //xuameng播放出错计数器
+                      } else if (exoSelect == 0 && mRetryCountExo < MAX_RETRIES){
                           if (exoCode){
                               try {
                                   mVodPlayerCfg.put("exocode", 1);  //xuameng默认选择，大于0为选择
@@ -1135,7 +1137,7 @@ public class PlayFragment extends BaseLazyFragment {
                               }
                               Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 1);  // 软解码标记存储
                               App.showToastShort(mContext, "播放出错！自动切换EXO硬解cccccc");
-                              mRetryCount++;  //xuameng播放出错计数器
+                              mRetryCountExo++;  //xuameng播放出错计数器
                           }else{
                               try {
                                   mVodPlayerCfg.put("exocode", 2);  //xuameng默认选择，大于0为选择
@@ -1144,7 +1146,7 @@ public class PlayFragment extends BaseLazyFragment {
                               }
                               Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 2);  // 软解码标记存储
                               App.showToastShort(mContext, "播放出错！自动切换EXO软解dddddd");
-                              mRetryCount++;  //xuameng播放出错计数器
+                              mRetryCountExo++;  //xuameng播放出错计数器
                           }
                       }
                       mController.setPlayerConfig(mVodPlayerCfg);   //xuameng更新变更
@@ -1155,23 +1157,32 @@ public class PlayFragment extends BaseLazyFragment {
                 //第一次重试直接带着原地址继续播放
                 if(allowSwitchPlayer){  //xuameng切换播放器
                     //切换播放器不占用重试次数
-                     mRetryCount = 0;  //xuameng播放出错计数器重置
+                     mRetryCountExo = 0;  //xuameng播放出错计数器重置
+                     mRetryCountIjk = 0;
                     if(mController.switchPlayer())autoRetryCount++;
                 }else {
-                    mRetryCount = 0;  //xuameng播放出错计数器重置
+                    mRetryCountExo = 0;  //xuameng播放出错计数器重置
+                    mRetryCountIjk = 0;
                     autoRetryCount++;
                     allowSwitchPlayer=true;  //xuameng切换播放器
                 }
                 play(false);
-                mRetryCount = 0;  //xuameng播放出错计数器重置
+                mRetryCountExo = 0;  //xuameng播放出错计数器重置
+                mRetryCountIjk = 0;
                 autoRetryCount++;
             }
             return true;
         } else {
-            if (mRetryCount < MAX_RETRIES){
+            if (mRetryCountExo < MAX_RETRIES){
+                autoRetryCount = 0;
 	            return true;
             }
-            mRetryCount = 0;  //xuameng播放出错计数器重置
+            if (mRetryCountIjk < MAX_RETRIES){
+                autoRetryCount = 0;
+	            return true;
+            }
+            mRetryCountExo = 0;  //xuameng播放出错计数器重置
+            mRetryCountIjk = 0;
             autoRetryCount = 0;
             return false;
         }
