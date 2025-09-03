@@ -288,6 +288,10 @@ public class PlayFragment extends BaseLazyFragment {
             public void startPlayUrl(String url, HashMap<String, String> headers) {
                 goPlayUrl(url, headers);
             }
+            @Override
+            public void setAllowSwitchPlayer(boolean isAllow){
+                allowSwitchPlayer=isAllow;
+            }
         });
         mVideoView.setVideoController(mController);
     }
@@ -1021,22 +1025,24 @@ public class PlayFragment extends BaseLazyFragment {
 
     private int autoRetryCount = 0;
 	private long lastRetryTime = 0; // 记录上次调用时间（毫秒）  //xuameng新增
+    private boolean allowSwitchPlayer = true;  //xuameng切换播放器
 
     boolean autoRetry() {
         AbstractPlayer mediaPlayer = mVideoView.getMediaPlayer();
-		boolean exoCode=Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false); //xuameng EXO默认设置解码
+        boolean exoCode=Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false); //xuameng EXO默认设置解码
         int exoSelect = Hawk.get(HawkConfig.EXO_PLAY_SELECTCODE, 0);  //xuameng exo解码动态选择
         long currentTime = System.currentTimeMillis();
-        if (currentTime - lastRetryTime > 60_000){
+        // 如果距离上次重试超过 10 秒（10000 毫秒），重置重试次数
+        if (currentTime - lastRetryTime > 60_000) {
             LOG.i("echo-reset-autoRetryCount");
             autoRetryCount = 0;
+            allowSwitchPlayer = false;  //xuameng切换播放器
         }
-
         lastRetryTime = currentTime;  // 更新上次调用时间
-    //    if (loadFoundVideoUrls != null && loadFoundVideoUrls.size() > 0) {
-     //       autoRetryFromLoadFoundVideoUrls();
-     //       return true;
-     //   }
+        if (loadFoundVideoUrls != null && !loadFoundVideoUrls.isEmpty()) {
+            autoRetryFromLoadFoundVideoUrls();
+            return true;
+        }
         if (autoRetryCount < 2) {
             if(autoRetryCount==1){
                 //第二次重试时重新调用接口
@@ -1060,8 +1066,8 @@ public class PlayFragment extends BaseLazyFragment {
                            play(false);
                         }
                     }, 400);
-					return true;
-				}
+                    return true;
+                }
                 if (mediaPlayer instanceof EXOmPlayer && mRetryCount < MAX_RETRIES) {
                     try {
                         mVodPlayerCfg = new JSONObject(mVodInfo.playerCfg);
@@ -1069,7 +1075,7 @@ public class PlayFragment extends BaseLazyFragment {
                         mVodPlayerCfg = new JSONObject();
                     }
                     try {
-			            exoSelect = mVodPlayerCfg.getInt("exocode");  //xuameng exo解码动态选择
+                        exoSelect = mVodPlayerCfg.getInt("exocode");  //xuameng exo解码动态选择
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -1113,22 +1119,27 @@ public class PlayFragment extends BaseLazyFragment {
                         }
                     }
                     mController.setPlayerConfig(mVodPlayerCfg);
-					mController.updatePlayerCfg();
+                    mController.updatePlayerCfg();
                     play(false);
-					return true;
+                    return true;
                 }
-                //切换播放器不占用重试次数
-                if(mController.switchPlayer()){
-                   mRetryCount = 0; // 重置计数器
-                   autoRetryCount++;
-                   play(false);
+                //第一次重试直接带着原地址继续播放
+                if(allowSwitchPlayer){  //xuameng切换播放器
+                    //切换播放器不占用重试次数
+                     mRetryCount = 0;  //xuameng播放出错重试2次
+                    if(mController.switchPlayer())autoRetryCount++;
                 }else {
-                   play(false);
+                    mRetryCount = 0;  //xuameng播放出错重试2次
+                    autoRetryCount++;
+                    allowSwitchPlayer=true;  //xuameng切换播放器
                 }
+                play(false);
+                mRetryCount = 0;  //xuameng播放出错重试2次
+                autoRetryCount++;
             }
             return true;
         } else {
-            mRetryCount = 0; // 重置计数器
+            mRetryCount = 0;  //xuameng播放出错重试2次
             autoRetryCount = 0;
             return false;
         }
@@ -1178,6 +1189,7 @@ public class PlayFragment extends BaseLazyFragment {
         }
         stopParse();
         initParseLoadFound();
+        allowSwitchPlayer = true;
 //xuameng某些设备有问题        mController.stopOther();
         if(mVideoView!= null) mVideoView.release();
         subtitleCacheKey = mVodInfo.sourceKey + "-" + mVodInfo.id + "-" + mVodInfo.playFlag + "-" + mVodInfo.playIndex+ "-" + vs.name + "-subt";
