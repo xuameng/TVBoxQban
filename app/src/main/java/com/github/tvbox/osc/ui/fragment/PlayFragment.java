@@ -127,7 +127,7 @@ public class PlayFragment extends BaseLazyFragment {
     private boolean isJianpian = false;  //xuameng判断视频是否为荐片
 
     private int mRetryCount = 0;  //xuameng播放出错计数器
-    private static final int MAX_RETRIES = 10;  //xuameng播放出错切换1次
+    private static final int MAX_RETRIES = 5;  //xuameng播放出错切换1次
 
     private final long videoDuration = -1;
 
@@ -1028,11 +1028,18 @@ public class PlayFragment extends BaseLazyFragment {
 
     boolean autoRetry() {
 		App.showToastShort(mContext, String.valueOf("重试" + mRetryCount));
-
         AbstractPlayer mediaPlayer = mVideoView.getMediaPlayer();
         boolean exoCode=Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false); //xuameng EXO默认设置解码
         int exoSelect = Hawk.get(HawkConfig.EXO_PLAY_SELECTCODE, 0);  //xuameng exo解码动态选择
         long currentTime = System.currentTimeMillis();
+        int playerType = 0;
+        try {
+            if (mVodPlayerCfg.has("pl")) {
+                playerType = mVodPlayerCfg.getInt("pl");     //xuameng 获取播放器类型
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         // 如果距离上次重试超过 10 秒（10000 毫秒），重置重试次数
         if (currentTime - lastRetryTime > 60_000) {
             LOG.i("echo-reset-autoRetryCount");
@@ -1046,10 +1053,14 @@ public class PlayFragment extends BaseLazyFragment {
         }
         if (autoRetryCount < 2) {
             if(autoRetryCount==1){
+                if (playerType == 2) { 
+                    play(false);
+                    autoRetryCount = 2;
+                    return;
+                }
                 //第二次重试时重新调用接口
                 play(false);
                 autoRetryCount++;
-                mRetryCount = 0;  //xuameng播放出错计数器重置
             }else {
                   if (isJianpian){
                       String CachePath = FileUtils.getCachePath();     //xuameng 清空缓存
@@ -1070,16 +1081,8 @@ public class PlayFragment extends BaseLazyFragment {
                       }, 400);
                       return true;
                   }
-                  int playerType = 0;
-                  try {
-                      if (mVodPlayerCfg.has("pl")) {
-                          playerType = mVodPlayerCfg.getInt("pl");     //xuameng 获取播放器类型
-                      }
-                  } catch (JSONException e) {
-                      e.printStackTrace();
-                  }
                   if (playerType == 2 && mRetryCount < MAX_RETRIES) {     //xuameng播放出错计数器
-            autoRetryCount = 0;
+					  App.showToastShort(mContext, String.valueOf("重试" + mRetryCount));
                       try {
                           exoSelect = mVodPlayerCfg.getInt("exocode");  //xuameng exo解码动态选择
                       } catch (JSONException e) {
