@@ -127,7 +127,7 @@ public class PlayFragment extends BaseLazyFragment {
 	private boolean isJianpian = false;  //xuameng判断视频是否为荐片
 
     private int mRetryCount = 0;  //xuameng播放出错重试2次
-    private static final int MAX_RETRIES = 2;  //xuameng播放出错重试2次
+    private static final int MAX_RETRIES = 1;  //xuameng播放出错重试2次
 
     private final long videoDuration = -1;
 
@@ -1067,13 +1067,13 @@ public class PlayFragment extends BaseLazyFragment {
                         mVodPlayerCfg = new JSONObject();
                     }
 		            boolean exoCode=Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false); //xuameng EXO默认设置解码
-                    int exoSelect = 0; // 默认值声明
+                    int exoSelect = mVodPlayerCfg.get("exocode"); // 默认值声明
                     try {
 			            exoSelect = mVodPlayerCfg.getInt("exocode");  //xuameng exo解码动态选择
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    if (exoSelect == 1) {
+                    if (exoSelect == 1 && mRetryCount < MAX_RETRIES) {
                         try {
                             mVodPlayerCfg.put("exocode", 2);  //xuameng默认选择，大于0为选择
                         } catch (JSONException e) {
@@ -1082,7 +1082,7 @@ public class PlayFragment extends BaseLazyFragment {
                         Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 2);  // 硬解码标记存储
                         App.showToastShort(mContext, "播放出错！自动切换EXO软解");
                         mRetryCount++;
-                    } else if (exoSelect == 2){
+                    } else if (exoSelect == 2 && mRetryCount < MAX_RETRIES){
                         try {
                             mVodPlayerCfg.put("exocode", 1);  //xuameng默认选择，大于0为选择
                         } catch (JSONException e) {
@@ -1091,7 +1091,7 @@ public class PlayFragment extends BaseLazyFragment {
                         Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 1);  // 软解码标记存储
                         App.showToastShort(mContext, "播放出错！自动切换EXO硬解");
                         mRetryCount++;
-                    } else if (exoSelect == 0){
+                    } else if (exoSelect == 0 && mRetryCount < MAX_RETRIES){
                         if (exoCode){
                             try {
                                 mVodPlayerCfg.put("exocode", 1);  //xuameng默认选择，大于0为选择
