@@ -83,6 +83,7 @@ import com.orhanobut.hawk.Hawk;
 
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.text.Cue;
+import com.github.tvbox.osc.bean.IJKCode;  //xuamengIJK切换用
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -1028,7 +1029,7 @@ public class PlayFragment extends BaseLazyFragment {
     private boolean allowSwitchPlayer = true;  //xuameng切换播放器
 
     boolean autoRetry() {
-		App.showToastShort(mContext, String.valueOf("重试" + mRetryCount));
+		App.showToastShort(mContext, String.valueOf("重试" + mRetryCountExo));
         AbstractPlayer mediaPlayer = mVideoView.getMediaPlayer();
         boolean exoCode=Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false); //xuameng EXO默认设置解码
         int exoSelect = Hawk.get(HawkConfig.EXO_PLAY_SELECTCODE, 0);  //xuameng exo解码动态选择
@@ -1081,7 +1082,7 @@ public class PlayFragment extends BaseLazyFragment {
                   }
                   if (playerType == 1 && mRetryCountIjk < MAX_RETRIES) {     //xuameng播放出错计数器
                       try {
-                          String ijk = mPlayerConfig.getString("ijk");
+                          String ijk = mVodPlayerCfg.getString("ijk");
                           List < IJKCode > codecs = ApiConfig.get().getIjkCodes();
                           for(int i = 0; i < codecs.size(); i++) {
                               if(ijk.equals(codecs.get(i).getName())) {
