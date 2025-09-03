@@ -276,6 +276,10 @@ public class PlayActivity extends BaseActivity {
             public void startPlayUrl(String url, HashMap<String, String> headers) {
                 goPlayUrl(url, headers);
             }
+            @Override
+            public void setAllowSwitchPlayer(boolean isAllow){
+                allowSwitchPlayer=isAllow;   //xuameng切换播放器
+            }
         });
         mVideoView.setVideoController(mController);
     }
