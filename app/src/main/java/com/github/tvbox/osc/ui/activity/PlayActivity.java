@@ -288,10 +288,6 @@ public class PlayActivity extends BaseActivity {
             public void startPlayUrl(String url, HashMap<String, String> headers) {
                 goPlayUrl(url, headers);
             }
-            @Override
-            public void setAllowSwitchPlayer(boolean isAllow){
-                allowSwitchPlayer=isAllow;   //xuameng切换播放器
-            }
         });
         mVideoView.setVideoController(mController);
     }
@@ -993,7 +989,6 @@ public class PlayActivity extends BaseActivity {
 
     private int autoRetryCount = 0;
     private long lastRetryTime = 0; // 记录上次调用时间（毫秒）  //xuameng新增
-    private boolean allowSwitchPlayer = true;  //xuameng切换播放器
 
     boolean autoRetry() {
         boolean exoCode=Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false); //xuameng EXO默认设置解码
@@ -1014,7 +1009,6 @@ public class PlayActivity extends BaseActivity {
             mRetryCountExo = 0;  //xuameng播放出错计数器重置
             mRetryCountIjk = 0;
             mRetryCountJP = 0;
-            allowSwitchPlayer = false;  //xuameng切换播放器
         }
         lastRetryTime = currentTime;  // 更新上次调用时间
         if (loadFoundVideoUrls != null && !loadFoundVideoUrls.isEmpty()) {
@@ -1121,16 +1115,11 @@ public class PlayActivity extends BaseActivity {
                 play(false);
                 return true;
            }        
-           //第一次重试直接带着原地址继续播放
-           if(allowSwitchPlayer){  //xuameng切换播放器
-               //切换播放器不占用重试次数
-               if(mController.switchPlayer()){
-                   autoRetryCount++;
-               }else {
-                   autoRetryCount = 2;
-               }
+           //切换播放器不占用重试次数
+           if(mController.switchPlayer()){
+               autoRetryCount++;
            }else {
-               allowSwitchPlayer=true;  //xuameng切换播放器
+               autoRetryCount++;
            }
            mRetryCountExo = 0;  //xuameng播放出错计数器重置
            mRetryCountIjk = 0;	
@@ -1175,7 +1164,6 @@ public class PlayActivity extends BaseActivity {
         }
         stopParse();
         initParseLoadFound();
-        allowSwitchPlayer = true;
 //xuameng某些设备有问题        mController.stopOther();
         if(mVideoView!= null) mVideoView.release();
         subtitleCacheKey = mVodInfo.sourceKey + "-" + mVodInfo.id + "-" + mVodInfo.playFlag + "-" + mVodInfo.playIndex+ "-" + vs.name + "-subt";
