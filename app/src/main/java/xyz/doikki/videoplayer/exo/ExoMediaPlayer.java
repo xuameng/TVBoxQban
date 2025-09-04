@@ -65,36 +65,30 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
             mMediaPlayer.removeListener(this);
         }
         // xuameng渲染器配置
-          if (mRenderersFactory == null) {
-            boolean exoDecode = Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false);
-            int exoSelect = Hawk.get(HawkConfig.EXO_PLAY_SELECTCODE, 0);
+        boolean exoDecode = Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false);
+        int exoSelect = Hawk.get(HawkConfig.EXO_PLAY_SELECTCODE, 0);
 
-            // ExoPlayer2 解码模式选择逻辑
-            int rendererMode;
-            if (exoSelect > 0) {
-                // 选择器优先
-                rendererMode = (exoSelect == 1) 
-                    ? DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF    // 硬解
-                    : DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER; // 软解
-            } else {
-                // 使用exoDecode配置
-                rendererMode = exoDecode 
-                    ? DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER // 软解
-                    : DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF;   // 硬解
-            }
-    
-            mRenderersFactory = new DefaultRenderersFactory(mAppContext)
-                .setExtensionRendererMode(rendererMode);
+        // ExoPlayer2 解码模式选择逻辑
+        int rendererMode;
+        if (exoSelect > 0) {
+            // 选择器优先
+            rendererMode = (exoSelect == 1) 
+                ? DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF    // 硬解
+                : DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER; // 软解
+        } else {
+            // 使用exoDecode配置
+            rendererMode = exoDecode 
+                ? DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER // 软解
+                : DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF;   // 硬解
         }
+    
+        mRenderersFactory = new DefaultRenderersFactory(mAppContext)
+            .setExtensionRendererMode(rendererMode);
 
         // xuameng轨道选择器配置
-        if (mTrackSelector == null) {
-            mTrackSelector = new DefaultTrackSelector(mAppContext);
-        }
-        //xuameng加载策略控制
-        if (mLoadControl == null) {   
-            mLoadControl = new DefaultLoadControl();
-        }
+        mTrackSelector = new DefaultTrackSelector(mAppContext);
+        //xuameng加载策略控制  
+        mLoadControl = new DefaultLoadControl();
 
         mTrackSelector.setParameters(
         mTrackSelector.getParameters().buildUpon()
@@ -334,7 +328,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
             int exoSelectXu = Hawk.get(HawkConfig.EXO_PLAY_SELECTCODE, 0);
             if (exoSelectXu == 1 && mRetryCount < MAX_RETRIES) {
                 memory.getInstance(mAppContext).deleteExoTrack(progressKey);   //xuameng删除记忆音轨
-                resetInitPlayer();
+                initPlayer();
                 App.showToastShort(mAppContext, "音频获取错误！正在尝试切换可用音轨！如仍未成功请选择其它解码方式！");
                 mRetryCount++;  // 计数器加一    重试3次
                 prepareAsync();
@@ -359,7 +353,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
                    return;
                 }else{
                    memory.getInstance(mAppContext).deleteExoTrack(progressKey);   //xuameng删除记忆音轨
-                   resetInitPlayer();
+                   initPlayer();
                    App.showToastShort(mAppContext, "音频获取错误！正在尝试切换可用音轨！如仍未成功请选择其它解码方式！");
                    mRetryCount++;  // 计数器加一    重试3次
                    prepareAsync();
@@ -383,47 +377,5 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
                 mPlayerEventListener.onInfo(MEDIA_INFO_VIDEO_ROTATION_CHANGED, videoSize.unappliedRotationDegrees);
             }
         }
-    }
-
-    public void resetInitPlayer() {
-        boolean exoDecode = Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false);
-        int exoSelect = Hawk.get(HawkConfig.EXO_PLAY_SELECTCODE, 0);
-        if (mMediaPlayer != null) {
-            mMediaPlayer.release();
-            mMediaPlayer.removeListener(this);
-        }
-        // ExoPlayer2 解码模式选择逻辑
-        int rendererMode;
-        if (exoSelect > 0) {
-            // 选择器优先
-            rendererMode = (exoSelect == 1) 
-                ? DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF    // 硬解
-                : DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER; // 软解
-        } else {
-            // 使用exoDecode配置
-            rendererMode = exoDecode 
-                ? DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER // 软解
-                : DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF;   // 硬解
-        }
-        mRenderersFactory = new DefaultRenderersFactory(mAppContext)
-            .setExtensionRendererMode(rendererMode);
-        mTrackSelector = new DefaultTrackSelector(mAppContext);
-        mTrackSelector.setParameters(
-        mTrackSelector.getParameters().buildUpon()
-        .setPreferredTextLanguages("ch", "chi", "zh", "zho", "en")           // 设置首选字幕语言为中文
-        .setPreferredAudioLanguages("ch", "chi", "zh", "zho", "en")                        // 设置首选音频语言为中文
-        .build());                         // 必须调用build()完成构建
-        mLoadControl = new DefaultLoadControl();
-        mMediaPlayer = new SimpleExoPlayer.Builder(
-                mAppContext,
-                mRenderersFactory,  // xuameng使用已配置的实例
-                mTrackSelector,
-                new DefaultMediaSourceFactory(mAppContext),
-                mLoadControl,
-                DefaultBandwidthMeter.getSingletonInstance(mAppContext),
-                new AnalyticsCollector(Clock.DEFAULT))
-                .build();
-        setOptions();
-		mMediaPlayer.addListener(this);
     }
 }
