@@ -1030,6 +1030,7 @@ public class PlayFragment extends BaseLazyFragment {
     private boolean allowSwitchPlayer = true;  //xuameng切换播放器
 
     boolean autoRetry() {
+		App.showToastShort(mContext, String.valueOf("666666" + autoRetryCount++));
         boolean exoCode=Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false); //xuameng EXO默认设置解码
         int exoSelect = Hawk.get(HawkConfig.EXO_PLAY_SELECTCODE, 0);  //xuameng exo解码动态选择
         long currentTime = System.currentTimeMillis();
@@ -1056,7 +1057,7 @@ public class PlayFragment extends BaseLazyFragment {
             if(autoRetryCount==1){
                 play(false);
                 autoRetryCount = 0;
-App.showToastShort(mContext, String.valueOf("444444444" + autoRetryCount++));
+App.showToastShort(mContext, String.valueOf("555555" + autoRetryCount++));
                 mRetryCountExo = 0;  //xuameng播放出错计数器重置
                 mRetryCountIjk = 0;  //xuameng播放出错计数器重置
                 return true;
