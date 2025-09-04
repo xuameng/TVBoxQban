@@ -117,7 +117,7 @@ public class OkGoHelper {
             String name = dnsConfig.has("name") ? dnsConfig.get("name").getAsString() : "Unknown Name";
             dnsHttpsList.add(name);
         }
-        if(Hawk.get(HawkConfig.DOH_URL, 0)>=dnsHttpsList.size())Hawk.put(HawkConfig.DOH_URL, 0);
+        if(Hawk.get(HawkConfig.DOH_URL, 0)+1>dnsHttpsList.size())Hawk.put(HawkConfig.DOH_URL, 0);
 
     }
 
@@ -144,7 +144,7 @@ public class OkGoHelper {
             String json=Hawk.get(HawkConfig.DOH_JSON,"");
             if(json.isEmpty())json=dnsConfigJson;
             JsonArray jsonArray = JsonParser.parseString(json).getAsJsonArray();
-            if(dohSelector>=jsonArray.size())Hawk.put(HawkConfig.DOH_URL, 0);
+            if(dohSelector>jsonArray.size())Hawk.put(HawkConfig.DOH_URL, 0);       //xuameng修复最后一项DNS选不上
             for (int i = 0; i < jsonArray.size(); i++) {
                 JsonObject dnsConfig = jsonArray.get(i).getAsJsonObject();
                 String name = dnsConfig.has("name") ? dnsConfig.get("name").getAsString() : "Unknown Name";
