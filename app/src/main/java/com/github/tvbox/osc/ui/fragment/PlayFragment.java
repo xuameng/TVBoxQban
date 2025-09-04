@@ -590,7 +590,7 @@ public class PlayFragment extends BaseLazyFragment {
 
     void playUrl(String url, HashMap<String, String> headers) {
         if(!url.startsWith("data:application"))EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_REFRESH, url));//更新播放地址
-        if (!Hawk.get(HawkConfig.M3U8_PURIFY, false)) {
+        if (!Hawk.get(HawkConfig.M3U8_PURIFY, false)) {       //xuameng广告过滤
             goPlayUrl(url,headers);
             return;
         }
@@ -607,7 +607,6 @@ public class PlayFragment extends BaseLazyFragment {
     }
     public void goPlayUrl(String url, HashMap<String, String> headers) {
         LOG.i("echo-goPlayUrl:" + url);
-//		if(autoRetryCount==0)webPlayUrl=url;
         if (mActivity == null) return;
         if (!isAdded()) return;
         LOG.i("playUrl:" + url);
@@ -1532,7 +1531,7 @@ public class PlayFragment extends BaseLazyFragment {
         setTip("正在解析播放地址", true, false);
         parseThreadPool = Executors.newSingleThreadExecutor();
         LinkedHashMap<String, HashMap<String, String>> jxs = new LinkedHashMap<>();
-		LinkedHashMap<String, String> json_jxs = new LinkedHashMap<>();
+        LinkedHashMap<String, String> json_jxs = new LinkedHashMap<>();
         String extendName = "";
         for (ParseBean p : ApiConfig.get().getParseBeanList()) {
             HashMap<String, String> data = new HashMap<String, String>();
