@@ -129,6 +129,7 @@ public class PlayFragment extends BaseLazyFragment {
 
     private int mRetryCountExo = 0;  //xuameng播放出错计数器
     private int mRetryCountIjk = 0;  //xuameng播放出错计数器
+    private int mRetryCountJP = 0;  //xuameng播放出错计数器
     private static final int MAX_RETRIES = 2;  //xuameng播放出错切换2次
 
     private final long videoDuration = -1;
@@ -232,6 +233,9 @@ public class PlayFragment extends BaseLazyFragment {
             @Override
             public void changeParse(ParseBean pb) {
                 autoRetryCount = 0;
+                mRetryCountExo = 0;  //xuameng播放出错计数器重置
+                mRetryCountIjk = 0;
+                mRetryCountJP = 0;
                 doParse(pb);
             }
 
@@ -244,6 +248,9 @@ public class PlayFragment extends BaseLazyFragment {
             @Override
             public void replay(boolean replay) {
                 autoRetryCount = 0;
+                mRetryCountExo = 0;  //xuameng播放出错计数器重置
+                mRetryCountIjk = 0;
+                mRetryCountJP = 0;
                 if(replay){  //xuameng新增
                     play(true);
                 }else {
@@ -1045,6 +1052,9 @@ public class PlayFragment extends BaseLazyFragment {
         if (currentTime - lastRetryTime > 60_000) {
             LOG.i("echo-reset-autoRetryCount");
             autoRetryCount = 0;
+            mRetryCountExo = 0;  //xuameng播放出错计数器重置
+            mRetryCountIjk = 0;
+            mRetryCountJP = 0;
             allowSwitchPlayer = false;  //xuameng切换播放器
         }
         lastRetryTime = currentTime;  // 更新上次调用时间
@@ -1053,7 +1063,7 @@ public class PlayFragment extends BaseLazyFragment {
             return true;
         }
         if (autoRetryCount <= 1) {
-            if (isJianpian){
+            if (isJianpian && mRetryCountJP < MAX_RETRIES){
                 String CachePath = FileUtils.getCachePath();     //xuameng 清空缓存
                 File CachePathDir = new File(CachePath); 
                 new Thread(() -> {
@@ -1068,9 +1078,15 @@ public class PlayFragment extends BaseLazyFragment {
                 @Override
                     public void run() {
                        play(false);
+                       mRetryCountJP++;
                     }
                 }, 400);
                 return true;
+            }
+            if (isJianpian && mRetryCountJP >= MAX_RETRIES){
+                App.showToastShort(mContext, "荐片播放地址获取失败！");
+                mRetryCountJP = 0;
+                return false;
             }
             if (playerType == 1 && mRetryCountIjk < MAX_RETRIES) {     //xuameng播放出错计数器
                 try {
