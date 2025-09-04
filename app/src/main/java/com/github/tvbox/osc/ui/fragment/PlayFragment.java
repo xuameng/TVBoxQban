@@ -1163,16 +1163,18 @@ App.showToastShort(mContext, String.valueOf("111111" + autoRetryCount++));
                      mRetryCountIjk = 0;
 App.showToastShort(mContext, String.valueOf("22222" + autoRetryCount++));
                  }else {
+					                      mRetryCountExo = 0;  //xuameng播放出错计数器重置
+                     mRetryCountIjk = 0;
                      autoRetryCount++;
                      allowSwitchPlayer=true;  //xuameng切换播放器
-                     mRetryCountExo = 0;  //xuameng播放出错计数器重置
-                     mRetryCountIjk = 0;
+
 App.showToastShort(mContext, String.valueOf("33333" + autoRetryCount++));
                  }
+				                  mRetryCountExo = 0;  //xuameng播放出错计数器重置
+                 mRetryCountIjk = 0;
                  play(false);
                  autoRetryCount++;
-                 mRetryCountExo = 0;  //xuameng播放出错计数器重置
-                 mRetryCountIjk = 0;
+
 App.showToastShort(mContext, String.valueOf("44444" + autoRetryCount++));
             }    
             return true;
