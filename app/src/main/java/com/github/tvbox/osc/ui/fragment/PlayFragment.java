@@ -1032,6 +1032,8 @@ public class PlayFragment extends BaseLazyFragment {
 
     boolean autoRetry() {
         boolean exoCode=Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false); //xuameng EXO默认设置解码
+        boolean switchCode=Hawk.get(HawkConfig.VOD_SWITCHDECODE, false); //xuameng 解码切换
+        boolean switchPlayer=Hawk.get(HawkConfig.VOD_SWITCHPLAYER, true); //xuameng 播放器切换
         int exoSelect = Hawk.get(HawkConfig.EXO_PLAY_SELECTCODE, 0);  //xuameng exo解码动态选择
         long currentTime = System.currentTimeMillis();
         int playerType = 0;   //xuameng默认播放器类型
@@ -1042,8 +1044,8 @@ public class PlayFragment extends BaseLazyFragment {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        // 如果距离上次重试超过 10 秒（10000 毫秒），重置重试次数
-        if (currentTime - lastRetryTime > 60_000) {
+        // 如果距离上次重试超过 30 秒（30000 毫秒），重置重试次数
+        if (currentTime - lastRetryTime > 30_000) {
             LOG.i("echo-reset-autoRetryCount");
             autoRetryCount = 0;
             mRetryCountExo = 0;  //xuameng播放出错计数器重置
@@ -1081,7 +1083,7 @@ public class PlayFragment extends BaseLazyFragment {
                 mRetryCountJP = 0;
                 return false;
             }
-            if (playerType == 1 && mRetryCountIjk < MAX_RETRIES) {     //xuameng播放出错计数器
+            if (playerType == 1 && mRetryCountIjk < MAX_RETRIES && switchCode) {     //xuameng播放出错计数器  是否开启解码切换
                 try {
                     String ijk = mVodPlayerCfg.getString("ijk");
                     List < IJKCode > codecs = ApiConfig.get().getIjkCodes();
@@ -1105,7 +1107,7 @@ public class PlayFragment extends BaseLazyFragment {
                       e.printStackTrace();
                 }
             }
-            if (playerType == 2 && mRetryCountExo < MAX_RETRIES) {     //xuameng播放出错计数器
+            if (playerType == 2 && mRetryCountExo < MAX_RETRIES && switchCode) {     //xuameng播放出错计数器   是否开启解码切换
                 try {
                     exoSelect = mVodPlayerCfg.getInt("exocode");  //xuameng exo解码动态选择
                 } catch (JSONException e) {
@@ -1156,8 +1158,12 @@ public class PlayFragment extends BaseLazyFragment {
                 return true;
            }        
            //切换播放器不占用重试次数
-           if(mController.switchPlayer()){
-               autoRetryCount++;
+           if (switchPlayer){  //xuameng是否开启播放切换
+               if(mController.switchPlayer()){
+                   autoRetryCount++;
+               }else {
+                   autoRetryCount++;
+               }
            }else {
                autoRetryCount++;
            }
