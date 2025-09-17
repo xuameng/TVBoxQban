@@ -7,11 +7,12 @@ android {
     compileSdkVersion 33
 
     defaultConfig {
+        namespace = 'com.github.tvbox.osc'
         applicationId 'com.jvhuiys.player'
         minSdkVersion 16
         targetSdkVersion 28
         versionCode 1
-        versionName '20250915-2222'
+        versionName '20250917-2222'
         multiDexEnabled true
         //设置room的Schema的位置
         javaCompileOptions {
@@ -134,6 +135,7 @@ dependencies {
     api "com.google.android.exoplayer:exoplayer-rtsp:2.16.0"
     api "com.google.android.exoplayer:extension-rtmp:2.16.0"
 }
+
 
 
 
