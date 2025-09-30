@@ -31,7 +31,7 @@ public class LivePlayerManager {
             defaultPlayerConfig.put("pr", Hawk.get(HawkConfig.PLAY_RENDER, 0));  //xuameng 渲染设置
             defaultPlayerConfig.put("sc", Hawk.get(HawkConfig.PLAY_SCALE, 0));
             defaultPlayerConfig.put("exocode", 0);      //xuameng exo动态解码  大于0为选择
-			Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 0);  // xuameng exo动态解码 大于0为选择
+            Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 0);  // xuameng exo动态解码 大于0为选择
             defaultPlayerConfig.put("music", Hawk.get(HawkConfig.LIVE_MUSIC_ANIMATION, false));   //xuameng音乐播放动画设置
         } catch (JSONException e) {
             e.printStackTrace();
@@ -39,10 +39,11 @@ public class LivePlayerManager {
         getDefaultLiveChannelPlayer(videoView);
     }
 
-    public void getDefaultLiveChannelPlayer(VideoView videoView) {
+    public void getDefaultLiveChannelPlayer(VideoView videoView) {   //xuameng播放器默认设置
         PlayerHelper.updateCfg(videoView, defaultPlayerConfig);
         try {
             currentPlayerConfig = new JSONObject(defaultPlayerConfig.toString());
+            Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 0);  // xuameng exo动态解码 大于0为选择 EXO解码恢复默认值
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -50,12 +51,13 @@ public class LivePlayerManager {
 
     public void getLiveChannelPlayer(VideoView videoView, String channelName) {
         JSONObject playerConfig = Hawk.get(channelName, null);
-        if (playerConfig == null) {
-            if (!currentPlayerConfig.toString().equals(defaultPlayerConfig.toString()))
+        if (playerConfig == null) {   //xuameng没有动态配置的就走默认配置
+            if (!currentPlayerConfig.toString().equals(defaultPlayerConfig.toString())){
                 getDefaultLiveChannelPlayer(videoView);
+            }
             return;
         }
-        if (playerConfig.toString().equals(currentPlayerConfig.toString()))
+        if (playerConfig.toString().equals(currentPlayerConfig.toString()))   //xuameng配置没变就反回
             return;
 
         try {
@@ -71,6 +73,7 @@ public class LivePlayerManager {
         }
 
         currentPlayerConfig = playerConfig;
+        setExoCode();    //xuameng 动态设置EXOCODE
     }
 
     public int getLivePlayerType() {
@@ -154,7 +157,6 @@ public class LivePlayerManager {
         return musicType;
     }
 
-
     public void changeLivePlayerType(VideoView videoView, int playerType, String channelName) {
         JSONObject playerConfig = currentPlayerConfig;
         try {
@@ -175,13 +177,11 @@ public class LivePlayerManager {
                     playerConfig.put("pl", 2);         //exo 播放器
                     playerConfig.put("exocode", 1);   //xuameng EXO硬解 动态设置
                     Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 1);
-                    playerConfig.put("ijk", "软解码");
                     break;
                 case 4:
                     playerConfig.put("pl", 2);
                     playerConfig.put("exocode", 2);       //xuameng EXO软解 动态设置
                     Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 2);
-                    playerConfig.put("ijk", "软解码");
                     break;
             }
         } catch (JSONException e) {
@@ -261,4 +261,25 @@ public class LivePlayerManager {
 
         currentPlayerConfig = playerConfig;
     }
+
+    private void setExoCode() {    //xuameng 动态设置EXOCODE
+        Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 0);  // xuameng exo动态解码 大于0为选择 EXO解码恢复默认值
+        int exoSelect = Hawk.get(HawkConfig.EXO_PLAY_SELECTCODE, 0);  //xuameng exo解码动态选择
+        try {
+            // 安全获取配置值
+            if (currentPlayerConfig.has("exocode")) {
+                exoSelect = currentPlayerConfig.getInt("exocode");     //xuameng exo解码动态选择 0默认设置 1硬解 2软解
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        if (exoSelect > 0){
+            // xuameng EXO 动态选择解码 存储选择状态
+            if (exoSelect == 1) {
+                Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 1);  // 硬解码标记存储
+            } else {
+                Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 2);  // 软解码标记存储
+            }
+        }
+    }    
 }
