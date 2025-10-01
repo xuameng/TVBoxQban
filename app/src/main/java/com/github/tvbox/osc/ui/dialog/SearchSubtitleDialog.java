@@ -141,7 +141,6 @@ private final View.OnKeyListener onSoftKeyPress = new View.OnKeyListener() {
                     imm.showSoftInput(v, InputMethodManager.SHOW_IMPLICIT);
                 }               
             }
-            return true;
         }
         return false;
     }
