@@ -104,7 +104,7 @@ public class SearchSubtitleDialog extends BaseDialog {
         }, mGridView);
 
         // xuameng : Fix on Key Enter
-        subtitleSearchEt.setOnKeyListener(onSoftKeyPress);
+   //     subtitleSearchEt.setOnKeyListener(onSoftKeyPress);
 
         subtitleSearchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -118,7 +118,7 @@ public class SearchSubtitleDialog extends BaseDialog {
     }
 
 // xuameng : Fix on Key Enter
-    private final View.OnKeyListener onSoftKeyPress = new View.OnKeyListener() {
+/*    private final View.OnKeyListener onSoftKeyPress = new View.OnKeyListener() {
         public boolean onKey(View v, int keyCode, KeyEvent event) {
             if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER || event.getKeyCode() == KeyEvent.KEYCODE_DPAD_CENTER || event.getKeyCode() == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
                 // hide soft keyboard, set focus on next button
@@ -128,6 +128,7 @@ public class SearchSubtitleDialog extends BaseDialog {
             return false;
         }
     };
+	*/
 
     public void setSearchWord(String wd) {
         wd = wd.replaceAll("(?:（|\\(|\\[|【|\\.mp4|\\.mkv|\\.avi|\\.MP4|\\.MKV|\\.AVI)", "");
