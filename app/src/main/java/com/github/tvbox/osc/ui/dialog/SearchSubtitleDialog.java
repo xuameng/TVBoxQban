@@ -119,26 +119,33 @@ public class SearchSubtitleDialog extends BaseDialog {
     }
 
     // xuameng : Fix on Key Enter  隐藏软键盘
-    private final View.OnKeyListener onSoftKeyPress = new View.OnKeyListener() {
-        @Override
-        public boolean onKey(View v, int keyCode, KeyEvent event) {
-            if (event.getAction() == KeyEvent.ACTION_UP && 
-                (keyCode == KeyEvent.KEYCODE_ENTER || 
-                 keyCode == KeyEvent.KEYCODE_DPAD_CENTER)) {
-                // 强制隐藏软键盘
-                InputMethodManager imm = (InputMethodManager) v.getContext()
-                    .getSystemService(Context.INPUT_METHOD_SERVICE);
-                if (imm != null) {
+private final View.OnKeyListener onSoftKeyPress = new View.OnKeyListener() {
+    @Override
+    public boolean onKey(View v, int keyCode, KeyEvent event) {
+        if (event.getAction() == KeyEvent.ACTION_UP && 
+            (keyCode == KeyEvent.KEYCODE_ENTER || 
+             keyCode == KeyEvent.KEYCODE_DPAD_CENTER)) {
+            
+            InputMethodManager imm = (InputMethodManager) v.getContext()
+                .getSystemService(Context.INPUT_METHOD_SERVICE);
+            
+            if (imm != null) {
+                if (imm.isActive(v)) {
+                    // 如果键盘已显示，则隐藏
                     imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                }
-                // 转移焦点
-                subtitleSearchEt.clearFocus();
-                subtitleSearchBtn.requestFocus();
-                return true;
+                    // 强制刷新焦点状态
+                    subtitleSearchEt.clearFocus();
+                    subtitleSearchBtn.requestFocus();
+                } else {
+                    // 如果键盘未显示，则显示
+                    imm.showSoftInput(v, InputMethodManager.SHOW_IMPLICIT);
+                }               
             }
-            return false;
+            return true;
         }
-    };
+        return false;
+    }
+};
 
     public void setSearchWord(String wd) {
         wd = wd.replaceAll("(?:（|\\(|\\[|【|\\.mp4|\\.mkv|\\.avi|\\.MP4|\\.MKV|\\.AVI)", "");
