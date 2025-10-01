@@ -119,31 +119,30 @@ public class SearchSubtitleDialog extends BaseDialog {
     }
 
     // xuameng : Fix on Key Enter  隐藏软键盘
-private final View.OnKeyListener onSoftKeyPress = new View.OnKeyListener() {
-    @Override
-    public boolean onKey(View v, int keyCode, KeyEvent event) {
-        InputMethodManager imm = (InputMethodManager) v.getContext()
-            .getSystemService(Context.INPUT_METHOD_SERVICE);
-        
-        if (imm != null) {
-            if (event.getAction() == KeyEvent.ACTION_DOWN && 
-                keyCode == KeyEvent.KEYCODE_ENTER || event.getAction() == KeyEvent.ACTION_DOWN && 
-                keyCode == KeyEvent.KEYCODE_DPAD_CENTER) {
-                v.requestFocus();
-                imm.showSoftInput(v, InputMethodManager.SHOW_IMPLICIT);
-                return true;
-            } else if (event.getAction() == KeyEvent.ACTION_UP && 
-                keyCode == KeyEvent.KEYCODE_ENTER || event.getAction() == KeyEvent.ACTION_DOWN && 
-                keyCode == KeyEvent.KEYCODE_DPAD_CENTER) {
-                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                subtitleSearchEt.clearFocus();
-                subtitleSearchBtn.requestFocus();
-                return true;
+    private final View.OnKeyListener onSoftKeyPress = new View.OnKeyListener() {
+        @Override
+        public boolean onKey(View v, int keyCode, KeyEvent event) {
+            InputMethodManager imm = (InputMethodManager) v.getContext()
+                .getSystemService(Context.INPUT_METHOD_SERVICE);        
+            if (imm != null) {
+                if (event.getAction() == KeyEvent.ACTION_DOWN && 
+                    keyCode == KeyEvent.KEYCODE_ENTER || event.getAction() == KeyEvent.ACTION_DOWN && 
+                    keyCode == KeyEvent.KEYCODE_DPAD_CENTER) {
+                    v.requestFocus();
+                    imm.showSoftInput(v, InputMethodManager.SHOW_IMPLICIT);
+                    return true;
+                } else if (event.getAction() == KeyEvent.ACTION_UP && 
+                    keyCode == KeyEvent.KEYCODE_ENTER || event.getAction() == KeyEvent.ACTION_DOWN && 
+                    keyCode == KeyEvent.KEYCODE_DPAD_CENTER) {
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                    subtitleSearchEt.clearFocus();
+                    subtitleSearchBtn.requestFocus();
+                    return true;
+                }
             }
+            return false;
         }
-        return false;
-    }
-};
+    };
 
     public void setSearchWord(String wd) {
         wd = wd.replaceAll("(?:（|\\(|\\[|【|\\.mp4|\\.mkv|\\.avi|\\.MP4|\\.MKV|\\.AVI)", "");
