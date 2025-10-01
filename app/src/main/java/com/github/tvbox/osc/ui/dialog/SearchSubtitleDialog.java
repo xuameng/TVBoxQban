@@ -122,7 +122,7 @@ public class SearchSubtitleDialog extends BaseDialog {
 private final View.OnKeyListener onSoftKeyPress = new View.OnKeyListener() {
     @Override
     public boolean onKey(View v, int keyCode, KeyEvent event) {
-        if (event.getAction() == KeyEvent.ACTION_UP && 
+        if (event.getAction() == KeyEvent.ACTION_DOWN && 
             (keyCode == KeyEvent.KEYCODE_ENTER || 
              keyCode == KeyEvent.KEYCODE_DPAD_CENTER)) {
             
