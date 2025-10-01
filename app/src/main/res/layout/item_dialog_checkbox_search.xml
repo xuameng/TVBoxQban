@@ -16,6 +16,7 @@
             android:paddingRight="@dimen/vs_10"
             android:focusable="true"
             android:clickable="true"
+            android:focusableInTouchMode="true"
             android:layout_width="fill_parent"
             android:layout_height="53.0mm"
             android:text="1111"/>
