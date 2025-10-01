@@ -44,32 +44,33 @@ public class PushDialog extends BaseDialog {
         etAddr = findViewById(R.id.etAddr);
 
 		etAddr.addTextChangedListener(new TextWatcher() {         //xuameng输入监听
-		private boolean isPointAdded = false;
+		    private boolean isPointAdded = false;
  
-		@Override
-		public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-        // 在文本改变之前不需要做任何操作
-		}
+		    @Override
+		    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            // 在文本改变之前不需要做任何操作
+		    }
  
-		@Override
-		public void onTextChanged(CharSequence s, int start, int before, int count) {
-	    // 在文本改变时也不需要做任何操作
-		}
+		    @Override
+		    public void onTextChanged(CharSequence s, int start, int before, int count) {
+	        // 在文本改变时也不需要做任何操作
+		    }
  
-		@Override
-		public void afterTextChanged(Editable s) {
-        String text = s.toString();
-		   if (text.contains("..")) {
-			    // 移除最后输入的点
-			  int index = text.lastIndexOf(".");
-			  etAddr.getEditableText().delete(index, index + 1);
-			  isPointAdded = false;
-              App.showToastShort(PushDialog.this.getContext(), "聚汇影视提示：IP地址格式为222.222.222.222");
-			} else {				
-			  isPointAdded = true;				
-			}
-		  }
+		    @Override
+		    public void afterTextChanged(Editable s) {
+                String text = s.toString();
+                if (text.contains("..")) {
+                    // 移除最后输入的点
+                    int index = text.lastIndexOf(".");
+                    etAddr.getEditableText().delete(index, index + 1);
+                    isPointAdded = false;
+                    App.showToastShort(PushDialog.this.getContext(), "聚汇影视提示：IP地址格式为222.222.222.222");
+                } else {				
+                    isPointAdded = true;				
+			    }
+		    }
 		});            //xuameng输入监听完
+
         etPort = findViewById(R.id.etPort);
         String cfgAddr = Hawk.get(HawkConfig.PUSH_TO_ADDR, "");
         String cfgPort = Hawk.get(HawkConfig.PUSH_TO_PORT, "");
