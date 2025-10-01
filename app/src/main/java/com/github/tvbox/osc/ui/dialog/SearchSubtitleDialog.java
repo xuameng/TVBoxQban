@@ -131,7 +131,7 @@ public class SearchSubtitleDialog extends BaseDialog {
                     imm.showSoftInput(v, InputMethodManager.SHOW_IMPLICIT);
                     return true;
                 } else if (event.getAction() == KeyEvent.ACTION_UP && 
-                    keyCode == KeyEvent.KEYCODE_ENTER) {
+                    keyCode == KeyEvent.KEYCODE_DPAD_CENTER) {
                     imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
                     subtitleSearchEt.clearFocus();
                     subtitleSearchBtn.requestFocus();
