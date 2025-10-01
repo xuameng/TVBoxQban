@@ -7,8 +7,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.view.KeyEvent;       //xuameng 键盘问题
-import android.view.inputmethod.InputMethodManager;  //xuameng 键盘问题
+import android.view.KeyEvent;       //xuameng Enter  隐藏软键盘问题
+import android.view.inputmethod.InputMethodManager;  //xuameng Enter  隐藏软键盘问题
 import com.github.tvbox.osc.base.App;  //xuameng toast
 
 import androidx.annotation.NonNull;
@@ -104,7 +104,7 @@ public class SearchSubtitleDialog extends BaseDialog {
             }
         }, mGridView);
 
-        // xuameng : Fix on Key Enter
+        // xuameng : Fix on Key Enter  隐藏软键盘
         subtitleSearchEt.setOnKeyListener(onSoftKeyPress);
 
         subtitleSearchBtn.setOnClickListener(new View.OnClickListener() {
@@ -118,7 +118,7 @@ public class SearchSubtitleDialog extends BaseDialog {
         searchAdapter.setNewData(new ArrayList<>());
     }
 
-    // xuameng : Fix on Key Enter
+    // xuameng : Fix on Key Enter  隐藏软键盘
     private final View.OnKeyListener onSoftKeyPress = new View.OnKeyListener() {
         @Override
         public boolean onKey(View v, int keyCode, KeyEvent event) {
