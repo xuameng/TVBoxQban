@@ -274,7 +274,7 @@ public class HomeActivity extends BaseActivity {
 						e.printStackTrace();
 					}
 				}).start();
-                    App.showToastShort(HomeActivity.this, "清空缓存成功！");
+                    App.showToastShort(HomeActivity.this, "缓存已清空！");
                 }else {
                     jumpActivity(SettingActivity.class);		//xuameng加载慢跳转设置
                 }
