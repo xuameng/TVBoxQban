@@ -281,7 +281,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
                 File cacheDir = new File(cachePath);
                 String cspCachePath = FileUtils.getFilePath()+"/csp/";
                 File cspCacheDir = new File(cspCachePath);
-                if (!cacheDir.exists() && !cspCacheDir.exists()) return;
+                if (!cacheDir.exists() && !cspCacheDir.exists()) return true;
                 new Thread(() -> {
                     try {
                         if(cacheDir.exists())FileUtils.cleanDirectory(cacheDir);
@@ -294,7 +294,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
                     }
                 }).start();
                 App.showToastShort(mContext, "缓存已清空！");
-                return;
+                return true;
             }
         });
 
