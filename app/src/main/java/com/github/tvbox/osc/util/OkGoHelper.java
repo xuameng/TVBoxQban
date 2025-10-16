@@ -82,7 +82,7 @@ public class OkGoHelper {
         }
 
 //        builder.dns(dnsOverHttps);
-        builder.dns(new CustomDns());  //xuameng新增
+        builder.dns(new CustomDns(dnsOverHttps)); //xuameng新增
         ItvClient=builder.build();
 
         ExoMediaSourceHelper.getInstance(App.getInstance()).setOkClient(ItvClient); //xuameng新增完
@@ -149,7 +149,7 @@ public class OkGoHelper {
                 JsonObject dnsConfig = jsonArray.get(i).getAsJsonObject();
                 String name = dnsConfig.has("name") ? dnsConfig.get("name").getAsString() : "Unknown Name";
                 dnsHttpsList.add(name);
-                if(dohSelector==i)ips = dnsConfig.has("ips") ? dnsConfig.getAsJsonArray("ips") : null;
+                if(dohSelector==i)ips = dnsConfig.has("ips") ? dnsConfig.getAsJsonArray("ips") : null;   //xuameng修复最后一项DNS选不上
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -170,30 +170,25 @@ public class OkGoHelper {
         } catch (Throwable th) {
             th.printStackTrace();
         }
-        builder.cache(new Cache(new File(App.getInstance().getCacheDir().getAbsolutePath(), "dohcache"), 100 * 1024 * 1024));   //xuameng新增完
+        builder.cache(new Cache(new File(App.getInstance().getCacheDir().getAbsolutePath(), "dohcache"), 100 * 1024 * 1024));   //xuameng新增
         OkHttpClient dohClient = builder.build();
         String dohUrl = getDohUrl(Hawk.get(HawkConfig.DOH_URL, 0));
-        if (!dohUrl.isEmpty()) is_doh = true;   //xuameng新增
-//        dnsOverHttps = new DnsOverHttps.Builder()
-//                .client(dohClient)
-//                .url(dohUrl.isEmpty() ? null : HttpUrl.get(dohUrl))
-//                .build();
-        DnsOverHttps.Builder dnsBuilder = new DnsOverHttps.Builder();
-        dnsBuilder.client(dohClient);
-        dnsBuilder.url(dohUrl.isEmpty() ? null : HttpUrl.get(dohUrl));
-        if (is_doh && ips!=null){
-            List<InetAddress> IPS=DohIps(ips);
-            dnsOverHttps = dnsBuilder.bootstrapDnsHosts(IPS).build();
-        }else {
-            dnsOverHttps = dnsBuilder.build();
-        }
-
-    }
+//        if (!dohUrl.isEmpty()) is_doh = true;
+//        LOG.i("echo-initDnsOverHttps dohUrl:"+dohUrl);
+//        LOG.i("echo-initDnsOverHttps ips:"+ips);
+        dnsOverHttps = new DnsOverHttps.Builder().client(dohClient).url(dohUrl.isEmpty() ? null : HttpUrl.get(dohUrl)).bootstrapDnsHosts((ips!=null && !dohUrl.equals("https://doh.pub/dns-query"))?DohIps(ips):null).build();
+    }   //xuameng新增完
 
     // 自定义 DNS 解析器
     static class CustomDns implements Dns {
         private  ConcurrentHashMap<String, List<InetAddress>> map;
         private final String excludeIps = "2409:8087:6c02:14:100::14,2409:8087:6c02:14:100::18,39.134.108.253,39.134.108.245";
+        private final DnsOverHttps mDnsOverHttps;
+
+        // 接收外部注入的 DoH 实例
+        public CustomDns(DnsOverHttps dnsOverHttps) {
+            this.mDnsOverHttps = dnsOverHttps;
+        }
         @NonNull
         @Override
         public List<InetAddress> lookup(@NonNull String hostname) throws UnknownHostException {
