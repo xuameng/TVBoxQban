@@ -101,7 +101,11 @@ public class OkGoHelper {
         JsonArray jsonArray = JsonParser.parseString(json).getAsJsonArray();
         if (type >= 1 && type < dnsHttpsList.size()) {
             JsonObject dnsConfig = jsonArray.get(type - 1).getAsJsonObject();
-            return dnsConfig.get("url").getAsString();  // 获取对应的 URL
+            if (dnsConfig.has("url")) {     //XUAMENG修复DNS URL为空问题
+                return dnsConfig.get("url").getAsString();    // 获取对应的 URL
+            } else {
+                return ""; // 或返回默认DNS地址如 "https://1.1.1.1/dns-query"
+            }
         }
         return ""; //xuameng新增完
     }
@@ -187,7 +191,6 @@ public class OkGoHelper {
         }else {
             dnsOverHttps = dnsBuilder.build();
         }
-
     }
 
     // 自定义 DNS 解析器
