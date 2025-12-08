@@ -218,7 +218,7 @@ public class HomeActivity extends BaseActivity {
                     HomeActivity.this.sortFocusView = view;
                     HomeActivity.this.sortFocused = position;
                     mHandler.removeCallbacks(mDataRunnable);
-                    mHandler.postDelayed(mDataRunnable, 250);
+                    mHandler.postDelayed(mDataRunnable, 250);   //xuameng 延时防止按主页不显示上面的时间栏
                 }
             }
 
@@ -570,15 +570,12 @@ public class HomeActivity extends BaseActivity {
             if (grid.restoreView()) {
                 return;
             }
-
             // 如果 sortFocusView 存在且没有获取焦点，则请求焦点
-     //       if (this.sortFocusView != null && !this.sortFocusView.isFocused()) {
-     //           this.sortFocusView.requestFocus();
-     //       }
-
-            // 如果 sortFocusView 存在且没有获取焦点，则请求焦点
-            if (this.sortFocusView != null && this.sortFocusView.isFocusable() && !this.sortFocusView.isFocused()) {
-                this.sortFocusView.requestFocus();
+            if (this.sortFocusView != null && !this.sortFocusView.isFocused()) {
+                //this.sortFocusView.requestFocus();
+                if (PositionXu !=0){     //xuameng处理手机滑动主页菜单失去焦点时按返回键闪退
+                    this.mGridView.setSelection(PositionXu);
+                }
             }
             // 如果当前不是第一个界面，则将列表设置到第一项
             else if (this.sortFocused != 0) {
