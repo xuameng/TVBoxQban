@@ -570,18 +570,16 @@ public class HomeActivity extends BaseActivity {
             if (grid.restoreView()) {
                 return;
             }
+
             // 如果 sortFocusView 存在且没有获取焦点，则请求焦点
      //       if (this.sortFocusView != null && !this.sortFocusView.isFocused()) {
      //           this.sortFocusView.requestFocus();
      //       }
 
-
-if (this.sortFocusView != null && this.sortFocusView.isFocusable() && !this.sortFocusView.isFocused()) {
-    this.sortFocusView.requestFocus();
-} else {
-    // 备用焦点逻辑，如切换到其他可聚焦视图
-    this.mGridView.requestFocus();
-}
+            // 如果 sortFocusView 存在且没有获取焦点，则请求焦点
+            if (this.sortFocusView != null && this.sortFocusView.isFocusable() && !this.sortFocusView.isFocused()) {
+                this.sortFocusView.requestFocus();
+            }
             // 如果当前不是第一个界面，则将列表设置到第一项
             else if (this.sortFocused != 0) {
                 this.mGridView.setSelection(0);
