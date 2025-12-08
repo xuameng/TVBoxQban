@@ -576,16 +576,20 @@ public class HomeActivity extends BaseActivity {
             }
             // 如果当前不是第一个界面，则将列表设置到第一项
             else if (this.sortFocused != 0) {
-                this.mGridView.requestFocus(); // 强制设置焦点
-                this.mGridView.setSelection(0);
+                     if (this.mGridView != null) {
+                         this.mGridView.requestFocus();
+                         this.mGridView.setSelection(0);
+                     }
             } else {
                 exit();
             }
         } else if (baseLazyFragment instanceof UserFragment && UserFragment.tvHotList1.canScrollVertically(-1)) {
             // 如果 UserFragment 列表可以向上滚动，则滚动到顶部
             UserFragment.tvHotList1.scrollToPosition(0);
-            this.mGridView.requestFocus(); // 强制设置焦点
-            this.mGridView.setSelection(0);
+            if (this.mGridView != null) {
+                this.mGridView.requestFocus();
+                this.mGridView.setSelection(0);
+            }
         } else {
             exit();
         }
