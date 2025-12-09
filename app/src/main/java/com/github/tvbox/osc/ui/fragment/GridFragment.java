@@ -365,6 +365,7 @@ public class GridFragment extends BaseLazyFragment {
         }
     };
 
+
 public void setFilterDialogData() {
     Context context = getContext();
     LayoutInflater inflater = LayoutInflater.from(context);
@@ -385,7 +386,9 @@ public void setFilterDialogData() {
         final ArrayList<String> values = new ArrayList<>(filter.values.keySet());
         final ArrayList<String> keys = new ArrayList<>(filter.values.values());
         
-        GridFilterKVAdapter adapter = new GridFilterKVAdapter();
+        // 修正：传入颜色参数
+        GridFilterKVAdapter adapter = new GridFilterKVAdapter(defaultColor, selectedColor);
+        
         // 设置当前选中项
         String currentSelected = sortData.filterSelect.get(key);
         int selectedPosition = -1;
@@ -398,28 +401,28 @@ public void setFilterDialogData() {
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                GridFilterKVAdapter kvAdapter = (GridFilterKVAdapter) adapter;
-                String currentSelection = sortData.filterSelect.get(key);
-                String newSelection = keys.get(position);
-                
-                if (currentSelection == null || !currentSelection.equals(newSelection)) {
-                    // 更新选中状态
-                    sortData.filterSelect.put(key, newSelection);
-                    kvAdapter.setSelectedPosition(position);
-                    kvAdapter.notifyDataSetChanged();
-                } else {
-                    // 取消选中
-                    sortData.filterSelect.remove(key);
-                    kvAdapter.setSelectedPosition(-1);
-                    kvAdapter.notifyDataSetChanged();
-                }
-                forceRefresh();
+            GridFilterKVAdapter kvAdapter = (GridFilterKVAdapter) adapter;
+            String currentSelection = sortData.filterSelect.get(key);
+            String newSelection = keys.get(position);
+            
+            if (currentSelection == null || !currentSelection.equals(newSelection)) {
+                // 更新选中状态
+                sortData.filterSelect.put(key, newSelection);
+                kvAdapter.setSelectedPosition(position);
+                kvAdapter.notifyDataSetChanged();
+            } else {
+                // 取消选中
+                sortData.filterSelect.remove(key);
+                kvAdapter.setSelectedPosition(-1);
+                kvAdapter.notifyDataSetChanged();
             }
-        });
-        adapter.setNewData(values);
-        gridFilterDialog.filterRoot.addView(line);
-    }
+            forceRefresh();
+        }
+    });
+    adapter.setNewData(values);
+    gridFilterDialog.filterRoot.addView(line);
 }
+
 
     public void forceRefresh() {
         page = 1;
