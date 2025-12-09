@@ -111,7 +111,7 @@ public class GridFragment extends BaseLazyFragment {
     public boolean isFolederMode(){ return (getUITag() =='1'); }
     // 获取当前页面UI的显示模式 ‘0’ 正常模式 '1' 文件夹模式 '2' 显示缩略图的文件夹模式
     public char getUITag(){
-		return (sortData == null || sortData.flag == null || sortData.flag.length() ==0 || style!=null) ?  '0' : sortData.flag.charAt(0);
+        return (sortData == null || sortData.flag == null || sortData.flag.length() ==0 || style!=null) ?  '0' : sortData.flag.charAt(0);
     }
     // 是否允许聚合搜索 sortData.flag的第二个字符为‘1’时允许聚搜
     public boolean enableFastSearch(){  return sortData.flag == null || sortData.flag.length() < 2 || (sortData.flag.charAt(1) == '1'); }
@@ -165,8 +165,8 @@ public class GridFragment extends BaseLazyFragment {
             mGridView.setVisibility(View.VISIBLE);
         }
         mGridView.setHasFixedSize(true);
-		style=ImgUtil.initStyle();
-         gridAdapter = new GridAdapter(isFolederMode(), style);
+        style=ImgUtil.initStyle();
+        gridAdapter = new GridAdapter(isFolederMode(), style);
         this.page =1;
         this.maxPage =1;
         this.isLoad = false;
@@ -246,7 +246,7 @@ public class GridFragment extends BaseLazyFragment {
                                 jumpActivity(SearchActivity.class, bundle);
                             }
                         }else {
-							bundle.putString("picture", video.pic);   //xuameng某些网站图片部显示
+                            bundle.putString("picture", video.pic);   //xuameng某些网站图片部显示
                             jumpActivity(DetailActivity.class, bundle);
                         }
                     }
@@ -371,6 +371,7 @@ public class GridFragment extends BaseLazyFragment {
         assert context != null;
         final int defaultColor = ContextCompat.getColor(context, R.color.color_FFFFFF);
         final int selectedColor = ContextCompat.getColor(context, R.color.color_02F8E1);
+        // 遍历过滤条件数据
         for (MovieSort.SortFilter filter : sortData.filters) {
             View line = inflater.inflate(R.layout.item_grid_filter, gridFilterDialog.filterRoot, false);
             TextView filterNameTv = line.findViewById(R.id.filterName);
@@ -394,7 +395,7 @@ public class GridFragment extends BaseLazyFragment {
                         // 更新选中状态
                         sortData.filterSelect.put(key, newSelection);
                         updateViewStyle(view, selectedColor, true);
-                        if (previousSelectedView != null && previousSelectedView != view) {
+                        if (previousSelectedView != null && previousSelectedView != view) {   //xuameng  previousSelectedView != view 多个item被选中BUG
                             updateViewStyle(previousSelectedView, defaultColor, false);
                         }
                         previousSelectedView = view;
