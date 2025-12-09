@@ -385,7 +385,6 @@ public void setFilterDialogData() {
         final ArrayList<String> values = new ArrayList<>(filter.values.keySet());
         final ArrayList<String> keys = new ArrayList<>(filter.values.values());
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            View previousSelectedView = null;
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 String currentSelection = sortData.filterSelect.get(key);
@@ -393,16 +392,20 @@ public void setFilterDialogData() {
                 if (currentSelection == null || !currentSelection.equals(newSelection)) {
                     sortData.filterSelect.put(key, newSelection);
                     updateViewStyle(view, selectedColor, true);
-                    if (previousSelectedView != null) {
-                        updateViewStyle(previousSelectedView, defaultColor, false);
+                    // 重置所有Item样式
+                    for (int i = 0; i < adapter.getData().size(); i++) {
+                        View itemView = adapter.getViewByPosition(i, R.id.filterValue);
+                        if (i != position) {
+                            updateViewStyle(itemView, defaultColor, false);
+                        }
                     }
-                    previousSelectedView = view;
                 } else {
                     sortData.filterSelect.remove(key);
-                    if (previousSelectedView != null) {
-                        updateViewStyle(previousSelectedView, defaultColor, false);
+                    // 重置所有Item样式
+                    for (int i = 0; i < adapter.getData().size(); i++) {
+                        View itemView = adapter.getViewByPosition(i, R.id.filterValue);
+                        updateViewStyle(itemView, defaultColor, false);
                     }
-                    previousSelectedView = null;
                 }
                 forceRefresh();
             }
@@ -416,7 +419,6 @@ public void setFilterDialogData() {
         gridFilterDialog.filterRoot.addView(line);
     }
 }
-
 
 
     public void forceRefresh() {
