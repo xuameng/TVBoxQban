@@ -205,6 +205,7 @@ public class HomeActivity extends BaseActivity {
                     HomeActivity.this.currentView = view;
                     HomeActivity.this.isDownOrUp = false;
                     HomeActivity.this.sortChange = true;
+                    resetAllItemsToDefault();  //xuameng
                     view.animate().scaleX(1.1f).scaleY(1.1f).setInterpolator(new BounceInterpolator()).setDuration(250).start();
                     TextView textView = view.findViewById(R.id.tvTitle);
                     textView.getPaint().setFakeBoldText(true);
@@ -221,7 +222,6 @@ public class HomeActivity extends BaseActivity {
                     }
                     HomeActivity.this.sortFocusView = view;
                     HomeActivity.this.sortFocused = position;
-                    resetAllItemsToDefault();  //xuameng
                     mHandler.removeCallbacks(mDataRunnable);
                     mHandler.postDelayed(mDataRunnable, 250);   //xuameng 延时防止按主页不显示上面的时间栏
                 }
@@ -965,5 +965,7 @@ public class HomeActivity extends BaseActivity {
                 }
             }
         }
+        sortFocused = -1;
+        sortFocusView = null;
     }
 }
