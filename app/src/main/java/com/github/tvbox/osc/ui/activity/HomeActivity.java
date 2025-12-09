@@ -176,24 +176,9 @@ public class HomeActivity extends BaseActivity {
                 });
             }
         });
-        this.mGridView.setOnItemListener(new TvRecyclerView.OnItemListener() {
+        this.mGridView.setOnItemListener(new TvRecyclerView.OnItemListener() {       //xuameng移除  mHandler.postDelayed
             public void onItemPreSelected(TvRecyclerView tvRecyclerView, View view, int position) {
-				/*
-                if (view != null && !HomeActivity.this.isDownOrUp) {
-                    TextView textView = view.findViewById(R.id.tvTitle);
-                    textView.getPaint().setFakeBoldText(false);
-                    if (sortFocused == position) {
-                        view.animate().scaleX(1.1f).scaleY(1.1f).setInterpolator(new BounceInterpolator()).setDuration(250).start();
-                        textView.setTextColor(HomeActivity.this.getResources().getColor(R.color.color_FFFFFF));
-                    } else {
-                        view.animate().scaleX(1.0f).scaleY(1.0f).setDuration(250).start();
-                        textView.setTextColor(HomeActivity.this.getResources().getColor(R.color.color_BBFFFFFF));
-                        view.findViewById(R.id.tvFilter).setVisibility(View.GONE);
-                        view.findViewById(R.id.tvFilterColor).setVisibility(View.GONE);
-                    }
-                    textView.invalidate();
-                }
-				*/
+// 无需处理，由适配器管理
             }
 
             public void onItemSelected(TvRecyclerView tvRecyclerView, View view, int position) {
@@ -201,11 +186,7 @@ public class HomeActivity extends BaseActivity {
                     HomeActivity.this.currentView = view;
                     HomeActivity.this.isDownOrUp = false;
                     HomeActivity.this.sortChange = true;
-                    view.animate().scaleX(1.1f).scaleY(1.1f).setInterpolator(new BounceInterpolator()).setDuration(250).start();
-                    TextView textView = view.findViewById(R.id.tvTitle);
-                    textView.getPaint().setFakeBoldText(true);
-                    textView.setTextColor(HomeActivity.this.getResources().getColor(R.color.color_FFFFFF));
-                    textView.invalidate();
+sortAdapter.setSelectedPosition(position);
                     PositionXu = position;
                     if (position == -1) {
                         position = 0;
@@ -217,7 +198,6 @@ public class HomeActivity extends BaseActivity {
                     }
                     HomeActivity.this.sortFocusView = view;
                     HomeActivity.this.sortFocused = position;
-                    resetAllItemsToDefault();  //xuameng   重置未选中菜单项为默认值
                     mHandler.removeCallbacks(mDataRunnable);
                     mHandler.postDelayed(mDataRunnable, 250);   //xuameng 延时防止按主页不显示上面的时间栏
                 }
@@ -252,17 +232,6 @@ public class HomeActivity extends BaseActivity {
                     return false;
                 }
                 return !((GridFragment) baseLazyFragment).isLoad();      //XUAMENG上键刷新完
-            }
-        });
-
-        // 添加焦点变化监听
-        this.mGridView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    // 重置所有项到默认状态
-                    resetAllItemsToDefault();   //xuameng   重置未选中菜单项为默认值
-                }
             }
         });
 
@@ -943,23 +912,6 @@ public class HomeActivity extends BaseActivity {
             Log.e(TAG, "跳转设置失败: " + e.getMessage());
             // 备用方案：跳转到应用列表
             startActivity(new Intent(Settings.ACTION_APPLICATION_SETTINGS));
-        }
-    }
-
-    private void resetAllItemsToDefault() {   //xuameng   重置未选中菜单项为默认值 手机上的BUG
-        for (int i = 0; i < sortAdapter.getItemCount(); i++) {
-            if (i != PositionXu ) {
-                View itemView = mGridView.getLayoutManager().findViewByPosition(i);
-                if (itemView != null) {
-                    TextView textView = itemView.findViewById(R.id.tvTitle);
-                    textView.getPaint().setFakeBoldText(false);
-                    textView.setTextColor(getResources().getColor(R.color.color_BBFFFFFF));
-                    textView.invalidate();
-                    itemView.animate().scaleX(1.0f).scaleY(1.0f).setDuration(250).start();
-                    itemView.findViewById(R.id.tvFilter).setVisibility(View.GONE);
-                    itemView.findViewById(R.id.tvFilterColor).setVisibility(View.GONE);
-                }
-            }
         }
     }
 }
