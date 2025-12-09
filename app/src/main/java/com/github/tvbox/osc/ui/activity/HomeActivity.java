@@ -109,7 +109,7 @@ public class HomeActivity extends BaseActivity {
     private boolean refreshEmpty = false;	//xuameng打断加载判断
     private int currentSelected = 0;
     private int sortFocused = 0;
-    private int PositionXu = 0;  //xuameng 分类筛选BUG修复变色问题
+	private int PositionXu = 0;  //xuameng 分类筛选BUG修复变色问题
     public View sortFocusView = null;
     private final Handler mHandler = new Handler();
     private long mExitTime = 0;
@@ -176,52 +176,40 @@ public class HomeActivity extends BaseActivity {
                 });
             }
         });
-this.mGridView.setOnItemListener(new TvRecyclerView.OnItemListener() {
-    public void onItemPreSelected(TvRecyclerView tvRecyclerView, View view, int position) {
-        if (view != null && !HomeActivity.this.isDownOrUp) {
-            // 统一重置所有非焦点项的样式
-            TextView textView = view.findViewById(R.id.tvTitle);
-            textView.getPaint().setFakeBoldText(false);
-            view.animate().scaleX(1.0f).scaleY(1.0f).setDuration(250).start();
-            textView.setTextColor(HomeActivity.this.getResources().getColor(R.color.color_BBFFFFFF));
-            view.findViewById(R.id.tvFilter).setVisibility(View.GONE);
-            view.findViewById(R.id.tvFilterColor).setVisibility(View.GONE);
-            textView.invalidate();
-        }
-    }
+        this.mGridView.setOnItemListener(new TvRecyclerView.OnItemListener() {
+            public void onItemPreSelected(TvRecyclerView tvRecyclerView, View view, int position) {
+                if (view != null && !HomeActivity.this.isDownOrUp) {
+                    TextView textView = view.findViewById(R.id.tvTitle);
+                    textView.getPaint().setFakeBoldText(false);
+                    view.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300).start();
+                    textView.setTextColor(HomeActivity.this.getResources().getColor(R.color.color_BBFFFFFF));
+                    view.findViewById(R.id.tvFilter).setVisibility(View.GONE);
+                    view.findViewById(R.id.tvFilterColor).setVisibility(View.GONE);
+                    textView.invalidate();
+                }
+            }
 
-    public void onItemSelected(TvRecyclerView tvRecyclerView, View view, int position) {
-        if (view != null) {
-            HomeActivity.this.currentView = view;
-            HomeActivity.this.isDownOrUp = false;
-            HomeActivity.this.sortChange = true;
-            
-            // 当前选中项设置高亮样式
-            view.animate().scaleX(1.1f).scaleY(1.1f).setInterpolator(new BounceInterpolator()).setDuration(250).start();
-            TextView textView = view.findViewById(R.id.tvTitle);
-            textView.getPaint().setFakeBoldText(true);
-            textView.setTextColor(HomeActivity.this.getResources().getColor(R.color.color_FFFFFF));
-            textView.invalidate();
-            
-            PositionXu = position;
-            if (position == -1) {
-                position = 0;
-                HomeActivity.this.mGridView.setSelection(0);
+            public void onItemSelected(TvRecyclerView tvRecyclerView, View view, int position) {
+                if (view != null) {
+                    HomeActivity.this.currentView = view;
+                    HomeActivity.this.isDownOrUp = false;
+                    HomeActivity.this.sortChange = true;
+                    view.animate().scaleX(1.1f).scaleY(1.1f).setInterpolator(new BounceInterpolator()).setDuration(300).start();
+                    TextView textView = view.findViewById(R.id.tvTitle);
+                    textView.getPaint().setFakeBoldText(true);
+                    textView.setTextColor(HomeActivity.this.getResources().getColor(R.color.color_FFFFFF));
+                    textView.invalidate();
+					PositionXu = position;
+                    MovieSort.SortData sortData = sortAdapter.getItem(position);
+                    if (!sortData.filters.isEmpty()) {
+                        showFilterIcon(sortData.filterSelectCount());
+                    }
+                    HomeActivity.this.sortFocusView = view;
+                    HomeActivity.this.sortFocused = position;
+                    mHandler.removeCallbacks(mDataRunnable);
+                    mHandler.postDelayed(mDataRunnable, 250);   //xuameng 延时防止按主页不显示上面的时间栏
+                }
             }
-            
-            MovieSort.SortData sortData = sortAdapter.getItem(position);
-            if (null != sortData && !sortData.filters.isEmpty()) {
-                showFilterIcon(sortData.filterSelectCount());
-            }
-            
-            HomeActivity.this.sortFocusView = view;
-            HomeActivity.this.sortFocused = position;
-            sortAdapter.setSelectedPosition(position); // 同步适配器状态
-            
-            mHandler.removeCallbacks(mDataRunnable);
-            mHandler.postDelayed(mDataRunnable, 250);
-        }
-    }
 
             @Override
             public void onItemClick(TvRecyclerView parent, View itemView, int position) {
@@ -257,25 +245,25 @@ this.mGridView.setOnItemListener(new TvRecyclerView.OnItemListener() {
         tvName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FastClickCheckUtil.check(v);
+				FastClickCheckUtil.check(v);
                 if(dataInitOk && jarInitOk){
-                    String cachePath = FileUtils.getCachePath();          //xuameng点击清空缓存
-                    String cspCachePath = FileUtils.getFilePath()+"/csp/";
-                    File cspCacheDir = new File(cspCachePath);
-                    File cacheDir = new File(cachePath);
-                    if (!cacheDir.exists() && !cspCacheDir.exists()) return;
-                        new Thread(() -> {
-                            try {
-                                if(cacheDir.exists())FileUtils.cleanDirectory(cacheDir);
-                                if(cspCacheDir.exists()){
-                                    //		FileUtils.deleteFile(cspCacheDir);
-                                    FileUtils.cleanDirectory(cspCacheDir);
-                                }
-                                // ApiConfig.get().clearJarLoader();
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }).start();
+				String cachePath = FileUtils.getCachePath();          //xuameng点击清空缓存
+                String cspCachePath = FileUtils.getFilePath()+"/csp/";
+				File cspCacheDir = new File(cspCachePath);
+				File cacheDir = new File(cachePath);
+				if (!cacheDir.exists() && !cspCacheDir.exists()) return;
+				new Thread(() -> {
+					try {
+						if(cacheDir.exists())FileUtils.cleanDirectory(cacheDir);
+						if(cspCacheDir.exists()){
+					//		FileUtils.deleteFile(cspCacheDir);
+					       FileUtils.cleanDirectory(cspCacheDir);
+						}
+                       // ApiConfig.get().clearJarLoader();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}).start();
                     App.showToastShort(HomeActivity.this, "缓存已清空！");
                 }else {
                     jumpActivity(SettingActivity.class);		//xuameng加载慢跳转设置
@@ -303,17 +291,17 @@ this.mGridView.setOnItemListener(new TvRecyclerView.OnItemListener() {
             @Override
             public void onClick(View v) {
                 if(dataInitOk && jarInitOk){           //xuameng MENU键显示主页源
-                    showSiteSwitch(); 
+					showSiteSwitch(); 
                 }else{
-                    jumpActivity(SettingActivity.class);		//xuameng加载慢跳转设置 
-                }
+					jumpActivity(SettingActivity.class);		//xuameng加载慢跳转设置 
+				}
             }
         });
 
         tvDate.setOnLongClickListener(new View.OnLongClickListener() {      //xuameng长按重新加载
             @Override
             public boolean onLongClick(View v) {
-                jumpActivity(SettingActivity.class);		//xuameng加载慢跳转设置   
+				jumpActivity(SettingActivity.class);		//xuameng加载慢跳转设置   
                 return true;
             }
         });
@@ -373,14 +361,16 @@ this.mGridView.setOnItemListener(new TvRecyclerView.OnItemListener() {
                             public void run() {
                                 if (!useCacheConfig) {
                                     if (Hawk.get(HawkConfig.HOME_DEFAULT_SHOW, false)) {         //xuameng直接进入直播
-                                        jumpActivity(LivePlayActivity.class);
-                                    }
-                                if (!ApiConfig.get().JvhuiWarning.isEmpty()){
-                                    String JvhuiWarning = ApiConfig.get().JvhuiWarning;
-                                    App.showToastShort(HomeActivity.this, (JvhuiWarning));
-                                }else{
-                                    App.showToastShort(HomeActivity.this, "聚汇影视提示：jar加载成功！");									}
+										jumpActivity(LivePlayActivity.class);
+                                   }
+									if (!ApiConfig.get().JvhuiWarning.isEmpty()){
+										String JvhuiWarning = ApiConfig.get().JvhuiWarning;
+                                        App.showToastShort(HomeActivity.this, (JvhuiWarning));
+									}else{
+                                        App.showToastShort(HomeActivity.this, "聚汇影视提示：jar加载成功！");
+									}
                                 }
+
                                 initData();
                                 checkMicrophonePermission();  //xuameng音频权限
                             }
@@ -400,7 +390,7 @@ this.mGridView.setOnItemListener(new TvRecyclerView.OnItemListener() {
                     @Override
                     public void error(String msg) {
                         jarInitOk = true;
-                        dataInitOk = true;
+						dataInitOk = true;
                         mHandler.post(new Runnable() {
                             @Override
                             public void run() {
@@ -466,7 +456,7 @@ this.mGridView.setOnItemListener(new TvRecyclerView.OnItemListener() {
                                         public void run() {
                                             initData();
                                             //dialog.hide();
-                                            dialog.dismiss();   //xuameng显示BUG
+											dialog.dismiss();   //xuameng显示BUG
                                         }
                                     });
                                 }
@@ -480,7 +470,7 @@ this.mGridView.setOnItemListener(new TvRecyclerView.OnItemListener() {
                                         public void run() {
                                             initData();
                                             //dialog.hide();
-                                            dialog.dismiss();  //xuameng显示BUG
+											dialog.dismiss();  //xuameng显示BUG
                                         }
                                     });
                                 }
@@ -494,15 +484,15 @@ this.mGridView.setOnItemListener(new TvRecyclerView.OnItemListener() {
                                         public void run() {
                                             initData();
                                             //dialog.hide();
-                                            dialog.dismiss();  //xuameng显示BUG
+											dialog.dismiss();  //xuameng显示BUG
                                         }
                                     });
                                 }
                             });
                         if (!dialog.isShowing() && !refreshEmpty){   //xuameng只要打断加载就不显示错误对话框
-                            showSuccess();  //xuameng显示BUG
+							showSuccess();  //xuameng显示BUG
                             dialog.show();
-                        }
+						}
                     }
                 });
             }
@@ -548,12 +538,12 @@ this.mGridView.setOnItemListener(new TvRecyclerView.OnItemListener() {
          // 如果处于 VOD 删除模式，则退出该模式并刷新界面
         if (HawkConfig.hotVodDelete) {
             HawkConfig.hotVodDelete = false;
-            if(!Hawk.get(HawkConfig.HOME_REC_STYLE, false)){   //xuameng首页单行
-                UserFragment.homeHotVodAdapterxu.notifyDataSetChanged();
-            }else{
-                UserFragment.homeHotVodAdapter.notifyDataSetChanged();
-            }
-            return;
+			if(!Hawk.get(HawkConfig.HOME_REC_STYLE, false)){   //xuameng首页单行
+				UserFragment.homeHotVodAdapterxu.notifyDataSetChanged();
+			}else{
+				UserFragment.homeHotVodAdapter.notifyDataSetChanged();
+			}
+			return;
         } 
 		
         // 检查 fragments 状态
@@ -591,7 +581,7 @@ this.mGridView.setOnItemListener(new TvRecyclerView.OnItemListener() {
         }
     }
 
-    public void showExitXu(){
+	 public void showExitXu(){
         App.HideToast();
         LayoutInflater inflater = getLayoutInflater();
         View customToastView = inflater.inflate(R.layout.exit_toast, null);
@@ -601,7 +591,7 @@ this.mGridView.setOnItemListener(new TvRecyclerView.OnItemListener() {
         toast.setView(customToastView);
         toast.setGravity(Gravity.CENTER, 0, 0);      //xuameng 20为左右，0是上下
         toast.show();
-    }
+   }
 
     private void exit() {
         if (System.currentTimeMillis() - mExitTime < 2000) {
@@ -688,7 +678,7 @@ this.mGridView.setOnItemListener(new TvRecyclerView.OnItemListener() {
         if (event.getAction() == KeyEvent.ACTION_DOWN) {
             if (keyCode == KeyEvent.KEYCODE_MENU) {
                 if(dataInitOk && jarInitOk){           //xuameng MENU键显示主页源
-                    showSiteSwitch(); 
+					showSiteSwitch(); 
                 }else {
                     jumpActivity(SettingActivity.class);   //xuameng主页加载缓慢时跳转到设置页面
                 }
@@ -738,7 +728,7 @@ this.mGridView.setOnItemListener(new TvRecyclerView.OnItemListener() {
                                     Integer.valueOf(AutoSizeUtils.mm2px(this.mContext, 1.0f))
                             }),
                     ObjectAnimator.ofFloat(this.topLayout, "alpha", new float[]{1.0f, 0.0f})});
-            animatorSet.setDuration(250);
+            animatorSet.setDuration(200);
             animatorSet.start();
             return;
         }
@@ -755,7 +745,7 @@ this.mGridView.setOnItemListener(new TvRecyclerView.OnItemListener() {
                                     Integer.valueOf(AutoSizeUtils.mm2px(this.mContext, 50.0f))
                             }),
                     ObjectAnimator.ofFloat(this.topLayout, "alpha", new float[]{0.0f, 1.0f})});
-            animatorSet.setDuration(250);
+            animatorSet.setDuration(200);
             animatorSet.start();
             return;
         }
@@ -815,11 +805,10 @@ this.mGridView.setOnItemListener(new TvRecyclerView.OnItemListener() {
             }
         }, sites, select);
         mSiteSwitchDialog.show();
-        }else {
+    }else {
             App.showToastLong(HomeActivity.this, "主页暂无数据！联系许大师吧！");
-        }
+		}
     }
-
     private void refreshEmpty(){   //xuameng打断加载优化
         refreshEmpty = true;	//xuameng打断加载判断
         OkGo.getInstance().cancelTag("loadjar");    //xuameng打断加载
