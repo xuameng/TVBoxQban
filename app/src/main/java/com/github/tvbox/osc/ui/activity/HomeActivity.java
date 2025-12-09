@@ -177,14 +177,14 @@ public class HomeActivity extends BaseActivity {
             }
         });
         this.mGridView.setOnItemListener(new TvRecyclerView.OnItemListener() {
-            public void onItemPreSelected(TvRecyclerView tvRecyclerView, View view, int position) {
+            public void onItemPreSelected(TvRecyclerView tvRecyclerView, View view, int position) {   //xuameng处理主页菜单文字、图标焦点变化时状态不正确的问题
                 if (view != null && !HomeActivity.this.isDownOrUp) {
                     TextView textView = view.findViewById(R.id.tvTitle);
-                    textView.getPaint().setFakeBoldText(false);
+                    textView.getPaint().setFakeBoldText(false);  //xuameng处理主页菜单文字粗细的问题
                     view.animate().scaleX(1.0f).scaleY(1.0f).setDuration(250).start();
-                    textView.setTextColor(HomeActivity.this.getResources().getColor(R.color.color_BBFFFFFF));
-                    view.findViewById(R.id.tvFilter).setVisibility(View.GONE);
-                    view.findViewById(R.id.tvFilterColor).setVisibility(View.GONE);
+                    textView.setTextColor(HomeActivity.this.getResources().getColor(R.color.color_BBFFFFFF));  //xuameng处理主页菜单文字颜色的问题
+                    view.findViewById(R.id.tvFilter).setVisibility(View.GONE);    //xuameng图标焦点变化时状态不正确的问题
+                    view.findViewById(R.id.tvFilterColor).setVisibility(View.GONE);  //xuameng图标焦点变化时状态不正确的问题
                     textView.invalidate();
                 }
             }
