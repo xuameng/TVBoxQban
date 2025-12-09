@@ -176,33 +176,53 @@ public class HomeActivity extends BaseActivity {
                 });
             }
         });
-        this.mGridView.setOnItemListener(new TvRecyclerView.OnItemListener() {       //xuameng移除  mHandler.postDelayed
-            public void onItemPreSelected(TvRecyclerView tvRecyclerView, View view, int position) {
-               // xuameng无需处理，由适配器管理  由 SortAdapter统一处理 焦点变化
-            }
+this.mGridView.setOnItemListener(new TvRecyclerView.OnItemListener() {
+    public void onItemPreSelected(TvRecyclerView tvRecyclerView, View view, int position) {
+        if (view != null && !HomeActivity.this.isDownOrUp) {
+            // 统一重置所有非焦点项的样式
+            TextView textView = view.findViewById(R.id.tvTitle);
+            textView.getPaint().setFakeBoldText(false);
+            view.animate().scaleX(1.0f).scaleY(1.0f).setDuration(250).start();
+            textView.setTextColor(HomeActivity.this.getResources().getColor(R.color.color_BBFFFFFF));
+            view.findViewById(R.id.tvFilter).setVisibility(View.GONE);
+            view.findViewById(R.id.tvFilterColor).setVisibility(View.GONE);
+            textView.invalidate();
+        }
+    }
 
-            public void onItemSelected(TvRecyclerView tvRecyclerView, View view, int position) {
-                if (view != null) {
-                    HomeActivity.this.currentView = view;
-                    HomeActivity.this.isDownOrUp = false;
-                    HomeActivity.this.sortChange = true;
-					sortAdapter.setSelectedPosition(position);     // xuameng由适配器管理  由 SortAdapter统一处理 焦点变化
-                    PositionXu = position;
-                    if (position == -1) {
-                        position = 0;
-                        HomeActivity.this.mGridView.setSelection(0);
-                    }
-                    MovieSort.SortData sortData = sortAdapter.getItem(position);
-                    if (null != sortData && !sortData.filters.isEmpty()) {
-                        showFilterIcon(sortData.filterSelectCount());
-                    }
-                    HomeActivity.this.sortFocusView = view;
-                    HomeActivity.this.sortFocused = position;
-
-                    mHandler.removeCallbacks(mDataRunnable);
-                    mHandler.postDelayed(mDataRunnable, 250);   //xuameng 延时防止按主页不显示上面的时间栏
-                }
+    public void onItemSelected(TvRecyclerView tvRecyclerView, View view, int position) {
+        if (view != null) {
+            HomeActivity.this.currentView = view;
+            HomeActivity.this.isDownOrUp = false;
+            HomeActivity.this.sortChange = true;
+            
+            // 当前选中项设置高亮样式
+            view.animate().scaleX(1.1f).scaleY(1.1f).setInterpolator(new BounceInterpolator()).setDuration(250).start();
+            TextView textView = view.findViewById(R.id.tvTitle);
+            textView.getPaint().setFakeBoldText(true);
+            textView.setTextColor(HomeActivity.this.getResources().getColor(R.color.color_FFFFFF));
+            textView.invalidate();
+            
+            PositionXu = position;
+            if (position == -1) {
+                position = 0;
+                HomeActivity.this.mGridView.setSelection(0);
             }
+            
+            MovieSort.SortData sortData = sortAdapter.getItem(position);
+            if (null != sortData && !sortData.filters.isEmpty()) {
+                showFilterIcon(sortData.filterSelectCount());
+            }
+            
+            HomeActivity.this.sortFocusView = view;
+            HomeActivity.this.sortFocused = position;
+            sortAdapter.setSelectedPosition(position); // 同步适配器状态
+            
+            mHandler.removeCallbacks(mDataRunnable);
+            mHandler.postDelayed(mDataRunnable, 250);
+        }
+    }
+});
 
             @Override
             public void onItemClick(TvRecyclerView parent, View itemView, int position) {
@@ -235,7 +255,6 @@ public class HomeActivity extends BaseActivity {
                 return !((GridFragment) baseLazyFragment).isLoad();      //XUAMENG上键刷新完
             }
         });
-
         tvName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -553,8 +572,10 @@ public class HomeActivity extends BaseActivity {
             }
             // 如果 sortFocusView 存在且没有获取焦点，则请求焦点
             if (this.sortFocusView != null && !this.sortFocusView.isFocused()) {
-                //this.sortFocusView.requestFocus(); //xuameng这段代码手机使用时菜单失去焦点会闪退   
-                this.mGridView.setSelection(PositionXu);   //xuameng处理手机滑动主页菜单失去焦点时按返回键闪退
+                //this.sortFocusView.requestFocus(); //xuameng这段代码手机使用时菜单失去焦点会闪退
+                if (PositionXu !=0){     //xuameng处理手机滑动主页菜单失去焦点时按返回键闪退
+                    this.mGridView.setSelection(PositionXu);
+                }
             }
             // 如果当前不是第一个界面，则将列表设置到第一项
             else if (this.sortFocused != 0) {
