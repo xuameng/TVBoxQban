@@ -26,11 +26,22 @@ public class SortAdapter extends BaseQuickAdapter<MovieSort.SortData, BaseViewHo
         
         // 根据状态更新样式和动画
         if (currentPosition == selectedPosition) {
-            // 选中项样式
+            // 选中项样式 - 添加动画效果
+            helper.itemView.animate()
+                    .scaleX(1.1f)
+                    .scaleY(1.1f)
+                    .setInterpolator(new BounceInterpolator())
+                    .setDuration(250)
+                    .start();
             textView.getPaint().setFakeBoldText(true);
             textView.setTextColor(mContext.getResources().getColor(R.color.color_FFFFFF));
         } else {
-            // 非选中项样式
+            // 非选中项样式 - 添加动画效果
+            helper.itemView.animate()
+                    .scaleX(1.0f)
+                    .scaleY(1.0f)
+                    .setDuration(250)
+                    .start();
             textView.getPaint().setFakeBoldText(false);
             textView.setTextColor(mContext.getResources().getColor(R.color.color_BBFFFFFF));
         }
