@@ -365,49 +365,60 @@ public class GridFragment extends BaseLazyFragment {
         }
     };
 
-
-public void setFilterDialogData() {
-    Context context = getContext();
-    LayoutInflater inflater = LayoutInflater.from(context);
-    assert context != null;
-    final int defaultColor = ContextCompat.getColor(context, R.color.color_FFFFFF);
-    final int selectedColor = ContextCompat.getColor(context, R.color.color_02F8E1);
-    for (MovieSort.SortFilter filter : sortData.filters) {
-        View line = inflater.inflate(R.layout.item_grid_filter, gridFilterDialog.filterRoot, false);
-        TextView filterNameTv = line.findViewById(R.id.filterName);
-        filterNameTv.setText(filter.name);
-        TvRecyclerView gridView = line.findViewById(R.id.mFilterKv);
-        gridView.setHasFixedSize(true);
-        gridView.setLayoutManager(new V7LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
-        GridFilterKVAdapter adapter = new GridFilterKVAdapter();
-        gridView.setAdapter(adapter);
-        final String key = filter.key;
-        final ArrayList<String> values = new ArrayList<>(filter.values.keySet());
-        final ArrayList<String> keys = new ArrayList<>(filter.values.values());
-        adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            private View previousSelectedView = null;
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                String newSelection = keys.get(position);
-                if (previousSelectedView != null) {
-                    updateViewStyle(previousSelectedView, defaultColor, false);
+    public void setFilterDialogData() {
+        Context context = getContext();
+        LayoutInflater inflater = LayoutInflater.from(context);
+        assert context != null;
+        final int defaultColor = ContextCompat.getColor(context, R.color.color_FFFFFF);
+        final int selectedColor = ContextCompat.getColor(context, R.color.color_02F8E1);
+        // 遍历过滤条件数据
+        for (MovieSort.SortFilter filter : sortData.filters) {
+            View line = inflater.inflate(R.layout.item_grid_filter, gridFilterDialog.filterRoot, false);
+            TextView filterNameTv = line.findViewById(R.id.filterName);
+            filterNameTv.setText(filter.name);
+            TvRecyclerView gridView = line.findViewById(R.id.mFilterKv);
+            gridView.setHasFixedSize(true);
+            gridView.setLayoutManager(new V7LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
+            GridFilterKVAdapter adapter = new GridFilterKVAdapter();
+            gridView.setAdapter(adapter);
+            final String key = filter.key;
+            final ArrayList<String> values = new ArrayList<>(filter.values.keySet());
+            final ArrayList<String> keys = new ArrayList<>(filter.values.values());
+            adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+                // 用于记录上一次选中的 view
+                View previousSelectedView = null;
+                @Override
+                public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                    String currentSelection = sortData.filterSelect.get(key);
+                    String newSelection = keys.get(position);
+                    if (currentSelection == null || !currentSelection.equals(newSelection)) {
+                        // 更新选中状态
+                        sortData.filterSelect.put(key, newSelection);
+                        updateViewStyle(view, selectedColor, true);
+                        if (previousSelectedView != null) {
+                            updateViewStyle(previousSelectedView, defaultColor, false);
+                        }
+                        previousSelectedView = view;
+                    } else {
+                        // 取消选中
+                        sortData.filterSelect.remove(key);
+                        if (previousSelectedView != null) {
+                            updateViewStyle(previousSelectedView, defaultColor, false);
+                        }
+                        previousSelectedView = null;
+                    }
+                    forceRefresh();
                 }
-                updateViewStyle(view, selectedColor, true);
-                previousSelectedView = view;
-                sortData.filterSelect.put(key, newSelection);
-                forceRefresh();
-            }
-            private void updateViewStyle(View view, int color, boolean isBold) {
-                TextView valueTv = view.findViewById(R.id.filterValue);
-                valueTv.getPaint().setFakeBoldText(isBold);
-                valueTv.setTextColor(color);
-            }
-        });
-        adapter.setNewData(values);
-        gridFilterDialog.filterRoot.addView(line);
+                private void updateViewStyle(View view, int color, boolean isBold) {
+                    TextView valueTv = view.findViewById(R.id.filterValue);
+                    valueTv.getPaint().setFakeBoldText(isBold);
+                    valueTv.setTextColor(color);
+                }
+            });
+            adapter.setNewData(values);
+            gridFilterDialog.filterRoot.addView(line);
+        }
     }
-}
-
 
     public void forceRefresh() {
         page = 1;
