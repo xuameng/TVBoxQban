@@ -111,7 +111,7 @@ public class GridFragment extends BaseLazyFragment {
     public boolean isFolederMode(){ return (getUITag() =='1'); }
     // 获取当前页面UI的显示模式 ‘0’ 正常模式 '1' 文件夹模式 '2' 显示缩略图的文件夹模式
     public char getUITag(){
-        return (sortData == null || sortData.flag == null || sortData.flag.length() ==0 || style!=null) ?  '0' : sortData.flag.charAt(0);
+		return (sortData == null || sortData.flag == null || sortData.flag.length() ==0 || style!=null) ?  '0' : sortData.flag.charAt(0);
     }
     // 是否允许聚合搜索 sortData.flag的第二个字符为‘1’时允许聚搜
     public boolean enableFastSearch(){  return sortData.flag == null || sortData.flag.length() < 2 || (sortData.flag.charAt(1) == '1'); }
@@ -165,8 +165,8 @@ public class GridFragment extends BaseLazyFragment {
             mGridView.setVisibility(View.VISIBLE);
         }
         mGridView.setHasFixedSize(true);
-        style=ImgUtil.initStyle();
-        gridAdapter = new GridAdapter(isFolederMode(), style);
+		style=ImgUtil.initStyle();
+         gridAdapter = new GridAdapter(isFolederMode(), style);
         this.page =1;
         this.maxPage =1;
         this.isLoad = false;
@@ -246,7 +246,7 @@ public class GridFragment extends BaseLazyFragment {
                                 jumpActivity(SearchActivity.class, bundle);
                             }
                         }else {
-                            bundle.putString("picture", video.pic);   //xuameng某些网站图片部显示
+							bundle.putString("picture", video.pic);   //xuameng某些网站图片部显示
                             jumpActivity(DetailActivity.class, bundle);
                         }
                     }
@@ -365,8 +365,7 @@ public class GridFragment extends BaseLazyFragment {
         }
     };
 
-
-public void setFilterDialogData() {
+ public void setFilterDialogData() {
     Context context = getContext();
     LayoutInflater inflater = LayoutInflater.from(context);
     assert context != null;
@@ -385,17 +384,22 @@ public void setFilterDialogData() {
         final ArrayList<String> values = new ArrayList<>(filter.values.keySet());
         final ArrayList<String> keys = new ArrayList<>(filter.values.values());
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            View previousSelectedView = null;
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 String newSelection = keys.get(position);
-                // 重置所有Item样式
-                for (int i = 0; i < adapter.getData().size(); i++) {
-                    View itemView = adapter.getViewByPosition(i, R.id.filterValue);
-                    updateViewStyle(itemView, defaultColor, false);
+                if (!newSelection.equals(sortData.filterSelect.get(key))) {
+                    sortData.filterSelect.put(key, newSelection);
+                    updateViewStyle(view, selectedColor, true);
+                    if (previousSelectedView != null) {
+                        updateViewStyle(previousSelectedView, defaultColor, false);
+                    }
+                    previousSelectedView = view;
+                } else {
+                    sortData.filterSelect.remove(key);
+                    updateViewStyle(view, defaultColor, false);
+                    previousSelectedView = null;
                 }
-                // 更新选中状态
-                sortData.filterSelect.put(key, newSelection);
-                updateViewStyle(view, selectedColor, true);
                 forceRefresh();
             }
             private void updateViewStyle(View view, int color, boolean isBold) {
