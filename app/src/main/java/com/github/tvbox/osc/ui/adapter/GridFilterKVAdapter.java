@@ -3,6 +3,7 @@ package com.github.tvbox.osc.ui.adapter;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.github.tvbox.osc.R;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -40,3 +41,5 @@ public class GridFilterKVAdapter extends BaseQuickAdapter<String, BaseViewHolder
         return selectedPosition;
     }
 }
+
+
