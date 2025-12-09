@@ -51,13 +51,16 @@ public class GridFilterDialog extends BaseDialog {
 
     public void setData(MovieSort.SortData sortData) {
         ArrayList<MovieSort.SortFilter> filters = sortData.filters;
+        final int defaultColor = ContextCompat.getColor(context, R.color.color_FFFFFF);
+        final int selectedColor = ContextCompat.getColor(context, R.color.color_02F8E1);
         for (MovieSort.SortFilter filter : filters) {
             View line = LayoutInflater.from(getContext()).inflate(R.layout.item_grid_filter, null);
             ((TextView) line.findViewById(R.id.filterName)).setText(filter.name);
             TvRecyclerView gridView = line.findViewById(R.id.mFilterKv);
             gridView.setHasFixedSize(true);
             gridView.setLayoutManager(new V7LinearLayoutManager(getContext(), 0, false));
-            GridFilterKVAdapter filterKVAdapter = new GridFilterKVAdapter();
+       //     GridFilterKVAdapter filterKVAdapter = new GridFilterKVAdapter();
+            GridFilterKVAdapter filterKVAdapter = new GridFilterKVAdapter(defaultColor, selectedColor);
             gridView.setAdapter(filterKVAdapter);
             String key = filter.key;
             ArrayList<String> values = new ArrayList<>(filter.values.keySet());
