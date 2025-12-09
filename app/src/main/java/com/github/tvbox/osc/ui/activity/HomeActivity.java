@@ -946,9 +946,9 @@ private void resetUnselectedItems() {
                 textView.getPaint().setFakeBoldText(false);
                 textView.setTextColor(getResources().getColor(R.color.color_BBFFFFFF));
                 textView.invalidate();
-                view.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300).start();
-                view.findViewById(R.id.tvFilter).setVisibility(View.GONE);
-                view.findViewById(R.id.tvFilterColor).setVisibility(View.GONE);
+                itemView.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300).start();
+                itemView.findViewById(R.id.tvFilter).setVisibility(View.GONE);
+                itemView.findViewById(R.id.tvFilterColor).setVisibility(View.GONE);
             }
         }
     }
