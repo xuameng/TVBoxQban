@@ -7,6 +7,8 @@ import com.github.tvbox.osc.R;
 import java.util.ArrayList;
 
 public class GridFilterKVAdapter extends BaseQuickAdapter<String, BaseViewHolder> {
+    private int selectedPosition = -1;
+    
     public GridFilterKVAdapter() {
         super(R.layout.item_grid_filter_value, new ArrayList<>());
     }
@@ -14,5 +16,14 @@ public class GridFilterKVAdapter extends BaseQuickAdapter<String, BaseViewHolder
     @Override
     protected void convert(BaseViewHolder helper, String item) {
         helper.setText(R.id.filterValue, item);
+    }
+    
+    public void setSelectedPosition(int position) {       //xuameng新增方法
+        this.selectedPosition = position;
+        notifyDataSetChanged();
+    }
+    
+    public int getSelectedPosition() {   //xuameng新增方法
+        return selectedPosition;
     }
 }
