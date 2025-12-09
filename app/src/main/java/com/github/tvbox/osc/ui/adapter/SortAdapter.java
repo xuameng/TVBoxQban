@@ -1,3 +1,4 @@
+
 package com.github.tvbox.osc.ui.adapter;
 
 import android.view.View;
@@ -24,6 +25,16 @@ public class SortAdapter extends BaseQuickAdapter<MovieSort.SortData, BaseViewHo
         TextView textView = helper.getView(R.id.tvTitle);
         int currentPosition = helper.getAdapterPosition();
         
+        // 设置焦点变化监听
+        helper.itemView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    setSelectedPosition(currentPosition);
+                }
+            }
+        });
+
         // 根据状态更新样式
         if (currentPosition == selectedPosition) {
             // 选中项样式
