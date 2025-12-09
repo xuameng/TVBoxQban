@@ -371,7 +371,6 @@ public class GridFragment extends BaseLazyFragment {
         assert context != null;
         final int defaultColor = ContextCompat.getColor(context, R.color.color_FFFFFF);
         final int selectedColor = ContextCompat.getColor(context, R.color.color_02F8E1);
-        // 遍历过滤条件数据
         for (MovieSort.SortFilter filter : sortData.filters) {
             View line = inflater.inflate(R.layout.item_grid_filter, gridFilterDialog.filterRoot, false);
             TextView filterNameTv = line.findViewById(R.id.filterName);
@@ -395,7 +394,7 @@ public class GridFragment extends BaseLazyFragment {
                         // 更新选中状态
                         sortData.filterSelect.put(key, newSelection);
                         updateViewStyle(view, selectedColor, true);
-                        if (previousSelectedView != null) {
+                        if (previousSelectedView != null && previousSelectedView != view) {
                             updateViewStyle(previousSelectedView, defaultColor, false);
                         }
                         previousSelectedView = view;
