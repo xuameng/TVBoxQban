@@ -587,10 +587,8 @@ public class HomeActivity extends BaseActivity {
             }
             // 如果 sortFocusView 存在且没有获取焦点，则请求焦点
             if (this.sortFocusView != null && !this.sortFocusView.isFocused()) {
-                //this.sortFocusView.requestFocus(); //xuameng这段代码手机使用时菜单失去焦点会闪退
-                if (PositionXu !=0){     //xuameng处理手机滑动主页菜单失去焦点时按返回键闪退
-                    this.mGridView.setSelection(PositionXu);
-                }
+                //this.sortFocusView.requestFocus(); //xuameng这段代码手机使用时菜单失去焦点会闪退   
+                this.mGridView.setSelection(PositionXu);   //xuameng处理手机滑动主页菜单失去焦点时按返回键闪退
             }
             // 如果当前不是第一个界面，则将列表设置到第一项
             else if (this.sortFocused != 0) {
