@@ -222,7 +222,6 @@ this.mGridView.setOnItemListener(new TvRecyclerView.OnItemListener() {
             mHandler.postDelayed(mDataRunnable, 250);
         }
     }
-});
 
             @Override
             public void onItemClick(TvRecyclerView parent, View itemView, int position) {
