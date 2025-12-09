@@ -936,4 +936,21 @@ public class HomeActivity extends BaseActivity {
             startActivity(new Intent(Settings.ACTION_APPLICATION_SETTINGS));
         }
     }
+
+private void resetUnselectedItems() {
+    for (int i = 0; i < sortAdapter.getItemCount(); i++) {
+        if (i != sortFocused) {
+            View itemView = mGridView.getLayoutManager().findViewByPosition(i);
+            if (itemView != null) {
+                TextView textView = itemView.findViewById(R.id.tvTitle);
+                textView.getPaint().setFakeBoldText(false);
+                textView.setTextColor(getResources().getColor(R.color.color_BBFFFFFF));
+                textView.invalidate();
+                view.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300).start();
+                view.findViewById(R.id.tvFilter).setVisibility(View.GONE);
+                view.findViewById(R.id.tvFilterColor).setVisibility(View.GONE);
+            }
+        }
+    }
+}
 }
