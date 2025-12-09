@@ -366,6 +366,7 @@ public class GridFragment extends BaseLazyFragment {
     };
 
 
+
 public void setFilterDialogData() {
     Context context = getContext();
     LayoutInflater inflater = LayoutInflater.from(context);
@@ -401,27 +402,29 @@ public void setFilterDialogData() {
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-            GridFilterKVAdapter kvAdapter = (GridFilterKVAdapter) adapter;
-            String currentSelection = sortData.filterSelect.get(key);
-            String newSelection = keys.get(position);
-            
-            if (currentSelection == null || !currentSelection.equals(newSelection)) {
-                // 更新选中状态
-                sortData.filterSelect.put(key, newSelection);
-                kvAdapter.setSelectedPosition(position);
-                kvAdapter.notifyDataSetChanged();
-            } else {
-                // 取消选中
-                sortData.filterSelect.remove(key);
-                kvAdapter.setSelectedPosition(-1);
-                kvAdapter.notifyDataSetChanged();
+                GridFilterKVAdapter kvAdapter = (GridFilterKVAdapter) adapter;
+                String currentSelection = sortData.filterSelect.get(key);
+                String newSelection = keys.get(position);
+                
+                if (currentSelection == null || !currentSelection.equals(newSelection)) {
+                    // 更新选中状态
+                    sortData.filterSelect.put(key, newSelection);
+                    kvAdapter.setSelectedPosition(position);
+                    kvAdapter.notifyDataSetChanged();
+                } else {
+                    // 取消选中
+                    sortData.filterSelect.remove(key);
+                    kvAdapter.setSelectedPosition(-1);
+                    kvAdapter.notifyDataSetChanged();
+                }
+                forceRefresh();
             }
-            forceRefresh();
-        }
-    });
-    adapter.setNewData(values);
-    gridFilterDialog.filterRoot.addView(line);
+        });
+        adapter.setNewData(values);
+        gridFilterDialog.filterRoot.addView(line);
+    }
 }
+
 
 
     public void forceRefresh() {
