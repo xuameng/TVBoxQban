@@ -178,6 +178,7 @@ public class HomeActivity extends BaseActivity {
         });
         this.mGridView.setOnItemListener(new TvRecyclerView.OnItemListener() {
             public void onItemPreSelected(TvRecyclerView tvRecyclerView, View view, int position) {
+				/*
                 if (view != null && !HomeActivity.this.isDownOrUp) {
                     TextView textView = view.findViewById(R.id.tvTitle);
                     textView.getPaint().setFakeBoldText(false);
@@ -192,6 +193,7 @@ public class HomeActivity extends BaseActivity {
                     }
                     textView.invalidate();
                 }
+				*/
             }
 
             public void onItemSelected(TvRecyclerView tvRecyclerView, View view, int position) {
