@@ -365,7 +365,8 @@ public class GridFragment extends BaseLazyFragment {
         }
     };
 
- public void setFilterDialogData() {
+
+public void setFilterDialogData() {
     Context context = getContext();
     LayoutInflater inflater = LayoutInflater.from(context);
     assert context != null;
@@ -384,22 +385,16 @@ public class GridFragment extends BaseLazyFragment {
         final ArrayList<String> values = new ArrayList<>(filter.values.keySet());
         final ArrayList<String> keys = new ArrayList<>(filter.values.values());
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            View previousSelectedView = null;
+            private View previousSelectedView = null;
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 String newSelection = keys.get(position);
-                if (!newSelection.equals(sortData.filterSelect.get(key))) {
-                    sortData.filterSelect.put(key, newSelection);
-                    updateViewStyle(view, selectedColor, true);
-                    if (previousSelectedView != null) {
-                        updateViewStyle(previousSelectedView, defaultColor, false);
-                    }
-                    previousSelectedView = view;
-                } else {
-                    sortData.filterSelect.remove(key);
-                    updateViewStyle(view, defaultColor, false);
-                    previousSelectedView = null;
+                if (previousSelectedView != null) {
+                    updateViewStyle(previousSelectedView, defaultColor, false);
                 }
+                updateViewStyle(view, selectedColor, true);
+                previousSelectedView = view;
+                sortData.filterSelect.put(key, newSelection);
                 forceRefresh();
             }
             private void updateViewStyle(View view, int color, boolean isBold) {
@@ -412,6 +407,7 @@ public class GridFragment extends BaseLazyFragment {
         gridFilterDialog.filterRoot.addView(line);
     }
 }
+
 
     public void forceRefresh() {
         page = 1;
