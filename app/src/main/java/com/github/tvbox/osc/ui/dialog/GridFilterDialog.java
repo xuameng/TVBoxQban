@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import androidx.core.content.ContextCompat;
 
 import androidx.annotation.NonNull;
 
@@ -51,6 +52,7 @@ public class GridFilterDialog extends BaseDialog {
 
     public void setData(MovieSort.SortData sortData) {
         ArrayList<MovieSort.SortFilter> filters = sortData.filters;
+        Context context = getContext(); // 获取上下文
         final int defaultColor = ContextCompat.getColor(context, R.color.color_FFFFFF);
         final int selectedColor = ContextCompat.getColor(context, R.color.color_02F8E1);
         for (MovieSort.SortFilter filter : filters) {
