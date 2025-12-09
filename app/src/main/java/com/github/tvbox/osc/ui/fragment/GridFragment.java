@@ -387,26 +387,15 @@ public void setFilterDialogData() {
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                String currentSelection = sortData.filterSelect.get(key);
                 String newSelection = keys.get(position);
-                if (currentSelection == null || !currentSelection.equals(newSelection)) {
-                    sortData.filterSelect.put(key, newSelection);
-                    updateViewStyle(view, selectedColor, true);
-                    // 重置所有Item样式
-                    for (int i = 0; i < adapter.getData().size(); i++) {
-                        View itemView = adapter.getViewByPosition(i, R.id.filterValue);
-                        if (i != position) {
-                            updateViewStyle(itemView, defaultColor, false);
-                        }
-                    }
-                } else {
-                    sortData.filterSelect.remove(key);
-                    // 重置所有Item样式
-                    for (int i = 0; i < adapter.getData().size(); i++) {
-                        View itemView = adapter.getViewByPosition(i, R.id.filterValue);
-                        updateViewStyle(itemView, defaultColor, false);
-                    }
+                // 重置所有Item样式
+                for (int i = 0; i < adapter.getData().size(); i++) {
+                    View itemView = adapter.getViewByPosition(i, R.id.filterValue);
+                    updateViewStyle(itemView, defaultColor, false);
                 }
+                // 更新选中状态
+                sortData.filterSelect.put(key, newSelection);
+                updateViewStyle(view, selectedColor, true);
                 forceRefresh();
             }
             private void updateViewStyle(View view, int color, boolean isBold) {
@@ -419,7 +408,6 @@ public void setFilterDialogData() {
         gridFilterDialog.filterRoot.addView(line);
     }
 }
-
 
     public void forceRefresh() {
         page = 1;
