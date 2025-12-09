@@ -217,10 +217,6 @@ public class HomeActivity extends BaseActivity {
                     }
                     HomeActivity.this.sortFocusView = view;
                     HomeActivity.this.sortFocused = position;
-
-        // 重置未选中项样式
-        resetUnselectedItems();
-
                     mHandler.removeCallbacks(mDataRunnable);
                     mHandler.postDelayed(mDataRunnable, 200);
                 }
@@ -257,6 +253,19 @@ public class HomeActivity extends BaseActivity {
                 return !((GridFragment) baseLazyFragment).isLoad();      //XUAMENG上键刷新完
             }
         });
+
+		
+// 添加焦点变化监听
+this.mGridView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+    @Override
+    public void onFocusChange(View v, boolean hasFocus) {
+        if (!hasFocus) {
+            // 重置所有项到默认状态
+            resetAllItemsToDefault();
+        }
+    }
+});
+
         tvName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -937,7 +946,7 @@ public class HomeActivity extends BaseActivity {
         }
     }
 
-private void resetUnselectedItems() {
+private void resetAllItemsToDefault() {
     for (int i = 0; i < sortAdapter.getItemCount(); i++) {
         if (i != sortFocused) {
             View itemView = mGridView.getLayoutManager().findViewByPosition(i);
