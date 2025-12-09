@@ -205,7 +205,7 @@ public class HomeActivity extends BaseActivity {
                     HomeActivity.this.currentView = view;
                     HomeActivity.this.isDownOrUp = false;
                     HomeActivity.this.sortChange = true;
-                    resetAllItemsToDefault();  //xuameng
+                    resetAllItemsToDefault();  //xuameng   重置未选中菜单项为默认值
                     view.animate().scaleX(1.1f).scaleY(1.1f).setInterpolator(new BounceInterpolator()).setDuration(250).start();
                     TextView textView = view.findViewById(R.id.tvTitle);
                     textView.getPaint().setFakeBoldText(true);
@@ -265,7 +265,7 @@ public class HomeActivity extends BaseActivity {
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
                     // 重置所有项到默认状态
-                    resetAllItemsToDefault();
+                    resetAllItemsToDefault();   //xuameng   重置未选中菜单项为默认值
                 }
             }
         });
@@ -950,7 +950,7 @@ public class HomeActivity extends BaseActivity {
         }
     }
 
-    private void resetAllItemsToDefault() {
+    private void resetAllItemsToDefault() {   //xuameng   重置未选中菜单项为默认值 手机上的BUG
         for (int i = 0; i < sortAdapter.getItemCount(); i++) {
             if (i != PositionXu ) {
                 View itemView = mGridView.getLayoutManager().findViewByPosition(i);
@@ -965,7 +965,5 @@ public class HomeActivity extends BaseActivity {
                 }
             }
         }
-        sortFocused = -1;
-        sortFocusView = null;
     }
 }
