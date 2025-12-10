@@ -37,6 +37,7 @@ import android.Manifest;  //xuameng音乐权限
 import androidx.core.app.ActivityCompat;  //xuameng音乐权限
 import android.content.SharedPreferences;  //xuameng音乐权限
 import android.content.Context; //xuameng音乐权限
+import android.view.ViewTreeObserver;
 
 import com.github.tvbox.osc.base.App;
 import android.widget.Toast;
@@ -643,6 +644,12 @@ if (getWindow() != null && getWindow().getDecorView() != null) {
     protected void onPause() {
         super.onPause();
         mHandler.removeCallbacksAndMessages(null);
+
+    if (focusChangeListener != null) {
+        getWindow().getDecorView().getViewTreeObserver()
+            .removeOnGlobalFocusChangeListener(focusChangeListener);
+    }
+
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
