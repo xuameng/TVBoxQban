@@ -968,7 +968,19 @@ this.mGridView.addOnScrollListener(new RecyclerView.OnScrollListener() {
                     itemView.findViewById(R.id.tvFilter).setVisibility(View.GONE);
                     itemView.findViewById(R.id.tvFilterColor).setVisibility(View.GONE);
                 }
-            }
+            }else{
+                if (itemView != null) {
+                    itemView.animate().scaleX(1.1f).scaleY(1.1f).setInterpolator(new BounceInterpolator()).setDuration(250).start();
+                    TextView textView = view.findViewById(R.id.tvTitle);
+                    textView.getPaint().setFakeBoldText(true);
+                    textView.setTextColor(HomeActivity.this.getResources().getColor(R.color.color_FFFFFF));
+                    textView.invalidate();
+                    MovieSort.SortData sortData = sortAdapter.getItem(i);
+                    if (null != sortData && !sortData.filters.isEmpty()) {
+                        showFilterIcon(sortData.filterSelectCount());
+                    }
+				}
+			}
         }
     }
 }
