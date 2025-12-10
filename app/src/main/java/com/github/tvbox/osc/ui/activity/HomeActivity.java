@@ -631,6 +631,11 @@ public class HomeActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         mHandler.post(mRunnable);
+		// 注册全局焦点变化监听
+if (getWindow() != null && getWindow().getDecorView() != null) {
+    getWindow().getDecorView().getViewTreeObserver()
+        .addOnGlobalFocusChangeListener(focusChangeListener);
+}
     }
 
 
@@ -1005,7 +1010,8 @@ ViewTreeObserver.OnGlobalFocusChangeListener focusChangeListener = new ViewTreeO
     }
 };
 
-// 注册全局焦点变化监听
-getWindow().getDecorView().getViewTreeObserver().addOnGlobalFocusChangeListener(focusChangeListener);
+
+
+
 
 }
