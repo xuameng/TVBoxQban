@@ -178,8 +178,8 @@ public class HomeActivity extends BaseActivity {
         });
         this.mGridView.setOnItemListener(new TvRecyclerView.OnItemListener() {       //xuameng移除  mHandler.postDelayed
             public void onItemPreSelected(TvRecyclerView tvRecyclerView, View view, int position) {
+				/*  xuameng统一由onItemSelected处理焦点变化
                 if (view != null && !HomeActivity.this.isDownOrUp) {
-                /*  xuameng统一由onItemSelected处理焦点变化
                     TextView textView = view.findViewById(R.id.tvTitle);
                     textView.getPaint().setFakeBoldText(false);
                     if (sortFocused == position) {
