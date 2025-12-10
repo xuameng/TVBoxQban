@@ -251,25 +251,13 @@ public class HomeActivity extends BaseActivity {
         });     
         */
 
- /*       this.mGridView.addOnScrollListener(new RecyclerView.OnScrollListener() {   //xuameng 监听手机滑动刷新菜单样式解决BUG
+        this.mGridView.addOnScrollListener(new RecyclerView.OnScrollListener() {   //xuameng 监听手机滑动刷新菜单样式解决BUG
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 resetAllItemsToDefaultPhone();   //xuameng   恢复主页菜单样式 解决样式丢失BUG
             }
-        });    */
-
-
-this.mGridView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-    @Override
-    public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-        super.onScrollStateChanged(recyclerView, newState);
-        if (newState == RecyclerView.SCROLL_STATE_DRAGGING || newState == RecyclerView.SCROLL_STATE_SETTLING) {
-            resetAllItemsToDefaultPhone();   // 滚动时重置菜单样式
-        }
-    }
-});
-
+        });
 
         tvName.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -979,14 +967,14 @@ this.mGridView.addOnScrollListener(new RecyclerView.OnScrollListener() {
                     textView.getPaint().setFakeBoldText(false);
                     textView.setTextColor(getResources().getColor(R.color.color_BBFFFFFF));
                     textView.invalidate();
-                    itemView.animate().scaleX(1.0f).scaleY(1.0f).setDuration(0).start();
+                    itemView.animate().scaleX(1.0f).scaleY(1.0f).setDuration(10).start();
                     itemView.findViewById(R.id.tvFilter).setVisibility(View.GONE);
                     itemView.findViewById(R.id.tvFilterColor).setVisibility(View.GONE);
                 }
             }else{
                 View itemView = mGridView.getLayoutManager().findViewByPosition(i);
                 if (itemView != null) {
-                    itemView.animate().scaleX(1.1f).scaleY(1.1f).setInterpolator(new BounceInterpolator()).setDuration(0).start();
+                    itemView.animate().scaleX(1.1f).scaleY(1.1f).setInterpolator(new BounceInterpolator()).setDuration(10).start();
                     TextView textView = itemView.findViewById(R.id.tvTitle);
                     textView.getPaint().setFakeBoldText(true);
                     textView.setTextColor(HomeActivity.this.getResources().getColor(R.color.color_FFFFFF));
@@ -999,4 +987,23 @@ this.mGridView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             }
         }
     }
+
+	        // 初始化焦点变化监听器
+        focusChangeListener = new ViewTreeObserver.OnGlobalFocusChangeListener() {
+            @Override
+            public void onGlobalFocusChanged(View oldFocus, View newFocus) {
+                if (newFocus == null) {  // 页面失去焦点
+                    BaseLazyFragment baseLazyFragment = this.fragments.get(this.sortFocused);
+                    if (baseLazyFragment instanceof GridFragment) {
+                        // 如果 sortFocusView 存在且没有获取焦点，则请求焦点
+                        if (this.sortFocusView != null && !this.sortFocusView.isFocused()) {
+                            this.mGridView.setSelection(PositionXu);   //xuameng处理手机滑动主页菜单失去焦点时按返回键闪退
+                        }
+	                }
+                }
+            }
+        };
+        
+        // 注册全局焦点变化监听
+        getWindow().getDecorView().getViewTreeObserver().addOnGlobalFocusChangeListener(focusChangeListener);
 }
