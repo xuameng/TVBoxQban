@@ -416,11 +416,10 @@ public class GridFragment extends BaseLazyFragment {
                         kvAdapter.setSelectedPosition(-1);
                         kvAdapter.notifyDataSetChanged();
                     }
-gridView.setFocusable(false);
-gridView.postDelayed(() -> {
-    gridView.setFocusable(true);
-    gridView.setSelectedPosition(position);
-}, 200);
+					// 跳转焦点
+                    gridView.postDelayed(() -> {
+                        gridView.setSelectedPosition(position);
+                    }, 200);
 
                     forceRefresh();
                 }
