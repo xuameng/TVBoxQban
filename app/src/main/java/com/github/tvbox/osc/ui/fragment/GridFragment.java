@@ -410,17 +410,20 @@ public class GridFragment extends BaseLazyFragment {
                         sortData.filterSelect.put(key, newSelection);
                         kvAdapter.setSelectedPosition(position);
                         kvAdapter.notifyDataSetChanged();
+                        gridView.setFocusable(false);  // 禁用焦点获取能力
                     } else {
                         // 取消选中
                         sortData.filterSelect.remove(key);
                         kvAdapter.setSelectedPosition(-1);
                         kvAdapter.notifyDataSetChanged();
+                        gridView.setFocusable(false);  // 禁用焦点获取能力
                     }
-					// 跳转焦点
-                    gridView.postDelayed(() -> {
+                // 修复：重置焦点防止跳转
+                    gridView.postDelayed(() -> {   // xuameng没有成功保存历史记录的刚才选那个现在选那个
+                        gridView.setFocusable(true);  // 恢复焦点获取能力
+                        gridView.requestFocusFromTouch();
                         gridView.setSelectedPosition(position);
-                    }, 200);
-
+                    }, 300);
                     forceRefresh();
                 }
             });
