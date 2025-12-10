@@ -178,15 +178,7 @@ public class HomeActivity extends BaseActivity {
         });
         this.mGridView.setOnItemListener(new TvRecyclerView.OnItemListener() {       //xuameng移除  mHandler.postDelayed
             public void onItemPreSelected(TvRecyclerView tvRecyclerView, View view, int position) {
-                if (view != null && !HomeActivity.this.isDownOrUp) {
-                    TextView textView = view.findViewById(R.id.tvTitle);
-                    textView.getPaint().setFakeBoldText(false);
-                    view.animate().scaleX(1.0f).scaleY(1.0f).setDuration(250).start();
-                    textView.setTextColor(HomeActivity.this.getResources().getColor(R.color.color_BBFFFFFF));
-                    view.findViewById(R.id.tvFilter).setVisibility(View.GONE);
-                    view.findViewById(R.id.tvFilterColor).setVisibility(View.GONE);
-                    textView.invalidate();
-                }
+resetAllItemsToDefault();  //xuameng   重置未选中菜单项为默认值
             }
 
             public void onItemSelected(TvRecyclerView tvRecyclerView, View view, int position) {
@@ -248,16 +240,7 @@ public class HomeActivity extends BaseActivity {
             }
         });
 
-        // xuameng添加焦点变化监听
-        this.mGridView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    // 重置所有项到默认状态
-                    resetAllItemsToDefault();   //xuameng   重置未选中菜单项为默认值
-                }
-            }
-        });     
+   
 
         tvName.setOnClickListener(new View.OnClickListener() {
             @Override
