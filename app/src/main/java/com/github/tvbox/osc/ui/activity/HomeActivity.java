@@ -109,7 +109,7 @@ public class HomeActivity extends BaseActivity {
     private boolean refreshEmpty = false;	//xuameng打断加载判断
     private int currentSelected = 0;
     private int sortFocused = 0;
-	private int PositionXu = 0;  //xuameng 分类筛选BUG修复变色问题
+    private int PositionXu = 0;  //xuameng 分类筛选BUG修复变色问题
     public View sortFocusView = null;
     private final Handler mHandler = new Handler();
     private long mExitTime = 0;
@@ -176,17 +176,24 @@ public class HomeActivity extends BaseActivity {
                 });
             }
         });
-        this.mGridView.setOnItemListener(new TvRecyclerView.OnItemListener() {
+        this.mGridView.setOnItemListener(new TvRecyclerView.OnItemListener() {       //xuameng移除  mHandler.postDelayed
             public void onItemPreSelected(TvRecyclerView tvRecyclerView, View view, int position) {
+				/*
                 if (view != null && !HomeActivity.this.isDownOrUp) {
                     TextView textView = view.findViewById(R.id.tvTitle);
                     textView.getPaint().setFakeBoldText(false);
-                    view.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300).start();
-                    textView.setTextColor(HomeActivity.this.getResources().getColor(R.color.color_BBFFFFFF));
-                    view.findViewById(R.id.tvFilter).setVisibility(View.GONE);
-                    view.findViewById(R.id.tvFilterColor).setVisibility(View.GONE);
+                    if (sortFocused == position) {
+                        view.animate().scaleX(1.1f).scaleY(1.1f).setInterpolator(new BounceInterpolator()).setDuration(250).start();
+                        textView.setTextColor(HomeActivity.this.getResources().getColor(R.color.color_FFFFFF));
+                    } else {
+                        view.animate().scaleX(1.0f).scaleY(1.0f).setDuration(250).start();
+                        textView.setTextColor(HomeActivity.this.getResources().getColor(R.color.color_BBFFFFFF));
+                        view.findViewById(R.id.tvFilter).setVisibility(View.GONE);
+                        view.findViewById(R.id.tvFilterColor).setVisibility(View.GONE);
+                    }
                     textView.invalidate();
                 }
+				*/      //由onItemSelected统一处理
             }
 
             public void onItemSelected(TvRecyclerView tvRecyclerView, View view, int position) {
@@ -194,18 +201,23 @@ public class HomeActivity extends BaseActivity {
                     HomeActivity.this.currentView = view;
                     HomeActivity.this.isDownOrUp = false;
                     HomeActivity.this.sortChange = true;
-                    view.animate().scaleX(1.1f).scaleY(1.1f).setInterpolator(new BounceInterpolator()).setDuration(300).start();
+                    view.animate().scaleX(1.1f).scaleY(1.1f).setInterpolator(new BounceInterpolator()).setDuration(250).start();
                     TextView textView = view.findViewById(R.id.tvTitle);
                     textView.getPaint().setFakeBoldText(true);
                     textView.setTextColor(HomeActivity.this.getResources().getColor(R.color.color_FFFFFF));
                     textView.invalidate();
-					PositionXu = position;
+                    PositionXu = position;
+                    if (position == -1) {
+                        position = 0;
+                        HomeActivity.this.mGridView.setSelection(0);
+                    }
                     MovieSort.SortData sortData = sortAdapter.getItem(position);
-                    if (!sortData.filters.isEmpty()) {
+                    if (null != sortData && !sortData.filters.isEmpty()) {
                         showFilterIcon(sortData.filterSelectCount());
                     }
                     HomeActivity.this.sortFocusView = view;
                     HomeActivity.this.sortFocused = position;
+                    resetAllItemsToDefault();  //xuameng   重置未选中菜单项为默认值
                     mHandler.removeCallbacks(mDataRunnable);
                     mHandler.postDelayed(mDataRunnable, 250);   //xuameng 延时防止按主页不显示上面的时间栏
                 }
@@ -242,28 +254,40 @@ public class HomeActivity extends BaseActivity {
                 return !((GridFragment) baseLazyFragment).isLoad();      //XUAMENG上键刷新完
             }
         });
+
+/*        // xuameng添加焦点变化监听
+        this.mGridView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    // 重置所有项到默认状态
+                    resetAllItemsToDefault();   //xuameng   重置未选中菜单项为默认值
+                }
+            }
+        });     */
+
         tvName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-				FastClickCheckUtil.check(v);
+                FastClickCheckUtil.check(v);
                 if(dataInitOk && jarInitOk){
-				String cachePath = FileUtils.getCachePath();          //xuameng点击清空缓存
-                String cspCachePath = FileUtils.getFilePath()+"/csp/";
-				File cspCacheDir = new File(cspCachePath);
-				File cacheDir = new File(cachePath);
-				if (!cacheDir.exists() && !cspCacheDir.exists()) return;
-				new Thread(() -> {
-					try {
-						if(cacheDir.exists())FileUtils.cleanDirectory(cacheDir);
-						if(cspCacheDir.exists()){
-					//		FileUtils.deleteFile(cspCacheDir);
-					       FileUtils.cleanDirectory(cspCacheDir);
-						}
-                       // ApiConfig.get().clearJarLoader();
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}).start();
+                    String cachePath = FileUtils.getCachePath();          //xuameng点击清空缓存
+                    String cspCachePath = FileUtils.getFilePath()+"/csp/";
+                    File cspCacheDir = new File(cspCachePath);
+                    File cacheDir = new File(cachePath);
+                    if (!cacheDir.exists() && !cspCacheDir.exists()) return;
+                        new Thread(() -> {
+                            try {
+                                if(cacheDir.exists())FileUtils.cleanDirectory(cacheDir);
+                                if(cspCacheDir.exists()){
+                                    //		FileUtils.deleteFile(cspCacheDir);
+                                    FileUtils.cleanDirectory(cspCacheDir);
+                                }
+                                // ApiConfig.get().clearJarLoader();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }).start();
                     App.showToastShort(HomeActivity.this, "缓存已清空！");
                 }else {
                     jumpActivity(SettingActivity.class);		//xuameng加载慢跳转设置
@@ -291,17 +315,17 @@ public class HomeActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 if(dataInitOk && jarInitOk){           //xuameng MENU键显示主页源
-					showSiteSwitch(); 
+                    showSiteSwitch(); 
                 }else{
-					jumpActivity(SettingActivity.class);		//xuameng加载慢跳转设置 
-				}
+                    jumpActivity(SettingActivity.class);		//xuameng加载慢跳转设置 
+                }
             }
         });
 
         tvDate.setOnLongClickListener(new View.OnLongClickListener() {      //xuameng长按重新加载
             @Override
             public boolean onLongClick(View v) {
-				jumpActivity(SettingActivity.class);		//xuameng加载慢跳转设置   
+                jumpActivity(SettingActivity.class);		//xuameng加载慢跳转设置   
                 return true;
             }
         });
@@ -361,16 +385,14 @@ public class HomeActivity extends BaseActivity {
                             public void run() {
                                 if (!useCacheConfig) {
                                     if (Hawk.get(HawkConfig.HOME_DEFAULT_SHOW, false)) {         //xuameng直接进入直播
-										jumpActivity(LivePlayActivity.class);
-                                   }
-									if (!ApiConfig.get().JvhuiWarning.isEmpty()){
-										String JvhuiWarning = ApiConfig.get().JvhuiWarning;
-                                        App.showToastShort(HomeActivity.this, (JvhuiWarning));
-									}else{
-                                        App.showToastShort(HomeActivity.this, "聚汇影视提示：jar加载成功！");
-									}
+                                        jumpActivity(LivePlayActivity.class);
+                                    }
+                                if (!ApiConfig.get().JvhuiWarning.isEmpty()){
+                                    String JvhuiWarning = ApiConfig.get().JvhuiWarning;
+                                    App.showToastShort(HomeActivity.this, (JvhuiWarning));
+                                }else{
+                                    App.showToastShort(HomeActivity.this, "聚汇影视提示：jar加载成功！");									}
                                 }
-
                                 initData();
                                 checkMicrophonePermission();  //xuameng音频权限
                             }
@@ -390,7 +412,7 @@ public class HomeActivity extends BaseActivity {
                     @Override
                     public void error(String msg) {
                         jarInitOk = true;
-						dataInitOk = true;
+                        dataInitOk = true;
                         mHandler.post(new Runnable() {
                             @Override
                             public void run() {
@@ -456,7 +478,7 @@ public class HomeActivity extends BaseActivity {
                                         public void run() {
                                             initData();
                                             //dialog.hide();
-											dialog.dismiss();   //xuameng显示BUG
+                                            dialog.dismiss();   //xuameng显示BUG
                                         }
                                     });
                                 }
@@ -470,7 +492,7 @@ public class HomeActivity extends BaseActivity {
                                         public void run() {
                                             initData();
                                             //dialog.hide();
-											dialog.dismiss();  //xuameng显示BUG
+                                            dialog.dismiss();  //xuameng显示BUG
                                         }
                                     });
                                 }
@@ -484,15 +506,15 @@ public class HomeActivity extends BaseActivity {
                                         public void run() {
                                             initData();
                                             //dialog.hide();
-											dialog.dismiss();  //xuameng显示BUG
+                                            dialog.dismiss();  //xuameng显示BUG
                                         }
                                     });
                                 }
                             });
                         if (!dialog.isShowing() && !refreshEmpty){   //xuameng只要打断加载就不显示错误对话框
-							showSuccess();  //xuameng显示BUG
+                            showSuccess();  //xuameng显示BUG
                             dialog.show();
-						}
+                        }
                     }
                 });
             }
@@ -527,7 +549,7 @@ public class HomeActivity extends BaseActivity {
         }
     }
 
-	@SuppressLint("NotifyDataSetChanged")
+    @SuppressLint("NotifyDataSetChanged")
     @Override
     public void onBackPressed() {
         if(isLoading()){
@@ -538,12 +560,12 @@ public class HomeActivity extends BaseActivity {
          // 如果处于 VOD 删除模式，则退出该模式并刷新界面
         if (HawkConfig.hotVodDelete) {
             HawkConfig.hotVodDelete = false;
-			if(!Hawk.get(HawkConfig.HOME_REC_STYLE, false)){   //xuameng首页单行
-				UserFragment.homeHotVodAdapterxu.notifyDataSetChanged();
-			}else{
-				UserFragment.homeHotVodAdapter.notifyDataSetChanged();
-			}
-			return;
+            if(!Hawk.get(HawkConfig.HOME_REC_STYLE, false)){   //xuameng首页单行
+                UserFragment.homeHotVodAdapterxu.notifyDataSetChanged();
+            }else{
+                UserFragment.homeHotVodAdapter.notifyDataSetChanged();
+            }
+            return;
         } 
 		
         // 检查 fragments 状态
@@ -561,10 +583,8 @@ public class HomeActivity extends BaseActivity {
             }
             // 如果 sortFocusView 存在且没有获取焦点，则请求焦点
             if (this.sortFocusView != null && !this.sortFocusView.isFocused()) {
-                //this.sortFocusView.requestFocus(); //xuameng这段代码手机使用时菜单失去焦点会闪退
-                if (PositionXu !=0){     //xuameng处理手机滑动主页菜单失去焦点时按返回键闪退
-                    this.mGridView.setSelection(PositionXu);
-                }
+                //this.sortFocusView.requestFocus(); //xuameng这段代码手机使用时菜单失去焦点会闪退   
+                this.mGridView.setSelection(PositionXu);   //xuameng处理手机滑动主页菜单失去焦点时按返回键闪退
             }
             // 如果当前不是第一个界面，则将列表设置到第一项
             else if (this.sortFocused != 0) {
@@ -581,7 +601,7 @@ public class HomeActivity extends BaseActivity {
         }
     }
 
-	 public void showExitXu(){
+    public void showExitXu(){
         App.HideToast();
         LayoutInflater inflater = getLayoutInflater();
         View customToastView = inflater.inflate(R.layout.exit_toast, null);
@@ -591,7 +611,7 @@ public class HomeActivity extends BaseActivity {
         toast.setView(customToastView);
         toast.setGravity(Gravity.CENTER, 0, 0);      //xuameng 20为左右，0是上下
         toast.show();
-   }
+    }
 
     private void exit() {
         if (System.currentTimeMillis() - mExitTime < 2000) {
@@ -678,7 +698,7 @@ public class HomeActivity extends BaseActivity {
         if (event.getAction() == KeyEvent.ACTION_DOWN) {
             if (keyCode == KeyEvent.KEYCODE_MENU) {
                 if(dataInitOk && jarInitOk){           //xuameng MENU键显示主页源
-					showSiteSwitch(); 
+                    showSiteSwitch(); 
                 }else {
                     jumpActivity(SettingActivity.class);   //xuameng主页加载缓慢时跳转到设置页面
                 }
@@ -728,7 +748,7 @@ public class HomeActivity extends BaseActivity {
                                     Integer.valueOf(AutoSizeUtils.mm2px(this.mContext, 1.0f))
                             }),
                     ObjectAnimator.ofFloat(this.topLayout, "alpha", new float[]{1.0f, 0.0f})});
-            animatorSet.setDuration(200);
+            animatorSet.setDuration(250);
             animatorSet.start();
             return;
         }
@@ -745,7 +765,7 @@ public class HomeActivity extends BaseActivity {
                                     Integer.valueOf(AutoSizeUtils.mm2px(this.mContext, 50.0f))
                             }),
                     ObjectAnimator.ofFloat(this.topLayout, "alpha", new float[]{0.0f, 1.0f})});
-            animatorSet.setDuration(200);
+            animatorSet.setDuration(250);
             animatorSet.start();
             return;
         }
@@ -764,51 +784,52 @@ public class HomeActivity extends BaseActivity {
     void showSiteSwitch() {
         List<SourceBean> sites = ApiConfig.get().getSwitchSourceBeanList();
         if (!sites.isEmpty()){
-        int select = sites.indexOf(ApiConfig.get().getHomeSourceBean());
-        if (select < 0 || select >= sites.size()) select = 0;
-        if (mSiteSwitchDialog == null) {
-            mSiteSwitchDialog = new SelectDialog<>(HomeActivity.this);
-            TvRecyclerView tvRecyclerView = mSiteSwitchDialog.findViewById(R.id.list);
-            // 根据 sites 数量动态计算列数
-            int spanCount = (int) Math.floor(sites.size() / 20.0);
-            spanCount = Math.min(spanCount, 2);
-            tvRecyclerView.setLayoutManager(new V7GridLayoutManager(mSiteSwitchDialog.getContext(), spanCount + 1));
-            // 设置对话框宽度
-            ConstraintLayout cl_root = mSiteSwitchDialog.findViewById(R.id.cl_root);
-            ViewGroup.LayoutParams clp = cl_root.getLayoutParams();
-            clp.width = AutoSizeUtils.mm2px(mSiteSwitchDialog.getContext(), 380 + 200 * spanCount);
-            mSiteSwitchDialog.setTip("请选择首页数据源");
-        }
-        mSiteSwitchDialog.setAdapter(new SelectDialogAdapter.SelectDialogInterface<SourceBean>() {
-            @Override
-            public void click(SourceBean value, int pos) {
-                ApiConfig.get().setSourceBean(value);
-                Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                Bundle bundle = new Bundle();
-                bundle.putBoolean("useCache", true);
-                intent.putExtras(bundle);
-                HomeActivity.this.startActivity(intent);
+            int select = sites.indexOf(ApiConfig.get().getHomeSourceBean());
+            if (select < 0 || select >= sites.size()) select = 0;
+            if (mSiteSwitchDialog == null) {
+                mSiteSwitchDialog = new SelectDialog<>(HomeActivity.this);
+                TvRecyclerView tvRecyclerView = mSiteSwitchDialog.findViewById(R.id.list);
+                // 根据 sites 数量动态计算列数
+                int spanCount = (int) Math.floor(sites.size() / 20.0);
+                spanCount = Math.min(spanCount, 2);
+                tvRecyclerView.setLayoutManager(new V7GridLayoutManager(mSiteSwitchDialog.getContext(), spanCount + 1));
+                // 设置对话框宽度
+                ConstraintLayout cl_root = mSiteSwitchDialog.findViewById(R.id.cl_root);
+                ViewGroup.LayoutParams clp = cl_root.getLayoutParams();
+                clp.width = AutoSizeUtils.mm2px(mSiteSwitchDialog.getContext(), 380 + 200 * spanCount);
+                mSiteSwitchDialog.setTip("请选择首页数据源");
             }
+            mSiteSwitchDialog.setAdapter(new SelectDialogAdapter.SelectDialogInterface<SourceBean>() {
             @Override
-            public String getDisplay(SourceBean val) {
-                return val.getName();
-            }
-        }, new DiffUtil.ItemCallback<SourceBean>() {
-            @Override
-            public boolean areItemsTheSame(@NonNull SourceBean oldItem, @NonNull SourceBean newItem) {
-                return oldItem == newItem;
-            }
-            @Override
-            public boolean areContentsTheSame(@NonNull SourceBean oldItem, @NonNull SourceBean newItem) {
-                return oldItem.getKey().equals(newItem.getKey());
-            }
-        }, sites, select);
-        mSiteSwitchDialog.show();
-    }else {
+                public void click(SourceBean value, int pos) {
+                    ApiConfig.get().setSourceBean(value);
+                    Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    Bundle bundle = new Bundle();
+                    bundle.putBoolean("useCache", true);
+                    intent.putExtras(bundle);
+                    HomeActivity.this.startActivity(intent);
+                }
+                @Override
+                public String getDisplay(SourceBean val) {
+                    return val.getName();
+                }
+            }, new DiffUtil.ItemCallback<SourceBean>() {
+                @Override
+                public boolean areItemsTheSame(@NonNull SourceBean oldItem, @NonNull SourceBean newItem) {
+                    return oldItem == newItem;
+                }
+                @Override
+                public boolean areContentsTheSame(@NonNull SourceBean oldItem, @NonNull SourceBean newItem) {
+                    return oldItem.getKey().equals(newItem.getKey());
+                }
+            }, sites, select);
+            mSiteSwitchDialog.show();
+        }else {
             App.showToastLong(HomeActivity.this, "主页暂无数据！联系许大师吧！");
-		}
+        }
     }
+
     private void refreshEmpty(){   //xuameng打断加载优化
         refreshEmpty = true;	//xuameng打断加载判断
         OkGo.getInstance().cancelTag("loadjar");    //xuameng打断加载
@@ -922,6 +943,23 @@ public class HomeActivity extends BaseActivity {
             Log.e(TAG, "跳转设置失败: " + e.getMessage());
             // 备用方案：跳转到应用列表
             startActivity(new Intent(Settings.ACTION_APPLICATION_SETTINGS));
+        }
+    }
+
+    private void resetAllItemsToDefault() {   //xuameng   重置未选中菜单项为默认值 手机上的BUG
+        for (int i = 0; i < sortAdapter.getItemCount(); i++) {
+            if (i != PositionXu ) {
+                View itemView = mGridView.getLayoutManager().findViewByPosition(i);
+                if (itemView != null) {
+                    TextView textView = itemView.findViewById(R.id.tvTitle);
+                    textView.getPaint().setFakeBoldText(false);
+                    textView.setTextColor(getResources().getColor(R.color.color_BBFFFFFF));
+                    textView.invalidate();
+                    itemView.animate().scaleX(1.0f).scaleY(1.0f).setDuration(250).start();
+                    itemView.findViewById(R.id.tvFilter).setVisibility(View.GONE);
+                    itemView.findViewById(R.id.tvFilterColor).setVisibility(View.GONE);
+                }
+            }
         }
     }
 }
