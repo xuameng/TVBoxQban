@@ -1,3 +1,4 @@
+
 package com.github.tvbox.osc.ui.adapter;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -23,23 +24,30 @@ public class GridFilterKVAdapter extends BaseQuickAdapter<String, BaseViewHolder
         helper.setText(R.id.filterValue, item);
         
         TextView valueTv = helper.getView(R.id.filterValue);
-        if (helper.getAdapterPosition() == selectedPosition) {         //xuameng新增方法修正多个高亮BUG
+        if (helper.getAdapterPosition() == selectedPosition) {    //xuameng新增方法修正多个高亮BUG
             valueTv.getPaint().setFakeBoldText(true);
             valueTv.setTextColor(selectedColor);
         } else {
-            valueTv.getPaint().setFakeBoldText(false);           //xuameng新增方法修正多个高亮BUG
+            valueTv.getPaint().setFakeBoldText(false);
             valueTv.setTextColor(defaultColor);
         }
+        
+        // xuameng新增禁用焦点移动
+        valueTv.setFocusable(false);
+        valueTv.setFocusableInTouchMode(false);
+        
+        // xuameng新增保留点击响应
+        valueTv.setOnClickListener(v -> {            //xuameng新增方法修正多个高亮BUG
+            setSelectedPosition(helper.getAdapterPosition());
+        });
     }
     
-    public void setSelectedPosition(int position) {    //xuameng新增方法修正多个高亮BUG
+    public void setSelectedPosition(int position) {     //xuameng新增方法修正多个高亮BUG
         this.selectedPosition = position;
         notifyDataSetChanged();
     }
     
-    public int getSelectedPosition() {    //xuameng新增方法修正多个高亮BUG
+    public int getSelectedPosition() {        //xuameng新增方法修正多个高亮BUG
         return selectedPosition;
     }
 }
-
-
