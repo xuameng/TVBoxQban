@@ -37,7 +37,6 @@ import android.Manifest;  //xuameng音乐权限
 import androidx.core.app.ActivityCompat;  //xuameng音乐权限
 import android.content.SharedPreferences;  //xuameng音乐权限
 import android.content.Context; //xuameng音乐权限
-import android.view.ViewTreeObserver;
 
 import com.github.tvbox.osc.base.App;
 import android.widget.Toast;
@@ -632,11 +631,6 @@ public class HomeActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         mHandler.post(mRunnable);
-		// 注册全局焦点变化监听
-if (getWindow() != null && getWindow().getDecorView() != null) {
-    getWindow().getDecorView().getViewTreeObserver()
-        .addOnGlobalFocusChangeListener(focusChangeListener);
-}
     }
 
 
@@ -644,12 +638,6 @@ if (getWindow() != null && getWindow().getDecorView() != null) {
     protected void onPause() {
         super.onPause();
         mHandler.removeCallbacksAndMessages(null);
-
-    if (focusChangeListener != null) {
-        getWindow().getDecorView().getViewTreeObserver()
-            .removeOnGlobalFocusChangeListener(focusChangeListener);
-    }
-
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -979,46 +967,20 @@ if (getWindow() != null && getWindow().getDecorView() != null) {
                     textView.getPaint().setFakeBoldText(false);
                     textView.setTextColor(getResources().getColor(R.color.color_BBFFFFFF));
                     textView.invalidate();
-                    itemView.animate().scaleX(1.0f).scaleY(1.0f).setDuration(10).start();
-                    itemView.findViewById(R.id.tvFilter).setVisibility(View.GONE);
-                    itemView.findViewById(R.id.tvFilterColor).setVisibility(View.GONE);
+                    itemView.animate().scaleX(1.0f).scaleY(1.0f).setDuration(0).start();
+                  //  itemView.findViewById(R.id.tvFilter).setVisibility(View.GONE);
+                  //  itemView.findViewById(R.id.tvFilterColor).setVisibility(View.GONE);
                 }
             }else{
                 View itemView = mGridView.getLayoutManager().findViewByPosition(i);
                 if (itemView != null) {
-                    itemView.animate().scaleX(1.1f).scaleY(1.1f).setInterpolator(new BounceInterpolator()).setDuration(10).start();
+                    itemView.animate().scaleX(1.1f).scaleY(1.1f).setInterpolator(new BounceInterpolator()).setDuration(0).start();
                     TextView textView = itemView.findViewById(R.id.tvTitle);
                     textView.getPaint().setFakeBoldText(true);
                     textView.setTextColor(HomeActivity.this.getResources().getColor(R.color.color_FFFFFF));
                     textView.invalidate();
-                    MovieSort.SortData sortData = sortAdapter.getItem(PositionXu);
-                    if (null != sortData && !sortData.filters.isEmpty()) {
-                        showFilterIcon(sortData.filterSelectCount());
-                    }
                 }
             }
         }
     }
-
-
-// 初始化焦点变化监听器
-ViewTreeObserver.OnGlobalFocusChangeListener focusChangeListener = new ViewTreeObserver.OnGlobalFocusChangeListener() {
-    @Override
-    public void onGlobalFocusChanged(View oldFocus, View newFocus) {
-        if (newFocus == null) {  // 页面失去焦点
-            BaseLazyFragment baseLazyFragment = fragments.get(sortFocused);
-            if (baseLazyFragment instanceof GridFragment) {
-                // 如果 sortFocusView 存在且没有获取焦点，则请求焦点
-                if (sortFocusView != null && !sortFocusView.isFocused()) {
-                    mGridView.setSelection(PositionXu);   // 处理手机滑动主页菜单失去焦点时按返回键闪退
-                }
-            }
-        }
-    }
-};
-
-
-
-
-
 }
