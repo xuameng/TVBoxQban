@@ -179,6 +179,7 @@ public class HomeActivity extends BaseActivity {
         this.mGridView.setOnItemListener(new TvRecyclerView.OnItemListener() {       //xuameng移除  mHandler.postDelayed
             public void onItemPreSelected(TvRecyclerView tvRecyclerView, View view, int position) {
                 if (view != null && !HomeActivity.this.isDownOrUp) {
+                /*  xuameng统一由onItemSelected处理焦点变化
                     TextView textView = view.findViewById(R.id.tvTitle);
                     textView.getPaint().setFakeBoldText(false);
                     if (sortFocused == position) {
@@ -192,6 +193,7 @@ public class HomeActivity extends BaseActivity {
                     }
                     textView.invalidate();
                 }
+                */
             }
 
             public void onItemSelected(TvRecyclerView tvRecyclerView, View view, int position) {
@@ -253,7 +255,7 @@ public class HomeActivity extends BaseActivity {
             }
         });
 
-        // xuameng添加焦点变化监听
+ /*       // xuameng添加焦点变化监听   变成只监听手机滑动
         this.mGridView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -263,17 +265,18 @@ public class HomeActivity extends BaseActivity {
                 }
             }
         });     
+*/
 
-this.mGridView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-    @Override
-    public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-        super.onScrollStateChanged(recyclerView, newState);
-
-            resetAllItemsToDefault();   //xuameng   重置未选中菜单项为默认值
-
-    }
-});
-
+        this.mGridView.addOnScrollListener(new RecyclerView.OnScrollListener() {   //xuameng 监听手机滑动刷新菜单样式解决BUG
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (!HomeActivity.this.isDownOrUp) {
+                    resetAllItemsToDefaultPhone();   //xuameng   恢复主页菜单样式 解决样式丢失BUG
+                }
+                HomeActivity.this.isDownOrUp = true;
+            }
+        });
 
         tvName.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -968,20 +971,34 @@ this.mGridView.addOnScrollListener(new RecyclerView.OnScrollListener() {
                     itemView.findViewById(R.id.tvFilter).setVisibility(View.GONE);
                     itemView.findViewById(R.id.tvFilterColor).setVisibility(View.GONE);
                 }
-            }else{
-				View itemView = mGridView.getLayoutManager().findViewByPosition(i);
+            }
+        }
+    }
+
+    private void resetAllItemsToDefaultPhone() {   //xuameng   重置未选中菜单项为默认值 手机上的BUG  手机滑动时监听
+        for (int i = 0; i < sortAdapter.getItemCount(); i++) {
+            if (i != PositionXu ) {
+                View itemView = mGridView.getLayoutManager().findViewByPosition(i);
                 if (itemView != null) {
-                    itemView.animate().scaleX(1.1f).scaleY(1.1f).setInterpolator(new BounceInterpolator()).setDuration(250).start();
+                    TextView textView = itemView.findViewById(R.id.tvTitle);
+                    textView.getPaint().setFakeBoldText(false);
+                    textView.setTextColor(getResources().getColor(R.color.color_BBFFFFFF));
+                    textView.invalidate();
+                    itemView.animate().scaleX(1.0f).scaleY(1.0f).setDuration(0).start();
+                    itemView.findViewById(R.id.tvFilter).setVisibility(View.GONE);
+                    itemView.findViewById(R.id.tvFilterColor).setVisibility(View.GONE);
+                }
+            }else{
+                View itemView = mGridView.getLayoutManager().findViewByPosition(i);
+                if (itemView != null) {
+                    itemView.animate().scaleX(1.1f).scaleY(1.1f).setInterpolator(new BounceInterpolator()).setDuration(0).start();
                     TextView textView = itemView.findViewById(R.id.tvTitle);
                     textView.getPaint().setFakeBoldText(true);
                     textView.setTextColor(HomeActivity.this.getResources().getColor(R.color.color_FFFFFF));
                     textView.invalidate();
-                    MovieSort.SortData sortData = sortAdapter.getItem(i);
-                    if (null != sortData && !sortData.filters.isEmpty()) {
-                        showFilterIcon(sortData.filterSelectCount());
-                    }
-				}
-			}
+                }
+            }
         }
     }
+
 }
