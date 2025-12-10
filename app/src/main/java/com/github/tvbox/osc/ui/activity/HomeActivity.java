@@ -251,13 +251,25 @@ public class HomeActivity extends BaseActivity {
         });     
         */
 
-        this.mGridView.addOnScrollListener(new RecyclerView.OnScrollListener() {   //xuameng 监听手机滑动刷新菜单样式解决BUG
+ /*       this.mGridView.addOnScrollListener(new RecyclerView.OnScrollListener() {   //xuameng 监听手机滑动刷新菜单样式解决BUG
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 resetAllItemsToDefaultPhone();   //xuameng   恢复主页菜单样式 解决样式丢失BUG
             }
-        });
+        });    */
+
+
+this.mGridView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+    @Override
+    public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+        super.onScrollStateChanged(recyclerView, newState);
+        if (newState == RecyclerView.SCROLL_STATE_DRAGGING || newState == RecyclerView.SCROLL_STATE_SETTLING) {
+            resetAllItemsToDefaultPhone();   // 滚动时重置菜单样式
+        }
+    }
+});
+
 
         tvName.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -979,6 +991,10 @@ public class HomeActivity extends BaseActivity {
                     textView.getPaint().setFakeBoldText(true);
                     textView.setTextColor(HomeActivity.this.getResources().getColor(R.color.color_FFFFFF));
                     textView.invalidate();
+                    MovieSort.SortData sortData = sortAdapter.getItem(PositionXu);
+                    if (null != sortData && !sortData.filters.isEmpty()) {
+                        showFilterIcon(sortData.filterSelectCount());
+                    }
                 }
             }
         }
