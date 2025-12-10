@@ -958,35 +958,37 @@ public class HomeActivity extends BaseActivity {
         }
     }
 
-private void resetAllItemsToDefaultPhone() {
-    for (int i = 0; i < sortAdapter.getItemCount(); i++) {
-        View itemView = mGridView.getLayoutManager().findViewByPosition(i);
-        if (itemView != null) {
-            TextView textView = itemView.findViewById(R.id.tvTitle);
-            textView.getPaint().setFakeBoldText(i == PositionXu);
-            textView.setTextColor(i == PositionXu 
-                ? getResources().getColor(R.color.color_FFFFFF) 
-                : getResources().getColor(R.color.color_BBFFFFFF));
-            textView.invalidate();
-            itemView.animate()
-                .scaleX(i == PositionXu ? 1.1f : 1.0f)
-                .scaleY(i == PositionXu ? 1.1f : 1.0f)
-                .setDuration(250)
-                .setInterpolator(i == PositionXu ? new BounceInterpolator() : null)
-                .start();
-            // 动态控制可见性
-            MovieSort.SortData sortData = sortAdapter.getItem(i);
-            itemView.findViewById(R.id.tvFilter).setVisibility(sortData.filters.isEmpty() ? View.GONE : View.VISIBLE);
-            itemView.findViewById(R.id.tvFilterColor).setVisibility(sortData.filters.isEmpty() ? View.GONE : View.VISIBLE);
-            if (i == PositionXu) {
-                itemView.post(() -> {
-                    if (!sortData.filters.isEmpty()) {
-                        showFilterIcon(sortData.filterSelectCount());
-                    }
-                });
+    private void resetAllItemsToDefaultPhone() {   //xuameng   重置未选中菜单项为默认值 手机上的BUG  手机滑动时监听
+        for (int i = 0; i < sortAdapter.getItemCount(); i++) {
+            if (i != PositionXu ) {
+                View itemView = mGridView.getLayoutManager().findViewByPosition(i);
+                if (itemView != null) {
+                    TextView textView = itemView.findViewById(R.id.tvTitle);
+                    textView.getPaint().setFakeBoldText(false);
+                    textView.setTextColor(getResources().getColor(R.color.color_BBFFFFFF));
+                    textView.invalidate();
+                    itemView.animate().scaleX(1.0f).scaleY(1.0f).setDuration(250).start();
+                    itemView.findViewById(R.id.tvFilter).setVisibility(View.GONE);
+                    itemView.findViewById(R.id.tvFilterColor).setVisibility(View.GONE);
+                }
+            }else{
+                View itemView = mGridView.getLayoutManager().findViewByPosition(i);
+                if (itemView != null) {
+                    itemView.animate().scaleX(1.1f).scaleY(1.1f).setInterpolator(new BounceInterpolator()).setDuration(250).start();
+                    TextView textView = itemView.findViewById(R.id.tvTitle);
+                    textView.getPaint().setFakeBoldText(true);
+                    textView.setTextColor(HomeActivity.this.getResources().getColor(R.color.color_FFFFFF));
+                    textView.invalidate();
+					itemView.requestFocus();
+                    final int position = i; // i 是循环变量
+                    itemView.post(() -> {
+                        MovieSort.SortData sortData = sortAdapter.getItem(position);
+                        if (null != sortData && !sortData.filters.isEmpty()) {
+                            showFilterIcon(sortData.filterSelectCount());
+                        }
+                    });
+                }
             }
         }
     }
-}
-
 }
