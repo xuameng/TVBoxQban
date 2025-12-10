@@ -958,9 +958,9 @@ public class HomeActivity extends BaseActivity {
         }
     }
 
-    private void resetAllItemsToDefaultPhone() {   //xuameng   重置未选中菜单项为默认值 手机上的BUG  手机滑动时监听
+    private void resetAllItemsToDefaultPhone() {   
         for (int i = 0; i < sortAdapter.getItemCount(); i++) {
-            if (i != PositionXu ) {
+            if (i != PositionXu ) {              //xuameng   重置未选中菜单项为默认值 手机上的BUG  手机滑动时监听
                 View itemView = mGridView.getLayoutManager().findViewByPosition(i);
                 if (itemView != null) {
                     TextView textView = itemView.findViewById(R.id.tvTitle);
@@ -971,7 +971,7 @@ public class HomeActivity extends BaseActivity {
                     itemView.findViewById(R.id.tvFilter).setVisibility(View.GONE);
                     itemView.findViewById(R.id.tvFilterColor).setVisibility(View.GONE);
                 }
-            }else{
+            }else{                       //xuameng   重置选中菜单项为默认值 手机上的BUG  手机滑动时监听
                 View itemView = mGridView.getLayoutManager().findViewByPosition(i);
                 if (itemView != null) {
                     itemView.animate().scaleX(1.1f).scaleY(1.1f).setInterpolator(new BounceInterpolator()).setDuration(250).start();
@@ -979,7 +979,7 @@ public class HomeActivity extends BaseActivity {
                     textView.getPaint().setFakeBoldText(true);
                     textView.setTextColor(HomeActivity.this.getResources().getColor(R.color.color_FFFFFF));
                     textView.invalidate();
-					itemView.requestFocus();
+                    itemView.requestFocus();    //xuameng 选中item出现时自动选定焦点
                 }
             }
         }
