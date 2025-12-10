@@ -378,10 +378,9 @@ public class GridFragment extends BaseLazyFragment {
             TextView filterNameTv = line.findViewById(R.id.filterName);
             filterNameTv.setText(filter.name);
             TvRecyclerView gridView = line.findViewById(R.id.mFilterKv);
+            gridView.setId(View.generateViewId());
             gridView.setHasFixedSize(true);
             gridView.setLayoutManager(new V7LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
-        // 禁用子控件自动获取焦点
-        gridView.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);  // 新增代码
         
             final String key = filter.key;
             final ArrayList<String> values = new ArrayList<>(filter.values.keySet());
