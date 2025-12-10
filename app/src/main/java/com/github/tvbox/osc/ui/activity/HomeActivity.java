@@ -163,7 +163,7 @@ public class HomeActivity extends BaseActivity {
         this.mGridView.setSpacingWithMargins(0, AutoSizeUtils.dp2px(this.mContext, 10.0f));
         this.mGridView.setAdapter(this.sortAdapter);
         this.mGridView.setAdapter(this.sortAdapter);
-        this.mGridView..setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);  // xuameng新增代码主页菜单不可自动获取焦点
+        this.mGridView.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);  // xuameng新增代码主页菜单不可自动获取焦点
         sortAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {     //xuameng主页默认焦点
             @Override
             public void onChanged() {
