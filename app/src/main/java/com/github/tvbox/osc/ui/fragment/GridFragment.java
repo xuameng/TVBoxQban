@@ -417,13 +417,10 @@ public class GridFragment extends BaseLazyFragment {
                         kvAdapter.notifyDataSetChanged();
                     }
 gridView.setFocusable(false);
-gridView.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
-
-                gridView.post(() -> {
+gridView.postDelayed(() -> {
     gridView.setFocusable(true);
-	gridView.setDescendantFocusability(ViewGroup.FOCUS_BEFORE_DESCENDANTS);
     gridView.setSelectedPosition(position);
-                });
+}, 200);
 
                     forceRefresh();
                 }
