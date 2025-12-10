@@ -403,21 +403,21 @@ public class GridFragment extends BaseLazyFragment {
                     GridFilterKVAdapter kvAdapter = (GridFilterKVAdapter) adapter;
                     String currentSelection = sortData.filterSelect.get(key);
                     String newSelection = keys.get(position);
- int previousSelectedPosition = kvAdapter.getSelectedPosition();               
+                
                     if (currentSelection == null || !currentSelection.equals(newSelection)) {
                         // 更新选中状态
                         sortData.filterSelect.put(key, newSelection);
                         kvAdapter.setSelectedPosition(position);
-// 仅刷新变化的item
-if (previousSelectedPosition >= 0)
-    kvAdapter.notifyItemChanged(previousSelectedPosition); // 刷新旧选中项
-    kvAdapter.notifyItemChanged(position); // 刷新新选中项
+                        kvAdapter.notifyDataSetChanged();
                     } else {
                         // 取消选中
                         sortData.filterSelect.remove(key);
                         kvAdapter.setSelectedPosition(-1);
-    kvAdapter.notifyItemChanged(position); // 刷新新选中项
+                        kvAdapter.notifyDataSetChanged();
                     }
+                    // 修复：重置焦点防止跳转
+                    gridView.requestFocus();
+                    gridView.setSelectedPosition(position);
                     forceRefresh();
                 }
             });
