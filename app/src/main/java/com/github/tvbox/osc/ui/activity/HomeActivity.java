@@ -967,18 +967,25 @@ public class HomeActivity extends BaseActivity {
                     textView.getPaint().setFakeBoldText(false);
                     textView.setTextColor(getResources().getColor(R.color.color_BBFFFFFF));
                     textView.invalidate();
-                    itemView.animate().scaleX(1.0f).scaleY(1.0f).setDuration(0).start();
-                  //  itemView.findViewById(R.id.tvFilter).setVisibility(View.GONE);
-                  //  itemView.findViewById(R.id.tvFilterColor).setVisibility(View.GONE);
+                    itemView.animate().scaleX(1.0f).scaleY(1.0f).setDuration(250).start();
+                    itemView.findViewById(R.id.tvFilter).setVisibility(View.GONE);
+                    itemView.findViewById(R.id.tvFilterColor).setVisibility(View.GONE);
                 }
             }else{
                 View itemView = mGridView.getLayoutManager().findViewByPosition(i);
                 if (itemView != null) {
-                    itemView.animate().scaleX(1.1f).scaleY(1.1f).setInterpolator(new BounceInterpolator()).setDuration(0).start();
+                    itemView.animate().scaleX(1.1f).scaleY(1.1f).setInterpolator(new BounceInterpolator()).setDuration(250).start();
                     TextView textView = itemView.findViewById(R.id.tvTitle);
                     textView.getPaint().setFakeBoldText(true);
                     textView.setTextColor(HomeActivity.this.getResources().getColor(R.color.color_FFFFFF));
                     textView.invalidate();
+                    final int position = i; // i 是循环变量
+                    itemView.post(() -> {
+                        MovieSort.SortData sortData = sortAdapter.getItem(position);
+                        if (null != sortData && !sortData.filters.isEmpty()) {
+                            showFilterIcon(sortData.filterSelectCount());
+                        }
+                    });
                 }
             }
         }
