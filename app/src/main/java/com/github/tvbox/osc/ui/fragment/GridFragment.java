@@ -418,13 +418,12 @@ public class GridFragment extends BaseLazyFragment {
                     }
 gridView.setFocusable(false);
 gridView.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
-gridView.postDelayed(() -> {
+
+                gridView.post(() -> {
     gridView.setFocusable(true);
 	gridView.setDescendantFocusability(ViewGroup.FOCUS_BEFORE_DESCENDANTS);
-
-    gridView.requestFocus(); // 强制焦点分配
     gridView.setSelectedPosition(position);
-}, 200);
+                });
 
                     forceRefresh();
                 }
