@@ -988,22 +988,24 @@ public class HomeActivity extends BaseActivity {
         }
     }
 
-	        // 初始化焦点变化监听器
-        focusChangeListener = new ViewTreeObserver.OnGlobalFocusChangeListener() {
-            @Override
-            public void onGlobalFocusChanged(View oldFocus, View newFocus) {
-                if (newFocus == null) {  // 页面失去焦点
-                    BaseLazyFragment baseLazyFragment = this.fragments.get(this.sortFocused);
-                    if (baseLazyFragment instanceof GridFragment) {
-                        // 如果 sortFocusView 存在且没有获取焦点，则请求焦点
-                        if (this.sortFocusView != null && !this.sortFocusView.isFocused()) {
-                            this.mGridView.setSelection(PositionXu);   //xuameng处理手机滑动主页菜单失去焦点时按返回键闪退
-                        }
-	                }
+
+// 初始化焦点变化监听器
+ViewTreeObserver.OnGlobalFocusChangeListener focusChangeListener = new ViewTreeObserver.OnGlobalFocusChangeListener() {
+    @Override
+    public void onGlobalFocusChanged(View oldFocus, View newFocus) {
+        if (newFocus == null) {  // 页面失去焦点
+            BaseLazyFragment baseLazyFragment = fragments.get(sortFocused);
+            if (baseLazyFragment instanceof GridFragment) {
+                // 如果 sortFocusView 存在且没有获取焦点，则请求焦点
+                if (sortFocusView != null && !sortFocusView.isFocused()) {
+                    mGridView.setSelection(PositionXu);   // 处理手机滑动主页菜单失去焦点时按返回键闪退
                 }
             }
-        };
-        
-        // 注册全局焦点变化监听
-        getWindow().getDecorView().getViewTreeObserver().addOnGlobalFocusChangeListener(focusChangeListener);
+        }
+    }
+};
+
+// 注册全局焦点变化监听
+getWindow().getDecorView().getViewTreeObserver().addOnGlobalFocusChangeListener(focusChangeListener);
+
 }
