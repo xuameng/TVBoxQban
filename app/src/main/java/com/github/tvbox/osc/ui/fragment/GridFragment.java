@@ -424,7 +424,8 @@ gridView.setFocusable(false);  // 恢复焦点获取能力
 					gridView.setFocusable(true);  // 恢复焦点获取能力
                         gridView.requestFocusFromTouch();
                         gridView.setSelectedPosition(position);
-                }, 200);
+
+                }, 300);
                     forceRefresh();
                 }
             });
