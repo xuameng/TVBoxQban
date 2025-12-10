@@ -194,6 +194,7 @@ public class HomeActivity extends BaseActivity {
                     textView.invalidate();
                 }
 				*/      //由onItemSelected统一处理
+				resetAllItemsToDefault();  //xuameng   重置未选中菜单项为默认值
             }
 
             public void onItemSelected(TvRecyclerView tvRecyclerView, View view, int position) {
@@ -255,7 +256,7 @@ public class HomeActivity extends BaseActivity {
             }
         });
 
-/*        // xuameng添加焦点变化监听
+        // xuameng添加焦点变化监听
         this.mGridView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -264,7 +265,7 @@ public class HomeActivity extends BaseActivity {
                     resetAllItemsToDefault();   //xuameng   重置未选中菜单项为默认值
                 }
             }
-        });     */
+        });     
 
         tvName.setOnClickListener(new View.OnClickListener() {
             @Override
