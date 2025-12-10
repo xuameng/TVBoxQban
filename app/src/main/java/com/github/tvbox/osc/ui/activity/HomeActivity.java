@@ -980,13 +980,6 @@ public class HomeActivity extends BaseActivity {
                     textView.setTextColor(HomeActivity.this.getResources().getColor(R.color.color_FFFFFF));
                     textView.invalidate();
 					itemView.requestFocus();
-                    final int position = i; // i 是循环变量
-                    itemView.post(() -> {
-                        MovieSort.SortData sortData = sortAdapter.getItem(position);
-                        if (null != sortData && !sortData.filters.isEmpty()) {
-                            showFilterIcon(sortData.filterSelectCount());
-                        }
-                    });
                 }
             }
         }
