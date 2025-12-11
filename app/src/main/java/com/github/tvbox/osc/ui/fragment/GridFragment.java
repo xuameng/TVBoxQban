@@ -408,12 +408,10 @@ public class GridFragment extends BaseLazyFragment {
                         // 更新选中状态
                         sortData.filterSelect.put(key, newSelection);
                         kvAdapter.setSelectedPosition(position);
-                        gridView.setFocusable(false);  // 禁用焦点获取能力
                     } else {
                         // 取消选中
                         sortData.filterSelect.remove(key);
                         kvAdapter.setSelectedPosition(-1);
-                        gridView.setFocusable(false);  // 禁用焦点获取能力
                     }
                     forceRefresh();
                 }
