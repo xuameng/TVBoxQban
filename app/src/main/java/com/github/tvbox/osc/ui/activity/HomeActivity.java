@@ -797,19 +797,13 @@ public class HomeActivity extends BaseActivity {
             mSiteSwitchDialog.setAdapter(new SelectDialogAdapter.SelectDialogInterface<SourceBean>() {
             @Override
                 public void click(SourceBean value, int pos) {
-    // 获取所有分类项
-    List<MovieSort.SortData> allSortData = new ArrayList<>();
-    for (int i = 0; i < sortAdapter.getItemCount(); i++) {
-        MovieSort.SortData sortData = sortAdapter.getItem(i);
-        allSortData.add(sortData);
-    }
-
-    // 清空所有过滤器
-    for (MovieSort.SortData sortData : allSortData) {
-        if (sortData != null && sortData.filterSelect != null) {
-            sortData.filterSelect.clear();
-        }
-    }
+                    // xuameng清空所有主页菜单过滤器  处理切换主页数据存在的BUG
+                    for (int i = 0; i < sortAdapter.getItemCount(); i++) {
+                        MovieSort.SortData sortData = sortAdapter.getItem(i);
+                        if (sortData != null && sortData.filterSelect != null) {
+                            sortData.filterSelect.clear();
+                        }
+                    }
                     ApiConfig.get().setSourceBean(value);
                     Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
