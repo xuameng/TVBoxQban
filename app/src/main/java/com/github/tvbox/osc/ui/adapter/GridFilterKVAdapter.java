@@ -44,7 +44,7 @@ public class GridFilterKVAdapter extends BaseQuickAdapter<String, BaseViewHolder
  }
  // 更新当前选中的 item
  notifyItemChanged(selectedPosition);
-    }     
+       
     }
     
     public int getSelectedPosition() {    //xuameng新增方法修正多个高亮BUG
