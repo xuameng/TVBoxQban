@@ -8,12 +8,12 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 public class GridFilterKVAdapter extends BaseQuickAdapter<String, BaseViewHolder> {
-    private int selectedPosition = -1;
-    private int lastSelectedPosition = -1; // 记录上
-    private int defaultColor;
-    private int selectedColor;
+    private int selectedPosition = -1;    // xuameng记录当前选中
+    private int lastSelectedPosition = -1; // xuameng记录上次选中
+    private int defaultColor;    //xuameng默认颜色
+    private int selectedColor;   //xuameng选中颜色
     
-    public GridFilterKVAdapter(int defaultColor, int selectedColor) {
+    public GridFilterKVAdapter(int defaultColor, int selectedColor) {   //xuameng传入颜色
         super(R.layout.item_grid_filter_value, new ArrayList<>());
         this.defaultColor = defaultColor;
         this.selectedColor = selectedColor;
@@ -34,19 +34,15 @@ public class GridFilterKVAdapter extends BaseQuickAdapter<String, BaseViewHolder
     }
     
     public void setSelectedPosition(int position) {    //xuameng新增方法修正多个高亮BUG
-
-    // 记录上一次选中的位置
-    // 记录上一次选中的位置
- lastSelectedPosition = selectedPosition;
- this.selectedPosition = position;
-
- // 如果存在上一次选中的 item，更新它的状态
- if (lastSelectedPosition != -1) {
- notifyItemChanged(lastSelectedPosition);
- }
- // 更新当前选中的 item
- notifyItemChanged(selectedPosition);
-       
+        // 记录上一次选中的位置
+        lastSelectedPosition = selectedPosition;
+        this.selectedPosition = position;
+        // 如果存在上一次选中的 item，更新它的状态   刷单个item避免焦点乱跳
+        if (lastSelectedPosition != -1) {
+            notifyItemChanged(lastSelectedPosition);
+        }
+        // 更新当前选中的 item  刷单个item避免焦点乱跳
+        notifyItemChanged(selectedPosition);
     }
     
     public int getSelectedPosition() {    //xuameng新增方法修正多个高亮BUG
