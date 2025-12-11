@@ -797,7 +797,7 @@ public class HomeActivity extends BaseActivity {
             mSiteSwitchDialog.setAdapter(new SelectDialogAdapter.SelectDialogInterface<SourceBean>() {
             @Override
                 public void click(SourceBean value, int pos) {
-                    // xuameng清空所有主页菜单过滤器  处理切换主页数据存在的BUG
+                    // xuameng清空所有主页菜单过滤器  处理切换主页数据还存在的BUG 如电线杆变色，过滤内容还在等
                     for (int i = 0; i < sortAdapter.getItemCount(); i++) {
                         MovieSort.SortData sortData = sortAdapter.getItem(i);
                         if (sortData != null && sortData.filterSelect != null) {
