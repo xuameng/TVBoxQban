@@ -33,8 +33,18 @@ public class GridFilterKVAdapter extends BaseQuickAdapter<String, BaseViewHolder
     }
     
     public void setSelectedPosition(int position) {    //xuameng新增方法修正多个高亮BUG
-        this.selectedPosition = position;
-        notifyItemChanged(position);
+
+    // 记录上一次选中的位置
+ lastSelectedPosition = selectedPosition;
+ this.selectedPosition = position;
+
+ // 如果存在上一次选中的 item，更新它的状态
+ if (lastSelectedPosition != -1) {
+ notifyItemChanged(lastSelectedPosition);
+ }
+ // 更新当前选中的 item
+ notifyItemChanged(selectedPosition);
+    }     
     }
     
     public int getSelectedPosition() {    //xuameng新增方法修正多个高亮BUG
