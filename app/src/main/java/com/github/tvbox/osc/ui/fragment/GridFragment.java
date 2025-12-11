@@ -378,7 +378,7 @@ public class GridFragment extends BaseLazyFragment {
             TextView filterNameTv = line.findViewById(R.id.filterName);
             filterNameTv.setText(filter.name);
             TvRecyclerView gridView = line.findViewById(R.id.mFilterKv);
-            gridView.setId(View.generateViewId());
+            gridView.setId(View.generateViewId());   //xuameng设置唯一ID
             gridView.setHasFixedSize(true);
             gridView.setLayoutManager(new V7LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
         
@@ -409,16 +409,13 @@ public class GridFragment extends BaseLazyFragment {
                         // 更新选中状态
                         sortData.filterSelect.put(key, newSelection);
                         kvAdapter.setSelectedPosition(position);
-                        
                         gridView.setFocusable(false);  // 禁用焦点获取能力
                     } else {
                         // 取消选中
                         sortData.filterSelect.remove(key);
                         kvAdapter.setSelectedPosition(-1);
-                        
                         gridView.setFocusable(false);  // 禁用焦点获取能力
                     }
-                
                     forceRefresh();
                 }
             });
