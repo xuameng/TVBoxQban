@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 public class GridFilterKVAdapter extends BaseQuickAdapter<String, BaseViewHolder> {
     private int selectedPosition = -1;
+    private int lastSelectedPosition = -1; // 记录上
     private int defaultColor;
     private int selectedColor;
     
@@ -35,7 +36,8 @@ public class GridFilterKVAdapter extends BaseQuickAdapter<String, BaseViewHolder
     public void setSelectedPosition(int position) {    //xuameng新增方法修正多个高亮BUG
 
     // 记录上一次选中的位置
- lastSelectedPosition = position;
+    // 记录上一次选中的位置
+ lastSelectedPosition = selectedPosition;
  this.selectedPosition = position;
 
  // 如果存在上一次选中的 item，更新它的状态
