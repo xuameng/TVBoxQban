@@ -259,16 +259,6 @@ public class HomeActivity extends BaseActivity {
             }
         });
 
-
-    this.mGridView.getViewTreeObserver().addOnGlobalFocusChangeListener((oldFocus, newFocus) -> {
-        if (newFocus == null && mGridView != null && PositionXu >= 0) {
-            mGridView.post(() -> {
-                mGridView.setSelection(PositionXu);
-              //  mGridView.requestFocus();
-            }); 
-        }
-    });
-
         tvName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
