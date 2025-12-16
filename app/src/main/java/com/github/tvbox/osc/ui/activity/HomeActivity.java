@@ -259,6 +259,16 @@ public class HomeActivity extends BaseActivity {
             }
         });
 
+
+    this.mGridView.getViewTreeObserver().addOnGlobalFocusChangeListener((oldFocus, newFocus) -> {
+        if (newFocus == null && mGridView != null && PositionXu >= 0) {
+            mGridView.post(() -> {
+                mGridView.setSelection(PositionXu);
+              //  mGridView.requestFocus();
+            }); 
+        }
+    });
+
         tvName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -991,20 +1001,4 @@ public class HomeActivity extends BaseActivity {
             }
         }
     }
-
-@Override
-public void onWindowFocusChanged(boolean hasFocus) {
-    super.onWindowFocusChanged(hasFocus);
-    if (!hasFocus) {
-        // 延迟恢复焦点
-        new Handler().postDelayed(() -> {
-            if (mGridView != null && PositionXu >= 0) {
-                mGridView.setSelection(PositionXu);
-                mGridView.requestFocus();
-            }
-        }, 200); // 延迟200ms
-    }
-}
-
-
 }
