@@ -995,12 +995,16 @@ public class HomeActivity extends BaseActivity {
 @Override
 public void onWindowFocusChanged(boolean hasFocus) {
     super.onWindowFocusChanged(hasFocus);
-    if (!hasFocus && mGridView != null && !mGridView.hasFocus()) {
-        mGridView.post(() -> {
-            mGridView.requestFocus();
-            mGridView.setSelection(PositionXu);
-        });
+    if (!hasFocus) {
+        // 延迟恢复焦点
+        new Handler().postDelayed(() -> {
+            if (mGridView != null && PositionXu >= 0) {
+                mGridView.setSelection(PositionXu);
+                mGridView.requestFocus();
+            }
+        }, 200); // 延迟200ms
     }
 }
+
 
 }
