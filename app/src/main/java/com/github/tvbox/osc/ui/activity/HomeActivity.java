@@ -991,4 +991,16 @@ public class HomeActivity extends BaseActivity {
             }
         }
     }
+
+@Override
+public void onWindowFocusChanged(boolean hasFocus) {
+    super.onWindowFocusChanged(hasFocus);
+    if (!hasFocus && mGridView != null && !mGridView.hasFocus()) {
+        mGridView.post(() -> {
+            mGridView.requestFocus();
+            mGridView.setSelection(PositionXu);
+        });
+    }
+}
+
 }
