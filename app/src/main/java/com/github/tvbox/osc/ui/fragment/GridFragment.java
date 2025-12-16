@@ -216,7 +216,7 @@ public class GridFragment extends BaseLazyFragment {
             public boolean onInBorderKeyEvent(int direction, View focused) {
                 if (direction == View.FOCUS_UP) {
                 }
-                return false;
+                return true;
             }
         });
         gridAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
