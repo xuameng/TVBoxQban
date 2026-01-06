@@ -61,52 +61,37 @@ public class JarLoader {
     }
 
 
-private boolean loadClassLoader(String jar, String key) {
-        if (classLoaders.containsKey(key)){
-            Log.i("JarLoader", "echo-loadClassLoader jar缓存: " + key);
-            return true;
-        }
+
+private void loadClassLoaderAsync(String jar, String key, Callback callback) {
+    if (classLoaders.containsKey(key)) {
+        callback.onSuccess();
+        return;
+    }
+    new Thread(() -> {
         boolean success = false;
         try {
             File cacheDir = new File(App.getInstance().getCacheDir().getAbsolutePath() + "/catvod_csp");
-            if (!cacheDir.exists())
-                cacheDir.mkdirs();
-            final DexClassLoader classLoader = new DexClassLoader(jar, cacheDir.getAbsolutePath(), null, App.getInstance().getClassLoader());
-            int count = 0;
-            do {
-                try {
-                    final Class<?> classInit = classLoader.loadClass("com.github.catvod.spider.Init");
-                    if (classInit != null) {
-                        final Method initMethod = classInit.getMethod("init", Context.class);
-                        // 直接在主线程调用method.invoke()，避免线程同步等待的开销
-                        initMethod.invoke(null, App.getInstance());
-                        Log.i("JarLoader", "echo-自定义爬虫代码加载成功!");
-                        success = true;
-                        try {
-                            Class<?> proxy = classLoader.loadClass("com.github.catvod.spider.Proxy");
-                            Method proxyMethod = proxy.getMethod("proxy", Map.class);
-                            proxyMethods.put(key, proxyMethod);
-                        } catch (Throwable th) {
-                            // 可以记录错误日志
-                            th.printStackTrace();
-                        }
-                        break;
-                    }
-                    Thread.sleep(200);
-                } catch (Throwable th) {
-                    th.printStackTrace();
-                }
-                count++;
-            } while (count < 2);
-
-            if (success) {
-                classLoaders.put(key, classLoader);
-            }
+            if (!cacheDir.exists()) cacheDir.mkdirs();
+            DexClassLoader classLoader = new DexClassLoader(jar, cacheDir.getAbsolutePath(), null, App.getInstance().getClassLoader());
+            Class<?> classInit = classLoader.loadClass("com.github.catvod.spider.Init");
+            Method initMethod = classInit.getMethod("init", Context.class);
+            initMethod.invoke(null, App.getInstance());
+            success = true;
+            Class<?> proxy = classLoader.loadClass("com.github.catvod.spider.Proxy");
+            Method proxyMethod = proxy.getMethod("proxy", Map.class);
+            proxyMethods.put(key, proxyMethod);
+            classLoaders.put(key, classLoader);
         } catch (Throwable th) {
             th.printStackTrace();
         }
-        return success;
-    }
+        if (success) {
+            callback.onSuccess();
+        } else {
+            callback.onFailure();
+        }
+    }).start();
+}
+
 
 
     private DexClassLoader loadJarInternal(String jar, String md5, String key) {
