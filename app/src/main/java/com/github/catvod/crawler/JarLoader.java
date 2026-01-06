@@ -68,8 +68,8 @@ private boolean loadClassLoader(String jar, String key) {
             Log.i("JarLoader", "echo-loadClassLoader jar缓存: " + key);
             return true;
     }
+    boolean success = false;
     new Thread(() -> {
-        boolean success = false;
         try {
             File cacheDir = new File(App.getInstance().getCacheDir().getAbsolutePath() + "/catvod_csp");
             if (!cacheDir.exists()) cacheDir.mkdirs();
