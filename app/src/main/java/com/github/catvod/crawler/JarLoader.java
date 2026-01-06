@@ -69,6 +69,7 @@ private boolean loadClassLoader(String jar, String key) {
             return true;
     }
     new Thread(() -> {
+        boolean success = false;
         try {
             File cacheDir = new File(App.getInstance().getCacheDir().getAbsolutePath() + "/catvod_csp");
             if (!cacheDir.exists()) cacheDir.mkdirs();
@@ -76,6 +77,7 @@ private boolean loadClassLoader(String jar, String key) {
             Class<?> classInit = classLoader.loadClass("com.github.catvod.spider.Init");
             Method initMethod = classInit.getMethod("init", Context.class);
             initMethod.invoke(null, App.getInstance());
+            success = true;
             Class<?> proxy = classLoader.loadClass("com.github.catvod.spider.Proxy");
             Method proxyMethod = proxy.getMethod("proxy", Map.class);
             proxyMethods.put(key, proxyMethod);
@@ -84,6 +86,7 @@ private boolean loadClassLoader(String jar, String key) {
             th.printStackTrace();
         }
     }).start();
+    return success;
 }
 
 
