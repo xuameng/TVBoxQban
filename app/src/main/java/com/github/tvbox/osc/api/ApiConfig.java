@@ -87,7 +87,7 @@ public class ApiConfig {
 
     private String defaultLiveObjString="{\"lives\":[{\"name\":\"txt_m3u\",\"type\":0,\"url\":\"txt_m3u_url\"}]}";
     private ApiConfig() {
-		clearJarLoader();
+		//clearJarLoader();
 		LoadapiUrlXu();  //xuameng 如果点播源url为空，清除API_URL键值。回复内置接口
         sourceBeanList = new LinkedHashMap<>();
         liveChannelGroupList = new ArrayList<>();
