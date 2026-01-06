@@ -62,13 +62,13 @@ public class JarLoader {
 
 
 
-private void loadClassLoaderAsync(String jar, String key, Callback callback) {
+
+private boolean loadClassLoader(String jar, String key) {
     if (classLoaders.containsKey(key)) {
-        callback.onSuccess();
-        return;
+            Log.i("JarLoader", "echo-loadClassLoader jar缓存: " + key);
+            return true;
     }
     new Thread(() -> {
-        boolean success = false;
         try {
             File cacheDir = new File(App.getInstance().getCacheDir().getAbsolutePath() + "/catvod_csp");
             if (!cacheDir.exists()) cacheDir.mkdirs();
@@ -76,7 +76,6 @@ private void loadClassLoaderAsync(String jar, String key, Callback callback) {
             Class<?> classInit = classLoader.loadClass("com.github.catvod.spider.Init");
             Method initMethod = classInit.getMethod("init", Context.class);
             initMethod.invoke(null, App.getInstance());
-            success = true;
             Class<?> proxy = classLoader.loadClass("com.github.catvod.spider.Proxy");
             Method proxyMethod = proxy.getMethod("proxy", Map.class);
             proxyMethods.put(key, proxyMethod);
@@ -84,13 +83,9 @@ private void loadClassLoaderAsync(String jar, String key, Callback callback) {
         } catch (Throwable th) {
             th.printStackTrace();
         }
-        if (success) {
-            callback.onSuccess();
-        } else {
-            callback.onFailure();
-        }
     }).start();
 }
+
 
 
 
