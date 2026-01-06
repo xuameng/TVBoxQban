@@ -1125,7 +1125,7 @@ public class ApiConfig {
         return myHosts;
     }
     public void clearJarLoader(){
-    //    jarLoader.clear();
+        jarLoader.clear();
 		jsLoader.clear();
     }
     private void addSuperParse(){
