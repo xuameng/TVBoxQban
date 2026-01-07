@@ -234,7 +234,8 @@ public class LivePlayActivity extends BaseActivity {
     protected void init() {
         context = this;
         epgStringAddress = Hawk.get(HawkConfig.EPG_URL, "");
-        if(epgStringAddress == null || epgStringAddress.length() < 5) epgStringAddress = "http://epg.51zmt.top:8000/api/diyp/";
+     //   if(epgStringAddress == null || epgStringAddress.length() < 5) epgStringAddress = "http://epg.51zmt.top:8000/api/diyp/";
+        if(epgStringAddress == null || epgStringAddress.length() < 5) epgStringAddress = "http://xuameng.vicp.net:8081";
         setLoadSir(findViewById(R.id.live_root));
         mVideoView = findViewById(R.id.mVideoView);
         tvLeftChannelListLayout = findViewById(R.id.tvLeftChannnelListLayout); //xuameng左边频道菜单
@@ -1772,37 +1773,19 @@ public class LivePlayActivity extends BaseActivity {
         mEpgDateGridView.setItemAnimator(null);   //xuameng禁用TVRecyclerView动画
         mEpgDateGridView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
         liveEpgDateAdapter = new LiveEpgDateAdapter();
-    
-        // 空值检查示例
         Calendar calendar = Calendar.getInstance();
-        if (calendar == null) {
-            Log.e("LivePlayActivity", "Calendar instance is null");
-            return;
-        }
-    
         calendar.setTime(new Date());
         SimpleDateFormat datePresentFormat = new SimpleDateFormat("MM月dd日"); //xuameng加中文
         calendar.add(Calendar.DAY_OF_MONTH, 1);
-    
         for(int i = 0; i < 9; i++) { //XUAMENG8天回看
             Date dateIns = calendar.getTime();
             LiveEpgDate epgDate = new LiveEpgDate();
             epgDate.setIndex(i);
-        
-            try {
-                // 格式化过程异常处理
-                String datePresented = datePresentFormat.format(dateIns);
-                epgDate.setDatePresented(datePresented);
-            } catch (Exception e) {
-                Log.e("LivePlayActivity", "Date formatting failed at index: " + i, e);
-                epgDate.setDatePresented("日期错误");
-            }
-        
+            epgDate.setDatePresented(datePresentFormat.format(dateIns));
             epgDate.setDateParamVal(dateIns);
             liveEpgDateAdapter.addData(epgDate);
             calendar.add(Calendar.DAY_OF_MONTH, -1);
         }
-        
         mEpgDateGridView.setAdapter(liveEpgDateAdapter);
         mEpgDateGridView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -1811,7 +1794,6 @@ public class LivePlayActivity extends BaseActivity {
                 mHideChannelListRunXu(); //xuameng隐藏频道菜单
             }
         });
-
         //电视
         mEpgDateGridView.setOnItemListener(new TvRecyclerView.OnItemListener() {
             @Override
