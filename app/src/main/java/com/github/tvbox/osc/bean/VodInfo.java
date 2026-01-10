@@ -93,12 +93,20 @@ public class VodInfo implements Serializable {
     }
 
     private int extractNumber(String name) {
-        java.util.regex.Matcher matcher = getPattern("\\d+").matcher(name);
+        // xuameng将 Unicode 数字转换为标准 ASCII 数字  解决全角字符闪退
+        String normalized = name.replaceAll("[\\p{Ll}\\p{Lu}\\p{Lt}\\p{Lm}\\p{Lo}\\p{Nl}]", "");
+        java.util.regex.Matcher matcher = getPattern("\\d+").matcher(normalized);
         if (matcher.find()) {
-            return Integer.parseInt(matcher.group());
+            try {
+                return Integer.parseInt(matcher.group());
+            } catch (NumberFormatException e) {
+                Log.e("ExtractNumber", "Invalid number format: " + normalized, e);
+                return 0;
+            }
         }
         return 0;
     }
+
     private boolean isReverse(List<VodInfo.VodSeries> list) {
         if (list.size() > 300) {      //xuameng集数大于300返回
             return false;
