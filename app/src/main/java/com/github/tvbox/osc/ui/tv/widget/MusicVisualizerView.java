@@ -133,7 +133,7 @@ public class MusicVisualizerView extends View {
         }
         mAnimator = ValueAnimator.ofFloat(0f, 1f);
         mAnimator.setDuration(ANIMATION_DURATION);
-        mAnimator.addUpdateListener(animation - > {
+        mAnimator.addUpdateListener(animation -> {
             float fraction = animation.getAnimatedFraction();
             for(int i = 0; i < BAR_COUNT; i++) {
                 mBarHeights[i] += (mTargetHeights[i] - mBarHeights[i]) * fraction;
