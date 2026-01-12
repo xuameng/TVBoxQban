@@ -1,4 +1,3 @@
-
 package xyz.doikki.videoplayer.exo;
 
 import android.content.Context;
@@ -21,10 +20,9 @@ import com.google.android.exoplayer2.upstream.cache.Cache;
 import com.google.android.exoplayer2.upstream.cache.CacheDataSource;
 import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor;
 import com.google.android.exoplayer2.upstream.cache.SimpleCache;
-import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.Util;
 
-import com.github.tvbox.osc.util.FileUtils;
+import com.github.tvbox.osc.util.FileUtils;      //xuameng exo
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -64,61 +62,43 @@ public final class ExoMediaSourceHelper {
     }
 
     public MediaSource getMediaSource(String uri) {
-        return getMediaSource(uri, null, false, null);
+        return getMediaSource(uri, null, false);
     }
 
     public MediaSource getMediaSource(String uri, Map<String, String> headers) {
-        return getMediaSource(uri, headers, false, null);
+        return getMediaSource(uri, headers, false);
     }
 
     public MediaSource getMediaSource(String uri, boolean isCache) {
-        return getMediaSource(uri, null, isCache, null);
+        return getMediaSource(uri, null, isCache);
     }
 
     public MediaSource getMediaSource(String uri, Map<String, String> headers, boolean isCache) {
-        return getMediaSource(uri, headers, isCache, null);
-    }
-
-    public MediaSource getMediaSource(String uri, Map<String, String> headers, boolean isCache, String mimeType) {
         Uri contentUri = Uri.parse(uri);
-        
-        // RTMP和RTSP协议特殊处理
         if ("rtmp".equals(contentUri.getScheme())) {
             return new ProgressiveMediaSource.Factory(new RtmpDataSourceFactory(null))
                     .createMediaSource(MediaItem.fromUri(contentUri));
         } else if ("rtsp".equals(contentUri.getScheme())) {
             return new RtspMediaSource.Factory().createMediaSource(MediaItem.fromUri(contentUri));
         }
-        
-        // 获取数据源工厂
+        int contentType = inferContentType(uri);
         DataSource.Factory factory;
         if (isCache) {
             factory = getCacheDataSourceFactory();
         } else {
             factory = getDataSourceFactory();
         }
-        
-        // 设置HTTP头部
         if (mHttpDataSourceFactory != null) {
             setHeaders(headers);
         }
-        
-        // 构建MediaItem，优先使用传入的MIME类型
-        MediaItem mediaItem = new MediaItem.Builder()
-                .setUri(contentUri)
-                .setMimeType(mimeType != null ? mimeType : inferMimeType(uri))
-                .build();
-        
-        // 根据内容类型创建对应的MediaSource
-        int contentType = inferContentType(uri);
         switch (contentType) {
             case C.TYPE_DASH:
-                return new DashMediaSource.Factory(factory).createMediaSource(mediaItem);
+                return new DashMediaSource.Factory(factory).createMediaSource(MediaItem.fromUri(contentUri));
             case C.TYPE_HLS:
-                return new HlsMediaSource.Factory(factory).createMediaSource(mediaItem);
+                return new HlsMediaSource.Factory(factory).createMediaSource(MediaItem.fromUri(contentUri));
             default:
             case C.TYPE_OTHER:
-                return new ProgressiveMediaSource.Factory(factory).createMediaSource(mediaItem);
+                return new ProgressiveMediaSource.Factory(factory).createMediaSource(MediaItem.fromUri(contentUri));
         }
     }
 
@@ -133,18 +113,6 @@ public final class ExoMediaSourceHelper {
         }
     }
 
-    private String inferMimeType(String uri) {
-        int contentType = inferContentType(uri);
-        switch (contentType) {
-            case C.TYPE_DASH:
-                return MimeTypes.APPLICATION_MPD;
-            case C.TYPE_HLS:
-                return MimeTypes.APPLICATION_M3U8;
-            default:
-                return null;
-        }
-    }
-
     private DataSource.Factory getCacheDataSourceFactory() {
         if (mCache == null) {
             mCache = newCache();
@@ -155,10 +123,10 @@ public final class ExoMediaSourceHelper {
                 .setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR);
     }
 
-    private Cache newCache() {
+    private Cache newCache() {           //xuameng exo播放错误
         return new SimpleCache(
-                new File(FileUtils.getCachePath() + "exo-video-cache"),
-                new LeastRecentlyUsedCacheEvictor(512 * 1024 * 1024),
+                new File(FileUtils.getCachePath() + "exo-video-cache"),//缓存目录
+                new LeastRecentlyUsedCacheEvictor(512 * 1024 * 1024),//缓存大小，默认512M，使用LRU算法实现
                 new ExoDatabaseProvider(mAppContext));
     }
 
@@ -179,7 +147,8 @@ public final class ExoMediaSourceHelper {
     private DataSource.Factory getHttpDataSourceFactory() {
         if (mHttpDataSourceFactory == null) {
             mHttpDataSourceFactory = new OkHttpDataSource.Factory(mOkClient)
-                    .setUserAgent(mUserAgent);
+                    .setUserAgent(mUserAgent)/*
+                    .setAllowCrossProtocolRedirects(true)*/;
         }
         return mHttpDataSourceFactory;
     }
