@@ -1406,6 +1406,7 @@ public class LivePlayActivity extends BaseActivity {
         }
 
         if(tvLeftChannelListLayout.getVisibility() == View.VISIBLE  && TimeoutChangeSource || tvRightSettingLayout.getVisibility() == View.VISIBLE && TimeoutChangeSource) {
+            App.showToastShort(mContext, "聚汇直播提示您：播放失败！自动切换中！");
             TimeoutChangeSource = false;  //xuameng是否自动换源
         }else{
 		    getEpg(new Date());
