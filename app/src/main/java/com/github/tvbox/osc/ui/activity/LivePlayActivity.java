@@ -1410,6 +1410,7 @@ public class LivePlayActivity extends BaseActivity {
         }else{
 		    getEpg(new Date());
             showBottomEpg(); //XUAMENG重要点击频道播放，上面的不重新播放。只显示EPG
+            TimeoutChangeSource = false;  //xuameng是否自动换源
         }
 
         liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
