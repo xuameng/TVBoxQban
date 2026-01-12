@@ -192,6 +192,7 @@ public class LivePlayActivity extends BaseActivity {
     private boolean isShowlist = false; //xuameng判断菜单显示
     private boolean isVideoplaying = false; //xuameng判断视频开始播放
     private boolean XuSource = false; //xuameng退出回看
+    private boolean TimeoutChangeSource = false; //xuameng是否自动换源
     private int selectedChannelNumber = 0; // xuameng遥控器数字键输入的要切换的频道号码
     private TextView tvSelectedChannel; //xuameng频道编号
     private ImageView iv_circle_bg_xu; //xuameng音乐播放时图标
@@ -1403,8 +1404,15 @@ public class LivePlayActivity extends BaseActivity {
         } else {
             currentLiveChannelItem.setinclude_back(false);
         }
-        getEpg(new Date());
-        showBottomEpg(); //XUAMENG重要点击频道播放，上面的不重新播放。只显示EPG
+
+        if(tvLeftChannelListLayout.getVisibility() == View.VISIBLE  && TimeoutChangeSource || tvRightSettingLayout.getVisibility() == View.VISIBLE && TimeoutChangeSource) {
+            
+        }else{
+		    getEpg(new Date());
+            showBottomEpg(); //XUAMENG重要点击频道播放，上面的不重新播放。只显示EPG
+            TimeoutChangeSource = false;  //xuameng是否自动换源
+        }
+
         liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
         simSeekPosition = 0; //XUAMENG重要,换视频时重新记录进度
         simSlideOffset = 0; //XUAMENG重要,换视频时重新记录进度
@@ -2073,11 +2081,12 @@ public class LivePlayActivity extends BaseActivity {
     private Runnable mConnectTimeoutChangeSourceRun = new Runnable() {
         @Override
         public void run() {
+            TimeoutChangeSource = true;  //xuameng是否自动换源
             currentLiveChangeSourceTimes++;
             int channelGroupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex(); //xuameng当前选定的频道组
             if(currentLiveChannelItem.getSourceNum() == currentLiveChangeSourceTimes) { //xuameng如果只有一个源就换频道
                 currentLiveChangeSourceTimes = 0;
-                if(liveChannelGroupList.size() - 1 < 1 && getLiveChannels(channelGroupIndexXu).size() - 1 < 1) { //如果只有一个频道组就播放当前频道，不胯下胯下跨选频道组
+                if(liveChannelGroupList.size() - 1 < 1 && getLiveChannels(channelGroupIndexXu).size() - 1 < 1) { //如果只有一个频道组就播放当前频道，不胯下跨选频道组
                     playXuSource();
                     App.showToastShort(mContext, "聚汇影视提示您：只有一个频道！正在重播！");
                     return;
@@ -2090,7 +2099,7 @@ public class LivePlayActivity extends BaseActivity {
                 Integer[] groupChannelIndex = getNextChannel(Hawk.get(HawkConfig.LIVE_CHANNEL_REVERSE, false) ? -1 : 1); //xuameng换台反转与跨选分类
                 playChannel(groupChannelIndex[0], groupChannelIndex[1], false);
             } else {
-                playNextSource();
+                playNextSource();     //xuameng否则换源
             }
         }
     };
