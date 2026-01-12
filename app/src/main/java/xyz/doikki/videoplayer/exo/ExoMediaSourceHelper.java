@@ -172,5 +172,3 @@ public final class ExoMediaSourceHelper {
         this.mCache = cache;
     }
 }
-
-}
