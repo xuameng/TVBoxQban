@@ -109,10 +109,7 @@ public final class ExoMediaSourceHelper {
                 return new HlsMediaSource.Factory(factory).createMediaSource(mediaItem);
             default:
             case C.TYPE_OTHER:
-                if (uri.toLowerCase().contains(".m3u8")) {
-                    return new HlsMediaSource.Factory(factory).createMediaSource(mediaItem);
-                }
-                return new ProgressiveMediaSource.Factory(factory).createMediaSource(mediaItem);
+                return new HlsMediaSource.Factory(factory).createMediaSource(mediaItem);
         }
     }
     /**
