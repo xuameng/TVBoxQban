@@ -30,7 +30,7 @@ public class MusicVisualizerView extends View {
 
     // 新增横纹样式相关变量
     private boolean mShowStripes = true; // 是否显示横纹
-    private int mStripeColor = Color.argb(100, 255, 255, 255); // 横纹颜色
+    private int mStripeColor = Color.argb(180, 255, 255, 255); // 横纹颜色
     private float mStripeSpacingRatio = 0.15f; // 横纹间距比例（相对于音柱高度）
     private float mStripeWidth = 1.5f; // 横纹线宽
     private Paint mStripePaint; // 横纹画笔
@@ -197,9 +197,9 @@ public class MusicVisualizerView extends View {
                 // 使用固定透明度，确保横纹可见
                 int stripeColor = Color.argb(
                     180, // 固定透明度180（70%不透明）
-                    Color.red(color),
-                    Color.green(color),
-                    Color.blue(color)
+                    0,  // 红色分量：0（黑色）
+                    0,  // 绿色分量：0（黑色）
+                    0  // 蓝色分量：0（黑色）
                 );
                 mStripePaint.setColor(stripeColor);
     
