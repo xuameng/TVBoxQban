@@ -21,7 +21,6 @@ import com.google.android.exoplayer2.upstream.cache.CacheDataSource;
 import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor;
 import com.google.android.exoplayer2.upstream.cache.SimpleCache;
 import com.google.android.exoplayer2.util.Util;
-import com.google.android.exoplayer2.source.DefaultMediaSourceFactory;
 
 import com.github.tvbox.osc.util.FileUtils;      //xuameng exo
 
@@ -82,7 +81,7 @@ public final class ExoMediaSourceHelper {
         } else if ("rtsp".equals(contentUri.getScheme())) {
             return new RtspMediaSource.Factory().createMediaSource(MediaItem.fromUri(contentUri));
         }
-
+        int contentType = inferContentType(uri);
         DataSource.Factory factory;
         if (isCache) {
             factory = getCacheDataSourceFactory();
@@ -92,15 +91,27 @@ public final class ExoMediaSourceHelper {
         if (mHttpDataSourceFactory != null) {
             setHeaders(headers);
         }
-
-    // 使用DefaultMediaSourceFactory，它会自动探测格式并选择合适的提取器
-    DefaultMediaSourceFactory mediaSourceFactory = new DefaultMediaSourceFactory(factory);
-    // 可以在这里配置工厂，例如设置提取器
-    // mediaSourceFactory.setExtractorsFactory(...);
-    return mediaSourceFactory.createMediaSource(MediaItem.fromUri(contentUri));
-
+        switch (contentType) {
+            case C.TYPE_DASH:
+                return new DashMediaSource.Factory(factory).createMediaSource(MediaItem.fromUri(contentUri));
+            case C.TYPE_HLS:
+                return new HlsMediaSource.Factory(factory).createMediaSource(MediaItem.fromUri(contentUri));
+            default:
+            case C.TYPE_OTHER:
+                return new ProgressiveMediaSource.Factory(factory).createMediaSource(MediaItem.fromUri(contentUri));
+        }
     }
 
+    private int inferContentType(String fileName) {
+        fileName = fileName.toLowerCase();
+        if (fileName.contains(".mpd") || fileName.contains("type=mpd")) {
+            return C.TYPE_DASH;
+        } else if (fileName.contains("m3u8")) {
+            return C.TYPE_HLS;
+        } else {
+            return C.TYPE_OTHER;
+        }
+    }
 
     private DataSource.Factory getCacheDataSourceFactory() {
         if (mCache == null) {
