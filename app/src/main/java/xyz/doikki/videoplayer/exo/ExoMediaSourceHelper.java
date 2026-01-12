@@ -136,7 +136,7 @@ public MediaSource getMediaSource(String uri, Map<String, String> headers, boole
             return new HlsMediaSource.Factory(factory).createMediaSource(mediaItem);
         default:
         case C.TYPE_OTHER:
-            return new HlsMediaSource.Factory(factory).createMediaSource(mediaItem);
+            return new ProgressiveMediaSource.Factory(factory).createMediaSource(mediaItem);
     }
 }
 
@@ -244,6 +244,4 @@ private void setHeaders(Map<String, String> headers) {
 
 public void setCache(Cache cache) {
     this.mCache = cache;
-}
-
 }
