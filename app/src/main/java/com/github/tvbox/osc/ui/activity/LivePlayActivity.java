@@ -1406,11 +1406,10 @@ public class LivePlayActivity extends BaseActivity {
         }
 
         if(tvLeftChannelListLayout.getVisibility() == View.VISIBLE  && TimeoutChangeSource || tvRightSettingLayout.getVisibility() == View.VISIBLE && TimeoutChangeSource) {
-            
+            TimeoutChangeSource = false;  //xuameng是否自动换源
         }else{
 		    getEpg(new Date());
             showBottomEpg(); //XUAMENG重要点击频道播放，上面的不重新播放。只显示EPG
-            TimeoutChangeSource = false;  //xuameng是否自动换源
         }
 
         liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
