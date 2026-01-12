@@ -18,7 +18,7 @@ import android.animation.ValueAnimator;
  * 3. 完全兼容原有接口
  * 4. 振幅随音量大小变化
  * 5. 三种颜色随机变化
- * 6. 新增横纹样式选项
+ * 6. 新增音柱分段效果
  */
 public class MusicVisualizerView extends View {
     private static final int MAX_AMPLITUDE = 6222;
@@ -28,12 +28,10 @@ public class MusicVisualizerView extends View {
     // 改为非静态变量实现动态刷新
     private int[][] colorSchemes = new int[3][3];
 
-    // 新增横纹样式相关变量
-    private boolean mShowStripes = true; // 是否显示横纹
-    private int mStripeColor = Color.argb(180, 255, 255, 255); // 横纹颜色
-    private float mStripeSpacingRatio = 0.15f; // 横纹间距比例（相对于音柱高度）
-    private float mStripeWidth = 1.5f; // 横纹线宽
-    private Paint mStripePaint; // 横纹画笔
+    // 新增音柱分段效果相关变量
+    private boolean mShowStripes = true; // 是否显示分段效果
+    private int mSegmentCount = 15; // 每个音柱的分段数
+    private float mSegmentSpacingRatio = 0.2f; // 段间距比例（相对于段高度）
 
     // 新增颜色方案刷新方法
     private void refreshColorSchemes() {
@@ -79,34 +77,21 @@ public class MusicVisualizerView extends View {
     private void init() {
         mBarPaint.setStyle(Paint.Style.FILL);
         refreshColorSchemes();  // 新增：初始化时预加载颜色方案
-        
-        // 初始化横纹画笔
-        mStripePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mStripePaint.setStyle(Paint.Style.STROKE);
-        mStripePaint.setStrokeWidth(mStripeWidth);
-        mStripePaint.setColor(mStripeColor);
     }
 
-    // 新增横纹样式设置方法
+    // 新增音柱分段效果设置方法
     public void setShowStripes(boolean show) {
         mShowStripes = show;
         postInvalidate();
     }
 
-    public void setStripeColor(int color) {
-        mStripeColor = color;
-        mStripePaint.setColor(color);
+    public void setSegmentCount(int count) {
+        mSegmentCount = Math.max(1, count); // 至少1段
         postInvalidate();
     }
 
-    public void setStripeSpacingRatio(float ratio) {
-        mStripeSpacingRatio = Math.max(0.05f, Math.min(0.3f, ratio));
-        postInvalidate();
-    }
-
-    public void setStripeWidth(float width) {
-        mStripeWidth = width;
-        mStripePaint.setStrokeWidth(width);
+    public void setSegmentSpacingRatio(float ratio) {
+        mSegmentSpacingRatio = Math.max(0f, Math.min(0.5f, ratio)); // 限制在0-0.5之间
         postInvalidate();
     }
 
@@ -188,30 +173,30 @@ public class MusicVisualizerView extends View {
             float top = height - barHeight;
         
             // 根据当前颜色方案和振幅强度计算颜色
-            int color = getDynamicColor(mAmplitudeLevels[i],colorSchemes[currentSchemeIndex]); 
+            int color = getDynamicColor(mAmplitudeLevels[i], colorSchemes[currentSchemeIndex]); 
             mBarPaint.setColor(color);
-            canvas.drawRect(left, top, right, height, mBarPaint);
-
-            // 新增：绘制横纹样式
+            
+            // 分段绘制音柱（实现"一段一段"效果）
             if (mShowStripes && barHeight > 0) {
-                // 使用固定黑色横纹，确保横纹可见
-                int stripeColor = Color.argb(
-                    180, // 固定透明度180（70%不透明）
-                    0,   // 红色分量：0（黑色）
-                    0,   // 绿色分量：0（黑色）
-                    0    // 蓝色分量：0（黑色）
-                );
-                mStripePaint.setColor(stripeColor);
-
-                // 固定间距（例如10像素）
-                float stripeSpacing = 5f;
-                float stripeY = top + stripeSpacing;
-
-                // 绘制横纹
-                while (stripeY < height - stripeSpacing) {
-                    canvas.drawLine(left, stripeY, right, stripeY, mStripePaint);
-                    stripeY += stripeSpacing * 2;
+                // 分段参数设置
+                int segmentCount = mSegmentCount; // 每个音柱分成若干段
+                float segmentHeight = barHeight / segmentCount;
+                float segmentSpacing = segmentHeight * mSegmentSpacingRatio; // 段间距为段高度的指定比例
+                float actualSegmentHeight = segmentHeight - segmentSpacing;
+                
+                // 从下往上绘制各个段
+                for (int segment = 0; segment < segmentCount; segment++) {
+                    float segmentTop = height - (segment + 1) * segmentHeight + segmentSpacing;
+                    float segmentBottom = segmentTop + actualSegmentHeight;
+                    
+                    // 确保段在音柱范围内
+                    if (segmentTop >= top) {
+                        canvas.drawRect(left, segmentTop, right, segmentBottom, mBarPaint);
+                    }
                 }
+            } else {
+                // 如果不显示分段效果，绘制完整音柱
+                canvas.drawRect(left, top, right, height, mBarPaint);
             }
         }
     }
