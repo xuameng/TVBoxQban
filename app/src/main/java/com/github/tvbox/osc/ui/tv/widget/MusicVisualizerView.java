@@ -1,16 +1,16 @@
+
 package com.github.tvbox.osc.ui.tv.widget;
 
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.LinearGradient;
 import android.graphics.Paint;
-import android.graphics.Shader;
 import android.util.AttributeSet;
 import android.view.View;
 import android.animation.ValueAnimator;
 
-/** xuameng
+/**
+ * xuameng
  * 音乐可视化视图组件（带振幅颜色渐变）
  * 新增特性：
  * 1. 颜色随振幅大小变化
@@ -18,6 +18,7 @@ import android.animation.ValueAnimator;
  * 3. 完全兼容原有接口
  * 4. 振幅随音量大小变化
  * 5. 三种颜色随机变化
+ * 6. 新增横纹样式选项
  */
 public class MusicVisualizerView extends View {
     private static final int MAX_AMPLITUDE = 6222;
@@ -26,6 +27,13 @@ public class MusicVisualizerView extends View {
     
     // 改为非静态变量实现动态刷新
     private int[][] colorSchemes = new int[3][3];
+
+    // 新增横纹样式相关变量
+    private boolean mShowStripes = true; // 是否显示横纹
+    private int mStripeColor = Color.argb(100, 255, 255, 255); // 横纹颜色
+    private float mStripeSpacingRatio = 0.1f; // 横纹间距比例（相对于音柱高度）
+    private float mStripeWidth = 1f; // 横纹线宽
+    private Paint mStripePaint; // 横纹画笔
 
     // 新增颜色方案刷新方法
     private void refreshColorSchemes() {
@@ -40,7 +48,6 @@ public class MusicVisualizerView extends View {
         postInvalidate(); // 新增：立即刷新视图
     }
 
-   // private static final long COLOR_CYCLE_DURATION = 10 * 60 * 1000; // 10分钟
     private static final long COLOR_CYCLE_DURATION = (long)(0.1 * 60 * 1000); // 6秒切换
     private int currentSchemeIndex = 0;
     private long lastSwitchTime = 0;
@@ -72,6 +79,35 @@ public class MusicVisualizerView extends View {
     private void init() {
         mBarPaint.setStyle(Paint.Style.FILL);
         refreshColorSchemes();  // 新增：初始化时预加载颜色方案
+        
+        // 初始化横纹画笔
+        mStripePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mStripePaint.setStyle(Paint.Style.STROKE);
+        mStripePaint.setStrokeWidth(mStripeWidth);
+        mStripePaint.setColor(mStripeColor);
+    }
+
+    // 新增横纹样式设置方法
+    public void setShowStripes(boolean show) {
+        mShowStripes = show;
+        postInvalidate();
+    }
+
+    public void setStripeColor(int color) {
+        mStripeColor = color;
+        mStripePaint.setColor(color);
+        postInvalidate();
+    }
+
+    public void setStripeSpacingRatio(float ratio) {
+        mStripeSpacingRatio = Math.max(0.05f, Math.min(0.3f, ratio));
+        postInvalidate();
+    }
+
+    public void setStripeWidth(float width) {
+        mStripeWidth = width;
+        mStripePaint.setStrokeWidth(width);
+        postInvalidate();
     }
 
     public void updateVisualizer(byte[] fft, float volumeLevel) {
@@ -132,7 +168,7 @@ public class MusicVisualizerView extends View {
     }
 
     @Override
-     protected void onDraw(Canvas canvas) {
+    protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         if (mBarHeights == null) return;
 
@@ -155,6 +191,28 @@ public class MusicVisualizerView extends View {
             int color = getDynamicColor(mAmplitudeLevels[i],colorSchemes[currentSchemeIndex]); 
             mBarPaint.setColor(color);
             canvas.drawRect(left, top, right, height, mBarPaint);
+            
+            // 新增：绘制横纹样式
+            if (mShowStripes && barHeight > 0) {
+                // 动态计算横纹颜色（与音柱颜色协调）
+                int stripeColor = Color.argb(
+                    (int)(150 * mAmplitudeLevels[i]), // 透明度随振幅变化
+                    Color.red(color),
+                    Color.green(color),
+                    Color.blue(color)
+                );
+                mStripePaint.setColor(stripeColor);
+                
+                // 计算横纹间距（根据音柱高度动态调整）
+                float stripeSpacing = Math.max(3f, barHeight * mStripeSpacingRatio);
+                float stripeY = top + stripeSpacing;
+                
+                // 绘制横纹
+                while (stripeY < height - stripeSpacing) {
+                    canvas.drawLine(left, stripeY, right, stripeY, mStripePaint);
+                    stripeY += stripeSpacing * 2; // 间隔绘制
+                }
+            }
         }
     }
 
@@ -180,6 +238,7 @@ public class MusicVisualizerView extends View {
             return interpolateColor((amplitude - 0.3f) / 0.7f, currentScheme[1], currentScheme[2]);
         }
     }
+    
     /**
      * 颜色插值计算
      */
