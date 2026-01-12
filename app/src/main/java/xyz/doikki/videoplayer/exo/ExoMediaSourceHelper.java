@@ -102,42 +102,53 @@ public final class ExoMediaSourceHelper {
         }
         // 如果MIME类型为空，则根据URL推断
         int contentType = inferContentType(uri);
-        switch(contentType) {
-            case C.TYPE_DASH:
-                return new DashMediaSource.Factory(factory).createMediaSource(mediaItem);
-            case C.TYPE_HLS:
-                return new HlsMediaSource.Factory(factory).createMediaSource(mediaItem);
-            default:
-            case C.TYPE_OTHER:
-        // 额外检查：如果整个 URI 包含 .m3u8，也使用 HLS
-        if(uri.toLowerCase().contains(".m3u8")) {
+   if (contentType == C.TYPE_OTHER && uri.toLowerCase().contains(".m3u8")) {
+        return new HlsMediaSource.Factory(factory).createMediaSource(mediaItem);
+    }
+    
+    switch(contentType) {
+        case C.TYPE_DASH:
+            return new DashMediaSource.Factory(factory).createMediaSource(mediaItem);
+        case C.TYPE_HLS:
             return new HlsMediaSource.Factory(factory).createMediaSource(mediaItem);
-        }
-        return new ProgressiveMediaSource.Factory(factory).createMediaSource(mediaItem);
-        }
+        default:
+        case C.TYPE_OTHER:
+            return new ProgressiveMediaSource.Factory(factory).createMediaSource(mediaItem);
+    }
     }
     /**
      * 修复后的 inferContentType 方法
      * 正确处理带查询参数的URL
      */
 private int inferContentType(String uri) {
-    // 先去除查询参数，只检查路径部分
-    String path = uri.toLowerCase();
+    // 先对 URI 进行解码处理
+    String decodedUri;
+    try {
+        decodedUri = java.net.URLDecoder.decode(uri, "UTF-8");
+    } catch (Exception e) {
+        decodedUri = uri;
+    }
+    
+    String path = decodedUri.toLowerCase();
     int questionMarkIndex = path.indexOf('?');
     if(questionMarkIndex != -1) {
         path = path.substring(0, questionMarkIndex);
     }
     
-    // 更严格的 HLS 流检测
-    if(path.contains(".mpd") || path.contains("type=mpd")) {
+    // 更精确的扩展名匹配
+    if(path.endsWith(".mpd") || path.contains(".mpd?")) {
         return C.TYPE_DASH;
-    } else if(path.contains(".m3u8") || uri.toLowerCase().contains(".m3u8")) {
-        // 双重检查：既检查路径部分，也检查整个 URI
+    } else if(path.endsWith(".m3u8") || path.contains(".m3u8?")) {
         return C.TYPE_HLS;
     } else {
+        // 额外检查整个 URI
+        if (decodedUri.toLowerCase().contains(".m3u8")) {
+            return C.TYPE_HLS;
+        }
         return C.TYPE_OTHER;
     }
 }
+
 
     /**
      * 根据内容类型推断MIME类型
