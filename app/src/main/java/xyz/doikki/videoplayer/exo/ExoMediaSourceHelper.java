@@ -245,3 +245,5 @@ private void setHeaders(Map<String, String> headers) {
 public void setCache(Cache cache) {
     this.mCache = cache;
 }
+
+}
