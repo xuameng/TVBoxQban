@@ -193,26 +193,19 @@ public class MusicVisualizerView extends View {
             canvas.drawRect(left, top, right, height, mBarPaint);
             
             // 新增：绘制横纹样式
-            if (mShowStripes && barHeight > 0) {
-                // 动态计算横纹颜色（与音柱颜色协调）
-                int stripeColor = Color.argb(
-                    (int)(150 * mAmplitudeLevels[i]), // 透明度随振幅变化
-                    Color.red(color),
-                    Color.green(color),
-                    Color.blue(color)
-                );
-                mStripePaint.setColor(stripeColor);
-                
-                // 计算横纹间距（根据音柱高度动态调整）
-                float stripeSpacing = Math.max(3f, barHeight * mStripeSpacingRatio);
-                float stripeY = top + stripeSpacing;
-                
-                // 绘制横纹
-                while (stripeY < height - stripeSpacing) {
-                    canvas.drawLine(left, stripeY, right, stripeY, mStripePaint);
-                    stripeY += stripeSpacing * 2; // 间隔绘制
-                }
-            }
+// 临时修改：使用固定颜色和间距测试
+if (mShowStripes && barHeight > 0) {
+    // 使用固定红色横纹测试
+    mStripePaint.setColor(Color.RED);
+    float stripeSpacing = 10f; // 固定10像素间距
+    float stripeY = top + stripeSpacing;
+    
+    while (stripeY < height - stripeSpacing) {
+        canvas.drawLine(left, stripeY, right, stripeY, mStripePaint);
+        stripeY += stripeSpacing * 2;
+    }
+}
+
         }
     }
 
