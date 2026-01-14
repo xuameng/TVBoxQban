@@ -73,7 +73,7 @@ public final class ExoMediaSourceHelper {
         return getMediaSource(uri, null, isCache);
     }
 
-    public MediaSource getMediaSource(String uri, Map<String, String> headers, boolean isCache) {
+    public MediaSource getMediaSource(String uri, Map<String, String> headers, boolean isCache, int errorCode) {
         Uri contentUri = Uri.parse(uri);
         if ("rtmp".equals(contentUri.getScheme())) {
             return new ProgressiveMediaSource.Factory(new RtmpDataSourceFactory(null))
@@ -91,6 +91,12 @@ public final class ExoMediaSourceHelper {
         if (mHttpDataSourceFactory != null) {
             setHeaders(headers);
         }
+
+        if (errorCode == 3003) {
+           // xuameng当错误码为3003时，强制使用 HLS 源进行播放
+            return new HlsMediaSource.Factory(factory).createMediaSource(MediaItem.fromUri(contentUri));
+        }
+
         switch (contentType) {
             case C.TYPE_DASH:
                 return new DashMediaSource.Factory(factory).createMediaSource(MediaItem.fromUri(contentUri));
@@ -98,9 +104,6 @@ public final class ExoMediaSourceHelper {
                 return new HlsMediaSource.Factory(factory).createMediaSource(MediaItem.fromUri(contentUri));
             default:
             case C.TYPE_OTHER:
-                if (uri.toLowerCase().contains("188766.xyz") || uri.toLowerCase().contains(".m3u8")) {   //xuameng 修复错判类型
-                    return new HlsMediaSource.Factory(factory).createMediaSource(MediaItem.fromUri(contentUri));
-                }
                 return new ProgressiveMediaSource.Factory(factory).createMediaSource(MediaItem.fromUri(contentUri));
         }
     }
