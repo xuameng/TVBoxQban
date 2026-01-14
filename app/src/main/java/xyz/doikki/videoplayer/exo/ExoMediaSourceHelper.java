@@ -96,8 +96,7 @@ public final class ExoMediaSourceHelper {
             setHeaders(headers);
         }
 
-        if (errorCode == 3003 || errorCode == 3001 || errorCode == 2000) {
-           // xuameng当错误码为3003时，强制使用 HLS 源进行播放
+        if (errorCode == 3003 || errorCode == 3001 || errorCode == 2000) {               // xuameng当错误码为3003时，强制使用 HLS 源进行播放
             return new HlsMediaSource.Factory(factory).createMediaSource(MediaItem.fromUri(contentUri));
         }
 
