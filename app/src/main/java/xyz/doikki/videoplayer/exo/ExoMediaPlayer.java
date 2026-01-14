@@ -49,6 +49,8 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     private static AudioTrackMemory memory;    //xuameng记忆选择音轨
 
     private int errorCode = -100;   //xuameng错误日志
+    private String mLastUri;
+    private Map<String, String> mLastHeaders;
 
     public ExoMediaPlayer(Context context) {
         mAppContext = context.getApplicationContext();
@@ -124,6 +126,8 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 
     @Override
     public void setDataSource(String path, Map<String, String> headers) {
+        mLastUri = path;
+        mLastHeaders = headers;
         mMediaSource = mMediaSourceHelper.getMediaSource(path, headers, false, errorCode);
     }
 
@@ -334,9 +338,13 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 	        }
         }
 		if (errorCode == 3003 || errorCode == 3001 || errorCode == 2000) {
+            reset(); // 重置播放器
+            if (mLastUri != null) {
+                setDataSource(mLastUri, mLastHeaders); // 重新设置数据源
                 prepareAsync();
                 start();
-                return;
+                return; // 关键：避免触发 onError 回调
+            }
 		}
         if (mPlayerEventListener != null) {
             mPlayerEventListener.onError();
