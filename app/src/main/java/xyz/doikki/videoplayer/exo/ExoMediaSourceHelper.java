@@ -69,6 +69,10 @@ public final class ExoMediaSourceHelper {
         return getMediaSource(uri, headers, false);
     }
 
+    public MediaSource getMediaSource(String uri, boolean isCache) {
+        return getMediaSource(uri, null, isCache);
+    }
+
     public MediaSource getMediaSource(String uri, Map<String, String> headers, boolean isCache) {
         return getMediaSource(uri, headers, isCache, -1);
     }
@@ -92,7 +96,7 @@ public final class ExoMediaSourceHelper {
             setHeaders(headers);
         }
 
-        if (errorCode == 3003) {
+        if (errorCode == 3003 || errorCode == 3001 || errorCode == 2000) {
            // xuameng当错误码为3003时，强制使用 HLS 源进行播放
             return new HlsMediaSource.Factory(factory).createMediaSource(MediaItem.fromUri(contentUri));
         }
