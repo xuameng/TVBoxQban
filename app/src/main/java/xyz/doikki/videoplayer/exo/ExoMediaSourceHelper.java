@@ -69,8 +69,8 @@ public final class ExoMediaSourceHelper {
         return getMediaSource(uri, headers, false);
     }
 
-    public MediaSource getMediaSource(String uri, boolean isCache) {
-        return getMediaSource(uri, null, isCache);
+    public MediaSource getMediaSource(String uri, Map<String, String> headers, boolean isCache) {
+        return getMediaSource(uri, headers, isCache, -1);
     }
 
     public MediaSource getMediaSource(String uri, Map<String, String> headers, boolean isCache, int errorCode) {
