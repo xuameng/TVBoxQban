@@ -49,8 +49,10 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     private static AudioTrackMemory memory;    //xuameng记忆选择音轨
 
     private int errorCode = -100;   //xuameng错误日志
-    private String mLastUri;
-    private Map<String, String> mLastHeaders;
+    private String mLastUri;   //xuameng 上次播放地址
+    private Map<String, String> mLastHeaders;  //xuameng 上次头部
+    private int mRetryCount = 0; // xuameng当前重试次数
+    private static final int MAX_RETRY_COUNT = 3; // xuameng最大重试次数
 
     public ExoMediaPlayer(Context context) {
         mAppContext = context.getApplicationContext();
@@ -126,8 +128,8 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 
     @Override
     public void setDataSource(String path, Map<String, String> headers) {
-        mLastUri = path;
-        mLastHeaders = headers;
+        mLastUri = path;   //xuameng 记录上次播放地址
+        mLastHeaders = headers;  //xuameng 记录上次头部
         mMediaSource = mMediaSourceHelper.getMediaSource(path, headers, false, errorCode);
     }
 
@@ -337,15 +339,26 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
                 }
 	        }
         }
-		if (errorCode == 3003 || errorCode == 3001 || errorCode == 2000) {
- //           reset(); // 重置播放器
-            if (mLastUri != null) {
-                setDataSource(mLastUri, mLastHeaders); // 重新设置数据源
-                prepareAsync();
-                start();
-                return; // 关键：避免触发 onError 回调
+
+        if (errorCode == 3003 || errorCode == 3001 || errorCode == 2000) {
+            if (mRetryCount < MAX_RETRY_COUNT) {                // xuameng检查是否超过最大重试次数
+                mRetryCount++;                          // xuameng未超过，执行重试 增加重试计数
+                if (mMediaPlayer != null) {                        // xuameng重置播放器状态
+                    mMediaPlayer.stop();
+                    mMediaPlayer.clearMediaItems();
+                    mIsPreparing = false;                       // xuameng可选：重置一些状态变量
+                }
+                // xuameng重新尝试播放
+                if (mLastUri != null) {
+                    setDataSource(mLastUri, mLastHeaders);
+                    prepareAsync();
+                    start();
+                    return; // 避免触发外层 onError 回调
+                }
+            } else {
+                mRetryCount = 0;    // 重置重试次数，避免影响下一次播放
             }
-		}
+        }
         if (mPlayerEventListener != null) {
             mPlayerEventListener.onError();
         }
