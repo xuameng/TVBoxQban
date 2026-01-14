@@ -333,6 +333,11 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
                 }
 	        }
         }
+		if (errorCode == 3003 || errorCode == 3001 || errorCode == 2000) {
+                prepareAsync();
+                start();
+                return;
+		}
         if (mPlayerEventListener != null) {
             mPlayerEventListener.onError();
         }
