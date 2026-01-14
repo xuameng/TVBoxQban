@@ -338,7 +338,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 	        }
         }
 		if (errorCode == 3003 || errorCode == 3001 || errorCode == 2000) {
-            reset(); // 重置播放器
+ //           reset(); // 重置播放器
             if (mLastUri != null) {
                 setDataSource(mLastUri, mLastHeaders); // 重新设置数据源
                 prepareAsync();
