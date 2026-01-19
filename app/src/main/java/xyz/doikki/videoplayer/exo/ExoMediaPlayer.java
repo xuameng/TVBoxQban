@@ -22,11 +22,16 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.util.Clock;
 import com.google.android.exoplayer2.util.EventLogger;
 import com.google.android.exoplayer2.video.VideoSize;
+import com.google.android.exoplayer2.ui.SubtitleView;  //xuameng用于显示字幕
+import com.google.android.exoplayer.text.Cue;  //xuameng用于显示字幕
+import com.google.android.exoplayer2.ui.CaptionStyleCompat;  //xuameng用于显示字幕
+import android.graphics.Color;     //xuameng用于显示字幕
 import com.github.tvbox.osc.util.HawkConfig;  //xuameng EXO解码
 import com.orhanobut.hawk.Hawk; //xuameng EXO解码
 import com.github.tvbox.osc.util.AudioTrackMemory;  //xuameng记忆选择音轨
 import com.github.tvbox.osc.base.App;  //xuameng 提示消息
 
+import java.util.List;   //xuameng用于显示字幕
 import java.util.Map;
 
 import xyz.doikki.videoplayer.player.AbstractPlayer;
@@ -47,6 +52,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     protected ExoTrackNameProvider trackNameProvider;
     protected TrackSelectionArray mTrackSelections;
     private static AudioTrackMemory memory;    //xuameng记忆选择音轨
+    private SubtitleView mExoSubtitleView; // 用于显示ExoPlayer内置字幕
 
     private int errorCode = -100;   //xuameng错误日志
     private String mLastUri;   //xuameng 上次播放地址
@@ -373,4 +379,29 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
             }
         }
     }
+
+    public void setSubtitleView(SubtitleView subtitleView) {       // 用于显示ExoPlayer内置字幕
+        this.mExoSubtitleView = subtitleView;
+        // 设置字幕样式，添加黑色边框效果
+        if (subtitleView != null) {
+            CaptionStyleCompat style = new CaptionStyleCompat(
+            Color.WHITE,        // 文字颜色
+            Color.TRANSPARENT,  // 背景颜色（透明）
+            Color.TRANSPARENT,  // 窗口颜色（也设为透明）
+            CaptionStyleCompat.EDGE_TYPE_OUTLINE, // 边缘类型为轮廓
+            Color.BLACK,        // 边缘颜色（黑色边框）
+            null                // 字体族
+            );
+            subtitleView.setStyle(style);
+        }
+    }
+
+
+    @Override
+    public void onCues(@NonNull List<Cue> cues) {   //xuameng用于显示ExoPlayer内置字幕
+        if (mExoSubtitleView != null) {
+            mExoSubtitleView.setCues(cues); 
+        }
+    }
+
 }
