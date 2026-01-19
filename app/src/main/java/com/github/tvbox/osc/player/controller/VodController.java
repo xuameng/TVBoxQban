@@ -78,6 +78,7 @@ import android.media.audiofx.Visualizer;  //xuameng音乐播放动画
 import android.util.Log; //xuameng音乐播放动画
 import android.os.Looper; //xuameng音乐播放动画
 import android.media.AudioManager;  //xuameng音乐播放动画
+import com.google.android.exoplayer2.ui.SubtitleView;  //xuameng用于显示字幕
 
 import android.os.Build;
 import android.webkit.WebView;
@@ -299,6 +300,7 @@ public class VodController extends BaseController {
     private MusicVisualizerView customVisualizer; //xuameng播放音乐柱状图
     private int audioSessionId = -1; // 使用-1表示未初始化状态 //xuameng音乐播放动画
     private boolean musicAnimation = Hawk.get(HawkConfig.VOD_MUSIC_ANIMATION, false);     //xuameng 音柱动画 加载设置
+    public SubtitleView mExoSubtitleView;   // 用于显示ExoPlayer内置字幕
 	
 	private static final String TAG = "VodController";  //xuameng音乐播放动画
     Handler myHandle;
@@ -513,6 +515,8 @@ public class VodController extends BaseController {
         mxuPlay = findViewById(R.id.mxuplay); //xuameng  低菜单播放
         mPlayrender = findViewById(R.id.play_render);   //xuameng渲染方式
         mPlayanimation = findViewById(R.id.play_animation);  //xuameng音柱动画
+        mExoSubtitleView = findViewById(R.id.exo_subtitle_view); // 用于显示ExoPlayer内置字幕
+
         //xuameng音乐播放时图标
         ObjectAnimator animator20 = ObjectAnimator.ofFloat(iv_circle_bg, "rotation", 360.0f);
         animator20.setDuration(10000);
@@ -1201,7 +1205,24 @@ public class VodController extends BaseController {
             public boolean onLongClick(View view) {
                 FastClickCheckUtil.check(view); //xuameng 防播放打断动画
                 isLongClick = true;
-                if(mSubtitleView.getVisibility() == View.GONE) {
+                if (HawkConfig.exoSubtitle){      //xuameng 打开关闭exo内置方法字幕
+                    if(mExoSubtitleView.getVisibility() == View.GONE) {
+                        if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
+                            hideBottom();
+                        }
+                        mExoSubtitleView.setVisibility(VISIBLE);
+                        App.showToastShort(getContext(), "字幕已开启！");
+                    } else if(mExoSubtitleView.getVisibility() == View.VISIBLE) {
+                        if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
+                            hideBottom();
+                        }
+                        mExoSubtitleView.setVisibility(View.GONE);
+                        App.showToastShort(getContext(), "字幕已关闭！");
+                    }
+                    return true;
+                }
+
+                if(mSubtitleView.getVisibility() == View.GONE) {  //xuameng 打开关闭外置方法字幕
                     if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
                         hideBottom();
                     }
@@ -1624,6 +1645,7 @@ public class VodController extends BaseController {
 				releaseVisualizer();  //xuameng播放音乐背景
                 isVideoplaying = false;
                 isVideoPlay = false;
+                clearSubtitleCache();  //xuameng清除字幕缓存
                 break;
             case VideoView.STATE_PLAYING:
                 initLandscapePortraitBtnInfo();
@@ -2295,6 +2317,15 @@ public class VodController extends BaseController {
         Thunder.stop(false); //停止磁力下载
         Jianpian.finish(); //停止p2p下载
         App.getInstance().setDashData(null);
+    }
+
+    public void clearSubtitleCache(){ //xuameng清除字幕缓存
+        mSubtitleView.setVisibility(View.GONE); //xuameng 外部方法字幕
+        mSubtitleView.destroy();
+        mSubtitleView.clearSubtitleCache();
+        mSubtitleView.onSubtitleChanged(null);
+        mSubtitleView.setVisibility(View.VISIBLE);
+		mExoSubtitleView.setVisibility(View.GONE);    //xuameng EXO内置字幕
     }
 
     private void initVisualizer() {   //xuameng播放音乐柱状图
