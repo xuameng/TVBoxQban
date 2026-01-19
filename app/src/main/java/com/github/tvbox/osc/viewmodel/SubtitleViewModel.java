@@ -192,34 +192,79 @@ public class SubtitleViewModel extends ViewModel {
         }
     }
 
-    private void getSubtitleUrlFromAssrt(Subtitle subtitle, SearchSubtitleDialog.SubtitleLoader subtitleLoader) {
-        String ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.54 Safari/537.36";
-        Request request = new Request.Builder()
-                .url(subtitle.getUrl())
-                .get()
-                .addHeader("Referer", "https://secure.assrt.net")
-                .addHeader("User-Agent", ua)
-                .build();
-        OkHttpClient.Builder builder = new OkHttpClient.Builder()
-                .readTimeout(15, TimeUnit.SECONDS)
-                .writeTimeout(15, TimeUnit.SECONDS)
-                .connectTimeout(15, TimeUnit.SECONDS)
-                .followRedirects(false)
-                .followSslRedirects(false)
-                .retryOnConnectionFailure(true);
-        OkHttpClient client = builder.build();
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                e.printStackTrace();
-            }
 
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                subtitle.setUrl(response.header("location"));
-                subtitleLoader.loadSubtitle(subtitle);
-            }
-        });
+	private void getSubtitleUrlFromAssrt(Subtitle subtitle, SearchSubtitleDialog.SubtitleLoader subtitleLoader) {
+    String ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.54 Safari/537.36";
+    Request request = new Request.Builder()
+            .url(subtitle.getUrl())
+            .get()
+            .addHeader("Referer", "https://secure.assrt.net")
+            .addHeader("User-Agent", ua)
+            .build();
+    
+    // 使用兼容 Android 4.x 的 HTTP 客户端
+    OkHttpClient client = getCompatibleHttpClient();
+    
+    client.newCall(request).enqueue(new Callback() {
+        @Override
+        public void onFailure(Call call, IOException e) {
+            e.printStackTrace();
+        }
+        
+        @Override
+        public void onResponse(Call call, Response response) throws IOException {
+            subtitle.setUrl(response.header("location"));
+            subtitleLoader.loadSubtitle(subtitle);
+        }
+    });
+}
+
+
+// 在SubtitleViewModel类中添加以下方法
+private OkHttpClient getCompatibleHttpClient() {
+    OkHttpClient.Builder builder = new OkHttpClient.Builder()
+            .readTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(30, TimeUnit.SECONDS)
+            .connectTimeout(30, TimeUnit.SECONDS);
+    
+    // Android 4.x兼容性处理
+    if (android.os.Build.VERSION.SDK_INT <= android.os.Build.VERSION_CODES.KITKAT) {
+        // 启用TLS 1.1和1.2支持
+        try {
+            SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
+            sslContext.init(null, null, null);
+            builder.sslSocketFactory(new TLSSocketFactory(sslContext.getSocketFactory()));
+            
+            // 更宽松的重试策略
+            builder.retryOnConnectionFailure(true);
+            ConnectionSpec spec = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
+                    .tlsVersions(TlsVersion.TLS_1_2, TlsVersion.TLS_1_1, TlsVersion.TLS_1_0)
+                    .cipherSuites(
+                            CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
+                            CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+                            CipherSuite.TLS_DHE_RSA_WITH_AES_128_GCM_SHA256,
+                            CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,
+                            CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,
+                            CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,
+                            CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,
+                            CipherSuite.TLS_DHE_RSA_WITH_AES_128_CBC_SHA,
+                            CipherSuite.TLS_DHE_RSA_WITH_AES_256_CBC_SHA,
+                            CipherSuite.TLS_RSA_WITH_AES_128_GCM_SHA256,
+                            CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA,
+                            CipherSuite.TLS_RSA_WITH_AES_256_CBC_SHA,
+                            CipherSuite.TLS_RSA_WITH_3DES_EDE_CBC_SHA
+                    )
+                    .build();
+            List<ConnectionSpec> specs = new ArrayList<>();
+            specs.add(spec);
+            specs.add(ConnectionSpec.CLEARTEXT); // 允许HTTP
+            builder.connectionSpecs(specs);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
+    
+    return builder.build();
+}
 
 }
