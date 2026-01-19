@@ -101,6 +101,9 @@ public class EXOmPlayer extends ExoMediaPlayer {
                             data.addAudio(t);
                         } else if (MimeTypes.isText(format.sampleMimeType)) {
 							String originalString = format.sampleMimeType;   //xuameng显示字幕类型
+                            if (TextUtils.isEmpty(originalString)) {
+                                originalString = "cea";
+                            }
 							String stringToReplace = "application/";  //xuameng过滤字幕类型里application/字符串
 							String replacementString = "";
 							if(originalString.contains(stringToReplace)) {  //xuameng过滤字幕类型里application/字符串
