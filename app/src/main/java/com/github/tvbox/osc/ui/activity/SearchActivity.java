@@ -398,11 +398,12 @@ public class SearchActivity extends BaseActivity {
             }
         });
     // 手动修复焦点：遍历所有已添加的子视图
-    post(new Runnable() {
+    runOnUiThread(new Runnable() {
         @Override
         public void run() {
             for (int i = 0; i < tv_history.getChildCount(); i++) {
                 View child = tv_history.getChildAt(i);
+                // 关键修复：设置焦点属性，解决 Android 4.x 点击问题
                 child.setFocusable(true);
                 child.setFocusableInTouchMode(true);
             }
