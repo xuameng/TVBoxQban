@@ -397,18 +397,20 @@ public class SearchActivity extends BaseActivity {
                 }
             }
         });
-    // 手动修复焦点：遍历所有已添加的子视图
-    runOnUiThread(new Runnable() {
-        @Override
-        public void run() {
-            for (int i = 0; i < tv_history.getChildCount(); i++) {
-                View child = tv_history.getChildAt(i);
-                // 关键修复：设置焦点属性，解决 Android 4.x 点击问题
-                child.setFocusable(true);
-                child.setFocusableInTouchMode(true);
-            }
+        // 仅在 Android 5.0 以下版本应用焦点修复       xuameng修复安卓4搜索历史获取不到焦点问题
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.LOLLIPOP) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    for (int i = 0; i < tv_history.getChildCount(); i++) {
+                        View child = tv_history.getChildAt(i);
+                        // 关键修复：设置焦点属性，解决 Android 4.x 点击问题
+                        child.setFocusable(true);
+                       // child.setFocusableInTouchMode(true);
+                    }
+                }
+            });
         }
-    });
     }               //xuameng 搜索历史
 
     private void initViewModel() {
