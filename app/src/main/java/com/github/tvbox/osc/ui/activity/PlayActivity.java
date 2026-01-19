@@ -154,6 +154,7 @@ public class PlayActivity extends BaseActivity {
         initViewModel();
         initData();
         Hawk.put(HawkConfig.PLAYER_IS_LIVE,false);  //xuameng新增
+        HawkConfig.exoSubtitle = false;  //xuameng 判断当前是否播放EXO内置字幕
     }
 
     public long getSavedProgress(String url) {
@@ -341,6 +342,10 @@ public class PlayActivity extends BaseActivity {
                                 String zimuUrl = subtitle.getUrl();
                                 LOG.i("echo-Remote Subtitle Url: " + zimuUrl);
                                 setSubtitle(zimuUrl);//设置字幕
+                                if (mController.mExoSubtitleView.getVisibility() == View.VISIBLE){  //xuameng 使用搜索字幕隐藏EXO PGS字幕
+                                    mController.mExoSubtitleView.setVisibility(View.GONE);
+                                }
+                                HawkConfig.exoSubtitle = false;  //xuameng 判断当前是否播放EXO内置字幕 
                                 if (searchSubtitleDialog != null) {
                                     searchSubtitleDialog.dismiss();
                                 }
@@ -368,6 +373,10 @@ public class PlayActivity extends BaseActivity {
                             public void onChoosePath(String path, File pathFile) {
                                 LOG.i("echo-Local Subtitle Path: " + path);
                                 setSubtitle(path);//设置字幕
+                                if (mController.mExoSubtitleView.getVisibility() == View.VISIBLE){  //xuameng 使用搜索字幕隐藏EXO PGS字幕
+                                    mController.mExoSubtitleView.setVisibility(View.GONE);
+                                }
+                                HawkConfig.exoSubtitle = false;  //xuameng 判断当前是否播放EXO内置字幕
                             }
                         })
                         .build()
@@ -500,10 +509,30 @@ public class PlayActivity extends BaseActivity {
                             }
                         }, 300);
                     }
+
+					// xuameng判断选中的字幕是否为 PGS 格式
+                    boolean isPgsSubtitle = value.language != null && value.language.toLowerCase().contains("pgs");
                     if (mediaPlayer instanceof EXOmPlayer) {
-                        mController.mSubtitleView.destroy();
-                        mController.mSubtitleView.clearSubtitleCache();
-                        mController.mSubtitleView.isInternal = true;
+
+                        if (isPgsSubtitle) {
+                            // xuameng选中的是 PGS 字幕：使用 ExoPlayer 内置视图
+                            mController.mExoSubtitleView.setVisibility(View.VISIBLE);
+                            mController.mSubtitleView.setVisibility(View.GONE);
+                            mController.mSubtitleView.destroy();
+                            mController.mSubtitleView.clearSubtitleCache();
+                            mController.mSubtitleView.onSubtitleChanged(null);
+                            mController.mSubtitleView.isInternal = true; // 外部视图处理
+                            HawkConfig.exoSubtitle = true;  //xuameng 判断当前是否播放EXO内置字幕
+                        } else {
+                            // xuameng选中的是其他字幕：使用外部视图
+                            mController.mExoSubtitleView.setVisibility(View.GONE);
+                            mController.mSubtitleView.setVisibility(View.VISIBLE);
+                            mController.mSubtitleView.destroy();
+                            mController.mSubtitleView.clearSubtitleCache();
+                            mController.mSubtitleView.isInternal = true; // 外部视图处理
+                            HawkConfig.exoSubtitle = false;  //xuameng 判断当前是否播放EXO内置字幕
+                        }
+
                         ((EXOmPlayer)mediaPlayer).selectExoTrack(value);
                         new Handler().postDelayed(new Runnable() {
                             @Override
@@ -667,11 +696,46 @@ public class PlayActivity extends BaseActivity {
 
      if (mVideoView.getMediaPlayer() instanceof EXOmPlayer) {
             trackInfo = ((EXOmPlayer) (mVideoView.getMediaPlayer())).getTrackInfo();
+
             if (trackInfo != null && trackInfo.getSubtitle().size() > 0) {
                 mController.mSubtitleView.hasInternal = true;
-            }else{
-                mController.mSubtitleView.hasInternal = false;  //xuameng修复切换播放器内置字幕不刷新
+
+                // 获取当前选中的字幕轨道
+                TrackInfoBean selectedSubtitleTrack = null;
+                for (TrackInfoBean subtitleTrack : trackInfo.getSubtitle()) {
+                    if (subtitleTrack.selected) {
+                        selectedSubtitleTrack = subtitleTrack;
+                        break;
+                    }
+                }
+
+                // 判断当前选中的字幕是否为 PGS
+                boolean isPgsSelected = false;
+                if (selectedSubtitleTrack != null && selectedSubtitleTrack.language != null) {
+                    try {
+                        isPgsSelected = selectedSubtitleTrack.language.toLowerCase().contains("pgs");
+                    } catch (Exception e) {
+                    // 处理可能的异常情况
+                        isPgsSelected = false;
+                    }
+                }
+
+                if (isPgsSelected) {
+                    // 当前选中的是 PGS 字幕，使用 ExoPlayer 内置视图
+                    ((EXOmPlayer) mVideoView.getMediaPlayer()).setSubtitleView(mController.mExoSubtitleView);   //xuameng绑定Exo字幕视图
+                    mController.mExoSubtitleView.setVisibility(View.VISIBLE);
+                    mController.mSubtitleView.setVisibility(View.GONE);
+                    HawkConfig.exoSubtitle = true;  //xuameng 判断当前是否播放EXO内置字幕
+                } else {
+                    // 当前选中的是其他格式字幕，使用外部视图
+                    mController.mExoSubtitleView.setVisibility(View.GONE);
+                    mController.mSubtitleView.setVisibility(View.VISIBLE);
+                    HawkConfig.exoSubtitle = false;  //xuameng 判断当前是否播放EXO内置字幕
+                }
+            } else {
+                mController.mSubtitleView.hasInternal = false;
             }
+
             final int selectedIdExo = trackInfo.getAudioSelected(false);  //xuameng判断选中的音轨
             Hawk.put(HawkConfig.EXO_PROGRESS_KEY, progressKey);  //xuameng存储进程KEY
             if (selectedIdExo != 99999) { // xuameng99999表示未选中
