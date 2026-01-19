@@ -369,7 +369,7 @@ public class SearchActivity extends BaseActivity {
         });
     }
 
-    private void refreshSearchHistory(String keyword2) {         //xuameng 搜索历史
+    private void refreshSearchHistory(String keyword2) {         //xuameng 更新搜索历史记录
         if (!this.searchPresenter.keywordsExist(keyword2)) {
             this.searchPresenter.addKeyWordsTodb(keyword2);
             initSearchHistory();
