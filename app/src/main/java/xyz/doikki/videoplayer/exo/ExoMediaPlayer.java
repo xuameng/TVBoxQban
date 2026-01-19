@@ -125,9 +125,11 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 
         mMediaPlayer.addListener(this);
     }
+    
     public DefaultTrackSelector getTrackSelector() {
         return mTrackSelector;
     }
+    
     @Override
     public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
         Player.Listener.super.onTracksChanged(trackGroups, trackSelections);
