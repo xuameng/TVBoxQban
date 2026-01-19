@@ -23,7 +23,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
 
@@ -32,6 +31,7 @@ import okhttp3.Response;
 /**
  * @author AveryZhong.
  */
+
 public class SubtitleLoader {
     private static final String TAG = SubtitleLoader.class.getSimpleName();
 
@@ -115,8 +115,7 @@ public class SubtitleLoader {
         });
     }
 
-    // 修改1：将此方法改为静态方法，以便正确调用内部的静态方法
-    public static SubtitleLoadSuccessResult loadSubtitle(String path) {
+    public SubtitleLoadSuccessResult loadSubtitle(String path) {
         if (TextUtils.isEmpty(path)) {
             return null;
         }
@@ -143,30 +142,17 @@ public class SubtitleLoader {
             referer = "https://secure.assrt.net/";
         }
         String ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.54 Safari/537.36";
-        // 修改2：修正OkGo请求的超时设置API，使用标准方法名
-        okhttp3.Call call = OkGo.<String>get(remoteSubtitlePath.split("#")[0])
+        Response response = OkGo.<String>get(remoteSubtitlePath.split("#")[0])
                 .headers("Referer", referer)
                 .headers("User-Agent", ua)
-                // 为Android 4.x增加超时设置，使用正确的API方法
-                .connectTimeout(45000)       // 连接超时45秒
-                .readTimeOut(45000)          // 读取超时45秒
-                .writeTimeOut(45000)         // 写入超时45秒
-                .getCall();
-        Response response = call.execute();
-
+                .execute();
         byte[] bytes = response.body().bytes();
         UniversalDetector detector = new UniversalDetector(null);
         detector.handleData(bytes, 0, bytes.length);
         detector.dataEnd();
         String encoding = detector.getDetectedCharset();
         if (TextUtils.isEmpty(encoding)) encoding = "UTF-8";
-        String content;
-        // 修改3：处理UnsupportedEncodingException，已添加import
-        try {
-            content = new String(bytes, encoding);
-        } catch (UnsupportedEncodingException e) {
-            content = new String(bytes, "UTF-8");
-        }
+        String content = new String(bytes, encoding);
         InputStream is = new ByteArrayInputStream(content.getBytes());
         String filename = "";
         String contentDispostion = response.header("content-disposition", "");
@@ -178,7 +164,7 @@ public class SubtitleLoader {
                 filename = filenameInfo.replace("filename=", "");
                 filename = filename.replace("\"", "");
             } else if (filenameInfo.startsWith("filename*=")) {
-                filename = filenameInfo.substring(filenameInfo.lastIndexOf("''") + 2);
+                filename = filenameInfo.substring(filenameInfo.lastIndexOf("''")+2);
             }
             filename = filename.trim();
             filename = URLDecoder.decode(filename);
@@ -244,7 +230,7 @@ public class SubtitleLoader {
             return new FormatSTL().parseFile(fileName, newInputStream);
         }
         TimedTextFileFormat[] arr = {new FormatSRT(), new FormatASS(), new FormatSTL(), new FormatSTL()};
-        for (TimedTextFileFormat oneFormat : arr) {
+        for(TimedTextFileFormat oneFormat : arr) {
             try {
                 TimedTextObject obj = oneFormat.parseFile(fileName, newInputStream);
                 return obj;
