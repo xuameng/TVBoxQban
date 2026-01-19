@@ -4,12 +4,16 @@ import android.content.res.Resources;
 import android.text.TextUtils;
 import androidx.annotation.Nullable;
 import com.github.tvbox.osc.player.R;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.Util;
+
 import java.util.Locale;
+import java.util.regex.Pattern; //xuameng 判断字幕中是否含有中文
+
 public class ExoTrackNameProvider {
     private final Resources resources;
     /**
@@ -25,7 +29,7 @@ public class ExoTrackNameProvider {
             trackName =
                     joinWithSeparator(
                             buildRoleString(format), buildResolutionString(format), buildBitrateString(format));
-        } else if (trackType == C.TRACK_TYPE_AUDIO) {
+        } else if (trackType == C.TRACK_TYPE_AUDIO) {    //xuameng 显示音频轨道信息
             trackName =
                     joinWithSeparator(
                             buildLanguageOrLabelStringAudio(format),   //xuameng 显示音频轨道信息
@@ -74,15 +78,24 @@ public class ExoTrackNameProvider {
         return TextUtils.isEmpty(languageAndRole) ? buildLabelString(format) : languageAndRole;
     }
 
+    private static final Pattern CHINESE_PATTERN = Pattern.compile("[\\u4e00-\\u9fa5]");    //xuameng 判断字幕中是否含有中文
+
+    private boolean containsChinese(String str) {   //xuameng 判断字幕中是否含有中文
+        if (str == null) return false;
+        return CHINESE_PATTERN.matcher(str).find();
+    }
+
     private String buildLanguageOrLabelStringSubtitle(Format format) {  //xuameng 字幕显示详细语言（简繁中文）
-      // 先尝试直接使用 label，因为它通常包含更友好的描述
-      String labelString = buildLabelString(format);
-      if (!TextUtils.isEmpty(labelString)) {    //xuameng 优先显示详细语言信息
-        return labelString;
-      }
-      // 如果 label 为空，再降级到语言 + 角色的组合
-      String languageAndRole = joinWithSeparator(buildLanguageString(format), buildRoleString(format));
-      return languageAndRole;
+        // 先尝试直接使用 label，因为它通常包含更友好的描述
+        String labelString = buildLabelString(format);
+        // 2. 判断label是否包含中文字符
+        if (!TextUtils.isEmpty(labelString) && containsChinese(labelString)) {  //xuameng 有中文就显示（简繁中文）友好的描述
+            // 如果label非空且包含中文，直接返回label
+            return labelString;
+        }
+        // 3. 否则使用语言+角色组合（自动本地化）  用buildLanguageString把各国语言变化为中文
+        String languageAndRole = joinWithSeparator(buildLanguageString(format), buildRoleString(format));
+        return languageAndRole;
     }
 
     private String buildLabelString(Format format) {
