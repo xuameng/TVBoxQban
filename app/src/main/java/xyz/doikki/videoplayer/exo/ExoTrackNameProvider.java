@@ -1,4 +1,5 @@
 package xyz.doikki.videoplayer.exo;
+
 import android.annotation.SuppressLint;
 import android.content.res.Resources;
 import android.text.TextUtils;
@@ -16,12 +17,14 @@ import java.util.regex.Pattern; //xuameng 判断字幕中是否含有中文
 
 public class ExoTrackNameProvider {
     private final Resources resources;
+    
     /**
      * @param resources Resources from which to obtain strings.
      */
     public ExoTrackNameProvider(Resources resources) {
         this.resources = Assertions.checkNotNull(resources);
     }
+    
     public String getTrackName(Format format) {
         String trackName;
         int trackType = inferPrimaryTrackType(format);
@@ -40,6 +43,7 @@ public class ExoTrackNameProvider {
         }
         return trackName.length() == 0 ? resources.getString(R.string.exo_track_unknown) : trackName;
     }
+    
     private String buildResolutionString(Format format) {
         int width = format.width;
         int height = format.height;
@@ -47,12 +51,14 @@ public class ExoTrackNameProvider {
                 ? ""
                 : resources.getString(R.string.exo_track_resolution, width, height);
     }
+    
     private String buildBitrateString(Format format) {
         int bitrate = format.bitrate;
         return bitrate == Format.NO_VALUE
                 ? ""
                 : resources.getString(R.string.exo_track_bitrate, bitrate / 1000000f);   //xuameng Mbps
     }
+    
     private String buildAudioChannelString(Format format) {
         int channelCount = format.channelCount;
         if (channelCount == Format.NO_VALUE || channelCount < 1) {
@@ -72,6 +78,7 @@ public class ExoTrackNameProvider {
                 return resources.getString(R.string.exo_track_surround);
         }
     }
+    
     private String buildLanguageOrLabelStringAudio(Format format) {   //xuameng 音轨显示简单语言
         String languageAndRole =
                 joinWithSeparator(buildLanguageString(format), buildRoleString(format));
@@ -101,6 +108,7 @@ public class ExoTrackNameProvider {
     private String buildLabelString(Format format) {
         return TextUtils.isEmpty(format.label) ? "" : format.label;
     }
+    
     private String buildLanguageString(Format format) {
         @Nullable String language = format.language;
         if (TextUtils.isEmpty(language) || C.LANGUAGE_UNDETERMINED.equals(language)) {
@@ -124,6 +132,7 @@ public class ExoTrackNameProvider {
             return languageName;
         }
     }
+    
     private String buildRoleString(Format format) {
         String roles = "";
         if ((format.roleFlags & C.ROLE_FLAG_ALTERNATE) != 0) {
@@ -141,6 +150,7 @@ public class ExoTrackNameProvider {
         }
         return roles;
     }
+    
     private String joinWithSeparator(String... items) {
         String itemList = "";
         for (String item : items) {
@@ -154,6 +164,7 @@ public class ExoTrackNameProvider {
         }
         return itemList;
     }
+    
     private static int inferPrimaryTrackType(Format format) {
         int trackType = MimeTypes.getTrackType(format.sampleMimeType);
         if (trackType != C.TRACK_TYPE_UNKNOWN) {
