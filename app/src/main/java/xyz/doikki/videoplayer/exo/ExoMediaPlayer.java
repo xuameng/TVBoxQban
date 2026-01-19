@@ -23,7 +23,7 @@ import com.google.android.exoplayer2.util.Clock;
 import com.google.android.exoplayer2.util.EventLogger;
 import com.google.android.exoplayer2.video.VideoSize;
 import com.google.android.exoplayer2.ui.SubtitleView;  //xuameng用于显示字幕
-import com.google.android.exoplayer.text.Cue;  //xuameng用于显示字幕
+import com.google.android.exoplayer2.text.Cue;  //xuameng用于显示字幕
 import com.google.android.exoplayer2.ui.CaptionStyleCompat;  //xuameng用于显示字幕
 import android.graphics.Color;     //xuameng用于显示字幕
 import com.github.tvbox.osc.util.HawkConfig;  //xuameng EXO解码
