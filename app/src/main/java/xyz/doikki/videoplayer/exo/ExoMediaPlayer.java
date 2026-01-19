@@ -5,6 +5,8 @@ import android.content.res.AssetFileDescriptor;
 import android.util.Log;  //xuameng 错误日志
 import android.view.Surface;
 import android.view.SurfaceHolder;
+import androidx.annotation.NonNull;  //xuameng用于显示字幕等
+
 import com.google.android.exoplayer2.PlaybackException;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
@@ -25,6 +27,7 @@ import com.google.android.exoplayer2.video.VideoSize;
 import com.google.android.exoplayer2.ui.SubtitleView;  //xuameng用于显示字幕
 import com.google.android.exoplayer2.text.Cue;  //xuameng用于显示字幕
 import com.google.android.exoplayer2.ui.CaptionStyleCompat;  //xuameng用于显示字幕
+
 import android.graphics.Color;     //xuameng用于显示字幕
 import com.github.tvbox.osc.util.HawkConfig;  //xuameng EXO解码
 import com.orhanobut.hawk.Hawk; //xuameng EXO解码
