@@ -397,6 +397,17 @@ public class SearchActivity extends BaseActivity {
                 }
             }
         });
+    // 手动修复焦点：遍历所有已添加的子视图
+    post(new Runnable() {
+        @Override
+        public void run() {
+            for (int i = 0; i < tv_history.getChildCount(); i++) {
+                View child = tv_history.getChildAt(i);
+                child.setFocusable(true);
+                child.setFocusableInTouchMode(true);
+            }
+        }
+    });
     }               //xuameng 搜索历史
 
     private void initViewModel() {
