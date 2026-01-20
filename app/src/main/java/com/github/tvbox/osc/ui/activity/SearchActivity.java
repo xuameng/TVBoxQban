@@ -411,6 +411,45 @@ public class SearchActivity extends BaseActivity {
                 }
             });
         }
+
+		    // ========== 新增：为每个历史标签添加长按直接删除功能 ==========
+    runOnUiThread(new Runnable() {
+        @Override
+        public void run() {
+            // 遍历 FlowLayout 中的所有子视图（即每个历史标签）
+            for (int i = 0; i < tv_history.getChildCount(); i++) {
+                final View child = tv_history.getChildAt(i);
+                // 根据视图的索引，从已反转的列表中获取对应的关键词和数据对象
+                final String keywordToDelete = historyList.get(i);
+                final SearchHistory historyItemToDelete = originalHistoryList.get(i);
+
+                // 设置长按监听器
+                child.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        // 直接执行删除操作，不弹出对话框
+                        // 1. 从数据库删除数据
+                        boolean success = searchPresenter.deleteKeyWordsFromDb(keywordToDelete);
+                        // 注意：你需要先在 SearchPresenter 中实现 deleteKeyWordsFromDb 方法
+                        // 或者使用：DbHelper.deleteKeyword(keywordToDelete);
+
+                        if (success) {
+                            // 2. 从界面移除该标签
+                            tv_history.removeView(child);
+                            // 3. 显示操作成功的 Toast 提示
+                            App.showToastShort(SearchActivity.this, "已删除: " + keywordToDelete);
+                        } else {
+                            App.showToastShort(SearchActivity.this, "删除失败");
+                        }
+                        // 返回 true 表示已消费该长按事件，防止触发其他可能的后续事件
+                        return true;
+                    }
+                });
+            }
+        }
+    });
+
+
     }               //xuameng 搜索历史
 
     private void initViewModel() {
