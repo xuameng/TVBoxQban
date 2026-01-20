@@ -95,12 +95,34 @@ public class ExoTrackNameProvider {
     private String buildLanguageOrLabelStringSubtitle(Format format) {  //xuameng 字幕显示详细语言（简繁中文）
         // 先尝试直接使用 label，因为它通常包含更友好的描述
         String labelString = buildLabelString(format);
-        // 2. 判断label是否包含中文字符
-        if (!TextUtils.isEmpty(labelString) && containsChinese(labelString)) {  //xuameng 有中文就显示（简繁中文）友好的描述
-            // 如果label非空且包含中文，直接返回label
-            return labelString;
+        
+        // 增强中文检测逻辑：优先检查是否包含中文字符或中文标识
+        if (!TextUtils.isEmpty(labelString)) {
+            // 检查是否包含中文字符
+            if (containsChinese(labelString)) {
+                return labelString;
+            }
+            
+            // 检查是否包含常见的中文标识（不区分大小写）
+            String lowerLabel = labelString.toLowerCase(Locale.ENGLISH);
+            if (lowerLabel.contains("simplified") || lowerLabel.contains("traditional") || 
+                lowerLabel.contains("chinese")) {
+                // 如果包含 traditional，直接返回"繁体中文"
+                if (lowerLabel.contains("traditional")) {
+                    return "繁体中文";
+                }
+                if (lowerLabel.contains("simplified")) {
+                    return "简体中文";
+                }
+                if (lowerLabel.contains("chinese")) {
+                    return "中文";
+                }
+                // 其他中文标识返回原始 label
+                return labelString;
+            }
         }
-        // 3. 否则使用语言+角色组合（自动本地化）  用buildLanguageString把各国语言变化为中文
+        
+        // 否则使用语言+角色组合（自动本地化）  用buildLanguageString把各国语言变化为中文
         String languageAndRole = joinWithSeparator(buildLanguageString(format), buildRoleString(format));
         return languageAndRole;
     }
