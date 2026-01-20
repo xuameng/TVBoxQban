@@ -379,6 +379,8 @@ public class SearchActivity extends BaseActivity {
     private void initSearchHistory() {
         ArrayList<SearchHistory> searchHistory = this.searchPresenter.getSearchHistory();
         List<String> historyList = new ArrayList<>();
+        // xuameng保留原始数据列表的引用，以便通过索引获取对应的 SearchHistory 对象（如果删除需要ID）
+        final List<SearchHistory> originalHistoryList = new ArrayList<>(searchHistory);
         for (SearchHistory history : searchHistory) {
             historyList.add(history.searchKeyWords);
         }
