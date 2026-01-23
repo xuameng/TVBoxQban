@@ -2,7 +2,6 @@ package com.github.tvbox.osc.ui.adapter;
 
 import android.text.TextUtils;
 import android.widget.ImageView;
-import android.content.Context;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -58,8 +57,9 @@ public class SearchAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder>
         }
     }
 
-    public static void clearPicassoMemoryCache(Context context) {
-        Picasso.get().invalidate(context);
+    public static void clearMemoryCache() {
+        // 清空所有内存缓存
+        Picasso.get().invalidate((String) null);
     }
 
 }
