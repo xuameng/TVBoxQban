@@ -828,7 +828,7 @@ public class PlayFragment extends BaseLazyFragment {
         String lowerLang = subtitleTrackInfoBean.language.toLowerCase();
     
         // 检测顺序很重要，先检测更具体的标识
-        if (lowerLang.contains("中英特效")) {
+        if (lowerLang.contains("中英")) {
             return true;
         }
     
