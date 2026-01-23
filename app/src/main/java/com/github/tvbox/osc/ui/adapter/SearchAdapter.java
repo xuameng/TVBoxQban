@@ -56,4 +56,9 @@ public class SearchAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder>
             }
         }
     }
+
+    public static void clearPicassoMemoryCache(Context context) {
+        Picasso.get().invalidate(context);
+    }
+
 }
