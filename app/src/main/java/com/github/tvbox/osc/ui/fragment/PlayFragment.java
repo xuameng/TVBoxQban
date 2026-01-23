@@ -131,6 +131,7 @@ public class PlayFragment extends BaseLazyFragment {
     private int mRetryCountIjk = 0;  //xuameng播放出错计数器
     private int mRetryCountJP = 0;  //xuameng播放出错计数器
     private static final int MAX_RETRIES = 2;  //xuameng播放出错切换2次
+    private boolean isChineseSubtitle = false;   //xuameng 判断中文字幕
 
     private final long videoDuration = -1;
 
