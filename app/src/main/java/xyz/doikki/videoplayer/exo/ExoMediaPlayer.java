@@ -6,6 +6,7 @@ import android.util.Log;  //xuameng 错误日志
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import androidx.annotation.NonNull;  //xuameng用于显示字幕等
+import android.app.ActivityManager;  //xuameng加载策略控制
 
 import com.google.android.exoplayer2.PlaybackException;
 import com.google.android.exoplayer2.DefaultLoadControl;
@@ -98,8 +99,27 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 
         // xuameng轨道选择器配置
         mTrackSelector = new DefaultTrackSelector(mAppContext);
+
         //xuameng加载策略控制  
-        mLoadControl = new DefaultLoadControl();
+        ActivityManager activityManager = (ActivityManager) mAppContext.getSystemService(Context.ACTIVITY_SERVICE);
+        int memoryClass = activityManager.getMemoryClass();
+        
+        // 判断内存大小
+        if (memoryClass <= 2048) { // 2G = 2048MB
+            // 内存小于等于2G时使用低内存策略
+            mLoadControl = new DefaultLoadControl.Builder()
+                .setBufferDurationsMs(
+                    15000,    // minBufferMs - 减小最小缓冲时间
+                    30000,   // maxBufferMs - 减小最大缓冲时间
+                    3000,    // bufferForPlaybackMs - 减小播放前缓冲时间
+                    5000     // bufferForPlaybackAfterRebufferMs - 减小重新缓冲后缓冲时间
+                )
+                .setTargetBufferBytes(30 * 1024 * 1024)  // 设置目标缓冲字节数为30MB
+                .setPrioritizeTimeOverSizeThresholds(false)  // 优先考虑字节数阈值
+                .build();
+        } else {
+            mLoadControl = new DefaultLoadControl();
+        }
 
         mTrackSelector.setParameters(
         mTrackSelector.getParameters().buildUpon()
