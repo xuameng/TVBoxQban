@@ -777,7 +777,7 @@ public class PlayActivity extends BaseActivity {
                         boolean hasCh =false;
                         for(TrackInfoBean subtitleTrackInfoBean : subtitleTrackList) {
                         String lowerLang = subtitleTrackInfoBean.language.toLowerCase();
-                        if (isChineseSubtitle){    //xuameng修复EXO播放器也可以默认选择中文字幕
+                        if (isChineseSubtitle(subtitleTrackInfoBean)){    //xuameng修复EXO播放器也可以默认选择中文字幕
                             hasCh=true;
                             if (mVideoView.getMediaPlayer() instanceof IjkMediaPlayer){
                                 if (selectedIndex != subtitleTrackInfoBean.trackId) {
@@ -815,7 +815,7 @@ public class PlayActivity extends BaseActivity {
         }
     
         // 其他中文标识检测
-        if (lowerLang.contains("中文") || lowerLang.contains("简体") || 
+        if (lowerLang.contains("简体") || lowerLang.contains("中文") || 
             lowerLang.contains("国语") || lowerLang.contains("国配") ||
             lowerLang.contains("普通") || lowerLang.contains("粤语") || 
             lowerLang.contains("双语") || lowerLang.contains("繁体") ||
