@@ -2,6 +2,7 @@ package com.github.tvbox.osc.ui.adapter;
 
 import android.text.TextUtils;
 import android.widget.ImageView;
+import android.content.Context;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
