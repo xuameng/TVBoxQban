@@ -236,7 +236,6 @@ public class SearchActivity extends BaseActivity {
                     bundle.putString("id", video.id);
 					bundle.putString("picture", video.pic);   //xuameng某些网站图片部显示
                     bundle.putString("sourceKey", video.sourceKey);
-                    searchAdapter.clearMemoryCache();   //xuameng清理图片缓存
                     jumpActivity(DetailActivity.class, bundle);
                 }
             }
@@ -744,7 +743,6 @@ public class SearchActivity extends BaseActivity {
         } catch (Throwable th) {
             th.printStackTrace();
         }
-        searchAdapter.clearMemoryCache();   //xuameng清理图片缓存
         EventBus.getDefault().unregister(this);
     }
 
@@ -762,7 +760,6 @@ public class SearchActivity extends BaseActivity {
         } catch (Throwable th) {
             th.printStackTrace();
         }
-        searchAdapter.clearMemoryCache();  //xuameng清理图片缓存
         super.onBackPressed();
     }
 
