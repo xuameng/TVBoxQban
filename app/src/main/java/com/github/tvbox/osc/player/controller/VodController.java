@@ -1600,7 +1600,7 @@ public class VodController extends BaseController {
         mHandler.sendEmptyMessage(1000);
         mHandler.removeMessages(1001);
         if(!simSlideStart) {
-            mHandler.sendEmptyMessageDelayed(1001, 500);   //xuameng手机隐藏快进图标
+            mHandler.sendEmptyMessageDelayed(1001, 100);   //xuameng手机隐藏快进图标
         }
     }
     @Override
@@ -1736,9 +1736,6 @@ public class VodController extends BaseController {
                 mPlayLoadNetSpeed.setVisibility(VISIBLE);
                 if(iv_circle_bg.getVisibility() == View.VISIBLE) { //xuameng音乐播放时图标
                     iv_circle_bg.setVisibility(GONE);
-                }
-                if(mProgressRoot.getVisibility() == View.VISIBLE) { //xuameng进程图标
-                    mProgressRoot.setVisibility(GONE);
                 }
                 isVideoPlay = false;
                 isBufferIng = true; //xuameng 判断是否进在缓冲视频
