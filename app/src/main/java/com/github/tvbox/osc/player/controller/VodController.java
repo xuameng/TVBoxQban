@@ -78,7 +78,8 @@ import android.media.audiofx.Visualizer;  //xuameng音乐播放动画
 import android.util.Log; //xuameng音乐播放动画
 import android.os.Looper; //xuameng音乐播放动画
 import android.media.AudioManager;  //xuameng音乐播放动画
-import com.google.android.exoplayer2.ui.SubtitleView;  //xuameng用于显示字幕
+
+import androidx.media3.ui.SubtitleView;   // 用于显示ExoPlayer内置字幕
 
 import android.os.Build;
 import android.webkit.WebView;
@@ -111,6 +112,9 @@ public class VodController extends BaseController {
                     case 1001: { // seek 关闭
                         if(mProgressRoot.getVisibility() == View.VISIBLE) { //xuameng进程图标
                             mProgressRoot.setVisibility(GONE);
+                        }
+                        if (isBufferIng){  //xuameng 修复缓存图标不显示
+                            XuLoading.setVisibility(View.VISIBLE);
                         }
                         break;
                     }
@@ -296,17 +300,18 @@ public class VodController extends BaseController {
     private boolean isVideoPlay = false; //xuameng判断视频开始播放
     private boolean isLongClick = false; //xuameng判断长按
     private boolean mSeekBarhasFocus = false; //xuameng seekbar是否拥有焦点
+    private boolean isBufferIng = false; //xuameng 判断是否进在缓冲视频
     private Visualizer mVisualizer;  //xuameng音乐播放动画
     private MusicVisualizerView customVisualizer; //xuameng播放音乐柱状图
     private int audioSessionId = -1; // 使用-1表示未初始化状态 //xuameng音乐播放动画
     private boolean musicAnimation = Hawk.get(HawkConfig.VOD_MUSIC_ANIMATION, false);     //xuameng 音柱动画 加载设置
     public SubtitleView mExoSubtitleView;   // 用于显示ExoPlayer内置字幕
-	
     private static final String TAG = "VodController";  //xuameng音乐播放动画
     Handler myHandle;
     Runnable myRunnable;
     int myHandleSeconds = 50000; //闲置多少毫秒秒关闭底栏  默认100秒
     int videoPlayState = 0;
+
     private Runnable myRunnable2 = new Runnable() {
         @Override
         public void run() {
@@ -820,7 +825,7 @@ public class VodController extends BaseController {
                 }
                 DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
                 try {
-					musicAnimation = mPlayerConfig.getBoolean("music");   //xuameng音乐播放动画获取设置
+                    musicAnimation = mPlayerConfig.getBoolean("music");   //xuameng音乐播放动画获取设置
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -1494,7 +1499,7 @@ public class VodController extends BaseController {
                 simSlideStart = false;
             //simSeekPosition = 0;  //XUAMENG重要要不然重0播放
             simSlideOffset = 0;
-            mHandler.sendEmptyMessageDelayed(1001, 100);
+            mHandler.sendEmptyMessageDelayed(1001, 100);   //xuameng隐藏快进图标
         }
     }
     public void tvSlideStopXu() { //xuameng修复SEEKBAR快进重新播放问题
@@ -1595,7 +1600,7 @@ public class VodController extends BaseController {
         mHandler.sendEmptyMessage(1000);
         mHandler.removeMessages(1001);
         if(!simSlideStart) {
-            mHandler.sendEmptyMessageDelayed(1001, 300);
+            mHandler.sendEmptyMessageDelayed(1001, 100);   //xuameng隐藏快进图标
         }
     }
     @Override
@@ -1645,6 +1650,7 @@ public class VodController extends BaseController {
                 releaseVisualizer();  //xuameng播放音乐背景
                 isVideoplaying = false;
                 isVideoPlay = false;
+                isBufferIng = false; //xuameng 判断是否进在缓冲视频
                 clearSubtitleCache();  //xuameng清除字幕缓存
                 break;
             case VideoView.STATE_PLAYING:
@@ -1654,10 +1660,11 @@ public class VodController extends BaseController {
                 mxuPlay.setText("暂停"); //xuameng底部菜单显示暂停
                 isVideoplaying = true;
                 isVideoPlay = true;
-                //playIngXu();	
+                isBufferIng = false; //xuameng 判断是否进在缓冲视频
                 break;
             case VideoView.STATE_PAUSED:
                 isVideoPlay = false;
+                isBufferIng = false; //xuameng 判断是否进在缓冲视频
                 mxuPlay.setText("播放"); //xuameng底部菜单显示播放
                 //mTopRoot1.setVisibility(GONE);       //xuameng隐藏上面菜单
                 //mTopRoot2.setVisibility(GONE);       //xuameng隐藏上面菜单
@@ -1714,6 +1721,7 @@ public class VodController extends BaseController {
             case VideoView.STATE_BUFFERED:
                 mPlayLoadNetSpeed.setVisibility(GONE);
                 isVideoPlay = true;
+                isBufferIng = false; //xuameng 判断是否进在缓冲视频
                 break;
             case VideoView.STATE_PREPARING:
                 if(isBottomVisible() && mSeekBarhasFocus) { //xuameng假如焦点在SeekBar
@@ -1733,11 +1741,13 @@ public class VodController extends BaseController {
                     mProgressRoot.setVisibility(GONE);
                 }
                 isVideoPlay = false;
+                isBufferIng = true; //xuameng 判断是否进在缓冲视频
                 speedPlayEnd();
                 break;
             case VideoView.STATE_PLAYBACK_COMPLETED:
                 listener.playNext(true);
                 isVideoPlay = false;
+                isBufferIng = false; //xuameng 判断是否进在缓冲视频
                 break;
         }
     }
