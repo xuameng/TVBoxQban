@@ -81,6 +81,7 @@ public class IjkMediaPlayer extends IjkPlayer {
             mMediaPlayer.setOption(tv.danmaku.ijk.media.player.IjkMediaPlayer.OPT_CATEGORY_FORMAT, "keepalive", 1); // xuameng开启TCP保活
             mMediaPlayer.setOption(tv.danmaku.ijk.media.player.IjkMediaPlayer.OPT_CATEGORY_FORMAT, "reconnect", 1); // xuameng开启自动重连
             mMediaPlayer.setOption(tv.danmaku.ijk.media.player.IjkMediaPlayer.OPT_CATEGORY_FORMAT, "timeout", 60000000); // xuameng60秒超时
+        }
     }  //xuameng新增完
 
     private static final String ITV_TARGET_DOMAIN = "gslbserv.itv.cmvideo.cn";
