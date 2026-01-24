@@ -970,14 +970,4 @@
         android:shadowRadius="2.0"
         android:digits=" 0123456789"
         android:inputType="number"/>
-    <LinearLayout
-        android:gravity="center"
-        android:layout_gravity="center"
-        android:orientation="vertical"
-        android:id="@+id/tv_progress_container"
-        android:tag="progress_root"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:visibility="gone">
-    </LinearLayout>
 </FrameLayout>
