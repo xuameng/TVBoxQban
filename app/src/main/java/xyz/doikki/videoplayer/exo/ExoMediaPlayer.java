@@ -356,7 +356,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
         String progressKey = Hawk.get(HawkConfig.EXO_PROGRESS_KEY, "");
         errorCode = error.errorCode;
         Log.e("EXOPLAYER", "" + error.errorCode);      //xuameng音频出错后尝试重播
-        if (errorCode == 5001 || errorCode == 5002 || errorCode == 4001){
+        if (errorCode == 5001 || errorCode == 5002 || errorCode == 4001 || errorCode == 4002 || errorCode == 4003){
             boolean exoDecodeXu = Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false);
             int exoSelectXu = Hawk.get(HawkConfig.EXO_PLAY_SELECTCODE, 0);
             if (exoSelectXu == 1) {
