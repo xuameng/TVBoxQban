@@ -119,7 +119,7 @@ public abstract class BaseController extends BaseVideoController implements Gest
         mPauseRoot = findViewWithTag("vod_control_pause");
         mPauseTime = findViewWithTag("vod_control_pause_t");
         mProgressroot = findViewWithTag("progress_root");    //xuameng 显示进程
-		music_iv_circle_bg = findViewWithTag("music_iv_circle_bg");  //xuameng音乐播放时图标
+        music_iv_circle_bg = findViewWithTag("music_iv_circle_bg");  //xuameng音乐播放时图标
     }
 
     @Override
@@ -318,20 +318,20 @@ public abstract class BaseController extends BaseVideoController implements Gest
         deltaX = -deltaX;
         int width = getMeasuredWidth();
         int duration = (int) mControlWrapper.getDuration();
-		if (duration >= 1000){
-        int currentPosition = (int) mControlWrapper.getCurrentPosition();
-        int position = (int) (deltaX / width * 120000 + currentPosition);
-        if (position > duration) position = duration;
-        if (position < 0) position = 0;
-        for (Map.Entry<IControlComponent, Boolean> next : mControlComponents.entrySet()) {
-            IControlComponent component = next.getKey();
-            if (component instanceof IGestureComponent) {
-                ((IGestureComponent) component).onPositionChange(position, currentPosition, duration);
+        if (duration >= 1000){
+            int currentPosition = (int) mControlWrapper.getCurrentPosition();
+            int position = (int) (deltaX / width * 120000 + currentPosition);
+            if (position > duration) position = duration;
+            if (position < 0) position = 0;
+            for (Map.Entry<IControlComponent, Boolean> next : mControlComponents.entrySet()) {
+                IControlComponent component = next.getKey();
+                if (component instanceof IGestureComponent) {
+                    ((IGestureComponent) component).onPositionChange(position, currentPosition, duration);
+                }
             }
+            updateSeekUI(currentPosition, position, duration);
+            mSeekPosition = position;
         }
-        updateSeekUI(currentPosition, position, duration);
-        mSeekPosition = position;
-		}
     }
 
     protected void updateSeekUI(int curr, int seekTo, int duration) {
