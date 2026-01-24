@@ -105,8 +105,8 @@ public abstract class BaseController extends BaseVideoController implements Gest
     private ProgressBar mLoading;
     private ViewGroup mPauseRoot;
     private TextView mPauseTime;
-	private ImageView music_iv_circle_bg;  //xuameng音乐播放时图标
-	private LinearLayout mProgressroot;  //xuameng 显示进程
+    private ImageView music_iv_circle_bg;  //xuameng音乐播放时图标
+    private LinearLayout mProgressroot;  //xuameng 显示进程
 
     @Override
     protected void initView() {
