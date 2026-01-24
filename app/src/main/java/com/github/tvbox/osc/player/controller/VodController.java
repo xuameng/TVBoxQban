@@ -79,7 +79,7 @@ import android.util.Log; //xuameng音乐播放动画
 import android.os.Looper; //xuameng音乐播放动画
 import android.media.AudioManager;  //xuameng音乐播放动画
 
-import androidx.media3.ui.SubtitleView;   // 用于显示ExoPlayer内置字幕
+import com.google.android.exoplayer2.ui.SubtitleView;   // 用于显示ExoPlayer内置字幕
 
 import android.os.Build;
 import android.webkit.WebView;
