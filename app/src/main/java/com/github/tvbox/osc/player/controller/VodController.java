@@ -115,6 +115,7 @@ public class VodController extends BaseController {
                         }
                         if (isBufferIng){  //xuameng 修复缓存图标不显示
                             XuLoading.setVisibility(View.VISIBLE);
+                            mPlayLoadNetSpeed.setVisibility(View.VISIBLE);
                         }
                         break;
                     }
@@ -1732,8 +1733,9 @@ public class VodController extends BaseController {
                 isVideoplaying = false;
                 isVideoPlay = false;
             case VideoView.STATE_BUFFERING:
-                //  if(mProgressRoot.getVisibility()==GONE)mPlayLoadNetSpeed.setVisibility(VISIBLE);
-                mPlayLoadNetSpeed.setVisibility(VISIBLE);
+			    if(mProgressRoot.getVisibility() == View.GONE) { //xuameng进程图标
+                    mPlayLoadNetSpeed.setVisibility(View.VISIBLE);
+                }
                 if(iv_circle_bg.getVisibility() == View.VISIBLE) { //xuameng音乐播放时图标
                     iv_circle_bg.setVisibility(GONE);
                 }
