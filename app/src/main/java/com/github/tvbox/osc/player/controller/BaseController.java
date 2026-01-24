@@ -69,16 +69,16 @@ public abstract class BaseController extends BaseVideoController implements Gest
                     case 100: { // 亮度+音量调整
                         mSlideInfo.setVisibility(VISIBLE);
                         mSlideInfo.setText(msg.obj.toString());
-						if (music_iv_circle_bg.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
-							music_iv_circle_bg.setVisibility(GONE);
-						}
-						HawkConfig.MSLIDEINFO = true;  //xuameng判断滑动
+                        if (music_iv_circle_bg.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
+                            music_iv_circle_bg.setVisibility(GONE);
+                        }
+                        HawkConfig.MSLIDEINFO = true;  //xuameng判断滑动
                         break;
                     }
 
                     case 101: { // 亮度+音量调整 关闭
                         mSlideInfo.setVisibility(GONE);
-						HawkConfig.MSLIDEINFO = false;  //xuameng判断滑动
+                        HawkConfig.MSLIDEINFO = false;  //xuameng判断滑动
                         break;
                     }
                     default: {
@@ -116,6 +116,7 @@ public abstract class BaseController extends BaseVideoController implements Gest
         mLoading = findViewWithTag("vod_control_loading");
         mPauseRoot = findViewWithTag("vod_control_pause");
         mPauseTime = findViewWithTag("vod_control_pause_t");
+        mProgressroot = findViewWithTag("progress_root");    //xuameng 显示进程
 		music_iv_circle_bg = findViewWithTag("music_iv_circle_bg");  //xuameng音乐播放时图标
     }
 
@@ -148,7 +149,9 @@ public abstract class BaseController extends BaseVideoController implements Gest
                 break;
             case VideoView.STATE_PREPARING:
             case VideoView.STATE_BUFFERING:
-                mLoading.setVisibility(VISIBLE);
+                if (mProgressroot.getVisibility() == View.GONE){  //xuameng进程不显示就显示缓存
+                    mLoading.setVisibility(VISIBLE);
+                }
                 break;
             case VideoView.STATE_PLAYBACK_COMPLETED:
                 mLoading.setVisibility(GONE);
