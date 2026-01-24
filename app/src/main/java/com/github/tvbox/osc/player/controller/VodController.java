@@ -94,7 +94,6 @@ public class VodController extends BaseController {
             public void callback(Message msg) {
                 switch(msg.what) {
                     case 1000: { // seek 刷新
-                        mProgressRoot.setVisibility(VISIBLE);
                         if(iv_circle_bg.getVisibility() == View.VISIBLE) { //xuameng音乐播放时图标
                             iv_circle_bg.setVisibility(GONE);
                         }
@@ -107,6 +106,7 @@ public class VodController extends BaseController {
                         if(XuLoading.getVisibility() == View.VISIBLE) { //xuameng loading
                             XuLoading.setVisibility(GONE);
                         }
+                        mProgressRoot.setVisibility(VISIBLE);
                         break;
                     }
                     case 1001: { // seek 关闭
@@ -1499,7 +1499,7 @@ public class VodController extends BaseController {
                 simSlideStart = false;
             //simSeekPosition = 0;  //XUAMENG重要要不然重0播放
             simSlideOffset = 0;
-            mHandler.sendEmptyMessageDelayed(1001, 100);   //xuameng隐藏快进图标
+            mHandler.sendEmptyMessageDelayed(1001, 100);   //xuamengTV隐藏快进图标
         }
     }
     public void tvSlideStopXu() { //xuameng修复SEEKBAR快进重新播放问题
@@ -1600,7 +1600,7 @@ public class VodController extends BaseController {
         mHandler.sendEmptyMessage(1000);
         mHandler.removeMessages(1001);
         if(!simSlideStart) {
-            mHandler.sendEmptyMessageDelayed(1001, 100);   //xuameng隐藏快进图标
+            mHandler.sendEmptyMessageDelayed(1001, 500);   //xuameng手机隐藏快进图标
         }
     }
     @Override
