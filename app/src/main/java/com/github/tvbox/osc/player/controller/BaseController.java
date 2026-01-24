@@ -46,7 +46,6 @@ public abstract class BaseController extends BaseVideoController implements Gest
     private boolean mEnableInNormal;
     private boolean mCanSlide;
     private int mCurPlayState;
-    private int mLastPosition = 0;   //xuameng防抖处理
 
     protected Handler mHandler;
 
@@ -135,11 +134,11 @@ public abstract class BaseController extends BaseVideoController implements Gest
                 mLoading.setVisibility(GONE);
                 break;
             case VideoView.STATE_PLAYING:
-           //     mPauseRoot.setVisibility(GONE);
+                mPauseRoot.setVisibility(GONE);
                 mLoading.setVisibility(GONE);
                 break;
             case VideoView.STATE_PAUSED:
-           //     mPauseRoot.setVisibility(VISIBLE);
+                mPauseRoot.setVisibility(VISIBLE);
                 mLoading.setVisibility(GONE);
                 break;
             case VideoView.STATE_PREPARED:
@@ -153,7 +152,7 @@ public abstract class BaseController extends BaseVideoController implements Gest
                 break;
             case VideoView.STATE_PLAYBACK_COMPLETED:
                 mLoading.setVisibility(GONE);
-        //        mPauseRoot.setVisibility(GONE);
+                mPauseRoot.setVisibility(GONE);
                 break;
         }
     }
@@ -310,30 +309,23 @@ public abstract class BaseController extends BaseVideoController implements Gest
         return true;
     }
 
-    protected void slideToChangePosition(float deltaX) {   // xuameng修复滑动过程中图标闪烁问题
+    protected void slideToChangePosition(float deltaX) {
         deltaX = -deltaX;
         int width = getMeasuredWidth();
         int duration = (int) mControlWrapper.getDuration();
 		if (duration >= 1000){
-            int currentPosition = (int) mControlWrapper.getCurrentPosition();
-            int position = (int) (deltaX / width * 120000 + currentPosition);
-            if (position > duration) position = duration;
-            if (position < 0) position = 0;
-
-            // 添加防抖处理，避免频繁更新UI
-            if (Math.abs(position - mLastPosition) < 1000) { // 1秒内不重复更新
-                return;
+        int currentPosition = (int) mControlWrapper.getCurrentPosition();
+        int position = (int) (deltaX / width * 120000 + currentPosition);
+        if (position > duration) position = duration;
+        if (position < 0) position = 0;
+        for (Map.Entry<IControlComponent, Boolean> next : mControlComponents.entrySet()) {
+            IControlComponent component = next.getKey();
+            if (component instanceof IGestureComponent) {
+                ((IGestureComponent) component).onPositionChange(position, currentPosition, duration);
             }
-            mLastPosition = position;
-
-            for (Map.Entry<IControlComponent, Boolean> next : mControlComponents.entrySet()) {
-                IControlComponent component = next.getKey();
-                if (component instanceof IGestureComponent) {
-                    ((IGestureComponent) component).onPositionChange(position, currentPosition, duration);
-                }
-            }
-            updateSeekUI(currentPosition, position, duration);
-            mSeekPosition = position;
+        }
+        updateSeekUI(currentPosition, position, duration);
+        mSeekPosition = position;
 		}
     }
 
