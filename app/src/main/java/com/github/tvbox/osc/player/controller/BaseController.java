@@ -76,10 +76,25 @@ public abstract class BaseController extends BaseVideoController implements Gest
                         HawkConfig.MSLIDEINFO = true;  //xuameng判断滑动
                         break;
                     }
-
                     case 101: { // 亮度+音量调整 关闭
                         mSlideInfo.setVisibility(GONE);
                         HawkConfig.MSLIDEINFO = false;  //xuameng判断滑动
+                        break;
+                    }
+                    case 201: { // Show Volume Dialog
+                        mDialogVolume.setVisibility(VISIBLE);
+                        break;
+                    }
+                    case 202: { // Hide Volume Dialog
+                        mDialogVolume.setVisibility(GONE);
+                        break;
+                    }
+                    case 203: { // Show Volume Dialog
+                        mDialogBrightness.setVisibility(VISIBLE);
+                        break;
+                    }
+                    case 204: { // Hide Volume Dialog
+                        mDialogBrightness.setVisibility(GONE);
                         break;
                     }
                     default: {
@@ -108,6 +123,11 @@ public abstract class BaseController extends BaseVideoController implements Gest
     private ImageView music_iv_circle_bg;  //xuameng音乐播放时图标
     private LinearLayout mProgressroot;  //xuameng 显示进程
 
+    private LinearLayout mDialogVolume;
+    private LinearLayout mDialogBrightness;
+    private ProgressBar mDialogVolumeProgressBar;
+    private ProgressBar mDialogBrightnessProgressBar;
+
     @Override
     protected void initView() {
         super.initView();
@@ -120,6 +140,11 @@ public abstract class BaseController extends BaseVideoController implements Gest
         mPauseTime = findViewWithTag("vod_control_pause_t");
         mProgressroot = findViewWithTag("progress_root");    //xuameng 显示进程
         music_iv_circle_bg = findViewWithTag("music_iv_circle_bg");  //xuameng音乐播放时图标
+
+        mDialogVolume = findViewWithTag("dialog_volume");
+        mDialogBrightness = findViewWithTag("dialog_brightness");
+        mDialogVolumeProgressBar = findViewWithTag("progressbar_volume");
+        mDialogBrightnessProgressBar = findViewWithTag("progressbar_brightness");
     }
 
     @Override
@@ -344,12 +369,18 @@ public abstract class BaseController extends BaseVideoController implements Gest
         Window window = activity.getWindow();
         WindowManager.LayoutParams attributes = window.getAttributes();
         int height = getMeasuredHeight();
-        if (mBrightness == -1.0f) mBrightness = 0.5f;
-        float brightness = deltaY * 2 / height * 1.0f + mBrightness;
-        if (brightness < 0) {
-            brightness = 0f;
+//        if (mBrightness == -1.0f) mBrightness = 0.5f;
+        if (mBrightness <= 0.00f) {
+            mBrightness = 0.50f;
+        } else if (mBrightness < 0.01f) {
+            mBrightness = 0.01f;
         }
-        if (brightness > 1.0f) brightness = 1.0f;
+        float brightness = deltaY * 2 / height * 1.0f + mBrightness;
+        if (brightness > 1.0f) {
+            brightness = 1.0f;
+        } else if (brightness < 0.01f) {
+            brightness = 0.01f;
+        }
         int percent = (int) (brightness * 100);
         attributes.screenBrightness = brightness;
         window.setAttributes(attributes);
@@ -359,12 +390,13 @@ public abstract class BaseController extends BaseVideoController implements Gest
                 ((IGestureComponent) component).onBrightnessChange(percent);
             }
         }
+        mDialogBrightnessProgressBar.setProgress(percent);
         Message msg = Message.obtain();
-        msg.what = 100;
-        msg.obj = "亮度" + percent + "%";
+        msg.what = 203;
+        msg.obj = "亮度 " + percent + "%";
         mHandler.sendMessage(msg);
-        mHandler.removeMessages(101);
-        mHandler.sendEmptyMessageDelayed(101, 1000);
+        mHandler.removeMessages(204);
+        mHandler.sendEmptyMessageDelayed(204, 600);
     }
 
     protected void slideToChangeVolume(float deltaY) {
@@ -382,12 +414,13 @@ public abstract class BaseController extends BaseVideoController implements Gest
                 ((IGestureComponent) component).onVolumeChange(percent);
             }
         }
+        mDialogVolumeProgressBar.setProgress(percent);
         Message msg = Message.obtain();
-        msg.what = 100;
-        msg.obj = "音量" + percent + "%";
+        msg.what = 201;
+        msg.obj = "音量 " + percent + "%";
         mHandler.sendMessage(msg);
-        mHandler.removeMessages(101);
-        mHandler.sendEmptyMessageDelayed(101, 1000);
+        mHandler.removeMessages(202);
+        mHandler.sendEmptyMessageDelayed(202, 600);
     }
 
     @Override
