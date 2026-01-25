@@ -70,15 +70,10 @@ public abstract class BaseController extends BaseVideoController implements Gest
                     case 100: { // 亮度+音量调整
                         mSlideInfo.setVisibility(VISIBLE);
                         mSlideInfo.setText(msg.obj.toString());
-                        if (music_iv_circle_bg.getVisibility() == View.VISIBLE){  //xuameng音乐播放时图标
-                            music_iv_circle_bg.setVisibility(GONE);
-                        }
-                        HawkConfig.MSLIDEINFO = true;  //xuameng判断滑动
                         break;
                     }
                     case 101: { // 亮度+音量调整 关闭
                         mSlideInfo.setVisibility(GONE);
-                        HawkConfig.MSLIDEINFO = false;  //xuameng判断滑动
                         break;
                     }
                     case 201: { // Show Volume Dialog
@@ -123,10 +118,10 @@ public abstract class BaseController extends BaseVideoController implements Gest
     private ImageView music_iv_circle_bg;  //xuameng音乐播放时图标
     private LinearLayout mProgressroot;  //xuameng 显示进程
 
-    private LinearLayout mDialogVolume;
-    private LinearLayout mDialogBrightness;
-    private ProgressBar mDialogVolumeProgressBar;
-    private ProgressBar mDialogBrightnessProgressBar;
+    private LinearLayout mDialogVolume;   //xuameng 新增音量亮度条
+    private LinearLayout mDialogBrightness;  //xuameng 新增音量亮度条
+    private ProgressBar mDialogVolumeProgressBar;  //xuameng 新增音量亮度条
+    private ProgressBar mDialogBrightnessProgressBar;  //xuameng 新增音量亮度条
 
     @Override
     protected void initView() {
@@ -141,10 +136,10 @@ public abstract class BaseController extends BaseVideoController implements Gest
         mProgressroot = findViewWithTag("progress_root");    //xuameng 显示进程
         music_iv_circle_bg = findViewWithTag("music_iv_circle_bg");  //xuameng音乐播放时图标
 
-        mDialogVolume = findViewWithTag("dialog_volume");
-        mDialogBrightness = findViewWithTag("dialog_brightness");
-        mDialogVolumeProgressBar = findViewWithTag("progressbar_volume");
-        mDialogBrightnessProgressBar = findViewWithTag("progressbar_brightness");
+        mDialogVolume = findViewWithTag("dialog_volume");  //xuameng 新增音量亮度条
+        mDialogBrightness = findViewWithTag("dialog_brightness");  //xuameng 新增音量亮度条
+        mDialogVolumeProgressBar = findViewWithTag("progressbar_volume");  //xuameng 新增音量亮度条
+        mDialogBrightnessProgressBar = findViewWithTag("progressbar_brightness");  //xuameng 新增音量亮度条
     }
 
     @Override
@@ -363,7 +358,7 @@ public abstract class BaseController extends BaseVideoController implements Gest
 
     }
 
-    protected void slideToChangeBrightness(float deltaY) {
+    protected void slideToChangeBrightness(float deltaY) {  //xuameng 新增音量亮度条
         Activity activity = PlayerUtils.scanForActivity(getContext());
         if (activity == null) return;
         Window window = activity.getWindow();
@@ -399,7 +394,7 @@ public abstract class BaseController extends BaseVideoController implements Gest
         mHandler.sendEmptyMessageDelayed(204, 600);
     }
 
-    protected void slideToChangeVolume(float deltaY) {
+    protected void slideToChangeVolume(float deltaY) {  //xuameng 新增音量亮度条
         int streamMaxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
         int height = getMeasuredHeight();
         float deltaV = deltaY * 2 / height * streamMaxVolume;
