@@ -571,90 +571,91 @@ tvPlay.setOnLongClickListener(new View.OnLongClickListener() {
 
 
 
-    private void refresh(View itemView, int position) {
-        String newFlag = seriesFlagAdapter.getData().get(position).name;
-        if (vodInfo != null) {
-            // 初始化 playIndexMap（保持向后兼容）
-            if (vodInfo.playIndexMap == null) {
-                vodInfo.playIndexMap = new HashMap<>();
-            }
-            
-            // 保存当前播放列表的索引到全局状态
-            if (vodInfo.playFlag != null) {
-                App.getInstance().updateGlobalPlayIndex(vodInfo.playFlag, vodInfo.playIndex);
-            }
 
-            // 只取消当前选中列的高亮状态
-            for (int i = 0; i < vodInfo.seriesFlags.size(); i++) {
-                VodInfo.VodSeriesFlag flag = vodInfo.seriesFlags.get(i);
-                if (flag.selected) {
-                    flag.selected = false;
-                    seriesFlagAdapter.notifyItemChanged(i);
-                    break;
-                }
+private void refresh(View itemView, int position) {
+    String newFlag = seriesFlagAdapter.getData().get(position).name;
+    if (vodInfo != null) {
+        // 初始化 playIndexMap（保持向后兼容）
+        if (vodInfo.playIndexMap == null) {
+            vodInfo.playIndexMap = new HashMap<>();
+        }
+        
+        // 保存当前播放列表的索引到全局状态
+        if (vodInfo.playFlag != null) {
+            App.getInstance().updateGlobalPlayIndex(vodInfo.playFlag, vodInfo.playIndex);
+        }
+
+        // 只取消当前选中列的高亮状态
+        for (int i = 0; i < vodInfo.seriesFlags.size(); i++) {
+            VodInfo.VodSeriesFlag flag = vodInfo.seriesFlags.get(i);
+            if (flag.selected) {
+                flag.selected = false;
+                seriesFlagAdapter.notifyItemChanged(i);
+                break;
             }
-            
-            // 高亮当前点击的列（即拥有焦点的列）
-            VodInfo.VodSeriesFlag flag = vodInfo.seriesFlags.get(position);
-            flag.selected = true;
-            seriesFlagAdapter.notifyItemChanged(position);
-            
-            // 清除之前列表的选中状态（仅清除选中状态，不影响播放状态）
-            if (vodInfo.seriesMap.containsKey(vodInfo.playFlag) && 
-                vodInfo.seriesMap.get(vodInfo.playFlag).size() > vodInfo.playIndex) {
-                vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).selected = false;
-            }
-            
-            // 保存切换前的播放状态
-            String oldFlag = vodInfo.playFlag;
-            int oldIndex = vodInfo.playIndex;
-            
-            vodInfo.playFlag = newFlag;
-            
-            // 关键修改：精确恢复各列播放位置
-            // 1. 首先检查是否有全局播放状态且是同一视频
-            VodInfo currentPlayInfo = App.getInstance().getVodInfo();
-            boolean isSameVideo = currentPlayInfo != null && 
-                                 currentPlayInfo.id != null && 
-                                 currentPlayInfo.id.equals(vodInfo.id);
-            
-            if (isSameVideo && currentPlayInfo.playFlag != null && 
-                currentPlayInfo.playFlag.equals(newFlag)) {
-                // 如果是当前播放的列，使用实时播放位置
-                vodInfo.playIndex = currentPlayInfo.playIndex;
-            } else {
-                // 2. 尝试从全局历史记录恢复播放索引
-                HashMap<String, Integer> globalMap = App.getInstance().getGlobalPlayIndexMap();
-                if (globalMap.containsKey(newFlag)) {
-                    // 如果新列表有全局历史记录，恢复历史索引
-                    int savedIndex = globalMap.get(newFlag);
-                    // 检查索引是否有效
-                    if (savedIndex < vodInfo.seriesMap.get(newFlag).size()) {
-                        vodInfo.playIndex = savedIndex;
-                    } else {
-                        vodInfo.playIndex = 0; // 索引无效，重置为0
-                    }
-                } else if (vodInfo.playIndexMap != null && vodInfo.playIndexMap.containsKey(newFlag)) {
-                    // 如果全局记录中没有，使用本地记录（向后兼容）
-                    int savedIndex = vodInfo.playIndexMap.get(newFlag);
-                    if (savedIndex < vodInfo.seriesMap.get(newFlag).size()) {
-                        vodInfo.playIndex = savedIndex;
-                    } else {
-                        vodInfo.playIndex = 0;
-                    }
+        }
+        
+        // 高亮当前点击的列（即拥有焦点的列）
+        VodInfo.VodSeriesFlag flag = vodInfo.seriesFlags.get(position);
+        flag.selected = true;
+        seriesFlagAdapter.notifyItemChanged(position);
+        
+        // 清除之前列表的选中状态（仅清除选中状态，不影响播放状态）
+        if (vodInfo.seriesMap.containsKey(vodInfo.playFlag) && 
+            vodInfo.seriesMap.get(vodInfo.playFlag).size() > vodInfo.playIndex) {
+            vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).selected = false;
+        }
+        
+        // 保存切换前的播放状态
+        String oldFlag = vodInfo.playFlag;
+        int oldIndex = vodInfo.playIndex;
+        
+        vodInfo.playFlag = newFlag;
+        
+        // 关键修改：精确恢复各列播放位置
+        // 1. 首先检查是否有全局播放状态且是同一视频
+        VodInfo currentPlayInfo = App.getInstance().getVodInfo();
+        boolean isSameVideo = currentPlayInfo != null && 
+                             currentPlayInfo.id != null && 
+                             currentPlayInfo.id.equals(vodInfo.id);
+        
+        if (isSameVideo && currentPlayInfo.playFlag != null && 
+            currentPlayInfo.playFlag.equals(newFlag)) {
+            // 如果是当前播放的列，使用实时播放位置
+            vodInfo.playIndex = currentPlayInfo.playIndex;
+        } else {
+            // 2. 尝试从全局历史记录恢复播放索引
+            HashMap<String, Integer> globalMap = App.getInstance().getGlobalPlayIndexMap();
+            if (globalMap.containsKey(newFlag)) {
+                // 如果新列表有全局历史记录，恢复历史索引
+                int savedIndex = globalMap.get(newFlag);
+                // 检查索引是否有效
+                if (savedIndex < vodInfo.seriesMap.get(newFlag).size()) {
+                    vodInfo.playIndex = savedIndex;
                 } else {
-                    // 新列表没有历史记录，重置为0
+                    vodInfo.playIndex = 0; // 索引无效，重置为0
+                }
+            } else if (vodInfo.playIndexMap != null && vodInfo.playIndexMap.containsKey(newFlag)) {
+                // 如果全局记录中没有，使用本地记录（向后兼容）
+                int savedIndex = vodInfo.playIndexMap.get(newFlag);
+                if (savedIndex < vodInfo.seriesMap.get(newFlag).size()) {
+                    vodInfo.playIndex = savedIndex;
+                } else {
                     vodInfo.playIndex = 0;
                 }
+            } else {
+                // 新列表没有历史记录，重置为0
+                vodInfo.playIndex = 0;
             }
-            
-            // 保存当前播放状态到全局
-            App.getInstance().setVodInfo(vodInfo);
-            
-            refreshList();
         }
-        seriesFlagFocus = itemView;
+        
+        // 保存当前播放状态到全局
+        App.getInstance().setVodInfo(vodInfo);
+        
+        refreshList();
     }
+    seriesFlagFocus = itemView;
+}
 
 
 
