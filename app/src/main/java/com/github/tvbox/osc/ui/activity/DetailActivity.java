@@ -568,6 +568,7 @@ tvPlay.setOnLongClickListener(new View.OnLongClickListener() {
         mGridViewFlag.setOnItemListener(new TvRecyclerView.OnItemListener() {
 
 
+
 private void refresh(View itemView, int position) {
     String newFlag = seriesFlagAdapter.getData().get(position).name;
     if (vodInfo != null) {
@@ -604,7 +605,7 @@ private void refresh(View itemView, int position) {
         
         vodInfo.playFlag = newFlag;
         
-        // 关键修改：智能播放位置同步
+        // 关键修改：智能播放位置同步 - 修复循环切换问题
         // 1. 先尝试在新列表中恢复当前播放位置
         int targetIndex = vodInfo.playIndex;
         
@@ -615,6 +616,8 @@ private void refresh(View itemView, int position) {
             vodInfo.playIndex = targetIndex;
         } else {
             // 新列表中不存在当前播放位置的剧集，使用第一集
+            // 但同时保存当前播放位置到全局映射，以便后续切换回来时恢复
+            App.getInstance().updateGlobalPlayIndex(newFlag, 0);
             vodInfo.playIndex = 0;
         }
         
