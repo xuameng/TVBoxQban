@@ -570,6 +570,7 @@ tvPlay.setOnLongClickListener(new View.OnLongClickListener() {
 
 
 
+
 private void refresh(View itemView, int position) {
     String newFlag = seriesFlagAdapter.getData().get(position).name;
     if (vodInfo != null) {
@@ -627,10 +628,15 @@ private void refresh(View itemView, int position) {
             }
         }
         
+        // 修复：确保切换回原列时能正确恢复播放位置
+        // 保存当前播放状态到全局
+        App.getInstance().setVodInfo(vodInfo);
+        
         refreshList();
     }
     seriesFlagFocus = itemView;
 }
+
 
 
 
