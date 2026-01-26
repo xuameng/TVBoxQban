@@ -345,18 +345,18 @@ public class DetailActivity extends BaseActivity {
         });
 
            //xuameng : 长按播放滚动
-//xuameng : 长按播放滚动
 tvPlay.setOnLongClickListener(new View.OnLongClickListener() {       //xuameng长按历史键重载主页数据
     @Override
     public boolean onLongClick(View v) {
         FastClickCheckUtil.check(v);
         
-        // 检查当前是否在播放剧集所在的列
-        if (vodInfo != null && vodInfo.playFlag != null) {
+        // 获取当前实际播放的VodInfo
+        VodInfo currentPlayInfo = App.getInstance().getVodInfo();
+        if (currentPlayInfo != null && currentPlayInfo.playFlag != null) {
             // 查找播放剧集所在的列位置
             int playFlagPosition = -1;
             for (int i = 0; i < seriesFlagAdapter.getData().size(); i++) {
-                if (seriesFlagAdapter.getData().get(i).name.equals(vodInfo.playFlag)) {
+                if (seriesFlagAdapter.getData().get(i).name.equals(currentPlayInfo.playFlag)) {
                     playFlagPosition = i;
                     break;
                 }
@@ -378,6 +378,9 @@ tvPlay.setOnLongClickListener(new View.OnLongClickListener() {       //xuameng�
                     // 选中播放剧集所在的列
                     seriesFlagAdapter.getData().get(playFlagPosition).selected = true;
                     vodInfo.playFlag = seriesFlagAdapter.getData().get(playFlagPosition).name;
+                    
+                    // 更新vodInfo的播放索引为当前实际播放的索引
+                    vodInfo.playIndex = currentPlayInfo.playIndex;
                     
                     // 刷新列表显示
                     seriesFlagAdapter.notifyItemChanged(playFlagPosition);
@@ -570,11 +573,19 @@ private void refresh(View itemView, int position) {
             vodInfo.playIndexMap = new HashMap<>();
         }
         
+        // 关键修改：在保存之前，先获取当前实际播放的索引
+        VodInfo currentPlayInfo = App.getInstance().getVodInfo();
+        if (currentPlayInfo != null && currentPlayInfo.id != null && currentPlayInfo.id.equals(vodInfo.id)) {
+            // 如果当前有播放信息，且是同一个视频，使用实际的播放索引
+            vodInfo.playIndex = currentPlayInfo.playIndex;
+            vodInfo.playFlag = currentPlayInfo.playFlag;
+        }
+        
         // 保存当前播放列表的索引
         if (vodInfo.playFlag != null) {
-            updatePlayIndexMap(vodInfo.playFlag, vodInfo.playIndex);
+            vodInfo.playIndexMap.put(vodInfo.playFlag, vodInfo.playIndex);
         }
-
+        
         for (int i = 0; i < vodInfo.seriesFlags.size(); i++) {
             VodInfo.VodSeriesFlag flag = vodInfo.seriesFlags.get(i);
             if (flag.name.equals(vodInfo.playFlag)) {
@@ -613,6 +624,7 @@ private void refresh(View itemView, int position) {
     }
     seriesFlagFocus = itemView;
 }
+
 
 
             @Override
