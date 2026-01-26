@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -51,6 +52,7 @@ public class VodInfo implements Serializable {
     public String sourceKey;
     public String playerCfg = "";
     public boolean reverseSort = false;
+    public HashMap<String, Integer> playIndexMap; // xuameng保存每个播放列表的索引
 
     public void setVideo(Movie.Video video) {
         last = video.last;
