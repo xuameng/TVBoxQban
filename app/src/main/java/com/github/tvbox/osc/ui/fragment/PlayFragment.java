@@ -1083,53 +1083,49 @@ public class PlayFragment extends BaseLazyFragment {
     private SourceBean sourceBean;
 
 	
-private void updatePlayIndexMap(String flag, int index) {
-    if (mVodInfo != null) {
-        if (mVodInfo.playIndexMap == null) {
-            mVodInfo.playIndexMap = new HashMap<>();
-        }
-        mVodInfo.playIndexMap.put(flag, index);
-    }
-}
 
-    private void playNext(boolean isProgress) {
-        boolean hasNext;
-        if (mVodInfo == null || mVodInfo.seriesMap.get(mVodInfo.playFlag) == null) {
-            hasNext = false;
-        } else {
-            hasNext = mVodInfo.playIndex + 1 < mVodInfo.seriesMap.get(mVodInfo.playFlag).size();
-        }
-        if (!hasNext) {
-            if(isProgress && mVodInfo!= null){
-                mVodInfo.playIndex=0;
-                updatePlayIndexMap(mVodInfo.playFlag, mVodInfo.playIndex);
-                App.showToastShort(mContext, "已经是最后一集了！即将跳到第一集继续播放！");
-            }else {
-                App.showToastShort(mContext, "已经是最后一集了！");
-                return;
-            }
+private void playNext(boolean isProgress) {
+    boolean hasNext;
+    if (mVodInfo == null || mVodInfo.seriesMap.get(mVodInfo.playFlag) == null) {
+        hasNext = false;
+    } else {
+        hasNext = mVodInfo.playIndex + 1 < mVodInfo.seriesMap.get(mVodInfo.playFlag).size();
+    }
+    if (!hasNext) {
+        if(isProgress && mVodInfo!= null){
+            mVodInfo.playIndex=0;
+            // 更新全局播放索引
+            App.getInstance().updateGlobalPlayIndex(mVodInfo.playFlag, mVodInfo.playIndex);
+            App.showToastShort(mContext, "已经是最后一集了！即将跳到第一集继续播放！");
         }else {
-            mVodInfo.playIndex++;
-            updatePlayIndexMap(mVodInfo.playFlag, mVodInfo.playIndex);
-        }
-        play(false);
-    }
-
-    private void playPrevious() {
-        boolean hasPre = true;
-        if (mVodInfo == null || mVodInfo.seriesMap.get(mVodInfo.playFlag) == null) {
-            hasPre = false;
-        } else {
-            hasPre = mVodInfo.playIndex - 1 >= 0;
-        }
-        if (!hasPre) {
-            App.showToastShort(mContext, "已经是第一集了！");
+            App.showToastShort(mContext, "已经是最后一集了！");
             return;
         }
-        mVodInfo.playIndex--;
-        updatePlayIndexMap(mVodInfo.playFlag, mVodInfo.playIndex);
-        play(false);
+    }else {
+        mVodInfo.playIndex++;
+        // 更新全局播放索引
+        App.getInstance().updateGlobalPlayIndex(mVodInfo.playFlag, mVodInfo.playIndex);
     }
+    play(false);
+}
+
+private void playPrevious() {
+    boolean hasPre = true;
+    if (mVodInfo == null || mVodInfo.seriesMap.get(mVodInfo.playFlag) == null) {
+        hasPre = false;
+    } else {
+        hasPre = mVodInfo.playIndex - 1 >= 0;
+    }
+    if (!hasPre) {
+        App.showToastShort(mContext, "已经是第一集了！");
+        return;
+    }
+    mVodInfo.playIndex--;
+    // 更新全局播放索引
+    App.getInstance().updateGlobalPlayIndex(mVodInfo.playFlag, mVodInfo.playIndex);
+    play(false);
+}
+
 
     private int autoRetryCount = 0;
     private long lastRetryTime = 0; // 记录上次调用时间（毫秒）  //xuameng新增
@@ -1314,6 +1310,7 @@ private void updatePlayIndexMap(String flag, int index) {
     }
 
     public void play(boolean reset) {
+        App.getInstance().setVodInfo(mVodInfo);
         if(mVodInfo==null)return;
         isJianpian = false;
         VodInfo.VodSeries vs = mVodInfo.seriesMap.get(mVodInfo.playFlag).get(mVodInfo.playIndex);
