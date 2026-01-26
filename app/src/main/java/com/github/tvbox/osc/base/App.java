@@ -23,6 +23,7 @@ import com.p2p.P2PClass;
 import java.io.File;   //xuameng清缓存
 import android.content.Context;   //xuameng  Toast
 import android.widget.Toast;  //xuameng  Toast
+import java.util.HashMap;
 
 import me.jessyan.autosize.AutoSizeConfig;
 import me.jessyan.autosize.unit.Subunits;
@@ -124,7 +125,6 @@ private String currentPlayingVideoId;
     }
 
 
-    private VodInfo vodInfo;
 public void setVodInfo(VodInfo vodinfo){
     this.vodInfo = vodinfo;
     if (vodinfo != null && vodinfo.playFlag != null) {
