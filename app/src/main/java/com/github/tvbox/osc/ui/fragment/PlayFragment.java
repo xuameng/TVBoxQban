@@ -1082,6 +1082,16 @@ public class PlayFragment extends BaseLazyFragment {
     private String sourceKey;
     private SourceBean sourceBean;
 
+	
+private void updatePlayIndexMap(String flag, int index) {
+    if (mVodInfo != null) {
+        if (mVodInfo.playIndexMap == null) {
+            mVodInfo.playIndexMap = new HashMap<>();
+        }
+        mVodInfo.playIndexMap.put(flag, index);
+    }
+}
+
     private void playNext(boolean isProgress) {
         boolean hasNext;
         if (mVodInfo == null || mVodInfo.seriesMap.get(mVodInfo.playFlag) == null) {
@@ -1092,6 +1102,7 @@ public class PlayFragment extends BaseLazyFragment {
         if (!hasNext) {
             if(isProgress && mVodInfo!= null){
                 mVodInfo.playIndex=0;
+                updatePlayIndexMap(mVodInfo.playFlag, mVodInfo.playIndex);
                 App.showToastShort(mContext, "已经是最后一集了！即将跳到第一集继续播放！");
             }else {
                 App.showToastShort(mContext, "已经是最后一集了！");
@@ -1099,6 +1110,7 @@ public class PlayFragment extends BaseLazyFragment {
             }
         }else {
             mVodInfo.playIndex++;
+            updatePlayIndexMap(mVodInfo.playFlag, mVodInfo.playIndex);
         }
         play(false);
     }
@@ -1115,6 +1127,7 @@ public class PlayFragment extends BaseLazyFragment {
             return;
         }
         mVodInfo.playIndex--;
+        updatePlayIndexMap(mVodInfo.playFlag, mVodInfo.playIndex);
         play(false);
     }
 
