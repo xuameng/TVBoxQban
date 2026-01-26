@@ -718,7 +718,7 @@ public class DetailActivity extends BaseActivity {
 //                    bundle.putSerializable("VodInfo", previewVodInfo);
                     App.getInstance().setVodInfo(previewVodInfo);
                 }
-                playFragment.setData(bundle);
+        //        playFragment.setData(bundle);
             } else {
                 jumpActivity(PlayActivity.class, bundle);
             }
