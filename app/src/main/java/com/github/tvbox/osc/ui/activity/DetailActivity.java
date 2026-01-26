@@ -569,6 +569,7 @@ tvPlay.setOnLongClickListener(new View.OnLongClickListener() {
 
 
 
+
 private void refresh(View itemView, int position) {
     String newFlag = seriesFlagAdapter.getData().get(position).name;
     if (vodInfo != null) {
@@ -617,14 +618,20 @@ private void refresh(View itemView, int position) {
         } else {
             // 新列表中不存在当前播放位置的剧集，使用第一集
             // 但同时保存当前播放位置到全局映射，以便后续切换回来时恢复
-            App.getInstance().updateGlobalPlayIndex(newFlag, 0);
-            vodInfo.playIndex = 0;
+            // 重要修改：使用全局保存的播放索引而不是硬编码为0
+            int savedIndex = App.getInstance().getSavedPlayIndex(newFlag);
+            if (savedIndex < vodInfo.seriesMap.get(newFlag).size()) {
+                vodInfo.playIndex = savedIndex;
+            } else {
+                vodInfo.playIndex = 0;
+            }
         }
         
         refreshList();
     }
     seriesFlagFocus = itemView;
 }
+
 
 
 
@@ -1441,20 +1448,41 @@ private void refresh(View itemView, int position) {
 
 
 // 滚动到播放剧集的辅助方法
+
 private void scrollToPlayingEpisode() {
+    // 获取当前实际播放的VodInfo
+    VodInfo currentPlayInfo = App.getInstance().getVodInfo();
+    if (currentPlayInfo != null && App.getInstance().isCurrentPlayingVideo(vodInfo.id)) {
+        // 如果是当前播放的视频，使用全局播放索引
+        vodInfo.playIndex = currentPlayInfo.playIndex;
+    } else {
+        // 如果不是当前播放的视频，使用本地保存的索引
+        vodInfo.playIndex = App.getInstance().getSavedPlayIndex(vodInfo.playFlag);
+    }
+    
+    // 确保只高亮当前播放的列
+    for (int i = 0; i < seriesFlagAdapter.getData().size(); i++) {
+        if (seriesFlagAdapter.getData().get(i).name.equals(vodInfo.playFlag)) {
+            seriesFlagAdapter.getData().get(i).selected = true;
+            seriesFlagAdapter.notifyItemChanged(i);
+        } else {
+            seriesFlagAdapter.getData().get(i).selected = false;
+            seriesFlagAdapter.notifyItemChanged(i);
+        }
+    }
+    
     mGridView.addOnScrollListener(new RecyclerView.OnScrollListener() {
         @Override
         public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
             super.onScrollStateChanged(recyclerView, newState);
-            if (newState == mGridView.SCROLL_STATE_IDLE) {    //xuameng剧集滚动完成后焦点选择为剧集
-                // 滚动已经停止，执行你需要的操作
+            if (newState == mGridView.SCROLL_STATE_IDLE) {
                 mGridView.setSelection(vodInfo.playIndex);
-                mGridView.removeOnScrollListener(this);                //xuameng删除滚动监听
+                mGridView.removeOnScrollListener(this);
             }
         }
     });
     
-    refreshList();   //xuameng返回键、长按播放刷新滚动到剧集
+    refreshList();
     
     if (mGridView.isScrolling() || mGridView.isComputingLayout()) {
         // 如果正在滚动或计算布局，等待滚动监听器处理
@@ -1462,5 +1490,6 @@ private void scrollToPlayingEpisode() {
         mGridView.setSelection(vodInfo.playIndex);
     }
 }
+
 
 }
