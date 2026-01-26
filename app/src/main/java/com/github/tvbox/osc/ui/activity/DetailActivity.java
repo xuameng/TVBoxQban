@@ -574,11 +574,22 @@ private void refresh(View itemView, int position) {
             vodInfo.playIndexMap = new HashMap<>();
         }
         
+        // 关键修改1: 优先从全局状态获取当前播放信息
+        VodInfo currentPlayInfo = App.getInstance().getVodInfo();
+        if (currentPlayInfo != null && 
+            currentPlayInfo.id != null && 
+            currentPlayInfo.id.equals(vodInfo.id)) {
+            // 如果是同一个视频，同步播放状态
+            vodInfo.playFlag = currentPlayInfo.playFlag;
+            vodInfo.playIndex = currentPlayInfo.playIndex;
+        }
+        
         // 保存当前播放列表的索引到全局状态
         if (vodInfo.playFlag != null) {
             App.getInstance().updateGlobalPlayIndex(vodInfo.playFlag, vodInfo.playIndex);
         }
 
+        // 更新选中状态
         for (int i = 0; i < vodInfo.seriesFlags.size(); i++) {
             VodInfo.VodSeriesFlag flag = vodInfo.seriesFlags.get(i);
             if (flag.name.equals(vodInfo.playFlag)) {
@@ -591,14 +602,15 @@ private void refresh(View itemView, int position) {
         flag.selected = true;
         
         // 清除之前列表的选中状态
-        if (vodInfo.seriesMap.get(vodInfo.playFlag).size() > vodInfo.playIndex) {
+        if (vodInfo.seriesMap.containsKey(vodInfo.playFlag) && 
+            vodInfo.seriesMap.get(vodInfo.playFlag).size() > vodInfo.playIndex) {
             vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).selected = false;
         }
         
         vodInfo.playFlag = newFlag;
         seriesFlagAdapter.notifyItemChanged(position);
         
-        // 关键修改：优先从全局历史记录中恢复播放索引
+        // 关键修改2: 从全局历史记录中恢复播放索引
         HashMap<String, Integer> globalMap = App.getInstance().getGlobalPlayIndexMap();
         if (globalMap.containsKey(newFlag)) {
             // 如果新列表有全局历史记录，恢复历史索引
@@ -622,10 +634,17 @@ private void refresh(View itemView, int position) {
             vodInfo.playIndex = 0;
         }
         
+        // 关键修改3: 更新新列表的选中状态
+        if (vodInfo.seriesMap.containsKey(vodInfo.playFlag) && 
+            vodInfo.seriesMap.get(vodInfo.playFlag).size() > vodInfo.playIndex) {
+            vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).selected = true;
+        }
+        
         refreshList();
     }
     seriesFlagFocus = itemView;
 }
+
 
 
 
