@@ -1356,8 +1356,7 @@ public class LivePlayActivity extends BaseActivity {
         }
         if(!isCurrentLiveChannelValidXu()) return;    //xuameng 空指针修复
         liveEpgDateAdapter.setSelectedIndex(1);   //xuameng频道EPG日期自动选今天
-     //   getEpg(new Date());
-        showBottomEpg();
+        getEpg(new Date());
     }
     private void mHideChannelListRunXu() { //xuameng左侧菜单延时5秒隐藏
         if(countDownTimer7 != null) {
@@ -1381,7 +1380,7 @@ public class LivePlayActivity extends BaseActivity {
         if((channelGroupIndex == currentChannelGroupIndex && liveChannelIndex == currentLiveChannelIndex && !changeSource) || (changeSource && currentLiveChannelItem.getSourceNum() == 1) && !XuSource) {
             // xuamengEPG日期自动选今天
             liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
-      //      getEpg(new Date());
+            getEpg(new Date());
             if(isVOD) {
                 if(backcontroller.getVisibility() == View.GONE) {
                    showProgressBars(true);
@@ -1416,7 +1415,7 @@ public class LivePlayActivity extends BaseActivity {
             App.showToastShort(mContext, "聚汇直播提示您：播放失败！自动切换中！");
             TimeoutChangeSource = false;  //xuameng是否自动换源
         }else{
-		//    getEpg(new Date());
+		    getEpg(new Date());
             showBottomEpg(); //XUAMENG重要点击频道播放，上面的不重新播放。只显示EPG
             TimeoutChangeSource = false;  //xuameng是否自动换源
         }
