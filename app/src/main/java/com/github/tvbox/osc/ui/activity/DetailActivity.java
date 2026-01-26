@@ -158,9 +158,9 @@ public class DetailActivity extends BaseActivity {
         EventBus.getDefault().register(this);
 		HawkConfig.intVod = true;  //xuameng判断进入播放
         HawkConfig.saveHistory = false;  //xuameng判断存储历史记录
-        initView();
-        initViewModel();
-        initData();
+     //   initView();
+     //   initViewModel();
+     //   initData();
     }
 
     private void initView() {
@@ -718,7 +718,7 @@ public class DetailActivity extends BaseActivity {
 //                    bundle.putSerializable("VodInfo", previewVodInfo);
                     App.getInstance().setVodInfo(previewVodInfo);
                 }
-        //        playFragment.setData(bundle);
+                playFragment.setData(bundle);
             } else {
                 jumpActivity(PlayActivity.class, bundle);
             }
