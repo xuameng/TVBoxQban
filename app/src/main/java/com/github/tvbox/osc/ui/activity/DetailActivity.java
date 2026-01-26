@@ -148,9 +148,6 @@ public class DetailActivity extends BaseActivity {
     private View currentSeriesGroupView;
     private int GroupCount;
 
-    private String lastPlayFlag = null; // 记录上一次播放的列表标识
-    private int lastPlayIndex = 0;      // 记录上一次播放的剧集索引
-
     @Override
     protected int getLayoutResID() {
         return R.layout.activity_detail;
@@ -532,36 +529,67 @@ public class DetailActivity extends BaseActivity {
             }
         });
 
-        // 设置播放源列表项监听器
         mGridViewFlag.setOnItemListener(new TvRecyclerView.OnItemListener() {
+private void refresh(View itemView, int position) {
+    String newFlag = seriesFlagAdapter.getData().get(position).name;
+    if (vodInfo != null) {
+        // 保存当前播放列表和索引
+        String oldFlag = vodInfo.playFlag;
+        int oldIndex = vodInfo.playIndex;
+        
+        for (int i = 0; i < vodInfo.seriesFlags.size(); i++) {
+            VodInfo.VodSeriesFlag flag = vodInfo.seriesFlags.get(i);
+            if (flag.name.equals(vodInfo.playFlag)) {
+                flag.selected = false;
+                seriesFlagAdapter.notifyItemChanged(i);
+                break;
+            }
+        }
+        VodInfo.VodSeriesFlag flag = vodInfo.seriesFlags.get(position);
+        flag.selected = true;
+        
+        // 清除之前列表的选中状态
+        if (vodInfo.seriesMap.get(vodInfo.playFlag).size() > vodInfo.playIndex) {
+            vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).selected = false;
+        }
+        
+        vodInfo.playFlag = newFlag;
+        seriesFlagAdapter.notifyItemChanged(position);
+        
+        // 关键修改：检查新列表中是否存在之前的播放索引
+        if (oldFlag.equals(newFlag)) {
+            // 如果是切回原来的列表，恢复之前的播放索引
+            vodInfo.playIndex = oldIndex;
+        } else {
+            // 如果是切换到新列表，检查索引是否有效
+            if (vodInfo.playIndex >= vodInfo.seriesMap.get(newFlag).size()) {
+                vodInfo.playIndex = 0; // 如果索引超出范围，重置为0
+            }
+            // 如果索引有效，保持当前索引（可能是从其他逻辑设置的）
+        }
+        
+        refreshList();
+    }
+    seriesFlagFocus = itemView;
+}
+
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
-                // 可在此处处理预选中状态
+//                seriesSelect = false;
             }
 
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
-                // 当列表项被选中时的处理
-                if (position < 0) return;
-                
-                // 使用post方法确保UI更新完成后执行
-                mGridViewFlag.post(() -> {
-                    refresh(itemView, position);
-                });
+                refresh(itemView, position);
+//                if(isReverse)vodInfo.reverse();
             }
 
             @Override
             public void onItemClick(TvRecyclerView parent, View itemView, int position) {
-                // 当列表项被点击时的处理
-                if (position < 0) return;
-                
-                // 使用post方法确保UI更新完成后执行
-                mGridViewFlag.post(() -> {
-                    refresh(itemView, position);
-                });
+                refresh(itemView, position);
+//                if(isReverse)vodInfo.reverse();
             }
         });
-
         seriesAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
@@ -717,37 +745,49 @@ public class DetailActivity extends BaseActivity {
 
     @SuppressLint("NotifyDataSetChanged")
     void refreshList() {
-        // 检查当前播放列表是否为最近播放过的列表
-        boolean isLastPlayedFlag = (lastPlayFlag != null && vodInfo.playFlag.equals(lastPlayFlag));
-        
-        // 确定要使用的播放索引
-        int indexToScroll = vodInfo.playIndex;
-        
-        // 如果是返回到上次播放的列表，则使用上次的播放索引
-        if (isLastPlayedFlag && lastPlayFlag != null) {
-            indexToScroll = lastPlayIndex;
+        if (vodInfo.seriesMap.get(vodInfo.playFlag).size() <= vodInfo.playIndex) {
+            vodInfo.playIndex = 0;
         }
-        
-        // 边界检查，防止索引越界
-        if (vodInfo.seriesMap.get(vodInfo.playFlag).size() <= indexToScroll) {
-            indexToScroll = 0;
+
+        if (vodInfo.seriesMap.get(vodInfo.playFlag) != null) {
+            boolean canSelect = true;
+            for (int j = 0; j < vodInfo.seriesMap.get(vodInfo.playFlag).size(); j++) {
+                if(vodInfo.seriesMap.get(vodInfo.playFlag).get(j).selected){
+                    canSelect = false;
+                    break;
+                }
+            }
+            if(canSelect)vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).selected = true;
         }
-        
-        // 根据剧集数量动态设置网格列数
-        if (vodInfo.seriesMap.get(vodInfo.playFlag).size() > 0) {
-            int spanCount = vodInfo.seriesMap.get(vodInfo.playFlag).size() > 99 ? 10 : 9;
-            mGridViewLayoutMgr.setSpanCount(spanCount); // 使用已有的布局管理器实例
+
+        Paint pFont = new Paint();
+//        pFont.setTypeface(Typeface.DEFAULT );
+        Rect rect = new Rect();
+
+        List<VodInfo.VodSeries> list = vodInfo.seriesMap.get(vodInfo.playFlag);
+        int listSize = list.size();
+        int w = 1;
+        for(int i =0; i < listSize; ++i){
+            String name = list.get(i).name;
+            pFont.getTextBounds(name, 0, name.length(), rect);
+            if(w < rect.width()){
+                w = rect.width();
+            }
         }
-        
-        // 更新剧集适配器的数据
+        w += 32;
+        int screenWidth = getWindowManager().getDefaultDisplay().getWidth()/3;
+        int offset = screenWidth/w;
+        if(offset <=2) offset =2;
+        if(offset > 6) offset =6;
+        mGridViewLayoutMgr.setSpanCount(offset);
         seriesAdapter.setNewData(vodInfo.seriesMap.get(vodInfo.playFlag));
-        
-        // 延迟执行滚动操作，确保布局已完成
-        final int scrollIndex = indexToScroll;
+
+        setSeriesGroupOptions();
+
         mGridView.postDelayed(new Runnable() {
             @Override
             public void run() {
-                customSeriesScrollPos(scrollIndex);
+                customSeriesScrollPos(vodInfo.playIndex);
             }
         }, 100);
     }
@@ -1331,46 +1371,5 @@ public class DetailActivity extends BaseActivity {
           url = "聚汇影视提示您：播放地址为空！";
       }	
       setTextShow(tvPlayUrl, "播放地址：", url);
-    }
-
-    /**
-     * 刷新播放源列表和剧集列表
-     * @param itemView 当前选中的播放源项视图
-     * @param position 当前选中的播放源索引
-     */
-    private void refresh(View itemView, int position) {
-        // 获取新的播放源标识
-        String newFlag = seriesFlagAdapter.getData().get(position).name;
-        
-        // 保存切换前的播放状态（仅当真正切换列表时）
-        if (vodInfo != null && !vodInfo.playFlag.equals(newFlag)) {
-            lastPlayFlag = vodInfo.playFlag;
-            lastPlayIndex = vodInfo.playIndex;
-        }
-        
-        if (vodInfo != null) {
-            // 取消之前选中项的选中状态
-            if (seriesFlagFocus != null && !seriesFlagFocus.isFocused()) {
-                TextView tvSeriesFlag = seriesFlagFocus.findViewById(R.id.tvSeriesFlag);
-                if (tvSeriesFlag != null) {
-                    tvSeriesFlag.setSelected(false);
-                }
-            }
-            
-            // 更新当前选中项的选中状态
-            TextView tvCurrentFlag = itemView.findViewById(R.id.tvSeriesFlag);
-            if (tvCurrentFlag != null) {
-                tvCurrentFlag.setSelected(true);
-            }
-            
-            // 更新当前播放源标识
-            vodInfo.playFlag = newFlag;
-            
-            // 刷新剧集列表
-            refreshList();
-        }
-        
-        // 更新当前焦点视图引用
-        seriesFlagFocus = itemView;
     }
 }
