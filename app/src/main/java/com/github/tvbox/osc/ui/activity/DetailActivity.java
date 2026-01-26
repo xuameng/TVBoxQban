@@ -345,32 +345,64 @@ public class DetailActivity extends BaseActivity {
         });
 
            //xuameng : 长按播放滚动
-		    tvPlay.setOnLongClickListener(new View.OnLongClickListener() {       //xuameng长按历史键重载主页数据
-        	@Override
-            public boolean onLongClick(View v) {
-				FastClickCheckUtil.check(v);
-				mGridView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-				@Override
-					public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-						super.onScrollStateChanged(recyclerView, newState);
-						if (newState == mGridView.SCROLL_STATE_IDLE) {    //xuameng剧集滚动完成后焦点选择为剧集
-						// 滚动已经停止，执行你需要的操作
-				//		mGridView.requestFocus();    //xuameng如果不满足滚动条件直接获得焦点
-						mGridView.setSelection(vodInfo.playIndex);
-						mGridView.removeOnScrollListener(this);				//xuameng删除滚动监听				
-						}
-					}
-				});
-            refreshList();   //xuameng返回键、长按播放刷新滚动到剧集
-			if(mGridView.isScrolling() || mGridView.isComputingLayout()) {
-			}else{
-			//	mGridView.requestFocus();  //xuameng如果不满足滚动条件直接获得焦点
-			    mGridView.setSelection(vodInfo.playIndex);
-			}
-            App.showToastShort(DetailActivity.this, "滚动到当前播放剧集！");
-			return true;
+//xuameng : 长按播放滚动
+tvPlay.setOnLongClickListener(new View.OnLongClickListener() {       //xuameng长按历史键重载主页数据
+    @Override
+    public boolean onLongClick(View v) {
+        FastClickCheckUtil.check(v);
+        
+        // 检查当前是否在播放剧集所在的列
+        if (vodInfo != null && vodInfo.playFlag != null) {
+            // 查找播放剧集所在的列位置
+            int playFlagPosition = -1;
+            for (int i = 0; i < seriesFlagAdapter.getData().size(); i++) {
+                if (seriesFlagAdapter.getData().get(i).name.equals(vodInfo.playFlag)) {
+                    playFlagPosition = i;
+                    break;
+                }
             }
-        });
+            
+            // 如果找到了播放剧集所在的列
+            if (playFlagPosition != -1) {
+                // 如果当前不在播放剧集所在的列，切换到该列
+                if (!seriesFlagAdapter.getData().get(playFlagPosition).selected) {
+                    // 取消当前选中列
+                    for (int i = 0; i < seriesFlagAdapter.getData().size(); i++) {
+                        if (seriesFlagAdapter.getData().get(i).selected) {
+                            seriesFlagAdapter.getData().get(i).selected = false;
+                            seriesFlagAdapter.notifyItemChanged(i);
+                            break;
+                        }
+                    }
+                    
+                    // 选中播放剧集所在的列
+                    seriesFlagAdapter.getData().get(playFlagPosition).selected = true;
+                    vodInfo.playFlag = seriesFlagAdapter.getData().get(playFlagPosition).name;
+                    
+                    // 刷新列表显示
+                    seriesFlagAdapter.notifyItemChanged(playFlagPosition);
+                    
+                    // 刷新剧集列表
+                    refreshList();
+                    
+                    // 等待列表刷新完成后滚动到播放剧集
+                    mGridView.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            scrollToPlayingEpisode();
+                        }
+                    }, 100);
+                } else {
+                    // 如果已经在播放剧集所在的列，直接滚动到播放剧集
+                    scrollToPlayingEpisode();
+                }
+            }
+        }
+        
+        App.showToastShort(DetailActivity.this, "滚动到当前播放剧集！");
+        return true;
+    }
+});
 
 		tvPlay.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override         //xuameng许大师制作焦点变大
@@ -540,9 +572,9 @@ private void refresh(View itemView, int position) {
         
         // 保存当前播放列表的索引
         if (vodInfo.playFlag != null) {
-            vodInfo.playIndexMap.put(vodInfo.playFlag, vodInfo.playIndex);
+            updatePlayIndexMap(vodInfo.playFlag, vodInfo.playIndex);
         }
-        
+
         for (int i = 0; i < vodInfo.seriesFlags.size(); i++) {
             VodInfo.VodSeriesFlag flag = vodInfo.seriesFlags.get(i);
             if (flag.name.equals(vodInfo.playFlag)) {
@@ -724,6 +756,10 @@ private void refresh(View itemView, int position) {
             bundle.putString("sourceKey", sourceKey);
 //            bundle.putSerializable("VodInfo", vodInfo);
             App.getInstance().setVodInfo(vodInfo);
+    if (vodInfo != null && vodInfo.playFlag != null) {
+        // 假设vodInfo.playIndex已经被设置为当前播放的索引
+        updatePlayIndexMap(vodInfo.playFlag, vodInfo.playIndex);
+    }
             if (showPreview) {
                 if (previewVodInfo == null) {
                     try {
@@ -1382,4 +1418,37 @@ private void refresh(View itemView, int position) {
       }	
       setTextShow(tvPlayUrl, "播放地址：", url);
     }
+
+private void updatePlayIndexMap(String flag, int index) {
+    if (vodInfo != null) {
+        if (vodInfo.playIndexMap == null) {
+            vodInfo.playIndexMap = new HashMap<>();
+        }
+        vodInfo.playIndexMap.put(flag, index);
+    }
+}
+
+// 滚动到播放剧集的辅助方法
+private void scrollToPlayingEpisode() {
+    mGridView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+            super.onScrollStateChanged(recyclerView, newState);
+            if (newState == mGridView.SCROLL_STATE_IDLE) {    //xuameng剧集滚动完成后焦点选择为剧集
+                // 滚动已经停止，执行你需要的操作
+                mGridView.setSelection(vodInfo.playIndex);
+                mGridView.removeOnScrollListener(this);                //xuameng删除滚动监听
+            }
+        }
+    });
+    
+    refreshList();   //xuameng返回键、长按播放刷新滚动到剧集
+    
+    if (mGridView.isScrolling() || mGridView.isComputingLayout()) {
+        // 如果正在滚动或计算布局，等待滚动监听器处理
+    } else {
+        mGridView.setSelection(vodInfo.playIndex);
+    }
+}
+
 }
