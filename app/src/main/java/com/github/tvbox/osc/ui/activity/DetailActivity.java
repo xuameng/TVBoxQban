@@ -148,6 +148,9 @@ public class DetailActivity extends BaseActivity {
     private View currentSeriesGroupView;
     private int GroupCount;
 
+    private String lastPlayFlag = null; // 记录上一次播放的列表标识
+    private int lastPlayIndex = 0;      // 记录上一次播放的剧集索引
+
     @Override
     protected int getLayoutResID() {
         return R.layout.activity_detail;
@@ -558,47 +561,6 @@ public class DetailActivity extends BaseActivity {
                 });
             }
         });
-
-    /**
-     * 刷新播放源列表和剧集列表
-     * @param itemView 当前选中的播放源项视图
-     * @param position 当前选中的播放源索引
-     */
-    private void refresh(View itemView, int position) {
-        // 获取新的播放源标识
-        String newFlag = seriesFlagAdapter.getData().get(position).name;
-        
-        // 保存切换前的播放状态（仅当真正切换列表时）
-        if (vodInfo != null && !vodInfo.playFlag.equals(newFlag)) {
-            lastPlayFlag = vodInfo.playFlag;
-            lastPlayIndex = vodInfo.playIndex;
-        }
-        
-        if (vodInfo != null) {
-            // 取消之前选中项的选中状态
-            if (seriesFlagFocus != null && !seriesFlagFocus.isFocused()) {
-                TextView tvSeriesFlag = seriesFlagFocus.findViewById(R.id.tvSeriesFlag);
-                if (tvSeriesFlag != null) {
-                    tvSeriesFlag.setSelected(false);
-                }
-            }
-            
-            // 更新当前选中项的选中状态
-            TextView tvCurrentFlag = itemView.findViewById(R.id.tvSeriesFlag);
-            if (tvCurrentFlag != null) {
-                tvCurrentFlag.setSelected(true);
-            }
-            
-            // 更新当前播放源标识
-            vodInfo.playFlag = newFlag;
-            
-            // 刷新剧集列表
-            refreshList();
-        }
-        
-        // 更新当前焦点视图引用
-        seriesFlagFocus = itemView;
-    }
 
         seriesAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
@@ -1369,5 +1331,46 @@ public class DetailActivity extends BaseActivity {
           url = "聚汇影视提示您：播放地址为空！";
       }	
       setTextShow(tvPlayUrl, "播放地址：", url);
+    }
+
+    /**
+     * 刷新播放源列表和剧集列表
+     * @param itemView 当前选中的播放源项视图
+     * @param position 当前选中的播放源索引
+     */
+    private void refresh(View itemView, int position) {
+        // 获取新的播放源标识
+        String newFlag = seriesFlagAdapter.getData().get(position).name;
+        
+        // 保存切换前的播放状态（仅当真正切换列表时）
+        if (vodInfo != null && !vodInfo.playFlag.equals(newFlag)) {
+            lastPlayFlag = vodInfo.playFlag;
+            lastPlayIndex = vodInfo.playIndex;
+        }
+        
+        if (vodInfo != null) {
+            // 取消之前选中项的选中状态
+            if (seriesFlagFocus != null && !seriesFlagFocus.isFocused()) {
+                TextView tvSeriesFlag = seriesFlagFocus.findViewById(R.id.tvSeriesFlag);
+                if (tvSeriesFlag != null) {
+                    tvSeriesFlag.setSelected(false);
+                }
+            }
+            
+            // 更新当前选中项的选中状态
+            TextView tvCurrentFlag = itemView.findViewById(R.id.tvSeriesFlag);
+            if (tvCurrentFlag != null) {
+                tvCurrentFlag.setSelected(true);
+            }
+            
+            // 更新当前播放源标识
+            vodInfo.playFlag = newFlag;
+            
+            // 刷新剧集列表
+            refreshList();
+        }
+        
+        // 更新当前焦点视图引用
+        seriesFlagFocus = itemView;
     }
 }
