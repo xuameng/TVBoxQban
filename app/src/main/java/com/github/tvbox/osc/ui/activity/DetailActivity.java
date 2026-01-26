@@ -736,7 +736,7 @@ public class DetailActivity extends BaseActivity {
         // 根据剧集数量动态设置网格列数
         if (vodInfo.seriesMap.get(vodInfo.playFlag).size() > 0) {
             int spanCount = vodInfo.seriesMap.get(vodInfo.playFlag).size() > 99 ? 10 : 9;
-            mGridView.setLayoutManager(new VodGridLayoutManager(this, spanCount));
+            mGridView.setLayoutManager(this.mGridViewLayoutMgr(this, spanCount));
         }
         
         // 更新剧集适配器的数据
