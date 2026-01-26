@@ -533,9 +533,15 @@ public class DetailActivity extends BaseActivity {
 private void refresh(View itemView, int position) {
     String newFlag = seriesFlagAdapter.getData().get(position).name;
     if (vodInfo != null) {
-        // 保存当前播放列表和索引
-        String oldFlag = vodInfo.playFlag;
-        int oldIndex = vodInfo.playIndex;
+        // 初始化 playIndexMap
+        if (vodInfo.playIndexMap == null) {
+            vodInfo.playIndexMap = new HashMap<>();
+        }
+        
+        // 保存当前播放列表的索引
+        if (vodInfo.playFlag != null) {
+            vodInfo.playIndexMap.put(vodInfo.playFlag, vodInfo.playIndex);
+        }
         
         for (int i = 0; i < vodInfo.seriesFlags.size(); i++) {
             VodInfo.VodSeriesFlag flag = vodInfo.seriesFlags.get(i);
@@ -556,22 +562,26 @@ private void refresh(View itemView, int position) {
         vodInfo.playFlag = newFlag;
         seriesFlagAdapter.notifyItemChanged(position);
         
-        // 关键修改：检查新列表中是否存在之前的播放索引
-        if (oldFlag.equals(newFlag)) {
-            // 如果是切回原来的列表，恢复之前的播放索引
-            vodInfo.playIndex = oldIndex;
-        } else {
-            // 如果是切换到新列表，检查索引是否有效
-            if (vodInfo.playIndex >= vodInfo.seriesMap.get(newFlag).size()) {
-                vodInfo.playIndex = 0; // 如果索引超出范围，重置为0
+        // 关键修改：从历史记录中恢复播放索引
+        if (vodInfo.playIndexMap != null && vodInfo.playIndexMap.containsKey(newFlag)) {
+            // 如果新列表有历史记录，恢复历史索引
+            int savedIndex = vodInfo.playIndexMap.get(newFlag);
+            // 检查索引是否有效
+            if (savedIndex < vodInfo.seriesMap.get(newFlag).size()) {
+                vodInfo.playIndex = savedIndex;
+            } else {
+                vodInfo.playIndex = 0; // 索引无效，重置为0
             }
-            // 如果索引有效，保持当前索引（可能是从其他逻辑设置的）
+        } else {
+            // 新列表没有历史记录，重置为0
+            vodInfo.playIndex = 0;
         }
         
         refreshList();
     }
     seriesFlagFocus = itemView;
 }
+
 
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
