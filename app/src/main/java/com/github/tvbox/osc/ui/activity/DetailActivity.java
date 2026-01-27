@@ -712,17 +712,17 @@ private void refresh(View itemView, int position) {
             preFlag = vodInfo.playFlag;
             //更新播放地址
             setTextShow(tvPlayUrl, "播放地址：", vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).url);
-        // 新增：记录当前播放的源和剧集索引
-        vodInfo.currentPlayFlag = vodInfo.playFlag;
-        vodInfo.currentPlayIndex = vodInfo.playIndex;
-        Bundle bundle = new Bundle();
-        //保存历史 - 关键修改：使用当前播放的源进行保存
-        String saveSourceKey = vodInfo.currentPlayFlag != null ? vodInfo.currentPlayFlag : sourceKey;
-        insertVod(saveSourceKey, vodInfo);
-        // 同时保存一份到初始源，用于兼容性
-        if (!saveSourceKey.equals(firstsourceKey)) {
-            insertVod(firstsourceKey, vodInfo);
-        }
+            // 新增：记录当前播放的源和剧集索引
+            vodInfo.currentPlayFlag = vodInfo.playFlag;
+            vodInfo.currentPlayIndex = vodInfo.playIndex;
+            Bundle bundle = new Bundle();
+            //保存历史 - 关键修改：使用当前播放的源进行保存
+            String saveSourceKey = vodInfo.currentPlayFlag != null ? vodInfo.currentPlayFlag : sourceKey;
+            insertVod(saveSourceKey, vodInfo);
+            // 同时保存一份到初始源，用于兼容性
+            if (!saveSourceKey.equals(firstsourceKey)) {
+                insertVod(firstsourceKey, vodInfo);
+            }
         //   insertVod(sourceKey, vodInfo);
             bundle.putString("sourceKey", sourceKey);
 //            bundle.putSerializable("VodInfo", vodInfo);
@@ -762,39 +762,39 @@ private void refresh(View itemView, int position) {
             vodInfo.playIndex = 0;
         }
 
-    if (vodInfo.seriesMap.get(vodInfo.playFlag) != null) {
-        // 清除当前显示源的所有高亮状态
-        for (int j = 0; j < vodInfo.seriesMap.get(vodInfo.playFlag).size(); j++) {
-            vodInfo.seriesMap.get(vodInfo.playFlag).get(j).selected = false;
-        }
-        
-        // 判断当前显示源是否是正在播放的源
-        if (vodInfo.playFlag.equals(vodInfo.currentPlayFlag)) {
-            // 如果是正在播放的源，高亮当前播放索引
-            if (vodInfo.currentPlayIndex < vodInfo.seriesMap.get(vodInfo.playFlag).size()) {
-                vodInfo.playIndex = vodInfo.currentPlayIndex;
-                vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).selected = true;
+        if (vodInfo.seriesMap.get(vodInfo.playFlag) != null) {
+            // 清除当前显示源的所有高亮状态
+            for (int j = 0; j < vodInfo.seriesMap.get(vodInfo.playFlag).size(); j++) {
+                vodInfo.seriesMap.get(vodInfo.playFlag).get(j).selected = false;
             }
-        } else {
-            // 如果不是正在播放的源，检查是否有对应的剧集索引
-            // 这里可以根据需要实现索引映射逻辑
-            // 例如：如果两个源的剧集数量相同，可以使用相同的索引
-            // 或者根据剧集名称进行匹配
-            
-            // 简单实现：如果当前显示源有足够多的剧集，使用相同的索引
-            if (vodInfo.currentPlayIndex < vodInfo.seriesMap.get(vodInfo.playFlag).size()) {
-                vodInfo.playIndex = vodInfo.currentPlayIndex;
-                vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).selected = true;
+        
+            // 判断当前显示源是否是正在播放的源
+            if (vodInfo.playFlag.equals(vodInfo.currentPlayFlag)) {
+                // 如果是正在播放的源，高亮当前播放索引
+                if (vodInfo.currentPlayIndex < vodInfo.seriesMap.get(vodInfo.playFlag).size()) {
+                    vodInfo.playIndex = vodInfo.currentPlayIndex;
+                    vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).selected = true;
+                }
             } else {
-                // 如果没有对应的索引，不清除高亮（保持现状）
-                vodInfo.playIndex = 0;
-                // 修复：确保至少有一个剧集被高亮
-                if (vodInfo.seriesMap.get(vodInfo.playFlag).size() > 0) {
-                    vodInfo.seriesMap.get(vodInfo.playFlag).get(0).selected = true;
+                // 如果不是正在播放的源，检查是否有对应的剧集索引
+                // 这里可以根据需要实现索引映射逻辑
+                // 例如：如果两个源的剧集数量相同，可以使用相同的索引
+                // 或者根据剧集名称进行匹配
+            
+                // 简单实现：如果当前显示源有足够多的剧集，使用相同的索引
+                if (vodInfo.currentPlayIndex < vodInfo.seriesMap.get(vodInfo.playFlag).size()) {
+                    vodInfo.playIndex = vodInfo.currentPlayIndex;
+                    vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).selected = true;
+                } else {
+                    // 如果没有对应的索引，不清除高亮（保持现状）
+                    vodInfo.playIndex = 0;
+                    // 修复：确保至少有一个剧集被高亮
+                    if (vodInfo.seriesMap.get(vodInfo.playFlag).size() > 0) {
+                        vodInfo.seriesMap.get(vodInfo.playFlag).get(0).selected = true;
+                    }
                 }
             }
         }
-    }
 
         Paint pFont = new Paint();
 //        pFont.setTypeface(Typeface.DEFAULT );
@@ -1069,25 +1069,23 @@ if (vodInfoRecord != null) {
         }
     }
 
-@Subscribe(threadMode = ThreadMode.MAIN)
-public void refresh(RefreshEvent event) {
-    if (event.type == RefreshEvent.TYPE_REFRESH) {
-        if (event.obj != null) {
-            if (event.obj instanceof Integer) {
-                int newIndex = (int) event.obj;
-                if (vodInfo != null) {
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void refresh(RefreshEvent event) {
+        if (event.type == RefreshEvent.TYPE_REFRESH) {
+                 if (vodInfo != null) {
                     // 1. 保存当前显示源，确保不会丢失
                     String originalDisplayFlag = vodInfo.playFlag;
                     
-                    // 2. 重要修改：不更新 currentPlayFlag，保持原来的播放源
+                    // 2. 关键修复：保持 currentPlayFlag 不变，只更新 currentPlayIndex
                     // 原来的错误逻辑：
-                    // String currentPlayFlag = (vodInfo.currentPlayFlag != null) ? vodInfo.currentPlayFlag : vodInfo.playFlag;
-                    // vodInfo.currentPlayFlag = currentPlayFlag;
+                    // if (vodInfo.currentPlayFlag == null) {
+                    //     vodInfo.currentPlayFlag = vodInfo.playFlag;
+                    // }
+                    // vodInfo.currentPlayIndex = newIndex;
                     
                     // 正确逻辑：保持 currentPlayFlag 不变，只更新 currentPlayIndex
-                    if (vodInfo.currentPlayFlag == null) {
-                        vodInfo.currentPlayFlag = vodInfo.playFlag;
-                    }
+                    // 注意：currentPlayFlag 只应该在用户实际播放时更新（在 jumpToPlay() 方法中）
+                    // 自动播放下一集时，currentPlayFlag 应该保持不变
                     vodInfo.currentPlayIndex = newIndex;
                     
                     // 3. 清除播放源（第二列）中所有剧集的高亮状态
@@ -1154,6 +1152,7 @@ public void refresh(RefreshEvent event) {
                         seriesAdapter.setNewData(vodInfo.seriesMap.get(vodInfo.playFlag));
                     }
                 }
+                // 保存历史
                 // 保存历史 - 关键修改：使用当前播放的源进行保存
                 String saveSourceKey = vodInfo.currentPlayFlag != null ? vodInfo.currentPlayFlag : sourceKey;
                 insertVod(saveSourceKey, vodInfo);
@@ -1162,37 +1161,37 @@ public void refresh(RefreshEvent event) {
                     insertVod(firstsourceKey, vodInfo);
                 }
                 //   insertVod(sourceKey, vodInfo);
+                    //   insertVod(sourceKey, vodInfo);
                 
-            } else if (event.obj instanceof JSONObject) {
-                vodInfo.playerCfg = ((JSONObject) event.obj).toString();
-                //保存历史
-                insertVod(firstsourceKey, vodInfo);
-                //        insertVod(sourceKey, vodInfo);
-            } else if (event.obj instanceof String) {
-                String url = event.obj.toString();
-                //设置更新播放地址
-                setTvPlayUrl(url);
+                } else if (event.obj instanceof JSONObject) {
+                    vodInfo.playerCfg = ((JSONObject) event.obj).toString();
+                    //保存历史
+                    insertVod(firstsourceKey, vodInfo);
+                    //        insertVod(sourceKey, vodInfo);
+                } else if (event.obj instanceof String) {
+                    String url = event.obj.toString();
+                    //设置更新播放地址
+                    setTvPlayUrl(url);
+                }
+            }
+        } else if (event.type == RefreshEvent.TYPE_QUICK_SEARCH_SELECT) {
+            if (event.obj != null) {
+                Movie.Video video = (Movie.Video) event.obj;
+                loadDetail(video.id, video.sourceKey);
+            }
+        } else if (event.type == RefreshEvent.TYPE_QUICK_SEARCH_WORD_CHANGE) {
+            if (event.obj != null) {
+                String word = (String) event.obj;
+                switchSearchWord(word);
+            }
+        } else if (event.type == RefreshEvent.TYPE_QUICK_SEARCH_RESULT) {
+            try {
+                searchData(event.obj == null ? null : (AbsXml) event.obj);
+            } catch (Exception e) {
+                searchData(null);
             }
         }
-    } else if (event.type == RefreshEvent.TYPE_QUICK_SEARCH_SELECT) {
-        if (event.obj != null) {
-            Movie.Video video = (Movie.Video) event.obj;
-            loadDetail(video.id, video.sourceKey);
-        }
-    } else if (event.type == RefreshEvent.TYPE_QUICK_SEARCH_WORD_CHANGE) {
-        if (event.obj != null) {
-            String word = (String) event.obj;
-            switchSearchWord(word);
-        }
-    } else if (event.type == RefreshEvent.TYPE_QUICK_SEARCH_RESULT) {
-        try {
-            searchData(event.obj == null ? null : (AbsXml) event.obj);
-        } catch (Exception e) {
-            searchData(null);
-        }
     }
-}
-
 
     @Subscribe(threadMode = ThreadMode.MAIN)              //xuameng远程推送
     public void pushVod(RefreshEvent event) {
