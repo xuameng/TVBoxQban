@@ -345,18 +345,18 @@ public class DetailActivity extends BaseActivity {
         });
 
            //xuameng : 长按播放滚动
-tvPlay.setOnLongClickListener(new View.OnLongClickListener() {
+//xuameng : 长按播放滚动
+tvPlay.setOnLongClickListener(new View.OnLongClickListener() {       //xuameng长按历史键重载主页数据
     @Override
     public boolean onLongClick(View v) {
         FastClickCheckUtil.check(v);
         
-        // 获取当前实际播放的VodInfo
-        VodInfo currentPlayInfo = App.getInstance().getVodInfo();
-        if (currentPlayInfo != null && currentPlayInfo.playFlag != null) {
+        // 检查当前是否在播放剧集所在的列
+        if (vodInfo != null && vodInfo.playFlag != null) {
             // 查找播放剧集所在的列位置
             int playFlagPosition = -1;
             for (int i = 0; i < seriesFlagAdapter.getData().size(); i++) {
-                if (seriesFlagAdapter.getData().get(i).name.equals(currentPlayInfo.playFlag)) {
+                if (seriesFlagAdapter.getData().get(i).name.equals(vodInfo.playFlag)) {
                     playFlagPosition = i;
                     break;
                 }
@@ -378,9 +378,6 @@ tvPlay.setOnLongClickListener(new View.OnLongClickListener() {
                     // 选中播放剧集所在的列
                     seriesFlagAdapter.getData().get(playFlagPosition).selected = true;
                     vodInfo.playFlag = seriesFlagAdapter.getData().get(playFlagPosition).name;
-                    
-                    // 从全局状态获取播放索引
-                    vodInfo.playIndex = App.getInstance().getSavedPlayIndex(vodInfo.playFlag);
                     
                     // 刷新列表显示
                     seriesFlagAdapter.notifyItemChanged(playFlagPosition);
@@ -406,7 +403,6 @@ tvPlay.setOnLongClickListener(new View.OnLongClickListener() {
         return true;
     }
 });
-
 
 		tvPlay.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override         //xuameng许大师制作焦点变大
@@ -566,103 +562,57 @@ tvPlay.setOnLongClickListener(new View.OnLongClickListener() {
         });
 
         mGridViewFlag.setOnItemListener(new TvRecyclerView.OnItemListener() {
-
-
-
-
-
-
 private void refresh(View itemView, int position) {
     String newFlag = seriesFlagAdapter.getData().get(position).name;
     if (vodInfo != null) {
-        // 初始化 playIndexMap（保持向后兼容）
+        // 初始化 playIndexMap
         if (vodInfo.playIndexMap == null) {
             vodInfo.playIndexMap = new HashMap<>();
         }
         
-        // 保存当前播放列表的索引到全局状态
+        // 保存当前播放列表的索引
         if (vodInfo.playFlag != null) {
-            App.getInstance().updateGlobalPlayIndex(vodInfo.playFlag, vodInfo.playIndex);
+            updatePlayIndexMap(vodInfo.playFlag, vodInfo.playIndex);
         }
 
-        // 只取消当前选中列的高亮状态
         for (int i = 0; i < vodInfo.seriesFlags.size(); i++) {
             VodInfo.VodSeriesFlag flag = vodInfo.seriesFlags.get(i);
-            if (flag.selected) {
+            if (flag.name.equals(vodInfo.playFlag)) {
                 flag.selected = false;
                 seriesFlagAdapter.notifyItemChanged(i);
                 break;
             }
         }
-        
-        // 高亮当前点击的列（即拥有焦点的列）
         VodInfo.VodSeriesFlag flag = vodInfo.seriesFlags.get(position);
         flag.selected = true;
-        seriesFlagAdapter.notifyItemChanged(position);
         
-        // 清除之前列表的选中状态（仅清除选中状态，不影响播放状态）
-        if (vodInfo.seriesMap.containsKey(vodInfo.playFlag) && 
-            vodInfo.seriesMap.get(vodInfo.playFlag).size() > vodInfo.playIndex) {
+        // 清除之前列表的选中状态
+        if (vodInfo.seriesMap.get(vodInfo.playFlag).size() > vodInfo.playIndex) {
             vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).selected = false;
         }
         
-        // 保存切换前的播放状态
-        String oldFlag = vodInfo.playFlag;
-        int oldIndex = vodInfo.playIndex;
-        
         vodInfo.playFlag = newFlag;
+        seriesFlagAdapter.notifyItemChanged(position);
         
-        // 关键修改：精确恢复各列播放位置
-        // 1. 首先检查是否有全局播放状态且是同一视频
-        VodInfo currentPlayInfo = App.getInstance().getVodInfo();
-        boolean isSameVideo = currentPlayInfo != null && 
-                             currentPlayInfo.id != null && 
-                             currentPlayInfo.id.equals(vodInfo.id);
-        
-        if (isSameVideo && currentPlayInfo.playFlag != null && 
-            currentPlayInfo.playFlag.equals(newFlag)) {
-            // 如果是当前播放的列，使用实时播放位置
-            vodInfo.playIndex = currentPlayInfo.playIndex;
-        } else {
-            // 2. 尝试从全局历史记录恢复播放索引
-            HashMap<String, Integer> globalMap = App.getInstance().getGlobalPlayIndexMap();
-            if (globalMap.containsKey(newFlag)) {
-                // 如果新列表有全局历史记录，恢复历史索引
-                int savedIndex = globalMap.get(newFlag);
-                // 检查索引是否有效
-                if (savedIndex < vodInfo.seriesMap.get(newFlag).size()) {
-                    vodInfo.playIndex = savedIndex;
-                } else {
-                    vodInfo.playIndex = 0; // 索引无效，重置为0
-                }
-            } else if (vodInfo.playIndexMap != null && vodInfo.playIndexMap.containsKey(newFlag)) {
-                // 如果全局记录中没有，使用本地记录（向后兼容）
-                int savedIndex = vodInfo.playIndexMap.get(newFlag);
-                if (savedIndex < vodInfo.seriesMap.get(newFlag).size()) {
-                    vodInfo.playIndex = savedIndex;
-                } else {
-                    vodInfo.playIndex = 0;
-                }
+        // 关键修改：从历史记录中恢复播放索引
+        if (vodInfo.playIndexMap != null && vodInfo.playIndexMap.containsKey(newFlag)) {
+            // 如果新列表有历史记录，恢复历史索引
+            int savedIndex = vodInfo.playIndexMap.get(newFlag);
+            // 检查索引是否有效
+            if (savedIndex < vodInfo.seriesMap.get(newFlag).size()) {
+                vodInfo.playIndex = savedIndex;
             } else {
-                // 新列表没有历史记录，重置为0
-                vodInfo.playIndex = 0;
+                vodInfo.playIndex = 0; // 索引无效，重置为0
             }
+        } else {
+            // 新列表没有历史记录，重置为0
+            vodInfo.playIndex = 0;
         }
-        
-        // 保存当前播放状态到全局
-        App.getInstance().setVodInfo(vodInfo);
         
         refreshList();
     }
     seriesFlagFocus = itemView;
 }
-
-
-
-
-
-
-
 
 
             @Override
@@ -806,13 +756,10 @@ private void refresh(View itemView, int position) {
             bundle.putString("sourceKey", sourceKey);
 //            bundle.putSerializable("VodInfo", vodInfo);
             App.getInstance().setVodInfo(vodInfo);
-        // 关键修改：更新全局播放状态
-        App.getInstance().setVodInfo(vodInfo);
-        
-        // 同时更新全局播放索引映射
-        if (vodInfo != null && vodInfo.playFlag != null) {
-            App.getInstance().updateGlobalPlayIndex(vodInfo.playFlag, vodInfo.playIndex);
-        }
+    if (vodInfo != null && vodInfo.playFlag != null) {
+        // 假设vodInfo.playIndex已经被设置为当前播放的索引
+        updatePlayIndexMap(vodInfo.playFlag, vodInfo.playIndex);
+    }
             if (showPreview) {
                 if (previewVodInfo == null) {
                     try {
@@ -1138,11 +1085,19 @@ private void refresh(View itemView, int position) {
                     //保存历史
                     insertVod(firstsourceKey, vodInfo);
                      //   insertVod(sourceKey, vodInfo);
+    if (vodInfo != null && vodInfo.playFlag != null) {
+        // 假设vodInfo.playIndex已经被设置为当前播放的索引
+        updatePlayIndexMap(vodInfo.playFlag, vodInfo.playIndex);
+    }
                 } else if (event.obj instanceof JSONObject) {
                     vodInfo.playerCfg = ((JSONObject) event.obj).toString();
                     //保存历史
                     insertVod(firstsourceKey, vodInfo);
             //        insertVod(sourceKey, vodInfo);
+    if (vodInfo != null && vodInfo.playFlag != null) {
+        // 假设vodInfo.playIndex已经被设置为当前播放的索引
+        updatePlayIndexMap(vodInfo.playFlag, vodInfo.playIndex);
+    }
                 }else if (event.obj instanceof String) {
                     String url = event.obj.toString();
                     //设置更新播放地址
@@ -1472,43 +1427,30 @@ private void refresh(View itemView, int position) {
       setTextShow(tvPlayUrl, "播放地址：", url);
     }
 
+private void updatePlayIndexMap(String flag, int index) {
+    if (vodInfo != null) {
+        if (vodInfo.playIndexMap == null) {
+            vodInfo.playIndexMap = new HashMap<>();
+        }
+        vodInfo.playIndexMap.put(flag, index);
+    }
+}
 
 // 滚动到播放剧集的辅助方法
-
 private void scrollToPlayingEpisode() {
-    // 获取当前实际播放的VodInfo
-    VodInfo currentPlayInfo = App.getInstance().getVodInfo();
-    if (currentPlayInfo != null && App.getInstance().isCurrentPlayingVideo(vodInfo.id)) {
-        // 如果是当前播放的视频，使用全局播放索引
-        vodInfo.playIndex = currentPlayInfo.playIndex;
-    } else {
-        // 如果不是当前播放的视频，使用本地保存的索引
-        vodInfo.playIndex = App.getInstance().getSavedPlayIndex(vodInfo.playFlag);
-    }
-    
-    // 确保只高亮当前播放的列
-    for (int i = 0; i < seriesFlagAdapter.getData().size(); i++) {
-        if (seriesFlagAdapter.getData().get(i).name.equals(vodInfo.playFlag)) {
-            seriesFlagAdapter.getData().get(i).selected = true;
-            seriesFlagAdapter.notifyItemChanged(i);
-        } else {
-            seriesFlagAdapter.getData().get(i).selected = false;
-            seriesFlagAdapter.notifyItemChanged(i);
-        }
-    }
-    
     mGridView.addOnScrollListener(new RecyclerView.OnScrollListener() {
         @Override
         public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
             super.onScrollStateChanged(recyclerView, newState);
-            if (newState == mGridView.SCROLL_STATE_IDLE) {
+            if (newState == mGridView.SCROLL_STATE_IDLE) {    //xuameng剧集滚动完成后焦点选择为剧集
+                // 滚动已经停止，执行你需要的操作
                 mGridView.setSelection(vodInfo.playIndex);
-                mGridView.removeOnScrollListener(this);
+                mGridView.removeOnScrollListener(this);                //xuameng删除滚动监听
             }
         }
     });
     
-    refreshList();
+    refreshList();   //xuameng返回键、长按播放刷新滚动到剧集
     
     if (mGridView.isScrolling() || mGridView.isComputingLayout()) {
         // 如果正在滚动或计算布局，等待滚动监听器处理
@@ -1516,6 +1458,5 @@ private void scrollToPlayingEpisode() {
         mGridView.setSelection(vodInfo.playIndex);
     }
 }
-
 
 }
