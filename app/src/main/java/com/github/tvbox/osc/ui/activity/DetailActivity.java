@@ -768,6 +768,10 @@ private void refresh(View itemView, int position) {
             } else {
                 // 如果没有对应的索引，不清除高亮（保持现状）
                 vodInfo.playIndex = 0;
+                // 修复：确保至少有一个剧集被高亮
+                if (vodInfo.seriesMap.get(vodInfo.playFlag).size() > 0) {
+                    vodInfo.seriesMap.get(vodInfo.playFlag).get(0).selected = true;
+                }
             }
         }
     }
@@ -1037,7 +1041,7 @@ private void refresh(View itemView, int position) {
         if (event.type == RefreshEvent.TYPE_REFRESH) {
             if (event.obj != null) {
                 if (event.obj instanceof Integer) {
-
+                    int newIndex = (int) event.obj;
                 if (vodInfo != null) {
                     // 1. 保存当前显示源，确保不会丢失
                     String originalDisplayFlag = vodInfo.playFlag;
