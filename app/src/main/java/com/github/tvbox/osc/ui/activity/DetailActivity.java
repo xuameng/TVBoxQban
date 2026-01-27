@@ -1038,6 +1038,7 @@ public class DetailActivity extends BaseActivity {
             if (event.obj != null) {
                 if (event.obj instanceof Integer) {
                     int index = (int) event.obj;
+
                 // 关键修改：更新当前播放源的播放索引，无论当前选中哪个列
                 if (vodInfo != null && vodInfo.currentPlayFlag != null) {
                     // 获取当前播放的源
@@ -1048,30 +1049,52 @@ public class DetailActivity extends BaseActivity {
                     
                     // 如果当前选中的列就是正在播放的列，则更新高亮显示
                     if (currentPlayingFlag.equals(vodInfo.playFlag)) {
+                        // 先清除当前选中列的所有高亮
                         for (int j = 0; j < vodInfo.seriesMap.get(vodInfo.playFlag).size(); j++) {
                             seriesAdapter.getData().get(j).selected = false;
                             seriesAdapter.notifyItemChanged(j);
                         }
+                        // 设置新的高亮
                         seriesAdapter.getData().get(index).selected = true;
                         seriesAdapter.notifyItemChanged(index);
                         vodInfo.playIndex = index;
                     }
-                    // 如果当前选中的列不是正在播放的列，只更新播放记录，不更新高亮
+                    // 如果当前选中的列不是正在播放的列
                     else {
-                        // 这里不需要更新高亮，因为当前选中的列不是播放列
-                        // 但需要更新播放记录，以便切换回播放列时能正确显示
-                        vodInfo.playIndex = index; // 仍然更新playIndex，但不会影响当前显示
+                        // 清除当前选中列的所有高亮（因为播放不在这个列）
+                        for (int j = 0; j < vodInfo.seriesMap.get(vodInfo.playFlag).size(); j++) {
+                            seriesAdapter.getData().get(j).selected = false;
+                            seriesAdapter.notifyItemChanged(j);
+                        }
+                        // 清除播放列的高亮（确保只有一个高亮）
+                        if (vodInfo.seriesMap.containsKey(currentPlayingFlag)) {
+                            List<VodInfo.VodSeries> playingSeries = vodInfo.seriesMap.get(currentPlayingFlag);
+                            for (int j = 0; j < playingSeries.size(); j++) {
+                                playingSeries.get(j).selected = false;
+                            }
+                        }
+                        // 设置播放列的高亮
+                        if (vodInfo.seriesMap.containsKey(currentPlayingFlag) && index < vodInfo.seriesMap.get(currentPlayingFlag).size()) {
+                            vodInfo.seriesMap.get(currentPlayingFlag).get(index).selected = true;
+                        }
+                        // 更新playIndex，但当前选中列的UI不会显示高亮
+                        vodInfo.playIndex = index;
                     }
                 } else {
                     // 兼容旧逻辑：如果没有currentPlayFlag记录，使用原来的逻辑
+                    // 先清除所有高亮
                     for (int j = 0; j < vodInfo.seriesMap.get(vodInfo.playFlag).size(); j++) {
                         seriesAdapter.getData().get(j).selected = false;
                         seriesAdapter.notifyItemChanged(j);
                     }
+                    // 设置新的高亮
                     seriesAdapter.getData().get(index).selected = true;
                     seriesAdapter.notifyItemChanged(index);
                     vodInfo.playIndex = index;
                 }
+                // 保存历史
+                insertVod(firstsourceKey, vodInfo);
+
                 } else if (event.obj instanceof JSONObject) {
                     vodInfo.playerCfg = ((JSONObject) event.obj).toString();
                     //保存历史
