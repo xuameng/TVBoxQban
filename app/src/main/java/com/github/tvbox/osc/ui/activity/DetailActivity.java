@@ -533,26 +533,47 @@ public class DetailActivity extends BaseActivity {
     private void refresh(View itemView, int position) {
         String newFlag = seriesFlagAdapter.getData().get(position).name;
         if (vodInfo != null) {
-            // 更新 playIndexMap：记录当前源的播放索引
-            if (vodInfo.playIndexMap == null) {
-                vodInfo.playIndexMap = new HashMap<>();
-            }
-            vodInfo.playIndexMap.put(vodInfo.playFlag, vodInfo.playIndex);
-
-            // 切换到新源
-            vodInfo.playFlag = newFlag;
-
-            // 获取新源的记录索引
-            Integer recordedIndex = vodInfo.playIndexMap.get(vodInfo.playFlag);
-            if (recordedIndex != null && recordedIndex < vodInfo.seriesMap.get(vodInfo.playFlag).size()) {
-                vodInfo.playIndex = recordedIndex;
+            // 如果切换到的源是当前播放的源，则恢复之前播放的剧集位置
+            if (newFlag.equals(vodInfo.currentPlayFlag)) {
+                // 检查当前播放的剧集索引是否有效
+                if (vodInfo.currentPlayIndex < vodInfo.seriesMap.get(newFlag).size()) {
+                    vodInfo.playIndex = vodInfo.currentPlayIndex;
+                } else {
+                    vodInfo.playIndex = 0; // 如果无效则回退到第一集
+                }
             } else {
-                vodInfo.playIndex = 0;
+                // 如果不是当前播放的源，则按索引位置匹配
+                // 获取当前播放的索引位置
+                int currentIndex = vodInfo.currentPlayIndex;
+                // 获取新源的剧集总数
+                int newFlagSize = vodInfo.seriesMap.get(newFlag).size();
+                
+                // 如果当前索引在新源范围内，则使用相同索引
+                if (currentIndex < newFlagSize) {
+                    vodInfo.playIndex = currentIndex;
+                } else {
+                    vodInfo.playIndex = 0; // 超出范围则滚动到第一集
+                }
             }
-
-            // 更新UI
-            refreshList();
+            
+            // 更新选中状态
+            for (int i = 0; i < vodInfo.seriesFlags.size(); i++) {
+                VodInfo.VodSeriesFlag flag = vodInfo.seriesFlags.get(i);
+                if (flag.name.equals(vodInfo.playFlag)) {
+                    flag.selected = false;
+                    seriesFlagAdapter.notifyItemChanged(i);
+                    break;
+                }
+            }
+            VodInfo.VodSeriesFlag flag = vodInfo.seriesFlags.get(position);
+            flag.selected = true;
+            // 清理之前源的选中状态
+            if (vodInfo.seriesMap.get(vodInfo.playFlag).size() > vodInfo.playIndex) {
+                vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).selected = false;
+            }
+            vodInfo.playFlag = newFlag;
             seriesFlagAdapter.notifyItemChanged(position);
+            refreshList();
         }
         seriesFlagFocus = itemView;
     }
@@ -691,16 +712,14 @@ public class DetailActivity extends BaseActivity {
             preFlag = vodInfo.playFlag;
             //更新播放地址
             setTextShow(tvPlayUrl, "播放地址：", vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).url);
+        // 新增：记录当前播放的源和剧集索引
+        vodInfo.currentPlayFlag = vodInfo.playFlag;
+        vodInfo.currentPlayIndex = vodInfo.playIndex;
             Bundle bundle = new Bundle();
             //保存历史
             insertVod(firstsourceKey, vodInfo);
         //   insertVod(sourceKey, vodInfo);
             bundle.putString("sourceKey", sourceKey);
-        // 更新 playIndexMap
-        if (vodInfo.playIndexMap == null) {
-            vodInfo.playIndexMap = new HashMap<>();
-        }
-        vodInfo.playIndexMap.put(vodInfo.playFlag, vodInfo.playIndex);
 //            bundle.putSerializable("VodInfo", vodInfo);
             App.getInstance().setVodInfo(vodInfo);
             if (showPreview) {
@@ -734,25 +753,9 @@ public class DetailActivity extends BaseActivity {
 
     @SuppressLint("NotifyDataSetChanged")
     void refreshList() {
-
-    if (vodInfo.seriesMap.get(vodInfo.playFlag).size() <= vodInfo.playIndex) {
-        vodInfo.playIndex = 0;
-    }
-
-    // 初始化 playIndexMap 如果为空
-    if (vodInfo.playIndexMap == null) {
-        vodInfo.playIndexMap = new HashMap<>();
-    }
-
-    // 获取当前源的记录索引
-    Integer recordedIndex = vodInfo.playIndexMap.get(vodInfo.playFlag);
-    if (recordedIndex != null && recordedIndex < vodInfo.seriesMap.get(vodInfo.playFlag).size()) {
-        vodInfo.playIndex = recordedIndex;
-    } else {
-        vodInfo.playIndex = 0;
-        vodInfo.playIndexMap.put(vodInfo.playFlag, 0);
-    }
-
+        if (vodInfo.seriesMap.get(vodInfo.playFlag).size() <= vodInfo.playIndex) {
+            vodInfo.playIndex = 0;
+        }
 
         if (vodInfo.seriesMap.get(vodInfo.playFlag) != null) {
             boolean canSelect = true;
@@ -762,7 +765,11 @@ public class DetailActivity extends BaseActivity {
                     break;
                 }
             }
-            if(canSelect)vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).selected = true;
+            // 如果当前源是播放源，则选中记录的剧集；否则选中计算出的剧集
+            if (vodInfo.playFlag.equals(vodInfo.currentPlayFlag)) {
+                vodInfo.playIndex = vodInfo.currentPlayIndex;
+            }
+            vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).selected = true;
         }
 
         Paint pFont = new Paint();
@@ -1041,17 +1048,11 @@ public class DetailActivity extends BaseActivity {
             //            mGridView.setSelection(index);
 			//		}
                     vodInfo.playIndex = index;
-
-   // ========== 新增：更新 playIndexMap ==========
-                if (vodInfo.playIndexMap == null) {
-                    vodInfo.playIndexMap = new HashMap<>();
-                }
-                vodInfo.playIndexMap.put(vodInfo.playFlag, index);
-
+                // 新增：更新当前播放记录
+                vodInfo.currentPlayFlag = vodInfo.playFlag;
+                vodInfo.currentPlayIndex = vodInfo.playIndex;
                     //保存历史
                     insertVod(firstsourceKey, vodInfo);
-                // 更新UI
-                refreshList();
                      //   insertVod(sourceKey, vodInfo);
                 } else if (event.obj instanceof JSONObject) {
                     vodInfo.playerCfg = ((JSONObject) event.obj).toString();
