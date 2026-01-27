@@ -1032,79 +1032,125 @@ private void refresh(View itemView, int position) {
         }
     }
 
-@Subscribe(threadMode = ThreadMode.MAIN)
-public void refresh(RefreshEvent event) {
-    if (event.type == RefreshEvent.TYPE_REFRESH) {
-        if (event.obj != null) {
-            if (event.obj instanceof Integer) {
-                int newIndex = (int) event.obj;
-                
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void refresh(RefreshEvent event) {
+        if (event.type == RefreshEvent.TYPE_REFRESH) {
+            if (event.obj != null) {
+                if (event.obj instanceof Integer) {
+
                 if (vodInfo != null) {
-                    // 1. 更新当前播放的源和索引
+                    // 1. 保存当前显示源，确保不会丢失
+                    String originalDisplayFlag = vodInfo.playFlag;
+                    
+                    // 2. 更新当前播放的源和索引
                     String currentPlayFlag = (vodInfo.currentPlayFlag != null) ? vodInfo.currentPlayFlag : vodInfo.playFlag;
                     vodInfo.currentPlayFlag = currentPlayFlag;
                     vodInfo.currentPlayIndex = newIndex;
                     
-                    // 2. 清除所有源中所有剧集的高亮状态
-                    for (String flag : vodInfo.seriesMap.keySet()) {
-                        List<VodInfo.VodSeries> seriesList = vodInfo.seriesMap.get(flag);
-                        if (seriesList != null) {
-                            for (VodInfo.VodSeries series : seriesList) {
+                    // 3. 清除播放源（第二列）中所有剧集的高亮状态
+                    if (vodInfo.seriesMap.containsKey(currentPlayFlag)) {
+                        List<VodInfo.VodSeries> currentSeriesList = vodInfo.seriesMap.get(currentPlayFlag);
+                        if (currentSeriesList != null) {
+                            for (VodInfo.VodSeries series : currentSeriesList) {
                                 series.selected = false;
                             }
                         }
                     }
                     
-                    // 3. 为当前播放源设置新的高亮
+                    // 4. 为播放源（第二列）设置新的高亮
                     if (vodInfo.seriesMap.containsKey(currentPlayFlag)) {
                         List<VodInfo.VodSeries> currentSeriesList = vodInfo.seriesMap.get(currentPlayFlag);
-                        if (newIndex >= 0 && newIndex < currentSeriesList.size()) {
-                            currentSeriesList.get(newIndex).selected = true;
+                        // 修复边界条件：如果newIndex超出范围，使用最后一集
+                        int safeIndex = newIndex;
+                        if (safeIndex >= currentSeriesList.size()) {
+                            safeIndex = currentSeriesList.size() - 1;
+                        }
+                        if (safeIndex >= 0 && safeIndex < currentSeriesList.size()) {
+                            currentSeriesList.get(safeIndex).selected = true;
                         }
                     }
                     
-                    // 4. 如果当前显示的源是正在播放的源，更新playIndex
-                    if (currentPlayFlag.equals(vodInfo.playFlag)) {
+                    // 5. 关键修复：保持显示源（第一列）的高亮状态
+                    // 注意：不自动清除显示源的高亮状态，只有当需要更新时才更新
+                    if (!currentPlayFlag.equals(originalDisplayFlag)) {
+                        // 当前显示源不是播放源，需要同步高亮状态
+                        if (vodInfo.seriesMap.containsKey(originalDisplayFlag)) {
+                            List<VodInfo.VodSeries> displaySeriesList = vodInfo.seriesMap.get(originalDisplayFlag);
+                            
+                            // 先清除显示源的高亮状态
+                            if (displaySeriesList != null) {
+                                for (VodInfo.VodSeries series : displaySeriesList) {
+                                    series.selected = false;
+                                }
+                            }
+                            
+                            // 然后设置新的高亮
+                            if (displaySeriesList != null && !displaySeriesList.isEmpty()) {
+                                // 计算显示源的安全索引
+                                int displaySafeIndex = newIndex;
+                                if (displaySafeIndex >= displaySeriesList.size()) {
+                                    displaySafeIndex = displaySeriesList.size() - 1;
+                                }
+                                if (displaySafeIndex < 0) {
+                                    displaySafeIndex = 0;
+                                }
+                                
+                                // 设置高亮
+                                displaySeriesList.get(displaySafeIndex).selected = true;
+                                vodInfo.playIndex = displaySafeIndex;
+                            }
+                        }
+                    } else {
+                        // 显示源和播放源相同，更新playIndex
                         vodInfo.playIndex = newIndex;
                     }
                     
-                    // 5. 刷新界面显示
-                    if (seriesAdapter != null) {
+                    // 6. 确保显示源的正确性（防止被前面的逻辑修改）
+                    vodInfo.playFlag = originalDisplayFlag;
+                    
+                    // 7. 刷新界面显示
+                    if (seriesAdapter != null && vodInfo.seriesMap.containsKey(vodInfo.playFlag)) {
                         // 更新适配器数据
                         seriesAdapter.setNewData(vodInfo.seriesMap.get(vodInfo.playFlag));
                     }
-                }
+				}
+			//		if (!fullWindows){     xuameng解决焦点丢失
+            //            mGridView.setSelection(index);
+			//		}
                 // 保存历史
                 insertVod(firstsourceKey, vodInfo);
-                
-            } else if (event.obj instanceof JSONObject) {
-                vodInfo.playerCfg = ((JSONObject) event.obj).toString();
-                //保存历史
-                insertVod(firstsourceKey, vodInfo);
-            } else if (event.obj instanceof String) {
-                String url = event.obj.toString();
-                //设置更新播放地址
-                setTvPlayUrl(url);
+                //   insertVod(sourceKey, vodInfo);
+
+                } else if (event.obj instanceof JSONObject) {
+                    vodInfo.playerCfg = ((JSONObject) event.obj).toString();
+                    //保存历史
+                    insertVod(firstsourceKey, vodInfo);
+            //        insertVod(sourceKey, vodInfo);
+                }else if (event.obj instanceof String) {
+                    String url = event.obj.toString();
+                    //设置更新播放地址
+                    setTvPlayUrl(url);
+                }
+
+            }
+        } else if (event.type == RefreshEvent.TYPE_QUICK_SEARCH_SELECT) {
+            if (event.obj != null) {
+                Movie.Video video = (Movie.Video) event.obj;
+                loadDetail(video.id, video.sourceKey);
+            }
+        } else if (event.type == RefreshEvent.TYPE_QUICK_SEARCH_WORD_CHANGE) {
+            if (event.obj != null) {
+                String word = (String) event.obj;
+                switchSearchWord(word);
+            }
+        } else if (event.type == RefreshEvent.TYPE_QUICK_SEARCH_RESULT) {
+            try {
+                searchData(event.obj == null ? null : (AbsXml) event.obj);
+            } catch (Exception e) {
+                searchData(null);
             }
         }
-    } else if (event.type == RefreshEvent.TYPE_QUICK_SEARCH_SELECT) {
-        if (event.obj != null) {
-            Movie.Video video = (Movie.Video) event.obj;
-            loadDetail(video.id, video.sourceKey);
-        }
-    } else if (event.type == RefreshEvent.TYPE_QUICK_SEARCH_WORD_CHANGE) {
-        if (event.obj != null) {
-            String word = (String) event.obj;
-            switchSearchWord(word);
-        }
-    } else if (event.type == RefreshEvent.TYPE_QUICK_SEARCH_RESULT) {
-        try {
-            searchData(event.obj == null ? null : (AbsXml) event.obj);
-        } catch (Exception e) {
-            searchData(null);
-        }
     }
-}  // refresh方法结束
 
     @Subscribe(threadMode = ThreadMode.MAIN)              //xuameng远程推送
     public void pushVod(RefreshEvent event) {
