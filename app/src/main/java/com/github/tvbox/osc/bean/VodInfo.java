@@ -56,6 +56,7 @@ public class VodInfo implements Serializable {
     public int currentPlayIndex = 0;      // 当前播放的剧集索引
 
     public void setVideo(Movie.Video video) {
+ this.video = video; // 存储video对象
         last = video.last;
         id = video.id;
         tid = video.tid;
