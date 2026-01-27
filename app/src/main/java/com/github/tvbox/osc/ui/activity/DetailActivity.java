@@ -1076,16 +1076,18 @@ public void refresh(RefreshEvent event) {
             if (event.obj instanceof Integer) {
                 int newIndex = (int) event.obj;
                 if (vodInfo != null) {
-                    // --- 核心修复开始 ---
-                    // 此事件来自播放器（如自动连播），只更新当前播放源的索引。
-                    // 绝对不改变 currentPlayFlag，因为用户没有主动切换播放源。
+                    // 1. 保存当前显示源，用于后续UI更新
+                    String originalDisplayFlag = vodInfo.playFlag;
+                    
+                    // 2. 重要：绝对不改变 currentPlayFlag，保持原来的播放源
                     if (vodInfo.currentPlayFlag == null) {
-                        vodInfo.currentPlayFlag = vodInfo.playFlag; // 初始化保护
+                        vodInfo.currentPlayFlag = vodInfo.playFlag;
                     }
-                    // 仅更新当前播放源的索引
+                    
+                    // 3. 更新当前播放源的索引
                     vodInfo.currentPlayIndex = newIndex;
-
-                    // 清除播放源中所有剧集的高亮状态
+                    
+                    // 4. 清除播放源中所有剧集的高亮状态
                     if (vodInfo.seriesMap.containsKey(vodInfo.currentPlayFlag)) {
                         List<VodInfo.VodSeries> currentSeriesList = vodInfo.seriesMap.get(vodInfo.currentPlayFlag);
                         if (currentSeriesList != null) {
@@ -1094,8 +1096,8 @@ public void refresh(RefreshEvent event) {
                             }
                         }
                     }
-
-                    // 为播放源设置新的高亮
+                    
+                    // 5. 为播放源设置新的高亮
                     if (vodInfo.seriesMap.containsKey(vodInfo.currentPlayFlag)) {
                         List<VodInfo.VodSeries> currentSeriesList = vodInfo.seriesMap.get(vodInfo.currentPlayFlag);
                         int safeIndex = newIndex;
@@ -1106,24 +1108,22 @@ public void refresh(RefreshEvent event) {
                             currentSeriesList.get(safeIndex).selected = true;
                         }
                     }
-
-                    // 如果当前显示源正好是播放源，也需要同步更新其显示索引和高亮
+                    
+                    // 6. 处理显示源的高亮
+                    // 如果显示源和播放源相同，更新playIndex
                     if (vodInfo.currentPlayFlag.equals(vodInfo.playFlag)) {
                         vodInfo.playIndex = newIndex;
-                        // 刷新界面显示
-                        if (seriesAdapter != null) {
-                            seriesAdapter.setNewData(vodInfo.seriesMap.get(vodInfo.playFlag));
-                        }
                     } else {
-                        // 如果显示源和播放源不同，则需要为显示源同步一个合理的高亮位置
-                        // 例如，映射到相同的索引位置，或根据剧集名称匹配
-                        // 这里采用简单映射：如果索引有效则同步，否则高亮第一集
+                        // 显示源和播放源不同，需要为显示源设置合理的高亮
                         if (vodInfo.seriesMap.containsKey(vodInfo.playFlag)) {
                             List<VodInfo.VodSeries> displaySeriesList = vodInfo.seriesMap.get(vodInfo.playFlag);
                             if (displaySeriesList != null) {
+                                // 清除显示源的高亮
                                 for (VodInfo.VodSeries series : displaySeriesList) {
                                     series.selected = false;
                                 }
+                                
+                                // 设置显示源的高亮（映射到相同索引或第一集）
                                 int displaySafeIndex = newIndex;
                                 if (displaySafeIndex >= displaySeriesList.size() || displaySafeIndex < 0) {
                                     displaySafeIndex = 0;
@@ -1134,19 +1134,46 @@ public void refresh(RefreshEvent event) {
                                 }
                             }
                         }
-                        // 刷新界面显示
-                        if (seriesAdapter != null && vodInfo.seriesMap.containsKey(vodInfo.playFlag)) {
-                            seriesAdapter.setNewData(vodInfo.seriesMap.get(vodInfo.playFlag));
-                        }
                     }
-                    // --- 核心修复结束 ---
-
-                    // 保存历史记录 - 使用当前播放源进行保存
+                    
+                    // 7. 刷新界面显示
+                    if (seriesAdapter != null && vodInfo.seriesMap.containsKey(vodInfo.playFlag)) {
+                        seriesAdapter.setNewData(vodInfo.seriesMap.get(vodInfo.playFlag));
+                    }
+                    
+                    // 8. 关键修复：保存历史记录时使用临时变量确保正确性
+                    // 创建临时VodInfo副本，确保保存时使用正确的播放源信息
+                    VodInfo saveVodInfo = new VodInfo();
+                    try {
+                        // 深拷贝vodInfo的基本属性
+                        saveVodInfo.setVideo(vodInfo.getVideo());
+                        saveVodInfo.sourceKey = vodInfo.sourceKey;
+                        saveVodInfo.seriesMap = vodInfo.seriesMap;
+                        saveVodInfo.seriesFlags = vodInfo.seriesFlags;
+                        saveVodInfo.playerCfg = vodInfo.playerCfg;
+                        saveVodInfo.reverseSort = vodInfo.reverseSort;
+                        
+                        // 关键：保存时使用播放源的信息，而不是显示源
+                        saveVodInfo.playFlag = vodInfo.currentPlayFlag;  // 使用播放源
+                        saveVodInfo.playIndex = vodInfo.currentPlayIndex; // 使用播放索引
+                        saveVodInfo.currentPlayFlag = vodInfo.currentPlayFlag;
+                        saveVodInfo.currentPlayIndex = vodInfo.currentPlayIndex;
+                        
+                        // 恢复显示源状态，不影响UI
+                        vodInfo.playFlag = originalDisplayFlag;
+                        
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        saveVodInfo = vodInfo;
+                    }
+                    
+                    // 9. 保存历史记录 - 使用当前播放源进行保存
                     String saveSourceKey = vodInfo.currentPlayFlag != null ? vodInfo.currentPlayFlag : sourceKey;
-                    insertVod(saveSourceKey, vodInfo);
-                    // 同时保存一份到初始源，用于兼容性
+                    insertVod(saveSourceKey, saveVodInfo);
+                    
+                    // 10. 同时保存一份到初始源，用于兼容性
                     if (!saveSourceKey.equals(firstsourceKey)) {
-                        insertVod(firstsourceKey, vodInfo);
+                        insertVod(firstsourceKey, saveVodInfo);
                     }
                 }
                     //   insertVod(sourceKey, vodInfo);
@@ -1341,6 +1368,8 @@ public void refresh(RefreshEvent event) {
         HawkConfig.saveHistory = true;  //xuameng判断存储历史记录
         EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_HISTORY_REFRESH));
     }
+
+
 
     @Override
     protected void onDestroy() {
