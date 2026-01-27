@@ -536,7 +536,14 @@ private void refresh(View itemView, int position) {
         // 保存旧的播放标志
         String oldFlag = vodInfo.playFlag;
         
-        // 更新播放标志
+        // 重要：检查是否正在切换实际播放的源
+        boolean isSwitchingPlayingSource = false;
+        if (vodInfo.currentPlayFlag != null && vodInfo.currentPlayFlag.equals(oldFlag)) {
+            // 如果当前显示源就是正在播放的源，那么切换源会影响播放源
+            isSwitchingPlayingSource = true;
+        }
+        
+        // 更新显示源
         vodInfo.playFlag = newFlag;
         
         // 清除旧源的高亮状态
@@ -557,11 +564,19 @@ private void refresh(View itemView, int position) {
         flag.selected = true;
         seriesFlagAdapter.notifyItemChanged(position);
         
+        // 重要：如果切换的是正在播放的源，需要更新 currentPlayFlag
+        if (isSwitchingPlayingSource) {
+            vodInfo.currentPlayFlag = newFlag;
+            // 注意：这里不保存历史记录，因为用户只是切换查看，还没有实际播放
+            // 实际播放时会在 jumpToPlay() 中保存
+        }
+        
         // 刷新列表，这会根据当前显示源和播放源的关系设置正确的高亮
         refreshList();
     }
     seriesFlagFocus = itemView;
 }
+
 
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
