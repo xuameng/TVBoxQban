@@ -23,7 +23,6 @@ import com.p2p.P2PClass;
 import java.io.File;   //xuameng清缓存
 import android.content.Context;   //xuameng  Toast
 import android.widget.Toast;  //xuameng  Toast
-import java.util.HashMap;
 
 import me.jessyan.autosize.AutoSizeConfig;
 import me.jessyan.autosize.unit.Subunits;
@@ -39,10 +38,6 @@ public class App extends MultiDexApplication {
     private static P2PClass p;
     public static String burl;
     private static String dashData;
-
-private VodInfo vodInfo;
-private HashMap<String, Integer> globalPlayIndexMap = new HashMap<>();
-private String currentPlayingVideoId;
 
     @Override
     public void onCreate() {
@@ -125,45 +120,13 @@ private String currentPlayingVideoId;
     }
 
 
-public void setVodInfo(VodInfo vodinfo){
-    this.vodInfo = vodinfo;
-    if (vodinfo != null && vodinfo.playFlag != null) {
-        // 保存当前播放的视频ID
-        this.currentPlayingVideoId = vodinfo.id;
-        // 更新全局播放索引记录
-        globalPlayIndexMap.put(vodinfo.playFlag, vodinfo.playIndex);
+    private VodInfo vodInfo;
+    public void setVodInfo(VodInfo vodinfo){
+        this.vodInfo = vodinfo;
     }
-}
     public VodInfo getVodInfo(){
         return this.vodInfo;
     }
-
-// 更新全局播放索引
-public void updateGlobalPlayIndex(String flag, int index) {
-    if (flag != null) {
-        globalPlayIndexMap.put(flag, index);
-    }
-}
-
-// 获取全局播放索引
-public HashMap<String, Integer> getGlobalPlayIndexMap() {
-    return globalPlayIndexMap;
-}
-
-// 获取特定播放列表的保存索引
-public int getSavedPlayIndex(String flag) {
-    return globalPlayIndexMap.containsKey(flag) ? globalPlayIndexMap.get(flag) : 0;
-}
-
-// 获取当前播放的视频ID
-public String getCurrentPlayingVideoId() {
-    return currentPlayingVideoId;
-}
-
-// 检查是否是当前播放的视频
-public boolean isCurrentPlayingVideo(String videoId) {
-    return currentPlayingVideoId != null && currentPlayingVideoId.equals(videoId);
-}
 
     public static P2PClass getp2p() {
         try {
