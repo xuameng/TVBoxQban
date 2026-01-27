@@ -1303,16 +1303,22 @@ private void refresh(View itemView, int position) {
         }
     }
 
-    private void insertVod(String sourceKey, VodInfo vodInfo) {
-        try {
-            vodInfo.playNote = vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).name;
-        } catch (Throwable th) {
-            vodInfo.playNote = "";
-        }
-        RoomDataManger.insertVodRecord(sourceKey, vodInfo);
-        HawkConfig.saveHistory = true;  //xuameng判断存储历史记录
-        EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_HISTORY_REFRESH));
+private void insertVod(String sourceKey, VodInfo vodInfo) {
+    try {
+        // 优先使用当前播放的源和索引
+        String playFlagToSave = (vodInfo.currentPlayFlag != null) ? vodInfo.currentPlayFlag : vodInfo.playFlag;
+        int playIndexToSave = (vodInfo.currentPlayFlag != null && vodInfo.currentPlayFlag.equals(playFlagToSave)) 
+            ? vodInfo.currentPlayIndex : vodInfo.playIndex;
+        
+        vodInfo.playNote = vodInfo.seriesMap.get(playFlagToSave).get(playIndexToSave).name;
+    } catch (Throwable th) {
+        vodInfo.playNote = "";
     }
+    RoomDataManger.insertVodRecord(sourceKey, vodInfo);
+    HawkConfig.saveHistory = true;  //xuameng判断存储历史记录
+    EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_HISTORY_REFRESH));
+}
+
 
     @Override
     protected void onDestroy() {
