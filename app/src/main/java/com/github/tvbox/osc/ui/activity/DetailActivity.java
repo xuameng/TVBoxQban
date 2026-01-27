@@ -826,6 +826,7 @@ if (mGridViewLayoutMgr != null) {
             }
         }
     }, 100);
+}
     }
 
     @SuppressLint("NotifyDataSetChanged")
