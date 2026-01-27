@@ -1345,17 +1345,31 @@ public void refresh(RefreshEvent event) {
         }
     }
 
-    private void insertVod(String sourceKey, VodInfo vodInfo) {
-        try {
-            vodInfo.playNote = vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).name;
-        } catch (Throwable th) {
-            vodInfo.playNote = "";
-        }
-        RoomDataManger.insertVodRecord(sourceKey, vodInfo);
-        HawkConfig.saveHistory = true;  //xuameng判断存储历史记录
-        EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_HISTORY_REFRESH));
-    }
 
+private void insertVod(String sourceKey, VodInfo vodInfo) {
+    try {
+        // 优先使用当前播放源的信息来获取剧集名称
+        String playFlagForNote;
+        int playIndexForNote;
+        
+        if (vodInfo.currentPlayFlag != null && vodInfo.currentPlayIndex >= 0) {
+            // 使用当前播放源的信息
+            playFlagForNote = vodInfo.currentPlayFlag;
+            playIndexForNote = vodInfo.currentPlayIndex;
+        } else {
+            // 兼容旧版：使用显示源的信息
+            playFlagForNote = vodInfo.playFlag;
+            playIndexForNote = vodInfo.playIndex;
+        }
+        
+        vodInfo.playNote = vodInfo.seriesMap.get(playFlagForNote).get(playIndexForNote).name;
+    } catch (Throwable th) {
+        vodInfo.playNote = "";
+    }
+    RoomDataManger.insertVodRecord(sourceKey, vodInfo);
+    HawkConfig.saveHistory = true;   //xuameng判断存储历史记录
+    EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_HISTORY_REFRESH));
+}
 
 
     @Override
