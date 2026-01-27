@@ -1069,12 +1069,11 @@ if (vodInfoRecord != null) {
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void refresh(RefreshEvent event) {
-        if (event.type == RefreshEvent.TYPE_REFRESH) {
-            if (event.obj != null) {
-                if (event.obj instanceof Integer) {
-                int newIndex = (int) event.obj;
+@Subscribe(threadMode = ThreadMode.MAIN)
+public void refresh(RefreshEvent event) {
+    if (event.type == RefreshEvent.TYPE_REFRESH) {
+        if (event.obj != null) {
+            if (event.obj instanceof Integer) {
                 int newIndex = (int) event.obj;
                 if (vodInfo != null) {
                     // 1. 保存当前显示源，确保不会丢失
@@ -1155,7 +1154,6 @@ if (vodInfoRecord != null) {
                         seriesAdapter.setNewData(vodInfo.seriesMap.get(vodInfo.playFlag));
                     }
                 }
-                // 保存历史
                 // 保存历史 - 关键修改：使用当前播放的源进行保存
                 String saveSourceKey = vodInfo.currentPlayFlag != null ? vodInfo.currentPlayFlag : sourceKey;
                 insertVod(saveSourceKey, vodInfo);
@@ -1164,37 +1162,37 @@ if (vodInfoRecord != null) {
                     insertVod(firstsourceKey, vodInfo);
                 }
                 //   insertVod(sourceKey, vodInfo);
-
-                } else if (event.obj instanceof JSONObject) {
-                    vodInfo.playerCfg = ((JSONObject) event.obj).toString();
-                    //保存历史
-                    insertVod(firstsourceKey, vodInfo);
-            //        insertVod(sourceKey, vodInfo);
-                }else if (event.obj instanceof String) {
-                    String url = event.obj.toString();
-                    //设置更新播放地址
-                    setTvPlayUrl(url);
-                }
-
-            }
-        } else if (event.type == RefreshEvent.TYPE_QUICK_SEARCH_SELECT) {
-            if (event.obj != null) {
-                Movie.Video video = (Movie.Video) event.obj;
-                loadDetail(video.id, video.sourceKey);
-            }
-        } else if (event.type == RefreshEvent.TYPE_QUICK_SEARCH_WORD_CHANGE) {
-            if (event.obj != null) {
-                String word = (String) event.obj;
-                switchSearchWord(word);
-            }
-        } else if (event.type == RefreshEvent.TYPE_QUICK_SEARCH_RESULT) {
-            try {
-                searchData(event.obj == null ? null : (AbsXml) event.obj);
-            } catch (Exception e) {
-                searchData(null);
+                
+            } else if (event.obj instanceof JSONObject) {
+                vodInfo.playerCfg = ((JSONObject) event.obj).toString();
+                //保存历史
+                insertVod(firstsourceKey, vodInfo);
+                //        insertVod(sourceKey, vodInfo);
+            } else if (event.obj instanceof String) {
+                String url = event.obj.toString();
+                //设置更新播放地址
+                setTvPlayUrl(url);
             }
         }
+    } else if (event.type == RefreshEvent.TYPE_QUICK_SEARCH_SELECT) {
+        if (event.obj != null) {
+            Movie.Video video = (Movie.Video) event.obj;
+            loadDetail(video.id, video.sourceKey);
+        }
+    } else if (event.type == RefreshEvent.TYPE_QUICK_SEARCH_WORD_CHANGE) {
+        if (event.obj != null) {
+            String word = (String) event.obj;
+            switchSearchWord(word);
+        }
+    } else if (event.type == RefreshEvent.TYPE_QUICK_SEARCH_RESULT) {
+        try {
+            searchData(event.obj == null ? null : (AbsXml) event.obj);
+        } catch (Exception e) {
+            searchData(null);
+        }
     }
+}
+
 
     @Subscribe(threadMode = ThreadMode.MAIN)              //xuameng远程推送
     public void pushVod(RefreshEvent event) {
