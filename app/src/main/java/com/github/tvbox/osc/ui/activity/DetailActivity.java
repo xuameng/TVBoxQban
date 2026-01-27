@@ -1072,7 +1072,10 @@ if (vodInfoRecord != null) {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void refresh(RefreshEvent event) {
         if (event.type == RefreshEvent.TYPE_REFRESH) {
-                 if (vodInfo != null) {
+            if (event.obj != null) {
+                if (event.obj instanceof Integer) {
+                  int newIndex = (int) event.obj;
+                if (vodInfo != null) {
                     // 1. 保存当前显示源，确保不会丢失
                     String originalDisplayFlag = vodInfo.playFlag;
                     
@@ -1160,7 +1163,6 @@ if (vodInfoRecord != null) {
                 if (!saveSourceKey.equals(firstsourceKey)) {
                     insertVod(firstsourceKey, vodInfo);
                 }
-                //   insertVod(sourceKey, vodInfo);
                     //   insertVod(sourceKey, vodInfo);
                 
                 } else if (event.obj instanceof JSONObject) {
