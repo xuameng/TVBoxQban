@@ -1056,14 +1056,6 @@ public class DetailActivity extends BaseActivity {
                 } else if (event.obj instanceof JSONObject) {
                     vodInfo.playerCfg = ((JSONObject) event.obj).toString();
                     //保存历史
-					   // ========== 新增：更新 playIndexMap ==========
-                if (vodInfo.playIndexMap == null) {
-                    vodInfo.playIndexMap = new HashMap<>();
-                }
-                vodInfo.playIndexMap.put(vodInfo.playFlag, index);
-                // 更新UI
-                refreshList();
-
                     insertVod(firstsourceKey, vodInfo);
             //        insertVod(sourceKey, vodInfo);
                 }else if (event.obj instanceof String) {
