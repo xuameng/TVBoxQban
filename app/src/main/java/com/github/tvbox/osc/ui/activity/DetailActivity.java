@@ -1133,7 +1133,7 @@ public void refresh(RefreshEvent event) {
                     VodInfo saveVodInfo = new VodInfo();
                     try {
                         // 深拷贝vodInfo的基本属性
-                        saveVodInfo.setVideo(vodInfo.video);
+                        saveVodInfo.setVideo(vodInfo.getVideo());
                         saveVodInfo.sourceKey = vodInfo.sourceKey;
                         saveVodInfo.seriesMap = vodInfo.seriesMap;
                         saveVodInfo.seriesFlags = vodInfo.seriesFlags;
