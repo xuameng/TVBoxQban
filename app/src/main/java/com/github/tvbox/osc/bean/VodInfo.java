@@ -5,7 +5,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -96,6 +95,13 @@ public class VodInfo implements Serializable {
                 seriesMap.put(flag.name, list);
             }
         }
+    }
+
+    // 方案1：在VodInfo类中添加getVideo()方法
+    public Movie.Video getVideo() {
+        // 这需要在VodInfo类中添加一个video字段来存储
+        // 但根据现有代码，我们无法直接访问video字段
+        return null; // 实际实现需要根据具体需求
     }
 
     private int extractNumber(String name) {
