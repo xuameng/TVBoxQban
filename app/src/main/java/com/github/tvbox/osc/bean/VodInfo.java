@@ -52,7 +52,9 @@ public class VodInfo implements Serializable {
     public String sourceKey;
     public String playerCfg = "";
     public boolean reverseSort = false;
-    public HashMap<String, Integer> playIndexMap; // xuameng保存每个播放列表的索引
+    // 新增：记录当前播放的源和剧集索引（用于切换源时恢复位置）
+    public String currentPlayFlag = null; // 当前播放的源（flag）
+    public int currentPlayIndex = 0;      // 当前播放的剧集索引
 
     public void setVideo(Movie.Video video) {
         last = video.last;
