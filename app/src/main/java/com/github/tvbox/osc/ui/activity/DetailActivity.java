@@ -530,53 +530,53 @@ public class DetailActivity extends BaseActivity {
         });
 
         mGridViewFlag.setOnItemListener(new TvRecyclerView.OnItemListener() {
-    private void refresh(View itemView, int position) {
-        String newFlag = seriesFlagAdapter.getData().get(position).name;
-        if (vodInfo != null) {
-            // 如果切换到的源是当前播放的源，则恢复之前播放的剧集位置
-            if (newFlag.equals(vodInfo.currentPlayFlag)) {
-                // 检查当前播放的剧集索引是否有效
-                if (vodInfo.currentPlayIndex < vodInfo.seriesMap.get(newFlag).size()) {
-                    vodInfo.playIndex = vodInfo.currentPlayIndex;
-                } else {
-                    vodInfo.playIndex = 0; // 如果无效则回退到第一集
-                }
-            } else {
-                // 如果不是当前播放的源，则按索引位置匹配
-                // 获取当前播放的索引位置
-                int currentIndex = vodInfo.currentPlayIndex;
-                // 获取新源的剧集总数
-                int newFlagSize = vodInfo.seriesMap.get(newFlag).size();
+            private void refresh(View itemView, int position) {
+                String newFlag = seriesFlagAdapter.getData().get(position).name;
+                if (vodInfo != null) {
+                    // 如果切换到的源是当前播放的源，则恢复之前播放的剧集位置
+                    if (newFlag.equals(vodInfo.currentPlayFlag)) {
+                        // 检查当前播放的剧集索引是否有效
+                        if (vodInfo.currentPlayIndex < vodInfo.seriesMap.get(newFlag).size()) {
+                            vodInfo.playIndex = vodInfo.currentPlayIndex;
+                        } else {
+                            vodInfo.playIndex = 0; // 如果无效则回退到第一集
+                        }
+                    } else {
+                        // 如果不是当前播放的源，则按索引位置匹配
+                        // 获取当前播放的索引位置
+                        int currentIndex = vodInfo.currentPlayIndex;
+                        // 获取新源的剧集总数
+                        int newFlagSize = vodInfo.seriesMap.get(newFlag).size();
                 
-                // 如果当前索引在新源范围内，则使用相同索引
-                if (currentIndex < newFlagSize) {
-                    vodInfo.playIndex = currentIndex;
-                } else {
-                    vodInfo.playIndex = 0; // 超出范围则滚动到第一集
-                }
-            }
+                        // 如果当前索引在新源范围内，则使用相同索引
+                        if (currentIndex < newFlagSize) {
+                            vodInfo.playIndex = currentIndex;
+                        } else {
+                            vodInfo.playIndex = 0; // 超出范围则滚动到第一集
+                        }
+                    }
             
-            // 更新选中状态
-            for (int i = 0; i < vodInfo.seriesFlags.size(); i++) {
-                VodInfo.VodSeriesFlag flag = vodInfo.seriesFlags.get(i);
-                if (flag.name.equals(vodInfo.playFlag)) {
-                    flag.selected = false;
-                    seriesFlagAdapter.notifyItemChanged(i);
-                    break;
+                    // 更新选中状态
+                    for (int i = 0; i < vodInfo.seriesFlags.size(); i++) {
+                        VodInfo.VodSeriesFlag flag = vodInfo.seriesFlags.get(i);
+                        if (flag.name.equals(vodInfo.playFlag)) {
+                            flag.selected = false;
+                            seriesFlagAdapter.notifyItemChanged(i);
+                            break;
+                        }
+                    }
+                    VodInfo.VodSeriesFlag flag = vodInfo.seriesFlags.get(position);
+                    flag.selected = true;
+                    // 清理之前源的选中状态
+                    if (vodInfo.seriesMap.get(vodInfo.playFlag).size() > vodInfo.playIndex) {
+                        vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).selected = false;
+                    }
+                    vodInfo.playFlag = newFlag;
+                    seriesFlagAdapter.notifyItemChanged(position);
+                    refreshList();
                 }
+                seriesFlagFocus = itemView;
             }
-            VodInfo.VodSeriesFlag flag = vodInfo.seriesFlags.get(position);
-            flag.selected = true;
-            // 清理之前源的选中状态
-            if (vodInfo.seriesMap.get(vodInfo.playFlag).size() > vodInfo.playIndex) {
-                vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).selected = false;
-            }
-            vodInfo.playFlag = newFlag;
-            seriesFlagAdapter.notifyItemChanged(position);
-            refreshList();
-        }
-        seriesFlagFocus = itemView;
-    }
 
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
@@ -1063,6 +1063,15 @@ public class DetailActivity extends BaseActivity {
                     // 3. 更新当前播放列的播放索引
                     if (currentPlayingFlag.equals(vodInfo.playFlag)) {
                         vodInfo.playIndex = index;
+                    }
+                    
+                    // 4. 关键修复：刷新适配器数据
+                    // 如果当前显示的源是正在播放的源，需要刷新界面
+                    if (currentPlayingFlag.equals(vodInfo.playFlag)) {
+                        // 更新适配器的数据源
+                        seriesAdapter.setNewData(vodInfo.seriesMap.get(vodInfo.playFlag));
+                        // 或者使用 notifyDataSetChanged()
+                        // seriesAdapter.notifyDataSetChanged();
                     }
                 } else {
                     // 兼容旧逻辑：如果没有currentPlayFlag记录，使用原来的逻辑
