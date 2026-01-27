@@ -54,6 +54,7 @@ public class VodInfo implements Serializable {
     // 新增：记录当前播放的源和剧集索引（用于切换源时恢复位置）
     public String currentPlayFlag = null; // 当前播放的源（flag）
     public int currentPlayIndex = 0;      // 当前播放的剧集索引
+	public Movie.Video video; // 添加video字段存储
 
     public void setVideo(Movie.Video video) {
  this.video = video; // 存储video对象
