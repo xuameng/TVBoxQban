@@ -677,15 +677,23 @@ private void refresh(View itemView, int position) {
     }
 
     //解决类似海贼王的超长动漫 焦点滚动失败的问题
-     void customSeriesScrollPos(int targetPos)
-     {
-         mGridViewLayoutMgr.scrollToPositionWithOffset(targetPos>10?targetPos - 10:0, 0);
-         mGridView.postDelayed(() -> {
-             this.smoothScroller.setTargetPosition(targetPos);
-             mGridViewLayoutMgr.startSmoothScroll(smoothScroller);
-             mGridView.smoothScrollToPosition(targetPos);
-         }, 50);
-     }
+void customSeriesScrollPos(int targetPos) {
+    // 检查 LayoutManager 是否存在
+    if (mGridViewLayoutMgr == null || mGridView == null) {
+        return;
+    }
+    
+    mGridViewLayoutMgr.scrollToPositionWithOffset(targetPos>10?targetPos - 10:0, 0);
+    mGridView.postDelayed(() -> {
+        // 再次检查确保安全
+        if (mGridViewLayoutMgr != null && smoothScroller != null) {
+            this.smoothScroller.setTargetPosition(targetPos);
+            mGridViewLayoutMgr.startSmoothScroll(smoothScroller);
+            mGridView.smoothScrollToPosition(targetPos);
+        }
+    }, 50);
+}
+
 
     private void onGridViewFocusChange(View view, boolean hasFocus) {
         if (llPlayerFragmentContainerBlock.getVisibility() != View.VISIBLE) return;
@@ -807,12 +815,17 @@ private void refresh(View itemView, int position) {
 
         setSeriesGroupOptions();
 
-        mGridView.postDelayed(new Runnable() {
-            @Override
-            public void run() {
+// 修改 refreshList() 方法最后的部分
+if (mGridViewLayoutMgr != null) {
+    mGridView.postDelayed(new Runnable() {
+        @Override
+        public void run() {
+            // 双重检查确保安全
+            if (mGridViewLayoutMgr != null && vodInfo != null && vodInfo.playFlag != null) {
                 customSeriesScrollPos(vodInfo.playIndex);
             }
-        }, 100);
+        }
+    }, 100);
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -1123,10 +1136,19 @@ public void refresh(RefreshEvent event) {
                         }
                     }
                     
-                    // 7. 关键修复：确保UI刷新 - 无论显示源和播放源是否相同，都要刷新UI
-                    if (seriesAdapter != null && vodInfo.seriesMap.containsKey(vodInfo.playFlag)) {
-                        seriesAdapter.setNewData(vodInfo.seriesMap.get(vodInfo.playFlag));
-                    }
+// 7. 关键修复：确保UI刷新 - 无论显示源和播放源是否相同，都要刷新UI
+if (seriesAdapter != null && vodInfo.seriesMap.containsKey(vodInfo.playFlag)) {
+    // 添加延迟，确保LayoutManager已初始化
+    mGridView.postDelayed(new Runnable() {
+        @Override
+        public void run() {
+            // 再次检查确保安全
+            if (mGridViewLayoutMgr != null && vodInfo != null && vodInfo.playFlag != null) {
+                seriesAdapter.setNewData(vodInfo.seriesMap.get(vodInfo.playFlag));
+            }
+        }
+    }, 50);
+}
                     
                     // 8. 关键修复：保存历史记录时使用临时变量确保正确性
                     // 创建临时VodInfo副本，确保保存时使用正确的播放源信息
