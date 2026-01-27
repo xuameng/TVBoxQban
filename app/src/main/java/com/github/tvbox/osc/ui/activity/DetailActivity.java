@@ -1070,23 +1070,23 @@ if (vodInfoRecord != null) {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void refresh(RefreshEvent event) {
-        if (event.type == RefreshEvent.TYPE_REFRESH) {
-            if (event.obj != null) {
-                if (event.obj instanceof Integer) {
+public void refresh(RefreshEvent event) {
+    if (event.type == RefreshEvent.TYPE_REFRESH) {
+        if (event.obj != null) {
+            if (event.obj instanceof Integer) {
                 int newIndex = (int) event.obj;
                 if (vodInfo != null) {
-                    // 1. 保存当前显示源，确保不会丢失
-                    String originalDisplayFlag = vodInfo.playFlag;
-                    
-                    // 2. 关键修复：保持 currentPlayFlag 不变，只更新 currentPlayIndex
-                    // 注意：currentPlayFlag 只应该在用户实际播放时更新（在 jumpToPlay() 方法中）
-                    // 自动播放下一集时，currentPlayFlag 应该保持不变
-                    // 如果 currentPlayFlag 为 null，说明还没有播放记录，保持为 null
+                    // --- 核心修复开始 ---
+                    // 此事件来自播放器（如自动连播），只更新当前播放源的索引。
+                    // 绝对不改变 currentPlayFlag，因为用户没有主动切换播放源。
+                    if (vodInfo.currentPlayFlag == null) {
+                        vodInfo.currentPlayFlag = vodInfo.playFlag; // 初始化保护
+                    }
+                    // 仅更新当前播放源的索引
                     vodInfo.currentPlayIndex = newIndex;
-                    
-                    // 3. 清除播放源（第二列）中所有剧集的高亮状态
-                    if (vodInfo.currentPlayFlag != null && vodInfo.seriesMap.containsKey(vodInfo.currentPlayFlag)) {
+
+                    // 清除播放源中所有剧集的高亮状态
+                    if (vodInfo.seriesMap.containsKey(vodInfo.currentPlayFlag)) {
                         List<VodInfo.VodSeries> currentSeriesList = vodInfo.seriesMap.get(vodInfo.currentPlayFlag);
                         if (currentSeriesList != null) {
                             for (VodInfo.VodSeries series : currentSeriesList) {
@@ -1094,11 +1094,10 @@ if (vodInfoRecord != null) {
                             }
                         }
                     }
-                    
-                    // 4. 为播放源（第二列）设置新的高亮
-                    if (vodInfo.currentPlayFlag != null && vodInfo.seriesMap.containsKey(vodInfo.currentPlayFlag)) {
+
+                    // 为播放源设置新的高亮
+                    if (vodInfo.seriesMap.containsKey(vodInfo.currentPlayFlag)) {
                         List<VodInfo.VodSeries> currentSeriesList = vodInfo.seriesMap.get(vodInfo.currentPlayFlag);
-                        // 修复边界条件：如果newIndex超出范围，使用最后一集
                         int safeIndex = newIndex;
                         if (safeIndex >= currentSeriesList.size()) {
                             safeIndex = currentSeriesList.size() - 1;
@@ -1107,65 +1106,48 @@ if (vodInfoRecord != null) {
                             currentSeriesList.get(safeIndex).selected = true;
                         }
                     }
-                    
-                    // 5. 关键修复：保持显示源（第一列）的高亮状态
-                    // 注意：不自动清除显示源的高亮状态，只有当需要更新时才更新
-                    if (vodInfo.currentPlayFlag != null && !vodInfo.currentPlayFlag.equals(originalDisplayFlag)) {
-                        // 当前显示源不是播放源，需要同步高亮状态
-                        if (vodInfo.seriesMap.containsKey(originalDisplayFlag)) {
-                            List<VodInfo.VodSeries> displaySeriesList = vodInfo.seriesMap.get(originalDisplayFlag);
-                            
-                            // 先清除显示源的高亮状态
+
+                    // 如果当前显示源正好是播放源，也需要同步更新其显示索引和高亮
+                    if (vodInfo.currentPlayFlag.equals(vodInfo.playFlag)) {
+                        vodInfo.playIndex = newIndex;
+                        // 刷新界面显示
+                        if (seriesAdapter != null) {
+                            seriesAdapter.setNewData(vodInfo.seriesMap.get(vodInfo.playFlag));
+                        }
+                    } else {
+                        // 如果显示源和播放源不同，则需要为显示源同步一个合理的高亮位置
+                        // 例如，映射到相同的索引位置，或根据剧集名称匹配
+                        // 这里采用简单映射：如果索引有效则同步，否则高亮第一集
+                        if (vodInfo.seriesMap.containsKey(vodInfo.playFlag)) {
+                            List<VodInfo.VodSeries> displaySeriesList = vodInfo.seriesMap.get(vodInfo.playFlag);
                             if (displaySeriesList != null) {
                                 for (VodInfo.VodSeries series : displaySeriesList) {
                                     series.selected = false;
                                 }
-                            }
-                            
-                            // 然后设置新的高亮
-                            if (displaySeriesList != null && !displaySeriesList.isEmpty()) {
-                                // 计算显示源的安全索引
                                 int displaySafeIndex = newIndex;
-                                if (displaySafeIndex >= displaySeriesList.size()) {
-                                    displaySafeIndex = 0; // 修改：使用第一个有效索引而不是最后一个
-                                }
-                                if (displaySafeIndex < 0) {
+                                if (displaySafeIndex >= displaySeriesList.size() || displaySafeIndex < 0) {
                                     displaySafeIndex = 0;
                                 }
-                                
-                                // 设置高亮
-                                displaySeriesList.get(displaySafeIndex).selected = true;
-                                vodInfo.playIndex = displaySafeIndex;
+                                if (!displaySeriesList.isEmpty()) {
+                                    displaySeriesList.get(displaySafeIndex).selected = true;
+                                    vodInfo.playIndex = displaySafeIndex;
+                                }
                             }
                         }
-                    } else if (vodInfo.currentPlayFlag != null && vodInfo.currentPlayFlag.equals(originalDisplayFlag)) {
-                        // 显示源和播放源相同，更新playIndex
-                        vodInfo.playIndex = newIndex;
-                    } else {
-                        // currentPlayFlag 为 null，说明还没有播放记录
-                        // 这种情况下，只更新显示源的高亮
-                        vodInfo.playIndex = newIndex;
-                        if (vodInfo.seriesMap.containsKey(originalDisplayFlag)) {
-                            List<VodInfo.VodSeries> displaySeriesList = vodInfo.seriesMap.get(originalDisplayFlag);
-                            if (displaySeriesList != null && newIndex < displaySeriesList.size()) {
-                                displaySeriesList.get(newIndex).selected = true;
-                            }
+                        // 刷新界面显示
+                        if (seriesAdapter != null && vodInfo.seriesMap.containsKey(vodInfo.playFlag)) {
+                            seriesAdapter.setNewData(vodInfo.seriesMap.get(vodInfo.playFlag));
                         }
-                    }                 
-                    
-                    // 6. 刷新界面显示
-                    if (seriesAdapter != null && vodInfo.seriesMap.containsKey(vodInfo.playFlag)) {
-                        // 更新适配器数据
-                        seriesAdapter.setNewData(vodInfo.seriesMap.get(vodInfo.playFlag));
                     }
-                }
-                // 保存历史
-                // 保存历史 - 关键修改：使用当前播放的源进行保存
-                String saveSourceKey = vodInfo.currentPlayFlag != null ? vodInfo.currentPlayFlag : sourceKey;
-                insertVod(saveSourceKey, vodInfo);
-                // 同时保存一份到初始源，用于兼容性
-                if (!saveSourceKey.equals(firstsourceKey)) {
-                    insertVod(firstsourceKey, vodInfo);
+                    // --- 核心修复结束 ---
+
+                    // 保存历史记录 - 使用当前播放源进行保存
+                    String saveSourceKey = vodInfo.currentPlayFlag != null ? vodInfo.currentPlayFlag : sourceKey;
+                    insertVod(saveSourceKey, vodInfo);
+                    // 同时保存一份到初始源，用于兼容性
+                    if (!saveSourceKey.equals(firstsourceKey)) {
+                        insertVod(firstsourceKey, vodInfo);
+                    }
                 }
                     //   insertVod(sourceKey, vodInfo);
                 
