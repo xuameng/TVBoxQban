@@ -1039,7 +1039,7 @@ public class DetailActivity extends BaseActivity {
                 if (event.obj instanceof Integer) {
                     int index = (int) event.obj;
 
-                // 关键修改：更新当前播放源的播放索引，无论当前选中哪个列
+                // 关键修改：确保每一列只有一个高亮的剧集
                 if (vodInfo != null && vodInfo.currentPlayFlag != null) {
                     // 获取当前播放的源
                     String currentPlayingFlag = vodInfo.currentPlayFlag;
@@ -1047,53 +1047,39 @@ public class DetailActivity extends BaseActivity {
                     // 更新当前播放源的播放索引
                     vodInfo.currentPlayIndex = index;
                     
-                    // 如果当前选中的列就是正在播放的列，则更新高亮显示
-                    if (currentPlayingFlag.equals(vodInfo.playFlag)) {
-                        // 先清除当前选中列的所有高亮
-                        for (int j = 0; j < vodInfo.seriesMap.get(vodInfo.playFlag).size(); j++) {
-                            seriesAdapter.getData().get(j).selected = false;
-                            seriesAdapter.notifyItemChanged(j);
+                    // 1. 清除所有列的高亮状态（确保只有一个高亮）
+                    for (String flag : vodInfo.seriesMap.keySet()) {
+                        List<VodInfo.VodSeries> seriesList = vodInfo.seriesMap.get(flag);
+                        for (int j = 0; j < seriesList.size(); j++) {
+                            seriesList.get(j).selected = false;
                         }
-                        // 设置新的高亮
-                        seriesAdapter.getData().get(index).selected = true;
-                        seriesAdapter.notifyItemChanged(index);
-                        vodInfo.playIndex = index;
                     }
-                    // 如果当前选中的列不是正在播放的列
-                    else {
-                        // 清除当前选中列的所有高亮（因为播放不在这个列）
-                        for (int j = 0; j < vodInfo.seriesMap.get(vodInfo.playFlag).size(); j++) {
-                            seriesAdapter.getData().get(j).selected = false;
-                            seriesAdapter.notifyItemChanged(j);
-                        }
-                        // 清除播放列的高亮（确保只有一个高亮）
-                        if (vodInfo.seriesMap.containsKey(currentPlayingFlag)) {
-                            List<VodInfo.VodSeries> playingSeries = vodInfo.seriesMap.get(currentPlayingFlag);
-                            for (int j = 0; j < playingSeries.size(); j++) {
-                                playingSeries.get(j).selected = false;
-                            }
-                        }
-                        // 设置播放列的高亮
-                        if (vodInfo.seriesMap.containsKey(currentPlayingFlag) && index < vodInfo.seriesMap.get(currentPlayingFlag).size()) {
-                            vodInfo.seriesMap.get(currentPlayingFlag).get(index).selected = true;
-                        }
-                        // 更新playIndex，但当前选中列的UI不会显示高亮
+                    
+                    // 2. 为当前播放源设置新的高亮
+                    if (vodInfo.seriesMap.containsKey(currentPlayingFlag) && index < vodInfo.seriesMap.get(currentPlayingFlag).size()) {
+                        vodInfo.seriesMap.get(currentPlayingFlag).get(index).selected = true;
+                    }
+                    
+                    // 3. 更新当前播放列的播放索引
+                    if (currentPlayingFlag.equals(vodInfo.playFlag)) {
                         vodInfo.playIndex = index;
                     }
                 } else {
                     // 兼容旧逻辑：如果没有currentPlayFlag记录，使用原来的逻辑
-                    // 先清除所有高亮
                     for (int j = 0; j < vodInfo.seriesMap.get(vodInfo.playFlag).size(); j++) {
                         seriesAdapter.getData().get(j).selected = false;
                         seriesAdapter.notifyItemChanged(j);
                     }
-                    // 设置新的高亮
                     seriesAdapter.getData().get(index).selected = true;
                     seriesAdapter.notifyItemChanged(index);
                     vodInfo.playIndex = index;
                 }
+			//		if (!fullWindows){     xuameng解决焦点丢失
+            //            mGridView.setSelection(index);
+			//		}
                 // 保存历史
                 insertVod(firstsourceKey, vodInfo);
+                //   insertVod(sourceKey, vodInfo);
 
                 } else if (event.obj instanceof JSONObject) {
                     vodInfo.playerCfg = ((JSONObject) event.obj).toString();
