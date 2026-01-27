@@ -678,22 +678,27 @@ private void refresh(View itemView, int position) {
 
     //解决类似海贼王的超长动漫 焦点滚动失败的问题
 void customSeriesScrollPos(int targetPos) {
-    // 检查 LayoutManager 是否存在
+    // 如果 LayoutManager 为空，延迟重试
     if (mGridViewLayoutMgr == null || mGridView == null) {
+        mGridView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                customSeriesScrollPos(targetPos);
+            }
+        }, 100); // 延迟100ms重试
         return;
     }
     
+    // 正常执行滚动逻辑
     mGridViewLayoutMgr.scrollToPositionWithOffset(targetPos>10?targetPos - 10:0, 0);
     mGridView.postDelayed(() -> {
-        // 再次检查确保安全
         if (mGridViewLayoutMgr != null && smoothScroller != null) {
-            this.smoothScroller.setTargetPosition(targetPos);
+            smoothScroller.setTargetPosition(targetPos);
             mGridViewLayoutMgr.startSmoothScroll(smoothScroller);
             mGridView.smoothScrollToPosition(targetPos);
         }
     }, 50);
 }
-
 
     private void onGridViewFocusChange(View view, boolean hasFocus) {
         if (llPlayerFragmentContainerBlock.getVisibility() != View.VISIBLE) return;
@@ -815,18 +820,12 @@ void customSeriesScrollPos(int targetPos) {
 
         setSeriesGroupOptions();
 
-// 修改 refreshList() 方法最后的部分
-if (mGridViewLayoutMgr != null) {
-    mGridView.postDelayed(new Runnable() {
-        @Override
-        public void run() {
-            // 双重检查确保安全
-            if (mGridViewLayoutMgr != null && vodInfo != null && vodInfo.playFlag != null) {
+        mGridView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
                 customSeriesScrollPos(vodInfo.playIndex);
             }
-        }
-    }, 100);
-}
+        }, 100);
     }
 
     @SuppressLint("NotifyDataSetChanged")
