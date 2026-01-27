@@ -530,53 +530,38 @@ public class DetailActivity extends BaseActivity {
         });
 
         mGridViewFlag.setOnItemListener(new TvRecyclerView.OnItemListener() {
-            private void refresh(View itemView, int position) {
-                String newFlag = seriesFlagAdapter.getData().get(position).name;
-                if (vodInfo != null) {
-                    // 如果切换到的源是当前播放的源，则恢复之前播放的剧集位置
-                    if (newFlag.equals(vodInfo.currentPlayFlag)) {
-                        // 检查当前播放的剧集索引是否有效
-                        if (vodInfo.currentPlayIndex < vodInfo.seriesMap.get(newFlag).size()) {
-                            vodInfo.playIndex = vodInfo.currentPlayIndex;
-                        } else {
-                            vodInfo.playIndex = 0; // 如果无效则回退到第一集
-                        }
-                    } else {
-                        // 如果不是当前播放的源，则按索引位置匹配
-                        // 获取当前播放的索引位置
-                        int currentIndex = vodInfo.currentPlayIndex;
-                        // 获取新源的剧集总数
-                        int newFlagSize = vodInfo.seriesMap.get(newFlag).size();
-                
-                        // 如果当前索引在新源范围内，则使用相同索引
-                        if (currentIndex < newFlagSize) {
-                            vodInfo.playIndex = currentIndex;
-                        } else {
-                            vodInfo.playIndex = 0; // 超出范围则滚动到第一集
-                        }
-                    }
-            
-                    // 更新选中状态
-                    for (int i = 0; i < vodInfo.seriesFlags.size(); i++) {
-                        VodInfo.VodSeriesFlag flag = vodInfo.seriesFlags.get(i);
-                        if (flag.name.equals(vodInfo.playFlag)) {
-                            flag.selected = false;
-                            seriesFlagAdapter.notifyItemChanged(i);
-                            break;
-                        }
-                    }
-                    VodInfo.VodSeriesFlag flag = vodInfo.seriesFlags.get(position);
-                    flag.selected = true;
-                    // 清理之前源的选中状态
-                    if (vodInfo.seriesMap.get(vodInfo.playFlag).size() > vodInfo.playIndex) {
-                        vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).selected = false;
-                    }
-                    vodInfo.playFlag = newFlag;
-                    seriesFlagAdapter.notifyItemChanged(position);
-                    refreshList();
-                }
-                seriesFlagFocus = itemView;
+private void refresh(View itemView, int position) {
+    String newFlag = seriesFlagAdapter.getData().get(position).name;
+    if (vodInfo != null) {
+        // 保存旧的播放标志
+        String oldFlag = vodInfo.playFlag;
+        
+        // 更新播放标志
+        vodInfo.playFlag = newFlag;
+        
+        // 清除旧源的高亮状态
+        if (vodInfo.seriesMap.containsKey(oldFlag) && vodInfo.playIndex < vodInfo.seriesMap.get(oldFlag).size()) {
+            vodInfo.seriesMap.get(oldFlag).get(vodInfo.playIndex).selected = false;
+        }
+        
+        // 更新选中状态
+        for (int i = 0; i < vodInfo.seriesFlags.size(); i++) {
+            VodInfo.VodSeriesFlag flag = vodInfo.seriesFlags.get(i);
+            if (flag.name.equals(oldFlag)) {
+                flag.selected = false;
+                seriesFlagAdapter.notifyItemChanged(i);
+                break;
             }
+        }
+        VodInfo.VodSeriesFlag flag = vodInfo.seriesFlags.get(position);
+        flag.selected = true;
+        seriesFlagAdapter.notifyItemChanged(position);
+        
+        // 刷新列表，这会根据当前显示源和播放源的关系设置正确的高亮
+        refreshList();
+    }
+    seriesFlagFocus = itemView;
+}
 
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
@@ -757,20 +742,35 @@ public class DetailActivity extends BaseActivity {
             vodInfo.playIndex = 0;
         }
 
-        if (vodInfo.seriesMap.get(vodInfo.playFlag) != null) {
-            boolean canSelect = true;
-            for (int j = 0; j < vodInfo.seriesMap.get(vodInfo.playFlag).size(); j++) {
-                if(vodInfo.seriesMap.get(vodInfo.playFlag).get(j).selected){
-                    canSelect = false;
-                    break;
-                }
-            }
-            // 如果当前源是播放源，则选中记录的剧集；否则选中计算出的剧集
-            if (vodInfo.playFlag.equals(vodInfo.currentPlayFlag)) {
-                vodInfo.playIndex = vodInfo.currentPlayIndex;
-            }
-            vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).selected = true;
+    if (vodInfo.seriesMap.get(vodInfo.playFlag) != null) {
+        // 清除当前显示源的所有高亮状态
+        for (int j = 0; j < vodInfo.seriesMap.get(vodInfo.playFlag).size(); j++) {
+            vodInfo.seriesMap.get(vodInfo.playFlag).get(j).selected = false;
         }
+        
+        // 判断当前显示源是否是正在播放的源
+        if (vodInfo.playFlag.equals(vodInfo.currentPlayFlag)) {
+            // 如果是正在播放的源，高亮当前播放索引
+            if (vodInfo.currentPlayIndex < vodInfo.seriesMap.get(vodInfo.playFlag).size()) {
+                vodInfo.playIndex = vodInfo.currentPlayIndex;
+                vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).selected = true;
+            }
+        } else {
+            // 如果不是正在播放的源，检查是否有对应的剧集索引
+            // 这里可以根据需要实现索引映射逻辑
+            // 例如：如果两个源的剧集数量相同，可以使用相同的索引
+            // 或者根据剧集名称进行匹配
+            
+            // 简单实现：如果当前显示源有足够多的剧集，使用相同的索引
+            if (vodInfo.currentPlayIndex < vodInfo.seriesMap.get(vodInfo.playFlag).size()) {
+                vodInfo.playIndex = vodInfo.currentPlayIndex;
+                vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).selected = true;
+            } else {
+                // 如果没有对应的索引，不清除高亮（保持现状）
+                vodInfo.playIndex = 0;
+            }
+        }
+    }
 
         Paint pFont = new Paint();
 //        pFont.setTypeface(Typeface.DEFAULT );
@@ -1037,52 +1037,40 @@ public class DetailActivity extends BaseActivity {
         if (event.type == RefreshEvent.TYPE_REFRESH) {
             if (event.obj != null) {
                 if (event.obj instanceof Integer) {
-                    int index = (int) event.obj;
-
-                // 关键修改：确保每一列只有一个高亮的剧集
-                if (vodInfo != null && vodInfo.currentPlayFlag != null) {
-                    // 获取当前播放的源
-                    String currentPlayingFlag = vodInfo.currentPlayFlag;
+                if (vodInfo != null) {
+                    // 1. 更新当前播放的源和索引
+                    String currentPlayFlag = (vodInfo.currentPlayFlag != null) ? vodInfo.currentPlayFlag : vodInfo.playFlag;
+                    vodInfo.currentPlayFlag = currentPlayFlag;
+                    vodInfo.currentPlayIndex = newIndex;
                     
-                    // 更新当前播放源的播放索引
-                    vodInfo.currentPlayIndex = index;
-                    
-                    // 1. 清除所有列的高亮状态（确保只有一个高亮）
+                    // 2. 清除所有源中所有剧集的高亮状态
                     for (String flag : vodInfo.seriesMap.keySet()) {
                         List<VodInfo.VodSeries> seriesList = vodInfo.seriesMap.get(flag);
-                        for (int j = 0; j < seriesList.size(); j++) {
-                            seriesList.get(j).selected = false;
+                        if (seriesList != null) {
+                            for (VodInfo.VodSeries series : seriesList) {
+                                series.selected = false;
+                            }
                         }
                     }
                     
-                    // 2. 为当前播放源设置新的高亮
-                    if (vodInfo.seriesMap.containsKey(currentPlayingFlag) && index < vodInfo.seriesMap.get(currentPlayingFlag).size()) {
-                        vodInfo.seriesMap.get(currentPlayingFlag).get(index).selected = true;
+                    // 3. 为当前播放源设置新的高亮
+                    if (vodInfo.seriesMap.containsKey(currentPlayFlag)) {
+                        List<VodInfo.VodSeries> currentSeriesList = vodInfo.seriesMap.get(currentPlayFlag);
+                        if (newIndex >= 0 && newIndex < currentSeriesList.size()) {
+                            currentSeriesList.get(newIndex).selected = true;
+                        }
                     }
                     
-                    // 3. 更新当前播放列的播放索引
-                    if (currentPlayingFlag.equals(vodInfo.playFlag)) {
-                        vodInfo.playIndex = index;
+                    // 4. 如果当前显示的源是正在播放的源，更新playIndex
+                    if (currentPlayFlag.equals(vodInfo.playFlag)) {
+                        vodInfo.playIndex = newIndex;
                     }
                     
-                    // 4. 关键修复：刷新适配器数据
-                    // 如果当前显示的源是正在播放的源，需要刷新界面
-                    if (currentPlayingFlag.equals(vodInfo.playFlag)) {
-                        // 更新适配器的数据源
+                    // 5. 刷新界面显示
+                    if (seriesAdapter != null) {
+                        // 更新适配器数据
                         seriesAdapter.setNewData(vodInfo.seriesMap.get(vodInfo.playFlag));
-                        // 或者使用 notifyDataSetChanged()
-                        // seriesAdapter.notifyDataSetChanged();
                     }
-                } else {
-                    // 兼容旧逻辑：如果没有currentPlayFlag记录，使用原来的逻辑
-                    for (int j = 0; j < vodInfo.seriesMap.get(vodInfo.playFlag).size(); j++) {
-                        seriesAdapter.getData().get(j).selected = false;
-                        seriesAdapter.notifyItemChanged(j);
-                    }
-                    seriesAdapter.getData().get(index).selected = true;
-                    seriesAdapter.notifyItemChanged(index);
-                    vodInfo.playIndex = index;
-                }
 			//		if (!fullWindows){     xuameng解决焦点丢失
             //            mGridView.setSelection(index);
 			//		}
