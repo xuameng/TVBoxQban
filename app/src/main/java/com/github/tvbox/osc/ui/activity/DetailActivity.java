@@ -533,20 +533,14 @@ public class DetailActivity extends BaseActivity {
 private void refresh(View itemView, int position) {
     String newFlag = seriesFlagAdapter.getData().get(position).name;
     if (vodInfo != null) {
-        // 保存旧的播放标志
+        // 保存旧的显示源
         String oldFlag = vodInfo.playFlag;
         
-        // 重要：检查是否正在切换实际播放的源
-        boolean isSwitchingPlayingSource = false;
-        if (vodInfo.currentPlayFlag != null && vodInfo.currentPlayFlag.equals(oldFlag)) {
-            // 如果当前显示源就是正在播放的源，那么切换源会影响播放源
-            isSwitchingPlayingSource = true;
-        }
-        
-        // 更新显示源
+        // 重要：只更新显示源，绝对不更新 currentPlayFlag
+        // currentPlayFlag 应该只在用户点击播放时更新（在 jumpToPlay() 中）
         vodInfo.playFlag = newFlag;
         
-        // 清除旧源的高亮状态
+        // 清除旧显示源的高亮状态
         if (vodInfo.seriesMap.containsKey(oldFlag) && vodInfo.playIndex < vodInfo.seriesMap.get(oldFlag).size()) {
             vodInfo.seriesMap.get(oldFlag).get(vodInfo.playIndex).selected = false;
         }
@@ -564,18 +558,15 @@ private void refresh(View itemView, int position) {
         flag.selected = true;
         seriesFlagAdapter.notifyItemChanged(position);
         
-        // 重要：如果切换的是正在播放的源，需要更新 currentPlayFlag
-        if (isSwitchingPlayingSource) {
-            vodInfo.currentPlayFlag = newFlag;
-            // 注意：这里不保存历史记录，因为用户只是切换查看，还没有实际播放
-            // 实际播放时会在 jumpToPlay() 中保存
-        }
+        // 重要：不再检查是否切换播放源，因为用户只是查看，不是播放
+        // 播放源的切换应该在 jumpToPlay() 中处理
         
         // 刷新列表，这会根据当前显示源和播放源的关系设置正确的高亮
         refreshList();
     }
     seriesFlagFocus = itemView;
 }
+
 
 
             @Override
@@ -762,39 +753,35 @@ private void refresh(View itemView, int position) {
             vodInfo.playIndex = 0;
         }
 
-        if (vodInfo.seriesMap.get(vodInfo.playFlag) != null) {
-            // 清除当前显示源的所有高亮状态
-            for (int j = 0; j < vodInfo.seriesMap.get(vodInfo.playFlag).size(); j++) {
-                vodInfo.seriesMap.get(vodInfo.playFlag).get(j).selected = false;
+ if (vodInfo.seriesMap.get(vodInfo.playFlag) != null) {
+        // 清除当前显示源的所有高亮状态
+        for (int j = 0; j < vodInfo.seriesMap.get(vodInfo.playFlag).size(); j++) {
+            vodInfo.seriesMap.get(vodInfo.playFlag).get(j).selected = false;
+        }
+    
+        // 判断当前显示源是否是正在播放的源
+        if (vodInfo.playFlag.equals(vodInfo.currentPlayFlag)) {
+            // 如果是正在播放的源，高亮当前播放索引
+            if (vodInfo.currentPlayIndex < vodInfo.seriesMap.get(vodInfo.playFlag).size()) {
+                vodInfo.playIndex = vodInfo.currentPlayIndex;
+                vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).selected = true;
             }
-        
-            // 判断当前显示源是否是正在播放的源
-            if (vodInfo.playFlag.equals(vodInfo.currentPlayFlag)) {
-                // 如果是正在播放的源，高亮当前播放索引
-                if (vodInfo.currentPlayIndex < vodInfo.seriesMap.get(vodInfo.playFlag).size()) {
-                    vodInfo.playIndex = vodInfo.currentPlayIndex;
-                    vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).selected = true;
-                }
+        } else {
+            // 如果不是正在播放的源，检查是否有对应的剧集索引
+            // 简单实现：如果当前显示源有足够多的剧集，使用相同的索引
+            if (vodInfo.currentPlayIndex < vodInfo.seriesMap.get(vodInfo.playFlag).size()) {
+                vodInfo.playIndex = vodInfo.currentPlayIndex;
+                vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).selected = true;
             } else {
-                // 如果不是正在播放的源，检查是否有对应的剧集索引
-                // 这里可以根据需要实现索引映射逻辑
-                // 例如：如果两个源的剧集数量相同，可以使用相同的索引
-                // 或者根据剧集名称进行匹配
-            
-                // 简单实现：如果当前显示源有足够多的剧集，使用相同的索引
-                if (vodInfo.currentPlayIndex < vodInfo.seriesMap.get(vodInfo.playFlag).size()) {
-                    vodInfo.playIndex = vodInfo.currentPlayIndex;
-                    vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).selected = true;
-                } else {
-                    // 如果没有对应的索引，不清除高亮（保持现状）
-                    vodInfo.playIndex = 0;
-                    // 修复：确保至少有一个剧集被高亮
-                    if (vodInfo.seriesMap.get(vodInfo.playFlag).size() > 0) {
-                        vodInfo.seriesMap.get(vodInfo.playFlag).get(0).selected = true;
-                    }
+                // 如果没有对应的索引，不清除高亮（保持现状）
+                vodInfo.playIndex = 0;
+                // 修复：确保至少有一个剧集被高亮
+                if (vodInfo.seriesMap.get(vodInfo.playFlag).size() > 0) {
+                    vodInfo.seriesMap.get(vodInfo.playFlag).get(0).selected = true;
                 }
             }
         }
+    }
 
         Paint pFont = new Paint();
 //        pFont.setTypeface(Typeface.DEFAULT );
@@ -1109,7 +1096,7 @@ public void refresh(RefreshEvent event) {
                         }
                     }
                     
-                    // 6. 处理显示源的高亮
+                    // 6. 处理显示源的高亮 - 修复关键问题
                     // 如果显示源和播放源相同，更新playIndex
                     if (vodInfo.currentPlayFlag.equals(vodInfo.playFlag)) {
                         vodInfo.playIndex = newIndex;
@@ -1136,7 +1123,7 @@ public void refresh(RefreshEvent event) {
                         }
                     }
                     
-                    // 7. 刷新界面显示
+                    // 7. 关键修复：确保UI刷新 - 无论显示源和播放源是否相同，都要刷新UI
                     if (seriesAdapter != null && vodInfo.seriesMap.containsKey(vodInfo.playFlag)) {
                         seriesAdapter.setNewData(vodInfo.seriesMap.get(vodInfo.playFlag));
                     }
@@ -1146,7 +1133,7 @@ public void refresh(RefreshEvent event) {
                     VodInfo saveVodInfo = new VodInfo();
                     try {
                         // 深拷贝vodInfo的基本属性
-                        saveVodInfo.setVideo(vodInfo.getVideo());
+                        saveVodInfo.setVideo(vodInfo.video);
                         saveVodInfo.sourceKey = vodInfo.sourceKey;
                         saveVodInfo.seriesMap = vodInfo.seriesMap;
                         saveVodInfo.seriesFlags = vodInfo.seriesFlags;
