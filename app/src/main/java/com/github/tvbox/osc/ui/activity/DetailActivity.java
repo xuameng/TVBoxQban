@@ -1075,18 +1075,25 @@ if (vodInfoRecord != null) {
             if (event.obj != null) {
                 if (event.obj instanceof Integer) {
                 int newIndex = (int) event.obj;
+                int newIndex = (int) event.obj;
                 if (vodInfo != null) {
                     // 1. 保存当前显示源，确保不会丢失
                     String originalDisplayFlag = vodInfo.playFlag;
                     
-                    // 2. 更新当前播放的源和索引
-                    String currentPlayFlag = (vodInfo.currentPlayFlag != null) ? vodInfo.currentPlayFlag : vodInfo.playFlag;
-                    vodInfo.currentPlayFlag = currentPlayFlag;
+                    // 2. 重要修改：不更新 currentPlayFlag，保持原来的播放源
+                    // 原来的错误逻辑：
+                    // String currentPlayFlag = (vodInfo.currentPlayFlag != null) ? vodInfo.currentPlayFlag : vodInfo.playFlag;
+                    // vodInfo.currentPlayFlag = currentPlayFlag;
+                    
+                    // 正确逻辑：保持 currentPlayFlag 不变，只更新 currentPlayIndex
+                    if (vodInfo.currentPlayFlag == null) {
+                        vodInfo.currentPlayFlag = vodInfo.playFlag;
+                    }
                     vodInfo.currentPlayIndex = newIndex;
                     
                     // 3. 清除播放源（第二列）中所有剧集的高亮状态
-                    if (vodInfo.seriesMap.containsKey(currentPlayFlag)) {
-                        List<VodInfo.VodSeries> currentSeriesList = vodInfo.seriesMap.get(currentPlayFlag);
+                    if (vodInfo.seriesMap.containsKey(vodInfo.currentPlayFlag)) {
+                        List<VodInfo.VodSeries> currentSeriesList = vodInfo.seriesMap.get(vodInfo.currentPlayFlag);
                         if (currentSeriesList != null) {
                             for (VodInfo.VodSeries series : currentSeriesList) {
                                 series.selected = false;
@@ -1095,8 +1102,8 @@ if (vodInfoRecord != null) {
                     }
                     
                     // 4. 为播放源（第二列）设置新的高亮
-                    if (vodInfo.seriesMap.containsKey(currentPlayFlag)) {
-                        List<VodInfo.VodSeries> currentSeriesList = vodInfo.seriesMap.get(currentPlayFlag);
+                    if (vodInfo.seriesMap.containsKey(vodInfo.currentPlayFlag)) {
+                        List<VodInfo.VodSeries> currentSeriesList = vodInfo.seriesMap.get(vodInfo.currentPlayFlag);
                         // 修复边界条件：如果newIndex超出范围，使用最后一集
                         int safeIndex = newIndex;
                         if (safeIndex >= currentSeriesList.size()) {
@@ -1109,7 +1116,7 @@ if (vodInfoRecord != null) {
                     
                     // 5. 关键修复：保持显示源（第一列）的高亮状态
                     // 注意：不自动清除显示源的高亮状态，只有当需要更新时才更新
-                    if (!currentPlayFlag.equals(originalDisplayFlag)) {
+                    if (!vodInfo.currentPlayFlag.equals(originalDisplayFlag)) {
                         // 当前显示源不是播放源，需要同步高亮状态
                         if (vodInfo.seriesMap.containsKey(originalDisplayFlag)) {
                             List<VodInfo.VodSeries> displaySeriesList = vodInfo.seriesMap.get(originalDisplayFlag);
@@ -1148,9 +1155,6 @@ if (vodInfoRecord != null) {
                         seriesAdapter.setNewData(vodInfo.seriesMap.get(vodInfo.playFlag));
                     }
                 }
-			//		if (!fullWindows){     xuameng解决焦点丢失
-            //            mGridView.setSelection(index);
-			//		}
                 // 保存历史
                 // 保存历史 - 关键修改：使用当前播放的源进行保存
                 String saveSourceKey = vodInfo.currentPlayFlag != null ? vodInfo.currentPlayFlag : sourceKey;
