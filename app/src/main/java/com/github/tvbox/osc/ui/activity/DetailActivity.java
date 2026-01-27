@@ -1305,19 +1305,42 @@ private void refresh(View itemView, int position) {
 
 private void insertVod(String sourceKey, VodInfo vodInfo) {
     try {
-        // 优先使用当前播放的源和索引
-        String playFlagToSave = (vodInfo.currentPlayFlag != null) ? vodInfo.currentPlayFlag : vodInfo.playFlag;
-        int playIndexToSave = (vodInfo.currentPlayFlag != null && vodInfo.currentPlayFlag.equals(playFlagToSave)) 
-            ? vodInfo.currentPlayIndex : vodInfo.playIndex;
+        // 确定保存历史记录时使用的播放源和索引
+        String playFlagToSave = vodInfo.playFlag;  // 默认使用显示源
+        int playIndexToSave = vodInfo.playIndex;   // 默认使用显示索引
+        
+        // 如果有当前播放记录，优先使用当前播放的源
+        if (vodInfo.currentPlayFlag != null && !vodInfo.currentPlayFlag.isEmpty()) {
+            playFlagToSave = vodInfo.currentPlayFlag;
+            
+            // 关键修复：无论什么情况，都使用currentPlayIndex作为播放索引
+            // 因为currentPlayIndex始终记录实际播放的剧集索引
+            playIndexToSave = vodInfo.currentPlayIndex;
+        }
+        
+        // 边界检查：确保索引在有效范围内
+        if (playIndexToSave >= vodInfo.seriesMap.get(playFlagToSave).size()) {
+            playIndexToSave = vodInfo.seriesMap.get(playFlagToSave).size() - 1;
+        }
+        if (playIndexToSave < 0) {
+            playIndexToSave = 0;
+        }
         
         vodInfo.playNote = vodInfo.seriesMap.get(playFlagToSave).get(playIndexToSave).name;
+        
+        // 关键修复：更新vodInfo的playFlag和playIndex为保存的值
+        // 确保保存到数据库的数据是正确的
+        vodInfo.playFlag = playFlagToSave;
+        vodInfo.playIndex = playIndexToSave;
+        
     } catch (Throwable th) {
         vodInfo.playNote = "";
     }
     RoomDataManger.insertVodRecord(sourceKey, vodInfo);
-    HawkConfig.saveHistory = true;  //xuameng判断存储历史记录
+    HawkConfig.saveHistory = true;
     EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_HISTORY_REFRESH));
 }
+
 
 
     @Override
