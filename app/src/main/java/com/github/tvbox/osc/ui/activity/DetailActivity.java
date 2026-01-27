@@ -1041,7 +1041,7 @@ private void refresh(View itemView, int position) {
         if (event.type == RefreshEvent.TYPE_REFRESH) {
             if (event.obj != null) {
                 if (event.obj instanceof Integer) {
-                    int newIndex = (int) event.obj;
+                int newIndex = (int) event.obj;
                 if (vodInfo != null) {
                     // 1. 保存当前显示源，确保不会丢失
                     String originalDisplayFlag = vodInfo.playFlag;
@@ -1093,7 +1093,7 @@ private void refresh(View itemView, int position) {
                                 // 计算显示源的安全索引
                                 int displaySafeIndex = newIndex;
                                 if (displaySafeIndex >= displaySeriesList.size()) {
-                                    displaySafeIndex = displaySeriesList.size() - 1;
+                                    displaySafeIndex = 0; // 修改：使用第一个有效索引而不是最后一个
                                 }
                                 if (displaySafeIndex < 0) {
                                     displaySafeIndex = 0;
@@ -1107,17 +1107,14 @@ private void refresh(View itemView, int position) {
                     } else {
                         // 显示源和播放源相同，更新playIndex
                         vodInfo.playIndex = newIndex;
-                    }
+                    }                 
                     
-                    // 6. 确保显示源的正确性（防止被前面的逻辑修改）
-                    vodInfo.playFlag = originalDisplayFlag;
-                    
-                    // 7. 刷新界面显示
+                    // 6. 刷新界面显示
                     if (seriesAdapter != null && vodInfo.seriesMap.containsKey(vodInfo.playFlag)) {
                         // 更新适配器数据
                         seriesAdapter.setNewData(vodInfo.seriesMap.get(vodInfo.playFlag));
                     }
-				}
+                }
 			//		if (!fullWindows){     xuameng解决焦点丢失
             //            mGridView.setSelection(index);
 			//		}
