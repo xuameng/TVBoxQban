@@ -1611,86 +1611,86 @@ public class DetailActivity extends BaseActivity {
         App.showToastShort(DetailActivity.this, "已滚动到当前播放剧集！");
     }
 
-private void switchTomGridViewFlag() {
-    // 1. 检查当前显示源是否是正在播放的源
-    if (vodInfo != null && vodInfo.currentPlayFlag != null && !vodInfo.playFlag.equals(vodInfo.currentPlayFlag)) {
-        // 当前显示源不是播放源，需要切换回播放源
+    private void switchTomGridViewFlag() {  //xuameng 自动滚动到当前播放源
+        // 1. 检查当前显示源是否是正在播放的源
+        if (vodInfo != null && vodInfo.currentPlayFlag != null && !vodInfo.playFlag.equals(vodInfo.currentPlayFlag)) {
+            // 当前显示源不是播放源，需要切换回播放源
     
-        // 1.1 保存旧的显示源
-        String oldFlag = vodInfo.playFlag;
+            // 1.1 保存旧的显示源
+            String oldFlag = vodInfo.playFlag;
     
-        // 1.2 清除旧显示源的高亮状态
-        if (vodInfo.seriesMap.containsKey(oldFlag) && vodInfo.playIndex < vodInfo.seriesMap.get(oldFlag).size()) {
-            vodInfo.seriesMap.get(oldFlag).get(vodInfo.playIndex).selected = false;
-        }
-    
-        // 1.3 清除旧显示源在源列表中的选中状态
-        for (int i = 0; i < vodInfo.seriesFlags.size(); i++) {
-            VodInfo.VodSeriesFlag flag = vodInfo.seriesFlags.get(i);
-            if (flag.name.equals(oldFlag)) {
-                flag.selected = false;
-                seriesFlagAdapter.notifyItemChanged(i);
-                break;
+            // 1.2 清除旧显示源的高亮状态
+            if (vodInfo.seriesMap.containsKey(oldFlag) && vodInfo.playIndex < vodInfo.seriesMap.get(oldFlag).size()) {
+                vodInfo.seriesMap.get(oldFlag).get(vodInfo.playIndex).selected = false;
             }
-        }
     
-        // 1.4 切换到播放源
-        vodInfo.playFlag = vodInfo.currentPlayFlag;
-    
-        // 1.5 设置播放源在源列表中的选中状态
-        for (int i = 0; i < vodInfo.seriesFlags.size(); i++) {
-            VodInfo.VodSeriesFlag flag = vodInfo.seriesFlags.get(i);
-            if (flag.name.equals(vodInfo.playFlag)) {
-                flag.selected = true;
-                seriesFlagAdapter.notifyItemChanged(i);
-                // 滚动源列表到播放源位置
-                mGridViewFlag.scrollToPosition(playingSourceIndex);
-                // 选中源列表到播放源位置
-                mGridViewFlag.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                    @Override
-                    public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                        super.onScrollStateChanged(recyclerView, newState);
-                        if (newState == mGridViewFlag.SCROLL_STATE_IDLE) {
-                            mGridViewFlag.setSelection(i);
-                            mGridViewFlag.removeOnScrollListener(this);
-                        }
-                    }
-                });
-    
-                if (!mGridViewFlag.isScrolling() && !mGridViewFlag.isComputingLayout()) {
-                    // 如果当前没有滚动且没有计算布局，则直接执行选择
-                    mGridViewFlag.setSelection(i);
-                } 
-                break;
-            }
-        }
-        
-    } else if (vodInfo != null && vodInfo.currentPlayFlag != null) {
-        // 如果已经在播放源，只需要确保选中状态正确
-        for (int i = 0; i < vodInfo.seriesFlags.size(); i++) {
-            VodInfo.VodSeriesFlag flag = vodInfo.seriesFlags.get(i);
-            if (flag.name.equals(vodInfo.currentPlayFlag)) {
-                mGridViewFlag.scrollToPosition(i);
-                // 选中源列表到播放源位置
-                mGridViewFlag.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                    @Override
-                    public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                        super.onScrollStateChanged(recyclerView, newState);
-                        if (newState == mGridViewFlag.SCROLL_STATE_IDLE) {
-                            mGridViewFlag.setSelection(i);
-                            mGridViewFlag.removeOnScrollListener(this);
-                        }
-                    }
-                });
-    
-                if (!mGridViewFlag.isScrolling() && !mGridViewFlag.isComputingLayout()) {
-                    // 如果当前没有滚动且没有计算布局，则直接执行选择
-                    mGridViewFlag.setSelection(i);
+            // 1.3 清除旧显示源在源列表中的选中状态
+            for (int i = 0; i < vodInfo.seriesFlags.size(); i++) {
+                VodInfo.VodSeriesFlag flag = vodInfo.seriesFlags.get(i);
+                if (flag.name.equals(oldFlag)) {
+                    flag.selected = false;
+                    seriesFlagAdapter.notifyItemChanged(i);
+                    break;
                 }
-                break;
+            }
+    
+            // 1.4 切换到播放源
+            vodInfo.playFlag = vodInfo.currentPlayFlag;
+    
+            // 1.5 设置播放源在源列表中的选中状态
+            for (int i = 0; i < vodInfo.seriesFlags.size(); i++) {
+                VodInfo.VodSeriesFlag flag = vodInfo.seriesFlags.get(i);
+                if (flag.name.equals(vodInfo.playFlag)) {
+                    flag.selected = true;
+                    seriesFlagAdapter.notifyItemChanged(i);
+                    // 滚动源列表到播放源位置
+                    mGridViewFlag.scrollToPosition(i);
+                    // 选中源列表到播放源位置
+                    mGridViewFlag.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                        @Override
+                        public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                            super.onScrollStateChanged(recyclerView, newState);
+                            if (newState == mGridViewFlag.SCROLL_STATE_IDLE) {
+                                mGridViewFlag.setSelection(i);
+                                mGridViewFlag.removeOnScrollListener(this);
+                            }
+                        }
+                    });
+    
+                    if (!mGridViewFlag.isScrolling() && !mGridViewFlag.isComputingLayout()) {
+                        // 如果当前没有滚动且没有计算布局，则直接执行选择
+                        mGridViewFlag.setSelection(i);
+                    } 
+                    break;
+                }
+            }
+        
+        } else if (vodInfo != null && vodInfo.currentPlayFlag != null) {
+            // 如果已经在播放源，只需要确保选中状态正确
+            for (int i = 0; i < vodInfo.seriesFlags.size(); i++) {
+                VodInfo.VodSeriesFlag flag = vodInfo.seriesFlags.get(i);
+                if (flag.name.equals(vodInfo.currentPlayFlag)) {
+                    mGridViewFlag.scrollToPosition(i);
+                    // 选中源列表到播放源位置
+                    mGridViewFlag.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                        @Override
+                        public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                            super.onScrollStateChanged(recyclerView, newState);
+                            if (newState == mGridViewFlag.SCROLL_STATE_IDLE) {
+                                mGridViewFlag.setSelection(i);
+                            mGridViewFlag.removeOnScrollListener(this);
+                            }
+                        }
+                    });
+    
+                    if (!mGridViewFlag.isScrolling() && !mGridViewFlag.isComputingLayout()) {
+                        // 如果当前没有滚动且没有计算布局，则直接执行选择
+                        mGridViewFlag.setSelection(i);
+                    }
+                    break;
+                }
             }
         }
     }
-}
 
 }
