@@ -1613,7 +1613,7 @@ public class LivePlayActivity extends BaseActivity {
         smoothScrollerEpg = new LinearSmoothScroller(this) {
             @Override
             protected float calculateSpeedPerPixel(DisplayMetrics displayMetrics) {
-                return 100f / displayMetrics.densityDpi; // 控制滚动速度
+                return 50f / displayMetrics.densityDpi; // 控制滚动速度   数越小越快
             }
         
             @Override
@@ -3455,7 +3455,7 @@ public class LivePlayActivity extends BaseActivity {
     
         // 正常执行滚动逻辑
         // 先快速滚动到目标位置附近（留出10个item的缓冲）
-        mRightEpgListLayoutMgr.scrollToPositionWithOffset(targetPos > 10 ? targetPos - 10 : 0, 0);
+        mRightEpgListLayoutMgr.scrollToPositionWithOffset(targetPos > 5 ? targetPos - 5 : 0, 0);   //xuameng 数越小越近
     
         // 延迟执行平滑滚动到精确位置
         mRightEpgList.postDelayed(() -> {
