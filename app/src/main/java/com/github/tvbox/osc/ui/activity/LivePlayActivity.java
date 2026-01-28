@@ -105,6 +105,8 @@ import java.util.Locale;
 import java.util.TimeZone;
 import xyz.doikki.videoplayer.player.VideoView;
 import androidx.recyclerview.widget.LinearSmoothScroller;
+import android.graphics.PointF;
+import android.util.DisplayMetrics;
 public class LivePlayActivity extends BaseActivity {
     public static Context context;
     private VideoView mVideoView;
@@ -1607,7 +1609,7 @@ private LinearSmoothScroller smoothScrollerEpg;
         mRightEpgList.setItemAnimator(null);   //xuameng禁用TVRecyclerView动画
         mRightEpgList.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
     // 获取 LayoutManager 并初始化平滑滚动器
-    mRightEpgListLayoutMgr = (LinearLayoutManager) mRightEpgList.getLayoutManager();
+    mRightEpgListLayoutMgr = (V7LinearLayoutManager) mRightEpgList.getLayoutManager();
     
     // 初始化平滑滚动器
     smoothScrollerEpg = new LinearSmoothScroller(this) {
