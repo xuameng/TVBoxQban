@@ -54,10 +54,10 @@ public class VodInfo implements Serializable {
     // 新增：记录当前播放的源和剧集索引（用于切换源时恢复位置）
     public String currentPlayFlag = null; // 当前播放的源（flag）
     public int currentPlayIndex = 0;      // 当前播放的剧集索引
-	public Movie.Video video; // 添加video字段存储
+	public Movie.Video video; // xuameng添加video字段存储
 
     public void setVideo(Movie.Video video) {
- this.video = video; // 存储video对象
+        this.video = video; // xuameng存储video对象
         last = video.last;
         id = video.id;
         tid = video.tid;
@@ -99,11 +99,9 @@ public class VodInfo implements Serializable {
         }
     }
 
-    // 方案1：在VodInfo类中添加getVideo()方法
+    // xuameng存储video对象在VodInfo类中添加getVideo()方法
     public Movie.Video getVideo() {
-        // 这需要在VodInfo类中添加一个video字段来存储
-        // 但根据现有代码，我们无法直接访问video字段
-        return null; // 实际实现需要根据具体需求
+        return null; 
     }
 
     private int extractNumber(String name) {
