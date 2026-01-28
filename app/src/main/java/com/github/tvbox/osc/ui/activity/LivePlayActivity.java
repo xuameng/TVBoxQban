@@ -465,7 +465,7 @@ private LinearSmoothScroller smoothScrollerEpg;
                 epgListAdapter.setSelectedEpgIndex(targetPos);
                 if(targetPos >= 0 && targetPos < epgListAdapter.getItemCount()) {
             // 使用优化后的滚动方法
-            customEpgScrollPos((targetPos);
+            customEpgScrollPos(targetPos);;
                 }
             }
         } 
@@ -491,7 +491,7 @@ private LinearSmoothScroller smoothScrollerEpg;
                 epgListAdapter.setSelectedEpgIndex(targetPos);
                 if(targetPos >= 0 && targetPos < epgListAdapter.getItemCount()) {
             // 使用优化后的滚动方法
-            customEpgScrollPos((targetPos);
+            customEpgScrollPos(targetPos);
                 }
             }
         } 
@@ -884,7 +884,7 @@ private LinearSmoothScroller smoothScrollerEpg;
         int SelectedIndexEpg = epgListAdapter.getSelectedIndex(); //xuameng当前选中的EPG
         if (SelectedIndexEpg >= 0  && SelectedIndexEpg < epgListAdapter.getItemCount()){  //xuameng不等于-1代表已有选中的EPG，防空指针
         // 使用优化后的滚动方法
-        customEpgScrollPos((SelectedIndexEpg);
+        customEpgScrollPos(SelectedIndexEpg);
         }
     }
     //频道列表
