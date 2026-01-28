@@ -1646,12 +1646,13 @@ public class DetailActivity extends BaseActivity {
                     // 滚动源列表到播放源位置
                     mGridViewFlag.scrollToPosition(i);
                     // 选中源列表到播放源位置
+                    final int finalScrollPosition = i; // 创建一个 final 局部变量副本
                     mGridViewFlag.addOnScrollListener(new RecyclerView.OnScrollListener() {
                         @Override
                         public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                             super.onScrollStateChanged(recyclerView, newState);
                             if (newState == mGridViewFlag.SCROLL_STATE_IDLE) {
-                                mGridViewFlag.setSelection(i);
+                                mGridViewFlag.setSelection(finalScrollPosition);
                                 mGridViewFlag.removeOnScrollListener(this);
                             }
                         }
@@ -1672,12 +1673,13 @@ public class DetailActivity extends BaseActivity {
                 if (flag.name.equals(vodInfo.currentPlayFlag)) {
                     mGridViewFlag.scrollToPosition(i);
                     // 选中源列表到播放源位置
+                    final int finalScrollPosition = i; // 创建一个 final 局部变量副本
                     mGridViewFlag.addOnScrollListener(new RecyclerView.OnScrollListener() {
                         @Override
                         public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                             super.onScrollStateChanged(recyclerView, newState);
                             if (newState == mGridViewFlag.SCROLL_STATE_IDLE) {
-                                mGridViewFlag.setSelection(i);
+                                mGridViewFlag.setSelection(finalScrollPosition);
                             mGridViewFlag.removeOnScrollListener(this);
                             }
                         }
