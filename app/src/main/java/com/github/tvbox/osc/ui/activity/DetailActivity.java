@@ -286,7 +286,7 @@ public class DetailActivity extends BaseActivity {
 			   
                     setSeriesGroupOptions();
                     seriesAdapter.notifyDataSetChanged();
-					jumpToPlay();
+					isReverseXu();
                 }
             }
         });
@@ -759,6 +759,52 @@ void customSeriesScrollPos(int targetPos) {
             } else {
                 jumpActivity(PlayActivity.class, bundle);
             }
+        }
+    }
+
+    private void isReverseXu() {
+        if (vodInfo != null && vodInfo.seriesMap.get(vodInfo.playFlag).size() > 0) {
+            preFlag = vodInfo.playFlag;
+            //更新播放地址
+            setTextShow(tvPlayUrl, "播放地址：", vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).url);
+            // 新增：记录当前播放的源和剧集索引
+            vodInfo.currentPlayFlag = vodInfo.playFlag;
+            vodInfo.currentPlayIndex = vodInfo.playIndex;
+            Bundle bundle = new Bundle();
+            //保存历史 - 关键修改：使用当前播放的源进行保存
+            String saveSourceKey = vodInfo.currentPlayFlag != null ? vodInfo.currentPlayFlag : sourceKey;
+            insertVod(saveSourceKey, vodInfo);
+            // 同时保存一份到初始源，用于兼容性
+            if (!saveSourceKey.equals(firstsourceKey)) {
+                insertVod(firstsourceKey, vodInfo);
+            }
+        //   insertVod(sourceKey, vodInfo);
+            bundle.putString("sourceKey", sourceKey);
+//            bundle.putSerializable("VodInfo", vodInfo);
+            App.getInstance().setVodInfo(vodInfo);
+            if (showPreview) {
+                if (previewVodInfo == null) {
+                    try {
+                        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                        ObjectOutputStream oos = new ObjectOutputStream(bos);
+                        oos.writeObject(vodInfo);
+                        oos.flush();
+                        oos.close();
+                        ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(bos.toByteArray()));
+                        previewVodInfo = (VodInfo) ois.readObject();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (previewVodInfo != null) {
+                    previewVodInfo.playerCfg = vodInfo.playerCfg;
+                    previewVodInfo.playFlag = vodInfo.playFlag;
+                    previewVodInfo.playIndex = vodInfo.playIndex;
+                    previewVodInfo.seriesMap = vodInfo.seriesMap;
+//                    bundle.putSerializable("VodInfo", previewVodInfo);
+                    App.getInstance().setVodInfo(previewVodInfo);
+                }  
+            } 
         }
     }
 
