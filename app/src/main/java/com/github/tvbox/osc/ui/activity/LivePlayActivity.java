@@ -104,6 +104,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 import xyz.doikki.videoplayer.player.VideoView;
+import androidx.recyclerview.widget.LinearSmoothScroller;
 public class LivePlayActivity extends BaseActivity {
     public static Context context;
     private VideoView mVideoView;
@@ -227,6 +228,9 @@ public class LivePlayActivity extends BaseActivity {
     private TextView iv_playpause;
     private View iv_play;
     private boolean show = false;
+// 在类成员变量区域添加
+private V7LinearLayoutManager mRightEpgListLayoutMgr;
+private LinearSmoothScroller smoothScrollerEpg;
     @Override
     protected int getLayoutResID() {
         return R.layout.activity_live_play;
@@ -455,14 +459,11 @@ public class LivePlayActivity extends BaseActivity {
             if(i >= 0 && new Date().compareTo(epgdata.get(i).enddateTime) <= 0) {
                 epgListAdapter.notifyDataSetChanged();
                 final int targetPos = i; // 使用final保证线程安全
-                mRightEpgList.removeCallbacks(null);
            //些方法有滚动效果会产生焦点乱跳         mRightEpgList.setSelectedPosition(targetPos);  
                 epgListAdapter.setSelectedEpgIndex(targetPos);
                 if(targetPos >= 0 && targetPos < epgListAdapter.getItemCount()) {
-                   mRightEpgList.post(() -> {
-                   mRightEpgList.scrollToPositionWithOffset(targetPos, 0);
-                        //xuameng防止跳焦点                 mRightEpgList.setSelection(finalI);
-                   });
+            // 使用优化后的滚动方法
+            scrollToEpgPosition(targetPos);
                 }
             }
         } 
@@ -484,14 +485,11 @@ public class LivePlayActivity extends BaseActivity {
             if(i >= 0 && new Date().compareTo(epgdata.get(i).enddateTime) <= 0) {
                 epgListAdapter.notifyDataSetChanged();
                 final int targetPos = i; // 使用final保证线程安全
-                mRightEpgList.removeCallbacks(null);
                  //些方法有滚动效果会产生焦点乱跳   mRightEpgList.setSelectedPosition(targetPos);
                 epgListAdapter.setSelectedEpgIndex(targetPos);
                 if(targetPos >= 0 && targetPos < epgListAdapter.getItemCount()) {
-                   mRightEpgList.post(() -> {
-                   mRightEpgList.scrollToPositionWithOffset(targetPos, 0);
-                        //xuameng防止跳焦点                 mRightEpgList.setSelection(finalI);
-                   });
+            // 使用优化后的滚动方法
+            scrollToEpgPosition(targetPos);
                 }
             }
         } 
@@ -883,11 +881,8 @@ public class LivePlayActivity extends BaseActivity {
         divLoadEpgleft.setVisibility(View.VISIBLE);
         int SelectedIndexEpg = epgListAdapter.getSelectedIndex(); //xuameng当前选中的EPG
         if (SelectedIndexEpg >= 0  && SelectedIndexEpg < epgListAdapter.getItemCount()){  //xuameng不等于-1代表已有选中的EPG，防空指针
-            mRightEpgList.removeCallbacks(null);
-	        mRightEpgList.post(() -> {
-            mRightEpgList.scrollToPositionWithOffset(SelectedIndexEpg, 0);
-            epgListAdapter.getSelectedIndex(); //xuamengEPG打开菜单自动变颜色
-            }); 
+        // 使用优化后的滚动方法
+        scrollToEpgPosition(SelectedIndexEpg);
         }
     }
     //频道列表
@@ -1611,6 +1606,24 @@ public class LivePlayActivity extends BaseActivity {
         mRightEpgList.setHasFixedSize(true);
         mRightEpgList.setItemAnimator(null);   //xuameng禁用TVRecyclerView动画
         mRightEpgList.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
+    // 获取 LayoutManager 并初始化平滑滚动器
+    mRightEpgListLayoutMgr = (LinearLayoutManager) mRightEpgList.getLayoutManager();
+    
+    // 初始化平滑滚动器
+    smoothScrollerEpg = new LinearSmoothScroller(this) {
+        @Override
+        protected float calculateSpeedPerPixel(DisplayMetrics displayMetrics) {
+            return 100f / displayMetrics.densityDpi; // 控制滚动速度
+        }
+        
+        @Override
+        public PointF computeScrollVectorForPosition(int targetPosition) {
+            if (mRightEpgListLayoutMgr != null) {
+                return mRightEpgListLayoutMgr.computeScrollVectorForPosition(targetPosition);
+            }
+            return null;
+        }
+    };
         epgListAdapter = new LiveEpgAdapter();
         mRightEpgList.setAdapter(epgListAdapter);
         mRightEpgList.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -3413,4 +3426,69 @@ public class LivePlayActivity extends BaseActivity {
         // 保留两位小数
         return (float) Math.round(volumePercent * 100) / 100.0f;
     }
+
+/**
+ * 优化后的 EPG 列表滚动方法
+ * 确保在任何情况下都能准确滚动到目标位置
+ * @param targetPos 目标位置
+ */
+private void scrollToEpgPosition(int targetPos) {
+    if (targetPos < 0 || targetPos >= epgListAdapter.getItemCount()) {
+        return;
+    }
+    
+    // 1. 设置选中状态
+    epgListAdapter.setSelectedEpgIndex(targetPos);
+    epgListAdapter.notifyDataSetChanged();
+    
+    // 2. 清除之前的滚动监听器
+    mRightEpgList.clearOnScrollListeners();
+    
+    // 3. 添加滚动监听器确保滚动完成
+    mRightEpgList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+            super.onScrollStateChanged(recyclerView, newState);
+            if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                // 滚动完成后设置焦点
+                mRightEpgList.setSelection(targetPos);
+                mRightEpgList.removeOnScrollListener(this);
+            }
+        }
+    });
+    
+    // 4. 执行优化后的滚动逻辑
+    customEpgScrollPos(targetPos);
+}
+
+/**
+ * 确保 EPG 列表一定滚动的核心方法
+ * 参考 DetailActivity.java 中的 customSeriesScrollPos 实现
+ */
+private void customEpgScrollPos(int targetPos) {
+    // 如果 LayoutManager 为空，延迟重试
+    if (mRightEpgListLayoutMgr == null || mRightEpgList == null) {
+        mRightEpgList.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                customEpgScrollPos(targetPos);
+            }
+        }, 100); // 延迟100ms重试
+        return;
+    }
+    
+    // 正常执行滚动逻辑
+    // 先快速滚动到目标位置附近（留出10个item的缓冲）
+    mRightEpgListLayoutMgr.scrollToPositionWithOffset(targetPos > 10 ? targetPos - 10 : 0, 0);
+    
+    // 延迟执行平滑滚动到精确位置
+    mRightEpgList.postDelayed(() -> {
+        if (mRightEpgListLayoutMgr != null && smoothScrollerEpg != null) {
+            smoothScrollerEpg.setTargetPosition(targetPos);
+            mRightEpgListLayoutMgr.startSmoothScroll(smoothScrollerEpg);
+            mRightEpgList.smoothScrollToPosition(targetPos);
+        }
+    }, 50);
+}
+
 }
