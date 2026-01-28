@@ -804,7 +804,9 @@ void customSeriesScrollPos(int targetPos) {
 //                    bundle.putSerializable("VodInfo", previewVodInfo);
                     App.getInstance().setVodInfo(previewVodInfo);
                 }  
-            } 
+            }
+			        // 刷新列表，这会根据当前显示源和播放源的关系设置正确的高亮
+            refreshList();
         }
     }
 
