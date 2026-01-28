@@ -465,7 +465,7 @@ private LinearSmoothScroller smoothScrollerEpg;
                 epgListAdapter.setSelectedEpgIndex(targetPos);
                 if(targetPos >= 0 && targetPos < epgListAdapter.getItemCount()) {
             // 使用优化后的滚动方法
-            scrollToEpgPosition(targetPos);
+            customEpgScrollPos((targetPos);
                 }
             }
         } 
@@ -491,7 +491,7 @@ private LinearSmoothScroller smoothScrollerEpg;
                 epgListAdapter.setSelectedEpgIndex(targetPos);
                 if(targetPos >= 0 && targetPos < epgListAdapter.getItemCount()) {
             // 使用优化后的滚动方法
-            scrollToEpgPosition(targetPos);
+            customEpgScrollPos((targetPos);
                 }
             }
         } 
@@ -884,7 +884,7 @@ private LinearSmoothScroller smoothScrollerEpg;
         int SelectedIndexEpg = epgListAdapter.getSelectedIndex(); //xuameng当前选中的EPG
         if (SelectedIndexEpg >= 0  && SelectedIndexEpg < epgListAdapter.getItemCount()){  //xuameng不等于-1代表已有选中的EPG，防空指针
         // 使用优化后的滚动方法
-        scrollToEpgPosition(SelectedIndexEpg);
+        customEpgScrollPos((SelectedIndexEpg);
         }
     }
     //频道列表
@@ -3428,40 +3428,6 @@ private LinearSmoothScroller smoothScrollerEpg;
         // 保留两位小数
         return (float) Math.round(volumePercent * 100) / 100.0f;
     }
-
-/**
- * 优化后的 EPG 列表滚动方法
- * 确保在任何情况下都能准确滚动到目标位置
- * @param targetPos 目标位置
- */
-private void scrollToEpgPosition(int targetPos) {
-    if (targetPos < 0 || targetPos >= epgListAdapter.getItemCount()) {
-        return;
-    }
-    
-    // 1. 设置选中状态
-    epgListAdapter.setSelectedEpgIndex(targetPos);
-    epgListAdapter.notifyDataSetChanged();
-    
-    // 2. 清除之前的滚动监听器
-    mRightEpgList.clearOnScrollListeners();
-    
-    // 3. 添加滚动监听器确保滚动完成
-    mRightEpgList.addOnScrollListener(new RecyclerView.OnScrollListener() {
-        @Override
-        public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-            super.onScrollStateChanged(recyclerView, newState);
-            if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                // 滚动完成后设置焦点
-                mRightEpgList.setSelection(targetPos);
-                mRightEpgList.removeOnScrollListener(this);
-            }
-        }
-    });
-    
-    // 4. 执行优化后的滚动逻辑
-    customEpgScrollPos(targetPos);
-}
 
 /**
  * 确保 EPG 列表一定滚动的核心方法
