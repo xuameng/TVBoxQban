@@ -288,7 +288,7 @@ public class DetailActivity extends BaseActivity {
                 }else{
                     v.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
                 }
-	        }
+            }
         });
         //xuameng : end
         ivThumb.setOnClickListener(new View.OnClickListener() {         //xuameng播放窗口点击图片播放视频
@@ -332,29 +332,12 @@ public class DetailActivity extends BaseActivity {
         });
 
         //xuameng : 长按播放滚动
-        tvPlay.setOnLongClickListener(new View.OnLongClickListener() {       //xuameng长按历史键重载主页数据
+        tvPlay.setOnLongClickListener(new View.OnLongClickListener() {       //xuameng长按播放滚动
             @Override
             public boolean onLongClick(View v) {
                 FastClickCheckUtil.check(v);
-                mGridView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                    @Override
-                    public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                        super.onScrollStateChanged(recyclerView, newState);
-                        if (newState == mGridView.SCROLL_STATE_IDLE) {    //xuameng剧集滚动完成后焦点选择为剧集
-                            // 滚动已经停止，执行你需要的操作
-                            //mGridView.requestFocus();    //xuameng如果不满足滚动条件直接获得焦点
-                            mGridView.setSelection(vodInfo.playIndex);
-                            mGridView.removeOnScrollListener(this);				//xuameng删除滚动监听				
-                        }
-                    }
-                });
-                refreshList();   //xuameng返回键、长按播放刷新滚动到剧集
-                if(mGridView.isScrolling() || mGridView.isComputingLayout()) {
-                }else{
-                    //	mGridView.requestFocus();  //xuameng如果不满足滚动条件直接获得焦点
-                    mGridView.setSelection(vodInfo.playIndex);
-                }
-                App.showToastShort(DetailActivity.this, "滚动到当前播放剧集！");
+                // 调用提取的方法
+                switchToPlayingSourceAndScroll();   //xuameng长按播放滚动
                 return true;
             }
         });
@@ -367,7 +350,7 @@ public class DetailActivity extends BaseActivity {
                 }else{
                     v.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
                 }
-	        }
+            }
         });
         //xuameng : end
 
@@ -411,7 +394,7 @@ public class DetailActivity extends BaseActivity {
                 }else{
                     v.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
                 }
-	        }
+            }
         });
         //xuameng : end
 
@@ -439,7 +422,7 @@ public class DetailActivity extends BaseActivity {
                 }else{
                     v.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
                 }
-	        }
+            }
         });
         //xuameng : end
 
@@ -478,7 +461,7 @@ public class DetailActivity extends BaseActivity {
                 }else{
                     v.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
                 }
-	        }
+            }
         });
         //xuameng : end
 
@@ -1005,6 +988,7 @@ public class DetailActivity extends BaseActivity {
                         seriesFlagAdapter.setNewData(vodInfo.seriesFlags);
                         mGridViewFlag.scrollToPosition(flagScrollTo);
 
+                        refreshList();   //xuameng返回键、长按播放刷新滚动到剧集
                         mGridView.addOnScrollListener(new RecyclerView.OnScrollListener() {
                             @Override
                                 public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
@@ -1017,12 +1001,11 @@ public class DetailActivity extends BaseActivity {
                                     }
                                 }
                        });
-                       refreshList();   //xuameng返回键、长按播放刷新滚动到剧集
-			           if(mGridView.isScrolling() || mGridView.isComputingLayout()) {
-			           }else{
-			               //	mGridView.requestFocus();  //xuameng如果不满足滚动条件直接获得焦点
-			               mGridView.setSelection(vodInfo.playIndex);
-			           }
+                       if(mGridView.isScrolling() || mGridView.isComputingLayout()) {
+                       }else{
+                           //mGridView.requestFocus();  //xuameng如果不满足滚动条件直接获得焦点
+                           mGridView.setSelection(vodInfo.playIndex);
+                       }
 
                        tvPlay.setNextFocusUpId(R.id.mGridView);   //xuameng上面焦点是选剧集
                        tvQuickSearch.setNextFocusUpId(R.id.mGridView); 
@@ -1431,24 +1414,7 @@ public class DetailActivity extends BaseActivity {
             if (playFragment.onBackPressed())  //xuameng上一级交给VODController控制
                 return;
             toggleFullPreview();
-			mGridView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-			@Override
-			public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-					super.onScrollStateChanged(recyclerView, newState);
-					if (newState == mGridView.SCROLL_STATE_IDLE) {    //xuameng剧集滚动完成后焦点选择为剧集
-					// 滚动已经停止，执行你需要的操作
-				//	mGridView.requestFocus();
-					mGridView.setSelection(vodInfo.playIndex);
-					mGridView.removeOnScrollListener(this);				//xuameng删除滚动监听				
-					}
-				}
-			});
-            refreshList();   //xuameng返回键、长按播放刷新滚动到剧集
-			if(mGridView.isScrolling() || mGridView.isComputingLayout()) {
-			}else{
-			//	mGridView.requestFocus();  //xuameng如果不满足滚动条件直接获得焦点
-			    mGridView.setSelection(vodInfo.playIndex);
-			}
+            switchToPlayingSourceAndScroll();   //xuameng滚动到当前剧集
 //            mGridView.requestFocus(); 没用了
             List<VodInfo.VodSeries> list = vodInfo.seriesMap.get(vodInfo.playFlag);
             mSeriesGroupView.setVisibility(list.size()>GroupCount ? View.VISIBLE : View.GONE);
@@ -1577,4 +1543,73 @@ public class DetailActivity extends BaseActivity {
             }
         }
     }
+
+
+private void switchToPlayingSourceAndScroll() {
+    // 1. 检查当前显示源是否是正在播放的源
+    if (vodInfo != null && vodInfo.currentPlayFlag != null && !vodInfo.playFlag.equals(vodInfo.currentPlayFlag)) {
+        // 当前显示源不是播放源，需要切换回播放源
+        
+        // 1.1 保存旧的显示源
+        String oldFlag = vodInfo.playFlag;
+        
+        // 1.2 清除旧显示源的高亮状态
+        if (vodInfo.seriesMap.containsKey(oldFlag) && vodInfo.playIndex < vodInfo.seriesMap.get(oldFlag).size()) {
+            vodInfo.seriesMap.get(oldFlag).get(vodInfo.playIndex).selected = false;
+        }
+        
+        // 1.3 清除旧显示源在源列表中的选中状态
+        for (int i = 0; i < vodInfo.seriesFlags.size(); i++) {
+            VodInfo.VodSeriesFlag flag = vodInfo.seriesFlags.get(i);
+            if (flag.name.equals(oldFlag)) {
+                flag.selected = false;
+                seriesFlagAdapter.notifyItemChanged(i);
+                break;
+            }
+        }
+        
+        // 1.4 切换到播放源
+        vodInfo.playFlag = vodInfo.currentPlayFlag;
+        
+        // 1.5 设置播放源在源列表中的选中状态
+        for (int i = 0; i < vodInfo.seriesFlags.size(); i++) {
+            VodInfo.VodSeriesFlag flag = vodInfo.seriesFlags.get(i);
+            if (flag.name.equals(vodInfo.playFlag)) {
+                flag.selected = true;
+                seriesFlagAdapter.notifyItemChanged(i);
+                // 滚动源列表到播放源位置
+                mGridViewFlag.scrollToPosition(i);
+                break;
+            }
+        }
+    }
+    
+    // 2. 刷新列表显示
+    refreshList();
+    
+    // 3. 确保即使不滚动也能执行选择操作
+    // 添加滚动监听器确保在任何情况下都能执行选择
+    mGridView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+            super.onScrollStateChanged(recyclerView, newState);
+            if (newState == mGridView.SCROLL_STATE_IDLE) {
+                mGridView.setSelection(vodInfo.playIndex);
+                mGridView.removeOnScrollListener(this);
+            }
+        }
+    });
+    
+    // 4. 立即检查是否需要直接执行选择（避免滚动不触发）
+    if (!mGridView.isScrolling() && !mGridView.isComputingLayout()) {
+        // 如果当前没有滚动且没有计算布局，则直接执行选择
+        mGridView.setSelection(vodInfo.playIndex);
+    } else {
+        // 如果正在滚动或计算布局，则等待滚动完成后再执行
+        // 上面的监听器会处理这种情况
+    }
+    
+    App.showToastShort(DetailActivity.this, "已滚动到当前播放剧集！");
+}
+
 }
