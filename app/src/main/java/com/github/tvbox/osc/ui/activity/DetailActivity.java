@@ -282,9 +282,11 @@ public class DetailActivity extends BaseActivity {
                     vodInfo.reverse();
                     vodInfo.playIndex=(vodInfo.seriesMap.get(vodInfo.playFlag).size()-1)-vodInfo.playIndex;
 //                    insertVod(sourceKey, vodInfo);
-                    firstReverse = true;
+               //     firstReverse = true;
+			   
                     setSeriesGroupOptions();
                     seriesAdapter.notifyDataSetChanged();
+					jumpToPlay();
                 }
             }
         });
@@ -820,7 +822,7 @@ void customSeriesScrollPos(int targetPos) {
 
         setSeriesGroupOptions();
 
-customSeriesScrollPos(vodInfo.playIndex);
+        customSeriesScrollPos(vodInfo.playIndex);
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -1079,32 +1081,10 @@ public void refresh(RefreshEvent event) {
                         vodInfo.currentPlayFlag = vodInfo.playFlag;
                     }
                     
-                    // ===== 【核心修复：索引转换开始】 =====
-                    // 3. 计算在倒序情况下的正确播放索引
-                    int correctedPlayIndex = newIndex;
+                    // 3. 更新当前播放源的索引
+                    vodInfo.currentPlayIndex = newIndex;
                     
-                    // 判断当前播放源对应的列表是否处于倒序状态
-                    if (vodInfo.reverseSort && vodInfo.seriesMap.containsKey(vodInfo.currentPlayFlag)) {
-                        List<VodInfo.VodSeries> currentSeriesList = vodInfo.seriesMap.get(vodInfo.currentPlayFlag);
-                        if (currentSeriesList != null) {
-                            int seriesSize = currentSeriesList.size();
-                            // 确保 newIndex 在有效范围内，然后进行转换
-                            if (newIndex >= 0 && newIndex < seriesSize) {
-                                // 关键转换：将播放器传来的正序索引转换为倒序列表中的索引
-                                // 公式：倒序索引 = 列表大小 - 1 - 正序索引
-                                correctedPlayIndex = seriesSize - 1 - newIndex;
-                            } else {
-                                // 如果索引越界，进行安全处理
-                                correctedPlayIndex = 0;
-                            }
-                        }
-                    }
-                    // ===== 【核心修复：索引转换结束】 =====
-                    
-                    // 4. 使用修正后的索引更新当前播放索引
-                    vodInfo.currentPlayIndex = correctedPlayIndex;
-                    
-                    // 5. 清除播放源中所有剧集的高亮状态
+                    // 4. 清除播放源中所有剧集的高亮状态
                     if (vodInfo.seriesMap.containsKey(vodInfo.currentPlayFlag)) {
                         List<VodInfo.VodSeries> currentSeriesList = vodInfo.seriesMap.get(vodInfo.currentPlayFlag);
                         if (currentSeriesList != null) {
@@ -1114,10 +1094,10 @@ public void refresh(RefreshEvent event) {
                         }
                     }
                     
-                    // 6. 为播放源设置新的高亮（使用修正后的索引）
+                    // 5. 为播放源设置新的高亮
                     if (vodInfo.seriesMap.containsKey(vodInfo.currentPlayFlag)) {
                         List<VodInfo.VodSeries> currentSeriesList = vodInfo.seriesMap.get(vodInfo.currentPlayFlag);
-                        int safeIndex = correctedPlayIndex;
+                        int safeIndex = newIndex;
                         if (safeIndex >= currentSeriesList.size()) {
                             safeIndex = currentSeriesList.size() - 1;
                         }
@@ -1126,10 +1106,10 @@ public void refresh(RefreshEvent event) {
                         }
                     }
                     
-                    // 7. 处理显示源的高亮 - 修复关键问题
+                    // 6. 处理显示源的高亮 - 修复关键问题
                     // 如果显示源和播放源相同，更新playIndex
                     if (vodInfo.currentPlayFlag.equals(vodInfo.playFlag)) {
-                        vodInfo.playIndex = correctedPlayIndex;
+                        vodInfo.playIndex = newIndex;
                     } else {
                         // 显示源和播放源不同，需要为显示源设置合理的高亮
                         if (vodInfo.seriesMap.containsKey(vodInfo.playFlag)) {
@@ -1141,7 +1121,7 @@ public void refresh(RefreshEvent event) {
                                 }
                                 
                                 // 设置显示源的高亮（映射到相同索引或第一集）
-                                int displaySafeIndex = correctedPlayIndex;
+                                int displaySafeIndex = newIndex;
                                 if (displaySafeIndex >= displaySeriesList.size() || displaySafeIndex < 0) {
                                     displaySafeIndex = 0;
                                 }
@@ -1153,21 +1133,10 @@ public void refresh(RefreshEvent event) {
                         }
                     }
                     
-                    // 8. 关键修复：确保UI刷新 - 无论显示源和播放源是否相同，都要刷新UI
-                    if (seriesAdapter != null && vodInfo.seriesMap.containsKey(vodInfo.playFlag)) {
-                        // 添加延迟，确保LayoutManager已初始化
-                        mGridView.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                // 再次检查确保安全
-                                if (mGridViewLayoutMgr != null && vodInfo != null && vodInfo.playFlag != null) {
-                                    seriesAdapter.setNewData(vodInfo.seriesMap.get(vodInfo.playFlag));
-                                }
-                            }
-                        }, 50);
-                    }
+// 7. 关键修复：确保UI刷新 - 无论显示源和播放源是否相同，都要刷新UI
+updateSeriesAdapterData();
                     
-                    // 9. 关键修复：保存历史记录时使用临时变量确保正确性
+                    // 8. 关键修复：保存历史记录时使用临时变量确保正确性
                     // 创建临时VodInfo副本，确保保存时使用正确的播放源信息
                     VodInfo saveVodInfo = new VodInfo();
                     try {
@@ -1193,47 +1162,46 @@ public void refresh(RefreshEvent event) {
                         saveVodInfo = vodInfo;
                     }
                     
-                    // 10. 保存历史记录 - 使用当前播放源进行保存
+                    // 9. 保存历史记录 - 使用当前播放源进行保存
                     String saveSourceKey = vodInfo.currentPlayFlag != null ? vodInfo.currentPlayFlag : sourceKey;
                     insertVod(saveSourceKey, saveVodInfo);
                     
-                    // 11. 同时保存一份到初始源，用于兼容性
+                    // 10. 同时保存一份到初始源，用于兼容性
                     if (!saveSourceKey.equals(firstsourceKey)) {
                         insertVod(firstsourceKey, saveVodInfo);
                     }
                 }
-                //   insertVod(sourceKey, vodInfo);
+                    //   insertVod(sourceKey, vodInfo);
                 
-            } else if (event.obj instanceof JSONObject) {
-                vodInfo.playerCfg = ((JSONObject) event.obj).toString();
-                //保存历史
-                insertVod(firstsourceKey, vodInfo);
-                //        insertVod(sourceKey, vodInfo);
-            } else if (event.obj instanceof String) {
-                String url = event.obj.toString();
-                //设置更新播放地址
-                setTvPlayUrl(url);
+                } else if (event.obj instanceof JSONObject) {
+                    vodInfo.playerCfg = ((JSONObject) event.obj).toString();
+                    //保存历史
+                    insertVod(firstsourceKey, vodInfo);
+                    //        insertVod(sourceKey, vodInfo);
+                } else if (event.obj instanceof String) {
+                    String url = event.obj.toString();
+                    //设置更新播放地址
+                    setTvPlayUrl(url);
+                }
+            }
+        } else if (event.type == RefreshEvent.TYPE_QUICK_SEARCH_SELECT) {
+            if (event.obj != null) {
+                Movie.Video video = (Movie.Video) event.obj;
+                loadDetail(video.id, video.sourceKey);
+            }
+        } else if (event.type == RefreshEvent.TYPE_QUICK_SEARCH_WORD_CHANGE) {
+            if (event.obj != null) {
+                String word = (String) event.obj;
+                switchSearchWord(word);
+            }
+        } else if (event.type == RefreshEvent.TYPE_QUICK_SEARCH_RESULT) {
+            try {
+                searchData(event.obj == null ? null : (AbsXml) event.obj);
+            } catch (Exception e) {
+                searchData(null);
             }
         }
-    } else if (event.type == RefreshEvent.TYPE_QUICK_SEARCH_SELECT) {
-        if (event.obj != null) {
-            Movie.Video video = (Movie.Video) event.obj;
-            loadDetail(video.id, video.sourceKey);
-        }
-    } else if (event.type == RefreshEvent.TYPE_QUICK_SEARCH_WORD_CHANGE) {
-        if (event.obj != null) {
-            String word = (String) event.obj;
-            switchSearchWord(word);
-        }
-    } else if (event.type == RefreshEvent.TYPE_QUICK_SEARCH_RESULT) {
-        try {
-            searchData(event.obj == null ? null : (AbsXml) event.obj);
-        } catch (Exception e) {
-            searchData(null);
-        }
     }
-}
-
 
     @Subscribe(threadMode = ThreadMode.MAIN)              //xuameng远程推送
     public void pushVod(RefreshEvent event) {
@@ -1553,4 +1521,33 @@ private void insertVod(String sourceKey, VodInfo vodInfo) {
       }	
       setTextShow(tvPlayUrl, "播放地址：", url);
     }
+
+// 优化后的UI刷新方法
+public void updateSeriesAdapterData() {
+    if (seriesAdapter != null && vodInfo.seriesMap.containsKey(vodInfo.playFlag)) {
+        // 使用递归重试机制确保安全执行
+        postDelayedWithRetry();
+    }
+}
+
+private void postDelayedWithRetry() {
+    if (mGridViewLayoutMgr == null || mGridView == null) {
+        // 如果LayoutManager或GridView为空，延迟重试
+        mGridView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                postDelayedWithRetry(); // 递归调用重试
+            }
+        }, 100); // 延迟100ms重试
+        return;
+    }
+    
+    // 确保在主线程中执行
+    if (vodInfo != null && vodInfo.playFlag != null) {
+        // 执行数据更新
+        if (seriesAdapter != null && vodInfo.seriesMap.containsKey(vodInfo.playFlag)) {
+            seriesAdapter.setNewData(vodInfo.seriesMap.get(vodInfo.playFlag));
+        }
+    }
+}
 }
