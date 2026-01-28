@@ -1639,14 +1639,10 @@ public class LivePlayActivity extends BaseActivity {
                     case RecyclerView.SCROLL_STATE_SETTLING: // 自动滚动开始
                         // 滚动中，禁用整个列表的焦点获取能力
                         mRightEpgList.setFocusable(false);
-                        // 新增：禁用所有可见子项的焦点
-                        disableChildFocus();
                         break;
                     case RecyclerView.SCROLL_STATE_IDLE: // 滚动停止
                         // 滚动结束，恢复整个列表的焦点获取能力
                         mRightEpgList.setFocusable(true);
-                        // 新增：恢复焦点到正确位置
-                        restoreFocusAfterScroll();
                         break;
                 }
             }
@@ -3473,30 +3469,4 @@ public class LivePlayActivity extends BaseActivity {
         }, 50);
     }
 
-// 新增辅助方法：禁用所有可见子项焦点
-private void disableChildFocus() {
-    if (mRightEpgListLayoutMgr == null) return;
-    
-    int firstVisible = mRightEpgListLayoutMgr.findFirstVisibleItemPosition();
-    int lastVisible = mRightEpgListLayoutMgr.findLastVisibleItemPosition();
-    
-    for (int i = firstVisible; i <= lastVisible; i++) {
-        View itemView = mRightEpgListLayoutMgr.findViewByPosition(i);
-        if (itemView != null) {
-            itemView.setFocusable(false);
-        }
-    }
-}
-
-// 新增辅助方法：滚动结束后恢复焦点
-private void restoreFocusAfterScroll() {
-    if (epgListAdapter == null || mRightEpgListLayoutMgr == null) return;
-        mRightEpgList.postDelayed(() -> {
-            View itemView = mRightEpgListLayoutMgr.findViewByPosition(selectedPos);
-            if (itemView != null) {
-                // 恢复子项焦点能力
-                itemView.setFocusable(true);
-            }
-        }, 50);
-    }
 }
