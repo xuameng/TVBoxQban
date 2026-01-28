@@ -1609,7 +1609,7 @@ public class LivePlayActivity extends BaseActivity {
         mRightEpgList.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
         // xuameng获取 LayoutManager 并初始化平滑滚动器  开始
         mRightEpgListLayoutMgr = (V7LinearLayoutManager) mRightEpgList.getLayoutManager();
-            // xuameng初始化平滑滚动器
+        // xuameng初始化平滑滚动器
         smoothScrollerEpg = new LinearSmoothScroller(this) {
             @Override
             protected float calculateSpeedPerPixel(DisplayMetrics displayMetrics) {
@@ -1631,7 +1631,17 @@ public class LivePlayActivity extends BaseActivity {
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 mHideChannelListRunXu();
-                if(newState == mRightEpgList.SCROLL_STATE_IDLE) {
+                // xuameng新增：根据滚动状态控制焦点  防止TV端EPG焦点乱跳
+                switch (newState) {
+                    case RecyclerView.SCROLL_STATE_DRAGGING: // 用户拖动开始
+                    case RecyclerView.SCROLL_STATE_SETTLING: // 自动滚动开始
+                        // 滚动中，禁用整个列表的焦点获取能力
+                        mRightEpgList.setFocusable(false);
+                        break;
+                    case RecyclerView.SCROLL_STATE_IDLE: // 滚动停止
+                        // 滚动结束，恢复整个列表的焦点获取能力
+                        mRightEpgList.setFocusable(true);
+                        break;
                 }
             }
         });
