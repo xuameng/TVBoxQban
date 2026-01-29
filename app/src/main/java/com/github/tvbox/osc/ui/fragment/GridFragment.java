@@ -49,7 +49,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.graphics.Rect;
-
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * @author pj567
@@ -240,6 +240,8 @@ mGridView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             }
         }
     }
+
+});
 	    // 辅助方法：判断一个子视图是否在RecyclerView的可见区域内
     private boolean isViewVisibleInRecyclerView(RecyclerView recyclerView, View child) {
         Rect childRect = new Rect();
@@ -248,7 +250,6 @@ mGridView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
         recyclerView.getGlobalVisibleRect(recyclerRect);
         return recyclerRect.contains(childRect);
     }
-});
 
         gridAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
