@@ -48,10 +48,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.graphics.Rect;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.annotation.NonNull;
-
 /**
  * @author pj567
  * @date :2020/12/21
@@ -223,34 +219,6 @@ public class GridFragment extends BaseLazyFragment {
                 return false;
             }
         });
-
-// 在initView()方法中添加以下代码
-mGridView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-    @Override
-    public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-        super.onScrollStateChanged(recyclerView, newState);
-        handleFocusAfterScroll();
-    }
-
-    @Override
-    public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-        super.onScrolled(recyclerView, dx, dy);
-        // 在滚动过程中也可以检查焦点
-        handleFocusAfterScroll();
-    }
-});
-
-// 焦点变化监听
-mGridView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-    @Override
-    public void onFocusChange(View v, boolean hasFocus) {
-        if (!hasFocus) {
-            handleFocusLoss();
-        }
-    }
-});
-
-
         gridAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
@@ -457,44 +425,4 @@ mGridView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
         page = 1;
         initData();
     }
-
-// 处理滚动后的焦点
-private void handleFocusAfterScroll() {
-    View focusedView = mGridView.getFocusedChild();
-    if (focusedView != null && !isViewVisibleInRecyclerView(mGridView, focusedView)) {
-        // 延迟处理，避免在滚动过程中立即改变焦点
-        mGridView.post(new Runnable() {
-            @Override
-            public void run() {
-                mGridView.requestFocus();
-            }
-        });
-    }
 }
-
-// 处理焦点丢失
-private void handleFocusLoss() {
-    // 检查是否有子项仍然持有焦点
-    View focusedChild = mGridView.getFocusedChild();
-    if (focusedChild != null && !isViewVisibleInRecyclerView(mGridView, focusedChild)) {
-        mGridView.requestFocus();
-    }
-}
-
-// 辅助方法：判断视图是否在RecyclerView的可见区域内
-private boolean isViewVisibleInRecyclerView(TvRecyclerView recyclerView, View child) {
-    if (child == null || recyclerView == null) return false;
-    
-    Rect childRect = new Rect();
-    boolean isChildVisible = child.getGlobalVisibleRect(childRect);
-    if (!isChildVisible) return false;
-    
-    Rect recyclerRect = new Rect();
-    recyclerView.getGlobalVisibleRect(recyclerRect);
-    
-    // 检查子视图是否至少有一部分在RecyclerView的可见区域内
-    return Rect.intersects(childRect, recyclerRect);
-}
-}
-
-
