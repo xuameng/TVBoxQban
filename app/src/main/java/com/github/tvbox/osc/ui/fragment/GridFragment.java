@@ -50,6 +50,7 @@ import org.json.JSONObject;
 
 import android.graphics.Rect;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.annotation.NonNull;
 
 /**
  * @author pj567
