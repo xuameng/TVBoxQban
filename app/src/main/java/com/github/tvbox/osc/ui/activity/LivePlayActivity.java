@@ -914,6 +914,10 @@ public class LivePlayActivity extends BaseActivity {
             if(mHandler != null) {
                 mHandler.removeCallbacksAndMessages(null);
             }
+            // 清理 View 的延迟任务
+            if (mRightEpgList != null) {
+                mRightEpgList.removeCallbacksAndMessages(null);
+            }
             OkGo.getInstance().cancelTag("xuameng");
             if(countDownTimer != null) {
                countDownTimer.cancel();
@@ -982,6 +986,10 @@ public class LivePlayActivity extends BaseActivity {
         MxuamengMusic.setVisibility(View.GONE); //xuameng播放音乐背景
         if(mHandler != null) {
             mHandler.removeCallbacksAndMessages(null);
+        }
+        // 清理 View 的延迟任务
+        if (mRightEpgList != null) {
+            mRightEpgList.removeCallbacksAndMessages(null);
         }
         OkGo.getInstance().cancelTag("xuameng");
         if(countDownTimer != null) {
@@ -1249,6 +1257,13 @@ public class LivePlayActivity extends BaseActivity {
         if(countDownTimer != null) {
            countDownTimer.cancel();
            countDownTimer = null;
+        }
+        if(mHandler != null) {
+            mHandler.removeCallbacksAndMessages(null);
+        }
+        // 清理 View 的延迟任务
+        if (mRightEpgList != null) {
+            mRightEpgList.removeCallbacksAndMessages(null);
         }
         OkGo.getInstance().cancelTag("xuameng");
     }
@@ -2216,6 +2231,22 @@ public class LivePlayActivity extends BaseActivity {
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {}
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
+
+                // xuameng边界判断逻辑
+                if (position == liveChannelGroupList.size() - 1) { // xuameng判断是否是最后一个频道组
+                    itemView.setId(View.generateViewId());
+                    itemView.setNextFocusDownId(itemView.getId()); // 不超出item
+                } else {
+                    itemView.setNextFocusDownId(View.NO_ID);
+                }
+        
+                if (position == 0) { // xuameng判断是否是第一个频道组
+                    itemView.setId(View.generateViewId());
+                    itemView.setNextFocusUpId(itemView.getId()); // 不超出item
+                } else {
+                    itemView.setNextFocusUpId(View.NO_ID);
+                }
+
                 selectChannelGroup(position, true, -1); //xuameng频道组
             }
             @Override
@@ -2276,11 +2307,19 @@ public class LivePlayActivity extends BaseActivity {
                 isTouch = false;
                 if(position < 0) return;
                 int channelGroupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex(); //xuameng当前选定的频道组
-                if(position == getLiveChannels(channelGroupIndexXu).size() - 1) { //xuameng判断是否是最后一个item
+
+                // xuameng边界判断逻辑
+                if(position == getLiveChannels(channelGroupIndexXu).size() - 1) { //xuameng判断是否是最后一个频道
                     itemView.setId(View.generateViewId());
-                    itemView.setNextFocusDownId(itemView.getId()); //xuameng不超出item
+                    itemView.setNextFocusDownId(itemView.getId()); //xuameng不超出最后一个频道
                 } else {
                     itemView.setNextFocusDownId(View.NO_ID);
+                }
+                if (position == 0){   //xuameng判断是否是第一个频道
+                    itemView.setId(View.generateViewId());
+                    itemView.setNextFocusUpId(itemView.getId()); //xuameng第一个频道
+                } else {
+                    itemView.setNextFocusUpId(View.NO_ID);
                 }
                 liveChannelGroupAdapter.setFocusedGroupIndex(-1);
                 liveChannelItemAdapter.setFocusedChannelIndex(position);
@@ -3443,30 +3482,42 @@ public class LivePlayActivity extends BaseActivity {
      * xuameng确保 EPG 列表一定滚动的核心方法
      * 参考 DetailActivity.java 中的 customSeriesScrollPos 实现
      */
+    private Runnable delayedScrollTask;
+
     private void customEpgScrollPos(int targetPos) {    // xuameng使用优化后的滚动方法
+        // 取消之前的延迟任务（如果存在）
+        if (delayedScrollTask != null) {
+            mRightEpgList.removeCallbacks(delayedScrollTask);
+        }
+    
         // 如果 LayoutManager 为空，延迟重试
         if (mRightEpgListLayoutMgr == null || mRightEpgList == null) {
-            mRightEpgList.postDelayed(new Runnable() {
+            delayedScrollTask = new Runnable() {
                 @Override
                 public void run() {
                     customEpgScrollPos(targetPos);
                 }
-            }, 100); // 延迟100ms重试
+            };
+            mRightEpgList.postDelayed(delayedScrollTask, 100);
             return;
         }
     
         // 正常执行滚动逻辑
-        // 先快速滚动到目标位置附近（留出10个item的缓冲）
-        mRightEpgListLayoutMgr.scrollToPositionWithOffset(targetPos > 5 ? targetPos - 5 : 0, 0);   //xuameng 数越小越近
+        // 先快速滚动到目标位置附近（留出5个item的缓冲）
+        mRightEpgListLayoutMgr.scrollToPositionWithOffset(targetPos > 5 ? targetPos - 5 : 0, 0);    //xuameng 数越小越近
     
         // 延迟执行平滑滚动到精确位置
-        mRightEpgList.postDelayed(() -> {
-            if (mRightEpgListLayoutMgr != null && smoothScrollerEpg != null) {
-                smoothScrollerEpg.setTargetPosition(targetPos);
-                mRightEpgListLayoutMgr.startSmoothScroll(smoothScrollerEpg);
-                mRightEpgList.smoothScrollToPosition(targetPos);
+        delayedScrollTask = new Runnable() {
+            @Override
+            public void run() {
+                if (mRightEpgListLayoutMgr != null && smoothScrollerEpg != null) {
+                    smoothScrollerEpg.setTargetPosition(targetPos);
+                    mRightEpgListLayoutMgr.startSmoothScroll(smoothScrollerEpg);
+                    mRightEpgList.smoothScrollToPosition(targetPos);
+                }
             }
-        }, 50);
+        };
+        mRightEpgList.postDelayed(delayedScrollTask, 50);
     }
 
 }
