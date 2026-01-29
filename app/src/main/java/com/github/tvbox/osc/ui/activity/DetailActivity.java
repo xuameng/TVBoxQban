@@ -989,23 +989,20 @@ public class DetailActivity extends BaseActivity {
                         mGridViewFlag.scrollToPosition(flagScrollTo);
 
                         refreshList();   //xuameng返回键、长按播放刷新滚动到剧集
+
                         mGridView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                            @Override
-                                public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                                    super.onScrollStateChanged(recyclerView, newState);
-                                    if (newState == mGridView.SCROLL_STATE_IDLE) {   //xuameng剧集滚动完成后焦点选择为剧集
-                                        // 滚动已经停止，执行你需要的操作
-                                        //	mGridView.requestFocus();
+                        @Override
+                            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                                super.onScrollStateChanged(recyclerView, newState);
+                                if (newState == RecyclerView.SCROLL_STATE_IDLE) {   //xuameng剧集滚动完成后焦点选择为剧集
+                                    // 滚动已经停止，执行焦点设置操作
+                                    mGridView.post(() -> {
                                         mGridView.setSelection(vodInfo.playIndex);
-                                        mGridView.removeOnScrollListener(this);    //xuameng删除滚动监听
-                                    }
+                                    });
+                                    mGridView.removeOnScrollListener(this);    //xuameng删除滚动监听
                                 }
+                            }
                        });
-                       if(mGridView.isScrolling() || mGridView.isComputingLayout()) {
-                       }else{
-                           //mGridView.requestFocus();  //xuameng如果不满足滚动条件直接获得焦点
-                           mGridView.setSelection(vodInfo.playIndex);
-                       }
 
                        tvPlay.setNextFocusUpId(R.id.mGridView);   //xuameng上面焦点是选剧集
                        tvQuickSearch.setNextFocusUpId(R.id.mGridView); 
@@ -1593,21 +1590,16 @@ public class DetailActivity extends BaseActivity {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                if (newState == mGridView.SCROLL_STATE_IDLE) {
-                    mGridView.setSelection(vodInfo.playIndex);
-                    mGridView.removeOnScrollListener(this);
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {   //xuameng剧集滚动完成后焦点选择为剧集
+                    // 滚动已经停止，执行焦点设置操作
+                    mGridView.post(() -> {
+                        mGridView.setSelection(vodInfo.playIndex);
+                    });
+                    mGridView.removeOnScrollListener(this);    //xuameng删除滚动监听
                 }
             }
-        });
-    
-        // 4. 立即检查是否需要直接执行选择（避免滚动不触发）
-        if (!mGridView.isScrolling() && !mGridView.isComputingLayout()) {
-            // 如果当前没有滚动且没有计算布局，则直接执行选择
-            mGridView.setSelection(vodInfo.playIndex);
-        } else {
-            // 如果正在滚动或计算布局，则等待滚动完成后再执行
-            // 上面的监听器会处理这种情况
-        }    
+        });  
+		
         App.showToastShort(DetailActivity.this, "已滚动到当前播放剧集！");
     }
 
