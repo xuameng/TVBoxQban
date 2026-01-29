@@ -991,7 +991,7 @@ public class DetailActivity extends BaseActivity {
                         refreshList();   //xuameng返回键、长按播放刷新滚动到剧集
 
                         mGridView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                        @Override
+                            @Override
                             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                                 super.onScrollStateChanged(recyclerView, newState);
                                 if (newState == RecyclerView.SCROLL_STATE_IDLE) {   //xuameng剧集滚动完成后焦点选择为剧集
