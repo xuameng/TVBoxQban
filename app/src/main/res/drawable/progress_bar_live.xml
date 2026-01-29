@@ -1,0 +1,58 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 背景层 -->
+    <item android:id="@android:id/background">
+        <shape>
+            <corners android:radius="5dip"/>
+            <gradient
+                android:startColor="#ff9d9e9d"
+                android:centerColor="#ff333333"
+                android:centerY="0.75"
+                android:endColor="#ff747674"
+                android:angle="270"/>
+        </shape>
+    </item>
+    
+    <!-- 次要进度层（可选，保持原样） -->
+    <item android:id="@android:id/secondaryProgress">
+        <clip>
+            <shape>
+                <corners android:radius="5dip"/>
+                <gradient
+                    android:startColor="#33ffd300"
+                    android:centerColor="#4dffb600"
+                    android:centerY="0.75"
+                    android:endColor="#33ffcb00"
+                    android:angle="270"/>
+            </shape>
+        </clip>
+    </item>
+    
+    <!-- 主进度层（修改为单向加载效果） -->
+    <item android:id="@android:id/progress">
+        <clip>
+            <shape>
+                <corners android:radius="5dip"/>
+                <!-- 修改渐变方向为水平，实现从左到右的加载效果 -->
+                <gradient
+                    android:startColor="#ffffd300"
+                    android:centerColor="#ffb66a00"
+                    android:endColor="#ffffcb00"
+                    android:angle="0"/> <!-- 角度改为0度，水平渐变 -->
+            </shape>
+        </clip>
+    </item>
+    
+    <!-- 新增：加载动画层（可选，增强视觉效果） -->
+    <item>
+        <scale 
+            android:scaleWidth="100%"
+            android:scaleGravity="left">
+            <shape>
+                <gradient
+                    android:startColor="#80ffffff" <!-- 半透明白色 -->
+                    android:endColor="#00ffffff" <!-- 完全透明 -->
+                    android:angle="0"/>
+            </shape>
+        </scale>
+    </item>
+</layer-list>
