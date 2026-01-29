@@ -914,10 +914,6 @@ public class LivePlayActivity extends BaseActivity {
             if(mHandler != null) {
                 mHandler.removeCallbacksAndMessages(null);
             }
-            // 清理 View 的延迟任务
-            if (mRightEpgList != null) {
-                mRightEpgList.removeCallbacksAndMessages(null);
-            }
             OkGo.getInstance().cancelTag("xuameng");
             if(countDownTimer != null) {
                countDownTimer.cancel();
@@ -986,10 +982,6 @@ public class LivePlayActivity extends BaseActivity {
         MxuamengMusic.setVisibility(View.GONE); //xuameng播放音乐背景
         if(mHandler != null) {
             mHandler.removeCallbacksAndMessages(null);
-        }
-        // 清理 View 的延迟任务
-        if (mRightEpgList != null) {
-            mRightEpgList.removeCallbacksAndMessages(null);
         }
         OkGo.getInstance().cancelTag("xuameng");
         if(countDownTimer != null) {
@@ -1260,10 +1252,6 @@ public class LivePlayActivity extends BaseActivity {
         }
         if(mHandler != null) {
             mHandler.removeCallbacksAndMessages(null);
-        }
-        // 清理 View 的延迟任务
-        if (mRightEpgList != null) {
-            mRightEpgList.removeCallbacksAndMessages(null);
         }
         OkGo.getInstance().cancelTag("xuameng");
     }
