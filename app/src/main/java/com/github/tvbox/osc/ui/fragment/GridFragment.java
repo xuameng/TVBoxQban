@@ -48,6 +48,9 @@ import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.graphics.Rect;
+import androidx.annotation.NonNull;
+
 /**
  * @author pj567
  * @date :2020/12/21
@@ -219,6 +222,36 @@ public class GridFragment extends BaseLazyFragment {
                 return false;
             }
         });
+
+mGridView.addOnScrollListener(new TvRecyclerView.OnScrollListener() {
+    @Override
+    public void onScrollStateChanged(@NonNull TvRecyclerView recyclerView, int newState) {
+        super.onScrollStateChanged(recyclerView, newState);
+        if (newState == TvRecyclerView.SCROLL_STATE_IDLE) {
+            // 滚动停止后检查焦点项是否可见
+            View focusedView = recyclerView.getFocusedChild();
+            if (focusedView != null) {
+                // 判断focusedView是否还在屏幕可见范围内
+                if (!isViewVisibleInRecyclerView(recyclerView, focusedView)) {
+                    // 方案A: 清除焦点，屏幕上无焦点项
+                 //   focusedView.clearFocus();
+                    // 方案B: 将焦点还给RecyclerView本身
+                     recyclerView.requestFocus();
+                }
+            }
+        }
+    }
+
+    // 辅助方法：判断一个子视图是否在RecyclerView的可见区域内
+    private boolean isViewVisibleInRecyclerView(TvRecyclerView recyclerView, View child) {
+        Rect childRect = new Rect();
+        child.getGlobalVisibleRect(childRect);
+        Rect recyclerRect = new Rect();
+        recyclerView.getGlobalVisibleRect(recyclerRect);
+        return recyclerRect.contains(childRect);
+    }
+});
+
         gridAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
