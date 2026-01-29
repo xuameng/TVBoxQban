@@ -3481,7 +3481,7 @@ private void customEpgScrollPos(int targetPos) {    // xuameng使用优化后的
     
     // 取消正在进行的平滑滚动
     if (mRightEpgListLayoutMgr != null) {
-        mRightEpgListLayoutMgr.stopSmoothScroll();
+        mRightEpgListLayoutMgr.stopScroll();
     }
     if (mRightEpgList != null) {
         mRightEpgList.stopScroll();
