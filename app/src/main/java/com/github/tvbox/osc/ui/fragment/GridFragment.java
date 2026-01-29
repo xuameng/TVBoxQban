@@ -48,6 +48,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import androidx.recyclerview.widget.RecyclerView;
 import android.graphics.Rect;
 import androidx.annotation.NonNull;
 
@@ -223,11 +224,11 @@ public class GridFragment extends BaseLazyFragment {
             }
         });
 
-mGridView.addOnScrollListener(new TvRecyclerView.OnScrollListener() {
+mGridView.addOnScrollListener(new RecyclerView.OnScrollListener() {
     @Override
-    public void onScrollStateChanged(@NonNull TvRecyclerView recyclerView, int newState) {
+    public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
         super.onScrollStateChanged(recyclerView, newState);
-        if (newState == TvRecyclerView.SCROLL_STATE_IDLE) {
+        if (newState == RecyclerView.SCROLL_STATE_IDLE) {
             // 滚动停止后检查焦点项是否可见
             View focusedView = recyclerView.getFocusedChild();
             if (focusedView != null) {
@@ -243,7 +244,7 @@ mGridView.addOnScrollListener(new TvRecyclerView.OnScrollListener() {
     }
 
     // 辅助方法：判断一个子视图是否在RecyclerView的可见区域内
-    private boolean isViewVisibleInRecyclerView(TvRecyclerView recyclerView, View child) {
+    private boolean isViewVisibleInRecyclerView(RecyclerView recyclerView, View child) {
         Rect childRect = new Rect();
         child.getGlobalVisibleRect(childRect);
         Rect recyclerRect = new Rect();
