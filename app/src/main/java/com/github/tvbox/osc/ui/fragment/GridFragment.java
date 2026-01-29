@@ -242,14 +242,7 @@ mGridView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
     }
 
 });
-	    // 辅助方法：判断一个子视图是否在RecyclerView的可见区域内
-    private boolean isViewVisibleInRecyclerView(RecyclerView recyclerView, View child) {
-        Rect childRect = new Rect();
-        child.getGlobalVisibleRect(childRect);
-        Rect recyclerRect = new Rect();
-        recyclerView.getGlobalVisibleRect(recyclerRect);
-        return recyclerRect.contains(childRect);
-    }
+
 
         gridAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
@@ -456,5 +449,14 @@ mGridView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
     public void forceRefresh() {
         page = 1;
         initData();
+    }
+
+		    // 辅助方法：判断一个子视图是否在RecyclerView的可见区域内
+    private boolean isViewVisibleInRecyclerView(RecyclerView recyclerView, View child) {
+        Rect childRect = new Rect();
+        child.getGlobalVisibleRect(childRect);
+        Rect recyclerRect = new Rect();
+        recyclerView.getGlobalVisibleRect(recyclerRect);
+        return recyclerRect.contains(childRect);
     }
 }
