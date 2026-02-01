@@ -926,7 +926,6 @@ public class LivePlayActivity extends BaseActivity {
             releaseVisualizer();  //xuameng音乐播放动画
             App.HideToast();  //xuameng HideToast
             cancelxToast();
-			finish();
             super.onBackPressed();
         } else {
             mExitTime = System.currentTimeMillis();
@@ -996,7 +995,6 @@ public class LivePlayActivity extends BaseActivity {
         releaseVisualizer();  //xuameng音乐播放动画
         App.HideToast();  //xuameng HideToast
         cancelxToast();
-		finish();
         super.onBackPressed();
     }
     private final Runnable mPlaySelectedChannel = new Runnable() {
