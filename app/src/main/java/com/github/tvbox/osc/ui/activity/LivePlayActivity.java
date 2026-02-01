@@ -1393,6 +1393,7 @@ public class LivePlayActivity extends BaseActivity {
         }
         if(mVideoView == null) return true; //XUAMENG可能会引起空指针问题的修复
         mVideoView.release(); //XUAMENG可能会引起空指针问题的修复
+		mVideoView.replay(true);
         if(!changeSource) {
             currentChannelGroupIndex = channelGroupIndex;
             currentLiveChannelIndex = liveChannelIndex;
