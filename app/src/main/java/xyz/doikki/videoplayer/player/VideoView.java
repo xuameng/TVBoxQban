@@ -217,7 +217,7 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
         }
         initPlayer();
         addDisplay();
-        startPrepare(false);
+        startPrepare(true);
         return true;
     }
 
