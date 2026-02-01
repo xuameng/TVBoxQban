@@ -238,9 +238,6 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     public void release() {
         if (mMediaPlayer != null) {
             mMediaPlayer.removeListener(this);
-            mMediaPlayer.stop();
-            mMediaPlayer.clearMediaItems();
-            mMediaPlayer.setVideoSurface(null);
             mMediaPlayer.release();
             mMediaPlayer = null;
         }
@@ -359,7 +356,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
         String progressKey = Hawk.get(HawkConfig.EXO_PROGRESS_KEY, "");
         errorCode = error.errorCode;
         Log.e("EXOPLAYER", "" + error.errorCode);      //xuameng音频出错后尝试重播
-        if (errorCode == 5001 || errorCode == 5002 || errorCode == 4001 || errorCode == 4002 || errorCode == 4003){
+        if (errorCode == 5001 || errorCode == 5002 || errorCode == 4001){
             boolean exoDecodeXu = Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false);
             int exoSelectXu = Hawk.get(HawkConfig.EXO_PLAY_SELECTCODE, 0);
             if (exoSelectXu == 1) {
@@ -387,7 +384,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
         }
         // ====== 新增结束 ======
 
-        if (errorCode == 3003 || errorCode == 3001 || errorCode == 2000) {   //出现错误直播用M3U8方式解码
+        if (errorCode == 3003 || errorCode == 3001 || errorCode == 2000 || errorCode == 4003) {   //出现错误直播用M3U8方式解码
             if (mRetryCount < MAX_RETRY_COUNT) {                // xuameng检查是否超过最大重试次数
                 mRetryCount++;                                  // xuameng未超过，执行重试 增加重试计数
                 if (mMediaPlayer != null) {                        // xuameng重置播放器状态
