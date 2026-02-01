@@ -238,6 +238,9 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     public void release() {
         if (mMediaPlayer != null) {
             mMediaPlayer.removeListener(this);
+            mMediaPlayer.stop();
+            mMediaPlayer.clearMediaItems();
+            mMediaPlayer.setVideoSurface(null);
             mMediaPlayer.release();
             mMediaPlayer = null;
         }
