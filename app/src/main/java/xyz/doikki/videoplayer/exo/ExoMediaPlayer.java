@@ -75,7 +75,11 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
         if (mMediaPlayer != null) {
             mMediaPlayer.removeListener(this);
             mMediaPlayer.release();
+			mMediaPlayer.setVideoSurface(null);
+			mMediaPlayer.clearMediaItems();
         }
+
+		
         // xuameng渲染器配置
         boolean exoDecode = Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false);
         int exoSelect = Hawk.get(HawkConfig.EXO_PLAY_SELECTCODE, 0);
@@ -109,8 +113,8 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
             // 内存小于等于2G时使用低内存策略
             mLoadControl = new DefaultLoadControl.Builder()
                 .setBufferDurationsMs(
-                    15000,    // minBufferMs - 减小最小缓冲时间
-                    30000,   // maxBufferMs - 减小最大缓冲时间
+                    1000,    // minBufferMs - 减小最小缓冲时间
+                    1000,   // maxBufferMs - 减小最大缓冲时间
                     3000,    // bufferForPlaybackMs - 减小播放前缓冲时间
                     5000     // bufferForPlaybackAfterRebufferMs - 减小重新缓冲后缓冲时间
                 )
