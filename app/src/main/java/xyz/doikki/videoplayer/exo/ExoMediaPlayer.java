@@ -70,16 +70,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     }
 
     @Override
-    public void initPlayer() {
-        // xuameng释放旧实例
-        if (mMediaPlayer != null) {
-            mMediaPlayer.removeListener(this);
-            mMediaPlayer.release();
-			mMediaPlayer.setVideoSurface(null);
-			mMediaPlayer.clearMediaItems();
-        }
-
-		
+    public void initPlayer() {	
         // xuameng渲染器配置
         boolean exoDecode = Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false);
         int exoSelect = Hawk.get(HawkConfig.EXO_PLAY_SELECTCODE, 0);
@@ -241,7 +232,10 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     @Override
     public void release() {
         if (mMediaPlayer != null) {
+            mMediaPlayer.stop();
             mMediaPlayer.removeListener(this);
+            mMediaPlayer.clearMediaItems();
+            mMediaPlayer.setVideoSurface(null);
             mMediaPlayer.release();
             mMediaPlayer = null;
         }
