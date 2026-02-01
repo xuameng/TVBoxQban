@@ -108,7 +108,7 @@ public class TextureRenderView extends TextureView implements IRenderView, Textu
 
     @Override
     public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
-        return true;
+        return false;
     }
 
     @Override
