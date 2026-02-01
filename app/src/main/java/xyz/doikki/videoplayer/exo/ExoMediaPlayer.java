@@ -70,7 +70,12 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     }
 
     @Override
-    public void initPlayer() {	
+    public void initPlayer() {
+        // xuameng释放旧实例
+        if (mMediaPlayer != null) {
+            mMediaPlayer.removeListener(this);
+            mMediaPlayer.release();
+        }
         // xuameng渲染器配置
         boolean exoDecode = Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false);
         int exoSelect = Hawk.get(HawkConfig.EXO_PLAY_SELECTCODE, 0);
@@ -104,10 +109,10 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
             // 内存小于等于2G时使用低内存策略
             mLoadControl = new DefaultLoadControl.Builder()
                 .setBufferDurationsMs(
-                    1000,    // minBufferMs - 减小最小缓冲时间
-                    1500,   // maxBufferMs - 减小最大缓冲时间
-                    500,    // bufferForPlaybackMs - 减小播放前缓冲时间
-                    900     // bufferForPlaybackAfterRebufferMs - 减小重新缓冲后缓冲时间
+                    15000,    // minBufferMs - 减小最小缓冲时间
+                    30000,   // maxBufferMs - 减小最大缓冲时间
+                    3000,    // bufferForPlaybackMs - 减小播放前缓冲时间
+                    5000     // bufferForPlaybackAfterRebufferMs - 减小重新缓冲后缓冲时间
                 )
                 .setTargetBufferBytes(30 * 1024 * 1024)  // 设置目标缓冲字节数为30MB
                 .setPrioritizeTimeOverSizeThresholds(false)  // 优先考虑字节数阈值
@@ -232,10 +237,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     @Override
     public void release() {
         if (mMediaPlayer != null) {
-            mMediaPlayer.stop();
             mMediaPlayer.removeListener(this);
-            mMediaPlayer.clearMediaItems();
-            mMediaPlayer.setVideoSurface(null);
             mMediaPlayer.release();
             mMediaPlayer = null;
         }
@@ -354,7 +356,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
         String progressKey = Hawk.get(HawkConfig.EXO_PROGRESS_KEY, "");
         errorCode = error.errorCode;
         Log.e("EXOPLAYER", "" + error.errorCode);      //xuameng音频出错后尝试重播
-        if (errorCode == 5001 || errorCode == 5002 || errorCode == 4001){
+        if (errorCode == 5001 || errorCode == 5002 || errorCode == 4001 || errorCode == 4002 || errorCode == 4003){
             boolean exoDecodeXu = Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false);
             int exoSelectXu = Hawk.get(HawkConfig.EXO_PLAY_SELECTCODE, 0);
             if (exoSelectXu == 1) {
@@ -382,7 +384,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
         }
         // ====== 新增结束 ======
 
-        if (errorCode == 3003 || errorCode == 3001 || errorCode == 2000 || errorCode == 4003) {   //出现错误直播用M3U8方式解码
+        if (errorCode == 3003 || errorCode == 3001 || errorCode == 2000) {   //出现错误直播用M3U8方式解码
             if (mRetryCount < MAX_RETRY_COUNT) {                // xuameng检查是否超过最大重试次数
                 mRetryCount++;                                  // xuameng未超过，执行重试 增加重试计数
                 if (mMediaPlayer != null) {                        // xuameng重置播放器状态
