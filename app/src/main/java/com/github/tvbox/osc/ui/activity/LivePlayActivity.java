@@ -926,6 +926,7 @@ public class LivePlayActivity extends BaseActivity {
             releaseVisualizer();  //xuameng音乐播放动画
             App.HideToast();  //xuameng HideToast
             cancelxToast();
+			finish();
             super.onBackPressed();
         } else {
             mExitTime = System.currentTimeMillis();
@@ -995,6 +996,7 @@ public class LivePlayActivity extends BaseActivity {
         releaseVisualizer();  //xuameng音乐播放动画
         App.HideToast();  //xuameng HideToast
         cancelxToast();
+		finish();
         super.onBackPressed();
     }
     private final Runnable mPlaySelectedChannel = new Runnable() {
@@ -3472,58 +3474,58 @@ public class LivePlayActivity extends BaseActivity {
      */
     private Runnable delayedScrollTask;
 
-private void customEpgScrollPos(int targetPos) {    // xuameng使用优化后的滚动方法
-    // 取消之前的延迟任务（如果存在）
-    if (delayedScrollTask != null) {
-        mRightEpgList.removeCallbacks(delayedScrollTask);
-        delayedScrollTask = null;
-    }
-    
-    if (mRightEpgList != null) {
-        mRightEpgList.stopScroll();
-    }
-    
-    // 新增：检查滚动状态，如果正在滚动则延迟执行
-    if (mRightEpgList.isComputingLayout() || mRightEpgList.isScrolling()) {
-        // 如果正在滚动，则延迟100ms后重试
-        delayedScrollTask = new Runnable() {
-            @Override
-            public void run() {
-                customEpgScrollPos(targetPos);
-            }
-        };
-        mRightEpgList.postDelayed(delayedScrollTask, 100);
-        return;
-    }
-    
-    // 如果 LayoutManager 为空，延迟重试
-    if (mRightEpgListLayoutMgr == null || mRightEpgList == null) {
-        delayedScrollTask = new Runnable() {
-            @Override
-            public void run() {
-                customEpgScrollPos(targetPos);
-            }
-        };
-        mRightEpgList.postDelayed(delayedScrollTask, 100);
-        return;
-    }
-    
-    // 正常执行滚动逻辑
-    // 先快速滚动到目标位置附近（留出5个item的缓冲）
-    mRightEpgListLayoutMgr.scrollToPositionWithOffset(targetPos > 5 ? targetPos - 5 : 0, 0);    //xuameng 数越小越近
-    
-    // 延迟执行平滑滚动到精确位置
-    delayedScrollTask = new Runnable() {
-        @Override
-        public void run() {
-            if (mRightEpgListLayoutMgr != null && smoothScrollerEpg != null) {
-                smoothScrollerEpg.setTargetPosition(targetPos);
-                mRightEpgListLayoutMgr.startSmoothScroll(smoothScrollerEpg);
-                mRightEpgList.smoothScrollToPosition(targetPos);
-            }
+    private void customEpgScrollPos(int targetPos) {    // xuameng使用优化后的滚动方法
+        // 取消之前的延迟任务（如果存在）
+        if (delayedScrollTask != null) {
+            mRightEpgList.removeCallbacks(delayedScrollTask);
+            delayedScrollTask = null;
         }
-    };
-    mRightEpgList.postDelayed(delayedScrollTask, 50);
-}
+    
+        if (mRightEpgList != null) {
+            mRightEpgList.stopScroll();
+        }
+    
+        // 新增：检查滚动状态，如果正在滚动则延迟执行
+        if (mRightEpgList.isComputingLayout() || mRightEpgList.isScrolling()) {
+            // 如果正在滚动，则延迟100ms后重试
+            delayedScrollTask = new Runnable() {
+                @Override
+                public void run() {
+                    customEpgScrollPos(targetPos);
+                }
+            };
+            mRightEpgList.postDelayed(delayedScrollTask, 100);
+            return;
+        }
+    
+        // 如果 LayoutManager 为空，延迟重试
+        if (mRightEpgListLayoutMgr == null || mRightEpgList == null) {
+            delayedScrollTask = new Runnable() {
+                @Override
+                public void run() {
+                    customEpgScrollPos(targetPos);
+                }
+            };
+            mRightEpgList.postDelayed(delayedScrollTask, 100);
+            return;
+        }
+    
+        // 正常执行滚动逻辑
+        // 先快速滚动到目标位置附近（留出5个item的缓冲）
+        mRightEpgListLayoutMgr.scrollToPositionWithOffset(targetPos > 5 ? targetPos - 5 : 0, 0);    //xuameng 数越小越近
+    
+        // 延迟执行平滑滚动到精确位置
+        delayedScrollTask = new Runnable() {
+            @Override
+            public void run() {
+                if (mRightEpgListLayoutMgr != null && smoothScrollerEpg != null) {
+                    smoothScrollerEpg.setTargetPosition(targetPos);
+                    mRightEpgListLayoutMgr.startSmoothScroll(smoothScrollerEpg);
+                    mRightEpgList.smoothScrollToPosition(targetPos);
+                }
+            }
+        };
+        mRightEpgList.postDelayed(delayedScrollTask, 50);
+    }
 
 }
