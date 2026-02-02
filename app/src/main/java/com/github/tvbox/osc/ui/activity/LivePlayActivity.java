@@ -808,7 +808,6 @@ private void showBottomEpg() {
         } else {
             int selectedIndex = liveEpgDateAdapter.getSelectedIndex();
             if(selectedIndex < 0) getEpg(new Date());
-            else getEpg(liveEpgDateAdapter.getData().get(selectedIndex).getDateParamVal());
         }
         
         // 其他UI更新逻辑...
@@ -909,7 +908,6 @@ private void showBottomEpg() {
         } else {
             int selectedIndex = liveEpgDateAdapter.getSelectedIndex();
             if(selectedIndex < 0) getEpg(new Date());
-            else getEpg(liveEpgDateAdapter.getData().get(selectedIndex).getDateParamVal());
         }
     }
     }
