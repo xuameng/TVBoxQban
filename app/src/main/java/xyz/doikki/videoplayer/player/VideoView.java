@@ -28,6 +28,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import android.os.Handler;
+import android.os.Looper;
+
 import xyz.doikki.videoplayer.controller.BaseVideoController;
 import xyz.doikki.videoplayer.controller.MediaPlayerControl;
 import xyz.doikki.videoplayer.render.IRenderView;
@@ -217,7 +220,13 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
         }
         initPlayer();
         addDisplay();
-        startPrepare(false);
+
+    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+        @Override
+        public void run() {
+            startPrepare(false);
+        }
+    }, 2000); 
         return true;
     }
 
@@ -275,10 +284,10 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
      * 初始化视频渲染View
      */
     protected void addDisplay() {
-      //  if (mRenderView != null) {
-      //      mPlayerContainer.removeView(mRenderView.getView());
-      //      mRenderView.release();
-      //  }
+        if (mRenderView != null) {
+            mPlayerContainer.removeView(mRenderView.getView());
+            mRenderView.release();
+        }
 		String cleanUrl = mUrl.split("\\?")[0];
 		if (cleanUrl.endsWith(".mp3") || cleanUrl.endsWith(".m4a") || cleanUrl.endsWith(".wma") || cleanUrl.endsWith(".wav") || cleanUrl.endsWith(".flac") || cleanUrl.endsWith(".aac") || cleanUrl.endsWith(".mid")) {
 			return;      //xuameng如果是上述音频文件执行
