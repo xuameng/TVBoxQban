@@ -117,32 +117,51 @@ public class VodController extends BaseController {
                         break;
                     }
                     case 1005: { // 隐藏底部菜单Xu
-                        ObjectAnimator animator3 = ObjectAnimator.ofFloat(mBottomRoot, "translationY", -0, 700); //xuameng向下划出屏外
-                        animator3.setDuration(300); //xuameng动画菜单        
-                        animator3.addListener(new AnimatorListenerAdapter() {
-                            @Override
-                            public void onAnimationStart(Animator animation) {
-                                super.onAnimationStart(animation);
-                                MxuamengView.setVisibility(VISIBLE); //xuameng动画开始防点击
-                                isAnimation = true;
-                            }
-                            public void onAnimationEnd(Animator animation) {
-                                super.onAnimationEnd(animation);
-                                mBottomRoot.setVisibility(GONE); //动画结束后隐藏下菜单
-                                mTopRoot1.setVisibility(GONE); //动画结束后隐藏上菜单
-                                mTopRoot2.setVisibility(GONE); //动画结束后隐藏上菜单
-                                MxuamengView.setVisibility(GONE); //xuameng动画结束可点击
-                                isAnimation = false;
-                            }
-                        });
-                        animator3.start(); //XUAMENG隐藏底部菜单结束                        
-                        ObjectAnimator animator4 = ObjectAnimator.ofFloat(mTopRoot1, "translationY", 0, -700); //xuameng向上划出屏外
-                        animator4.setDuration(300); //xuameng动画菜单				
-                        animator4.start(); //XUAMENG隐藏上面菜单1结束
-                        ObjectAnimator animator5 = ObjectAnimator.ofFloat(mTopRoot2, "translationY", 0, -700); //xuameng向上划出屏外
-                        animator5.setDuration(300);
-                        animator5.start(); //XUAMENG隐藏上面菜单2结束
-                        backBtn.setVisibility(INVISIBLE); //返回键隐藏菜单						
+     // 底部视图滑出动画
+    mBottomRoot.animate()
+            .translationY(700)
+            .alpha(0.0f)
+            .setDuration(300)
+            .setInterpolator(new DecelerateInterpolator())
+            .setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+                    super.onAnimationStart(animation);
+                    MxuamengView.setVisibility(VISIBLE); // 动画开始防点击
+                    isAnimation = true;
+                }
+                
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    super.onAnimationEnd(animation);
+                    mBottomRoot.setVisibility(GONE); // 动画结束后隐藏下菜单
+                    mTopRoot1.setVisibility(GONE); // 动画结束后隐藏上菜单
+                    mTopRoot2.setVisibility(GONE); // 动画结束后隐藏上菜单
+                    MxuamengView.setVisibility(GONE); // 动画结束可点击
+                    isAnimation = false;
+                }
+            });
+
+    // 顶部视图1滑出动画
+    mTopRoot1.animate()
+            .translationY(-700)
+            .alpha(0.0f)
+            .setDuration(300)
+            .setInterpolator(new DecelerateInterpolator())
+            .setListener(null);
+
+    // 顶部视图2滑出动画
+    mTopRoot2.animate()
+            .translationY(-700)
+            .alpha(0.0f)
+            .setDuration(300)
+            .setInterpolator(new DecelerateInterpolator())
+            .setListener(null);
+
+    // 返回按钮隐藏
+    backBtn.setVisibility(INVISIBLE);
+}
+				
                         break;
                     }
                     case 1002: { // 显示底部菜单
