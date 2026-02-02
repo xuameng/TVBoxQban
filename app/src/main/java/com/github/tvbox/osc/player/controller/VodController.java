@@ -188,13 +188,14 @@ public class VodController extends BaseController {
                                         isDisplay = false;
                                     }
                                 });
-        // 添加延迟重新布局
-    mHandler.postDelayed(new Runnable() {
-        @Override
-        public void run() {
-            mBottomRoot.requestLayout();
-        }
-    }, 50);
+    // 检查视图高度是否已计算
+    if (mBottomRoot.getHeight() == 0) {
+        // 延迟执行或使用 ViewTreeObserver
+        mBottomRoot.postDelayed(() -> {
+            mHandler.sendEmptyMessage(1002);
+        }, 50);
+        break;
+    }
                         // xuameng顶部视图1动画
                         mTopRoot1.setVisibility(VISIBLE);
                         mTopRoot1.setAlpha(0.0f);
