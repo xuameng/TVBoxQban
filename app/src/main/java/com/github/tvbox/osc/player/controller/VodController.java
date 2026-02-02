@@ -267,21 +267,25 @@ public class VodController extends BaseController {
     if (mControlWrapper.isPlaying()) {
         // 播放状态处理
     } else {
-        mPlayTitle.setVisibility(VISIBLE);
-        mPlayTitle.animate()
-                .translationY(0)
-                .alpha(1.0f)
-                .setDuration(300)
-                .setInterpolator(new DecelerateInterpolator())
-                .setListener(null);
+    // 显示播放标题动画
+    mPlayTitle.setVisibility(VISIBLE);
+    mPlayTitle.setTranslationY(-mPlayTitle.getHeight() / 2);
+    mPlayTitle.animate()
+            .translationY(0)
+            .alpha(1.0f)
+            .setDuration(300)
+            .setInterpolator(new DecelerateInterpolator())
+            .setListener(null);
 
-        mPlayPauseTimexu.setVisibility(VISIBLE);
-        mPlayPauseTimexu.animate()
-                .translationY(0)
-                .alpha(1.0f)
-                .setDuration(300)
-                .setInterpolator(new DecelerateInterpolator())
-                .setListener(null);
+    // 显示播放暂停时间控件动画
+    mPlayPauseTimexu.setVisibility(VISIBLE);
+    mPlayPauseTimexu.setTranslationY(-mPlayPauseTimexu.getHeight() / 2);
+    mPlayPauseTimexu.animate()
+            .translationY(0)
+            .alpha(1.0f)
+            .setDuration(300)
+            .setInterpolator(new DecelerateInterpolator())
+            .setListener(null);
     }
                         break;
                     }
