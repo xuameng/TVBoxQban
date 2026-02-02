@@ -82,6 +82,16 @@ public class EXOmPlayer extends ExoMediaPlayer {
                             if (TextUtils.isEmpty(formatCodecs)){    //xuameng formatCodecs这是文件类型当audioCodecs返回空是用formatCodecs代替
                                 formatCodecs = "未知";
                             }
+                            String mp4a9 = "mp4a.40.2";  //xuameng过滤formatCodecs类型里application/字符串
+                            String mp4aString9 = "aac";
+                            if(formatCodecs.contains(mp4a9)) {  //xuameng过滤formatCodecs类型里application/字符串
+                                formatCodecs = formatCodecs.replace(mp4a9, mp4aString9);  //xuameng过滤音轨类型里application/字符串
+                            }
+                            String mp4a10 = "mp4a.40.5";  //xuameng过滤formatCodecs类型里application/字符串
+                            String mp4aString10 = "aac";
+                            if(formatCodecs.contains(mp4a10)) {  //xuameng过滤formatCodecs类型里application/字符串
+                                formatCodecs = formatCodecs.replace(mp4a10, mp4aString10);  //xuameng过滤音轨类型里application/字符串
+                            }
                             String mp4a3 = "mp4a.40.02";  //xuameng过滤formatCodecs类型里application/字符串
                             String mp4aString3 = "aac";
                             if(formatCodecs.contains(mp4a3)) {  //xuameng过滤formatCodecs类型里application/字符串
