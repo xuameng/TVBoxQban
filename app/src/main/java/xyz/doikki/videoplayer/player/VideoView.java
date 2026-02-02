@@ -10,6 +10,8 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Parcelable;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.Gravity;
@@ -27,9 +29,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import android.os.Handler;
-import android.os.Looper;
 
 import xyz.doikki.videoplayer.controller.BaseVideoController;
 import xyz.doikki.videoplayer.controller.MediaPlayerControl;
@@ -220,13 +219,12 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
         }
         initPlayer();
         addDisplay();
-
     new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
         @Override
         public void run() {
             startPrepare(false);
         }
-    }, 2000); 
+    }, 300);
         return true;
     }
 
