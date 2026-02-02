@@ -238,8 +238,9 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
             String className = mMediaPlayer.getClass().getName();
             isExoPlayer = className.contains("ExoMediaPlayer");
         }
-    
-        if (isExoPlayer && Hawk.get(HawkConfig.PLAYER_IS_LIVE)) {    //xuameng 如是EXO又是在直播界面就延时
+
+        Boolean isLive = (Boolean) Hawk.get(HawkConfig.PLAYER_IS_LIVE, false);
+        if (isExoPlayer && isLive) {    //xuameng 如是EXO又是在直播界面就延时
             // ExoPlayer 播放器，延迟300毫秒   xuameng 修复EXO解码有时黑屏
             new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(new Runnable() {
                 @Override
