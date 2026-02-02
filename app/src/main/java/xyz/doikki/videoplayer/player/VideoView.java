@@ -275,6 +275,11 @@ public interface OnPlayerInitializedListener {
     void onPlayerInitialized();
 }
 
+    /**
+     * 初始化之前的配置项
+     */
+    protected void setInitOptions() {
+    }
 
     /**
      * 初始化之后的配置项
@@ -400,8 +405,13 @@ public interface OnDisplayAddedListener {
 					if(duration > 130000) {      //xuameng 系统播放器获取播放进度
 						Progress = (int) getCurrentPosition();
 					}
-					addDisplay();
-					startPrepare(true);
+addDisplay(new OnDisplayAddedListener() {
+    @Override
+    public void onDisplayAdded() {
+        startPrepare(true);
+    }
+});
+
 					if (mAudioFocusHelper != null && !isMute()) {
 						mAudioFocusHelper.requestFocus();
 					}
@@ -504,8 +514,13 @@ public interface OnDisplayAddedListener {
         if (resetPosition) {
             mCurrentPosition = 0;
         }
-        addDisplay();
+addDisplay(new OnDisplayAddedListener() {
+    @Override
+    public void onDisplayAdded() {
         startPrepare(true);
+    }
+});
+
     }
 
     /**
