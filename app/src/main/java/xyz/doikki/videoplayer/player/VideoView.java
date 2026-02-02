@@ -38,6 +38,7 @@ import xyz.doikki.videoplayer.util.L;
 import xyz.doikki.videoplayer.util.PlayerUtils;
 import xyz.doikki.videoplayer.exo.ExoMediaPlayer;   //xuameng 修复EXO解码有时黑屏
 import com.github.tvbox.osc.util.HawkConfig;  //xuameng surfaceview判断用
+import com.orhanobut.hawk.Hawk;  //xuameng 修复EXO解码有时黑屏
 
 /**
  * 播放器
