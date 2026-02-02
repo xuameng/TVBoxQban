@@ -171,12 +171,6 @@ if (mBottomRoot.getHeight() == 0 || mTopRoot1.getHeight() == 0 || mTopRoot2.getH
     mBottomRoot.postDelayed(() -> {
         mHandler.sendEmptyMessage(1002);
     }, 50);
-    mTopRoot1.postDelayed(() -> {
-        mHandler.sendEmptyMessage(1002);
-    }, 50);
-    mTopRoot2.postDelayed(() -> {
-        mHandler.sendEmptyMessage(1002);
-    }, 50);
     return;
 }
                         mBottomRoot.setVisibility(VISIBLE);
@@ -241,9 +235,6 @@ if (mBottomRoot.getHeight() == 0 || mTopRoot1.getHeight() == 0 || mTopRoot2.getH
 if (mPlayPauseTimexu.getHeight() == 0 || mPlayTitle.getHeight() == 0) {
     // 延迟执行或使用 ViewTreeObserver
     mPlayPauseTimexu.postDelayed(() -> {
-        mHandler.sendEmptyMessage(1003);
-    }, 50);
-    mPlayTitle.postDelayed(() -> {
         mHandler.sendEmptyMessage(1003);
     }, 50);
     return; // 防止继续往下执行动画
