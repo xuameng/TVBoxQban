@@ -228,7 +228,7 @@ public class VodController extends BaseController {
                     case 1003: { // 隐藏底部菜单
     // 底部视图滑出动画
     mBottomRoot.animate()
-            mBottomRoot.setTranslationY(mBottomRoot.getHeight() / 2);
+            .translationY(mBottomRoot.getHeight() / 2)
             .alpha(0.0f)
             .setDuration(300)
             .setInterpolator(new DecelerateInterpolator())
@@ -246,7 +246,7 @@ public class VodController extends BaseController {
 
     // 顶部视图1滑出动画
     mTopRoot1.animate()
-            mTopRoot1.setTranslationY(-mTopRoot1.getHeight() / 2);
+            .translationY(-mTopRoot1.getHeight() / 2)
             .alpha(0.0f)
             .setDuration(300)
             .setInterpolator(new DecelerateInterpolator())
@@ -254,7 +254,7 @@ public class VodController extends BaseController {
 
     // 顶部视图2滑出动画
     mTopRoot2.animate()
-            mTopRoot1.setTranslationY(-mTopRoot1.getHeight() / 2);
+            .translationY(-mTopRoot2.getHeight() / 2)
             .alpha(0.0f)
             .setDuration(300)
             .setInterpolator(new DecelerateInterpolator())
