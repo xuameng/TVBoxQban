@@ -165,6 +165,20 @@ public class VodController extends BaseController {
                     }
                     case 1002: { // 显示底部菜单
                         // xuameng底部视图动画
+// 检查所有视图高度是否已计算
+if (mBottomRoot.getHeight() == 0 || mTopRoot1.getHeight() == 0 || mTopRoot2.getHeight() == 0) {
+    // 延迟执行或使用 ViewTreeObserver
+    mBottomRoot.postDelayed(() -> {
+        mHandler.sendEmptyMessage(1002);
+    }, 50);
+    mTopRoot1.postDelayed(() -> {
+        mHandler.sendEmptyMessage(1002);
+    }, 50);
+    mTopRoot2.postDelayed(() -> {
+        mHandler.sendEmptyMessage(1002);
+    }, 50);
+    return;
+}
                         mBottomRoot.setVisibility(VISIBLE);
                         mBottomRoot.setAlpha(0.0f);
                         mBottomRoot.setTranslationY(mBottomRoot.getHeight() / 2);
@@ -188,14 +202,6 @@ public class VodController extends BaseController {
                                         isDisplay = false;
                                     }
                                 });
-    // 检查视图高度是否已计算
-    if (mBottomRoot.getHeight() == 0) {
-        // 延迟执行或使用 ViewTreeObserver
-        mBottomRoot.postDelayed(() -> {
-            mHandler.sendEmptyMessage(1002);
-        }, 50);
-        break;
-    }
                         // xuameng顶部视图1动画
                         mTopRoot1.setVisibility(VISIBLE);
                         mTopRoot1.setAlpha(0.0f);
@@ -232,6 +238,16 @@ public class VodController extends BaseController {
                     }
                     case 1003: { // xuameng隐藏底部菜单
                         // xuameng底部视图滑出动画
+if (mPlayPauseTimexu.getHeight() == 0 || mPlayTitle.getHeight() == 0) {
+    // 延迟执行或使用 ViewTreeObserver
+    mPlayPauseTimexu.postDelayed(() -> {
+        mHandler.sendEmptyMessage(1003);
+    }, 50);
+    mPlayTitle.postDelayed(() -> {
+        mHandler.sendEmptyMessage(1003);
+    }, 50);
+    return; // 防止继续往下执行动画
+}
                         mBottomRoot.animate()
                                 .translationY(mBottomRoot.getHeight() / 2)
                                 .alpha(0.0f)
@@ -274,7 +290,7 @@ public class VodController extends BaseController {
                         } else {
                             // xuameng显示播放标题动画
                             mPlayTitle.setVisibility(VISIBLE);
-                            mPlayTitle.setTranslationY(-700);
+                            mPlayTitle.setTranslationY(-mPlayTitle.getHeight() / 2);
                             mPlayTitle.animate()
                                     .translationY(0)
                                     .alpha(1.0f)
@@ -284,7 +300,7 @@ public class VodController extends BaseController {
 
                             // xuameng显示播放暂停时间控件动画
                             mPlayPauseTimexu.setVisibility(VISIBLE);
-                            mPlayPauseTimexu.setTranslationY(-700);
+                            mPlayPauseTimexu.setTranslationY(-mPlayPauseTimexu.getHeight() / 2);
                             mPlayPauseTimexu.animate()
                                     .translationY(0)
                                     .alpha(1.0f)
