@@ -10,8 +10,8 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Parcelable;
-import android.os.Handler;
-import android.os.Looper;
+import android.os.Handler;  //xuameng 修复EXO解码有时黑屏
+import android.os.Looper;   //xuameng 修复EXO解码有时黑屏
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.Gravity;
@@ -36,7 +36,7 @@ import xyz.doikki.videoplayer.render.IRenderView;
 import xyz.doikki.videoplayer.render.RenderViewFactory;
 import xyz.doikki.videoplayer.util.L;
 import xyz.doikki.videoplayer.util.PlayerUtils;
-import xyz.doikki.videoplayer.exo.ExoMediaPlayer;
+import xyz.doikki.videoplayer.exo.ExoMediaPlayer;   //xuameng 修复EXO解码有时黑屏
 import com.github.tvbox.osc.util.HawkConfig;  //xuameng surfaceview判断用
 
 /**
@@ -202,59 +202,58 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
      *
      * @return 是否成功开始播放
      */
-protected boolean startPlay() {
-    Progress = 0; //xuameng清空进程记录
-    //如果要显示移动网络提示则不继续播放
-    if (showNetWarning()) {
-        //中止播放
-        setPlayState(STATE_START_ABORT);
-        return false;
-    }
-    //监听音频焦点改变
-    if (mEnableAudioFocus) {
-        mAudioFocusHelper = new AudioFocusHelper(this);
-    }
-    //读取播放进度
-    if (mProgressManager != null) {
-        mCurrentPosition = mProgressManager.getSavedProgress(mProgressKey == null ? mUrl : mProgressKey);
-    }
-    initPlayer();
-    addDisplay();
+    protected boolean startPlay() {
+        Progress = 0; //xuameng清空进程记录
+        //如果要显示移动网络提示则不继续播放
+        if (showNetWarning()) {
+            //中止播放
+            setPlayState(STATE_START_ABORT);
+            return false;
+        }
+        //监听音频焦点改变
+        if (mEnableAudioFocus) {
+            mAudioFocusHelper = new AudioFocusHelper(this);
+        }
+        //读取播放进度
+        if (mProgressManager != null) {
+            mCurrentPosition = mProgressManager.getSavedProgress(mProgressKey == null ? mUrl : mProgressKey);
+        }
+        initPlayer();
+        addDisplay();
     
-    // 确保播放器已初始化
-    if (mMediaPlayer == null) {
-        setPlayState(STATE_ERROR);
-        return false;
-    }
+        // 确保播放器已初始化
+        if (mMediaPlayer == null) {
+            setPlayState(STATE_ERROR);
+            return false;
+        }
     
-    // 判断播放器类型
-    boolean isExoPlayer = false;
-    try {
-        // 方法1：使用 instanceof（需要导入 ExoMediaPlayer）
-        isExoPlayer = mMediaPlayer instanceof xyz.doikki.videoplayer.exo.ExoMediaPlayer;
-    } catch (NoClassDefFoundError e) {
-        // 如果 ExoMediaPlayer 类不存在，使用类名判断
-        String className = mMediaPlayer.getClass().getName();
-        isExoPlayer = className.contains("ExoMediaPlayer");
-    }
+        // 判断播放器类型   xuameng 修复EXO解码有时黑屏
+        boolean isExoPlayer = false;
+        try {
+            // 方法1：使用 instanceof（需要导入 ExoMediaPlayer）
+            isExoPlayer = mMediaPlayer instanceof xyz.doikki.videoplayer.exo.ExoMediaPlayer;
+        } catch (NoClassDefFoundError e) {
+            // 如果 ExoMediaPlayer 类不存在，使用类名判断
+            String className = mMediaPlayer.getClass().getName();
+            isExoPlayer = className.contains("ExoMediaPlayer");
+        }
     
-    if (isExoPlayer) {
-        // ExoPlayer 播放器，延迟300毫秒
-        new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                startPrepare(false);
-            }
-        }, 300);
+        if (isExoPlayer && Hawk.get(HawkConfig.PLAYER_IS_LIVE)) {    //xuameng 如是EXO又是在直播界面就延时
+            // ExoPlayer 播放器，延迟300毫秒   xuameng 修复EXO解码有时黑屏
+            new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    startPrepare(false);
+                }
+            }, 300);
         
-    } else {
-        // 其他播放器（系统播放器、IJKPlayer等）立即开始准备
-	startPrepare(false);
-
-    }
+        } else {
+            // 其他播放器（系统播放器、IJKPlayer等）立即开始准备
+            startPrepare(false);
+        }
     
-    return true;
-}
+        return true;
+    }
 
 
     /**
