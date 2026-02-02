@@ -164,13 +164,6 @@ public class VodController extends BaseController {
                         break;
                     }
                     case 1002: { // 显示底部菜单
-if (mBottomRoot.getHeight() == 0) {
-        // 延迟执行或使用 ViewTreeObserver
-        mBottomRoot.postDelayed(() -> {
-            mHandler.sendEmptyMessage(1002);
-        }, 50);
-        break;
-    }
                         // xuameng底部视图动画
                         mBottomRoot.setVisibility(VISIBLE);
                         mBottomRoot.setAlpha(0.0f);
@@ -195,7 +188,13 @@ if (mBottomRoot.getHeight() == 0) {
                                         isDisplay = false;
                                     }
                                 });
-    
+        // 添加延迟重新布局
+    mHandler.postDelayed(new Runnable() {
+        @Override
+        public void run() {
+            mBottomRoot.requestLayout();
+        }
+    }, 50);
                         // xuameng顶部视图1动画
                         mTopRoot1.setVisibility(VISIBLE);
                         mTopRoot1.setAlpha(0.0f);
