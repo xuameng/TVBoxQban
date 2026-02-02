@@ -171,7 +171,7 @@ if (mBottomRoot.getHeight() == 0 || mTopRoot1.getHeight() == 0 || mTopRoot2.getH
     mBottomRoot.postDelayed(() -> {
         mHandler.sendEmptyMessage(1002);
     }, 50);
-    return;
+    break;
 }
                         mBottomRoot.setVisibility(VISIBLE);
                         mBottomRoot.setAlpha(0.0f);
@@ -237,7 +237,7 @@ if (mPlayPauseTimexu.getHeight() == 0 || mPlayTitle.getHeight() == 0) {
     mPlayPauseTimexu.postDelayed(() -> {
         mHandler.sendEmptyMessage(1003);
     }, 50);
-    return; // 防止继续往下执行动画
+    break; // 防止继续往下执行动画
 }
                         mBottomRoot.animate()
                                 .translationY(mBottomRoot.getHeight() / 2)
