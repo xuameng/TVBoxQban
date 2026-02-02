@@ -160,7 +160,7 @@ public class VodController extends BaseController {
 
     // 返回按钮隐藏
     backBtn.setVisibility(INVISIBLE);
-}
+
 				
                         break;
                     }
