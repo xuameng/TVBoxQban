@@ -36,6 +36,7 @@ import xyz.doikki.videoplayer.render.IRenderView;
 import xyz.doikki.videoplayer.render.RenderViewFactory;
 import xyz.doikki.videoplayer.util.L;
 import xyz.doikki.videoplayer.util.PlayerUtils;
+import xyz.doikki.videoplayer.exo.ExoMediaPlayer;
 import com.github.tvbox.osc.util.HawkConfig;  //xuameng surfaceview判断用
 
 /**
@@ -201,32 +202,60 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
      *
      * @return 是否成功开始播放
      */
-    protected boolean startPlay() {
-		Progress = 0; //xuameng清空进程记录
-        //如果要显示移动网络提示则不继续播放
-        if (showNetWarning()) {
-            //中止播放
-            setPlayState(STATE_START_ABORT);
-            return false;
-        }
-        //监听音频焦点改变
-        if (mEnableAudioFocus) {
-            mAudioFocusHelper = new AudioFocusHelper(this);
-        }
-        //读取播放进度
-        if (mProgressManager != null) {
-            mCurrentPosition = mProgressManager.getSavedProgress(mProgressKey == null ? mUrl : mProgressKey);
-        }
-        initPlayer();
-        addDisplay();
-    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-        @Override
-        public void run() {
-            startPrepare(false);
-        }
-    }, 300);
-        return true;
+protected boolean startPlay() {
+    Progress = 0; //xuameng清空进程记录
+    //如果要显示移动网络提示则不继续播放
+    if (showNetWarning()) {
+        //中止播放
+        setPlayState(STATE_START_ABORT);
+        return false;
     }
+    //监听音频焦点改变
+    if (mEnableAudioFocus) {
+        mAudioFocusHelper = new AudioFocusHelper(this);
+    }
+    //读取播放进度
+    if (mProgressManager != null) {
+        mCurrentPosition = mProgressManager.getSavedProgress(mProgressKey == null ? mUrl : mProgressKey);
+    }
+    initPlayer();
+    addDisplay();
+    
+    // 确保播放器已初始化
+    if (mMediaPlayer == null) {
+        setPlayState(STATE_ERROR);
+        return false;
+    }
+    
+    // 判断播放器类型
+    boolean isExoPlayer = false;
+    try {
+        // 方法1：使用 instanceof（需要导入 ExoMediaPlayer）
+        isExoPlayer = mMediaPlayer instanceof xyz.doikki.videoplayer.exo.ExoMediaPlayer;
+    } catch (NoClassDefFoundError e) {
+        // 如果 ExoMediaPlayer 类不存在，使用类名判断
+        String className = mMediaPlayer.getClass().getName();
+        isExoPlayer = className.contains("ExoMediaPlayer");
+    }
+    
+    if (isExoPlayer) {
+        // ExoPlayer 播放器，延迟300毫秒
+        new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                startPrepare(false);
+            }
+        }, 300);
+        
+    } else {
+        // 其他播放器（系统播放器、IJKPlayer等）立即开始准备
+	startPrepare(false);
+
+    }
+    
+    return true;
+}
+
 
     /**
      * 是否显示移动网络提示，可在Controller中配置
