@@ -194,41 +194,32 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
         }
     }
 
-
-protected boolean startPlay() {
-    Progress = 0; //xuameng清空进程记录
-    //如果要显示移动网络提示则不继续播放
-    if (showNetWarning()) {
-//中止播放
-        setPlayState(STATE_START_ABORT);
-        return false;
-    }
-    //监听音频焦点改变
-    if (mEnableAudioFocus) {
-        mAudioFocusHelper = new AudioFocusHelper(this);
-    }
-     //读取播放进度
-    if (mProgressManager != null) {
-        mCurrentPosition = mProgressManager.getSavedProgress(mProgressKey == null ? mUrl : mProgressKey);
-    }
-    
-    // 使用链式回调确保顺序执行
-    initPlayer(new OnPlayerInitializedListener() {
-        @Override
-        public void onPlayerInitialized() {
-            addDisplay(new OnDisplayAddedListener() {
-                @Override
-                public void onDisplayAdded() {
-                    // 确保前两个方法都完成后才执行
-                    startPrepare(false);
-                }
-            });
+    /**
+     * 第一次播放
+     *
+     * @return 是否成功开始播放
+     */
+    protected boolean startPlay() {
+		Progress = 0; //xuameng清空进程记录
+        //如果要显示移动网络提示则不继续播放
+        if (showNetWarning()) {
+            //中止播放
+            setPlayState(STATE_START_ABORT);
+            return false;
         }
-    });
-    
-    return true;
-}
-
+        //监听音频焦点改变
+        if (mEnableAudioFocus) {
+            mAudioFocusHelper = new AudioFocusHelper(this);
+        }
+        //读取播放进度
+        if (mProgressManager != null) {
+            mCurrentPosition = mProgressManager.getSavedProgress(mProgressKey == null ? mUrl : mProgressKey);
+        }
+        initPlayer();
+        addDisplay();
+        startPrepare(false);
+        return true;
+    }
 
     /**
      * 是否显示移动网络提示，可在Controller中配置
@@ -257,23 +248,13 @@ protected boolean startPlay() {
     /**
      * 初始化播放器
      */
-protected void initPlayer(OnPlayerInitializedListener listener) {
-    mMediaPlayer = mPlayerFactory.createPlayer(getContext());
-    mMediaPlayer.setPlayerEventListener(this);
-    setInitOptions();
-    mMediaPlayer.initPlayer();
-    setOptions();
-    
-    // 初始化完成后回调
-    if (listener != null) {
-        listener.onPlayerInitialized();
+    protected void initPlayer() {
+        mMediaPlayer = mPlayerFactory.createPlayer(getContext());
+        mMediaPlayer.setPlayerEventListener(this);
+        setInitOptions();
+        mMediaPlayer.initPlayer();
+        setOptions();
     }
-}
-
-// 添加回调接口
-public interface OnPlayerInitializedListener {
-    void onPlayerInitialized();
-}
 
     /**
      * 初始化之前的配置项
@@ -293,41 +274,23 @@ public interface OnPlayerInitializedListener {
     /**
      * 初始化视频渲染View
      */
-
-protected void addDisplay(OnDisplayAddedListener listener) {
-    if (mRenderView != null) {
-        mPlayerContainer.removeView(mRenderView.getView());
-        mRenderView.release();
+    protected void addDisplay() {
+      //  if (mRenderView != null) {
+      //      mPlayerContainer.removeView(mRenderView.getView());
+      //      mRenderView.release();
+      //  }
+		String cleanUrl = mUrl.split("\\?")[0];
+		if (cleanUrl.endsWith(".mp3") || cleanUrl.endsWith(".m4a") || cleanUrl.endsWith(".wma") || cleanUrl.endsWith(".wav") || cleanUrl.endsWith(".flac") || cleanUrl.endsWith(".aac") || cleanUrl.endsWith(".mid")) {
+			return;      //xuameng如果是上述音频文件执行
+		}
+        mRenderView = mRenderViewFactory.createRenderView(getContext());
+        mRenderView.attachToPlayer(mMediaPlayer);
+        LayoutParams params = new LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                Gravity.CENTER);
+        mPlayerContainer.addView(mRenderView.getView(), 0, params);
     }
-    
-    String cleanUrl = mUrl.split("\\?")[0];        //xuameng如果是上述音频文件执行
-    if (cleanUrl.endsWith(".mp3") || cleanUrl.endsWith(".m4a") || cleanUrl.endsWith(".wma") 
-        || cleanUrl.endsWith(".wav") || cleanUrl.endsWith(".flac") 
-        || cleanUrl.endsWith(".aac") || cleanUrl.endsWith(".mid")) {
-        if (listener != null) {
-            listener.onDisplayAdded();
-        }
-        return;
-    }
-    
-    mRenderView = mRenderViewFactory.createRenderView(getContext());
-    mRenderView.attachToPlayer(mMediaPlayer);
-    LayoutParams params = new LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            Gravity.CENTER);
-    mPlayerContainer.addView(mRenderView.getView(), 0, params);
-    
-    // 视图添加完成后回调
-    if (listener != null) {
-        listener.onDisplayAdded();
-    }
-}
-
-// 添加回调接口
-public interface OnDisplayAddedListener {
-    void onDisplayAdded();
-}
 
     /**
      * 开始准备播放（直接播放）
@@ -405,13 +368,8 @@ public interface OnDisplayAddedListener {
 					if(duration > 130000) {      //xuameng 系统播放器获取播放进度
 						Progress = (int) getCurrentPosition();
 					}
-addDisplay(new OnDisplayAddedListener() {
-    @Override
-    public void onDisplayAdded() {
-        startPrepare(true);
-    }
-});
-
+					addDisplay();
+					startPrepare(true);
 					if (mAudioFocusHelper != null && !isMute()) {
 						mAudioFocusHelper.requestFocus();
 					}
@@ -514,13 +472,8 @@ addDisplay(new OnDisplayAddedListener() {
         if (resetPosition) {
             mCurrentPosition = 0;
         }
-addDisplay(new OnDisplayAddedListener() {
-    @Override
-    public void onDisplayAdded() {
+        addDisplay();
         startPrepare(true);
-    }
-});
-
     }
 
     /**
