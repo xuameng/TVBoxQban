@@ -164,6 +164,13 @@ public class VodController extends BaseController {
                         break;
                     }
                     case 1002: { // 显示底部菜单
+if (mBottomRoot.getHeight() == 0) {
+        // 延迟执行或使用 ViewTreeObserver
+        mBottomRoot.postDelayed(() -> {
+            mHandler.sendEmptyMessage(1002);
+        }, 50);
+        break;
+    }
                         // xuameng底部视图动画
                         mBottomRoot.setVisibility(VISIBLE);
                         mBottomRoot.setAlpha(0.0f);
