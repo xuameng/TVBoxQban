@@ -118,175 +118,173 @@ public class VodController extends BaseController {
                         break;
                     }
                     case 1005: { // 隐藏底部菜单Xu
-     // 底部视图滑出动画
-    mBottomRoot.animate()
-            .translationY(mBottomRoot.getHeight() / 2)
-            .alpha(0.0f)
-            .setDuration(300)
-            .setInterpolator(new DecelerateInterpolator())
-            .setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationStart(Animator animation) {
-                    super.onAnimationStart(animation);
-                    MxuamengView.setVisibility(VISIBLE); // 动画开始防点击
-                    isAnimation = true;
-                }
+                        // 底部视图滑出动画
+                        mBottomRoot.animate()
+                                .translationY(mBottomRoot.getHeight() / 2)
+                                .alpha(0.0f)
+                                .setDuration(300)
+                                .setInterpolator(new DecelerateInterpolator())
+                                .setListener(new AnimatorListenerAdapter() {
+                                    @Override
+                                    public void onAnimationStart(Animator animation) {
+                                        super.onAnimationStart(animation);
+                                        MxuamengView.setVisibility(VISIBLE); // xuameng动画开始防点击
+                                        isAnimation = true;
+                                    }
                 
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    super.onAnimationEnd(animation);
-                    mBottomRoot.setVisibility(GONE); // 动画结束后隐藏下菜单
-                    mTopRoot1.setVisibility(GONE); // 动画结束后隐藏上菜单
-                    mTopRoot2.setVisibility(GONE); // 动画结束后隐藏上菜单
-                    MxuamengView.setVisibility(GONE); // 动画结束可点击
-                    isAnimation = false;
-                }
-            });
+                                    @Override
+                                    public void onAnimationEnd(Animator animation) {
+                                        super.onAnimationEnd(animation);
+                                        mBottomRoot.setVisibility(GONE); // xuameng动画结束后隐藏下菜单
+                                        mTopRoot1.setVisibility(GONE); // xuameng动画结束后隐藏上菜单
+                                        mTopRoot2.setVisibility(GONE); // xuameng动画结束后隐藏上菜单
+                                        MxuamengView.setVisibility(GONE); // xuameng动画结束可点击
+                                        isAnimation = false;
+                                    }
+                                });
 
-    // 顶部视图1滑出动画
-    mTopRoot1.animate()
-            .translationY(-mTopRoot1.getHeight() / 2)
-            .alpha(0.0f)
-            .setDuration(300)
-            .setInterpolator(new DecelerateInterpolator())
-            .setListener(null);
+                        // xuameng顶部视图1滑出动画
+                        mTopRoot1.animate()
+                                .translationY(-mTopRoot1.getHeight() / 2)
+                                .alpha(0.0f)
+                                .setDuration(300)
+                                .setInterpolator(new DecelerateInterpolator())
+                                .setListener(null);
 
-    // 顶部视图2滑出动画
-    mTopRoot2.animate()
-            .translationY(-mTopRoot2.getHeight() / 2)
-            .alpha(0.0f)
-            .setDuration(300)
-            .setInterpolator(new DecelerateInterpolator())
-            .setListener(null);
+                        // xuameng顶部视图2滑出动画
+                        mTopRoot2.animate()
+                                .translationY(-mTopRoot2.getHeight() / 2)
+                                .alpha(0.0f)
+                                .setDuration(300)
+                                .setInterpolator(new DecelerateInterpolator())
+                                .setListener(null);
 
-    // 返回按钮隐藏
-    backBtn.setVisibility(INVISIBLE);
-
-				
+                        // xuameng返回按钮隐藏
+                        backBtn.setVisibility(INVISIBLE);
                         break;
                     }
                     case 1002: { // 显示底部菜单
-    // 底部视图动画
-    mBottomRoot.setVisibility(VISIBLE);
-    mBottomRoot.setAlpha(0.0f);
-    mBottomRoot.setTranslationY(mBottomRoot.getHeight() / 2);
-    mBottomRoot.animate()
-            .translationY(0)
-            .alpha(1.0f)
-            .setDuration(300)
-            .setInterpolator(new DecelerateInterpolator())
-            .setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationStart(Animator animation) {
-                    super.onAnimationStart(animation);
-                    MxuamengView.setVisibility(VISIBLE);
-                    isDisplay = true;
-                }
+                        // xuameng底部视图动画
+                        mBottomRoot.setVisibility(VISIBLE);
+                        mBottomRoot.setAlpha(0.0f);
+                        mBottomRoot.setTranslationY(mBottomRoot.getHeight() / 2);
+                        mBottomRoot.animate()
+                                .translationY(0)
+                                .alpha(1.0f)
+                                .setDuration(300)
+                                .setInterpolator(new DecelerateInterpolator())
+                                .setListener(new AnimatorListenerAdapter() {
+                                    @Override
+                                    public void onAnimationStart(Animator animation) {
+                                        super.onAnimationStart(animation);
+                                        MxuamengView.setVisibility(VISIBLE);
+                                        isDisplay = true;
+                                    }
                 
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    super.onAnimationEnd(animation);
-                    MxuamengView.setVisibility(GONE);
-                    isDisplay = false;
-                }
-            });
+                                    @Override
+                                    public void onAnimationEnd(Animator animation) {
+                                        super.onAnimationEnd(animation);
+                                        MxuamengView.setVisibility(GONE);
+                                        isDisplay = false;
+                                    }
+                                });
     
-    // 顶部视图1动画
-    mTopRoot1.setVisibility(VISIBLE);
-    mTopRoot1.setAlpha(0.0f);
-    mTopRoot1.setTranslationY(-mTopRoot1.getHeight() / 2);
-    mTopRoot1.animate()
-            .translationY(0)
-            .alpha(1.0f)
-            .setDuration(300)
-            .setInterpolator(new DecelerateInterpolator())
-            .setListener(null);
+                        // xuameng顶部视图1动画
+                        mTopRoot1.setVisibility(VISIBLE);
+                        mTopRoot1.setAlpha(0.0f);
+                        mTopRoot1.setTranslationY(-mTopRoot1.getHeight() / 2);
+                        mTopRoot1.animate()
+                                .translationY(0)
+                                .alpha(1.0f)
+                                .setDuration(300)
+                                .setInterpolator(new DecelerateInterpolator())
+                                .setListener(null);
     
-    // 顶部视图2动画
-    mTopRoot2.setVisibility(VISIBLE);
-    mTopRoot2.setAlpha(0.0f);
-    mTopRoot2.setTranslationY(-mTopRoot2.getHeight() / 2);
-    mTopRoot2.animate()
-            .translationY(0)
-            .alpha(1.0f)
-            .setDuration(300)
-            .setInterpolator(new DecelerateInterpolator())
-            .setListener(null);
+                        // xuameng顶部视图2动画
+                        mTopRoot2.setVisibility(VISIBLE);
+                        mTopRoot2.setAlpha(0.0f);
+                        mTopRoot2.setTranslationY(-mTopRoot2.getHeight() / 2);
+                        mTopRoot2.animate()
+                                .translationY(0)
+                                .alpha(1.0f)
+                                .setDuration(300)
+                                .setInterpolator(new DecelerateInterpolator())
+                                .setListener(null);
     
-    // 其他设置
-    mxuPlay.requestFocus();
-    backBtn.setVisibility(ScreenUtils.isTv(context) ? INVISIBLE : VISIBLE);
-    showLockView();
-    mPlayPauseTimexu.setVisibility(GONE);
-    mPlayTitle.setVisibility(GONE);
+                        // xuameng其他设置
+                        mxuPlay.requestFocus();   //xuameng底部菜单默认焦点为播放
+                        backBtn.setVisibility(ScreenUtils.isTv(context) ? INVISIBLE : VISIBLE);   //xuameng返回按钮
+                        showLockView();    //xuameng屏幕锁
+                        mPlayPauseTimexu.setVisibility(GONE);  //xuameng隐藏上面时间
+                        mPlayTitle.setVisibility(GONE);   //xuameng隐藏上面视频名称
     
-    if(mLandscapePortraitBtn.getVisibility() == View.VISIBLE) {
-        setLandscapePortraitXu();
-    }
+                        if(mLandscapePortraitBtn.getVisibility() == View.VISIBLE) {    //xuameng 横竖屏显示BUG
+                            setLandscapePortraitXu();
+                        }
                         break;
                     }
-                    case 1003: { // 隐藏底部菜单
-    // 底部视图滑出动画
-    mBottomRoot.animate()
-            .translationY(mBottomRoot.getHeight() / 2)
-            .alpha(0.0f)
-            .setDuration(300)
-            .setInterpolator(new DecelerateInterpolator())
-            .setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    super.onAnimationEnd(animation);
-                    mBottomRoot.setVisibility(GONE);
-                    mTopRoot1.setVisibility(GONE);
-                    mTopRoot2.setVisibility(GONE);
-                    MxuamengView.setVisibility(GONE);
-                    isAnimation = false;
-                }
-            });
+                    case 1003: { // xuameng隐藏底部菜单
+                        // xuameng底部视图滑出动画
+                        mBottomRoot.animate()
+                                .translationY(mBottomRoot.getHeight() / 2)
+                                .alpha(0.0f)
+                                .setDuration(300)
+                                .setInterpolator(new DecelerateInterpolator())
+                                .setListener(new AnimatorListenerAdapter() {
+                                    @Override
+                                    public void onAnimationEnd(Animator animation) {
+                                        super.onAnimationEnd(animation);
+                                        mBottomRoot.setVisibility(GONE);
+                                        mTopRoot1.setVisibility(GONE);
+                                        mTopRoot2.setVisibility(GONE);
+                                        MxuamengView.setVisibility(GONE);
+                                        isAnimation = false;
+                                    }
+                                });
 
-    // 顶部视图1滑出动画
-    mTopRoot1.animate()
-            .translationY(-mTopRoot1.getHeight() / 2)
-            .alpha(0.0f)
-            .setDuration(300)
-            .setInterpolator(new DecelerateInterpolator())
-            .setListener(null);
+                        // xuameng顶部视图1滑出动画
+                        mTopRoot1.animate()
+                                .translationY(-mTopRoot1.getHeight() / 2)
+                                .alpha(0.0f)
+                                .setDuration(300)
+                                .setInterpolator(new DecelerateInterpolator())
+                                .setListener(null);
 
-    // 顶部视图2滑出动画
-    mTopRoot2.animate()
-            .translationY(-mTopRoot2.getHeight() / 2)
-            .alpha(0.0f)
-            .setDuration(300)
-            .setInterpolator(new DecelerateInterpolator())
-            .setListener(null);
+                        // xuameng顶部视图2滑出动画
+                        mTopRoot2.animate()
+                                .translationY(-mTopRoot2.getHeight() / 2)
+                                .alpha(0.0f)
+                                .setDuration(300)
+                                .setInterpolator(new DecelerateInterpolator())
+                                .setListener(null);
 
-    // 返回按钮隐藏
-    backBtn.setVisibility(INVISIBLE);
+                        // xuameng返回按钮隐藏
+                        backBtn.setVisibility(INVISIBLE);
 
-    // 播放控制视图处理
-    if (mControlWrapper.isPlaying()) {
-        // 播放状态处理
-    } else {
-    // 显示播放标题动画
-    mPlayTitle.setVisibility(VISIBLE);
-    mPlayTitle.setTranslationY(-mPlayTitle.getHeight() / 2);
-    mPlayTitle.animate()
-            .translationY(0)
-            .alpha(1.0f)
-            .setDuration(300)
-            .setInterpolator(new DecelerateInterpolator())
-            .setListener(null);
+                        // xuameng播放控制视图处理
+                        if (mControlWrapper.isPlaying()) {
+                            // xuameng播放状态处理
+                        } else {
+                            // xuameng显示播放标题动画
+                            mPlayTitle.setVisibility(VISIBLE);
+                            mPlayTitle.setTranslationY(-700);
+                            mPlayTitle.animate()
+                                    .translationY(0)
+                                    .alpha(1.0f)
+                                    .setDuration(300)
+                                    .setInterpolator(new DecelerateInterpolator())
+                                    .setListener(null);
 
-    // 显示播放暂停时间控件动画
-    mPlayPauseTimexu.setVisibility(VISIBLE);
-    mPlayPauseTimexu.setTranslationY(-mPlayPauseTimexu.getHeight() / 2);
-    mPlayPauseTimexu.animate()
-            .translationY(0)
-            .alpha(1.0f)
-            .setDuration(300)
-            .setInterpolator(new DecelerateInterpolator())
-            .setListener(null);
-    }
+                            // xuameng显示播放暂停时间控件动画
+                            mPlayPauseTimexu.setVisibility(VISIBLE);
+                            mPlayPauseTimexu.setTranslationY(-700);
+                            mPlayPauseTimexu.animate()
+                                    .translationY(0)
+                                    .alpha(1.0f)
+                                    .setDuration(300)
+                                    .setInterpolator(new DecelerateInterpolator())
+                                    .setListener(null);
+                        }
                         break;
                     }
                     case 1004: { // 设置速度
