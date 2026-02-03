@@ -781,10 +781,6 @@ public class LivePlayActivity extends BaseActivity {
                 }
                 epgListAdapter.CanBack(currentLiveChannelItem.getinclude_back());
                 epgListAdapter.setNewData(arrayList);
-            } else {
-                int selectedIndex = liveEpgDateAdapter.getSelectedIndex();
-                if(selectedIndex < 0) getEpg(new Date());
-                else getEpg(liveEpgDateAdapter.getData().get(selectedIndex).getDateParamVal());
             }
             HideBottomEpgTimer();  //隐藏底部菜单到计时
             backcontroller.setVisibility(View.GONE);    //xuameng 隐藏进度条
@@ -812,8 +808,6 @@ public class LivePlayActivity extends BaseActivity {
         }
         if(isBack) return;
         if(channel_Name.getChannelName() != null) {
-            tip_epg1.setText("");  //xuameng先清空防止重叠显示BUG
-            tip_epg2.setText("");  //xuameng先清空防止重叠显示BUG
             String savedEpgKey = channel_Name.getChannelName() + "_" + Objects.requireNonNull(liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex())).getDatePresented();
             if(hsEpg.containsKey(savedEpgKey)) {
                 String[] epgInfo = EpgUtil.getEpgInfo(channel_Name.getChannelName());
@@ -846,10 +840,6 @@ public class LivePlayActivity extends BaseActivity {
                 }
                 epgListAdapter.CanBack(currentLiveChannelItem.getinclude_back());
                 epgListAdapter.setNewData(arrayList);
-            } else {
-                int selectedIndex = liveEpgDateAdapter.getSelectedIndex();
-                if(selectedIndex < 0) getEpg(new Date());
-                else getEpg(liveEpgDateAdapter.getData().get(selectedIndex).getDateParamVal());
             }
         }
     }
