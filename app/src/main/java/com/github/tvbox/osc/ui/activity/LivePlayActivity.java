@@ -814,8 +814,6 @@ public class LivePlayActivity extends BaseActivity {
         if(channel_Name.getChannelName() != null) {
             tip_epg1.setText("");  //xuameng先清空防止重叠显示BUG
             tip_epg2.setText("");  //xuameng先清空防止重叠显示BUG
-            ((TextView) findViewById(R.id.tv_current_program_name)).setText("");  //xuameng先清空防止重叠显示BUG
-            ((TextView) findViewById(R.id.tv_next_program_name)).setText("");     //xuameng先清空防止重叠显示BUG
             String savedEpgKey = channel_Name.getChannelName() + "_" + Objects.requireNonNull(liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex())).getDatePresented();
             if(hsEpg.containsKey(savedEpgKey)) {
                 String[] epgInfo = EpgUtil.getEpgInfo(channel_Name.getChannelName());
