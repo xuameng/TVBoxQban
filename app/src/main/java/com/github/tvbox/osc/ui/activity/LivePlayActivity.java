@@ -531,8 +531,10 @@ public class LivePlayActivity extends BaseActivity {
         } else {
             url = epgStringAddress + "?ch=" + URLEncoder.encode(epgTagName) + "&date=" + timeFormat.format(date);
         }
-        UrlHttpUtil.get(url, new CallBackUtil.CallBackString() {
-            public void onFailure(int i, String str) {    //xuameng如果EPG获取失败启动默认列表
+        String requestTag = "getepg"; // 定义一个唯一的标签
+        OkHttpUtil.get(OkGoHelper.getDefaultClient(), url, requestTag, null, null, new OKCallBack<String>() {
+            @Override
+            public void onFailure(Call call, Exception e) {   //xuameng如果EPG获取失败启动默认列表   
                 ArrayList arrayList = new ArrayList();
                 Epginfo epgbcinfo = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "00:00", "01:59", 0);   //xuameng最后一项为pos id
                 Epginfo epgbcinfo1 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "02:00", "03:59", 1);
@@ -564,9 +566,10 @@ public class LivePlayActivity extends BaseActivity {
                 showEpg(date, arrayList);
                 showBottomEpgXU(); //xuameng测试EPG刷新        
             }
-            public void onResponse(String paramString) {
+            @Override
+            public void onResponse(String response) {
                 ArrayList arrayList = new ArrayList();
-             ////xuameng 空指针   Log.d("返回的EPG信息", paramString != null ? paramString : "暂无当前节目单，聚汇直播欢迎您的观看！");
+                //xuameng 空指针   Log.d("返回的EPG信息", paramString != null ? paramString : "暂无当前节目单，聚汇直播欢迎您的观看！");
                 try {
                     if(paramString != null && paramString.contains("epg_data")) {  //xuameng 空指针
                         final JSONArray jSONArray = new JSONObject(paramString).optJSONArray("epg_data");
@@ -575,7 +578,7 @@ public class LivePlayActivity extends BaseActivity {
                                 JSONObject jSONObject = jSONArray.getJSONObject(b);
                                 Epginfo epgbcinfo = new Epginfo(date, jSONObject.optString("title"), date, jSONObject.optString("start"), jSONObject.optString("end"), b);
                                 arrayList.add(epgbcinfo);
-                             ////xuameng 空指针   Log.d("EPG信息:", day + "  " + jSONObject.optString("start") + " - " + jSONObject.optString("end") + "  " + jSONObject.optString("title"));
+                                //xuameng 空指针   Log.d("EPG信息:", day + "  " + jSONObject.optString("start") + " - " + jSONObject.optString("end") + "  " + jSONObject.optString("title"));
                             }
                         }
                     }
@@ -646,8 +649,10 @@ public class LivePlayActivity extends BaseActivity {
         } else {
             url = epgStringAddress + "?ch=" + URLEncoder.encode(epgTagName) + "&date=" + timeFormat.format(date);
         }
-        UrlHttpUtil.get(url, new CallBackUtil.CallBackString() {
-            public void onFailure(int i, String str) {
+        String requestTag = "getepgxu"; // 定义一个唯一的标签
+        OkHttpUtil.get(OkGoHelper.getDefaultClient(), url, requestTag, null, null, new OKCallBack<String>() {
+            @Override
+            public void onFailure(Call call, Exception e) {   //xuameng如果EPG获取失败启动默认列表  
                 ArrayList arrayList = new ArrayList();
                 Epginfo epgbcinfo = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "00:00", "01:59", 0);   //xuameng最后一项为pos id
                 Epginfo epgbcinfo1 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "02:00", "03:59", 1);
@@ -678,9 +683,10 @@ public class LivePlayActivity extends BaseActivity {
                 hsEpg.put(savedEpgKey, arrayList);  //xuameng默认列表存入缓存
                 showEpgxu(date, arrayList);   //xuameng先保存EPG再显示EPG
             }
-            public void onResponse(String paramString) {
+            @Override
+            public void onResponse(String response) {
                 ArrayList arrayList = new ArrayList();
-			////xuameng 空指针 	Log.d("返回的EPG信息", paramString != null ? paramString : "暂无当前节目单，聚汇直播欢迎您的观看！");
+			    //xuameng 空指针 	Log.d("返回的EPG信息", paramString != null ? paramString : "暂无当前节目单，聚汇直播欢迎您的观看！");
                 try {
                     if(paramString != null && paramString.contains("epg_data")) {   //xuameng 空指针
                         final JSONArray jSONArray = new JSONObject(paramString).optJSONArray("epg_data");
@@ -689,7 +695,7 @@ public class LivePlayActivity extends BaseActivity {
                                 JSONObject jSONObject = jSONArray.getJSONObject(b);
                                 Epginfo epgbcinfo = new Epginfo(date, jSONObject.optString("title"), date, jSONObject.optString("start"), jSONObject.optString("end"), b);
                                 arrayList.add(epgbcinfo);
-                             ////xuameng 空指针   Log.d("EPG信息:", day + "  " + jSONObject.optString("start") + " - " + jSONObject.optString("end") + "  " + jSONObject.optString("title"));
+                                //xuameng 空指针   Log.d("EPG信息:", day + "  " + jSONObject.optString("start") + " - " + jSONObject.optString("end") + "  " + jSONObject.optString("title"));
                             }
                         }
                     }
@@ -911,6 +917,8 @@ public class LivePlayActivity extends BaseActivity {
                 mHandler.removeCallbacksAndMessages(null);
             }
             OkGo.getInstance().cancelTag("xuameng");
+            OkHttpUtil.cancel("getepg");
+            OkHttpUtil.cancel("getepgxu");
             if(countDownTimer != null) {
                countDownTimer.cancel();
                countDownTimer = null;
@@ -980,6 +988,8 @@ public class LivePlayActivity extends BaseActivity {
             mHandler.removeCallbacksAndMessages(null);
         }
         OkGo.getInstance().cancelTag("xuameng");
+        OkHttpUtil.cancel("getepg");
+        OkHttpUtil.cancel("getepgxu");
         if(countDownTimer != null) {
            countDownTimer.cancel();
            countDownTimer = null;
@@ -1250,6 +1260,8 @@ public class LivePlayActivity extends BaseActivity {
             mHandler.removeCallbacksAndMessages(null);
         }
         OkGo.getInstance().cancelTag("xuameng");
+        OkHttpUtil.cancel("getepg");
+        OkHttpUtil.cancel("getepgxu");
     }
     private void showChannelList() {
         if(liveChannelGroupList.isEmpty()) return; //xuameng新增
@@ -2519,15 +2531,6 @@ public class LivePlayActivity extends BaseActivity {
                 mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);  //xuameng BUG
                 mHandler.removeCallbacks(mConnectTimeoutChangeSourceRunBack);  //xuameng BUG
                 mHandler.removeCallbacks(mConnectTimeoutChangeSourceRunBuffer);  //xuameng BUG
-                hsEpg.clear();   //xuameng清空epg缓存 解决重复显示BUG
-    // 清除所有相关的TextView
-    ((TextView) findViewById(R.id.tv_next_program_name)).setText("");
-    ((TextView) findViewById(R.id.tv_current_program_name)).setText("");
-    ((TextView) findViewById(R.id.tv_current_program_time)).setText("");
-    ((TextView) findViewById(R.id.tv_next_program_time)).setText("");
-    // 清除底部EPG的默认文本
-    tip_epg1.setText("");
-    tip_epg2.setText("");
                 recreate();
                 return;
             case 6: //xuameng渲染方式
