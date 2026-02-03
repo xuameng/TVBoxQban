@@ -2521,7 +2521,9 @@ public class LivePlayActivity extends BaseActivity {
     if (livesOBJ.has("epg")) {
         String newEpgUrl = livesOBJ.get("epg").getAsString();
         Hawk.put(HawkConfig.EPG_URL, newEpgUrl);
+        epgStringAddress = newEpgUrl; // 更新当前 Activity 的变量
     }
+
                 liveSettingItemAdapter.selectItem(position, true, true);
                 Hawk.put(HawkConfig.LIVE_GROUP_INDEX, position);
                 ApiConfig.get().loadLiveApi(livesOBJ);
@@ -2529,7 +2531,7 @@ public class LivePlayActivity extends BaseActivity {
                 mHandler.removeCallbacks(mConnectTimeoutChangeSourceRunBack);  //xuameng BUG
                 mHandler.removeCallbacks(mConnectTimeoutChangeSourceRunBuffer);  //xuameng BUG
 
-
+	hsEpg.clear();
 
                 recreate();
                 return;
