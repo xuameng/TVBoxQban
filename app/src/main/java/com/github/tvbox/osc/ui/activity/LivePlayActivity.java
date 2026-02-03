@@ -536,7 +536,7 @@ public class LivePlayActivity extends BaseActivity {
             url = epgStringAddress + "?ch=" + URLEncoder.encode(epgTagName) + "&date=" + timeFormat.format(date);
         }
         String requestTag = "getepg"; // 定义一个唯一的标签
-        OkHttpUtil.get(OkGoHelper.getDefaultClient(), url, requestTag, null, null, new OKCallBack<String>() {
+        OkHttpUtil.get(OkGoHelper.getDefaultClient(), url, requestTag, null, null, new OKCallBack.OKCallBackString() {
             @Override
             public void onFailure(Call call, Exception e) {   //xuameng如果EPG获取失败启动默认列表   
                 ArrayList arrayList = new ArrayList();
@@ -570,20 +570,6 @@ public class LivePlayActivity extends BaseActivity {
                 showEpg(date, arrayList);
                 showBottomEpgXU(); //xuameng测试EPG刷新        
             }
-@Override
-public String onParseResponse(Call call, Response response) {
-    // 解析响应
-        try {
-            if (response.body() != null) {
-                return response.body().string();
-            } else {
-                return "";
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            return "";
-        }
-}
             @Override
             public void onResponse(String response) {
                 ArrayList arrayList = new ArrayList();
@@ -668,7 +654,7 @@ public String onParseResponse(Call call, Response response) {
             url = epgStringAddress + "?ch=" + URLEncoder.encode(epgTagName) + "&date=" + timeFormat.format(date);
         }
         String requestTag = "getepgxu"; // 定义一个唯一的标签
-        OkHttpUtil.get(OkGoHelper.getDefaultClient(), url, requestTag, null, null, new OKCallBack<String>() {
+        OkHttpUtil.get(OkGoHelper.getDefaultClient(), url, requestTag, null, null, new OKCallBack.OKCallBackString() {
             @Override
             public void onFailure(Call call, Exception e) {   //xuameng如果EPG获取失败启动默认列表  
                 ArrayList arrayList = new ArrayList();
@@ -701,20 +687,6 @@ public String onParseResponse(Call call, Response response) {
                 hsEpg.put(savedEpgKey, arrayList);  //xuameng默认列表存入缓存
                 showEpgxu(date, arrayList);   //xuameng先保存EPG再显示EPG
             }
-@Override
-public String onParseResponse(Call call, Response response) {
-    // 解析响应
-        try {
-            if (response.body() != null) {
-                return response.body().string();
-            } else {
-                return "";
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            return "";
-        }
-}
             @Override
             public void onResponse(String response) {
                 ArrayList arrayList = new ArrayList();
