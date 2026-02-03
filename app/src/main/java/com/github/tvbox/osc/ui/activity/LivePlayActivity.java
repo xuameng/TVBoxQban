@@ -82,6 +82,9 @@ import com.github.tvbox.osc.util.live.TxtSubscribe;
 import com.github.tvbox.osc.util.urlhttp.CallBackUtil;
 import com.github.tvbox.osc.util.urlhttp.UrlHttpUtil;
 import com.github.tvbox.osc.util.urlhttp.OkHttpUtil;
+import com.github.tvbox.osc.util.OkGoHelper;          // 新增
+import com.github.tvbox.osc.util.urlhttp.OKCallBack;  // 新增
+import okhttp3.Call;                                  // 新增
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject; //xuameng新增
 import com.google.gson.JsonElement; //xuameng新增
@@ -567,13 +570,18 @@ public class LivePlayActivity extends BaseActivity {
                 showEpg(date, arrayList);
                 showBottomEpgXU(); //xuameng测试EPG刷新        
             }
+@Override
+public String onParseResponse(Call call, Response response) throws IOException {
+    // 解析响应
+    return response.body().string();
+}
             @Override
             public void onResponse(String response) {
                 ArrayList arrayList = new ArrayList();
-                //xuameng 空指针   Log.d("返回的EPG信息", paramString != null ? paramString : "暂无当前节目单，聚汇直播欢迎您的观看！");
+                //xuameng 空指针   Log.d("返回的EPG信息", response != null ? response : "暂无当前节目单，聚汇直播欢迎您的观看！");
                 try {
-                    if(paramString != null && paramString.contains("epg_data")) {  //xuameng 空指针
-                        final JSONArray jSONArray = new JSONObject(paramString).optJSONArray("epg_data");
+                    if(response != null && response.contains("epg_data")) {  //xuameng 空指针
+                        final JSONArray jSONArray = new JSONObject(response).optJSONArray("epg_data");
                         if(jSONArray != null){
                             for(int b = 0; b < jSONArray.length(); b++) {
                                 JSONObject jSONObject = jSONArray.getJSONObject(b);
@@ -684,13 +692,18 @@ public class LivePlayActivity extends BaseActivity {
                 hsEpg.put(savedEpgKey, arrayList);  //xuameng默认列表存入缓存
                 showEpgxu(date, arrayList);   //xuameng先保存EPG再显示EPG
             }
+@Override
+public String onParseResponse(Call call, Response response) throws IOException {
+    // 解析响应
+    return response.body().string();
+}
             @Override
             public void onResponse(String response) {
                 ArrayList arrayList = new ArrayList();
-			    //xuameng 空指针 	Log.d("返回的EPG信息", paramString != null ? paramString : "暂无当前节目单，聚汇直播欢迎您的观看！");
+			    //xuameng 空指针 	Log.d("返回的EPG信息", response != null ? response : "暂无当前节目单，聚汇直播欢迎您的观看！");
                 try {
-                    if(paramString != null && paramString.contains("epg_data")) {   //xuameng 空指针
-                        final JSONArray jSONArray = new JSONObject(paramString).optJSONArray("epg_data");
+                    if(response != null && response.contains("epg_data")) {   //xuameng 空指针
+                        final JSONArray jSONArray = new JSONObject(response).optJSONArray("epg_data");
                         if(jSONArray != null){
                             for(int b = 0; b < jSONArray.length(); b++) {
                                 JSONObject jSONObject = jSONArray.getJSONObject(b);
