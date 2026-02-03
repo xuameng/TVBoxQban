@@ -145,7 +145,7 @@ public class VodController extends BaseController {
 
                         // xuameng顶部视图1滑出动画
                         mTopRoot1.animate()
-                                .translationY(-160)
+                                .translationY(-120)
                                 .alpha(0.0f)
                                 .setDuration(300)
                                 .setInterpolator(new DecelerateInterpolator())
@@ -153,7 +153,7 @@ public class VodController extends BaseController {
 
                         // xuameng顶部视图2滑出动画
                         mTopRoot2.animate()
-                                .translationY(-160)
+                                .translationY(-120)
                                 .alpha(0.0f)
                                 .setDuration(300)
                                 .setInterpolator(new DecelerateInterpolator())
@@ -191,7 +191,7 @@ public class VodController extends BaseController {
                         // xuameng顶部视图1动画
                         mTopRoot1.setVisibility(VISIBLE);
                         mTopRoot1.setAlpha(0.0f);
-                        mTopRoot1.setTranslationY(-160);
+                        mTopRoot1.setTranslationY(-120);
                         mTopRoot1.animate()
                                 .translationY(0)
                                 .alpha(1.0f)
@@ -202,7 +202,7 @@ public class VodController extends BaseController {
                         // xuameng顶部视图2动画
                         mTopRoot2.setVisibility(VISIBLE);
                         mTopRoot2.setAlpha(0.0f);
-                        mTopRoot2.setTranslationY(-160);
+                        mTopRoot2.setTranslationY(-120);
                         mTopRoot2.animate()
                                 .translationY(0)
                                 .alpha(1.0f)
@@ -249,7 +249,7 @@ public class VodController extends BaseController {
 
                         // xuameng顶部视图1滑出动画
                         mTopRoot1.animate()
-                                .translationY(-160)
+                                .translationY(-120)
                                 .alpha(0.0f)
                                 .setDuration(300)
                                 .setInterpolator(new DecelerateInterpolator())
@@ -257,7 +257,7 @@ public class VodController extends BaseController {
 
                         // xuameng顶部视图2滑出动画
                         mTopRoot2.animate()
-                                .translationY(-160)
+                                .translationY(-120)
                                 .alpha(0.0f)
                                 .setDuration(300)
                                 .setInterpolator(new DecelerateInterpolator())
@@ -272,7 +272,7 @@ public class VodController extends BaseController {
                         } else {
                             // xuameng显示播放标题动画
                             mPlayTitle.setVisibility(VISIBLE);
-                            mPlayTitle.setTranslationY(-160);
+                            mPlayTitle.setTranslationY(-120);
                             mPlayTitle.animate()
                                     .translationY(0)
                                     .alpha(1.0f)
@@ -282,7 +282,7 @@ public class VodController extends BaseController {
 
                             // xuameng显示播放暂停时间控件动画
                             mPlayPauseTimexu.setVisibility(VISIBLE);
-                            mPlayPauseTimexu.setTranslationY(-160);
+                            mPlayPauseTimexu.setTranslationY(-120);
                             mPlayPauseTimexu.animate()
                                     .translationY(0)
                                     .alpha(1.0f)
