@@ -571,9 +571,18 @@ public class LivePlayActivity extends BaseActivity {
                 showBottomEpgXU(); //xuameng测试EPG刷新        
             }
 @Override
-public String onParseResponse(Call call, Response response) throws IOException {
+public String onParseResponse(Call call, Response response) {
     // 解析响应
-    return response.body().string();
+        try {
+            if (response.body() != null) {
+                return response.body().string();
+            } else {
+                return "";
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "";
+        }
 }
             @Override
             public void onResponse(String response) {
@@ -693,9 +702,18 @@ public String onParseResponse(Call call, Response response) throws IOException {
                 showEpgxu(date, arrayList);   //xuameng先保存EPG再显示EPG
             }
 @Override
-public String onParseResponse(Call call, Response response) throws IOException {
+public String onParseResponse(Call call, Response response) {
     // 解析响应
-    return response.body().string();
+        try {
+            if (response.body() != null) {
+                return response.body().string();
+            } else {
+                return "";
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "";
+        }
 }
             @Override
             public void onResponse(String response) {
