@@ -2517,21 +2517,13 @@ public class LivePlayActivity extends BaseActivity {
                 if(position == Hawk.get(HawkConfig.LIVE_GROUP_INDEX, 0)) break;
                 JsonArray live_groups = Hawk.get(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
                 JsonObject livesOBJ = live_groups.get(position).getAsJsonObject();
-    // 读取新线路的 EPG 地址
-    if (livesOBJ.has("epg")) {
-        String newEpgUrl = livesOBJ.get("epg").getAsString();
-        Hawk.put(HawkConfig.EPG_URL, newEpgUrl);
-    }
-
                 liveSettingItemAdapter.selectItem(position, true, true);
                 Hawk.put(HawkConfig.LIVE_GROUP_INDEX, position);
                 ApiConfig.get().loadLiveApi(livesOBJ);
                 mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);  //xuameng BUG
                 mHandler.removeCallbacks(mConnectTimeoutChangeSourceRunBack);  //xuameng BUG
                 mHandler.removeCallbacks(mConnectTimeoutChangeSourceRunBuffer);  //xuameng BUG
-
-//	hsEpg.clear();
-
+                hsEpg.clear();
                 recreate();
                 return;
             case 6: //xuameng渲染方式
