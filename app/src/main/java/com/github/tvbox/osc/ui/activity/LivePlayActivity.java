@@ -81,6 +81,7 @@ import com.github.tvbox.osc.util.PlayerHelper;
 import com.github.tvbox.osc.util.live.TxtSubscribe;
 import com.github.tvbox.osc.util.urlhttp.CallBackUtil;
 import com.github.tvbox.osc.util.urlhttp.UrlHttpUtil;
+import com.github.tvbox.osc.util.urlhttp.OkHttpUtil;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject; //xuameng新增
 import com.google.gson.JsonElement; //xuameng新增
