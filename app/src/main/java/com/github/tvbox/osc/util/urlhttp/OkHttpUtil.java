@@ -63,6 +63,14 @@ public class OkHttpUtil {
         return string(OkGoHelper.getDefaultClient(), url, tag, null, headerMap, null);
     }
 
+    // 新增：支持 Tag 的 get 方法（异步回调版本）
+    public static void get(OkHttpClient client, String url, String tag, Map<String, String> paramsMap, Map<String, String> headerMap, OKCallBack callBack) {
+        OKRequest req = new OKRequest(METHOD_GET, url, paramsMap, headerMap, callBack);
+        req.setTag(tag);
+        req.execute(client);
+    }
+
+    // 保留原有重载方法，保持向后兼容
     public static void get(OkHttpClient client, String url, OKCallBack callBack) {
         get(client, url, null, null, callBack);
     }
@@ -72,7 +80,8 @@ public class OkHttpUtil {
     }
 
     public static void get(OkHttpClient client, String url, Map<String, String> paramsMap, Map<String, String> headerMap, OKCallBack callBack) {
-        new OKRequest(METHOD_GET, url, paramsMap, headerMap, callBack).execute(client);
+        // 调用新增的带 tag 的方法，tag 传 null
+        get(client, url, null, paramsMap, headerMap, callBack);
     }
 
     public static void post(OkHttpClient client, String url, OKCallBack callBack) {
