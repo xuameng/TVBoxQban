@@ -2519,6 +2519,7 @@ public class LivePlayActivity extends BaseActivity {
                 mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);  //xuameng BUG
                 mHandler.removeCallbacks(mConnectTimeoutChangeSourceRunBack);  //xuameng BUG
                 mHandler.removeCallbacks(mConnectTimeoutChangeSourceRunBuffer);  //xuameng BUG
+                hsEpg.clear();   //xuameng清空epg缓存 解决重复显示BUG
                 recreate();
                 return;
             case 6: //xuameng渲染方式
