@@ -831,10 +831,7 @@ public class LivePlayActivity extends BaseActivity {
                             size--;
                         }
                     }
-                }else{
-            tip_epg1.setText("00:00--23:59");
-            tip_epg2.setText("00:00--23:59");
-				}
+                }
                 epgListAdapter.CanBack(currentLiveChannelItem.getinclude_back());
                 epgListAdapter.setNewData(arrayList);
             }
@@ -1346,7 +1343,6 @@ public class LivePlayActivity extends BaseActivity {
         }
         if(!isCurrentLiveChannelValidXu()) return;    //xuameng 空指针修复
         liveEpgDateAdapter.setSelectedIndex(1);   //xuameng频道EPG日期自动选今天
-        getEpg(new Date());
     }
     private void mHideChannelListRunXu() { //xuameng左侧菜单延时5秒隐藏
         if(countDownTimer7 != null) {
