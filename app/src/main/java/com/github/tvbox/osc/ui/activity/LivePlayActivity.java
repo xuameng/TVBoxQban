@@ -804,6 +804,8 @@ public class LivePlayActivity extends BaseActivity {
         }
         if(isBack) return;
         if(channel_Name.getChannelName() != null) {
+            tip_epg1.setVisibility(View.VISIBLE);
+            tip_epg2.setVisibility(View.VISIBLE);
             tip_epg1.setText("00:00--23:59");
             tip_epg2.setText("00:00--23:59");
             String savedEpgKey = channel_Name.getChannelName() + "_" + Objects.requireNonNull(liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex())).getDatePresented();
