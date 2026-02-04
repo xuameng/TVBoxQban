@@ -743,7 +743,9 @@ public class LivePlayActivity extends BaseActivity {
         if(channel_Name.getChannelName() != null) {
             ((TextView) findViewById(R.id.tv_channel_bar_name)).setText(channel_Name.getChannelName());
             ((TextView) findViewById(R.id.tv_channel_bottom_number)).setText("" + channel_Name.getChannelNum());
+            tip_epg1.setText("暂无当前节目单，聚汇直播欢迎您的观看！");
             ((TextView) findViewById(R.id.tv_current_program_name)).setText("");
+            tip_epg2.setText("许大师开发制作，请勿商用以及播放违法内容！");
             ((TextView) findViewById(R.id.tv_next_program_name)).setText("");
             String savedEpgKey = channel_Name.getChannelName() + "_" + Objects.requireNonNull(liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex())).getDatePresented();
             if(hsEpg.containsKey(savedEpgKey)) {
@@ -775,10 +777,7 @@ public class LivePlayActivity extends BaseActivity {
                 }
                 epgListAdapter.CanBack(currentLiveChannelItem.getinclude_back());
                 epgListAdapter.setNewData(arrayList);
-            }else{
-                tip_epg1.setText("暂无当前节目单，聚汇直播欢迎您的观看！");
-                tip_epg2.setText("许大师开发制作，请勿商用以及播放违法内容！");
-            }
+            }           
             HideBottomEpgTimer();  //隐藏底部菜单到计时
             backcontroller.setVisibility(View.GONE);    //xuameng 隐藏进度条
             Mtv_left_top_xu.setVisibility(View.GONE); //xuameng直播时隐藏回看左上图标
@@ -805,6 +804,8 @@ public class LivePlayActivity extends BaseActivity {
         }
         if(isBack) return;
         if(channel_Name.getChannelName() != null) {
+            tip_epg1.setText("");
+            tip_epg2.setText("");
             String savedEpgKey = channel_Name.getChannelName() + "_" + Objects.requireNonNull(liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex())).getDatePresented();
             if(hsEpg.containsKey(savedEpgKey)) {
                 String[] epgInfo = EpgUtil.getEpgInfo(channel_Name.getChannelName());
