@@ -673,6 +673,13 @@ public class DetailActivity extends BaseActivity {
 
     private void jumpToPlay() {
         if (vodInfo != null && vodInfo.seriesMap.get(vodInfo.playFlag).size() > 0) {
+        // 1. 获取当前播放地址
+        String playUrl = vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).url;
+        
+        // 2. 检查播放地址是否为空
+        if (TextUtils.isEmpty(playUrl) || playUrl.equals("聚汇影视提示您：播放地址为空！")) {
+finish(); // 退出Activity
+}
             preFlag = vodInfo.playFlag;
             //更新播放地址
             setTextShow(tvPlayUrl, "播放地址：", vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).url);
