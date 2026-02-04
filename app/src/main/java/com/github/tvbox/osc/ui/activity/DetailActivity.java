@@ -1037,8 +1037,7 @@ public class DetailActivity extends BaseActivity {
                 }
             }
         });
-		    // 添加播放结果观察者 - 在这里添加
-    sourceViewModel.playResult.observe(this, new Observer<JSONObject>() {
+		    sourceViewModel.playResult.observe(this, new Observer<JSONObject>() {
         @Override
         public void onChanged(JSONObject info) {
             // 直接判断 info 是否为 null
@@ -1048,10 +1047,10 @@ public class DetailActivity extends BaseActivity {
                 // 可以选择退出 Activity 或显示错误界面
                 finish();
                 return;
-            }            
+            }
+			
         }
     });
-    }
     }
 
     private String getHtml(String label, String content) {
