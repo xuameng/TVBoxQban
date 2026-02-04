@@ -810,6 +810,13 @@ public class LivePlayActivity extends BaseActivity {
             return;
         }
         if(isBack) return;
+        liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
+            tip_epg1.setText("");
+            tip_epg1.setText("暂无当前节目单，聚汇直播欢迎您的观看！");
+            ((TextView) findViewById(R.id.tv_current_program_name)).setText("");
+            tip_epg2.setText("");
+            tip_epg2.setText("许大师开发制作，请勿商用以及播放违法内容！");
+            ((TextView) findViewById(R.id.tv_next_program_name)).setText("");
         if(channel_Name.getChannelName() != null) {
             String savedEpgKey = channel_Name.getChannelName() + "_" + Objects.requireNonNull(liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex())).getDatePresented();
             if(hsEpg.containsKey(savedEpgKey)) {
@@ -847,12 +854,6 @@ public class LivePlayActivity extends BaseActivity {
                 int selectedIndex = liveEpgDateAdapter.getSelectedIndex();
                 if(selectedIndex < 0) getEpg(new Date());
             }
-            ll_epg.setVisibility(View.GONE); //xuameng下面EPG菜单显示
-            ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单显示
-            view_line_XU.setVisibility(View.GONE); //xuamengEPG中的横线
-            ll_epg.setVisibility(View.VISIBLE); //xuameng下面EPG菜单显示
-            ll_right_top_loading.setVisibility(View.VISIBLE); //xuameng右上菜单显示
-            view_line_XU.setVisibility(View.VISIBLE); //xuamengEPG中的横线
         }
     }
     private void updateChannelIcon(String channelName, String logoUrl) {
