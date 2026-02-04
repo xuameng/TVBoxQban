@@ -764,14 +764,7 @@ public class LivePlayActivity extends BaseActivity {
                     while(size >= 0) {
                         if(new Date().compareTo(((Epginfo) arrayList.get(size)).startdateTime) >= 0) {
                             tip_epg1.setText(((Epginfo) arrayList.get(size)).start + "--" + ((Epginfo) arrayList.get(size)).end);
-            Epginfo currentEpg = (Epginfo) arrayList.get(size);
-            TextView currentProgramName = (TextView) findViewById(R.id.tv_current_program_name);
-            
-            // 判断标题是否不为空
-            if (currentEpg.title != null && !currentEpg.title.isEmpty()) {
-				tip_epg1.setText(((Epginfo) arrayList.get(size)).start + "--" + ((Epginfo) arrayList.get(size)).end);
-                currentProgramName.setText(currentEpg.title);
-            } 
+                            ((TextView) findViewById(R.id.tv_current_program_name)).setText(((Epginfo) arrayList.get(size)).title);
                             if(size != arrayList.size() - 1) {
                                 tip_epg2.setText(((Epginfo) arrayList.get(size + 1)).start + "--" + ((Epginfo) arrayList.get(size + 1)).end); //xuameng修复EPG低菜单下一个节目结束的时间
                                 ((TextView) findViewById(R.id.tv_next_program_name)).setText(((Epginfo) arrayList.get(size + 1)).title);
@@ -811,6 +804,7 @@ public class LivePlayActivity extends BaseActivity {
         }
         if(isBack) return;
         if(channel_Name.getChannelName() != null) {
+			TextView tvCurrentProgramName = (TextView) findViewById(R.id.tv_current_program_name);
             String savedEpgKey = channel_Name.getChannelName() + "_" + Objects.requireNonNull(liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex())).getDatePresented();
             if(hsEpg.containsKey(savedEpgKey)) {
                 String[] epgInfo = EpgUtil.getEpgInfo(channel_Name.getChannelName());
@@ -842,6 +836,10 @@ public class LivePlayActivity extends BaseActivity {
                 epgListAdapter.CanBack(currentLiveChannelItem.getinclude_back());
                 epgListAdapter.setNewData(arrayList);
             }
+			if (tvCurrentProgramName != null && tvCurrentProgramName.getText() != null && tvCurrentProgramName.getText().length() > 0){
+				            tip_epg1.setText("");
+            tip_epg2.setText("");
+			}
         }
     }
     private void updateChannelIcon(String channelName, String logoUrl) {
