@@ -521,12 +521,7 @@ public class LivePlayActivity extends BaseActivity {
    //        String title = arrayListJudge.get(0).title;      //0中EPG第一行的名称
    //        if (!title.contains("聚汇直播")) {   //xuameng再次判断如果缓存EPG中有聚汇直播字样说明是在线获取EPG失败则继续重试
               showEpg(date, hsEpg.get(savedEpgKey));   //xuameng如果成功就直接显示缓存EPG   
-new Handler(Looper.getMainLooper()).post(new Runnable() {
-    @Override
-    public void run() {
-        showBottomEpgXU();
-    }
-});
+              showBottomEpgXU(); //xuameng测试EPG刷新 
               return;
    //        }
         }
@@ -567,12 +562,7 @@ new Handler(Looper.getMainLooper()).post(new Runnable() {
                 epgListAdapter.setNewData(epgdata);
                 hsEpg.put(savedEpgKey, arrayList);   //xuameng默认列表存入缓存
                 showEpg(date, arrayList);
-new Handler(Looper.getMainLooper()).post(new Runnable() {
-    @Override
-    public void run() {
-        showBottomEpgXU();
-    }
-});    
+                showBottomEpgXU(); //xuameng测试EPG刷新        
             }
             public void onResponse(String paramString) {
                 ArrayList arrayList = new ArrayList();
@@ -595,12 +585,7 @@ new Handler(Looper.getMainLooper()).post(new Runnable() {
                 if(arrayList != null && arrayList.size() > 0){
                    hsEpg.put(savedEpgKey, arrayList);  //xuameng默认列表存入缓存
                    showEpg(date, arrayList);
-new Handler(Looper.getMainLooper()).post(new Runnable() {
-    @Override
-    public void run() {
-        showBottomEpgXU();
-    }
-});
+                   showBottomEpgXU(); //xuameng测试EPG刷新
                 }else{
                    Epginfo epgbcinfo = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "00:00", "01:59", 0);   //xuameng最后一项为pos id
                    Epginfo epgbcinfo1 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "02:00", "03:59", 1);
@@ -630,12 +615,7 @@ new Handler(Looper.getMainLooper()).post(new Runnable() {
                    epgListAdapter.setNewData(epgdata);
                    hsEpg.put(savedEpgKey, arrayList);   //xuameng默认列表存入缓存
                    showEpg(date, arrayList);
-new Handler(Looper.getMainLooper()).post(new Runnable() {
-    @Override
-    public void run() {
-        showBottomEpgXU();
-    }
-});
+                   showBottomEpgXU(); //xuameng测试EPG刷新
                 }
             }
         });
@@ -838,8 +818,10 @@ new Handler(Looper.getMainLooper()).post(new Runnable() {
                 ArrayList arrayList = (ArrayList) hsEpg.get(savedEpgKey);
                 if(arrayList != null && arrayList.size() > 0) {
                     int size = arrayList.size() - 1;
+					boolean found = false;
                     while(size >= 0) {
                         if(new Date().compareTo(((Epginfo) arrayList.get(size)).startdateTime) >= 0) {
+							found = true;
                             tip_epg1.setText(((Epginfo) arrayList.get(size)).start + "--" + ((Epginfo) arrayList.get(size)).end);
                             ((TextView) findViewById(R.id.tv_current_program_name)).setText(((Epginfo) arrayList.get(size)).title);
                             if(size != arrayList.size() - 1) {
@@ -851,6 +833,9 @@ new Handler(Looper.getMainLooper()).post(new Runnable() {
                             size--;
                         }
                     }
+    if(!found) {
+        tip_epg1.setText("暂无节目信息");
+    }
                 }
                 epgListAdapter.CanBack(currentLiveChannelItem.getinclude_back());
                 epgListAdapter.setNewData(arrayList);
