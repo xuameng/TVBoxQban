@@ -784,7 +784,6 @@ public class LivePlayActivity extends BaseActivity {
             } else {
                 int selectedIndex = liveEpgDateAdapter.getSelectedIndex();
                 if(selectedIndex < 0) getEpg(new Date());
-                else getEpg(liveEpgDateAdapter.getData().get(selectedIndex).getDateParamVal());
             }
             HideBottomEpgTimer();  //隐藏底部菜单到计时
             backcontroller.setVisibility(View.GONE);    //xuameng 隐藏进度条
@@ -847,8 +846,13 @@ public class LivePlayActivity extends BaseActivity {
             } else {
                 int selectedIndex = liveEpgDateAdapter.getSelectedIndex();
                 if(selectedIndex < 0) getEpg(new Date());
-                else getEpg(liveEpgDateAdapter.getData().get(selectedIndex).getDateParamVal());
             }
+            ll_epg.setVisibility(View.GONE); //xuameng下面EPG菜单显示
+            ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单显示
+            view_line_XU.setVisibility(View.GONE); //xuamengEPG中的横线
+            ll_epg.setVisibility(View.VISIBLE); //xuameng下面EPG菜单显示
+            ll_right_top_loading.setVisibility(View.VISIBLE); //xuameng右上菜单显示
+            view_line_XU.setVisibility(View.VISIBLE); //xuamengEPG中的横线
         }
     }
     private void updateChannelIcon(String channelName, String logoUrl) {
@@ -2517,19 +2521,12 @@ public class LivePlayActivity extends BaseActivity {
                 if(position == Hawk.get(HawkConfig.LIVE_GROUP_INDEX, 0)) break;
                 JsonArray live_groups = Hawk.get(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
                 JsonObject livesOBJ = live_groups.get(position).getAsJsonObject();
-    // 读取新线路的 EPG 地址
-    if (livesOBJ.has("epg")) {
-        String newEpgUrl = livesOBJ.get("epg").getAsString();
-        Hawk.put(HawkConfig.EPG_URL, newEpgUrl);
-        epgStringAddress = newEpgUrl; // 更新当前 Activity 的变量
-    }
                 liveSettingItemAdapter.selectItem(position, true, true);
                 Hawk.put(HawkConfig.LIVE_GROUP_INDEX, position);
                 ApiConfig.get().loadLiveApi(livesOBJ);
                 mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);  //xuameng BUG
                 mHandler.removeCallbacks(mConnectTimeoutChangeSourceRunBack);  //xuameng BUG
                 mHandler.removeCallbacks(mConnectTimeoutChangeSourceRunBuffer);  //xuameng BUG
-                hsEpg.clear();
                 recreate();
                 return;
             case 6: //xuameng渲染方式
