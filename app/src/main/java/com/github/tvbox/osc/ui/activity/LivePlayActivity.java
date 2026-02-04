@@ -831,24 +831,10 @@ public class LivePlayActivity extends BaseActivity {
                             size--;
                         }
                     }
-                }
-    String timeText = ((Epginfo) arrayList.get(size)).start + "--" + ((Epginfo) arrayList.get(size)).end;
-    
-    // 检查文本是否为空或null
-    if (timeText == null || timeText.trim().isEmpty()) {
-        tip_epg1.setText("00:00--23:59");
-    } else {
-        tip_epg1.setText(timeText);
-    }
-
-    String timeText1 = ((Epginfo) arrayList.get(size + 1)).start + "--" + ((Epginfo) arrayList.get(size + 1)).end;
-    
-    // 检查文本是否为空或null
-    if (timeText1 == null || timeText1.trim().isEmpty()) {
-        tip_epg2.setText("00:00--23:59");
-    } else {
-        tip_epg2.setText(timeText1);
-    }
+                }else{
+            tip_epg1.setText("00:00--23:59");
+            tip_epg2.setText("00:00--23:59");
+				}
                 epgListAdapter.CanBack(currentLiveChannelItem.getinclude_back());
                 epgListAdapter.setNewData(arrayList);
             }
