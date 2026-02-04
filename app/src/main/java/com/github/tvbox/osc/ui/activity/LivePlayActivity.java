@@ -818,10 +818,8 @@ public class LivePlayActivity extends BaseActivity {
                 ArrayList arrayList = (ArrayList) hsEpg.get(savedEpgKey);
                 if(arrayList != null && arrayList.size() > 0) {
                     int size = arrayList.size() - 1;
-					boolean found = false;
                     while(size >= 0) {
                         if(new Date().compareTo(((Epginfo) arrayList.get(size)).startdateTime) >= 0) {
-							found = true;
                             tip_epg1.setText(((Epginfo) arrayList.get(size)).start + "--" + ((Epginfo) arrayList.get(size)).end);
                             ((TextView) findViewById(R.id.tv_current_program_name)).setText(((Epginfo) arrayList.get(size)).title);
                             if(size != arrayList.size() - 1) {
@@ -833,12 +831,10 @@ public class LivePlayActivity extends BaseActivity {
                             size--;
                         }
                     }
-    if(!found) {
-        tip_epg1.setText("暂无节目信息");
-    }
                 }
                 epgListAdapter.CanBack(currentLiveChannelItem.getinclude_back());
                 epgListAdapter.setNewData(arrayList);
+showBottomEpg();
             }
         }
     }
