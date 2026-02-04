@@ -743,10 +743,10 @@ public class LivePlayActivity extends BaseActivity {
         if(channel_Name.getChannelName() != null) {
             ((TextView) findViewById(R.id.tv_channel_bar_name)).setText(channel_Name.getChannelName());
             ((TextView) findViewById(R.id.tv_channel_bottom_number)).setText("" + channel_Name.getChannelNum());
-            tip_epg1.setText("暂无当前节目单，聚汇直播欢迎您的观看！");
-            ((TextView) findViewById(R.id.tv_current_program_name)).setText("");
-            tip_epg2.setText("许大师开发制作，请勿商用以及播放违法内容！");
-            ((TextView) findViewById(R.id.tv_next_program_name)).setText("");
+            tip_epg1.setText("");
+            ((TextView) findViewById(R.id.tv_current_program_name)).setText("暂无当前节目单，聚汇直播欢迎您的观看！");
+            tip_epg2.setText("");
+            ((TextView) findViewById(R.id.tv_next_program_name)).setText("许大师开发制作，请勿商用以及播放违法内容！");
             String savedEpgKey = channel_Name.getChannelName() + "_" + Objects.requireNonNull(liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex())).getDatePresented();
             if(hsEpg.containsKey(savedEpgKey)) {
                 String[] epgInfo = EpgUtil.getEpgInfo(channel_Name.getChannelName());
@@ -777,10 +777,7 @@ public class LivePlayActivity extends BaseActivity {
                 }
                 epgListAdapter.CanBack(currentLiveChannelItem.getinclude_back());
                 epgListAdapter.setNewData(arrayList);
-            } else {
-                int selectedIndex = liveEpgDateAdapter.getSelectedIndex();
-                if(selectedIndex < 0) getEpg(new Date());
-            }
+            
             HideBottomEpgTimer();  //隐藏底部菜单到计时
             backcontroller.setVisibility(View.GONE);    //xuameng 隐藏进度条
             Mtv_left_top_xu.setVisibility(View.GONE); //xuameng直播时隐藏回看左上图标
@@ -806,7 +803,39 @@ public class LivePlayActivity extends BaseActivity {
             return;
         }
         if(isBack) return;
- 
+        if(channel_Name.getChannelName() != null) {
+            String savedEpgKey = channel_Name.getChannelName() + "_" + Objects.requireNonNull(liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex())).getDatePresented();
+            if(hsEpg.containsKey(savedEpgKey)) {
+                String[] epgInfo = EpgUtil.getEpgInfo(channel_Name.getChannelName());
+                if(logoUrl == null || logoUrl.isEmpty()) {
+                    updateChannelIcon(channel_Name.getChannelName(), epgInfo == null ? null : epgInfo[0]); //xuameng自带logo
+                } else if(logoUrl.equals("false")) {
+                    updateChannelIcon(channel_Name.getChannelName(), null);
+                } else {
+                    String logo = logoUrl.replace("{name}", channel_Name.getChannelName());
+                    updateChannelIcon(channel_Name.getChannelName(), logo); //xuameng支持logourl
+                }
+                ArrayList arrayList = (ArrayList) hsEpg.get(savedEpgKey);
+                if(arrayList != null && arrayList.size() > 0) {
+                    int size = arrayList.size() - 1;
+                    while(size >= 0) {
+                        if(new Date().compareTo(((Epginfo) arrayList.get(size)).startdateTime) >= 0) {
+                            tip_epg1.setText(((Epginfo) arrayList.get(size)).start + "--" + ((Epginfo) arrayList.get(size)).end);
+                            ((TextView) findViewById(R.id.tv_current_program_name)).setText(((Epginfo) arrayList.get(size)).title);
+                            if(size != arrayList.size() - 1) {
+                                tip_epg2.setText(((Epginfo) arrayList.get(size + 1)).start + "--" + ((Epginfo) arrayList.get(size + 1)).end); //xuameng修复EPG低菜单下一个节目结束的时间
+                                ((TextView) findViewById(R.id.tv_next_program_name)).setText(((Epginfo) arrayList.get(size + 1)).title);
+                            }
+                            break;
+                        } else {
+                            size--;
+                        }
+                    }
+                }
+                epgListAdapter.CanBack(currentLiveChannelItem.getinclude_back());
+                epgListAdapter.setNewData(arrayList);
+            }
+        }
     }
     private void updateChannelIcon(String channelName, String logoUrl) {
         if(StringUtils.isEmpty(logoUrl)) {
