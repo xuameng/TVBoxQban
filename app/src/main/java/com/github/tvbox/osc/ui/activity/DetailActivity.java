@@ -672,16 +672,6 @@ public class DetailActivity extends BaseActivity {
     private List<Runnable> pauseRunnable = null;
 
     private void jumpToPlay() {
-		String playUrl = vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).url;
-        if (!playUrl.startsWith("http://") && !playUrl.startsWith("https://") 
-            && !playUrl.startsWith("rtmp://") && !playUrl.startsWith("rtsp://")
-            && !playUrl.startsWith("data:application")) {
-                // 处理空值情况
-                App.showToastShort(DetailActivity.this, "11111111111111");
-                // 可以选择退出 Activity 或显示错误界面
-                finish();
-                return;
-        }
         if (vodInfo != null && vodInfo.seriesMap.get(vodInfo.playFlag).size() > 0) {
             preFlag = vodInfo.playFlag;
             //更新播放地址
