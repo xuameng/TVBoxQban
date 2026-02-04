@@ -219,7 +219,7 @@ public class LivePlayActivity extends BaseActivity {
     private CountDownTimer countDownTimer22;  //xuameng显示设置菜单用
     private Visualizer mVisualizer;  //xuameng音乐播放动画
     private MusicVisualizerView customVisualizer; //xuameng播放音乐柱状图
-    private boolean musicAnimation = false;     ////xuameng 音柱动画 加载设置
+    private boolean musicAnimation = false;       //xuameng 音柱动画 加载设置
     private int audioSessionId = -1; // 使用-1表示未初始化状态 //xuameng音乐播放动画
 	private static final String TAG = "LivePlayActivity";  //xuameng音乐播放动画
     private final int videoWidth = 1920;
@@ -566,7 +566,7 @@ public class LivePlayActivity extends BaseActivity {
             }
             public void onResponse(String paramString) {
                 ArrayList arrayList = new ArrayList();
-             ////xuameng 空指针   Log.d("返回的EPG信息", paramString != null ? paramString : "暂无当前节目单，聚汇直播欢迎您的观看！");
+                //xuameng 空指针   Log.d("返回的EPG信息", paramString != null ? paramString : "暂无当前节目单，聚汇直播欢迎您的观看！");
                 try {
                     if(paramString != null && paramString.contains("epg_data")) {  //xuameng 空指针
                         final JSONArray jSONArray = new JSONObject(paramString).optJSONArray("epg_data");
@@ -575,7 +575,7 @@ public class LivePlayActivity extends BaseActivity {
                                 JSONObject jSONObject = jSONArray.getJSONObject(b);
                                 Epginfo epgbcinfo = new Epginfo(date, jSONObject.optString("title"), date, jSONObject.optString("start"), jSONObject.optString("end"), b);
                                 arrayList.add(epgbcinfo);
-                             ////xuameng 空指针   Log.d("EPG信息:", day + "  " + jSONObject.optString("start") + " - " + jSONObject.optString("end") + "  " + jSONObject.optString("title"));
+                                //xuameng 空指针   Log.d("EPG信息:", day + "  " + jSONObject.optString("start") + " - " + jSONObject.optString("end") + "  " + jSONObject.optString("title"));
                             }
                         }
                     }
@@ -680,7 +680,7 @@ public class LivePlayActivity extends BaseActivity {
             }
             public void onResponse(String paramString) {
                 ArrayList arrayList = new ArrayList();
-			////xuameng 空指针 	Log.d("返回的EPG信息", paramString != null ? paramString : "暂无当前节目单，聚汇直播欢迎您的观看！");
+			    //xuameng 空指针 	Log.d("返回的EPG信息", paramString != null ? paramString : "暂无当前节目单，聚汇直播欢迎您的观看！");
                 try {
                     if(paramString != null && paramString.contains("epg_data")) {   //xuameng 空指针
                         final JSONArray jSONArray = new JSONObject(paramString).optJSONArray("epg_data");
@@ -689,7 +689,7 @@ public class LivePlayActivity extends BaseActivity {
                                 JSONObject jSONObject = jSONArray.getJSONObject(b);
                                 Epginfo epgbcinfo = new Epginfo(date, jSONObject.optString("title"), date, jSONObject.optString("start"), jSONObject.optString("end"), b);
                                 arrayList.add(epgbcinfo);
-                             ////xuameng 空指针   Log.d("EPG信息:", day + "  " + jSONObject.optString("start") + " - " + jSONObject.optString("end") + "  " + jSONObject.optString("title"));
+                                //xuameng 空指针   Log.d("EPG信息:", day + "  " + jSONObject.optString("start") + " - " + jSONObject.optString("end") + "  " + jSONObject.optString("title"));
                             }
                         }
                     }
@@ -804,6 +804,8 @@ public class LivePlayActivity extends BaseActivity {
         }
         if(isBack) return;
         if(channel_Name.getChannelName() != null) {
+            tip_epg1.setText("00:00--23:59");
+            tip_epg2.setText("00:00--23:59");
             String savedEpgKey = channel_Name.getChannelName() + "_" + Objects.requireNonNull(liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex())).getDatePresented();
             if(hsEpg.containsKey(savedEpgKey)) {
                 String[] epgInfo = EpgUtil.getEpgInfo(channel_Name.getChannelName());
@@ -832,16 +834,6 @@ public class LivePlayActivity extends BaseActivity {
                         }
                     }
                 }
-            // 强制UI刷新
-            mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    tip_epg1.invalidate();
-                    tip_epg1.requestLayout();
-                    tip_epg2.invalidate();
-                    tip_epg2.requestLayout();
-                }
-            });
                 epgListAdapter.CanBack(currentLiveChannelItem.getinclude_back());
                 epgListAdapter.setNewData(arrayList);
             }
