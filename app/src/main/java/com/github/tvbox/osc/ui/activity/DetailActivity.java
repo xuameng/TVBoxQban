@@ -672,14 +672,11 @@ public class DetailActivity extends BaseActivity {
     private List<Runnable> pauseRunnable = null;
 
     private void jumpToPlay() {
+    if (!isPlayInfoValid()) {
+        finish(); // 退出Activity
+        return;
+    }
         if (vodInfo != null && vodInfo.seriesMap.get(vodInfo.playFlag).size() > 0) {
-        // 1. 获取当前播放地址
-        String playUrl = vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).url;
-        
-        // 2. 检查播放地址是否为空
-        if (TextUtils.isEmpty(playUrl) || playUrl.equals("聚汇影视提示您：播放地址为空！")) {
-finish(); // 退出Activity
-}
             preFlag = vodInfo.playFlag;
             //更新播放地址
             setTextShow(tvPlayUrl, "播放地址：", vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).url);
@@ -1702,4 +1699,58 @@ finish(); // 退出Activity
         }
     }
 
+private boolean isPlayInfoValid() {
+    return checkBasicConditions() && checkDeepConditions();
+}
+
+private boolean checkBasicConditions() {
+    // 基础检查：播放地址是否为空
+    if (vodInfo == null || vodInfo.playFlag == null) {
+        return false;
+    }
+    
+    List<VodInfo.VodSeries> seriesList = vodInfo.seriesMap.get(vodInfo.playFlag);
+    if (seriesList == null || seriesList.isEmpty()) {
+        return false;
+    }
+    
+    String playUrl = seriesList.get(vodInfo.playIndex).url;
+    return !TextUtils.isEmpty(playUrl) && !playUrl.equals("聚汇影视提示您：播放地址为空！");
+}
+
+private boolean checkDeepConditions() {
+    // 深层检查：模拟 PlayFragment 中的逻辑
+    try {
+        VodInfo.VodSeries vs = vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex);
+        
+        // 1. 检查特殊协议地址
+        if (Jianpian.isJpUrl(vs.url)) {
+            String decodedUrl = vs.url.startsWith("tvbox-xg:") 
+                ? Jianpian.JPUrlDec(vs.url.substring(9)) 
+                : Jianpian.JPUrlDec(vs.url);
+            if (TextUtils.isEmpty(decodedUrl)) {
+                return false;
+            }
+        }
+        
+        // 2. 检查迅雷地址
+        if (Thunder.play(vs.url, null)) {
+            return true; // 迅雷地址由 Thunder 处理
+        }
+        
+        // 3. 检查标准URL格式
+        if (!vs.url.startsWith("http://") && !vs.url.startsWith("https://") 
+            && !vs.url.startsWith("rtmp://") && !vs.url.startsWith("rtsp://")
+            && !vs.url.startsWith("data:application")) {
+            return false;
+        }
+        
+        // 4. 检查播放源配置
+        SourceBean sourceBean = ApiConfig.get().getSource(sourceKey);
+        return sourceBean != null;
+        
+    } catch (Exception e) {
+        return false;
+    }
+}
 }
