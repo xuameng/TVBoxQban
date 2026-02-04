@@ -832,6 +832,16 @@ public class LivePlayActivity extends BaseActivity {
                         }
                     }
                 }
+            // 强制UI刷新
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    tip_epg1.invalidate();
+                    tip_epg1.requestLayout();
+                    tip_epg2.invalidate();
+                    tip_epg2.requestLayout();
+                }
+            });
                 epgListAdapter.CanBack(currentLiveChannelItem.getinclude_back());
                 epgListAdapter.setNewData(arrayList);
             }
