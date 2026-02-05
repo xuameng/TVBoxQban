@@ -3675,17 +3675,21 @@ private LiveChannelGroup createFavoriteChannelGroup() {
             if (channel.isFavorited()) {
                 // 创建新的频道对象，避免引用问题
                 LiveChannelItem favoriteChannel = new LiveChannelItem();
+                
+                // 复制基本属性
                 favoriteChannel.setChannelName(channel.getChannelName());
                 favoriteChannel.setChannelNum(channel.getChannelNum());
                 favoriteChannel.setFavorited(true); // 明确设置为收藏状态
                 favoriteChannel.setChannelIndex(channel.getChannelIndex());
                 
-                // 复制其他必要的属性
+                // 复制频道源相关属性
                 favoriteChannel.setChannelUrls(channel.getChannelUrls());
                 favoriteChannel.setChannelSourceNames(channel.getChannelSourceNames());
                 favoriteChannel.setSourceIndex(channel.getSourceIndex());
-                favoriteChannel.setSourceNum(channel.getSourceNum());
-                favoriteChannel.setinclude_back(channel.getinclude_back());
+                
+                // 重要修改：直接访问公共字段
+                favoriteChannel.sourceNum = channel.sourceNum;
+                favoriteChannel.include_back = channel.include_back;
                 
                 favoriteChannels.add(favoriteChannel);
             }
@@ -3699,19 +3703,27 @@ private LiveChannelGroup createFavoriteChannelGroup() {
         emptyFavorite.setChannelNum(0);
         emptyFavorite.setFavorited(false);
         emptyFavorite.setChannelIndex(-1);
+        
         // 设置一个空的URL列表，防止点击时出错
         ArrayList<String> emptyUrls = new ArrayList<>();
         emptyUrls.add("");
         emptyFavorite.setChannelUrls(emptyUrls);
+        
         ArrayList<String> emptyNames = new ArrayList<>();
         emptyNames.add("长按频道可收藏");
         emptyFavorite.setChannelSourceNames(emptyNames);
+        
+        // 设置公共字段的默认值
+        emptyFavorite.sourceNum = 1;
+        emptyFavorite.include_back = false;
+        
         favoriteChannels.add(emptyFavorite);
     }
     
     favGroup.setLiveChannels(favoriteChannels);
     return favGroup;
 }
+
 
 
 
