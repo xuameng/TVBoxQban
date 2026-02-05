@@ -1,3 +1,5 @@
+package com.github.tvbox.osc.ui.adapter;
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
