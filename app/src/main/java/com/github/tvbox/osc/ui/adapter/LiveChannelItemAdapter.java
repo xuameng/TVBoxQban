@@ -15,6 +15,8 @@ import com.orhanobut.hawk.Hawk;
 import java.util.ArrayList;
 
 import com.github.tvbox.osc.bean.LiveChannelItem;
+import com.orhanobut.hawk.Hawk;
+import com.github.tvbox.osc.util.HawkConfig;
 
 
 /**
