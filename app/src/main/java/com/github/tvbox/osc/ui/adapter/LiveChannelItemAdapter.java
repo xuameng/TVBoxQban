@@ -10,10 +10,6 @@ import com.github.tvbox.osc.bean.LiveChannelItem;
 
 import java.util.ArrayList;
 
-// 添加以下导入
-import android.view.View;
-import androidx.core.content.ContextCompat; 
-
 /**
  * @author pj567
  * @date :2021/1/12
@@ -31,21 +27,8 @@ public class LiveChannelItemAdapter extends BaseQuickAdapter<LiveChannelItem, Ba
     protected void convert(BaseViewHolder holder, LiveChannelItem item) {
         TextView tvChannelNum = holder.getView(R.id.tvChannelNum);
         TextView tvChannel = holder.getView(R.id.tvChannelName);
-    // 新增：获取收藏符号TextView
-    TextView tvFavorite = holder.getView(R.id.tvFavorite);
         tvChannelNum.setText(String.format("%s", item.getChannelNum()));
         tvChannel.setText(item.getChannelName());
-// 新增：根据收藏状态设置收藏符号
-    if (item.isFavorited()) {
-        tvFavorite.setVisibility(View.VISIBLE);
-        tvFavorite.setText("★");
-        tvFavorite.setTextColor(ContextCompat.getColor(mContext, R.color.color_FFD700)); // 金色
-    } else {
-        tvFavorite.setVisibility(View.GONE); // 隐藏未收藏状态
-        // 或者使用空心星星：tvFavorite.setText("☆");
-        // tvFavorite.setVisibility(View.VISIBLE);
-        // tvFavorite.setTextColor(Color.WHITE);
-    }
         int channelIndex = item.getChannelIndex();
         if (channelIndex == selectedChannelIndex && channelIndex != focusedChannelIndex) {
             tvChannelNum.setTextColor(mContext.getResources().getColor(R.color.color_02F8E1));
