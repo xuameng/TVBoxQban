@@ -521,7 +521,9 @@ public class LivePlayActivity extends BaseActivity {
    //        String title = arrayListJudge.get(0).title;      //0中EPG第一行的名称
    //        if (!title.contains("聚汇直播")) {   //xuameng再次判断如果缓存EPG中有聚汇直播字样说明是在线获取EPG失败则继续重试
               showEpg(date, hsEpg.get(savedEpgKey));   //xuameng如果成功就直接显示缓存EPG   
-          //    showBottomEpgXU(); //xuameng测试EPG刷新 
+            tip_epg1.setText("");
+            tip_epg2.setText("");
+              showBottomEpgXU(); //xuameng测试EPG刷新 
               return;
    //        }
         }
@@ -562,7 +564,9 @@ public class LivePlayActivity extends BaseActivity {
                 epgListAdapter.setNewData(epgdata);
                 hsEpg.put(savedEpgKey, arrayList);   //xuameng默认列表存入缓存
                 showEpg(date, arrayList);
-            //    showBottomEpgXU(); //xuameng测试EPG刷新        
+            tip_epg1.setText("");
+            tip_epg2.setText("");
+                showBottomEpgXU(); //xuameng测试EPG刷新        
             }
             public void onResponse(String paramString) {
                 ArrayList arrayList = new ArrayList();
@@ -585,7 +589,9 @@ public class LivePlayActivity extends BaseActivity {
                 if(arrayList != null && arrayList.size() > 0){
                    hsEpg.put(savedEpgKey, arrayList);  //xuameng默认列表存入缓存
                    showEpg(date, arrayList);
-                //   showBottomEpgXU(); //xuameng测试EPG刷新
+            tip_epg1.setText("");
+            tip_epg2.setText("");
+                   showBottomEpgXU(); //xuameng测试EPG刷新
                 }else{
                    Epginfo epgbcinfo = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "00:00", "01:59", 0);   //xuameng最后一项为pos id
                    Epginfo epgbcinfo1 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "02:00", "03:59", 1);
@@ -615,7 +621,9 @@ public class LivePlayActivity extends BaseActivity {
                    epgListAdapter.setNewData(epgdata);
                    hsEpg.put(savedEpgKey, arrayList);   //xuameng默认列表存入缓存
                    showEpg(date, arrayList);
-               //    showBottomEpgXU(); //xuameng测试EPG刷新
+            tip_epg1.setText("");
+            tip_epg2.setText("");
+                   showBottomEpgXU(); //xuameng测试EPG刷新
                 }
             }
         });
@@ -799,8 +807,6 @@ public class LivePlayActivity extends BaseActivity {
     }
     @SuppressLint("SetTextI18n") //xuameng乱码
     private void showBottomEpgXU() { //XUAMENG刷新EPG，要不不能自动刷新
-        tip_epg1.setText("");
-        tip_epg2.setText("");
         if(!isCurrentLiveChannelValidXu()) { //xuameng 未选择频道空指针问题
             return;
         }
