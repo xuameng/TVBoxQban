@@ -13,6 +13,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.orhanobut.hawk.Hawk;
 import java.util.ArrayList;
+import com.github.tvbox.osc.R;
 
 import com.github.tvbox.osc.bean.LiveChannelItem;
 import com.orhanobut.hawk.Hawk;
@@ -30,6 +31,18 @@ public class LiveChannelItemAdapter extends BaseQuickAdapter<LiveChannelItem, Ba
 
     public LiveChannelItemAdapter() {
         super(R.layout.item_live_channel, new ArrayList<>());
+
+    // 添加长按监听器
+    setOnItemLongClickListener(new OnItemLongClickListener() {
+        @Override
+        public boolean onItemLongClick(BaseQuickAdapter adapter, View view, int position) {
+            LiveChannelItem channel = getData().get(position);
+            // 直接切换收藏状态，不显示菜单
+            toggleFavoriteChannel(channel, position);
+            return true; // 消费长按事件
+        }
+    });
+
     }
 
     @Override
@@ -108,55 +121,38 @@ TextView tvFavoriteStar = holder.getView(R.id.ivFavoriteStar); // 新增：获�
         return false;
     }
 
-    /**
-     * 切换频道的收藏状态
-     */
-    public void toggleFavoriteChannel(LiveChannelItem channel, int position) {
-        JsonArray favoriteArray = Hawk.get(HawkConfig.LIVE_FAVORITE_CHANNELS, new JsonArray());
-        JsonObject channelJson = LiveChannelItem.convertChannelToJson(channel);
 
-        boolean found = false;
-        int foundIndex = -1;
-        for (int i = 0; i < favoriteArray.size(); i++) {
-            JsonObject fav = favoriteArray.get(i).getAsJsonObject();
-            if (LiveChannelItem.isSameChannel(fav, channelJson)) {
-                found = true;
-                foundIndex = i;
-                break;
-            }
+/**
+ * 切换频道的收藏状态
+ */
+public void toggleFavoriteChannel(LiveChannelItem channel, int position) {
+    JsonArray favoriteArray = Hawk.get(HawkConfig.LIVE_FAVORITE_CHANNELS, new JsonArray());
+    JsonObject channelJson = LiveChannelItem.convertChannelToJson(channel);
+
+    boolean found = false;
+    int foundIndex = -1;
+    for (int i = 0; i < favoriteArray.size(); i++) {
+        JsonObject fav = favoriteArray.get(i).getAsJsonObject();
+        if (LiveChannelItem.isSameChannel(fav, channelJson)) {
+            found = true;
+            foundIndex = i;
+            break;
         }
-
-        if (found) {
-            favoriteArray.remove(foundIndex);
-            Toast.makeText(mContext, "已取消收藏", Toast.LENGTH_SHORT).show();
-        } else {
-            favoriteArray.add(channelJson);
-            Toast.makeText(mContext, "已加入收藏", Toast.LENGTH_SHORT).show();
-        }
-
-        Hawk.put(HawkConfig.LIVE_FAVORITE_CHANNELS, favoriteArray);
-        notifyItemChanged(position);
     }
 
-    /**
-     * 显示收藏操作菜单
-     */
-    public void showFavoriteMenu(final LiveChannelItem channel, final int position) {
-        if (channel == null) return;
-
-        boolean isCurrentlyFavorited = isChannelFavorited(channel);
-        String menuTitle = isCurrentlyFavorited ? "取消收藏" : "加入收藏";
-
-        new AlertDialog.Builder(mContext)
-                .setTitle("频道操作")
-                .setMessage(channel.getChannelName())
-                .setPositiveButton(menuTitle, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        toggleFavoriteChannel(channel, position);
-                    }
-                })
-                .setNegativeButton("取消", null)
-                .show();
+    if (found) {
+        // 已收藏，执行取消收藏（移除）
+        favoriteArray.remove(foundIndex);
+        Toast.makeText(mContext, "已取消收藏：" + channel.getChannelName(), Toast.LENGTH_SHORT).show();
+    } else {
+        // 未收藏，执行收藏（添加）
+        favoriteArray.add(channelJson);
+        Toast.makeText(mContext, "已收藏：" + channel.getChannelName(), Toast.LENGTH_SHORT).show();
     }
+
+    Hawk.put(HawkConfig.LIVE_FAVORITE_CHANNELS, favoriteArray);
+    notifyItemChanged(position);
+}
+
+
 }
