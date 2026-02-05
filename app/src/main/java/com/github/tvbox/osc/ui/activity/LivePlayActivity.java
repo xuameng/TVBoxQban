@@ -107,6 +107,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 import xyz.doikki.videoplayer.player.VideoView;
+
+// 在现有的导入语句中添加以下两行
+import java.util.Map;
+import java.util.HashMap;
 public class LivePlayActivity extends BaseActivity {
     public static Context context;
     private VideoView mVideoView;
