@@ -2340,12 +2340,32 @@ public class LivePlayActivity extends BaseActivity {
 liveChannelItemAdapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLongClickListener() {
     @Override
     public boolean onItemLongClick(BaseQuickAdapter adapter, View view, int position) {
+        // 如果是收藏分组中的空提示项，不执行收藏操作
+        if (liveChannelGroupAdapter.getSelectedGroupIndex() == 0 && 
+            liveChannelGroupList.get(0).getGroupName().equals("我的收藏")) {
+            
+            LiveChannelItem clickedItem = liveChannelGroupList.get(0).getLiveChannels().get(position);
+            if (clickedItem.getChannelName().equals("暂无收藏频道")) {
+                App.showToastShort(mContext, "请在普通频道中长按收藏");
+                return true;
+            }
+        }
         toggleFavoriteForChannel(position);
         return true;
     }
 });
     }
     private void clickLiveChannel(int position) {
+    // 如果是收藏分组中的空提示项，不执行播放操作
+    if (liveChannelGroupAdapter.getSelectedGroupIndex() == 0 && 
+        liveChannelGroupList.get(0).getGroupName().equals("我的收藏")) {
+        
+        LiveChannelItem clickedItem = liveChannelGroupList.get(0).getLiveChannels().get(position);
+        if (clickedItem.getChannelName().equals("暂无收藏频道")) {
+            App.showToastShort(mContext, "长按任意频道可添加到收藏");
+            return;
+        }
+    }
         liveChannelItemAdapter.setSelectedChannelIndex(position);
         liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
         playChannel(liveChannelGroupAdapter.getSelectedGroupIndex(), position, false);
@@ -2588,11 +2608,6 @@ liveChannelItemAdapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLon
             showSuccess();
             initLiveState();
         }
-// 在 initLiveChannelList 方法中，加载完所有普通分组后
-LiveChannelGroup favoriteGroup = createFavoriteChannelGroup();
-if (!favoriteGroup.getLiveChannels().isEmpty()) {
-    liveChannelGroupList.add(0, favoriteGroup); // 放在第一个
-}
     }
     public void loadProxyLives(String url) {
         try {
@@ -2688,9 +2703,14 @@ if (!favoriteGroup.getLiveChannels().isEmpty()) {
         showNetSpeed();
         tvLeftChannelListLayout.setVisibility(View.INVISIBLE); //xuameng显示EPG就隐藏左右菜单
         tvRightSettingLayout.setVisibility(View.INVISIBLE); //xuameng显示EPG就隐藏左右菜单
-        liveChannelGroupAdapter.setNewData(liveChannelGroupList);
+
     // 新增：加载收藏状态并应用到频道数据
     loadAndApplyFavoriteStates();
+	    // 新增：创建并添加收藏分组
+    LiveChannelGroup favoriteGroup = createFavoriteChannelGroup();
+        liveChannelGroupList.add(0, favoriteGroup); // 放在第一个
+
+	        liveChannelGroupAdapter.setNewData(liveChannelGroupList);
         selectChannelGroup(lastChannelGroupIndex, false, lastLiveChannelIndex);
     }
     private boolean isListOrSettingLayoutVisible() {
@@ -3643,11 +3663,13 @@ private void toggleFavoriteForChannel(int position) {
 
 private LiveChannelGroup createFavoriteChannelGroup() {
     LiveChannelGroup favGroup = new LiveChannelGroup();
-    favGroup.setGroupIndex(-1); // 或一个特殊索引
+    favGroup.setGroupIndex(-1); // 使用特殊索引标识收藏分组
     favGroup.setGroupName("我的收藏");
     favGroup.setGroupPassword("");
 
     ArrayList<LiveChannelItem> favoriteChannels = new ArrayList<>();
+    
+    // 遍历所有频道组和频道
     for (LiveChannelGroup group : liveChannelGroupList) {
         for (LiveChannelItem channel : group.getLiveChannels()) {
             if (channel.isFavorited()) {
@@ -3657,14 +3679,40 @@ private LiveChannelGroup createFavoriteChannelGroup() {
                 favoriteChannel.setChannelNum(channel.getChannelNum());
                 favoriteChannel.setFavorited(true); // 明确设置为收藏状态
                 favoriteChannel.setChannelIndex(channel.getChannelIndex());
-                // 复制其他需要的属性...
+                
+                // 复制其他必要的属性
+                favoriteChannel.setChannelUrls(channel.getChannelUrls());
+                favoriteChannel.setChannelSourceNames(channel.getChannelSourceNames());
+                favoriteChannel.setSourceIndex(channel.getSourceIndex());
+                favoriteChannel.setSourceNum(channel.getSourceNum());
+                favoriteChannel.setinclude_back(channel.getinclude_back());
+                
                 favoriteChannels.add(favoriteChannel);
             }
         }
     }
+    
+    // 如果没有收藏的频道，添加一个提示项
+    if (favoriteChannels.isEmpty()) {
+        LiveChannelItem emptyFavorite = new LiveChannelItem();
+        emptyFavorite.setChannelName("暂无收藏频道");
+        emptyFavorite.setChannelNum(0);
+        emptyFavorite.setFavorited(false);
+        emptyFavorite.setChannelIndex(-1);
+        // 设置一个空的URL列表，防止点击时出错
+        ArrayList<String> emptyUrls = new ArrayList<>();
+        emptyUrls.add("");
+        emptyFavorite.setChannelUrls(emptyUrls);
+        ArrayList<String> emptyNames = new ArrayList<>();
+        emptyNames.add("长按频道可收藏");
+        emptyFavorite.setChannelSourceNames(emptyNames);
+        favoriteChannels.add(emptyFavorite);
+    }
+    
     favGroup.setLiveChannels(favoriteChannels);
     return favGroup;
 }
+
 
 
 
