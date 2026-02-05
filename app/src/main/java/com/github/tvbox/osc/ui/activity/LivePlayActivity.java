@@ -2319,6 +2319,13 @@ public class LivePlayActivity extends BaseActivity {
                 clickLiveChannel(position);
                 mHideChannelListRun(); //xuameng隐藏左侧频道菜单
             }
+
+    // 新增：长按监听
+    @Override
+    public boolean onItemLongClick(TvRecyclerView parent, View itemView, int position) {
+        toggleFavoriteForChannel(position);
+        return true; // 消费长按事件
+    }
         });
         //手机/模拟器
         liveChannelItemAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
@@ -2330,6 +2337,15 @@ public class LivePlayActivity extends BaseActivity {
                 mHideChannelListRun(); //xuameng隐藏左侧频道菜单
             }
         });
+
+		// 新增：长按监听
+liveChannelItemAdapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLongClickListener() {
+    @Override
+    public boolean onItemLongClick(BaseQuickAdapter adapter, View view, int position) {
+        toggleFavoriteForChannel(position);
+        return true;
+    }
+});
     }
     private void clickLiveChannel(int position) {
         liveChannelItemAdapter.setSelectedChannelIndex(position);
@@ -2670,6 +2686,8 @@ public class LivePlayActivity extends BaseActivity {
         tvLeftChannelListLayout.setVisibility(View.INVISIBLE); //xuameng显示EPG就隐藏左右菜单
         tvRightSettingLayout.setVisibility(View.INVISIBLE); //xuameng显示EPG就隐藏左右菜单
         liveChannelGroupAdapter.setNewData(liveChannelGroupList);
+    // 新增：加载收藏状态并应用到频道数据
+    loadAndApplyFavoriteStates();
         selectChannelGroup(lastChannelGroupIndex, false, lastLiveChannelIndex);
     }
     private boolean isListOrSettingLayoutVisible() {
@@ -3547,4 +3565,78 @@ public class LivePlayActivity extends BaseActivity {
         countDownTimer21 = null;
         countDownTimer22 = null;
     }
+
+/**
+ * 保存或移除频道的收藏状态到持久化存储。
+ * @param item 频道项
+ * @param isFavorited true 收藏，false 取消收藏
+ */
+private void saveFavoriteState(LiveChannelItem item, boolean isFavorited) {
+    // 构建频道的唯一标识：建议使用 "频道名@组名"，避免跨组同名问题
+    String groupName = liveChannelGroupList.get(currentChannelGroupIndex).getGroupName();
+    String uniqueKey = item.getChannelName() + "@" + groupName;
+    
+    // 从 Hawk 中获取现有的收藏映射表，若不存在则创建新的
+    Map<String, Boolean> favMap = Hawk.get(HawkConfig.LIVE_FAVORITE_MAP, new HashMap<>());
+    
+    if (isFavorited) {
+        // 收藏：将频道标识加入映射表，值为 true
+        favMap.put(uniqueKey, true);
+    } else {
+        // 取消收藏：从映射表中移除该频道标识
+        favMap.remove(uniqueKey);
+    }
+    
+    // 将更新后的映射表保存回 Hawk
+    Hawk.put(HawkConfig.LIVE_FAVORITE_MAP, favMap);
+}
+
+private void loadAndApplyFavoriteStates() {
+    // 从 Hawk 中获取收藏映射表
+    Map<String, Boolean> favMap = Hawk.get(HawkConfig.LIVE_FAVORITE_MAP, new HashMap<>());
+    
+    // 遍历所有频道组和频道
+    for (LiveChannelGroup group : liveChannelGroupList) {
+        for (LiveChannelItem channel : group.getLiveChannels()) {
+            // 构建与保存时一致的唯一标识
+            String uniqueKey = channel.getChannelName() + "@" + group.getGroupName();
+            // 如果映射表中存在该键且值为 true，则标记为已收藏
+            channel.setFavorited(favMap.containsKey(uniqueKey) && Boolean.TRUE.equals(favMap.get(uniqueKey)));
+        }
+    }
+}
+
+/**
+ * 切换指定位置频道的收藏状态。
+ * @param position 在频道列表中的位置
+ */
+private void toggleFavoriteForChannel(int position) {
+    if (!isCurrentLiveChannelValid()) return;
+    
+    // 1. 获取当前操作的频道项
+    int groupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
+    LiveChannelItem channelItem = getLiveChannels(groupIndex).get(position);
+    
+    // 2. 切换收藏状态
+    boolean newFavState = !channelItem.isFavorited();
+    channelItem.setFavorited(newFavState);
+    
+    // 3. 持久化保存收藏状态
+    saveFavoriteState(channelItem, newFavState);
+    
+    // 4. 更新UI提示
+    String msg = newFavState ? 
+        "已收藏频道: " + channelItem.getChannelName() : 
+        "已取消收藏: " + channelItem.getChannelName();
+    App.showToastShort(mContext, msg);
+    
+    // 5. 刷新当前列表的显示（例如更新收藏图标）
+    liveChannelItemAdapter.notifyItemChanged(position);
+    
+    // 6. 如果当前在“收藏夹”分组内操作，需要更新该分组的数据（后续实现）
+    // 注意：这里需要先创建“收藏夹”分组功能
+    // updateFavoriteGroupIfNeeded();
+}
+
+
 }
