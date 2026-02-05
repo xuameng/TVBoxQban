@@ -2,6 +2,11 @@ package com.github.tvbox.osc.bean;
 
 import java.util.ArrayList;
 
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonArray;
+import java.util.HashSet;
+import java.util.Set;
 /**
  * @author pj567
  * @date :2021/1/12
