@@ -25,9 +25,6 @@ public class LiveChannelItem {
     public int sourceNum = 0;
     public boolean include_back = false;
 
-    // --- 新增：收藏状态字段 ---
-    private boolean isFavorited = false;
-
     public void setinclude_back(boolean include_back) {
         this.include_back = include_back;
     }
@@ -103,22 +100,5 @@ public class LiveChannelItem {
 
     public String getSourceName() {
         return channelSourceNames.get(sourceIndex);
-    }
-
-    // --- 新增：收藏状态字段的 getter 和 setter 方法 ---
-    /**
-     * 获取当前频道的收藏状态。
-     * @return true 表示已收藏，false 表示未收藏。
-     */
-    public boolean isFavorited() {
-        return isFavorited;
-    }
-
-    /**
-     * 设置当前频道的收藏状态。
-     * @param favorited true 设置为收藏，false 设置为取消收藏。
-     */
-    public void setFavorited(boolean favorited) {
-        isFavorited = favorited;
     }
 }
