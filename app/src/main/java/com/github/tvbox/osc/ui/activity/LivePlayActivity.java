@@ -1379,6 +1379,22 @@ public class LivePlayActivity extends BaseActivity {
         return Hawk.get(HawkConfig.LIVE_WEB_HEADER);
     }
     private boolean playChannel(int channelGroupIndex, int liveChannelIndex, boolean changeSource) { //xuameng播放
+		    // 如果是收藏分组，需要找到原始频道位置
+    if (channelGroupIndex == 0 && liveChannelGroupList.get(0).getGroupName().equals("我的收藏")) {
+        LiveChannelItem favoriteChannel = liveChannelGroupList.get(0).getLiveChannels().get(liveChannelIndex);
+        
+        // 空提示项不播放
+        if (favoriteChannel.getChannelName().equals("暂无收藏频道")) {
+            return false;
+        }
+        
+        // 找到原始频道位置
+        int[] originalPosition = findOriginalChannelPosition(favoriteChannel);
+        if (originalPosition != null) {
+            channelGroupIndex = originalPosition[0];
+            liveChannelIndex = originalPosition[1];
+        }
+    }
         if((channelGroupIndex == currentChannelGroupIndex && liveChannelIndex == currentLiveChannelIndex && !changeSource) || (changeSource && currentLiveChannelItem.getSourceNum() == 1) && !XuSource) {
             // xuamengEPG日期自动选今天
             liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
@@ -2355,7 +2371,7 @@ liveChannelItemAdapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLon
     }
 });
     }
-    private void clickLiveChannel(int position) {
+private void clickLiveChannel(int position) {
     // 如果是收藏分组中的空提示项，不执行播放操作
     if (liveChannelGroupAdapter.getSelectedGroupIndex() == 0 && 
         liveChannelGroupList.get(0).getGroupName().equals("我的收藏")) {
@@ -2365,14 +2381,32 @@ liveChannelItemAdapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLon
             App.showToastShort(mContext, "长按任意频道可添加到收藏");
             return;
         }
-    }
-        liveChannelItemAdapter.setSelectedChannelIndex(position);
-        liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
-        playChannel(liveChannelGroupAdapter.getSelectedGroupIndex(), position, false);
-        if(tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
-            mHideChannelListRunXu(); //xuameng隐藏频道菜单
+        
+        // 重要：从收藏分组播放时，需要找到原始频道的位置
+        int[] originalPosition = findOriginalChannelPosition(clickedItem);
+        if (originalPosition != null) {
+            // 切换到原始频道所在的分组
+            selectChannelGroup(originalPosition[0], false, originalPosition[1]);
+            // 播放原始频道
+            playChannel(originalPosition[0], originalPosition[1], false);
+        } else {
+            // 如果找不到原始频道，直接播放收藏分组中的频道
+            liveChannelItemAdapter.setSelectedChannelIndex(position);
+            liveEpgDateAdapter.setSelectedIndex(1);
+            playChannel(liveChannelGroupAdapter.getSelectedGroupIndex(), position, false);
         }
+    } else {
+        // 普通分组的播放逻辑保持不变
+        liveChannelItemAdapter.setSelectedChannelIndex(position);
+        liveEpgDateAdapter.setSelectedIndex(1);
+        playChannel(liveChannelGroupAdapter.getSelectedGroupIndex(), position, false);
     }
+    
+    if(tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
+        mHideChannelListRunXu();
+    }
+}
+
     private void initSettingGroupView() {
         mSettingGroupView.setHasFixedSize(true);
         mSettingGroupView.setItemAnimator(null);   //xuameng禁用TVRecyclerView动画
@@ -2704,13 +2738,31 @@ liveChannelItemAdapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLon
         tvLeftChannelListLayout.setVisibility(View.INVISIBLE); //xuameng显示EPG就隐藏左右菜单
         tvRightSettingLayout.setVisibility(View.INVISIBLE); //xuameng显示EPG就隐藏左右菜单
 
-    // 新增：加载收藏状态并应用到频道数据
+   // 新增：加载收藏状态并应用到频道数据
     loadAndApplyFavoriteStates();
-	    // 新增：创建并添加收藏分组
+    
+    // 重要修改：先创建收藏分组，再添加到列表开头
     LiveChannelGroup favoriteGroup = createFavoriteChannelGroup();
-        liveChannelGroupList.add(0, favoriteGroup); // 放在第一个
+    // 无论是否有收藏频道，都添加到列表开头
+    liveChannelGroupList.add(0, favoriteGroup);
+    
+    liveChannelGroupAdapter.setNewData(liveChannelGroupList);
+    
+    // 重要：如果上次播放的是收藏分组中的频道，需要找到原始位置
+    if (lastChannelGroupIndex == 0 && liveChannelGroupList.size() > 0 && 
+        liveChannelGroupList.get(0).getGroupName().equals("我的收藏")) {
+        
+        // 获取上次播放的频道
+        LiveChannelItem lastChannel = liveChannelGroupList.get(0).getLiveChannels().get(lastLiveChannelIndex);
+        
+        // 找到原始频道位置
+        int[] originalPosition = findOriginalChannelPosition(lastChannel);
+        if (originalPosition != null) {
+            lastChannelGroupIndex = originalPosition[0];
+            lastLiveChannelIndex = originalPosition[1];
+        }
+    }
 
-	        liveChannelGroupAdapter.setNewData(liveChannelGroupList);
         selectChannelGroup(lastChannelGroupIndex, false, lastLiveChannelIndex);
     }
     private boolean isListOrSettingLayoutVisible() {
@@ -3022,6 +3074,21 @@ liveChannelItemAdapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLon
         dialog.show();
     }
     private void loadChannelGroupDataAndPlay(int groupIndex, int liveChannelIndex) {
+  // 如果是收藏分组，需要找到原始分组
+    if (groupIndex == 0 && liveChannelGroupList.get(0).getGroupName().equals("我的收藏")) {
+        if (liveChannelIndex >= 0 && liveChannelIndex < liveChannelGroupList.get(0).getLiveChannels().size()) {
+            LiveChannelItem favoriteChannel = liveChannelGroupList.get(0).getLiveChannels().get(liveChannelIndex);
+            
+            // 空提示项不处理
+            if (!favoriteChannel.getChannelName().equals("暂无收藏频道")) {
+                int[] originalPosition = findOriginalChannelPosition(favoriteChannel);
+                if (originalPosition != null) {
+                    groupIndex = originalPosition[0];
+                    liveChannelIndex = originalPosition[1];
+                }
+            }
+        }
+    }
         liveChannelItemAdapter.setNewData(getLiveChannels(groupIndex));
         if(groupIndex == currentChannelGroupIndex) {
             if(currentLiveChannelIndex > -1) mLiveChannelView.scrollToPosition(currentLiveChannelIndex);
@@ -3060,6 +3127,15 @@ liveChannelItemAdapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLon
     private Integer[] getNextChannel(int direction) {
         int channelGroupIndex = currentChannelGroupIndex;
         int liveChannelIndex = currentLiveChannelIndex;
+    // 如果当前在收藏分组，需要找到原始频道位置
+    if (channelGroupIndex == 0 && liveChannelGroupList.get(0).getGroupName().equals("我的收藏")) {
+        LiveChannelItem currentFavorite = liveChannelGroupList.get(0).getLiveChannels().get(liveChannelIndex);
+        int[] originalPosition = findOriginalChannelPosition(currentFavorite);
+        if (originalPosition != null) {
+            channelGroupIndex = originalPosition[0];
+            liveChannelIndex = originalPosition[1];
+        }
+    }
         //跨选分组模式下跳过加密频道分组（遥控器上下键换台/超时换源）
         if(direction > 0) {
             liveChannelIndex++;
@@ -3638,28 +3714,58 @@ private void toggleFavoriteForChannel(int position) {
     
     // 1. 获取当前操作的频道项
     int groupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
+    
+    // 重要：检查是否在收藏分组中操作
+    if (groupIndex == 0 && liveChannelGroupList.get(0).getGroupName().equals("我的收藏")) {
+        // 在收藏分组中操作
+        LiveChannelItem channelItem = liveChannelGroupList.get(0).getLiveChannels().get(position);
+        
+        // 如果是空提示项，不执行操作
+        if (channelItem.getChannelName().equals("暂无收藏频道")) {
+            App.showToastShort(mContext, "请在普通频道中长按收藏");
+            return;
+        }
+        
+        // 取消收藏
+        channelItem.setFavorited(false);
+        
+        // 保存状态
+        saveFavoriteState(channelItem, false);
+        
+        // 更新UI
+        App.showToastShort(mContext, "已取消收藏: " + channelItem.getChannelName());
+        
+        // 刷新收藏分组
+        refreshFavoriteGroup();
+        
+        // 刷新当前列表
+        liveChannelItemAdapter.notifyDataSetChanged();
+        return;
+    }
+    
+    // 2. 在普通分组中操作
     LiveChannelItem channelItem = getLiveChannels(groupIndex).get(position);
     
-    // 2. 切换收藏状态
+    // 3. 切换收藏状态
     boolean newFavState = !channelItem.isFavorited();
     channelItem.setFavorited(newFavState);
     
-    // 3. 持久化保存收藏状态
+    // 4. 持久化保存收藏状态
     saveFavoriteState(channelItem, newFavState);
     
-    // 4. 更新UI提示
+    // 5. 更新UI提示
     String msg = newFavState ? 
         "已收藏频道: " + channelItem.getChannelName() : 
         "已取消收藏: " + channelItem.getChannelName();
     App.showToastShort(mContext, msg);
     
-    // 5. 刷新当前列表的显示（例如更新收藏图标）
+    // 6. 刷新当前列表的显示
     liveChannelItemAdapter.notifyItemChanged(position);
     
-    // 6. 如果当前在“收藏夹”分组内操作，需要更新该分组的数据（后续实现）
-    // 注意：这里需要先创建“收藏夹”分组功能
-    // updateFavoriteGroupIfNeeded();
+    // 7. 刷新收藏分组
+    refreshFavoriteGroup();
 }
+
 
 private LiveChannelGroup createFavoriteChannelGroup() {
     LiveChannelGroup favGroup = new LiveChannelGroup();
@@ -3668,9 +3774,21 @@ private LiveChannelGroup createFavoriteChannelGroup() {
     favGroup.setGroupPassword("");
 
     ArrayList<LiveChannelItem> favoriteChannels = new ArrayList<>();
+    private LiveChannelGroup createFavoriteChannelGroup() {
+    LiveChannelGroup favGroup = new LiveChannelGroup();
+    favGroup.setGroupIndex(-1); // 使用特殊索引标识收藏分组
+    favGroup.setGroupName("我的收藏");
+    favGroup.setGroupPassword("");
+
+    ArrayList<LiveChannelItem> favoriteChannels = new ArrayList<>();
     
-    // 遍历所有频道组和频道
+    // 重要：只遍历普通分组，避免重复包含收藏分组
     for (LiveChannelGroup group : liveChannelGroupList) {
+        // 跳过收藏分组本身
+        if (group.getGroupIndex() == -1) {
+            continue;
+        }
+        
         for (LiveChannelItem channel : group.getLiveChannels()) {
             if (channel.isFavorited()) {
                 // 创建新的频道对象，避免引用问题
@@ -3679,7 +3797,7 @@ private LiveChannelGroup createFavoriteChannelGroup() {
                 // 复制基本属性
                 favoriteChannel.setChannelName(channel.getChannelName());
                 favoriteChannel.setChannelNum(channel.getChannelNum());
-                favoriteChannel.setFavorited(true); // 明确设置为收藏状态
+                favoriteChannel.setFavorited(true);
                 favoriteChannel.setChannelIndex(channel.getChannelIndex());
                 
                 // 复制频道源相关属性
@@ -3687,7 +3805,7 @@ private LiveChannelGroup createFavoriteChannelGroup() {
                 favoriteChannel.setChannelSourceNames(channel.getChannelSourceNames());
                 favoriteChannel.setSourceIndex(channel.getSourceIndex());
                 
-                // 重要修改：直接访问公共字段
+                // 直接访问公共字段
                 favoriteChannel.sourceNum = channel.sourceNum;
                 favoriteChannel.include_back = channel.include_back;
                 
@@ -3704,7 +3822,6 @@ private LiveChannelGroup createFavoriteChannelGroup() {
         emptyFavorite.setFavorited(false);
         emptyFavorite.setChannelIndex(-1);
         
-        // 设置一个空的URL列表，防止点击时出错
         ArrayList<String> emptyUrls = new ArrayList<>();
         emptyUrls.add("");
         emptyFavorite.setChannelUrls(emptyUrls);
@@ -3713,7 +3830,6 @@ private LiveChannelGroup createFavoriteChannelGroup() {
         emptyNames.add("长按频道可收藏");
         emptyFavorite.setChannelSourceNames(emptyNames);
         
-        // 设置公共字段的默认值
         emptyFavorite.sourceNum = 1;
         emptyFavorite.include_back = false;
         
@@ -3725,6 +3841,56 @@ private LiveChannelGroup createFavoriteChannelGroup() {
 }
 
 
+private void refreshFavoriteGroup() {
+    // 更新收藏分组的数据
+    LiveChannelGroup favoriteGroup = createFavoriteChannelGroup();
+    
+    // 替换原来的收藏分组
+    if (liveChannelGroupList.size() > 0 && liveChannelGroupList.get(0).getGroupName().equals("我的收藏")) {
+        liveChannelGroupList.set(0, favoriteGroup);
+    } else {
+        liveChannelGroupList.add(0, favoriteGroup);
+    }
+    
+    // 刷新适配器
+    liveChannelGroupAdapter.notifyDataSetChanged();
+    
+    // 如果当前选中的是收藏分组，刷新频道列表
+    if (liveChannelGroupAdapter.getSelectedGroupIndex() == 0) {
+        liveChannelItemAdapter.setNewData(favoriteGroup.getLiveChannels());
+    }
+}
+
+/**
+ * 根据收藏频道找到原始频道的位置
+ * @param favoriteChannel 收藏分组中的频道
+ * @return int[2] 数组，[0]=分组索引，[1]=频道索引，找不到返回null
+ */
+private int[] findOriginalChannelPosition(LiveChannelItem favoriteChannel) {
+    // 跳过收藏分组本身（索引0）
+    for (int groupIndex = 1; groupIndex < liveChannelGroupList.size(); groupIndex++) {
+        LiveChannelGroup group = liveChannelGroupList.get(groupIndex);
+        ArrayList<LiveChannelItem> channels = group.getLiveChannels();
+        
+        for (int channelIndex = 0; channelIndex < channels.size(); channelIndex++) {
+            LiveChannelItem originalChannel = channels.get(channelIndex);
+            
+            // 通过频道名称和编号匹配原始频道
+            if (originalChannel.getChannelName().equals(favoriteChannel.getChannelName()) &&
+                originalChannel.getChannelNum() == favoriteChannel.getChannelNum()) {
+                
+                // 确保原始频道是收藏状态
+                if (originalChannel.isFavorited()) {
+                    int[] position = new int[2];
+                    position[0] = groupIndex;
+                    position[1] = channelIndex;
+                    return position;
+                }
+            }
+        }
+    }
+    return null;
+}
 
 
 
