@@ -2571,6 +2571,16 @@ public class LivePlayActivity extends BaseActivity {
         } else {
             liveChannelGroupList.clear();
             liveChannelGroupList.addAll(list);
+
+    // ========== 新增：创建并插入“我的收藏”频道组 ==========
+    LiveChannelGroup favoriteGroup = createFavoriteChannelGroup();
+    if (favoriteGroup != null && !favoriteGroup.getLiveChannels().isEmpty()) {
+        // 将“我的收藏”插入到列表的第一个位置，方便用户访问
+        liveChannelGroupList.add(0, favoriteGroup);
+    }
+    // ========== 新增结束 ==========
+
+
             showSuccess();
             initLiveState();
         }
@@ -3547,4 +3557,86 @@ public class LivePlayActivity extends BaseActivity {
         countDownTimer21 = null;
         countDownTimer22 = null;
     }
+
+
+
+/**
+ * 从 Hawk 中读取收藏的频道，并构建一个 LiveChannelGroup 对象
+ */
+private LiveChannelGroup createFavoriteChannelGroup() {
+    LiveChannelGroup group = new LiveChannelGroup();
+    group.setGroupIndex(-1); // 使用特殊索引 -1 标识收藏组
+    group.setGroupName("我的收藏");
+    group.setGroupPassword("");
+
+    ArrayList<LiveChannelItem> favoriteChannels = new ArrayList<>();
+    JsonArray favoriteArray = Hawk.get(HawkConfig.LIVE_FAVORITE_CHANNELS, new JsonArray());
+
+    for (int i = 0; i < favoriteArray.size(); i++) {
+        try {
+            JsonObject channelJson = favoriteArray.get(i).getAsJsonObject();
+            LiveChannelItem item = new LiveChannelItem();
+
+            // 从 JSON 还原 LiveChannelItem 对象
+            item.setChannelIndex(channelJson.get("channelIndex").getAsInt());
+            item.setChannelNum(channelJson.get("channelNum").getAsInt());
+            item.setChannelName(channelJson.get("channelName").getAsString());
+            item.setSourceIndex(channelJson.get("sourceIndex").getAsInt());
+            // sourceNum 会在 setChannelUrls 中自动设置
+            item.setinclude_back(channelJson.get("include_back").getAsBoolean());
+
+            // 还原频道源名称列表
+            JsonArray sourceNameArray = channelJson.getAsJsonArray("channelSourceNames");
+            ArrayList<String> sourceNames = new ArrayList<>();
+            for (int j = 0; j < sourceNameArray.size(); j++) {
+                sourceNames.add(sourceNameArray.get(j).getAsString());
+            }
+            item.setChannelSourceNames(sourceNames);
+
+            // 还原频道源链接列表 (核心)
+            JsonArray urlArray = channelJson.getAsJsonArray("channelUrls");
+            ArrayList<String> urls = new ArrayList<>();
+            for (int j = 0; j < urlArray.size(); j++) {
+                urls.add(urlArray.get(j).getAsString());
+            }
+            item.setChannelUrls(urls); // 这里会设置 sourceNum
+
+            favoriteChannels.add(item);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    group.setLiveChannels(favoriteChannels);
+    return group;
+}
+
+/**
+ * 判断两个 JsonObject 是否代表同一个频道
+ * 对比规则：频道名称相同 且 所有频道链接集合相同（顺序不敏感）
+ */
+private boolean isSameChannel(JsonObject fav1, JsonObject fav2) {
+    // 1. 对比频道名称
+    if (!fav1.get("channelName").getAsString().equals(fav2.get("channelName").getAsString())) {
+        return false;
+    }
+
+    // 2. 对比链接集合（转换为 HashSet 忽略顺序）
+    JsonArray urls1 = fav1.getAsJsonArray("channelUrls");
+    JsonArray urls2 = fav2.getAsJsonArray("channelUrls");
+
+    if (urls1.size() != urls2.size()) {
+        return false;
+    }
+
+    Set<String> set1 = new HashSet<>();
+    Set<String> set2 = new HashSet<>();
+    for (int i = 0; i < urls1.size(); i++) {
+        set1.add(urls1.get(i).getAsString());
+        set2.add(urls2.get(i).getAsString());
+    }
+
+    return set1.equals(set2);
+}
+
+
 }
