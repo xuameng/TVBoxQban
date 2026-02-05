@@ -2324,12 +2324,6 @@ public class LivePlayActivity extends BaseActivity {
                 mHideChannelListRun(); //xuameng隐藏左侧频道菜单
             }
 
-    // 新增：长按监听
-    @Override
-    public boolean onItemLongClick(TvRecyclerView parent, View itemView, int position) {
-        toggleFavoriteForChannel(position);
-        return true; // 消费长按事件
-    }
         });
         //手机/模拟器
         liveChannelItemAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
