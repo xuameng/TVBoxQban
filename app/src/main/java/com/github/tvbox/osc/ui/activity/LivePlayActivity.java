@@ -799,12 +799,12 @@ public class LivePlayActivity extends BaseActivity {
     }
     @SuppressLint("SetTextI18n") //xuameng乱码
     private void showBottomEpgXU() { //XUAMENG刷新EPG，要不不能自动刷新
+        tip_epg1.setText("");
+        tip_epg2.setText("");
         if(!isCurrentLiveChannelValidXu()) { //xuameng 未选择频道空指针问题
             return;
         }
         if(isBack) return;
-        tip_epg1.setText("");
-        tip_epg2.setText("");
         if(channel_Name.getChannelName() != null) {
             String savedEpgKey = channel_Name.getChannelName() + "_" + Objects.requireNonNull(liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex())).getDatePresented();
             if(hsEpg.containsKey(savedEpgKey)) {
