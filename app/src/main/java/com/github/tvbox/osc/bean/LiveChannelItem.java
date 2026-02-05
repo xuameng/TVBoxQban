@@ -7,6 +7,9 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonArray;
 import java.util.HashSet;
 import java.util.Set;
+
+import com.orhanobut.hawk.Hawk;
+import com.github.tvbox.osc.util.HawkConfig;
 /**
  * @author pj567
  * @date :2021/1/12
@@ -161,7 +164,6 @@ public class LiveChannelItem {
                 item.setChannelNum(channelJson.get("channelNum").getAsInt());
                 item.setChannelName(channelJson.get("channelName").getAsString());
                 item.setSourceIndex(channelJson.get("sourceIndex").getAsInt());
-                item.setSourceNum(channelJson.get("sourceNum").getAsInt());
                 item.setinclude_back(channelJson.get("include_back").getAsBoolean());
 
                 JsonArray sourceNameArray = channelJson.getAsJsonArray("channelSourceNames");
