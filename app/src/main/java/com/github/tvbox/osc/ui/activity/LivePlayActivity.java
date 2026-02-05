@@ -2588,6 +2588,11 @@ liveChannelItemAdapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLon
             showSuccess();
             initLiveState();
         }
+// 在 initLiveChannelList 方法中，加载完所有普通分组后
+LiveChannelGroup favoriteGroup = createFavoriteChannelGroup();
+if (!favoriteGroup.getLiveChannels().isEmpty()) {
+    liveChannelGroupList.add(0, favoriteGroup); // 放在第一个
+}
     }
     public void loadProxyLives(String url) {
         try {
@@ -3635,6 +3640,32 @@ private void toggleFavoriteForChannel(int position) {
     // 注意：这里需要先创建“收藏夹”分组功能
     // updateFavoriteGroupIfNeeded();
 }
+
+private LiveChannelGroup createFavoriteChannelGroup() {
+    LiveChannelGroup favGroup = new LiveChannelGroup();
+    favGroup.setGroupIndex(-1); // 或一个特殊索引
+    favGroup.setGroupName("我的收藏");
+    favGroup.setGroupPassword("");
+
+    ArrayList<LiveChannelItem> favoriteChannels = new ArrayList<>();
+    for (LiveChannelGroup group : liveChannelGroupList) {
+        for (LiveChannelItem channel : group.getLiveChannels()) {
+            if (channel.isFavorited()) {
+                // 创建新的频道对象，避免引用问题
+                LiveChannelItem favoriteChannel = new LiveChannelItem();
+                favoriteChannel.setChannelName(channel.getChannelName());
+                favoriteChannel.setChannelNum(channel.getChannelNum());
+                favoriteChannel.setFavorited(true); // 明确设置为收藏状态
+                favoriteChannel.setChannelIndex(channel.getChannelIndex());
+                // 复制其他需要的属性...
+                favoriteChannels.add(favoriteChannel);
+            }
+        }
+    }
+    favGroup.setLiveChannels(favoriteChannels);
+    return favGroup;
+}
+
 
 
 }
