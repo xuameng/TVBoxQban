@@ -896,24 +896,21 @@ public class LivePlayActivity extends BaseActivity {
             mHandler.removeCallbacks(mUpdateVodImageXu);
             mHandler.removeCallbacks(mUpdateTimeRun);
             mHandler.removeCallbacks(mUpdateTimeRunXu);
-            iv_circle_bg_xu.setVisibility(View.GONE); //xuameng音乐播放时图标
-            MxuamengMusic.setVisibility(View.GONE); //xuameng播放音乐背景
-            customVisualizer.setVisibility(View.GONE);  //xuameng播放音乐柱状图
             if(mHandler != null) {
                 mHandler.removeCallbacksAndMessages(null);
             }
-            OkGo.getInstance().cancelTag("xuameng");
-            if(countDownTimer != null) {
-               countDownTimer.cancel();
-               countDownTimer = null;
-            }
-           if(mVideoView != null) {
-               mVideoView.release();
-               mVideoView = null;
-           }
+            iv_circle_bg_xu.setVisibility(View.GONE); //xuameng音乐播放时图标
+            MxuamengMusic.setVisibility(View.GONE); //xuameng播放音乐背景
+            customVisualizer.setVisibility(View.GONE);  //xuameng播放音乐柱状图
             releaseVisualizer();  //xuameng音乐播放动画
             App.HideToast();  //xuameng HideToast
             cancelxToast();
+            OkGo.getInstance().cancelTag("xuameng");
+            cleanupAllTimers();
+            if(mVideoView != null) {
+                mVideoView.release();
+                mVideoView = null;
+            }
             super.onBackPressed();
         } else {
             mExitTime = System.currentTimeMillis();
@@ -966,23 +963,21 @@ public class LivePlayActivity extends BaseActivity {
         mHandler.removeCallbacks(mUpdateVodImageXu);
         mHandler.removeCallbacks(mUpdateTimeRun);
         mHandler.removeCallbacks(mUpdateTimeRunXu);
-        iv_circle_bg_xu.setVisibility(View.GONE); //xuameng音乐播放时图标
-        MxuamengMusic.setVisibility(View.GONE); //xuameng播放音乐背景
         if(mHandler != null) {
             mHandler.removeCallbacksAndMessages(null);
         }
+        iv_circle_bg_xu.setVisibility(View.GONE); //xuameng音乐播放时图标
+        MxuamengMusic.setVisibility(View.GONE); //xuameng播放音乐背景
+        customVisualizer.setVisibility(View.GONE);  //xuameng播放音乐柱状图
+        releaseVisualizer();  //xuameng音乐播放动画
+        App.HideToast();  //xuameng HideToast
+        cancelxToast();
         OkGo.getInstance().cancelTag("xuameng");
-        if(countDownTimer != null) {
-           countDownTimer.cancel();
-           countDownTimer = null;
-        }
+        cleanupAllTimers();
         if(mVideoView != null) {
             mVideoView.release();
             mVideoView = null;
         }
-        releaseVisualizer();  //xuameng音乐播放动画
-        App.HideToast();  //xuameng HideToast
-        cancelxToast();
         super.onBackPressed();
     }
     private final Runnable mPlaySelectedChannel = new Runnable() {
@@ -1230,18 +1225,31 @@ public class LivePlayActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);
+        mHandler.removeCallbacks(mConnectTimeoutChangeSourceRunBack);
+        mHandler.removeCallbacks(mConnectTimeoutChangeSourceRunBuffer);
+        mHandler.removeCallbacks(mUpdateNetSpeedRun);
+        mHandler.removeCallbacks(mUpdateNetSpeedRunXu);
+        mHandler.removeCallbacks(mUpdateVodProgressXu);
+        mHandler.removeCallbacks(myRunnableMusic);
+        mHandler.removeCallbacks(mUpdateVodImageXu);
+        mHandler.removeCallbacks(mUpdateTimeRun);
+        mHandler.removeCallbacks(mUpdateTimeRunXu);
+        if(mHandler != null) {
+            mHandler.removeCallbacksAndMessages(null);
+        }
+        iv_circle_bg_xu.setVisibility(View.GONE); //xuameng音乐播放时图标
+        MxuamengMusic.setVisibility(View.GONE); //xuameng播放音乐背景
+        customVisualizer.setVisibility(View.GONE);  //xuameng播放音乐柱状图
+        releaseVisualizer();  //xuameng音乐播放动画
+        App.HideToast();  //xuameng HideToast
+        cancelxToast();
+        OkGo.getInstance().cancelTag("xuameng");
+        cleanupAllTimers();
         if(mVideoView != null) {
             mVideoView.release();
             mVideoView = null;
         }
-        if(countDownTimer != null) {
-           countDownTimer.cancel();
-           countDownTimer = null;
-        }
-        if(mHandler != null) {
-            mHandler.removeCallbacksAndMessages(null);
-        }
-        OkGo.getInstance().cancelTag("xuameng");
     }
     private void showChannelList() {
         if(liveChannelGroupList.isEmpty()) return; //xuameng新增
@@ -3513,4 +3521,28 @@ public class LivePlayActivity extends BaseActivity {
         mRightEpgList.postDelayed(delayedScrollTask, 50);
     }
 
+    private void cleanupAllTimers() {   // xuameng清理所有 CountDownTimer 实例
+        CountDownTimer[] timers = {
+            countDownTimer, countDownTimer5, countDownTimer6, countDownTimer7,
+            countDownTimer8, countDownTimer10, countDownTimer20, countDownTimer21,
+            countDownTimer22
+        };
+    
+        for (CountDownTimer timer : timers) {
+            if (timer != null) {
+                timer.cancel();
+            }
+        }
+    
+        // 置空所有引用
+        countDownTimer = null;
+        countDownTimer5 = null;
+        countDownTimer6 = null;
+        countDownTimer7 = null;
+        countDownTimer8 = null;
+        countDownTimer10 = null;
+        countDownTimer20 = null;
+        countDownTimer21 = null;
+        countDownTimer22 = null;
+    }
 }
