@@ -14,6 +14,7 @@ import com.google.gson.JsonObject;
 import com.orhanobut.hawk.Hawk;
 import java.util.ArrayList;
 import com.github.tvbox.osc.R;
+import com.github.tvbox.osc.ui.activity.LivePlayActivity;
 
 import com.github.tvbox.osc.bean.LiveChannelItem;
 import com.orhanobut.hawk.Hawk;
