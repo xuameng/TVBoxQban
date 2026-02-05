@@ -803,8 +803,6 @@ public class LivePlayActivity extends BaseActivity {
             return;
         }
         if(isBack) return;
-            tip_epg1.setText("");
-            tip_epg2.setText("");
         if(channel_Name.getChannelName() != null) {
             String savedEpgKey = channel_Name.getChannelName() + "_" + Objects.requireNonNull(liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex())).getDatePresented();
             if(hsEpg.containsKey(savedEpgKey)) {
@@ -822,9 +820,13 @@ public class LivePlayActivity extends BaseActivity {
                     int size = arrayList.size() - 1;
                     while(size >= 0) {
                         if(new Date().compareTo(((Epginfo) arrayList.get(size)).startdateTime) >= 0) {
+            tip_epg1.setText("");
+            tip_epg2.setText("");
                           //  tip_epg1.setText(((Epginfo) arrayList.get(size)).start + "--" + ((Epginfo) arrayList.get(size)).end);
                          //   ((TextView) findViewById(R.id.tv_current_program_name)).setText(((Epginfo) arrayList.get(size)).title);
                             if(size != arrayList.size() - 1) {
+								            tip_epg1.setText("");
+            tip_epg2.setText("");
                                 tip_epg2.setText(((Epginfo) arrayList.get(size + 1)).start + "--" + ((Epginfo) arrayList.get(size + 1)).end); //xuameng修复EPG低菜单下一个节目结束的时间
                                 ((TextView) findViewById(R.id.tv_next_program_name)).setText(((Epginfo) arrayList.get(size + 1)).title);
                             }
