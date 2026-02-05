@@ -152,7 +152,15 @@ public void toggleFavoriteChannel(LiveChannelItem channel, int position) {
 
     Hawk.put(HawkConfig.LIVE_FAVORITE_CHANNELS, favoriteArray);
     notifyItemChanged(position);
+    
+    // ========== 新增：通知LivePlayActivity刷新收藏频道组 ==========
+    // 通过广播或回调通知LivePlayActivity刷新
+    if (mContext instanceof LivePlayActivity) {
+        ((LivePlayActivity) mContext).refreshFavoriteChannelGroup();
+    }
+    // ========== 新增结束 ==========
 }
+
 
 
 }
