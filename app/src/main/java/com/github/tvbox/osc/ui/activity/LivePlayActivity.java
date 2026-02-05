@@ -2574,13 +2574,28 @@ public class LivePlayActivity extends BaseActivity {
             liveChannelGroupList.clear();
             liveChannelGroupList.addAll(list);
 
-    // ========== 新增：创建并插入“我的收藏”频道组 ==========
+ // ========== 修改：创建并插入"我的收藏"频道组 ==========
+    // 先创建收藏频道组
     LiveChannelGroup favoriteGroup = createFavoriteChannelGroup();
+    
+    // 检查收藏频道组是否有效且有频道
     if (favoriteGroup != null && !favoriteGroup.getLiveChannels().isEmpty()) {
-        // 将“我的收藏”插入到列表的第一个位置，方便用户访问
+        // 将"我的收藏"插入到列表的第一个位置
         liveChannelGroupList.add(0, favoriteGroup);
+        
+        // 更新所有频道组的索引，避免索引冲突
+        for (int i = 0; i < liveChannelGroupList.size(); i++) {
+            liveChannelGroupList.get(i).setGroupIndex(i);
+        }
+        
+        // 如果当前选中的频道组索引需要调整（因为插入了一个新组）
+        if (currentChannelGroupIndex >= 0) {
+            currentChannelGroupIndex++; // 因为前面插入了一个组，所以索引+1
+        }
+        // ========== 新增：调用 refreshFavoriteChannelGroup 方法 ==========
+        refreshFavoriteChannelGroup();
+        // ========== 新增结束 ==========
     }
-    // ========== 新增结束 ==========
 
 
             showSuccess();
@@ -3640,5 +3655,54 @@ private boolean isSameChannel(JsonObject fav1, JsonObject fav2) {
     return set1.equals(set2);
 }
 
+
+/**
+ * 刷新收藏频道组
+ */
+public void refreshFavoriteChannelGroup() {
+    // 保存当前选中的频道信息
+    int oldGroupIndex = currentChannelGroupIndex;
+    int oldChannelIndex = currentLiveChannelIndex;
+    
+    // 重新创建收藏频道组
+    List<LiveChannelGroup> originalList = ApiConfig.get().getChannelGroupList();
+    liveChannelGroupList.clear();
+    liveChannelGroupList.addAll(originalList);
+    
+    // 重新插入收藏频道组
+    LiveChannelGroup favoriteGroup = createFavoriteChannelGroup();
+    if (favoriteGroup != null && !favoriteGroup.getLiveChannels().isEmpty()) {
+        // 将"我的收藏"插入到列表的第一个位置
+        liveChannelGroupList.add(0, favoriteGroup);
+        
+        // 更新所有频道组的索引
+        for (int i = 0; i < liveChannelGroupList.size(); i++) {
+            liveChannelGroupList.get(i).setGroupIndex(i);
+        }
+        
+        // 调整当前选中的频道组索引
+        if (oldGroupIndex >= 0) {
+            // 如果之前选中的是收藏组，保持选中收藏组
+            if (oldGroupIndex == 0) {
+                currentChannelGroupIndex = 0;
+            } else {
+                // 否则索引+1（因为前面插入了一个收藏组）
+                currentChannelGroupIndex = oldGroupIndex + 1;
+            }
+        }
+    }
+    
+    // 刷新适配器
+    liveChannelGroupAdapter.setNewData(liveChannelGroupList);
+    
+    // 重新选中之前的频道组
+    if (currentChannelGroupIndex >= 0 && currentChannelGroupIndex < liveChannelGroupList.size()) {
+        liveChannelGroupAdapter.setSelectedGroupIndex(currentChannelGroupIndex);
+        liveChannelGroupAdapter.notifyDataSetChanged();
+        
+        // 加载该组的频道
+        loadChannelGroupDataAndPlay(currentChannelGroupIndex, currentLiveChannelIndex);
+    }
+}
 
 }
