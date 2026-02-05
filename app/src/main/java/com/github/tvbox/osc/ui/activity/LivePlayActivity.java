@@ -2574,24 +2574,6 @@ public class LivePlayActivity extends BaseActivity {
             liveChannelGroupList.clear();
             liveChannelGroupList.addAll(list);
 
- // ========== 修改：创建并插入"我的收藏"频道组 ==========
-    // 先创建收藏频道组
-    LiveChannelGroup favoriteGroup = createFavoriteChannelGroup();
-    
-    // 检查收藏频道组是否有效且有频道
-    if (favoriteGroup != null && !favoriteGroup.getLiveChannels().isEmpty()) {
-        // 将"我的收藏"插入到列表的第一个位置
-        liveChannelGroupList.add(0, favoriteGroup);
-        
-        // 更新所有频道组的索引，避免索引冲突
-        for (int i = 0; i < liveChannelGroupList.size(); i++) {
-            liveChannelGroupList.get(i).setGroupIndex(i);
-        }
-        
-        // 如果当前选中的频道组索引需要调整（因为插入了一个新组）
-        if (currentChannelGroupIndex >= 0) {
-            currentChannelGroupIndex++; // 因为前面插入了一个组，所以索引+1
-        }
         // ========== 新增：调用 refreshFavoriteChannelGroup 方法 ==========
         refreshFavoriteChannelGroup();
         // ========== 新增结束 ==========
@@ -3695,14 +3677,25 @@ public void refreshFavoriteChannelGroup() {
     // 刷新适配器
     liveChannelGroupAdapter.setNewData(liveChannelGroupList);
     
-    // 重新选中之前的频道组
+    // 重新选中之前的频道组（但不触发播放）
     if (currentChannelGroupIndex >= 0 && currentChannelGroupIndex < liveChannelGroupList.size()) {
         liveChannelGroupAdapter.setSelectedGroupIndex(currentChannelGroupIndex);
         liveChannelGroupAdapter.notifyDataSetChanged();
         
-        // 加载该组的频道
-        loadChannelGroupDataAndPlay(currentChannelGroupIndex, currentLiveChannelIndex);
+        // 仅加载该组的频道数据，不触发播放
+        liveChannelItemAdapter.setNewData(getLiveChannels(currentChannelGroupIndex));
+        if (currentLiveChannelIndex > -1) {
+            mLiveChannelView.scrollToPosition(currentLiveChannelIndex);
+            liveChannelItemAdapter.setSelectedChannelIndex(currentLiveChannelIndex);
+        } else {
+            mLiveChannelView.scrollToPosition(0);
+            liveChannelItemAdapter.setSelectedChannelIndex(-1);
+        }
+        
+        // 重要：不调用 loadChannelGroupDataAndPlay()，避免触发 clickLiveChannel() 和 mHideChannelListRun()
+        // loadChannelGroupDataAndPlay(currentChannelGroupIndex, currentLiveChannelIndex);
     }
 }
+
 
 }
