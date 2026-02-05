@@ -521,8 +521,6 @@ public class LivePlayActivity extends BaseActivity {
    //        String title = arrayListJudge.get(0).title;      //0中EPG第一行的名称
    //        if (!title.contains("聚汇直播")) {   //xuameng再次判断如果缓存EPG中有聚汇直播字样说明是在线获取EPG失败则继续重试
               showEpg(date, hsEpg.get(savedEpgKey));   //xuameng如果成功就直接显示缓存EPG   
-            tip_epg1.setText("");
-            tip_epg2.setText("");
               showBottomEpgXU(); //xuameng测试EPG刷新 
               return;
    //        }
@@ -564,8 +562,6 @@ public class LivePlayActivity extends BaseActivity {
                 epgListAdapter.setNewData(epgdata);
                 hsEpg.put(savedEpgKey, arrayList);   //xuameng默认列表存入缓存
                 showEpg(date, arrayList);
-            tip_epg1.setText("");
-            tip_epg2.setText("");
                 showBottomEpgXU(); //xuameng测试EPG刷新        
             }
             public void onResponse(String paramString) {
@@ -589,8 +585,6 @@ public class LivePlayActivity extends BaseActivity {
                 if(arrayList != null && arrayList.size() > 0){
                    hsEpg.put(savedEpgKey, arrayList);  //xuameng默认列表存入缓存
                    showEpg(date, arrayList);
-            tip_epg1.setText("");
-            tip_epg2.setText("");
                    showBottomEpgXU(); //xuameng测试EPG刷新
                 }else{
                    Epginfo epgbcinfo = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "00:00", "01:59", 0);   //xuameng最后一项为pos id
@@ -621,8 +615,6 @@ public class LivePlayActivity extends BaseActivity {
                    epgListAdapter.setNewData(epgdata);
                    hsEpg.put(savedEpgKey, arrayList);   //xuameng默认列表存入缓存
                    showEpg(date, arrayList);
-            tip_epg1.setText("");
-            tip_epg2.setText("");
                    showBottomEpgXU(); //xuameng测试EPG刷新
                 }
             }
@@ -811,6 +803,8 @@ public class LivePlayActivity extends BaseActivity {
             return;
         }
         if(isBack) return;
+            tip_epg1.setText("");
+            tip_epg2.setText("");
         if(channel_Name.getChannelName() != null) {
             String savedEpgKey = channel_Name.getChannelName() + "_" + Objects.requireNonNull(liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex())).getDatePresented();
             if(hsEpg.containsKey(savedEpgKey)) {
@@ -828,8 +822,8 @@ public class LivePlayActivity extends BaseActivity {
                     int size = arrayList.size() - 1;
                     while(size >= 0) {
                         if(new Date().compareTo(((Epginfo) arrayList.get(size)).startdateTime) >= 0) {
-                            tip_epg1.setText(((Epginfo) arrayList.get(size)).start + "--" + ((Epginfo) arrayList.get(size)).end);
-                            ((TextView) findViewById(R.id.tv_current_program_name)).setText(((Epginfo) arrayList.get(size)).title);
+                          //  tip_epg1.setText(((Epginfo) arrayList.get(size)).start + "--" + ((Epginfo) arrayList.get(size)).end);
+                         //   ((TextView) findViewById(R.id.tv_current_program_name)).setText(((Epginfo) arrayList.get(size)).title);
                             if(size != arrayList.size() - 1) {
                                 tip_epg2.setText(((Epginfo) arrayList.get(size + 1)).start + "--" + ((Epginfo) arrayList.get(size + 1)).end); //xuameng修复EPG低菜单下一个节目结束的时间
                                 ((TextView) findViewById(R.id.tv_next_program_name)).setText(((Epginfo) arrayList.get(size + 1)).title);
