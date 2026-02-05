@@ -3767,13 +3767,8 @@ private void toggleFavoriteForChannel(int position) {
 }
 
 
-private LiveChannelGroup createFavoriteChannelGroup() {
-    LiveChannelGroup favGroup = new LiveChannelGroup();
-    favGroup.setGroupIndex(-1); // 使用特殊索引标识收藏分组
-    favGroup.setGroupName("我的收藏");
-    favGroup.setGroupPassword("");
 
-    ArrayList<LiveChannelItem> favoriteChannels = new ArrayList<>();
+
     private LiveChannelGroup createFavoriteChannelGroup() {
     LiveChannelGroup favGroup = new LiveChannelGroup();
     favGroup.setGroupIndex(-1); // 使用特殊索引标识收藏分组
