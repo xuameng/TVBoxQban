@@ -2587,39 +2587,19 @@ public class LivePlayActivity extends BaseActivity {
         } else {
             liveChannelGroupList.clear();
 
-// ========== 修复：确保收藏组始终显示（优化版） ==========
-// 1. 强制创建收藏组，无论是否有收藏频道
-LiveChannelGroup favoriteGroup = LiveChannelItem.createFavoriteChannelGroup();
-
-// 2. 确保收藏组不为null且设置正确的索引
-if (favoriteGroup == null) {
-    favoriteGroup = new LiveChannelGroup();
-    favoriteGroup.setGroupName("我的收藏");
-    favoriteGroup.setGroupPassword("");
-}
-
-// 3. 设置收藏组索引为0（最前面）
-favoriteGroup.setGroupIndex(0);
-
-// 4. 确保收藏组的频道列表不为null
-if (favoriteGroup.getLiveChannels() == null) {
-    favoriteGroup.setLiveChannels(new ArrayList<>());
-}
-
-// 5. 添加收藏组到列表
-liveChannelGroupList.add(favoriteGroup);
-
-// 6. 添加原始频道组，动态计算索引
-int startIndex = 1; // 从1开始（因为收藏组占用了索引0）
-for (int i = 0; i < list.size(); i++) {
-    LiveChannelGroup group = list.get(i);
+    // 1. 创建收藏组
+    LiveChannelGroup favoriteGroup = LiveChannelItem.createFavoriteChannelGroup();
+    favoriteGroup.setGroupIndex(0); // 固定为第一个组
+    liveChannelGroupList.add(favoriteGroup);
     
-    // 跳过原始列表中的"我的收藏"组（如果存在）
-    if (!"我的收藏".equals(group.getGroupName())) {
-        group.setGroupIndex(startIndex + i);
-        liveChannelGroupList.add(group);
+    // 2. 添加原始频道组，跳过可能存在的“我的收藏”组
+    int nextIndex = 1;
+    for (LiveChannelGroup group : list) {
+        if (!"我的收藏".equals(group.getGroupName())) {
+            group.setGroupIndex(nextIndex++);
+            liveChannelGroupList.add(group);
+        }
     }
-}
 
         // ========== 修复结束 ==========
 
