@@ -3598,6 +3598,7 @@ private void setDefaultLiveChannelList() {
 
 
 
+
 /**
  * 刷新收藏频道组（修复版）- 解决TV端焦点冲突导致的崩溃
  */
@@ -3627,20 +3628,21 @@ private void refreshFavoriteChannelGroup() {
                 // 关键修复：如果当前选中的是收藏组，延迟刷新频道列表
                 int selectedGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
                 if (selectedGroupIndex == favoriteGroupIndex) {
+                    // 创建final副本以解决内部类引用问题
+                    final int finalFavoriteGroupIndex = favoriteGroupIndex;
                     // 使用postDelayed确保TvRecyclerView完成当前的焦点处理
                     mHandler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             // 此时可以安全更新频道列表数据
-                            liveChannelItemAdapter.setNewData(getLiveChannels(favoriteGroupIndex));
+                            liveChannelItemAdapter.setNewData(getLiveChannels(finalFavoriteGroupIndex));
                         }
-                    }, 200); // 延迟50毫秒，足够让任何正在进行的焦点事件完成
+                    }, 50); // 延迟50毫秒，足够让任何正在进行的焦点事件完成
                 }
             }
         }
     });
 }
-
 
 
 
