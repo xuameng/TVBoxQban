@@ -14,10 +14,10 @@ import com.google.gson.JsonObject;
 import com.orhanobut.hawk.Hawk;
 import java.util.ArrayList;
 import com.github.tvbox.osc.R;
-import com.github.tvbox.osc.ui.activity.LivePlayActivity;
 
 import com.github.tvbox.osc.bean.LiveChannelItem;
 import com.github.tvbox.osc.util.HawkConfig;
+import com.github.tvbox.osc.base.App;
 
 
 /**
@@ -155,10 +155,10 @@ public void toggleFavoriteChannel(LiveChannelItem channel, int position) {
 
     if (found) {
         favoriteArray.remove(foundIndex);
-        Toast.makeText(mContext, "已取消收藏：" + channel.getChannelName(), Toast.LENGTH_SHORT).show();
+        App.showToastShort(mContext, "已取消收藏：" + channel.getChannelName(), Toast.LENGTH_SHORT).show();
     } else {
         favoriteArray.add(channelJson);
-        Toast.makeText(mContext, "已收藏：" + channel.getChannelName(), Toast.LENGTH_SHORT).show();
+        App.showToastShort(mContext, "已收藏：" + channel.getChannelName(), Toast.LENGTH_SHORT).show();
     }
 
     Hawk.put(HawkConfig.LIVE_FAVORITE_CHANNELS, favoriteArray);
