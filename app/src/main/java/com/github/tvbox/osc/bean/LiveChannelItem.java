@@ -143,78 +143,64 @@ public class LiveChannelItem {
         return json;
     }
 
-    /**
-     * 从 Hawk 中读取收藏的频道，并构建一个 LiveChannelGroup 对象
-     */
-   /**
- * 从 Hawk 中读取收藏的频道，并构建一个 LiveChannelGroup 对象
+/**
+ * 从 Hawk 中读取收藏的频道，并构建一个 LiveChannelGroup 对象（优化版）
  */
 public static LiveChannelGroup createFavoriteChannelGroup() {
     LiveChannelGroup group = new LiveChannelGroup();
-    group.setGroupIndex(-1); // 临时索引，会在loadLives中重新设置
+    // 设置收藏组基本属性
+    group.setGroupIndex(-1); // 临时索引，会在调用处重新设置
     group.setGroupName("我的收藏");
     group.setGroupPassword("");
-
-    ArrayList<LiveChannelItem> favoriteChannels = new ArrayList<>();
+    
+    // 从存储中读取收藏的频道
     JsonArray favoriteArray = Hawk.get(HawkConfig.LIVE_FAVORITE_CHANNELS, new JsonArray());
-
+    ArrayList<LiveChannelItem> favoriteChannels = new ArrayList<>();
+    
     for (int i = 0; i < favoriteArray.size(); i++) {
         try {
             JsonObject channelJson = favoriteArray.get(i).getAsJsonObject();
-            LiveChannelItem item = new LiveChannelItem();
-
-            item.setChannelIndex(i); // 重新设置频道索引
-            item.setChannelNum(channelJson.get("channelNum").getAsInt());
-            item.setChannelName(channelJson.get("channelName").getAsString());
-            item.setSourceIndex(channelJson.get("sourceIndex").getAsInt());
-            item.setinclude_back(channelJson.get("include_back").getAsBoolean());
-
-            JsonArray sourceNameArray = channelJson.getAsJsonArray("channelSourceNames");
-            ArrayList<String> sourceNames = new ArrayList<>();
-            for (int j = 0; j < sourceNameArray.size(); j++) {
-                sourceNames.add(sourceNameArray.get(j).getAsString());
-            }
-            item.setChannelSourceNames(sourceNames);
-
-            JsonArray urlArray = channelJson.getAsJsonArray("channelUrls");
-            ArrayList<String> urls = new ArrayList<>();
-            for (int j = 0; j < urlArray.size(); j++) {
-                urls.add(urlArray.get(j).getAsString());
-            }
-            item.setChannelUrls(urls);
-
+            LiveChannelItem item = convertJsonToChannel(channelJson, i);
             favoriteChannels.add(item);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+    
     group.setLiveChannels(favoriteChannels);
     return group;
 }
 
 
-    /**
-     * 判断两个 JsonObject 是否代表同一个频道
-     */
-    public static boolean isSameChannel(JsonObject fav1, JsonObject fav2) {
-        if (!fav1.get("channelName").getAsString().equals(fav2.get("channelName").getAsString())) {
-            return false;
-        }
-
-        JsonArray urls1 = fav1.getAsJsonArray("channelUrls");
-        JsonArray urls2 = fav2.getAsJsonArray("channelUrls");
-
-        if (urls1.size() != urls2.size()) {
-            return false;
-        }
-
-        Set<String> set1 = new HashSet<>();
-        Set<String> set2 = new HashSet<>();
-        for (int i = 0; i < urls1.size(); i++) {
-            set1.add(urls1.get(i).getAsString());
-            set2.add(urls2.get(i).getAsString());
-        }
-
-        return set1.equals(set2);
+/**
+ * 将 JsonObject 转换为 LiveChannelItem（提取公共方法）
+ */
+private static LiveChannelItem convertJsonToChannel(JsonObject channelJson, int index) {
+    LiveChannelItem item = new LiveChannelItem();
+    
+    item.setChannelIndex(index);
+    item.setChannelNum(channelJson.get("channelNum").getAsInt());
+    item.setChannelName(channelJson.get("channelName").getAsString());
+    item.setSourceIndex(channelJson.get("sourceIndex").getAsInt());
+    item.setinclude_back(channelJson.get("include_back").getAsBoolean());
+    
+    // 解析频道源名称
+    JsonArray sourceNameArray = channelJson.getAsJsonArray("channelSourceNames");
+    ArrayList<String> sourceNames = new ArrayList<>();
+    for (int j = 0; j < sourceNameArray.size(); j++) {
+        sourceNames.add(sourceNameArray.get(j).getAsString());
     }
+    item.setChannelSourceNames(sourceNames);
+    
+    // 解析频道URL
+    JsonArray urlArray = channelJson.getAsJsonArray("channelUrls");
+    ArrayList<String> urls = new ArrayList<>();
+    for (int j = 0; j < urlArray.size(); j++) {
+        urls.add(urlArray.get(j).getAsString());
+    }
+    item.setChannelUrls(urls);
+    
+    return item;
+}
+
 }
