@@ -149,8 +149,8 @@ public class LiveChannelItem {
 public static LiveChannelGroup createFavoriteChannelGroup() {
     LiveChannelGroup group = new LiveChannelGroup();
     
-    // 设置默认索引为0（收藏组通常在最前面）
-    group.setGroupIndex(0); 
+    // 保持索引为-1，由调用处根据实际情况动态设置
+    group.setGroupIndex(-1);
     group.setGroupName("我的收藏");
     group.setGroupPassword("");
     
@@ -174,6 +174,7 @@ public static LiveChannelGroup createFavoriteChannelGroup() {
     
     return group;
 }
+
 
 
     /**
