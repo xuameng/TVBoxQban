@@ -2587,38 +2587,30 @@ public class LivePlayActivity extends BaseActivity {
         } else {
             liveChannelGroupList.clear();
 
-        // ========== 修复：确保收藏组始终显示 ==========
-        // 1. 检查原始列表中是否已有"我的收藏"组
-        boolean hasFavoriteInOriginal = false;
-        for (LiveChannelGroup group : list) {
-            if ("我的收藏".equals(group.getGroupName())) {
-                hasFavoriteInOriginal = true;
-                break;
-            }
-        }
-        
-        // 2. 创建收藏频道组
+        // ========== 修复：确保收藏组始终显示（优化版） ==========
+        // 1. 强制创建收藏组，无论是否有收藏频道
         LiveChannelGroup favoriteGroup = LiveChannelItem.createFavoriteChannelGroup();
         
-        // 3. 关键修复：无论是否有收藏频道，都添加收藏组
-        if (!hasFavoriteInOriginal) {
-            // 如果原始列表中没有收藏组，则添加并设置索引为0
-            favoriteGroup.setGroupIndex(0);
-            liveChannelGroupList.add(favoriteGroup);
-        } else {
-            // 如果原始列表中已有收藏组，使用原始列表中的收藏组
-            // 但确保它的索引为0（放在最前面）
-            for (LiveChannelGroup group : list) {
-                if ("我的收藏".equals(group.getGroupName())) {
-                    group.setGroupIndex(0);
-                    liveChannelGroupList.add(group);
-                    break;
-                }
-            }
+        // 2. 确保收藏组不为null且设置正确的索引
+        if (favoriteGroup == null) {
+            favoriteGroup = new LiveChannelGroup();
+            favoriteGroup.setGroupName("我的收藏");
+            favoriteGroup.setGroupPassword("");
         }
         
-        // 4. 添加原始频道组，动态计算索引
-        int startIndex = liveChannelGroupList.size(); // 从当前大小开始
+        // 3. 设置收藏组索引为0（最前面）
+        favoriteGroup.setGroupIndex(0);
+        
+        // 4. 确保收藏组的频道列表不为null
+        if (favoriteGroup.getLiveChannels() == null) {
+            favoriteGroup.setLiveChannels(new ArrayList<>());
+        }
+        
+        // 5. 添加收藏组到列表
+        liveChannelGroupList.add(favoriteGroup);
+        
+        // 6. 添加原始频道组，动态计算索引
+        int startIndex = 1; // 从1开始（因为收藏组占用了索引0）
         for (int i = 0; i < list.size(); i++) {
             LiveChannelGroup group = list.get(i);
             
@@ -2629,6 +2621,7 @@ public class LivePlayActivity extends BaseActivity {
             }
         }
         // ========== 修复结束 ==========
+
             showSuccess();
             initLiveState();
 
@@ -3625,12 +3618,14 @@ private void setDefaultLiveChannelList() {
 
 
 /**
- * 刷新收藏频道组（优化版）
+ * 刷新收藏频道组（完全修复版）
  */
 private void refreshFavoriteChannelGroup() {
-    // 保存当前选中的频道组索引
+    // 保存当前所有状态
     int currentGroupIndex = currentChannelGroupIndex;
     int currentChannelIndex = currentLiveChannelIndex;
+    int focusedGroupIndex = liveChannelGroupAdapter.getFocusedGroupIndex();
+    int focusedChannelIndex = liveChannelItemAdapter.getFocusedChannelIndex();
     
     // 查找收藏组的索引
     int favoriteGroupIndex = -1;
@@ -3650,12 +3645,40 @@ private void refreshFavoriteChannelGroup() {
         // 刷新适配器数据
         liveChannelGroupAdapter.setNewData(liveChannelGroupList);
         
-        // ========== 关键修复：保持当前选中的频道组 ==========
-        // 只有当当前选中的就是收藏组时，才刷新收藏组的频道列表
-        if (currentGroupIndex == favoriteGroupIndex) {
+        // ========== 关键修复：智能状态恢复 ==========
+        // 情况1：如果当前焦点在收藏组，刷新收藏组的频道列表
+        if (focusedGroupIndex == favoriteGroupIndex) {
+            liveChannelItemAdapter.setNewData(getLiveChannels(favoriteGroupIndex));
+            
+            // 恢复焦点和选择状态
+            if (focusedChannelIndex >= 0 && focusedChannelIndex < getLiveChannels(favoriteGroupIndex).size()) {
+                liveChannelItemAdapter.setFocusedChannelIndex(focusedChannelIndex);
+                liveChannelItemAdapter.setSelectedChannelIndex(focusedChannelIndex);
+                mLiveChannelView.scrollToPosition(focusedChannelIndex);
+            }
+        }
+        // 情况2：如果当前焦点在其他组，保持当前状态
+        else if (focusedGroupIndex >= 0 && focusedGroupIndex < liveChannelGroupList.size()) {
+            // 恢复之前的焦点状态
+            liveChannelGroupAdapter.setFocusedGroupIndex(focusedGroupIndex);
+            liveChannelGroupAdapter.setSelectedGroupIndex(focusedGroupIndex);
+            
+            // 刷新当前焦点组的频道列表
+            liveChannelItemAdapter.setNewData(getLiveChannels(focusedGroupIndex));
+            
+            // 恢复频道焦点和选择状态
+            if (focusedChannelIndex >= 0 && focusedChannelIndex < getLiveChannels(focusedGroupIndex).size()) {
+                liveChannelItemAdapter.setFocusedChannelIndex(focusedChannelIndex);
+                liveChannelItemAdapter.setSelectedChannelIndex(focusedChannelIndex);
+                mLiveChannelView.scrollToPosition(focusedChannelIndex);
+            }
+        }
+        // 情况3：没有焦点，恢复播放状态
+        else {
+            // 恢复播放的频道组和频道
+            liveChannelGroupAdapter.setSelectedGroupIndex(currentGroupIndex);
             liveChannelItemAdapter.setNewData(getLiveChannels(currentGroupIndex));
             
-            // 恢复之前的频道选择
             if (currentChannelIndex >= 0 && currentChannelIndex < getLiveChannels(currentGroupIndex).size()) {
                 liveChannelItemAdapter.setSelectedChannelIndex(currentChannelIndex);
                 mLiveChannelView.scrollToPosition(currentChannelIndex);
@@ -3664,6 +3687,7 @@ private void refreshFavoriteChannelGroup() {
         // ========== 修复结束 ==========
     }
 }
+
 
 
 
