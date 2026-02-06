@@ -2279,7 +2279,7 @@ public class LivePlayActivity extends BaseActivity {
     liveChannelItemAdapter.setOnFavoriteChangeListener(new LiveChannelItemAdapter.OnFavoriteChangeListener() {
         @Override
         public void onFavoriteChanged() {
-         //   refreshFavoriteChannelGroup();
+            refreshFavoriteChannelGroup();
         }
     });
         mLiveChannelView.setAdapter(liveChannelItemAdapter);
@@ -3599,33 +3599,46 @@ private void setDefaultLiveChannelList() {
 
 
 /**
- * 刷新收藏频道组（简化版）- 只更新数据，不处理焦点状态
+ * 刷新收藏频道组（修复版）- 解决TV端焦点冲突导致的崩溃
  */
 private void refreshFavoriteChannelGroup() {
-    // 查找收藏组的索引
-    int favoriteGroupIndex = -1;
-    for (int i = 0; i < liveChannelGroupList.size(); i++) {
-        if ("我的收藏".equals(liveChannelGroupList.get(i).getGroupName())) {
-            favoriteGroupIndex = i;
-            break;
+    // 使用Handler.post确保在主线程执行，并避开当前的焦点事件处理周期
+    mHandler.post(new Runnable() {
+        @Override
+        public void run() {
+            // 查找收藏组的索引
+            int favoriteGroupIndex = -1;
+            for (int i = 0; i < liveChannelGroupList.size(); i++) {
+                if ("我的收藏".equals(liveChannelGroupList.get(i).getGroupName())) {
+                    favoriteGroupIndex = i;
+                    break;
+                }
+            }
+            
+            if (favoriteGroupIndex != -1) {
+                // 重新创建收藏组
+                LiveChannelGroup newFavoriteGroup = LiveChannelItem.createFavoriteChannelGroup();
+                newFavoriteGroup.setGroupIndex(favoriteGroupIndex);
+                liveChannelGroupList.set(favoriteGroupIndex, newFavoriteGroup);
+                
+                // 刷新适配器数据
+                liveChannelGroupAdapter.setNewData(liveChannelGroupList);
+                
+                // 关键修复：如果当前选中的是收藏组，延迟刷新频道列表
+                int selectedGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
+                if (selectedGroupIndex == favoriteGroupIndex) {
+                    // 使用postDelayed确保TvRecyclerView完成当前的焦点处理
+                    mHandler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            // 此时可以安全更新频道列表数据
+                            liveChannelItemAdapter.setNewData(getLiveChannels(favoriteGroupIndex));
+                        }
+                    }, 200); // 延迟50毫秒，足够让任何正在进行的焦点事件完成
+                }
+            }
         }
-    }
-    
-    if (favoriteGroupIndex != -1) {
-        // 重新创建收藏组
-        LiveChannelGroup newFavoriteGroup = LiveChannelItem.createFavoriteChannelGroup();
-        newFavoriteGroup.setGroupIndex(favoriteGroupIndex);
-        liveChannelGroupList.set(favoriteGroupIndex, newFavoriteGroup);
-        
-        // 刷新适配器数据
-        liveChannelGroupAdapter.setNewData(liveChannelGroupList);
-        
-        // 如果当前选中的是收藏组，刷新频道列表
-        int selectedGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
-        if (selectedGroupIndex == favoriteGroupIndex) {
-            liveChannelItemAdapter.setNewData(getLiveChannels(favoriteGroupIndex));
-        }
-    }
+    });
 }
 
 
