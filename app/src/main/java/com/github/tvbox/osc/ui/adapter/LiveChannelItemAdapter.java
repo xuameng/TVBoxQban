@@ -127,9 +127,6 @@ TextView tvFavoriteStar = holder.getView(R.id.ivFavoriteStar); // 新增：获�
 /**
  * 切换频道的收藏状态
  */
-/**
- * 切换频道的收藏状态
- */
 public void toggleFavoriteChannel(LiveChannelItem channel, int position) {
     JsonArray favoriteArray = Hawk.get(HawkConfig.LIVE_FAVORITE_CHANNELS, new JsonArray());
     JsonObject channelJson = LiveChannelItem.convertChannelToJson(channel);
@@ -155,20 +152,9 @@ public void toggleFavoriteChannel(LiveChannelItem channel, int position) {
 
     Hawk.put(HawkConfig.LIVE_FAVORITE_CHANNELS, favoriteArray);
     
-    // ========== 修复：使用Handler延迟更新，避免焦点跳转 ==========
-    new android.os.Handler().postDelayed(new Runnable() {
-        @Override
-        public void run() {
-            // 只更新当前项的UI
-            notifyItemChanged(position);
-            
-            // 通知LivePlayActivity刷新收藏频道组
-            if (mContext instanceof LivePlayActivity) {
-                ((LivePlayActivity) mContext).refreshFavoriteChannelGroup();
-            }
-        }
-    }, 50); // 延迟50ms，确保RecyclerView状态稳定
-    // ========== 修复结束 ==========
+    // 只需要更新当前项的UI
+    notifyItemChanged(position);
+    
 }
 
 
