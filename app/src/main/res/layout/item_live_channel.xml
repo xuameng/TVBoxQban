@@ -35,11 +35,11 @@
         android:marqueeRepeatLimit="marquee_forever"/>
     <TextView
         android:id="@+id/ivFavoriteStar"
-        android:layout_width="60.0mm"
+        android:layout_width="wrap_content"
         android:layout_height="60.0mm"
         android:layout_gravity="center_vertical"
         android:layout_marginStart="8.0mm"
-        android:layout_marginEnd="8.0mm"
+        android:layout_marginEnd="0.0mm"
         android:text="★"
         android:textSize="22.0mm"
         android:visibility="gone"
