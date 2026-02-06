@@ -2275,6 +2275,13 @@ public class LivePlayActivity extends BaseActivity {
         mLiveChannelView.setItemAnimator(null);   //xuameng禁用TVRecyclerView动画
         mLiveChannelView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
         liveChannelItemAdapter = new LiveChannelItemAdapter();
+    // === 新增：设置收藏变更监听器 ===
+    liveChannelItemAdapter.setOnFavoriteChangeListener(new LiveChannelItemAdapter.OnFavoriteChangeListener() {
+        @Override
+        public void onFavoriteChanged() {
+            refreshFavoriteChannelGroup();
+        }
+    });
         mLiveChannelView.setAdapter(liveChannelItemAdapter);
         mLiveChannelView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -3574,103 +3581,30 @@ public class LivePlayActivity extends BaseActivity {
 
 
 
-/**
- * 从 Hawk 中读取收藏的频道，并构建一个 LiveChannelGroup 对象
- */
-private LiveChannelGroup createFavoriteChannelGroup() {
-    LiveChannelGroup group = new LiveChannelGroup();
-    group.setGroupIndex(-1); // 使用特殊索引 -1 标识收藏组
-    group.setGroupName("我的收藏");
-    group.setGroupPassword("");
-
-    ArrayList<LiveChannelItem> favoriteChannels = new ArrayList<>();
-    JsonArray favoriteArray = Hawk.get(HawkConfig.LIVE_FAVORITE_CHANNELS, new JsonArray());
-
-    for (int i = 0; i < favoriteArray.size(); i++) {
-        try {
-            JsonObject channelJson = favoriteArray.get(i).getAsJsonObject();
-            LiveChannelItem item = new LiveChannelItem();
-
-            // 从 JSON 还原 LiveChannelItem 对象
-            item.setChannelIndex(channelJson.get("channelIndex").getAsInt());
-            item.setChannelNum(channelJson.get("channelNum").getAsInt());
-            item.setChannelName(channelJson.get("channelName").getAsString());
-            item.setSourceIndex(channelJson.get("sourceIndex").getAsInt());
-            // sourceNum 会在 setChannelUrls 中自动设置
-            item.setinclude_back(channelJson.get("include_back").getAsBoolean());
-
-            // 还原频道源名称列表
-            JsonArray sourceNameArray = channelJson.getAsJsonArray("channelSourceNames");
-            ArrayList<String> sourceNames = new ArrayList<>();
-            for (int j = 0; j < sourceNameArray.size(); j++) {
-                sourceNames.add(sourceNameArray.get(j).getAsString());
-            }
-            item.setChannelSourceNames(sourceNames);
-
-            // 还原频道源链接列表 (核心)
-            JsonArray urlArray = channelJson.getAsJsonArray("channelUrls");
-            ArrayList<String> urls = new ArrayList<>();
-            for (int j = 0; j < urlArray.size(); j++) {
-                urls.add(urlArray.get(j).getAsString());
-            }
-            item.setChannelUrls(urls); // 这里会设置 sourceNum
-
-            favoriteChannels.add(item);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    group.setLiveChannels(favoriteChannels);
-    return group;
-}
-
-/**
- * 判断两个 JsonObject 是否代表同一个频道
- * 对比规则：频道名称相同 且 所有频道链接集合相同（顺序不敏感）
- */
-private boolean isSameChannel(JsonObject fav1, JsonObject fav2) {
-    // 1. 对比频道名称
-    if (!fav1.get("channelName").getAsString().equals(fav2.get("channelName").getAsString())) {
-        return false;
-    }
-
-    // 2. 对比链接集合（转换为 HashSet 忽略顺序）
-    JsonArray urls1 = fav1.getAsJsonArray("channelUrls");
-    JsonArray urls2 = fav2.getAsJsonArray("channelUrls");
-
-    if (urls1.size() != urls2.size()) {
-        return false;
-    }
-
-    Set<String> set1 = new HashSet<>();
-    Set<String> set2 = new HashSet<>();
-    for (int i = 0; i < urls1.size(); i++) {
-        set1.add(urls1.get(i).getAsString());
-        set2.add(urls2.get(i).getAsString());
-    }
-
-    return set1.equals(set2);
-}
 
 
 
 /**
  * 刷新收藏频道组（简化版）
  */
-public void refreshFavoriteChannelGroup() {
-    // 只需要重新加载数据即可，因为收藏组已经在loadLives中创建
-    if (liveChannelGroupAdapter != null && liveChannelGroupList != null) {
-        // 重新加载当前选中的频道组数据
-        if (currentChannelGroupIndex >= 0 && currentChannelGroupIndex < liveChannelGroupList.size()) {
+
+private void refreshFavoriteChannelGroup() {
+    int favoriteGroupIndex = -1;
+    for (int i = 0; i < liveChannelGroupList.size(); i++) {
+        if (liveChannelGroupList.get(i).getGroupName().equals("我的收藏")) {
+            favoriteGroupIndex = i;
+            break;
+        }
+    }
+    if (favoriteGroupIndex != -1) {
+        LiveChannelGroup newFavoriteGroup = LiveChannelItem.createFavoriteChannelGroup();
+        newFavoriteGroup.setGroupIndex(favoriteGroupIndex);
+        liveChannelGroupList.set(favoriteGroupIndex, newFavoriteGroup);
+        if (currentChannelGroupIndex == favoriteGroupIndex) {
             liveChannelItemAdapter.setNewData(getLiveChannels(currentChannelGroupIndex));
-            if (currentLiveChannelIndex > -1) {
-                mLiveChannelView.scrollToPosition(currentLiveChannelIndex);
-                liveChannelItemAdapter.setSelectedChannelIndex(currentLiveChannelIndex);
-            }
         }
     }
 }
-
 
 
 
