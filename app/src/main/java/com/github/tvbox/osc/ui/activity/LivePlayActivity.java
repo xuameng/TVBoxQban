@@ -1,4 +1,4 @@
-ppackage com.github.tvbox.osc.ui.activity;
+package com.github.tvbox.osc.ui.activity;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.IntEvaluator;
