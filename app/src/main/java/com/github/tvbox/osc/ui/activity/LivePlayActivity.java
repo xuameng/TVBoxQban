@@ -3599,14 +3599,9 @@ private void setDefaultLiveChannelList() {
 
 
 /**
- * 刷新收藏频道组（完全修复版）
+ * 刷新收藏频道组（简化版）- 只更新数据，不处理焦点状态
  */
 private void refreshFavoriteChannelGroup() {
-    // 保存当前所有状态
-    int currentGroupIndex = currentChannelGroupIndex;
-    int currentChannelIndex = currentLiveChannelIndex;
-    int focusedGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
-    int focusedChannelIndex = liveChannelItemAdapter.getSelectedChannelIndex();
     // 查找收藏组的索引
     int favoriteGroupIndex = -1;
     for (int i = 0; i < liveChannelGroupList.size(); i++) {
@@ -3625,45 +3620,14 @@ private void refreshFavoriteChannelGroup() {
         // 刷新适配器数据
         liveChannelGroupAdapter.setNewData(liveChannelGroupList);
         
-        // ========== 关键修复：智能状态恢复 ==========
-        // 情况1：如果当前焦点在收藏组，刷新收藏组的频道列表
-        if (focusedGroupIndex == favoriteGroupIndex) {
+        // 如果当前选中的是收藏组，刷新频道列表
+        int selectedGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
+        if (selectedGroupIndex == favoriteGroupIndex) {
             liveChannelItemAdapter.setNewData(getLiveChannels(favoriteGroupIndex));
-            
-            // 恢复焦点和选择状态
-            if (focusedChannelIndex >= 0 && focusedChannelIndex < getLiveChannels(favoriteGroupIndex).size()) {
-                liveChannelItemAdapter.setFocusedChannelIndex(focusedChannelIndex);
-                liveChannelItemAdapter.setSelectedChannelIndex(focusedChannelIndex);
-            }
         }
-        // 情况2：如果当前焦点在其他组，保持当前状态
-        else if (focusedGroupIndex >= 0 && focusedGroupIndex < liveChannelGroupList.size()) {
-            // 恢复之前的焦点状态
-            liveChannelGroupAdapter.setFocusedGroupIndex(focusedGroupIndex);
-            liveChannelGroupAdapter.setSelectedGroupIndex(focusedGroupIndex);
-            
-            // 刷新当前焦点组的频道列表
-            liveChannelItemAdapter.setNewData(getLiveChannels(focusedGroupIndex));
-            
-            // 恢复频道焦点和选择状态
-            if (focusedChannelIndex >= 0 && focusedChannelIndex < getLiveChannels(focusedGroupIndex).size()) {
-                liveChannelItemAdapter.setFocusedChannelIndex(focusedChannelIndex);
-                liveChannelItemAdapter.setSelectedChannelIndex(focusedChannelIndex);
-            }
-        }
-        // 情况3：没有焦点，恢复播放状态
-        else {
-            // 恢复播放的频道组和频道
-            liveChannelGroupAdapter.setSelectedGroupIndex(currentGroupIndex);
-            liveChannelItemAdapter.setNewData(getLiveChannels(currentGroupIndex));
-            
-            if (currentChannelIndex >= 0 && currentChannelIndex < getLiveChannels(currentGroupIndex).size()) {
-                liveChannelItemAdapter.setSelectedChannelIndex(currentChannelIndex);
-            }
-        }
-        // ========== 修复结束 ==========
     }
 }
+
 
 
 
