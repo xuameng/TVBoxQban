@@ -2590,8 +2590,6 @@ public class LivePlayActivity extends BaseActivity {
         // 创建收藏频道组（LiveChannelItem.createFavoriteChannelGroup() 中已设置基本属性）
         LiveChannelGroup favoriteGroup = LiveChannelItem.createFavoriteChannelGroup();
         
-        // 只需要设置索引（因为 createFavoriteChannelGroup() 中设置的是 -1）
-        favoriteGroup.setGroupIndex(0);
         
         // 始终添加收藏组
         liveChannelGroupList.add(favoriteGroup);
@@ -3586,10 +3584,6 @@ public class LivePlayActivity extends BaseActivity {
 
 
 
-
-/**
- * 刷新收藏频道组（简化版）
- */
 
 /**
  * 刷新收藏频道组（优化版）
