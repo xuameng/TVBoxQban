@@ -3600,10 +3600,10 @@ private void setDefaultLiveChannelList() {
 
 
 /**
- * 刷新收藏频道组（修复版）- 解决TV端焦点冲突导致的崩溃
+ * 刷新收藏频道组（循环重试版）- 通过循环检测确保安全更新
  */
 private void refreshFavoriteChannelGroup() {
-    // 使用Handler.post确保在主线程执行，并避开当前的焦点事件处理周期
+    // 使用Handler.post确保在主线程执行
     mHandler.post(new Runnable() {
         @Override
         public void run() {
@@ -3625,25 +3625,48 @@ private void refreshFavoriteChannelGroup() {
                 // 刷新适配器数据
                 liveChannelGroupAdapter.setNewData(liveChannelGroupList);
                 
-                // 关键修复：如果当前选中的是收藏组，延迟刷新频道列表
+                // 关键：循环重试机制确保安全更新频道列表
                 int selectedGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
                 if (selectedGroupIndex == favoriteGroupIndex) {
-                    // 创建final副本以解决内部类引用问题
-                    final int finalFavoriteGroupIndex = favoriteGroupIndex;
-                    // 使用postDelayed确保TvRecyclerView完成当前的焦点处理
-                    mHandler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            // 此时可以安全更新频道列表数据
-                            liveChannelItemAdapter.setNewData(getLiveChannels(finalFavoriteGroupIndex));
-                        }
-                    }, 50); // 延迟50毫秒，足够让任何正在进行的焦点事件完成
+                    // 使用循环重试机制
+                    retryUpdateChannelList(favoriteGroupIndex, 0);
                 }
             }
         }
     });
 }
 
+/**
+ * 循环重试更新频道列表数据
+ * @param favoriteGroupIndex 收藏组索引
+ * @param retryCount 重试次数
+ */
+private void retryUpdateChannelList(int favoriteGroupIndex, int retryCount) {
+    // 最大重试次数，避免无限循环
+    final int MAX_RETRY = 10;
+    
+    if (retryCount > MAX_RETRY) {
+        // 达到最大重试次数，放弃更新
+        return;
+    }
+    
+    // 检查当前是否仍在计算布局或滚动
+    if (mLiveChannelView.isComputingLayout() || mLiveChannelView.isScrolling()) {
+        // 如果仍在计算布局或滚动，继续重试
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                retryUpdateChannelList(favoriteGroupIndex, retryCount + 1);
+            }
+        }, 50); // 每50毫秒重试一次
+    } else {
+        // 状态安全，执行更新
+        int selectedGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
+        if (selectedGroupIndex == favoriteGroupIndex) {
+            liveChannelItemAdapter.setNewData(getLiveChannels(favoriteGroupIndex));
+        }
+    }
+}
 
 
 
