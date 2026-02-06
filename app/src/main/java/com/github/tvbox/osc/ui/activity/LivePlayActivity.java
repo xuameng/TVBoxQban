@@ -1,4 +1,4 @@
-package com.github.tvbox.osc.ui.activity;
+ppackage com.github.tvbox.osc.ui.activity;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.IntEvaluator;
@@ -2577,7 +2577,8 @@ public class LivePlayActivity extends BaseActivity {
         // ========== 新增：调用 refreshFavoriteChannelGroup 方法 ==========
         refreshFavoriteChannelGroup();
         // ========== 新增结束 ==========
-    }
+    
+		
 
 
             showSuccess();
