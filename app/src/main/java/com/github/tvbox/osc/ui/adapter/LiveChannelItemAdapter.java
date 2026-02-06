@@ -18,6 +18,7 @@ import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.bean.LiveChannelItem;
 import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.base.App;
+import android.os.Handler;
 
 
 /**
@@ -141,7 +142,7 @@ TextView tvFavoriteStar = holder.getView(R.id.ivFavoriteStar); // 新增：获�
 public void toggleFavoriteChannel(LiveChannelItem channel, int position) {
     JsonArray favoriteArray = Hawk.get(HawkConfig.LIVE_FAVORITE_CHANNELS, new JsonArray());
     JsonObject channelJson = LiveChannelItem.convertChannelToJson(channel);
-
+    
     boolean found = false;
     int foundIndex = -1;
     for (int i = 0; i < favoriteArray.size(); i++) {
@@ -152,7 +153,7 @@ public void toggleFavoriteChannel(LiveChannelItem channel, int position) {
             break;
         }
     }
-
+    
     if (found) {
         favoriteArray.remove(foundIndex);
         App.showToastShort(mContext, "已取消收藏：" + channel.getChannelName());
@@ -160,17 +161,47 @@ public void toggleFavoriteChannel(LiveChannelItem channel, int position) {
         favoriteArray.add(channelJson);
         App.showToastShort(mContext, "已收藏：" + channel.getChannelName());
     }
-
+    
     Hawk.put(HawkConfig.LIVE_FAVORITE_CHANNELS, favoriteArray);
     
-    // 只需要更新当前项的UI
-    notifyItemChanged(position);
-
-	        // === 新增：通知收藏状态变更 ===
-        if (favoriteChangeListener != null) {
-            favoriteChangeListener.onFavoriteChanged();
-        }
+    // TV端安全的UI更新
+    safeUpdateItem(position);
     
+    // 延迟通知收藏变更
+    if (favoriteChangeListener != null) {
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                favoriteChangeListener.onFavoriteChanged();
+            }
+        }, 150);
+    }
+}
+
+private void safeUpdateItem(final int position) {
+    if (mLiveChannelView == null) return;
+    
+    mLiveChannelView.post(new Runnable() {
+        @Override
+        public void run() {
+            if (!mLiveChannelView.isComputingLayout() && !mLiveChannelView.isScrolling()) {
+                try {
+                    notifyItemChanged(position);
+                } catch (IllegalStateException e) {
+                    // 重试一次
+                    mLiveChannelView.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            notifyItemChanged(position);
+                        }
+                    }, 50);
+                }
+            } else {
+                // 延迟重试
+                mLiveChannelView.postDelayed(this, 50);
+            }
+        }
+    });
 }
 
 
