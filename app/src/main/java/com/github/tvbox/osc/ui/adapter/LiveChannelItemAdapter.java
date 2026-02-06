@@ -155,10 +155,10 @@ public void toggleFavoriteChannel(LiveChannelItem channel, int position) {
 
     if (found) {
         favoriteArray.remove(foundIndex);
-        App.showToastShort(mContext, "已取消收藏：" + channel.getChannelName(), Toast.LENGTH_SHORT).show();
+        App.showToastShort(mContext, "已取消收藏：" + channel.getChannelName());
     } else {
         favoriteArray.add(channelJson);
-        App.showToastShort(mContext, "已收藏：" + channel.getChannelName(), Toast.LENGTH_SHORT).show();
+        App.showToastShort(mContext, "已收藏：" + channel.getChannelName());
     }
 
     Hawk.put(HawkConfig.LIVE_FAVORITE_CHANNELS, favoriteArray);
