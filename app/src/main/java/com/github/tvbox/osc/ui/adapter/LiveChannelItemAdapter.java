@@ -19,6 +19,7 @@ import com.github.tvbox.osc.ui.activity.LivePlayActivity;
 import com.github.tvbox.osc.bean.LiveChannelItem;
 import com.orhanobut.hawk.Hawk;
 import com.github.tvbox.osc.util.HawkConfig;
+import android.os.Handler;
 
 
 /**
@@ -126,6 +127,9 @@ TextView tvFavoriteStar = holder.getView(R.id.ivFavoriteStar); // 新增：获�
 /**
  * 切换频道的收藏状态
  */
+/**
+ * 切换频道的收藏状态
+ */
 public void toggleFavoriteChannel(LiveChannelItem channel, int position) {
     JsonArray favoriteArray = Hawk.get(HawkConfig.LIVE_FAVORITE_CHANNELS, new JsonArray());
     JsonObject channelJson = LiveChannelItem.convertChannelToJson(channel);
@@ -142,25 +146,32 @@ public void toggleFavoriteChannel(LiveChannelItem channel, int position) {
     }
 
     if (found) {
-        // 已收藏，执行取消收藏（移除）
         favoriteArray.remove(foundIndex);
         Toast.makeText(mContext, "已取消收藏：" + channel.getChannelName(), Toast.LENGTH_SHORT).show();
     } else {
-        // 未收藏，执行收藏（添加）
         favoriteArray.add(channelJson);
         Toast.makeText(mContext, "已收藏：" + channel.getChannelName(), Toast.LENGTH_SHORT).show();
     }
 
     Hawk.put(HawkConfig.LIVE_FAVORITE_CHANNELS, favoriteArray);
-    notifyItemChanged(position);
     
-    // ========== 新增：通知LivePlayActivity刷新收藏频道组 ==========
-    // 通过广播或回调通知LivePlayActivity刷新
-    if (mContext instanceof LivePlayActivity) {
-        ((LivePlayActivity) mContext).refreshFavoriteChannelGroup();
-    }
-    // ========== 新增结束 ==========
+    // ========== 修复：使用Handler延迟更新，避免焦点跳转 ==========
+    new android.os.Handler().postDelayed(new Runnable() {
+        @Override
+        public void run() {
+            // 只更新当前项的UI
+            notifyItemChanged(position);
+            
+            // 通知LivePlayActivity刷新收藏频道组
+            if (mContext instanceof LivePlayActivity) {
+                ((LivePlayActivity) mContext).refreshFavoriteChannelGroup();
+            }
+        }
+    }, 50); // 延迟50ms，确保RecyclerView状态稳定
+    // ========== 修复结束 ==========
 }
+
+
 
 
 
