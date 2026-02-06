@@ -2334,6 +2334,13 @@ public class LivePlayActivity extends BaseActivity {
         });
     }
     private void clickLiveChannel(int position) {
+    // 清除之前的选择状态
+    int oldSelectedIndex = liveChannelItemAdapter.getSelectedChannelIndex();
+    if (oldSelectedIndex != -1 && oldSelectedIndex != position) {
+        // 通知之前选中的频道取消高亮
+        liveChannelItemAdapter.setSelectedChannelIndex(-1);
+    }
+
         liveChannelItemAdapter.setSelectedChannelIndex(position);
         liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
         playChannel(liveChannelGroupAdapter.getSelectedGroupIndex(), position, false);
@@ -2572,21 +2579,24 @@ public class LivePlayActivity extends BaseActivity {
             loadProxyLives(list.get(0).getGroupName());
         } else {
             liveChannelGroupList.clear();
-            liveChannelGroupList.addAll(list);
-
-// ========== 修复：延迟加载收藏频道组 ==========
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                refreshFavoriteChannelGroup();
-            }
-        }, 300);  // 延迟300ms确保UI完全初始化
-        // ========== 修复结束 ==========
-    
-
-
+            liveChannelGroupList.addAll(list); 
             showSuccess();
             initLiveState();
+// 不需要延迟加载收藏组，因为已经在loadLives中创建了
+        // 直接设置适配器数据
+        if (liveChannelGroupAdapter != null) {
+            liveChannelGroupAdapter.setNewData(liveChannelGroupList);
+            
+            // 默认选中第一个组（收藏组）
+            if (liveChannelGroupList.size() > 0) {
+                currentChannelGroupIndex = 0;
+                liveChannelGroupAdapter.setSelectedGroupIndex(0);
+                liveChannelItemAdapter.setNewData(getLiveChannels(0));
+                mLiveChannelView.scrollToPosition(0);
+                liveChannelItemAdapter.setSelectedChannelIndex(-1);
+            }
+        }
+
         }
     }
     public void loadProxyLives(String url) {
@@ -3643,103 +3653,21 @@ private boolean isSameChannel(JsonObject fav1, JsonObject fav2) {
 }
 
 
+
 /**
- * 刷新收藏频道组
- */
-/**
- * 刷新收藏频道组
+ * 刷新收藏频道组（简化版）
  */
 public void refreshFavoriteChannelGroup() {
-    // 保存当前选中的频道信息
-    int oldGroupIndex = currentChannelGroupIndex;
-    int oldChannelIndex = currentLiveChannelIndex;
-    LiveChannelItem oldChannelItem = currentLiveChannelItem; // 保存当前频道对象
-    
-    // 重新创建收藏频道组
-    List<LiveChannelGroup> originalList = ApiConfig.get().getChannelGroupList();
-    liveChannelGroupList.clear();
-    liveChannelGroupList.addAll(originalList);
-    
-    // 重新插入收藏频道组
-    LiveChannelGroup favoriteGroup = createFavoriteChannelGroup();
-    if (favoriteGroup != null && !favoriteGroup.getLiveChannels().isEmpty()) {
-        // 将"我的收藏"插入到列表的第一个位置
-        liveChannelGroupList.add(0, favoriteGroup);
-        
-        // 更新所有频道组的索引
-        for (int i = 0; i < liveChannelGroupList.size(); i++) {
-            liveChannelGroupList.get(i).setGroupIndex(i);
-            
-            // ========== 修复：更新每个频道组内频道的索引 ==========
-            ArrayList<LiveChannelItem> channels = liveChannelGroupList.get(i).getLiveChannels();
-            for (int j = 0; j < channels.size(); j++) {
-                channels.get(j).setChannelIndex(j);
-            }
-            // ========== 修复结束 ==========
-        }
-        
-        // 调整当前选中的频道组索引
-        if (oldGroupIndex >= 0) {
-            // 如果之前选中的是收藏组，保持选中收藏组
-            if (oldGroupIndex == 0) {
-                currentChannelGroupIndex = 0;
-            } else {
-                // 否则索引+1（因为前面插入了一个收藏组）
-                currentChannelGroupIndex = oldGroupIndex + 1;
+    // 只需要重新加载数据即可，因为收藏组已经在loadLives中创建
+    if (liveChannelGroupAdapter != null && liveChannelGroupList != null) {
+        // 重新加载当前选中的频道组数据
+        if (currentChannelGroupIndex >= 0 && currentChannelGroupIndex < liveChannelGroupList.size()) {
+            liveChannelItemAdapter.setNewData(getLiveChannels(currentChannelGroupIndex));
+            if (currentLiveChannelIndex > -1) {
+                mLiveChannelView.scrollToPosition(currentLiveChannelIndex);
+                liveChannelItemAdapter.setSelectedChannelIndex(currentLiveChannelIndex);
             }
         }
-    }
-    
-    // ========== 修复：重置焦点和选择状态 ==========
-    liveChannelGroupAdapter.setSelectedGroupIndex(-1);
-    liveChannelGroupAdapter.setFocusedGroupIndex(-1);
-    liveChannelItemAdapter.setSelectedChannelIndex(-1);
-    liveChannelItemAdapter.setFocusedChannelIndex(-1);
-    // ========== 修复结束 ==========
-    
-    // 刷新适配器
-    liveChannelGroupAdapter.setNewData(liveChannelGroupList);
-    
-    // 重新选中之前的频道组（但不触发播放）
-    if (currentChannelGroupIndex >= 0 && currentChannelGroupIndex < liveChannelGroupList.size()) {
-        liveChannelGroupAdapter.setSelectedGroupIndex(currentChannelGroupIndex);
-        liveChannelGroupAdapter.setFocusedGroupIndex(currentChannelGroupIndex);
-        
-        // 加载该组的频道数据
-        liveChannelItemAdapter.setNewData(getLiveChannels(currentChannelGroupIndex));
-        
-        // ========== 修复：重新定位到之前的频道 ==========
-        if (oldChannelItem != null && currentLiveChannelIndex > -1) {
-            // 尝试在当前的频道组中找到相同的频道
-            ArrayList<LiveChannelItem> currentChannels = getLiveChannels(currentChannelGroupIndex);
-            int newChannelIndex = -1;
-            
-            for (int i = 0; i < currentChannels.size(); i++) {
-                LiveChannelItem channel = currentChannels.get(i);
-                if (channel.getChannelName().equals(oldChannelItem.getChannelName()) &&
-                    channel.getChannelUrls().equals(oldChannelItem.getChannelUrls())) {
-                    newChannelIndex = i;
-                    break;
-                }
-            }
-            
-            if (newChannelIndex >= 0) {
-                currentLiveChannelIndex = newChannelIndex;
-                liveChannelItemAdapter.setSelectedChannelIndex(newChannelIndex);
-                mLiveChannelView.scrollToPosition(newChannelIndex);
-            } else {
-                // 如果找不到相同的频道，重置为第一个
-                currentLiveChannelIndex = 0;
-                liveChannelItemAdapter.setSelectedChannelIndex(0);
-                mLiveChannelView.scrollToPosition(0);
-            }
-        } else {
-            // 如果没有之前的频道，重置为第一个
-            currentLiveChannelIndex = 0;
-            liveChannelItemAdapter.setSelectedChannelIndex(0);
-            mLiveChannelView.scrollToPosition(0);
-        }
-        // ========== 修复结束 ==========
     }
 }
 
