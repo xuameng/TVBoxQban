@@ -148,7 +148,9 @@ public class LiveChannelItem {
  */
 public static LiveChannelGroup createFavoriteChannelGroup() {
     LiveChannelGroup group = new LiveChannelGroup();
-    
+    if (group == null) {
+        group = new LiveChannelGroup(); // 双重保障
+    }
     // 保持索引为-1，由调用处根据实际情况动态设置
     group.setGroupIndex(-1);
     group.setGroupName("我的收藏");
@@ -169,11 +171,16 @@ public static LiveChannelGroup createFavoriteChannelGroup() {
         }
     }
     
-    // 确保频道列表不为null
+    // 确保频道列表不为null（即使为空）
+    if (favoriteChannels == null) {
+        favoriteChannels = new ArrayList<>();
+    }
+    
     group.setLiveChannels(favoriteChannels);
     
     return group;
 }
+
 
 
 
