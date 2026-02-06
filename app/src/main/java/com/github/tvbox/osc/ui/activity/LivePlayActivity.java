@@ -2586,21 +2586,38 @@ public class LivePlayActivity extends BaseActivity {
             loadProxyLives(list.get(0).getGroupName());
         } else {
             liveChannelGroupList.clear();
-        // ========== 优化后的收藏组添加逻辑 ==========
-        // 创建收藏频道组（LiveChannelItem.createFavoriteChannelGroup() 中已设置基本属性）
+       // ========== 修复：确保收藏组始终显示且不重复 ==========
+        // 1. 检查原始列表中是否已有"我的收藏"组
+        boolean hasFavoriteInOriginal = false;
+        for (LiveChannelGroup group : list) {
+            if ("我的收藏".equals(group.getGroupName())) {
+                hasFavoriteInOriginal = true;
+                break;
+            }
+        }
+        
+        // 2. 创建收藏频道组
         LiveChannelGroup favoriteGroup = LiveChannelItem.createFavoriteChannelGroup();
         
+        // 3. 动态设置收藏组索引
+        if (!hasFavoriteInOriginal) {
+            // 如果原始列表中没有收藏组，则添加并设置索引为0
+            favoriteGroup.setGroupIndex(0);
+            liveChannelGroupList.add(favoriteGroup);
+        }
         
-        // 始终添加收藏组
-        liveChannelGroupList.add(favoriteGroup);
-        
-        // 添加原始频道组，并调整索引
+        // 4. 添加原始频道组，动态计算索引
+        int startIndex = liveChannelGroupList.size(); // 从当前大小开始
         for (int i = 0; i < list.size(); i++) {
             LiveChannelGroup group = list.get(i);
-            group.setGroupIndex(i + 1); // 索引从1开始
-            liveChannelGroupList.add(group);
+            
+            // 跳过原始列表中的"我的收藏"组（如果存在）
+            if (!"我的收藏".equals(group.getGroupName())) {
+                group.setGroupIndex(startIndex + i);
+                liveChannelGroupList.add(group);
+            }
         }
-        // ========== 优化结束 ==========
+        // ========== 修复结束 ==========
             showSuccess();
             initLiveState();
 
@@ -3334,32 +3351,43 @@ public class LivePlayActivity extends BaseActivity {
         tv_currentpos.setText(durationToString(simSeekPosition));
     }
 
-    private void setDefaultLiveChannelList() {   //xuameng 加载失败默认频道列表
-        liveChannelGroupList.clear();
-        // 创建默认直播分组
-        LiveChannelGroup defaultGroup = new LiveChannelGroup();
-        defaultGroup.setGroupIndex(0);
-        defaultGroup.setGroupName("聚汇直播");
-        defaultGroup.setGroupPassword("");
-        LiveChannelItem defaultChannel = new LiveChannelItem();
-        defaultChannel.setChannelName("暂无频道");
-        defaultChannel.setChannelIndex(0);
-        defaultChannel.setChannelNum(1);
-        ArrayList<String> defaultSourceNames = new ArrayList<>();
-        ArrayList<String> defaultSourceUrls = new ArrayList<>();
-        defaultSourceNames.add("默认源1");
-        defaultSourceUrls.add("http://default.play.url/stream");
-        defaultChannel.setChannelSourceNames(defaultSourceNames);
-        defaultChannel.setChannelUrls(defaultSourceUrls);
-        // 将默认频道添加到分组内
-        ArrayList<LiveChannelItem> channels = new ArrayList<>();
-        channels.add(defaultChannel);
-        defaultGroup.setLiveChannels(channels);
-        // 添加分组到全局列表
-        liveChannelGroupList.add(defaultGroup);
-        showSuccess();
-        initLiveState();
-    }
+private void setDefaultLiveChannelList() {
+    liveChannelGroupList.clear();
+    
+    // 1. 先添加收藏组（即使为空）
+    LiveChannelGroup favoriteGroup = LiveChannelItem.createFavoriteChannelGroup();
+    favoriteGroup.setGroupIndex(0); // 收藏组索引为0
+    liveChannelGroupList.add(favoriteGroup);
+    
+    // 2. 创建默认直播分组（索引从1开始）
+    LiveChannelGroup defaultGroup = new LiveChannelGroup();
+    defaultGroup.setGroupIndex(1); // 改为1，避免与收藏组冲突
+    defaultGroup.setGroupName("聚汇直播");
+    defaultGroup.setGroupPassword("");
+    
+    LiveChannelItem defaultChannel = new LiveChannelItem();
+    defaultChannel.setChannelName("暂无频道");
+    defaultChannel.setChannelIndex(0);
+    defaultChannel.setChannelNum(1);
+    
+    ArrayList<String> defaultSourceNames = new ArrayList<>();
+    ArrayList<String> defaultSourceUrls = new ArrayList<>();
+    defaultSourceNames.add("默认源1");
+    defaultSourceUrls.add("http://default.play.url/stream");
+    defaultChannel.setChannelSourceNames(defaultSourceNames);
+    defaultChannel.setChannelUrls(defaultSourceUrls);
+    
+    ArrayList<LiveChannelItem> channels = new ArrayList<>();
+    channels.add(defaultChannel);
+    defaultGroup.setLiveChannels(channels);
+    
+    // 3. 添加默认分组到列表
+    liveChannelGroupList.add(defaultGroup);
+    
+    showSuccess();
+    initLiveState();
+}
+
     private void initLiveObj(){
         int position=Hawk.get(HawkConfig.LIVE_GROUP_INDEX, 0);
         JsonArray live_groups=Hawk.get(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
