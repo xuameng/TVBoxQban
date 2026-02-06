@@ -2294,7 +2294,7 @@ public class LivePlayActivity extends BaseActivity {
         mLiveChannelView.setOnItemListener(new TvRecyclerView.OnItemListener() {
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
-                liveChannelItemAdapter.setFocusedChannelIndex(-1); //xuameng修复频道名称移走焦点变色问题
+         //       liveChannelItemAdapter.setFocusedChannelIndex(-1); //xuameng修复频道名称移走焦点变色问题
             }
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
@@ -2316,8 +2316,8 @@ public class LivePlayActivity extends BaseActivity {
                     itemView.setNextFocusUpId(View.NO_ID);
                 }
                 liveChannelGroupAdapter.setFocusedGroupIndex(-1);
-           //     liveChannelItemAdapter.setFocusedChannelIndex(position);
-            //    liveChannelItemAdapter.setSelectedChannelIndex(position);
+                liveChannelItemAdapter.setFocusedChannelIndex(position);
+                liveChannelItemAdapter.setSelectedChannelIndex(position);
                 playChannelxu(liveChannelGroupAdapter.getSelectedGroupIndex(), liveChannelItemAdapter.getSelectedChannelIndex(), false); //xuameng换频道显示EPG
                 liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
                 mHideChannelListRunXu(); //xuameng隐藏频道菜单
