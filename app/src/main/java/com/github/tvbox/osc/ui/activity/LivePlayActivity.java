@@ -2279,7 +2279,7 @@ public class LivePlayActivity extends BaseActivity {
     liveChannelItemAdapter.setOnFavoriteChangeListener(new LiveChannelItemAdapter.OnFavoriteChangeListener() {
         @Override
         public void onFavoriteChanged() {
-            refreshFavoriteChannelGroup();
+         //   refreshFavoriteChannelGroup();
         }
     });
         mLiveChannelView.setAdapter(liveChannelItemAdapter);
@@ -2294,7 +2294,7 @@ public class LivePlayActivity extends BaseActivity {
         mLiveChannelView.setOnItemListener(new TvRecyclerView.OnItemListener() {
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
-         //       liveChannelItemAdapter.setFocusedChannelIndex(-1); //xuameng修复频道名称移走焦点变色问题
+                liveChannelItemAdapter.setFocusedChannelIndex(-1); //xuameng修复频道名称移走焦点变色问题
             }
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
