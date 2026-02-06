@@ -2300,6 +2300,18 @@ public class LivePlayActivity extends BaseActivity {
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
                 isTouch = false;
                 if(position < 0) return;
+if (mLiveChannelView.isComputingLayout() || mLiveChannelView.isScrolling()) {
+    // 延迟 20 毫秒后重试
+    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+        @Override
+        public void run() {
+            // 递归调用自身，直到状态安全
+            onItemSelected(parent, itemView, position);
+        }
+    }, 20);
+    return;
+}
+
                 int channelGroupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex(); //xuameng当前选定的频道组
 
                 // xuameng边界判断逻辑
