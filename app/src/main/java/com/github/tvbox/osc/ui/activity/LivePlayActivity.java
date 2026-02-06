@@ -3626,7 +3626,6 @@ private void refreshFavoriteChannelGroup() {
     int currentChannelIndex = currentLiveChannelIndex;
     int focusedGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
     int focusedChannelIndex = liveChannelItemAdapter.getSelectedChannelIndex();
-    getSelectedfocusedChannelIndex
     // 查找收藏组的索引
     int favoriteGroupIndex = -1;
     for (int i = 0; i < liveChannelGroupList.size(); i++) {
