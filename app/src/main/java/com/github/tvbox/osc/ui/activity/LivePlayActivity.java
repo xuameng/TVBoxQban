@@ -2316,8 +2316,8 @@ public class LivePlayActivity extends BaseActivity {
                     itemView.setNextFocusUpId(View.NO_ID);
                 }
                 liveChannelGroupAdapter.setFocusedGroupIndex(-1);
-                liveChannelItemAdapter.setFocusedChannelIndex(position);
-                liveChannelItemAdapter.setSelectedChannelIndex(position);
+           //     liveChannelItemAdapter.setFocusedChannelIndex(position);
+            //    liveChannelItemAdapter.setSelectedChannelIndex(position);
                 playChannelxu(liveChannelGroupAdapter.getSelectedGroupIndex(), liveChannelItemAdapter.getSelectedChannelIndex(), false); //xuameng换频道显示EPG
                 liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
                 mHideChannelListRunXu(); //xuameng隐藏频道菜单
@@ -3598,19 +3598,10 @@ private void setDefaultLiveChannelList() {
 
 
 
+/**
+ * 刷新收藏频道组（简化版）- 只更新数据，不处理焦点状态
+ */
 private void refreshFavoriteChannelGroup() {
-    // 检查 RecyclerView 是否处于安全状态
-    if (mLiveChannelView.isComputingLayout() || mLiveChannelView.isScrolling()) {
-        // 延迟执行
-        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                refreshFavoriteChannelGroup();
-            }
-        }, 20);
-        return;
-    }
-    
     // 查找收藏组的索引
     int favoriteGroupIndex = -1;
     for (int i = 0; i < liveChannelGroupList.size(); i++) {
@@ -3636,7 +3627,6 @@ private void refreshFavoriteChannelGroup() {
         }
     }
 }
-
 
 
 
