@@ -171,7 +171,30 @@ public static LiveChannelGroup createFavoriteChannelGroup() {
     return group;
 }
 
+    /**
+     * 判断两个 JsonObject 是否代表同一个频道
+     */
+    public static boolean isSameChannel(JsonObject fav1, JsonObject fav2) {
+        if (!fav1.get("channelName").getAsString().equals(fav2.get("channelName").getAsString())) {
+            return false;
+        }
 
+        JsonArray urls1 = fav1.getAsJsonArray("channelUrls");
+        JsonArray urls2 = fav2.getAsJsonArray("channelUrls");
+
+        if (urls1.size() != urls2.size()) {
+            return false;
+        }
+
+        Set<String> set1 = new HashSet<>();
+        Set<String> set2 = new HashSet<>();
+        for (int i = 0; i < urls1.size(); i++) {
+            set1.add(urls1.get(i).getAsString());
+            set2.add(urls2.get(i).getAsString());
+        }
+
+        return set1.equals(set2);
+    }
 /**
  * 将 JsonObject 转换为 LiveChannelItem（提取公共方法）
  */
