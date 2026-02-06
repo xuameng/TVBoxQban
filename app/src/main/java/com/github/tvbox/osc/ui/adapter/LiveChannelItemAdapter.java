@@ -17,9 +17,7 @@ import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.ui.activity.LivePlayActivity;
 
 import com.github.tvbox.osc.bean.LiveChannelItem;
-import com.orhanobut.hawk.Hawk;
 import com.github.tvbox.osc.util.HawkConfig;
-import android.os.Handler;
 
 
 /**
@@ -30,6 +28,19 @@ import android.os.Handler;
 public class LiveChannelItemAdapter extends BaseQuickAdapter<LiveChannelItem, BaseViewHolder> {
     private int selectedChannelIndex = -1;
     private int focusedChannelIndex = -1;
+
+    // ... 现有成员变量 ...
+    private OnFavoriteChangeListener favoriteChangeListener;
+
+    // 定义收藏变更监听器接口
+    public interface OnFavoriteChangeListener {
+        void onFavoriteChanged();
+    }
+
+    // 设置监听器的方法
+    public void setOnFavoriteChangeListener(OnFavoriteChangeListener listener) {
+        this.favoriteChangeListener = listener;
+    }
 
     public LiveChannelItemAdapter() {
         super(R.layout.item_live_channel, new ArrayList<>());
@@ -154,6 +165,11 @@ public void toggleFavoriteChannel(LiveChannelItem channel, int position) {
     
     // 只需要更新当前项的UI
     notifyItemChanged(position);
+
+	        // === 新增：通知收藏状态变更 ===
+        if (favoriteChangeListener != null) {
+            favoriteChangeListener.onFavoriteChanged();
+        }
     
 }
 
