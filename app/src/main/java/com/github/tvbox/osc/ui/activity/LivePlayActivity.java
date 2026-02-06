@@ -3598,12 +3598,11 @@ private void setDefaultLiveChannelList() {
 
 
 
-
 /**
- * 刷新收藏频道组（循环重试版）- 通过循环检测确保安全更新
+ * 刷新收藏频道组（TV端安全版）- 避免焦点冲突
  */
 private void refreshFavoriteChannelGroup() {
-    // 使用Handler.post确保在主线程执行
+    // 使用Handler确保在主线程执行
     mHandler.post(new Runnable() {
         @Override
         public void run() {
@@ -3617,58 +3616,59 @@ private void refreshFavoriteChannelGroup() {
             }
             
             if (favoriteGroupIndex != -1) {
-                // 重新创建收藏组
-                LiveChannelGroup newFavoriteGroup = LiveChannelItem.createFavoriteChannelGroup();
-                newFavoriteGroup.setGroupIndex(favoriteGroupIndex);
-                liveChannelGroupList.set(favoriteGroupIndex, newFavoriteGroup);
-                
-                
-                // 关键：循环重试机制确保安全更新频道列表
+                // 获取当前选中的频道
                 int selectedGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
-                if (selectedGroupIndex == favoriteGroupIndex) {
-                    // 使用循环重试机制
-                    retryUpdateChannelList(favoriteGroupIndex, 0);
+                int selectedChannelIndex = liveChannelItemAdapter.getSelectedChannelIndex();
+                
+                // 如果当前选中的是收藏组，才刷新频道列表
+                if (selectedGroupIndex == favoriteGroupIndex && selectedChannelIndex >= 0) {
+                    // 直接修改收藏组数据，不重建对象
+                    LiveChannelGroup favoriteGroup = liveChannelGroupList.get(favoriteGroupIndex);
+                    ArrayList<LiveChannelItem> favoriteChannels = favoriteGroup.getLiveChannels();
+                    
+                    if (selectedChannelIndex < favoriteChannels.size()) {
+                        // 移除选中的收藏项
+                        favoriteChannels.remove(selectedChannelIndex);
+                        
+                        // 更新后续频道的索引
+                        for (int i = selectedChannelIndex; i < favoriteChannels.size(); i++) {
+                            favoriteChannels.get(i).setChannelIndex(i);
+                        }
+                        
+                        // 延迟执行UI更新，避免焦点冲突
+                        mHandler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                // 检查RecyclerView状态
+                                if (!mLiveChannelView.isComputingLayout() && !mLiveChannelView.isScrolling()) {
+                                    // 更新频道列表适配器
+                                    liveChannelItemAdapter.setNewData(getLiveChannels(favoriteGroupIndex));
+                                    
+                                    // 如果移除后列表为空，调整选中状态
+                                    if (favoriteChannels.isEmpty()) {
+                                        liveChannelItemAdapter.setSelectedChannelIndex(-1);
+                                    } else if (selectedChannelIndex >= favoriteChannels.size()) {
+                                        // 如果移除的是最后一个，选中前一个
+                                        liveChannelItemAdapter.setSelectedChannelIndex(favoriteChannels.size() - 1);
+                                    }
+                                }
+                            }
+                        }, 100); // 延迟100ms确保焦点事件处理完毕
+                    }
+                } else {
+                    // 如果当前选中的不是收藏组，只更新收藏组数据
+                    // 重新创建收藏组
+                    LiveChannelGroup newFavoriteGroup = LiveChannelItem.createFavoriteChannelGroup();
+                    newFavoriteGroup.setGroupIndex(favoriteGroupIndex);
+                    liveChannelGroupList.set(favoriteGroupIndex, newFavoriteGroup);
+                    
+                    // 刷新适配器数据
+                    liveChannelGroupAdapter.setNewData(liveChannelGroupList);
                 }
             }
         }
     });
 }
-
-/**
- * 循环重试更新频道列表数据
- * @param favoriteGroupIndex 收藏组索引
- * @param retryCount 重试次数
- */
-private void retryUpdateChannelList(int favoriteGroupIndex, int retryCount) {
-    // 最大重试次数，避免无限循环
-    final int MAX_RETRY = 10;
-    
-    if (retryCount > MAX_RETRY) {
-        // 达到最大重试次数，放弃更新
-        return;
-    }
-    
-    // 检查当前是否仍在计算布局或滚动
-    if (mLiveChannelView.isComputingLayout() || mLiveChannelView.isScrolling()) {
-        // 如果仍在计算布局或滚动，继续重试
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                retryUpdateChannelList(favoriteGroupIndex, retryCount + 1);
-            }
-        }, 50); // 每50毫秒重试一次
-    } else {
-        // 状态安全，执行更新
-
-                // 刷新适配器数据
-            liveChannelGroupAdapter.setNewData(liveChannelGroupList);
-            liveChannelItemAdapter.setNewData(getLiveChannels(favoriteGroupIndex));
-
-    }
-}
-
-
-
 
 
 
