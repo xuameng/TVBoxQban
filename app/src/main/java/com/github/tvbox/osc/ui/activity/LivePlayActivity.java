@@ -3630,39 +3630,21 @@ private void refreshFavoriteChannelGroup() {
         if (focusedGroupIndex == favoriteGroupIndex) {
             liveChannelItemAdapter.setNewData(getLiveChannels(favoriteGroupIndex));
             
-            // 恢复焦点和选择状态
-            if (focusedChannelIndex >= 0 && focusedChannelIndex < getLiveChannels(favoriteGroupIndex).size()) {
-                liveChannelItemAdapter.setFocusedChannelIndex(focusedChannelIndex);
-                liveChannelItemAdapter.setSelectedChannelIndex(focusedChannelIndex);
-                mLiveChannelView.scrollToPosition(focusedChannelIndex);
-            }
         }
         // 情况2：如果当前焦点在其他组，保持当前状态
         else if (focusedGroupIndex >= 0 && focusedGroupIndex < liveChannelGroupList.size()) {
             // 恢复之前的焦点状态
-            liveChannelGroupAdapter.setFocusedGroupIndex(focusedGroupIndex);
-            liveChannelGroupAdapter.setSelectedGroupIndex(focusedGroupIndex);
             
             // 刷新当前焦点组的频道列表
             liveChannelItemAdapter.setNewData(getLiveChannels(focusedGroupIndex));
-            
-            // 恢复频道焦点和选择状态
-            if (focusedChannelIndex >= 0 && focusedChannelIndex < getLiveChannels(focusedGroupIndex).size()) {
-                liveChannelItemAdapter.setFocusedChannelIndex(focusedChannelIndex);
-                liveChannelItemAdapter.setSelectedChannelIndex(focusedChannelIndex);
-                mLiveChannelView.scrollToPosition(focusedChannelIndex);
-            }
+
         }
         // 情况3：没有焦点，恢复播放状态
         else {
             // 恢复播放的频道组和频道
-            liveChannelGroupAdapter.setSelectedGroupIndex(currentGroupIndex);
             liveChannelItemAdapter.setNewData(getLiveChannels(currentGroupIndex));
             
-            if (currentChannelIndex >= 0 && currentChannelIndex < getLiveChannels(currentGroupIndex).size()) {
-                liveChannelItemAdapter.setSelectedChannelIndex(currentChannelIndex);
-                mLiveChannelView.scrollToPosition(currentChannelIndex);
-            }
+ 
         }
         // ========== 修复结束 ==========
     }
