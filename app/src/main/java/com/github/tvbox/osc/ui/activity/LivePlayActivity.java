@@ -2275,13 +2275,15 @@ public class LivePlayActivity extends BaseActivity {
         mLiveChannelView.setItemAnimator(null);   //xuameng禁用TVRecyclerView动画
         mLiveChannelView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
         liveChannelItemAdapter = new LiveChannelItemAdapter();
-    // === 新增：设置收藏变更监听器 ===
-    liveChannelItemAdapter.setOnFavoriteChangeListener(new LiveChannelItemAdapter.OnFavoriteChangeListener() {
-        @Override
-        public void onFavoriteChanged() {
-            refreshFavoriteChannelGroup();
-        }
-    });
+
+        // === 新增：设置收藏变更监听器 ===
+        liveChannelItemAdapter.setOnFavoriteChangeListener(new LiveChannelItemAdapter.OnFavoriteChangeListener() {
+            @Override
+            public void onFavoriteChanged() {
+                refreshFavoriteChannelGroup();
+            }
+        });
+
         mLiveChannelView.setAdapter(liveChannelItemAdapter);
         mLiveChannelView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -2587,21 +2589,22 @@ public class LivePlayActivity extends BaseActivity {
         } else {
             liveChannelGroupList.clear();
 
-    // 1. 创建收藏组
-    LiveChannelGroup favoriteGroup = LiveChannelItem.createFavoriteChannelGroup();
-    favoriteGroup.setGroupIndex(0); // 固定为第一个组
-    liveChannelGroupList.add(favoriteGroup);
+            // ========== 修复开始 ==========
+            // 1. 创建收藏组
+            LiveChannelGroup favoriteGroup = LiveChannelItem.createFavoriteChannelGroup();
+            favoriteGroup.setGroupIndex(0); // 固定为第一个组
+            liveChannelGroupList.add(favoriteGroup);
     
-    // 2. 添加原始频道组，跳过可能存在的“我的收藏”组
-    int nextIndex = 1;
-    for (LiveChannelGroup group : list) {
-        if (!"我的收藏".equals(group.getGroupName())) {
-            group.setGroupIndex(nextIndex++);
-            liveChannelGroupList.add(group);
-        }
-    }
+            // 2. 添加原始频道组，跳过可能存在的“我的收藏”组
+            int nextIndex = 1;
+            for (LiveChannelGroup group : list) {
+                if (!"我的收藏".equals(group.getGroupName())) {
+                    group.setGroupIndex(nextIndex++);
+                    liveChannelGroupList.add(group);
+                }
+            }
 
-        // ========== 修复结束 ==========
+            // ========== 修复结束 ==========
 
             showSuccess();
             initLiveState();
@@ -3598,6 +3601,7 @@ private void setDefaultLiveChannelList() {
 
 
 
+
 /**
  * 刷新收藏频道组（TV端安全版）- 避免焦点冲突
  */
@@ -3635,6 +3639,10 @@ private void refreshFavoriteChannelGroup() {
                             favoriteChannels.get(i).setChannelIndex(i);
                         }
                         
+                        // 创建final副本以解决内部类引用问题
+                        final int finalFavoriteGroupIndex = favoriteGroupIndex;
+                        final int finalSelectedChannelIndex = selectedChannelIndex;
+                        
                         // 延迟执行UI更新，避免焦点冲突
                         mHandler.postDelayed(new Runnable() {
                             @Override
@@ -3642,12 +3650,12 @@ private void refreshFavoriteChannelGroup() {
                                 // 检查RecyclerView状态
                                 if (!mLiveChannelView.isComputingLayout() && !mLiveChannelView.isScrolling()) {
                                     // 更新频道列表适配器
-                                    liveChannelItemAdapter.setNewData(getLiveChannels(favoriteGroupIndex));
+                                    liveChannelItemAdapter.setNewData(getLiveChannels(finalFavoriteGroupIndex));
                                     
                                     // 如果移除后列表为空，调整选中状态
                                     if (favoriteChannels.isEmpty()) {
                                         liveChannelItemAdapter.setSelectedChannelIndex(-1);
-                                    } else if (selectedChannelIndex >= favoriteChannels.size()) {
+                                    } else if (finalSelectedChannelIndex >= favoriteChannels.size()) {
                                         // 如果移除的是最后一个，选中前一个
                                         liveChannelItemAdapter.setSelectedChannelIndex(favoriteChannels.size() - 1);
                                     }
@@ -3669,7 +3677,6 @@ private void refreshFavoriteChannelGroup() {
         }
     });
 }
-
 
 
 
