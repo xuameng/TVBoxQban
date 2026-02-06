@@ -2300,18 +2300,6 @@ public class LivePlayActivity extends BaseActivity {
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
                 isTouch = false;
                 if(position < 0) return;
-if (mLiveChannelView.isComputingLayout() || mLiveChannelView.isScrolling()) {
-    // 延迟 20 毫秒后重试
-    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-        @Override
-        public void run() {
-            // 递归调用自身，直到状态安全
-            onItemSelected(parent, itemView, position);
-        }
-    }, 20);
-    return;
-}
-
                 int channelGroupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex(); //xuameng当前选定的频道组
 
                 // xuameng边界判断逻辑
@@ -3610,10 +3598,19 @@ private void setDefaultLiveChannelList() {
 
 
 
-/**
- * 刷新收藏频道组（简化版）- 只更新数据，不处理焦点状态
- */
 private void refreshFavoriteChannelGroup() {
+    // 检查 RecyclerView 是否处于安全状态
+    if (mLiveChannelView.isComputingLayout() || mLiveChannelView.isScrolling()) {
+        // 延迟执行
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                refreshFavoriteChannelGroup();
+            }
+        }, 20);
+        return;
+    }
+    
     // 查找收藏组的索引
     int favoriteGroupIndex = -1;
     for (int i = 0; i < liveChannelGroupList.size(); i++) {
@@ -3639,6 +3636,7 @@ private void refreshFavoriteChannelGroup() {
         }
     }
 }
+
 
 
 
