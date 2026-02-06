@@ -18,8 +18,6 @@ import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.bean.LiveChannelItem;
 import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.base.App;
-import android.os.Handler;
-import android.os.Looper;
 
 
 /**
@@ -166,12 +164,7 @@ public void toggleFavoriteChannel(LiveChannelItem channel, int position) {
     Hawk.put(HawkConfig.LIVE_FAVORITE_CHANNELS, favoriteArray);
     
     // 只需要更新当前项的UI
- new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-    @Override
-    public void run() {
-        notifyItemChanged(position);
-    }
-}, 200); 
+    notifyItemChanged(position);
 
 	        // === 新增：通知收藏状态变更 ===
         if (favoriteChangeListener != null) {
