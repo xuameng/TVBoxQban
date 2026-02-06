@@ -148,11 +148,6 @@ public class LiveChannelItem {
  */
 public static LiveChannelGroup createFavoriteChannelGroup() {
     LiveChannelGroup group = new LiveChannelGroup();
-    if (group == null) {
-        group = new LiveChannelGroup(); // 双重保障
-    }
-    // 保持索引为-1，由调用处根据实际情况动态设置
-    group.setGroupIndex(-1);
     group.setGroupName("我的收藏");
     group.setGroupPassword("");
     
@@ -160,7 +155,6 @@ public static LiveChannelGroup createFavoriteChannelGroup() {
     JsonArray favoriteArray = Hawk.get(HawkConfig.LIVE_FAVORITE_CHANNELS, new JsonArray());
     ArrayList<LiveChannelItem> favoriteChannels = new ArrayList<>();
     
-    // 即使没有收藏频道，也要创建空的频道列表
     for (int i = 0; i < favoriteArray.size(); i++) {
         try {
             JsonObject channelJson = favoriteArray.get(i).getAsJsonObject();
@@ -168,18 +162,16 @@ public static LiveChannelGroup createFavoriteChannelGroup() {
             favoriteChannels.add(item);
         } catch (Exception e) {
             e.printStackTrace();
+            // 记录错误但继续处理其他频道
         }
     }
     
     // 确保频道列表不为null（即使为空）
-    if (favoriteChannels == null) {
-        favoriteChannels = new ArrayList<>();
-    }
-    
     group.setLiveChannels(favoriteChannels);
     
     return group;
 }
+
 
 
 
