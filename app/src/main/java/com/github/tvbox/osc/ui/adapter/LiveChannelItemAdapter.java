@@ -164,14 +164,7 @@ public void toggleFavoriteChannel(LiveChannelItem channel, int position) {
     Hawk.put(HawkConfig.LIVE_FAVORITE_CHANNELS, favoriteArray);
     
     // 只需要更新当前项的UI
-// 使用 Handler 确保在主线程且当前UI操作队列完成后执行
-new android.os.Handler(android.os.Looper.getMainLooper()).post(new Runnable() {
-    @Override
-    public void run() {
-        notifyItemChanged(position);
-    }
-});
-
+    notifyItemChanged(position);
 
 	        // === 新增：通知收藏状态变更 ===
         if (favoriteChangeListener != null) {
