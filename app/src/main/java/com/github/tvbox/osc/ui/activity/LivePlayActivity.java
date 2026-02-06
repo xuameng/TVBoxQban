@@ -2574,11 +2574,15 @@ public class LivePlayActivity extends BaseActivity {
             liveChannelGroupList.clear();
             liveChannelGroupList.addAll(list);
 
-        // ========== 新增：调用 refreshFavoriteChannelGroup 方法 ==========
-        refreshFavoriteChannelGroup();
-        // ========== 新增结束 ==========
+// ========== 修复：延迟加载收藏频道组 ==========
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                refreshFavoriteChannelGroup();
+            }
+        }, 300);  // 延迟300ms确保UI完全初始化
+        // ========== 修复结束 ==========
     
-		
 
 
             showSuccess();
@@ -3642,10 +3646,14 @@ private boolean isSameChannel(JsonObject fav1, JsonObject fav2) {
 /**
  * 刷新收藏频道组
  */
+/**
+ * 刷新收藏频道组
+ */
 public void refreshFavoriteChannelGroup() {
     // 保存当前选中的频道信息
     int oldGroupIndex = currentChannelGroupIndex;
     int oldChannelIndex = currentLiveChannelIndex;
+    LiveChannelItem oldChannelItem = currentLiveChannelItem; // 保存当前频道对象
     
     // 重新创建收藏频道组
     List<LiveChannelGroup> originalList = ApiConfig.get().getChannelGroupList();
@@ -3661,6 +3669,13 @@ public void refreshFavoriteChannelGroup() {
         // 更新所有频道组的索引
         for (int i = 0; i < liveChannelGroupList.size(); i++) {
             liveChannelGroupList.get(i).setGroupIndex(i);
+            
+            // ========== 修复：更新每个频道组内频道的索引 ==========
+            ArrayList<LiveChannelItem> channels = liveChannelGroupList.get(i).getLiveChannels();
+            for (int j = 0; j < channels.size(); j++) {
+                channels.get(j).setChannelIndex(j);
+            }
+            // ========== 修复结束 ==========
         }
         
         // 调整当前选中的频道组索引
@@ -3675,27 +3690,59 @@ public void refreshFavoriteChannelGroup() {
         }
     }
     
+    // ========== 修复：重置焦点和选择状态 ==========
+    liveChannelGroupAdapter.setSelectedGroupIndex(-1);
+    liveChannelGroupAdapter.setFocusedGroupIndex(-1);
+    liveChannelItemAdapter.setSelectedChannelIndex(-1);
+    liveChannelItemAdapter.setFocusedChannelIndex(-1);
+    // ========== 修复结束 ==========
+    
     // 刷新适配器
     liveChannelGroupAdapter.setNewData(liveChannelGroupList);
     
     // 重新选中之前的频道组（但不触发播放）
     if (currentChannelGroupIndex >= 0 && currentChannelGroupIndex < liveChannelGroupList.size()) {
         liveChannelGroupAdapter.setSelectedGroupIndex(currentChannelGroupIndex);
-        liveChannelGroupAdapter.notifyDataSetChanged();
+        liveChannelGroupAdapter.setFocusedGroupIndex(currentChannelGroupIndex);
         
-        // 仅加载该组的频道数据，不触发播放
+        // 加载该组的频道数据
         liveChannelItemAdapter.setNewData(getLiveChannels(currentChannelGroupIndex));
-        if (currentLiveChannelIndex > -1) {
-            mLiveChannelView.scrollToPosition(currentLiveChannelIndex);
-            liveChannelItemAdapter.setSelectedChannelIndex(currentLiveChannelIndex);
-        } else {
-            mLiveChannelView.scrollToPosition(0);
-            liveChannelItemAdapter.setSelectedChannelIndex(-1);
-        }
         
-        // 重要：不调用 loadChannelGroupDataAndPlay()，避免触发 clickLiveChannel() 和 mHideChannelListRun()
-        // loadChannelGroupDataAndPlay(currentChannelGroupIndex, currentLiveChannelIndex);
+        // ========== 修复：重新定位到之前的频道 ==========
+        if (oldChannelItem != null && currentLiveChannelIndex > -1) {
+            // 尝试在当前的频道组中找到相同的频道
+            ArrayList<LiveChannelItem> currentChannels = getLiveChannels(currentChannelGroupIndex);
+            int newChannelIndex = -1;
+            
+            for (int i = 0; i < currentChannels.size(); i++) {
+                LiveChannelItem channel = currentChannels.get(i);
+                if (channel.getChannelName().equals(oldChannelItem.getChannelName()) &&
+                    channel.getChannelUrls().equals(oldChannelItem.getChannelUrls())) {
+                    newChannelIndex = i;
+                    break;
+                }
+            }
+            
+            if (newChannelIndex >= 0) {
+                currentLiveChannelIndex = newChannelIndex;
+                liveChannelItemAdapter.setSelectedChannelIndex(newChannelIndex);
+                mLiveChannelView.scrollToPosition(newChannelIndex);
+            } else {
+                // 如果找不到相同的频道，重置为第一个
+                currentLiveChannelIndex = 0;
+                liveChannelItemAdapter.setSelectedChannelIndex(0);
+                mLiveChannelView.scrollToPosition(0);
+            }
+        } else {
+            // 如果没有之前的频道，重置为第一个
+            currentLiveChannelIndex = 0;
+            liveChannelItemAdapter.setSelectedChannelIndex(0);
+            mLiveChannelView.scrollToPosition(0);
+        }
+        // ========== 修复结束 ==========
     }
+}
+
 }
 
 
