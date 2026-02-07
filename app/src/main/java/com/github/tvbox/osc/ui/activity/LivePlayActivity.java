@@ -3613,10 +3613,11 @@ public class LivePlayActivity extends BaseActivity {
 
 
 /**
- * 刷新收藏频道组 - 增强版
+ * 刷新收藏频道组 - 增强版（修复版）
  * 1. 更新收藏组数据
  * 2. 如果当前正在收藏组，智能处理焦点位置
  * 3. 防止在RecyclerView计算布局或滚动时操作导致崩溃
+ * 4. 修复索引越界问题
  */
 private void refreshFavoriteChannelGroup() {
     // 1. 查找收藏组的索引
@@ -3649,7 +3650,7 @@ private void refreshFavoriteChannelGroup() {
         int newFocusPosition = calculateNewFocusPosition(favoriteChannels);
         
         // 6. 安全地滚动和设置焦点（防止崩溃）
-        safeScrollAndFocus(newFocusPosition, favoriteChannels);
+        safeScrollAndFocus(newFocusPosition, favoriteChannels, favoriteGroupIndex);
     }
 }
 
@@ -3659,7 +3660,7 @@ private void refreshFavoriteChannelGroup() {
  */
 private int calculateNewFocusPosition(ArrayList<LiveChannelItem> channels) {
     if (channels == null || channels.isEmpty()) {
-        return -1; // 没有频道，返回-1
+        return 0; // 修改：返回0而不是-1，避免索引越界
     }
     
     // 获取当前的焦点索引
@@ -3681,14 +3682,14 @@ private int calculateNewFocusPosition(ArrayList<LiveChannelItem> channels) {
  * 安全地滚动和设置焦点
  * 防止在RecyclerView计算布局或滚动时操作导致崩溃
  */
-private void safeScrollAndFocus(final int targetPosition, final ArrayList<LiveChannelItem> channels) {
+private void safeScrollAndFocus(final int targetPosition, final ArrayList<LiveChannelItem> channels, final int groupIndex) {
     // 检查RecyclerView状态
     if (mLiveChannelView.isComputingLayout() || mLiveChannelView.isScrolling()) {
         // 如果正在计算布局或滚动，延迟执行
         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             @Override
             public void run() {
-                safeScrollAndFocus(targetPosition, channels);
+                safeScrollAndFocus(targetPosition, channels, groupIndex);
             }
         }, 20); // 延迟20毫秒重试
         return;
@@ -3696,8 +3697,15 @@ private void safeScrollAndFocus(final int targetPosition, final ArrayList<LiveCh
     
     // 安全检查：确保目标位置有效且列表不为空
     if (channels == null || channels.isEmpty() || targetPosition < 0 || targetPosition >= channels.size()) {
-        // 如果没有频道，清空选择
+        // 如果没有频道，清空选择并更新状态
         liveChannelItemAdapter.setSelectedChannelIndex(-1);
+        liveChannelItemAdapter.setFocusedChannelIndex(-1);
+        
+        // 重要：更新当前频道状态，避免后续操作使用无效索引
+        if (currentChannelGroupIndex == groupIndex) {
+            currentLiveChannelIndex = -1;
+            currentLiveChannelItem = null;
+        }
         return;
     }
     
@@ -3717,11 +3725,12 @@ private void safeScrollAndFocus(final int targetPosition, final ArrayList<LiveCh
                     
                 }
             }
-        }, 50); // 延迟100毫秒确保滚动完成
+        }, 100); // 延迟100毫秒确保滚动完成
     } catch (Exception e) {
         Log.e("LivePlayActivity", "滚动和设置焦点时出错", e);
         // 出错时恢复安全状态
         liveChannelItemAdapter.setSelectedChannelIndex(-1);
+        liveChannelItemAdapter.setFocusedChannelIndex(-1);
     }
 }
 
