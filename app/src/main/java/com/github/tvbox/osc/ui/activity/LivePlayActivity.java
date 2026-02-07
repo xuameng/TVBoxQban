@@ -198,7 +198,6 @@ public class LivePlayActivity extends BaseActivity {
     private boolean isVideoplaying = false; //xuameng判断视频开始播放
     private boolean XuSource = false; //xuameng退出回看
     private boolean TimeoutChangeSource = false; //xuameng是否自动换源
-    private boolean isChannelNull = false; //xuameng是否频道为空
     private int selectedChannelNumber = 0; // xuameng遥控器数字键输入的要切换的频道号码
     private TextView tvSelectedChannel; //xuameng频道编号
     private ImageView iv_circle_bg_xu; //xuameng音乐播放时图标
@@ -868,9 +867,6 @@ public class LivePlayActivity extends BaseActivity {
     public void divLoadEpgRight(View view) {
         mHideChannelListRunXu(); //xuameng BUG
         if(!isCurrentLiveChannelValid()) return; //xuameng 未选择频道空指针问题
-        if (isChannelNull) {  //xuameng 频道为空
-            App.showToastShort(mContext, "聚汇影视提示您：请先选择频道！");
-        }
         if(isTouch) {
             showChannelListTouch();
         }
@@ -1443,17 +1439,14 @@ public class LivePlayActivity extends BaseActivity {
             // xuameng添加空列表检查
             ArrayList<LiveChannelItem> channels = getLiveChannels(currentChannelGroupIndexXu);
             if(channels == null || channels.isEmpty()) {
-                isChannelNull = true;  //xuameg频道为空
                 return false;
             }
         
             // xuameng添加索引范围检查
             if(currentLiveChannelIndexXu < 0 || currentLiveChannelIndexXu >= channels.size()) {
-                isChannelNull = true;  //xuameg频道为空
                 return false;
             }
 
-            isChannelNull = false;  //xuameg频道为空
             currentLiveChannelItemXu = getLiveChannels(currentChannelGroupIndexXu).get(currentLiveChannelIndexXu);
             liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
         }
@@ -3696,6 +3689,13 @@ public class LivePlayActivity extends BaseActivity {
                 }else {
                     // 当前播放的频道不在收藏组中，不改变任何焦点状态
                     // 只需更新列表数据，不设置选中状态
+                    // 检查收藏组是否有频道
+                    if (favoriteChannels.size() > 0) {
+                        // 如果有频道，滚动到收藏组位置（滚动到第一个频道位置）
+                        judgescrollToPosition(0);
+                        // 找到了当前播放的频道，选择第一个频道位置但不选中
+			            judgeLiveChannelViewNoSelected(0); 
+                    }
                     judgeSelectedChannelIndex(-1); // 确保没有选中项
                 }
                 // ========== 修复结束 ==========
@@ -3772,6 +3772,24 @@ public class LivePlayActivity extends BaseActivity {
     
         if (liveChannelItemAdapter != null) {
            liveChannelItemAdapter.setSelectedChannelIndex(targetChannelIndex);
+	       mLiveChannelView.setSelection(targetChannelIndex); 
+        }
+    }
+
+    private void judgeLiveChannelViewNoSelected(int targetChannelIndex) {     //xuameng 修复我的收藏滚动闪退
+       // 检查 RecyclerView 是否处于安全状态
+        if (mLiveChannelView.isComputingLayout() || mLiveChannelView.isScrolling()) {
+            // 延迟执行，避免在布局计算或滚动过程中操作
+            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    judgeLiveChannelViewNoSelected(targetChannelIndex); 
+                }
+            }, 20);
+            return;
+        }
+    
+        if (liveChannelItemAdapter != null) {
 	       mLiveChannelView.setSelection(targetChannelIndex); 
         }
     }
