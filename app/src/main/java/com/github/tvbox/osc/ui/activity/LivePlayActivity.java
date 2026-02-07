@@ -3655,17 +3655,19 @@ private void refreshFavoriteChannelGroup() {
                 }
                 
                 if (targetChannelIndex != -1) {
+
+                    // 确保UI滚动到正确位置
+                    judgescrollToPosition(targetChannelIndex);
+
                     // 找到了当前播放的频道，恢复其选中和高亮状态
-                    liveChannelItemAdapter.setSelectedChannelIndex(targetChannelIndex);
-                    liveChannelItemAdapter.setFocusedChannelIndex(targetChannelIndex);
+                    judgeLiveChannelView(targetChannelIndex);
                     
                     // 更新当前播放频道信息
                     currentLiveChannelIndex = targetChannelIndex;
                     currentLiveChannelItem = favoriteGroupIndex.get(targetChannelIndex);
                     channel_Name = currentLiveChannelItem;
                     
-                    // 确保UI滚动到正确位置
-                    mLiveChannelView.scrollToPosition(targetChannelIndex);
+
                     
                 } else {
                     // 没有找到当前播放的频道（可能被删除了），重置状态
@@ -3734,6 +3736,43 @@ private void judgeFocusedChannelIndex() {     //xuameng  修复滚动闪退
     // 只在安全状态下执行业务逻辑
     if (liveChannelItemAdapter != null) {
         liveChannelItemAdapter.setFocusedChannelIndex(-1);
+    }
+}
+
+private void judgeLiveChannelView(int targetChannelIndex) {     //xuameng  修复滚动闪退
+    // 检查 RecyclerView 是否处于安全状态
+    if (mLiveChannelView.isComputingLayout() || mLiveChannelView.isScrolling()) {
+        // 延迟执行，避免在布局计算或滚动过程中操作
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                judgeLiveChannelView(targetChannelIndex); 
+            }
+        }, 20);
+        return;
+    }
+    
+    if (liveChannelItemAdapter != null) {
+       liveChannelItemAdapter.setSelectedChannelIndex(targetChannelIndex);
+       liveChannelItemAdapter.setFocusedChannelIndex(targetChannelIndex);
+    }
+}
+
+private void judgescrollToPosition(int targetChannelIndex) {     //xuameng  修复滚动闪退
+    // 检查 RecyclerView 是否处于安全状态
+    if (mLiveChannelView.isComputingLayout() || mLiveChannelView.isScrolling()) {
+        // 延迟执行，避免在布局计算或滚动过程中操作
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                judgescrollToPosition(targetChannelIndex); 
+            }
+        }, 20);
+        return;
+    }
+    
+    if (mLiveChannelView != null) {
+        mLiveChannelView.scrollToPosition(targetChannelIndex);
     }
 }
 
