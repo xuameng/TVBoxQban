@@ -2351,15 +2351,9 @@ public class LivePlayActivity extends BaseActivity {
             }
         });
         // --- 新增结束 ---
+
     }
     private void clickLiveChannel(int position) {
-    // 清除之前的选择状态
-    int oldSelectedIndex = liveChannelItemAdapter.getSelectedChannelIndex();
-    if (oldSelectedIndex != -1 && oldSelectedIndex != position) {
-        // 通知之前选中的频道取消高亮
-        liveChannelItemAdapter.setSelectedChannelIndex(-1);
-    }
-
         liveChannelItemAdapter.setSelectedChannelIndex(position);
         liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
         playChannel(liveChannelGroupAdapter.getSelectedGroupIndex(), position, false);
@@ -3676,6 +3670,12 @@ private void refreshFavoriteChannelGroup() {
                 } else {
                     // 没有找到当前播放的频道（可能被删除了），重置状态
                     judgeSelectedChannelIndex(targetChannelIndex); 
+                   // 如果当前在收藏组中但找不到频道，重置频道信息
+                    if (currentChannelGroupIndex == favoriteGroupIndex) {
+                        currentLiveChannelIndex = -1;
+                        currentLiveChannelItem = null;
+                        channel_Name = null;
+                    }
                 }
             }
             // ========== 修复结束 ==========
