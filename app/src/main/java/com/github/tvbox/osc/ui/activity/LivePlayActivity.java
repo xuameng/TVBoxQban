@@ -2329,6 +2329,10 @@ public class LivePlayActivity extends BaseActivity {
             }
             @Override
             public void onItemClick(TvRecyclerView parent, View itemView, int position) { //选中播放就隐藏左侧频道菜单
+                // xuameng添加安全检查
+                if (position < 0 || liveChannelItemAdapter.getData() == null || position >= liveChannelItemAdapter.getData().size()) {
+                    return;
+                }
                 isTouch = false;
                 clickLiveChannel(position);
                 mHideChannelListRun(); //xuameng隐藏左侧频道菜单
@@ -2339,6 +2343,10 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 FastClickCheckUtil.check(view);
+                // // xuameng添加安全检查添加安全检查
+                if (position < 0 || adapter.getData() == null || position >= adapter.getData().size()) {
+                    return;
+                }
                 clickLiveChannel(position);
                 isTouch = false;
                 mHideChannelListRun(); //xuameng隐藏左侧频道菜单
