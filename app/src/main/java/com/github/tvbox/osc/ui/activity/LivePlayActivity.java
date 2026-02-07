@@ -1436,6 +1436,19 @@ public class LivePlayActivity extends BaseActivity {
         if(!changeSource) {
             currentChannelGroupIndexXu = channelGroupIndex; //xuameng重要频道组
             currentLiveChannelIndexXu = liveChannelIndex; //xuameng重要频道名称
+            // xuameng添加空列表检查
+            ArrayList<LiveChannelItem> channels = getLiveChannels(currentChannelGroupIndexXu);
+            if(channels == null || channels.isEmpty()) {
+                App.showToastShort(mContext, "聚汇影视提示您：请选择一个频道！");
+                return false;
+            }
+        
+            // xuameng添加索引范围检查
+            if(currentLiveChannelIndexXu < 0 || currentLiveChannelIndexXu >= channels.size()) {
+                App.showToastShort(mContext, "聚汇影视提示您：请选择一个频道！");
+                return false;
+            }
+
             currentLiveChannelItemXu = getLiveChannels(currentChannelGroupIndexXu).get(currentLiveChannelIndexXu);
             liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
         }
