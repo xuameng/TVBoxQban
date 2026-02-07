@@ -2342,7 +2342,7 @@ public class LivePlayActivity extends BaseActivity {
                 LiveChannelItem channel = liveChannelItemAdapter.getItem(position);
                 if (channel != null) {
                     // 调用适配器的切换收藏方法
-                    liveChannelItemAdapter.toggleFavoriteChannel(channel, position);
+                    toggleFavoriteChannel(channel, position);
                     // 返回 true 表示消费了长按事件
                     return true;
                 }
@@ -3635,7 +3635,7 @@ private void refreshFavoriteChannelGroup() {
         
         // 如果当前选中的是收藏组，刷新频道列表
         int selectedGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
-        if (selectedGroupIndex == favoriteGroupIndex) {
+        if (selectedGroupIndex == favoriteGroupIndex && liveChannelItemAdapter != null) {
             liveChannelItemAdapter.setNewData(getLiveChannels(favoriteGroupIndex));
         }
     }
@@ -3670,7 +3670,9 @@ private void refreshFavoriteChannelGroup() {
         Hawk.put(HawkConfig.LIVE_FAVORITE_CHANNELS, favoriteArray);
     
         // 只需要更新当前项的UI
-        notifyItemChanged(position);
+        if (liveChannelItemAdapter != null) {
+            liveChannelItemAdapter.notifyItemChanged(position);
+        }
         refreshFavoriteChannelGroup();
     }
 
@@ -3688,7 +3690,9 @@ private void judgeFocusedChannelIndex() {     //xuameng  修复滚动闪退
     }
     
     // 只在安全状态下执行业务逻辑
-    liveChannelItemAdapter.setFocusedChannelIndex(-1);
+    if (liveChannelItemAdapter != null) {
+        liveChannelItemAdapter.setFocusedChannelIndex(-1);
+    }
 }
 
 }
