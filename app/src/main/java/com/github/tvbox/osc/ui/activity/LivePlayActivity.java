@@ -3608,15 +3608,14 @@ public class LivePlayActivity extends BaseActivity {
 
 
 
-
-
-
-
 /**
- * 刷新收藏频道组（简化版）- 只更新数据，不处理焦点状态
+ * 刷新收藏频道组 - 增强版
+ * 1. 更新收藏组数据
+ * 2. 如果当前正在收藏组，智能处理焦点位置
+ * 3. 防止在RecyclerView计算布局或滚动时操作导致崩溃
  */
 private void refreshFavoriteChannelGroup() {
-    // 查找收藏组的索引
+    // 1. 查找收藏组的索引
     int favoriteGroupIndex = -1;
     for (int i = 0; i < liveChannelGroupList.size(); i++) {
         if ("我的收藏".equals(liveChannelGroupList.get(i).getGroupName())) {
@@ -3625,82 +3624,140 @@ private void refreshFavoriteChannelGroup() {
         }
     }
     
-    if (favoriteGroupIndex != -1) {
-        // 重新创建收藏组
-        LiveChannelGroup newFavoriteGroup = LiveChannelItem.createFavoriteChannelGroup();
-        newFavoriteGroup.setGroupIndex(favoriteGroupIndex);
-        liveChannelGroupList.set(favoriteGroupIndex, newFavoriteGroup);
+    if (favoriteGroupIndex == -1) return;
+    
+    // 2. 重新创建收藏组
+    LiveChannelGroup newFavoriteGroup = LiveChannelItem.createFavoriteChannelGroup();
+    newFavoriteGroup.setGroupIndex(favoriteGroupIndex);
+    liveChannelGroupList.set(favoriteGroupIndex, newFavoriteGroup);
+    
+    // 3. 刷新适配器数据
+    liveChannelGroupAdapter.setNewData(liveChannelGroupList);
+    
+    // 4. 如果当前选中的是收藏组，智能处理焦点
+    int selectedGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
+    if (selectedGroupIndex == favoriteGroupIndex && liveChannelItemAdapter != null) {
+        // 获取收藏组的新频道列表
+        ArrayList<LiveChannelItem> favoriteChannels = getLiveChannels(favoriteGroupIndex);
+        liveChannelItemAdapter.setNewData(favoriteChannels);
         
-        // 刷新适配器数据
-        liveChannelGroupAdapter.setNewData(liveChannelGroupList);
+        // 5. 智能计算新的焦点位置
+        int newFocusPosition = calculateNewFocusPosition(favoriteChannels);
         
-        // 如果当前选中的是收藏组，刷新频道列表
-        int selectedGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
-        if (selectedGroupIndex == favoriteGroupIndex && liveChannelItemAdapter != null) {
-            liveChannelItemAdapter.setNewData(getLiveChannels(favoriteGroupIndex));
-        }
+        // 6. 安全地滚动和设置焦点（防止崩溃）
+        safeScrollAndFocus(newFocusPosition, favoriteChannels);
     }
+}
+
+/**
+ * 计算新的焦点位置
+ * 规则：如果收藏组还有频道，焦点滚动到上一个索引（如果存在），否则为0
+ */
+private int calculateNewFocusPosition(ArrayList<LiveChannelItem> channels) {
+    if (channels == null || channels.isEmpty()) {
+        return -1; // 没有频道，返回-1
+    }
+    
+    // 获取当前的焦点索引
+    int currentFocusIndex = liveChannelItemAdapter.getSelectedChannelIndex();
+    
+    // 如果当前焦点索引无效或为0，则设置为0
+    if (currentFocusIndex < 0 || currentFocusIndex >= channels.size()) {
+        return 0;
+    }
+    
+    // 计算上一个索引（如果当前是0，则保持为0）
+    int newIndex = Math.max(0, currentFocusIndex - 1);
+    
+    // 确保新索引不超过频道列表范围
+    return Math.min(newIndex, channels.size() - 1);
+}
+
+/**
+ * 安全地滚动和设置焦点
+ * 防止在RecyclerView计算布局或滚动时操作导致崩溃
+ */
+private void safeScrollAndFocus(final int targetPosition, final ArrayList<LiveChannelItem> channels) {
+    // 检查RecyclerView状态
+    if (mLiveChannelView.isComputingLayout() || mLiveChannelView.isScrolling()) {
+        // 如果正在计算布局或滚动，延迟执行
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                safeScrollAndFocus(targetPosition, channels);
+            }
+        }, 20); // 延迟20毫秒重试
+        return;
+    }
+    
+    // 安全检查：确保目标位置有效且列表不为空
+    if (channels == null || channels.isEmpty() || targetPosition < 0 || targetPosition >= channels.size()) {
+        // 如果没有频道，清空选择
+        liveChannelItemAdapter.setSelectedChannelIndex(-1);
+        return;
+    }
+    
+    // 执行滚动和焦点设置
+    try {
+        // 1. 先滚动到目标位置附近（防止空指针）
+        mLiveChannelView.scrollToPosition(targetPosition);
+        judgeLiveChannelView();
+    } catch (Exception e) {
+        liveChannelItemAdapter.setSelectedChannelIndex(-1);
+    }
+}
+
+
+private void judgeLiveChannelView() {     //xuameng  修复滚动闪退
+    // 检查 RecyclerView 是否处于安全状态
+    if (mLiveChannelView.isComputingLayout() || mLiveChannelView.isScrolling()) {
+        // 延迟执行，避免在布局计算或滚动过程中操作
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                judgeLiveChannelView(); //xuameng先滚动再选择防止空指针  
+            }
+        }, 20);
+        return;
+    }
+    
+    mLiveChannelView.setSelection(targetPosition); //xuameng先滚动再选择防止空指针  
 }
 
     /**
      * 切换频道的收藏状态
      */
-public void toggleFavoriteChannel(LiveChannelItem channel, int position) {
-    JsonArray favoriteArray = Hawk.get(HawkConfig.LIVE_FAVORITE_CHANNELS, new JsonArray());
-    JsonObject channelJson = LiveChannelItem.convertChannelToJson(channel);
+    public void toggleFavoriteChannel(LiveChannelItem channel, int position) {
+        JsonArray favoriteArray = Hawk.get(HawkConfig.LIVE_FAVORITE_CHANNELS, new JsonArray());
+        JsonObject channelJson = LiveChannelItem.convertChannelToJson(channel);
 
-    boolean found = false;
-    int foundIndex = -1;
-    for (int i = 0; i < favoriteArray.size(); i++) {
-        JsonObject fav = favoriteArray.get(i).getAsJsonObject();
-        if (LiveChannelItem.isSameChannel(fav, channelJson)) {
-            found = true;
-            foundIndex = i;
-            break;
-        }
-    }
-
-    // 判断是否满足特殊处理条件
-    boolean needClearHighlight = false;
-    if (found) {
-        // 条件1：当前正在取消收藏
-        // 条件2：当前选中的是“我的收藏”组
-        int selectedGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
-        if (selectedGroupIndex >= 0 && selectedGroupIndex < liveChannelGroupList.size()) {
-            LiveChannelGroup currentGroup = liveChannelGroupList.get(selectedGroupIndex);
-            if ("我的收藏".equals(currentGroup.getGroupName())) {
-                // 条件3：取消的频道正是当前播放的频道
-                if (currentLiveChannelItem != null && 
-                    LiveChannelItem.isSameChannel(
-                        LiveChannelItem.convertChannelToJson(currentLiveChannelItem), 
-                        channelJson)) {
-                    needClearHighlight = true;
-                }
+        boolean found = false;
+        int foundIndex = -1;
+        for (int i = 0; i < favoriteArray.size(); i++) {
+            JsonObject fav = favoriteArray.get(i).getAsJsonObject();
+            if (LiveChannelItem.isSameChannel(fav, channelJson)) {
+                found = true;
+                foundIndex = i;
+                break;
             }
         }
-        
-        favoriteArray.remove(foundIndex);
-        App.showToastShort(mContext, "已取消收藏：" + channel.getChannelName());
-    } else {
-        favoriteArray.add(channelJson);
-        App.showToastShort(mContext, "已收藏：" + channel.getChannelName());
-    }
 
-    Hawk.put(HawkConfig.LIVE_FAVORITE_CHANNELS, favoriteArray);
-    
-    // 更新UI
-    if (liveChannelItemAdapter != null) {
-        liveChannelItemAdapter.notifyItemChanged(position);
-    }
-    
-    // 特殊处理：清除高亮状态
-    if (needClearHighlight) {
-        liveChannelItemAdapter.setSelectedChannelIndex(-1);
-    }
-    
-    refreshFavoriteChannelGroup();
-}
+        if (found) {
+            favoriteArray.remove(foundIndex);
+            App.showToastShort(mContext, "已取消收藏：" + channel.getChannelName());
+        } else {
+            favoriteArray.add(channelJson);
+            App.showToastShort(mContext, "已收藏：" + channel.getChannelName());
+        }
 
+        Hawk.put(HawkConfig.LIVE_FAVORITE_CHANNELS, favoriteArray);
+    
+        // 只需要更新当前项的UI
+        if (liveChannelItemAdapter != null) {
+            liveChannelItemAdapter.notifyItemChanged(position);
+        }
+        refreshFavoriteChannelGroup();
+    }
 
 private void judgeFocusedChannelIndex() {     //xuameng  修复滚动闪退
     // 检查 RecyclerView 是否处于安全状态
@@ -3709,7 +3766,7 @@ private void judgeFocusedChannelIndex() {     //xuameng  修复滚动闪退
         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             @Override
             public void run() {
-                judgeFocusedChannelIndex(); // 添加正确的括号调用
+                judgeFocusedChannelIndex(); 
             }
         }, 20);
         return;
