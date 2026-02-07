@@ -60,6 +60,7 @@ public class HawkConfig {
 	public static final String VOD_SWITCHDECODE = "vod_switchdecode";  //xuameng解码切换
 	public static final String VOD_SWITCHPLAYER = "vod_switchplayer";  //xuameng播放器切换
     public static final String LIVE_FAVORITE_CHANNELS = "live_favorite_channels"; // xuameng存储收藏频道列表的键
+    public static final String LIVE_CURRENT_PLAYING_URL = "live_current_PlayingUrl"; // xuameng存储收藏频道列表的键
 
 
 	public static boolean intLIVEPLAYTYPE = false;  //xuameng是否有直播默认播放器
