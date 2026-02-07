@@ -13,7 +13,7 @@ android {
         targetSdkVersion 28
         versionCode 1
         versionName '20260205-2222'
-        multiDexEnabled true
+        multiDexEnabled false
         //设置room的Schema的位置
         javaCompileOptions {
             annotationProcessorOptions {
@@ -136,6 +136,7 @@ dependencies {
     api "com.google.android.exoplayer:exoplayer-ui:2.16.0"
     api "com.google.android.exoplayer:extension-rtmp:2.16.0"
 }
+
 
 
 
