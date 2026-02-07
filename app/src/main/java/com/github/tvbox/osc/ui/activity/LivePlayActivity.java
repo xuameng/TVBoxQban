@@ -3639,16 +3639,18 @@ private void refreshFavoriteChannelGroup() {
                 currentChannelName = currentLiveChannelItem.getChannelName();
             }
             
+            // 获取收藏组的新频道列表
+            ArrayList<LiveChannelItem> favoriteChannels = getLiveChannels(favoriteGroupIndex);
             // 更新频道列表
-            liveChannelItemAdapter.setNewData(getLiveChannels(favoriteGroupIndex));
+            liveChannelItemAdapter.setNewData(favoriteChannels);
             
             // ========== 修复：恢复当前播放频道的选中状态 ==========
             if (currentChannelName != null) {
                 int targetChannelIndex = -1;
                 
                 // 在新的频道列表中查找当前播放的频道
-                for (int i = 0; i < favoriteGroupIndex.size(); i++) {
-                    if (favoriteGroupIndex.get(i).getChannelName().equals(currentChannelName)) {
+                for (int i = 0; i < favoriteChannels.size(); i++) {
+                    if (favoriteChannels.get(i).getChannelName().equals(currentChannelName)) {
                         targetChannelIndex = i;
                         break;
                     }
@@ -3664,7 +3666,7 @@ private void refreshFavoriteChannelGroup() {
                     
                     // 更新当前播放频道信息
                     currentLiveChannelIndex = targetChannelIndex;
-                    currentLiveChannelItem = favoriteGroupIndex.get(targetChannelIndex);
+                    currentLiveChannelItem = favoriteChannels.get(targetChannelIndex);
                     channel_Name = currentLiveChannelItem;
                     
 
@@ -3673,9 +3675,6 @@ private void refreshFavoriteChannelGroup() {
                     // 没有找到当前播放的频道（可能被删除了），重置状态
                     liveChannelItemAdapter.setSelectedChannelIndex(-1);
                     liveChannelItemAdapter.setFocusedChannelIndex(-1);
-                    currentLiveChannelIndex = -1;
-                    currentLiveChannelItem = null;
-                    channel_Name = null;
                 }
             }
             // ========== 修复结束 ==========
