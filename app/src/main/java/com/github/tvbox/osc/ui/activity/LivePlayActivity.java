@@ -2344,6 +2344,7 @@ public class LivePlayActivity extends BaseActivity {
                     // 调用适配器的切换收藏方法
                     toggleFavoriteChannel(channel, position);
                     // 返回 true 表示消费了长按事件
+                    mHideChannelListRunXu(); //xuameng隐藏频道菜单
                     return true;
                 }
                 return false;
@@ -3631,7 +3632,7 @@ private void refreshFavoriteChannelGroup() {
         liveChannelGroupList.set(favoriteGroupIndex, newFavoriteGroup);
         
         // 刷新适配器数据
-   //     liveChannelGroupAdapter.setNewData(liveChannelGroupList);
+        liveChannelGroupAdapter.setNewData(liveChannelGroupList);
         
         // 如果当前选中的是收藏组，刷新频道列表
         int selectedGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
@@ -3644,37 +3645,62 @@ private void refreshFavoriteChannelGroup() {
     /**
      * 切换频道的收藏状态
      */
-    public void toggleFavoriteChannel(LiveChannelItem channel, int position) {
-        JsonArray favoriteArray = Hawk.get(HawkConfig.LIVE_FAVORITE_CHANNELS, new JsonArray());
-        JsonObject channelJson = LiveChannelItem.convertChannelToJson(channel);
+public void toggleFavoriteChannel(LiveChannelItem channel, int position) {
+    JsonArray favoriteArray = Hawk.get(HawkConfig.LIVE_FAVORITE_CHANNELS, new JsonArray());
+    JsonObject channelJson = LiveChannelItem.convertChannelToJson(channel);
 
-        boolean found = false;
-        int foundIndex = -1;
-        for (int i = 0; i < favoriteArray.size(); i++) {
-            JsonObject fav = favoriteArray.get(i).getAsJsonObject();
-            if (LiveChannelItem.isSameChannel(fav, channelJson)) {
-                found = true;
-                foundIndex = i;
-                break;
+    boolean found = false;
+    int foundIndex = -1;
+    for (int i = 0; i < favoriteArray.size(); i++) {
+        JsonObject fav = favoriteArray.get(i).getAsJsonObject();
+        if (LiveChannelItem.isSameChannel(fav, channelJson)) {
+            found = true;
+            foundIndex = i;
+            break;
+        }
+    }
+
+    // 判断是否满足特殊处理条件
+    boolean needClearHighlight = false;
+    if (found) {
+        // 条件1：当前正在取消收藏
+        // 条件2：当前选中的是“我的收藏”组
+        int selectedGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
+        if (selectedGroupIndex >= 0 && selectedGroupIndex < liveChannelGroupList.size()) {
+            LiveChannelGroup currentGroup = liveChannelGroupList.get(selectedGroupIndex);
+            if ("我的收藏".equals(currentGroup.getGroupName())) {
+                // 条件3：取消的频道正是当前播放的频道
+                if (currentLiveChannelItem != null && 
+                    LiveChannelItem.isSameChannel(
+                        LiveChannelItem.convertChannelToJson(currentLiveChannelItem), 
+                        channelJson)) {
+                    needClearHighlight = true;
+                }
             }
         }
-
-        if (found) {
-            favoriteArray.remove(foundIndex);
-            App.showToastShort(mContext, "已取消收藏：" + channel.getChannelName());
-        } else {
-            favoriteArray.add(channelJson);
-            App.showToastShort(mContext, "已收藏：" + channel.getChannelName());
-        }
-
-        Hawk.put(HawkConfig.LIVE_FAVORITE_CHANNELS, favoriteArray);
-    
-        // 只需要更新当前项的UI
-        if (liveChannelItemAdapter != null) {
-            liveChannelItemAdapter.notifyItemChanged(position);
-        }
-        refreshFavoriteChannelGroup();
+        
+        favoriteArray.remove(foundIndex);
+        App.showToastShort(mContext, "已取消收藏：" + channel.getChannelName());
+    } else {
+        favoriteArray.add(channelJson);
+        App.showToastShort(mContext, "已收藏：" + channel.getChannelName());
     }
+
+    Hawk.put(HawkConfig.LIVE_FAVORITE_CHANNELS, favoriteArray);
+    
+    // 更新UI
+    if (liveChannelItemAdapter != null) {
+        liveChannelItemAdapter.notifyItemChanged(position);
+    }
+    
+    // 特殊处理：清除高亮状态
+    if (needClearHighlight) {
+        liveChannelItemAdapter.setSelectedChannelIndex(-1);
+    }
+    
+    refreshFavoriteChannelGroup();
+}
+
 
 private void judgeFocusedChannelIndex() {     //xuameng  修复滚动闪退
     // 检查 RecyclerView 是否处于安全状态
