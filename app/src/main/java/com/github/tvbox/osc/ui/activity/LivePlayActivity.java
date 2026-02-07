@@ -1402,10 +1402,11 @@ public class LivePlayActivity extends BaseActivity {
         }
         channel_Name = currentLiveChannelItem;
 
-    // ========== 新增：保存当前播放频道的链接 ==========
-    String currentPlayingUrl = currentLiveChannelItem.getUrl();
-    Hawk.put(HawkConfig.LIVE_CURRENT_PLAYING_URL, currentPlayingUrl);
-    // ========== 新增结束 ==========
+// ========== 修改：保存当前播放的完整频道信息 ==========
+JsonObject currentPlayingChannelJson = LiveChannelItem.convertChannelToJson(currentLiveChannelItem);
+Hawk.put(HawkConfig.LIVE_CURRENT_PLAYING_CHANNEL, currentPlayingChannelJson);
+// ========== 修改结束 ==========
+
 
         isBack = false;
         XuSource = false;
@@ -3647,16 +3648,17 @@ private void refreshFavoriteChannelGroup() {
             ArrayList<LiveChannelItem> favoriteChannels = getLiveChannels(favoriteGroupIndex);
             liveChannelItemAdapter.setNewData(favoriteChannels);
             
-            // ========== 优化：只在收藏组中才查找链接 ==========
-            // 获取当前播放的链接
-            String currentPlayingUrl = Hawk.get(HawkConfig.LIVE_CURRENT_PLAYING_URL, "");
+            // ========== 优化：使用 isSameChannel 进行可靠判断 ==========
+            // 获取当前播放的频道信息（需要保存更多信息，而不仅是URL）
+            // 假设我们之前保存的是整个频道的JsonObject
+            JsonObject currentPlayingChannelJson = Hawk.get(HawkConfig.LIVE_CURRENT_PLAYING_CHANNEL, null);
             int targetChannelIndex = -1;
             
-            // 如果当前正在播放的频道链接不为空，则在收藏组中查找该链接对应的频道
-            if (!currentPlayingUrl.isEmpty()) {
+            if (currentPlayingChannelJson != null) {
                 for (int i = 0; i < favoriteChannels.size(); i++) {
                     LiveChannelItem channel = favoriteChannels.get(i);
-                    if (currentPlayingUrl.equals(channel.getUrl())) {
+                    // 使用 isSameChannel 方法进行比较，这个方法应该能正确处理频道标识
+                    if (LiveChannelItem.isSameChannel(currentPlayingChannelJson, LiveChannelItem.convertChannelToJson(channel))) {
                         targetChannelIndex = i;
                         break;
                     }
@@ -3665,12 +3667,12 @@ private void refreshFavoriteChannelGroup() {
             
             // 根据查找结果设置焦点
             if (targetChannelIndex != -1) {
-                // 找到对应链接的频道，设置其为选中和高亮
+                // 找到对应频道，设置其为选中和高亮
                 liveChannelItemAdapter.setSelectedChannelIndex(targetChannelIndex);
                 liveChannelItemAdapter.setFocusedChannelIndex(targetChannelIndex);
                 mLiveChannelView.scrollToPosition(targetChannelIndex);
             } else {
-                // 没有找到对应链接的频道（可能被删除了），取消所有选中和高亮
+                // 没有找到对应频道（可能被删除了），取消所有选中和高亮
                 liveChannelItemAdapter.setSelectedChannelIndex(-1);
                 liveChannelItemAdapter.setFocusedChannelIndex(-1);
             }
@@ -3678,6 +3680,7 @@ private void refreshFavoriteChannelGroup() {
         }
     }
 }
+
 
 
     /**
