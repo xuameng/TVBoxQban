@@ -3043,9 +3043,13 @@ public class LivePlayActivity extends BaseActivity {
             playChannel(groupIndex, liveChannelIndex, false);
         }
     }
-    private boolean isNeedInputPassword(int groupIndex) {
-        return !liveChannelGroupList.get(groupIndex).getGroupPassword().isEmpty() && !isPasswordConfirmed(groupIndex);
+private boolean isNeedInputPassword(int groupIndex) {
+    // 添加边界检查，防止 ArrayIndexOutOfBoundsException
+    if (groupIndex < 0 || groupIndex >= liveChannelGroupList.size()) {
+        return false;
     }
+    return !liveChannelGroupList.get(groupIndex).getGroupPassword().isEmpty() && !isPasswordConfirmed(groupIndex);
+}
     private boolean isPasswordConfirmed(int groupIndex) {
         for(Integer confirmedNum: channelGroupPasswordConfirmed) {
             if(confirmedNum == groupIndex) return true;
@@ -3767,7 +3771,7 @@ private void judgescrollToPosition(int targetChannelIndex) {     //xuameng  修�
         return;
     }
     
-    if (mLiveChannelView != null) {
+    if (mLiveChannelView != null && targetChannelIndex >= 0) {
         mLiveChannelView.scrollToPosition(targetChannelIndex);
     }
 }
