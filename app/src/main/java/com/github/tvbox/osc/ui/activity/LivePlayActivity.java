@@ -1401,6 +1401,12 @@ public class LivePlayActivity extends BaseActivity {
             livePlayerManager.getLiveChannelPlayer(mVideoView, currentLiveChannelItem.getChannelName());
         }
         channel_Name = currentLiveChannelItem;
+
+    // ========== 新增：保存当前播放频道的链接 ==========
+    String currentPlayingUrl = currentLiveChannelItem.getUrl();
+    Hawk.put(HawkConfig.LIVE_CURRENT_PLAYING_URL, currentPlayingUrl);
+    // ========== 新增结束 ==========
+
         isBack = false;
         XuSource = false;
         isVOD = false;
@@ -3613,14 +3619,10 @@ public class LivePlayActivity extends BaseActivity {
 
 
 /**
- * 刷新收藏频道组 - 增强版（修复版）
- * 1. 更新收藏组数据
- * 2. 如果当前正在收藏组，智能处理焦点位置
- * 3. 防止在RecyclerView计算布局或滚动时操作导致崩溃
- * 4. 修复索引越界问题
+ * 刷新收藏频道组（简化版）- 只更新数据，不处理焦点状态
  */
 private void refreshFavoriteChannelGroup() {
-    // 1. 查找收藏组的索引
+    // 查找收藏组的索引
     int favoriteGroupIndex = -1;
     for (int i = 0; i < liveChannelGroupList.size(); i++) {
         if ("我的收藏".equals(liveChannelGroupList.get(i).getGroupName())) {
@@ -3629,108 +3631,51 @@ private void refreshFavoriteChannelGroup() {
         }
     }
     
-    if (favoriteGroupIndex == -1) return;
-    
-    // 2. 重新创建收藏组
-    LiveChannelGroup newFavoriteGroup = LiveChannelItem.createFavoriteChannelGroup();
-    newFavoriteGroup.setGroupIndex(favoriteGroupIndex);
-    liveChannelGroupList.set(favoriteGroupIndex, newFavoriteGroup);
-    
-    // 3. 刷新适配器数据
-    liveChannelGroupAdapter.setNewData(liveChannelGroupList);
-    
-    // 4. 如果当前选中的是收藏组，智能处理焦点
-    int selectedGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
-    if (selectedGroupIndex == favoriteGroupIndex && liveChannelItemAdapter != null) {
-        // 获取收藏组的新频道列表
-        ArrayList<LiveChannelItem> favoriteChannels = getLiveChannels(favoriteGroupIndex);
-        liveChannelItemAdapter.setNewData(favoriteChannels);
+    if (favoriteGroupIndex != -1) {
+        // 重新创建收藏组
+        LiveChannelGroup newFavoriteGroup = LiveChannelItem.createFavoriteChannelGroup();
+        newFavoriteGroup.setGroupIndex(favoriteGroupIndex);
+        liveChannelGroupList.set(favoriteGroupIndex, newFavoriteGroup);
         
-        // 5. 智能计算新的焦点位置
-        int newFocusPosition = calculateNewFocusPosition(favoriteChannels);
+        // 刷新适配器数据
+        liveChannelGroupAdapter.setNewData(liveChannelGroupList);
         
-        // 6. 安全地滚动和设置焦点（防止崩溃）
-        safeScrollAndFocus(newFocusPosition, favoriteChannels, favoriteGroupIndex);
-    }
-}
-
-/**
- * 计算新的焦点位置
- * 规则：如果收藏组还有频道，焦点滚动到上一个索引（如果存在），否则为0
- */
-private int calculateNewFocusPosition(ArrayList<LiveChannelItem> channels) {
-    if (channels == null || channels.isEmpty()) {
-        return 0; // 修改：返回0而不是-1，避免索引越界
-    }
-    
-    // 获取当前的焦点索引
-    int currentFocusIndex = liveChannelItemAdapter.getSelectedChannelIndex();
-    
-    // 如果当前焦点索引无效或为0，则设置为0
-    if (currentFocusIndex < 0 || currentFocusIndex >= channels.size()) {
-        return 0;
-    }
-    
-    // 计算上一个索引（如果当前是0，则保持为0）
-    int newIndex = Math.max(0, currentFocusIndex - 1);
-    
-    // 确保新索引不超过频道列表范围
-    return Math.min(newIndex, channels.size() - 1);
-}
-
-/**
- * 安全地滚动和设置焦点
- * 防止在RecyclerView计算布局或滚动时操作导致崩溃
- */
-private void safeScrollAndFocus(final int targetPosition, final ArrayList<LiveChannelItem> channels, final int groupIndex) {
-    // 检查RecyclerView状态
-    if (mLiveChannelView.isComputingLayout() || mLiveChannelView.isScrolling()) {
-        // 如果正在计算布局或滚动，延迟执行
-        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                safeScrollAndFocus(targetPosition, channels, groupIndex);
-            }
-        }, 20); // 延迟20毫秒重试
-        return;
-    }
-    
-    // 安全检查：确保目标位置有效且列表不为空
-    if (channels == null || channels.isEmpty() || targetPosition < 0 || targetPosition >= channels.size()) {
-        // 如果没有频道，清空选择并更新状态
-        liveChannelItemAdapter.setSelectedChannelIndex(-1);
-        liveChannelItemAdapter.setFocusedChannelIndex(-1);
-        
-        // 重要：更新当前频道状态，避免后续操作使用无效索引
-        if (currentChannelGroupIndex == groupIndex) {
-            currentLiveChannelIndex = -1;
-            currentLiveChannelItem = null;
-        }
-        return;
-    }
-    
-    // 执行滚动和焦点设置
-    try {
-        // 1. 先滚动到目标位置附近（防止空指针）
-        mLiveChannelView.scrollToPosition(targetPosition);
-        
-        // 2. 延迟设置选择状态（确保滚动完成）
-        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                // 再次检查状态
-                if (!mLiveChannelView.isComputingLayout() && !mLiveChannelView.isScrolling()) {
-                    // 设置选中的频道索引
-                    mLiveChannelView.setSelection(targetPosition); //xuameng先滚动再选择防止空指针
-                    
+        // 如果当前选中的是收藏组，才需要处理焦点逻辑
+        int selectedGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
+        if (selectedGroupIndex == favoriteGroupIndex && liveChannelItemAdapter != null) {
+            // 获取收藏组的新频道列表
+            ArrayList<LiveChannelItem> favoriteChannels = getLiveChannels(favoriteGroupIndex);
+            liveChannelItemAdapter.setNewData(favoriteChannels);
+            
+            // ========== 优化：只在收藏组中才查找链接 ==========
+            // 获取当前播放的链接
+            String currentPlayingUrl = Hawk.get(HawkConfig.LIVE_CURRENT_PLAYING_URL, "");
+            int targetChannelIndex = -1;
+            
+            // 如果当前正在播放的频道链接不为空，则在收藏组中查找该链接对应的频道
+            if (!currentPlayingUrl.isEmpty()) {
+                for (int i = 0; i < favoriteChannels.size(); i++) {
+                    LiveChannelItem channel = favoriteChannels.get(i);
+                    if (currentPlayingUrl.equals(channel.getUrl())) {
+                        targetChannelIndex = i;
+                        break;
+                    }
                 }
             }
-        }, 100); // 延迟100毫秒确保滚动完成
-    } catch (Exception e) {
-        Log.e("LivePlayActivity", "滚动和设置焦点时出错", e);
-        // 出错时恢复安全状态
-        liveChannelItemAdapter.setSelectedChannelIndex(-1);
-        liveChannelItemAdapter.setFocusedChannelIndex(-1);
+            
+            // 根据查找结果设置焦点
+            if (targetChannelIndex != -1) {
+                // 找到对应链接的频道，设置其为选中和高亮
+                liveChannelItemAdapter.setSelectedChannelIndex(targetChannelIndex);
+                liveChannelItemAdapter.setFocusedChannelIndex(targetChannelIndex);
+                mLiveChannelView.scrollToPosition(targetChannelIndex);
+            } else {
+                // 没有找到对应链接的频道（可能被删除了），取消所有选中和高亮
+                liveChannelItemAdapter.setSelectedChannelIndex(-1);
+                liveChannelItemAdapter.setFocusedChannelIndex(-1);
+            }
+            // ========== 优化结束 ==========
+        }
     }
 }
 
