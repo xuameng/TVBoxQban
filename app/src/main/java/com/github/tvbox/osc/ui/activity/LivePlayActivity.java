@@ -3754,7 +3754,7 @@ private void judgeLiveChannelView(int targetChannelIndex) {     //xuameng  ä¿®å¤
     
     if (liveChannelItemAdapter != null) {
        liveChannelItemAdapter.setSelectedChannelIndex(targetChannelIndex);
-       liveChannelItemAdapter.setFocusedChannelIndex(targetChannelIndex);
+	   mLiveChannelView.setSelection(targetChannelIndex); 
     }
 }
 
