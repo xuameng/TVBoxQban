@@ -1,23 +1,23 @@
 package com.github.tvbox.osc.ui.adapter;
 
-import android.view.View;   //xuameng 新增
+import android.view.View;   //xuameng 新增我的收藏
 import android.graphics.Color;
 import android.widget.TextView;
 
-import com.google.gson.JsonArray;  //xuameng 新增
-import com.google.gson.JsonObject;  //xuameng 新增
+import com.google.gson.JsonArray;  //xuameng 新增我的收藏
+import com.google.gson.JsonObject;  //xuameng 新增我的收藏
 
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 
-import com.orhanobut.hawk.Hawk;  //xuameng 新增
+import com.orhanobut.hawk.Hawk;  //xuameng 新增我的收藏
 
 import java.util.ArrayList;
 
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.bean.LiveChannelItem;
-import com.github.tvbox.osc.util.HawkConfig;  //xuameng 新增
+import com.github.tvbox.osc.util.HawkConfig;  //xuameng 新增我的收藏
 
 
 /**
@@ -37,20 +37,20 @@ public class LiveChannelItemAdapter extends BaseQuickAdapter<LiveChannelItem, Ba
     protected void convert(BaseViewHolder holder, LiveChannelItem item) {
         TextView tvChannelNum = holder.getView(R.id.tvChannelNum);
         TextView tvChannel = holder.getView(R.id.tvChannelName);
-        TextView tvFavoriteStar = holder.getView(R.id.ivFavoriteStar); // xuameng新增：获取星星TextView的引用
+        TextView tvFavoriteStar = holder.getView(R.id.ivFavoriteStar); // xuameng新增：我的收藏获取星星TextView的引用
         tvChannelNum.setText(String.format("%s", item.getChannelNum()));
         tvChannel.setText(item.getChannelName());
 
-        // xuameng========== 修改：根据收藏状态显示 TextView 星星 ==========
+        // xuameng========== 修改：根据收藏状态显示 我的收藏TextView 星星 ==========
         boolean isFavorited = isChannelFavorited(item);
         if (isFavorited) {
             tvFavoriteStar.setVisibility(View.VISIBLE);
             tvFavoriteStar.setText("★");
-            tvFavoriteStar.setTextColor(Color.YELLOW); // 设置为黄色
+            tvFavoriteStar.setTextColor(Color.YELLOW); // 我的收藏 设置为黄色
         } else {
             tvFavoriteStar.setVisibility(View.GONE);
         }
-        // xuameng========== 修改结束 ==========
+        // xuameng========== 我的收藏 修改结束 ==========
 
         int channelIndex = item.getChannelIndex();
         if (channelIndex == selectedChannelIndex && channelIndex != focusedChannelIndex) {
@@ -73,11 +73,11 @@ public class LiveChannelItemAdapter extends BaseQuickAdapter<LiveChannelItem, Ba
             notifyItemChanged(this.selectedChannelIndex);
     }
 
-    public int getSelectedChannelIndex() {        //xuameng
+    public int getSelectedChannelIndex() {        //xuameng  选中频道
         return selectedChannelIndex;
     }
 
-    public int getSelectedfocusedChannelIndex() {        //xuameng
+    public int getSelectedfocusedChannelIndex() {        //xuameng 焦点颜色
         return focusedChannelIndex;
     }
 
@@ -92,7 +92,7 @@ public class LiveChannelItemAdapter extends BaseQuickAdapter<LiveChannelItem, Ba
             notifyItemChanged(this.selectedChannelIndex);
     }
 
-    /** xuameng
+    /** xuameng 我的收藏
      * 判断当前频道是否已被收藏
      */
     private boolean isChannelFavorited(LiveChannelItem channel) {
