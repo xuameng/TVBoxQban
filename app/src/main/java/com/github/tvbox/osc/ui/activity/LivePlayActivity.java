@@ -3620,7 +3620,7 @@ Hawk.put(HawkConfig.LIVE_CURRENT_PLAYING_CHANNEL, currentPlayingChannelJson);
 
 
 /**
- * 刷新收藏频道组 - 修复焦点状态管理
+ * 刷新收藏频道组 - 改进频道匹配逻辑
  */
 private void refreshFavoriteChannelGroup() {
     // 查找收藏组的索引
@@ -3648,21 +3648,42 @@ private void refreshFavoriteChannelGroup() {
             ArrayList<LiveChannelItem> favoriteChannels = getLiveChannels(favoriteGroupIndex);
             liveChannelItemAdapter.setNewData(favoriteChannels);
             
-            // ========== 修复：使用频道唯一标识进行可靠匹配 ==========
-            // 获取当前播放的频道信息（需要保存完整频道信息）
-            JsonObject currentPlayingChannelJson = Hawk.get(HawkConfig.LIVE_CURRENT_PLAYING_CHANNEL, null);
+            // ========== 改进：使用更可靠的频道匹配方法 ==========
             int targetChannelIndex = -1;
             
-            if (currentPlayingChannelJson != null) {
-                // 在新列表中查找相同的频道
+            // 首先尝试使用当前播放的频道信息进行匹配
+            if (currentLiveChannelItem != null) {
+                String currentChannelName = currentLiveChannelItem.getChannelName();
+                String currentChannelUrl = currentLiveChannelItem.getUrl(); // 当前使用的URL
+                
+                // 在新列表中查找相同频道
                 for (int i = 0; i < favoriteChannels.size(); i++) {
                     LiveChannelItem channel = favoriteChannels.get(i);
-                    JsonObject channelJson = LiveChannelItem.convertChannelToJson(channel);
                     
-                    // 使用 isSameChannel 方法进行比较，这个方法考虑了频道名和URL的组合
-                    if (LiveChannelItem.isSameChannel(currentPlayingChannelJson, channelJson)) {
-                        targetChannelIndex = i;
-                        break;
+                    // 匹配频道名称
+                    if (channel.getChannelName().equals(currentChannelName)) {
+                        // 检查是否包含相同的URL
+                        ArrayList<String> urls = channel.getChannelUrls();
+                        if (urls != null && urls.contains(currentChannelUrl)) {
+                            targetChannelIndex = i;
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            // 如果仍没找到，尝试从Hawk存储的完整频道信息匹配
+            if (targetChannelIndex == -1) {
+                JsonObject currentPlayingChannelJson = Hawk.get(HawkConfig.LIVE_CURRENT_PLAYING_CHANNEL, null);
+                if (currentPlayingChannelJson != null) {
+                    for (int i = 0; i < favoriteChannels.size(); i++) {
+                        LiveChannelItem channel = favoriteChannels.get(i);
+                        JsonObject channelJson = LiveChannelItem.convertChannelToJson(channel);
+                        
+                        if (LiveChannelItem.isSameChannel(currentPlayingChannelJson, channelJson)) {
+                            targetChannelIndex = i;
+                            break;
+                        }
                     }
                 }
             }
@@ -3679,6 +3700,12 @@ private void refreshFavoriteChannelGroup() {
                 // 更新当前播放频道信息
                 currentLiveChannelIndex = targetChannelIndex;
                 currentLiveChannelItem = favoriteChannels.get(targetChannelIndex);
+                
+                // 更新频道名称显示
+                channel_Name = currentLiveChannelItem;
+                
+                // 刷新EPG显示
+                showBottomEpg();
             } else {
                 // 没有找到对应频道（可能被删除了），取消所有选中和高亮
                 liveChannelItemAdapter.setSelectedChannelIndex(-1);
@@ -3688,12 +3715,63 @@ private void refreshFavoriteChannelGroup() {
                 if (favoriteGroupIndex == currentChannelGroupIndex) {
                     currentLiveChannelIndex = -1;
                     currentLiveChannelItem = null;
+                    channel_Name = null;
                 }
             }
-            // ========== 修复结束 ==========
+            // ========== 改进结束 ==========
         }
     }
 }
+
+/**
+ * 更新频道匹配方法 - 更严格的匹配
+ */
+public static boolean isSameChannel(JsonObject fav1, JsonObject fav2) {
+    // 首先比较频道名称
+    if (!fav1.get("channelName").getAsString().equals(fav2.get("channelName").getAsString())) {
+        return false;
+    }
+
+    // 比较频道URL数组是否完全相同
+    JsonArray urls1 = fav1.getAsJsonArray("channelUrls");
+    JsonArray urls2 = fav2.getAsJsonArray("channelUrls");
+
+    if (urls1.size() != urls2.size()) {
+        return false;
+    }
+
+    // 将URL转换为集合进行比较
+    Set<String> set1 = new HashSet<>();
+    Set<String> set2 = new HashSet<>();
+    for (int i = 0; i < urls1.size(); i++) {
+        set1.add(urls1.get(i).getAsString());
+        set2.add(urls2.get(i).getAsString());
+    }
+
+    // 检查两个集合是否完全相等
+    return set1.equals(set2);
+}
+
+/**
+ * 检查是否为当前播放频道的辅助方法
+ */
+private boolean isCurrentPlayingChannel(LiveChannelItem channel) {
+    if (currentLiveChannelItem == null) {
+        return false;
+    }
+    
+    // 检查频道名称是否相同
+    if (!currentLiveChannelItem.getChannelName().equals(channel.getChannelName())) {
+        return false;
+    }
+    
+    // 检查当前使用的URL是否在频道的URL列表中
+    String currentUrl = currentLiveChannelItem.getUrl();
+    ArrayList<String> channelUrls = channel.getChannelUrls();
+    
+    return channelUrls != null && channelUrls.contains(currentUrl);
+}
+
 
 
 
