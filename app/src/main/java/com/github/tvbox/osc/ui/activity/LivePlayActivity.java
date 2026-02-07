@@ -2255,7 +2255,17 @@ public class LivePlayActivity extends BaseActivity {
     private void selectChannelGroup(int groupIndex, boolean focus, int liveChannelIndex) {
         if(focus) {
             liveChannelGroupAdapter.setFocusedGroupIndex(groupIndex);
-            liveChannelItemAdapter.setFocusedChannelIndex(-1); //xuameng修复频道名称移走焦点变色问题
+    if (mLiveChannelView.isComputingLayout() || mLiveChannelView.isScrolling()) {
+        // 延迟执行
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                 liveChannelItemAdapter.setFocusedChannelIndex(-1); //xuameng修复频道名称移走焦点变色问题
+            }
+        }, 100);
+        return;
+    }
+           
         }
         if((groupIndex > -1 && groupIndex != liveChannelGroupAdapter.getSelectedGroupIndex()) || isNeedInputPassword(groupIndex)) {
             isTouch = true;
