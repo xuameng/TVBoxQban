@@ -2255,7 +2255,7 @@ public class LivePlayActivity extends BaseActivity {
     private void selectChannelGroup(int groupIndex, boolean focus, int liveChannelIndex) {
         if(focus) {
             liveChannelGroupAdapter.setFocusedGroupIndex(groupIndex);
-            judgeFocusedChannelIndex();    //xuameng 滚动闪退
+            judgeFocusedChannelIndex();    //xuameng 修复我的收藏滚动闪退
            
         }
         if((groupIndex > -1 && groupIndex != liveChannelGroupAdapter.getSelectedGroupIndex()) || isNeedInputPassword(groupIndex)) {
@@ -2288,7 +2288,7 @@ public class LivePlayActivity extends BaseActivity {
         mLiveChannelView.setOnItemListener(new TvRecyclerView.OnItemListener() {
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
-                judgeFocusedChannelIndex();    //xuameng 滚动闪退
+                judgeFocusedChannelIndex();    //xuameng 修复我的收藏滚动闪退
             }
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
@@ -2334,7 +2334,7 @@ public class LivePlayActivity extends BaseActivity {
             }
         });
 
-        // --- 新增：设置长按监听器 ---
+        // xuameng--- 新增：设置长按监听器  我的收藏---
         liveChannelItemAdapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(BaseQuickAdapter adapter, View view, int position) {
@@ -2350,7 +2350,7 @@ public class LivePlayActivity extends BaseActivity {
                 return false;
             }
         });
-        // --- 新增结束 ---
+        // xuameng--- 新增结束 ---
 
     }
     private void clickLiveChannel(int position) {
@@ -2593,8 +2593,8 @@ public class LivePlayActivity extends BaseActivity {
         } else {
             liveChannelGroupList.clear();
 
-            // ========== 修复开始 ==========
-            // 1. 创建收藏组
+            // xuaemng========我的收藏 ==========
+            // 1. xuaemng创建我的收藏组
             LiveChannelGroup favoriteGroup = LiveChannelItem.createFavoriteChannelGroup();
             favoriteGroup.setGroupIndex(0); // 固定为第一个组
             liveChannelGroupList.add(favoriteGroup);
@@ -2607,13 +2607,10 @@ public class LivePlayActivity extends BaseActivity {
                     liveChannelGroupList.add(group);
                 }
             }
-
-            // ========== 修复结束 ==========
+            // ========== 我的收藏 修复结束 ==========
 
             showSuccess();
             initLiveState();
-
-
         }
     }
     public void loadProxyLives(String url) {
@@ -3037,13 +3034,15 @@ public class LivePlayActivity extends BaseActivity {
             playChannel(groupIndex, liveChannelIndex, false);
         }
     }
-private boolean isNeedInputPassword(int groupIndex) {
-    // 添加边界检查，防止 ArrayIndexOutOfBoundsException
-    if (groupIndex < 0 || groupIndex >= liveChannelGroupList.size()) {
-        return false;
+
+    private boolean isNeedInputPassword(int groupIndex) {
+        // xuameng 添加边界检查，防止 ArrayIndexOutOfBoundsException
+        if (groupIndex < 0 || groupIndex >= liveChannelGroupList.size()) {
+            return false;
+        }
+        return !liveChannelGroupList.get(groupIndex).getGroupPassword().isEmpty() && !isPasswordConfirmed(groupIndex);
     }
-    return !liveChannelGroupList.get(groupIndex).getGroupPassword().isEmpty() && !isPasswordConfirmed(groupIndex);
-}
+
     private boolean isPasswordConfirmed(int groupIndex) {
         for(Integer confirmedNum: channelGroupPasswordConfirmed) {
             if(confirmedNum == groupIndex) return true;
@@ -3347,17 +3346,17 @@ private boolean isNeedInputPassword(int groupIndex) {
         tv_currentpos.setText(durationToString(simSeekPosition));
     }
 
-    private void setDefaultLiveChannelList() {
+    private void setDefaultLiveChannelList() {      //xuameng 加载失败默认频道列表
         liveChannelGroupList.clear();
     
-        // 1. 先添加收藏组（即使为空）
+        // 1. xuameng先添加收藏组（即使为空）
         LiveChannelGroup favoriteGroup = LiveChannelItem.createFavoriteChannelGroup();
         favoriteGroup.setGroupIndex(0); // 收藏组索引为0
         liveChannelGroupList.add(favoriteGroup);
     
-        // 2. 创建默认直播分组（索引从1开始）
+        // 2. xuameng创建默认直播分组（索引从1开始）
         LiveChannelGroup defaultGroup = new LiveChannelGroup();
-        defaultGroup.setGroupIndex(1); // 改为1，避免与收藏组冲突
+        defaultGroup.setGroupIndex(1); // xuameng改为1，避免与收藏组冲突
         defaultGroup.setGroupName("聚汇直播");
         defaultGroup.setGroupPassword("");
     
@@ -3377,7 +3376,7 @@ private boolean isNeedInputPassword(int groupIndex) {
         channels.add(defaultChannel);
         defaultGroup.setLiveChannels(channels);
     
-        // 3. 添加默认分组到列表
+        // 3. xuameng添加默认分组到列表
         liveChannelGroupList.add(defaultGroup);
     
         showSuccess();
@@ -3604,8 +3603,7 @@ private boolean isNeedInputPassword(int groupIndex) {
         countDownTimer22 = null;
     }
 
-
-/**
+/**xuameng
  * 刷新收藏频道组 - 修复当前播放频道状态管理
  */
 private void refreshFavoriteChannelGroup() {
@@ -3677,7 +3675,11 @@ private void refreshFavoriteChannelGroup() {
                         channel_Name = null;
                     }
                 }
-            }
+            }else {
+            // 当前播放的频道不在收藏组中，不改变任何焦点状态
+            // 只需更新列表数据，不设置选中状态
+            judgeSelectedChannelIndex(-1); // 确保没有选中项
+        }
             // ========== 修复结束 ==========
         }
     }
