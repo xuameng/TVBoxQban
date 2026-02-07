@@ -3631,7 +3631,7 @@ private void refreshFavoriteChannelGroup() {
         liveChannelGroupList.set(favoriteGroupIndex, newFavoriteGroup);
         
         // 刷新适配器数据
-        liveChannelGroupAdapter.setNewData(liveChannelGroupList);
+   //     liveChannelGroupAdapter.setNewData(liveChannelGroupList);
         
         // 如果当前选中的是收藏组，刷新频道列表
         int selectedGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
