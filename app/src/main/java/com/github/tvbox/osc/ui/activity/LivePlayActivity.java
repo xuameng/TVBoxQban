@@ -107,8 +107,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 import xyz.doikki.videoplayer.player.VideoView;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashSet;  //新增频道收藏
+import java.util.Set;  //新增频道收藏
 public class LivePlayActivity extends BaseActivity {
     public static Context context;
     private VideoView mVideoView;
@@ -3643,7 +3643,7 @@ private void refreshFavoriteChannelGroup() {
             liveChannelItemAdapter.setNewData(favoriteChannels);
             
             // ========== 修复：恢复当前播放频道的选中状态 ==========
-            if (currentChannelName != null) {
+            if (currentChannelName != null && currentChannelGroupIndex == favoriteGroupIndex) {
                 int targetChannelIndex = -1;
                 
                 // 在新的频道列表中查找当前播放的频道
