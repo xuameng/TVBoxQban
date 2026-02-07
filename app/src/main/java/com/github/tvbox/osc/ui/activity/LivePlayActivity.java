@@ -2296,17 +2296,9 @@ public class LivePlayActivity extends BaseActivity {
         mLiveChannelView.setOnItemListener(new TvRecyclerView.OnItemListener() {
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
-     // 检查 RecyclerView 是否处于安全状态
-    if (mLiveChannelView.isComputingLayout() || mLiveChannelView.isScrolling()) {
-        // 延迟执行
-        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                onItemPreSelected();
-            }
-        }, 20);
-        return;
-    }
+ if (mLiveChannelView.isComputingLayout() || mLiveChannelView.isScrolling()) {
+	 return;
+ }
                 liveChannelItemAdapter.setFocusedChannelIndex(-1); //xuameng修复频道名称移走焦点变色问题
             }
             @Override
