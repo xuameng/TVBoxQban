@@ -1,15 +1,14 @@
 package com.github.tvbox.osc.bean;
 
 import java.util.ArrayList;
+import java.util.HashSet;  //xuameng 新增我的收藏
+import java.util.Set;  //xuameng 新增我的收藏
 
+import com.google.gson.JsonObject;  //xuameng 新增我的收藏
+import com.google.gson.JsonArray;  //xuameng 新增我的收藏
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonArray;
-import java.util.HashSet;
-import java.util.Set;
-
-import com.orhanobut.hawk.Hawk;
-import com.github.tvbox.osc.util.HawkConfig;
+import com.orhanobut.hawk.Hawk;   //xuameng 新增我的收藏
+import com.github.tvbox.osc.util.HawkConfig;  //xuameng 新增我的收藏
 /**
  * @author pj567
  * @date :2021/1/12
@@ -110,7 +109,7 @@ public class LiveChannelItem {
         return channelSourceNames.get(sourceIndex);
     }
 
-    /**
+    /**xuameng 我的收藏
      * 将 LiveChannelItem 转换为 JsonObject 以便存储到 Hawk
      */
     public static JsonObject convertChannelToJson(LiveChannelItem channel) {
@@ -143,40 +142,40 @@ public class LiveChannelItem {
         return json;
     }
 
-/**
- * 从 Hawk 中读取收藏的频道，并构建一个 LiveChannelGroup 对象（修复版）
- */
-public static LiveChannelGroup createFavoriteChannelGroup() {
-    LiveChannelGroup group = new LiveChannelGroup();
-    group.setGroupName("我的收藏");
-    group.setGroupPassword("");
+    /**  我的收藏
+     * 从 Hawk 中读取收藏的频道，并构建一个 LiveChannelGroup 对象（修复版）
+     */
+    public static LiveChannelGroup createFavoriteChannelGroup() {
+        LiveChannelGroup group = new LiveChannelGroup();
+        group.setGroupName("我的收藏");
+        group.setGroupPassword("");
     
-    // 从存储中读取收藏的频道
-    JsonArray favoriteArray = Hawk.get(HawkConfig.LIVE_FAVORITE_CHANNELS, new JsonArray());
-    ArrayList<LiveChannelItem> favoriteChannels = new ArrayList<>();
+        // 从存储中读取收藏的频道
+        JsonArray favoriteArray = Hawk.get(HawkConfig.LIVE_FAVORITE_CHANNELS, new JsonArray());
+        ArrayList<LiveChannelItem> favoriteChannels = new ArrayList<>();
     
-    for (int i = 0; i < favoriteArray.size(); i++) {
-        try {
-            JsonObject channelJson = favoriteArray.get(i).getAsJsonObject();
-            LiveChannelItem item = convertJsonToChannel(channelJson, i);
-            favoriteChannels.add(item);
-        } catch (Exception e) {
-            e.printStackTrace();
-            // 记录错误但继续处理其他频道
+        for (int i = 0; i < favoriteArray.size(); i++) {
+            try {
+                JsonObject channelJson = favoriteArray.get(i).getAsJsonObject();
+                LiveChannelItem item = convertJsonToChannel(channelJson, i);
+                favoriteChannels.add(item);
+            } catch (Exception e) {
+                e.printStackTrace();
+                // 记录错误但继续处理其他频道
+            }
         }
+    
+        // 确保频道列表不为null（即使为空）
+        group.setLiveChannels(favoriteChannels);
+    
+        return group;
     }
-    
-    // 确保频道列表不为null（即使为空）
-    group.setLiveChannels(favoriteChannels);
-    
-    return group;
-}
 
 
 
 
 
-    /**
+    /**  我的收藏
      * 判断两个 JsonObject 是否代表同一个频道
      */
     public static boolean isSameChannel(JsonObject fav1, JsonObject fav2) {
@@ -200,35 +199,36 @@ public static LiveChannelGroup createFavoriteChannelGroup() {
 
         return set1.equals(set2);
     }
-/**
- * 将 JsonObject 转换为 LiveChannelItem（提取公共方法）
- */
-private static LiveChannelItem convertJsonToChannel(JsonObject channelJson, int index) {
-    LiveChannelItem item = new LiveChannelItem();
+
+    /**  我的收藏
+     * 将 JsonObject 转换为 LiveChannelItem（提取公共方法）
+     */
+    private static LiveChannelItem convertJsonToChannel(JsonObject channelJson, int index) {
+        LiveChannelItem item = new LiveChannelItem();
     
-    item.setChannelIndex(index);
-    item.setChannelNum(channelJson.get("channelNum").getAsInt());
-    item.setChannelName(channelJson.get("channelName").getAsString());
-    item.setSourceIndex(channelJson.get("sourceIndex").getAsInt());
-    item.setinclude_back(channelJson.get("include_back").getAsBoolean());
+        item.setChannelIndex(index);
+        item.setChannelNum(channelJson.get("channelNum").getAsInt());
+        item.setChannelName(channelJson.get("channelName").getAsString());
+        item.setSourceIndex(channelJson.get("sourceIndex").getAsInt());
+        item.setinclude_back(channelJson.get("include_back").getAsBoolean());
     
-    // 解析频道源名称
-    JsonArray sourceNameArray = channelJson.getAsJsonArray("channelSourceNames");
-    ArrayList<String> sourceNames = new ArrayList<>();
-    for (int j = 0; j < sourceNameArray.size(); j++) {
-        sourceNames.add(sourceNameArray.get(j).getAsString());
+        // 解析频道源名称
+        JsonArray sourceNameArray = channelJson.getAsJsonArray("channelSourceNames");
+        ArrayList<String> sourceNames = new ArrayList<>();
+        for (int j = 0; j < sourceNameArray.size(); j++) {
+            sourceNames.add(sourceNameArray.get(j).getAsString());
+        }
+        item.setChannelSourceNames(sourceNames);
+    
+        // 解析频道URL
+        JsonArray urlArray = channelJson.getAsJsonArray("channelUrls");
+        ArrayList<String> urls = new ArrayList<>();
+        for (int j = 0; j < urlArray.size(); j++) {
+            urls.add(urlArray.get(j).getAsString());
+        }
+        item.setChannelUrls(urls);
+    
+        return item;
     }
-    item.setChannelSourceNames(sourceNames);
-    
-    // 解析频道URL
-    JsonArray urlArray = channelJson.getAsJsonArray("channelUrls");
-    ArrayList<String> urls = new ArrayList<>();
-    for (int j = 0; j < urlArray.size(); j++) {
-        urls.add(urlArray.get(j).getAsString());
-    }
-    item.setChannelUrls(urls);
-    
-    return item;
-}
 
 }
