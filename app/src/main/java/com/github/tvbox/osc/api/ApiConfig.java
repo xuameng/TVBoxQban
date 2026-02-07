@@ -853,12 +853,12 @@ public class ApiConfig {
         int groupIndex = 0;
         int channelIndex = 0;
         int channelNum = 0;
-    // ========== 修复：首先添加"我的收藏"频道组 ==========
-    // 创建收藏频道组（始终放在第一个位置）
-    LiveChannelGroup favoriteGroup = LiveChannelItem.createFavoriteChannelGroup();
+        // ========== xuameng：新增首先添加"我的收藏"频道组 ==========
+        // 创建收藏频道组（始终放在第一个位置）
+        LiveChannelGroup favoriteGroup = LiveChannelItem.createFavoriteChannelGroup();
         favoriteGroup.setGroupIndex(groupIndex++);
         liveChannelGroupList.add(favoriteGroup);
-    // ========== 修复结束 ==========
+        // ========== xuameng：新增"我的收藏"结束 ==========
         for (JsonElement groupElement : livesArray) {
             LiveChannelGroup liveChannelGroup = new LiveChannelGroup();
             liveChannelGroup.setLiveChannels(new ArrayList<LiveChannelItem>());
