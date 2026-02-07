@@ -3613,7 +3613,7 @@ public class LivePlayActivity extends BaseActivity {
 
 
 /**
- * 刷新收藏频道组（简化版）- 只更新数据，不处理焦点状态
+ * 刷新收藏频道组 - 简化频道匹配逻辑（只匹配频道名称）
  */
 private void refreshFavoriteChannelGroup() {
     // 查找收藏组的索引
@@ -3634,13 +3634,56 @@ private void refreshFavoriteChannelGroup() {
         // 刷新适配器数据
         liveChannelGroupAdapter.setNewData(liveChannelGroupList);
         
-        // 如果当前选中的是收藏组，刷新频道列表
+        // 如果当前选中的是收藏组，才需要处理焦点逻辑
         int selectedGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
         if (selectedGroupIndex == favoriteGroupIndex && liveChannelItemAdapter != null) {
-            liveChannelItemAdapter.setNewData(getLiveChannels(favoriteGroupIndex));
+            // 获取收藏组的新频道列表
+            ArrayList<LiveChannelItem> favoriteChannels = getLiveChannels(favoriteGroupIndex);
+            liveChannelItemAdapter.setNewData(favoriteChannels);
+            
+            // ========== 简化：只使用频道名称进行匹配 ==========
+            int targetChannelIndex = -1;
+            
+            // 使用当前播放的频道名称进行匹配
+            if (currentLiveChannelItem != null) {
+                String currentChannelName = currentLiveChannelItem.getChannelName();
+                
+                // 在新列表中查找相同名称的频道
+                for (int i = 0; i < favoriteChannels.size(); i++) {
+                    LiveChannelItem channel = favoriteChannels.get(i);
+                    
+                    // 只匹配频道名称
+                    if (channel.getChannelName().equals(currentChannelName)) {
+                        targetChannelIndex = i;
+                        break;
+                    }
+                }
+            }
+            
+            // 根据查找结果设置焦点
+            if (targetChannelIndex != -1) {
+                // 找到对应频道，设置其为选中和高亮
+                liveChannelItemAdapter.setSelectedChannelIndex(targetChannelIndex);
+                liveChannelItemAdapter.setFocusedChannelIndex(targetChannelIndex);
+                
+                // 确保UI滚动到正确位置
+                mLiveChannelView.scrollToPosition(targetChannelIndex);
+                
+                // 更新当前播放频道信息
+                currentLiveChannelIndex = targetChannelIndex;
+                currentLiveChannelItem = favoriteChannels.get(targetChannelIndex);
+                
+            } else {
+                // 没有找到对应频道（可能被删除了），取消所有选中和高亮
+                liveChannelItemAdapter.setSelectedChannelIndex(-1);
+                liveChannelItemAdapter.setFocusedChannelIndex(-1);
+                
+            }
+            // ========== 简化结束 ==========
         }
     }
 }
+
 
     /**
      * 切换频道的收藏状态
