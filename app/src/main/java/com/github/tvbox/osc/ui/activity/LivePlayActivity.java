@@ -3608,6 +3608,10 @@ public class LivePlayActivity extends BaseActivity {
 
 
 
+
+
+
+
 /**
  * 刷新收藏频道组 - 增强版
  * 1. 更新收藏组数据
@@ -3701,28 +3705,26 @@ private void safeScrollAndFocus(final int targetPosition, final ArrayList<LiveCh
     try {
         // 1. 先滚动到目标位置附近（防止空指针）
         mLiveChannelView.scrollToPosition(targetPosition);
-        judgeLiveChannelView();
+        
+        // 2. 延迟设置选择状态（确保滚动完成）
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // 再次检查状态
+                if (!mLiveChannelView.isComputingLayout() && !mLiveChannelView.isScrolling()) {
+                    // 设置选中的频道索引
+                    mLiveChannelView.setSelection(targetPosition); //xuameng先滚动再选择防止空指针
+                    
+                }
+            }
+        }, 50); // 延迟100毫秒确保滚动完成
     } catch (Exception e) {
+        Log.e("LivePlayActivity", "滚动和设置焦点时出错", e);
+        // 出错时恢复安全状态
         liveChannelItemAdapter.setSelectedChannelIndex(-1);
     }
 }
 
-
-private void judgeLiveChannelView() {     //xuameng  修复滚动闪退
-    // 检查 RecyclerView 是否处于安全状态
-    if (mLiveChannelView.isComputingLayout() || mLiveChannelView.isScrolling()) {
-        // 延迟执行，避免在布局计算或滚动过程中操作
-        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                judgeLiveChannelView(); //xuameng先滚动再选择防止空指针  
-            }
-        }, 20);
-        return;
-    }
-    
-    mLiveChannelView.setSelection(targetPosition); //xuameng先滚动再选择防止空指针  
-}
 
     /**
      * 切换频道的收藏状态
