@@ -2255,16 +2255,7 @@ public class LivePlayActivity extends BaseActivity {
     private void selectChannelGroup(int groupIndex, boolean focus, int liveChannelIndex) {
         if(focus) {
             liveChannelGroupAdapter.setFocusedGroupIndex(groupIndex);
-    if (mLiveChannelView.isComputingLayout() || mLiveChannelView.isScrolling()) {
-        // 延迟执行
-        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                 liveChannelItemAdapter.setFocusedChannelIndex(-1); //xuameng修复频道名称移走焦点变色问题
-            }
-        }, 100);
-        return;
-    }
+            judgeFocusedChannelIndex();    //xuameng 滚动闪退
            
         }
         if((groupIndex > -1 && groupIndex != liveChannelGroupAdapter.getSelectedGroupIndex()) || isNeedInputPassword(groupIndex)) {
@@ -2285,15 +2276,6 @@ public class LivePlayActivity extends BaseActivity {
         mLiveChannelView.setItemAnimator(null);   //xuameng禁用TVRecyclerView动画
         mLiveChannelView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
         liveChannelItemAdapter = new LiveChannelItemAdapter();
-
-        // === 新增：设置收藏变更监听器 ===
-        liveChannelItemAdapter.setOnFavoriteChangeListener(new LiveChannelItemAdapter.OnFavoriteChangeListener() {
-            @Override
-            public void onFavoriteChanged() {
-                refreshFavoriteChannelGroup();
-            }
-        });
-
         mLiveChannelView.setAdapter(liveChannelItemAdapter);
         mLiveChannelView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -2306,10 +2288,7 @@ public class LivePlayActivity extends BaseActivity {
         mLiveChannelView.setOnItemListener(new TvRecyclerView.OnItemListener() {
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
- if (mLiveChannelView.isComputingLayout() || mLiveChannelView.isScrolling()) {
-	 return;
- }
-                liveChannelItemAdapter.setFocusedChannelIndex(-1); //xuameng修复频道名称移走焦点变色问题
+                judgeFocusedChannelIndex();    //xuameng 滚动闪退
             }
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
@@ -2354,6 +2333,23 @@ public class LivePlayActivity extends BaseActivity {
                 mHideChannelListRun(); //xuameng隐藏左侧频道菜单
             }
         });
+
+        // --- 新增：设置长按监听器 ---
+        liveChannelItemAdapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(BaseQuickAdapter adapter, View view, int position) {
+                // 获取当前频道项
+                LiveChannelItem channel = liveChannelItemAdapter.getItem(position);
+                if (channel != null) {
+                    // 调用适配器的切换收藏方法
+                    liveChannelItemAdapter.toggleFavoriteChannel(channel, position);
+                    // 返回 true 表示消费了长按事件
+                    return true;
+                }
+                return false;
+            }
+        });
+        // --- 新增结束 ---
     }
     private void clickLiveChannel(int position) {
     // 清除之前的选择状态
@@ -3645,5 +3641,54 @@ private void refreshFavoriteChannelGroup() {
     }
 }
 
+    /**
+     * 切换频道的收藏状态
+     */
+    public void toggleFavoriteChannel(LiveChannelItem channel, int position) {
+        JsonArray favoriteArray = Hawk.get(HawkConfig.LIVE_FAVORITE_CHANNELS, new JsonArray());
+        JsonObject channelJson = LiveChannelItem.convertChannelToJson(channel);
+
+        boolean found = false;
+        int foundIndex = -1;
+        for (int i = 0; i < favoriteArray.size(); i++) {
+            JsonObject fav = favoriteArray.get(i).getAsJsonObject();
+            if (LiveChannelItem.isSameChannel(fav, channelJson)) {
+                found = true;
+                foundIndex = i;
+                break;
+            }
+        }
+
+        if (found) {
+            favoriteArray.remove(foundIndex);
+            App.showToastShort(mContext, "已取消收藏：" + channel.getChannelName());
+        } else {
+            favoriteArray.add(channelJson);
+            App.showToastShort(mContext, "已收藏：" + channel.getChannelName());
+        }
+
+        Hawk.put(HawkConfig.LIVE_FAVORITE_CHANNELS, favoriteArray);
+    
+        // 只需要更新当前项的UI
+        notifyItemChanged(position);
+        refreshFavoriteChannelGroup();
+    }
+
+private void judgeFocusedChannelIndex() {     //xuameng  修复滚动闪退
+    // 检查 RecyclerView 是否处于安全状态
+    if (mLiveChannelView.isComputingLayout() || mLiveChannelView.isScrolling()) {
+        // 延迟执行，避免在布局计算或滚动过程中操作
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                judgeFocusedChannelIndex(); // 添加正确的括号调用
+            }
+        }, 20);
+        return;
+    }
+    
+    // 只在安全状态下执行业务逻辑
+    liveChannelItemAdapter.setFocusedChannelIndex(-1);
+}
 
 }
