@@ -2421,6 +2421,11 @@ public class LivePlayActivity extends BaseActivity {
                 // 获取当前频道项
                 LiveChannelItem channel = liveChannelItemAdapter.getItem(position);
                 if (channel != null) {
+                    // 检查是否是"暂无收藏"占位项
+                    if ("暂无收藏".equals(channel.getChannelName())) {
+                        App.showToastShort(mContext, "聚汇影视提示您：暂无收藏频道！);
+                        return true; // 消费长按事件，不执行后续操作
+                    }
                     // 调用适配器的切换收藏方法
                     toggleFavoriteChannel(channel, position);
                     // 返回 true 表示消费了长按事件
@@ -2437,11 +2442,11 @@ public class LivePlayActivity extends BaseActivity {
 
     LiveChannelItem selectedChannel = getLiveChannels(liveChannelGroupAdapter.getSelectedGroupIndex()).get(position);
     
-    // 检查是否是“暂无收藏”占位项
-    if ("暂无收藏".equals(selectedChannel.getChannelName())) {
-        App.showToastShort(mContext, "暂无收藏频道，请先添加收藏");
-        return;
-    }
+        // 检查是否是“暂无收藏”占位项
+        if ("暂无收藏".equals(selectedChannel.getChannelName())) {
+            App.showToastShort(mContext, "聚汇影视提示您：暂无收藏频道！");
+            return;
+        }
         liveChannelItemAdapter.setSelectedChannelIndex(position);
         liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
         playChannel(liveChannelGroupAdapter.getSelectedGroupIndex(), position, false);
