@@ -3690,8 +3690,7 @@ public class LivePlayActivity extends BaseActivity {
                        // 如果当前在收藏组中但找不到频道，重置频道信息
                         if (currentChannelGroupIndex == favoriteGroupIndex) {
                             currentLiveChannelIndex = -1;
-                            currentLiveChannelItem = null;
-                            channel_Name = null;
+                        
                         }
                     }
                 }else {
