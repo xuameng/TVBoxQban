@@ -1864,6 +1864,18 @@ public class LivePlayActivity extends BaseActivity {
                 liveEpgDateAdapter.setSelectedIndex(position);
                 currentChannelGroupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex(); //XUAMENG 7天EPG
                 currentLiveChannelIndexXu = liveChannelItemAdapter.getSelectedChannelIndex();
+
+                // xuameng添加空列表检查
+                ArrayList<LiveChannelItem> channels = getLiveChannels(currentChannelGroupIndexXu);
+                if(channels == null || channels.isEmpty()) {
+                    return;
+                }
+        
+                // xuameng添加索引范围检查
+                if(currentLiveChannelIndexXu < 0 || currentLiveChannelIndexXu >= channels.size()) {
+                    return;
+                }
+
                 currentLiveChannelItemXu = getLiveChannels(currentChannelGroupIndexXu).get(currentLiveChannelIndexXu);
                 channel_NameXu = currentLiveChannelItemXu;
                 getEpgxu(liveEpgDateAdapter.getData().get(position).getDateParamVal()); //XUAMENG 7天EPG
@@ -1878,6 +1890,18 @@ public class LivePlayActivity extends BaseActivity {
                 liveEpgDateAdapter.setSelectedIndex(position);
                 currentChannelGroupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex(); //XUAMENG 7天EPG
                 currentLiveChannelIndexXu = liveChannelItemAdapter.getSelectedChannelIndex();
+
+                // xuameng添加空列表检查
+                ArrayList<LiveChannelItem> channels = getLiveChannels(currentChannelGroupIndexXu);
+                if(channels == null || channels.isEmpty()) {
+                    return;
+                }
+        
+                // xuameng添加索引范围检查
+                if(currentLiveChannelIndexXu < 0 || currentLiveChannelIndexXu >= channels.size()) {
+                    return;
+                }
+
                 currentLiveChannelItemXu = getLiveChannels(currentChannelGroupIndexXu).get(currentLiveChannelIndexXu);
                 channel_NameXu = currentLiveChannelItemXu;
                 getEpgxu(liveEpgDateAdapter.getData().get(position).getDateParamVal()); //XUAMENG 7天EPG
@@ -3685,18 +3709,12 @@ public class LivePlayActivity extends BaseActivity {
                         channel_Name = currentLiveChannelItem;                   
                     
                     } else {
-                        // 没有找到当前播放的频道（可能被删除了），重置状态
-                        judgeSelectedChannelIndex(targetChannelIndex); 
-                       // 如果当前在收藏组中但找不到频道，重置频道信息
-                        if (currentChannelGroupIndex == favoriteGroupIndex) {
-                            currentLiveChannelIndex = -1;
-                        
-                        }
+                        // 没有找到当前播放的频道（可能被删除了），确保没有选中项
+                        judgeSelectedChannelIndex(-1); 
                     }
                 }else {
                     // 当前播放的频道不在收藏组中，不改变任何焦点状态
                     // 只需更新列表数据，不设置选中状态
-                    // 检查收藏组是否有频道
                     if (favoriteChannels.size() > 0) {
                         // 如果有频道，滚动到收藏组位置（滚动到第一个频道位置）
                         judgescrollToPosition(0);
@@ -3833,8 +3851,8 @@ public class LivePlayActivity extends BaseActivity {
         }
     
         if (liveChannelItemAdapter != null) {
-            liveChannelItemAdapter.setSelectedChannelIndex(-1);
-            liveChannelItemAdapter.setFocusedChannelIndex(-1);
+            liveChannelItemAdapter.setSelectedChannelIndex(targetChannelIndex);
+            liveChannelItemAdapter.setFocusedChannelIndex(targetChannelIndex);
         }
     }
 
