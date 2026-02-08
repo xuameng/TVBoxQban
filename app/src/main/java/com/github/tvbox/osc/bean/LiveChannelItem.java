@@ -154,37 +154,35 @@ public class LiveChannelItem {
         JsonArray favoriteArray = Hawk.get(HawkConfig.LIVE_FAVORITE_CHANNELS, new JsonArray());
         ArrayList<LiveChannelItem> favoriteChannels = new ArrayList<>();
 
-    if (favoriteArray.isEmpty()) {
-        // 如果收藏列表为空，添加一个“暂无收藏”的占位项
-        LiveChannelItem emptyItem = new LiveChannelItem();
-        emptyItem.setChannelName("暂无收藏");
-        emptyItem.setChannelNum(0);
-        // 设置一个特殊的索引，用于识别占位项
-        emptyItem.setChannelIndex(-1); // 使用-1表示占位项
-        // 设置一个安全的空链接，防止播放报错
-        ArrayList<String> emptyUrls = new ArrayList<>();
-        emptyUrls.add("about:blank"); // 使用安全的空链接
-        emptyItem.setChannelUrls(emptyUrls);
-        ArrayList<String> emptySourceNames = new ArrayList<>();
-        emptySourceNames.add("空源");
-        emptyItem.setChannelSourceNames(emptySourceNames);
-        favoriteChannels.add(emptyItem);
-    } else {
-        // 如果有收藏频道，正常加载
-        // ... 原有的加载收藏频道的逻辑 ...
-        for (int i = 0; i < favoriteArray.size(); i++) {
-            try {
-                JsonObject channelJson = favoriteArray.get(i).getAsJsonObject();
-                LiveChannelItem item = convertJsonToChannel(channelJson, i);
-                favoriteChannels.add(item);
-            } catch (Exception e) {
-                e.printStackTrace();
-                // 记录错误但继续处理其他频道
+        if (favoriteArray.isEmpty()) {
+            // 如果收藏列表为空，添加一个“暂无收藏”的占位项
+            LiveChannelItem emptyItem = new LiveChannelItem();
+            emptyItem.setChannelName("暂无收藏");
+            emptyItem.setChannelNum(0);
+            // 设置一个特殊的索引，用于识别占位项
+            emptyItem.setChannelIndex(-1); // 使用-1表示占位项
+            // 设置一个安全的空链接，防止播放报错
+            ArrayList<String> emptyUrls = new ArrayList<>();
+            emptyUrls.add("about:blank"); // 使用安全的空链接
+            emptyItem.setChannelUrls(emptyUrls);
+            ArrayList<String> emptySourceNames = new ArrayList<>();
+            emptySourceNames.add("空源");
+            emptyItem.setChannelSourceNames(emptySourceNames);
+            favoriteChannels.add(emptyItem);
+        } else {
+            // 如果有收藏频道，正常加载
+            // ... 原有的加载收藏频道的逻辑 ...
+            for (int i = 0; i < favoriteArray.size(); i++) {
+                try {
+                    JsonObject channelJson = favoriteArray.get(i).getAsJsonObject();
+                    LiveChannelItem item = convertJsonToChannel(channelJson, i);
+                    favoriteChannels.add(item);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    // 记录错误但继续处理其他频道
+                }
             }
         }
-    }
-    
-
     
         // 确保频道列表不为null（即使为空）
         group.setLiveChannels(favoriteChannels);
