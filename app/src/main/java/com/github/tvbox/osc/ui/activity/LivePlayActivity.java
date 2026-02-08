@@ -2848,6 +2848,33 @@ public class LivePlayActivity extends BaseActivity {
         tvLeftChannelListLayout.setVisibility(View.INVISIBLE); //xuameng显示EPG就隐藏左右菜单
         tvRightSettingLayout.setVisibility(View.INVISIBLE); //xuameng显示EPG就隐藏左右菜单
         liveChannelGroupAdapter.setNewData(liveChannelGroupList);
+    // xuameng 修复：避免从"我的收藏"组中的占位项开始播放
+    if (lastChannelGroupIndex == 0 && lastLiveChannelIndex >= 0) {  // 如果是"我的收藏"组(索引为0)且指定了具体频道
+        ArrayList<LiveChannelItem> channels = getLiveChannels(0);  // 获取我的收藏组的频道列表
+        if (channels != null && lastLiveChannelIndex < channels.size()) {
+            LiveChannelItem currentChannel = channels.get(lastLiveChannelIndex);  // 获取当前要播放的频道
+            if (currentChannel != null && currentChannel.getChannelIndex() == -1) {  // 如果当前频道是占位项(索引为-1表示"暂无收藏")
+                // 寻找"我的收藏"组中第一个非占位项的有效频道
+                for (int i = 0; i < channels.size(); i++) {
+                    if (channels.get(i).getChannelIndex() != -1) {  // 找到非占位项频道，即真实收藏的频道
+                        selectChannelGroup(0, false, i);  // 播放第一个有效频道
+                        return;  // 结束方法
+                    }
+                }
+                // 如果"我的收藏"组中没有有效频道，寻找其他组的第一个有效频道
+                for (int groupIndex = 1; groupIndex < liveChannelGroupList.size(); groupIndex++) {  // 从第1组开始（跳过收藏组）
+                    ArrayList<LiveChannelItem> otherGroupChannels = getLiveChannels(groupIndex);
+                    if (otherGroupChannels != null && !otherGroupChannels.isEmpty()) {
+                        selectChannelGroup(groupIndex, false, 0);  // 播放其他组的第一个频道
+                        return;  // 结束方法
+                    }
+                }
+                // 如果所有组都没有频道，只选择"我的收藏"组但不播放任何频道
+                selectChannelGroup(0, false, -1);
+                return;  // 结束方法
+            }
+        }
+    }
         selectChannelGroup(lastChannelGroupIndex, false, lastLiveChannelIndex);
     }
     private boolean isListOrSettingLayoutVisible() {
