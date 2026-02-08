@@ -338,6 +338,23 @@ public class LivePlayActivity extends BaseActivity {
             showNetSpeedXu(); //XUAMENG显示右下网速
             view_line_XU.setVisibility(View.VISIBLE); //xuamengEPG中的横线
         }
+
+        private void initDivLoadEpgFocusListener() {
+            if (divLoadEpg != null) {
+                divLoadEpg.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                    @Override
+                    public void onFocusChange(View v, boolean hasFocus) {
+                        if (hasFocus) {
+                            // 获取焦点后自动执行的方法
+                            if (liveChannelGroupAdapter != null) {
+                                liveChannelGroupAdapter.setFocusedGroupIndex(-1);
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
         iv_playpause.setOnClickListener(new View.OnClickListener() { //xuameng回看暂停键
             @Override
             public void onClick(View arg0) {
@@ -1378,7 +1395,7 @@ public class LivePlayActivity extends BaseActivity {
     }
     private boolean playChannel(int channelGroupIndex, int liveChannelIndex, boolean changeSource) { //xuameng播放
         // xuameng 1. 获取目标频道组名称，判断是否为“我的收藏”
-		// xuameng 2. 如果是“我的收藏”组，跳过相同频道检查；否则，执行原有检查
+        // xuameng 2. 如果是“我的收藏”组，跳过相同频道检查；否则，执行原有检查
         String targetGroupName = liveChannelGroupList.get(channelGroupIndex).getGroupName();
         boolean isFavoriteGroup = "我的收藏".equals(targetGroupName);
         if(!isFavoriteGroup && (channelGroupIndex == currentChannelGroupIndex && liveChannelIndex == currentLiveChannelIndex && !changeSource) || (changeSource && currentLiveChannelItem.getSourceNum() == 1) && !XuSource) {
@@ -1443,11 +1460,13 @@ public class LivePlayActivity extends BaseActivity {
             // xuameng添加空列表检查
             ArrayList<LiveChannelItem> channels = getLiveChannels(currentChannelGroupIndexXu);
             if(channels == null || channels.isEmpty()) {
+                App.showToastShort(mContext, "聚汇影视提示您：频道为空！");
                 return false;
             }
         
             // xuameng添加索引范围检查
             if(currentLiveChannelIndexXu < 0 || currentLiveChannelIndexXu >= channels.size()) {
+                App.showToastShort(mContext, "聚汇影视提示您：频道为空！");
                 return false;
             }
 
@@ -1682,6 +1701,20 @@ public class LivePlayActivity extends BaseActivity {
             public void onItemClick(TvRecyclerView parent, View itemView, int position) {
                 currentChannelGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
                 currentLiveChannelIndex = liveChannelItemAdapter.getSelectedChannelIndex();
+
+                // xuameng添加空列表检查
+                ArrayList<LiveChannelItem> channels = getLiveChannels(currentChannelGroupIndex);
+                if(channels == null || channels.isEmpty()) {
+                    App.showToastShort(mContext, "聚汇影视提示您：频道为空！");
+                    return;
+                }
+        
+                // xuameng添加索引范围检查
+                if(currentLiveChannelIndex < 0 || currentLiveChannelIndex >= channels.size()) {
+                    App.showToastShort(mContext, "聚汇影视提示您：频道为空！");
+                    return;
+                }
+
                 currentLiveChannelItem = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndex);
                 Hawk.put(HawkConfig.LIVE_CHANNEL, currentLiveChannelItem.getChannelName());
                 channel_Name = currentLiveChannelItem; //xuameng重要EPG名称
@@ -1749,6 +1782,18 @@ public class LivePlayActivity extends BaseActivity {
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 currentChannelGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
                 currentLiveChannelIndex = liveChannelItemAdapter.getSelectedChannelIndex();
+                // xuameng添加空列表检查
+                ArrayList<LiveChannelItem> channels = getLiveChannels(currentChannelGroupIndex);
+                if(channels == null || channels.isEmpty()) {
+                    App.showToastShort(mContext, "聚汇影视提示您：频道为空！");
+                    return;
+                }
+        
+                // xuameng添加索引范围检查
+                if(currentLiveChannelIndex < 0 || currentLiveChannelIndex >= channels.size()) {
+                    App.showToastShort(mContext, "聚汇影视提示您：频道为空！");
+                    return;
+                }
                 currentLiveChannelItem = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndex);
                 Hawk.put(HawkConfig.LIVE_CHANNEL, currentLiveChannelItem.getChannelName());
                 channel_Name = currentLiveChannelItem; //xuameng重要EPG名称
@@ -1872,11 +1917,13 @@ public class LivePlayActivity extends BaseActivity {
                 // xuameng添加空列表检查
                 ArrayList<LiveChannelItem> channels = getLiveChannels(currentChannelGroupIndexXu);
                 if(channels == null || channels.isEmpty()) {
+                    App.showToastShort(mContext, "聚汇影视提示您：频道为空！");
                     return;
                 }
         
                 // xuameng添加索引范围检查
                 if(currentLiveChannelIndexXu < 0 || currentLiveChannelIndexXu >= channels.size()) {
+                    App.showToastShort(mContext, "聚汇影视提示您：频道为空！");
                     return;
                 }
 
@@ -1897,11 +1944,13 @@ public class LivePlayActivity extends BaseActivity {
                 // xuameng添加空列表检查
                 ArrayList<LiveChannelItem> channels = getLiveChannels(currentChannelGroupIndexXu);
                 if(channels == null || channels.isEmpty()) {
+                    App.showToastShort(mContext, "聚汇影视提示您：频道为空！");
                     return;
                 }
         
                 // xuameng添加索引范围检查
                 if(currentLiveChannelIndexXu < 0 || currentLiveChannelIndexXu >= channels.size()) {
+                    App.showToastShort(mContext, "聚汇影视提示您：频道为空！");
                     return;
                 }
                 liveEpgDateAdapter.setSelectedIndex(position);
@@ -3232,7 +3281,7 @@ public class LivePlayActivity extends BaseActivity {
                       iv_playpause.requestFocus();
                    }
                 }
-            }, 200);
+            }, 100);
         } else {
             backcontroller.setVisibility(View.GONE);   //xuameng显示回看下方菜单
             Mtv_left_top_xu.setVisibility(View.GONE);  //xuameng显示回看上图标
