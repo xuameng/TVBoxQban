@@ -2480,7 +2480,7 @@ public class LivePlayActivity extends BaseActivity {
                 if (channel != null) {
                     if (channel.getChannelIndex() == -1) {
                         App.showToastShort(mContext, "聚汇影视提示您：暂无收藏频道！");
-                        return; // 如果是占位项则直接返回，不执行任何后续操作
+                        return false; // 如果是占位项则直接返回，不执行任何后续操作
                     }
                     // 调用适配器的切换收藏方法
                     toggleFavoriteChannel(channel, position);
