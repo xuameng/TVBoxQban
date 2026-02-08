@@ -339,22 +339,6 @@ public class LivePlayActivity extends BaseActivity {
             view_line_XU.setVisibility(View.VISIBLE); //xuamengEPG中的横线
         }
 
-        private void initDivLoadEpgFocusListener() {
-            if (divLoadEpg != null) {
-                divLoadEpg.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-                    @Override
-                    public void onFocusChange(View v, boolean hasFocus) {
-                        if (hasFocus) {
-                            // 获取焦点后自动执行的方法
-                            if (liveChannelGroupAdapter != null) {
-                                liveChannelGroupAdapter.setFocusedGroupIndex(-1);
-                            }
-                        }
-                    }
-                });
-            }
-        }
-
         iv_playpause.setOnClickListener(new View.OnClickListener() { //xuameng回看暂停键
             @Override
             public void onClick(View arg0) {
@@ -460,6 +444,23 @@ public class LivePlayActivity extends BaseActivity {
         mHandler.post(mUpdateVodImageXu); //xuamengVOD BACK播放进度检测
         iv_playpause.setNextFocusLeftId(R.id.pb_progressbar);  //xuameng左右焦点
     }
+
+    private void initDivLoadEpgFocusListener() {   //xuameng 节目信息 焦点监听
+        if (divLoadEpg != null) {
+            divLoadEpg.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    if (hasFocus) {
+                        // 获取焦点后自动执行的方法
+                        if (liveChannelGroupAdapter != null) {
+                            liveChannelGroupAdapter.setFocusedGroupIndex(-1);
+                        }
+                    }
+                }
+            });
+        }
+    }
+
     //获取EPG并存储 // 百川epg  DIYP epg   51zmt epg ------- 自建EPG格式输出格式请参考 51zmt
     private List < Epginfo > epgdata = new ArrayList < > ();
     private void showEpg(Date date, ArrayList < Epginfo > arrayList) {
