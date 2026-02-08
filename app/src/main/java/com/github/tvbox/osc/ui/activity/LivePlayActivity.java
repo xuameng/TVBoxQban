@@ -3807,6 +3807,10 @@ public class LivePlayActivity extends BaseActivity {
                     
                     } else {
                         // 没有找到当前播放的频道（可能被删除了），确保没有选中项
+                        // 清除当前播放频道信息
+                        currentLiveChannelItem = null;
+                        currentLiveChannelIndex = -1;
+                        channel_Name = null;
                         judgeSelectedChannelIndex(-1); 
                     }
                 }else {
