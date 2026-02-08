@@ -867,8 +867,8 @@ public class LivePlayActivity extends BaseActivity {
     public void divLoadEpgRight(View view) {
         mHideChannelListRunXu(); //xuameng BUG
         if(!isCurrentLiveChannelValid()) return; //xuameng 未选择频道空指针问题
-        if(isTouch) {
-            showChannelListTouch();
+        if(isTouch) {   //xuameng手机选择频道判断  显示正在播放频道所在组
+            showChannelListTouch();   //xuameng 显示正在播放频道所在组
         }
         mChannelGroupView.setVisibility(View.GONE);
         divLoadEpg.setVisibility(View.GONE);
@@ -1377,7 +1377,11 @@ public class LivePlayActivity extends BaseActivity {
         return Hawk.get(HawkConfig.LIVE_WEB_HEADER);
     }
     private boolean playChannel(int channelGroupIndex, int liveChannelIndex, boolean changeSource) { //xuameng播放
-        if((channelGroupIndex == currentChannelGroupIndex && liveChannelIndex == currentLiveChannelIndex && !changeSource) || (changeSource && currentLiveChannelItem.getSourceNum() == 1) && !XuSource) {
+        // xuameng 1. 获取目标频道组名称，判断是否为“我的收藏”
+		// xuameng 2. 如果是“我的收藏”组，跳过相同频道检查；否则，执行原有检查
+        String targetGroupName = liveChannelGroupList.get(channelGroupIndex).getGroupName();
+        boolean isFavoriteGroup = "我的收藏".equals(targetGroupName);
+        if(!isFavoriteGroup && (channelGroupIndex == currentChannelGroupIndex && liveChannelIndex == currentLiveChannelIndex && !changeSource) || (changeSource && currentLiveChannelItem.getSourceNum() == 1) && !XuSource) {
             // xuamengEPG日期自动选今天
             liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
             getEpg(new Date());
@@ -1887,7 +1891,6 @@ public class LivePlayActivity extends BaseActivity {
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 FastClickCheckUtil.check(view);
                 mHideChannelListRunXu(); //xuameng隐藏频道菜单
-                liveEpgDateAdapter.setSelectedIndex(position);
                 currentChannelGroupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex(); //XUAMENG 7天EPG
                 currentLiveChannelIndexXu = liveChannelItemAdapter.getSelectedChannelIndex();
 
@@ -1901,7 +1904,7 @@ public class LivePlayActivity extends BaseActivity {
                 if(currentLiveChannelIndexXu < 0 || currentLiveChannelIndexXu >= channels.size()) {
                     return;
                 }
-
+                liveEpgDateAdapter.setSelectedIndex(position);
                 currentLiveChannelItemXu = getLiveChannels(currentChannelGroupIndexXu).get(currentLiveChannelIndexXu);
                 channel_NameXu = currentLiveChannelItemXu;
                 getEpgxu(liveEpgDateAdapter.getData().get(position).getDateParamVal()); //XUAMENG 7天EPG
@@ -2294,7 +2297,7 @@ public class LivePlayActivity extends BaseActivity {
            
         }
         if((groupIndex > -1 && groupIndex != liveChannelGroupAdapter.getSelectedGroupIndex()) || isNeedInputPassword(groupIndex)) {
-            isTouch = true;
+            isTouch = true;  //xuameng手机选择频道判断  显示正在播放频道所在组
             liveChannelGroupAdapter.setSelectedGroupIndex(groupIndex);
             if(isNeedInputPassword(groupIndex)) {
                 showPasswordDialog(groupIndex, liveChannelIndex);
@@ -2327,7 +2330,6 @@ public class LivePlayActivity extends BaseActivity {
             }
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
-                isTouch = false;
                 if(position < 0) return;
                 int channelGroupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex(); //xuameng当前选定的频道组
 
@@ -2344,6 +2346,7 @@ public class LivePlayActivity extends BaseActivity {
                 } else {
                     itemView.setNextFocusUpId(View.NO_ID);
                 }
+                isTouch = false;  //xuameng手机选择频道判断  显示正在播放频道所在组
                 liveChannelGroupAdapter.setFocusedGroupIndex(-1);
                 liveChannelItemAdapter.setFocusedChannelIndex(position);
                 liveChannelItemAdapter.setSelectedChannelIndex(position);
@@ -2357,8 +2360,8 @@ public class LivePlayActivity extends BaseActivity {
                 if (position < 0 || liveChannelItemAdapter.getData() == null || position >= liveChannelItemAdapter.getData().size()) {
                     return;
                 }
-                isTouch = false;
                 clickLiveChannel(position);
+                isTouch = false;
                 mHideChannelListRun(); //xuameng隐藏左侧频道菜单
             }
         });
