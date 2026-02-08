@@ -445,22 +445,6 @@ public class LivePlayActivity extends BaseActivity {
         iv_playpause.setNextFocusLeftId(R.id.pb_progressbar);  //xuameng左右焦点
     }
 
-    private void initDivLoadEpgFocusListener() {   //xuameng 节目信息 焦点监听
-        if (divLoadEpg != null) {
-            divLoadEpg.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-                @Override
-                public void onFocusChange(View v, boolean hasFocus) {
-                    if (hasFocus) {
-                        // 获取焦点后自动执行的方法
-                        if (liveChannelGroupAdapter != null) {
-                            liveChannelGroupAdapter.setFocusedGroupIndex(-1);
-                        }
-                    }
-                }
-            });
-        }
-    }
-
     //获取EPG并存储 // 百川epg  DIYP epg   51zmt epg ------- 自建EPG格式输出格式请参考 51zmt
     private List < Epginfo > epgdata = new ArrayList < > ();
     private void showEpg(Date date, ArrayList < Epginfo > arrayList) {
@@ -1461,13 +1445,13 @@ public class LivePlayActivity extends BaseActivity {
             // xuameng添加空列表检查
             ArrayList<LiveChannelItem> channels = getLiveChannels(currentChannelGroupIndexXu);
             if(channels == null || channels.isEmpty()) {
-                App.showToastShort(mContext, "聚汇影视提示您：频道为空！");
+              //  App.showToastShort(mContext, "聚汇影视提示您：频道为空！");
                 return false;
             }
         
             // xuameng添加索引范围检查
             if(currentLiveChannelIndexXu < 0 || currentLiveChannelIndexXu >= channels.size()) {
-                App.showToastShort(mContext, "聚汇影视提示您：频道为空！");
+              //  App.showToastShort(mContext, "聚汇影视提示您：频道为空！");
                 return false;
             }
 
