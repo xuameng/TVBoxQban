@@ -2423,7 +2423,7 @@ public class LivePlayActivity extends BaseActivity {
                 if (channel != null) {
                     // 检查是否是"暂无收藏"占位项
                     if ("暂无收藏".equals(channel.getChannelName())) {
-                        App.showToastShort(mContext, "聚汇影视提示您：暂无收藏频道！);
+                        App.showToastShort(mContext, "聚汇影视提示您：暂无收藏频道！");
                         return true; // 消费长按事件，不执行后续操作
                     }
                     // 调用适配器的切换收藏方法
