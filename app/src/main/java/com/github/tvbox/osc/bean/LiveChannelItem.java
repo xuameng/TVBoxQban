@@ -154,7 +154,7 @@ public class LiveChannelItem {
         JsonArray favoriteArray = Hawk.get(HawkConfig.LIVE_FAVORITE_CHANNELS, new JsonArray());
         ArrayList<LiveChannelItem> favoriteChannels = new ArrayList<>();
 
-    if (favoriteChannelKeys.isEmpty()) {
+    if (favoriteArray.isEmpty()) {
         // 如果收藏列表为空，添加一个“暂无收藏”的占位项
         LiveChannelItem emptyItem = new LiveChannelItem();
         emptyItem.setChannelName("暂无收藏");
