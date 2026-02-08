@@ -3791,8 +3791,6 @@ public class LivePlayActivity extends BaseActivity {
             }
         }
 
-    // 操作完成后刷新收藏列表
-    refreshFavoriteChannels();
         if (found) {
             favoriteArray.remove(foundIndex);
             App.showToastShort(mContext, "已取消收藏：" + channel.getChannelName());
@@ -3902,26 +3900,5 @@ public class LivePlayActivity extends BaseActivity {
             liveChannelItemAdapter.setFocusedChannelIndex(targetChannelIndex);
         }
     }
-
-private void refreshFavoriteChannels() {
-    // 获取当前选中的组索引
-    int currentGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
-    
-    // 重新创建收藏组
-    LiveChannelGroup newFavoriteGroup = LiveChannelItem.createFavoriteChannelGroup();
-    newFavoriteGroup.setGroupIndex(0);
-    
-    // 更新列表中的收藏组
-    if (liveChannelGroupList.size() > 0 && "我的收藏".equals(liveChannelGroupList.get(0).getGroupName())) {
-        liveChannelGroupList.set(0, newFavoriteGroup);
-    }
-    
-    // 如果当前选中的是收藏组，刷新显示
-    if (currentGroupIndex == 0) {
-        liveChannelItemAdapter.setNewData(getLiveChannels(0));
-        liveChannelItemAdapter.notifyDataSetChanged();
-    }
-}
-
 
 }
