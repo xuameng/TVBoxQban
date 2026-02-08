@@ -46,7 +46,7 @@ public class LiveChannelItemAdapter extends BaseQuickAdapter<LiveChannelItem, Ba
         if (isFavorited) {
             tvFavoriteStar.setVisibility(View.VISIBLE);
             tvFavoriteStar.setText("★");
-            tvFavoriteStar.setTextColor(Color.YELLOW); // 我的收藏 设置为黄色
+            tvFavoriteStar.setTextColor(Color.parseColor("#FFD700")); //xuameng我的收藏 设置为金黄色
         } else {
             tvFavoriteStar.setVisibility(View.GONE);
         }
