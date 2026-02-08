@@ -159,6 +159,8 @@ public class LiveChannelItem {
         LiveChannelItem emptyItem = new LiveChannelItem();
         emptyItem.setChannelName("暂无收藏");
         emptyItem.setChannelNum(0);
+        // 设置一个特殊的索引，用于识别占位项
+        emptyItem.setChannelIndex(-1); // 使用-1表示占位项
         // 设置一个安全的空链接，防止播放报错
         ArrayList<String> emptyUrls = new ArrayList<>();
         emptyUrls.add("about:blank"); // 使用安全的空链接
