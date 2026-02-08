@@ -2412,9 +2412,11 @@ public class LivePlayActivity extends BaseActivity {
 
                 // xuameng检查是否是"暂无收藏"占位项
                 LiveChannelItem selectedChannel = getLiveChannels(channelGroupIndexXu).get(position);
-                if ("暂无收藏".equals(selectedChannel.getChannelName())) {
-                    return; // 如果是占位项则直接返回，不执行后续操作
+                // xuameng检查是否是占位项（使用索引判断，-1表示占位项）
+                if (selectedChannel.getChannelIndex() == -1) {
+                    return; // 如果是占位项则直接返回，不执行任何后续操作
                 }
+        
                 isTouch = false;  //xuameng手机选择频道判断  显示正在播放频道所在组
                 liveChannelItemAdapter.setFocusedChannelIndex(position);
                 liveChannelItemAdapter.setSelectedChannelIndex(position);
@@ -2432,9 +2434,10 @@ public class LivePlayActivity extends BaseActivity {
                 }
                 // xuameng检查是否是"暂无收藏"占位项
                 LiveChannelItem selectedChannel = getLiveChannels(liveChannelGroupAdapter.getSelectedGroupIndex()).get(position);
-                if ("暂无收藏".equals(selectedChannel.getChannelName())) {
+                // xuameng检查是否是占位项（使用索引判断，-1表示占位项）
+                if (selectedChannel.getChannelIndex() == -1) {
                     App.showToastShort(mContext, "聚汇影视提示您：暂无收藏频道！");
-                    return; // 这里return会跳过下面的代码
+                    return; // 如果是占位项则直接返回，不执行任何后续操作
                 }
                 clickLiveChannel(position);
                 isTouch = false;
@@ -2455,9 +2458,9 @@ public class LivePlayActivity extends BaseActivity {
                 }
                 // xuameng检查是否是"暂无收藏"占位项
                 LiveChannelItem selectedChannel = getLiveChannels(liveChannelGroupAdapter.getSelectedGroupIndex()).get(position);
-                if ("暂无收藏".equals(selectedChannel.getChannelName())) {
+                if (selectedChannel.getChannelIndex() == -1) {
                     App.showToastShort(mContext, "聚汇影视提示您：暂无收藏频道！");
-                    return; // 这里return会跳过下面的代码
+                    return; // 如果是占位项则直接返回，不执行任何后续操作
                 }
                 clickLiveChannel(position);
                 isTouch = false;
@@ -2475,10 +2478,9 @@ public class LivePlayActivity extends BaseActivity {
                 // 获取当前频道项
                 LiveChannelItem channel = liveChannelItemAdapter.getItem(position);
                 if (channel != null) {
-                    // 检查是否是"暂无收藏"占位项
-                    if ("暂无收藏".equals(channel.getChannelName())) {
+                    if (channel.getChannelIndex() == -1) {
                         App.showToastShort(mContext, "聚汇影视提示您：暂无收藏频道！");
-                        return true; // 消费长按事件，不执行后续操作
+                        return; // 如果是占位项则直接返回，不执行任何后续操作
                     }
                     // 调用适配器的切换收藏方法
                     toggleFavoriteChannel(channel, position);
@@ -2492,8 +2494,6 @@ public class LivePlayActivity extends BaseActivity {
 
     }
     private void clickLiveChannel(int position) {
-
-    LiveChannelItem selectedChannel = getLiveChannels(liveChannelGroupAdapter.getSelectedGroupIndex()).get(position);
         if(tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
             mHideChannelListRunXu(); //xuameng隐藏频道菜单
         }
