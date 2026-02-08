@@ -2325,6 +2325,9 @@ public class LivePlayActivity extends BaseActivity {
         });
     }
     private void selectChannelGroup(int groupIndex, boolean focus, int liveChannelIndex) {
+        if(tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
+            mHideChannelListRunXu(); //xuameng隐藏频道菜单
+        }
         if(focus) {
             liveChannelGroupAdapter.setFocusedGroupIndex(groupIndex);
             judgeFocusedChannelIndex();    //xuameng 修复我的收藏滚动闪退
@@ -2338,9 +2341,6 @@ public class LivePlayActivity extends BaseActivity {
                 return;
             }
             loadChannelGroupDataAndPlay(groupIndex, liveChannelIndex);
-        }
-        if(tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
-            mHideChannelListRunXu(); //xuameng隐藏频道菜单
         }
     }
     private void initLiveChannelView() {
@@ -2394,6 +2394,12 @@ public class LivePlayActivity extends BaseActivity {
                 if (position < 0 || liveChannelItemAdapter.getData() == null || position >= liveChannelItemAdapter.getData().size()) {
                     return;
                 }
+                // xuameng检查是否是"暂无收藏"占位项
+                LiveChannelItem selectedChannel = getLiveChannels(liveChannelGroupAdapter.getSelectedGroupIndex()).get(position);
+                if ("暂无收藏".equals(selectedChannel.getChannelName())) {
+                    App.showToastShort(mContext, "聚汇影视提示您：暂无收藏频道！");
+                    return; // 这里return会跳过下面的代码
+                }
                 clickLiveChannel(position);
                 isTouch = false;
                 mHideChannelListRun(); //xuameng隐藏左侧频道菜单
@@ -2404,9 +2410,15 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 FastClickCheckUtil.check(view);
-                // // xuameng添加安全检查添加安全检查
+                // xuameng添加安全检查添加安全检查
                 if (position < 0 || adapter.getData() == null || position >= adapter.getData().size()) {
                     return;
+                }
+                // xuameng检查是否是"暂无收藏"占位项
+                LiveChannelItem selectedChannel = getLiveChannels(liveChannelGroupAdapter.getSelectedGroupIndex()).get(position);
+                if ("暂无收藏".equals(selectedChannel.getChannelName())) {
+                    App.showToastShort(mContext, "聚汇影视提示您：暂无收藏频道！");
+                    return; // 这里return会跳过下面的代码
                 }
                 clickLiveChannel(position);
                 isTouch = false;
@@ -2418,6 +2430,7 @@ public class LivePlayActivity extends BaseActivity {
         liveChannelItemAdapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(BaseQuickAdapter adapter, View view, int position) {
+                mHideChannelListRunXu(); //xuameng隐藏频道菜单
                 // 获取当前频道项
                 LiveChannelItem channel = liveChannelItemAdapter.getItem(position);
                 if (channel != null) {
@@ -2429,7 +2442,6 @@ public class LivePlayActivity extends BaseActivity {
                     // 调用适配器的切换收藏方法
                     toggleFavoriteChannel(channel, position);
                     // 返回 true 表示消费了长按事件
-                    mHideChannelListRunXu(); //xuameng隐藏频道菜单
                     return true;
                 }
                 return false;
@@ -2441,18 +2453,12 @@ public class LivePlayActivity extends BaseActivity {
     private void clickLiveChannel(int position) {
 
     LiveChannelItem selectedChannel = getLiveChannels(liveChannelGroupAdapter.getSelectedGroupIndex()).get(position);
-    
-        // 检查是否是“暂无收藏”占位项
-        if ("暂无收藏".equals(selectedChannel.getChannelName())) {
-            App.showToastShort(mContext, "聚汇影视提示您：暂无收藏频道！");
-            return;
+        if(tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
+            mHideChannelListRunXu(); //xuameng隐藏频道菜单
         }
         liveChannelItemAdapter.setSelectedChannelIndex(position);
         liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
         playChannel(liveChannelGroupAdapter.getSelectedGroupIndex(), position, false);
-        if(tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
-            mHideChannelListRunXu(); //xuameng隐藏频道菜单
-        }
     }
     private void initSettingGroupView() {
         mSettingGroupView.setHasFixedSize(true);
