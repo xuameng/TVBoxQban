@@ -198,6 +198,7 @@ public class LivePlayActivity extends BaseActivity {
     private boolean isVideoplaying = false; //xuameng判断视频开始播放
     private boolean XuSource = false; //xuameng退出回看
     private boolean TimeoutChangeSource = false; //xuameng是否自动换源
+	private boolean refreshFavoriteChannelGroup = false;  //xuameng 频道更新我的收藏
     private int selectedChannelNumber = 0; // xuameng遥控器数字键输入的要切换的频道号码
     private TextView tvSelectedChannel; //xuameng频道编号
     private ImageView iv_circle_bg_xu; //xuameng音乐播放时图标
@@ -995,8 +996,8 @@ public class LivePlayActivity extends BaseActivity {
         public void run() {
             tvSelectedChannel.setVisibility(View.GONE);
             tvSelectedChannel.setText("");
-            int grpIndx = 0;
-            int chaIndx = 0;
+            int grpIndx = 1;
+            int chaIndx = 1;
             int getMin = 1;
             int getMax;
             for(int j = 0; j < liveChannelGroupList.size(); j++) { //xuameng循环频道组
@@ -2351,8 +2352,12 @@ public class LivePlayActivity extends BaseActivity {
         }
         if(focus) {
             liveChannelGroupAdapter.setFocusedGroupIndex(groupIndex);
-            judgeFocusedChannelIndex();    //xuameng 修复我的收藏滚动闪退
-           
+            if (refreshFavoriteChannelGroup){
+                judgeFocusedChannelIndex();    //xuameng 修复我的收藏滚动闪退
+                refreshFavoriteChannelGroup = false;  //xuameng 判断刷收藏数据
+            }else{
+                liveChannelItemAdapter.setFocusedChannelIndex(-1);   //xuameng 正常情况
+            }
         }
         if((groupIndex > -1 && groupIndex != liveChannelGroupAdapter.getSelectedGroupIndex()) || isNeedInputPassword(groupIndex)) {
             isTouch = true;  //xuameng手机选择频道判断  显示正在播放频道所在组
@@ -2383,8 +2388,12 @@ public class LivePlayActivity extends BaseActivity {
         mLiveChannelView.setOnItemListener(new TvRecyclerView.OnItemListener() {
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
-              //  judgeFocusedChannelIndex();    //xuameng 修复我的收藏滚动闪退
-			  liveChannelItemAdapter.setFocusedChannelIndex(-1);
+                if (refreshFavoriteChannelGroup){
+                    judgeFocusedChannelIndex();    //xuameng 修复我的收藏滚动闪退
+                    refreshFavoriteChannelGroup = false;  //xuameng 判断刷收藏数据
+                }else{
+                    liveChannelItemAdapter.setFocusedChannelIndex(-1);   //xuameng 正常情况
+                }
             }
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
@@ -3805,6 +3814,7 @@ public class LivePlayActivity extends BaseActivity {
                 ArrayList<LiveChannelItem> favoriteChannels = getLiveChannels(favoriteGroupIndex);
                 // 更新频道列表
                 liveChannelItemAdapter.setNewData(favoriteChannels);
+                refreshFavoriteChannelGroup = true;  //xuameng 判断刷收藏数据
             
                 // ========== 修复：恢复当前播放频道的选中状态 ==========
                 if (currentChannelName != null && currentChannelGroupIndex == favoriteGroupIndex) {
@@ -3834,7 +3844,7 @@ public class LivePlayActivity extends BaseActivity {
                     } else {
                         // 没有找到当前播放的频道（可能被删除了），确保没有选中项
                         // 清除当前播放频道信息
-                     //   currentLiveChannelItem = null;
+                        // currentLiveChannelItem = null;
                         currentLiveChannelIndex = -1;
                         channel_Name = null;
                         judgeSelectedChannelIndex(-1); 
