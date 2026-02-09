@@ -3910,7 +3910,7 @@ public class LivePlayActivity extends BaseActivity {
             new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    judgeSelectedChannelIndex(targetChannelIndex); 
+                    judgeScrollChannelIndex(targetChannelIndex); 
                 }
             }, 20);
             return;
