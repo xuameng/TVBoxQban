@@ -3882,7 +3882,7 @@ public class LivePlayActivity extends BaseActivity {
         if (liveChannelItemAdapter != null) {
                 // 4. 调用updateFavoriteCache：更新缓存+局部刷新UI
     boolean isFavorited = !found; // 若未找到（添加收藏），则状态为true；否则为false
-    updateFavoriteCache(channel, isFavorited, position);
+    liveChannelItemAdapter.updateFavoriteCache(channel, isFavorited, position);
         }
         refreshFavoriteChannelGroup();
     }
