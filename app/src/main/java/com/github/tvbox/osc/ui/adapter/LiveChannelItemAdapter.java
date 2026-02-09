@@ -1,24 +1,29 @@
 package com.github.tvbox.osc.ui.adapter;
 
-import android.view.View;   //xuameng 新增我的收藏
+import android.app.Activity;
 import android.graphics.Color;
+import android.view.View;
 import android.widget.TextView;
 
-import com.google.gson.JsonArray;  //xuameng 新增我的收藏
-import com.google.gson.JsonObject;  //xuameng 新增我的收藏
-
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
-
-import com.orhanobut.hawk.Hawk;  //xuameng 新增我的收藏
-
-import java.util.ArrayList;
-
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.bean.LiveChannelItem;
-import com.github.tvbox.osc.util.HawkConfig;  //xuameng 新增我的收藏
+import com.github.tvbox.osc.util.HawkConfig;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.orhanobut.hawk.Hawk;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @author pj567
@@ -28,6 +33,8 @@ import com.github.tvbox.osc.util.HawkConfig;  //xuameng 新增我的收藏
 public class LiveChannelItemAdapter extends BaseQuickAdapter<LiveChannelItem, BaseViewHolder> {
     private int selectedChannelIndex = -1;
     private int focusedChannelIndex = -1;
+    private ExecutorService favoriteCheckExecutor;
+    private Map<String, Boolean> favoriteCache = new ConcurrentHashMap<>();
 
     public LiveChannelItemAdapter() {
         super(R.layout.item_live_channel, new ArrayList<>());
@@ -37,29 +44,135 @@ public class LiveChannelItemAdapter extends BaseQuickAdapter<LiveChannelItem, Ba
     protected void convert(BaseViewHolder holder, LiveChannelItem item) {
         TextView tvChannelNum = holder.getView(R.id.tvChannelNum);
         TextView tvChannel = holder.getView(R.id.tvChannelName);
-        TextView tvFavoriteStar = holder.getView(R.id.ivFavoriteStar); // xuameng新增：我的收藏获取星星TextView的引用
+        TextView tvFavoriteStar = holder.getView(R.id.ivFavoriteStar);
+        
         tvChannelNum.setText(String.format("%s", item.getChannelNum()));
         tvChannel.setText(item.getChannelName());
-
-        // xuameng========== 修改：根据收藏状态显示 我的收藏TextView 星星 ==========
-        boolean isFavorited = isChannelFavorited(item);
-        if (isFavorited) {
-            tvFavoriteStar.setVisibility(View.VISIBLE);
-            tvFavoriteStar.setText("★");
-            tvFavoriteStar.setTextColor(Color.parseColor("#FFD700")); //xuameng我的收藏 设置为金黄色
-        } else {
-            tvFavoriteStar.setVisibility(View.GONE);
-        }
-        // xuameng========== 我的收藏 修改结束 ==========
+        tvFavoriteStar.setVisibility(View.GONE);
+        
+        int position = holder.getLayoutPosition();
+        
+        // 异步检查收藏状态
+        checkChannelFavoriteAsync(item, position, new FavoriteCheckCallback() {
+            @Override
+            public void onFavoriteChecked(boolean isFavorited, int checkedPosition) {
+                // 通过RecyclerView获取当前ViewHolder
+                RecyclerView recyclerView = getRecyclerView();
+                if (recyclerView != null) {
+                    BaseViewHolder currentHolder = (BaseViewHolder) recyclerView.findViewHolderForAdapterPosition(checkedPosition);
+                    if (currentHolder != null) {
+                        TextView starView = currentHolder.getView(R.id.ivFavoriteStar);
+                        if (isFavorited) {
+                            starView.setVisibility(View.VISIBLE);
+                            starView.setText("★");
+                            starView.setTextColor(Color.parseColor("#FFD700"));
+                        } else {
+                            starView.setVisibility(View.GONE);
+                        }
+                    }
+                }
+            }
+        });
 
         int channelIndex = item.getChannelIndex();
         if (channelIndex == selectedChannelIndex && channelIndex != focusedChannelIndex) {
             tvChannelNum.setTextColor(mContext.getResources().getColor(R.color.color_02F8E1));
             tvChannel.setTextColor(mContext.getResources().getColor(R.color.color_02F8E1));
-        }
-        else{
+        } else {
             tvChannelNum.setTextColor(Color.WHITE);
             tvChannel.setTextColor(Color.WHITE);
+        }
+    }
+
+    // 新增接口定义
+    public interface FavoriteCheckCallback {
+        void onFavoriteChecked(boolean isFavorited, int position);
+    }
+
+    // 生成缓存键的方法
+    private String getChannelCacheKey(LiveChannelItem channel) {
+        return channel.getChannelName() + "|" + channel.getUrl();
+    }
+
+    // 修改异步检查方法，先检查缓存
+    private void checkChannelFavoriteAsync(LiveChannelItem channel, int position, FavoriteCheckCallback callback) {
+        if (channel == null) {
+            if (callback != null) callback.onFavoriteChecked(false, position);
+            return;
+        }
+        
+        // 先检查缓存
+        String cacheKey = getChannelCacheKey(channel);
+        Boolean cachedResult = favoriteCache.get(cacheKey);
+        if (cachedResult != null) {
+            if (callback != null) {
+                boolean finalResult = cachedResult;
+                if (mContext instanceof Activity) {
+                    ((Activity) mContext).runOnUiThread(() -> {
+                        callback.onFavoriteChecked(finalResult, position);
+                    });
+                }
+            }
+            return;
+        }
+        
+        // 缓存未命中，执行异步查询
+        if (favoriteCheckExecutor == null) {
+            int coreCount = Runtime.getRuntime().availableProcessors();
+            favoriteCheckExecutor = Executors.newFixedThreadPool(Math.max(1, coreCount - 1));
+        }
+        
+        favoriteCheckExecutor.execute(() -> {
+            boolean isFavorited = false;
+            try {
+                JsonArray favoriteArray = Hawk.get(HawkConfig.LIVE_FAVORITE_CHANNELS, new JsonArray());
+                JsonObject currentChannelJson = LiveChannelItem.convertChannelToJson(channel);
+                
+                for (int i = 0; i < favoriteArray.size(); i++) {
+                    JsonObject favChannelJson = favoriteArray.get(i).getAsJsonObject();
+                    if (LiveChannelItem.isSameChannel(favChannelJson, currentChannelJson)) {
+                        isFavorited = true;
+                        break;
+                    }
+                }
+                
+                // 更新缓存
+                favoriteCache.put(cacheKey, isFavorited);
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                boolean finalIsFavorited = isFavorited;
+                if (mContext instanceof Activity) {
+                    ((Activity) mContext).runOnUiThread(() -> {
+                        if (callback != null) {
+                            callback.onFavoriteChecked(finalIsFavorited, position);
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    // 清理缓存的方法
+    public void clearFavoriteCache() {
+        if (favoriteCache != null) {
+            favoriteCache.clear();
+        }
+    }
+
+    // 在数据更新时清理缓存
+    @Override
+    public void setNewData(@Nullable List<LiveChannelItem> data) {
+        clearFavoriteCache();
+        super.setNewData(data);
+    }
+
+    // 在Adapter销毁时释放资源
+    @Override
+    public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView);
+        if (favoriteCheckExecutor != null && !favoriteCheckExecutor.isShutdown()) {
+            favoriteCheckExecutor.shutdownNow();
         }
     }
 
@@ -73,11 +186,11 @@ public class LiveChannelItemAdapter extends BaseQuickAdapter<LiveChannelItem, Ba
             notifyItemChanged(this.selectedChannelIndex);
     }
 
-    public int getSelectedChannelIndex() {        //xuameng  选中频道
+    public int getSelectedChannelIndex() {
         return selectedChannelIndex;
     }
 
-    public int getSelectedfocusedChannelIndex() {        //xuameng 焦点颜色
+    public int getSelectedfocusedChannelIndex() {
         return focusedChannelIndex;
     }
 
@@ -92,8 +205,8 @@ public class LiveChannelItemAdapter extends BaseQuickAdapter<LiveChannelItem, Ba
             notifyItemChanged(this.selectedChannelIndex);
     }
 
-    /** xuameng 我的收藏
-     * 判断当前频道是否已被收藏
+    /**
+     * 判断当前频道是否已被收藏（同步方法，保留供其他用途）
      */
     private boolean isChannelFavorited(LiveChannelItem channel) {
         if (channel == null) return false;
@@ -108,5 +221,4 @@ public class LiveChannelItemAdapter extends BaseQuickAdapter<LiveChannelItem, Ba
         }
         return false;
     }
-
 }
