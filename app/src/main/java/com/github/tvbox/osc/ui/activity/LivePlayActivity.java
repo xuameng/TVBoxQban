@@ -2387,10 +2387,8 @@ public class LivePlayActivity extends BaseActivity {
         mLiveChannelView.setOnItemListener(new TvRecyclerView.OnItemListener() {
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
-                if (refreshFavoriteChannelGroup){
-                    judgeFocusedChannelIndex();    //xuameng 修复我的收藏滚动闪退
-                }else{
-                    liveChannelItemAdapter.setFocusedChannelIndex(-1);   //xuameng 正常情况
+if (!mLiveChannelView.isComputingLayout() || !mLiveChannelView.isScrolling()) {
+	                    liveChannelItemAdapter.setFocusedChannelIndex(-1);   //xuameng 正常情况
                 }
             }
             @Override
