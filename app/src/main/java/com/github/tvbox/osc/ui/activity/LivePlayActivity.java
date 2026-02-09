@@ -3931,9 +3931,7 @@ public class LivePlayActivity extends BaseActivity {
         }
     
         if (liveChannelItemAdapter != null && mLiveChannelView != null) {
-           liveChannelItemAdapter.setSelectedChannelIndex(targetChannelIndex);
 	       mLiveChannelView.setSelection(targetChannelIndex); 
-           liveChannelItemAdapter.setFocusedChannelIndex(targetChannelIndex);
         }
     }
 
@@ -3990,7 +3988,6 @@ public class LivePlayActivity extends BaseActivity {
     
         if (liveChannelItemAdapter != null) {
             liveChannelItemAdapter.setSelectedChannelIndex(targetChannelIndex);
-            liveChannelItemAdapter.setFocusedChannelIndex(targetChannelIndex);
         }
     }
 
