@@ -2383,7 +2383,8 @@ public class LivePlayActivity extends BaseActivity {
         mLiveChannelView.setOnItemListener(new TvRecyclerView.OnItemListener() {
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
-                judgeFocusedChannelIndex();    //xuameng 修复我的收藏滚动闪退
+              //  judgeFocusedChannelIndex();    //xuameng 修复我的收藏滚动闪退
+			  liveChannelItemAdapter.setFocusedChannelIndex(-1);
             }
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
@@ -3833,7 +3834,7 @@ public class LivePlayActivity extends BaseActivity {
                     } else {
                         // 没有找到当前播放的频道（可能被删除了），确保没有选中项
                         // 清除当前播放频道信息
-                        currentLiveChannelItem = null;
+                     //   currentLiveChannelItem = null;
                         currentLiveChannelIndex = -1;
                         channel_Name = null;
                         judgeSelectedChannelIndex(-1); 
