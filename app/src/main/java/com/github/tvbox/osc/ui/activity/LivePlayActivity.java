@@ -2310,7 +2310,7 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {}
             @Override
-            public void onItemSelected(TQvRecyclerView parent, View itemView, int position) {
+            public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
 
                 // xuameng边界判断逻辑
                 if (position == liveChannelGroupList.size() - 1) { // xuameng判断是否是最后一个频道组
