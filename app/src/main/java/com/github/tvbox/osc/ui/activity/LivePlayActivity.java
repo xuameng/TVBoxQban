@@ -198,7 +198,6 @@ public class LivePlayActivity extends BaseActivity {
     private boolean isVideoplaying = false; //xuameng判断视频开始播放
     private boolean XuSource = false; //xuameng退出回看
     private boolean TimeoutChangeSource = false; //xuameng是否自动换源
-	private boolean refreshFavoriteChannelGroup = false;  //xuameng 频道更新我的收藏
     private int selectedChannelNumber = 0; // xuameng遥控器数字键输入的要切换的频道号码
     private TextView tvSelectedChannel; //xuameng频道编号
     private ImageView iv_circle_bg_xu; //xuameng音乐播放时图标
@@ -2351,14 +2350,11 @@ public class LivePlayActivity extends BaseActivity {
             mHideChannelListRunXu(); //xuameng隐藏频道菜单
         }
         if(focus) {
-            liveChannelGroupAdapter.setFocusedGroupIndex(groupIndex);
-            if (refreshFavoriteChannelGroup){
-                judgeFocusedChannelIndex();    //xuameng 修复我的收藏滚动闪退
-            }else{
-                liveChannelItemAdapter.setFocusedChannelIndex(-1);   //xuameng 正常情况
+            if (!mLiveChannelView.isComputingLayout() || !mLiveChannelView.isScrolling()) {
+	            liveChannelItemAdapter.setFocusedChannelIndex(-1);   //xuameng 正常情况
             }
         }
-        if((groupIndex > -1 && groupIndex != liveChannelGroupAdapter.getSelectedGroupIndex()) || isNeedInputPassword(groupIndex)) {
+        if((groupIndex == 0 || groupIndex > -1 && groupIndex != liveChannelGroupAdapter.getSelectedGroupIndex()) || isNeedInputPassword(groupIndex)) { //xuameng增加如果当前选中的是我的收藏 一定滚动频道菜单
             isTouch = true;  //xuameng手机选择频道判断  显示正在播放频道所在组
             liveChannelGroupAdapter.setSelectedGroupIndex(groupIndex);
             if(isNeedInputPassword(groupIndex)) {
@@ -2387,11 +2383,9 @@ public class LivePlayActivity extends BaseActivity {
         mLiveChannelView.setOnItemListener(new TvRecyclerView.OnItemListener() {
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
-                if (mLiveChannelView.isComputingLayout() || mLiveChannelView.isScrolling()) {
-	                
-                }else{
-					liveChannelItemAdapter.setFocusedChannelIndex(-1);   //xuameng 正常情况
-				}
+                if (!mLiveChannelView.isComputingLayout() || !mLiveChannelView.isScrolling()) {
+	                liveChannelItemAdapter.setFocusedChannelIndex(-1);   //xuameng 正常情况
+                }
             }
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
@@ -3827,11 +3821,8 @@ public class LivePlayActivity extends BaseActivity {
                 
                     if (targetChannelIndex != -1) {
 
-                        // 确保UI滚动到正确位置
-                        judgescrollToPosition(targetChannelIndex);
-
                         // 找到了当前播放的频道，恢复其选中和高亮状态
-                        judgeLiveChannelView(targetChannelIndex);
+                        judgeSelectedChannelIndex(targetChannelIndex);
                     
                         // 更新当前播放频道信息
                         currentLiveChannelIndex = targetChannelIndex;
@@ -3849,12 +3840,6 @@ public class LivePlayActivity extends BaseActivity {
                 }else {
                     // 当前播放的频道不在收藏组中，不改变任何焦点状态
                     // 只需更新列表数据，不设置选中状态
-                    if (favoriteChannels.size() > 0) {
-                        // 如果有频道，滚动到收藏组位置（滚动到第一个频道位置）
-                        judgescrollToPosition(0);
-                        // 找到了当前播放的频道，选择第一个频道位置但不选中
-			            judgeLiveChannelViewNoSelected(0); 
-                    }
                     judgeSelectedChannelIndex(-1); // 确保没有选中项
                 }
                 // ========== 修复结束 ==========
@@ -3897,83 +3882,6 @@ public class LivePlayActivity extends BaseActivity {
         refreshFavoriteChannelGroup();
     }
 
-    private void judgeFocusedChannelIndex() {     //xuameng 修复我的收藏滚动闪退
-        // 检查 RecyclerView 是否处于安全状态
-        if (mLiveChannelView.isComputingLayout() || mLiveChannelView.isScrolling()) {
-            // 延迟执行，避免在布局计算或滚动过程中操作
-            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    judgeFocusedChannelIndex(); 
-                }
-            }, 20);
-            return;
-        }
-    
-        // 只在安全状态下执行业务逻辑
-        if (liveChannelItemAdapter != null) {
-            liveChannelItemAdapter.setFocusedChannelIndex(-1);
-            refreshFavoriteChannelGroup = false;  //xuameng 频道更新我的收藏
-        }
-    }
-
-    private void judgeLiveChannelView(int targetChannelIndex) {     //xuameng 修复我的收藏滚动闪退
-       // 检查 RecyclerView 是否处于安全状态
-        if (mLiveChannelView.isComputingLayout() || mLiveChannelView.isScrolling()) {
-            // 延迟执行，避免在布局计算或滚动过程中操作
-            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    judgeLiveChannelView(targetChannelIndex); 
-                }
-            }, 20);
-            return;
-        }
-    
-        if (liveChannelItemAdapter != null && mLiveChannelView != null) {
-           liveChannelItemAdapter.setSelectedChannelIndex(targetChannelIndex);
-	       mLiveChannelView.setSelection(targetChannelIndex); 
-        }
-    }
-
-    private void judgeLiveChannelViewNoSelected(int targetChannelIndex) {     //xuameng 修复我的收藏滚动闪退
-       // 检查 RecyclerView 是否处于安全状态
-        if (mLiveChannelView.isComputingLayout() || mLiveChannelView.isScrolling()) {
-            // 延迟执行，避免在布局计算或滚动过程中操作
-            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    judgeLiveChannelViewNoSelected(targetChannelIndex); 
-                }
-            }, 20);
-            return;
-        }
-    
-        if (mLiveChannelView != null) {
-	       mLiveChannelView.setSelection(targetChannelIndex); 
-        }
-    }
-
-    private void judgescrollToPosition(int targetChannelIndex) {     //xuameng 修复我的收藏滚动闪退
-        // 检查 RecyclerView 是否处于安全状态
-        if (mLiveChannelView.isComputingLayout() || mLiveChannelView.isScrolling()) {
-            // 延迟执行，避免在布局计算或滚动过程中操作
-            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    judgescrollToPosition(targetChannelIndex); 
-                }
-            }, 20);
-            return;
-        }
-    
-        if (mLiveChannelView != null && targetChannelIndex >= 0) {
-            refreshFavoriteChannelGroup = true;  //xuameng 频道更新我的收藏
-            mLiveChannelView.scrollToPosition(targetChannelIndex);
-
-        }
-    }
-
     private void judgeSelectedChannelIndex(int targetChannelIndex) {     //xuameng 修复我的收藏滚动闪退
         // 检查 RecyclerView 是否处于安全状态
         if (mLiveChannelView.isComputingLayout() || mLiveChannelView.isScrolling()) {
@@ -3989,7 +3897,6 @@ public class LivePlayActivity extends BaseActivity {
     
         if (liveChannelItemAdapter != null) {
             liveChannelItemAdapter.setSelectedChannelIndex(targetChannelIndex);
-            liveChannelItemAdapter.setFocusedChannelIndex(targetChannelIndex);
         }
     }
 
