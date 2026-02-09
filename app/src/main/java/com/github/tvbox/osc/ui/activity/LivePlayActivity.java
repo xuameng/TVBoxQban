@@ -2350,10 +2350,7 @@ public class LivePlayActivity extends BaseActivity {
             mHideChannelListRunXu(); //xuameng隐藏频道菜单
         }
         if(focus) {
-            if(mChannelGroupView.isScrolling() || mLiveChannelView.isScrolling() || mChannelGroupView.isComputingLayout() || mLiveChannelView.isComputingLayout()) {
-            }else{
-	            liveChannelItemAdapter.setFocusedChannelIndex(-1);   //xuameng 正常情况
-            }
+            liveChannelItemAdapter.setFocusedChannelIndex(-1);   //xuameng 正常情况
         }
         if((groupIndex > -1 && groupIndex != liveChannelGroupAdapter.getSelectedGroupIndex()) || isNeedInputPassword(groupIndex)) { 
             isTouch = true;  //xuameng手机选择频道判断  显示正在播放频道所在组
@@ -2384,7 +2381,7 @@ public class LivePlayActivity extends BaseActivity {
         mLiveChannelView.setOnItemListener(new TvRecyclerView.OnItemListener() {
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
-                if(mChannelGroupView.isScrolling() || mLiveChannelView.isScrolling() || mChannelGroupView.isComputingLayout() || mLiveChannelView.isComputingLayout()) {
+                if (mLiveChannelView.isComputingLayout() || mLiveChannelView.isScrolling()) {
                 }else{
 	                liveChannelItemAdapter.setFocusedChannelIndex(-1);   //xuameng 正常情况
                 }
@@ -3887,7 +3884,7 @@ public class LivePlayActivity extends BaseActivity {
 
     private void judgeSelectedChannelIndex(int targetChannelIndex) {     //xuameng 修复我的收藏滚动闪退
         // 检查 RecyclerView 是否处于安全状态
-        if(mChannelGroupView.isScrolling() || mLiveChannelView.isScrolling() || mChannelGroupView.isComputingLayout() || mLiveChannelView.isComputingLayout()) {
+        if (mLiveChannelView.isComputingLayout() || mLiveChannelView.isScrolling()) {
             // 延迟执行，避免在布局计算或滚动过程中操作
             new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                 @Override
@@ -3905,7 +3902,7 @@ public class LivePlayActivity extends BaseActivity {
 
     private void judgeScrollChannelIndex(int targetChannelIndex) {     //xuameng 修复我的收藏滚动闪退
         // 检查 RecyclerView 是否处于安全状态
-        if(mChannelGroupView.isScrolling() || mLiveChannelView.isScrolling() || mChannelGroupView.isComputingLayout() || mLiveChannelView.isComputingLayout()) {
+        if (mLiveChannelView.isComputingLayout() || mLiveChannelView.isScrolling()) {
             // 延迟执行，避免在布局计算或滚动过程中操作
             new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                 @Override
