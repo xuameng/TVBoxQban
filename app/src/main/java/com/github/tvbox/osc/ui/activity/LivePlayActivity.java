@@ -2355,7 +2355,7 @@ public class LivePlayActivity extends BaseActivity {
 	            liveChannelItemAdapter.setFocusedChannelIndex(-1);   //xuameng 正常情况
             }
         }
-        if((groupIndex == 0 || groupIndex > -1 && groupIndex != liveChannelGroupAdapter.getSelectedGroupIndex()) || isNeedInputPassword(groupIndex)) { //xuameng增加如果当前选中的是我的收藏 一定滚动频道菜单
+        if((groupIndex > -1 && groupIndex != liveChannelGroupAdapter.getSelectedGroupIndex()) || isNeedInputPassword(groupIndex)) { 
             isTouch = true;  //xuameng手机选择频道判断  显示正在播放频道所在组
             liveChannelGroupAdapter.setSelectedGroupIndex(groupIndex);
             if(isNeedInputPassword(groupIndex)) {
