@@ -2387,9 +2387,11 @@ public class LivePlayActivity extends BaseActivity {
         mLiveChannelView.setOnItemListener(new TvRecyclerView.OnItemListener() {
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
-if (!mLiveChannelView.isComputingLayout() || !mLiveChannelView.isScrolling()) {
-	                    liveChannelItemAdapter.setFocusedChannelIndex(-1);   //xuameng 正常情况
-                }
+                if (mLiveChannelView.isComputingLayout() || mLiveChannelView.isScrolling()) {
+	                
+                }else{
+					liveChannelItemAdapter.setFocusedChannelIndex(-1);   //xuameng 正常情况
+				}
             }
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
@@ -3929,6 +3931,7 @@ if (!mLiveChannelView.isComputingLayout() || !mLiveChannelView.isScrolling()) {
         }
     
         if (liveChannelItemAdapter != null && mLiveChannelView != null) {
+           liveChannelItemAdapter.setSelectedChannelIndex(targetChannelIndex);
 	       mLiveChannelView.setSelection(targetChannelIndex); 
         }
     }
@@ -3986,6 +3989,7 @@ if (!mLiveChannelView.isComputingLayout() || !mLiveChannelView.isScrolling()) {
     
         if (liveChannelItemAdapter != null) {
             liveChannelItemAdapter.setSelectedChannelIndex(targetChannelIndex);
+            liveChannelItemAdapter.setFocusedChannelIndex(targetChannelIndex);
         }
     }
 
