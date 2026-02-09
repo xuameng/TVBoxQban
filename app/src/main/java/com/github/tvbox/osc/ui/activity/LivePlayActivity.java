@@ -1480,7 +1480,7 @@ public class LivePlayActivity extends BaseActivity {
             return;
         }
         if(!isCurrentLiveChannelValid()) return;   //xuameng 空指针修复
-        int channelGroupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex(); //xuameng当前选定的频道组
+        int channelGroupIndexXu = currentChannelGroupIndex; //xuameng当前选定的频道组
         if(liveChannelGroupList.size() - 1 < 1 && getLiveChannels(channelGroupIndexXu).size() - 1 < 1) { //如果只有一个频道组就播放当前频道，不胯下胯下跨选频道组
             App.showToastShort(mContext, "聚汇影视提示您：只有一个频道！");
             return;
@@ -1497,7 +1497,7 @@ public class LivePlayActivity extends BaseActivity {
             return;
         }
         if(!isCurrentLiveChannelValid()) return;    //xuameng 空指针修复
-        int channelGroupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex(); //xuameng当前选定的频道组
+        int channelGroupIndexXu = currentChannelGroupIndex; //xuameng当前选定的频道组
         if(liveChannelGroupList.size() - 1 < 1 && getLiveChannels(channelGroupIndexXu).size() - 1 < 1) { //如果只有一个频道组就播放当前频道，不胯下胯下跨选频道组
             App.showToastShort(mContext, "聚汇影视提示您：只有一个频道！");
             return;
@@ -3972,6 +3972,8 @@ public class LivePlayActivity extends BaseActivity {
     
         if (mLiveChannelView != null && targetChannelIndex >= 0) {
             mLiveChannelView.scrollToPosition(targetChannelIndex);
+            refreshFavoriteChannelGroup = true;  //xuameng 判断刷收藏数据
+
         }
     }
 
