@@ -2350,7 +2350,10 @@ public class LivePlayActivity extends BaseActivity {
             mHideChannelListRunXu(); //xuameng隐藏频道菜单
         }
         if(focus) {
-            liveChannelItemAdapter.setFocusedChannelIndex(-1);   //xuameng 正常情况
+            if (mLiveChannelView.isComputingLayout() || mLiveChannelView.isScrolling()) {
+            }else{
+	            liveChannelItemAdapter.setFocusedChannelIndex(-1);   //xuameng 正常情况
+            }
         }
         if((groupIndex > -1 && groupIndex != liveChannelGroupAdapter.getSelectedGroupIndex()) || isNeedInputPassword(groupIndex)) { 
             isTouch = true;  //xuameng手机选择频道判断  显示正在播放频道所在组
