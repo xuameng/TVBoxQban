@@ -19,9 +19,9 @@ import com.google.gson.JsonObject;
 import com.orhanobut.hawk.Hawk;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -34,7 +34,15 @@ public class LiveChannelItemAdapter extends BaseQuickAdapter<LiveChannelItem, Ba
     private int selectedChannelIndex = -1;
     private int focusedChannelIndex = -1;
     private ExecutorService favoriteCheckExecutor;
-    private Map<String, Boolean> favoriteCache = new ConcurrentHashMap<>();
+    
+    // 使用LinkedHashMap实现LRU缓存
+    private static final int MAX_CACHE_SIZE = 200;
+    private Map<String, Boolean> favoriteCache = new LinkedHashMap<String, Boolean>() {
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<String, Boolean> eldest) {
+            return size() > MAX_CACHE_SIZE;
+        }
+    };
 
     public LiveChannelItemAdapter() {
         super(R.layout.item_live_channel, new ArrayList<>());
@@ -52,25 +60,21 @@ public class LiveChannelItemAdapter extends BaseQuickAdapter<LiveChannelItem, Ba
         
         int position = holder.getLayoutPosition();
         
-        // 异步检查收藏状态
+       // 异步检查收藏状态
         checkChannelFavoriteAsync(item, position, new FavoriteCheckCallback() {
             @Override
             public void onFavoriteChecked(boolean isFavorited, int checkedPosition) {
-                // 通过RecyclerView获取当前ViewHolder
-                RecyclerView recyclerView = getRecyclerView();
-                if (recyclerView != null) {
-                    BaseViewHolder currentHolder = (BaseViewHolder) recyclerView.findViewHolderForAdapterPosition(checkedPosition);
-                    if (currentHolder != null) {
-                        TextView starView = currentHolder.getView(R.id.ivFavoriteStar);
-                        if (isFavorited) {
-                            starView.setVisibility(View.VISIBLE);
-                            starView.setText("★");
-                            starView.setTextColor(Color.parseColor("#FFD700"));
-                        } else {
-                            starView.setVisibility(View.GONE);
-                        }
+                // 直接使用holder参数更新UI
+                if (holder.getLayoutPosition() == checkedPosition) {
+                    if (isFavorited) {
+                        tvFavoriteStar.setVisibility(View.VISIBLE);
+                        tvFavoriteStar.setText("★");
+                        tvFavoriteStar.setTextColor(Color.parseColor("#FFD700"));
+                    } else {
+                        tvFavoriteStar.setVisibility(View.GONE);
                     }
                 }
+                // 注意：这里不要调用notifyItemChanged
             }
         });
 
@@ -89,15 +93,16 @@ public class LiveChannelItemAdapter extends BaseQuickAdapter<LiveChannelItem, Ba
         void onFavoriteChecked(boolean isFavorited, int position);
     }
 
-    // 生成缓存键的方法
+    // 生成缓存键的方法 - 优化版本
     private String getChannelCacheKey(LiveChannelItem channel) {
-        return channel.getChannelName() + "|" + channel.getUrl();
+        // 使用频道名和当前URL的哈希值作为缓存键
+        return channel.getChannelName() + "|" + 
+               (channel.getUrl() != null ? channel.getUrl().hashCode() : 0);
     }
 
     // 修改异步检查方法，先检查缓存
     private void checkChannelFavoriteAsync(LiveChannelItem channel, int position, FavoriteCheckCallback callback) {
-        if (channel == null) {
-            if (callback != null) callback.onFavoriteChecked(false, position);
+        if (channel == null || callback == null) {
             return;
         }
         
@@ -105,13 +110,12 @@ public class LiveChannelItemAdapter extends BaseQuickAdapter<LiveChannelItem, Ba
         String cacheKey = getChannelCacheKey(channel);
         Boolean cachedResult = favoriteCache.get(cacheKey);
         if (cachedResult != null) {
-            if (callback != null) {
-                boolean finalResult = cachedResult;
-                if (mContext instanceof Activity) {
-                    ((Activity) mContext).runOnUiThread(() -> {
-                        callback.onFavoriteChecked(finalResult, position);
-                    });
-                }
+            // 缓存命中，直接回调
+            boolean finalResult = cachedResult;
+            if (mContext instanceof Activity) {
+                ((Activity) mContext).runOnUiThread(() -> {
+                    callback.onFavoriteChecked(finalResult, position);
+                });
             }
             return;
         }
@@ -128,25 +132,28 @@ public class LiveChannelItemAdapter extends BaseQuickAdapter<LiveChannelItem, Ba
                 JsonArray favoriteArray = Hawk.get(HawkConfig.LIVE_FAVORITE_CHANNELS, new JsonArray());
                 JsonObject currentChannelJson = LiveChannelItem.convertChannelToJson(channel);
                 
-                for (int i = 0; i < favoriteArray.size(); i++) {
-                    JsonObject favChannelJson = favoriteArray.get(i).getAsJsonObject();
-                    if (LiveChannelItem.isSameChannel(favChannelJson, currentChannelJson)) {
-                        isFavorited = true;
-                        break;
+                // 优化：使用更高效的比较方式
+                if (favoriteArray != null && favoriteArray.size() > 0) {
+                    for (int i = 0; i < favoriteArray.size(); i++) {
+                        JsonObject favChannelJson = favoriteArray.get(i).getAsJsonObject();
+                        if (LiveChannelItem.isSameChannel(favChannelJson, currentChannelJson)) {
+                            isFavorited = true;
+                            break;
+                        }
                     }
                 }
                 
                 // 更新缓存
-                favoriteCache.put(cacheKey, isFavorited);
+                synchronized (favoriteCache) {
+                    favoriteCache.put(cacheKey, isFavorited);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
                 boolean finalIsFavorited = isFavorited;
                 if (mContext instanceof Activity) {
                     ((Activity) mContext).runOnUiThread(() -> {
-                        if (callback != null) {
-                            callback.onFavoriteChecked(finalIsFavorited, position);
-                        }
+                        callback.onFavoriteChecked(finalIsFavorited, position);
                     });
                 }
             }
@@ -155,7 +162,7 @@ public class LiveChannelItemAdapter extends BaseQuickAdapter<LiveChannelItem, Ba
 
     // 清理缓存的方法
     public void clearFavoriteCache() {
-        if (favoriteCache != null) {
+        synchronized (favoriteCache) {
             favoriteCache.clear();
         }
     }
@@ -173,7 +180,9 @@ public class LiveChannelItemAdapter extends BaseQuickAdapter<LiveChannelItem, Ba
         super.onDetachedFromRecyclerView(recyclerView);
         if (favoriteCheckExecutor != null && !favoriteCheckExecutor.isShutdown()) {
             favoriteCheckExecutor.shutdownNow();
+            favoriteCheckExecutor = null;
         }
+        clearFavoriteCache();
     }
 
     public void setSelectedChannelIndex(int selectedChannelIndex) {
