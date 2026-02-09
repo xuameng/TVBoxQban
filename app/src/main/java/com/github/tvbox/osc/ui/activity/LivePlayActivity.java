@@ -3205,6 +3205,10 @@ public class LivePlayActivity extends BaseActivity {
     }
 
     private boolean isNeedInputPassword(int groupIndex) {
+        // xuameng 添加边界检查，防止 ArrayIndexOutOfBoundsException
+        if (groupIndex < 0 || groupIndex >= liveChannelGroupList.size()) {
+            return false;
+        }
         return !liveChannelGroupList.get(groupIndex).getGroupPassword().isEmpty() && !isPasswordConfirmed(groupIndex);
     }
 
