@@ -230,4 +230,52 @@ public class LiveChannelItemAdapter extends BaseQuickAdapter<LiveChannelItem, Ba
         }
         return false;
     }
+
+
+	/**
+ * 更新指定频道的收藏状态缓存
+ * @param channel 频道信息
+ * @param isFavorited 是否已收藏
+ * @param position 频道在列表中的位置（可选）
+ */
+public void updateFavoriteCache(LiveChannelItem channel, boolean isFavorited, int position) {
+    if (channel == null) return;
+    
+    String cacheKey = getChannelCacheKey(channel);
+    synchronized (favoriteCache) {
+        favoriteCache.put(cacheKey, isFavorited);
+    }
+    
+    // 如果知道位置，只刷新这个item
+    if (position >= 0) {
+        notifyItemChanged(position);
+    } else {
+        // 不知道位置时，查找并刷新
+        int itemPosition = findItemPosition(channel);
+        if (itemPosition >= 0) {
+            notifyItemChanged(itemPosition);
+        }
+    }
+}
+
+/**
+ * 查找频道在列表中的位置
+ */
+private int findItemPosition(LiveChannelItem channel) {
+    List<LiveChannelItem> data = getData();
+    if (data == null || channel == null) return -1;
+    
+    for (int i = 0; i < data.size(); i++) {
+        LiveChannelItem item = data.get(i);
+        if (item != null && item.getChannelName().equals(channel.getChannelName())) {
+            // 比较URL或其他标识
+            if (item.getUrl() != null && item.getUrl().equals(channel.getUrl())) {
+                return i;
+            }
+        }
+    }
+    return -1;
+}
+
+
 }
