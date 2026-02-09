@@ -197,7 +197,7 @@ public class LiveChannelItem {
     /**  我的收藏
      * 判断两个 JsonObject 是否代表同一个频道
      */
-    public static boolean isSameChannel(JsonObject fav1, JsonObject fav2) {
+/*    public static boolean isSameChannel(JsonObject fav1, JsonObject fav2) {
         if (!fav1.get("channelName").getAsString().equals(fav2.get("channelName").getAsString())) {
             return false;
         }
@@ -217,7 +217,29 @@ public class LiveChannelItem {
         }
 
         return set1.equals(set2);
+    }   */
+
+public static boolean isSameChannel(JsonObject fav1, JsonObject fav2) {
+    // 1. 先比较频道名（保持原逻辑，确保是同一频道）
+    if (!fav1.get("channelName").getAsString().equals(fav2.get("channelName").getAsString())) {
+        return false;
     }
+    
+    // 2. 直接取两个频道的第一个URL（index=0）比较
+    JsonArray urls1 = fav1.getAsJsonArray("channelUrls");
+    JsonArray urls2 = fav2.getAsJsonArray("channelUrls");
+    
+    // 3. 边界检查：确保两个数组都有至少一个URL（避免越界）
+    if (urls1.size() == 0 || urls2.size() == 0) {
+        return false; // 若某频道无URL，视为不同
+    }
+    
+    // 4. 比较第一个URL（index=0）
+    String firstUrl1 = urls1.get(0).getAsString();
+    String firstUrl2 = urls2.get(0).getAsString();
+    return firstUrl1.equals(firstUrl2);
+}
+
 
     /**  我的收藏
      * 将 JsonObject 转换为 LiveChannelItem（提取公共方法）
