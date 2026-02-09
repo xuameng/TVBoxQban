@@ -3933,6 +3933,7 @@ public class LivePlayActivity extends BaseActivity {
         if (liveChannelItemAdapter != null && mLiveChannelView != null) {
            liveChannelItemAdapter.setSelectedChannelIndex(targetChannelIndex);
 	       mLiveChannelView.setSelection(targetChannelIndex); 
+           liveChannelItemAdapter.setFocusedChannelIndex(targetChannelIndex);
         }
     }
 
