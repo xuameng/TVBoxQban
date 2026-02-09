@@ -2350,7 +2350,7 @@ public class LivePlayActivity extends BaseActivity {
             mHideChannelListRunXu(); //xuameng隐藏频道菜单
         }
         if(focus) {
-            if (mLiveChannelView.isComputingLayout() || mLiveChannelView.isScrolling()) {
+            if(mChannelGroupView.isScrolling() || mLiveChannelView.isScrolling() || mChannelGroupView.isComputingLayout() || mLiveChannelView.isComputingLayout()) {
             }else{
 	            liveChannelItemAdapter.setFocusedChannelIndex(-1);   //xuameng 正常情况
             }
@@ -2384,7 +2384,7 @@ public class LivePlayActivity extends BaseActivity {
         mLiveChannelView.setOnItemListener(new TvRecyclerView.OnItemListener() {
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
-                if (mLiveChannelView.isComputingLayout() || mLiveChannelView.isScrolling()) {
+                if(mChannelGroupView.isScrolling() || mLiveChannelView.isScrolling() || mChannelGroupView.isComputingLayout() || mLiveChannelView.isComputingLayout()) {
                 }else{
 	                liveChannelItemAdapter.setFocusedChannelIndex(-1);   //xuameng 正常情况
                 }
@@ -3822,7 +3822,8 @@ public class LivePlayActivity extends BaseActivity {
                     }
                 
                     if (targetChannelIndex != -1) {
-
+                        // 找到了当前播放的频道，先滚动到当前播放的频道
+                        judgeScrollChannelIndex(targetChannelIndex);
                         // 找到了当前播放的频道，恢复其选中和高亮状态
                         judgeSelectedChannelIndex(targetChannelIndex);
                     
@@ -3886,7 +3887,7 @@ public class LivePlayActivity extends BaseActivity {
 
     private void judgeSelectedChannelIndex(int targetChannelIndex) {     //xuameng 修复我的收藏滚动闪退
         // 检查 RecyclerView 是否处于安全状态
-        if (mLiveChannelView.isComputingLayout() || mLiveChannelView.isScrolling()) {
+        if(mChannelGroupView.isScrolling() || mLiveChannelView.isScrolling() || mChannelGroupView.isComputingLayout() || mLiveChannelView.isComputingLayout()) {
             // 延迟执行，避免在布局计算或滚动过程中操作
             new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                 @Override
@@ -3899,6 +3900,24 @@ public class LivePlayActivity extends BaseActivity {
     
         if (liveChannelItemAdapter != null) {
             liveChannelItemAdapter.setSelectedChannelIndex(targetChannelIndex);
+        }
+    }
+
+    private void judgeScrollChannelIndex(int targetChannelIndex) {     //xuameng 修复我的收藏滚动闪退
+        // 检查 RecyclerView 是否处于安全状态
+        if(mChannelGroupView.isScrolling() || mLiveChannelView.isScrolling() || mChannelGroupView.isComputingLayout() || mLiveChannelView.isComputingLayout()) {
+            // 延迟执行，避免在布局计算或滚动过程中操作
+            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    judgeSelectedChannelIndex(targetChannelIndex); 
+                }
+            }, 20);
+            return;
+        }
+    
+        if (mLiveChannelView != null) {
+            mLiveChannelView.scrollToPosition(targetChannelIndex);
         }
     }
 
