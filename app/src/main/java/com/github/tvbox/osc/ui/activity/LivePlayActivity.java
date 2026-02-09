@@ -2354,7 +2354,6 @@ public class LivePlayActivity extends BaseActivity {
             liveChannelGroupAdapter.setFocusedGroupIndex(groupIndex);
             if (refreshFavoriteChannelGroup){
                 judgeFocusedChannelIndex();    //xuameng 修复我的收藏滚动闪退
-                refreshFavoriteChannelGroup = false;  //xuameng 判断刷收藏数据
             }else{
                 liveChannelItemAdapter.setFocusedChannelIndex(-1);   //xuameng 正常情况
             }
@@ -2390,7 +2389,6 @@ public class LivePlayActivity extends BaseActivity {
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
                 if (refreshFavoriteChannelGroup){
                     judgeFocusedChannelIndex();    //xuameng 修复我的收藏滚动闪退
-                    refreshFavoriteChannelGroup = false;  //xuameng 判断刷收藏数据
                 }else{
                     liveChannelItemAdapter.setFocusedChannelIndex(-1);   //xuameng 正常情况
                 }
@@ -3247,7 +3245,7 @@ public class LivePlayActivity extends BaseActivity {
                     do {
                         channelGroupIndex++;
                         if(channelGroupIndex >= liveChannelGroupList.size()) channelGroupIndex = 0;
-                    } while(!liveChannelGroupList.get(channelGroupIndex).getGroupPassword().isEmpty() && isNeedInputPassword(channelGroupIndex) || channelGroupIndex == currentChannelGroupIndex);   //xuameng isNeedInputPassword(channelGroupIndex)  目的是跨选分类，如果密码频道组密码验证以通过了即使有密码也可以跨选了是的BUG
+                    } while(channelGroupIndex == 0 || !liveChannelGroupList.get(channelGroupIndex).getGroupPassword().isEmpty() && isNeedInputPassword(channelGroupIndex) || channelGroupIndex == currentChannelGroupIndex);   //xuameng isNeedInputPassword(channelGroupIndex)  目的是跨选分类，如果密码频道组密码验证以通过了即使有密码也可以跨选了是的BUG    // 新增：跳过"我的收藏"组（索引0）
                 }
             }
         } else {
@@ -3257,7 +3255,7 @@ public class LivePlayActivity extends BaseActivity {
                     do {
                         channelGroupIndex--;
                         if(channelGroupIndex < 0) channelGroupIndex = liveChannelGroupList.size() - 1;
-                    } while(!liveChannelGroupList.get(channelGroupIndex).getGroupPassword().isEmpty() && isNeedInputPassword(channelGroupIndex) || channelGroupIndex == currentChannelGroupIndex);   //xuameng isNeedInputPassword(channelGroupIndex)  目的是跨选分类，如果密码频道组密码验证以通过了即使有密码也可以跨选了是的BUG
+                    } while(channelGroupIndex == 0 || !liveChannelGroupList.get(channelGroupIndex).getGroupPassword().isEmpty() && isNeedInputPassword(channelGroupIndex) || channelGroupIndex == currentChannelGroupIndex);   //xuameng isNeedInputPassword(channelGroupIndex)  目的是跨选分类，如果密码频道组密码验证以通过了即使有密码也可以跨选了是的BUG   // 新增：跳过"我的收藏"组（索引0）
                 }
                 liveChannelIndex = getLiveChannels(channelGroupIndex).size() - 1;
             }
@@ -3799,7 +3797,6 @@ public class LivePlayActivity extends BaseActivity {
         
             // 刷新适配器数据
             liveChannelGroupAdapter.setNewData(liveChannelGroupList);
-            refreshFavoriteChannelGroup = true;  //xuameng 判断刷收藏数据
         
             // 如果当前选中的是收藏组，需要处理焦点逻辑
             int selectedGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
@@ -3815,7 +3812,6 @@ public class LivePlayActivity extends BaseActivity {
                 ArrayList<LiveChannelItem> favoriteChannels = getLiveChannels(favoriteGroupIndex);
                 // 更新频道列表
                 liveChannelItemAdapter.setNewData(favoriteChannels);
-                refreshFavoriteChannelGroup = true;  //xuameng 判断刷收藏数据
             
                 // ========== 修复：恢复当前播放频道的选中状态 ==========
                 if (currentChannelName != null && currentChannelGroupIndex == favoriteGroupIndex) {
@@ -3846,8 +3842,8 @@ public class LivePlayActivity extends BaseActivity {
                         // 没有找到当前播放的频道（可能被删除了），确保没有选中项
                         // 清除当前播放频道信息
                         // currentLiveChannelItem = null;
+                        //channel_Name = null;
                         currentLiveChannelIndex = -1;
-                        channel_Name = null;
                         judgeSelectedChannelIndex(-1); 
                     }
                 }else {
@@ -3917,6 +3913,7 @@ public class LivePlayActivity extends BaseActivity {
         // 只在安全状态下执行业务逻辑
         if (liveChannelItemAdapter != null) {
             liveChannelItemAdapter.setFocusedChannelIndex(-1);
+            refreshFavoriteChannelGroup = false;  //xuameng 频道更新我的收藏
         }
     }
 
@@ -3971,8 +3968,8 @@ public class LivePlayActivity extends BaseActivity {
         }
     
         if (mLiveChannelView != null && targetChannelIndex >= 0) {
+            refreshFavoriteChannelGroup = true;  //xuameng 频道更新我的收藏
             mLiveChannelView.scrollToPosition(targetChannelIndex);
-            refreshFavoriteChannelGroup = true;  //xuameng 判断刷收藏数据
 
         }
     }
