@@ -996,11 +996,11 @@ public class LivePlayActivity extends BaseActivity {
         public void run() {
             tvSelectedChannel.setVisibility(View.GONE);
             tvSelectedChannel.setText("");
-            int grpIndx = 1;
+            int grpIndx = 1;  // 从第2组开始（跳过"我的收藏"组）
             int chaIndx = 1;
             int getMin = 1;
             int getMax;
-            for(int j = 0; j < liveChannelGroupList.size(); j++) { //xuameng循环频道组
+            for(int j = 1; j < liveChannelGroupList.size(); j++) { //xuameng循环频道组
                 getMax = getMin + getLiveChannelsXu(j).size() - 1;     //xuameng数字选台时用跳过密码频道验证获取全部频道编号
                 if(selectedChannelNumber >= getMin && selectedChannelNumber <= getMax) {
                     grpIndx = j;
@@ -3799,6 +3799,7 @@ public class LivePlayActivity extends BaseActivity {
         
             // 刷新适配器数据
             liveChannelGroupAdapter.setNewData(liveChannelGroupList);
+            refreshFavoriteChannelGroup = true;  //xuameng 判断刷收藏数据
         
             // 如果当前选中的是收藏组，需要处理焦点逻辑
             int selectedGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
