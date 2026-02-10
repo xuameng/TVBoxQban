@@ -3286,14 +3286,14 @@ private boolean isGroupAllPlaceholders(int groupIndex) {
         return -1;
     }
     private boolean isCurrentLiveChannelValid() {
-        if(currentLiveChannelItem == null) {
+        if(currentLiveChannelItem == null || currentLiveChannelIndex == -1) {
            App.showToastShort(mContext, "聚汇影视提示您：请先选择频道！");
            return false;
         }
         return true;
     }
     private boolean isCurrentLiveChannelValidXu() {
-        if(currentLiveChannelItem == null) {
+        if(currentLiveChannelItem == null || currentLiveChannelIndex == -1) {
             return false;
         }
         return true;
