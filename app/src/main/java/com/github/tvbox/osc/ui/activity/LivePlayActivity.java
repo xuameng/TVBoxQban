@@ -2233,13 +2233,7 @@ public class LivePlayActivity extends BaseActivity {
         boolean isCurrentGroupEmptyOrPlaceholder = isGroupEmptyOrPlaceholderDirect(currentGroupChannels);
         // ========== 新增结束 ==========
 
-	    // 修改条件1：检查“只有一个频道组”且“当前组没有有效频道”
-    if(liveChannelGroupList.size() - 1 < 1 && isCurrentGroupEmptyOrPlaceholder) { //如果只有一个频道组且该组没有有效频道
-        App.showToastShort(mContext, "聚汇影视提示您：请选择频道！");
-        return;
-    }
-
-                if(liveChannelGroupList.size() - 1 < 1 && getLiveChannels(channelGroupIndexXu).size() - 1 < 1) { //如果只有一个频道组就播放当前频道，不胯下跨选频道组
+                if(liveChannelGroupList.size() - 1 < 1 && getLiveChannels(channelGroupIndexXu).size() - 1 < 1 && !isCurrentGroupEmptyOrPlaceholder) { //如果只有一个频道组就播放当前频道，不胯下跨选频道组
                     playXuSource();
                     App.showToastShort(mContext, "聚汇影视提示您：只有一个频道！正在重播！");
                     return;
