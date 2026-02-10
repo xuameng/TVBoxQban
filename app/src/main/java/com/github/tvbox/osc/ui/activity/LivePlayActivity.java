@@ -1301,7 +1301,7 @@ public class LivePlayActivity extends BaseActivity {
         if(countDownTimer10 != null) {
             countDownTimer10.cancel();
         }
-        countDownTimer10 = new CountDownTimer(100, 50) { //底部epg隐藏时间设定
+        countDownTimer10 = new CountDownTimer(20, 10) { //底部epg隐藏时间设定
             public void onTick(long j) {}
             public void onFinish() {
                 mFocusCurrentChannelAndShowChannelList();
@@ -1314,7 +1314,7 @@ public class LivePlayActivity extends BaseActivity {
             if(countDownTimer20 != null) {
                 countDownTimer20.cancel();
             }
-            countDownTimer20 = new CountDownTimer(100, 50) { //底部epg隐藏时间设定
+            countDownTimer20 = new CountDownTimer(20, 10) { //底部epg隐藏时间设定
                 public void onTick(long j) {}
                 public void onFinish() {
                     mFocusCurrentChannelAndShowChannelList();
@@ -1552,7 +1552,7 @@ public class LivePlayActivity extends BaseActivity {
             if(countDownTimer22 != null) {
                 countDownTimer22.cancel();
             }
-            countDownTimer22 = new CountDownTimer(100, 50) { //XUAMENG显示右侧菜单时间设定
+            countDownTimer22 = new CountDownTimer(20, 10) { //XUAMENG显示右侧菜单时间设定
                 public void onTick(long j) {}
                 public void onFinish() {
                     mFocusAndShowSettingGroup();
@@ -1568,7 +1568,7 @@ public class LivePlayActivity extends BaseActivity {
             if(countDownTimer21 != null) {
                 countDownTimer21.cancel();
             }
-            countDownTimer21 = new CountDownTimer(100, 50) { //底部epg隐藏时间设定
+            countDownTimer21 = new CountDownTimer(20, 10) { //显示设置菜单时间设定
                 public void onTick(long j) {}
                 public void onFinish() {
                     mFocusAndShowSettingGroup();
@@ -2350,11 +2350,8 @@ public class LivePlayActivity extends BaseActivity {
             mHideChannelListRunXu(); //xuameng隐藏频道菜单
         }
         if(focus) {
-                liveChannelGroupAdapter.setFocusedGroupIndex(groupIndex);
-            if (mLiveChannelView.isComputingLayout() || mLiveChannelView.isScrolling()) {
-            }else{
-	            liveChannelItemAdapter.setFocusedChannelIndex(-1);   //xuameng 正常情况
-            }
+            liveChannelGroupAdapter.setFocusedGroupIndex(groupIndex);
+            judgeFocusedChannelIndex();  //xuameng 滚动闪退
         }
         if((groupIndex > -1 && groupIndex != liveChannelGroupAdapter.getSelectedGroupIndex()) || isNeedInputPassword(groupIndex)) { 
             isTouch = true;  //xuameng手机选择频道判断  显示正在播放频道所在组
@@ -2385,7 +2382,7 @@ public class LivePlayActivity extends BaseActivity {
         mLiveChannelView.setOnItemListener(new TvRecyclerView.OnItemListener() {
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
-                if (mLiveChannelView.isComputingLayout() || mLiveChannelView.isScrolling()) {
+                if (mLiveChannelView.isComputingLayout() || mLiveChannelView.isScrolling()) {  //xuameng 滚动闪退
                 }else{
 	                liveChannelItemAdapter.setFocusedChannelIndex(-1);   //xuameng 正常情况
                 }
@@ -3714,7 +3711,7 @@ public class LivePlayActivity extends BaseActivity {
                     customEpgScrollPos(targetPos);
                 }
             };
-            mRightEpgList.postDelayed(delayedScrollTask, 100);
+            mRightEpgList.postDelayed(delayedScrollTask, 20);
             return;
         }
     
@@ -3726,7 +3723,7 @@ public class LivePlayActivity extends BaseActivity {
                     customEpgScrollPos(targetPos);
                 }
             };
-            mRightEpgList.postDelayed(delayedScrollTask, 100);
+            mRightEpgList.postDelayed(delayedScrollTask, 20);
             return;
         }
     
@@ -3921,6 +3918,25 @@ public class LivePlayActivity extends BaseActivity {
     
         if (mLiveChannelView != null) {
             mLiveChannelView.scrollToPosition(targetChannelIndex);
+        }
+    }
+
+    private void judgeFocusedChannelIndex() {     //xuameng 修复我的收藏滚动闪退
+        // 检查 RecyclerView 是否处于安全状态
+        if (mLiveChannelView.isComputingLayout() || mLiveChannelView.isScrolling()) {
+            // 延迟执行，避免在布局计算或滚动过程中操作
+            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    judgeFocusedChannelIndex(); 
+                }
+            }, 20);
+            return;
+        }
+    
+        // 只在安全状态下执行业务逻辑
+        if (liveChannelItemAdapter != null) {
+            liveChannelItemAdapter.setFocusedChannelIndex(-1);
         }
     }
 
