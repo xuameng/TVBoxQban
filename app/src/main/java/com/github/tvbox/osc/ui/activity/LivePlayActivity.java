@@ -3227,85 +3227,47 @@ public class LivePlayActivity extends BaseActivity {
     private ArrayList < LiveChannelItem > getLiveChannelsXu(int groupIndex) {   //xuameng数字选台时用跳过密码频道验证
         return liveChannelGroupList.get(groupIndex).getLiveChannels();
     }
-
-
-private Integer[] getNextChannel(int direction) {
-    int channelGroupIndex = currentChannelGroupIndex;
-    int liveChannelIndex = currentLiveChannelIndex;
-    LiveChannelGroup currentGroup = null; // 统一在方法顶部定义currentGroup，避免重复定义
-    // 跨选分组模式下跳过加密频道分组（遥控器上下键换台/超时换源）
-    if (direction > 0) {
-        liveChannelIndex++;
-        // 当前频道的索引超出当前组的范围，需要跨组
-        if (liveChannelIndex >= getLiveChannels(channelGroupIndex).size()) {
-            liveChannelIndex = 0; // 重置为下一组的第一个频道
-            // 开启跨选分组：循环找到下一个有效组
-            if (Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false)) {
-                do {
-                    channelGroupIndex++;
-                    // 循环到组列表末尾，回到第一个组
-                    if (channelGroupIndex >= liveChannelGroupList.size()) {
-                        channelGroupIndex = 0;
-                    }
-                    currentGroup = liveChannelGroupList.get(channelGroupIndex);
-                    // 关键修改：移除`channelGroupIndex == 0`的强制跳过，仅保留以下3个条件
-                } while (
-                    // 1. 跳过需要密码的组（若密码未验证通过）
-                    (!currentGroup.getGroupPassword().isEmpty() && isNeedInputPassword(channelGroupIndex)) ||
-                    // 2. 跳过当前组（避免循环到当前组）
-                    channelGroupIndex == currentChannelGroupIndex ||
-                    // 3. 跳过全为占位项的组（无有效频道）
-                    isGroupAllPlaceholders(channelGroupIndex)
-                );
+    private Integer[] getNextChannel(int direction) {
+        int channelGroupIndex = currentChannelGroupIndex;
+        int liveChannelIndex = currentLiveChannelIndex;
+        //跨选分组模式下跳过加密频道分组（遥控器上下键换台/超时换源）
+        if(direction > 0) {
+            liveChannelIndex++;
+            if(liveChannelIndex >= getLiveChannels(channelGroupIndex).size()) {
+                liveChannelIndex = 0;
+                if(Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false)) {
+                    do {
+                        channelGroupIndex++;
+                        if(channelGroupIndex >= liveChannelGroupList.size()) channelGroupIndex = 0;
+                    } while(channelGroupIndex == 0 || !liveChannelGroupList.get(channelGroupIndex).getGroupPassword().isEmpty() && isNeedInputPassword(channelGroupIndex) || channelGroupIndex == currentChannelGroupIndex || isGroupEmptyOrPlaceholder(channelGroupIndex));   //xuameng isNeedInputPassword(channelGroupIndex)  目的是跨选分类，如果密码频道组密码验证以通过了即使有密码也可以跨选了是的BUG    // 新增：跳过"我的收藏"组（索引0）
+                }
+            }
+        } else {
+            liveChannelIndex--;
+            if(liveChannelIndex < 0) {
+                if(Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false)) {
+                    do {
+                        channelGroupIndex--;
+                        if(channelGroupIndex < 0) channelGroupIndex = liveChannelGroupList.size() - 1;
+                    } while(channelGroupIndex == 0 || !liveChannelGroupList.get(channelGroupIndex).getGroupPassword().isEmpty() && isNeedInputPassword(channelGroupIndex) || channelGroupIndex == currentChannelGroupIndex || isGroupEmptyOrPlaceholder(channelGroupIndex));   //xuameng isNeedInputPassword(channelGroupIndex)  目的是跨选分类，如果密码频道组密码验证以通过了即使有密码也可以跨选了是的BUG   // 新增：跳过"我的收藏"组（索引0）
+                }
+                liveChannelIndex = getLiveChannels(channelGroupIndex).size() - 1;
             }
         }
-    } else {
-        liveChannelIndex--;
-        // 当前频道的索引小于0，需要跨组
-        if (liveChannelIndex < 0) {
-            // 开启跨选分组：循环找到上一个有效组
-            if (Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false)) {
-                do {
-                    channelGroupIndex--;
-                    // 循环到组列表开头，回到最后一个组
-                    if (channelGroupIndex < 0) {
-                        channelGroupIndex = liveChannelGroupList.size() - 1;
-                    }
-                    currentGroup = liveChannelGroupList.get(channelGroupIndex);
-                    // 关键修改：移除`channelGroupIndex == 0`的强制跳过，仅保留以下3个条件
-                } while (
-                    // 1. 跳过需要密码的组（若密码未验证通过）
-                    (!currentGroup.getGroupPassword().isEmpty() && isNeedInputPassword(channelGroupIndex)) ||
-                    // 2. 跳过当前组（避免循环到当前组）
-                    channelGroupIndex == currentChannelGroupIndex ||
-                    // 3. 跳过全为占位项的组（无有效频道）
-                    isGroupAllPlaceholders(channelGroupIndex)
-                );
-            }
-            // 跨组后，设置为目标组的最后一个频道
-            liveChannelIndex = getLiveChannels(channelGroupIndex).size() - 1;
-        }
+        Integer[] groupChannelIndex = new Integer[2];
+        groupChannelIndex[0] = channelGroupIndex;
+        groupChannelIndex[1] = liveChannelIndex;
+        return groupChannelIndex;
     }
-    
-    Integer[] groupChannelIndex = new Integer[2];
-    groupChannelIndex[0] = channelGroupIndex;
-    groupChannelIndex[1] = liveChannelIndex;
-    return groupChannelIndex;
-}
 
-private boolean isGroupAllPlaceholders(int groupIndex) {
+private boolean isGroupEmptyOrPlaceholder(int groupIndex) {
+    if (groupIndex < 0 || groupIndex >= liveChannelGroupList.size()) {
+        return true;
+    }
     ArrayList<LiveChannelItem> channels = getLiveChannels(groupIndex);
-    if (channels == null || channels.isEmpty()) {
-        return true; // 空组视为全占位
-    }
-    for (LiveChannelItem channel : channels) {
-        if (channel.getChannelIndex() != -1) {
-            return false; // 有有效频道，不是全占位
-        }
-    }
-    return true; // 所有频道都是占位项
+    // 如果频道列表为空，或者只有一个频道且该频道是占位项（channelIndex == -1）
+    return channels == null || channels.isEmpty() || (channels.size() == 1 && channels.get(0).getChannelIndex() == -1);
 }
-
 
     private int getFirstNoPasswordChannelGroup() {
         for(LiveChannelGroup liveChannelGroup: liveChannelGroupList) {
@@ -3314,14 +3276,14 @@ private boolean isGroupAllPlaceholders(int groupIndex) {
         return -1;
     }
     private boolean isCurrentLiveChannelValid() {
-        if(currentLiveChannelItem == null || currentLiveChannelIndex == -1) {
+        if(currentLiveChannelItem == null) {
            App.showToastShort(mContext, "聚汇影视提示您：请先选择频道！");
            return false;
         }
         return true;
     }
     private boolean isCurrentLiveChannelValidXu() {
-        if(currentLiveChannelItem == null || currentLiveChannelIndex == -1) {
+        if(currentLiveChannelItem == null) {
             return false;
         }
         return true;
