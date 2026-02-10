@@ -2220,6 +2220,11 @@ public class LivePlayActivity extends BaseActivity {
     private Runnable mConnectTimeoutChangeSourceRun = new Runnable() {
         @Override
         public void run() {
+        // 确保在主线程执行
+        if (Looper.myLooper() != Looper.getMainLooper()) {
+            mHandler.post(this);
+            return;
+        }
             TimeoutChangeSource = true;  //xuameng是否自动换源
             currentLiveChangeSourceTimes++;
             int channelGroupIndexXu = currentChannelGroupIndex; //xuameng当前选定的频道组;
