@@ -1409,6 +1409,15 @@ public class LivePlayActivity extends BaseActivity {
             currentChannelGroupIndex = channelGroupIndex;
             currentLiveChannelIndex = liveChannelIndex;
             currentLiveChannelItem = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndex);
+        // ========== 新增：关键修复 - 检查获取到的频道是否为占位项 ==========
+        if (currentLiveChannelItem != null && currentLiveChannelItem.getChannelIndex() == -1) {
+            // 如果当前频道是占位项（"暂无收藏"），则主动寻找下一个有效频道
+            App.showToastShort(mContext, "目标频道无效，正在寻找下一个有效频道...");
+            Integer[] nextValidChannel = getNextChannel(Hawk.get(HawkConfig.LIVE_CHANNEL_REVERSE, false) ? -1 : 1);
+            // 递归调用 playChannel，播放找到的有效频道
+            return playChannel(nextValidChannel[0], nextValidChannel[1], false);
+        }
+        // ========== 新增结束 ==========
             Hawk.put(HawkConfig.LIVE_CHANNEL, currentLiveChannelItem.getChannelName());
             HawkUtils.setLastLiveChannelGroup(liveChannelGroupList.get(currentChannelGroupIndex).getGroupName()); //xuameng记忆频道组
             livePlayerManager.getLiveChannelPlayer(mVideoView, currentLiveChannelItem.getChannelName());
@@ -1463,6 +1472,12 @@ public class LivePlayActivity extends BaseActivity {
             }
 
             currentLiveChannelItemXu = getLiveChannels(currentChannelGroupIndexXu).get(currentLiveChannelIndexXu);
+        // ========== 新增：检查是否为占位项 ==========
+        if (currentLiveChannelItemXu != null && currentLiveChannelItemXu.getChannelIndex() == -1) {
+            // 如果是占位项，直接返回false，不更新EPG
+            return false;
+        }
+        // ========== 新增结束 ==========
             liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
         }
         channel_NameXu = currentLiveChannelItemXu; //xuameng重要EPG名称
@@ -2211,6 +2226,17 @@ public class LivePlayActivity extends BaseActivity {
             int channelGroupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex(); //xuameng当前选定的频道组
             if(currentLiveChannelItem.getSourceNum() == currentLiveChangeSourceTimes) { //xuameng如果只有一个源就换频道
                 currentLiveChangeSourceTimes = 0;
+    // ========== 新增：判断当前组是否为空或仅包含占位项 ==========
+    ArrayList<LiveChannelItem> currentGroupChannels = getLiveChannels(channelGroupIndexXu);
+    boolean isCurrentGroupEmptyOrPlaceholder = isGroupEmptyOrPlaceholder(channelGroupIndexXu);
+    // ========== 新增结束 ==========
+
+	    // 修改条件1：检查“只有一个频道组”且“当前组没有有效频道”
+    if(liveChannelGroupList.size() - 1 < 1 && isCurrentGroupEmptyOrPlaceholder) { //如果只有一个频道组且该组没有有效频道
+        App.showToastShort(mContext, "聚汇影视提示您：请选择频道！");
+        return;
+    }
+
                 if(liveChannelGroupList.size() - 1 < 1 && getLiveChannels(channelGroupIndexXu).size() - 1 < 1) { //如果只有一个频道组就播放当前频道，不胯下跨选频道组
                     playXuSource();
                     App.showToastShort(mContext, "聚汇影视提示您：只有一个频道！正在重播！");
@@ -2228,6 +2254,17 @@ public class LivePlayActivity extends BaseActivity {
             }
         }
     };
+
+	private boolean isGroupEmptyOrPlaceholder(int groupIndex) {
+    if (groupIndex < 0 || groupIndex >= liveChannelGroupList.size()) {
+        return true;
+    }
+    ArrayList<LiveChannelItem> channels = getLiveChannels(groupIndex);
+    // 如果频道列表为空，或者只有一个频道且该频道是占位项（channelIndex == -1）
+    return channels == null || channels.isEmpty() || (channels.size() == 1 && channels.get(0).getChannelIndex() == -1);
+}
+
+
     public void showToastXu() {   //xuameng回看完成
         App.HideToast();  //xuameng HideToast
         cancelxToast();
@@ -3239,7 +3276,7 @@ public class LivePlayActivity extends BaseActivity {
                     do {
                         channelGroupIndex++;
                         if(channelGroupIndex >= liveChannelGroupList.size()) channelGroupIndex = 0;
-                    } while(channelGroupIndex == 0 || !liveChannelGroupList.get(channelGroupIndex).getGroupPassword().isEmpty() && isNeedInputPassword(channelGroupIndex) || channelGroupIndex == currentChannelGroupIndex || isGroupEmptyOrPlaceholder(channelGroupIndex));   //xuameng isNeedInputPassword(channelGroupIndex)  目的是跨选分类，如果密码频道组密码验证以通过了即使有密码也可以跨选了是的BUG    // 新增：跳过"我的收藏"组（索引0）
+                    } while(channelGroupIndex == 0 || !liveChannelGroupList.get(channelGroupIndex).getGroupPassword().isEmpty() && isNeedInputPassword(channelGroupIndex) || channelGroupIndex == currentChannelGroupIndex);   //xuameng isNeedInputPassword(channelGroupIndex)  目的是跨选分类，如果密码频道组密码验证以通过了即使有密码也可以跨选了是的BUG    // 新增：跳过"我的收藏"组（索引0）
                 }
             }
         } else {
@@ -3249,7 +3286,7 @@ public class LivePlayActivity extends BaseActivity {
                     do {
                         channelGroupIndex--;
                         if(channelGroupIndex < 0) channelGroupIndex = liveChannelGroupList.size() - 1;
-                    } while(channelGroupIndex == 0 || !liveChannelGroupList.get(channelGroupIndex).getGroupPassword().isEmpty() && isNeedInputPassword(channelGroupIndex) || channelGroupIndex == currentChannelGroupIndex || isGroupEmptyOrPlaceholder(channelGroupIndex));   //xuameng isNeedInputPassword(channelGroupIndex)  目的是跨选分类，如果密码频道组密码验证以通过了即使有密码也可以跨选了是的BUG   // 新增：跳过"我的收藏"组（索引0）
+                    } while(channelGroupIndex == 0 || !liveChannelGroupList.get(channelGroupIndex).getGroupPassword().isEmpty() && isNeedInputPassword(channelGroupIndex) || channelGroupIndex == currentChannelGroupIndex);   //xuameng isNeedInputPassword(channelGroupIndex)  目的是跨选分类，如果密码频道组密码验证以通过了即使有密码也可以跨选了是的BUG   // 新增：跳过"我的收藏"组（索引0）
                 }
                 liveChannelIndex = getLiveChannels(channelGroupIndex).size() - 1;
             }
@@ -3259,16 +3296,6 @@ public class LivePlayActivity extends BaseActivity {
         groupChannelIndex[1] = liveChannelIndex;
         return groupChannelIndex;
     }
-
-private boolean isGroupEmptyOrPlaceholder(int groupIndex) {
-    if (groupIndex < 0 || groupIndex >= liveChannelGroupList.size()) {
-        return true;
-    }
-    ArrayList<LiveChannelItem> channels = getLiveChannels(groupIndex);
-    // 如果频道列表为空，或者只有一个频道且该频道是占位项（channelIndex == -1）
-    return channels == null || channels.isEmpty() || (channels.size() == 1 && channels.get(0).getChannelIndex() == -1);
-}
-
     private int getFirstNoPasswordChannelGroup() {
         for(LiveChannelGroup liveChannelGroup: liveChannelGroupList) {
             if(liveChannelGroup.getGroupPassword().isEmpty()) return liveChannelGroup.getGroupIndex();
