@@ -2226,14 +2226,20 @@ public class LivePlayActivity extends BaseActivity {
             int channelGroupIndexXu = currentChannelGroupIndex; //xuameng当前选定的频道组;
             if(currentLiveChannelItem.getSourceNum() == currentLiveChangeSourceTimes) { //xuameng如果只有一个源就换频道
                 currentLiveChangeSourceTimes = 0;
-            // 添加索引不为-1的判断
-            ArrayList<LiveChannelItem> channels = getLiveChannels(channelGroupIndexXu);
-                if(liveChannelGroupList.size() - 1 < 1 && getLiveChannels(channelGroupIndexXu).size() - 1 < 1 && channels.get(0).getChannelIndex() != -1) { //如果只有一个频道组就播放当前频道，不胯下跨选频道组
+                // xuameng添加索引不为-1的判断 如果是-1就是暂无收藏直接切换下一个频道
+                ArrayList<LiveChannelItem> channels = getLiveChannels(channelGroupIndexXu);
+                // 优化后的条件判断，避免在占位项情况下误判
+                if(!Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false) && !channels.isEmpty() && 
+                    channels.get(0).getChannelIndex() = -1) { //如果只有一个频道组就播放当前频道，不胯下跨选频道组
+                    App.showToastShort(mContext, "聚汇影视提示您：请选择频道！");
+                    return;
+                }
+                else if(liveChannelGroupList.size() - 1 < 1 && getLiveChannels(channelGroupIndexXu).size() - 1 < 1) { //如果只有一个频道组就播放当前频道，不胯下跨选频道组
                     playXuSource();
                     App.showToastShort(mContext, "聚汇影视提示您：只有一个频道！正在重播！");
                     return;
                 }
-                if(!Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false) && getLiveChannels(channelGroupIndexXu).size() - 1 < 1) {
+                else if(!Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false) && getLiveChannels(channelGroupIndexXu).size() - 1 < 1) {
                     playXuSource();
                     App.showToastShort(mContext, "聚汇影视提示您：未选择跨选分类且本组只有一个频道！正在重播！");
                     return;
