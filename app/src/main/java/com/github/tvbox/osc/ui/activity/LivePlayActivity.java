@@ -1409,15 +1409,14 @@ public class LivePlayActivity extends BaseActivity {
             currentChannelGroupIndex = channelGroupIndex;
             currentLiveChannelIndex = liveChannelIndex;
             currentLiveChannelItem = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndex);
-        // ========== 新增：关键修复 - 检查获取到的频道是否为占位项 ==========
-        if (currentLiveChannelItem != null && currentLiveChannelItem.getChannelIndex() == -1) {
-            // 如果当前频道是占位项（"暂无收藏"），则主动寻找下一个有效频道
-            App.showToastShort(mContext, "目标频道无效，正在寻找下一个有效频道...");
-            Integer[] nextValidChannel = getNextChannel(Hawk.get(HawkConfig.LIVE_CHANNEL_REVERSE, false) ? -1 : 1);
-            // 递归调用 playChannel，播放找到的有效频道
-            return playChannel(nextValidChannel[0], nextValidChannel[1], false);
-        }
-        // ========== 新增结束 ==========
+            // ========== xuameng新增：关键修复 - 检查获取到的频道是否为占位项 ==========
+            if (currentLiveChannelItem != null && currentLiveChannelItem.getChannelIndex() == -1) {
+                // xuameng如果当前频道是占位项（"暂无收藏"），则主动寻找下一个有效频道
+                Integer[] nextValidChannel = getNextChannel(Hawk.get(HawkConfig.LIVE_CHANNEL_REVERSE, false) ? -1 : 1);
+                // xuameng递归调用 playChannel，播放找到的有效频道
+                return playChannel(nextValidChannel[0], nextValidChannel[1], false);
+            }
+            // ========== xuameng 新增结束 ==========
             Hawk.put(HawkConfig.LIVE_CHANNEL, currentLiveChannelItem.getChannelName());
             HawkUtils.setLastLiveChannelGroup(liveChannelGroupList.get(currentChannelGroupIndex).getGroupName()); //xuameng记忆频道组
             livePlayerManager.getLiveChannelPlayer(mVideoView, currentLiveChannelItem.getChannelName());
@@ -2226,12 +2225,12 @@ public class LivePlayActivity extends BaseActivity {
             int channelGroupIndexXu = currentChannelGroupIndex; //xuameng当前选定的频道组;
             if(currentLiveChannelItem.getSourceNum() == currentLiveChangeSourceTimes) { //xuameng如果只有一个源就换频道
                 currentLiveChangeSourceTimes = 0;
-                // xuameng添加索引不为-1的判断 如果是-1就是暂无收藏直接切换下一个频道
+                // xuameng添加索引不为-1的判断 如果是-1就是暂无收藏 选择跨选分类直接切换下一个频道
                 ArrayList<LiveChannelItem> channels = getLiveChannels(channelGroupIndexXu);
                 // 优化后的条件判断，避免在占位项情况下误判
                 if(!Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false) && !channels.isEmpty() && 
                     channels.get(0).getChannelIndex() == -1) { //如果只有一个频道组就播放当前频道，不胯下跨选频道组
-                    App.showToastShort(mContext, "聚汇影视提示您：请选择频道！");
+                    App.showToastShort(mContext, "聚汇影视提示您：未选择跨选分类且本组频道为空！");
                     return;
                 }
                 else if(liveChannelGroupList.size() - 1 < 1 && getLiveChannels(channelGroupIndexXu).size() - 1 < 1) { //如果只有一个频道组就播放当前频道，不胯下跨选频道组
