@@ -5,6 +5,9 @@ import android.graphics.Color;
 import android.view.View;
 import android.widget.TextView;
 
+import android.os.Handler;
+import android.os.Looper;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -35,6 +38,7 @@ public class LiveChannelItemAdapter extends BaseQuickAdapter<LiveChannelItem, Ba
     private int selectedChannelIndex = -1;
     private int focusedChannelIndex = -1;
     private ExecutorService favoriteCheckExecutor;
+	private Handler mHandler = new Handler(Looper.getMainLooper());
 
     // 使用LinkedHashMap实现LRU缓存
     private static final int MAX_CACHE_SIZE = 200;
@@ -53,40 +57,46 @@ public class LiveChannelItemAdapter extends BaseQuickAdapter<LiveChannelItem, Ba
         super(R.layout.item_live_channel, new ArrayList<>());
     }
 
+
     @Override
     protected void convert(BaseViewHolder holder, LiveChannelItem item) {
         TextView tvChannelNum = holder.getView(R.id.tvChannelNum);
         TextView tvChannel = holder.getView(R.id.tvChannelName);
         TextView tvFavoriteStar = holder.getView(R.id.ivFavoriteStar);
-
+        
         tvChannelNum.setText(String.format("%s", item.getChannelNum()));
         tvChannel.setText(item.getChannelName());
+        
+        // 先设置为GONE，等待异步检查结果
         tvFavoriteStar.setVisibility(View.GONE);
-
-        int position = holder.getLayoutPosition();
-
-        // 关键修改：只在可见时检查收藏
-        if (isPositionVisible(position)) {
-            checkChannelFavoriteAsync(item, position, new FavoriteCheckCallback() {
-                @Override
-                public void onFavoriteChecked(boolean isFavorited, int checkedPosition) {
-                    // 再次检查，确保回调时Item仍然可见（或位置有效）
-                    if (holder.getLayoutPosition() == checkedPosition && isPositionVisible(checkedPosition)) {
-                        if (isFavorited) {
-                            tvFavoriteStar.setVisibility(View.VISIBLE);
-                            tvFavoriteStar.setText("★");
-                            tvFavoriteStar.setTextColor(Color.parseColor("#FFD700"));
-                        } else {
-                            tvFavoriteStar.setVisibility(View.GONE);
+        
+        final int position = holder.getLayoutPosition();
+        
+        // 总是检查收藏状态，但只在可见时更新UI
+        checkChannelFavoriteAsync(item, position, new FavoriteCheckCallback() {
+            @Override
+            public void onFavoriteChecked(boolean isFavorited, int checkedPosition) {
+                // 检查当前位置是否仍然可见
+                if (isPositionVisible(checkedPosition)) {
+                    // 找到对应的ViewHolder
+                    if (mRecyclerView != null) {
+                        RecyclerView.ViewHolder viewHolder = mRecyclerView.findViewHolderForAdapterPosition(checkedPosition);
+                        if (viewHolder instanceof BaseViewHolder) {
+                            BaseViewHolder baseHolder = (BaseViewHolder) viewHolder;
+                            TextView starView = baseHolder.getView(R.id.ivFavoriteStar);
+                            if (starView != null) {
+                                if (isFavorited) {
+                                    starView.setVisibility(View.VISIBLE);
+                                    starView.setText("★");
+                                    starView.setTextColor(Color.parseColor("#FFD700"));
+                                }
+                                // 如果不收藏，保持GONE状态
+                            }
                         }
                     }
-                    // 注意：这里不要调用notifyItemChanged
                 }
-            });
-        } else {
-            // 对于不可见的项，直接隐藏星标
-            tvFavoriteStar.setVisibility(View.GONE);
-        }
+            }
+        });
 
         int channelIndex = item.getChannelIndex();
         if (channelIndex == selectedChannelIndex && channelIndex != focusedChannelIndex) {
@@ -192,6 +202,23 @@ public class LiveChannelItemAdapter extends BaseQuickAdapter<LiveChannelItem, Ba
     public void setNewData(@Nullable List<LiveChannelItem> data) {
         clearFavoriteCache();
         super.setNewData(data);
+        
+        // 数据设置完成后，延迟刷新可见项的收藏状态
+        scheduleInitialRefresh();
+    }
+
+    /**
+     * 调度初始刷新
+     */
+    private void scheduleInitialRefresh() {
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (mRecyclerView != null && mLayoutManager != null) {
+                    refreshFavoriteStatusForVisibleItems();
+                }
+            }
+        }, 100); // 延迟150ms，确保RecyclerView布局完成
     }
 
     /**
@@ -254,44 +281,49 @@ public class LiveChannelItemAdapter extends BaseQuickAdapter<LiveChannelItem, Ba
         return position >= firstVisible && position <= lastVisible;
     }
 
-    /**
-     * 刷新当前所有可见Item的收藏状态
-     * 优化版本：使用直接更新ViewHolder的方式，避免完整重绑定
-     */
-    private void refreshFavoriteStatusForVisibleItems() {
-        if (mLayoutManager == null) {
-            return;
-        }
+/**
+ * 刷新当前所有可见Item的收藏状态
+ * 优化版本：使用直接更新ViewHolder的方式，避免完整重绑定
+ */
+private void refreshFavoriteStatusForVisibleItems() {
+    if (mLayoutManager == null) {
+        return;
+    }
 
-        int firstVisible = mLayoutManager.findFirstVisibleItemPosition();
-        int lastVisible = mLayoutManager.findLastVisibleItemPosition();
+    int firstVisible = mLayoutManager.findFirstVisibleItemPosition();
+    int lastVisible = mLayoutManager.findLastVisibleItemPosition();
+    
+    if (firstVisible < 0 || lastVisible < 0) {
+        return;
+    }
 
-        // 批量检查可见项的收藏状态
-        List<Integer> positionsToCheck = new ArrayList<>();
-        List<LiveChannelItem> itemsToCheck = new ArrayList<>();
-        
-        for (int i = firstVisible; i <= lastVisible; i++) {
-            LiveChannelItem item = getItem(i);
-            if (item != null) {
-                String cacheKey = getChannelCacheKey(item);
-                Boolean cachedResult = favoriteCache.get(cacheKey);
-                
-                if (cachedResult != null) {
-                    // 缓存命中，直接更新UI
-                    updateFavoriteUI(i, cachedResult);
-                } else {
-                    // 缓存未命中，添加到待检查列表
-                    positionsToCheck.add(i);
-                    itemsToCheck.add(item);
-                }
+    // 批量检查可见项的收藏状态
+    List<Integer> positionsToCheck = new ArrayList<>();
+    List<LiveChannelItem> itemsToCheck = new ArrayList<>();
+    
+    for (int i = firstVisible; i <= lastVisible; i++) {
+        LiveChannelItem item = getItem(i);
+        if (item != null) {
+            String cacheKey = getChannelCacheKey(item);
+            Boolean cachedResult = favoriteCache.get(cacheKey);
+            
+            if (cachedResult != null) {
+                // 缓存命中，直接更新UI
+                updateFavoriteUI(i, cachedResult);
+            } else {
+                // 缓存未命中，添加到待检查列表
+                positionsToCheck.add(i);
+                itemsToCheck.add(item);
             }
         }
-        
-        // 批量检查未缓存的项
-        if (!itemsToCheck.isEmpty()) {
-            batchCheckFavorites(itemsToCheck, positionsToCheck);
-        }
     }
+    
+    // 批量检查未缓存的项
+    if (!itemsToCheck.isEmpty()) {
+        batchCheckFavorites(itemsToCheck, positionsToCheck);
+    }
+}
+
 
     /**
      * 批量检查收藏状态，减少线程切换开销
@@ -457,6 +489,11 @@ public class LiveChannelItemAdapter extends BaseQuickAdapter<LiveChannelItem, Ba
         if (mRecyclerView == null || position < 0 || position >= getItemCount()) {
             return;
         }
+
+    // 添加可见性检查
+    if (!isPositionVisible(position)) {
+        return;
+    }
         
         // 通过RecyclerView找到对应位置的ViewHolder
         RecyclerView.ViewHolder viewHolder = mRecyclerView.findViewHolderForAdapterPosition(position);
