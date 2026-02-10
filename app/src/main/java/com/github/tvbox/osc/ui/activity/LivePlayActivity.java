@@ -2350,6 +2350,7 @@ public class LivePlayActivity extends BaseActivity {
             mHideChannelListRunXu(); //xuameng隐藏频道菜单
         }
         if(focus) {
+                liveChannelGroupAdapter.setFocusedGroupIndex(groupIndex);
             if (mLiveChannelView.isComputingLayout() || mLiveChannelView.isScrolling()) {
             }else{
 	            liveChannelItemAdapter.setFocusedChannelIndex(-1);   //xuameng 正常情况
@@ -3880,9 +3881,9 @@ public class LivePlayActivity extends BaseActivity {
     
         // 只需要更新当前项的UI
         if (liveChannelItemAdapter != null) {
-                // 4. 调用updateFavoriteCache：更新缓存+局部刷新UI
-    boolean isFavorited = !found; // 若未找到（添加收藏），则状态为true；否则为false
-    liveChannelItemAdapter.updateFavoriteCache(channel, isFavorited, position);
+            // 4. 调用updateFavoriteCache：更新缓存+局部刷新UI
+            boolean isFavorited = !found; // 若未找到（添加收藏），则状态为true；否则为false
+            liveChannelItemAdapter.updateFavoriteCache(channel, isFavorited, position);
         }
         refreshFavoriteChannelGroup();
     }
