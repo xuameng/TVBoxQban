@@ -3227,38 +3227,68 @@ public class LivePlayActivity extends BaseActivity {
     private ArrayList < LiveChannelItem > getLiveChannelsXu(int groupIndex) {   //xuameng数字选台时用跳过密码频道验证
         return liveChannelGroupList.get(groupIndex).getLiveChannels();
     }
-    private Integer[] getNextChannel(int direction) {
-        int channelGroupIndex = currentChannelGroupIndex;
-        int liveChannelIndex = currentLiveChannelIndex;
-        //跨选分组模式下跳过加密频道分组（遥控器上下键换台/超时换源）
-        if(direction > 0) {
-            liveChannelIndex++;
-            if(liveChannelIndex >= getLiveChannels(channelGroupIndex).size()) {
-                liveChannelIndex = 0;
-                if(Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false)) {
-                    do {
-                        channelGroupIndex++;
-                        if(channelGroupIndex >= liveChannelGroupList.size()) channelGroupIndex = 0;
-                    } while(channelGroupIndex == 0 || !liveChannelGroupList.get(channelGroupIndex).getGroupPassword().isEmpty() && isNeedInputPassword(channelGroupIndex) || channelGroupIndex == currentChannelGroupIndex);   //xuameng isNeedInputPassword(channelGroupIndex)  目的是跨选分类，如果密码频道组密码验证以通过了即使有密码也可以跨选了是的BUG    // 新增：跳过"我的收藏"组（索引0）
-                }
-            }
-        } else {
-            liveChannelIndex--;
-            if(liveChannelIndex < 0) {
-                if(Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false)) {
-                    do {
-                        channelGroupIndex--;
-                        if(channelGroupIndex < 0) channelGroupIndex = liveChannelGroupList.size() - 1;
-                    } while(channelGroupIndex == 0 || !liveChannelGroupList.get(channelGroupIndex).getGroupPassword().isEmpty() && isNeedInputPassword(channelGroupIndex) || channelGroupIndex == currentChannelGroupIndex);   //xuameng isNeedInputPassword(channelGroupIndex)  目的是跨选分类，如果密码频道组密码验证以通过了即使有密码也可以跨选了是的BUG   // 新增：跳过"我的收藏"组（索引0）
-                }
-                liveChannelIndex = getLiveChannels(channelGroupIndex).size() - 1;
+
+private Integer[] getNextChannel(int direction) {
+    int channelGroupIndex = currentChannelGroupIndex;
+    int liveChannelIndex = currentLiveChannelIndex;
+    
+    //跨选分组模式下跳过加密频道分组（遥控器上下键换台/超时换源）
+    if(direction > 0) {
+        liveChannelIndex++;
+        if(liveChannelIndex >= getLiveChannels(channelGroupIndex).size()) {
+            liveChannelIndex = 0;
+            if(Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false)) {
+                do {
+                    channelGroupIndex++;
+                    if(channelGroupIndex >= liveChannelGroupList.size()) channelGroupIndex = 0;
+                } while(channelGroupIndex == 0 || !liveChannelGroupList.get(channelGroupIndex).getGroupPassword().isEmpty() && isNeedInputPassword(channelGroupIndex) || channelGroupIndex == currentChannelGroupIndex);
             }
         }
-        Integer[] groupChannelIndex = new Integer[2];
-        groupChannelIndex[0] = channelGroupIndex;
-        groupChannelIndex[1] = liveChannelIndex;
-        return groupChannelIndex;
+    } else {
+        liveChannelIndex--;
+        if(liveChannelIndex < 0) {
+            if(Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false)) {
+                do {
+                    channelGroupIndex--;
+                    if(channelGroupIndex < 0) channelGroupIndex = liveChannelGroupList.size() - 1;
+                } while(channelGroupIndex == 0 || !liveChannelGroupList.get(channelGroupIndex).getGroupPassword().isEmpty() && isNeedInputPassword(channelGroupIndex) || channelGroupIndex == currentChannelGroupIndex);
+            }
+            liveChannelIndex = getLiveChannels(channelGroupIndex).size() - 1;
+        }
     }
+    
+    // 跳过占位符项（channelIndex == -1）
+    List<LiveChannelItem> channels = getLiveChannels(channelGroupIndex);
+    if (channels.size() > 0) {
+        LiveChannelItem targetChannel = channels.get(liveChannelIndex);
+        if (targetChannel != null && targetChannel.getChannelIndex() == -1) {
+            // 如果是占位符，跳过到下一个有效频道
+            int attempts = 0;
+            int maxAttempts = channels.size();
+            while (attempts < maxAttempts) {
+                if (direction > 0) {
+                    liveChannelIndex++;
+                    if (liveChannelIndex >= channels.size()) liveChannelIndex = 0;
+                } else {
+                    liveChannelIndex--;
+                    if (liveChannelIndex < 0) liveChannelIndex = channels.size() - 1;
+                }
+                
+                targetChannel = channels.get(liveChannelIndex);
+                if (targetChannel != null && targetChannel.getChannelIndex() != -1) {
+                    break;
+                }
+                attempts++;
+            }
+        }
+    }
+    
+    Integer[] groupChannelIndex = new Integer[2];
+    groupChannelIndex[0] = channelGroupIndex;
+    groupChannelIndex[1] = liveChannelIndex;
+    return groupChannelIndex;
+}
+
     private int getFirstNoPasswordChannelGroup() {
         for(LiveChannelGroup liveChannelGroup: liveChannelGroupList) {
             if(liveChannelGroup.getGroupPassword().isEmpty()) return liveChannelGroup.getGroupIndex();
