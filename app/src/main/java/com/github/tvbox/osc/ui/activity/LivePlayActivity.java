@@ -2223,13 +2223,15 @@ public class LivePlayActivity extends BaseActivity {
         public void run() {
             TimeoutChangeSource = true;  //xuameng是否自动换源
             currentLiveChangeSourceTimes++;
-            int channelGroupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex(); //xuameng当前选定的频道组
+            int channelGroupIndexXu = currentChannelGroupIndex; //xuameng当前选定的频道组
             if(currentLiveChannelItem.getSourceNum() == currentLiveChangeSourceTimes) { //xuameng如果只有一个源就换频道
                 currentLiveChangeSourceTimes = 0;
-    // ========== 新增：判断当前组是否为空或仅包含占位项 ==========
-    ArrayList<LiveChannelItem> currentGroupChannels = getLiveChannels(channelGroupIndexXu);
-    boolean isCurrentGroupEmptyOrPlaceholder = isGroupEmptyOrPlaceholder(channelGroupIndexXu);
-    // ========== 新增结束 ==========
+
+        // ========== 新增：判断当前组是否为空或仅包含占位项 ==========
+        ArrayList<LiveChannelItem> currentGroupChannels = getLiveChannels(channelGroupIndexXu);
+        // 修改：直接使用currentGroupChannels进行判断，避免重复调用getLiveChannels
+        boolean isCurrentGroupEmptyOrPlaceholder = isGroupEmptyOrPlaceholderDirect(currentGroupChannels);
+        // ========== 新增结束 ==========
 
 	    // 修改条件1：检查“只有一个频道组”且“当前组没有有效频道”
     if(liveChannelGroupList.size() - 1 < 1 && isCurrentGroupEmptyOrPlaceholder) { //如果只有一个频道组且该组没有有效频道
@@ -2255,13 +2257,17 @@ public class LivePlayActivity extends BaseActivity {
         }
     };
 
-	private boolean isGroupEmptyOrPlaceholder(int groupIndex) {
-    if (groupIndex < 0 || groupIndex >= liveChannelGroupList.size()) {
-        return true;
-    }
-    ArrayList<LiveChannelItem> channels = getLiveChannels(groupIndex);
-    // 如果频道列表为空，或者只有一个频道且该频道是占位项（channelIndex == -1）
-    return channels == null || channels.isEmpty() || (channels.size() == 1 && channels.get(0).getChannelIndex() == -1);
+// 新增方法：直接判断频道列表是否为空或仅包含占位项
+private boolean isGroupEmptyOrPlaceholderDirect(ArrayList<LiveChannelItem> channels) {
+// 如果频道列表为空
+if (channels == null || channels.isEmpty()) {
+return true;
+}
+// 如果只有一个频道且该频道是占位项（channelIndex == -1）
+if (channels.size() == 1 && channels.get(0).getChannelIndex() == -1) {
+return true;
+}
+return false;
 }
 
 
