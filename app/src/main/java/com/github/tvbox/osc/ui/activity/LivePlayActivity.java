@@ -1280,7 +1280,7 @@ public class LivePlayActivity extends BaseActivity {
             if(countDownTimer10 != null) {
                 countDownTimer10.cancel();
             }
-            countDownTimer10 = new CountDownTimer(100, 50) { //底部epg隐藏时间设定
+            countDownTimer10 = new CountDownTimer(20, 10) { //底部epg隐藏时间设定
                 public void onTick(long j) {}
                 public void onFinish() {
                     mFocusCurrentChannelAndShowChannelList();
@@ -1471,12 +1471,12 @@ public class LivePlayActivity extends BaseActivity {
             }
 
             currentLiveChannelItemXu = getLiveChannels(currentChannelGroupIndexXu).get(currentLiveChannelIndexXu);
-        // ========== 新增：检查是否为占位项 ==========
-        if (currentLiveChannelItemXu != null && currentLiveChannelItemXu.getChannelIndex() == -1) {
-            // 如果是占位项，直接返回false，不更新EPG
-            return false;
-        }
-        // ========== 新增结束 ==========
+            // ========== xuameng新增：检查是否为占位项 ==========
+            if (currentLiveChannelItemXu != null && currentLiveChannelItemXu.getChannelIndex() == -1) {
+                // 如果是占位项，直接返回false，不更新EPG
+                return false;
+            }
+            // ========== xuameng 新增结束 ==========
             liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
         }
         channel_NameXu = currentLiveChannelItemXu; //xuameng重要EPG名称
@@ -1638,7 +1638,7 @@ public class LivePlayActivity extends BaseActivity {
         if(countDownTimer6 != null) {
             countDownTimer6.cancel();
         }
-        countDownTimer8 = new CountDownTimer(5000, 1000) { //底部epg隐藏时间设定
+        countDownTimer8 = new CountDownTimer(5000, 1000) { //xuameng 设置菜单隐藏时间
             public void onTick(long j) {}
             public void onFinish() {
                 mHideSettingLayoutRun();
@@ -2406,7 +2406,7 @@ public class LivePlayActivity extends BaseActivity {
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
                 if (mLiveChannelView.isComputingLayout() || mLiveChannelView.isScrolling()) {  //xuameng 滚动闪退
                 }else{
-	                liveChannelItemAdapter.setFocusedChannelIndex(-1);   //xuameng 正常情况
+	                liveChannelItemAdapter.setFocusedChannelIndex(-1);   //xuameng 正常情况   //xuameng修复频道名称移走焦点变色问题
                 }
             }
             @Override
@@ -2438,7 +2438,7 @@ public class LivePlayActivity extends BaseActivity {
                 LiveChannelItem selectedChannel = getLiveChannels(channelGroupIndexXu).get(position);
                 // xuameng检查是否是占位项（使用索引判断，-1表示占位项）
                 if (selectedChannel.getChannelIndex() == -1) {
-                    return; // 如果是占位项则直接返回，不执行任何后续操作
+                    return; // xuameng如果是占位项则直接返回，不执行任何后续操作
                 }
         
                 isTouch = false;  //xuameng手机选择频道判断  显示正在播放频道所在组
@@ -3900,14 +3900,14 @@ public class LivePlayActivity extends BaseActivity {
     
         // 只需要更新当前项的UI
         if (liveChannelItemAdapter != null) {
-            // 4. 调用updateFavoriteCache：更新缓存+局部刷新UI
+            //调用updateFavoriteCache：更新缓存+局部刷新UI
             boolean isFavorited = !found; // 若未找到（添加收藏），则状态为true；否则为false
             liveChannelItemAdapter.updateFavoriteCache(channel, isFavorited, position);
         }
         refreshFavoriteChannelGroup();
     }
 
-    private void judgeSelectedChannelIndex(int targetChannelIndex) {     //xuameng 修复我的收藏滚动闪退
+    private void judgeSelectedChannelIndex(int targetChannelIndex) {     //xuameng 修复我的收藏滚动闪退   选择正在播放的频道
         // 检查 RecyclerView 是否处于安全状态
         if (mLiveChannelView.isComputingLayout() || mLiveChannelView.isScrolling()) {
             // 延迟执行，避免在布局计算或滚动过程中操作
@@ -3925,7 +3925,7 @@ public class LivePlayActivity extends BaseActivity {
         }
     }
 
-    private void judgeScrollChannelIndex(int targetChannelIndex) {     //xuameng 修复我的收藏滚动闪退
+    private void judgeScrollChannelIndex(int targetChannelIndex) {     //xuameng 修复我的收藏滚动闪退   滚动到正在播放的频道
         // 检查 RecyclerView 是否处于安全状态
         if (mLiveChannelView.isComputingLayout() || mLiveChannelView.isScrolling()) {
             // 延迟执行，避免在布局计算或滚动过程中操作
@@ -3943,7 +3943,7 @@ public class LivePlayActivity extends BaseActivity {
         }
     }
 
-    private void judgeFocusedChannelIndex() {     //xuameng 修复我的收藏滚动闪退
+    private void judgeFocusedChannelIndex() {     //xuameng 修复我的收藏滚动闪退   频道高亮
         // 检查 RecyclerView 是否处于安全状态
         if (mLiveChannelView.isComputingLayout() || mLiveChannelView.isScrolling()) {
             // 延迟执行，避免在布局计算或滚动过程中操作
@@ -3958,7 +3958,7 @@ public class LivePlayActivity extends BaseActivity {
     
         // 只在安全状态下执行业务逻辑
         if (liveChannelItemAdapter != null) {
-            liveChannelItemAdapter.setFocusedChannelIndex(-1);
+            liveChannelItemAdapter.setFocusedChannelIndex(-1);  //xuameng修复频道名称移走焦点变色问题
         }
     }
 
