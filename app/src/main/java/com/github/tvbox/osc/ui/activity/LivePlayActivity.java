@@ -2230,7 +2230,7 @@ public class LivePlayActivity extends BaseActivity {
                 ArrayList<LiveChannelItem> channels = getLiveChannels(channelGroupIndexXu);
                 // 优化后的条件判断，避免在占位项情况下误判
                 if(!Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false) && !channels.isEmpty() && 
-                    channels.get(0).getChannelIndex() = -1) { //如果只有一个频道组就播放当前频道，不胯下跨选频道组
+                    channels.get(0).getChannelIndex() == -1) { //如果只有一个频道组就播放当前频道，不胯下跨选频道组
                     App.showToastShort(mContext, "聚汇影视提示您：请选择频道！");
                     return;
                 }
