@@ -3241,14 +3241,14 @@ private Integer[] getNextChannel(int direction) {
             liveChannelIndex = 0; // 重置为下一组的第一个频道
             // 开启跨选分组：循环找到下一个有效组
             if (Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false)) {
+				LiveChannelGroup currentGroup; // 将currentGroup定义移到do-while外部
                 do {
                     channelGroupIndex++;
                     // 循环到组列表末尾，回到第一个组
                     if (channelGroupIndex >= liveChannelGroupList.size()) {
                         channelGroupIndex = 0;
                     }
-                    LiveChannelGroup currentGroup = liveChannelGroupList.get(channelGroupIndex);
-                    // 关键修改：移除`channelGroupIndex == 0`的强制跳过，仅保留以下3个条件
+
                 } while (
                     // 1. 跳过需要密码的组（若密码未验证通过）
                     (!currentGroup.getGroupPassword().isEmpty() && isNeedInputPassword(channelGroupIndex)) ||
@@ -3265,6 +3265,7 @@ private Integer[] getNextChannel(int direction) {
         if (liveChannelIndex < 0) {
             // 开启跨选分组：循环找到上一个有效组
             if (Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false)) {
+				LiveChannelGroup currentGroup; // 将currentGroup定义移到do-while外部
                 do {
                     channelGroupIndex--;
                     // 循环到组列表开头，回到最后一个组
