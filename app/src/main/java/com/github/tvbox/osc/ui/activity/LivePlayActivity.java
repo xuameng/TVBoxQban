@@ -3239,8 +3239,13 @@ public class LivePlayActivity extends BaseActivity {
                     do {
                         channelGroupIndex++;
                         if(channelGroupIndex >= liveChannelGroupList.size()) channelGroupIndex = 0;
-                    } while(channelGroupIndex == 0 || !liveChannelGroupList.get(channelGroupIndex).getGroupPassword().isEmpty() && isNeedInputPassword(channelGroupIndex)
-                            || channelGroupIndex == currentChannelGroupIndex || isGroupAllPlaceholders(channelGroupIndex) // 新增：跳过全占位项的组)   //xuameng isNeedInputPassword(channelGroupIndex)  目的是跨选分类，如果密码频道组密码验证以通过了即使有密码也可以跨选了是的BUG    // 新增：跳过"我的收藏"组（索引0）
+                    } while (  // 1. 用()包裹整个条件（语法要求）
+                        channelGroupIndex == 0  // xuameng跳过"我的收藏"组（索引0）
+                        || (!liveChannelGroupList.get(channelGroupIndex).getGroupPassword().isEmpty()  // 2. xuameng“有密码”的判断
+                            && isNeedInputPassword(channelGroupIndex))  // 3. xuameng“需要输入密码”的判断
+                         || channelGroupIndex == currentChannelGroupIndex  // xuameng跳过当前组
+                         || isGroupAllPlaceholders(channelGroupIndex)  // xuameng跳过全占位项的组
+                    );
                 }
             }
         } else {
@@ -3250,8 +3255,13 @@ public class LivePlayActivity extends BaseActivity {
                     do {
                         channelGroupIndex--;
                         if(channelGroupIndex < 0) channelGroupIndex = liveChannelGroupList.size() - 1;
-                    } while(channelGroupIndex == 0 || !liveChannelGroupList.get(channelGroupIndex).getGroupPassword().isEmpty() && isNeedInputPassword(channelGroupIndex)
-                            || channelGroupIndex == currentChannelGroupIndex || isGroupAllPlaceholders(channelGroupIndex) // 新增：跳过全占位项的组)   //xuameng isNeedInputPassword(channelGroupIndex)  目的是跨选分类，如果密码频道组密码验证以通过了即使有密码也可以跨选了是的BUG    // 新增：跳过"我的收藏"组（索引0）
+                    } while (  // 1. 用()包裹整个条件（语法要求）
+                        channelGroupIndex == 0  // xuameng跳过"我的收藏"组（索引0）
+                        || (!liveChannelGroupList.get(channelGroupIndex).getGroupPassword().isEmpty()  // 2. xuameng“有密码”的判断
+                            && isNeedInputPassword(channelGroupIndex))  // 3. xuameng“需要输入密码”的判断
+                         || channelGroupIndex == currentChannelGroupIndex  // xuameng跳过当前组
+                         || isGroupAllPlaceholders(channelGroupIndex)  // xuameng跳过全占位项的组
+                    );
                 }
                 liveChannelIndex = getLiveChannels(channelGroupIndex).size() - 1;
             }
