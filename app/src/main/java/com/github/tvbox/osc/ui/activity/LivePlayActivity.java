@@ -2784,10 +2784,7 @@ public class LivePlayActivity extends BaseActivity {
     }
     private void initLiveChannelList() {
         List < LiveChannelGroup > list = ApiConfig.get().getChannelGroupList();
-        initLiveObj(); //xuameng 直播配置里有没有logo配置
-        if(list.size() == 1 && list.get(0).getGroupName().startsWith("http://127.0.0.1")) {
-            loadProxyLives(list.get(0).getGroupName());
-        }else if(list.size() == 1) {
+        if(list.isEmpty()) {
             JsonArray live_groups = Hawk.get(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
             if(live_groups.size() > 1) {
                 setDefaultLiveChannelList();
@@ -2799,6 +2796,10 @@ public class LivePlayActivity extends BaseActivity {
             showSuccess();
             App.showToastShort(mContext, "聚汇影视提示您：频道列表为空！");
             return;
+        }
+        initLiveObj(); //xuameng 直播配置里有没有logo配置
+        if(list.size() == 1 && list.get(0).getGroupName().startsWith("http://127.0.0.1")) {
+            loadProxyLives(list.get(0).getGroupName());
         } else {
             liveChannelGroupList.clear();
 
