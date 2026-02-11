@@ -2784,23 +2784,22 @@ public class LivePlayActivity extends BaseActivity {
     }
     private void initLiveChannelList() {
         List < LiveChannelGroup > list = ApiConfig.get().getChannelGroupList();
-        if(list.isEmpty()) {
+        if((list.size() <= 1) {
             JsonArray live_groups = Hawk.get(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
             if(live_groups.size() > 1) {
                 setDefaultLiveChannelList();
-                App.showToastShort(mContext, "聚汇影视提示您：直播列表为空！请切换线路！");
                 showSuccess();
-                initLiveState();
+                App.showToastShort(mContext, "聚汇影视提示您：直播列表为空！请切换线路！");
                 return;
             }
             setDefaultLiveChannelList();
-            App.showToastShort(mContext, "聚汇影视提示您：频道列表为空！");
             showSuccess();
-            initLiveState();
+            App.showToastShort(mContext, "聚汇影视提示您：频道列表为空！");
+            finish();
             return;
         }
         initLiveObj(); //xuameng 直播配置里有没有logo配置
-        if(list.size() == 1 && list.get(0).getGroupName().startsWith("http://127.0.0.1")) {
+        if(list.size() == 2 && list.get(0).getGroupName().startsWith("http://127.0.0.1")) {
             loadProxyLives(list.get(0).getGroupName());
         } else {
             liveChannelGroupList.clear();
@@ -2903,7 +2902,7 @@ public class LivePlayActivity extends BaseActivity {
     }
 
 private void initLiveState() {
-    int lastChannelGroupIndex = -1;
+    int lastChannelGroupIndex = -1; //xuameng记忆上次播放频道组开始
     int lastLiveChannelIndex = -1;
     Intent intent = getIntent();
     if(intent != null && intent.getExtras() != null) {
@@ -2911,59 +2910,51 @@ private void initLiveState() {
         lastChannelGroupIndex = bundle.getInt("groupIndex", 0);
         lastLiveChannelIndex = bundle.getInt("channelIndex", 0);
     } else {
-        Pair<Integer, Integer> lastChannel = JavaUtil.findLiveLastChannel(liveChannelGroupList);
+        Pair < Integer, Integer > lastChannel = JavaUtil.findLiveLastChannel(liveChannelGroupList);
         lastChannelGroupIndex = lastChannel.getFirst();
         lastLiveChannelIndex = lastChannel.getSecond();
-    }
+    } //xuameng记忆上次播放频道组结束
     
     livePlayerManager.init(mVideoView);
     showTime();
     showNetSpeed();
-    tvLeftChannelListLayout.setVisibility(View.INVISIBLE);
-    tvRightSettingLayout.setVisibility(View.INVISIBLE);
+    tvLeftChannelListLayout.setVisibility(View.INVISIBLE); //xuameng显示EPG就隐藏左右菜单
+    tvRightSettingLayout.setVisibility(View.INVISIBLE); //xuameng显示EPG就隐藏左右菜单
     liveChannelGroupAdapter.setNewData(liveChannelGroupList);
 
-    // ========== 新增：检查列表是否为空，如果为空则显示默认列表 ==========
-    if (liveChannelGroupList == null || liveChannelGroupList.isEmpty()) {
-        setDefaultLiveChannelList();
-        // 更新适配器数据
-        liveChannelGroupAdapter.setNewData(liveChannelGroupList);
-        // 重置记忆的频道索引
-        lastChannelGroupIndex = 1; // 默认组索引
-        lastLiveChannelIndex = 0;  // 默认频道索引
-    }
-    
     // ========== 新增：检查是否是默认列表的特殊情况 ==========
     boolean isDefaultList = false;
-    if (liveChannelGroupList.size() == 2) {
+    if (liveChannelGroupList.size() == 2) { // 只有收藏组和默认组
         if (liveChannelGroupList.get(1).getGroupName().equals("聚汇直播")) {
             isDefaultList = true;
         }
     }
     
     // xuameng 修复：避免从"我的收藏"组中的占位项开始播放
-    if (lastChannelGroupIndex == 0 && lastLiveChannelIndex >= 0) {
-        ArrayList<LiveChannelItem> channels = getLiveChannels(0);
+    if (lastChannelGroupIndex == 0 && lastLiveChannelIndex >= 0) {  // 如果是"我的收藏"组(索引为0)且指定了具体频道
+        ArrayList<LiveChannelItem> channels = getLiveChannels(0);  // 获取我的收藏组的频道列表
         if (channels != null && lastLiveChannelIndex < channels.size()) {
-            LiveChannelItem currentChannel = channels.get(lastLiveChannelIndex);
-            if (currentChannel != null && currentChannel.getChannelIndex() == -1) {
+            LiveChannelItem currentChannel = channels.get(lastLiveChannelIndex);  // 获取当前要播放的频道
+            if (currentChannel != null && currentChannel.getChannelIndex() == -1) {  // 如果当前频道是占位项(索引为-1表示"暂无收藏")
                 // 寻找第一个非"我的收藏"组的有效频道组
                 for (int groupIndex = 1; groupIndex < liveChannelGroupList.size(); groupIndex++) {
                     ArrayList<LiveChannelItem> otherGroupChannels = getLiveChannels(groupIndex);
                     if (otherGroupChannels != null && !otherGroupChannels.isEmpty()) {
+                        // 找到第一个有频道的组，播放其第一个频道
                         selectChannelGroup(groupIndex, false, 0);
-                        return;
+                        return;  // 结束方法
                     }
                 }
                 // 如果所有其他组都没有频道，选择"我的收藏"组但不播放
                 selectChannelGroup(0, false, -1);
-                return;
+                return;  // 结束方法
             }
         }
     }
     
     // ========== 新增：如果是默认列表，强制选择默认组 ==========
     if (isDefaultList && lastChannelGroupIndex == 0) {
+        // 如果是默认列表且记忆的是收藏组，强制选择默认组
         selectChannelGroup(1, false, 0);
         return;
     }
