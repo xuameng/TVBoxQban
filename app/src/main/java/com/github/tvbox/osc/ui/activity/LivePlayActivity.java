@@ -2877,21 +2877,38 @@ public class LivePlayActivity extends BaseActivity {
                 JsonArray live_groups = Hawk.get(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
                 ApiConfig.get().loadLives(livesArray);
                 List < LiveChannelGroup > list = ApiConfig.get().getChannelGroupList();
-                if(list.isEmpty()) {
-                    mHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            if(live_groups.size() > 1) {
+            // 排除"我的收藏"组，检查剩余组是否为空
+        boolean hasValidGroups = false;
+        for (LiveChannelGroup group : list) {
+            if (group != null && !"我的收藏".equals(group.getGroupName())) {
+                hasValidGroups = true;
+                break;
+            }
+        }
+
+        // 如果原列表为空，或排除收藏组后没有其他组，则显示默认列表
+        if (list.isEmpty() || !hasValidGroups) {
+            JsonArray live_groups = Hawk.get(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
+            if(live_groups.size() > 1) {
+                setDefaultLiveChannelList();
+                showSuccess();
+                App.showToastShort(mContext, "1111111111！");
+            } else {
+            
+                 
+    liveChannelGroupList.clear();                       
                                 setDefaultLiveChannelList();
-                                App.showToastShort(mContext, "聚汇影视提示您：直播列表为空！请切换线路！");
-                            } else {
-                                setDefaultLiveChannelList();
-                                App.showToastShort(mContext, "聚汇影视提示您：直播列表为空！");
-                            }
-                        }
-                    });
-                    return;
-                }
+                         
+                  showSuccess();
+                App.showToastShort(mContext, "聚汇影22222！");                          
+                          
+            
+             
+
+            }
+         //   initLiveState(); // 关键：初始化界面
+            return;
+        }
                 liveChannelGroupList.clear();
                 liveChannelGroupList.addAll(list);
                 mHandler.post(new Runnable() {
