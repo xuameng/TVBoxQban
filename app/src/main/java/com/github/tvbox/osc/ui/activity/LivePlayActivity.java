@@ -2802,10 +2802,25 @@ private void initLiveChannelList() {
     if(list.size() == 1 && list.get(0).getGroupName().startsWith("http://127.0.0.1")) {
         loadProxyLives(list.get(0).getGroupName());
     } else {
+        // 先检查原始列表是否全为空
+        boolean isOriginalGroupsEmpty = true;
+        for (LiveChannelGroup group : list) {
+            if (group.getLiveChannels() != null && !group.getLiveChannels().isEmpty()) {
+                isOriginalGroupsEmpty = false;
+                break;
+            }
+        }
+        
+        // 如果原始列表全为空，直接设置默认列表
+        if (isOriginalGroupsEmpty) {
+            setDefaultLiveChannelList();
+            showSuccess();
+        App.showToastShort(mContext, "聚汇影视提示您：频道列表为空！");
+            return; // 直接返回，不执行后面的逻辑
+        }
+        
+        // 如果原始列表不为空，才执行正常的添加逻辑
         liveChannelGroupList.clear();
-
-        // 保存原始列表用于检查是否为空
-        List<LiveChannelGroup> originalGroups = new ArrayList<>(list);
 
         // xuaemng========我的收藏 ==========
         // 1. xuaemng创建我的收藏组
@@ -2822,22 +2837,6 @@ private void initLiveChannelList() {
             }
         }
         // ========== 我的收藏 修复结束 ==========
-
-        // ========== 新增：检查原始频道组是否全为空 ==========
-        boolean isOriginalGroupsEmpty = true;
-        for (LiveChannelGroup group : originalGroups) {
-            if (group.getLiveChannels() != null && !group.getLiveChannels().isEmpty()) {
-                isOriginalGroupsEmpty = false;
-                break;
-            }
-        }
-        // 如果原始频道组全为空，或originalGroups为空，设置默认列表
-        if (originalGroups.isEmpty() || isOriginalGroupsEmpty) {
-            setDefaultLiveChannelList();
-            // 重新设置liveChannelGroupList，因为setDefaultLiveChannelList()会清空并重新添加
-            liveChannelGroupList.clear();
-            setDefaultLiveChannelList();
-        }
 
         showSuccess();
         initLiveState();
