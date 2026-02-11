@@ -3720,7 +3720,7 @@ private void initLiveState() {
         liveChannelGroupList.add(defaultGroup);
     
         showSuccess();
-        initLiveState();
+       // initLiveState();
     }
 
     private void initLiveObj(){
