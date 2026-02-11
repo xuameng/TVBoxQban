@@ -2784,56 +2784,32 @@ public class LivePlayActivity extends BaseActivity {
     }
 
     private void initLiveChannelList() {
-    List < LiveChannelGroup > list = ApiConfig.get().getChannelGroupList();
-    
-    // 检查1：list本身是否为空
-    boolean isListEmpty = list.isEmpty();
-    
-    // 检查2：排除"我的收藏"组后，其他组是否全为空
-    boolean isAllNonFavoriteGroupsEmpty = true;
-    if (!isListEmpty) {
+        List < LiveChannelGroup > list = ApiConfig.get().getChannelGroupList();
+
+        // 排除"我的收藏"组，检查剩余组是否为空
+        boolean hasValidGroups = false;
         for (LiveChannelGroup group : list) {
-            // 跳过"我的收藏"组，只检查其他组
-            if (group != null && 
-                !"我的收藏".equals(group.getGroupName()) &&  // 关键：排除收藏组
-                group.getLiveChannels() != null && 
-                !group.getLiveChannels().isEmpty()) {
-                
-                // 进一步检查：组中的频道不能是占位符（channelIndex == -1）
-                boolean hasValidChannel = false;
-                for (LiveChannelItem channel : group.getLiveChannels()) {
-                    if (channel != null && channel.getChannelIndex() != -1) {  // 关键：排除占位符
-                        hasValidChannel = true;
-                        break;
-                    }
-                }
-                
-                if (hasValidChannel) {
-                    isAllNonFavoriteGroupsEmpty = false;
-                    break;
-                }
+            if (group != null && !"我的收藏".equals(group.getGroupName())) {
+                hasValidGroups = true;
+                break;
             }
         }
-    }
-    
-    // 如果list为空 或 所有非收藏组都无效/为空，则使用默认列表
-    if (isListEmpty || isAllNonFavoriteGroupsEmpty) {
-        Log.d("LivePlayActivity", "使用默认列表，原因：listEmpty=" + isListEmpty + 
-              ", allNonFavoriteEmpty=" + isAllNonFavoriteGroupsEmpty);
-        
-        JsonArray live_groups = Hawk.get(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
-        if(live_groups.size() > 1) {
-            setDefaultLiveChannelList();
-            showSuccess();
-            App.showToastShort(mContext, "聚汇影视提示您：直播列表为空！请切换线路！");
-        } else {
-            setDefaultLiveChannelList();
-            showSuccess();
-            App.showToastShort(mContext, "聚汇影视提示您：频道列表为空！");
+
+        // 如果原列表为空，或排除收藏组后没有其他组，则显示默认列表
+        if (list.isEmpty() || !hasValidGroups) {
+            JsonArray live_groups = Hawk.get(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
+            if(live_groups.size() > 1) {
+                setDefaultLiveChannelList();
+                showSuccess();
+                App.showToastShort(mContext, "1111111111！");
+            } else {
+                setDefaultLiveChannelList();
+                showSuccess();
+                App.showToastShort(mContext, "聚汇影22222！");
+            }
+         //   initLiveState(); // 关键：初始化界面
+            return;
         }
-        initLiveState(); // 关键：初始化界面
-        return;
-    }
         initLiveObj(); //xuameng 直播配置里有没有logo配置
         if(list.size() == 1 && list.get(0).getGroupName().startsWith("http://127.0.0.1")) {
             loadProxyLives(list.get(0).getGroupName());
@@ -2869,11 +2845,9 @@ public class LivePlayActivity extends BaseActivity {
                 JsonArray live_groups = Hawk.get(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
                 if(live_groups.size() > 1) {
                     setDefaultLiveChannelList();
-                    showSuccess();
                     App.showToastShort(mContext, "聚汇影视提示您：直播文件错误！请切换线路！");
                 } else {
                     setDefaultLiveChannelList();
-                    showSuccess();
                     App.showToastShort(mContext, "聚汇影视提示您：直播文件错误！");
                 }
                 return;
@@ -2901,11 +2875,9 @@ public class LivePlayActivity extends BaseActivity {
                         public void run() {
                             if(live_groups.size() > 1) {
                                 setDefaultLiveChannelList();
-                                showSuccess();
                                 App.showToastShort(mContext, "聚汇影视提示您：直播列表为空！请切换线路！");
                             } else {
                                 setDefaultLiveChannelList();
-                                showSuccess();
                                 App.showToastShort(mContext, "聚汇影视提示您：直播列表为空！");
                             }
                         }
@@ -2930,11 +2902,9 @@ public class LivePlayActivity extends BaseActivity {
                     public void run() {
                         if(live_groups.size() > 1) {
                             setDefaultLiveChannelList();
-                            showSuccess();
                             App.showToastShort(mContext, "聚汇影视提示您：直播列表获取错误！请切换线路！");
                         } else {
                             setDefaultLiveChannelList();
-                            showSuccess();
                             App.showToastShort(mContext, "聚汇影视提示您：直播列表获取错误！");
                         }
                     }
@@ -3384,7 +3354,7 @@ private void initLiveState() {
                         }
                     
                         // 检查找到的频道组是否有有效频道（非占位项）
-                        ArrayList<LiveChannelItem> channels = getLiveChannels(channelGroupIndex);   //xuameng isNeedInputPassword(channelGroupIndex)  目的是跨选分类，如果密码频道组密码验证以通过了即使有密码也可以跨选了是的BUG
+                        ArrayList<LiveChannelItem> channels = getLiveChannels(channelGroupIndex);
                         if (channels != null && !channels.isEmpty()) {
                             for (LiveChannelItem channel : channels) {
                                 if (channel.getChannelIndex() != -1) {
@@ -3417,7 +3387,7 @@ private void initLiveState() {
                         }
                     
                         // 检查找到的频道组是否有有效频道（非占位项）
-                        ArrayList<LiveChannelItem> channels = getLiveChannels(channelGroupIndex);    //xuameng isNeedInputPassword(channelGroupIndex)  目的是跨选分类，如果密码频道组密码验证以通过了即使有密码也可以跨选了是的BUG
+                        ArrayList<LiveChannelItem> channels = getLiveChannels(channelGroupIndex);
                         if (channels != null && !channels.isEmpty()) {
                             for (LiveChannelItem channel : channels) {
                                 if (channel.getChannelIndex() != -1) {
@@ -3736,8 +3706,10 @@ private void initLiveState() {
         defaultGroup.setLiveChannels(channels);
     
         // 3. xuameng添加默认分组到列表
-        liveChannelGroupList.add(defaultGroup); 
+        liveChannelGroupList.add(defaultGroup);
+    
         showSuccess();
+        initLiveState();
     }
 
     private void initLiveObj(){
