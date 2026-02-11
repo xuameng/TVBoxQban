@@ -2784,7 +2784,7 @@ public class LivePlayActivity extends BaseActivity {
     }
     private void initLiveChannelList() {
         List < LiveChannelGroup > list = ApiConfig.get().getChannelGroupList();
-        if(list.isEmpty()) {
+        if (!hasValidLiveGroups()) {
             JsonArray live_groups = Hawk.get(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
             if(live_groups.size() > 1) {
                 setDefaultLiveChannelList();
@@ -2821,6 +2821,25 @@ public class LivePlayActivity extends BaseActivity {
             initLiveState();
         }
     }
+
+	/**
+ * 检查是否有除“我的收藏”外的有效直播组（包含真实频道）
+ */
+private boolean hasValidLiveGroups() {
+    for (LiveChannelGroup group : liveChannelGroupList) {
+        // 跳过“我的收藏”组
+        if ("我的收藏".equals(group.getGroupName())) {
+            continue;
+        }
+        // 检查组是否有有效频道（非占位项）
+        ArrayList<LiveChannelItem> channels = group.getLiveChannels();
+        if (channels != null && !channels.isEmpty() && channels.get(0).getChannelIndex() != -1) {
+            return true;
+        }
+    }
+    return false;
+}
+
     public void loadProxyLives(String url) {
         try {
             Uri parsedUrl = Uri.parse(url);
