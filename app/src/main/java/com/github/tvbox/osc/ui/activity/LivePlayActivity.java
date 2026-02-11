@@ -2807,7 +2807,6 @@ public class LivePlayActivity extends BaseActivity {
                 showSuccess();
                 App.showToastShort(mContext, "聚汇影视提示您：频道列表为空！");
             }
-            initLiveState(); // 关键：初始化界面
             return;
         }
         initLiveObj(); //xuameng 直播配置里有没有logo配置
@@ -3354,7 +3353,7 @@ private void initLiveState() {
                         }
                     
                         // 检查找到的频道组是否有有效频道（非占位项）
-                        ArrayList<LiveChannelItem> channels = getLiveChannels(channelGroupIndex);
+                        ArrayList<LiveChannelItem> channels = getLiveChannels(channelGroupIndex);   //xuameng isNeedInputPassword(channelGroupIndex)  目的是跨选分类，如果密码频道组密码验证以通过了即使有密码也可以跨选了是的BUG
                         if (channels != null && !channels.isEmpty()) {
                             for (LiveChannelItem channel : channels) {
                                 if (channel.getChannelIndex() != -1) {
@@ -3387,7 +3386,7 @@ private void initLiveState() {
                         }
                     
                         // 检查找到的频道组是否有有效频道（非占位项）
-                        ArrayList<LiveChannelItem> channels = getLiveChannels(channelGroupIndex);
+                        ArrayList<LiveChannelItem> channels = getLiveChannels(channelGroupIndex);    //xuameng isNeedInputPassword(channelGroupIndex)  目的是跨选分类，如果密码频道组密码验证以通过了即使有密码也可以跨选了是的BUG
                         if (channels != null && !channels.isEmpty()) {
                             for (LiveChannelItem channel : channels) {
                                 if (channel.getChannelIndex() != -1) {
@@ -3709,7 +3708,15 @@ private void initLiveState() {
         liveChannelGroupList.add(defaultGroup);
     
         showSuccess();
-        initLiveState();
+
+        // 关键：延迟初始化界面，确保视图准备好
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                initLiveState(); // 在UI线程延迟执行
+            }
+        });
+ 
     }
 
     private void initLiveObj(){
