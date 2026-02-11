@@ -3311,14 +3311,14 @@ public class LivePlayActivity extends BaseActivity {
         return -1;
     }
     private boolean isCurrentLiveChannelValid() {  //xuameng   currentLiveChannelIndex = -1  就是没选频道
-        if(currentLiveChannelItem == null || currentLiveChannelIndex = -1) {
+        if(currentLiveChannelItem == null || currentLiveChannelIndex == -1) {
            App.showToastShort(mContext, "聚汇影视提示您：请先选择频道！");
            return false;
         }
         return true;
     }
     private boolean isCurrentLiveChannelValidXu() {  //xuameng   currentLiveChannelIndex = -1  就是没选频道
-        if(currentLiveChannelItem == null || currentLiveChannelIndex = -1) {
+        if(currentLiveChannelItem == null || currentLiveChannelIndex == -1) {
             return false;
         }
         return true;
