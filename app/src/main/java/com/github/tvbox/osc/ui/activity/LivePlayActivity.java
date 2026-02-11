@@ -2804,16 +2804,13 @@ public class LivePlayActivity extends BaseActivity {
                 App.showToastShort(mContext, "1111111111！");
             } else {
             
-                    mHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
+                 
                            
                                 setDefaultLiveChannelList();
                          
                   showSuccess();
                 App.showToastShort(mContext, "聚汇影22222！");                          
-                        }
-                    });      
+                          
             
              
 
@@ -3696,7 +3693,7 @@ private void initLiveState() {
     
         // 2. xuameng创建默认直播分组（索引从1开始）
         LiveChannelGroup defaultGroup = new LiveChannelGroup();
-        defaultGroup.setGroupIndex(1); // xuameng改为1，避免与收藏组冲突
+        defaultGroup.setGroupIndex(10); // xuameng改为1，避免与收藏组冲突
         defaultGroup.setGroupName("聚汇直播");
         defaultGroup.setGroupPassword("");
     
@@ -3720,7 +3717,7 @@ private void initLiveState() {
         liveChannelGroupList.add(defaultGroup);
     
         showSuccess();
-       // initLiveState();
+        initLiveState();
     }
 
     private void initLiveObj(){
