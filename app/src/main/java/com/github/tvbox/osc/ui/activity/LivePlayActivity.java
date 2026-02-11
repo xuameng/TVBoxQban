@@ -2784,17 +2784,6 @@ public class LivePlayActivity extends BaseActivity {
     }
     private void initLiveChannelList() {
         List < LiveChannelGroup > list = ApiConfig.get().getChannelGroupList();
-        if (!hasValidLiveGroups()) {
-            JsonArray live_groups = Hawk.get(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
-            if(live_groups.size() > 1) {
-                setDefaultLiveChannelList();
-                App.showToastShort(mContext, "聚汇影视提示您：直播列表为空！请切换线路！");
-                return;
-            }
-            App.showToastShort(mContext, "聚汇影视提示您：频道列表为空！");
-            finish();
-            return;
-        }
         initLiveObj(); //xuameng 直播配置里有没有logo配置
         if(list.size() == 1 && list.get(0).getGroupName().startsWith("http://127.0.0.1")) {
             loadProxyLives(list.get(0).getGroupName());
@@ -2816,29 +2805,41 @@ public class LivePlayActivity extends BaseActivity {
                 }
             }
             // ========== 我的收藏 修复结束 ==========
+        // 3. 初始化完成后，再判断是否有有效组（若没有则加载默认列表）
+        if (!hasValidLiveGroups()) {
+            JsonArray live_groups = Hawk.get(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
+            if (live_groups.size() > 1) {
+                setDefaultLiveChannelList();
+                App.showToastShort(mContext, "聚汇影视提示您：直播列表为空！请切换线路！");
+            } else {
+                setDefaultLiveChannelList();
+                App.showToastShort(mContext, "聚汇影视提示您：频道列表为空！");
+            }
+            return;
+        }
 
             showSuccess();
             initLiveState();
         }
     }
 
-	/**
- * 检查是否有除“我的收藏”外的有效直播组（包含真实频道）
- */
-private boolean hasValidLiveGroups() {
-    for (LiveChannelGroup group : liveChannelGroupList) {
-        // 跳过“我的收藏”组
-        if ("我的收藏".equals(group.getGroupName())) {
-            continue;
+    /** xuameng
+    * 检查是否有除“我的收藏”外的有效直播组（包含真实频道）
+    */
+    private boolean hasValidLiveGroups() {
+        for (LiveChannelGroup group : liveChannelGroupList) {
+            // 跳过“我的收藏”组
+            if ("我的收藏".equals(group.getGroupName())) {
+                continue;
+            }
+            // 检查组是否有有效频道（非占位项）
+            ArrayList<LiveChannelItem> channels = group.getLiveChannels();
+            if (channels != null && !channels.isEmpty() && channels.get(0).getChannelIndex() != -1) {
+                return true;
+            }
         }
-        // 检查组是否有有效频道（非占位项）
-        ArrayList<LiveChannelItem> channels = group.getLiveChannels();
-        if (channels != null && !channels.isEmpty() && channels.get(0).getChannelIndex() != -1) {
-            return true;
-        }
+        return false;
     }
-    return false;
-}
 
     public void loadProxyLives(String url) {
         try {
@@ -3302,6 +3303,11 @@ private boolean hasValidLiveGroups() {
         return false;
     }
     private ArrayList < LiveChannelItem > getLiveChannels(int groupIndex) {
+        // xuameng添加边界检查
+        if (groupIndex < 0 || groupIndex >= liveChannelGroupList.size()) {
+            // xuameng返回一个空列表或默认列表，避免崩溃
+            return new ArrayList<>();
+        }
         if(!isNeedInputPassword(groupIndex)) {
             return liveChannelGroupList.get(groupIndex).getLiveChannels();
         } else {
