@@ -2888,7 +2888,7 @@ public class LivePlayActivity extends BaseActivity {
 
         // 如果原列表为空，或排除收藏组后没有其他组，则显示默认列表
         if (list.isEmpty() || !hasValidGroups) {
-            JsonArray live_groups = Hawk.get(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
+            
             if(live_groups.size() > 1) {
                 setDefaultLiveChannelList();
                 showSuccess();
