@@ -2790,17 +2790,23 @@ public class LivePlayActivity extends BaseActivity {
         } else if (list.size() == 1) {
             JsonArray live_groups = Hawk.get(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
             if(live_groups.size() > 1) {
-                setDefaultLiveChannelList();
-                showSuccess();
-                initLiveState();
-                App.showToastShort(mContext, "聚汇影视提示您：直播列表为空！请切换线路！");
-                return;
-            }
             setDefaultLiveChannelList();
             showSuccess();
+            // 新增：直接设置选中默认组
+            currentChannelGroupIndex = 1;
+            currentLiveChannelIndex = 0;
             initLiveState();
-            App.showToastShort(mContext, "聚汇影视提示您：频道列表为空！");
+            App.showToastShort(mContext, "聚汇影视提示您：直播列表为空！请切换线路！");
             return;
+        }
+        setDefaultLiveChannelList();
+        showSuccess();
+        // 新增：直接设置选中默认组
+        currentChannelGroupIndex = 1;
+        currentLiveChannelIndex = 0;
+        initLiveState();
+        App.showToastShort(mContext, "聚汇影视提示您：频道列表为空！");
+        return;
         }else {
             liveChannelGroupList.clear();
 
