@@ -2814,6 +2814,7 @@ public class LivePlayActivity extends BaseActivity {
         initLiveState(); // 初始化直播状态并播放
         return; // 成功加载，直接返回
     }
+}
     
     // 情况2: 获取的列表为空或获取失败
     // 无论是因为网络错误、配置解析失败还是列表本身为空，都强制显示默认列表
