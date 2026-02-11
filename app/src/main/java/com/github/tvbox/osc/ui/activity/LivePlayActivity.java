@@ -9,7 +9,6 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Base64;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -47,7 +46,6 @@ import java.util.HashMap; //XUAMENG自定义UA
 import com.github.tvbox.osc.ui.tv.widget.MusicVisualizerView;  //xuameng音乐播放动画
 import android.media.audiofx.Visualizer;  //xuameng音乐播放动画
 import android.util.Log; //xuameng音乐播放动画
-import android.os.Looper; //xuameng音乐播放动画
 import android.media.AudioManager;  //xuameng音乐播放动画
 import java.util.Objects;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -1494,12 +1492,18 @@ public class LivePlayActivity extends BaseActivity {
         }
         if(!isCurrentLiveChannelValid()) return;   //xuameng 空指针修复
         int channelGroupIndexXu = currentChannelGroupIndex; //xuameng当前选定的频道组
-        if(liveChannelGroupList.size() - 1 < 1 && getLiveChannels(channelGroupIndexXu).size() - 1 < 1) { //如果只有一个频道组就播放当前频道，不胯下胯下跨选频道组
+        ArrayList<LiveChannelItem> channels = getLiveChannels(channelGroupIndexXu);
+        if(!Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false) && !channels.isEmpty() && 
+            channels.get(0).getChannelIndex() == -1) {
+            App.showToastShort(mContext, "聚汇影视提示您：未选择跨选分类且本组频道为空！");
+            return;
+        }
+        else if(liveChannelGroupList.size() - 1 < 1 && getLiveChannels(channelGroupIndexXu).size() - 1 < 1) { //如果只有一个频道组就播放当前频道，不胯下胯下跨选频道组
             App.showToastShort(mContext, "聚汇影视提示您：只有一个频道！");
             return;
         }
-        if(!Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false) && getLiveChannels(channelGroupIndexXu).size() - 1 < 1) {
-            App.showToastShort(mContext, "聚汇影视提示您：未选择跨选分类且本组只有一个频道或没有选择频道！");
+        else if(!Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false) && getLiveChannels(channelGroupIndexXu).size() - 1 < 1) {
+            App.showToastShort(mContext, "聚汇影视提示您：未选择跨选分类且本组只有一个频道");
             return;
         }
         Integer[] groupChannelIndex = getNextChannel(1);
@@ -1511,12 +1515,18 @@ public class LivePlayActivity extends BaseActivity {
         }
         if(!isCurrentLiveChannelValid()) return;    //xuameng 空指针修复
         int channelGroupIndexXu = currentChannelGroupIndex; //xuameng当前选定的频道组
-        if(liveChannelGroupList.size() - 1 < 1 && getLiveChannels(channelGroupIndexXu).size() - 1 < 1) { //如果只有一个频道组就播放当前频道，不胯下胯下跨选频道组
+        ArrayList<LiveChannelItem> channels = getLiveChannels(channelGroupIndexXu);
+        if(!Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false) && !channels.isEmpty() && 
+            channels.get(0).getChannelIndex() == -1) {
+            App.showToastShort(mContext, "聚汇影视提示您：未选择跨选分类且本组频道为空！");
+            return;
+        }
+        else if(liveChannelGroupList.size() - 1 < 1 && getLiveChannels(channelGroupIndexXu).size() - 1 < 1) { //如果只有一个频道组就播放当前频道，不胯下胯下跨选频道组
             App.showToastShort(mContext, "聚汇影视提示您：只有一个频道！");
             return;
         }
-        if(!Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false) && getLiveChannels(channelGroupIndexXu).size() - 1 < 1) {
-            App.showToastShort(mContext, "聚汇影视提示您：未选择跨选分类且本组只有一个频道或没有选择频道！");
+        else if(!Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false) && getLiveChannels(channelGroupIndexXu).size() - 1 < 1) {
+            App.showToastShort(mContext, "聚汇影视提示您：未选择跨选分类且本组只有一个频道");
             return;
         }
         Integer[] groupChannelIndex = getNextChannel(-1);
@@ -2220,21 +2230,22 @@ public class LivePlayActivity extends BaseActivity {
     private Runnable mConnectTimeoutChangeSourceRun = new Runnable() {
         @Override
         public void run() {
-        // 确保在主线程执行
-        if (Looper.myLooper() != Looper.getMainLooper()) {
-            mHandler.post(this);
-            return;
-        }
+            // 确保在主线程执行
+            if (Looper.myLooper() != Looper.getMainLooper()) {
+                mHandler.post(this);
+                return;
+            }
             TimeoutChangeSource = true;  //xuameng是否自动换源
             currentLiveChangeSourceTimes++;
             int channelGroupIndexXu = currentChannelGroupIndex; //xuameng当前选定的频道组;
+            // xuameng添加索引不为-1的判断 如果是-1就是暂无收藏 选择跨选分类直接切换下一个频道
+            ArrayList<LiveChannelItem> channels = getLiveChannels(channelGroupIndexXu);
             if(currentLiveChannelItem.getSourceNum() == currentLiveChangeSourceTimes) { //xuameng如果只有一个源就换频道
                 currentLiveChangeSourceTimes = 0;
-                // xuameng添加索引不为-1的判断 如果是-1就是暂无收藏 选择跨选分类直接切换下一个频道
-                ArrayList<LiveChannelItem> channels = getLiveChannels(channelGroupIndexXu);
-                // 优化后的条件判断，避免在占位项情况下误判
+                // xuameng优化后的条件判断，避免在占位项情况下误判
                 if(!Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false) && !channels.isEmpty() && 
-                    channels.get(0).getChannelIndex() == -1) { //如果只有一个频道组就播放当前频道，不胯下跨选频道组
+                    channels.get(0).getChannelIndex() == -1) { //xuameng如果是站位符就返回
+                    TimeoutChangeSource = false;  //xuameng是否自动换源  未到播放playChannel所以false
                     App.showToastShort(mContext, "聚汇影视提示您：未选择跨选分类且本组频道为空！");
                     return;
                 }
@@ -2251,6 +2262,13 @@ public class LivePlayActivity extends BaseActivity {
                 Integer[] groupChannelIndex = getNextChannel(Hawk.get(HawkConfig.LIVE_CHANNEL_REVERSE, false) ? -1 : 1); //xuameng换台反转与跨选分类
                 playChannel(groupChannelIndex[0], groupChannelIndex[1], false);
             } else {
+                // xuameng优化后的条件判断，避免在占位项情况下误判
+                if(!Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false) && !channels.isEmpty() && 
+                    channels.get(0).getChannelIndex() == -1) { //如果只有一个频道组就播放当前频道，不胯下跨选频道组
+                    TimeoutChangeSource = false;  //xuameng是否自动换源  未到播放playChannel所以false
+                    App.showToastShort(mContext, "聚汇影视提示您：未选择跨选分类且本组频道为空！");
+                    return;
+                }
                 playNextSource();     //xuameng否则换源
             }
         }
