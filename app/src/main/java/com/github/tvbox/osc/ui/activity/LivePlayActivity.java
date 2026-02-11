@@ -2898,6 +2898,8 @@ public class LivePlayActivity extends BaseActivity {
                     @Override
                     public void run() {
                         LivePlayActivity.this.showSuccess();
+                App.showToastShort(mContext, "聚汇影555555！");                          
+                         
                         initLiveState();
                     }
                 });
