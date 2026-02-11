@@ -2803,9 +2803,20 @@ public class LivePlayActivity extends BaseActivity {
                 showSuccess();
                 App.showToastShort(mContext, "1111111111！");
             } else {
-                setDefaultLiveChannelList();
-                showSuccess();
-                App.showToastShort(mContext, "聚汇影22222！");
+            
+                    mHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                           
+                                setDefaultLiveChannelList();
+                         
+                  showSuccess();
+                App.showToastShort(mContext, "聚汇影22222！");                          
+                        }
+                    });      
+            
+             
+
             }
          //   initLiveState(); // 关键：初始化界面
             return;
