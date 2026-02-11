@@ -2784,63 +2784,55 @@ public class LivePlayActivity extends BaseActivity {
     }
     private void initLiveChannelList() {
         List < LiveChannelGroup > list = ApiConfig.get().getChannelGroupList();
-        initLiveObj(); //xuameng 直播配置里有没有logo配置
-        if(list.size() == 1 && list.get(0).getGroupName().startsWith("http://127.0.0.1")) {
-            loadProxyLives(list.get(0).getGroupName());
-        } else {
-            liveChannelGroupList.clear();
 
-            // xuaemng========我的收藏 ==========
-            // 1. xuaemng创建我的收藏组
-            LiveChannelGroup favoriteGroup = LiveChannelItem.createFavoriteChannelGroup();
-            favoriteGroup.setGroupIndex(0); // 固定为第一个组
-            liveChannelGroupList.add(favoriteGroup);
-    
-            // 2. 添加原始频道组，跳过可能存在的“我的收藏”组
-            int nextIndex = 1;
-            for (LiveChannelGroup group : list) {
-                if (!"我的收藏".equals(group.getGroupName())) {
-                    group.setGroupIndex(nextIndex++);
-                    liveChannelGroupList.add(group);
-                }
+        initLiveObj(); //xuameng 直播配置里有没有logo配置
+
+    // 情况1: 成功获取到频道组列表（非空且非代理模式）
+    if (list != null && !list.isEmpty()) {
+        // 检查是否是单组代理模式（URL以"http://127.0.0.1"开头）
+        if (list.size() == 1 && list.get(0).getGroupName().startsWith("http://127.0.0.1")) {
+            loadProxyLives(list.get(0).getGroupName());
+            return; // 代理加载会异步处理，此处直接返回
+        }
+        
+        // 非代理模式：正常加载频道列表
+        liveChannelGroupList.clear();
+        // 首先添加“我的收藏”组
+        LiveChannelGroup favoriteGroup = LiveChannelItem.createFavoriteChannelGroup();
+        favoriteGroup.setGroupIndex(0);
+        liveChannelGroupList.add(favoriteGroup);
+        
+        // 然后添加从配置获取的频道组（跳过可能已存在的“我的收藏”组）
+        int nextIndex = 1;
+        for (LiveChannelGroup group : list) {
+            if (!"我的收藏".equals(group.getGroupName())) {
+                group.setGroupIndex(nextIndex++);
+                liveChannelGroupList.add(group);
             }
-            // ========== 我的收藏 修复结束 ==========
-        // 3. 初始化完成后，再判断是否有有效组（若没有则加载默认列表）
-        if (!hasValidLiveGroups()) {
+        }
+        showSuccess();
+        initLiveState(); // 初始化直播状态并播放
+        return; // 成功加载，直接返回
+    }
+    
+    // 情况2: 获取的列表为空或获取失败
+    // 无论是因为网络错误、配置解析失败还是列表本身为空，都强制显示默认列表
+    setDefaultLiveChannelList(); // 这个方法已经包含了“我的收藏”和默认频道组
+
+        if(list.isEmpty()) {
             JsonArray live_groups = Hawk.get(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
-            if (live_groups.size() > 1) {
+            if(live_groups.size() > 1) {
                 setDefaultLiveChannelList();
                 App.showToastShort(mContext, "聚汇影视提示您：直播列表为空！请切换线路！");
-            } else {
-                setDefaultLiveChannelList();
-                App.showToastShort(mContext, "聚汇影视提示您：频道列表为空！");
+                return;
             }
+            App.showToastShort(mContext, "聚汇影视提示您：频道列表为空！");
+            finish();
             return;
         }
-
             showSuccess();
-            initLiveState();
         }
     }
-
-    /** xuameng
-    * 检查是否有除“我的收藏”外的有效直播组（包含真实频道）
-    */
-    private boolean hasValidLiveGroups() {
-        for (LiveChannelGroup group : liveChannelGroupList) {
-            // 跳过“我的收藏”组
-            if ("我的收藏".equals(group.getGroupName())) {
-                continue;
-            }
-            // 检查组是否有有效频道（非占位项）
-            ArrayList<LiveChannelItem> channels = group.getLiveChannels();
-            if (channels != null && !channels.isEmpty() && channels.get(0).getChannelIndex() != -1) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public void loadProxyLives(String url) {
         try {
             Uri parsedUrl = Uri.parse(url);
@@ -3303,11 +3295,6 @@ public class LivePlayActivity extends BaseActivity {
         return false;
     }
     private ArrayList < LiveChannelItem > getLiveChannels(int groupIndex) {
-        // xuameng添加边界检查
-        if (groupIndex < 0 || groupIndex >= liveChannelGroupList.size()) {
-            // xuameng返回一个空列表或默认列表，避免崩溃
-            return new ArrayList<>();
-        }
         if(!isNeedInputPassword(groupIndex)) {
             return liveChannelGroupList.get(groupIndex).getLiveChannels();
         } else {
@@ -3318,38 +3305,102 @@ public class LivePlayActivity extends BaseActivity {
     private ArrayList < LiveChannelItem > getLiveChannelsXu(int groupIndex) {   //xuameng数字选台时用跳过密码频道验证
         return liveChannelGroupList.get(groupIndex).getLiveChannels();
     }
-    private Integer[] getNextChannel(int direction) {
-        int channelGroupIndex = currentChannelGroupIndex;
-        int liveChannelIndex = currentLiveChannelIndex;
-        //跨选分组模式下跳过加密频道分组（遥控器上下键换台/超时换源）
-        if(direction > 0) {
-            liveChannelIndex++;
-            if(liveChannelIndex >= getLiveChannels(channelGroupIndex).size()) {
-                liveChannelIndex = 0;
-                if(Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false)) {
-                    do {
-                        channelGroupIndex++;
-                        if(channelGroupIndex >= liveChannelGroupList.size()) channelGroupIndex = 0;
-                    } while(channelGroupIndex == 0 || !liveChannelGroupList.get(channelGroupIndex).getGroupPassword().isEmpty() && isNeedInputPassword(channelGroupIndex) || channelGroupIndex == currentChannelGroupIndex);   //xuameng isNeedInputPassword(channelGroupIndex)  目的是跨选分类，如果密码频道组密码验证以通过了即使有密码也可以跨选了是的BUG    // 新增：跳过"我的收藏"组（索引0）
-                }
-            }
-        } else {
-            liveChannelIndex--;
-            if(liveChannelIndex < 0) {
-                if(Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false)) {
-                    do {
-                        channelGroupIndex--;
-                        if(channelGroupIndex < 0) channelGroupIndex = liveChannelGroupList.size() - 1;
-                    } while(channelGroupIndex == 0 || !liveChannelGroupList.get(channelGroupIndex).getGroupPassword().isEmpty() && isNeedInputPassword(channelGroupIndex) || channelGroupIndex == currentChannelGroupIndex);   //xuameng isNeedInputPassword(channelGroupIndex)  目的是跨选分类，如果密码频道组密码验证以通过了即使有密码也可以跨选了是的BUG   // 新增：跳过"我的收藏"组（索引0）
-                }
-                liveChannelIndex = getLiveChannels(channelGroupIndex).size() - 1;
+
+private Integer[] getNextChannel(int direction) {
+    int channelGroupIndex = currentChannelGroupIndex;
+    int liveChannelIndex = currentLiveChannelIndex;
+    
+    // 添加循环计数器，防止无限循环
+    int maxLoopCount = liveChannelGroupList.size() * 2; // 最多循环两轮
+    int loopCount = 0;
+    
+    //跨选分组模式下跳过加密频道分组（遥控器上下键换台/超时换源）
+    if(direction > 0) {
+        liveChannelIndex++;
+        if(liveChannelIndex >= getLiveChannels(channelGroupIndex).size()) {
+            liveChannelIndex = 0;
+            if(Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false)) {
+                do {
+                    channelGroupIndex++;
+                    if(channelGroupIndex >= liveChannelGroupList.size()) channelGroupIndex = 0;
+                    loopCount++;
+                    
+                    // 添加退出条件：避免无限循环
+                    if (loopCount >= maxLoopCount) {
+                        // 找不到有效频道，返回当前频道
+                        return new Integer[]{currentChannelGroupIndex, currentLiveChannelIndex};
+                    }
+                    
+                    // 检查找到的频道组是否有有效频道（非占位项）
+                    ArrayList<LiveChannelItem> channels = getLiveChannels(channelGroupIndex);
+                    boolean hasValidChannel = false;
+                    if (channels != null && !channels.isEmpty()) {
+                        for (LiveChannelItem channel : channels) {
+                            if (channel.getChannelIndex() != -1) {
+                                hasValidChannel = true;
+                                break;
+                            }
+                        }
+                    }
+                    
+                } while(channelGroupIndex == 0 || 
+                       !liveChannelGroupList.get(channelGroupIndex).getGroupPassword().isEmpty() && 
+                       isNeedInputPassword(channelGroupIndex) || 
+                       channelGroupIndex == currentChannelGroupIndex ||
+                       !hasValidChannel); // 修改：检查是否有有效频道
             }
         }
-        Integer[] groupChannelIndex = new Integer[2];
-        groupChannelIndex[0] = channelGroupIndex;
-        groupChannelIndex[1] = liveChannelIndex;
-        return groupChannelIndex;
+    } else {
+        liveChannelIndex--;
+        if(liveChannelIndex < 0) {
+            if(Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false)) {
+                do {
+                    channelGroupIndex--;
+                    if(channelGroupIndex < 0) channelGroupIndex = liveChannelGroupList.size() - 1;
+                    loopCount++;
+                    
+                    // 添加退出条件：避免无限循环
+                    if (loopCount >= maxLoopCount) {
+                        // 找不到有效频道，返回当前频道
+                        return new Integer[]{currentChannelGroupIndex, currentLiveChannelIndex};
+                    }
+                    
+                    // 检查找到的频道组是否有有效频道（非占位项）
+                    ArrayList<LiveChannelItem> channels = getLiveChannels(channelGroupIndex);
+                    boolean hasValidChannel = false;
+                    if (channels != null && !channels.isEmpty()) {
+                        for (LiveChannelItem channel : channels) {
+                            if (channel.getChannelIndex() != -1) {
+                                hasValidChannel = true;
+                                break;
+                            }
+                        }
+                    }
+                    
+                } while(channelGroupIndex == 0 || 
+                       !liveChannelGroupList.get(channelGroupIndex).getGroupPassword().isEmpty() && 
+                       isNeedInputPassword(channelGroupIndex) || 
+                       channelGroupIndex == currentChannelGroupIndex ||
+                       !hasValidChannel); // 修改：检查是否有有效频道
+            }
+            liveChannelIndex = getLiveChannels(channelGroupIndex).size() - 1;
+        }
     }
+    
+    // 最终检查：如果目标频道是占位项，返回当前频道
+    ArrayList<LiveChannelItem> targetChannels = getLiveChannels(channelGroupIndex);
+    if (targetChannels.isEmpty() || 
+        (liveChannelIndex < targetChannels.size() && 
+         targetChannels.get(liveChannelIndex).getChannelIndex() == -1)) {
+        return new Integer[]{currentChannelGroupIndex, currentLiveChannelIndex};
+    }
+    
+    Integer[] groupChannelIndex = new Integer[2];
+    groupChannelIndex[0] = channelGroupIndex;
+    groupChannelIndex[1] = liveChannelIndex;
+    return groupChannelIndex;
+}
+
     private int getFirstNoPasswordChannelGroup() {
         for(LiveChannelGroup liveChannelGroup: liveChannelGroupList) {
             if(liveChannelGroup.getGroupPassword().isEmpty()) return liveChannelGroup.getGroupIndex();
