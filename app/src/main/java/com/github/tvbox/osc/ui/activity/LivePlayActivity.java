@@ -2665,15 +2665,28 @@ public class LivePlayActivity extends BaseActivity {
         }
         switch(settingGroupIndex) {
             case 0: //线路切换
+                if(mVideoView == null) return;
+                if (currentLiveChannelIndex == -1){
+                    App.showToastShort(mContext, "聚汇影视提示您：请先选择频道！");
+                    return;
+                }
                 currentLiveChannelItem.setSourceIndex(position);
                 playChannel(currentChannelGroupIndex, currentLiveChannelIndex, true);
                 break;
             case 1: //画面比例
                 if(mVideoView == null) return;
+                if (currentLiveChannelIndex == -1){
+                    App.showToastShort(mContext, "聚汇影视提示您：请先选择频道！");
+                    return;
+                }
                 livePlayerManager.changeLivePlayerScale(mVideoView, position, currentLiveChannelItem.getChannelName());
                 break;
             case 2: //播放解码
                 if(mVideoView == null) return;
+                if (currentLiveChannelIndex == -1){
+                    App.showToastShort(mContext, "聚汇影视提示您：请先选择频道！");
+                    return;
+                }
                 mVideoView.release();
                 livePlayerManager.changeLivePlayerType(mVideoView, position, currentLiveChannelItem.getChannelName());
                 mVideoView.setUrl(currentLiveChannelItem.getUrl(), liveWebHeader());
@@ -2732,8 +2745,12 @@ public class LivePlayActivity extends BaseActivity {
                 recreate();
                 return;
             case 6: //xuameng渲染方式
-                if(position == liveSettingItemAdapter.getSelectedItemIndex()) return;
                 if(mVideoView == null) return;
+                if (currentLiveChannelIndex == -1){
+                    App.showToastShort(mContext, "聚汇影视提示您：请先选择频道！");
+                    return;
+                }
+                if(position == liveSettingItemAdapter.getSelectedItemIndex()) return;
                 mVideoView.release();
                 livePlayerManager.changeLivePlayerRender(mVideoView, position, currentLiveChannelItem.getChannelName()); //xuameng 设置渲染方式
                 mVideoView.setUrl(currentLiveChannelItem.getUrl(), liveWebHeader());
@@ -2744,8 +2761,12 @@ public class LivePlayActivity extends BaseActivity {
                 }
                 break;
             case 7: //xuameng音柱动画 点击
-                if(position == liveSettingItemAdapter.getSelectedItemIndex()) return;
                 if(mVideoView == null) return;
+                if (currentLiveChannelIndex == -1){
+                    App.showToastShort(mContext, "聚汇影视提示您：请先选择频道！");
+                    return;
+                }
+                if(position == liveSettingItemAdapter.getSelectedItemIndex()) return;
                 livePlayerManager.changeLivePlayerMusic(mVideoView, position, currentLiveChannelItem.getChannelName()); 
                 if (position == 0){
                     initVisualizer();  //xuameng音乐播放动画
@@ -3311,14 +3332,14 @@ public class LivePlayActivity extends BaseActivity {
         return -1;
     }
     private boolean isCurrentLiveChannelValid() {  //xuameng   currentLiveChannelIndex = -1  就是没选频道
-        if(currentLiveChannelItem == null || currentLiveChannelIndex == -1) {
+        if(currentLiveChannelItem == null) {
            App.showToastShort(mContext, "聚汇影视提示您：请先选择频道！");
            return false;
         }
         return true;
     }
     private boolean isCurrentLiveChannelValidXu() {  //xuameng   currentLiveChannelIndex = -1  就是没选频道
-        if(currentLiveChannelItem == null || currentLiveChannelIndex == -1) {
+        if(currentLiveChannelItem == null) {
             return false;
         }
         return true;
