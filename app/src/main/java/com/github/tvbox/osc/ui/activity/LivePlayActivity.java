@@ -2250,12 +2250,12 @@ public class LivePlayActivity extends BaseActivity {
                     return;
                 }
                 else if(liveChannelGroupList.size() - 1 < 1 && getLiveChannels(channelGroupIndexXu).size() - 1 < 1) { //如果只有一个频道组就播放当前频道，不胯下跨选频道组
-                    playXuSource();
+                    playNextSource();
                     App.showToastShort(mContext, "聚汇影视提示您：只有一个频道！正在重播！");
                     return;
                 }
                 else if(!Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false) && getLiveChannels(channelGroupIndexXu).size() - 1 < 1) {
-                    playXuSource();
+                    playNextSource();
                     App.showToastShort(mContext, "聚汇影视提示您：未选择跨选分类且本组只有一个频道！正在重播！");
                     return;
                 }
