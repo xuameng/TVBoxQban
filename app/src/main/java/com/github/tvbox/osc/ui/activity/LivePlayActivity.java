@@ -3311,7 +3311,7 @@ public class LivePlayActivity extends BaseActivity {
 private Integer[] getNextChannel(int direction) {
     int channelGroupIndex = currentChannelGroupIndex;
     int liveChannelIndex = currentLiveChannelIndex;
-    
+                        boolean hasValidChannel = false;
     // 添加循环计数器，防止无限循环
     int maxLoopCount = liveChannelGroupList.size() * 2; // 最多循环两轮
     int loopCount = 0;
@@ -3335,7 +3335,6 @@ private Integer[] getNextChannel(int direction) {
                     
                     // 检查找到的频道组是否有有效频道（非占位项）
                     ArrayList<LiveChannelItem> channels = getLiveChannels(channelGroupIndex);
-                    boolean hasValidChannel = false;
                     if (channels != null && !channels.isEmpty()) {
                         for (LiveChannelItem channel : channels) {
                             if (channel.getChannelIndex() != -1) {
@@ -3369,7 +3368,7 @@ private Integer[] getNextChannel(int direction) {
                     
                     // 检查找到的频道组是否有有效频道（非占位项）
                     ArrayList<LiveChannelItem> channels = getLiveChannels(channelGroupIndex);
-                    boolean hasValidChannel = false;
+
                     if (channels != null && !channels.isEmpty()) {
                         for (LiveChannelItem channel : channels) {
                             if (channel.getChannelIndex() != -1) {
