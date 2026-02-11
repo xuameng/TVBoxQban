@@ -1936,7 +1936,6 @@ public class LivePlayActivity extends BaseActivity {
                 if(tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
                     mHideChannelListRunXu(); //xuameng隐藏频道菜单
                 }
-                liveEpgDateAdapter.setSelectedIndex(position);
                 currentChannelGroupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex(); //XUAMENG 7天EPG
                 currentLiveChannelIndexXu = liveChannelItemAdapter.getSelectedChannelIndex();
 
@@ -1953,6 +1952,7 @@ public class LivePlayActivity extends BaseActivity {
                     return;
                 }
 
+                liveEpgDateAdapter.setSelectedIndex(position);
                 currentLiveChannelItemXu = getLiveChannels(currentChannelGroupIndexXu).get(currentLiveChannelIndexXu);
                 channel_NameXu = currentLiveChannelItemXu;
                 getEpgxu(liveEpgDateAdapter.getData().get(position).getDateParamVal()); //XUAMENG 7天EPG
@@ -3311,14 +3311,14 @@ public class LivePlayActivity extends BaseActivity {
         return -1;
     }
     private boolean isCurrentLiveChannelValid() {
-        if(currentLiveChannelItem == null) {
+        if(currentLiveChannelItem == null || currentLiveChannelIndex = -1) {
            App.showToastShort(mContext, "聚汇影视提示您：请先选择频道！");
            return false;
         }
         return true;
     }
     private boolean isCurrentLiveChannelValidXu() {
-        if(currentLiveChannelItem == null) {
+        if(currentLiveChannelItem == null || currentLiveChannelIndex = -1) {
             return false;
         }
         return true;
