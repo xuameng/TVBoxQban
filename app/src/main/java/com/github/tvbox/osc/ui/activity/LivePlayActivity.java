@@ -2795,7 +2795,6 @@ public class LivePlayActivity extends BaseActivity {
             setDefaultLiveChannelList();
             showSuccess();
             App.showToastShort(mContext, "聚汇影视提示您：频道列表为空！");
-            finish();
             return;
         }
         initLiveObj(); //xuameng 直播配置里有没有logo配置
