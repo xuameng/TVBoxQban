@@ -2814,7 +2814,7 @@ public class LivePlayActivity extends BaseActivity {
         initLiveState(); // 初始化直播状态并播放
         return; // 成功加载，直接返回
     }
-}
+
     
     // 情况2: 获取的列表为空或获取失败
     // 无论是因为网络错误、配置解析失败还是列表本身为空，都强制显示默认列表
@@ -2825,15 +2825,16 @@ public class LivePlayActivity extends BaseActivity {
             if(live_groups.size() > 1) {
                 setDefaultLiveChannelList();
                 App.showToastShort(mContext, "聚汇影视提示您：直播列表为空！请切换线路！");
+				            showSuccess();
                 return;
             }
             App.showToastShort(mContext, "聚汇影视提示您：频道列表为空！");
             finish();
             return;
         }
-            showSuccess();
-        }
+
     }
+
     public void loadProxyLives(String url) {
         try {
             Uri parsedUrl = Uri.parse(url);
