@@ -3039,17 +3039,38 @@ private void initLiveState() {
             liveSettingGroupList.get(5).getLiveSettingItems().get(Hawk.get(HawkConfig.LIVE_GROUP_INDEX, 0)).setItemSelected(true); //xuameng新增 换源
         }
     }
-    private void loadCurrentSourceList() {
-        ArrayList < String > currentSourceNames = currentLiveChannelItem.getChannelSourceNames();
-        ArrayList < LiveSettingItem > liveSettingItemList = new ArrayList < > ();
-        for(int j = 0; j < currentSourceNames.size(); j++) {
-            LiveSettingItem liveSettingItem = new LiveSettingItem();
-            liveSettingItem.setItemIndex(j);
-            liveSettingItem.setItemName(currentSourceNames.get(j));
-            liveSettingItemList.add(liveSettingItem);
-        }
-        liveSettingGroupList.get(0).setLiveSettingItems(liveSettingItemList);
-    }
+
+
+
+
+private void loadCurrentSourceList() {
+ if (currentLiveChannelItem == null) {
+ return;
+ }
+
+ ArrayList<String> currentSourceNames = currentLiveChannelItem.getChannelSourceNames();
+ ArrayList<LiveSettingItem> liveSettingItemList = new ArrayList<>();
+
+ // 核心修改：处理空列表，添加默认名称
+ if (currentSourceNames == null || currentSourceNames.isEmpty()) {
+ // 添加默认名称（示例：name=0）
+ currentSourceNames = new ArrayList<>();
+ currentSourceNames.add("聚汇直播");
+ }
+
+ // 循环生成 LiveSettingItem（此时列表已非空）
+ for (int j = 0; j < currentSourceNames.size(); j++) {
+ LiveSettingItem liveSettingItem = new LiveSettingItem();
+ liveSettingItem.setItemIndex(j);
+ liveSettingItem.setItemName(currentSourceNames.get(j));
+ liveSettingItemList.add(liveSettingItem);
+ }
+
+ // 安全设置到 liveSettingGroupList
+ if (liveSettingGroupList != null && !liveSettingGroupList.isEmpty()) {
+ liveSettingGroupList.get(0).setLiveSettingItems(liveSettingItemList);
+ }
+}
     void showTime() {
         if(Hawk.get(HawkConfig.LIVE_SHOW_TIME, false)) {
             mHandler.removeCallbacks(mUpdateTimeRun);
