@@ -2581,42 +2581,61 @@ public class LivePlayActivity extends BaseActivity {
             }
         });
     }
-    private void selectSettingGroup(int position, boolean focus) {
-        if(!isCurrentLiveChannelValid()) return;
-        if(focus) {
-            liveSettingGroupAdapter.setFocusedGroupIndex(position);
-            liveSettingItemAdapter.setFocusedItemIndex(-1);
-        }
-        if(position == liveSettingGroupAdapter.getSelectedGroupIndex() || position < -1) return;
-        liveSettingGroupAdapter.setSelectedGroupIndex(position);
-        liveSettingItemAdapter.setNewData(liveSettingGroupList.get(position).getLiveSettingItems());
-        switch(position) {
-            case 0:
-                liveSettingItemAdapter.selectItem(currentLiveChannelItem.getSourceIndex(), true, false);
-                break;
-            case 1:
-                liveSettingItemAdapter.selectItem(livePlayerManager.getLivePlayerScale(), true, true);
-                break;
-            case 2:
-                liveSettingItemAdapter.selectItem(livePlayerManager.getLivePlayerType(), true, true);
-                break;
-            case 6:
-                liveSettingItemAdapter.selectItem(livePlayerManager.getLivePlayrender(), true, true); //xuameng 获取渲染方式
-                break;
-            case 7:
-                musicAnimation = livePlayerManager.getLivePlaymusic();
-                if (musicAnimation){
-                    liveSettingItemAdapter.selectItem(0, true, true);  //xuameng 音柱动画开
-                }else{
-                    liveSettingItemAdapter.selectItem(1, true, true);  //xuameng 音柱动画关
-                }
-                break;
-        }
-        int scrollToPosition = liveSettingItemAdapter.getSelectedItemIndex();
-        if(scrollToPosition < 0) scrollToPosition = 0;
-        mSettingItemView.scrollToPosition(scrollToPosition);
-        mHideSettingLayoutRunXu();
-    }
+private void selectSettingGroup(int position, boolean focus) {
+ if(!isCurrentLiveChannelValid()) return;
+ 
+ // 新增：检查设置组列表是否为空
+ if (liveSettingGroupList == null || liveSettingGroupList.isEmpty()) {
+ // 可添加提示（如Toast）告知用户无设置组
+     App.showToastShort(mContext, "聚汇影视提示您：暂无收藏频道！");
+ return;
+ }
+ 
+ // 新增：检查position是否在有效范围内
+ if (position < 0 || position >= liveSettingGroupList.size()) {
+     App.showToastShort(mContext, "聚汇影视提示您：暂无收藏频道2222！");    
+ return;
+ }
+ 
+ if(focus) {
+ liveSettingGroupAdapter.setFocusedGroupIndex(position);
+ liveSettingItemAdapter.setFocusedItemIndex(-1);
+ }
+ 
+ if(position == liveSettingGroupAdapter.getSelectedGroupIndex()) return; // 移除position < -1的判断（已在上文处理）
+ 
+ liveSettingGroupAdapter.setSelectedGroupIndex(position);
+ // 现在可安全调用get(position)
+ liveSettingItemAdapter.setNewData(liveSettingGroupList.get(position).getLiveSettingItems());
+ 
+ switch(position) {
+ case 0:
+ liveSettingItemAdapter.selectItem(currentLiveChannelItem.getSourceIndex(), true, false);
+ break;
+ case 1:
+ liveSettingItemAdapter.selectItem(livePlayerManager.getLivePlayerScale(), true, true);
+ break;
+ case 2:
+ liveSettingItemAdapter.selectItem(livePlayerManager.getLivePlayerType(), true, true);
+ break;
+ case 6:
+ liveSettingItemAdapter.selectItem(livePlayerManager.getLivePlayrender(), true, true); 
+ break;
+ case 7:
+ musicAnimation = livePlayerManager.getLivePlaymusic();
+ if (musicAnimation){
+ liveSettingItemAdapter.selectItem(0, true, true); 
+ }else{
+ liveSettingItemAdapter.selectItem(1, true, true); 
+ }
+ break;
+ }
+ 
+ int scrollToPosition = liveSettingItemAdapter.getSelectedItemIndex();
+ if(scrollToPosition < 0) scrollToPosition = 0;
+ mSettingItemView.scrollToPosition(scrollToPosition);
+ mHideSettingLayoutRunXu();
+}
     private void initSettingItemView() {
         mSettingItemView.setHasFixedSize(true);
         mSettingItemView.setItemAnimator(null);   //xuameng禁用TVRecyclerView动画
@@ -2900,7 +2919,7 @@ public class LivePlayActivity extends BaseActivity {
                                 setDefaultLiveChannelList();
                          
                   showSuccess();
-                App.showToastShort(mContext, "聚汇影22222！");                          
+                App.showToastShort(mContext, "聚汇影8888888！");                          
                           
             
              
