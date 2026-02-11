@@ -1493,7 +1493,7 @@ public class LivePlayActivity extends BaseActivity {
         if(!isCurrentLiveChannelValid()) return;   //xuameng 空指针修复
         int channelGroupIndexXu = currentChannelGroupIndex; //xuameng当前选定的频道组
         ArrayList<LiveChannelItem> channels = getLiveChannels(channelGroupIndexXu);
-        if(!Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false) && !channels.isEmpty() && 
+        if(!Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false) && !channels.isEmpty() &&    //xuameng 占位符判断
             channels.get(0).getChannelIndex() == -1) {
             App.showToastShort(mContext, "聚汇影视提示您：未选择跨选分类且本组频道为空！");
             return;
@@ -1516,7 +1516,7 @@ public class LivePlayActivity extends BaseActivity {
         if(!isCurrentLiveChannelValid()) return;    //xuameng 空指针修复
         int channelGroupIndexXu = currentChannelGroupIndex; //xuameng当前选定的频道组
         ArrayList<LiveChannelItem> channels = getLiveChannels(channelGroupIndexXu);
-        if(!Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false) && !channels.isEmpty() && 
+        if(!Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false) && !channels.isEmpty() &&   //xuameng 占位符判断
             channels.get(0).getChannelIndex() == -1) {
             App.showToastShort(mContext, "聚汇影视提示您：未选择跨选分类且本组频道为空！");
             return;
@@ -3310,14 +3310,14 @@ public class LivePlayActivity extends BaseActivity {
         }
         return -1;
     }
-    private boolean isCurrentLiveChannelValid() {
+    private boolean isCurrentLiveChannelValid() {  //xuameng   currentLiveChannelIndex = -1  就是没选频道
         if(currentLiveChannelItem == null || currentLiveChannelIndex = -1) {
            App.showToastShort(mContext, "聚汇影视提示您：请先选择频道！");
            return false;
         }
         return true;
     }
-    private boolean isCurrentLiveChannelValidXu() {
+    private boolean isCurrentLiveChannelValidXu() {  //xuameng   currentLiveChannelIndex = -1  就是没选频道
         if(currentLiveChannelItem == null || currentLiveChannelIndex = -1) {
             return false;
         }
