@@ -1537,6 +1537,10 @@ public class LivePlayActivity extends BaseActivity {
             return;
         }
         if(!isCurrentLiveChannelValid()) return;
+        if (currentLiveChannelIndex == -1){
+            App.showToastShort(mContext, "聚汇影视提示您：请先选择频道！");
+            return;
+        }
         currentLiveChannelItem.preSource();
         playChannel(currentChannelGroupIndex, currentLiveChannelIndex, true);
     }
@@ -1545,6 +1549,10 @@ public class LivePlayActivity extends BaseActivity {
             return;
         }
         if(!isCurrentLiveChannelValid()) return;
+        if (currentLiveChannelIndex == -1){
+            App.showToastShort(mContext, "聚汇影视提示您：请先选择频道！");
+            return;
+        }
         currentLiveChannelItem.nextSource();
         playChannel(currentChannelGroupIndex, currentLiveChannelIndex, true);
     }
@@ -2716,10 +2724,10 @@ public class LivePlayActivity extends BaseActivity {
                         Hawk.put(HawkConfig.LIVE_CHANNEL_REVERSE, select);
                         break;
                     case 3:
-                        if(liveChannelGroupList.size() - 1 < 1) { //xuameng 只有一个频道组跨选分类BUG
-                            App.showToastShort(mContext, "聚汇影视提示您：只有一个频道组！不能跨选分类！");
-                            return;
-                        }
+                     //   if(liveChannelGroupList.size() - 1 < 1) { //xuameng 只有一个频道组跨选分类BUG
+                     //       App.showToastShort(mContext, "聚汇影视提示您：只有一个频道组！不能跨选分类！");
+                     //       return;
+                     //   }
                         select = !Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false);
                         Hawk.put(HawkConfig.LIVE_CROSS_GROUP, select);
                         break;
@@ -2801,7 +2809,7 @@ public class LivePlayActivity extends BaseActivity {
             if(live_groups.size() > 1) {
                 setDefaultLiveChannelList();
                 showSuccess();
-                App.showToastShort(mContext, "聚汇影视提示您：直播列表为空！请切换线路！11111111");
+                App.showToastShort(mContext, "聚汇影视提示您：直播列表为空！请切换线路！");
             } else {
                 setDefaultLiveChannelList();
                 showSuccess();
@@ -2972,9 +2980,9 @@ public class LivePlayActivity extends BaseActivity {
         JsonArray live_groups = Hawk.get(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
         liveSettingGroupList = ApiConfig.get().getLiveSettingGroupList();
         if(!listxu.isEmpty()) {
-            if(liveChannelGroupList.size() - 1 < 1) { //xuameng 只有一个频道组跨选分类BUG
-                Hawk.put(HawkConfig.LIVE_CROSS_GROUP, false);
-            }
+          //  if(liveChannelGroupList.size() - 1 < 2) { //xuameng 只有两个频道组跨选分类BUG
+          //      Hawk.put(HawkConfig.LIVE_CROSS_GROUP, false);
+          //  }
             liveSettingGroupList.get(3).getLiveSettingItems().get(Hawk.get(HawkConfig.LIVE_CONNECT_TIMEOUT, 1)).setItemSelected(true);
             liveSettingGroupList.get(4).getLiveSettingItems().get(0).setItemSelected(Hawk.get(HawkConfig.LIVE_SHOW_TIME, false));
             liveSettingGroupList.get(4).getLiveSettingItems().get(1).setItemSelected(Hawk.get(HawkConfig.LIVE_SHOW_NET_SPEED, false));
@@ -2991,17 +2999,37 @@ public class LivePlayActivity extends BaseActivity {
             liveSettingGroupList.get(5).getLiveSettingItems().get(Hawk.get(HawkConfig.LIVE_GROUP_INDEX, 0)).setItemSelected(true); //xuameng新增 换源
         }
     }
-    private void loadCurrentSourceList() {
-        ArrayList < String > currentSourceNames = currentLiveChannelItem.getChannelSourceNames();
-        ArrayList < LiveSettingItem > liveSettingItemList = new ArrayList < > ();
-        for(int j = 0; j < currentSourceNames.size(); j++) {
+
+private void loadCurrentSourceList() {
+    // 添加空值检查
+    if (currentLiveChannelItem == null || 
+        currentLiveChannelItem.getChannelSourceNames() == null || 
+        currentLiveChannelItem.getChannelSourceNames().isEmpty()) {
+        // 创建默认源列表防止崩溃
+        ArrayList<String> defaultSourceNames = new ArrayList<>();
+        defaultSourceNames.add("聚汇直播");
+        ArrayList<LiveSettingItem> liveSettingItemList = new ArrayList<>();
+        for (int j = 0; j < defaultSourceNames.size(); j++) {
             LiveSettingItem liveSettingItem = new LiveSettingItem();
             liveSettingItem.setItemIndex(j);
-            liveSettingItem.setItemName(currentSourceNames.get(j));
+            liveSettingItem.setItemName(defaultSourceNames.get(j));
             liveSettingItemList.add(liveSettingItem);
         }
         liveSettingGroupList.get(0).setLiveSettingItems(liveSettingItemList);
+        return;
     }
+
+    ArrayList<String> currentSourceNames = currentLiveChannelItem.getChannelSourceNames();
+    ArrayList<LiveSettingItem> liveSettingItemList = new ArrayList<>();
+    for (int j = 0; j < currentSourceNames.size(); j++) {
+        LiveSettingItem liveSettingItem = new LiveSettingItem();
+        liveSettingItem.setItemIndex(j);
+        liveSettingItem.setItemName(currentSourceNames.get(j));
+        liveSettingItemList.add(liveSettingItem);
+    }
+    liveSettingGroupList.get(0).setLiveSettingItems(liveSettingItemList);
+}
+
     void showTime() {
         if(Hawk.get(HawkConfig.LIVE_SHOW_TIME, false)) {
             mHandler.removeCallbacks(mUpdateTimeRun);
