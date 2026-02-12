@@ -46,7 +46,6 @@ import okhttp3.dnsoverhttps.DnsOverHttps;
 import okhttp3.internal.Version;
 import xyz.doikki.videoplayer.exo.ExoMediaSourceHelper;
 
-
 public class OkGoHelper {
     public static final long DEFAULT_MILLISECONDS = 10000;      //默认的超时时间
 
@@ -59,18 +58,18 @@ public class OkGoHelper {
 
     static OkHttpClient ItvClient = null;   //xuameng新增完
     
-    // 修改类型为 Dns
-    public static Dns dnsOverHttps = null; 
+    // 修改类型为 DnsOverHttps
+    public static DnsOverHttps dnsOverHttps = null;
 
     public static ArrayList<String> dnsHttpsList = new ArrayList<>();
     public static boolean is_doh = false;  //xuameng新增
     public static Map<String, String> myHosts = null;  //xuameng新增
 
     public static String getDohUrl(int type) {  //xuameng新增
-        String json=Hawk.get(HawkConfig.DOH_JSON,"");
-        if(json.isEmpty())json=dnsConfigJson;
+        String json = Hawk.get(HawkConfig.DOH_JSON, "");
+        if (json.isEmpty()) json = dnsConfigJson;
         JsonArray jsonArray = JsonParser.parseString(json).getAsJsonArray();
-        if (type >= 1 && type < dnsHttpsList.size()) {
+        if (type >= 1 && type <= dnsHttpsList.size()) { // 修改条件以匹配索引
             JsonObject dnsConfig = jsonArray.get(type - 1).getAsJsonObject();
             if (dnsConfig.has("url")) {     //XUAMENG修复DNS URL为空问题
                 return dnsConfig.get("url").getAsString();    // 获取对应的 URL
@@ -83,8 +82,8 @@ public class OkGoHelper {
 
     public static void setDnsList() {  //xuameng新增
         dnsHttpsList.clear();
-        String json=Hawk.get(HawkConfig.DOH_JSON,"");
-        if(json.isEmpty())json=dnsConfigJson;
+        String json = Hawk.get(HawkConfig.DOH_JSON, "");
+        if (json.isEmpty()) json = dnsConfigJson;
         JsonArray jsonArray = JsonParser.parseString(json).getAsJsonArray();
         dnsHttpsList.add("默认");
         for (int i = 0; i < jsonArray.size(); i++) {
@@ -92,7 +91,7 @@ public class OkGoHelper {
             String name = dnsConfig.has("name") ? dnsConfig.get("name").getAsString() : "Unknown Name";
             dnsHttpsList.add(name);
         }
-        if(Hawk.get(HawkConfig.DOH_URL, 0)+1>dnsHttpsList.size())Hawk.put(HawkConfig.DOH_URL, 0);
+        if (Hawk.get(HawkConfig.DOH_URL, 0) + 1 > dnsHttpsList.size()) Hawk.put(HawkConfig.DOH_URL, 0);
     }
 
     private static List<InetAddress> DohIps(JsonArray ips) {
@@ -123,7 +122,7 @@ public class OkGoHelper {
             }
             JsonArray jsonArray = JsonParser.parseString(json).getAsJsonArray();
             
-            if (dohSelector > 0 && dohSelector >= jsonArray.size()) {
+            if (dohSelector > 0 && dohSelector > dnsHttpsList.size()) { // 修改条件
                 Hawk.put(HawkConfig.DOH_URL, 0);
                 dohSelector = 0;
             }
@@ -172,8 +171,8 @@ public class OkGoHelper {
         OkHttpClient dohClient = builder.build();
         String dohUrl = getDohUrl(Hawk.get(HawkConfig.DOH_URL, 0));
         
-        // 初始化 dnsOverHttps 为默认的 Dns.SYSTEM
-        dnsOverHttps = Dns.SYSTEM; // 现在 dnsOverHttps 是 Dns 类型
+        // 初始化 dnsOverHttps 为 null
+        dnsOverHttps = null;
         
         if (!dohUrl.isEmpty()) {
             is_doh = true;
@@ -188,12 +187,11 @@ public class OkGoHelper {
                         dnsBuilder.bootstrapDnsHosts(IPS);
                     }
                 }
-                DnsOverHttps doh = dnsBuilder.build();
-                dnsOverHttps = doh; // 现在可以赋值，因为 dnsOverHttps 是 Dns 类型
+                dnsOverHttps = dnsBuilder.build(); // 现在 dnsOverHttps 是 DnsOverHttps 类型
             } catch (Exception e) {
                 e.printStackTrace();
-                // 如果创建 DnsOverHttps 失败，保持使用系统DNS
-                // dnsOverHttps 已经是 Dns.SYSTEM
+                // 如果创建 DnsOverHttps 失败，保持 dnsOverHttps 为 null
+                dnsOverHttps = null;
             }
         }
     }
@@ -368,7 +366,7 @@ public class OkGoHelper {
         builder.writeTimeout(DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS);
         builder.connectTimeout(DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS);
 
-        builder.dns(dnsOverHttps); // 现在 dnsOverHttps 是 Dns 类型
+        builder.dns(dnsOverHttps); // 现在 dnsOverHttps 是 DnsOverHttps 类型
         try {
             setOkHttpSsl(builder);
         } catch (Throwable th) {
@@ -430,7 +428,7 @@ public class OkGoHelper {
     static void initExoOkHttpClient() {
         // 确保 dnsOverHttps 已经初始化
         if (dnsOverHttps == null) {
-            dnsOverHttps = Dns.SYSTEM;
+            dnsOverHttps = Dns.SYSTEM; // 使用系统默认 DNS
         }
         
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
@@ -455,9 +453,8 @@ public class OkGoHelper {
             th.printStackTrace();
         }
 
-        builder.dns(new CustomDns());  // 或者使用 dnsOverHttps，根据需求选择
-        // 如果您想使用 dnsOverHttps，可以这样设置：
-        // builder.dns(dnsOverHttps);
+        // 使用 CustomDns 作为 Dns 实现
+        builder.dns(new CustomDns());  // 使用 CustomDns 而不是 dnsOverHttps
 
         ItvClient = builder.build();
 
