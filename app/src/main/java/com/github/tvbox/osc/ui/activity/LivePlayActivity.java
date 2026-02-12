@@ -2977,6 +2977,7 @@ public class LivePlayActivity extends BaseActivity {
     }
 
     private void initLiveSettingGroupList() { //xuameng
+        List<LiveChannelGroup> listxu = ApiConfig.get().getChannelGroupList();
         JsonArray live_groups = Hawk.get(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
     
         // 关键：从接口获取数据，如果为空则用默认数据兜底
@@ -2984,32 +2985,28 @@ public class LivePlayActivity extends BaseActivity {
         liveSettingGroupList = (apiSettingGroups != null && !apiSettingGroups.isEmpty()) 
             ? apiSettingGroups 
             : ApiConfig.get().createDefaultLiveSettingGroupList(); // 接口失败，用默认数据
-
-        //  if(liveChannelGroupList.size() - 1 < 2) { //xuameng 只有两个频道组跨选分类BUG
-        //      Hawk.put(HawkConfig.LIVE_CROSS_GROUP, false);
-        //  }
-        liveSettingGroupList.get(3).getLiveSettingItems().get(Hawk.get(HawkConfig.LIVE_CONNECT_TIMEOUT, 1)).setItemSelected(true);
-        liveSettingGroupList.get(4).getLiveSettingItems().get(0).setItemSelected(Hawk.get(HawkConfig.LIVE_SHOW_TIME, false));
-        liveSettingGroupList.get(4).getLiveSettingItems().get(1).setItemSelected(Hawk.get(HawkConfig.LIVE_SHOW_NET_SPEED, false));
-        liveSettingGroupList.get(4).getLiveSettingItems().get(2).setItemSelected(Hawk.get(HawkConfig.LIVE_CHANNEL_REVERSE, false));
-        liveSettingGroupList.get(4).getLiveSettingItems().get(3).setItemSelected(Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false));
-        if(live_groups != null) {
-            for(JsonElement element: live_groups) {
-                if(element.isJsonNull()) {
-                    App.showToastShort(mContext, "聚汇直播提示您：直播列表读取有错误！请检查JSON中lives的配置！");
-                    return;
+        if(!listxu.isEmpty()) {
+          //  if(liveChannelGroupList.size() - 1 < 2) { //xuameng 只有两个频道组跨选分类BUG
+          //      Hawk.put(HawkConfig.LIVE_CROSS_GROUP, false);
+          //  }
+            liveSettingGroupList.get(3).getLiveSettingItems().get(Hawk.get(HawkConfig.LIVE_CONNECT_TIMEOUT, 1)).setItemSelected(true);
+            liveSettingGroupList.get(4).getLiveSettingItems().get(0).setItemSelected(Hawk.get(HawkConfig.LIVE_SHOW_TIME, false));
+            liveSettingGroupList.get(4).getLiveSettingItems().get(1).setItemSelected(Hawk.get(HawkConfig.LIVE_SHOW_NET_SPEED, false));
+            liveSettingGroupList.get(4).getLiveSettingItems().get(2).setItemSelected(Hawk.get(HawkConfig.LIVE_CHANNEL_REVERSE, false));
+            liveSettingGroupList.get(4).getLiveSettingItems().get(3).setItemSelected(Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false));
+            if(live_groups != null) {
+                for(JsonElement element: live_groups) {
+                    if(element.isJsonNull()) {
+                        App.showToastShort(mContext, "聚汇直播提示您：直播列表读取有错误！请检查JSON中lives的配置！");
+                        return;
+                    }
                 }
             }
+            liveSettingGroupList.get(5).getLiveSettingItems().get(Hawk.get(HawkConfig.LIVE_GROUP_INDEX, 0)).setItemSelected(true); //xuameng新增 换源
         }
-        liveSettingGroupList.get(5).getLiveSettingItems().get(Hawk.get(HawkConfig.LIVE_GROUP_INDEX, 0)).setItemSelected(true); //xuameng新增 换源
     }
 
     private void loadCurrentSourceList() {
-        // 1. xuameng先检查liveSettingGroupList是否有效（关键！）
-        if (liveSettingGroupList == null || liveSettingGroupList.isEmpty() || liveSettingGroupList.size() < 1) {
-            App.showToastShort(mContext, "聚汇直播提示您：请先选择频道！");
-            return;
-        }
         ArrayList < String > currentSourceNames = currentLiveChannelItem.getChannelSourceNames();
         ArrayList < LiveSettingItem > liveSettingItemList = new ArrayList < > ();
         for(int j = 0; j < currentSourceNames.size(); j++) {
