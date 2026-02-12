@@ -2976,9 +2976,14 @@ public class LivePlayActivity extends BaseActivity {
         return iv_Play_Xu.getVisibility() == View.VISIBLE;
     }
     private void initLiveSettingGroupList() { //xuameng
-        List < LiveChannelGroup > listxu = ApiConfig.get().getChannelGroupList();
-        JsonArray live_groups = Hawk.get(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
-        liveSettingGroupList = ApiConfig.get().getLiveSettingGroupList();
+    List<LiveChannelGroup> listxu = ApiConfig.get().getChannelGroupList();
+    JsonArray live_groups = Hawk.get(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
+    
+    // 关键：从接口获取数据，如果为空则用默认数据兜底
+    List<LiveSettingGroup> apiSettingGroups = ApiConfig.get().getLiveSettingGroupList();
+    liveSettingGroupList = (apiSettingGroups != null && !apiSettingGroups.isEmpty()) 
+        ? apiSettingGroups 
+        : ApiConfig.get().createDefaultLiveSettingGroupList(); // 接口失败，用默认数据
         if(!listxu.isEmpty()) {
           //  if(liveChannelGroupList.size() - 1 < 2) { //xuameng 只有两个频道组跨选分类BUG
           //      Hawk.put(HawkConfig.LIVE_CROSS_GROUP, false);
@@ -2999,7 +3004,6 @@ public class LivePlayActivity extends BaseActivity {
             liveSettingGroupList.get(5).getLiveSettingItems().get(Hawk.get(HawkConfig.LIVE_GROUP_INDEX, 0)).setItemSelected(true); //xuameng新增 换源
         }
     }
-
 private void loadCurrentSourceList() {
     // 添加空值检查
     if (currentLiveChannelItem == null || 
@@ -3007,7 +3011,7 @@ private void loadCurrentSourceList() {
         currentLiveChannelItem.getChannelSourceNames().isEmpty()) {
         // 创建默认源列表防止崩溃
         ArrayList<String> defaultSourceNames = new ArrayList<>();
-        defaultSourceNames.add("聚汇直播");
+        defaultSourceNames.add("默认源1");
         ArrayList<LiveSettingItem> liveSettingItemList = new ArrayList<>();
         for (int j = 0; j < defaultSourceNames.size(); j++) {
             LiveSettingItem liveSettingItem = new LiveSettingItem();
@@ -3029,7 +3033,6 @@ private void loadCurrentSourceList() {
     }
     liveSettingGroupList.get(0).setLiveSettingItems(liveSettingItemList);
 }
-
     void showTime() {
         if(Hawk.get(HawkConfig.LIVE_SHOW_TIME, false)) {
             mHandler.removeCallbacks(mUpdateTimeRun);
