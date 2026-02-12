@@ -58,8 +58,8 @@ public class OkGoHelper {
 
     static OkHttpClient ItvClient = null;   //xuameng新增完
     
-    // 修改类型为 Dns
-    public static Dns dnsOverHttps = null;
+    // 保持类型为 DnsOverHttps
+    public static DnsOverHttps dnsOverHttps = null;
 
     public static ArrayList<String> dnsHttpsList = new ArrayList<>();
     public static boolean is_doh = false;  //xuameng新增
@@ -187,8 +187,7 @@ public class OkGoHelper {
                         dnsBuilder.bootstrapDnsHosts(IPS);
                     }
                 }
-                DnsOverHttps doh = dnsBuilder.build();
-                dnsOverHttps = doh; // 现在 dnsOverHttps 是 Dns 类型，因为 DnsOverHttps 实现了 Dns 接口
+                dnsOverHttps = dnsBuilder.build(); // 现在 dnsOverHttps 是 DnsOverHttps 类型
             } catch (Exception e) {
                 e.printStackTrace();
                 // 如果创建 DnsOverHttps 失败，保持 dnsOverHttps 为 null
@@ -367,7 +366,7 @@ public class OkGoHelper {
         builder.writeTimeout(DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS);
         builder.connectTimeout(DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS);
 
-        builder.dns(dnsOverHttps); // 现在 dnsOverHttps 是 Dns 类型
+        builder.dns(dnsOverHttps); // 现在 dnsOverHttps 是 DnsOverHttps 类型
         try {
             setOkHttpSsl(builder);
         } catch (Throwable th) {
@@ -425,42 +424,55 @@ public class OkGoHelper {
         }
     }
 
-// 确保 initExoOkHttpClient 使用正确的 Dns 类型
-static void initExoOkHttpClient() {
-    // 确保 dnsOverHttps 已经初始化，如果为 null，则使用 Dns.SYSTEM
-    if (dnsOverHttps == null) {
-        dnsOverHttps = Dns.SYSTEM; // 现在 dnsOverHttps 是 Dns 类型
+    // 确保 initExoOkHttpClient 使用正确的 Dns 类型
+    static void initExoOkHttpClient() {
+        // 确保 dnsOverHttps 已经初始化
+        if (dnsOverHttps == null) {
+            dnsOverHttps = Dns.SYSTEM; // **错误：不能将 Dns 赋值给 DnsOverHttps**
+            // 正确做法：使用 Dns.SYSTEM 作为 OkHttpClient 的 dns，而不是赋值给 dnsOverHttps
+        }
+        
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor("OkExoPlayer");
+
+        if (Hawk.get(HawkConfig.DEBUG_OPEN, false)) {
+            loggingInterceptor.setPrintLevel(HttpLoggingInterceptor.Level.BODY);
+            loggingInterceptor.setColorLevel(Level.INFO);
+        } else {
+            loggingInterceptor.setPrintLevel(HttpLoggingInterceptor.Level.NONE);
+            loggingInterceptor.setColorLevel(Level.OFF);
+        }
+        builder.addInterceptor(loggingInterceptor);
+
+        builder.retryOnConnectionFailure(true);
+        builder.followRedirects(true);
+        builder.followSslRedirects(true);
+
+        try {
+            setOkHttpSsl(builder);
+        } catch (Throwable th) {
+            th.printStackTrace();
+        }
+
+        // **解决方案：不将 Dns.SYSTEM 赋值给 dnsOverHttps，而是将其作为 OkHttpClient 的 dns**
+        // **将 dnsOverHttps 保持为 DnsOverHttps 类型，如果为 null，则使用 Dns.SYSTEM 作为 OkHttpClient 的 dns**
+        if (dnsOverHttps == null) {
+            // **不将 Dns.SYSTEM 赋值给 dnsOverHttps，因为类型不兼容**
+            // **而是，在构建 OkHttpClient 时，使用 Dns.SYSTEM 作为 dns**
+            builder.dns(Dns.SYSTEM); // 使用系统默认 DNS
+        } else {
+            // **使用 dnsOverHttps 作为 OkHttpClient 的 dns**
+            builder.dns(dnsOverHttps);
+        }
+
+        // **如果您需要使用 CustomDns，可以选择以下之一：**
+        // **1. 使用 dnsOverHttps**
+        // **2. 使用 CustomDns**
+        // **根据您的需求选择，以下示例使用 dnsOverHttps 如果可用，否则使用 Dns.SYSTEM**
+        // builder.dns(dnsOverHttps != null ? dnsOverHttps : Dns.SYSTEM);
+
+        ItvClient = builder.build();
+
+        ExoMediaSourceHelper.getInstance(App.getInstance()).setOkClient(ItvClient); //xuameng新增完
     }
-    
-    OkHttpClient.Builder builder = new OkHttpClient.Builder();
-    HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor("OkExoPlayer");
-
-    if (Hawk.get(HawkConfig.DEBUG_OPEN, false)) {
-        loggingInterceptor.setPrintLevel(HttpLoggingInterceptor.Level.BODY);
-        loggingInterceptor.setColorLevel(Level.INFO);
-    } else {
-        loggingInterceptor.setPrintLevel(HttpLoggingInterceptor.Level.NONE);
-        loggingInterceptor.setColorLevel(Level.OFF);
-    }
-    builder.addInterceptor(loggingInterceptor);
-
-    builder.retryOnConnectionFailure(true);
-    builder.followRedirects(true);
-    builder.followSslRedirects(true);
-
-    try {
-        setOkHttpSsl(builder);
-    } catch (Throwable th) {
-        th.printStackTrace();
-    }
-
-    // 使用 CustomDns 作为 Dns 实现，或者使用 dnsOverHttps
-    builder.dns(new CustomDns());  // 或者使用 dnsOverHttps，根据需求选择
-    // 如果您想使用 dnsOverHttps，可以这样设置：
-    // builder.dns(dnsOverHttps);
-
-    ItvClient = builder.build();
-
-    ExoMediaSourceHelper.getInstance(App.getInstance()).setOkClient(ItvClient); //xuameng新增完
-}
 }
