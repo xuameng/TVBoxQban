@@ -93,7 +93,7 @@ public class OkGoHelper {
     public static ArrayList<String> dnsHttpsList = new ArrayList<>();
 
     public static boolean is_doh = false;  //xuameng新增
-    public static Map<String, String> myHosts = null;  //xuameng新增
+    public static volatile Map<String, String> myHosts = null;  // 添加volatile关键字确保线程可见性
 
     public static String getDohUrl(int type) {  //xuameng新增
         String json = Hawk.get(HawkConfig.DOH_JSON, "");
@@ -217,26 +217,19 @@ public class OkGoHelper {
         }
     }
 
-    // 自定义 DNS 解析器 - 修复卡死问题的关键
+    // 自定义 DNS 解析器 - 修复卡死问题和空指针异常的关键
     static class CustomDns implements Dns {
         private final String excludeIps = "2409:8087:6c02:14:100::14,2409:8087:6c02:14:100::18,39.134.108.253,39.134.108.245";
         
         @NonNull
         @Override
         public List<InetAddress> lookup(@NonNull String hostname) throws UnknownHostException {
-            // 修复：先初始化myHosts，再进行空值和空map检查
-            if (myHosts == null) {
-                try {
-                    myHosts = ApiConfig.get().getMyHost();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    myHosts = new ConcurrentHashMap<>(); // 初始化为空map防止后续出错
-                }
-            }
+            // 修复：安全地获取并使用myHosts，防止并发问题
+            Map<String, String> localMyHosts = getMyHostsSafely();
             
             // 修复空指针异常：添加 null 检查
-            if (myHosts != null && !myHosts.isEmpty() && myHosts.containsKey(hostname)) {
-                hostname = myHosts.get(hostname);
+            if (localMyHosts != null && !localMyHosts.isEmpty() && localMyHosts.containsKey(hostname)) {
+                hostname = localMyHosts.get(hostname);
             }
             
             if (hostname == null) {
@@ -252,7 +245,21 @@ public class OkGoHelper {
             }
         }
 
-        private List<InetAddress> getAllByName(String host) {
+        // 安全地获取myHosts，防止并发问题
+        private Map<String, String> getMyHostsSafely() {
+            if (myHosts == null) {
+                try {
+                    Map<String, String> tempHosts = ApiConfig.get().getMyHost();
+                    myHosts = tempHosts != null ? tempHosts : new ConcurrentHashMap<>(); // 初始化为空map防止后续出错
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    myHosts = new ConcurrentHashMap<>(); // 初始化为空map防止后续出错
+                }
+            }
+            return myHosts;
+        }
+
+        private List<InetAddress> getAllByName(String host) throws UnknownHostException {
             try {
                 // 获取所有与主机名关联的 IP 地址
                 InetAddress[] allAddresses = InetAddress.getAllByName(host);
@@ -270,9 +277,12 @@ public class OkGoHelper {
                     }
                 }
                 return validAddresses;
+            } catch (UnknownHostException e) {
+                // 如果系统DNS也失败，重新抛出异常
+                throw e;
             } catch (Exception e) {
                 e.printStackTrace();
-                // 如果系统DNS也失败，抛出异常
+                // 如果其他异常发生，抛出UnknownHostException
                 throw new UnknownHostException("DNS lookup failed for: " + host + ", error: " + e.getMessage());
             }
         }
