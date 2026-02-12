@@ -50,8 +50,8 @@ import xyz.doikki.videoplayer.exo.ExoMediaSourceHelper;
 public class OkGoHelper {
     public static final long DEFAULT_MILLISECONDS = 10000;      //默认的超时时间
 
-    // 内置doh json
-    private static final String dnsConfigJson = "["   //xuameng新增
+    // 内置doh json - 包含默认选项
+    private static final String dnsConfigJson = "["
             + "{\"name\": \"默认\", \"url\": \"\"},"
             + "{\"name\": \"腾讯\", \"url\": \"https://doh.pub/dns-query\"},"
             + "{\"name\": \"阿里\", \"url\": \"https://dns.alidns.com/dns-query\"},"
@@ -99,9 +99,17 @@ public class OkGoHelper {
     public static String getDohUrl(int type) {  //xuameng新增
         String json=Hawk.get(HawkConfig.DOH_JSON,"");
         if(json.isEmpty())json=dnsConfigJson;
-        JsonArray jsonArray = JsonParser.parseString(json).getAsJsonArray();
-        if (type >= 1 && type < dnsHttpsList.size()) {
-            JsonObject dnsConfig = jsonArray.get(type - 1).getAsJsonObject();
+        JsonArray jsonArray;
+        try {
+            jsonArray = JsonParser.parseString(json).getAsJsonArray();
+        } catch (Exception e) {
+            // 如果JSON解析失败，使用默认配置
+            jsonArray = JsonParser.parseString(dnsConfigJson).getAsJsonArray();
+            e.printStackTrace();
+        }
+        
+        if (type >= 0 && type < jsonArray.size()) {  // 修正索引范围检查
+            JsonObject dnsConfig = jsonArray.get(type).getAsJsonObject();
             if (dnsConfig.has("url")) {     //XUAMENG修复DNS URL为空问题
                 return dnsConfig.get("url").getAsString();    // 获取对应的 URL
             } else {
@@ -112,17 +120,31 @@ public class OkGoHelper {
     }
 
     public static void setDnsList() {  //xuameng新增
-        dnsHttpsList.clear();
+        dnsHttpsList.clear(); // 清除旧列表
+        
         String json=Hawk.get(HawkConfig.DOH_JSON,"");
         if(json.isEmpty())json=dnsConfigJson;
-        JsonArray jsonArray = JsonParser.parseString(json).getAsJsonArray();
+        
+        JsonArray jsonArray;
+        try {
+            jsonArray = JsonParser.parseString(json).getAsJsonArray();
+        } catch (Exception e) {
+            // 如果JSON解析失败，使用默认配置
+            jsonArray = JsonParser.parseString(dnsConfigJson).getAsJsonArray();
+            e.printStackTrace();
+        }
+        
+        // 添加所有DNS配置到列表
         for (int i = 0; i < jsonArray.size(); i++) {
             JsonObject dnsConfig = jsonArray.get(i).getAsJsonObject();
             String name = dnsConfig.has("name") ? dnsConfig.get("name").getAsString() : "Unknown Name";
             dnsHttpsList.add(name);
         }
-        if(Hawk.get(HawkConfig.DOH_URL, 0)+1>dnsHttpsList.size())Hawk.put(HawkConfig.DOH_URL, 0);
-
+        
+        // 确保选择器值在有效范围内
+        if(Hawk.get(HawkConfig.DOH_URL, 0) >= dnsHttpsList.size()) {
+            Hawk.put(HawkConfig.DOH_URL, 0);
+        }
     }
 
     private static List<InetAddress> DohIps(JsonArray ips) {
@@ -143,32 +165,36 @@ public class OkGoHelper {
     static void initDnsOverHttps() {   //xuameng新增
         Integer dohSelector=Hawk.get(HawkConfig.DOH_URL, 0);
         JsonArray ips=null;
+        JsonArray jsonArray;
+        
         try {
             String json=Hawk.get(HawkConfig.DOH_JSON,"");
-            if(json.isEmpty()) {
-                json=dnsConfigJson;
-                // 清空现有列表，然后添加默认的4项
-                dnsHttpsList.clear();
+            if(json.isEmpty())json=dnsConfigJson;
+            
+            try {
+                jsonArray = JsonParser.parseString(json).getAsJsonArray();
+            } catch (Exception e) {
+                // 如果JSON解析失败，使用默认配置
+                jsonArray = JsonParser.parseString(dnsConfigJson).getAsJsonArray();
+                e.printStackTrace();
             }
             
-            JsonArray jsonArray = JsonParser.parseString(json).getAsJsonArray();
-            if(dohSelector>jsonArray.size())Hawk.put(HawkConfig.DOH_URL, 0);       //xuameng修复最后一项DNS选不上
+            // 确保选择器值在有效范围内
+            if(dohSelector >= jsonArray.size()) {
+                Hawk.put(HawkConfig.DOH_URL, 0);
+                dohSelector = 0; // 更新本地变量
+            }
             
+            // 遍历JSON数组获取DNS配置
             for (int i = 0; i < jsonArray.size(); i++) {
                 JsonObject dnsConfig = jsonArray.get(i).getAsJsonObject();
                 String name = dnsConfig.has("name") ? dnsConfig.get("name").getAsString() : "Unknown Name";
-                dnsHttpsList.add(name);
-                if(dohSelector==i)ips = dnsConfig.has("ips") ? dnsConfig.getAsJsonArray("ips") : null;   //xuameng修复最后一项DNS选不上
+                
+                if(dohSelector.equals(i)) {
+                    ips = dnsConfig.has("ips") ? dnsConfig.getAsJsonArray("ips") : null;
+                }
             }
         } catch (Exception e) {
-            // 获取列表失败，清空现有列表，然后添加默认的4项
-            dnsHttpsList.clear();
-            JsonArray jsonArray = JsonParser.parseString(dnsConfigJson).getAsJsonArray();
-            for (int i = 0; i < jsonArray.size(); i++) {
-                JsonObject dnsConfig = jsonArray.get(i).getAsJsonObject();
-                String name = dnsConfig.has("name") ? dnsConfig.get("name").getAsString() : "Unknown Name";
-                dnsHttpsList.add(name);
-            }
             e.printStackTrace();
         }
 
@@ -191,10 +217,7 @@ public class OkGoHelper {
         OkHttpClient dohClient = builder.build();
         String dohUrl = getDohUrl(Hawk.get(HawkConfig.DOH_URL, 0));
         if (!dohUrl.isEmpty()) is_doh = true;   //xuameng新增
-//        dnsOverHttps = new DnsOverHttps.Builder()
-//                .client(dohClient)
-//                .url(dohUrl.isEmpty() ? null : HttpUrl.get(dohUrl))
-//                .build();
+        
         DnsOverHttps.Builder dnsBuilder = new DnsOverHttps.Builder();
         dnsBuilder.client(dohClient);
         dnsBuilder.url(dohUrl.isEmpty() ? null : HttpUrl.get(dohUrl));
