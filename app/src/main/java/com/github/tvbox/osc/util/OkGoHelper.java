@@ -118,16 +118,23 @@ public class OkGoHelper {
 
     public static void setDnsList() {  //xuameng新增
         dnsHttpsList.clear();
+        dnsHttpsList.add("默认"); // 添加默认选项
+        
         String json=Hawk.get(HawkConfig.DOH_JSON,"");
-        if(json.isEmpty())json=dnsConfigJson;
         JsonArray jsonArray;
         try {
             jsonArray = JsonParser.parseString(json).getAsJsonArray();
+            // 检查是否有有效的DNS配置
+            if(jsonArray.size() == 0) {
+                // 如果获取到的配置为空数组，使用默认配置
+                jsonArray = JsonParser.parseString(dnsConfigJson).getAsJsonArray();
+            }
         } catch (Exception e) {
             e.printStackTrace();
+            // 如果解析失败，使用默认配置
             jsonArray = JsonParser.parseString(dnsConfigJson).getAsJsonArray();
         }
-        dnsHttpsList.add("默认");
+        
         for (int i = 0; i < jsonArray.size(); i++) {
             JsonObject dnsConfig = jsonArray.get(i).getAsJsonObject();
             String name = dnsConfig.has("name") ? dnsConfig.get("name").getAsString() : "Unknown Name";
@@ -157,15 +164,23 @@ public class OkGoHelper {
         JsonArray ips=null;
         try {
             dnsHttpsList.clear(); // 清空列表防止重复添加
+            dnsHttpsList.add("默认"); // 添加默认选项
+            
             String json=Hawk.get(HawkConfig.DOH_JSON,"");
-            if(json.isEmpty())json=dnsConfigJson;
             JsonArray jsonArray;
             try {
                 jsonArray = JsonParser.parseString(json).getAsJsonArray();
+                // 检查是否有有效的DNS配置
+                if(jsonArray.size() == 0) {
+                    // 如果获取到的配置为空数组，使用默认配置
+                    jsonArray = JsonParser.parseString(dnsConfigJson).getAsJsonArray();
+                }
             } catch (Exception e) {
                 e.printStackTrace();
+                // 如果解析失败，使用默认配置
                 jsonArray = JsonParser.parseString(dnsConfigJson).getAsJsonArray();
             }
+            
             if(dohSelector>=jsonArray.size())Hawk.put(HawkConfig.DOH_URL, 0);       //xuameng修复最后一项DNS选不上
             for (int i = 0; i < jsonArray.size(); i++) {
                 JsonObject dnsConfig = jsonArray.get(i).getAsJsonObject();
