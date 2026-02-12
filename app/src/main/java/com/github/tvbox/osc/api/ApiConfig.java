@@ -763,7 +763,7 @@ public class ApiConfig {
 							JsonObject jsonObject = lives_groups.get(i).getAsJsonObject();
 							String name = jsonObject.has("name")?jsonObject.get("name").getAsString():"聚汇影视"+(i+1);
 							if(name == null || name.isEmpty()){
-								name = "聚汇影视";
+								name = "聚汇直播";
 							}
 							LiveSettingItem liveSettingItem = new LiveSettingItem();
 							liveSettingItem.setItemIndex(i);
@@ -1164,7 +1164,7 @@ public class ApiConfig {
         LiveSettingGroup lineGroup = new LiveSettingGroup();
         lineGroup.setGroupIndex(0);
         lineGroup.setGroupName("线路选择");
-        lineGroup.setLiveSettingItems(new ArrayList<>()); // 空ArrayList，后续由loadCurrentSourceList填充
+        lineGroup.setLiveSettingItems(new ArrayList<>()); // 已经是ArrayList，无需转换
 
         // ==================== 2. 画面比例（索引1） ====================
         LiveSettingGroup scaleGroup = new LiveSettingGroup();
@@ -1177,7 +1177,8 @@ public class ApiConfig {
         scaleItems.add(createLiveSettingItem(3, "填充比例"));
         scaleItems.add(createLiveSettingItem(4, "原始比例"));
         scaleItems.add(createLiveSettingItem(5, "裁剪比例"));
-        scaleGroup.setLiveSettingItems(scaleItems);
+        // 关键修改：强制转换为ArrayList
+        scaleGroup.setLiveSettingItems((ArrayList<LiveSettingItem>) (List<?>) scaleItems);
 
         // ==================== 3. 播放解码（索引2） ====================
         LiveSettingGroup decoderGroup = new LiveSettingGroup();
@@ -1189,7 +1190,8 @@ public class ApiConfig {
         decoderItems.add(createLiveSettingItem(2, "IJK  软解"));
         decoderItems.add(createLiveSettingItem(3, "EXO硬解"));
         decoderItems.add(createLiveSettingItem(4, "EXO软解"));
-        decoderGroup.setLiveSettingItems(decoderItems);
+        // 关键修改：强制转换
+        decoderGroup.setLiveSettingItems((ArrayList<LiveSettingItem>) (List<?>) decoderItems);
 
         // ==================== 4. 超时换源（索引3） ====================
         LiveSettingGroup timeoutGroup = new LiveSettingGroup();
@@ -1202,7 +1204,8 @@ public class ApiConfig {
         timeoutItems.add(createLiveSettingItem(3, "超时20秒"));
         timeoutItems.add(createLiveSettingItem(4, "超时25秒"));
         timeoutItems.add(createLiveSettingItem(5, "超时30秒"));
-        timeoutGroup.setLiveSettingItems(timeoutItems);
+        // 关键修改：强制转换
+        timeoutGroup.setLiveSettingItems((ArrayList<LiveSettingItem>) (List<?>) timeoutItems);
 
         // ==================== 5. 偏好设置（索引4） ====================
         LiveSettingGroup personalGroup = new LiveSettingGroup();
@@ -1213,7 +1216,8 @@ public class ApiConfig {
         personalItems.add(createLiveSettingItem(1, "显示网速"));
         personalItems.add(createLiveSettingItem(2, "换台反转"));
         personalItems.add(createLiveSettingItem(3, "跨选分类"));
-        personalGroup.setLiveSettingItems(personalItems);
+        // 关键修改：强制转换
+        personalGroup.setLiveSettingItems((ArrayList<LiveSettingItem>) (List<?>) personalItems);
 
         // ==================== 6. 多源切换（索引5） ====================
         LiveSettingGroup yumGroup = new LiveSettingGroup();
@@ -1221,7 +1225,8 @@ public class ApiConfig {
         yumGroup.setGroupName("多源切换");
         List<LiveSettingItem> yumItems = new ArrayList<>();
         yumItems.add(createLiveSettingItem(0, "聚汇直播"));
-        yumGroup.setLiveSettingItems(yumItems);
+        // 关键修改：强制转换
+        yumGroup.setLiveSettingItems((ArrayList<LiveSettingItem>) (List<?>) yumItems);
 
         // ==================== 7. 渲染方式（索引6） ====================
         LiveSettingGroup renderGroup = new LiveSettingGroup();
@@ -1230,7 +1235,8 @@ public class ApiConfig {
         List<LiveSettingItem> renderItems = new ArrayList<>();
         renderItems.add(createLiveSettingItem(0, "Texture渲染"));
         renderItems.add(createLiveSettingItem(1, "Surface渲染"));
-        renderGroup.setLiveSettingItems(renderItems);
+        // 关键修改：强制转换
+        renderGroup.setLiveSettingItems((ArrayList<LiveSettingItem>) (List<?>) renderItems);
 
         // ==================== 8. 音柱动画（索引7） ====================
         LiveSettingGroup musicGroup = new LiveSettingGroup();
@@ -1239,7 +1245,8 @@ public class ApiConfig {
         List<LiveSettingItem> musicItems = new ArrayList<>();
         musicItems.add(createLiveSettingItem(0, "音柱开启"));
         musicItems.add(createLiveSettingItem(1, "音柱关闭"));
-        musicGroup.setLiveSettingItems(musicItems);
+        // 关键修改：强制转换
+        musicGroup.setLiveSettingItems((ArrayList<LiveSettingItem>) (List<?>) musicItems);
 
         // ==================== 9. 退出直播（索引8） ====================
         LiveSettingGroup exitGroup = new LiveSettingGroup();
@@ -1247,7 +1254,8 @@ public class ApiConfig {
         exitGroup.setGroupName("退出直播");
         List<LiveSettingItem> exitItems = new ArrayList<>();
         exitItems.add(createLiveSettingItem(0, "确认退出"));
-        exitGroup.setLiveSettingItems(exitItems);
+        // 关键修改：强制转换
+        exitGroup.setLiveSettingItems((ArrayList<LiveSettingItem>) (List<?>) exitItems);
 
         // ==================== 将所有组加入默认列表 ====================
         defaultList.add(lineGroup);     // 索引0
