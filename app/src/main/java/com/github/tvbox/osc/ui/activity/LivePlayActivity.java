@@ -1391,14 +1391,21 @@ public class LivePlayActivity extends BaseActivity {
         if(!isFavoriteGroup && (channelGroupIndex == currentChannelGroupIndex && liveChannelIndex == currentLiveChannelIndex && !changeSource) || (changeSource && currentLiveChannelItem.getSourceNum() == 1) && !XuSource) {
             // xuamengEPG日期自动选今天
             liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
-            getEpg(new Date());
-            if(isVOD) {
-                if(backcontroller.getVisibility() == View.GONE) {
-                   showProgressBars(true);
-                }
+            if(tvLeftChannelListLayout.getVisibility() == View.VISIBLE  && TimeoutChangeSource || tvRightSettingLayout.getVisibility() == View.VISIBLE && TimeoutChangeSource) {
+                App.showToastShort(mContext, "聚汇直播提示您：播放失败！自动切换中！");
+                TimeoutChangeSource = false;  //xuameng是否自动换源
             }else{
-                showBottomEpg();
-            }
+                getEpg(new Date());
+                if(isVOD) {
+                    if(backcontroller.getVisibility() == View.GONE) {
+                       showProgressBars(true);
+                       TimeoutChangeSource = false;  //xuameng是否自动换源
+                    }
+                }else{
+                    showBottomEpg();
+                    TimeoutChangeSource = false;  //xuameng是否自动换源
+                }
+		    }
             return true;
         }
         if(mVideoView == null) return true; //XUAMENG可能会引起空指针问题的修复
@@ -2258,12 +2265,12 @@ public class LivePlayActivity extends BaseActivity {
                     return;
                 }
                 else if(liveChannelGroupList.size() - 1 < 1 && getLiveChannels(channelGroupIndexXu).size() - 1 < 1) { //如果只有一个频道组就播放当前频道，不胯下跨选频道组
-                    playNextSource();
+                    playXuSource();
                     App.showToastShort(mContext, "聚汇影视提示您：只有一个频道！正在重播！");
                     return;
                 }
                 else if(!Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false) && getLiveChannels(channelGroupIndexXu).size() - 1 < 1) {
-                    playNextSource();
+                    playXuSource();
                     App.showToastShort(mContext, "聚汇影视提示您：未选择跨选分类且本组只有一个频道！正在重播！");
                     return;
                 }
