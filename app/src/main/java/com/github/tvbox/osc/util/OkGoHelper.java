@@ -118,65 +118,20 @@ public class OkGoHelper {
         return ""; //xuameng新增完
     }
 
-public static void setDnsList() {
-    String json = Hawk.get(HawkConfig.DOH_JSON, ""); // 获取保存的DNS配置JSON
-    JsonArray jsonArray;
-
-    if (json.isEmpty() || !isValidDnsConfigJson(json)) {
-        // 如果加载不成功或JSON无效，使用默认配置
-        json = DEFAULT_DNS_CONFIG_JSON;
-        Hawk.put(HawkConfig.DOH_JSON, json); // 可选：将默认配置保存起来
-    }
-
-    jsonArray = JsonParser.parseString(json).getAsJsonArray();
-
-    // 清除现有的DNS列表
-    dnsHttpsList.clear();
-
-    // 添加“默认”项
-    dnsHttpsList.add("默认");
-
-    // 遍历JSON数组，添加其他DNS配置
-    for (int i = 0; i < jsonArray.size(); i++) {
-        JsonObject dnsConfig = jsonArray.get(i).getAsJsonObject();
-        String name = dnsConfig.has("name") ? dnsConfig.get("name").getAsString() : "Unknown Name";
-        String url = dnsConfig.has("url") ? dnsConfig.get("url").getAsString() : "";
-        dnsHttpsList.add(name);
-
-        // 可选：如果需要，您也可以将URL存储起来以备后续使用
-    }
-
-    // 确保Hawk中的DOH_URL在有效范围内
-    int currentDohUrl = Hawk.get(HawkConfig.DOH_URL, 0);
-    if (currentDohUrl + 1 > dnsHttpsList.size()) {
-        Hawk.put(HawkConfig.DOH_URL, 0);
-    }
-}
-
-
-// 辅助方法：验证DNS配置JSON是否有效
-private static boolean isValidDnsConfigJson(String json) {
-    try {
+    public static void setDnsList() {  //xuameng新增
+        dnsHttpsList.clear();
+        String json=Hawk.get(HawkConfig.DOH_JSON,"");
+        if(json.isEmpty())json=dnsConfigJson;
         JsonArray jsonArray = JsonParser.parseString(json).getAsJsonArray();
+        dnsHttpsList.add("默认");
         for (int i = 0; i < jsonArray.size(); i++) {
-            JsonObject obj = jsonArray.get(i).getAsJsonObject();
-            if (!obj.has("name") || !obj.has("url")) {
-                return false;
-            }
+            JsonObject dnsConfig = jsonArray.get(i).getAsJsonObject();
+            String name = dnsConfig.has("name") ? dnsConfig.get("name").getAsString() : "Unknown Name";
+            dnsHttpsList.add(name);
         }
-        return true;
-    } catch (Exception e) {
-        return false;
-    }
-}
+        if(Hawk.get(HawkConfig.DOH_URL, 0)+1>dnsHttpsList.size())Hawk.put(HawkConfig.DOH_URL, 0);
 
-// 定义默认的DNS配置JSON
-private static final String DEFAULT_DNS_CONFIG_JSON = "["
-        + "{\"name\": \"默认\", \"url\": \"\"},"
-        + "{\"name\": \"腾讯\", \"url\": \"https://doh.pub/dns-query\"},"
-        + "{\"name\": \"阿里\", \"url\": \"https://dns.alidns.com/dns-query\"},"
-        + "{\"name\": \"360\", \"url\": \"https://doh.360.cn/dns-query\"}"
-        + "]";
+    }
 
     private static List<InetAddress> DohIps(JsonArray ips) {
         List<InetAddress> inetAddresses = new ArrayList<>();
