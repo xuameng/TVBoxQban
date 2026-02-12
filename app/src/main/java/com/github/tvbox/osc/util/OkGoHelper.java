@@ -57,17 +57,7 @@ public class OkGoHelper {
             + "]";
 
     // 内置默认DNS配置列表
-    private static final JsonArray defaultDnsConfigs;
-    static {
-        // 静态初始化，避免多次解析JSON
-        try {
-            defaultDnsConfigs = JsonParser.parseString(dnsConfigJson).getAsJsonArray();
-        } catch (Exception e) {
-            e.printStackTrace();
-            // 如果解析失败，创建一个空的JsonArray
-            defaultDnsConfigs = new JsonArray();
-        }
-    }
+    private static final JsonArray defaultDnsConfigs = JsonParser.parseString(dnsConfigJson).getAsJsonArray();
     
     static OkHttpClient ItvClient = null;   //xuameng新增完
     
