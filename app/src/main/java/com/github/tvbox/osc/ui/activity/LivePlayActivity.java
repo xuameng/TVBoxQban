@@ -3006,11 +3006,11 @@ public class LivePlayActivity extends BaseActivity {
     }
 
     private void loadCurrentSourceList() {
-    // 1. 先检查liveSettingGroupList是否有效（关键！）
-    if (liveSettingGroupList == null || liveSettingGroupList.isEmpty() || liveSettingGroupList.size() < 1) {
-        App.showToastShort(mContext, "聚汇直播提示您：请先选择频道！");
-        return;
-    }
+        // 1. xuameng先检查liveSettingGroupList是否有效（关键！）
+        if (liveSettingGroupList == null || liveSettingGroupList.isEmpty() || liveSettingGroupList.size() < 1) {
+            App.showToastShort(mContext, "聚汇直播提示您：请先选择频道！");
+            return;
+        }
         ArrayList < String > currentSourceNames = currentLiveChannelItem.getChannelSourceNames();
         ArrayList < LiveSettingItem > liveSettingItemList = new ArrayList < > ();
         for(int j = 0; j < currentSourceNames.size(); j++) {
@@ -3022,16 +3022,6 @@ public class LivePlayActivity extends BaseActivity {
         liveSettingGroupList.get(0).setLiveSettingItems(liveSettingItemList);
     }
 
-    ArrayList<String> currentSourceNames = currentLiveChannelItem.getChannelSourceNames();
-    ArrayList<LiveSettingItem> liveSettingItemList = new ArrayList<>();
-    for (int j = 0; j < currentSourceNames.size(); j++) {
-        LiveSettingItem liveSettingItem = new LiveSettingItem();
-        liveSettingItem.setItemIndex(j);
-        liveSettingItem.setItemName(currentSourceNames.get(j));
-        liveSettingItemList.add(liveSettingItem);
-    }
-    liveSettingGroupList.get(0).setLiveSettingItems(liveSettingItemList);
-}
     void showTime() {
         if(Hawk.get(HawkConfig.LIVE_SHOW_TIME, false)) {
             mHandler.removeCallbacks(mUpdateTimeRun);
