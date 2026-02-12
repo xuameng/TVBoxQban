@@ -2581,61 +2581,42 @@ public class LivePlayActivity extends BaseActivity {
             }
         });
     }
-private void selectSettingGroup(int position, boolean focus) {
- if(!isCurrentLiveChannelValid()) return;
- 
- // 新增：检查设置组列表是否为空
- if (liveSettingGroupList == null || liveSettingGroupList.isEmpty()) {
- // 可添加提示（如Toast）告知用户无设置组
-     App.showToastShort(mContext, "聚汇影视提示您：暂无收藏频道！");
- return;
- }
- 
- // 新增：检查position是否在有效范围内
- if (position < 0 || position >= liveSettingGroupList.size()) {
-     App.showToastShort(mContext, "聚汇影视提示您：暂无收藏频道2222！");    
- return;
- }
- 
- if(focus) {
- liveSettingGroupAdapter.setFocusedGroupIndex(position);
- liveSettingItemAdapter.setFocusedItemIndex(-1);
- }
- 
- if(position == liveSettingGroupAdapter.getSelectedGroupIndex()) return; // 移除position < -1的判断（已在上文处理）
- 
- liveSettingGroupAdapter.setSelectedGroupIndex(position);
- // 现在可安全调用get(position)
- liveSettingItemAdapter.setNewData(liveSettingGroupList.get(position).getLiveSettingItems());
- 
- switch(position) {
- case 0:
- liveSettingItemAdapter.selectItem(currentLiveChannelItem.getSourceIndex(), true, false);
- break;
- case 1:
- liveSettingItemAdapter.selectItem(livePlayerManager.getLivePlayerScale(), true, true);
- break;
- case 2:
- liveSettingItemAdapter.selectItem(livePlayerManager.getLivePlayerType(), true, true);
- break;
- case 6:
- liveSettingItemAdapter.selectItem(livePlayerManager.getLivePlayrender(), true, true); 
- break;
- case 7:
- musicAnimation = livePlayerManager.getLivePlaymusic();
- if (musicAnimation){
- liveSettingItemAdapter.selectItem(0, true, true); 
- }else{
- liveSettingItemAdapter.selectItem(1, true, true); 
- }
- break;
- }
- 
- int scrollToPosition = liveSettingItemAdapter.getSelectedItemIndex();
- if(scrollToPosition < 0) scrollToPosition = 0;
- mSettingItemView.scrollToPosition(scrollToPosition);
- mHideSettingLayoutRunXu();
-}
+    private void selectSettingGroup(int position, boolean focus) {
+        if(!isCurrentLiveChannelValid()) return;
+        if(focus) {
+            liveSettingGroupAdapter.setFocusedGroupIndex(position);
+            liveSettingItemAdapter.setFocusedItemIndex(-1);
+        }
+        if(position == liveSettingGroupAdapter.getSelectedGroupIndex() || position < -1) return;
+        liveSettingGroupAdapter.setSelectedGroupIndex(position);
+        liveSettingItemAdapter.setNewData(liveSettingGroupList.get(position).getLiveSettingItems());
+        switch(position) {
+            case 0:
+                liveSettingItemAdapter.selectItem(currentLiveChannelItem.getSourceIndex(), true, false);
+                break;
+            case 1:
+                liveSettingItemAdapter.selectItem(livePlayerManager.getLivePlayerScale(), true, true);
+                break;
+            case 2:
+                liveSettingItemAdapter.selectItem(livePlayerManager.getLivePlayerType(), true, true);
+                break;
+            case 6:
+                liveSettingItemAdapter.selectItem(livePlayerManager.getLivePlayrender(), true, true); //xuameng 获取渲染方式
+                break;
+            case 7:
+                musicAnimation = livePlayerManager.getLivePlaymusic();
+                if (musicAnimation){
+                    liveSettingItemAdapter.selectItem(0, true, true);  //xuameng 音柱动画开
+                }else{
+                    liveSettingItemAdapter.selectItem(1, true, true);  //xuameng 音柱动画关
+                }
+                break;
+        }
+        int scrollToPosition = liveSettingItemAdapter.getSelectedItemIndex();
+        if(scrollToPosition < 0) scrollToPosition = 0;
+        mSettingItemView.scrollToPosition(scrollToPosition);
+        mHideSettingLayoutRunXu();
+    }
     private void initSettingItemView() {
         mSettingItemView.setHasFixedSize(true);
         mSettingItemView.setItemAnimator(null);   //xuameng禁用TVRecyclerView动画
@@ -2805,7 +2786,7 @@ private void selectSettingGroup(int position, boolean focus) {
     private void initLiveChannelList() {
         List < LiveChannelGroup > list = ApiConfig.get().getChannelGroupList();
 
-        // 排除"我的收藏"组，检查剩余组是否为空
+        // xuameng排除"我的收藏"组，检查剩余组是否为空
         boolean hasValidGroups = false;
         for (LiveChannelGroup group : list) {
             if (group != null && !"我的收藏".equals(group.getGroupName())) {
@@ -2814,27 +2795,18 @@ private void selectSettingGroup(int position, boolean focus) {
             }
         }
 
-        // 如果原列表为空，或排除收藏组后没有其他组，则显示默认列表
+        // xuameng如果原列表为空，或排除收藏组后没有其他组，则显示默认列表
         if (list.isEmpty() || !hasValidGroups) {
             JsonArray live_groups = Hawk.get(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
             if(live_groups.size() > 1) {
                 setDefaultLiveChannelList();
                 showSuccess();
-                App.showToastShort(mContext, "1111111111！");
+                App.showToastShort(mContext, "聚汇影视提示您：直播列表为空！请切换线路！11111111");
             } else {
-            
-                 
-    liveChannelGroupList.clear();                       
-                                setDefaultLiveChannelList();
-                         
-                  showSuccess();
-                App.showToastShort(mContext, "聚汇影22222！");                          
-                          
-            
-             
-
+                setDefaultLiveChannelList();
+                showSuccess();
+                App.showToastShort(mContext, "聚汇影视提示您：频道列表为空！");
             }
-         //   initLiveState(); // 关键：初始化界面
             return;
         }
         initLiveObj(); //xuameng 直播配置里有没有logo配置
@@ -2842,23 +2814,7 @@ private void selectSettingGroup(int position, boolean focus) {
             loadProxyLives(list.get(0).getGroupName());
         } else {
             liveChannelGroupList.clear();
-
-            // xuaemng========我的收藏 ==========
-            // 1. xuaemng创建我的收藏组
-            LiveChannelGroup favoriteGroup = LiveChannelItem.createFavoriteChannelGroup();
-            favoriteGroup.setGroupIndex(0); // 固定为第一个组
-            liveChannelGroupList.add(favoriteGroup);
-    
-            // 2. 添加原始频道组，跳过可能存在的“我的收藏”组
-            int nextIndex = 1;
-            for (LiveChannelGroup group : list) {
-                if (!"我的收藏".equals(group.getGroupName())) {
-                    group.setGroupIndex(nextIndex++);
-                    liveChannelGroupList.add(group);
-                }
-            }
-            // ========== 我的收藏 修复结束 ==========
-
+            liveChannelGroupList.addAll(list);
             showSuccess();
             initLiveState();
         }
@@ -2872,9 +2828,11 @@ private void selectSettingGroup(int position, boolean focus) {
                 JsonArray live_groups = Hawk.get(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
                 if(live_groups.size() > 1) {
                     setDefaultLiveChannelList();
+                    showSuccess();
                     App.showToastShort(mContext, "聚汇影视提示您：直播文件错误！请切换线路！");
                 } else {
                     setDefaultLiveChannelList();
+                    showSuccess();
                     App.showToastShort(mContext, "聚汇影视提示您：直播文件错误！");
                 }
                 return;
@@ -2896,46 +2854,35 @@ private void selectSettingGroup(int position, boolean focus) {
                 JsonArray live_groups = Hawk.get(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
                 ApiConfig.get().loadLives(livesArray);
                 List < LiveChannelGroup > list = ApiConfig.get().getChannelGroupList();
-            // 排除"我的收藏"组，检查剩余组是否为空
-        boolean hasValidGroups = false;
-        for (LiveChannelGroup group : list) {
-            if (group != null && !"我的收藏".equals(group.getGroupName())) {
-                hasValidGroups = true;
-                break;
-            }
-        }
 
-        // 如果原列表为空，或排除收藏组后没有其他组，则显示默认列表
-        if (list.isEmpty() || !hasValidGroups) {
-            
-            if(live_groups.size() > 1) {
-                setDefaultLiveChannelList();
-                showSuccess();
-                App.showToastShort(mContext, "1111111111！");
-            } else {
-            
-                 
-    liveChannelGroupList.clear();                       
-                                setDefaultLiveChannelList();
-                         
-                  showSuccess();
-                App.showToastShort(mContext, "聚汇影8888888！");                          
-                          
-            
-             
+                // xuameng排除"我的收藏"组，检查剩余组是否为空
+                boolean hasValidGroups = false;
+                for (LiveChannelGroup group : list) {
+                    if (group != null && !"我的收藏".equals(group.getGroupName())) {
+                        hasValidGroups = true;
+                        break;
+                    }
+                }
 
-            }
-         //   initLiveState(); // 关键：初始化界面
-            return;
-        }
+                // xuameng如果原列表为空，或排除收藏组后没有其他组，则显示默认列表
+                if (list.isEmpty() || !hasValidGroups) {
+                    if(live_groups.size() > 1) {
+                        setDefaultLiveChannelList();
+                        showSuccess();
+                        App.showToastShort(mContext, "聚汇影视提示您：直播列表为空！请切换线路！");
+                    } else {
+                        setDefaultLiveChannelList();
+                        showSuccess();
+                        App.showToastShort(mContext, "聚汇影视提示您：频道列表为空！");
+                    }
+                    return;
+                }
                 liveChannelGroupList.clear();
                 liveChannelGroupList.addAll(list);
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {
                         LivePlayActivity.this.showSuccess();
-                App.showToastShort(mContext, "聚汇影555555！");                          
-                         
                         initLiveState();
                     }
                 });
@@ -2948,9 +2895,11 @@ private void selectSettingGroup(int position, boolean focus) {
                     public void run() {
                         if(live_groups.size() > 1) {
                             setDefaultLiveChannelList();
+                            showSuccess();
                             App.showToastShort(mContext, "聚汇影视提示您：直播列表获取错误！请切换线路！");
                         } else {
                             setDefaultLiveChannelList();
+                            showSuccess();
                             App.showToastShort(mContext, "聚汇影视提示您：直播列表获取错误！");
                         }
                     }
@@ -2959,67 +2908,51 @@ private void selectSettingGroup(int position, boolean focus) {
         });
     }
 
-private void initLiveState() {
-    int lastChannelGroupIndex = -1; //xuameng记忆上次播放频道组开始
-    int lastLiveChannelIndex = -1;
-    Intent intent = getIntent();
-    if(intent != null && intent.getExtras() != null) {
-        Bundle bundle = intent.getExtras();
-        lastChannelGroupIndex = bundle.getInt("groupIndex", 0);
-        lastLiveChannelIndex = bundle.getInt("channelIndex", 0);
-    } else {
-        Pair < Integer, Integer > lastChannel = JavaUtil.findLiveLastChannel(liveChannelGroupList);
-        lastChannelGroupIndex = lastChannel.getFirst();
-        lastLiveChannelIndex = lastChannel.getSecond();
-    } //xuameng记忆上次播放频道组结束
-    
-    livePlayerManager.init(mVideoView);
-    showTime();
-    showNetSpeed();
-    tvLeftChannelListLayout.setVisibility(View.INVISIBLE); //xuameng显示EPG就隐藏左右菜单
-    tvRightSettingLayout.setVisibility(View.INVISIBLE); //xuameng显示EPG就隐藏左右菜单
-    liveChannelGroupAdapter.setNewData(liveChannelGroupList);
+    private void initLiveState() {
+        int lastChannelGroupIndex = -1; //xuameng记忆上次播放频道组开始
+        int lastLiveChannelIndex = -1;
+        Intent intent = getIntent();
+        if(intent != null && intent.getExtras() != null) {
+            Bundle bundle = intent.getExtras();
+            lastChannelGroupIndex = bundle.getInt("groupIndex", 0);
+            lastLiveChannelIndex = bundle.getInt("channelIndex", 0);
+        } else {
+            Pair < Integer, Integer > lastChannel = JavaUtil.findLiveLastChannel(liveChannelGroupList);
+            lastChannelGroupIndex = lastChannel.getFirst();
+            lastLiveChannelIndex = lastChannel.getSecond();
+        } //xuameng记忆上次播放频道组结束
+        livePlayerManager.init(mVideoView);
+        showTime();
+        showNetSpeed();
+        tvLeftChannelListLayout.setVisibility(View.INVISIBLE); //xuameng显示EPG就隐藏左右菜单
+        tvRightSettingLayout.setVisibility(View.INVISIBLE); //xuameng显示EPG就隐藏左右菜单
+        liveChannelGroupAdapter.setNewData(liveChannelGroupList);
 
-    // ========== 新增：检查是否是默认列表的特殊情况 ==========
-    boolean isDefaultList = false;
-    if (liveChannelGroupList.size() == 2) { // 只有收藏组和默认组
-        if (liveChannelGroupList.get(1).getGroupName().equals("聚汇直播")) {
-            isDefaultList = true;
-        }
-    }
-    
-    // xuameng 修复：避免从"我的收藏"组中的占位项开始播放
-    if (lastChannelGroupIndex == 0 && lastLiveChannelIndex >= 0) {  // 如果是"我的收藏"组(索引为0)且指定了具体频道
-        ArrayList<LiveChannelItem> channels = getLiveChannels(0);  // 获取我的收藏组的频道列表
-        if (channels != null && lastLiveChannelIndex < channels.size()) {
-            LiveChannelItem currentChannel = channels.get(lastLiveChannelIndex);  // 获取当前要播放的频道
-            if (currentChannel != null && currentChannel.getChannelIndex() == -1) {  // 如果当前频道是占位项(索引为-1表示"暂无收藏")
-                // 寻找第一个非"我的收藏"组的有效频道组
-                for (int groupIndex = 1; groupIndex < liveChannelGroupList.size(); groupIndex++) {
-                    ArrayList<LiveChannelItem> otherGroupChannels = getLiveChannels(groupIndex);
-                    if (otherGroupChannels != null && !otherGroupChannels.isEmpty()) {
-                        // 找到第一个有频道的组，播放其第一个频道
-                        selectChannelGroup(groupIndex, false, 0);
-                        return;  // 结束方法
+        // xuameng 修复：避免从"我的收藏"组中的占位项开始播放
+        if (lastChannelGroupIndex == 0 && lastLiveChannelIndex >= 0) {  // 如果是"我的收藏"组(索引为0)且指定了具体频道
+            ArrayList<LiveChannelItem> channels = getLiveChannels(0);  // 获取我的收藏组的频道列表
+            if (channels != null && lastLiveChannelIndex < channels.size()) {
+                LiveChannelItem currentChannel = channels.get(lastLiveChannelIndex);  // 获取当前要播放的频道
+                if (currentChannel != null && currentChannel.getChannelIndex() == -1) {  // 如果当前频道是占位项(索引为-1表示"暂无收藏")
+                    // 寻找第一个非"我的收藏"组的有效频道组
+                    for (int groupIndex = 1; groupIndex < liveChannelGroupList.size(); groupIndex++) {
+                        ArrayList<LiveChannelItem> otherGroupChannels = getLiveChannels(groupIndex);
+                        if (otherGroupChannels != null && !otherGroupChannels.isEmpty()) {
+                            // 找到第一个有频道的组，播放其第一个频道
+                            selectChannelGroup(groupIndex, false, 0);
+                            return;  // 结束方法
+                        }
                     }
+                    // 如果所有其他组都没有频道，选择"我的收藏"组但不播放
+                    selectChannelGroup(0, false, -1);
+                    return;  // 结束方法
                 }
-                // 如果所有其他组都没有频道，选择"我的收藏"组但不播放
-                selectChannelGroup(0, false, -1);
-                return;  // 结束方法
             }
         }
-    }
-    
-    // ========== 新增：如果是默认列表，强制选择默认组 ==========
-    if (isDefaultList && lastChannelGroupIndex == 0) {
-        // 如果是默认列表且记忆的是收藏组，强制选择默认组
-        selectChannelGroup(1, false, 0);
-        return;
-    }
     
     // 如果不是我的收藏组占位项问题，则按正常流程选择频道
-    selectChannelGroup(lastChannelGroupIndex, false, lastLiveChannelIndex);
-}
+        selectChannelGroup(lastChannelGroupIndex, false, lastLiveChannelIndex);
+    }
 
 
     private boolean isListOrSettingLayoutVisible() {
@@ -3058,38 +2991,17 @@ private void initLiveState() {
             liveSettingGroupList.get(5).getLiveSettingItems().get(Hawk.get(HawkConfig.LIVE_GROUP_INDEX, 0)).setItemSelected(true); //xuameng新增 换源
         }
     }
-
-
-
-
-private void loadCurrentSourceList() {
- if (currentLiveChannelItem == null) {
- return;
- }
-
- ArrayList<String> currentSourceNames = currentLiveChannelItem.getChannelSourceNames();
- ArrayList<LiveSettingItem> liveSettingItemList = new ArrayList<>();
-
- // 核心修改：处理空列表，添加默认名称
- if (currentSourceNames == null || currentSourceNames.isEmpty()) {
- // 添加默认名称（示例：name=0）
- currentSourceNames = new ArrayList<>();
- currentSourceNames.add("聚汇直播");
- }
-
- // 循环生成 LiveSettingItem（此时列表已非空）
- for (int j = 0; j < currentSourceNames.size(); j++) {
- LiveSettingItem liveSettingItem = new LiveSettingItem();
- liveSettingItem.setItemIndex(j);
- liveSettingItem.setItemName(currentSourceNames.get(j));
- liveSettingItemList.add(liveSettingItem);
- }
-
- // 安全设置到 liveSettingGroupList
- if (liveSettingGroupList != null && !liveSettingGroupList.isEmpty()) {
- liveSettingGroupList.get(0).setLiveSettingItems(liveSettingItemList);
- }
-}
+    private void loadCurrentSourceList() {
+        ArrayList < String > currentSourceNames = currentLiveChannelItem.getChannelSourceNames();
+        ArrayList < LiveSettingItem > liveSettingItemList = new ArrayList < > ();
+        for(int j = 0; j < currentSourceNames.size(); j++) {
+            LiveSettingItem liveSettingItem = new LiveSettingItem();
+            liveSettingItem.setItemIndex(j);
+            liveSettingItem.setItemName(currentSourceNames.get(j));
+            liveSettingItemList.add(liveSettingItem);
+        }
+        liveSettingGroupList.get(0).setLiveSettingItems(liveSettingItemList);
+    }
     void showTime() {
         if(Hawk.get(HawkConfig.LIVE_SHOW_TIME, false)) {
             mHandler.removeCallbacks(mUpdateTimeRun);
@@ -3421,7 +3333,7 @@ private void loadCurrentSourceList() {
                         }
                     
                         // 检查找到的频道组是否有有效频道（非占位项）
-                        ArrayList<LiveChannelItem> channels = getLiveChannels(channelGroupIndex);
+                        ArrayList<LiveChannelItem> channels = getLiveChannels(channelGroupIndex);   //xuameng isNeedInputPassword(channelGroupIndex)  目的是跨选分类，如果密码频道组密码验证以通过了即使有密码也可以跨选了是的BUG
                         if (channels != null && !channels.isEmpty()) {
                             for (LiveChannelItem channel : channels) {
                                 if (channel.getChannelIndex() != -1) {
@@ -3454,7 +3366,7 @@ private void loadCurrentSourceList() {
                         }
                     
                         // 检查找到的频道组是否有有效频道（非占位项）
-                        ArrayList<LiveChannelItem> channels = getLiveChannels(channelGroupIndex);
+                        ArrayList<LiveChannelItem> channels = getLiveChannels(channelGroupIndex);    //xuameng isNeedInputPassword(channelGroupIndex)  目的是跨选分类，如果密码频道组密码验证以通过了即使有密码也可以跨选了是的BUG
                         if (channels != null && !channels.isEmpty()) {
                             for (LiveChannelItem channel : channels) {
                                 if (channel.getChannelIndex() != -1) {
@@ -3773,8 +3685,7 @@ private void loadCurrentSourceList() {
         defaultGroup.setLiveChannels(channels);
     
         // 3. xuameng添加默认分组到列表
-        liveChannelGroupList.add(defaultGroup);
-    
+        liveChannelGroupList.add(defaultGroup); 
         showSuccess();
         initLiveState();
     }
