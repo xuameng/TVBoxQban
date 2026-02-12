@@ -1224,7 +1224,7 @@ public class ApiConfig {
         yumGroup.setGroupIndex(5);
         yumGroup.setGroupName("多源切换");
         List<LiveSettingItem> yumItems = new ArrayList<>();
-        yumItems.add(createLiveSettingItem(0, "聚汇直播"));
+        yumItems.add(createLiveSettingItem(0, "聚汇直播", "about:blank"));
         // 关键修改：强制转换
         yumGroup.setLiveSettingItems((ArrayList<LiveSettingItem>) (List<?>) yumItems);
 
@@ -1281,4 +1281,15 @@ public class ApiConfig {
         item.setItemSelected(false);
         return item;
     }
+
+    // 新增：带URL参数的重载方法（必须加，否则无法传入URL）
+    private LiveSettingItem createLiveSettingItem(int index, String name, String url) {
+        LiveSettingItem item = new LiveSettingItem();
+        item.setItemIndex(index);
+        item.setItemName(name);
+        item.setItemUrl(url); // 赋值默认URL
+        item.setItemSelected(false);
+        return item;
+    }
+
 }
