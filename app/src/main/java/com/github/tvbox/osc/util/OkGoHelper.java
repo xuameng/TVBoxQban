@@ -58,6 +58,29 @@ public class OkGoHelper {
             + "{\"name\": \"360\", \"url\": \"https://doh.360.cn/dns-query\"}"
             + "]";
     static OkHttpClient ItvClient = null;   //xuameng新增完
+    
+    // 初始化时添加默认选项
+    public static ArrayList<String> dnsHttpsList = new ArrayList<>();
+    
+    static {
+        // 类加载时初始化默认DNS列表
+        initializeDefaultDnsList();
+    }
+    
+    private static void initializeDefaultDnsList() {
+        dnsHttpsList.clear();
+        try {
+            JsonArray jsonArray = JsonParser.parseString(dnsConfigJson).getAsJsonArray();
+            for (int i = 0; i < jsonArray.size(); i++) {
+                JsonObject dnsConfig = jsonArray.get(i).getAsJsonObject();
+                String name = dnsConfig.has("name") ? dnsConfig.get("name").getAsString() : "Unknown Name";
+                dnsHttpsList.add(name);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
     static void initExoOkHttpClient() {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor("OkExoPlayer");
@@ -91,8 +114,6 @@ public class OkGoHelper {
 
     public static DnsOverHttps dnsOverHttps = null;
 
-    public static ArrayList<String> dnsHttpsList = new ArrayList<>();
-
     public static boolean is_doh = false;  //xuameng新增
     public static Map<String, String> myHosts = null;  //xuameng新增
 
@@ -106,6 +127,7 @@ public class OkGoHelper {
             // 如果JSON解析失败，使用默认配置
             jsonArray = JsonParser.parseString(dnsConfigJson).getAsJsonArray();
             e.printStackTrace();
+            return ""; // 返回空字符串表示使用系统默认DNS
         }
         
         if (type >= 0 && type < jsonArray.size()) {  // 修正索引范围检查
