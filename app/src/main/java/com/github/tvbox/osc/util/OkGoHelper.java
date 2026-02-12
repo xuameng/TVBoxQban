@@ -46,14 +46,6 @@ import okhttp3.dnsoverhttps.DnsOverHttps;
 import okhttp3.internal.Version;
 import xyz.doikki.videoplayer.exo.ExoMediaSourceHelper;
 
-import java.util.concurrent.ExecutorService; //xuameng新增
-import java.util.concurrent.Executors; //xuameng新增
-import java.util.concurrent.Future; //xuameng新增
-import java.util.concurrent.TimeUnit; //xuameng新增
-import java.util.concurrent.TimeoutException; //xuameng新增
-import java.util.concurrent.ExecutionException; //xuameng新增
-import android.util.Log;
-
 
 public class OkGoHelper {
     public static final long DEFAULT_MILLISECONDS = 10000;      //默认的超时时间
@@ -208,55 +200,24 @@ public class OkGoHelper {
         @NonNull
         @Override
         public List<InetAddress> lookup(@NonNull String hostname) throws UnknownHostException {
-            if (myHosts == null) {
-                myHosts = ApiConfig.get().getMyHost(); // 确保只获取一次减少消耗
+            if (myHosts == null){
+                myHosts = ApiConfig.get().getMyHost(); //确保只获取一次减少消耗
             }
-    
             // 如果myHosts不为null且非空，则进行主机名替换
-            if (myHosts != null && !myHosts.isEmpty() && myHosts.containsKey(hostname)) {
+            if(myHosts != null && !myHosts.isEmpty() && myHosts.containsKey(hostname)) {
                 hostname = myHosts.get(hostname);
             }
-    
             assert hostname != null;
-    
             if (isValidIpAddress(hostname)) {
                 return Collections.singletonList(InetAddress.getByName(hostname));
             } else {
                 // 如果dnsOverHttps为null，回退到系统默认DNS
-                if (dnsOverHttps != null) {     //xuameng 获取失败为空用系统默认DNS
-                    // 添加超时控制的DoH查询
-                    return lookupWithTimeout(hostname);
+                if (dnsOverHttps != null) {
+                    return dnsOverHttps.lookup(hostname);
                 } else {
-                    // 使用系统默认DNS
+                    // xuameng使用系统默认DNS
                     return Dns.SYSTEM.lookup(hostname);
                 }
-            }
-        }
-
-        private List<InetAddress> lookupWithTimeout(String hostname) throws UnknownHostException {   //XUAMENG超时方法放在卡死
-            ExecutorService executor = Executors.newSingleThreadExecutor();
-            Future<List<InetAddress>> future = executor.submit(() -> dnsOverHttps.lookup(hostname));
-    
-            try {
-                // 设置5秒超时，可根据需要调整
-                return future.get(5, TimeUnit.SECONDS);
-            } catch (TimeoutException e) {
-                future.cancel(true); // 取消任务
-                LOG.e("DNS查询超时，使用系统DNS");
-                return Dns.SYSTEM.lookup(hostname);
-            } catch (ExecutionException e) {
-                Throwable cause = e.getCause();
-                if (cause instanceof UnknownHostException) {
-                    throw (UnknownHostException) cause;
-                }
-                LOG.e("DNS查询异常: " + e.getMessage());
-                return Dns.SYSTEM.lookup(hostname);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                LOG.e("DNS查询被中断");
-                return Dns.SYSTEM.lookup(hostname);
-            } finally {
-                executor.shutdown();
             }
         }
 
