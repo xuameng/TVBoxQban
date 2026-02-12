@@ -57,7 +57,17 @@ public class OkGoHelper {
             + "]";
 
     // 内置默认DNS配置列表
-    private static final JsonArray defaultDnsConfigs = JsonParser.parseString(dnsConfigJson).getAsJsonArray();
+    private static final JsonArray defaultDnsConfigs;
+    static {
+        // 静态初始化，避免多次解析JSON
+        try {
+            defaultDnsConfigs = JsonParser.parseString(dnsConfigJson).getAsJsonArray();
+        } catch (Exception e) {
+            e.printStackTrace();
+            // 如果解析失败，创建一个空的JsonArray
+            defaultDnsConfigs = new JsonArray();
+        }
+    }
     
     static OkHttpClient ItvClient = null;   //xuameng新增完
     
@@ -77,7 +87,6 @@ public class OkGoHelper {
         builder.retryOnConnectionFailure(true);
         builder.followRedirects(true);
         builder.followSslRedirects(true);
-
 
         try {
             setOkHttpSsl(builder);
@@ -132,12 +141,12 @@ public class OkGoHelper {
             jsonArray = JsonParser.parseString(json).getAsJsonArray();
             // 如果获取到的配置为空数组，使用默认配置
             if(jsonArray.size() == 0) {
-                jsonArray = JsonParser.parseString(dnsConfigJson).getAsJsonArray();
+                jsonArray = defaultDnsConfigs;
             }
         } catch (Exception e) {
             e.printStackTrace();
             // 如果解析失败，使用默认配置
-            jsonArray = JsonParser.parseString(dnsConfigJson).getAsJsonArray();
+            jsonArray = defaultDnsConfigs;
         }
         
         // 将默认的DNS配置添加到前面
@@ -177,26 +186,26 @@ public class OkGoHelper {
     }  //xuameng新增完
 
     static void initDnsOverHttps() {   //xuameng新增
-        Integer dohSelector=Hawk.get(HawkConfig.DOH_URL, 0);
-        JsonArray ips=null;
+        Integer dohSelector = Hawk.get(HawkConfig.DOH_URL, 0);
+        JsonArray ips = null;
         try {
             // 清空列表
             dnsHttpsList.clear();
             // 添加默认选项
             dnsHttpsList.add("默认");
             
-            String json=Hawk.get(HawkConfig.DOH_JSON,"");
+            String json = Hawk.get(HawkConfig.DOH_JSON,"");
             JsonArray jsonArray;
             try {
                 jsonArray = JsonParser.parseString(json).getAsJsonArray();
                 // 如果获取到的配置为空数组，使用默认配置
                 if(jsonArray.size() == 0) {
-                    jsonArray = JsonParser.parseString(dnsConfigJson).getAsJsonArray();
+                    jsonArray = defaultDnsConfigs;
                 }
             } catch (Exception e) {
                 e.printStackTrace();
                 // 如果解析失败，使用默认配置
-                jsonArray = JsonParser.parseString(dnsConfigJson).getAsJsonArray();
+                jsonArray = defaultDnsConfigs;
             }
             
             // 将默认的DNS配置添加到前面
@@ -215,13 +224,23 @@ public class OkGoHelper {
                 if (!dnsHttpsList.contains(name)) { // 避免重复添加
                     dnsHttpsList.add(name);
                 }
-                
-                if(dohSelector == i + defaultDnsConfigs.size() + 1) { // 考虑默认项和默认DNS配置的数量
+            }
+            
+            // 计算实际的索引位置，考虑默认选项和默认DNS配置
+            int actualIndex = dohSelector;
+            if(actualIndex >= dnsHttpsList.size()) {
+                Hawk.put(HawkConfig.DOH_URL, 0);
+                actualIndex = 0;
+            }
+            
+            // 根据实际的索引获取对应的ips
+            if(actualIndex > 0) { // 0是"默认"选项，不需要获取ips
+                int customIndex = actualIndex - 1; // 减去"默认"选项
+                if(customIndex < jsonArray.size()) {
+                    JsonObject dnsConfig = jsonArray.get(customIndex).getAsJsonObject();
                     ips = dnsConfig.has("ips") ? dnsConfig.getAsJsonArray("ips") : null;
                 }
             }
-            
-            if(dohSelector >= dnsHttpsList.size())Hawk.put(HawkConfig.DOH_URL, 0);       //xuameng修复最后一项DNS选不上
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -243,7 +262,7 @@ public class OkGoHelper {
         }
         builder.cache(new Cache(new File(App.getInstance().getCacheDir().getAbsolutePath(), "dohcache"), 100 * 1024 * 1024));   //xuameng新增完
         OkHttpClient dohClient = builder.build();
-        String dohUrl = getDohUrl(Hawk.get(HawkConfig.DOH_URL, 0));
+        String dohUrl = getDohUrl(dohSelector);
         if (!dohUrl.isEmpty()) is_doh = true;   //xuameng新增
 //        dnsOverHttps = new DnsOverHttps.Builder()
 //                .client(dohClient)
@@ -262,7 +281,6 @@ public class OkGoHelper {
 
     // 自定义 DNS 解析器
     static class CustomDns implements Dns {
-        private  ConcurrentHashMap<String, List<InetAddress>> map;
         private final String excludeIps = "2409:8087:6c02:14:100::14,2409:8087:6c02:14:100::18,39.134.108.253,39.134.108.245";
         @NonNull
         @Override
@@ -282,29 +300,25 @@ public class OkGoHelper {
                 hostname = myHosts.get(hostname);
             }
             
-            assert hostname != null;
+            if (hostname == null) {
+                throw new UnknownHostException("Hostname is null");
+            }
+            
             if (isValidIpAddress(hostname)) {
                 return Collections.singletonList(InetAddress.getByName(hostname));
             } else {
                 // xuameng修复：如果dnsOverHttps未初始化，则使用系统默认DNS
                 if (dnsOverHttps != null) {
-                    return dnsOverHttps.lookup(hostname);
+                    try {
+                        return dnsOverHttps.lookup(hostname);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        // 如果DOH查询失败，回退到系统默认DNS解析
+                        return Arrays.asList(InetAddress.getAllByName(hostname));
+                    }
                 } else {
                     // xuameng如果DOH未初始化，回退到系统默认DNS解析
                     return Arrays.asList(InetAddress.getAllByName(hostname));
-                }
-            }
-        }
-
-        public synchronized void mapHosts(Map<String,String> hosts) throws UnknownHostException {   //xuameng新增
-            map=new ConcurrentHashMap<>();
-            for (Map.Entry<String, String> entry : hosts.entrySet()) {
-                String key = entry.getKey();
-                String value = entry.getValue();
-                if(isValidIpAddress(value)){
-                    map.put(key,Collections.singletonList(InetAddress.getByName(value)));
-                }else {
-                    map.put(key,getAllByName(value));
                 }
             }
         }
@@ -327,6 +341,7 @@ public class OkGoHelper {
                 }
                 return validAddresses;
             } catch (Exception e) {
+                e.printStackTrace();
                 return new ArrayList<>();
             }
         }
@@ -384,7 +399,7 @@ public class OkGoHelper {
         builder.writeTimeout(DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS);
         builder.connectTimeout(DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS);
 
-        builder.dns(dnsOverHttps);
+        builder.dns(new CustomDns()); // 使用自定义DNS解析器而不是dnsOverHttps
         try {
             setOkHttpSsl(builder);
         } catch (Throwable th) {
