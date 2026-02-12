@@ -36,6 +36,11 @@ public class LiveSettingItem {
     }
 
     // xuameng新增：itemUrl的Getter/Setter
+    public void setItemUrl(String itemUrl) {
+        this.itemUrl = itemUrl;
+    }
+
+    // xuameng新增：itemUrl的Getter/Setter
     public String getItemUrl() {
         return itemUrl;
     }
