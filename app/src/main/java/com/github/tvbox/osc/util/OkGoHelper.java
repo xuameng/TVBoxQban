@@ -194,26 +194,28 @@ static void initDnsOverHttps() {
     synchronized (dnsHttpsList) {
         dnsHttpsList.clear();
         setDnsList(); // 统一初始化列表
-        
+
         Integer dohSelector = Hawk.get(HawkConfig.DOH_URL, 0);
-        JsonArray ips = null;
         String json = Hawk.get(HawkConfig.DOH_JSON, "");
         if (json.isEmpty()) json = DEFAULT_DNS_CONFIG_JSON;
-        
+
         JsonArray jsonArray = JsonParser.parseString(json).getAsJsonArray();
         if (dohSelector >= jsonArray.size()) {
             Hawk.put(HawkConfig.DOH_URL, 0);
             dohSelector = 0;
         }
-        
+
+        JsonArray ipsArray = null; // 用于存储 "ips" 字段，作用域保持在 synchronized 块内
+
         for (int i = 0; i < jsonArray.size(); i++) {
             JsonObject dnsConfig = jsonArray.get(i).getAsJsonObject();
             if (dohSelector == i) {
-                ips = dnsConfig.has("ips") ? dnsConfig.getAsJsonArray("ips") : null;
+                ipsArray = dnsConfig.has("ips") ? dnsConfig.getAsJsonArray("ips") : null;
                 break;
             }
         }
-	}
+
+        // 现在 ipsArray 在这个 synchronized 块内是可以访问的
 
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor("OkExoPlayer");
@@ -230,24 +232,28 @@ static void initDnsOverHttps() {
         } catch (Throwable th) {
             th.printStackTrace();
         }
-        builder.cache(new Cache(new File(App.getInstance().getCacheDir().getAbsolutePath(), "dohcache"), 100 * 1024 * 1024));   //xuameng新增完
+        builder.cache(new Cache(new File(App.getInstance().getCacheDir().getAbsolutePath(), "dohcache"), 100 * 1024 * 1024));
         OkHttpClient dohClient = builder.build();
         String dohUrl = getDohUrl(Hawk.get(HawkConfig.DOH_URL, 0));
-        if (!dohUrl.isEmpty()) is_doh = true;   //xuameng新增
-//        dnsOverHttps = new DnsOverHttps.Builder()
-//                .client(dohClient)
-//                .url(dohUrl.isEmpty() ? null : HttpUrl.get(dohUrl))
-//                .build();
+        if (!dohUrl.isEmpty()) is_doh = true;
+
+        // 现在 ipsArray 在作用域内，可以安全使用
+        List<InetAddress> IPS = null;
+        if (is_doh && ipsArray != null) {
+            IPS = DohIps(ipsArray);  // 传入的是 JsonArray
+        }
+
         DnsOverHttps.Builder dnsBuilder = new DnsOverHttps.Builder();
         dnsBuilder.client(dohClient);
         dnsBuilder.url(dohUrl.isEmpty() ? null : HttpUrl.get(dohUrl));
-        if (is_doh && ips!=null){
-            List<InetAddress> IPS=DohIps(ips);
+
+        if (is_doh && IPS != null) {
             dnsOverHttps = dnsBuilder.bootstrapDnsHosts(IPS).build();
-        }else {
+        } else {
             dnsOverHttps = dnsBuilder.build();
         }
     }
+}
 
     // 自定义 DNS 解析器
     static class CustomDns implements Dns {
