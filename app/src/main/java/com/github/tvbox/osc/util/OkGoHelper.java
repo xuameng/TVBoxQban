@@ -52,6 +52,7 @@ public class OkGoHelper {
 
     // 内置doh json
     private static final String dnsConfigJson = "["   //xuameng新增
+            + "{\"name\": \"默认\", \"url\": \"\"},"
             + "{\"name\": \"腾讯\", \"url\": \"https://doh.pub/dns-query\"},"
             + "{\"name\": \"阿里\", \"url\": \"https://dns.alidns.com/dns-query\"},"
             + "{\"name\": \"360\", \"url\": \"https://doh.360.cn/dns-query\"}"
@@ -115,7 +116,6 @@ public class OkGoHelper {
         String json=Hawk.get(HawkConfig.DOH_JSON,"");
         if(json.isEmpty())json=dnsConfigJson;
         JsonArray jsonArray = JsonParser.parseString(json).getAsJsonArray();
-        dnsHttpsList.add("默认");
         for (int i = 0; i < jsonArray.size(); i++) {
             JsonObject dnsConfig = jsonArray.get(i).getAsJsonObject();
             String name = dnsConfig.has("name") ? dnsConfig.get("name").getAsString() : "Unknown Name";
@@ -144,11 +144,16 @@ public class OkGoHelper {
         Integer dohSelector=Hawk.get(HawkConfig.DOH_URL, 0);
         JsonArray ips=null;
         try {
-            dnsHttpsList.add("默认");
             String json=Hawk.get(HawkConfig.DOH_JSON,"");
-            if(json.isEmpty())json=dnsConfigJson;
+            if(json.isEmpty()) {
+                json=dnsConfigJson;
+                // 清空现有列表，然后添加默认的4项
+                dnsHttpsList.clear();
+            }
+            
             JsonArray jsonArray = JsonParser.parseString(json).getAsJsonArray();
             if(dohSelector>jsonArray.size())Hawk.put(HawkConfig.DOH_URL, 0);       //xuameng修复最后一项DNS选不上
+            
             for (int i = 0; i < jsonArray.size(); i++) {
                 JsonObject dnsConfig = jsonArray.get(i).getAsJsonObject();
                 String name = dnsConfig.has("name") ? dnsConfig.get("name").getAsString() : "Unknown Name";
@@ -156,6 +161,14 @@ public class OkGoHelper {
                 if(dohSelector==i)ips = dnsConfig.has("ips") ? dnsConfig.getAsJsonArray("ips") : null;   //xuameng修复最后一项DNS选不上
             }
         } catch (Exception e) {
+            // 获取列表失败，清空现有列表，然后添加默认的4项
+            dnsHttpsList.clear();
+            JsonArray jsonArray = JsonParser.parseString(dnsConfigJson).getAsJsonArray();
+            for (int i = 0; i < jsonArray.size(); i++) {
+                JsonObject dnsConfig = jsonArray.get(i).getAsJsonObject();
+                String name = dnsConfig.has("name") ? dnsConfig.get("name").getAsString() : "Unknown Name";
+                dnsHttpsList.add(name);
+            }
             e.printStackTrace();
         }
 
