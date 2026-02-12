@@ -812,7 +812,7 @@ public class ApiConfig {
         ArrayList < String > playerDecoderItems = new ArrayList < > (Arrays.asList("系统解码", "IJK  硬解", "IJK  软解", "EXO硬解", "EXO软解"));   //xuameng增加exo软硬解
         ArrayList < String > timeoutItems = new ArrayList < > (Arrays.asList("超时05秒", "超时10秒", "超时15秒", "超时20秒", "超时25秒", "超时30秒"));
         ArrayList < String > personalSettingItems = new ArrayList < > (Arrays.asList("显示时间", "显示网速", "换台反转", "跨选分类"));
-        ArrayList<String> yumItems = new ArrayList<>();   //xuameng新增 换源
+        ArrayList<String> yumItems = new ArrayList<>(Arrays.asList("聚汇直播"));   //xuameng新增 换源
         ArrayList < String > PlayrenderSettingItems = new ArrayList < > (Arrays.asList("Texture渲染", "Surface渲染"));   //xuameng渲染方式
         ArrayList < String > LiveMusicAnimationItems = new ArrayList < > (Arrays.asList("音柱开启", "音柱关闭"));   //xuameng音柱动画
         ArrayList < String > ExitSettingItems = new ArrayList < > (Arrays.asList("确认退出"));   //xuameng退出直播
