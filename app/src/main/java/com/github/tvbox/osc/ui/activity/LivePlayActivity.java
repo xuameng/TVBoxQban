@@ -2757,18 +2757,18 @@ public class LivePlayActivity extends BaseActivity {
                 }
     
                 // 4. 解析为JsonObject（此时已确保安全）
-                JsonObject livesOBJ = element.getAsJsonObject();
-                if (livesOBJ == null || livesOBJ.isJsonNull()) {
+                JsonObject livesOBJxU = element.getAsJsonObject();
+                if (livesOBJxU == null || livesOBJxU.isJsonNull()) {
                     App.showToastShort(mContext, "聚汇直播提示您：直播组配置为空！");
                     return;
                 }
                 //TODO
+                if(position == Hawk.get(HawkConfig.LIVE_GROUP_INDEX, 0)) break;
                 if(mVideoView != null) {
                     mVideoView.release();
                     mVideoView = null;
                 }
-                if(position == Hawk.get(HawkConfig.LIVE_GROUP_INDEX, 0)) break;
-                JsonArray live_groups = Hawk.get(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
+              //  JsonArray live_groups = Hawk.get(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
                 JsonObject livesOBJ = live_groups.get(position).getAsJsonObject();
                 liveSettingItemAdapter.selectItem(position, true, true);
                 Hawk.put(HawkConfig.LIVE_GROUP_INDEX, position);
