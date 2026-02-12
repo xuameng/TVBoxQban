@@ -516,9 +516,9 @@ public class ApiConfig {
 						ArrayList<LiveSettingItem> liveSettingItemList = new ArrayList<>();
 						for (int i=0; i< lives_groups.size();i++) {
 							JsonObject jsonObject = lives_groups.get(i).getAsJsonObject();
-							String name = jsonObject.has("name")?jsonObject.get("name").getAsString():"聚汇影视";
+							String name = jsonObject.has("name")?jsonObject.get("name").getAsString():"聚汇直播";
 							if(name == null || name.isEmpty()){
-								name = "聚汇影视";
+								name = "聚汇直播";
 							}
 							LiveSettingItem liveSettingItem = new LiveSettingItem();
 							liveSettingItem.setItemIndex(i);
@@ -540,9 +540,9 @@ public class ApiConfig {
 							ArrayList<LiveSettingItem> liveSettingItemList = new ArrayList<>();
 							for (int i=0; i< lives_groups.size();i++) {
 							JsonObject jsonObject = lives_groups.get(i).getAsJsonObject();
-							String name = jsonObject.has("name")?jsonObject.get("name").getAsString():"聚汇影视"+(i+1);
+							String name = jsonObject.has("name")?jsonObject.get("name").getAsString():"聚汇直播";
 							if(name == null || name.isEmpty()){
-								name = "聚汇影视";
+								name = "聚汇直播";
 							}
 							LiveSettingItem liveSettingItem = new LiveSettingItem();
 							liveSettingItem.setItemIndex(i);
@@ -737,9 +737,9 @@ public class ApiConfig {
 						ArrayList<LiveSettingItem> liveSettingItemList = new ArrayList<>();
 						for (int i=0; i< lives_groups.size();i++) {
 							JsonObject jsonObject = lives_groups.get(i).getAsJsonObject();
-							String name = jsonObject.has("name")?jsonObject.get("name").getAsString():"聚汇影视"+(i+1);
+							String name = jsonObject.has("name")?jsonObject.get("name").getAsString():"聚汇直播");
 							if(name == null || name.isEmpty()){
-								name = "聚汇影视";
+								name = "聚汇直播";
 							}
 							LiveSettingItem liveSettingItem = new LiveSettingItem();
 							liveSettingItem.setItemIndex(i);
@@ -761,7 +761,7 @@ public class ApiConfig {
 						ArrayList<LiveSettingItem> liveSettingItemList = new ArrayList<>();
 						for (int i=0; i< lives_groups.size();i++) {
 							JsonObject jsonObject = lives_groups.get(i).getAsJsonObject();
-							String name = jsonObject.has("name")?jsonObject.get("name").getAsString():"聚汇影视"+(i+1);
+							String name = jsonObject.has("name")?jsonObject.get("name").getAsString():"聚汇直播";
 							if(name == null || name.isEmpty()){
 								name = "聚汇直播";
 							}
