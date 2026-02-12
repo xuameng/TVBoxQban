@@ -2736,6 +2736,32 @@ public class LivePlayActivity extends BaseActivity {
                 break;
             case 5: //多源切换   //xuameng新增
                 if(position == liveSettingItemAdapter.getSelectedItemIndex()) return;
+                // 1. 从Hawk获取直播组列表（关键：确保不为null）
+                JsonArray live_groups = Hawk.get(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
+                if (live_groups == null) {
+                    App.showToastShort(mContext, "聚汇直播提示您：直播组配置为空！");
+                    return;
+                }
+    
+                // 2. 检查position是否在有效范围内（避免索引越界）
+                if (position < 0 || position >= live_groups.size()) {
+                    App.showToastShort(mContext, "聚汇直播提示您：直播组配置为空！");
+                    return;
+                }
+    
+                // 3. 检查JsonElement是否为null或JsonNull（避免解析错误）
+                JsonElement element = live_groups.get(position);
+                if (element == null || element.isJsonNull()) {
+                    App.showToastShort(mContext, "聚汇直播提示您：直播组配置为空！");
+                    return;
+                }
+    
+                // 4. 解析为JsonObject（此时已确保安全）
+                JsonObject livesOBJ = element.getAsJsonObject();
+                if (livesOBJ == null || livesOBJ.isJsonNull()) {
+                    App.showToastShort(mContext, "聚汇直播提示您：直播组配置为空！");
+                    return;
+                }
                 //TODO
                 if(mVideoView != null) {
                     mVideoView.release();
