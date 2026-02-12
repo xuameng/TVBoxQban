@@ -213,6 +213,7 @@ static void initDnsOverHttps() {
                 break;
             }
         }
+	}
 
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor("OkExoPlayer");
