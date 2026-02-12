@@ -1164,98 +1164,104 @@ public class ApiConfig {
         LiveSettingGroup lineGroup = new LiveSettingGroup();
         lineGroup.setGroupIndex(0);
         lineGroup.setGroupName("线路选择");
-        lineGroup.setLiveSettingItems(new ArrayList<>()); // 初始为空，后续由loadCurrentSourceList填充具体线路
+        lineGroup.setLiveSettingItems(new ArrayList<>()); // 这里已经是ArrayList，没问题
 
         // ==================== 2. 画面比例（索引1） ====================
         LiveSettingGroup scaleGroup = new LiveSettingGroup();
         scaleGroup.setGroupIndex(1);
         scaleGroup.setGroupName("画面比例");
-        List<LiveSettingItem> scaleItems = Arrays.asList(
+        // 将List转换为ArrayList：用new ArrayList包裹Arrays.asList
+        List<LiveSettingItem> scaleItems = new ArrayList<>(Arrays.asList(
             createLiveSettingItem(0, "默认比例"),
             createLiveSettingItem(1, "16:9比例"),
             createLiveSettingItem(2, "4:3 比例"),
             createLiveSettingItem(3, "填充比例"),
             createLiveSettingItem(4, "原始比例"),
             createLiveSettingItem(5, "裁剪比例")
-        );
-        scaleGroup.setLiveSettingItems(scaleItems);
+        ));
+        scaleGroup.setLiveSettingItems(scaleItems); // 现在scaleItems是ArrayList，没问题
 
         // ==================== 3. 播放解码（索引2） ====================
         LiveSettingGroup decoderGroup = new LiveSettingGroup();
         decoderGroup.setGroupIndex(2);
         decoderGroup.setGroupName("播放解码");
-        List<LiveSettingItem> decoderItems = Arrays.asList(
+        List<LiveSettingItem> decoderItems = new ArrayList<>(Arrays.asList(
             createLiveSettingItem(0, "系统解码"),
             createLiveSettingItem(1, "IJK  硬解"),
             createLiveSettingItem(2, "IJK  软解"),
             createLiveSettingItem(3, "EXO硬解"),
             createLiveSettingItem(4, "EXO软解")
-        );
+        ));
         decoderGroup.setLiveSettingItems(decoderItems);
 
         // ==================== 4. 超时换源（索引3） ====================
         LiveSettingGroup timeoutGroup = new LiveSettingGroup();
         timeoutGroup.setGroupIndex(3);
         timeoutGroup.setGroupName("超时换源");
-        List<LiveSettingItem> timeoutItems = Arrays.asList(
+        List<LiveSettingItem> timeoutItems = new ArrayList<>(Arrays.asList(
             createLiveSettingItem(0, "超时05秒"),
             createLiveSettingItem(1, "超时10秒"),
             createLiveSettingItem(2, "超时15秒"),
             createLiveSettingItem(3, "超时20秒"),
             createLiveSettingItem(4, "超时25秒"),
             createLiveSettingItem(5, "超时30秒")
-        );
+        ));
         timeoutGroup.setLiveSettingItems(timeoutItems);
 
         // ==================== 5. 偏好设置（索引4） ====================
         LiveSettingGroup personalGroup = new LiveSettingGroup();
         personalGroup.setGroupIndex(4);
         personalGroup.setGroupName("偏好设置");
-        List<LiveSettingItem> personalItems = Arrays.asList(
+        // 关键修改：将List转换为ArrayList
+        List<LiveSettingItem> personalItems = new ArrayList<>(Arrays.asList(
             createLiveSettingItem(0, "显示时间"),
             createLiveSettingItem(1, "显示网速"),
             createLiveSettingItem(2, "换台反转"),
             createLiveSettingItem(3, "跨选分类")
-        );
-        personalGroup.setLiveSettingItems(personalItems);
+        ));
+        personalGroup.setLiveSettingItems(personalItems); // 现在personalItems是ArrayList，解决错误
 
         // ==================== 6. 多源切换（索引5） ====================
         LiveSettingGroup yumGroup = new LiveSettingGroup();
         yumGroup.setGroupIndex(5);
         yumGroup.setGroupName("多源切换");
-        // 默认多源列表（比如“聚汇直播”，实际可后续从Hawk配置中读取）
-        List<LiveSettingItem> yumItems = new ArrayList<>();
-        yumItems.add(createLiveSettingItem(0, "聚汇直播"));
-        yumGroup.setLiveSettingItems(yumItems);
+        // 关键修改：将List转换为ArrayList
+        List<LiveSettingItem> yumItems = new ArrayList<>(Arrays.asList(
+            createLiveSettingItem(0, "聚汇直播")
+        ));
+        yumGroup.setLiveSettingItems(yumItems); // 解决错误
 
         // ==================== 7. 渲染方式（索引6） ====================
         LiveSettingGroup renderGroup = new LiveSettingGroup();
         renderGroup.setGroupIndex(6);
         renderGroup.setGroupName("渲染方式");
-        List<LiveSettingItem> renderItems = Arrays.asList(
+        // 关键修改：将List转换为ArrayList
+        List<LiveSettingItem> renderItems = new ArrayList<>(Arrays.asList(
             createLiveSettingItem(0, "Texture渲染"),
             createLiveSettingItem(1, "Surface渲染")
-        );
-        renderGroup.setLiveSettingItems(renderItems);
+        ));
+        renderGroup.setLiveSettingItems(renderItems); // 解决错误
 
         // ==================== 8. 音柱动画（索引7） ====================
         LiveSettingGroup musicGroup = new LiveSettingGroup();
         musicGroup.setGroupIndex(7);
         musicGroup.setGroupName("直播音柱");
-        List<LiveSettingItem> musicItems = Arrays.asList(
+        // 关键修改：将List转换为ArrayList
+        List<LiveSettingItem> musicItems = new ArrayList<>(Arrays.asList(
             createLiveSettingItem(0, "音柱开启"),
             createLiveSettingItem(1, "音柱关闭")
-        );
-        musicGroup.setLiveSettingItems(musicItems);
+        ));
+        musicGroup.setLiveSettingItems(musicItems); // 解决错误
 
         // ==================== 9. 退出直播（索引8） ====================
         LiveSettingGroup exitGroup = new LiveSettingGroup();
         exitGroup.setGroupIndex(8);
         exitGroup.setGroupName("退出直播");
-        List<LiveSettingItem> exitItems = Arrays.asList(
+        // 关键修改：将List转换为ArrayList
+        List<LiveSettingItem> exitItems = new ArrayList<>(Arrays.asList(
             createLiveSettingItem(0, "确认退出")
-        );
-        exitGroup.setLiveSettingItems(exitItems);
+        ));
+        exitGroup.setLiveSettingItems(exitItems); // 解决错误
 
         // ==================== 将所有组加入默认列表 ====================
         defaultList.add(lineGroup);     // 索引0
