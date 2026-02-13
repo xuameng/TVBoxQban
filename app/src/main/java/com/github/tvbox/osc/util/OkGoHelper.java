@@ -308,7 +308,7 @@ private static final long DNS_TIMEOUT_MS = 3000; // 3秒超时
         return noRedirectClient;
     }
 
-public static void initAsync() {
+public static void init() {
     // 第一阶段：快速初始化核心组件（在主线程执行）
     initEssentialSync();
     
@@ -318,7 +318,7 @@ public static void initAsync() {
     }).start();
 }
 
-public static void init() {
+private static void initEssentialSync() {
     // 只初始化必要的、快速的组件
     OkHttpClient.Builder builder = new OkHttpClient.Builder();
     builder.readTimeout(DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS);
