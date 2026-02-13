@@ -2222,6 +2222,10 @@ public class LivePlayActivity extends BaseActivity {
             }
             @Override
             public void changeSource(int direction) {
+                if (currentLiveChannelIndex == -1){
+                    App.showToastShort(mContext, "聚汇直播提示您：请先选择频道！");
+                    return;
+                }
                 if(direction > 0)
                     if(isBack) { //xuameng手机换源和显示时移控制栏
                         if(backcontroller.getVisibility() == View.VISIBLE) {
