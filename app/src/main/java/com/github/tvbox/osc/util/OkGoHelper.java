@@ -88,12 +88,15 @@ public class OkGoHelper {
         ExoMediaSourceHelper.getInstance(App.getInstance()).setOkClient(ItvClient); //xuameng新增完
     }
 
-    public static DnsOverHttps dnsOverHttps = null;
+
+// 修改为 volatile
+public static volatile DnsOverHttps dnsOverHttps = null;
 
     public static ArrayList<String> dnsHttpsList = new ArrayList<>();
 
     public static boolean is_doh = false;  //xuameng新增
-    public static Map<String, String> myHosts = null;  //xuameng新增
+// 修改为 volatile 确保可见性
+public static volatile Map<String, String> myHosts = null;
 
     public static String getDohUrl(int type) {  //xuameng新增
         String json=Hawk.get(HawkConfig.DOH_JSON,"");
@@ -221,9 +224,13 @@ private static final long DNS_TIMEOUT_MS = 3000; // 3秒超时
         return result[0] != null ? result[0] : Dns.SYSTEM.lookup(hostname);
     }
         private List<InetAddress> doLookup(String hostname) throws UnknownHostException {
-            if (myHosts == null){
-                myHosts = ApiConfig.get().getMyHost(); //确保只获取一次减少消耗
+    if (myHosts == null) {
+        synchronized (OkGoHelper.class) {
+            if (myHosts == null) {
+                myHosts = ApiConfig.get().getMyHost();
             }
+        }
+    }
             // 如果myHosts不为null且非空，则进行主机名替换
             if(myHosts != null && !myHosts.isEmpty() && myHosts.containsKey(hostname)) {
                 hostname = myHosts.get(hostname);
@@ -339,13 +346,17 @@ private static void initEssentialSync() {
     defaultClient = tempClient;
 }
 
+// 在 initHeavyComponentsAsync() 中
 private static void initHeavyComponentsAsync() {
     // 异步初始化DNS-over-HTTPS
     initDnsOverHttps();
     
+    // 使用局部变量避免竞态条件
+    DnsOverHttps localDns = dnsOverHttps;
+    
     // 重新构建客户端使用新的DNS
     OkHttpClient.Builder builder = defaultClient.newBuilder();
-    builder.dns(dnsOverHttps != null ? dnsOverHttps : Dns.SYSTEM);
+    builder.dns(localDns != null ? localDns : Dns.SYSTEM);
     
     OkHttpClient finalClient = builder.build();
     OkGo.getInstance().setOkHttpClient(finalClient);
