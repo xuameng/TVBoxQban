@@ -1385,11 +1385,6 @@ public class LivePlayActivity extends BaseActivity {
     }
     private boolean playChannel(int channelGroupIndex, int liveChannelIndex, boolean changeSource) { //xuameng播放
         if(mVideoView == null) return true; //XUAMENG可能会引起空指针问题的修复
-        if (currentLiveChannelIndex == -1){
-            TimeoutChangeSource = false;
-            App.showToastShort(mContext, "聚汇直播提示您：请先选择频道！");
-            return false;
-        }
         // xuameng 1. 获取目标频道组名称，判断是否为“我的收藏”
         // xuameng 2. 如果是“我的收藏”组，跳过相同频道检查；否则，执行原有检查
         String targetGroupName = liveChannelGroupList.get(channelGroupIndex).getGroupName();
@@ -1464,11 +1459,6 @@ public class LivePlayActivity extends BaseActivity {
         return true;
     }
     private boolean playChannelxu(int channelGroupIndex, int liveChannelIndex, boolean changeSource) { //xuameng播放
-        if(mVideoView == null) return true; //XUAMENG可能会引起空指针问题的修复
-        if (currentLiveChannelIndex == -1){
-            App.showToastShort(mContext, "聚汇直播提示您：请先选择频道！");
-            return false;
-        }
         if(!changeSource) {
             currentChannelGroupIndexXu = channelGroupIndex; //xuameng重要频道组
             currentLiveChannelIndexXu = liveChannelIndex; //xuameng重要频道名称
