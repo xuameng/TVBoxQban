@@ -3402,6 +3402,10 @@ public class LivePlayActivity extends BaseActivity {
     }
 
     private Integer[] getNextChannel(int direction) {
+        if (currentLiveChannelIndex == -1){
+            App.showToastShort(mContext, "聚汇直播提示您：请先选择频道！");
+            return;
+        }
         int channelGroupIndex = currentChannelGroupIndex;
         int liveChannelIndex = currentLiveChannelIndex;
         boolean hasValidChannel = false;
