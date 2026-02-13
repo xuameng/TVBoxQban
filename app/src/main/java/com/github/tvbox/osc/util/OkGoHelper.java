@@ -52,11 +52,12 @@ public class OkGoHelper {
 public static final long DEFAULT_MILLISECONDS = 5000; //默认的超时时间
 
 // 内置doh json - 定义为常量，方便统一管理
+
 private static final String DEFAULT_DNS_CONFIG_JSON = "["
-+ "{"name": "腾讯", "url": "https://doh.pub/dns-query"},"
-+ "{"name": "阿里", "url": "https://dns.alidns.com/dns-query"},"
-+ "{"name": "360", "url": "https://doh.360.cn/dns-query"}"
-+ "]";
+        + "{\"name\": \"腾讯\", \"url\": \"https://doh.pub/dns-query\"},"
+        + "{\"name\": \"阿里\", \"url\": \"https://dns.alidns.com/dns-query\"},"
+        + "{\"name\": \"360\", \"url\": \"https://doh.360.cn/dns-query\"}"
+        + "]";
 
 // DNS列表缓存管理
 private static volatile JsonArray cachedDnsConfig = null;
