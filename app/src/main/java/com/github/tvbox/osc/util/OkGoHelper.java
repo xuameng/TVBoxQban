@@ -48,7 +48,7 @@ import xyz.doikki.videoplayer.exo.ExoMediaSourceHelper;
 
 
 public class OkGoHelper {
-    public static final long DEFAULT_MILLISECONDS = 10000;      //默认的超时时间
+    public static final long DEFAULT_MILLISECONDS = 5000;      //默认的超时时间
 
     // 内置doh json
     private static final String dnsConfigJson = "["   //xuameng新增
@@ -174,7 +174,7 @@ public class OkGoHelper {
         } catch (Throwable th) {
             th.printStackTrace();
         }
-        builder.cache(new Cache(new File(App.getInstance().getCacheDir().getAbsolutePath(), "dohcache"), 100 * 1024 * 1024));   //xuameng新增完
+        builder.cache(new Cache(new File(App.getInstance().getCacheDir().getAbsolutePath(), "dohcache"), 10 * 1024 * 1024));   //xuameng新增完
         OkHttpClient dohClient = builder.build();
         String dohUrl = getDohUrl(Hawk.get(HawkConfig.DOH_URL, 0));
         if (!dohUrl.isEmpty()) is_doh = true;   //xuameng新增
@@ -196,10 +196,31 @@ public class OkGoHelper {
     // 自定义 DNS 解析器
     static class CustomDns implements Dns {
         private  ConcurrentHashMap<String, List<InetAddress>> map;
+private static final long DNS_TIMEOUT_MS = 3000; // 3秒超时
         private final String excludeIps = "2409:8087:6c02:14:100::14,2409:8087:6c02:14:100::18,39.134.108.253,39.134.108.245";
         @NonNull
         @Override
-        public List<InetAddress> lookup(@NonNull String hostname) throws UnknownHostException {
+    public List<InetAddress> lookup(@NonNull String hostname) throws UnknownHostException {
+        // 添加超时机制
+        final List<InetAddress>[] result = new List[]{null};
+        Thread lookupThread = new Thread(() -> {
+            try {
+                result[0] = doLookup(hostname);
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+            }
+        });
+        
+        lookupThread.start();
+        try {
+            lookupThread.join(DNS_TIMEOUT_MS);
+        } catch (InterruptedException e) {
+            lookupThread.interrupt();
+        }
+        
+        return result[0] != null ? result[0] : Dns.SYSTEM.lookup(hostname);
+    }
+        private List<InetAddress> doLookup(String hostname) throws UnknownHostException {
             if (myHosts == null){
                 myHosts = ApiConfig.get().getMyHost(); //确保只获取一次减少消耗
             }
@@ -287,49 +308,54 @@ public class OkGoHelper {
         return noRedirectClient;
     }
 
-    public static void init() {
-        initDnsOverHttps();
+public static void initAsync() {
+    // 第一阶段：快速初始化核心组件（在主线程执行）
+    initEssentialSync();
+    
+    // 第二阶段：异步初始化耗时组件
+    new Thread(() -> {
+        initHeavyComponentsAsync();
+    }).start();
+}
 
-        OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor("OkGo");
-
-        if (Hawk.get(HawkConfig.DEBUG_OPEN, false)) {
-            loggingInterceptor.setPrintLevel(HttpLoggingInterceptor.Level.BODY);
-            loggingInterceptor.setColorLevel(Level.INFO);
-        } else {
-            loggingInterceptor.setPrintLevel(HttpLoggingInterceptor.Level.NONE);
-            loggingInterceptor.setColorLevel(Level.OFF);
-        }
-
-        //builder.retryOnConnectionFailure(false);
-
-        builder.addInterceptor(loggingInterceptor);
-
-        builder.readTimeout(DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS);
-        builder.writeTimeout(DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS);
-        builder.connectTimeout(DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS);
-
-        builder.dns(dnsOverHttps);
-        try {
-            setOkHttpSsl(builder);
-        } catch (Throwable th) {
-            th.printStackTrace();
-        }
-
-        HttpHeaders.setUserAgent(Version.userAgent());
-
-        OkHttpClient okHttpClient = builder.build();
-        OkGo.getInstance().setOkHttpClient(okHttpClient);
-
-        defaultClient = okHttpClient;
-
-        builder.followRedirects(false);
-        builder.followSslRedirects(false);
-        noRedirectClient = builder.build();
-
-        initExoOkHttpClient();
-        initPicasso(okHttpClient);
+public static void init() {
+    // 只初始化必要的、快速的组件
+    OkHttpClient.Builder builder = new OkHttpClient.Builder();
+    builder.readTimeout(DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS);
+    builder.writeTimeout(DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS);
+    builder.connectTimeout(DEFAULT_MILLISECONDS, TimeUnit.MILLISECONDS);
+    
+    // 使用系统DNS作为临时方案
+    builder.dns(Dns.SYSTEM);
+    
+    try {
+        setOkHttpSsl(builder);
+    } catch (Throwable th) {
+        th.printStackTrace();
     }
+    
+    OkHttpClient tempClient = builder.build();
+    OkGo.getInstance().setOkHttpClient(tempClient);
+    defaultClient = tempClient;
+}
+
+private static void initHeavyComponentsAsync() {
+    // 异步初始化DNS-over-HTTPS
+    initDnsOverHttps();
+    
+    // 重新构建客户端使用新的DNS
+    OkHttpClient.Builder builder = defaultClient.newBuilder();
+    builder.dns(dnsOverHttps != null ? dnsOverHttps : Dns.SYSTEM);
+    
+    OkHttpClient finalClient = builder.build();
+    OkGo.getInstance().setOkHttpClient(finalClient);
+    defaultClient = finalClient;
+    
+    // 初始化其他组件
+    initExoOkHttpClient();
+    initPicasso(finalClient);
+}
+
 
     static void initPicasso(OkHttpClient client) {
         client.dispatcher().setMaxRequestsPerHost(10);
