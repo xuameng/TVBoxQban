@@ -2712,10 +2712,10 @@ public class LivePlayActivity extends BaseActivity {
     }
     private void clickSettingItem(int position) {
         int settingGroupIndex = liveSettingGroupAdapter.getSelectedGroupIndex();
-        if(settingGroupIndex < 4) {
-            if(position == liveSettingItemAdapter.getSelectedItemIndex()) return;
-            liveSettingItemAdapter.selectItem(position, true, true);
-        }
+     //   if(settingGroupIndex < 4) {
+     //       if(position == liveSettingItemAdapter.getSelectedItemIndex()) return;
+     //       liveSettingItemAdapter.selectItem(position, true, true);
+     //   }
         switch(settingGroupIndex) {
             case 0: //线路切换
                 if(mVideoView == null) return;
@@ -2723,6 +2723,8 @@ public class LivePlayActivity extends BaseActivity {
                     App.showToastShort(mContext, "聚汇直播提示您：请先选择频道！");
                     return;
                 }
+                if(position == liveSettingItemAdapter.getSelectedItemIndex()) return;
+                liveSettingItemAdapter.selectItem(position, true, true);
                 currentLiveChannelItem.setSourceIndex(position);
                 playChannel(currentChannelGroupIndex, currentLiveChannelIndex, true);
                 break;
@@ -2732,6 +2734,8 @@ public class LivePlayActivity extends BaseActivity {
                     App.showToastShort(mContext, "聚汇直播提示您：请先选择频道！");
                     return;
                 }
+                if(position == liveSettingItemAdapter.getSelectedItemIndex()) return;
+                liveSettingItemAdapter.selectItem(position, true, true);
                 livePlayerManager.changeLivePlayerScale(mVideoView, position, currentLiveChannelItem.getChannelName());
                 break;
             case 2: //播放解码
@@ -2740,6 +2744,8 @@ public class LivePlayActivity extends BaseActivity {
                     App.showToastShort(mContext, "聚汇直播提示您：请先选择频道！");
                     return;
                 }
+                if(position == liveSettingItemAdapter.getSelectedItemIndex()) return;
+                liveSettingItemAdapter.selectItem(position, true, true);
                 mVideoView.release();
                 livePlayerManager.changeLivePlayerType(mVideoView, position, currentLiveChannelItem.getChannelName());
                 mVideoView.setUrl(currentLiveChannelItem.getUrl(), liveWebHeader());
@@ -2749,6 +2755,8 @@ public class LivePlayActivity extends BaseActivity {
                 }
                 break;
             case 3: //超时换源
+                if(position == liveSettingItemAdapter.getSelectedItemIndex()) return;
+                liveSettingItemAdapter.selectItem(position, true, true);
                 Hawk.put(HawkConfig.LIVE_CONNECT_TIMEOUT, position);
                 break;
             case 4: //偏好设置
