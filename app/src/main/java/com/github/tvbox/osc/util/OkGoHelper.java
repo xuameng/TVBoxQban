@@ -48,6 +48,12 @@ import okhttp3.dnsoverhttps.DnsOverHttps;
 import okhttp3.internal.Version;
 import xyz.doikki.videoplayer.exo.ExoMediaSourceHelper;
 
+/**
+ * @author xuameng
+ * @date :2026/2/12
+ * @description:
+ */
+
 public class OkGoHelper {
     public static final long DEFAULT_MILLISECONDS = 5000;      //默认的超时时间
 
