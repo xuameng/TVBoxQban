@@ -1416,7 +1416,7 @@ public class LivePlayActivity extends BaseActivity {
             currentLiveChannelIndex = liveChannelIndex;
             currentLiveChannelItem = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndex);
             // ========== xuameng新增：关键修复 - 检查获取到的频道是否为占位项 ==========
-            if (currentLiveChannelItem != null && currentLiveChannelItem.getChannelIndex() == -1) {
+            if (currentLiveChannelItem != null && currentLiveChannelItem.getChannelIndex() < 1) {
                 // xuameng如果当前频道是占位项（"暂无收藏"），则主动寻找下一个有效频道
                 Integer[] nextValidChannel = getNextChannel(Hawk.get(HawkConfig.LIVE_CHANNEL_REVERSE, false) ? -1 : 1);
                 // xuameng递归调用 playChannel，播放找到的有效频道
