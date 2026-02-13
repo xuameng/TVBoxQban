@@ -868,7 +868,7 @@ public class LivePlayActivity extends BaseActivity {
         if(tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
             mHideChannelListRunXu(); //xuameng隐藏频道菜单
         }
-    //    if(!isCurrentLiveChannelValid()) return; //xuameng 未选择频道空指针问题
+        if(!isCurrentLiveChannelValid()) return; //xuameng 未选择频道空指针问题
         if(isTouch) {   //xuameng手机选择频道判断  显示正在播放频道所在组
             showChannelListTouch();   //xuameng 显示正在播放频道所在组
         }
