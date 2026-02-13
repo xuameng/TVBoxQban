@@ -1732,13 +1732,13 @@ public class LivePlayActivity extends BaseActivity {
                 // xuameng添加空列表检查
                 ArrayList<LiveChannelItem> channels = getLiveChannels(currentChannelGroupIndex);
                 if(channels == null || channels.isEmpty()) {
-                    App.showToastShort(mContext, "聚汇直播提示您：频道为空！");
+                    App.showToastShort(mContext, "聚汇直播提示您：请先选择频道！");
                     return;
                 }
         
                 // xuameng添加索引范围检查
                 if(currentLiveChannelIndex < 0 || currentLiveChannelIndex >= channels.size()) {
-                    App.showToastShort(mContext, "聚汇直播提示您：频道为空！");
+                    App.showToastShort(mContext, "聚汇直播提示您：请先选择频道！");
                     return;
                 }
 
@@ -1812,13 +1812,13 @@ public class LivePlayActivity extends BaseActivity {
                 // xuameng添加空列表检查
                 ArrayList<LiveChannelItem> channels = getLiveChannels(currentChannelGroupIndex);
                 if(channels == null || channels.isEmpty()) {
-                    App.showToastShort(mContext, "聚汇直播提示您：频道为空！");
+                    App.showToastShort(mContext, "聚汇直播提示您：请先选择频道！");
                     return;
                 }
         
                 // xuameng添加索引范围检查
                 if(currentLiveChannelIndex < 0 || currentLiveChannelIndex >= channels.size()) {
-                    App.showToastShort(mContext, "聚汇直播提示您：频道为空！");
+                    App.showToastShort(mContext, "聚汇直播提示您：请先选择频道！");
                     return;
                 }
                 currentLiveChannelItem = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndex);
@@ -1949,13 +1949,13 @@ public class LivePlayActivity extends BaseActivity {
                 // xuameng添加空列表检查
                 ArrayList<LiveChannelItem> channels = getLiveChannels(currentChannelGroupIndexXu);
                 if(channels == null || channels.isEmpty()) {
-                    App.showToastShort(mContext, "聚汇直播提示您：频道为空！");
+                    App.showToastShort(mContext, "聚汇直播提示您：请先选择频道！");
                     return;
                 }
         
                 // xuameng添加索引范围检查
                 if(currentLiveChannelIndexXu < 0 || currentLiveChannelIndexXu >= channels.size()) {
-                    App.showToastShort(mContext, "聚汇直播提示您：频道为空！");
+                    App.showToastShort(mContext, "聚汇直播提示您：请先选择频道！");
                     return;
                 }
 
@@ -1979,13 +1979,13 @@ public class LivePlayActivity extends BaseActivity {
                 // xuameng添加空列表检查
                 ArrayList<LiveChannelItem> channels = getLiveChannels(currentChannelGroupIndexXu);
                 if(channels == null || channels.isEmpty()) {
-                    App.showToastShort(mContext, "聚汇直播提示您：频道为空！");
+                    App.showToastShort(mContext, "聚汇直播提示您：请先选择频道！");
                     return;
                 }
         
                 // xuameng添加索引范围检查
                 if(currentLiveChannelIndexXu < 0 || currentLiveChannelIndexXu >= channels.size()) {
-                    App.showToastShort(mContext, "聚汇直播提示您：频道为空！");
+                    App.showToastShort(mContext, "聚汇直播提示您：请先选择频道！");
                     return;
                 }
                 liveEpgDateAdapter.setSelectedIndex(position);
