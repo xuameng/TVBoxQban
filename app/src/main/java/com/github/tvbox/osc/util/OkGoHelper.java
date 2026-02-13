@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -58,7 +58,7 @@ private static final String dnsConfigJson = "["
         + "{\"name\": \"360\", \"url\": \"https://doh.360.cn/dns-query\"}"
         + "]";
 
-// 内置默认DNS列表
+// 内置默认DNS列表 - 包含默认选项
 private static final String defaultDnsList = "["
         + "{\"name\": \"默认\", \"url\": \"\"},"
         + "{\"name\": \"腾讯\", \"url\": \"https://doh.pub/dns-query\"},"
@@ -112,8 +112,14 @@ public static volatile Map<String, String> myHosts = null;
 public static String getDohUrl(int type) {
     String json = Hawk.get(HawkConfig.DOH_JSON, "");
     if (json.isEmpty()) json = dnsConfigJson;
-    JsonArray jsonArray = JsonParser.parseString(json).getAsJsonArray();
-    if (type >= 1 && type < dnsHttpsList.size()) {
+    JsonArray jsonArray;
+    try {
+        jsonArray = JsonParser.parseString(json).getAsJsonArray();
+    } catch (Exception e) {
+        // 解析失败时返回空字符串
+        return "";
+    }
+    if (type >= 1 && type <= jsonArray.size()) {
         JsonObject dnsConfig = jsonArray.get(type - 1).getAsJsonObject();
         if (dnsConfig.has("url")) {
             return dnsConfig.get("url").getAsString();
@@ -124,47 +130,53 @@ public static String getDohUrl(int type) {
     return "";
 }
 
-public static void setDnsList() {
-    // 关键修复：在添加新数据前，先清空列表
-    dnsHttpsList.clear();
-    
-    // 添加默认选项
-    dnsHttpsList.add("默认");
-    
-    // 尝试从配置获取DNS JSON，如果失败则使用内置默认值
+// 获取默认DNS列表
+public static JsonArray getDefaultDnsArray() {
+    try {
+        return JsonParser.parseString(defaultDnsList).getAsJsonArray();
+    } catch (Exception e) {
+        e.printStackTrace();
+        return JsonParser.parseString(defaultDnsList).getAsJsonArray();
+    }
+}
+
+// 获取自定义DNS列表
+public static JsonArray getCustomDnsArray() {
     String json = Hawk.get(HawkConfig.DOH_JSON, "");
-    JsonArray jsonArray = null;
-    boolean useDefault = false;
+    if (json.isEmpty()) {
+        return null;
+    }
     
     try {
-        if (json.isEmpty()) {
-            json = dnsConfigJson;
-        }
-        jsonArray = JsonParser.parseString(json).getAsJsonArray();
+        return JsonParser.parseString(json).getAsJsonArray();
     } catch (Exception e) {
-        // 解析失败时使用默认DNS列表
         e.printStackTrace();
-        json = dnsConfigJson;
-        jsonArray = JsonParser.parseString(json).getAsJsonArray();
-        useDefault = true;
+        return null;
+    }
+}
+
+/**
+ * 设置合并后的DNS列表（默认+自定义），确保即使加载失败也能显示默认列表
+ */
+public static void setMergedDnsList() {
+    // 总是清空现有列表
+    dnsHttpsList.clear();
+    
+    // 首先添加默认列表项
+    JsonArray defaultArray = getDefaultDnsArray();
+    for (int i = 0; i < defaultArray.size(); i++) {
+        JsonObject dnsConfig = defaultArray.get(i).getAsJsonObject();
+        String name = dnsConfig.has("name") ? dnsConfig.get("name").getAsString() : "Unknown Name";
+        dnsHttpsList.add(name);
     }
     
-    // 添加自定义DNS列表项（如果成功加载）
-    if (jsonArray != null) {
-        for (int i = 0; i < jsonArray.size(); i++) {
-            JsonObject dnsConfig = jsonArray.get(i).getAsJsonObject();
+    // 尝试添加自定义列表项（去重）
+    JsonArray customArray = getCustomDnsArray();
+    if (customArray != null) {
+        for (int i = 0; i < customArray.size(); i++) {
+            JsonObject dnsConfig = customArray.get(i).getAsJsonObject();
             String name = dnsConfig.has("name") ? dnsConfig.get("name").getAsString() : "Unknown Name";
-            dnsHttpsList.add(name);
-        }
-    }
-    
-    // 如果加载失败，也添加默认DNS提供商
-    if (useDefault) {
-        JsonArray defaultArray = JsonParser.parseString(dnsConfigJson).getAsJsonArray();
-        for (int i = 0; i < defaultArray.size(); i++) {
-            JsonObject dnsConfig = defaultArray.get(i).getAsJsonObject();
-            String name = dnsConfig.has("name") ? dnsConfig.get("name").getAsString() : "Unknown Name";
-            // 检查是否已存在，避免重复添加
+            // 避免重复添加
             if (!dnsHttpsList.contains(name)) {
                 dnsHttpsList.add(name);
             }
@@ -178,40 +190,30 @@ public static void setDnsList() {
     }
 }
 
-// 新增方法：获取合并后的DNS列表（默认+自定义）
-public static void setMergedDnsList() {
+/**
+ * 设置仅自定义DNS列表（当自定义列表加载失败时，回退到默认列表）
+ */
+public static void setCustomDnsList() {
     // 清空现有列表
     dnsHttpsList.clear();
     
     // 添加默认选项
     dnsHttpsList.add("默认");
     
-    // 解析默认DNS列表
-    JsonArray defaultArray = JsonParser.parseString(defaultDnsList).getAsJsonArray();
-    for (int i = 1; i < defaultArray.size(); i++) { // 从1开始，跳过"默认"项
-        JsonObject dnsConfig = defaultArray.get(i).getAsJsonObject();
-        String name = dnsConfig.has("name") ? dnsConfig.get("name").getAsString() : "Unknown Name";
-        dnsHttpsList.add(name);
-    }
-    
-    // 尝试添加自定义DNS列表
-    String json = Hawk.get(HawkConfig.DOH_JSON, "");
-    JsonArray customArray = null;
-    
-    try {
-        if (!json.isEmpty()) {
-            customArray = JsonParser.parseString(json).getAsJsonArray();
-        }
-    } catch (Exception e) {
-        e.printStackTrace();
-        // 如果自定义列表解析失败，继续使用默认列表
-        customArray = null;
-    }
-    
+    // 尝试加载自定义列表
+    JsonArray customArray = getCustomDnsArray();
     if (customArray != null) {
-        // 添加自定义列表项，避免重复
+        // 成功加载自定义列表，添加到列表中
         for (int i = 0; i < customArray.size(); i++) {
             JsonObject dnsConfig = customArray.get(i).getAsJsonObject();
+            String name = dnsConfig.has("name") ? dnsConfig.get("name").getAsString() : "Unknown Name";
+            dnsHttpsList.add(name);
+        }
+    } else {
+        // 加载失败，添加默认的三个提供商
+        JsonArray defaultArray = getDefaultDnsArray();
+        for (int i = 1; i < defaultArray.size(); i++) { // 从1开始，跳过"默认"项
+            JsonObject dnsConfig = defaultArray.get(i).getAsJsonObject();
             String name = dnsConfig.has("name") ? dnsConfig.get("name").getAsString() : "Unknown Name";
             if (!dnsHttpsList.contains(name)) {
                 dnsHttpsList.add(name);
@@ -247,13 +249,26 @@ static void initDnsOverHttps() {
     
     Integer dohSelector = Hawk.get(HawkConfig.DOH_URL, 0);
     JsonArray ips = null;
+    
+    // 使用默认列表作为基础，然后尝试添加自定义列表
+    JsonArray jsonArray = getDefaultDnsArray();
+    JsonArray customArray = getCustomDnsArray();
+    
+    if (customArray != null) {
+        // 合并数组：先添加默认列表，再添加自定义列表
+        for (int i = 0; i < customArray.size(); i++) {
+            jsonArray.add(customArray.get(i));
+        }
+    }
+    
+    // 修正选择器索引
+    if (dohSelector >= jsonArray.size()) {
+        dohSelector = 0;
+        Hawk.put(HawkConfig.DOH_URL, dohSelector);
+    }
+    
     try {
-        String json = Hawk.get(HawkConfig.DOH_JSON, "");
-        if (json.isEmpty()) json = dnsConfigJson;
-        JsonArray jsonArray = JsonParser.parseString(json).getAsJsonArray();
-        if (dohSelector > jsonArray.size()) Hawk.put(HawkConfig.DOH_URL, 0);
-        
-        // 注意：这里不再添加列表项，列表已由 setMergedDnsList() 生成
+        // 获取选定DNS的IP地址
         for (int i = 0; i < jsonArray.size(); i++) {
             JsonObject dnsConfig = jsonArray.get(i).getAsJsonObject();
             if (dohSelector == i)
@@ -280,7 +295,7 @@ static void initDnsOverHttps() {
     }
     builder.cache(new Cache(new File(App.getInstance().getCacheDir().getAbsolutePath(), "dohcache"), 10 * 1024 * 1024));
     OkHttpClient dohClient = builder.build();
-    String dohUrl = getDohUrl(Hawk.get(HawkConfig.DOH_URL, 0));
+    String dohUrl = getDohUrl(dohSelector);
     if (!dohUrl.isEmpty()) is_doh = true;
     DnsOverHttps.Builder dnsBuilder = new DnsOverHttps.Builder();
     dnsBuilder.client(dohClient);
