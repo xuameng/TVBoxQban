@@ -160,7 +160,7 @@ public static JsonArray getCustomDnsArray() {
  * 设置合并后的DNS列表（默认+自定义），确保即使加载失败也能显示默认列表
  * 并且正确处理越界问题
  */
-public static void setMergedDnsList() {
+public static void setDnsList() {
     // 总是清空现有列表
     dnsHttpsList.clear();
     
@@ -286,8 +286,8 @@ private static List<InetAddress> DohIps(JsonArray ips) {
 }
 
 static void initDnsOverHttps() {
-    // 调用 setMergedDnsList() 来确保列表是最新的（包含默认+自定义）
-    setMergedDnsList();
+    // 调用 setDnsList() 来确保列表是最新的（包含默认+自定义）
+    setDnsList();
     
     Integer dohSelector = Hawk.get(HawkConfig.DOH_URL, 0);
     
@@ -556,8 +556,8 @@ public static void init() {
             // 第一阶段：快速初始化核心组件（在主线程执行）
             initEssentialSync();
             
-            // 在初始化时调用 setMergedDnsList() 确保列表被正确初始化（包含默认+自定义）
-            setMergedDnsList();
+            // 在初始化时调用 setDnsList() 确保列表被正确初始化（包含默认+自定义）
+            setDnsList();
             
             // 第二阶段：延迟1秒后异步初始化耗时组件
             new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
