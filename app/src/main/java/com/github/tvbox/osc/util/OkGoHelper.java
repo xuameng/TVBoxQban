@@ -49,22 +49,19 @@ import okhttp3.internal.Version;
 import xyz.doikki.videoplayer.exo.ExoMediaSourceHelper;
 
 public class OkGoHelper {
-    public static final long DEFAULT_MILLISECONDS = 5000;      //默认的超时时间
+public static final long DEFAULT_MILLISECONDS = 5000; //默认的超时时间
 
-// 内置doh json
-private static final String dnsConfigJson = "["
-        + "{\"name\": \"腾讯\", \"url\": \"https://doh.pub/dns-query\"},"
-        + "{\"name\": \"阿里\", \"url\": \"https://dns.alidns.com/dns-query\"},"
-        + "{\"name\": \"360\", \"url\": \"https://doh.360.cn/dns-query\"}"
-        + "]";
+// 内置doh json - 定义为常量，方便统一管理
+private static final String DEFAULT_DNS_CONFIG_JSON = "["
++ "{"name": "腾讯", "url": "https://doh.pub/dns-query"},"
++ "{"name": "阿里", "url": "https://dns.alidns.com/dns-query"},"
++ "{"name": "360", "url": "https://doh.360.cn/dns-query"}"
++ "]";
 
-// 内置默认DNS列表 - 包含默认选项
-private static final String defaultDnsList = "["
-        + "{\"name\": \"默认\", \"url\": \"\"},"
-        + "{\"name\": \"腾讯\", \"url\": \"https://doh.pub/dns-query\"},"
-        + "{\"name\": \"阿里\", \"url\": \"https://dns.alidns.com/dns-query\"},"
-        + "{\"name\": \"360\", \"url\": \"https://doh.360.cn/dns-query\"}"
-        + "]";
+// DNS列表缓存管理
+private static volatile JsonArray cachedDnsConfig = null;
+private static volatile long lastConfigUpdateTime = 0;
+private static final long CONFIG_CACHE_DURATION = 5 * 60 * 1000; // 5分钟缓存
 
 static OkHttpClient ItvClient = null;
 
@@ -74,32 +71,36 @@ private static volatile boolean isInitialized = false;
 private static final Object initLock = new Object();
 
 static void initExoOkHttpClient() {
-    OkHttpClient.Builder builder = new OkHttpClient.Builder();
-    HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor("OkExoPlayer");
+OkHttpClient.Builder builder = new OkHttpClient.Builder();
+HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor("OkExoPlayer");
 
-    if (Hawk.get(HawkConfig.DEBUG_OPEN, false)) {
-        loggingInterceptor.setPrintLevel(HttpLoggingInterceptor.Level.BODY);
-        loggingInterceptor.setColorLevel(Level.INFO);
-    } else {
-        loggingInterceptor.setPrintLevel(HttpLoggingInterceptor.Level.NONE);
-        loggingInterceptor.setColorLevel(Level.OFF);
-    }
-    builder.addInterceptor(loggingInterceptor);
+if (Hawk.get(HawkConfig.DEBUG_OPEN, false)) {
+    loggingInterceptor.setPrintLevel(HttpLoggingInterceptor.Level.BODY);
+    loggingInterceptor.setColorLevel(Level.INFO);
+} else {
+    loggingInterceptor.setPrintLevel(HttpLoggingInterceptor.Level.NONE);
+    loggingInterceptor.setColorLevel(Level.OFF);
+}
+builder.addInterceptor(loggingInterceptor);
 
-    builder.retryOnConnectionFailure(true);
-    builder.followRedirects(true);
-    builder.followSslRedirects(true);
+builder.retryOnConnectionFailure(true);
+builder.followRedirects(true);
+builder.followSslRedirects(true);
 
-    try {
-        setOkHttpSsl(builder);
-    } catch (Throwable th) {
-        th.printStackTrace();
-    }
+try {
+    setOkHttpSsl(builder);
+} catch (Throwable th) {
+    th.printStackTrace();
+}
 
-    builder.dns(new CustomDns());
-    ItvClient = builder.build();
+builder.dns(new CustomDns());
+ItvClient = builder.build();
 
-    ExoMediaSourceHelper.getInstance(App.getInstance()).setOkClient(ItvClient);
+ExoMediaSourceHelper.getInstance(App.getInstance()).setOkClient(ItvClient);
+
+
+
+
 }
 
 public static volatile DnsOverHttps dnsOverHttps = null;
@@ -109,419 +110,370 @@ public static ArrayList<String> dnsHttpsList = new ArrayList<>();
 public static boolean is_doh = false;
 public static volatile Map<String, String> myHosts = null;
 
+/**
+
+获取DNS配置JSON，优先使用缓存的配置
+*/
+public static String getDnsConfigJson() {
+// 检查缓存是否有效
+if (cachedDnsConfig != null &&
+System.currentTimeMillis() - lastConfigUpdateTime < CONFIG_CACHE_DURATION) {
+return cachedDnsConfig.toString();
+}
+
+// 从Hawk获取用户配置
+String userConfig = Hawk.get(HawkConfig.DOH_JSON, "");
+if (userConfig != null && !userConfig.trim().isEmpty()) {
+try {
+JsonArray jsonArray = JsonParser.parseString(userConfig).getAsJsonArray();
+cachedDnsConfig = jsonArray;
+lastConfigUpdateTime = System.currentTimeMillis();
+return userConfig;
+} catch (Exception e) {
+e.printStackTrace();
+// 解析失败，使用默认配置
+}
+}
+
+// 使用默认配置
+cachedDnsConfig = JsonParser.parseString(DEFAULT_DNS_CONFIG_JSON).getAsJsonArray();
+lastConfigUpdateTime = System.currentTimeMillis();
+return DEFAULT_DNS_CONFIG_JSON;
+}
+
+/**
+
+清除DNS配置缓存，强制重新加载
+*/
+public static void clearDnsConfigCache() {
+cachedDnsConfig = null;
+lastConfigUpdateTime = 0;
+}
 public static String getDohUrl(int type) {
-    String json = Hawk.get(HawkConfig.DOH_JSON, "");
-    if (json.isEmpty()) json = dnsConfigJson;
-    JsonArray jsonArray;
-    try {
-        jsonArray = JsonParser.parseString(json).getAsJsonArray();
-    } catch (Exception e) {
-        // 解析失败时返回空字符串
-        return "";
-    }
-    // 注意：这里type是从1开始计算的（跳过了"默认"项），所以需要调整索引
-    if (type >= 1 && type <= jsonArray.size()) {
-        JsonObject dnsConfig = jsonArray.get(type - 1).getAsJsonObject();
-        if (dnsConfig.has("url")) {
-            return dnsConfig.get("url").getAsString();
-        } else {
-            return "";
-        }
-    }
-    return "";
+String json = getDnsConfigJson();
+JsonArray jsonArray = JsonParser.parseString(json).getAsJsonArray();
+if (type >= 1 && type < dnsHttpsList.size()) {
+JsonObject dnsConfig = jsonArray.get(type - 1).getAsJsonObject();
+if (dnsConfig.has("url")) {
+return dnsConfig.get("url").getAsString();
+} else {
+return "";
 }
-
-// 获取默认DNS列表
-public static JsonArray getDefaultDnsArray() {
-    try {
-        return JsonParser.parseString(defaultDnsList).getAsJsonArray();
-    } catch (Exception e) {
-        e.printStackTrace();
-        return JsonParser.parseString(defaultDnsList).getAsJsonArray();
-    }
 }
-
-// 获取自定义DNS列表
-public static JsonArray getCustomDnsArray() {
-    String json = Hawk.get(HawkConfig.DOH_JSON, "");
-    if (json.isEmpty()) {
-        return null;
-    }
-    
-    try {
-        return JsonParser.parseString(json).getAsJsonArray();
-    } catch (Exception e) {
-        e.printStackTrace();
-        return null;
-    }
+return "";
 }
 
 /**
- * 设置合并后的DNS列表（默认+自定义），确保即使加载失败也能显示默认列表
- * 并且正确处理越界问题
- */
+
+设置DNS列表，确保总是包含默认四项在前面
+*/
 public static void setDnsList() {
-    // 总是清空现有列表
-    dnsHttpsList.clear();
-    
-    // 首先添加默认列表项
-    JsonArray defaultArray = getDefaultDnsArray();
-    for (int i = 0; i < defaultArray.size(); i++) {
-        JsonObject dnsConfig = defaultArray.get(i).getAsJsonObject();
-        String name = dnsConfig.has("name") ? dnsConfig.get("name").getAsString() : "Unknown Name";
-        dnsHttpsList.add(name);
-    }
-    
-    // 尝试添加自定义列表项（去重）
-    JsonArray customArray = getCustomDnsArray();
-    if (customArray != null) {
-        for (int i = 0; i < customArray.size(); i++) {
-            JsonObject dnsConfig = customArray.get(i).getAsJsonObject();
-            String name = dnsConfig.has("name") ? dnsConfig.get("name").getAsString() : "Unknown Name";
-            // 避免重复添加
-            if (!dnsHttpsList.contains(name)) {
-                dnsHttpsList.add(name);
-            }
-        }
-    }
-    
-    // 修正用户选择索引，防止越界
-    int selectedIndex = Hawk.get(HawkConfig.DOH_URL, 0);
-    if (selectedIndex >= dnsHttpsList.size()) {
-        // 如果越界，重置为0（"默认"选项）
-        Hawk.put(HawkConfig.DOH_URL, 0);
-    }
+// 清空现有列表
+dnsHttpsList.clear();
+
+// 添加"默认"选项
+dnsHttpsList.add("默认");
+
+try {
+// 获取DNS配置
+String json = getDnsConfigJson();
+JsonArray jsonArray = JsonParser.parseString(json).getAsJsonArray();
+
+
+ // 添加默认的三项DNS服务商
+ JsonArray defaultArray = JsonParser.parseString(DEFAULT_DNS_CONFIG_JSON).getAsJsonArray();
+ for (int i = 0; i < defaultArray.size(); i++) {
+     JsonObject dnsConfig = defaultArray.get(i).getAsJsonObject();
+     String name = dnsConfig.has("name") ? dnsConfig.get("name").getAsString() : "Unknown Name";
+     dnsHttpsList.add(name);
+ }
+ 
+ // 如果用户配置了额外的DNS，添加到列表后面
+ if (jsonArray.size() > defaultArray.size()) {
+     for (int i = defaultArray.size(); i < jsonArray.size(); i++) {
+         JsonObject dnsConfig = jsonArray.get(i).getAsJsonObject();
+         String name = dnsConfig.has("name") ? dnsConfig.get("name").getAsString() : "Unknown Name";
+         dnsHttpsList.add(name);
+     }
+ }
+ 
+
+
+} catch (Exception e) {
+e.printStackTrace();
+// 发生异常时，使用默认配置
+resetToDefaultDnsList();
+}
+
+// 修正用户选择索引，防止越界
+int selectedIndex = Hawk.get(HawkConfig.DOH_URL, 0);
+if (selectedIndex >= dnsHttpsList.size()) {
+Hawk.put(HawkConfig.DOH_URL, 0);
+}
 }
 
 /**
- * 设置仅自定义DNS列表（当自定义列表加载失败时，回退到默认列表）
- * 并且正确处理越界问题
- */
-public static void setCustomDnsList() {
-    // 清空现有列表
-    dnsHttpsList.clear();
-    
-    // 添加默认选项
-    dnsHttpsList.add("默认");
-    
-    // 尝试加载自定义列表
-    JsonArray customArray = getCustomDnsArray();
-    if (customArray != null) {
-        // 成功加载自定义列表，添加到列表中
-        for (int i = 0; i < customArray.size(); i++) {
-            JsonObject dnsConfig = customArray.get(i).getAsJsonObject();
-            String name = dnsConfig.has("name") ? dnsConfig.get("name").getAsString() : "Unknown Name";
-            dnsHttpsList.add(name);
-        }
-    } else {
-        // 加载失败，添加默认的三个提供商
-        JsonArray defaultArray = getDefaultDnsArray();
-        for (int i = 1; i < defaultArray.size(); i++) { // 从1开始，跳过"默认"项
-            JsonObject dnsConfig = defaultArray.get(i).getAsJsonObject();
-            String name = dnsConfig.has("name") ? dnsConfig.get("name").getAsString() : "Unknown Name";
-            if (!dnsHttpsList.contains(name)) {
-                dnsHttpsList.add(name);
-            }
-        }
-    }
-    
-    // 修正用户选择索引，防止越界
-    int selectedIndex = Hawk.get(HawkConfig.DOH_URL, 0);
-    if (selectedIndex >= dnsHttpsList.size()) {
-        // 如果越界，重置为0（"默认"选项）
-        Hawk.put(HawkConfig.DOH_URL, 0);
-    }
+
+重置为默认DNS列表（四项：默认 + 腾讯 + 阿里 + 360）
+*/
+public static void resetToDefaultDnsList() {
+dnsHttpsList.clear();
+dnsHttpsList.add("默认");
+
+try {
+JsonArray defaultArray = JsonParser.parseString(DEFAULT_DNS_CONFIG_JSON).getAsJsonArray();
+for (int i = 0; i < defaultArray.size(); i++) {
+JsonObject dnsConfig = defaultArray.get(i).getAsJsonObject();
+String name = dnsConfig.has("name") ? dnsConfig.get("name").getAsString() : "Unknown Name";
+dnsHttpsList.add(name);
+}
+} catch (Exception e) {
+e.printStackTrace();
 }
 
-/**
- * 获取实际的DOH URL（考虑合并列表的情况）
- */
-public static String getActualDohUrl(int selectedPosition) {
-    if (selectedPosition < 0 || selectedPosition >= dnsHttpsList.size()) {
-        return ""; // 越界情况返回空字符串
-    }
-    
-    String selectedName = dnsHttpsList.get(selectedPosition);
-    
-    // 优先检查自定义列表
-    JsonArray customArray = getCustomDnsArray();
-    if (customArray != null) {
-        for (int i = 0; i < customArray.size(); i++) {
-            JsonObject dnsConfig = customArray.get(i).getAsJsonObject();
-            if (dnsConfig.has("name") && dnsConfig.get("name").getAsString().equals(selectedName)) {
-                if (dnsConfig.has("url")) {
-                    return dnsConfig.get("url").getAsString();
-                }
-            }
-        }
-    }
-    
-    // 如果不是自定义的，检查默认列表
-    JsonArray defaultArray = getDefaultDnsArray();
-    for (int i = 0; i < defaultArray.size(); i++) {
-        JsonObject dnsConfig = defaultArray.get(i).getAsJsonObject();
-        if (dnsConfig.has("name") && dnsConfig.get("name").getAsString().equals(selectedName)) {
-            if (dnsConfig.has("url")) {
-                return dnsConfig.get("url").getAsString();
-            }
-        }
-    }
-    
-    return ""; // "默认"选项返回空字符串
+// 重置用户选择
+Hawk.put(HawkConfig.DOH_URL, 0);
 }
 
 private static List<InetAddress> DohIps(JsonArray ips) {
-    List<InetAddress> inetAddresses = new ArrayList<>();
-    if (ips != null) {
-        for (int j = 0; j < ips.size(); j++) {
-            try {
-                InetAddress inetAddress = InetAddress.getByName(ips.get(j).getAsString());
-                inetAddresses.add(inetAddress);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-    return inetAddresses;
+List<InetAddress> inetAddresses = new ArrayList<>();
+if (ips != null) {
+for (int j = 0; j < ips.size(); j++) {
+try {
+InetAddress inetAddress = InetAddress.getByName(ips.get(j).getAsString());
+inetAddresses.add(inetAddress);
+} catch (Exception e) {
+e.printStackTrace();
+}
+}
+}
+return inetAddresses;
 }
 
 static void initDnsOverHttps() {
-    // 调用 setDnsList() 来确保列表是最新的（包含默认+自定义）
-    setDnsList();
-    
-    Integer dohSelector = Hawk.get(HawkConfig.DOH_URL, 0);
-    
-    // 确保选择器不越界
-    if (dohSelector >= dnsHttpsList.size()) {
-        dohSelector = 0;
-        Hawk.put(HawkConfig.DOH_URL, dohSelector);
-    }
-    
-    JsonArray ips = null;
-    
-    // 使用默认列表作为基础，然后尝试添加自定义列表
-    JsonArray jsonArray = getDefaultDnsArray();
-    JsonArray customArray = getCustomDnsArray();
-    
-    if (customArray != null) {
-        // 合并数组：先添加默认列表，再添加自定义列表
-        for (int i = 0; i < customArray.size(); i++) {
-            jsonArray.add(customArray.get(i));
-        }
-    }
-    
-    // 根据选择的名称查找对应的IP配置
-    String selectedName = dnsHttpsList.get(dohSelector);
-    try {
-        // 遍历合并后的数组找到对应项
-        for (int i = 0; i < jsonArray.size(); i++) {
-            JsonObject dnsConfig = jsonArray.get(i).getAsJsonObject();
-            if (dnsConfig.has("name") && dnsConfig.get("name").getAsString().equals(selectedName)) {
-                ips = dnsConfig.has("ips") ? dnsConfig.getAsJsonArray("ips") : null;
-                break;
-            }
-        }
-    } catch (Exception e) {
-        e.printStackTrace();
-    }
+// 调用 setDnsList() 来确保列表是最新的
+setDnsList();
 
-    OkHttpClient.Builder builder = new OkHttpClient.Builder();
-    HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor("OkExoPlayer");
-    if (Hawk.get(HawkConfig.DEBUG_OPEN, false)) {
-        loggingInterceptor.setPrintLevel(HttpLoggingInterceptor.Level.BODY);
-        loggingInterceptor.setColorLevel(Level.INFO);
-    } else {
-        loggingInterceptor.setPrintLevel(HttpLoggingInterceptor.Level.NONE);
-        loggingInterceptor.setColorLevel(Level.OFF);
+
+Integer dohSelector = Hawk.get(HawkConfig.DOH_URL, 0);
+JsonArray ips = null;
+try {
+    String json = getDnsConfigJson();
+    JsonArray jsonArray = JsonParser.parseString(json).getAsJsonArray();
+    if (dohSelector > jsonArray.size()) {
+        Hawk.put(HawkConfig.DOH_URL, 0);
+        dohSelector = 0;
     }
-    builder.addInterceptor(loggingInterceptor);
-    try {
-        setOkHttpSsl(builder);
-    } catch (Throwable th) {
-        th.printStackTrace();
-    }
-    builder.cache(new Cache(new File(App.getInstance().getCacheDir().getAbsolutePath(), "dohcache"), 10 * 1024 * 1024));
-    OkHttpClient dohClient = builder.build();
     
-    String dohUrl = getActualDohUrl(dohSelector);
-    if (!dohUrl.isEmpty()) is_doh = true;
-    
-    DnsOverHttps.Builder dnsBuilder = new DnsOverHttps.Builder();
-    dnsBuilder.client(dohClient);
-    dnsBuilder.url(dohUrl.isEmpty() ? null : HttpUrl.get(dohUrl));
-    if (is_doh && ips != null) {
-        List<InetAddress> IPS = DohIps(ips);
-        dnsOverHttps = dnsBuilder.bootstrapDnsHosts(IPS).build();
-    } else {
-        dnsOverHttps = dnsBuilder.build();
+    // 获取选中的DNS配置
+    if (dohSelector > 0 && dohSelector <= jsonArray.size()) {
+        JsonObject dnsConfig = jsonArray.get(dohSelector - 1).getAsJsonObject();
+        ips = dnsConfig.has("ips") ? dnsConfig.getAsJsonArray("ips") : null;
     }
+} catch (Exception e) {
+    e.printStackTrace();
+    // 发生异常时重置为默认
+    resetToDefaultDnsList();
+}
+
+OkHttpClient.Builder builder = new OkHttpClient.Builder();
+HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor("OkExoPlayer");
+if (Hawk.get(HawkConfig.DEBUG_OPEN, false)) {
+    loggingInterceptor.setPrintLevel(HttpLoggingInterceptor.Level.BODY);
+    loggingInterceptor.setColorLevel(Level.INFO);
+} else {
+    loggingInterceptor.setPrintLevel(HttpLoggingInterceptor.Level.NONE);
+    loggingInterceptor.setColorLevel(Level.OFF);
+}
+builder.addInterceptor(loggingInterceptor);
+try {
+    setOkHttpSsl(builder);
+} catch (Throwable th) {
+    th.printStackTrace();
+}
+builder.cache(new Cache(new File(App.getInstance().getCacheDir().getAbsolutePath(), "dohcache"), 10 * 1024 * 1024));
+OkHttpClient dohClient = builder.build();
+String dohUrl = getDohUrl(Hawk.get(HawkConfig.DOH_URL, 0));
+if (!dohUrl.isEmpty()) is_doh = true;
+DnsOverHttps.Builder dnsBuilder = new DnsOverHttps.Builder();
+dnsBuilder.client(dohClient);
+dnsBuilder.url(dohUrl.isEmpty() ? null : HttpUrl.get(dohUrl));
+if (is_doh && ips != null) {
+    List<InetAddress> IPS = DohIps(ips);
+    dnsOverHttps = dnsBuilder.bootstrapDnsHosts(IPS).build();
+} else {
+    dnsOverHttps = dnsBuilder.build();
+}
+
 }
 
 // 自定义 DNS 解析器 - 修复线程泄漏问题
 static class CustomDns implements Dns {
-    private ConcurrentHashMap<String, List<InetAddress>> map;
-    private static final long DNS_TIMEOUT_MS = 3000; // 3秒超时
-    private final String excludeIps = "2409:8087:6c02:14:100::14,2409:8087:6c02:14:100::18,39.134.108.253,39.134.108.245";
-    
-    // 使用线程池管理DNS查询，避免线程泄漏
-    private static final ExecutorService dnsExecutor = Executors.newFixedThreadPool(3);
-    private static final AtomicInteger activeQueries = new AtomicInteger(0);
-    private static final int MAX_ACTIVE_QUERIES = 10;
-    
-    // DNS缓存机制
-    private static final ConcurrentHashMap<String, CacheEntry> dnsCache = new ConcurrentHashMap<>();
-    private static final long CACHE_DURATION = 5 * 60 * 1000; // 5分钟缓存
-    
-    static class CacheEntry {
-        List<InetAddress> addresses;
-        long timestamp;
-        
-        CacheEntry(List<InetAddress> addresses) {
-            this.addresses = addresses;
-            this.timestamp = System.currentTimeMillis();
-        }
-        
-        boolean isExpired() {
-            return System.currentTimeMillis() - timestamp > CACHE_DURATION;
-        }
-    }
+private ConcurrentHashMap<String, List<InetAddress>> map;
+private static final long DNS_TIMEOUT_MS = 3000; // 3秒超时
+private final String excludeIps = "2409:8087:6c02:14:100::14,2409:8087:6c02:14:100::18,39.134.108.253,39.134.108.245";
 
-    @NonNull
-    @Override
-    public List<InetAddress> lookup(@NonNull String hostname) throws UnknownHostException {
-        // 检查活跃查询数量，防止过多并发查询
-        if (activeQueries.get() >= MAX_ACTIVE_QUERIES) {
+
+// 使用线程池管理DNS查询，避免线程泄漏
+private static final ExecutorService dnsExecutor = Executors.newFixedThreadPool(3);
+private static final AtomicInteger activeQueries = new AtomicInteger(0);
+private static final int MAX_ACTIVE_QUERIES = 10;
+
+// DNS缓存机制
+private static final ConcurrentHashMap<String, CacheEntry> dnsCache = new ConcurrentHashMap<>();
+private static final long CACHE_DURATION = 5 * 60 * 1000; // 5分钟缓存
+
+static class CacheEntry {
+    List<InetAddress> addresses;
+    long timestamp;
+    
+    CacheEntry(List<InetAddress> addresses) {
+        this.addresses = addresses;
+        this.timestamp = System.currentTimeMillis();
+    }
+    
+    boolean isExpired() {
+        return System.currentTimeMillis() - timestamp > CACHE_DURATION;
+    }
+}
+
+@NonNull
+@Override
+public List<InetAddress> lookup(@NonNull String hostname) throws UnknownHostException {
+    // 检查活跃查询数量，防止过多并发查询
+    if (activeQueries.get() >= MAX_ACTIVE_QUERIES) {
+        return Dns.SYSTEM.lookup(hostname);
+    }
+    
+    // 检查缓存
+    CacheEntry cached = dnsCache.get(hostname);
+    if (cached != null && !cached.isExpired()) {
+        return cached.addresses;
+    }
+    
+    activeQueries.incrementAndGet();
+    try {
+        // 提交任务到线程池
+        Future<List<InetAddress>> future = dnsExecutor.submit(() -> {
+            return doLookup(hostname);
+        });
+        
+        try {
+            // 设置超时时间
+            List<InetAddress> addresses = future.get(DNS_TIMEOUT_MS, TimeUnit.MILLISECONDS);
+            
+            // 更新缓存
+            dnsCache.put(hostname, new CacheEntry(addresses));
+            
+            // 清理过期缓存
+            cleanupExpiredCache();
+            
+            return addresses;
+        } catch (Exception e) {
+            // 取消任务
+            future.cancel(true);
+            // 超时或异常后使用系统DNS
             return Dns.SYSTEM.lookup(hostname);
         }
-        
-        // 检查缓存
-        CacheEntry cached = dnsCache.get(hostname);
-        if (cached != null && !cached.isExpired()) {
-            return cached.addresses;
-        }
-        
-        activeQueries.incrementAndGet();
-        try {
-            // 提交任务到线程池
-            Future<List<InetAddress>> future = dnsExecutor.submit(() -> {
-                return doLookup(hostname);
-            });
-            
-            try {
-                // 设置超时时间
-                List<InetAddress> addresses = future.get(DNS_TIMEOUT_MS, TimeUnit.MILLISECONDS);
-                
-                // 更新缓存
-                dnsCache.put(hostname, new CacheEntry(addresses));
-                
-                // 清理过期缓存
-                cleanupExpiredCache();
-                
-                return addresses;
-            } catch (Exception e) {
-                // 取消任务
-                future.cancel(true);
-                // 超时或异常后使用系统DNS
-                return Dns.SYSTEM.lookup(hostname);
+    } finally {
+        activeQueries.decrementAndGet();
+    }
+}
+
+private void cleanupExpiredCache() {
+    long now = System.currentTimeMillis();
+    dnsCache.entrySet().removeIf(entry -> 
+        now - entry.getValue().timestamp > CACHE_DURATION
+    );
+}
+
+private List<InetAddress> doLookup(String hostname) throws UnknownHostException {
+    // 双重检查锁定确保myHosts只初始化一次
+    if (myHosts == null) {
+        synchronized (OkGoHelper.class) {
+            if (myHosts == null) {
+                myHosts = ApiConfig.get().getMyHost();
             }
-        } finally {
-            activeQueries.decrementAndGet();
         }
     }
     
-    private void cleanupExpiredCache() {
-        long now = System.currentTimeMillis();
-        dnsCache.entrySet().removeIf(entry -> 
-            now - entry.getValue().timestamp > CACHE_DURATION
-        );
+    // 如果myHosts不为null且非空，则进行主机名替换
+    if (myHosts != null && !myHosts.isEmpty() && myHosts.containsKey(hostname)) {
+        hostname = myHosts.get(hostname);
     }
-
-    private List<InetAddress> doLookup(String hostname) throws UnknownHostException {
-        // 双重检查锁定确保myHosts只初始化一次
-        if (myHosts == null) {
-            synchronized (OkGoHelper.class) {
-                if (myHosts == null) {
-                    myHosts = ApiConfig.get().getMyHost();
-                }
-            }
-        }
-        
-        // 如果myHosts不为null且非空，则进行主机名替换
-        if (myHosts != null && !myHosts.isEmpty() && myHosts.containsKey(hostname)) {
-            hostname = myHosts.get(hostname);
-        }
-        
-        assert hostname != null;
-        if (isValidIpAddress(hostname)) {
-            return Collections.singletonList(InetAddress.getByName(hostname));
+    
+    assert hostname != null;
+    if (isValidIpAddress(hostname)) {
+        return Collections.singletonList(InetAddress.getByName(hostname));
+    } else {
+        // 如果dnsOverHttps为null，回退到系统默认DNS
+        DnsOverHttps localDns = dnsOverHttps;
+        if (localDns != null) {
+            return localDns.lookup(hostname);
         } else {
-            // 如果dnsOverHttps为null，回退到系统默认DNS
-            DnsOverHttps localDns = dnsOverHttps;
-            if (localDns != null) {
-                return localDns.lookup(hostname);
-            } else {
-                return Dns.SYSTEM.lookup(hostname);
-            }
+            return Dns.SYSTEM.lookup(hostname);
         }
     }
+}
 
-    public synchronized void mapHosts(Map<String, String> hosts) throws UnknownHostException {
-        map = new ConcurrentHashMap<>();
-        for (Map.Entry<String, String> entry : hosts.entrySet()) {
-            String key = entry.getKey();
-            String value = entry.getValue();
-            if (isValidIpAddress(value)) {
-                map.put(key, Collections.singletonList(InetAddress.getByName(value)));
-            } else {
-                map.put(key, getAllByName(value));
-            }
+public synchronized void mapHosts(Map<String, String> hosts) throws UnknownHostException {
+    map = new ConcurrentHashMap<>();
+    for (Map.Entry<String, String> entry : hosts.entrySet()) {
+        String key = entry.getKey();
+        String value = entry.getValue();
+        if (isValidIpAddress(value)) {
+            map.put(key, Collections.singletonList(InetAddress.getByName(value)));
+        } else {
+            map.put(key, getAllByName(value));
         }
     }
+}
 
-    private List<InetAddress> getAllByName(String host) {
+private List<InetAddress> getAllByName(String host) {
+    try {
+        // 获取所有与主机名关联的 IP 地址
+        InetAddress[] allAddresses = InetAddress.getAllByName(host);
+        if (excludeIps.isEmpty()) return Arrays.asList(allAddresses);
+        // 创建一个列表用于存储有效的 IP 地址
+        List<InetAddress> validAddresses = new ArrayList<>();
+        Set<String> excludeIpsSet = new HashSet<>();
+        for (String ip : excludeIps.split(",")) {
+            excludeIpsSet.add(ip.trim());
+        }
+        for (InetAddress address : allAddresses) {
+            if (!excludeIpsSet.contains(address.getHostAddress())) {
+                validAddresses.add(address);
+            }
+        }
+        return validAddresses;
+    } catch (Exception e) {
+        return new ArrayList<>();
+    }
+}
+
+//简单判断减少开销
+private boolean isValidIpAddress(String str) {
+    if (str.indexOf('.') > 0) return isValidIPv4(str);
+    return str.indexOf(':') > 0;
+}
+
+private boolean isValidIPv4(String str) {
+    String[] parts = str.split("\\.");
+    if (parts.length != 4) return false;
+    for (String part : parts) {
         try {
-            // 获取所有与主机名关联的 IP 地址
-            InetAddress[] allAddresses = InetAddress.getAllByName(host);
-            if (excludeIps.isEmpty()) return Arrays.asList(allAddresses);
-            // 创建一个列表用于存储有效的 IP 地址
-            List<InetAddress> validAddresses = new ArrayList<>();
-            Set<String> excludeIpsSet = new HashSet<>();
-            for (String ip : excludeIps.split(",")) {
-                excludeIpsSet.add(ip.trim());
-            }
-            for (InetAddress address : allAddresses) {
-                if (!excludeIpsSet.contains(address.getHostAddress())) {
-                    validAddresses.add(address);
-                }
-            }
-            return validAddresses;
-        } catch (Exception e) {
-            return new ArrayList<>();
+            Integer.parseInt(part);
+        } catch (NumberFormatException e) {
+            return false;
         }
     }
-
-    //简单判断减少开销
-    private boolean isValidIpAddress(String str) {
-        if (str.indexOf('.') > 0) return isValidIPv4(str);
-        return str.indexOf(':') > 0;
-    }
-
-    private boolean isValidIPv4(String str) {
-        String[] parts = str.split("\\.");
-        if (parts.length != 4) return false;
-        for (String part : parts) {
-            try {
-                Integer.parseInt(part);
-            } catch (NumberFormatException e) {
-                return false;
-            }
-        }
-        return true;
-    }
+    return true;
+}
 }
 
 static OkHttpClient defaultClient = null;
 static OkHttpClient noRedirectClient = null;
+
 
 public static OkHttpClient getDefaultClient() {
     if (!isInitialized && !isInitializing) {
@@ -556,7 +508,7 @@ public static void init() {
             // 第一阶段：快速初始化核心组件（在主线程执行）
             initEssentialSync();
             
-            // 在初始化时调用 setDnsList() 确保列表被正确初始化（包含默认+自定义）
+            // 在初始化时调用 setDnsList() 确保列表被正确初始化
             setDnsList();
             
             // 第二阶段：延迟1秒后异步初始化耗时组件
