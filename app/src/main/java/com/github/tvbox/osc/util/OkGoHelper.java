@@ -119,6 +119,7 @@ public static String getDohUrl(int type) {
         // 解析失败时返回空字符串
         return "";
     }
+    // 注意：这里type是从1开始计算的（跳过了"默认"项），所以需要调整索引
     if (type >= 1 && type <= jsonArray.size()) {
         JsonObject dnsConfig = jsonArray.get(type - 1).getAsJsonObject();
         if (dnsConfig.has("url")) {
@@ -157,6 +158,7 @@ public static JsonArray getCustomDnsArray() {
 
 /**
  * 设置合并后的DNS列表（默认+自定义），确保即使加载失败也能显示默认列表
+ * 并且正确处理越界问题
  */
 public static void setMergedDnsList() {
     // 总是清空现有列表
@@ -186,12 +188,14 @@ public static void setMergedDnsList() {
     // 修正用户选择索引，防止越界
     int selectedIndex = Hawk.get(HawkConfig.DOH_URL, 0);
     if (selectedIndex >= dnsHttpsList.size()) {
+        // 如果越界，重置为0（"默认"选项）
         Hawk.put(HawkConfig.DOH_URL, 0);
     }
 }
 
 /**
  * 设置仅自定义DNS列表（当自定义列表加载失败时，回退到默认列表）
+ * 并且正确处理越界问题
  */
 public static void setCustomDnsList() {
     // 清空现有列表
@@ -224,8 +228,46 @@ public static void setCustomDnsList() {
     // 修正用户选择索引，防止越界
     int selectedIndex = Hawk.get(HawkConfig.DOH_URL, 0);
     if (selectedIndex >= dnsHttpsList.size()) {
+        // 如果越界，重置为0（"默认"选项）
         Hawk.put(HawkConfig.DOH_URL, 0);
     }
+}
+
+/**
+ * 获取实际的DOH URL（考虑合并列表的情况）
+ */
+public static String getActualDohUrl(int selectedPosition) {
+    if (selectedPosition < 0 || selectedPosition >= dnsHttpsList.size()) {
+        return ""; // 越界情况返回空字符串
+    }
+    
+    String selectedName = dnsHttpsList.get(selectedPosition);
+    
+    // 优先检查自定义列表
+    JsonArray customArray = getCustomDnsArray();
+    if (customArray != null) {
+        for (int i = 0; i < customArray.size(); i++) {
+            JsonObject dnsConfig = customArray.get(i).getAsJsonObject();
+            if (dnsConfig.has("name") && dnsConfig.get("name").getAsString().equals(selectedName)) {
+                if (dnsConfig.has("url")) {
+                    return dnsConfig.get("url").getAsString();
+                }
+            }
+        }
+    }
+    
+    // 如果不是自定义的，检查默认列表
+    JsonArray defaultArray = getDefaultDnsArray();
+    for (int i = 0; i < defaultArray.size(); i++) {
+        JsonObject dnsConfig = defaultArray.get(i).getAsJsonObject();
+        if (dnsConfig.has("name") && dnsConfig.get("name").getAsString().equals(selectedName)) {
+            if (dnsConfig.has("url")) {
+                return dnsConfig.get("url").getAsString();
+            }
+        }
+    }
+    
+    return ""; // "默认"选项返回空字符串
 }
 
 private static List<InetAddress> DohIps(JsonArray ips) {
@@ -248,6 +290,13 @@ static void initDnsOverHttps() {
     setMergedDnsList();
     
     Integer dohSelector = Hawk.get(HawkConfig.DOH_URL, 0);
+    
+    // 确保选择器不越界
+    if (dohSelector >= dnsHttpsList.size()) {
+        dohSelector = 0;
+        Hawk.put(HawkConfig.DOH_URL, dohSelector);
+    }
+    
     JsonArray ips = null;
     
     // 使用默认列表作为基础，然后尝试添加自定义列表
@@ -261,18 +310,16 @@ static void initDnsOverHttps() {
         }
     }
     
-    // 修正选择器索引
-    if (dohSelector >= jsonArray.size()) {
-        dohSelector = 0;
-        Hawk.put(HawkConfig.DOH_URL, dohSelector);
-    }
-    
+    // 根据选择的名称查找对应的IP配置
+    String selectedName = dnsHttpsList.get(dohSelector);
     try {
-        // 获取选定DNS的IP地址
+        // 遍历合并后的数组找到对应项
         for (int i = 0; i < jsonArray.size(); i++) {
             JsonObject dnsConfig = jsonArray.get(i).getAsJsonObject();
-            if (dohSelector == i)
+            if (dnsConfig.has("name") && dnsConfig.get("name").getAsString().equals(selectedName)) {
                 ips = dnsConfig.has("ips") ? dnsConfig.getAsJsonArray("ips") : null;
+                break;
+            }
         }
     } catch (Exception e) {
         e.printStackTrace();
@@ -295,8 +342,10 @@ static void initDnsOverHttps() {
     }
     builder.cache(new Cache(new File(App.getInstance().getCacheDir().getAbsolutePath(), "dohcache"), 10 * 1024 * 1024));
     OkHttpClient dohClient = builder.build();
-    String dohUrl = getDohUrl(dohSelector);
+    
+    String dohUrl = getActualDohUrl(dohSelector);
     if (!dohUrl.isEmpty()) is_doh = true;
+    
     DnsOverHttps.Builder dnsBuilder = new DnsOverHttps.Builder();
     dnsBuilder.client(dohClient);
     dnsBuilder.url(dohUrl.isEmpty() ? null : HttpUrl.get(dohUrl));
