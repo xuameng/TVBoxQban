@@ -1545,68 +1545,28 @@ public class LivePlayActivity extends BaseActivity {
         Integer[] groupChannelIndex = getNextChannel(-1);
         playChannel(groupChannelIndex[0], groupChannelIndex[1], false);
     }
-public void playPreSource() {
-    if(mVideoView == null) {
-        return;
-    }
-    if (currentLiveChannelIndex == -1){
-        App.showToastShort(mContext, "聚汇直播提示您：请先选择频道！");
-        return;
-    }
-    
-    // 保存当前源索引
-    int oldSourceIndex = currentLiveChannelItem.getSourceIndex();
-    
-    // 切换源
-    currentLiveChannelItem.preSource();
-    
-    // 获取新源索引
-    int newSourceIndex = currentLiveChannelItem.getSourceIndex();
-    
-    // 同步更新设置菜单高亮
-    if (liveSettingGroupAdapter != null && liveSettingItemAdapter != null) {
-        // 检查当前是否在"线路切换"设置组（索引0）
-            // 清除旧的高亮
-            liveSettingItemAdapter.selectItem(oldSourceIndex, false, false);
-            // 设置新的高亮
-            liveSettingItemAdapter.selectItem(newSourceIndex, true, false);
+    public void playPreSource() {
+        if(mVideoView == null) {
+            return;
         }
-    
-    liveSettingGroupAdapter.setSelectedGroupIndex(-1); //xuameng右菜单BUG修复
-    playChannel(currentChannelGroupIndex, currentLiveChannelIndex, true);
-}
-
-
-public void playNextSource() {
-    if(mVideoView == null) {
-        return;
+        if (currentLiveChannelIndex == -1){
+            App.showToastShort(mContext, "聚汇直播提示您：请先选择频道！");
+            return;
+        }
+        currentLiveChannelItem.preSource();
+        playChannel(currentChannelGroupIndex, currentLiveChannelIndex, true);
     }
-    if (currentLiveChannelIndex == -1){
-        App.showToastShort(mContext, "聚汇直播提示您：请先选择频道！");
-        return;
+    public void playNextSource() {
+        if(mVideoView == null) {
+            return;
+        }
+        if (currentLiveChannelIndex == -1){
+            App.showToastShort(mContext, "聚汇直播提示您：请先选择频道！");
+            return;
+        }
+        currentLiveChannelItem.nextSource();
+        playChannel(currentChannelGroupIndex, currentLiveChannelIndex, true);
     }
-    
-    // 保存当前源索引
-    int oldSourceIndex = currentLiveChannelItem.getSourceIndex();
-    
-    // 切换源
-    currentLiveChannelItem.nextSource();
-    
-    // 获取新源索引
-    int newSourceIndex = currentLiveChannelItem.getSourceIndex();
-    
-    // 同步更新设置菜单高亮
-    if (liveSettingGroupAdapter != null && liveSettingItemAdapter != null) {
-        // 检查当前是否在"线路切换"设置组（索引0）
-            // 清除旧的高亮
-            liveSettingItemAdapter.selectItem(oldSourceIndex, false, false);
-            // 设置新的高亮
-            liveSettingItemAdapter.selectItem(newSourceIndex, true, false);
-    }
-    
-    liveSettingGroupAdapter.setSelectedGroupIndex(-1); //xuameng右菜单BUG修复
-    playChannel(currentChannelGroupIndex, currentLiveChannelIndex, true);
-}
     public void playXuSource() {
         if(mVideoView == null) {
             return;
@@ -2266,6 +2226,7 @@ public void playNextSource() {
                     }
                 } else {
                     playNextSource();
+                    liveSettingGroupAdapter.setSelectedGroupIndex(-1); //xuameng右菜单BUG修复
                 } else if(direction < 0)
                     if(isBack) { //xuameng手机换源和隐藏时移控制栏
                         if(backcontroller.getVisibility() == View.VISIBLE) {
@@ -2281,6 +2242,7 @@ public void playNextSource() {
                     }
                 } else {
                     playPreSource();
+                    liveSettingGroupAdapter.setSelectedGroupIndex(-1); //xuameng右菜单BUG修复
                 }
             }
         });
