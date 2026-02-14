@@ -214,7 +214,13 @@ public class OkGoHelper {
             if (isValidIpAddress(hostname)) {
                 return Collections.singletonList(InetAddress.getByName(hostname));
             }else {
-                return  dnsOverHttps.lookup(hostname);
+                // 如果dnsOverHttps为null，回退到系统默认DNS
+                DnsOverHttps localDns = dnsOverHttps;
+                if (localDns != null) {
+                    return localDns.lookup(hostname);
+                } else {
+                    return Dns.SYSTEM.lookup(hostname);
+                }
             }
         }
 
