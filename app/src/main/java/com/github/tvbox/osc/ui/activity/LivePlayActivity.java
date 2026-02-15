@@ -4071,7 +4071,9 @@ public class LivePlayActivity extends BaseActivity {
                     // 当前播放的频道不在收藏组中，不改变任何焦点状态
                     // 只需更新列表数据，不设置选中状态
                     judgeSelectedChannelIndex(-1); // 确保没有选中项
-                    judgeFocusedChannelIndex();  //xuameng 滚动闪退
+                    if(divLoadEpgleft.getVisibility() == View.VISIBLE) {
+                        judgeFocusedChannelIndex();  //xuameng 滚动闪退
+                    }
                 }
                 // ========== 修复结束 ==========
             }
