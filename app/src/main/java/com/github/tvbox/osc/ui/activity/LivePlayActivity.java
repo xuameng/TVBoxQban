@@ -4053,19 +4053,21 @@ public class LivePlayActivity extends BaseActivity {
                         // currentLiveChannelItem = null;
                         //channel_Name = null;
                         currentLiveChannelIndex = -1;
-                        judgeSelectedChannelIndex(-1); 
-                        judgeFocusedChannelIndex();  //xuameng 修复焦点高亮问题
+                        judgeSelectedChannelIndex(-2); 
                         if(mVideoView == null) return;
                         mVideoView.release();
-                        divEpg.setVisibility(View.GONE);
-                        divLoadEpgleft.setVisibility(View.GONE);
-                        mChannelGroupView.setVisibility(View.VISIBLE);
-                        divLoadEpg.setVisibility(View.VISIBLE);
+                        if(divLoadEpgleft.getVisibility() == View.VISIBLE) {
+                            divEpg.setVisibility(View.GONE);
+                            divLoadEpgleft.setVisibility(View.GONE);
+                            mChannelGroupView.setVisibility(View.VISIBLE);
+                            divLoadEpg.setVisibility(View.VISIBLE);
+                        }
+                        App.showToastShort(mContext, "聚汇直播提示您：当前播放中的频道已被删除！请选择频道！");
                     }
                 }else {
                     // 当前播放的频道不在收藏组中，不改变任何焦点状态
                     // 只需更新列表数据，不设置选中状态
-                    judgeSelectedChannelIndex(-1); // 确保没有选中项
+                    judgeSelectedChannelIndex(-2); // 确保没有选中项
                 }
                 // ========== 修复结束 ==========
             }
