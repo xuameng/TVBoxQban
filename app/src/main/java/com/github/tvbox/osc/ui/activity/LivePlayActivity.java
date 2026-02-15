@@ -2475,7 +2475,6 @@ public class LivePlayActivity extends BaseActivity {
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
                 if(position < 0) return;
                 int channelGroupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex(); //xuameng当前选定的频道组
-
                 // xuameng边界判断逻辑
                 if(position == getLiveChannels(channelGroupIndexXu).size() - 1) { //xuameng判断是否是最后一个频道
                     itemView.setId(View.generateViewId());
@@ -2494,18 +2493,18 @@ public class LivePlayActivity extends BaseActivity {
                 if(tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
                     mHideChannelListRunXu(); //xuameng隐藏频道菜单
                 }
-
-                // xuameng检查是否是"暂无收藏"占位项
-                LiveChannelItem selectedChannel = getLiveChannels(channelGroupIndexXu).get(position);
-                // xuameng检查是否是占位项（使用索引判断，-1表示占位项）
-                if (selectedChannel.getChannelIndex() == -1) {
-                    return; // xuameng如果是占位项则直接返回，不执行任何后续操作
-                }
-                        // xuameng防止列表为空报空指针：
+                // xuameng防止列表为空报空指针：
                 ArrayList<LiveChannelItem> channels = getLiveChannels(channelGroupIndexXu);
                 if (channels == null || position < 0 || position >= channels.size()) {
                     return; // 防止越界
                 }
+                // xuameng检查是否是"暂无收藏"占位项 - 已经在上面做了安全检查
+                LiveChannelItem selectedChannel = channels.get(position);
+                // xuameng检查是否是占位项（使用索引判断，-1表示占位项）
+                if (selectedChannel.getChannelIndex() == -1) {
+                    return; // xuameng如果是占位项则直接返回，不执行任何后续操作
+                }
+
                 isTouch = false;  //xuameng手机选择频道判断  显示正在播放频道所在组
                 liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
                 liveChannelItemAdapter.setFocusedChannelIndex(position);
