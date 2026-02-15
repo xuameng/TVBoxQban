@@ -499,6 +499,7 @@ public class LivePlayActivity extends BaseActivity {
     }
 
     public void getEpg(Date date) {
+        if(!isCurrentLiveChannelValidXu()) return;    //xuameng 空指针修复
         String channelName = channel_Name.getChannelName();
         SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd");
         timeFormat.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
@@ -623,6 +624,7 @@ public class LivePlayActivity extends BaseActivity {
         });
     }
     public void getEpgxu(Date date) {
+        if(!isCurrentLiveChannelValidXu()) return;    //xuameng 空指针修复
         String channelName = channel_NameXu.getChannelName();    //xuameng频道名称在移动item中选中
         SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd");
         timeFormat.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
@@ -1362,7 +1364,6 @@ public class LivePlayActivity extends BaseActivity {
         if(countDownTimer7 != null) {
             countDownTimer7.cancel();
         }
-        if(!isCurrentLiveChannelValidXu()) return;    //xuameng 空指针修复
         liveEpgDateAdapter.setSelectedIndex(1);   //xuameng频道EPG日期自动选今天
         getEpg(new Date());
     }
@@ -4053,7 +4054,13 @@ public class LivePlayActivity extends BaseActivity {
                         //channel_Name = null;
                         currentLiveChannelIndex = -1;
                         judgeSelectedChannelIndex(-1); 
-                        judgeFocusedChannelIndex();
+                        judgeFocusedChannelIndex();  //xuameng 修复焦点高亮问题
+                        if(mVideoView == null) return;
+                        mVideoView.release();
+                        divEpg.setVisibility(View.GONE);
+                        divLoadEpgleft.setVisibility(View.GONE);
+                        mChannelGroupView.setVisibility(View.VISIBLE);
+                        divLoadEpg.setVisibility(View.VISIBLE);
                     }
                 }else {
                     // 当前播放的频道不在收藏组中，不改变任何焦点状态
