@@ -737,11 +737,11 @@ public class LivePlayActivity extends BaseActivity {
     //显示底部EPG
     @SuppressLint("SetTextI18n") //xuameng乱码
     private void showBottomEpg() {
-        liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
         if(!isCurrentLiveChannelValid()) { //xuameng 未选择频道空指针问题
             return;
         }
         if(isBack) return;
+        liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
         if(channel_Name.getChannelName() != null) {
             ((TextView) findViewById(R.id.tv_channel_bar_name)).setText(channel_Name.getChannelName());
             ((TextView) findViewById(R.id.tv_channel_bottom_number)).setText("" + channel_Name.getChannelNum());
@@ -888,7 +888,6 @@ public class LivePlayActivity extends BaseActivity {
         divLoadEpgleft.setVisibility(View.GONE);
         mChannelGroupView.setVisibility(View.VISIBLE);
         divLoadEpg.setVisibility(View.VISIBLE);
-        judgeFocusedChannelIndex();  //xuameng 滚动闪退   更新频道高亮
         if(tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
             mHideChannelListRunXu(); //xuameng隐藏频道菜单
         }
@@ -1363,7 +1362,9 @@ public class LivePlayActivity extends BaseActivity {
         if(countDownTimer7 != null) {
             countDownTimer7.cancel();
         }
+        if(!isCurrentLiveChannelValidXu()) return;    //xuameng 空指针修复
         liveEpgDateAdapter.setSelectedIndex(1);   //xuameng频道EPG日期自动选今天
+        getEpg(new Date());
     }
     private void mHideChannelListRunXu() { //xuameng左侧菜单延时5秒隐藏
         if(countDownTimer7 != null) {
@@ -4052,6 +4053,7 @@ public class LivePlayActivity extends BaseActivity {
                         //channel_Name = null;
                         currentLiveChannelIndex = -1;
                         judgeSelectedChannelIndex(-1); 
+                        judgeFocusedChannelIndex();
                     }
                 }else {
                     // 当前播放的频道不在收藏组中，不改变任何焦点状态
