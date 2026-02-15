@@ -1475,7 +1475,7 @@ public class LivePlayActivity extends BaseActivity {
                 return false;
             }
 
-            currentLiveChannelItemXu = getLiveChannels(currentChannelGroupIndexXu).get(currentLiveChannelIndexXu);
+            currentLiveChannelItemXu = channels.get(currentLiveChannelIndexXu);
             // ========== xuameng新增：检查是否为占位项 ==========
             if (currentLiveChannelItemXu != null && currentLiveChannelItemXu.getChannelIndex() == -1) {
                 // 如果是占位项，直接返回false，不更新EPG
