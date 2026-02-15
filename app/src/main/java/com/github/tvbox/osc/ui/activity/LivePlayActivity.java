@@ -1475,7 +1475,7 @@ public class LivePlayActivity extends BaseActivity {
                 return false;
             }
 
-            currentLiveChannelItemXu = channels.get(currentLiveChannelIndexXu);
+            currentLiveChannelItemXu = getLiveChannels(currentChannelGroupIndexXu).get(currentLiveChannelIndexXu);
             // ========== xuameng新增：检查是否为占位项 ==========
             if (currentLiveChannelItemXu != null && currentLiveChannelItemXu.getChannelIndex() == -1) {
                 // 如果是占位项，直接返回false，不更新EPG
@@ -1497,8 +1497,7 @@ public class LivePlayActivity extends BaseActivity {
         if(mVideoView == null) {
             return;
         }
-        if (currentLiveChannelIndex == -1){
-            App.showToastShort(mContext, "聚汇直播提示您：请先选择频道！");
+        if(!isCurrentLiveChannelValid()) { //xuameng 未选择频道空指针问题
             return;
         }
         int channelGroupIndexXu = currentChannelGroupIndex; //xuameng当前选定的频道组
@@ -1523,8 +1522,7 @@ public class LivePlayActivity extends BaseActivity {
         if(mVideoView == null) {
             return;
         }
-        if (currentLiveChannelIndex == -1){
-            App.showToastShort(mContext, "聚汇直播提示您：请先选择频道！");
+        if(!isCurrentLiveChannelValid()) { //xuameng 未选择频道空指针问题
             return;
         }
         int channelGroupIndexXu = currentChannelGroupIndex; //xuameng当前选定的频道组
@@ -1549,8 +1547,7 @@ public class LivePlayActivity extends BaseActivity {
         if(mVideoView == null) {
             return;
         }
-        if (currentLiveChannelIndex == -1){
-            App.showToastShort(mContext, "聚汇直播提示您：请先选择频道！");
+        if(!isCurrentLiveChannelValid()) { //xuameng 未选择频道空指针问题
             return;
         }
         currentLiveChannelItem.preSource();
@@ -1560,8 +1557,7 @@ public class LivePlayActivity extends BaseActivity {
         if(mVideoView == null) {
             return;
         }
-        if (currentLiveChannelIndex == -1){
-            App.showToastShort(mContext, "聚汇直播提示您：请先选择频道！");
+        if(!isCurrentLiveChannelValid()) { //xuameng 未选择频道空指针问题
             return;
         }
         currentLiveChannelItem.nextSource();
@@ -1571,8 +1567,7 @@ public class LivePlayActivity extends BaseActivity {
         if(mVideoView == null) {
             return;
         }
-        if (currentLiveChannelIndex == -1){
-            App.showToastShort(mContext, "聚汇直播提示您：请先选择频道！");
+        if(!isCurrentLiveChannelValid()) { //xuameng 未选择频道空指针问题
             return;
         }
         XuSource = true;
@@ -2207,8 +2202,7 @@ public class LivePlayActivity extends BaseActivity {
             }
             @Override
             public void changeSource(int direction) {
-                if (currentLiveChannelIndex == -1){
-                    App.showToastShort(mContext, "聚汇直播提示您：请先选择频道！");
+                if(!isCurrentLiveChannelValid()) { //xuameng 未选择频道空指针问题
                     return;
                 }
                 if(direction > 0)
@@ -2256,8 +2250,7 @@ public class LivePlayActivity extends BaseActivity {
     private Runnable mConnectTimeoutChangeSourceRun = new Runnable() {
         @Override
         public void run() {
-            if (currentLiveChannelIndex == -1){
-                App.showToastShort(mContext, "聚汇直播提示您：请先选择频道！");
+            if(!isCurrentLiveChannelValid()) { //xuameng 未选择频道空指针问题
                 return;
             }
             // 确保在主线程执行
@@ -2354,8 +2347,7 @@ public class LivePlayActivity extends BaseActivity {
     private Runnable mConnectTimeoutChangeSourceRunBack = new Runnable() { //xuameng为回看失败准备
         @Override
         public void run() {
-            if (currentLiveChannelIndex == -1){
-                App.showToastShort(mContext, "聚汇直播提示您：请先选择频道！");
+            if(!isCurrentLiveChannelValid()) { //xuameng 未选择频道空指针问题
                 return;
             }
             // 确保在主线程执行
@@ -2370,8 +2362,7 @@ public class LivePlayActivity extends BaseActivity {
     private Runnable mConnectTimeoutChangeSourceRunBuffer = new Runnable() { //xuameng为回看失败准备
         @Override
         public void run() {
-            if (currentLiveChannelIndex == -1){
-                App.showToastShort(mContext, "聚汇直播提示您：请先选择频道！");
+            if(!isCurrentLiveChannelValid()) { //xuameng 未选择频道空指针问题
                 return;
             }
             // 确保在主线程执行
@@ -2500,7 +2491,6 @@ public class LivePlayActivity extends BaseActivity {
                 }
 
                 liveChannelGroupAdapter.setFocusedGroupIndex(-1);  //xuameng 频道组高亮
-                liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
                 if(tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
                     mHideChannelListRunXu(); //xuameng隐藏频道菜单
                 }
@@ -2511,8 +2501,13 @@ public class LivePlayActivity extends BaseActivity {
                 if (selectedChannel.getChannelIndex() == -1) {
                     return; // xuameng如果是占位项则直接返回，不执行任何后续操作
                 }
-        
+                        // xuameng防止列表为空报空指针：
+                ArrayList<LiveChannelItem> channels = getLiveChannels(channelGroupIndexXu);
+                if (channels == null || position < 0 || position >= channels.size()) {
+                    return; // 防止越界
+                }
                 isTouch = false;  //xuameng手机选择频道判断  显示正在播放频道所在组
+                liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
                 liveChannelItemAdapter.setFocusedChannelIndex(position);
                 liveChannelItemAdapter.setSelectedChannelIndex(position);
                 playChannelxu(liveChannelGroupAdapter.getSelectedGroupIndex(), liveChannelItemAdapter.getSelectedChannelIndex(), false); //xuameng换频道显示EPG
@@ -2714,8 +2709,7 @@ public class LivePlayActivity extends BaseActivity {
         switch(settingGroupIndex) {
             case 0: //线路切换
                 if(mVideoView == null) return;
-                if (currentLiveChannelIndex == -1){
-                    App.showToastShort(mContext, "聚汇直播提示您：请先选择频道！");
+                if(!isCurrentLiveChannelValid()) { //xuameng 未选择频道空指针问题
                     return;
                 }
                 if(position == liveSettingItemAdapter.getSelectedItemIndex()) return;
@@ -2725,8 +2719,7 @@ public class LivePlayActivity extends BaseActivity {
                 break;
             case 1: //画面比例
                 if(mVideoView == null) return;
-                if (currentLiveChannelIndex == -1){
-                    App.showToastShort(mContext, "聚汇直播提示您：请先选择频道！");
+                if(!isCurrentLiveChannelValid()) { //xuameng 未选择频道空指针问题
                     return;
                 }
                 if(position == liveSettingItemAdapter.getSelectedItemIndex()) return;
@@ -2735,8 +2728,7 @@ public class LivePlayActivity extends BaseActivity {
                 break;
             case 2: //播放解码
                 if(mVideoView == null) return;
-                if (currentLiveChannelIndex == -1){
-                    App.showToastShort(mContext, "聚汇直播提示您：请先选择频道！");
+                if(!isCurrentLiveChannelValid()) { //xuameng 未选择频道空指针问题
                     return;
                 }
                 if(position == liveSettingItemAdapter.getSelectedItemIndex()) return;
@@ -2828,8 +2820,7 @@ public class LivePlayActivity extends BaseActivity {
                 return;
             case 6: //xuameng渲染方式
                 if(mVideoView == null) return;
-                if (currentLiveChannelIndex == -1){
-                    App.showToastShort(mContext, "聚汇直播提示您：请先选择频道！");
+                if(!isCurrentLiveChannelValid()) { //xuameng 未选择频道空指针问题
                     return;
                 }
                 if(position == liveSettingItemAdapter.getSelectedItemIndex()) return;
@@ -2844,8 +2835,7 @@ public class LivePlayActivity extends BaseActivity {
                 break;
             case 7: //xuameng音柱动画 点击
                 if(mVideoView == null) return;
-                if (currentLiveChannelIndex == -1){
-                    App.showToastShort(mContext, "聚汇直播提示您：请先选择频道！");
+                if(!isCurrentLiveChannelValid()) { //xuameng 未选择频道空指针问题
                     return;
                 }
                 if(position == liveSettingItemAdapter.getSelectedItemIndex()) return;
@@ -3497,14 +3487,14 @@ public class LivePlayActivity extends BaseActivity {
         return -1;
     }
     private boolean isCurrentLiveChannelValid() {  //xuameng   currentLiveChannelIndex = -1  就是没选频道
-        if(currentLiveChannelItem == null) {
+        if(currentLiveChannelItem == null || currentLiveChannelIndex == -1) {
            App.showToastShort(mContext, "聚汇直播提示您：请先选择频道！");
            return false;
         }
         return true;
     }
     private boolean isCurrentLiveChannelValidXu() {  //xuameng   currentLiveChannelIndex = -1  就是没选频道
-        if(currentLiveChannelItem == null) {
+        if(currentLiveChannelItem == null || currentLiveChannelIndex == -1) {
             return false;
         }
         return true;
