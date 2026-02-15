@@ -737,11 +737,11 @@ public class LivePlayActivity extends BaseActivity {
     //显示底部EPG
     @SuppressLint("SetTextI18n") //xuameng乱码
     private void showBottomEpg() {
+        liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
         if(!isCurrentLiveChannelValid()) { //xuameng 未选择频道空指针问题
             return;
         }
         if(isBack) return;
-        liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
         if(channel_Name.getChannelName() != null) {
             ((TextView) findViewById(R.id.tv_channel_bar_name)).setText(channel_Name.getChannelName());
             ((TextView) findViewById(R.id.tv_channel_bottom_number)).setText("" + channel_Name.getChannelNum());
@@ -888,6 +888,7 @@ public class LivePlayActivity extends BaseActivity {
         divLoadEpgleft.setVisibility(View.GONE);
         mChannelGroupView.setVisibility(View.VISIBLE);
         divLoadEpg.setVisibility(View.VISIBLE);
+        judgeFocusedChannelIndex();  //xuameng 滚动闪退   更新频道高亮
         if(tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
             mHideChannelListRunXu(); //xuameng隐藏频道菜单
         }
@@ -1362,7 +1363,6 @@ public class LivePlayActivity extends BaseActivity {
         if(countDownTimer7 != null) {
             countDownTimer7.cancel();
         }
-        if(!isCurrentLiveChannelValidXu()) return;    //xuameng 空指针修复
         liveEpgDateAdapter.setSelectedIndex(1);   //xuameng频道EPG日期自动选今天
     }
     private void mHideChannelListRunXu() { //xuameng左侧菜单延时5秒隐藏
@@ -1475,7 +1475,7 @@ public class LivePlayActivity extends BaseActivity {
                 return false;
             }
 
-            currentLiveChannelItemXu = getLiveChannels(currentChannelGroupIndexXu).get(currentLiveChannelIndexXu);
+			currentLiveChannelItemXu = channels.get(currentLiveChannelIndexXu);
             // ========== xuameng新增：检查是否为占位项 ==========
             if (currentLiveChannelItemXu != null && currentLiveChannelItemXu.getChannelIndex() == -1) {
                 // 如果是占位项，直接返回false，不更新EPG
@@ -2395,7 +2395,7 @@ public class LivePlayActivity extends BaseActivity {
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {}
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
-
+                if(position < 0) return;
                 // xuameng边界判断逻辑
                 if (position == liveChannelGroupList.size() - 1) { // xuameng判断是否是最后一个频道组
                     itemView.setId(View.generateViewId());
@@ -2473,7 +2473,9 @@ public class LivePlayActivity extends BaseActivity {
             }
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
-                if(position < 0) return;
+                if(tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
+                    mHideChannelListRunXu(); //xuameng隐藏频道菜单
+                }
                 int channelGroupIndexXu = liveChannelGroupAdapter.getSelectedGroupIndex(); //xuameng当前选定的频道组
                 // xuameng边界判断逻辑
                 if(position == getLiveChannels(channelGroupIndexXu).size() - 1) { //xuameng判断是否是最后一个频道
@@ -2490,9 +2492,6 @@ public class LivePlayActivity extends BaseActivity {
                 }
 
                 liveChannelGroupAdapter.setFocusedGroupIndex(-1);  //xuameng 频道组高亮
-                if(tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
-                    mHideChannelListRunXu(); //xuameng隐藏频道菜单
-                }
                 // xuameng防止列表为空报空指针：
                 ArrayList<LiveChannelItem> channels = getLiveChannels(channelGroupIndexXu);
                 if (channels == null || position < 0 || position >= channels.size()) {
@@ -2514,12 +2513,12 @@ public class LivePlayActivity extends BaseActivity {
             }
             @Override
             public void onItemClick(TvRecyclerView parent, View itemView, int position) { //选中播放就隐藏左侧频道菜单
+                if(tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
+                    mHideChannelListRunXu(); //xuameng隐藏频道菜单
+                }
                 // xuameng添加安全检查
                 if (position < 0 || liveChannelItemAdapter.getData() == null || position >= liveChannelItemAdapter.getData().size()) {
                     return;
-                }
-                if(tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
-                    mHideChannelListRunXu(); //xuameng隐藏频道菜单
                 }
                 // xuameng检查是否是"暂无收藏"占位项
                 LiveChannelItem selectedChannel = getLiveChannels(liveChannelGroupAdapter.getSelectedGroupIndex()).get(position);
@@ -2583,9 +2582,6 @@ public class LivePlayActivity extends BaseActivity {
 
     }
     private void clickLiveChannel(int position) {
-        if(tvLeftChannelListLayout.getVisibility() == View.VISIBLE) {
-            mHideChannelListRunXu(); //xuameng隐藏频道菜单
-        }
         liveChannelItemAdapter.setSelectedChannelIndex(position);
         liveEpgDateAdapter.setSelectedIndex(1); //xuameng频道EPG日期自动选今天
         playChannel(liveChannelGroupAdapter.getSelectedGroupIndex(), position, false);
