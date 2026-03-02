@@ -12,7 +12,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 28
         versionCode 1
-        versionName '20260212-2222'
+        versionName '20260302-2222'
         multiDexEnabled true
         //设置room的Schema的位置
         javaCompileOptions {
@@ -121,11 +121,11 @@ dependencies {
     implementation 'commons-io:commons-io:2.11.0'
     implementation 'com.googlecode.juniversalchardet:juniversalchardet:1.0.3'
     implementation(name:'xwalk_shared_library-23.53.589.4',ext:'aar')
-        //支持http3
+    //支持http3
     implementation ('com.google.net.cronet:cronet-okhttp:0.1.0')
 //    implementation 'com.google.android.gms:play-services-cronet:18.0.1'
     implementation ('org.chromium.net:cronet-embedded:101.4951.41')
-      //工具类
+    //工具类
     implementation 'com.blankj:utilcodex:1.31.0'
     implementation 'com.github.alidili:FlowLayout:v1.5'  //xuameng搜索历史
     //xuameng exo
@@ -136,48 +136,3 @@ dependencies {
     api "com.google.android.exoplayer:exoplayer-ui:2.16.0"
     api "com.google.android.exoplayer:extension-rtmp:2.16.0"
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
