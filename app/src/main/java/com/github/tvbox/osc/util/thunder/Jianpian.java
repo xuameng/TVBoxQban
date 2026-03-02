@@ -63,7 +63,7 @@ public static String JPUrlDec(String url) {
             String localIp = LocalIPAddress.getIP(App.getInstance());
             int port = P2PClass.port;
 
-            return "http://" + localIp + ":" + port + "/" + encodedFileName;
+            return "http://127.0.0.1:" + port + "/" + encodedFileName;
 
         } catch (Exception e) {
             e.printStackTrace();
