@@ -81,8 +81,9 @@ public class ExoTrackNameProvider {
     
     private String buildLanguageOrLabelStringAudio(Format format) {   //xuameng 音轨显示简单语言
         String languageAndRole =
-                joinWithSeparator(buildLanguageString(format), buildRoleString(format));
-        return TextUtils.isEmpty(languageAndRole) ? buildLabelString(format) : languageAndRole;
+            joinWithSeparator(buildLanguageString(format), buildRoleString(format));
+        String result = TextUtils.isEmpty(languageAndRole) ? buildLabelString(format) : languageAndRole;
+        return "Aud".equals(result) ? "未知" : result;   //xuameng 如果语言为and返回未知
     }
 
     private static final Pattern CHINESE_PATTERN = Pattern.compile("[\\u4e00-\\u9fa5]");    //xuameng 判断字幕中是否含有中文
@@ -173,14 +174,14 @@ public class ExoTrackNameProvider {
         return roles;
     }
     
-    private String joinWithSeparator(String... items) {
+    private String joinWithSeparator(String... items) {   //xuameng 音频信息中间的逗号改成半角
         String itemList = "";
         for (String item : items) {
             if (item.length() > 0) {
                 if (TextUtils.isEmpty(itemList)) {
                     itemList = item;
                 } else {
-                    itemList = resources.getString(R.string.exo_item_list, itemList, item);
+                    itemList = itemList + "," + item; // xuameng直接拼接半角逗号
                 }
             }
         }
