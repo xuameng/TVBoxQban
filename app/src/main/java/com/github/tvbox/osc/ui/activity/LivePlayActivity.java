@@ -1753,12 +1753,6 @@ public class LivePlayActivity extends BaseActivity {
                     return;
                 }
 
-                currentChannelGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
-                currentLiveChannelIndex = liveChannelItemAdapter.getSelectedChannelIndex();
-                currentLiveChannelItem = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndex);
-                Hawk.put(HawkConfig.LIVE_CHANNEL, currentLiveChannelItem.getChannelName());
-                channel_Name = currentLiveChannelItem; //xuameng重要EPG名称
-                String channelName = channel_Name.getChannelName();
                 Date date = liveEpgDateAdapter.getSelectedIndex() < 0 ? new Date() : liveEpgDateAdapter.getData().get(liveEpgDateAdapter.getSelectedIndex()).getDateParamVal();
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
                 dateFormat.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
@@ -1773,6 +1767,15 @@ public class LivePlayActivity extends BaseActivity {
                 //                epgListAdapter.setSelectedEpgIndex(position);   //xuameng取消电视手机点击无法回看的EPG节目源变色
                 if(now.compareTo(selectedData.startdateTime) >= 0 && now.compareTo(selectedData.enddateTime) <= 0) {
                     if(mVideoView == null) return;
+
+                    currentChannelGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
+                    currentLiveChannelIndex = liveChannelItemAdapter.getSelectedChannelIndex();
+                    currentLiveChannelItem = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndex);
+                    Hawk.put(HawkConfig.LIVE_CHANNEL, currentLiveChannelItem.getChannelName());
+                    HawkUtils.setLastLiveChannelGroup(liveChannelGroupList.get(currentChannelGroupIndex).getGroupName()); //xuameng记忆频道组
+                    livePlayerManager.getLiveChannelPlayer(mVideoView, currentLiveChannelItem.getChannelName());
+                    channel_Name = currentLiveChannelItem; //xuameng重要EPG名称
+
                     mVideoView.release();
                     mVideoView.setUrl(currentLiveChannelItem.getUrl(), liveWebHeader());
                     mVideoView.start();
@@ -1785,6 +1788,15 @@ public class LivePlayActivity extends BaseActivity {
                 String shiyiUrl = currentLiveChannelItem.getUrl();
                 if(now.compareTo(selectedData.startdateTime) < 0) {} else if(shiyiUrl.contains("PLTV/") || shiyiUrl.contains("TVOD/")) {
                     if(mVideoView == null) return;
+
+                    currentChannelGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
+                    currentLiveChannelIndex = liveChannelItemAdapter.getSelectedChannelIndex();
+                    currentLiveChannelItem = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndex);
+                    Hawk.put(HawkConfig.LIVE_CHANNEL, currentLiveChannelItem.getChannelName());
+                    HawkUtils.setLastLiveChannelGroup(liveChannelGroupList.get(currentChannelGroupIndex).getGroupName()); //xuameng记忆频道组
+                    livePlayerManager.getLiveChannelPlayer(mVideoView, currentLiveChannelItem.getChannelName());
+                    channel_Name = currentLiveChannelItem; //xuameng重要EPG名称
+
                     isBack = true;
                     isVOD = false;
                     mVideoView.release();
@@ -1834,12 +1846,7 @@ public class LivePlayActivity extends BaseActivity {
                     App.showToastShort(mContext, "聚汇直播提示您：请先选择频道！");
                     return;
                 }
-                currentChannelGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
-                currentLiveChannelIndex = liveChannelItemAdapter.getSelectedChannelIndex();
-                currentLiveChannelItem = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndex);
-                Hawk.put(HawkConfig.LIVE_CHANNEL, currentLiveChannelItem.getChannelName());
-                channel_Name = currentLiveChannelItem; //xuameng重要EPG名称
-                String channelName = channel_Name.getChannelName();
+
                 Date date = liveEpgDateAdapter.getSelectedIndex() < 0 ? new Date() : liveEpgDateAdapter.getData().get(liveEpgDateAdapter.getSelectedIndex()).getDateParamVal();
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
                 dateFormat.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
@@ -1854,6 +1861,15 @@ public class LivePlayActivity extends BaseActivity {
                 //                epgListAdapter.setSelectedEpgIndex(position);   //xuameng取消电视手机点击无法回看的EPG节目源变色
                 if(now.compareTo(selectedData.startdateTime) >= 0 && now.compareTo(selectedData.enddateTime) <= 0) {
                     if(mVideoView == null) return;
+
+                    currentChannelGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
+                    currentLiveChannelIndex = liveChannelItemAdapter.getSelectedChannelIndex();
+                    currentLiveChannelItem = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndex);
+                    Hawk.put(HawkConfig.LIVE_CHANNEL, currentLiveChannelItem.getChannelName());
+                    HawkUtils.setLastLiveChannelGroup(liveChannelGroupList.get(currentChannelGroupIndex).getGroupName()); //xuameng记忆频道组
+                    livePlayerManager.getLiveChannelPlayer(mVideoView, currentLiveChannelItem.getChannelName());
+                    channel_Name = currentLiveChannelItem; //xuameng重要EPG名称
+
                     mVideoView.release();
                     mVideoView.setUrl(currentLiveChannelItem.getUrl(), liveWebHeader());
                     mVideoView.start();
@@ -1867,6 +1883,15 @@ public class LivePlayActivity extends BaseActivity {
                 String shiyiUrl = currentLiveChannelItem.getUrl();
                 if(now.compareTo(selectedData.startdateTime) < 0) {} else if(shiyiUrl.contains("PLTV/") || shiyiUrl.contains("TVOD/")) {
                     if(mVideoView == null) return;
+
+                    currentChannelGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
+                    currentLiveChannelIndex = liveChannelItemAdapter.getSelectedChannelIndex();
+                    currentLiveChannelItem = getLiveChannels(currentChannelGroupIndex).get(currentLiveChannelIndex);
+                    Hawk.put(HawkConfig.LIVE_CHANNEL, currentLiveChannelItem.getChannelName());
+                    HawkUtils.setLastLiveChannelGroup(liveChannelGroupList.get(currentChannelGroupIndex).getGroupName()); //xuameng记忆频道组
+                    livePlayerManager.getLiveChannelPlayer(mVideoView, currentLiveChannelItem.getChannelName());
+                    channel_Name = currentLiveChannelItem; //xuameng重要EPG名称
+
                     isBack = true;
                     isVOD = false;
                     mVideoView.release();
