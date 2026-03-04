@@ -1740,6 +1740,7 @@ public class LivePlayActivity extends BaseActivity {
             public void onItemClick(TvRecyclerView parent, View itemView, int position) {
                 int SelectedChannelGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
                 int SelectedLiveChannelIndex = liveChannelItemAdapter.getSelectedChannelIndex();
+                LiveChannelItem SelectedLiveChannelItem = getLiveChannels(SelectedChannelGroupIndex).get(SelectedLiveChannelIndex);  //xuameng epg BUG
                 // xuameng添加空列表检查
                 ArrayList<LiveChannelItem> channels = getLiveChannels(SelectedChannelGroupIndex);
                 if(channels == null || channels.isEmpty()) {
@@ -1785,7 +1786,7 @@ public class LivePlayActivity extends BaseActivity {
                     showBottomEpg(); //xuameng显示EPG和上面菜单 
                     return;
                 }
-                String shiyiUrl = currentLiveChannelItem.getUrl();
+                String shiyiUrl = SelectedLiveChannelItem.getUrl();  //xuameng 解决EPG BUG
                 if(now.compareTo(selectedData.startdateTime) < 0) {} else if(shiyiUrl.contains("PLTV/") || shiyiUrl.contains("TVOD/")) {
                     if(mVideoView == null) return;
 
@@ -1834,6 +1835,7 @@ public class LivePlayActivity extends BaseActivity {
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 int SelectedChannelGroupIndex = liveChannelGroupAdapter.getSelectedGroupIndex();
                 int SelectedLiveChannelIndex = liveChannelItemAdapter.getSelectedChannelIndex();
+                LiveChannelItem SelectedLiveChannelItem = getLiveChannels(SelectedChannelGroupIndex).get(SelectedLiveChannelIndex);  //xuameng epg BUG
                 // xuameng添加空列表检查
                 ArrayList<LiveChannelItem> channels = getLiveChannels(SelectedChannelGroupIndex);
                 if(channels == null || channels.isEmpty()) {
@@ -1880,7 +1882,8 @@ public class LivePlayActivity extends BaseActivity {
                     showBottomEpg(); //xuameng显示EPG和上面菜单 				
                     return;
                 }
-                String shiyiUrl = currentLiveChannelItem.getUrl();
+
+                String shiyiUrl = SelectedLiveChannelItem.getUrl();   //xuameng 解决EPG BUG
                 if(now.compareTo(selectedData.startdateTime) < 0) {} else if(shiyiUrl.contains("PLTV/") || shiyiUrl.contains("TVOD/")) {
                     if(mVideoView == null) return;
 
