@@ -525,7 +525,7 @@ public class VodController extends BaseController {
         }
     }; //xuameng显示系统时间
     private void showLockView() {
-        mLockView.setVisibility(ScreenUtils.isTv(getContext()) ? INVISIBLE : VISIBLE);
+        mLockView.setVisibility(ScreenUtils.isTv(getContext()) ? GONE : VISIBLE);
         mHandler.removeCallbacks(lockRunnable);
         mHandler.postDelayed(lockRunnable, 3000);
     }
