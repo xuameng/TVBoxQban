@@ -629,18 +629,18 @@ public class VodController extends BaseController {
             }
         });
         View rootView = findViewById(R.id.rootView);
- /*       rootView.setOnTouchListener(new OnTouchListener() {
+        rootView.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if(isLock) {
                     if(event.getAction() == MotionEvent.ACTION_UP) {
                         showLockView();
+						mLockView.setVisibility(VISIBLE);
                     }
                 }
                 return isLock;
             }
         });
-*/
         initSubtitleInfo();
         myHandle = new Handler();
         myRunnable = new Runnable() {
@@ -2087,10 +2087,6 @@ public class VodController extends BaseController {
         }
         DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
         if(isClickBackBtn) { //xuameng 罕见BUG  防止180ms内点击BackBtn键，又会弹击菜单	
-            return false;
-        }
-        if(isLock) {
-            showLockView();
             return false;
         }
         myHandle.removeCallbacks(myRunnable);
