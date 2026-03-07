@@ -634,13 +634,11 @@ public class VodController extends BaseController {
             public boolean onTouch(View v, MotionEvent event) {
                 if(isLock) {
                     if(event.getAction() == MotionEvent.ACTION_UP) {
-            mLockView.setVisibility(VISIBLE);
-            mHandler.removeCallbacks(lockRunnable);
-            mHandler.postDelayed(lockRunnable, 3000);
-return true;
+                        showLockView();
                     }
                 }
-                return false;
+				showLockView();
+                return isLock;
             }
         });
         initSubtitleInfo();
