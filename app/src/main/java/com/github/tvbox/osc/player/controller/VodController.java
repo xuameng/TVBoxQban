@@ -634,8 +634,8 @@ public class VodController extends BaseController {
             public boolean onTouch(View v, MotionEvent event) {
                 if(isLock) {
                     if(event.getAction() == MotionEvent.ACTION_UP) {
+                        v.performClick(); // 确保点击事件正确触发
                         showLockView();
-						mLockView.setVisibility(VISIBLE);
                     }
                 }
                 return isLock;
