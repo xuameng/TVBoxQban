@@ -618,7 +618,7 @@ public class VodController extends BaseController {
                 showLockView();
             }
         });
-        View rootView = findViewById(R.id.rootView);
+/*        View rootView = findViewById(R.id.rootView);
         rootView.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -629,7 +629,7 @@ public class VodController extends BaseController {
                 }
                 return isLock;
             }
-        });
+        }); */
         initSubtitleInfo();
         myHandle = new Handler();
         myRunnable = new Runnable() {
@@ -2070,6 +2070,11 @@ public class VodController extends BaseController {
         if(isClickBackBtn) { //xuameng 罕见BUG  防止180ms内点击BackBtn键，又会弹击菜单	
             return false;
         }
+                if(isLock) {                  
+                        showLockView();
+						return false;
+
+                }
         myHandle.removeCallbacks(myRunnable);
         if(mBottomRoot.getVisibility() == View.GONE && !isDisplay) {
             showBottom();
