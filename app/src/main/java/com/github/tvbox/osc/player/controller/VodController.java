@@ -637,7 +637,6 @@ public class VodController extends BaseController {
                         showLockView();
                     }
                 }
-				showLockView();
                 return isLock;
             }
         });
