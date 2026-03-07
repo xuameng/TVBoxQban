@@ -158,7 +158,7 @@ public class VodController extends BaseController {
                                 .setListener(null);
 
                         // xuameng返回按钮隐藏
-                        backBtn.setVisibility(INVISIBLE);
+                        backBtn.setVisibility(GONE);
                         break;
                     }
                     case 1002: { // 显示底部菜单
@@ -208,7 +208,7 @@ public class VodController extends BaseController {
     
                         // xuameng其他设置
                         mxuPlay.requestFocus();   //xuameng底部菜单默认焦点为播放
-                        backBtn.setVisibility(ScreenUtils.isTv(context) ? INVISIBLE : VISIBLE);   //xuameng返回按钮
+                        backBtn.setVisibility(ScreenUtils.isTv(context) ? GONE : VISIBLE);   //xuameng返回按钮
                         showLockView();    //xuameng屏幕锁
                         mPlayPauseTimexu.setVisibility(GONE);  //xuameng隐藏上面时间
                         mPlayTitle.setVisibility(GONE);   //xuameng隐藏上面视频名称
@@ -258,7 +258,7 @@ public class VodController extends BaseController {
                                 .setListener(null);
 
                         // xuameng返回按钮隐藏
-                        backBtn.setVisibility(INVISIBLE);
+                        backBtn.setVisibility(GONE);
 
                         // xuameng播放控制视图处理
                         if (mControlWrapper.isPlaying()) {
@@ -623,11 +623,9 @@ public class VodController extends BaseController {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (isLock) {
-					App.showToastShort(getContext(), "aaa！");
                     if (event.getAction() == MotionEvent.ACTION_UP) {
-						App.showToastShort(getContext(), "bbb！");
                         if (mLockView.getVisibility() == View.VISIBLE) {
-                            mLockView.setVisibility(GONE);
+                            mLockView.setVisibility(GONE);  //xuameng 必须GONE如果写成INVISIBLE在surface下会没反应
                         } else {
                             showLockView();
                         }
@@ -2113,7 +2111,7 @@ public class VodController extends BaseController {
     private class LockRunnable implements Runnable {
         @Override
         public void run() {
-            mLockView.setVisibility(GONE);
+            mLockView.setVisibility(GONE);  //xuameng 必须GONE如果写成INVISIBLE在surface下会没反应
         }
     }
     @Override
@@ -2140,7 +2138,7 @@ public class VodController extends BaseController {
                 mTopRoot2.setVisibility(GONE); //动画结束后隐藏上菜单
                 mPlayPauseTimexu.setVisibility(GONE); //xuameng隐藏上面时间
                 mPlayTitle.setVisibility(GONE); //xuameng隐藏上面视频名称
-                backBtn.setVisibility(INVISIBLE); //返回键隐藏菜单
+                backBtn.setVisibility(GONE); //返回键隐藏菜单
                 mTvPausexu.setVisibility(GONE); //隐藏暂停菜单
                 mLockView.setVisibility(GONE); //xuameng隐藏屏幕锁
             }
@@ -2161,7 +2159,7 @@ public class VodController extends BaseController {
         }
         mPlayPauseTimexu.setVisibility(GONE); //xuameng隐藏上面时间
         mPlayTitle.setVisibility(GONE); //xuameng隐藏上面视频名称
-        backBtn.setVisibility(INVISIBLE); //返回键隐藏菜单
+        backBtn.setVisibility(GONE); //返回键隐藏菜单
         mTvPausexu.setVisibility(GONE); //隐藏暂停菜单
         mLockView.setVisibility(GONE); //xuameng隐藏屏幕锁
         return false;
