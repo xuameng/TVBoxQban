@@ -623,7 +623,9 @@ public class VodController extends BaseController {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (isLock) {
+					App.showToastShort(getContext(), "aaa！");
                     if (event.getAction() == MotionEvent.ACTION_UP) {
+						App.showToastShort(getContext(), "bbb！");
                         if (mLockView.getVisibility() == View.VISIBLE) {
                             mLockView.setVisibility(GONE);
                         } else {
@@ -2111,7 +2113,7 @@ public class VodController extends BaseController {
     private class LockRunnable implements Runnable {
         @Override
         public void run() {
-            mLockView.setVisibility(INVISIBLE);
+            mLockView.setVisibility(GONE);
         }
     }
     @Override
@@ -2140,7 +2142,7 @@ public class VodController extends BaseController {
                 mPlayTitle.setVisibility(GONE); //xuameng隐藏上面视频名称
                 backBtn.setVisibility(INVISIBLE); //返回键隐藏菜单
                 mTvPausexu.setVisibility(GONE); //隐藏暂停菜单
-                mLockView.setVisibility(INVISIBLE); //xuameng隐藏屏幕锁
+                mLockView.setVisibility(GONE); //xuameng隐藏屏幕锁
             }
             return false;
         }
@@ -2161,7 +2163,7 @@ public class VodController extends BaseController {
         mPlayTitle.setVisibility(GONE); //xuameng隐藏上面视频名称
         backBtn.setVisibility(INVISIBLE); //返回键隐藏菜单
         mTvPausexu.setVisibility(GONE); //隐藏暂停菜单
-        mLockView.setVisibility(INVISIBLE); //xuameng隐藏屏幕锁
+        mLockView.setVisibility(GONE); //xuameng隐藏屏幕锁
         return false;
     }
     @Override
