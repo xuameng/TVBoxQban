@@ -414,7 +414,14 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
 					return;
 				}       
 			}  //xuameng某些系统播放器黑屏处理完
-            mMediaPlayer.start();
+
+            new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                                mMediaPlayer.start();
+                }
+            }, 300);
+
             setPlayState(STATE_PLAYING);
             if (mAudioFocusHelper != null && !isMute()) {
                 mAudioFocusHelper.requestFocus();
