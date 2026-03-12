@@ -85,13 +85,13 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
         if (exoSelect > 0) {
             // 选择器优先
             rendererMode = (exoSelect == 1) 
-                ? DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF    // 硬解
+                ? DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON    // 硬解
                 : DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER; // 软解
         } else {
             // 使用exoDecode配置
             rendererMode = exoDecode 
                 ? DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER // 软解
-                : DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF;   // 硬解
+                : DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON;   // 硬解
         }
     
         mRenderersFactory = new DefaultRenderersFactory(mAppContext)
@@ -356,7 +356,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
         String progressKey = Hawk.get(HawkConfig.EXO_PROGRESS_KEY, "");
         errorCode = error.errorCode;
         Log.e("EXOPLAYER", "" + error.errorCode);      //xuameng音频出错后尝试重播
-        if (errorCode == 5001 || errorCode == 5002 || errorCode == 4001 || errorCode == 4002 || errorCode == 4003){
+        if (errorCode == 5001 || errorCode == 5002 || errorCode == 5003 || errorCode == 5004){
             boolean exoDecodeXu = Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false);
             int exoSelectXu = Hawk.get(HawkConfig.EXO_PLAY_SELECTCODE, 0);
             if (exoSelectXu == 1) {
@@ -443,7 +443,3 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     }
 
 }
-
-
-
-
