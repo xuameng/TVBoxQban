@@ -80,6 +80,8 @@ import android.util.Log; //xuameng音乐播放动画
 import android.os.Looper; //xuameng音乐播放动画
 import android.media.AudioManager;  //xuameng音乐播放动画
 
+import com.github.tvbox.osc.player.controller.LrcView;
+
 import com.google.android.exoplayer2.ui.SubtitleView;   // 用于显示ExoPlayer内置字幕
 
 import android.os.Build;
@@ -369,6 +371,11 @@ public class VodController extends BaseController {
     private boolean musicAnimation = Hawk.get(HawkConfig.VOD_MUSIC_ANIMATION, false);     //xuameng 音柱动画 加载设置
     public SubtitleView mExoSubtitleView;   // 用于显示ExoPlayer内置字幕
     private static final String TAG = "VodController";  //xuameng音乐播放动画
+
+    private LrcView mLrcView;
+    private boolean mLrcVisible = false;
+    private String mLrcContent = "";
+
     Handler myHandle;
     Runnable myRunnable;
     int myHandleSeconds = 50000; //闲置多少毫秒秒关闭底栏  默认100秒
@@ -580,6 +587,15 @@ public class VodController extends BaseController {
         mPlayrender = findViewById(R.id.play_render);   //xuameng渲染方式
         mPlayanimation = findViewById(R.id.play_animation);  //xuameng音柱动画
         mExoSubtitleView = findViewById(R.id.exo_subtitle_view); // 用于显示ExoPlayer内置字幕
+
+        mLrcView = findViewById(R.id.lrc_view);
+      //  mLrcView.setVisibility(GONE);
+
+        // 设置歌词样式
+        mLrcView.setNormalTextSize(16);
+        mLrcView.setHighlightTextSize(18);
+        mLrcView.setNormalColor(Color.WHITE);
+        mLrcView.setHighlightColor(Color.YELLOW);
 
         //xuameng音乐播放时图标
         ObjectAnimator animator20 = ObjectAnimator.ofFloat(iv_circle_bg, "rotation", 360.0f);
@@ -1507,6 +1523,9 @@ public class VodController extends BaseController {
             return;
         }
         super.setProgress(duration, position);
+        if (mLrcView != null) {
+            mLrcView.updateTime(position);
+        }
         if(skipEnd && position != 0 && duration != 0) {
             int et = 0;
             try {
@@ -1715,6 +1734,7 @@ public class VodController extends BaseController {
                 clearSubtitleCache();  //xuameng清除字幕缓存
                 break;
             case VideoView.STATE_PLAYING:
+				startLrcSync();
                 initLandscapePortraitBtnInfo();
                 listener.hideTipXu(); //xuameng 只要播放就隐藏错误信息
                 startProgress();
@@ -1724,6 +1744,7 @@ public class VodController extends BaseController {
                 isBufferIng = false; //xuameng 判断是否进在缓冲视频
                 break;
             case VideoView.STATE_PAUSED:
+				stopLrcSync();
                 isVideoPlay = false;
                 isBufferIng = false; //xuameng 判断是否进在缓冲视频
                 mxuPlay.setText("播放"); //xuameng底部菜单显示播放
@@ -1803,6 +1824,7 @@ public class VodController extends BaseController {
                 break;
             case VideoView.STATE_PLAYBACK_COMPLETED:
                 listener.playNext(true);
+			stopLrcSync();
                 isVideoPlay = false;
                 isBufferIng = false; //xuameng 判断是否进在缓冲视频
                 break;
@@ -2480,5 +2502,35 @@ public class VodController extends BaseController {
         
         // 保留两位小数
         return (float) Math.round(volumePercent * 100) / 100.0f;
+    }
+
+	    // 设置LRC歌词内容
+    public void setLrcContent(String lrcContent) {
+        mLrcContent = lrcContent;
+        if (mLrcView != null) {
+            mLrcView.setLrcText(lrcContent);
+        }
+    }
+
+   // 歌词同步定时器
+    private Handler mLrcHandler = new Handler();
+    private Runnable mLrcUpdateTask = new Runnable() {
+        @Override
+        public void run() {
+            if (mVideoView != null && mVideoView.isPlaying()) {
+                long position = mVideoView.getCurrentPosition();
+                mController.updateLrcTime(position);
+                mLrcHandler.postDelayed(this, 100); // 每100ms更新一次
+            }
+        }
+    };
+    
+    private void startLrcSync() {
+        mLrcHandler.removeCallbacks(mLrcUpdateTask);
+        mLrcHandler.post(mLrcUpdateTask);
+    }
+    
+    private void stopLrcSync() {
+        mLrcHandler.removeCallbacks(mLrcUpdateTask);
     }
 }
