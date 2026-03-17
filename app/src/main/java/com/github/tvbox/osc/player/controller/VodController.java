@@ -592,8 +592,8 @@ public class VodController extends BaseController {
       //  mLrcView.setVisibility(GONE);
 
         // 设置歌词样式
-        mLrcView.setNormalTextSize(16);
-        mLrcView.setHighlightTextSize(18);
+        mLrcView.setNormalTextSize(30);
+        mLrcView.setHighlightTextSize(32);
         mLrcView.setNormalColor(Color.WHITE);
         mLrcView.setHighlightColor(Color.YELLOW);
 
