@@ -81,7 +81,6 @@ import android.os.Looper; //xuameng音乐播放动画
 import android.media.AudioManager;  //xuameng音乐播放动画
 
 import com.github.tvbox.osc.player.controller.LrcView;
-import android.text.TextUtils;
 
 import com.google.android.exoplayer2.ui.SubtitleView;   // 用于显示ExoPlayer内置字幕
 
@@ -2510,23 +2509,5 @@ public class VodController extends BaseController {
             mLrcView.setLrcText(lrcContent);
         }
     }
-
-public void setVideoImage(String imageUrl) {
-    if (!TextUtils.isEmpty(imageUrl)) {
-        // 显示圆形背景图片
-        if (iv_circle_bg != null) {
-            iv_circle_bg.setVisibility(View.VISIBLE);
-            // 使用图片加载库加载图片（如Glide或Picasso）
-                    Picasso.get().load(imageUrl)
-                        .placeholder(R.drawable.xumusic)   //xuameng默认的站位图
-                        .config(Bitmap.Config.RGB_565).into(iv_circle_bg); // xuameng内容空显示banner
-        }
-    } else {
-        // 隐藏图片显示
-        if (iv_circle_bg != null) {
-            iv_circle_bg.setVisibility(View.GONE);
-        }
-    }
-}
 
 }
