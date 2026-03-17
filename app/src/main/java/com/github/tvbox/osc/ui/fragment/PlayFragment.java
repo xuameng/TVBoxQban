@@ -859,13 +859,19 @@ if (info.has("lrc")) {
     String lrcContent = info.optString("lrc", "");
     if (!TextUtils.isEmpty(lrcContent)) {
         mController.setLrcContent(lrcContent);
-	playSubtitle = "";
+        playSubtitle = "";
     } else {
         playSubtitle = info.optString("subt", "");
     }
 } else {
     playSubtitle = info.optString("subt", "");
 }
+
+    // 处理图片显示
+    if (info.has("pic")) {
+        String picUrl = info.optString("pic", "");
+        mController.setVideoImage(picUrl);
+    }
 
 // 如果 playSubtitle 仍为空，且存在 subs 字段，则按原有逻辑处理字幕数组
 if(playSubtitle.isEmpty() && info.has("subs")) {
