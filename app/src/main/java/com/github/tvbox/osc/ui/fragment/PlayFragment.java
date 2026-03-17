@@ -859,12 +859,15 @@ if (info.has("lrc")) {
     String lrcContent = info.optString("lrc", "");
     if (!TextUtils.isEmpty(lrcContent)) {
         mController.setLrcContent(lrcContent);
+        mController.mLrcView.setVisibility(View.VISIBLE);
         playSubtitle = "";
     } else {
         playSubtitle = info.optString("subt", "");
+        mController.mLrcView.setVisibility(View.GONE);
     }
 } else {
     playSubtitle = info.optString("subt", "");
+    mController.mLrcView.setVisibility(View.GONE);
 }
 
 // 如果 playSubtitle 仍为空，且存在 subs 字段，则按原有逻辑处理字幕数组
