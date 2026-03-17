@@ -870,6 +870,7 @@ if (info.has("lrc")) {
     // 处理图片显示
     if (info.has("pic")) {
         String picUrl = info.optString("pic", "");
+		App.showToastShort(mContext, picUrl);
         mController.setVideoImage(picUrl);
     }
 
