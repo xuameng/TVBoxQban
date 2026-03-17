@@ -684,7 +684,9 @@ public class DetailActivity extends BaseActivity {
             String saveSourceKey = vodInfo.currentPlayFlag != null ? vodInfo.currentPlayFlag : sourceKey;
             insertVod(saveSourceKey, vodInfo);
             // 同时保存一份到初始源，用于兼容性
-insertVod(firstsourceKey, vodInfo);
+            if (!saveSourceKey.equals(firstsourceKey)) {
+                insertVod(firstsourceKey, vodInfo);
+            }
         //   insertVod(sourceKey, vodInfo);
             bundle.putString("sourceKey", sourceKey);
 //            bundle.putSerializable("VodInfo", vodInfo);
@@ -729,7 +731,9 @@ insertVod(firstsourceKey, vodInfo);
             String saveSourceKey = vodInfo.currentPlayFlag != null ? vodInfo.currentPlayFlag : sourceKey;
             insertVod(saveSourceKey, vodInfo);
             // 同时保存一份到初始源，用于兼容性
-insertVod(firstsourceKey, vodInfo);
+            if (!saveSourceKey.equals(firstsourceKey)) {
+                insertVod(firstsourceKey, vodInfo);
+            }
             bundle.putString("sourceKey", sourceKey);
             App.getInstance().setVodInfo(vodInfo);
             if (showPreview) {
@@ -1169,7 +1173,9 @@ insertVod(firstsourceKey, vodInfo);
                             insertVod(saveSourceKey, saveVodInfo);
                     
                             // 10. 同时保存一份到初始源，用于兼容性
-insertVod(firstsourceKey, saveVodInfo);
+                            if (!saveSourceKey.equals(firstsourceKey)) {
+                                insertVod(firstsourceKey, saveVodInfo);
+                            }
                         }
 			                //xuameng解决焦点丢失		if (!fullWindows){
             //              mGridView.setSelection(index);
