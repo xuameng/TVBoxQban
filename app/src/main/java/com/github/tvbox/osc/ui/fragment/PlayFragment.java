@@ -854,36 +854,49 @@ public class PlayFragment extends BaseLazyFragment {
                         progressKey = info.optString("proKey", null);
                         boolean parse = info.optString("parse", "1").equals("1");
                         boolean jx = info.optString("jx", "0").equals("1");
-                        playSubtitle = info.optString("subt", /*"https://dash.akamaized.net/akamai/test/caption_test/ElephantsDream/ElephantsDream_en.vtt"*/"");
-                        if(playSubtitle.isEmpty() && info.has("subs")) {
-                            try {
-                                JSONObject obj =info.getJSONArray("subs").optJSONObject(0);
-                                String url = obj.optString("url", "");
-                                if (!TextUtils.isEmpty(url) && !FileUtils.hasExtension(url)) {
-                                    String format = obj.optString("format", "");
-                                    String name = obj.optString("name", "字幕");
-                                    String ext = ".srt";
-                                    switch (format) {
-                                        case "text/x-ssa":
-                                            ext = ".ass";
-                                            break;
-                                        case "text/vtt":
-                                            ext = ".vtt";
-                                            break;
-                                        case "application/x-subrip":
-                                            ext = ".srt";
-                                            break;
-                                        case "text/lrc":
-                                            ext = ".lrc";
-                                            break;
-                                    }
-                                    String filename = name + (name.toLowerCase().endsWith(ext) ? "" : ext);
-                                    url += "#" + mController.encodeUrl(filename);
-                                }
-                                playSubtitle = url;
-                            } catch (Throwable th) {
-                            }
-                        }
+// 优先检查 lrc 字段（歌词字符串）
+if (info.has("lrc")) {
+    String lrcContent = info.optString("lrc", "");
+    if (!TextUtils.isEmpty(lrcContent)) {
+        playSubtitle = lrcContent;
+    } else {
+        playSubtitle = info.optString("subt", "");
+    }
+} else {
+    playSubtitle = info.optString("subt", "");
+}
+
+// 如果 playSubtitle 仍为空，且存在 subs 字段，则按原有逻辑处理字幕数组
+if(playSubtitle.isEmpty() && info.has("subs")) {
+    try {
+        JSONObject obj = info.getJSONArray("subs").optJSONObject(0);
+        String url = obj.optString("url", "");
+        if (!TextUtils.isEmpty(url) && !FileUtils.hasExtension(url)) {
+            String format = obj.optString("format", "");
+            String name = obj.optString("name", "字幕");
+            String ext = ".srt";
+            switch (format) {
+                case "text/x-ssa":
+                    ext = ".ass";
+                    break;
+                case "text/vtt":
+                    ext = ".vtt";
+                    break;
+                case "application/x-subrip":
+                    ext = ".srt";
+                    break;
+                case "text/lrc":
+                    ext = ".lrc";
+                    break;
+            }
+            String filename = name + (name.toLowerCase().endsWith(ext) ? "" : ext);
+            url += "#" + mController.encodeUrl(filename);
+        }
+        playSubtitle = url;
+    } catch (Throwable th) {
+        // 异常处理
+    }
+}
                         subtitleCacheKey = info.optString("subtKey", null);
                         String playUrl = info.optString("playUrl", "");
                         String msg = info.optString("msg", "");
