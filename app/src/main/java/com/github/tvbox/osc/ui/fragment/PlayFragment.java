@@ -859,7 +859,7 @@ if (info.has("lrc")) {
     String lrcContent = info.optString("lrc", "");
     if (!TextUtils.isEmpty(lrcContent)) {
         mController.setLrcContent(lrcContent);
-	//	App.showToastShort(mContext, playSubtitle);
+	playSubtitle = "";
     } else {
         playSubtitle = info.optString("subt", "");
     }
