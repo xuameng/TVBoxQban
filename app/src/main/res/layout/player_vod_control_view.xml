@@ -27,9 +27,8 @@
         android:layout_height="wrap_content"
         android:layout_above="@id/visualizer_view"
         android:layout_margin="16dp"
-        android:visibility="visible"
+        android:visibility="gone"
         android:gravity="center"/>
-
     <LinearLayout
         android:orientation="vertical"
         android:id="@+id/tv_top_l_container"
