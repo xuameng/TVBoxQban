@@ -1,1209 +1,1182 @@
-package com.github.tvbox.osc.ui.fragment;
-
-import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
+package com.github.tvbox.osc.player.controller;
+import android.animation.Animator; //xuameng动画
+import android.animation.AnimatorListenerAdapter; //xuameng动画
+import android.animation.ObjectAnimator; //xuameng动画
+import android.view.animation.DecelerateInterpolator;  //xuameng动画
 import android.app.Activity;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.net.http.SslError;
-import android.os.Build;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.text.TextUtils;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.webkit.ConsoleMessage;
-import android.webkit.CookieManager;
-import android.webkit.JsPromptResult;
-import android.webkit.JsResult;
-import android.webkit.SslErrorHandler;
-import android.webkit.ValueCallback;
-import android.webkit.WebChromeClient;
-import android.webkit.WebResourceRequest;
-import android.webkit.WebResourceResponse;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
+import android.widget.LinearLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
-import com.github.tvbox.osc.util.parser.SuperParse;
-
+import android.graphics.Color; //xuameng获取颜色值
+import android.widget.FrameLayout; //xuameng倍速播放
+import com.github.tvbox.osc.server.RemoteServer; //xuameng新增广告过滤
+import com.github.tvbox.osc.util.M3u8; //xuameng新增广告过滤
+import com.lzy.okgo.OkGo; //xuameng新增广告过滤
+import com.lzy.okgo.callback.AbsCallback; //xuameng新增广告过滤
+import com.lzy.okgo.model.HttpHeaders; //xuameng新增广告过滤
+import com.lzy.okgo.model.Response; //xuameng新增广告过滤
+import java.net.MalformedURLException; //xuameng新增广告过滤
+import com.github.tvbox.osc.base.App; //xuameng停止磁力下载
+import com.github.tvbox.osc.util.thunder.Jianpian; //xuameng停止磁力下载
+import com.github.tvbox.osc.util.thunder.Thunder; //xuameng停止磁力下载
+import java.net.URL; //xuameng新增广告过滤
+import java.util.HashMap; //xuameng新增广告过滤
+import java.util.Map; //xuameng新增广告过滤
+import org.json.JSONArray; //xuameng  b站
+import android.widget.ProgressBar; //xuameng loading
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DiffUtil;
-
-import com.github.catvod.crawler.Spider;
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.api.ApiConfig;
-import com.github.tvbox.osc.base.App;
-import com.github.tvbox.osc.base.BaseLazyFragment;
+import com.github.tvbox.osc.bean.IJKCode;
 import com.github.tvbox.osc.bean.ParseBean;
-import com.github.tvbox.osc.bean.SourceBean;
-import com.github.tvbox.osc.bean.Subtitle;
-import com.github.tvbox.osc.bean.VodInfo;
-import com.github.tvbox.osc.cache.CacheManager;
-import com.github.tvbox.osc.event.RefreshEvent;
-import com.github.tvbox.osc.player.IjkMediaPlayer;
-import com.github.tvbox.osc.player.EXOmPlayer;
-import com.github.tvbox.osc.player.MyVideoView;
-import com.github.tvbox.osc.player.TrackInfo;
-import com.github.tvbox.osc.player.TrackInfoBean;
-import com.github.tvbox.osc.player.controller.VodController;
-import com.github.tvbox.osc.server.ControlManager;
+import com.github.tvbox.osc.subtitle.widget.SimpleSubtitleView;
+import com.github.tvbox.osc.ui.adapter.ParseAdapter;
 import com.github.tvbox.osc.ui.adapter.SelectDialogAdapter;
-import com.github.tvbox.osc.ui.dialog.SearchSubtitleDialog;
 import com.github.tvbox.osc.ui.dialog.SelectDialog;
-import com.github.tvbox.osc.ui.dialog.SubtitleDialog;
-import com.github.tvbox.osc.util.AdBlocker;
-import com.github.tvbox.osc.util.DefaultConfig;
-import com.github.tvbox.osc.util.FileUtils;
-import com.github.tvbox.osc.util.HawkConfig;
+import com.github.tvbox.osc.util.FastClickCheckUtil;
+import com.github.tvbox.osc.util.FastClickCheckUtilxu; //xuameng防连击1秒
+import com.github.tvbox.osc.server.ControlManager;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import com.github.tvbox.osc.util.LOG;
-import com.github.tvbox.osc.util.MD5;
+import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.util.PlayerHelper;
-import com.github.tvbox.osc.util.VideoParseRuler;
-import com.github.tvbox.osc.util.XWalkUtils;
-import com.github.tvbox.osc.util.thunder.Jianpian;
-import com.github.tvbox.osc.util.thunder.Thunder;
-import com.github.tvbox.osc.viewmodel.SourceViewModel;
-import com.github.tvbox.osc.util.StringUtils;
-import com.lzy.okgo.OkGo;
-import com.lzy.okgo.callback.AbsCallback;
-import com.lzy.okgo.model.HttpHeaders;
-import com.lzy.okgo.model.Response;
-import com.obsez.android.lib.filechooser.ChooserDialog;
+import com.github.tvbox.osc.util.ScreenUtils;
+import com.github.tvbox.osc.util.SubtitleHelper;
 import com.orhanobut.hawk.Hawk;
-
-import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.text.Cue;
-import com.github.tvbox.osc.bean.IJKCode;  //xuamengIJK切换用
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
+import com.owen.tvrecyclerview.widget.TvRecyclerView;
+import com.owen.tvrecyclerview.widget.V7LinearLayoutManager;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.xwalk.core.XWalkJavascriptResult;
-import org.xwalk.core.XWalkResourceClient;
-import org.xwalk.core.XWalkSettings;
-import org.xwalk.core.XWalkUIClient;
-import org.xwalk.core.XWalkView;
-import org.xwalk.core.XWalkWebResourceRequest;
-import org.xwalk.core.XWalkWebResourceResponse;
-
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Date;
+import java.util.Calendar; //xuameng 获取时间
+import java.util.Locale; //xuameng 获取时间
+import xyz.doikki.videoplayer.player.VideoView;
+import xyz.doikki.videoplayer.util.PlayerUtils;
+import static xyz.doikki.videoplayer.util.PlayerUtils.stringForTime;
+import com.squareup.picasso.Picasso; //xuameng播放音频切换图片
+import com.squareup.picasso.MemoryPolicy; //xuameng播放音频切换图片
+import com.squareup.picasso.NetworkPolicy; //xuameng播放音频切换图片
+import android.graphics.Bitmap; //xuameng播放音频切换图片
+import com.github.tvbox.osc.api.ApiConfig; //xuameng播放音频切换图片
+import com.github.tvbox.osc.ui.tv.widget.MusicVisualizerView;  //xuameng音乐播放动画
+import android.media.audiofx.Visualizer;  //xuameng音乐播放动画
+import android.util.Log; //xuameng音乐播放动画
+import android.os.Looper; //xuameng音乐播放动画
+import android.media.AudioManager;  //xuameng音乐播放动画
 
-import me.jessyan.autosize.AutoSize;
-import tv.danmaku.ijk.media.player.IMediaPlayer;
-import tv.danmaku.ijk.media.player.IjkTimedText;
-import xyz.doikki.videoplayer.player.AbstractPlayer;
-import xyz.doikki.videoplayer.player.ProgressManager;
+import com.github.tvbox.osc.player.controller.LrcView;
+import android.text.TextUtils;
 
-public class PlayFragment extends BaseLazyFragment {
-    public MyVideoView mVideoView;  //xuameng 改成public以便被调用
-    private TextView mPlayLoadTip;
-    private ImageView mPlayLoadErr;
-    private ProgressBar mPlayLoading;
-    private VodController mController;
-    private SourceViewModel sourceViewModel;
-    private Handler mHandler;
-    private boolean isJianpian = false;  //xuameng判断视频是否为荐片
-    private boolean selectExoTrack = false;  //xuameng判断exo选择音轨
-    private int mRetryCountExo = 0;  //xuameng播放出错计数器
-    private int mRetryCountIjk = 0;  //xuameng播放出错计数器
-    private int mRetryCountJP = 0;  //xuameng播放出错计数器
-    private static final int MAX_RETRIES = 2;  //xuameng播放出错切换2次
-    private boolean isChineseSubtitle = false;   //xuameng 判断中文字幕
+import com.google.android.exoplayer2.ui.SubtitleView;   // 用于显示ExoPlayer内置字幕
 
-    private final long videoDuration = -1;
-
-    @Override
-    protected int getLayoutResID() {
-        return R.layout.activity_play;
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void refresh(RefreshEvent event) {
-        if (event.type == RefreshEvent.TYPE_SUBTITLE_SIZE_CHANGE) {
-            mController.mSubtitleView.setTextSize((int) event.obj);
-        }
-    }
-
-    @Override
-    protected void init() {
-        initView();
-        initViewModel();
-        initData();
-        Hawk.put(HawkConfig.PLAYER_IS_LIVE,false);  //xuameng新增
-        HawkConfig.exoSubtitle = false;  //xuameng 判断当前是否播放EXO内置字幕
-    }
-
-    public long getSavedProgress(String url) {
-        int st = 0;
-        try {
-            st = mVodPlayerCfg.getInt("st");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        long skip = st * 1000L;
-        Object theCache=CacheManager.getCache(MD5.string2MD5(url));
-        if (theCache == null) {
-            return skip;
-        }
-        long rec = 0;
-        if (theCache instanceof Long) {
-            rec = (Long) theCache;
-        } else if (theCache instanceof String) {
-            try {
-                rec = Long.parseLong((String) theCache);
-            } catch (NumberFormatException e) {
-                LOG.i("echo-String value is not a valid long.");
-            }
-        } else {
-            LOG.i("echo-Value cannot be converted to long.");
-        }
-        return Math.max(rec, skip);
-    }
-
-    private void initView() {
-        EventBus.getDefault().register(this);
-        mHandler = new Handler(new Handler.Callback() {
+import android.os.Build;
+import android.webkit.WebView;
+import com.github.tvbox.osc.bean.SourceBean;
+import com.github.tvbox.osc.util.VideoParseRuler;
+import org.xwalk.core.XWalkView;
+public class VodController extends BaseController {
+    public VodController(@NonNull @NotNull Context context) {
+        super(context);
+        mHandlerCallback = new HandlerCallback() {
             @Override
-            public boolean handleMessage(@NonNull Message msg) {
-                switch (msg.what) {
-                    case 100:
-                        stopParse();
-                        errorWithRetry("嗅探错误", false);
+            public void callback(Message msg) {
+                switch(msg.what) {
+                    case 1000: { // seek 刷新
+                        if(iv_circle_bg.getVisibility() == View.VISIBLE) { //xuameng音乐播放时图标
+                            iv_circle_bg.setVisibility(GONE);
+                        }
+                        if(mPlayLoadNetSpeed.getVisibility() == View.VISIBLE) { //xuameng网速
+                            mPlayLoadNetSpeed.setVisibility(View.GONE);
+                        }
+                        if(XuLoading.getVisibility() == View.VISIBLE) { //xuameng loading
+                            XuLoading.setVisibility(GONE);
+                        }
+                        mProgressRoot.setVisibility(VISIBLE);
                         break;
+                    }
+                    case 1001: { // seek 关闭
+                        if(mProgressRoot.getVisibility() == View.VISIBLE) { //xuameng进程图标
+                            mProgressRoot.setVisibility(GONE);
+                        }
+                        if (isBufferIng){  //xuameng 修复缓存图标不显示
+                            XuLoading.setVisibility(View.VISIBLE);
+                            mPlayLoadNetSpeed.setVisibility(View.VISIBLE);
+                        }
+                        break;
+                    }
+                    case 1005: { // 隐藏底部菜单Xu
+                        // 底部视图滑出动画
+                        mBottomRoot.animate()
+                                .translationY(230)
+                                .alpha(0.0f)
+                                .setDuration(300)
+                                .setInterpolator(new DecelerateInterpolator())
+                                .setListener(new AnimatorListenerAdapter() {
+                                    @Override
+                                    public void onAnimationStart(Animator animation) {
+                                        super.onAnimationStart(animation);
+                                        isAnimation = true;
+                                    }
+                
+                                    @Override
+                                    public void onAnimationEnd(Animator animation) {
+                                        super.onAnimationEnd(animation);
+                                        mBottomRoot.setVisibility(GONE); // xuameng动画结束后隐藏下菜单
+                                        mTopRoot1.setVisibility(GONE); // xuameng动画结束后隐藏上菜单
+                                        mTopRoot2.setVisibility(GONE); // xuameng动画结束后隐藏上菜单
+                                        isAnimation = false;
+                                    }
+                                });
+
+                        // xuameng顶部视图1滑出动画
+                        mTopRoot1.animate()
+                                .translationY(-120)
+                                .alpha(0.0f)
+                                .setDuration(300)
+                                .setInterpolator(new DecelerateInterpolator())
+                                .setListener(null);
+
+                        // xuameng顶部视图2滑出动画
+                        mTopRoot2.animate()
+                                .translationY(-120)
+                                .alpha(0.0f)
+                                .setDuration(300)
+                                .setInterpolator(new DecelerateInterpolator())
+                                .setListener(null);
+
+                        // xuameng返回按钮隐藏
+                        backBtn.setVisibility(GONE);
+                        break;
+                    }
+                    case 1002: { // 显示底部菜单
+                        // xuameng底部视图动画
+                        mBottomRoot.setVisibility(VISIBLE);
+                        mBottomRoot.setAlpha(0.0f);
+                        mBottomRoot.setTranslationY(230);
+                        mBottomRoot.animate()
+                                .translationY(0)
+                                .alpha(1.0f)
+                                .setDuration(300)
+                                .setInterpolator(new DecelerateInterpolator())
+                                .setListener(new AnimatorListenerAdapter() {
+                                    @Override
+                                    public void onAnimationStart(Animator animation) {
+                                        super.onAnimationStart(animation);
+                                        isDisplay = true;
+                                    }
+                
+                                    @Override
+                                    public void onAnimationEnd(Animator animation) {
+                                        super.onAnimationEnd(animation);
+                                        isDisplay = false;
+                                    }
+                                });
+                        // xuameng顶部视图1动画
+                        mTopRoot1.setVisibility(VISIBLE);
+                        mTopRoot1.setAlpha(0.0f);
+                        mTopRoot1.setTranslationY(-120);
+                        mTopRoot1.animate()
+                                .translationY(0)
+                                .alpha(1.0f)
+                                .setDuration(300)
+                                .setInterpolator(new DecelerateInterpolator())
+                                .setListener(null);
+    
+                        // xuameng顶部视图2动画
+                        mTopRoot2.setVisibility(VISIBLE);
+                        mTopRoot2.setAlpha(0.0f);
+                        mTopRoot2.setTranslationY(-120);
+                        mTopRoot2.animate()
+                                .translationY(0)
+                                .alpha(1.0f)
+                                .setDuration(300)
+                                .setInterpolator(new DecelerateInterpolator())
+                                .setListener(null);
+    
+                        // xuameng其他设置
+                        mxuPlay.requestFocus();   //xuameng底部菜单默认焦点为播放
+                        backBtn.setVisibility(ScreenUtils.isTv(context) ? GONE : VISIBLE);   //xuameng返回按钮
+                        showLockView();    //xuameng屏幕锁
+                        mPlayPauseTimexu.setVisibility(GONE);  //xuameng隐藏上面时间
+                        mPlayTitle.setVisibility(GONE);   //xuameng隐藏上面视频名称
+    
+                        if(mLandscapePortraitBtn.getVisibility() == View.VISIBLE) {    //xuameng 横竖屏显示BUG
+                            setLandscapePortraitXu();
+                        }
+                        break;
+                    }
+                    case 1003: { // xuameng隐藏底部菜单
+                        // xuameng底部视图滑出动画
+                        mBottomRoot.animate()
+                                .translationY(230)
+                                .alpha(0.0f)
+                                .setDuration(300)
+                                .setInterpolator(new DecelerateInterpolator())
+                                .setListener(new AnimatorListenerAdapter() {
+                                    @Override
+                                    public void onAnimationStart(Animator animation) {
+                                        super.onAnimationStart(animation);
+                                        isAnimation = true;
+                                    }
+                                    @Override
+                                    public void onAnimationEnd(Animator animation) {
+                                        super.onAnimationEnd(animation);
+                                        mBottomRoot.setVisibility(GONE);   //动画结束后隐藏下菜单
+                                        mTopRoot1.setVisibility(GONE);    //动画结束后隐藏上菜单
+                                        mTopRoot2.setVisibility(GONE);   //动画结束后隐藏上菜单
+                                        isAnimation = false;
+                                    }
+                                });
+
+                        // xuameng顶部视图1滑出动画
+                        mTopRoot1.animate()
+                                .translationY(-120)
+                                .alpha(0.0f)
+                                .setDuration(300)
+                                .setInterpolator(new DecelerateInterpolator())
+                                .setListener(null);
+
+                        // xuameng顶部视图2滑出动画
+                        mTopRoot2.animate()
+                                .translationY(-120)
+                                .alpha(0.0f)
+                                .setDuration(300)
+                                .setInterpolator(new DecelerateInterpolator())
+                                .setListener(null);
+
+                        // xuameng返回按钮隐藏
+                        backBtn.setVisibility(GONE);
+
+                        // xuameng播放控制视图处理
+                        if (mControlWrapper.isPlaying()) {
+                            // xuameng播放状态处理
+                        } else {
+                            // xuameng显示播放标题动画
+                            mPlayTitle.setVisibility(VISIBLE);
+                            mPlayTitle.setTranslationY(-120);
+                            mPlayTitle.animate()
+                                    .translationY(0)
+                                    .alpha(1.0f)
+                                    .setDuration(300)
+                                    .setInterpolator(new DecelerateInterpolator())
+                                    .setListener(null);
+
+                            // xuameng显示播放暂停时间控件动画
+                            mPlayPauseTimexu.setVisibility(VISIBLE);
+                            mPlayPauseTimexu.setTranslationY(-120);
+                            mPlayPauseTimexu.animate()
+                                    .translationY(0)
+                                    .alpha(1.0f)
+                                    .setDuration(300)
+                                    .setInterpolator(new DecelerateInterpolator())
+                                    .setListener(null);
+                        }
+                        break;
+                    }
+                    case 1004: { // 设置速度
+                        if(isInPlaybackState()) {
+                            try {
+                                float speed = (float) mPlayerConfig.getDouble("sp");
+                                mControlWrapper.setSpeed(speed);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        } else mHandler.sendEmptyMessageDelayed(1004, 100);
+                        break;
+                    }
+                }
+            }
+        };
+    }
+    SeekBar mSeekBar;
+    TextView mCurrentTime;
+    TextView mTotalTime;
+    boolean mIsDragging;
+    LinearLayout mProgressRoot;
+    TextView mProgressText;
+    ImageView mProgressIcon;
+    ImageView mLockView;
+    LinearLayout mBottomRoot;
+    LinearLayout mTopRoot1;
+    LinearLayout mTopRoot2;
+    LinearLayout mParseRoot;
+    LinearLayout mTvPausexu; //xuameng暂停动画
+    TvRecyclerView mGridView;
+    TextView mPlayTitle;
+    TextView mPlayTitle1;
+    TextView mPlayLoadNetSpeedRightTop;
+    TextView mPlayTimeEnd; //xuameng影片结束时间
+    TextView mNextBtn;
+    TextView mPreBtn;
+    TextView mPlayerScaleBtn;
+    public TextView mPlayerSpeedBtn;
+    TextView mPlayerBtn;
+    TextView mPlayerIJKBtn;
+    TextView mPlayerEXOBtn;  //exo解码
+    TextView mPlayerRetry;
+    TextView mPlayrefresh;
+    TextView mxuPlay; //xuameng 底部播放ID
+    TextView mPlayrender;  //xuameng渲染方式
+    TextView mPlayanimation; //xuameng音柱动画
+    private ImageView iv_circle_bg; //xuameng音乐播放时图标
+    private FrameLayout play_speed_3; //xuameng倍速播放
+    private TextView tv_slide_progress_text;  //xuameng 旧的亮度调节框已作废
+    ImageView MxuamengMusic; //xuameng播放音乐背景
+    private ProgressBar XuLoading; //xuameng  loading
+    public TextView mPlayerTimeStartEndText;
+    public TextView mPlayerTimeStartBtn;
+    public TextView mPlayerTimeSkipBtn;
+    public TextView mPlayerTimeResetBtn;
+    TextView mPlayPauseTime;
+    TextView mPlayPauseTimexu; //xuameng系统时间
+    TextView mPlayLoadNetSpeed;
+    TextView mVideoSize;
+    public SimpleSubtitleView mSubtitleView;
+    TextView mZimuBtn;
+    TextView mAudioTrackBtn;
+    public TextView mLandscapePortraitBtn;
+    private View backBtn; //返回键
+    private boolean isClickBackBtn;
+    private double DOUBLE_CLICK_TIME = 0L; //xuameng返回键防连击1.5秒（为动画）
+    private double DOUBLE_CLICK_TIME_2 = 0L; //xuameng防连击1秒（为动画）
+    LockRunnable lockRunnable = new LockRunnable();
+    private boolean isLock = false;
+    private boolean isSEEKBAR = false; //xuameng进入SEEKBAR
+    private boolean isPlaying = false; //xuameng判断暂停动画
+    private boolean isAnimation = false; //xuameng判断隐藏菜单动画
+    private boolean isDisplay = false; //xuameng判断显示菜单动画
+    private boolean isVideoplaying = false; //xuameng判断视频开始播放
+    private boolean isVideoPlay = false; //xuameng判断视频开始播放
+    private boolean isLongClick = false; //xuameng判断长按
+    private boolean mSeekBarhasFocus = false; //xuameng seekbar是否拥有焦点
+    private boolean isBufferIng = false; //xuameng 判断是否进在缓冲视频
+    private Visualizer mVisualizer;  //xuameng音乐播放动画
+    private MusicVisualizerView customVisualizer; //xuameng播放音乐柱状图
+    private int audioSessionId = -1; // 使用-1表示未初始化状态 //xuameng音乐播放动画
+    private boolean musicAnimation = Hawk.get(HawkConfig.VOD_MUSIC_ANIMATION, false);     //xuameng 音柱动画 加载设置
+    public SubtitleView mExoSubtitleView;   // 用于显示ExoPlayer内置字幕
+    private static final String TAG = "VodController";  //xuameng音乐播放动画
+
+    private LrcView mLrcView;
+    private boolean mLrcVisible = false;
+    private String mLrcContent = "";
+
+    Handler myHandle;
+    Runnable myRunnable;
+    int myHandleSeconds = 50000; //闲置多少毫秒秒关闭底栏  默认100秒
+    int videoPlayState = 0;
+
+    private Runnable myRunnable2 = new Runnable() {
+        @Override
+        public void run() {
+            Date date = new Date();
+            SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+            mPlayPauseTime.setText(timeFormat.format(date));
+            String speed = PlayerHelper.getDisplaySpeed(mControlWrapper.getTcpSpeed());
+            mPlayLoadNetSpeedRightTop.setText("[ " + speed + " ]");
+            mPlayLoadNetSpeed.setText(speed);
+            long duration = mControlWrapper.getDuration();
+            if(isInPlaybackState() && duration >= 1000 && duration <= 180000000) {
+                long position = mControlWrapper.getCurrentPosition();
+                if(position < 0) position = 0; //xuameng系统播放器有时会有负进度的BUG
+                long TimeRemaining = mControlWrapper.getDuration() - position;
+                Calendar dateXu = Calendar.getInstance();
+                long t = dateXu.getTimeInMillis();
+                Date afterAdd = new Date(t + TimeRemaining);
+                SimpleDateFormat timeEnd = new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH);
+                mPlayTimeEnd.setVisibility(VISIBLE);
+                mPlayTimeEnd.setText("影片剩余时间" + " " + PlayerUtils.stringForTime((int) TimeRemaining) + " ｜ " + "影片结束时间" + " " + timeEnd.format(afterAdd));
+            } else {
+                mPlayTimeEnd.setVisibility(GONE);
+            }
+            mHandler.postDelayed(this, 1000);
+        }
+    };
+    private Runnable myRunnableXu = new Runnable() {
+        @Override
+        public void run() {
+            String width = Integer.toString(mControlWrapper.getVideoSize()[0]);
+            String height = Integer.toString(mControlWrapper.getVideoSize()[1]);
+            if(isInPlaybackState()) { //xuameng 重新选择解析视频大小不刷新
+                mVideoSize.setText("[ " + width + " X " + height + " ]");
+            }
+            if(mControlWrapper.isPlaying()) { //xuameng音乐播放时图标判断
+                if(!mIsDragging) {
+                    mControlWrapper.startProgress(); //xuameng启动进程
+                    mControlWrapper.startFadeOut();
+                }
+                mxuPlay.setText("暂停");
+                if(!isPlaying && mTvPausexu.getVisibility() == View.VISIBLE) {
+                    ObjectAnimator animator10 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0, 700); //xuameng动画暂停菜单开始
+                    animator10.setDuration(300); //xuameng动画暂停菜单
+                    animator10.addListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationStart(Animator animation) {
+                            super.onAnimationStart(animation);
+                            isPlaying = true; //xuameng动画开启
+                        }
+                        public void onAnimationEnd(Animator animation) {
+                            super.onAnimationEnd(animation);
+                            mTvPausexu.setVisibility(GONE); //xuameng动画暂停菜单隐藏 
+                            isPlaying = false; //xuameng动画开启
+                        }
+                    });
+                    animator10.start(); //xuameng动画暂停菜单结束					
+                }
+                if(mPlayPauseTimexu.getVisibility() == View.VISIBLE || mPlayTitle.getVisibility() == View.VISIBLE) {
+                    mPlayPauseTimexu.setVisibility(GONE); //xuameng隐藏上面视频名称
+                    mPlayTitle.setVisibility(GONE); //xuameng隐藏上面时间
+                }
+                try {
+                    musicAnimation = mPlayerConfig.getBoolean("music");  //xuameng音乐播放动画获取设置
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                if (musicAnimation){
+                    if(customVisualizer.getVisibility() == View.GONE) { //xuameng播放音乐柱状图
+                        customVisualizer.setVisibility(VISIBLE);
+                    }
+                }else{
+                    if(customVisualizer.getVisibility() == View.VISIBLE) { //xuameng播放音乐柱状图
+                        customVisualizer.setVisibility(GONE);
+                    }
+                }
+                if(width.length() > 1 && height.length() > 1) {
+                    if(iv_circle_bg.getVisibility() == View.VISIBLE) { //xuameng音乐播放时图标
+                        iv_circle_bg.setVisibility(GONE);
+                    }
+                    if(MxuamengMusic.getVisibility() == View.VISIBLE) { //xuameng播放音乐背景
+                        MxuamengMusic.setVisibility(GONE);
+                    }
+                } else {
+                    if(MxuamengMusic.getVisibility() == View.GONE && isVideoplaying) { //xuameng播放音乐背景
+                        MxuamengMusic.setVisibility(VISIBLE);
+                    }
+                    if(mProgressRoot.getVisibility() == View.VISIBLE || mPlayLoadNetSpeed.getVisibility() == View.VISIBLE || XuLoading.getVisibility() == View.VISIBLE || play_speed_3.getVisibility() == View.VISIBLE) {
+                        if(iv_circle_bg.getVisibility() == View.VISIBLE) { //xuameng音乐播放时图标
+                            iv_circle_bg.setVisibility(GONE);
+                        }
+                    } else {
+                        if(isVideoplaying) {
+                            iv_circle_bg.setVisibility(VISIBLE);
+                        }
+                    }
+                }
+            } else {
+                iv_circle_bg.setVisibility(GONE);
+            } //xuameng音乐播放时图标判断完
+            mHandler.postDelayed(this, 100);
+        }
+    };
+    private Runnable myRunnableMusic = new Runnable() { //xuameng播放音频切换图片
+        @Override
+        public void run() {
+            if(MxuamengMusic.getVisibility() == View.VISIBLE) {
+                if(!ApiConfig.get().musicwallpaper.isEmpty()) {
+                    String Url = ApiConfig.get().musicwallpaper;
+                    Picasso.get().load(Url)
+                        //				.placeholder(R.drawable.xumusic)   //xuameng默认的站位图
+                        .noPlaceholder() //不使用站位图，效果不好
+                        				.resize(1920,1080)
+                        //				.centerCrop()
+                        //				.error(R.drawable.xumusic)
+                        .config(Bitmap.Config.RGB_565).memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE).networkPolicy(NetworkPolicy.NO_CACHE).into(MxuamengMusic); // xuameng内容空显示banner
+                    mHandler.postDelayed(this, 15000);
+                    return;
+                } else if(!ApiConfig.get().wallpaper.isEmpty()) {
+                    String Url = ApiConfig.get().wallpaper;
+                    Picasso.get().load(Url)
+                        //				.placeholder(R.drawable.xumusic)   //xuameng默认的站位图
+                        .noPlaceholder() //不使用站位图，效果不好
+                        .resize(1920, 1080)
+                        //				.centerCrop()
+                        //				.error(R.drawable.xumusic)
+                        .config(Bitmap.Config.RGB_565).memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE).networkPolicy(NetworkPolicy.NO_CACHE).into(MxuamengMusic); // xuameng内容空显示banner
+                    mHandler.postDelayed(this, 15000);
+                    return;
+                }
+                String Url = "https://api.miaomc.cn/image/get";
+                Picasso.get().load(Url)
+                    //				.placeholder(R.drawable.xumusic)   //xuameng默认的站位图
+                    .noPlaceholder() //不使用站位图，效果不好
+                    .resize(1920, 1080)
+                    //				.centerCrop()
+                    //				.error(R.drawable.xumusic)
+                    .config(Bitmap.Config.RGB_565).memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE).networkPolicy(NetworkPolicy.NO_CACHE).into(MxuamengMusic); // xuameng内容空显示banner
+            }
+            mHandler.postDelayed(this, 15000);
+        }
+    };
+    private Runnable xuRunnable = new Runnable() { //xuameng显示系统时间
+        @Override
+        public void run() {
+            Date date1 = new Date();
+            SimpleDateFormat timeFormat1 = new SimpleDateFormat("HH:mm:ss");
+            mPlayPauseTimexu.setText(timeFormat1.format(date1));
+            mHandler.postDelayed(this, 1000);
+        }
+    }; //xuameng显示系统时间
+    private void showLockView() {
+        mLockView.setVisibility(ScreenUtils.isTv(getContext()) ? GONE : VISIBLE);
+        mHandler.removeCallbacks(lockRunnable);
+        mHandler.postDelayed(lockRunnable, 3000);
+    }
+    @Override
+    protected void initView() {
+        super.initView();
+        mCurrentTime = findViewById(R.id.curr_time);
+        mTotalTime = findViewById(R.id.total_time);
+        mPlayTitle = findViewById(R.id.tv_info_name);
+        mPlayTitle1 = findViewById(R.id.tv_info_name1);
+        mPlayLoadNetSpeedRightTop = findViewById(R.id.tv_play_load_net_speed_right_top);
+        mPlayTimeEnd = findViewById(R.id.play_time_end_xu); //xuameng影片结束时间
+        mSeekBar = findViewById(R.id.seekBar);
+        mProgressRoot = findViewById(R.id.tv_progress_container);
+        mProgressIcon = findViewById(R.id.tv_progress_icon);
+        mProgressText = findViewById(R.id.tv_progress_text);
+        mBottomRoot = findViewById(R.id.bottom_container);
+        mTopRoot1 = findViewById(R.id.tv_top_l_container);
+        mTopRoot2 = findViewById(R.id.tv_top_r_container);
+        mParseRoot = findViewById(R.id.parse_root);
+        mGridView = findViewById(R.id.mGridView);
+        mPlayerRetry = findViewById(R.id.play_retry);
+        mPlayrefresh = findViewById(R.id.play_refresh);
+        mNextBtn = findViewById(R.id.play_next);
+        mPreBtn = findViewById(R.id.play_pre);
+        mPlayerScaleBtn = findViewById(R.id.play_scale);
+        mPlayerSpeedBtn = findViewById(R.id.play_speed);
+        mPlayerBtn = findViewById(R.id.play_player);
+        mPlayerIJKBtn = findViewById(R.id.play_ijk);
+        mPlayerEXOBtn = findViewById(R.id.play_exo);  //exo解码
+        mPlayerTimeStartEndText = findViewById(R.id.play_time_start_end_text);
+        mPlayerTimeStartBtn = findViewById(R.id.play_time_start);
+        mPlayerTimeSkipBtn = findViewById(R.id.play_time_end);
+        mPlayerTimeResetBtn = findViewById(R.id.play_time_reset);
+        mPlayPauseTime = findViewById(R.id.tv_sys_time);
+        mPlayPauseTimexu = findViewById(R.id.tv_sys_time_xu); //XUAMENG的系统时间
+        mTvPausexu = findViewById(R.id.tv_pause_xu); //XUAMENG暂停动画
+        iv_circle_bg = (ImageView) findViewById(R.id.iv_circle_bg); //xuameng音乐播放时图标
+        MxuamengMusic = (ImageView) findViewById(R.id.xuamengMusic); //xuameng播放音乐背景
+        play_speed_3 = findViewById(R.id.play_speed_3_container); //xuameng倍速播放
+        XuLoading = findViewWithTag("vod_control_loading"); //xuameng  loading 
+        customVisualizer = findViewById(R.id.visualizer_view);  //xuameng播放音乐柱状图
+        tv_slide_progress_text = findViewById(R.id.tv_slide_progress_text);   //xuameng 旧的亮度调节框已作废
+        mPlayLoadNetSpeed = findViewById(R.id.tv_play_load_net_speed);
+        mVideoSize = findViewById(R.id.tv_videosize);
+        mSubtitleView = findViewById(R.id.subtitle_view);
+        mZimuBtn = findViewById(R.id.zimu_select);
+        mAudioTrackBtn = findViewById(R.id.audio_track_select);
+        mLandscapePortraitBtn = findViewById(R.id.landscape_portrait);
+        backBtn = findViewById(R.id.tv_back);
+        mxuPlay = findViewById(R.id.mxuplay); //xuameng  低菜单播放
+        mPlayrender = findViewById(R.id.play_render);   //xuameng渲染方式
+        mPlayanimation = findViewById(R.id.play_animation);  //xuameng音柱动画
+        mExoSubtitleView = findViewById(R.id.exo_subtitle_view); // 用于显示ExoPlayer内置字幕
+
+        mLrcView = findViewById(R.id.lrc_view);
+      //  mLrcView.setVisibility(GONE);
+
+        // 设置歌词样式
+        mLrcView.setNormalTextSize(40);
+        mLrcView.setHighlightTextSize(40);
+        mLrcView.setNormalColor(Color.WHITE);
+        mLrcView.setHighlightColor(Color.parseColor("#FFD700"));
+
+        //xuameng音乐播放时图标
+        ObjectAnimator animator20 = ObjectAnimator.ofFloat(iv_circle_bg, "rotation", 360.0f);
+        animator20.setDuration(10000);
+        animator20.setRepeatCount(-1);
+        animator20.start();
+        backBtn.setOnClickListener(new OnClickListener() { //xuameng  屏幕上的返回键
+            @Override
+            public void onClick(View view) {
+                if(getContext() instanceof Activity) {
+                    if(isDisplay || isAnimation || isPlaying) {
+                        return;
+                    } else {
+                        isClickBackBtn = true;
+                        ((Activity) getContext()).onBackPressed();
+                    }
+                }
+            }
+        });
+        mLockView = findViewById(R.id.tv_lock);
+        mLockView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(isDisplay || isAnimation || isPlaying) {
+                    return;
+                }
+                isLock = !isLock;
+                mLockView.setImageResource(isLock ? R.drawable.icon_lock : R.drawable.icon_unlock);
+                if(isLock) {
+                    if(mBottomRoot.getVisibility() == View.VISIBLE) {
+                        Message obtain = Message.obtain();
+                        obtain.what = 1003; //隐藏底部菜单
+                        mHandler.sendMessage(obtain);
+                    }
+                }
+                showLockView();
+            }
+        });
+        View rootView = findViewById(R.id.rootView);
+        rootView.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (isLock) {
+                    if (event.getAction() == MotionEvent.ACTION_UP) {
+                        if (mLockView.getVisibility() == View.VISIBLE) {
+                            mLockView.setVisibility(GONE);  //xuameng 必须GONE如果写成INVISIBLE在surface下会没反应
+                        } else {
+                            showLockView();
+                        }
+                    }
+                }
+                return isLock;
+            }
+        });
+        initSubtitleInfo();
+        myHandle = new Handler();
+        myRunnable = new Runnable() {
+            @Override
+            public void run() {
+                if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
+                    hideBottom();
+                }
+            }
+        };
+        mPlayPauseTime.post(new Runnable() {
+            @Override
+            public void run() {
+                mHandler.post(myRunnable2);
+                mHandler.post(myRunnableMusic); //xuameng播放音频切换图片
+                mHandler.post(myRunnableXu); //xuameng播放音频切换图片
+            }
+        });
+        mPlayPauseTimexu.post(new Runnable() { //xuameng显示系统时间
+            @Override
+            public void run() {
+                mHandler.post(xuRunnable);
+            }
+        });
+        mGridView.setLayoutManager(new V7LinearLayoutManager(getContext(), 0, false));
+        ParseAdapter parseAdapter = new ParseAdapter();
+        parseAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                ParseBean parseBean = parseAdapter.getItem(position);
+                // 当前默认解析需要刷新
+                int currentDefault = parseAdapter.getData().indexOf(ApiConfig.get().getDefaultParse());
+                parseAdapter.notifyItemChanged(currentDefault);
+                ApiConfig.get().setDefaultParse(parseBean);
+                parseAdapter.notifyItemChanged(position);
+                listener.changeParse(parseBean);
+                if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
+                    hideBottom();
+                }
+            }
+        });
+        mGridView.setAdapter(parseAdapter);
+        parseAdapter.setNewData(ApiConfig.get().getParseBeanList());
+        //     mParseRoot.setVisibility(VISIBLE);
+        mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if(!fromUser) {
+                    return;
+                }
+                long duration = mControlWrapper.getDuration();
+                long newPosition = (duration * progress) / seekBar.getMax();
+                if(mCurrentTime != null) mCurrentTime.setText(stringForTime((int) newPosition));
+            }
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                mIsDragging = true;
+                mControlWrapper.stopProgress();
+                mControlWrapper.stopFadeOut();
+            }
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                myHandle.removeCallbacks(myRunnable);
+                myHandle.postDelayed(myRunnable, myHandleSeconds);
+                long duration = mControlWrapper.getDuration();
+                long newPosition = (duration * seekBar.getProgress()) / seekBar.getMax();
+                mControlWrapper.seekTo((int) newPosition);
+                mIsDragging = false;
+                mControlWrapper.startProgress();
+                mControlWrapper.startFadeOut();
+            }
+        });
+        //xuameng监听底部进度条遥控器
+        mSeekBar.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View arg0, int keycode, KeyEvent event) {
+                if(event.getAction() == KeyEvent.ACTION_DOWN) {
+                    int keyCode = event.getKeyCode();
+                    int action = event.getAction();
+                    boolean isInPlayback = isInPlaybackState();
+                    if(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+                        if(isInPlayback) {
+                            tvSlideStartXu(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT ? 1 : -1);
+                            return true;
+                        } else {
+                            mSeekBar.setEnabled(false);
+                            return true;
+                        }
+                    }
+                    if(keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
+                        if((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 300 || isAnimation || isDisplay) { //xuameng 防播放打断动画
+                            return true;
+                        }
+                        DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
+                        if(isInPlayback) {
+                            if(!isDisplay || !isAnimation) {
+                                if(mControlWrapper.isPlaying()) {
+                                    pauseIngXu();
+                                    togglePlay();
+                                    return true;
+                                }
+                                if(!mControlWrapper.isPlaying()) {
+                                    playIngXu();
+                                    togglePlay();
+                                    return true;
+                                }
+                            }
+                            return true;
+                        }
+                    }
+                }
+                if(event.getAction() == KeyEvent.ACTION_UP) {
+                    int keyCode = event.getKeyCode();
+                    int action = event.getAction();
+                    boolean isInPlayback = isInPlaybackState();
+                    if(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+                        if(isInPlayback) {
+                            tvSlideStopXu(); //xuameng修复SEEKBAR快进重新播放问题
+                            return true;
+                        }
+                    }
                 }
                 return false;
             }
         });
-        mVideoView = findViewById(R.id.mVideoView);
-        mPlayLoadTip = findViewById(R.id.play_load_tip);
-        mPlayLoading = findViewById(R.id.play_loading);
-        mPlayLoadErr = findViewById(R.id.play_load_error);
-        mController = new VodController(requireContext());
-        mController.setCanChangePosition(true);
-        mController.setEnableInNormal(true);
-        mController.setGestureEnabled(true);
-        ProgressManager progressManager = new ProgressManager() {
-            @Override
-            public void saveProgress(String url, long progress) {
-                if (videoDuration ==0) return;    //xuameng 不save
-                CacheManager.save(MD5.string2MD5(url), progress);
-            }
-
-            @Override
-            public long getSavedProgress(String url) {
-                return PlayFragment.this.getSavedProgress(url);
-            }
-        };
-        mVideoView.setProgressManager(progressManager);
-        mController.setListener(new VodController.VodControlListener() {
-            @Override
-            public void playNext(boolean rmProgress) {
-                String preProgressKey = progressKey;
-                PlayFragment.this.playNext(rmProgress);
-                if (rmProgress && preProgressKey != null)
-                    CacheManager.delete(MD5.string2MD5(preProgressKey), 0);
-            }
-
-            @Override
-            public void playPre() {
-                PlayFragment.this.playPrevious();
-            }
-
-            @Override
-            public void changeParse(ParseBean pb) {
-                autoRetryCount = 0;
-                mRetryCountExo = 0;  //xuameng播放出错计数器重置
-                mRetryCountIjk = 0;
-                mRetryCountJP = 0;
-                doParse(pb);
-            }
-
-            @Override
-            public void updatePlayerCfg() {
-                mVodInfo.playerCfg = mVodPlayerCfg.toString();
-                EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_REFRESH, mVodPlayerCfg));
-            }
-
-            @Override
-            public void replay(boolean replay) {
-                autoRetryCount = 0;
-                mRetryCountExo = 0;  //xuameng播放出错计数器重置
-                mRetryCountIjk = 0;
-                mRetryCountJP = 0;
-                if(replay){  //xuameng新增
-                    play(true);
-                }else {
-                    play(false);
-                }  //xuameng新增完
-            }
-
-            @Override
-            public void errReplay() {
-                errorWithRetry("视频播放出错", false);
-            }
-
-            public void hideTipXu() {        //xuameng隐藏错误信息
-               if (mPlayLoadTip.getVisibility() == View.VISIBLE){
-                   mPlayLoadTip.setVisibility(View.GONE);
-               }
-               if (mPlayLoading.getVisibility() == View.VISIBLE){
-                   mPlayLoading.setVisibility(View.GONE);
-               }
-               if (mPlayLoadErr.getVisibility() == View.VISIBLE){
-                   mPlayLoadErr.setVisibility(View.GONE);
-               }
-            }
-
-            @Override
-            public void selectSubtitle() {
-                try {
-                    selectMySubtitle();
-                } catch (Exception e) {
-                    e.printStackTrace();
+        //xuameng监听底部进度条遥控器结束
+        mSeekBar.setOnFocusChangeListener(new View.OnFocusChangeListener() { //XUAMENG SEEKBAR获得焦点
+            @Override //xuameng进入SEEKBAR
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus) {
+                    mSeekBarhasFocus = true; //xuameng进入SEEKBAR
+                } else {
+                    mSeekBarhasFocus = false; //xuameng进入SEEKBAR
+                    isSEEKBAR = false; //xuameng SEEKBAR 失去焦点
                 }
             }
-
-            @Override
-            public void selectAudioTrack() {
-                selectMyAudioTrack();
-            }
-
-            @Override
-            public void prepared() {
-                initSubtitleView();
-            }
-            @Override
-            public void startPlayUrl(String url, HashMap<String, String> headers) {
-                goPlayUrl(url, headers);
-            }
         });
-        mVideoView.setVideoController(mController);
-    }
-
-    //设置字幕
-    void setSubtitle(String path) {
-        if (path != null && path .length() > 0) {
-            // 设置字幕
-            mController.mSubtitleView.setVisibility(View.GONE);
-            mController.mSubtitleView.setSubtitlePath(path);
-            mController.mSubtitleView.setVisibility(View.VISIBLE);
-        }
-    }
-
-    void selectMySubtitle() throws Exception {
-        SubtitleDialog subtitleDialog = new SubtitleDialog(getActivity());
-        int playerType = mVodPlayerCfg.getInt("pl");
-        if (mController.mSubtitleView.hasInternal && playerType == 1 ||mController.mSubtitleView.hasInternal && playerType == 2) {
-            subtitleDialog.selectInternal.setVisibility(View.VISIBLE);
-        } else {
-            subtitleDialog.selectInternal.setVisibility(View.GONE);
-        }
-        subtitleDialog.setSubtitleViewListener(new SubtitleDialog.SubtitleViewListener() {
+        mPlayerRetry.setOnClickListener(new OnClickListener() {
             @Override
-            public void setTextSize(int size) {
-                mController.mSubtitleView.setTextSize(size);
-            }
-            @Override
-            public void setSubtitleDelay(int milliseconds) {
-                mController.mSubtitleView.setSubtitleDelay(milliseconds);
-            }
-            @Override
-            public void selectInternalSubtitle() {
-                selectMyInternalSubtitle();
-            }
-            @Override
-            public void setTextStyle(int style) {
-                setSubtitleViewTextStyle(style);
-            }
-        });
-        subtitleDialog.setSearchSubtitleListener(new SubtitleDialog.SearchSubtitleListener() {
-            @Override
-            public void openSearchSubtitleDialog() {
-                SearchSubtitleDialog searchSubtitleDialog = new SearchSubtitleDialog(getActivity());
-                searchSubtitleDialog.setSubtitleLoader(new SearchSubtitleDialog.SubtitleLoader() {
-                    @Override
-                    public void loadSubtitle(Subtitle subtitle) {
-                        if (!isAdded()) return;
-                        requireActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                String zimuUrl = subtitle.getUrl();
-                                LOG.i("echo-Remote Subtitle Url: " + zimuUrl);
-                                setSubtitle(zimuUrl);//设置字幕
-                                if (mController.mExoSubtitleView.getVisibility() == View.VISIBLE){  //xuameng 使用搜索字幕隐藏EXO PGS字幕
-                                    mController.mExoSubtitleView.setVisibility(View.GONE);
-                                }
-                                HawkConfig.exoSubtitle = false;  //xuameng 判断当前是否播放EXO内置字幕 
-                                if (searchSubtitleDialog != null) {
-                                    searchSubtitleDialog.dismiss();
-                                }
-                            }
-                        });
-                    }
-                });
-                if(mVodInfo.playFlag.contains("Ali")||mVodInfo.playFlag.contains("parse")){
-                    searchSubtitleDialog.setSearchWord(mVodInfo.playNote);
-                }else {
-                    searchSubtitleDialog.setSearchWord(mVodInfo.name);
-                }
-                searchSubtitleDialog.show();
-            }
-        });
-        subtitleDialog.setLocalFileChooserListener(new SubtitleDialog.LocalFileChooserListener() {
-            @Override
-            public void openLocalFileChooserDialog() {
-                new ChooserDialog(getActivity(),R.style.FileChooserXu)   //xuameng本地字幕风格
-                        .withResources(R.string.title_choose_file, R.string.title_choose, R.string.dialog_cancel)  //xuameng本地字幕风格
-                        .withFilter(false, false, "srt", "ass", "scc", "stl", "ttml")
-                        .withStartFile("/storage/emulated/0/Download")
-                        .withChosenListener(new ChooserDialog.Result() {
-                            @Override
-                            public void onChoosePath(String path, File pathFile) {
-                                LOG.i("echo-Local Subtitle Path: " + path);
-                                setSubtitle(path);//设置字幕
-                                if (mController.mExoSubtitleView.getVisibility() == View.VISIBLE){  //xuameng 使用搜索字幕隐藏EXO PGS字幕
-                                    mController.mExoSubtitleView.setVisibility(View.GONE);
-                                }
-                                HawkConfig.exoSubtitle = false;  //xuameng 判断当前是否播放EXO内置字幕
-                            }
-                        })
-                        .build()
-                        .show();
-            }
-        });
-        subtitleDialog.show();
-    }
-
-    @SuppressLint("UseCompatLoadingForColorStateLists")
-    void setSubtitleViewTextStyle(int style) {
-        if (style == 0) {
-            mController.mSubtitleView.setTextColor(getContext().getResources().getColorStateList(R.color.color_FFFFFF));
-        } else if (style == 1) {
-            mController.mSubtitleView.setTextColor(getContext().getResources().getColorStateList(R.color.color_02F8E1));
-        }
-    }
-
-    void selectMyAudioTrack() {
-        AbstractPlayer mediaPlayer = mVideoView.getMediaPlayer();
-
-        TrackInfo trackInfo = null;
-        if (mediaPlayer instanceof IjkMediaPlayer) {
-            trackInfo = ((IjkMediaPlayer) mediaPlayer).getTrackInfo();
-        }
-        if (mediaPlayer instanceof EXOmPlayer) {
-            trackInfo = ((EXOmPlayer) mediaPlayer).getTrackInfo();
-        }
-        if (trackInfo == null) {
-            App.showToastShort(mContext, "没有音轨！");
-            return;
-        }
-        List<TrackInfoBean> bean = trackInfo.getAudio();
-        if (bean.size() < 1){
-            App.showToastShort(mContext, "没有内置音轨！");
-            return;
-        }
-
-        final int selectedId = trackInfo.getAudioSelected(false);   //xuameng判断音轨选择
-        SelectDialog<TrackInfoBean> dialog = new SelectDialog<>(getActivity());
-        dialog.setTip("切换音轨");
-        dialog.setAdapter(new SelectDialogAdapter.SelectDialogInterface<TrackInfoBean>() {
-            @Override
-            public void click(TrackInfoBean value, int pos) {
-                if (selectedId == 99999) { // xuameng99999表示未选中
-                    App.showToastShort(mContext, "切换音轨失败！请切换解码方式或刷新重试！");
+            public void onClick(View v) {
+                if((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 300 || isAnimation || isDisplay) { //xuameng 防播放打断动画
                     return;
                 }
-                try {
-                    for (TrackInfoBean audio : bean) {
-                        audio.selected = audio.trackId == value.trackId;
-                    }
-                    long progress = mediaPlayer.getCurrentPosition() - 3000L;//XUAMENG保存当前进度，//XUAMENG保存当前进度，回退3秒
-                    if (mediaPlayer instanceof IjkMediaPlayer) {
-                        ((IjkMediaPlayer)mediaPlayer).setTrack(value.trackId,progressKey);
-                    }
-                    if (mediaPlayer instanceof EXOmPlayer) {
-                        ((EXOmPlayer) mediaPlayer).selectExoTrackAudio(value,progressKey);
-                        selectExoTrack = true;  //xuameng 选择音轨
-                    }
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            mediaPlayer.seekTo(progress);
-                        }
-                    }, 300);
-                    dialog.dismiss();
-                } catch (Exception e) {
-                    LOG.e("切换音轨出错");
+                DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
+                FastClickCheckUtil.check(v);
+                if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
+                    hideBottomXu();
                 }
-            }
-
-            @Override
-            public String getDisplay(TrackInfoBean val) {
-                String name = val.name.replace("AUDIO,", "");
-                name = name.replace("N/A,", "");
-                name = name.replace(" ", "");
-                return name + (StringUtils.isEmpty(val.language) ? "" : " " + val.language);
-            }
-        }, new DiffUtil.ItemCallback<TrackInfoBean>() {
-            @Override
-            public boolean areItemsTheSame(@NonNull @NotNull TrackInfoBean oldItem, @NonNull @NotNull TrackInfoBean newItem) {
-                return oldItem.trackId == newItem.trackId;
-            }
-
-            @Override
-            public boolean areContentsTheSame(@NonNull @NotNull TrackInfoBean oldItem, @NonNull @NotNull TrackInfoBean newItem) {
-                return oldItem.trackId == newItem.trackId;
-            }
-        }, bean, trackInfo.getAudioSelected(false));
-        dialog.show();
-    }
-
-    void selectMyInternalSubtitle() {
-        AbstractPlayer mediaPlayer = mVideoView.getMediaPlayer();
-
-        TrackInfo trackInfo = null;
-        if (mediaPlayer instanceof EXOmPlayer) {
-            trackInfo = ((EXOmPlayer)mediaPlayer).getTrackInfo();
-        }
-        if (mediaPlayer instanceof IjkMediaPlayer) {
-            trackInfo = ((IjkMediaPlayer)mediaPlayer).getTrackInfo();
-        }
-        if (trackInfo == null) {
-            App.showToastShort(mContext, "没有内置字幕！");
-            return;
-        }
-        List<TrackInfoBean> bean = trackInfo.getSubtitle();
-        if (bean.size() < 1) {
-            App.showToastShort(mContext, "没有内置字幕！");
-            return;
-        }
-        SelectDialog<TrackInfoBean> dialog = new SelectDialog<>(mActivity);
-        dialog.setTip("切换内置字幕");
-        dialog.setAdapter(new SelectDialogAdapter.SelectDialogInterface<TrackInfoBean>() {
-            @Override
-            public void click(TrackInfoBean value, int pos) {
-                mController.mSubtitleView.setVisibility(View.VISIBLE);
-                try {
-                    for (TrackInfoBean subtitle : bean) {
-                        subtitle.selected = subtitle.trackId == value.trackId;
-                    }
-                    long progress = mediaPlayer.getCurrentPosition() - 3000L;//XUAMENG保存当前进度，回退3秒
-                    if (mediaPlayer instanceof IjkMediaPlayer) {
-                        mController.mSubtitleView.destroy();
-                        mController.mSubtitleView.clearSubtitleCache();
-                        mController.mSubtitleView.isInternal = true;
-                        ((IjkMediaPlayer)mediaPlayer).setTrack(value.trackId);
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                mediaPlayer.seekTo(progress);
-                            }
-                        }, 300);
-                    }
-
-					// xuameng判断选中的字幕是否为 PGS 格式
-                    boolean isPgsSubtitle = value.language != null && value.language.toLowerCase().contains("pgs");
-                    if (mediaPlayer instanceof EXOmPlayer) {
-
-                        if (isPgsSubtitle) {
-                            // xuameng选中的是 PGS 字幕：使用 ExoPlayer 内置视图
-                            mController.mExoSubtitleView.setVisibility(View.VISIBLE);
-                            mController.mSubtitleView.setVisibility(View.GONE);
-                            mController.mSubtitleView.destroy();
-                            mController.mSubtitleView.clearSubtitleCache();
-                            mController.mSubtitleView.onSubtitleChanged(null);
-                            mController.mSubtitleView.isInternal = true; // 外部视图处理
-                            HawkConfig.exoSubtitle = true;  //xuameng 判断当前是否播放EXO内置字幕
-                        } else {
-                            // xuameng选中的是其他字幕：使用外部视图
-                            mController.mExoSubtitleView.setVisibility(View.GONE);
-                            mController.mSubtitleView.setVisibility(View.VISIBLE);
-                            mController.mSubtitleView.destroy();
-                            mController.mSubtitleView.clearSubtitleCache();
-                            mController.mSubtitleView.isInternal = true; // 外部视图处理
-                            HawkConfig.exoSubtitle = false;  //xuameng 判断当前是否播放EXO内置字幕
-                        }
-
-                        ((EXOmPlayer)mediaPlayer).selectExoTrack(value);
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                mediaPlayer.seekTo(progress);
-                            }
-                        }, 300);
-                    }
-                    dialog.dismiss();
-                } catch (Exception e) {
-                    LOG.e("切换内置字幕出错");
-                }
-            }
-
-            @Override
-            public String getDisplay(TrackInfoBean val) {
-                return val.name + (StringUtils.isEmpty(val.language) ? "" : " " + val.language);
-            }
-        }, new DiffUtil.ItemCallback<TrackInfoBean>() {
-            @Override
-            public boolean areItemsTheSame(@NonNull @NotNull TrackInfoBean oldItem, @NonNull @NotNull TrackInfoBean newItem) {
-                return oldItem.trackId == newItem.trackId;
-            }
-
-            @Override
-            public boolean areContentsTheSame(@NonNull @NotNull TrackInfoBean oldItem, @NonNull @NotNull TrackInfoBean newItem) {
-                return oldItem.trackId == newItem.trackId;
-            }
-        }, bean, trackInfo.getSubtitleSelected(false));
-        dialog.show();
-    }
-
-    void setTip(String msg, boolean loading, boolean err) {
-        if (!isAdded()) return;
-        requireActivity().runOnUiThread(new Runnable() { //影魔
-            @Override
-            public void run() {
-                mPlayLoadTip.setText(msg);
-                mPlayLoadTip.setVisibility(View.VISIBLE);
-                mPlayLoading.setVisibility(loading ? View.VISIBLE : View.GONE);
-                mPlayLoadErr.setVisibility(err ? View.VISIBLE : View.GONE);
+                listener.replay(true);
             }
         });
-    }
-
-    void hideTip() {
-        mPlayLoadTip.setVisibility(View.GONE);
-        mPlayLoading.setVisibility(View.GONE);
-        mPlayLoadErr.setVisibility(View.GONE);
-    }
-
-    void errorWithRetry(String err, boolean finish) {
-        if (!autoRetry()) {
-            if (!isAdded()) return;
-            requireActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (finish) {
-                        setTip(err, false, true);
-                        App.showToastShort(mContext, err);
-                    } else {
-                        setTip(err, false, true);
-                    }
-                }
-            });
-        }
-    }
-
-    void playUrl(String url, HashMap<String, String> headers) {
-        if(!url.startsWith("data:application"))EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_REFRESH, url));//更新播放地址
-        if (!Hawk.get(HawkConfig.M3U8_PURIFY, false)) {       //xuameng广告过滤
-            goPlayUrl(url,headers);
-            return;
-        }
-        if (url.startsWith("http://127.0.0.1") || !url.contains(".m3u8")) {
-            goPlayUrl(url,headers);
-            return;
-        }
-        if(DefaultConfig.noAd(mVodInfo.playFlag)){
-            goPlayUrl(url,headers);
-            return;
-        }
-        LOG.i("echo-playM3u8:" + url);
-        mController.playM3u8(url,headers);
-    }
-    public void goPlayUrl(String url, HashMap<String, String> headers) {
-        LOG.i("echo-goPlayUrl:" + url);
-        if (mActivity == null) return;
-        if (!isAdded()) return;
-        LOG.i("playUrl:" + url);
-        final String finalUrl = url;
-        requireActivity().runOnUiThread(new Runnable() {
+        mPlayrefresh.setOnClickListener(new OnClickListener() {
             @Override
-            public void run() {
-                stopParse();
-                if (mVideoView != null) {
-                    mVideoView.release();
-                    if (finalUrl != null) {
-                        String url = finalUrl;
+            public void onClick(View v) {
+                if((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 300 || isAnimation || isDisplay) { //xuameng 防播放打断动画
+                    return;
+                }
+                DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
+                FastClickCheckUtil.check(v);
+                if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
+                    hideBottomXu();
+                }
+                listener.replay(false);
+            }
+        });
+        mNextBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 300 || isAnimation || isDisplay) { //xuameng 防播放打断动画
+                    return;
+                }
+                DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
+                FastClickCheckUtil.check(view);
+                if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
+                    hideBottomXu();
+                }
+                listener.playNext(false);
+            }
+        });
+        mxuPlay.setOnClickListener(new OnClickListener() { //xuameng 低菜单播放监听
+            @Override //xuameng 低菜单播放监听
+            public void onClick(View view) { //xuameng 低菜单播放监听
+                boolean isInPlayback = isInPlaybackState();
+                if((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 300 || isAnimation || isDisplay) { //xuameng 防播放打断动画
+                    return;
+                }
+                DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
+                if(isInPlayback) {
+                    if(!isDisplay || !isAnimation) {
+                        if(mControlWrapper.isPlaying()) {
+                            pauseIngXu();
+                            togglePlay();
+                            return;
+                        }
+                        if(!mControlWrapper.isPlaying()) {
+                            playIngXu();
+                            togglePlay();
+                            return;
+                        }
+                    } //xuameng 低菜单播放监听
+                }
+            }
+        });
+        mPlayrender.setOnClickListener(new OnClickListener() { //xuameng渲染选择
+            @Override
+            public void onClick(View view) {
+                FastClickCheckUtil.check(view);
+                if((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 300 || isAnimation || isDisplay) { //xuameng 防播放打断动画
+                    return;
+                }
+                if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
+                    hideBottomXu();
+                }
+                DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
+                int pr = Hawk.get(HawkConfig.PLAY_RENDER, 0);      //xuameng pr 0 text渲染 1 sur渲染
+                try {
+                    pr = mPlayerConfig.getInt("pr");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                if(pr == 0) {
+                    try {
+                        mPlayerConfig.put("pr", 1);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    updatePlayerCfgView();
+                    listener.updatePlayerCfg();
+                    listener.replay(false);
+                } else {
+                    try {
+                        mPlayerConfig.put("pr", 0);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    updatePlayerCfgView();
+                    listener.updatePlayerCfg();
+                    listener.replay(false);
+                }
+            }
+        });
+
+        mPlayanimation.setOnClickListener(new OnClickListener() { //xuameng音柱动画
+            @Override
+            public void onClick(View view) {
+                FastClickCheckUtil.check(view);
+                if((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 300 || isAnimation || isDisplay) { //xuameng 防播放打断动画
+                    return;
+                }
+                if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
+                    hideBottomXu();
+                }
+                DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
+                try {
+                    musicAnimation = mPlayerConfig.getBoolean("music");   //xuameng音乐播放动画获取设置
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                if(musicAnimation) {
+                    try {
+                        mPlayerConfig.put("music", false);  //xuameng音乐播放动画关闭
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    updatePlayerCfgView();
+                    listener.updatePlayerCfg();
+                    releaseVisualizer();  //xuameng音乐播放动画
+                } else {
+                    try {
+                        mPlayerConfig.put("music", true);   //xuameng音乐播放动画开启
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    updatePlayerCfgView();
+                    listener.updatePlayerCfg();
+                    initVisualizer();  //xuameng音乐播放动画
+                }
+            }
+        });
+
+        mPlayerEXOBtn.setOnClickListener(new OnClickListener() { //xuameng EXO解码
+            @Override
+            public void onClick(View view) {
+                FastClickCheckUtil.check(view);
+                if((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 300 || isAnimation || isDisplay) { //xuameng 防播放打断动画
+                    return;
+                }
+                if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
+                    hideBottomXu();
+                }
+                DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
+                boolean exocode=Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false);  //xuameng exo解码默认设置
+                int exoselect = Hawk.get(HawkConfig.EXO_PLAY_SELECTCODE, 0);  //xuameng exo解码动态选择
+                try {
+                    exoselect = mPlayerConfig.getInt("exocode");    //xuameng exo解码动态选择 0默认设置 1硬解 2软解
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                if(exoselect == 0) {
+                    if (!exocode){
                         try {
-                            int playerType = mVodPlayerCfg.getInt("pl");
-                            if (playerType >= 10) {
-                                VodInfo.VodSeries vs = mVodInfo.seriesMap.get(mVodInfo.playFlag).get(mVodInfo.playIndex);
-                                String playTitle = mVodInfo.name + " " + vs.name;
-                                setTip("调用外部播放器" + PlayerHelper.getPlayerName(playerType) + "进行播放", true, false);
-                                boolean callResult = false;
-                                long progress = getSavedProgress(progressKey);
-                                callResult = PlayerHelper.runExternalPlayer(playerType, requireActivity(), url, playTitle, playSubtitle, headers, progress);
-                                setTip("调用外部播放器" + PlayerHelper.getPlayerName(playerType) + (callResult ? "成功" : "失败"), callResult, !callResult);
-                                return;
-                            }
+                            mPlayerConfig.put("exocode", 2); 
+                            Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 2);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        hideTip();
-                        if (url.startsWith("data:application/dash+xml;base64,")) {
-                            PlayerHelper.updateCfg(mVideoView, mVodPlayerCfg, 2);
-                            App.getInstance().setDashData(url.split("base64,")[1]);
-                            url = ControlManager.get().getAddress(true) + "dash/proxy.mpd";
-                        } else if (url.contains(".mpd") || url.contains("type=mpd")) {
-                            PlayerHelper.updateCfg(mVideoView, mVodPlayerCfg, 2);
-                        } else {
-                            PlayerHelper.updateCfg(mVideoView, mVodPlayerCfg);
-                        }
-                        mVideoView.setProgressKey(progressKey);
-                        if (headers != null) {
-                            mVideoView.setUrl(url, headers);
-                        } else {
-                            mVideoView.setUrl(url);
-                        }
-                        mVideoView.start();
-                        mController.resetSpeed();
-                    }
-                }
-            }
-        });
-    }
-
-    private void initSubtitleView() {
-        TrackInfo trackInfo = null;
-        if (mVideoView.getMediaPlayer() instanceof IjkMediaPlayer) {
-            trackInfo = ((IjkMediaPlayer)(mVideoView.getMediaPlayer())).getTrackInfo();
-            if (trackInfo != null && trackInfo.getSubtitle().size() > 0) {
-                mController.mSubtitleView.hasInternal = true;
-            }else{
-                mController.mSubtitleView.hasInternal = false;   //xuameng修复切换播放器内置字幕不刷新
-            }
-            final int selectedIdIjk = trackInfo.getAudioSelected(false);  //xuameng判断选中的音轨
-            Hawk.put(HawkConfig.IJK_PROGRESS_KEY, progressKey);  //xuameng存储进程KEY
-            if (selectedIdIjk != 99999) { // xuameng99999表示未选中
-               ((IjkMediaPlayer)(mVideoView.getMediaPlayer())).loadDefaultTrack(trackInfo,progressKey);      //xuameng记忆选择音轨  如果未选中音轨就不选择记忆音轨
-            }
-            ((IjkMediaPlayer)(mVideoView.getMediaPlayer())).setOnTimedTextListener(new IMediaPlayer.OnTimedTextListener() {
-                @Override
-                public void onTimedText(IMediaPlayer mp, IjkTimedText text) {
-                    if(text==null)return;   //xuameng
-                    if (mController.mSubtitleView.isInternal) {
-                        com.github.tvbox.osc.subtitle.model.Subtitle subtitle = new com.github.tvbox.osc.subtitle.model.Subtitle();
-                        subtitle.content = text.getText();
-                        mController.mSubtitleView.onSubtitleChanged(subtitle);
-                    }
-                }
-            });
-        }
-
-     if (mVideoView.getMediaPlayer() instanceof EXOmPlayer) {
-            trackInfo = ((EXOmPlayer) (mVideoView.getMediaPlayer())).getTrackInfo();
-
-            if (trackInfo != null && trackInfo.getSubtitle().size() > 0) {
-                mController.mSubtitleView.hasInternal = true;
-
-                // 获取当前选中的字幕轨道
-                TrackInfoBean selectedSubtitleTrack = null;
-                for (TrackInfoBean subtitleTrack : trackInfo.getSubtitle()) {
-                    if (subtitleTrack.selected) {
-                        selectedSubtitleTrack = subtitleTrack;
-                        break;
-                    }
-                }
-
-                // 判断当前选中的字幕是否为 PGS
-                boolean isPgsSelected = false;
-                if (selectedSubtitleTrack != null && selectedSubtitleTrack.language != null) {
-                    try {
-                        isPgsSelected = selectedSubtitleTrack.language.toLowerCase().contains("pgs");
-                    } catch (Exception e) {
-                    // 处理可能的异常情况
-                        isPgsSelected = false;
-                    }
-                }
-
-                if (isPgsSelected) {
-                    // 当前选中的是 PGS 字幕，使用 ExoPlayer 内置视图
-                    ((EXOmPlayer) mVideoView.getMediaPlayer()).setSubtitleView(mController.mExoSubtitleView);   //xuameng绑定Exo字幕视图
-                    mController.mExoSubtitleView.setVisibility(View.VISIBLE);
-                    mController.mSubtitleView.setVisibility(View.GONE);
-                    HawkConfig.exoSubtitle = true;  //xuameng 判断当前是否播放EXO内置字幕
-                } else {
-                    // 当前选中的是其他格式字幕，使用外部视图
-                    mController.mExoSubtitleView.setVisibility(View.GONE);
-                    mController.mSubtitleView.setVisibility(View.VISIBLE);
-                    HawkConfig.exoSubtitle = false;  //xuameng 判断当前是否播放EXO内置字幕
-                }
-            } else {
-                mController.mSubtitleView.hasInternal = false;
-            }
-
-            final int selectedIdExo = trackInfo.getAudioSelected(false);  //xuameng判断选中的音轨
-            Hawk.put(HawkConfig.EXO_PROGRESS_KEY, progressKey);  //xuameng存储进程KEY
-            if (selectedIdExo != 99999) { // xuameng99999表示未选中
-               ((EXOmPlayer) (mVideoView.getMediaPlayer())).loadDefaultTrack(progressKey);      //xuameng记忆选择音轨  如果未选中音轨就不选择记忆音轨
-            }
-            ((EXOmPlayer) (mVideoView.getMediaPlayer())).setOnTimedTextListener(new Player.Listener() {
-                @Override
-                public void onCues(@NonNull List<Cue> cues) {
-                    if (cues.size() > 0) {
-                        CharSequence ss = cues.get(0).text;
-                        if (ss != null && mController.mSubtitleView.isInternal) {
-                            com.github.tvbox.osc.subtitle.model.Subtitle subtitle = new com.github.tvbox.osc.subtitle.model.Subtitle();
-                            subtitle.content = ss.toString();
-                            mController.mSubtitleView.onSubtitleChanged(subtitle);
-                        }
                     }else{
-                        com.github.tvbox.osc.subtitle.model.Subtitle subtitle = new com.github.tvbox.osc.subtitle.model.Subtitle();
-                        subtitle.content = "";
-                        mController.mSubtitleView.onSubtitleChanged(subtitle);
-                    }
-                }
-            });
-        }
-
-        mController.mSubtitleView.bindToMediaPlayer(mVideoView.getMediaPlayer());
-        mController.mSubtitleView.setPlaySubtitleCacheKey(subtitleCacheKey);
-        String subtitlePathCache = (String)CacheManager.getCache(MD5.string2MD5(subtitleCacheKey));
-        if (subtitlePathCache != null && !subtitlePathCache.isEmpty()) {
-            mController.mSubtitleView.setSubtitlePath(subtitlePathCache);
-        } else {
-            if (playSubtitle != null && playSubtitle.length() > 0) {
-                mController.mSubtitleView.setSubtitlePath(playSubtitle);
-            } else {
-                if (mController.mSubtitleView.hasInternal) {//有则使用内置字幕
-                    mController.mSubtitleView.isInternal = true;
-                    if (trackInfo != null && !trackInfo.getSubtitle().isEmpty()) {
-                        List<TrackInfoBean> subtitleTrackList = trackInfo.getSubtitle();
-                        int selectedIndex = trackInfo.getSubtitleSelected(true);
-                        boolean hasCh =false;
-                        for(TrackInfoBean subtitleTrackInfoBean : subtitleTrackList) {
-                            String lowerLang = subtitleTrackInfoBean.language.toLowerCase();
-                            if (isChineseSubtitle(subtitleTrackInfoBean)){    //xuameng修复EXO播放器也可以默认选择中文字幕
-                                hasCh=true;                               
-                                    if (mVideoView.getMediaPlayer() instanceof IjkMediaPlayer){
-                                        if (selectedIndex != subtitleTrackInfoBean.trackId) {
-                                        ((IjkMediaPlayer)(mVideoView.getMediaPlayer())).setTrack(subtitleTrackInfoBean.trackId);
-										}
-                                    }else if (mVideoView.getMediaPlayer() instanceof EXOmPlayer){
-                                        ((EXOmPlayer)(mVideoView.getMediaPlayer())).selectExoTrack(subtitleTrackInfoBean);
-                                    }
-                                    break;
-                            }
-                        }
-                        if(!hasCh){
-                            if (mVideoView.getMediaPlayer() instanceof IjkMediaPlayer){
-                                ((IjkMediaPlayer)(mVideoView.getMediaPlayer())).setTrack(subtitleTrackList.get(0).trackId);
-                            }else if (mVideoView.getMediaPlayer() instanceof EXOmPlayer){
-                                ((EXOmPlayer)(mVideoView.getMediaPlayer())).selectExoTrack(subtitleTrackList.get(0));
-                            }
+                        try {
+                            mPlayerConfig.put("exocode", 1);
+                            Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 1);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
                     }
-                }
-            }
-        }
-    }
-
-    public boolean isChineseSubtitle(TrackInfoBean subtitleTrackInfoBean) {   //xuameng判断中文字幕
-       if (subtitleTrackInfoBean == null || subtitleTrackInfoBean.language == null) {
-            return false;
-        }
-    
-        String lowerLang = subtitleTrackInfoBean.language.toLowerCase();
-    
-        // 检测顺序很重要，先检测更具体的标识
-        if (lowerLang.contains("中英")) {
-            return true;
-        }
-    
-        // 其他中文标识检测
-        if (lowerLang.contains("简体") || lowerLang.contains("中文") || 
-            lowerLang.contains("国语") || lowerLang.contains("国配") ||
-            lowerLang.contains("普通") || lowerLang.contains("粤语") || 
-            lowerLang.contains("双语") || lowerLang.contains("繁体") ||
-            lowerLang.contains("zh") || lowerLang.contains("ch")) {
-            return true;
-        }
-    
-        return false;
-    }
-
-    private void initViewModel() {
-        sourceViewModel = new ViewModelProvider(this).get(SourceViewModel.class);
-        sourceViewModel.playResult.observe(this, new Observer<JSONObject>() {
-            @Override
-            public void onChanged(JSONObject info) {
-                if (info != null) {
+                }else if(exoselect == 1) {
                     try {
-                        progressKey = info.optString("proKey", null);
-                        boolean parse = info.optString("parse", "1").equals("1");
-                        boolean jx = info.optString("jx", "0").equals("1");
-// 优先检查 lrc 字段（歌词字符串）
-if (info.has("lrc")) {
-    String lrcContent = info.optString("lrc", "");
-    if (!TextUtils.isEmpty(lrcContent)) {
-        mController.setLrcContent(lrcContent);
-        playSubtitle = "";
-    } else {
-        playSubtitle = info.optString("subt", "");
-    }
-} else {
-    playSubtitle = info.optString("subt", "");
-}
-App.showToastShort(mContext, "22222222");
-    // 处理图片显示
-    if (info.has("pic")) {
-        String picUrl = "http://p2.music.126.net/tXCIFsVDK6IKcQ9YWxwOEg==/109951163523944497.jpg";
-		App.showToastShort(mContext, "http://p2.music.126.net/tXCIFsVDK6IKcQ9YWxwOEg==/109951163523944497.jpg");
-        mController.setVideoImage(picUrl);
-    }
-
-// 如果 playSubtitle 仍为空，且存在 subs 字段，则按原有逻辑处理字幕数组
-if(playSubtitle.isEmpty() && info.has("subs")) {
-    try {
-        JSONObject obj = info.getJSONArray("subs").optJSONObject(0);
-        String url = obj.optString("url", "");
-        if (!TextUtils.isEmpty(url) && !FileUtils.hasExtension(url)) {
-            String format = obj.optString("format", "");
-            String name = obj.optString("name", "字幕");
-            String ext = ".srt";
-            switch (format) {
-                case "text/x-ssa":
-                    ext = ".ass";
-                    break;
-                case "text/vtt":
-                    ext = ".vtt";
-                    break;
-                case "application/x-subrip":
-                    ext = ".srt";
-                    break;
-                case "text/lrc":
-                    ext = ".lrc";
-                    break;
-            }
-            String filename = name + (name.toLowerCase().endsWith(ext) ? "" : ext);
-            url += "#" + mController.encodeUrl(filename);
-        }
-        playSubtitle = url;
-    } catch (Throwable th) {
-        // 异常处理
-    }
-}
-                        subtitleCacheKey = info.optString("subtKey", null);
-                        String playUrl = info.optString("playUrl", "");
-                        String msg = info.optString("msg", "");
-                        if(!msg.isEmpty()){
-                            App.showToastShort(mContext, msg);
-                        }
-                        String flag = info.optString("flag");
-                        String url = info.getString("url");
-                        if(url.startsWith("[")){
-                            url=mController.firstUrlByArray(url);
-                        }
-                        HashMap<String, String> headers = null;
-                        webUserAgent = null;
-                        webHeaderMap = null;
-                        if (info.has("header")) {
-                            try {
-                                JSONObject hds = new JSONObject(info.getString("header"));
-                                Iterator<String> keys = hds.keys();
-                                while (keys.hasNext()) {
-                                    String key = keys.next();
-                                    if (headers == null) {
-                                        headers = new HashMap<>();
-                                    }
-                                    headers.put(key, hds.getString(key));
-                                    if (key.equalsIgnoreCase("user-agent")) {
-                                        webUserAgent = hds.getString(key).trim();
-                                    }
-                                }
-                                webHeaderMap = headers;
-                            } catch (Throwable th) {
-
-                            }
-                        }
-                        if (parse || jx) {
-                            boolean userJxList = (playUrl.isEmpty() && ApiConfig.get().getVipParseFlags().contains(flag)) || jx;
-                            initParse(flag, userJxList, playUrl, url);
-                        } else {
-                            mController.showParse(false);
-                            playUrl(playUrl + url, headers);
-                        }
-                    } catch (Throwable th) {
-//                        errorWithRetry("获取播放信息错误", true);
-//                        Toast.makeText(mContext, "获取播放信息错误1", Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                  //   获取播放信息错误后只需再重试一次
-                    errorWithRetry("获取播放信息错误", true);
-//                    Toast.makeText(mContext, "获取播放信息错误", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-    }
-
-    public void setData(Bundle bundle) {
-//        mVodInfo = (VodInfo) bundle.getSerializable("VodInfo");
-        mVodInfo = App.getInstance().getVodInfo();
-        sourceKey = bundle.getString("sourceKey");
-        sourceBean = ApiConfig.get().getSource(sourceKey);
-        initPlayerCfg();
-        play(false);
-    }
-
-    private void initData() {
-        /*Intent intent = getIntent();
-        if (intent != null && intent.getExtras() != null) {
-
-        }*/
-    }
-
-    void initPlayerCfg() {
-        try {
-            mVodPlayerCfg = new JSONObject(mVodInfo.playerCfg);
-        } catch (Throwable th) {
-            mVodPlayerCfg = new JSONObject();
-        }
-        try {
-            if (!mVodPlayerCfg.has("pl")) {
-                mVodPlayerCfg.put("pl", (sourceBean.getPlayerType() == -1) ? (int)Hawk.get(HawkConfig.PLAY_TYPE, 1) : sourceBean.getPlayerType());
-            }
-            if (!mVodPlayerCfg.has("pr")) {
-                mVodPlayerCfg.put("pr", Hawk.get(HawkConfig.PLAY_RENDER, 0));
-            }
-            if (!mVodPlayerCfg.has("music")) {    //xuameng音频柱状图
-                mVodPlayerCfg.put("music", Hawk.get(HawkConfig.VOD_MUSIC_ANIMATION, false));
-            }
-            if (!mVodPlayerCfg.has("exocode")) {    //xuameng exo解码
-                mVodPlayerCfg.put("exocode", 0);    //xuameng默认选择，大于0为选择
-                Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 0);  // 大于0为选择
-            }
-            if (!mVodPlayerCfg.has("ijk")) {
-                mVodPlayerCfg.put("ijk", Hawk.get(HawkConfig.IJK_CODEC, ""));
-            }
-            if (!mVodPlayerCfg.has("sc")) {
-                mVodPlayerCfg.put("sc", Hawk.get(HawkConfig.PLAY_SCALE, 0));
-            }
-            if (!mVodPlayerCfg.has("sp")) {
-                mVodPlayerCfg.put("sp", 1.0f);
-            }
-            if (!mVodPlayerCfg.has("st")) {
-                mVodPlayerCfg.put("st", 0);
-            }
-            if (!mVodPlayerCfg.has("et")) {
-                mVodPlayerCfg.put("et", 0);
-            }
-        } catch (Throwable th) {
-
-        }
-        mController.setPlayerConfig(mVodPlayerCfg);
-    }
-
-    public boolean onBackPressed() {
-        App.HideToast();
-        int requestedOrientation = requireActivity().getRequestedOrientation();
-        if (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT) {
-            requireActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
-            mController.mLandscapePortraitBtn.setText("竖屏");
-        }
-        if (mController.onBackPressed()) {
-            return true;
-        }
-        return false;
-    }
-
-    public boolean dispatchKeyEvent(KeyEvent event) {
-        if (event != null) {
-            if (mController.onKeyEvent(event)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (event !=null) {
-            if (mController.onKeyDown(keyCode,event)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean onKeyUp(int keyCode, KeyEvent event) {
-        if (event !=null) {
-            if (mController.onKeyUp(keyCode,event)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (mVideoView != null) {
-            mVideoView.pause();
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (mVideoView != null) {
-            mVideoView.resume();
-        }
-    }
-
-    @Override
-    public void onHiddenChanged(boolean hidden) {
-        if (hidden) {
-            if (mVideoView != null) {
-                mVideoView.pause();
-            }
-        } else {
-            if (mVideoView != null) {
-                mVideoView.resume();
-            }
-        }
-        super.onHiddenChanged(hidden);
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        EventBus.getDefault().unregister(this);
-        if (mVideoView != null) {
-            mVideoView.release();
-            mVideoView = null;
-        }
-        ClearOtherCache();
-        stopLoadWebView(true);
-        stopParse();
-    }
-
-    private VodInfo mVodInfo;
-    private JSONObject mVodPlayerCfg;
-    private String sourceKey;
-    private SourceBean sourceBean;
-
-    private void playNext(boolean isProgress) {
-        boolean hasNext;
-        if (mVodInfo == null || mVodInfo.seriesMap.get(mVodInfo.playFlag) == null) {
-            hasNext = false;
-        } else {
-            hasNext = mVodInfo.playIndex + 1 < mVodInfo.seriesMap.get(mVodInfo.playFlag).size();
-        }
-        if (!hasNext) {
-            if(isProgress && mVodInfo!= null){
-                mVodInfo.playIndex=0;
-                App.showToastShort(mContext, "已经是最后一集了！即将跳到第一集继续播放！");
-            }else {
-                App.showToastShort(mContext, "已经是最后一集了！");
-                return;
-            }
-        }else {
-            mVodInfo.playIndex++;
-        }
-        play(false);
-    }
-
-    private void playPrevious() {
-        boolean hasPre = true;
-        if (mVodInfo == null || mVodInfo.seriesMap.get(mVodInfo.playFlag) == null) {
-            hasPre = false;
-        } else {
-            hasPre = mVodInfo.playIndex - 1 >= 0;
-        }
-        if (!hasPre) {
-            App.showToastShort(mContext, "已经是第一集了！");
-            return;
-        }
-        mVodInfo.playIndex--;
-        play(false);
-    }
-
-    private int autoRetryCount = 0;
-    private long lastRetryTime = 0; // 记录上次调用时间（毫秒）  //xuameng新增
-
-    boolean autoRetry() {
-        boolean exoCode=Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false); //xuameng EXO默认设置解码
-        boolean switchCode=Hawk.get(HawkConfig.VOD_SWITCHDECODE, false); //xuameng 解码切换
-        boolean switchPlayer=Hawk.get(HawkConfig.VOD_SWITCHPLAYER, true); //xuameng 播放器切换
-        int exoSelect = Hawk.get(HawkConfig.EXO_PLAY_SELECTCODE, 0);  //xuameng exo解码动态选择
-        long currentTime = System.currentTimeMillis();
-        int playerType = 0;   //xuameng默认播放器类型
-        if (selectExoTrack){    //xuameng如果是EXO在选择音轨就重置次数
-            autoRetryCount = 0;
-            mRetryCountExo = 0;  //xuameng播放出错计数器重置
-            mRetryCountIjk = 0;
-            selectExoTrack = false;
-        }
-        try {
-            if (mVodPlayerCfg.has("pl")) {
-                playerType = mVodPlayerCfg.getInt("pl");     //xuameng 获取播放器类型
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        // 如果距离上次重试超过 30 秒（30000 毫秒），重置重试次数
-        if (currentTime - lastRetryTime > 30_000) {
-            LOG.i("echo-reset-autoRetryCount");
-            autoRetryCount = 0;
-            mRetryCountExo = 0;  //xuameng播放出错计数器重置
-            mRetryCountIjk = 0;
-            mRetryCountJP = 0;
-        }
-        lastRetryTime = currentTime;  // 更新上次调用时间
-        if (loadFoundVideoUrls != null && !loadFoundVideoUrls.isEmpty()) {
-            autoRetryFromLoadFoundVideoUrls();
-            return true;
-        }
-        if (autoRetryCount <= 1) {
-            if (isJianpian && mRetryCountJP < MAX_RETRIES){
-                String CachePath = FileUtils.getCachePath();     //xuameng 清空缓存
-                File CachePathDir = new File(CachePath); 
-                new Thread(() -> {
-                    try {
-                        if(CachePathDir.exists())FileUtils.cleanDirectory(CachePathDir);
-                    } catch (Exception e) {
+                        mPlayerConfig.put("exocode", 2);
+                        Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 2);
+                    } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                }).start();
-                App.showToastShort(mContext, "播放失败！立即清空缓存！重试！");
-                new Handler().postDelayed(new Runnable() {
-                @Override
-                    public void run() {
-                       play(false);
-                       mRetryCountJP++;
+                }else if(exoselect == 2) {
+                    try {
+                        mPlayerConfig.put("exocode", 1);
+                        Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 1);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                }, 400);
+                }
+                updatePlayerCfgView();
+                listener.updatePlayerCfg();
+                listener.replay(false);
+            }
+        });
+
+        mxuPlay.setOnFocusChangeListener(new View.OnFocusChangeListener() { //XUAMENG播放键预选取消SEEKBAR进度
+            @Override //xuameng进入SEEKBAR
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus) {
+                    isSEEKBAR = false; //xuameng进入SEEKBAR
+                }
+            }
+        });
+        mPreBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 300 || isAnimation || isDisplay) { //xuameng 防播放打断动画
+                    return;
+                }
+                DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
+                FastClickCheckUtil.check(view);
+                if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
+                    hideBottomXu();
+                }
+                listener.playPre();
+            }
+        });
+        mPlayerScaleBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                myHandle.removeCallbacks(myRunnable);
+                myHandle.postDelayed(myRunnable, myHandleSeconds);
+                try {
+                    int scaleType = mPlayerConfig.getInt("sc");
+                    scaleType++;
+                    if(scaleType > 5) scaleType = 0;
+                    mPlayerConfig.put("sc", scaleType);
+                    updatePlayerCfgView();
+                    listener.updatePlayerCfg();
+                    mControlWrapper.setScreenScaleType(scaleType);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        mPlayerSpeedBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                myHandle.removeCallbacks(myRunnable);
+                myHandle.postDelayed(myRunnable, myHandleSeconds);
+                try {
+                    float speed = (float) mPlayerConfig.getDouble("sp");
+                    speed += 0.25f;
+                    if(speed > 3) speed = 0.5f;
+                    mPlayerConfig.put("sp", speed);
+                    updatePlayerCfgView();
+                    listener.updatePlayerCfg();
+                    speed_old = speed;
+                    mControlWrapper.setSpeed(speed);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        mPlayerSpeedBtn.setOnLongClickListener(new OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                try {
+                    mPlayerConfig.put("sp", 1.0f);
+                    updatePlayerCfgView();
+                    listener.updatePlayerCfg();
+                    speed_old = 1.0f;
+                    mControlWrapper.setSpeed(1.0f);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 return true;
             }
-            if (isJianpian && mRetryCountJP >= MAX_RETRIES){
-                App.showToastShort(mContext, "荐片播放地址获取失败！");
-                mRetryCountJP = 0;
-                return false;
-            }
-            if (playerType == 1 && mRetryCountIjk < MAX_RETRIES && switchCode) {     //xuameng播放出错计数器  是否开启解码切换
+        });
+        mPlayerBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 300 || isAnimation || isDisplay) { //xuameng 防播放打断动画
+                    return;
+                }
+                DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
+                FastClickCheckUtil.check(view);
+                if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
+                    hideBottomXu();
+                }
+                myHandle.removeCallbacks(myRunnable);
+                myHandle.postDelayed(myRunnable, myHandleSeconds);
                 try {
-                    String ijk = mVodPlayerCfg.getString("ijk");
+                    int playerType = mPlayerConfig.getInt("pl");
+                    ArrayList < Integer > exsitPlayerTypes = PlayerHelper.getExistPlayerTypes();
+                    int playerTypeIdx = 0;
+                    int playerTypeSize = exsitPlayerTypes.size();
+                    for(int i = 0; i < playerTypeSize; i++) {
+                        if(playerType == exsitPlayerTypes.get(i)) {
+                            if(i == playerTypeSize - 1) {
+                                playerTypeIdx = 0;
+                            } else {
+                                playerTypeIdx = i + 1;
+                            }
+                        }
+                    }
+                    playerType = exsitPlayerTypes.get(playerTypeIdx);
+                    mPlayerConfig.put("pl", playerType);
+                    updatePlayerCfgView();
+                    listener.updatePlayerCfg();
+                    listener.replay(false);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                //xuameng不用选中焦点       mPlayerBtn.requestFocus();
+                //xuameng不用选中焦点       mPlayerBtn.requestFocusFromTouch();
+            }
+        });
+        mPlayerBtn.setOnLongClickListener(new OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                myHandle.removeCallbacks(myRunnable);
+                myHandle.postDelayed(myRunnable, myHandleSeconds);
+                FastClickCheckUtil.check(view);
+                hideBottom();
+                try {
+                    int playerType = mPlayerConfig.getInt("pl");
+                    int defaultPos = 0;
+                    ArrayList < Integer > players = PlayerHelper.getExistPlayerTypes();
+                    ArrayList < Integer > renders = new ArrayList < > ();
+                    for(int p = 0; p < players.size(); p++) {
+                        renders.add(p);
+                        if(players.get(p) == playerType) {
+                            defaultPos = p;
+                        }
+                    }
+                    SelectDialog < Integer > dialog = new SelectDialog < > (mActivity);
+                    dialog.setTip("请选择播放器");
+                    dialog.setAdapter(new SelectDialogAdapter.SelectDialogInterface < Integer > () {
+                        @Override
+                        public void click(Integer value, int pos) {
+                            try {
+                                dialog.cancel();
+                                int thisPlayType = players.get(pos);
+                                if(thisPlayType != playerType) {
+                                    mPlayerConfig.put("pl", thisPlayType);
+                                    updatePlayerCfgView();
+                                    listener.updatePlayerCfg();
+                                    listener.replay(false);
+                                    if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
+                                        hideBottomXu();
+                                    }
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                     //xuameng不用选中焦点       mPlayerBtn.requestFocus();
+                      //xuameng不用选中焦点      mPlayerBtn.requestFocusFromTouch();
+                        }
+                        @Override
+                        public String getDisplay(Integer val) {
+                            Integer playerType = players.get(val);
+                            return PlayerHelper.getPlayerName(playerType);
+                        }
+                    }, new DiffUtil.ItemCallback < Integer > () {
+                        @Override
+                        public boolean areItemsTheSame(@NonNull @NotNull Integer oldItem, @NonNull @NotNull Integer newItem) {
+                            return oldItem.intValue() == newItem.intValue();
+                        }
+                        @Override
+                        public boolean areContentsTheSame(@NonNull @NotNull Integer oldItem, @NonNull @NotNull Integer newItem) {
+                            return oldItem.intValue() == newItem.intValue();
+                        }
+                    }, renders, defaultPos);
+                    dialog.show();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                return true;
+            }
+        });
+        mPlayerIJKBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 300 || isAnimation || isDisplay) { //xuameng 防播放打断动画
+                    return;
+                }
+                DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
+                FastClickCheckUtil.check(view);
+                if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
+                    hideBottomXu();
+                }
+                myHandle.removeCallbacks(myRunnable);
+                myHandle.postDelayed(myRunnable, myHandleSeconds);
+                try {
+                    String ijk = mPlayerConfig.getString("ijk");
                     List < IJKCode > codecs = ApiConfig.get().getIjkCodes();
                     for(int i = 0; i < codecs.size(); i++) {
                         if(ijk.equals(codecs.get(i).getName())) {
@@ -1214,1084 +1187,1346 @@ if(playSubtitle.isEmpty() && info.has("subs")) {
                             break;
                         }
                     }
-                    mVodPlayerCfg.put("ijk", ijk);
-                    App.showToastShort(mContext, String.valueOf("播放出错！自动切换IJK" + ijk));
-                    mRetryCountIjk++;   //xuameng播放出错计数器
-                    mController.setPlayerConfig(mVodPlayerCfg);   //xuameng更新变更
-                    mController.updatePlayerCfg();  //xuameng更新变更
-                    play(false);
-                    return true;
-                } catch (JSONException e) {
-                      e.printStackTrace();
-                }
-            }
-            if (playerType == 2 && mRetryCountExo < MAX_RETRIES && switchCode) {     //xuameng播放出错计数器   是否开启解码切换
-                try {
-                    exoSelect = mVodPlayerCfg.getInt("exocode");  //xuameng exo解码动态选择
+                    mPlayerConfig.put("ijk", ijk);
+                    updatePlayerCfgView();
+                    listener.updatePlayerCfg();
+                    listener.replay(false);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                if (exoSelect == 1 && mRetryCountExo < MAX_RETRIES) {
-                    try {
-                        mVodPlayerCfg.put("exocode", 2);  //xuameng默认选择，大于0为选择
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 2);  // 硬解码标记存储
-                    App.showToastShort(mContext, "播放出错！自动切换EXO软解码");
-                    mRetryCountExo++;   //xuameng播放出错计数器
-                } else if (exoSelect == 2 && mRetryCountExo < MAX_RETRIES){
-                    try {
-                        mVodPlayerCfg.put("exocode", 1);  //xuameng默认选择，大于0为选择
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 1);  // 软解码标记存储
-                    App.showToastShort(mContext, "播放出错！自动切换EXO硬解码");
-                    mRetryCountExo++;   //xuameng播放出错计数器
-                } else if (exoSelect == 0 && mRetryCountExo < MAX_RETRIES){
-                    if (exoCode){
-                        try {
-                            mVodPlayerCfg.put("exocode", 1);  //xuameng默认选择，大于0为选择
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 1);  // 软解码标记存储
-                        App.showToastShort(mContext, "播放出错！自动切换EXO硬解码");
-                        mRetryCountExo++;  //xuameng播放出错计数器
-                    }else{
-                        try {
-                            mVodPlayerCfg.put("exocode", 2);  //xuameng默认选择，大于0为选择
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                              }
-                        Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 2);  // 软解码标记存储
-                        App.showToastShort(mContext, "播放出错！自动切换EXO软解码");
-                        mRetryCountExo++;  //xuameng播放出错计数器
-                    }
+                mPlayerIJKBtn.requestFocus();
+                mPlayerIJKBtn.requestFocusFromTouch();
+            }
+        });
+        //        增加播放页面片头片尾时间重置
+        mPlayerTimeResetBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FastClickCheckUtil.check(v);
+                myHandle.removeCallbacks(myRunnable);
+                myHandle.postDelayed(myRunnable, myHandleSeconds);
+                try {
+                    mPlayerConfig.put("et", 0);
+                    mPlayerConfig.put("st", 0);
+                    updatePlayerCfgView();
+                    listener.updatePlayerCfg();
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-                mController.setPlayerConfig(mVodPlayerCfg);   //xuameng更新变更
-                mController.updatePlayerCfg();  //xuameng更新变更
-                play(false);
+            }
+        });
+        mPlayerTimeStartBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                myHandle.removeCallbacks(myRunnable);
+                myHandle.postDelayed(myRunnable, myHandleSeconds);
+                try {
+                    int current = (int) mControlWrapper.getCurrentPosition();
+                    int duration = (int) mControlWrapper.getDuration();
+                    if(current > duration / 2) return;
+                    mPlayerConfig.put("st", current / 1000);
+                    updatePlayerCfgView();
+                    listener.updatePlayerCfg();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        mPlayerTimeStartBtn.setOnLongClickListener(new OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                try {
+                    mPlayerConfig.put("st", 0);
+                    updatePlayerCfgView();
+                    listener.updatePlayerCfg();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 return true;
-           }        
-           //切换播放器不占用重试次数
-           if (switchPlayer){  //xuameng是否开启播放切换
-               if(mController.switchPlayer()){
-                   autoRetryCount++;
-               }else {
-                   autoRetryCount++;
-               }
-           }else {
-               autoRetryCount++;
-           }
-           mRetryCountExo = 0;  //xuameng播放出错计数器重置
-           mRetryCountIjk = 0;	
-           play(false);
-           return true;
-        } else {
-            mRetryCountExo = 0;  //xuameng播放出错计数器重置
-            mRetryCountIjk = 0;
-            autoRetryCount = 0;
-            return false;
-        }
-    }
-
-    void autoRetryFromLoadFoundVideoUrls() {
-        String videoUrl = loadFoundVideoUrls.poll();
-        HashMap<String,String> header = loadFoundVideoUrlsHeader.get(videoUrl);
-        playUrl(videoUrl, header);
-    }
-
-    void initParseLoadFound() {
-        loadFoundCount.set(0);
-        loadFoundVideoUrls = new LinkedList<String>();
-        loadFoundVideoUrlsHeader = new HashMap<String, HashMap<String, String>>();
-    }
-
-    public void setPlayTitle(boolean show){   //XUAMENG全屏TITLE问题
-        if(show){
-            String playTitleInfo= "";
-            if(mVodInfo!=null){
-                playTitleInfo = mVodInfo.name + " " + mVodInfo.seriesMap.get(mVodInfo.playFlag).get(mVodInfo.playIndex).name;
             }
-            mController.setTitle(playTitleInfo);
-        }else {
-            mController.setTitle("聚汇影视祝您：观影愉快！");
-        }
-    }
-
-    public void play(boolean reset) {
-        if(mVodInfo==null)return;
-        isJianpian = false;
-        VodInfo.VodSeries vs = mVodInfo.seriesMap.get(mVodInfo.playFlag).get(mVodInfo.playIndex);
-        EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_REFRESH, mVodInfo.playIndex));
-        setTip("正在获取播放信息", true, false);
-        String playTitleInfo = mVodInfo.name + " " + vs.name;
-        int lengthplayTitleInfo = playTitleInfo.length();
-         if (lengthplayTitleInfo <= 7 ){
-            mController.setTitle("您正在观看影片：" + playTitleInfo);
-         }else if (lengthplayTitleInfo > 7 && lengthplayTitleInfo <= 10 ){
-             mController.setTitle("正在观看：" + playTitleInfo);
-        }else if (lengthplayTitleInfo > 10 && lengthplayTitleInfo <= 12 ){
-            mController.setTitle("影片：" + playTitleInfo);
-        }else{
-            mController.setTitle(playTitleInfo);
-        }
-        stopParse();
-        initParseLoadFound();
-//xuameng某些设备有问题        mController.stopOther();
-        if(mVideoView!= null) mVideoView.release();
-        subtitleCacheKey = mVodInfo.sourceKey + "-" + mVodInfo.id + "-" + mVodInfo.playFlag + "-" + mVodInfo.playIndex+ "-" + vs.name + "-subt";
-        progressKey = mVodInfo.sourceKey + mVodInfo.id + mVodInfo.playFlag + mVodInfo.playIndex + vs.name;
-        //重新播放清除现有进度
-        if (reset) {
-            CacheManager.delete(MD5.string2MD5(progressKey), 0);
-            CacheManager.delete(MD5.string2MD5(subtitleCacheKey), 0);
-        }
-
-        if(Jianpian.isJpUrl(vs.url)){//荐片地址特殊判断
-            String jp_url= vs.url;
-            mController.showParse(false);
-            if(vs.url.startsWith("tvbox-xg:")){
-                playUrl(Jianpian.JPUrlDec(jp_url.substring(9)), null);
-                isJianpian = true;
-            }else {
-                playUrl(Jianpian.JPUrlDec(jp_url), null);
-                isJianpian = true;
-            }
-            return;
-        }
-
-        if (Thunder.play(vs.url, new Thunder.ThunderCallback() {
+        });
+        mPlayerTimeSkipBtn.setOnClickListener(new OnClickListener() {
             @Override
-            public void status(int code, String info) {
-                if (code < 0) {
-                    setTip(info, false, true);
-                } else {
-                    setTip(info, true, false);
-                }
-            }
-
-            @Override
-            public void list(Map<Integer, String> urlMap) {
-            }
-
-            @Override
-            public void play(String url) {
-                playUrl(url, null);
-            }
-        })) {
-            mController.showParse(false);
-            return;
-        }
-        ClearOtherCache();
-        sourceViewModel.getPlay(sourceKey, mVodInfo.playFlag, progressKey, vs.url, subtitleCacheKey);
-    }
-
-    private String playSubtitle;
-    private String subtitleCacheKey;
-    private String progressKey;
-    private String parseFlag;
-    private String webUrl;
-    private String webUserAgent;
-    private HashMap<String, String > webHeaderMap;
-
-    private void initParse(String flag, boolean useParse, String playUrl, final String url) {
-        parseFlag = flag;
-        webUrl = url;
-        ParseBean parseBean = null;
-        if (useParse) {
-            parseBean = ApiConfig.get().getDefaultParse();
-            if (parseBean == null) {
-                parseBean = new ParseBean();
-                parseBean.setType(0);
-                parseBean.setUrl(playUrl);
-                mController.showParse(false);
-                App.showToastShort(mContext, "解析站点未配置，直接嗅探播放！");
-            }else{
-                mController.showParse(useParse);
-            }
-        } else {
-            if (playUrl.startsWith("json:")) {
-                parseBean = new ParseBean();
-                parseBean.setType(1);
-                parseBean.setUrl(playUrl.substring(5));
-            } else if (playUrl.startsWith("parse:")) {
-                String parseRedirect = playUrl.substring(6);
-                for (ParseBean pb : ApiConfig.get().getParseBeanList()) {
-                    if (pb.getName().equals(parseRedirect)) {
-                        parseBean = pb;
-                        break;
-                    }
-                }
-            }
-            if (parseBean == null) {
-                parseBean = new ParseBean();
-                parseBean.setType(0);
-                parseBean.setUrl(playUrl);
-            }
-        }
-        doParse(parseBean);
-    }
-
-    JSONObject jsonParse(String input, String json) throws JSONException {
-        JSONObject jsonPlayData = new JSONObject(json);
-        //小窗版解析方法改到这了  之前那个位置data解析无效
-        String url;
-        if (jsonPlayData.has("data")) {
-            url = jsonPlayData.getJSONObject("data").getString("url");
-        } else {
-            url = jsonPlayData.getString("url");
-        }
-        if (url.startsWith("//")) {
-            url = "http:" + url;
-        }
-        if (!url.startsWith("http")) {
-            return null;
-        }
-        JSONObject headers = new JSONObject();
-        String ua = jsonPlayData.optString("user-agent", "");
-        if (ua.trim().length() > 0) {
-            headers.put("User-Agent", " " + ua);
-        }
-        String referer = jsonPlayData.optString("referer", "");
-        if (referer.trim().length() > 0) {
-            headers.put("Referer", " " + referer);
-        }
-        JSONObject taskResult = new JSONObject();
-        taskResult.put("header", headers);
-        taskResult.put("url", url);
-        return taskResult;
-    }
-
-    void stopParse() {
-        mHandler.removeMessages(100);
-        stopLoadWebView(false);
-        OkGo.getInstance().cancelTag("json_jx");
-        if (parseThreadPool != null) {
-            try {
-                parseThreadPool.shutdown();
-                parseThreadPool = null;
-            } catch (Throwable th) {
-                th.printStackTrace();
-            }
-        }
-    }
-
-    ExecutorService parseThreadPool;
-
-    private void doParse(ParseBean pb) {
-        stopParse();
-        initParseLoadFound();
-        mVideoView.release();            //XUAMENG修复嗅探换源闪退
-        if (pb.getType() == 4) {
-            parseMix(pb,true);
-        }
-        else if (pb.getType() == 0) {
-            setTip("正在嗅探播放地址", true, false);
-            mHandler.removeMessages(100);
-            mHandler.sendEmptyMessageDelayed(100, 20 * 1000);
-            if(pb.getExt()!= null){
-                // 解析ext
+            public void onClick(View view) {
+                myHandle.removeCallbacks(myRunnable);
+                myHandle.postDelayed(myRunnable, myHandleSeconds);
                 try {
-                    HashMap<String, String> reqHeaders = new HashMap<>();
-                    JSONObject jsonObject = new JSONObject(pb.getExt());
-                    if (jsonObject.has("header")) {
-                        JSONObject headerJson = jsonObject.optJSONObject("header");
-                        Iterator<String> keys = headerJson.keys();
-                        while (keys.hasNext()) {
-                            String key = keys.next();
-                            if (key.equalsIgnoreCase("user-agent")) {
-                                webUserAgent = headerJson.getString(key).trim();
-                            }else {
-                                reqHeaders.put(key, headerJson.optString(key, ""));
-                            }
-                        }
-                        if(reqHeaders.size()>0)webHeaderMap = reqHeaders;
-                    }
-                } catch (Throwable e) {
+                    int current = (int) mControlWrapper.getCurrentPosition();
+                    int duration = (int) mControlWrapper.getDuration();
+                    if(current < duration / 2  || duration <= 1) return;     //xuameng 防止负数BUG
+                    mPlayerConfig.put("et", (duration - current) / 1000);
+                    updatePlayerCfgView();
+                    listener.updatePlayerCfg();
+                } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
-            loadWebView(pb.getUrl() + webUrl);
-
-        } else if (pb.getType() == 1) { // json 解析
-            setTip("正在解析播放地址", true, false);
-            // 解析ext
-            HttpHeaders reqHeaders = new HttpHeaders();
-            try {
-                JSONObject jsonObject = new JSONObject(pb.getExt());
-                if (jsonObject.has("header")) {
-                    JSONObject headerJson = jsonObject.optJSONObject("header");
-                    Iterator<String> keys = headerJson.keys();
-                    while (keys.hasNext()) {
-                        String key = keys.next();
-                        reqHeaders.put(key, headerJson.optString(key, ""));
-                    }
+        });
+        mPlayerTimeSkipBtn.setOnLongClickListener(new OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                try {
+                    mPlayerConfig.put("et", 0);
+                    updatePlayerCfgView();
+                    listener.updatePlayerCfg();
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-            } catch (Throwable e) {
+                return true;
+            }
+        });
+        mZimuBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FastClickCheckUtil.check(view);
+                listener.selectSubtitle();
+                if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
+                    hideBottom();
+                }
+            }
+        });
+        mZimuBtn.setOnLongClickListener(new OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                FastClickCheckUtil.check(view); //xuameng 防播放打断动画
+                isLongClick = true;
+                if (HawkConfig.exoSubtitle){      //xuameng 打开关闭exo内置方法字幕
+                    if(mExoSubtitleView.getVisibility() == View.GONE) {
+                        if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
+                            hideBottom();
+                        }
+                        mExoSubtitleView.setVisibility(VISIBLE);
+                        App.showToastShort(getContext(), "字幕已开启！");
+                    } else if(mExoSubtitleView.getVisibility() == View.VISIBLE) {
+                        if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
+                            hideBottom();
+                        }
+                        mExoSubtitleView.setVisibility(View.GONE);
+                        App.showToastShort(getContext(), "字幕已关闭！");
+                    }
+                    return true;
+                }
+
+                if(mSubtitleView.getVisibility() == View.GONE) {  //xuameng 打开关闭外置方法字幕
+                    if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
+                        hideBottom();
+                    }
+                    mSubtitleView.setVisibility(VISIBLE);
+                    App.showToastShort(getContext(), "字幕已开启！");
+                } else if(mSubtitleView.getVisibility() == View.VISIBLE) {
+                    if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
+                        hideBottom();
+                    }
+                    mSubtitleView.setVisibility(View.GONE);
+                    //                  mSubtitleView.destroy();
+                    //                  mSubtitleView.clearSubtitleCache();
+                    //                  mSubtitleView.isInternal = false;
+                    App.showToastShort(getContext(), "字幕已关闭！");
+                }
+                return true;
+            }
+        });
+        mAudioTrackBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FastClickCheckUtil.check(view);
+                listener.selectAudioTrack();
+                if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
+                    hideBottom();
+                }
+            }
+        });
+        mLandscapePortraitBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FastClickCheckUtil.check(view);
+                setLandscapePortrait();
+                if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
+                    hideBottom();
+                }
+            }
+        });
+        mxuPlay.setNextFocusRightId(R.id.seekBar); //xuameng底部菜单播放右键是进度条
+        mSeekBar.setNextFocusLeftId(R.id.mxuplay); //xuameng底部菜单进度条左键是播放
+        mNextBtn.setNextFocusLeftId(R.id.audio_track_select); //xuameng底部菜单下一集左键是音轨
+        mxuPlay.setNextFocusLeftId(R.id.seekBar); //xuameng底部菜单播放左键是进度条
+        mxuPlay.setNextFocusDownId(R.id.play_next); //xuameng底部菜单所有键上键都是播放
+        mSeekBar.setNextFocusDownId(R.id.play_next);
+        mNextBtn.setNextFocusUpId(R.id.mxuplay);
+        mPreBtn.setNextFocusUpId(R.id.mxuplay);
+        mPlayerRetry.setNextFocusUpId(R.id.mxuplay);
+        mPlayrefresh.setNextFocusUpId(R.id.mxuplay);
+        mPlayerScaleBtn.setNextFocusUpId(R.id.mxuplay);
+        mPlayerSpeedBtn.setNextFocusUpId(R.id.mxuplay);
+        mPlayerBtn.setNextFocusUpId(R.id.mxuplay);
+        mPlayerIJKBtn.setNextFocusUpId(R.id.mxuplay);
+        mPlayerTimeStartEndText.setNextFocusUpId(R.id.mxuplay);
+        mPlayerTimeStartBtn.setNextFocusUpId(R.id.mxuplay);
+        mPlayerTimeSkipBtn.setNextFocusUpId(R.id.mxuplay);
+        mPlayerTimeResetBtn.setNextFocusUpId(R.id.mxuplay);
+        mZimuBtn.setNextFocusUpId(R.id.mxuplay);
+        mAudioTrackBtn.setNextFocusRightId(R.id.play_next);
+        mAudioTrackBtn.setNextFocusUpId(R.id.mxuplay); //xuameng底部菜单所有键上键都是播放完
+        mPlayrender.setNextFocusUpId(R.id.mxuplay);
+    }
+    private void hideLiveAboutBtn() {
+        if(mControlWrapper != null && mControlWrapper.getDuration() <= 1) {
+            mPlayerSpeedBtn.setVisibility(GONE);
+            mPlayerTimeStartEndText.setVisibility(GONE);
+            mPlayerTimeStartBtn.setVisibility(GONE);
+            mPlayerTimeSkipBtn.setVisibility(GONE);
+            mPlayerTimeResetBtn.setVisibility(GONE);
+            mNextBtn.setNextFocusLeftId(R.id.audio_track_select); //xuameng底部菜单下一集左键是音轨
+        } else {
+            mPlayerSpeedBtn.setVisibility(View.VISIBLE);
+            mPlayerTimeStartEndText.setVisibility(View.VISIBLE);
+            mPlayerTimeStartBtn.setVisibility(View.VISIBLE);
+            mPlayerTimeSkipBtn.setVisibility(View.VISIBLE);
+            mPlayerTimeResetBtn.setVisibility(View.VISIBLE);
+            mNextBtn.setNextFocusLeftId(R.id.audio_track_select); //xuameng底部菜单下一集左键是音轨
+        }
+    }
+    public void initLandscapePortraitBtnInfo() {
+        if(mControlWrapper != null && mActivity != null) {
+            int width = mControlWrapper.getVideoSize()[0];
+            int height = mControlWrapper.getVideoSize()[1];
+            if(width == 0 || height == 0) {
+                return;
+            }
+            double screenSqrt = ScreenUtils.getSqrt(mActivity);
+            if(screenSqrt < 10.0 && width <= height) {
+                mLandscapePortraitBtn.setVisibility(View.VISIBLE);
+                mAudioTrackBtn.setNextFocusRightId(R.id.landscape_portrait);
+                mLandscapePortraitBtn.setNextFocusRightId(R.id.play_next); //xuameng底部菜音轨右键是下一集
+                int requestedOrientation = mActivity.getRequestedOrientation(); //xuameng 横竖屏显示BUG
+                if(requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
+                    mLandscapePortraitBtn.setText("竖屏");
+                } else if(requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT) {
+                    mLandscapePortraitBtn.setText("横屏");
+                }
+            } else {
+                mLandscapePortraitBtn.setVisibility(View.GONE);
+                mAudioTrackBtn.setNextFocusRightId(R.id.play_next); //xuameng底部菜音轨右键是下一集
+            }
+        }
+    }
+    void setLandscapePortrait() {
+        int requestedOrientation = mActivity.getRequestedOrientation();
+        if(requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
+            mLandscapePortraitBtn.setText("横屏");
+            mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
+        } else if(requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT) {
+            mLandscapePortraitBtn.setText("竖屏");
+            mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+        }
+    }
+    void setLandscapePortraitXu() { //xuameng 横竖屏显示BUG
+        int requestedOrientation = mActivity.getRequestedOrientation();
+        if(requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
+            mLandscapePortraitBtn.setText("竖屏");
+        } else if(requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT) {
+            mLandscapePortraitBtn.setText("横屏");
+        }
+    }
+    void initSubtitleInfo() {
+        int subtitleTextSize = SubtitleHelper.getTextSize(mActivity);
+        mSubtitleView.setTextSize(subtitleTextSize);
+    }
+    @Override
+    protected int getLayoutId() {
+        return R.layout.player_vod_control_view;
+    }
+    public void showParse(boolean userJxList) {
+        mParseRoot.setVisibility(userJxList ? VISIBLE : GONE);
+    }
+    private JSONObject mPlayerConfig = null;
+    public void setPlayerConfig(JSONObject playerCfg) {
+        this.mPlayerConfig = playerCfg;
+        updatePlayerCfgView();
+    }
+    void updatePlayerCfgView() {
+        try {
+            musicAnimation = mPlayerConfig.getBoolean("music");   //xuameng音乐播放动画设置
+            Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 0);  // xuameng exo动态解码 大于0为选择 EXO解码恢复默认值
+            boolean exoCode=Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false); //xuameng EXO默认设置解码
+            int exoSelect = Hawk.get(HawkConfig.EXO_PLAY_SELECTCODE, 0);  //xuameng exo解码动态选择
+            exoSelect = mPlayerConfig.getInt("exocode");  //xuameng exo解码动态选择
+            int playerType = mPlayerConfig.getInt("pl");   //xuameng播放器选择
+            int pr = mPlayerConfig.getInt("pr");  //xuameng渲染选择
+            mPlayerBtn.setText(PlayerHelper.getPlayerName(playerType));
+            mPlayerScaleBtn.setText(PlayerHelper.getScaleName(mPlayerConfig.getInt("sc")));
+            mPlayerIJKBtn.setText(mPlayerConfig.getString("ijk"));
+            mPlayerIJKBtn.setVisibility(playerType == 1 ? VISIBLE : GONE);
+            mPlayerScaleBtn.setText(PlayerHelper.getScaleName(mPlayerConfig.getInt("sc")));
+            mPlayerSpeedBtn.setText("x" + mPlayerConfig.getDouble("sp"));
+            mPlayerTimeStartBtn.setText(PlayerUtils.stringForTime(mPlayerConfig.getInt("st") * 1000));
+            mPlayerTimeSkipBtn.setText(PlayerUtils.stringForTime(mPlayerConfig.getInt("et") * 1000));
+  //          mAudioTrackBtn.setVisibility((playerType == 1 || playerType == 2) ? VISIBLE : GONE);     //xuameng不判断音轨了全部显示
+            mAudioTrackBtn.setVisibility(View.VISIBLE);
+            mPlayrender.setText((pr == 0) ? "T渲染" : "S渲染"); //xuameng 渲染
+            mPlayanimation.setText(musicAnimation ? "音柱已开" : "音柱已关");  //xuameng音乐播放动画获取状态
+            if (exoSelect > 0){
+                mPlayerEXOBtn.setText(exoSelect == 1 ? "硬解码" : "软解码");  //xuameng EXO解码 
+                // xuameng EXO 动态选择解码 存储选择状态
+                if (exoSelect == 1) {
+                    Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 1);  // 硬解码标记存储
+                } else {
+                    Hawk.put(HawkConfig.EXO_PLAY_SELECTCODE, 2);  // 软解码标记存储
+                }
+            }else {
+                mPlayerEXOBtn.setText(exoCode ? "软解码" : "硬解码");  //xuameng EXO解码
+            }
+            mPlayerEXOBtn.setVisibility(playerType == 2 ? VISIBLE : GONE);  //xuameng EXO解码
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+    public void setTitle(String playTitleInfo) {
+        mPlayTitle.setText(playTitleInfo);
+        mPlayTitle1.setText(playTitleInfo);
+    }
+    public void setUrlTitle(String playTitleInfo) {
+        mPlayTitle.setText(playTitleInfo);
+    }
+    public void resetSpeed() {
+        skipEnd = true;
+        mHandler.removeMessages(1004);
+        mHandler.sendEmptyMessageDelayed(1004, 100);
+    }
+    public interface VodControlListener {
+        void playNext(boolean rmProgress);
+        void playPre();
+        void prepared();
+        void changeParse(ParseBean pb);
+        void updatePlayerCfg();
+        void replay(boolean replay);
+        void errReplay();
+        void selectSubtitle();
+        void selectAudioTrack();
+        void hideTipXu(); //xuameng隐藏错误信息
+        void startPlayUrl(String url, HashMap < String, String > headers); //xuameng广告过滤
+    }
+    public void setListener(VodControlListener listener) {
+        this.listener = listener;
+    }
+
+    public void updatePlayerCfg() {    //xuameng新增变更更新方法
+        if (listener != null) {
+            listener.updatePlayerCfg();
+        }
+    }
+
+    private VodControlListener listener;
+    private boolean skipEnd = true;
+    @Override
+    protected void setProgress(int duration, int position) {
+        if(mIsDragging) {
+            return;
+        }
+        super.setProgress(duration, position);
+        if (mLrcView != null) {
+            mLrcView.updateTime(position);
+        }
+        if(skipEnd && position != 0 && duration != 0) {
+            int et = 0;
+            try {
+                et = mPlayerConfig.getInt("et");
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
-            OkGo.<String>get(pb.getUrl() + mController.encodeUrl(webUrl))   //xuameng新增
-                    .tag("json_jx")
-                    .headers(reqHeaders)
-                    .execute(new AbsCallback<String>() {
+            if(et > 0 && position + (et * 1000) >= duration) {
+                skipEnd = false;
+                listener.playNext(true);
+            }
+        }
+        if(position < 0) position = 0; //xuameng系统播放器有时会有负进度的BUG
+        if(duration >= 1000 && duration <= 180000000) {
+            mSeekBar.setEnabled(true);
+            mSeekBar.setProgress(position); //xuameng当前进程
+            mSeekBar.setMax(duration); //xuameng设置总进程必须
+            mCurrentTime.setText(PlayerUtils.stringForTime(position)); //xuameng当前进程时间
+            mTotalTime.setText(PlayerUtils.stringForTime(duration)); //xuameng总进程时间
+        } else {
+            mSeekBar.setEnabled(false);
+            duration = 0;
+            mSeekBar.setProgress(0); //xuameng视频总长度为0重置进度条为0
+            mSeekBar.setMax(duration); //xuameng设置总进程必须
+            mCurrentTime.setText(PlayerUtils.stringForTime(position)); //xuameng当前进程时间
+            mTotalTime.setText(PlayerUtils.stringForTime(duration)); //xuameng总进程时间
+        }
+        int percent = mControlWrapper.getBufferedPercentage();
+        int totalBuffer = percent * duration;
+        int SecondaryProgress = totalBuffer / 100;
+        if(percent >= 98) {
+            mSeekBar.setSecondaryProgress(duration);
+        } else {
+            mSeekBar.setSecondaryProgress(SecondaryProgress); //xuameng缓冲进度
+        }
+    }
+    private boolean simSlideStart = false;
+    private boolean simSlideStartXu = false;
+    private int simSeekPosition = 0;
+    private long simSlideOffset = 0;
+    private long mSpeedTimeUp = 0; //xuameng上键间隔时间
+    public void tvSlideStop() {
+        int duration = (int) mControlWrapper.getDuration();
+        if(duration >= 1000 && duration <= 180000000) {
+            mIsDragging = false; //xuamengsetProgress监听
+            mControlWrapper.startProgress(); //xuameng启动进程
+            mControlWrapper.startFadeOut();
+            mSpeedTimeUp = 0;
+            if(!simSlideStart) return;
+            mControlWrapper.seekTo(simSeekPosition);
+            if(!mControlWrapper.isPlaying())
+                //xuameng快进暂停就暂停测试    mControlWrapper.start();    //测试成功，如果想暂停时快进自动播放取消注销
+                simSlideStart = false;
+            //simSeekPosition = 0;  //XUAMENG重要要不然重0播放
+            simSlideOffset = 0;
+            mHandler.sendEmptyMessageDelayed(1001, 100);   //xuamengTV隐藏快进图标
+        }
+    }
+    public void tvSlideStopXu() { //xuameng修复SEEKBAR快进重新播放问题
+        mIsDragging = false; //xuamengsetProgress监听
+        mControlWrapper.startProgress(); //xuameng启动进程
+        mControlWrapper.startFadeOut();
+        mSpeedTimeUp = 0;
+        if(!simSlideStartXu) return;
+        if(isSEEKBAR) {
+            mControlWrapper.seekTo(simSeekPosition);
+        }
+        if(!mControlWrapper.isPlaying())
+            //xuameng快进暂停就暂停测试    mControlWrapper.start();    //测试成功，如果想暂停时快进自动播放取消注销
+            simSlideStartXu = false;
+        //		simSeekPosition = 0;      //XUAMENG重要
+        simSlideOffset = 0;
+    }
+    public void tvSlideStart(int dir) {
+        int duration = (int) mControlWrapper.getDuration();
+        if(duration >= 1000 && duration <= 180000000) {
+            mIsDragging = true; //xuamengsetProgress不监听
+            mControlWrapper.stopProgress(); //xuameng结束进程
+            mControlWrapper.stopFadeOut();
+            if(!simSlideStart) {
+                simSlideStart = true;
+            }
+            // 每次10秒
+            if(mSpeedTimeUp == 0) {
+                mSpeedTimeUp = System.currentTimeMillis();
+            }
+            if(System.currentTimeMillis() - mSpeedTimeUp < 3000) {
+                simSlideOffset += (10000.0f * dir);
+            }
+            if(System.currentTimeMillis() - mSpeedTimeUp > 3000 && System.currentTimeMillis() - mSpeedTimeUp < 6000) {
+                simSlideOffset += (30000.0f * dir);
+            }
+            if(System.currentTimeMillis() - mSpeedTimeUp > 6000 && System.currentTimeMillis() - mSpeedTimeUp < 9000) {
+                simSlideOffset += (60000.0f * dir);
+            }
+            if(System.currentTimeMillis() - mSpeedTimeUp > 9000) {
+                simSlideOffset += (120000.0f * dir);
+            }
+            int currentPosition = (int) mControlWrapper.getCurrentPosition();
+            int position = (int)(simSlideOffset + currentPosition);
+            if(position > duration) position = duration;
+            if(position < 0) position = 0;
+            updateSeekUI(currentPosition, position, duration);
+            simSeekPosition = position;
+            mSeekBar.setProgress(simSeekPosition); //xuameng设置SEEKBAR当前进度
+            mCurrentTime.setText(PlayerUtils.stringForTime(simSeekPosition)); //xuameng设置SEEKBAR当前进度
+        }
+    }
+    public void tvSlideStartXu(int dir) {
+        isSEEKBAR = true;
+        mIsDragging = true; //xuamengsetProgress不监听
+        mControlWrapper.stopProgress(); //xuameng结束进程
+        mControlWrapper.stopFadeOut();
+        int duration = (int) mControlWrapper.getDuration();
+        if(!simSlideStartXu) {
+            simSlideStartXu = true;
+        }
+        // 每次10秒
+        if(mSpeedTimeUp == 0) {
+            mSpeedTimeUp = System.currentTimeMillis();
+        }
+        if(System.currentTimeMillis() - mSpeedTimeUp < 3000) {
+            simSlideOffset += (10000.0f * dir);
+        }
+        if(System.currentTimeMillis() - mSpeedTimeUp > 3000 && System.currentTimeMillis() - mSpeedTimeUp < 6000) {
+            simSlideOffset += (30000.0f * dir);
+        }
+        if(System.currentTimeMillis() - mSpeedTimeUp > 6000 && System.currentTimeMillis() - mSpeedTimeUp < 9000) {
+            simSlideOffset += (60000.0f * dir);
+        }
+        if(System.currentTimeMillis() - mSpeedTimeUp > 9000) {
+            simSlideOffset += (120000.0f * dir);
+        }
+        int currentPosition = (int) mControlWrapper.getCurrentPosition();
+        int position = (int)(simSlideOffset + currentPosition);
+        if(position > duration) position = duration;
+        if(position < 0) position = 0;
+        simSeekPosition = position;
+        mSeekBar.setProgress(simSeekPosition); //xuameng设置SEEKBAR当前进度
+        mCurrentTime.setText(PlayerUtils.stringForTime(simSeekPosition)); //xuameng设置SEEKBAR当前进度
+    }
+    @Override
+    protected void updateSeekUI(int curr, int seekTo, int duration) { //xuameng手机滑动屏幕快进
+        super.updateSeekUI(curr, seekTo, duration);
+        if(seekTo > curr) {
+            mProgressIcon.setImageResource(R.drawable.icon_prexu); //xuameng快进图标更换
+        } else {
+            mProgressIcon.setImageResource(R.drawable.icon_backxu); //xuameng快进图标更换
+        }
+        mIsDragging = false; //xuamengsetProgress监听
+        mControlWrapper.startProgress(); //xuameng启动进程 手机滑动快进时候暂停图标文字跟随变化
+        mControlWrapper.startFadeOut();
+        mProgressText.setText(PlayerUtils.stringForTime(seekTo) + " / " + PlayerUtils.stringForTime(duration));
+        mHandler.sendEmptyMessage(1000);
+        mHandler.removeMessages(1001);
+        if(!simSlideStart) {
+            mHandler.sendEmptyMessageDelayed(1001, 100);   //xuameng手机隐藏快进图标
+        }
+    }
+    @Override
+    protected void onPlayStateChanged(int playState) {
+        super.onPlayStateChanged(playState);
+        videoPlayState = playState;
+        switch(playState) {
+            case VideoView.STATE_IDLE:
+                if(isBottomVisible() && mSeekBarhasFocus) { //xuameng假如焦点在SeekBar
+                    mxuPlay.requestFocus(); //底部菜单默认焦点为播放
+                }
+                mLandscapePortraitBtn.setVisibility(View.GONE);
+                if(!isPlaying && mTvPausexu.getVisibility() == View.VISIBLE) {
+                    ObjectAnimator animator30 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0, 700); //xuameng动画暂停菜单开始
+                    animator30.setDuration(300); //xuameng动画暂停菜单
+                    animator30.addListener(new AnimatorListenerAdapter() {
                         @Override
-                        public String convertResponse(okhttp3.Response response) throws Throwable {
-                            if (response.body() != null) {
-                                return response.body().string();
-                            } else {
-                                throw new IllegalStateException("网络请求错误");
+                        public void onAnimationStart(Animator animation) {
+                            super.onAnimationStart(animation);
+                            if(mPlayPauseTimexu.getVisibility() == View.VISIBLE || mPlayTitle.getVisibility() == View.VISIBLE) {
+                                mPlayPauseTimexu.setVisibility(GONE); //xuameng隐藏上面视频名称
+                                mPlayTitle.setVisibility(GONE); //xuameng隐藏上面时间
                             }
+                            isPlaying = true; //xuameng动画开启
                         }
-
-                        @Override
-                        public void onSuccess(Response<String> response) {
-                            String json = response.body();
-                            try {
-                                JSONObject rs = jsonParse(webUrl, json);
-                                HashMap<String, String> headers = null;
-                                if (rs.has("header")) {
-                                    try {
-                                        JSONObject hds = rs.getJSONObject("header");
-                                        Iterator<String> keys = hds.keys();
-                                        while (keys.hasNext()) {
-                                            String key = keys.next();
-                                            if (headers == null) {
-                                                headers = new HashMap<>();
-                                            }
-                                            headers.put(key, hds.getString(key));
-                                        }
-                                    } catch (Throwable th) {
-
-                                    }
-                                }
-                                playUrl(rs.getString("url"), headers);
-                            } catch (Throwable e) {
-                                e.printStackTrace();
-                                errorWithRetry("解析错误", false);
-//                                setTip("解析错误", false, true);
-                            }
-                        }
-
-                        @Override
-                        public void onError(Response<String> response) {
-                            super.onError(response);
-                            errorWithRetry("解析错误", false);
-//                            setTip("解析错误", false, true);
+                        public void onAnimationEnd(Animator animation) {
+                            super.onAnimationEnd(animation);
+                            mTvPausexu.setVisibility(GONE); //xuameng动画暂停菜单隐藏 
+                            isPlaying = false; //xuameng动画开启
                         }
                     });
-        } else if (pb.getType() == 2) { // json 扩展
-            setTip("正在解析播放地址", true, false);
-            parseThreadPool = Executors.newSingleThreadExecutor();
-            LinkedHashMap<String, String> jxs = new LinkedHashMap<>();
-            for (ParseBean p : ApiConfig.get().getParseBeanList()) {
-                if (p.getType() == 1) {
-                    jxs.put(p.getName(), p.mixUrl());
+                    animator30.start(); //xuameng动画暂停菜单结束
                 }
-            }
-            parseThreadPool.execute(new Runnable() {
-                @Override
-                public void run() {
-                    JSONObject rs = ApiConfig.get().jsonExt(pb.getUrl(), jxs, webUrl);
-                    if (rs == null || !rs.has("url") || rs.optString("url").isEmpty()) {
-//                        errorWithRetry("解析错误", false);
-                        setTip("解析错误", false, true);
-                    } else {
-                        HashMap<String, String> headers = null;
-                        if (rs.has("header")) {
-                            try {
-                                JSONObject hds = rs.getJSONObject("header");
-                                Iterator<String> keys = hds.keys();
-                                while (keys.hasNext()) {
-                                    String key = keys.next();
-                                    if (headers == null) {
-                                        headers = new HashMap<>();
-                                    }
-                                    headers.put(key, hds.getString(key));
-                                }
-                            } catch (Throwable th) {
-
-                            }
+                mxuPlay.setText("准备");
+                mVideoSize.setText("[ 0 X 0 ]");
+                if(MxuamengMusic.getVisibility() == View.VISIBLE) { //xuameng播放音乐背景
+                    MxuamengMusic.setVisibility(GONE);
+                }
+                if(iv_circle_bg.getVisibility() == View.VISIBLE) { //xuameng音乐播放时图标
+                    iv_circle_bg.setVisibility(GONE);
+                }
+                if(customVisualizer.getVisibility() == View.VISIBLE) { //xuameng播放音乐柱状图
+                    customVisualizer.setVisibility(GONE);
+                }
+                releaseVisualizer();  //xuameng播放音乐背景
+                isVideoplaying = false;
+                isVideoPlay = false;
+                isBufferIng = false; //xuameng 判断是否进在缓冲视频
+                clearSubtitleCache();  //xuameng清除字幕缓存
+                break;
+            case VideoView.STATE_PLAYING:
+                initLandscapePortraitBtnInfo();
+                listener.hideTipXu(); //xuameng 只要播放就隐藏错误信息
+                startProgress();
+                mxuPlay.setText("暂停"); //xuameng底部菜单显示暂停
+                isVideoplaying = true;
+                isVideoPlay = true;
+                isBufferIng = false; //xuameng 判断是否进在缓冲视频
+                break;
+            case VideoView.STATE_PAUSED:
+                isVideoPlay = false;
+                isBufferIng = false; //xuameng 判断是否进在缓冲视频
+                mxuPlay.setText("播放"); //xuameng底部菜单显示播放
+                //mTopRoot1.setVisibility(GONE);       //xuameng隐藏上面菜单
+                //mTopRoot2.setVisibility(GONE);       //xuameng隐藏上面菜单
+                //mPlayTitle.setVisibility(VISIBLE);   //xuameng显示上面菜单
+                //pauseIngXu();
+                break;
+            case VideoView.STATE_ERROR:
+                if(isBottomVisible() && mSeekBarhasFocus) { //xuameng假如焦点在SeekBar
+                    mxuPlay.requestFocus(); //底部菜单默认焦点为播放
+                }
+                listener.errReplay();
+                isVideoPlay = false;
+                mxuPlay.setText("准备");
+                if(!isPlaying && mTvPausexu.getVisibility() == View.VISIBLE) {
+                    ObjectAnimator animator31 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0, 700); //xuameng动画暂停菜单开始
+                    animator31.setDuration(300); //xuameng动画暂停菜单
+                    animator31.addListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationStart(Animator animation) {
+                            super.onAnimationStart(animation);
+                            isPlaying = true; //xuameng动画开启
                         }
-                        if (rs.has("jxFrom")) {
-                            if(!isAdded())return;
-                            requireActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    App.showToastShort(mContext, "解析来自:" + rs.optString("jxFrom"));
-                                }
-                            });
+                        public void onAnimationEnd(Animator animation) {
+                            super.onAnimationEnd(animation);
+                            mTvPausexu.setVisibility(GONE); //xuameng动画暂停菜单隐藏 
+                            isPlaying = false; //xuameng动画开启
                         }
-                        boolean parseWV = rs.optInt("parse", 0) == 1;
-                        if (parseWV) {
-                            String wvUrl = DefaultConfig.checkReplaceProxy(rs.optString("url", ""));
-                            loadUrl(wvUrl);
-                        } else {
-                            playUrl(rs.optString("url", ""), headers);
-                        }
+                    });
+                    animator31.start(); //xuameng动画暂停菜单结束
+                }
+                break;
+            case VideoView.STATE_PREPARED:
+                mPlayLoadNetSpeed.setVisibility(GONE);
+                hideLiveAboutBtn();
+                listener.prepared();
+                String width = Integer.toString(mControlWrapper.getVideoSize()[0]);
+                String height = Integer.toString(mControlWrapper.getVideoSize()[1]);
+                mVideoSize.setText("[ " + width + " X " + height + " ]");
+                isVideoPlay = false;
+                try {
+                    musicAnimation = mPlayerConfig.getBoolean("music");  //xuameng音乐播放动画获取设置
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                if (musicAnimation){
+                    int newSessionId = mControlWrapper.getAudioSessionId();   //xuameng音乐播放动画
+                    if(newSessionId != audioSessionId) { // 避免重复初始化
+                       initVisualizer();  //xuameng音乐播放动画
                     }
                 }
-            });
-        } else if (pb.getType() == 3) { // json 聚合
-             parseMix(pb,false);
+                break;
+            case VideoView.STATE_BUFFERED:
+                mPlayLoadNetSpeed.setVisibility(GONE);
+                isVideoPlay = true;
+                isBufferIng = false; //xuameng 判断是否进在缓冲视频
+                break;
+            case VideoView.STATE_PREPARING:
+                if(isBottomVisible() && mSeekBarhasFocus) { //xuameng假如焦点在SeekBar
+                    mxuPlay.requestFocus(); //底部菜单默认焦点为播放
+                }
+                mLandscapePortraitBtn.setVisibility(View.GONE);
+                simSeekPosition = 0; //XUAMENG重要,换视频时重新记录进度
+                isVideoplaying = false;
+                isVideoPlay = false;
+            case VideoView.STATE_BUFFERING:
+			    if(mProgressRoot.getVisibility() == View.GONE) { //xuameng进程图标
+                    mPlayLoadNetSpeed.setVisibility(View.VISIBLE);
+                }
+                if(iv_circle_bg.getVisibility() == View.VISIBLE) { //xuameng音乐播放时图标
+                    iv_circle_bg.setVisibility(GONE);
+                }
+                isVideoPlay = false;
+                isBufferIng = true; //xuameng 判断是否进在缓冲视频
+                speedPlayEnd();
+                break;
+            case VideoView.STATE_PLAYBACK_COMPLETED:
+                listener.playNext(true);
+                isVideoPlay = false;
+                isBufferIng = false; //xuameng 判断是否进在缓冲视频
+                break;
         }
     }
- 
-    private void parseMix(ParseBean pb,boolean isSuper){
-        setTip("正在解析播放地址", true, false);
-        parseThreadPool = Executors.newSingleThreadExecutor();
-        LinkedHashMap<String, HashMap<String, String>> jxs = new LinkedHashMap<>();
-        LinkedHashMap<String, String> json_jxs = new LinkedHashMap<>();
-        String extendName = "";
-        for (ParseBean p : ApiConfig.get().getParseBeanList()) {
-            HashMap<String, String> data = new HashMap<String, String>();
-            data.put("url", p.getUrl());
-            if (p.getUrl().equals(pb.getUrl())) {
-                extendName = p.getName();
-            }
-            data.put("type", p.getType() + "");
-            data.put("ext", p.getExt());
-            jxs.put(p.getName(), data);
-            if (p.getType() == 1) {
-                json_jxs.put(p.getName(), p.mixUrl());
-            }
+    boolean isBottomVisible() { //xuameng底部菜单是否显示
+        return mBottomRoot.getVisibility() == VISIBLE;
+    }
+    void showBottom() {
+        isSEEKBAR = false; //XUAMENG隐藏菜单时修复进度条BUG
+        mHandler.removeMessages(1003);
+        mHandler.sendEmptyMessage(1002);
+    }
+    void hideBottom() {
+        isSEEKBAR = false; //XUAMENG隐藏菜单时修复进度条BUG
+        mHandler.removeMessages(1002);
+        mHandler.sendEmptyMessage(1003);
+    }
+    void hideBottomXu() {
+        isSEEKBAR = false; //XUAMENG隐藏菜单时修复进度条BUG
+        mHandler.removeMessages(1002);
+        mHandler.sendEmptyMessage(1005);
+    }
+    public void playIngXu() {
+        mxuPlay.setVisibility(View.VISIBLE);
+        mxuPlay.setTextColor(Color.WHITE);
+        mxuPlay.setText("暂停"); //xuameng底部菜单显示暂停
+        if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
+            hideBottom();
         }
-        String finalExtendName = extendName;
-        parseThreadPool.execute(new Runnable() {
+        ObjectAnimator animator9 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0, 700); //xuameng动画暂停菜单开始
+        animator9.setDuration(300); //xuameng动画暂停菜单
+        animator9.addListener(new AnimatorListenerAdapter() {
             @Override
-            public void run() {
-                if(isSuper){
-                    //并发执行 嗅探和json
-                    JSONObject rs = SuperParse.parse(jxs, parseFlag+"123", webUrl);
-                    if (!rs.has("url") || rs.optString("url").isEmpty()) {
-                        setTip("解析错误", false, true);
-                    } else {
-                        if (rs.has("parse") && rs.optInt("parse", 0) == 1) {
-                            if (rs.has("ua")) {
-                                webUserAgent = rs.optString("ua").trim();
-                            }
-                            setTip("聚汇超级解析中", true, false);
-
-                            if(!isAdded())return;
-                            requireActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    String mixParseUrl = DefaultConfig.checkReplaceProxy(rs.optString("url", ""));
-                                    stopParse();
-                                    mHandler.removeMessages(100);
-                                    mHandler.sendEmptyMessageDelayed(100, 20 * 1000);
-                                    loadWebView(mixParseUrl);
-                                }
-                            });
-                            parseThreadPool.execute(new Runnable() {
-                                @Override
-                                public void run() {
-                                    JSONObject res = SuperParse.doJsonJx(webUrl);
-                                    rsJsonJX(res, true);
-                                }
-                            });
-                        } else {
-                            rsJsonJX(rs,false);
-                        }
-                    }
-                }else {
-                    JSONObject rs = ApiConfig.get().jsonExtMix(parseFlag + "111", pb.getUrl(), finalExtendName, jxs, webUrl);
-                    if (rs == null || !rs.has("url") || rs.optString("url").isEmpty()) {
-//                        errorWithRetry("解析错误", false);
-                        setTip("解析错误", false, true);
-                    } else {
-                        if (rs.has("parse") && rs.optInt("parse", 0) == 1) {
-                            if (rs.has("ua")) {
-                                webUserAgent = rs.optString("ua").trim();
-                            }
-                            if(!isAdded())return;
-                            requireActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    String mixParseUrl = DefaultConfig.checkReplaceProxy(rs.optString("url", ""));
-                                    stopParse();
-                                    setTip("正在嗅探播放地址", true, false);
-                                    mHandler.removeMessages(100);
-                                    mHandler.sendEmptyMessageDelayed(100, 20 * 1000);
-                                    loadWebView(mixParseUrl);
-                                }
-                            });
-                        } else {
-                            rsJsonJX(rs,false);
-                        }
-                    }
-                }
+            public void onAnimationStart(Animator animation) {
+                super.onAnimationStart(animation);
+                isPlaying = true; //xuameng动画开启
+            }
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                mTvPausexu.setVisibility(GONE); //xuameng动画暂停菜单隐藏 
+                isPlaying = false; //xuameng动画开启
             }
         });
+        animator9.start(); //xuameng动画暂停菜单结束
     }
-
-    private void rsJsonJX(JSONObject rs,boolean isSuper){
-        if(isSuper){
-            if(rs==null || !rs.has("url"))return;
-            stopLoadWebView(false);
+    public void pauseIngXu() {
+        mTvPausexu.setVisibility(VISIBLE);
+        if(mBottomRoot.getVisibility() == View.GONE && !isDisplay) { //xuameng如果没显示菜单就显示
+            showBottom();
+            myHandle.postDelayed(myRunnable, myHandleSeconds);
         }
-        HashMap<String, String> headers = null;
-        if (rs.has("header")) {
+        ObjectAnimator animator8 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", 700, 0); //xuameng动画暂停菜单开始
+        animator8.setDuration(300); //xuameng动画暂停菜单
+        animator8.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                super.onAnimationStart(animation);
+                isPlaying = true; //xuameng动画开启
+            }
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                isPlaying = false; //xuameng动画开启
+            }
+        });
+        animator8.start(); //xuameng动画暂停菜单结束
+        mxuPlay.setVisibility(View.VISIBLE);
+        mxuPlay.setTextColor(Color.WHITE); //xuameng底部菜单显示播放颜色
+        mxuPlay.setText("播放"); //xuameng底部菜单显示播放
+        mPlayPauseTimexu.setVisibility(GONE); //xuameng隐藏上面时间
+        mPlayTitle.setVisibility(GONE); //xuameng隐藏上面视频名称
+    }
+    @Override
+    public boolean onKeyEvent(KeyEvent event) {
+        myHandle.removeCallbacks(myRunnable);
+        if(super.onKeyEvent(event)) {
+            return true;
+        }
+        int keyCode = event.getKeyCode();
+        int action = event.getAction();
+        if(isBottomVisible()) {
+            mHandler.removeMessages(1002);
+            //        mHandler.removeMessages(1003);      xuameng重大BUG修复
+            myHandle.postDelayed(myRunnable, myHandleSeconds);
+            return super.dispatchKeyEvent(event);
+        }
+        boolean isInPlayback = isInPlaybackState();
+        if(action == KeyEvent.ACTION_DOWN) {
+            if(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+                if(isInPlayback) {
+                    tvSlideStart(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT ? 1 : -1);
+                    return true;
+                }
+            } else if(keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
+                if((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 300 || isLongClick || isAnimation || isDisplay) { //xuameng 防播放打断动画					
+                    return true;
+                }
+                DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
+                if(isInPlayback) {
+                    if(!isDisplay || !isAnimation) {
+                        if(mControlWrapper.isPlaying()) {
+                            pauseIngXu();
+                            togglePlay();
+                            return true;
+                        }
+                        if(!mControlWrapper.isPlaying()) {
+                            playIngXu();
+                            togglePlay();
+                            return true;
+                        }
+                    }
+                    return true;
+                }
+            } else if(keyCode == KeyEvent.KEYCODE_DPAD_DOWN || keyCode == KeyEvent.KEYCODE_MENU) {
+                if((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 300 || isAnimation || isDisplay) { //xuameng 防播放打断动画					
+                    return true;
+                }
+                DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
+                if(mBottomRoot.getVisibility() == View.GONE && !isDisplay) {
+                    showBottom();
+                    myHandle.postDelayed(myRunnable, myHandleSeconds);
+                    return true;
+                }
+            }
+        } else if(action == KeyEvent.ACTION_UP) {
+            if(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+                if(isInPlayback) {
+                    tvSlideStop();
+                    return true;
+                }
+            } else if(keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
+                isLongClick = false;
+            }
+        }
+        return super.dispatchKeyEvent(event);
+    }
+    private boolean fromLongPress;
+    private float speed_old = 1.0f;
+    private void speedPlayStart() {
+        if(isVideoPlay && mControlWrapper.isPlaying()) {
+            fromLongPress = true;
             try {
-                JSONObject hds = rs.getJSONObject("header");
-                Iterator<String> keys = hds.keys();
-                while (keys.hasNext()) {
-                    String key = keys.next();
-                    if (headers == null) {
-                        headers = new HashMap<>();
-                    }
-                    headers.put(key, hds.getString(key));
+                speed_old = (float) mPlayerConfig.getDouble("sp");
+                float speed = 3.0f;
+                mPlayerConfig.put("sp", speed);
+                updatePlayerCfgView();
+                listener.updatePlayerCfg();
+                mControlWrapper.setSpeed(speed);
+                if(iv_circle_bg.getVisibility() == View.VISIBLE) { //xuameng音乐播放时图标
+                    iv_circle_bg.setVisibility(GONE);
                 }
-            } catch (Throwable th) {
-                th.printStackTrace();
+                if(mProgressRoot.getVisibility() == View.VISIBLE) { //xuameng进程图标
+                    mProgressRoot.setVisibility(GONE);
+                }
+                findViewById(R.id.play_speed_3_container).setVisibility(View.VISIBLE);
+            } catch (JSONException f) {
+                f.printStackTrace();
             }
         }
-        if (rs.has("jxFrom")) {
-            if(!isAdded())return;
-            requireActivity().runOnUiThread(new Runnable() {
+    }
+    private void speedPlayEnd() {
+        if(fromLongPress) {
+            fromLongPress = false;
+            try {
+                float speed = speed_old;
+                mPlayerConfig.put("sp", speed);
+                updatePlayerCfgView();
+                listener.updatePlayerCfg();
+                mControlWrapper.setSpeed(speed);
+            } catch (JSONException f) {
+                f.printStackTrace();
+            }
+            findViewById(R.id.play_speed_3_container).setVisibility(View.GONE);
+        }
+    }
+    @Override
+    public void onLongPress(MotionEvent e) {
+        speedPlayStart();
+    }
+    @SuppressLint("ClickableViewAccessibility")
+    @Override
+    public boolean onTouchEvent(MotionEvent e) {
+        if(e.getAction() == MotionEvent.ACTION_UP) {
+            speedPlayEnd();
+        }
+        return super.onTouchEvent(e);
+    }
+    private final Handler mmHandler = new Handler();
+    private Runnable mLongPressRunnable;
+    private static final long LONG_PRESS_DELAY = 300;
+    private boolean setMinPlayTimeChange(String typeEt, boolean increase) { //xuameng微调片头片尾
+        myHandle.removeCallbacks(myRunnable);
+        myHandle.postDelayed(myRunnable, myHandleSeconds);
+        try {
+            int currentValue = mPlayerConfig.optInt(typeEt, 0);
+            if(currentValue != 0) {
+                int newValue = increase ? currentValue + 1 : currentValue - 1;
+                if(newValue < 0) {
+                    newValue = 0;
+                }
+                mPlayerConfig.put(typeEt, newValue);
+                updatePlayerCfgView();
+                listener.updatePlayerCfg();
+                return true;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(isBottomVisible()) {
+            if(keyCode == KeyEvent.KEYCODE_DPAD_UP) {
+                if(mPlayerTimeStartBtn.hasFocus()) {
+                    if(setMinPlayTimeChange("st", true)) { //xuameng微调片头片尾
+                        return true;
+                    }
+                }
+            }
+            if(keyCode == KeyEvent.KEYCODE_DPAD_DOWN) { //xuameng微调片头片尾
+                if(mPlayerTimeStartBtn.hasFocus()) {
+                    if(setMinPlayTimeChange("st", false)) return true;
+                }
+            }
+            if(keyCode == KeyEvent.KEYCODE_DPAD_UP) {
+                if(mPlayerTimeSkipBtn.hasFocus()) {
+                    if(setMinPlayTimeChange("et", true)) { //xuameng微调片头片尾
+                        return true;
+                    }
+                }
+            }
+            if(keyCode == KeyEvent.KEYCODE_DPAD_DOWN) { //xuameng微调片头片尾
+                if(mPlayerTimeSkipBtn.hasFocus()) {
+                    if(setMinPlayTimeChange("et", false)) return true;
+                }
+            }
+            return super.onKeyDown(keyCode, event);
+        }
+        if((keyCode == KeyEvent.KEYCODE_DPAD_UP) && event.getRepeatCount() == 0) {
+            mLongPressRunnable = new Runnable() {
                 @Override
                 public void run() {
-                    App.showToastShort(mContext, "解析来自:" + rs.optString("jxFrom"));
+                    speedPlayStart(); //xuameng长按上键快放
                 }
-            });
+            };
+            mmHandler.postDelayed(mLongPressRunnable, LONG_PRESS_DELAY);
+            return true;
         }
-        playUrl(rs.optString("url", ""), headers);
+        return super.onKeyDown(keyCode, event);
     }
-    // webview
-    private XWalkView mXwalkWebView;
-    private WebView mSysWebView;
-    private final Map<String, Boolean> loadedUrls = new HashMap<>();
-    private LinkedList<String> loadFoundVideoUrls = new LinkedList<>();
-    private HashMap<String, HashMap<String, String>> loadFoundVideoUrlsHeader = new HashMap<>();
-    private final AtomicInteger loadFoundCount = new AtomicInteger(0);
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if(keyCode == KeyEvent.KEYCODE_DPAD_UP) {
+            if(mLongPressRunnable != null) {
+                mmHandler.removeCallbacks(mLongPressRunnable);
+                mLongPressRunnable = null;
+            }
+            speedPlayEnd();
+        }
+        return super.onKeyUp(keyCode, event);
+    }
+    @Override
+    public boolean onSingleTapConfirmed(MotionEvent e) { //延时回调,延迟时间是 180 ms,
+        if((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 300 || isAnimation || isDisplay) { //xuameng 防止180ms内点击返回键，又会弹击菜单				
+            return false;
+        }
+        DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
+        if(isClickBackBtn) { //xuameng 罕见BUG  防止180ms内点击BackBtn键，又会弹击菜单	
+            return false;
+        }
+        myHandle.removeCallbacks(myRunnable);
+        if(mBottomRoot.getVisibility() == View.GONE && !isDisplay) {
+            showBottom();
+            // 闲置计时关闭
+            myHandle.postDelayed(myRunnable, myHandleSeconds);
+        } else {
+            if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
+                hideBottom();
+            }
+        }
+        return true;
+    }
+    @Override
+    public boolean onDoubleTap(MotionEvent e) { //xuameng双击
+        if((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 300 || isAnimation || isDisplay) { //xuameng 防播放打断动画
+            return true;
+        }
+        DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
+        if(!isLock && isInPlaybackState()) {
+            if(!isDisplay || !isAnimation) {
+                if(mControlWrapper.isPlaying()) {
+                    pauseIngXu();
+                    togglePlay();
+                    return true;
+                }
+                if(!mControlWrapper.isPlaying()) {
+                    playIngXu();
+                    togglePlay();
+                    return true;
+                }
+            }
+        }
+        return true;
+    }
+    private class LockRunnable implements Runnable {
+        @Override
+        public void run() {
+            mLockView.setVisibility(GONE);  //xuameng 必须GONE如果写成INVISIBLE在surface下会没反应
+        }
+    }
+    @Override
+    public boolean onBackPressed() {
+        if(isBottomVisible() && (System.currentTimeMillis() - DOUBLE_CLICK_TIME) < 300) { //xuameng返回键防连击1.5秒（为动画,当动画显示时）
+            DOUBLE_CLICK_TIME = System.currentTimeMillis();
+            return true;
+        }
+        if((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 300 || isAnimation || isDisplay) { //xuameng 防播放打断动画					
+            return true;
+        }
+        DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
+        if(isClickBackBtn) { //xuameng 罕见BUG
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    isClickBackBtn = false;
+                }
+            }, 300);
+            if((System.currentTimeMillis() - DOUBLE_CLICK_TIME) > 300) { //xuameng  屏幕上的返回键退出
+                DOUBLE_CLICK_TIME = System.currentTimeMillis();
+                mBottomRoot.setVisibility(GONE); //动画结束后隐藏下菜单
+                mTopRoot1.setVisibility(GONE); //动画结束后隐藏上菜单
+                mTopRoot2.setVisibility(GONE); //动画结束后隐藏上菜单
+                mPlayPauseTimexu.setVisibility(GONE); //xuameng隐藏上面时间
+                mPlayTitle.setVisibility(GONE); //xuameng隐藏上面视频名称
+                backBtn.setVisibility(GONE); //返回键隐藏菜单
+                mTvPausexu.setVisibility(GONE); //隐藏暂停菜单
+                mLockView.setVisibility(GONE); //xuameng隐藏屏幕锁
+            }
+            return false;
+        }
+        if(super.onBackPressed()) { //xuameng返回退出
+            iv_circle_bg.setVisibility(GONE); //xuameng音乐播放时图标
+            MxuamengMusic.setVisibility(GONE); //xuameng播放音乐背景
+            customVisualizer.setVisibility(GONE);  //xuameng播放音乐柱状图
+            return true;
+        }
+        if(isBottomVisible() && (System.currentTimeMillis() - DOUBLE_CLICK_TIME > 300)) { //xuameng按返回键退出
+            DOUBLE_CLICK_TIME = System.currentTimeMillis();
+            if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
+                hideBottom();
+            }
+            return true;
+        }
+        mPlayPauseTimexu.setVisibility(GONE); //xuameng隐藏上面时间
+        mPlayTitle.setVisibility(GONE); //xuameng隐藏上面视频名称
+        backBtn.setVisibility(GONE); //返回键隐藏菜单
+        mTvPausexu.setVisibility(GONE); //隐藏暂停菜单
+        mLockView.setVisibility(GONE); //xuameng隐藏屏幕锁
+        return false;
+    }
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        mHandler.removeCallbacks(myRunnable2);
+        mHandler.removeCallbacks(xuRunnable);
+        mHandler.removeCallbacks(myRunnableMusic);
+        mHandler.removeCallbacks(myRunnableXu);
+        if(mHandler != null) {
+            mHandler.removeCallbacksAndMessages(null);
+        }
+        releaseVisualizer();  //xuameng音乐播放动画
+    }
+    //尝试去bom
+    public String getWebPlayUrlIfNeeded(String webPlayUrl) {
+        if(webPlayUrl != null && !webPlayUrl.contains("127.0.0.1:9978") && webPlayUrl.contains(".m3u8")) {
+            try {
+                String urlEncode = URLEncoder.encode(webPlayUrl, "UTF-8");
+                LOG.i("echo-BOM-------");
+                return ControlManager.get().getAddress(true) + "proxy?go=bom&url=" + urlEncode;
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+        }
+        return webPlayUrl;
+    }
+    public String encodeUrl(String url) {
+        try {
+            return URLEncoder.encode(url, "UTF-8");
+        } catch (Exception e) {
+            return url;
+        }
+    }
+    private static int switchPlayerCount = 0;
+    public boolean switchPlayer() {
+        try {
+            int playerType = mPlayerConfig.getInt("pl");
+            int p_type = (playerType == 1) ? playerType + 1 : (playerType == 2) ? playerType - 1 : playerType;
+            if(p_type != playerType) {
+                mPlayerConfig.put("pl", p_type);
+                updatePlayerCfgView();
+                listener.updatePlayerCfg();
+                App.showToastShort(getContext(), "切换到" + (p_type == 1 ? "IJK" : "EXO") + "播放器重试！");
+            } else {
+                return true;
+            }
+        } catch (Exception e) {
+            return true;
+        }
+        if(switchPlayerCount == 1) {
+            switchPlayerCount = 0;
+            return true;
+        }
+        switchPlayerCount++;
+        return false;
+    }
+    public void playM3u8(final String url, final HashMap < String, String > headers) {
+        if(url.contains("url=")) {
+            listener.startPlayUrl(url, headers);
+            return;
+        }
+        OkGo.getInstance().cancelTag("m3u8-1");
+        OkGo.getInstance().cancelTag("m3u8-2");
+        final HttpHeaders okGoHeaders = new HttpHeaders();
+        if(headers != null) {
+            for(Map.Entry < String, String > entry: headers.entrySet()) {
+                okGoHeaders.put(entry.getKey(), entry.getValue());
+            }
+        }
+        OkGo. < String > get(url).tag("m3u8-1").headers(okGoHeaders).execute(new AbsCallback < String > () {
+            @Override
+            public void onSuccess(Response < String > response) {
+                String content = response.body();
+                if(!content.startsWith("#EXTM3U")) {
+                    listener.startPlayUrl(url, headers);
+                    return;
+                }
+                String forwardUrl = extractForwardUrl(url, content);
+                if(forwardUrl.isEmpty()) {
+                    LOG.i("echo-m3u81-to-play");
+                    processM3u8Content(url, content, headers);
+                } else {
+                    fetchAndProcessForwardUrl(forwardUrl, headers, okGoHeaders, url);
+                }
+            }
+            @Override
+            public String convertResponse(okhttp3.Response response) throws Throwable {
+                return response.body().string();
+            }
+            @Override
+            public void onError(Response < String > response) {
+                super.onError(response);
+                LOG.e("echo-m3u8请求错误1: " + response.getException());
+                listener.startPlayUrl(url, headers);
+            }
+        });
+    }
+    private String extractForwardUrl(String baseUrl, String content) {
+        String[] lines = content.split("\\r?\\n", 50);
+        for(int i = 0; i < lines.length; i++) {
+            String line = lines[i].trim();
+            if(line.startsWith("#EXT-X-STREAM-INF")) {
+                // 只需要找接下来的几行
+                for(int j = i + 1; j < lines.length; j++) {
+                    String targetLine = lines[j].trim();
+                    if(targetLine.isEmpty()) continue;
+                    if(isValidM3u8Line(targetLine)) {
+                        return resolveForwardUrl(baseUrl, targetLine);
+                    }
+                }
+            }
+        }
+        return "";
+    }
+    private boolean isValidM3u8Line(String line) {
+        return !line.startsWith("#") && (line.endsWith(".m3u8") || line.contains(".m3u8?"));
+    }
+    private void processM3u8Content(String url, String content, HashMap < String, String > headers) {
+        String basePath = getBasePath(url);
+        RemoteServer.m3u8Content = M3u8.purify(basePath, content);
+        if(RemoteServer.m3u8Content == null || M3u8.currentAdCount == 0) {
+            LOG.i("echo-m3u8内容解析：未检测到广告");
+            listener.startPlayUrl(url, headers);
+        } else {
+            listener.startPlayUrl(ControlManager.get().getAddress(true) + "proxyM3u8", headers);
+            App.showToastShort(getContext(), "聚汇影视已移除" + M3u8.currentAdCount + "条视频广告！");
+        }
+    }
+    private void fetchAndProcessForwardUrl(final String forwardUrl, final HashMap < String, String > headers, HttpHeaders okGoHeaders, final String fallbackUrl) {
+        OkGo. < String > get(forwardUrl).tag("m3u8-2").headers(okGoHeaders).execute(new AbsCallback < String > () {
+            @Override
+            public void onSuccess(Response < String > response) {
+                String content = response.body();
+                LOG.i("echo-m3u82-to-play");
+                processM3u8Content(forwardUrl, content, headers);
+            }
+            @Override
+            public String convertResponse(okhttp3.Response response) throws Throwable {
+                return response.body().string();
+            }
+            @Override
+            public void onError(Response < String > response) {
+                super.onError(response);
+                LOG.e("echo-重定向 m3u8 请求错误: " + response.getException());
+                listener.startPlayUrl(fallbackUrl, headers);
+            }
+        });
+    }
+    private String getBasePath(String url) {
+        int ilast = url.lastIndexOf('/');
+        return url.substring(0, ilast + 1);
+    }
+    private String resolveForwardUrl(String baseUrl, String line) {
+        try {
+            // 使用 URL 构造器自动解析相对路径
+            URL base = new URL(baseUrl);
+            URL resolved = new URL(base, line);
+            return resolved.toString();
+        } catch (MalformedURLException e) {
+            // 出现异常时可以记录日志，并返回原始 line
+            LOG.e("echo-resolveForwardUrl异常: " + e.getMessage());
+            return line;
+        }
+    }
+    public String firstUrlByArray(String url) //xuameng B站
+    {
+        try {
+            JSONArray urlArray = new JSONArray(url);
+            for(int i = 0; i < urlArray.length(); i++) {
+                String item = urlArray.getString(i);
+                if(item.contains("http")) {
+                    url = item;
+                    break; // 找到第一个立即终止循环
+                }
+            }
+        } catch (JSONException e) {}
+        return url;
+    }
+    public void evaluateScript(SourceBean sourceBean, String url, WebView web_view, XWalkView xWalk_view) {
+        String clickSelector = sourceBean.getClickSelector().trim();
+        clickSelector = clickSelector.isEmpty() ? VideoParseRuler.getHostScript(url) : clickSelector;
+        if(!clickSelector.isEmpty()) {
+            String selector;
+            if(clickSelector.contains(";") && !clickSelector.endsWith(";")) {
+                String[] parts = clickSelector.split(";", 2);
+                if(!url.contains(parts[0])) {
+                    return;
+                }
+                selector = parts[1].trim();
+            } else {
+                selector = clickSelector.trim();
+            }
+            // 构造点击的 JS 代码
+            String js = selector;
+            //            if(!selector.contains("click()"))js+=".click();";
+            LOG.i("echo-javascript:" + js);
+            if(web_view != null) {
+                //4.4以上才支持这种写法
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                    web_view.evaluateJavascript(js, null);
+                } else {
+                    web_view.loadUrl("javascript:" + js);
+                }
+            }
+            if(xWalk_view != null) {
+                //4.0+开始全部支持这种写法
+                xWalk_view.evaluateJavascript(js, null);
+            }
+        }
+    }
+    public void stopOther(){ //xuameng停止磁力下载
+        Thunder.stop(false); //停止磁力下载
+        Jianpian.finish(); //停止p2p下载
+        App.getInstance().setDashData(null);
+    }
 
-    void loadWebView(String url) {
-        if (mSysWebView == null && mXwalkWebView == null) {
-            boolean useSystemWebView = Hawk.get(HawkConfig.PARSE_WEBVIEW, true);
-            if (!useSystemWebView) {
-               XWalkUtils.tryUseXWalk(mContext, new XWalkUtils.XWalkState() {
-                  @Override
-                   public void success() {
-                       initWebView(false);
-                       loadUrl(url);
-                   }
+    public void clearSubtitleCache(){ //xuameng清除字幕缓存
+        mSubtitleView.setVisibility(View.GONE); //xuameng 外部方法字幕
+        mSubtitleView.destroy();
+        mSubtitleView.clearSubtitleCache();
+        mSubtitleView.onSubtitleChanged(null);
+        mSubtitleView.setVisibility(View.VISIBLE);
+        mExoSubtitleView.setVisibility(View.GONE);    //xuameng EXO内置字幕
+        mExoSubtitleView.setCues(null); // 清除字幕数据
+        mLrcContent = "";
+    }
 
-                   @Override
-                   public void fail() {
-                       App.showToastShort(mContext, "XWalkView不兼容，已替换为系统自带WebView");
-                       initWebView(true);
-                       loadUrl(url);
-                   }
-
+    private void initVisualizer() {   //xuameng播放音乐柱状图
+        releaseVisualizer();  // 确保先释放已有实例
+        // 基础检查
+        if (getContext() == null) {
+            Log.w(TAG, "Context is null");
+            return;
+        }
+        int sessionId = mControlWrapper != null ? mControlWrapper.getAudioSessionId() : 0;
+        if (sessionId <= 0) {
+            Log.w(TAG, "Invalid audio session ID");
+            return;
+        }
+        try {
+        // 统一创建Visualizer实例（仅一次）
+            mVisualizer = new Visualizer(sessionId);
+            // 智能采样率设置
+            int targetRate = Visualizer.getMaxCaptureRate() / 2;
+            // 设置数据捕获监听器
+            mVisualizer.setDataCaptureListener(
+                new Visualizer.OnDataCaptureListener() {
                     @Override
-                    public void ignore() {
-                       App.showToastShort(mContext, "XWalkView运行组件未下载，已替换为系统自带WebView");
-                       initWebView(true);
-                       loadUrl(url);
-                }
-              });
-            } else {
-                initWebView(true);
-                loadUrl(url);
-            }
-        } else {
-            loadUrl(url);
-        }
-    }
-
-    void initWebView(boolean useSystemWebView) {
-        if (useSystemWebView) {
-            mSysWebView = new MyWebView(mContext);
-            configWebViewSys(mSysWebView);
-        } else {
-            mXwalkWebView = new MyXWalkView(mContext);
-            configWebViewX5(mXwalkWebView);
-        }
-    }
-
-    void loadUrl(String url) {
-        if(!isAdded())return;
-        requireActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (mXwalkWebView != null) {
-                    mXwalkWebView.stopLoading();
-                    if(webUserAgent != null) {
-                        mXwalkWebView.getSettings().setUserAgentString(webUserAgent);
+                    public void onWaveFormDataCapture(Visualizer viz, byte[] bytes, int rate) {
+                    // 可选波形数据捕获
                     }
-  //                  mXwalkWebView.clearCache(true);
-                    if(webHeaderMap != null){
-                        mXwalkWebView.loadUrl(url,webHeaderMap);
-                    }else {
-                        mXwalkWebView.loadUrl(url);
-                    }
-                }
-                if (mSysWebView != null) {
-                    mSysWebView.stopLoading();
-                    if(webUserAgent != null) {
-                        mSysWebView.getSettings().setUserAgentString(webUserAgent);
-                    }
-     //               mSysWebView.clearCache(true);
-                    if(webHeaderMap != null){
-                        mSysWebView.loadUrl(url,webHeaderMap);
-                    }else {
-                        mSysWebView.loadUrl(url);
-                    }
-                }
-            }
-        });
-    }
-
-    void stopLoadWebView(boolean destroy) {
-        if (mActivity == null) return;
-        if(!isAdded())return;
-        requireActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-
-                if (mXwalkWebView != null) {
-                    mXwalkWebView.stopLoading();
-                    mXwalkWebView.loadUrl("about:blank");
-                    if (destroy) {
-                        mXwalkWebView.clearCache(true);
-                        mXwalkWebView.removeAllViews();
-                        mXwalkWebView.onDestroy();
-                        mXwalkWebView = null;
-                    }
-                }
-                if (mSysWebView != null) {
-                    mSysWebView.stopLoading();
-                    mSysWebView.loadUrl("about:blank");
-                    if (destroy) {
-                        mSysWebView.clearCache(true);
-                        mSysWebView.removeAllViews();
-                        mSysWebView.destroy();
-                        mSysWebView = null;
-                    }
-                }
-            }
-        });
-    }
-
-    boolean checkVideoFormat(String url) {
-        try{
-            if (url.contains("url=http") || url.contains(".html")) {
-                return false;
-            }
-            if (sourceBean.getType() == 3) {
-                Spider sp = ApiConfig.get().getCSP(sourceBean);
-                if (sp != null && sp.manualVideoCheck()){
-                    return sp.isVideoFormat(url);
-                }
-            }
-            return VideoParseRuler.checkIsVideoForParse(webUrl, url);
-        }catch (Exception e){
-            return false;
-        }
-    }
-
-    class MyWebView extends WebView {
-        public MyWebView(@NonNull Context context) {
-            super(context);
-        }
-
-        @Override
-        public void setOverScrollMode(int mode) {
-            super.setOverScrollMode(mode);
-            if (mContext instanceof Activity)
-                AutoSize.autoConvertDensityOfCustomAdapt((Activity) mContext, PlayFragment.this);
-        }
-
-        @Override
-        public boolean dispatchKeyEvent(KeyEvent event) {
-            return false;
-        }
-    }
-
-    class MyXWalkView extends XWalkView {
-        public MyXWalkView(Context context) {
-            super(context);
-        }
-
-        @Override
-        public void setOverScrollMode(int mode) {
-            super.setOverScrollMode(mode);
-            if (mContext instanceof Activity)
-                AutoSize.autoConvertDensityOfCustomAdapt((Activity) mContext, PlayFragment.this);
-        }
-
-        @Override
-        public boolean dispatchKeyEvent(KeyEvent event) {
-            return false;
-        }
-    }
-
-    @SuppressLint("SetJavaScriptEnabled")
-    private void configWebViewSys(WebView webView) {
-        if (webView == null) {
-            return;
-        }
-        ViewGroup.LayoutParams layoutParams = Hawk.get(HawkConfig.DEBUG_OPEN, false)
-                ? new ViewGroup.LayoutParams(800, 400) :
-                new ViewGroup.LayoutParams(1, 1);
-        webView.setFocusable(false);
-        webView.setFocusableInTouchMode(false);
-        webView.clearFocus();
-        webView.setOverScrollMode(View.OVER_SCROLL_ALWAYS);
-        if(!isAdded())return;
-        requireActivity().addContentView(webView, layoutParams);
-        /* 添加webView配置 */
-        final WebSettings settings = webView.getSettings();
-        settings.setNeedInitialFocus(false);
-        settings.setAllowContentAccess(true);
-        settings.setAllowFileAccess(true);
-        settings.setAllowUniversalAccessFromFileURLs(true);
-        settings.setAllowFileAccessFromFileURLs(true);
-        settings.setDatabaseEnabled(true);
-        settings.setDomStorageEnabled(true);
-        settings.setJavaScriptEnabled(true);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            settings.setMediaPlaybackRequiresUserGesture(false);
-        }
-        if (Hawk.get(HawkConfig.DEBUG_OPEN, false)) {
-            settings.setBlockNetworkImage(false);
-        } else {
-            settings.setBlockNetworkImage(true);
-        }
-        settings.setUseWideViewPort(true);
-        settings.setDomStorageEnabled(true);
-        settings.setJavaScriptCanOpenWindowsAutomatically(true);
-        settings.setSupportMultipleWindows(false);
-        settings.setLoadWithOverviewMode(true);
-        settings.setBuiltInZoomControls(true);
-        settings.setSupportZoom(false);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
-        }
-//        settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
-        settings.setCacheMode(WebSettings.LOAD_DEFAULT);
-        /* 添加webView配置 */
-        //设置编码
-        settings.setDefaultTextEncodingName("utf-8");
-        settings.setUserAgentString(webView.getSettings().getUserAgentString());
-//         settings.setUserAgentString(ANDROID_UA);
-
-        webView.setWebChromeClient(new WebChromeClient() {
-            @Override
-            public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
-                return false;
-            }
-
-            @Override
-            public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
-                return true;
-            }
-
-            @Override
-            public boolean onJsConfirm(WebView view, String url, String message, JsResult result) {
-                return true;
-            }
-
-            @Override
-            public boolean onJsPrompt(WebView view, String url, String message, String defaultValue, JsPromptResult result) {
-                return true;
-            }
-        });
-        SysWebClient mSysWebClient = new SysWebClient();
-        webView.setWebViewClient(mSysWebClient);
-        webView.setBackgroundColor(Color.BLACK);
-    }
-
-    private class SysWebClient extends WebViewClient {
-
-        @SuppressLint("WebViewClientOnReceivedSslError")
-        @Override
-        public void onReceivedSslError(WebView webView, SslErrorHandler sslErrorHandler, SslError sslError) {
-            sslErrorHandler.proceed();
-        }
-
-        @Override
-        public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-            return false;
-        }
-
-        @Override
-        public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            return false;
-        }
-
-        @Override
-        public void onPageStarted(WebView view, String url, Bitmap favicon) {
-            super.onPageStarted( view,  url, favicon);
-        }
-
-        @Override
-        public void onPageFinished(WebView view, String url) {
-            super.onPageFinished(view, url);
-            LOG.i("echo-onPageFinished url:" + url);
-            if(!url.equals("about:blank")){
-                mController.evaluateScript(sourceBean,url,view,null);
-            }
-        }
-
-        WebResourceResponse checkIsVideo(String url, HashMap<String, String> headers) {
-            if (url.endsWith("/favicon.ico")) {
-                if (url.startsWith("http://127.0.0.1")) {
-                    return new WebResourceResponse("image/x-icon", "UTF-8", null);
-                }
-                return null;
-            }
-
-            boolean isFilter = VideoParseRuler.isFilter(webUrl, url);
-            if (isFilter) {
-                LOG.i( "shouldInterceptLoadRequest filter:" + url);
-                return null;
-            }
-
-            boolean ad;
-            if (!loadedUrls.containsKey(url)) {
-                ad = AdBlocker.isAd(url);
-                loadedUrls.put(url, ad);
-            } else {
-                ad = Boolean.TRUE.equals(loadedUrls.get(url));
-            }
-
-            if (!ad) {
-                if (checkVideoFormat(url)) {
-                    loadFoundVideoUrls.add(url);
-                    loadFoundVideoUrlsHeader.put(url, headers);
-                    LOG.i("echo-loadFoundVideoUrl:" + url );
-                    if (loadFoundCount.incrementAndGet() == 1) {
-                        stopLoadWebView(false);
-                        SuperParse.stopJsonJx();
-                        url = loadFoundVideoUrls.poll();
-                        mHandler.removeMessages(100);
-                        String cookie = CookieManager.getInstance().getCookie(url);
-                        if(!TextUtils.isEmpty(cookie))headers.put("Cookie", " " + cookie);//携带cookie
-                        playUrl(url, headers);
-                    }
-                }
-            }
-
-            return ad || loadFoundCount.get() > 0 ?
-                    AdBlocker.createEmptyResource() :
-                    null;
-        }
-
-        @Nullable
-        @Override
-        public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
-//            WebResourceResponse response = checkIsVideo(url, new HashMap<>());
-            return null;
-        }
-
-        @Nullable
-        @Override
-        @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-        public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
-            String url = request.getUrl().toString();
-            LOG.i("echo-shouldInterceptRequest url:" + url);
-            HashMap<String, String> webHeaders = new HashMap<>();
-            Map<String, String> hds = request.getRequestHeaders();
-            if (hds != null && hds.keySet().size() > 0) {
-                for (String k : hds.keySet()) {
-                    if (k.equalsIgnoreCase("user-agent")
-                            || k.equalsIgnoreCase("referer")
-                            || k.equalsIgnoreCase("origin")) {
-                        webHeaders.put(k," " + hds.get(k));
-                    }
-                }
-            }
-            return checkIsVideo(url, webHeaders);
-        }
-
-        @Override
-        public void onLoadResource(WebView webView, String url) {
-            super.onLoadResource(webView, url);
-        }
-    }
-
-    @SuppressLint("SetJavaScriptEnabled")
-    private void configWebViewX5(XWalkView webView) {
-        if (webView == null) {
-            return;
-        }
-        ViewGroup.LayoutParams layoutParams = Hawk.get(HawkConfig.DEBUG_OPEN, false)
-                ? new ViewGroup.LayoutParams(800, 400) :
-                new ViewGroup.LayoutParams(1, 1);
-        webView.setFocusable(false);
-        webView.setFocusableInTouchMode(false);
-        webView.clearFocus();
-        webView.setOverScrollMode(View.OVER_SCROLL_ALWAYS);
-        if(!isAdded())return;
-        requireActivity().addContentView(webView, layoutParams);
-        /* 添加webView配置 */
-        final XWalkSettings settings = webView.getSettings();
-        settings.setAllowContentAccess(true);
-        settings.setAllowFileAccess(true);
-        settings.setAllowUniversalAccessFromFileURLs(true);
-        settings.setAllowFileAccessFromFileURLs(true);
-        settings.setDatabaseEnabled(true);
-        settings.setDomStorageEnabled(true);
-        settings.setJavaScriptEnabled(true);
-
-        if (Hawk.get(HawkConfig.DEBUG_OPEN, false)) {
-            settings.setBlockNetworkImage(false);
-        } else {
-            settings.setBlockNetworkImage(true);
-        }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            settings.setMediaPlaybackRequiresUserGesture(false);
-        }
-        settings.setUseWideViewPort(true);
-        settings.setDomStorageEnabled(true);
-        settings.setJavaScriptCanOpenWindowsAutomatically(true);
-        settings.setSupportMultipleWindows(false);
-        settings.setLoadWithOverviewMode(true);
-        settings.setBuiltInZoomControls(true);
-        settings.setSupportZoom(false);
-//        settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
-        settings.setCacheMode(WebSettings.LOAD_DEFAULT);
-        // settings.setUserAgentString(ANDROID_UA);
-
-        webView.setBackgroundColor(Color.BLACK);
-        webView.setUIClient(new XWalkUIClient(webView) {
-            @Override
-            public boolean onConsoleMessage(XWalkView view, String message, int lineNumber, String sourceId, ConsoleMessageType messageType) {
-                return false;
-            }
-
-            @Override
-            public boolean onJsAlert(XWalkView view, String url, String message, XWalkJavascriptResult result) {
-                return true;
-            }
-
-            @Override
-            public boolean onJsConfirm(XWalkView view, String url, String message, XWalkJavascriptResult result) {
-                return true;
-            }
-
-            @Override
-            public boolean onJsPrompt(XWalkView view, String url, String message, String defaultValue, XWalkJavascriptResult result) {
-                return true;
-            }
-        });
-        XWalkWebClient mX5WebClient = new XWalkWebClient(webView);
-        webView.setResourceClient(mX5WebClient);
-    }
-
-    private class XWalkWebClient extends XWalkResourceClient {
-        public XWalkWebClient(XWalkView view) {
-            super(view);
-        }
-
-        @Override
-        public void onDocumentLoadedInFrame(XWalkView view, long frameId) {
-            super.onDocumentLoadedInFrame(view, frameId);
-        }
-
-        @Override
-        public void onLoadStarted(XWalkView view, String url) {
-            super.onLoadStarted(view, url);
-        }
-
-        @Override
-        public void onLoadFinished(XWalkView view, String url) {
-            super.onLoadFinished(view, url);
-            LOG.i("echo-onLoadFinished url:" + url);
-            if(!url.equals("about:blank")){
-                mController.evaluateScript(sourceBean,url,null,view);
-            }
-        }
-
-        @Override
-        public void onProgressChanged(XWalkView view, int progressInPercent) {
-            super.onProgressChanged(view, progressInPercent);
-        }
-
-        @Override
-        public XWalkWebResourceResponse shouldInterceptLoadRequest(XWalkView view, XWalkWebResourceRequest request) {
-            String url = request.getUrl().toString();
-            LOG.i("echo-shouldInterceptLoadRequest url:" + url);
-            // suppress favicon requests as we don't display them anywhere
-            if (url.endsWith("/favicon.ico")) {
-                if (url.startsWith("http://127.0.0.1")) {
-                    return createXWalkWebResourceResponse("image/x-icon", "UTF-8", null);
-                }
-                return null;
-            }
-
-            boolean isFilter = VideoParseRuler.isFilter(webUrl, url);
-            if (isFilter) {
-                LOG.i( "shouldInterceptLoadRequest filter:" + url);
-                return null;
-            }
-
-            boolean ad;
-            if (!loadedUrls.containsKey(url)) {
-                ad = AdBlocker.isAd(url);
-                loadedUrls.put(url, ad);
-            } else {
-                ad = Boolean.TRUE.equals(loadedUrls.get(url));
-            }
-            if (!ad ) {
-
-                if (checkVideoFormat(url)) {
-                    HashMap<String, String> webHeaders = new HashMap<>();
-                    Map<String, String> hds = request.getRequestHeaders();
-                    if (hds != null && hds.keySet().size() > 0) {
-                        for (String k : hds.keySet()) {
-                            if (k.equalsIgnoreCase("user-agent")
-                                    || k.equalsIgnoreCase("referer")
-                                    || k.equalsIgnoreCase("origin")) {
-                                webHeaders.put(k," " + hds.get(k));
+                    @Override
+                    public void onFftDataCapture(Visualizer visualizer, byte[] fftData, int samplingRate) {
+                        if (fftData == null || customVisualizer == null) return;
+                         // 1. 计算当前音量级别（0-1范围）
+                        float volumeLevel = calculateVolumeLevel(getContext());
+                        Runnable updateTask = () -> {
+                            try {
+                                if (customVisualizer != null) {
+                                    customVisualizer.updateVisualizer(fftData, volumeLevel);
+                                }
+                            } catch (Exception e) {
+                                Log.e(TAG, "Visualizer update error", e);
                             }
+                        };
+                        if (Looper.myLooper() == Looper.getMainLooper()) {
+                            updateTask.run();
+                        } else {
+                            new Handler(Looper.getMainLooper()).post(updateTask);
                         }
                     }
-                    loadFoundVideoUrls.add(url);
-                    loadFoundVideoUrlsHeader.put(url, webHeaders);
-                    LOG.i("echo-loadFoundVideoUrl:" + url );
-                    if (loadFoundCount.incrementAndGet() == 1) {
-                        stopLoadWebView(false);
-                        SuperParse.stopJsonJx();
-                        mHandler.removeMessages(100);
-                        url = loadFoundVideoUrls.poll();
-                        String cookie = CookieManager.getInstance().getCookie(url);
-                        if(!TextUtils.isEmpty(cookie))webHeaders.put("Cookie", " " + cookie);//携带cookie
-                        playUrl(url, webHeaders);
-                    }
-                }
-            }
-            return ad || loadFoundCount.get() > 0 ?
-                    createXWalkWebResourceResponse("text/plain", "utf-8", new ByteArrayInputStream("".getBytes())) :
-                    null;
-        }
-
-        @Override
-        public boolean shouldOverrideUrlLoading(XWalkView view, String s) {
-            return false;
-        }
-
-        @Override
-        public void onReceivedSslError(XWalkView view, ValueCallback<Boolean> callback, SslError error) {
-            callback.onReceiveValue(true);
-        }
-    }
-
-    public void ClearOtherCache() {    //xuameng清空荐片迅雷缓存
-        mController.stopOther();
-        String CachePath = FileUtils.getCachePath();     //xuameng 清空缓存
-        File CachePathDir = new File(CachePath); 
-        new Thread(() -> {
-        try {
-            if(CachePathDir.exists())FileUtils.cleanDirectory(CachePathDir);
+                },
+                targetRate,
+                false,  // 不捕获波形数据
+                true    // 捕获FFT数据
+            );
+            mVisualizer.setEnabled(true);
+        } catch (IllegalStateException e) {
+            Log.e(TAG, "Visualizer state error", e);
+            releaseVisualizer();
+        } catch (UnsupportedOperationException e) {
+            Log.e(TAG, "Device doesn't support Visualizer", e);
+            releaseVisualizer();
         } catch (Exception e) {
-              e.printStackTrace();
+            Log.e(TAG, "Visualizer init failed", e);
+            releaseVisualizer();
         }
-        }).start();
     }
+
+    private synchronized void releaseVisualizer() {   //xuameng播放音乐柱状图
+        try {
+            if (mVisualizer != null) {
+                mVisualizer.setEnabled(false);
+                mVisualizer.release();
+                mVisualizer = null;
+                Log.d(TAG, "Visualizer released successfully");
+            }
+            if (customVisualizer != null) {
+                customVisualizer.release();
+            }
+            if(customVisualizer.getVisibility() == View.VISIBLE) { //xuameng播放音乐柱状图
+                customVisualizer.setVisibility(View.GONE);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error releasing visualizer", e);
+        }
+    }
+
+    public static float calculateVolumeLevel(Context context) {  //系统音量监控
+        AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+        int currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+        int maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        
+        // 计算0-1范围的百分比
+        float volumePercent = (float) currentVolume / maxVolume;
+        
+        // 保留两位小数
+        return (float) Math.round(volumePercent * 100) / 100.0f;
+    }
+
+	    // 设置LRC歌词内容
+    public void setLrcContent(String lrcContent) {
+        mLrcContent = lrcContent;
+        if (mLrcView != null) {
+            mLrcView.setLrcText(lrcContent);
+        }
+    }
+
+public void setVideoImage(String imageUrl) {
+    if (!TextUtils.isEmpty(imageUrl)) {
+        // 显示圆形背景图片
+        if (iv_circle_bg != null) {
+            iv_circle_bg.setVisibility(View.VISIBLE);
+            // 使用图片加载库加载图片（如Glide或Picasso）
+                    Picasso.get().load(imageUrl)
+                        .placeholder(R.drawable.xumusic)   //xuameng默认的站位图
+                        .config(Bitmap.Config.RGB_565).into(iv_circle_bg); // xuameng内容空显示banner
+        }
+    } else {
+        // 隐藏图片显示
+        if (iv_circle_bg != null) {
+            iv_circle_bg.setVisibility(View.GONE);
+        }
+    }
+}
+
 }
