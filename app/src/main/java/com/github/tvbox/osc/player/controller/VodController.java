@@ -1734,7 +1734,6 @@ public class VodController extends BaseController {
                 clearSubtitleCache();  //xuameng清除字幕缓存
                 break;
             case VideoView.STATE_PLAYING:
-				startLrcSync();
                 initLandscapePortraitBtnInfo();
                 listener.hideTipXu(); //xuameng 只要播放就隐藏错误信息
                 startProgress();
@@ -1744,7 +1743,6 @@ public class VodController extends BaseController {
                 isBufferIng = false; //xuameng 判断是否进在缓冲视频
                 break;
             case VideoView.STATE_PAUSED:
-				stopLrcSync();
                 isVideoPlay = false;
                 isBufferIng = false; //xuameng 判断是否进在缓冲视频
                 mxuPlay.setText("播放"); //xuameng底部菜单显示播放
@@ -1824,7 +1822,6 @@ public class VodController extends BaseController {
                 break;
             case VideoView.STATE_PLAYBACK_COMPLETED:
                 listener.playNext(true);
-			stopLrcSync();
                 isVideoPlay = false;
                 isBufferIng = false; //xuameng 判断是否进在缓冲视频
                 break;
@@ -2512,25 +2509,4 @@ public class VodController extends BaseController {
         }
     }
 
-   // 歌词同步定时器
-    private Handler mLrcHandler = new Handler();
-    private Runnable mLrcUpdateTask = new Runnable() {
-        @Override
-        public void run() {
-            if (mVideoView != null && mVideoView.isPlaying()) {
-                long position = mVideoView.getCurrentPosition();
-                mController.updateLrcTime(position);
-                mLrcHandler.postDelayed(this, 100); // 每100ms更新一次
-            }
-        }
-    };
-    
-    private void startLrcSync() {
-        mLrcHandler.removeCallbacks(mLrcUpdateTask);
-        mLrcHandler.post(mLrcUpdateTask);
-    }
-    
-    private void stopLrcSync() {
-        mLrcHandler.removeCallbacks(mLrcUpdateTask);
-    }
 }
