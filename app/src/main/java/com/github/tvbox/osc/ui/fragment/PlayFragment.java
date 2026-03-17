@@ -866,13 +866,6 @@ if (info.has("lrc")) {
 } else {
     playSubtitle = info.optString("subt", "");
 }
-App.showToastShort(mContext, "22222222");
-    // 处理图片显示
-    if (info.has("pic")) {
-        String picUrl = "http://p2.music.126.net/tXCIFsVDK6IKcQ9YWxwOEg==/109951163523944497.jpg";
-		App.showToastShort(mContext, "http://p2.music.126.net/tXCIFsVDK6IKcQ9YWxwOEg==/109951163523944497.jpg");
-        mController.setVideoImage(picUrl);
-    }
 
 // 如果 playSubtitle 仍为空，且存在 subs 字段，则按原有逻辑处理字幕数组
 if(playSubtitle.isEmpty() && info.has("subs")) {
