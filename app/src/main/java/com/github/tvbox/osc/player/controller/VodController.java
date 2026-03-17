@@ -81,6 +81,7 @@ import android.os.Looper; //xuameng音乐播放动画
 import android.media.AudioManager;  //xuameng音乐播放动画
 
 import com.github.tvbox.osc.player.controller.LrcView;
+import android.text.TextUtils;
 
 import com.google.android.exoplayer2.ui.SubtitleView;   // 用于显示ExoPlayer内置字幕
 
@@ -2406,6 +2407,7 @@ public class VodController extends BaseController {
         mSubtitleView.setVisibility(View.VISIBLE);
         mExoSubtitleView.setVisibility(View.GONE);    //xuameng EXO内置字幕
         mExoSubtitleView.setCues(null); // 清除字幕数据
+        mLrcContent = "";
     }
 
     private void initVisualizer() {   //xuameng播放音乐柱状图
