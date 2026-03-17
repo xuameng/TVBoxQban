@@ -2518,7 +2518,7 @@ public void setVideoImage(String imageUrl) {
             iv_circle_bg.setVisibility(View.VISIBLE);
             // 使用图片加载库加载图片（如Glide或Picasso）
                     Picasso.get().load(imageUrl)
-                        .placeholder(R.drawable.app_icon)   //xuameng默认的站位图
+                        .placeholder(R.drawable.xumusic)   //xuameng默认的站位图
                         .config(Bitmap.Config.RGB_565).into(iv_circle_bg); // xuameng内容空显示banner
         }
     } else {
