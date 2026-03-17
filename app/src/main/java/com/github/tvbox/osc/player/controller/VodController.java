@@ -2509,4 +2509,22 @@ public class VodController extends BaseController {
         }
     }
 
+public void setVideoImage(String imageUrl) {
+    if (!TextUtils.isEmpty(imageUrl)) {
+        // 显示圆形背景图片
+        if (iv_circle_bg != null) {
+            iv_circle_bg.setVisibility(View.VISIBLE);
+            // 使用图片加载库加载图片（如Glide或Picasso）
+                    Picasso.get().load(imageUrl)
+                        .placeholder(R.drawable.app_icon)   //xuameng默认的站位图
+                        .config(Bitmap.Config.RGB_565).into(iv_circle_bg); // xuameng内容空显示banner
+        }
+    } else {
+        // 隐藏图片显示
+        if (iv_circle_bg != null) {
+            iv_circle_bg.setVisibility(View.GONE);
+        }
+    }
+}
+
 }
