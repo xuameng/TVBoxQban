@@ -595,7 +595,7 @@ public class VodController extends BaseController {
         mLrcView.setNormalTextSize(40);
         mLrcView.setHighlightTextSize(40);
         mLrcView.setNormalColor(Color.WHITE);
-        mLrcView.setHighlightColor(Color.YELLOW);
+        mLrcView.setHighlightColor(Color.parseColor("#FFD700"));
 
         //xuameng音乐播放时图标
         ObjectAnimator animator20 = ObjectAnimator.ofFloat(iv_circle_bg, "rotation", 360.0f);
