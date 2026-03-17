@@ -28,7 +28,7 @@
         android:layout_above="@id/visualizer_view"
         android:layout_margin="16dp"
         android:visibility="visible"
-        android:gravity="center"/>
+        android:layout_gravity="center|right"/>
 
     <LinearLayout
         android:orientation="vertical"
@@ -771,7 +771,7 @@
         android:src="@drawable/icon_unlock"
         android:paddingHorizontal="@dimen/vs_20"/>
     <ImageView
-        android:layout_gravity="center"
+        android:layout_gravity="center|left"
         android:id="@+id/iv_circle_bg"
         android:tag="music_iv_circle_bg"
         android:padding="@dimen/vs_10"
