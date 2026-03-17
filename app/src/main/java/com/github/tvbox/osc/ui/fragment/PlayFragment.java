@@ -858,7 +858,7 @@ public class PlayFragment extends BaseLazyFragment {
 if (info.has("lrc")) {
     String lrcContent = info.optString("lrc", "");
     if (!TextUtils.isEmpty(lrcContent)) {
-        playSubtitle = lrcContent;
+        mController.setLrcContent(lrcContent);
 		App.showToastShort(mContext, playSubtitle);
     } else {
         playSubtitle = info.optString("subt", "");
