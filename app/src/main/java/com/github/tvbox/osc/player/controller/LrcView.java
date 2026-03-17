@@ -49,11 +49,13 @@ public class LrcView extends View {
         mNormalPaint.setAntiAlias(true);
         mNormalPaint.setTextSize(36);
         mNormalPaint.setColor(Color.WHITE);
+        mNormalPaint.setShadowLayer(3, 1, 1, Color.BLACK);
         
         mHighlightPaint = new Paint();
         mHighlightPaint.setAntiAlias(true);
         mHighlightPaint.setTextSize(36);
         mHighlightPaint.setColor(Color.YELLOW);
+        mHighlightPaint.setShadowLayer(3, 1, 1, Color.BLACK);
         mHighlightPaint.setFakeBoldText(true);
     }
     
