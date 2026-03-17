@@ -21,6 +21,15 @@
         android:visibility="gone"
         android:layout_margin="16dp"
         android:background="@android:color/transparent"/>
+<com.github.tvbox.osc.player.controller.LrcView
+    android:id="@+id/lrc_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_above="@id/bottom_container"
+    android:layout_marginBottom="20dp"
+    android:visibility="visible"
+    android:gravity="center"/>
+
     <LinearLayout
         android:orientation="vertical"
         android:id="@+id/tv_top_l_container"
