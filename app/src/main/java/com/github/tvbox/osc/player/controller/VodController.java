@@ -472,7 +472,7 @@ public class VodController extends BaseController {
                             iv_circle_bg.setVisibility(GONE);
                         }
                     } else {
-                        if(isVideoplaying) {
+                        if(isVideoplaying && mLrcView.getVisibility() == View.GONE) {
                             iv_circle_bg.setVisibility(VISIBLE);
                         }
                     }
