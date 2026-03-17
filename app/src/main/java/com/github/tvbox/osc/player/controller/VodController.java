@@ -372,8 +372,7 @@ public class VodController extends BaseController {
     public SubtitleView mExoSubtitleView;   // 用于显示ExoPlayer内置字幕
     private static final String TAG = "VodController";  //xuameng音乐播放动画
 
-    private LrcView mLrcView;
-    private boolean mLrcVisible = false;
+    public LrcView mLrcView;
     private String mLrcContent = "";
 
     Handler myHandle;
