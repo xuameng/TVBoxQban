@@ -46,25 +46,17 @@ public class RoomDataManger {
         return new GsonBuilder().addSerializationExclusionStrategy(vodInfoStrategy).create();
     }
 
-
-
-// 在 insertVod 方法中修改保存逻辑
-public static void insertVodRecord(String sourceKey, VodInfo vodInfo) {
-    // 使用组合key：vodId + 播放源标识
-    String uniqueKey = vodInfo.id + "_" + 
-        (vodInfo.currentPlayFlag != null ? vodInfo.currentPlayFlag : sourceKey);
-    
-    VodRecord record = AppDataManager.get().getVodRecordDao().getVodRecord(uniqueKey, vodInfo.id);
-    if (record == null) {
-        record = new VodRecord();
+    public static void insertVodRecord(String sourceKey, VodInfo vodInfo) {
+        VodRecord record = AppDataManager.get().getVodRecordDao().getVodRecord(sourceKey, vodInfo.id);
+        if (record == null) {
+            record = new VodRecord();
+        }
+        record.sourceKey = sourceKey;
+        record.vodId = vodInfo.id;
+        record.updateTime = System.currentTimeMillis();
+        record.dataJson = getVodInfoGson().toJson(vodInfo);
+        AppDataManager.get().getVodRecordDao().insert(record);
     }
-    record.sourceKey = uniqueKey;  // 使用组合key
-    record.vodId = vodInfo.id;
-    record.updateTime = System.currentTimeMillis();
-    record.dataJson = getVodInfoGson().toJson(vodInfo);
-    AppDataManager.get().getVodRecordDao().insert(record);
-}
-
 
     public static VodInfo getVodInfo(String sourceKey, String vodId) {
         VodRecord record = AppDataManager.get().getVodRecordDao().getVodRecord(sourceKey, vodId);
@@ -92,7 +84,7 @@ public static void insertVodRecord(String sourceKey, VodInfo vodInfo) {
     public static List<VodInfo> getAllVodRecord(int limit) {
         int count = AppDataManager.get().getVodRecordDao().getCount();
         Integer index = Hawk.get(HawkConfig.HISTORY_NUM, 0);
-        Integer hisNum = HistoryHelper.getHisNum(index);   //xuameng 历史记录加倍，因为存储的一个副本
+        Integer hisNum = HistoryHelper.getHisNum(index) * 2;   //xuameng 历史记录加倍，因为存储的一个副本
         if ( count > hisNum ) {
             AppDataManager.get().getVodRecordDao().reserver(hisNum);
         }
