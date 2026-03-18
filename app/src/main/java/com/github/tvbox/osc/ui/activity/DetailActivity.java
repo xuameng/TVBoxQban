@@ -94,8 +94,6 @@ import android.graphics.Typeface;
 import androidx.recyclerview.widget.RecyclerView;
 import com.github.tvbox.osc.util.ImgUtilXude;   //xuameng base64图片
 import com.github.tvbox.osc.util.ImgUtil;   //xuameng base64图片
-
-import com.github.tvbox.osc.player.controller.VodController;
 /**
  * @author pj567
  * @date :2020/12/22
@@ -147,8 +145,6 @@ public class DetailActivity extends BaseActivity {
     private final ArrayList<String> seriesGroupOptions = new ArrayList<>();
     private View currentSeriesGroupView;
     private int GroupCount;
-
-    private VodController mController;
 
     @Override
     protected int getLayoutResID() {
@@ -693,6 +689,7 @@ public class DetailActivity extends BaseActivity {
             }
         //   insertVod(sourceKey, vodInfo);
             bundle.putString("sourceKey", sourceKey);
+			bundle.putString("videoPic", mVideo.pic);
 //            bundle.putSerializable("VodInfo", vodInfo);
             App.getInstance().setVodInfo(vodInfo);
             if (showPreview) {
@@ -900,7 +897,6 @@ public class DetailActivity extends BaseActivity {
                     if((mVideo.pic==null || mVideo.pic.isEmpty()) && !vod_picture.isEmpty()){    //xuameng某些网站图片部显示
                         mVideo.pic=vod_picture;
                     }
-					mController.setVideoPicUrl(mVideo.pic);
                     vodInfo.setVideo(mVideo);
                     vodInfo.sourceKey = mVideo.sourceKey;
                     sourceKey = mVideo.sourceKey;
