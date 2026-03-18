@@ -327,6 +327,8 @@ public class PlayFragment extends BaseLazyFragment {
             @Override
             public void setTextSize(int size) {
                 mController.mSubtitleView.setTextSize(size);
+        mController.mLrcView.setNormalTextSize(size);
+        mController.mLrcView.setHighlightTextSize(size);
             }
             @Override
             public void setSubtitleDelay(int milliseconds) {
