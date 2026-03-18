@@ -13,6 +13,15 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:scaleType="fitXY"/>
+    <ImageView
+        android:layout_gravity="center"
+        android:id="@+id/iv_circle_bg"
+        android:tag="music_iv_circle_bg"
+        android:padding="@dimen/vs_10"
+        android:visibility="gone"
+        android:layout_width="@dimen/vs_80"
+        android:layout_height="@dimen/vs_80"
+        android:src="@drawable/app_icon"/>
     <com.github.tvbox.osc.ui.tv.widget.MusicVisualizerView
         android:id="@+id/visualizer_view"
         android:layout_width="400mm"
@@ -769,15 +778,6 @@
         android:layout_height="@dimen/vs_80"
         android:src="@drawable/icon_unlock"
         android:paddingHorizontal="@dimen/vs_20"/>
-    <ImageView
-        android:layout_gravity="center"
-        android:id="@+id/iv_circle_bg"
-        android:tag="music_iv_circle_bg"
-        android:padding="@dimen/vs_10"
-        android:visibility="gone"
-        android:layout_width="@dimen/vs_80"
-        android:layout_height="@dimen/vs_80"
-        android:src="@drawable/app_icon"/>
     <FrameLayout
         android:layout_gravity="center"
         android:orientation="horizontal"
