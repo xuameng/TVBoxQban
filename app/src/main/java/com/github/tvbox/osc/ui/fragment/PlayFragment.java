@@ -409,12 +409,6 @@ void setSubtitleViewTextStyle(int style) {
         mController.mSubtitleView.setTextColor(subtitleColors[style]);
 		mLrcView.setHighlightColor(subtitleColors[style]);  //xuameng LRC歌词字幕 高亮颜色
         
-        // 更新按钮颜色
-        if (subtitleStyleOne != null && subtitleStyleTwo != null) {
-            // 更新按钮颜色以反映当前选中的样式
-            subtitleStyleOne.setTextColor(subtitleColors[style]);
-            subtitleStyleTwo.setTextColor(subtitleColors[(style + 1) % subtitleColors.length]);
-        }
     }
 }
 
