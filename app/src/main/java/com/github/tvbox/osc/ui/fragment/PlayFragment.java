@@ -117,6 +117,8 @@ import tv.danmaku.ijk.media.player.IjkTimedText;
 import xyz.doikki.videoplayer.player.AbstractPlayer;
 import xyz.doikki.videoplayer.player.ProgressManager;
 
+import com.github.tvbox.osc.util.SubtitleHelper;
+
 public class PlayFragment extends BaseLazyFragment {
     public MyVideoView mVideoView;  //xuameng 改成public以便被调用
     private TextView mPlayLoadTip;
@@ -420,9 +422,8 @@ void setSubtitleViewTextStyle(int style) {
         mController.mSubtitleView.setTextColor(subtitleColors[style]);
 		mController.mLrcView.setHighlightColor(subtitleColors[style]);  //xuameng LRC歌词字幕 高亮颜色
         // 更新按钮颜色
-        if (subtitleDialog != null && subtitleDialog.isShowing()) {
-            subtitleDialog.updateStyleButtons(style, subtitleColors);
-        }
+
+
         
     }
 }
