@@ -80,7 +80,7 @@ import android.util.Log; //xuameng音乐播放动画
 import android.os.Looper; //xuameng音乐播放动画
 import android.media.AudioManager;  //xuameng音乐播放动画
 
-import com.github.tvbox.osc.player.controller.LrcView;  //xuameng LRC歌词字幕
+import com.github.tvbox.osc.subtitle.LrcView;  //xuameng LRC歌词字幕
 import android.text.TextUtils;  //xuameng LRC歌词字幕
 
 import com.google.android.exoplayer2.ui.SubtitleView;   // 用于显示ExoPlayer内置字幕
@@ -466,10 +466,10 @@ public class VodController extends BaseController {
                     if(MxuamengMusic.getVisibility() == View.GONE && isVideoplaying) { //xuameng播放音乐背景
                         MxuamengMusic.setVisibility(VISIBLE);
                     }
-                    if(mLrcView.getVisibility() == View.VISIBLE) {
+                    if(mLrcView.getVisibility() == View.VISIBLE) {   //xuameng LRC歌词字幕
                         long position = mControlWrapper.getCurrentPosition();
                         if (mLrcView != null) {
-                            mLrcView.updateTime(position);
+                            mLrcView.updateTime(position);  //xuameng 刷新LRC歌词字幕
                         }
                     }
                     if(mProgressRoot.getVisibility() == View.VISIBLE || mPlayLoadNetSpeed.getVisibility() == View.VISIBLE || XuLoading.getVisibility() == View.VISIBLE || play_speed_3.getVisibility() == View.VISIBLE || mLrcView.getVisibility() == View.VISIBLE) {
@@ -592,14 +592,7 @@ public class VodController extends BaseController {
         mPlayrender = findViewById(R.id.play_render);   //xuameng渲染方式
         mPlayanimation = findViewById(R.id.play_animation);  //xuameng音柱动画
         mExoSubtitleView = findViewById(R.id.exo_subtitle_view); // 用于显示ExoPlayer内置字幕
-
         mLrcView = findViewById(R.id.lrc_view);  //xuameng LRC歌词字幕
-        //  mLrcView.setVisibility(GONE);
-        //  xuameng 设置歌词样式
-     //   mLrcView.setNormalTextSize(40);
-     //   mLrcView.setHighlightTextSize(40);
-        mLrcView.setNormalColor(Color.WHITE);
-        mLrcView.setHighlightColor(Color.parseColor("#FFD700"));
 
         //xuameng音乐播放时图标
         ObjectAnimator animator20 = ObjectAnimator.ofFloat(iv_circle_bg, "rotation", 360.0f);
@@ -1294,17 +1287,21 @@ public class VodController extends BaseController {
                 FastClickCheckUtil.check(view); //xuameng 防播放打断动画
                 isLongClick = true;
                 if (HawkConfig.exoSubtitle){      //xuameng 打开关闭exo内置方法字幕
-                    if(mExoSubtitleView.getVisibility() == View.GONE) {
+                    if(mExoSubtitleView.getVisibility() == View.GONE  && mLrcView.getVisibility() == View.GONE) {
                         if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
                             hideBottom();
                         }
                         mExoSubtitleView.setVisibility(VISIBLE);
+                        if (!TextUtils.isEmpty(mLrcContent)) {
+                            mLrcView.setVisibility(View.VISIBLE);  //xuameng LRC歌词字幕
+                        }
                         App.showToastShort(getContext(), "字幕已开启！");
-                    } else if(mExoSubtitleView.getVisibility() == View.VISIBLE) {
+                    } else {
                         if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
                             hideBottom();
                         }
                         mExoSubtitleView.setVisibility(View.GONE);
+                        mLrcView.setVisibility(View.GONE);   //xuameng LRC歌词字幕
                         App.showToastShort(getContext(), "字幕已关闭！");
                     }
                     return true;
@@ -1316,7 +1313,7 @@ public class VodController extends BaseController {
                     }
                     mSubtitleView.setVisibility(VISIBLE);
                     if (!TextUtils.isEmpty(mLrcContent)) {
-                        mLrcView.setVisibility(View.VISIBLE); 
+                        mLrcView.setVisibility(View.VISIBLE);  //xuameng LRC歌词字幕
                     }
                     App.showToastShort(getContext(), "字幕已开启！");
                 } else {
@@ -1324,7 +1321,7 @@ public class VodController extends BaseController {
                         hideBottom();
                     }
                     mSubtitleView.setVisibility(View.GONE);
-                    mLrcView.setVisibility(View.GONE); 
+                    mLrcView.setVisibility(View.GONE);  //xuameng LRC歌词字幕
                     //                  mSubtitleView.destroy();
                     //                  mSubtitleView.clearSubtitleCache();
                     //                  mSubtitleView.isInternal = false;
@@ -1438,8 +1435,10 @@ public class VodController extends BaseController {
     void initSubtitleInfo() {
         int subtitleTextSize = SubtitleHelper.getTextSize(mActivity);
         mSubtitleView.setTextSize(subtitleTextSize);
-        mLrcView.setNormalTextSize(subtitleTextSize * 2.5f);
-        mLrcView.setHighlightTextSize(subtitleTextSize * 2.5f);
+        mLrcView.setNormalColor(Color.WHITE);      //xuameng LRC歌词字幕 默认颜色
+        mLrcView.setHighlightColor(Color.parseColor("#ff02f8e1"));  //xuameng LRC歌词字幕 高亮颜色
+        mLrcView.setNormalTextSize(subtitleTextSize * 2.5f);  //xuameng LRC歌词字幕  默认字体大小
+        mLrcView.setHighlightTextSize(subtitleTextSize * 2.5f);  //xuameng LRC歌词字幕  高亮字体大小
     }
     @Override
     protected int getLayoutId() {
@@ -2517,6 +2516,5 @@ public class VodController extends BaseController {
             mLrcView.setLrcText(mLrcContent);
         }
     }
-
 
 }
