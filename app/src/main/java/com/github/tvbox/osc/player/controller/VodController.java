@@ -374,6 +374,7 @@ public class VodController extends BaseController {
     private static final String TAG = "VodController";  //xuameng音乐播放动画
     public LrcView mLrcView;   //xuameng LRC歌词字幕
     private String mLrcContent = "";  //xuameng LRC歌词字幕
+	private String videoPicUrl;
 
     Handler myHandle;
     Runnable myRunnable;
@@ -494,7 +495,7 @@ public class VodController extends BaseController {
             if(MxuamengMusic.getVisibility() == View.VISIBLE) {
                 if(!ApiConfig.get().musicwallpaper.isEmpty()) {
                     String Url = ApiConfig.get().musicwallpaper;
-                    Picasso.get().load(Url)
+                    Picasso.get().load(videoPicUrl)
                         //				.placeholder(R.drawable.xumusic)   //xuameng默认的站位图
                         .noPlaceholder() //不使用站位图，效果不好
                         				.resize(1920,1080)
@@ -2517,5 +2518,8 @@ public class VodController extends BaseController {
             mLrcView.setLrcText(mLrcContent);
         }
     }
+public void setVideoPicUrl(String picUrl) {
+    this.videoPicUrl = picUrl;
+}
 
 }
