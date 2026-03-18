@@ -84,6 +84,7 @@ import com.github.tvbox.osc.subtitle.LrcView;  //xuameng LRC歌词字幕
 import android.text.TextUtils;  //xuameng LRC歌词字幕
 import com.github.tvbox.osc.picasso.RoundTransformation;
 import me.jessyan.autosize.utils.AutoSizeUtils;
+import com.github.tvbox.osc.util.MD5;
 import com.google.android.exoplayer2.ui.SubtitleView;   // 用于显示ExoPlayer内置字幕
 
 import android.os.Build;
@@ -2531,9 +2532,9 @@ public void loadVideoPic() {
                .load(videoPicUrl)
                                 .transform(new RoundTransformation(MD5.string2MD5(videoPicUrl))
                                         .centerCorp(true)
-                                        .roundRadius(AutoSizeUtils.mm2px(mContext, 10), RoundTransformation.RoundType.ALL))
-               .placeholder(R.drawable.iv_circle_bg)
-               .error(R.drawable.iv_circle_bg)
+                                        .roundRadius(AutoSizeUtils.mm2px(getContext, 10), RoundTransformation.RoundType.ALL))
+               .placeholder(R.drawable.app_icon)
+               .error(R.drawable.app_icon)
                .into(iv_circle_bg);
     }
 }
