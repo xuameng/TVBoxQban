@@ -85,6 +85,10 @@ import android.text.TextUtils;  //xuameng LRC歌词字幕
 import com.github.tvbox.osc.picasso.RoundTransformation;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 import com.github.tvbox.osc.util.MD5;
+import android.widget.FrameLayout.LayoutParams;
+import android.view.Gravity;
+import android.util.TypedValue;
+
 import com.google.android.exoplayer2.ui.SubtitleView;   // 用于显示ExoPlayer内置字幕
 
 import android.os.Build;
@@ -469,13 +473,23 @@ public class VodController extends BaseController {
                     if(MxuamengMusic.getVisibility() == View.GONE && isVideoplaying) { //xuameng播放音乐背景
                         MxuamengMusic.setVisibility(VISIBLE);
                     }
+FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) iv_circle_bg.getLayoutParams();
                     if(mLrcView.getVisibility() == View.VISIBLE) {   //xuameng LRC歌词字幕
                         long position = mControlWrapper.getCurrentPosition();
                         if (mLrcView != null) {
                             mLrcView.updateTime(position);  //xuameng 刷新LRC歌词字幕
                         }
-                    }
-                    if(mProgressRoot.getVisibility() == View.VISIBLE || mPlayLoadNetSpeed.getVisibility() == View.VISIBLE || XuLoading.getVisibility() == View.VISIBLE || play_speed_3.getVisibility() == View.VISIBLE || mLrcView.getVisibility() == View.VISIBLE) {
+                // 如果 mLrcView 显示，则将 iv_circle_bg 置于屏幕上方居中
+                params.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
+                // 可以设置上边距，例如 50dp，根据实际需求调整
+                params.topMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, getResources().getDisplayMetrics());
+                    }else {
+                // 如果 mLrcView 不显示，则将 iv_circle_bg 置于屏幕中心
+                params.gravity = Gravity.CENTER;
+                params.topMargin = 0; // 重置上边距
+            }
+            iv_circle_bg.setLayoutParams(params);
+                    if(mProgressRoot.getVisibility() == View.VISIBLE || mPlayLoadNetSpeed.getVisibility() == View.VISIBLE || XuLoading.getVisibility() == View.VISIBLE || play_speed_3.getVisibility() == View.VISIBLE) {
                         if(iv_circle_bg.getVisibility() == View.VISIBLE) { //xuameng音乐播放时图标
                             iv_circle_bg.setVisibility(GONE);
                         }
@@ -2530,7 +2544,7 @@ public class VodController extends BaseController {
         if (videoPicUrl != null && !videoPicUrl.isEmpty() && iv_circle_bg != null) {
             Picasso.get()
                    .load(videoPicUrl)
-				   .resize(80,80)
+				   .resize(100,100)
                    .transform(new RoundTransformation(MD5.string2MD5(videoPicUrl))
                    .centerCorp(true)
                    .roundRadius(AutoSizeUtils.mm2px(getContext(), 50), RoundTransformation.RoundType.ALL))
