@@ -83,6 +83,7 @@ import android.media.AudioManager;  //xuameng音乐播放动画
 import com.github.tvbox.osc.subtitle.LrcView;  //xuameng LRC歌词字幕
 import android.text.TextUtils;  //xuameng LRC歌词字幕
 import com.github.tvbox.osc.picasso.RoundTransformation;
+import me.jessyan.autosize.utils.AutoSizeUtils;
 import com.google.android.exoplayer2.ui.SubtitleView;   // 用于显示ExoPlayer内置字幕
 
 import android.os.Build;
@@ -2528,12 +2529,14 @@ public void loadVideoPic() {
     if (videoPicUrl != null && !videoPicUrl.isEmpty() && iv_circle_bg != null) {
         Picasso.get()
                .load(videoPicUrl)
+                                .transform(new RoundTransformation(MD5.string2MD5(videoPicUrl))
+                                        .centerCorp(true)
+                                        .roundRadius(AutoSizeUtils.mm2px(mContext, 10), RoundTransformation.RoundType.ALL))
                .placeholder(R.drawable.iv_circle_bg)
                .error(R.drawable.iv_circle_bg)
-               .centerCorp(true)
-               .roundRadius(AutoSizeUtils.mm2px(mContext, 10), RoundTransformation.RoundType.ALL))
                .into(iv_circle_bg);
     }
 }
+
 
 }
