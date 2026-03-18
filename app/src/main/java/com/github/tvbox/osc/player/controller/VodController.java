@@ -2526,19 +2526,18 @@ public class VodController extends BaseController {
         this.videoPicUrl = picUrl;
     }
 
-public void loadVideoPic() {
-    if (videoPicUrl != null && !videoPicUrl.isEmpty() && iv_circle_bg != null) {
-        Picasso.get()
-               .load(videoPicUrl)
-               .transform(new RoundTransformation(MD5.string2MD5(videoPicUrl))
-                       .centerCorp(true)
-                       .roundRadius(AutoSizeUtils.mm2px(getContext(), 10), RoundTransformation.RoundType.ALL))
-               .placeholder(R.drawable.app_icon)
-               .error(R.drawable.app_icon)
-               .into(iv_circle_bg);
+    public void loadVideoPic() {
+        if (videoPicUrl != null && !videoPicUrl.isEmpty() && iv_circle_bg != null) {
+            Picasso.get()
+                   .load(videoPicUrl)
+                   .transform(new RoundTransformation(MD5.string2MD5(videoPicUrl))
+                   .centerCorp(true)
+				    .resize(80,80)
+                   .roundRadius(AutoSizeUtils.mm2px(getContext(), 50), RoundTransformation.RoundType.ALL))
+                   .placeholder(R.drawable.app_icon)
+                   .error(R.drawable.app_icon)
+                   .into(iv_circle_bg);
+        }
     }
-}
-
-
 
 }
