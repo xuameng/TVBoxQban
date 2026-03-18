@@ -144,7 +144,6 @@
                     android:layout_weight="1.0"/>
                 <TextView
                     android:textSize="@dimen/ts_22"
-                    android:textStyle="bold"
                     android:textColor="@color/color_02F8E1"
                     android:gravity="center"
                     android:layout_gravity="center"
