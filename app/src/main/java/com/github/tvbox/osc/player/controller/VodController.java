@@ -82,10 +82,6 @@ import android.media.AudioManager;  //xuameng音乐播放动画
 
 import com.github.tvbox.osc.player.controller.LrcView;  //xuameng LRC歌词字幕
 import android.text.TextUtils;  //xuameng LRC歌词字幕
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-import com.github.tvbox.osc.event.RefreshEvent;
-import org.greenrobot.eventbus.EventBus;
 
 import com.google.android.exoplayer2.ui.SubtitleView;   // 用于显示ExoPlayer内置字幕
 
@@ -604,9 +600,6 @@ public class VodController extends BaseController {
      //   mLrcView.setHighlightTextSize(40);
         mLrcView.setNormalColor(Color.WHITE);
         mLrcView.setHighlightColor(Color.parseColor("#FFD700"));
-
-    // ... 其他初始化代码 ...
-    EventBus.getDefault().register(this); // 注册 EventBus
 
         //xuameng音乐播放时图标
         ObjectAnimator animator20 = ObjectAnimator.ofFloat(iv_circle_bg, "rotation", 360.0f);
@@ -1445,8 +1438,8 @@ public class VodController extends BaseController {
     void initSubtitleInfo() {
         int subtitleTextSize = SubtitleHelper.getTextSize(mActivity);
         mSubtitleView.setTextSize(subtitleTextSize);
-        mLrcView.setNormalTextSize(subtitleTextSize);
-        mLrcView.setHighlightTextSize(subtitleTextSize);
+        mLrcView.setNormalTextSize(subtitleTextSize * 2.5f);
+        mLrcView.setHighlightTextSize(subtitleTextSize * 2.5f);
     }
     @Override
     protected int getLayoutId() {
@@ -2200,7 +2193,6 @@ public class VodController extends BaseController {
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        EventBus.getDefault().unregister(this); // 注销 EventBus
         mHandler.removeCallbacks(myRunnable2);
         mHandler.removeCallbacks(xuRunnable);
         mHandler.removeCallbacks(myRunnableMusic);
@@ -2526,18 +2518,5 @@ public class VodController extends BaseController {
         }
     }
 
-@Subscribe(threadMode = ThreadMode.MAIN)
-public void onSubtitleSizeChange(RefreshEvent event) {
-    if (event.type == RefreshEvent.TYPE_SUBTITLE_SIZE_CHANGE && event.obj != null) {
-        int newTextSize = (int) event.obj; // 获取新的字体大小
-        // 更新 LRC 歌词字幕的字体大小
-        if (mLrcView != null) {
-            mLrcView.setNormalTextSize(newTextSize);
-            mLrcView.setHighlightTextSize(newTextSize);
-        }
-        // 如果需要，也可以同时更新其他字幕视图的字体大小
-        // 例如：mSubtitleView.setTextSize(newTextSize);
-    }
-}
 
 }
