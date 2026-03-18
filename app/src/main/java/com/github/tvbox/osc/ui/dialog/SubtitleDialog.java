@@ -163,7 +163,7 @@ public class SubtitleDialog extends BaseDialog {
         subtitleStyleOne.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                currentStyle = (currentStyle + 1) % 10; // 10是颜色总数
+                currentStyle = (currentStyle - 1 + 10) % 10;  // 10是颜色总数
                 //dismiss();
                 mSubtitleViewListener.setTextStyle(currentStyle);
                 App.showToastShort(getContext(), "设置样式成功");
@@ -173,7 +173,7 @@ public class SubtitleDialog extends BaseDialog {
         subtitleStyleTwo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                currentStyle = (currentStyle + 2) % 10; // 10是颜色总数
+                currentStyle = (currentStyle + 1) % 10; // 10是颜色总数
             //    dismiss();
                 mSubtitleViewListener.setTextStyle(currentStyle);
                 App.showToastShort(getContext(), "设置样式成功");
