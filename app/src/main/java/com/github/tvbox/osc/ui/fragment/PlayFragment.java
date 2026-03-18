@@ -407,7 +407,7 @@ void setSubtitleViewTextStyle(int style) {
     if (style >= 0 && style < subtitleColors.length) {
         // 设置字幕颜色
         mController.mSubtitleView.setTextColor(subtitleColors[style]);
-		mLrcView.setHighlightColor(subtitleColors[style]);  //xuameng LRC歌词字幕 高亮颜色
+		mController.mLrcView.setHighlightColor(subtitleColors[style]);  //xuameng LRC歌词字幕 高亮颜色
         
     }
 }
@@ -2306,7 +2306,7 @@ private int[] subtitleColors = {
     0xFFFF0000, // 红色
     0xFF00FF00, // 绿色
     0xFF0000FF, // 蓝色
-    0xFFFFFF00, // 黄色
+    0xFFFFD700, // 黄色
     0xFFFF00FF, // 紫色
     0xFF00FFFF, // 青色
     0xFFFFA500, // 橙色
