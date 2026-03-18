@@ -82,12 +82,12 @@ import android.media.AudioManager;  //xuameng音乐播放动画
 
 import com.github.tvbox.osc.subtitle.LrcView;  //xuameng LRC歌词字幕
 import android.text.TextUtils;  //xuameng LRC歌词字幕
-import com.github.tvbox.osc.picasso.RoundTransformation;
-import me.jessyan.autosize.utils.AutoSizeUtils;
-import com.github.tvbox.osc.util.MD5;
-import android.widget.FrameLayout.LayoutParams;
-import android.view.Gravity;
-import android.util.TypedValue;
+import com.github.tvbox.osc.picasso.RoundTransformation; //xuameng 新增给vod显示旋转图片用
+import me.jessyan.autosize.utils.AutoSizeUtils; //xuameng 新增给vod显示旋转图片用
+import com.github.tvbox.osc.util.MD5; //xuameng 新增给vod显示旋转图片用
+import android.widget.FrameLayout.LayoutParams; //xuameng 新增给vod显示旋转图片用
+import android.view.Gravity; //xuameng 新增给vod显示旋转图片用
+import android.util.TypedValue; //xuameng 新增给vod显示旋转图片用
 
 import com.google.android.exoplayer2.ui.SubtitleView;   // 用于显示ExoPlayer内置字幕
 
@@ -380,7 +380,7 @@ public class VodController extends BaseController {
     private static final String TAG = "VodController";  //xuameng音乐播放动画
     public LrcView mLrcView;   //xuameng LRC歌词字幕
     private String mLrcContent = "";  //xuameng LRC歌词字幕
-	private String videoPicUrl;
+	private String videoPicUrl; //xuameng 新增给vod显示旋转图片用
 
     Handler myHandle;
     Runnable myRunnable;
@@ -473,29 +473,32 @@ public class VodController extends BaseController {
                     if(MxuamengMusic.getVisibility() == View.GONE && isVideoplaying) { //xuameng播放音乐背景
                         MxuamengMusic.setVisibility(VISIBLE);
                     }
-FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) iv_circle_bg.getLayoutParams();
+                    FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) iv_circle_bg.getLayoutParams(); //xuameng 新增给vod显示旋转图片用
                     if(mLrcView.getVisibility() == View.VISIBLE) {   //xuameng LRC歌词字幕
                         long position = mControlWrapper.getCurrentPosition();
                         if (mLrcView != null) {
                             mLrcView.updateTime(position);  //xuameng 刷新LRC歌词字幕
                         }
-                // 如果 mLrcView 显示，则将 iv_circle_bg 置于屏幕上方居中
-                params.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
-                // 可以设置上边距，例如 50dp，根据实际需求调整
-                params.topMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, getResources().getDisplayMetrics());
+                        // xuameng如果 mLrcView 显示，则将 iv_circle_bg 置于屏幕左上角
+                        params.gravity = Gravity.TOP | Gravity.LEFT;
+                        // xuameng设置左上角的外边距为 30dp
+                        int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, getResources().getDisplayMetrics());
+                        params.topMargin = margin;
+                        params.leftMargin = margin;
                     }else {
-                // 如果 mLrcView 不显示，则将 iv_circle_bg 置于屏幕中心
-                params.gravity = Gravity.CENTER;
-                params.topMargin = 0; // 重置上边距
-            }
-            iv_circle_bg.setLayoutParams(params);
+                        // xuameng如果 mLrcView 不显示，则将 iv_circle_bg 置于屏幕中心
+                        params.gravity = Gravity.CENTER;
+                        params.topMargin = 0; // 重置上边距
+                        params.leftMargin = 0; // 重置左边距
+                    }
+                    iv_circle_bg.setLayoutParams(params);
                     if(mProgressRoot.getVisibility() == View.VISIBLE || mPlayLoadNetSpeed.getVisibility() == View.VISIBLE || XuLoading.getVisibility() == View.VISIBLE || play_speed_3.getVisibility() == View.VISIBLE) {
                         if(iv_circle_bg.getVisibility() == View.VISIBLE) { //xuameng音乐播放时图标
                             iv_circle_bg.setVisibility(GONE);
                         }
                     } else {
-                        if(isVideoplaying && mLrcView.getVisibility() == View.GONE) {
-                            loadVideoPic();
+                        if(isVideoplaying) {
+                            loadVideoPic(); //xuameng 新增给vod显示旋转图片用
                             iv_circle_bg.setVisibility(VISIBLE);
                         }
                     }
@@ -2536,15 +2539,15 @@ FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) iv_circle_bg.getLay
         }
     }
 
-    public void setVideoPicUrl(String picUrl) {
+    public void setVideoPicUrl(String picUrl) {  //xuameng 新增给vod显示旋转图片用
         this.videoPicUrl = picUrl;
     }
 
-    public void loadVideoPic() {
+    public void loadVideoPic() {  //xuameng 新增给vod显示旋转图片用
         if (videoPicUrl != null && !videoPicUrl.isEmpty() && iv_circle_bg != null) {
             Picasso.get()
                    .load(videoPicUrl)
-				   .resize(100,100)
+				   .resize(110,110)
                    .transform(new RoundTransformation(MD5.string2MD5(videoPicUrl))
                    .centerCorp(true)
                    .roundRadius(AutoSizeUtils.mm2px(getContext(), 50), RoundTransformation.RoundType.ALL))
