@@ -870,6 +870,12 @@ if (info.has("lrc")) {
     mController.mLrcView.setVisibility(View.GONE);
 }
 
+// 优先检查 lrc 字段（歌词字符串）
+if (info.has("pic")) {
+    String picContent = info.optString("pic", "");
+	App.showToastShort(mContext, picContent);
+
+} 
 // 如果 playSubtitle 仍为空，且存在 subs 字段，则按原有逻辑处理字幕数组
 if(playSubtitle.isEmpty() && info.has("subs")) {
     try {
