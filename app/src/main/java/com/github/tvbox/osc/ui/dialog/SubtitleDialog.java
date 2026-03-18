@@ -205,4 +205,12 @@ public class SubtitleDialog extends BaseDialog {
         void selectInternalSubtitle();
         void setTextStyle(int style);
     }
+
+	public void updateStyleButtons(int selectedStyle, int[] subtitleColors) {
+    if (selectedStyle >= 0 && selectedStyle < subtitleColors.length) {
+        subtitleStyleOne.setTextColor(subtitleColors[selectedStyle]);
+        subtitleStyleTwo.setTextColor(subtitleColors[(selectedStyle + 1) % subtitleColors.length]);
+    }
+}
+
 }
