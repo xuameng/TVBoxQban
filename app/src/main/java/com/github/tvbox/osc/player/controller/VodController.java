@@ -82,7 +82,7 @@ import android.media.AudioManager;  //xuameng音乐播放动画
 
 import com.github.tvbox.osc.subtitle.LrcView;  //xuameng LRC歌词字幕
 import android.text.TextUtils;  //xuameng LRC歌词字幕
-
+import com.github.tvbox.osc.picasso.RoundTransformation;
 import com.google.android.exoplayer2.ui.SubtitleView;   // 用于显示ExoPlayer内置字幕
 
 import android.os.Build;
@@ -479,6 +479,7 @@ public class VodController extends BaseController {
                         }
                     } else {
                         if(isVideoplaying && mLrcView.getVisibility() == View.GONE) {
+                            loadVideoPic();
                             iv_circle_bg.setVisibility(VISIBLE);
                         }
                     }
@@ -495,7 +496,7 @@ public class VodController extends BaseController {
             if(MxuamengMusic.getVisibility() == View.VISIBLE) {
                 if(!ApiConfig.get().musicwallpaper.isEmpty()) {
                     String Url = ApiConfig.get().musicwallpaper;
-                    Picasso.get().load(videoPicUrl)
+                    Picasso.get().load(Url)
                         //				.placeholder(R.drawable.xumusic)   //xuameng默认的站位图
                         .noPlaceholder() //不使用站位图，效果不好
                         				.resize(1920,1080)
@@ -2518,8 +2519,21 @@ public class VodController extends BaseController {
             mLrcView.setLrcText(mLrcContent);
         }
     }
-public void setVideoPicUrl(String picUrl) {
-    this.videoPicUrl = picUrl;
+
+    public void setVideoPicUrl(String picUrl) {
+        this.videoPicUrl = picUrl;
+    }
+
+public void loadVideoPic() {
+    if (videoPicUrl != null && !videoPicUrl.isEmpty() && iv_circle_bg != null) {
+        Picasso.get()
+               .load(videoPicUrl)
+               .placeholder(R.drawable.iv_circle_bg)
+               .error(R.drawable.iv_circle_bg)
+               .centerCorp(true)
+               .roundRadius(AutoSizeUtils.mm2px(mContext, 10), RoundTransformation.RoundType.ALL))
+               .into(iv_circle_bg);
+    }
 }
 
 }
