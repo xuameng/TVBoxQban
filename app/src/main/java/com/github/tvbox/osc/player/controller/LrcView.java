@@ -98,7 +98,7 @@ public void setHighlightColor(int color) {
 public void setLrcText(String lrcContent) {
     mLrcLines.clear();
     String[] lines = lrcContent.split("\n");
-    Pattern pattern = Pattern.compile("\\[(\\d{2}):(\\d{2})\\.(\\d{2,3})\\]");
+    Pattern pattern = Pattern.compile("\\[(\\d{2}):(\\d{2})\\.(\\d{1,3})\\]");
     
     for (String line : lines) {
         Matcher matcher = pattern.matcher(line);
@@ -106,8 +106,14 @@ public void setLrcText(String lrcContent) {
             LrcLine lrcLine = new LrcLine();
             int min = Integer.parseInt(matcher.group(1));
             int sec = Integer.parseInt(matcher.group(2));
-            int ms = Integer.parseInt(matcher.group(3).length() == 2 ? 
-                matcher.group(3) + "0" : matcher.group(3));
+            // 处理毫秒部分
+            String msStr = matcher.group(3);
+            if (msStr.length() == 1) {
+                msStr = msStr + "00";  // .1 -> .100
+            } else if (msStr.length() == 2) {
+                msStr = msStr + "0";   // .12 -> .120
+            }
+            int ms = Integer.parseInt(msStr);
             lrcLine.time = (min * 60 + sec) * 1000 + ms;
             lrcLine.text = line.substring(matcher.end()).trim();
             lrcLine.width = mNormalPaint.measureText(lrcLine.text);
