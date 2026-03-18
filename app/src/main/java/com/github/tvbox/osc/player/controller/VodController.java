@@ -466,6 +466,12 @@ public class VodController extends BaseController {
                     if(MxuamengMusic.getVisibility() == View.GONE && isVideoplaying) { //xuameng播放音乐背景
                         MxuamengMusic.setVisibility(VISIBLE);
                     }
+                    if(mLrcView.getVisibility() == View.VISIBLE) {
+                        long position = mControlWrapper.getCurrentPosition();
+                        if (mLrcView != null) {
+                            mLrcView.updateTime(position);
+                        }
+                    }
                     if(mProgressRoot.getVisibility() == View.VISIBLE || mPlayLoadNetSpeed.getVisibility() == View.VISIBLE || XuLoading.getVisibility() == View.VISIBLE || play_speed_3.getVisibility() == View.VISIBLE) {
                         if(iv_circle_bg.getVisibility() == View.VISIBLE) { //xuameng音乐播放时图标
                             iv_circle_bg.setVisibility(GONE);
@@ -1522,9 +1528,6 @@ public class VodController extends BaseController {
             return;
         }
         super.setProgress(duration, position);
-        if (mLrcView != null) {
-            mLrcView.updateTime(position);
-        }
         if(skipEnd && position != 0 && duration != 0) {
             int et = 0;
             try {
@@ -2404,8 +2407,9 @@ public class VodController extends BaseController {
         mSubtitleView.onSubtitleChanged(null);
         mSubtitleView.setVisibility(View.VISIBLE);
         mExoSubtitleView.setVisibility(View.GONE);    //xuameng EXO内置字幕
-        mExoSubtitleView.setCues(null); // 清除字幕数据
-        mLrcContent = "";
+        mExoSubtitleView.setCues(null); // xuameng清除EXO字幕数据
+        mLrcView.setVisibility(View.GONE);  //xuameng LRC歌词字幕
+        mLrcContent = "";  //xuameng 清除LRC歌词字幕
     }
 
     private void initVisualizer() {   //xuameng播放音乐柱状图
