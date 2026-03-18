@@ -2199,6 +2199,7 @@ public class VodController extends BaseController {
         if(mHandler != null) {
             mHandler.removeCallbacksAndMessages(null);
         }
+        clearSubtitleCache();  //xuameng清除字幕缓存
         releaseVisualizer();  //xuameng音乐播放动画
     }
     //尝试去bom
