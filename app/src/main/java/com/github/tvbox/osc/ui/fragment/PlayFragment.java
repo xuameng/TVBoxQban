@@ -341,6 +341,7 @@ public class PlayFragment extends BaseLazyFragment {
             @Override
             public void setTextStyle(int style) {
                 setSubtitleViewTextStyle(style);
+				subtitleDialog.updateStyleButtons(style, subtitleColors);
             }
         });
         subtitleDialog.setSearchSubtitleListener(new SubtitleDialog.SearchSubtitleListener() {
@@ -401,14 +402,22 @@ public class PlayFragment extends BaseLazyFragment {
         subtitleDialog.show();
     }
 
-    @SuppressLint("UseCompatLoadingForColorStateLists")
-    void setSubtitleViewTextStyle(int style) {
-        if (style == 0) {
-            mController.mSubtitleView.setTextColor(getContext().getResources().getColorStateList(R.color.color_FFFFFF));
-        } else if (style == 1) {
-            mController.mSubtitleView.setTextColor(getContext().getResources().getColorStateList(R.color.color_02F8E1));
+@SuppressLint("UseCompatLoadingForColorStateLists")
+void setSubtitleViewTextStyle(int style) {
+    if (style >= 0 && style < subtitleColors.length) {
+        // 设置字幕颜色
+        mController.mSubtitleView.setTextColor(subtitleColors[style]);
+		mLrcView.setHighlightColor(subtitleColors[style]);  //xuameng LRC歌词字幕 高亮颜色
+        
+        // 更新按钮颜色
+        if (subtitleStyleOne != null && subtitleStyleTwo != null) {
+            // 更新按钮颜色以反映当前选中的样式
+            subtitleStyleOne.setTextColor(subtitleColors[style]);
+            subtitleStyleTwo.setTextColor(subtitleColors[(style + 1) % subtitleColors.length]);
         }
     }
+}
+
 
     void selectMyAudioTrack() {
         AbstractPlayer mediaPlayer = mVideoView.getMediaPlayer();
@@ -2295,4 +2304,18 @@ public class PlayFragment extends BaseLazyFragment {
         }
         }).start();
     }
+
+	// 在 PlayFragment 类中添加颜色数组
+private int[] subtitleColors = {
+    0xFFFFFFFF, // 白色
+    0xFF02F8E1, // 青色
+    0xFFFF0000, // 红色
+    0xFF00FF00, // 绿色
+    0xFF0000FF, // 蓝色
+    0xFFFFFF00, // 黄色
+    0xFFFF00FF, // 紫色
+    0xFF00FFFF, // 青色
+    0xFFFFA500, // 橙色
+    0xFF800080  // 紫色
+};
 }
