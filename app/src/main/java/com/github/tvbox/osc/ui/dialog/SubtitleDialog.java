@@ -55,6 +55,9 @@ public class SubtitleDialog extends BaseDialog {
         subtitleStyleOne = findViewById(R.id.subtitleStyleOne);
         subtitleStyleTwo = findViewById(R.id.subtitleStyleTwo);
 
+		    // 读取保存的样式
+    currentStyle = SubtitleHelper.getTextStyle();
+
         selectLocal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -166,6 +169,7 @@ public class SubtitleDialog extends BaseDialog {
                 currentStyle = (currentStyle - 1 + 10) % 10;  // 10是颜色总数
                 //dismiss();
                 mSubtitleViewListener.setTextStyle(currentStyle);
+				SubtitleHelper.setTextStyle(currentStyle);  // 保存样式
                 App.showToastShort(getContext(), "设置样式成功");
             }
         });
@@ -176,6 +180,7 @@ public class SubtitleDialog extends BaseDialog {
                 currentStyle = (currentStyle + 1) % 10; // 10是颜色总数
             //    dismiss();
                 mSubtitleViewListener.setTextStyle(currentStyle);
+				SubtitleHelper.setTextStyle(currentStyle);  // 保存样式
                 App.showToastShort(getContext(), "设置样式成功");
             }
         });
@@ -208,12 +213,14 @@ public class SubtitleDialog extends BaseDialog {
         void setTextStyle(int style);
     }
 
-	public void updateStyleButtons(int selectedStyle, int[] subtitleColors) {
+public void updateStyleButtons(int selectedStyle, int[] subtitleColors) {
     if (selectedStyle >= 0 && selectedStyle < subtitleColors.length) {
         subtitleStyleOne.setTextColor(subtitleColors[selectedStyle]);
         subtitleStyleTwo.setTextColor(subtitleColors[(selectedStyle + 1) % subtitleColors.length]);
+        currentStyle = selectedStyle; // 更新当前样式
     }
 }
+
 
     // 添加重置方法
     public void resetStyle() {
