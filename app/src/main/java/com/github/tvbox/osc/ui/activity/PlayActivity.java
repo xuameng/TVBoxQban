@@ -118,6 +118,7 @@ import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkTimedText;
 import xyz.doikki.videoplayer.player.AbstractPlayer;
 import xyz.doikki.videoplayer.player.ProgressManager;
+import com.github.tvbox.osc.util.SubtitleHelper; //xuameng 保存字幕颜色信息用
 
 public class PlayActivity extends BaseActivity {
     private MyVideoView mVideoView;
@@ -136,6 +137,7 @@ public class PlayActivity extends BaseActivity {
     private int mRetryCountJP = 0;  //xuameng播放出错计数器
     private static final int MAX_RETRIES = 2;  //xuameng播放出错切换2次
     private boolean isChineseSubtitle = false;   //xuameng 判断中文字幕
+	private int currentSubtitleStyle = 0; // xuameng当前字幕颜色索引
 
     @Override
     protected int getLayoutResID() {
@@ -146,6 +148,8 @@ public class PlayActivity extends BaseActivity {
     public void refresh(RefreshEvent event) {
         if (event.type == RefreshEvent.TYPE_SUBTITLE_SIZE_CHANGE) {
             mController.mSubtitleView.setTextSize((int) event.obj);
+            mController.mLrcView.setNormalTextSize((int) event.obj * 2.5f); //xuameng 设置LRC歌词 全屏非全屏状态同步
+            mController.mLrcView.setHighlightTextSize((int) event.obj * 2.5f); //xuameng 设置LRC歌词 全屏非全屏状态同步
         }
     }
 
@@ -312,10 +316,20 @@ public class PlayActivity extends BaseActivity {
         } else {
             subtitleDialog.selectInternal.setVisibility(View.GONE);
         }
+
+        // xuameng 读取保存的字幕颜色信息
+        currentSubtitleStyle = SubtitleHelper.getTextStyle();
+        // xuameng初始化对话框时传递当前样式和颜色数组
+        if (subtitleDialog != null) {
+            subtitleDialog.updateStyleButtons(currentSubtitleStyle, subtitleColors);
+        }
+
         subtitleDialog.setSubtitleViewListener(new SubtitleDialog.SubtitleViewListener() {
             @Override
             public void setTextSize(int size) {
                 mController.mSubtitleView.setTextSize(size);
+                mController.mLrcView.setNormalTextSize(size * 2.5f);  //xuameng 设置LRC歌词字体大小
+                mController.mLrcView.setHighlightTextSize(size * 2.5f);  //xuameng 设置LRC歌词字体大小
             }
             @Override
             public void setSubtitleDelay(int milliseconds) {
@@ -328,6 +342,9 @@ public class PlayActivity extends BaseActivity {
             @Override
             public void setTextStyle(int style) {
                 setSubtitleViewTextStyle(style);
+                if (subtitleDialog != null) {
+                    subtitleDialog.updateStyleButtons(style, subtitleColors);  // xuameng 更新字幕颜色信息
+                }
             }
         });
         subtitleDialog.setSearchSubtitleListener(new SubtitleDialog.SearchSubtitleListener() {
@@ -387,11 +404,15 @@ public class PlayActivity extends BaseActivity {
         subtitleDialog.show();
     }
 
-    void setSubtitleViewTextStyle(int style) {
-        if (style == 0) {
-            mController.mSubtitleView.setTextColor(getBaseContext().getResources().getColorStateList(R.color.color_FFFFFF));
-        } else if (style == 1) {
-            mController.mSubtitleView.setTextColor(getBaseContext().getResources().getColorStateList(R.color.color_02F8E1));
+    void setSubtitleViewTextStyle(int style) {   //xuameng 设置字幕颜色
+        if (style >= 0 && style < subtitleColors.length) {
+            // xuameng保存当前样式
+            currentSubtitleStyle = style;
+            SubtitleHelper.setTextStyle(style); // xuameng持久化存储
+            // xuameng设置字幕颜色
+            mController.mSubtitleView.setTextColor(subtitleColors[style]);
+		    mController.mLrcView.setHighlightColor(subtitleColors[style]);  //xuameng LRC歌词字幕 高亮颜色
+            // xuameng更新按钮颜色        
         }
     }
 
@@ -670,6 +691,15 @@ public class PlayActivity extends BaseActivity {
 
     private void initSubtitleView() {
         TrackInfo trackInfo = null;
+
+        // xuameng应用保存的字幕颜色
+        int savedStyle = SubtitleHelper.getTextStyle();
+        if (savedStyle >= 0 && savedStyle < subtitleColors.length) {
+            mController.mSubtitleView.setTextColor(subtitleColors[savedStyle]);
+            mController.mLrcView.setHighlightColor(subtitleColors[savedStyle]);
+            currentSubtitleStyle = savedStyle;
+        }
+
         if (mVideoView.getMediaPlayer() instanceof IjkMediaPlayer) {
             trackInfo = ((IjkMediaPlayer)(mVideoView.getMediaPlayer())).getTrackInfo();
             if (trackInfo != null && trackInfo.getSubtitle().size() > 0) {
@@ -836,10 +866,27 @@ public class PlayActivity extends BaseActivity {
                         progressKey = info.optString("proKey", null);
                         boolean parse = info.optString("parse", "1").equals("1");
                         boolean jx = info.optString("jx", "0").equals("1");
-                        playSubtitle = info.optString("subt", /*"https://dash.akamaized.net/akamai/test/caption_test/ElephantsDream/ElephantsDream_en.vtt"*/"");
+
+                        // xuameng优先检查 lrc 字段（歌词字符串）
+                        if (info.has("lrc")) {
+                            String lrcContent = info.optString("lrc", "");
+                            if (!TextUtils.isEmpty(lrcContent)) {
+                                mController.setLrcContent(lrcContent);
+                                mController.mLrcView.setVisibility(View.VISIBLE);  //xuameng 设置LRC歌词
+                                playSubtitle = "";
+                            } else {
+                                playSubtitle = info.optString("subt", "");
+                                mController.mLrcView.setVisibility(View.GONE);
+                            }
+                        } else {
+                            playSubtitle = info.optString("subt", "");
+                            mController.mLrcView.setVisibility(View.GONE);
+                        }
+
+                        // 如果 playSubtitle 仍为空，且存在 subs 字段，则按原有逻辑处理字幕数组
                         if(playSubtitle.isEmpty() && info.has("subs")) {
                             try {
-                                JSONObject obj =info.getJSONArray("subs").optJSONObject(0);
+                                JSONObject obj = info.getJSONArray("subs").optJSONObject(0);
                                 String url = obj.optString("url", "");
                                 if (!TextUtils.isEmpty(url) && !FileUtils.hasExtension(url)) {
                                     String format = obj.optString("format", "");
@@ -858,13 +905,14 @@ public class PlayActivity extends BaseActivity {
                                         case "text/lrc":
                                             ext = ".lrc";
                                             break;
-                                    }
-                                    String filename = name + (name.toLowerCase().endsWith(ext) ? "" : ext);
-                                    url += "#" + mController.encodeUrl(filename);  //xuameng新增
                                 }
-                                playSubtitle = url;
-                            } catch (Throwable th) {
-                            }
+                                String filename = name + (name.toLowerCase().endsWith(ext) ? "" : ext);
+                                url += "#" + mController.encodeUrl(filename);
+                                }
+                                 playSubtitle = url;
+                             } catch (Throwable th) {
+                                 // 异常处理
+                             }
                         }
                         subtitleCacheKey = info.optString("subtKey", null);
                         String playUrl = info.optString("playUrl", "");
@@ -2197,4 +2245,19 @@ public class PlayActivity extends BaseActivity {
         }
         }).start();
     }
+
+	// xuameng 字幕颜色类中添加颜色数组
+    private int[] subtitleColors = {
+        0xFFFFFFFF, // 白色
+        0xFF02F8E1, // 青色
+        0xFFFF0000, // 红色
+        0xFF00FF00, // 绿色
+        0xFF0000FF, // 蓝色
+        0xFFFFD700, // 黄色
+        0xFFFF00FF, // 紫色
+        0xFF00FFFF, // 青色
+        0xFFFFA500, // 橙色
+        0xFF800080  // 紫色
+    };
+
 }
