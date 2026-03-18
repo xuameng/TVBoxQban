@@ -381,7 +381,7 @@ public class PlayFragment extends BaseLazyFragment {
                     searchSubtitleDialog.setSearchWord(mVodInfo.name);
                 }
 				    // 初始化对话框时传递当前样式和颜色数组
-    subtitleDialog.updateStyleButtons(currentSubtitleStyle, subtitleColors)
+    subtitleDialog.updateStyleButtons(currentSubtitleStyle, subtitleColors);
                 searchSubtitleDialog.show();
             }
         });
