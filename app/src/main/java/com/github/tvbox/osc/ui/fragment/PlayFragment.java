@@ -328,6 +328,8 @@ public class PlayFragment extends BaseLazyFragment {
         }
     // 读取保存的样式
     currentSubtitleStyle = SubtitleHelper.getTextStyle();
+					    // 初始化对话框时传递当前样式和颜色数组
+    subtitleDialog.updateStyleButtons(currentSubtitleStyle, subtitleColors);
 
         subtitleDialog.setSubtitleViewListener(new SubtitleDialog.SubtitleViewListener() {
             @Override
@@ -382,8 +384,6 @@ public class PlayFragment extends BaseLazyFragment {
                 }else {
                     searchSubtitleDialog.setSearchWord(mVodInfo.name);
                 }
-				    // 初始化对话框时传递当前样式和颜色数组
-    subtitleDialog.updateStyleButtons(currentSubtitleStyle, subtitleColors);
                 searchSubtitleDialog.show();
             }
         });
