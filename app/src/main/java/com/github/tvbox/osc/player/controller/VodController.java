@@ -2530,14 +2530,15 @@ public void loadVideoPic() {
     if (videoPicUrl != null && !videoPicUrl.isEmpty() && iv_circle_bg != null) {
         Picasso.get()
                .load(videoPicUrl)
-                                .transform(new RoundTransformation(MD5.string2MD5(videoPicUrl))
-                                        .centerCorp(true)
-                                        .roundRadius(AutoSizeUtils.mm2px(getContext, 10), RoundTransformation.RoundType.ALL))
+               .transform(new RoundTransformation(MD5.string2MD5(videoPicUrl))
+                       .centerCorp(true)
+                       .roundRadius(AutoSizeUtils.mm2px(getContext(), 10), RoundTransformation.RoundType.ALL))
                .placeholder(R.drawable.app_icon)
                .error(R.drawable.app_icon)
                .into(iv_circle_bg);
     }
 }
+
 
 
 }
