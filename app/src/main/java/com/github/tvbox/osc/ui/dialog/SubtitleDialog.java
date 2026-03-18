@@ -27,6 +27,8 @@ public class SubtitleDialog extends BaseDialog {
     private TextView subtitleStyleOne;
     private TextView subtitleStyleTwo;
 
+	private int currentStyle = 0;
+
     private SearchSubtitleListener mSearchSubtitleListener;
     private LocalFileChooserListener mLocalFileChooserListener;
     private SubtitleViewListener mSubtitleViewListener;
@@ -161,9 +163,9 @@ public class SubtitleDialog extends BaseDialog {
         subtitleStyleOne.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int style = 0;
-                dismiss();
-                mSubtitleViewListener.setTextStyle(style);
+                currentStyle = (currentStyle + 1) % 10; // 10是颜色总数
+                //dismiss();
+                mSubtitleViewListener.setTextStyle(currentStyle);
                 App.showToastShort(getContext(), "设置样式成功");
             }
         });
@@ -171,9 +173,9 @@ public class SubtitleDialog extends BaseDialog {
         subtitleStyleTwo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int style = 1;
-                dismiss();
-                mSubtitleViewListener.setTextStyle(style);
+                currentStyle = (currentStyle + 2) % 10; // 10是颜色总数
+            //    dismiss();
+                mSubtitleViewListener.setTextStyle(currentStyle);
                 App.showToastShort(getContext(), "设置样式成功");
             }
         });
@@ -212,5 +214,10 @@ public class SubtitleDialog extends BaseDialog {
         subtitleStyleTwo.setTextColor(subtitleColors[(selectedStyle + 1) % subtitleColors.length]);
     }
 }
+
+    // 添加重置方法
+    public void resetStyle() {
+        currentStyle = 0;
+    }
 
 }
