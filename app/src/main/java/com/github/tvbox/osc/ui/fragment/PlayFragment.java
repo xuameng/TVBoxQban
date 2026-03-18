@@ -132,6 +132,7 @@ public class PlayFragment extends BaseLazyFragment {
     private int mRetryCountJP = 0;  //xuameng播放出错计数器
     private static final int MAX_RETRIES = 2;  //xuameng播放出错切换2次
     private boolean isChineseSubtitle = false;   //xuameng 判断中文字幕
+	private int currentSubtitleStyle = 0; // 当前字幕样式索引
 
     private final long videoDuration = -1;
 
@@ -323,6 +324,9 @@ public class PlayFragment extends BaseLazyFragment {
         } else {
             subtitleDialog.selectInternal.setVisibility(View.GONE);
         }
+    // 读取保存的样式
+    currentSubtitleStyle = SubtitleHelper.getTextStyle();
+
         subtitleDialog.setSubtitleViewListener(new SubtitleDialog.SubtitleViewListener() {
             @Override
             public void setTextSize(int size) {
@@ -341,7 +345,9 @@ public class PlayFragment extends BaseLazyFragment {
             @Override
             public void setTextStyle(int style) {
                 setSubtitleViewTextStyle(style);
-				subtitleDialog.updateStyleButtons(style, subtitleColors);
+            if (subtitleDialog != null) {
+                subtitleDialog.updateStyleButtons(style, subtitleColors);
+            }
             }
         });
         subtitleDialog.setSearchSubtitleListener(new SubtitleDialog.SearchSubtitleListener() {
@@ -374,6 +380,8 @@ public class PlayFragment extends BaseLazyFragment {
                 }else {
                     searchSubtitleDialog.setSearchWord(mVodInfo.name);
                 }
+				    // 初始化对话框时传递当前样式和颜色数组
+    subtitleDialog.updateStyleButtons(currentSubtitleStyle, subtitleColors)
                 searchSubtitleDialog.show();
             }
         });
@@ -405,9 +413,16 @@ public class PlayFragment extends BaseLazyFragment {
 @SuppressLint("UseCompatLoadingForColorStateLists")
 void setSubtitleViewTextStyle(int style) {
     if (style >= 0 && style < subtitleColors.length) {
+        // 保存当前样式
+        currentSubtitleStyle = style;
+        SubtitleHelper.setTextStyle(style); // 持久化存储
         // 设置字幕颜色
         mController.mSubtitleView.setTextColor(subtitleColors[style]);
 		mController.mLrcView.setHighlightColor(subtitleColors[style]);  //xuameng LRC歌词字幕 高亮颜色
+        // 更新按钮颜色
+        if (subtitleDialog != null && subtitleDialog.isShowing()) {
+            subtitleDialog.updateStyleButtons(style, subtitleColors);
+        }
         
     }
 }
@@ -694,6 +709,13 @@ void setSubtitleViewTextStyle(int style) {
 
     private void initSubtitleView() {
         TrackInfo trackInfo = null;
+		    // 应用保存的字幕样式
+    int savedStyle = SubtitleHelper.getTextStyle();
+    if (savedStyle >= 0 && savedStyle < subtitleColors.length) {
+        mController.mSubtitleView.setTextColor(subtitleColors[savedStyle]);
+        mController.mLrcView.setHighlightColor(subtitleColors[savedStyle]);
+        currentSubtitleStyle = savedStyle;
+    }
         if (mVideoView.getMediaPlayer() instanceof IjkMediaPlayer) {
             trackInfo = ((IjkMediaPlayer)(mVideoView.getMediaPlayer())).getTrackInfo();
             if (trackInfo != null && trackInfo.getSubtitle().size() > 0) {
