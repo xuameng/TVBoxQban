@@ -2527,7 +2527,7 @@ public class VodController extends BaseController {
 @Subscribe(threadMode = ThreadMode.MAIN)
 public void onSubtitleSizeChange(RefreshEvent event) {
     if (event.type == RefreshEvent.TYPE_SUBTITLE_SIZE_CHANGE && event.obj != null) {
-        int newTextSize = 40 * 0.6; // 获取新的字体大小
+        int newTextSize = (int) (40 * 0.6); // 获取新的字体大小
         // 更新 LRC 歌词字幕的字体大小
         if (mLrcView != null) {
             mLrcView.setNormalTextSize(newTextSize);
