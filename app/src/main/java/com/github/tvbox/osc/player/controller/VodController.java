@@ -85,6 +85,7 @@ import android.text.TextUtils;  //xuameng LRC歌词字幕
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import com.github.tvbox.osc.event.RefreshEvent;
+import org.greenrobot.eventbus.EventBus;
 
 import com.google.android.exoplayer2.ui.SubtitleView;   // 用于显示ExoPlayer内置字幕
 
@@ -377,8 +378,6 @@ public class VodController extends BaseController {
     private static final String TAG = "VodController";  //xuameng音乐播放动画
     public LrcView mLrcView;   //xuameng LRC歌词字幕
     private String mLrcContent = "";  //xuameng LRC歌词字幕
-    // ... 其他初始化代码 ...
-    EventBus.getDefault().register(this); // 注册 EventBus
 
     Handler myHandle;
     Runnable myRunnable;
@@ -605,6 +604,9 @@ public class VodController extends BaseController {
         mLrcView.setHighlightTextSize(40);
         mLrcView.setNormalColor(Color.WHITE);
         mLrcView.setHighlightColor(Color.parseColor("#FFD700"));
+
+    // ... 其他初始化代码 ...
+    EventBus.getDefault().register(this); // 注册 EventBus
 
         //xuameng音乐播放时图标
         ObjectAnimator animator20 = ObjectAnimator.ofFloat(iv_circle_bg, "rotation", 360.0f);
