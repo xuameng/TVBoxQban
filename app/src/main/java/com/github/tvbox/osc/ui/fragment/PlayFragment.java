@@ -144,8 +144,8 @@ public class PlayFragment extends BaseLazyFragment {
     public void refresh(RefreshEvent event) {
         if (event.type == RefreshEvent.TYPE_SUBTITLE_SIZE_CHANGE) {
             mController.mSubtitleView.setTextSize((int) event.obj);
-        mController.mLrcView.setNormalTextSize((int) event.obj * 2.5f);
-        mController.mLrcView.setHighlightTextSize((int) event.obj * 2.5f);
+            mController.mLrcView.setNormalTextSize((int) event.obj * 2.5f);   //xuameng 设置LRC歌词 全屏非全屏状态同步
+            mController.mLrcView.setHighlightTextSize((int) event.obj * 2.5f);  //xuameng 设置LRC歌词 全屏非全屏状态同步
         }
     }
 
@@ -327,8 +327,8 @@ public class PlayFragment extends BaseLazyFragment {
             @Override
             public void setTextSize(int size) {
                 mController.mSubtitleView.setTextSize(size);
-        mController.mLrcView.setNormalTextSize(size * 2.5f);
-        mController.mLrcView.setHighlightTextSize(size * 2.5f);
+                mController.mLrcView.setNormalTextSize(size * 2.5f);  //xuameng 设置LRC歌词字体大小
+                mController.mLrcView.setHighlightTextSize(size * 2.5f);  //xuameng 设置LRC歌词字体大小
             }
             @Override
             public void setSubtitleDelay(int milliseconds) {
@@ -864,7 +864,7 @@ public class PlayFragment extends BaseLazyFragment {
                             String lrcContent = info.optString("lrc", "");
                             if (!TextUtils.isEmpty(lrcContent)) {
                                 mController.setLrcContent(lrcContent);
-                                mController.mLrcView.setVisibility(View.VISIBLE);
+                                mController.mLrcView.setVisibility(View.VISIBLE);  //xuameng 设置LRC歌词
                                 playSubtitle = "";
                             } else {
                                 playSubtitle = info.optString("subt", "");
