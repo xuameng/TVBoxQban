@@ -82,6 +82,10 @@ import android.media.AudioManager;  //xuameng音乐播放动画
 
 import com.github.tvbox.osc.player.controller.LrcView;  //xuameng LRC歌词字幕
 import android.text.TextUtils;  //xuameng LRC歌词字幕
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+import com.github.tvbox.osc.event.RefreshEvent;
+
 import com.google.android.exoplayer2.ui.SubtitleView;   // 用于显示ExoPlayer内置字幕
 
 import android.os.Build;
@@ -373,6 +377,8 @@ public class VodController extends BaseController {
     private static final String TAG = "VodController";  //xuameng音乐播放动画
     public LrcView mLrcView;   //xuameng LRC歌词字幕
     private String mLrcContent = "";  //xuameng LRC歌词字幕
+    // ... 其他初始化代码 ...
+    EventBus.getDefault().register(this); // 注册 EventBus
 
     Handler myHandle;
     Runnable myRunnable;
@@ -2190,6 +2196,7 @@ public class VodController extends BaseController {
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
+        EventBus.getDefault().unregister(this); // 注销 EventBus
         mHandler.removeCallbacks(myRunnable2);
         mHandler.removeCallbacks(xuRunnable);
         mHandler.removeCallbacks(myRunnableMusic);
@@ -2514,5 +2521,19 @@ public class VodController extends BaseController {
             mLrcView.setLrcText(mLrcContent);
         }
     }
+
+@Subscribe(threadMode = ThreadMode.MAIN)
+public void onSubtitleSizeChange(RefreshEvent event) {
+    if (event.type == RefreshEvent.TYPE_SUBTITLE_SIZE_CHANGE && event.obj != null) {
+        int newTextSize = 40 * 0.6; // 获取新的字体大小
+        // 更新 LRC 歌词字幕的字体大小
+        if (mLrcView != null) {
+            mLrcView.setNormalTextSize(newTextSize);
+            mLrcView.setHighlightTextSize(newTextSize);
+        }
+        // 如果需要，也可以同时更新其他字幕视图的字体大小
+        // 例如：mSubtitleView.setTextSize(newTextSize);
+    }
+}
 
 }
