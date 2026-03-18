@@ -98,7 +98,7 @@ public void setHighlightColor(int color) {
 public void setLrcText(String lrcContent) {
     mLrcLines.clear();
     String[] lines = lrcContent.split("\n");
-    Pattern pattern = Pattern.compile("\$(\\d{2}):(\\d{2})\\.(\\d{2,3})\$");
+	Pattern pattern = Pattern.compile("\\[(\\d{2}):(\\d{2})\\.(\\d{2,3})\\]");
     
     for (String line : lines) {
         Matcher matcher = pattern.matcher(line);
