@@ -38,4 +38,12 @@ public class SubtitleHelper {
         Hawk.put(HawkConfig.SUBTITLE_TIME_DELAY, delay);
     }
 
+public static void setTextStyle(int style) {
+    Hawk.put(HawkConfig.SUBTITLE_TEXT_STYLE, style);
+}
+
+public static int getTextStyle() {
+    return Hawk.get(HawkConfig.SUBTITLE_TEXT_STYLE, 0); // 默认样式为0（白色）
+}
+
 }
