@@ -144,6 +144,8 @@ public class PlayFragment extends BaseLazyFragment {
     public void refresh(RefreshEvent event) {
         if (event.type == RefreshEvent.TYPE_SUBTITLE_SIZE_CHANGE) {
             mController.mSubtitleView.setTextSize((int) event.obj);
+        mController.mLrcView.setNormalTextSize((int) event.obj);
+        mController.mLrcView.setHighlightTextSize((int) event.obj);
         }
     }
 
