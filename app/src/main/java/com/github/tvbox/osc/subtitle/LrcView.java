@@ -52,7 +52,7 @@ private int mScrollDuration = 300; // 滚动动画时长（毫秒）
 
 // 新增：控制是否显示歌词的标志
 private boolean mShouldShowLyrics = false;
-private static final long MIN_POSITION_TO_SHOW = 1000; // 5秒，单位：毫秒
+private static final long MIN_POSITION_TO_SHOW = 1500; // 1.5秒，单位：毫秒
 
 public LrcView(Context context) {
 super(context);
@@ -65,8 +65,9 @@ init();
 }
 
 public LrcView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
-super(context, defStyleAttr);
-init();
+    super(context, attrs, defStyleAttr);  // 修复这里
+    init();
+}
 }
 
 /**
