@@ -276,12 +276,13 @@ public class LrcView extends View {
             return;
         }
 
-        // 新增：检查进度是否达到显示条件
+        // 在 updateTime 方法中，修改以下部分：
         if (position < MIN_POSITION_TO_SHOW) {
-            // 进度小于5秒，不显示歌词
+            // 进度小于1秒，不显示歌词
             if (mShouldShowLyrics) {
                 mShouldShowLyrics = false;
-                invalidate(); // 触发重绘，隐藏歌词
+                mCurrentLine = 0; // 新增：重置当前行到开头
+                invalidate();
             }
             return;
         }
