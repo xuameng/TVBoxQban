@@ -26,6 +26,8 @@ LRC歌词显示控件
 支持卡拉OK效果的歌词同步显示
 
 新增平滑滚动功能
+
+新增：未获取到进度或进度小于5秒时不显示歌词
 */
 public class LrcView extends View {
 
@@ -48,6 +50,10 @@ private float mScrollOffset = 0f; // 当前滚动偏移量（行数）
 private ValueAnimator mScrollAnimator; // 滚动动画
 private int mScrollDuration = 300; // 滚动动画时长（毫秒）
 
+// 新增：控制是否显示歌词的标志
+private boolean mShouldShowLyrics = false;
+private static final long MIN_POSITION_TO_SHOW = 1000; // 5秒，单位：毫秒
+
 public LrcView(Context context) {
 super(context);
 init();
@@ -59,7 +65,7 @@ init();
 }
 
 public LrcView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
-super(context, attrs, defStyleAttr);
+super(context, defStyleAttr);
 init();
 }
 
@@ -155,6 +161,7 @@ for (String line : lines) {
 if (line.trim().isEmpty()) {
 continue;
 }
+
  Matcher matcher = pattern.matcher(line);
  List<Long> times = new ArrayList<>();
  String text = "";
@@ -194,20 +201,24 @@ continue;
  }
 
 
+
+
 }
 Collections.sort(mLrcLines, (a, b) -> Long.compare(a.time, b.time));
 
 // 修改初始行设置逻辑
 if (mLrcLines.size() >= 7) {
-    // 歌词行数足够，从第0行开始显示
-    mCurrentLine = 0;
+// 歌词行数足够，从第0行开始显示
+mCurrentLine = 0;
 } else if (mLrcLines.size() > 0) {
-    // 歌词行数不足7行，居中显示
-    mCurrentLine = Math.max(0, mLrcLines.size() - 4);
+// 歌词行数不足7行，居中显示
+mCurrentLine = Math.max(0, mLrcLines.size() - 4);
 } else {
-    mCurrentLine = 0;
+mCurrentLine = 0;
 }
 
+// 新增：加载歌词时默认不显示，等待进度更新
+mShouldShowLyrics = false;
 mCurrentPosition = 0;
 mScrollOffset = 0f; // 重置滚动偏移
 invalidate();
@@ -254,6 +265,7 @@ mScrollOffset = 0f;
      mCurrentLine = targetLine;
      mScrollOffset = 0f;
  }
+
 });
 
 mScrollAnimator.start();
@@ -268,6 +280,21 @@ mScrollAnimator.start();
 public void updateTime(long position) {
 if (mLrcLines.isEmpty()) {
 return;
+}
+
+// 新增：检查进度是否达到显示条件
+if (position < MIN_POSITION_TO_SHOW) {
+// 进度小于5秒，不显示歌词
+if (mShouldShowLyrics) {
+mShouldShowLyrics = false;
+invalidate(); // 触发重绘，隐藏歌词
+}
+return;
+}
+
+// 进度大于等于5秒，开始显示歌词
+if (!mShouldShowLyrics) {
+mShouldShowLyrics = true;
 }
 
 mCurrentPosition = position;
@@ -294,11 +321,53 @@ invalidate();
 
 /**
 
+新增：手动设置是否显示歌词
+@param show 是否显示歌词
+*/
+public void setShowLyrics(boolean show) {
+if (mShouldShowLyrics != show) {
+mShouldShowLyrics = show;
+invalidate();
+}
+}
+/**
+
+新增：获取当前是否显示歌词
+@return 是否显示歌词
+*/
+public boolean isShowingLyrics() {
+return mShouldShowLyrics;
+}
+/**
+
+新增：重置显示状态
+*/
+public void reset() {
+mShouldShowLyrics = false;
+mCurrentPosition = 0;
+mCurrentLine = 0;
+mScrollOffset = 0f;
+invalidate();
+}
+/**
+
 绘制卡拉OK效果
 */
 @Override
 protected void onDraw(Canvas canvas) {
 super.onDraw(canvas);
+
+// 新增：检查是否应该显示歌词
+if (!mShouldShowLyrics) {
+// 不显示歌词，可以显示提示信息或保持空白
+String hint = "歌词载入中...";
+float textWidth = mNormalPaint.measureText(hint);
+float centerX = getWidth() / 2 - textWidth / 2;
+float centerY = getHeight() / 2;
+canvas.drawText(hint, centerX, centerY, mNormalPaint);
+return;
+}
+
 if (mLrcLines.isEmpty()) {
 return;
 }
