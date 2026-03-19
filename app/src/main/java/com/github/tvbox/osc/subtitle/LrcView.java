@@ -112,15 +112,18 @@ public void setLrcText(String lrcContent) {
         while (matcher.find()) {
             int min = Integer.parseInt(matcher.group(1));
             int sec = Integer.parseInt(matcher.group(2));
-            // 处理毫秒部分
-            String msStr = matcher.group(3);
-            if (msStr.length() == 1) {
-                msStr = msStr + "00";  // .1 -> .100
-            } else if (msStr.length() == 2) {
-                msStr = msStr + "0";   // .12 -> .120
-            }
-            int ms = Integer.parseInt(msStr);
-            times.add((min * 60 + sec) * 1000L + ms);
+// 处理毫秒部分
+String msStr = matcher.group(3);
+long ms;
+if (msStr.length() == 2) {
+    // 2位数字，按百分秒处理
+    ms = Integer.parseInt(msStr) * 10L; // 百分秒转毫秒
+} else if (msStr.length() == 1) {
+    ms = Integer.parseInt(msStr) * 100L; // 如.1 -> 100毫秒
+} else {
+    ms = Integer.parseInt(msStr); // 3位数字，直接作为毫秒
+}
+times.add((min * 60 + sec) * 1000L + ms);
             lastEnd = matcher.end();
         }
         
