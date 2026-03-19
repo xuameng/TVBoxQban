@@ -19,11 +19,11 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
+/**xuameng
  * LRC歌词显示控件
  * 支持卡拉OK效果的歌词同步显示
  * 新增平滑滚动功能
- * 新增：未获取到进度或进度小于5秒时不显示歌词
+ * 新增：未获取到进度或进度小于1秒时不显示歌词
  */
 public class LrcView extends View {
 
