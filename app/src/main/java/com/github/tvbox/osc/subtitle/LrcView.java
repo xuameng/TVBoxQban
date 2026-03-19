@@ -204,7 +204,7 @@ public class LrcView extends View {
         // 按时间排序
         Collections.sort(mLrcLines, (a, b) -> Long.compare(a.time, b.time));
 
-        // 移除重复的时间标签（相同时间相同文本的行）
+        // 移除重复的歌词行
         removeDuplicateLines();
 
         // 重置所有状态
@@ -399,28 +399,28 @@ public class LrcView extends View {
         int visibleLines = Math.min(mLrcLines.size(), 7); // 显示最多7行歌词
         float totalHeight = lineHeight * visibleLines;
 
-        // 应用滚动偏移
-        float scrollOffsetPixels = mScrollOffset * lineHeight;
-
         // 计算起始Y位置，使当前行居中显示
-        float startY = (getHeight() - totalHeight) / 2 + mNormalPaint.getTextSize() - scrollOffsetPixels;
+        float startY = (getHeight() - totalHeight) / 2 + mNormalPaint.getTextSize();
 
         // 计算实际可见的行范围，确保不会超出歌词列表边界
         int startLineIndex = Math.max(0, mCurrentLine - 3);
         int endLineIndex = Math.min(mLrcLines.size() - 1, mCurrentLine + 3);
 
         // 绘制当前行及前后行
-        for (int i = startLineIndex; i <= endLineIndex; i++) {
-            LrcLine line = mLrcLines.get(i);
-            int relativeIndex = i - Math.max(startLineIndex, Math.min(mCurrentLine - 3, endLineIndex - 6)); // 修正相对索引计算
-            int visualIndex = i - startLineIndex; // 在可见区域中的视觉索引
-            float y = startY + visualIndex * lineHeight;
+        for (int i = 0; i < visibleLines; i++) {
+            int actualIndex = startLineIndex + i;
+            if (actualIndex < 0 || actualIndex >= mLrcLines.size()) {
+                continue;
+            }
+            
+            LrcLine line = mLrcLines.get(actualIndex);
+            float y = startY + i * lineHeight;
 
-            if (i == mCurrentLine) {
+            if (actualIndex == mCurrentLine) {
                 // 当前行：卡拉OK高亮效果
                 float progress = 0f;
                 if (mCurrentPosition >= line.time) {
-                    long nextTime = (i + 1 < mLrcLines.size()) ? mLrcLines.get(i + 1).time : line.time + 5000;
+                    long nextTime = (actualIndex + 1 < mLrcLines.size()) ? mLrcLines.get(actualIndex + 1).time : line.time + 5000;
                     long duration = nextTime - line.time;
                     if (duration > 0) {
                         progress = (float) (mCurrentPosition - line.time) / duration;
