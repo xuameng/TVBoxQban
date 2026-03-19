@@ -19,8 +19,9 @@
         android:tag="music_iv_circle_bg"
         android:padding="@dimen/vs_10"
         android:visibility="gone"
-        android:layout_width="@dimen/vs_120"
-        android:layout_height="@dimen/vs_120"
+        android:scaleType="fitXY"
+        android:layout_width="@dimen/vs_100"
+        android:layout_height="@dimen/vs_100"
         android:src="@drawable/app_logo"/>
     <com.github.tvbox.osc.ui.tv.widget.MusicVisualizerView
         android:id="@+id/visualizer_view"
