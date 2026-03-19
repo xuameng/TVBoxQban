@@ -68,7 +68,6 @@ public LrcView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) 
     super(context, attrs, defStyleAttr);  // 修复这里
     init();
 }
-}
 
 /**
 
