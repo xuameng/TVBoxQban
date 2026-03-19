@@ -198,35 +198,19 @@ public class LrcView extends View {
                     }
                 }
             }
-// 在setLrcText方法最后，确保重置所有状态
-mShouldShowLyrics = false;
-mCurrentLine = 0;
-mScrollOffset = 0f;
-mCurrentPosition = 0;
-if (mScrollAnimator != null && mScrollAnimator.isRunning()) {
-    mScrollAnimator.cancel();
-}
-invalidate(); // 立即重绘
         }
+        
         Collections.sort(mLrcLines, (a, b) -> Long.compare(a.time, b.time));
 
-        // 修改初始行设置逻辑
-        if (mLrcLines.size() >= 7) {
-            // 歌词行数足够，从第0行开始显示
-            mCurrentLine = 0;
-        } else if (mLrcLines.size() > 0) {
-            // 歌词行数不足7行，但确保从第一句开始
-            mCurrentLine = 0;
-            // 可以在这里调整显示行数或布局，但起始行必须是0
-        } else {
-            mCurrentLine = 0;
-        }
-
-        // 新增：加载歌词时默认不显示，等待进度更新
+        // 重置所有状态
         mShouldShowLyrics = false;
+        mCurrentLine = 0;
+        mScrollOffset = 0f;
         mCurrentPosition = 0;
-        mScrollOffset = 0f; // 重置滚动偏移
-        invalidate();
+        if (mScrollAnimator != null && mScrollAnimator.isRunning()) {
+            mScrollAnimator.cancel();
+        }
+        invalidate(); // 立即重绘
     }
 
     /**
@@ -286,14 +270,14 @@ invalidate(); // 立即重绘
         }
 
         // 在 updateTime 方法中，修改以下部分：
-    if (position < MIN_POSITION_TO_SHOW) {
-        // 进度小于1秒，不显示歌词
-        mShouldShowLyrics = false;
-        mCurrentLine = 0; // 强制重置到第一行
-        mScrollOffset = 0f; // 重置滚动偏移
-        invalidate(); // 强制重绘，显示"歌词载入中..."或空白
-        return;
-    }
+        if (position < MIN_POSITION_TO_SHOW) {
+            // 进度小于1秒，不显示歌词
+            mShouldShowLyrics = false;
+            mCurrentLine = 0; // 强制重置到第一行
+            mScrollOffset = 0f; // 重置滚动偏移
+            invalidate(); // 强制重绘，显示"歌词载入中..."或空白
+            return;
+        }
 
         // 进度大于等于5秒，开始显示歌词
         if (!mShouldShowLyrics) {
@@ -378,15 +362,32 @@ invalidate(); // 立即重绘
 
         // 计算总高度和起始Y位置，实现垂直居中
         float lineHeight = mNormalPaint.getTextSize() * 1.5f;
-        float totalHeight = lineHeight * 7; // 显示7行歌词
+        float totalHeight = lineHeight * Math.min(mLrcLines.size(), 7); // 显示最多7行歌词
 
         // 应用滚动偏移
         float scrollOffsetPixels = mScrollOffset * lineHeight;
+        
+        // 修正绘制逻辑，确保歌词从正确位置开始绘制
+        // 计算实际显示的中心行，考虑边界情况
+        int displayCenterLine = mCurrentLine;
+        if (mLrcLines.size() < 7) {
+            // 如果歌词数量少于7行，始终以第0行为中心
+            displayCenterLine = Math.max(0, Math.min(mCurrentLine, mLrcLines.size() - 1));
+        } else {
+            // 如果歌词数量够多，确保当前行在可视区域内
+            int minDisplayable = 3; // 最小显示行索引
+            int maxDisplayable = mLrcLines.size() - 4; // 最大显示行索引
+            displayCenterLine = Math.max(minDisplayable, Math.min(displayCenterLine, maxDisplayable));
+        }
+
+        // 计算起始Y位置，使当前行居中显示
         float startY = (getHeight() - totalHeight) / 2 + mNormalPaint.getTextSize() - scrollOffsetPixels;
 
-        // 绘制当前行及前后行
+        // 绘制当前行及前后行 - 修正逻辑，确保从正确的中心行开始
         for (int i = -3; i <= 3; i++) {
-            int index = mCurrentLine + i;
+            int index = displayCenterLine + i;
+            
+            // 边界检查
             if (index < 0 || index >= mLrcLines.size()) {
                 continue;
             }
@@ -394,7 +395,7 @@ invalidate(); // 立即重绘
             LrcLine line = mLrcLines.get(index);
             float y = startY + (i + 3) * lineHeight; // 从startY开始计算每行位置
 
-            if (i == 0) {
+            if (index == mCurrentLine) {
                 // 当前行：卡拉OK高亮效果
                 float progress = (float) (mCurrentPosition - line.time) /
                         (index + 1 < mLrcLines.size() ?
