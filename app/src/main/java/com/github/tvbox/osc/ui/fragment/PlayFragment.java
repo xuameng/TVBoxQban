@@ -890,6 +890,7 @@ public class PlayFragment extends BaseLazyFragment {
 // xuameng优先检查 lrc 字段（歌词字符串）
 if (info.has("lrc")) {
     String lrcContent = info.optString("lrc", "");
+					App.showToastShort(mContext, lrcContent);
     if (!TextUtils.isEmpty(lrcContent)) {
         // 新增：判断 lrcContent 是否为 URL
         if (lrcContent.startsWith("http://") || lrcContent.startsWith("https://")) {
@@ -2373,7 +2374,6 @@ private void loadLrcFromUrl(String lrcUrl) {
             @Override
             public void onError(Response<String> response) {
                 super.onError(response);
-				App.showToastShort(mContext, "22222222222222");
                 // 加载失败，隐藏歌词视图
                 requireActivity().runOnUiThread(() -> {
                     mController.mLrcView.setVisibility(View.GONE);
