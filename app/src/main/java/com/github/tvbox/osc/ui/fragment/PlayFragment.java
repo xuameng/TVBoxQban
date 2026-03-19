@@ -2348,6 +2348,12 @@ if (info.has("lrc")) {
     };
 
 private void loadLrcFromUrl(String lrcUrl) {
+    // 检查URL是否包含需要替换的端口
+    if (lrcUrl.contains(":9976/")) {
+        // 将端口9976替换为9978
+        lrcUrl = lrcUrl.replace(":9976/", ":9978/");
+    }
+    
     OkGo.<String>get(lrcUrl)
         .tag("lrc_load")
         .execute(new AbsCallback<String>() {
@@ -2355,11 +2361,29 @@ private void loadLrcFromUrl(String lrcUrl) {
             public void onSuccess(Response<String> response) {
                 String lrcText = response.body();
                 if (!TextUtils.isEmpty(lrcText)) {
-                    // 切换到主线程更新 UI
-                    requireActivity().runOnUiThread(() -> {
-                        mController.setLrcContent(lrcText);
-                        mController.mLrcView.setVisibility(View.VISIBLE);
-                    });
+                    // 尝试解析JSON格式的歌词响应
+                    try {
+                        JSONObject jsonResponse = new JSONObject(lrcText);
+                        if (jsonResponse.has("lrc")) {
+                            lrcText = jsonResponse.optString("lrc", "");
+                        }
+                    } catch (JSONException e) {
+                        // 如果不是JSON格式，保持原歌词文本
+                        e.printStackTrace();
+                    }
+                    
+                    if (!TextUtils.isEmpty(lrcText)) {
+                        // 切换到主线程更新UI
+                        requireActivity().runOnUiThread(() -> {
+                            mController.setLrcContent(lrcText);
+                            mController.mLrcView.setVisibility(View.VISIBLE);
+                        });
+                    } else {
+                        // 歌词内容为空，隐藏歌词视图
+                        requireActivity().runOnUiThread(() -> {
+                            mController.mLrcView.setVisibility(View.GONE);
+                        });
+                    }
                 } else {
                     // 歌词内容为空，隐藏歌词视图
                     requireActivity().runOnUiThread(() -> {
@@ -2384,4 +2408,5 @@ private void loadLrcFromUrl(String lrcUrl) {
             }
         });
 }
+
 }
