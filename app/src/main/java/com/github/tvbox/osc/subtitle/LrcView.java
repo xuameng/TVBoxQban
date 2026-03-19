@@ -48,7 +48,7 @@ public class LrcView extends View {
 
     // 新增：控制是否显示歌词的标志
     private boolean mShouldShowLyrics = false;
-    private static final long MIN_POSITION_TO_SHOW = 1000; // 1秒，单位：毫秒
+    private static final long MIN_POSITION_TO_SHOW = 200; // 0.2秒，单位：毫秒
 
     public LrcView(Context context) {
         super(context);
@@ -185,18 +185,22 @@ public class LrcView extends View {
                 lastEnd = matcher.end();
             }
 
-            // 如果有时间标签，提取歌词文本
-            if (!times.isEmpty()) {
-                text = line.substring(lastEnd).trim();
-                if (!text.isEmpty()) {
-                    for (Long time : times) {
-                        LrcLine lrcLine = new LrcLine();
-                        lrcLine.time = time;
-                        lrcLine.text = text;
-                        lrcLine.width = mNormalPaint.measureText(text);
-                        mLrcLines.add(lrcLine);
-                    }
+            // 提取歌词文本（去除时间标签后的内容）
+            text = line.substring(lastEnd).trim();
+
+            // 只有当文本非空时才添加到歌词列表
+            if (!text.isEmpty()) {
+                for (Long time : times) {
+                    LrcLine lrcLine = new LrcLine();
+                    lrcLine.time = time;
+                    lrcLine.text = text;
+                    lrcLine.width = mNormalPaint.measureText(text);
+                    mLrcLines.add(lrcLine);
                 }
+            } else {
+                // 如果文本为空，但是有时间标签，可能是纯时间标签行（如[00:13.760]）
+                // 这种情况下我们忽略这些行，因为它们没有歌词内容
+                continue;
             }
         }
         
@@ -362,44 +366,30 @@ public class LrcView extends View {
 
         // 计算总高度和起始Y位置，实现垂直居中
         float lineHeight = mNormalPaint.getTextSize() * 1.5f;
-        float totalHeight = lineHeight * Math.min(mLrcLines.size(), 7); // 显示最多7行歌词
+        int visibleLines = Math.min(mLrcLines.size(), 7); // 显示最多7行歌词
+        float totalHeight = lineHeight * visibleLines;
 
         // 应用滚动偏移
         float scrollOffsetPixels = mScrollOffset * lineHeight;
-        
-        // 修正绘制逻辑，确保歌词从正确位置开始绘制
-        // 计算实际显示的中心行，考虑边界情况
-        int displayCenterLine = mCurrentLine;
-        if (mLrcLines.size() < 7) {
-            // 如果歌词数量少于7行，始终以第0行为中心
-            displayCenterLine = Math.max(0, Math.min(mCurrentLine, mLrcLines.size() - 1));
-        } else {
-            // 如果歌词数量够多，确保当前行在可视区域内
-            int minDisplayable = 3; // 最小显示行索引
-            int maxDisplayable = mLrcLines.size() - 4; // 最大显示行索引
-            displayCenterLine = Math.max(minDisplayable, Math.min(displayCenterLine, maxDisplayable));
-        }
 
         // 计算起始Y位置，使当前行居中显示
         float startY = (getHeight() - totalHeight) / 2 + mNormalPaint.getTextSize() - scrollOffsetPixels;
 
-        // 绘制当前行及前后行 - 修正逻辑，确保从正确的中心行开始
-        for (int i = -3; i <= 3; i++) {
-            int index = displayCenterLine + i;
-            
-            // 边界检查
-            if (index < 0 || index >= mLrcLines.size()) {
-                continue;
-            }
+        // 计算实际可见的行范围，确保不会超出歌词列表边界
+        int startLineIndex = Math.max(0, mCurrentLine - 3);
+        int endLineIndex = Math.min(mLrcLines.size() - 1, mCurrentLine + 3);
 
-            LrcLine line = mLrcLines.get(index);
-            float y = startY + (i + 3) * lineHeight; // 从startY开始计算每行位置
+        // 绘制当前行及前后行
+        for (int i = startLineIndex; i <= endLineIndex; i++) {
+            LrcLine line = mLrcLines.get(i);
+            int relativeIndex = i - mCurrentLine + 3; // 相对于中心位置的索引 (-3 到 3)
+            float y = startY + relativeIndex * lineHeight;
 
-            if (index == mCurrentLine) {
+            if (i == mCurrentLine) {
                 // 当前行：卡拉OK高亮效果
                 float progress = (float) (mCurrentPosition - line.time) /
-                        (index + 1 < mLrcLines.size() ?
-                                mLrcLines.get(index + 1).time - line.time : 1000);
+                        (i + 1 < mLrcLines.size() ?
+                                mLrcLines.get(i + 1).time - line.time : 1000);
                 progress = Math.max(0, Math.min(1, progress));
 
                 // 绘制背景文本（完整）
