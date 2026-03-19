@@ -208,13 +208,14 @@ Collections.sort(mLrcLines, (a, b) -> Long.compare(a.time, b.time));
 
 // 修改初始行设置逻辑
 if (mLrcLines.size() >= 7) {
-// 歌词行数足够，从第0行开始显示
-mCurrentLine = 0;
+    // 歌词行数足够，从第0行开始显示
+    mCurrentLine = 0;
 } else if (mLrcLines.size() > 0) {
-// 歌词行数不足7行，居中显示
-mCurrentLine = Math.max(0, mLrcLines.size() - 4);
+    // 歌词行数不足7行，但确保从第一句开始
+    mCurrentLine = 0;
+    // 可以在这里调整显示行数或布局，但起始行必须是0
 } else {
-mCurrentLine = 0;
+    mCurrentLine = 0;
 }
 
 // 新增：加载歌词时默认不显示，等待进度更新
