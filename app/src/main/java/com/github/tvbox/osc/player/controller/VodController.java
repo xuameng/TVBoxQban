@@ -381,6 +381,7 @@ public class VodController extends BaseController {
     public LrcView mLrcView;   //xuameng LRC歌词字幕
     private String mLrcContent = "";  //xuameng LRC歌词字幕
 	private String videoPicUrl; //xuameng 新增给vod显示旋转图片用
+    private boolean mLrcViewShow = false; //xuameng判断字幕是否显示
 
     Handler myHandle;
     Runnable myRunnable;
@@ -476,6 +477,7 @@ public class VodController extends BaseController {
                     FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) iv_circle_bg.getLayoutParams(); //xuameng 新增给vod显示旋转图片用
                     if(mLrcView.getVisibility() == View.VISIBLE) {   //xuameng LRC歌词字幕
                         long position = mControlWrapper.getCurrentPosition();
+                        mLrcViewShow = true;  //xuameng判断字幕是否显示
                         if (mLrcView != null) {
                             mLrcView.updateTime(position);  //xuameng 刷新LRC歌词字幕
                         }
@@ -486,13 +488,14 @@ public class VodController extends BaseController {
                         params.topMargin = margin;
                         params.leftMargin = margin;
                     }else {
+                        mLrcViewShow = false;  //xuameng判断字幕是否显示
                         // xuameng如果 mLrcView 不显示，则将 iv_circle_bg 置于屏幕中心
                         params.gravity = Gravity.CENTER;
                         params.topMargin = 0; // 重置上边距
                         params.leftMargin = 0; // 重置左边距
                     }
                     iv_circle_bg.setLayoutParams(params);
-                    if(mProgressRoot.getVisibility() == View.VISIBLE || mPlayLoadNetSpeed.getVisibility() == View.VISIBLE || XuLoading.getVisibility() == View.VISIBLE || play_speed_3.getVisibility() == View.VISIBLE) {
+                    if(mProgressRoot.getVisibility() == View.VISIBLE && !mLrcViewShow || mPlayLoadNetSpeed.getVisibility() == View.VISIBLE && !mLrcViewShow || XuLoading.getVisibility() == View.VISIBLE && !mLrcViewShow || play_speed_3.getVisibility() == View.VISIBLE && !mLrcViewShow) {
                         if(iv_circle_bg.getVisibility() == View.VISIBLE) { //xuameng音乐播放时图标
                             iv_circle_bg.setVisibility(GONE);
                         }
