@@ -198,6 +198,15 @@ public class LrcView extends View {
                     }
                 }
             }
+// 在setLrcText方法最后，确保重置所有状态
+mShouldShowLyrics = false;
+mCurrentLine = 0;
+mScrollOffset = 0f;
+mCurrentPosition = 0;
+if (mScrollAnimator != null && mScrollAnimator.isRunning()) {
+    mScrollAnimator.cancel();
+}
+invalidate(); // 立即重绘
         }
         Collections.sort(mLrcLines, (a, b) -> Long.compare(a.time, b.time));
 
@@ -277,15 +286,14 @@ public class LrcView extends View {
         }
 
         // 在 updateTime 方法中，修改以下部分：
-        if (position < MIN_POSITION_TO_SHOW) {
-            // 进度小于1秒，不显示歌词
-            if (mShouldShowLyrics) {
-                mShouldShowLyrics = false;
-                mCurrentLine = 0; // 新增：重置当前行到开头
-                invalidate();
-            }
-            return;
-        }
+    if (position < MIN_POSITION_TO_SHOW) {
+        // 进度小于1秒，不显示歌词
+        mShouldShowLyrics = false;
+        mCurrentLine = 0; // 强制重置到第一行
+        mScrollOffset = 0f; // 重置滚动偏移
+        invalidate(); // 强制重绘，显示"歌词载入中..."或空白
+        return;
+    }
 
         // 进度大于等于5秒，开始显示歌词
         if (!mShouldShowLyrics) {
