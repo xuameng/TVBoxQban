@@ -2547,7 +2547,7 @@ public class VodController extends BaseController {
         if (videoPicUrl != null && !videoPicUrl.isEmpty() && iv_circle_bg != null) {
             Picasso.get()
                    .load(videoPicUrl)
-				   .resize(130,130)
+				   .resize(160,160)
                    .transform(new RoundTransformation(MD5.string2MD5(videoPicUrl))
                    .centerCorp(true)
                    .roundRadius(AutoSizeUtils.mm2px(getContext(), 50), RoundTransformation.RoundType.ALL))
