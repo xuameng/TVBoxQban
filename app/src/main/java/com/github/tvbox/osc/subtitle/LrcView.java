@@ -97,28 +97,27 @@ public class LrcView extends View {
 public void setLrcText(String lrcContent) {
     mLrcLines.clear();
     String[] lines = lrcContent.split("\n");
-    Pattern pattern = Pattern.compile("\$(\\d{2}):(\\d{2})\\.(\\d{1,3})\$");
+    Pattern pattern = Pattern.compile("\\[(\\d{2}):(\\d{2})\\.(\\d{1,3})\\]");
     
     for (String line : lines) {
-        // 跳过空行和纯元数据行
+        // 跳过空行
         if (line.trim().isEmpty()) continue;
         
-        // 检查是否是时间标签行
         Matcher matcher = pattern.matcher(line);
         List<Long> times = new ArrayList<>();
         String text = "";
+        int lastEnd = 0;
         
         // 查找所有时间标签
-        int lastEnd = 0;
         while (matcher.find()) {
             int min = Integer.parseInt(matcher.group(1));
             int sec = Integer.parseInt(matcher.group(2));
-            String msStr = matcher.group(3);
             // 处理毫秒部分
+            String msStr = matcher.group(3);
             if (msStr.length() == 1) {
-                msStr = msStr + "00";
+                msStr = msStr + "00";  // .1 -> .100
             } else if (msStr.length() == 2) {
-                msStr = msStr + "0";
+                msStr = msStr + "0";   // .12 -> .120
             }
             int ms = Integer.parseInt(msStr);
             times.add((min * 60 + sec) * 1000L + ms);
@@ -139,7 +138,6 @@ public void setLrcText(String lrcContent) {
             }
         }
     }
-    
     Collections.sort(mLrcLines, (a, b) -> Long.compare(a.time, b.time));
     mCurrentLine = 0;
     mCurrentPosition = 0;
