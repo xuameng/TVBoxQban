@@ -70,7 +70,6 @@ import xyz.doikki.videoplayer.player.VideoView;
 import xyz.doikki.videoplayer.util.PlayerUtils;
 import static xyz.doikki.videoplayer.util.PlayerUtils.stringForTime;
 import com.squareup.picasso.Picasso; //xuameng播放音频切换图片
-import jp.wasabeef.picasso.transformations.CircleCropTransformation;
 import com.squareup.picasso.MemoryPolicy; //xuameng播放音频切换图片
 import com.squareup.picasso.NetworkPolicy; //xuameng播放音频切换图片
 import android.graphics.Bitmap; //xuameng播放音频切换图片
@@ -2548,9 +2547,10 @@ public class VodController extends BaseController {
         if (videoPicUrl != null && !videoPicUrl.isEmpty() && iv_circle_bg != null) {
             Picasso.get()
                    .load(videoPicUrl)
-				   .resize(150,150)
+				   .resize(120,120)
+                   .transform(new RoundTransformation(MD5.string2MD5(videoPicUrl))
                    .centerCorp(true)
-                   .transform(new CircleCropTransformation())
+                   .roundRadius(AutoSizeUtils.mm2px(getContext(), 50), RoundTransformation.RoundType.ALL))
                    .placeholder(R.drawable.app_logo)
                    .error(R.drawable.app_logo)
                    .into(iv_circle_bg);
