@@ -104,7 +104,7 @@ public class VodController extends BaseController {
             public void callback(Message msg) {
                 switch(msg.what) {
                     case 1000: { // seek 刷新
-                        if(iv_circle_bg.getVisibility() == View.VISIBLE) { //xuameng音乐播放时图标
+                        if(iv_circle_bg.getVisibility() == View.VISIBLE && mLrcView.getVisibility() == View.GONE) { //xuameng音乐播放时图标  当字幕显示时不隐藏旋转图标
                             iv_circle_bg.setVisibility(GONE);
                         }
                         if(mPlayLoadNetSpeed.getVisibility() == View.VISIBLE) { //xuameng网速
@@ -487,7 +487,7 @@ public class VodController extends BaseController {
                         params.leftMargin = margin;
 
                         if(isVideoplaying) {
-                            loadVideoPic();
+                            loadVideoPic();    //xuameng 加载网络PIC图片
                             iv_circle_bg.setVisibility(VISIBLE);
                         }
                     }else {
@@ -508,7 +508,7 @@ public class VodController extends BaseController {
                             }
                         } else {
                             if(isVideoplaying) {
-                                loadVideoPic();
+                                loadVideoPic();  //xuameng 加载网络PIC图片
                                 iv_circle_bg.setVisibility(VISIBLE);
                             }
                         }
@@ -2009,7 +2009,7 @@ public class VodController extends BaseController {
                 updatePlayerCfgView();
                 listener.updatePlayerCfg();
                 mControlWrapper.setSpeed(speed);
-                if(iv_circle_bg.getVisibility() == View.VISIBLE) { //xuameng音乐播放时图标
+                if(iv_circle_bg.getVisibility() == View.VISIBLE && mLrcView.getVisibility() == View.GONE) { //xuameng音乐播放时图标  当歌词显示时不隐藏旋转图标
                     iv_circle_bg.setVisibility(GONE);
                 }
                 if(mProgressRoot.getVisibility() == View.VISIBLE) { //xuameng进程图标
