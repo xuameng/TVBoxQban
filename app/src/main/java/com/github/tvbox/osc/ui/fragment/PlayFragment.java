@@ -885,6 +885,56 @@ public class PlayFragment extends BaseLazyFragment {
                         progressKey = info.optString("proKey", null);
                         boolean parse = info.optString("parse", "1").equals("1");
                         boolean jx = info.optString("jx", "0").equals("1");
+// 在获取 playUrl 和 url 后，检查它们是否是 JSON 格式
+String playUrlXu = info.optString("playUrl", "");
+String urlXu = info.getString("url");
+
+// 检查 playUrl 是否是 JSON 格式（以 "json:" 开头）
+if (playUrlXu.startsWith("json:")) {
+    String jsonStr = playUrlXu.substring(5);
+    try {
+        JSONObject jsonObject = new JSONObject(jsonStr);
+        if (jsonObject.has("lrc")) {
+            String lrcContent = jsonObject.optString("lrc", "");
+            if (!TextUtils.isEmpty(lrcContent)) {
+                if (lrcContent.startsWith("http://") || lrcContent.startsWith("https://")) {
+                    loadLrcFromUrl(lrcContent);
+                } else {
+                    mController.setLrcContent(lrcContent);
+                    mController.mLrcView.setVisibility(View.VISIBLE);
+                }
+            }
+        }
+    } catch (JSONException e) {
+        e.printStackTrace();
+    }
+}
+
+// 检查 url 是否是 JSON 格式（以 "[" 开头或包含 JSON 结构）
+if (urlXu.startsWith("{") || urlXu.startsWith("[")) {
+    try {
+        // 如果是 JSON 数组，先提取第一个 URL
+        if (urlXu.startsWith("[")) {
+            urlXu = mController.firstUrlByArray(urlXu);
+        } else {
+            // 如果是 JSON 对象，尝试解析
+            JSONObject jsonObject = new JSONObject(urlXu);
+            if (jsonObject.has("lrc")) {
+                String lrcContent = jsonObject.optString("lrc", "");
+                if (!TextUtils.isEmpty(lrcContent)) {
+                    if (lrcContent.startsWith("http://") || lrcContent.startsWith("https://")) {
+                        loadLrcFromUrl(lrcContent);
+                    } else {
+                        mController.setLrcContent(lrcContent);
+                        mController.mLrcView.setVisibility(View.VISIBLE);
+                    }
+                }
+            }
+        }
+    } catch (JSONException e) {
+        e.printStackTrace();
+    }
+}
 
 // xuameng优先检查 lrc 字段（歌词字符串）
 if (info.has("lrc")) {
@@ -2379,7 +2429,6 @@ private void loadLrcFromUrl(String lrcUrl) {
                 requireActivity().runOnUiThread(() -> {
                     mController.mLrcView.setVisibility(View.GONE);
                 });
-                LOG.e("LRC歌词加载失败: " + lrcUrl);
             }
 
             @Override
