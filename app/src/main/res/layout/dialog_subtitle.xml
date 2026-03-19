@@ -118,6 +118,7 @@
                 <TextView
                     android:textSize="@dimen/ts_22"
                     android:textColor="@color/color_FFFFFF"
+                    android:textStyle="bold"
                     android:gravity="center"
                     android:layout_gravity="center"
                     android:id="@+id/subtitleStyleOne"
@@ -145,6 +146,7 @@
                 <TextView
                     android:textSize="@dimen/ts_22"
                     android:textColor="@color/color_02F8E1"
+                    android:textStyle="bold"
                     android:gravity="center"
                     android:layout_gravity="center"
                     android:id="@+id/subtitleStyleTwo"
