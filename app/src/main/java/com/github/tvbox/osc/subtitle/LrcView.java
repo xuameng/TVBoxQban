@@ -48,7 +48,7 @@ public class LrcView extends View {
 
     // 新增：控制是否显示歌词的标志
     private boolean mShouldShowLyrics = false;
-    private static final long MIN_POSITION_TO_SHOW = 1000; // 1秒，单位：毫秒
+    private static final long MIN_POSITION_TO_SHOW = 100; // 0.1秒，单位：毫秒
 
     public LrcView(Context context) {
         super(context);
@@ -382,7 +382,7 @@ public class LrcView extends View {
         // 检查是否应该显示歌词
         if (!mShouldShowLyrics) {
             // 不显示歌词，显示提示信息
-            String hint = "歌词载入中...";
+            String hint = "";   //xuameng 可以加 歌词载入中...
             float textWidth = mNormalPaint.measureText(hint);
             float centerX = getWidth() / 2 - textWidth / 2;
             float centerY = getHeight() / 2;
