@@ -48,7 +48,7 @@ public class LrcView extends View {
 
     // 新增：控制是否显示歌词的标志
     private boolean mShouldShowLyrics = false;
-    private static final long MIN_POSITION_TO_SHOW = 200; // 0.2秒，单位：毫秒
+    private static final long MIN_POSITION_TO_SHOW = 1000; // 1秒，单位：毫秒
 
     public LrcView(Context context) {
         super(context);
@@ -197,24 +197,47 @@ public class LrcView extends View {
                     lrcLine.width = mNormalPaint.measureText(text);
                     mLrcLines.add(lrcLine);
                 }
-            } else {
-                // 如果文本为空，但是有时间标签，可能是纯时间标签行（如[00:13.760]）
-                // 这种情况下我们忽略这些行，因为它们没有歌词内容
-                continue;
             }
+            // 注意：这里我们跳过了纯时间标签行（如[00:13.760]），因为它们没有歌词内容
         }
         
+        // 按时间排序
         Collections.sort(mLrcLines, (a, b) -> Long.compare(a.time, b.time));
+
+        // 移除重复的时间标签（相同时间相同文本的行）
+        removeDuplicateLines();
 
         // 重置所有状态
         mShouldShowLyrics = false;
-        mCurrentLine = 0;
+        mCurrentLine = 0; // 总是从第0行开始
         mScrollOffset = 0f;
         mCurrentPosition = 0;
         if (mScrollAnimator != null && mScrollAnimator.isRunning()) {
             mScrollAnimator.cancel();
         }
         invalidate(); // 立即重绘
+    }
+
+    /**
+     * 移除重复的歌词行
+     */
+    private void removeDuplicateLines() {
+        if (mLrcLines.size() <= 1) return;
+        
+        List<LrcLine> uniqueLines = new ArrayList<>();
+        for (LrcLine line : mLrcLines) {
+            boolean isDuplicate = false;
+            for (LrcLine existingLine : uniqueLines) {
+                if (existingLine.time == line.time && existingLine.text.equals(line.text)) {
+                    isDuplicate = true;
+                    break;
+                }
+            }
+            if (!isDuplicate) {
+                uniqueLines.add(line);
+            }
+        }
+        mLrcLines = uniqueLines;
     }
 
     /**
@@ -273,17 +296,17 @@ public class LrcView extends View {
             return;
         }
 
-        // 在 updateTime 方法中，修改以下部分：
+        // 检查是否达到最小显示位置
         if (position < MIN_POSITION_TO_SHOW) {
-            // 进度小于1秒，不显示歌词
+            // 进度小于1秒，不显示歌词，但保持在第一行
             mShouldShowLyrics = false;
-            mCurrentLine = 0; // 强制重置到第一行
+            mCurrentLine = 0; // 确保强制重置到第一行
             mScrollOffset = 0f; // 重置滚动偏移
-            invalidate(); // 强制重绘，显示"歌词载入中..."或空白
+            invalidate();
             return;
         }
 
-        // 进度大于等于5秒，开始显示歌词
+        // 达到最小显示位置，开始显示歌词
         if (!mShouldShowLyrics) {
             mShouldShowLyrics = true;
         }
@@ -292,12 +315,19 @@ public class LrcView extends View {
 
         // 查找当前应该显示的行
         int targetLine = 0;
-        for (int i = 0; i < mLrcLines.size(); i++) {
-            if (i == mLrcLines.size() - 1 ||
-                    position >= mLrcLines.get(i).time &&
-                            position < mLrcLines.get(i + 1).time) {
-                targetLine = i;
-                break;
+        
+        // 如果当前时间比第一行还早，保持在第一行
+        if (position < mLrcLines.get(0).time) {
+            targetLine = 0;
+        } else {
+            // 否则找到合适的时间点
+            for (int i = 0; i < mLrcLines.size(); i++) {
+                if (i == mLrcLines.size() - 1 ||
+                        position >= mLrcLines.get(i).time &&
+                                position < mLrcLines.get(i + 1).time) {
+                    targetLine = i;
+                    break;
+                }
             }
         }
 
@@ -349,9 +379,9 @@ public class LrcView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        // 新增：检查是否应该显示歌词
+        // 检查是否应该显示歌词
         if (!mShouldShowLyrics) {
-            // 不显示歌词，可以显示提示信息或保持空白
+            // 不显示歌词，显示提示信息
             String hint = "歌词载入中...";
             float textWidth = mNormalPaint.measureText(hint);
             float centerX = getWidth() / 2 - textWidth / 2;
@@ -382,14 +412,20 @@ public class LrcView extends View {
         // 绘制当前行及前后行
         for (int i = startLineIndex; i <= endLineIndex; i++) {
             LrcLine line = mLrcLines.get(i);
-            int relativeIndex = i - mCurrentLine + 3; // 相对于中心位置的索引 (-3 到 3)
-            float y = startY + relativeIndex * lineHeight;
+            int relativeIndex = i - Math.max(startLineIndex, Math.min(mCurrentLine - 3, endLineIndex - 6)); // 修正相对索引计算
+            int visualIndex = i - startLineIndex; // 在可见区域中的视觉索引
+            float y = startY + visualIndex * lineHeight;
 
             if (i == mCurrentLine) {
                 // 当前行：卡拉OK高亮效果
-                float progress = (float) (mCurrentPosition - line.time) /
-                        (i + 1 < mLrcLines.size() ?
-                                mLrcLines.get(i + 1).time - line.time : 1000);
+                float progress = 0f;
+                if (mCurrentPosition >= line.time) {
+                    long nextTime = (i + 1 < mLrcLines.size()) ? mLrcLines.get(i + 1).time : line.time + 5000;
+                    long duration = nextTime - line.time;
+                    if (duration > 0) {
+                        progress = (float) (mCurrentPosition - line.time) / duration;
+                    }
+                }
                 progress = Math.max(0, Math.min(1, progress));
 
                 // 绘制背景文本（完整）
