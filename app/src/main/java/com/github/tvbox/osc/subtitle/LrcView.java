@@ -148,7 +148,7 @@ invalidate();
 public void setLrcText(String lrcContent) {
 mLrcLines.clear();
 String[] lines = lrcContent.split("\n");
-Pattern pattern = Pattern.compile("$(\d{2}):(\d{2})\.(\d{1,3})$");
+Pattern pattern = Pattern.compile("\\[(\\d{2}):(\\d{2})\\.(\\d{1,3})\\]");
 
 for (String line : lines) {
 // 跳过空行
