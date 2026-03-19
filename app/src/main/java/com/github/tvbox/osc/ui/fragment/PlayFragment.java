@@ -887,21 +887,29 @@ public class PlayFragment extends BaseLazyFragment {
                         boolean jx = info.optString("jx", "0").equals("1");
 
                         // xuameng优先检查 lrc 字段（歌词字符串）
-                        if (info.has("lrc")) {
-                            String lrcContent = info.optString("lrc", "");
-                            if (!TextUtils.isEmpty(lrcContent)) {
-                                mController.setLrcContent(lrcContent);
-                                mController.mLrcView.setVisibility(View.VISIBLE);  //xuameng 设置LRC歌词
-								App.showToastShort(mContext, lrcContent);
-                                playSubtitle = "";
-                            } else {
-                                playSubtitle = info.optString("subt", "");
-                                mController.mLrcView.setVisibility(View.GONE);
-                            }
-                        } else {
-                            playSubtitle = info.optString("subt", "");
-                            mController.mLrcView.setVisibility(View.GONE);
-                        }
+// xuameng优先检查 lrc 字段（歌词字符串）
+if (info.has("lrc")) {
+    String lrcContent = info.optString("lrc", "");
+    if (!TextUtils.isEmpty(lrcContent)) {
+        // 新增：判断 lrcContent 是否为 URL
+        if (lrcContent.startsWith("http://") || lrcContent.startsWith("https://")) {
+            // 异步加载网络歌词
+            loadLrcFromUrl(lrcContent);
+        } else {
+            // 直接使用歌词文本
+            mController.setLrcContent(lrcContent);
+            mController.mLrcView.setVisibility(View.VISIBLE);
+        }
+        playSubtitle = "";
+    } else {
+        playSubtitle = info.optString("subt", "");
+        mController.mLrcView.setVisibility(View.GONE);
+    }
+} else {
+    playSubtitle = info.optString("subt", "");
+    mController.mLrcView.setVisibility(View.GONE);
+}
+
 
                         // 如果 playSubtitle 仍为空，且存在 subs 字段，则按原有逻辑处理字幕数组
                         if(playSubtitle.isEmpty() && info.has("subs")) {
@@ -2339,5 +2347,45 @@ public class PlayFragment extends BaseLazyFragment {
         0xFFFFA500, // 橙色
         0xFF800080  // 紫色
     };
+
+private void loadLrcFromUrl(String lrcUrl) {
+    OkGo.<String>get(lrcUrl)
+        .tag("lrc_load")
+        .execute(new AbsCallback<String>() {
+            @Override
+            public void onSuccess(Response<String> response) {
+                String lrcText = response.body();
+				App.showToastShort(mContext, lrcText);
+                if (!TextUtils.isEmpty(lrcText)) {
+                    // 切换到主线程更新 UI
+                    requireActivity().runOnUiThread(() -> {
+                        mController.setLrcContent(lrcText);
+                        mController.mLrcView.setVisibility(View.VISIBLE);
+                    });
+                } else {
+                    // 歌词内容为空，隐藏歌词视图
+                    requireActivity().runOnUiThread(() -> {
+                        mController.mLrcView.setVisibility(View.GONE);
+                    });
+                }
+            }
+
+            @Override
+            public void onError(Response<String> response) {
+                super.onError(response);
+				App.showToastShort(mContext, "22222222222222");
+                // 加载失败，隐藏歌词视图
+                requireActivity().runOnUiThread(() -> {
+                    mController.mLrcView.setVisibility(View.GONE);
+                });
+                LOG.e("LRC歌词加载失败: " + lrcUrl);
+            }
+
+            @Override
+            public String convertResponse(okhttp3.Response response) throws Throwable {
+                return response.body().string();
+            }
+        });
+}
 
 }
