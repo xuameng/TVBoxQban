@@ -2370,7 +2370,6 @@ private void loadLrcFromUrl(String lrcUrl) {
 
             @Override
             public void onError(Response<String> response) {
-				App.showToastShort(mContext, "2222");
                 super.onError(response);
                 // 加载失败，隐藏歌词视图
                 requireActivity().runOnUiThread(() -> {
