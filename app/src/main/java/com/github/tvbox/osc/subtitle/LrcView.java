@@ -94,36 +94,58 @@ public class LrcView extends View {
     }
 
     // 解析LRC格式歌词
-    public void setLrcText(String lrcContent) {
-        mLrcLines.clear();
-        String[] lines = lrcContent.split("\n");
-        Pattern pattern = Pattern.compile("\\[(\\d{2}):(\\d{2})\\.(\\d{1,3})\\]");
+public void setLrcText(String lrcContent) {
+    mLrcLines.clear();
+    String[] lines = lrcContent.split("\n");
+    Pattern pattern = Pattern.compile("\$(\\d{2}):(\\d{2})\\.(\\d{1,3})\$");
+    
+    for (String line : lines) {
+        // 跳过空行和纯元数据行
+        if (line.trim().isEmpty()) continue;
         
-        for (String line : lines) {
-            Matcher matcher = pattern.matcher(line);
-            while (matcher.find()) {
-                LrcLine lrcLine = new LrcLine();
-                int min = Integer.parseInt(matcher.group(1));
-                int sec = Integer.parseInt(matcher.group(2));
-                // 处理毫秒部分
-                String msStr = matcher.group(3);
-                if (msStr.length() == 1) {
-                    msStr = msStr + "00";  // .1 -> .100
-                } else if (msStr.length() == 2) {
-                    msStr = msStr + "0";   // .12 -> .120
+        // 检查是否是时间标签行
+        Matcher matcher = pattern.matcher(line);
+        List<Long> times = new ArrayList<>();
+        String text = "";
+        
+        // 查找所有时间标签
+        int lastEnd = 0;
+        while (matcher.find()) {
+            int min = Integer.parseInt(matcher.group(1));
+            int sec = Integer.parseInt(matcher.group(2));
+            String msStr = matcher.group(3);
+            // 处理毫秒部分
+            if (msStr.length() == 1) {
+                msStr = msStr + "00";
+            } else if (msStr.length() == 2) {
+                msStr = msStr + "0";
+            }
+            int ms = Integer.parseInt(msStr);
+            times.add((min * 60 + sec) * 1000L + ms);
+            lastEnd = matcher.end();
+        }
+        
+        // 如果有时间标签，提取歌词文本
+        if (!times.isEmpty()) {
+            text = line.substring(lastEnd).trim();
+            if (!text.isEmpty()) {
+                for (Long time : times) {
+                    LrcLine lrcLine = new LrcLine();
+                    lrcLine.time = time;
+                    lrcLine.text = text;
+                    lrcLine.width = mNormalPaint.measureText(text);
+                    mLrcLines.add(lrcLine);
                 }
-                int ms = Integer.parseInt(msStr);
-                lrcLine.time = (min * 60 + sec) * 1000 + ms;
-                lrcLine.text = line.substring(matcher.end()).trim();
-                lrcLine.width = mNormalPaint.measureText(lrcLine.text);
-                mLrcLines.add(lrcLine);
             }
         }
-        Collections.sort(mLrcLines, (a, b) -> Long.compare(a.time, b.time));
-        mCurrentLine = 0;
-        mCurrentPosition = 0;
-        invalidate();
     }
+    
+    Collections.sort(mLrcLines, (a, b) -> Long.compare(a.time, b.time));
+    mCurrentLine = 0;
+    mCurrentPosition = 0;
+    invalidate();
+}
+
 
     // 更新播放进度
     public void updateTime(long position) {
