@@ -27,11 +27,11 @@ public class SubtitleDialog extends BaseDialog {
     private TextView subtitleStyleOne;
     private TextView subtitleStyleTwo;
 
-	private int currentStyle = 0;
-
     private SearchSubtitleListener mSearchSubtitleListener;
     private LocalFileChooserListener mLocalFileChooserListener;
     private SubtitleViewListener mSubtitleViewListener;
+
+    private int currentStyle = 0;   //xuameng 字幕颜色信息
 
     public SubtitleDialog(@NonNull @NotNull Context context) {
         super(context);
@@ -55,8 +55,8 @@ public class SubtitleDialog extends BaseDialog {
         subtitleStyleOne = findViewById(R.id.subtitleStyleOne);
         subtitleStyleTwo = findViewById(R.id.subtitleStyleTwo);
 
-		    // 读取保存的样式
-    currentStyle = SubtitleHelper.getTextStyle();
+        // xuameng读取保存的样式 字幕颜色信息
+        currentStyle = SubtitleHelper.getTextStyle();
 
         selectLocal.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -166,22 +166,22 @@ public class SubtitleDialog extends BaseDialog {
         subtitleStyleOne.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                currentStyle = (currentStyle - 1 + 10) % 10;  // 10是颜色总数
+                currentStyle = (currentStyle - 1 + 10) % 10;  // xuameng字幕颜色信息 10是颜色总数 上一个颜色
                 //dismiss();
                 mSubtitleViewListener.setTextStyle(currentStyle);
-				SubtitleHelper.setTextStyle(currentStyle);  // 保存样式
-                App.showToastShort(getContext(), "设置样式成功");
+                SubtitleHelper.setTextStyle(currentStyle);  // 保存样式 xuameng字幕颜色信息
+                App.showToastShort(getContext(), "设置字幕颜色成功");
             }
         });
 
         subtitleStyleTwo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                currentStyle = (currentStyle + 1) % 10; // 10是颜色总数
-            //    dismiss();
+                currentStyle = (currentStyle + 1) % 10; // xuameng字幕颜色信息 10是颜色总数 下一个颜色
+                //dismiss();
                 mSubtitleViewListener.setTextStyle(currentStyle);
-				SubtitleHelper.setTextStyle(currentStyle);  // 保存样式
-                App.showToastShort(getContext(), "设置样式成功");
+                SubtitleHelper.setTextStyle(currentStyle);  // xuameng字幕颜色信息 保存样式
+                App.showToastShort(getContext(), "设置字幕颜色成功");
             }
         });
     }
@@ -213,18 +213,11 @@ public class SubtitleDialog extends BaseDialog {
         void setTextStyle(int style);
     }
 
-public void updateStyleButtons(int selectedStyle, int[] subtitleColors) {
-    if (selectedStyle >= 0 && selectedStyle < subtitleColors.length) {
-        subtitleStyleOne.setTextColor(subtitleColors[selectedStyle]);
-        subtitleStyleTwo.setTextColor(subtitleColors[(selectedStyle + 1) % subtitleColors.length]);
-        currentStyle = selectedStyle; // 更新当前样式
+    public void updateStyleButtons(int selectedStyle, int[] subtitleColors) {  //xuameng更新 subtitleDialog中字幕按键颜色
+        if (selectedStyle >= 0 && selectedStyle < subtitleColors.length) {
+            subtitleStyleOne.setTextColor(subtitleColors[selectedStyle]);
+            subtitleStyleTwo.setTextColor(subtitleColors[(selectedStyle + 1) % subtitleColors.length]);
+            currentStyle = selectedStyle; // xuameng更新当前样式
+        }
     }
-}
-
-
-    // 添加重置方法
-    public void resetStyle() {
-        currentStyle = 0;
-    }
-
 }
