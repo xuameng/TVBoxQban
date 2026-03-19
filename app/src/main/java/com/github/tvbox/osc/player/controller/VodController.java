@@ -1863,6 +1863,7 @@ public class VodController extends BaseController {
                 listener.playNext(true);
                 isVideoPlay = false;
                 isBufferIng = false; //xuameng 判断是否进在缓冲视频
+                clearSubtitleCache();
                 break;
         }
     }
@@ -2448,6 +2449,7 @@ public class VodController extends BaseController {
         mExoSubtitleView.setCues(null); // xuameng清除EXO字幕数据
         mLrcView.setVisibility(View.GONE);  //xuameng LRC歌词字幕
         mLrcContent = "";  //xuameng 清除LRC歌词字幕
+        mLrcView.reset(); //xuameng 清除LRC歌词播放进度重置
     }
 
     private void initVisualizer() {   //xuameng播放音乐柱状图
