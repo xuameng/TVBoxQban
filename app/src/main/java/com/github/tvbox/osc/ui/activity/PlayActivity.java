@@ -2252,14 +2252,14 @@ public class PlayActivity extends BaseActivity {
     private int[] subtitleColors = {
         0xFFFFFFFF, // 白色
         0xFF02F8E1, // 青色
-        0xFFFF0000, // 红色
-        0xFF00FF00, // 绿色
-        0xFF0000FF, // 蓝色
         0xFFFFD700, // 黄色
-        0xFFFF00FF, // 紫色
-        0xFF00FFFF, // 青色
-        0xFFFFA500, // 橙色
-        0xFF800080  // 紫色
+        0xFFFF1493, // 亮粉色
+        0xFF00FF7F, // 亮绿色
+        0xFF4169E1, // 亮蓝色
+        0xFFFFC000, // 橙色（替换为更接近黄色的亮橙色）
+        0xFFDA70D6, // 亮紫色
+        0xFF00CED1, // 亮青色
+        0xFFEE82EE  // 亮紫色
     };
 
 }
