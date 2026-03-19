@@ -21,7 +21,7 @@
         android:visibility="gone"
         android:layout_width="@dimen/vs_120"
         android:layout_height="@dimen/vs_120"
-        android:src="@drawable/app_icon"/>
+        android:src="@drawable/app_logo"/>
     <com.github.tvbox.osc.ui.tv.widget.MusicVisualizerView
         android:id="@+id/visualizer_view"
         android:layout_width="400mm"
