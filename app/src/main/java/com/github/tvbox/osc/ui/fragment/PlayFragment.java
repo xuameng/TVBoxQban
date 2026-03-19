@@ -892,6 +892,7 @@ public class PlayFragment extends BaseLazyFragment {
                             if (!TextUtils.isEmpty(lrcContent)) {
                                 mController.setLrcContent(lrcContent);
                                 mController.mLrcView.setVisibility(View.VISIBLE);  //xuameng 设置LRC歌词
+								App.showToastShort(mContext, lrcContent);
                                 playSubtitle = "";
                             } else {
                                 playSubtitle = info.optString("subt", "");
@@ -991,8 +992,8 @@ public class PlayFragment extends BaseLazyFragment {
         mVodInfo = App.getInstance().getVodInfo();
         sourceKey = bundle.getString("sourceKey");
         sourceBean = ApiConfig.get().getSource(sourceKey);
-String picUrl = bundle.getString("videoPic");
-mController.setVideoPicUrl(picUrl);
+        String picUrl = bundle.getString("videoPic");  //xuameng 新增给vod显示旋转图片用
+        mController.setVideoPicUrl(picUrl);  //xuameng 新增给vod显示旋转图片用
         initPlayerCfg();
         play(false);
     }
