@@ -971,6 +971,8 @@ public class PlayActivity extends BaseActivity {
             mVodInfo = App.getInstance().getVodInfo();
             sourceKey = bundle.getString("sourceKey");
             sourceBean = ApiConfig.get().getSource(sourceKey);
+            String picUrl = bundle.getString("videoPic");  //xuameng 新增给vod显示旋转图片用
+            mController.setVideoPicUrl(picUrl);  //xuameng 新增给vod显示旋转图片用
             initPlayerCfg();
             play(false);
         }
