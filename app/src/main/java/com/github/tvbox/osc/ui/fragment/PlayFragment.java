@@ -2352,6 +2352,9 @@ private void loadLrcFromUrl(String lrcUrl) {
     if (lrcUrl.contains(":9976/")) {
         // 将端口9976替换为9978
         lrcUrl = lrcUrl.replace(":9976/", ":9978/");
+    } else if (lrcUrl.contains(":0/")) {
+        // 将端口0替换为9978
+        lrcUrl = lrcUrl.replace(":0/", ":9978/");
     }
     OkGo.<String>get(lrcUrl)
         .tag("lrc_load")
