@@ -2285,13 +2285,13 @@ public class PlayActivity extends BaseActivity {
                     String lrcText = response.body();
                     if (!TextUtils.isEmpty(lrcText)) {
                         // 切换到主线程更新 UI
-                        requireActivity().runOnUiThread(() -> {
+                        PlayActivity.this.runOnUiThread(() -> {
                             mController.setLrcContent(lrcText);
                             mController.mLrcView.setVisibility(View.VISIBLE);
                         });
                     } else {
                         // 歌词内容为空，隐藏歌词视图
-                            requireActivity().runOnUiThread(() -> {
+                            PlayActivity.this.runOnUiThread(() -> {
                             mController.mLrcView.setVisibility(View.GONE);
                         });
                     }
@@ -2301,7 +2301,7 @@ public class PlayActivity extends BaseActivity {
                 public void onError(Response<String> response) {
                     super.onError(response);
                     // 加载失败，隐藏歌词视图
-                    requireActivity().runOnUiThread(() -> {
+                    PlayActivity.this.runOnUiThread(() -> {
                         mController.mLrcView.setVisibility(View.GONE);
                     });
                 }
