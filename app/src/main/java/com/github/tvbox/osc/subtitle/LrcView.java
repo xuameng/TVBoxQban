@@ -197,14 +197,17 @@ continue;
 }
 Collections.sort(mLrcLines, (a, b) -> Long.compare(a.time, b.time));
 
-// 修改初始行，确保能显示7行
-if (mLrcLines.size() > 3) {
-mCurrentLine = 3; // 从第3行开始显示
-} else if (!mLrcLines.isEmpty()) {
-mCurrentLine = mLrcLines.size() - 1; // 如果歌词少于4行，显示最后一行
+// 修改初始行设置逻辑
+if (mLrcLines.size() >= 7) {
+    // 歌词行数足够，从第0行开始显示
+    mCurrentLine = 0;
+} else if (mLrcLines.size() > 0) {
+    // 歌词行数不足7行，居中显示
+    mCurrentLine = Math.max(0, mLrcLines.size() - 4);
 } else {
-mCurrentLine = 0;
+    mCurrentLine = 0;
 }
+
 mCurrentPosition = 0;
 mScrollOffset = 0f; // 重置滚动偏移
 invalidate();
