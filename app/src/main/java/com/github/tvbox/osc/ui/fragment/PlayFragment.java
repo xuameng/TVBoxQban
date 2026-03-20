@@ -2366,17 +2366,23 @@ public class PlayFragment extends BaseLazyFragment {
                 public void onSuccess(Response<String> response) {
                     String lrcText = response.body();
 					App.showToastShort(mContext, lrcText);
-                        if (lrcText.has("lrc")) {
-                            String lrcContent = lrcText.optString("lrc", "");
-                            if (!TextUtils.isEmpty(lrcContent) && lrcContent.length() > 10) {
-                        requireActivity().runOnUiThread(() -> {
-                            mController.setLrcContent(lrcText);
-                            mController.mLrcView.setVisibility(View.VISIBLE);
-							return;
-                        });
-
-                            } 
-                        } 
+               // 修复：先尝试将字符串解析为JSON对象
+                try {
+                    JSONObject jsonResponse = new JSONObject(lrcText);
+                    if (jsonResponse.has("lrc")) {
+                        String lrcContent = jsonResponse.optString("lrc", "");
+                        if (!TextUtils.isEmpty(lrcContent) && lrcContent.length() > 10) {
+                            requireActivity().runOnUiThread(() -> {
+                                mController.setLrcContent(lrcContent);
+                                mController.mLrcView.setVisibility(View.VISIBLE);
+                            });
+                            return;
+                        }
+                    }
+                } catch (JSONException e) {
+                    // 如果不是JSON格式，直接使用原始文本
+                    e.printStackTrace();
+                }
 
                     if (!TextUtils.isEmpty(lrcText) && lrcText.length() > 10) {
                         // 切换到主线程更新 UI
