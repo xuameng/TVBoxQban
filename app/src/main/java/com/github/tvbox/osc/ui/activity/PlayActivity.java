@@ -2260,10 +2260,10 @@ public class PlayActivity extends BaseActivity {
         0xFFFFFFFF, // 白色
         0xFF02F8E1, // 青色
         0xFFFFD700, // 黄色
-        0xFFFF1493, // 亮粉色
+        0xFFFF69B4, // 亮粉色（调亮点）
         0xFF00FF7F, // 亮绿色
         0xFF4169E1, // 亮蓝色
-        0xFFFFC000, // 橙色（替换为更接近黄色的亮橙色）
+        0xFFFF4500, // 橙红色（调亮的橙红色）
         0xFFDA70D6, // 亮紫色
         0xFF00CED1, // 亮青色
         0xFFEE82EE  // 亮紫色
