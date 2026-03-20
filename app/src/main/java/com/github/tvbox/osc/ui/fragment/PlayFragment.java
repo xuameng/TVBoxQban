@@ -887,9 +887,33 @@ public class PlayFragment extends BaseLazyFragment {
                         boolean jx = info.optString("jx", "0").equals("1");
 
                         // xuameng优先检查 lrc 字段（歌词字符串）
-                        if (info.has("lrc")) {
-                            String lrcContent = info.optString("lrc", "");
-                            if (!TextUtils.isEmpty(lrcContent) && lrcContent.length() > 10) {
+// 修改后的歌词处理逻辑
+if (info.has("lrc")) {
+    try {
+        JSONObject lrcObj = info.getJSONObject("lrc");
+        String lrcContent = lrcObj.optString("lyric", "");
+        
+        if (!TextUtils.isEmpty(lrcContent) && lrcContent.length() > 10) {
+			mController.setTitle(lrcContent);
+            // 判断是否为URL
+            if (lrcContent.startsWith("http://") || lrcContent.startsWith("https://")) {
+                // 异步加载网络歌词
+                loadLrcFromUrl(lrcContent);
+            } else {
+                // 直接使用歌词文本
+                mController.setLrcContent(lrcContent);
+                mController.mLrcView.setVisibility(View.VISIBLE);
+            }
+            playSubtitle = "";
+        } else {
+            playSubtitle = info.optString("subt", "");
+            mController.mLrcView.setVisibility(View.GONE);
+        }
+    } catch (JSONException e) {
+        e.printStackTrace();
+        // 如果解析失败，回退到原来的逻辑
+        String lrcContent = info.optString("lrc", "");
+        if (!TextUtils.isEmpty(lrcContent) && lrcContent.length() > 10) {
                                 // 新增：判断 lrcContent 是否为 URL
                                 if (lrcContent.startsWith("http://") || lrcContent.startsWith("https://")) {
                                     // 异步加载网络歌词
@@ -900,14 +924,15 @@ public class PlayFragment extends BaseLazyFragment {
                                     mController.mLrcView.setVisibility(View.VISIBLE);
                                 }
                                 playSubtitle = "";
-                            } else {
-                                playSubtitle = info.optString("subt", "");
-                                mController.mLrcView.setVisibility(View.GONE);
-                            }
-                        } else {
-                            playSubtitle = info.optString("subt", "");
-                            mController.mLrcView.setVisibility(View.GONE);
-                        }
+        } else {
+            playSubtitle = info.optString("subt", "");
+            mController.mLrcView.setVisibility(View.GONE);
+        }
+    }
+} else {
+    playSubtitle = info.optString("subt", "");
+    mController.mLrcView.setVisibility(View.GONE);
+}
 
                         // 如果 playSubtitle 仍为空，且存在 subs 字段，则按原有逻辑处理字幕数组
                         if(playSubtitle.isEmpty() && info.has("subs")) {
