@@ -918,6 +918,7 @@ public class PlayFragment extends BaseLazyFragment {
                                 if (url.contains("lrc")) {
                                     // 异步加载网络歌词
                                     loadLrcFromUrl(url);
+									playSubtitle = "";
                                 }
                                 if (!TextUtils.isEmpty(url) && !FileUtils.hasExtension(url) && !url.contains("lrc")) {
                                     String format = obj.optString("format", "");
@@ -940,7 +941,7 @@ public class PlayFragment extends BaseLazyFragment {
                                 String filename = name + (name.toLowerCase().endsWith(ext) ? "" : ext);
                                 url += "#" + mController.encodeUrl(filename);
                                 }
-                                 playSubtitle = url;
+                                playSubtitle = url;
                              } catch (Throwable th) {
                                  // 异常处理
                              }
