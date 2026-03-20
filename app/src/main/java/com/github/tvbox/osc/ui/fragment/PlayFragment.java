@@ -902,12 +902,10 @@ public class PlayFragment extends BaseLazyFragment {
                                 playSubtitle = "";
                             } else {
                                 playSubtitle = info.optString("subt", "");
-								App.showToastShort(mContext, "222");
                                 mController.mLrcView.setVisibility(View.GONE);
                             }
                         } else {
                             playSubtitle = info.optString("subt", "");
-							App.showToastShort(mContext, "111");
                             mController.mLrcView.setVisibility(View.GONE);
                         }
 
@@ -916,7 +914,15 @@ public class PlayFragment extends BaseLazyFragment {
                             try {
                                 JSONObject obj = info.getJSONArray("subs").optJSONObject(0);
                                 String url = obj.optString("url", "");
-															App.showToastShort(mContext, url);
+                                // 新增：判断 lrcContent 是否为 URL
+                                if (url.startsWith("http://") || url.startsWith("https://")) {
+                                    // 异步加载网络歌词
+                                    loadLrcFromUrl(url);
+                                } else {
+                                    // 直接使用歌词文本
+                                    mController.setLrcContent(url);
+                                    mController.mLrcView.setVisibility(View.VISIBLE);
+                                }
                                 if (!TextUtils.isEmpty(url) && !FileUtils.hasExtension(url)) {
                                     String format = obj.optString("format", "");
                                     String name = obj.optString("name", "字幕");
@@ -2363,6 +2369,7 @@ public class PlayFragment extends BaseLazyFragment {
                 @Override
                 public void onSuccess(Response<String> response) {
                     String lrcText = response.body();
+					App.showToastShort(mContext, lrcText);
                     if (!TextUtils.isEmpty(lrcText) && lrcText.length() > 10) {
                         // 切换到主线程更新 UI
                         requireActivity().runOnUiThread(() -> {
