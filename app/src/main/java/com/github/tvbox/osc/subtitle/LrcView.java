@@ -3,7 +3,9 @@ package com.github.tvbox.osc.subtitle;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.LinearGradient;
 import android.graphics.Paint;
+import android.graphics.Shader;
 import android.util.AttributeSet;
 import android.view.View;
 import android.animation.ValueAnimator;
@@ -19,11 +21,13 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**xuameng
+/**
+ * xuameng
  * LRC歌词显示控件
  * 支持卡拉OK效果的歌词同步显示
  * 新增平滑滚动功能
  * 新增：未获取到进度或进度小于1秒时不显示歌词
+ * 新增：高亮字幕右侧边缘渐变透明效果
  */
 public class LrcView extends View {
 
@@ -37,7 +41,7 @@ public class LrcView extends View {
     }
 
     private List<LrcLine> mLrcLines = new ArrayList<>();
-    private Paint mNormalPaint, mHighlightPaint;
+    private Paint mNormalPaint, mHighlightPaint, mGradientPaint;
     private int mCurrentLine = 0;
     private long mCurrentPosition = 0;
 
@@ -81,6 +85,14 @@ public class LrcView extends View {
         mHighlightPaint.setColor(Color.YELLOW);
         mHighlightPaint.setShadowLayer(3, 1, 1, Color.BLACK);
         mHighlightPaint.setFakeBoldText(true);
+
+        // 新增：渐变画笔
+        mGradientPaint = new Paint();
+        mGradientPaint.setAntiAlias(true);
+        mGradientPaint.setTextSize(36);
+        mGradientPaint.setColor(Color.YELLOW);
+        mGradientPaint.setShadowLayer(3, 1, 1, Color.BLACK);
+        mGradientPaint.setFakeBoldText(true);
     }
 
     /**
@@ -99,6 +111,8 @@ public class LrcView extends View {
      */
     public void setNormalTextSize(float textSize) {
         mNormalPaint.setTextSize(textSize);
+        mHighlightPaint.setTextSize(textSize);
+        mGradientPaint.setTextSize(textSize);
         // 重新计算所有歌词行的宽度
         recalculateLineWidths();
         invalidate();
@@ -111,6 +125,7 @@ public class LrcView extends View {
      */
     public void setHighlightTextSize(float textSize) {
         mHighlightPaint.setTextSize(textSize);
+        mGradientPaint.setTextSize(textSize);
         // 重新计算所有歌词行的宽度
         recalculateLineWidths();
         invalidate();
@@ -142,6 +157,7 @@ public class LrcView extends View {
      */
     public void setHighlightColor(int color) {
         mHighlightPaint.setColor(color);
+        mGradientPaint.setColor(color);
         invalidate();
     }
 
@@ -433,11 +449,53 @@ public class LrcView extends View {
 
                 // 绘制高亮部分（渐变填充）
                 float highlightWidth = line.width * progress;
-                canvas.save();
-                canvas.clipRect(getWidth() / 2 - line.width / 2, y - mHighlightPaint.getTextSize(),
-                        getWidth() / 2 - line.width / 2 + highlightWidth, y + 10);
-                canvas.drawText(line.text, getWidth() / 2 - line.width / 2, y, mHighlightPaint);
-                canvas.restore();
+                
+                // 创建渐变效果
+                if (highlightWidth > 0) {
+                    // 设置渐变区域
+                    float startX = getWidth() / 2 - line.width / 2;
+                    float gradientStartX = startX + highlightWidth - 50; // 渐变开始位置，留出50像素的渐变宽度
+                    
+                    if (gradientStartX < startX + highlightWidth) {
+                        // 创建从完全不透明到透明的渐变
+                        int[] colors = {Color.YELLOW, Color.TRANSPARENT};
+                        float[] positions = {0f, 1f};
+                        
+                        // 确保渐变范围在有效范围内
+                        if (gradientStartX < startX) {
+                            gradientStartX = startX;
+                        }
+                        
+                        LinearGradient shader = new LinearGradient(
+                                gradientStartX,
+                                y - mHighlightPaint.getTextSize(),
+                                startX + highlightWidth,
+                                y + 10,
+                                colors,
+                                positions,
+                                Shader.TileMode.CLAMP
+                        );
+                        
+                        mGradientPaint.setShader(shader);
+                        
+                        // 绘制渐变高亮文本
+                        canvas.save();
+                        canvas.clipRect(startX, y - mHighlightPaint.getTextSize(),
+                                startX + highlightWidth, y + 10);
+                        canvas.drawText(line.text, startX, y, mGradientPaint);
+                        canvas.restore();
+                        
+                        // 移除shader
+                        mGradientPaint.setShader(null);
+                    } else {
+                        // 如果不需要渐变，直接绘制普通高亮文本
+                        canvas.save();
+                        canvas.clipRect(startX, y - mHighlightPaint.getTextSize(),
+                                startX + highlightWidth, y + 10);
+                        canvas.drawText(line.text, startX, y, mHighlightPaint);
+                        canvas.restore();
+                    }
+                }
             } else {
                 // 非当前行：普通显示
                 canvas.drawText(line.text, getWidth() / 2 - line.width / 2, y, mNormalPaint);
