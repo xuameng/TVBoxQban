@@ -1325,7 +1325,7 @@ public class VodController extends BaseController {
                             hideBottom();
                         }
                         mExoSubtitleView.setVisibility(VISIBLE);
-                        if (!TextUtils.isEmpty(mLrcContent)) {
+                        if (!TextUtils.isEmpty(mLrcContent) && mLrcContent.length() > 10) {
                             mLrcView.setVisibility(View.VISIBLE);  //xuameng LRC歌词字幕
                         }
                         App.showToastShort(getContext(), "字幕已开启！");
@@ -1345,7 +1345,7 @@ public class VodController extends BaseController {
                         hideBottom();
                     }
                     mSubtitleView.setVisibility(VISIBLE);
-                    if (!TextUtils.isEmpty(mLrcContent)) {
+                    if (!TextUtils.isEmpty(mLrcContent) && mLrcContent.length() > 10) {
                         mLrcView.setVisibility(View.VISIBLE);  //xuameng LRC歌词字幕
                     }
                     App.showToastShort(getContext(), "字幕已开启！");
