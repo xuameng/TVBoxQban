@@ -2374,10 +2374,12 @@ public class PlayFragment extends BaseLazyFragment {
                             requireActivity().runOnUiThread(() -> {
                                 mController.setLrcContent(lrcContent);
                                 mController.mLrcView.setVisibility(View.VISIBLE);
-					App.showToastShort(mContext, lrcContent);
+								App.showToastShort(mContext, "2222");
+
                             });
                             return;
                         }
+						 return;
                     }
                 } catch (JSONException e) {
                     // 如果不是JSON格式，直接使用原始文本
@@ -2389,7 +2391,7 @@ public class PlayFragment extends BaseLazyFragment {
                         requireActivity().runOnUiThread(() -> {
                             mController.setLrcContent(lrcText);
                             mController.mLrcView.setVisibility(View.VISIBLE);
-App.showToastShort(mContext, "2222");
+					App.showToastShort(mContext, lrcContent);
                         });
                     } else {
                         // 歌词内容为空，隐藏歌词视图
