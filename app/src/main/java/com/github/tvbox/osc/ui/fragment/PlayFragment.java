@@ -2367,7 +2367,7 @@ public class PlayFragment extends BaseLazyFragment {
                     String lrcText = response.body();
                // 修复：先尝试将字符串解析为JSON对象
                 try {
-                    JSONObject jsonResponse = new JSONObject(lrcText);
+                    JSONObject jsonResponse = new JSONObject(response.body());
                     if (jsonResponse.has("lrc")) {
                         String lrcContent = jsonResponse.optString("lrc", "");
                         if (!TextUtils.isEmpty(lrcContent) && lrcContent.length() > 10) {
@@ -2391,7 +2391,7 @@ public class PlayFragment extends BaseLazyFragment {
                         requireActivity().runOnUiThread(() -> {
                             mController.setLrcContent(lrcText);
                             mController.mLrcView.setVisibility(View.VISIBLE);
-					App.showToastShort(mContext, lrcContent);
+					App.showToastShort(mContext, lrcText);
                         });
                     } else {
                         // 歌词内容为空，隐藏歌词视图
