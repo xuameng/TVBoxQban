@@ -382,7 +382,7 @@ public class LrcView extends View {
         // 检查是否应该显示歌词
         if (!mShouldShowLyrics) {
             // 不显示歌词，显示提示信息
-            String hint = "歌词载入中...";   //xuameng 可以加 歌词载入中...
+            String hint = "";   //xuameng 可以加 歌词载入中...
             float textWidth = mNormalPaint.measureText(hint);
             float centerX = getWidth() / 2 - textWidth / 2;
             float centerY = getHeight() / 2;
