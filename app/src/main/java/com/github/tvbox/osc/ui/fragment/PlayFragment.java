@@ -914,13 +914,7 @@ public class PlayFragment extends BaseLazyFragment {
                             try {
                                 JSONObject obj = info.getJSONArray("subs").optJSONObject(0);
                                 String url = obj.optString("url", "");
-                                // 新增：判断 lrcContent 是否为 URL
-                                if (url.contains("lrc")) {
-                                    // 异步加载网络歌词
-                                    loadLrcFromUrl(url);
-									playSubtitle = "";
-                                }
-                                if (!TextUtils.isEmpty(url) && !FileUtils.hasExtension(url) && !url.contains("lrc")) {
+                                if (!TextUtils.isEmpty(url) && !FileUtils.hasExtension(url)) {
                                     String format = obj.optString("format", "");
                                     String name = obj.optString("name", "字幕");
                                     String ext = ".srt";
@@ -941,7 +935,7 @@ public class PlayFragment extends BaseLazyFragment {
                                 String filename = name + (name.toLowerCase().endsWith(ext) ? "" : ext);
                                 url += "#" + mController.encodeUrl(filename);
                                 }
-                                playSubtitle = url;
+                                 playSubtitle = url;
                              } catch (Throwable th) {
                                  // 异常处理
                              }
@@ -2366,33 +2360,11 @@ public class PlayFragment extends BaseLazyFragment {
                 @Override
                 public void onSuccess(Response<String> response) {
                     String lrcText = response.body();
-               // 修复：先尝试将字符串解析为JSON对象
-                try {
-                    JSONObject jsonResponse = new JSONObject(response.body());
-                    if (jsonResponse.has("lrc")) {
-                        String lrcContent = jsonResponse.optString("lrc", "");
-                        if (!TextUtils.isEmpty(lrcContent) && lrcContent.length() > 10) {
-                            requireActivity().runOnUiThread(() -> {
-                                mController.setLrcContent(lrcContent);
-                                mController.mLrcView.setVisibility(View.VISIBLE);
-								App.showToastShort(mContext, "2222");
-
-                            });
-                            return;
-                        }
-						 return;
-                    }
-                } catch (JSONException e) {
-                    // 如果不是JSON格式，直接使用原始文本
-                    e.printStackTrace();
-                }
-
                     if (!TextUtils.isEmpty(lrcText) && lrcText.length() > 10) {
                         // 切换到主线程更新 UI
                         requireActivity().runOnUiThread(() -> {
                             mController.setLrcContent(lrcText);
                             mController.mLrcView.setVisibility(View.VISIBLE);
-					App.showToastShort(mContext, lrcText);
                         });
                     } else {
                         // 歌词内容为空，隐藏歌词视图
