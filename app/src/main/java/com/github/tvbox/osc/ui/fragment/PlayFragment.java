@@ -2389,6 +2389,7 @@ public class PlayFragment extends BaseLazyFragment {
                         requireActivity().runOnUiThread(() -> {
                             mController.setLrcContent(lrcText);
                             mController.mLrcView.setVisibility(View.VISIBLE);
+App.showToastShort(mContext, "2222");
                         });
                     } else {
                         // 歌词内容为空，隐藏歌词视图
