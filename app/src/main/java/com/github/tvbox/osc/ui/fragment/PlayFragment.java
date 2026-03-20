@@ -2365,7 +2365,6 @@ public class PlayFragment extends BaseLazyFragment {
                 @Override
                 public void onSuccess(Response<String> response) {
                     String lrcText = response.body();
-					App.showToastShort(mContext, lrcText);
                // 修复：先尝试将字符串解析为JSON对象
                 try {
                     JSONObject jsonResponse = new JSONObject(lrcText);
@@ -2375,6 +2374,7 @@ public class PlayFragment extends BaseLazyFragment {
                             requireActivity().runOnUiThread(() -> {
                                 mController.setLrcContent(lrcContent);
                                 mController.mLrcView.setVisibility(View.VISIBLE);
+					App.showToastShort(mContext, lrcContent);
                             });
                             return;
                         }
