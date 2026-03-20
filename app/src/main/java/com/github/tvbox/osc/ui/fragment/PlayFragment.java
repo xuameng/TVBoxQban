@@ -2372,6 +2372,7 @@ public class PlayFragment extends BaseLazyFragment {
                         requireActivity().runOnUiThread(() -> {
                             mController.setLrcContent(lrcText);
                             mController.mLrcView.setVisibility(View.VISIBLE);
+							return;
                         });
 
                             } 
