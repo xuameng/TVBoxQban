@@ -3,9 +3,7 @@ package com.github.tvbox.osc.subtitle;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.LinearGradient;
 import android.graphics.Paint;
-import android.graphics.Shader;
 import android.util.AttributeSet;
 import android.view.View;
 import android.animation.ValueAnimator;
@@ -21,14 +19,11 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * xuameng
+/**xuameng
  * LRC歌词显示控件
  * 支持卡拉OK效果的歌词同步显示
  * 新增平滑滚动功能
  * 新增：未获取到进度或进度小于1秒时不显示歌词
- * 新增：高亮字幕右侧边缘渐变透明效果
- * 优化：滚动算法，使滚动更平滑自然
  */
 public class LrcView extends View {
 
@@ -42,15 +37,14 @@ public class LrcView extends View {
     }
 
     private List<LrcLine> mLrcLines = new ArrayList<>();
-    private Paint mNormalPaint, mHighlightPaint, mGradientPaint;
+    private Paint mNormalPaint, mHighlightPaint;
     private int mCurrentLine = 0;
     private long mCurrentPosition = 0;
 
     // 平滑滚动相关变量
-    private float mScrollOffset = 0f; // 当前滚动偏移量（像素）
+    private float mScrollOffset = 0f; // 当前滚动偏移量（行数）
     private ValueAnimator mScrollAnimator; // 滚动动画
     private int mScrollDuration = 300; // 滚动动画时长（毫秒）
-    private float mLineHeight = 0f; // 每行的高度
 
     // 新增：控制是否显示歌词的标志
     private boolean mShouldShowLyrics = false;
@@ -87,16 +81,6 @@ public class LrcView extends View {
         mHighlightPaint.setColor(Color.YELLOW);
         mHighlightPaint.setShadowLayer(3, 1, 1, Color.BLACK);
         mHighlightPaint.setFakeBoldText(true);
-
-        // 新增：渐变画笔
-        mGradientPaint = new Paint();
-        mGradientPaint.setAntiAlias(true);
-        mGradientPaint.setTextSize(36);
-        mGradientPaint.setColor(Color.YELLOW);
-        mGradientPaint.setShadowLayer(3, 1, 1, Color.BLACK);
-        mGradientPaint.setFakeBoldText(true);
-        
-        mLineHeight = mNormalPaint.getTextSize() * 1.5f;
     }
 
     /**
@@ -115,9 +99,6 @@ public class LrcView extends View {
      */
     public void setNormalTextSize(float textSize) {
         mNormalPaint.setTextSize(textSize);
-        mHighlightPaint.setTextSize(textSize);
-        mGradientPaint.setTextSize(textSize);
-        mLineHeight = mNormalPaint.getTextSize() * 1.5f;
         // 重新计算所有歌词行的宽度
         recalculateLineWidths();
         invalidate();
@@ -130,8 +111,6 @@ public class LrcView extends View {
      */
     public void setHighlightTextSize(float textSize) {
         mHighlightPaint.setTextSize(textSize);
-        mGradientPaint.setTextSize(textSize);
-        mLineHeight = mNormalPaint.getTextSize() * 1.5f;
         // 重新计算所有歌词行的宽度
         recalculateLineWidths();
         invalidate();
@@ -163,7 +142,6 @@ public class LrcView extends View {
      */
     public void setHighlightColor(int color) {
         mHighlightPaint.setColor(color);
-        mGradientPaint.setColor(color);
         invalidate();
     }
 
@@ -272,12 +250,14 @@ public class LrcView extends View {
             mScrollAnimator.cancel();
         }
 
-        // 计算滚动距离（像素差）
-        float targetOffset = -(targetLine - mCurrentLine) * mLineHeight;
-        float currentTotalOffset = mScrollOffset;
+        // 计算滚动距离（行数差）
+        int lineDiff = targetLine - mCurrentLine;
+        if (lineDiff == 0) {
+            return; // 无需滚动
+        }
 
         // 设置动画
-        mScrollAnimator = ValueAnimator.ofFloat(currentTotalOffset, targetOffset);
+        mScrollAnimator = ValueAnimator.ofFloat(0f, (float) lineDiff);
         mScrollAnimator.setDuration(mScrollDuration);
         mScrollAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
 
@@ -291,7 +271,7 @@ public class LrcView extends View {
             public void onAnimationEnd(Animator animation) {
                 // 动画结束后更新当前行
                 mCurrentLine = targetLine;
-                mScrollOffset = 0f; // 重置偏移，准备下次滚动
+                mScrollOffset = 0f;
             }
 
             @Override
@@ -414,92 +394,53 @@ public class LrcView extends View {
             return;
         }
 
-        // 计算起始Y位置，使当前行居中显示
+        // 计算总高度和起始Y位置，实现垂直居中
+        float lineHeight = mNormalPaint.getTextSize() * 1.5f;
         int visibleLines = Math.min(mLrcLines.size(), 7); // 显示最多7行歌词
-        float totalHeight = mLineHeight * visibleLines;
+        float totalHeight = lineHeight * visibleLines;
+
+        // 计算起始Y位置，使当前行居中显示
         float startY = (getHeight() - totalHeight) / 2 + mNormalPaint.getTextSize();
 
-        // 计算实际可见的行范围，考虑滚动偏移
-        float currentCenterY = startY + 3 * mLineHeight + mScrollOffset;
-        int centerLineIndex = (int) ((currentCenterY - startY) / mLineHeight);
-        int startLineIndex = Math.max(0, centerLineIndex - 3);
-        int endLineIndex = Math.min(mLrcLines.size() - 1, centerLineIndex + 3);
+        // 计算实际可见的行范围，确保不会超出歌词列表边界
+        int startLineIndex = Math.max(0, mCurrentLine - 3);
+        int endLineIndex = Math.min(mLrcLines.size() - 1, mCurrentLine + 3);
 
         // 绘制当前行及前后行
-        for (int i = startLineIndex; i <= endLineIndex; i++) {
-            if (i < 0 || i >= mLrcLines.size()) {
+        for (int i = 0; i < visibleLines; i++) {
+            int actualIndex = startLineIndex + i;
+            if (actualIndex < 0 || actualIndex >= mLrcLines.size()) {
                 continue;
             }
             
-            LrcLine line = mLrcLines.get(i);
-            float y = startY + (i - centerLineIndex + 3) * mLineHeight + mScrollOffset;
+            LrcLine line = mLrcLines.get(actualIndex);
+            float y = startY + i * lineHeight;
 
-            // 只绘制屏幕内的行
-            if (y > -mLineHeight && y < getHeight() + mLineHeight) {
-                if (i == mCurrentLine) {
-                    // 当前行：卡拉OK高亮效果
-                    float progress = 0f;
-                    if (mCurrentPosition >= line.time) {
-                        long nextTime = (i + 1 < mLrcLines.size()) ? mLrcLines.get(i + 1).time : line.time + 5000;
-                        long duration = nextTime - line.time;
-                        if (duration > 0) {
-                            progress = (float) (mCurrentPosition - line.time) / duration;
-                        }
+            if (actualIndex == mCurrentLine) {
+                // 当前行：卡拉OK高亮效果
+                float progress = 0f;
+                if (mCurrentPosition >= line.time) {
+                    long nextTime = (actualIndex + 1 < mLrcLines.size()) ? mLrcLines.get(actualIndex + 1).time : line.time + 5000;
+                    long duration = nextTime - line.time;
+                    if (duration > 0) {
+                        progress = (float) (mCurrentPosition - line.time) / duration;
                     }
-                    progress = Math.max(0, Math.min(1, progress));
-
-                    // 绘制背景文本（完整）
-                    canvas.drawText(line.text, getWidth() / 2 - line.width / 2, y, mNormalPaint);
-
-                    // 绘制高亮部分（渐变填充）
-                    float highlightWidth = line.width * progress;
-                    
-                    // 创建渐变效果
-                    if (highlightWidth > 0) {
-                        // 设置渐变区域
-                        float startX = getWidth() / 2 - line.width / 2;
-                        float gradientStartX = startX + highlightWidth - 50; // 渐变开始位置，留出50像素的渐变宽度
-                        
-                        if (gradientStartX < startX + highlightWidth) {
-                            // 确保渐变范围在有效范围内
-                            if (gradientStartX < startX) {
-                                gradientStartX = startX;
-                            }
-                            
-                            LinearGradient shader = new LinearGradient(
-                                    gradientStartX,
-                                    y - mHighlightPaint.getTextSize(),
-                                    startX + highlightWidth,
-                                    y + 10,
-                                    new int[]{Color.YELLOW, Color.TRANSPARENT},
-                                    new float[]{0f, 1f},
-                                    Shader.TileMode.CLAMP
-                            );
-                            
-                            mGradientPaint.setShader(shader);
-                            
-                            // 绘制渐变高亮文本
-                            canvas.save();
-                            canvas.clipRect(startX, y - mHighlightPaint.getTextSize(),
-                                    startX + highlightWidth, y + 10);
-                            canvas.drawText(line.text, startX, y, mGradientPaint);
-                            canvas.restore();
-                            
-                            // 移除shader
-                            mGradientPaint.setShader(null);
-                        } else {
-                            // 如果不需要渐变，直接绘制普通高亮文本
-                            canvas.save();
-                            canvas.clipRect(startX, y - mHighlightPaint.getTextSize(),
-                                    startX + highlightWidth, y + 10);
-                            canvas.drawText(line.text, startX, y, mHighlightPaint);
-                            canvas.restore();
-                        }
-                    }
-                } else {
-                    // 非当前行：普通显示
-                    canvas.drawText(line.text, getWidth() / 2 - line.width / 2, y, mNormalPaint);
                 }
+                progress = Math.max(0, Math.min(1, progress));
+
+                // 绘制背景文本（完整）
+                canvas.drawText(line.text, getWidth() / 2 - line.width / 2, y, mNormalPaint);
+
+                // 绘制高亮部分（渐变填充）
+                float highlightWidth = line.width * progress;
+                canvas.save();
+                canvas.clipRect(getWidth() / 2 - line.width / 2, y - mHighlightPaint.getTextSize(),
+                        getWidth() / 2 - line.width / 2 + highlightWidth, y + 10);
+                canvas.drawText(line.text, getWidth() / 2 - line.width / 2, y, mHighlightPaint);
+                canvas.restore();
+            } else {
+                // 非当前行：普通显示
+                canvas.drawText(line.text, getWidth() / 2 - line.width / 2, y, mNormalPaint);
             }
         }
     }
