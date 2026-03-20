@@ -156,7 +156,7 @@
                     android:focusable="true"
                     android:layout_width="@dimen/vs_170"
                     android:layout_height="wrap_content"
-                    android:text="下个颜色"
+                    android:text="选择颜色"
                     android:maxLines="1"
                     android:shadowColor="@color/color_CC000000"
                     android:shadowDx="1.0"
