@@ -48,7 +48,7 @@ public class LrcView extends View {
 
     // 新增：控制是否显示歌词的标志
     private boolean mShouldShowLyrics = false;
-    private static final long MIN_POSITION_TO_SHOW = 1000; // 1秒，单位：毫秒
+    private static final long MIN_POSITION_TO_SHOW = 100; // 0.1秒，单位：毫秒
 
     public LrcView(Context context) {
         super(context);
@@ -185,39 +185,59 @@ public class LrcView extends View {
                 lastEnd = matcher.end();
             }
 
-            // 如果有时间标签，提取歌词文本
-            if (!times.isEmpty()) {
-                text = line.substring(lastEnd).trim();
-                if (!text.isEmpty()) {
-                    for (Long time : times) {
-                        LrcLine lrcLine = new LrcLine();
-                        lrcLine.time = time;
-                        lrcLine.text = text;
-                        lrcLine.width = mNormalPaint.measureText(text);
-                        mLrcLines.add(lrcLine);
-                    }
+            // 提取歌词文本（去除时间标签后的内容）
+            text = line.substring(lastEnd).trim();
+
+            // 只有当文本非空时才添加到歌词列表
+            if (!text.isEmpty()) {
+                for (Long time : times) {
+                    LrcLine lrcLine = new LrcLine();
+                    lrcLine.time = time;
+                    lrcLine.text = text;
+                    lrcLine.width = mNormalPaint.measureText(text);
+                    mLrcLines.add(lrcLine);
                 }
             }
+            // 注意：这里我们跳过了纯时间标签行（如[00:13.760]），因为它们没有歌词内容
         }
+        
+        // 按时间排序
         Collections.sort(mLrcLines, (a, b) -> Long.compare(a.time, b.time));
 
-        // 修改初始行设置逻辑
-        if (mLrcLines.size() >= 7) {
-            // 歌词行数足够，从第0行开始显示
-            mCurrentLine = 0;
-        } else if (mLrcLines.size() > 0) {
-            // 歌词行数不足7行，但确保从第一句开始
-            mCurrentLine = 0;
-            // 可以在这里调整显示行数或布局，但起始行必须是0
-        } else {
-            mCurrentLine = 0;
-        }
+        // 移除重复的歌词行
+        removeDuplicateLines();
 
-        // 新增：加载歌词时默认不显示，等待进度更新
+        // 重置所有状态
         mShouldShowLyrics = false;
+        mCurrentLine = 0; // 总是从第0行开始
+        mScrollOffset = 0f;
         mCurrentPosition = 0;
-        mScrollOffset = 0f; // 重置滚动偏移
-        invalidate();
+        if (mScrollAnimator != null && mScrollAnimator.isRunning()) {
+            mScrollAnimator.cancel();
+        }
+        invalidate(); // 立即重绘
+    }
+
+    /**
+     * 移除重复的歌词行
+     */
+    private void removeDuplicateLines() {
+        if (mLrcLines.size() <= 1) return;
+        
+        List<LrcLine> uniqueLines = new ArrayList<>();
+        for (LrcLine line : mLrcLines) {
+            boolean isDuplicate = false;
+            for (LrcLine existingLine : uniqueLines) {
+                if (existingLine.time == line.time && existingLine.text.equals(line.text)) {
+                    isDuplicate = true;
+                    break;
+                }
+            }
+            if (!isDuplicate) {
+                uniqueLines.add(line);
+            }
+        }
+        mLrcLines = uniqueLines;
     }
 
     /**
@@ -276,18 +296,17 @@ public class LrcView extends View {
             return;
         }
 
-        // 在 updateTime 方法中，修改以下部分：
+        // 检查是否达到最小显示位置
         if (position < MIN_POSITION_TO_SHOW) {
-            // 进度小于1秒，不显示歌词
-            if (mShouldShowLyrics) {
-                mShouldShowLyrics = false;
-                mCurrentLine = 0; // 新增：重置当前行到开头
-                invalidate();
-            }
+            // 进度小于1秒，不显示歌词，但保持在第一行
+            mShouldShowLyrics = false;
+            mCurrentLine = 0; // 确保强制重置到第一行
+            mScrollOffset = 0f; // 重置滚动偏移
+            invalidate();
             return;
         }
 
-        // 进度大于等于5秒，开始显示歌词
+        // 达到最小显示位置，开始显示歌词
         if (!mShouldShowLyrics) {
             mShouldShowLyrics = true;
         }
@@ -296,12 +315,19 @@ public class LrcView extends View {
 
         // 查找当前应该显示的行
         int targetLine = 0;
-        for (int i = 0; i < mLrcLines.size(); i++) {
-            if (i == mLrcLines.size() - 1 ||
-                    position >= mLrcLines.get(i).time &&
-                            position < mLrcLines.get(i + 1).time) {
-                targetLine = i;
-                break;
+        
+        // 如果当前时间比第一行还早，保持在第一行
+        if (position < mLrcLines.get(0).time) {
+            targetLine = 0;
+        } else {
+            // 否则找到合适的时间点
+            for (int i = 0; i < mLrcLines.size(); i++) {
+                if (i == mLrcLines.size() - 1 ||
+                        position >= mLrcLines.get(i).time &&
+                                position < mLrcLines.get(i + 1).time) {
+                    targetLine = i;
+                    break;
+                }
             }
         }
 
@@ -353,10 +379,10 @@ public class LrcView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        // 新增：检查是否应该显示歌词
+        // 检查是否应该显示歌词
         if (!mShouldShowLyrics) {
-            // 不显示歌词，可以显示提示信息或保持空白
-            String hint = "歌词载入中...";
+            // 不显示歌词，显示提示信息
+            String hint = "";   //xuameng 可以加 歌词载入中...
             float textWidth = mNormalPaint.measureText(hint);
             float centerX = getWidth() / 2 - textWidth / 2;
             float centerY = getHeight() / 2;
@@ -370,27 +396,38 @@ public class LrcView extends View {
 
         // 计算总高度和起始Y位置，实现垂直居中
         float lineHeight = mNormalPaint.getTextSize() * 1.5f;
-        float totalHeight = lineHeight * 7; // 显示7行歌词
+        int visibleLines = Math.min(mLrcLines.size(), 7); // 显示最多7行歌词
+        float totalHeight = lineHeight * visibleLines;
+float scrollOffsetPixels = mScrollOffset * lineHeight;
+float startY = (getHeight() - totalHeight) / 2 + mNormalPaint.getTextSize() - scrollOffsetPixels;
 
-        // 应用滚动偏移
-        float scrollOffsetPixels = mScrollOffset * lineHeight;
-        float startY = (getHeight() - totalHeight) / 2 + mNormalPaint.getTextSize() - scrollOffsetPixels;
+        // 计算起始Y位置，使当前行居中显示
+  //      float startY = (getHeight() - totalHeight) / 2 + mNormalPaint.getTextSize();
+
+        // 计算实际可见的行范围，确保不会超出歌词列表边界
+        int startLineIndex = Math.max(0, mCurrentLine - 3);
+        int endLineIndex = Math.min(mLrcLines.size() - 1, mCurrentLine + 3);
 
         // 绘制当前行及前后行
-        for (int i = -3; i <= 3; i++) {
-            int index = mCurrentLine + i;
-            if (index < 0 || index >= mLrcLines.size()) {
+        for (int i = 0; i < visibleLines; i++) {
+            int actualIndex = startLineIndex + i;
+            if (actualIndex < 0 || actualIndex >= mLrcLines.size()) {
                 continue;
             }
+            
+            LrcLine line = mLrcLines.get(actualIndex);
+            float y = startY + i * lineHeight;
 
-            LrcLine line = mLrcLines.get(index);
-            float y = startY + (i + 3) * lineHeight; // 从startY开始计算每行位置
-
-            if (i == 0) {
+            if (actualIndex == mCurrentLine) {
                 // 当前行：卡拉OK高亮效果
-                float progress = (float) (mCurrentPosition - line.time) /
-                        (index + 1 < mLrcLines.size() ?
-                                mLrcLines.get(index + 1).time - line.time : 1000);
+                float progress = 0f;
+                if (mCurrentPosition >= line.time) {
+                    long nextTime = (actualIndex + 1 < mLrcLines.size()) ? mLrcLines.get(actualIndex + 1).time : line.time + 5000;
+                    long duration = nextTime - line.time;
+                    if (duration > 0) {
+                        progress = (float) (mCurrentPosition - line.time) / duration;
+                    }
+                }
                 progress = Math.max(0, Math.min(1, progress));
 
                 // 绘制背景文本（完整）
