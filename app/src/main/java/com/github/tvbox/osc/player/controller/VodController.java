@@ -2544,56 +2544,112 @@ public class VodController extends BaseController {
 
 
 private void loadImageWithFallback() {
-                if(!ApiConfig.get().musicwallpaper.isEmpty()) {
-                    String Url = ApiConfig.get().musicwallpaper;
+    // 第一步：尝试加载 musicwallpaper
+    String firstUrl = ApiConfig.get().musicwallpaper;
+    if (!TextUtils.isEmpty(firstUrl)) {
+        Picasso.get()
+                .load(firstUrl)
+                .resize(1920, 1080)
+                .config(Bitmap.Config.RGB_565)
+                .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
+                .networkPolicy(NetworkPolicy.NO_CACHE)
+                .into(MxuamengMusic, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        // 第一张图片加载成功
+                        mHandler.postDelayed(myRunnableMusic, 15000);
+                    }
 
-                }
-    Picasso.get().load(Url)
-        .resize(1920, 1080)
-        .config(Bitmap.Config.RGB_565)
-        .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
-        .networkPolicy(NetworkPolicy.NO_CACHE)
-        .into(MxuamengMusic, new Callback() {
-            @Override
-            public void onSuccess() {
-                // 第一个URL加载成功
-                mHandler.postDelayed(myRunnableMusic, 15000);
-            }
-            
-            @Override
-            public void onError(Exception e) {
- if(!ApiConfig.get().wallpaper.isEmpty()) {
-                    String Url = ApiConfig.get().wallpaper;
-}
-                // 第一个URL加载失败，尝试第二个
-                if (!TextUtils.isEmpty(Url)) {
-                    Picasso.get().load(Url)
-                        .resize(1920, 1080)
-                        .config(Bitmap.Config.RGB_565)
-                        .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
-                        .networkPolicy(NetworkPolicy.NO_CACHE)
-                        .into(MxuamengMusic, new Callback() {
-                            @Override
-                            public void onSuccess() {
-                                mHandler.postDelayed(myRunnableMusic, 15000);
-                            }
-                            
-                            @Override
-                            public void onError(Exception e) {
-								String Url = "https://api.miaomc.cn/image/get";
-                                // 第二个也失败，使用默认URL
-                                Picasso.get().load(Url)
+                    @Override
+                    public void onError(Exception e) {
+                        // 第一张图片加载失败，尝试加载 wallpaper
+                        String secondUrl = ApiConfig.get().wallpaper;
+                        if (!TextUtils.isEmpty(secondUrl)) {
+                            Picasso.get()
+                                    .load(secondUrl)
+                                    .resize(1920, 1080)
+                                    .config(Bitmap.Config.RGB_565)
+                                    .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
+                                    .networkPolicy(NetworkPolicy.NO_CACHE)
+                                    .into(MxuamengMusic, new Callback() {
+                                        @Override
+                                        public void onSuccess() {
+                                            // 第二张图片加载成功
+                                            mHandler.postDelayed(myRunnableMusic, 15000);
+                                        }
+
+                                        @Override
+                                        public void onError(Exception e) {
+                                            // 第二张也失败了，使用一个默认的图片 URL
+                                            String defaultUrl = "https://api.miaomc.cn/image/get"; // ✅ 请替换为你想要的默认图片链接
+                                            Picasso.get()
+                                                    .load(defaultUrl)
+                                                    .resize(1920, 1080)
+                                                    .config(Bitmap.Config.RGB_565)
+                                                    .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
+                                                    .networkPolicy(NetworkPolicy.NO_CACHE)
+                                                    .into(MxuamengMusic);
+                                            // 延迟执行你的任务
+                                            mHandler.postDelayed(myRunnableMusic, 15000);
+                                        }
+                                    });
+                        } else {
+                            // 如果 wallpaper 也为空，直接使用默认图片
+                            String defaultUrl = "https://api.miaomc.cn/image/get"; // ✅ 默认图片链接
+                            Picasso.get()
+                                    .load(defaultUrl)
                                     .resize(1920, 1080)
                                     .config(Bitmap.Config.RGB_565)
                                     .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
                                     .networkPolicy(NetworkPolicy.NO_CACHE)
                                     .into(MxuamengMusic);
-                                mHandler.postDelayed(myRunnableMusic, 15000);
-                            }
-                        });
-                }
-            }
-        });
+                            mHandler.postDelayed(myRunnableMusic, 15000);
+                        }
+                    }
+                });
+    } else {
+        // 如果 musicwallpaper 为空，直接尝试 wallpaper
+        String secondUrl = ApiConfig.get().wallpaper;
+        if (!TextUtils.isEmpty(secondUrl)) {
+            Picasso.get()
+                    .load(secondUrl)
+                    .resize(1920, 1080)
+                    .config(Bitmap.Config.RGB_565)
+                    .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
+                    .networkPolicy(NetworkPolicy.NO_CACHE)
+                    .into(MxuamengMusic, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            mHandler.postDelayed(myRunnableMusic, 15000);
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+                            // 直接使用默认图片
+                            String defaultUrl = "https://api.miaomc.cn/image/get"; // ✅ 请替换为真实 URL
+                            Picasso.get()
+                                    .load(defaultUrl)
+                                    .resize(1920, 1080)
+                                    .config(Bitmap.Config.RGB_565)
+                                    .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
+                                    .networkPolicy(NetworkPolicy.NO_CACHE)
+                                    .into(MxuamengMusic);
+                            mHandler.postDelayed(myRunnableMusic, 15000);
+                        }
+                    });
+        } else {
+            // 如果两者都为空，直接加载默认图片
+            String defaultUrl = "https://api.miaomc.cn/image/get"; // ✅ 默认图片
+            Picasso.get()
+                    .load(defaultUrl)
+                    .resize(1920, 1080)
+                    .config(Bitmap.Config.RGB_565)
+                    .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
+                    .networkPolicy(NetworkPolicy.NO_CACHE)
+                    .into(MxuamengMusic);
+            mHandler.postDelayed(myRunnableMusic, 15000);
+        }
+    }
 }
 
 }
