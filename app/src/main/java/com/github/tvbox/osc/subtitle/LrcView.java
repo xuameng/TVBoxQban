@@ -292,7 +292,6 @@ public class LrcView extends View {
                 // 动画结束后更新当前行
                 mCurrentLine = targetLine;
                 mScrollOffset = 0f;
-                invalidate();
             }
 
             @Override
@@ -300,7 +299,6 @@ public class LrcView extends View {
                 // 动画取消时也更新当前行
                 mCurrentLine = targetLine;
                 mScrollOffset = 0f;
-                invalidate();
             }
 
         });
