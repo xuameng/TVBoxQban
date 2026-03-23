@@ -283,7 +283,7 @@ public class LrcView extends View {
 
         mScrollAnimator.addUpdateListener(animation -> {
             mScrollOffset = (float) animation.getAnimatedValue();
-           // invalidate();
+            invalidate();
         });
 
         mScrollAnimator.addListener(new AnimatorListenerAdapter() {
