@@ -527,11 +527,8 @@ public class VodController extends BaseController {
         @Override
         public void run() {
             if(MxuamengMusic.getVisibility() == View.VISIBLE) {
-				App.showToastShort(getContext(), "5555");
               loadImageWithFallback();
-            }
-mHandler.removeCallbacks(myRunnableMusic);
-mHandler.post(myRunnableMusic);
+              mHandler.postDelayed(this, 15000);
 		}
 
     };
