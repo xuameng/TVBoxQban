@@ -2049,6 +2049,7 @@ public class VodController extends BaseController {
     public boolean onTouchEvent(MotionEvent e) {
         if(e.getAction() == MotionEvent.ACTION_UP) {
             speedPlayEnd();
+            mLrcView.smoothScrollCancel();  //xuameng 暂停歌词滚动
         }
         return super.onTouchEvent(e);
     }
