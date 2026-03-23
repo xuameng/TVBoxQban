@@ -44,7 +44,7 @@ public class LrcView extends View {
     // 平滑滚动相关变量
     private float mScrollOffset = 0f; // 当前滚动偏移量（行数）
     private ValueAnimator mScrollAnimator; // 滚动动画
-    private int mScrollDuration = 3000; // 滚动动画时长（毫秒）
+    private int mScrollDuration = 300; // 滚动动画时长（毫秒）
 
     // 新增：控制是否显示歌词的标志
     private boolean mShouldShowLyrics = false;
@@ -332,9 +332,12 @@ public class LrcView extends View {
         }
 
         // 如果行数发生变化，启动平滑滚动
+        if (targetLine != mCurrentLine) {
             smoothScrollTo(targetLine);
+        } else {
             // 行数不变，只更新进度
-         //   invalidate();
+            invalidate();
+        }
     }
 
     /**
