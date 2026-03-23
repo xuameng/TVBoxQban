@@ -11,6 +11,8 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
+import android.content.res.Resources;
+import android.util.DisplayMetrics;
 
 import androidx.annotation.Nullable;
 
@@ -20,10 +22,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
-import android.content.res.Resources;
-
-import android.util.DisplayMetrics;
 /**
  * xuameng
  * LRC歌词显示控件
@@ -108,9 +106,9 @@ public class LrcView extends View {
      * @param textSize 文本大小
      */
     public void setNormalTextSize(float textSize) {
-    // 将 sp 转换为 px
-    float pxSize = spToPx(getContext(), textSize);
-    mNormalPaint.setTextSize(pxSize);
+        // 将 sp 转换为 px 以便与字幕的字体大小一致
+        float pxSize = spToPx(getContext(), textSize);
+        mNormalPaint.setTextSize(pxSize);
         // 重新计算所有歌词行的宽度
         recalculateLineWidths();
         invalidate();
@@ -122,9 +120,9 @@ public class LrcView extends View {
      * @param textSize 文本大小
      */
     public void setHighlightTextSize(float textSize) {
-    // 将 sp 转换为 px
-    float pxSize = spToPx(getContext(), textSize);
-    mHighlightPaint.setTextSize(pxSize);
+        // 将 sp 转换为 px 以便与字幕的字体大小一致
+        float pxSize = spToPx(getContext(), textSize);
+        mHighlightPaint.setTextSize(pxSize);
         // 重新计算所有歌词行的宽度
         recalculateLineWidths();
         invalidate();
@@ -401,6 +399,13 @@ public class LrcView extends View {
     }
 
     /**
+     * 新增：终止滚动
+     */
+    public void smoothScrollCancel() {
+        mIsInitialPositioning = true; // 新增：重置初始定位状态
+    }
+
+    /**
      * 绘制卡拉OK效果
      */
     @Override
@@ -472,12 +477,12 @@ public class LrcView extends View {
         }
     }
 
-/**
- * 将 sp 值转换为 px 值
- */
-private float spToPx(Context context, float sp) {
-    return sp * context.getResources().getDisplayMetrics().scaledDensity;
-}
+    /**
+     * 将 sp 值转换为 px 值  以便与字幕的字体大小一致
+     */
+    private float spToPx(Context context, float sp) {
+        return sp * context.getResources().getDisplayMetrics().scaledDensity;
+    }
 
     /**
      * 清理资源
