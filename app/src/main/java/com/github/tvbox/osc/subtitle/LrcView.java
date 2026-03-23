@@ -291,54 +291,64 @@ public class LrcView extends View {
      *
      * @param position 当前播放时间（毫秒）
      */
-    public void updateTime(long position) {
-        if (mLrcLines.isEmpty()) {
-            return;
-        }
+public void updateTime(long position) {
+    if (mLrcLines.isEmpty()) {
+        return;
+    }
 
-        // 检查是否达到最小显示位置
-        if (position < MIN_POSITION_TO_SHOW) {
-            // 进度小于1秒，不显示歌词，但保持在第一行
-            mShouldShowLyrics = false;
-            mCurrentLine = 0; // 确保强制重置到第一行
-            mScrollOffset = 0f; // 重置滚动偏移
-            invalidate();
-            return;
-        }
+    // 检查是否达到最小显示位置
+    if (position < MIN_POSITION_TO_SHOW) {
+        // 进度小于1秒，不显示歌词，但保持在第一行
+        mShouldShowLyrics = false;
+        mCurrentLine = 0; // 确保强制重置到第一行
+        mScrollOffset = 0f; // 重置滚动偏移
+        invalidate();
+        return;
+    }
 
-        // 达到最小显示位置，开始显示歌词
-        if (!mShouldShowLyrics) {
-            mShouldShowLyrics = true;
-        }
+    // 达到最小显示位置，开始显示歌词
+    if (!mShouldShowLyrics) {
+        mShouldShowLyrics = true;
+    }
 
-        mCurrentPosition = position;
+    mCurrentPosition = position;
 
-        // 查找当前应该显示的行
-        int targetLine = 0;
-        
-        // 如果当前时间比第一行还早，保持在第一行
-        if (position < mLrcLines.get(0).time) {
-            targetLine = 0;
-        } else {
-            // 否则找到合适的时间点
-            for (int i = 0; i < mLrcLines.size(); i++) {
-                if (i == mLrcLines.size() - 1 ||
-                        position >= mLrcLines.get(i).time &&
-                                position < mLrcLines.get(i + 1).time) {
-                    targetLine = i;
-                    break;
-                }
+    // 查找当前应该显示的行
+    int targetLine = 0;
+    
+    // 如果当前时间比第一行还早，保持在第一行
+    if (position < mLrcLines.get(0).time) {
+        targetLine = 0;
+    } else {
+        // 否则找到合适的时间点
+        for (int i = 0; i < mLrcLines.size(); i++) {
+            if (i == mLrcLines.size() - 1 ||
+                    position >= mLrcLines.get(i).time &&
+                            position < mLrcLines.get(i + 1).time) {
+                targetLine = i;
+                break;
             }
         }
+    }
 
-        // 如果行数发生变化，启动平滑滚动
-        if (targetLine != mCurrentLine) {
+    // 如果行数发生变化
+    if (targetLine != mCurrentLine) {
+        // 判断是否需要滚动：只有当目标行>=3时才滚动
+        // 这样可以确保前3行显示在屏幕顶部，第4行开始才滚动
+        if (targetLine >= 3) {
             smoothScrollTo(targetLine);
         } else {
-            // 行数不变，只更新进度
+            // 前3行不滚动，直接更新当前行
+            mCurrentLine = targetLine;
+            mScrollOffset = 0f;
             invalidate();
         }
+    } else {
+        // 行数不变，只更新进度
+        invalidate();
     }
+}
+
 
     /**
      * 新增：手动设置是否显示歌词
@@ -401,8 +411,7 @@ public class LrcView extends View {
 float scrollOffsetPixels = mScrollOffset * lineHeight;
 float startY = (getHeight() - totalHeight) / 2 + mNormalPaint.getTextSize() - scrollOffsetPixels;
 
-        // 计算起始Y位置，使当前行居中显示
-  //      float startY = (getHeight() - totalHeight) / 2 + mNormalPaint.getTextSize();
+
 
         // 计算实际可见的行范围，确保不会超出歌词列表边界
         int startLineIndex = Math.max(0, mCurrentLine - 3);
