@@ -747,7 +747,6 @@ public class VodController extends BaseController {
                 long duration = mControlWrapper.getDuration();
                 long newPosition = (duration * seekBar.getProgress()) / seekBar.getMax();
                 mControlWrapper.seekTo((int) newPosition);
-                mLrcView.smoothScrollCancel();  //xuameng 暂停歌词滚动
                 mIsDragging = false;
                 mControlWrapper.startProgress();
                 mControlWrapper.startFadeOut();
@@ -1616,10 +1615,9 @@ public class VodController extends BaseController {
             mSpeedTimeUp = 0;
             if(!simSlideStart) return;
             mControlWrapper.seekTo(simSeekPosition);
-            mLrcView.smoothScrollCancel();  //xuameng 暂停歌词滚动
-            //if(!mControlWrapper.isPlaying())
+            if(!mControlWrapper.isPlaying())
                 //xuameng快进暂停就暂停测试    mControlWrapper.start();    //测试成功，如果想暂停时快进自动播放取消注销
-            simSlideStart = false;
+                simSlideStart = false;
             //simSeekPosition = 0;  //XUAMENG重要要不然重0播放
             simSlideOffset = 0;
             mHandler.sendEmptyMessageDelayed(1001, 100);   //xuamengTV隐藏快进图标
@@ -1633,11 +1631,10 @@ public class VodController extends BaseController {
         if(!simSlideStartXu) return;
         if(isSEEKBAR) {
             mControlWrapper.seekTo(simSeekPosition);
-            mLrcView.smoothScrollCancel();  //xuameng 暂停歌词滚动
         }
-        //if(!mControlWrapper.isPlaying())
+        if(!mControlWrapper.isPlaying())
             //xuameng快进暂停就暂停测试    mControlWrapper.start();    //测试成功，如果想暂停时快进自动播放取消注销
-        simSlideStartXu = false;
+            simSlideStartXu = false;
         //		simSeekPosition = 0;      //XUAMENG重要
         simSlideOffset = 0;
     }
@@ -2049,7 +2046,6 @@ public class VodController extends BaseController {
     public boolean onTouchEvent(MotionEvent e) {
         if(e.getAction() == MotionEvent.ACTION_UP) {
             speedPlayEnd();
-            mLrcView.smoothScrollCancel();  //xuameng 暂停歌词滚动
         }
         return super.onTouchEvent(e);
     }
