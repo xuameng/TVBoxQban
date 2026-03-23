@@ -19,11 +19,13 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**xuameng
+/**
+ * xuameng
  * LRC歌词显示控件
  * 支持卡拉OK效果的歌词同步显示
  * 新增平滑滚动功能
- * 新增：未获取到进度或进度小于1秒时不显示歌词
+ * 新增：未获取到进度或进度小于0.1秒时不显示歌词
+ * 新增：初始位不显示滚动动画
  */
 public class LrcView extends View {
 
@@ -50,7 +52,7 @@ public class LrcView extends View {
     private boolean mShouldShowLyrics = false;
     private static final long MIN_POSITION_TO_SHOW = 100; // 0.1秒，单位：毫秒
     // 标记是否正在初始定位
-    private boolean mIsInitialPositioning = true; 
+    private boolean mIsInitialPositioning = true;
 
 
     public LrcView(Context context) {
@@ -203,7 +205,7 @@ public class LrcView extends View {
             }
             // 注意：这里我们跳过了纯时间标签行（如[00:13.760]），因为它们没有歌词内容
         }
-        
+
         // 按时间排序
         Collections.sort(mLrcLines, (a, b) -> Long.compare(a.time, b.time));
 
@@ -227,7 +229,7 @@ public class LrcView extends View {
      */
     private void removeDuplicateLines() {
         if (mLrcLines.size() <= 1) return;
-        
+
         List<LrcLine> uniqueLines = new ArrayList<>();
         for (LrcLine line : mLrcLines) {
             boolean isDuplicate = false;
@@ -263,7 +265,8 @@ public class LrcView extends View {
         // 设置动画
         mScrollAnimator = ValueAnimator.ofFloat(0f, (float) lineDiff);
         mScrollAnimator.setDuration(mScrollDuration);
-        mScrollAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
+        //mScrollAnimator.setInterpolator(new AccelerateDecelerateInterpolator());  //加速减速插值器
+        mScrollAnimator.setInterpolator(new LinearInterpolator()); // 改为线性插值器
 
         mScrollAnimator.addUpdateListener(animation -> {
             mScrollOffset = (float) animation.getAnimatedValue();
@@ -295,65 +298,64 @@ public class LrcView extends View {
      *
      * @param position 当前播放时间（毫秒）
      */
-public void updateTime(long position) {
-    if (mLrcLines.isEmpty()) {
-        return;
-    }
-
-    // 检查是否达到最小显示位置
-    if (position < MIN_POSITION_TO_SHOW) {
-        mShouldShowLyrics = false;
-        mCurrentLine = 0;
-        mScrollOffset = 0f;
-        invalidate();
-        return;
-    }
-
-    if (!mShouldShowLyrics) {
-        mShouldShowLyrics = true;
-    }
-
-    mCurrentPosition = position;
-
-    // 查找当前应该显示的行
-    int targetLine = 0;
-    if (position < mLrcLines.get(0).time) {
-        targetLine = 0;
-    } else {
-        for (int i = 0; i < mLrcLines.size(); i++) {
-            if (i == mLrcLines.size() - 1 ||
-                    position >= mLrcLines.get(i).time &&
-                            position < mLrcLines.get(i + 1).time) {
-                targetLine = i;
-                break;
-            }
+    public void updateTime(long position) {
+        if (mLrcLines.isEmpty()) {
+            return;
         }
-    }
 
-    // 关键修改：处理初始定位
-    if (mIsInitialPositioning) {
-        // 初始定位阶段，直接跳转到目标行，不执行滚动动画
-        mCurrentLine = targetLine;
-        mScrollOffset = 0f;
-        mIsInitialPositioning = false; // 定位完成，退出初始状态
-        invalidate();
-        return;
-    }
-
-    // 正常播放中的滚动逻辑
-    if (targetLine != mCurrentLine) {
-        if (targetLine > 3) {
-            smoothScrollTo(targetLine);
-        } else {
-            mCurrentLine = targetLine;
+        // 检查是否达到最小显示位置
+        if (position < MIN_POSITION_TO_SHOW) {
+            mShouldShowLyrics = false;
+            mCurrentLine = 0;
             mScrollOffset = 0f;
             invalidate();
+            return;
         }
-    } else {
-        invalidate();
-    }
-}
 
+        if (!mShouldShowLyrics) {
+            mShouldShowLyrics = true;
+        }
+
+        mCurrentPosition = position;
+
+        // 查找当前应该显示的行
+        int targetLine = 0;
+        if (position < mLrcLines.get(0).time) {
+            targetLine = 0;
+        } else {
+            for (int i = 0; i < mLrcLines.size(); i++) {
+                if (i == mLrcLines.size() - 1 ||
+                        position >= mLrcLines.get(i).time &&
+                                position < mLrcLines.get(i + 1).time) {
+                    targetLine = i;
+                    break;
+                }
+            }
+        }
+
+        // 关键修改：处理初始定位
+        if (mIsInitialPositioning) {
+            // 初始定位阶段，直接跳转到目标行，不执行滚动动画
+            mCurrentLine = targetLine;
+            mScrollOffset = 0f;
+            mIsInitialPositioning = false; // 定位完成，退出初始状态
+            invalidate();
+            return;
+        }
+
+        // 正常播放中的滚动逻辑
+        if (targetLine != mCurrentLine) {
+            if (targetLine > 3) {
+                smoothScrollTo(targetLine);
+            } else {
+                mCurrentLine = targetLine;
+                mScrollOffset = 0f;
+                invalidate();
+            }
+        } else {
+            invalidate();
+        }
+    }
 
 
     /**
@@ -428,7 +430,7 @@ public void updateTime(long position) {
             if (actualIndex < 0 || actualIndex >= mLrcLines.size()) {
                 continue;
             }
-            
+
             LrcLine line = mLrcLines.get(actualIndex);
             float y = startY + i * lineHeight;
 
