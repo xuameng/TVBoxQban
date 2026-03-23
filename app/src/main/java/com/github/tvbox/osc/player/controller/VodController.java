@@ -529,9 +529,10 @@ public class VodController extends BaseController {
             if(MxuamengMusic.getVisibility() == View.VISIBLE) {
               loadImageWithFallback();
             }
-		}
 mHandler.removeCallbacks(myRunnableMusic);
 mHandler.post(myRunnableMusic);
+		}
+
     };
     private Runnable xuRunnable = new Runnable() { //xuameng显示系统时间
         @Override
