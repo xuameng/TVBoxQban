@@ -72,6 +72,8 @@ import static xyz.doikki.videoplayer.util.PlayerUtils.stringForTime;
 import com.squareup.picasso.Picasso; //xuameng播放音频切换图片
 import com.squareup.picasso.MemoryPolicy; //xuameng播放音频切换图片
 import com.squareup.picasso.NetworkPolicy; //xuameng播放音频切换图片
+import com.squareup.picasso.Callback;
+
 import android.graphics.Bitmap; //xuameng播放音频切换图片
 import com.github.tvbox.osc.api.ApiConfig; //xuameng播放音频切换图片
 import com.github.tvbox.osc.ui.tv.widget.MusicVisualizerView;  //xuameng音乐播放动画
@@ -525,39 +527,7 @@ public class VodController extends BaseController {
         @Override
         public void run() {
             if(MxuamengMusic.getVisibility() == View.VISIBLE) {
-                if(!ApiConfig.get().musicwallpaper.isEmpty()) {
-                    String Url = ApiConfig.get().musicwallpaper;
-                    Picasso.get().load(Url)
-                        //				.placeholder(R.drawable.xumusic)   //xuameng默认的站位图
-                        .noPlaceholder() //不使用站位图，效果不好
-                        				.resize(1920,1080)
-                        //				.centerCrop()
-                        //				.error(R.drawable.xumusic)
-                        .config(Bitmap.Config.RGB_565).memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE).networkPolicy(NetworkPolicy.NO_CACHE).into(MxuamengMusic); // xuameng内容空显示banner
-                    mHandler.postDelayed(this, 15000);
-                    return;
-                } else if(!ApiConfig.get().wallpaper.isEmpty()) {
-                    String Url = ApiConfig.get().wallpaper;
-                    Picasso.get().load(Url)
-                        //				.placeholder(R.drawable.xumusic)   //xuameng默认的站位图
-                        .noPlaceholder() //不使用站位图，效果不好
-                        .resize(1920, 1080)
-                        //				.centerCrop()
-                        //				.error(R.drawable.xumusic)
-                        .config(Bitmap.Config.RGB_565).memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE).networkPolicy(NetworkPolicy.NO_CACHE).into(MxuamengMusic); // xuameng内容空显示banner
-                    mHandler.postDelayed(this, 15000);
-                    return;
-                }
-                String Url = "https://api.miaomc.cn/image/get";
-                Picasso.get().load(Url)
-                    //				.placeholder(R.drawable.xumusic)   //xuameng默认的站位图
-                    .noPlaceholder() //不使用站位图，效果不好
-                    .resize(1920, 1080)
-                    //				.centerCrop()
-                    //				.error(R.drawable.xumusic)
-                    .config(Bitmap.Config.RGB_565).memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE).networkPolicy(NetworkPolicy.NO_CACHE).into(MxuamengMusic); // xuameng内容空显示banner
-            }
-            mHandler.postDelayed(this, 15000);
+              loadImageWithFallback();
         }
     };
     private Runnable xuRunnable = new Runnable() { //xuameng显示系统时间
@@ -2570,5 +2540,60 @@ public class VodController extends BaseController {
                    .into(iv_circle_bg);
         }
     }
+
+
+
+private void loadImageWithFallback() {
+                if(!ApiConfig.get().musicwallpaper.isEmpty()) {
+                    String Url = ApiConfig.get().musicwallpaper;
+
+                }
+    Picasso.get().load(Url)
+        .resize(1920, 1080)
+        .config(Bitmap.Config.RGB_565)
+        .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
+        .networkPolicy(NetworkPolicy.NO_CACHE)
+        .into(MxuamengMusic, new Callback() {
+            @Override
+            public void onSuccess() {
+                // 第一个URL加载成功
+                mHandler.postDelayed(myRunnableMusic, 15000);
+            }
+            
+            @Override
+            public void onError(Exception e) {
+ if(!ApiConfig.get().wallpaper.isEmpty()) {
+                    String Url = ApiConfig.get().wallpaper;
+}
+                // 第一个URL加载失败，尝试第二个
+                if (!TextUtils.isEmpty(Url)) {
+                    Picasso.get().load(Url)
+                        .resize(1920, 1080)
+                        .config(Bitmap.Config.RGB_565)
+                        .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
+                        .networkPolicy(NetworkPolicy.NO_CACHE)
+                        .into(MxuamengMusic, new Callback() {
+                            @Override
+                            public void onSuccess() {
+                                mHandler.postDelayed(myRunnableMusic, 15000);
+                            }
+                            
+                            @Override
+                            public void onError(Exception e) {
+								String Url = "https://api.miaomc.cn/image/get";
+                                // 第二个也失败，使用默认URL
+                                Picasso.get().load(Url)
+                                    .resize(1920, 1080)
+                                    .config(Bitmap.Config.RGB_565)
+                                    .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
+                                    .networkPolicy(NetworkPolicy.NO_CACHE)
+                                    .into(MxuamengMusic);
+                                mHandler.postDelayed(myRunnableMusic, 15000);
+                            }
+                        });
+                }
+            }
+        });
+}
 
 }
