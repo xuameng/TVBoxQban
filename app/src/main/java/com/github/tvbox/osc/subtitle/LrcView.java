@@ -20,6 +20,10 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+
+import android.content.res.Resources;
+
+import android.util.DisplayMetrics;
 /**
  * xuameng
  * LRC歌词显示控件
@@ -104,7 +108,9 @@ public class LrcView extends View {
      * @param textSize 文本大小
      */
     public void setNormalTextSize(float textSize) {
-        mNormalPaint.setTextSize(textSize);
+    // 将 sp 转换为 px
+    float pxSize = spToPx(getContext(), textSize);
+    mNormalPaint.setTextSize(pxSize);
         // 重新计算所有歌词行的宽度
         recalculateLineWidths();
         invalidate();
@@ -116,7 +122,9 @@ public class LrcView extends View {
      * @param textSize 文本大小
      */
     public void setHighlightTextSize(float textSize) {
-        mHighlightPaint.setTextSize(textSize);
+    // 将 sp 转换为 px
+    float pxSize = spToPx(getContext(), textSize);
+    mHighlightPaint.setTextSize(pxSize);
         // 重新计算所有歌词行的宽度
         recalculateLineWidths();
         invalidate();
@@ -463,6 +471,13 @@ public class LrcView extends View {
             }
         }
     }
+
+/**
+ * 将 sp 值转换为 px 值
+ */
+private float spToPx(Context context, float sp) {
+    return sp * context.getResources().getDisplayMetrics().scaledDensity;
+}
 
     /**
      * 清理资源
