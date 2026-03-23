@@ -529,6 +529,7 @@ public class VodController extends BaseController {
             if(MxuamengMusic.getVisibility() == View.VISIBLE) {
               loadImageWithFallback();
               mHandler.postDelayed(this, 15000);
+			}
 		}
 
     };
