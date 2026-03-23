@@ -30,7 +30,6 @@ import xyz.doikki.videoplayer.player.VideoView;
 import xyz.doikki.videoplayer.util.PlayerUtils;
 
 import com.github.tvbox.osc.util.HawkConfig;    //xuameng 滑动亮度判断
-import com.github.tvbox.osc.subtitle.LrcView;  //xuameng LRC歌词字幕
 import com.orhanobut.hawk.Hawk; //xuameng 滑动亮度判断
 
 public abstract class BaseController extends BaseVideoController implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener, View.OnTouchListener {
@@ -48,7 +47,6 @@ public abstract class BaseController extends BaseVideoController implements Gest
     private boolean mEnableInNormal;
     private boolean mCanSlide;
     private int mCurPlayState;
-    private LrcView mLrcViewXu;   //xuameng LRC歌词字幕
 
     protected Handler mHandler;
 
@@ -430,7 +428,6 @@ public abstract class BaseController extends BaseVideoController implements Gest
                     stopSlide();
                     if (mSeekPosition > 0) {
                         mControlWrapper.seekTo(mSeekPosition);
-                        mLrcViewXu.smoothScrollCancel();  //xuameng 暂停歌词滚动
                         mSeekPosition = 0;
                     }
                     break;
