@@ -527,6 +527,7 @@ public class VodController extends BaseController {
         @Override
         public void run() {
             if(MxuamengMusic.getVisibility() == View.VISIBLE) {
+				App.showToastShort(getContext(), "5555");
               loadImageWithFallback();
             }
 mHandler.removeCallbacks(myRunnableMusic);
@@ -2550,7 +2551,9 @@ mHandler.post(myRunnableMusic);
 private void loadImageWithFallback() {
     // 第一步：尝试加载 musicwallpaper
     String firstUrl = ApiConfig.get().musicwallpaper;
+	App.showToastShort(getContext(), "1111");
     if (!TextUtils.isEmpty(firstUrl)) {
+		App.showToastShort(getContext(), "2222");
         Picasso.get()
                 .load(firstUrl)
                 .resize(1920, 1080)
@@ -2561,6 +2564,7 @@ private void loadImageWithFallback() {
                     @Override
                     public void onSuccess() {
                         // 第一张图片加载成功
+						App.showToastShort(getContext(), "3333");
                         mHandler.postDelayed(myRunnableMusic, 15000);
                     }
 
