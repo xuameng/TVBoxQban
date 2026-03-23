@@ -334,7 +334,7 @@ public class LrcView extends View {
         // 如果行数发生变化，启动平滑滚动
             smoothScrollTo(targetLine);
             // 行数不变，只更新进度
-            invalidate();
+         //   invalidate();
     }
 
     /**
