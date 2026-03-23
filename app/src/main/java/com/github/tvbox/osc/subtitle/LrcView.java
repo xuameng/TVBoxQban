@@ -31,7 +31,6 @@ import java.lang.Math;
  * 新增平滑滚动功能
  * 新增：未获取到进度或进度小于0.1秒时不显示歌词
  * 新增：初始位不显示滚动动画
- * 新增：不是相邻行不不显示滚动动画
  */
 public class LrcView extends View {
 
@@ -60,7 +59,7 @@ public class LrcView extends View {
     // 标记是否正在初始定位
     private boolean mIsInitialPositioning = true;
     // 最大滚动距离（行数）
-    private static final int MAX_SCROLL_DISTANCE = 1;
+    private static final int MAX_SCROLL_DISTANCE = 1; 
 
 
 
@@ -311,81 +310,75 @@ public class LrcView extends View {
      *
      * @param position 当前播放时间（毫秒）
      */
-    public void updateTime(long position) {
-        if (mLrcLines.isEmpty()) {
-            return;
-        }
+public void updateTime(long position) {
+    if (mLrcLines.isEmpty()) {
+        return;
+    }
 
-        // 检查是否达到最小显示位置
-        if (position < MIN_POSITION_TO_SHOW) {
-            // 进度小于1秒，不显示歌词，但保持在第一行
-            mShouldShowLyrics = false;
-            mCurrentLine = 0; // 确保强制重置到第一行
-            mScrollOffset = 0f; // 重置滚动偏移
-            invalidate();
-            return;
-        }
+    // 检查是否达到最小显示位置
+    if (position < MIN_POSITION_TO_SHOW) {
+        mShouldShowLyrics = false;
+        mCurrentLine = 0;
+        mScrollOffset = 0f;
+        invalidate();
+        return;
+    }
 
-        // 达到最小显示位置，开始显示歌词
-        if (!mShouldShowLyrics) {
-            mShouldShowLyrics = true;
-        }
+    if (!mShouldShowLyrics) {
+        mShouldShowLyrics = true;
+    }
 
-        mCurrentPosition = position;
+    mCurrentPosition = position;
 
-        // 查找当前应该显示的行
-        int targetLine = 0;
-
-        // 如果当前时间比第一行还早，保持在第一行
-        if (position < mLrcLines.get(0).time) {
-            targetLine = 0;
-        } else {
-            // 否则找到合适的时间点
-            for (int i = 0; i < mLrcLines.size(); i++) {
-                if (i == mLrcLines.size() - 1 ||
-                        position >= mLrcLines.get(i).time &&
-                                position < mLrcLines.get(i + 1).time) {
-                    targetLine = i;
-                    break;
-                }
+    // 查找当前应该显示的行
+    int targetLine = 0;
+    if (position < mLrcLines.get(0).time) {
+        targetLine = 0;
+    } else {
+        for (int i = 0; i < mLrcLines.size(); i++) {
+            if (i == mLrcLines.size() - 1 ||
+                    position >= mLrcLines.get(i).time &&
+                            position < mLrcLines.get(i + 1).time) {
+                targetLine = i;
+                break;
             }
         }
+    }
 
-        // 关键修改：处理初始定位
-        if (mIsInitialPositioning) {
-            // 初始定位阶段，直接跳转到目标行，不执行滚动动画
+    // 关键修改：处理初始定位
+    if (mIsInitialPositioning) {
+        // 初始定位阶段，直接跳转到目标行，不执行滚动动画
+        mCurrentLine = targetLine;
+        mScrollOffset = 0f;
+        mIsInitialPositioning = false; // 定位完成，退出初始状态
+        invalidate();
+        return;
+    }
+
+    // 正常播放中的滚动逻辑
+    if (targetLine != mCurrentLine) {
+        // 计算目标行与当前行的距离
+        int lineDistance = Math.abs(targetLine - mCurrentLine);
+        
+        // 如果距离超过阈值（不是相邻行），直接跳转而不滚动
+        if (lineDistance > 1) { // 这里设置为1，表示只有相邻行才滚动
             mCurrentLine = targetLine;
             mScrollOffset = 0f;
-            mIsInitialPositioning = false; // 定位完成，退出初始状态
             invalidate();
-            return;
-        }
-
-        // 正常播放中的滚动逻辑
-        if (targetLine != mCurrentLine) {
-            // 计算目标行与当前行的距离
-            int lineDistance = Math.abs(targetLine - mCurrentLine);
-
-            // 如果距离超过阈值（不是相邻行），直接跳转而不滚动
-            if (lineDistance > 1) { // 这里设置为1，表示只有相邻行才滚动
+        } else {
+            // 如果是相邻行，执行平滑滚动
+            if (targetLine > 3) {
+                smoothScrollTo(targetLine);
+            } else {
                 mCurrentLine = targetLine;
                 mScrollOffset = 0f;
                 invalidate();
-            } else {
-                // 如果是相邻行，执行平滑滚动
-                if (targetLine > 3) {
-                    smoothScrollTo(targetLine);
-                } else {
-                    mCurrentLine = targetLine;
-                    mScrollOffset = 0f;
-                    invalidate();
-                }
             }
-        } else {
-            // 行数不变，只更新进度
-            invalidate();
         }
+    } else {
+        invalidate();
     }
+}
 
 
 
@@ -449,7 +442,7 @@ public class LrcView extends View {
         int visibleLines = Math.min(mLrcLines.size(), 7); // 显示最多7行歌词
         float totalHeight = lineHeight * visibleLines;
         float scrollOffsetPixels = mScrollOffset * lineHeight; //滚动偏移像素
-        float startY = (getHeight() - totalHeight) / 2 + mNormalPaint.getTextSize() - scrollOffsetPixels;  // 计算起始Y位置，使当前行居中显示  并滚动
+        float startY = (getHeight() - totalHeight) / 2 + mNormalPaint.getTextSize() - scrollOffsetPixels;
 
         // 计算实际可见的行范围，确保不会超出歌词列表边界
         int startLineIndex = Math.max(0, mCurrentLine - 3);
