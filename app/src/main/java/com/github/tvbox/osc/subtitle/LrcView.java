@@ -53,7 +53,7 @@ public class LrcView extends View {
     // 平滑滚动相关变量
     private float mScrollOffset = 0f; // 当前滚动偏移量（行数）
     private ValueAnimator mScrollAnimator; // 滚动动画
-    private int mScrollDuration = 500; // 滚动动画时长（毫秒）
+    private int mScrollDuration = 300; // 滚动动画时长（毫秒）
 
     // 新增：控制是否显示歌词的标志
     private boolean mShouldShowLyrics = false;
@@ -279,8 +279,8 @@ public class LrcView extends View {
         // 设置动画
         mScrollAnimator = ValueAnimator.ofFloat(0f, (float) lineDiff);
         mScrollAnimator.setDuration(mScrollDuration);
-        //mScrollAnimator.setInterpolator(new AccelerateDecelerateInterpolator());  //加速减速插值器
-        mScrollAnimator.setInterpolator(new LinearInterpolator()); // 改为线性插值器
+        mScrollAnimator.setInterpolator(new AccelerateDecelerateInterpolator());  //加速减速插值器
+    //    mScrollAnimator.setInterpolator(new LinearInterpolator()); // 改为线性插值器
     //    mScrollAnimator.setInterpolator(new DecelerateInterpolator(1.5f));
 
         mScrollAnimator.addUpdateListener(animation -> {
@@ -473,29 +473,38 @@ public class LrcView extends View {
             LrcLine line = mLrcLines.get(actualIndex);
             float y = startY + i * lineHeight;
 
-            if (actualIndex == mCurrentLine) {
-                // 当前行：卡拉OK高亮效果
-                float progress = 0f;
-                if (mCurrentPosition >= line.time) {
-                    long nextTime = (actualIndex + 1 < mLrcLines.size()) ? mLrcLines.get(actualIndex + 1).time : line.time + 5000;
-                    long duration = nextTime - line.time;
-                    if (duration > 0) {
-                        progress = (float) (mCurrentPosition - line.time) / duration;
-                    }
-                }
-                progress = Math.max(0, Math.min(1, progress));
+if (actualIndex == mCurrentLine) {
+    // 当前行：卡拉OK高亮效果
+    float progress = 0f;
+    if (mCurrentPosition >= line.time) {
+        long nextTime = (actualIndex + 1 < mLrcLines.size()) ? 
+                       mLrcLines.get(actualIndex + 1).time : line.time + 5000;
+        long duration = nextTime - line.time;
+        if (duration > 0) {
+            progress = (float) (mCurrentPosition - line.time) / duration;
+        }
+    }
+    progress = Math.max(0, Math.min(1, progress));
 
-                // 绘制背景文本（完整）
-                canvas.drawText(line.text, getWidth() / 2 - line.width / 2, y, mNormalPaint);
+    // 获取字体度量信息
+    Paint.FontMetrics fm = mHighlightPaint.getFontMetrics();
+    float textTop = y + fm.top;
+    float textBottom = y + fm.bottom;
 
-                // 绘制高亮部分（渐变填充）
-                float highlightWidth = line.width * progress;
-                canvas.save();
-                canvas.clipRect(getWidth() / 2 - line.width / 2, y - mHighlightPaint.getTextSize(),
-                        getWidth() / 2 - line.width / 2 + highlightWidth, y + 10);
-                canvas.drawText(line.text, getWidth() / 2 - line.width / 2, y, mHighlightPaint);
-                canvas.restore();
-            } else {
+    // 绘制背景文本（完整）
+    canvas.drawText(line.text, getWidth() / 2 - line.width / 2, y, mNormalPaint);
+
+    // 绘制高亮部分（渐变填充）
+    float highlightWidth = line.width * progress;
+    canvas.save();
+    // 使用精确的裁剪区域
+    canvas.clipRect(getWidth() / 2 - line.width / 2, 
+                    textTop,
+                    getWidth() / 2 - line.width / 2 + highlightWidth, 
+                    textBottom);
+    canvas.drawText(line.text, getWidth() / 2 - line.width / 2, y, mHighlightPaint);
+    canvas.restore();
+}else {
                 // 非当前行：普通显示
                 canvas.drawText(line.text, getWidth() / 2 - line.width / 2, y, mNormalPaint);
             }
