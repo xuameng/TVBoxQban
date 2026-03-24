@@ -725,8 +725,8 @@ public class DetailActivity extends BaseActivity {
         if (vodInfo != null && vodInfo.seriesMap.get(vodInfo.playFlag).size() > 0) {
             preFlag = vodInfo.playFlag;
             // 新增：记录当前播放的源和剧集索引
-            vodInfo.currentPlayFlag = vodInfo.playFlag;
-            vodInfo.currentPlayIndex = vodInfo.playIndex;
+         //   vodInfo.currentPlayFlag = vodInfo.playFlag;
+         //   vodInfo.currentPlayIndex = vodInfo.playIndex;
             Bundle bundle = new Bundle();
             //保存历史 - 关键修改：使用当前播放的源进行保存
          //   String saveSourceKey = vodInfo.currentPlayFlag != null ? vodInfo.currentPlayFlag : sourceKey;
