@@ -11,6 +11,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.content.res.Resources;
 import android.util.DisplayMetrics;
 
@@ -279,7 +280,8 @@ public class LrcView extends View {
         mScrollAnimator = ValueAnimator.ofFloat(0f, (float) lineDiff);
         mScrollAnimator.setDuration(mScrollDuration);
         //mScrollAnimator.setInterpolator(new AccelerateDecelerateInterpolator());  //加速减速插值器
-        mScrollAnimator.setInterpolator(new LinearInterpolator()); // 改为线性插值器
+       // mScrollAnimator.setInterpolator(new LinearInterpolator()); // 改为线性插值器
+		mScrollAnimator.setInterpolator(new DecelerateInterpolator(1.5f));
 
         mScrollAnimator.addUpdateListener(animation -> {
             mScrollOffset = (float) animation.getAnimatedValue();
