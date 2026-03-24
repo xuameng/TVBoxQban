@@ -33,6 +33,7 @@ import java.lang.Math;
  * 新增：未获取到进度或进度小于0.1秒时不显示歌词
  * 新增：初始位不显示滚动动画
  * 新增：不是相邻行不不显示滚动动画
+ * 新增：播放进度到当前行的上行或多行不显示滚动动画
  */
 public class LrcView extends View {
 
