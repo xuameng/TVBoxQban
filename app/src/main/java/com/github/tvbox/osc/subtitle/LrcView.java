@@ -370,7 +370,9 @@ public class LrcView extends View {
             if (lineDistance > 1) { // 这里设置为1，表示只有相邻行才滚动
                 mCurrentLine = targetLine;
                 mScrollOffset = 0f;
-				mScrollAnimator.cancel();
+                if (mScrollAnimator != null && mScrollAnimator.isRunning()) {
+                    mScrollAnimator.cancel();
+                }
                 invalidate();
             } else {
                 // 如果是相邻行，执行平滑滚动
@@ -379,6 +381,9 @@ public class LrcView extends View {
                 } else {
                     mCurrentLine = targetLine;
                     mScrollOffset = 0f;
+                    if (mScrollAnimator != null && mScrollAnimator.isRunning()) {
+                        mScrollAnimator.cancel();
+                    }
                     invalidate();
                 }
             }
