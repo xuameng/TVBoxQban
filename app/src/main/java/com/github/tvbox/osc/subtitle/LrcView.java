@@ -281,7 +281,7 @@ public class LrcView extends View {
         mScrollAnimator.setDuration(mScrollDuration);
         mScrollAnimator.setInterpolator(new AccelerateDecelerateInterpolator());  //加速减速插值器
     //    mScrollAnimator.setInterpolator(new LinearInterpolator()); // 改为线性插值器
-    //    mScrollAnimator.setInterpolator(new DecelerateInterpolator(1.5f));
+    //    mScrollAnimator.setInterpolator(new DecelerateInterpolator(1.5f));  //减速插值器
 
         mScrollAnimator.addUpdateListener(animation -> {
             mScrollOffset = (float) animation.getAnimatedValue();
@@ -365,22 +365,28 @@ public class LrcView extends View {
 
         // 正常播放中的滚动逻辑
         if (targetLine != mCurrentLine) {
-            // 计算目标行与当前行的距离
-            int lineDistance = Math.abs(targetLine - mCurrentLine);
-
+            // 计算目标行与当前行的距离和方向
+            int lineDiff = targetLine - mCurrentLine;
+            int lineDistance = Math.abs(lineDiff);
+    
+            // 判断滚动方向：正数表示向前（下一行），负数表示向后（上一行）
+            boolean isForward = lineDiff > 0;
+    
             // 如果距离超过阈值（不是相邻行），直接跳转而不滚动
-            if (lineDistance > MAX_SCROLL_DISTANCE) { // 这里设置为1，表示只有相邻行才滚动
+            if (lineDistance > MAX_SCROLL_DISTANCE) {
                 if (mScrollAnimator != null && mScrollAnimator.isRunning()) {
                     mScrollAnimator.cancel();
                 }
+                // 直接跳转逻辑
                 mCurrentLine = targetLine;
                 mScrollOffset = 0f;
                 invalidate();
             } else {
-                // 如果是相邻行，执行平滑滚动
-                if (targetLine > 3) {    //前三行歌词不滚动
+                // 相邻行：只有向前滚动（到下一行）才执行平滑滚动
+                if (isForward && targetLine > 3) {
                     smoothScrollTo(targetLine);
                 } else {
+                    // 向后滚动（到上一行）或前三行：直接跳转
                     if (mScrollAnimator != null && mScrollAnimator.isRunning()) {
                         mScrollAnimator.cancel();
                     }
@@ -394,8 +400,6 @@ public class LrcView extends View {
             invalidate();
         }
     }
-
-
 
     /**
      * 新增：手动设置是否显示歌词
@@ -473,38 +477,38 @@ public class LrcView extends View {
             LrcLine line = mLrcLines.get(actualIndex);
             float y = startY + i * lineHeight;
 
-if (actualIndex == mCurrentLine) {
-    // 当前行：卡拉OK高亮效果
-    float progress = 0f;
-    if (mCurrentPosition >= line.time) {
-        long nextTime = (actualIndex + 1 < mLrcLines.size()) ? 
-                       mLrcLines.get(actualIndex + 1).time : line.time + 5000;
-        long duration = nextTime - line.time;
-        if (duration > 0) {
-            progress = (float) (mCurrentPosition - line.time) / duration;
-        }
-    }
-    progress = Math.max(0, Math.min(1, progress));
+            if (actualIndex == mCurrentLine) {
+                // 当前行：卡拉OK高亮效果
+                float progress = 0f;
+                if (mCurrentPosition >= line.time) {
+                    long nextTime = (actualIndex + 1 < mLrcLines.size()) ? 
+                                   mLrcLines.get(actualIndex + 1).time : line.time + 5000;
+                    long duration = nextTime - line.time;
+                    if (duration > 0) {
+                        progress = (float) (mCurrentPosition - line.time) / duration;
+                    }
+                }
+                progress = Math.max(0, Math.min(1, progress));
 
-    // 获取字体度量信息
-    Paint.FontMetrics fm = mHighlightPaint.getFontMetrics();
-    float textTop = y + fm.top;
-    float textBottom = y + fm.bottom;
+                // 获取字体度量信息
+                Paint.FontMetrics fm = mHighlightPaint.getFontMetrics();
+                float textTop = y + fm.top;
+                float textBottom = y + fm.bottom;
 
-    // 绘制背景文本（完整）
-    canvas.drawText(line.text, getWidth() / 2 - line.width / 2, y, mNormalPaint);
+                // 绘制背景文本（完整）
+                canvas.drawText(line.text, getWidth() / 2 - line.width / 2, y, mNormalPaint);
 
-    // 绘制高亮部分（渐变填充）
-    float highlightWidth = line.width * progress;
-    canvas.save();
-    // 使用精确的裁剪区域
-    canvas.clipRect(getWidth() / 2 - line.width / 2, 
-                    textTop,
-                    getWidth() / 2 - line.width / 2 + highlightWidth, 
-                    textBottom);
-    canvas.drawText(line.text, getWidth() / 2 - line.width / 2, y, mHighlightPaint);
-    canvas.restore();
-}else {
+                // 绘制高亮部分（渐变填充）
+                float highlightWidth = line.width * progress;
+                canvas.save();
+                // 使用精确的裁剪区域
+                canvas.clipRect(getWidth() / 2 - line.width / 2, 
+                                textTop,
+                                getWidth() / 2 - line.width / 2 + highlightWidth, 
+                                textBottom);
+                canvas.drawText(line.text, getWidth() / 2 - line.width / 2, y, mHighlightPaint);
+                canvas.restore();
+            }else {
                 // 非当前行：普通显示
                 canvas.drawText(line.text, getWidth() / 2 - line.width / 2, y, mNormalPaint);
             }
