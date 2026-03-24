@@ -275,7 +275,8 @@ public class DetailActivity extends BaseActivity {
 			   
                     setSeriesGroupOptions();
                     seriesAdapter.notifyDataSetChanged();
-                    isReverseXu();
+                   // isReverseXu();
+				   insertVod(firstsourceKey, vodInfo);
                 }
             }
         });
