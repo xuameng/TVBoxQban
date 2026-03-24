@@ -53,7 +53,7 @@ public class LrcView extends View {
     // 平滑滚动相关变量
     private float mScrollOffset = 0f; // 当前滚动偏移量（行数）
     private ValueAnimator mScrollAnimator; // 滚动动画
-    private int mScrollDuration = 1000; // 滚动动画时长（毫秒）
+    private int mScrollDuration = 500; // 滚动动画时长（毫秒）
 
     // 新增：控制是否显示歌词的标志
     private boolean mShouldShowLyrics = false;
@@ -280,8 +280,8 @@ public class LrcView extends View {
         mScrollAnimator = ValueAnimator.ofFloat(0f, (float) lineDiff);
         mScrollAnimator.setDuration(mScrollDuration);
         //mScrollAnimator.setInterpolator(new AccelerateDecelerateInterpolator());  //加速减速插值器
-    //    mScrollAnimator.setInterpolator(new LinearInterpolator()); // 改为线性插值器
-        mScrollAnimator.setInterpolator(new DecelerateInterpolator(1.5f));
+        mScrollAnimator.setInterpolator(new LinearInterpolator()); // 改为线性插值器
+    //    mScrollAnimator.setInterpolator(new DecelerateInterpolator(1.5f));
 
         mScrollAnimator.addUpdateListener(animation -> {
             mScrollOffset = (float) animation.getAnimatedValue();
@@ -370,14 +370,20 @@ public class LrcView extends View {
 
             // 如果距离超过阈值（不是相邻行），直接跳转而不滚动
             if (lineDistance > MAX_SCROLL_DISTANCE) { // 这里设置为1，表示只有相邻行才滚动
+                if (mScrollAnimator != null && mScrollAnimator.isRunning()) {
+                    mScrollAnimator.cancel();
+                }
                 mCurrentLine = targetLine;
                 mScrollOffset = 0f;
                 invalidate();
             } else {
                 // 如果是相邻行，执行平滑滚动
-                if (targetLine > 3) {
+                if (targetLine > 3) {    //前三行歌词不滚动
                     smoothScrollTo(targetLine);
                 } else {
+                    if (mScrollAnimator != null && mScrollAnimator.isRunning()) {
+                        mScrollAnimator.cancel();
+                    }
                     mCurrentLine = targetLine;
                     mScrollOffset = 0f;
                     invalidate();
@@ -450,11 +456,9 @@ public class LrcView extends View {
         float lineHeight = mNormalPaint.getTextSize() * 1.5f;
         int visibleLines = Math.min(mLrcLines.size(), 7); // 显示最多7行歌词
         float totalHeight = lineHeight * visibleLines;
-// 将浮点数偏移转换为整数像素，避免亚像素渲染问题
-float scrollOffsetPixels = Math.round(mScrollOffset * lineHeight);
-float startY = (getHeight() - totalHeight) / 2 + mNormalPaint.getTextSize() - scrollOffsetPixels;
-
-
+		// 将浮点数偏移转换为整数像素，避免亚像素渲染问题
+        float scrollOffsetPixels = Math.round(mScrollOffset * lineHeight);  //滚动偏移像素
+        float startY = (getHeight() - totalHeight) / 2 + mNormalPaint.getTextSize() - scrollOffsetPixels;  // 计算起始Y位置，使当前行居中显示  并滚动
         // 计算实际可见的行范围，确保不会超出歌词列表边界
         int startLineIndex = Math.max(0, mCurrentLine - 3);
         int endLineIndex = Math.min(mLrcLines.size() - 1, mCurrentLine + 3);
