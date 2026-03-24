@@ -682,11 +682,11 @@ public class DetailActivity extends BaseActivity {
             Bundle bundle = new Bundle();
             //保存历史 - 关键修改：使用当前播放的源进行保存
             String saveSourceKey = vodInfo.currentPlayFlag != null ? vodInfo.currentPlayFlag : sourceKey;
-            insertVod(saveSourceKey, vodInfo);
+        //    insertVod(saveSourceKey, vodInfo);
             // 同时保存一份到初始源，用于兼容性
-            if (!saveSourceKey.equals(firstsourceKey)) {
+          //  if (!saveSourceKey.equals(firstsourceKey)) {
                 insertVod(firstsourceKey, vodInfo);
-            }
+          //  }
         //   insertVod(sourceKey, vodInfo);
             bundle.putString("sourceKey", sourceKey);
             bundle.putString("videoPic", mVideo.pic);   //xuameng 新增给vod显示旋转图片用
@@ -730,11 +730,11 @@ public class DetailActivity extends BaseActivity {
             Bundle bundle = new Bundle();
             //保存历史 - 关键修改：使用当前播放的源进行保存
             String saveSourceKey = vodInfo.currentPlayFlag != null ? vodInfo.currentPlayFlag : sourceKey;
-            insertVod(saveSourceKey, vodInfo);
+          //  insertVod(saveSourceKey, vodInfo);
             // 同时保存一份到初始源，用于兼容性
-            if (!saveSourceKey.equals(firstsourceKey)) {
+           // if (!saveSourceKey.equals(firstsourceKey)) {
                 insertVod(firstsourceKey, vodInfo);
-            }
+           // }
             bundle.putString("sourceKey", sourceKey);
             App.getInstance().setVodInfo(vodInfo);
             if (showPreview) {
@@ -1171,12 +1171,12 @@ public class DetailActivity extends BaseActivity {
                     
                             // 9. 保存历史记录 - 使用当前播放源进行保存
                             String saveSourceKey = vodInfo.currentPlayFlag != null ? vodInfo.currentPlayFlag : sourceKey;
-                            insertVod(saveSourceKey, saveVodInfo);
+                          //  insertVod(saveSourceKey, saveVodInfo);
                     
                             // 10. 同时保存一份到初始源，用于兼容性
-                            if (!saveSourceKey.equals(firstsourceKey)) {
+                          //  if (!saveSourceKey.equals(firstsourceKey)) {
                                 insertVod(firstsourceKey, saveVodInfo);
-                            }
+                           // }
                         }
 			                //xuameng解决焦点丢失		if (!fullWindows){
             //              mGridView.setSelection(index);
