@@ -52,7 +52,7 @@ public class LrcView extends View {
     // 平滑滚动相关变量
     private float mScrollOffset = 0f; // 当前滚动偏移量（行数）
     private ValueAnimator mScrollAnimator; // 滚动动画
-    private int mScrollDuration = 500; // 滚动动画时长（毫秒）
+    private int mScrollDuration = 1000; // 滚动动画时长（毫秒）
 
     // 新增：控制是否显示歌词的标志
     private boolean mShouldShowLyrics = false;
@@ -456,7 +456,7 @@ public class LrcView extends View {
         float lineHeight = mNormalPaint.getTextSize() * 1.5f;
         int visibleLines = Math.min(mLrcLines.size(), 7); // 显示最多7行歌词
         float totalHeight = lineHeight * visibleLines;
-        float scrollOffsetPixels = mScrollOffset * lineHeight / 1.5f; //滚动偏移像素
+        float scrollOffsetPixels = mScrollOffset * lineHeight * 5f; //滚动偏移像素
         float startY = (getHeight() - totalHeight) / 2 + mNormalPaint.getTextSize() - scrollOffsetPixels;  // 计算起始Y位置，使当前行居中显示  并滚动
 
         // 计算实际可见的行范围，确保不会超出歌词列表边界
