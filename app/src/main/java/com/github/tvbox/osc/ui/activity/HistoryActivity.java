@@ -153,27 +153,15 @@ public class HistoryActivity extends BaseActivity {
         }
     };
 
-private void initData() {
-    
-    new Thread(() -> {
-        List<VodInfo> allVodRecord = RoomDataManger.getAllVodRecord(100);
-        List<HistoryItem> historyItems = new ArrayList<>();
-        
+    private void initData() {
+        List<VodInfo> allVodRecord = RoomDataManger.getAllVodRecord(100); 
+        List<VodInfo> vodInfoList = new ArrayList<>();
         for (VodInfo vodInfo : allVodRecord) {
-            HistoryItem item = new HistoryItem();
-            item.id = vodInfo.id;
-            item.sourceKey = vodInfo.sourceKey;
-            item.name = vodInfo.name;
-            item.pic = vodInfo.pic;
-            item.playNote = vodInfo.playNote;
-            if (vodInfo.playNote != null && !vodInfo.playNote.isEmpty())
-                item.note = "上次看到" + vodInfo.playNote;
-            historyItems.add(item);
+            if (vodInfo.playNote != null && !vodInfo.playNote.isEmpty())vodInfo.note = "上次看到" + vodInfo.playNote;
+            vodInfoList.add(vodInfo);
         }
-        
-        runOnUiThread(() -> {
-            historyAdapter.setNewData(historyItems);
-}
+        historyAdapter.setNewData(vodInfoList);
+    }
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
