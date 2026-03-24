@@ -52,7 +52,7 @@ public class LrcView extends View {
     // 平滑滚动相关变量
     private float mScrollOffset = 0f; // 当前滚动偏移量（行数）
     private ValueAnimator mScrollAnimator; // 滚动动画
-    private int mScrollDuration = 300; // 滚动动画时长（毫秒）
+    private int mScrollDuration = 1000; // 滚动动画时长（毫秒）
 
     // 新增：控制是否显示歌词的标志
     private boolean mShouldShowLyrics = false;
@@ -266,7 +266,7 @@ public class LrcView extends View {
      */
     private void smoothScrollTo(int targetLine) {
         if (mScrollAnimator != null && mScrollAnimator.isRunning()) {
-          //  mScrollAnimator.cancel();
+            mScrollAnimator.cancel();
         }
 
         // 计算滚动距离（行数差）
@@ -370,6 +370,7 @@ public class LrcView extends View {
             if (lineDistance > 1) { // 这里设置为1，表示只有相邻行才滚动
                 mCurrentLine = targetLine;
                 mScrollOffset = 0f;
+				mScrollAnimator.cancel();
                 invalidate();
             } else {
                 // 如果是相邻行，执行平滑滚动
