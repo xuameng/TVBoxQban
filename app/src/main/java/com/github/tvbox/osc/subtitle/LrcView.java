@@ -267,7 +267,7 @@ public class LrcView extends View {
      */
     private void smoothScrollTo(int targetLine) {
         if (mScrollAnimator != null && mScrollAnimator.isRunning()) {
-            mScrollAnimator.cancel();
+            return; // 无需滚动
         }
 
         // 计算滚动距离（行数差）
