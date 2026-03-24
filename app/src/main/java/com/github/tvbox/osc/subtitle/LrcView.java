@@ -280,8 +280,8 @@ public class LrcView extends View {
         mScrollAnimator = ValueAnimator.ofFloat(0f, (float) lineDiff);
         mScrollAnimator.setDuration(mScrollDuration);
         //mScrollAnimator.setInterpolator(new AccelerateDecelerateInterpolator());  //加速减速插值器
-       // mScrollAnimator.setInterpolator(new LinearInterpolator()); // 改为线性插值器
-		mScrollAnimator.setInterpolator(new DecelerateInterpolator(1.5f));
+    //    mScrollAnimator.setInterpolator(new LinearInterpolator()); // 改为线性插值器
+        mScrollAnimator.setInterpolator(new DecelerateInterpolator(1.5f));
 
         mScrollAnimator.addUpdateListener(animation -> {
             mScrollOffset = (float) animation.getAnimatedValue();
@@ -450,12 +450,8 @@ public class LrcView extends View {
         float lineHeight = mNormalPaint.getTextSize() * 1.5f;
         int visibleLines = Math.min(mLrcLines.size(), 7); // 显示最多7行歌词
         float totalHeight = lineHeight * visibleLines;
-// 将浮点数偏移转换为整数像素，避免亚像素渲染问题
-float scrollOffsetPixels = Math.round(mScrollOffset * lineHeight);
-float startY = (getHeight() - totalHeight) / 2 + mNormalPaint.getTextSize() - scrollOffsetPixels;
-
-
-
+        float scrollOffsetPixels = mScrollOffset * (lineHeight / 2.0f); //滚动偏移像素
+        float startY = (getHeight() - totalHeight) / 2 + mNormalPaint.getTextSize() - scrollOffsetPixels;  // 计算起始Y位置，使当前行居中显示  并滚动
 
         // 计算实际可见的行范围，确保不会超出歌词列表边界
         int startLineIndex = Math.max(0, mCurrentLine - 3);
