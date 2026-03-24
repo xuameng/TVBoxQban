@@ -266,9 +266,7 @@ public class LrcView extends View {
      */
     private void smoothScrollTo(int targetLine) {
         if (mScrollAnimator != null && mScrollAnimator.isRunning()) {
-                mCurrentLine = targetLine;
-                mScrollOffset = 0f;
-            return; // 无需滚动
+            mScrollAnimator.cancel();
         }
 
         // 计算滚动距离（行数差）
@@ -369,12 +367,9 @@ public class LrcView extends View {
             int lineDistance = Math.abs(targetLine - mCurrentLine);
 
             // 如果距离超过阈值（不是相邻行），直接跳转而不滚动
-            if (lineDistance > 1) { // 这里设置为1，表示只有相邻行才滚动
+            if (lineDistance > MAX_SCROLL_DISTANCE) { // 这里设置为1，表示只有相邻行才滚动
                 mCurrentLine = targetLine;
                 mScrollOffset = 0f;
-                if (mScrollAnimator != null && mScrollAnimator.isRunning()) {
-                    mScrollAnimator.cancel();
-                }
                 invalidate();
             } else {
                 // 如果是相邻行，执行平滑滚动
@@ -383,9 +378,6 @@ public class LrcView extends View {
                 } else {
                     mCurrentLine = targetLine;
                     mScrollOffset = 0f;
-                    if (mScrollAnimator != null && mScrollAnimator.isRunning()) {
-                        mScrollAnimator.cancel();
-                    }
                     invalidate();
                 }
             }
@@ -456,8 +448,12 @@ public class LrcView extends View {
         float lineHeight = mNormalPaint.getTextSize() * 1.5f;
         int visibleLines = Math.min(mLrcLines.size(), 7); // 显示最多7行歌词
         float totalHeight = lineHeight * visibleLines;
-        float scrollOffsetPixels = mScrollOffset * lineHeight * 5f; //滚动偏移像素
-        float startY = (getHeight() - totalHeight) / 2 + mNormalPaint.getTextSize() - scrollOffsetPixels;  // 计算起始Y位置，使当前行居中显示  并滚动
+// 将浮点数偏移转换为整数像素，避免亚像素渲染问题
+float scrollOffsetPixels = Math.round(mScrollOffset * lineHeight);
+float startY = (getHeight() - totalHeight) / 2 + mNormalPaint.getTextSize() - scrollOffsetPixels;
+
+
+
 
         // 计算实际可见的行范围，确保不会超出歌词列表边界
         int startLineIndex = Math.max(0, mCurrentLine - 3);
