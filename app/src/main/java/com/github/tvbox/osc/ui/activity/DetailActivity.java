@@ -723,8 +723,9 @@ public class DetailActivity extends BaseActivity {
 
     private void isReverseXu() {       //xuameng 解决倒叙剧集播放错误问题
         if (vodInfo != null && vodInfo.seriesMap.get(vodInfo.playFlag).size() > 0) {
-            preFlag = vodInfo.playFlag;
+          //  preFlag = vodInfo.playFlag;
             // 新增：记录当前播放的源和剧集索引
+            //xuameng在其他列表倒叙不影响当前播放剧集索引所以注销掉后面两行
          //   vodInfo.currentPlayFlag = vodInfo.playFlag;
          //   vodInfo.currentPlayIndex = vodInfo.playIndex;
             Bundle bundle = new Bundle();
