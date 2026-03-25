@@ -454,8 +454,6 @@ public class VodController extends BaseController {
                     e.printStackTrace();
                 }
                 if (musicAnimation){
-					        int sessionId = mControlWrapper != null ? mControlWrapper.getAudioSessionId() : 0;
-		App.showToastShort(getContext(), String.valueOf(sessionId));
                     if(customVisualizer.getVisibility() == View.GONE) { //xuameng播放音乐柱状图
                         customVisualizer.setVisibility(VISIBLE);
                     }
@@ -952,7 +950,7 @@ public class VodController extends BaseController {
                     }
                     updatePlayerCfgView();
                     listener.updatePlayerCfg();
-                    releaseVisualizer();  //xuameng音乐播放动画
+                  //  releaseVisualizer();  //xuameng音乐播放动画
                 } else {
                     try {
                         mPlayerConfig.put("music", true);   //xuameng音乐播放动画开启
@@ -1772,7 +1770,7 @@ public class VodController extends BaseController {
                 if(customVisualizer.getVisibility() == View.VISIBLE) { //xuameng播放音乐柱状图
                     customVisualizer.setVisibility(GONE);
                 }
-                releaseVisualizer();  //xuameng播放音乐背景
+             //   releaseVisualizer();  //xuameng播放音乐背景
                 isVideoplaying = false;
                 isVideoPlay = false;
                 isBufferIng = false; //xuameng 判断是否进在缓冲视频
@@ -2240,7 +2238,7 @@ public class VodController extends BaseController {
             mHandler.removeCallbacksAndMessages(null);
         }
         clearSubtitleCache();  //xuameng清除字幕缓存
-        releaseVisualizer();  //xuameng音乐播放动画
+      //  releaseVisualizer();  //xuameng音乐播放动画
     }
     //尝试去bom
     public String getWebPlayUrlIfNeeded(String webPlayUrl) {
@@ -2458,74 +2456,67 @@ public class VodController extends BaseController {
         mLrcView.reset(); //xuameng 清除LRC歌词播放进度重置
     }
 
-
-private Runnable updateTask = new Runnable() {
-    @Override
-    public void run() {
+    private void initVisualizer() {   //xuameng播放音乐柱状图
+     //   releaseVisualizer();  // 确保先释放已有实例
+        // 基础检查
+        if (getContext() == null) {
+            Log.w(TAG, "Context is null");
+            return;
+        }
+        int sessionId = mControlWrapper != null ? mControlWrapper.getAudioSessionId() : 0;
+        if (sessionId <= 0) {
+            Log.w(TAG, "Invalid audio session ID");
+            return;
+        }
         try {
-            if (customVisualizer != null) {
-                float volumeLevel = calculateVolumeLevel(getContext());
-                // 注意：这里需要保存fftData作为成员变量以便访问
-                if (lastFftData != null) {
-                    customVisualizer.updateVisualizer(lastFftData, volumeLevel);
-                }
-            }
+        // 统一创建Visualizer实例（仅一次）
+            mVisualizer = new Visualizer(sessionId);
+            // 智能采样率设置
+            int targetRate = Visualizer.getMaxCaptureRate() / 2;
+            // 设置数据捕获监听器
+            mVisualizer.setDataCaptureListener(
+                new Visualizer.OnDataCaptureListener() {
+                    @Override
+                    public void onWaveFormDataCapture(Visualizer viz, byte[] bytes, int rate) {
+                    // 可选波形数据捕获
+                    }
+                    @Override
+                    public void onFftDataCapture(Visualizer visualizer, byte[] fftData, int samplingRate) {
+                        if (fftData == null || customVisualizer == null) return;
+                         // 1. 计算当前音量级别（0-1范围）
+                        float volumeLevel = calculateVolumeLevel(getContext());
+                        Runnable updateTask = () -> {
+                            try {
+                                if (customVisualizer != null) {
+                                    customVisualizer.updateVisualizer(fftData, volumeLevel);
+                                }
+                            } catch (Exception e) {
+                                Log.e(TAG, "Visualizer update error", e);
+                            }
+                        };
+                        if (Looper.myLooper() == Looper.getMainLooper()) {
+                            updateTask.run();
+                        } else {
+                            new Handler(Looper.getMainLooper()).post(updateTask);
+                        }
+                    }
+                },
+                targetRate,
+                false,  // 不捕获波形数据
+                true    // 捕获FFT数据
+            );
+            mVisualizer.setEnabled(true);
+        } catch (IllegalStateException e) {
+            Log.e(TAG, "Visualizer state error", e);
+         //   releaseVisualizer();
+        } catch (UnsupportedOperationException e) {
+            Log.e(TAG, "Device doesn't support Visualizer", e);
+           // releaseVisualizer();
         } catch (Exception e) {
-            Log.e(TAG, "Visualizer update error", e);
+            Log.e(TAG, "Visualizer init failed", e);
+         //   releaseVisualizer();
         }
     }
-};
-
-// 需要添加成员变量来保存最新的FFT数据
-private byte[] lastFftData;
-
-private void initVisualizer() {   //xuameng播放音乐柱状图
-    releaseVisualizer();  // 确保先释放已有实例
-    // 基础检查
-    if (getContext() == null) {
-        Log.w(TAG, "Context is null");
-        return;
-    }
-    int sessionId = mControlWrapper != null ? mControlWrapper.getAudioSessionId() : 0;
-    if (sessionId <= 0) {
-        Log.w(TAG, "Invalid audio session ID");
-        return;
-    }
-    try {
-        // 统一创建Visualizer实例（仅一次）
-        mVisualizer = new Visualizer(sessionId);
-        // 智能采样率设置
-        int targetRate = Visualizer.getMaxCaptureRate() / 2;
-        // 设置数据捕获监听器
-        mVisualizer.setDataCaptureListener(
-            new Visualizer.OnDataCaptureListener() {
-                @Override
-                public void onWaveFormDataCapture(Visualizer viz, byte[] bytes, int rate) {
-                    // 可选波形数据捕获
-                }
-                
-                @Override
-                public void onFftDataCapture(Visualizer visualizer, byte[] fftData, int samplingRate) {
-                    if (fftData == null || customVisualizer == null) return;
-                    
-                    // 保存最新FFT数据
-                    lastFftData = fftData.clone();
-                    
-                    // 使用mHandler执行更新任务
-                    mHandler.removeCallbacks(updateTask); // 防止重复提交
-                    mHandler.post(updateTask);
-                }
-            },
-            targetRate,
-            false,  // 不捕获波形数据
-            true    // 捕获FFT数据
-        );
-        mVisualizer.setEnabled(true);
-    } catch (IllegalStateException e) {
-        Log.e(TAG, "Failed to initialize visualizer", e);
-    }
-}
-
 
     private synchronized void releaseVisualizer() {   //xuameng播放音乐柱状图
         try {
