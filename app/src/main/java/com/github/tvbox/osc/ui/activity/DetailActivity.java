@@ -723,42 +723,20 @@ public class DetailActivity extends BaseActivity {
 
     private void isReverseXu() {       //xuameng 解决倒叙剧集播放错误问题
         if (vodInfo != null && vodInfo.seriesMap.get(vodInfo.playFlag).size() > 0) {
-            preFlag = vodInfo.currentPlayFlag;
-                             // 8. 关键修复：保存历史记录时使用临时变量确保正确性
-                            // 创建临时VodInfo副本，确保保存时使用正确的播放源信息
-                            VodInfo saveVodInfo = new VodInfo();
-                            try {
-                                // 深拷贝vodInfo的基本属性
-                                saveVodInfo.setVideo(vodInfo.getVideo());
-                                saveVodInfo.sourceKey = vodInfo.sourceKey;
-                                saveVodInfo.seriesMap = vodInfo.seriesMap;
-                                saveVodInfo.seriesFlags = vodInfo.seriesFlags;
-                                saveVodInfo.playerCfg = vodInfo.playerCfg;
-                                saveVodInfo.reverseSort = vodInfo.reverseSort;
-                        
-                                // 关键：保存时使用播放源的信息，而不是显示源
-                                saveVodInfo.playFlag = vodInfo.currentPlayFlag;  // 使用播放源
-                                saveVodInfo.playIndex = vodInfo.currentPlayIndex; // 使用播放索引
-                                saveVodInfo.currentPlayFlag = vodInfo.currentPlayFlag;
-                                saveVodInfo.currentPlayIndex = vodInfo.currentPlayIndex;
-                        
-                                // 恢复显示源状态，不影响UI
-                   
-                        
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                saveVodInfo = vodInfo;
-                            }
+            preFlag = vodInfo.playFlag;
+            // 新增：记录当前播放的源和剧集索引
+         //   vodInfo.currentPlayFlag = vodInfo.playFlag;
+         //   vodInfo.currentPlayIndex = vodInfo.playIndex;
             Bundle bundle = new Bundle();
             //保存历史 - 关键修改：使用当前播放的源进行保存
          //   String saveSourceKey = vodInfo.currentPlayFlag != null ? vodInfo.currentPlayFlag : sourceKey;
           //  insertVod(saveSourceKey, vodInfo);
             // 同时保存一份到初始源，用于兼容性
            // if (!saveSourceKey.equals(firstsourceKey)) {
-                 insertVod(firstsourceKey, saveVodInfo);
+                insertVod(firstsourceKey, vodInfo);
            // }
             bundle.putString("sourceKey", sourceKey);
-            App.getInstance().setVodInfo(saveVodInfo);
+            App.getInstance().setVodInfo(vodInfo);
             if (showPreview) {
                 if (previewVodInfo == null) {
                     try {
