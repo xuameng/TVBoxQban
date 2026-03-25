@@ -758,7 +758,7 @@ public class DetailActivity extends BaseActivity {
                  insertVod(firstsourceKey, saveVodInfo);
            // }
             bundle.putString("sourceKey", sourceKey);
-            App.getInstance().setVodInfo(vodInfo);
+            App.getInstance().setVodInfo(saveVodInfo);
             if (showPreview) {
                 if (previewVodInfo == null) {
                     try {
