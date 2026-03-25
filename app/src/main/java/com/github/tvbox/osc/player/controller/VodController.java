@@ -2496,11 +2496,7 @@ public class VodController extends BaseController {
                                 Log.e(TAG, "Visualizer update error", e);
                             }
                         };
-                        if (Looper.myLooper() == Looper.getMainLooper()) {
-                            updateTask.run();
-                        } else {
-                            new Handler(Looper.getMainLooper()).post(updateTask);
-                        }
+  mHandler.post(updateTask);
                     }
                 },
                 targetRate,
