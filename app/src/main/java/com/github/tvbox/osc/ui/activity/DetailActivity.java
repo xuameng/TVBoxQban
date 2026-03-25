@@ -258,27 +258,34 @@ public class DetailActivity extends BaseActivity {
             toggleFullPreview();
         });
 
-        tvSort.setOnClickListener(new View.OnClickListener() {
-            @SuppressLint("NotifyDataSetChanged")
-            @Override
-            public void onClick(View v) {
-                if (vodInfo != null && vodInfo.seriesMap.size() > 0) {
-                    vodInfo.reverseSort = !vodInfo.reverseSort;
-                    if (vodInfo.reverseSort){    //XUAMENG读取记录后显示BUG
-                        tvSort.setText("正序");
-                    }else{
-                        tvSort.setText("倒序");
-                    }
-
-                    vodInfo.reverse();
-                    vodInfo.playIndex=(vodInfo.seriesMap.get(vodInfo.playFlag).size()-1)-vodInfo.playIndex;
-			   
-                    setSeriesGroupOptions();
-                    seriesAdapter.notifyDataSetChanged();
-                    isReverseXu();
-                }
+tvSort.setOnClickListener(new View.OnClickListener() {
+    @SuppressLint("NotifyDataSetChanged")
+    @Override
+    public void onClick(View v) {
+        if (vodInfo != null && vodInfo.seriesMap.size() > 0) {
+            vodInfo.reverseSort = !vodInfo.reverseSort;
+            if (vodInfo.reverseSort){    //XUAMENG读取记录后显示BUG
+                tvSort.setText("正序");
+            }else{
+                tvSort.setText("倒序");
             }
-        });
+
+            vodInfo.reverse();
+            
+            // 关键修改：同时更新显示索引和播放索引（如果当前显示源是播放源）
+            vodInfo.playIndex = (vodInfo.seriesMap.get(vodInfo.playFlag).size()-1) - vodInfo.playIndex;
+            
+            // 如果当前显示源就是播放源，也需要更新播放索引
+            if (vodInfo.playFlag.equals(vodInfo.currentPlayFlag)) {
+                vodInfo.currentPlayIndex = vodInfo.playIndex;
+            }
+            
+            setSeriesGroupOptions();
+            seriesAdapter.notifyDataSetChanged();
+            isReverseXu();
+        }
+    }
+});
 
         tvSort.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override         //xuameng许大师制作焦点变大
@@ -723,18 +730,13 @@ public class DetailActivity extends BaseActivity {
 
     private void isReverseXu() {       //xuameng 解决倒叙剧集播放错误问题
         if (vodInfo != null && vodInfo.seriesMap.get(vodInfo.playFlag).size() > 0) {
-            preFlag = vodInfo.playFlag;
-            // 新增：记录当前播放的源和剧集索引
-         //   vodInfo.currentPlayFlag = vodInfo.playFlag;
-         //   vodInfo.currentPlayIndex = vodInfo.playIndex;
-            Bundle bundle = new Bundle();
-            //保存历史 - 关键修改：使用当前播放的源进行保存
-         //   String saveSourceKey = vodInfo.currentPlayFlag != null ? vodInfo.currentPlayFlag : sourceKey;
-          //  insertVod(saveSourceKey, vodInfo);
-            // 同时保存一份到初始源，用于兼容性
-           // if (!saveSourceKey.equals(firstsourceKey)) {
-                insertVod(firstsourceKey, vodInfo);
-           // }
+        preFlag = vodInfo.playFlag;
+        
+        // 注意：这里不再修改 currentPlayFlag 和 currentPlayIndex
+        // 因为已经在 tvSort 的点击事件中处理了
+        
+        Bundle bundle = new Bundle();
+        insertVod(firstsourceKey, vodInfo);
             bundle.putString("sourceKey", sourceKey);
             App.getInstance().setVodInfo(vodInfo);
             if (showPreview) {
