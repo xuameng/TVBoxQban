@@ -270,6 +270,7 @@ tvSort.setOnClickListener(new View.OnClickListener() {
                 tvSort.setText("倒序");
             }
 
+            // 执行倒序操作
             vodInfo.reverse();
             
             // 关键修改：严格区分播放源和显示源的处理
@@ -279,16 +280,36 @@ tvSort.setOnClickListener(new View.OnClickListener() {
             if (vodInfo.playFlag.equals(vodInfo.currentPlayFlag)) {
                 // 同时更新显示索引和播放索引
                 vodInfo.playIndex = (totalEpisodes - 1) - vodInfo.playIndex;
-                vodInfo.currentPlayIndex = vodInfo.playIndex;
+                vodInfo.currentPlayIndex = vodInfo.playIndex; // 播放索引同步更新
             } 
             // 情况2：当前显示源不是播放源
             else {
-                // 重要：在非播放源倒序时，只更新UI显示，不修改playIndex
-                // 因为playIndex是显示源的当前索引，我们需要保持它不变
-                // 但需要反转显示源的剧集顺序
+                // 重要：在非播放源倒序时，只计算并应用临时的显示索引
+                // 1. 计算倒序后的新显示位置
+                int newDisplayIndex = (totalEpisodes - 1) - vodInfo.playIndex;
                 
-                // 注意：vodInfo.playIndex 保持不变，因为它是显示源的当前索引
-                // 我们只需要反转剧集列表，UI会自动更新
+                // 2. 关键修正：不直接修改 vodInfo.playIndex，而是通过刷新逻辑来更新UI
+                // 我们将在 refreshList() 方法中处理这个新索引
+                
+                // 3. 临时保存这个新索引，用于后续的UI刷新
+                // 注意：这里我们不修改 vodInfo.playIndex，而是通过其他方式传递这个值
+                // 但由于 refreshList() 方法会重新计算高亮，我们可以在这里设置一个临时状态
+                
+                // 方案：直接调用 refreshList()，但在此之前需要确保 playIndex 是正确的
+                // 由于我们不想污染 playIndex，所以先保存原始值，计算后再恢复
+                int originalPlayIndex = vodInfo.playIndex;
+                
+                // 临时设置 playIndex 为倒序后的位置，仅用于本次UI刷新
+                vodInfo.playIndex = newDisplayIndex;
+                
+                // 刷新列表（这会基于临时的 playIndex 设置高亮）
+                refreshList();
+                
+                // 重要：恢复 playIndex 为原始值，确保不污染状态
+                vodInfo.playIndex = originalPlayIndex;
+                
+                // 注意：播放索引 vodInfo.currentPlayIndex 保持不变
+                return; // 提前返回，避免执行后面的 isReverseXu()
             }
             
             setSeriesGroupOptions();
@@ -297,7 +318,6 @@ tvSort.setOnClickListener(new View.OnClickListener() {
         }
     }
 });
-
 
 
 
