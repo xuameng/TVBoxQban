@@ -454,6 +454,8 @@ public class VodController extends BaseController {
                     e.printStackTrace();
                 }
                 if (musicAnimation){
+					        int sessionId = mControlWrapper != null ? mControlWrapper.getAudioSessionId() : 0;
+		App.showToastShort(getContext(), String.valueOf(sessionId));
                     if(customVisualizer.getVisibility() == View.GONE) { //xuameng播放音乐柱状图
                         customVisualizer.setVisibility(VISIBLE);
                     }
@@ -2464,8 +2466,6 @@ public class VodController extends BaseController {
             return;
         }
         int sessionId = mControlWrapper != null ? mControlWrapper.getAudioSessionId() : 0;
-		App.showToastShort(getContext(), String.valueOf(sessionId));
-
         if (sessionId <= 0) {
             Log.w(TAG, "Invalid audio session ID");
             return;
