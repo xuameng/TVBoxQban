@@ -306,7 +306,7 @@ tvSort.setOnClickListener(new View.OnClickListener() {
                 refreshList();
                 
                 // 重要：恢复 playIndex 为原始值，确保不污染状态
-                vodInfo.playIndex = originalPlayIndex;
+                vodInfo.playIndex = vodInfo.currentPlayIndex;
                 
                 // 注意：播放索引 vodInfo.currentPlayIndex 保持不变
                 return; // 提前返回，避免执行后面的 isReverseXu()
