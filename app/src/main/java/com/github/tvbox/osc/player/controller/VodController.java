@@ -2456,7 +2456,7 @@ public class VodController extends BaseController {
         mLrcView.reset(); //xuameng 清除LRC歌词播放进度重置
     }
 
-    public void initVisualizer() {   //xuameng播放音乐柱状图
+    private void initVisualizer() {   //xuameng播放音乐柱状图
         releaseVisualizer();  // 确保先释放已有实例
         // 基础检查
         if (getContext() == null) {
