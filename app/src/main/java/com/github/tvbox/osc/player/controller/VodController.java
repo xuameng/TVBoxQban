@@ -1827,6 +1827,7 @@ public class VodController extends BaseController {
                 String height = Integer.toString(mControlWrapper.getVideoSize()[1]);
                 mVideoSize.setText("[ " + width + " X " + height + " ]");
                 isVideoPlay = false;
+				/*
                 try {
                     musicAnimation = mPlayerConfig.getBoolean("music");  //xuameng音乐播放动画获取设置
                 } catch (JSONException e) {
@@ -1837,7 +1838,7 @@ public class VodController extends BaseController {
                     if(newSessionId != audioSessionId) { // 避免重复初始化
                        initVisualizer();  //xuameng音乐播放动画
                     }
-                }
+                }*/
                 break;
             case VideoView.STATE_BUFFERED:
                 mPlayLoadNetSpeed.setVisibility(GONE);
