@@ -950,7 +950,7 @@ public class VodController extends BaseController {
                     }
                     updatePlayerCfgView();
                     listener.updatePlayerCfg();
-                  //  releaseVisualizer();  //xuameng音乐播放动画
+                    releaseVisualizer();  //xuameng音乐播放动画
                 } else {
                     try {
                         mPlayerConfig.put("music", true);   //xuameng音乐播放动画开启
@@ -1770,7 +1770,7 @@ public class VodController extends BaseController {
                 if(customVisualizer.getVisibility() == View.VISIBLE) { //xuameng播放音乐柱状图
                     customVisualizer.setVisibility(GONE);
                 }
-             //   releaseVisualizer();  //xuameng播放音乐背景
+                releaseVisualizer();  //xuameng播放音乐背景
                 isVideoplaying = false;
                 isVideoPlay = false;
                 isBufferIng = false; //xuameng 判断是否进在缓冲视频
@@ -2230,15 +2230,7 @@ public class VodController extends BaseController {
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        mHandler.removeCallbacks(myRunnable2);
-        mHandler.removeCallbacks(xuRunnable);
-        mHandler.removeCallbacks(myRunnableMusic);
-        mHandler.removeCallbacks(myRunnableXu);
-        if(mHandler != null) {
-            mHandler.removeCallbacksAndMessages(null);
-        }
-        clearSubtitleCache();  //xuameng清除字幕缓存
-      //  releaseVisualizer();  //xuameng音乐播放动画
+
     }
     //尝试去bom
     public String getWebPlayUrlIfNeeded(String webPlayUrl) {
@@ -2457,7 +2449,7 @@ public class VodController extends BaseController {
     }
 
     private void initVisualizer() {   //xuameng播放音乐柱状图
-     //   releaseVisualizer();  // 确保先释放已有实例
+        releaseVisualizer();  // 确保先释放已有实例
         // 基础检查
         if (getContext() == null) {
             Log.w(TAG, "Context is null");
@@ -2508,13 +2500,13 @@ public class VodController extends BaseController {
             mVisualizer.setEnabled(true);
         } catch (IllegalStateException e) {
             Log.e(TAG, "Visualizer state error", e);
-         //   releaseVisualizer();
+            releaseVisualizer();
         } catch (UnsupportedOperationException e) {
             Log.e(TAG, "Device doesn't support Visualizer", e);
-           // releaseVisualizer();
+            releaseVisualizer();
         } catch (Exception e) {
             Log.e(TAG, "Visualizer init failed", e);
-         //   releaseVisualizer();
+            releaseVisualizer();
         }
     }
 
