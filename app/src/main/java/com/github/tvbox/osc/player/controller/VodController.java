@@ -2230,7 +2230,15 @@ public class VodController extends BaseController {
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-
+        mHandler.removeCallbacks(myRunnable2);
+        mHandler.removeCallbacks(xuRunnable);
+        mHandler.removeCallbacks(myRunnableMusic);
+        mHandler.removeCallbacks(myRunnableXu);
+        if(mHandler != null) {
+            mHandler.removeCallbacksAndMessages(null);
+        }
+        clearSubtitleCache();  //xuameng清除字幕缓存
+        releaseVisualizer();  //xuameng音乐播放动画
     }
     //尝试去bom
     public String getWebPlayUrlIfNeeded(String webPlayUrl) {
