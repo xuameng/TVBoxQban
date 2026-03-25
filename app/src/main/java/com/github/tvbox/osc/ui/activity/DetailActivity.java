@@ -749,13 +749,13 @@ public class DetailActivity extends BaseActivity {
                                 e.printStackTrace();
                                 saveVodInfo = vodInfo;
                             }
-            Bundle bundle = new Bundle();
+            
             //保存历史 - 关键修改：使用当前播放的源进行保存
          //   String saveSourceKey = vodInfo.currentPlayFlag != null ? vodInfo.currentPlayFlag : sourceKey;
           //  insertVod(saveSourceKey, vodInfo);
             // 同时保存一份到初始源，用于兼容性
            // if (!saveSourceKey.equals(firstsourceKey)) {
-                insertVod(saveVodInfo, vodInfo);
+               insertVod(firstsourceKey, saveVodInfo);
            // }
    
             // xuameng刷新列表，这会根据当前显示源和播放源的关系设置正确的高亮
