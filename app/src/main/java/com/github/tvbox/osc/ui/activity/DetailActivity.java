@@ -258,68 +258,27 @@ public class DetailActivity extends BaseActivity {
             toggleFullPreview();
         });
 
-tvSort.setOnClickListener(new View.OnClickListener() {
-    @SuppressLint("NotifyDataSetChanged")
-    @Override
-    public void onClick(View v) {
-        if (vodInfo != null && vodInfo.seriesMap.size() > 0) {
-            vodInfo.reverseSort = !vodInfo.reverseSort;
-            if (vodInfo.reverseSort) {
-                tvSort.setText("正序");
-            } else {
-                tvSort.setText("倒序");
+        tvSort.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("NotifyDataSetChanged")
+            @Override
+            public void onClick(View v) {
+                if (vodInfo != null && vodInfo.seriesMap.size() > 0) {
+                    vodInfo.reverseSort = !vodInfo.reverseSort;
+                    if (vodInfo.reverseSort){    //XUAMENG读取记录后显示BUG
+                        tvSort.setText("正序");
+                    }else{
+                        tvSort.setText("倒序");
+                    }
+
+                    vodInfo.reverse();
+                    vodInfo.playIndex=(vodInfo.seriesMap.get(vodInfo.playFlag).size()-1)-vodInfo.playIndex;
+			   
+                    setSeriesGroupOptions();
+                    seriesAdapter.notifyDataSetChanged();
+                    isReverseXu();
+                }
             }
-
-            // 执行倒序操作
-            vodInfo.reverse();
-            
-            // 关键修改：严格区分播放源和显示源的处理
-            int totalEpisodes = vodInfo.seriesMap.get(vodInfo.playFlag).size();
-            
-            // 情况1：当前显示源就是播放源
-            if (vodInfo.playFlag.equals(vodInfo.currentPlayFlag)) {
-                // 同时更新显示索引和播放索引
-                vodInfo.playIndex = (totalEpisodes - 1) - vodInfo.playIndex;
-                vodInfo.currentPlayIndex = vodInfo.playIndex; // 播放索引同步更新
-            } 
-            // 情况2：当前显示源不是播放源
-            else {
-                // 重要：在非播放源倒序时，只计算并应用临时的显示索引
-                // 1. 计算倒序后的新显示位置
-                int newDisplayIndex = (totalEpisodes - 1) - vodInfo.playIndex;
-                
-                // 2. 关键修正：不直接修改 vodInfo.playIndex，而是通过刷新逻辑来更新UI
-                // 我们将在 refreshList() 方法中处理这个新索引
-                
-                // 3. 临时保存这个新索引，用于后续的UI刷新
-                // 注意：这里我们不修改 vodInfo.playIndex，而是通过其他方式传递这个值
-                // 但由于 refreshList() 方法会重新计算高亮，我们可以在这里设置一个临时状态
-                
-                // 方案：直接调用 refreshList()，但在此之前需要确保 playIndex 是正确的
-                // 由于我们不想污染 playIndex，所以先保存原始值，计算后再恢复
-                int originalPlayIndex = vodInfo.playIndex;
-                
-                // 临时设置 playIndex 为倒序后的位置，仅用于本次UI刷新
-                vodInfo.playIndex = newDisplayIndex;
-                
-                // 刷新列表（这会基于临时的 playIndex 设置高亮）
-                refreshList();
-                
-                // 重要：恢复 playIndex 为原始值，确保不污染状态
-                vodInfo.playIndex = vodInfo.currentPlayIndex;
-                
-                // 注意：播放索引 vodInfo.currentPlayIndex 保持不变
-                return; // 提前返回，避免执行后面的 isReverseXu()
-            }
-            
-            setSeriesGroupOptions();
-            seriesAdapter.notifyDataSetChanged();
-            isReverseXu();
-        }
-    }
-});
-
-
+        });
 
         tvSort.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override         //xuameng许大师制作焦点变大
@@ -541,53 +500,41 @@ tvSort.setOnClickListener(new View.OnClickListener() {
         });
 
         mGridViewFlag.setOnItemListener(new TvRecyclerView.OnItemListener() {
-private void refresh(View itemView, int position) {
-    String newFlag = seriesFlagAdapter.getData().get(position).name;
-    if (vodInfo != null) {
-        // 保存旧的显示源
-        String oldFlag = vodInfo.playFlag;
-
-        // 重要：只更新显示源，绝对不更新 currentPlayFlag
-        // currentPlayFlag 应该只在用户点击播放时更新（在 jumpToPlay() 中）
-        vodInfo.playFlag = newFlag;
-
-        // 清除旧显示源的高亮状态
-        if (vodInfo.seriesMap.containsKey(oldFlag) && vodInfo.playIndex < vodInfo.seriesMap.get(oldFlag).size()) {
-            vodInfo.seriesMap.get(oldFlag).get(vodInfo.playIndex).selected = false;
-        }
-
-        // 更新选中状态
-        for (int i = 0; i < vodInfo.seriesFlags.size(); i++) {
-            VodInfo.VodSeriesFlag flag = vodInfo.seriesFlags.get(i);
-            if (flag.name.equals(oldFlag)) {
-                flag.selected = false;
-                seriesFlagAdapter.notifyItemChanged(i);
-                break;
-            }
-        }
-        VodInfo.VodSeriesFlag flag = vodInfo.seriesFlags.get(position);
-        flag.selected = true;
-        seriesFlagAdapter.notifyItemChanged(position);
-
-        // 重要：当切换回播放源时，需要恢复播放源的高亮位置
-        if (newFlag.equals(vodInfo.currentPlayFlag)) {
-            // 切换到播放源，需要恢复播放索引
-            vodInfo.playIndex = vodInfo.currentPlayIndex;
-        } else {
-            // 切换到非播放源，尝试使用播放源的索引，如果无效则使用第一集
-            if (vodInfo.currentPlayIndex < vodInfo.seriesMap.get(newFlag).size()) {
-                vodInfo.playIndex = vodInfo.currentPlayIndex;
-            } else {
-                vodInfo.playIndex = 0;
-            }
-        }
+            private void refresh(View itemView, int position) {
+                String newFlag = seriesFlagAdapter.getData().get(position).name;
+                if (vodInfo != null) {
+                    // 保存旧的显示源
+                    String oldFlag = vodInfo.playFlag;
         
-        // 刷新列表，这会根据当前显示源和播放源的关系设置正确的高亮
-        refreshList();
-    }
-    seriesFlagFocus = itemView;
-}
-
+                    // 重要：只更新显示源，绝对不更新 currentPlayFlag
+                    // currentPlayFlag 应该只在用户点击播放时更新（在 jumpToPlay() 中）
+                    vodInfo.playFlag = newFlag;
+        
+                    // 清除旧显示源的高亮状态
+                    if (vodInfo.seriesMap.containsKey(oldFlag) && vodInfo.playIndex < vodInfo.seriesMap.get(oldFlag).size()) {
+                        vodInfo.seriesMap.get(oldFlag).get(vodInfo.playIndex).selected = false;
+                    }
+        
+                    // 更新选中状态
+                    for (int i = 0; i < vodInfo.seriesFlags.size(); i++) {
+                        VodInfo.VodSeriesFlag flag = vodInfo.seriesFlags.get(i);
+                        if (flag.name.equals(oldFlag)) {
+                            flag.selected = false;
+                            seriesFlagAdapter.notifyItemChanged(i);
+                            break;
+                        }
+                    }
+                    VodInfo.VodSeriesFlag flag = vodInfo.seriesFlags.get(position);
+                    flag.selected = true;
+                    seriesFlagAdapter.notifyItemChanged(position);
+        
+                    // 重要：不再检查是否切换播放源，因为用户只是查看，不是播放
+                    // 播放源的切换应该在 jumpToPlay() 中处理
+                    // 刷新列表，这会根据当前显示源和播放源的关系设置正确的高亮
+                    refreshList();
+                }
+                seriesFlagFocus = itemView;
+            }
 
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
@@ -776,13 +723,26 @@ private void refresh(View itemView, int position) {
 
     private void isReverseXu() {       //xuameng 解决倒叙剧集播放错误问题
         if (vodInfo != null && vodInfo.seriesMap.get(vodInfo.playFlag).size() > 0) {
-        preFlag = vodInfo.playFlag;
-        
-        // 注意：这里不再修改 currentPlayFlag 和 currentPlayIndex
-        // 因为已经在 tvSort 的点击事件中处理了
-        
-        Bundle bundle = new Bundle();
-        insertVod(firstsourceKey, vodInfo);
+
+            // 检查当前选中的源是否是正在播放的源
+            if (vodInfo.currentPlayFlag != null && !vodInfo.playFlag.equals(vodInfo.currentPlayFlag)) {
+                // 当前选中的源不是正在播放的源，禁止倒序操作
+                App.showToastShort(DetailActivity.this, "请切换到正在播放的源后再进行倒序操作！");
+                return;
+            }
+
+            preFlag = vodInfo.playFlag;
+            // 新增：记录当前播放的源和剧集索引
+            vodInfo.currentPlayFlag = vodInfo.playFlag;
+            vodInfo.currentPlayIndex = vodInfo.playIndex;
+            Bundle bundle = new Bundle();
+            //保存历史 - 关键修改：使用当前播放的源进行保存
+         //   String saveSourceKey = vodInfo.currentPlayFlag != null ? vodInfo.currentPlayFlag : sourceKey;
+          //  insertVod(saveSourceKey, vodInfo);
+            // 同时保存一份到初始源，用于兼容性
+           // if (!saveSourceKey.equals(firstsourceKey)) {
+                insertVod(firstsourceKey, vodInfo);
+           // }
             bundle.putString("sourceKey", sourceKey);
             App.getInstance().setVodInfo(vodInfo);
             if (showPreview) {
@@ -812,42 +772,41 @@ private void refresh(View itemView, int position) {
         }
     }
 
-@SuppressLint("NotifyDataSetChanged")
-void refreshList() {     //xuameng 不同源选集不准确及 自动播放源不对等问题 切换回正在播放的源可以恢复到正确状态等BUG
-    if (vodInfo.seriesMap.get(vodInfo.playFlag).size() <= vodInfo.playIndex) {
-        vodInfo.playIndex = 0;
-    }
+    @SuppressLint("NotifyDataSetChanged")
+    void refreshList() {     //xuameng 不同源选集不准确及 自动播放源不对等问题 切换回正在播放的源可以恢复到正确状态等BUG
+        if (vodInfo.seriesMap.get(vodInfo.playFlag).size() <= vodInfo.playIndex) {
+            vodInfo.playIndex = 0;
+        }
 
-    if (vodInfo.seriesMap.get(vodInfo.playFlag) != null) {
-        // 清除当前显示源的所有高亮状态
-        for (int j = 0; j < vodInfo.seriesMap.get(vodInfo.playFlag).size(); j++) {
-            vodInfo.seriesMap.get(vodInfo.playFlag).get(j).selected = false;
-        }
+        if (vodInfo.seriesMap.get(vodInfo.playFlag) != null) {
+            // 清除当前显示源的所有高亮状态
+            for (int j = 0; j < vodInfo.seriesMap.get(vodInfo.playFlag).size(); j++) {
+                vodInfo.seriesMap.get(vodInfo.playFlag).get(j).selected = false;
+            }
     
-        // 判断当前显示源是否是正在播放的源
-        if (vodInfo.playFlag.equals(vodInfo.currentPlayFlag)) {
-            // 如果是正在播放的源，高亮当前播放索引
-            if (vodInfo.currentPlayIndex < vodInfo.seriesMap.get(vodInfo.playFlag).size()) {
-                vodInfo.playIndex = vodInfo.currentPlayIndex;
-                vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).selected = true;
-            }
-        } else {
-            // 如果不是正在播放的源，需要重新计算高亮位置
-            // 重要：不能直接使用 currentPlayIndex，因为两个源的剧集顺序可能不同
-            
-            // 方案：显示源使用自己的索引逻辑，与播放源无关
-            // 如果显示源有剧集，高亮第一集（或保持当前显示索引）
-            // 重要：这里需要确保 vodInfo.playIndex 是有效的
-            if (vodInfo.playIndex >= vodInfo.seriesMap.get(vodInfo.playFlag).size() || vodInfo.playIndex < 0) {
-                vodInfo.playIndex = 0;
-            }
-            
-            // 设置高亮
-            if (vodInfo.seriesMap.get(vodInfo.playFlag).size() > 0) {
-                vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).selected = true;
+            // 判断当前显示源是否是正在播放的源
+            if (vodInfo.playFlag.equals(vodInfo.currentPlayFlag)) {
+                // 如果是正在播放的源，高亮当前播放索引
+                if (vodInfo.currentPlayIndex < vodInfo.seriesMap.get(vodInfo.playFlag).size()) {
+                    vodInfo.playIndex = vodInfo.currentPlayIndex;
+                    vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).selected = true;
+                }
+            } else {
+                // 如果不是正在播放的源，检查是否有对应的剧集索引
+                // 简单实现：如果当前显示源有足够多的剧集，使用相同的索引
+                if (vodInfo.currentPlayIndex < vodInfo.seriesMap.get(vodInfo.playFlag).size()) {
+                    vodInfo.playIndex = vodInfo.currentPlayIndex;
+                    vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).selected = true;
+                } else {
+                    // 如果没有对应的索引，不清除高亮（保持现状）
+                    vodInfo.playIndex = 0;
+                    // 修复：确保至少有一个剧集被高亮 第一集被高亮
+                    if (vodInfo.seriesMap.get(vodInfo.playFlag).size() > 0) {
+                        vodInfo.seriesMap.get(vodInfo.playFlag).get(0).selected = true;
+                    }
+                }
             }
         }
-    }
 
         Paint pFont = new Paint();
 //        pFont.setTypeface(Typeface.DEFAULT );
@@ -1595,47 +1554,44 @@ void refreshList() {     //xuameng 不同源选集不准确及 自动播放源�
         }
     }
 
-private void switchToPlayingSourceAndScroll() {   //xuameng 支持跨源滚动到当前剧集
-    // 1. 检查当前显示源是否是正在播放的源
-    if (vodInfo != null && vodInfo.currentPlayFlag != null && !vodInfo.playFlag.equals(vodInfo.currentPlayFlag)) {
-        // 当前显示源不是播放源，需要切换回播放源
-    
-        // 1.1 保存旧的显示源
-        String oldFlag = vodInfo.playFlag;
-    
-        // 1.2 清除旧显示源的高亮状态
-        if (vodInfo.seriesMap.containsKey(oldFlag) && vodInfo.playIndex < vodInfo.seriesMap.get(oldFlag).size()) {
-            vodInfo.seriesMap.get(oldFlag).get(vodInfo.playIndex).selected = false;
-        }
-    
-        // 1.3 清除旧显示源在源列表中的选中状态
-        for (int i = 0; i < vodInfo.seriesFlags.size(); i++) {
-            VodInfo.VodSeriesFlag flag = vodInfo.seriesFlags.get(i);
-            if (flag.name.equals(oldFlag)) {
-                flag.selected = false;
-                seriesFlagAdapter.notifyItemChanged(i);
-                break;
+    private void switchToPlayingSourceAndScroll() {   //xuameng 支持跨源滚动到当前剧集
+        // 1. 检查当前显示源是否是正在播放的源
+        if (vodInfo != null && vodInfo.currentPlayFlag != null && !vodInfo.playFlag.equals(vodInfo.currentPlayFlag)) {
+            // 当前显示源不是播放源，需要切换回播放源
+        
+            // 1.1 保存旧的显示源
+            String oldFlag = vodInfo.playFlag;
+        
+            // 1.2 清除旧显示源的高亮状态
+            if (vodInfo.seriesMap.containsKey(oldFlag) && vodInfo.playIndex < vodInfo.seriesMap.get(oldFlag).size()) {
+                vodInfo.seriesMap.get(oldFlag).get(vodInfo.playIndex).selected = false;
+            }
+        
+            // 1.3 清除旧显示源在源列表中的选中状态
+            for (int i = 0; i < vodInfo.seriesFlags.size(); i++) {
+                VodInfo.VodSeriesFlag flag = vodInfo.seriesFlags.get(i);
+                if (flag.name.equals(oldFlag)) {
+                    flag.selected = false;
+                    seriesFlagAdapter.notifyItemChanged(i);
+                    break;
+                }
+            }
+        
+            // 1.4 切换到播放源
+            vodInfo.playFlag = vodInfo.currentPlayFlag;
+        
+            // 1.5 设置播放源在源列表中的选中状态
+            for (int i = 0; i < vodInfo.seriesFlags.size(); i++) {
+                VodInfo.VodSeriesFlag flag = vodInfo.seriesFlags.get(i);
+                if (flag.name.equals(vodInfo.playFlag)) {
+                    flag.selected = true;
+                    seriesFlagAdapter.notifyItemChanged(i);
+                    // 滚动源列表到播放源位置
+                    mGridViewFlag.scrollToPosition(i);
+                    break;
+                }
             }
         }
-    
-        // 1.4 切换到播放源
-        vodInfo.playFlag = vodInfo.currentPlayFlag;
-    
-        // 1.5 重要：恢复播放源的索引
-        vodInfo.playIndex = vodInfo.currentPlayIndex;
-    
-        // 1.6 设置播放源在源列表中的选中状态
-        for (int i = 0; i < vodInfo.seriesFlags.size(); i++) {
-            VodInfo.VodSeriesFlag flag = vodInfo.seriesFlags.get(i);
-            if (flag.name.equals(vodInfo.playFlag)) {
-                flag.selected = true;
-                seriesFlagAdapter.notifyItemChanged(i);
-                // 滚动源列表到播放源位置
-                mGridViewFlag.scrollToPosition(i);
-                break;
-            }
-        }
-    }
     
         // 2. 刷新列表显示
         refreshList();
