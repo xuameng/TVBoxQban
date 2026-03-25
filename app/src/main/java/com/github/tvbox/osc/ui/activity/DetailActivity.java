@@ -543,6 +543,7 @@ private void refresh(View itemView, int position) {
         String oldFlag = vodInfo.playFlag;
 
         // 重要：只更新显示源，绝对不更新 currentPlayFlag
+        // currentPlayFlag 应该只在用户点击播放时更新（在 jumpToPlay() 中）
         vodInfo.playFlag = newFlag;
 
         // 清除旧显示源的高亮状态
@@ -568,8 +569,12 @@ private void refresh(View itemView, int position) {
             // 切换到播放源，需要恢复播放索引
             vodInfo.playIndex = vodInfo.currentPlayIndex;
         } else {
-            // 切换到非播放源，重置显示索引为0（第一集）
-            vodInfo.playIndex = 0;
+            // 切换到非播放源，尝试使用播放源的索引，如果无效则使用第一集
+            if (vodInfo.currentPlayIndex < vodInfo.seriesMap.get(newFlag).size()) {
+                vodInfo.playIndex = vodInfo.currentPlayIndex;
+            } else {
+                vodInfo.playIndex = 0;
+            }
         }
         
         // 刷新列表，这会根据当前显示源和播放源的关系设置正确的高亮
@@ -577,7 +582,6 @@ private void refresh(View itemView, int position) {
     }
     seriesFlagFocus = itemView;
 }
-
 
 
             @Override
