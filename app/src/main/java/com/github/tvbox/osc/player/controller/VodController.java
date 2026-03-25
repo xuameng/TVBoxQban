@@ -2464,6 +2464,7 @@ public class VodController extends BaseController {
             return;
         }
         int sessionId = mControlWrapper != null ? mControlWrapper.getAudioSessionId() : 0;
+		App.showToastShort(getContext(), sessionId);
         if (sessionId <= 0) {
             Log.w(TAG, "Invalid audio session ID");
             return;
