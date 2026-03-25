@@ -264,20 +264,35 @@ tvSort.setOnClickListener(new View.OnClickListener() {
     public void onClick(View v) {
         if (vodInfo != null && vodInfo.seriesMap.size() > 0) {
             vodInfo.reverseSort = !vodInfo.reverseSort;
-            if (vodInfo.reverseSort){    //XUAMENG读取记录后显示BUG
+            if (vodInfo.reverseSort) {    //XUAMENG读取记录后显示BUG
                 tvSort.setText("正序");
-            }else{
+            } else {
                 tvSort.setText("倒序");
             }
 
             vodInfo.reverse();
             
-            // 关键修改：同时更新显示索引和播放索引（如果当前显示源是播放源）
-            vodInfo.playIndex = (vodInfo.seriesMap.get(vodInfo.playFlag).size()-1) - vodInfo.playIndex;
+            // 关键修改：区分播放源和显示源的不同处理
+            int totalEpisodes = vodInfo.seriesMap.get(vodInfo.playFlag).size();
             
-            // 如果当前显示源就是播放源，也需要更新播放索引
+            // 1. 更新显示源的索引
+            vodInfo.playIndex = (totalEpisodes - 1) - vodInfo.playIndex;
+            
+            // 2. 只有在当前显示源就是播放源时，才更新播放索引
             if (vodInfo.playFlag.equals(vodInfo.currentPlayFlag)) {
                 vodInfo.currentPlayIndex = vodInfo.playIndex;
+            } else {
+                // 3. 如果显示源不是播放源，需要重新计算显示源的高亮位置
+                // 因为播放源的索引可能不适用于显示源（特别是当两个源的剧集数量不同时）
+                // 这里使用一个安全的策略：如果播放索引在显示源范围内，则使用对应位置
+                // 否则使用第一集
+                if (vodInfo.currentPlayIndex < totalEpisodes) {
+                    // 播放索引在显示源范围内，使用对应的位置
+                    vodInfo.playIndex = vodInfo.currentPlayIndex;
+                } else {
+                    // 播放索引超出显示源范围，使用第一集
+                    vodInfo.playIndex = 0;
+                }
             }
             
             setSeriesGroupOptions();
@@ -286,6 +301,7 @@ tvSort.setOnClickListener(new View.OnClickListener() {
         }
     }
 });
+
 
         tvSort.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override         //xuameng许大师制作焦点变大
@@ -767,40 +783,49 @@ tvSort.setOnClickListener(new View.OnClickListener() {
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    void refreshList() {     //xuameng 不同源选集不准确及 自动播放源不对等问题 切换回正在播放的源可以恢复到正确状态等BUG
-        if (vodInfo.seriesMap.get(vodInfo.playFlag).size() <= vodInfo.playIndex) {
-            vodInfo.playIndex = 0;
-        }
+void refreshList() {     //xuameng 不同源选集不准确及 自动播放源不对等问题 切换回正在播放的源可以恢复到正确状态等BUG
+    if (vodInfo.seriesMap.get(vodInfo.playFlag).size() <= vodInfo.playIndex) {
+        vodInfo.playIndex = 0;
+    }
 
-        if (vodInfo.seriesMap.get(vodInfo.playFlag) != null) {
-            // 清除当前显示源的所有高亮状态
-            for (int j = 0; j < vodInfo.seriesMap.get(vodInfo.playFlag).size(); j++) {
-                vodInfo.seriesMap.get(vodInfo.playFlag).get(j).selected = false;
-            }
+    if (vodInfo.seriesMap.get(vodInfo.playFlag) != null) {
+        // 清除当前显示源的所有高亮状态
+        for (int j = 0; j < vodInfo.seriesMap.get(vodInfo.playFlag).size(); j++) {
+            vodInfo.seriesMap.get(vodInfo.playFlag).get(j).selected = false;
+        }
     
-            // 判断当前显示源是否是正在播放的源
-            if (vodInfo.playFlag.equals(vodInfo.currentPlayFlag)) {
-                // 如果是正在播放的源，高亮当前播放索引
-                if (vodInfo.currentPlayIndex < vodInfo.seriesMap.get(vodInfo.playFlag).size()) {
-                    vodInfo.playIndex = vodInfo.currentPlayIndex;
-                    vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).selected = true;
-                }
+        // 判断当前显示源是否是正在播放的源
+        if (vodInfo.playFlag.equals(vodInfo.currentPlayFlag)) {
+            // 如果是正在播放的源，高亮当前播放索引
+            if (vodInfo.currentPlayIndex < vodInfo.seriesMap.get(vodInfo.playFlag).size()) {
+                vodInfo.playIndex = vodInfo.currentPlayIndex;
+                vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).selected = true;
+            }
+        } else {
+            // 如果不是正在播放的源，需要重新计算高亮位置
+            // 重要：不能直接使用 currentPlayIndex，因为两个源的剧集顺序可能不同
+            
+            // 方案1：如果显示源有对应的剧集索引，使用对应位置
+            // 方案2：使用显示源的第一集（更安全）
+            // 这里采用方案2，确保不会出现索引越界
+            
+            vodInfo.playIndex = 0; // 默认使用第一集
+            
+            // 可选：如果希望显示对应位置的剧集，可以取消下面的注释
+            
+            if (vodInfo.currentPlayIndex < vodInfo.seriesMap.get(vodInfo.playFlag).size()) {
+                vodInfo.playIndex = vodInfo.currentPlayIndex;
             } else {
-                // 如果不是正在播放的源，检查是否有对应的剧集索引
-                // 简单实现：如果当前显示源有足够多的剧集，使用相同的索引
-                if (vodInfo.currentPlayIndex < vodInfo.seriesMap.get(vodInfo.playFlag).size()) {
-                    vodInfo.playIndex = vodInfo.currentPlayIndex;
-                    vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).selected = true;
-                } else {
-                    // 如果没有对应的索引，不清除高亮（保持现状）
-                    vodInfo.playIndex = 0;
-                    // 修复：确保至少有一个剧集被高亮 第一集被高亮
-                    if (vodInfo.seriesMap.get(vodInfo.playFlag).size() > 0) {
-                        vodInfo.seriesMap.get(vodInfo.playFlag).get(0).selected = true;
-                    }
-                }
+                vodInfo.playIndex = 0;
+            }
+            
+            
+            // 设置高亮
+            if (vodInfo.seriesMap.get(vodInfo.playFlag).size() > 0) {
+                vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).selected = true;
             }
         }
+    }
 
         Paint pFont = new Paint();
 //        pFont.setTypeface(Typeface.DEFAULT );
