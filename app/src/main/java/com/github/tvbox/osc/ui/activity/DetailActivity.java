@@ -264,7 +264,7 @@ tvSort.setOnClickListener(new View.OnClickListener() {
     public void onClick(View v) {
         if (vodInfo != null && vodInfo.seriesMap.size() > 0) {
             vodInfo.reverseSort = !vodInfo.reverseSort;
-            if (vodInfo.reverseSort) {    //XUAMENG读取记录后显示BUG
+            if (vodInfo.reverseSort) {
                 tvSort.setText("正序");
             } else {
                 tvSort.setText("倒序");
@@ -283,19 +283,27 @@ tvSort.setOnClickListener(new View.OnClickListener() {
             } 
             // 情况2：当前显示源不是播放源
             else {
-                // 重要：在非播放源倒序时，只更新显示源的索引，并且使用临时变量
-                // 不修改 vodInfo.playIndex，因为这会影响到播放源
-                int tempPlayIndex = (totalEpisodes - 1) - vodInfo.playIndex;
+                // 重要：在非播放源倒序时，只更新显示源的临时索引，不影响播放源
+                // 使用临时变量存储倒序后的显示索引
+                int tempDisplayIndex = (totalEpisodes - 1) - vodInfo.playIndex;
                 
                 // 重要：播放索引保持不变，因为用户没有在播放源上操作
                 // vodInfo.currentPlayIndex 保持不变
-                // vodInfo.playIndex 也保持不变，使用临时变量
-                
-                // 临时保存倒序后的显示索引，用于UI刷新
-                int newDisplayIndex = tempPlayIndex;
+                // vodInfo.playIndex 也保持不变
                 
                 // 刷新UI时使用临时索引
-                vodInfo.playIndex = newDisplayIndex;
+                int originalPlayIndex = vodInfo.playIndex; // 保存原始索引
+                vodInfo.playIndex = tempDisplayIndex; // 临时设置为倒序索引用于UI刷新
+                
+                setSeriesGroupOptions();
+                seriesAdapter.notifyDataSetChanged();
+                
+                // 重要：刷新UI后，立即恢复原始的 playIndex
+                vodInfo.playIndex = originalPlayIndex;
+                
+                // 调用 isReverseXu 但不传入任何参数，让它只处理UI刷新
+                isReverseXuForDisplayOnly();
+                return; // 提前返回，避免执行下面的通用逻辑
             }
             
             setSeriesGroupOptions();
@@ -304,6 +312,7 @@ tvSort.setOnClickListener(new View.OnClickListener() {
         }
     }
 });
+
 
 
 
@@ -534,7 +543,6 @@ private void refresh(View itemView, int position) {
         String oldFlag = vodInfo.playFlag;
 
         // 重要：只更新显示源，绝对不更新 currentPlayFlag
-        // currentPlayFlag 应该只在用户点击播放时更新（在 jumpToPlay() 中）
         vodInfo.playFlag = newFlag;
 
         // 清除旧显示源的高亮状态
@@ -560,12 +568,8 @@ private void refresh(View itemView, int position) {
             // 切换到播放源，需要恢复播放索引
             vodInfo.playIndex = vodInfo.currentPlayIndex;
         } else {
-            // 切换到非播放源，尝试使用播放源的索引，如果无效则使用第一集
-            if (vodInfo.currentPlayIndex < vodInfo.seriesMap.get(newFlag).size()) {
-                vodInfo.playIndex = vodInfo.currentPlayIndex;
-            } else {
-                vodInfo.playIndex = 0;
-            }
+            // 切换到非播放源，重置显示索引为0（第一集）
+            vodInfo.playIndex = 0;
         }
         
         // 刷新列表，这会根据当前显示源和播放源的关系设置正确的高亮
@@ -573,6 +577,7 @@ private void refresh(View itemView, int position) {
     }
     seriesFlagFocus = itemView;
 }
+
 
 
             @Override
@@ -797,6 +802,94 @@ private void refresh(View itemView, int position) {
             refreshList();
         }
     }
+
+private void isReverseXuForDisplayOnly() {
+    if (vodInfo != null && vodInfo.seriesMap.get(vodInfo.playFlag).size() > 0) {
+        preFlag = vodInfo.playFlag;
+        
+        Bundle bundle = new Bundle();
+        insertVod(firstsourceKey, vodInfo);
+        bundle.putString("sourceKey", sourceKey);
+        App.getInstance().setVodInfo(vodInfo);
+        
+        if (showPreview) {
+            if (previewVodInfo == null) {
+                try {
+                    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                    ObjectOutputStream oos = new ObjectOutputStream(bos);
+                    oos.writeObject(vodInfo);
+                    oos.flush();
+                    oos.close();
+                    ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(bos.toByteArray()));
+                    previewVodInfo = (VodInfo) ois.readObject();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            if (previewVodInfo != null) {
+                previewVodInfo.playerCfg = vodInfo.playerCfg;
+                previewVodInfo.playFlag = vodInfo.playFlag;
+                previewVodInfo.playIndex = vodInfo.playIndex;
+                previewVodInfo.seriesMap = vodInfo.seriesMap;
+                App.getInstance().setVodInfo(previewVodInfo);
+            }  
+        }
+        
+        // 只刷新UI，不修改播放源的状态
+        refreshListForDisplayOnly();
+    }
+}
+
+@SuppressLint("NotifyDataSetChanged")
+void refreshListForDisplayOnly() {
+    if (vodInfo.seriesMap.get(vodInfo.playFlag).size() <= vodInfo.playIndex) {
+        vodInfo.playIndex = 0;
+    }
+
+    if (vodInfo.seriesMap.get(vodInfo.playFlag) != null) {
+        // 清除当前显示源的所有高亮状态
+        for (int j = 0; j < vodInfo.seriesMap.get(vodInfo.playFlag).size(); j++) {
+            vodInfo.seriesMap.get(vodInfo.playFlag).get(j).selected = false;
+        }
+    
+        // 重要：在非播放源中，始终使用显示源的当前索引（不引用播放源索引）
+        // 确保索引在有效范围内
+        if (vodInfo.playIndex >= vodInfo.seriesMap.get(vodInfo.playFlag).size() || vodInfo.playIndex < 0) {
+            vodInfo.playIndex = 0;
+        }
+        
+        // 设置高亮
+        if (vodInfo.seriesMap.get(vodInfo.playFlag).size() > 0) {
+            vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).selected = true;
+        }
+    }
+
+    Paint pFont = new Paint();
+    Rect rect = new Rect();
+
+    List<VodInfo.VodSeries> list = vodInfo.seriesMap.get(vodInfo.playFlag);
+    int listSize = list.size();
+    int w = 1;
+    for(int i =0; i < listSize; ++i){
+        String name = list.get(i).name;
+        pFont.getTextBounds(name, 0, name.length(), rect);
+        if(w < rect.width()){
+            w = rect.width();
+        }
+    }
+    w += 32;
+    int screenWidth = getWindowManager().getDefaultDisplay().getWidth()/3;
+    int offset = screenWidth/w;
+    if(offset <=2) offset =2;
+    if(offset > 6) offset =6;
+    mGridViewLayoutMgr.setSpanCount(offset);
+    seriesAdapter.setNewData(vodInfo.seriesMap.get(vodInfo.playFlag));
+
+    setSeriesGroupOptions();
+
+    customSeriesScrollPos(vodInfo.playIndex);
+}
+
 
 @SuppressLint("NotifyDataSetChanged")
 void refreshList() {     //xuameng 不同源选集不准确及 自动播放源不对等问题 切换回正在播放的源可以恢复到正确状态等BUG
