@@ -749,15 +749,38 @@ public class DetailActivity extends BaseActivity {
                                 e.printStackTrace();
                                 saveVodInfo = vodInfo;
                             }
-            
+            Bundle bundle = new Bundle();
             //保存历史 - 关键修改：使用当前播放的源进行保存
          //   String saveSourceKey = vodInfo.currentPlayFlag != null ? vodInfo.currentPlayFlag : sourceKey;
           //  insertVod(saveSourceKey, vodInfo);
             // 同时保存一份到初始源，用于兼容性
            // if (!saveSourceKey.equals(firstsourceKey)) {
-               insertVod(firstsourceKey, saveVodInfo);
+                 insertVod(firstsourceKey, saveVodInfo);
            // }
-   
+            bundle.putString("sourceKey", sourceKey);
+            App.getInstance().setVodInfo(vodInfo);
+            if (showPreview) {
+                if (previewVodInfo == null) {
+                    try {
+                        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                        ObjectOutputStream oos = new ObjectOutputStream(bos);
+                        oos.writeObject(vodInfo);
+                        oos.flush();
+                        oos.close();
+                        ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(bos.toByteArray()));
+                        previewVodInfo = (VodInfo) ois.readObject();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (previewVodInfo != null) {
+                    previewVodInfo.playerCfg = vodInfo.playerCfg;
+                    previewVodInfo.playFlag = vodInfo.playFlag;
+                    previewVodInfo.playIndex = vodInfo.playIndex;
+                    previewVodInfo.seriesMap = vodInfo.seriesMap;
+                    App.getInstance().setVodInfo(previewVodInfo);
+                }  
+            }
             // xuameng刷新列表，这会根据当前显示源和播放源的关系设置正确的高亮
             refreshList();
         }
