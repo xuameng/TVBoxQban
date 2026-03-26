@@ -42,10 +42,6 @@ import com.github.tvbox.osc.util.LOG;
 import com.github.tvbox.osc.util.SearchHelper;
 import com.github.catvod.crawler.JsLoader;
 import com.github.tvbox.osc.viewmodel.SourceViewModel;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.AbsCallback;
 import com.lzy.okgo.model.Response;
@@ -59,15 +55,15 @@ import android.text.Editable;		//xuameng搜索历史
 import com.github.tvbox.osc.data.SearchPresenter;  //xuameng搜索历史
 import com.github.tvbox.osc.cache.SearchHistory;   //xuameng搜索历史
 import java.util.Collections;   //xuameng搜索历史
-import com.google.gson.Gson;  //热门搜索
-import com.google.gson.JsonArray; //热门搜索
-import com.google.gson.JsonElement; //热门搜索
-import com.google.gson.JsonObject; //热门搜索
-import com.google.gson.JsonParser; //热门搜索
+import com.google.gson.Gson;  //xuameng热门搜索
+import com.google.gson.JsonArray; //xuameng热门搜索
+import com.google.gson.JsonElement; //xuameng热门搜索
+import com.google.gson.JsonObject; //xuameng热门搜索
+import com.google.gson.JsonParser; //xuameng热门搜索
+import com.google.common.net.HttpHeaders;  //xuameng热门搜索
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import com.google.common.net.HttpHeaders;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -764,43 +760,58 @@ public class SearchActivity extends BaseActivity {
         super.onBackPressed();
     }
 
-    public void showHotSearchtext() {          //xuameng 热搜
+public void showHotSearchtext() { //xuameng 热搜
 OkGo.<String>get("https://api.web.360kan.com/v1/rank?cat=1")
-    .headers(HttpHeaders.REFERER, "https://www.360kan.com/rank/general")
-    .execute(new AbsCallback<String>() {
-        @Override
-        public void onSuccess(Response<String> response) {
-            try {
-                String result = response.body();
-                if (TextUtils.isEmpty(result)) return;
-                
+.headers(HttpHeaders.REFERER, "https://www.360kan.com/rank/general")
+.execute(new AbsCallback<String>() {
+@Override
+public void onSuccess(Response<String> response) {
+try {
+String result = response.body();
+// 情况1：网络请求成功但返回内容为空
+if (TextUtils.isEmpty(result)) {
+setDefaultHotWords();
+return;
+}
                 hots.clear();
                 JsonObject jsonObject = JsonParser.parseString(result).getAsJsonObject();
                 JsonArray dataArray = jsonObject.getAsJsonArray("data");
                 
-                if (dataArray != null) {
+                // 情况2：返回的JSON结构正确，但data数组为空
+                if (dataArray != null && dataArray.size() > 0) {
                     for (JsonElement element : dataArray) {
                         JsonObject item = element.getAsJsonObject();
-                        String title = item.get("title").getAsString().trim();
-                        hots.add(title);
+                        // 添加健壮性检查，防止字段缺失
+                        if (item.has("title")) {
+                            String title = item.get("title").getAsString().trim();
+                            hots.add(title);
+                        }
                     }
                 }
                 
-                wordAdapter.setNewData(hots);
+                // 情况3：data数组为空或解析不出有效数据
+                if (hots.isEmpty()) {
+                    setDefaultHotWords();
+                } else {
+                    wordAdapter.setNewData(hots);
+                }
                 
             } catch (Throwable th) {
                 th.printStackTrace();
+                // 情况4：JSON解析异常
+                setDefaultHotWords();
             }
         }
 
         @Override
         public void onError(Response<String> response) {
             super.onError(response);
-            // 网络错误处理
+            // 情况5：网络请求失败
             Throwable exception = response.getException();
             if (exception != null) {
                 exception.printStackTrace();
             }
+            setDefaultHotWords();
         }
 
         @Override
@@ -808,6 +819,34 @@ OkGo.<String>get("https://api.web.360kan.com/v1/rank?cat=1")
             return response.body().string();
         }
     });
+}
 
-		} 
+
+/**
+
+设置默认的热门搜索词
+
+当网络请求失败或返回空数据时使用
+*/
+private void setDefaultHotWords() {
+hots.clear();
+// 添加一些通用的热门搜索词作为默认值
+hots.add("聚汇电影");
+hots.add("聚汇电视剧");
+hots.add("聚汇综艺");
+hots.add("聚汇动漫");
+hots.add("聚汇纪录片");
+hots.add("聚汇动作片");
+hots.add("聚汇喜剧片");
+hots.add("聚汇爱情片");
+hots.add("聚汇科幻片");
+hots.add("聚汇悬疑片");
+
+// 更新UI
+wordAdapter.setNewData(hots);
+
+// 可选：给用户一个提示（如果需要）
+// App.showToastShort(SearchActivity.this, "加载热门搜索失败，已显示默认推荐");
+}
+
 }
