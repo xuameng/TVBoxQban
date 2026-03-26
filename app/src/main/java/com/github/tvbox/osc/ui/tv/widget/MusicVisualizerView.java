@@ -20,18 +20,13 @@ xuameng
 public class MusicVisualizerView extends View {
     private static final int MAX_AMPLITUDE = 6222;
     private static final int BAR_COUNT = 22;
-    private static final int ANIMATION_DURATION = 50;
+    private static final int ANIMATION_DURATION = 80;
     // 改为非静态变量实现动态刷新
     private int[][] colorSchemes = new int[3][3];
     // 新增音柱分段效果相关变量
     private boolean mShowStripes = true; // 是否显示分段效果
     private int mSegmentCount = 20; // 每个音柱的分段数
     private float mSegmentSpacingFixed = 2.5f; // 段间距固定值（像素）
-// 节奏检测相关变量
-private float[] mPreviousAmplitudeLevels = new float[BAR_COUNT];
-private float mRhythmEnergy = 0;
-private static final float RHYTHM_THRESHOLD = 0.3f;
-
     // 新增颜色方案刷新方法
     private void refreshColorSchemes() {
         for(int i = 0; i < 3; i++) {
@@ -91,99 +86,58 @@ private static final float RHYTHM_THRESHOLD = 0.3f;
         mSegmentSpacingFixed = Math.max(0f, spacing); // 确保非负值
         postInvalidate();
     }
-public void updateVisualizer(byte[] fft, float volumeLevel) {
-    if(fft == null || fft.length < BAR_COUNT * 2 + 2) return;
-    if(volumeLevel == 0f || volumeLevel == 0.0f || volumeLevel == 0.00f) {
-        reset(); //xuameng处理静音状态重置音柱
-    }
-    
-    // 优化采样策略：三段式采样，增强鼓声响应
-    for(int i = 0; i < BAR_COUNT; i++) {
-        int barIndex;
-        if(i < BAR_COUNT / 4) {
-            // 低频段(0-300Hz)：每2点取1，对应底鼓
-            barIndex = 2 + i * 2;
-        } else if(i < BAR_COUNT * 3 / 4) {
-            // 中频段(300-3kHz)：每1点取1，对应军鼓、嗵鼓（重点改进）
-            barIndex = 2 + (BAR_COUNT / 4) * 2 + (i - BAR_COUNT / 4);
-        } else {
-            // 高频段(3kHz以上)：每2点取1，对应镲片
-            barIndex = 2 + (BAR_COUNT / 4) * 2 + (BAR_COUNT / 2) + (i - BAR_COUNT * 3 / 4) * 2;
+    public void updateVisualizer(byte[] fft, float volumeLevel) {
+        if(fft == null || fft.length < BAR_COUNT * 2 + 2) return;
+        if(volumeLevel == 0f || volumeLevel == 0.0f || volumeLevel == 0.00f) {
+            reset(); //xuameng处理静音状态重置音柱
         }
-        
-        if(barIndex < fft.length - 1) {
-            byte rfk = fft[barIndex];
-            byte ifk = fft[barIndex + 1];
-            float magnitude = (rfk * rfk + ifk * ifk);
-            
-            // 优化频率加权策略，增强鼓声响应
-            float weight;
-            if(i < BAR_COUNT / 4) {
-                weight = 1.0f; // 超低频段(0-300Hz)增益
-            } else if(i < BAR_COUNT * 3 / 4) {
-                // 鼓声核心频段(300Hz-3kHz)增强响应
-                weight = 2.5f; // 调整为2.5f，避免过度放大
-            } else {
-                float freqFactor = (float) Math.pow(1.5, (i - BAR_COUNT * 3 / 4) / 2.0); // 降低指数因子
-                weight = 2.0f * freqFactor; // 降低基础权重
-            }
-            
-            // 修复瞬态能量检测（使用归一化值）
-            float normalizedMagnitude = Math.min(magnitude / MAX_AMPLITUDE, 1.0f);
-            float previousNormalized = mAmplitudeLevels[i];
-            float energyChange = Math.max(0, normalizedMagnitude - previousNormalized * 0.7f);
-            float transientBoost = 1.0f + energyChange * 0.3f; // 降低瞬态增强因子
-            
-            mTargetHeights[i] = Math.min(
-                (magnitude * getHeight() * weight * volumeLevel * transientBoost) / MAX_AMPLITUDE,
-                getHeight() * 0.95f); // 降低最大高度限制到80%
-            mAmplitudeLevels[i] = normalizedMagnitude;
-        }
-    }
-    startAnimation();
-}
-
-
-private void startAnimation() {
-    if(mAnimator != null) {
-        mAnimator.cancel();
-    }
-    
-    // 计算节奏能量
-    mRhythmEnergy = 0;
-    for(int i = 0; i < BAR_COUNT; i++) {
-        if(i >= BAR_COUNT/4 && i < BAR_COUNT*3/4) { // 只计算鼓声核心频段
-            float energyChange = Math.max(0, mAmplitudeLevels[i] - mPreviousAmplitudeLevels[i] * 0.7f);
-            mRhythmEnergy += energyChange;
-        }
-        mPreviousAmplitudeLevels[i] = mAmplitudeLevels[i];
-    }
-    
-    // 根据节奏能量调整动画速度
-    int animationDuration = ANIMATION_DURATION;
-    if(mRhythmEnergy > RHYTHM_THRESHOLD) {
-        // 检测到强节奏时加快动画
-        animationDuration = 50; // 50ms快速响应
-    }
-    
-    mAnimator = ValueAnimator.ofFloat(0f, 1f);
-    mAnimator.setDuration(animationDuration);
-    mAnimator.addUpdateListener(animation -> {
-        float fraction = animation.getAnimatedFraction();
+        // 修改采样策略：前1/3柱子重点采样低频，后2/3均匀采样中高频
         for(int i = 0; i < BAR_COUNT; i++) {
-            // 根据频段调整动画曲线
-            float animationFactor = 1.0f;
-            if(i >= BAR_COUNT/4 && i < BAR_COUNT*3/4) {
-                // 鼓声频段使用更快的动画曲线
-                animationFactor = 1.5f;
+            int barIndex;
+            if(i < BAR_COUNT / 3) {
+                // 低频段密集采样（每2点取1）
+                barIndex = 2 + i * 2;
+            } else {
+                // 中高频段间隔采样（每4点取1）
+                barIndex = 2 + (BAR_COUNT / 3) * 2 + (i - BAR_COUNT / 3) * 4;
             }
-            mBarHeights[i] += (mTargetHeights[i] - mBarHeights[i]) * fraction * animationFactor;
+            if(barIndex < fft.length - 1) {
+                byte rfk = fft[barIndex];
+                byte ifk = fft[barIndex + 1];
+                float magnitude = (rfk * rfk + ifk * ifk);
+                // xuameng改进的频率加权策略（三段式加权）
+                float weight;
+                if(i < BAR_COUNT / 4) {
+                    weight = 1.0f; //xuameng 超低频段(0-200Hz)增益
+                } else if(i < BAR_COUNT / 2) {
+                    weight = 2.5f; //xuameng 中低频段(200-800Hz)基准值增益
+                } else {
+                    float freqFactor = (float) Math.pow(1.5, (i - BAR_COUNT / 2) / 2.0); //xuameng 高频段(800Hz+)指数增强
+                    weight = 3.5f * freqFactor;
+                }
+                mTargetHeights[i] = Math.min(
+                    (magnitude * getHeight() * weight * volumeLevel) / MAX_AMPLITUDE, //xuameng判断音量大小
+                    getHeight() * 0.95f);
+                mAmplitudeLevels[i] = Math.min(magnitude / MAX_AMPLITUDE, 1.0f);
+            }
         }
-        postInvalidate();
-    });
-    mAnimator.start();
-}
-
+        startAnimation();
+    }
+    private void startAnimation() {
+        if(mAnimator != null) {
+            mAnimator.cancel();
+        }
+        mAnimator = ValueAnimator.ofFloat(0f, 1f);
+        mAnimator.setDuration(ANIMATION_DURATION);
+        mAnimator.addUpdateListener(animation -> {
+            float fraction = animation.getAnimatedFraction();
+            for(int i = 0; i < BAR_COUNT; i++) {
+                mBarHeights[i] += (mTargetHeights[i] - mBarHeights[i]) * fraction;
+            }
+            postInvalidate();
+        });
+        mAnimator.start();
+    }
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
@@ -244,26 +198,17 @@ private void startAnimation() {
 
     根据振幅强度计算渐变颜色
     */
-private int getDynamicColor(float amplitude, int[] currentScheme) {
-    amplitude = Math.max(0.0f, Math.min(1.0f, amplitude));
-    
-    // 根据节奏能量调整颜色响应
-    float adjustedAmplitude = amplitude;
-    if(mRhythmEnergy > RHYTHM_THRESHOLD) {
-        // 强节奏时增强颜色变化
-        adjustedAmplitude = Math.min(1.0f, amplitude * 1.3f);
+    private int getDynamicColor(float amplitude, int[] currentScheme) {
+        amplitude = Math.max(0.0f, Math.min(1.0f, amplitude)); // 确保振幅在有效范围内
+        if(amplitude < 0.3f) {
+            return interpolateColor(amplitude / 0.3f, currentScheme[0], currentScheme[1]);
+        } else {
+            return interpolateColor((amplitude - 0.3f) / 0.7f, currentScheme[1], currentScheme[2]);
+        }
     }
-    
-    if(adjustedAmplitude < 0.3f) {
-        return interpolateColor(adjustedAmplitude / 0.3f, currentScheme[0], currentScheme[1]);
-    } else {
-        return interpolateColor((adjustedAmplitude - 0.3f) / 0.7f, currentScheme[1], currentScheme[2]);
-    }
-}
+    /**
 
-
-    /**颜色插值计算
-
+    颜色插值计算
     */
     private int interpolateColor(float ratio, int startColor, int endColor) {
         int alpha = (int)(Color.alpha(startColor) + (Color.alpha(endColor) - Color.alpha(startColor)) * ratio);
@@ -272,17 +217,14 @@ private int getDynamicColor(float amplitude, int[] currentScheme) {
         int blue = (int)(Color.blue(startColor) + (Color.blue(endColor) - Color.blue(startColor)) * ratio);
         return Color.argb(alpha, red, green, blue);
     }
-public void reset() {
-    for(int i = 0; i < BAR_COUNT; i++) {
-        mBarHeights[i] = 0;
-        mTargetHeights[i] = 0;
-        mAmplitudeLevels[i] = 0;
-        mPreviousAmplitudeLevels[i] = 0;
+    public void reset() {
+        for(int i = 0; i < BAR_COUNT; i++) {
+            mBarHeights[i] = 0;
+            mTargetHeights[i] = 0;
+            mAmplitudeLevels[i] = 0;
+        }
+        postInvalidate();
     }
-    mRhythmEnergy = 0;
-    postInvalidate();
-}
-
     public void release() {
         if(mAnimator != null) {
             mAnimator.cancel();
