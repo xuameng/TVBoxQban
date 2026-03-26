@@ -122,25 +122,27 @@ public void updateVisualizer(byte[] fft, float volumeLevel) {
                 weight = 1.0f; // 超低频段(0-300Hz)增益
             } else if(i < BAR_COUNT * 3 / 4) {
                 // 鼓声核心频段(300Hz-3kHz)增强响应
-                weight = 4.0f; // 显著增强中频段
+                weight = 2.5f; // 调整为2.5f，避免过度放大
             } else {
-                float freqFactor = (float) Math.pow(1.8, (i - BAR_COUNT * 3 / 4) / 2.0); // 提高指数因子
-                weight = 3.0f * freqFactor;
+                float freqFactor = (float) Math.pow(1.5, (i - BAR_COUNT * 3 / 4) / 2.0); // 降低指数因子
+                weight = 2.0f * freqFactor; // 降低基础权重
             }
             
-            // 添加瞬态能量检测（增强节奏感）
-            float previousEnergy = mAmplitudeLevels[i];
-            float energyChange = Math.max(0, magnitude - previousEnergy * 0.7f);
-            float transientBoost = 1.0f + energyChange * 0.5f; // 瞬态增强因子
+            // 修复瞬态能量检测（使用归一化值）
+            float normalizedMagnitude = Math.min(magnitude / MAX_AMPLITUDE, 1.0f);
+            float previousNormalized = mAmplitudeLevels[i];
+            float energyChange = Math.max(0, normalizedMagnitude - previousNormalized * 0.7f);
+            float transientBoost = 1.0f + energyChange * 0.3f; // 降低瞬态增强因子
             
             mTargetHeights[i] = Math.min(
                 (magnitude * getHeight() * weight * volumeLevel * transientBoost) / MAX_AMPLITUDE,
-                getHeight() * 0.95f);
-            mAmplitudeLevels[i] = Math.min(magnitude / MAX_AMPLITUDE, 1.0f);
+                getHeight() * 0.95f); // 降低最大高度限制到80%
+            mAmplitudeLevels[i] = normalizedMagnitude;
         }
     }
     startAnimation();
 }
+
 
 private void startAnimation() {
     if(mAnimator != null) {
