@@ -764,29 +764,49 @@ public class SearchActivity extends BaseActivity {
     }
 
     public void showHotSearchtext() {          //xuameng 热搜
-        OkGo.<String>get("https://node.video.qq.com/x/api/hot_search")
-                .params("channdlId", "0")
-                .params("_", System.currentTimeMillis())
-                .execute(new AbsCallback<String>() {
-                    @Override
-                    public void onSuccess(Response<String> response) {
-                        try {
-//xuameng已声明类成员变量                            ArrayList<String> hots = new ArrayList<>();
-                            JsonArray itemList = JsonParser.parseString(response.body()).getAsJsonObject().get("data").getAsJsonObject().get("mapResult").getAsJsonObject().get("0").getAsJsonObject().get("listInfo").getAsJsonArray();
-                            for (JsonElement ele : itemList) {
-                                JsonObject obj = (JsonObject) ele;
-                                hots.add(obj.get("title").getAsString().trim().replaceAll("<|>|《|》|-", "").split(" ")[0]);
-                            }
-							wordAdapter.setNewData(hots);   
-                        } catch (Throwable th) {
-                            th.printStackTrace();
-                        }
+OkGo.<String>get("https://api.web.360kan.com/v1/rank?cat=1")
+    .headers(HttpHeaders.REFERER, "https://www.360kan.com/rank/general")
+    .execute(new AbsCallback<String>() {
+        @Override
+        public void onSuccess(Response<String> response) {
+            try {
+                String result = response.body();
+                if (TextUtils.isEmpty(result)) return;
+                
+                hots.clear();
+                JsonObject jsonObject = JsonParser.parseString(result).getAsJsonObject();
+                JsonArray dataArray = jsonObject.getAsJsonArray("data");
+                
+                if (dataArray != null) {
+                    for (JsonElement element : dataArray) {
+                        JsonObject item = element.getAsJsonObject();
+                        String title = item.get("title").getAsString().trim();
+                        hots.add(title);
                     }
+                }
+                
+                wordAdapter.setNewData(hots);
+                
+            } catch (Throwable th) {
+                th.printStackTrace();
+            }
+        }
 
-                    @Override
-                    public String convertResponse(okhttp3.Response response) throws Throwable {
-                        return response.body().string();
-                    }
-                });
+        @Override
+        public void onError(Response<String> response) {
+            super.onError(response);
+            // 网络错误处理
+            Throwable exception = response.getException();
+            if (exception != null) {
+                exception.printStackTrace();
+            }
+        }
+
+        @Override
+        public String convertResponse(okhttp3.Response response) throws Throwable {
+            return response.body().string();
+        }
+    });
+
 		} 
 }
