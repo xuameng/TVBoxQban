@@ -260,7 +260,8 @@ private int getDynamicColor(float amplitude, int[] currentScheme) {
 }
 
 
-    颜色插值计算
+    /**颜色插值计算
+
     */
     private int interpolateColor(float ratio, int startColor, int endColor) {
         int alpha = (int)(Color.alpha(startColor) + (Color.alpha(endColor) - Color.alpha(startColor)) * ratio);
