@@ -67,6 +67,7 @@ import com.google.gson.JsonParser; //热门搜索
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import com.google.common.net.HttpHeaders;
 
 import java.util.ArrayList;
 import java.util.HashMap;
