@@ -265,7 +265,11 @@ public class DetailActivity extends BaseActivity {
                 if (vodInfo != null && vodInfo.seriesMap.size() > 0) {
 
                     // xuameng检查当前选中的源是否是正在播放的源
-
+                    if (vodInfo.currentPlayFlag != null && !vodInfo.playFlag.equals(vodInfo.currentPlayFlag)) {
+                        // xuameng当前选中的源不是正在播放的源，禁止倒序操作
+                        App.showToastShort(DetailActivity.this, "倒叙操作只可在当前正在播放的节目所在的列表中操作");
+                        return;
+                    }
 
                     vodInfo.reverseSort = !vodInfo.reverseSort;
                     if (vodInfo.reverseSort){    //XUAMENG读取记录后显示BUG
@@ -276,11 +280,14 @@ public class DetailActivity extends BaseActivity {
 
                     vodInfo.reverse();
                     vodInfo.playIndex=(vodInfo.seriesMap.get(vodInfo.playFlag).size()-1)-vodInfo.playIndex;
-                    vodInfo.currentPlayIndex=(vodInfo.seriesMap.get(vodInfo.currentPlayFlag).size()-1)-vodInfo.currentPlayIndex;
-
 			   
                     setSeriesGroupOptions();
                     seriesAdapter.notifyDataSetChanged();
+                    // xuameng检查当前选中的源是否是正在播放的源
+                    if (vodInfo.currentPlayFlag != null && !vodInfo.playFlag.equals(vodInfo.currentPlayFlag)) {
+                        vodInfo.currentPlayIndex=(vodInfo.seriesMap.get(vodInfo.currentPlayFlag).size()-1)-vodInfo.currentPlayIndex;
+                        return;
+                    }
                     isReverseXu();
                 }
             }
@@ -729,8 +736,10 @@ public class DetailActivity extends BaseActivity {
 
     private void isReverseXu() {       //xuameng 解决倒叙剧集播放错误问题
         if (vodInfo != null && vodInfo.seriesMap.get(vodInfo.playFlag).size() > 0) {
-            preFlag = vodInfo.currentPlayFlag;
+            preFlag = vodInfo.playFlag;
             // 新增：记录当前播放的源和剧集索引
+            vodInfo.currentPlayFlag = vodInfo.playFlag;
+            vodInfo.currentPlayIndex = vodInfo.playIndex;
             Bundle bundle = new Bundle();
             //保存历史 - 关键修改：使用当前播放的源进行保存
          //   String saveSourceKey = vodInfo.currentPlayFlag != null ? vodInfo.currentPlayFlag : sourceKey;
