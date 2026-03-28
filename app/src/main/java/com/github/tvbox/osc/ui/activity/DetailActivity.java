@@ -264,6 +264,13 @@ public class DetailActivity extends BaseActivity {
             public void onClick(View v) {
                 if (vodInfo != null && vodInfo.seriesMap.size() > 0) {
 
+                    // xuameng检查当前选中的源是否是正在播放的源
+                    if (vodInfo.currentPlayFlag != null && !vodInfo.playFlag.equals(vodInfo.currentPlayFlag)) {
+                        // xuameng当前选中的源不是正在播放的源，禁止倒序操作
+                        App.showToastShort(DetailActivity.this, "倒叙操作只可在当前正在播放的节目所在的列表中操作");
+                        return;
+                    }
+
                     vodInfo.reverseSort = !vodInfo.reverseSort;
                     if (vodInfo.reverseSort){    //XUAMENG读取记录后显示BUG
                         tvSort.setText("正序");
@@ -276,11 +283,6 @@ public class DetailActivity extends BaseActivity {
 			   
                     setSeriesGroupOptions();
                     seriesAdapter.notifyDataSetChanged();
-                    // xuameng检查当前选中的源是否是正在播放的源
-                    if (vodInfo.currentPlayFlag != null && !vodInfo.playFlag.equals(vodInfo.currentPlayFlag)) {
-                        vodInfo.currentPlayIndex=(vodInfo.seriesMap.get(vodInfo.currentPlayFlag).size()-1)-vodInfo.currentPlayIndex;
-                        return;
-                    }
                     isReverseXu();
                 }
             }
