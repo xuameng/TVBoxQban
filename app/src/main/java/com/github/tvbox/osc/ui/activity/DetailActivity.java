@@ -1515,7 +1515,7 @@ public class DetailActivity extends BaseActivity {
         if (!fullWindows) {
             subtitleTextSize *= 0.6;
         }else{
-            EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_PAUSE_VOD, ""));
+            EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_PAUSE_VOD, ""));   //xuameng 全屏时如果是暂停状态就显示暂停图标
         }
         EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_SUBTITLE_SIZE_CHANGE, subtitleTextSize));
     }
