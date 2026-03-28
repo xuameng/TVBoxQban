@@ -20,23 +20,13 @@ xuameng
 public class MusicVisualizerView extends View {
     private static final int MAX_AMPLITUDE = 6222;
     private static final int BAR_COUNT = 22;
-    private static final int ANIMATION_DURATION = 50;
+    private static final int ANIMATION_DURATION = 30;
     // 改为非静态变量实现动态刷新
     private int[][] colorSchemes = new int[3][3];
     // 新增音柱分段效果相关变量
     private boolean mShowStripes = true; // 是否显示分段效果
     private int mSegmentCount = 20; // 每个音柱的分段数
     private float mSegmentSpacingFixed = 2.5f; // 段间距固定值（像素）
-
-// 节奏检测相关变量
-private float mPreviousEnergy = 0f;
-private float mEnergyThreshold = 1.25f; // 能量增长阈值
-private boolean mBeatDetected = false;
-private long mLastBeatTime = 0;
-private static final long BEAT_COOLDOWN = 50; // 节拍冷却时间（毫秒）
-// 节奏敏感度设置
-private float mSensitivity = 1.5f; // 默认敏感度
-
     // 新增颜色方案刷新方法
     private void refreshColorSchemes() {
         for(int i = 0; i < 3; i++) {
@@ -96,146 +86,104 @@ private float mSensitivity = 1.5f; // 默认敏感度
         mSegmentSpacingFixed = Math.max(0f, spacing); // 确保非负值
         postInvalidate();
     }
-public void updateVisualizer(byte[] fft, float volumeLevel) {
-    if(fft == null || fft.length < BAR_COUNT * 2 + 2) return;
-    if(volumeLevel == 0f || volumeLevel == 0.0f || volumeLevel == 0.00f) {
-        reset(); //xuameng处理静音状态重置音柱
-    }
-    
-    // 新增：节奏检测变量
-    float currentEnergy = 0f;
-    
-    // 修改采样策略：前1/3柱子重点采样低频，后2/3均匀采样中高频
-    for(int i = 0; i < BAR_COUNT; i++) {
-        int barIndex;
-        if(i < BAR_COUNT / 3) {
-            // 低频段密集采样（每2点取1）
-            barIndex = 2 + i * 2;
-        } else {
-            // 中高频段间隔采样（每4点取1）
-            barIndex = 2 + (BAR_COUNT / 3) * 2 + (i - BAR_COUNT / 3) * 4;
+    public void updateVisualizer(byte[] fft, float volumeLevel) {
+        if(fft == null || fft.length < BAR_COUNT * 2 + 2) return;
+        if(volumeLevel == 0f || volumeLevel == 0.0f || volumeLevel == 0.00f) {
+            reset(); //xuameng处理静音状态重置音柱
         }
-        
-        if(barIndex < fft.length - 1) {
-            byte rfk = fft[barIndex];
-            byte ifk = fft[barIndex + 1];
-            float magnitude = (rfk * rfk + ifk * ifk);
-            
-            // 增强低频响应：调整加权策略
-            float weight;
-            if(i < BAR_COUNT / 3) {  // 增加低频段范围
-                weight = 1.8f; // 提高低频增益
-            } else if(i < BAR_COUNT * 2 / 3) {
-                weight = 2.5f; // 中频段基准值
-            } else {
-                float freqFactor = (float) Math.pow(1.3, (i - BAR_COUNT * 2 / 3) / 2.0);
-                weight = 3.0f * freqFactor; // 适当降低高频权重
-            }
-            
-            // 应用非线性响应曲线，增强小音量变化
-            float responsiveVolume = (float) Math.pow(volumeLevel, 1.3);
-            
-            mTargetHeights[i] = Math.min(
-                (magnitude * getHeight() * weight * responsiveVolume) / MAX_AMPLITUDE,
-                getHeight() * 0.95f);
-            mAmplitudeLevels[i] = Math.min(magnitude / MAX_AMPLITUDE, 1.0f);
-            
-            // 累计能量用于节奏检测
-            currentEnergy += mAmplitudeLevels[i];
-        }
-    }
-    
-    // 新增：节奏检测逻辑
-    detectBeat(currentEnergy);
-    
-    startAnimation();
-}
-
-private void startAnimation() {
-    if(mAnimator != null) {
-        mAnimator.cancel();
-    }
-    
-    // 节拍检测时使用更快的动画
-    int duration = mBeatDetected ? ANIMATION_DURATION / 2 : ANIMATION_DURATION;
-    
-    mAnimator = ValueAnimator.ofFloat(0f, 1f);
-    mAnimator.setDuration(duration);
-    mAnimator.addUpdateListener(animation -> {
-        float fraction = animation.getAnimatedFraction();
-        
-        // 节拍检测时使用更激进的插值
-        float animationFactor = mBeatDetected ? 1.5f : 1.0f;
-        
+        // 修改采样策略：前1/3柱子重点采样低频，后2/3均匀采样中高频
         for(int i = 0; i < BAR_COUNT; i++) {
-            float targetFraction = fraction * animationFactor;
-            if (targetFraction > 1.0f) targetFraction = 1.0f;
-            
-            mBarHeights[i] += (mTargetHeights[i] - mBarHeights[i]) * targetFraction;
+            int barIndex;
+            if(i < BAR_COUNT / 3) {
+                // 低频段密集采样（每2点取1）
+                barIndex = 2 + i * 2;
+            } else {
+                // 中高频段间隔采样（每4点取1）
+                barIndex = 2 + (BAR_COUNT / 3) * 2 + (i - BAR_COUNT / 3) * 4;
+            }
+            if(barIndex < fft.length - 1) {
+                byte rfk = fft[barIndex];
+                byte ifk = fft[barIndex + 1];
+                float magnitude = (rfk * rfk + ifk * ifk);
+                // xuameng改进的频率加权策略（三段式加权）
+                float weight;
+                if(i < BAR_COUNT / 3) {
+                    weight = 1.0f; //xuameng 超低频段(0-200Hz)增益
+                } else if(i < BAR_COUNT / 2) {
+                    weight = 3.5f; //xuameng 中低频段(200-800Hz)基准值增益
+                } else {
+                    float freqFactor = (float) Math.pow(1.5, (i - BAR_COUNT / 2) / 2.0); //xuameng 高频段(800Hz+)指数增强
+                    weight = 5.5f * freqFactor;
+                }
+                mTargetHeights[i] = Math.min(
+                    (magnitude * getHeight() * weight * volumeLevel) / MAX_AMPLITUDE, //xuameng判断音量大小
+                    getHeight() * 0.95f);
+                mAmplitudeLevels[i] = Math.min(magnitude / MAX_AMPLITUDE, 1.0f);
+            }
         }
-        postInvalidate();
-    });
-    mAnimator.start();
-}
-
+        startAnimation();
+    }
+    private void startAnimation() {
+        if(mAnimator != null) {
+            mAnimator.cancel();
+        }
+        mAnimator = ValueAnimator.ofFloat(0f, 1f);
+        mAnimator.setDuration(ANIMATION_DURATION);
+        mAnimator.addUpdateListener(animation -> {
+            float fraction = animation.getAnimatedFraction();
+            for(int i = 0; i < BAR_COUNT; i++) {
+                mBarHeights[i] += (mTargetHeights[i] - mBarHeights[i]) * fraction;
+            }
+            postInvalidate();
+        });
+        mAnimator.start();
+    }
     @Override
-protected void onDraw(Canvas canvas) {
-    super.onDraw(canvas);
-    if(mBarHeights == null) return;
-    
-    // 检查是否需要切换颜色方案
-    checkColorCycleSwitch();
-    
-    final int width = getWidth();
-    final int height = getHeight();
-    final float barWidth = width / (float) BAR_COUNT;
-    final float gap = barWidth * 0.2f;
-    final float barUnitWidth = barWidth - gap;
-    
-    // 新增：节拍检测时的全局亮度增强
-    float globalBrightness = mBeatDetected ? 1.2f : 1.0f;
-    
-    final float MIN_HEIGHT_FOR_STRIPES = 20f;
-    
-    for(int i = 0; i < BAR_COUNT; i++) {
-        float left = i * barWidth + gap / 2;
-        float right = left + barUnitWidth;
-        float barHeight = Math.min(mBarHeights[i], height * 0.9f);
-        float top = height - barHeight;
-        
-        // 根据当前颜色方案和振幅强度计算颜色
-        int color = getDynamicColor(mAmplitudeLevels[i], colorSchemes[currentSchemeIndex]);
-        
-        // 应用节拍亮度增强
-        if (mBeatDetected && i < BAR_COUNT / 3) {
-            color = adjustColorBrightness(color, globalBrightness);
-        }
-        
-        mBarPaint.setColor(color);
-        
-        // 分段绘制音柱（实现"一段一段"效果）
-        if(mShowStripes && barHeight >= MIN_HEIGHT_FOR_STRIPES) {
-            // ... 原有分段绘制逻辑保持不变
-        } else {
-            canvas.drawRect(left, top, right, height, mBarPaint);
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+        if(mBarHeights == null) return;
+        // 检查是否需要切换颜色方案
+        checkColorCycleSwitch();
+        final int width = getWidth();
+        final int height = getHeight();
+        final float barWidth = width / (float) BAR_COUNT;
+        final float gap = barWidth * 0.2f;
+        final float barUnitWidth = barWidth - gap;
+        // 新增：定义分段效果的最小高度阈值（例如4像素）
+        final float MIN_HEIGHT_FOR_STRIPES = 20f;
+        for(int i = 0; i < BAR_COUNT; i++) {
+            float left = i * barWidth + gap / 2;
+            float right = left + barUnitWidth;
+            float barHeight = Math.min(mBarHeights[i], height * 0.9f);
+            float top = height - barHeight;
+            // 根据当前颜色方案和振幅强度计算颜色
+            int color = getDynamicColor(mAmplitudeLevels[i], colorSchemes[currentSchemeIndex]);
+            mBarPaint.setColor(color);
+            // 分段绘制音柱（实现"一段一段"效果）
+            // 修改点：分段绘制音柱（仅当音柱高度达到最小阈值时才显示分段效果）
+            if(mShowStripes && barHeight >= MIN_HEIGHT_FOR_STRIPES) {
+                // 动态计算实际能显示的分段数量
+                float segmentHeightWithSpacing = mSegmentSpacingFixed * 2; // 每段高度+间距
+                int actualSegmentCount = (int)(barHeight / segmentHeightWithSpacing);
+                actualSegmentCount = Math.min(actualSegmentCount, mSegmentCount);
+                actualSegmentCount = Math.max(1, actualSegmentCount); // 至少显示1段
+                // 计算实际段高度（考虑固定间距）
+                float actualSegmentHeight = (barHeight - (actualSegmentCount - 1) * mSegmentSpacingFixed) / actualSegmentCount;
+                // 从下往上绘制各个段
+                for(int segment = 0; segment < actualSegmentCount; segment++) {
+                    float segmentTop = height - (segment + 1) * (actualSegmentHeight + mSegmentSpacingFixed);
+                    float segmentBottom = segmentTop + actualSegmentHeight;
+                    // 确保段在音柱范围内
+                    if(segmentTop >= top) {
+                        canvas.drawRect(left, segmentTop, right, segmentBottom, mBarPaint);
+                    }
+                }
+            } else {
+                // 如果不显示分段效果，绘制完整音柱
+                canvas.drawRect(left, top, right, height, mBarPaint);
+            }
         }
     }
-    
-    // 重置节拍标志
-    if (mBeatDetected) {
-        mBeatDetected = false;
-    }
-}
-
-/**
- * 调整颜色亮度
- */
-private int adjustColorBrightness(int color, float factor) {
-    float[] hsv = new float[3];
-    Color.colorToHSV(color, hsv);
-    hsv[2] = Math.min(hsv[2] * factor, 1.0f); // 调整亮度
-    return Color.HSVToColor(hsv);
-}
     // 修改调用方式
     private void checkColorCycleSwitch() {
         long now = System.currentTimeMillis();
@@ -250,26 +198,14 @@ private int adjustColorBrightness(int color, float factor) {
 
     根据振幅强度计算渐变颜色
     */
-private int getDynamicColor(float amplitude, int[] currentScheme) {
-    amplitude = Math.max(0.0f, Math.min(1.0f, amplitude));
-    
-    // 节拍检测时使用更鲜艳的颜色
-    if (mBeatDetected && amplitude > 0.2f) {
-        // 节拍时直接使用最亮色
-        return currentScheme[2];
+    private int getDynamicColor(float amplitude, int[] currentScheme) {
+        amplitude = Math.max(0.0f, Math.min(1.0f, amplitude)); // 确保振幅在有效范围内
+        if(amplitude < 0.3f) {
+            return interpolateColor(amplitude / 0.3f, currentScheme[0], currentScheme[1]);
+        } else {
+            return interpolateColor((amplitude - 0.3f) / 0.7f, currentScheme[1], currentScheme[2]);
+        }
     }
-    
-    // 增强颜色响应曲线
-    if(amplitude < 0.2f) {
-        return interpolateColor(amplitude / 0.2f, currentScheme[0], currentScheme[1]);
-    } else if(amplitude < 0.6f) {
-        return interpolateColor((amplitude - 0.2f) / 0.4f, currentScheme[1], currentScheme[2]);
-    } else {
-        // 高振幅时使用饱和色
-        return currentScheme[2];
-    }
-}
-
     /**
 
     颜色插值计算
@@ -296,56 +232,4 @@ private int getDynamicColor(float amplitude, int[] currentScheme) {
         }
         reset();
     }
-
-/**
- * 检测节拍点
- */
-private void detectBeat(float currentEnergy) {
-    long now = System.currentTimeMillis();
-    
-    // 防止过于频繁的节拍检测
-    if (now - mLastBeatTime < BEAT_COOLDOWN) {
-        return;
-    }
-    
-    // 检测能量突增
-    if (mPreviousEnergy > 0 && currentEnergy > mPreviousEnergy * mEnergyThreshold) {
-        mBeatDetected = true;
-        mLastBeatTime = now;
-        
-        // 触发节拍效果
-        applyBeatEffect();
-    } else {
-        mBeatDetected = false;
-    }
-    
-    mPreviousEnergy = currentEnergy;
-}
-
-/**
- * 应用节拍效果
- */
-private void applyBeatEffect() {
-    // 1. 随机增强几个柱子的高度
-    int beatCount = 3 + (int)(Math.random() * 3); // 3-5个柱子
-    for (int i = 0; i < beatCount; i++) {
-        int randomBar = (int)(Math.random() * BAR_COUNT);
-        // 优先选择低频段柱子
-        if (randomBar < BAR_COUNT / 3) {
-            mTargetHeights[randomBar] *= 1.8f; // 低频柱子增强80%
-        } else {
-            mTargetHeights[randomBar] *= 1.4f; // 其他柱子增强40%
-        }
-        // 确保不超过最大高度
-        mTargetHeights[randomBar] = Math.min(mTargetHeights[randomBar], getHeight() * 0.95f);
-    }
-    
-    // 2. 触发颜色切换（可选）
-    if (Math.random() > 0.7) { // 70%概率切换颜色
-        currentSchemeIndex = (currentSchemeIndex + 1) % colorSchemes.length;
-        refreshColorSchemes();
-    }
-}
-
-
 }
