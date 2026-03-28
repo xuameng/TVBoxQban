@@ -1938,6 +1938,28 @@ public class VodController extends BaseController {
         mPlayPauseTimexu.setVisibility(GONE); //xuameng隐藏上面时间
         mPlayTitle.setVisibility(GONE); //xuameng隐藏上面视频名称
     }
+
+    public void mPauseIngXu() {
+        mTvPausexu.setVisibility(VISIBLE);
+        ObjectAnimator animator8 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", 700, 0); //xuameng动画暂停菜单开始
+        animator8.setDuration(300); //xuameng动画暂停菜单
+        animator8.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                super.onAnimationStart(animation);
+                isPlaying = true; //xuameng动画开启
+            }
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                isPlaying = false; //xuameng动画开启
+            }
+        });
+        animator8.start(); //xuameng动画暂停菜单结束
+        mxuPlay.setVisibility(View.VISIBLE);
+        mxuPlay.setTextColor(Color.WHITE); //xuameng底部菜单显示播放颜色
+        mxuPlay.setText("播放"); //xuameng底部菜单显示播放
+    }
+
     @Override
     public boolean onKeyEvent(KeyEvent event) {
         myHandle.removeCallbacks(myRunnable);
