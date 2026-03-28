@@ -347,22 +347,5 @@ private void applyBeatEffect() {
     }
 }
 
-/**
- * 设置节奏敏感度
- * @param sensitivity 敏感度 (0.5-2.0)，值越大越敏感
- */
-public void setSensitivity(float sensitivity) {
-    mSensitivity = Math.max(0.5f, Math.min(2.0f, sensitivity));
-    // 根据敏感度调整阈值
-    mEnergyThreshold = 1.5f - (mSensitivity * 0.2f);
-}
-
-/**
- * 设置节拍冷却时间
- * @param cooldown 冷却时间（毫秒）
- */
-public void setBeatCooldown(long cooldown) {
-    BEAT_COOLDOWN = Math.max(50, Math.min(500, cooldown));
-}
 
 }
