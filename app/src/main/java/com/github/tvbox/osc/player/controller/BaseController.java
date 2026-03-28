@@ -166,6 +166,7 @@ public abstract class BaseController extends BaseVideoController implements Gest
                 break;
             case VideoView.STATE_PREPARED:
             case VideoView.STATE_ERROR:
+                mLoading.setVisibility(GONE);
             case VideoView.STATE_BUFFERED:
                 mLoading.setVisibility(GONE);
                 break;
