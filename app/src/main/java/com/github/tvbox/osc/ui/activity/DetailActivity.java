@@ -1514,6 +1514,8 @@ public class DetailActivity extends BaseActivity {
         int subtitleTextSize  = SubtitleHelper.getTextSize(this);
         if (!fullWindows) {
             subtitleTextSize *= 0.6;
+        }else{
+            EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_PAUSE_VOD, ""));
         }
         EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_SUBTITLE_SIZE_CHANGE, subtitleTextSize));
     }
