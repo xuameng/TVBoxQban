@@ -1939,7 +1939,10 @@ public class VodController extends BaseController {
         mPlayTitle.setVisibility(GONE); //xuameng隐藏上面视频名称
     }
 
-    public void mPauseIngXu() {
+    public void mPauseIngXu() {        //xuameng 全屏时如果是暂停状态就显示暂停图标
+		if(mControlWrapper.isPlaying() || mTvPausexu.getVisibility() == View.VISIBLE) {
+            return;
+        }
         mTvPausexu.setVisibility(VISIBLE);
         ObjectAnimator animator8 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", 700, 0); //xuameng动画暂停菜单开始
         animator8.setDuration(300); //xuameng动画暂停菜单
