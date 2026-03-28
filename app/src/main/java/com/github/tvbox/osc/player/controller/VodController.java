@@ -1770,6 +1770,7 @@ public class VodController extends BaseController {
                 if(customVisualizer.getVisibility() == View.VISIBLE) { //xuameng播放音乐柱状图
                     customVisualizer.setVisibility(GONE);
                 }
+                mPlayLoadNetSpeed.setVisibility(View.GONE);
                 releaseVisualizer();  //xuameng播放音乐背景
                 isVideoplaying = false;
                 isVideoPlay = false;
@@ -1784,6 +1785,7 @@ public class VodController extends BaseController {
                 isVideoplaying = true;
                 isVideoPlay = true;
                 isBufferIng = false; //xuameng 判断是否进在缓冲视频
+                mPlayLoadNetSpeed.setVisibility(GONE);
                 break;
             case VideoView.STATE_PAUSED:
                 isVideoPlay = false;
@@ -1801,6 +1803,7 @@ public class VodController extends BaseController {
                 listener.errReplay();
                 isVideoPlay = false;
                 mxuPlay.setText("准备");
+                mPlayLoadNetSpeed.setVisibility(View.GONE);
                 if(!isPlaying && mTvPausexu.getVisibility() == View.VISIBLE) {
                     ObjectAnimator animator31 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0, 700); //xuameng动画暂停菜单开始
                     animator31.setDuration(300); //xuameng动画暂停菜单
@@ -1820,7 +1823,6 @@ public class VodController extends BaseController {
                 }
                 break;
             case VideoView.STATE_PREPARED:
-                mPlayLoadNetSpeed.setVisibility(GONE);
                 hideLiveAboutBtn();
                 listener.prepared();
                 String width = Integer.toString(mControlWrapper.getVideoSize()[0]);
@@ -1867,6 +1869,7 @@ public class VodController extends BaseController {
                 listener.playNext(true);
                 isVideoPlay = false;
                 isBufferIng = false; //xuameng 判断是否进在缓冲视频
+                mPlayLoadNetSpeed.setVisibility(GONE);
                 clearSubtitleCache();
                 break;
         }
