@@ -148,6 +148,8 @@ public class PlayFragment extends BaseLazyFragment {
             mController.mSubtitleView.setTextSize((int) event.obj);
             mController.mLrcView.setNormalTextSize((int) event.obj);   //xuameng 设置LRC歌词 全屏非全屏状态同步
             mController.mLrcView.setHighlightTextSize((int) event.obj);  //xuameng 设置LRC歌词 全屏非全屏状态同步
+        }else if (event.type == RefreshEvent.TYPE_PAUSE_VOD) {
+            mController.mPauseIngXu();
         }
     }
 
