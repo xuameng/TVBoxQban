@@ -20,7 +20,7 @@ xuameng
 public class MusicVisualizerView extends View {
     private static final int MAX_AMPLITUDE = 6222;
     private static final int BAR_COUNT = 22;
-    private static final int ANIMATION_DURATION = 30;
+    private static final int ANIMATION_DURATION = 80;
     // 改为非静态变量实现动态刷新
     private int[][] colorSchemes = new int[3][3];
     // 新增音柱分段效果相关变量
@@ -107,13 +107,13 @@ public class MusicVisualizerView extends View {
                 float magnitude = (rfk * rfk + ifk * ifk);
                 // xuameng改进的频率加权策略（三段式加权）
                 float weight;
-                if(i < BAR_COUNT / 3) {
+                if(i < BAR_COUNT / 4) {
                     weight = 1.0f; //xuameng 超低频段(0-200Hz)增益
                 } else if(i < BAR_COUNT / 2) {
-                    weight = 3.5f; //xuameng 中低频段(200-800Hz)基准值增益
+                    weight = 2.5f; //xuameng 中低频段(200-800Hz)基准值增益
                 } else {
                     float freqFactor = (float) Math.pow(1.5, (i - BAR_COUNT / 2) / 2.0); //xuameng 高频段(800Hz+)指数增强
-                    weight = 5.5f * freqFactor;
+                    weight = 3.5f * freqFactor;
                 }
                 mTargetHeights[i] = Math.min(
                     (magnitude * getHeight() * weight * volumeLevel) / MAX_AMPLITUDE, //xuameng判断音量大小
