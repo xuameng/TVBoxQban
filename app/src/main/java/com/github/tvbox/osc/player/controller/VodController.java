@@ -120,10 +120,23 @@ public class VodController extends BaseController {
                         if(mProgressRoot.getVisibility() == View.VISIBLE) { //xuameng进程图标
                             mProgressRoot.setVisibility(GONE);
                         }
+        try {
+	    int playerType = mPlayerConfig.getInt("pl");   //xuameng播放器选择
+if (playerType == 0){
+    if (isSystemPlayerBufferIng){
+                            XuLoading.setVisibility(View.VISIBLE);
+                            mPlayLoadNetSpeed.setVisibility(View.VISIBLE);
+    }
+}else{
                         if (isBufferIng){  //xuameng 修复缓存图标不显示
                             XuLoading.setVisibility(View.VISIBLE);
                             mPlayLoadNetSpeed.setVisibility(View.VISIBLE);
                         }
+}
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
                         break;
                     }
                     case 1005: { // 隐藏底部菜单Xu
@@ -372,6 +385,7 @@ public class VodController extends BaseController {
     private boolean isLongClick = false; //xuameng判断长按
     private boolean mSeekBarhasFocus = false; //xuameng seekbar是否拥有焦点
     private boolean isBufferIng = false; //xuameng 判断是否进在缓冲视频
+    private boolean isSystemPlayerBufferIng = false; //xuameng 判断系统播放器是否进在缓冲视频
     private Visualizer mVisualizer;  //xuameng音乐播放动画
     private MusicVisualizerView customVisualizer; //xuameng播放音乐柱状图
     private int audioSessionId = -1; // 使用-1表示未初始化状态 //xuameng音乐播放动画
@@ -1731,6 +1745,7 @@ public class VodController extends BaseController {
                 isVideoplaying = false;
                 isVideoPlay = false;
                 isBufferIng = false; //xuameng 判断是否进在缓冲视频
+                isSystemPlayerBufferIng = false;  //xuameng 判断系统播放器是否进在缓冲视频
                 mxuPlay.setText("准备");
                 mVideoSize.setText("[ 0 X 0 ]");
                 releaseVisualizer();  //xuameng播放音乐背景
@@ -1741,6 +1756,7 @@ public class VodController extends BaseController {
                 isVideoplaying = true;
                 isVideoPlay = true;
                 //isBufferIng = false; //xuameng 判断是否进在缓冲视频
+                isSystemPlayerBufferIng = false;  //xuameng 判断系统播放器是否进在缓冲视频
                 mxuPlay.setText("暂停"); //xuameng底部菜单显示暂停
                 initLandscapePortraitBtnInfo();
                 listener.hideTipXu(); //xuameng 只要播放就隐藏错误信息
@@ -1755,15 +1771,16 @@ XuLoading.setVisibility(GONE);
             case VideoView.STATE_PAUSED:
                 isVideoPlay = false;
                 mxuPlay.setText("播放"); //xuameng底部菜单显示播放
+                isSystemPlayerBufferIng = false;  //xuameng 判断系统播放器是否进在缓冲视频
+if (videoPlayState == 0){
+mPlayLoadNetSpeed.setVisibility(View.GONE);
+XuLoading.setVisibility(GONE);
+}
                 //isBufferIng = false; //xuameng 判断是否进在缓冲视频
                 //mTopRoot1.setVisibility(GONE);       //xuameng隐藏上面菜单
                 //mTopRoot2.setVisibility(GONE);       //xuameng隐藏上面菜单
                 //mPlayTitle.setVisibility(VISIBLE);   //xuameng显示上面菜单
                 //pauseIngXu();
-if (videoPlayState == 0){
-mPlayLoadNetSpeed.setVisibility(View.GONE);
-XuLoading.setVisibility(GONE);
-}
                 break;
             case VideoView.STATE_ERROR:
                 mPlayLoadNetSpeed.setVisibility(View.GONE);
@@ -1799,6 +1816,7 @@ XuLoading.setVisibility(GONE);
                 mPlayLoadNetSpeed.setVisibility(View.GONE);
                 isVideoPlay = true;
                 isBufferIng = false; //xuameng 判断是否进在缓冲视频
+                isSystemPlayerBufferIng = false;  //xuameng 判断系统播放器是否进在缓冲视频
                 break;
             case VideoView.STATE_PREPARING:
                 if(isBottomVisible() && mSeekBarhasFocus) { //xuameng假如焦点在SeekBar
@@ -1817,6 +1835,7 @@ XuLoading.setVisibility(GONE);
                 }
                 isVideoPlay = false;
                 isBufferIng = true; //xuameng 判断是否进在缓冲视频
+                isSystemPlayerBufferIng = true;  //xuameng 判断系统播放器是否进在缓冲视频
                 speedPlayEnd();  //xuameng 停止快进
                 break;
             case VideoView.STATE_PLAYBACK_COMPLETED:
@@ -1824,6 +1843,7 @@ XuLoading.setVisibility(GONE);
                 clearSubtitleCache();
                 isVideoPlay = false;
                 isBufferIng = false; //xuameng 判断是否进在缓冲视频
+                isSystemPlayerBufferIng = false;  //xuameng 判断系统播放器是否进在缓冲视频
                 listener.playNext(true);
                 break;
         }
