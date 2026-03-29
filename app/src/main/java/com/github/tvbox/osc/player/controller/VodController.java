@@ -353,6 +353,7 @@ public class VodController extends BaseController {
     TextView mPlayanimation; //xuameng音柱动画
     private ImageView iv_circle_bg; //xuameng音乐播放时图标
     private FrameLayout play_speed_3; //xuameng倍速播放
+    private FrameLayout mPauseContainer; //xuameng mPlayTitle的父级
     private TextView tv_slide_progress_text;  //xuameng 旧的亮度调节框已作废
     ImageView MxuamengMusic; //xuameng播放音乐背景
     private ProgressBar XuLoading; //xuameng  loading
@@ -571,6 +572,7 @@ public class VodController extends BaseController {
         mCurrentTime = findViewById(R.id.curr_time);
         mTotalTime = findViewById(R.id.total_time);
         mPlayTitle = findViewById(R.id.tv_info_name);
+        mPauseContainer = findViewById(R.id.tv_pause_container);  //xuameng mPlayTitle 的父级
         mPlayTitle1 = findViewById(R.id.tv_info_name1);
         mPlayLoadNetSpeedRightTop = findViewById(R.id.tv_play_load_net_speed_right_top);
         mPlayTimeEnd = findViewById(R.id.play_time_end_xu); //xuameng影片结束时间
@@ -1908,6 +1910,8 @@ public class VodController extends BaseController {
 		if(isInPlaybackState()){
             if (!mControlWrapper.isPlaying() && mTvPausexu.getVisibility() == View.GONE){
                 mTvPausexu.setVisibility(VISIBLE);
+                mPlayTitle.setVisibility(VISIBLE);
+                mPlayPauseTimexu.setVisibility(VISIBLE);
                 mxuPlay.setVisibility(View.VISIBLE);
                 mxuPlay.setTextColor(Color.WHITE); //xuameng底部菜单显示播放颜色
                 mxuPlay.setText("播放"); //xuameng底部菜单显示播放
@@ -1944,6 +1948,7 @@ public class VodController extends BaseController {
         @Override
         public void run() {
             mTvPausexu.requestLayout();
+            mPauseContainer.requestLayout();
         }
     };
 
