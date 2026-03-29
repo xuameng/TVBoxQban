@@ -431,8 +431,6 @@ public class VodController extends BaseController {
             String height = Integer.toString(mControlWrapper.getVideoSize()[1]);
             if(isInPlaybackState()) { //xuameng 重新选择解析视频大小不刷新
                 mVideoSize.setText("[ " + width + " X " + height + " ]");
-            }else{
-                return;
             }
             if(mControlWrapper.isPlaying()) { //xuameng音乐播放时图标判断
                 if(!mIsDragging) {
