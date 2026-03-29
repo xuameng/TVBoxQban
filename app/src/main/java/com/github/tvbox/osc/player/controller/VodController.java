@@ -1745,6 +1745,12 @@ public class VodController extends BaseController {
                 initLandscapePortraitBtnInfo();
                 listener.hideTipXu(); //xuameng 只要播放就隐藏错误信息
                 startProgress();
+int playerType = mPlayerConfig.getInt("pl");
+if (playerType == 0){
+mPlayLoadNetSpeed.setVisibility(View.GONE);
+XuLoading.setVisibility(GONE);
+}
+
                 break;
             case VideoView.STATE_PAUSED:
                 isVideoPlay = false;
@@ -1754,6 +1760,11 @@ public class VodController extends BaseController {
                 //mTopRoot2.setVisibility(GONE);       //xuameng隐藏上面菜单
                 //mPlayTitle.setVisibility(VISIBLE);   //xuameng显示上面菜单
                 //pauseIngXu();
+int playerType = mPlayerConfig.getInt("pl");
+if (playerType == 0){
+mPlayLoadNetSpeed.setVisibility(View.GONE);
+XuLoading.setVisibility(GONE);
+}
                 break;
             case VideoView.STATE_ERROR:
                 mPlayLoadNetSpeed.setVisibility(View.GONE);
