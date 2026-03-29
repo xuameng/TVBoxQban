@@ -420,20 +420,6 @@ public class VodController extends BaseController {
             String height = Integer.toString(mControlWrapper.getVideoSize()[1]);
             if(isInPlaybackState()) { //xuameng 重新选择解析视频大小不刷新
                 mVideoSize.setText("[ " + width + " X " + height + " ]");
-try {
-int playerType = mPlayerConfig.getInt("pl");
-if (playerType == 0){
-	if (isBufferIng){
-        mPlayLoadNetSpeed.setVisibility(View.VISIBLE);
-        XuLoading.setVisibility(View.VISIBLE);
-    }else{
-        mPlayLoadNetSpeed.setVisibility(View.GONE);
-        XuLoading.setVisibility(View.GONE);
-    }
-}
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
             }
             if(mControlWrapper.isPlaying()) { //xuameng音乐播放时图标判断
                 if(!mIsDragging) {
@@ -1759,6 +1745,12 @@ if (playerType == 0){
                 initLandscapePortraitBtnInfo();
                 listener.hideTipXu(); //xuameng 只要播放就隐藏错误信息
                 startProgress();
+
+if (videoPlayState == 0){
+mPlayLoadNetSpeed.setVisibility(View.GONE);
+XuLoading.setVisibility(GONE);
+}
+
                 break;
             case VideoView.STATE_PAUSED:
                 isVideoPlay = false;
@@ -1768,6 +1760,10 @@ if (playerType == 0){
                 //mTopRoot2.setVisibility(GONE);       //xuameng隐藏上面菜单
                 //mPlayTitle.setVisibility(VISIBLE);   //xuameng显示上面菜单
                 //pauseIngXu();
+if (videoPlayState == 0){
+mPlayLoadNetSpeed.setVisibility(View.GONE);
+XuLoading.setVisibility(GONE);
+}
                 break;
             case VideoView.STATE_ERROR:
                 mPlayLoadNetSpeed.setVisibility(View.GONE);
