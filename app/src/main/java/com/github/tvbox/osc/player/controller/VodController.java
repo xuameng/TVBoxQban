@@ -378,7 +378,6 @@ public class VodController extends BaseController {
     private boolean isPlaying = false; //xuameng判断暂停动画
     private boolean isAnimation = false; //xuameng判断隐藏菜单动画
     private boolean isDisplay = false; //xuameng判断显示菜单动画
-    private boolean isVideoplaying = false; //xuameng判断视频开始播放
     private boolean isVideoPlay = false; //xuameng判断视频开始播放
     private boolean isLongClick = false; //xuameng判断长按
     private boolean mSeekBarhasFocus = false; //xuameng seekbar是否拥有焦点
@@ -428,10 +427,12 @@ public class VodController extends BaseController {
     private Runnable myRunnableXu = new Runnable() {
         @Override
         public void run() {
-            String width = Integer.toString(mControlWrapper.getVideoSize()[0]);
-            String height = Integer.toString(mControlWrapper.getVideoSize()[1]);
             if(isInPlaybackState()) { //xuameng 重新选择解析视频大小不刷新
+                String width = Integer.toString(mControlWrapper.getVideoSize()[0]);
+                String height = Integer.toString(mControlWrapper.getVideoSize()[1]);
                 mVideoSize.setText("[ " + width + " X " + height + " ]");
+            }else{
+                return;
             }
             if(mControlWrapper.isPlaying()) { //xuameng音乐播放时图标判断
                 if(!mIsDragging) {
@@ -462,7 +463,7 @@ public class VodController extends BaseController {
                         MxuamengMusic.setVisibility(GONE);
                     }
                 } else {
-                    if(MxuamengMusic.getVisibility() == View.GONE && isVideoplaying) { //xuameng播放音乐背景
+                    if(MxuamengMusic.getVisibility() == View.GONE) { //xuameng播放音乐背景
                         MxuamengMusic.setVisibility(VISIBLE);
                     }
                     FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) iv_circle_bg.getLayoutParams(); //xuameng 新增给vod显示旋转图片用
@@ -478,10 +479,8 @@ public class VodController extends BaseController {
                         params.topMargin = margin;
                         params.leftMargin = margin;
 
-                        if(isVideoplaying) {
-                            loadVideoPic();    //xuameng 加载网络PIC图片
-                            iv_circle_bg.setVisibility(VISIBLE);
-                        }
+                        loadVideoPic();    //xuameng 加载网络PIC图片
+                        iv_circle_bg.setVisibility(VISIBLE);
                     }else {
                         // xuameng如果 mLrcView 不显示，则将 iv_circle_bg 置于屏幕中心
                         params.gravity = Gravity.CENTER;
@@ -499,10 +498,8 @@ public class VodController extends BaseController {
                                 iv_circle_bg.setVisibility(GONE);
                             }
                         } else {
-                            if(isVideoplaying) {
-                                loadVideoPic();  //xuameng 加载网络PIC图片
-                                iv_circle_bg.setVisibility(VISIBLE);
-                            }
+                            loadVideoPic();  //xuameng 加载网络PIC图片
+                            iv_circle_bg.setVisibility(VISIBLE);
                         }
                     }
                     iv_circle_bg.setLayoutParams(params);
@@ -1740,7 +1737,6 @@ public class VodController extends BaseController {
                 if(isBottomVisible() && mSeekBarhasFocus) { //xuameng假如焦点在SeekBar
                     mxuPlay.requestFocus(); //底部菜单默认焦点为播放
                 }
-                isVideoplaying = false;
                 isVideoPlay = false;
                 isBufferIng = false; //xuameng 判断是否进在缓冲视频
                 isSystemPlayerBufferIng = false;  //xuameng 判断系统播放器是否进在缓冲视频
@@ -1751,7 +1747,6 @@ public class VodController extends BaseController {
                 mHidePauseIng(); //xuameng 隐藏暂停图标
                 break;
             case VideoView.STATE_PLAYING:
-                isVideoplaying = true;
                 isVideoPlay = true;
                 isSystemPlayerBufferIng = false;  //xuameng 判断系统播放器是否进在缓冲视频
                 //isBufferIng = false; //xuameng 判断是否进在缓冲视频
@@ -1820,7 +1815,6 @@ public class VodController extends BaseController {
                 }
                 mLandscapePortraitBtn.setVisibility(View.GONE);
                 simSeekPosition = 0; //XUAMENG重要,换视频时重新记录进度
-                isVideoplaying = false;
                 isVideoPlay = false;
             case VideoView.STATE_BUFFERING:
 			    if(mProgressRoot.getVisibility() == View.GONE) { //xuameng进程图标
