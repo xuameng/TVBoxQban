@@ -1947,7 +1947,7 @@ public class VodController extends BaseController {
 
     public void mPauseIngXu() {        //xuameng 全屏时如果是暂停状态就显示暂停图标
 		if(isInPlaybackState()){
-            if (!mControlWrapper.isPlaying() && mTvPausexu.getVisibility() == View.GONE)){
+            if (!mControlWrapper.isPlaying() && mTvPausexu.getVisibility() == View.GONE){
                 mTvPausexu.setVisibility(VISIBLE);
                 ObjectAnimator animator8 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", 700, 0); //xuameng动画暂停菜单开始
                 animator8.setDuration(300); //xuameng动画暂停菜单
