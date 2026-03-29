@@ -1766,6 +1766,7 @@ public class VodController extends BaseController {
                 mHidePauseIng(); //xuameng 隐藏暂停图标
                 break;
             case VideoView.STATE_PREPARED:
+                mPlayLoadNetSpeed.setVisibility(View.GONE);
                 isVideoPlay = false;
                 hideLiveAboutBtn();
                 listener.prepared();
@@ -1793,7 +1794,6 @@ public class VodController extends BaseController {
                 if(isBottomVisible() && mSeekBarhasFocus) { //xuameng假如焦点在SeekBar
                     mxuPlay.requestFocus(); //底部菜单默认焦点为播放
                 }
-                mPlayLoadNetSpeed.setVisibility(View.GONE);
                 mLandscapePortraitBtn.setVisibility(View.GONE);
                 simSeekPosition = 0; //XUAMENG重要,换视频时重新记录进度
                 isVideoplaying = false;
