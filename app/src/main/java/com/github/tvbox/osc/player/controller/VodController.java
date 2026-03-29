@@ -427,9 +427,9 @@ public class VodController extends BaseController {
     private Runnable myRunnableXu = new Runnable() {
         @Override
         public void run() {
+            String width = Integer.toString(mControlWrapper.getVideoSize()[0]);
+            String height = Integer.toString(mControlWrapper.getVideoSize()[1]);
             if(isInPlaybackState()) { //xuameng 重新选择解析视频大小不刷新
-                String width = Integer.toString(mControlWrapper.getVideoSize()[0]);
-                String height = Integer.toString(mControlWrapper.getVideoSize()[1]);
                 mVideoSize.setText("[ " + width + " X " + height + " ]");
             }else{
                 return;
