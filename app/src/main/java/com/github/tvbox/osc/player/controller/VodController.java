@@ -1896,21 +1896,7 @@ public class VodController extends BaseController {
                 mxuPlay.setVisibility(View.VISIBLE);
                 mxuPlay.setTextColor(Color.WHITE); //xuameng底部菜单显示播放颜色
                 mxuPlay.setText("播放"); //xuameng底部菜单显示播放
-                mHandler.postDelayed(mUpdateLayout, 305);   // Workaround Fix : SurfaceView
-                ObjectAnimator animator8 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", 700, 0); //xuameng动画暂停菜单开始
-                animator8.setDuration(300); //xuameng动画暂停菜单
-                animator8.addListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationStart(Animator animation) {
-                        super.onAnimationStart(animation);
-                        isPlaying = true; //xuameng动画开启
-                    }
-                    public void onAnimationEnd(Animator animation) {
-                        super.onAnimationEnd(animation);
-                        isPlaying = false; //xuameng动画开启
-                    }
-                });
-                animator8.start(); //xuameng动画暂停菜单结束
+                mHandler.postDelayed(mUpdatePauseLayout, 50);   // Workaround Fix : SurfaceView
             }
         }
     }
@@ -1939,10 +1925,24 @@ public class VodController extends BaseController {
         }
     }
 
-    private final Runnable mUpdateLayout = new Runnable() {
+    private final Runnable mUpdatePauseLayout = new Runnable() {
         @Override
         public void run() {
             mTvPausexu.requestLayout();
+            ObjectAnimator animator8 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", 700, 0); //xuameng动画暂停菜单开始
+            animator8.setDuration(300); //xuameng动画暂停菜单
+            animator8.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+                    super.onAnimationStart(animation);
+                    isPlaying = true; //xuameng动画开启
+                }
+                public void onAnimationEnd(Animator animation) {
+                    super.onAnimationEnd(animation);
+                    isPlaying = false; //xuameng动画开启
+                }
+            });
+            animator8.start(); //xuameng动画暂停菜单结束
         }
     };
 
