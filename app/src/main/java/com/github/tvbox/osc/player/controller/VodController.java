@@ -1793,6 +1793,7 @@ public class VodController extends BaseController {
                 if(isBottomVisible() && mSeekBarhasFocus) { //xuameng假如焦点在SeekBar
                     mxuPlay.requestFocus(); //底部菜单默认焦点为播放
                 }
+                mPlayLoadNetSpeed.setVisibility(View.GONE);
                 mLandscapePortraitBtn.setVisibility(View.GONE);
                 simSeekPosition = 0; //XUAMENG重要,换视频时重新记录进度
                 isVideoplaying = false;
@@ -1925,20 +1926,6 @@ public class VodController extends BaseController {
         @Override
         public void run() {
             mTvPausexu.requestLayout();
-            ObjectAnimator animator8 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", 700, 0); //xuameng动画暂停菜单开始
-            animator8.setDuration(300); //xuameng动画暂停菜单
-            animator8.addListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationStart(Animator animation) {
-                    super.onAnimationStart(animation);
-                    isPlaying = true; //xuameng动画开启
-                }
-                public void onAnimationEnd(Animator animation) {
-                    super.onAnimationEnd(animation);
-                    isPlaying = false; //xuameng动画开启
-                }
-            });
-            animator8.start(); //xuameng动画暂停菜单结束
         }
     };
 
