@@ -1738,10 +1738,6 @@ public class VodController extends BaseController {
                 mHidePauseIng(); //xuameng 隐藏暂停图标
                 break;
             case VideoView.STATE_PLAYING:
-                if (!isBufferIng){
-                    mPlayLoadNetSpeed.setVisibility(GONE);
-                    XuLoading.setVisibility(GONE);
-                }
                 isVideoplaying = true;
                 isVideoPlay = true;
                 //isBufferIng = false; //xuameng 判断是否进在缓冲视频
@@ -1789,7 +1785,7 @@ public class VodController extends BaseController {
                 }
                 break;
             case VideoView.STATE_BUFFERED:
-                mPlayLoadNetSpeed.setVisibility(GONE);
+                mPlayLoadNetSpeed.setVisibility(View.GONE);
                 isVideoPlay = true;
                 isBufferIng = false; //xuameng 判断是否进在缓冲视频
                 break;
@@ -1813,7 +1809,7 @@ public class VodController extends BaseController {
                 speedPlayEnd();  //xuameng 停止快进
                 break;
             case VideoView.STATE_PLAYBACK_COMPLETED:
-                mPlayLoadNetSpeed.setVisibility(GONE);
+                mPlayLoadNetSpeed.setVisibility(View.GONE);
                 clearSubtitleCache();
                 isVideoPlay = false;
                 isBufferIng = false; //xuameng 判断是否进在缓冲视频
