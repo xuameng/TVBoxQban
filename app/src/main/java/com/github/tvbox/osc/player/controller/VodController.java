@@ -1785,7 +1785,10 @@ public class VodController extends BaseController {
                 isVideoplaying = true;
                 isVideoPlay = true;
                 isBufferIng = false; //xuameng 判断是否进在缓冲视频
-                mPlayLoadNetSpeed.setVisibility(GONE);
+                if (!isBufferIng){
+                    mPlayLoadNetSpeed.setVisibility(GONE);
+                    XuLoading.setVisibility(GONE);
+                }
                 break;
             case VideoView.STATE_PAUSED:
                 isVideoPlay = false;
@@ -1962,8 +1965,16 @@ public class VodController extends BaseController {
             mxuPlay.setVisibility(View.VISIBLE);
             mxuPlay.setTextColor(Color.WHITE); //xuameng底部菜单显示播放颜色
             mxuPlay.setText("播放"); //xuameng底部菜单显示播放
+            mHandler.postDelayed(mUpdateLayout, 300);   // Workaround Fix : SurfaceView
         }
     }
+
+    private final Runnable mUpdateLayout = new Runnable() {
+        @Override
+        public void run() {
+            mTvPausexu.requestLayout();
+        }
+    };
 
     @Override
     public boolean onKeyEvent(KeyEvent event) {
