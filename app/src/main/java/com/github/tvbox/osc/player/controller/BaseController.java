@@ -153,13 +153,14 @@ public abstract class BaseController extends BaseVideoController implements Gest
                 break;
             case VideoView.STATE_PLAYING:
                 mPauseRoot.setVisibility(GONE);
-              //  mLoading.setVisibility(GONE);
+                //  mLoading.setVisibility(GONE);  //xuameng这里不应该隐藏
                 break;
             case VideoView.STATE_PAUSED:
                 mPauseRoot.setVisibility(VISIBLE);
-            //    mLoading.setVisibility(GONE);  //xuameng这里不应该隐藏
+                //  mLoading.setVisibility(GONE);  //xuameng这里不应该隐藏
                 break;
             case VideoView.STATE_PREPARED:
+                mLoading.setVisibility(GONE);    //xuameng 有时系统播放器有问题所以加上
             case VideoView.STATE_ERROR:
                 mLoading.setVisibility(GONE);
             case VideoView.STATE_BUFFERED:
