@@ -1785,6 +1785,7 @@ public class VodController extends BaseController {
                 break;
             case VideoView.STATE_PREPARED:
                 mPlayLoadNetSpeed.setVisibility(View.GONE);
+			isSystemPlayerBufferIng = false; 
                 isVideoPlay = false;
                 hideLiveAboutBtn();
                 listener.prepared();
