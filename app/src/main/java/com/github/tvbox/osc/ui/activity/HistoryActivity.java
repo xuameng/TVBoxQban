@@ -172,10 +172,7 @@ private void initData() {
         vod.area = vodInfo.area;
         vod.year = vodInfo.year;
         vod.state = vodInfo.state;
-            if (vodInfo.playNote != null && !vodInfo.playNote.isEmpty())
-                vod.note = "上次看到" + vodInfo.playNote;
-                vodList.add(vod);
-            }
+if (vodInfo.playNote != null && !vodInfo.playNote.isEmpty())vodInfo.note = "上次看到" + vodInfo.playNote;
         vod.actor = vodInfo.actor;
         vod.director = vodInfo.director;
         vod.des = vodInfo.des;
