@@ -176,7 +176,6 @@ if (vodInfo.playNote != null && !vodInfo.playNote.isEmpty())vodInfo.note = "ä¸Šæ
         vod.actor = vodInfo.actor;
         vod.director = vodInfo.director;
         vod.des = vodInfo.des;
-        vod.tag = vodInfo.tag;
         vod.sourceKey = vodInfo.sourceKey;
         
         vodList.add(vod);
