@@ -681,12 +681,19 @@ public class DetailActivity extends BaseActivity {
 
     private void jumpToPlay() {
         if (vodInfo != null && vodInfo.seriesMap.get(vodInfo.playFlag).size() > 0) {
-        // 获取当前剧集的URL
-        String currentUrl = vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).url;
+String currentUrl = vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).url;
 
-            // 如果是设置请求，可以执行相应操作，例如：
-            // 1. 显示提示信息
-            App.showToastLong(DetailActivity.this, currentUrl);
+// 判断URL是否满足条件：不为空、长度不超过4、且包含"Ok"
+if (currentUrl != null && currentUrl.length() <= 4 && currentUrl.startsWith("Ok")) {
+    // 如果满足条件，执行相应操作
+    App.showToastShort(DetailActivity.this, "当前链接为设置请求，非播放地址");
+    return;
+}else if (currentUrl != null && currentUrl.length() <= 10 && currentUrl.startsWith("Add")) {
+    // 如果满足条件，执行相应操作
+    App.showToastShort(DetailActivity.this, "当前链接为设置请求，非播放地址");
+    return;
+}
+
 
             preFlag = vodInfo.playFlag;
             //更新播放地址
@@ -1528,7 +1535,10 @@ public class DetailActivity extends BaseActivity {
     }
 
     private void setTvPlayUrl(String url){
-
+      if (url == null || url.isEmpty()) {
+          url = "聚汇影视提示您：播放地址为空！";
+      }	
+      setTextShow(tvPlayUrl, "播放地址：", url);
     }
 
     //xuameng 优化后的UI刷新方法
