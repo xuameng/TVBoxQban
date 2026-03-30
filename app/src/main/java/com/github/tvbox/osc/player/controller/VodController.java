@@ -1751,8 +1751,8 @@ public class VodController extends BaseController {
                 isSystemPlayerBufferIng = false;  //xuameng 判断系统播放器是否进在缓冲视频
                 //isBufferIng = false; //xuameng 判断是否进在缓冲视频
                 if (videoPlayState == 0){  //xuameng 如果是系统播放器直接隐藏
-                    mPlayLoadNetSpeed.setVisibility(View.GONE);
-                    XuLoading.setVisibility(GONE);
+                //    mPlayLoadNetSpeed.setVisibility(View.GONE);
+                //    XuLoading.setVisibility(GONE);
                 }
                 mxuPlay.setText("暂停"); //xuameng底部菜单显示暂停
                 initLandscapePortraitBtnInfo();
@@ -1765,8 +1765,8 @@ public class VodController extends BaseController {
                 isSystemPlayerBufferIng = false;  //xuameng 判断系统播放器是否进在缓冲视频
                 //isBufferIng = false; //xuameng 判断是否进在缓冲视频
                 if (videoPlayState == 0){    //xuameng 如果是系统播放器直接隐藏
-                    mPlayLoadNetSpeed.setVisibility(View.GONE);
-                    XuLoading.setVisibility(GONE);
+                 //   mPlayLoadNetSpeed.setVisibility(View.GONE);
+                 //   XuLoading.setVisibility(GONE);
                 }
                 //mTopRoot1.setVisibility(GONE);       //xuameng隐藏上面菜单
                 //mTopRoot2.setVisibility(GONE);       //xuameng隐藏上面菜单
