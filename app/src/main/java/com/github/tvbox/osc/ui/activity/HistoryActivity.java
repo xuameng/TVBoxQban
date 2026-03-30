@@ -156,17 +156,17 @@ bundle.putString("title", vod.name);
         }
     };
 
-
-
     private void initData() {
         List<VodInfo> allVodRecord = RoomDataManger.getAllVodRecord(100); 
-        List<VodInfo> vodInfoList = new ArrayList<>();
+        List<Movie.Video> vodList = new ArrayList<>();
         for (VodInfo vodInfo : allVodRecord) {
-            if (vodInfo.playNote != null && !vodInfo.playNote.isEmpty())vodInfo.note = "上次看到" + vodInfo.playNote;
-            vodInfoList.add(vodInfo);
-        }
-        historyAdapter.setNewData(vodInfoList);
+            if (vodInfo.playNote != null && !vodInfo.playNote.isEmpty())
+                vod.note = "上次看到" + vodInfo.playNote;
+                vodList.add(vodInfo);
+            }
+        historyAdapter.setNewData(vodList);
     }
+
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void refresh(RefreshEvent event) {
