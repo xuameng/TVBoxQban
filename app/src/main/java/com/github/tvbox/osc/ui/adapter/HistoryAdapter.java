@@ -10,7 +10,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.api.ApiConfig;
-import com.github.tvbox.osc.bean.Movie;
+import com.github.tvbox.osc.bean.VodInfo;
 import com.github.tvbox.osc.picasso.RoundTransformation;
 import com.github.tvbox.osc.util.DefaultConfig;
 import com.github.tvbox.osc.util.HawkConfig;
@@ -27,13 +27,13 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
  * @date :2020/12/21
  * @description:
  */
-public class HistoryAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder> {
+public class HistoryAdapter extends BaseQuickAdapter<VodInfo, BaseViewHolder> {
     public HistoryAdapter() {
         super(R.layout.item_grid, new ArrayList<>());
     }
 
     @Override
-    protected void convert(BaseViewHolder helper, Movie.Video item) {
+    protected void convert(BaseViewHolder helper, VodInfo item) {
     	// takagen99: Add Delete Mode
         FrameLayout tvDel = helper.getView(R.id.delFrameLayout);
         if (HawkConfig.hotVodDelete) {
