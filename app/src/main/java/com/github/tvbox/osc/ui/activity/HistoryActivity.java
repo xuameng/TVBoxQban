@@ -114,12 +114,12 @@ public class HistoryActivity extends BaseActivity {
                 FastClickCheckUtil.check(view);
                 if (position == -1) return;
              //   VodInfo vodInfo = historyAdapter.getData().get(position);
-                Movie.Video video = historyAdapter.getData().get(position);
+                Movie.Video video = historyAdapter.getData().get(position);    //xuameng vodInfo  改成Movie.Video
 
                 if (video != null) {
                     if (delMode) {
                         historyAdapter.remove(position);
-                        VodInfo vodInfo = RoomDataManger.getVodInfo(vod.sourceKey, vod.id);
+                        VodInfo vodInfo = RoomDataManger.getVodInfo(video.sourceKey, video.id);
                         RoomDataManger.deleteVodRecord(video.sourceKey, vodInfo);
                     } else {
                         Bundle bundle = new Bundle();
