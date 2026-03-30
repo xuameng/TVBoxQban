@@ -156,16 +156,37 @@ bundle.putString("title", vod.name);
         }
     };
 
-    private void initData() {
-        List<VodInfo> allVodRecord = RoomDataManger.getAllVodRecord(100); 
-        List<Movie.Video> vodList = new ArrayList<>();
-        for (VodInfo vodInfo : allVodRecord) {
+private void initData() {
+    List<VodInfo> allVodRecord = RoomDataManger.getAllVodRecord(100); 
+    List<Movie.Video> vodList = new ArrayList<>();
+    for (VodInfo vodInfo : allVodRecord) {
+        Movie.Video vod = new Movie.Video();
+        // 设置所有必需字段
+        vod.last = vodInfo.last;
+        vod.id = vodInfo.id;
+        vod.tid = vodInfo.tid;
+        vod.name = vodInfo.name;  // 确保name被设置
+        vod.type = vodInfo.type;
+        vod.pic = vodInfo.pic;
+        vod.lang = vodInfo.lang;
+        vod.area = vodInfo.area;
+        vod.year = vodInfo.year;
+        vod.state = vodInfo.state;
             if (vodInfo.playNote != null && !vodInfo.playNote.isEmpty())
                 vod.note = "上次看到" + vodInfo.playNote;
-                vodList.add(vodInfo);
+                vodList.add(vod);
             }
-        historyAdapter.setNewData(vodList);
+        vod.actor = vodInfo.actor;
+        vod.director = vodInfo.director;
+        vod.des = vodInfo.des;
+        vod.tag = vodInfo.tag;
+        vod.sourceKey = vodInfo.sourceKey;
+        
+        vodList.add(vod);
     }
+    historyAdapter.setNewData(vodList);
+}
+
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
