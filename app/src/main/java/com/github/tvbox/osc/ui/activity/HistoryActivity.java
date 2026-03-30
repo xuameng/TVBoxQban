@@ -114,18 +114,19 @@ public class HistoryActivity extends BaseActivity {
                 FastClickCheckUtil.check(view);
                 if (position == -1) return;
              //   VodInfo vodInfo = historyAdapter.getData().get(position);
-                Movie.Video video = historyAdapter.getData().get(position);    //xuameng vodInfo  改成Movie.Video
+                Movie.Video vod = historyAdapter.getData().get(position);    //xuameng vodInfo  改成Movie.Video
 
-                if (video != null) {
+                if (vod.id != null && !vod.id.isEmpty()) {
                     if (delMode) {
                         historyAdapter.remove(position);
-                        VodInfo vodInfo = RoomDataManger.getVodInfo(video.sourceKey, video.id);
-                        RoomDataManger.deleteVodRecord(video.sourceKey, vodInfo);
+                        VodInfo vodInfo = RoomDataManger.getVodInfo(vod.sourceKey, vod.id);
+                        RoomDataManger.deleteVodRecord(vod.sourceKey, vodInfo);
                     } else {
                         Bundle bundle = new Bundle();
-                        bundle.putString("id", video.id);
-                        bundle.putString("sourceKey", video.sourceKey);
-                        bundle.putString("picture", video.pic);    //xuameng某些网站图片部显示
+                        bundle.putString("id", vod.id);
+bundle.putString("title", vod.name);
+                        bundle.putString("sourceKey", vod.sourceKey);
+                        bundle.putString("picture", vod.pic);    //xuameng某些网站图片部显示
                         jumpActivity(DetailActivity.class, bundle);
                     }
                 }
