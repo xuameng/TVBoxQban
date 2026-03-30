@@ -681,6 +681,17 @@ public class DetailActivity extends BaseActivity {
 
     private void jumpToPlay() {
         if (vodInfo != null && vodInfo.seriesMap.get(vodInfo.playFlag).size() > 0) {
+        // 获取当前剧集的URL
+        String currentUrl = vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).url;
+        // 判断URL是否包含 "/action?do=setting"
+        if (currentUrl != null && currentUrl.contains("/action?do=setting")) {
+            // 如果是设置请求，可以执行相应操作，例如：
+            // 1. 显示提示信息
+            App.showToastShort(DetailActivity.this, "当前链接为设置请求，非直接播放地址");
+            // 2. 或者尝试解析该请求，获取真正的播放地址
+            // 3. 或者直接返回，不执行跳转
+            return;
+        }
             preFlag = vodInfo.playFlag;
             //更新播放地址
             setTextShow(tvPlayUrl, "播放地址：", vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).url);
