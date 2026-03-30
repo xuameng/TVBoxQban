@@ -1748,7 +1748,7 @@ public class VodController extends BaseController {
                 break;
             case VideoView.STATE_PLAYING:
                 isVideoPlay = true;
-                isSystemPlayerBufferIng = false;  //xuameng 判断系统播放器是否进在缓冲视频
+              //  isSystemPlayerBufferIng = false;  //xuameng 判断系统播放器是否进在缓冲视频
                 //isBufferIng = false; //xuameng 判断是否进在缓冲视频
                 if (videoPlayState == 0){  //xuameng 如果是系统播放器直接隐藏
                 //    mPlayLoadNetSpeed.setVisibility(View.GONE);
@@ -1762,7 +1762,7 @@ public class VodController extends BaseController {
             case VideoView.STATE_PAUSED:
                 isVideoPlay = false;
                 mxuPlay.setText("播放"); //xuameng底部菜单显示播放
-                isSystemPlayerBufferIng = false;  //xuameng 判断系统播放器是否进在缓冲视频
+              //  isSystemPlayerBufferIng = false;  //xuameng 判断系统播放器是否进在缓冲视频
                 //isBufferIng = false; //xuameng 判断是否进在缓冲视频
                 if (videoPlayState == 0){    //xuameng 如果是系统播放器直接隐藏
                  //   mPlayLoadNetSpeed.setVisibility(View.GONE);
