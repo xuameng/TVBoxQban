@@ -7,7 +7,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 
 import com.github.tvbox.osc.R;
-import com.github.tvbox.osc.bean.Movie;  //xuameng 把VODINFO 改成movie提高加载速度
+import com.github.tvbox.osc.bean.VodInfo;
 import com.github.tvbox.osc.cache.RoomDataManger;
 import com.github.tvbox.osc.cache.VodCollect;
 import com.github.tvbox.osc.ui.activity.CollectActivity;
@@ -40,8 +40,8 @@ public class ConfirmClearDialog extends BaseDialog {
                     RoomDataManger.deleteVodCollectAll();
                     // if removing all History
                 } else if (type == "History") {
-                    List<Movie.Video> vodList = new ArrayList<>();  //xuameng 把VODINFO 改成movie提高加载速度
-                    HistoryActivity.historyAdapter.setNewData(vodList);
+                    List<VodInfo> vodInfoList = new ArrayList<>();
+                    HistoryActivity.historyAdapter.setNewData(vodInfoList);
                     HistoryActivity.historyAdapter.notifyDataSetChanged();
                     RoomDataManger.deleteVodRecordAll();
                 }
