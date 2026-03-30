@@ -113,17 +113,19 @@ public class HistoryActivity extends BaseActivity {
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 FastClickCheckUtil.check(view);
                 if (position == -1) return;
-                VodInfo vodInfo = historyAdapter.getData().get(position);
+             //   VodInfo vodInfo = historyAdapter.getData().get(position);
+                Movie.Video vod = historyAdapter.getData().get(position);    //xuameng vodInfo  改成Movie.Video
 
-                if (vodInfo != null) {
+                if (vod.id != null && !vod.id.isEmpty()) {
                     if (delMode) {
                         historyAdapter.remove(position);
-                        RoomDataManger.deleteVodRecord(vodInfo.sourceKey, vodInfo);
+                        VodInfo vodInfo = RoomDataManger.getVodInfo(vod.sourceKey, vod.id);
+                        RoomDataManger.deleteVodRecord(vod.sourceKey, vodInfo);
                     } else {
                         Bundle bundle = new Bundle();
-                        bundle.putString("id", vodInfo.id);
-                        bundle.putString("sourceKey", vodInfo.sourceKey);
-                        bundle.putString("picture", vodInfo.pic);    //xuameng某些网站图片部显示
+                        bundle.putString("id", vod.id);
+                        bundle.putString("sourceKey", vod.sourceKey);
+                        bundle.putString("picture", vod.pic);    //xuameng某些网站图片部显示
                         jumpActivity(DetailActivity.class, bundle);
                     }
                 }
@@ -155,12 +157,18 @@ public class HistoryActivity extends BaseActivity {
 
     private void initData() {
         List<VodInfo> allVodRecord = RoomDataManger.getAllVodRecord(100); 
-        List<VodInfo> vodInfoList = new ArrayList<>();
+        List<Movie.Video> vodList = new ArrayList<>();
         for (VodInfo vodInfo : allVodRecord) {
-            if (vodInfo.playNote != null && !vodInfo.playNote.isEmpty())vodInfo.note = "上次看到" + vodInfo.playNote;
-            vodInfoList.add(vodInfo);
-        }
-        historyAdapter.setNewData(vodInfoList);
+            Movie.Video vod = new Movie.Video();
+            vod.id = vodInfo.id;
+            vod.sourceKey = vodInfo.sourceKey;
+            vod.name = vodInfo.name;
+            vod.pic = vodInfo.pic;
+            if (vodInfo.playNote != null && !vodInfo.playNote.isEmpty())
+                vod.note = "上次看到" + vodInfo.playNote;
+                vodList.add(vod);
+            }
+        historyAdapter.setNewData(vodList);
     }
 
 
