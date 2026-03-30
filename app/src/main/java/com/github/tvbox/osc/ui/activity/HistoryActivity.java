@@ -113,20 +113,17 @@ public class HistoryActivity extends BaseActivity {
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 FastClickCheckUtil.check(view);
                 if (position == -1) return;
-             //   VodInfo vodInfo = historyAdapter.getData().get(position);
-                Movie.Video vod = historyAdapter.getData().get(position);    //xuameng vodInfo  改成Movie.Video
+                VodInfo vodInfo = historyAdapter.getData().get(position);
 
-                if (vod.id != null && !vod.id.isEmpty()) {
+                if (vodInfo != null) {
                     if (delMode) {
                         historyAdapter.remove(position);
-                        VodInfo vodInfo = RoomDataManger.getVodInfo(vod.sourceKey, vod.id);
-                        RoomDataManger.deleteVodRecord(vod.sourceKey, vodInfo);
+                        RoomDataManger.deleteVodRecord(vodInfo.sourceKey, vodInfo);
                     } else {
                         Bundle bundle = new Bundle();
-                        bundle.putString("id", vod.id);
-bundle.putString("title", vod.name);
-                        bundle.putString("sourceKey", vod.sourceKey);
-                        bundle.putString("picture", vod.pic);    //xuameng某些网站图片部显示
+                        bundle.putString("id", vodInfo.id);
+                        bundle.putString("sourceKey", vodInfo.sourceKey);
+                        bundle.putString("picture", vodInfo.pic);    //xuameng某些网站图片部显示
                         jumpActivity(DetailActivity.class, bundle);
                     }
                 }
@@ -156,33 +153,15 @@ bundle.putString("title", vod.name);
         }
     };
 
-private void initData() {
-    List<VodInfo> allVodRecord = RoomDataManger.getAllVodRecord(100); 
-    List<Movie.Video> vodList = new ArrayList<>();
-    for (VodInfo vodInfo : allVodRecord) {
-        Movie.Video vod = new Movie.Video();
-        // 设置所有必需字段
-        vod.last = vodInfo.last;
-        vod.id = vodInfo.id;
-        vod.tid = vodInfo.tid;
-        vod.name = vodInfo.name;  // 确保name被设置
-        vod.type = vodInfo.type;
-        vod.pic = vodInfo.pic;
-        vod.lang = vodInfo.lang;
-        vod.area = vodInfo.area;
-        vod.year = vodInfo.year;
-        vod.state = vodInfo.state;
-if (vodInfo.playNote != null && !vodInfo.playNote.isEmpty())vodInfo.note = "上次看到" + vodInfo.playNote;
-        vod.actor = vodInfo.actor;
-        vod.director = vodInfo.director;
-        vod.des = vodInfo.des;
-        vod.sourceKey = vodInfo.sourceKey;
-        
-        vodList.add(vod);
+    private void initData() {
+        List<VodInfo> allVodRecord = RoomDataManger.getAllVodRecord(100); 
+        List<VodInfo> vodInfoList = new ArrayList<>();
+        for (VodInfo vodInfo : allVodRecord) {
+            if (vodInfo.playNote != null && !vodInfo.playNote.isEmpty())vodInfo.note = "上次看到" + vodInfo.playNote;
+            vodInfoList.add(vodInfo);
+        }
+        historyAdapter.setNewData(vodInfoList);
     }
-    historyAdapter.setNewData(vodList);
-}
-
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
