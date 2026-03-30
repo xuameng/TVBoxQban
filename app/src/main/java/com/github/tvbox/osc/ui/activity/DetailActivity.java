@@ -684,7 +684,7 @@ public class DetailActivity extends BaseActivity {
         // 获取当前剧集的URL
         String currentUrl = vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).url;
         // 判断URL是否包含 "/action?do=setting"
-        if (currentUrl == null ||currentUrl.isEmpty() {
+        if (currentUrl == null ||currentUrl.isEmpty()) {
             // 如果是设置请求，可以执行相应操作，例如：
             // 1. 显示提示信息
             App.showToastShort(DetailActivity.this, "当前链接为设置请求，非直接播放地址");
