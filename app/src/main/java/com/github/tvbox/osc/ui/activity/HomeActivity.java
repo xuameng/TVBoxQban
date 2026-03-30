@@ -592,21 +592,34 @@ public class HomeActivity extends BaseActivity {
                 if (layoutManager == null) {
                     return; // xuameng防止空指针
                 }
-                if (currentView == null && PositionXu == 0) {   //xuameng 分类筛选BUG修复变色问题
-                    return; // xuameng防止空指针
+                if (currentView != null && PositionXu !=0) {   // xuameng防止空指针
+					//this.sortFocusView.requestFocus(); //xuameng这段代码手机使用时菜单失去焦点会闪退   
+                    this.mGridView.setSelection(PositionXu);   //xuameng处理手机滑动主页菜单失去焦点时按返回键闪退
                 }
 
-                //this.sortFocusView.requestFocus(); //xuameng这段代码手机使用时菜单失去焦点会闪退   
-                this.mGridView.setSelection(PositionXu);   //xuameng处理手机滑动主页菜单失去焦点时按返回键闪退
             }
             // 如果当前不是第一个界面，则将列表设置到第一项
             else if (this.sortFocused != 0) {
+                if (mGridView == null || !mGridView.isAttachedToWindow()) {
+                    return; // 如果RecyclerView为空或未附加到窗口，直接返回
+                }
+                RecyclerView.LayoutManager layoutManager = mGridView.getLayoutManager();
+                if (layoutManager == null) {
+                    return; // xuameng防止空指针
+                }
                 this.mGridView.setSelection(0);
             } else {
                 exit();
             }
         } else if (baseLazyFragment instanceof UserFragment && UserFragment.tvHotList1.canScrollVertically(-1)) {
             // 如果 UserFragment 列表可以向上滚动，则滚动到顶部
+            if (mGridView == null || !mGridView.isAttachedToWindow()) {
+                return; // 如果RecyclerView为空或未附加到窗口，直接返回
+            }
+            RecyclerView.LayoutManager layoutManager = mGridView.getLayoutManager();
+            if (layoutManager == null) {
+                return; // xuameng防止空指针
+            }
             UserFragment.tvHotList1.scrollToPosition(0);
             this.mGridView.setSelection(0);
         } else {
