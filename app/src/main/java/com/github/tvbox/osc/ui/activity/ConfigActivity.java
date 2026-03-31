@@ -100,7 +100,7 @@ import com.github.tvbox.osc.util.ImgUtil;   //xuameng base64图片
  * @description:
  */
 
-public class DetailActivity extends BaseActivity {
+public class ConfigActivity extends BaseActivity {
     private LinearLayout llLayout;
     private FragmentContainerView llPlayerFragmentContainer;
     private View llPlayerFragmentContainerBlock;
@@ -265,7 +265,7 @@ public class DetailActivity extends BaseActivity {
                     // xuameng检查当前选中的源是否是正在播放的源
                     if (vodInfo.currentPlayFlag != null && !vodInfo.playFlag.equals(vodInfo.currentPlayFlag)) {
                         // xuameng当前选中的源不是正在播放的源，禁止倒序操作
-                        App.showToastShort(DetailActivity.this, "倒叙操作只可在当前正在播放的节目所在的列表中操作");
+                        App.showToastShort(ConfigActivity.this, "倒叙操作只可在当前正在播放的节目所在的列表中操作");
                         return;
                     }
 
@@ -364,7 +364,7 @@ public class DetailActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 startQuickSearch();
-                QuickSearchDialog quickSearchDialog = new QuickSearchDialog(DetailActivity.this);
+                QuickSearchDialog quickSearchDialog = new QuickSearchDialog(ConfigActivity.this);
                 EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_QUICK_SEARCH, quickSearchData));
                 EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_QUICK_SEARCH_WORD, quickSearchWord));
                 quickSearchDialog.show();
@@ -410,11 +410,11 @@ public class DetailActivity extends BaseActivity {
                 String text = tvCollect.getText().toString();
                 if ("☆收藏".equals(text)) {
                     RoomDataManger.insertVodCollect(sourceKey, vodInfo);
-                    App.showToastShort(DetailActivity.this, "已加入收藏夹");
+                    App.showToastShort(ConfigActivity.this, "已加入收藏夹");
                     tvCollect.setText("★收藏");
                 } else {
                     RoomDataManger.deleteVodCollect(sourceKey, vodInfo);
-                    App.showToastShort(DetailActivity.this, "已移除收藏夹");
+                    App.showToastShort(ConfigActivity.this, "已移除收藏夹");
                     tvCollect.setText("☆收藏");
                 }
             }
@@ -439,7 +439,7 @@ public class DetailActivity extends BaseActivity {
                 ClipboardManager cm = (ClipboardManager)getSystemService(mContext.CLIPBOARD_SERVICE);
                 //设置内容到剪切板
                 cm.setPrimaryClip(ClipData.newPlainText(null, tvPlayUrl.getText().toString().replace("播放地址：","")));
-                App.showToastShort(DetailActivity.this, "播放地址已复制！");
+                App.showToastShort(ConfigActivity.this, "播放地址已复制！");
             }
         });
 
@@ -482,7 +482,7 @@ public class DetailActivity extends BaseActivity {
                         String cpContent = removeHtmlTag(mVideo.des);
                         ClipData clipData = ClipData.newPlainText(null, cpContent);
                         clipprofile.setPrimaryClip(clipData);
-                        App.showToastShort(DetailActivity.this, "简介内容已复制：" + cpContent);
+                        App.showToastShort(ConfigActivity.this, "简介内容已复制：" + cpContent);
                     }
                 });
                 return true;
@@ -898,7 +898,7 @@ public class DetailActivity extends BaseActivity {
                 if (absXml != null && absXml.movie != null && absXml.movie.videoList != null && absXml.movie.videoList.size() > 0) {
                     showSuccess();
                     if(!TextUtils.isEmpty(absXml.msg) && !absXml.msg.equals("数据列表")){
-                        App.showToastShort(DetailActivity.this, absXml.msg);
+                        App.showToastShort(ConfigActivity.this, absXml.msg);
                         showEmpty();
                         return;
                     }
@@ -1238,7 +1238,7 @@ HawkConfig.isConfig = false;  //xuameng判断进入播放
                                 if (response.body() != null) {
                                     return response.body().string();
                                 } else {
-                                    App.showToastShort(DetailActivity.this, "推送失败，地址可能填写错误！");
+                                    App.showToastShort(ConfigActivity.this, "推送失败，地址可能填写错误！");
                                     throw new IllegalStateException("网络请求错误");
                                 }
                             }
@@ -1247,15 +1247,15 @@ HawkConfig.isConfig = false;  //xuameng判断进入播放
                             public void onSuccess(Response<String> response) {
                                 String r = response.body();
                                 if ("mirrored".equals(r))
-                                    App.showToastShort(DetailActivity.this, "推送成功！");
+                                    App.showToastShort(ConfigActivity.this, "推送成功！");
                                 else
-                                    App.showToastShort(DetailActivity.this, "推送失败，远端聚汇影视版本不支持！");
+                                    App.showToastShort(ConfigActivity.this, "推送失败，远端聚汇影视版本不支持！");
                             }
 
                             @Override
                             public void onError(Response<String> response) {
                                 super.onError(response);
-                                App.showToastShort(DetailActivity.this, "推送失败，地址可能填写错误！");
+                                App.showToastShort(ConfigActivity.this, "推送失败，地址可能填写错误！");
                             }
                         });
             }
@@ -1615,7 +1615,7 @@ HawkConfig.isConfig = false;  //xuameng判断进入播放
             // 如果正在滚动或计算布局，则等待滚动完成后再执行
             // 上面的监听器会处理这种情况
         }    
-        App.showToastShort(DetailActivity.this, "已滚动到当前播放剧集！");
+        App.showToastShort(ConfigActivity.this, "已滚动到当前播放剧集！");
     }
 
     private void switchTomGridViewFlag() {  //xuameng 自动滚动到当前播放源
