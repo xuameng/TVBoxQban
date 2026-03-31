@@ -249,9 +249,9 @@ public class GridFragment extends BaseLazyFragment {
                             if (isAllLettersOrUnderscore(video.id)) {
                                 App.showToastShort(getContext(), video.id);
                                 HawkConfig.isConfig = true;  //xuameng判断进入播放
-                                jumpActivity(DetailActivity.class, bundle);
+                                jumpActivity(ConfigActivity.class, bundle);
                             }else{
-								App.showToastShort(getContext(), video.id);
+                                App.showToastShort(getContext(), video.id);
                                 bundle.putString("picture", video.pic);   //xuameng某些网站图片部显示
                                 jumpActivity(DetailActivity.class, bundle);
                             }
