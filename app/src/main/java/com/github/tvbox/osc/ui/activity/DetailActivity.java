@@ -948,6 +948,11 @@ public class DetailActivity extends BaseActivity {
                     }
 
                     if (vodInfo.seriesMap != null && vodInfo.seriesMap.size() > 0) {
+if (HawkConfig.isConfig){
+autoExitAfterDelay();
+HawkConfig.isConfig = false;  //xuameng判断进入播放
+return;
+}
                         mGridViewFlag.setVisibility(View.VISIBLE);
                         mGridView.setVisibility(View.VISIBLE);
                         tvPlay.setVisibility(View.VISIBLE);
@@ -1713,5 +1718,23 @@ public class DetailActivity extends BaseActivity {
             }
         }
     }
+
+
+private void autoExitAfterDelay() {
+    // 使用Handler延迟执行退出操作
+    new android.os.Handler().postDelayed(new Runnable() {
+        @Override
+        public void run() {
+            // 检查当前Activity是否仍然有效
+            if (!isFinishing() && !isDestroyed()) {
+                // 调用onBackPressed()方法返回上一页
+                onBackPressed();
+                
+               //  finish();
+
+            }
+        }
+    }, 2000); // 200毫秒延迟
+}
 
 }
