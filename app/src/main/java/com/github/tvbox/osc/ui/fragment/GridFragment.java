@@ -443,6 +443,11 @@ public class GridFragment extends BaseLazyFragment {
         if (str.contains("http")) {
             return false;
         }
+        // 去掉空格后判断是否只包含一个数字
+        String trimmed = str.replaceAll("\\s+", "");
+        if (trimmed.length() == 1 && Character.isDigit(trimmed.charAt(0))) {
+            return true;
+        }
         // 遍历字符串中的每个字符
         for (int i = 0; i < str.length(); i++) {
             char c = str.charAt(i);
