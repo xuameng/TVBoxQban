@@ -69,6 +69,7 @@ public class HawkConfig {
 	public static boolean isGetWp = false;  //xuameng下载壁纸
     public static boolean saveHistory = false;  //xuameng 存储历史记录
     public static boolean exoSubtitle = false;  //xuameng 判断当前是否播放EXO内置字幕
+	public static boolean isConfig = false;  //xuameng 判断当前是否是设置界面
 
     public static boolean hotVodDelete;
 }
