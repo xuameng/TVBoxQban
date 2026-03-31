@@ -945,7 +945,7 @@ public class ConfigActivity extends BaseActivity {
 
                     if (vodInfo.seriesMap != null && vodInfo.seriesMap.size() > 0) {
 if (HawkConfig.isConfig){
-autoExitAfterDelay();
+//autoExitAfterDelay();
 HawkConfig.isConfig = false;  //xuameng判断进入播放
 return;
 }
