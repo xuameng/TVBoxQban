@@ -229,7 +229,6 @@ public class GridFragment extends BaseLazyFragment {
                     bundle.putString("id", video.id);
                     bundle.putString("sourceKey", video.sourceKey);
                     bundle.putString("title", video.name);
-					App.showToastShort(getContext(), video.id);
                     if( video.tag !=null && (video.tag.equals("folder") || video.tag.equals("cover"))){
                         focusedView = view;
                         if(("12".indexOf(getUITag()) != -1)){
@@ -246,18 +245,9 @@ public class GridFragment extends BaseLazyFragment {
                                 jumpActivity(SearchActivity.class, bundle);
                             }
                         }else {
-            // 判断 video.id 是否只包含字母
-            boolean isAllLetters = true;
-            for (int i = 0; i < video.id.length(); i++) {
-                if (!Character.isLetter(video.id.charAt(i))) {
-                    isAllLetters = false;
-                    break;
-                }
-            }
     
-    if (isAllLetters) {
+    if (isAllLettersOrUnderscore(video.id)) {
 							App.showToastShort(getContext(), video.id);
-							initViewModel();
 	}else{
                             bundle.putString("picture", video.pic);   //xuameng某些网站图片部显示
                             jumpActivity(DetailActivity.class, bundle);
@@ -440,5 +430,29 @@ public class GridFragment extends BaseLazyFragment {
     public void forceRefresh() {
         page = 1;
         initData();
+    }
+
+
+	    public static boolean isAllLettersOrUnderscore(String str) {
+        // 检查是否为null或空字符串
+        if (str == null || str.isEmpty()) {
+            return false;
+        }
+
+        // 检查是否包含"http"
+        if (str.contains("http")) {
+            return false;
+        }
+
+        // 遍历字符串中的每个字符
+        for (int i = 0; i < str.length(); i++) {
+            char c = str.charAt(i);
+            // 如果字符不是字母且不是下划线，则返回false
+            if (!Character.isLetter(c) && c != '_') {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
