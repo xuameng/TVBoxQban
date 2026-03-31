@@ -230,7 +230,6 @@ public class GridFragment extends BaseLazyFragment {
                     bundle.putString("id", video.id);
                     bundle.putString("sourceKey", video.sourceKey);
                     bundle.putString("title", video.name);
-					App.showToastShort(getContext(), video.id);
                     if( video.tag !=null && (video.tag.equals("folder") || video.tag.equals("cover"))){
                         focusedView = view;
                         if(("12".indexOf(getUITag()) != -1)){
@@ -257,7 +256,7 @@ public class GridFragment extends BaseLazyFragment {
             }
     
     if (isAllLetters) {
-		jumpActivity(HomeActivity.class);
+							App.showToastShort(getContext(), video.id);
 	}else{
                             bundle.putString("picture", video.pic);   //xuameng某些网站图片部显示
                             jumpActivity(DetailActivity.class, bundle);
