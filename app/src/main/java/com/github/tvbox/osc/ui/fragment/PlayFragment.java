@@ -887,7 +887,8 @@ public class PlayFragment extends BaseLazyFragment {
                         progressKey = info.optString("proKey", null);
                         boolean parse = info.optString("parse", "1").equals("1");
                         boolean jx = info.optString("jx", "0").equals("1");
-
+						String lrcContentXu = info.optString("lrc", "");
+App.showToastShort(mContext, lrcContentXu);
                         // xuameng优先检查 lrc 字段（歌词字符串）
                         if (info.has("lrc")) {
                             String lrcContent = info.optString("lrc", "");
@@ -916,7 +917,6 @@ public class PlayFragment extends BaseLazyFragment {
                             try {
                                 JSONObject obj = info.getJSONArray("subs").optJSONObject(0);
                                 String url = obj.optString("url", "");
-								App.showToastShort(mContext, url);
                                 if (!TextUtils.isEmpty(url) && !FileUtils.hasExtension(url)) {
                                     String format = obj.optString("format", "");
                                     String name = obj.optString("name", "字幕");
@@ -945,14 +945,12 @@ public class PlayFragment extends BaseLazyFragment {
                         }
                         subtitleCacheKey = info.optString("subtKey", null);
                         String playUrl = info.optString("playUrl", "");
-						App.showToastShort(mContext, playUrl);
                         String msg = info.optString("msg", "");
                         if(!msg.isEmpty()){
                             App.showToastShort(mContext, msg);
                         }
                         String flag = info.optString("flag");
                         String url = info.getString("url");
-												App.showToastShort(mContext, url);
                         if(url.startsWith("[")){
                             url=mController.firstUrlByArray(url);
                         }
