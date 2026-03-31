@@ -246,9 +246,17 @@ public class GridFragment extends BaseLazyFragment {
                                 jumpActivity(SearchActivity.class, bundle);
                             }
                         }else {
+    char firstChar = video.id.charAt(0);
+    boolean isLetterStart = Character.isLetter(firstChar);
+    
+    if (isLetterStart) {
+		jumpActivity(HomeActivity.class);
+	}else{
                             bundle.putString("picture", video.pic);   //xuameng某些网站图片部显示
-                          //  jumpActivity(DetailActivity.class, bundle);
+                            jumpActivity(DetailActivity.class, bundle);
+						  
                         }
+						}
                     }
 
                 }
