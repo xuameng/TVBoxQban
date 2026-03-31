@@ -23,7 +23,6 @@ import com.github.tvbox.osc.bean.SourceBean;
 import com.github.tvbox.osc.event.RefreshEvent;
 import com.github.tvbox.osc.ui.activity.DetailActivity;
 import com.github.tvbox.osc.ui.activity.FastSearchActivity;
-import com.github.tvbox.osc.ui.activity.ConfigActivity;
 import com.github.tvbox.osc.ui.activity.SearchActivity;
 import com.github.tvbox.osc.ui.adapter.GridAdapter;
 import com.github.tvbox.osc.ui.adapter.GridFilterKVAdapter;
@@ -246,17 +245,11 @@ public class GridFragment extends BaseLazyFragment {
                                 jumpActivity(SearchActivity.class, bundle);
                             }
                         }else {
-                            if (isAllLettersOrUnderscore(video.id)) {
-                                App.showToastShort(getContext(), video.id);
-                                HawkConfig.isConfig = true;  //xuameng判断进入播放
-                                jumpActivity(ConfigActivity.class, bundle);
-                            }else{
-                                App.showToastShort(getContext(), video.id);
-                                bundle.putString("picture", video.pic);   //xuameng某些网站图片部显示
-                                jumpActivity(DetailActivity.class, bundle);
-                            }
-						}
+                            bundle.putString("picture", video.pic);   //xuameng某些网站图片部显示
+                            jumpActivity(DetailActivity.class, bundle);
+                        }
                     }
+
                 }
             }
         });
@@ -432,31 +425,4 @@ public class GridFragment extends BaseLazyFragment {
         page = 1;
         initData();
     }
-
-
-	public static boolean isAllLettersOrUnderscore(String str) {
-        // 检查是否为null或空字符串
-        if (str == null || str.isEmpty()) {
-            return false;
-        }
-        // 检查是否包含"http"
-        if (str.contains("http")) {
-            return false;
-        }
-        // 去掉空格后判断是否只包含一个数字
-        String trimmed = str.replaceAll("\\s+", "");
-        if (trimmed.length() == 1 && Character.isDigit(trimmed.charAt(0))) {
-            return true;
-        }
-        // 遍历字符串中的每个字符
-        for (int i = 0; i < str.length(); i++) {
-            char c = str.charAt(i);
-            // 如果字符不是字母且不是下划线，则返回false
-            if (!Character.isLetter(c) && c != '_') {
-                return false;
-            }
-        }
-        return true;
-    }
-
 }
