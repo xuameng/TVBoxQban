@@ -891,7 +891,6 @@ public class PlayFragment extends BaseLazyFragment {
                         // xuameng优先检查 lrc 字段（歌词字符串）
                         if (info.has("lrc")) {
                             String lrcContent = info.optString("lrc", "");
-							App.showToastShort(mContext, lrcContent);
                             if (!TextUtils.isEmpty(lrcContent) && lrcContent.length() > 10) {
                                 // 新增：判断 lrcContent 是否为 URL
                                 if (lrcContent.startsWith("http://") || lrcContent.startsWith("https://")) {
