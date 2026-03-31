@@ -257,6 +257,7 @@ public class GridFragment extends BaseLazyFragment {
     
     if (isAllLetters) {
 							App.showToastShort(getContext(), video.id);
+							initViewModel();
 	}else{
                             bundle.putString("picture", video.pic);   //xuameng某些网站图片部显示
                             jumpActivity(DetailActivity.class, bundle);
