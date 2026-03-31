@@ -1715,13 +1715,13 @@ private void autoExitAfterDelay() {
             // 检查当前Activity是否仍然有效
             if (!isFinishing() && !isDestroyed()) {
                 // 调用onBackPressed()方法返回上一页
-               // onBackPressed();
+                onBackPressed();
                 
-                 finish();
+               //  finish();
 
             }
         }
-    }, 200); // 200毫秒延迟
+    }, 2000); // 200毫秒延迟
 }
 
 
