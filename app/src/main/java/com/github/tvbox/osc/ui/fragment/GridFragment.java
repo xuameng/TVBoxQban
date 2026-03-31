@@ -224,12 +224,13 @@ public class GridFragment extends BaseLazyFragment {
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 FastClickCheckUtil.check(view);
                 Movie.Video video = gridAdapter.getData().get(position);
+				Movie.Video.UrlBean urlBean = gridAdapter.getData().get(position);
                 if (video != null) {
                     Bundle bundle = new Bundle();
                     bundle.putString("id", video.id);
                     bundle.putString("sourceKey", video.sourceKey);
                     bundle.putString("title", video.name);
-					App.showToastShort(getContext(), video.tag + "---- " + video.type);
+					App.showToastShort(getContext(), urlBean.url);
 
                     if( video.tag !=null && (video.tag.equals("folder") || video.tag.equals("cover"))){
                         focusedView = view;
