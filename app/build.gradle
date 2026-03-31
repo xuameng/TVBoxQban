@@ -22,18 +22,30 @@ android {
         }
     }
 
+    signingConfigs {
+        config {
+            keyAlias 'TVBoxOSC'
+            keyPassword 'TVBoxOSC'
+            storeFile file('TVBoxOSC.jks')
+            storePassword 'TVBoxOSC'
+            v2SigningEnabled = true
+        }
+    }
+
     packagingOptions {
         exclude 'META-INF/DEPENDENCIES'
     }
 
     buildTypes {
         release {
+            signingConfig = signingConfigs.config
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
 
         debug {
+            signingConfig = signingConfigs.config
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt')
 
