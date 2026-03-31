@@ -229,7 +229,7 @@ public class GridFragment extends BaseLazyFragment {
                     bundle.putString("id", video.id);
                     bundle.putString("sourceKey", video.sourceKey);
                     bundle.putString("title", video.name);
-					App.showToastShort(getContext(), video.tag "+" video.type);
+					App.showToastShort(getContext(), video.tag + "---- " + video.type);
 
                     if( video.tag !=null && (video.tag.equals("folder") || video.tag.equals("cover"))){
                         focusedView = view;
