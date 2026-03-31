@@ -887,8 +887,7 @@ public class PlayFragment extends BaseLazyFragment {
                         progressKey = info.optString("proKey", null);
                         boolean parse = info.optString("parse", "1").equals("1");
                         boolean jx = info.optString("jx", "0").equals("1");
-						String lrcContentXu = info.optString("lrc", "");
-App.showToastShort(mContext, lrcContentXu);
+
                         // xuameng优先检查 lrc 字段（歌词字符串）
                         if (info.has("lrc")) {
                             String lrcContent = info.optString("lrc", "");
