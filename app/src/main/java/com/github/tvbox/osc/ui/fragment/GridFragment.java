@@ -23,6 +23,7 @@ import com.github.tvbox.osc.bean.SourceBean;
 import com.github.tvbox.osc.event.RefreshEvent;
 import com.github.tvbox.osc.ui.activity.DetailActivity;
 import com.github.tvbox.osc.ui.activity.FastSearchActivity;
+import com.github.tvbox.osc.ui.activity.HomeActivity;
 import com.github.tvbox.osc.ui.activity.SearchActivity;
 import com.github.tvbox.osc.ui.adapter.GridAdapter;
 import com.github.tvbox.osc.ui.adapter.GridFilterKVAdapter;
@@ -246,10 +247,16 @@ public class GridFragment extends BaseLazyFragment {
                                 jumpActivity(SearchActivity.class, bundle);
                             }
                         }else {
-    char firstChar = video.id.charAt(0);
-    boolean isLetterStart = Character.isLetter(firstChar);
+            // 判断 video.id 是否只包含字母
+            boolean isAllLetters = true;
+            for (int i = 0; i < video.id.length(); i++) {
+                if (!Character.isLetter(video.id.charAt(i))) {
+                    isAllLetters = false;
+                    break;
+                }
+            }
     
-    if (isLetterStart) {
+    if (isAllLetters) {
 		jumpActivity(HomeActivity.class);
 	}else{
                             bundle.putString("picture", video.pic);   //xuameng某些网站图片部显示
