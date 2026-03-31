@@ -219,8 +219,7 @@ public class VodController extends BaseController {
                         mxuPlay.requestFocus();   //xuameng底部菜单默认焦点为播放
                         backBtn.setVisibility(ScreenUtils.isTv(context) ? GONE : VISIBLE);   //xuameng返回按钮
                         showLockView();    //xuameng屏幕锁
-                        mPlayPauseTimexu.setVisibility(GONE);  //xuameng隐藏上面时间
-                        mPlayTitle.setVisibility(GONE);   //xuameng隐藏上面视频名称
+                        mPauseContainer.setVisibility(GONE);  // xuameng播放标题、暂停时间
     
                         if(mLandscapePortraitBtn.getVisibility() == View.VISIBLE) {    //xuameng 横竖屏显示BUG
                             setLandscapePortraitXu();
@@ -273,20 +272,10 @@ public class VodController extends BaseController {
                         if (mControlWrapper.isPlaying()) {
                             // xuameng播放状态处理
                         } else {
-                            // xuameng显示播放标题动画
-                            mPlayTitle.setVisibility(VISIBLE);
-                            mPlayTitle.setTranslationY(-120);
-                            mPlayTitle.animate()
-                                    .translationY(0)
-                                    .alpha(1.0f)
-                                    .setDuration(300)
-                                    .setInterpolator(new DecelerateInterpolator())
-                                    .setListener(null);
-
-                            // xuameng显示播放暂停时间控件动画
-                            mPlayPauseTimexu.setVisibility(VISIBLE);
-                            mPlayPauseTimexu.setTranslationY(-120);
-                            mPlayPauseTimexu.animate()
+                            // xuameng显示播放标题、暂停时间动画
+                            mPauseContainer.setVisibility(VISIBLE);
+                            mPauseContainer.setTranslationY(-120);
+                            mPauseContainer.animate()
                                     .translationY(0)
                                     .alpha(1.0f)
                                     .setDuration(300)
@@ -342,7 +331,7 @@ public class VodController extends BaseController {
     TextView mPlayanimation; //xuameng音柱动画
     private ImageView iv_circle_bg; //xuameng音乐播放时图标
     private FrameLayout play_speed_3; //xuameng倍速播放
-    private FrameLayout mPauseContainer; //xuameng mPlayTitle的父级
+    private FrameLayout mPauseContainer; // xuameng播放标题、暂停时间
     private TextView tv_slide_progress_text;  //xuameng 旧的亮度调节框已作废
     ImageView MxuamengMusic; //xuameng播放音乐背景
     private ProgressBar XuLoading; //xuameng  loading
@@ -563,7 +552,7 @@ public class VodController extends BaseController {
         mCurrentTime = findViewById(R.id.curr_time);
         mTotalTime = findViewById(R.id.total_time);
         mPlayTitle = findViewById(R.id.tv_info_name);
-        mPauseContainer = findViewById(R.id.tv_pause_container);  //xuameng mPlayTitle 的父级
+        mPauseContainer = findViewById(R.id.tv_pause_container);  // xuameng播放标题、暂停时间
         mPlayTitle1 = findViewById(R.id.tv_info_name1);
         mPlayLoadNetSpeedRightTop = findViewById(R.id.tv_play_load_net_speed_right_top);
         mPlayTimeEnd = findViewById(R.id.play_time_end_xu); //xuameng影片结束时间
@@ -1858,8 +1847,7 @@ public class VodController extends BaseController {
     public void pauseIngXu() {
         mTvPausexu.setVisibility(VISIBLE);
         mxuPlay.setText("播放"); //xuameng底部菜单显示播放
-        mPlayPauseTimexu.setVisibility(GONE); //xuameng隐藏上面时间
-        mPlayTitle.setVisibility(GONE); //xuameng隐藏上面视频名称
+        mPauseContainer.setVisibility(GONE); // xuameng播放标题、暂停时间
         if(mBottomRoot.getVisibility() == View.GONE && !isDisplay) { //xuameng如果没显示菜单就显示
             showBottom();
             myHandle.postDelayed(myRunnable, myHandleSeconds);
@@ -1883,10 +1871,8 @@ public class VodController extends BaseController {
     public void mPauseIngXu() {        //xuameng 全屏时如果是暂停状态就显示暂停图标
 		if(isInPlaybackState()){
             if (!mControlWrapper.isPlaying() && mTvPausexu.getVisibility() == View.GONE){
-				App.showToastShort(getContext(), "2222222222222222222222222222222222222");
                 mTvPausexu.setVisibility(VISIBLE);
-                mPlayTitle.setVisibility(VISIBLE);
-                mPlayPauseTimexu.setVisibility(VISIBLE);
+                mPauseContainer.setVisibility(VISIBLE);  // xuameng播放标题、暂停时间
                 mxuPlay.setText("播放"); //xuameng底部菜单显示播放
                 mHandler.postDelayed(mUpdatePauseLayout, 50);   // Workaround Fix : SurfaceView
             }
@@ -1901,9 +1887,8 @@ public class VodController extends BaseController {
                 @Override
                 public void onAnimationStart(Animator animation) {
                     super.onAnimationStart(animation);
-                    if(mPlayPauseTimexu.getVisibility() == View.VISIBLE || mPlayTitle.getVisibility() == View.VISIBLE) {
-                        mPlayPauseTimexu.setVisibility(GONE); //xuameng隐藏上面视频名称
-                        mPlayTitle.setVisibility(GONE); //xuameng隐藏上面时间
+                    if(mPauseContainer.getVisibility() == View.VISIBLE) { // xuameng播放标题、暂停时间
+                        mPauseContainer.setVisibility(GONE); // xuameng播放标题、暂停时间
                     }
                     isPlaying = true; //xuameng动画开启
                 }
@@ -1917,11 +1902,11 @@ public class VodController extends BaseController {
         }
     }
 
-    private final Runnable mUpdatePauseLayout = new Runnable() {
+    private final Runnable mUpdatePauseLayout = new Runnable() {  //解决surfaceview不显示问题
         @Override
         public void run() {
-            mTvPausexu.requestLayout();
-            mPauseContainer.requestLayout();
+            mTvPausexu.requestLayout();  //xuameng暂停图标
+            mPauseContainer.requestLayout();  // xuameng播放标题、暂停时间
         }
     };
 
@@ -2186,8 +2171,7 @@ public class VodController extends BaseController {
                 mBottomRoot.setVisibility(GONE); //动画结束后隐藏下菜单
                 mTopRoot1.setVisibility(GONE); //动画结束后隐藏上菜单
                 mTopRoot2.setVisibility(GONE); //动画结束后隐藏上菜单
-                mPlayPauseTimexu.setVisibility(GONE); //xuameng隐藏上面时间
-                mPlayTitle.setVisibility(GONE); //xuameng隐藏上面视频名称
+                mPauseContainer.setVisibility(GONE); // xuameng播放标题、暂停时间
                 backBtn.setVisibility(GONE); //返回键隐藏菜单
                 mTvPausexu.setVisibility(GONE); //隐藏暂停菜单
                 mLockView.setVisibility(GONE); //xuameng隐藏屏幕锁
@@ -2207,8 +2191,7 @@ public class VodController extends BaseController {
             }
             return true;
         }
-        mPlayPauseTimexu.setVisibility(GONE); //xuameng隐藏上面时间
-        mPlayTitle.setVisibility(GONE); //xuameng隐藏上面视频名称
+        mPauseContainer.setVisibility(GONE); // xuameng播放标题、暂停时间
         backBtn.setVisibility(GONE); //返回键隐藏菜单
         mTvPausexu.setVisibility(GONE); //隐藏暂停菜单
         mLockView.setVisibility(GONE); //xuameng隐藏屏幕锁
