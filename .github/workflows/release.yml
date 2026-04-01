@@ -1,4 +1,4 @@
-name: jvhuiys Build (release)
+name: jvhuiys release Sign
 
 on:
   workflow_dispatch:
@@ -8,37 +8,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup JDK 17
-        uses: actions/setup-java@v4
+      - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+      - uses: android-actions/setup-android@v3
 
-      - name: Install Build Tools
-        run: |
-          sdkmanager "build-tools;34.0.0"
+      - run: sdkmanager "build-tools;34.0.0"
 
-      - name: Build Unsigned APK
+      - name: Build & Unsigned APK
         run: |
           chmod +x gradlew
           ./gradlew assembleRelease
-
           APK=$(find app/build/outputs -name "*.apk" | head -n 1)
-          mv "$APK" original.apk
+          unzip $APK -d temp_apk
+          rm -rf temp_apk/META-INF
 
-          mkdir -p temp_apk
-          cd temp_apk
-          unzip ../original.apk
-          rm -rf META-INF/
-          cd ..
-
-      - name: Generate Keystore (alias=android)
+      - name: Generate Keystore & Sign
         run: |
           keytool -genkeypair \
             -alias android \
@@ -50,8 +39,6 @@ jobs:
             -keypass tvbox123 \
             -dname "CN=Android, OU=Android, O=Android, L=Android, S=Android, C=CN"
 
-      - name: JAR Sign APK
-        run: |
           cd temp_apk
           zip -r ../unsigned.apk .
           cd ..
@@ -70,15 +57,12 @@ jobs:
         run: |
           $ANDROID_HOME/build-tools/34.0.0/zipalign -v 4 signed.apk final.apk
 
-      - name: Verify ANDROID.RSA / ANDROID.SF
+      - name: Verify ANDROID.RSA
         run: |
           unzip final.apk
-          ls -l META-INF/
           test -f META-INF/ANDROID.RSA
-          test -f META-INF/ANDROID.SF
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
-          name: tvhuiys-android-rsa
+          name: com.jvhuiys.player
           path: final.apk
