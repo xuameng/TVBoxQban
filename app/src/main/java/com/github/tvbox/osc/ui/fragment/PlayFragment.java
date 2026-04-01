@@ -945,7 +945,7 @@ public class PlayFragment extends BaseLazyFragment {
                         subtitleCacheKey = info.optString("subtKey", null);
                         String playUrl = info.optString("playUrl", "");
 						App.showToastShort(mContext, playUrl);
-                                if (url.startsWith("http://") || url.startsWith("https://")) {
+                                if (playUrl.startsWith("http://") || playUrl.startsWith("https://")) {
                                     // 异步加载网络歌词
                                     loadLrcFromUrl(playUrl);
 								}
