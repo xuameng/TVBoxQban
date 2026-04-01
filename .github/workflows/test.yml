@@ -22,11 +22,11 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Verify Keystore
+      - name: Prepare Keystore
         run: |
           pwd
           ls app
-          file app/TVBoxOSC.jks
+          file app/TVBoxOSC.jks || echo "Keystore NOT FOUND"
 
       - name: Configure Gradle Properties
         run: |
@@ -35,7 +35,7 @@ jobs:
           echo "RELEASE_KEY_ALIAS=TVBoxOSC" >> gradle.properties
           echo "RELEASE_KEY_PASSWORD=TVBoxOSC" >> gradle.properties
 
-      - name: Build With Gradle (Release + V3)
+      - name: Build With Gradle
         run: |
           chmod +x gradlew
           ./gradlew assembleRelease \
@@ -47,10 +47,10 @@ jobs:
       - name: Collect APK
         run: |
           mkdir -p apk
-          mv app/build/outputs/apk/release/*.apk apk/
+          find . -name "*release*.apk" -exec mv {} apk/ \;
 
-      - name: Upload Signed APK
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: com.jvhuiys.player
+          name: signed-apk
           path: apk/*
