@@ -26,9 +26,13 @@ jobs:
         
       - name: Create Keystore
         run: |
-          # 创建与第二个工作流相同的keystore
-          keytool -genkey -v -keystore app/TVBoxOSC.jks -alias TVBoxOSC -keyalg RSA -keysize 2048 -validity 10000 \
-            -storepass TVBoxOSC -keypass TVBoxOSC -dname "CN=TVBoxOSC, OU=TVBox, O=TVBox, L=TVBox, S=TVBox, C=CN" -noprompt
+          # 检查keystore是否存在，如果不存在则创建
+          if [ ! -f "app/TVBoxOSC.jks" ]; then
+            keytool -genkey -v -keystore app/TVBoxOSC.jks -alias TVBoxOSC -keyalg RSA -keysize 2048 -validity 10000 \
+              -storepass TVBoxOSC -keypass TVBoxOSC -dname "CN=TVBoxOSC, OU=TVBox, O=TVBox, L=TVBox, S=TVBox, C=CN" -noprompt
+          else
+            echo "Keystore already exists, using existing one."
+          fi
           
       - name: Apply Same Signing Config as Second Workflow
         run: |
