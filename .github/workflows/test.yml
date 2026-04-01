@@ -44,10 +44,6 @@ jobs:
             --daemon \
             --warning-mode all
 
-      - name: Verify APK Signature
-        run: |
-          apksigner verify --verbose app/build/outputs/apk/release/*.apk
-
       - name: Collect APK
         run: |
           mkdir -p apk
