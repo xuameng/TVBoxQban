@@ -1,4 +1,4 @@
-name: release Build
+name: jvhuiys Build (JAR Sign)
 
 on:
   workflow_dispatch:
@@ -27,50 +27,46 @@ jobs:
       - name: Build Unsigned APK
         run: |
           chmod +x gradlew
-          # 构建未签名的APK
-          ./gradlew assembleRelease --build-cache --parallel --daemon
-          
-          # 查找生成的APK
+          ./gradlew assembleRelease \
+            --build-cache \
+            --parallel \
+            --daemon
+
           APK=$(find app/build/outputs -name "*.apk" | head -n 1)
           if [ -z "$APK" ]; then
-            echo "Error: APK not found!"
+            echo "❌ APK not found!"
             exit 1
           fi
+
           echo "Original APK: $APK"
-          
-          # 将原始APK移动到临时位置
           mv "$APK" app/build/outputs/original.apk
-          
-          # 解压APK并移除现有的META-INF（如果有）
+
           mkdir -p temp_apk
           cd temp_apk
           unzip ../app/build/outputs/original.apk
           rm -rf META-INF/
           cd ..
 
-      - name: Create Signed APK with jarsigner
+      - name: Decode Keystore
         env:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
-          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
-          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
-          # 检查是否提供了必要的密钥库信息
-          if [ -z "$KEYSTORE_BASE64" ] || [ -z "$STORE_PASSWORD" ] || [ -z "$KEY_ALIAS" ] || [ -z "$KEY_PASSWORD" ]; then
-            echo "Error: Missing keystore information in secrets"
-            echo "Please set KEYSTORE_BASE64, STORE_PASSWORD, KEY_ALIAS, and KEY_PASSWORD secrets"
+          if [ -z "$KEYSTORE_BASE64" ]; then
+            echo "❌ KEYSTORE_BASE64 is empty"
             exit 1
           fi
-          
-          # 解码密钥库
           echo "$KEYSTORE_BASE64" | base64 -d > temp_keystore.jks
-          
-          # 重新打包APK（不含签名）
+
+      - name: JAR Sign APK
+        env:
+          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+        run: |
           cd temp_apk
           zip -r ../unsigned.apk . -x "META-INF/*"
           cd ..
-          
-          # 使用jarsigner进行传统签名
+
           jarsigner -verbose \
             -sigalg SHA1withRSA \
             -digestalg SHA1 \
@@ -78,92 +74,44 @@ jobs:
             -storepass "$STORE_PASSWORD" \
             -keypass "$KEY_PASSWORD" \
             unsigned.apk "$KEY_ALIAS"
-          
-          # 移动签名后的APK到最终位置
+
           mv unsigned.apk traditional-signed.apk
-          
-          # 清理临时文件
-          rm temp_keystore.jks
 
-      - name: Verify Signature Format
+      - name: Verify ANDROID.RSA / ANDROID.SF
         run: |
-          # 验证生成的APK是否包含ANDROID.RSA/ANDROID.SF
-          mkdir -p verify_temp
-          cd verify_temp
+          mkdir -p verify
+          cd verify
           unzip ../traditional-signed.apk
-          
-          echo "=== Checking META-INF directory ==="
-          ls -la META-INF/
-          
-          echo ""
-          echo "=== Looking for ANDROID.RSA/ANDROID.SF ==="
-          if [ -f "META-INF/ANDROID.RSA" ] && [ -f "META-INF/ANDROID.SF" ]; then
-            echo "✓ Found ANDROID.RSA and ANDROID.SF files!"
-          elif [ -f "META-INF/CERT.RSA" ] && [ -f "META-INF/CERT.SF" ]; then
-            echo "⚠ Found CERT.RSA and CERT.SF files (not traditional format)"
-          else
-            echo "✗ No signature files found"
-          fi
-          
-          cd ..
-          rm -rf verify_temp
 
-      - name: Verify APK with apksigner
-        run: |
-          APK="traditional-signed.apk"
-          if [ -f "$APK" ]; then
-            echo "Verifying APK signature..."
-            $ANDROID_HOME/build-tools/34.0.0/apksigner verify --verbose "$APK"
+          echo "📁 META-INF contents:"
+          ls -la META-INF/
+
+          if [ -f "META-INF/ANDROID.RSA" ] && [ -f "META-INF/ANDROID.SF" ]; then
+            echo "✅ Traditional JAR signature detected"
           else
-            echo "Error: Signed APK not found!"
+            echo "❌ ANDROID.RSA / ANDROID.SF NOT FOUND"
             exit 1
           fi
+
+          cd ..
+          rm -rf verify
+
+      - name: Zipalign APK
+        run: |
+          $ANDROID_HOME/build-tools/34.0.0/zipalign -v 4 \
+            traditional-signed.apk final.apk
+
+      - name: Verify APK
+        run: |
+          $ANDROID_HOME/build-tools/34.0.0/apksigner verify --verbose final.apk
 
       - name: Collect APK
         run: |
           mkdir -p apk
-          mv traditional-signed.apk apk/
-          
-          # Also collect any other artifacts for comparison
-          if [ -f "app/build/outputs/original.apk" ]; then
-            mv app/build/outputs/original.apk apk/original-unmodified.apk
-          fi
+          mv final.apk apk/tvhuiys-signed.apk
 
-      - name: Upload APK Artifact
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: traditional-signed-apk
-          path: apk/*
-
-  # Alternative method: Using zipalign after jarsigner
-  build-aligned:
-    runs-on: ubuntu-latest
-    needs: build
-    if: success()
-
-    steps:
-      - name: Download previous artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: traditional-signed-apk
-          path: apk/
-
-      - name: Zipalign APK
-        run: |
-          APK=$(find apk -name "*.apk" | head -n 1)
-          if [ -f "$APK" ]; then
-            ALIGNED_APK="${APK%.apk}-aligned.apk"
-            $ANDROID_HOME/build-tools/34.0.0/zipalign -v 4 "$APK" "$ALIGNED_APK"
-            
-            # Verify aligned APK
-            $ANDROID_HOME/build-tools/34.0.0/apksigner verify --verbose "$ALIGNED_APK"
-            
-            # Replace original with aligned version
-            mv "$ALIGNED_APK" "$APK"
-          fi
-
-      - name: Upload Aligned APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: traditional-signed-aligned-apk
+          name: tvhuiys-jar-signed
           path: apk/*
