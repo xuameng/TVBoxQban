@@ -916,6 +916,11 @@ public class PlayFragment extends BaseLazyFragment {
                             try {
                                 JSONObject obj = info.getJSONArray("subs").optJSONObject(0);
                                 String url = obj.optString("url", "");
+String urllrc = obj.optString("lrc", "");
+						App.showToastShort(mContext, urllrc);
+						                                    mController.setLrcContent(urllrc);
+                                    mController.mLrcView.setVisibility(View.VISIBLE);
+
                                 if (!TextUtils.isEmpty(url) && !FileUtils.hasExtension(url)) {
                                     String format = obj.optString("format", "");
                                     String name = obj.optString("name", "字幕");
@@ -943,9 +948,6 @@ public class PlayFragment extends BaseLazyFragment {
                              }
                         }
                         subtitleCacheKey = info.optString("subtKey", null);
-						App.showToastShort(mContext, subtitleCacheKey);
-						                                    mController.setLrcContent(subtitleCacheKey);
-                                    mController.mLrcView.setVisibility(View.VISIBLE);
                         String playUrl = info.optString("playUrl", "");
                         String msg = info.optString("msg", "");
                         if(!msg.isEmpty()){
