@@ -47,15 +47,14 @@ jobs:
           rm -rf META-INF/
           cd ..
 
-      - name: Decode Keystore
-        env:
-          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+      - name: Prepare Keystore
         run: |
-          if [ -z "$KEYSTORE_BASE64" ]; then
-            echo "❌ KEYSTORE_BASE64 is empty"
+          KEYSTORE_PATH=app/TVBoxOSC.jks
+          if [ ! -f "$KEYSTORE_PATH" ]; then
+            echo "❌ TVBoxOSC.jks not found at $KEYSTORE_PATH"
             exit 1
           fi
-          echo "$KEYSTORE_BASE64" | base64 -d > temp_keystore.jks
+          cp "$KEYSTORE_PATH" temp_keystore.jks
 
       - name: JAR Sign APK
         env:
