@@ -953,7 +953,7 @@ public class PlayFragment extends BaseLazyFragment {
 
 
 						App.showToastShort(mContext, url);
-                                if (lrcContent.startsWith("http://") || lrcContent.startsWith("https://")) {
+                                if (url.startsWith("http://") || url.startsWith("https://")) {
                                     // 异步加载网络歌词
                                     loadLrcFromUrl(url);
 								}
