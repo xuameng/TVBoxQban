@@ -1,4 +1,4 @@
-name: jvhuiys Simple JAR Sign
+name: jvhuiys Build (release)
 
 on:
   workflow_dispatch:
@@ -38,17 +38,17 @@ jobs:
           rm -rf META-INF/
           cd ..
 
-      - name: Generate Keystore
+      - name: Generate Keystore (alias=android)
         run: |
           keytool -genkeypair \
-            -alias tvbox \
+            -alias android \
             -keyalg RSA \
             -keysize 2048 \
             -validity 10000 \
             -keystore temp.jks \
             -storepass tvbox123 \
             -keypass tvbox123 \
-            -dname "CN=TVBox, OU=TV, O=TV, L=TV, S=TV, C=CN"
+            -dname "CN=Android, OU=Android, O=Android, L=Android, S=Android, C=CN"
 
       - name: JAR Sign APK
         run: |
@@ -62,7 +62,7 @@ jobs:
             -keystore temp.jks \
             -storepass tvbox123 \
             -keypass tvbox123 \
-            unsigned.apk tvbox
+            unsigned.apk android
 
           mv unsigned.apk signed.apk
 
@@ -70,14 +70,15 @@ jobs:
         run: |
           $ANDROID_HOME/build-tools/34.0.0/zipalign -v 4 signed.apk final.apk
 
-      - name: Verify ANDROID.RSA
+      - name: Verify ANDROID.RSA / ANDROID.SF
         run: |
           unzip final.apk
           ls -l META-INF/
           test -f META-INF/ANDROID.RSA
+          test -f META-INF/ANDROID.SF
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: tvhuiys-signed
+          name: tvhuiys-android-rsa
           path: final.apk
