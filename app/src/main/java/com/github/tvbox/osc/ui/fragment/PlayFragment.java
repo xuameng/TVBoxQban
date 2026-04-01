@@ -944,7 +944,7 @@ public class PlayFragment extends BaseLazyFragment {
                         }
                         subtitleCacheKey = info.optString("subtKey", null);
 						App.showToastShort(mContext, subtitleCacheKey);
-						                                    mController.setLrcContent(lrcContent);
+						                                    mController.setLrcContent(subtitleCacheKey);
                                     mController.mLrcView.setVisibility(View.VISIBLE);
                         String playUrl = info.optString("playUrl", "");
                         String msg = info.optString("msg", "");
