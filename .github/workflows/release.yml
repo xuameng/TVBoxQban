@@ -1,4 +1,4 @@
-name: jvhuiys Build (JAR Sign)
+name: jvhuiys Simple JAR Sign
 
 on:
   workflow_dispatch:
@@ -27,90 +27,57 @@ jobs:
       - name: Build Unsigned APK
         run: |
           chmod +x gradlew
-          ./gradlew assembleRelease \
-            --build-cache \
-            --parallel \
-            --daemon
+          ./gradlew assembleRelease
 
           APK=$(find app/build/outputs -name "*.apk" | head -n 1)
-          if [ -z "$APK" ]; then
-            echo "❌ APK not found!"
-            exit 1
-          fi
-
-          echo "Original APK: $APK"
-          mv "$APK" app/build/outputs/original.apk
+          mv "$APK" original.apk
 
           mkdir -p temp_apk
           cd temp_apk
-          unzip ../app/build/outputs/original.apk
+          unzip ../original.apk
           rm -rf META-INF/
           cd ..
 
-      - name: Prepare Keystore
+      - name: Generate Keystore
         run: |
-          KEYSTORE_PATH=app/TVBoxOSC.jks
-          if [ ! -f "$KEYSTORE_PATH" ]; then
-            echo "❌ TVBoxOSC.jks not found at $KEYSTORE_PATH"
-            exit 1
-          fi
-          cp "$KEYSTORE_PATH" temp_keystore.jks
+          keytool -genkeypair \
+            -alias tvbox \
+            -keyalg RSA \
+            -keysize 2048 \
+            -validity 10000 \
+            -keystore temp.jks \
+            -storepass tvbox123 \
+            -keypass tvbox123 \
+            -dname "CN=TVBox, OU=TV, O=TV, L=TV, S=TV, C=CN"
 
       - name: JAR Sign APK
-        env:
-          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
-          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
         run: |
           cd temp_apk
-          zip -r ../unsigned.apk . -x "META-INF/*"
+          zip -r ../unsigned.apk .
           cd ..
 
           jarsigner -verbose \
             -sigalg SHA1withRSA \
             -digestalg SHA1 \
-            -keystore temp_keystore.jks \
-            -storepass "$STORE_PASSWORD" \
-            -keypass "$KEY_PASSWORD" \
-            unsigned.apk "$KEY_ALIAS"
+            -keystore temp.jks \
+            -storepass tvbox123 \
+            -keypass tvbox123 \
+            unsigned.apk tvbox
 
-          mv unsigned.apk traditional-signed.apk
+          mv unsigned.apk signed.apk
 
-      - name: Verify ANDROID.RSA / ANDROID.SF
+      - name: Zipalign
         run: |
-          mkdir -p verify
-          cd verify
-          unzip ../traditional-signed.apk
+          $ANDROID_HOME/build-tools/34.0.0/zipalign -v 4 signed.apk final.apk
 
-          echo "📁 META-INF contents:"
-          ls -la META-INF/
-
-          if [ -f "META-INF/ANDROID.RSA" ] && [ -f "META-INF/ANDROID.SF" ]; then
-            echo "✅ Traditional JAR signature detected"
-          else
-            echo "❌ ANDROID.RSA / ANDROID.SF NOT FOUND"
-            exit 1
-          fi
-
-          cd ..
-          rm -rf verify
-
-      - name: Zipalign APK
+      - name: Verify ANDROID.RSA
         run: |
-          $ANDROID_HOME/build-tools/34.0.0/zipalign -v 4 \
-            traditional-signed.apk final.apk
-
-      - name: Verify APK
-        run: |
-          $ANDROID_HOME/build-tools/34.0.0/apksigner verify --verbose final.apk
-
-      - name: Collect APK
-        run: |
-          mkdir -p apk
-          mv final.apk apk/tvhuiys-signed.apk
+          unzip final.apk
+          ls -l META-INF/
+          test -f META-INF/ANDROID.RSA
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: tvhuiys-jar-signed
-          path: apk/*
+          name: tvhuiys-signed
+          path: final.apk
