@@ -1,4 +1,4 @@
-name: jvhuiys Build
+name: Official Sign Build
 
 on:
   workflow_dispatch:
@@ -26,7 +26,7 @@ jobs:
         run: |
           # 如果根目录已有 TVBoxOSC.jks，复制到 app 目录
           if [ -f "TVBoxOSC.jks" ]; then
-            cp TVBoxOSC.jks app/TVBoxOSC.jks
+            cp TVBoxOSC.jks TVBoxOSC.jks
           fi
 
       - name: Configure Gradle Properties
