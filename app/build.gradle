@@ -29,7 +29,7 @@ android {
             storeFile file('TVBoxOSC.jks')
             storePassword 'TVBoxOSC'
             v2SigningEnabled = true
-            v3SigningEnabled = true
+            enableV3Signing = true
         }
     }
 
