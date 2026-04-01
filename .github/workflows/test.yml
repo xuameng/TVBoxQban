@@ -15,11 +15,11 @@ jobs:
         with:
           fetch-depth: 0
           
-      - name: Setup JDK 11
+      - name: Setup JDK 17
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '11'
+          java-version: '17'
           
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
@@ -46,15 +46,14 @@ jobs:
       - name: Build With Gradle
         run: |
           chmod +x gradlew
+          export JAVA_HOME=/usr/lib/jvm/java-17-openjdk
           ./gradlew assemblerelease --build-cache --parallel --daemon --warning-mode all
           # ./gradlew assembleDebug 
           
       - name: Prepare App
         run: |
           mkdir -p ${{ github.workspace }}/apk/
-          for file in `find . -name "*release*.apk" -print`; do
-            mv "$file" ${{ github.workspace }}/apk/ || true
-          done
+          find . -name "*release*.apk" -exec mv {} ${{ github.workspace }}/apk/ \; 2>/dev/null || true
           
       - name: Upload App To Artifact
         uses: actions/upload-artifact@v4
