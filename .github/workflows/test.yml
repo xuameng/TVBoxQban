@@ -24,39 +24,34 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
           
-      - name: Check and Copy Keystore
+      - name: Use TVBoxOSC Keystore Instead of Default
         run: |
-          # 检查是否有TVBoxOSC.jks文件，如果有就复制到app目录
+          # 检查是否已有TVBoxOSC.jks文件
           if [ -f "TVBoxOSC.jks" ]; then
-            echo "Found TVBoxOSC.jks, copying to app directory"
-            cp TVBoxOSC.jks app/TVBoxOSC.jks
-            
-            # 配置gradle.properties使用这个keystore
-            echo "RELEASE_STORE_FILE=./app/TVBoxOSC.jks" >> gradle.properties
-            echo "RELEASE_KEY_ALIAS=TVBoxOSC" >> gradle.properties
-            echo "RELEASE_STORE_PASSWORD=TVBoxOSC" >> gradle.properties
-            echo "RELEASE_KEY_PASSWORD=TVBoxOSC" >> gradle.properties
+            echo "Found TVBoxOSC.jks in root, copying to app directory"
+            cp TVBoxOSC.jks app/release-key.jks
+            # 配置gradle.properties使用TVBoxOSC的参数
+            echo "MYAPP_RELEASE_STORE_FILE=../app/release-key.jks" >> gradle.properties
+            echo "MYAPP_RELEASE_STORE_PASSWORD=TVBoxOSC" >> gradle.properties
+            echo "MYAPP_RELEASE_KEY_ALIAS=TVBoxOSC" >> gradle.properties
+            echo "MYAPP_RELEASE_KEY_PASSWORD=TVBoxOSC" >> gradle.properties
+          elif [ -f "app/TVBoxOSC.jks" ]; then
+            echo "Found TVBoxOSC.jks in app directory, copying to release-key.jks"
+            cp app/TVBoxOSC.jks app/release-key.jks
+            # 配置gradle.properties使用TVBoxOSC的参数
+            echo "MYAPP_RELEASE_STORE_FILE=../app/release-key.jks" >> gradle.properties
+            echo "MYAPP_RELEASE_STORE_PASSWORD=TVBoxOSC" >> gradle.properties
+            echo "MYAPP_RELEASE_KEY_ALIAS=TVBoxOSC" >> gradle.properties
+            echo "MYAPP_RELEASE_KEY_PASSWORD=TVBoxOSC" >> gradle.properties
           else
-            echo "TVBoxOSC.jks not found, creating a test keystore"
-            keytool -genkey -v -keystore app/test-keystore.jks -alias test_key -keyalg RSA -keysize 2048 -validity 10000 \
-              -storepass testpass -keypass testpass -dname "CN=Test, OU=Test, O=Test, L=Test, S=Test, C=US"
-            echo "RELEASE_STORE_FILE=./app/test-keystore.jks" >> gradle.properties
-            echo "RELEASE_KEY_ALIAS=test_key" >> gradle.properties
-            echo "RELEASE_STORE_PASSWORD=testpass" >> gradle.properties
-            echo "RELEASE_KEY_PASSWORD=testpass" >> gradle.properties
-          fi
-          
-      - name: Apply Same Signing Config as Second Workflow
-        run: |
-          # 使用与第二个工作流完全相同的签名配置
-          if [ -f "TVBoxOSC.jks" ]; then
-            signingConfigs='ICAgIHNpZ25pbmdDb25maWdzIHtcCiAgICAgICAgaWYgKHByb2plY3QuaGFzUHJvcGVydHkoIlJFTEVBU0VfU1RPUkVfRklMRSIpKSB7XAogICAgICAgICAgICBteUNvbmZpZyB7XAogICAgICAgICAgICAgICAgc3RvcmVGaWxlIGZpbGUoUkVMRUFTRV9TVE9SRV9GSUxFKVwKICAgICAgICAgICAgICAgIHN0b3JlUGFzc3dvcmQgUkVMRUFTRV9TVE9SRV9QQVNTV09SRFwKICAgICAgICAgICAgICAgIGtleUFsaWFzIFJFTEVBU0VfS0VZX0FMSUFTXAogICAgICAgICAgICAgICAga2V5UGFzc3dvcmQgUkVMRUFTRV9LRVlfUEFTU1dPUkRcCiAgICAgICAgICAgICAgICB2MVNpZ25pbmdFbmFibGVkIHRydWVcCiAgICAgICAgICAgICAgICB2MlNpZ25pbmdFbmFibGVkIHRydWVcCiAgICAgICAgICAgICAgICBlbmFibGVWM1NpZ25pbmcgPSB0cnVlXAogICAgICAgICAgICAgICAgZW5hYmxlVjRTaWduaW5nID0gdHJ1ZVwKICAgICAgICAgICAgfVwKICAgICAgICB9XAogICAgfVwKXA=='
-            signingConfig='ICAgICAgICAgICAgaWYgKHByb2plY3QuaGFzUHJvcGVydHkoIlJFTEVBU0VfU1RPUkVfRklMRSIpKSB7XAogICAgICAgICAgICAgICAgc2lnbmluZ0NvbmZpZyBzaWduaW5nQ29uZmlncy5teUNvbmZpZ1wKICAgICAgICAgICAgfVwK'
-            signingConfigs="$(echo "$signingConfigs" |base64 -d )"
-            signingConfig="$(echo "$signingConfig" |base64 -d )"
-            
-            # 应用签名配置到build.gradle
-            sed -i -e "/defaultConfig {/i\\$signingConfigs " -e "/debug {/a\\$signingConfig " -e "/release {/a\\$signingConfig " app/build.gradle
+            echo "TVBoxOSC.jks not found, using original logic"
+            # 如果没有找到TVBoxOSC.jks，使用原有逻辑
+            keytool -genkey -v -keystore app/release-key.jks -alias test_key -keyalg RSA -keysize 2048 -validity 10000 \
+              -storepass changeit -keypass changeit -dname "CN=Test, OU=Test, O=Test, L=Test, S=Test, C=US" -noprompt
+            echo "MYAPP_RELEASE_STORE_FILE=../app/release-key.jks" >> gradle.properties
+            echo "MYAPP_RELEASE_STORE_PASSWORD=changeit" >> gradle.properties
+            echo "MYAPP_RELEASE_KEY_ALIAS=test_key" >> gradle.properties
+            echo "MYAPP_RELEASE_KEY_PASSWORD=changeit" >> gradle.properties
           fi
           
       - name: Build With Gradle
