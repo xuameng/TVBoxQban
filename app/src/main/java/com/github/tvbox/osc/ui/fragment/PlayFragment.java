@@ -944,20 +944,17 @@ public class PlayFragment extends BaseLazyFragment {
                         }
                         subtitleCacheKey = info.optString("subtKey", null);
                         String playUrl = info.optString("playUrl", "");
+						App.showToastShort(mContext, playUrl);
+                                if (url.startsWith("http://") || url.startsWith("https://")) {
+                                    // 异步加载网络歌词
+                                    loadLrcFromUrl(playUrl);
+								}
                         String msg = info.optString("msg", "");
                         if(!msg.isEmpty()){
                             App.showToastShort(mContext, msg);
                         }
                         String flag = info.optString("flag");
                         String url = info.getString("url");
-
-
-						App.showToastShort(mContext, url);
-                                if (url.startsWith("http://") || url.startsWith("https://")) {
-                                    // 异步加载网络歌词
-                                    loadLrcFromUrl(url);
-								}
-
                         if(url.startsWith("[")){
                             url=mController.firstUrlByArray(url);
                         }
