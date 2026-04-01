@@ -24,14 +24,30 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
         
-      - name: Create Keystore
+      - name: Decode Keystore
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
         run: |
-          # 检查keystore是否存在，如果不存在则创建
-          if [ ! -f "app/TVBoxOSC.jks" ]; then
-            keytool -genkey -v -keystore app/TVBoxOSC.jks -alias TVBoxOSC -keyalg RSA -keysize 2048 -validity 10000 \
-              -storepass TVBoxOSC -keypass TVBoxOSC -dname "CN=TVBoxOSC, OU=TVBox, O=TVBox, L=TVBox, S=TVBox, C=CN" -noprompt
+          if [ -n "$KEYSTORE_BASE64" ]; then
+            echo "$KEYSTORE_BASE64" | base64 -d > app/release-key.jks
+            echo "MYAPP_RELEASE_STORE_FILE=../app/release-key.jks" >> gradle.properties
+            echo "MYAPP_RELEASE_STORE_PASSWORD=${{ secrets.KEYSTORE_PASSWORD }}" >> gradle.properties
+            echo "MYAPP_RELEASE_KEY_ALIAS=${{ secrets.KEY_ALIAS }}" >> gradle.properties
+            echo "MYAPP_RELEASE_KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}" >> gradle.properties
           else
-            echo "Keystore already exists, using existing one."
+            echo "Using default test keystore"
+            # 如果没有提供正式keystore，则创建与第二个工作流相同的keystore
+            if [ ! -f "TVBoxOSC.jks" ]; then
+              keytool -genkey -v -keystore TVBoxOSC.jks -alias TVBoxOSC -keyalg RSA -keysize 2048 -validity 10000 \
+                -storepass TVBoxOSC -keypass TVBoxOSC -dname "CN=TVBoxOSC, OU=TVBox, O=TVBox, L=TVBox, S=TVBox, C=CN" -noprompt
+            fi
+            cp TVBoxOSC.jks app/TVBoxOSC.jks
+            
+            # 使用与第二个工作流相同的签名配置
+            echo "RELEASE_STORE_FILE=./app/TVBoxOSC.jks" >> gradle.properties
+            echo "RELEASE_KEY_ALIAS=TVBoxOSC" >> gradle.properties
+            echo "RELEASE_STORE_PASSWORD=TVBoxOSC" >> gradle.properties
+            echo "RELEASE_KEY_PASSWORD=TVBoxOSC" >> gradle.properties
           fi
           
       - name: Apply Same Signing Config as Second Workflow
@@ -44,12 +60,6 @@ jobs:
           
           # 应用签名配置到build.gradle
           sed -i -e "/defaultConfig {/i\\$signingConfigs " -e "/debug {/a\\$signingConfig " -e "/release {/a\\$signingConfig " app/build.gradle
-          
-          # 添加gradle.properties配置
-          echo "RELEASE_STORE_FILE=./app/TVBoxOSC.jks" >> gradle.properties
-          echo "RELEASE_KEY_ALIAS=TVBoxOSC" >> gradle.properties
-          echo "RELEASE_STORE_PASSWORD=TVBoxOSC" >> gradle.properties
-          echo "RELEASE_KEY_PASSWORD=TVBoxOSC" >> gradle.properties
           
       - name: Build With Gradle
         run: |
