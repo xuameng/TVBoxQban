@@ -1,55 +1,32 @@
-name: ABI Split Sign Build (V3)
+name: jvhuiys Build
 
 on:
+#  push:
+#    branches:
+#      - main
+#  pull_request:
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup JDK 17
-        uses: actions/setup-java@v4
+      - uses: actions/checkout@v4
         with:
-          distribution: temurin
-          java-version: 17
-
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Install Build Tools
-        run: |
-          sdkmanager "build-tools;34.0.0"
-
-      - name: Build APK (with ABI splits)
+          fetch-depth: 0
+      - name: Build With Gradle
         run: |
           chmod +x gradlew
-          ./gradlew assembleRelease \
-            --build-cache \
-            --parallel \
-            --daemon
-
-      #关键步骤：自动查找 APK，不再写死路径
-      - name: Verify APK Signature
+           ./gradlew assemblerelease --build-cache --parallel --daemon --warning-mode all
+          # ./gradlew assembleDebug 
+      - name: Prepare App
         run: |
-          APK=$(find app/build/outputs -name "*.apk" | head -n 1)
-          if [ -z "$APK" ]; then
-            echo "❌ Error: APK not found!"
-            exit 1
-          fi
-          echo "✅ Found APK: $APK"
-          $ANDROID_HOME/build-tools/34.0.0/apksigner verify --verbose "$APK"
-
-      - name: Collect APK
-        run: |
-          mkdir -p apk
-          find app/build/outputs -name "*.apk" -exec mv {} apk/ \;
-
-      - name: Upload APK Artifact
+          mkdir -p ${{ github.workspace }}/apk/
+          for file in `find ~ -name "*.apk" -print`; do
+            mv "$file" ${{ github.workspace }}/apk/
+          done
+      - name: Upload App To Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: signed-v3-apk
-          path: apk/*
+          name: com.jvhuiys.player
+          path: ${{ github.workspace }}/apk/*
