@@ -1,4 +1,4 @@
-name: jvhuiys Build
+name: Official Sign Build (V3)
 
 on:
   workflow_dispatch:
@@ -22,11 +22,15 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Prepare Keystore
+      - name: Install Build Tools
+        run: |
+          sdkmanager "build-tools;34.0.0"
+
+      - name: Verify Keystore
         run: |
           pwd
           ls app
-          file app/TVBoxOSC.jks || echo "Keystore NOT FOUND"
+          file app/TVBoxOSC.jks
 
       - name: Configure Gradle Properties
         run: |
@@ -44,13 +48,17 @@ jobs:
             --daemon \
             --warning-mode all
 
+      - name: Verify APK Signature
+        run: |
+          apksigner verify --verbose app/build/outputs/apk/release/*.apk
+
       - name: Collect APK
         run: |
           mkdir -p apk
-          find . -name "*release*.apk" -exec mv {} apk/ \;
+          mv app/build/outputs/apk/release/*.apk apk/
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: signed-apk
+          name: official-signed-v3-apk
           path: apk/*
