@@ -46,7 +46,6 @@ jobs:
       - name: Build With Gradle
         run: |
           chmod +x gradlew
-          export JAVA_HOME=/usr/lib/jvm/java-17-openjdk
           ./gradlew assemblerelease --build-cache --parallel --daemon --warning-mode all
           # ./gradlew assembleDebug 
           
