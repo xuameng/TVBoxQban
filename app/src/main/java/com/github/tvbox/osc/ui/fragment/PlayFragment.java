@@ -938,11 +938,6 @@ public class PlayFragment extends BaseLazyFragment {
                                 url += "#" + mController.encodeUrl(filename);
                                 }
                                  playSubtitle = url;
-
-						App.showToastShort(mContext, playSubtitle);
-						                                    mController.setLrcContent(playSubtitle);
-                                    mController.mLrcView.setVisibility(View.VISIBLE);
-
                              } catch (Throwable th) {
                                  // 异常处理
                              }
@@ -955,6 +950,14 @@ public class PlayFragment extends BaseLazyFragment {
                         }
                         String flag = info.optString("flag");
                         String url = info.getString("url");
+
+
+						App.showToastShort(mContext, url);
+                                if (lrcContent.startsWith("http://") || lrcContent.startsWith("https://")) {
+                                    // 异步加载网络歌词
+                                    loadLrcFromUrl(url);
+								}
+
                         if(url.startsWith("[")){
                             url=mController.firstUrlByArray(url);
                         }
