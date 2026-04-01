@@ -1,104 +1,57 @@
 name: jvhuiys Build
 
 on:
-#  push:
-#    branches:
-#      - main
-#  pull_request:
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          
+
       - name: Setup JDK 17
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
-          java-version: '17'
-          
+          distribution: temurin
+          java-version: 17
+
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
-          
-      - name: Use TVBoxOSC Keystore with Configuration Matching Second Workflow Exactly
+
+      - name: Prepare Keystore
         run: |
-          # 检查是否已有TVBoxOSC.jks文件
+          # 如果根目录已有 TVBoxOSC.jks，复制到 app 目录
           if [ -f "TVBoxOSC.jks" ]; then
-            echo "Found TVBoxOSC.jks in root, copying to app directory"
             cp TVBoxOSC.jks app/TVBoxOSC.jks
-          elif [ -f "app/TVBoxOSC.jks" ]; then
-            echo "Found TVBoxOSC.jks in app directory"
-          else
-            echo "TVBoxOSC.jks not found, creating new one with same parameters"
-            keytool -genkey -v -keystore app/TVBoxOSC.jks -alias TVBoxOSC -keyalg RSA -keysize 2048 -validity 10000 \
-              -storepass TVBoxOSC -keypass TVBoxOSC -dname "CN=TVBoxOSC, OU=TVBox, O=TVBox, L=TVBox, S=TVBox, C=CN" -noprompt
           fi
-          
-      - name: Apply Signing Config from Second Workflow (with V1 disabled)
+
+      - name: Configure Gradle Properties
         run: |
-          # 解码第二个工作流的base64签名配置
-          signingConfigs='ICAgIHNpZ25pbmdDb25maWdzIHtcCiAgICAgICAgaWYgKHByb2plY3QuaGFzUHJvcGVydHkoIlJFTEVBU0VfU1RPUkVfRklMRSIpKSB7XAogICAgICAgICAgICBteUNvbmZpZyB7XAogICAgICAgICAgICAgICAgc3RvcmVGaWxlIGZpbGUoUkVMRUFTRV9TVE9SRV9GSUxFKVwKICAgICAgICAgICAgICAgIHN0b3JlUGFzc3dvcmQgUkVMRUFTRV9TVE9SRV9QQVNTV09SRFwKICAgICAgICAgICAgICAgIGtleUFsaWFzIFJFTEVBU0VfS0VZX0FMSUFTXAogICAgICAgICAgICAgICAga2V5UGFzc3dvcmQgUkVMRUFTRV9LRVlfUEFTU1dPUkRcCiAgICAgICAgICAgICAgICB2MVNpZ25pbmdFbmFibGVkIHRydWVcCiAgICAgICAgICAgICAgICB2MlNpZ25pbmdFbmFibGVkIHRydWVcCiAgICAgICAgICAgICAgICBlbmFibGVWM1NpZ25pbmcgPSB0cnVlXAogICAgICAgICAgICAgICAgZW5hYmxlVjRTaWduaW5nID0gdHJ1ZVwKICAgICAgICAgICAgfVwKICAgICAgICB9XAogICAgfVwKXA=='
-          signingConfig='ICAgICAgICAgICAgaWYgKHByb2plY3QuaGFzUHJvcGVydHkoIlJFTEVBU0VfU1RPUkVfRklMRSIpKSB7XAogICAgICAgICAgICAgICAgc2lnbmluZ0NvbmZpZyBzaWduaW5nQ29uZmlncy5teUNvbmZpZ1wKICAgICAgICAgICAgfVwK'
-          signingConfigs="$(echo "$signingConfigs" |base64 -d )"
-          signingConfig="$(echo "$signingConfig" |base64 -d )"
-          
-          # 显示解码后的内容
-          echo "Original decoded signingConfigs:"
-          echo "$signingConfigs"
-          echo ""
-          echo "Original decoded signingConfig:"
-          echo "$signingConfig"
-          
-          # 修改配置：将v1SigningEnabled设为false，这样只会生成ANDROID.RSA/SF
-          modifiedSigningConfigs=$(echo "$signingConfigs" | sed 's/v1SigningEnabled true/v1SigningEnabled false/g')
-          echo "Modified signingConfigs (V1 disabled):"
-          echo "$modifiedSigningConfigs"
-          
-          # 应用修改后的签名配置到build.gradle
-          sed -i -e "/defaultConfig {/i\\$modifiedSigningConfigs " -e "/debug {/a\\$signingConfig " -e "/release {/a\\$signingConfig " app/build.gradle
-          
-          # 使用与第二个工作流相同的gradle.properties配置
-          sed -i '$a\RELEASE_STORE_FILE=./app/TVBoxOSC.jks' ./gradle.properties
-          sed -i '$a\RELEASE_KEY_ALIAS=TVBoxOSC' ./gradle.properties
-          sed -i '$a\RELEASE_STORE_PASSWORD=TVBoxOSC' ./gradle.properties
-          sed -i '$a\RELEASE_KEY_PASSWORD=TVBoxOSC' ./gradle.properties
-          
-      - name: Verify Build Configuration
-        run: |
-          echo "Final signing configuration in build.gradle:"
-          grep -A 25 "signingConfigs" app/build.gradle
-          echo ""
-          echo "Gradle properties:"
-          cat gradle.properties
-          
+          echo "RELEASE_STORE_FILE=./app/TVBoxOSC.jks" >> gradle.properties
+          echo "RELEASE_STORE_PASSWORD=TVBoxOSC" >> gradle.properties
+          echo "RELEASE_KEY_ALIAS=TVBoxOSC" >> gradle.properties
+          echo "RELEASE_KEY_PASSWORD=TVBoxOSC" >> gradle.properties
+
       - name: Build With Gradle
         run: |
           chmod +x gradlew
-          ./gradlew assemblerelease --build-cache --parallel --daemon --warning-mode all
-          
-      - name: Check APK Contents for Signature Files
+          ./gradlew assembleRelease \
+            --build-cache \
+            --parallel \
+            --daemon \
+            --warning-mode all
+
+      - name: Collect APK
         run: |
-          # 查找生成的APK文件
-          APK_FILE=$(find . -name "*release*.apk" -print -quit 2>/dev/null)
-          if [ -n "$APK_FILE" ]; then
-            echo "Found APK: $APK_FILE"
-            echo "APK signature-related files:"
-            unzip -l "$APK_FILE" | grep -E "(META-INF/.*\.(SF|RSA|DSA))" | sort
-          else
-            echo "No APK file found!"
-          fi
-          
-      - name: Prepare App
-        run: |
-          mkdir -p ${{ github.workspace }}/apk/
-          find . -name "*release*.apk" -exec mv {} ${{ github.workspace }}/apk/ \; 2>/dev/null || true
-          
-      - name: Upload App To Artifact
+          mkdir -p apk
+          find . -name "*release*.apk" -exec mv {} apk/ \;
+
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: com.jvhuiys.player
-          path: ${{ github.workspace }}/apk/*
+          name: signed-apk
+          path: apk/*
