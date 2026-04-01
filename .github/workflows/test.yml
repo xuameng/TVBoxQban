@@ -32,7 +32,7 @@ jobs:
             --parallel \
             --daemon
 
-      # 🔥 关键步骤：自动查找 APK，不再写死路径
+      #关键步骤：自动查找 APK，不再写死路径
       - name: Verify APK Signature
         run: |
           APK=$(find app/build/outputs -name "*.apk" | head -n 1)
