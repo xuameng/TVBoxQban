@@ -1,4 +1,4 @@
-rootProject.name = "com.jvhuiys.player"
+rootProject.name = "TVBox"
 include ':app'
 include ':player'
 include ':quickjs'
