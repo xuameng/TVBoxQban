@@ -1,4 +1,4 @@
-name: Official Sign Build
+name: jvhuiys Build
 
 on:
   workflow_dispatch:
@@ -24,14 +24,13 @@ jobs:
 
       - name: Prepare Keystore
         run: |
-          # 如果根目录已有 TVBoxOSC.jks，复制到 app 目录
-          if [ -f "TVBoxOSC.jks" ]; then
-            cp TVBoxOSC.jks TVBoxOSC.jks
-          fi
+          pwd
+          ls app
+          file app/TVBoxOSC.jks || echo "Keystore NOT FOUND"
 
       - name: Configure Gradle Properties
         run: |
-          echo "RELEASE_STORE_FILE=./app/TVBoxOSC.jks" >> gradle.properties
+          echo "RELEASE_STORE_FILE=TVBoxOSC.jks" >> gradle.properties
           echo "RELEASE_STORE_PASSWORD=TVBoxOSC" >> gradle.properties
           echo "RELEASE_KEY_ALIAS=TVBoxOSC" >> gradle.properties
           echo "RELEASE_KEY_PASSWORD=TVBoxOSC" >> gradle.properties
