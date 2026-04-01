@@ -1,4 +1,4 @@
-name: Official Sign Build (V3)
+name: Official Sign Build (V3 Final)
 
 on:
   workflow_dispatch:
@@ -22,7 +22,7 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Install Build Tools
+      - name: Install Build Tools (required for apksigner)
         run: |
           sdkmanager "build-tools;34.0.0"
 
@@ -48,9 +48,11 @@ jobs:
             --daemon \
             --warning-mode all
 
-      - name: Verify APK Signature
+      - name: Verify APK Signature (V1+V2+V3)
         run: |
-          apksigner verify --verbose app/build/outputs/apk/release/*.apk
+          APKSIGNER=$ANDROID_HOME/build-tools/34.0.0/apksigner
+          chmod +x $APKSIGNER
+          $APKSIGNER verify --verbose app/build/outputs/apk/release/*.apk
 
       - name: Collect APK
         run: |
