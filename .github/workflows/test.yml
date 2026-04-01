@@ -23,24 +23,54 @@ jobs:
           
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
-          
-      - name: Decode Keystore
-        env:
-          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        
+      - name: Copy Keystore
         run: |
-          if [ -n "$KEYSTORE_BASE64" ]; then
-            echo "$KEYSTORE_BASE64" | base64 -d > app/release-key.jks
-            echo "MYAPP_RELEASE_STORE_FILE=../app/release-key.jks" >> gradle.properties
-            echo "MYAPP_RELEASE_STORE_PASSWORD=${{ secrets.KEYSTORE_PASSWORD }}" >> gradle.properties
-            echo "MYAPP_RELEASE_KEY_ALIAS=${{ secrets.KEY_ALIAS }}" >> gradle.properties
-            echo "MYAPP_RELEASE_KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}" >> gradle.properties
-          else
-            echo "Using default test keystore"
-            cp ${{ github.workspace }}/.github/workflows/TVBoxOSC.jks app/TVBoxOSC.jks
-            sed -i '$a\RELEASE_STORE_FILE=./TVBoxOSC.jks' ./gradle.properties
-            sed -i '$a\RELEASE_KEY_ALIAS=TVBoxOSC' ./gradle.properties
-            sed -i '$a\RELEASE_STORE_PASSWORD=TVBoxOSC' ./gradle.properties
-            sed -i '$a\RELEASE_KEY_PASSWORD=TVBoxOSC' ./gradle.properties
+          # 确保使用与第二个工作流相同的keystore位置
+          if [ ! -f TVBoxOSC.jks ]; then
+            # 如果根目录没有keystore，则复制一份
+            keytool -genkey -v -keystore TVBoxOSC.jks -alias TVBoxOSC -keyalg RSA -keysize 2048 -validity 10000 \
+              -storepass TVBoxOSC -keypass TVBoxOSC -dname "CN=TVBoxOSC, OU=TVBox, O=TVBox, L=TVBox, S=TVBox, C=CN"
+          fi
+          cp TVBoxOSC.jks app/TVBoxOSC.jks
+          
+      - name: Configure Signing
+        run: |
+          # 使用与第二个工作流相同的签名配置
+          echo "RELEASE_STORE_FILE=./app/TVBoxOSC.jks" >> gradle.properties
+          echo "RELEASE_KEY_ALIAS=TVBoxOSC" >> gradle.properties
+          echo "RELEASE_STORE_PASSWORD=TVBoxOSC" >> gradle.properties
+          echo "RELEASE_KEY_PASSWORD=TVBoxOSC" >> gradle.properties
+          
+          # 修改build.gradle以包含与第二个工作流相同的签名配置
+          if ! grep -q "signingConfigs" app/build.gradle; then
+            sed -i '/android {/a\
+    signingConfigs {\
+        config {\
+            keyAlias '\''TVBoxOSC'\''\
+            keyPassword '\''TVBoxOSC'\''\
+            storeFile file('\''TVBoxOSC.jks'\'')\
+            storePassword '\''TVBoxOSC'\''\
+            v2SigningEnabled = true\
+        }\
+    }' app/build.gradle
+          fi
+          
+          # 确保release和debug构建类型使用相同的签名配置
+          if ! grep -q "signingConfig signingConfigs.config" app/build.gradle; then
+            sed -i '/buildTypes {/a\
+        release {\
+            signingConfig = signingConfigs.config\
+            minifyEnabled true\
+            shrinkResources true\
+            proguardFiles getDefaultProguardFile('\''proguard-android-optimize.txt'\''), '\''proguard-rules.pro'\'\
+        }\
+\
+        debug {\
+            signingConfig = signingConfigs.config\
+            minifyEnabled false\
+            proguardFiles getDefaultProguardFile('\''proguard-android-optimize.txt'\'')\
+        }' app/build.gradle
           fi
           
       - name: Build With Gradle
