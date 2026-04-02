@@ -33,6 +33,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.github.tvbox.osc.util.parser.SuperParse;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import org.json.JSONObject;
+import java.util.Iterator;
+
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
@@ -883,6 +889,38 @@ public class PlayFragment extends BaseLazyFragment {
             @Override
             public void onChanged(JSONObject info) {
                 if (info != null) {
+
+                StringBuilder contentBuilder = new StringBuilder();
+                Iterator<String> keys = info.keys();
+                while (keys.hasNext()) {
+                    String key = keys.next();
+                    try {
+                        Object value = info.get(key);
+                        contentBuilder.append(key)
+                                .append(": ")
+                                .append(value.toString())
+                                .append("\n");
+                    } catch (JSONException e) {
+                        contentBuilder.append(key)
+                                .append(": 解析错误\n");
+                    }
+                }
+
+                // 创建并显示 AlertDialog
+                new AlertDialog.Builder(requireContext())
+                        .setTitle("播放信息详情")
+                        .setMessage(contentBuilder.toString())
+                        .setPositiveButton("确定", null)
+                        .show();
+
+                // 后续原有处理逻辑...
+                try {
+                    progressKey = info.optString("proKey", null);
+                    // ... 其他代码
+                } catch (Throwable th) {
+                    // 错误处理
+                }
+
                     try {
                         progressKey = info.optString("proKey", null);
                         boolean parse = info.optString("parse", "1").equals("1");
