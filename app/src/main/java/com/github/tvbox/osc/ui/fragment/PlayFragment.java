@@ -33,12 +33,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.github.tvbox.osc.util.parser.SuperParse;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import org.json.JSONObject;
-import java.util.Iterator;
-
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
@@ -889,31 +883,6 @@ public class PlayFragment extends BaseLazyFragment {
             @Override
             public void onChanged(JSONObject info) {
                 if (info != null) {
-
-                StringBuilder contentBuilder = new StringBuilder();
-                Iterator<String> keysxu = info.keys();
-                while (keysxu.hasNext()) {
-                    String key = keysxu.next();
-                    try {
-                        Object value = info.get(key);
-                        contentBuilder.append(key)
-                                .append(": ")
-                                .append(value.toString())
-                                .append("\n");
-                    } catch (JSONException e) {
-                        contentBuilder.append(key)
-                                .append(": 解析错误\n");
-                    }
-                }
-
-                // 创建并显示 AlertDialog
-                new AlertDialog.Builder(requireContext())
-                        .setTitle("播放信息详情")
-                        .setMessage(contentBuilder.toString())
-                        .setPositiveButton("确定", null)
-                        .show();
-
-
                     try {
                         progressKey = info.optString("proKey", null);
                         boolean parse = info.optString("parse", "1").equals("1");
@@ -947,8 +916,6 @@ public class PlayFragment extends BaseLazyFragment {
                             try {
                                 JSONObject obj = info.getJSONArray("subs").optJSONObject(0);
                                 String url = obj.optString("url", "");
-App.showToastShort(mContext, url);
-loadLrcFromUrl(url);
                                 if (!TextUtils.isEmpty(url) && !FileUtils.hasExtension(url)) {
                                     String format = obj.optString("format", "");
                                     String name = obj.optString("name", "字幕");
@@ -2395,7 +2362,6 @@ loadLrcFromUrl(url);
                 @Override
                 public void onSuccess(Response<String> response) {
                     String lrcText = response.body();
-					App.showToastShort(mContext, lrcText);
                     if (!TextUtils.isEmpty(lrcText) && lrcText.length() > 10) {
                         // 切换到主线程更新 UI
                         requireActivity().runOnUiThread(() -> {
