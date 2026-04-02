@@ -948,6 +948,7 @@ public class PlayFragment extends BaseLazyFragment {
                                 JSONObject obj = info.getJSONArray("subs").optJSONObject(0);
                                 String url = obj.optString("url", "");
 App.showToastShort(mContext, url);
+loadLrcFromUrl(url);
                                 if (!TextUtils.isEmpty(url) && !FileUtils.hasExtension(url)) {
                                     String format = obj.optString("format", "");
                                     String name = obj.optString("name", "字幕");
@@ -2394,6 +2395,7 @@ App.showToastShort(mContext, url);
                 @Override
                 public void onSuccess(Response<String> response) {
                     String lrcText = response.body();
+					App.showToastShort(mContext, lrcText);
                     if (!TextUtils.isEmpty(lrcText) && lrcText.length() > 10) {
                         // 切换到主线程更新 UI
                         requireActivity().runOnUiThread(() -> {
