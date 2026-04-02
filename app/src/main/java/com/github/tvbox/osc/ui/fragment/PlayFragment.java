@@ -891,9 +891,9 @@ public class PlayFragment extends BaseLazyFragment {
                 if (info != null) {
 
                 StringBuilder contentBuilder = new StringBuilder();
-                Iterator<String> keys = info.keys();
-                while (keys.hasNext()) {
-                    String key = keys.next();
+                Iterator<String> keysxu = info.keys();
+                while (keysxu.hasNext()) {
+                    String key = keysxu.next();
                     try {
                         Object value = info.get(key);
                         contentBuilder.append(key)
@@ -913,13 +913,6 @@ public class PlayFragment extends BaseLazyFragment {
                         .setPositiveButton("确定", null)
                         .show();
 
-                // 后续原有处理逻辑...
-                try {
-                    progressKey = info.optString("proKey", null);
-                    // ... 其他代码
-                } catch (Throwable th) {
-                    // 错误处理
-                }
 
                     try {
                         progressKey = info.optString("proKey", null);
