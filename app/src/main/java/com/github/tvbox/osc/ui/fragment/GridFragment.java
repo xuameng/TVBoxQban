@@ -101,7 +101,7 @@ public class GridFragment extends BaseLazyFragment {
 
     private void changeView(String id,Boolean isFolder){
         if(isFolder){
-            this.sortData.flag =style==null?"1":"2"; // 修改sortData.flag
+            this.sortData.flag =style==null?"2":"2"; // 修改sortData.flag
         }else {
             this.sortData.flag ="2"; // 修改sortData.flag
         }
@@ -113,12 +113,10 @@ public class GridFragment extends BaseLazyFragment {
     public boolean isFolederMode(){ return (getUITag() =='1'); }
     // 获取当前页面UI的显示模式 ‘0’ 正常模式 '1' 文件夹模式 '2' 显示缩略图的文件夹模式
 
-	public char getUITag(){
-    // 优先检查 sortData.flag，只有当其为空时才考虑其他条件
-    if(sortData != null && sortData.flag != null && sortData.flag.length() > 0){
-        return sortData.flag.charAt(0);
-    }
-    return '0';
+
+public char getUITag(){
+    // 完全移除 style!=null 的条件判断
+    return (sortData == null || sortData.flag == null || sortData.flag.length() == 0) ? '0' : sortData.flag.charAt(0);
 }
 
     // 是否允许聚合搜索 sortData.flag的第二个字符为‘1’时允许聚搜
