@@ -282,6 +282,10 @@ public class GridFragment extends BaseLazyFragment {
                                 jumpActivity(SearchActivity.class, bundle);
                             }
                         }else {
+if (video.sourceKey.contains("配置中心") 
+    || video.sourceKey.toLowerCase().contains("config")) {
+    return;
+}
                             bundle.putString("picture", video.pic);   //xuameng某些网站图片部显示
                             jumpActivity(DetailActivity.class, bundle);
                         }
