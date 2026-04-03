@@ -899,13 +899,14 @@ public class DetailActivity extends BaseActivity {
                         return;
                     }
                     mVideo = absXml.movie.videoList.get(0);
-
-if (mVideo.sourceKey.contains("配置中心") 
-    || mVideo.sourceKey.toLowerCase().contains("config")) {
-    showEmpty();
-    return;
-}
                     mVideo.id = vodId;
+
+                    if (mVideo.sourceKey.contains("配置中心") 
+                        || mVideo.sourceKey.toLowerCase().contains("config")) {  //xuameng 配置中心判断如是就返回
+                        showEmpty();
+                        return;
+                    }
+
                     if (TextUtils.isEmpty(mVideo.name))mVideo.name = "🥇聚汇影视";
                     vodInfo = new VodInfo();
                     if((mVideo.pic==null || mVideo.pic.isEmpty()) && !vod_picture.isEmpty()){    //xuameng某些网站图片部显示
