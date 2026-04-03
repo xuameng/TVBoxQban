@@ -48,9 +48,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Field; // 新增：用于反射获取字段
-import android.app.AlertDialog; // 新增：用于创建信息弹窗
-
 /**
  * @author pj567
  * @date :2020/12/21
@@ -101,9 +98,9 @@ public class GridFragment extends BaseLazyFragment {
 
     private void changeView(String id,Boolean isFolder){
         if(isFolder){
-            this.sortData.flag = "1"; // 修改sortData.flag
+            this.sortData.flag =style==null?"1":"2"; // 修改sortData.flag
         }else {
-            this.sortData.flag = "1"; // 修改sortData.flag
+            this.sortData.flag ="2"; // 修改sortData.flag
         }
         initView();
         this.sortData.id =id; // 修改sortData.id为新的ID
@@ -112,12 +109,9 @@ public class GridFragment extends BaseLazyFragment {
     }
     public boolean isFolederMode(){ return (getUITag() =='1'); }
     // 获取当前页面UI的显示模式 ‘0’ 正常模式 '1' 文件夹模式 '2' 显示缩略图的文件夹模式
-
     public char getUITag(){
-        // 完全移除 style!=null 的条件判断
-        return (sortData == null || sortData.flag == null || sortData.flag.length() == 0) ? '0' : sortData.flag.charAt(0);
+        return (sortData == null || sortData.flag == null || sortData.flag.length() ==0 || style!=null) ?  '0' : sortData.flag.charAt(0);
     }
-
     // 是否允许聚合搜索 sortData.flag的第二个字符为‘1’时允许聚搜
     public boolean enableFastSearch(){  return sortData.flag == null || sortData.flag.length() < 2 || (sortData.flag.charAt(1) == '1'); }
     // 保存当前页面
@@ -231,37 +225,6 @@ public class GridFragment extends BaseLazyFragment {
                 FastClickCheckUtil.check(view);
                 Movie.Video video = gridAdapter.getData().get(position);
                 if (video != null) {
-
-            // 使用反射获取对象的所有字段和值
-            StringBuilder contentBuilder = new StringBuilder();
-            Class<?> clazz = video.getClass();
-            Field[] fields = clazz.getDeclaredFields(); // 获取所有声明的字段（包括私有字段）
-
-            for (Field field : fields) {
-                field.setAccessible(true); // 允许访问私有字段
-                try {
-                    String fieldName = field.getName();
-                    Object fieldValue = field.get(video); // 获取字段值
-                    contentBuilder.append(fieldName)
-                            .append(": ")
-                            .append(fieldValue != null ? fieldValue.toString() : "null")
-                            .append("\n");
-                } catch (IllegalAccessException e) {
-                    contentBuilder.append(field.getName())
-                            .append(": [无法访问]\n");
-                }
-            }
-
-            // 创建并显示 AlertDialog
-            new AlertDialog.Builder(getContext()) // 注意：这里使用 getContext()，因为是在 Fragment 中
-                    .setTitle("视频信息详情")
-                    .setMessage(contentBuilder.toString())
-                    .setPositiveButton("确定", null)
-                    .show();
-
-
-
-
                     Bundle bundle = new Bundle();
                     bundle.putString("id", video.id);
                     bundle.putString("sourceKey", video.sourceKey);
@@ -282,10 +245,6 @@ public class GridFragment extends BaseLazyFragment {
                                 jumpActivity(SearchActivity.class, bundle);
                             }
                         }else {
-if (video.sourceKey.contains("配置中心") 
-    || video.sourceKey.toLowerCase().contains("config")) {
-    return;
-}
                             bundle.putString("picture", video.pic);   //xuameng某些网站图片部显示
                             jumpActivity(DetailActivity.class, bundle);
                         }
