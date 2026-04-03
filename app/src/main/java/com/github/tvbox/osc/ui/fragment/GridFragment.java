@@ -115,7 +115,7 @@ public class GridFragment extends BaseLazyFragment {
 
     public char getUITag(){
         // 完全移除 style!=null 的条件判断
-        return (sortData == null || sortData.flag == null || sortData.flag.length() == 0) ? '0' : sortData.flag.charAt(0);
+        return (sortData == null || sortData.flag == null || sortData.flag.length() == 0) ? '1' : sortData.flag.charAt(0);
     }
 
     // 是否允许聚合搜索 sortData.flag的第二个字符为‘1’时允许聚搜
