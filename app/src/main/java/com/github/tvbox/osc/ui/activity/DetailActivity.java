@@ -902,6 +902,7 @@ public class DetailActivity extends BaseActivity {
 
 if (mVideo.sourceKey.contains("配置中心") 
     || mVideo.sourceKey.toLowerCase().contains("config")) {
+    showEmpty();
     return;
 }
                     mVideo.id = vodId;
