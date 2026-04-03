@@ -681,8 +681,6 @@ public class DetailActivity extends BaseActivity {
 
     private void jumpToPlay() {
         if (vodInfo != null && vodInfo.seriesMap.get(vodInfo.playFlag).size() > 0) {
-
-
             preFlag = vodInfo.playFlag;
             //更新播放地址
             setTextShow(tvPlayUrl, "播放地址：", vodInfo.seriesMap.get(vodInfo.playFlag).get(vodInfo.playIndex).url);
@@ -901,6 +899,11 @@ public class DetailActivity extends BaseActivity {
                         return;
                     }
                     mVideo = absXml.movie.videoList.get(0);
+
+if (mVideo.sourceKey.contains("配置中心") 
+    || mVideo.sourceKey.toLowerCase().contains("config")) {
+    return;
+}
                     mVideo.id = vodId;
                     if (TextUtils.isEmpty(mVideo.name))mVideo.name = "🥇聚汇影视";
                     vodInfo = new VodInfo();
