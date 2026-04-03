@@ -34,10 +34,6 @@ import android.widget.TextView;
 import com.github.tvbox.osc.util.parser.SuperParse;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
-import org.json.JSONObject;
-import java.util.Iterator;
-
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -919,12 +915,12 @@ public class PlayFragment extends BaseLazyFragment {
                         boolean parse = info.optString("parse", "1").equals("1");
                         boolean jx = info.optString("jx", "0").equals("1");
 
-if (info.has("artwork")) {
-    String picUrl = info.optString("artwork", "");
-    if (picUrl != null && !picUrl.isEmpty()) {
-        mController.setVideoPicUrl(picUrl);  //xuameng 新增给vod显示旋转图片用
-    }
-}
+                        if (info.has("artwork")) {
+                            String picUrl = info.optString("artwork", "");
+                            if (!TextUtils.isEmpty(picUrl)) {
+                                mController.setVideoPicUrl(picUrl);  //xuameng 新增给vod显示旋转图片用
+                            }
+                        }
 
                         // xuameng优先检查 lrc 字段（歌词字符串）
                         if (info.has("lrc")) {
