@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.BounceInterpolator;
+import android.content.Intent;
 
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
@@ -236,6 +237,14 @@ public class GridFragment extends BaseLazyFragment {
                     bundle.putString("id", video.id);
                     bundle.putString("sourceKey", video.sourceKey);
                     bundle.putString("title", video.name);
+
+        // ✅ 关键拦截点
+        if (isConfigSource(video.sourceKey)) {
+            // 直接在这里触发你的“接口程序 dialog”
+            openConfigWithoutUI(video);
+            return; // ❗ 不跳转 DetailActivity
+        }
+
                     if( video.tag !=null && (video.tag.equals("folder") || video.tag.equals("cover"))){
                         focusedView = view;
                         if(("12".indexOf(getUITag()) != -1)){
@@ -432,4 +441,19 @@ public class GridFragment extends BaseLazyFragment {
         page = 1;
         initData();
     }
+
+private boolean isConfigSource(String sourceKey) {
+    return sourceKey != null &&
+           (sourceKey.contains("配置中心")
+            || sourceKey.toLowerCase().contains("config"));
+}
+
+private void openConfigWithoutUI(Movie.Video video) {
+    Intent intent = new Intent(mContext, DetailActivity.class);
+    intent.putExtra("id", video.id);
+    intent.putExtra("sourceKey", video.sourceKey);
+    intent.putExtra("just_config", true); // ✅ 关键标志
+    startActivity(intent);
+}
+
 }
