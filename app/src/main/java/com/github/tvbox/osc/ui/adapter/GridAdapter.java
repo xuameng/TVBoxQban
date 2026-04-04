@@ -15,8 +15,6 @@ import com.github.tvbox.osc.util.DefaultConfig;
 import com.github.tvbox.osc.util.MD5;
 import com.squareup.picasso.Picasso;
 import com.github.tvbox.osc.util.ImgUtil;   //xuamengBASE64图片
-import com.squareup.picasso.MemoryPolicy; //xuameng播放音频切换图片
-import com.squareup.picasso.NetworkPolicy; //xuameng播放音频切换图片
 
 import java.util.ArrayList;
 
@@ -159,8 +157,6 @@ public class GridAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder> {
             }else {
                 Picasso.get()
                         .load(DefaultConfig.checkReplaceProxy(item.pic))
-										        .networkPolicy(NetworkPolicy.NO_CACHE)
-        .memoryPolicy(MemoryPolicy.NO_CACHE)
                         .transform(new RoundTransformation(MD5.string2MD5(item.pic))
                                 .centerCorp(true)
                                 .override(AutoSizeUtils.mm2px(mContext,newWidth), AutoSizeUtils.mm2px(mContext,newHeight))
@@ -175,7 +171,7 @@ public class GridAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder> {
            // ivThumb.setImageResource(R.drawable.img_loading_placeholder);
 			ivThumb.setImageDrawable(ImgUtil.createTextDrawable(item.name));
         }
-		applyStyleToImage(ivThumb);//动态设置宽高
+	//	applyStyleToImage(ivThumb);//动态设置宽高
     }
 	    /**
      * 根据传入的 style 动态设置 ImageView 的高度：高度 = 宽度 / ratio
