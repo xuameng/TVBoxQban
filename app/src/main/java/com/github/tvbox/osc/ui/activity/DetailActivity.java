@@ -1068,6 +1068,9 @@ public class DetailActivity extends BaseActivity {
         if (intent != null && intent.getExtras() != null) {
             Bundle bundle = intent.getExtras();
             vod_picture=bundle.getString("picture", "");
+			mVideo.name = bundle.optString("title", "");
+			App.showToastShort(DetailActivity.this, mVideo.name);
+if (TextUtils.isEmpty(mVideo.name))mVideo.name = "🥇聚汇影视";
             loadDetail(bundle.getString("id", null), bundle.getString("sourceKey", ""));
         }
     }
