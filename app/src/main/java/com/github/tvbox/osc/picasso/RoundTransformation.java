@@ -68,6 +68,14 @@ public class RoundTransformation implements Transformation {
 
     @Override
     public Bitmap transform(Bitmap source) {
+    // ✅ 第一步：统一 Bitmap 配置，防止 clipPath 失效
+    if (source.getConfig() != Bitmap.Config.ARGB_8888) {
+        Bitmap argb = source.copy(Bitmap.Config.ARGB_8888, false);
+        if (argb != null) {
+            source.recycle();
+            source = argb;
+        }
+    }
         int srcW = source.getWidth();
         int srcH = source.getHeight();
 
