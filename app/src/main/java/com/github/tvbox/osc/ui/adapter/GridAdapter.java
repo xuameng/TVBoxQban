@@ -5,7 +5,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.view.ViewGroup;
-
+import android.graphics.Bitmap; //xuameng播放音频切换图片
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.github.tvbox.osc.R;
@@ -87,6 +87,7 @@ public class GridAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder> {
                             .load(DefaultConfig.checkReplaceProxy(item.pic))
                             .transform(new RoundTransformation(MD5.string2MD5(item.pic))
                                     .centerCorp(true)
+						.config(Bitmap.Config.ARGB_8888)
                                   //  .override(AutoSizeUtils.mm2px(mContext, 240), AutoSizeUtils.mm2px(mContext, 320))
 					        .override(AutoSizeUtils.mm2px(mContext,newWidth), AutoSizeUtils.mm2px(mContext,newHeight))
                             .roundRadius(AutoSizeUtils.mm2px(mContext, 10), RoundTransformation.RoundType.ALL))
