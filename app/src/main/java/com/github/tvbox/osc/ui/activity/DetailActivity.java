@@ -145,6 +145,7 @@ public class DetailActivity extends BaseActivity {
     private final ArrayList<String> seriesGroupOptions = new ArrayList<>();
     private View currentSeriesGroupView;
     private int GroupCount;
+	private boolean justConfig = false;
 
     @Override
     protected int getLayoutResID() {
@@ -1067,6 +1068,8 @@ public class DetailActivity extends BaseActivity {
         Intent intent = getIntent();
         if (intent != null && intent.getExtras() != null) {
 
+            Bundle bundle = intent.getExtras();
+
     if (intent.getBooleanExtra("just_config", false)) {
         loadDetailForConfig(
             bundle.getString("id"),
@@ -1074,7 +1077,6 @@ public class DetailActivity extends BaseActivity {
         );
         return;
     }
-            Bundle bundle = intent.getExtras();
             vod_picture=bundle.getString("picture", "");
             loadDetail(bundle.getString("id", null), bundle.getString("sourceKey", ""));
         }
