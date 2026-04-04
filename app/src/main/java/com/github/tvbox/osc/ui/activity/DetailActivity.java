@@ -698,6 +698,7 @@ public class DetailActivity extends BaseActivity {
         //   insertVod(sourceKey, vodInfo);
             bundle.putString("sourceKey", sourceKey);
             bundle.putString("videoPic", mVideo.pic);   //xuameng 新增给vod显示旋转图片用
+			bundle.putString("title", vod_name);   //xuameng 新增给vod显示旋转图片用
 //            bundle.putSerializable("VodInfo", vodInfo);
             App.getInstance().setVodInfo(vodInfo);
             if (showPreview) {
