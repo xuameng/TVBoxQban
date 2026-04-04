@@ -27,11 +27,11 @@ import java.lang.annotation.Target;
  */
 public class RoundTransformation implements Transformation {
 
-    private final int viewWidth, viewHeight;
-    private final int radius;
-    private final int bottomShapeHeight;
-    private final boolean centerCorp;
-    private final int roundType;
+    private int viewWidth, viewHeight;
+    private int radius;
+    private int bottomShapeHeight;
+    private boolean centerCorp;
+    private int roundType;
     private final String key;
 
     public RoundTransformation(String key) {
