@@ -1072,7 +1072,6 @@ public class DetailActivity extends BaseActivity {
 			vod_name = intent.getStringExtra("title");
 
 			App.showToastShort(DetailActivity.this, vod_name);
-if (TextUtils.isEmpty(vod_name))vod_name = "🥇聚汇影视";
 tvName.setText(vod_name);
             loadDetail(bundle.getString("id", null), bundle.getString("sourceKey", ""));
         }
