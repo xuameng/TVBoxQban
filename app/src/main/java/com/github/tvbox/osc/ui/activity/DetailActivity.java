@@ -698,6 +698,7 @@ public class DetailActivity extends BaseActivity {
         //   insertVod(sourceKey, vodInfo);
             bundle.putString("sourceKey", sourceKey);
             bundle.putString("videoPic", mVideo.pic);   //xuameng 新增给vod显示旋转图片用
+            bundle.putString("title", vod_name);   //xuameng 新增给vod显示旋转图片用
 //            bundle.putSerializable("VodInfo", vodInfo);
             App.getInstance().setVodInfo(vodInfo);
             if (showPreview) {
@@ -1069,7 +1070,7 @@ public class DetailActivity extends BaseActivity {
         if (intent != null && intent.getExtras() != null) {
             Bundle bundle = intent.getExtras();
             vod_picture=bundle.getString("picture", "");
-			vod_name = intent.getStringExtra("title");
+			vod_name = bundle.getString("title");
 
 			App.showToastShort(DetailActivity.this, vod_name);
 tvName.setText(vod_name);
