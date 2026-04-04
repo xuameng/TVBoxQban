@@ -15,6 +15,8 @@ import com.github.tvbox.osc.util.DefaultConfig;
 import com.github.tvbox.osc.util.MD5;
 import com.squareup.picasso.Picasso;
 import com.github.tvbox.osc.util.ImgUtil;   //xuamengBASE64图片
+import com.squareup.picasso.MemoryPolicy; //xuameng播放音频切换图片
+import com.squareup.picasso.NetworkPolicy; //xuameng播放音频切换图片
 
 import java.util.ArrayList;
 
@@ -159,6 +161,8 @@ public class GridAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder> {
                         .load(DefaultConfig.checkReplaceProxy(item.pic))
                         .transform(new RoundTransformation(MD5.string2MD5(item.pic))
                                 .centerCorp(true)
+					        .networkPolicy(NetworkPolicy.NO_CACHE)
+        .memoryPolicy(MemoryPolicy.NO_CACHE)
                                 .override(AutoSizeUtils.mm2px(mContext,newWidth), AutoSizeUtils.mm2px(mContext,newHeight))
                                 .roundRadius(AutoSizeUtils.mm2px(mContext, 10), RoundTransformation.RoundType.ALL))
                         .placeholder(R.drawable.img_loading_placeholder)
