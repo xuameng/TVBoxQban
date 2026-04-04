@@ -6,7 +6,6 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PaintFlagsDrawFilter;
-import android.graphics.Path;
 import android.graphics.RectF;
 import android.graphics.Shader;
 
@@ -19,12 +18,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * 描述
- *
- * @author pj567
- * @since 2020/12/22
- */
 public class RoundTransformation implements Transformation {
 
     private int viewWidth, viewHeight;
@@ -68,14 +61,16 @@ public class RoundTransformation implements Transformation {
 
     @Override
     public Bitmap transform(Bitmap source) {
-    // ✅ 第一步：统一 Bitmap 配置，防止 clipPath 失效
-    if (source.getConfig() != Bitmap.Config.ARGB_8888) {
-        Bitmap argb = source.copy(Bitmap.Config.ARGB_8888, false);
-        if (argb != null) {
-            source.recycle();
-            source = argb;
+
+        // ---------- 1. 兜底：统一 Bitmap 配置 ----------
+        if (source != null && source.getConfig() != Bitmap.Config.ARGB_8888) {
+            Bitmap argb = source.copy(Bitmap.Config.ARGB_8888, false);
+            if (argb != null) {
+                source.recycle();
+                source = argb;
+            }
         }
-    }
+
         int srcW = source.getWidth();
         int srcH = source.getHeight();
 
@@ -84,41 +79,41 @@ public class RoundTransformation implements Transformation {
 
         Bitmap out = Bitmap.createBitmap(outW, outH, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(out);
-        canvas.setDrawFilter(new PaintFlagsDrawFilter(0,
-                Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG));
+        canvas.setDrawFilter(new PaintFlagsDrawFilter(
+                0, Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG));
 
-        // ---- bitmap paint ----
-        Paint bitmapPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        bitmapPaint.setFilterBitmap(true);
-        bitmapPaint.setShader(new BitmapShader(
-                source, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP));
+        // ---------- 2. BitmapShader + Matrix ----------
+        BitmapShader shader = new BitmapShader(
+                source, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
 
-        Matrix m = new Matrix();
+        Matrix matrix = new Matrix();
         float scale;
         if ((float) srcW / outW > (float) srcH / outH) {
             scale = (float) outH / srcH;
             float dx = (srcW * scale - outW) / 2f;
-            m.setScale(scale, scale);
-            m.postTranslate(-dx, 0);
+            matrix.setScale(scale, scale);
+            matrix.postTranslate(-dx, 0);
         } else {
             scale = (float) outW / srcW;
             float dy = (srcH * scale - outH) / 2f;
-            m.setScale(scale, scale);
-            m.postTranslate(0, centerCorp ? -dy : 0);
+            matrix.setScale(scale, scale);
+            matrix.postTranslate(0, centerCorp ? -dy : 0);
         }
-        bitmapPaint.getShader().setLocalMatrix(m);
+        shader.setLocalMatrix(matrix);
 
-        // ---- mask paint ----
-        Paint maskPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paint.setFilterBitmap(true);
+        paint.setShader(shader);
 
-        Path path = buildRoundPath(outW, outH);
-        canvas.save();
-        canvas.clipPath(path);
-        canvas.drawPaint(bitmapPaint);
-        canvas.restore();
+        // ---------- 3. 圆角绘制（不使用 clipPath） ----------
+        RectF rect = new RectF(0, 0, outW, outH);
+        float[] radii = getCornerRadii();
 
-        // bottom label
+        canvas.drawRoundRect(rect, radii[0], radii[1], paint);
+
+        // ---------- 4. bottom shape ----------
         if (bottomShapeHeight > 0) {
+            Paint maskPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
             maskPaint.setColor(0x99000000);
             canvas.drawRect(
                     0,
@@ -133,33 +128,33 @@ public class RoundTransformation implements Transformation {
         return out;
     }
 
-    private Path buildRoundPath(int w, int h) {
-        Path p = new Path();
-        RectF r = new RectF(0, 0, w, h);
+    private float[] getCornerRadii() {
+        float[] radii = new float[8];
+        float r = radius;
         switch (roundType) {
             case RoundType.ALL:
-                p.addRoundRect(r, radius, radius, Path.Direction.CW);
+                for (int i = 0; i < 8; i++) radii[i] = r;
                 break;
             case RoundType.TOP:
-                p.addRoundRect(r, new float[]{
-                        radius, radius, radius, radius, 0, 0, 0, 0}, Path.Direction.CW);
+                radii[0] = r; radii[1] = r;
+                radii[2] = r; radii[3] = r;
                 break;
             case RoundType.BOTTOM:
-                p.addRoundRect(r, new float[]{
-                        0, 0, 0, 0, radius, radius, radius, radius}, Path.Direction.CW);
+                radii[4] = r; radii[5] = r;
+                radii[6] = r; radii[7] = r;
                 break;
             case RoundType.LEFT:
-                p.addRoundRect(r, new float[]{
-                        radius, radius, 0, 0, 0, 0, radius, radius}, Path.Direction.CW);
+                radii[0] = r; radii[1] = r;
+                radii[6] = r; radii[7] = r;
                 break;
             case RoundType.RIGHT:
-                p.addRoundRect(r, new float[]{
-                        0, 0, radius, radius, radius, radius, 0, 0}, Path.Direction.CW);
+                radii[2] = r; radii[3] = r;
+                radii[4] = r; radii[5] = r;
                 break;
             default:
-                p.addRect(r, Path.Direction.CW);
+                // NONE
         }
-        return p;
+        return radii;
     }
 
     @Override
