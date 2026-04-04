@@ -1063,15 +1063,16 @@ public class DetailActivity extends BaseActivity {
     }
 
     private String  vod_picture="";
+	private String  vod_name="";
     private void initData() {
         Intent intent = getIntent();
         if (intent != null && intent.getExtras() != null) {
             Bundle bundle = intent.getExtras();
             vod_picture=bundle.getString("picture", "");
-			mVideo.name = bundle.getString("title", "");
+			vod_name = bundle.getString("title", "");
 			App.showToastShort(DetailActivity.this, mVideo.name);
-if (TextUtils.isEmpty(mVideo.name))mVideo.name = "🥇聚汇影视";
-tvName.setText(mVideo.name);
+if (TextUtils.isEmpty(vod_name))vod_name = "🥇聚汇影视";
+tvName.setText(vod_name);
             loadDetail(bundle.getString("id", null), bundle.getString("sourceKey", ""));
         }
     }
