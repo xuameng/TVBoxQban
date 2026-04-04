@@ -71,9 +71,12 @@ public class RoundTransformation implements Transformation {
         }
         Paint mPaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.DITHER_FLAG);
         BitmapShader mBitmapShader = new BitmapShader(source, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
+
+        Matrix matrix = new Matrix();
+        float scale;
+
         if (viewWidth != width || viewHeight != height) {
-            //是否以宽计算
-            float scale;
+            // 是否以宽计算
             if (width * 1f / viewWidth > height * 1f / viewHeight) {
                 scale = viewHeight * 1f / height;
                 width = (int) (width * scale);
@@ -83,10 +86,14 @@ public class RoundTransformation implements Transformation {
                 height = (int) (height * scale);
                 width = viewWidth;
             }
-            Matrix matrix = new Matrix();
-            matrix.postScale(scale, scale);
-            mBitmapShader.setLocalMatrix(matrix);
+        } else {
+            // ✅ 关键：尺寸一致时也要有 scale
+            scale = 1f;
         }
+
+        matrix.setScale(scale, scale);
+        mBitmapShader.setLocalMatrix(matrix);
+
         Bitmap bitmap = Bitmap.createBitmap(viewWidth, viewHeight, Bitmap.Config.ARGB_8888);          //xuameng重要RGB8888可以透明，解决边角圆角问题
         bitmap.setHasAlpha(true);
         Canvas mCanvas = new Canvas(bitmap);
