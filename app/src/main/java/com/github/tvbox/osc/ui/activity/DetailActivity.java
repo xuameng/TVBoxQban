@@ -153,6 +153,12 @@ public class DetailActivity extends BaseActivity {
 
     @Override
     protected void init() {
+    Intent intent = getIntent();
+    if (intent != null) {
+        justConfig = intent.getBooleanExtra("just_config", false);
+    }
+
+    if (justConfig) return; // ✅ 直接跳过 UI 初始化
         EventBus.getDefault().register(this);
         HawkConfig.intVod = true;  //xuameng判断进入播放
         HawkConfig.saveHistory = false;  //xuameng判断存储历史记录
@@ -901,12 +907,6 @@ public class DetailActivity extends BaseActivity {
                     mVideo = absXml.movie.videoList.get(0);
                     mVideo.id = vodId;
 
-                    if (mVideo.sourceKey.contains("配置中心") 
-                        || mVideo.sourceKey.toLowerCase().contains("config")) {  //xuameng 配置中心判断如是就返回
-                        showEmpty();
-                        return;
-                    }
-
                     if (TextUtils.isEmpty(mVideo.name))mVideo.name = "🥇聚汇影视";
                     vodInfo = new VodInfo();
                     if((mVideo.pic==null || mVideo.pic.isEmpty()) && !vod_picture.isEmpty()){    //xuameng某些网站图片部显示
@@ -1066,6 +1066,14 @@ public class DetailActivity extends BaseActivity {
     private void initData() {
         Intent intent = getIntent();
         if (intent != null && intent.getExtras() != null) {
+
+    if (intent.getBooleanExtra("just_config", false)) {
+        loadDetailForConfig(
+            bundle.getString("id"),
+            bundle.getString("sourceKey")
+        );
+        return;
+    }
             Bundle bundle = intent.getExtras();
             vod_picture=bundle.getString("picture", "");
             loadDetail(bundle.getString("id", null), bundle.getString("sourceKey", ""));
@@ -1712,5 +1720,19 @@ public class DetailActivity extends BaseActivity {
             }
         }
     }
+
+private void loadDetailForConfig(String vid, String key) {
+    if (vid == null) return;
+
+    vodId = vid;
+    sourceKey = key;
+    firstsourceKey = key;
+
+    // ✅ 只触发接口，不 showLoading / 不 init UI
+    sourceViewModel.getDetail(sourceKey, vodId);
+
+    // ✅ 可选：防止内存泄漏
+  //  showEmpty(); // 或直接什么都不显示
+}
 
 }
