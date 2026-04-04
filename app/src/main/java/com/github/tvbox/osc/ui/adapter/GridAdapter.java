@@ -158,7 +158,7 @@ public class GridAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder> {
                 Picasso.get()
                         .load(DefaultConfig.checkReplaceProxy(item.pic))
                         .transform(new RoundTransformation(MD5.string2MD5(item.pic))
-                                .fit()‌
+                                .fit()
                                 .override(AutoSizeUtils.mm2px(mContext,newWidth), AutoSizeUtils.mm2px(mContext,newHeight))
                                 .roundRadius(AutoSizeUtils.mm2px(mContext, 10), RoundTransformation.RoundType.ALL))
                         .placeholder(R.drawable.img_loading_placeholder)
