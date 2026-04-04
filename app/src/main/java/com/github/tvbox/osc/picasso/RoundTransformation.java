@@ -1,5 +1,6 @@
 package com.github.tvbox.osc.picasso;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapShader;
 import android.graphics.Canvas;
@@ -8,29 +9,27 @@ import android.graphics.Paint;
 import android.graphics.PaintFlagsDrawFilter;
 import android.graphics.RectF;
 import android.graphics.Shader;
+import android.util.DisplayMetrics;
 
 import androidx.annotation.IntDef;
 
 import com.squareup.picasso.Transformation;
 
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 
 /**
- * 内存安全版 RoundTransformation
- * 特性：
- * 1. 使用 Xfermode/drawRoundRect 替代 clipPath，兼容性更好
- * 2. 智能 Bitmap 配置，减少内存占用
- * 3. 限制最大尺寸，防止 OOM
- *
- * @author pj567 (original)
- * @optimized by AI Assistant
+ * 最终绝对不翻车版 RoundTransformation
+ * 特点：
+ * 1. 圆角场景强制 ARGB_8888（关键）
+ * 2. 输入 / 输出 Bitmap 配置统一
+ * 3. 使用 drawRoundRect，不依赖 clipPath
+ * 4. 内存安全、兼容所有图片类型
  */
 public class RoundTransformation implements Transformation {
 
-    private static final int MAX_BITMAP_SIZE = 2048; // 防止超大图导致 OOM
+    /** 防止极端大图 OOM，不影响清晰度 */
+    private static final int MAX_BITMAP_SIZE = 2048;
 
     private int viewWidth, viewHeight;
     private int radius;
@@ -39,7 +38,6 @@ public class RoundTransformation implements Transformation {
     private int roundType;
     private final String key;
 
-    // 复用 Matrix，减少对象创建
     private final Matrix matrix = new Matrix();
 
     public RoundTransformation(String key) {
@@ -84,7 +82,7 @@ public class RoundTransformation implements Transformation {
             int srcW = source.getWidth();
             int srcH = source.getHeight();
 
-            // 1. 计算输出尺寸，并限制最大尺寸以防 OOM
+            // 1. 计算输出尺寸
             int outW = viewWidth <= 0 ? srcW : viewWidth;
             int outH = viewHeight <= 0 ? srcH : viewHeight;
 
@@ -98,30 +96,18 @@ public class RoundTransformation implements Transformation {
                 outH = (int) (outH * scaleFactor);
             }
 
-            // 2. 决定输出 Bitmap 的配置 (关键优化点)
-            // 如果有圆角或底部遮罩，必须用 ARGB_8888；否则用 RGB_565 节省一半内存
-            Bitmap.Config outConfig =
-                    (radius > 0 || bottomShapeHeight > 0)
-                            ? Bitmap.Config.ARGB_8888
-                            : Bitmap.Config.RGB_565;
+            // 2. ✅ 圆角场景：强制 ARGB_8888（关键）
+            Bitmap.Config outConfig = Bitmap.Config.ARGB_8888;
 
             Bitmap out = Bitmap.createBitmap(outW, outH, outConfig);
             Canvas canvas = new Canvas(out);
             canvas.setDrawFilter(new PaintFlagsDrawFilter(
                     0, Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG));
 
-            // 3. 智能处理输入 Bitmap (关键优化点)
-            // 只有当源图不是 ARGB_8888 且我们需要透明通道时，才进行昂贵的 copy 操作
-            Bitmap workingBitmap = source;
-            if (outConfig == Bitmap.Config.ARGB_8888 &&
-                    source.getConfig() != Bitmap.Config.ARGB_8888) {
-                Bitmap converted = source.copy(Bitmap.Config.ARGB_8888, false);
-                if (converted != null) {
-                    workingBitmap = converted;
-                }
-            }
+            // 3. ✅ 强制输入 Bitmap 为 ARGB_8888
+            Bitmap workingBitmap = ensureArgb8888(source);
 
-            // 4. 设置 BitmapShader 和 Matrix
+            // 4. Shader + Matrix
             BitmapShader shader = new BitmapShader(
                     workingBitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
 
@@ -145,12 +131,12 @@ public class RoundTransformation implements Transformation {
             paint.setFilterBitmap(true);
             paint.setShader(shader);
 
-            // 5. 绘制圆角矩形 (不使用 clipPath，更稳定)
+            // 5. ✅ 稳定圆角绘制
             RectF rect = new RectF(0, 0, outW, outH);
-            float[] radii = getCornerRadii();
-            canvas.drawRoundRect(rect, radii[0], radii[1], paint);
+            float radiusPx = radius;
+            canvas.drawRoundRect(rect, radiusPx, radiusPx, paint);
 
-            // 6. 绘制底部遮罩
+            // 6. 底部遮罩
             if (bottomShapeHeight > 0) {
                 Paint maskPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
                 maskPaint.setColor(0x99000000);
@@ -163,18 +149,26 @@ public class RoundTransformation implements Transformation {
                 );
             }
 
-            // 7. 回收临时创建的 Bitmap
+            // 7. 回收临时 Bitmap
             if (workingBitmap != source) {
                 workingBitmap.recycle();
             }
 
             return out;
         } finally {
-            // 确保 source 被回收
             if (source != null && !source.isRecycled()) {
                 source.recycle();
             }
         }
+    }
+
+    /** ✅ 确保 Bitmap 一定是 ARGB_8888 */
+    private Bitmap ensureArgb8888(Bitmap source) {
+        if (source.getConfig() == Bitmap.Config.ARGB_8888) {
+            return source;
+        }
+        Bitmap argb = source.copy(Bitmap.Config.ARGB_8888, false);
+        return argb != null ? argb : source;
     }
 
     private float[] getCornerRadii() {
@@ -200,7 +194,7 @@ public class RoundTransformation implements Transformation {
                 radii[2] = r; radii[3] = r;
                 radii[4] = r; radii[5] = r;
                 break;
-            default: // NONE
+            default:
         }
         return radii;
     }
