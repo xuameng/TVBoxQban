@@ -56,9 +56,7 @@ public class HomeHotVodAdapterXu extends BaseQuickAdapter<Movie.Video, BaseViewH
             tvDel.setVisibility(View.GONE);
         }
 
-        if(!this.mShowList) {
-            TextView tvRate = helper.getView(R.id.tvRate);
-        }
+        TextView tvRate = helper.getView(R.id.tvRate);
         if (Hawk.get(HawkConfig.HOME_REC, 0) == 2 && !this.mShowList){
             tvRate.setText(ApiConfig.get().getSource(item.sourceKey).getName());
         }else if(Hawk.get(HawkConfig.HOME_REC, 0) == 0  && !this.mShowList){
