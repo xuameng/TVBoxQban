@@ -38,10 +38,6 @@ public class GridAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder> {
     public GridAdapter(boolean showList, ImgUtil.Style style) {
         super( showList ? R.layout.item_list:R.layout.item_grid, new ArrayList<>());
         this.mShowList = showList;
-        if(style!=null ){
-            if(style.type.equals("list"))this.mShowList=true;
-			this.defaultWidth=ImgUtil.getStyleDefaultWidth(style);
-        }
         this.style = style;
     }
 
@@ -157,7 +153,7 @@ public class GridAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder> {
             }else {
                 Picasso.get()
                         .load(DefaultConfig.checkReplaceProxy(item.pic))
-                        .transform(new RoundTransformation(item.pic)
+                        .transform(new RoundTransformation(MD5.string2MD5(item.pic))
                                 .centerCorp(true)
                                 .override(AutoSizeUtils.mm2px(mContext,newWidth), AutoSizeUtils.mm2px(mContext,newHeight))
                                 .roundRadius(AutoSizeUtils.mm2px(mContext, 10), RoundTransformation.RoundType.ALL))
@@ -171,7 +167,7 @@ public class GridAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder> {
            // ivThumb.setImageResource(R.drawable.img_loading_placeholder);
 			ivThumb.setImageDrawable(ImgUtil.createTextDrawable(item.name));
         }
-	//	applyStyleToImage(ivThumb);//动态设置宽高
+		applyStyleToImage(ivThumb);//动态设置宽高
     }
 	    /**
      * 根据传入的 style 动态设置 ImageView 的高度：高度 = 宽度 / ratio
