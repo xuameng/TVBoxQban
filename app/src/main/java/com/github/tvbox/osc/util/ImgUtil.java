@@ -130,4 +130,49 @@ public class ImgUtil {
     public static void clearCache() {
         drawableCache.clear();
     }
+
+public static Bitmap decodeBase64ToRoundBitmap(String base64Str, int radiusPx) {
+    if (TextUtils.isEmpty(base64Str)) {
+        return null;
+    }
+
+    try {
+        // 1. 去掉 data:image/xxx;base64,
+        String base64 = base64Str;
+        if (base64.contains(",")) {
+            base64 = base64.substring(base64.indexOf(",") + 1);
+        }
+
+        byte[] bytes = Base64.decode(base64, Base64.DEFAULT);
+        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+        if (bitmap == null) return null;
+
+        // 2. 创建圆角 Bitmap
+        Bitmap output = Bitmap.createBitmap(
+                bitmap.getWidth(),
+                bitmap.getHeight(),
+                Bitmap.Config.ARGB_8888
+        );
+
+        Canvas canvas = new Canvas(output);
+        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paint.setFilterBitmap(true);
+
+        Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+        RectF rectF = new RectF(rect);
+
+        canvas.drawRoundRect(rectF, radiusPx, radiusPx, paint);
+
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(bitmap, rect, rect, paint);
+
+        bitmap.recycle();
+
+        return output;
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        return null;
+    }
+}
 }
