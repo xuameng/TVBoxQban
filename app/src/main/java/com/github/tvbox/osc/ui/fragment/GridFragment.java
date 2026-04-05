@@ -115,7 +115,7 @@ public class GridFragment extends BaseLazyFragment {
 
     public char getUITag(){
         if (style.type.equals("list")){
-            return "1";
+            return '0';
         }
         //return (sortData == null || sortData.flag == null || sortData.flag.length() ==0 || style!=null) ?  '0' : sortData.flag.charAt(0);
         // xuameng完全移除 style!=null 的条件判断  如有flag  直接显示文件夹样式
