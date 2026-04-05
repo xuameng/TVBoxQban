@@ -38,12 +38,12 @@ public class GridAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder> {
     public GridAdapter(boolean showList, ImgUtil.Style style) {
         super( showList ? R.layout.item_list:R.layout.item_grid, new ArrayList<>());
         this.mShowList = false;
-        if(style!=null ){
          //   if(style.type.equals("list"))this.mShowList=true;
             if (style != null && style.type != null && !style.type.equals("list")) {
                 this.defaultWidth = ImgUtil.getStyleDefaultWidth(style);
+            }else if (style != null && style.type != null && style.type.equals("list")) {
+                style = null;
             }
-        }
         this.style = style;
     }
 
