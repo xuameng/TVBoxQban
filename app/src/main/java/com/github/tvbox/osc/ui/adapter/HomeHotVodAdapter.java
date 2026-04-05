@@ -24,7 +24,7 @@ import java.util.ArrayList;
 
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
-public class HomeHotVodAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder> {
+public class HomeHotVodAdapterXu extends BaseQuickAdapter<Movie.Video, BaseViewHolder> {
 
     private int defaultWidth;
     private final ImgUtil.Style style;
@@ -33,8 +33,8 @@ public class HomeHotVodAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHol
     /**xuameng 增加 boolean showList 判断是否 style为list 是就显示文件夹样式
      * style 数据结构：ratio 指定宽高比（宽 / 高），type 表示风格（例如 rect、list）
      */
-    public HomeHotVodAdapter(boolean showList, ImgUtil.Style style) {
-        super( showList ? R.layout.item_list:R.layout.item_user_hot_vod, new ArrayList<>());
+    public HomeHotVodAdapterXu(boolean showList, ImgUtil.Style style) {
+        super( showList ? R.layout.item_list:R.layout.item_user_hot_vod_xu, new ArrayList<>());
         this.mShowList = showList; //xuameng 判断是否 style为list
         if (style != null) {
             if ("list".equals(style.type)) {   //如果 style = list 用item_list显示文件夹样式
@@ -83,7 +83,7 @@ public class HomeHotVodAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHol
         } else {
             helper.setText(R.id.tvName, item.name);
         }
-  //      helper.setText(R.id.tvName, item.name);
+     //   helper.setText(R.id.tvName, item.name);
         ImageView ivThumb = helper.getView(R.id.ivThumb);
 
         int newWidth = ImgUtil.defaultWidth;
@@ -112,12 +112,12 @@ public class HomeHotVodAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHol
                                 .roundRadius(AutoSizeUtils.mm2px(mContext, 10), RoundTransformation.RoundType.ALL))
                         .placeholder(R.drawable.img_loading_placeholder)
                         .noFade()
-                       // .error(R.drawable.img_loading_placeholder)
+                     //   .error(R.drawable.img_loading_placeholder)
 						.error(ImgUtil.createTextDrawable(item.name))
                         .into(ivThumb);
             }
         } else {
-        //    ivThumb.setImageResource(R.drawable.img_loading_placeholder);
+           // ivThumb.setImageResource(R.drawable.img_loading_placeholder);
 			ivThumb.setImageDrawable(ImgUtil.createTextDrawable(item.name));
         }
 		        applyStyleToImage(ivThumb);//动态设置宽高
@@ -132,7 +132,7 @@ public class HomeHotVodAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHol
             int height = (int) (width / style.ratio);
             ViewGroup.LayoutParams containerParams = container.getLayoutParams();
             containerParams.height = AutoSizeUtils.mm2px(mContext, height); // 高度
-            containerParams.width = ViewGroup.LayoutParams.MATCH_PARENT; // 宽度
+			containerParams.width = AutoSizeUtils.mm2px(mContext, width); // 宽度
             container.setLayoutParams(containerParams);
         }
     }
