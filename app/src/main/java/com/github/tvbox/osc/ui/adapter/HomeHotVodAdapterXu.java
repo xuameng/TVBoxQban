@@ -28,12 +28,14 @@ public class HomeHotVodAdapterXu extends BaseQuickAdapter<Movie.Video, BaseViewH
 
     private int defaultWidth;
     private final ImgUtil.Style style;
+    private boolean mShowList ;
 
     /**
      * style 数据结构：ratio 指定宽高比（宽 / 高），type 表示风格（例如 rect、list）
      */
     public HomeHotVodAdapterXu(boolean showList, ImgUtil.Style style) {
         super( showList ? R.layout.item_list:R.layout.item_user_hot_vod_xu, new ArrayList<>());
+        this.mShowList = showList;
         if (style != null) {
             if ("list".equals(style.type)) {   //如果 style = list 用 item_user_hot_vod默认样式 要不不好看
                 style = null;
@@ -54,12 +56,14 @@ public class HomeHotVodAdapterXu extends BaseQuickAdapter<Movie.Video, BaseViewH
             tvDel.setVisibility(View.GONE);
         }
 
-        TextView tvRate = helper.getView(R.id.tvRate);
-        if (Hawk.get(HawkConfig.HOME_REC, 0) == 2){
+        if(!this.mShowList) {
+            TextView tvRate = helper.getView(R.id.tvRate);
+        }
+        if (Hawk.get(HawkConfig.HOME_REC, 0) == 2 && !this.mShowList){
             tvRate.setText(ApiConfig.get().getSource(item.sourceKey).getName());
-        }else if(Hawk.get(HawkConfig.HOME_REC, 0) == 0){
-            tvRate.setText("聚汇热播");
-        }else if(Hawk.get(HawkConfig.HOME_REC, 0) == 1){
+        }else if(Hawk.get(HawkConfig.HOME_REC, 0) == 0  && !this.mShowList){
+            tvRate.setText("聚汇热播");          //xuameng显示主页聚汇热播左上小字
+        }else if(Hawk.get(HawkConfig.HOME_REC, 0) == 1  && !this.mShowList){
             tvRate.setText("聚汇推荐");
         }else {
             tvRate.setVisibility(View.GONE);
