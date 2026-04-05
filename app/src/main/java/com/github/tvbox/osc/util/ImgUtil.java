@@ -19,6 +19,11 @@ import java.util.Random;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.text.TextUtils;
+import android.graphics.Rect;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 /**
