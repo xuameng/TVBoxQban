@@ -155,19 +155,20 @@ public class GridAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder> {
             item.pic=item.pic.trim();
             if(ImgUtil.isBase64Image(item.pic)){
                 // 如果是 Base64 图片，解码并设置
-    String base64 = item.pic;
-    base64 = base64.substring(base64.indexOf(",") + 1);
-    byte[] bytes = Base64.decode(base64, Base64.DEFAULT);
+                String base64 = item.pic;
+                base64 = base64.substring(base64.indexOf(",") + 1);
+                byte[] bytes = Base64.decode(base64, Base64.DEFAULT);
 
-    Picasso.get()
-        .load(DefaultConfig.checkReplaceProxy(bytes)
-        .transform(new RoundTransformation(MD5.string2MD5(item.pic))
-            .centerCorp(true)
+                Picasso.get()
+                        .load(DefaultConfig.checkReplaceProxy(bytes))
+                        .transform(new RoundTransformation(MD5.string2MD5(item.pic))
+                                .centerCorp(true)
                                 .override(AutoSizeUtils.mm2px(mContext,newWidth), AutoSizeUtils.mm2px(mContext,newHeight))
-                                .roundRadius(AutoSizeUtils.mm2px(mContext, 10), RoundTransformation.RoundType.ALL))
-        .placeholder(R.drawable.img_loading_placeholder)
-        .error(ImgUtil.createTextDrawable(item.name))
-        .into(ivThumb);
+                               .roundRadius(AutoSizeUtils.mm2px(mContext, 10), RoundTransformation.RoundType.ALL))
+                        .placeholder(R.drawable.img_loading_placeholder)
+                        .noFade()
+                        .error(ImgUtil.createTextDrawable(item.name))
+                        .into(ivThumb);
             }else {
                 Picasso.get()
                         .load(DefaultConfig.checkReplaceProxy(item.pic))
