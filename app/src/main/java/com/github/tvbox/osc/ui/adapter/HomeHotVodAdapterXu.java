@@ -66,14 +66,16 @@ public class HomeHotVodAdapterXu extends BaseQuickAdapter<Movie.Video, BaseViewH
         }else if(Hawk.get(HawkConfig.HOME_REC, 0) == 1 && !this.mShowList && tvRate != null){
             tvRate.setText("聚汇推荐");
         }else {
-            tvRate.setVisibility(View.GONE);
+            if (!this.mShowList && tvRate != null){
+                tvRate.setVisibility(View.GONE);
+            }
         }
 
         TextView tvNote = helper.getView(R.id.tvNote);
         if (item.note == null || item.note.isEmpty()) {
         //    tvNote.setVisibility(View.GONE);
-		    tvNote.setText("暂无信息");
-		    tvNote.setVisibility(View.VISIBLE);    
+            tvNote.setText("暂无信息");
+            tvNote.setVisibility(View.VISIBLE);    
         } else {
             tvNote.setText(item.note);
             tvNote.setVisibility(View.VISIBLE);      
@@ -113,14 +115,14 @@ public class HomeHotVodAdapterXu extends BaseQuickAdapter<Movie.Video, BaseViewH
                         .placeholder(R.drawable.img_loading_placeholder)
                         .noFade()
                      //   .error(R.drawable.img_loading_placeholder)
-						.error(ImgUtil.createTextDrawable(item.name))
+                        .error(ImgUtil.createTextDrawable(item.name))
                         .into(ivThumb);
             }
         } else {
            // ivThumb.setImageResource(R.drawable.img_loading_placeholder);
-			ivThumb.setImageDrawable(ImgUtil.createTextDrawable(item.name));
+            ivThumb.setImageDrawable(ImgUtil.createTextDrawable(item.name));
         }
-		        applyStyleToImage(ivThumb);//动态设置宽高
+        applyStyleToImage(ivThumb);//动态设置宽高
     }
     /**
      * 根据传入的 style 动态设置 ImageView 的高度：高度 = 宽度 / ratio
@@ -132,7 +134,7 @@ public class HomeHotVodAdapterXu extends BaseQuickAdapter<Movie.Video, BaseViewH
             int height = (int) (width / style.ratio);
             ViewGroup.LayoutParams containerParams = container.getLayoutParams();
             containerParams.height = AutoSizeUtils.mm2px(mContext, height); // 高度
-			containerParams.width = AutoSizeUtils.mm2px(mContext, width); // 宽度
+            containerParams.width = AutoSizeUtils.mm2px(mContext, width); // 宽度
             container.setLayoutParams(containerParams);
         }
     }
