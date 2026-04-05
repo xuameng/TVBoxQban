@@ -50,10 +50,12 @@ public class HomeHotVodAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHol
     protected void convert(BaseViewHolder helper, Movie.Video item) {
     	// takagen99: Add Delete Mode
         FrameLayout tvDel = helper.getView(R.id.delFrameLayout);
-        if (HawkConfig.hotVodDelete && !this.mShowList && tvDel != null) {   //xuameng增加判断item_list中没有tvDel
-            tvDel.setVisibility(View.VISIBLE);
-        } else {
-            tvDel.setVisibility(View.GONE);
+        if ( !this.mShowList && tvDel != null){
+            if (HawkConfig.hotVodDelete) {   //xuameng增加判断item_list中没有tvDel
+                tvDel.setVisibility(View.VISIBLE);
+            } else {
+                tvDel.setVisibility(View.GONE);
+            }
         }
 
         TextView tvRate = helper.getView(R.id.tvRate);
