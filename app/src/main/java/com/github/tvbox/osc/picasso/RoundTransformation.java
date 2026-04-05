@@ -18,8 +18,8 @@ import com.squareup.picasso.Transformation;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-/**
- * 最终绝对不翻车版 RoundTransformation
+/**xuameng
+ * 最终版 RoundTransformation
  * 特点：
  * 1. 圆角场景强制 ARGB_8888（关键）
  * 2. 输入 / 输出 Bitmap 配置统一
@@ -29,7 +29,7 @@ import java.lang.annotation.RetentionPolicy;
 public class RoundTransformation implements Transformation {
 
     /** 防止极端大图 OOM，不影响清晰度 */
-    private static final int MAX_BITMAP_SIZE = 500;
+    private static final int MAX_BITMAP_SIZE = 1024;
 
     private int viewWidth, viewHeight;
     private int radius;
