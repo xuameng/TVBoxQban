@@ -21,11 +21,12 @@ import java.util.ArrayList;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 /**
- * @author pj567
- * @date :2020/12/21
- * @description:
-  * GridAdapter 支持传入 style 来设置图片的宽高比例，
-  * 如果不传 style 则保留旧的默认风格（XML 中 item_grid.xml 定义的尺寸）。
+ * @xuameng
+ * @date :2026/04/05
+ * 增加Base64 图片圆角处理
+ * 增加如果style是list直接显示文件夹样式  删除所有mShowList判断
+ * GridAdapter 支持传入 style 如style 类型不是list 就用style来设置图片的宽高比例，
+ * 如果不传 style 则保留旧的默认风格（XML 中 item_grid.xml 定义的尺寸）。
  */
 public class GridAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder> {
 	private int defaultWidth;
