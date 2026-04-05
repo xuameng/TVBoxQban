@@ -28,16 +28,16 @@ public class HomeHotVodAdapterXu extends BaseQuickAdapter<Movie.Video, BaseViewH
 
     private int defaultWidth;
     private final ImgUtil.Style style;
-    private boolean mShowList ;
+    private boolean mShowList ; //xuameng 判断是否 style为list
 
-    /**
+    /**xuameng 增加 boolean showList 判断是否 style为list 是就显示文件夹样式
      * style 数据结构：ratio 指定宽高比（宽 / 高），type 表示风格（例如 rect、list）
      */
     public HomeHotVodAdapterXu(boolean showList, ImgUtil.Style style) {
         super( showList ? R.layout.item_list:R.layout.item_user_hot_vod_xu, new ArrayList<>());
-        this.mShowList = showList;
+        this.mShowList = showList; //xuameng 判断是否 style为list
         if (style != null) {
-            if ("list".equals(style.type)) {   //如果 style = list 用 item_user_hot_vod默认样式 要不不好看
+            if ("list".equals(style.type)) {   //如果 style = list 用item_list显示文件夹样式
                 style = null;
             } else {
                 this.defaultWidth = ImgUtil.getStyleDefaultWidth(style);   //style 来设置图片的宽高比例
@@ -50,18 +50,20 @@ public class HomeHotVodAdapterXu extends BaseQuickAdapter<Movie.Video, BaseViewH
     protected void convert(BaseViewHolder helper, Movie.Video item) {
     	// takagen99: Add Delete Mode
         FrameLayout tvDel = helper.getView(R.id.delFrameLayout);
-        if (HawkConfig.hotVodDelete) {
-            tvDel.setVisibility(View.VISIBLE);
-        } else {
-            tvDel.setVisibility(View.GONE);
+        if ( !this.mShowList && tvDel != null){
+            if (HawkConfig.hotVodDelete) {   //xuameng增加判断item_list中没有tvDel
+                tvDel.setVisibility(View.VISIBLE);
+            } else {
+                tvDel.setVisibility(View.GONE);
+            }
         }
 
         TextView tvRate = helper.getView(R.id.tvRate);
-        if (Hawk.get(HawkConfig.HOME_REC, 0) == 2 && !this.mShowList){
+        if (Hawk.get(HawkConfig.HOME_REC, 0) == 2 && !this.mShowList && tvRate != null){  //xuameng增加判断item_list中没有tvRate
             tvRate.setText(ApiConfig.get().getSource(item.sourceKey).getName());
-        }else if(Hawk.get(HawkConfig.HOME_REC, 0) == 0  && !this.mShowList){
+        }else if(Hawk.get(HawkConfig.HOME_REC, 0) == 0 && !this.mShowList && tvRate != null){
             tvRate.setText("聚汇热播");          //xuameng显示主页聚汇热播左上小字
-        }else if(Hawk.get(HawkConfig.HOME_REC, 0) == 1  && !this.mShowList){
+        }else if(Hawk.get(HawkConfig.HOME_REC, 0) == 1 && !this.mShowList && tvRate != null){
             tvRate.setText("聚汇推荐");
         }else {
             tvRate.setVisibility(View.GONE);
