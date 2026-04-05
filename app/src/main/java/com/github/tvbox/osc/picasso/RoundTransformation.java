@@ -29,7 +29,7 @@ import java.lang.annotation.RetentionPolicy;
 public class RoundTransformation implements Transformation {
 
     /** 防止极端大图 OOM，不影响清晰度 */
-    private static final int MAX_BITMAP_SIZE = 200;
+    private static final int MAX_BITMAP_SIZE = 10;
 
     private int viewWidth, viewHeight;
     private int radius;
