@@ -120,6 +120,7 @@ public class HomeActivity extends BaseActivity {
 
 private int scrollThreshold = 30;
 private int totalDy = 0;
+private boolean allowTopRefresh = false;
 
 
     private final Runnable mRunnable = new Runnable() {
@@ -261,32 +262,36 @@ triggerTopRefresh();
         */
 
         this.mGridView.addOnScrollListener(new RecyclerView.OnScrollListener() {   //xuameng 监听手机滑动刷新菜单样式解决BUG
-@Override
-public void onScrolled(@NotNull RecyclerView recyclerView, int dx, int dy) {
-    super.onScrolled(recyclerView, dx, dy);
+    @Override
+    public void onScrolled(@NotNull RecyclerView recyclerView, int dx, int dy) {
+        super.onScrolled(recyclerView, dx, dy);
 
-    if (dy <= 0) {
-        totalDy = 0;
-        return;
+        if (dy <= 0) {
+            totalDy = 0;
+            return;
+        }
+
+        totalDy += dy;
+
+        RecyclerView.LayoutManager lm = recyclerView.getLayoutManager();
+        if (!(lm instanceof V7LinearLayoutManager)) return;
+
+        // ✅ 关键：是否还能往上滚
+        boolean isTop = !recyclerView.canScrollVertically(-1);
+
+        if (totalDy > scrollThreshold && isTop) {
+            triggerTopRefresh();
+            totalDy = 0;
+			allowTopRefresh = false;
+        }
     }
-
-    totalDy += dy;
-
-    RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
-    if (layoutManager == null || !(layoutManager instanceof V7LinearLayoutManager)) {
-        return;
-    }
-
-    V7LinearLayoutManager lm = (V7LinearLayoutManager) layoutManager;
-    if (totalDy > scrollThreshold && lm.findFirstVisibleItemPosition() == 0) {
-        triggerTopRefresh();
-        totalDy = 0;
-    }
-}
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 resetAllItemsToDefaultPhone();   //xuameng   恢复主页菜单样式 解决样式丢失BUG
+    if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+        allowTopRefresh = true;
+    }
             }
         });
 
