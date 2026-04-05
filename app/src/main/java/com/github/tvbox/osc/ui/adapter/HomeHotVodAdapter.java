@@ -32,8 +32,8 @@ public class HomeHotVodAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHol
     /**
      * style 数据结构：ratio 指定宽高比（宽 / 高），type 表示风格（例如 rect、list）
      */
-    public HomeHotVodAdapter(ImgUtil.Style style) {
-        super(R.layout.item_user_hot_vod, new ArrayList<>());
+    public HomeHotVodAdapter(boolean showList, ImgUtil.Style style) {
+        super( showList ? R.layout.item_list:R.layout.item_user_hot_vod, new ArrayList<>());
         if (style != null) {
             if ("list".equals(style.type)) {   //如果 style = list 用 item_user_hot_vod默认样式 要不不好看
                 style = null;
