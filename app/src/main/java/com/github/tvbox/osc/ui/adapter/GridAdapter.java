@@ -37,7 +37,7 @@ public class GridAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder> {
      */
     public GridAdapter(boolean showList, ImgUtil.Style style) {
         super( showList ? R.layout.item_list:R.layout.item_grid, new ArrayList<>());
-        this.mShowList = showList;
+        this.mShowList = false;
         if(style!=null ){
          //   if(style.type.equals("list"))this.mShowList=true;
 			this.defaultWidth=ImgUtil.getStyleDefaultWidth(style);
@@ -149,7 +149,7 @@ public class GridAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder> {
          }
         ImageView ivThumb = helper.getView(R.id.ivThumb);
 
-int radius = AutoSizeUtils.mm2px(mContext, 10);
+int radius = AutoSizeUtils.mm2px(mContext, 8);
 
         //由于部分电视机使用glide报错
         if (!TextUtils.isEmpty(item.pic)) {
