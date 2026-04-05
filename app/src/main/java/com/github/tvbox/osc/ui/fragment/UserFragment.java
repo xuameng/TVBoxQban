@@ -93,8 +93,13 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
             tvHotList2.setVisibility(View.GONE);
             tvHotList1.setHasFixedSize(true);
             int spanCount = 5;
-            if (style != null && Hawk.get(HawkConfig.HOME_REC, 0) == 1) spanCount = ImgUtil.spanCountByStyle(style, spanCount);
-            tvHotList1.setLayoutManager(new V7GridLayoutManager(this.mContext, spanCount));
+            if(isFolederMode()){
+                tvHotList1.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
+            }else{
+                if (style != null && Hawk.get(HawkConfig.HOME_REC, 0) == 1) {
+                    spanCount = ImgUtil.spanCountByStyle(style, spanCount);
+                }
+                tvHotList1.setLayoutManager(new V7GridLayoutManager(this.mContext, spanCount));
         } else {
             tvHotList1.setVisibility(View.GONE);
             tvHotList2.setVisibility(View.VISIBLE);
