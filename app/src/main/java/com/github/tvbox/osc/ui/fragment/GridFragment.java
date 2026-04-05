@@ -119,7 +119,6 @@ public class GridFragment extends BaseLazyFragment {
                 return '1';
             }
         }
-    }
         //return (sortData == null || sortData.flag == null || sortData.flag.length() ==0 || style!=null) ?  '0' : sortData.flag.charAt(0);
         // xuameng完全移除 style!=null 的条件判断  如有flag  直接显示文件夹样式
         return (sortData == null || sortData.flag == null || sortData.flag.length() == 0) ? '0' : sortData.flag.charAt(0);
