@@ -96,14 +96,8 @@ public class GridFragment extends BaseLazyFragment {
         initData();
     }
 
-    private void changeView(String id,Boolean isFolder){
-        if(isFolder){
-            //this.sortData.flag =style==null?"1":"2"; // 修改sortData.flag
-            this.sortData.flag = "1"; // xuameng修改成1不判断style 直接显示文件夹样式
-        }else {
-            //this.sortData.flag ="2"; // 修改sortData.flag
-            this.sortData.flag = "1"; // xuameng修改成1 直接显示文件夹样式   '2' 显示缩略图的文件夹模式
-        }
+    private void changeView(String id){
+        this.sortData.flag = "1"; // xuameng修改成1不判断style 直接显示文件夹样式
         initView();
         this.sortData.id =id; // 修改sortData.id为新的ID
         initViewModel();
@@ -121,7 +115,7 @@ public class GridFragment extends BaseLazyFragment {
         }
         //return (sortData == null || sortData.flag == null || sortData.flag.length() ==0 || style!=null) ?  '0' : sortData.flag.charAt(0);
         // xuameng完全移除 style!=null 的条件判断  如有flag  直接显示文件夹样式
-        return (sortData == null || sortData.flag == null || sortData.flag.length() == 0) ? '0' : sortData.flag.charAt(0);
+        return (sortData == null || sortData.flag == null || sortData.flag.length() == 0) ? '0' : '1';
     }
 
     // 是否允许聚合搜索 sortData.flag的第二个字符为‘1’时允许聚搜
@@ -243,11 +237,7 @@ public class GridFragment extends BaseLazyFragment {
                     bundle.putString("title", video.name);
                     if( video.tag !=null && (video.tag.equals("folder") || video.tag.equals("cover"))){
                         focusedView = view;
-                        if(("12".indexOf(getUITag()) != -1)){
-                            changeView(video.id,video.tag.equals("folder"));
-                        }else {
-                            changeView(video.id,false);
-                        }
+                        changeView(video.id);
                     }
                     else{
                         if(video.id == null || video.id.isEmpty() || video.id.startsWith("msearch:")){
