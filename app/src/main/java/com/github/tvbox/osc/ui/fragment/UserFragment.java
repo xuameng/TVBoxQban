@@ -154,7 +154,14 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
         if (Hawk.get(HawkConfig.HOME_REC, 0) == 1 && homeSourceRec != null) {
             style = ImgUtil.initStyle();
         }
-        homeHotVodAdapter = new HomeHotVodAdapter(style);
+
+    public boolean isFolederMode(){ 
+        if (style != null && "list".equals(style.type)) {
+            return true;   //文件夹模式 
+        }
+        return false
+    }
+        homeHotVodAdapter = new HomeHotVodAdapter(isFolederMode(), style);
         homeHotVodAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
@@ -197,7 +204,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
             }
         });
 
-        homeHotVodAdapterxu = new HomeHotVodAdapterXu(style);
+        homeHotVodAdapterxu = new HomeHotVodAdapterXu(isFolederMode(), style);
         homeHotVodAdapterxu.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() { //xuameng首页单行
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
