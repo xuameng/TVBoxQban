@@ -36,11 +36,13 @@ public class GridAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder> {
      * 如果 style 传 null，则采用 item_grid.xml 中的默认尺寸
      */
     public GridAdapter(boolean showList, ImgUtil.Style style) {
-        super( showList ? R.layout.item_list:R.layout.item_list, new ArrayList<>());
+        super( showList ? R.layout.item_list:R.layout.item_grid, new ArrayList<>());
         this.mShowList = false;
         if(style!=null ){
          //   if(style.type.equals("list"))this.mShowList=true;
-			this.defaultWidth=ImgUtil.getStyleDefaultWidth(style);
+            if (style != null && style.type != null && !style.type.equals("list")) {
+                this.defaultWidth = ImgUtil.getStyleDefaultWidth(style);
+            }
         }
         this.style = style;
     }
