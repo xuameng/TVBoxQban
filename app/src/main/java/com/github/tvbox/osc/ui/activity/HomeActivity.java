@@ -117,12 +117,6 @@ public class HomeActivity extends BaseActivity {
     private static final int MARSHMALLOW = Build.VERSION_CODES.M;  //xuameng获取音频权限
     private static final String PREF_PERMISSION_DIALOG = "permission_prefs";   //xuameng获取音频权限
     private static final String KEY_DIALOG_SHOWN = "dialog_shown";  //xuameng获取音频权限
-
-private int scrollThreshold = 30;
-private int totalDy = 0;
-private boolean allowTopRefresh = false;
-
-
     private final Runnable mRunnable = new Runnable() {
         @SuppressLint({"DefaultLocale", "SetTextI18n"})
         @Override
@@ -236,7 +230,10 @@ private boolean allowTopRefresh = false;
         this.mGridView.setOnInBorderKeyEventListener(new TvRecyclerView.OnInBorderKeyEventListener() {
             public boolean onInBorderKeyEvent(int direction, View view) {
                 if (direction == View.FOCUS_UP) {   //XUAMENG上键刷新完
-triggerTopRefresh();
+                    BaseLazyFragment baseLazyFragment = fragments.get(sortFocused);
+                    if ((baseLazyFragment instanceof GridFragment)) {
+                        ((GridFragment) baseLazyFragment).forceRefresh();
+                    }
                 }
                 if (direction != View.FOCUS_DOWN) {
                     return false;
@@ -262,36 +259,10 @@ triggerTopRefresh();
         */
 
         this.mGridView.addOnScrollListener(new RecyclerView.OnScrollListener() {   //xuameng 监听手机滑动刷新菜单样式解决BUG
-    @Override
-    public void onScrolled(@NotNull RecyclerView recyclerView, int dx, int dy) {
-        super.onScrolled(recyclerView, dx, dy);
-
-        if (dy <= 0) {
-            totalDy = 0;
-            return;
-        }
-
-        totalDy += dy;
-
-        RecyclerView.LayoutManager lm = recyclerView.getLayoutManager();
-        if (!(lm instanceof V7LinearLayoutManager)) return;
-
-        // ✅ 关键：是否还能往上滚
-        boolean isTop = !recyclerView.canScrollVertically(-1);
-
-        if (totalDy > scrollThreshold && isTop) {
-            triggerTopRefresh();
-            totalDy = 0;
-			allowTopRefresh = false;
-        }
-    }
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 resetAllItemsToDefaultPhone();   //xuameng   恢复主页菜单样式 解决样式丢失BUG
-    if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-        allowTopRefresh = true;
-    }
             }
         });
 
@@ -1066,12 +1037,4 @@ triggerTopRefresh();
             }
         }
     }
-
-private void triggerTopRefresh() {
-    BaseLazyFragment baseLazyFragment = fragments.get(sortFocused);
-    if (baseLazyFragment instanceof GridFragment) {
-        ((GridFragment) baseLazyFragment).forceRefresh();
-    }
-}
-
 }
