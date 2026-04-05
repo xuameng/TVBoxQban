@@ -159,7 +159,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
         if (style != null && "list".equals(style.type)) {
             return true;   //文件夹模式 
         }
-        return false
+        return false;
     }
         homeHotVodAdapter = new HomeHotVodAdapter(isFolederMode(), style);
         homeHotVodAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
