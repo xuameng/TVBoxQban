@@ -100,6 +100,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
                     spanCount = ImgUtil.spanCountByStyle(style, spanCount);
                 }
                 tvHotList1.setLayoutManager(new V7GridLayoutManager(this.mContext, spanCount));
+            }
         } else {
             tvHotList1.setVisibility(View.GONE);
             tvHotList2.setVisibility(View.VISIBLE);
