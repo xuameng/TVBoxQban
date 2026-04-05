@@ -34,10 +34,14 @@ public class HomeHotVodAdapterXu extends BaseQuickAdapter<Movie.Video, BaseViewH
      */
     public HomeHotVodAdapterXu(ImgUtil.Style style) {
         super(R.layout.item_user_hot_vod_xu, new ArrayList<>());
-        if(style!=null){
-            this.defaultWidth=ImgUtil.getStyleDefaultWidth(style);
+        if (style != null) {
+            if ("list".equals(style.type)) {   //如果 style = list 用 item_user_hot_vod默认样式 要不不好看
+                style = null;
+            } else {
+                this.defaultWidth = ImgUtil.getStyleDefaultWidth(style);   //style 来设置图片的宽高比例
+            }
         }
-        this.style=style;
+        this.style = style;
     }
 
     @Override
@@ -84,12 +88,17 @@ public class HomeHotVodAdapterXu extends BaseQuickAdapter<Movie.Video, BaseViewH
             newWidth = defaultWidth;
             newHeight = (int)(newWidth / style.ratio);
         }
+
+        int radius = AutoSizeUtils.mm2px(mContext, 8);  //xuameng Base64 图片 圆角设置
+
         //由于部分电视机使用glide报错
         if (!TextUtils.isEmpty(item.pic)) {
             item.pic=item.pic.trim();
             if(ImgUtil.isBase64Image(item.pic)){
-                // 如果是 Base64 图片，解码并设置
-                ivThumb.setImageBitmap(ImgUtil.decodeBase64ToBitmap(item.pic));
+                // xuameng 如果是 Base64 图片，解码并设置
+                ivThumb.setImageBitmap(
+                    ImgUtil.decodeBase64ToRoundBitmap(item.pic, radius)   //xuameng 用这个方法进行圆角设置
+                );
             }else {
                 Picasso.get()
                         .load(DefaultConfig.checkReplaceProxy(item.pic))
