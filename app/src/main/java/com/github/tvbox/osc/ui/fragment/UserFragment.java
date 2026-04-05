@@ -93,7 +93,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
             tvHotList2.setVisibility(View.GONE);
             tvHotList1.setHasFixedSize(true);
             int spanCount = 5;
-            if(isFolederMode()){
+            if(isFolederMode()){  //xuameng 增加判断如果style 为 list 就显示文件夹样式
                 tvHotList1.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
             }else{
                 if (style != null && Hawk.get(HawkConfig.HOME_REC, 0) == 1) {
@@ -161,7 +161,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
             style = ImgUtil.initStyle();
         }
 
-        homeHotVodAdapter = new HomeHotVodAdapter(isFolederMode(), style);
+        homeHotVodAdapter = new HomeHotVodAdapter(isFolederMode(), style);   //xuameng 增加传入isFolederMode style为list为true
         homeHotVodAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
@@ -204,7 +204,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
             }
         });
 
-        homeHotVodAdapterxu = new HomeHotVodAdapterXu(isFolederMode(), style);
+        homeHotVodAdapterxu = new HomeHotVodAdapterXu(isFolederMode(), style);  //xuameng 增加传入isFolederMode style为list为true
         homeHotVodAdapterxu.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() { //xuameng首页单行
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
@@ -572,7 +572,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
         EventBus.getDefault().unregister(this);
     }
 
-    public boolean isFolederMode(){ 
+    public boolean isFolederMode(){   //xuameng 增加传入isFolederMode style为list为true
         if (style != null && "list".equals(style.type)) {
             return true;   //文件夹模式 
         }
