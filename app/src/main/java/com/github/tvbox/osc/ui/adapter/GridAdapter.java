@@ -160,7 +160,7 @@ public class GridAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder> {
                 byte[] bytes = Base64.decode(base64, Base64.DEFAULT);
 
                 Picasso.get()
-                        .load(DefaultConfig.checkReplaceProxy(bytes))
+                        .load(bytes)
                         .transform(new RoundTransformation(MD5.string2MD5(item.pic))
                                 .centerCorp(true)
                                 .override(AutoSizeUtils.mm2px(mContext,newWidth), AutoSizeUtils.mm2px(mContext,newHeight))
