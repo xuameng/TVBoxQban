@@ -155,12 +155,6 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
             style = ImgUtil.initStyle();
         }
 
-    public boolean isFolederMode(){ 
-        if (style != null && "list".equals(style.type)) {
-            return true;   //文件夹模式 
-        }
-        return false;
-    }
         homeHotVodAdapter = new HomeHotVodAdapter(isFolederMode(), style);
         homeHotVodAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
@@ -204,7 +198,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
             }
         });
 
-        homeHotVodAdapterxu = new HomeHotVodAdapterXu(isFolederMode(), style);
+        homeHotVodAdapterxu = new HomeHotVodAdapterXu(style);
         homeHotVodAdapterxu.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() { //xuameng首页单行
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
@@ -570,5 +564,12 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
     public void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
+    }
+
+    public boolean isFolederMode(){ 
+        if (style != null && "list".equals(style.type)) {
+            return true;   //文件夹模式 
+        }
+        return false
     }
 }
