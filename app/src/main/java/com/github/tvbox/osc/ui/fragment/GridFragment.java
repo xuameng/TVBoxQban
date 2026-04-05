@@ -114,9 +114,12 @@ public class GridFragment extends BaseLazyFragment {
     // 获取当前页面UI的显示模式 ‘0’ 正常模式 '1' 文件夹模式 '2' 显示缩略图的文件夹模式
 
     public char getUITag(){
-        if (style.type.equals("list")){
-            return '0';
+        if(style!=null ){
+            if (style.type.equals("list")){
+                return '1';
+            }
         }
+    }
         //return (sortData == null || sortData.flag == null || sortData.flag.length() ==0 || style!=null) ?  '0' : sortData.flag.charAt(0);
         // xuameng完全移除 style!=null 的条件判断  如有flag  直接显示文件夹样式
         return (sortData == null || sortData.flag == null || sortData.flag.length() == 0) ? '0' : sortData.flag.charAt(0);
