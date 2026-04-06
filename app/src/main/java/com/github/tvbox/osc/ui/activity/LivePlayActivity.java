@@ -107,9 +107,9 @@ import java.util.TimeZone;
 import xyz.doikki.videoplayer.player.VideoView;
 import java.util.HashSet;  //新增频道收藏
 import java.util.Set;  //新增频道收藏
-import com.github.tvbox.osc.picasso.RoundTransformation; //xuameng 新增给vod显示旋转图片用
-import me.jessyan.autosize.utils.AutoSizeUtils; //xuameng 新增给vod显示旋转图片用
-import com.github.tvbox.osc.util.MD5; //xuameng 新增给vod显示旋转图片用
+import com.github.tvbox.osc.picasso.RoundTransformation; //xuameng 新增给音乐显示旋转图片用
+import me.jessyan.autosize.utils.AutoSizeUtils; //xuameng 新增给音乐显示旋转图片用
+import com.github.tvbox.osc.util.MD5; //xuameng 新增给音乐显示旋转图片用
 
 public class LivePlayActivity extends BaseActivity {
     public static Context context;
