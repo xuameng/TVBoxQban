@@ -164,39 +164,38 @@ public class GridFragment extends BaseLazyFragment {
     // 更改当前页面
  
 private void createView() {
-    this.saveCurrentView(); // 保存当前页面
+    this.saveCurrentView();
 
     ViewGroup parent = null;
     if (mGridView != null) {
         parent = (ViewGroup) mGridView.getParent();
         if (parent != null) {
-            parent.removeView(mGridView); // 移除旧 View
+            parent.removeView(mGridView);
         }
     }
 
-    // ✅ 新建一个干净的 TvRecyclerView
+    // ✅ 新建干净的 RecyclerView
     mGridView = new TvRecyclerView(mContext);
 
-    // ✅ 使用标准 LayoutParams
-    if (parent != null) {
-        mGridView.setLayoutParams(
-            new ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT
-            )
+    // ✅ 标准参数
+    ViewGroup.LayoutParams lp =
+        new ViewGroup.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT
         );
-        parent.addView(mGridView);
-    } else {
-        // 极端情况兜底（一般不会走到）
-    }
+    mGridView.setLayoutParams(lp);
 
     mGridView.setSpacingWithMargins(10, 10);
-
     mGridView.setPadding(0, 0, 0, 0);
     mGridView.setClipToPadding(true);
     mGridView.setHasFixedSize(true);
 
-    // ✅ 重新初始化
+    // ✅ 加到父布局
+    if (parent != null) {
+        parent.addView(mGridView);
+    }
+
+    // ✅ 初始化数据
     style = ImgUtil.initStyle();
     gridAdapter = new GridAdapter(isFolederMode(), style);
 
@@ -208,7 +207,7 @@ private void createView() {
     private void initView() {
         this.createView();
         mGridView.setLayoutManager(null);
-        mGridView.setAdapter(gridAdapter);
+        
         if(isFolederMode()){
             mGridView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
         }else{
@@ -222,7 +221,7 @@ private void createView() {
                 mGridView.setLayoutManager(new V7GridLayoutManager(mContext, spanCount));
             }
         }
-
+        mGridView.setAdapter(gridAdapter);
         gridAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
