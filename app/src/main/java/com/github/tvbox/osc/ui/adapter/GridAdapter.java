@@ -32,13 +32,13 @@ public class GridAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder> {
 	private int defaultWidth;
     public ImgUtil.Style style; // 动态风格，传入时调整图片宽高比
 
-    /**xuameng 如果 style = list 就以文件夹显示 style = null 用 item_list
+    /**xuameng 如果 style = list 就以文件夹显示 style = null 用 item_grid.xml  video.tag.equals("folder" 用 item_list以文件夹显示
      * 如果 style不是list  传 null，则采用 item_grid.xml 中的默认尺寸
      */
     public GridAdapter(boolean showList, ImgUtil.Style style) {
         super( showList ? R.layout.item_list:R.layout.item_grid, new ArrayList<>());
         if (style != null) {
-            if ("list".equals(style.type)) {   //如果 style = list 就以文件夹显示 style = null 用 item_list
+            if ("list".equals(style.type)) {   //xuameng如果 style = list 就以文件夹显示 转style = null 用 item_list
                 style = null;
             } else {
                 this.defaultWidth = ImgUtil.getStyleDefaultWidth(style);   //style 来设置图片的宽高比例
