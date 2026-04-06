@@ -169,7 +169,7 @@ public class GridFragment extends BaseLazyFragment {
             mGridView = findViewById(R.id.mGridView);
         }else{ // 复制当前view
 
-int spacing1 = AutoSizeUtils.dip2px(mContext, 50);
+int spacing1 = AutoSizeUtils.dp2px(mContext, 50);
 int spacing2 = AutoSizeUtils.mm2px(mContext, 10);
 
 
