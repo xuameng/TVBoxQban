@@ -9,20 +9,20 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
     <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="@dimen/vs_70">
+        android:gravity="center_vertical"
+        android:layout_height="@dimen/vs_60">
         <ImageView
             android:layout_marginLeft="@dimen/vs_10"
             android:id="@+id/ivThumb"
-            android:padding="@dimen/vs_1"
-            android:gravity="center_vertical"
-            android:layout_width="@dimen/vs_60"
-            android:layout_height="@dimen/vs_60"
+            android:padding="@dimen/vs_0"
+            android:layout_width="@dimen/vs_54"
+            android:layout_height="@dimen/vs_54"
             android:scaleType="fitXY"/>
         <TextView
-            android:textSize="@dimen/ts_24"
+            android:textSize="@dimen/ts_22"
             android:textColor="@android:color/white"
             android:ellipsize="marquee"
-            android:gravity="center_vertical"
+            android:layout_gravity="center_vertical"
             android:id="@+id/tvName"
             android:padding="@dimen/vs_10"
             android:layout_width="fill_parent"
@@ -31,7 +31,7 @@
             android:layout_weight="1.0"
             android:marqueeRepeatLimit="marquee_forever"/>
         <TextView
-            android:textSize="@dimen/ts_24"
+            android:textSize="@dimen/ts_22"
             android:textColor="@android:color/white"
             android:ellipsize="marquee"
             android:layout_gravity="center_vertical"
@@ -44,7 +44,7 @@
             android:layout_weight="3.0"
             android:marqueeRepeatLimit="marquee_forever"/>
             <TextView
-            android:textSize="@dimen/ts_24"
+            android:textSize="@dimen/ts_20"
             android:textColor="@android:color/white"
             android:ellipsize="end"
             android:gravity="center"
@@ -59,7 +59,7 @@
             android:singleLine="true"
             android:layout_marginEnd="@dimen/vs_5"/>
             <TextView
-            android:textSize="@dimen/ts_24"
+            android:textSize="@dimen/ts_20"
             android:textColor="@android:color/white"
             android:ellipsize="end"
             android:gravity="center"
@@ -74,7 +74,7 @@
             android:singleLine="true"
             android:layout_marginEnd="@dimen/vs_5"/>
             <TextView
-            android:textSize="@dimen/ts_24"
+            android:textSize="@dimen/ts_20"
             android:textColor="@android:color/white"
             android:ellipsize="end"
             android:gravity="center"
@@ -89,7 +89,7 @@
             android:singleLine="true"
             android:layout_marginEnd="@dimen/vs_5"/>
             <TextView
-            android:textSize="@dimen/ts_24"
+            android:textSize="@dimen/ts_16"
             android:textColor="@android:color/white"
             android:ellipsize="end"
             android:gravity="top"
