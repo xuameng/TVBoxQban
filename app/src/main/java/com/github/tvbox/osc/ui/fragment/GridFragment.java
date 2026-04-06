@@ -54,6 +54,7 @@ import org.json.JSONObject;
  * @description:
  */
 public class GridFragment extends BaseLazyFragment {
+	protected View mContentView;
     private MovieSort.SortData sortData = null;
     private TvRecyclerView mGridView;
     private SourceViewModel sourceViewModel;
@@ -92,9 +93,9 @@ public class GridFragment extends BaseLazyFragment {
 
     @Override
     protected void init() {
-    rootView = LayoutInflater.from(mContext)
+    mContentView = LayoutInflater.from(mContext)
         .inflate(R.layout.fragment_grid, null);
-    setContentView(rootView);
+    mContentView = rootView;
         initView();
         initViewModel();
         initData();
