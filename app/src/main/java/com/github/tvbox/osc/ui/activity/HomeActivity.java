@@ -255,10 +255,7 @@ mGridView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             // 延迟执行，确保 RecyclerView 已布局完成
             mGridView.post(() -> {
                 if (!isUserClickFocus) {
-                    // ✅ 非用户点击：恢复上次选中
-                    if (PositionXu >= 0 && PositionXu < sortAdapter.getItemCount()) {
-                        mGridView.setSelection(PositionXu);
-                    }
+restoreGridFocus(PositionXu);
                 }
                 // ✅ 重置标记，准备下一次判断
                 isUserClickFocus = false;
@@ -1046,4 +1043,29 @@ mGridView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             }
         }
     }
+
+
+private void restoreGridFocus(int position) {
+    if (mGridView == null || sortAdapter == null) return;
+    if (position < 0 || position >= sortAdapter.getItemCount()) return;
+
+    RecyclerView.LayoutManager lm = mGridView.getLayoutManager();
+    if (!(lm instanceof V7LinearLayoutManager)) return;
+
+    V7LinearLayoutManager layoutManager = (V7LinearLayoutManager) lm;
+
+    // 1. 先滚动到该位置（确保 item 在屏幕内）
+    layoutManager.scrollToPositionWithOffset(position, 0);
+
+    // 2. 延迟执行，等布局完成
+    mGridView.post(() -> {
+        View targetView = layoutManager.findViewByPosition(position);
+        if (targetView != null) {
+            targetView.requestFocus();
+        } else {
+            // 极端情况兜底
+            mGridView.setSelection(position);
+        }
+    });
+}
 }
