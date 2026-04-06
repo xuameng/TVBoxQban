@@ -107,6 +107,9 @@ import java.util.TimeZone;
 import xyz.doikki.videoplayer.player.VideoView;
 import java.util.HashSet;  //新增频道收藏
 import java.util.Set;  //新增频道收藏
+import com.github.tvbox.osc.picasso.RoundTransformation; //xuameng 新增给vod显示旋转图片用
+import me.jessyan.autosize.utils.AutoSizeUtils; //xuameng 新增给vod显示旋转图片用
+
 public class LivePlayActivity extends BaseActivity {
     public static Context context;
     private VideoView mVideoView;
@@ -867,6 +870,7 @@ public class LivePlayActivity extends BaseActivity {
             liveIconNullText.setVisibility(View.VISIBLE);
             liveIconNullText.setText("[频道编号" + channel_Name.getChannelNum() + "]"); // xuameng显示频道编号
         } else {
+			loadLogoPic();
             imgLiveIconXu.setVisibility(View.GONE);
             imgLiveIcon.setVisibility(View.VISIBLE);
             Picasso.get().load(logoUrl).placeholder(R.drawable.banner_xu).into(imgLiveIcon); // xuameng内不空显示banner
@@ -4236,6 +4240,20 @@ public class LivePlayActivity extends BaseActivity {
         // 只在安全状态下执行业务逻辑
         if (liveChannelItemAdapter != null) {
             liveChannelItemAdapter.setFocusedChannelIndex(-1);  //xuameng修复频道名称移走焦点变色问题
+        }
+    }
+
+    public void loadLogoPic() {  //xuameng 新增给lived显示旋转图片用
+        if (logoUrl != null && !logoUrl.isEmpty() && iv_circle_bg_xu != null) {
+            Picasso.get()
+                   .load(logoUrl)
+				   .resize(120,120)
+                   .transform(new RoundTransformation(MD5.string2MD5(videoPicUrl))
+                   .centerCorp(true)
+                   .roundRadius(AutoSizeUtils.mm2px(getContext(), 50), RoundTransformation.RoundType.ALL))
+                   .placeholder(R.drawable.app_logo)
+                   .error(R.drawable.app_logo)
+                   .into(iv_circle_bg_xu);
         }
     }
 
