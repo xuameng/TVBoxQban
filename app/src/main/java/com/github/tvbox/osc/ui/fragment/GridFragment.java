@@ -102,12 +102,13 @@ public class GridFragment extends BaseLazyFragment {
         this.sortData.id =id; // 修改sortData.id为新的ID
         initViewModel();
         initData();
+        mGridView.post(() -> mGridView.requestLayout());
     }
 
     public boolean isFolederMode(){ return (getUITag() =='1'); }
     // xuameng获取当前页面UI的显示模式 ‘0’ 正常模式 '1' 文件夹模式  取消 2缩略图模式 没用
     //return (sortData == null || sortData.flag == null || sortData.flag.length() ==0 || style!=null) ?  '0' : sortData.flag.charAt(0);
-    // xuameng完全移除 style!=null 的条件判断  如有flag  直接显示文件夹样式
+    // xuameng完全移除 style!=null 的条件判断  如有flag  直接显示文件夹样式   style 为 list，直接显示文件夹样式
     public char getUITag() {
         // 1. style 为 list，直接返回 1
         if (style != null && "list".equals(style.type)) {
@@ -245,7 +246,7 @@ public class GridFragment extends BaseLazyFragment {
                     bundle.putString("title", video.name);
                     if( video.tag !=null && (video.tag.equals("folder") || video.tag.equals("cover"))){
                         focusedView = view;
-                        changeView(video.id);  //xuameng移除多余判断 有folder或cover就进入文件夹下一级
+                        changeView(video.id);  //xuameng移除多余判断 有folder或cover就进入video.id(文件夹下一级)
                     }
                     else{
                         if(video.id == null || video.id.isEmpty() || video.id.startsWith("msearch:")){
