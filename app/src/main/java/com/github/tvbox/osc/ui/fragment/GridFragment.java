@@ -102,7 +102,6 @@ public class GridFragment extends BaseLazyFragment {
         this.sortData.id =id; // 修改sortData.id为新的ID
         initViewModel();
         initData();
-        mGridView.post(() -> mGridView.requestLayout());
     }
 
     public boolean isFolederMode(){ return (getUITag() =='1'); }
