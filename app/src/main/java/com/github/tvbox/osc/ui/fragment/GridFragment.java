@@ -64,6 +64,7 @@ public class GridFragment extends BaseLazyFragment {
     private boolean isLoad = false;
     private boolean isTop = true;
     private View focusedView = null;
+	private View rootView;
     private static class GridInfo{
         public String sortID="";
         public TvRecyclerView mGridView;
@@ -91,6 +92,9 @@ public class GridFragment extends BaseLazyFragment {
 
     @Override
     protected void init() {
+    rootView = LayoutInflater.from(mContext)
+        .inflate(R.layout.fragment_grid, null);
+    setContentView(rootView);
         initView();
         initViewModel();
         initData();
@@ -174,10 +178,13 @@ private void createView() {
         }
     }
 
-    // ✅ 新建干净的 RecyclerView
+    // ✅ 如果 parent 丢失，从 XML 根布局拿
+    if (parent == null && rootView != null) {
+        parent = (ViewGroup) rootView; // LinearLayout
+    }
+
     mGridView = new TvRecyclerView(mContext);
 
-    // ✅ 标准参数
     ViewGroup.LayoutParams lp =
         new ViewGroup.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
@@ -190,12 +197,12 @@ private void createView() {
     mGridView.setClipToPadding(true);
     mGridView.setHasFixedSize(true);
 
-    // ✅ 加到父布局
     if (parent != null) {
         parent.addView(mGridView);
+    } else {
+        
     }
 
-    // ✅ 初始化数据
     style = ImgUtil.initStyle();
     gridAdapter = new GridAdapter(isFolederMode(), style);
 
