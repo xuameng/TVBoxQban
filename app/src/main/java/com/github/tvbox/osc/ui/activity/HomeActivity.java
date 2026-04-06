@@ -174,7 +174,7 @@ public class HomeActivity extends BaseActivity {
                     if (layoutManager == null) {
                         return; // xuameng防止空指针
                     }
-                    this.mGridView.setSelection(0);
+                    mGridView.setSelection(0);
                 });
             }
         });
