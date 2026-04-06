@@ -86,8 +86,8 @@ public class ImgUtil {
             } else if (style.ratio >= 1.3) {
                 spanCount = 4; // 4:3
             }
-        } else if ("list".equals(style.type)) {   //xuameng list 时 首页推荐 5列要不太难看
-            spanCount = 5;
+        } else if ("list".equals(style.type)) {   //xuameng list 时 首页推荐 1列
+            spanCount = 1;
         }
         return spanCount;
     }
