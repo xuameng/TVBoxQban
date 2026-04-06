@@ -109,6 +109,7 @@ import java.util.HashSet;  //新增频道收藏
 import java.util.Set;  //新增频道收藏
 import com.github.tvbox.osc.picasso.RoundTransformation; //xuameng 新增给vod显示旋转图片用
 import me.jessyan.autosize.utils.AutoSizeUtils; //xuameng 新增给vod显示旋转图片用
+import com.github.tvbox.osc.util.MD5; //xuameng 新增给vod显示旋转图片用
 
 public class LivePlayActivity extends BaseActivity {
     public static Context context;
@@ -4248,9 +4249,9 @@ public class LivePlayActivity extends BaseActivity {
             Picasso.get()
                    .load(logoUrl)
 				   .resize(120,120)
-                   .transform(new RoundTransformation(MD5.string2MD5(videoPicUrl))
+                   .transform(new RoundTransformation(MD5.string2MD5(logoUrl))
                    .centerCorp(true)
-                   .roundRadius(AutoSizeUtils.mm2px(getContext(), 50), RoundTransformation.RoundType.ALL))
+                   .roundRadius(AutoSizeUtils.mm2px(mContext, 50), RoundTransformation.RoundType.ALL))
                    .placeholder(R.drawable.app_logo)
                    .error(R.drawable.app_logo)
                    .into(iv_circle_bg_xu);
