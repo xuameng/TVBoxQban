@@ -168,7 +168,7 @@ public class GridFragment extends BaseLazyFragment {
             mGridView = findViewById(R.id.mGridView);
         }else{ // 复制当前view
             TvRecyclerView v3 = new TvRecyclerView(this.mContext);
-            //v3.setSpacingWithMargins(10,10);
+            v3.setSpacingWithMargins(20,20);
             v3.setLayoutParams(mGridView.getLayoutParams());
             v3.setPadding(mGridView.getPaddingLeft(), mGridView.getPaddingTop(), mGridView.getPaddingRight(), mGridView.getPaddingBottom());
             v3.setClipToPadding(mGridView.getClipToPadding());
