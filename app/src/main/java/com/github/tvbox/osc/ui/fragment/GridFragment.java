@@ -54,7 +54,6 @@ import org.json.JSONObject;
  * @description:
  */
 public class GridFragment extends BaseLazyFragment {
-	protected View mContentView;
     private MovieSort.SortData sortData = null;
     private TvRecyclerView mGridView;
     private SourceViewModel sourceViewModel;
@@ -65,7 +64,6 @@ public class GridFragment extends BaseLazyFragment {
     private boolean isLoad = false;
     private boolean isTop = true;
     private View focusedView = null;
-	private View rootView;
     private static class GridInfo{
         public String sortID="";
         public TvRecyclerView mGridView;
@@ -93,9 +91,6 @@ public class GridFragment extends BaseLazyFragment {
 
     @Override
     protected void init() {
-    mContentView = LayoutInflater.from(mContext)
-        .inflate(R.layout.fragment_grid, null);
-    mContentView = rootView;
         initView();
         initViewModel();
         initData();
@@ -167,55 +162,32 @@ public class GridFragment extends BaseLazyFragment {
 
 	private ImgUtil.Style style;
     // 更改当前页面
- 
-private void createView() {
-    this.saveCurrentView();
-
-    ViewGroup parent = null;
-    if (mGridView != null) {
-        parent = (ViewGroup) mGridView.getParent();
-        if (parent != null) {
-            parent.removeView(mGridView);
+    private void createView(){
+        this.saveCurrentView(); // 保存当前页面
+        if(mGridView == null){ // 从layout中拿view
+            mGridView = findViewById(R.id.mGridView);
+        }else{ // 复制当前view
+            TvRecyclerView v3 = new TvRecyclerView(this.mContext);
+            v3.setSpacingWithMargins(10,10);
+            v3.setLayoutParams(mGridView.getLayoutParams());
+            v3.setPadding(mGridView.getPaddingLeft(), mGridView.getPaddingTop(), mGridView.getPaddingRight(), mGridView.getPaddingBottom());
+            v3.setClipToPadding(mGridView.getClipToPadding());
+            ((ViewGroup) mGridView.getParent()).addView(v3);
+            mGridView.setVisibility(View.GONE);
+            mGridView = v3;
+            mGridView.setVisibility(View.VISIBLE);
         }
+        mGridView.setHasFixedSize(false);
+        style=ImgUtil.initStyle();
+        gridAdapter = new GridAdapter(isFolederMode(), style);
+        this.page =1;
+        this.maxPage =1;
+        this.isLoad = false;
     }
-
-    // ✅ 如果 parent 丢失，从 XML 根布局拿
-    if (parent == null && rootView != null) {
-        parent = (ViewGroup) rootView; // LinearLayout
-    }
-
-    mGridView = new TvRecyclerView(mContext);
-
-    ViewGroup.LayoutParams lp =
-        new ViewGroup.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.MATCH_PARENT
-        );
-    mGridView.setLayoutParams(lp);
-
-    mGridView.setSpacingWithMargins(10, 10);
-    mGridView.setPadding(0, 0, 0, 0);
-    mGridView.setClipToPadding(true);
-    mGridView.setHasFixedSize(true);
-
-    if (parent != null) {
-        parent.addView(mGridView);
-    } else {
-        
-    }
-
-    style = ImgUtil.initStyle();
-    gridAdapter = new GridAdapter(isFolederMode(), style);
-
-    this.page = 1;
-    this.maxPage = 1;
-    this.isLoad = false;
-}
 
     private void initView() {
         this.createView();
-        mGridView.setLayoutManager(null);
-        
+        mGridView.setAdapter(gridAdapter);
         if(isFolederMode()){
             mGridView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
         }else{
@@ -229,7 +201,7 @@ private void createView() {
                 mGridView.setLayoutManager(new V7GridLayoutManager(mContext, spanCount));
             }
         }
-        mGridView.setAdapter(gridAdapter);
+
         gridAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
