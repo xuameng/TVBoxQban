@@ -1046,7 +1046,7 @@ public class HomeActivity extends BaseActivity {
                 textView.setTextColor(getResources().getColor(R.color.color_FFFFFF));
                 textView.invalidate();
 
-                itemView.requestFocus(); //xuameng 选中item出现时自动选定焦点
+              //  itemView.requestFocus(); //xuameng 选中item出现时自动选定焦点
 
             } else {                  //xuameng   重置未选中菜单项为默认值
                 textView.getPaint().setFakeBoldText(false);
