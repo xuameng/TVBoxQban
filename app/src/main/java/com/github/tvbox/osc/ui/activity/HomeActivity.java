@@ -590,7 +590,7 @@ public class HomeActivity extends BaseActivity {
                 }
                 if (currentView != null && PositionXu !=0) {   // xuameng防止空指针
 					//this.sortFocusView.requestFocus(); //xuameng这段代码手机使用时菜单失去焦点会闪退   
-                    this.mGridView.setSelection(PositionXu);   //xuameng处理手机滑动主页菜单失去焦点时按返回键闪退
+                    this.mGridView.setSelectedPosition(PositionXu);   //xuameng处理手机滑动主页菜单失去焦点时按返回键闪退
                 }
 
             }
