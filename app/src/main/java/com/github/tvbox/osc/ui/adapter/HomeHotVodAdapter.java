@@ -32,15 +32,9 @@ public class HomeHotVodAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHol
 
     /**xuameng 增加 boolean showList 判断是否 style为list 是就显示文件夹样式
      * style 数据结构：ratio 指定宽高比（宽 / 高），type 表示风格（例如 rect、list）
-	 * //xuameng 增加 pageStyle 判断首页true为多行
      */
-    public HomeHotVodAdapter(boolean showList, boolean pageStyle, ImgUtil.Style style) {   
-        super(
-            showList
-                ? R.layout.item_list
-                : (pageStyle ? R.layout.item_user_hot_vod : R.layout.item_user_hot_vod_xu),
-                new ArrayList<>()
-        );
+    public HomeHotVodAdapter(boolean showList, ImgUtil.Style style) {
+        super( showList ? R.layout.item_list:R.layout.item_user_hot_vod, new ArrayList<>());
         this.mShowList = showList; //xuameng 判断是否 style为list
         if (style != null) {
             if ("list".equals(style.type)) {   //如果 style = list 用item_list显示文件夹样式
