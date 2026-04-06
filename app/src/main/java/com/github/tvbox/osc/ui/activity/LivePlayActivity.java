@@ -871,7 +871,15 @@ public class LivePlayActivity extends BaseActivity {
             liveIconNullText.setVisibility(View.VISIBLE);
             liveIconNullText.setText("[频道编号" + channel_Name.getChannelNum() + "]"); // xuameng显示频道编号
         } else {
-			loadLogoPic();
+            Picasso.get()
+                   .load(logoUrl)
+				   .resize(120,120)
+                   .transform(new RoundTransformation(MD5.string2MD5(logoUrl))
+                   .centerCorp(true)
+                   .roundRadius(AutoSizeUtils.mm2px(mContext, 50), RoundTransformation.RoundType.ALL))
+                   .placeholder(R.drawable.app_logo)
+                   .error(R.drawable.app_logo)
+                   .into(iv_circle_bg_xu);
             imgLiveIconXu.setVisibility(View.GONE);
             imgLiveIcon.setVisibility(View.VISIBLE);
             Picasso.get().load(logoUrl).placeholder(R.drawable.banner_xu).into(imgLiveIcon); // xuameng内不空显示banner
