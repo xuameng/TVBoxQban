@@ -117,7 +117,6 @@ public class HomeActivity extends BaseActivity {
     private static final int MARSHMALLOW = Build.VERSION_CODES.M;  //xuameng获取音频权限
     private static final String PREF_PERMISSION_DIALOG = "permission_prefs";   //xuameng获取音频权限
     private static final String KEY_DIALOG_SHOWN = "dialog_shown";  //xuameng获取音频权限
-    private boolean isUserClickFocus = false; // 是否是用户主动点击获得焦点
     private final Runnable mRunnable = new Runnable() {
         @SuppressLint({"DefaultLocale", "SetTextI18n"})
         @Override
@@ -191,7 +190,6 @@ public class HomeActivity extends BaseActivity {
 
             public void onItemSelected(TvRecyclerView tvRecyclerView, View view, int position) {
                 if (view != null) {
-                    isUserClickFocus = true;
                     HomeActivity.this.currentView = view;
                     HomeActivity.this.sortChange = true;
                     view.animate().scaleX(1.1f).scaleY(1.1f).setInterpolator(new BounceInterpolator()).setDuration(250).start();
@@ -248,21 +246,17 @@ public class HomeActivity extends BaseActivity {
             }
         });
 
-mGridView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-    @Override
-    public void onFocusChange(View v, boolean hasFocus) {
-        if (hasFocus) {
-            // 延迟执行，确保 RecyclerView 已布局完成
-            mGridView.post(() -> {
-                if (!isUserClickFocus) {
-restoreGridFocus(PositionXu);
+        /*       // xuameng添加焦点变化监听   变成只监听手机滑动
+        this.mGridView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    // 重置所有项到默认状态
+                    resetAllItemsToDefault();   //xuameng   重置未选中菜单项为默认值
                 }
-                // ✅ 重置标记，准备下一次判断
-                isUserClickFocus = false;
-            });
-        }
-    }
-});
+            }
+        });     
+        */
 
         this.mGridView.addOnScrollListener(new RecyclerView.OnScrollListener() {   //xuameng 监听手机滑动刷新菜单样式解决BUG
             @Override
@@ -1043,29 +1037,4 @@ restoreGridFocus(PositionXu);
             }
         }
     }
-
-
-private void restoreGridFocus(int position) {
-    if (mGridView == null || sortAdapter == null) return;
-    if (position < 0 || position >= sortAdapter.getItemCount()) return;
-
-    RecyclerView.LayoutManager lm = mGridView.getLayoutManager();
-    if (!(lm instanceof V7LinearLayoutManager)) return;
-
-    V7LinearLayoutManager layoutManager = (V7LinearLayoutManager) lm;
-
-    // 1. 先滚动到该位置（确保 item 在屏幕内）
-    layoutManager.scrollToPositionWithOffset(position, 0);
-
-    // 2. 延迟执行，等布局完成
-    mGridView.post(() -> {
-        View targetView = layoutManager.findViewByPosition(position);
-        if (targetView != null) {
-            targetView.requestFocus();
-        } else {
-            // 极端情况兜底
-            mGridView.setSelection(position);
-        }
-    });
-}
 }
