@@ -37,7 +37,7 @@ import com.orhanobut.hawk.Hawk;
 import com.owen.tvrecyclerview.widget.TvRecyclerView;
 import com.owen.tvrecyclerview.widget.V7GridLayoutManager;
 import com.owen.tvrecyclerview.widget.V7LinearLayoutManager;
-import me.jessyan.autosize.utils.AutoSizeUtils;
+import me.jessyan.autosize.utils.AutoSizeUtils;  //xuameng像素转换
 
 import java.util.ArrayList;
 import java.util.Stack;
@@ -168,13 +168,11 @@ public class GridFragment extends BaseLazyFragment {
         if(mGridView == null){ // 从layout中拿view
             mGridView = findViewById(R.id.mGridView);
         }else{ // 复制当前view
-
-int spacing1 = AutoSizeUtils.dp2px(mContext, 50);
-int spacing2 = AutoSizeUtils.mm2px(mContext, 10);
-
+            int horizontal = AutoSizeUtils.dp2px(mContext, 20); //xuameng dp dip转成px像素 
+            int vertical = AutoSizeUtils.mm2px(mContext, 10); //xuameng mm转成px像素 
 
             TvRecyclerView v3 = new TvRecyclerView(this.mContext);
-            v3.setSpacingWithMargins(spacing1,spacing2);
+            v3.setSpacingWithMargins(vertical,horizontal);
             v3.setLayoutParams(mGridView.getLayoutParams());
             v3.setPadding(mGridView.getPaddingLeft(), mGridView.getPaddingTop(), mGridView.getPaddingRight(), mGridView.getPaddingBottom());
             v3.setClipToPadding(mGridView.getClipToPadding());
