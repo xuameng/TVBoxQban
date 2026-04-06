@@ -174,7 +174,7 @@ public class HomeActivity extends BaseActivity {
                     if (layoutManager == null) {
                         return; // xuameng防止空指针
                     }
-                    mGridView.setSelectedPosition(0);
+                    this.mGridView.setSelection(0);
                 });
             }
         });
@@ -196,7 +196,7 @@ public class HomeActivity extends BaseActivity {
                     PositionXu = position;
                     if (position == -1) {
                         position = 0;
-                        HomeActivity.this.mGridView.setSelectedPosition(0);
+                        HomeActivity.this.mGridView.setSelection(0);
                     }
                     MovieSort.SortData sortData = sortAdapter.getItem(position);
                     if (null != sortData && !sortData.filters.isEmpty()) {
@@ -590,7 +590,7 @@ public class HomeActivity extends BaseActivity {
                 }
                 if (currentView != null && PositionXu !=0) {   // xuameng防止空指针
 					//this.sortFocusView.requestFocus(); //xuameng这段代码手机使用时菜单失去焦点会闪退   
-                    this.mGridView.setSelectedPosition(PositionXu);   //xuameng处理手机滑动主页菜单失去焦点时按返回键闪退
+                    this.mGridView.setSelection(PositionXu);   //xuameng处理手机滑动主页菜单失去焦点时按返回键闪退
                 }
 
             }
@@ -603,7 +603,7 @@ public class HomeActivity extends BaseActivity {
                 if (layoutManager == null) {
                     return; // xuameng防止空指针
                 }
-                this.mGridView.setSelectedPosition(0);
+                this.mGridView.setSelection(0);
             } else {
                 exit();
             }
@@ -617,7 +617,7 @@ public class HomeActivity extends BaseActivity {
                 return; // xuameng防止空指针
             }
             UserFragment.tvHotList1.scrollToPosition(0);
-            this.mGridView.setSelectedPosition(0);
+            this.mGridView.setSelection(0);
         } else {
             exit();
         }
@@ -1064,5 +1064,4 @@ public class HomeActivity extends BaseActivity {
             }
         }
     }
-
 }
