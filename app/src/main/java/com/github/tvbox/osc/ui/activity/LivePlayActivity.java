@@ -863,6 +863,15 @@ public class LivePlayActivity extends BaseActivity {
     }
     private void updateChannelIcon(String channelName, String logoUrl) {
         if(StringUtils.isEmpty(logoUrl)) {
+            Picasso.get() //xuameng 音乐旋转图标 台标
+                   .load(logoUrl)
+				   .resize(120,120)
+                   .transform(new RoundTransformation(MD5.string2MD5(logoUrl))
+                   .centerCorp(true)
+                   .roundRadius(AutoSizeUtils.mm2px(mContext, 50), RoundTransformation.RoundType.ALL))
+                   .placeholder(R.drawable.app_logo)
+                   .error(R.drawable.app_logo)
+                   .into(iv_circle_bg_xu);
             imgLiveIconXu.setVisibility(View.GONE);
             liveIconNullBg.setVisibility(View.VISIBLE);
             liveIconNullText.setVisibility(View.VISIBLE);
@@ -870,8 +879,8 @@ public class LivePlayActivity extends BaseActivity {
             Picasso.get().load(logoUrl).placeholder(R.drawable.banner_xu).into(imgLiveIcon); // xuameng内容空显示banner
             liveIconNullText.setVisibility(View.VISIBLE);
             liveIconNullText.setText("[频道编号" + channel_Name.getChannelNum() + "]"); // xuameng显示频道编号
-        } else {
-            Picasso.get()
+        } else {   //xuameng 新增给lived显示旋转图片用
+            Picasso.get()  //xuameng 音乐旋转图标 台标
                    .load(logoUrl)
 				   .resize(120,120)
                    .transform(new RoundTransformation(MD5.string2MD5(logoUrl))
@@ -4249,20 +4258,6 @@ public class LivePlayActivity extends BaseActivity {
         // 只在安全状态下执行业务逻辑
         if (liveChannelItemAdapter != null) {
             liveChannelItemAdapter.setFocusedChannelIndex(-1);  //xuameng修复频道名称移走焦点变色问题
-        }
-    }
-
-    public void loadLogoPic() {  //xuameng 新增给lived显示旋转图片用
-        if (logoUrl != null && !logoUrl.isEmpty() && iv_circle_bg_xu != null) {
-            Picasso.get()
-                   .load(logoUrl)
-				   .resize(120,120)
-                   .transform(new RoundTransformation(MD5.string2MD5(logoUrl))
-                   .centerCorp(true)
-                   .roundRadius(AutoSizeUtils.mm2px(mContext, 50), RoundTransformation.RoundType.ALL))
-                   .placeholder(R.drawable.app_logo)
-                   .error(R.drawable.app_logo)
-                   .into(iv_circle_bg_xu);
         }
     }
 
