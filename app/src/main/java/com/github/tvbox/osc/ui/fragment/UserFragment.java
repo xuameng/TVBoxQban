@@ -70,7 +70,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
     public static TvRecyclerView tvHotList1;
     public static TvRecyclerView tvHotList2; //xuameng首页单行
     private ImgUtil.Style style; //xuameng 图片样式
-    private boolean pageStyle;
+    private boolean pageStyle;  //xuameng 增加传入首页多行判断
 
     public static UserFragment newInstance() {
         return new UserFragment();
@@ -123,7 +123,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
                     vod.note = "上次看到" + vodInfo.playNote;
                 vodList.add(vod);
             }
-            homeHotVodAdapter.setNewData(vodList); //xuameng首页单行
+            homeHotVodAdapter.setNewData(vodList); //xuameng首页数据
         }
     }
 
@@ -159,7 +159,8 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
             style = ImgUtil.initStyle();
         }
 
-        homeHotVodAdapter = new HomeHotVodAdapter(isFolederMode(),mPageStyle(), style);   //xuameng 增加传入isFolederMode style为list为true
+        //xuameng 增加传入isFolederMode style为list为true  增加mPageStyle传入首页多行判断
+        homeHotVodAdapter = new HomeHotVodAdapter(isFolederMode(),mPageStyle(), style);   
         homeHotVodAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
@@ -307,7 +308,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
 
             }
         });
-        tvHotList1.setAdapter(homeHotVodAdapter);
+        tvHotList1.setAdapter(homeHotVodAdapter); //xuameng首页多行行
         tvHotList2.setOnItemListener(new TvRecyclerView.OnItemListener() {
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
@@ -324,6 +325,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
 
             }
         });
+        tvHotList2.setAdapter(homeHotVodAdapter); //xuameng首页单行
         initHomeHotVod(homeHotVodAdapter);
     }
 
