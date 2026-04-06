@@ -933,10 +933,10 @@ public class DetailActivity extends BaseActivity {
                     int radius = AutoSizeUtils.mm2px(mContext, 8);  //xuameng Base64 图片 圆角设置
 
                     if (!TextUtils.isEmpty(mVideo.pic)) {
-                        if(ImgUtil.isBase64Image(item.pic)){
+                        if(ImgUtil.isBase64Image(mVideo.pic)){
                             // xuameng 如果是 Base64 图片，解码并设置
                             ivThumb.setImageBitmap(
-                                ImgUtil.decodeBase64ToRoundBitmap(item.pic, radius)   //xuameng 用这个方法进行圆角设置
+                                ImgUtil.decodeBase64ToRoundBitmap(mVideo.pic, radius)   //xuameng 用这个方法进行圆角设置
                             );
                         }else {
                             Picasso.get()
