@@ -562,7 +562,11 @@ public class HomeActivity extends BaseActivity {
          // 如果处于 VOD 删除模式，则退出该模式并刷新界面
         if (HawkConfig.hotVodDelete) {
             HawkConfig.hotVodDelete = false;
-            UserFragment.homeHotVodAdapter.notifyDataSetChanged();  //xuameng刷新首页数据
+            if(!Hawk.get(HawkConfig.HOME_REC_STYLE, false)){   //xuameng首页单行
+                UserFragment.homeHotVodAdapterxu.notifyDataSetChanged();
+            }else{
+                UserFragment.homeHotVodAdapter.notifyDataSetChanged();
+            }
             return;
         } 
 		
