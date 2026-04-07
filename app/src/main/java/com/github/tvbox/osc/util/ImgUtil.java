@@ -137,9 +137,16 @@ public static Drawable createTextDrawable(String text) {
 
     if (style != null) {
         width = getStyleDefaultWidth(style);
-        height = (int) (width / style.ratio);
+
+        if ("list".equals(style.type)) {
+            //  list 类型：高度等于宽度（或你希望的任何固定比例）
+            height = width;
+        } else {
+            //  非 list，才使用 ratio
+            height = (int) (width / style.ratio);
+        }
     } else {
-        // ✅ 使用 ImgUtil 中定义的默认值
+        //  style == null，回退默认
         width = defaultWidth;
         height = defaultHeight;
     }
@@ -151,7 +158,7 @@ public static Drawable createTextDrawable(String text) {
     int randomColor = getRandomColor();
 
     // ✅ 圆角按 bitmap 尺寸动态计算
-    float cornerRadius = Math.min(width, height) * 0.08f;
+    float cornerRadius = Math.min(width, height) * 0.05f;
 
     Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
     Canvas canvas = new Canvas(bitmap);
@@ -164,7 +171,7 @@ public static Drawable createTextDrawable(String text) {
     canvas.drawRoundRect(rectF, cornerRadius, cornerRadius, paint);
 
     paint.setColor(Color.WHITE);
-    paint.setTextSize(height * 0.35f);
+    paint.setTextSize(height * 0.25f);
     paint.setTextAlign(Paint.Align.CENTER);
 
     Paint.FontMetrics fm = paint.getFontMetrics();
