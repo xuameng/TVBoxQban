@@ -258,10 +258,10 @@ public class HomeActivity extends BaseActivity {
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                     // xuameng只在停止滚动时修复样式
-                    if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                        mGridView.postDelayed(() -> {
-                            resetAllItemsToDefaultPhone();
-                    }, 50); 
+                 //   if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                 //       mGridView.postDelayed(() -> {
+                 //           resetAllItemsToDefaultPhone();
+                 //   }, 50); 
                 }
             }
         });
