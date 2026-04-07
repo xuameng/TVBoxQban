@@ -18,7 +18,6 @@ import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.util.MD5;
 import com.squareup.picasso.Picasso;
 import com.github.tvbox.osc.util.ImgUtil;   //xuamengBASE64图片
-import com.github.tvbox.osc.util.ImgUtilCollect;   //xuamengBASE64图片
 
 import java.util.ArrayList;
 
@@ -69,12 +68,12 @@ public class CollectAdapter extends BaseQuickAdapter<VodCollect, BaseViewHolder>
                         .placeholder(R.drawable.img_loading_placeholder)
                         .noFade()
                        // .error(R.drawable.img_loading_placeholder)
-					    .error(ImgUtilCollect.createTextDrawable(item.name))
+					    .error(ImgUtil.createTextDrawable(item.name))
                         .into(ivThumb);
             }
         } else {
            // ivThumb.setImageResource(R.drawable.img_loading_placeholder);
-			ivThumb.setImageDrawable(ImgUtilCollect.createTextDrawable(item.name));
+			ivThumb.setImageDrawable(ImgUtil.createTextDrawable(item.name));
         }
     }
 }
