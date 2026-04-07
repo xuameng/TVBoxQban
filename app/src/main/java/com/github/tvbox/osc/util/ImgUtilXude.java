@@ -30,7 +30,7 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
  *base64图片
  * @version 1.0.0 <br/>
  */
-public class ImgUtilXude {
+public class ImgUtilXufa {
     private static final Map<String, Drawable> drawableCache = new HashMap<>();
     public static boolean isBase64Image(String picUrl) {
         return picUrl.startsWith("data:image");
