@@ -94,7 +94,7 @@ public class GridAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder> {
          }
         ImageView ivThumb = helper.getView(R.id.ivThumb);
 
-        int radius = AutoSizeUtils.mm2px(mContext, 7);  //xuameng Base64 图片 圆角设置
+        int radius = AutoSizeUtils.mm2px(mContext, 10);  //xuameng Base64 图片 圆角设置
 
         //由于部分电视机使用glide报错
         if (!TextUtils.isEmpty(item.pic)) {
