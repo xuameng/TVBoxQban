@@ -143,7 +143,8 @@ public static Drawable createTextDrawable(String text) {
             height = width;
         } else {
             //  非 list，才使用 ratio
-            height = (int) (width / style.ratio);
+        float safeRatio = normalizeRatio(style.ratio);
+        height = (int) (width / safeRatio);
         }
     } else {
         //  style == null，回退默认
@@ -238,5 +239,18 @@ public static Drawable createTextDrawable(String text) {
             return null;
         }
     }
+
+private static float normalizeRatio(float ratio) {
+    if (ratio <= 0) {
+        return 1f;
+    }
+    if (ratio < 1f) {
+        return 1f;
+    }
+    if (ratio > 1.7f) {
+        return 1.755f;
+    }
+    return ratio;
+}
 
 }
