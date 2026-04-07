@@ -96,22 +96,25 @@ public class ImgUtil {
         return spanCount;
     }
 
-    public static int getStyleDefaultWidth(Style style) {
+    public static int getStyleDefaultWidth(Style style) {  //xuameng 强行指定ratio值防止用户乱写
         // 1. style 为空，回退默认
         if (style == null) {
             return defaultWidth;
         }
 
-        // 2. xuameng list 类型，直接给固定宽度
+        // 2. list 类型，直接给固定宽度
         if ("list".equals(style.type)) {
             return 100;
         }
 
-        // 3. rect / 其他类型，根据 ratio 计算
-        if (style.ratio < 1) {
+        // ✅ 关键改动：先 normalize，再决定宽度
+        float safeRatio = normalizeRatio(style.ratio);
+
+        // 3. rect / 其他类型，基于 safeRatio 计算
+        if (safeRatio < 1) {
             return 220;
         }
-        if (style.ratio > 1.7) {
+        if (safeRatio > 1.7) {
             return 380;
         }
         return 280;
@@ -129,6 +132,10 @@ public static Drawable createTextDrawable(String text) {
         text = "聚";
     }
     text = text.substring(0, 1);
+
+    if (drawableCache.containsKey(text)) {
+        return drawableCache.get(text);
+    }
 
     Style style = initStyle();
 
@@ -153,45 +160,48 @@ public static Drawable createTextDrawable(String text) {
         height = defaultHeight;
     }
 
-    // ✅【关键 1】style-aware 缓存 key，防止不同窗口串样式
-    String cacheKey = text + "_" + width + "_" + height;
-    if (drawableCache.containsKey(cacheKey)) {
-        return drawableCache.get(cacheKey);
-    }
-
     int randomColor = getRandomColor();
 
+    // 1. 背景圆角（仍按整体 bitmap）
     float cornerRadius = Math.min(width, height) * 0.05f;
 
     Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
     Canvas canvas = new Canvas(bitmap);
 
-    Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    paint.setColor(randomColor);
-    paint.setStyle(Paint.Style.FILL);
+    Paint bgPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    bgPaint.setColor(randomColor);
+    bgPaint.setStyle(Paint.Style.FILL);
 
     RectF rectF = new RectF(0, 0, width, height);
-    canvas.drawRoundRect(rectF, cornerRadius, cornerRadius, paint);
+    canvas.drawRoundRect(rectF, cornerRadius, cornerRadius, bgPaint);
 
-    paint.setColor(Color.WHITE);
+    // ✅ 2. 文字区域：始终正方形
+    int textSize = Math.min(width, height);
+    int textLeft = (width - textSize) / 2;
+    int textTop = (height - textSize) / 2;
 
-    // ✅【关键 2】字体基于最小边，永远不变形
-    float baseSize = Math.min(width, height);
+    Rect textRect = new Rect(
+            textLeft,
+            textTop,
+            textLeft + textSize,
+            textTop + textSize
+    );
 
-    // ✅【关键 3】系数建议 0.35f~0.4f，0.25f 在横图里会偏小
-    paint.setTextSize(baseSize * 0.30f);
+    // ✅ 3. 文字绘制
+    Paint textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    textPaint.setColor(Color.WHITE);
+    textPaint.setTextSize(textSize * 0.25f);
+    textPaint.setTextAlign(Paint.Align.CENTER);
+    textPaint.setAntiAlias(true);
 
-    paint.setTextAlign(Paint.Align.CENTER);
-    paint.setAntiAlias(true);
+    Paint.FontMetrics fm = textPaint.getFontMetrics();
+    float x = textRect.centerX();
+    float y = textRect.centerY() - (fm.top + fm.bottom) / 2f;
 
-    Paint.FontMetrics fm = paint.getFontMetrics();
-    float x = width / 2f;
-    float y = (height - fm.bottom - fm.top) / 2f;
-
-    canvas.drawText(text, x, y, paint);
+    canvas.drawText(text, x, y, textPaint);
 
     Drawable drawable = new BitmapDrawable(bitmap);
-    drawableCache.put(cacheKey, drawable);
+    drawableCache.put(text, drawable);
     return drawable;
 }
 
