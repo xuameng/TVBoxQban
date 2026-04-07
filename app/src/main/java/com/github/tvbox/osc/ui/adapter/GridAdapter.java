@@ -89,11 +89,11 @@ public class GridAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder> {
         int newWidth = ImgUtil.defaultWidth;
         int newHeight = ImgUtil.defaultHeight;
 
-if (style != null) {
-    newWidth = defaultWidth;
-    float safeRatio = ImgUtil.normalizeRatio(style.ratio);
-    newHeight = (int) (newWidth / safeRatio);
-}
+        if (style != null) {
+            newWidth = defaultWidth;
+            float safeRatio = ImgUtil.normalizeRatio(style.ratio);  //xuameng normalizeRatio强行指定ratio值防止用户乱写
+            newHeight = (int) (newWidth / safeRatio);
+        }
         ImageView ivThumb = helper.getView(R.id.ivThumb);
 
         int radius = AutoSizeUtils.mm2px(mContext, 5);  //xuameng Base64 图片 圆角设置
