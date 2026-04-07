@@ -131,8 +131,10 @@ public class GridAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder> {
     private void applyStyleToImage(final ImageView ivThumb) {
         if(style!=null){
             ViewGroup container = (ViewGroup) ivThumb.getParent();
+            // xuameng修复：应用normalizeRatio处理后的安全ratio值来计算高度
             int width = defaultWidth;
-            int height = (int) (width / style.ratio);
+            float safeRatio = ImgUtil.normalizeRatio(style.ratio);
+            int height = (int) (width / safeRatio);
             ViewGroup.LayoutParams containerParams = container.getLayoutParams();
             containerParams.height = AutoSizeUtils.mm2px(mContext, height); // 高度
             containerParams.width = ViewGroup.LayoutParams.MATCH_PARENT; // 宽度
