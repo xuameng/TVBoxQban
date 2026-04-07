@@ -158,14 +158,9 @@ public class HomeActivity extends BaseActivity {
         this.contentLayout = findViewById(R.id.contentLayout);
         this.mGridView = findViewById(R.id.mGridView);
         this.mViewPager = findViewById(R.id.mViewPager);
-        mGridView.post(() -> {  //xuameng 防空指针findViewByPosition
-            mGridView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 0, false));
-            mGridView.setAdapter(sortAdapter);
-        });
-      //  this.mGridView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 0, false));
-      //  this.sortAdapter = new SortAdapter();
+        this.mGridView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 0, false));
+        this.sortAdapter = new SortAdapter();
         this.mGridView.setSpacingWithMargins(0, AutoSizeUtils.dp2px(this.mContext, 10.0f));
-        this.mGridView.setAdapter(this.sortAdapter);
         this.mGridView.setAdapter(this.sortAdapter);
         sortAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {     //xuameng主页默认焦点
             @Override
