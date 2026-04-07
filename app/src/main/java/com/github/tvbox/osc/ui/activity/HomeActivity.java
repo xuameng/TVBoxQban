@@ -262,7 +262,12 @@ public class HomeActivity extends BaseActivity {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                resetAllItemsToDefaultPhone();   //xuameng   恢复主页菜单样式 解决样式丢失BUG
+                    // xuameng只在停止滚动时修复样式
+                    if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                        mGridView.post(() -> {
+                            resetAllItemsToDefaultPhone();
+                    });
+                }
             }
         });
 
