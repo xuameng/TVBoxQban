@@ -158,8 +158,12 @@ public class HomeActivity extends BaseActivity {
         this.contentLayout = findViewById(R.id.contentLayout);
         this.mGridView = findViewById(R.id.mGridView);
         this.mViewPager = findViewById(R.id.mViewPager);
-        this.sortAdapter = new SortAdapter();
-        this.mGridView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 0, false));
+        mGridView.post(() -> {  //xuameng 防空指针findViewByPosition
+            this.mGridView.setLayoutManager(new V7LinearLayoutManager(mContext));
+            this.mGridView.setAdapter(sortAdapter);
+        });
+      //  this.mGridView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 0, false));
+      //  this.sortAdapter = new SortAdapter();
         this.mGridView.setSpacingWithMargins(0, AutoSizeUtils.dp2px(this.mContext, 10.0f));
         this.mGridView.setAdapter(this.sortAdapter);
         this.mGridView.setAdapter(this.sortAdapter);
@@ -657,6 +661,9 @@ public class HomeActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        if (mGridView.getLayoutManager() == null) {  //xuameng 防空指针findViewByPosition
+            mGridView.setLayoutManager(new V7LinearLayoutManager(this));
+        }
         mHandler.post(mRunnable);
     }
 
