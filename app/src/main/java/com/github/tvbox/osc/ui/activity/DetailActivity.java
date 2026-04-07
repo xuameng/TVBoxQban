@@ -903,7 +903,7 @@ public class DetailActivity extends BaseActivity {
 
                     if (mVideo.sourceKey.contains("配置中心") 
                         || mVideo.sourceKey.toLowerCase().contains("config")) {  //xuameng 配置中心判断如是就返回
-                        showEmpty();
+                        showConfig();
                         return;
                     }
 
