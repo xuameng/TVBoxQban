@@ -259,9 +259,9 @@ public class HomeActivity extends BaseActivity {
                 super.onScrollStateChanged(recyclerView, newState);
                     // xuameng只在停止滚动时修复样式
                     if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                        mGridView.post(() -> {
+                        mGridView.postDelayed(() -> {
                             resetAllItemsToDefaultPhone();
-                    });
+                    }, 50); 
                 }
             }
         });
@@ -661,9 +661,6 @@ public class HomeActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (mGridView.getLayoutManager() == null) {  //xuameng 防空指针findViewByPosition
-            mGridView.setLayoutManager(new V7LinearLayoutManager(this));
-        }
         mHandler.post(mRunnable);
     }
 
