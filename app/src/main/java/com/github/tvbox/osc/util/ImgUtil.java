@@ -95,7 +95,7 @@ public class ImgUtil {
     public static int getStyleDefaultWidth(Style style){
         int styleDefaultWidth = 280;
         if(style.ratio<1)styleDefaultWidth=220;
-        if(style.ratio>1.7)styleDefaultWidth=380;
+        if(style.ratio>1.7)styleDefaultWidth=340;
         return styleDefaultWidth;
     }
 
@@ -115,7 +115,7 @@ public class ImgUtil {
         }
         int width = 240, height = 320; // 设定图片大小
         int randomColor = getRandomColor();
-        float cornerRadius = AutoSizeUtils.mm2px(App.getInstance(), 10); // 圆角半径
+        float cornerRadius = AutoSizeUtils.mm2px(App.getInstance(), 8); // 圆角半径
 
         Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
