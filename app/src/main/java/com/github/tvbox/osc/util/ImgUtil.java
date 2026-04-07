@@ -35,8 +35,8 @@ public class ImgUtil {
     public static boolean isBase64Image(String picUrl) {
         return picUrl.startsWith("data:image");
     }
-    public static int defaultWidth = 240;
-    public static int defaultHeight = 320;
+    public static int defaultWidth = 220;
+    public static int defaultHeight = 280;
 
    /**
      * style 数据结构：ratio 指定宽高比（宽 / 高），type 表示风格（例如 rect、list）
@@ -115,7 +115,7 @@ public class ImgUtil {
         }
         int width = 240, height = 320; // 设定图片大小
         int randomColor = getRandomColor();
-        float cornerRadius = AutoSizeUtils.mm2px(App.getInstance(), 8); // 圆角半径
+        float cornerRadius = AutoSizeUtils.mm2px(App.getInstance(), 10); // 圆角半径
 
         Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
