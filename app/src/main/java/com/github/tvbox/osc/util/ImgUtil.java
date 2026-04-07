@@ -113,7 +113,7 @@ public class ImgUtil {
         if (drawableCache.containsKey(text)) {
             return drawableCache.get(text);
         }
-        int width = 240, height = 320; // 设定图片大小
+        int width = 220, height = 280; // 设定图片大小
         int randomColor = getRandomColor();
         float cornerRadius = AutoSizeUtils.mm2px(App.getInstance(), 7); // 圆角半径
 
