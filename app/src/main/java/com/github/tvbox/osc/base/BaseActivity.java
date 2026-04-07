@@ -136,6 +136,12 @@ public abstract class BaseActivity extends AppCompatActivity implements CustomAd
         }
     }
 
+    protected void showConfig() {   //xuameng配置中心显示
+        if (null != mLoadService) {
+            mLoadService.showCallback(ConfigCallback.class);
+        }
+    }
+
     protected void showSuccess() {
         if (null != mLoadService) {
             mLoadService.showSuccess();
