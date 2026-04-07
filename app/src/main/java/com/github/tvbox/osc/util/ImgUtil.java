@@ -240,7 +240,7 @@ public static Drawable createTextDrawable(String text) {
         }
     }
 
-private static float normalizeRatio(float ratio) {
+public static float normalizeRatio(float ratio) {
     if (ratio <= 0) {
         return 1f;
     }
