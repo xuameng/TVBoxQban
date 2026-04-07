@@ -11,10 +11,18 @@ import android.graphics.drawable.Drawable;
 import android.util.Base64;
 
 import com.github.tvbox.osc.base.App;
+import com.github.tvbox.osc.api.ApiConfig;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import android.text.TextUtils;   //xuameng 新增 base64图片圆角处理
+import android.graphics.Rect; //xuameng 新增 base64图片圆角处理
+import android.graphics.PorterDuff; //xuameng 新增 base64图片圆角处理
+import android.graphics.PorterDuffXfermode; //xuameng 新增 base64图片圆角处理
 
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
@@ -26,6 +34,69 @@ public class ImgUtilXu {
     private static final Map<String, Drawable> drawableCache = new HashMap<>();
     public static boolean isBase64Image(String picUrl) {
         return picUrl.startsWith("data:image");
+    }
+    public static int defaultWidth = 240;
+    public static int defaultHeight = 320;
+
+   /**
+     * style 数据结构：ratio 指定宽高比（宽 / 高），type 表示风格（例如 rect、list）
+     */
+    public static class Style {
+        public float ratio;
+        public String type;
+
+        public Style(float ratio, String type) {
+            this.ratio = ratio;
+            this.type = type;
+        }
+    }
+
+    public static Style initStyle() {     //xuameng 改成list 不需要ratio
+        String bStyle = ApiConfig.get().getHomeSourceBean().getStyle();
+        if (TextUtils.isEmpty(bStyle)) {
+            return null;
+        }
+
+        try {
+            JSONObject jsonObject = new JSONObject(bStyle);
+
+            String type = jsonObject.getString("type");
+
+            // list 类型不需要 ratio
+            if ("list".equals(type)) {
+                return new Style(0f, type);
+            }
+
+            // 非 list 才解析 ratio
+            float ratio = (float) jsonObject.getDouble("ratio");
+            return new Style(ratio, type);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public static int spanCountByStyle(Style style,int defaultCount){
+        int spanCount=defaultCount;
+        if ("rect".equals(style.type)) {
+            if (style.ratio >= 1.7) {
+                spanCount = 3; // 横图
+            } else if (style.ratio >= 1.3) {
+                spanCount = 4; // 4:3
+            }
+        } else if ("list".equals(style.type)) {   //xuameng list 时 首页推荐 1列
+            spanCount = 1;
+        }
+        return spanCount;
+    }
+
+    public static int getStyleDefaultWidth(Style style){
+        int styleDefaultWidth = 280;
+        if(style.ratio<1)styleDefaultWidth=220;
+        if(style.ratio>1.7)styleDefaultWidth=380;
+        return styleDefaultWidth;
     }
 
     public static Bitmap decodeBase64ToBitmap(String base64Str) {
@@ -75,4 +146,50 @@ public class ImgUtilXu {
     public static void clearCache() {
         drawableCache.clear();
     }
+
+    public static Bitmap decodeBase64ToRoundBitmap(String base64Str, int radiusPx) {    //xuameng base64图片圆角处理
+        if (TextUtils.isEmpty(base64Str)) {
+            return null;
+        }
+
+        try {
+            // 1. 去掉 data:image/xxx;base64,
+            String base64 = base64Str;
+            if (base64.contains(",")) {
+                base64 = base64.substring(base64.indexOf(",") + 1);
+            }
+
+            byte[] bytes = Base64.decode(base64, Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+            if (bitmap == null) return null;
+
+            // 2. 创建圆角 Bitmap
+            Bitmap output = Bitmap.createBitmap(
+                    bitmap.getWidth(),
+                    bitmap.getHeight(),
+                    Bitmap.Config.ARGB_8888
+            );
+
+            Canvas canvas = new Canvas(output);
+            Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            paint.setFilterBitmap(true);
+
+            Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+            RectF rectF = new RectF(rect);
+
+            canvas.drawRoundRect(rectF, radiusPx, radiusPx, paint);
+
+            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+            canvas.drawBitmap(bitmap, rect, rect, paint);
+
+            bitmap.recycle();
+
+            return output;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 }
