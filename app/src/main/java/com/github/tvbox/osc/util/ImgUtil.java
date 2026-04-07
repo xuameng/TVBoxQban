@@ -175,14 +175,19 @@ public class ImgUtil {
         RectF rectF = new RectF(0, 0, width, height);
         canvas.drawRoundRect(rectF, cornerRadius, cornerRadius, paint);
 
-        paint.setColor(Color.WHITE); // 文字颜色
-        paint.setTextSize(55); // 文字大小
+        paint.setColor(Color.WHITE);
+        // xuameng基于最小边，保证文字不变形
+        float baseSize = Math.min(width, height);
+        paint.setTextSize(baseSize * 0.25f);
         paint.setTextAlign(Paint.Align.CENTER);
-        Paint.FontMetrics fontMetrics = paint.getFontMetrics();
+        paint.setAntiAlias(true);
+
+        Paint.FontMetrics fm = paint.getFontMetrics();
         float x = width / 2f;
-        float y = (height - fontMetrics.bottom - fontMetrics.top) / 2f;
+        float y = (height - fm.bottom - fm.top) / 2f;
 
         canvas.drawText(text, x, y, paint);
+
         Drawable drawable = new BitmapDrawable(bitmap);
         drawableCache.put(text, drawable);
         return drawable;
