@@ -2,7 +2,6 @@
 <FrameLayout
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@drawable/icon_config"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <LinearLayout
         android:gravity="center_horizontal"
@@ -10,6 +9,10 @@
         android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
+        <ImageView
+            android:layout_width="@dimen/vs_120"
+            android:layout_height="@dimen/vs_120"
+            android:src="@drawable/icon_config"/>
         <TextView
             android:textSize="@dimen/ts_24"
             android:textColor="@android:color/white"
@@ -18,7 +21,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/vs_0"
             android:layout_marginBottom="@dimen/vs_10"
-            android:text="完成工作后请返回！"
+            android:text="工作完成后请返回！"
             android:shadowColor="#ff000000"
             android:shadowDx="2.0"
             android:shadowDy="2.0"
