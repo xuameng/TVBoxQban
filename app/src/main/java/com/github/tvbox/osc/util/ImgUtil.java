@@ -165,10 +165,8 @@ public class ImgUtil {
         // xuameng 圆角按 bitmap 尺寸动态计算
         float cornerRadius = Math.min(width, height) * 0.05f;
 
-// 修改后（固定尺寸，不受 style 影响）：
-int iconSize = 200; // 固定大小
-Bitmap bitmap = Bitmap.createBitmap(iconSize, iconSize, Bitmap.Config.ARGB_8888);
-Canvas canvas = new Canvas(bitmap);
+        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
 
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setColor(randomColor);
