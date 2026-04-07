@@ -159,8 +159,8 @@ public class HomeActivity extends BaseActivity {
         this.mGridView = findViewById(R.id.mGridView);
         this.mViewPager = findViewById(R.id.mViewPager);
         mGridView.post(() -> {  //xuameng 防空指针findViewByPosition
-            this.mGridView.setLayoutManager(new V7LinearLayoutManager(mContext));
-            this.mGridView.setAdapter(sortAdapter);
+            mGridView.setLayoutManager(new V7LinearLayoutManager(mContext));
+            mGridView.setAdapter(sortAdapter);
         });
       //  this.mGridView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 0, false));
       //  this.sortAdapter = new SortAdapter();
