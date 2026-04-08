@@ -70,7 +70,9 @@ protected void convert(BaseViewHolder helper, MovieSort.SortData item) {
             .start();
 
     // ✅ filter icon 完全由 Adapter 控制
-    boolean showFilter = isSelected && item.filterSelectCount() > 0;
+boolean showFilter = isSelected
+        && item.hasUserFilter
+        && item.filterSelectCount() > 0;
     helper.setGone(R.id.tvFilterColor, showFilter);
     helper.setGone(R.id.tvFilter, !showFilter);
 }
