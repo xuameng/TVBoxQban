@@ -162,9 +162,6 @@ public class HomeActivity extends BaseActivity {
         this.sortAdapter = new SortAdapter();
         this.mGridView.setSpacingWithMargins(0, AutoSizeUtils.dp2px(this.mContext, 10.0f));
         this.mGridView.setAdapter(this.sortAdapter);
-mGridView.setFocusableInTouchMode(false);
-mGridView.setFocusable(false);
-mGridView.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
         sortAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {     //xuameng主页默认焦点
             @Override
             public void onChanged() {
@@ -176,7 +173,7 @@ mGridView.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
                     if (layoutManager == null) {
                         return; // xuameng防止空指针
                     }
-               //     mGridView.setSelection(0);
+                    mGridView.setSelection(0);
                 });
             }
         });
