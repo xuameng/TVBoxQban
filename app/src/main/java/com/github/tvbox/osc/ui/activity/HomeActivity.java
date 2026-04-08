@@ -653,7 +653,6 @@ public class HomeActivity extends BaseActivity {
             if (pos > 0) {  //xuameng 主页为0不参与
                 MovieSort.SortData sortData = sortAdapter.getItem(pos);
                 if (sortData != null) {
-                    sortData.hasUserFilter = true;   // xuameng 用户点击
                     sortAdapter.notifyItemChanged(pos);
                 }
             }
@@ -796,7 +795,6 @@ public class HomeActivity extends BaseActivity {
                         MovieSort.SortData sortData = sortAdapter.getItem(i);
                         if (sortData != null && sortData.filterSelect != null) {
                             sortData.filterSelect.clear();
-                            sortData.hasUserFilter = false; // xuameng是否有用户主动筛选重置
                         }
                     }
                     ApiConfig.get().setSourceBean(value);
