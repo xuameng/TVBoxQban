@@ -423,10 +423,18 @@ public class GridFragment extends BaseLazyFragment {
                         // 更新选中状态
                         sortData.filterSelect.put(key, newSelection);
                         kvAdapter.setSelectedPosition(position);
+// ✅ 新增：通知首页刷新筛选状态
+EventBus.getDefault().post(
+    new RefreshEvent(RefreshEvent.TYPE_FILTER_CHANGE)
+);
                     } else {
                         // 取消选中
                         sortData.filterSelect.remove(key);
                         kvAdapter.setSelectedPosition(-1);
+// ✅ 新增：通知首页刷新筛选状态
+EventBus.getDefault().post(
+    new RefreshEvent(RefreshEvent.TYPE_FILTER_CHANGE)
+);
                     }
                     forceRefresh();
                 }
