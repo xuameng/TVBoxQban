@@ -6,12 +6,13 @@ import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.bean.MovieSort;
 
 import java.util.ArrayList;
+
 import android.graphics.Typeface;
 
 /**
  * @author xuameng
  * @date 2026/04/08
- * @description: 首页分类菜单 Adapter（修复焦点及多高亮等BUG，彻底解决跳动）
+ * @description: 首页分类菜单 Adapter（修复焦点及多高亮等BUG）
  */
 public class SortAdapter extends BaseQuickAdapter<MovieSort.SortData, BaseViewHolder> {
 
@@ -23,18 +24,21 @@ public class SortAdapter extends BaseQuickAdapter<MovieSort.SortData, BaseViewHo
     }
 
     /**
-     * ✅ 外部设置选中项
+     * ✅ 外部设置选中项（焦点 / 滑动 / 点击 统一入口）
      */
     public void setSelectedPosition(int pos) {
         if (pos < 0 || pos >= getData().size()) return;
-        
-        // ❌ 删除旧的逻辑（只更新两个Item）
-        // 因为那个逻辑会导致 convert 被调用，从而触发 setScaleX 强制重置
-        
-        // ✅ 新逻辑：直接刷新整个数据集
-        // 这样虽然性能稍微低一点点，但是能保证 convert 里的逻辑最简单
+
+        int old = selectedPosition;
         selectedPosition = pos;
-        notifyDataSetChanged(); 
+
+        // 只更新受影响的项目，避免不必要的刷新
+        if (old != selectedPosition) {
+            if (old >= 0 && old < getData().size()) {
+                notifyItemChanged(old);  //更新上一个选中项状态
+            }
+            notifyItemChanged(selectedPosition);  //更新当前选中项状态
+        }
     }
 
     public int getSelectedPosition() {
@@ -44,9 +48,9 @@ public class SortAdapter extends BaseQuickAdapter<MovieSort.SortData, BaseViewHo
     @Override
     protected void convert(BaseViewHolder helper, MovieSort.SortData item) {
         int pos = helper.getAdapterPosition();
-        if (pos == -1) return;
-        
         boolean isSelected = pos == selectedPosition;
+        
+        // 主页（位置0）不显示筛选图标
         boolean isHomePage = pos == 0;
 
         helper.setText(R.id.tvTitle, item.name);
@@ -65,25 +69,17 @@ public class SortAdapter extends BaseQuickAdapter<MovieSort.SortData, BaseViewHo
                         : Typeface.DEFAULT
         );
 
-        // ✅ 核心修复点
-        // 1. 我们不再在代码里强制设置 setScaleX(1.0f)
-        // 2. 我们只在选中时设置变大，不选中时不碰这个属性
-        // 3. 这样 View 复用时，不会被强制压回 1.0，视觉上就不会有“抽搐感”
-        
-        if (isSelected) {
-            // 只有当选中时，才设置大一点
-            // 这样就不会出现“从1.1瞬间变回1.0”的左右抖动
-            helper.itemView.setScaleX(1.1f);
-            helper.itemView.setScaleY(1.1f);
-        }
-        // ❌ 注释掉这行：helper.itemView.setScaleX(1.0f);
-        // ❌ 注释掉这行：helper.itemView.setScaleY(1.0f);
-        // 让非选中状态保持 View 的默认状态（通常是1.0），不要在代码里反复横跳
+        // 设置缩放动画
+        float targetScaleX = isSelected ? 1.1f : 1.0f;
+        float targetScaleY = isSelected ? 1.1f : 1.0f;
+        helper.itemView.setScaleX(targetScaleX);
+        helper.itemView.setScaleY(targetScaleY);
 
-        // 筛选图标逻辑
+        // 筛选图标显示逻辑：仅在当前选中的item上显示
         boolean hasFilterSelected = isSelected && !isHomePage && item.filterSelectCount() > 0;
         boolean hasFiltersAvailable = isSelected && !isHomePage && !item.filters.isEmpty() && item.filterSelectCount() <= 0;
         
+        // 只有在符合条件时才显示对应图标，否则隐藏
         helper.setGone(R.id.tvFilterColor, hasFilterSelected);
         helper.setGone(R.id.tvFilter, hasFiltersAvailable);
     }
