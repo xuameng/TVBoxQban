@@ -167,11 +167,130 @@ public class ImgUtil {
         drawableCache.clear();
     }
     
-    // 下方其他方法省略，请保留你原文件中的实现
-    public static Bitmap decodeBase64ToBitmap(String base64Str) { /* ... */ return null; }
-    public static Bitmap decodeBase64ToRoundBitmap(String base64Str, int radiusPx) { /* ... */ return null; }
-    public static float normalizeRatio(float ratio) { /* ... */ return ratio; }
-    public static Style initStyle() { /* ... */ return null; }
-    public static int spanCountByStyle(Style style, int defaultCount) { /* ... */ return defaultCount; }
-    public static int getStyleDefaultWidth(Style style) { /* ... */ return defaultWidth; }
+    public static Bitmap decodeBase64ToBitmap(String base64Str) {
+        // 去掉 Base64 数据的头部前缀，例如 "data:image/png;base64,"
+        String base64Data = base64Str.substring(base64Str.indexOf(",") + 1);
+        byte[] decodedBytes = Base64.decode(base64Data, Base64.NO_WRAP);
+        return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
+    }
+
+    public static Bitmap decodeBase64ToRoundBitmap(String base64Str, int radiusPx) {    //xuameng base64图片圆角处理
+        if (TextUtils.isEmpty(base64Str)) {
+            return null;
+        }
+
+        try {
+            // 1. 去掉 data:image/xxx;base64,
+            String base64 = base64Str;
+            if (base64.contains(",")) {
+                base64 = base64.substring(base64.indexOf(",") + 1);
+            }
+
+            byte[] bytes = Base64.decode(base64, Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+            if (bitmap == null) return null;
+
+            // 2. 创建圆角 Bitmap
+            Bitmap output = Bitmap.createBitmap(
+                    bitmap.getWidth(),
+                    bitmap.getHeight(),
+                    Bitmap.Config.ARGB_8888
+            );
+
+            Canvas canvas = new Canvas(output);
+            Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            paint.setFilterBitmap(true);
+
+            Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+            RectF rectF = new RectF(rect);
+
+            canvas.drawRoundRect(rectF, radiusPx, radiusPx, paint);
+
+            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+            canvas.drawBitmap(bitmap, rect, rect, paint);
+
+            bitmap.recycle();
+
+            return output;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static float normalizeRatio(float ratio) {   //xuameng 强行指定ratio值防止用户乱写
+        if (ratio <= 0) {
+            return 1f;
+        }
+        if (ratio < 1f) {
+            return 1f;
+        }
+        if (ratio > 2.0f) {
+            return 1.755f;
+        }
+        return ratio;
+    }
+
+    public static Style initStyle() {     //xuameng 改成list 不需要ratio
+        String bStyle = ApiConfig.get().getHomeSourceBean().getStyle();
+        if (TextUtils.isEmpty(bStyle)) {
+            return null;
+        }
+
+        try {
+            JSONObject jsonObject = new JSONObject(bStyle);
+
+            String type = jsonObject.getString("type");
+
+            // list 类型不需要 ratio
+            if ("list".equals(type)) {
+                return new Style(0f, type);
+            }
+
+            // 非 list 才解析 ratio
+            float ratio = (float) jsonObject.getDouble("ratio");
+            return new Style(ratio, type);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public static int spanCountByStyle(Style style, int defaultCount) {
+        int spanCount = defaultCount;
+        if ("rect".equals(style.type)) {
+            if (style.ratio >= 1.7) {
+                spanCount = 3; // 横图
+            } else if (style.ratio >= 1.3) {
+                spanCount = 4; // 4:3
+            }
+        } else if ("list".equals(style.type)) {   //xuameng list 时 首页推荐 1列
+            spanCount = 1;
+        }
+        return spanCount;
+    }
+
+    public static int getStyleDefaultWidth(Style style) {
+        // 1. style 为空，回退默认
+        if (style == null) {
+            return defaultWidth;
+        }
+
+        // 2. xuameng list 类型，直接给固定宽度
+        if ("list".equals(style.type)) {
+            return 100;
+        }
+
+        // 3. rect / 其他类型，根据 ratio 计算
+        if (style.ratio < 1) {
+            return 220;
+        }
+        if (style.ratio > 1.7) {
+            return 380;
+        }
+        return 280;
+    }
 }
