@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import android.graphics.Typeface;
 
 /**
- * @author pj567 / xuameng
+ * @author xuameng
  * @date 2026/04/08
  * @description: 首页分类菜单 Adapter（修复焦点及多高亮等BUG）
  */
@@ -32,8 +32,8 @@ public class SortAdapter extends BaseQuickAdapter<MovieSort.SortData, BaseViewHo
         int old = selectedPosition;
         selectedPosition = pos;
 
-        notifyItemChanged(old);
-        notifyItemChanged(selectedPosition);
+        notifyItemChanged(old);  //更新上一个选中项状态
+        notifyItemChanged(selectedPosition);  //更新当前选中项状态
     }
 
     public int getSelectedPosition() {
@@ -72,11 +72,10 @@ public class SortAdapter extends BaseQuickAdapter<MovieSort.SortData, BaseViewHo
                 .setDuration(250)
                 .start();
 
-        // ✅ filter icon 完全由 Adapter 控制
-        // 修复：主页不显示筛选图标，其他页面按规则显示
+        // ✅ filter icon 完全由 Adapter 控制 
+        // 修复：主页不显示筛选图标，其他页面按规则显示  hasUserFilter为用户点击  filterSelectCount是用户筛选的项
         boolean showFilterColor = isSelected && !isHomePage && item.hasUserFilter && item.filterSelectCount() > 0;
-        boolean showFilterNormal = isSelected && !isHomePage && !showFilterColor && !item.filters.isEmpty();
-        
+        boolean showFilterNormal = isSelected && !isHomePage && !item.hasUserFilter && !item.filters.isEmpty();
         helper.setGone(R.id.tvFilterColor, showFilterColor);
         helper.setGone(R.id.tvFilter, showFilterNormal);
     }
