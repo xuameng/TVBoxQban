@@ -162,7 +162,7 @@ public class HomeActivity extends BaseActivity {
         this.sortAdapter = new SortAdapter();
         this.mGridView.setSpacingWithMargins(0, AutoSizeUtils.dp2px(this.mContext, 10.0f));
         this.mGridView.setAdapter(this.sortAdapter);
-        this.mGridView.setItemAnimator(null);
+        this.mGridView.setItemAnimator(null);   //xuameng 取消Item动画 闹腾
         sortAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {     //xuameng主页默认焦点
             @Override
             public void onChanged() {
@@ -197,7 +197,7 @@ public class HomeActivity extends BaseActivity {
                     HomeActivity.this.sortFocusView = view;
                     HomeActivity.this.sortFocused = position;
                     mHandler.removeCallbacks(mDataRunnable);
-                    mHandler.postDelayed(mDataRunnable, 250);   //xuameng 延时防止按主页不显示上面的时间栏
+                    mHandler.postDelayed(mDataRunnable, 50);   //xuameng 延时不显示上面的时间栏
                 }
             }
 
@@ -736,7 +736,7 @@ public class HomeActivity extends BaseActivity {
                                     Integer.valueOf(AutoSizeUtils.mm2px(this.mContext, 1.0f))
                             }),
                     ObjectAnimator.ofFloat(this.topLayout, "alpha", new float[]{1.0f, 0.0f})});
-            animatorSet.setDuration(250);
+            animatorSet.setDuration(150);
             animatorSet.start();
             return;
         }
@@ -753,7 +753,7 @@ public class HomeActivity extends BaseActivity {
                                     Integer.valueOf(AutoSizeUtils.mm2px(this.mContext, 50.0f))
                             }),
                     ObjectAnimator.ofFloat(this.topLayout, "alpha", new float[]{0.0f, 1.0f})});
-            animatorSet.setDuration(250);
+            animatorSet.setDuration(150);
             animatorSet.start();
             return;
         }
