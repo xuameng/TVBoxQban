@@ -74,9 +74,14 @@ public class SortAdapter extends BaseQuickAdapter<MovieSort.SortData, BaseViewHo
 
         // ✅ filter icon 完全由 Adapter 控制 
         // 修复：主页不显示筛选图标，其他页面按规则显示  filterSelectCount是用户筛选的项
-        boolean showFilterColor = isSelected && !isHomePage && item.filterSelectCount() > 0;
-        boolean showFilterNormal = isSelected && !isHomePage && !item.filters.isEmpty();
-        helper.setGone(R.id.tvFilterColor, showFilterColor);
-        helper.setGone(R.id.tvFilter, showFilterNormal);
+        boolean isFilterActive = item.filterSelectCount() > 0;
+
+        if (isSelected && !isHomePage) {
+            helper.setGone(R.id.tvFilterColor, !isFilterActive);
+            helper.setGone(R.id.tvFilter, isFilterActive || item.filters.isEmpty());
+        } else {
+            helper.setGone(R.id.tvFilterColor, true);
+            helper.setGone(R.id.tvFilter, true);
+        }
     }
 }
