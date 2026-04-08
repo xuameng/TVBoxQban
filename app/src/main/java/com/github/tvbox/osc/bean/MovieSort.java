@@ -42,6 +42,8 @@ public class MovieSort implements Serializable {
             this.name = name;
         }
 
+        public boolean hasUserFilter = false; // xuameng是否有用户主动筛选
+
         public int filterSelectCount() {   // xuameng hasUserFilter是否有用户主动筛选
             if (!hasUserFilter || filterSelect == null) {
                 return 0;
@@ -88,7 +90,5 @@ public class MovieSort implements Serializable {
                     '}';
         }
     }
-
-    public boolean hasUserFilter = false; // xuameng是否有用户主动筛选
 
 }
