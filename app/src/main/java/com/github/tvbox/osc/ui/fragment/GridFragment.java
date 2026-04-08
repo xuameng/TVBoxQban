@@ -331,16 +331,7 @@ public class GridFragment extends BaseLazyFragment {
         showLoading();
         isLoad = false;
         scrollTop();
-        toggleFilterColor();
         sourceViewModel.getList(sortData, page);
-    }
-
-    private void toggleFilterColor() {    //xuameng 更改方法不传filterSelectCount  增加 hasUserFilter 是否用户点击
-        if (sortData != null && sortData.hasUserFilter && sortData.filters != null && !sortData.filters.isEmpty()) {
-            EventBus.getDefault().post(
-                new RefreshEvent(RefreshEvent.TYPE_FILTER_CHANGE)   //xuameng通知首页刷新筛选状态
-            );
-        }
     }
 
     public boolean isTop() {
