@@ -7,6 +7,8 @@ import com.github.tvbox.osc.bean.MovieSort;
 
 import java.util.ArrayList;
 
+import android.graphics.Typeface;
+
 /**
  * @author pj567 / xuameng
  * @date 2020/12/21
