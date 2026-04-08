@@ -193,10 +193,6 @@ public class HomeActivity extends BaseActivity {
                         position = 0;
                         HomeActivity.this.mGridView.setSelection(0);
                     }
-                    MovieSort.SortData sortData = sortAdapter.getItem(position);
-                    if (null != sortData && !sortData.filters.isEmpty()) {
-                        showFilterIcon(sortData.filterSelectCount());
-                    }
                     HomeActivity.this.sortFocusView = view;
                     HomeActivity.this.sortFocused = position;
                    // resetAllItemsToDefault();  //xuameng   重置未选中菜单项为默认值
@@ -673,20 +669,9 @@ public class HomeActivity extends BaseActivity {
                 HomeActivity.this.startActivity(newIntent);
             }
         } else if (event.type == RefreshEvent.TYPE_FILTER_CHANGE) {
-            if (currentView != null && PositionXu !=0) {   //xuameng 分类筛选BUG修复变色问题
-                MovieSort.SortData sortData = sortAdapter.getItem(PositionXu);
-                if (!sortData.filters.isEmpty()) {
-                    showFilterIcon(sortData.filterSelectCount());
-                }
-          //      showFilterIcon((int) event.obj);
-            }
+    // 只刷新当前选中 item
+    sortAdapter.notifyItemChanged(sortAdapter.getSelectedPosition());
         }
-    }
-
-    private void showFilterIcon(int count) {
-        boolean visible = count > 0;
-        currentView.findViewById(R.id.tvFilterColor).setVisibility(visible ? View.VISIBLE : View.GONE);
-        currentView.findViewById(R.id.tvFilter).setVisibility(visible ? View.GONE : View.VISIBLE);
     }
 
     private Runnable mDataRunnable = new Runnable() {
