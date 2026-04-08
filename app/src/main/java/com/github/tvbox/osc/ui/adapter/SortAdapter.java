@@ -6,12 +6,13 @@ import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.bean.MovieSort;
 
 import java.util.ArrayList;
+
 import android.graphics.Typeface;
 
 /**
  * @author xuameng
  * @date 2026/04/08
- * @description: 首页分类菜单 Adapter（终极版：Payload局部刷新，无跳动，焦点完美）
+ * @description: 首页分类菜单 Adapter（修复焦点及多高亮等BUG）
  */
 public class SortAdapter extends BaseQuickAdapter<MovieSort.SortData, BaseViewHolder> {
 
@@ -23,7 +24,7 @@ public class SortAdapter extends BaseQuickAdapter<MovieSort.SortData, BaseViewHo
     }
 
     /**
-     * ✅ 外部设置选中项
+     * ✅ 外部设置选中项（焦点 / 滑动 / 点击 统一入口）
      */
     public void setSelectedPosition(int pos) {
         if (pos < 0 || pos >= getData().size()) return;
@@ -31,14 +32,12 @@ public class SortAdapter extends BaseQuickAdapter<MovieSort.SortData, BaseViewHo
         int old = selectedPosition;
         selectedPosition = pos;
 
+        // 只更新受影响的项目，避免不必要的刷新
         if (old != selectedPosition) {
-            // ✅ 核心修复：使用 Payload 进行局部刷新
-            // 1. 刷新旧的选中项，告诉它“你不再是焦点了，请变回 1.0”
             if (old >= 0 && old < getData().size()) {
-                notifyItemChanged(old, false); // 第二个参数 false 代表“未选中”
+                notifyItemChanged(old);  //更新上一个选中项状态
             }
-            // 2. 刷新新的选中项，告诉它“你是焦点了，请变成 1.1”
-            notifyItemChanged(selectedPosition, true); // 第二个参数 true 代表“选中”
+            notifyItemChanged(selectedPosition);  //更新当前选中项状态
         }
     }
 
@@ -49,12 +48,11 @@ public class SortAdapter extends BaseQuickAdapter<MovieSort.SortData, BaseViewHo
     @Override
     protected void convert(BaseViewHolder helper, MovieSort.SortData item) {
         int pos = helper.getAdapterPosition();
-        if (pos == -1) return;
-        
         boolean isSelected = pos == selectedPosition;
+        
+        // 主页（位置0）不显示筛选图标
         boolean isHomePage = pos == 0;
 
-        // ✅ 全量绑定逻辑（只在初始化或全量刷新时执行）
         helper.setText(R.id.tvTitle, item.name);
 
         helper.setTextColor(
@@ -71,34 +69,20 @@ public class SortAdapter extends BaseQuickAdapter<MovieSort.SortData, BaseViewHo
                         : Typeface.DEFAULT
         );
 
-        // 筛选图标逻辑
+        // 设置缩放动画
+        helper.itemView.setPivotX(helper.itemView.getWidth() / 2f);
+        helper.itemView.setPivotY(helper.itemView.getHeight() / 2f);
+        float targetScaleX = isSelected ? 1.1f : 1.0f;
+        float targetScaleY = isSelected ? 1.1f : 1.0f;
+        helper.itemView.setScaleX(targetScaleX);
+        helper.itemView.setScaleY(targetScaleY);
+
+        // 筛选图标显示逻辑：仅在当前选中的item上显示
         boolean hasFilterSelected = isSelected && !isHomePage && item.filterSelectCount() > 0;
         boolean hasFiltersAvailable = isSelected && !isHomePage && !item.filters.isEmpty() && item.filterSelectCount() <= 0;
         
+        // 只有在符合条件时才显示对应图标，否则隐藏
         helper.setGone(R.id.tvFilterColor, hasFilterSelected);
         helper.setGone(R.id.tvFilter, hasFiltersAvailable);
-    }
-
-    /**
-     * ✅ 核心修复：Payload 局部更新逻辑
-     * 这个方法专门处理“只改变大小”的需求，不触碰文字、颜色、焦点
-     */
-    @Override
-    protected void convert(@NonNull BaseViewHolder helper, @NonNull MovieSort.SortData item, @NonNull List<Object> payloads) {
-        // payloads 里存的就是我们在 notifyItemChanged 里传的 true/false
-        for (Object payload : payloads) {
-            if (payload instanceof Boolean) {
-                boolean isSelected = (Boolean) payload;
-                // ✅ 这里只做缩放，不做其他任何操作
-                // 这样就不会干扰焦点，也不会导致左右跳动
-                if (isSelected) {
-                    helper.itemView.setScaleX(1.1f);
-                    helper.itemView.setScaleY(1.1f);
-                } else {
-                    helper.itemView.setScaleX(1.0f);
-                    helper.itemView.setScaleY(1.0f);
-                }
-            }
-        }
     }
 }
