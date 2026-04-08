@@ -648,12 +648,12 @@ public class HomeActivity extends BaseActivity {
                 HomeActivity.this.startActivity(newIntent);
             }
         } else if (event.type == RefreshEvent.TYPE_FILTER_CHANGE) {
-            // ✅ 只刷新当前选中 item
+            // xuameng 只刷新当前选中 item
             int pos = sortAdapter.getSelectedPosition();
-            if (pos >= 0) {
+            if (pos > 0) {  //xuameng 主页为0不参与
                 MovieSort.SortData sortData = sortAdapter.getItem(pos);
                 if (sortData != null) {
-                    sortData.hasUserFilter = true;   // ✅ 放在这里
+                    sortData.hasUserFilter = true;   // xuameng 用户点击
                     sortAdapter.notifyItemChanged(pos);
                 }
             }
