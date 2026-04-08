@@ -187,7 +187,7 @@ public class HomeActivity extends BaseActivity {
                 if (view != null) {
                     HomeActivity.this.currentView = view;
                     HomeActivity.this.sortChange = true;
-        sortAdapter.setSelectedPosition(position);
+                    sortAdapter.setSelectedPosition(position); //xuameng 完全交给sortAdapter维护
                     PositionXu = position;
                     if (position == -1) {
                         position = 0;
@@ -195,7 +195,6 @@ public class HomeActivity extends BaseActivity {
                     }
                     HomeActivity.this.sortFocusView = view;
                     HomeActivity.this.sortFocused = position;
-                   // resetAllItemsToDefault();  //xuameng   重置未选中菜单项为默认值
                     mHandler.removeCallbacks(mDataRunnable);
                     mHandler.postDelayed(mDataRunnable, 250);   //xuameng 延时防止按主页不显示上面的时间栏
                 }
@@ -230,26 +229,6 @@ public class HomeActivity extends BaseActivity {
                     return false;
                 }
                 return !((GridFragment) baseLazyFragment).isLoad();      //XUAMENG上键刷新完
-            }
-        });
-
-        /*       // xuameng添加焦点变化监听   变成只监听手机滑动
-        this.mGridView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    // 重置所有项到默认状态
-                    resetAllItemsToDefault();   //xuameng   重置未选中菜单项为默认值
-                }
-            }
-        });     
-        */
-
-        this.mGridView.addOnScrollListener(new RecyclerView.OnScrollListener() {   //xuameng 监听手机滑动刷新菜单样式解决BUG
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-               // resetAllItemsToDefaultPhone();   //xuameng   恢复主页菜单样式 解决样式丢失BUG
             }
         });
 
@@ -669,8 +648,15 @@ public class HomeActivity extends BaseActivity {
                 HomeActivity.this.startActivity(newIntent);
             }
         } else if (event.type == RefreshEvent.TYPE_FILTER_CHANGE) {
-    // 只刷新当前选中 item
-    sortAdapter.notifyItemChanged(sortAdapter.getSelectedPosition());
+            // ✅ 只刷新当前选中 item
+            int pos = sortAdapter.getSelectedPosition();
+            if (pos >= 0) {
+                MovieSort.SortData sortData = sortAdapter.getItem(pos);
+                if (sortData != null) {
+                    sortData.hasUserFilter = true;   // ✅ 放在这里
+                    sortAdapter.notifyItemChanged(pos);
+                }
+            }
         }
     }
 
@@ -810,6 +796,7 @@ public class HomeActivity extends BaseActivity {
                         MovieSort.SortData sortData = sortAdapter.getItem(i);
                         if (sortData != null && sortData.filterSelect != null) {
                             sortData.filterSelect.clear();
+                            sortData.hasUserFilter = false; // xuameng是否有用户主动筛选重置
                         }
                     }
                     ApiConfig.get().setSourceBean(value);
@@ -956,92 +943,4 @@ public class HomeActivity extends BaseActivity {
         }
     }
 
-    private void resetAllItemsToDefault() {   //xuameng   重置未选中菜单项为默认值 手机上的BUG
-        if (mGridView == null || !mGridView.isAttachedToWindow()) {
-            return;
-        }
-
-        RecyclerView.LayoutManager lm = mGridView.getLayoutManager();
-        if (!(lm instanceof V7LinearLayoutManager)) {
-            return;
-        }
-
-        V7LinearLayoutManager layoutManager = (V7LinearLayoutManager) lm;
-
-        int first = layoutManager.findFirstVisibleItemPosition();
-        int last = layoutManager.findLastVisibleItemPosition();
-
-        for (int i = first; i <= last; i++) {
-            if (i == PositionXu) continue;
-
-            View itemView = layoutManager.findViewByPosition(i);
-            if (itemView == null) continue;
-
-            TextView textView = itemView.findViewById(R.id.tvTitle);
-            textView.getPaint().setFakeBoldText(false);
-            textView.setTextColor(getResources().getColor(R.color.color_BBFFFFFF));
-            textView.invalidate();
-
-            itemView.animate()
-                    .scaleX(1.0f)
-                    .scaleY(1.0f)
-                    .setDuration(250)
-                    .start();
-
-            itemView.findViewById(R.id.tvFilter).setVisibility(View.GONE);
-            itemView.findViewById(R.id.tvFilterColor).setVisibility(View.GONE);
-        }
-    }
-
-    private void resetAllItemsToDefaultPhone() {
-        if (mGridView == null || !mGridView.isAttachedToWindow()) {
-            return;
-        }
-
-        RecyclerView.LayoutManager lm = mGridView.getLayoutManager();
-        if (!(lm instanceof V7LinearLayoutManager)) {
-            return;
-        }
-
-        V7LinearLayoutManager layoutManager = (V7LinearLayoutManager) lm;
-
-        int first = layoutManager.findFirstVisibleItemPosition();
-        int last = layoutManager.findLastVisibleItemPosition();
-
-        for (int i = first; i <= last; i++) {
-            View itemView = layoutManager.findViewByPosition(i);
-            if (itemView == null) continue;
-
-            TextView textView = itemView.findViewById(R.id.tvTitle);
-
-            if (i == PositionXu) {   //xuameng   重置选中菜单项为默认值 手机上的BUG
-                itemView.animate()
-                        .scaleX(1.1f)
-                        .scaleY(1.1f)
-                        .setInterpolator(new BounceInterpolator())
-                        .setDuration(250)
-                        .start();
-
-                textView.getPaint().setFakeBoldText(true);
-                textView.setTextColor(getResources().getColor(R.color.color_FFFFFF));
-                textView.invalidate();
-
-                itemView.requestFocus(); //xuameng 选中item出现时自动选定焦点
-
-            } else {                  //xuameng   重置未选中菜单项为默认值
-                textView.getPaint().setFakeBoldText(false);
-                textView.setTextColor(getResources().getColor(R.color.color_BBFFFFFF));
-                textView.invalidate();
-
-                itemView.animate()
-                        .scaleX(1.0f)
-                        .scaleY(1.0f)
-                        .setDuration(250)
-                        .start();
-
-                itemView.findViewById(R.id.tvFilter).setVisibility(View.GONE);
-                itemView.findViewById(R.id.tvFilterColor).setVisibility(View.GONE);
-            }
-        }
-    }
 }
