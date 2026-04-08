@@ -4,15 +4,14 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.bean.MovieSort;
+
 import java.util.ArrayList;
 import android.graphics.Typeface;
-// ✅ 1. 加上这行 Import
-import android.view.animation.BounceInterpolator;
 
 /**
  * @author xuameng
  * @date 2026/04/08
- * @description: 首页分类菜单 Adapter（修复焦点及多高亮等BUG）
+ * @description: 首页分类菜单 Adapter（修复焦点及多高亮等BUG，彻底解决跳动）
  */
 public class SortAdapter extends BaseQuickAdapter<MovieSort.SortData, BaseViewHolder> {
 
@@ -21,23 +20,20 @@ public class SortAdapter extends BaseQuickAdapter<MovieSort.SortData, BaseViewHo
 
     public SortAdapter() {
         super(R.layout.item_home_sort, new ArrayList<>());
+        // ✅ 关键修复 1：告诉RecyclerView这个列表的大小是固定的，不要因为内容改变而重新请求布局
+        // 这能防止左右跳动
+        setHasFixedSize(true);
     }
 
-    /**
-     * ✅ 外部设置选中项（焦点 / 滑动 / 点击 统一入口）
-     */
     public void setSelectedPosition(int pos) {
         if (pos < 0 || pos >= getData().size()) return;
-
         int old = selectedPosition;
         selectedPosition = pos;
-
-        // 只更新受影响的项目，避免不必要的刷新
         if (old != selectedPosition) {
             if (old >= 0 && old < getData().size()) {
-                notifyItemChanged(old);  //更新上一个选中项状态
+                notifyItemChanged(old);
             }
-            notifyItemChanged(selectedPosition);  //更新当前选中项状态
+            notifyItemChanged(selectedPosition);
         }
     }
 
@@ -50,7 +46,6 @@ public class SortAdapter extends BaseQuickAdapter<MovieSort.SortData, BaseViewHo
         int pos = helper.getAdapterPosition();
         boolean isSelected = pos == selectedPosition;
         
-        // 主页（位置0）不显示筛选图标
         boolean isHomePage = pos == 0;
 
         helper.setText(R.id.tvTitle, item.name);
@@ -69,22 +64,23 @@ public class SortAdapter extends BaseQuickAdapter<MovieSort.SortData, BaseViewHo
                         : Typeface.DEFAULT
         );
 
-        // ✅ 2. 换成老代码的动画方式
-        float targetScale = isSelected ? 1.1f : 1.0f;
-        helper.itemView.animate()
-            .scaleX(targetScale)
-            .scaleY(targetScale)
-            // ✅ 加上老代码的灵魂：回弹动画
-            .setInterpolator(new BounceInterpolator())
-            .setDuration(50) // 老代码是 250毫秒
-            .start(); // 
+        // ✅ 核心逻辑：直接设置缩放比例
+        // RecyclerView 会自动处理这个属性，不需要 start()，也不会触发 Layout 跳动
+        float scale = isSelected ? 1.1f : 1.0f;
+        helper.itemView.setScaleX(scale);
+        helper.itemView.setScaleY(scale);
+        
+        // ✅ 关键修复 2：必须设置 Pivot 点为中心
+        // 否则 View 会以左上角为轴心缩放，导致视觉位移
+        helper.itemView.setPivotX(helper.itemView.getWidth() / 2f);
+        helper.itemView.setPivotY(helper.itemView.getHeight() / 2f);
 
-        // 筛选图标显示逻辑：仅在当前选中的item上显示
+        // 图标逻辑...
         boolean hasFilterSelected = isSelected && !isHomePage && item.filterSelectCount() > 0;
         boolean hasFiltersAvailable = isSelected && !isHomePage && !item.filters.isEmpty() && item.filterSelectCount() <= 0;
         
-        // 只有在符合条件时才显示对应图标，否则隐藏
         helper.setGone(R.id.tvFilterColor, hasFilterSelected);
         helper.setGone(R.id.tvFilter, hasFiltersAvailable);
     }
+
 }
