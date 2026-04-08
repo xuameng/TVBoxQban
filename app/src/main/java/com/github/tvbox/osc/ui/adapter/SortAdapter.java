@@ -11,8 +11,8 @@ import android.graphics.Typeface;
 
 /**
  * @author pj567 / xuameng
- * @date 2020/12/21
- * @description: 首页分类菜单 Adapter（支持焦点 & 手机滑动）
+ * @date 2026/04/08
+ * @description: 首页分类菜单 Adapter（修复焦点及多高亮等BUG）
  */
 public class SortAdapter extends BaseQuickAdapter<MovieSort.SortData, BaseViewHolder> {
 
@@ -40,40 +40,44 @@ public class SortAdapter extends BaseQuickAdapter<MovieSort.SortData, BaseViewHo
         return selectedPosition;
     }
 
-@Override
-protected void convert(BaseViewHolder helper, MovieSort.SortData item) {
-    int pos = helper.getAdapterPosition();
-    boolean isSelected = pos == selectedPosition;
+    @Override
+    protected void convert(BaseViewHolder helper, MovieSort.SortData item) {
+        int pos = helper.getAdapterPosition();
+        boolean isSelected = pos == selectedPosition;
+        
+        // 主页（位置0）不显示筛选图标
+        boolean isHomePage = pos == 0;
 
-    helper.setText(R.id.tvTitle, item.name);
+        helper.setText(R.id.tvTitle, item.name);
 
-    helper.setTextColor(
-            R.id.tvTitle,
-            isSelected
-                    ? mContext.getResources().getColor(R.color.color_FFFFFF)
-                    : mContext.getResources().getColor(R.color.color_BBFFFFFF)
-    );
+        helper.setTextColor(
+                R.id.tvTitle,
+                isSelected
+                        ? mContext.getResources().getColor(R.color.color_FFFFFF)
+                        : mContext.getResources().getColor(R.color.color_BBFFFFFF)
+        );
 
-    helper.setTypeface(
-            R.id.tvTitle,
-            isSelected
-                    ? Typeface.DEFAULT_BOLD
-                    : Typeface.DEFAULT
-    );
+        helper.setTypeface(
+                R.id.tvTitle,
+                isSelected
+                        ? Typeface.DEFAULT_BOLD
+                        : Typeface.DEFAULT
+        );
 
-    helper.itemView.setPivotX(helper.itemView.getWidth() / 2f);
-    helper.itemView.setPivotY(helper.itemView.getHeight() / 2f);
-    helper.itemView.animate()
-            .scaleX(isSelected ? 1.1f : 1.0f)
-            .scaleY(isSelected ? 1.1f : 1.0f)
-            .setDuration(250)
-            .start();
+        helper.itemView.setPivotX(helper.itemView.getWidth() / 2f);
+        helper.itemView.setPivotY(helper.itemView.getHeight() / 2f);
+        helper.itemView.animate()
+                .scaleX(isSelected ? 1.1f : 1.0f)
+                .scaleY(isSelected ? 1.1f : 1.0f)
+                .setDuration(250)
+                .start();
 
-    // ✅ filter icon 完全由 Adapter 控制
-boolean showFilter = isSelected
-        && item.hasUserFilter
-        && item.filterSelectCount() > 0;
-    helper.setGone(R.id.tvFilterColor, showFilter);
-    helper.setGone(R.id.tvFilter, !showFilter);
-}
+        // ✅ filter icon 完全由 Adapter 控制
+        // 修复：主页不显示筛选图标，其他页面按规则显示
+        boolean showFilterColor = isSelected && !isHomePage && item.hasUserFilter && item.filterSelectCount() > 0;
+        boolean showFilterNormal = isSelected && !isHomePage && !showFilterColor && !item.filters.isEmpty();
+        
+        helper.setGone(R.id.tvFilterColor, showFilterColor);
+        helper.setGone(R.id.tvFilter, showFilterNormal);
+    }
 }
