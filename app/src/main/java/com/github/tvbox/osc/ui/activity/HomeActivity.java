@@ -187,11 +187,7 @@ public class HomeActivity extends BaseActivity {
                 if (view != null) {
                     HomeActivity.this.currentView = view;
                     HomeActivity.this.sortChange = true;
-                    view.animate().scaleX(1.1f).scaleY(1.1f).setInterpolator(new BounceInterpolator()).setDuration(250).start();
-                    TextView textView = view.findViewById(R.id.tvTitle);
-                    textView.getPaint().setFakeBoldText(true);
-                    textView.setTextColor(HomeActivity.this.getResources().getColor(R.color.color_FFFFFF));
-                    textView.invalidate();
+        sortAdapter.setSelectedPosition(position);
                     PositionXu = position;
                     if (position == -1) {
                         position = 0;
@@ -203,7 +199,7 @@ public class HomeActivity extends BaseActivity {
                     }
                     HomeActivity.this.sortFocusView = view;
                     HomeActivity.this.sortFocused = position;
-                    resetAllItemsToDefault();  //xuameng   重置未选中菜单项为默认值
+                   // resetAllItemsToDefault();  //xuameng   重置未选中菜单项为默认值
                     mHandler.removeCallbacks(mDataRunnable);
                     mHandler.postDelayed(mDataRunnable, 250);   //xuameng 延时防止按主页不显示上面的时间栏
                 }
