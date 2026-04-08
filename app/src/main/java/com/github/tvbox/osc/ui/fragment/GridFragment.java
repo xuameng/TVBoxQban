@@ -338,7 +338,7 @@ public class GridFragment extends BaseLazyFragment {
     private void toggleFilterColor() {    //xuameng 更改方法不传filterSelectCount  增加 hasUserFilter 是否用户点击
         if (sortData != null && sortData.hasUserFilter && sortData.filters != null && !sortData.filters.isEmpty()) {
             EventBus.getDefault().post(
-                new RefreshEvent(RefreshEvent.TYPE_FILTER_CHANGE)
+                new RefreshEvent(RefreshEvent.TYPE_FILTER_CHANGE)   //xuameng通知首页刷新筛选状态
             );
         }
     }
@@ -423,18 +423,18 @@ public class GridFragment extends BaseLazyFragment {
                         // 更新选中状态
                         sortData.filterSelect.put(key, newSelection);
                         kvAdapter.setSelectedPosition(position);
-// ✅ 新增：通知首页刷新筛选状态
-EventBus.getDefault().post(
-    new RefreshEvent(RefreshEvent.TYPE_FILTER_CHANGE)
-);
+                        // xuameng 新增：通知首页刷新筛选状态
+                        EventBus.getDefault().post(
+                            new RefreshEvent(RefreshEvent.TYPE_FILTER_CHANGE)
+                        );
                     } else {
                         // 取消选中
                         sortData.filterSelect.remove(key);
                         kvAdapter.setSelectedPosition(-1);
-// ✅ 新增：通知首页刷新筛选状态
-EventBus.getDefault().post(
-    new RefreshEvent(RefreshEvent.TYPE_FILTER_CHANGE)
-);
+                        // xuameng 新增：通知首页刷新筛选状态
+                        EventBus.getDefault().post(
+                            new RefreshEvent(RefreshEvent.TYPE_FILTER_CHANGE)
+                        );
                     }
                     forceRefresh();
                 }
