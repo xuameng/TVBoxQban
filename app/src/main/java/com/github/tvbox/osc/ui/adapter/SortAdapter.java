@@ -4,10 +4,10 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.bean.MovieSort;
-
 import java.util.ArrayList;
-
 import android.graphics.Typeface;
+// ✅ 1. 加上这行 Import
+import android.view.animation.BounceInterpolator;
 
 /**
  * @author xuameng
@@ -69,11 +69,15 @@ public class SortAdapter extends BaseQuickAdapter<MovieSort.SortData, BaseViewHo
                         : Typeface.DEFAULT
         );
 
-        // 设置缩放动画
-        float targetScaleX = isSelected ? 1.1f : 1.0f;
-        float targetScaleY = isSelected ? 1.1f : 1.0f;
-        helper.itemView.setScaleX(targetScaleX);
-        helper.itemView.setScaleY(targetScaleY);
+        // ✅ 2. 换成老代码的动画方式
+        float targetScale = isSelected ? 1.1f : 1.0f;
+        helper.itemView.animate()
+            .scaleX(targetScale)
+            .scaleY(targetScale)
+            // ✅ 加上老代码的灵魂：回弹动画
+            .setInterpolator(new BounceInterpolator())
+            .setDuration(50) // 老代码是 250毫秒
+            .start(); // 
 
         // 筛选图标显示逻辑：仅在当前选中的item上显示
         boolean hasFilterSelected = isSelected && !isHomePage && item.filterSelectCount() > 0;
