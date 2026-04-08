@@ -20,21 +20,21 @@ public class SortAdapter extends BaseQuickAdapter<MovieSort.SortData, BaseViewHo
 
     public SortAdapter() {
         super(R.layout.item_home_sort, new ArrayList<>());
-        // ✅ 关键修复 1：告诉RecyclerView这个列表的大小是固定的，不要因为内容改变而重新请求布局
-        // 这能防止左右跳动
-        setHasFixedSize(true);
     }
 
+    /**
+     * ✅ 外部设置选中项
+     */
     public void setSelectedPosition(int pos) {
         if (pos < 0 || pos >= getData().size()) return;
-        int old = selectedPosition;
+        
+        // ❌ 删除旧的逻辑（只更新两个Item）
+        // 因为那个逻辑会导致 convert 被调用，从而触发 setScaleX 强制重置
+        
+        // ✅ 新逻辑：直接刷新整个数据集
+        // 这样虽然性能稍微低一点点，但是能保证 convert 里的逻辑最简单
         selectedPosition = pos;
-        if (old != selectedPosition) {
-            if (old >= 0 && old < getData().size()) {
-                notifyItemChanged(old);
-            }
-            notifyItemChanged(selectedPosition);
-        }
+        notifyDataSetChanged(); 
     }
 
     public int getSelectedPosition() {
@@ -44,8 +44,9 @@ public class SortAdapter extends BaseQuickAdapter<MovieSort.SortData, BaseViewHo
     @Override
     protected void convert(BaseViewHolder helper, MovieSort.SortData item) {
         int pos = helper.getAdapterPosition();
-        boolean isSelected = pos == selectedPosition;
+        if (pos == -1) return;
         
+        boolean isSelected = pos == selectedPosition;
         boolean isHomePage = pos == 0;
 
         helper.setText(R.id.tvTitle, item.name);
@@ -64,23 +65,26 @@ public class SortAdapter extends BaseQuickAdapter<MovieSort.SortData, BaseViewHo
                         : Typeface.DEFAULT
         );
 
-        // ✅ 核心逻辑：直接设置缩放比例
-        // RecyclerView 会自动处理这个属性，不需要 start()，也不会触发 Layout 跳动
-        float scale = isSelected ? 1.1f : 1.0f;
-        helper.itemView.setScaleX(scale);
-        helper.itemView.setScaleY(scale);
+        // ✅ 核心修复点
+        // 1. 我们不再在代码里强制设置 setScaleX(1.0f)
+        // 2. 我们只在选中时设置变大，不选中时不碰这个属性
+        // 3. 这样 View 复用时，不会被强制压回 1.0，视觉上就不会有“抽搐感”
         
-        // ✅ 关键修复 2：必须设置 Pivot 点为中心
-        // 否则 View 会以左上角为轴心缩放，导致视觉位移
-        helper.itemView.setPivotX(helper.itemView.getWidth() / 2f);
-        helper.itemView.setPivotY(helper.itemView.getHeight() / 2f);
+        if (isSelected) {
+            // 只有当选中时，才设置大一点
+            // 这样就不会出现“从1.1瞬间变回1.0”的左右抖动
+            helper.itemView.setScaleX(1.1f);
+            helper.itemView.setScaleY(1.1f);
+        }
+        // ❌ 注释掉这行：helper.itemView.setScaleX(1.0f);
+        // ❌ 注释掉这行：helper.itemView.setScaleY(1.0f);
+        // 让非选中状态保持 View 的默认状态（通常是1.0），不要在代码里反复横跳
 
-        // 图标逻辑...
+        // 筛选图标逻辑
         boolean hasFilterSelected = isSelected && !isHomePage && item.filterSelectCount() > 0;
         boolean hasFiltersAvailable = isSelected && !isHomePage && !item.filters.isEmpty() && item.filterSelectCount() <= 0;
         
         helper.setGone(R.id.tvFilterColor, hasFilterSelected);
         helper.setGone(R.id.tvFilter, hasFiltersAvailable);
     }
-
 }
