@@ -203,8 +203,6 @@ public class HomeActivity extends BaseActivity {
 
             @Override
             public void onItemClick(TvRecyclerView parent, View itemView, int position) {
-				sortAdapter.setSelectedPosition(position); // ✅ 关键
-                currentSelected = position;   // ✅ 补这一句（关键）
                 if (itemView != null && currentSelected == position) {
                     BaseLazyFragment baseLazyFragment = fragments.get(currentSelected);
                     if ((baseLazyFragment instanceof GridFragment) && !sortAdapter.getItem(position).filters.isEmpty()) {// 弹出筛选
@@ -738,7 +736,7 @@ public class HomeActivity extends BaseActivity {
                                     Integer.valueOf(AutoSizeUtils.mm2px(this.mContext, 1.0f))
                             }),
                     ObjectAnimator.ofFloat(this.topLayout, "alpha", new float[]{1.0f, 0.0f})});
-            animatorSet.setDuration(150);
+            animatorSet.setDuration(250);
             animatorSet.start();
             return;
         }
@@ -755,7 +753,7 @@ public class HomeActivity extends BaseActivity {
                                     Integer.valueOf(AutoSizeUtils.mm2px(this.mContext, 50.0f))
                             }),
                     ObjectAnimator.ofFloat(this.topLayout, "alpha", new float[]{0.0f, 1.0f})});
-            animatorSet.setDuration(150);
+            animatorSet.setDuration(250);
             animatorSet.start();
             return;
         }
