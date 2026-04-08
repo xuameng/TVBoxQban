@@ -38,40 +38,38 @@ public class SortAdapter extends BaseQuickAdapter<MovieSort.SortData, BaseViewHo
         return selectedPosition;
     }
 
-    @Override
-    protected void convert(BaseViewHolder helper, MovieSort.SortData item) {
-        boolean isSelected = helper.getAdapterPosition() == selectedPosition;
+@Override
+protected void convert(BaseViewHolder helper, MovieSort.SortData item) {
+    int pos = helper.getAdapterPosition();
+    boolean isSelected = pos == selectedPosition;
 
-        helper.setText(R.id.tvTitle, item.name);
+    helper.setText(R.id.tvTitle, item.name);
 
-        // ✅ 标题样式
-        helper.setTextColor(
-                R.id.tvTitle,
-                isSelected
-                        ? mContext.getResources().getColor(R.color.color_FFFFFF)
-                        : mContext.getResources().getColor(R.color.color_BBFFFFFF)
-        );
+    helper.setTextColor(
+            R.id.tvTitle,
+            isSelected
+                    ? mContext.getResources().getColor(R.color.color_FFFFFF)
+                    : mContext.getResources().getColor(R.color.color_BBFFFFFF)
+    );
 
-        helper.setTypeface(
-                R.id.tvTitle,
-                isSelected
-                        ? android.graphics.Typeface.DEFAULT_BOLD
-                        : android.graphics.Typeface.DEFAULT
-        );
+    helper.setTypeface(
+            R.id.tvTitle,
+            isSelected
+                    ? Typeface.DEFAULT_BOLD
+                    : Typeface.DEFAULT
+    );
 
-        // ✅ 缩放动画（和 TV 焦点保持一致）
-        helper.itemView.setPivotX(helper.itemView.getWidth() / 2f);
-        helper.itemView.setPivotY(helper.itemView.getHeight() / 2f);
-        helper.itemView.animate()
-                .scaleX(isSelected ? 1.1f : 1.0f)
-                .scaleY(isSelected ? 1.1f : 1.0f)
-                .setDuration(250)
-                .start();
+    helper.itemView.setPivotX(helper.itemView.getWidth() / 2f);
+    helper.itemView.setPivotY(helper.itemView.getHeight() / 2f);
+    helper.itemView.animate()
+            .scaleX(isSelected ? 1.1f : 1.0f)
+            .scaleY(isSelected ? 1.1f : 1.0f)
+            .setDuration(250)
+            .start();
 
-        // ✅ 筛选图标
-        helper.setGone(
-                R.id.tvFilterColor,
-                isSelected && item.filterSelectCount() > 0
-        );
-    }
+    // ✅ filter icon 完全由 Adapter 控制
+    boolean showFilter = isSelected && item.filterSelectCount() > 0;
+    helper.setGone(R.id.tvFilterColor, showFilter);
+    helper.setGone(R.id.tvFilter, !showFilter);
+}
 }
