@@ -13,9 +13,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
- * @author pj567
- * @date :2020/12/18
- * @description:
+ * @author xuameng
+ * @date :2026/04/08
+ * @description:是否有用户主动筛选全面修复主页菜单显示
  */
 @XStreamAlias("class")
 public class MovieSort implements Serializable {
