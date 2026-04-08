@@ -32,8 +32,13 @@ public class SortAdapter extends BaseQuickAdapter<MovieSort.SortData, BaseViewHo
         int old = selectedPosition;
         selectedPosition = pos;
 
-        notifyItemChanged(old);  //更新上一个选中项状态
-        notifyItemChanged(selectedPosition);  //更新当前选中项状态
+        // 只更新受影响的项目，避免不必要的刷新
+        if (old != selectedPosition) {
+            if (old >= 0 && old < getData().size()) {
+                notifyItemChanged(old);  //更新上一个选中项状态
+            }
+            notifyItemChanged(selectedPosition);  //更新当前选中项状态
+        }
     }
 
     public int getSelectedPosition() {
@@ -64,20 +69,17 @@ public class SortAdapter extends BaseQuickAdapter<MovieSort.SortData, BaseViewHo
                         : Typeface.DEFAULT
         );
 
-        helper.itemView.setPivotX(helper.itemView.getWidth() / 2f);
-        helper.itemView.setPivotY(helper.itemView.getHeight() / 2f);
-        helper.itemView.animate()
-                .scaleX(isSelected ? 1.1f : 1.0f)
-                .scaleY(isSelected ? 1.1f : 1.0f)
-                .setDuration(250)
-                .start();
+        // 设置缩放动画
+        float targetScaleX = isSelected ? 1.1f : 1.0f;
+        float targetScaleY = isSelected ? 1.1f : 1.0f;
+        helper.itemView.setScaleX(targetScaleX);
+        helper.itemView.setScaleY(targetScaleY);
 
-        // ✅ filter icon 完全由 Adapter 控制 
-        // 修复：主页不显示筛选图标，其他页面按规则显示
-        // 优先级：有筛选项时显示彩色筛选图标，无筛选项但有筛选条件时显示普通筛选图标
+        // 筛选图标显示逻辑：仅在当前选中的item上显示
         boolean hasFilterSelected = isSelected && !isHomePage && item.filterSelectCount() > 0;
         boolean hasFiltersAvailable = isSelected && !isHomePage && !item.filters.isEmpty() && item.filterSelectCount() <= 0;
         
+        // 只有在符合条件时才显示对应图标，否则隐藏
         helper.setGone(R.id.tvFilterColor, hasFilterSelected);
         helper.setGone(R.id.tvFilter, hasFiltersAvailable);
     }
