@@ -8,6 +8,7 @@ import com.github.tvbox.osc.bean.MovieSort;
 import java.util.ArrayList;
 
 import android.graphics.Typeface;
+import android.view.View;
 
 /**
  * @author xuameng
@@ -49,6 +50,14 @@ public class SortAdapter extends BaseQuickAdapter<MovieSort.SortData, BaseViewHo
     protected void convert(BaseViewHolder helper, MovieSort.SortData item) {
         int pos = helper.getAdapterPosition();
         boolean isSelected = pos == selectedPosition;
+
+		View itemRoot = helper.getView(R.id.itemRoot);
+
+    if (isSelected) {
+        itemRoot.setBackgroundResource(R.drawable.button_home_sort_focus);
+    } else {
+        itemRoot.setBackgroundResource(android.R.color.transparent);
+    }
         
         // 主页（位置0）不显示筛选图标
         boolean isHomePage = pos == 0;
