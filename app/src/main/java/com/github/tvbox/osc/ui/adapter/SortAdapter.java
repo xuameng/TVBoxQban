@@ -69,11 +69,11 @@ public class SortAdapter extends BaseQuickAdapter<MovieSort.SortData, BaseViewHo
                         : Typeface.DEFAULT
         );
 
-        // 设置缩放动画
+        // 设置缩放
         helper.itemView.setPivotX(helper.itemView.getWidth() / 2f);
         helper.itemView.setPivotY(helper.itemView.getHeight() / 2f);
-        float targetScaleX = isSelected ? 1.1f : 1.0f;
-        float targetScaleY = isSelected ? 1.1f : 1.0f;
+        float targetScaleX = isSelected ? 1.05f : 1.0f;
+        float targetScaleY = isSelected ? 1.05f : 1.0f;
         helper.itemView.setScaleX(targetScaleX);
         helper.itemView.setScaleY(targetScaleY);
 
