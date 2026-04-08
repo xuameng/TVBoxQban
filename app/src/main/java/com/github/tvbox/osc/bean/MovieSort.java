@@ -13,9 +13,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
- * @author xuameng
- * @date :2026/04/08
- * @description:是否有用户主动筛选全面修复主页菜单显示
+ * @author pj567
+ * @date :2020/12/18
+ * @description:
  */
 @XStreamAlias("class")
 public class MovieSort implements Serializable {
@@ -42,10 +42,8 @@ public class MovieSort implements Serializable {
             this.name = name;
         }
 
-        public boolean hasUserFilter = false; // xuameng是否有用户主动筛选
-
-        public int filterSelectCount() {   // xuameng hasUserFilter是否有用户主动筛选
-            if (!hasUserFilter || filterSelect == null) {
+        public int filterSelectCount() {
+            if (filterSelect == null) {
                 return 0;
             }
             int count = 0;
