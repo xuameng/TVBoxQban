@@ -92,6 +92,8 @@ import java.util.List;
 
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
+import com.squareup.picasso.Picasso;
+
 public class HomeActivity extends BaseActivity {
     private LinearLayout topLayout;
     private LinearLayout contentLayout;
@@ -186,6 +188,7 @@ public class HomeActivity extends BaseActivity {
 
             public void onItemSelected(TvRecyclerView tvRecyclerView, View view, int position) {
                 if (view != null && position >= 0) {
+					Picasso.get().cancelTag("image_load");
                     HomeActivity.this.currentView = view;
                     HomeActivity.this.sortChange = true;
                     sortAdapter.setSelectedPosition(position); //xuameng 完全交给sortAdapter维护
