@@ -61,6 +61,7 @@ public class CollectAdapter extends BaseQuickAdapter<VodCollect, BaseViewHolder>
             }else {
                 Picasso.get()
                         .load(DefaultConfig.checkReplaceProxy(item.pic))
+                        .tag("image_load")
                         .transform(new RoundTransformation(MD5.string2MD5(item.pic))
                                 .centerCorp(true)
                                 .override(AutoSizeUtils.mm2px(mContext, ImgUtilCollect.defaultWidth), AutoSizeUtils.mm2px(mContext, ImgUtilCollect.defaultHeight))
