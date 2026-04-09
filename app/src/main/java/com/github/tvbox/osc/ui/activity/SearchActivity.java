@@ -20,8 +20,6 @@ import com.github.tvbox.osc.base.App;
 
 import androidx.lifecycle.ViewModelProvider;
 
-import com.squareup.picasso.Picasso; //xuameng清空Picasso
-
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.api.ApiConfig;
@@ -740,7 +738,6 @@ public class SearchActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Picasso.get().cancelTag("image_load"); //xuameng清空Picasso
         isActivityDestroyed = true; //xuameng 退出就不统计搜索成功了
         cancel();
         try {
