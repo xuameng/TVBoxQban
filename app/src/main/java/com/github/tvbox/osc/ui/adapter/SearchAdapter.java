@@ -51,6 +51,7 @@ public class SearchAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder>
                 }else {
                     Picasso.get()
                             .load(item.pic)
+                            .tag("image_load")
                             .transform(new RoundTransformation(MD5.string2MD5(item.pic))
                                     .centerCorp(true)
                                     .override(AutoSizeUtils.mm2px(mContext, ImgUtilXu.defaultWidth), AutoSizeUtils.mm2px(mContext, ImgUtilXu.defaultHeight))
