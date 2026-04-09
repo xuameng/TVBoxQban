@@ -1,36 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <!-- 按下 -->
-    <item android:state_pressed="true">
+    <item
+        android:state_focused="true"
+        android:state_pressed="true">
         <shape>
             <corners android:radius="@dimen/vs_20"/>
             <solid android:color="@color/color_BD0CADE2"/>
         </shape>
     </item>
-
-    <!-- 选中（无论是否焦点） -->
-    <item android:state_selected="true">
+    <item
+        android:state_focused="false"
+        android:state_pressed="true">
         <shape>
             <corners android:radius="@dimen/vs_20"/>
             <solid android:color="@color/color_BD0CADE2"/>
         </shape>
     </item>
-
-    <!-- 焦点（可选，增强 TV 体验） -->
     <item android:state_focused="true">
         <shape>
             <corners android:radius="@dimen/vs_20"/>
             <solid android:color="@color/color_BD0CADE2"/>
         </shape>
     </item>
-
-    <!-- 默认 -->
-    <item>
+    <item
+        android:state_focused="false"
+        android:state_pressed="false">
         <shape>
             <corners android:radius="@dimen/vs_20"/>
             <solid android:color="@android:color/transparent"/>
         </shape>
     </item>
-
 </selector>
