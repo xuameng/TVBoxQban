@@ -37,8 +37,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import com.squareup.picasso.Picasso; //xuameng清空Picasso
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -577,7 +575,6 @@ public class FastSearchActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Picasso.get().cancelTag("image_load"); //xuameng清空Picasso
         isActivityDestroyed = true; //xuameng 退出就不统计搜索成功了
         cancel();
         try {
