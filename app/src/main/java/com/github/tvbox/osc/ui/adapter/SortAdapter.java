@@ -49,13 +49,6 @@ public class SortAdapter extends BaseQuickAdapter<MovieSort.SortData, BaseViewHo
     protected void convert(BaseViewHolder helper, MovieSort.SortData item) {
         int pos = helper.getAdapterPosition();
         boolean isSelected = pos == selectedPosition;
-
-        helper.itemView.setSelected(isSelected); // ✅ 关键
-
-    // ✅ 强制刷新 selector（TV 必备）
-
-        helper.itemView.setBackgroundResource(R.drawable.button_home_sort_focus);
-
         
         // 主页（位置0）不显示筛选图标
         boolean isHomePage = pos == 0;
