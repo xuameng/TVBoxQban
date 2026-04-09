@@ -95,7 +95,7 @@ public class HistoryAdapter extends BaseQuickAdapter<VodInfo, BaseViewHolder> {
             }else {
                 Picasso.get()
                         .load(DefaultConfig.checkReplaceProxy(item.pic))
-					.tag("image_load")
+                        .tag("image_load")
                         .transform(new RoundTransformation(MD5.string2MD5(item.pic))
                                 .centerCorp(true)
                                 .override(AutoSizeUtils.mm2px(mContext, ImgUtilHistory.defaultWidth), AutoSizeUtils.mm2px(mContext, ImgUtilHistory.defaultHeight))
