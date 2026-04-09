@@ -92,7 +92,7 @@ import java.util.List;
 
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
-import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Picasso; //xuameng清空Picasso
 
 public class HomeActivity extends BaseActivity {
     private LinearLayout topLayout;
@@ -188,7 +188,7 @@ public class HomeActivity extends BaseActivity {
 
             public void onItemSelected(TvRecyclerView tvRecyclerView, View view, int position) {
                 if (view != null && position >= 0) {
-					Picasso.get().cancelTag("image_load");
+                    Picasso.get().cancelTag("image_load"); //xuameng清空Picasso
                     HomeActivity.this.currentView = view;
                     HomeActivity.this.sortChange = true;
                     sortAdapter.setSelectedPosition(position); //xuameng 完全交给sortAdapter维护
@@ -771,6 +771,7 @@ public class HomeActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Picasso.get().cancelTag("image_load"); //xuameng清空Picasso
         mHandler.removeCallbacksAndMessages(null);
         EventBus.getDefault().unregister(this);
         AppManager.getInstance().appExit(0);
