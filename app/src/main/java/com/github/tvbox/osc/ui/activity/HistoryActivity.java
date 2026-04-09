@@ -27,8 +27,6 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.squareup.picasso.Picasso; //xuameng清空Picasso
-
 /**
  * @author pj567
  * @date :2021/1/7
@@ -176,7 +174,6 @@ public class HistoryActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Picasso.get().cancelTag("image_load"); //xuameng清空Picasso
         EventBus.getDefault().unregister(this);
     }
 
