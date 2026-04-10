@@ -655,13 +655,13 @@ public class HomeActivity extends BaseActivity {
 
        StringBuilder contentBuilder = new StringBuilder();
 
-        contentBuilder.append("分类ID：").append(sortData.id).append("\n");
-        contentBuilder.append("分类名称：").append(sortData.name).append("\n");
+        contentBuilder.append("分类id：").append(sortData.id).append("\n");
+        contentBuilder.append("分类名称name：").append(sortData.name).append("\n");
         contentBuilder.append("排序值(sort)：").append(sortData.sort).append("\n");
-        contentBuilder.append("是否选中：").append(sortData.select).append("\n");
+        contentBuilder.append("是否选中select：").append(sortData.select).append("\n");
         contentBuilder.append("类型标识(flag)：").append(sortData.flag).append("\n");
-        contentBuilder.append("筛选条件数量：").append(sortData.filters.size()).append("\n");
-        contentBuilder.append("已选筛选：").append(sortData.filterSelect.toString()).append("\n");
+        contentBuilder.append("筛选条件数量filters.size：").append(sortData.filters.size()).append("\n");
+        contentBuilder.append("已选筛选filterSelect：").append(sortData.filterSelect.toString()).append("\n");
 
         new AlertDialog.Builder(HomeActivity.this)
                 .setTitle("分类信息详情")
