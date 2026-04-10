@@ -33,7 +33,7 @@ public class MovieSort implements Serializable {
         public ArrayList<SortFilter> filters = new ArrayList<>();
         public HashMap<String, String> filterSelect = new HashMap<>();
         public String flag; // 类型
-        public String typeFlag; // xuameng 1为文件夹显示
+        public String type_flag; // xuameng 1为文件夹显示
 
         public SortData() {
         }
@@ -71,7 +71,7 @@ public class MovieSort implements Serializable {
                     ", filters=" + filters +
                     ", filterSelect=" + filterSelect +
                     ", flag='" + flag + '\'' +
-                    ", typeFlag='" + typeFlag + '\'' +
+                    ", type_flag='" + type_flag + '\'' +
                     '}';
         }
     }
