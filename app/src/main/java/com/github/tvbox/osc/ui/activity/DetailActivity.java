@@ -92,8 +92,7 @@ import android.text.TextPaint;
 import androidx.annotation.NonNull;
 import android.graphics.Typeface;
 import androidx.recyclerview.widget.RecyclerView;
-import com.github.tvbox.osc.util.ImgUtilXude;   //xuameng base64图片
-import com.github.tvbox.osc.util.ImgUtil;   //xuameng base64图片
+import com.github.tvbox.osc.util.ImgUtilDetail;   //xuameng base64图片
 /**
  * @author pj567
  * @date :2020/12/22
@@ -933,16 +932,16 @@ if (mVideo.sourceKey.contains("配置中心")
                                 .load(DefaultConfig.checkReplaceProxy(mVideo.pic))
                                 .transform(new RoundTransformation(MD5.string2MD5(mVideo.pic))
                                         .centerCorp(true)
-                                        .override(AutoSizeUtils.mm2px(mContext, ImgUtil.defaultWidth), AutoSizeUtils.mm2px(mContext, ImgUtil.defaultHeight))
+                                        .override(AutoSizeUtils.mm2px(mContext, ImgUtilDetail.defaultWidth), AutoSizeUtils.mm2px(mContext, ImgUtilDetail.defaultHeight))
                                         .roundRadius(AutoSizeUtils.mm2px(mContext, 10), RoundTransformation.RoundType.ALL))
                                 .placeholder(R.drawable.img_loading_placeholder)
                                 .noFade()
                             //    .error(R.drawable.img_loading_placeholder)
-	                        .error(ImgUtilXude.createTextDrawable(mVideo.name))
+	                        .error(ImgUtilDetail.createTextDrawable(mVideo.name))
                                 .into(ivThumb);
                     } else {
                       //  ivThumb.setImageResource(R.drawable.img_loading_placeholder);
-                          ivThumb.setImageDrawable(ImgUtilXude.createTextDrawable(mVideo.name));
+                          ivThumb.setImageDrawable(ImgUtilDetail.createTextDrawable(mVideo.name));
                     }
 
                     if (vodInfo.seriesMap != null && vodInfo.seriesMap.size() > 0) {
