@@ -33,6 +33,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.github.tvbox.osc.util.parser.SuperParse;
 
+import android.app.AlertDialog;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
@@ -883,18 +885,43 @@ public class PlayFragment extends BaseLazyFragment {
             @Override
             public void onChanged(JSONObject info) {
                 if (info != null) {
+
+                    StringBuilder contentBuilder = new StringBuilder();
+                    Iterator<String> keysxu = info.keys();
+                    while (keysxu.hasNext()) {
+                        String key = keysxu.next();
+                        try {
+                            Object value = info.get(key);
+                            contentBuilder.append(key)
+                                    .append(": ")
+                                    .append(value.toString())
+                                    .append("\n");
+                        } catch (JSONException e) {
+                            contentBuilder.append(key)
+                                    .append(": 解析错误\n");
+                        }
+                    }
+
+                    // 创建并显示 AlertDialog
+                    new AlertDialog.Builder(requireContext())
+                            .setTitle("播放信息详情")
+                            .setMessage(contentBuilder.toString())
+                            .setPositiveButton("确定", null)
+                            .show();
+
+
                     try {
                         progressKey = info.optString("proKey", null);
                         boolean parse = info.optString("parse", "1").equals("1");
                         boolean jx = info.optString("jx", "0").equals("1");
 
-                        // xuameng优先检查 artwork 字段（歌手图片）
                         if (info.has("artwork")) {
                             String picUrl = info.optString("artwork", "");
                             if (!TextUtils.isEmpty(picUrl)) {
                                 mController.setVideoPicUrl(picUrl);  //xuameng 新增给vod显示旋转图片用
                             }
                         }
+
                         // xuameng优先检查 lrc 字段（歌词字符串）
                         if (info.has("lrc")) {
                             String lrcContent = info.optString("lrc", "");
