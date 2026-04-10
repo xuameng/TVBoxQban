@@ -120,7 +120,7 @@ public class GridFragment extends BaseLazyFragment {
         contentBuilder.append("类型标识(flag)：").append(sortData.flag).append("\n");
         contentBuilder.append("筛选条件数量filters.size：").append(sortData.filters.size()).append("\n");
         contentBuilder.append("已选筛选filterSelect：").append(sortData.filterSelect.toString()).append("\n");
-        contentBuilder.append("类型标识(flagtype)：").append(sortData.flagtype).append("\n");
+        contentBuilder.append("类型标识(typeFlag)：").append(sortData.typeFlag).append("\n");
 
         new AlertDialog.Builder(HomeActivity.this)
                 .setTitle("分类信息详情")
@@ -145,11 +145,11 @@ public class GridFragment extends BaseLazyFragment {
         return flagChar != '0' ? '1' : flagChar;
 
         // 2. 基础校验
-        if (sortData == null || sortData.flag == null || sortData.flagtype.length() == 0) {
+        if (sortData == null || sortData.flag == null || sortData.typeFlag.length() == 0) {
             return '0';  //正常模式
         }
         // 3. flag 第一个字符
-        char flagChartype = sortData.flagtype.charAt(0);
+        char flagChartype = sortData.typeFlag.charAt(0);
 
         // 4. 非 '0' 直接返回 1  文件夹模式 
         return flagChartype != '0' ? '1' : flagChartype;
