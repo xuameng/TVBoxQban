@@ -37,6 +37,7 @@ import com.orhanobut.hawk.Hawk;
 import com.owen.tvrecyclerview.widget.TvRecyclerView;
 import com.owen.tvrecyclerview.widget.V7GridLayoutManager;
 import com.owen.tvrecyclerview.widget.V7LinearLayoutManager;
+import me.jessyan.autosize.utils.AutoSizeUtils;  //xuameng像素转换
 
 import java.util.ArrayList;
 import java.util.Stack;
@@ -47,9 +48,6 @@ import android.widget.TextView;
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.lang.reflect.Field; // 新增：用于反射获取字段
-import android.app.AlertDialog; // 新增：用于创建信息弹窗
 
 /**
  * @author pj567
@@ -99,26 +97,34 @@ public class GridFragment extends BaseLazyFragment {
         initData();
     }
 
-    private void changeView(String id,Boolean isFolder){
-        if(isFolder){
-            //this.sortData.flag =style==null?"1":"2"; // 修改sortData.flag
-            this.sortData.flag = "1"; // xuameng修改成1不判断style 直接显示文件夹样式
-        }else {
-            //this.sortData.flag ="2"; // 修改sortData.flag
-            this.sortData.flag = "1"; // xuameng修改成1 直接显示文件夹样式   '2' 显示缩略图的文件夹模式
-        }
+    private void changeView(String id){
+        this.sortData.flag = "1"; // xuameng修改成1不判断style 直接显示文件夹样式
         initView();
         this.sortData.id =id; // 修改sortData.id为新的ID
         initViewModel();
         initData();
     }
-    public boolean isFolederMode(){ return (getUITag() =='1'); }
-    // 获取当前页面UI的显示模式 ‘0’ 正常模式 '1' 文件夹模式 '2' 显示缩略图的文件夹模式
 
-    public char getUITag(){
-        //return (sortData == null || sortData.flag == null || sortData.flag.length() ==0 || style!=null) ?  '0' : sortData.flag.charAt(0);
-        // xuameng完全移除 style!=null 的条件判断  如有flag  直接显示文件夹样式
-        return (sortData == null || sortData.flag == null || sortData.flag.length() == 0) ? '0' : sortData.flag.charAt(0);
+    public boolean isFolederMode(){ return (getUITag() =='1'); }
+    // xuameng获取当前页面UI的显示模式 ‘0’ 正常模式 '1' 文件夹模式  取消 2缩略图模式 没用
+    //return (sortData == null || sortData.flag == null || sortData.flag.length() ==0 || style!=null) ?  '0' : sortData.flag.charAt(0);
+    // xuameng完全移除 style!=null 的条件判断  如有flag  直接显示文件夹样式   style 为 list，直接显示文件夹样式
+    public char getUITag() {
+        // 1. style 为 list，直接返回 1
+        if (style != null && "list".equals(style.type)) {
+            return '1';   //文件夹模式 
+        }
+
+        // 2. 基础校验
+        if (sortData == null || sortData.flag == null || sortData.flag.length() == 0) {
+            return '0';  //正常模式
+        }
+
+        // 3. flag 第一个字符
+        char flagChar = sortData.flag.charAt(0);
+
+        // 4. 非 '0' 直接返回 1  文件夹模式 
+        return flagChar != '0' ? '1' : flagChar;
     }
 
     // 是否允许聚合搜索 sortData.flag的第二个字符为‘1’时允许聚搜
@@ -162,8 +168,11 @@ public class GridFragment extends BaseLazyFragment {
         if(mGridView == null){ // 从layout中拿view
             mGridView = findViewById(R.id.mGridView);
         }else{ // 复制当前view
+            int horizontal = AutoSizeUtils.dp2px(mContext, 20); //xuameng dp dip转成px像素 
+            int vertical = AutoSizeUtils.mm2px(mContext, 10); //xuameng mm转成px像素 
+
             TvRecyclerView v3 = new TvRecyclerView(this.mContext);
-            v3.setSpacingWithMargins(10,10);
+            v3.setSpacingWithMargins(vertical,horizontal);
             v3.setLayoutParams(mGridView.getLayoutParams());
             v3.setPadding(mGridView.getPaddingLeft(), mGridView.getPaddingTop(), mGridView.getPaddingRight(), mGridView.getPaddingBottom());
             v3.setClipToPadding(mGridView.getClipToPadding());
@@ -234,48 +243,13 @@ public class GridFragment extends BaseLazyFragment {
                 FastClickCheckUtil.check(view);
                 Movie.Video video = gridAdapter.getData().get(position);
                 if (video != null) {
-
-            // 使用反射获取对象的所有字段和值
-            StringBuilder contentBuilder = new StringBuilder();
-            Class<?> clazz = video.getClass();
-            Field[] fields = clazz.getDeclaredFields(); // 获取所有声明的字段（包括私有字段）
-
-            for (Field field : fields) {
-                field.setAccessible(true); // 允许访问私有字段
-                try {
-                    String fieldName = field.getName();
-                    Object fieldValue = field.get(video); // 获取字段值
-                    contentBuilder.append(fieldName)
-                            .append(": ")
-                            .append(fieldValue != null ? fieldValue.toString() : "null")
-                            .append("\n");
-                } catch (IllegalAccessException e) {
-                    contentBuilder.append(field.getName())
-                            .append(": [无法访问]\n");
-                }
-            }
-
-            // 创建并显示 AlertDialog
-            new AlertDialog.Builder(getContext()) // 注意：这里使用 getContext()，因为是在 Fragment 中
-                    .setTitle("视频信息详情")
-                    .setMessage(contentBuilder.toString())
-                    .setPositiveButton("确定", null)
-                    .show();
-
-
-
-
                     Bundle bundle = new Bundle();
                     bundle.putString("id", video.id);
                     bundle.putString("sourceKey", video.sourceKey);
                     bundle.putString("title", video.name);
                     if( video.tag !=null && (video.tag.equals("folder") || video.tag.equals("cover"))){
                         focusedView = view;
-                        if(("12".indexOf(getUITag()) != -1)){
-                            changeView(video.id,video.tag.equals("folder"));
-                        }else {
-                            changeView(video.id,false);
-                        }
+                        changeView(video.id);  //xuameng移除多余判断 有folder或cover就进入video.id(文件夹下一级)
                     }
                     else{
                         if(video.id == null || video.id.isEmpty() || video.id.startsWith("msearch:")){
@@ -357,15 +331,7 @@ public class GridFragment extends BaseLazyFragment {
         showLoading();
         isLoad = false;
         scrollTop();
-        toggleFilterColor();
         sourceViewModel.getList(sortData, page);
-    }
-
-    private void toggleFilterColor() {
-        if (sortData!=null && sortData.filters != null && !sortData.filters.isEmpty()) {
-            int count = sortData.filterSelectCount();
-            EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_FILTER_CHANGE, count));
-        }
     }
 
     public boolean isTop() {
@@ -448,10 +414,18 @@ public class GridFragment extends BaseLazyFragment {
                         // 更新选中状态
                         sortData.filterSelect.put(key, newSelection);
                         kvAdapter.setSelectedPosition(position);
+                        // xuameng 新增：通知首页刷新筛选状态
+                        EventBus.getDefault().post(
+                            new RefreshEvent(RefreshEvent.TYPE_FILTER_CHANGE)
+                        );
                     } else {
                         // 取消选中
                         sortData.filterSelect.remove(key);
                         kvAdapter.setSelectedPosition(-1);
+                        // xuameng 新增：通知首页刷新筛选状态
+                        EventBus.getDefault().post(
+                            new RefreshEvent(RefreshEvent.TYPE_FILTER_CHANGE)
+                        );
                     }
                     forceRefresh();
                 }
