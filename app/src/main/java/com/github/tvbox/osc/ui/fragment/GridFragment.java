@@ -38,9 +38,6 @@ import com.owen.tvrecyclerview.widget.TvRecyclerView;
 import com.owen.tvrecyclerview.widget.V7GridLayoutManager;
 import com.owen.tvrecyclerview.widget.V7LinearLayoutManager;
 import me.jessyan.autosize.utils.AutoSizeUtils;  //xuameng像素转换
-import androidx.appcompat.app.AlertDialog; //xuameng音乐权限
-import java.lang.reflect.Field;
-
 
 import java.util.ArrayList;
 import java.util.Stack;
@@ -113,44 +110,21 @@ public class GridFragment extends BaseLazyFragment {
     //return (sortData == null || sortData.flag == null || sortData.flag.length() ==0 || style!=null) ?  '0' : sortData.flag.charAt(0);
     // xuameng完全移除 style!=null 的条件判断  如有flag  直接显示文件夹样式   style 为 list，直接显示文件夹样式
     public char getUITag() {
+        // 1. style 为 list，直接返回 1
+        if (style != null && "list".equals(style.type)) {
+            return '1';   //文件夹模式 
+        }
 
-       StringBuilder contentBuilder = new StringBuilder();
+        // 2. 基础校验
+        if (sortData == null || sortData.flag == null || sortData.flag.length() == 0) {
+            return '0';  //正常模式
+        }
 
-        contentBuilder.append("分类id：").append(sortData.id).append("\n");
-        contentBuilder.append("分类名称name：").append(sortData.name).append("\n");
-        contentBuilder.append("排序值(sort)：").append(sortData.sort).append("\n");
-        contentBuilder.append("是否选中select：").append(sortData.select).append("\n");
-        contentBuilder.append("类型标识(flag)：").append(sortData.flag).append("\n");
-        contentBuilder.append("筛选条件数量filters.size：").append(sortData.filters.size()).append("\n");
-        contentBuilder.append("已选筛选filterSelect：").append(sortData.filterSelect.toString()).append("\n");
-        contentBuilder.append("类型标识(type_flag)：").append(sortData.type_flag).append("\n");
+        // 3. flag 第一个字符
+        char flagChar = sortData.flag.charAt(0);
 
-        new AlertDialog.Builder(getContext())
-                .setTitle("分类信息详情")
-                .setMessage(contentBuilder.toString())
-                .setPositiveButton("确定", null)
-                .show();
-
-// 1. style 为 list，直接返回 1
-if (style != null && "list".equals(style.type)) {
-    return '1';
-}
-
-// 2. 优先使用 flag
-if (sortData != null && sortData.flag != null && sortData.flag.length() > 0) {
-    char flagChar = sortData.flag.charAt(0);
-    return flagChar != '0' ? '1' : flagChar;
-}
-
-// 3. 再使用 type_flag
-if (sortData != null && sortData.type_flag != null && sortData.type_flag.length() > 0) {
-    char flagChartype = sortData.type_flag.charAt(0);
-    return flagChartype != '0' ? '1' : flagChartype;
-}
-
-// 4. 默认正常模式
-return '0';
-
+        // 4. 非 '0' 直接返回 1  文件夹模式 
+        return flagChar != '0' ? '1' : flagChar;
     }
 
     // 是否允许聚合搜索 sortData.flag的第二个字符为‘1’时允许聚搜
@@ -269,34 +243,6 @@ return '0';
                 FastClickCheckUtil.check(view);
                 Movie.Video video = gridAdapter.getData().get(position);
                 if (video != null) {
-
-            // 使用反射获取对象的所有字段和值
-            StringBuilder contentBuilder = new StringBuilder();
-            Class<?> clazz = video.getClass();
-            Field[] fields = clazz.getDeclaredFields(); // 获取所有声明的字段（包括私有字段）
-
-            for (Field field : fields) {
-                field.setAccessible(true); // 允许访问私有字段
-                try {
-                    String fieldName = field.getName();
-                    Object fieldValue = field.get(video); // 获取字段值
-                    contentBuilder.append(fieldName)
-                            .append(": ")
-                            .append(fieldValue != null ? fieldValue.toString() : "null")
-                            .append("\n");
-                } catch (IllegalAccessException e) {
-                    contentBuilder.append(field.getName())
-                            .append(": [无法访问]\n");
-                }
-            }
-
-            // 创建并显示 AlertDialog
-            new AlertDialog.Builder(getContext()) // 注意：这里使用 getContext()，因为是在 Fragment 中
-                    .setTitle("视频信息详情")
-                    .setMessage(contentBuilder.toString())
-                    .setPositiveButton("确定", null)
-                    .show();
-
                     Bundle bundle = new Bundle();
                     bundle.putString("id", video.id);
                     bundle.putString("sourceKey", video.sourceKey);
