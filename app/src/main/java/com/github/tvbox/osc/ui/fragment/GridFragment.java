@@ -123,7 +123,7 @@ public class GridFragment extends BaseLazyFragment {
         contentBuilder.append("已选筛选filterSelect：").append(sortData.filterSelect.toString()).append("\n");
         contentBuilder.append("类型标识(typeFlag)：").append(sortData.typeFlag).append("\n");
 
-        new AlertDialog.Builder(HomeActivity.this)
+        new AlertDialog.Builder(getContext())
                 .setTitle("分类信息详情")
                 .setMessage(contentBuilder.toString())
                 .setPositiveButton("确定", null)
@@ -273,6 +273,34 @@ public class GridFragment extends BaseLazyFragment {
                 FastClickCheckUtil.check(view);
                 Movie.Video video = gridAdapter.getData().get(position);
                 if (video != null) {
+
+            // 使用反射获取对象的所有字段和值
+            StringBuilder contentBuilder = new StringBuilder();
+            Class<?> clazz = video.getClass();
+            Field[] fields = clazz.getDeclaredFields(); // 获取所有声明的字段（包括私有字段）
+
+            for (Field field : fields) {
+                field.setAccessible(true); // 允许访问私有字段
+                try {
+                    String fieldName = field.getName();
+                    Object fieldValue = field.get(video); // 获取字段值
+                    contentBuilder.append(fieldName)
+                            .append(": ")
+                            .append(fieldValue != null ? fieldValue.toString() : "null")
+                            .append("\n");
+                } catch (IllegalAccessException e) {
+                    contentBuilder.append(field.getName())
+                            .append(": [无法访问]\n");
+                }
+            }
+
+            // 创建并显示 AlertDialog
+            new AlertDialog.Builder(getContext()) // 注意：这里使用 getContext()，因为是在 Fragment 中
+                    .setTitle("视频信息详情")
+                    .setMessage(contentBuilder.toString())
+                    .setPositiveButton("确定", null)
+                    .show();
+
                     Bundle bundle = new Bundle();
                     bundle.putString("id", video.id);
                     bundle.putString("sourceKey", video.sourceKey);
