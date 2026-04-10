@@ -71,6 +71,7 @@ public class MovieSort implements Serializable {
                     ", filters=" + filters +
                     ", filterSelect=" + filterSelect +
                     ", flag='" + flag + '\'' +
+                    ", typeFlag='" + typeFlag + '\'' +
                     '}';
         }
     }
