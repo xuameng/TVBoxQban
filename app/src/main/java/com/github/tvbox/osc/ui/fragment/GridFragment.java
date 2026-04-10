@@ -131,31 +131,25 @@ public class GridFragment extends BaseLazyFragment {
                 .setPositiveButton("确定", null)
                 .show();
 
-        // 1. style 为 list，直接返回 1
-        if (style != null && "list".equals(style.type)) {
-            return '1';   //文件夹模式 
-        }
+// 1. style 为 list，直接返回 1
+if (style != null && "list".equals(style.type)) {
+    return '1';
+}
 
-        // 2. 基础校验
-        if (sortData == null || sortData.flag == null || sortData.flag.length() == 0) {
-            return '0';  //正常模式
-        }
+// 2. 优先使用 flag
+if (sortData != null && sortData.flag != null && sortData.flag.length() > 0) {
+    char flagChar = sortData.flag.charAt(0);
+    return flagChar != '0' ? '1' : flagChar;
+}
 
-        // 3. flag 第一个字符
-        char flagChar = sortData.flag.charAt(0);
+// 3. 再使用 typeFlag
+if (sortData != null && sortData.typeFlag != null && sortData.typeFlag.length() > 0) {
+    char flagChartype = sortData.typeFlag.charAt(0);
+    return flagChartype != '0' ? '1' : flagChartype;
+}
 
-        // 4. 非 '0' 直接返回 1  文件夹模式 
-        return flagChar != '0' ? '1' : flagChar;
-
-        // 2. 基础校验
-        if (sortData == null || sortData.flag == null || sortData.typeFlag.length() == 0) {
-            return '0';  //正常模式
-        }
-        // 3. flag 第一个字符
-        char flagChartype = sortData.typeFlag.charAt(0);
-
-        // 4. 非 '0' 直接返回 1  文件夹模式 
-        return flagChartype != '0' ? '1' : flagChartype;
+// 4. 默认正常模式
+return '0';
 
     }
 
