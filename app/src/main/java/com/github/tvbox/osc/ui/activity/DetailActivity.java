@@ -898,13 +898,14 @@ public class DetailActivity extends BaseActivity {
                         return;
                     }
                     mVideo = absXml.movie.videoList.get(0);
-
-if (mVideo.sourceKey.contains("配置中心") 
-    || mVideo.sourceKey.toLowerCase().contains("config")) {
-    showEmpty();
-    return;
-}
                     mVideo.id = vodId;
+
+                    if (mVideo.sourceKey.contains("配置中心") 
+                        || mVideo.sourceKey.toLowerCase().contains("config")) {  //xuameng 配置中心判断如是就返回
+                        showConfig();
+                        return;
+                    }
+
                     if (TextUtils.isEmpty(mVideo.name))mVideo.name = "🥇聚汇影视";
                     vodInfo = new VodInfo();
                     if((mVideo.pic==null || mVideo.pic.isEmpty()) && !vod_picture.isEmpty()){    //xuameng某些网站图片部显示
@@ -927,18 +928,28 @@ if (mVideo.sourceKey.contains("配置中心")
                     setTextShow(tvActor, "演员：", mVideo.actor);
                     setTextShow(tvDirector, "导演：", mVideo.director);
                     setTextShow(tvDes, "内容简介：", removeHtmlTag(mVideo.des));
+
+                    int radius = AutoSizeUtils.mm2px(mContext, 5);  //xuameng Base64 图片 圆角设置
+
                     if (!TextUtils.isEmpty(mVideo.pic)) {
-                        Picasso.get()
-                                .load(DefaultConfig.checkReplaceProxy(mVideo.pic))
-                                .transform(new RoundTransformation(MD5.string2MD5(mVideo.pic))
-                                        .centerCorp(true)
-                                        .override(AutoSizeUtils.mm2px(mContext, ImgUtilDetail.defaultWidth), AutoSizeUtils.mm2px(mContext, ImgUtilDetail.defaultHeight))
-                                        .roundRadius(AutoSizeUtils.mm2px(mContext, 10), RoundTransformation.RoundType.ALL))
-                                .placeholder(R.drawable.img_loading_placeholder)
-                                .noFade()
-                            //    .error(R.drawable.img_loading_placeholder)
-	                        .error(ImgUtilDetail.createTextDrawable(mVideo.name))
-                                .into(ivThumb);
+                        if(ImgUtilDetail.isBase64Image(mVideo.pic)){
+                            // xuameng 如果是 Base64 图片，解码并设置
+                            ivThumb.setImageBitmap(
+                                ImgUtilDetail.decodeBase64ToRoundBitmap(mVideo.pic, radius)   //xuameng 用这个方法进行圆角设置
+                            );
+                        }else {
+                            Picasso.get()
+                                    .load(DefaultConfig.checkReplaceProxy(mVideo.pic))
+                                    .transform(new RoundTransformation(MD5.string2MD5(mVideo.pic))
+                                            .centerCorp(true)
+                                            .override(AutoSizeUtils.mm2px(mContext, ImgUtilDetail.defaultWidth), AutoSizeUtils.mm2px(mContext, ImgUtilDetail.defaultHeight))
+                                            .roundRadius(AutoSizeUtils.mm2px(mContext, 10), RoundTransformation.RoundType.ALL))
+                                    .placeholder(R.drawable.img_loading_placeholder)
+                                    .noFade()
+                                //  .error(R.drawable.img_loading_placeholder)
+	                                .error(ImgUtilDetail.createTextDrawable(mVideo.name))
+                                    .into(ivThumb);
+                        }
                     } else {
                       //  ivThumb.setImageResource(R.drawable.img_loading_placeholder);
                           ivThumb.setImageDrawable(ImgUtilDetail.createTextDrawable(mVideo.name));
