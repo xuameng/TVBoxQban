@@ -38,6 +38,7 @@ import com.owen.tvrecyclerview.widget.TvRecyclerView;
 import com.owen.tvrecyclerview.widget.V7GridLayoutManager;
 import com.owen.tvrecyclerview.widget.V7LinearLayoutManager;
 import me.jessyan.autosize.utils.AutoSizeUtils;  //xuameng像素转换
+import androidx.appcompat.app.AlertDialog; //xuameng音乐权限
 
 import java.util.ArrayList;
 import java.util.Stack;
