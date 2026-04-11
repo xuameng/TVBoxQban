@@ -72,6 +72,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
     public static TvRecyclerView tvHotList1;
     public static TvRecyclerView tvHotList2; //xuameng首页单行
     private ImgUtil.Style style; //xuameng 图片样式
+    private boolean havehomeSource = false; //xuameng 判断聚汇推荐有没有内容
 
     public static UserFragment newInstance() {
         return new UserFragment();
@@ -162,6 +163,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
         tvHotList2 = findViewById(R.id.tvHotList2);
         if (Hawk.get(HawkConfig.HOME_REC, 0) == 1 && homeSourceRec != null) {
             style = ImgUtil.initStyle();
+            havehomeSource = true;  //xuameng 聚推荐有数据
         }
 
         homeHotVodAdapter = new HomeHotVodAdapter(isFolederMode(), style);   //xuameng 增加传入isFolederMode style为list为true
@@ -580,5 +582,9 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
             return true;   //文件夹模式 
         }
         return false;
+    }
+
+    public boolean havehomeSource() {   //xuameng 判断聚汇推荐有没有内容
+        return havehomeSource; 
     }
 }
