@@ -15,6 +15,7 @@ import com.github.tvbox.osc.picasso.RoundTransformation;
 import com.github.tvbox.osc.util.DefaultConfig;
 import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.util.MD5;
+import com.github.tvbox.osc.ui.fragment.UserFragment;  //xuameng 判断聚汇推荐有内容
 import com.orhanobut.hawk.Hawk;
 import com.squareup.picasso.Picasso;
 import com.github.tvbox.osc.util.ImgUtil;   //xuameng base64图片
@@ -29,6 +30,7 @@ public class HomeHotVodAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHol
     private int defaultWidth;
     private final ImgUtil.Style style;
     private boolean mShowList ; //xuameng 判断是否 style为list
+    private int UserFragment userFragment;  //xuameng 判断聚汇推荐有内容
 
     /**xuameng 增加 boolean showList 判断是否 style为list 是就显示文件夹样式
      * style 数据结构：ratio 指定宽高比（宽 / 高），type 表示风格（例如 rect、list）
@@ -40,7 +42,11 @@ public class HomeHotVodAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHol
             if ("list".equals(style.type)) {   //如果 style = list 用item_list显示文件夹样式
                 style = null;
             } else {
-                this.defaultWidth = ImgUtil.getStyleDefaultWidth(style);   //style 来设置图片的宽高比例
+                if (Hawk.get(HawkConfig.HOME_REC, 0) == 1 && userFragment.havehomeSource()){    //xuameng 判断当前是聚汇推荐 并且聚汇推荐有内容
+                    this.defaultWidth = ImgUtil.getStyleDefaultWidth(style);   //style 来设置图片的宽高比例
+                }else{
+                    style = null;
+                }
             }
         }
         this.style = style;
