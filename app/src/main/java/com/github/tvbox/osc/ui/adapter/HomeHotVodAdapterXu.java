@@ -30,7 +30,7 @@ public class HomeHotVodAdapterXu extends BaseQuickAdapter<Movie.Video, BaseViewH
     private int defaultWidth;
     private final ImgUtil.Style style;
     private boolean mShowList ; //xuameng 判断是否 style为list
-    private int UserFragment userFragment;  //xuameng 判断聚汇推荐有内容
+    private UserFragment userFragment;  //xuameng 判断聚汇推荐有内容
 
     /**xuameng 增加 boolean showList 判断是否 style为list 是就显示文件夹样式
      * style 数据结构：ratio 指定宽高比（宽 / 高），type 表示风格（例如 rect、list）
