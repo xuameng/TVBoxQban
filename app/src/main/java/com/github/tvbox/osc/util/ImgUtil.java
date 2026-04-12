@@ -108,7 +108,7 @@ public class ImgUtil {
         }
 
         // 3. rect / 其他类型，根据 ratio 计算
-        if (style.ratio < 1) {
+        if (style.ratio < 1.3) {
             return 220;
         }
         if (style.ratio > 1.7) {
