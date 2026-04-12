@@ -133,9 +133,9 @@ public class ImgUtilHot {
         }
         text = text.substring(0, 1);
 
-        if (drawableCache.containsKey(text)) {
-            return drawableCache.get(text);
-        }
+ //       if (drawableCache.containsKey(text)) {  //xuameng 去掉缓存
+ //           return drawableCache.get(text);
+ //       }
 
         Style style = initStyle();
 
@@ -196,7 +196,7 @@ public class ImgUtilHot {
         canvas.drawText(text, x, y, paint);
 
         Drawable drawable = new BitmapDrawable(bitmap);
-        drawableCache.put(text, drawable);
+//        drawableCache.put(text, drawable);  //xuameng 去掉缓存
         return drawable;
     }
 
