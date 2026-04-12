@@ -198,6 +198,7 @@ public class HomeActivity extends BaseActivity {
                     HomeActivity.this.sortChange = true;
                     sortAdapter.setSelectedPosition(position); //xuameng 完全交给sortAdapter维护
                     PositionXu = position;  //xuameng 记忆当前Position
+					sourceViewModel.setDebugSortPosition(position);
                     HomeActivity.this.sortFocusView = view;
                     HomeActivity.this.sortFocused = position;
                     mHandler.removeCallbacks(mDataRunnable);
