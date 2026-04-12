@@ -1024,14 +1024,9 @@ public class SourceViewModel extends ViewModel {
     private AbsSortXml sortJson(MutableLiveData<AbsSortXml> result, String json) {
         try {
             // ✅ 第 1 行新增：把原始 json 发到 HomeActivity
-// 只在选中位置匹配时才发送
-if (debugSortPosition >= 0 &&
-    debugSortPosition < sortResult.getValue().classes.sortList.size()) {
-
-    EventBus.getDefault().post(
-        new RefreshEvent(RefreshEvent.TYPE_DEBUG_JSON, json)
-    );
-}
+            EventBus.getDefault().post(
+                    new RefreshEvent(RefreshEvent.TYPE_DEBUG_JSON, json)
+            );
             JsonObject obj = JsonParser.parseString(json).getAsJsonObject();
             AbsSortJson sortJson = gson.fromJson(obj, new TypeToken<AbsSortJson>() {
             }.getType());
