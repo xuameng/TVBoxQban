@@ -66,7 +66,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import android.util.Log;
-import androidx.appcompat.app.AlertDialog; //xuameng音乐权限
 
 import okhttp3.Call;
 
@@ -1024,12 +1023,6 @@ public class SourceViewModel extends ViewModel {
     private AbsSortXml sortJson(MutableLiveData<AbsSortXml> result, String json) {
         try {
             JsonObject obj = JsonParser.parseString(json).getAsJsonObject();
-String jsonStr = obj.toString();
-new AlertDialog.Builder(context)
-        .setTitle("JsonObject 内容")
-        .setMessage(jsonStr)
-        .setPositiveButton("确定", null)
-        .show();
             AbsSortJson sortJson = gson.fromJson(obj, new TypeToken<AbsSortJson>() {
             }.getType());
             AbsSortXml data = sortJson.toAbsSortXml();
