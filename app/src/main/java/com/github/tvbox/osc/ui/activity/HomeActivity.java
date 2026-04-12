@@ -201,7 +201,7 @@ public class HomeActivity extends BaseActivity {
 String json = "{\"name\":\"test\",\"value\":123}";
 
 JsonObject obj = JsonParser.parseString(json).getAsJsonObject();
-showJsonDialog(this, obj);
+showJsonDialog(obj);
                     HomeActivity.this.sortFocusView = view;
                     HomeActivity.this.sortFocused = position;
                     mHandler.removeCallbacks(mDataRunnable);
