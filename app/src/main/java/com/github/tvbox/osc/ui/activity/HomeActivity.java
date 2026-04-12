@@ -30,7 +30,6 @@ import com.github.tvbox.osc.util.MD5;  //xuameng cache
 import android.util.Log; //xuameng音乐权限
 import android.os.Build; //xuameng音乐权限
 import android.content.pm.PackageManager; //xuameng音乐权限
-import androidx.appcompat.app.AlertDialog; //xuameng音乐权限
 import android.provider.Settings; //xuameng音乐权限
 import android.net.Uri; //xuameng音乐权限
 
@@ -961,13 +960,13 @@ showJsonDialog(this, obj);
         }
     }
 
-private void showJsonDialog(Activity activity, JsonObject obj) {
+private void showJsonDialog(JsonObject obj) {
     String jsonStr = new GsonBuilder()
             .setPrettyPrinting()
             .create()
             .toJson(obj);
 
-    new AlertDialog.Builder(activity)
+    new AlertDialog.Builder(this)
             .setTitle("JsonObject 内容")
             .setMessage(jsonStr)
             .setPositiveButton("确定", null)
