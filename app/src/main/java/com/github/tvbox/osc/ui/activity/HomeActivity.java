@@ -198,10 +198,6 @@ public class HomeActivity extends BaseActivity {
                     HomeActivity.this.sortChange = true;
                     sortAdapter.setSelectedPosition(position); //xuameng 完全交给sortAdapter维护
                     PositionXu = position;  //xuameng 记忆当前Position
-String json = "{\"name\":\"test\",\"value\":123}";
-
-JsonObject obj = JsonParser.parseString(json).getAsJsonObject();
-showJsonDialog(obj);
                     HomeActivity.this.sortFocusView = view;
                     HomeActivity.this.sortFocused = position;
                     mHandler.removeCallbacks(mDataRunnable);
@@ -666,7 +662,11 @@ showJsonDialog(obj);
                     sortAdapter.notifyItemChanged(pos);
                 }
             }
-        }
+        }else if (event.type == RefreshEvent.TYPE_DEBUG_JSON) {
+    String jsonStr = (String) event.obj;
+    JsonObject obj = JsonParser.parseString(jsonStr).getAsJsonObject();
+    showJsonDialog(obj);
+}
     }
 
     private Runnable mDataRunnable = new Runnable() {
