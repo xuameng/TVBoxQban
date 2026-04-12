@@ -111,7 +111,7 @@ public class ImgUtil {
         if (style.ratio < 1.3) {
             return 220;
         }
-        if (style.ratio > 1.7) {
+        if (style.ratio >= 1.7) {
             return 380;
         }
         return 280;
