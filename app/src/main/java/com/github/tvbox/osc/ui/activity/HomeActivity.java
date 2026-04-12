@@ -32,15 +32,7 @@ import android.os.Build; //xuameng音乐权限
 import android.content.pm.PackageManager; //xuameng音乐权限
 import android.provider.Settings; //xuameng音乐权限
 import android.net.Uri; //xuameng音乐权限
-
-
-// Gson 相关
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.GsonBuilder;
-
-// Android Dialog 相关
-import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AlertDialog; //xuameng音乐权限
 import android.Manifest;  //xuameng音乐权限
 import androidx.core.app.ActivityCompat;  //xuameng音乐权限
 import android.content.SharedPreferences;  //xuameng音乐权限
@@ -198,7 +190,6 @@ public class HomeActivity extends BaseActivity {
                     HomeActivity.this.sortChange = true;
                     sortAdapter.setSelectedPosition(position); //xuameng 完全交给sortAdapter维护
                     PositionXu = position;  //xuameng 记忆当前Position
-					sourceViewModel.setDebugSortPosition(position);
                     HomeActivity.this.sortFocusView = view;
                     HomeActivity.this.sortFocused = position;
                     mHandler.removeCallbacks(mDataRunnable);
@@ -663,11 +654,7 @@ public class HomeActivity extends BaseActivity {
                     sortAdapter.notifyItemChanged(pos);
                 }
             }
-        }else if (event.type == RefreshEvent.TYPE_DEBUG_JSON) {
-    String jsonStr = (String) event.obj;
-    JsonObject obj = JsonParser.parseString(jsonStr).getAsJsonObject();
-    showJsonDialog(obj);
-}
+        }
     }
 
     private Runnable mDataRunnable = new Runnable() {
@@ -961,16 +948,4 @@ public class HomeActivity extends BaseActivity {
         }
     }
 
-private void showJsonDialog(JsonObject obj) {
-    String jsonStr = new GsonBuilder()
-            .setPrettyPrinting()
-            .create()
-            .toJson(obj);
-
-    new AlertDialog.Builder(this)
-            .setTitle("JsonObject 内容")
-            .setMessage(jsonStr)
-            .setPositiveButton("确定", null)
-            .show();
-}
 }
