@@ -82,6 +82,7 @@ public class SourceViewModel extends ViewModel {
     public MutableLiveData<AbsXml> detailResult;
     public MutableLiveData<JSONObject> playResult;
     public Gson gson;
+	private int debugSortPosition = -1;
 
     public SourceViewModel() {
         sortResult = new MutableLiveData<>();
@@ -1023,9 +1024,14 @@ public class SourceViewModel extends ViewModel {
     private AbsSortXml sortJson(MutableLiveData<AbsSortXml> result, String json) {
         try {
             // ✅ 第 1 行新增：把原始 json 发到 HomeActivity
-            EventBus.getDefault().post(
-                    new RefreshEvent(RefreshEvent.TYPE_DEBUG_JSON, json)
-            );
+// 只在选中位置匹配时才发送
+if (debugSortPosition >= 0 &&
+    debugSortPosition < sortResult.getValue().classes.sortList.size()) {
+
+    EventBus.getDefault().post(
+        new RefreshEvent(RefreshEvent.TYPE_DEBUG_JSON, json)
+    );
+}
             JsonObject obj = JsonParser.parseString(json).getAsJsonObject();
             AbsSortJson sortJson = gson.fromJson(obj, new TypeToken<AbsSortJson>() {
             }.getType());
@@ -1405,4 +1411,9 @@ public class SourceViewModel extends ViewModel {
     protected void onCleared() {
         super.onCleared();
     }
+
+
+public void setDebugSortPosition(int position) {
+    this.debugSortPosition = position;
+}
 }
