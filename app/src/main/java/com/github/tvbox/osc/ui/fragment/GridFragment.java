@@ -38,7 +38,6 @@ import com.owen.tvrecyclerview.widget.TvRecyclerView;
 import com.owen.tvrecyclerview.widget.V7GridLayoutManager;
 import com.owen.tvrecyclerview.widget.V7LinearLayoutManager;
 import me.jessyan.autosize.utils.AutoSizeUtils;  //xuameng像素转换
-import android.view.MotionEvent;
 
 import java.util.ArrayList;
 import java.util.Stack;
@@ -66,9 +65,6 @@ public class GridFragment extends BaseLazyFragment {
     private boolean isLoad = false;
     private boolean isTop = true;
     private View focusedView = null;
-private float touchStartY = 0f;
-private boolean isPullOverThreshold = false; // 是否已下拉超过阈值
-private static final int PULL_REFRESH_THRESHOLD = 200; // 下拉距离阈值（px）
     private static class GridInfo{
         public String sortID="";
         public TvRecyclerView mGridView;
@@ -271,40 +267,6 @@ private static final int PULL_REFRESH_THRESHOLD = 200; // 下拉距离阈值（p
                 }
             }
         });
-
-mGridView.setOnTouchListener((v, event) -> {
-    switch (event.getAction()) {
-        case MotionEvent.ACTION_DOWN:
-            touchStartY = event.getY();
-            isPullOverThreshold = false;
-            break;
-
-        case MotionEvent.ACTION_MOVE:
-            float currentY = event.getY();
-            float dy = touchStartY - currentY;
-
-            // 向下滑动 & 在顶部 & page == 1
-            boolean isPullDown = dy < -PULL_REFRESH_THRESHOLD;
-            boolean canRefresh = page == 1 && isTop();
-
-            if (isPullDown && canRefresh) {
-                isPullOverThreshold = true;
-            } else {
-                isPullOverThreshold = false;
-            }
-            break;
-
-        case MotionEvent.ACTION_UP:
-        case MotionEvent.ACTION_CANCEL:
-            if (isPullOverThreshold && page == 1 && isTop()) {
-                forceRefresh();
-            }
-            isPullOverThreshold = false;
-            break;
-    }
-    return false; // 不拦截 RecyclerView 的正常事件
-});
-
         gridAdapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(BaseQuickAdapter adapter, View view, int position) {
