@@ -110,7 +110,7 @@ public class HomeActivity extends BaseActivity {
     private int sortFocused = 0;
     private int PositionXu = 0;  //xuameng 记忆当前Position
     public View sortFocusView = null;
-//    private final Handler mHandler = new Handler();
+    private final Handler mHandler = new Handler();
     private long mExitTime = 0;
     private static final int REQUEST_CODE_RECORD_AUDIO = 1001; //xuameng获取音频权限
     private static final String TAG = "PermissionHelper";//xuameng获取音频权限
@@ -118,13 +118,9 @@ public class HomeActivity extends BaseActivity {
     private static final String PREF_PERMISSION_DIALOG = "permission_prefs";   //xuameng获取音频权限
     private static final String KEY_DIALOG_SHOWN = "dialog_shown";  //xuameng获取音频权限
 
-private int currentSelected = 0;
-private int sortFocused = 0;
+
 
 private boolean topHidden = false;   // ✅ 用 boolean 更直观
-private boolean sortChange = false;
-
-private final Handler mHandler = new Handler(Looper.getMainLooper());
 
     private final Runnable mRunnable = new Runnable() {
         @SuppressLint({"DefaultLocale", "SetTextI18n"})
