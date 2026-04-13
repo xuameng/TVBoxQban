@@ -65,6 +65,9 @@ public class GridFragment extends BaseLazyFragment {
     private boolean isLoad = false;
     private boolean isTop = true;
     private View focusedView = null;
+private float touchStartY = 0f;
+private boolean isPullRefreshTriggered = false;
+private static final int PULL_THRESHOLD = 200; // 下拉触发阈值（px）
     private static class GridInfo{
         public String sortID="";
         public TvRecyclerView mGridView;
@@ -267,6 +270,36 @@ public class GridFragment extends BaseLazyFragment {
                 }
             }
         });
+
+mGridView.setOnTouchListener((v, event) -> {
+    switch (event.getAction()) {
+        case MotionEvent.ACTION_DOWN:
+            touchStartY = event.getY();
+            isPullRefreshTriggered = false;
+            break;
+
+        case MotionEvent.ACTION_MOVE:
+            float currentY = event.getY();
+            float dy = touchStartY - currentY;
+
+            // 向下滑动 dy < 0
+            boolean isPullDown = dy < -PULL_THRESHOLD;
+            boolean isAtTop = isTop();
+
+            if (isPullDown && isAtTop && page == 1 && !isPullRefreshTriggered) {
+                isPullRefreshTriggered = true;
+                forceRefresh();
+            }
+            break;
+
+        case MotionEvent.ACTION_UP:
+        case MotionEvent.ACTION_CANCEL:
+            isPullRefreshTriggered = false;
+            break;
+    }
+    return false; // 不影响 RecyclerView 原有点击/滚动
+});
+
         gridAdapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(BaseQuickAdapter adapter, View view, int position) {
