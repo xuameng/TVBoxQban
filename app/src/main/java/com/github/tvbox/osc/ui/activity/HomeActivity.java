@@ -657,32 +657,26 @@ public class HomeActivity extends BaseActivity {
         }
     }
 
-    private Runnable mDataRunnable = new Runnable() {
-        @Override
-        public void run() {
-            if (sortChange) {
-                sortChange = false;
-                // 防御：ViewPager 尚未初始化
-                if (mViewPager == null || mViewPager.getAdapter() == null) {
-                    return;
-                }
-                if (sortFocused != currentSelected) {
-                    currentSelected = sortFocused;
-                    // 确保 position 合法
-                    int count = mViewPager.getAdapter().getCount();
-                    if (sortFocused < 0 || sortFocused >= count) {
-                        return;
-                    }
-                    mViewPager.setCurrentItem(sortFocused, false);
-                    if (sortFocused == 0) {
-                        changeTop(false);
-                    } else {
-                        changeTop(true);
-                    }
-                }
-            }
+private Runnable mDataRunnable = new Runnable() {
+    @Override
+    public void run() {
+        if (!sortChange) return;
+        sortChange = false;
+
+        final int lastSelected = currentSelected;
+        final int newSelected = sortFocused;
+
+        if (lastSelected == newSelected) return;
+
+        currentSelected = newSelected;
+
+        if (newSelected == 0) {
+            changeTop(false);
+        } else {
+            changeTop(true);
         }
-    };
+    }
+};
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
