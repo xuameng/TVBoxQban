@@ -670,11 +670,16 @@ private Runnable mDataRunnable = new Runnable() {
 
         currentSelected = newSelected;
 
-        if (newSelected == 0) {
-            changeTop(false);
-        } else {
-            changeTop(true);
+        // 1️⃣ 同步 ViewPager
+        if (mViewPager != null
+                && mViewPager.getAdapter() != null
+                && newSelected < mViewPager.getAdapter().getCount()) {
+
+            mViewPager.setCurrentItem(newSelected, false);
         }
+
+        // 2️⃣ 顶部动画
+        changeTop(newSelected != 0);
     }
 };
 
