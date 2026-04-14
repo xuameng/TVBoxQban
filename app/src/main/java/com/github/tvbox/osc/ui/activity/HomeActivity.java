@@ -715,7 +715,6 @@ public class HomeActivity extends BaseActivity {
 
             @Override
             public void onAnimationEnd(Animator animation) {
-                topHide = (byte) (hide ? 1 : 0);
             }
 
             @Override
