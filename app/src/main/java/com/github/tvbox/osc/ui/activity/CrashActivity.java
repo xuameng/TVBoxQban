@@ -1,35 +1,38 @@
 package com.github.tvbox.osc.ui.activity;
 
-import android.app.Activity;
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.github.tvbox.osc.R;
+import com.github.tvbox.osc.base.BaseActivity;
 import com.github.tvbox.osc.crash.CrashLogUtil;
 
-public class CrashActivity extends Activity {
+/**
+ * xuameng
+ * 全局崩溃捕获
+ * @version 1.0.0 <br/>
+ */
+
+public class CrashActivity extends BaseActivity {
 
     private TextView tvLog;
     private TextView tvRestart;
-    private TextView tvCopyLog;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_crash);
+    protected int getLayoutResID() {
+        return R.layout.activity_crash;
+    }
 
+    @Override
+    protected void init() {
         tvLog = findViewById(R.id.tvCrashLog);
         tvRestart = findViewById(R.id.tvRestart);
-        tvCopyLog = findViewById(R.id.tvCopyLog);
 
         tvLog.setText(CrashLogUtil.get(this));
 
+        // 默认焦点给重启按钮
         tvRestart.requestFocus();
 
         tvRestart.setOnClickListener(v -> restartApp());
@@ -41,36 +44,13 @@ public class CrashActivity extends Activity {
             }
             return false;
         });
-
-        tvCopyLog.setOnClickListener(v -> copyLogSafe());
-        tvCopyLog.setOnKeyListener((v, keyCode, event) -> {
-            if (event.getAction() == KeyEvent.ACTION_UP
-                    && keyCode == KeyEvent.KEYCODE_ENTER) {
-                copyLogSafe();
-                return true;
-            }
-            return false;
-        });
-    }
-
-    private void copyLogSafe() {
-        try {
-            ClipboardManager cm =
-                    (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-            if (cm != null) {
-                cm.setPrimaryClip(
-                        ClipData.newPlainText("crash", tvLog.getText())
-                );
-            }
-            Toast.makeText(this, "已复制", Toast.LENGTH_SHORT).show();
-        } catch (Exception ignored) {
-        }
     }
 
     private void restartApp() {
-        startActivity(new Intent(this, HomeActivity.class)
-                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
-                          Intent.FLAG_ACTIVITY_CLEAR_TASK));
+        Intent intent = new Intent(this, HomeActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
         finish();
     }
 }
