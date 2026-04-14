@@ -3,15 +3,15 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@android:color/black"
-    android:padding="40dp">
+    android:padding="@dimen/vs_40">
 
-    <TextView
-        android:text="应用发生崩溃"
-        android:textSize="28sp"
-        android:textColor="@android:color/white"
-        android:layout_marginBottom="24dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        <TextView
+            android:text="应用居然崩溃！"
+            android:textSize="@dimen/vs_30"
+            android:layout_marginBottom="@dimen/vs_25"
+            android:textColor="@color/color_BBFFFFFF"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -22,26 +22,43 @@
 
         <TextView
             android:id="@+id/tvCrashLog"
-            android:textSize="14sp"
-            android:textColor="#CCCCCC"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/vs_20"
+            android:textColor="@color/color_FFFFFF"
+            android:gravity="center"/>
     </ScrollView>
 
-    <TextView
-        android:id="@+id/tvRestart"
-        android:text="重启应用"
-        android:textSize="22sp"
-        android:textColor="@android:color/white"
-		android:background="@drawable/button_dialog_main"
-        android:gravity="center"
-        android:layout_marginTop="32dp"
-        android:layout_gravity="center_horizontal"
-        android:focusable="true"
-        android:clickable="true"
-        android:paddingHorizontal="48dp"
-        android:paddingVertical="16dp"
+    <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/vs_25"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:spacing="@dimen/vs_10">
+
+        <TextView
+            android:id="@+id/tvRestart"
+            android:text="重启应用"
+            android:textSize="@dimen/ts_22"
+            android:textColor="@color/color_FFFFFF"
+            android:background="@drawable/button_dialog_main"
+            android:gravity="center"
+            android:focusable="true"
+            android:clickable="true"
+            android:padding="@dimen/vs_10"/>
+
+        <TextView
+            android:id="@+id/tvCopyLog"
+            android:text="复制日志"
+            android:textSize="@dimen/ts_22"
+            android:textColor="@color/color_FFFFFF"
+            android:background="@drawable/button_dialog_main"
+            android:gravity="center"
+            android:focusable="true"
+            android:clickable="true"
+            android:padding="@dimen/vs_10"/>
+    </LinearLayout>
 
 </LinearLayout>
