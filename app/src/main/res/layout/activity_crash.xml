@@ -5,16 +5,14 @@
     android:background="@color/black"
     android:padding="40dp">
 
-    <!-- 标题 -->
     <TextView
-        android:text="应用发生崩溃"
+        android:text="搴旂敤鍙戠敓宕╂簝"
         android:textSize="28sp"
         android:textColor="@color/white"
         android:layout_marginBottom="24dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
-    <!-- 日志区域（可滚动） -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -30,10 +28,9 @@
             android:layout_height="wrap_content"/>
     </ScrollView>
 
-    <!-- 重启按钮（TV 焦点重点） -->
     <TextView
         android:id="@+id/tvRestart"
-        android:text="重启应用"
+        android:text="閲嶅惎搴旂敤"
         android:textSize="22sp"
         android:textColor="@color/white"
         android:background="@drawable/bg_crash_button"
