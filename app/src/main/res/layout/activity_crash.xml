@@ -4,14 +4,31 @@
     android:orientation="vertical"
     android:background="@drawable/app_bg"
     android:padding="@dimen/vs_40">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/vs_25"
+    android:orientation="horizontal"
+    android:gravity="center_vertical">
 
     <TextView
         android:text="应用居然崩溃！"
         android:textSize="@dimen/vs_30"
         android:textColor="@color/color_BBFFFFFF"
-        android:layout_marginBottom="@dimen/vs_25"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+    <ImageView
+        android:layout_width="@dimen/vs_120"
+        android:layout_height="@dimen/vs_120"
+        android:src="@drawable/icon_empty"/>
+
+</LinearLayout>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -30,6 +47,15 @@
             android:layout_height="wrap_content"/>
     </ScrollView>
 
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal"
+    android:layout_marginTop="@dimen/vs_25"
+    android:orientation="horizontal"
+    android:gravity="center"
+    android:spacing="@dimen/vs_10">
+
     <TextView
         android:id="@+id/tvRestart"
         android:text="重启应用"
@@ -37,12 +63,25 @@
         android:textColor="@color/color_FFFFFF"
         android:background="@drawable/button_dialog_main"
         android:gravity="center"
-        android:layout_marginTop="@dimen/vs_25"
-        android:layout_gravity="center_horizontal"
         android:focusable="true"
         android:clickable="true"
         android:padding="@dimen/vs_10"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/tvCopyLog"
+        android:text="复制日志"
+        android:textSize="@dimen/vs_22"
+        android:textColor="@color/color_FFFFFF"
+        android:background="@drawable/button_dialog_main"
+        android:gravity="center"
+        android:focusable="true"
+        android:clickable="true"
+        android:padding="@dimen/vs_10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+</LinearLayout>
 
 </LinearLayout>
