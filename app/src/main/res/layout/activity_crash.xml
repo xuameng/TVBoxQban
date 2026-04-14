@@ -8,7 +8,7 @@
     <TextView
         android:text="应用发生崩溃"
         android:textSize="28sp"
-        android:textColor="@color/white"
+        android:textColor="@android:color/white"
         android:layout_marginBottom="24dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
@@ -32,8 +32,7 @@
         android:id="@+id/tvRestart"
         android:text="重启应用"
         android:textSize="22sp"
-        android:textColor="@color/white"
-        android:background="@drawable/bg_crash_button"
+        android:textColor="@android:color/white"
         android:gravity="center"
         android:layout_marginTop="32dp"
         android:layout_gravity="center_horizontal"
