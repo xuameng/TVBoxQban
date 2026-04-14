@@ -19,6 +19,7 @@ import com.github.tvbox.osc.util.PlayerHelper;
 import com.whl.quickjs.android.QuickJSLoader;
  import com.github.catvod.crawler.JsLoader;
 import com.kingja.loadsir.core.LoadSir;
+import com.github.tvbox.osc.crash.CrashHandler;
 import com.orhanobut.hawk.Hawk;
 import com.p2p.P2PClass;
 import java.io.File;   //xuameng清缓存
@@ -44,6 +45,8 @@ public class App extends MultiDexApplication {
     public void onCreate() {
         super.onCreate();
         instance = this;
+    // ✅ 全局崩溃捕获（一定要放在最前面）
+    CrashHandler.getInstance().init(this);
         initParams();
         // OKGo
         OkGoHelper.init(); //台标获取
