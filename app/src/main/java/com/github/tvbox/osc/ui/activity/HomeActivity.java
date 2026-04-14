@@ -117,7 +117,6 @@ public class HomeActivity extends BaseActivity {
     private static final int MARSHMALLOW = Build.VERSION_CODES.M;  //xuameng获取音频权限
     private static final String PREF_PERMISSION_DIALOG = "permission_prefs";   //xuameng获取音频权限
     private static final String KEY_DIALOG_SHOWN = "dialog_shown";  //xuameng获取音频权限
-private AnimatorSet currentAnimator;
     private final Runnable mRunnable = new Runnable() {
         @SuppressLint({"DefaultLocale", "SetTextI18n"})
         @Override
@@ -705,9 +704,10 @@ private Runnable mDataRunnable = new Runnable() {
 private AnimatorSet currentAnimator;
 
 private void changeTop(boolean hide) {
-    // 如果当前动画存在且在运行，直接跳过
+    // ✅ 如果动画在跑，直接结束它（不要 return）
     if (currentAnimator != null && currentAnimator.isRunning()) {
-        return;
+        currentAnimator.end(); // ⭐关键
+        currentAnimator = null;
     }
 
     ViewObj viewObj = new ViewObj(
