@@ -78,7 +78,7 @@
             android:textStyle="bold"
             android:gravity="center"
             android:paddingVertical="12dp"
-            android:background="@drawable/button_crash_background"
+            android:background="@drawable/bg_crash_button"
             android:focusable="true"
             android:clickable="true"
             android:focusableInTouchMode="true"/>
@@ -96,7 +96,7 @@
             android:textStyle="bold"
             android:gravity="center"
             android:paddingVertical="12dp"
-            android:background="@drawable/button_crash_background"
+            android:background="@drawable/bg_crash_button"
             android:focusable="true"
             android:clickable="true"
             android:focusableInTouchMode="true"/>
