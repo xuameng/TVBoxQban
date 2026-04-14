@@ -3,61 +3,44 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@android:color/black"
-    android:padding="40dp">
+    android:padding="40mm">
 
     <TextView
-        android:text="应用发生崩溃"
-        android:textSize="28sp"
-        android:textColor="@android:color/white"
-        android:layout_marginBottom="24dp"
+        android:text="聚汇影视提示：应用居然崩溃了！"
+        android:textSize="30mm"
+        android:textColor="#bbffffff"
+        android:layout_marginBottom="30mm"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="0mm"
         android:layout_weight="1"
         android:focusable="true"
         android:descendantFocusability="beforeDescendants">
 
         <TextView
             android:id="@+id/tvCrashLog"
-            android:textSize="14sp"
+            android:textSize="20mm"
+            android:textColor="@android:color/white"
             android:gravity="center"
-            android:textColor="#CCCCCC"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
     </ScrollView>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <TextView
+        android:id="@+id/tvRestart"
+        android:text="重启应用"
+        android:textSize="22mm"
+        android:textColor="@android:color/white"
+        android:gravity="center"
+        android:layout_marginTop="30mm"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="25mm"
-        android:orientation="horizontal"
-        android:gravity="center">
-
-        <TextView
-            android:id="@+id/tvRestart"
-            android:text="重启应用"
-            android:textSize="22mm"
-            android:textColor="#CCCCCC"
-            android:background="@drawable/bg_crash_button"
-            android:gravity="center"
-            android:focusable="true"
-            android:clickable="true"
-            android:padding="@dimen/vs_10"/>
-
-        <TextView
-            android:id="@+id/tvCopyLog"
-            android:text="复制日志"
-            android:textSize="22mm"
-            android:textColor="#CCCCCC"
-            android:background="@drawable/bg_crash_button"
-            android:gravity="center"
-            android:focusable="true"
-            android:clickable="true"
-            android:padding="@dimen/vs_10"/>
-    </LinearLayout>
+        android:focusable="true"
+        android:clickable="true"
+        android:padding="10mm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 
 </LinearLayout>
