@@ -41,10 +41,10 @@ public class CrashActivity extends BaseActivity {
         tvLog.setText(crashLog);
 
         // 默认焦点给复制按钮（更安全）
-        tvCopyLog.requestFocus();
+     //   tvCopyLog.requestFocus();
 
         // 复制日志
-        tvCopyLog.setOnClickListener(v -> copyLog(crashLog));
+ /*       tvCopyLog.setOnClickListener(v -> copyLog(crashLog));
         tvCopyLog.setOnKeyListener((v, keyCode, event) -> {
             if (event.getAction() == KeyEvent.ACTION_UP
                     && keyCode == KeyEvent.KEYCODE_ENTER) {
@@ -52,7 +52,7 @@ public class CrashActivity extends BaseActivity {
                 return true;
             }
             return false;
-        });
+        });  */
 
         // 重启应用
         tvRestart.setOnClickListener(v -> restartApp());
@@ -66,7 +66,7 @@ public class CrashActivity extends BaseActivity {
         });
     }
 
-    private void copyLog(String log) {
+/*    private void copyLog(String log) {
         try {
             ClipboardManager cm =
                     (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
@@ -75,12 +75,11 @@ public class CrashActivity extends BaseActivity {
             ClipData clipData = ClipData.newPlainText("crash_log", log);
             cm.setPrimaryClip(clipData);
 
-            Toast.makeText(this, "错误日志已复制", Toast.LENGTH_SHORT).show();
             App.showToastShort(this, "错误日志已复制");
         } catch (Exception e) {
             App.showToastShort(this, "日志复制失败");
         }
-    }
+    } */
 
     private void restartApp() {
         Intent intent = new Intent(this, HomeActivity.class);
