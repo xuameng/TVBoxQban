@@ -704,69 +704,54 @@ private Runnable mDataRunnable = new Runnable() {
 
     byte topHide = 0;
 
-    private void changeTop(boolean hide) {
-        ViewObj viewObj = new ViewObj(topLayout, (ViewGroup.MarginLayoutParams) topLayout.getLayoutParams());
-        AnimatorSet animatorSet = new AnimatorSet();
-        animatorSet.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-                topHide = (byte) (hide ? 1 : 0);  //xuameng 修复BUG
-            }
+private void changeTop(boolean hide) {
+    if (topHide == (hide ? 1 : 0)) return;
 
-            @Override
-            public void onAnimationEnd(Animator animation) {
-            }
+    ViewObj viewObj = new ViewObj(
+            topLayout,
+            (ViewGroup.MarginLayoutParams) topLayout.getLayoutParams()
+    );
 
-            @Override
-            public void onAnimationCancel(Animator animation) {
-            }
+    AnimatorSet animatorSet = new AnimatorSet();
 
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-
-            }
-        });
-        if (hide && topHide == 0) {
-            animatorSet.playTogether(new Animator[]{
-                    ObjectAnimator.ofObject(viewObj, "marginTop", new IntEvaluator(),
-                            new Object[]{
-                                    Integer.valueOf(AutoSizeUtils.mm2px(this.mContext, 10.0f)),
-                                    Integer.valueOf(AutoSizeUtils.mm2px(this.mContext, 0.0f))
-                            }),
-                    ObjectAnimator.ofObject(viewObj, "height", new IntEvaluator(),
-                            new Object[]{
-                                    Integer.valueOf(AutoSizeUtils.mm2px(this.mContext, 50.0f)),
-                                    Integer.valueOf(AutoSizeUtils.mm2px(this.mContext, 1.0f))
-                            }),
-                    ObjectAnimator.ofFloat(this.topLayout, "alpha", new float[]{1.0f, 0.0f})});
-            if (animatorSet != null && animatorSet.isRunning()) {  //xuameng 修复BUG
-                animatorSet.cancel();
-            }
-            animatorSet.setDuration(250);
-            animatorSet.start();
-            return;
+    animatorSet.addListener(new Animator.AnimatorListener() {
+        @Override public void onAnimationStart(Animator animation) {
+            topHide = (byte) (hide ? 1 : 0);
         }
-        if (!hide && topHide == 1) {
-            animatorSet.playTogether(new Animator[]{
-                    ObjectAnimator.ofObject(viewObj, "marginTop", new IntEvaluator(),
-                            new Object[]{
-                                    Integer.valueOf(AutoSizeUtils.mm2px(this.mContext, 0.0f)),
-                                    Integer.valueOf(AutoSizeUtils.mm2px(this.mContext, 10.0f))
-                            }),
-                    ObjectAnimator.ofObject(viewObj, "height", new IntEvaluator(),
-                            new Object[]{
-                                    Integer.valueOf(AutoSizeUtils.mm2px(this.mContext, 1.0f)),
-                                    Integer.valueOf(AutoSizeUtils.mm2px(this.mContext, 50.0f))
-                            }),
-                    ObjectAnimator.ofFloat(this.topLayout, "alpha", new float[]{0.0f, 1.0f})});
-            if (animatorSet != null && animatorSet.isRunning()) { //xuameng 修复BUG
-                animatorSet.cancel();
-            }
-            animatorSet.setDuration(250);
-            animatorSet.start();
-            return;
-        }
+        @Override public void onAnimationEnd(Animator animation) {}
+        @Override public void onAnimationCancel(Animator animation) {}
+        @Override public void onAnimationRepeat(Animator animation) {}
+    });
+
+    if (hide) {
+        animatorSet.playTogether(
+                ObjectAnimator.ofObject(viewObj, "marginTop", new IntEvaluator(),
+                        AutoSizeUtils.mm2px(mContext, 10),
+                        AutoSizeUtils.mm2px(mContext, 0)
+                ),
+                ObjectAnimator.ofObject(viewObj, "height", new IntEvaluator(),
+                        AutoSizeUtils.mm2px(mContext, 50),
+                        AutoSizeUtils.mm2px(mContext, 1)
+                ),
+                ObjectAnimator.ofFloat(topLayout, "alpha", 1f, 0f)
+        );
+    } else {
+        animatorSet.playTogether(
+                ObjectAnimator.ofObject(viewObj, "marginTop", new IntEvaluator(),
+                        AutoSizeUtils.mm2px(mContext, 0),
+                        AutoSizeUtils.mm2px(mContext, 10)
+                ),
+                ObjectAnimator.ofObject(viewObj, "height", new IntEvaluator(),
+                        AutoSizeUtils.mm2px(mContext, 1),
+                        AutoSizeUtils.mm2px(mContext, 50)
+                ),
+                ObjectAnimator.ofFloat(topLayout, "alpha", 0f, 1f)
+        );
     }
+
+    animatorSet.setDuration(250);
+    animatorSet.start();
+}
 
     @Override
     protected void onDestroy() {
