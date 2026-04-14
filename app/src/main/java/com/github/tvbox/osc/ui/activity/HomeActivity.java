@@ -740,6 +740,9 @@ public class HomeActivity extends BaseActivity {
                                     Integer.valueOf(AutoSizeUtils.mm2px(this.mContext, 1.0f))
                             }),
                     ObjectAnimator.ofFloat(this.topLayout, "alpha", new float[]{1.0f, 0.0f})});
+            if (animatorSet != null && animatorSet.isRunning()) {  //xuameng 修复BUG
+                animatorSet.cancel();
+            }
             animatorSet.setDuration(250);
             animatorSet.start();
             return;
@@ -757,6 +760,9 @@ public class HomeActivity extends BaseActivity {
                                     Integer.valueOf(AutoSizeUtils.mm2px(this.mContext, 50.0f))
                             }),
                     ObjectAnimator.ofFloat(this.topLayout, "alpha", new float[]{0.0f, 1.0f})});
+            if (animatorSet != null && animatorSet.isRunning()) { //xuameng 修复BUG
+                animatorSet.cancel();
+            }
             animatorSet.setDuration(250);
             animatorSet.start();
             return;
