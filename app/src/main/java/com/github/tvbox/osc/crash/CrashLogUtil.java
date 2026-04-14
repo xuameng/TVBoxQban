@@ -7,10 +7,16 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * xuameng
+ * 全局崩溃捕获
+ * @version 1.0.0 <br/>
+ */
+
 public class CrashLogUtil {
 
     private static final String TAG = "CrashLogUtil";
-    private static final String FILE_NAME = "crash.txt";
+    private static final String FILE_NAME = "xuameng_crash.txt";
 
     public static void save(Context context, String log) {
         try {
