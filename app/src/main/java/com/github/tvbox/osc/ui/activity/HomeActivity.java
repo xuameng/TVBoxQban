@@ -163,21 +163,32 @@ public class HomeActivity extends BaseActivity {
         this.mGridView.setSpacingWithMargins(0, AutoSizeUtils.dp2px(this.mContext, 10.0f));
         this.mGridView.setAdapter(this.sortAdapter);
         this.mGridView.setItemAnimator(null);   //xuameng 取消Item动画 闹腾
-        sortAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {     //xuameng主页默认焦点
-            @Override
-            public void onChanged() {
-                if (mGridView == null || !mGridView.isAttachedToWindow()) {
-                    return; // 如果RecyclerView为空或未附加到窗口，直接返回
-                }
-                mGridView.post(() -> {
-                    RecyclerView.LayoutManager layoutManager = mGridView.getLayoutManager();
-                    if (layoutManager == null) {
-                        return; // xuameng防止空指针
-                    }
-                    mGridView.setSelection(0);
-                });
+
+private boolean hasFocusedOnChanged = false;
+
+sortAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+    @Override
+    public void onChanged() {
+        if (mGridView == null || !mGridView.isAttachedToWindow()) {
+            return;
+        }
+
+        if (hasFocusedOnChanged) {
+            return;
+        }
+
+        mGridView.post(() -> {
+            RecyclerView.LayoutManager lm = mGridView.getLayoutManager();
+            if (lm == null) return;
+
+            View firstView = lm.findViewByPosition(0);
+            if (firstView != null && !firstView.hasFocus()) {
+                hasFocusedOnChanged = true;
+                mGridView.setSelection(0);
             }
         });
+    }
+});
 
         this.mGridView.setOnItemListener(new TvRecyclerView.OnItemListener() {       //xuameng移除  mHandler.postDelayed
             public void onItemPreSelected(TvRecyclerView tvRecyclerView, View view, int position) {
