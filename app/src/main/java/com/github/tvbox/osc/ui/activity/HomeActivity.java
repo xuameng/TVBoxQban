@@ -713,6 +713,7 @@ sortAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
     }
 
     byte topHide = 0;
+    private boolean isChangeTop = false;
 
     private void changeTop(boolean hide) {
         ViewObj viewObj = new ViewObj(topLayout, (ViewGroup.MarginLayoutParams) topLayout.getLayoutParams());
@@ -721,10 +722,12 @@ sortAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
             public void onAnimationStart(Animator animation) {
                 topHide = (byte) (hide ? 1 : 0);  //xuameng 修复BUG
+                isChangeTop = true;
             }
 
             @Override
             public void onAnimationEnd(Animator animation) {
+                topHide = (byte) (hide ? 1 : 0);  //xuameng 修复BUG
             }
 
             @Override
@@ -749,7 +752,7 @@ sortAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
                                     Integer.valueOf(AutoSizeUtils.mm2px(this.mContext, 1.0f))
                             }),
                     ObjectAnimator.ofFloat(this.topLayout, "alpha", new float[]{1.0f, 0.0f})});
-            animatorSet.setDuration(50);
+            animatorSet.setDuration(250);
             animatorSet.start();
             return;
         }
@@ -766,7 +769,23 @@ sortAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
                                     Integer.valueOf(AutoSizeUtils.mm2px(this.mContext, 50.0f))
                             }),
                     ObjectAnimator.ofFloat(this.topLayout, "alpha", new float[]{0.0f, 1.0f})});
-            animatorSet.setDuration(50);
+            animatorSet.setDuration(250);
+            animatorSet.start();
+            return;
+        }else if (!hide && isChangeTop) {
+            animatorSet.playTogether(new Animator[]{
+                    ObjectAnimator.ofObject(viewObj, "marginTop", new IntEvaluator(),
+                            new Object[]{
+                                    Integer.valueOf(AutoSizeUtils.mm2px(this.mContext, 0.0f)),
+                                    Integer.valueOf(AutoSizeUtils.mm2px(this.mContext, 10.0f))
+                            }),
+                    ObjectAnimator.ofObject(viewObj, "height", new IntEvaluator(),
+                            new Object[]{
+                                    Integer.valueOf(AutoSizeUtils.mm2px(this.mContext, 1.0f)),
+                                    Integer.valueOf(AutoSizeUtils.mm2px(this.mContext, 50.0f))
+                            }),
+                    ObjectAnimator.ofFloat(this.topLayout, "alpha", new float[]{0.0f, 1.0f})});
+            animatorSet.setDuration(250);
             animatorSet.start();
             return;
         }
