@@ -17,6 +17,6 @@ public class CrashLogUtil {
     public static String get(Context context) {
         SharedPreferences sp =
                 context.getSharedPreferences(SP_NAME, Context.MODE_PRIVATE);
-        return sp.getString("last_crash", "ÎÞ±ÀÀ£ÈÕÖ¾");
+        return sp.getString("last_crash", "æ— å´©æºƒæ—¥å¿—");
     }
 }
