@@ -39,6 +39,7 @@
         android:layout_gravity="center_horizontal"
         android:background="@drawable/bg_crash_button"
         android:focusable="true"
+       android:focusableInTouchMode="true"
         android:clickable="true"
         android:padding="10mm"
         android:layout_width="wrap_content"
