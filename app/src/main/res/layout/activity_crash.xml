@@ -47,6 +47,5 @@
             android:text="复制日志"
             android:textSize="20sp"
             android:textColor="@android:color/white"
-            android:background="@drawable/button_dialog_main"
             android:padding="12dp"/>
 </LinearLayout>
