@@ -13,6 +13,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+/**
+ * xuameng
+ * 全局崩溃捕获
+ * @version 1.0.0 <br/>
+ */
+
 public class CrashHandler implements Thread.UncaughtExceptionHandler {
 
     private static final String TAG = "CrashHandler";
