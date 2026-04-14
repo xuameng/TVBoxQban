@@ -117,6 +117,7 @@ public class HomeActivity extends BaseActivity {
     private static final int MARSHMALLOW = Build.VERSION_CODES.M;  //xuameng获取音频权限
     private static final String PREF_PERMISSION_DIALOG = "permission_prefs";   //xuameng获取音频权限
     private static final String KEY_DIALOG_SHOWN = "dialog_shown";  //xuameng获取音频权限
+    private boolean hasFocusedOnChanged = false;
     private final Runnable mRunnable = new Runnable() {
         @SuppressLint({"DefaultLocale", "SetTextI18n"})
         @Override
@@ -163,9 +164,6 @@ public class HomeActivity extends BaseActivity {
         this.mGridView.setSpacingWithMargins(0, AutoSizeUtils.dp2px(this.mContext, 10.0f));
         this.mGridView.setAdapter(this.sortAdapter);
         this.mGridView.setItemAnimator(null);   //xuameng 取消Item动画 闹腾
-
-private boolean hasFocusedOnChanged = false;
-
 sortAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
     @Override
     public void onChanged() {
@@ -668,34 +666,37 @@ sortAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
         }
     }
 
-private Runnable mDataRunnable = new Runnable() {
-    @Override
-    public void run() {
-        if (!sortChange) return;
-        sortChange = false;
-
-        final int lastSelected = currentSelected;
-        final int newSelected = sortFocused;
-
-        if (lastSelected == newSelected) return;
-
-        currentSelected = newSelected;
-
-        // 1️⃣ 同步 ViewPager
-        if (mViewPager != null
-                && mViewPager.getAdapter() != null
-                && newSelected < mViewPager.getAdapter().getCount()) {
-
-            mViewPager.setCurrentItem(newSelected, false);
+    private Runnable mDataRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (sortChange) {
+                sortChange = false;
+                // 防御：ViewPager 尚未初始化
+                if (mViewPager == null || mViewPager.getAdapter() == null) {
+                    return;
+                }
+                if (sortFocused != currentSelected) {
+                    currentSelected = sortFocused;
+                    // 确保 position 合法
+                    int count = mViewPager.getAdapter().getCount();
+                    if (sortFocused < 0 || sortFocused >= count) {
+                        return;
+                    }
+                    mViewPager.setCurrentItem(sortFocused, false);
+                    if (sortFocused == 0) {
+                        changeTop(false);
+                    } else {
+                        changeTop(true);
+                    }
+                }
+            }
         }
-
-        // 2️⃣ 顶部动画
-        changeTop(newSelected != 0);
-    }
-};
+    };
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
+        if (topHide < 0)
+            return false;
         int keyCode = event.getKeyCode();
         if (event.getAction() == KeyEvent.ACTION_DOWN) {
             if (keyCode == KeyEvent.KEYCODE_MENU) {
@@ -711,66 +712,65 @@ private Runnable mDataRunnable = new Runnable() {
         return super.dispatchKeyEvent(event);
     }
 
+    byte topHide = 0;
 
-private AnimatorSet currentAnimator;
+    private void changeTop(boolean hide) {
+        ViewObj viewObj = new ViewObj(topLayout, (ViewGroup.MarginLayoutParams) topLayout.getLayoutParams());
+        AnimatorSet animatorSet = new AnimatorSet();
+        animatorSet.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                topHide = (byte) (hide ? 1 : 0);  //xuameng 修复BUG
+            }
 
-private void changeTop(boolean hide) {
-    // ✅ 如果动画在跑，直接结束它（不要 return）
-    if (currentAnimator != null && currentAnimator.isRunning()) {
-        currentAnimator.end(); // ⭐关键
-        currentAnimator = null;
+            @Override
+            public void onAnimationEnd(Animator animation) {
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
+        if (hide && topHide == 0) {
+            animatorSet.playTogether(new Animator[]{
+                    ObjectAnimator.ofObject(viewObj, "marginTop", new IntEvaluator(),
+                            new Object[]{
+                                    Integer.valueOf(AutoSizeUtils.mm2px(this.mContext, 10.0f)),
+                                    Integer.valueOf(AutoSizeUtils.mm2px(this.mContext, 0.0f))
+                            }),
+                    ObjectAnimator.ofObject(viewObj, "height", new IntEvaluator(),
+                            new Object[]{
+                                    Integer.valueOf(AutoSizeUtils.mm2px(this.mContext, 50.0f)),
+                                    Integer.valueOf(AutoSizeUtils.mm2px(this.mContext, 1.0f))
+                            }),
+                    ObjectAnimator.ofFloat(this.topLayout, "alpha", new float[]{1.0f, 0.0f})});
+            animatorSet.setDuration(50);
+            animatorSet.start();
+            return;
+        }
+        if (!hide && topHide == 1) {
+            animatorSet.playTogether(new Animator[]{
+                    ObjectAnimator.ofObject(viewObj, "marginTop", new IntEvaluator(),
+                            new Object[]{
+                                    Integer.valueOf(AutoSizeUtils.mm2px(this.mContext, 0.0f)),
+                                    Integer.valueOf(AutoSizeUtils.mm2px(this.mContext, 10.0f))
+                            }),
+                    ObjectAnimator.ofObject(viewObj, "height", new IntEvaluator(),
+                            new Object[]{
+                                    Integer.valueOf(AutoSizeUtils.mm2px(this.mContext, 1.0f)),
+                                    Integer.valueOf(AutoSizeUtils.mm2px(this.mContext, 50.0f))
+                            }),
+                    ObjectAnimator.ofFloat(this.topLayout, "alpha", new float[]{0.0f, 1.0f})});
+            animatorSet.setDuration(50);
+            animatorSet.start();
+            return;
+        }
     }
-
-    ViewObj viewObj = new ViewObj(
-            topLayout,
-            (ViewGroup.MarginLayoutParams) topLayout.getLayoutParams()
-    );
-
-    AnimatorSet animatorSet = new AnimatorSet();
-
-    if (hide) {
-        animatorSet.playTogether(
-                ObjectAnimator.ofObject(viewObj, "marginTop", new IntEvaluator(),
-                        AutoSizeUtils.mm2px(mContext, 10),
-                        AutoSizeUtils.mm2px(mContext, 0)
-                ),
-                ObjectAnimator.ofObject(viewObj, "height", new IntEvaluator(),
-                        AutoSizeUtils.mm2px(mContext, 50),
-                        AutoSizeUtils.mm2px(mContext, 1)
-                ),
-                ObjectAnimator.ofFloat(topLayout, "alpha", 1f, 0f)
-        );
-    } else {
-        animatorSet.playTogether(
-                ObjectAnimator.ofObject(viewObj, "marginTop", new IntEvaluator(),
-                        AutoSizeUtils.mm2px(mContext, 0),
-                        AutoSizeUtils.mm2px(mContext, 10)
-                ),
-                ObjectAnimator.ofObject(viewObj, "height", new IntEvaluator(),
-                        AutoSizeUtils.mm2px(mContext, 1),
-                        AutoSizeUtils.mm2px(mContext, 50)
-                ),
-                ObjectAnimator.ofFloat(topLayout, "alpha", 0f, 1f)
-        );
-    }
-
-    animatorSet.setDuration(250);
-
-    animatorSet.addListener(new Animator.AnimatorListener() {
-        @Override public void onAnimationStart(Animator animation) {
-            currentAnimator = animatorSet;
-        }
-        @Override public void onAnimationEnd(Animator animation) {
-            currentAnimator = null;
-        }
-        @Override public void onAnimationCancel(Animator animation) {
-            currentAnimator = null;
-        }
-        @Override public void onAnimationRepeat(Animator animation) {}
-    });
-
-    animatorSet.start();
-}
 
     @Override
     protected void onDestroy() {
