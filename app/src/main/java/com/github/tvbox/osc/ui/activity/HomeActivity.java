@@ -117,6 +117,7 @@ public class HomeActivity extends BaseActivity {
     private static final int MARSHMALLOW = Build.VERSION_CODES.M;  //xuameng获取音频权限
     private static final String PREF_PERMISSION_DIALOG = "permission_prefs";   //xuameng获取音频权限
     private static final String KEY_DIALOG_SHOWN = "dialog_shown";  //xuameng获取音频权限
+private AnimatorSet currentAnimator;
     private final Runnable mRunnable = new Runnable() {
         @SuppressLint({"DefaultLocale", "SetTextI18n"})
         @Override
@@ -685,8 +686,6 @@ private Runnable mDataRunnable = new Runnable() {
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        if (topHide < 0)
-            return false;
         int keyCode = event.getKeyCode();
         if (event.getAction() == KeyEvent.ACTION_DOWN) {
             if (keyCode == KeyEvent.KEYCODE_MENU) {
@@ -702,10 +701,14 @@ private Runnable mDataRunnable = new Runnable() {
         return super.dispatchKeyEvent(event);
     }
 
-    byte topHide = 0;
+
+private AnimatorSet currentAnimator;
 
 private void changeTop(boolean hide) {
-    if (topHide == (hide ? 1 : 0)) return;
+    // 如果当前动画存在且在运行，直接跳过
+    if (currentAnimator != null && currentAnimator.isRunning()) {
+        return;
+    }
 
     ViewObj viewObj = new ViewObj(
             topLayout,
@@ -713,15 +716,6 @@ private void changeTop(boolean hide) {
     );
 
     AnimatorSet animatorSet = new AnimatorSet();
-
-    animatorSet.addListener(new Animator.AnimatorListener() {
-        @Override public void onAnimationStart(Animator animation) {
-            topHide = (byte) (hide ? 1 : 0);
-        }
-        @Override public void onAnimationEnd(Animator animation) {}
-        @Override public void onAnimationCancel(Animator animation) {}
-        @Override public void onAnimationRepeat(Animator animation) {}
-    });
 
     if (hide) {
         animatorSet.playTogether(
@@ -750,6 +744,20 @@ private void changeTop(boolean hide) {
     }
 
     animatorSet.setDuration(250);
+
+    animatorSet.addListener(new Animator.AnimatorListener() {
+        @Override public void onAnimationStart(Animator animation) {
+            currentAnimator = animatorSet;
+        }
+        @Override public void onAnimationEnd(Animator animation) {
+            currentAnimator = null;
+        }
+        @Override public void onAnimationCancel(Animator animation) {
+            currentAnimator = null;
+        }
+        @Override public void onAnimationRepeat(Animator animation) {}
+    });
+
     animatorSet.start();
 }
 
