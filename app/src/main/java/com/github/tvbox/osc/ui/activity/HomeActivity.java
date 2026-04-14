@@ -675,7 +675,7 @@ sortAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
                 if (mViewPager == null || mViewPager.getAdapter() == null) {
                     return;
                 }
-                if (sortFocused != currentSelected) {
+
                     currentSelected = sortFocused;
                     // 确保 position 合法
                     int count = mViewPager.getAdapter().getCount();
@@ -688,7 +688,6 @@ sortAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
                     } else {
                         changeTop(true);
                     }
-                }
             }
         }
     };
