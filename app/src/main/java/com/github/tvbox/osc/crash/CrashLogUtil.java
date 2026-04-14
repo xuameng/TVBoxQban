@@ -1,22 +1,46 @@
 package com.github.tvbox.osc.crash;
 
 import android.content.Context;
-import android.content.SharedPreferences;
+import android.util.Log;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.nio.charset.StandardCharsets;
 
 public class CrashLogUtil {
 
-    private static final String FILE_NAME = "crash_log.txt";
-    private static final String SP_NAME = "crash_sp";
+    private static final String TAG = "CrashLogUtil";
+    private static final String FILE_NAME = "crash.txt";
 
     public static void save(Context context, String log) {
-        SharedPreferences sp =
-                context.getSharedPreferences(SP_NAME, Context.MODE_PRIVATE);
-        sp.edit().putString("last_crash", log).apply();
+        try {
+            File dir = context.getExternalFilesDir(null);
+            if (dir == null) return;
+
+            File file = new File(dir, FILE_NAME);
+            FileOutputStream fos = new FileOutputStream(file, false);
+            fos.write(log.getBytes(StandardCharsets.UTF_8));
+            fos.close();
+        } catch (Exception e) {
+            Log.e(TAG, "保存崩溃日志失败", e);
+        }
     }
 
     public static String get(Context context) {
-        SharedPreferences sp =
-                context.getSharedPreferences(SP_NAME, Context.MODE_PRIVATE);
-        return sp.getString("last_crash", "无崩溃日志");
+        try {
+            File dir = context.getExternalFilesDir(null);
+            if (dir == null) return "无崩溃日志";
+
+            File file = new File(dir, FILE_NAME);
+            if (!file.exists()) return "无崩溃日志";
+
+            return new String(
+                    java.nio.file.Files.readAllBytes(file.toPath()),
+                    StandardCharsets.UTF_8
+            );
+        } catch (Exception e) {
+            Log.e(TAG, "读取崩溃日志失败", e);
+            return "读取崩溃日志失败";
+        }
     }
 }
