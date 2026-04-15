@@ -35,7 +35,7 @@ public class CrashActivity extends BaseActivity {
     private ProgressBar progressBar;
     private ScrollView scrollView;
     private String crashLog = "";
-    private static final int MAX_DISPLAY_LENGTH = 60;
+    private static final int MAX_DISPLAY_LENGTH = 50;  //最多50行
     private static final String LOG_FILE_NAME = "crash_log.txt";
 
     @Override
@@ -112,7 +112,16 @@ public class CrashActivity extends BaseActivity {
                         );
                         tvLog.setText(displayText);
                     } else {
-                        tvLog.setText(crashLog);
+                        // 只显示错误摘要
+                        String summary = extractErrorSummary(crashLog);
+                        String displayText = String.format(
+                            "检测到详细错误日志（%d 字符）\n\n" +
+                            "完整错误信息：\n%s\n\n" +
+                            "日志可通过\"复制日志\"按钮保存到系统剪切版",
+                            crashLog.length(),
+                            summary
+                        );
+                        tvLog.setText(displayText);
                     }
                     
                     // 显示操作按钮
