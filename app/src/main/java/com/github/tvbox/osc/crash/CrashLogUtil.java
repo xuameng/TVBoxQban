@@ -10,9 +10,8 @@ import java.nio.charset.StandardCharsets;
 /**
  * xuameng
  * 全局崩溃捕获
- * @version 1.0.0 <br/>
+ * @version 2.0.0 <br/>
  */
-
 public class CrashLogUtil {
 
     private static final String TAG = "CrashLogUtil";
@@ -50,18 +49,18 @@ public class CrashLogUtil {
         }
     }
 
-public static void deleteCrashLog(Context context) {
-    try {
-        File dir = context.getExternalFilesDir(null);
-        if (dir == null) return;
+    public static void deleteCrashLog(Context context) {
+        try {
+            File dir = context.getExternalFilesDir(null);
+            if (dir == null) return;
 
-        File file = new File(dir, FILE_NAME);
-        if (file.exists()) {
-            boolean deleted = file.delete();
-            Log.d(TAG, deleted ? "崩溃日志已删除" : "崩溃日志删除失败");
+            File file = new File(dir, FILE_NAME);
+            if (file.exists()) {
+                boolean deleted = file.delete();
+                Log.d(TAG, deleted ? "崩溃日志已删除" : "崩溃日志删除失败");
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "删除崩溃日志失败", e);
         }
-    } catch (Exception e) {
-        Log.e(TAG, "删除崩溃日志失败", e);
     }
-}
 }
