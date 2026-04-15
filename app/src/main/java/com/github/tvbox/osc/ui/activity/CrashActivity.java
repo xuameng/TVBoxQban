@@ -104,9 +104,9 @@ public class CrashActivity extends BaseActivity {
                         // 只显示错误摘要
                         String summary = extractErrorSummary(crashLog);
                         String displayText = String.format(
-                            "检测到详细错误日志（%d 字符）\n\n" +
-                            "主要错误信息：\n%s\n\n" +
-                            "完整日志可通过\"复制日志\"按钮保存到系统剪切版",
+                            "检测到详细崩溃日志信息（%d 字符）\n\n" +
+                            "主要崩溃日志信息：\n%s\n\n" +
+                            "完整崩溃日志可通过\"复制日志\"按钮保存到系统剪切版",
                             crashLog.length(),
                             summary
                         );
@@ -115,9 +115,9 @@ public class CrashActivity extends BaseActivity {
                         // 只显示错误摘要
                         String summary = extractErrorSummary(crashLog);
                         String displayText = String.format(
-                            "检测到详细错误日志（%d 字符）\n\n" +
-                            "完整错误信息：\n%s\n\n" +
-                            "日志可通过\"复制日志\"按钮保存到系统剪切版",
+                            "检测到详细崩溃日志信息（%d 字符）\n\n" +
+                            "完整崩溃日志信息：\n%s\n\n" +
+                            "崩溃日志可通过\"复制日志\"按钮保存到系统剪切版",
                             crashLog.length(),
                             summary
                         );
