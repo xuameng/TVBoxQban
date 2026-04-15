@@ -27,8 +27,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="@dimen/vs_20"
-            android:text="聚汇影视居然崩溃了！"
-            android:textColor="#FF6B6B"
+            android:text="聚汇影视提示您：我居然崩溃了！"
+            android:textColor="#FFD700"
             android:textSize="@dimen/vs_28"
             android:textStyle="bold" />
 
