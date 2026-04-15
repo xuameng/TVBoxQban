@@ -239,8 +239,8 @@ public class HomeActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 FastClickCheckUtil.check(v);
-				throw new RuntimeException("Test crash from HomeActivity");
                 if(dataInitOk && jarInitOk){
+					throw new RuntimeException("Test crash from HomeActivity");
                     String cachePath = FileUtils.getCachePath();          //xuameng点击清空缓存
                     String cspCachePath = FileUtils.getFilePath()+"/csp/";
                     File cspCacheDir = new File(cspCachePath);
