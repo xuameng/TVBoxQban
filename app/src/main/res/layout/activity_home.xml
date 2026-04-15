@@ -46,6 +46,13 @@
             android:layout_weight="1.0"
             android:textAlignment="gravity"/>
         <TextView
+            android:id="@+id/tvTest"
+            android:textSize="@dimen/vs_0"
+            android:visibility="visible"
+            android:textColor="@color/color_90000000"
+            android:layout_width="@dimen/vs_0"
+            android:layout_height="@dimen/vs_0"/>
+        <TextView
             android:textSize="@dimen/ts_28"
             android:textColor="@android:color/white"
             android:gravity="center|right"
