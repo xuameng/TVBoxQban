@@ -22,6 +22,10 @@ import com.github.tvbox.osc.ui.activity.HomeActivity;
 import java.io.File;
 import java.io.FileWriter;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 /**
  * xuameng
  * 全局崩溃捕获 - 修复日志过长卡死问题
@@ -55,7 +59,7 @@ public class CrashActivity extends BaseActivity {
         progressBar.setVisibility(View.VISIBLE);
         tvLog.setText("正在加载崩溃日志...");
         
-        // 隐藏分享按钮直到日志加载完成
+        // 隐藏日志复制等按钮直到日志加载完成
         tvShare.setVisibility(View.GONE);
         tvRestart.setVisibility(View.GONE);
 
@@ -70,7 +74,7 @@ public class CrashActivity extends BaseActivity {
         tvRestart.setOnKeyListener((v, keyCode, event) -> {
             if (event.getAction() == KeyEvent.ACTION_UP
                     && keyCode == KeyEvent.KEYCODE_ENTER) {
-				CrashLogUtil.deleteCrashLog(this);  //删除日志
+                CrashLogUtil.deleteCrashLog(this);  //删除日志
                 restartApp();
                 return true;
             }
@@ -169,12 +173,16 @@ public class CrashActivity extends BaseActivity {
         return summary.toString();
     }
 
+    /**
+     * 复制到剪切版并备到到 聚汇影视备份黑标目录中
+     */
     private void copyCrashLogToClipboard() {
         if (crashLog == null || crashLog.isEmpty()) {
             App.showToastShort(this, "没有可复制的日志");
             return;
         }
 
+        // 1️⃣ 复制到剪切板（主线程）
         try {
             android.content.ClipboardManager clipboard =
                     (android.content.ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
@@ -183,12 +191,52 @@ public class CrashActivity extends BaseActivity {
                     android.content.ClipData.newPlainText("Crash Log", crashLog);
 
             clipboard.setPrimaryClip(clip);
-
-            App.showToastShort(this, "崩溃日志已复制到剪切板");
         } catch (Exception e) {
             e.printStackTrace();
             App.showToastShort(this, "崩溃日志复制失败：" + e.getMessage());
+            return;
         }
+
+        // 2️⃣ 异步保存到 聚汇影视备份黑标 目录
+        new Thread(() -> {
+            try {
+                File root = Environment.getExternalStorageDirectory();
+                File dir = new File(root, "聚汇影视备份黑标");
+
+                if (!dir.exists()) {
+                    dir.mkdirs();
+                }
+
+                // ✅ 按时间生成文件名
+                String time = new java.text.SimpleDateFormat(
+                        "yyyy-MM-dd_HH-mm",
+                        java.util.Locale.getDefault()
+                ).format(new java.util.Date());
+
+                File logFile = new File(dir, "jvhuiys_crash_" + time + ".txt");
+
+                FileWriter writer = new FileWriter(logFile, false);
+                writer.write(crashLog);
+                writer.flush();
+                writer.close();
+
+                runOnUiThread(() ->
+                        App.showToastShort(
+                                CrashActivity.this,
+                                "日志已复制到剪切版并保存到：\n" + logFile.getAbsolutePath()
+                        )
+                );
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                runOnUiThread(() ->
+                        App.showToastShort(
+                                CrashActivity.this,
+                                "日志保存失败：" + e.getMessage()
+                        )
+                );
+            }
+        }).start();
     }
 
     /**
@@ -198,6 +246,7 @@ public class CrashActivity extends BaseActivity {
         if (text == null || text.isEmpty()) return 0;
         return text.split("\n").length;
     }
+
     /**
      * 重启应用
      */
