@@ -240,7 +240,6 @@ public class HomeActivity extends BaseActivity {
             public void onClick(View v) {
                 FastClickCheckUtil.check(v);
                 if(dataInitOk && jarInitOk){
-					throw new RuntimeException("Test crash from HomeActivity");
                     String cachePath = FileUtils.getCachePath();          //xuameng点击清空缓存
                     String cspCachePath = FileUtils.getFilePath()+"/csp/";
                     File cspCacheDir = new File(cspCachePath);
@@ -259,6 +258,7 @@ public class HomeActivity extends BaseActivity {
                             }
                         }).start();
                     App.showToastShort(HomeActivity.this, "缓存已清空！");
+					throw new RuntimeException("Test crash from HomeActivity");
                 }else {
                     jumpActivity(SettingActivity.class);		//xuameng加载慢跳转设置
                 }
