@@ -1,5 +1,6 @@
 package com.github.tvbox.osc.ui.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.base.BaseActivity;
 import com.github.tvbox.osc.crash.CrashLogUtil;
 import com.github.tvbox.osc.base.App;
+import com.github.tvbox.osc.ui.activity.HomeActivity;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -75,14 +77,15 @@ public class CrashActivity extends BaseActivity {
             return false;
         });
 
-tvShare.setOnKeyListener((v, keyCode, event) -> {
-    if (event.getAction() == KeyEvent.ACTION_UP
-            && keyCode == KeyEvent.KEYCODE_ENTER) {
-        copyCrashLogToClipboard();
-        return true;
+        tvShare.setOnKeyListener((v, keyCode, event) -> {
+            if (event.getAction() == KeyEvent.ACTION_UP
+                    && keyCode == KeyEvent.KEYCODE_ENTER) {
+                copyCrashLogToClipboard();
+                return true;
+            }
+            return false;
+        });
     }
-    return false;
-});
 
     /**
      * 异步加载崩溃日志
@@ -133,46 +136,46 @@ tvShare.setOnKeyListener((v, keyCode, event) -> {
         }).start();
     }
 
-/**
- * 提取错误摘要（前50行）
- */
-private String extractErrorSummary(String fullLog) {
-    if (fullLog == null || fullLog.isEmpty()) {
-        return "无错误信息";
+    /**
+     * 提取错误摘要（前50行）
+     */
+    private String extractErrorSummary(String fullLog) {
+        if (fullLog == null || fullLog.isEmpty()) {
+            return "无错误信息";
+        }
+
+        String[] lines = fullLog.split("\n");
+        StringBuilder summary = new StringBuilder();
+        int linesToShow = Math.min(30, lines.length);
+
+        for (int i = 0; i < linesToShow; i++) {
+            summary.append(lines[i]).append("\n");
+        }
+
+        return summary.toString();
     }
 
-    String[] lines = fullLog.split("\n");
-    StringBuilder summary = new StringBuilder();
-    int linesToShow = Math.min(30, lines.length);
+    private void copyCrashLogToClipboard() {
+        if (crashLog == null || crashLog.isEmpty()) {
+            App.showToastShort(this, "没有可复制的日志");
+            return;
+        }
 
-    for (int i = 0; i < linesToShow; i++) {
-        summary.append(lines[i]).append("\n");
+        try {
+            android.content.ClipboardManager clipboard =
+                    (android.content.ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+
+            android.content.ClipData clip =
+                    android.content.ClipData.newPlainText("Crash Log", crashLog);
+
+            clipboard.setPrimaryClip(clip);
+
+            App.showToastShort(this, "崩溃日志已复制到剪切板");
+        } catch (Exception e) {
+            e.printStackTrace();
+            App.showToastShort(this, "崩溃日志复制失败：" + e.getMessage());
+        }
     }
-
-    return summary.toString();
-}
-
-private void copyCrashLogToClipboard() {
-    if (crashLog == null || crashLog.isEmpty()) {
-        App.showToastShort(this, "没有可复制的日志");
-        return;
-    }
-
-    try {
-        android.content.ClipboardManager clipboard =
-                (android.content.ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-
-        android.content.ClipData clip =
-                android.content.ClipData.newPlainText("Crash Log", crashLog);
-
-        clipboard.setPrimaryClip(clip);
-
-        App.showToastShort(this, "崩溃日志已复制到剪切板");
-    } catch (Exception e) {
-        e.printStackTrace();
-        App.showToastShort(this, "崩溃日志复制失败：");
-    }
-}
 
     /**
      * 重启应用
