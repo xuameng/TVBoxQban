@@ -65,10 +65,10 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
 
             String fullLog = sw.toString();
 
-            // 限制最多 300 行
+            // 限制最多 400 行
             String[] lines = fullLog.split("\n");
             StringBuilder limitedLog = new StringBuilder();
-            int maxLines = Math.min(300, lines.length);
+            int maxLines = Math.min(400, lines.length);
 
             for (int i = 0; i < maxLines; i++) {
                 limitedLog.append(lines[i]).append("\n");
