@@ -93,6 +93,20 @@ public class CrashActivity extends BaseActivity {
     }
 
     /**
+     * 设置焦点到重启按钮
+     */
+    // 
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) {
+            if (tvRestart != null && tvRestart.getVisibility() == View.VISIBLE) {
+                tvRestart.requestFocus();
+            }
+        }
+    }
+
+    /**
      * 异步加载崩溃日志
      */
     private void loadCrashLogAsync() {
@@ -137,7 +151,7 @@ public class CrashActivity extends BaseActivity {
                     tvRestart.requestFocus();
                     
                     // 滚动到底部查看最新日志
-                    scrollView.post(() -> scrollView.fullScroll(View.FOCUS_DOWN));
+                   // scrollView.post(() -> scrollView.fullScroll(View.FOCUS_DOWN));
                 });
             } catch (Exception e) {
                 runOnUiThread(() -> {
