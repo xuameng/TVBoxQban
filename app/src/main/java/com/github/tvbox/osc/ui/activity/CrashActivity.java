@@ -104,7 +104,7 @@ public class CrashActivity extends BaseActivity {
                         // 只显示错误摘要
                         String summary = extractErrorSummary(crashLog);
                         String displayText = String.format(
-                            "检测到详细崩溃日志信息（%d 字符）\n\n" +
+                            "检测到详细崩溃日志信息（共 %d 行）\n\n" +
                             "主要崩溃日志信息：\n%s\n\n" +
                             "完整崩溃日志可通过\"复制日志\"按钮保存到系统剪切版",
                             lineCount,
@@ -146,19 +146,24 @@ public class CrashActivity extends BaseActivity {
     }
 
     /**
-     * 提取错误摘要（前50行）
+     * 提取错误摘要（前MAX_DISPLAY_LINES行）
      */
     private String extractErrorSummary(String fullLog) {
         if (fullLog == null || fullLog.isEmpty()) {
             return "无错误信息";
         }
 
-        String[] lines = fullLog.split("\n");
+        String[] lines = fullLog.split("\n", -1);
         StringBuilder summary = new StringBuilder();
-        int linesToShow = Math.min(50, lines.length);
+        int linesToShow = Math.min(MAX_DISPLAY_LINES, lines.length);
 
         for (int i = 0; i < linesToShow; i++) {
             summary.append(lines[i]).append("\n");
+        }
+
+        // 删除最后一个多余的换行
+        if (summary.length() > 0) {
+            summary.deleteCharAt(summary.length() - 1);
         }
 
         return summary.toString();
