@@ -49,4 +49,19 @@ public class CrashLogUtil {
             return "读取崩溃日志失败";
         }
     }
+
+public static void deleteCrashLog(Context context) {
+    try {
+        File dir = context.getExternalFilesDir(null);
+        if (dir == null) return;
+
+        File file = new File(dir, FILE_NAME);
+        if (file.exists()) {
+            boolean deleted = file.delete();
+            Log.d(TAG, deleted ? "崩溃日志已删除" : "崩溃日志删除失败");
+        }
+    } catch (Exception e) {
+        Log.e(TAG, "删除崩溃日志失败", e);
+    }
+}
 }
