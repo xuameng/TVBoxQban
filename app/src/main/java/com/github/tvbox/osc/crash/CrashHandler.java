@@ -54,24 +54,36 @@ public void uncaughtException(Thread thread, Throwable ex) {
     // 防止 CrashActivity 再崩溃
     Process.killProcess(Process.myPid());
 }
-    private void saveCrashLog(Throwable ex) {
-        try {
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            ex.printStackTrace(pw);
+private void saveCrashLog(Throwable ex) {
+    try {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        ex.printStackTrace(pw);
+        pw.flush();
 
-            String crashTime = new SimpleDateFormat(
-                    "yyyy-MM-dd HH:mm:ss", Locale.getDefault()
-            ).format(new Date());
+        String fullLog = sw.toString();
 
-            String log = "===== Crash Time: " + crashTime + " =====\n"
-                    + sw.toString();
+        // 限制最多 300 行
+        String[] lines = fullLog.split("\n");
+        StringBuilder limitedLog = new StringBuilder();
+        int maxLines = Math.min(300, lines.length);
 
-            // 保存到文件（你也可以存 SharedPreferences）
-            CrashLogUtil.save(context, log);
-
-        } catch (Exception e) {
-            Log.e(TAG, "保存崩溃日志失败", e);
+        for (int i = 0; i < maxLines; i++) {
+            limitedLog.append(lines[i]).append("\n");
         }
+
+        String crashTime = new SimpleDateFormat(
+                "yyyy-MM-dd HH:mm:ss",
+                Locale.getDefault()
+        ).format(new Date());
+
+        String log = "===== Crash Time: " + crashTime + " =====\n"
+                + limitedLog.toString();
+
+        CrashLogUtil.save(context, log);
+
+    } catch (Exception e) {
+        Log.e(TAG, "保存崩溃日志失败", e);
     }
+}
 }
