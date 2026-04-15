@@ -1,23 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:paddingLeft="@dimen/vs_50"
-    android:paddingRight="@dimen/vs_50"
     android:paddingTop="@dimen/vs_45"
-    android:paddingBottom="@dimen/vs_50"
+    android:paddingRight="@dimen/vs_50"
+    android:paddingBottom="@dimen/vs_45"
     android:background="@drawable/app_bg">
-
-    <!-- 背景图标（居中，后一层） -->
+    
     <FrameLayout
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        android:layout_weight="1">
 
         <ImageView
             android:layout_width="@dimen/vs_120"
@@ -25,31 +20,38 @@
             android:layout_gravity="center"
             android:src="@drawable/icon_empty"/>
     </FrameLayout>
-
-    <!-- 标题 -->
+    
     <TextView
-        android:id="@+id/tvTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="聚汇影视居然崩溃了！"
         android:textColor="#FF6B6B"
         android:textSize="@dimen/vs_28"
         android:textStyle="bold"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="@dimen/vs_30"/>
+        android:layout_marginBottom="@dimen/vs_20"
+        android:layout_gravity="center_horizontal"/>
 
-    <!-- 日志区域 -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="@dimen/vs_30"
+        android:layout_height="@dimen/vs_30"
+        android:layout_gravity="center"
+        android:layout_marginBottom="@dimen/vs_20"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="崩溃日志信息"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/ts_24"
+        android:layout_marginBottom="@dimen/vs_15"/>
+
     <ScrollView
         android:id="@+id/scrollView"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/tvTitle"
-        app:layout_constraintBottom_toTopOf="@id/btnGroup"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="@dimen/vs_20"
+        android:layout_weight="1"
+        android:layout_marginBottom="@dimen/vs_10"
         android:background="@drawable/button_dialog_main_1"
         android:padding="@dimen/vs_10"
         android:scrollbars="vertical">
@@ -62,20 +64,17 @@
             android:textSize="@dimen/ts_16"
             android:fontFamily="monospace"
             android:lineSpacingExtra="@dimen/vs_5"
-            android:padding="@dimen/vs_10"/>
+            android:padding="@dimen/vs_10"
+            android:isScrollContainer="true"/>
+
     </ScrollView>
 
-    <!-- 按钮组 -->
     <LinearLayout
-        android:id="@+id/btnGroup"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center"
-        app:layout_constraintBottom_toTopOf="@id/tvTip"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="@dimen/vs_20">
+        android:layout_marginTop="@dimen/vs_10">
 
         <TextView
             android:id="@+id/tvShare"
@@ -90,8 +89,8 @@
             android:gravity="center"
             android:paddingVertical="@dimen/vs_15"
             android:background="@drawable/button_dialog_main_1"
-            android:clickable="true"
-            android:focusable="true"/>
+            android:focusable="true"
+            android:clickable="true"/>
 
         <TextView
             android:id="@+id/tvRestart"
@@ -106,20 +105,18 @@
             android:gravity="center"
             android:paddingVertical="@dimen/vs_15"
             android:background="@drawable/button_dialog_main_1"
-            android:clickable="true"
-            android:focusable="true"/>
+            android:focusable="true"
+            android:clickable="true"/>
+
     </LinearLayout>
 
-    <!-- 底部提示 -->
     <TextView
-        android:id="@+id/tvTip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="请把错误日志发送到：xuameng_1980@163.com，感谢支持！"
         android:textColor="#888888"
         android:textSize="@dimen/vs_20"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        android:layout_marginTop="@dimen/vs_15"
+        android:layout_gravity="center_horizontal"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>
