@@ -96,7 +96,6 @@ public class HomeActivity extends BaseActivity {
     private LinearLayout topLayout;
     private LinearLayout contentLayout;
     private TextView tvDate;
-    private TextView tvTest; //xuameng 动画不执行BUG
     private TextView tvName;
     private TvRecyclerView mGridView;
     private NoScrollViewPager mViewPager;
@@ -155,7 +154,6 @@ public class HomeActivity extends BaseActivity {
     private void initView() {
         this.topLayout = findViewById(R.id.topLayout);
         this.tvDate = findViewById(R.id.tvDate);
-        this.tvTest = findViewById(R.id.tvTest);   //xuameng 动画不执行BUG
         this.tvName = findViewById(R.id.tvName);
         this.contentLayout = findViewById(R.id.contentLayout);
         this.mGridView = findViewById(R.id.mGridView);
@@ -730,7 +728,6 @@ public class HomeActivity extends BaseActivity {
             }
         });
         if (hide && topHide == 0) {
-            tvTest.setVisibility(View.GONE);  //xuameng 动画不执行BUG
             animatorSet.playTogether(new Animator[]{
                     ObjectAnimator.ofObject(viewObj, "marginTop", new IntEvaluator(),
                             new Object[]{
@@ -748,24 +745,6 @@ public class HomeActivity extends BaseActivity {
             return;
         }
         if (!hide && topHide == 1) {
-            tvTest.setVisibility(View.VISIBLE); //xuameng 动画不执行BUG
-            animatorSet.playTogether(new Animator[]{
-                    ObjectAnimator.ofObject(viewObj, "marginTop", new IntEvaluator(),
-                            new Object[]{
-                                    Integer.valueOf(AutoSizeUtils.mm2px(this.mContext, 0.0f)),
-                                    Integer.valueOf(AutoSizeUtils.mm2px(this.mContext, 10.0f))
-                            }),
-                    ObjectAnimator.ofObject(viewObj, "height", new IntEvaluator(),
-                            new Object[]{
-                                    Integer.valueOf(AutoSizeUtils.mm2px(this.mContext, 1.0f)),
-                                    Integer.valueOf(AutoSizeUtils.mm2px(this.mContext, 50.0f))
-                            }),
-                    ObjectAnimator.ofFloat(this.topLayout, "alpha", new float[]{0.0f, 1.0f})});
-            animatorSet.setDuration(250);
-            animatorSet.start();
-            return;
-        }else if (!hide && tvTest.getVisibility() == View.GONE){
-            tvTest.setVisibility(View.VISIBLE); //xuameng 动画不执行BUG
             animatorSet.playTogether(new Animator[]{
                     ObjectAnimator.ofObject(viewObj, "marginTop", new IntEvaluator(),
                             new Object[]{
