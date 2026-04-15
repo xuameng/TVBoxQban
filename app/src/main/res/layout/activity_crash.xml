@@ -1,53 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:paddingLeft="@dimen/vs_54"
-    android:paddingTop="@dimen/vs_45"
+    android:paddingLeft="@dimen/vs_50"
     android:paddingRight="@dimen/vs_50"
-    android:paddingBottom="@dimen/vs_54"
+    android:paddingTop="@dimen/vs_45"
+    android:paddingBottom="@dimen/vs_50"
     android:background="@drawable/app_bg">
-    <ImageView
-        android:layout_width="@dimen/vs_120"
-        android:layout_height="@dimen/vs_120"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:src="@drawable/icon_empty"/>
+
+    <!-- 背景图标（居中，后一层） -->
+    <FrameLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageView
+            android:layout_width="@dimen/vs_120"
+            android:layout_height="@dimen/vs_120"
+            android:layout_gravity="center"
+            android:src="@drawable/icon_empty"/>
+    </FrameLayout>
+
     <!-- 标题 -->
     <TextView
+        android:id="@+id/tvTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="聚汇影视居然崩溃了！"
         android:textColor="#FF6B6B"
         android:textSize="@dimen/vs_28"
         android:textStyle="bold"
-        android:layout_marginBottom="@dimen/vs_20"
-        android:layout_gravity="center_horizontal"/>
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="@dimen/vs_30"/>
 
-    <!-- 加载指示器 -->
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="@dimen/vs_30"
-        android:layout_height="@dimen/vs_30"
-        android:layout_gravity="center"
-        android:layout_marginBottom="@dimen/vs_20"/>
-
-    <!-- 日志显示区域 -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="崩溃日志信息"
-        android:textColor="@android:color/white"
-        android:textSize="@dimen/ts_24"
-        android:layout_marginBottom="@dimen/vs_10"/>
-
+    <!-- 日志区域 -->
     <ScrollView
         android:id="@+id/scrollView"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_marginBottom="@dimen/vs_10"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle"
+        app:layout_constraintBottom_toTopOf="@id/btnGroup"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="@dimen/vs_20"
         android:background="@drawable/button_dialog_main_1"
         android:padding="@dimen/vs_10"
         android:scrollbars="vertical">
@@ -60,37 +62,37 @@
             android:textSize="@dimen/ts_16"
             android:fontFamily="monospace"
             android:lineSpacingExtra="@dimen/vs_5"
-            android:padding="@dimen/vs_10"
-            android:isScrollContainer="true"/>
-
+            android:padding="@dimen/vs_10"/>
     </ScrollView>
 
-    <!-- 按钮区域 -->
+    <!-- 按钮组 -->
     <LinearLayout
-        android:layout_width="match_parent"
+        android:id="@+id/btnGroup"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center"
-        android:layout_marginTop="@dimen/vs_10">
+        app:layout_constraintBottom_toTopOf="@id/tvTip"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="@dimen/vs_20">
 
-        <!-- 复制日志按钮 -->
-<TextView
-    android:id="@+id/tvShare"
-    android:layout_width="0dp"
-    android:layout_height="wrap_content"
-    android:layout_weight="1"
-    android:layout_marginEnd="@dimen/vs_10"
-    android:text="复制日志"
-    android:textColor="@android:color/white"
-    android:textSize="@dimen/ts_22"
-    android:textStyle="bold"
-    android:gravity="center"
-    android:paddingVertical="12dp"
-    android:background="@drawable/button_dialog_main_1"
-    android:focusable="true"
-    android:clickable="true"/>
+        <TextView
+            android:id="@+id/tvShare"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginEnd="@dimen/vs_10"
+            android:text="复制日志"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/ts_22"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:paddingVertical="@dimen/vs_15"
+            android:background="@drawable/button_dialog_main_1"
+            android:clickable="true"
+            android:focusable="true"/>
 
-        <!-- 重启应用按钮 -->
         <TextView
             android:id="@+id/tvRestart"
             android:layout_width="0dp"
@@ -104,19 +106,20 @@
             android:gravity="center"
             android:paddingVertical="@dimen/vs_15"
             android:background="@drawable/button_dialog_main_1"
-            android:focusable="true"
-            android:clickable="true"/>
-
+            android:clickable="true"
+            android:focusable="true"/>
     </LinearLayout>
 
-    <!-- 提示信息 -->
+    <!-- 底部提示 -->
     <TextView
+        android:id="@+id/tvTip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="请把错误日志发送到：xuameng_1980@163.com，感谢支持！"
         android:textColor="#888888"
         android:textSize="@dimen/vs_20"
-        android:layout_marginTop="@dimen/vs_15"
-        android:layout_gravity="center_horizontal"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
