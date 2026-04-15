@@ -70,7 +70,7 @@ public class CrashActivity extends BaseActivity {
         tvRestart.setOnKeyListener((v, keyCode, event) -> {
             if (event.getAction() == KeyEvent.ACTION_UP
                     && keyCode == KeyEvent.KEYCODE_ENTER) {
-				CrashLogUtil.deleteCrashLog(this);
+				CrashLogUtil.deleteCrashLog(this);  //删除日志
                 restartApp();
                 return true;
             }
@@ -146,7 +146,7 @@ public class CrashActivity extends BaseActivity {
 
         String[] lines = fullLog.split("\n");
         StringBuilder summary = new StringBuilder();
-        int linesToShow = Math.min(30, lines.length);
+        int linesToShow = Math.min(50, lines.length);
 
         for (int i = 0; i < linesToShow; i++) {
             summary.append(lines[i]).append("\n");
