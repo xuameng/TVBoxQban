@@ -3,16 +3,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="@dimen/vs_40"
+    android:paddingLeft="@dimen/vs_54"
+    android:paddingTop="@dimen/vs_45"
+    android:paddingRight="@dimen/vs_50"
+    android:paddingBottom="@dimen/vs_54"
     android:background="@drawable/app_bg">
 
     <!-- 标题 -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="应用发生崩溃"
+        android:text="聚汇影视居然崩溃了！"
         android:textColor="#FF6B6B"
-        android:textSize="@dimen/vs_24"
+        android:textSize="@dimen/vs_28"
         android:textStyle="bold"
         android:layout_marginBottom="@dimen/vs_20"
         android:layout_gravity="center_horizontal"/>
@@ -29,9 +32,9 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="崩溃日志"
+        android:text="崩溃日志信息"
         android:textColor="@android:color/white"
-        android:textSize="@dimen/vs_20"
+        android:textSize="@dimen/ts_24"
         android:layout_marginBottom="@dimen/vs_10"/>
 
     <ScrollView
@@ -40,7 +43,7 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:layout_marginBottom="@dimen/vs_10"
-        android:background="@color/color_6C3D3D3D"
+        android:background="@drawable/button_dialog_main_1"
         android:padding="@dimen/vs_10"
         android:scrollbars="vertical">
 
@@ -49,7 +52,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@android:color/white"
-            android:textSize="@dimen/vs_15"
+            android:textSize="@dimen/ts_16"
             android:fontFamily="monospace"
             android:lineSpacingExtra="@dimen/vs_5"
             android:padding="@dimen/vs_10"
