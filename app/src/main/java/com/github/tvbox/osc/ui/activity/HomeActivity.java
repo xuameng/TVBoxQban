@@ -258,7 +258,6 @@ public class HomeActivity extends BaseActivity {
                             }
                         }).start();
                     App.showToastShort(HomeActivity.this, "缓存已清空！");
-					throw new RuntimeException("Test crash from HomeActivity");
                 }else {
                     jumpActivity(SettingActivity.class);		//xuameng加载慢跳转设置
                 }
