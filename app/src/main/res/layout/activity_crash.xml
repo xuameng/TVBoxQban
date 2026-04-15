@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp"
+    android:padding="@dimen/vs_40"
     android:background="@drawable/app_bg">
 
     <!-- 标题 -->
@@ -12,47 +12,47 @@
         android:layout_height="wrap_content"
         android:text="应用发生崩溃"
         android:textColor="#FF6B6B"
-        android:textSize="20sp"
+        android:textSize="@dimen/vs_24"
         android:textStyle="bold"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="@dimen/vs_20"
         android:layout_gravity="center_horizontal"/>
 
     <!-- 加载指示器 -->
     <ProgressBar
         android:id="@+id/progressBar"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="@dimen/vs_30"
+        android:layout_height="@dimen/vs_30"
         android:layout_gravity="center"
-        android:layout_marginBottom="16dp"/>
+        android:layout_marginBottom="@dimen/vs_20"/>
 
     <!-- 日志显示区域 -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="崩溃日志"
-        android:textColor="#FFFFFF"
-        android:textSize="16sp"
-        android:layout_marginBottom="8dp"/>
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/vs_20"
+        android:layout_marginBottom="@dimen/vs_10"/>
 
     <ScrollView
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:layout_marginBottom="16dp"
-        android:background="#2d2d2d"
-        android:padding="8dp"
+        android:layout_marginBottom="@dimen/vs_10"
+        android:background="@color/color_6C3D3D3D"
+        android:padding="@dimen/vs_10"
         android:scrollbars="vertical">
 
         <TextView
             android:id="@+id/tvCrashLog"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="#CCCCCC"
-            android:textSize="12sp"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/vs_15"
             android:fontFamily="monospace"
-            android:lineSpacingExtra="2dp"
-            android:padding="8dp"
+            android:lineSpacingExtra="@dimen/vs_5"
+            android:padding="@dimen/vs_10"
             android:isScrollContainer="true"/>
 
     </ScrollView>
@@ -63,25 +63,24 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center"
-        android:layout_marginTop="8dp">
+        android:layout_marginTop="@dimen/vs_10">
 
-        <!-- 分享日志按钮 -->
-        <TextView
-            android:id="@+id/tvShare"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginEnd="8dp"
-            android:text="分享日志"
-            android:textColor="#4FC3F7"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:gravity="center"
-            android:paddingVertical="12dp"
-            android:background="@drawable/bg_crash_button"
-            android:focusable="true"
-            android:clickable="true"
-            android:focusableInTouchMode="true"/>
+        <!-- 复制日志按钮 -->
+<TextView
+    android:id="@+id/tvShare"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_weight="1"
+    android:layout_marginEnd="@dimen/vs_10"
+    android:text="复制日志"
+    android:textColor="@android:color/white"
+    android:textSize="@dimen/ts_22"
+    android:textStyle="bold"
+    android:gravity="center"
+    android:paddingVertical="12dp"
+    android:background="@drawable/button_dialog_main_1"
+    android:focusable="true"
+    android:clickable="true"/>
 
         <!-- 重启应用按钮 -->
         <TextView
@@ -89,17 +88,16 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="@dimen/vs_10"
             android:text="重启应用"
-            android:textColor="#4CAF50"
-            android:textSize="16sp"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/ts_22"
             android:textStyle="bold"
             android:gravity="center"
-            android:paddingVertical="12dp"
-            android:background="@drawable/bg_crash_button"
+            android:paddingVertical="@dimen/vs_15"
+            android:background="@drawable/button_dialog_main_1"
             android:focusable="true"
-            android:clickable="true"
-            android:focusableInTouchMode="true"/>
+            android:clickable="true"/>
 
     </LinearLayout>
 
@@ -107,10 +105,10 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="使用方向键导航，Enter键确认"
+        android:text="请把错误日志发送到：xuameng_1980@163.com，感谢支持！"
         android:textColor="#888888"
-        android:textSize="12sp"
-        android:layout_marginTop="12dp"
+        android:textSize="@dimen/vs_20"
+        android:layout_marginTop="@dimen/vs_15"
         android:layout_gravity="center_horizontal"/>
 
 </LinearLayout>
