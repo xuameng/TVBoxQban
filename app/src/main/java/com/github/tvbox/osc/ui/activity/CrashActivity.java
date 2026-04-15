@@ -35,7 +35,7 @@ public class CrashActivity extends BaseActivity {
     private ProgressBar progressBar;
     private ScrollView scrollView;
     private String crashLog = "";
-    private static final int MAX_DISPLAY_LENGTH = 50;  //最多50行
+    private static final int MAX_DISPLAY_LINES = 50;  //最多50行
     private static final String LOG_FILE_NAME = "crash_log.txt";
 
     @Override
@@ -99,15 +99,15 @@ public class CrashActivity extends BaseActivity {
                 // 在主线程更新UI
                 runOnUiThread(() -> {
                     progressBar.setVisibility(View.GONE);
-                    
-                    if (crashLog.length() > MAX_DISPLAY_LENGTH) {
+                    int lineCount = getLineCount(crashLog);
+                    if (lineCount > MAX_DISPLAY_LINES) {
                         // 只显示错误摘要
                         String summary = extractErrorSummary(crashLog);
                         String displayText = String.format(
                             "检测到详细崩溃日志信息（%d 字符）\n\n" +
                             "主要崩溃日志信息：\n%s\n\n" +
                             "完整崩溃日志可通过\"复制日志\"按钮保存到系统剪切版",
-                            crashLog.length(),
+                            lineCount,
                             summary
                         );
                         tvLog.setText(displayText);
@@ -118,7 +118,7 @@ public class CrashActivity extends BaseActivity {
                             "检测到详细崩溃日志信息（%d 字符）\n\n" +
                             "完整崩溃日志信息：\n%s\n\n" +
                             "崩溃日志可通过\"复制日志\"按钮保存到系统剪切版",
-                            crashLog.length(),
+                            lineCount,
                             summary
                         );
                         tvLog.setText(displayText);
@@ -186,6 +186,13 @@ public class CrashActivity extends BaseActivity {
         }
     }
 
+    /**
+     * 判断行数
+     */
+    private int getLineCount(String text) {
+        if (text == null || text.isEmpty()) return 0;
+        return text.split("\n").length;
+    }
     /**
      * 重启应用
      */
