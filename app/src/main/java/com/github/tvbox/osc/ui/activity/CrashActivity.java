@@ -192,6 +192,7 @@ public class CrashActivity extends BaseActivity {
                     android.content.ClipData.newPlainText("Crash Log", crashLog);
 
             clipboard.setPrimaryClip(clip);
+            App.showToastShort(this, "崩溃日志已复制到剪切板");
         } catch (Exception e) {
             e.printStackTrace();
             App.showToastShort(this, "崩溃日志复制失败：" + e.getMessage());
@@ -233,7 +234,7 @@ public class CrashActivity extends BaseActivity {
                 runOnUiThread(() ->
                         App.showToastShort(
                                 CrashActivity.this,
-                                "日志保存失败：" + e.getMessage()
+                                "日志保存失败：请先到设置中获取存储权限" + e.getMessage()
                         )
                 );
             }
