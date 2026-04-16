@@ -27,6 +27,9 @@ import android.os.Looper;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.github.tvbox.osc.util.HawkConfig;
+import com.orhanobut.hawk.Hawk;
+
 /**
  * xuameng
  * 远端聚汇影视全面修改
@@ -68,17 +71,27 @@ public class SearchRemoteTvDialog extends BaseDialog {
 findViewById(R.id.btnClear).setOnClickListener(v -> {
     isCancelled = true;
     isSearching = false;
+
     remoteTvHostList.clear();
+    Hawk.delete(HawkConfig.REMOTE_TV_LIST);
+
     foundRemoteTv = false;
     showEmpty();
     App.showToastShort(getContext(), "列表已清空");
 });
+
 }
 
 @Override
 public void show() {
     super.show();
-    if (remoteTvHostList != null && !remoteTvHostList.isEmpty()) {
+
+    List<String> cache =
+            Hawk.get(HawkConfig.REMOTE_TV_LIST, null);
+
+    if (cache != null && !cache.isEmpty()) {
+        remoteTvHostList.clear();
+        remoteTvHostList.addAll(cache);
         showRemoteTvList();
     } else {
         showEmpty();
@@ -123,19 +136,21 @@ public void show() {
         }).start();
     }
 
-    private void finishSearch(boolean found) {
-        isSearching = false;
-        foundRemoteTv = found;
+private void finishSearch(boolean found) {
+    isSearching = false;
+    foundRemoteTv = found;
 
-        new Handler(Looper.getMainLooper()).post(() -> {
-            if (found && !remoteTvHostList.isEmpty()) {
-                showRemoteTvList();
-            } else {
-                showEmpty();
-                App.showToastShort(getContext(), "未找到附近聚汇影视！");
-            }
-        });
-    }
+    new Handler(Looper.getMainLooper()).post(() -> {
+        if (found && !remoteTvHostList.isEmpty()) {
+            // ✅ 保存到 Hawk
+            Hawk.put(HawkConfig.REMOTE_TV_LIST, new ArrayList<>(remoteTvHostList));
+            showRemoteTvList();
+        } else {
+            showEmpty();
+            App.showToastShort(getContext(), "未找到附近聚汇影视！");
+        }
+    });
+}
 
 private void showRemoteTvList() {
     showSuccess();
@@ -147,6 +162,7 @@ private void showRemoteTvList() {
                 new SelectDialogAdapter.SelectDialogInterface<String>() {
                     @Override
                     public void click(String value, int pos) {
+                        Hawk.put(HawkConfig.REMOTE_TVBOX, value);
                         RemoteTVBox.setAvalible(value);
                         App.showToastShort(getContext(), "已选择：" + value);
                     }
@@ -169,12 +185,23 @@ private void showRemoteTvList() {
                 }
         );
 
-        list.setAdapter(mSelectAdapter);
+         mSelectAdapter.setData(remoteTvHostList, getLastSelectedIndex());
     }
 
     // ✅ 正确：两个参数
     mSelectAdapter.setData(remoteTvHostList, 0);
 }
+
+
+private int getLastSelectedIndex() {
+    String last = Hawk.get(HawkConfig.REMOTE_TVBOX, null);
+    if (last == null || remoteTvHostList == null) {
+        return 0;
+    }
+    return remoteTvHostList.indexOf(last);
+}
+
+
 
     protected void setLoadSir(View view) {
         if (mLoadService == null) {
