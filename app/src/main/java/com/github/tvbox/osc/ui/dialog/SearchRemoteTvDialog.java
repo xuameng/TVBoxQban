@@ -133,8 +133,7 @@ public class SearchRemoteTvDialog extends BaseDialog {
                 // ✅ 关键：默认选中第一个
                 if (mSelectAdapter != null) {
                     mSelectAdapter.setSelect(0);
-                    mSelectAdapter.notifyItemRangeChanged(0, mSelectAdapter.getItemCount());
-                    Hawk.put(HawkConfig.REMOTE_TVBOX, remoteTvHostList.get(0).getHost());
+                    RemoteTVBox.setAvalible(remoteTvHostList.get(0).getHost());
                 }
             } else {
                 showEmpty();
@@ -152,7 +151,6 @@ public class SearchRemoteTvDialog extends BaseDialog {
                     new SelectDialogAdapter.SelectDialogInterface<RemoteTVBox.RemoteDevice>() {
                         @Override
                         public void click(RemoteTVBox.RemoteDevice value, int pos) {
-                            Hawk.put(HawkConfig.REMOTE_TVBOX, value.getHost());
                             RemoteTVBox.setAvalible(value.getHost());
                             App.showToastShort(getContext(), "已选择：" + value.hostName);
                         }
