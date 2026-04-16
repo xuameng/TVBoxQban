@@ -14,9 +14,14 @@ import com.github.tvbox.osc.callback.LoadingCallback;
 import com.github.tvbox.osc.player.thirdparty.RemoteTVBox;
 import com.github.tvbox.osc.ui.adapter.SelectDialogAdapter;
 import com.github.tvbox.osc.ui.fragment.ModelSettingFragment;
+import com.github.tvbox.osc.base.App;  //xuameng toast
+
 import com.kingja.loadsir.callback.Callback;
 import com.kingja.loadsir.core.LoadService;
 import com.kingja.loadsir.core.LoadSir;
+
+import android.os.Handler;
+import android.os.Looper;
 
 public class SearchRemoteTvDialog extends BaseDialog {
 
@@ -99,7 +104,7 @@ public class SearchRemoteTvDialog extends BaseDialog {
         isSearching = false;
         ModelSettingFragment.foundRemoteTv = found;
 
-        ((Activity) getContext()).runOnUiThread(() -> {
+        new Handler(Looper.getMainLooper()).post(() -> {
             if (found && !ModelSettingFragment.remoteTvHostList.isEmpty()) {
                 showRemoteTvList();
             } else {
