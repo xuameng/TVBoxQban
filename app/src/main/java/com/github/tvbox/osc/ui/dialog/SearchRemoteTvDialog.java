@@ -16,6 +16,7 @@ import com.github.tvbox.osc.callback.LoadingCallback;
 import com.github.tvbox.osc.player.thirdparty.RemoteTVBox;
 import com.github.tvbox.osc.ui.adapter.SelectDialogAdapter;
 import com.github.tvbox.osc.ui.fragment.ModelSettingFragment;
+import com.github.tvbox.osc.util.PlayerHelper;
 import com.github.tvbox.osc.util.HawkConfig;
 import com.kingja.loadsir.callback.Callback;
 import com.kingja.loadsir.core.LoadService;
@@ -67,10 +68,10 @@ public class SearchRemoteTvDialog extends BaseDialog {
             remoteTvHostList.clear();
             Hawk.delete(HawkConfig.REMOTE_TV_LIST);
             Hawk.delete(HawkConfig.REMOTE_TVBOX);
-            // ✅ 只清除RemoteTVBox相关的缓存
+            // ✅ 添加：清除 PlayerHelper 缓存
+            PlayerHelper.clearRemoteTvBoxCache(); 
             showSuccess();
             foundRemoteTv = false;
-	    updatePlayerExistInfoCache();
             setTip("搜索附近聚汇影视");
             // 关键修改：清空适配器数据并刷新UI
             if (mSelectAdapter != null) {
@@ -142,38 +143,18 @@ public class SearchRemoteTvDialog extends BaseDialog {
                 Hawk.put(HawkConfig.REMOTE_TV_LIST, new ArrayList<>(remoteTvHostList));
                 setTip("选择附近聚汇影视");
                 showRemoteTvList();
-                
-                // ✅ 关键：设置新的远程TVBox并通知播放器更新
-                String firstHost = remoteTvHostList.get(0);
-                RemoteTVBox.setAvalible(firstHost);
-                
-                // ✅ 更新PlayerHelper中的播放器存在信息缓存
-                // 这样在播放页面就能实时获取到最新的远程TVBox状态
-                updatePlayerExistInfoCache();
-                
-                App.showToastShort(getContext(), "已自动选择：" + firstHost);
+                // ✅ 关键：默认选中第一个
+                if (mSelectAdapter != null) {
+                    RemoteTVBox.setAvalible(remoteTvHostList.get(0));
+                    // ✅ 添加：清除 PlayerHelper 缓存
+                    PlayerHelper.clearRemoteTvBoxCache(); 
+                }
             } else {
                 setTip("搜索附近聚汇影视");
                 showEmpty();
                 App.showToastShort(getContext(), "未找到附近聚汇影视！");
             }
         });
-    }
-
-    /**
-     * 更新PlayerHelper中的播放器存在信息缓存，确保播放页面能实时获取最新状态
-     */
-    private void updatePlayerExistInfoCache() {
-        // 触发PlayerHelper更新缓存，这样播放页面就能获取到最新的远程TVBox状态
-        // 通过调用PlayerHelper.getPlayersExistInfo()来强制刷新缓存
-        try {
-            // 由于PlayerHelper是静态类，我们可以通过调用其方法来刷新缓存
-            Class.forName("com.github.tvbox.osc.util.PlayerHelper")
-                 .getMethod("getPlayersExistInfo")
-                 .invoke(null);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     private void showRemoteTvList() {
@@ -184,10 +165,8 @@ public class SearchRemoteTvDialog extends BaseDialog {
                 @Override
                 public void click(String value, int pos) {
                     RemoteTVBox.setAvalible(value);
-                    
-                    // ✅ 同样更新播放器存在信息缓存
-                    updatePlayerExistInfoCache();
-                    
+                    // ✅ 添加：清除 PlayerHelper 缓存
+                    PlayerHelper.clearRemoteTvBoxCache(); 
                     App.showToastShort(getContext(), "已选择：" + value);
                 }
 
