@@ -161,9 +161,8 @@ try {
         client.newCall(new Request.Builder().url(url).post(formBody).build()).enqueue(callback);
     }
 
-    public abstract class Callback {
-// 修改为
-public abstract void found(RemoteDevice device, boolean end);
+    public static abstract class Callback {
+        public abstract void found(RemoteDevice device, boolean end);
         public abstract void fail(boolean all, boolean end);
     }
 
