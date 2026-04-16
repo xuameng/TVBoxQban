@@ -105,7 +105,7 @@ public class SearchRemoteTvDialog extends BaseDialog {
             return;
         }
         isSearching = true;
-		isCancelled = false;
+        isCancelled = false;
         showLoading();
         remoteTvHostList.clear();
         foundRemoteTv = false;
