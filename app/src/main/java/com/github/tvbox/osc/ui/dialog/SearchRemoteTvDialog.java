@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.callback.EmptyCallback;
@@ -71,11 +72,15 @@ public class SearchRemoteTvDialog extends BaseDialog {
         });
     }
 
-    @Override
-    public void show() {
-        super.show();
-       // startSearch();
+@Override
+public void show() {
+    super.show();
+    if (remoteTvHostList != null && !remoteTvHostList.isEmpty()) {
+        showRemoteTvList();
+    } else {
+        showEmpty();
     }
+}
 
     public void setTip(String tip) {
         ((TextView) findViewById(R.id.title)).setText(tip);
@@ -131,42 +136,40 @@ public class SearchRemoteTvDialog extends BaseDialog {
 private void showRemoteTvList() {
     showSuccess();
 
-    TvRecyclerView list = findViewById(R.id.list);
+    RecyclerView list = findViewById(R.id.list);
 
     if (mSelectAdapter == null) {
         mSelectAdapter = new SelectDialogAdapter<>(
-            new SelectDialogAdapter.SelectDialogInterface<String>() {
-                @Override
-                public void click(String value, int pos) {
-                    RemoteTVBox.setAvalible(value);
-                    App.showToastShort(getContext(), "已选择：" + value);
-                }
+                new SelectDialogAdapter.SelectDialogInterface<String>() {
+                    @Override
+                    public void click(String value, int pos) {
+                        RemoteTVBox.setAvalible(value);
+                        App.showToastShort(getContext(), "已选择：" + value);
+                    }
 
-                @Override
-                public String getDisplay(String val) {
-                    return val;
-                }
-            },
-            new DiffUtil.ItemCallback<String>() {
-                @Override
-                public boolean areItemsTheSame(@NonNull String oldItem, @NonNull String newItem) {
-                    return oldItem.equals(newItem);
-                }
+                    @Override
+                    public String getDisplay(String val) {
+                        return val;
+                    }
+                },
+                new DiffUtil.ItemCallback<String>() {
+                    @Override
+                    public boolean areItemsTheSame(@NonNull String oldItem, @NonNull String newItem) {
+                        return oldItem.equals(newItem);
+                    }
 
-                @Override
-                public boolean areContentsTheSame(@NonNull String oldItem, @NonNull String newItem) {
-                    return oldItem.equals(newItem);
+                    @Override
+                    public boolean areContentsTheSame(@NonNull String oldItem, @NonNull String newItem) {
+                        return oldItem.equals(newItem);
+                    }
                 }
-            }
         );
-
-        // ✅ 关键：用 SelectDialog 的布局
-        mSelectAdapter.setLayoutId(R.layout.item_dialog_select);
 
         list.setAdapter(mSelectAdapter);
     }
 
-    mSelectAdapter.setData(remoteTvHostList);
+    // ✅ 正确：两个参数
+    mSelectAdapter.setData(remoteTvHostList, 0);
 }
 
     protected void setLoadSir(View view) {
