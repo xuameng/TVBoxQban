@@ -79,7 +79,6 @@ findViewById(R.id.btnClear).setOnClickListener(v -> {
     showEmpty();
     App.showToastShort(getContext(), "列表已清空");
 });
-
 }
 
 @Override
@@ -185,11 +184,14 @@ private void showRemoteTvList() {
                 }
         );
 
-         mSelectAdapter.setData(remoteTvHostList, getLastSelectedIndex());
+        list.setAdapter(mSelectAdapter);
     }
 
-    // ✅ 正确：两个参数
-    mSelectAdapter.setData(remoteTvHostList, 0);
+    // ✅ 只在这里 setData
+    mSelectAdapter.setData(
+        remoteTvHostList,
+        getLastSelectedIndex()
+    );
 }
 
 
