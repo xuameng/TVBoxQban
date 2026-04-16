@@ -26,8 +26,16 @@ import android.os.Looper;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * xuameng
+ * 远端聚汇影视全面修改
+ * 直接显示上次列表，可清空列表，重新搜索等
+ * @version 2.0.0
+ */
+
 public class SearchRemoteTvDialog extends BaseDialog {
 
+    private SelectDialogAdapter<String> mSelectAdapter;
     private static final List<String> remoteTvHostList = new ArrayList<>();
     private boolean foundRemoteTv = false;
     private LoadService mLoadService;
@@ -50,6 +58,7 @@ public class SearchRemoteTvDialog extends BaseDialog {
                 App.showToastShort(getContext(), "搜索中，请稍候");
                 return;
             }
+            showLoading();
             startSearch();
         });
 
@@ -65,7 +74,7 @@ public class SearchRemoteTvDialog extends BaseDialog {
     @Override
     public void show() {
         super.show();
-        startSearch();
+       // startSearch();
     }
 
     public void setTip(String tip) {
@@ -119,41 +128,46 @@ public class SearchRemoteTvDialog extends BaseDialog {
         });
     }
 
-    private void showRemoteTvList() {
-        showSuccess();
+private void showRemoteTvList() {
+    showSuccess();
 
-        SelectDialog<String> dialog = new SelectDialog<>(getContext());
-        dialog.setTip("附近聚汇影视");
+    TvRecyclerView list = findViewById(R.id.list);
 
-        dialog.setAdapter(
-                new SelectDialogAdapter.SelectDialogInterface<String>() {
-                    @Override
-                    public void click(String value, int pos) {
-                        RemoteTVBox.setAvalible(value);
-                        App.showToastShort(getContext(), "已选择：" + value);
-                    }
+    if (mSelectAdapter == null) {
+        mSelectAdapter = new SelectDialogAdapter<>(
+            new SelectDialogAdapter.SelectDialogInterface<String>() {
+                @Override
+                public void click(String value, int pos) {
+                    RemoteTVBox.setAvalible(value);
+                    App.showToastShort(getContext(), "已选择：" + value);
+                }
 
-                    @Override
-                    public String getDisplay(String val) {
-                        return val;
-                    }
-                },
-                new DiffUtil.ItemCallback<String>() {
-                    @Override
-                    public boolean areItemsTheSame(@NonNull String oldItem, @NonNull String newItem) {
-                        return oldItem.equals(newItem);
-                    }
+                @Override
+                public String getDisplay(String val) {
+                    return val;
+                }
+            },
+            new DiffUtil.ItemCallback<String>() {
+                @Override
+                public boolean areItemsTheSame(@NonNull String oldItem, @NonNull String newItem) {
+                    return oldItem.equals(newItem);
+                }
 
-                    @Override
-                    public boolean areContentsTheSame(@NonNull String oldItem, @NonNull String newItem) {
-                        return oldItem.equals(newItem);
-                    }
-                },
-                remoteTvHostList,0
+                @Override
+                public boolean areContentsTheSame(@NonNull String oldItem, @NonNull String newItem) {
+                    return oldItem.equals(newItem);
+                }
+            }
         );
 
-        dialog.show();
+        // ✅ 关键：用 SelectDialog 的布局
+        mSelectAdapter.setLayoutId(R.layout.item_dialog_select);
+
+        list.setAdapter(mSelectAdapter);
     }
+
+    mSelectAdapter.setData(remoteTvHostList);
+}
 
     protected void setLoadSir(View view) {
         if (mLoadService == null) {
