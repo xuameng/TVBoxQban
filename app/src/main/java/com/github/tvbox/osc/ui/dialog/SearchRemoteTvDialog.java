@@ -64,7 +64,7 @@ public class SearchRemoteTvDialog extends BaseDialog {
             startSearch();
         });
 
-        // 清空列表
+// 清空列表
 findViewById(R.id.btnClear).setOnClickListener(v -> {
     isCancelled = true;
     isSearching = false;
