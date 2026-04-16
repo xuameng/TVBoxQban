@@ -23,8 +23,13 @@ import com.kingja.loadsir.core.LoadSir;
 import android.os.Handler;
 import android.os.Looper;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SearchRemoteTvDialog extends BaseDialog {
 
+    private static final List<String> remoteTvHostList = new ArrayList<>();
+    private boolean foundRemoteTv = false;
     private LoadService mLoadService;
     private boolean isSearching = false;
 
@@ -50,8 +55,8 @@ public class SearchRemoteTvDialog extends BaseDialog {
 
         // 清空列表
         findViewById(R.id.btnClear).setOnClickListener(v -> {
-            ModelSettingFragment.remoteTvHostList.clear();
-            ModelSettingFragment.foundRemoteTv = false;
+            remoteTvHostList.clear();
+            foundRemoteTv = false;
             showEmpty();
             App.showToastShort(getContext(), "列表已清空");
         });
@@ -75,16 +80,13 @@ public class SearchRemoteTvDialog extends BaseDialog {
 
         showLoading();
 
-        ModelSettingFragment.remoteTvHostList = new ArrayList<>();
-        ModelSettingFragment.foundRemoteTv = false;
-
         RemoteTVBox tv = new RemoteTVBox();
 
         new Thread(() -> {
             RemoteTVBox.searchAvalible(tv.new Callback() {
                 @Override
                 public void found(String viewHost, boolean end) {
-                    ModelSettingFragment.remoteTvHostList.add(viewHost);
+                    remoteTvHostList.add(viewHost);
                     if (end) {
                         finishSearch(true);
                     }
@@ -102,10 +104,10 @@ public class SearchRemoteTvDialog extends BaseDialog {
 
     private void finishSearch(boolean found) {
         isSearching = false;
-        ModelSettingFragment.foundRemoteTv = found;
+        foundRemoteTv = found;
 
         new Handler(Looper.getMainLooper()).post(() -> {
-            if (found && !ModelSettingFragment.remoteTvHostList.isEmpty()) {
+            if (found && !remoteTvHostList.isEmpty()) {
                 showRemoteTvList();
             } else {
                 showEmpty();
@@ -144,7 +146,7 @@ public class SearchRemoteTvDialog extends BaseDialog {
                         return oldItem.equals(newItem);
                     }
                 },
-                ModelSettingFragment.remoteTvHostList,0
+                remoteTvHostList,0
         );
 
         dialog.show();
