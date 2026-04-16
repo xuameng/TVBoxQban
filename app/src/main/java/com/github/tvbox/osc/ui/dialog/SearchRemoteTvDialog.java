@@ -105,24 +105,27 @@ public class SearchRemoteTvDialog extends BaseDialog {
         remoteTvHostList.clear();
 
         RemoteTVBox tv = new RemoteTVBox();
-        new Thread(() -> {
-            RemoteTVBox.searchAvalible(tv.new Callback() {
-            @Override
-            public void found(RemoteTVBox.RemoteDevice device, boolean end) {
-                if (isCancelled) return;
-                remoteTvHostList.add(device);
-                if (end) {
-                    finishSearch(true);
-                }
-            }
 
-            @Override
-            public void fail(boolean all, boolean end) {
-                if (end) {
-                    finishSearch(!all);
+        new Thread(() -> {
+            tv.searchAvalible(new RemoteTVBox.Callback() {
+
+                @Override
+                public void found(RemoteTVBox.RemoteDevice device, boolean end) {
+                    if (isCancelled) return;
+                    remoteTvHostList.add(device);
+                    if (end) {
+                    finishSearch(true);
+                    }
                 }
-            }
-        })).start();
+
+                @Override
+                public void fail(boolean all, boolean end) {
+                    if (end) {
+                        finishSearch(!all);
+                    }
+                }
+            });
+        }).start();
     }
 
     private void finishSearch(boolean found) {
