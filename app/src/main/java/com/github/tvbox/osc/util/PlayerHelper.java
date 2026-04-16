@@ -300,11 +300,4 @@ public class PlayerHelper {
         else
             return speed > 0?speed + "B/s":"0.00B/s";
     }
-
-    // xuameng方法：只清除RemoteTVBox的缓存 防止清空列表后播放器不刷新
-    public static void clearRemoteTvCacheOnly() {
-        if (mPlayersExistInfo != null) {
-            mPlayersExistInfo.remove(13);  // 移除键13 
-        }
-    }
 }
