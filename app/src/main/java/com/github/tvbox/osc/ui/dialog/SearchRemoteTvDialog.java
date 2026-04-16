@@ -66,6 +66,7 @@ public class SearchRemoteTvDialog extends BaseDialog {
             isSearching = false;
             remoteTvHostList.clear();
             Hawk.delete(HawkConfig.REMOTE_TV_LIST);
+            Hawk.delete(HawkConfig.REMOTE_TVBOX);
             foundRemoteTv = false;
             setTip("搜索附近聚汇影视");
             // 关键修改：清空适配器数据并刷新UI
