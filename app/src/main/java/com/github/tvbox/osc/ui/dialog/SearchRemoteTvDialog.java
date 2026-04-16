@@ -75,7 +75,7 @@ findViewById(R.id.btnClear).setOnClickListener(v -> {
     Hawk.delete(HawkConfig.REMOTE_TV_LIST);
 
     foundRemoteTv = false;
-//    showEmpty();
+        setTip("搜索附近聚汇影视");
 showSuccess();
     App.showToastShort(getContext(), "列表已清空");
 });
@@ -92,8 +92,9 @@ public void show() {
         remoteTvHostList.clear();
         remoteTvHostList.addAll(cache);
         showRemoteTvList();
+		setTip("选择附近聚汇影视");
     } else {
-       // showEmpty();
+       setTip("搜索附近聚汇影视");
     }
 }
 
@@ -143,12 +144,14 @@ private void finishSearch(boolean found) {
             // ✅ 保存到 Hawk
             Hawk.put(HawkConfig.REMOTE_TV_LIST, new ArrayList<>(remoteTvHostList));
             showRemoteTvList();
+					setTip("选择附近聚汇影视");
                 // ✅ 关键：默认选中第一个
                 if (mSelectAdapter != null) {
-                    RemoteTVBox.setAvalible(remoteTvHostList.get(0).getHost());
+                    RemoteTVBox.setAvalible(remoteTvHostList.get(0));
                 }
         } else {
             showEmpty();
+					setTip("搜索附近聚汇影视");
             App.showToastShort(getContext(), "未找到附近聚汇影视！");
         }
     });
