@@ -16,6 +16,7 @@ import com.github.tvbox.osc.callback.LoadingCallback;
 import com.github.tvbox.osc.player.thirdparty.RemoteTVBox;
 import com.github.tvbox.osc.ui.adapter.SelectDialogAdapter;
 import com.github.tvbox.osc.ui.fragment.ModelSettingFragment;
+import com.github.tvbox.osc.util.PlayerHelper;
 import com.github.tvbox.osc.util.HawkConfig;
 import com.kingja.loadsir.callback.Callback;
 import com.kingja.loadsir.core.LoadService;
@@ -67,6 +68,9 @@ public class SearchRemoteTvDialog extends BaseDialog {
             remoteTvHostList.clear();
             Hawk.delete(HawkConfig.REMOTE_TV_LIST);
             Hawk.delete(HawkConfig.REMOTE_TVBOX);
+            // ✅ 只清除RemoteTVBox相关的缓存
+            PlayerHelper.clearRemoteTvCacheOnly();
+
             foundRemoteTv = false;
             setTip("搜索附近聚汇影视");
             // 关键修改：清空适配器数据并刷新UI
