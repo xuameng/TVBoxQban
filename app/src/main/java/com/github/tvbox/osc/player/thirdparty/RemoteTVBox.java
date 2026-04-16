@@ -2,18 +2,21 @@ package com.github.tvbox.osc.player.thirdparty;
 
 import android.app.Activity;
 import android.text.TextUtils;
+
 import com.github.tvbox.osc.base.App;
 import com.github.tvbox.osc.bean.IpScanningVo;
 import com.github.tvbox.osc.server.RemoteServer;
 import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.util.IpScanning;
 import com.orhanobut.hawk.Hawk;
+
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
 import okhttp3.Call;
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
@@ -21,6 +24,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class RemoteTVBox {
+
     public static boolean run(Activity activity, String url, String title, String subtitle, HashMap<String, String> headers) {
         String actionUrl = getAvalibleActionUrl();
         if (TextUtils.isEmpty(actionUrl)) {
@@ -32,13 +36,13 @@ public class RemoteTVBox {
                 int idx = 0;
                 for (String hk : headers.keySet()) {
                     url += hk + "=" + URLEncoder.encode(headers.get(hk), "UTF-8");
-                    if (idx < headers.keySet().size() - 1) {
+                    if (idx < headers.keySet().size() -1) {
                         url += "&";
                     }
-                    idx++;
+                    idx ++;
                 }
             }
-            Map<String, String> params = new HashMap<>();
+            Map<String ,String> params = new HashMap<>();
             params.put("do", "push");
             params.put("url", url);
             post(actionUrl, params, new okhttp3.Callback() {
@@ -51,12 +55,14 @@ public class RemoteTVBox {
                 public void onResponse(Call call, Response response) throws IOException {
                     String pushResult = response.body().string();
                     if (pushResult.equals("ok")) {
+
                     }
                 }
             });
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         return true;
     }
 
@@ -71,15 +77,14 @@ public class RemoteTVBox {
         List<IpScanningVo> searchList = new IpScanning().search(localIp, false);
         avalibleIpNum = searchList.size();
         int port = 9978;
-        for (IpScanningVo one : searchList) {
+        for(IpScanningVo one : searchList) {
             String ip = one.getIp();
-            String hostName = one.getHostName(); // ✅ 获取主机名
             if (ip.equals(localIp)) {
-                avalibleIpNum--;
+                avalibleIpNum --;
                 continue;
             }
             String actionUrl = "http://" + ip + ":" + port + "/action";
-            String viewHost = "" + ip + ":" + port;
+            String viewHost = "" + ip  + ":" + port;
             try {
                 post(actionUrl, null, new okhttp3.Callback() {
                     @Override
@@ -90,17 +95,18 @@ public class RemoteTVBox {
 
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
-                        avalibleSuccessNum++;
+                        avalibleSuccessNum ++;
                         String result = response.body().string();
                         if (result.equals("ok")) {
-                            // ✅ 回调中传入主机名
-                            callback.found(viewHost, hostName, (avalibleSuccessNum + avalibleFailNum) == avalibleIpNum);
+                            callback.found(viewHost, (avalibleSuccessNum + avalibleFailNum) == avalibleIpNum);
                         }
                     }
                 });
             } catch (Exception e) {
+
             }
         }
+
         return;
     }
 
@@ -127,7 +133,7 @@ public class RemoteTVBox {
         OkHttpClient client = builder.build();
         FormBody.Builder formBodyBuilder = new FormBody.Builder();
         if (params != null && params.size() > 0) {
-            for (Map.Entry<String, String> entry : params.entrySet()) {
+            for(Map.Entry<String, String> entry : params.entrySet()) {
                 formBodyBuilder.add(entry.getKey(), entry.getValue());
             }
         }
@@ -135,9 +141,11 @@ public class RemoteTVBox {
         client.newCall(new Request.Builder().url(url).post(formBody).build()).enqueue(callback);
     }
 
-    // ✅ 修改 Callback 接口，增加 hostName 参数
     public abstract class Callback {
-        public abstract void found(String viewHost, String hostName, boolean end);
+        public abstract void found(String viewHost, boolean end);
         public abstract void fail(boolean all, boolean end);
     }
+
 }
+
+
