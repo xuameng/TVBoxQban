@@ -105,7 +105,8 @@ public class SearchRemoteTvDialog extends BaseDialog {
         remoteTvHostList.clear();
 
         RemoteTVBox tv = new RemoteTVBox();
-        new Thread(() -> tv.searchAvalible(new RemoteTVBox.Callback() {
+        new Thread(() -> {
+            RemoteTVBox.searchAvalible(tv.new Callback() {
             @Override
             public void found(RemoteTVBox.RemoteDevice device, boolean end) {
                 if (isCancelled) return;
@@ -132,7 +133,6 @@ public class SearchRemoteTvDialog extends BaseDialog {
                 showRemoteTvList();
                 // ✅ 关键：默认选中第一个
                 if (mSelectAdapter != null) {
-                    mSelectAdapter.setSelect(0);
                     RemoteTVBox.setAvalible(remoteTvHostList.get(0).getHost());
                 }
             } else {
