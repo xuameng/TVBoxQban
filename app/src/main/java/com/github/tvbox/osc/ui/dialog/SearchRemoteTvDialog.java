@@ -80,6 +80,9 @@ public class SearchRemoteTvDialog extends BaseDialog {
 
         showLoading();
 
+        remoteTvHostList.clear();
+        foundRemoteTv = false;
+
         RemoteTVBox tv = new RemoteTVBox();
 
         new Thread(() -> {
