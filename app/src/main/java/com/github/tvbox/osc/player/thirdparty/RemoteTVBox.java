@@ -85,26 +85,46 @@ public class RemoteTVBox {
             }
             String actionUrl = "http://" + ip + ":" + port + "/action";
             String viewHost = "" + ip  + ":" + port;
-            try {
-                post(actionUrl, null, new okhttp3.Callback() {
-                    @Override
-                    public void onFailure(Call call, IOException e) {
-                        avalibleFailNum++;
-                        callback.fail(avalibleFailNum == avalibleIpNum, (avalibleSuccessNum + avalibleFailNum) == avalibleIpNum);
-                    }
 
-                    @Override
-                    public void onResponse(Call call, Response response) throws IOException {
-                        avalibleSuccessNum ++;
-                        String result = response.body().string();
-                        if (result.equals("ok")) {
-                            callback.found(viewHost, (avalibleSuccessNum + avalibleFailNum) == avalibleIpNum);
-                        }
-                    }
-                });
-            } catch (Exception e) {
+try {
+    post(actionUrl, null, new okhttp3.Callback() {
+        @Override
+        public void onFailure(Call call, IOException e) {
+            avalibleFailNum++;
+            callback.fail(
+                avalibleFailNum == avalibleIpNum,
+                (avalibleSuccessNum + avalibleFailNum) == avalibleIpNum
+            );
+        }
 
+        @Override
+        public void onResponse(Call call, Response response) throws IOException {
+            avalibleSuccessNum++;
+
+            String result = response.body().string();
+            if (!result.equals("ok")) {
+                callback.fail(
+                    avalibleFailNum == avalibleIpNum,
+                    (avalibleSuccessNum + avalibleFailNum) == avalibleIpNum
+                );
+                return;
             }
+
+            // ✅ 假设远端返回的 body 就是主机名
+            String hostName = response.body().string().trim();
+
+            RemoteDevice device =
+                new RemoteDevice(ip, port, hostName);
+
+            callback.found(
+                device,
+                (avalibleSuccessNum + avalibleFailNum) == avalibleIpNum
+            );
+        }
+    });
+} catch (Exception e) {
+    e.printStackTrace();
+}
         }
 
         return;
@@ -142,9 +162,30 @@ public class RemoteTVBox {
     }
 
     public abstract class Callback {
-        public abstract void found(String viewHost, boolean end);
+// 修改为
+public abstract void found(RemoteDevice device, boolean end);
         public abstract void fail(boolean all, boolean end);
     }
+
+public static class RemoteDevice {
+    public String ip;
+    public int port;
+    public String hostName;
+
+    public RemoteDevice(String ip, int port, String hostName) {
+        this.ip = ip;
+        this.port = port;
+        this.hostName = hostName;
+    }
+
+    public String getHost() {
+        return ip + ":" + port;
+    }
+
+    public String getDisplay() {
+        return ip + ":" + port + "  " + hostName;
+    }
+}
 
 }
 
