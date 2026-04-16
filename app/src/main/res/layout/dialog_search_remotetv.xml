@@ -62,8 +62,8 @@
             android:padding="@dimen/vs_12"
             app:layout_constraintTop_toBottomOf="@id/list"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
-
             <TextView
                 android:textSize="@dimen/ts_22"
                 android:textColor="@color/color_FFFFFF"
