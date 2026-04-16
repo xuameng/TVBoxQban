@@ -800,11 +800,11 @@ public class ModelSettingFragment extends BaseLazyFragment {
             }
         });
 
-        findViewById(R.id.llSearchTv).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.llSearchTv).setOnClickListener(new View.OnClickListener() {   //xuameng搜索远程聚汇影视
             @Override
             public void onClick(View view) {
                 FastClickCheckUtil.check(view);
-                SearchRemoteTvDialog dialog = new SearchRemoteTvDialog(mActivity);
+                SearchRemoteTvDialog dialog = new SearchRemoteTvDialog(mActivity);  //xuameng 方法全部移到SearchRemoteTvDialog中
                 dialog.show();
             }
         });
