@@ -53,52 +53,49 @@ public class SearchRemoteTvDialog extends BaseDialog{
         showLoading();
     }
 
-    private void showRemoteTvDialog(boolean found) {
-        if (!found) {
-            if (ModelSettingFragment.loadingSearchRemoteTvDialog != null) {
-                ModelSettingFragment.loadingSearchRemoteTvDialog.showEmpty();
-            }
-            App.showToastShort(getContext(), "未找到附近聚汇影视！");
-            return;
-        }
-        if (ModelSettingFragment.loadingSearchRemoteTvDialog != null) {
-            ModelSettingFragment.loadingSearchRemoteTvDialog.dismiss();
-        }
-        if (ModelSettingFragment.remoteTvHostList == null) {
-            return;
-        }
-        RemoteTVBox.setAvalible(ModelSettingFragment.remoteTvHostList.get(0));
-        SelectDialog<String> dialog = new SelectDialog<>(getContext());
-        dialog.setTip("附近聚汇影视");
-        int defaultPos = 0;
-        dialog.setAdapter(new SelectDialogAdapter.SelectDialogInterface<String>() {
+    private ModelSettingFragment modelSettingFragment;
+
+private void showRemoteTvList() {
+    showSuccess();
+
+    SelectDialog<String> dialog = new SelectDialog<>(getContext());
+    dialog.setTip("附近聚汇影视");
+
+    dialog.setAdapter(
+        new SelectDialogAdapter.SelectDialogInterface<String>() {
             @Override
             public void click(String value, int pos) {
                 RemoteTVBox.setAvalible(value);
-                App.showToastShort(getContext(), "设置成功！");
+                App.showToastShort(getContext(), "已选择：" + value);
             }
 
             @Override
             public String getDisplay(String val) {
                 return val;
             }
-        }, new DiffUtil.ItemCallback<String>() {
+        },
+        new DiffUtil.ItemCallback<String>() {
             @Override
-            public boolean areItemsTheSame(@NonNull @NotNull String oldItem, @NonNull @NotNull String newItem) {
+            public boolean areItemsTheSame(@NonNull String oldItem, @NonNull String newItem) {
                 return oldItem.equals(newItem);
             }
 
             @Override
-            public boolean areContentsTheSame(@NonNull @NotNull String oldItem, @NonNull @NotNull String newItem) {
+            public boolean areContentsTheSame(@NonNull String oldItem, @NonNull String newItem) {
                 return oldItem.equals(newItem);
             }
-        }, ModelSettingFragment.remoteTvHostList, defaultPos);
-        dialog.show();
-    }
+        },
+        ModelSettingFragment.remoteTvHostList,
+        0
+    );
+
+    dialog.show();
+}
 
 
 
     private LoadService mLoadService;
+	private boolean isSearching = false;
 
     protected void setLoadSir(View view) {
         if (mLoadService == null) {
@@ -128,4 +125,65 @@ public class SearchRemoteTvDialog extends BaseDialog{
         }
     }
 
+findViewById(R.id.btnSearch).setOnClickListener(v -> {
+    if (isSearching) {
+        App.showToastShort(getContext(), "搜索中，请稍候");
+        return;
+    }
+    startSearch();
+});
+
+findViewById(R.id.btnClear).setOnClickListener(v -> {
+    ModelSettingFragment.remoteTvHostList.clear();
+    ModelSettingFragment.foundRemoteTv = false;
+    showEmpty();
+    App.showToastShort(getContext(), "列表已清空");
+});
+
+
+private void startSearch() {
+    if (isSearching) return;
+    isSearching = true;
+
+    showLoading();
+
+    ModelSettingFragment.remoteTvHostList = new ArrayList<>();
+    ModelSettingFragment.foundRemoteTv = false;
+
+    RemoteTVBox tv = new RemoteTVBox();
+
+    new Thread(() -> {
+        RemoteTVBox.searchAvalible(tv.new Callback() {
+            @Override
+            public void found(String viewHost, boolean end) {
+                ModelSettingFragment.remoteTvHostList.add(viewHost);
+                if (end) {
+                    finishSearch(true);
+                }
+            }
+
+            @Override
+            public void fail(boolean all, boolean end) {
+                if (end) {
+                    finishSearch(!all);
+                }
+            }
+        });
+    }).start();
+}
+
+
+private void finishSearch(boolean found) {
+    isSearching = false;
+    ModelSettingFragment.foundRemoteTv = found;
+
+    ((Activity) getContext()).runOnUiThread(() -> {
+        if (found && !ModelSettingFragment.remoteTvHostList.isEmpty()) {
+            showRemoteTvList();
+        } else {
+            showEmpty();
+            App.showToastShort(getContext(), "未找到附近聚汇影视！");
+        }
+    });
+}
 }
