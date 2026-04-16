@@ -97,30 +97,32 @@ try {
             );
         }
 
-        @Override
-        public void onResponse(Call call, Response response) throws IOException {
-            avalibleSuccessNum++;
+@Override
+public void onResponse(Call call, Response response) throws IOException {
+    avalibleSuccessNum++;
 
-            String result = response.body().string();
-            if (!result.equals("ok")) {
-                callback.fail(
-                    avalibleFailNum == avalibleIpNum,
-                    (avalibleSuccessNum + avalibleFailNum) == avalibleIpNum
-                );
-                return;
-            }
+    // ✅ 只调用一次
+    String body = response.body().string();
 
-            // ✅ 假设远端返回的 body 就是主机名
-            String hostName = response.body().string().trim();
+    if (!body.equals("ok")) {
+        callback.fail(
+            avalibleFailNum == avalibleIpNum,
+            (avalibleSuccessNum + avalibleFailNum) == avalibleIpNum
+        );
+        return;
+    }
 
-            RemoteDevice device =
-                new RemoteDevice(ip, port, hostName);
+    // ✅ 使用已经读取出来的 body
+    String hostName = body.trim();
 
-            callback.found(
-                device,
-                (avalibleSuccessNum + avalibleFailNum) == avalibleIpNum
-            );
-        }
+    RemoteDevice device =
+        new RemoteDevice(ip, port, hostName);
+
+    callback.found(
+        device,
+        (avalibleSuccessNum + avalibleFailNum) == avalibleIpNum
+    );
+}
     });
 } catch (Exception e) {
     e.printStackTrace();
