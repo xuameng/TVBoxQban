@@ -41,6 +41,7 @@ public class SearchRemoteTvDialog extends BaseDialog {
     private boolean foundRemoteTv = false;
     private LoadService mLoadService;
     private boolean isSearching = false;
+	private volatile boolean isCancelled = false;
 
     public SearchRemoteTvDialog(@NonNull Context context) {
         super(context);
@@ -64,13 +65,14 @@ public class SearchRemoteTvDialog extends BaseDialog {
         });
 
         // 清空列表
-        findViewById(R.id.btnClear).setOnClickListener(v -> {
-            remoteTvHostList.clear();
-            foundRemoteTv = false;
-            showEmpty();
-            App.showToastShort(getContext(), "列表已清空");
-        });
-    }
+findViewById(R.id.btnClear).setOnClickListener(v -> {
+    isCancelled = true;
+    isSearching = false;
+    remoteTvHostList.clear();
+    foundRemoteTv = false;
+    showEmpty();
+    App.showToastShort(getContext(), "列表已清空");
+});
 
 @Override
 public void show() {
@@ -103,6 +105,7 @@ public void show() {
             RemoteTVBox.searchAvalible(tv.new Callback() {
                 @Override
                 public void found(String viewHost, boolean end) {
+                    if (isCancelled) return; 
                     remoteTvHostList.add(viewHost);
                     if (end) {
                         finishSearch(true);
