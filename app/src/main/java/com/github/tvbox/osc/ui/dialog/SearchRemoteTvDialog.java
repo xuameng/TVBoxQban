@@ -14,7 +14,8 @@ import com.github.tvbox.osc.callback.EmptyCallback;
 import com.github.tvbox.osc.callback.LoadingCallback;
 import com.github.tvbox.osc.player.thirdparty.RemoteTVBox;
 import com.github.tvbox.osc.ui.adapter.SelectDialogAdapter;
-import com.github.tvbox.osc.base.App;
+import com.github.tvbox.osc.ui.fragment.ModelSettingFragment;
+import com.github.tvbox.osc.base.App;  //xuameng toast
 
 import com.kingja.loadsir.callback.Callback;
 import com.kingja.loadsir.core.LoadService;
@@ -33,18 +34,17 @@ import com.orhanobut.hawk.Hawk;
  * xuameng
  * 远端聚汇影视全面修改
  * 直接显示上次列表，可清空列表，重新搜索等
- * 最终稳定版
- * @version 2.0.1
+ * @version 2.0.0
  */
+
 public class SearchRemoteTvDialog extends BaseDialog {
 
-    // ✅ 关键点：List 类型必须与 RemoteTVBox 的 Callback 返回类型一致
-    private static final List<RemoteTVBox.RemoteDevice> remoteTvHostList = new ArrayList<>();
-    private SelectDialogAdapter<RemoteTVBox.RemoteDevice> mSelectAdapter;
-    
+    private SelectDialogAdapter<String> mSelectAdapter;
+    private static final List<String> remoteTvHostList = new ArrayList<>();
+    private boolean foundRemoteTv = false;
     private LoadService mLoadService;
     private boolean isSearching = false;
-    private volatile boolean isCancelled = false;
+	private volatile boolean isCancelled = false;
 
     public SearchRemoteTvDialog(@NonNull Context context) {
         super(context);
@@ -54,6 +54,7 @@ public class SearchRemoteTvDialog extends BaseDialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setTip("搜索附近聚汇影视");
 
         // 重新搜索
@@ -62,59 +63,64 @@ public class SearchRemoteTvDialog extends BaseDialog {
                 App.showToastShort(getContext(), "搜索中，请稍候");
                 return;
             }
-            isCancelled = false; // ✅ 重置取消状态
-            showLoading();
             startSearch();
         });
 
-        // 清空列表
-        findViewById(R.id.btnClear).setOnClickListener(v -> {
-            isCancelled = true;
-            isSearching = false;
-            remoteTvHostList.clear();
-            Hawk.delete(HawkConfig.REMOTE_TV_LIST);
-            Hawk.delete(HawkConfig.REMOTE_TVBOX);
-            showEmpty();
-            App.showToastShort(getContext(), "列表已清空");
-        });
-    }
+// 清空列表
+findViewById(R.id.btnClear).setOnClickListener(v -> {
+    isCancelled = true;
+    isSearching = false;
 
-    @Override
-    public void show() {
-        super.show();
-        List<RemoteTVBox.RemoteDevice> cache =
-                Hawk.get(HawkConfig.REMOTE_TV_LIST, null);
-        if (cache != null && !cache.isEmpty()) {
-            remoteTvHostList.clear();
-            remoteTvHostList.addAll(cache);
-            showRemoteTvList();
-        } else {
-            showEmpty();
-        }
+    remoteTvHostList.clear();
+    Hawk.delete(HawkConfig.REMOTE_TV_LIST);
+
+    foundRemoteTv = false;
+//    showEmpty();
+showSuccess();
+    App.showToastShort(getContext(), "列表已清空");
+});
+}
+
+@Override
+public void show() {
+    super.show();
+
+    List<String> cache =
+            Hawk.get(HawkConfig.REMOTE_TV_LIST, null);
+
+    if (cache != null && !cache.isEmpty()) {
+        remoteTvHostList.clear();
+        remoteTvHostList.addAll(cache);
+        showRemoteTvList();
+    } else {
+       // showEmpty();
     }
+}
 
     public void setTip(String tip) {
         ((TextView) findViewById(R.id.title)).setText(tip);
         setLoadSir(findViewById(R.id.list));
-        showLoading();
     }
 
     private void startSearch() {
         if (isSearching) return;
         isSearching = true;
+
+        showLoading();
+
         remoteTvHostList.clear();
+        foundRemoteTv = false;
 
         RemoteTVBox tv = new RemoteTVBox();
 
         new Thread(() -> {
-            tv.searchAvalible(new RemoteTVBox.Callback() {
-
+            RemoteTVBox.searchAvalible(tv.new Callback() {
                 @Override
-                public void found(RemoteTVBox.RemoteDevice device, boolean end) {
-                    if (isCancelled) return;
-                    remoteTvHostList.add(device);
+                public void found(String viewHost, boolean end) {
+                    if (isCancelled) return; 
+                    remoteTvHostList.add(viewHost);
                     if (end) {
-                    finishSearch(true);
+                        finishSearch(true);
                     }
                 }
 
@@ -128,85 +134,100 @@ public class SearchRemoteTvDialog extends BaseDialog {
         }).start();
     }
 
-    private void finishSearch(boolean found) {
-        isSearching = false;
-        new Handler(Looper.getMainLooper()).post(() -> {
-            if (found && !remoteTvHostList.isEmpty()) {
-                Hawk.put(HawkConfig.REMOTE_TV_LIST, new ArrayList<>(remoteTvHostList));
-                showRemoteTvList();
+private void finishSearch(boolean found) {
+    isSearching = false;
+    foundRemoteTv = found;
+
+    new Handler(Looper.getMainLooper()).post(() -> {
+        if (found && !remoteTvHostList.isEmpty()) {
+            // ✅ 保存到 Hawk
+            Hawk.put(HawkConfig.REMOTE_TV_LIST, new ArrayList<>(remoteTvHostList));
+            showRemoteTvList();
                 // ✅ 关键：默认选中第一个
                 if (mSelectAdapter != null) {
                     RemoteTVBox.setAvalible(remoteTvHostList.get(0).getHost());
                 }
-            } else {
-                showEmpty();
-                App.showToastShort(getContext(), "未找到附近聚汇影视！");
-            }
-        });
-    }
+        } else {
+            showEmpty();
+            App.showToastShort(getContext(), "未找到附近聚汇影视！");
+        }
+    });
+}
 
-    private void showRemoteTvList() {
-        showSuccess();
-        RecyclerView list = findViewById(R.id.list);
+private void showRemoteTvList() {
+    showSuccess();
 
-        if (mSelectAdapter == null) {
-            mSelectAdapter = new SelectDialogAdapter<>(
-                    new SelectDialogAdapter.SelectDialogInterface<RemoteTVBox.RemoteDevice>() {
-                        @Override
-                        public void click(RemoteTVBox.RemoteDevice value, int pos) {
-                            RemoteTVBox.setAvalible(value.getHost());
-                            App.showToastShort(getContext(), "已选择：" + value.hostName);
-                        }
+    RecyclerView list = findViewById(R.id.list);
 
-                        @Override
-                        public String getDisplay(RemoteTVBox.RemoteDevice val) {
-                            return val.getDisplay(); // ✅ 显示 IP + 主机名
-                        }
-                    },
-                    new DiffUtil.ItemCallback<RemoteTVBox.RemoteDevice>() {
-                        @Override
-                        public boolean areItemsTheSame(@NonNull RemoteTVBox.RemoteDevice oldItem, @NonNull RemoteTVBox.RemoteDevice newItem) {
-                            return oldItem.getHost().equals(newItem.getHost());
-                        }
-
-                        @Override
-                        public boolean areContentsTheSame(@NonNull RemoteTVBox.RemoteDevice oldItem, @NonNull RemoteTVBox.RemoteDevice newItem) {
-                            return oldItem.hostName.equals(newItem.hostName);
-                        }
+    if (mSelectAdapter == null) {
+        mSelectAdapter = new SelectDialogAdapter<>(
+                new SelectDialogAdapter.SelectDialogInterface<String>() {
+                    @Override
+                    public void click(String value, int pos) {
+                        RemoteTVBox.setAvalible(value);
+                        App.showToastShort(getContext(), "已选择：" + value);
                     }
-            );
-            list.setAdapter(mSelectAdapter);
-        }
-        // ✅ 修复了语法错误的位置，并正确获取索引
-        mSelectAdapter.setData(remoteTvHostList, getLastSelectedIndex());
+
+                    @Override
+                    public String getDisplay(String val) {
+                        return val;
+                    }
+                },
+                new DiffUtil.ItemCallback<String>() {
+                    @Override
+                    public boolean areItemsTheSame(@NonNull String oldItem, @NonNull String newItem) {
+                        return oldItem.equals(newItem);
+                    }
+
+                    @Override
+                    public boolean areContentsTheSame(@NonNull String oldItem, @NonNull String newItem) {
+                        return oldItem.equals(newItem);
+                    }
+                }
+        );
+        list.setAdapter(mSelectAdapter);
     }
 
-    private int getLastSelectedIndex() {
-        String lastHost = Hawk.get(HawkConfig.REMOTE_TVBOX, null);
-        if (lastHost == null) return 0;
-        for (int i = 0; i < remoteTvHostList.size(); i++) {
-            if (lastHost.equals(remoteTvHostList.get(i).getHost())) {
-                return i;
-            }
-        }
+        mSelectAdapter.setData(remoteTvHostList, getLastSelectedIndex());
+
+}
+
+
+private int getLastSelectedIndex() {
+    String last = Hawk.get(HawkConfig.REMOTE_TVBOX, null);
+    if (last == null || remoteTvHostList == null) {
         return 0;
     }
+    return remoteTvHostList.indexOf(last);
+}
+
+
 
     protected void setLoadSir(View view) {
         if (mLoadService == null) {
-            mLoadService = LoadSir.getDefault().register(view, v -> {});
+            mLoadService = LoadSir.getDefault().register(view, new Callback.OnReloadListener() {
+                @Override
+                public void onReload(View v) {
+                }
+            });
         }
     }
 
     public void showLoading() {
-        if (mLoadService != null) mLoadService.showCallback(LoadingCallback.class);
+        if (mLoadService != null) {
+            mLoadService.showCallback(LoadingCallback.class);
+        }
     }
 
     public void showEmpty() {
-        if (mLoadService != null) mLoadService.showCallback(EmptyCallback.class);
+        if (mLoadService != null) {
+            mLoadService.showCallback(EmptyCallback.class);
+        }
     }
 
     public void showSuccess() {
-        if (mLoadService != null) mLoadService.showSuccess();
+        if (mLoadService != null) {
+            mLoadService.showSuccess();
+        }
     }
 }
