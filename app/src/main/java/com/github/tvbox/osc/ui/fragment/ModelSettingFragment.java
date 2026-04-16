@@ -841,6 +841,9 @@ public class ModelSettingFragment extends BaseLazyFragment {
         return;
     }
 
+    public static List<String> remoteTvHostList;
+    public static boolean foundRemoteTv;
+
     @Override
     public void onDestroyView() {
         OkGo.getInstance().cancelTag("wallpaperDown");   //xuameng打断下载
