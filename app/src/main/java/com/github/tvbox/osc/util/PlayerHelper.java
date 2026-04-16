@@ -300,4 +300,16 @@ public class PlayerHelper {
         else
             return speed > 0?speed + "B/s":"0.00B/s";
     }
+
+
+    // 在 xuameng 清除播放器缓存，解决不刷新BUG
+    public static void clearRemoteTvBoxCache() {
+        try {
+            // 直接操作静态变量，将其置空
+            mPlayersExistInfo = null; // 这个变量存储了远程TV Box是否存在
+            mPlayersInfo = null;      // 这个变量存储了播放器名称映射
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
