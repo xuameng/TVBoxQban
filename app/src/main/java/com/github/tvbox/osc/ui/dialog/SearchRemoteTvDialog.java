@@ -73,6 +73,7 @@ findViewById(R.id.btnClear).setOnClickListener(v -> {
     showEmpty();
     App.showToastShort(getContext(), "列表已清空");
 });
+}
 
 @Override
 public void show() {
