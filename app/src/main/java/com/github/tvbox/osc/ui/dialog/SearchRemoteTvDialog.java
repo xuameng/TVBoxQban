@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
 import android.widget.TextView;
+import android.content.DialogInterface;  // 关闭监听器
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import com.owen.tvrecyclerview.widget.TvRecyclerView;
@@ -15,7 +16,6 @@ import com.github.tvbox.osc.callback.EmptyCallback;
 import com.github.tvbox.osc.callback.LoadingCallback;
 import com.github.tvbox.osc.player.thirdparty.RemoteTVBox;
 import com.github.tvbox.osc.ui.adapter.SelectDialogAdapter;
-import com.github.tvbox.osc.ui.fragment.ModelSettingFragment;
 import com.github.tvbox.osc.util.PlayerHelper;
 import com.github.tvbox.osc.util.HawkConfig;
 import com.kingja.loadsir.callback.Callback;
@@ -50,6 +50,17 @@ public class SearchRemoteTvDialog extends BaseDialog {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTip("搜索附近聚汇影视");
+
+        // 添加对话框关闭监听器
+        setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                // 在对话框关闭时停止搜索
+                isCancelled = true;
+                isSearching = false;
+                App.showToastShort(getContext(), "搜索已终止");
+            }
+        });
 
         // 重新搜索
         findViewById(R.id.btnSearch).setOnClickListener(v -> {
@@ -193,18 +204,18 @@ public class SearchRemoteTvDialog extends BaseDialog {
             list.setAdapter(mSelectAdapter);
         }
         mSelectAdapter.setData(remoteTvHostList, getLastSelectedIndex());
-list.setSelectedPosition(getLastSelectedIndex());
-if (getLastSelectedIndex() < 10) {
-    list.setSelection(getLastSelectedIndex());
-} else {
-    list.post(new Runnable() {
-        @Override
-        public void run() {
-            list.smoothScrollToPosition(getLastSelectedIndex());
-            list.setSelectionWithSmooth(getLastSelectedIndex());
+        list.setSelectedPosition(getLastSelectedIndex());
+        if (getLastSelectedIndex() < 10) {
+            list.setSelection(getLastSelectedIndex());
+        } else {
+            list.post(new Runnable() {
+                @Override
+                public void run() {
+                    list.smoothScrollToPosition(getLastSelectedIndex());
+                    list.setSelectionWithSmooth(getLastSelectedIndex());
+                }
+            });
         }
-    });
-}
     }
 
     private int getLastSelectedIndex() {
