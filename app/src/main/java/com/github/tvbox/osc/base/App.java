@@ -1,6 +1,7 @@
 package com.github.tvbox.osc.base;
 
 import android.app.Activity;
+import android.os.SystemProperties; // 新增：用于读取系统属性
 import androidx.multidex.MultiDexApplication;
 
 import com.github.tvbox.osc.bean.VodInfo;
@@ -24,9 +25,6 @@ import com.orhanobut.hawk.Hawk;
 import com.p2p.P2PClass;
 
 import java.io.File;
-import java.net.NetworkInterface;
-import java.util.Collections;
-import java.util.List;
 import android.content.Context;
 import android.widget.Toast;
 
@@ -45,9 +43,7 @@ public class App extends MultiDexApplication {
     public static String burl;
     private static String dashData;
 
-    // 修改：用于存储设备唯一标识（MAC地址）
-    public static String deviceId = "Unknown"; 
-    // 修改：用于存储设备显示名称
+    // 用于存储设备名称
     public static String deviceName = "TVBox";
 
     @Override
@@ -99,40 +95,44 @@ public class App extends MultiDexApplication {
             }).start();
         }
 
-        // --- 修改后的代码开始 ---
-        // 在后台线程异步获取设备信息
+        // --- 获取设备名称逻辑 ---
         new Thread(() -> {
             try {
-                // 1. 获取 MAC 地址作为唯一 ID (比主机名更靠谱)
-                String mac = "00:00:00:00:00:00";
-                List<NetworkInterface> interfaces = Collections.list(NetworkInterface.getNetworkInterfaces());
-                for (NetworkInterface intf : interfaces) {
-                    // 忽略回环接口和未激活接口
-                    if (!intf.isUp() || intf.isLoopback()) continue;
-                    
-                    byte[] macBytes = intf.getHardwareAddress();
-                    if (macBytes != null) {
-                        StringBuilder sb = new StringBuilder();
-                        for (byte b : macBytes) {
-                            sb.append(String.format("%02X:", b));
-                        }
-                        if (sb.length() > 0) {
-                            mac = sb.substring(0, sb.length() - 1);
-                            break; // 找到第一个有效的 MAC 地址就停止
-                        }
-                    }
+                // 优先获取市场名称 (如 "Redmi Box")，如果没有则使用默认型号 (如 "24069RA21C")
+                String name = getMarketName();
+                if (name == null || name.isEmpty()) {
+                    name = android.os.Build.MODEL;
                 }
-                deviceId = mac;
-
-                // 2. 获取设备型号作为显示名称
-                deviceName = android.os.Build.MODEL; 
-                
-              //  LOG.i("App", "设备信息获取成功 -> ID: " + deviceId + ", 名称: " + deviceName);
+                deviceName = name;
+          //      LOG.i("App", "设备名称获取成功: " + deviceName);
             } catch (Exception e) {
-              //  LOG.e("获取设备信息失败: " + e.getMessage());
+           //     LOG.e("获取设备名称失败: " + e.getMessage());
             }
         }).start();
-        // --- 修改后的代码结束 ---
+        // --- 代码结束 ---
+    }
+
+    /**
+     * 获取设备市场名称
+     * 优先读取 ro.product.marketname，解决 Build.MODEL 返回认证型号的问题
+     */
+    private String getMarketName() {
+        try {
+            // 尝试读取 ro.product.marketname 属性
+            String marketName = SystemProperties.get("ro.product.marketname", "");
+            if (!marketName.isEmpty()) {
+                return marketName.trim();
+            }
+            // 某些设备可能在 ro.product.name 中存储了可读名称
+            String productName = SystemProperties.get("ro.product.name", "");
+            if (!productName.isEmpty()) {
+                 // 简单过滤，避免返回奇怪的代号
+                 return productName.trim();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     private void initParams() {
