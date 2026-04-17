@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
-import androidx.recyclerview.widget.RecyclerView;
+import com.owen.tvrecyclerview.widget.TvRecyclerView;
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.base.App;
 import com.github.tvbox.osc.callback.EmptyCallback;
@@ -164,7 +164,7 @@ public class SearchRemoteTvDialog extends BaseDialog {
 
     private void showRemoteTvList() {
         showSuccess();
-        RecyclerView list = findViewById(R.id.list);
+        TvRecyclerView list = findViewById(R.id.list);
         if (mSelectAdapter == null) {
             mSelectAdapter = new SelectDialogAdapter<>(new SelectDialogAdapter.SelectDialogInterface<String>() {
                 @Override
