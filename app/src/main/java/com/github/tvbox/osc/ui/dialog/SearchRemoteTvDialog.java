@@ -175,13 +175,12 @@ public class SearchRemoteTvDialog extends BaseDialog {
         foundRemoteTv = found;
         new Handler(Looper.getMainLooper()).post(() -> {
             if (found && !remoteTvHostList.isEmpty()) {
+                PlayerHelper.clearRemoteTvBoxCache();
                 // ✅ 保存到 Hawk
                 Hawk.put(HawkConfig.REMOTE_TV_LIST, new ArrayList<>(remoteTvHostList));
                 // ✅ 关键：默认选中第一个
                 if (mSelectAdapter != null) {
-                    PlayerHelper.clearRemoteTvBoxCache(); //xuameng 首次获取必须同步
                     RemoteTVBox.setAvalible(remoteTvHostList.get(0));
-                    PlayerHelper.clearRemoteTvBoxCache();
                 }
                 setTip("选择附近聚汇影视");
                 showRemoteTvList();
@@ -195,6 +194,7 @@ public class SearchRemoteTvDialog extends BaseDialog {
 
     private void showRemoteTvList() {
         showSuccess();
+        PlayerHelper.clearRemoteTvBoxCache();
         TvRecyclerView list = findViewById(R.id.list);
         if (mSelectAdapter == null) {
             mSelectAdapter = new SelectDialogAdapter<>(new SelectDialogAdapter.SelectDialogInterface<String>() {
