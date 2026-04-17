@@ -2,6 +2,7 @@ package com.github.tvbox.osc.player.thirdparty;
 
 import android.app.Activity;
 import android.text.TextUtils;
+import com.github.tvbox.osc.base.App;
 import com.github.tvbox.osc.bean.IpScanningVo;
 import com.github.tvbox.osc.server.RemoteServer;
 import com.github.tvbox.osc.util.HawkConfig;
