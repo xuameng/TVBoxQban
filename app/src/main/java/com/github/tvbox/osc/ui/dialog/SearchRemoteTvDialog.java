@@ -142,11 +142,13 @@ public class SearchRemoteTvDialog extends BaseDialog {
         new Thread(() -> {
             RemoteTVBox.searchAvalible(tv.new Callback() {
                 @Override
-                public void found(String viewHost, boolean end) {
+                public void found(String viewHost, String deviceName, boolean end) {
                     if (isCancelled) {
                         return;
                     }
-                    remoteTvHostList.add(viewHost);
+                    // 把 "设备名 (IP:端口)" 组合成一个字符串存入列表
+                    String displayItem = deviceName + "(" + viewHost + ")";
+                    remoteTvHostList.add(displayItem);
                     if (end) {
                         finishSearch(true);
                     }
