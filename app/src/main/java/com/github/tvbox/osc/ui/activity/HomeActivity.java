@@ -189,8 +189,6 @@ public class HomeActivity extends BaseActivity {
 
             public void onItemSelected(TvRecyclerView tvRecyclerView, View view, int position) {
                 if (view != null && position >= 0) {
-					String name = App.deviceName;  // 获取设备型号，例如：Xiaomi Box
-App.showToastShort(HomeActivity.this, name);
                     HomeActivity.this.currentView = view;
                     HomeActivity.this.sortChange = true;
                     sortAdapter.setSelectedPosition(position); //xuameng 完全交给sortAdapter维护
