@@ -1481,7 +1481,7 @@ public class VodController extends BaseController {
                 if (!isPlayerAvailable && existPlayerTypes.contains(1)) {
                     playerType = 1;  // 使用默认播放器1
                     mPlayerConfig.put("pl", playerType);  // 更新配置
-                    listener.updatePlayerCfg();
+                    listener.updatePlayerCfg();   //xuameng 必须同步以便持久化保存
                     App.showToastShort(getContext(), "上次使用的播放器已失效，已切换到默认播放器！");
                 } 
             }
