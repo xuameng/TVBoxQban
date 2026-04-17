@@ -142,7 +142,7 @@ public class SearchRemoteTvDialog extends BaseDialog {
         new Thread(() -> {
             RemoteTVBox.searchAvalible(tv.new Callback() {
                 @Override
-                public void found(String viewHost, String deviceName, boolean end) {
+                public void found(String viewHost, String deviceName, boolean end) {  //增加deviceName设备
                     if (isCancelled) {
                         return;
                     }
