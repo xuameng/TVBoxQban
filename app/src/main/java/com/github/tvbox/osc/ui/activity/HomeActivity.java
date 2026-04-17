@@ -238,8 +238,8 @@ public class HomeActivity extends BaseActivity {
             public void onClick(View v) {
                 FastClickCheckUtil.check(v);
                 if(dataInitOk && jarInitOk){
-					String currentHostname = App.hostname; // 直接获取刚才异步获取到的主机名
-App.showToastShort(HomeActivity.this, currentHostname);
+					String name = App.deviceName;  // 获取设备型号，例如：Xiaomi Box
+App.showToastShort(HomeActivity.this, name);
                     String cachePath = FileUtils.getCachePath();          //xuameng点击清空缓存
                     String cspCachePath = FileUtils.getFilePath()+"/csp/";
                     File cspCacheDir = new File(cspCachePath);
