@@ -107,11 +107,9 @@ public class App extends MultiDexApplication {
                 }
                 
                 deviceName = displayName;
-                LOG.e("App", "设备名称获取成功: " + deviceName);
             } catch (Exception e) {
                 // 极端情况兜底
                 deviceName = "jvhuiys";
-                LOG.e("获取设备名称失败", e);
             }
         }).start();
         // --- xuameng代码结束 ---
