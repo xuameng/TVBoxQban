@@ -65,18 +65,18 @@ public class SearchRemoteTvDialog extends BaseDialog {
         findViewById(R.id.btnClear).setOnClickListener(v -> {
             isCancelled = true;
             isSearching = false;
+            foundRemoteTv = false;
             remoteTvHostList.clear();
             Hawk.delete(HawkConfig.REMOTE_TV_LIST);
             Hawk.delete(HawkConfig.REMOTE_TVBOX);
             // ✅ 添加：清除 PlayerHelper 缓存
             PlayerHelper.clearRemoteTvBoxCache(); 
-            showSuccess();
-            foundRemoteTv = false;
             setTip("搜索附近聚汇影视");
             // 关键修改：清空适配器数据并刷新UI
             if (mSelectAdapter != null) {
                 mSelectAdapter.setData(new ArrayList<>(), 0);
             }
+            showSuccess();
             App.showToastShort(getContext(), "列表已清空");
         });
     }
@@ -104,11 +104,14 @@ public class SearchRemoteTvDialog extends BaseDialog {
         if (isSearching) {
             return;
         }
+        showLoading();
         isSearching = true;
         isCancelled = false;
-        showLoading();
-        remoteTvHostList.clear();
         foundRemoteTv = false;
+        remoteTvHostList.clear();
+        if (mSelectAdapter != null) {
+            mSelectAdapter.setData(new ArrayList<>(), 0);
+        }
         RemoteTVBox tv = new RemoteTVBox();
 
         new Thread(() -> {
@@ -139,16 +142,18 @@ public class SearchRemoteTvDialog extends BaseDialog {
         foundRemoteTv = found;
         new Handler(Looper.getMainLooper()).post(() -> {
             if (found && !remoteTvHostList.isEmpty()) {
+                Hawk.delete(HawkConfig.REMOTE_TV_LIST);
+                Hawk.delete(HawkConfig.REMOTE_TVBOX);
+                // ✅ 添加：清除 PlayerHelper 缓存
+                PlayerHelper.clearRemoteTvBoxCache(); 
                 // ✅ 保存到 Hawk
                 Hawk.put(HawkConfig.REMOTE_TV_LIST, new ArrayList<>(remoteTvHostList));
-                setTip("选择附近聚汇影视");
-                showRemoteTvList();
                 // ✅ 关键：默认选中第一个
                 if (mSelectAdapter != null) {
                     RemoteTVBox.setAvalible(remoteTvHostList.get(0));
-                    // ✅ 添加：清除 PlayerHelper 缓存
-                    PlayerHelper.clearRemoteTvBoxCache(); 
                 }
+                setTip("选择附近聚汇影视");
+                showRemoteTvList();
             } else {
                 setTip("搜索附近聚汇影视");
                 showEmpty();
@@ -188,6 +193,18 @@ public class SearchRemoteTvDialog extends BaseDialog {
             list.setAdapter(mSelectAdapter);
         }
         mSelectAdapter.setData(remoteTvHostList, getLastSelectedIndex());
+list.setSelectedPosition(getLastSelectedIndex());
+if (getLastSelectedIndex() < 10) {
+    list.setSelection(getLastSelectedIndex());
+} else {
+    list.post(new Runnable() {
+        @Override
+        public void run() {
+            list.smoothScrollToPosition(getLastSelectedIndex());
+            list.setSelectionWithSmooth(getLastSelectedIndex());
+        }
+    });
+}
     }
 
     private int getLastSelectedIndex() {
