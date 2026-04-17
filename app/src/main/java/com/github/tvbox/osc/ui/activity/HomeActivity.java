@@ -189,6 +189,8 @@ public class HomeActivity extends BaseActivity {
 
             public void onItemSelected(TvRecyclerView tvRecyclerView, View view, int position) {
                 if (view != null && position >= 0) {
+					String name = App.deviceName;  // 获取设备型号，例如：Xiaomi Box
+App.showToastShort(HomeActivity.this, name);
                     HomeActivity.this.currentView = view;
                     HomeActivity.this.sortChange = true;
                     sortAdapter.setSelectedPosition(position); //xuameng 完全交给sortAdapter维护
@@ -238,8 +240,6 @@ public class HomeActivity extends BaseActivity {
             public void onClick(View v) {
                 FastClickCheckUtil.check(v);
                 if(dataInitOk && jarInitOk){
-					String name = App.deviceName;  // 获取设备型号，例如：Xiaomi Box
-App.showToastShort(HomeActivity.this, name);
                     String cachePath = FileUtils.getCachePath();          //xuameng点击清空缓存
                     String cspCachePath = FileUtils.getFilePath()+"/csp/";
                     File cspCacheDir = new File(cspCachePath);
@@ -257,7 +257,7 @@ App.showToastShort(HomeActivity.this, name);
                                 e.printStackTrace();
                             }
                         }).start();
-                 //   App.showToastShort(HomeActivity.this, "缓存已清空！");
+                    App.showToastShort(HomeActivity.this, "缓存已清空！");
                 }else {
                     jumpActivity(SettingActivity.class);		//xuameng加载慢跳转设置
                 }
