@@ -1,5 +1,7 @@
 package com.github.tvbox.osc.server;
 
+import com.github.tvbox.osc.base.App; // xuameng引入 App 类
+
 import java.util.Map;
 
 import fi.iki.elonen.NanoHTTPD;
@@ -57,7 +59,8 @@ public class InputRequestProcess implements RequestProcess {
                         }
                     }
                 }
-                return RemoteServer.createPlainTextResponse(NanoHTTPD.Response.Status.OK, "ok");
+                //return RemoteServer.createPlainTextResponse(NanoHTTPD.Response.Status.OK, "ok");
+                return RemoteServer.createPlainTextResponse(NanoHTTPD.Response.Status.OK, "ok|" + App.deviceName);
             default:
                 return RemoteServer.createPlainTextResponse(NanoHTTPD.Response.Status.NOT_FOUND, "Error 404, file not found.");
         }
