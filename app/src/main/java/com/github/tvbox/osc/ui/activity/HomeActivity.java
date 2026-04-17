@@ -238,6 +238,8 @@ public class HomeActivity extends BaseActivity {
             public void onClick(View v) {
                 FastClickCheckUtil.check(v);
                 if(dataInitOk && jarInitOk){
+					String currentHostname = App.hostname; // 直接获取刚才异步获取到的主机名
+App.showToastShort(HomeActivity.this, currentHostname);
                     String cachePath = FileUtils.getCachePath();          //xuameng点击清空缓存
                     String cspCachePath = FileUtils.getFilePath()+"/csp/";
                     File cspCacheDir = new File(cspCachePath);
@@ -255,7 +257,7 @@ public class HomeActivity extends BaseActivity {
                                 e.printStackTrace();
                             }
                         }).start();
-                    App.showToastShort(HomeActivity.this, "缓存已清空！");
+                 //   App.showToastShort(HomeActivity.this, "缓存已清空！");
                 }else {
                     jumpActivity(SettingActivity.class);		//xuameng加载慢跳转设置
                 }
