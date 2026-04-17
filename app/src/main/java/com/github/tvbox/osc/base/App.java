@@ -103,7 +103,7 @@ public class App extends MultiDexApplication {
                 String host = InetAddress.getLocalHost().getHostName();
                 if (host != null && !host.isEmpty()) {
                     hostname = host;
-                    LOG.i("App", "获取到主机名: " + hostname);
+                    
                 }
             } catch (Exception e) {
                 LOG.e("获取主机名失败: " + e.getMessage());
