@@ -76,7 +76,8 @@ public class SearchRemoteTvDialog extends BaseDialog {
 
         // 清空列表
         findViewById(R.id.btnClear).setOnClickListener(v -> {
-            if ((lastTvBox == null || remoteTvHostList.isEmpty()) {
+            String lastTvBox = Hawk.get(HawkConfig.REMOTE_TVBOX, null);
+            if (lastTvBox == null || remoteTvHostList.isEmpty()) {
                 App.showToastShort(getContext(), "列表为空无需清理");
                 return; // 直接返回，不执行后续清空操作
             }
