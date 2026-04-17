@@ -24,7 +24,9 @@ import com.orhanobut.hawk.Hawk;
 import com.p2p.P2PClass;
 
 import java.io.File;
-import java.net.InetAddress; // 新增：用于获取主机名
+import java.net.NetworkInterface;
+import java.util.Collections;
+import java.util.List;
 import android.content.Context;
 import android.widget.Toast;
 
@@ -43,8 +45,10 @@ public class App extends MultiDexApplication {
     public static String burl;
     private static String dashData;
 
-    // 新增：用于存储主机名的静态变量，方便外部直接调用 App.hostname
-    public static String hostname = "jvhuiys-Device"; 
+    // 修改：用于存储设备唯一标识（MAC地址）
+    public static String deviceId = "Unknown"; 
+    // 修改：用于存储设备显示名称
+    public static String deviceName = "TVBox";
 
     @Override
     public void onCreate() {
@@ -95,21 +99,40 @@ public class App extends MultiDexApplication {
             }).start();
         }
 
-        // --- 新增代码开始 ---
-        // 在后台线程异步获取主机名，避免阻塞主线程
+        // --- 修改后的代码开始 ---
+        // 在后台线程异步获取设备信息
         new Thread(() -> {
             try {
-                // 获取本机主机名 (例如: LivingRoom-TV)
-                String host = InetAddress.getLocalHost().getHostName();
-                if (host != null && !host.isEmpty()) {
-                    hostname = host;
+                // 1. 获取 MAC 地址作为唯一 ID (比主机名更靠谱)
+                String mac = "00:00:00:00:00:00";
+                List<NetworkInterface> interfaces = Collections.list(NetworkInterface.getNetworkInterfaces());
+                for (NetworkInterface intf : interfaces) {
+                    // 忽略回环接口和未激活接口
+                    if (!intf.isUp() || intf.isLoopback()) continue;
                     
+                    byte[] macBytes = intf.getHardwareAddress();
+                    if (macBytes != null) {
+                        StringBuilder sb = new StringBuilder();
+                        for (byte b : macBytes) {
+                            sb.append(String.format("%02X:", b));
+                        }
+                        if (sb.length() > 0) {
+                            mac = sb.substring(0, sb.length() - 1);
+                            break; // 找到第一个有效的 MAC 地址就停止
+                        }
+                    }
                 }
+                deviceId = mac;
+
+                // 2. 获取设备型号作为显示名称
+                deviceName = android.os.Build.MODEL; 
+                
+              //  LOG.i("App", "设备信息获取成功 -> ID: " + deviceId + ", 名称: " + deviceName);
             } catch (Exception e) {
-                LOG.e("获取主机名失败: " + e.getMessage());
+              //  LOG.e("获取设备信息失败: " + e.getMessage());
             }
         }).start();
-        // --- 新增代码结束 ---
+        // --- 修改后的代码结束 ---
     }
 
     private void initParams() {
