@@ -55,10 +55,12 @@ public class SearchRemoteTvDialog extends BaseDialog {
         setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
-                // 在对话框关闭时停止搜索
-                isCancelled = true;
-                isSearching = false;
-                App.showToastShort(getContext(), "搜索已终止");
+                if (isSearching){
+                    // 在对话框关闭时停止搜索
+                    isCancelled = true;
+                    isSearching = false;
+                    App.showToastShort(getContext(), "搜索已终止");
+                }
             }
         });
 
@@ -74,6 +76,10 @@ public class SearchRemoteTvDialog extends BaseDialog {
 
         // 清空列表
         findViewById(R.id.btnClear).setOnClickListener(v -> {
+            if ((lastTvBox == null || remoteTvHostList.isEmpty()) {
+                App.showToastShort(getContext(), "列表为空无需清理");
+                return; // 直接返回，不执行后续清空操作
+            }
             isCancelled = true;
             isSearching = false;
             foundRemoteTv = false;
@@ -140,6 +146,9 @@ public class SearchRemoteTvDialog extends BaseDialog {
 
                 @Override
                 public void fail(boolean all, boolean end) {
+                    if (isCancelled) {  // 在fail方法中也添加检查
+                        return;
+                    }
                     if (end) {
                         finishSearch(!all);
                     }
@@ -149,6 +158,9 @@ public class SearchRemoteTvDialog extends BaseDialog {
     }
 
     private void finishSearch(boolean found) {
+        if (isCancelled) {  // 在finishSearch方法中也添加检查
+            return;
+        }
         isSearching = false;
         foundRemoteTv = found;
         new Handler(Looper.getMainLooper()).post(() -> {
