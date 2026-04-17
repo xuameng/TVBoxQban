@@ -78,9 +78,11 @@ public class SearchRemoteTvDialog extends BaseDialog {
         findViewById(R.id.btnClear).setOnClickListener(v -> {
             String lastTvBox = Hawk.get(HawkConfig.REMOTE_TVBOX, null);
             List<String> cache = Hawk.get(HawkConfig.REMOTE_TV_LIST, null);
-            if (lastTvBox == null || cache == null && cache.isEmpty()) {
+            boolean isLastTvBoxEmpty = (lastTvBox == null || lastTvBox.isEmpty());
+            boolean isCacheEmpty = (cache == null || cache.isEmpty());
+            if (isLastTvBoxEmpty && isCacheEmpty) {
                 App.showToastShort(getContext(), "列表为空无需清理");
-                return; // 直接返回，不执行后续清空操作
+                return;
             }
 			if (isSearching){
                 App.showToastShort(getContext(), "列表已清空，搜索已终止");
@@ -132,6 +134,9 @@ public class SearchRemoteTvDialog extends BaseDialog {
         isCancelled = false;
         foundRemoteTv = false;
         remoteTvHostList.clear();
+        Hawk.delete(HawkConfig.REMOTE_TV_LIST);
+        Hawk.delete(HawkConfig.REMOTE_TVBOX);
+        PlayerHelper.clearRemoteTvBoxCache();
         if (mSelectAdapter != null) {
             mSelectAdapter.setData(new ArrayList<>(), 0);
         }
@@ -184,6 +189,10 @@ public class SearchRemoteTvDialog extends BaseDialog {
                 setTip("选择附近聚汇影视");
                 showRemoteTvList();
             } else {
+                // 搜索失败，清空所有数据
+                Hawk.delete(HawkConfig.REMOTE_TV_LIST);
+                Hawk.delete(HawkConfig.REMOTE_TVBOX);
+                PlayerHelper.clearRemoteTvBoxCache();
                 setTip("搜索附近聚汇影视");
                 showEmpty();
                 App.showToastShort(getContext(), "未找到附近聚汇影视！");
