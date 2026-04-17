@@ -80,7 +80,7 @@ public class App extends MultiDexApplication {
 				}
 			}).start();
 					
-        // --- 获取设备名称逻辑 (简单粗暴版) ---
+        // --- xuameng获取设备名称逻辑 ---
         new Thread(() -> {
             try {
                 // 1. 获取品牌 (例如: Xiaomi, TCL)
@@ -109,7 +109,7 @@ public class App extends MultiDexApplication {
                 deviceName = "聚汇影视";
             }
         }).start();
-        // --- 代码结束 ---
+        // --- xuameng代码结束 ---
     }
 
     private void initParams() {      //xuameng系统默认设置
