@@ -1,270 +1,151 @@
-package com.github.tvbox.osc.ui.dialog;
+package com.github.tvbox.osc.player.thirdparty;
 
-import android.content.Context;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.view.View;
-import android.widget.TextView;
-import android.content.DialogInterface;  // 关闭监听器
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.DiffUtil;
-import com.owen.tvrecyclerview.widget.TvRecyclerView;
-import com.github.tvbox.osc.R;
+import android.app.Activity;
+import android.text.TextUtils;
+
 import com.github.tvbox.osc.base.App;
-import com.github.tvbox.osc.callback.EmptyCallback;
-import com.github.tvbox.osc.callback.LoadingCallback;
-import com.github.tvbox.osc.player.thirdparty.RemoteTVBox;
-import com.github.tvbox.osc.ui.adapter.SelectDialogAdapter;
-import com.github.tvbox.osc.util.PlayerHelper;
+import com.github.tvbox.osc.bean.IpScanningVo;
+import com.github.tvbox.osc.server.RemoteServer;
 import com.github.tvbox.osc.util.HawkConfig;
-import com.kingja.loadsir.callback.Callback;
-import com.kingja.loadsir.core.LoadService;
-import com.kingja.loadsir.core.LoadSir;
+import com.github.tvbox.osc.util.IpScanning;
 import com.orhanobut.hawk.Hawk;
-import java.util.ArrayList;
+
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
-/**
- * xuameng
- * 远端聚汇影视全面修改
- * 直接显示上次列表，可清空列表，重新搜索等
- * 
- * @version 2.0.0
- */
-public class SearchRemoteTvDialog extends BaseDialog {
+import okhttp3.Call;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
-    private SelectDialogAdapter<String> mSelectAdapter;
-    private static final List<String> remoteTvHostList = new ArrayList<>();
-    private boolean foundRemoteTv = false;
-    private LoadService mLoadService;
-    private boolean isSearching = false;
-    private volatile boolean isCancelled = false;
+public class RemoteTVBox {
 
-    public SearchRemoteTvDialog(@NonNull Context context) {
-        super(context);
-        setContentView(R.layout.dialog_search_remotetv);
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setTip("搜索附近聚汇影视");
-
-        // 添加对话框关闭监听器
-        setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-                if (isSearching){
-                    // 在对话框关闭时停止搜索
-                    isCancelled = true;
-                    isSearching = false;
-                    App.showToastShort(getContext(), "搜索已终止");
+    public static boolean run(Activity activity, String url, String title, String subtitle, HashMap<String, String> headers) {
+        String actionUrl = getAvalibleActionUrl();
+        if (TextUtils.isEmpty(actionUrl)) {
+            return false;
+        }
+        try {
+            if (headers != null && headers.size() > 0) {
+                url = url + "|";
+                int idx = 0;
+                for (String hk : headers.keySet()) {
+                    url += hk + "=" + URLEncoder.encode(headers.get(hk), "UTF-8");
+                    if (idx < headers.keySet().size() -1) {
+                        url += "&";
+                    }
+                    idx ++;
                 }
             }
-        });
-
-        // 重新搜索
-        findViewById(R.id.btnSearch).setOnClickListener(v -> {
-            if (isSearching) {
-                App.showToastShort(getContext(), "搜索中，请稍候");
-                return;
-            }
-            setTip("搜索附近聚汇影视");
-            startSearch();
-        });
-
-        // 清空列表
-        findViewById(R.id.btnClear).setOnClickListener(v -> {
-            String lastTvBox = Hawk.get(HawkConfig.REMOTE_TVBOX, null);
-            List<String> cache = Hawk.get(HawkConfig.REMOTE_TV_LIST, null);
-            boolean isLastTvBoxEmpty = (lastTvBox == null || lastTvBox.isEmpty());
-            boolean isCacheEmpty = (cache == null || cache.isEmpty());
-            if (isLastTvBoxEmpty && isCacheEmpty) {
-                App.showToastShort(getContext(), "列表为空无需清理");
-                return;
-            }
-            isCancelled = true;
-            isSearching = false;
-            foundRemoteTv = false;
-            remoteTvHostList.clear();
-            Hawk.delete(HawkConfig.REMOTE_TV_LIST);
-            Hawk.delete(HawkConfig.REMOTE_TVBOX);
-            // ✅ 添加：清除 PlayerHelper 缓存
-            PlayerHelper.clearRemoteTvBoxCache(); 
-            setTip("搜索附近聚汇影视");
-            // 关键修改：清空适配器数据并刷新UI
-            if (mSelectAdapter != null) {
-                mSelectAdapter.setData(new ArrayList<>(), 0);
-            }
-            showSuccess();
-            App.showToastShort(getContext(), "列表已清空");
-        });
-    }
-
-    @Override
-    public void show() {
-        super.show();
-        List<String> cache = Hawk.get(HawkConfig.REMOTE_TV_LIST, null);
-        if (cache != null && !cache.isEmpty()) {
-            remoteTvHostList.clear();
-            remoteTvHostList.addAll(cache);
-            setTip("选择附近聚汇影视");
-            showRemoteTvList();
-        } else {
-            setTip("搜索附近聚汇影视");
-        }
-    }
-
-    public void setTip(String tip) {
-        ((TextView) findViewById(R.id.title)).setText(tip);
-        setLoadSir(findViewById(R.id.list));
-    }
-
-    private void startSearch() {
-        if (isSearching) {
-            return;
-        }
-        showLoading();
-        isSearching = true;
-        isCancelled = false;
-        foundRemoteTv = false;
-        remoteTvHostList.clear();
-        Hawk.delete(HawkConfig.REMOTE_TV_LIST);
-        Hawk.delete(HawkConfig.REMOTE_TVBOX);
-        // ✅ 添加：清除 PlayerHelper 缓存
-        PlayerHelper.clearRemoteTvBoxCache();
-        if (mSelectAdapter != null) {
-            mSelectAdapter.setData(new ArrayList<>(), 0);
-        }
-        RemoteTVBox tv = new RemoteTVBox();
-
-        new Thread(() -> {
-            RemoteTVBox.searchAvalible(tv.new Callback() {
+            Map<String ,String> params = new HashMap<>();
+            params.put("do", "push");
+            params.put("url", url);
+            post(actionUrl, params, new okhttp3.Callback() {
                 @Override
-                public void found(String viewHost, boolean end) {
-                    if (isCancelled) {
-                        return;
-                    }
-                    remoteTvHostList.add(viewHost);
-                    if (end) {
-                        finishSearch(true);
-                    }
+                public void onFailure(Call call, IOException e) {
+                    e.printStackTrace();
                 }
 
                 @Override
-                public void fail(boolean all, boolean end) {
-                    if (isCancelled) {  // 在fail方法中也添加检查
-                        return;
-                    }
-                    if (end) {
-                        finishSearch(!all);
+                public void onResponse(Call call, Response response) throws IOException {
+                    String pushResult = response.body().string();
+                    if (pushResult.equals("ok")) {
+
                     }
                 }
             });
-        }).start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return true;
     }
 
-    private void finishSearch(boolean found) {
-        if (isCancelled) {  // 在finishSearch方法中也添加检查
-            return;
-        }
-        isSearching = false;
-        foundRemoteTv = found;
-        new Handler(Looper.getMainLooper()).post(() -> {
-            if (found && !remoteTvHostList.isEmpty()) {
-                // ✅ 保存到 Hawk
-                Hawk.put(HawkConfig.REMOTE_TV_LIST, new ArrayList<>(remoteTvHostList));
-                // ✅ 关键：默认选中第一个
-                if (mSelectAdapter != null) {
-                    RemoteTVBox.setAvalible(remoteTvHostList.get(0));
-                }
-                setTip("选择附近聚汇影视");
-                showRemoteTvList();
-            } else {
-                setTip("搜索附近聚汇影视");
-                showEmpty();
-                App.showToastShort(getContext(), "未找到附近聚汇影视！");
+    private static int avalibleFailNum;
+    private static int avalibleSuccessNum;
+    private static int avalibleIpNum;
+
+    public static void searchAvalible(Callback callback) {
+        avalibleFailNum = 0;
+        avalibleSuccessNum = 0;
+        String localIp = RemoteServer.getLocalIPAddress(App.getInstance());
+        List<IpScanningVo> searchList = new IpScanning().search(localIp, false);
+        avalibleIpNum = searchList.size();
+        int port = 9978;
+        for(IpScanningVo one : searchList) {
+            String ip = one.getIp();
+            if (ip.equals(localIp)) {
+                avalibleIpNum --;
+                continue;
             }
-        });
+            String actionUrl = "http://" + ip + ":" + port + "/action";
+            String viewHost = "" + ip  + ":" + port;
+            try {
+                post(actionUrl, null, new okhttp3.Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        avalibleFailNum++;
+                        callback.fail(avalibleFailNum == avalibleIpNum, (avalibleSuccessNum + avalibleFailNum) == avalibleIpNum);
+                    }
+
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        avalibleSuccessNum ++;
+                        String result = response.body().string();
+                        if (result.equals("ok")) {
+                            callback.found(viewHost, (avalibleSuccessNum + avalibleFailNum) == avalibleIpNum);
+                        }
+                    }
+                });
+            } catch (Exception e) {
+
+            }
+        }
+
+        return;
     }
 
-    private void showRemoteTvList() {
-        showSuccess();
-        TvRecyclerView list = findViewById(R.id.list);
-        if (mSelectAdapter == null) {
-            mSelectAdapter = new SelectDialogAdapter<>(new SelectDialogAdapter.SelectDialogInterface<String>() {
-                @Override
-                public void click(String value, int pos) {
-                    RemoteTVBox.setAvalible(value);
-                    App.showToastShort(getContext(), "已选择：" + value);
-                }
-
-                @Override
-                public String getDisplay(String val) {
-                    return val;
-                }
-            }, new DiffUtil.ItemCallback<String>() {
-                @Override
-                public boolean areItemsTheSame(@NonNull String oldItem, @NonNull String newItem) {
-                    return oldItem.equals(newItem);
-                }
-
-                @Override
-                public boolean areContentsTheSame(@NonNull String oldItem, @NonNull String newItem) {
-                    return oldItem.equals(newItem);
-                }
-            });
-            list.setAdapter(mSelectAdapter);
-        }
-        mSelectAdapter.setData(remoteTvHostList, getLastSelectedIndex());
-        list.setSelectedPosition(getLastSelectedIndex());
-        if (getLastSelectedIndex() < 10) {
-            list.setSelection(getLastSelectedIndex());
-        } else {
-            list.post(new Runnable() {
-                @Override
-                public void run() {
-                    list.smoothScrollToPosition(getLastSelectedIndex());
-                    list.setSelectionWithSmooth(getLastSelectedIndex());
-                }
-            });
-        }
+    public static String getAvalible() {
+        return Hawk.get(HawkConfig.REMOTE_TVBOX, null);
     }
 
-    private int getLastSelectedIndex() {
-        String last = Hawk.get(HawkConfig.REMOTE_TVBOX, null);
-        if (last == null || remoteTvHostList == null) {
-            return 0;
+    public static String getAvalibleActionUrl() {
+        if (getAvalible() == null) {
+            return "";
         }
-        return remoteTvHostList.indexOf(last);
+        return "http://" + getAvalible() + "/action";
     }
 
-    protected void setLoadSir(View view) {
-        if (mLoadService == null) {
-            mLoadService = LoadSir.getDefault().register(view, new Callback.OnReloadListener() {
-                @Override
-                public void onReload(View v) {
-                }
-            });
-        }
+    public static void setAvalible(String viewHost) {
+        Hawk.put(HawkConfig.REMOTE_TVBOX, viewHost);
     }
 
-    public void showLoading() {
-        if (mLoadService != null) {
-            mLoadService.showCallback(LoadingCallback.class);
+    public static void post(String url, Map<String, String> params, okhttp3.Callback callback) {
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        builder.readTimeout(1000, TimeUnit.MILLISECONDS);
+        builder.writeTimeout(1000, TimeUnit.MILLISECONDS);
+        builder.connectTimeout(1000, TimeUnit.MILLISECONDS);
+        OkHttpClient client = builder.build();
+        FormBody.Builder formBodyBuilder = new FormBody.Builder();
+        if (params != null && params.size() > 0) {
+            for(Map.Entry<String, String> entry : params.entrySet()) {
+                formBodyBuilder.add(entry.getKey(), entry.getValue());
+            }
         }
+        FormBody formBody = formBodyBuilder.build();
+        client.newCall(new Request.Builder().url(url).post(formBody).build()).enqueue(callback);
     }
 
-    public void showEmpty() {
-        if (mLoadService != null) {
-            mLoadService.showCallback(EmptyCallback.class);
-        }
+    public abstract class Callback {
+        public abstract void found(String viewHost, boolean end);
+        public abstract void fail(boolean all, boolean end);
     }
 
-    public void showSuccess() {
-        if (mLoadService != null) {
-            mLoadService.showSuccess();
-        }
-    }
 }
+
+
