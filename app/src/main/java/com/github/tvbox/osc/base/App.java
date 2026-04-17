@@ -6,7 +6,7 @@ import androidx.multidex.MultiDexApplication;
 import com.github.tvbox.osc.bean.VodInfo;
 import com.github.tvbox.osc.callback.EmptyCallback;
 import com.github.tvbox.osc.callback.LoadingCallback;
-import com.github.tvbox.osc.callback.ConfigCallback;  //xuameng配置中心
+import com.github.tvbox.osc.callback.ConfigCallback;
 import com.github.tvbox.osc.data.AppDataManager;
 import com.github.tvbox.osc.server.ControlManager;
 import com.github.tvbox.osc.util.AppManager;
@@ -17,14 +17,16 @@ import com.github.tvbox.osc.util.LOG;
 import com.github.tvbox.osc.util.OkGoHelper;
 import com.github.tvbox.osc.util.PlayerHelper;
 import com.whl.quickjs.android.QuickJSLoader;
- import com.github.catvod.crawler.JsLoader;
+import com.github.catvod.crawler.JsLoader;
 import com.kingja.loadsir.core.LoadSir;
-import com.github.tvbox.osc.crash.CrashHandler;  //xuameng 崩溃信息
+import com.github.tvbox.osc.crash.CrashHandler;
 import com.orhanobut.hawk.Hawk;
 import com.p2p.P2PClass;
-import java.io.File;   //xuameng清缓存
-import android.content.Context;   //xuameng  Toast
-import android.widget.Toast;  //xuameng  Toast
+
+import java.io.File;
+import java.net.InetAddress; // 新增：用于获取主机名
+import android.content.Context;
+import android.widget.Toast;
 
 import me.jessyan.autosize.AutoSizeConfig;
 import me.jessyan.autosize.unit.Subunits;
@@ -32,87 +34,115 @@ import me.jessyan.autosize.unit.Subunits;
 /**
  * @author xuameng
  * @date :2026/04/14
- * @description:  增加崩溃  配置中心等
+ * @description: 增加崩溃 配置中心等
  */
 public class App extends MultiDexApplication {
     private static App instance;
-    private static Toast mToast;   //xuameng  Toast
+    private static Toast mToast;
     private static P2PClass p;
     public static String burl;
     private static String dashData;
+
+    // 新增：用于存储主机名的静态变量，方便外部直接调用 App.hostname
+    public static String hostname = "jvhuiys-Device"; 
 
     @Override
     public void onCreate() {
         super.onCreate();
         instance = this;
-        //xuameng 全局崩溃捕获（一定要放在最前面）
-        CrashHandler.getInstance().init(this);  //xuameng 崩溃信息
+        
+        // 全局崩溃捕获
+        CrashHandler.getInstance().init(this);
+        
+        // 初始化配置
         initParams();
-        // OKGo
-        OkGoHelper.init(); //台标获取
+        
+        // OKGo & Epg
+        OkGoHelper.init();
         EpgUtil.init();
+        
         // 初始化Web服务器
         ControlManager.init(this);
-        //初始化数据库
+        
+        // 初始化数据库
         AppDataManager.init();
+        
         LoadSir.beginBuilder()
                 .addCallback(new EmptyCallback())
                 .addCallback(new LoadingCallback())
-                .addCallback(new ConfigCallback())  //xuameng配置中心
+                .addCallback(new ConfigCallback())
                 .commit();
+                
         AutoSizeConfig.getInstance().setCustomFragment(true).getUnitsManager()
                 .setSupportDP(false)
                 .setSupportSP(false)
                 .setSupportSubunits(Subunits.MM);
+                
         PlayerHelper.init();
         QuickJSLoader.init();
-        FileUtils.cleanPlayerCache();        //xuameng
-		String cachePath = FileUtils.getCachePath();       //xuameng清空缓存
-			File cacheDir = new File(cachePath);
-			if (!cacheDir.exists()) return;
-			new Thread(() -> {
-				try {
-					FileUtils.cleanDirectory(cacheDir);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}).start();
-					
+        
+        // 清理缓存逻辑
+        FileUtils.cleanPlayerCache();
+        String cachePath = FileUtils.getCachePath();
+        File cacheDir = new File(cachePath);
+        if (cacheDir.exists()) {
+            new Thread(() -> {
+                try {
+                    FileUtils.cleanDirectory(cacheDir);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }).start();
+        }
 
+        // --- 新增代码开始 ---
+        // 在后台线程异步获取主机名，避免阻塞主线程
+        new Thread(() -> {
+            try {
+                // 获取本机主机名 (例如: LivingRoom-TV)
+                String host = InetAddress.getLocalHost().getHostName();
+                if (host != null && !host.isEmpty()) {
+                    hostname = host;
+                    LOG.i("App", "获取到主机名: " + hostname);
+                }
+            } catch (Exception e) {
+                LOG.e("获取主机名失败: " + e.getMessage());
+            }
+        }).start();
+        // --- 新增代码结束 ---
     }
 
-    private void initParams() {      //xuameng系统默认设置
+    private void initParams() {
         // Hawk
         Hawk.init(this).build();
-        Hawk.put(HawkConfig.DEBUG_OPEN, false);      //xuameng调试模式  默认关闭   2222开启
-        putDefault(HawkConfig.PLAY_TYPE, 1);         //播放器: 0=系统, 1=IJK, 2=Exo
-        putDefault(HawkConfig.HOME_REC, 0);          // Home Rec 0=豆瓣, 1=推荐, 2=历史
-        putDefault(HawkConfig.IJK_CODEC, "硬解码");  // IJK Render 软解码, 硬解码
-        putDefault(HawkConfig.HISTORY_NUM, 3);          //历史记录 0,30,1,50,2,70 3,100
-        putDefault(HawkConfig.SHOW_PREVIEW, true);   //窗口预览: true=开启, false=关闭
-        putDefault(HawkConfig.SEARCH_VIEW, 1);       //搜索展示: 0=文字列表, 1=缩略图
-        putDefault(HawkConfig.PLAY_SCALE, 3);		 //画面缩放: 0=默认, 1=16:9, 2=4:3, 3=填充, 4=原始, 5=裁剪
-        putDefault(HawkConfig.DOH_URL, 0);          //安全DNS: 0=关闭, 1=腾讯, 2=阿里, 3=360, 4=Google, 5=AdGuard, 6=Quad9
-        putDefault(HawkConfig.FAST_SEARCH_MODE, true);   //xuameng 聚合搜索  默认开启
-        putDefault(HawkConfig.IJK_CACHE_PLAY, false);    //xuameng IJK缓存  默认关闭
-        putDefault(HawkConfig.HOME_REC_STYLE, true);    //xuameng 首页多行  默认开启
-        putDefault(HawkConfig.HOME_DEFAULT_SHOW, false);    //xuameng 直进直播  默认关闭
-        putDefault(HawkConfig.M3U8_PURIFY, false);    //xuameng 去除广告  默认关闭
-        putDefault(HawkConfig.PLAY_RENDER, 0);       //xuameng 渲染方式 0 TextureView 1 SurfaceView
-        putDefault(HawkConfig.LIVE_MUSIC_ANIMATION, false);       //xuameng 直播音乐动画  默认关闭
-        putDefault(HawkConfig.VOD_MUSIC_ANIMATION, false);       //xuameng 点播音乐动画   默认关闭
-        putDefault(HawkConfig.EXO_PLAY_SELECTCODE, 0);       //xuameng exo解码动态选择  默认0为不选择
-        putDefault(HawkConfig.EXO_PLAYER_DECODE, false);      //xuameng exo解码方式  false硬解  true软解
-        putDefault(HawkConfig.VOD_SWITCHDECODE, false);       //xuameng解码切换  默认关闭
-        putDefault(HawkConfig.VOD_SWITCHPLAYER, true);      //xuameng播放器切换  默认开启
-
+        Hawk.put(HawkConfig.DEBUG_OPEN, false);
+        putDefault(HawkConfig.PLAY_TYPE, 1);
+        putDefault(HawkConfig.HOME_REC, 0);
+        putDefault(HawkConfig.IJK_CODEC, "硬解码");
+        putDefault(HawkConfig.HISTORY_NUM, 3);
+        putDefault(HawkConfig.SHOW_PREVIEW, true);
+        putDefault(HawkConfig.SEARCH_VIEW, 1);
+        putDefault(HawkConfig.PLAY_SCALE, 3);
+        putDefault(HawkConfig.DOH_URL, 0);
+        putDefault(HawkConfig.FAST_SEARCH_MODE, true);
+        putDefault(HawkConfig.IJK_CACHE_PLAY, false);
+        putDefault(HawkConfig.HOME_REC_STYLE, true);
+        putDefault(HawkConfig.HOME_DEFAULT_SHOW, false);
+        putDefault(HawkConfig.M3U8_PURIFY, false);
+        putDefault(HawkConfig.PLAY_RENDER, 0);
+        putDefault(HawkConfig.LIVE_MUSIC_ANIMATION, false);
+        putDefault(HawkConfig.VOD_MUSIC_ANIMATION, false);
+        putDefault(HawkConfig.EXO_PLAY_SELECTCODE, 0);
+        putDefault(HawkConfig.EXO_PLAYER_DECODE, false);
+        putDefault(HawkConfig.VOD_SWITCHDECODE, false);
+        putDefault(HawkConfig.VOD_SWITCHPLAYER, true);
     }
 
     public static App getInstance() {
         return instance;
     }
 
-    private void putDefault(String key, Object value) {	//xuameng系统默认设置方法
+    private void putDefault(String key, Object value) {
         if (!Hawk.contains(key)) {
             Hawk.put(key, value);
         }
@@ -123,7 +153,6 @@ public class App extends MultiDexApplication {
         super.onTerminate();
         JsLoader.destroy();
     }
-
 
     private VodInfo vodInfo;
     public void setVodInfo(VodInfo vodinfo){
@@ -136,8 +165,7 @@ public class App extends MultiDexApplication {
     public static P2PClass getp2p() {
         try {
             if (p == null) {
-				// p = new P2PClass(instance.getExternalCacheDir().getAbsolutePath());     
-                p = new P2PClass(instance.getCacheDir().getAbsolutePath());  //xuameng修复某些设备不能建立cachedir目录
+                p = new P2PClass(instance.getCacheDir().getAbsolutePath());
             }
             return p;
         } catch (Exception e) {
@@ -157,28 +185,28 @@ public class App extends MultiDexApplication {
         return dashData;
     }
 
-    public static void showToastShort(Context context, String msg) {  //xuameeng showtoast
+    public static void showToastShort(Context context, String msg) {
         if (mToast != null) {
             mToast.cancel();
-            mToast = null;  // 释放引用避免内存泄漏
+            mToast = null;
         } 
         mToast = Toast.makeText(context, msg, Toast.LENGTH_SHORT);
         mToast.show();
     }
 
-    public static void showToastLong(Context context, String msg) {  //xuameeng showtoast
+    public static void showToastLong(Context context, String msg) {
         if (mToast != null) {
             mToast.cancel();
-            mToast = null;  // 释放引用避免内存泄漏
+            mToast = null;
         } 
         mToast = Toast.makeText(context, msg, Toast.LENGTH_LONG);
         mToast.show();
     }
 	
-    public static void HideToast() {   //xuameeng HideToast
+    public static void HideToast() {
         if (mToast != null) {
             mToast.cancel();
-            mToast = null;  // 释放引用避免内存泄漏
+            mToast = null;
         }
     }
 }
