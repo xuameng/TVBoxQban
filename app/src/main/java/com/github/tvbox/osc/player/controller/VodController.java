@@ -1466,23 +1466,25 @@ public class VodController extends BaseController {
             int exoSelect = Hawk.get(HawkConfig.EXO_PLAY_SELECTCODE, 0);  //xuameng exo解码动态选择
             exoSelect = mPlayerConfig.getInt("exocode");  //xuameng exo解码动态选择
             int playerType = mPlayerConfig.getInt("pl");   //xuameng播放器选择
-
-        // 检查播放器是否在可用列表中
-        ArrayList<Integer> existPlayerTypes = PlayerHelper.getExistPlayerTypes();
-        boolean isPlayerAvailable = false;
+            if (playerType >= 10) {   //xuameng 修复 外部播放器失效的BUG
+                // 检查播放器是否在可用列表中
+                ArrayList<Integer> existPlayerTypes = PlayerHelper.getExistPlayerTypes();
+                boolean isPlayerAvailable = false;
         
-        for (Integer availableType : existPlayerTypes) {
-            if (availableType == playerType) {
-                isPlayerAvailable = true;
-                break;
+                for (Integer availableType : existPlayerTypes) {
+                    if (availableType == playerType) {
+                        isPlayerAvailable = true;
+                        break;
+                    }
+                }
+                // 如果播放器不可用，则使用默认播放器1
+                if (!isPlayerAvailable && existPlayerTypes.contains(1)) {
+                    playerType = 1;  // 使用默认播放器1
+                    mPlayerConfig.put("pl", playerType);  // 更新配置
+                    listener.updatePlayerCfg();
+                    App.showToastShort(getContext(), "上次使用的播放器已失效，已切换到默认播放器！");
+                } 
             }
-        }
-        // 如果播放器不可用，则使用默认播放器1
-        if (!isPlayerAvailable && existPlayerTypes.contains(1)) {
-            playerType = 1;  // 使用默认播放器1
-            mPlayerConfig.put("pl", playerType);  // 更新配置
-            App.showToastShort(getContext(), "上次使用的播放器已失效，已切换到默认播放器！");
-        } 
 
             int pr = mPlayerConfig.getInt("pr");  //xuameng渲染选择
             mPlayerBtn.setText(PlayerHelper.getPlayerName(playerType));
