@@ -84,11 +84,6 @@ public class SearchRemoteTvDialog extends BaseDialog {
                 App.showToastShort(getContext(), "列表为空无需清理");
                 return;
             }
-			if (isSearching){
-                App.showToastShort(getContext(), "列表已清空，搜索已终止");
-            }else{
-                App.showToastShort(getContext(), "列表已清空");
-            }
             isCancelled = true;
             isSearching = false;
             foundRemoteTv = false;
@@ -103,6 +98,7 @@ public class SearchRemoteTvDialog extends BaseDialog {
                 mSelectAdapter.setData(new ArrayList<>(), 0);
             }
             showSuccess();
+            App.showToastShort(getContext(), "列表已清空");
         });
     }
 
@@ -136,6 +132,7 @@ public class SearchRemoteTvDialog extends BaseDialog {
         remoteTvHostList.clear();
         Hawk.delete(HawkConfig.REMOTE_TV_LIST);
         Hawk.delete(HawkConfig.REMOTE_TVBOX);
+        // ✅ 添加：清除 PlayerHelper 缓存
         PlayerHelper.clearRemoteTvBoxCache();
         if (mSelectAdapter != null) {
             mSelectAdapter.setData(new ArrayList<>(), 0);
@@ -176,10 +173,6 @@ public class SearchRemoteTvDialog extends BaseDialog {
         foundRemoteTv = found;
         new Handler(Looper.getMainLooper()).post(() -> {
             if (found && !remoteTvHostList.isEmpty()) {
-                Hawk.delete(HawkConfig.REMOTE_TV_LIST);
-                Hawk.delete(HawkConfig.REMOTE_TVBOX);
-                // ✅ 添加：清除 PlayerHelper 缓存
-                PlayerHelper.clearRemoteTvBoxCache(); 
                 // ✅ 保存到 Hawk
                 Hawk.put(HawkConfig.REMOTE_TV_LIST, new ArrayList<>(remoteTvHostList));
                 // ✅ 关键：默认选中第一个
@@ -189,10 +182,6 @@ public class SearchRemoteTvDialog extends BaseDialog {
                 setTip("选择附近聚汇影视");
                 showRemoteTvList();
             } else {
-                // 搜索失败，清空所有数据
-                Hawk.delete(HawkConfig.REMOTE_TV_LIST);
-                Hawk.delete(HawkConfig.REMOTE_TVBOX);
-                PlayerHelper.clearRemoteTvBoxCache();
                 setTip("搜索附近聚汇影视");
                 showEmpty();
                 App.showToastShort(getContext(), "未找到附近聚汇影视！");
@@ -208,8 +197,6 @@ public class SearchRemoteTvDialog extends BaseDialog {
                 @Override
                 public void click(String value, int pos) {
                     RemoteTVBox.setAvalible(value);
-                    // ✅ 添加：清除 PlayerHelper 缓存
-                    PlayerHelper.clearRemoteTvBoxCache(); 
                     App.showToastShort(getContext(), "已选择：" + value);
                 }
 
