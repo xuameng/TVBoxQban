@@ -286,7 +286,7 @@ public class CrashActivity extends BaseActivity {
                 && tvRestart.getVisibility() == View.VISIBLE
                 && !tvRestart.isFocused()) {
                 tvRestart.requestFocus();
-                return true; // 消费掉 Back 事件
+                return;
         }
         super.onBackPressed();
     }
