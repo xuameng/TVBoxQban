@@ -15,6 +15,7 @@ import android.widget.Toast;
 import android.content.pm.PackageManager; // ✅ 修复1：添加导入
 import android.content.res.Configuration; // ✅ 修复2：添加导入
 import android.view.InputDevice;         // ✅ 修复3：添加导入
+import android.app.UiModeManager;
 
 import androidx.core.content.FileProvider;
 
