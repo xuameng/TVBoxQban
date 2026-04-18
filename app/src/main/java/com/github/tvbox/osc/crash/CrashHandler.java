@@ -14,23 +14,24 @@ import java.util.Date;
 import java.util.Locale;
 
 /**
- * xuameng
  * 全局崩溃捕获
- * @version 1.0.0 <br/>
+ *
+ * @author xuameng
+ * @version 2.0.0
  */
-
 public class CrashHandler implements Thread.UncaughtExceptionHandler {
 
     private static final String TAG = "CrashHandler";
-    private static CrashHandler instance = new CrashHandler();
+    private static final CrashHandler INSTANCE = new CrashHandler();
 
     private Thread.UncaughtExceptionHandler defaultHandler;
     private Context context;
 
-    private CrashHandler() {}
+    private CrashHandler() {
+    }
 
     public static CrashHandler getInstance() {
-        return instance;
+        return INSTANCE;
     }
 
     public void init(Context context) {
@@ -39,35 +40,46 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
         Thread.setDefaultUncaughtExceptionHandler(this);
     }
 
+    @Override
+    public void uncaughtException(Thread thread, Throwable ex) {
+        Log.e(TAG, "应用崩溃", ex);
 
-@Override
-public void uncaughtException(Thread thread, Throwable ex) {
-    Log.e(TAG, "应用崩溃", ex);
+        // 1. 保存日志
+        saveCrashLog(ex);
 
-    saveCrashLog(ex);
+        // 2. 跳转至崩溃页面
+        Intent intent = new Intent(context, CrashActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        context.startActivity(intent);
 
-    Intent intent = new Intent(context, CrashActivity.class);
-    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-            | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-    context.startActivity(intent);
+        // 3. 结束当前进程
+        Process.killProcess(Process.myPid());
+    }
 
-    // 防止 CrashActivity 再崩溃
-    Process.killProcess(Process.myPid());
-}
     private void saveCrashLog(Throwable ex) {
         try {
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
             ex.printStackTrace(pw);
+            pw.flush();
 
-            String crashTime = new SimpleDateFormat(
-                    "yyyy-MM-dd HH:mm:ss", Locale.getDefault()
-            ).format(new Date());
+            String fullLog = sw.toString();
 
-            String log = "===== Crash Time: " + crashTime + " =====\n"
-                    + sw.toString();
+            // 限制最多 400 行
+            String[] lines = fullLog.split("\n");
+            StringBuilder limitedLog = new StringBuilder();
+            int maxLines = Math.min(400, lines.length);
 
-            // 保存到文件（你也可以存 SharedPreferences）
+            for (int i = 0; i < maxLines; i++) {
+                limitedLog.append(lines[i]).append("\n");
+            }
+
+            String crashTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+                    .format(new Date());
+
+            // 拼接日志头
+            String log = "===== Crash Time: " + crashTime + " =====\n" + limitedLog.toString();
+
             CrashLogUtil.save(context, log);
 
         } catch (Exception e) {
