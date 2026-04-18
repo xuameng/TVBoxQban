@@ -201,8 +201,12 @@ public class SearchRemoteTvDialog extends BaseDialog {
             mSelectAdapter = new SelectDialogAdapter<>(new SelectDialogAdapter.SelectDialogInterface<String>() {
                 @Override
                 public void click(String value, int pos) {
-                    RemoteTVBox.setAvalible(value);
-                    App.showToastShort(getContext(), "已选择：" + value);
+    // 使用 remoteTvHostIp 列表中的对应元素
+ if (pos < remoteTvHostIp.size()) {
+ String ip = remoteTvHostIp.get(pos);
+ RemoteTVBox.setAvalible(ip);
+ App.showToastShort(getContext(), "已选择：" + value);
+ } 
                 }
 
                 @Override
