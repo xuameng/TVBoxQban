@@ -42,6 +42,7 @@ public class CrashActivity extends BaseActivity {
     private String crashLog = "";
     private static final int MAX_DISPLAY_LINES = 50;  //最多50行
     private static final String LOG_FILE_NAME = "crash_log.txt";
+    boolean tvRestartSelect = false;  //判断重启按钮获取过焦点没有
 
     @Override
     protected int getLayoutResID() {
@@ -102,6 +103,7 @@ public class CrashActivity extends BaseActivity {
         if (hasFocus) {
             if (tvRestart != null && tvRestart.getVisibility() == View.VISIBLE) {
                 tvRestart.requestFocus();
+                tvRestartSelect = true;
             }
         }
     }
@@ -284,7 +286,8 @@ public class CrashActivity extends BaseActivity {
     public void onBackPressed() {
         if (tvRestart != null
                 && tvRestart.getVisibility() == View.VISIBLE
-                && !tvRestart.isFocused()) {
+                && !tvRestart.isFocused()
+                && tvRestartSelect) {
                 tvRestart.requestFocus();
                 return;
         }
