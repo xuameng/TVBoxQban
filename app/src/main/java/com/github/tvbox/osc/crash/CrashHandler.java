@@ -14,24 +14,23 @@ import java.util.Date;
 import java.util.Locale;
 
 /**
+ * xuameng
  * 全局崩溃捕获
- *
- * @author xuameng
- * @version 2.0.0
+ * @version 1.0.0 <br/>
  */
+
 public class CrashHandler implements Thread.UncaughtExceptionHandler {
 
     private static final String TAG = "CrashHandler";
-    private static final CrashHandler INSTANCE = new CrashHandler();
+    private static CrashHandler instance = new CrashHandler();
 
     private Thread.UncaughtExceptionHandler defaultHandler;
     private Context context;
 
-    private CrashHandler() {
-    }
+    private CrashHandler() {}
 
     public static CrashHandler getInstance() {
-        return INSTANCE;
+        return instance;
     }
 
     public void init(Context context) {
@@ -40,47 +39,39 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
         Thread.setDefaultUncaughtExceptionHandler(this);
     }
 
-    @Override
-    public void uncaughtException(Thread thread, Throwable ex) {
-        Log.e(TAG, "应用崩溃", ex);
 
-        // 1. 保存日志
-        saveCrashLog(ex);
+@Override
+public void uncaughtException(Thread thread, Throwable ex) {
+    Log.e(TAG, "应用崩溃", ex);
 
-        // 2. 跳转至崩溃页面
-        Intent intent = new Intent(context, CrashActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        context.startActivity(intent);
+    saveCrashLog(ex);
 
-        // 3. 结束当前进程
-        Process.killProcess(Process.myPid());
-    }
+    Intent intent = new Intent(context, CrashActivity.class);
+    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+            | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+    context.startActivity(intent);
 
-private void saveCrashLog(Throwable ex) {
-    try {
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        
-        // ❌ 原代码：尝试打印所有堆栈（危险）
-        // ex.printStackTrace(pw); 
-        
-        // ✅ 新代码：只打印异常信息和前几行堆栈（安全）
-        pw.println(ex); // 打印异常类型和消息
-        StackTraceElement[] elements = ex.getStackTrace();
-        int maxLines = Math.min(100, elements.length); // 只取前20行
-        for (int i = 0; i < maxLines; i++) {
-            pw.println("    at " + elements[i]);
-        }
-        pw.println("... <StackOverflow Truncated> ..."); // 标记被截断
-        
-        String crashTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
-        String log = "===== Crash Time: " + crashTime + " =====\n" + sw.toString();
-        
-        CrashLogUtil.save(context, log);
-        
-    } catch (Exception e) {
-        Log.e(TAG, "保存崩溃日志失败", e);
-    }
+    // 防止 CrashActivity 再崩溃
+    Process.killProcess(Process.myPid());
 }
+    private void saveCrashLog(Throwable ex) {
+        try {
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            ex.printStackTrace(pw);
 
+            String crashTime = new SimpleDateFormat(
+                    "yyyy-MM-dd HH:mm:ss", Locale.getDefault()
+            ).format(new Date());
+
+            String log = "===== Crash Time: " + crashTime + " =====\n"
+                    + sw.toString();
+
+            // 保存到文件（你也可以存 SharedPreferences）
+            CrashLogUtil.save(context, log);
+
+        } catch (Exception e) {
+            Log.e(TAG, "保存崩溃日志失败", e);
+        }
+    }
 }
