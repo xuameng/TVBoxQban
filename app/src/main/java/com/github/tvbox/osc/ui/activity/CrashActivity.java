@@ -12,6 +12,10 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import android.content.pm.PackageManager; // ✅ 修复1：添加导入
+import android.content.res.Configuration; // ✅ 修复2：添加导入
+import android.view.InputDevice;         // ✅ 修复3：添加导入
+
 import androidx.core.content.FileProvider;
 
 import com.github.tvbox.osc.R;
@@ -19,7 +23,6 @@ import com.github.tvbox.osc.base.BaseActivity;
 import com.github.tvbox.osc.crash.CrashLogUtil;
 import com.github.tvbox.osc.base.App;
 import com.github.tvbox.osc.ui.activity.HomeActivity;
-import com.github.tvbox.osc.util.ScreenUtils;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -278,12 +281,56 @@ public class CrashActivity extends BaseActivity {
         System.exit(0);
     }
 
+
+public static boolean isTvOrBox(Context context) {
+    PackageManager pm = context.getPackageManager();
+    UiModeManager uiMode = (UiModeManager) context.getSystemService(Context.UI_MODE_SERVICE);
+
+    // 1. 官方推荐：优先判断 UI 模式 (Android TV / Google TV)
+    // 这是最准确的官方标准，不受厂商魔改影响
+    if (uiMode != null && uiMode.getCurrentModeType() == Configuration.UI_MODE_TYPE_TELEVISION) {
+        return true;
+    }
+
+    // 2. 检查系统特性 (兼容 Amazon Fire TV 和 Google TV)
+    // 注意：部分厂商可能未正确声明 FEATURE_TELEVISION，所以要多重检查
+    boolean hasLeanback = pm.hasSystemFeature(PackageManager.FEATURE_LEANBACK) 
+            || pm.hasSystemFeature("android.software.leanback"); // 软件层面支持
+    boolean hasTvFeature = pm.hasSystemFeature(PackageManager.FEATURE_TELEVISION);
+    boolean isFireTv = pm.hasSystemFeature("amazon.hardware.fire_tv");
+    boolean isGoogleTv = pm.hasSystemFeature("com.google.android.tv");
+
+    if (hasLeanback || hasTvFeature || isFireTv || isGoogleTv) {
+        return true;
+    }
+
+    // 3. 硬件辅助判断：无触摸屏 (大多数电视没有触摸屏)
+    // 注意：如果设备是带触摸的大屏平板，这里会返回 true，所以只能作为辅助
+    if (!pm.hasSystemFeature(PackageManager.FEATURE_TOUCHSCREEN)) {
+        return true;
+    }
+
+    // 4. 输入设备检测：检测是否连接了 DPAD (遥控器)
+    // 这是一个很强的特征，因为手机通常不会一直连接 DPAD
+    int[] deviceIds = InputDevice.getDeviceIds();
+    for (int id : deviceIds) {
+        InputDevice dev = InputDevice.getDevice(id);
+        if (dev != null && (dev.getSources() & InputDevice.SOURCE_DPAD) == InputDevice.SOURCE_DPAD) {
+            // 额外检查：如果设备既有触摸屏又有DPAD，可能是平板接了手柄，需谨慎
+            // 但结合前面的判断，这里大概率是电视
+            return true;
+        }
+    }
+
+    return false;
+}
+
     /**
      * 返回键
      */
     @Override
     public void onBackPressed() {
-        if (ScreenUtils.isTv(this)
+        if (isTvOrBox(this) 
                 && tvRestart != null
                 && tvRestart.getVisibility() == View.VISIBLE
                 && !tvRestart.isFocused()) {
