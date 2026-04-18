@@ -36,6 +36,7 @@ public class SearchRemoteTvDialog extends BaseDialog {
 
     private SelectDialogAdapter<String> mSelectAdapter;
     private static final List<String> remoteTvHostList = new ArrayList<>();
+    private static final List<String> remoteTvHostIp = new ArrayList<>();
     private boolean foundRemoteTv = false;
     private LoadService mLoadService;
     private boolean isSearching = false;
@@ -149,6 +150,7 @@ public class SearchRemoteTvDialog extends BaseDialog {
                     // 把 "设备名 (IP:端口)" 组合成一个字符串存入列表
                     String displayItem = deviceName + "(" + viewHost + ")";
                     remoteTvHostList.add(displayItem);
+                    remoteTvHostIp.add(viewHost);
                     if (end) {
                         finishSearch(true);
                     }
@@ -177,11 +179,12 @@ public class SearchRemoteTvDialog extends BaseDialog {
             if (found && !remoteTvHostList.isEmpty()) {
                 // ✅ 保存到 Hawk
                 Hawk.put(HawkConfig.REMOTE_TV_LIST, new ArrayList<>(remoteTvHostList));
-                setTip("选择附近聚汇影视");
-                showRemoteTvList();
+                
                 // ✅ 关键：默认选中第一个
-                RemoteTVBox.setAvalible(remoteTvHostList.get(0));
+                RemoteTVBox.setAvalible(remoteTvHostIp.get(0));
                 PlayerHelper.clearRemoteTvBoxCache();
+        setTip("选择附近聚汇影视");
+                showRemoteTvList();        
 
             } else {
                 setTip("搜索附近聚汇影视");
