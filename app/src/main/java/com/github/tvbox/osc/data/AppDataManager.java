@@ -57,8 +57,8 @@ public class AppDataManager {
         public void migrate(SupportSQLiteDatabase database) {
             database.execSQL("CREATE TABLE IF NOT EXISTS `vodRecordTmp` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `vodId` TEXT, `updateTime` INTEGER NOT NULL, `sourceKey` TEXT, `data` BLOB, `dataJson` TEXT, `testMigration` INTEGER NOT NULL)");
 
-            database.execSQL("CREATE TABLE IF NOT EXISTS t_search (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, searchKeyWords TEXT)"); //xuameng搜索历史
-            database.execSQL("CREATE INDEX IF NOT EXISTS index_t_search_searchKeyWords ON t_search (searchKeyWords)");  //xuameng搜索历史
+			database.execSQL("CREATE TABLE IF NOT EXISTS t_search (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, searchKeyWords TEXT)"); //xuameng搜索历史
+			database.execSQL("CREATE INDEX IF NOT EXISTS index_t_search_searchKeyWords ON t_search (searchKeyWords)");  //xuameng搜索历史
             // Read every thing from the former Expense table
             Cursor cursor = database.query("SELECT * FROM vodRecord");
 
@@ -119,7 +119,10 @@ public class AppDataManager {
         if (dbInstance == null)
             dbInstance = Room.databaseBuilder(App.getInstance(), AppDataBase.class, dbPath())
                     .setJournalMode(RoomDatabase.JournalMode.TRUNCATE)
+   //                 .addMigrations(MIGRATION_1_2)
                     .addMigrations(MIGRATION_2_3)     //xuameng搜索历史
+                    //.addMigrations(MIGRATION_3_4)
+                    //.addMigrations(MIGRATION_4_5)
                     .addCallback(new RoomDatabase.Callback() {
                         @Override
                         public void onCreate(@NonNull SupportSQLiteDatabase db) {
@@ -138,8 +141,9 @@ public class AppDataManager {
     }
 
     public static boolean backup(File path) throws IOException {
-        // 注意：这里的关键是不关闭数据库！
-        // 直接拷贝数据库文件，不关闭连接池
+        if (dbInstance != null && dbInstance.isOpen()) {
+            dbInstance.close();
+        }
         File db = App.getInstance().getDatabasePath(dbPath());
         if (db.exists()) {
             FileUtils.copyFile(db, path);
@@ -150,38 +154,16 @@ public class AppDataManager {
     }
 
     public static boolean restore(File path) throws IOException {
-        // 注意：这里的关键是不关闭数据库！
-        // 直接替换数据库文件，不关闭连接池
-        File db = App.getInstance().getDatabasePath(dbPath());
-        
-        if (path.exists()) {
-            // 1. 先关闭数据库连接
-            if (dbInstance != null && dbInstance.isOpen()) {
-                try {
-                    dbInstance.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-            
-            // 2. 删除旧的数据库文件
-            if (db.exists()) {
-                db.delete();
-            }
-            
-            // 3. 确保父目录存在
-            if (!db.getParentFile().exists())
-                db.getParentFile().mkdirs();
-            
-            // 4. 拷贝新的数据库文件
-            FileUtils.copyFile(path, db);
-            
-            // 5. 清空数据库实例，下次get()会自动重建
-            dbInstance = null;
-            
-            return true;
-        } else {
-            return false;
+        if (dbInstance != null && dbInstance.isOpen()) {
+            dbInstance.close();
         }
+        File db = App.getInstance().getDatabasePath(dbPath());
+        if (db.exists()) {
+            db.delete();
+        }
+        if (!db.getParentFile().exists())
+            db.getParentFile().mkdirs();
+        FileUtils.copyFile(path, db);
+        return true;
     }
 }
