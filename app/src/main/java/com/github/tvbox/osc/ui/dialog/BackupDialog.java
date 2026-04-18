@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -33,6 +35,8 @@ import java.util.List;
 import com.github.tvbox.osc.util.HawkConfig;     //xuameng恢复判断
 
 public class BackupDialog extends BaseDialog {
+
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     public BackupDialog(@NonNull @NotNull Context context) {
         super(context);
@@ -80,8 +84,7 @@ public class BackupDialog extends BaseDialog {
                                 public void onDenied(List<String> permissions, boolean never) {
                                     if (never) {
                                         App.showToastShort(getContext(), "获取存储权限失败,请在系统设置中开启！");
-                                        // 安全地启动权限设置页面
-                                        startPermissionActivitySafely(getContext(), permissions);
+                                        startPermissionActivitySafely(permissions);
                                     } else {
                                         App.showToastShort(getContext(), "获取存储权限失败！");
                                     }
@@ -93,19 +96,47 @@ public class BackupDialog extends BaseDialog {
     }
 
     // 安全地启动权限设置页面
-    private void startPermissionActivitySafely(Context context, List<String> permissions) {
+    private void startPermissionActivitySafely(List<String> permissions) {
+        Context context = getContext();
         if (context instanceof Activity) {
             // 如果context是Activity，安全调用
             XXPermissions.startPermissionActivity((Activity) context, permissions);
-        } else {
-            // 如果context不是Activity，尝试从Application获取Activity
-            if (getContext() instanceof Activity) {
-                XXPermissions.startPermissionActivity((Activity) getContext(), permissions);
+        } else if (context != null) {
+            // 如果不是Activity，尝试从Dialog的window获取Activity
+            Activity activity = getActivityFromContext(context);
+            if (activity != null) {
+                XXPermissions.startPermissionActivity(activity, permissions);
             } else {
-                // 如果都无法获取Activity，显示提示
+                // 如果无法获取Activity，显示提示
                 App.showToastShort(context, "无法启动权限设置页面，请在系统设置中手动开启权限");
             }
         }
+    }
+    
+    // 尝试从Context获取Activity
+    private Activity getActivityFromContext(Context context) {
+        // 方法1：如果是Activity，直接返回
+        if (context instanceof Activity) {
+            return (Activity) context;
+        }
+        
+        // 方法2：尝试从ContextThemeWrapper获取底层Activity
+        if (context instanceof android.view.ContextThemeWrapper) {
+            Context baseContext = ((android.view.ContextThemeWrapper) context).getBaseContext();
+            if (baseContext instanceof Activity) {
+                return (Activity) baseContext;
+            }
+        }
+        
+        // 方法3：如果是Wrapper，尝试获取原始Context
+        if (context instanceof android.content.ContextWrapper) {
+            Context baseContext = ((android.content.ContextWrapper) context).getBaseContext();
+            if (baseContext instanceof Activity) {
+                return (Activity) baseContext;
+            }
+        }
+        
+        return null;
     }
 
     List<String> allBackup() {
@@ -166,14 +197,10 @@ public class BackupDialog extends BaseDialog {
                             }
                             success = true;
                         } else {
-                            ((Activity) getContext()).runOnUiThread(() -> {
-                                App.showToastShort(getContext(), "Hawk恢复失败!");
-                            });
+                            showToastOnMainThread("Hawk恢复失败!");
                         }
                     } else {
-                        ((Activity) getContext()).runOnUiThread(() -> {
-                            App.showToastShort(getContext(), "DB文件恢复失败!");
-                        });
+                        showToastOnMainThread("DB文件恢复失败!");
                     }
                 }
             } catch (Throwable e) {
@@ -181,7 +208,7 @@ public class BackupDialog extends BaseDialog {
             }
             
             final boolean finalSuccess = success;
-            ((Activity) getContext()).runOnUiThread(() -> {
+            runOnMainThread(() -> {
                 if (finalSuccess) {
                     App.showToastShort(getContext(), "数据恢复成功！请重启应用！");
                     HawkConfig.ISrestore = true;  //xuameng恢复成功,请重启应用
@@ -215,26 +242,18 @@ public class BackupDialog extends BaseDialog {
                     }
                     if (!FileUtils.writeSimple(jsonObject.toString().getBytes("UTF-8"), new File(backup, "hawk"))) {
                         backup.delete();
-                        ((Activity) getContext()).runOnUiThread(() -> {
-                            App.showToastShort(getContext(), "备份Hawk失败!");
-                        });
+                        showToastOnMainThread("备份Hawk失败!");
                     } else {
                         success = true;
-                        ((Activity) getContext()).runOnUiThread(() -> {
-                            App.showToastShort(getContext(), "备份成功!");
-                        });
+                        showToastOnMainThread("备份成功!");
                     }
                 } else {
                     backup.delete();
-                    ((Activity) getContext()).runOnUiThread(() -> {
-                        App.showToastShort(getContext(), "DB文件不存在!");
-                    });
+                    showToastOnMainThread("DB文件不存在!");
                 }
             } catch (Throwable e) {
                 e.printStackTrace();
-                ((Activity) getContext()).runOnUiThread(() -> {
-                    App.showToastShort(getContext(), "备份失败!");
-                });
+                showToastOnMainThread("备份失败!");
             }
         }).start();
     }
@@ -245,12 +264,26 @@ public class BackupDialog extends BaseDialog {
                 String root = Environment.getExternalStorageDirectory().getAbsolutePath();
                 File backup = new File(root + "/聚汇影视备份黑标/" + dir);
                 FileUtils.recursiveDelete(backup);
-                ((Activity) getContext()).runOnUiThread(() -> {
-                    App.showToastShort(getContext(), "此备份已删除！");
-                });
+                showToastOnMainThread("此备份已删除！");
             } catch (Throwable e) {
                 e.printStackTrace();
             }
         }).start();
+    }
+    
+    // 在主线中运行代码
+    private void runOnMainThread(Runnable runnable) {
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            runnable.run();
+        } else {
+            mainHandler.post(runnable);
+        }
+    }
+    
+    // 在主线中显示Toast
+    private void showToastOnMainThread(String message) {
+        runOnMainThread(() -> {
+            App.showToastShort(getContext(), message);
+        });
     }
 }
