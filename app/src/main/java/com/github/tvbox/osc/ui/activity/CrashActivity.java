@@ -281,22 +281,14 @@ public class CrashActivity extends BaseActivity {
      * 返回键
      */
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            // 当前焦点不在重启按钮上
-            if (tvRestart != null
-                    && tvRestart.getVisibility() == View.VISIBLE
-                    && !tvRestart.hasFocus()) {
-
+    public void onBackPressed() {
+        if (tvRestart != null
+                && tvRestart.getVisibility() == View.VISIBLE
+                && !tvRestart.isFocused()) {
                 tvRestart.requestFocus();
                 return true; // 消费掉 Back 事件
-            }
-
-            // 焦点已经在重启按钮上 → 退出应用
-            restartApp();
-            return true;
         }
-        return super.onKeyDown(keyCode, event);
+        super.onBackPressed();
     }
 
 }
