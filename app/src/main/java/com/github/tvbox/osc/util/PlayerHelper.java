@@ -201,13 +201,7 @@ public class PlayerHelper {
             playersExist.put(10, MXPlayer.getPackageInfo() != null);
             playersExist.put(11, ReexPlayer.getPackageInfo() != null);
             playersExist.put(12, Kodi.getPackageInfo() != null);
-            //playersExist.put(13, RemoteTVBox.getAvalible() != null);
-            // xuameng 返回去掉主机名和括号只保留IP和端口
-            String available = RemoteTVBox.getAvalible();
-            boolean exist = available != null && 
-                          available.contains("(") && 
-                          available.contains(")");
-            playersExist.put(13, exist);
+            playersExist.put(13, RemoteTVBox.getAvalible() != null);
             playersExist.put(14, VlcPlayer.getPackageInfo() != null);
             mPlayersExistInfo = playersExist;
         }
