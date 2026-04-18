@@ -19,6 +19,7 @@ import com.github.tvbox.osc.base.BaseActivity;
 import com.github.tvbox.osc.crash.CrashLogUtil;
 import com.github.tvbox.osc.base.App;
 import com.github.tvbox.osc.ui.activity.HomeActivity;
+import com.github.tvbox.osc.util.ScreenUtils;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -42,7 +43,6 @@ public class CrashActivity extends BaseActivity {
     private String crashLog = "";
     private static final int MAX_DISPLAY_LINES = 50;  //最多50行
     private static final String LOG_FILE_NAME = "crash_log.txt";
-    boolean tvRestartSelect = false;  //判断重启按钮获取过焦点没有
 
     @Override
     protected int getLayoutResID() {
@@ -103,7 +103,6 @@ public class CrashActivity extends BaseActivity {
         if (hasFocus) {
             if (tvRestart != null && tvRestart.getVisibility() == View.VISIBLE) {
                 tvRestart.requestFocus();
-                tvRestartSelect = true;
             }
         }
     }
@@ -284,10 +283,10 @@ public class CrashActivity extends BaseActivity {
      */
     @Override
     public void onBackPressed() {
-        if (tvRestart != null
+        if (ScreenUtils.isTv(this)
+                && tvRestart != null
                 && tvRestart.getVisibility() == View.VISIBLE
-                && !tvRestart.isFocused()
-                && tvRestartSelect) {
+                && !tvRestart.isFocused()) {
                 tvRestart.requestFocus();
                 return;
         }
