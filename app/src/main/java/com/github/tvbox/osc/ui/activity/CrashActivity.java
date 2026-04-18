@@ -338,7 +338,9 @@ public static boolean isTvOrBox(Context context) {
                 tvRestart.requestFocus();
                 return;
         }
-        super.onBackPressed();
+        // 退出app
+        android.os.Process.killProcess(android.os.Process.myPid());
+        System.exit(0);
     }
 
 }
