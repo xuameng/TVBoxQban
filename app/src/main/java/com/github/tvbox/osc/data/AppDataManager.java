@@ -14,8 +14,7 @@ import com.github.tvbox.osc.util.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.ReentrantLock;
+
 
 /**
  * 类描述:
@@ -28,15 +27,6 @@ public class AppDataManager {
     private static final String DB_NAME = "tvbox";
     private static AppDataManager manager;   //xuameng搜索历史
     private static AppDataBase dbInstance;
-    
-    // 添加引用计数来跟踪活跃的数据库操作
-    private static final AtomicInteger connectionRefCount = new AtomicInteger(0);
-    // 添加锁来保护数据库关闭操作
-    private static final ReentrantLock closeLock = new ReentrantLock();
-    // 添加标志位标识数据库是否正在关闭
-    private static volatile boolean isClosing = false;
-    // 添加数据库状态标志
-    private static volatile boolean dbClosed = false;
 
     private AppDataManager() {
     }
@@ -48,28 +38,6 @@ public class AppDataManager {
                     manager = new AppDataManager();
                 }
             }
-        }
-    }
-
-    // 开始数据库操作
-    public static void beginOperation() {
-        connectionRefCount.incrementAndGet();
-    }
-    
-    // 结束数据库操作
-    public static void endOperation() {
-        connectionRefCount.decrementAndGet();
-    }
-    
-    // 获取活跃操作数量
-    public static int getActiveOperations() {
-        return connectionRefCount.get();
-    }
-    
-    // 等待所有活跃操作完成
-    public static void waitForAllOperations() throws InterruptedException {
-        while (connectionRefCount.get() > 0 && !dbClosed) {
-            Thread.sleep(100);  // 等待100毫秒
         }
     }
 
@@ -110,6 +78,7 @@ public class AppDataManager {
                         " ('" + id + "', '" + vodId + "', '" + updateTime + "', '" + sourceKey + "', '" + dataJson + "',0  )");
             }
 
+
             // Delete the former table
             database.execSQL("DROP TABLE vodRecord");
             // Rename the current table to the former table name so that all other code continues to work
@@ -147,107 +116,46 @@ public class AppDataManager {
         if (manager == null) {
             throw new RuntimeException("AppDataManager is no init");
         }
-        
-        // 如果数据库正在关闭，等待
-        if (isClosing) {
-            synchronized (AppDataManager.class) {
-                if (isClosing) {
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                    }
-                }
-            }
-        }
-        
-        // 如果数据库被关闭了，重新创建
-        if (dbClosed || dbInstance == null || !dbInstance.isOpen()) {
-            synchronized (AppDataManager.class) {
-                if (dbClosed || dbInstance == null || !dbInstance.isOpen()) {
-                    try {
-                        dbInstance = createDatabaseInstance();
-                        dbClosed = false;
-                        isClosing = false;
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        // 如果创建失败，记录错误但不抛异常
-                        return null;
-                    }
-                }
-            }
-        }
-        return dbInstance;
-    }
-    
-    private static AppDataBase createDatabaseInstance() {
-        return Room.databaseBuilder(App.getInstance(), AppDataBase.class, dbPath())
-                .setJournalMode(RoomDatabase.JournalMode.TRUNCATE)
-                .addMigrations(MIGRATION_2_3)     //xuameng搜索历史
-                .addCallback(new RoomDatabase.Callback() {
-                    @Override
-                    public void onCreate(@NonNull SupportSQLiteDatabase db) {
-                        super.onCreate(db);
-                    }
+        if (dbInstance == null)
+            dbInstance = Room.databaseBuilder(App.getInstance(), AppDataBase.class, dbPath())
+                    .setJournalMode(RoomDatabase.JournalMode.TRUNCATE)
+                    .addMigrations(MIGRATION_2_3)     //xuameng搜索历史
+                    .addCallback(new RoomDatabase.Callback() {
+                        @Override
+                        public void onCreate(@NonNull SupportSQLiteDatabase db) {
+                            super.onCreate(db);
+//                        LOG.i("数据库第一次创建成功");
+                        }
 
-                    @Override
-                    public void onOpen(@NonNull SupportSQLiteDatabase db) {
-                        super.onOpen(db);
-                    }
-                }).allowMainThreadQueries()//可以在主线程操作
-                .build();
+                        @Override
+                        public void onOpen(@NonNull SupportSQLiteDatabase db) {
+                            super.onOpen(db);
+//                        LOG.i("数据库打开成功");
+                        }
+                    }).allowMainThreadQueries()//可以在主线程操作
+                    .build();
+        return dbInstance;
     }
 
     public static boolean backup(File path) throws IOException {
-        beginOperation();
-        try {
-            closeLock.lock();
-            isClosing = true;
-            
-            // 等待所有活跃操作完成
-            try {
-                waitForAllOperations();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                return false;
-            }
-            
-            if (dbInstance != null && dbInstance.isOpen()) {
-                try {
-                    dbInstance.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-            
-            File db = App.getInstance().getDatabasePath(dbPath());
-            if (db.exists()) {
-                FileUtils.copyFile(db, path);
-                return true;
-            } else {
-                return false;
-            }
-        } finally {
-            dbClosed = true;
-            isClosing = false;
-            closeLock.unlock();
+        // 注意：这里的关键是不关闭数据库！
+        // 直接拷贝数据库文件，不关闭连接池
+        File db = App.getInstance().getDatabasePath(dbPath());
+        if (db.exists()) {
+            FileUtils.copyFile(db, path);
+            return true;
+        } else {
+            return false;
         }
     }
 
     public static boolean restore(File path) throws IOException {
-        beginOperation();
-        try {
-            closeLock.lock();
-            isClosing = true;
-            
-            // 等待所有活跃操作完成
-            try {
-                waitForAllOperations();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                return false;
-            }
-            
+        // 注意：这里的关键是不关闭数据库！
+        // 直接替换数据库文件，不关闭连接池
+        File db = App.getInstance().getDatabasePath(dbPath());
+        
+        if (path.exists()) {
+            // 1. 先关闭数据库连接
             if (dbInstance != null && dbInstance.isOpen()) {
                 try {
                     dbInstance.close();
@@ -256,72 +164,24 @@ public class AppDataManager {
                 }
             }
             
-            File db = App.getInstance().getDatabasePath(dbPath());
+            // 2. 删除旧的数据库文件
             if (db.exists()) {
                 db.delete();
             }
+            
+            // 3. 确保父目录存在
             if (!db.getParentFile().exists())
                 db.getParentFile().mkdirs();
+            
+            // 4. 拷贝新的数据库文件
             FileUtils.copyFile(path, db);
             
-            // 恢复完成后重置数据库实例
-            resetDatabase();
-            return true;
-        } finally {
-            dbClosed = false;
-            isClosing = false;
-            closeLock.unlock();
-        }
-    }
-    
-    // 重置数据库连接
-    public static void resetDatabase() {
-        synchronized (AppDataManager.class) {
-            if (dbInstance != null && dbInstance.isOpen()) {
-                try {
-                    dbInstance.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
+            // 5. 清空数据库实例，下次get()会自动重建
             dbInstance = null;
-            dbClosed = true;  // 设置为关闭状态，下次get()时会重新创建
-        }
-    }
-    
-    // 安全关闭数据库
-    public static void closeSafely() {
-        beginOperation();
-        try {
-            closeLock.lock();
-            isClosing = true;
             
-            // 等待所有活跃操作完成
-            try {
-                waitForAllOperations();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                return;
-            }
-            
-            if (dbInstance != null && dbInstance.isOpen()) {
-                try {
-                    dbInstance.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                } finally {
-                    dbInstance = null;
-                    dbClosed = true;
-                }
-            }
-        } finally {
-            isClosing = false;
-            closeLock.unlock();
+            return true;
+        } else {
+            return false;
         }
-    }
-    
-    // 检查数据库是否可用
-    public static boolean isDatabaseAvailable() {
-        return !dbClosed && dbInstance != null && dbInstance.isOpen();
     }
 }
