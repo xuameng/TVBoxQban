@@ -55,14 +55,8 @@ public class BackupDialog extends BaseDialog {
         findViewById(R.id.backupNow).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new Thread(() -> {
-                    boolean success = backup();
-                    ((Activity) getContext()).runOnUiThread(() -> {
-                        if (success) {
-                            adapter.setNewData(allBackup());
-                        }
-                    });
-                }).start();
+                backup();
+                adapter.setNewData(allBackup());
             }
         });
         findViewById(R.id.storagePermission).setOnClickListener(new View.OnClickListener() {
@@ -86,7 +80,8 @@ public class BackupDialog extends BaseDialog {
                                 public void onDenied(List<String> permissions, boolean never) {
                                     if (never) {
                                         App.showToastShort(getContext(), "获取存储权限失败,请在系统设置中开启！");
-                                        XXPermissions.startPermissionActivity(getContext(), permissions);     //xuameng  (Activity) BUG
+                                        // 安全地启动权限设置页面
+                                        startPermissionActivitySafely(getContext(), permissions);
                                     } else {
                                         App.showToastShort(getContext(), "获取存储权限失败！");
                                     }
@@ -95,6 +90,22 @@ public class BackupDialog extends BaseDialog {
                 }
             }
         });
+    }
+
+    // 安全地启动权限设置页面
+    private void startPermissionActivitySafely(Context context, List<String> permissions) {
+        if (context instanceof Activity) {
+            // 如果context是Activity，安全调用
+            XXPermissions.startPermissionActivity((Activity) context, permissions);
+        } else {
+            // 如果context不是Activity，尝试从Application获取Activity
+            if (getContext() instanceof Activity) {
+                XXPermissions.startPermissionActivity((Activity) getContext(), permissions);
+            } else {
+                // 如果都无法获取Activity，显示提示
+                App.showToastShort(context, "无法启动权限设置页面，请在系统设置中手动开启权限");
+            }
+        }
     }
 
     List<String> allBackup() {
@@ -155,10 +166,14 @@ public class BackupDialog extends BaseDialog {
                             }
                             success = true;
                         } else {
-                            App.showToastShort(getContext(), "Hawk恢复失败!");
+                            ((Activity) getContext()).runOnUiThread(() -> {
+                                App.showToastShort(getContext(), "Hawk恢复失败!");
+                            });
                         }
                     } else {
-                        App.showToastShort(getContext(), "DB文件恢复失败!");
+                        ((Activity) getContext()).runOnUiThread(() -> {
+                            App.showToastShort(getContext(), "DB文件恢复失败!");
+                        });
                     }
                 }
             } catch (Throwable e) {
@@ -168,51 +183,60 @@ public class BackupDialog extends BaseDialog {
             final boolean finalSuccess = success;
             ((Activity) getContext()).runOnUiThread(() -> {
                 if (finalSuccess) {
-                    App.showToastShort(getContext(), "数据恢复成功！退出设置页面将重启应用！");
+                    App.showToastShort(getContext(), "数据恢复成功！请重启应用！");
                     HawkConfig.ISrestore = true;  //xuameng恢复成功,请重启应用
                 }
             });
         }).start();
     }
 
-    boolean backup() {
-        boolean success = false;
-        try {
-            String root = Environment.getExternalStorageDirectory().getAbsolutePath();
-            File file = new File(root + "/聚汇影视备份黑标/");
-            if (!file.exists())
-                file.mkdirs();
-            Date now = new Date();
-            SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd-HHmmss");
-            File backup = new File(file, f.format(now));
-            backup.mkdirs();
-            File db = new File(backup, "sqlite");
-            if (AppDataManager.backup(db)) {
-                SharedPreferences sharedPreferences = App.getInstance().getSharedPreferences("Hawk2", Context.MODE_PRIVATE);
-                JSONObject jsonObject = new JSONObject();
-                for (String key : sharedPreferences.getAll().keySet()) {
-                    jsonObject.put(key, sharedPreferences.getString(key, ""));
-                }
-                sharedPreferences = App.getInstance().getSharedPreferences("crypto.KEY_256", Context.MODE_PRIVATE);
-                for (String key : sharedPreferences.getAll().keySet()) {
-                    jsonObject.put(key, sharedPreferences.getString(key, ""));
-                }
-                if (!FileUtils.writeSimple(jsonObject.toString().getBytes("UTF-8"), new File(backup, "hawk"))) {
-                    backup.delete();
-                    App.showToastShort(getContext(), "备份Hawk失败!");
+    void backup() {
+        new Thread(() -> {
+            boolean success = false;
+            try {
+                String root = Environment.getExternalStorageDirectory().getAbsolutePath();
+                File file = new File(root + "/聚汇影视备份黑标/");
+                if (!file.exists())
+                    file.mkdirs();
+                Date now = new Date();
+                SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd-HHmmss");
+                File backup = new File(file, f.format(now));
+                backup.mkdirs();
+                File db = new File(backup, "sqlite");
+                if (AppDataManager.backup(db)) {
+                    SharedPreferences sharedPreferences = App.getInstance().getSharedPreferences("Hawk2", Context.MODE_PRIVATE);
+                    JSONObject jsonObject = new JSONObject();
+                    for (String key : sharedPreferences.getAll().keySet()) {
+                        jsonObject.put(key, sharedPreferences.getString(key, ""));
+                    }
+                    sharedPreferences = App.getInstance().getSharedPreferences("crypto.KEY_256", Context.MODE_PRIVATE);
+                    for (String key : sharedPreferences.getAll().keySet()) {
+                        jsonObject.put(key, sharedPreferences.getString(key, ""));
+                    }
+                    if (!FileUtils.writeSimple(jsonObject.toString().getBytes("UTF-8"), new File(backup, "hawk"))) {
+                        backup.delete();
+                        ((Activity) getContext()).runOnUiThread(() -> {
+                            App.showToastShort(getContext(), "备份Hawk失败!");
+                        });
+                    } else {
+                        success = true;
+                        ((Activity) getContext()).runOnUiThread(() -> {
+                            App.showToastShort(getContext(), "备份成功!");
+                        });
+                    }
                 } else {
-                    success = true;
-                    App.showToastShort(getContext(), "备份成功!");
+                    backup.delete();
+                    ((Activity) getContext()).runOnUiThread(() -> {
+                        App.showToastShort(getContext(), "DB文件不存在!");
+                    });
                 }
-            } else {
-                App.showToastShort(getContext(), "DB文件不存在!");
-                backup.delete();
+            } catch (Throwable e) {
+                e.printStackTrace();
+                ((Activity) getContext()).runOnUiThread(() -> {
+                    App.showToastShort(getContext(), "备份失败!");
+                });
             }
-        } catch (Throwable e) {
-            e.printStackTrace();
-            App.showToastShort(getContext(), "备份失败!");
-        }
-        return success;
+        }).start();
     }
 
     void delete(String dir) {
