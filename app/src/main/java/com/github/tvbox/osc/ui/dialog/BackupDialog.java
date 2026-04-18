@@ -46,7 +46,7 @@ public class BackupDialog extends BaseDialog {
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
                 if (view.getId() == R.id.tvName) {
                     restore((String) adapter.getItem(position));
-                }else if (view.getId() == R.id.tvDel) {
+                } else if (view.getId() == R.id.tvDel) {
                     delete((String) adapter.getItem(position));
                     adapter.setNewData(allBackup());
                 }
@@ -55,8 +55,14 @@ public class BackupDialog extends BaseDialog {
         findViewById(R.id.backupNow).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                backup();
-                adapter.setNewData(allBackup());
+                new Thread(() -> {
+                    boolean success = backup();
+                    ((Activity) getContext()).runOnUiThread(() -> {
+                        if (success) {
+                            adapter.setNewData(allBackup());
+                        }
+                    });
+                }).start();
             }
         });
         findViewById(R.id.storagePermission).setOnClickListener(new View.OnClickListener() {
@@ -97,21 +103,23 @@ public class BackupDialog extends BaseDialog {
             String root = Environment.getExternalStorageDirectory().getAbsolutePath();
             File file = new File(root + "/聚汇影视备份黑标/");
             File[] list = file.listFiles();
-            Arrays.sort(list, new Comparator<File>() {
-                @Override
-                public int compare(File o1, File o2) {
-                    if (o1.isDirectory() && o2.isFile()) return -1;
-                    return o1.isFile() && o2.isDirectory() ? 1 : o2.getName().compareTo(o1.getName());
-                }
-            });
-            if (file.exists()) {
-                for (File f : list) {
-                    if (result.size() > 10) {
-                        FileUtils.recursiveDelete(f);
-                        continue;
+            if (list != null) {
+                Arrays.sort(list, new Comparator<File>() {
+                    @Override
+                    public int compare(File o1, File o2) {
+                        if (o1.isDirectory() && o2.isFile()) return -1;
+                        return o1.isFile() && o2.isDirectory() ? 1 : o2.getName().compareTo(o1.getName());
                     }
-                    if (f.isDirectory()) {
-                        result.add(f.getName());
+                });
+                if (file.exists()) {
+                    for (File f : list) {
+                        if (result.size() > 10) {
+                            FileUtils.recursiveDelete(f);
+                            continue;
+                        }
+                        if (f.isDirectory()) {
+                            result.add(f.getName());
+                        }
                     }
                 }
             }
@@ -122,42 +130,53 @@ public class BackupDialog extends BaseDialog {
     }
 
     void restore(String dir) {
-        try {
-            String root = Environment.getExternalStorageDirectory().getAbsolutePath();
-            File backup = new File(root + "/聚汇影视备份黑标/" + dir);
-            if (backup.exists()) {
-                File db = new File(backup, "sqlite");
-                if (AppDataManager.restore(db)) {
-                    byte[] data = FileUtils.readSimple(new File(backup, "hawk"));
-                    if (data != null) {
-                        String hawkJson = new String(data, "UTF-8");
-                        JSONObject jsonObject = new JSONObject(hawkJson);
-                        Iterator<String> it = jsonObject.keys();
-                        SharedPreferences sharedPreferences = App.getInstance().getSharedPreferences("Hawk2", Context.MODE_PRIVATE);
-                        while (it.hasNext()) {
-                            String key = it.next();
-                            String value = jsonObject.getString(key);
-                            if (key.equals("cipher_key")) {
-                                App.getInstance().getSharedPreferences("crypto.KEY_256", Context.MODE_PRIVATE).edit().putString(key, value).commit();
-                            } else {
-                                sharedPreferences.edit().putString(key, value).commit();
+        new Thread(() -> {
+            boolean success = false;
+            try {
+                String root = Environment.getExternalStorageDirectory().getAbsolutePath();
+                File backup = new File(root + "/聚汇影视备份黑标/" + dir);
+                if (backup.exists()) {
+                    File db = new File(backup, "sqlite");
+                    if (AppDataManager.restore(db)) {
+                        byte[] data = FileUtils.readSimple(new File(backup, "hawk"));
+                        if (data != null) {
+                            String hawkJson = new String(data, "UTF-8");
+                            JSONObject jsonObject = new JSONObject(hawkJson);
+                            Iterator<String> it = jsonObject.keys();
+                            SharedPreferences sharedPreferences = App.getInstance().getSharedPreferences("Hawk2", Context.MODE_PRIVATE);
+                            while (it.hasNext()) {
+                                String key = it.next();
+                                String value = jsonObject.getString(key);
+                                if (key.equals("cipher_key")) {
+                                    App.getInstance().getSharedPreferences("crypto.KEY_256", Context.MODE_PRIVATE).edit().putString(key, value).commit();
+                                } else {
+                                    sharedPreferences.edit().putString(key, value).commit();
+                                }
                             }
+                            success = true;
+                        } else {
+                            App.showToastShort(getContext(), "Hawk恢复失败!");
                         }
-                        App.showToastShort(getContext(), "数据恢复成功！退出设置页面将重启应用！");
-						HawkConfig.ISrestore = true;  //xuameng恢复成功,请重启应用
                     } else {
-                        App.showToastShort(getContext(), "Hawk恢复失败!");
+                        App.showToastShort(getContext(), "DB文件恢复失败!");
                     }
-                } else {
-                    App.showToastShort(getContext(), "DB文件恢复失败!");
                 }
+            } catch (Throwable e) {
+                e.printStackTrace();
             }
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
+            
+            final boolean finalSuccess = success;
+            ((Activity) getContext()).runOnUiThread(() -> {
+                if (finalSuccess) {
+                    App.showToastShort(getContext(), "数据恢复成功！退出设置页面将重启应用！");
+                    HawkConfig.ISrestore = true;  //xuameng恢复成功,请重启应用
+                }
+            });
+        }).start();
     }
 
-    void backup() {
+    boolean backup() {
+        boolean success = false;
         try {
             String root = Environment.getExternalStorageDirectory().getAbsolutePath();
             File file = new File(root + "/聚汇影视备份黑标/");
@@ -182,6 +201,7 @@ public class BackupDialog extends BaseDialog {
                     backup.delete();
                     App.showToastShort(getContext(), "备份Hawk失败!");
                 } else {
+                    success = true;
                     App.showToastShort(getContext(), "备份成功!");
                 }
             } else {
@@ -192,16 +212,21 @@ public class BackupDialog extends BaseDialog {
             e.printStackTrace();
             App.showToastShort(getContext(), "备份失败!");
         }
+        return success;
     }
 
     void delete(String dir) {
-        try {
-            String root = Environment.getExternalStorageDirectory().getAbsolutePath();
-            File backup = new File(root + "/聚汇影视备份黑标/" + dir);
-            FileUtils.recursiveDelete(backup);
-            App.showToastShort(getContext(), "此备份已删除！");
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
+        new Thread(() -> {
+            try {
+                String root = Environment.getExternalStorageDirectory().getAbsolutePath();
+                File backup = new File(root + "/聚汇影视备份黑标/" + dir);
+                FileUtils.recursiveDelete(backup);
+                ((Activity) getContext()).runOnUiThread(() -> {
+                    App.showToastShort(getContext(), "此备份已删除！");
+                });
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 }
