@@ -84,7 +84,6 @@ import com.orhanobut.hawk.Hawk;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.text.Cue;
 import com.github.tvbox.osc.bean.IJKCode;  //xuamengIJK切换用
-import com.github.tvbox.osc.player.thirdparty.RemoteTVBox;  //xuameng 调用附近聚汇影视显示主机名用
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -680,12 +679,7 @@ public class PlayFragment extends BaseLazyFragment {
                                 boolean callResult = false;
                                 long progress = getSavedProgress(progressKey);
                                 callResult = PlayerHelper.runExternalPlayer(playerType, requireActivity(), url, playTitle, playSubtitle, headers, progress);
-                                if (playerType == 13) {
-                                    String jvhuiysname = RemoteTVBox.getAvalible();
-                                    setTip(PlayerHelper.getPlayerName(playerType) + jvhuiysname + "调用" + (callResult ? "成功" : "失败"), callResult, !callResult);
-                                }else{
-                                    setTip("调用外部播放器" + PlayerHelper.getPlayerName(playerType) + (callResult ? "成功" : "失败"), callResult, !callResult);
-                                }
+                                setTip("调用外部播放器" + PlayerHelper.getPlayerName(playerType) + (callResult ? "成功" : "失败"), callResult, !callResult);
                                 return;
                             }
                         } catch (JSONException e) {
