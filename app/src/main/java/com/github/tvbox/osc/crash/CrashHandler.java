@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Process;
 import android.os.Handler;
+import android.os.Looper; 
 import android.util.Log;
 
 import com.github.tvbox.osc.ui.activity.CrashActivity;
@@ -58,7 +59,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
             @Override
             public void run() {
                 Process.killProcess(Process.myPid());
-                System.exit(10);
+                System.exit(0);
             }
         }, 2000); // 延迟2秒
     }
