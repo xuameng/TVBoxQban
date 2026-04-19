@@ -3,6 +3,7 @@ package com.github.tvbox.osc.crash;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Process;
+import android.os.Handler;
 import android.util.Log;
 
 import com.github.tvbox.osc.ui.activity.CrashActivity;
@@ -43,17 +44,23 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
     @Override
     public void uncaughtException(Thread thread, Throwable ex) {
         Log.e(TAG, "应用崩溃", ex);
-
-        // 1. 保存日志
+    
+        // 1. 保存崩溃日志
         saveCrashLog(ex);
-
-        // 2. 跳转至崩溃页面
+    
+        // 2. 启动CrashActivity
         Intent intent = new Intent(context, CrashActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         context.startActivity(intent);
-
-        // 3. 结束当前进程
-        Process.killProcess(Process.myPid());
+    
+        // 3. ✅ 添加延迟，确保CrashActivity完全初始化
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Process.killProcess(Process.myPid());
+                System.exit(10);
+            }
+        }, 2000); // 延迟2秒
     }
 
     private void saveCrashLog(Throwable ex) {
