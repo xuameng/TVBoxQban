@@ -282,7 +282,7 @@ public class CrashActivity extends BaseActivity {
      */
     @Override
     public void onBackPressed() {
-        if (ScreenUtils.isTvOrBox(this)){
+        if (ScreenUtils.isTv(this)){
 	        App.showToastShort(CrashActivity.this, "1111111111111");
             if (tvRestart != null
                     && tvRestart.getVisibility() == View.VISIBLE
