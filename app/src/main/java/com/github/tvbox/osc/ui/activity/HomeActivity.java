@@ -197,7 +197,6 @@ public class HomeActivity extends BaseActivity {
                     HomeActivity.this.sortFocused = position;
                     mHandler.removeCallbacks(mDataRunnable);
                     mHandler.post(mDataRunnable);   //xuameng 延迟到下一个主线程周期执行
-				        throw new RuntimeException("这是测试崩溃");
                 }
             }
 
@@ -619,7 +618,7 @@ public class HomeActivity extends BaseActivity {
             ControlManager.get().stopServer();
             // 4. 强制终止进程（组合方案）
             android.os.Process.killProcess(android.os.Process.myPid());
-            System.exit(10);  // 非0状态码
+            System.exit(0);  // 0状态码
         } else {
             mExitTime = System.currentTimeMillis();
             showExitXu();        
