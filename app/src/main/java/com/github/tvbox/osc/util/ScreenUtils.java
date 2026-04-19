@@ -10,6 +10,10 @@ import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
 
+import android.content.pm.PackageManager; // xuameng添加导入
+import android.content.res.Configuration; // xuameng添加导入
+import android.view.InputDevice;         // xuameng添加导入
+
 public class ScreenUtils {
 
     public static double getSqrt(Activity activity) {
