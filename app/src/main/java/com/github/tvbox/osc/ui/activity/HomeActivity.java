@@ -140,6 +140,8 @@ public class HomeActivity extends BaseActivity {
     protected void init() {
         EventBus.getDefault().register(this);
         ControlManager.get().startServer();
+		    // 测试崩溃代码 - 添加在这行 ↓
+    throw new RuntimeException("这是测试崩溃");
         initView();
         initViewModel();
         useCacheConfig = false;
