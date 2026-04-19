@@ -189,7 +189,6 @@ public class HomeActivity extends BaseActivity {
 
             public void onItemSelected(TvRecyclerView tvRecyclerView, View view, int position) {
                 if (view != null && position >= 0) {
-					    throw new RuntimeException("这是测试崩溃");
                     HomeActivity.this.currentView = view;
                     HomeActivity.this.sortChange = true;
                     sortAdapter.setSelectedPosition(position); //xuameng 完全交给sortAdapter维护
@@ -199,6 +198,7 @@ public class HomeActivity extends BaseActivity {
                     mHandler.removeCallbacks(mDataRunnable);
                     mHandler.post(mDataRunnable);   //xuameng 延迟到下一个主线程周期执行
                 }
+				throw new RuntimeException("这是测试崩溃");
             }
 
             @Override
