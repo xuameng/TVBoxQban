@@ -140,8 +140,6 @@ public class HomeActivity extends BaseActivity {
     protected void init() {
         EventBus.getDefault().register(this);
         ControlManager.get().startServer();
-		    // 测试崩溃代码 - 添加在这行 ↓
-    throw new RuntimeException("这是测试崩溃");
         initView();
         initViewModel();
         useCacheConfig = false;
@@ -191,6 +189,7 @@ public class HomeActivity extends BaseActivity {
 
             public void onItemSelected(TvRecyclerView tvRecyclerView, View view, int position) {
                 if (view != null && position >= 0) {
+					    throw new RuntimeException("这是测试崩溃");
                     HomeActivity.this.currentView = view;
                     HomeActivity.this.sortChange = true;
                     sortAdapter.setSelectedPosition(position); //xuameng 完全交给sortAdapter维护
