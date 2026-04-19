@@ -283,17 +283,13 @@ public class CrashActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         if (ScreenUtils.isTv(this)){
-	        App.showToastShort(CrashActivity.this, "1111111111111");
             if (tvRestart != null
                     && tvRestart.getVisibility() == View.VISIBLE
                     && !tvRestart.isFocused()) {
                     tvRestart.requestFocus();
-				App.showToastShort(CrashActivity.this, "2222");
                 return;
             }
         }
-        // 退出app
-		App.showToastShort(CrashActivity.this, "3333");
         android.os.Process.killProcess(android.os.Process.myPid());
         System.exit(0);
     }
