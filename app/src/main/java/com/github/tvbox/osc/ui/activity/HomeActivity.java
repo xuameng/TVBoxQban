@@ -198,7 +198,6 @@ public class HomeActivity extends BaseActivity {
                     mHandler.removeCallbacks(mDataRunnable);
                     mHandler.post(mDataRunnable);   //xuameng 延迟到下一个主线程周期执行
                 }
-				throw new RuntimeException("这是测试崩溃");
             }
 
             @Override
@@ -209,6 +208,7 @@ public class HomeActivity extends BaseActivity {
                         ((GridFragment) baseLazyFragment).showFilter();
                     } else if (baseLazyFragment instanceof UserFragment) {
                         showSiteSwitch();
+				        throw new RuntimeException("这是测试崩溃");
                     }
                 }
             }
