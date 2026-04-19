@@ -42,17 +42,18 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
 
     @Override
     public void uncaughtException(Thread thread, Throwable ex) {
-        // 1. 保存日志 (尽量用同步方式，或者确保存完再走)
+        Log.e(TAG, "应用崩溃", ex);
+
+        // 1. 保存日志
         saveCrashLog(ex);
 
         // 2. 跳转至崩溃页面
-        try {
-            Intent intent = new Intent(context, CrashActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            context.startActivity(intent);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Intent intent = new Intent(context, CrashActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        context.startActivity(intent);
+
+        // 3. 结束当前进程
+        Process.killProcess(Process.myPid());
     }
 
     private void saveCrashLog(Throwable ex) {
