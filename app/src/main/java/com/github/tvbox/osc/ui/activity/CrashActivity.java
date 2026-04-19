@@ -329,8 +329,8 @@ public static boolean isTvOrBox(Context context) {
     /**
      * 返回键
      */
-    @Override
-/*    public void onBackPressed() {
+/*    @Override
+    public void onBackPressed() {
         if (isTvOrBox(this) 
                 && tvRestart != null
                 && tvRestart.getVisibility() == View.VISIBLE
