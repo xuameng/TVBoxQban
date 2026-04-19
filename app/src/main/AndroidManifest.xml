@@ -84,17 +84,10 @@
             android:name=".ui.activity.CollectActivity"
 			android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation|density|fontScale"
             android:screenOrientation="sensorLandscape" />
-
-    <activity
-        android:name=".ui.activity.CrashActivity"
-        android:theme="@style/AppTheme.NoActionBar"
-        android:exported="false"
-        android:excludeFromRecents="true"
-        android:noHistory="true"
-        android:taskAffinity=".crash"
-        android:launchMode="singleTask"
-        android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation|density|fontScale"
-        android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.CrashActivity"
+			android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation|density|fontScale"
+            android:screenOrientation="sensorLandscape" />
 
         <receiver android:name=".receiver.SearchReceiver">
             <intent-filter>
