@@ -217,7 +217,7 @@ public class VodController extends BaseController {
     
                         // xuameng其他设置
                         mxuPlay.requestFocus();   //xuameng底部菜单默认焦点为播放
-                        backBtn.setVisibility(ScreenUtils.isTvOrBox(getContext()) ? GONE : VISIBLE);   //xuameng返回按钮
+                        backBtn.setVisibility(ScreenUtils.isTvOrBox(context) ? GONE : VISIBLE);   //xuameng返回按钮
                         showLockView();    //xuameng屏幕锁
                         mPauseContainer.setVisibility(GONE);  // xuameng播放标题、暂停时间
     
@@ -542,7 +542,7 @@ public class VodController extends BaseController {
         }
     }; //xuameng显示系统时间
     private void showLockView() {
-        mLockView.setVisibility(ScreenUtils.isTvOrBox(getContext()) ? GONE : VISIBLE);
+        mLockView.setVisibility(ScreenUtils.isTvOrBox(context) ? GONE : VISIBLE);
         mHandler.removeCallbacks(lockRunnable);
         mHandler.postDelayed(lockRunnable, 3000);
     }
