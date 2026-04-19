@@ -330,7 +330,7 @@ public static boolean isTvOrBox(Context context) {
      * 返回键
      */
     @Override
-    public void onBackPressed() {
+/*    public void onBackPressed() {
         if (isTvOrBox(this) 
                 && tvRestart != null
                 && tvRestart.getVisibility() == View.VISIBLE
@@ -342,5 +342,5 @@ public static boolean isTvOrBox(Context context) {
         android.os.Process.killProcess(android.os.Process.myPid());
         System.exit(0);
     }
-
+*/
 }
