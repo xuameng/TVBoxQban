@@ -41,7 +41,7 @@ public class ScreenUtils {
     }
 
     //xuameng 判断TV 盒子
-    public static boolean isTvDevice(Context context) {
+    public static boolean isTvOrBox(Context context) {
        if (context == null) return false;
     
         PackageManager pm = context.getPackageManager();
