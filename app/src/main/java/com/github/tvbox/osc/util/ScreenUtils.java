@@ -9,6 +9,7 @@ import android.content.res.Configuration;
 import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
+import android.os.Build;
 
 public class ScreenUtils {
 
