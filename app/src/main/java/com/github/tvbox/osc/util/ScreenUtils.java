@@ -31,9 +31,14 @@ public class ScreenUtils {
         return telephonyManager.getPhoneType() != TelephonyManager.PHONE_TYPE_NONE;
     }
 
+    // xuameng直接判断是否低于Android 6.0 如是就是TV
+    private static boolean isBelowMarshmallow() {
+        return Build.VERSION.SDK_INT < Build.VERSION_CODES.M;
+    }
+
     public static boolean isTv(Context context) {
         UiModeManager uiModeManager = (UiModeManager) context.getSystemService(UI_MODE_SERVICE);
-        return uiModeManager.getCurrentModeType() == Configuration.UI_MODE_TYPE_TELEVISION || (checkScreenLayoutIsTv(context) && !checkIsPhone(context));
+        return uiModeManager.getCurrentModeType() == Configuration.UI_MODE_TYPE_TELEVISION || (checkScreenLayoutIsTv(context) && !checkIsPhone(context) || isBelowMarshmallow);
     }
 
 
