@@ -40,37 +40,21 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
         Thread.setDefaultUncaughtExceptionHandler(this);
     }
 
-@Override
-public void uncaughtException(Thread thread, Throwable ex) {
-    Log.e(TAG, "应用崩溃", ex);
+    @Override
+    public void uncaughtException(Thread thread, Throwable ex) {
+        Log.e(TAG, "应用崩溃", ex);
 
-    // 1. 保存日志 (同步操作)
-    saveCrashLog(ex);
+        // 1. 保存日志
+        saveCrashLog(ex);
 
-    // 2. 跳转至崩溃页面
-    try {
+        // 2. 跳转至崩溃页面
         Intent intent = new Intent(context, CrashActivity.class);
-        // 确保 flags 正确
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         context.startActivity(intent);
-    } catch (Exception e) {
-        Log.e(TAG, "启动崩溃页失败", e);
-    }
 
-    // 3. 【关键修改】延迟自杀
-    try {
-        // 等待 500 毫秒，给系统时间启动和显示 CrashActivity
-        // 这段时间足够让 Activity 完成 onCreate 和 setContentView
-        Thread.sleep(500);
-    } catch (InterruptedException e) {
-        Log.e(TAG, "Sleep interrupted", e);
+        // 3. 结束当前进程
+        Process.killProcess(Process.myPid());
     }
-
-    // 4. 杀死进程
-    // 此时 CrashActivity 应该已经显示出来了，再杀进程就不会触发系统的“启动失败”重启机制
-    Process.killProcess(Process.myPid());
-    System.exit(10); // 确保彻底退出
-}
 
     private void saveCrashLog(Throwable ex) {
         try {
