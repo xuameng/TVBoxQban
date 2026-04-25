@@ -73,33 +73,26 @@ public class GridFilterDialog extends BaseDialog {
             String key = filter.key;
             ArrayList<String> values = new ArrayList<>(filter.values.keySet());
             ArrayList<String> keys = new ArrayList<>(filter.values.values());
-            filterKVAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-                View pre = null;
-
-                @Override
-                public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                    selectChange = true;
-                    String filterSelect = sortData.filterSelect.get(key);
-                    if (filterSelect == null || !filterSelect.equals(keys.get(position))) {
-                        sortData.filterSelect.put(key, keys.get(position));
-                        if (pre != null) {
-                            TextView val = pre.findViewById(R.id.filterValue);
-                            val.getPaint().setFakeBoldText(false);
-                            val.setTextColor(getContext().getResources().getColor(R.color.color_FFFFFF));
-                        }
-                        TextView val = view.findViewById(R.id.filterValue);
-                        val.getPaint().setFakeBoldText(true);
-                        val.setTextColor(getContext().getResources().getColor(R.color.color_02F8E1));
-                        pre = view;
-                    } else {
-                        sortData.filterSelect.remove(key);
-                        TextView val = pre.findViewById(R.id.filterValue);
-                        val.getPaint().setFakeBoldText(false);
-                        val.setTextColor(getContext().getResources().getColor(R.color.color_FFFFFF));
-                        pre = null;
-                    }
-                }
-            });
+filterKVAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+    @Override
+    public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+        selectChange = true;
+        String filterSelect = sortData.filterSelect.get(key);
+        GridFilterKVAdapter gridAdapter = (GridFilterKVAdapter) adapter;
+        
+        if (filterSelect == null || !filterSelect.equals(keys.get(position))) {
+            // 选中新的项
+            sortData.filterSelect.put(key, keys.get(position));
+            // 通过Adapter更新选中状态
+            gridAdapter.setSelectedPosition(position);
+        } else {
+            // 取消选中
+            sortData.filterSelect.remove(key);
+            // 取消选中状态
+            gridAdapter.setSelectedPosition(-1);
+        }
+    }
+});
             filterKVAdapter.setNewData(values);
             filterRoot.addView(line);
         }
