@@ -54,9 +54,9 @@ import java.util.concurrent.LinkedBlockingQueue;   //xuameng 线程池
 import java.util.Locale;   //xuameng 统计进度用
 
 /**
- * @author pj567
- * @date :2020/12/23
- * @description:
+ * @author xuameng
+ * @date :2026/04/25
+ * @description:  搜索展示等修复
  */
 public class FastSearchActivity extends BaseActivity {
     private LinearLayout llLayout;
