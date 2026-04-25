@@ -37,6 +37,9 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import com.orhanobut.hawk.Hawk;  //xuameng 搜索展示用
+import com.github.tvbox.osc.util.HawkConfig; //xuameng 搜索展示用
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
