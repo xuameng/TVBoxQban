@@ -90,7 +90,11 @@ import java.util.Date;
 import java.util.List;
 
 import me.jessyan.autosize.utils.AutoSizeUtils;
-
+/**
+ * @author xuameng
+ * @date :2026/04/25
+ * @description:  焦点状态全面修复，各种BUG修复
+ */
 public class HomeActivity extends BaseActivity {
     private LinearLayout topLayout;
     private LinearLayout contentLayout;
