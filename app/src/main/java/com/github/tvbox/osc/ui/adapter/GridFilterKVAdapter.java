@@ -34,23 +34,14 @@ public class GridFilterKVAdapter extends BaseQuickAdapter<String, BaseViewHolder
         // 初始状态设置
         int position = helper.getAdapterPosition();
         boolean isSelected = (position == selectedPosition);
-
-        // 检查当前是否有焦点
-        boolean hasFocus = valueTv.hasFocus();
-
+    
         if (isSelected) {
             valueTv.getPaint().setFakeBoldText(true);
-            if (hasFocus) {
-                // 选中且拥有焦点：白色加粗
-                valueTv.setTextColor(defaultColor);
-            } else {
-                // 选中但无焦点：绿色加粗
-                valueTv.setTextColor(selectedColor);
-            }
+            // 默认选中但未焦点时为绿色
+            valueTv.setTextColor(selectedColor); // selectedColor 原为绿色
         } else {
-            // 未选中项 白色
             valueTv.getPaint().setFakeBoldText(false);
-            valueTv.setTextColor(defaultColor);
+            valueTv.setTextColor(defaultColor); // defaultColor 原为白色
         }
     
         // 设置焦点变化监听
