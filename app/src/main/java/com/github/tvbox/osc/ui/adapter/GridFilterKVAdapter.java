@@ -8,6 +8,12 @@ import android.view.View; // xuameng导入 View 类
 
 import java.util.ArrayList;
 
+/**
+ * @author xuameng
+ * @date :2026/04/25
+ * @description:  焦点状态全面修复
+ */
+
 public class GridFilterKVAdapter extends BaseQuickAdapter<String, BaseViewHolder> {
     private int selectedPosition = -1;    // xuameng记录当前选中
     private int lastSelectedPosition = -1; // xuameng记录上次选中
@@ -28,14 +34,23 @@ public class GridFilterKVAdapter extends BaseQuickAdapter<String, BaseViewHolder
         // 初始状态设置
         int position = helper.getAdapterPosition();
         boolean isSelected = (position == selectedPosition);
-    
+
+        // 检查当前是否有焦点
+        boolean hasFocus = valueTv.hasFocus();
+
         if (isSelected) {
             valueTv.getPaint().setFakeBoldText(true);
-            // 默认选中但未焦点时为绿色
-            valueTv.setTextColor(selectedColor); // selectedColor 原为绿色
+            if (hasFocus) {
+                // 选中且拥有焦点：白色加粗
+                valueTv.setTextColor(defaultColor);
+            } else {
+                // 选中但无焦点：绿色加粗
+                valueTv.setTextColor(selectedColor);
+            }
         } else {
+            // 未选中项 白色
             valueTv.getPaint().setFakeBoldText(false);
-            valueTv.setTextColor(defaultColor); // defaultColor 原为白色
+            valueTv.setTextColor(defaultColor);
         }
     
         // 设置焦点变化监听
