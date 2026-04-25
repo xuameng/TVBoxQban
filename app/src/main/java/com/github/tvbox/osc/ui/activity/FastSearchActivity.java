@@ -31,7 +31,6 @@ import com.lzy.okgo.OkGo;
 import com.owen.tvrecyclerview.widget.TvRecyclerView;
 import com.owen.tvrecyclerview.widget.V7GridLayoutManager;
 import com.owen.tvrecyclerview.widget.V7LinearLayoutManager;
-import me.jessyan.autosize.utils.AutoSizeUtils;  //xuameng像素转换
 import com.github.tvbox.osc.base.App;
 
 import org.greenrobot.eventbus.EventBus;
@@ -203,10 +202,7 @@ public class FastSearchActivity extends BaseActivity {
         // xuameng 搜索展示 0文字列表 
         if (Hawk.get(HawkConfig.SEARCH_VIEW, 0) == 0){
             mGridView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
-            int margins = AutoSizeUtils.mm2px(mContext, 5); //xuameng mm转成px像素 
-            mGridView.setSpacingWithMargins(margins,margins);
-            // xuameng 搜索展示 1缩略图
-        }else{
+        }else{  // xuameng 搜索展示 1缩略图
             mGridView.setLayoutManager(new V7GridLayoutManager(this.mContext, 5));
         }
         
@@ -239,11 +235,8 @@ public class FastSearchActivity extends BaseActivity {
 
         // xuameng 搜索展示 0文字列表 
         if (Hawk.get(HawkConfig.SEARCH_VIEW, 0) == 0){
-            mGridViewFilter.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
-            int margins = AutoSizeUtils.mm2px(mContext, 5); //xuameng mm转成px像素 
-            mGridViewFilter.setSpacingWithMargins(margins,margins);
-            // xuameng 搜索展示 1缩略图
-        }else{
+            mGridViewFilter.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));           
+        }else{  // xuameng 搜索展示 1缩略图
             mGridViewFilter.setLayoutManager(new V7GridLayoutManager(this.mContext, 5));
         }
         searchAdapterFilter = new FastSearchAdapter();
