@@ -22,7 +22,6 @@ import android.widget.ImageView;						//xuameng
 import android.graphics.Color;                          //xuameng获取颜色值
 import android.util.TypedValue;              //xuameng TypedValue依赖
 import android.view.LayoutInflater;			//xuameng LayoutInflater依赖
-import androidx.recyclerview.widget.RecyclerView;  //xuameng主页默认焦点
 import com.lzy.okgo.OkGo;   //xuameng 打断加载用
 import java.util.Objects;   //xuameng主页默认焦点
 import com.github.tvbox.osc.util.FastClickCheckUtil;   //xuameng cache
@@ -163,7 +162,7 @@ public class HomeActivity extends BaseActivity {
         this.mGridView.setSpacingWithMargins(0, AutoSizeUtils.dp2px(this.mContext, 10.0f));
         this.mGridView.setAdapter(this.sortAdapter);
         this.mGridView.setItemAnimator(null);   //xuameng 取消Item动画 闹腾
-        sortAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+        sortAdapter.registerAdapterDataObserver(new TvRecyclerView.AdapterDataObserver() {
             @Override
             public void onChanged() {
                 if (mGridView == null || !mGridView.isAttachedToWindow()) {
@@ -171,7 +170,7 @@ public class HomeActivity extends BaseActivity {
                 }
 
                 mGridView.post(() -> {
-                    RecyclerView.LayoutManager lm = mGridView.getLayoutManager();
+                    TvRecyclerView.LayoutManager lm = mGridView.getLayoutManager();
                     if (lm == null) return;
 
                     View firstView = lm.findViewByPosition(0);
@@ -555,7 +554,7 @@ public class HomeActivity extends BaseActivity {
                 if (mGridView == null || !mGridView.isAttachedToWindow()) {
                     return; // 如果RecyclerView为空或未附加到窗口，直接返回
                 }
-                RecyclerView.LayoutManager layoutManager = mGridView.getLayoutManager();
+                TvRecyclerView.LayoutManager layoutManager = mGridView.getLayoutManager();
                 if (layoutManager == null) {
                     return; // xuameng防止空指针
                 }
@@ -570,7 +569,7 @@ public class HomeActivity extends BaseActivity {
                 if (mGridView == null || !mGridView.isAttachedToWindow()) {
                     return; // 如果RecyclerView为空或未附加到窗口，直接返回
                 }
-                RecyclerView.LayoutManager layoutManager = mGridView.getLayoutManager();
+                TvRecyclerView.LayoutManager layoutManager = mGridView.getLayoutManager();
                 if (layoutManager == null) {
                     return; // xuameng防止空指针
                 }
@@ -583,7 +582,7 @@ public class HomeActivity extends BaseActivity {
             if (mGridView == null || !mGridView.isAttachedToWindow()) {
                 return; // 如果RecyclerView为空或未附加到窗口，直接返回
             }
-            RecyclerView.LayoutManager layoutManager = mGridView.getLayoutManager();
+            TvRecyclerView.LayoutManager layoutManager = mGridView.getLayoutManager();
             if (layoutManager == null) {
                 return; // xuameng防止空指针
             }
