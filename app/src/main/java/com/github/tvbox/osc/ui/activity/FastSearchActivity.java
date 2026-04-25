@@ -195,8 +195,15 @@ public class FastSearchActivity extends BaseActivity {
         });
 
         mGridView.setHasFixedSize(true);
-        mGridView.setLayoutManager(new V7GridLayoutManager(this.mContext, 5));
 
+        // xuameng 搜索展示 0文字列表 
+        if (Hawk.get(HawkConfig.SEARCH_VIEW, 0) == 0){
+            mGridView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
+            // xuameng 搜索展示 1缩略图
+        }else{
+            mGridView.setLayoutManager(new V7GridLayoutManager(this.mContext, 5));
+        }
+        
         searchAdapter = new FastSearchAdapter();
         mGridView.setAdapter(searchAdapter);
 
