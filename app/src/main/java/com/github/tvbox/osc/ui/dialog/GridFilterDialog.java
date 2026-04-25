@@ -24,6 +24,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
+/**
+ * @author xuameng
+ * @date :2026/04/25
+ * @description:  焦点状态全面修复
+ */
+
 public class GridFilterDialog extends BaseDialog {
     public LinearLayout filterRoot;
 
