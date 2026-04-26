@@ -670,7 +670,6 @@ public class PlayFragment extends BaseLazyFragment {
                     mVideoView.release();
                     if (finalUrl != null) {
                         String url = finalUrl;
-						App.showToastShort(mContext, url);
                         try {
                             int playerType = mVodPlayerCfg.getInt("pl");
                             if (playerType >= 10) {
@@ -687,11 +686,6 @@ public class PlayFragment extends BaseLazyFragment {
                             e.printStackTrace();
                         }
                         hideTip();
-    if (url.startsWith("push://")) {
-
-        url = url.substring(7); // 去掉push://前缀
-		App.showToastShort(mContext, url);
-    }
                         if (url.startsWith("data:application/dash+xml;base64,")) {
                             PlayerHelper.updateCfg(mVideoView, mVodPlayerCfg, 2);
                             App.getInstance().setDashData(url.split("base64,")[1]);
@@ -966,6 +960,11 @@ public class PlayFragment extends BaseLazyFragment {
                         if(url.startsWith("[")){
                             url=mController.firstUrlByArray(url);
                         }
+						    if (url.startsWith("push://")) {
+
+        url = url.substring(7); // 去掉push://前缀
+	App.showToastShort(mContext, url);
+    }
                         HashMap<String, String> headers = null;
                         webUserAgent = null;
                         webHeaderMap = null;
