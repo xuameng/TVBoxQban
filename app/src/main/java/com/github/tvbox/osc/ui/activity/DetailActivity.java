@@ -1215,6 +1215,10 @@ public class DetailActivity extends BaseActivity {
                             String url = event.obj.toString();
                             //设置更新播放地址
                             setTvPlayUrl(url);
+												    if (url.startsWith("push://")) {
+	App.showToastShort(DetailActivity.this, url);
+	sourceViewModel.getDetail(firstsourceKey, url);
+    }
                         }
                     }
             } else if (event.type == RefreshEvent.TYPE_QUICK_SEARCH_SELECT) {
