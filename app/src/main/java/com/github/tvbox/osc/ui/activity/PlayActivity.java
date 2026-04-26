@@ -936,6 +936,9 @@ public class PlayActivity extends BaseActivity {
                         }
                         String flag = info.optString("flag");
                         String url = info.getString("url");
+                        if (url.startsWith("push://") && ApiConfig.get().getSource("push_agent") != null) {   //xuameng 如果是推送链接返回等待detailactivity重新解析
+                            return;
+                        }
                         if(url.startsWith("[")){
                             url=mController.firstUrlByArray(url);
                         }
