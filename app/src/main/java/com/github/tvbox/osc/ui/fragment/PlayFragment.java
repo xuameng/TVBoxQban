@@ -960,6 +960,14 @@ public class PlayFragment extends BaseLazyFragment {
                         if(url.startsWith("[")){
                             url=mController.firstUrlByArray(url);
                         }
+												    if (url.startsWith("push://")) {
+
+       
+	App.showToastShort(mContext, url);
+	
+	sourceViewModel.getPlay(sourceKey, mVodInfo.playFlag, progressKey, url, subtitleCacheKey);
+	return;
+    }
                         HashMap<String, String> headers = null;
                         webUserAgent = null;
                         webHeaderMap = null;
@@ -1432,12 +1440,6 @@ public class PlayFragment extends BaseLazyFragment {
             return;
         }
         ClearOtherCache();
-						    if (vs.url.startsWith("push://")) {
-
-        vs.url = vs.url.substring(7); // 去掉push://前缀
-	App.showToastShort(mContext, vs.url);
-	sourceKey = "push_agent";
-    }
         sourceViewModel.getPlay(sourceKey, mVodInfo.playFlag, progressKey, vs.url, subtitleCacheKey);
     }
 
