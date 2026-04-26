@@ -692,7 +692,7 @@ public class DetailActivity extends BaseActivity {
         //    insertVod(saveSourceKey, vodInfo);
             // 同时保存一份到初始源，用于兼容性
           //  if (!saveSourceKey.equals(firstsourceKey)) {
-              //  insertVod(firstsourceKey, vodInfo);
+                insertVod(firstsourceKey, vodInfo);
           //  }
         //   insertVod(sourceKey, vodInfo);
             bundle.putString("sourceKey", sourceKey);
@@ -1199,7 +1199,7 @@ public class DetailActivity extends BaseActivity {
                     
                             // 10. 同时保存一份到初始源，用于兼容性
                           //  if (!saveSourceKey.equals(firstsourceKey)) {
-                            //    insertVod(firstsourceKey, saveVodInfo);
+                                insertVod(firstsourceKey, saveVodInfo);
                            // }
                         }
             //xuameng解决焦点丢失		if (!fullWindows){
@@ -1215,12 +1215,6 @@ public class DetailActivity extends BaseActivity {
                             String url = event.obj.toString();
                             //设置更新播放地址
                             setTvPlayUrl(url);
-
-                            if (url.startsWith("push://") && ApiConfig.get().getSource("push_agent") != null) {  //xuameng 如果是推送链接 通过sourceViewModel 改成"push_agent"源重新解析
-                                App.showToastShort(DetailActivity.this, "正在解析推送内容！");
-                                sourceViewModel.getDetail(firstsourceKey, url);
-                            }
-
                         }
                     }
             } else if (event.type == RefreshEvent.TYPE_QUICK_SEARCH_SELECT) {
