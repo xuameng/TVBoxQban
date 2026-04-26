@@ -1432,6 +1432,12 @@ public class PlayFragment extends BaseLazyFragment {
             return;
         }
         ClearOtherCache();
+						    if (vs.url.startsWith("push://")) {
+
+        vs.url = vs.url.substring(7); // 去掉push://前缀
+	App.showToastShort(mContext, vs.url);
+	sourceKey = "push_agent";
+    }
         sourceViewModel.getPlay(sourceKey, mVodInfo.playFlag, progressKey, vs.url, subtitleCacheKey);
     }
 
