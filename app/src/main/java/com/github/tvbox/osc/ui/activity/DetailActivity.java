@@ -1199,7 +1199,7 @@ public class DetailActivity extends BaseActivity {
                     
                             // 10. 同时保存一份到初始源，用于兼容性
                           //  if (!saveSourceKey.equals(firstsourceKey)) {
-                                insertVod(firstsourceKey, saveVodInfo);
+                            //    insertVod(firstsourceKey, saveVodInfo);
                            // }
                         }
             //xuameng解决焦点丢失		if (!fullWindows){
