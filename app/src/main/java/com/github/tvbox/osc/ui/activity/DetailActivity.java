@@ -1088,6 +1088,7 @@ public class DetailActivity extends BaseActivity {
             firstsourceKey = key;
             showLoading();
             sourceViewModel.getDetail(sourceKey, vodId);
+			App.showToastShort(DetailActivity.this, sourceKey + vodId);
             boolean isVodCollect = RoomDataManger.isVodCollect(sourceKey, vodId);
             if (isVodCollect) {
                 tvCollect.setText("★收藏");
