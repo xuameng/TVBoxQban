@@ -965,7 +965,7 @@ public class HomeActivity extends BaseActivity {
         }
     
         // 检查RecyclerView是否处于"不安全状态"
-        if (recyclerView.isComputingLayout() || recyclerView.isScrollRunning()) {
+        if (recyclerView.isComputingLayout() || recyclerView.isScrolling()) {
             // 延迟到下一个UI周期执行
             recyclerView.post(() -> {
                 // 再次检查，因为异步可能导致状态变化
