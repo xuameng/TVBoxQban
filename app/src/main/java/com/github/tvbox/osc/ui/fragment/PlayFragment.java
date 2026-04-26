@@ -670,6 +670,7 @@ public class PlayFragment extends BaseLazyFragment {
                     mVideoView.release();
                     if (finalUrl != null) {
                         String url = finalUrl;
+						App.showToastShort(mContext, url);
                         try {
                             int playerType = mVodPlayerCfg.getInt("pl");
                             if (playerType >= 10) {
@@ -687,6 +688,7 @@ public class PlayFragment extends BaseLazyFragment {
                         }
                         hideTip();
     if (url.startsWith("push://")) {
+App.showToastShort(mContext, "22222");
         url = url.substring(7); // 去掉push://前缀
     }
                         if (url.startsWith("data:application/dash+xml;base64,")) {
