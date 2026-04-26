@@ -965,7 +965,8 @@ public class PlayFragment extends BaseLazyFragment {
         url = url.substring(7); // 去掉push://前缀
 	App.showToastShort(mContext, url);
 	sourceKey = "push_agent";
-	sourceViewModel.getPlay(sourceKey, mVodInfo.playFlag, progressKey, url, subtitleCacheKey);
+sourceBean = ApiConfig.get().getSource(sourceKey);
+play(false);
 	return;
     }
                         HashMap<String, String> headers = null;
