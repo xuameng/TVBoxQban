@@ -960,11 +960,6 @@ public class PlayFragment extends BaseLazyFragment {
                         if(url.startsWith("[")){
                             url=mController.firstUrlByArray(url);
                         }
-												    if (url.startsWith("push://")) {
-	App.showToastShort(mContext, url);
-	sourceViewModel.getDetail(sourceKey, url);
-	return;
-    }
                         HashMap<String, String> headers = null;
                         webUserAgent = null;
                         webHeaderMap = null;
