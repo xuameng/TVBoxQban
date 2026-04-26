@@ -692,7 +692,7 @@ public class DetailActivity extends BaseActivity {
         //    insertVod(saveSourceKey, vodInfo);
             // 同时保存一份到初始源，用于兼容性
           //  if (!saveSourceKey.equals(firstsourceKey)) {
-                insertVod(firstsourceKey, vodInfo);
+              //  insertVod(firstsourceKey, vodInfo);
           //  }
         //   insertVod(sourceKey, vodInfo);
             bundle.putString("sourceKey", sourceKey);
@@ -1169,6 +1169,29 @@ public class DetailActivity extends BaseActivity {
                     
                             // 8. 关键修复：保存历史记录时使用临时变量确保正确性
                             // 创建临时VodInfo副本，确保保存时使用正确的播放源信息
+                            VodInfo saveVodInfo = new VodInfo();
+                            try {
+                                // 深拷贝vodInfo的基本属性
+                                saveVodInfo.setVideo(vodInfo.getVideo());
+                                saveVodInfo.sourceKey = vodInfo.sourceKey;
+                                saveVodInfo.seriesMap = vodInfo.seriesMap;
+                                saveVodInfo.seriesFlags = vodInfo.seriesFlags;
+                                saveVodInfo.playerCfg = vodInfo.playerCfg;
+                                saveVodInfo.reverseSort = vodInfo.reverseSort;
+                        
+                                // 关键：保存时使用播放源的信息，而不是显示源
+                                saveVodInfo.playFlag = vodInfo.currentPlayFlag;  // 使用播放源
+                                saveVodInfo.playIndex = vodInfo.currentPlayIndex; // 使用播放索引
+                                saveVodInfo.currentPlayFlag = vodInfo.currentPlayFlag;
+                                saveVodInfo.currentPlayIndex = vodInfo.currentPlayIndex;
+                        
+                                // 恢复显示源状态，不影响UI
+                                vodInfo.playFlag = originalDisplayFlag;
+                        
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                saveVodInfo = vodInfo;
+                            }
                     
                             // 9. 保存历史记录 - 使用当前播放源进行保存
                           //  String saveSourceKey = vodInfo.currentPlayFlag != null ? vodInfo.currentPlayFlag : sourceKey;
@@ -1176,7 +1199,7 @@ public class DetailActivity extends BaseActivity {
                     
                             // 10. 同时保存一份到初始源，用于兼容性
                           //  if (!saveSourceKey.equals(firstsourceKey)) {
-                                insertVod(firstsourceKey, vodInfo);
+                                insertVod(firstsourceKey, saveVodInfo);
                            // }
                         }
             //xuameng解决焦点丢失		if (!fullWindows){
