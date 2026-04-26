@@ -688,8 +688,9 @@ public class PlayFragment extends BaseLazyFragment {
                         }
                         hideTip();
     if (url.startsWith("push://")) {
-App.showToastShort(mContext, "22222");
+
         url = url.substring(7); // 去掉push://前缀
+		App.showToastShort(mContext, url);
     }
                         if (url.startsWith("data:application/dash+xml;base64,")) {
                             PlayerHelper.updateCfg(mVideoView, mVodPlayerCfg, 2);
