@@ -641,10 +641,6 @@ public class PlayFragment extends BaseLazyFragment {
 
     void playUrl(String url, HashMap<String, String> headers) {
         if(!url.startsWith("data:application"))EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_REFRESH, url));//更新播放地址
-
-        if (url.startsWith("push://") && ApiConfig.get().getSource("push_agent") != null) {   //xuameng 如果是推送链接返回等待detailactivity重新解析
-            return;
-        }
         if (!Hawk.get(HawkConfig.M3U8_PURIFY, false)) {       //xuameng广告过滤
             goPlayUrl(url,headers);
             return;
