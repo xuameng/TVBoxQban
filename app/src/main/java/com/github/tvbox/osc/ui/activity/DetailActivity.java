@@ -137,6 +137,7 @@ public class DetailActivity extends BaseActivity {
     public String sourceKey;
     public String firstsourceKey;
     boolean seriesSelect = false;
+    boolean showLoading = false;	
     private View seriesFlagFocus = null;
     private String preFlag="";
     private V7GridLayoutManager mGridViewLayoutMgr = null;
@@ -692,7 +693,7 @@ public class DetailActivity extends BaseActivity {
         //    insertVod(saveSourceKey, vodInfo);
             // 同时保存一份到初始源，用于兼容性
           //  if (!saveSourceKey.equals(firstsourceKey)) {
-                insertVod(firstsourceKey, vodInfo);
+             //   insertVod(firstsourceKey, vodInfo);
           //  }
         //   insertVod(sourceKey, vodInfo);
             bundle.putString("sourceKey", sourceKey);
@@ -740,7 +741,7 @@ public class DetailActivity extends BaseActivity {
           //  insertVod(saveSourceKey, vodInfo);
             // 同时保存一份到初始源，用于兼容性
            // if (!saveSourceKey.equals(firstsourceKey)) {
-                insertVod(firstsourceKey, vodInfo);
+              //  insertVod(firstsourceKey, vodInfo);
            // }
             bundle.putString("sourceKey", sourceKey);
             App.getInstance().setVodInfo(vodInfo);
@@ -1078,6 +1079,7 @@ public class DetailActivity extends BaseActivity {
             Bundle bundle = intent.getExtras();
             vod_picture=bundle.getString("picture", "");
             loadDetail(bundle.getString("id", null), bundle.getString("sourceKey", ""));
+			showLoading = true;
         }
     }
 
@@ -1086,7 +1088,10 @@ public class DetailActivity extends BaseActivity {
             vodId = vid;
             sourceKey = key;
             firstsourceKey = key;
-            showLoading();
+            if (showLoading){
+                showLoading();
+                showLoading = false;
+            }
             sourceViewModel.getDetail(sourceKey, vodId);
             boolean isVodCollect = RoomDataManger.isVodCollect(sourceKey, vodId);
             if (isVodCollect) {
@@ -1199,7 +1204,7 @@ public class DetailActivity extends BaseActivity {
                     
                             // 10. 同时保存一份到初始源，用于兼容性
                           //  if (!saveSourceKey.equals(firstsourceKey)) {
-                                insertVod(firstsourceKey, saveVodInfo);
+                               // insertVod(firstsourceKey, saveVodInfo);
                            // }
                         }
             //xuameng解决焦点丢失		if (!fullWindows){
@@ -1219,7 +1224,6 @@ public class DetailActivity extends BaseActivity {
                             if (url.startsWith("push://") && ApiConfig.get().getSource("push_agent") != null) {  //xuameng 如果是推送链接 通过sourceViewModel 改成"push_agent"源重新解析
                                 App.showToastShort(DetailActivity.this, "正在解析推送内容！");
 								loadDetail(url, "push_agent");
-                               // sourceViewModel.getDetail(firstsourceKey, url);
                             }
 
                         }
