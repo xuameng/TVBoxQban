@@ -914,7 +914,7 @@ public class DetailActivity extends BaseActivity {
                     vodInfo.setVideo(mVideo);
                     vodInfo.sourceKey = mVideo.sourceKey;
                     sourceKey = mVideo.sourceKey;
-
+firstsourceKey = sourceKey;
                     tvName.setText(mVideo.name);
                     setTextShow(tvSite, "来源：", ApiConfig.get().getSource(firstsourceKey).getName());
                     setTextShow(tvYear, "年份：", mVideo.year == 0 ? "" : String.valueOf(mVideo.year));
@@ -1218,7 +1218,7 @@ public class DetailActivity extends BaseActivity {
 
                             if (url.startsWith("push://") && ApiConfig.get().getSource("push_agent") != null) {  //xuameng 如果是推送链接 通过sourceViewModel 改成"push_agent"源重新解析
                                 App.showToastShort(DetailActivity.this, "正在解析推送内容！");
-                                sourceViewModel.getDetail("push_agent", url);
+                                sourceViewModel.getDetail(firstsourceKey, url);
                             }
 
                         }
