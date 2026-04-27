@@ -624,6 +624,39 @@ public class SourceViewModel extends ViewModel {
                             if (type == 0) {
                                 String xml = response.body();
                                 xml(detailResult, xml, sourceBean.getKey());
+                            } 
+                            if (type == 4) {
+                                String json = response.body();
+                                LOG.i(json);
+
+    // 检查 JSON 中是否包含 push:// 链接
+    if (json != null && json.contains("push://")) {
+        LOG.i("发现推送链接，开始提取并重新解析");
+        
+        try {
+            // 从 JSON 中提取第一个 push:// 链接
+            String pushUrl = extractPushUrlFromJson(json);
+            if (pushUrl != null && !pushUrl.isEmpty()) {
+                // 获取 push_agent 源
+                SourceBean pushAgent = ApiConfig.get().getSource("push_agent");
+                if (pushAgent != null) {
+                    LOG.i("获取到 push_agent 源，开始解析推送内容: " + pushUrl);
+                    // 重新调用 getDetail 解析推送链接
+                    getDetail("push_agent", pushUrl);
+                    return; // 重要：直接返回，不继续执行原来的 json() 调用
+                } else {
+                    LOG.e("push_agent 源不存在，无法解析推送链接");
+                }
+            } else {
+                LOG.i("未在 JSON 中找到有效的 push:// 链接");
+            }
+        } catch (Exception e) {
+            LOG.e("提取推送链接失败: " + e.getMessage());
+        }
+    }
+    
+    // 如果没有推送链接、提取失败或没有 push_agent 源，执行原有逻辑
+                                json(detailResult, json, sourceBean.getKey());
                             } else {
                                 String json = response.body();
                                 LOG.i(json);
@@ -1401,4 +1434,30 @@ public class SourceViewModel extends ViewModel {
     protected void onCleared() {
         super.onCleared();
     }
+
+private String extractPushUrlFromJson(String json) {
+    if (json == null || json.isEmpty()) {
+        return null;
+    }
+    
+    try {
+        JsonObject jsonObj = JsonParser.parseString(json).getAsJsonObject();
+        
+        // 方法1：检查常见的播放地址字段
+        String[] urlFields = {"url", "playUrl", "vod_play_url", "play_url"};
+        for (String field : urlFields) {
+            if (jsonObj.has(field)) {
+                JsonElement elem = jsonObj.get(field);
+                if (elem.isJsonPrimitive()) {
+                    String url = elem.getAsString();
+                    if (url != null && url.startsWith("push://")) {
+                        return url;
+                    }
+                }
+            }
+        }
+    
+    return null;
+}
+
 }
