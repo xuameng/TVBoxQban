@@ -627,34 +627,6 @@ public class SourceViewModel extends ViewModel {
                             } else {
                                 String json = response.body();
                                 LOG.i(json);
-
-    // 检查 JSON 中是否包含 push:// 链接
-    if (json != null && json.contains("push://")) {
-        LOG.i("发现推送链接，开始提取并重新解析");
-        
-        try {
-            // 从 JSON 中提取第一个 push:// 链接
-            String pushUrl = extractPushUrlFromJson(json);
-            if (pushUrl != null && !pushUrl.isEmpty()) {
-                // 获取 push_agent 源
-                SourceBean pushAgent = ApiConfig.get().getSource("push_agent");
-                if (pushAgent != null) {
-                    LOG.i("获取到 push_agent 源，开始解析推送内容: " + pushUrl);
-                    // 重新调用 getDetail 解析推送链接
-                    getDetail("push_agent", pushUrl);
-                    return; // 重要：直接返回，不继续执行原来的 json() 调用
-                } else {
-                    LOG.e("push_agent 源不存在，无法解析推送链接");
-                }
-            } else {
-                LOG.i("未在 JSON 中找到有效的 push:// 链接");
-            }
-        } catch (Exception e) {
-            LOG.e("提取推送链接失败: " + e.getMessage());
-        }
-    }
-    
-    // 如果没有推送链接、提取失败或没有 push_agent 源，执行原有逻辑
                                 json(detailResult, json, sourceBean.getKey());
                             }
                         }
@@ -950,31 +922,6 @@ public class SourceViewModel extends ViewModel {
                     @Override
                     public void onSuccess(Response<String> response) {
                         String json = response.body();
-    // 检查 JSON 中是否包含 push:// 链接
-    if (json != null && json.contains("push://")) {
-        LOG.i("发现推送链接，开始提取并重新解析");
-        
-        try {
-            // 从 JSON 中提取第一个 push:// 链接
-            String pushUrl = extractPushUrlFromJson(json);
-            if (pushUrl != null && !pushUrl.isEmpty()) {
-                // 获取 push_agent 源
-                SourceBean pushAgent = ApiConfig.get().getSource("push_agent");
-                if (pushAgent != null) {
-                    LOG.i("获取到 push_agent 源，开始解析推送内容: " + pushUrl);
-                    // 重新调用 getDetail 解析推送链接
-                    getDetail("push_agent", pushUrl);
-                    return; // 重要：直接返回，不继续执行原来的 json() 调用
-                } else {
-                    LOG.e("push_agent 源不存在，无法解析推送链接");
-                }
-            } else {
-                LOG.i("未在 JSON 中找到有效的 push:// 链接");
-            }
-        } catch (Exception e) {
-            LOG.e("提取推送链接失败: " + e.getMessage());
-        }
-    }
                         LOG.i(json);
                         try {
                             JSONObject result = new JSONObject(json);
@@ -1454,96 +1401,4 @@ public class SourceViewModel extends ViewModel {
     protected void onCleared() {
         super.onCleared();
     }
-
-
-private String extractPushUrlFromJson(String json) {
-    if (json == null || json.isEmpty()) {
-        return null;
-    }
-    
-    try {
-        JsonObject jsonObj = JsonParser.parseString(json).getAsJsonObject();
-        
-        // 方法1：直接检查 url 字段（最直接的方式）
-        if (jsonObj.has("url")) {
-            JsonElement urlElem = jsonObj.get("url");
-            if (urlElem.isJsonPrimitive()) {
-                String url = urlElem.getAsString();
-                if (url != null && url.startsWith("push://")) {
-                    return url;
-                }
-            }
-        }
-        
-        // 方法2：检查 list 数组中的 url
-        if (jsonObj.has("list") && jsonObj.get("list").isJsonArray()) {
-            JsonArray list = jsonObj.getAsJsonArray("list");
-            for (JsonElement item : list) {
-                if (item.isJsonObject()) {
-                    JsonObject obj = item.getAsJsonObject();
-                    if (obj.has("url")) {
-                        JsonElement urlElem = obj.get("url");
-                        if (urlElem.isJsonPrimitive()) {
-                            String url = urlElem.getAsString();
-                            if (url != null && url.startsWith("push://")) {
-                                return url;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        
-        // 方法3：检查 vod_play_url 字段（剧集播放地址）
-        if (jsonObj.has("vod_play_url")) {
-            JsonElement playUrlElem = jsonObj.get("vod_play_url");
-            if (playUrlElem.isJsonPrimitive()) {
-                String playUrl = playUrlElem.getAsString();
-                if (playUrl != null && playUrl.contains("push://")) {
-                    // 从剧集字符串中提取第一个 push:// 链接
-                    return extractFirstPushFromPlayUrl(playUrl);
-                }
-            }
-        }
-        
-    } catch (Exception e) {
-        LOG.e("解析 JSON 提取推送地址失败: " + e.getMessage());
-    }
-    
-    return null;
-}
-
-// 保持原有的 extractFirstPushFromPlayUrl 方法不变
-private String extractFirstPushFromPlayUrl(String playUrl) {
-    if (playUrl == null || playUrl.isEmpty()) {
-        return null;
-    }
-    
-    // 假设格式为 "第1集$push://xxxx#第2集$http://yyyy" 或 "push://xxx"
-    if (playUrl.startsWith("push://")) {
-        return playUrl;
-    }
-    
-    // 处理用 # 分隔的多集情况
-    String[] episodes = playUrl.split("#");
-    for (String episode : episodes) {
-        String[] parts = episode.split("\\$");
-        if (parts.length >= 2) {
-            String url = parts[1].trim();
-            if (url.startsWith("push://")) {
-                return url;
-            }
-        } else if (parts.length == 1) {
-            // 如果没有 $ 分隔，直接检查
-            String url = parts[0].trim();
-            if (url.startsWith("push://")) {
-                return url;
-            }
-        }
-    }
-    
-    return null;
-}
-
-
 }
