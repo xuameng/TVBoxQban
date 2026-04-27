@@ -624,8 +624,7 @@ public class SourceViewModel extends ViewModel {
                             if (type == 0) {
                                 String xml = response.body();
                                 xml(detailResult, xml, sourceBean.getKey());
-                            } 
-                            if (type == 4) {
+                            } else {
                                 String json = response.body();
                                 LOG.i(json);
 
@@ -656,10 +655,6 @@ public class SourceViewModel extends ViewModel {
     }
     
     // 如果没有推送链接、提取失败或没有 push_agent 源，执行原有逻辑
-                                json(detailResult, json, sourceBean.getKey());
-                            } else {
-                                String json = response.body();
-                                LOG.i(json);
                                 json(detailResult, json, sourceBean.getKey());
                             }
                         }
@@ -1456,8 +1451,14 @@ private String extractPushUrlFromJson(String json) {
                 }
             }
         }
+        
+    } catch (Exception e) {
+        LOG.e("解析 JSON 提取推送地址失败: " + e.getMessage());
+    }
     
     return null;
 }
+
+
 
 }
