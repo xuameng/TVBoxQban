@@ -692,7 +692,7 @@ public class DetailActivity extends BaseActivity {
         //    insertVod(saveSourceKey, vodInfo);
             // 同时保存一份到初始源，用于兼容性
           //  if (!saveSourceKey.equals(firstsourceKey)) {
-                insertVod(vodInfo.sourceKey, vodInfo);
+                insertVod(firstsourceKey, vodInfo);
           //  }
         //   insertVod(sourceKey, vodInfo);
             bundle.putString("sourceKey", sourceKey);
@@ -740,7 +740,7 @@ public class DetailActivity extends BaseActivity {
           //  insertVod(saveSourceKey, vodInfo);
             // 同时保存一份到初始源，用于兼容性
            // if (!saveSourceKey.equals(firstsourceKey)) {
-                insertVod(vodInfo.sourceKey, vodInfo);
+                insertVod(firstsourceKey, vodInfo);
            // }
             bundle.putString("sourceKey", sourceKey);
             App.getInstance().setVodInfo(vodInfo);
@@ -914,7 +914,13 @@ public class DetailActivity extends BaseActivity {
                     vodInfo.setVideo(mVideo);
                     vodInfo.sourceKey = mVideo.sourceKey;
                     sourceKey = mVideo.sourceKey;
-
+String saveKey = vodInfo.sourceKey; 
+// 判断：如果当前这个视频的 sourceKey 是 push_agent（说明是推送解析），并且我们知道最初是从 firstsourceKey 进来的
+if ("push_agent".equals(vodInfo.sourceKey) && firstsourceKey != null && !firstsourceKey.isEmpty()) {
+    saveKey = firstsourceKey; // 强制把存档的 Key 改回 "百度推送"
+}
+// 执行保存：不管它是谁解析的，我都存一份给最初的那个源
+insertVod(saveKey, vodInfo);
                     tvName.setText(mVideo.name);
                     setTextShow(tvSite, "来源：", ApiConfig.get().getSource(firstsourceKey).getName());
                     setTextShow(tvYear, "年份：", mVideo.year == 0 ? "" : String.valueOf(mVideo.year));
@@ -962,7 +968,7 @@ public class DetailActivity extends BaseActivity {
                         tvSort.setVisibility(View.VISIBLE);  //xuameng修复无播放数据倒序空指针
                         mEmptyPlayList.setVisibility(View.GONE);
 
-                        VodInfo vodInfoRecord = RoomDataManger.getVodInfo(vodInfo.sourceKey, vodId);
+                        VodInfo vodInfoRecord = RoomDataManger.getVodInfo(sourceKey, vodId);
                         // xuameng读取历史记录
                         if (vodInfoRecord != null) {
                             // 优先使用历史记录中保存的当前播放源和索引
@@ -1199,8 +1205,7 @@ public class DetailActivity extends BaseActivity {
                     
                             // 10. 同时保存一份到初始源，用于兼容性
                           //  if (!saveSourceKey.equals(firstsourceKey)) {
-                                String actualSourceKey = vodInfo.sourceKey; 
-insertVod(actualSourceKey, saveVodInfo);
+                                insertVod(firstsourceKey, saveVodInfo);
                            // }
                         }
             //xuameng解决焦点丢失		if (!fullWindows){
@@ -1210,7 +1215,7 @@ insertVod(actualSourceKey, saveVodInfo);
                         } else if (event.obj instanceof JSONObject) {    //xuameng保存播放器配置
                             vodInfo.playerCfg = ((JSONObject) event.obj).toString();
                             //保存历史
-                            insertVod(vodInfo.sourceKey, vodInfo);
+                            insertVod(firstsourceKey, vodInfo);
                             //        insertVod(sourceKey, vodInfo);
                         } else if (event.obj instanceof String) {
                             String url = event.obj.toString();
