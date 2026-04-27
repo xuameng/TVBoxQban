@@ -137,7 +137,7 @@ public class DetailActivity extends BaseActivity {
     public String sourceKey;
     public String firstsourceKey;
     boolean seriesSelect = false;
-    boolean isPushUrl = false;
+    boolean isPushUrl = false;   //xuameng 判断推送内容
     private View seriesFlagFocus = null;
     private String preFlag="";
     private V7GridLayoutManager mGridViewLayoutMgr = null;
@@ -1209,11 +1209,13 @@ public class DetailActivity extends BaseActivity {
                                 saveVodInfo = vodInfo;
                             }
                     
-                            if (isPushUrl) {
+                            if (isPushUrl) {  //xuameng 判断推送内容 如是 不执行保存 播放成功后会自动保存
                                 isPushUrl = false;
-if (PlayActivity.instance != null) {
-    PlayActivity.instance.finish();
-}
+                                boolean showPreview = Hawk.get(HawkConfig.SHOW_PREVIEW, true);  //xuameng true是显示小窗口,false是不显示小窗口
+                                if (!showPreview){
+                                    EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_CLOSE_PLAY_ACTIVITY, null));  //xuameng 远程关闭playactivity 用于push推送解析刷新
+                                    App.showToastShort(DetailActivity.this, "推送内解析成功，！");
+								}
                                 return; 
                             }
                             insertVod(firstsourceKey, saveVodInfo);
@@ -1235,7 +1237,7 @@ if (PlayActivity.instance != null) {
 
                         if (url.startsWith("push://") && ApiConfig.get().getSource("push_agent") != null) {  //xuameng 如果是推送链接 通过sourceViewModel 改成"push_agent"源重新解析
                             App.showToastShort(DetailActivity.this, "正在解析推送内容！");
-                            deleteOldSourceHistoryIfNeeded(firstsourceKey, "push_agent", vodInfo);
+                            deleteOldSourceHistoryIfNeeded(firstsourceKey, "push_agent", vodInfo);  //xuameng 删除firstsourceKey存储历史因为源变成 push_agent了
                             loadDetailXu(url, "push_agent");
                             isPushUrl = true;
                         }
