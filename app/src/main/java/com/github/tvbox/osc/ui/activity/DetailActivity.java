@@ -1222,18 +1222,12 @@ public class DetailActivity extends BaseActivity {
                                 isPushUrl = false;
                                 if (!showPreview){
                                     EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_CLOSE_PLAY_ACTIVITY, null));  //xuameng 远程关闭playactivity 用于push推送解析刷新
-                                    runOnUiThread(new Runnable() {
+                                    new Handler().postDelayed(new Runnable() {
                                         @Override
                                         public void run() {
-                                            // 延迟执行跳转
-                                            new Handler().postDelayed(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    App.showToastShort(DetailActivity.this, "推送内容解析成功，准备播放！");
-                                                }
-                                            }, 500);  // 延迟300毫秒，确保旧播放器完全关闭
+                                            App.showToastShort(DetailActivity.this, "推送内容解析成功，准备播放！");
                                         }
-                                    });
+                                    }, 500);
 								}
                                 return; 
                             }
