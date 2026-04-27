@@ -1214,7 +1214,7 @@ public class DetailActivity extends BaseActivity {
                     
                             // 10. 同时保存一份到初始源，用于兼容性
                           //  if (!saveSourceKey.equals(firstsourceKey)) {
-                                insertVod(firstsourceKey, saveVodInfo);
+                            //    insertVod(firstsourceKey, saveVodInfo);
                            // }
                         }
             //xuameng解决焦点丢失		if (!fullWindows){
@@ -1745,25 +1745,25 @@ public class DetailActivity extends BaseActivity {
         }
     }
 
-/**
- * xuameng删除指定源的历史记录（当源发生变更时使用）
- * 例如：从原始源切换到 push_agent 源时，清理原始源的历史记录
- *
- * @param oldSourceKey 原始源键（要删除记录的源）
- * @param vodInfo      当前的视频信息对象
- */
-private void deleteOldSourceHistoryIfNeeded(String oldSourceKey, String newSourceKey, VodInfo vodInfo) {
-    // 检查源是否发生变化
-    if (vodInfo != null && oldSourceKey != null && newSourceKey != null 
-            && !oldSourceKey.equals(newSourceKey)) {
-        try {
-            // 删除旧源的历史记录
-            RoomDataManger.deleteVodRecord(oldSourceKey, vodInfo);
+    /**
+     * xuameng删除指定源的历史记录（当源发生变更时使用）
+     * 例如：从原始源切换到 push_agent 源时，清理原始源的历史记录
+     *
+     * @param oldSourceKey 原始源键（要删除记录的源）
+     * @param vodInfo      当前的视频信息对象
+     */
+    private void deleteOldSourceHistoryIfNeeded(String oldSourceKey, String newSourceKey, VodInfo vodInfo) {
+        // 检查源是否发生变化
+        if (vodInfo != null && oldSourceKey != null && newSourceKey != null 
+                && !oldSourceKey.equals(newSourceKey)) {
+            try {
+                // 删除旧源的历史记录
+                RoomDataManger.deleteVodRecord(oldSourceKey, vodInfo);
             
-        } catch (Exception e) {
+            } catch (Exception e) {
             e.printStackTrace();
+            }
         }
     }
-}
 
 }
