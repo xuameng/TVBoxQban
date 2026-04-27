@@ -1219,11 +1219,10 @@ public class DetailActivity extends BaseActivity {
                     
                             if (isPushUrl) {  //xuameng 判断推送内容 如是 不执行保存 播放成功后会自动保存
                                 isPushUrl = false;
-                                boolean showPreview = Hawk.get(HawkConfig.SHOW_PREVIEW, true);  //xuameng true是显示小窗口,false是不显示小窗口
-                             //   if (!showPreview){
+                                if (!showPreview){
                                     EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_CLOSE_PLAY_ACTIVITY, null));  //xuameng 远程关闭playactivity 用于push推送解析刷新
                                     App.showToastShort(DetailActivity.this, "推送内容解析成功，请选择播放！");
-								//}
+								}
                                 return; 
                             }
                             insertVod(firstsourceKey, saveVodInfo);
