@@ -692,7 +692,7 @@ public class DetailActivity extends BaseActivity {
         //    insertVod(saveSourceKey, vodInfo);
             // 同时保存一份到初始源，用于兼容性
           //  if (!saveSourceKey.equals(firstsourceKey)) {
-                insertVod(firstsourceKey, vodInfo);
+                insertVod(vodInfo.sourceKey, vodInfo);
           //  }
         //   insertVod(sourceKey, vodInfo);
             bundle.putString("sourceKey", sourceKey);
@@ -740,7 +740,7 @@ public class DetailActivity extends BaseActivity {
           //  insertVod(saveSourceKey, vodInfo);
             // 同时保存一份到初始源，用于兼容性
            // if (!saveSourceKey.equals(firstsourceKey)) {
-                insertVod(firstsourceKey, vodInfo);
+                insertVod(vodInfo.sourceKey, vodInfo);
            // }
             bundle.putString("sourceKey", sourceKey);
             App.getInstance().setVodInfo(vodInfo);
@@ -962,7 +962,7 @@ public class DetailActivity extends BaseActivity {
                         tvSort.setVisibility(View.VISIBLE);  //xuameng修复无播放数据倒序空指针
                         mEmptyPlayList.setVisibility(View.GONE);
 
-                        VodInfo vodInfoRecord = RoomDataManger.getVodInfo(sourceKey, vodId);
+                        VodInfo vodInfoRecord = RoomDataManger.getVodInfo(vodInfo.sourceKey, vodId);
                         // xuameng读取历史记录
                         if (vodInfoRecord != null) {
                             // 优先使用历史记录中保存的当前播放源和索引
@@ -1199,7 +1199,8 @@ public class DetailActivity extends BaseActivity {
                     
                             // 10. 同时保存一份到初始源，用于兼容性
                           //  if (!saveSourceKey.equals(firstsourceKey)) {
-                                insertVod(firstsourceKey, saveVodInfo);
+                                String actualSourceKey = vodInfo.sourceKey; 
+insertVod(actualSourceKey, saveVodInfo);
                            // }
                         }
             //xuameng解决焦点丢失		if (!fullWindows){
@@ -1209,7 +1210,7 @@ public class DetailActivity extends BaseActivity {
                         } else if (event.obj instanceof JSONObject) {    //xuameng保存播放器配置
                             vodInfo.playerCfg = ((JSONObject) event.obj).toString();
                             //保存历史
-                            insertVod(firstsourceKey, vodInfo);
+                            insertVod(vodInfo.sourceKey, vodInfo);
                             //        insertVod(sourceKey, vodInfo);
                         } else if (event.obj instanceof String) {
                             String url = event.obj.toString();
@@ -1219,7 +1220,6 @@ public class DetailActivity extends BaseActivity {
                             if (url.startsWith("push://") && ApiConfig.get().getSource("push_agent") != null) {  //xuameng 如果是推送链接 通过sourceViewModel 改成"push_agent"源重新解析
                                 App.showToastShort(DetailActivity.this, "正在解析推送内容！");
                                 sourceViewModel.getDetail(firstsourceKey, url);
-								sourceKey = "push_agent";
                             }
 
                         }
