@@ -1211,6 +1211,9 @@ public class DetailActivity extends BaseActivity {
                     
                             if (isPushUrl) {
                                 isPushUrl = false;
+if (PlayActivity.instance != null) {
+    PlayActivity.instance.finish();
+}
                                 return; 
                             }
                             insertVod(firstsourceKey, saveVodInfo);
@@ -1220,25 +1223,24 @@ public class DetailActivity extends BaseActivity {
                         //              mGridView.setSelection(index);
                         //             insertVod(sourceKey, vodInfo);}
                 
-                        } else if (event.obj instanceof JSONObject) {    //xuameng保存播放器配置
-                            vodInfo.playerCfg = ((JSONObject) event.obj).toString();
-                            //保存历史
-                            insertVod(firstsourceKey, vodInfo);
-                            //        insertVod(sourceKey, vodInfo);
-                        } else if (event.obj instanceof String) {
-                            String url = event.obj.toString();
-                            //设置更新播放地址
-                            setTvPlayUrl(url);
+                    } else if (event.obj instanceof JSONObject) {    //xuameng保存播放器配置
+                        vodInfo.playerCfg = ((JSONObject) event.obj).toString();
+                        //保存历史
+                        insertVod(firstsourceKey, vodInfo);
+                        //        insertVod(sourceKey, vodInfo);
+                    } else if (event.obj instanceof String) {
+                        String url = event.obj.toString();
+                        //设置更新播放地址
+                        setTvPlayUrl(url);
 
-                            if (url.startsWith("push://") && ApiConfig.get().getSource("push_agent") != null) {  //xuameng 如果是推送链接 通过sourceViewModel 改成"push_agent"源重新解析
-                                App.showToastShort(DetailActivity.this, "正在解析推送内容！");
-                                deleteOldSourceHistoryIfNeeded(firstsourceKey, "push_agent", vodInfo);
-								loadDetailXu(url, "push_agent");
-                                isPushUrl = true;
-                            }
-
+                        if (url.startsWith("push://") && ApiConfig.get().getSource("push_agent") != null) {  //xuameng 如果是推送链接 通过sourceViewModel 改成"push_agent"源重新解析
+                            App.showToastShort(DetailActivity.this, "正在解析推送内容！");
+                            deleteOldSourceHistoryIfNeeded(firstsourceKey, "push_agent", vodInfo);
+                            loadDetailXu(url, "push_agent");
+                            isPushUrl = true;
                         }
                     }
+                }
             } else if (event.type == RefreshEvent.TYPE_QUICK_SEARCH_SELECT) {
                 if (event.obj != null) {
                     Movie.Video video = (Movie.Video) event.obj;
