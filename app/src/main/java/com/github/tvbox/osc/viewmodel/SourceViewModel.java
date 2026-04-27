@@ -950,6 +950,31 @@ public class SourceViewModel extends ViewModel {
                     @Override
                     public void onSuccess(Response<String> response) {
                         String json = response.body();
+    // 检查 JSON 中是否包含 push:// 链接
+    if (json != null && json.contains("push://")) {
+        LOG.i("发现推送链接，开始提取并重新解析");
+        
+        try {
+            // 从 JSON 中提取第一个 push:// 链接
+            String pushUrl = extractPushUrlFromJson(json);
+            if (pushUrl != null && !pushUrl.isEmpty()) {
+                // 获取 push_agent 源
+                SourceBean pushAgent = ApiConfig.get().getSource("push_agent");
+                if (pushAgent != null) {
+                    LOG.i("获取到 push_agent 源，开始解析推送内容: " + pushUrl);
+                    // 重新调用 getDetail 解析推送链接
+                    getDetail("push_agent", pushUrl);
+                    return; // 重要：直接返回，不继续执行原来的 json() 调用
+                } else {
+                    LOG.e("push_agent 源不存在，无法解析推送链接");
+                }
+            } else {
+                LOG.i("未在 JSON 中找到有效的 push:// 链接");
+            }
+        } catch (Exception e) {
+            LOG.e("提取推送链接失败: " + e.getMessage());
+        }
+    }
                         LOG.i(json);
                         try {
                             JSONObject result = new JSONObject(json);
