@@ -137,7 +137,6 @@ public class DetailActivity extends BaseActivity {
     public String sourceKey;
     public String firstsourceKey;
     boolean seriesSelect = false;
-    boolean showLoading = false;	
     private View seriesFlagFocus = null;
     private String preFlag="";
     private V7GridLayoutManager mGridViewLayoutMgr = null;
@@ -693,7 +692,7 @@ public class DetailActivity extends BaseActivity {
         //    insertVod(saveSourceKey, vodInfo);
             // 同时保存一份到初始源，用于兼容性
           //  if (!saveSourceKey.equals(firstsourceKey)) {
-             //   insertVod(firstsourceKey, vodInfo);
+                insertVod(firstsourceKey, vodInfo);
           //  }
         //   insertVod(sourceKey, vodInfo);
             bundle.putString("sourceKey", sourceKey);
@@ -741,7 +740,7 @@ public class DetailActivity extends BaseActivity {
           //  insertVod(saveSourceKey, vodInfo);
             // 同时保存一份到初始源，用于兼容性
            // if (!saveSourceKey.equals(firstsourceKey)) {
-              //  insertVod(firstsourceKey, vodInfo);
+                insertVod(firstsourceKey, vodInfo);
            // }
             bundle.putString("sourceKey", sourceKey);
             App.getInstance().setVodInfo(vodInfo);
@@ -1079,7 +1078,6 @@ public class DetailActivity extends BaseActivity {
             Bundle bundle = intent.getExtras();
             vod_picture=bundle.getString("picture", "");
             loadDetail(bundle.getString("id", null), bundle.getString("sourceKey", ""));
-			showLoading = true;
         }
     }
 
@@ -1088,10 +1086,22 @@ public class DetailActivity extends BaseActivity {
             vodId = vid;
             sourceKey = key;
             firstsourceKey = key;
-            if (showLoading){
-                showLoading();
-                showLoading = false;
+            showLoading();
+            sourceViewModel.getDetail(sourceKey, vodId);
+            boolean isVodCollect = RoomDataManger.isVodCollect(sourceKey, vodId);
+            if (isVodCollect) {
+                tvCollect.setText("★收藏");
+            } else {
+                tvCollect.setText("☆收藏");
             }
+        }
+    }
+
+    private void loadDetailXu(String vid, String key) {
+        if (vid != null) {
+            vodId = vid;
+            sourceKey = key;
+            firstsourceKey = key;
             sourceViewModel.getDetail(sourceKey, vodId);
             boolean isVodCollect = RoomDataManger.isVodCollect(sourceKey, vodId);
             if (isVodCollect) {
@@ -1204,7 +1214,7 @@ public class DetailActivity extends BaseActivity {
                     
                             // 10. 同时保存一份到初始源，用于兼容性
                           //  if (!saveSourceKey.equals(firstsourceKey)) {
-                               // insertVod(firstsourceKey, saveVodInfo);
+                                insertVod(firstsourceKey, saveVodInfo);
                            // }
                         }
             //xuameng解决焦点丢失		if (!fullWindows){
@@ -1223,7 +1233,9 @@ public class DetailActivity extends BaseActivity {
 
                             if (url.startsWith("push://") && ApiConfig.get().getSource("push_agent") != null) {  //xuameng 如果是推送链接 通过sourceViewModel 改成"push_agent"源重新解析
                                 App.showToastShort(DetailActivity.this, "正在解析推送内容！");
-								loadDetail(url, "push_agent");
+                                deleteOldSourceHistoryIfNeeded(firstsourceKey, "push_agent", vodInfo);
+								loadDetailXu(url, "push_agent");
+                               // sourceViewModel.getDetail(firstsourceKey, url);
                             }
 
                         }
@@ -1231,7 +1243,7 @@ public class DetailActivity extends BaseActivity {
             } else if (event.type == RefreshEvent.TYPE_QUICK_SEARCH_SELECT) {
                 if (event.obj != null) {
                     Movie.Video video = (Movie.Video) event.obj;
-                    loadDetail(video.id, video.sourceKey);
+                    loadDetailXu(video.id, video.sourceKey);
                 }
             } else if (event.type == RefreshEvent.TYPE_QUICK_SEARCH_WORD_CHANGE) {
                 if (event.obj != null) {
@@ -1732,5 +1744,26 @@ public class DetailActivity extends BaseActivity {
             }
         }
     }
+
+/**
+ * xuameng删除指定源的历史记录（当源发生变更时使用）
+ * 例如：从原始源切换到 push_agent 源时，清理原始源的历史记录
+ *
+ * @param oldSourceKey 原始源键（要删除记录的源）
+ * @param vodInfo      当前的视频信息对象
+ */
+private void deleteOldSourceHistoryIfNeeded(String oldSourceKey, String newSourceKey, VodInfo vodInfo) {
+    // 检查源是否发生变化
+    if (vodInfo != null && oldSourceKey != null && newSourceKey != null 
+            && !oldSourceKey.equals(newSourceKey)) {
+        try {
+            // 删除旧源的历史记录
+            RoomDataManger.deleteVodRecord(oldSourceKey, vodInfo);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
 
 }
