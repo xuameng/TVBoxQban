@@ -1092,6 +1092,7 @@ public class PlayActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+		instance = null;
         if (mVideoView != null) {
             mVideoView.release();
             mVideoView = null;
@@ -2319,5 +2320,12 @@ public class PlayActivity extends BaseActivity {
                 }
             });
     }
+public static PlayActivity instance;
+
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    instance = this;
+}
 
 }
