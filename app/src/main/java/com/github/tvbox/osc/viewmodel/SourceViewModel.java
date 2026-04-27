@@ -1430,6 +1430,7 @@ public class SourceViewModel extends ViewModel {
         super.onCleared();
     }
 
+
 private String extractPushUrlFromJson(String json) {
     if (json == null || json.isEmpty()) {
         return null;
@@ -1438,16 +1439,44 @@ private String extractPushUrlFromJson(String json) {
     try {
         JsonObject jsonObj = JsonParser.parseString(json).getAsJsonObject();
         
-        // 方法1：检查常见的播放地址字段
-        String[] urlFields = {"url", "playUrl", "vod_play_url", "play_url"};
-        for (String field : urlFields) {
-            if (jsonObj.has(field)) {
-                JsonElement elem = jsonObj.get(field);
-                if (elem.isJsonPrimitive()) {
-                    String url = elem.getAsString();
-                    if (url != null && url.startsWith("push://")) {
-                        return url;
+        // 方法1：直接检查 url 字段（最直接的方式）
+        if (jsonObj.has("url")) {
+            JsonElement urlElem = jsonObj.get("url");
+            if (urlElem.isJsonPrimitive()) {
+                String url = urlElem.getAsString();
+                if (url != null && url.startsWith("push://")) {
+                    return url;
+                }
+            }
+        }
+        
+        // 方法2：检查 list 数组中的 url
+        if (jsonObj.has("list") && jsonObj.get("list").isJsonArray()) {
+            JsonArray list = jsonObj.getAsJsonArray("list");
+            for (JsonElement item : list) {
+                if (item.isJsonObject()) {
+                    JsonObject obj = item.getAsJsonObject();
+                    if (obj.has("url")) {
+                        JsonElement urlElem = obj.get("url");
+                        if (urlElem.isJsonPrimitive()) {
+                            String url = urlElem.getAsString();
+                            if (url != null && url.startsWith("push://")) {
+                                return url;
+                            }
+                        }
                     }
+                }
+            }
+        }
+        
+        // 方法3：检查 vod_play_url 字段（剧集播放地址）
+        if (jsonObj.has("vod_play_url")) {
+            JsonElement playUrlElem = jsonObj.get("vod_play_url");
+            if (playUrlElem.isJsonPrimitive()) {
+                String playUrl = playUrlElem.getAsString();
+                if (playUrl != null && playUrl.contains("push://")) {
+                    // 从剧集字符串中提取第一个 push:// 链接
+                    return extractFirstPushFromPlayUrl(playUrl);
                 }
             }
         }
@@ -1459,6 +1488,37 @@ private String extractPushUrlFromJson(String json) {
     return null;
 }
 
+// 保持原有的 extractFirstPushFromPlayUrl 方法不变
+private String extractFirstPushFromPlayUrl(String playUrl) {
+    if (playUrl == null || playUrl.isEmpty()) {
+        return null;
+    }
+    
+    // 假设格式为 "第1集$push://xxxx#第2集$http://yyyy" 或 "push://xxx"
+    if (playUrl.startsWith("push://")) {
+        return playUrl;
+    }
+    
+    // 处理用 # 分隔的多集情况
+    String[] episodes = playUrl.split("#");
+    for (String episode : episodes) {
+        String[] parts = episode.split("\\$");
+        if (parts.length >= 2) {
+            String url = parts[1].trim();
+            if (url.startsWith("push://")) {
+                return url;
+            }
+        } else if (parts.length == 1) {
+            // 如果没有 $ 分隔，直接检查
+            String url = parts[0].trim();
+            if (url.startsWith("push://")) {
+                return url;
+            }
+        }
+    }
+    
+    return null;
+}
 
 
 }
