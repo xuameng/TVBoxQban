@@ -152,7 +152,10 @@ public class PlayActivity extends BaseActivity {
             mController.mLrcView.setHighlightTextSize((int) event.obj); //xuameng 设置LRC歌词 全屏非全屏状态同步
         } else if (event.type == RefreshEvent.TYPE_CLOSE_PLAY_ACTIVITY) {  //xuameng 远程关闭playactivity 用于push推送解析刷新
             // 收到指令，执行关闭
-          //  finish(); 
+            if (mVideoView != null) {
+                mVideoView.release();
+            }
+            finish(); 
         } 
     }
 
