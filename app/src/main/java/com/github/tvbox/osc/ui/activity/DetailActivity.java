@@ -137,7 +137,6 @@ public class DetailActivity extends BaseActivity {
     public String sourceKey;
     public String firstsourceKey;
     boolean seriesSelect = false;
-    boolean isPushUrl = false;   //xuameng 判断推送内容
     private View seriesFlagFocus = null;
     private String preFlag="";
     private V7GridLayoutManager mGridViewLayoutMgr = null;
@@ -263,7 +262,10 @@ public class DetailActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 if (vodInfo != null && vodInfo.seriesMap.size() > 0) {
-
+                    if (!firstsourceKey.equals(sourceKey)) {
+                        App.showToastShort(DetailActivity.this, "数据未准备中，请稍后！");
+                        return;
+                    }
                     // xuameng检查当前选中的源是否是正在播放的源
                     if (vodInfo.currentPlayFlag != null && !vodInfo.playFlag.equals(vodInfo.currentPlayFlag)) {
                         // xuameng当前选中的源不是正在播放的源，禁止倒序操作
@@ -409,15 +411,21 @@ public class DetailActivity extends BaseActivity {
         tvCollect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String text = tvCollect.getText().toString();
-                if ("☆收藏".equals(text)) {
-                    RoomDataManger.insertVodCollect(sourceKey, vodInfo);
-                    App.showToastShort(DetailActivity.this, "已加入收藏夹");
-                    tvCollect.setText("★收藏");
-                } else {
-                    RoomDataManger.deleteVodCollect(sourceKey, vodInfo);
-                    App.showToastShort(DetailActivity.this, "已移除收藏夹");
-                    tvCollect.setText("☆收藏");
+                if (vodInfo != null && vodInfo.seriesMap.size() > 0) {
+                    if (!firstsourceKey.equals(sourceKey)) {
+                        App.showToastShort(DetailActivity.this, "数据未准备中，请稍后！");
+                        return;
+                        }
+                    String text = tvCollect.getText().toString();
+                    if ("☆收藏".equals(text)) {
+                        RoomDataManger.insertVodCollect(sourceKey, vodInfo);
+                        App.showToastShort(DetailActivity.this, "已加入收藏夹");
+                        tvCollect.setText("★收藏");
+                    } else {
+                        RoomDataManger.deleteVodCollect(sourceKey, vodInfo);
+                        App.showToastShort(DetailActivity.this, "已移除收藏夹");
+                        tvCollect.setText("☆收藏");
+                    }
                 }
             }
         });
@@ -1098,7 +1106,7 @@ public class DetailActivity extends BaseActivity {
         }
     }
 
-    private void loadDetailXu(String vid, String key) {
+    private void loadDetailXu(String vid, String key) {   //xuameng 这个方法目的主要是为了好看showLoading的话屏幕上的内容就被覆盖了
         if (vid != null) {
             vodId = vid;
             sourceKey = key;
@@ -1209,12 +1217,11 @@ public class DetailActivity extends BaseActivity {
                                 saveVodInfo = vodInfo;
                             }
                     
-                            if (isPushUrl) {  //xuameng 判断推送内容 如是 不执行保存 播放成功后会自动保存
-                                isPushUrl = false;
+                            if (!firstsourceKey.equals(sourceKey)) {  //xuameng 判断推送内容 如是 不执行保存 播放成功后会自动保存
                                 boolean showPreview = Hawk.get(HawkConfig.SHOW_PREVIEW, true);  //xuameng true是显示小窗口,false是不显示小窗口
                                 if (!showPreview){
                                     EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_CLOSE_PLAY_ACTIVITY, null));  //xuameng 远程关闭playactivity 用于push推送解析刷新
-                                    App.showToastShort(DetailActivity.this, "推送内解析成功，！");
+                                    App.showToastShort(DetailActivity.this, "推送内容解析成功，请选择播放！");
 								}
                                 return; 
                             }
@@ -1228,6 +1235,9 @@ public class DetailActivity extends BaseActivity {
                     } else if (event.obj instanceof JSONObject) {    //xuameng保存播放器配置
                         vodInfo.playerCfg = ((JSONObject) event.obj).toString();
                         //保存历史
+                        if (!firstsourceKey.equals(sourceKey)) {  //xuameng 判断推送内容 如是 不执行保存 播放成功后会自动保存
+                            return; 
+                        }
                         insertVod(firstsourceKey, vodInfo);
                         //        insertVod(sourceKey, vodInfo);
                     } else if (event.obj instanceof String) {
@@ -1238,8 +1248,7 @@ public class DetailActivity extends BaseActivity {
                         if (url.startsWith("push://") && ApiConfig.get().getSource("push_agent") != null) {  //xuameng 如果是推送链接 通过sourceViewModel 改成"push_agent"源重新解析
                             App.showToastShort(DetailActivity.this, "正在解析推送内容！");
                             deleteOldSourceHistoryIfNeeded(firstsourceKey, "push_agent", vodInfo);  //xuameng 删除firstsourceKey存储历史因为源变成 push_agent了
-                            loadDetailXu(url, "push_agent");
-                            isPushUrl = true;
+                            loadDetailXu(url, "push_agent");  //通过sourceViewModel.getDetail方法去push头并更改源为push_agent 因为type 4源不支持解析
                         }
                     }
                 }
