@@ -150,7 +150,10 @@ public class PlayActivity extends BaseActivity {
             mController.mSubtitleView.setTextSize((int) event.obj);
             mController.mLrcView.setNormalTextSize((int) event.obj); //xuameng 设置LRC歌词 全屏非全屏状态同步
             mController.mLrcView.setHighlightTextSize((int) event.obj); //xuameng 设置LRC歌词 全屏非全屏状态同步
-        }
+        } else if (event.type == RefreshEvent.TYPE_CLOSE_PLAY_ACTIVITY) {  //xuameng 远程关闭playactivity 用于push推送解析刷新
+            // 收到指令，执行关闭
+            finish(); 
+        } 
     }
 
     @Override
@@ -1092,7 +1095,6 @@ public class PlayActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-		instance = null;
         if (mVideoView != null) {
             mVideoView.release();
             mVideoView = null;
@@ -2320,12 +2322,5 @@ public class PlayActivity extends BaseActivity {
                 }
             });
     }
-public static PlayActivity instance;
-
-@Override
-protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    instance = this;
-}
 
 }
