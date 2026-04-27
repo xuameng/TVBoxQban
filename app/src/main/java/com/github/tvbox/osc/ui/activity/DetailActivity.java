@@ -266,7 +266,7 @@ public class DetailActivity extends BaseActivity {
             public void onClick(View v) {
                 if (vodInfo != null && vodInfo.seriesMap.size() > 0) {
                     if (isPushUrl) {
-                        App.showToastShort(DetailActivity.this, "播放内容准备中，请稍后！");
+                        App.showToastShort(DetailActivity.this, "播放内容准备中，请在播放成功后再试！");
                         return;
                     }
                     // xuameng检查当前选中的源是否是正在播放的源
@@ -415,7 +415,7 @@ public class DetailActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 if (isPushUrl) {
-                    App.showToastShort(DetailActivity.this, "播放内容准备中，请稍后！");
+                    App.showToastShort(DetailActivity.this, "播放内容准备中，请在播放成功后再试！");
                     return;
                 }
                 String text = tvCollect.getText().toString();
@@ -1222,12 +1222,19 @@ public class DetailActivity extends BaseActivity {
                                 isPushUrl = false;
                                 if (!showPreview){
                                     EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_CLOSE_PLAY_ACTIVITY, null));  //xuameng 远程关闭playactivity 用于push推送解析刷新
-                                    new Handler().postDelayed(new Runnable() {
+                                    runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
-                                            App.showToastShort(DetailActivity.this, "推送内容解析成功，准备播放！");
+                                            // 延迟执行跳转
+                                            new Handler().postDelayed(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    App.showToastShort(DetailActivity.this, "推送内容解析成功，准备播放！");
+                                                }
+                                            }, 500);  // 延迟300毫秒，确保旧播放器完全关闭
                                         }
-                                    }, 500);  
+                                    });
+								}
                                 return; 
                             }
                             insertVod(firstsourceKey, saveVodInfo);
