@@ -1071,7 +1071,10 @@ public class DetailActivity extends BaseActivity {
                             if (isPushUrl) {  
 								 App.showToastShort(DetailActivity.this, "222222222222222");
                                 EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_REFRESH, vodInfo.playIndex));
-                            }
+                            }else{
+								App.showToastShort(DetailActivity.this, "33333");
+							}
+
                         }
                         // startQuickSearch();
                     } else {
