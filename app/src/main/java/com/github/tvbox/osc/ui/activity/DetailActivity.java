@@ -1232,6 +1232,7 @@ public class DetailActivity extends BaseActivity {
                     
                             if (isPushUrl) {  //xuameng 判断推送内容 如是 不执行保存 播放成功后会自动保存
                                 if (!showPreview){
+                                    EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_REFRESH, VodInfo.playIndex));
                                     new Handler().postDelayed(new Runnable() {
                                         @Override
                                         public void run() {
