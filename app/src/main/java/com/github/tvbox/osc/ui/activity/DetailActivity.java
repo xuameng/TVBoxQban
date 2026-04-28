@@ -138,7 +138,6 @@ public class DetailActivity extends BaseActivity {
     public String sourceKey;
     public String firstsourceKey;
     boolean seriesSelect = false;
-    boolean isPushUrl = false;   //xuameng 判断推送内容
     private View seriesFlagFocus = null;
     private String preFlag="";
     private V7GridLayoutManager mGridViewLayoutMgr = null;
@@ -264,7 +263,7 @@ public class DetailActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 if (vodInfo != null && vodInfo.seriesMap.size() > 0) {
-                    if (isPushUrl) {
+                    if (HawkConfig.isPushUrl) {
                         App.showToastShort(DetailActivity.this, "正在解析推送地址，请稍后再试！");
                         return;
                     }
@@ -426,7 +425,7 @@ public class DetailActivity extends BaseActivity {
         tvCollect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isPushUrl) {
+                if (HawkConfig.isPushUrl) {
                     App.showToastShort(DetailActivity.this, "正在解析推送地址，请稍后再试！");
                     return;
                 }
@@ -1230,15 +1229,13 @@ public class DetailActivity extends BaseActivity {
                                 saveVodInfo = vodInfo;
                             }
                     
-                            if (isPushUrl) {  //xuameng 判断推送内容 如是 不执行保存 播放成功后会自动保存
-								App.showToastShort(DetailActivity.this, "2222");
+                            if (HawkConfig.isPushUrl) {  //xuameng 判断推送内容 如是 不执行保存 播放成功后会自动保存
                                 if (!showPreview){
-									App.showToastShort(DetailActivity.this, "11111");
-                                    EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_CLOSE_PLAY_ACTIVITY, null));  //xuameng 远程关闭playactivity 用于push推送解析刷新
                                     new Handler().postDelayed(new Runnable() {
                                         @Override
                                         public void run() {
-                                            isPushUrl = false;
+                                            HawkConfig.isPushUrl = false;
+                                            EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_CLOSE_PLAY_ACTIVITY, null));  //xuameng 远程关闭playactivity 用于push推送解析刷新
                                             App.showToastShort(DetailActivity.this, "推送地址解析成功，请重新播放！");
                                         }
                                     }, 500);
@@ -1247,7 +1244,7 @@ public class DetailActivity extends BaseActivity {
                                 new Handler().postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
-                                        isPushUrl = false;
+                                        HawkConfig.isPushUrl = false;
                                     }
                                 }, 500);
                                 return; 
@@ -1262,7 +1259,7 @@ public class DetailActivity extends BaseActivity {
                     } else if (event.obj instanceof JSONObject) {    //xuameng保存播放器配置
                         vodInfo.playerCfg = ((JSONObject) event.obj).toString();
                         //保存历史
-                        if (isPushUrl) {  //xuameng 判断推送内容 如是 不执行保存 播放成功后会自动保存
+                        if (HawkConfig.isPushUrl) {  //xuameng 判断推送内容 如是 不执行保存 播放成功后会自动保存
                             return; 
                         }
                         insertVod(firstsourceKey, vodInfo);
@@ -1276,7 +1273,7 @@ public class DetailActivity extends BaseActivity {
                             App.showToastShort(DetailActivity.this, "正在解析推送地址！");
                             deleteOldSourceHistoryIfNeeded(firstsourceKey, "push_agent", vodInfo);  //xuameng 删除firstsourceKey存储历史因为源变成 push_agent了
                             loadDetailXu(url, "push_agent");  //通过sourceViewModel.getDetail方法去push头并更改源为push_agent 因为type 4源不支持解析
-                            isPushUrl = true;
+                            HawkConfig.isPushUrl = true;
                         }
                     }
                 }
