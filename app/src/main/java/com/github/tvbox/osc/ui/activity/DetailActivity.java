@@ -138,6 +138,7 @@ public class DetailActivity extends BaseActivity {
     public String sourceKey;
     public String firstsourceKey;
     boolean seriesSelect = false;
+    boolean isPushUrl = false;   //xuameng 判断推送内容
     private View seriesFlagFocus = null;
     private String preFlag="";
     private V7GridLayoutManager mGridViewLayoutMgr = null;
@@ -263,7 +264,7 @@ public class DetailActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 if (vodInfo != null && vodInfo.seriesMap.size() > 0) {
-                    if (HawkConfig.isPushUrl) {
+                    if (isPushUrl) {
                         App.showToastShort(DetailActivity.this, "正在解析推送地址，请稍后再试！");
                         return;
                     }
@@ -425,7 +426,7 @@ public class DetailActivity extends BaseActivity {
         tvCollect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (HawkConfig.isPushUrl) {
+                if (isPushUrl) {
                     App.showToastShort(DetailActivity.this, "正在解析推送地址，请稍后再试！");
                     return;
                 }
@@ -1229,12 +1230,12 @@ public class DetailActivity extends BaseActivity {
                                 saveVodInfo = vodInfo;
                             }
                     
-                            if (HawkConfig.isPushUrl) {  //xuameng 判断推送内容 如是 不执行保存 播放成功后会自动保存
+                            if (isPushUrl) {  //xuameng 判断推送内容 如是 不执行保存 播放成功后会自动保存
                                 if (!showPreview){
                                     new Handler().postDelayed(new Runnable() {
                                         @Override
                                         public void run() {
-                                            HawkConfig.isPushUrl = false;
+                                            isPushUrl = false;
                                             EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_CLOSE_PLAY_ACTIVITY, null));  //xuameng 远程关闭playactivity 用于push推送解析刷新
                                             App.showToastShort(DetailActivity.this, "推送地址解析成功，请重新播放！");
                                         }
@@ -1244,7 +1245,7 @@ public class DetailActivity extends BaseActivity {
                                 new Handler().postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
-                                        HawkConfig.isPushUrl = false;
+                                        isPushUrl = false;
                                     }
                                 }, 500);
                                 return; 
@@ -1259,7 +1260,7 @@ public class DetailActivity extends BaseActivity {
                     } else if (event.obj instanceof JSONObject) {    //xuameng保存播放器配置
                         vodInfo.playerCfg = ((JSONObject) event.obj).toString();
                         //保存历史
-                        if (HawkConfig.isPushUrl) {  //xuameng 判断推送内容 如是 不执行保存 播放成功后会自动保存
+                        if (isPushUrl) {  //xuameng 判断推送内容 如是 不执行保存 播放成功后会自动保存
                             return; 
                         }
                         insertVod(firstsourceKey, vodInfo);
@@ -1273,7 +1274,7 @@ public class DetailActivity extends BaseActivity {
                             App.showToastShort(DetailActivity.this, "正在解析推送地址！");
                             deleteOldSourceHistoryIfNeeded(firstsourceKey, "push_agent", vodInfo);  //xuameng 删除firstsourceKey存储历史因为源变成 push_agent了
                             loadDetailXu(url, "push_agent");  //通过sourceViewModel.getDetail方法去push头并更改源为push_agent 因为type 4源不支持解析
-                            HawkConfig.isPushUrl = true;
+                            isPushUrl = true;
                         }
                     }
                 }
