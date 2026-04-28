@@ -1250,7 +1250,7 @@ public class DetailActivity extends BaseActivity {
                                     public void run() {
                                         isPushUrl = false;
                                     }
-                                }, 500);
+                                }, 1000);
                                 return; 
                             }
                             insertVod(firstsourceKey, saveVodInfo);
