@@ -610,9 +610,6 @@ public class PlayActivity extends BaseActivity {
     }
 
     void errorWithRetry(String err, boolean finish) {
-        if (HawkConfig.isPushUrl){
-            return;
-        }
         if (!autoRetry()) {
             runOnUiThread(new Runnable() {
                 @Override
@@ -657,6 +654,10 @@ public class PlayActivity extends BaseActivity {
                     mVideoView.release();
                     if (finalUrl != null) {
                         String url = finalUrl;
+                        if (url.startsWith("push://") && ApiConfig.get().getSource("push_agent") != null) {  //xuameng 如是推送链接直接返回由detailactivity重新解析
+App.showToastShort(mContext, "55555555555");
+                            return;
+                        }
                         try {
                             int playerType = mVodPlayerCfg.getInt("pl");
                             if (playerType >= 10) {
