@@ -265,7 +265,7 @@ public class DetailActivity extends BaseActivity {
             public void onClick(View v) {
                 if (vodInfo != null && vodInfo.seriesMap.size() > 0) {
                     if (isPushUrl) {
-                        App.showToastShort(DetailActivity.this, "正在解析播放地址，请在播放成功后再试！");
+                        App.showToastShort(DetailActivity.this, "正在解析推送地址，请稍后再试！");
                         return;
                     }
                     // xuameng检查当前选中的源是否是正在播放的源
@@ -427,7 +427,7 @@ public class DetailActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 if (isPushUrl) {
-                    App.showToastShort(DetailActivity.this, "正在解析播放地址，请在播放成功后再试！");
+                    App.showToastShort(DetailActivity.this, "正在解析推送地址，请稍后再试！");
                     return;
                 }
                 String text = tvCollect.getText().toString();
@@ -1237,7 +1237,7 @@ public class DetailActivity extends BaseActivity {
                                         @Override
                                         public void run() {
                                             isPushUrl = false;
-                                            App.showToastShort(DetailActivity.this, "播放地址解析成功，请重新播放！");
+                                            App.showToastShort(DetailActivity.this, "推送地址解析成功，请重新播放！");
                                         }
                                     }, 500);
                                     return; 
@@ -1271,7 +1271,7 @@ public class DetailActivity extends BaseActivity {
                         setTvPlayUrl(url);
 
                         if (url.startsWith("push://") && ApiConfig.get().getSource("push_agent") != null) {  //xuameng 如果是推送链接 通过sourceViewModel 改成"push_agent"源重新解析
-                            App.showToastShort(DetailActivity.this, "正在解析播放地址！");
+                            App.showToastShort(DetailActivity.this, "正在解析推送地址！");
                             deleteOldSourceHistoryIfNeeded(firstsourceKey, "push_agent", vodInfo);  //xuameng 删除firstsourceKey存储历史因为源变成 push_agent了
                             loadDetailXu(url, "push_agent");  //通过sourceViewModel.getDetail方法去push头并更改源为push_agent 因为type 4源不支持解析
                             isPushUrl = true;
