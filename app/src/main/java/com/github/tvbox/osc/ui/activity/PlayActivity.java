@@ -655,6 +655,7 @@ public class PlayActivity extends BaseActivity {
                     if (finalUrl != null) {
                         String url = finalUrl;
                         if (url.startsWith("push://") && ApiConfig.get().getSource("push_agent") != null) {  //xuameng 如是推送链接直接返回由detailactivity重新解析
+                            EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_REFRESH, mVodInfo.playIndex));  //xuameng 通知detailactivity退出playactivity页面以便更新数据
                             return;
                         }
                         try {
