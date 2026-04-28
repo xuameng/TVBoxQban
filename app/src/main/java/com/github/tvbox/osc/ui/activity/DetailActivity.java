@@ -1069,8 +1069,8 @@ public class DetailActivity extends BaseActivity {
                             toggleSubtitleTextSize();
                         }else{   //xuameng 如果不是小窗口播放并且是推送内容通知关闭playactivity刷新播放列表
                             if (isPushUrl) {  
-								jumpToPlay();
-                              //  EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_REFRESH, vodInfo.playIndex));
+								 App.showToastShort(DetailActivity.this, "222222222222222");
+                                EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_REFRESH, vodInfo.playIndex));
                             }
                         }
                         // startQuickSearch();
@@ -1241,7 +1241,7 @@ public class DetailActivity extends BaseActivity {
                                         @Override
                                         public void run() {
                                             isPushUrl = false;
-                                          //  EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_CLOSE_PLAY_ACTIVITY, null));  //xuameng 远程关闭playactivity 用于push推送解析刷新
+                                            EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_CLOSE_PLAY_ACTIVITY, null));  //xuameng 远程关闭playactivity 用于push推送解析刷新
                                             App.showToastShort(DetailActivity.this, "推送地址解析成功，请重新播放！");
                                         }
                                     }, 1000);
