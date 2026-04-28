@@ -1241,7 +1241,7 @@ public class DetailActivity extends BaseActivity {
                                         @Override
                                         public void run() {
                                             isPushUrl = false;
-                                            EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_CLOSE_PLAY_ACTIVITY, null));  //xuameng 远程关闭playactivity 用于push推送解析刷新
+                                          //  EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_CLOSE_PLAY_ACTIVITY, null));  //xuameng 远程关闭playactivity 用于push推送解析刷新
                                             App.showToastShort(DetailActivity.this, "推送地址解析成功，请重新播放！");
                                         }
                                     }, 1000);
