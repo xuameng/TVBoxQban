@@ -1251,6 +1251,7 @@ public class DetailActivity extends BaseActivity {
                                 new Handler().postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
+                                        App.showToastShort(DetailActivity.this, "推送地址换源解析成功！");
                                         isPushUrl = false;
                                     }
                                 }, 1000);
