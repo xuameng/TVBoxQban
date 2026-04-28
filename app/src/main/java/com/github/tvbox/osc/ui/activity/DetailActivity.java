@@ -1073,7 +1073,8 @@ public class DetailActivity extends BaseActivity {
                                     @Override
                                     public void run() {
                                         isPushUrl = false;
-                                        App.showToastShort(DetailActivity.this, "推送地址解析成功！");
+                                        showSuccess();
+                                        App.showToastShort(DetailActivity.this, "推送地址换源解析成功！");
                                     }
                                 }, 1000);
                             }
@@ -1243,7 +1244,8 @@ public class DetailActivity extends BaseActivity {
                             if (isPushUrl) {  //xuameng 判断推送内容 如是 不执行保存 播放成功后会自动保存
                                 if (!showPreview){
                                     EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_CLOSE_PLAY_ACTIVITY, null));  //xuameng 远程关闭playactivity 用于push推送解析刷新
-                                    App.showToastShort(DetailActivity.this, "推送地址解析中，请稍后！");
+                                    showLoading();
+                                    App.showToastShort(DetailActivity.this, "推送地址需换源解析，请稍后！");
                                     return; 
 								}
                                 new Handler().postDelayed(new Runnable() {
