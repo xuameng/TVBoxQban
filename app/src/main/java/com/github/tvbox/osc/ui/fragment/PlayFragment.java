@@ -957,6 +957,9 @@ public class PlayFragment extends BaseLazyFragment {
                         }
                         String flag = info.optString("flag");
                         String url = info.getString("url");
+                        if (url.startsWith("push://") && ApiConfig.get().getSource("push_agent") != null) {
+                            return;
+                        }
                         if(url.startsWith("[")){
                             url=mController.firstUrlByArray(url);
                         }
