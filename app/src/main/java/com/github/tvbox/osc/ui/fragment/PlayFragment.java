@@ -670,6 +670,10 @@ public class PlayFragment extends BaseLazyFragment {
                     mVideoView.release();
                     if (finalUrl != null) {
                         String url = finalUrl;
+                        if (url.startsWith("push://") && ApiConfig.get().getSource("push_agent") != null) {
+							App.showToastShort(mContext, url);
+                            return;
+                        }
                         try {
                             int playerType = mVodPlayerCfg.getInt("pl");
                             if (playerType >= 10) {
@@ -957,9 +961,6 @@ public class PlayFragment extends BaseLazyFragment {
                         }
                         String flag = info.optString("flag");
                         String url = info.getString("url");
-                        if (url.startsWith("push://") && ApiConfig.get().getSource("push_agent") != null) {
-                            return;
-                        }
                         if(url.startsWith("[")){
                             url=mController.firstUrlByArray(url);
                         }
