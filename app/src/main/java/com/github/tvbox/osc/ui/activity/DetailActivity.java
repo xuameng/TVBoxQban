@@ -1070,6 +1070,7 @@ public class DetailActivity extends BaseActivity {
                         }else{   //xuameng 如果不是小窗口播放并且是推送内容通知关闭playactivity刷新播放列表
                             if (isPushUrl) {  
                                 EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_REFRESH, vodInfo.playIndex));
+                            }
                         }
                         // startQuickSearch();
                     } else {
