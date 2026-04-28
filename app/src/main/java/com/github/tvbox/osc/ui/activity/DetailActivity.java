@@ -1231,7 +1231,9 @@ public class DetailActivity extends BaseActivity {
                             }
                     
                             if (isPushUrl) {  //xuameng 判断推送内容 如是 不执行保存 播放成功后会自动保存
+								App.showToastShort(DetailActivity.this, "2222");
                                 if (!showPreview){
+									App.showToastShort(DetailActivity.this, "11111");
                                     EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_CLOSE_PLAY_ACTIVITY, null));  //xuameng 远程关闭playactivity 用于push推送解析刷新
                                     new Handler().postDelayed(new Runnable() {
                                         @Override
