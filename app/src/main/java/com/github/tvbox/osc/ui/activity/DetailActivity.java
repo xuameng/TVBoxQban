@@ -139,7 +139,6 @@ public class DetailActivity extends BaseActivity {
     public String firstsourceKey;
     boolean seriesSelect = false;
     boolean isPushUrl = false;   //xuameng 判断推送内容
-    boolean isPushUrlXu = false;   //xuameng 判断推送内容
     private View seriesFlagFocus = null;
     private String preFlag="";
     private V7GridLayoutManager mGridViewLayoutMgr = null;
@@ -266,7 +265,7 @@ public class DetailActivity extends BaseActivity {
             public void onClick(View v) {
                 if (vodInfo != null && vodInfo.seriesMap.size() > 0) {
                     if (isPushUrl) {
-                        App.showToastShort(DetailActivity.this, "播放内容准备中，请在播放成功后再试！");
+                        App.showToastShort(DetailActivity.this, "正在解析播放地址，请在播放成功后再试！");
                         return;
                     }
                     // xuameng检查当前选中的源是否是正在播放的源
@@ -355,6 +354,19 @@ public class DetailActivity extends BaseActivity {
             }
         });
 
+        //xuameng长按推送复制播放地址
+        tvPush.setOnLongClickListener(new View.OnLongClickListener() {  
+            @Override
+            public boolean onLongClick(View v) {
+                //获取剪切板管理器
+                ClipboardManager cm = (ClipboardManager)getSystemService(mContext.CLIPBOARD_SERVICE);
+                //设置内容到剪切板
+                cm.setPrimaryClip(ClipData.newPlainText(null, tvPlayUrl.getText().toString().replace("播放地址：","")));
+                App.showToastShort(DetailActivity.this, "播放地址已复制！");
+                return true;
+            }
+        });
+
         tvPlay.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override         //xuameng许大师制作焦点变大
             public void onFocusChange(View v, boolean hasFocus){
@@ -415,7 +427,7 @@ public class DetailActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 if (isPushUrl) {
-                    App.showToastShort(DetailActivity.this, "播放内容准备中，请在播放成功后再试！");
+                    App.showToastShort(DetailActivity.this, "正在解析播放地址，请在播放成功后再试！");
                     return;
                 }
                 String text = tvCollect.getText().toString();
@@ -1219,16 +1231,23 @@ public class DetailActivity extends BaseActivity {
                             }
                     
                             if (isPushUrl) {  //xuameng 判断推送内容 如是 不执行保存 播放成功后会自动保存
-                                isPushUrl = false;
                                 if (!showPreview){
                                     EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_CLOSE_PLAY_ACTIVITY, null));  //xuameng 远程关闭playactivity 用于push推送解析刷新
                                     new Handler().postDelayed(new Runnable() {
                                         @Override
                                         public void run() {
-                                            App.showToastShort(DetailActivity.this, "推送内容解析成功，准备播放！");
+                                            isPushUrl = false;
+                                            App.showToastShort(DetailActivity.this, "播放地址解析成功，请重新播放！");
                                         }
                                     }, 500);
+                                    return; 
 								}
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        isPushUrl = false;
+                                    }
+                                }, 500);
                                 return; 
                             }
                             insertVod(firstsourceKey, saveVodInfo);
@@ -1241,8 +1260,7 @@ public class DetailActivity extends BaseActivity {
                     } else if (event.obj instanceof JSONObject) {    //xuameng保存播放器配置
                         vodInfo.playerCfg = ((JSONObject) event.obj).toString();
                         //保存历史
-                        if (isPushUrlXu) {  //xuameng 判断推送内容 如是 不执行保存 播放成功后会自动保存
-                            isPushUrlXu = false;
+                        if (isPushUrl) {  //xuameng 判断推送内容 如是 不执行保存 播放成功后会自动保存
                             return; 
                         }
                         insertVod(firstsourceKey, vodInfo);
@@ -1253,11 +1271,10 @@ public class DetailActivity extends BaseActivity {
                         setTvPlayUrl(url);
 
                         if (url.startsWith("push://") && ApiConfig.get().getSource("push_agent") != null) {  //xuameng 如果是推送链接 通过sourceViewModel 改成"push_agent"源重新解析
-                            App.showToastShort(DetailActivity.this, "正在解析推送内容！");
+                            App.showToastShort(DetailActivity.this, "正在解析播放地址！");
                             deleteOldSourceHistoryIfNeeded(firstsourceKey, "push_agent", vodInfo);  //xuameng 删除firstsourceKey存储历史因为源变成 push_agent了
                             loadDetailXu(url, "push_agent");  //通过sourceViewModel.getDetail方法去push头并更改源为push_agent 因为type 4源不支持解析
                             isPushUrl = true;
-                            isPushUrlXu = true;
                         }
                     }
                 }
