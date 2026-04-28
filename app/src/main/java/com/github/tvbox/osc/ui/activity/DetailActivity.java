@@ -1067,6 +1067,9 @@ public class DetailActivity extends BaseActivity {
                             llPlayerFragmentContainer.setVisibility(View.VISIBLE);
                             llPlayerFragmentContainerBlock.setVisibility(View.VISIBLE);
                             toggleSubtitleTextSize();
+                        }else{   //xuameng 如果不是小窗口播放并且是推送内容通知关闭playactivity刷新播放列表
+                            if (isPushUrl) {  
+                                EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_REFRESH, vodInfo.playIndex));
                         }
                         // startQuickSearch();
                     } else {
@@ -1232,7 +1235,6 @@ public class DetailActivity extends BaseActivity {
                     
                             if (isPushUrl) {  //xuameng 判断推送内容 如是 不执行保存 播放成功后会自动保存
                                 if (!showPreview){
-                                    EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_REFRESH, vodInfo.playIndex));
                                     new Handler().postDelayed(new Runnable() {
                                         @Override
                                         public void run() {
@@ -1240,7 +1242,7 @@ public class DetailActivity extends BaseActivity {
                                             EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_CLOSE_PLAY_ACTIVITY, null));  //xuameng 远程关闭playactivity 用于push推送解析刷新
                                             App.showToastShort(DetailActivity.this, "推送地址解析成功，请重新播放！");
                                         }
-                                    }, 500);
+                                    }, 1000);
                                     return; 
 								}
                                 new Handler().postDelayed(new Runnable() {
