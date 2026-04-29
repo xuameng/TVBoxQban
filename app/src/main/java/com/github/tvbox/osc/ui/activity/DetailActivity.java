@@ -1814,7 +1814,7 @@ public class DetailActivity extends BaseActivity {
                 RoomDataManger.deleteVodRecord(oldSourceKey, vodInfo);
             
             } catch (Exception e) {
-            e.printStackTrace();
+                e.printStackTrace();
             }
         }
     }
