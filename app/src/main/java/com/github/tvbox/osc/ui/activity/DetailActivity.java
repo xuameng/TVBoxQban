@@ -139,7 +139,6 @@ public class DetailActivity extends BaseActivity {
     public String firstsourceKey;
     boolean seriesSelect = false;
     boolean isPushUrl = false;   //xuameng 判断推送内容
-    boolean authorizationsWitchToPlaying = false;  //xuameng 如果数据为空不执行滚动到当前剧集
     private View seriesFlagFocus = null;
     private String preFlag="";
     private V7GridLayoutManager mGridViewLayoutMgr = null;
@@ -1084,28 +1083,43 @@ public class DetailActivity extends BaseActivity {
                     } else {
                         if (isPushUrl) {  //xuameng 判断推送恢复初始
                             isPushUrl = false;
-                            App.showToastShort(DetailActivity.this, "接收推送数据失败！");
+                            App.showToastShort(DetailActivity.this, "接收到推送数据为空！");
                         }
-                        authorizationsWitchToPlaying = true;
                         mGridViewFlag.setVisibility(View.GONE);
                         mGridView.setVisibility(View.GONE);
                         mSeriesGroupView.setVisibility(View.GONE);
                         tvPlay.setVisibility(View.GONE);
-                        tvSort.setVisibility(View.GONE);  //xuameng修复无播放数据倒序空指针
-                        tvCollect.setVisibility(View.GONE);
-                        tvQuickSearch.setVisibility(View.GONE);
-                        tvDesc.setVisibility(View.GONE);   
-                        tvPush.setVisibility(View.GONE);
-                        llPlayerFragmentContainer.setVisibility(View.GONE);
-                        llPlayerFragmentContainerBlock.setVisibility(View.GONE);
+						tvSort.setVisibility(View.GONE);  //xuameng修复无播放数据倒序空指针
                         mEmptyPlayList.setVisibility(View.VISIBLE);
                     }
                 } else {
                     if (isPushUrl) {  //xuameng 判断推送恢复初始
                         isPushUrl = false;
-                        App.showToastShort(DetailActivity.this, "推送数据已失效！");
+                        App.showToastShort(DetailActivity.this, "接收推送数据失败！");
+                    }
+                    if (fullWindows) {
+                        toggleFullPreview();
                     }
                     showEmpty();
+                    mGridViewFlag.setFocusable(false);
+                    mGridView.setFocusable(false);
+                    mSeriesGroupView.setFocusable(false);
+                    tvPlay.setFocusable(false);
+                    tvSort.setFocusable(false);
+                    tvCollect.setFocusable(false);
+                    tvQuickSearch.setFocusable(false);
+                    tvDesc.setFocusable(false); 
+                    tvPush.setFocusable(false);
+                    llPlayerFragmentContainerBlock.setFocusable(false);
+                    mGridViewFlag.setVisibility(View.GONE);
+                    mGridView.setVisibility(View.GONE);
+                    mSeriesGroupView.setVisibility(View.GONE);
+                    tvPlay.setVisibility(View.GONE);
+                    tvSort.setVisibility(View.GONE);  //xuameng修复无播放数据倒序空指针
+                    tvCollect.setVisibility(View.GONE);
+                    tvQuickSearch.setVisibility(View.GONE);
+                    tvDesc.setVisibility(View.GONE);   
+                    tvPush.setVisibility(View.GONE);
                     llPlayerFragmentContainer.setVisibility(View.GONE);
                     llPlayerFragmentContainerBlock.setVisibility(View.GONE);
                 }
@@ -1657,10 +1671,6 @@ public class DetailActivity extends BaseActivity {
     }
 
     private void switchToPlayingSourceAndScroll() {   //xuameng 支持跨源滚动到当前剧集
-        if (authorizationsWitchToPlaying){   //xuameng 如果数据为空不执行滚动到当前剧集
-            authorizationsWitchToPlaying = false;
-			return;
-        }
         // 1. 检查当前显示源是否是正在播放的源
         if (vodInfo != null && vodInfo.currentPlayFlag != null && !vodInfo.playFlag.equals(vodInfo.currentPlayFlag)) {
             // 当前显示源不是播放源，需要切换回播放源
