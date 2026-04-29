@@ -1658,7 +1658,7 @@ public class DetailActivity extends BaseActivity {
 
     private void switchToPlayingSourceAndScroll() {   //xuameng 支持跨源滚动到当前剧集
         if (authorizationsWitchToPlaying){   //xuameng 如果数据为空不执行滚动到当前剧集
-            authorizationsWitchToPlaying = false
+            authorizationsWitchToPlaying = false;
 			return;
         }
         // 1. 检查当前显示源是否是正在播放的源
