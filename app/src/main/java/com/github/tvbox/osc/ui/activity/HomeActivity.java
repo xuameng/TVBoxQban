@@ -191,28 +191,11 @@ public class HomeActivity extends BaseActivity {
                     mGridViewHasFocus = false;
                     return;
                 }
+        
                 // 获取当前焦点item
                 int focusedPosition = mGridView.getSelectedPosition();
                 if (focusedPosition == 0) {
                     mGridViewHasFocus = true;
-                }
-                mGridView.post(() -> {
-                    TvRecyclerView.LayoutManager layoutManager = mGridView.getLayoutManager();
-                    if (layoutManager != null && PositionXu != 0) {  //主页没有拥有焦点时执行
-                       mGridView.smoothScrollToPosition(PositionXu);
-                    }
-                });
-            }
-        });
-
-        mGridView.addOnScrollListener(new TvRecyclerView.OnScrollListener() {
-            public void onScrollStateChanged(@NonNull TvRecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                if (newState == mGridView.SCROLL_STATE_IDLE) {
-                    TvRecyclerView.LayoutManager layoutManager = mGridView.getLayoutManager();
-                    if (layoutManager != null && PositionXu != 0) {  //主页没有拥有焦点时执行
-                        mGridView.setSelection(PositionXu);
-                    }
                 }
             }
         });
