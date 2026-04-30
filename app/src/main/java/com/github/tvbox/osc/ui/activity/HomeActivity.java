@@ -205,9 +205,8 @@ public class HomeActivity extends BaseActivity {
             }
         });
 
-        mGridView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+        mGridView.addOnScrollListener(new TvRecyclerView.OnScrollListener() {
+            public void onScrollStateChanged(@NonNull TvRecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 if (newState == mGridView.SCROLL_STATE_IDLE) {
                     TvRecyclerView.LayoutManager layoutManager = mGridView.getLayoutManager();
