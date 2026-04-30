@@ -205,16 +205,15 @@ public class HomeActivity extends BaseActivity {
             }
         });
 
-        mGridView.addOnScrollListener(new TvRecyclerView.OnScrollListener() {
+        mGridView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrollStateChanged(@NonNull TvRecyclerView recyclerView, int newState) {
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 if (newState == mGridView.SCROLL_STATE_IDLE) {
                     TvRecyclerView.LayoutManager layoutManager = mGridView.getLayoutManager();
                     if (layoutManager != null && PositionXu != 0) {  //主页没有拥有焦点时执行
                         mGridView.setSelection(PositionXu);
                     }
-                   
                 }
             }
         });
