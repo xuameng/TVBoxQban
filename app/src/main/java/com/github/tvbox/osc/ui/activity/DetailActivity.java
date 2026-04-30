@@ -1092,6 +1092,10 @@ public class DetailActivity extends BaseActivity {
 						tvSort.setVisibility(View.GONE);  //xuameng修复无播放数据倒序空指针
                         ivThumb.setEnabled(false);
                         ivThumb.setFocusable(false);
+                        tvPush.setEnabled(false);
+                        tvPush.setFocusable(false);
+                        tvPlayUrl.setEnabled(false);
+                        tvPlayUrl.setFocusable(false);
                         mEmptyPlayList.setVisibility(View.VISIBLE);
                     }
                 } else {
