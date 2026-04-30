@@ -1090,7 +1090,7 @@ public class DetailActivity extends BaseActivity {
                         mSeriesGroupView.setVisibility(View.GONE);
                         tvPlay.setVisibility(View.GONE);
 						tvSort.setVisibility(View.GONE);  //xuameng修复无播放数据倒序空指针
-                        ivThumb..setFocusable(false);
+                        ivThumb.setFocusable(false);
                         mEmptyPlayList.setVisibility(View.VISIBLE);
                     }
                 } else {
@@ -1112,7 +1112,7 @@ public class DetailActivity extends BaseActivity {
                     tvDesc.setFocusable(false); 
                     tvPush.setFocusable(false);
                     llPlayerFragmentContainerBlock.setFocusable(false);
-                    ivThumb..setFocusable(false);
+                    ivThumb.setFocusable(false);
                     mGridViewFlag.setVisibility(View.GONE);
                     mGridView.setVisibility(View.GONE);
                     mSeriesGroupView.setVisibility(View.GONE);
