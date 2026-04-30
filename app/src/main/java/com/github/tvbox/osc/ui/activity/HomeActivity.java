@@ -191,12 +191,17 @@ public class HomeActivity extends BaseActivity {
                     mGridViewHasFocus = false;
                     return;
                 }
-        
                 // 获取当前焦点item
                 int focusedPosition = mGridView.getSelectedPosition();
                 if (focusedPosition == 0) {
                     mGridViewHasFocus = true;
                 }
+                mGridView.post(() -> {
+                    TvRecyclerView.LayoutManager layoutManager = mGridView.getLayoutManager();
+                    if (layoutManager != null && PositionXu != 0) {  //主页没有拥有焦点时执行
+                        mGridView.setSelection(PositionXu);
+                    }
+                });
             }
         });
 
