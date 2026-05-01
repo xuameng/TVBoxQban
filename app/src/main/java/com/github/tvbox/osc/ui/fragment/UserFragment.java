@@ -184,7 +184,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
                     bundle.putString("id", vod.id);
                     bundle.putString("sourceKey", vod.sourceKey);
                     //if (vod.id.startsWith("msearch:")) {  xuameng 改成只要有folder就是下一集直接搜索
-                    if (vod.id.startsWith("msearch:") || (video.tag != null && (video.tag.equals("folder") || video.tag.equals("cover")))) {
+                    if (vod.id.startsWith("msearch:") || (vod.tag != null && (vod.tag.equals("folder") || vod.tag.equals("cover")))) {
                         bundle.putString("title", vod.name);
                         if (Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)) {
                             jumpActivity(FastSearchActivity.class, bundle);
