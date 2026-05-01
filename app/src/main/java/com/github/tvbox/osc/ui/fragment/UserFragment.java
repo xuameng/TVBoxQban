@@ -183,7 +183,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
                     Bundle bundle = new Bundle();
                     bundle.putString("id", vod.id);
                     bundle.putString("sourceKey", vod.sourceKey);
-App.showToastShort(mContext, video.tag);
+App.showToastShort(mContext, vod.tag);
 					
                     if (vod.id.startsWith("msearch:")) {
                         bundle.putString("title", vod.name);
