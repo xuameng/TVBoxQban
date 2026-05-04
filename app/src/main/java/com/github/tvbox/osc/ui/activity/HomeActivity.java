@@ -202,7 +202,7 @@ public class HomeActivity extends BaseActivity {
 
         this.mGridView.setOnItemListener(new TvRecyclerView.OnItemListener() {       //xuameng移除  mHandler.postDelayed
             public void onItemPreSelected(TvRecyclerView tvRecyclerView, View view, int position) {
-				//  xuameng统一由onItemSelected处理焦点变化
+                //  xuameng统一由onItemSelected处理焦点变化
             }
 
             public void onItemSelected(TvRecyclerView tvRecyclerView, View view, int position) {
@@ -354,7 +354,7 @@ public class HomeActivity extends BaseActivity {
         if (home != null && home.getName() != null && !home.getName().isEmpty())
             tvName.setText(home.getName());
         if (dataInitOk && jarInitOk) {
-//            showLoading();
+            //showLoading();
             sourceViewModel.getSort(ApiConfig.get().getHomeSourceBean().getKey());
             if (hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                 LOG.e("有");
@@ -574,7 +574,7 @@ public class HomeActivity extends BaseActivity {
             // 如果 sortFocusView 存在且没有获取焦点，则请求焦点
             if (this.sortFocusView != null && !this.sortFocusView.isFocused()) {
                 if (currentView != null && PositionXu !=0) {   // xuameng防止空指针
-					//this.sortFocusView.requestFocus(); //xuameng这段代码手机使用时菜单失去焦点会闪退   
+                    //this.sortFocusView.requestFocus(); //xuameng这段代码手机使用时菜单失去焦点会闪退   
                     safeGridViewSetSelection(PositionXu);   //xuameng处理手机滑动主页菜单失去焦点时按返回键闪退
                 }
             }
@@ -774,7 +774,7 @@ public class HomeActivity extends BaseActivity {
         ControlManager.get().stopServer();
     }
 
-	private SelectDialog<SourceBean> mSiteSwitchDialog;
+    private SelectDialog<SourceBean> mSiteSwitchDialog;
 
     void showSiteSwitch() {
         List<SourceBean> sites = ApiConfig.get().getSwitchSourceBeanList();
