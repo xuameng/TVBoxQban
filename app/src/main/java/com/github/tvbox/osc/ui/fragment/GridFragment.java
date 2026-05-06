@@ -201,28 +201,10 @@ public class GridFragment extends BaseLazyFragment {
             v3.setAdapter(gridAdapter);
             /* ===== xuameng✅ 最小侵入 Patch 结束 ===== */
 
-            // 安全添加到父容器
-            ViewGroup parent = (ViewGroup) mGridView.getParent();
-            if (parent != null) {
-                // 获取原始视图的位置索引
-                int index = parent.indexOfChild(mGridView);
-                if (index != -1) {
-                    // 在相同位置添加新视图
-                    parent.addView(v3, index, mGridView.getLayoutParams());
-                } else {
-                    parent.addView(v3);
-                }
-            }
-            
+            ((ViewGroup) mGridView.getParent()).addView(v3);
             mGridView.setVisibility(View.GONE);
             mGridView = v3;
-            
-            // 确保视图完全初始化后再显示
-            mGridView.post(() -> {
-                if (mGridView != null) {
-                    mGridView.setVisibility(View.VISIBLE);
-                }
-            });
+            mGridView.setVisibility(View.VISIBLE);
         }
         mGridView.setHasFixedSize(true);
         this.page =1;
@@ -236,26 +218,19 @@ public class GridFragment extends BaseLazyFragment {
         gridAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
-                // 安全检查，确保gridAdapter和mGridView可用
-                if (gridAdapter != null && mGridView != null) {
-                    gridAdapter.setEnableLoadMore(true);
-                    sourceViewModel.getList(sortData, page);
-                }
+                gridAdapter.setEnableLoadMore(true);
+                sourceViewModel.getList(sortData, page);
             }
         }, mGridView);
         mGridView.setOnItemListener(new TvRecyclerView.OnItemListener() {
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
-                if (itemView != null) {
-                    itemView.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
-                }
+                itemView.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
             }
 
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
-                if (itemView != null) {
-                    itemView.animate().scaleX(1.05f).scaleY(1.05f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
-                }
+                itemView.animate().scaleX(1.05f).scaleY(1.05f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
             }
 
             @Override
