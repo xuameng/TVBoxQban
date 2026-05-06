@@ -547,21 +547,12 @@ private void initViewPager(AbsSortXml absXml) {
         } else {
             pageAdapter.notifyDataSetChanged(); // 如果 Adapter 已存在，刷新数据
         }
-
-        // 4. ✅ 关键修复：在数据加载完成后，强制设置当前页面
-        // 这里的 PositionXu 是你保存的记忆位置，或者默认为 0
-        int targetPosition = PositionXu; 
-        if (targetPosition >= fragments.size()) {
-            targetPosition = 0; // 防止越界
-        }
         
         // 这里使用 post 是为了确保 ViewPager 已经完成了 layout
         mViewPager.post(new Runnable() {
             @Override
             public void run() {
-                if (mViewPager.getCurrentItem() != targetPosition) {
-                    mViewPager.setCurrentItem(targetPosition, false);
-                }
+                mViewPager.setCurrentItem(currentSelected, false);
             }
         });
     }
