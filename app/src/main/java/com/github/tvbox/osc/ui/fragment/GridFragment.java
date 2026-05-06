@@ -156,21 +156,23 @@ public class GridFragment extends BaseLazyFragment {
         this.isLoad = info.isLoad;
         this.focusedView = info.focusedView;
         this.mGridView.setVisibility(View.VISIBLE);
-if (mGridView.getLayoutManager() == null) {
-        if(isFolederMode()){
-            mGridView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
-        }else{
-            int spanCount = isBaseOnWidth() ? 5 : 6;
-            if (style != null) {
-                spanCount = ImgUtil.spanCountByStyle(style, spanCount);
-            }
-            if (spanCount == 1) {
-                mGridView.setLayoutManager(new V7LinearLayoutManager(mContext, spanCount, false));
-            } else {
-                mGridView.setLayoutManager(new V7GridLayoutManager(mContext, spanCount));
+
+        if (mGridView.getLayoutManager() == null) {    //xuameng 新增防止LayoutManager为空
+            if(isFolederMode()){
+                mGridView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
+            }else{
+                int spanCount = isBaseOnWidth() ? 5 : 6;
+                if (style != null) {
+                    spanCount = ImgUtil.spanCountByStyle(style, spanCount);
+                }
+                if (spanCount == 1) {
+                    mGridView.setLayoutManager(new V7LinearLayoutManager(mContext, spanCount, false));
+                } else {
+                    mGridView.setLayoutManager(new V7GridLayoutManager(mContext, spanCount));
+                }
             }
         }
-}
+
 //        if(this.focusedView != null){ this.focusedView.requestFocus(); }
         if(mGridView != null) mGridView.requestFocus();
         return true;
@@ -191,21 +193,22 @@ if (mGridView.getLayoutManager() == null) {
             v3.setLayoutParams(mGridView.getLayoutParams());
             v3.setPadding(mGridView.getPaddingLeft(), mGridView.getPaddingTop(), mGridView.getPaddingRight(), mGridView.getPaddingBottom());
             v3.setClipToPadding(mGridView.getClipToPadding());
-if (mGridView.getLayoutManager() == null) {
-        if(isFolederMode()){
-            v3.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
-        }else{
-            int spanCount = isBaseOnWidth() ? 5 : 6;
-            if (style != null) {
-                spanCount = ImgUtil.spanCountByStyle(style, spanCount);
+
+            if (mGridView.getLayoutManager() == null) { //xuameng 新增防止LayoutManager为空
+                if(isFolederMode()){
+                    v3.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
+                }else{
+                    int spanCount = isBaseOnWidth() ? 5 : 6;
+                    if (style != null) {
+                        spanCount = ImgUtil.spanCountByStyle(style, spanCount);
+                    }
+                    if (spanCount == 1) {
+                        v3.setLayoutManager(new V7LinearLayoutManager(mContext, spanCount, false));
+                    } else {
+                        v3.setLayoutManager(new V7GridLayoutManager(mContext, spanCount));
+                    }
+                }
             }
-            if (spanCount == 1) {
-                v3.setLayoutManager(new V7LinearLayoutManager(mContext, spanCount, false));
-            } else {
-                v3.setLayoutManager(new V7GridLayoutManager(mContext, spanCount));
-            }
-        }
-}
 
             ((ViewGroup) mGridView.getParent()).addView(v3);
             mGridView.setVisibility(View.GONE);
@@ -223,21 +226,22 @@ if (mGridView.getLayoutManager() == null) {
     private void initView() {
         this.createView();
         mGridView.setAdapter(gridAdapter);
-if (mGridView.getLayoutManager() == null) {
-        if(isFolederMode()){
-            mGridView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
-        }else{
-            int spanCount = isBaseOnWidth() ? 5 : 6;
-            if (style != null) {
-                spanCount = ImgUtil.spanCountByStyle(style, spanCount);
-            }
-            if (spanCount == 1) {
+
+        if (mGridView.getLayoutManager() == null) {  //xuameng 新增防止LayoutManager为空
+            if(isFolederMode()){
+                mGridView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
+            }else{
+                int spanCount = isBaseOnWidth() ? 5 : 6;
+                if (style != null) {
+                    spanCount = ImgUtil.spanCountByStyle(style, spanCount);
+                }
+                if (spanCount == 1) {
                 mGridView.setLayoutManager(new V7LinearLayoutManager(mContext, spanCount, false));
-            } else {
-                mGridView.setLayoutManager(new V7GridLayoutManager(mContext, spanCount));
+                } else {
+                    mGridView.setLayoutManager(new V7GridLayoutManager(mContext, spanCount));
+                }
             }
         }
-}
 
         gridAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
