@@ -165,10 +165,7 @@ public class GridFragment extends BaseLazyFragment {
     // 更改当前页面
     private void createView(){
         this.saveCurrentView(); // 保存当前页面
-
-        style=ImgUtil.initStyle();
-        gridAdapter = new GridAdapter(isFolederMode(), style);
-
+        style=ImgUtil.initStyle();  //xuameng 设置style
         if(mGridView == null){ // 从layout中拿view
             mGridView = findViewById(R.id.mGridView);
         }else{ // 复制当前view
@@ -182,7 +179,7 @@ public class GridFragment extends BaseLazyFragment {
             v3.setClipToPadding(mGridView.getClipToPadding());
 
             /* ===== xuameng✅ 最小侵入 Patch 开始 ===== */
-            // ① 先创建 LayoutManager（一定要在 addView 之前）
+            // 先创建 LayoutManager（一定要在 addView 之前）
             if(isFolederMode()){
                 v3.setLayoutManager(new V7LinearLayoutManager(mContext, 1, false));
             }else{
@@ -211,6 +208,8 @@ public class GridFragment extends BaseLazyFragment {
 
     private void initView() {
         this.createView();
+        // xuameng在这里创建 Adapter，此时 mGridView 已经是最终的 View 了
+        gridAdapter = new GridAdapter(isFolederMode(), style); 
         // xuameng在这里重新绑定 Adapter
         mGridView.setAdapter(gridAdapter); 
         gridAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
