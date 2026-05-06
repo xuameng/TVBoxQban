@@ -449,41 +449,4 @@ public class GridFragment extends BaseLazyFragment {
         initData();
     }
 
-@Override
-public void setUserVisibleHint(boolean isVisibleToUser) {
-    super.setUserVisibleHint(isVisibleToUser);
-    if (isVisibleToUser && mGridView != null) {
-        if (mGridView.getLayoutManager() == null) {
-            restoreLayoutManager();
-        }
-    }
-}
-
-private void restoreLayoutManager() {
-    if (isFolederMode()) {
-        mGridView.setLayoutManager(
-                new V7LinearLayoutManager(mContext, 1, false)
-        );
-    } else {
-        int spanCount = isBaseOnWidth() ? 5 : 6;
-        if (style != null) {
-            spanCount = ImgUtil.spanCountByStyle(style, spanCount);
-        }
-        mGridView.setLayoutManager(
-                spanCount == 1
-                        ? new V7LinearLayoutManager(mContext)
-                        : new V7GridLayoutManager(mContext, spanCount)
-        );
-    }
-}
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        if (mGridView != null) {
-            mGridView.setLayoutManager(null);
-            mGridView.setAdapter(null);
-        }
-    }
-
 }
