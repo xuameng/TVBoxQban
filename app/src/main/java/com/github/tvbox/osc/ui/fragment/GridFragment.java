@@ -181,10 +181,10 @@ public class GridFragment extends BaseLazyFragment {
             v3.setPadding(mGridView.getPaddingLeft(), mGridView.getPaddingTop(), mGridView.getPaddingRight(), mGridView.getPaddingBottom());
             v3.setClipToPadding(mGridView.getClipToPadding());
 
-            /* ===== ✅ 最小侵入 Patch 开始 ===== */
+            /* ===== xuameng✅ 最小侵入 Patch 开始 ===== */
             // ① 先创建 LayoutManager（一定要在 addView 之前）
             if(isFolederMode()){
-                v3.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
+                v3.setLayoutManager(new V7LinearLayoutManager(mContext, 1, false));
             }else{
                 int spanCount = isBaseOnWidth() ? 5 : 6;
                 if (style != null) {
@@ -199,7 +199,7 @@ public class GridFragment extends BaseLazyFragment {
 
             // ② 先绑定 Adapter
             v3.setAdapter(gridAdapter);
-            /* ===== ✅ 最小侵入 Patch 结束 ===== */
+            /* ===== xuameng✅ 最小侵入 Patch 结束 ===== */
 
             ((ViewGroup) mGridView.getParent()).addView(v3);
             mGridView.setVisibility(View.GONE);
@@ -448,6 +448,34 @@ public class GridFragment extends BaseLazyFragment {
         page = 1;
         initData();
     }
+
+@Override
+public void setUserVisibleHint(boolean isVisibleToUser) {
+    super.setUserVisibleHint(isVisibleToUser);
+    if (isVisibleToUser && mGridView != null) {
+        if (mGridView.getLayoutManager() == null) {
+            restoreLayoutManager();
+        }
+    }
+}
+
+private void restoreLayoutManager() {
+    if (isFolederMode()) {
+        mGridView.setLayoutManager(
+                new V7LinearLayoutManager(mContext, 1, false)
+        );
+    } else {
+        int spanCount = isBaseOnWidth() ? 5 : 6;
+        if (style != null) {
+            spanCount = ImgUtil.spanCountByStyle(style, spanCount);
+        }
+        mGridView.setLayoutManager(
+                spanCount == 1
+                        ? new V7LinearLayoutManager(mContext)
+                        : new V7GridLayoutManager(mContext, spanCount)
+        );
+    }
+}
 
     @Override
     public void onDestroyView() {
