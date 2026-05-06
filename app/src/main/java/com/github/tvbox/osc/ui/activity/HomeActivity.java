@@ -93,7 +93,7 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 /**
  * @author xuameng
  * @date :2026/04/25
- * @description:  焦点状态全面修复，各种BUG修复
+ * @description:  焦点状态全面修复，各种BUG修复，修复TvRecyclerView空指针异常
  */
 public class HomeActivity extends BaseActivity {
     private LinearLayout topLayout;
@@ -533,9 +533,13 @@ public class HomeActivity extends BaseActivity {
                 scroller.setmDuration(300);
             } catch (Exception e) {
             }
-            mViewPager.setPageTransformer(true, new DefaultTransformer());
-            mViewPager.setAdapter(pageAdapter);
-            mViewPager.setCurrentItem(currentSelected, false);
+            
+            // 修复TvRecyclerView空指针异常的关键：检查ViewPager是否已初始化
+            if (mViewPager != null) {
+                mViewPager.setPageTransformer(true, new DefaultTransformer());
+                mViewPager.setAdapter(pageAdapter);
+                mViewPager.setCurrentItem(currentSelected, false);
+            }
         }
     }
 
@@ -557,7 +561,7 @@ public class HomeActivity extends BaseActivity {
             }
             return;
         } 
-		
+        
         // 检查 fragments 状态
         if (this.fragments.size() <= 0 || this.sortFocused >= this.fragments.size() || this.sortFocused < 0) {
             exit();
@@ -675,7 +679,11 @@ public class HomeActivity extends BaseActivity {
                     if (sortFocused < 0 || sortFocused >= count) {
                         return;
                     }
-                    mViewPager.setCurrentItem(sortFocused, false);
+                    
+                    // 修复TvRecyclerView空指针异常的关键：安全设置ViewPager
+                    if (mViewPager != null && mViewPager.getAdapter() != null) {
+                        mViewPager.setCurrentItem(sortFocused, false);
+                    }
                 }
                 changeTop(sortFocused != 0);
             }
@@ -992,6 +1000,4 @@ public class HomeActivity extends BaseActivity {
             }
         });
     }
-
-
 }
