@@ -511,29 +511,19 @@ public class HomeActivity extends BaseActivity {
         }, this);
     }
 
-private void initViewPager(AbsSortXml absXml) {
-    // 1. 清空旧数据（防止重复添加）
-    this.fragments.clear(); 
-    if (pageAdapter != null) {
-        pageAdapter.notifyDataSetChanged(); // 通知旧的 Adapter 数据清空
-    }
-
-    if (sortAdapter.getData().size() > 0) {
-        // 2. 填充新数据
-        for (MovieSort.SortData data : sortAdapter.getData()) {
-            if (data.id.equals("my0")) {
-                if (Hawk.get(HawkConfig.HOME_REC, 0) == 1 && absXml != null && absXml.videoList != null && absXml.videoList.size() > 0) {
-                    fragments.add(UserFragment.newInstance(absXml.videoList));
+    private void initViewPager(AbsSortXml absXml) {
+        if (sortAdapter.getData().size() > 0) {
+            for (MovieSort.SortData data : sortAdapter.getData()) {
+                if (data.id.equals("my0")) {
+                    if (Hawk.get(HawkConfig.HOME_REC, 0) == 1 && absXml != null && absXml.videoList != null && absXml.videoList.size() > 0) {
+                        fragments.add(UserFragment.newInstance(absXml.videoList));
+                    } else {
+                        fragments.add(UserFragment.newInstance(null));
+                    }
                 } else {
-                    fragments.add(UserFragment.newInstance(null));
+                    fragments.add(GridFragment.newInstance(data));
                 }
-            } else {
-                fragments.add(GridFragment.newInstance(data));
             }
-        }
-        
-        // 3. 初始化 Adapter
-        if (pageAdapter == null) {
             pageAdapter = new HomePageAdapter(getSupportFragmentManager(), fragments);
             try {
                 Field field = ViewPager.class.getDeclaredField("mScroller");
@@ -541,22 +531,13 @@ private void initViewPager(AbsSortXml absXml) {
                 FixedSpeedScroller scroller = new FixedSpeedScroller(mContext, new AccelerateInterpolator());
                 field.set(mViewPager, scroller);
                 scroller.setmDuration(300);
-            } catch (Exception e) { }
+            } catch (Exception e) {
+            }
             mViewPager.setPageTransformer(true, new DefaultTransformer());
             mViewPager.setAdapter(pageAdapter);
-        } else {
-            pageAdapter.notifyDataSetChanged(); // 如果 Adapter 已存在，刷新数据
+            mViewPager.setCurrentItem(currentSelected, false);
         }
-        
-        // 这里使用 post 是为了确保 ViewPager 已经完成了 layout
-        mViewPager.post(new Runnable() {
-            @Override
-            public void run() {
-                mViewPager.setCurrentItem(currentSelected, false);
-            }
-        });
     }
-}
 
     @SuppressLint("NotifyDataSetChanged")
     @Override
