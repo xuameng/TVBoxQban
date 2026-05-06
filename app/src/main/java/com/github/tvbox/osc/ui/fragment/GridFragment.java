@@ -201,10 +201,28 @@ public class GridFragment extends BaseLazyFragment {
             v3.setAdapter(gridAdapter);
             /* ===== xuameng✅ 最小侵入 Patch 结束 ===== */
 
-            ((ViewGroup) mGridView.getParent()).addView(v3);
+            // 安全添加到父容器
+            ViewGroup parent = (ViewGroup) mGridView.getParent();
+            if (parent != null) {
+                // 获取原始视图的位置索引
+                int index = parent.indexOfChild(mGridView);
+                if (index != -1) {
+                    // 在相同位置添加新视图
+                    parent.addView(v3, index, mGridView.getLayoutParams());
+                } else {
+                    parent.addView(v3);
+                }
+            }
+            
             mGridView.setVisibility(View.GONE);
             mGridView = v3;
-            mGridView.setVisibility(View.VISIBLE);
+            
+            // 确保视图完全初始化后再显示
+            mGridView.post(() -> {
+                if (mGridView != null) {
+                    mGridView.setVisibility(View.VISIBLE);
+                }
+            });
         }
         mGridView.setHasFixedSize(true);
         this.page =1;
@@ -218,19 +236,26 @@ public class GridFragment extends BaseLazyFragment {
         gridAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
-                gridAdapter.setEnableLoadMore(true);
-                sourceViewModel.getList(sortData, page);
+                // 安全检查，确保gridAdapter和mGridView可用
+                if (gridAdapter != null && mGridView != null) {
+                    gridAdapter.setEnableLoadMore(true);
+                    sourceViewModel.getList(sortData, page);
+                }
             }
         }, mGridView);
         mGridView.setOnItemListener(new TvRecyclerView.OnItemListener() {
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
-                itemView.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
+                if (itemView != null) {
+                    itemView.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
+                }
             }
 
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
-                itemView.animate().scaleX(1.05f).scaleY(1.05f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
+                if (itemView != null) {
+                    itemView.animate().scaleX(1.05f).scaleY(1.05f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
+                }
             }
 
             @Override
@@ -349,7 +374,17 @@ public class GridFragment extends BaseLazyFragment {
 
     public void scrollTop() {
         isTop = true;
-        mGridView.scrollToPosition(0);
+        // 安全检查，确保mGridView可用且LayoutManager已初始化
+        if (mGridView != null && mGridView.getLayoutManager() != null) {
+            mGridView.scrollToPosition(0);
+        } else {
+            // 如果LayoutManager还没准备好，延后执行
+            mGridView.post(() -> {
+                if (mGridView != null && mGridView.getLayoutManager() != null) {
+                    mGridView.scrollToPosition(0);
+                }
+            });
+        }
     }
 
     public void showFilter() {
