@@ -511,19 +511,29 @@ public class HomeActivity extends BaseActivity {
         }, this);
     }
 
-    private void initViewPager(AbsSortXml absXml) {
-        if (sortAdapter.getData().size() > 0) {
-            for (MovieSort.SortData data : sortAdapter.getData()) {
-                if (data.id.equals("my0")) {
-                    if (Hawk.get(HawkConfig.HOME_REC, 0) == 1 && absXml != null && absXml.videoList != null && absXml.videoList.size() > 0) {
-                        fragments.add(UserFragment.newInstance(absXml.videoList));
-                    } else {
-                        fragments.add(UserFragment.newInstance(null));
-                    }
+private void initViewPager(AbsSortXml absXml) {
+    // 1. 清空旧数据（防止重复添加）
+    this.fragments.clear(); 
+    if (pageAdapter != null) {
+        pageAdapter.notifyDataSetChanged(); // 通知旧的 Adapter 数据清空
+    }
+
+    if (sortAdapter.getData().size() > 0) {
+        // 2. 填充新数据
+        for (MovieSort.SortData data : sortAdapter.getData()) {
+            if (data.id.equals("my0")) {
+                if (Hawk.get(HawkConfig.HOME_REC, 0) == 1 && absXml != null && absXml.videoList != null && absXml.videoList.size() > 0) {
+                    fragments.add(UserFragment.newInstance(absXml.videoList));
                 } else {
-                    fragments.add(GridFragment.newInstance(data));
+                    fragments.add(UserFragment.newInstance(null));
                 }
+            } else {
+                fragments.add(GridFragment.newInstance(data));
             }
+        }
+        
+        // 3. 初始化 Adapter
+        if (pageAdapter == null) {
             pageAdapter = new HomePageAdapter(getSupportFragmentManager(), fragments);
             try {
                 Field field = ViewPager.class.getDeclaredField("mScroller");
@@ -531,13 +541,31 @@ public class HomeActivity extends BaseActivity {
                 FixedSpeedScroller scroller = new FixedSpeedScroller(mContext, new AccelerateInterpolator());
                 field.set(mViewPager, scroller);
                 scroller.setmDuration(300);
-            } catch (Exception e) {
-            }
+            } catch (Exception e) { }
             mViewPager.setPageTransformer(true, new DefaultTransformer());
             mViewPager.setAdapter(pageAdapter);
-            mViewPager.setCurrentItem(currentSelected, false);
+        } else {
+            pageAdapter.notifyDataSetChanged(); // 如果 Adapter 已存在，刷新数据
         }
+
+        // 4. ✅ 关键修复：在数据加载完成后，强制设置当前页面
+        // 这里的 PositionXu 是你保存的记忆位置，或者默认为 0
+        int targetPosition = PositionXu; 
+        if (targetPosition >= fragments.size()) {
+            targetPosition = 0; // 防止越界
+        }
+        
+        // 这里使用 post 是为了确保 ViewPager 已经完成了 layout
+        mViewPager.post(new Runnable() {
+            @Override
+            public void run() {
+                if (mViewPager.getCurrentItem() != targetPosition) {
+                    mViewPager.setCurrentItem(targetPosition, false);
+                }
+            }
+        });
     }
+}
 
     @SuppressLint("NotifyDataSetChanged")
     @Override
