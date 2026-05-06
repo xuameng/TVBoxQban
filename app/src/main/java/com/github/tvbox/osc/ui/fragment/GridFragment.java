@@ -184,7 +184,7 @@ public class GridFragment extends BaseLazyFragment {
             /* ===== ✅ 最小侵入 Patch 开始 ===== */
             // ① 先创建 LayoutManager（一定要在 addView 之前）
             if(isFolederMode()){
-                v3..setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
+                v3.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
             }else{
                 int spanCount = isBaseOnWidth() ? 5 : 6;
                 if (style != null) {
