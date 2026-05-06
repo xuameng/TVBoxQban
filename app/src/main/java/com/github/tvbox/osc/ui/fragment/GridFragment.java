@@ -196,9 +196,6 @@ public class GridFragment extends BaseLazyFragment {
                     v3.setLayoutManager(new V7GridLayoutManager(mContext, spanCount));
                 }
             }
-
-            // ② 先绑定 Adapter
-            v3.setAdapter(gridAdapter);
             /* ===== xuameng✅ 最小侵入 Patch 结束 ===== */
 
             ((ViewGroup) mGridView.getParent()).addView(v3);
@@ -214,7 +211,8 @@ public class GridFragment extends BaseLazyFragment {
 
     private void initView() {
         this.createView();
-
+        // xuameng在这里重新绑定 Adapter
+        mGridView.setAdapter(gridAdapter); 
         gridAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
@@ -457,6 +455,15 @@ public class GridFragment extends BaseLazyFragment {
     public void forceRefresh() {
         page = 1;
         initData();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (mGridView != null) {
+            mGridView.setLayoutManager(null);
+            mGridView.setAdapter(null);
+        }
     }
 
 }
