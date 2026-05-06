@@ -165,7 +165,6 @@ public class GridFragment extends BaseLazyFragment {
     // 更改当前页面
     private void createView(){
         this.saveCurrentView(); // 保存当前页面
-        style=ImgUtil.initStyle();  //xuameng 设置style
         if(mGridView == null){ // 从layout中拿view
             mGridView = findViewById(R.id.mGridView);
         }else{ // 复制当前view
@@ -177,23 +176,21 @@ public class GridFragment extends BaseLazyFragment {
             v3.setLayoutParams(mGridView.getLayoutParams());
             v3.setPadding(mGridView.getPaddingLeft(), mGridView.getPaddingTop(), mGridView.getPaddingRight(), mGridView.getPaddingBottom());
             v3.setClipToPadding(mGridView.getClipToPadding());
-
-            /* ===== xuameng✅ 最小侵入 Patch 开始 ===== */
-            // 先创建 LayoutManager（一定要在 addView 之前）
-            if(isFolederMode()){
-                v3.setLayoutManager(new V7LinearLayoutManager(mContext, 1, false));
-            }else{
-                int spanCount = isBaseOnWidth() ? 5 : 6;
-                if (style != null) {
-                    spanCount = ImgUtil.spanCountByStyle(style, spanCount);
-                }
-                if (spanCount == 1) {
-                    v3.setLayoutManager(new V7LinearLayoutManager(mContext, spanCount, false));
-                } else {
-                    v3.setLayoutManager(new V7GridLayoutManager(mContext, spanCount));
-                }
+if (mGridView.getLayoutManager() == null) {
+        if(isFolederMode()){
+            v3.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
+        }else{
+            int spanCount = isBaseOnWidth() ? 5 : 6;
+            if (style != null) {
+                spanCount = ImgUtil.spanCountByStyle(style, spanCount);
             }
-            /* ===== xuameng✅ 最小侵入 Patch 结束 ===== */
+            if (spanCount == 1) {
+                v3.setLayoutManager(new V7LinearLayoutManager(mContext, spanCount, false));
+            } else {
+                v3.setLayoutManager(new V7GridLayoutManager(mContext, spanCount));
+            }
+        }
+}
 
             ((ViewGroup) mGridView.getParent()).addView(v3);
             mGridView.setVisibility(View.GONE);
@@ -201,6 +198,8 @@ public class GridFragment extends BaseLazyFragment {
             mGridView.setVisibility(View.VISIBLE);
         }
         mGridView.setHasFixedSize(true);
+        style=ImgUtil.initStyle();
+        gridAdapter = new GridAdapter(isFolederMode(), style);
         this.page =1;
         this.maxPage =1;
         this.isLoad = false;
@@ -208,10 +207,23 @@ public class GridFragment extends BaseLazyFragment {
 
     private void initView() {
         this.createView();
-        // xuameng在这里创建 Adapter，此时 mGridView 已经是最终的 View 了
-        gridAdapter = new GridAdapter(isFolederMode(), style); 
-        // xuameng在这里重新绑定 Adapter
-        mGridView.setAdapter(gridAdapter); 
+        mGridView.setAdapter(gridAdapter);
+if (mGridView.getLayoutManager() == null) {
+        if(isFolederMode()){
+            mGridView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
+        }else{
+            int spanCount = isBaseOnWidth() ? 5 : 6;
+            if (style != null) {
+                spanCount = ImgUtil.spanCountByStyle(style, spanCount);
+            }
+            if (spanCount == 1) {
+                mGridView.setLayoutManager(new V7LinearLayoutManager(mContext, spanCount, false));
+            } else {
+                mGridView.setLayoutManager(new V7GridLayoutManager(mContext, spanCount));
+            }
+        }
+}
+
         gridAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
@@ -346,17 +358,7 @@ public class GridFragment extends BaseLazyFragment {
 
     public void scrollTop() {
         isTop = true;
-        // 安全检查，确保mGridView可用且LayoutManager已初始化
-        if (mGridView != null && mGridView.getLayoutManager() != null) {
-            mGridView.scrollToPosition(0);
-        } else {
-            // 如果LayoutManager还没准备好，延后执行
-            mGridView.post(() -> {
-                if (mGridView != null && mGridView.getLayoutManager() != null) {
-                    mGridView.scrollToPosition(0);
-                }
-            });
-        }
+        mGridView.scrollToPosition(0);
     }
 
     public void showFilter() {
@@ -455,14 +457,4 @@ public class GridFragment extends BaseLazyFragment {
         page = 1;
         initData();
     }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        if (mGridView != null) {
-            mGridView.setLayoutManager(null);
-            mGridView.setAdapter(null);
-        }
-    }
-
 }
