@@ -289,6 +289,9 @@ public class GridFragment extends BaseLazyFragment {
                         changeView(video.id);  //xuameng移除多余判断 有folder或cover就进入video.id(文件夹下一级)
                     }
                     else{
+if (video.id == null || video.id.isEmpty()){
+video.id = video.name;
+}
                         if(video.id == null || video.id.isEmpty() || video.id.startsWith("msearch:")){
                             if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false) && enableFastSearch()){
                                 jumpActivity(FastSearchActivity.class, bundle);
