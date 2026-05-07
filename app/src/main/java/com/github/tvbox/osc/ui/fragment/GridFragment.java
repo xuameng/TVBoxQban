@@ -164,13 +164,7 @@ public class GridFragment extends BaseLazyFragment {
     public boolean restoreView(){
         if(mGrids.empty()) return false;
         this.showSuccess();
-        
-        // 清理当前视图
-        if (mGridView != null) {
-            mGridView.setAdapter(null);
-            mGridView.setLayoutManager(null);
-        }
-        
+        ((ViewGroup) mGridView.getParent()).removeView(this.mGridView); // 重父窗口移除当前控件
         GridInfo info = mGrids.pop();// 还原上次保存的控件
         this.sortData.id = info.sortID;
         this.mGridView = info.mGridView;
