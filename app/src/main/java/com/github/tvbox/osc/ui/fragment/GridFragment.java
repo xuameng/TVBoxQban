@@ -146,6 +146,8 @@ public class GridFragment extends BaseLazyFragment {
     public boolean restoreView(){
         if(mGrids.empty()) return false;
         this.showSuccess();
+        mGridView.stopScroll();   //xuameng终止滚动
+        mGridView.setLayoutFrozen(true); //xuameng冻结
         ((ViewGroup) mGridView.getParent()).removeView(this.mGridView); // 重父窗口移除当前控件
         GridInfo info = mGrids.pop();// 还原上次保存的控件
         this.sortData.id = info.sortID;
@@ -171,6 +173,7 @@ public class GridFragment extends BaseLazyFragment {
                 }
             }
         }
+        mGridView.setLayoutFrozen(false); //xuameng解冻
         this.mGridView.setVisibility(View.VISIBLE);
 
 //        if(this.focusedView != null){ this.focusedView.requestFocus(); }
