@@ -114,7 +114,6 @@ public class GridFragment extends BaseLazyFragment {
         if (mGridView != null) {
             mGridView.setAdapter(null);
             mGridView.setLayoutManager(null);
-            mGridView = null;
         }
         if (gridAdapter != null) {
             gridAdapter = null;
@@ -165,7 +164,7 @@ public class GridFragment extends BaseLazyFragment {
         if(mGrids.empty()) return false;
         this.showSuccess();
         
-        // 清理当前视图 - 关键修复：移除当前视图从父容器
+        // 清理当前视图
         if (mGridView != null) {
             ViewGroup parent = (ViewGroup) mGridView.getParent();
             if (parent != null) {
@@ -177,6 +176,8 @@ public class GridFragment extends BaseLazyFragment {
         
         GridInfo info = mGrids.pop();// 还原上次保存的控件
         this.sortData.id = info.sortID;
+        
+        // 直接使用保存的视图，不需要重新添加到父容器
         this.mGridView = info.mGridView;
         this.gridAdapter = info.gridAdapter;
         this.page = info.page;
@@ -184,19 +185,27 @@ public class GridFragment extends BaseLazyFragment {
         this.isLoad = info.isLoad;
         this.focusedView = info.focusedView;
         
-        // 重新添加视图到父容器 - 关键修复
-        if (mGridView.getParent() == null) {
-            View rootView = getView();
-            if (rootView instanceof ViewGroup) {
-                ((ViewGroup) rootView).addView(mGridView);
-            }
-        }
-        
+        // 将还原的视图设置为可见
         mGridView.setVisibility(View.VISIBLE);
 
         // 安全地设置LayoutManager
         if (info.layoutManagerInitialized && mGridView.getLayoutManager() == null) {
             setupLayoutManager(mGridView);
+        }
+
+        // 添加到根布局中（如果还没有父容器）
+        if (mGridView.getParent() == null) {
+            View rootView = getView();
+            if (rootView != null && rootView instanceof ViewGroup) {
+                ((ViewGroup) rootView).addView(mGridView);
+            } else {
+                // 如果getView()返回null，可能是因为fragment还没完成初始化
+                // 尝试通过findViewById获取根布局
+                View root = findViewById(android.R.id.content);
+                if (root instanceof ViewGroup) {
+                    ((ViewGroup) root).addView(mGridView);
+                }
+            }
         }
 
         if(mGridView != null) mGridView.requestFocus();
