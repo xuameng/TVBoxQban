@@ -52,7 +52,7 @@ import java.util.Stack;
 /**
  * @author xuameng
  * @date :2026/05/07
- * @description:  焦点状态全面修复，list判断 folder文件夹判断等修复，增加LayoutManager安全检查
+ * @description: 修复restoreView方法，确保能正确返回上一级页面
  */
 public class GridFragment extends BaseLazyFragment {
     private MovieSort.SortData sortData = null;
@@ -164,7 +164,17 @@ public class GridFragment extends BaseLazyFragment {
     public boolean restoreView(){
         if(mGrids.empty()) return false;
         this.showSuccess();
-        ((ViewGroup) mGridView.getParent()).removeView(this.mGridView); // 重父窗口移除当前控件
+        
+        // 清理当前视图 - 关键修复：移除当前视图从父容器
+        if (mGridView != null) {
+            ViewGroup parent = (ViewGroup) mGridView.getParent();
+            if (parent != null) {
+                parent.removeView(mGridView);
+            }
+            mGridView.setAdapter(null);
+            mGridView.setLayoutManager(null);
+        }
+        
         GridInfo info = mGrids.pop();// 还原上次保存的控件
         this.sortData.id = info.sortID;
         this.mGridView = info.mGridView;
@@ -173,7 +183,16 @@ public class GridFragment extends BaseLazyFragment {
         this.maxPage = info.maxPage;
         this.isLoad = info.isLoad;
         this.focusedView = info.focusedView;
-        this.mGridView.setVisibility(View.VISIBLE);
+        
+        // 重新添加视图到父容器 - 关键修复
+        if (mGridView.getParent() == null) {
+            View rootView = getView();
+            if (rootView instanceof ViewGroup) {
+                ((ViewGroup) rootView).addView(mGridView);
+            }
+        }
+        
+        mGridView.setVisibility(View.VISIBLE);
 
         // 安全地设置LayoutManager
         if (info.layoutManagerInitialized && mGridView.getLayoutManager() == null) {
