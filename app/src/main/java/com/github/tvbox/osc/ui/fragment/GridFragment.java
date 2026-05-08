@@ -386,7 +386,7 @@ private void initViewModel() {
                 }
                 
                 // 打印到 Logcat (推荐，因为数据量大时 AlertDialog 会卡死或显示不全)
-                LOG.d("GridFragment_Debug", contentBuilder.toString());
+               // LOG.d("GridFragment_Debug", contentBuilder.toString());
                 
                 // 如果你想弹窗（仅建议数据量极小时使用），取消下面两行的注释，注释掉上面的 LOG.d
                  new AlertDialog.Builder(getContext())
