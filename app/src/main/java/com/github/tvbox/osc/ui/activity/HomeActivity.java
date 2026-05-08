@@ -675,7 +675,8 @@ public class HomeActivity extends BaseActivity {
                     if (sortFocused < 0 || sortFocused >= count) {
                         return;
                     }
-                 //   mViewPager.setCurrentItem(sortFocused, false);
+					if (!isGridViewSafe()) return;
+                    mViewPager.setCurrentItem(sortFocused, false);
                 }
                 changeTop(sortFocused != 0);
             }
