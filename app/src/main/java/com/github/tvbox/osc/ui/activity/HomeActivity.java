@@ -144,6 +144,8 @@ public class HomeActivity extends BaseActivity {
     @Override
     protected void init() {
 		App.showToastLong(HomeActivity.this, "4444");
+		    private int currentSelected = 0;
+    private int sortFocused = 0;
 		hasSetCurrentItemOnce = false;
         EventBus.getDefault().register(this);
         ControlManager.get().startServer();
@@ -336,6 +338,7 @@ public class HomeActivity extends BaseActivity {
                 } else {
                     sortAdapter.setNewData(DefaultConfig.adjustSort(ApiConfig.get().getHomeSourceBean().getKey(), new ArrayList<>(), true));
                 }
+				App.showToastLong(HomeActivity.this, "6666");
                 initViewPager(absXml);
             }
         });
@@ -685,7 +688,7 @@ public class HomeActivity extends BaseActivity {
                 mViewPager.setCurrentItem(sortFocused, false);
             }
         }
-    }, 5000); // 延时2000毫秒（2秒）
+    }, 1000); // 延时2000毫秒（2秒）
                        // mViewPager.setCurrentItem(sortFocused, false);
                     } else {
                         // 第一次执行，需要满足原有安全条件
@@ -698,7 +701,7 @@ public class HomeActivity extends BaseActivity {
                 mViewPager.setCurrentItem(sortFocused, false);
             }
         }
-    }, 5000); // 延时2000毫秒（2秒）
+    }, 1000); // 延时2000毫秒（2秒）
                           //  mViewPager.setCurrentItem(sortFocused, false);
 
                             // 标记已执行过
