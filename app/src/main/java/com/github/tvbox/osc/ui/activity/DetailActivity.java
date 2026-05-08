@@ -1166,8 +1166,8 @@ isShowConfig = false;
                     if (sourceKey.contains("配置中心") 
                         || sourceKey.toLowerCase().contains("config")) {  //xuameng 配置中心判断如是就返回
 						App.showToastShort(DetailActivity.this, vodId);
-                      isShowConfig = true
-                      //  return;
+                      isShowConfig = true;
+                   
                     }
             showLoading();
             sourceViewModel.getDetail(sourceKey, vodId);
