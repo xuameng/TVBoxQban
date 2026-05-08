@@ -670,8 +670,8 @@ public class HomeActivity extends BaseActivity {
                         changeTop(sortFocused != 0);
                         return;
                     }
-if (mViewPager.isComputingLayout()
-        || mViewPager.isLayoutRequested()) {
+if (mGridView.isComputingLayout()
+        || mGridView.isLayoutRequested()) {
 	changeTop(sortFocused != 0);
     return;
 }
