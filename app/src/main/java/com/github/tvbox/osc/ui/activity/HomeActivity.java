@@ -659,6 +659,7 @@ public class HomeActivity extends BaseActivity {
                 sortChange = false;
                 // 防御：ViewPager 尚未初始化
                 if (mViewPager == null || mViewPager.getAdapter() == null) {
+                    changeTop(sortFocused != 0);
                     return;
                 }
                 if (sortFocused != currentSelected) {
@@ -666,15 +667,15 @@ public class HomeActivity extends BaseActivity {
                     // 确保 position 合法
                     int count = mViewPager.getAdapter().getCount();
                     if (sortFocused < 0 || sortFocused >= count) {
+                        changeTop(sortFocused != 0);
                         return;
                     }
-                    try {
-                        if (!isFinishing() && isGridViewSafe() && dataInitOk && jarInitOk) {
-                            // 加上 try-catch 作为最后的保底，防止极端情况
-                            mViewPager.setCurrentItem(sortFocused, false);
-                        }
-                    } catch (Exception e) {
-                        LOG.e("HomeActivity: ViewPager 切换页面时发生异常: " + e.getMessage());
+                    if (HomeActivity.this.isFinishing()) {
+                        changeTop(sortFocused != 0);
+                        return;
+                    }
+                    if (!isFinishing() && isGridViewSafe() && dataInitOk && jarInitOk) {
+                        mViewPager.setCurrentItem(sortFocused, false);
                     }
                 }
                 changeTop(sortFocused != 0);
@@ -769,8 +770,10 @@ public class HomeActivity extends BaseActivity {
         if (mGridView != null) {
             mGridView.setAdapter(null);   // xuameng防止 Fragment/Adapter 再回调
         }
+    currentSelected = 0;
+    sortFocused = 0;
         EventBus.getDefault().unregister(this);
-        AppManager.getInstance().appExit(0);
+       // AppManager.getInstance().appExit(0);
         ControlManager.get().stopServer();
     }
 
