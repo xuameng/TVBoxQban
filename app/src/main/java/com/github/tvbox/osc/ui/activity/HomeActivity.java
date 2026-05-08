@@ -675,12 +675,12 @@ public class HomeActivity extends BaseActivity {
                     if (sortFocused < 0 || sortFocused >= count) {
                         return;
                     }
-                try {
-                    // 加上 try-catch 作为最后的保底，防止极端情况
-                    mViewPager.setCurrentItem(sortFocused, false);
-                } catch (Exception e) {
-                }
-
+                    try {
+                        // 加上 try-catch 作为最后的保底，防止极端情况
+                        mViewPager.setCurrentItem(sortFocused, false);
+                    } catch (Exception e) {
+                        LOG.e("HomeActivity", "ViewPager 切换页面时发生异常: " + e.getMessage());
+                    }
                 }
                 changeTop(sortFocused != 0);
             }
