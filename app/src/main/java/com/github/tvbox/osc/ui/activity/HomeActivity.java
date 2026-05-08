@@ -672,7 +672,7 @@ public class HomeActivity extends BaseActivity {
                     currentSelected = sortFocused;
                     // 确保 position 合法
                     int count = mViewPager.getAdapter().getCount();
-                    if (sortFocused < 0 || sortFocused >= count) {
+                    if (sortFocused <= 0 || sortFocused >= count) {
                         return;
                     }
                     mViewPager.setCurrentItem(sortFocused, false);
