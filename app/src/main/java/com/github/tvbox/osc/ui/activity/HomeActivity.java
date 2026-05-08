@@ -142,14 +142,6 @@ public class HomeActivity extends BaseActivity {
 
     @Override
     protected void init() {
-                sortAdapter.setNewData(
-                    DefaultConfig.adjustSort(
-                        ApiConfig.get().getHomeSourceBean().getKey(),
-                        new ArrayList<>(),
-                        true
-                    )
-                );
-                initViewPager(null);
         EventBus.getDefault().register(this);
         ControlManager.get().startServer();
         initView();
@@ -327,6 +319,13 @@ public class HomeActivity extends BaseActivity {
 	private boolean skipNextUpdate = false;
 
     private void initViewModel() {
+                sortAdapter.setNewData(
+                    DefaultConfig.adjustSort(
+                        ApiConfig.get().getHomeSourceBean().getKey(),
+                        new ArrayList<>(),
+                        true
+                    )
+                );
         sourceViewModel = new ViewModelProvider(this).get(SourceViewModel.class);
         sourceViewModel.sortResult.observe(this, new Observer<AbsSortXml>() {
             @Override
@@ -513,6 +512,8 @@ public class HomeActivity extends BaseActivity {
     }
 
     private void initViewPager(AbsSortXml absXml) {
+
+                initViewPager(null);
         if (sortAdapter.getData().size() > 0) {
             for (MovieSort.SortData data : sortAdapter.getData()) {
                 if (data.id.equals("my0")) {
