@@ -139,7 +139,7 @@ public class DetailActivity extends BaseActivity {
     public String firstsourceKey;
     boolean seriesSelect = false;
     boolean isPushUrl = false;   //xuameng 判断推送内容
-    boolean isShowConfig = false; 
+    boolean isShowConfig = false;  //xuameng 配置中心判断
     private View seriesFlagFocus = null;
     private String preFlag="";
     private V7GridLayoutManager mGridViewLayoutMgr = null;
@@ -1107,13 +1107,12 @@ public class DetailActivity extends BaseActivity {
                     if (fullWindows) {
                         toggleFullPreview();
                     }
-					if (isShowConfig){
-						showConfig();
-						App.showToastShort(DetailActivity.this, "11111111111111111");
-isShowConfig = false;
-					}else{
-                    showEmpty();
-					}
+                    if (isShowConfig){ //xuameng 配置中心判断
+                        showConfig();
+                        isShowConfig = false;
+					} else {
+                        showEmpty();
+                    }
                     mGridViewFlag.setFocusable(false);
                     mGridView.setFocusable(false);
                     mSeriesGroupView.setFocusable(false);
@@ -1164,12 +1163,10 @@ isShowConfig = false;
             vodId = vid;
             sourceKey = key;
             firstsourceKey = key;
-                    if (sourceKey.contains("配置中心") 
-                        || sourceKey.toLowerCase().contains("config")) {  //xuameng 配置中心判断如是就返回
-						
-                      isShowConfig = true;
-                   
-                    }
+            if (sourceKey.contains("配置中心") 
+                || sourceKey.toLowerCase().contains("config")) {  //xuameng 配置中心判断
+                isShowConfig = true;   
+            }
             showLoading();
             sourceViewModel.getDetail(sourceKey, vodId);
             boolean isVodCollect = RoomDataManger.isVodCollect(sourceKey, vodId);
