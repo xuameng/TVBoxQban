@@ -411,15 +411,17 @@ public class GridFragment extends BaseLazyFragment {
     private View.OnFocusChangeListener focusChangeListener = new View.OnFocusChangeListener() {     //xuameng触碰变大
         @Override
         public void onFocusChange(View v, boolean hasFocus) {
-            if (hasFocus)
+            if (hasFocus){
                 v.animate().scaleX(1.05f).scaleY(1.05f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
 			new AlertDialog.Builder(this)
         .setTitle("AbsXml 详情")
         .setMessage(absXmlToText(absXml))
         .setPositiveButton("关闭", null)
         .show();
-            else
+			}
+            else{
                 v.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
+			}
         }
     };
 
