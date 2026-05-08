@@ -392,6 +392,10 @@ public class GridFragment extends BaseLazyFragment {
     }
 
     public void showFilter() {
+        // 1. xuameng增加 Context 的有效性检查
+        if (mContext == null) {
+            return;
+        }
         if (!sortData.filters.isEmpty() && gridFilterDialog == null) {
             gridFilterDialog = new GridFilterDialog(mContext);
 //            gridFilterDialog.setData(sortData);
