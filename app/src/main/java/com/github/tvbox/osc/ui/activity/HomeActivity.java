@@ -673,11 +673,13 @@ public class HomeActivity extends BaseActivity {
                     }
                     if (isGridViewSafe() && hasSetCurrentItemOnce) {   //xuameng 判断SetCurrentItem是否执行过，解决findViewByPosition空指针
                         // 如果已经执行过一次，无条件执行
+						App.showToastLong(HomeActivity.this, "1111111111");
                         mViewPager.setCurrentItem(sortFocused, false);
                     } else {
                         // 第一次执行，需要满足原有安全条件
                         if (isGridViewSafe() && sortFocused != 0) {   //xuameng 第一次主页上不执行 解决findViewByPosition空指针
                             mViewPager.setCurrentItem(sortFocused, false);
+							App.showToastLong(HomeActivity.this, "22222222222222222");
                             // 标记已执行过
                             hasSetCurrentItemOnce = true;
                         }
