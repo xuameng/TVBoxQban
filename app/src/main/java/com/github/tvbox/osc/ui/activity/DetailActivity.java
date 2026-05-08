@@ -1159,7 +1159,7 @@ public class DetailActivity extends BaseActivity {
             firstsourceKey = key;
                     if (sourceKey.contains("配置中心") 
                         || sourceKey.toLowerCase().contains("config")) {  //xuameng 配置中心判断如是就返回
-						App.showToastShort(DetailActivity.this, "222222222！");
+						App.showToastShort(DetailActivity.this, vodId);
                         showConfig();
                         return;
                     }
