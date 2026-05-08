@@ -170,14 +170,10 @@ public class HomeActivity extends BaseActivity {
         sortAdapter.registerAdapterDataObserver(new TvRecyclerView.AdapterDataObserver() {
             @Override
             public void onChanged() {
-                if (mGridView == null || !mGridView.isAttachedToWindow()) {
-                    return;
-                }
-
                 mGridView.post(() -> {
                     TvRecyclerView.LayoutManager layoutManager = mGridView.getLayoutManager();
                     if (layoutManager != null && !mGridViewHasFocus) {  //主页没有拥有焦点时执行
-                     //   mGridView.setSelection(0);
+					  //  safeGridViewSetSelection(0); //xuameng安全检查后选择
                     }
                 });
             }
@@ -575,19 +571,19 @@ public class HomeActivity extends BaseActivity {
             if (this.sortFocusView != null && !this.sortFocusView.isFocused()) {
                 if (currentView != null && PositionXu !=0) {   // xuameng防止空指针
                     //this.sortFocusView.requestFocus(); //xuameng这段代码手机使用时菜单失去焦点会闪退   
-                    safeGridViewSetSelection(PositionXu);   //xuameng处理手机滑动主页菜单失去焦点时按返回键闪退
+                 //   safeGridViewSetSelection(PositionXu);   //xuameng处理手机滑动主页菜单失去焦点时按返回键闪退
                 }
             }
             // 如果当前不是第一个界面，则将列表设置到第一项
             else if (this.sortFocused != 0) {
-                safeGridViewSetSelection(0);   //xuameng安全检查后选择
+              //  safeGridViewSetSelection(0);   //xuameng安全检查后选择
             } else {
                 exit();
             }
         } else if (baseLazyFragment instanceof UserFragment && UserFragment.tvHotList1.canScrollVertically(-1)) {
             // 如果 UserFragment 列表可以向上滚动，则滚动到顶部
             UserFragment.tvHotList1.scrollToPosition(0);
-            safeGridViewSetSelection(0);   //xuameng安全检查后选择
+         //   safeGridViewSetSelection(0);   //xuameng安全检查后选择
         } else {
             exit();
         }
@@ -978,10 +974,11 @@ public class HomeActivity extends BaseActivity {
         }
     }
 
-    private boolean isGridViewSafe() { //xuameng安全检查
+    private boolean isGridViewSafe() {  //xuameng安全检查
         return mGridView != null
                 && mGridView.isAttachedToWindow()
-                && mGridView.getLayoutManager() != null;
+                && mGridView.getLayoutManager() != null
+                && !mGridView.isComputingLayout(); // xuameng新增
     }
 
     private void safeGridViewSetSelection(int pos) {  //xuameng安全选择
