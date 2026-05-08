@@ -670,12 +670,8 @@ public class HomeActivity extends BaseActivity {
                         changeTop(sortFocused != 0);
                         return;
                     }
-                    if (HomeActivity.this.isFinishing()) {
-                        changeTop(sortFocused != 0);
-                        return;
-                    }
                     if (!isFinishing() && isGridViewSafe() && dataInitOk && jarInitOk) {
-                        mViewPager.setCurrentItem(sortFocused, false);
+                        mViewPager.setCurrentItem(0, false);
                     }
                 }
                 changeTop(sortFocused != 0);
@@ -770,10 +766,8 @@ public class HomeActivity extends BaseActivity {
         if (mGridView != null) {
             mGridView.setAdapter(null);   // xuameng防止 Fragment/Adapter 再回调
         }
-    currentSelected = 0;
-    sortFocused = 0;
         EventBus.getDefault().unregister(this);
-       // AppManager.getInstance().appExit(0);
+        AppManager.getInstance().appExit(0);
         ControlManager.get().stopServer();
     }
 
