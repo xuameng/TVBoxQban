@@ -92,8 +92,8 @@ import java.util.List;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 /**
  * @author xuameng
- * @date :2026/04/25
- * @description:  焦点状态全面修复，各种BUG修复
+ * @date :2026/05/08
+ * @description:  焦点状态全面修复，各种BUG修复   关键findViewByPosition(int)' on a null object reference
  */
 public class HomeActivity extends BaseActivity {
     private LinearLayout topLayout;
@@ -529,7 +529,7 @@ public class HomeActivity extends BaseActivity {
             mViewPager.setPageTransformer(true, new DefaultTransformer());
             mViewPager.setAdapter(pageAdapter);
             if (isGridViewSafe()) {  //xuameng安全检查
-                mViewPager.setCurrentItem(currentSelected, false);  //xuameng 关键findViewByPosition(int)' on a null object reference
+              //  mViewPager.setCurrentItem(currentSelected, false);  //xuameng 关键findViewByPosition(int)' on a null object reference
             }
         }
     }
@@ -661,7 +661,6 @@ public class HomeActivity extends BaseActivity {
                 sortChange = false;
                 // 防御：ViewPager 尚未初始化
                 if (mViewPager == null || mViewPager.getAdapter() == null) {
-                    changeTop(sortFocused != 0);
                     return;
                 }
                 if (sortFocused != currentSelected) {
