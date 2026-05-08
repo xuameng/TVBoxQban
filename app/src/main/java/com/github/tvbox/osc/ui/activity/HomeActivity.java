@@ -116,6 +116,8 @@ public class HomeActivity extends BaseActivity {
     private final Handler mHandler = new Handler();
     private long mExitTime = 0;
     private boolean mGridViewHasFocus = false;  //xuameng 判断 mGridView主页是否拥有焦点
+    private boolean firstsetCurrentItem = true;  //xuameng 判断 mGridView主页是否拥有焦点
+	setCurrentItem
     private static final int REQUEST_CODE_RECORD_AUDIO = 1001; //xuameng获取音频权限
     private static final String TAG = "PermissionHelper";//xuameng获取音频权限
     private static final int MARSHMALLOW = Build.VERSION_CODES.M;  //xuameng获取音频权限
@@ -670,13 +672,13 @@ public class HomeActivity extends BaseActivity {
                         changeTop(sortFocused != 0);
                         return;
                     }
-if (mGridView.isComputingLayout()
-        || mGridView.isLayoutRequested()) {
-	changeTop(sortFocused != 0);
-    return;
-}
-                    if (!isFinishing() && isGridViewSafe() && dataInitOk && jarInitOk) {
-                        mViewPager.setCurrentItem(sortFocused, false);
+                    if (!isFinishing() && isGridViewSafe()) {
+                        if (firstsetCurrentItem){
+                            mViewPager.setCurrentItem(0, false);
+                            firstsetCurrentItem = false;
+                        } else {
+                            mViewPager.setCurrentItem(sortFocused, false);
+                        }
                     }
                 }
                 changeTop(sortFocused != 0);
