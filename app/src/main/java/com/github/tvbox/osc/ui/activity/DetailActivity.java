@@ -1098,6 +1098,7 @@ public class DetailActivity extends BaseActivity {
                         tvPlayUrl.setFocusable(false);
                         mEmptyPlayList.setVisibility(View.VISIBLE);
                     }
+                } 
                 else if (absXml != null && absXml.movie != null && absXml.movie.videoList != null) {
 									App.showToastShort(DetailActivity.this, "22222222222222222222222");
                     mVideo = absXml.movie.videoList.get(0);
@@ -1109,7 +1110,7 @@ public class DetailActivity extends BaseActivity {
                         return;
                     }
 				}
-                } else {
+				else {
                     if (isPushUrl) {  //xuameng 判断推送恢复初始
                         isPushUrl = false;
                         App.showToastShort(DetailActivity.this, "接收推送数据失败！");
