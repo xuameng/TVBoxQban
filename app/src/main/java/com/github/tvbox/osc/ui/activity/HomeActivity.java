@@ -116,7 +116,6 @@ public class HomeActivity extends BaseActivity {
     private final Handler mHandler = new Handler();
     private long mExitTime = 0;
     private boolean mGridViewHasFocus = false;  //xuameng 判断 mGridView主页是否拥有焦点
-    private boolean hasSetCurrentItemOnce = false; //xuameng 判断SetCurrentItem是否执行过，解决findViewByPosition空指针
     private static final int REQUEST_CODE_RECORD_AUDIO = 1001; //xuameng获取音频权限
     private static final String TAG = "PermissionHelper";//xuameng获取音频权限
     private static final int MARSHMALLOW = Build.VERSION_CODES.M;  //xuameng获取音频权限
@@ -529,9 +528,9 @@ public class HomeActivity extends BaseActivity {
             }
             mViewPager.setPageTransformer(true, new DefaultTransformer());
             mViewPager.setAdapter(pageAdapter);
-			if (isGridViewSafe(){
-            mViewPager.setCurrentItem(currentSelected, false);
-			}
+            if (isGridViewSafe()) {  //xuameng安全检查
+                mViewPager.setCurrentItem(currentSelected, false);  //xuameng 关键findViewByPosition(int)' on a null object reference
+            }
         }
     }
 
@@ -673,19 +672,8 @@ public class HomeActivity extends BaseActivity {
                         changeTop(sortFocused != 0);
                         return;
                     }
-                    if (isGridViewSafe() && hasSetCurrentItemOnce) {   //xuameng 判断SetCurrentItem是否执行过，解决findViewByPosition空指针
-                        // 如果已经执行过一次，无条件执行
-						App.showToastLong(HomeActivity.this, "1111111111");
-                        mViewPager.setCurrentItem(sortFocused, false);
-                    } else {
-                        // 第一次执行，需要满足原有安全条件
-                        if (isGridViewSafe() && sortFocused != 0) {   //xuameng 第一次主页上不执行 解决findViewByPosition空指针
-							App.showToastLong(HomeActivity.this, "22222222222222222");
-                            mViewPager.setCurrentItem(sortFocused, false);
-
-                            // 标记已执行过
-                            hasSetCurrentItemOnce = true;
-                        }
+                    if (isGridViewSafe()) {
+                        mViewPager.setCurrentItem(sortFocused, false);  //xuameng 关键findViewByPosition(int)' on a null object reference
                     }
                 }
                 changeTop(sortFocused != 0);
