@@ -38,6 +38,9 @@ import com.owen.tvrecyclerview.widget.TvRecyclerView;
 import com.owen.tvrecyclerview.widget.V7GridLayoutManager;
 import com.owen.tvrecyclerview.widget.V7LinearLayoutManager;
 import me.jessyan.autosize.utils.AutoSizeUtils;  //xuameng像素转换
+import androidx.appcompat.app.AlertDialog; //xuameng音乐权限
+import java.lang.reflect.Field;
+
 
 import java.util.ArrayList;
 import java.util.Stack;
@@ -48,11 +51,11 @@ import android.widget.TextView;
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
-import androidx.appcompat.app.AlertDialog;
+
 /**
- * @author xuameng
- * @date :2026/05/07
- * @description:  焦点状态全面修复，list判断 folder文件夹判断等修复 LayoutManager为空修复
+ * @author pj567
+ * @date :2020/12/21
+ * @description:
  */
 public class GridFragment extends BaseLazyFragment {
     private MovieSort.SortData sortData = null;
@@ -110,21 +113,44 @@ public class GridFragment extends BaseLazyFragment {
     //return (sortData == null || sortData.flag == null || sortData.flag.length() ==0 || style!=null) ?  '0' : sortData.flag.charAt(0);
     // xuameng完全移除 style!=null 的条件判断  如有flag  直接显示文件夹样式   style 为 list，直接显示文件夹样式
     public char getUITag() {
-        // 1. style 为 list，直接返回 1
-        if (style != null && "list".equals(style.type)) {
-            return '1';   //文件夹模式 
-        }
 
-        // 2. 基础校验
-        if (sortData == null || sortData.flag == null || sortData.flag.length() == 0) {
-            return '0';  //正常模式
-        }
+       StringBuilder contentBuilder = new StringBuilder();
 
-        // 3. flag 第一个字符
-        char flagChar = sortData.flag.charAt(0);
+        contentBuilder.append("分类id：").append(sortData.id).append("\n");
+        contentBuilder.append("分类名称name：").append(sortData.name).append("\n");
+        contentBuilder.append("排序值(sort)：").append(sortData.sort).append("\n");
+        contentBuilder.append("是否选中select：").append(sortData.select).append("\n");
+        contentBuilder.append("类型标识(flag)：").append(sortData.flag).append("\n");
+        contentBuilder.append("筛选条件数量filters.size：").append(sortData.filters.size()).append("\n");
+        contentBuilder.append("已选筛选filterSelect：").append(sortData.filterSelect.toString()).append("\n");
+        contentBuilder.append("类型标识(flag)：").append(sortData.flag).append("\n");
 
-        // 4. 非 '0' 直接返回 1  文件夹模式 
-        return flagChar != '0' ? '1' : flagChar;
+        new AlertDialog.Builder(getContext())
+                .setTitle("分类信息详情")
+                .setMessage(contentBuilder.toString())
+                .setPositiveButton("确定", null)
+                .show();
+
+// 1. style 为 list，直接返回 1
+if (style != null && "list".equals(style.type)) {
+    return '1';
+}
+
+// 2. 优先使用 flag
+if (sortData != null && sortData.flag != null && sortData.flag.length() > 0) {
+    char flagChar = sortData.flag.charAt(0);
+    return flagChar != '0' ? '1' : flagChar;
+}
+
+// 3. 再使用 flag
+if (sortData != null && sortData.flag != null && sortData.flag.length() > 0) {
+    char flagChartype = sortData.flag.charAt(0);
+    return flagChartype != '0' ? '1' : flagChartype;
+}
+
+// 4. 默认正常模式
+return '0';
+
     }
 
     // 是否允许聚合搜索 sortData.flag的第二个字符为‘1’时允许聚搜
@@ -146,8 +172,6 @@ public class GridFragment extends BaseLazyFragment {
     public boolean restoreView(){
         if(mGrids.empty()) return false;
         this.showSuccess();
-        mGridView.stopScroll();   //xuameng终止滚动
-        mGridView.setLayoutFrozen(true); //xuameng冻结
         ((ViewGroup) mGridView.getParent()).removeView(this.mGridView); // 重父窗口移除当前控件
         GridInfo info = mGrids.pop();// 还原上次保存的控件
         this.sortData.id = info.sortID;
@@ -157,41 +181,13 @@ public class GridFragment extends BaseLazyFragment {
         this.maxPage = info.maxPage;
         this.isLoad = info.isLoad;
         this.focusedView = info.focusedView;
-
-        if (mGridView.getLayoutManager() == null) {    //xuameng 新增防止LayoutManager为空
-            if(isFolederMode()){
-                mGridView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
-            }else{
-                int spanCount = isBaseOnWidth() ? 5 : 6;
-                if (style != null) {
-                    spanCount = ImgUtil.spanCountByStyle(style, spanCount);
-                }
-                if (spanCount == 1) {
-                    mGridView.setLayoutManager(new V7LinearLayoutManager(mContext, spanCount, false));
-                } else {
-                    mGridView.setLayoutManager(new V7GridLayoutManager(mContext, spanCount));
-                }
-            }
-        }
-        mGridView.setLayoutFrozen(false); //xuameng解冻
         this.mGridView.setVisibility(View.VISIBLE);
-
 //        if(this.focusedView != null){ this.focusedView.requestFocus(); }
-//        if(mGridView != null) mGridView.requestFocus();
-        if(mGridView != null) {
-            mGridView.post(new Runnable() {
-                @Override
-                public void run() {
-                    if (mGridView.getLayoutManager() != null) {
-                        mGridView.requestFocus();
-                    }
-                }
-            });
-        }
+        if(mGridView != null) mGridView.requestFocus();
         return true;
     }
 
-    private ImgUtil.Style style;
+	private ImgUtil.Style style;
     // 更改当前页面
     private void createView(){
         this.saveCurrentView(); // 保存当前页面
@@ -206,21 +202,6 @@ public class GridFragment extends BaseLazyFragment {
             v3.setLayoutParams(mGridView.getLayoutParams());
             v3.setPadding(mGridView.getPaddingLeft(), mGridView.getPaddingTop(), mGridView.getPaddingRight(), mGridView.getPaddingBottom());
             v3.setClipToPadding(mGridView.getClipToPadding());
-
-            if(isFolederMode()){
-                v3.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
-            }else{
-                int spanCount = isBaseOnWidth() ? 5 : 6;
-                if (style != null) {
-                    spanCount = ImgUtil.spanCountByStyle(style, spanCount);
-                }
-                if (spanCount == 1) {
-                    v3.setLayoutManager(new V7LinearLayoutManager(mContext, spanCount, false));
-                } else {
-                    v3.setLayoutManager(new V7GridLayoutManager(mContext, spanCount));
-                }
-            }
-
             ((ViewGroup) mGridView.getParent()).addView(v3);
             mGridView.setVisibility(View.GONE);
             mGridView = v3;
@@ -237,20 +218,17 @@ public class GridFragment extends BaseLazyFragment {
     private void initView() {
         this.createView();
         mGridView.setAdapter(gridAdapter);
-
-        if (mGridView.getLayoutManager() == null) {  //xuameng 新增防止LayoutManager为空
-            if(isFolederMode()){
-                mGridView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
-            }else{
-                int spanCount = isBaseOnWidth() ? 5 : 6;
-                if (style != null) {
-                    spanCount = ImgUtil.spanCountByStyle(style, spanCount);
-                }
-                if (spanCount == 1) {
+        if(isFolederMode()){
+            mGridView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
+        }else{
+            int spanCount = isBaseOnWidth() ? 5 : 6;
+            if (style != null) {
+                spanCount = ImgUtil.spanCountByStyle(style, spanCount);
+            }
+            if (spanCount == 1) {
                 mGridView.setLayoutManager(new V7LinearLayoutManager(mContext, spanCount, false));
-                } else {
-                    mGridView.setLayoutManager(new V7GridLayoutManager(mContext, spanCount));
-                }
+            } else {
+                mGridView.setLayoutManager(new V7GridLayoutManager(mContext, spanCount));
             }
         }
 
@@ -291,6 +269,34 @@ public class GridFragment extends BaseLazyFragment {
                 FastClickCheckUtil.check(view);
                 Movie.Video video = gridAdapter.getData().get(position);
                 if (video != null) {
+
+            // 使用反射获取对象的所有字段和值
+            StringBuilder contentBuilder = new StringBuilder();
+            Class<?> clazz = video.getClass();
+            Field[] fields = clazz.getDeclaredFields(); // 获取所有声明的字段（包括私有字段）
+
+            for (Field field : fields) {
+                field.setAccessible(true); // 允许访问私有字段
+                try {
+                    String fieldName = field.getName();
+                    Object fieldValue = field.get(video); // 获取字段值
+                    contentBuilder.append(fieldName)
+                            .append(": ")
+                            .append(fieldValue != null ? fieldValue.toString() : "null")
+                            .append("\n");
+                } catch (IllegalAccessException e) {
+                    contentBuilder.append(field.getName())
+                            .append(": [无法访问]\n");
+                }
+            }
+
+            // 创建并显示 AlertDialog
+            new AlertDialog.Builder(getContext()) // 注意：这里使用 getContext()，因为是在 Fragment 中
+                    .setTitle("视频信息详情")
+                    .setMessage(contentBuilder.toString())
+                    .setPositiveButton("确定", null)
+                    .show();
+
                     Bundle bundle = new Bundle();
                     bundle.putString("id", video.id);
                     bundle.putString("sourceKey", video.sourceKey);
@@ -302,9 +308,9 @@ public class GridFragment extends BaseLazyFragment {
                     else{
                         if(video.id == null || video.id.isEmpty() || video.id.startsWith("msearch:")){
                             if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false) && enableFastSearch()){
-                                jumpActivity(FastSearchActivity.class, bundle);
+                                jumpActivity(DetailActivity.class, bundle);
                             }else {
-                                jumpActivity(SearchActivity.class, bundle);
+                                jumpActivity(DetailActivity.class, bundle);
                             }
                         }else {
                             bundle.putString("picture", video.pic);   //xuameng某些网站图片部显示
@@ -334,47 +340,94 @@ public class GridFragment extends BaseLazyFragment {
         setLoadSir2(mGridView);
     }
 
-    private void initViewModel() {
-        if(sourceViewModel != null) { return;}
-        sourceViewModel = new ViewModelProvider(this).get(SourceViewModel.class);
-        sourceViewModel.listResult.observe(this, new Observer<AbsXml>() {
-            @Override
-            public void onChanged(AbsXml absXml) {
-                if (absXml != null && absXml.movie != null && absXml.movie.videoList != null && absXml.movie.videoList.size() > 0) {
-                    if (page == 1) {
-                        showSuccess();
-                        isLoad = true;
-                        gridAdapter.setNewData(absXml.movie.videoList);
-                    } else {
-                        gridAdapter.addData(absXml.movie.videoList);
+private void initViewModel() {
+    if (sourceViewModel != null) {
+        return;
+    }
+    sourceViewModel = new ViewModelProvider(this).get(SourceViewModel.class);
+    sourceViewModel.listResult.observe(this, new Observer<AbsXml>() {
+        @Override
+        public void onChanged(AbsXml absXml) {
+            // --- 新增代码：打印 AbsXml 完整内容 ---
+            if (absXml != null) {
+                StringBuilder contentBuilder = new StringBuilder();
+                contentBuilder.append("=== AbsXml 数据包详情 ===\n");
+                
+                // 使用反射获取 AbsXml 的所有字段
+                Class<?> clazz = absXml.getClass();
+                Field[] fields = clazz.getDeclaredFields(); // 获取所有声明的字段（包括私有字段）
+
+                for (Field field : fields) {
+                    field.setAccessible(true); // 允许访问私有字段
+                    try {
+                        String fieldName = field.getName();
+                        Object fieldValue = field.get(absXml); // 获取字段值
+                        
+                        // 处理可能的复杂对象（如 Movie），避免直接打印内存地址
+                        String valueStr;
+                        if (fieldValue == null) {
+                            valueStr = "null";
+                        } else if (fieldValue.getClass().isPrimitive() || fieldValue instanceof String) {
+                            valueStr = fieldValue.toString();
+                        } else {
+                            // 如果是对象（如 Movie），尝试打印其类名和 hashCode，或者你可以递归打印
+                            valueStr = fieldValue.getClass().getSimpleName() + "@" + Integer.toHexString(fieldValue.hashCode());
+                        }
+                        
+                        contentBuilder.append(fieldName)
+                                .append(": ")
+                                .append(valueStr)
+                                .append("\n");
+                                
+                    } catch (IllegalAccessException e) {
+                        contentBuilder.append(field.getName())
+                                .append(": [无法访问]\n");
                     }
-                    page++;
-                    maxPage = absXml.movie.pagecount;
-                    if (maxPage>0 && page > maxPage) {
-                        gridAdapter.loadMoreEnd();
-                        gridAdapter.setEnableLoadMore(false);
-                        if(page>2)App.showToastShort(getContext(), "没有更多了！");
-                    }else {
-                        gridAdapter.loadMoreComplete();
-                        gridAdapter.setEnableLoadMore(true);
-                    }
-			new AlertDialog.Builder(getContext())
-        .setTitle("AbsXml 详情")
-        .setMessage(absXmlToText(absXml))
-        .setPositiveButton("关闭", null)
-        .show();
+                }
+                
+                // 打印到 Logcat (推荐，因为数据量大时 AlertDialog 会卡死或显示不全)
+                LOG.d("GridFragment_Debug", contentBuilder.toString());
+                
+                // 如果你想弹窗（仅建议数据量极小时使用），取消下面两行的注释，注释掉上面的 LOG.d
+                 new AlertDialog.Builder(getContext())
+                         .setTitle("AbsXml 数据详情")
+                         .setMessage(contentBuilder.toString())
+                         .setPositiveButton("确定", null)
+                         .show();
+            }
+            // --- 新增代码结束 ---
+
+            // --- 原有的业务逻辑 (保持不变) ---
+            if (absXml != null && absXml.movie != null && absXml.movie.videoList != null && absXml.movie.videoList.size() > 0) {
+                if (page == 1) {
+                    showSuccess();
+                    isLoad = true;
+                    gridAdapter.setNewData(absXml.movie.videoList);
                 } else {
-                    if (page == 1) {
-                        showEmpty();
-                    } else if(page > 2){// 只有一页数据时不提示
-                        App.showToastShort(getContext(), "没有更多了！");
-                    }
+                    gridAdapter.addData(absXml.movie.videoList);
+                }
+                page++;
+                maxPage = absXml.movie.pagecount;
+                if (maxPage > 0 && page > maxPage) {
                     gridAdapter.loadMoreEnd();
                     gridAdapter.setEnableLoadMore(false);
+                    if (page > 2) App.showToastShort(getContext(), "没有更多了！");
+                } else {
+                    gridAdapter.loadMoreComplete();
+                    gridAdapter.setEnableLoadMore(true);
                 }
+            } else {
+                if (page == 1) {
+                    showEmpty();
+                } else if (page > 2) { // 只有一页数据时不提示
+                    App.showToastShort(getContext(), "没有更多了！");
+                }
+                gridAdapter.loadMoreEnd();
+                gridAdapter.setEnableLoadMore(false);
             }
-        });
-    }
+        }
+    });
+}
 
     public boolean isLoad() {
         return isLoad || !mGrids.empty(); //如果有缓存页的话也可以认为是加载了数据的
@@ -492,35 +545,4 @@ public class GridFragment extends BaseLazyFragment {
         page = 1;
         initData();
     }
-
-private String absXmlToText(AbsXml absXml) {
-    if (absXml == null) return "null";
-
-    StringBuilder sb = new StringBuilder();
-
-    sb.append("AbsXml:\n");
-
-    if (absXml.movie != null) {
-        sb.append(" movie != null\n");
-
-        if (absXml.movie.videoList != null) {
-            sb.append(" videoList size = ")
-              .append(absXml.movie.videoList.size())
-              .append("\n");
-
-            for (int i = 0; i < absXml.movie.videoList.size(); i++) {
-                Video v = absXml.movie.videoList.get(i);
-                sb.append(" [")
-                  .append(i)
-                  .append("] title=")
-                  .append(v.title)
-                  .append(", url=")
-                  .append(v.url)
-                  .append("\n");
-            }
-        }
-    }
-
-    return sb.toString();
-}
 }
