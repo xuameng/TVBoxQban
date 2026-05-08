@@ -1099,7 +1099,7 @@ public class DetailActivity extends BaseActivity {
                         mEmptyPlayList.setVisibility(View.VISIBLE);
                     }
                 } 
-                else if (absXml != null) {
+                else if (absXml == null) {
 									App.showToastShort(DetailActivity.this, "22222222222222222222222");
                     mVideo = absXml.movie.videoList.get(0);
                     mVideo.id = vodId;
