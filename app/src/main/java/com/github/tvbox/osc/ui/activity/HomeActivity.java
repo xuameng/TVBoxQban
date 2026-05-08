@@ -209,7 +209,7 @@ public class HomeActivity extends BaseActivity {
                     HomeActivity.this.sortFocusView = view;
                     HomeActivity.this.sortFocused = position;
                     //xuameng 安全地更新Adapter选中状态   完全交给sortAdapter维护
-                    safeUpdateSortAdapterSelection(position, tvRecyclerView);
+                //    safeUpdateSortAdapterSelection(position, tvRecyclerView);
                     if (!isFinishing() && isGridViewSafe()) {  //xuameng安全检查
                         mHandler.removeCallbacks(mDataRunnable);
                         mHandler.post(mDataRunnable);  //xuameng 延迟到下一个主线程周期执行
