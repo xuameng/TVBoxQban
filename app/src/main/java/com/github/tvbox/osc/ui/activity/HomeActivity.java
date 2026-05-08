@@ -177,7 +177,7 @@ public class HomeActivity extends BaseActivity {
                 mGridView.post(() -> {
                     TvRecyclerView.LayoutManager layoutManager = mGridView.getLayoutManager();
                     if (layoutManager != null && !mGridViewHasFocus) {  //主页没有拥有焦点时执行
-                        mGridView.setSelection(0);
+                     //   mGridView.setSelection(0);
                     }
                 });
             }
