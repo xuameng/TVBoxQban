@@ -216,7 +216,7 @@ public class HomeActivity extends BaseActivity {
                     safeUpdateSortAdapterSelection(position, tvRecyclerView);
                     if (!isFinishing() && isGridViewSafe()) {  //xuameng安全检查
                         mHandler.removeCallbacks(mDataRunnable);
-                        mHandler.post(mDataRunnable);  //xuameng 延迟到下一个主线程周期执行
+                        mHandler.postDelayed(mDataRunnable, 500);  //xuameng 延迟到下一个主线程周期执行
                     }
                 }
             }
@@ -659,48 +659,28 @@ public class HomeActivity extends BaseActivity {
         }
     }
 
-private Runnable mDataRunnable = new Runnable() {
-    @Override
-    public void run() {
-        if (!sortChange) return;
-        sortChange = false;
-
-        // ① 基础防御（你已有，保留）
-        if (mViewPager == null
-                || mViewPager.getAdapter() == null
-                || mGridView == null) {
-            return;
-        }
-
-        // ② TV 最关键防御：RecyclerView 是否正在布局
-        if (mGridView.isComputingLayout()
-                || mGridView.isScrolling()) {
-            // ⚠️ 当前不安全，延迟重试
-            mHandler.postDelayed(this, 50);
-            return;
-        }
-
-        // ③ ViewPager 切页安全检查
-        if (sortFocused != currentSelected) {
-            currentSelected = sortFocused;
-
-            int count = mViewPager.getAdapter().getCount();
-            if (sortFocused < 0 || sortFocused >= count) {
-                return;
-            }
-
-            // ✅ 放到 post 中，彻底避开 onLayout 链
-            mViewPager.post(() -> {
-                if (isGridViewSafe()) {
+    private Runnable mDataRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (sortChange) {
+                sortChange = false;
+                // 防御：ViewPager 尚未初始化
+                if (mViewPager == null || mViewPager.getAdapter() == null) {
+                    return;
+                }
+                if (sortFocused != currentSelected) {
+                    currentSelected = sortFocused;
+                    // 确保 position 合法
+                    int count = mViewPager.getAdapter().getCount();
+                    if (sortFocused < 0 || sortFocused >= count) {
+                        return;
+                    }
                     mViewPager.setCurrentItem(sortFocused, false);
                 }
-            });
+                changeTop(sortFocused != 0);
+            }
         }
-
-        // ④ TopBar 动画同样延迟执行更安全
-        mHandler.post(() -> changeTop(sortFocused != 0));
-    }
-};
+    };
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
