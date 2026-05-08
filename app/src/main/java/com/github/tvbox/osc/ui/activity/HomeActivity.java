@@ -170,7 +170,16 @@ public class HomeActivity extends BaseActivity {
         sortAdapter.registerAdapterDataObserver(new TvRecyclerView.AdapterDataObserver() {
             @Override
             public void onChanged() {
+                if (mGridView == null || !mGridView.isAttachedToWindow()) {
+                    return;
+                }
 
+                mGridView.post(() -> {
+                    TvRecyclerView.LayoutManager layoutManager = mGridView.getLayoutManager();
+                    if (layoutManager != null && !mGridViewHasFocus) {  //主页没有拥有焦点时执行
+                        mGridView.setSelection(0);
+                    }
+                });
             }
         });
 
@@ -650,29 +659,33 @@ public class HomeActivity extends BaseActivity {
         }
     }
 
-private Runnable mDataRunnable = new Runnable() {
-    @Override
-    public void run() {
-        if (!sortChange) return;
-        sortChange = false;
+    private Runnable mDataRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (sortChange) {
+                sortChange = false;
+                // 防御：ViewPager 尚未初始化
+                if (mViewPager == null || mViewPager.getAdapter() == null) {
+                    return;
+                }
+                if (sortFocused != currentSelected) {
+                    currentSelected = sortFocused;
+                    // 确保 position 合法
+                    int count = mViewPager.getAdapter().getCount();
+                    if (sortFocused < 0 || sortFocused >= count) {
+                        return;
+                    }
+                try {
+                    // 加上 try-catch 作为最后的保底，防止极端情况
+                    mViewPager.setCurrentItem(sortFocused, false);
+                } catch (Exception e) {
+                }
 
-        if (!isGridViewSafe()
-                || mViewPager == null
-                || mViewPager.getAdapter() == null) {
-            return;
-        }
-
-        int count = mViewPager.getAdapter().getCount();
-        if (sortFocused < 0 || sortFocused >= count) return;
-
-        // ✅ 关键：延迟到下一帧
-        mViewPager.post(() -> {
-            if (isGridViewSafe()) {
-                mViewPager.setCurrentItem(sortFocused, false);
+                }
+                changeTop(sortFocused != 0);
             }
-        });
-    }
-};
+        }
+    };
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
