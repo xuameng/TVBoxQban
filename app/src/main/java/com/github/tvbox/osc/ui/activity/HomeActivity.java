@@ -206,11 +206,11 @@ public class HomeActivity extends BaseActivity {
                     HomeActivity.this.sortFocusView = view;
                     HomeActivity.this.sortFocused = position;
                     //xuameng 安全地更新Adapter选中状态   完全交给sortAdapter维护
-                    safeUpdateSortAdapterSelection(position, tvRecyclerView);
-                    if (!isFinishing() && isGridViewSafe()) {  //xuameng安全检查
-                        mHandler.removeCallbacks(mDataRunnable);
-                        mHandler.postDelayed(mDataRunnable, 200); //xuameng 延迟到下一个主线程周期执行
-                    }
+      if (isGridViewSafe()) {
+            safeUpdateSortAdapterSelection(position, tvRecyclerView);
+            mHandler.removeCallbacks(mDataRunnable);
+            mHandler.postDelayed(mDataRunnable, 200);
+        }
                 }
             }
 
@@ -319,13 +319,6 @@ public class HomeActivity extends BaseActivity {
 	private boolean skipNextUpdate = false;
 
     private void initViewModel() {
-                sortAdapter.setNewData(
-                    DefaultConfig.adjustSort(
-                        ApiConfig.get().getHomeSourceBean().getKey(),
-                        new ArrayList<>(),
-                        true
-                    )
-                );
         sourceViewModel = new ViewModelProvider(this).get(SourceViewModel.class);
         sourceViewModel.sortResult.observe(this, new Observer<AbsSortXml>() {
             @Override
@@ -512,7 +505,6 @@ public class HomeActivity extends BaseActivity {
     }
 
     private void initViewPager(AbsSortXml absXml) {
-
         if (sortAdapter.getData().size() > 0) {
             for (MovieSort.SortData data : sortAdapter.getData()) {
                 if (data.id.equals("my0")) {
@@ -537,6 +529,11 @@ public class HomeActivity extends BaseActivity {
             mViewPager.setPageTransformer(true, new DefaultTransformer());
             mViewPager.setAdapter(pageAdapter);
             mViewPager.setCurrentItem(currentSelected, false);
+			        // 添加状态重置
+        currentSelected = 0;
+        sortFocused = 0;
+        PositionXu = 0;
+        sortChange = false;
         }
     }
 
@@ -660,32 +657,42 @@ public class HomeActivity extends BaseActivity {
         }
     }
 
-    private Runnable mDataRunnable = new Runnable() {
-        @Override
-        public void run() {
-            if (sortChange) {
-                sortChange = false;
-                // 防御：ViewPager 尚未初始化
-                if (mViewPager == null || mViewPager.getAdapter() == null) {
+private Runnable mDataRunnable = new Runnable() {
+    @Override
+    public void run() {
+        if (sortChange) {
+            sortChange = false;
+            
+            // 增强的防御性检查
+            if (!isGridViewSafe() || mViewPager == null || mViewPager.getAdapter() == null) {
+                changeTop(sortFocused != 0);
+                return;
+            }
+            
+            if (sortFocused != currentSelected) {
+                currentSelected = sortFocused;
+                
+                // 确保 position 合法
+                int count = mViewPager.getAdapter().getCount();
+                if (sortFocused < 0 || sortFocused >= count) {
                     changeTop(sortFocused != 0);
                     return;
                 }
-                if (sortFocused != currentSelected) {
-                    currentSelected = sortFocused;
-                    // 确保 position 合法
-                    int count = mViewPager.getAdapter().getCount();
-                    if (sortFocused < 0 || sortFocused >= count) {
-                        changeTop(sortFocused != 0);
-                        return;
-                    }
-                    if (!isFinishing() && isGridViewSafe() && dataInitOk && jarInitOk) {
+                
+                // 添加额外的安全检查
+                if (!isFinishing() && !isDestroyed() && isGridViewSafe() && dataInitOk && jarInitOk) {
+                    try {
                         mViewPager.setCurrentItem(sortFocused, false);
+                    } catch (Exception e) {
+                        Log.e("HomeActivity", "setCurrentItem failed: " + e.getMessage());
                     }
                 }
-                changeTop(sortFocused != 0);
             }
+            changeTop(sortFocused != 0);
         }
-    };
+    }
+};
+
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
@@ -767,17 +774,19 @@ public class HomeActivity extends BaseActivity {
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mHandler.removeCallbacksAndMessages(null);
-        if (mGridView != null) {
-            mGridView.setAdapter(null);   // xuameng防止 Fragment/Adapter 再回调
-        }
-        EventBus.getDefault().unregister(this);
-        AppManager.getInstance().appExit(0);
-        ControlManager.get().stopServer();
+@Override
+protected void onDestroy() {
+    super.onDestroy();
+    mHandler.removeCallbacksAndMessages(null);
+    if (mGridView != null) {
+        mGridView.setAdapter(null);
+        mGridView.setLayoutManager(null); // 清除 LayoutManager
     }
+    EventBus.getDefault().unregister(this);
+    AppManager.getInstance().appExit(0);
+    ControlManager.get().stopServer();
+}
+
 
     private SelectDialog<SourceBean> mSiteSwitchDialog;
 
@@ -983,11 +992,15 @@ public class HomeActivity extends BaseActivity {
         }
     }
 
-    private boolean isGridViewSafe() { //xuameng安全检查
-        return mGridView != null
-                && mGridView.isAttachedToWindow()
-                && mGridView.getLayoutManager() != null;
-    }
+private boolean isGridViewSafe() {
+    return mGridView != null 
+            && !isFinishing() 
+            && !isDestroyed()
+            && mGridView.isAttachedToWindow()
+            && mGridView.getLayoutManager() != null
+            && mGridView.getAdapter() != null;
+}
+
 
     private void safeGridViewSetSelection(int pos) {  //xuameng安全选择
         if (!isGridViewSafe()) return;
