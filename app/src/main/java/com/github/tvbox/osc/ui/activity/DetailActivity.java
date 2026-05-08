@@ -1110,7 +1110,7 @@ public class DetailActivity extends BaseActivity {
                     if (isShowConfig){ //xuameng 配置中心判断
                         showConfig();
                         isShowConfig = false;
-					} else {
+                    } else {
                         showEmpty();
                     }
                     mGridViewFlag.setFocusable(false);
