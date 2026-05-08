@@ -143,6 +143,7 @@ public class HomeActivity extends BaseActivity {
 
     @Override
     protected void init() {
+		App.showToastLong(HomeActivity.this, "4444");
 		hasSetCurrentItemOnce = false;
         EventBus.getDefault().register(this);
         ControlManager.get().startServer();
@@ -528,6 +529,7 @@ public class HomeActivity extends BaseActivity {
                 scroller.setmDuration(300);
             } catch (Exception e) {
             }
+			App.showToastLong(HomeActivity.this, "5555");
 			hasSetCurrentItemOnce = false;
             mViewPager.setPageTransformer(true, new DefaultTransformer());
             mViewPager.setAdapter(pageAdapter);
@@ -683,7 +685,7 @@ public class HomeActivity extends BaseActivity {
                 mViewPager.setCurrentItem(sortFocused, false);
             }
         }
-    }, 1000); // 延时2000毫秒（2秒）
+    }, 5000); // 延时2000毫秒（2秒）
                        // mViewPager.setCurrentItem(sortFocused, false);
                     } else {
                         // 第一次执行，需要满足原有安全条件
@@ -696,7 +698,7 @@ public class HomeActivity extends BaseActivity {
                 mViewPager.setCurrentItem(sortFocused, false);
             }
         }
-    }, 1000); // 延时2000毫秒（2秒）
+    }, 5000); // 延时2000毫秒（2秒）
                           //  mViewPager.setCurrentItem(sortFocused, false);
 
                             // 标记已执行过
