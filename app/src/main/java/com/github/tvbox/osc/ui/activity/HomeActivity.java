@@ -144,8 +144,8 @@ public class HomeActivity extends BaseActivity {
     @Override
     protected void init() {
 		App.showToastLong(HomeActivity.this, "4444");
-		    private int currentSelected = 0;
-    private int sortFocused = 0;
+	currentSelected = 0;
+  sortFocused = 0;
 		hasSetCurrentItemOnce = false;
         EventBus.getDefault().register(this);
         ControlManager.get().startServer();
