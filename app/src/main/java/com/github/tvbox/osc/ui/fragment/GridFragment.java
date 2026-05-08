@@ -48,7 +48,7 @@ import android.widget.TextView;
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
-
+import androidx.appcompat.app.AlertDialog;
 /**
  * @author xuameng
  * @date :2026/05/07
@@ -413,6 +413,11 @@ public class GridFragment extends BaseLazyFragment {
         public void onFocusChange(View v, boolean hasFocus) {
             if (hasFocus)
                 v.animate().scaleX(1.05f).scaleY(1.05f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
+			new AlertDialog.Builder(this)
+        .setTitle("AbsXml 详情")
+        .setMessage(absXmlToText(absXml))
+        .setPositiveButton("关闭", null)
+        .show();
             else
                 v.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
         }
@@ -487,4 +492,35 @@ public class GridFragment extends BaseLazyFragment {
         page = 1;
         initData();
     }
+
+private String absXmlToText(AbsXml absXml) {
+    if (absXml == null) return "null";
+
+    StringBuilder sb = new StringBuilder();
+
+    sb.append("AbsXml:\n");
+
+    if (absXml.movie != null) {
+        sb.append(" movie != null\n");
+
+        if (absXml.movie.videoList != null) {
+            sb.append(" videoList size = ")
+              .append(absXml.movie.videoList.size())
+              .append("\n");
+
+            for (int i = 0; i < absXml.movie.videoList.size(); i++) {
+                Video v = absXml.movie.videoList.get(i);
+                sb.append(" [")
+                  .append(i)
+                  .append("] title=")
+                  .append(v.title)
+                  .append(", url=")
+                  .append(v.url)
+                  .append("\n");
+            }
+        }
+    }
+
+    return sb.toString();
+}
 }
