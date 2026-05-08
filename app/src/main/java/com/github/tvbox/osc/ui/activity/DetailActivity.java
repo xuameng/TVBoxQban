@@ -912,7 +912,6 @@ public class DetailActivity extends BaseActivity {
         sourceViewModel.detailResult.observe(this, new Observer<AbsXml>() {
             @Override
             public void onChanged(AbsXml absXml) {
-				App.showToastShort(DetailActivity.this, "22222222222222222222222");
                 if (absXml != null && absXml.movie != null && absXml.movie.videoList != null && absXml.movie.videoList.size() > 0) {
                     showSuccess();
                     if(!TextUtils.isEmpty(absXml.msg) && !absXml.msg.equals("数据列表")){
@@ -1099,6 +1098,17 @@ public class DetailActivity extends BaseActivity {
                         tvPlayUrl.setFocusable(false);
                         mEmptyPlayList.setVisibility(View.VISIBLE);
                     }
+                else if (absXml != null && absXml.movie != null && absXml.movie.videoList != null) {
+									App.showToastShort(DetailActivity.this, "22222222222222222222222");
+                    mVideo = absXml.movie.videoList.get(0);
+                    mVideo.id = vodId;
+
+                    if (mVideo.sourceKey.contains("配置中心") 
+                        || mVideo.sourceKey.toLowerCase().contains("config")) {  //xuameng 配置中心判断如是就返回
+                        showConfig();
+                        return;
+                    }
+				}
                 } else {
                     if (isPushUrl) {  //xuameng 判断推送恢复初始
                         isPushUrl = false;
