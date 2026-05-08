@@ -216,7 +216,7 @@ public class HomeActivity extends BaseActivity {
                     safeUpdateSortAdapterSelection(position, tvRecyclerView);
                     if (!isFinishing() && isGridViewSafe()) {  //xuameng安全检查
                         mHandler.removeCallbacks(mDataRunnable);
-                        mHandler.postDelayed(mDataRunnable, 5000);  //xuameng 延迟到下一个主线程周期执行
+                        mHandler.post(mDataRunnable);  //xuameng 延迟到下一个主线程周期执行
                     }
                 }
             }
