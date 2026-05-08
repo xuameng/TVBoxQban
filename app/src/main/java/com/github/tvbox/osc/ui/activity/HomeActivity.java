@@ -209,7 +209,7 @@ public class HomeActivity extends BaseActivity {
                     safeUpdateSortAdapterSelection(position, tvRecyclerView);
                     if (!isFinishing() && isGridViewSafe()) {  //xuameng安全检查
                         mHandler.removeCallbacks(mDataRunnable);
-                        mHandler.post(mDataRunnable);  //xuameng 延迟到下一个主线程周期执行
+                        mHandler.postDelayed(mDataRunnable, 200); //xuameng 延迟到下一个主线程周期执行
                     }
                 }
             }
@@ -664,9 +664,6 @@ public class HomeActivity extends BaseActivity {
                 if (mViewPager == null || mViewPager.getAdapter() == null) {
                     return;
                 }
-            if (HomeActivity.this.isFinishing()) {
-                return;
-            }
                 if (sortFocused != currentSelected) {
                     currentSelected = sortFocused;
                     // 确保 position 合法
@@ -675,8 +672,10 @@ public class HomeActivity extends BaseActivity {
                         return;
                     }
                     try {
-                        // 加上 try-catch 作为最后的保底，防止极端情况
-                        mViewPager.setCurrentItem(sortFocused, false);
+                        if (!isFinishing() && isGridViewSafe()) {
+                            // 加上 try-catch 作为最后的保底，防止极端情况
+                            mViewPager.setCurrentItem(sortFocused, false);
+                        }
                     } catch (Exception e) {
                         LOG.e("HomeActivity: ViewPager 切换页面时发生异常: " + e.getMessage());
                     }
