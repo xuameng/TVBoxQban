@@ -1098,19 +1098,7 @@ public class DetailActivity extends BaseActivity {
                         tvPlayUrl.setFocusable(false);
                         mEmptyPlayList.setVisibility(View.VISIBLE);
                     }
-                } 
-                else if (absXml == null) {
-									App.showToastShort(DetailActivity.this, "22222222222222222222222");
-                    mVideo = absXml.movie.videoList.get(0);
-                    mVideo.id = vodId;
-
-                    if (mVideo.sourceKey.contains("配置中心") 
-                        || mVideo.sourceKey.toLowerCase().contains("config")) {  //xuameng 配置中心判断如是就返回
-                        showConfig();
-                        return;
-                    }
-				}
-				else {
+                } else {
                     if (isPushUrl) {  //xuameng 判断推送恢复初始
                         isPushUrl = false;
                         App.showToastShort(DetailActivity.this, "接收推送数据失败！");
@@ -1169,6 +1157,12 @@ public class DetailActivity extends BaseActivity {
             vodId = vid;
             sourceKey = key;
             firstsourceKey = key;
+                    if (sourceKey.contains("配置中心") 
+                        || sourceKey.toLowerCase().contains("config")) {  //xuameng 配置中心判断如是就返回
+						App.showToastShort(DetailActivity.this, "222222222！");
+                        showConfig();
+                        return;
+                    }
             showLoading();
             sourceViewModel.getDetail(sourceKey, vodId);
             boolean isVodCollect = RoomDataManger.isVodCollect(sourceKey, vodId);
