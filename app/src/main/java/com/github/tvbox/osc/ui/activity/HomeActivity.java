@@ -170,16 +170,9 @@ public class HomeActivity extends BaseActivity {
         sortAdapter.registerAdapterDataObserver(new TvRecyclerView.AdapterDataObserver() {
             @Override
             public void onChanged() {
-                if (mGridView == null || !mGridView.isAttachedToWindow()) {
-                    return;
+                if (!mGridViewHasFocus) {  //xuameng主页没有拥有焦点时执行
+                    safeGridViewSetSelection(0);   //xuameng安全选择主页
                 }
-
-                mGridView.post(() -> {
-                    TvRecyclerView.LayoutManager layoutManager = mGridView.getLayoutManager();
-                    if (layoutManager != null && !mGridViewHasFocus) {  //主页没有拥有焦点时执行
-                        mGridView.setSelection(0);
-                    }
-                });
             }
         });
 
@@ -679,7 +672,7 @@ public class HomeActivity extends BaseActivity {
                         // 加上 try-catch 作为最后的保底，防止极端情况
                         mViewPager.setCurrentItem(sortFocused, false);
                     } catch (Exception e) {
-                        LOG.e("HomeActivity", "ViewPager 切换页面时发生异常: " + e.getMessage());
+                        LOG.e("HomeActivity: ViewPager 切换页面时发生异常: " + e.getMessage());
                     }
                 }
                 changeTop(sortFocused != 0);
