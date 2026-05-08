@@ -670,8 +670,13 @@ public class HomeActivity extends BaseActivity {
                         changeTop(sortFocused != 0);
                         return;
                     }
+if (mViewPager.isComputingLayout()
+        || mViewPager.isLayoutRequested()) {
+	changeTop(sortFocused != 0);
+    return;
+}
                     if (!isFinishing() && isGridViewSafe() && dataInitOk && jarInitOk) {
-                        mViewPager.setCurrentItem(0, false);
+                        mViewPager.setCurrentItem(sortFocused, false);
                     }
                 }
                 changeTop(sortFocused != 0);
