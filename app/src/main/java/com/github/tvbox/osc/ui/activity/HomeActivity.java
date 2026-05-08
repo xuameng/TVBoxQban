@@ -342,7 +342,6 @@ public class HomeActivity extends BaseActivity {
     private boolean jarInitOk = false;
 
     private void initData() {
-       // mHandler.removeCallbacks(mDataRunnable);
         refreshEmpty = false;	//xuameng打断加载判断
         SourceBean home = ApiConfig.get().getHomeSourceBean();
         if (home != null && home.getName() != null && !home.getName().isEmpty())
@@ -506,8 +505,6 @@ public class HomeActivity extends BaseActivity {
     }
 
     private void initViewPager(AbsSortXml absXml) {
-      //  currentSelected = 0; 
-      //  sortFocused = 0;
         if (sortAdapter.getData().size() > 0) {
             for (MovieSort.SortData data : sortAdapter.getData()) {
                 if (data.id.equals("my0")) {
@@ -672,7 +669,7 @@ public class HomeActivity extends BaseActivity {
                         return;
                     }
                     try {
-                        if (!isFinishing() && isGridViewSafe()) {
+                        if (!isFinishing() && isGridViewSafe() && dataInitOk && jarInitOk) {
                             // 加上 try-catch 作为最后的保底，防止极端情况
                             mViewPager.setCurrentItem(sortFocused, false);
                         }
@@ -768,7 +765,6 @@ public class HomeActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-       // mHandler.removeCallbacks(mDataRunnable);
         mHandler.removeCallbacksAndMessages(null);
         if (mGridView != null) {
             mGridView.setAdapter(null);   // xuameng防止 Fragment/Adapter 再回调
