@@ -171,7 +171,16 @@ public class HomeActivity extends BaseActivity {
             @Override
             public void onChanged() {
                 if (!mGridViewHasFocus) {  //xuameng主页没有拥有焦点时执行
-                    safeGridViewSetSelection(0);   //xuameng安全选择主页
+    mHandler.postDelayed(new Runnable() {
+        @Override
+        public void run() {
+            App.showToastLong(HomeActivity.this, "88888888888888");
+            if (isGridViewSafe()) {  //xuameng安全检查
+                safeGridViewSetSelection(0);   //xuameng安全选择主页
+            }
+        }
+    }, 10000); 
+                    
                 }
             }
         });
@@ -206,11 +215,18 @@ public class HomeActivity extends BaseActivity {
                     HomeActivity.this.sortFocusView = view;
                     HomeActivity.this.sortFocused = position;
                     //xuameng 安全地更新Adapter选中状态   完全交给sortAdapter维护
+    mHandler.postDelayed(new Runnable() {
+        @Override
+        public void run() {
+            App.showToastLong(HomeActivity.this, "565656556");
                     safeUpdateSortAdapterSelection(position, tvRecyclerView);
                     if (isGridViewSafe()) {  //xuameng安全检查
                         mHandler.removeCallbacks(mDataRunnable);
                         mHandler.postDelayed(mDataRunnable, 200); //xuameng 延迟到下一个主线程周期执行
                     }
+        }
+    }, 10000); 
+
                 }
             }
 
@@ -528,16 +544,9 @@ public class HomeActivity extends BaseActivity {
             }
             mViewPager.setPageTransformer(true, new DefaultTransformer());
             mViewPager.setAdapter(pageAdapter);
-    mHandler.postDelayed(new Runnable() {
-        @Override
-        public void run() {
-            App.showToastLong(HomeActivity.this, "88888888888888");
             if (isGridViewSafe()) {  //xuameng安全检查
                 mViewPager.setCurrentItem(currentSelected, false);  //xuameng 关键findViewByPosition(int)' on a null object reference
             }
-        }
-    }, 5000); 
-
         }
     }
 
