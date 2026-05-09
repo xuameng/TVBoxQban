@@ -206,26 +206,11 @@ public class HomeActivity extends BaseActivity {
                     HomeActivity.this.sortFocusView = view;
                     HomeActivity.this.sortFocused = position;
                     //xuameng 安全地更新Adapter选中状态   完全交给sortAdapter维护
- 		   mHandler.postDelayed(new Runnable() {
-        @Override
-        public void run() {
-            // 【关键】执行前检查页面状态，防止内存泄漏或崩溃
-            if (isFinishing() || isDestroyed()) {
-                return;
-            }
-            App.showToastLong(HomeActivity.this, "50505050");
-            // 检查参数有效性
-            if (tvRecyclerView != null) {
-                safeUpdateSortAdapterSelection(position, tvRecyclerView);
-            }
-			                    if (isGridViewSafe()) {  //xuameng安全检查
+                    safeUpdateSortAdapterSelection(position, tvRecyclerView);
+                    if (isGridViewSafe()) {  //xuameng安全检查
                         mHandler.removeCallbacks(mDataRunnable);
                         mHandler.postDelayed(mDataRunnable, 200); //xuameng 延迟到下一个主线程周期执行
                     }
-        }
-    }, 5000); // 2000毫秒 = 2秒
-                    
-
                 }
             }
 
@@ -543,9 +528,16 @@ public class HomeActivity extends BaseActivity {
             }
             mViewPager.setPageTransformer(true, new DefaultTransformer());
             mViewPager.setAdapter(pageAdapter);
+    mHandler.postDelayed(new Runnable() {
+        @Override
+        public void run() {
+            App.showToastLong(HomeActivity.this, "50505050");
             if (isGridViewSafe()) {  //xuameng安全检查
                 mViewPager.setCurrentItem(currentSelected, false);  //xuameng 关键findViewByPosition(int)' on a null object reference
             }
+        }
+    }, 5000); 
+
         }
     }
 
