@@ -529,9 +529,25 @@ public class HomeActivity extends BaseActivity {
             }
             mViewPager.setPageTransformer(true, new DefaultTransformer());
             mViewPager.setAdapter(pageAdapter);
-            if (isGridViewSafe()) {  //xuameng安全检查
-                mViewPager.setCurrentItem(currentSelected, false);  //xuameng 关键findViewByPosition(int)' on a null object reference
+        // 关键修复：确保在ViewPager完成布局后再设置当前项
+        mViewPager.post(new Runnable() {
+            @Override
+            public void run() {
+                // 等待ViewPager完成测量和布局
+                mViewPager.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (isViewPagerSafe() && isGridViewSafe()) {
+                            try {
+                                mViewPager.setCurrentItem(currentSelected, false);
+                            } catch (Exception e) {
+                                App.showToastLong(HomeActivity.this, "999999999999999");
+                            }
+                        }
+                    }
+                }, 5000); // 延迟100ms确保布局完成
             }
+        });
         }
     }
 
@@ -664,13 +680,13 @@ private Runnable mDataRunnable = new Runnable() {
             // 1. 增强安全检查
             if (mViewPager == null || mViewPager.getAdapter() == null || 
                 !isViewPagerSafe() || !isGridViewSafe()) {
-                
+                App.showToastLong(HomeActivity.this, "11111111111111");
                 return;
             }
             
             // 2. 检查ViewPager是否正在布局
             if (mViewPager.isLayoutRequested() || mViewPager.isInLayout()) {
-               
+               App.showToastLong(HomeActivity.this, "222222");
                 mHandler.postDelayed(this, 50); // 延迟50ms重试
                 return;
             }
@@ -679,14 +695,14 @@ private Runnable mDataRunnable = new Runnable() {
             if (mGridView != null) {
                 // 确保LayoutManager已完全初始化
                 if (mGridView.getLayoutManager() == null) {
-                  
+                  App.showToastLong(HomeActivity.this, "3333333333333");
                     mHandler.postDelayed(this, 50);
                     return;
                 }
                 
                 // 检查是否在布局过程中
                 if (mGridView.isLayoutRequested() || mGridView.isInLayout()) {
-                  
+                  App.showToastLong(HomeActivity.this, "4444444444444");
                     mHandler.postDelayed(this, 50);
                     return;
                 }
@@ -713,13 +729,13 @@ private Runnable mDataRunnable = new Runnable() {
                                 try {
                                     mViewPager.setCurrentItem(sortFocused, false);
                                 } catch (Exception e) {
-                                   
+                                   App.showToastLong(HomeActivity.this, "5555555555555555");
                                 }
                             }
                         });
                     }
                 } catch (Exception e) {
-                   
+                   App.showToastLong(HomeActivity.this, "6666666666666");
                     e.printStackTrace();
                     
                     // 5. 异常恢复机制
@@ -731,10 +747,12 @@ private Runnable mDataRunnable = new Runnable() {
                                 @Override
                                 public void run() {
                                     if (mGridView != null && mGridView.getLayoutManager() == null) {
+										App.showToastLong(HomeActivity.this, "777777777777777");
                                         mGridView.setLayoutManager(new V7LinearLayoutManager(mContext, 0, false));
                                     }
                                     // 重试一次
                                     if (sortChange) {
+										App.showToastLong(HomeActivity.this, "8888888888888");
                                         mHandler.postDelayed(mDataRunnable, 100);
                                     }
                                 }
