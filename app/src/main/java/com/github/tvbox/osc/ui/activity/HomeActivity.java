@@ -533,9 +533,11 @@ public class HomeActivity extends BaseActivity {
             }
             mViewPager.setPageTransformer(true, new DefaultTransformer());
             mViewPager.setAdapter(pageAdapter);
-            if (isGridViewSafe() && isViewPagerSafe()) {  //xuameng安全检查
-                mViewPager.setCurrentItem(currentSelected, false);  //xuameng 关键findViewByPosition(int)' on a null object reference
-            }
+mViewPager.post(() -> {
+    if (isViewPagerSafe()) {
+        mViewPager.setCurrentItem(currentSelected, false);
+    }
+});
         }
     }
 
@@ -676,9 +678,11 @@ public class HomeActivity extends BaseActivity {
                         changeTop(sortFocused != 0);
                         return;
                     }
-                    if (isGridViewSafe() && isViewPagerSafe()) {
-                        mViewPager.setCurrentItem(sortFocused, false);  //xuameng 关键findViewByPosition(int)' on a null object reference
-                    }
+     mViewPager.post(() -> {
+    if (isViewPagerSafe()) {
+        mViewPager.setCurrentItem(sortFocused, false);
+    }
+});
                 }
                 changeTop(sortFocused != 0);
             }
