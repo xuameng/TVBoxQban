@@ -173,7 +173,7 @@ public class HomeActivity extends BaseActivity {
                 mGridView.post(() -> {
                     View firstChild = Objects.requireNonNull(mGridView.getLayoutManager()).findViewByPosition(0);
                     if (firstChild != null) {
-                        mGridView.setSelectedPosition(0);
+                        mGridView.setSelection(0);
                     }
                 });
             }
@@ -942,11 +942,11 @@ public class HomeActivity extends BaseActivity {
                         stackTrace.contains("LayoutManager")) {
                         App.showToastShort(HomeActivity.this, "聚汇影视提示：数据加载错误！将在两秒后重启应用！");
                         mHandler.removeCallbacksAndMessages(null);
-                        ControlManager.get().stopServer();
-                        EventBus.getDefault().unregister(HomeActivity.this);
                         mHandler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
+                        ControlManager.get().stopServer();
+                        EventBus.getDefault().unregister(HomeActivity.this);
                                 Intent intent = new Intent(mContext, HomeActivity.class);
                                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                 startActivity(intent);
