@@ -78,10 +78,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
     }
 
     public static UserFragment newInstance(List<Movie.Video> recVod) {
-		if (tvHotList1.getLayoutManager() != null && tvHotList2.getLayoutManager() != null) {  //xuameng 新增防止LayoutManager为空
         return new UserFragment().setArguments(recVod);
-		}
-		return null;
     }
 
     public UserFragment setArguments(List<Movie.Video> recVod) {
@@ -104,7 +101,6 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
                 }
                 tvHotList1.setLayoutManager(new V7GridLayoutManager(this.mContext, spanCount));
             }
-
         } else {
             tvHotList1.setVisibility(View.GONE);
             tvHotList2.setVisibility(View.VISIBLE);
@@ -113,17 +109,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
             }
             //	tvHotList2.setHasFixedSize(true);      //xuameng不想显示单行
             //    tvHotList2.setLayoutManager(new V7GridLayoutManager(this.mContext, 5));
-
         }
-if (Hawk.get(HawkConfig.HOME_REC, 0) == 1 && homeSourceRec != null) {
-    if (Hawk.get(HawkConfig.HOME_REC_STYLE, false)) {
-        homeHotVodAdapter.setNewData(homeSourceRec);
-					tvHotList1.setAdapter(homeHotVodAdapter); 
-    } else {
-        homeHotVodAdapterxu.setNewData(homeSourceRec);
-					tvHotList2.setAdapter(homeHotVodAdapterxu); // ✅ 关键
-    }
-}
         super.onFragmentResume();
         if (Hawk.get(HawkConfig.HOME_REC, 0) == 2) {
             List<VodInfo> allVodRecord = RoomDataManger.getAllVodRecord(100); //xuameng首页历史条数   //xuameng 历史记录返回条数
@@ -388,6 +374,7 @@ if (Hawk.get(HawkConfig.HOME_REC, 0) == 1 && homeSourceRec != null) {
 
             }
         });
+        tvHotList1.setAdapter(homeHotVodAdapter);
         tvHotList2.setOnItemListener(new TvRecyclerView.OnItemListener() {
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
@@ -404,6 +391,7 @@ if (Hawk.get(HawkConfig.HOME_REC, 0) == 1 && homeSourceRec != null) {
 
             }
         });
+        tvHotList2.setAdapter(homeHotVodAdapterxu); //xuameng首页单行
 
         initHomeHotVodXu(homeHotVodAdapterxu); //xuameng首页单行
 
@@ -414,7 +402,7 @@ if (Hawk.get(HawkConfig.HOME_REC, 0) == 1 && homeSourceRec != null) {
     private void initHomeHotVod(HomeHotVodAdapter adapter) {
         if (Hawk.get(HawkConfig.HOME_REC, 0) == 1) {
             if (homeSourceRec != null) {
-              //  adapter.setNewData(homeSourceRec);
+                adapter.setNewData(homeSourceRec);
                 return;
             }
         } else if (Hawk.get(HawkConfig.HOME_REC, 0) == 2) {
@@ -426,7 +414,7 @@ if (Hawk.get(HawkConfig.HOME_REC, 0) == 1 && homeSourceRec != null) {
     private void initHomeHotVodXu(HomeHotVodAdapterXu adapter) { //xuameng首页单行
         if (Hawk.get(HawkConfig.HOME_REC, 0) == 1) {
             if (homeSourceRec != null) {
-              //  adapter.setNewData(homeSourceRec);
+                adapter.setNewData(homeSourceRec);
                 return;
             }
         } else if (Hawk.get(HawkConfig.HOME_REC, 0) == 2) {
