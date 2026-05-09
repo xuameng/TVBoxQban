@@ -69,8 +69,8 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
     public static HomeHotVodAdapter homeHotVodAdapter;
     public static HomeHotVodAdapterXu homeHotVodAdapterxu; //xuameng首页单行
     private List<Movie.Video> homeSourceRec;
-    public TvRecyclerView tvHotList1;
-    public TvRecyclerView tvHotList2; //xuameng首页单行
+    public static TvRecyclerView tvHotList1;
+    public static TvRecyclerView tvHotList2; //xuameng首页单行
     private ImgUtilHot.Style style; //xuameng 图片样式
 
     public static UserFragment newInstance() {
@@ -119,14 +119,6 @@ if (Hawk.get(HawkConfig.HOME_REC, 0) == 1 && homeSourceRec != null) {
     } else {
         homeHotVodAdapterxu.setNewData(homeSourceRec);
 					tvHotList2.setAdapter(homeHotVodAdapterxu); // ✅ 关键
-    }
-}else if (Hawk.get(HawkConfig.HOME_REC, 0) == 2) {
-    // 历史记录逻辑（你已经有了）
-} else {
-    if (Hawk.get(HawkConfig.HOME_REC_STYLE, false)) {
-	    setDouBanData(adapter);
-    }else{
-	    setDouBanDataXu(adapter);
     }
 }
         super.onFragmentResume();
@@ -417,11 +409,27 @@ if (Hawk.get(HawkConfig.HOME_REC, 0) == 1 && homeSourceRec != null) {
     }
 
     private void initHomeHotVod(HomeHotVodAdapter adapter) {
-
+        if (Hawk.get(HawkConfig.HOME_REC, 0) == 1) {
+            if (homeSourceRec != null) {
+              //  adapter.setNewData(homeSourceRec);
+                return;
+            }
+        } else if (Hawk.get(HawkConfig.HOME_REC, 0) == 2) {
+            return;
+        }
+        setDouBanData(adapter);
     }
 
     private void initHomeHotVodXu(HomeHotVodAdapterXu adapter) { //xuameng首页单行
-
+        if (Hawk.get(HawkConfig.HOME_REC, 0) == 1) {
+            if (homeSourceRec != null) {
+              //  adapter.setNewData(homeSourceRec);
+                return;
+            }
+        } else if (Hawk.get(HawkConfig.HOME_REC, 0) == 2) {
+            return;
+        }
+        setDouBanDataXu(adapter);
     }
 
     private void setDouBanData(HomeHotVodAdapter adapter) {
