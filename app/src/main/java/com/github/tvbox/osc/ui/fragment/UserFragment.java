@@ -76,7 +76,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
         }
         mHasLoaded = true;
 
-        style = ImgUtilHot.initStyle();
+
 
         if (Hawk.get(HawkConfig.HOME_REC_STYLE, false)) {
             tvHotList1.setVisibility(View.VISIBLE);
@@ -128,7 +128,10 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
 
         tvHotList1 = findViewById(R.id.tvHotList1);
         tvHotList2 = findViewById(R.id.tvHotList2);
-
+        //if (Hawk.get(HawkConfig.HOME_REC, 0) == 1 && homeSourceRec != null) {
+        if (Hawk.get(HawkConfig.HOME_REC, 0) == 1) {  //xuameng 无论推荐有没有数据
+            style = ImgUtilHot.initStyle();
+        }
         homeHotVodAdapter = new HomeHotVodAdapter(isFolederMode(), style);
         homeHotVodAdapterxu = new HomeHotVodAdapterXu(isFolederMode(), style);
 tvHotList1.setItemAnimator(null);
@@ -438,7 +441,7 @@ private ArrayList<Movie.Video> loadHots(String json) {
     public boolean isFolederMode() {
         return style != null && "list".equals(style.type);
     }
-private void safeSetLayoutManager(TvRecyclerView rv, RecyclerView.LayoutManager lm) {
+private void safeSetLayoutManager(TvRecyclerView rv, TvRecyclerView.LayoutManager lm) {
     if (rv != null && rv.getLayoutManager() == null) {
         rv.setLayoutManager(lm);
     }
