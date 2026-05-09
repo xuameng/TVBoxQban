@@ -533,7 +533,7 @@ public class HomeActivity extends BaseActivity {
             }
             mViewPager.setPageTransformer(true, new DefaultTransformer());
             mViewPager.setAdapter(pageAdapter);
-            if (isGridViewSafe()) && isViewPagerSafe()) {  //xuameng安全检查
+            if (isGridViewSafe() && isViewPagerSafe()) {  //xuameng安全检查
                 mViewPager.setCurrentItem(currentSelected, false);  //xuameng 关键findViewByPosition(int)' on a null object reference
             }
         }
