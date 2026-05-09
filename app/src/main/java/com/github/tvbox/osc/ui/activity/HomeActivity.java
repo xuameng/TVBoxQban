@@ -945,8 +945,6 @@ public class HomeActivity extends BaseActivity {
                         mHandler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                        ControlManager.get().stopServer();
-                        EventBus.getDefault().unregister(HomeActivity.this);
                                 Intent intent = new Intent(mContext, HomeActivity.class);
                                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                 startActivity(intent);
