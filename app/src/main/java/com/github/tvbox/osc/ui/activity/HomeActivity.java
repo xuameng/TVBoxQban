@@ -208,28 +208,10 @@ public class HomeActivity extends BaseActivity {
                     HomeActivity.this.sortFocusView = view;
                     HomeActivity.this.sortFocused = position;
                     //xuameng 安全地更新Adapter选中状态   完全交给sortAdapter维护
-					
- 		   mHandler.postDelayed(new Runnable() {
-        @Override
-        public void run() {
-            // 【关键】执行前检查页面状态，防止内存泄漏或崩溃
-            if (isFinishing() || isDestroyed()) {
-                return;
-            }
-            
-            // 检查参数有效性
-            if (tvRecyclerView != null) {
-                safeUpdateSortAdapterSelection(position, tvRecyclerView);
-            }
-        }
-    }, 2000); // 2000毫秒 = 2秒
-                    if (isGridViewSafe()) {  //xuameng安全检查
-						                   
-                        mHandler.removeCallbacks(mDataRunnable);
-                        mHandler.postDelayed(mDataRunnable, 2000); //xuameng 延迟到下一个主线程周期执行
-                    }
-                }
-            }
+					safeUpdateSortAdapterSelection(position, tvRecyclerView);
+					                        mHandler.removeCallbacks(mDataRunnable);
+                        mHandler.postDelayed(mDataRunnable, 200); //xuameng 延迟到下一个主线程周期执行
+
 
             @Override
             public void onItemClick(TvRecyclerView parent, View itemView, int position) {
@@ -526,15 +508,8 @@ public class HomeActivity extends BaseActivity {
             for (MovieSort.SortData data : sortAdapter.getData()) {
                 if (data.id.equals("my0")) {
                     if (Hawk.get(HawkConfig.HOME_REC, 0) == 1 && absXml != null && absXml.videoList != null && absXml.videoList.size() > 0) {
-						 
-						 if (isViewPagerSafe() && isGridViewSafe()) {
-							 App.showToastLong(HomeActivity.this, "101010101010");
+						
                         fragments.add(UserFragment.newInstance(absXml.videoList));
-						 }else{
-							 App.showToastLong(HomeActivity.this, "8080808080");
-							 fragments.add(UserFragment.newInstance(null));
-						 }
-
                     } else {
                         fragments.add(UserFragment.newInstance(null));
                     }
@@ -542,6 +517,8 @@ public class HomeActivity extends BaseActivity {
                     fragments.add(GridFragment.newInstance(data));
                 }
             }
+			if (isViewPagerSafe() && isGridViewSafe()) {
+				 App.showToastLong(HomeActivity.this, "101010101010");
             pageAdapter = new HomePageAdapter(getSupportFragmentManager(), fragments);
             try {
                 Field field = ViewPager.class.getDeclaredField("mScroller");
@@ -554,25 +531,15 @@ public class HomeActivity extends BaseActivity {
             mViewPager.setPageTransformer(true, new DefaultTransformer());
 			
             mViewPager.setAdapter(pageAdapter);
+			}else{
+				App.showToastLong(HomeActivity.this, "888888888888");
+            pageAdapter = new HomePageAdapter(getSupportFragmentManager(), fragments);
+            mViewPager.setPageTransformer(true, new DefaultTransformer());
+			
+            mViewPager.setAdapter(pageAdapter);
+			}
         // 关键修复：确保在ViewPager完成布局后再设置当前项
-        mViewPager.post(new Runnable() {
-            @Override
-            public void run() {
-                // 等待ViewPager完成测量和布局
-                mViewPager.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (isViewPagerSafe() && isGridViewSafe()) {
-                            try {
-                                mViewPager.setCurrentItem(currentSelected, false);
-                            } catch (Exception e) {
-                                
-                            }
-                        }
-                    }
-                }, 1000); // 延迟100ms确保布局完成
-            }
-        });
+mViewPager.setCurrentItem(currentSelected, false);
         }
     }
 
