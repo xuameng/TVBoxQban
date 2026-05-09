@@ -51,8 +51,8 @@ import org.json.JSONObject;
 
 /**
  * @author xuameng
- * @date :2026/04/25
- * @description:  焦点状态全面修复，list判断 folder文件夹判断等修复
+ * @date :2026/05/07
+ * @description:  焦点状态全面修复，list判断 folder文件夹判断等修复   mContext判空
  */
 public class GridFragment extends BaseLazyFragment {
     private MovieSort.SortData sortData = null;
@@ -161,7 +161,7 @@ public class GridFragment extends BaseLazyFragment {
         return true;
     }
 
-	private ImgUtil.Style style;
+    private ImgUtil.Style style;
     // 更改当前页面
     private void createView(){
         this.saveCurrentView(); // 保存当前页面
