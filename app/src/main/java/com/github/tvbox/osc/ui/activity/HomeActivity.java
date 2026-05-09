@@ -172,6 +172,7 @@ public class HomeActivity extends BaseActivity {
             @Override
             public void onChanged() {
                 if (!mGridViewHasFocus) {  //xuameng主页没有拥有焦点时执行
+					App.showToastLong(HomeActivity.this, "303030303");
                     safeGridViewSetSelection(0);   //xuameng安全选择主页
                 }
             }
@@ -207,10 +208,12 @@ public class HomeActivity extends BaseActivity {
                     HomeActivity.this.sortFocusView = view;
                     HomeActivity.this.sortFocused = position;
                     //xuameng 安全地更新Adapter选中状态   完全交给sortAdapter维护
-                    safeUpdateSortAdapterSelection(position, tvRecyclerView);
+					App.showToastLong(HomeActivity.this, "4040040404");
+ 
                     if (isGridViewSafe()) {  //xuameng安全检查
+						                   
                         mHandler.removeCallbacks(mDataRunnable);
-                        mHandler.postDelayed(mDataRunnable, 200); //xuameng 延迟到下一个主线程周期执行
+                        mHandler.postDelayed(mDataRunnable, 20000); //xuameng 延迟到下一个主线程周期执行
                     }
                 }
             }
@@ -511,7 +514,7 @@ public class HomeActivity extends BaseActivity {
                 if (data.id.equals("my0")) {
                     if (Hawk.get(HawkConfig.HOME_REC, 0) == 1 && absXml != null && absXml.videoList != null && absXml.videoList.size() > 0) {
 						 App.showToastLong(HomeActivity.this, "101010101010");
-                       // fragments.add(UserFragment.newInstance(absXml.videoList));
+                        fragments.add(UserFragment.newInstance(absXml.videoList));
                     } else {
                         fragments.add(UserFragment.newInstance(null));
                     }
@@ -529,6 +532,7 @@ public class HomeActivity extends BaseActivity {
             } catch (Exception e) {
             }
             mViewPager.setPageTransformer(true, new DefaultTransformer());
+			App.showToastLong(HomeActivity.this, "202020202020");
             mViewPager.setAdapter(pageAdapter);
         // 关键修复：确保在ViewPager完成布局后再设置当前项
         mViewPager.post(new Runnable() {
@@ -675,6 +679,8 @@ public class HomeActivity extends BaseActivity {
 private Runnable mDataRunnable = new Runnable() {
     @Override
     public void run() {
+		App.showToastLong(HomeActivity.this, "5050505050");
+		safeUpdateSortAdapterSelection(position, tvRecyclerView);
         if (sortChange) {
             sortChange = false;
             
