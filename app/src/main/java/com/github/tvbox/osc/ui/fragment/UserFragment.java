@@ -101,6 +101,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
                 }
                 tvHotList1.setLayoutManager(new V7GridLayoutManager(this.mContext, spanCount));
             }
+			tvHotList1.setAdapter(homeHotVodAdapter); 
         } else {
             tvHotList1.setVisibility(View.GONE);
             tvHotList2.setVisibility(View.VISIBLE);
@@ -109,6 +110,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
             }
             //	tvHotList2.setHasFixedSize(true);      //xuameng不想显示单行
             //    tvHotList2.setLayoutManager(new V7GridLayoutManager(this.mContext, 5));
+			tvHotList2.setAdapter(homeHotVodAdapterxu); // ✅ 关键
         }
         super.onFragmentResume();
         if (Hawk.get(HawkConfig.HOME_REC, 0) == 2) {
@@ -374,7 +376,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
 
             }
         });
-        tvHotList1.setAdapter(homeHotVodAdapter);
+     //   tvHotList1.setAdapter(homeHotVodAdapter);
         tvHotList2.setOnItemListener(new TvRecyclerView.OnItemListener() {
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
@@ -391,7 +393,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
 
             }
         });
-        tvHotList2.setAdapter(homeHotVodAdapterxu); //xuameng首页单行
+       // tvHotList2.setAdapter(homeHotVodAdapterxu); //xuameng首页单行
 
         initHomeHotVodXu(homeHotVodAdapterxu); //xuameng首页单行
 
