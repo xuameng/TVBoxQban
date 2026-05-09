@@ -226,7 +226,7 @@ public class HomeActivity extends BaseActivity {
                     if (isGridViewSafe()) {  //xuameng安全检查
 						                   
                         mHandler.removeCallbacks(mDataRunnable);
-                        mHandler.postDelayed(mDataRunnable, 20000); //xuameng 延迟到下一个主线程周期执行
+                        mHandler.postDelayed(mDataRunnable, 2000); //xuameng 延迟到下一个主线程周期执行
                     }
                 }
             }
@@ -563,7 +563,7 @@ public class HomeActivity extends BaseActivity {
                             }
                         }
                     }
-                }, 5000); // 延迟100ms确保布局完成
+                }, 1000); // 延迟100ms确保布局完成
             }
         });
         }
