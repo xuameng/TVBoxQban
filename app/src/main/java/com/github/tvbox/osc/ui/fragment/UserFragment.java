@@ -78,7 +78,9 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
     }
 
     public static UserFragment newInstance(List<Movie.Video> recVod) {
+		if (tvHotList1.getLayoutManager() != null && tvHotList2.getLayoutManager() != null) {  //xuameng 新增防止LayoutManager为空
         return new UserFragment().setArguments(recVod);
+		}
     }
 
     public UserFragment setArguments(List<Movie.Video> recVod) {
