@@ -556,14 +556,14 @@ public class HomeActivity extends BaseActivity {
                     @Override
                     public void run() {
                         if (isViewPagerSafe() && isGridViewSafe()) {
-                            try {
+                            try {App.showToastLong(HomeActivity.this, "999999999999999");
                                 mViewPager.setCurrentItem(currentSelected, false);
                             } catch (Exception e) {
                                 App.showToastLong(HomeActivity.this, "999999999999999");
                             }
                         }
                     }
-                }, 1000); // 延迟100ms确保布局完成
+                }, 5000); // 延迟100ms确保布局完成
             }
         });
         }
