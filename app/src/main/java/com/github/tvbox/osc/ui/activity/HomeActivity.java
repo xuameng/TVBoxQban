@@ -531,7 +531,7 @@ public class HomeActivity extends BaseActivity {
     mHandler.postDelayed(new Runnable() {
         @Override
         public void run() {
-            App.showToastLong(HomeActivity.this, "50505050");
+            App.showToastLong(HomeActivity.this, "88888888888888");
             if (isGridViewSafe()) {  //xuameng安全检查
                 mViewPager.setCurrentItem(currentSelected, false);  //xuameng 关键findViewByPosition(int)' on a null object reference
             }
