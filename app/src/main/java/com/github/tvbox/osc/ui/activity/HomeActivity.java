@@ -171,16 +171,7 @@ public class HomeActivity extends BaseActivity {
             @Override
             public void onChanged() {
                 if (!mGridViewHasFocus) {  //xuameng主页没有拥有焦点时执行
-    mHandler.postDelayed(new Runnable() {
-        @Override
-        public void run() {
-            App.showToastLong(HomeActivity.this, "88888888888888");
-            if (isGridViewSafe()) {  //xuameng安全检查
-                safeGridViewSetSelection(0);   //xuameng安全选择主页
-            }
-        }
-    }, 10000); 
-                    
+                    safeGridViewSetSelection(0);   //xuameng安全选择主页
                 }
             }
         });
@@ -215,18 +206,11 @@ public class HomeActivity extends BaseActivity {
                     HomeActivity.this.sortFocusView = view;
                     HomeActivity.this.sortFocused = position;
                     //xuameng 安全地更新Adapter选中状态   完全交给sortAdapter维护
-    mHandler.postDelayed(new Runnable() {
-        @Override
-        public void run() {
-            App.showToastLong(HomeActivity.this, "565656556");
                     safeUpdateSortAdapterSelection(position, tvRecyclerView);
                     if (isGridViewSafe()) {  //xuameng安全检查
                         mHandler.removeCallbacks(mDataRunnable);
                         mHandler.postDelayed(mDataRunnable, 200); //xuameng 延迟到下一个主线程周期执行
                     }
-        }
-    }, 10000); 
-
                 }
             }
 
@@ -525,7 +509,14 @@ public class HomeActivity extends BaseActivity {
             for (MovieSort.SortData data : sortAdapter.getData()) {
                 if (data.id.equals("my0")) {
                     if (Hawk.get(HawkConfig.HOME_REC, 0) == 1 && absXml != null && absXml.videoList != null && absXml.videoList.size() > 0) {
-                        fragments.add(UserFragment.newInstance(absXml.videoList));
+    mHandler.postDelayed(new Runnable() {
+        @Override
+        public void run() {
+            App.showToastLong(HomeActivity.this, "565656556");
+			fragments.add(UserFragment.newInstance(absXml.videoList));
+        }
+    }, 5000); 
+                        
                     } else {
                         fragments.add(UserFragment.newInstance(null));
                     }
