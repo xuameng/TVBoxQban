@@ -509,10 +509,10 @@ public class HomeActivity extends BaseActivity {
             for (MovieSort.SortData data : sortAdapter.getData()) {
                 if (data.id.equals("my0")) {
                 // ✅ 进入页面前先清空旧数据
-            //    List<?> videoList = null;
-            //    if (absXml != null && absXml.videoList != null) {
-            //        videoList = new ArrayList<>(absXml.videoList);
-            //    }
+                List<?> videoList = null;
+                if (absXml != null && absXml.videoList != null) {
+                    videoList = new ArrayList<>(absXml.videoList);
+                }
                     if (Hawk.get(HawkConfig.HOME_REC, 0) == 1 && absXml != null && absXml.videoList != null && absXml.videoList.size() > 0) {
                         fragments.add(UserFragment.newInstance(absXml.videoList));
                     } else {
