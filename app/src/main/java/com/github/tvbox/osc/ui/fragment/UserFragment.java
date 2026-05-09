@@ -131,7 +131,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
 
         homeHotVodAdapter = new HomeHotVodAdapter(isFolederMode(), style);
         homeHotVodAdapterxu = new HomeHotVodAdapterXu(isFolederMode(), style);
-
+tvHotList1.setItemAnimator(null);
         tvHotList1.setAdapter(homeHotVodAdapter);
         tvHotList2.setAdapter(homeHotVodAdapterxu);
 
@@ -150,7 +150,8 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
             if (style != null && Hawk.get(HawkConfig.HOME_REC, 0) == 1) {
                 spanCount = ImgUtilHot.spanCountByStyle(style, spanCount);
             }
-            tvHotList1.setLayoutManager(new V7GridLayoutManager(mContext, spanCount));
+	    safeSetLayoutManager(tvHotList1,
+    new V7GridLayoutManager(mContext, spanCount));
         }
     }
 
@@ -437,6 +438,11 @@ private ArrayList<Movie.Video> loadHots(String json) {
     public boolean isFolederMode() {
         return style != null && "list".equals(style.type);
     }
+private void safeSetLayoutManager(TvRecyclerView rv, RecyclerView.LayoutManager lm) {
+    if (rv != null && rv.getLayoutManager() == null) {
+        rv.setLayoutManager(lm);
+    }
+}
 
     private View.OnFocusChangeListener focusChangeListener =
         (v, hasFocus) -> v.animate()
