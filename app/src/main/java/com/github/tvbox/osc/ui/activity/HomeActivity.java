@@ -92,8 +92,8 @@ import java.util.List;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 /**
  * @author xuameng
- * @date :2026/04/25
- * @description:  焦点状态全面修复，各种BUG修复
+ * @date :2026/05/08
+ * @description:  焦点状态全面修复，各种BUG修复   关键findViewByPosition(int)' on a null object reference
  */
 public class HomeActivity extends BaseActivity {
     private LinearLayout topLayout;
@@ -116,7 +116,6 @@ public class HomeActivity extends BaseActivity {
     private final Handler mHandler = new Handler();
     private long mExitTime = 0;
     private boolean mGridViewHasFocus = false;  //xuameng 判断 mGridView主页是否拥有焦点
-    private boolean hasSetCurrentItemOnce = false; //xuameng 判断SetCurrentItem是否执行过，解决findViewByPosition空指针
     private static final int REQUEST_CODE_RECORD_AUDIO = 1001; //xuameng获取音频权限
     private static final String TAG = "PermissionHelper";//xuameng获取音频权限
     private static final int MARSHMALLOW = Build.VERSION_CODES.M;  //xuameng获取音频权限
@@ -143,10 +142,6 @@ public class HomeActivity extends BaseActivity {
 
     @Override
     protected void init() {
-		App.showToastLong(HomeActivity.this, "4444");
-	currentSelected = 0;
-  sortFocused = 0;
-		hasSetCurrentItemOnce = false;
         EventBus.getDefault().register(this);
         ControlManager.get().startServer();
         initView();
@@ -338,7 +333,6 @@ public class HomeActivity extends BaseActivity {
                 } else {
                     sortAdapter.setNewData(DefaultConfig.adjustSort(ApiConfig.get().getHomeSourceBean().getKey(), new ArrayList<>(), true));
                 }
-				App.showToastLong(HomeActivity.this, "6666");
                 initViewPager(absXml);
             }
         });
@@ -514,6 +508,11 @@ public class HomeActivity extends BaseActivity {
         if (sortAdapter.getData().size() > 0) {
             for (MovieSort.SortData data : sortAdapter.getData()) {
                 if (data.id.equals("my0")) {
+                // ✅ 进入页面前先清空旧数据
+            //    List<?> videoList = null;
+            //    if (absXml != null && absXml.videoList != null) {
+            //        videoList = new ArrayList<>(absXml.videoList);
+            //    }
                     if (Hawk.get(HawkConfig.HOME_REC, 0) == 1 && absXml != null && absXml.videoList != null && absXml.videoList.size() > 0) {
                         fragments.add(UserFragment.newInstance(absXml.videoList));
                     } else {
@@ -532,11 +531,11 @@ public class HomeActivity extends BaseActivity {
                 scroller.setmDuration(300);
             } catch (Exception e) {
             }
-			App.showToastLong(HomeActivity.this, "5555");
-			hasSetCurrentItemOnce = false;
             mViewPager.setPageTransformer(true, new DefaultTransformer());
             mViewPager.setAdapter(pageAdapter);
-            mViewPager.setCurrentItem(currentSelected, false);
+            if (isGridViewSafe()) && isViewPagerSafe()) {  //xuameng安全检查
+                mViewPager.setCurrentItem(currentSelected, false);  //xuameng 关键findViewByPosition(int)' on a null object reference
+            }
         }
     }
 
@@ -667,7 +666,6 @@ public class HomeActivity extends BaseActivity {
                 sortChange = false;
                 // 防御：ViewPager 尚未初始化
                 if (mViewPager == null || mViewPager.getAdapter() == null) {
-                    changeTop(sortFocused != 0);
                     return;
                 }
                 if (sortFocused != currentSelected) {
@@ -678,35 +676,8 @@ public class HomeActivity extends BaseActivity {
                         changeTop(sortFocused != 0);
                         return;
                     }
-                    if (isGridViewSafe() && hasSetCurrentItemOnce) {   //xuameng 判断SetCurrentItem是否执行过，解决findViewByPosition空指针
-                        // 如果已经执行过一次，无条件执行
-						App.showToastLong(HomeActivity.this, "1111111111");
-    mHandler.postDelayed(new Runnable() {
-        @Override
-        public void run() {
-            if (isGridViewSafe()) { // 执行前再次安全检查
-             //   mViewPager.setCurrentItem(sortFocused, false);
-            }
-        }
-    }, 1000); // 延时2000毫秒（2秒）
-                       // mViewPager.setCurrentItem(sortFocused, false);
-                    } else {
-                        // 第一次执行，需要满足原有安全条件
-                        if (isGridViewSafe() && sortFocused != 0) {   //xuameng 第一次主页上不执行 解决findViewByPosition空指针
-							App.showToastLong(HomeActivity.this, "22222222222222222");
-    mHandler.postDelayed(new Runnable() {
-        @Override
-        public void run() {
-            if (isGridViewSafe()) { // 执行前再次安全检查
-                mViewPager.setCurrentItem(sortFocused, false);
-            }
-        }
-    }, 1000); // 延时2000毫秒（2秒）
-                          //  mViewPager.setCurrentItem(sortFocused, false);
-
-                            // 标记已执行过
-                            hasSetCurrentItemOnce = true;
-                        }
+                    if (isGridViewSafe() && isViewPagerSafe()) {
+                        mViewPager.setCurrentItem(sortFocused, false);  //xuameng 关键findViewByPosition(int)' on a null object reference
                     }
                 }
                 changeTop(sortFocused != 0);
@@ -1019,6 +990,14 @@ public class HomeActivity extends BaseActivity {
                 && mGridView.getAdapter() != null;
     }
 
+private boolean isViewPagerSafe() {
+    return mViewPager != null
+            && mViewPager.getAdapter() != null
+            && mViewPager.getAdapter().getCount() > 0
+            && !isFinishing()
+            && !isDestroyed()
+            && mViewPager.isAttachedToWindow();
+}
 
     private void safeGridViewSetSelection(int pos) {  //xuameng安全选择
         if (!isGridViewSafe()) return;
