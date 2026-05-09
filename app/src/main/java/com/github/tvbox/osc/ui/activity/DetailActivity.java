@@ -95,8 +95,8 @@ import android.graphics.Typeface;
 import androidx.recyclerview.widget.RecyclerView;
 import com.github.tvbox.osc.util.ImgUtilDetail;   //xuameng base64图片
 /**
- * @author pj567
- * @date :2020/12/22
+ * @author xuameng
+ * @date :2025/05/07 配置中心判断
  * @description:
  */
 
