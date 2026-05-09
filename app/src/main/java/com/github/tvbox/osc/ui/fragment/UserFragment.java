@@ -39,6 +39,8 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.io.File;
+import java.util.ArrayList;
 
 public class UserFragment extends BaseLazyFragment implements View.OnClickListener {
 
@@ -198,7 +200,114 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
         }
         adapter.setNewData(list);
     }
+private void setDouBanData(HomeHotVodAdapter adapter) {
+    try {
+        Calendar cal = Calendar.getInstance();
+        int year = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH) + 1;
+        int day = cal.get(Calendar.DATE);
+        String today = String.format("%d%d%d", year, month, day);
+        String requestDay = Hawk.get("home_hot_day", "");
 
+        if (requestDay.equals(today)) {
+            String json = Hawk.get("home_hot", "");
+            if (!json.isEmpty()) {
+                adapter.setNewData(loadHots(json));
+                return;
+            }
+        }
+
+        String doubanUrl =
+            "https://movie.douban.com/j/new_search_subjects?" +
+            "sort=U&range=0,10&tags=&playable=1&start=0&year_range=" + year + "," + year;
+
+        OkGo.<String>get(doubanUrl)
+            .headers("User-Agent", UA.randomOne())
+            .execute(new AbsCallback<String>() {
+
+                @Override
+                public void onSuccess(Response<String> response) {
+                    String netJson = response.body();
+                    Hawk.put("home_hot_day", today);
+                    Hawk.put("home_hot", netJson);
+                    mActivity.runOnUiThread(() ->
+                        adapter.setNewData(loadHots(netJson))
+                    );
+                }
+
+                @Override
+                public String convertResponse(okhttp3.Response response) throws Throwable {
+                    return response.body().string();
+                }
+            });
+    } catch (Throwable th) {
+        th.printStackTrace();
+    }
+}
+
+private void setDouBanDataXu(HomeHotVodAdapterXu adapter) {
+    try {
+        Calendar cal = Calendar.getInstance();
+        int year = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH) + 1;
+        int day = cal.get(Calendar.DATE);
+        String today = String.format("%d%d%d", year, month, day);
+        String requestDay = Hawk.get("home_hot_day", "");
+
+        if (requestDay.equals(today)) {
+            String json = Hawk.get("home_hot", "");
+            if (!json.isEmpty()) {
+                adapter.setNewData(loadHots(json));
+                return;
+            }
+        }
+
+        String doubanUrl =
+            "https://movie.douban.com/j/new_search_subjects?" +
+            "sort=U&range=0,10&tags=&playable=1&start=0&year_range=" + year + "," + year;
+
+        OkGo.<String>get(doubanUrl)
+            .headers("User-Agent", UA.randomOne())
+            .execute(new AbsCallback<String>() {
+
+                @Override
+                public void onSuccess(Response<String> response) {
+                    String netJson = response.body();
+                    Hawk.put("home_hot_day", today);
+                    Hawk.put("home_hot", netJson);
+                    mActivity.runOnUiThread(() ->
+                        adapter.setNewData(loadHots(netJson))
+                    );
+                }
+
+                @Override
+                public String convertResponse(okhttp3.Response response) throws Throwable {
+                    return response.body().string();
+                }
+            });
+    } catch (Throwable th) {
+        th.printStackTrace();
+    }
+}
+
+private ArrayList<Movie.Video> loadHots(String json) {
+    ArrayList<Movie.Video> result = new ArrayList<>();
+    try {
+        JsonObject infoJson = new Gson().fromJson(json, JsonObject.class);
+        JsonArray array = infoJson.getAsJsonArray("data");
+        for (JsonElement ele : array) {
+            JsonObject obj = (JsonObject) ele;
+            Movie.Video vod = new Movie.Video();
+            vod.name = obj.get("title").getAsString();
+            vod.note = obj.get("rate").getAsString() + " 分";
+            vod.pic = obj.get("cover").getAsString()
+                + "@User-Agent=" + UA.randomOne()
+                + "@Referer=https://www.douban.com/";
+            result.add(vod);
+        }
+    } catch (Throwable ignored) {}
+    return result;
+}
     /* ================= 事件 ================= */
 
     private void initListeners() {
