@@ -142,6 +142,7 @@ public class HomeActivity extends BaseActivity {
 
     @Override
     protected void init() {
+		setupExceptionHandler(); // 添加这行
         EventBus.getDefault().register(this);
         ControlManager.get().startServer();
         initView();
@@ -508,15 +509,10 @@ public class HomeActivity extends BaseActivity {
         if (sortAdapter.getData().size() > 0) {
             for (MovieSort.SortData data : sortAdapter.getData()) {
                 if (data.id.equals("my0")) {
-                // ✅ 进入页面前先清空旧数据
-                List<?> videoList = null;
-                if (absXml != null && absXml.videoList != null) {
-                    videoList = new ArrayList<>(absXml.videoList);
-                }
                     if (Hawk.get(HawkConfig.HOME_REC, 0) == 1 && absXml != null && absXml.videoList != null && absXml.videoList.size() > 0) {
                         fragments.add(UserFragment.newInstance(absXml.videoList));
                     } else {
-                      //  fragments.add(UserFragment.newInstance(null));
+                        fragments.add(UserFragment.newInstance(null));
                     }
                 } else {
                     fragments.add(GridFragment.newInstance(data));
@@ -533,11 +529,9 @@ public class HomeActivity extends BaseActivity {
             }
             mViewPager.setPageTransformer(true, new DefaultTransformer());
             mViewPager.setAdapter(pageAdapter);
-mViewPager.post(() -> {
-    if (isViewPagerSafe()) {
-        mViewPager.setCurrentItem(currentSelected, false);
-    }
-});
+            if (isGridViewSafe()) {  //xuameng安全检查
+                mViewPager.setCurrentItem(currentSelected, false);  //xuameng 关键findViewByPosition(int)' on a null object reference
+            }
         }
     }
 
@@ -678,11 +672,9 @@ mViewPager.post(() -> {
                         changeTop(sortFocused != 0);
                         return;
                     }
-     mViewPager.post(() -> {
-    if (isViewPagerSafe()) {
-        mViewPager.setCurrentItem(sortFocused, false);
-    }
-});
+                    if (isGridViewSafe()) {
+                        mViewPager.setCurrentItem(sortFocused, false);  //xuameng 关键findViewByPosition(int)' on a null object reference
+                    }
                 }
                 changeTop(sortFocused != 0);
             }
@@ -994,14 +986,6 @@ mViewPager.post(() -> {
                 && mGridView.getAdapter() != null;
     }
 
-private boolean isViewPagerSafe() {
-    return mViewPager != null
-            && mViewPager.getAdapter() != null
-            && mViewPager.getAdapter().getCount() > 0
-            && !isFinishing()
-            && !isDestroyed()
-            && mViewPager.isAttachedToWindow();
-}
 
     private void safeGridViewSetSelection(int pos) {  //xuameng安全选择
         if (!isGridViewSafe()) return;
@@ -1011,6 +995,50 @@ private boolean isViewPagerSafe() {
             }
         });
     }
-
+// 在HomeActivity类中添加全局异常处理器
+private void setupExceptionHandler() {
+    Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+        @Override
+        public void uncaughtException(Thread thread, Throwable throwable) {
+            LOG.e("HomeActivity未捕获异常: ");
+            throwable.printStackTrace();
+            
+            // 如果是LayoutManager相关的空指针异常，尝试恢复
+            if (throwable instanceof NullPointerException) {
+                String stackTrace = Log.getStackTraceString(throwable);
+                if (stackTrace.contains("findViewByPosition") || 
+                    stackTrace.contains("LayoutManager")) {
+                    
+                    mHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            // 尝试重新初始化关键组件
+                            if (mGridView != null && mGridView.getLayoutManager() == null) {
+                                mGridView.setLayoutManager(new V7LinearLayoutManager(mContext, 0, false));
+                            }
+                            
+                            if (mViewPager != null && mViewPager.getAdapter() == null && pageAdapter != null) {
+                                mViewPager.setAdapter(pageAdapter);
+                            }
+                            
+                            // 重置状态
+                            sortChange = false;
+                            currentSelected = 0;
+                            sortFocused = 0;
+                        }
+                    });
+                }
+            }
+            
+            // 重新启动Activity
+            Intent intent = new Intent(mContext, HomeActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | 
+                          Intent.FLAG_ACTIVITY_NEW_TASK | 
+                          Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
+        }
+    });
+}
 
 }
