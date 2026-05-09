@@ -10,6 +10,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -1044,14 +1045,28 @@ private Runnable mDataRunnable = new Runnable() {
         }
     }
 
-    private boolean isGridViewSafe() {  //xuameng安全检查
-        return mGridView != null 
-                && !isFinishing() 
-                && !isDestroyed()
-                && mGridView.isAttachedToWindow()
-                && mGridView.getLayoutManager() != null
-                && mGridView.getAdapter() != null;
-    }
+private boolean isGridViewSafe() {
+    return mGridView != null 
+            && !isFinishing() 
+            && !isDestroyed()
+            && mGridView.isAttachedToWindow()
+            && mGridView.getLayoutManager() != null
+            && mGridView.getAdapter() != null
+            && !mGridView.isLayoutRequested()  // 新增：检查是否正在请求布局
+            && !mGridView.isInLayout();        // 新增：检查是否正在布局过程中
+}
+
+private boolean isViewPagerSafe() {
+    return mViewPager != null
+            && mViewPager.getAdapter() != null
+            && mViewPager.getAdapter().getCount() > 0
+            && !isFinishing()
+            && !isDestroyed()
+            && mViewPager.isAttachedToWindow()
+            && !mGridView.isLayoutRequested()  // 新增：检查是否正在请求布局
+            && !mGridView.isInLayout();        // 新增：检查是否正在布局过程中
+}
+
 
 
     private void safeGridViewSetSelection(int pos) {  //xuameng安全选择
