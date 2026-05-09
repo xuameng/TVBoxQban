@@ -209,7 +209,20 @@ public class HomeActivity extends BaseActivity {
                     HomeActivity.this.sortFocused = position;
                     //xuameng 安全地更新Adapter选中状态   完全交给sortAdapter维护
 					App.showToastLong(HomeActivity.this, "4040040404");
- 
+ 		   mHandler.postDelayed(new Runnable() {
+        @Override
+        public void run() {
+            // 【关键】执行前检查页面状态，防止内存泄漏或崩溃
+            if (isFinishing() || isDestroyed()) {
+                return;
+            }
+            App.showToastLong(HomeActivity.this, "50505050");
+            // 检查参数有效性
+            if (tvRecyclerView != null) {
+                safeUpdateSortAdapterSelection(position, tvRecyclerView);
+            }
+        }
+    }, 2000); // 2000毫秒 = 2秒
                     if (isGridViewSafe()) {  //xuameng安全检查
 						                   
                         mHandler.removeCallbacks(mDataRunnable);
@@ -680,7 +693,6 @@ private Runnable mDataRunnable = new Runnable() {
     @Override
     public void run() {
 		App.showToastLong(HomeActivity.this, "5050505050");
-		safeUpdateSortAdapterSelection(position, tvRecyclerView);
         if (sortChange) {
             sortChange = false;
             
