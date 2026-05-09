@@ -142,6 +142,7 @@ public class HomeActivity extends BaseActivity {
 
     @Override
     protected void init() {
+        setupExceptionHandler(); // 异常捕获
         EventBus.getDefault().register(this);
         ControlManager.get().startServer();
         initView();
@@ -528,11 +529,9 @@ public class HomeActivity extends BaseActivity {
             }
             mViewPager.setPageTransformer(true, new DefaultTransformer());
             mViewPager.setAdapter(pageAdapter);
-mHandler.post(() -> {
-    if (isGridViewSafe()) {
-        mViewPager.setCurrentItem(currentSelected, false);
-    }
-});
+            if (isGridViewSafe()) {  //xuameng安全检查
+                mViewPager.setCurrentItem(currentSelected, false);  //xuameng 关键findViewByPosition(int)' on a null object reference
+            }
         }
     }
 
@@ -997,5 +996,37 @@ mHandler.post(() -> {
         });
     }
 
+    // 在HomeActivity类中添加全局异常处理器
+    private void setupExceptionHandler() {
+        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+            @Override
+            public void uncaughtException(Thread thread, Throwable throwable) {
+                LOG.e("HomeActivity未捕获异常: ");
+                throwable.printStackTrace();
+            
+                // 如果是LayoutManager相关的空指针异常，重启
+                if (throwable instanceof NullPointerException) {
+                    String stackTrace = Log.getStackTraceString(throwable);
+                    if (stackTrace.contains("findViewByPosition") || 
+                        stackTrace.contains("LayoutManager")) {
+                        App.showToastShort(HomeActivity.this, "聚汇影视提示：数据加载错误！将在两秒后重启应用！");
+                        mHandler.removeCallbacksAndMessages(null);
+                        mHandler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                Intent intent = new Intent(mContext, HomeActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                startActivity(intent);
+                                finish();
+                                // 强制停止当前进程
+                                android.os.Process.killProcess(android.os.Process.myPid());
+                                System.exit(0);
+                            }
+                        }, 2000);
+                    }
+                }            
+            }
+        });
+    }
 
 }
