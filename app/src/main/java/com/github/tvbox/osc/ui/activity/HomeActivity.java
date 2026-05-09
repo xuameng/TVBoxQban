@@ -93,7 +93,7 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 /**
  * @author xuameng
  * @date :2026/05/08
- * @description:  焦点状态全面修复，各种BUG修复   关键findViewByPosition(int)' on a null object reference
+ * @description:  焦点状态全面修复
  */
 public class HomeActivity extends BaseActivity {
     private LinearLayout topLayout;
@@ -167,7 +167,7 @@ public class HomeActivity extends BaseActivity {
         this.mGridView.setSpacingWithMargins(0, AutoSizeUtils.dp2px(this.mContext, 10.0f));
         this.mGridView.setAdapter(this.sortAdapter);
         this.mGridView.setItemAnimator(null);   //xuameng 取消Item动画 闹腾
-        sortAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {     //xuameng主页默认焦点
+        sortAdapter.registerAdapterDataObserver(new TvRecyclerView.AdapterDataObserver() {     //xuameng主页默认焦点
             @Override
             public void onChanged() {
                 mGridView.post(() -> {
