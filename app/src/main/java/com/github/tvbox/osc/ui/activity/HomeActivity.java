@@ -527,7 +527,7 @@ public class HomeActivity extends BaseActivity {
                 if (data.id.equals("my0")) {
                     if (Hawk.get(HawkConfig.HOME_REC, 0) == 1 && absXml != null && absXml.videoList != null && absXml.videoList.size() > 0) {
 						 App.showToastLong(HomeActivity.this, "101010101010");
-                        fragments.add(UserFragment.newInstance(absXml.videoList));
+                        fragments.add(UserFragment.newInstance(null));
                     } else {
                         fragments.add(UserFragment.newInstance(null));
                     }
@@ -545,7 +545,7 @@ public class HomeActivity extends BaseActivity {
             } catch (Exception e) {
             }
             mViewPager.setPageTransformer(true, new DefaultTransformer());
-			App.showToastLong(HomeActivity.this, "202020202020");
+			
             mViewPager.setAdapter(pageAdapter);
         // 关键修复：确保在ViewPager完成布局后再设置当前项
         mViewPager.post(new Runnable() {
@@ -556,14 +556,14 @@ public class HomeActivity extends BaseActivity {
                     @Override
                     public void run() {
                         if (isViewPagerSafe() && isGridViewSafe()) {
-                            try {App.showToastLong(HomeActivity.this, "999999999999999");
+                            try {
                                 mViewPager.setCurrentItem(currentSelected, false);
                             } catch (Exception e) {
-                                App.showToastLong(HomeActivity.this, "999999999999999");
+                                
                             }
                         }
                     }
-                }, 5000); // 延迟100ms确保布局完成
+                }, 1000); // 延迟100ms确保布局完成
             }
         });
         }
