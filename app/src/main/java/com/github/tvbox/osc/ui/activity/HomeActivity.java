@@ -940,12 +940,20 @@ public class HomeActivity extends BaseActivity {
                     String stackTrace = Log.getStackTraceString(throwable);
                     if (stackTrace.contains("findViewByPosition") || 
                         stackTrace.contains("LayoutManager")) {
-                        Intent intent = new Intent(App.getInstance(), HomeActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        startActivity(intent);
-                        // 强制停止当前进程
-                        android.os.Process.killProcess(android.os.Process.myPid());
-                        System.exit(0);
+                        App.showToastShort(HomeActivity.this, "聚汇影视提示：数据加载错误！将在两秒后重启应用！");
+                        mHandler.removeCallbacksAndMessages(null);
+                        mHandler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                Intent intent = new Intent(mContext, HomeActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                startActivity(intent);
+                                finish();
+                                // 强制停止当前进程
+                                android.os.Process.killProcess(android.os.Process.myPid());
+                                System.exit(0);
+                            }
+                        }, 2000);
                     }
                 }            
             }
