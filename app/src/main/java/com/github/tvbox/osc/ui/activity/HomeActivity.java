@@ -1030,13 +1030,15 @@ private void setupExceptionHandler() {
                 }
             }
             
-            // 重新启动Activity
-            Intent intent = new Intent(mContext, HomeActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | 
-                          Intent.FLAG_ACTIVITY_NEW_TASK | 
-                          Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-            finish();
+
+        Intent intent = new Intent(this, HomeActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
+        
+        // 强制停止当前进程
+        android.os.Process.killProcess(android.os.Process.myPid());
+        System.exit(0);
         }
     });
 }
