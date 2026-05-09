@@ -208,7 +208,7 @@ public class HomeActivity extends BaseActivity {
                     HomeActivity.this.sortFocusView = view;
                     HomeActivity.this.sortFocused = position;
                     //xuameng 安全地更新Adapter选中状态   完全交给sortAdapter维护
-					App.showToastLong(HomeActivity.this, "4040040404");
+					
  		   mHandler.postDelayed(new Runnable() {
         @Override
         public void run() {
@@ -216,7 +216,7 @@ public class HomeActivity extends BaseActivity {
             if (isFinishing() || isDestroyed()) {
                 return;
             }
-            App.showToastLong(HomeActivity.this, "50505050");
+            
             // 检查参数有效性
             if (tvRecyclerView != null) {
                 safeUpdateSortAdapterSelection(position, tvRecyclerView);
