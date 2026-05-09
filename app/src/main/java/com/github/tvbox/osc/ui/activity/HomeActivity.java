@@ -685,7 +685,7 @@ public class HomeActivity extends BaseActivity {
         @Override
         public void run() {
             if (isGridViewSafe()) { // 执行前再次安全检查
-                mViewPager.setCurrentItem(sortFocused, false);
+             //   mViewPager.setCurrentItem(sortFocused, false);
             }
         }
     }, 1000); // 延时2000毫秒（2秒）
