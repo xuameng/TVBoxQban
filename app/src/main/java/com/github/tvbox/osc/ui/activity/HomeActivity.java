@@ -142,7 +142,6 @@ public class HomeActivity extends BaseActivity {
 
     @Override
     protected void init() {
-		setupExceptionHandler(); // 添加这行
         EventBus.getDefault().register(this);
         ControlManager.get().startServer();
         initView();
@@ -655,31 +654,99 @@ public class HomeActivity extends BaseActivity {
         }
     }
 
-    private Runnable mDataRunnable = new Runnable() {
-        @Override
-        public void run() {
-            if (sortChange) {
-                sortChange = false;
-                // 防御：ViewPager 尚未初始化
-                if (mViewPager == null || mViewPager.getAdapter() == null) {
+private Runnable mDataRunnable = new Runnable() {
+    @Override
+    public void run() {
+        if (sortChange) {
+            sortChange = false;
+            
+            // 1. 增强安全检查
+            if (mViewPager == null || mViewPager.getAdapter() == null || 
+                !isViewPagerSafe() || !isGridViewSafe()) {
+                
+                return;
+            }
+            
+            // 2. 检查ViewPager是否正在布局
+            if (mViewPager.isLayoutRequested() || mViewPager.isInLayout()) {
+               
+                mHandler.postDelayed(this, 50); // 延迟50ms重试
+                return;
+            }
+            
+            // 3. 检查RecyclerView的LayoutManager状态
+            if (mGridView != null) {
+                // 确保LayoutManager已完全初始化
+                if (mGridView.getLayoutManager() == null) {
+                  
+                    mHandler.postDelayed(this, 50);
                     return;
                 }
-                if (sortFocused != currentSelected) {
-                    currentSelected = sortFocused;
-                    // 确保 position 合法
-                    int count = mViewPager.getAdapter().getCount();
-                    if (sortFocused < 0 || sortFocused >= count) {
-                        changeTop(sortFocused != 0);
-                        return;
+                
+                // 检查是否在布局过程中
+                if (mGridView.isLayoutRequested() || mGridView.isInLayout()) {
+                  
+                    mHandler.postDelayed(this, 50);
+                    return;
+                }
+            }
+            
+            if (sortFocused != currentSelected) {
+                currentSelected = sortFocused;
+                int count = mViewPager.getAdapter().getCount();
+                
+                if (sortFocused < 0 || sortFocused >= count) {
+                    changeTop(sortFocused != 0);
+                    return;
+                }
+                
+                // 4. 使用try-catch包装关键操作
+                try {
+                    // 确保在主线程安全执行
+                    if (Looper.myLooper() == Looper.getMainLooper()) {
+                        mViewPager.setCurrentItem(sortFocused, false);
+                    } else {
+                        mHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    mViewPager.setCurrentItem(sortFocused, false);
+                                } catch (Exception e) {
+                                   
+                                }
+                            }
+                        });
                     }
-                    if (isGridViewSafe()) {
-                        mViewPager.setCurrentItem(sortFocused, false);  //xuameng 关键findViewByPosition(int)' on a null object reference
+                } catch (Exception e) {
+                   
+                    e.printStackTrace();
+                    
+                    // 5. 异常恢复机制
+                    if (e instanceof NullPointerException) {
+                        String stackTrace = Log.getStackTraceString(e);
+                        if (stackTrace.contains("LayoutManager") || stackTrace.contains("findViewByPosition")) {
+                            // 重新初始化GridView的LayoutManager
+                            mHandler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (mGridView != null && mGridView.getLayoutManager() == null) {
+                                        mGridView.setLayoutManager(new V7LinearLayoutManager(mContext, 0, false));
+                                    }
+                                    // 重试一次
+                                    if (sortChange) {
+                                        mHandler.postDelayed(mDataRunnable, 100);
+                                    }
+                                }
+                            }, 100);
+                        }
                     }
                 }
                 changeTop(sortFocused != 0);
             }
         }
-    };
+    }
+};
+
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
@@ -995,52 +1062,6 @@ public class HomeActivity extends BaseActivity {
             }
         });
     }
-// 在HomeActivity类中添加全局异常处理器
-private void setupExceptionHandler() {
-    Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-        @Override
-        public void uncaughtException(Thread thread, Throwable throwable) {
-            LOG.e("HomeActivity未捕获异常: ");
-            throwable.printStackTrace();
-            
-            // 如果是LayoutManager相关的空指针异常，尝试恢复
-            if (throwable instanceof NullPointerException) {
-                String stackTrace = Log.getStackTraceString(throwable);
-                if (stackTrace.contains("findViewByPosition") || 
-                    stackTrace.contains("LayoutManager")) {
-                    
-                    mHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            // 尝试重新初始化关键组件
-                            if (mGridView != null && mGridView.getLayoutManager() == null) {
-                                mGridView.setLayoutManager(new V7LinearLayoutManager(mContext, 0, false));
-                            }
-                            
-                            if (mViewPager != null && mViewPager.getAdapter() == null && pageAdapter != null) {
-                                mViewPager.setAdapter(pageAdapter);
-                            }
-                            
-                            // 重置状态
-                            sortChange = false;
-                            currentSelected = 0;
-                            sortFocused = 0;
-                        }
-                    });
-                }
-            }
-            
 
-        Intent intent = new Intent(mContext, HomeActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-        finish();
-        
-        // 强制停止当前进程
-        android.os.Process.killProcess(android.os.Process.myPid());
-        System.exit(0);
-        }
-    });
-}
 
 }
