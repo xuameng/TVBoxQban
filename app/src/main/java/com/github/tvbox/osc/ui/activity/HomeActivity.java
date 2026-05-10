@@ -93,7 +93,7 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 /**
  * @author xuameng
  * @date :2026/05/08
- * @description:  焦点状态全面修复，各种BUG修复   关键findViewByPosition(int)' on a null object reference
+ * @description:  焦点状态全面修复
  */
 public class HomeActivity extends BaseActivity {
     private LinearLayout topLayout;
@@ -208,10 +208,8 @@ public class HomeActivity extends BaseActivity {
                     HomeActivity.this.sortFocused = position;
                     //xuameng 安全地更新Adapter选中状态   完全交给sortAdapter维护
                     safeUpdateSortAdapterSelection(position, tvRecyclerView);
-                    if (isGridViewSafe()) {  //xuameng安全检查
-                        mHandler.removeCallbacks(mDataRunnable);
-                        mHandler.postDelayed(mDataRunnable, 200); //xuameng 延迟到下一个主线程周期执行
-                    }
+                    mHandler.removeCallbacks(mDataRunnable);
+                    mHandler.postDelayed(mDataRunnable, 200); //xuameng 延迟到下一个主线程周期执行
                 }
             }
 
@@ -529,9 +527,7 @@ public class HomeActivity extends BaseActivity {
             }
             mViewPager.setPageTransformer(true, new DefaultTransformer());
             mViewPager.setAdapter(pageAdapter);
-            if (isGridViewSafe()) {  //xuameng安全检查
-                mViewPager.setCurrentItem(currentSelected, false);  //xuameng 关键findViewByPosition(int)' on a null object reference
-            }
+            mViewPager.setCurrentItem(currentSelected, false);  
         }
     }
 
@@ -571,19 +567,19 @@ public class HomeActivity extends BaseActivity {
             if (this.sortFocusView != null && !this.sortFocusView.isFocused()) {
                 if (currentView != null && PositionXu !=0) {   // xuameng防止空指针
                     //this.sortFocusView.requestFocus(); //xuameng这段代码手机使用时菜单失去焦点会闪退   
-                    safeGridViewSetSelection(PositionXu);   //xuameng处理手机滑动主页菜单失去焦点时按返回键闪退
+                    mGridView.setSelection(PositionXu);   //xuameng处理手机滑动主页菜单失去焦点时按返回键闪退
                 }
             }
             // 如果当前不是第一个界面，则将列表设置到第一项
             else if (this.sortFocused != 0) {
-                safeGridViewSetSelection(0);   //xuameng安全检查后选择
+                mGridView.setSelection(0);  
             } else {
                 exit();
             }
         } else if (baseLazyFragment instanceof UserFragment && UserFragment.tvHotList1.canScrollVertically(-1)) {
             // 如果 UserFragment 列表可以向上滚动，则滚动到顶部
             UserFragment.tvHotList1.scrollToPosition(0);
-            safeGridViewSetSelection(0);   //xuameng安全检查后选择
+            mGridView.setSelection(0);  
         } else {
             exit();
         }
@@ -660,21 +656,9 @@ public class HomeActivity extends BaseActivity {
         public void run() {
             if (sortChange) {
                 sortChange = false;
-                // 防御：ViewPager 尚未初始化
-                if (mViewPager == null || mViewPager.getAdapter() == null) {
-                    return;
-                }
                 if (sortFocused != currentSelected) {
                     currentSelected = sortFocused;
-                    // 确保 position 合法
-                    int count = mViewPager.getAdapter().getCount();
-                    if (sortFocused < 0 || sortFocused >= count) {
-                        changeTop(sortFocused != 0);
-                        return;
-                    }
-                    if (isGridViewSafe()) {
-                        mViewPager.setCurrentItem(sortFocused, false);  //xuameng 关键findViewByPosition(int)' on a null object reference
-                    }
+                    mViewPager.setCurrentItem(sortFocused, false); 
                 }
                 changeTop(sortFocused != 0);
             }
@@ -765,9 +749,6 @@ public class HomeActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         mHandler.removeCallbacksAndMessages(null);
-        if (mGridView != null) {
-            mGridView.setAdapter(null);   // xuameng防止 Fragment/Adapter 再回调
-        }
         EventBus.getDefault().unregister(this);
         AppManager.getInstance().appExit(0);
         ControlManager.get().stopServer();
@@ -839,18 +820,8 @@ public class HomeActivity extends BaseActivity {
         dataInitOk = true;
         skipNextUpdate=true;
         showSuccess();
-        mHandler.post(() -> {  //xuameng 安全检查后执行
-            if (isGridViewSafe()) {
-                sortAdapter.setNewData(
-                    DefaultConfig.adjustSort(
-                        ApiConfig.get().getHomeSourceBean().getKey(),
-                        new ArrayList<>(),
-                        true
-                    )
-                );
-                initViewPager(null);
-            }
-        });
+        sortAdapter.setNewData(DefaultConfig.adjustSort(ApiConfig.get().getHomeSourceBean().getKey(), new ArrayList<>(), true));
+        initViewPager(null);
         App.showToastShort(HomeActivity.this, "聚汇影视提示：已打断当前源加载！");
     }
 
@@ -962,37 +933,13 @@ public class HomeActivity extends BaseActivity {
      * 核心：避免在RecyclerView.isComputingLayout()时调用notifyItemChanged()
      */
     private void safeUpdateSortAdapterSelection(int position, TvRecyclerView recyclerView) {
-        if (recyclerView == null || !isGridViewSafe()) {
-            return;
-        }
-
         if (recyclerView.isComputingLayout() || recyclerView.isScrolling()) {
             recyclerView.post(() -> {
-                if (isGridViewSafe()) { //xuameng安全检查
-                    sortAdapter.setSelectedPosition(position);
-                }
+                sortAdapter.setSelectedPosition(position);
             });
         } else {
             sortAdapter.setSelectedPosition(position);
         }
-    }
-
-    private boolean isGridViewSafe() {  //xuameng安全检查
-        return mGridView != null 
-                && !isFinishing() 
-                && !isDestroyed()
-                && mGridView.isAttachedToWindow()
-                && mGridView.getLayoutManager() != null
-                && mGridView.getAdapter() != null;
-    }
-
-    private void safeGridViewSetSelection(int pos) {  //xuameng安全选择
-        if (!isGridViewSafe()) return;
-        mGridView.post(() -> {
-            if (isGridViewSafe()) {
-                mGridView.setSelection(pos);
-            }
-        });
     }
 
     // xuameng添加全局异常处理器
