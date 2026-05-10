@@ -172,7 +172,7 @@ public class HomeActivity extends BaseActivity {
             @Override
             public void onChanged() {
                 if (!mGridViewHasFocus) {  //xuameng主页没有拥有焦点时执行
-                    safeGridViewSetSelection(0);   //xuameng安全选择主页
+                    mGridView.setSelection(0);   //xuameng setSelectedPosition不能获取焦点
                 }
             }
         });
