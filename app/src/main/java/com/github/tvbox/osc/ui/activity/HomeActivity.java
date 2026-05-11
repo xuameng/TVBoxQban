@@ -318,8 +318,6 @@ public class HomeActivity extends BaseActivity {
 	private boolean skipNextUpdate = false;
 
     private void initViewModel() {
-		initViewPager(null);
-		sortAdapter.setNewData(DefaultConfig.adjustSort(ApiConfig.get().getHomeSourceBean().getKey(), new ArrayList<>(), true));
         sourceViewModel = new ViewModelProvider(this).get(SourceViewModel.class);
         sourceViewModel.sortResult.observe(this, new Observer<AbsSortXml>() {
             @Override
@@ -331,10 +329,12 @@ public class HomeActivity extends BaseActivity {
                 showSuccess();
                 if (absXml != null && absXml.classes != null && absXml.classes.sortList != null) {
                     sortAdapter.setNewData(DefaultConfig.adjustSort(ApiConfig.get().getHomeSourceBean().getKey(), absXml.classes.sortList, true));
+					initViewPager(absXml);
                 } else {
                     sortAdapter.setNewData(DefaultConfig.adjustSort(ApiConfig.get().getHomeSourceBean().getKey(), new ArrayList<>(), true));
+					initViewPager(null);
                 }
-                initViewPager(absXml);
+                
             }
         });
     }
