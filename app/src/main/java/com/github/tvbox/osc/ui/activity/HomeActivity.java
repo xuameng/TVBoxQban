@@ -329,12 +329,10 @@ public class HomeActivity extends BaseActivity {
                 showSuccess();
                 if (absXml != null && absXml.classes != null && absXml.classes.sortList != null) {
                     sortAdapter.setNewData(DefaultConfig.adjustSort(ApiConfig.get().getHomeSourceBean().getKey(), absXml.classes.sortList, true));
-					initViewPager(absXml);
                 } else {
                     sortAdapter.setNewData(DefaultConfig.adjustSort(ApiConfig.get().getHomeSourceBean().getKey(), new ArrayList<>(), true));
-					initViewPager(null);
                 }
-                
+                initViewPager(absXml);
             }
         });
     }
