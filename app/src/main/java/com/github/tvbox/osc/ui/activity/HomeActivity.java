@@ -318,6 +318,8 @@ public class HomeActivity extends BaseActivity {
 	private boolean skipNextUpdate = false;
 
     private void initViewModel() {
+		initViewPager(null);
+		sortAdapter.setNewData(DefaultConfig.adjustSort(ApiConfig.get().getHomeSourceBean().getKey(), new ArrayList<>(), true));
         sourceViewModel = new ViewModelProvider(this).get(SourceViewModel.class);
         sourceViewModel.sortResult.observe(this, new Observer<AbsSortXml>() {
             @Override
