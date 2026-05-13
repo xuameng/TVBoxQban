@@ -899,7 +899,7 @@ public class DetailActivity extends BaseActivity {
             return;
         }
         view.setVisibility(View.VISIBLE);
-        view.setText(Html.fromHtml(getHtml(tag, info)));
+        view.setText("22");
     }
 
     private String removeHtmlTag(String info) {
@@ -942,7 +942,7 @@ public class DetailActivity extends BaseActivity {
                     setTextShow(tvSite, "来源：", ApiConfig.get().getSource(firstsourceKey).getName());
                     setTextShow(tvYear, "年份：", mVideo.year == 0 ? "" : String.valueOf(mVideo.year));
                     setTextShow(tvArea, "地区：", mVideo.area);
-                  //  setTextShow(tvLang, "语言：", mVideo.lang);
+                    setTextShow(tvLang, "语言：", mVideo.lang);
                     if (!firstsourceKey.equals(sourceKey)) {
                     	setTextShow(tvType, "类型：", "[" + ApiConfig.get().getSource(sourceKey).getName() + "] 解析");
                     } else {
