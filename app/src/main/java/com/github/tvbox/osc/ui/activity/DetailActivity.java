@@ -899,7 +899,7 @@ public class DetailActivity extends BaseActivity {
             return;
         }
         view.setVisibility(View.VISIBLE);
-        view.setText("22");
+        view.setText(Html.fromHtml(getHtml(tag, info)));
     }
 
     private String removeHtmlTag(String info) {
