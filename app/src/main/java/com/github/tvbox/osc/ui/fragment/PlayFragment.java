@@ -81,6 +81,7 @@ import com.lzy.okgo.model.Response;
 import com.obsez.android.lib.filechooser.ChooserDialog;
 import com.orhanobut.hawk.Hawk;
 import org.json.JSONArray;
+import org.json.JSONException;
 
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.text.Cue;
@@ -690,17 +691,24 @@ public class PlayFragment extends BaseLazyFragment {
                             e.printStackTrace();
                         }
                         hideTip();
-JSONArray array = new JSONArray(url);
+url = url.replace("\\/", "/");
 
-for (int i = 0; i < array.length(); i++) {
-    String item = array.getString(i);
 
-    if (item.startsWith("data:application/dash+xml;base64,")) {
-        String base64 = item.split("base64,")[1];
-		PlayerHelper.updateCfg(mVideoView, mVodPlayerCfg, 2);
-        App.getInstance().setDashData(base64);
-        break;
+try {
+    JSONArray array = new JSONArray(url);
+
+    for (int i = 0; i < array.length(); i++) {
+        String item = array.getString(i);
+
+        if (item.startsWith("data:application/dash+xml;base64,")) {
+            String base64 = item.split("base64,")[1]
+                    .replaceAll("\\s+", "");
+            App.getInstance().setDashData(base64);
+            break;
+        }
     }
+} catch (JSONException e) {
+    e.printStackTrace();
 }
                         if (url.startsWith("data:application/dash+xml;base64,")) {
                             PlayerHelper.updateCfg(mVideoView, mVodPlayerCfg, 2);
