@@ -697,6 +697,7 @@ for (int i = 0; i < array.length(); i++) {
 
     if (item.startsWith("data:application/dash+xml;base64,")) {
         String base64 = item.split("base64,")[1];
+		PlayerHelper.updateCfg(mVideoView, mVodPlayerCfg, 2);
         App.getInstance().setDashData(base64);
         break;
     }
