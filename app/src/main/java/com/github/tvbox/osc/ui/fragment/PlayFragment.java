@@ -80,7 +80,6 @@ import com.lzy.okgo.model.HttpHeaders;
 import com.lzy.okgo.model.Response;
 import com.obsez.android.lib.filechooser.ChooserDialog;
 import com.orhanobut.hawk.Hawk;
-import org.json.JSONArray;
 
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.text.Cue;
@@ -92,6 +91,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONArray;  //xuameng 修复B站base64视频解析URL为 JSON的情况
 import org.xwalk.core.XWalkJavascriptResult;
 import org.xwalk.core.XWalkResourceClient;
 import org.xwalk.core.XWalkSettings;
@@ -690,26 +690,28 @@ public class PlayFragment extends BaseLazyFragment {
                             e.printStackTrace();
                         }
                         hideTip();
-boolean isDash = false;
 
-try {
-    JSONArray array = new JSONArray(url.replace("\\/", "/"));
-    for (int i = 0; i < array.length(); i++) {
-        String s = array.optString(i);
-        if (s.contains("application/dash+xml;base64,")) {
-            PlayerHelper.updateCfg(mVideoView, mVodPlayerCfg, 2);
-            String base64 = s.substring(s.indexOf("base64,") + 7)
-                    .replaceAll("\\s+", "");
-            App.getInstance().setDashData(base64);
-            isDash = true;
-            break;
-        }
-    }
-} catch (Exception ignored) {}
+                        //xuameng 修复B站base64视频解析URL为 JSON的情况
+                        boolean isDash = false;
+                        try {
+                            JSONArray array = new JSONArray(url.replace("\\/", "/"));
+                            for (int i = 0; i < array.length(); i++) {
+                                String s = array.optString(i);
+                                if (s.contains("application/dash+xml;base64,")) {
+                                    PlayerHelper.updateCfg(mVideoView, mVodPlayerCfg, 2);
+                                    String base64 = s.substring(s.indexOf("base64,") + 7)
+                                            .replaceAll("\\s+", "");
+                                    App.getInstance().setDashData(base64);
+                                    isDash = true;
+                                    break;
+                                }
+                            }
+                        } catch (Exception ignored) {}
+                        if (isDash) {
+                            url = ControlManager.get().getAddress(true) + "dash/proxy.mpd";
+                        }
+                        //xuameng 修复B站base64视频解析URL为 JSON的情况完
 
-if (isDash) {
-    url = ControlManager.get().getAddress(true) + "dash/proxy.mpd";
-}
                         if (url.startsWith("data:application/dash+xml;base64,")) {
                             PlayerHelper.updateCfg(mVideoView, mVodPlayerCfg, 2);
                             App.getInstance().setDashData(url.split("base64,")[1]);
