@@ -81,7 +81,6 @@ import com.lzy.okgo.model.Response;
 import com.obsez.android.lib.filechooser.ChooserDialog;
 import com.orhanobut.hawk.Hawk;
 import org.json.JSONArray;
-import org.json.JSONException;
 
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.text.Cue;
@@ -691,24 +690,25 @@ public class PlayFragment extends BaseLazyFragment {
                             e.printStackTrace();
                         }
                         hideTip();
-url = url.replace("\\/", "/");
-
+boolean isDash = false;
 
 try {
-    JSONArray array = new JSONArray(url);
-
+    JSONArray array = new JSONArray(url.replace("\\/", "/"));
     for (int i = 0; i < array.length(); i++) {
-        String item = array.getString(i);
-
-        if (item.startsWith("data:application/dash+xml;base64,")) {
-            String base64 = item.split("base64,")[1]
+        String s = array.optString(i);
+        if (s.contains("application/dash+xml;base64,")) {
+            PlayerHelper.updateCfg(mVideoView, mVodPlayerCfg, 2);
+            String base64 = s.substring(s.indexOf("base64,") + 7)
                     .replaceAll("\\s+", "");
             App.getInstance().setDashData(base64);
+            isDash = true;
             break;
         }
     }
-} catch (JSONException e) {
-    e.printStackTrace();
+} catch (Exception ignored) {}
+
+if (isDash) {
+    url = ControlManager.get().getAddress(true) + "dash/proxy.mpd";
 }
                         if (url.startsWith("data:application/dash+xml;base64,")) {
                             PlayerHelper.updateCfg(mVideoView, mVodPlayerCfg, 2);
