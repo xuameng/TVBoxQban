@@ -510,5 +510,18 @@ private BroadcastReceiver downloadReceiver = new BroadcastReceiver() {
     }
 };
 
+@Override
+public void onResume() {
+    super.onResume();
+    requireContext().registerReceiver(
+            downloadReceiver,
+            new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
+    );
+}
+@Override
+public void onPause() {
+    super.onPause();
+    requireContext().unregisterReceiver(downloadReceiver);
+}
 
 }
