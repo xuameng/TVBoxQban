@@ -51,6 +51,13 @@ import org.json.JSONObject;
 
 import android.text.TextUtils;  //xuameng 接口action方法判断
 import com.github.catvod.crawler.Spider;  //xuameng 接口action方法判断
+import com.github.tvbox.osc.util.DownloadHelper;
+import android.app.DownloadManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 
 /**
  * @author xuameng
@@ -249,6 +256,18 @@ public class GridFragment extends BaseLazyFragment {
 
                     //xuameng 接口action方法判断
                     if (!TextUtils.isEmpty(video.action)) {
+    String act = video.action.toLowerCase();
+
+    if (act.endsWith(".apk")
+            || act.endsWith(".zip")
+            || act.endsWith(".rar")
+            || act.endsWith(".7z")
+            || act.endsWith(".tar")) {
+
+        String name = video.name;
+        DownloadHelper.start(getContext(), video.action, name);
+        return;
+    }
                         try {
                             SourceBean bean = ApiConfig.get().getSource(video.sourceKey);
                             Spider sp = ApiConfig.get().getCSP(bean);
@@ -463,4 +482,33 @@ public class GridFragment extends BaseLazyFragment {
         page = 1;
         initData();
     }
+
+private BroadcastReceiver downloadReceiver = new BroadcastReceiver() {
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
+        if (id == -1) return;
+
+        DownloadManager dm =
+                (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+
+        DownloadManager.Query query = new DownloadManager.Query();
+        query.setFilterById(id);
+        Cursor c = dm.query(query);
+
+        if (c.moveToFirst()) {
+            int status = c.getInt(
+                    c.getColumnIndex(DownloadManager.COLUMN_STATUS));
+            String uri = c.getString(
+                    c.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
+
+            if (status == DownloadManager.STATUS_SUCCESSFUL) {
+                App.showToastShort(context, "下载完成");
+            }
+        }
+        c.close();
+    }
+};
+
+
 }
