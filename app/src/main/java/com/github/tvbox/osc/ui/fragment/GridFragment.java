@@ -257,18 +257,7 @@ public class GridFragment extends BaseLazyFragment {
 
                     //xuameng 接口action方法判断
                     if (!TextUtils.isEmpty(video.action)) {
-    String act = video.action.toLowerCase();
 
-    if (act.endsWith(".apk")
-            || act.endsWith(".zip")
-            || act.endsWith(".rar")
-            || act.endsWith(".7z")
-            || act.endsWith(".tar")) {
-
-        String name = video.name;
-        DownloadHelper.start(getContext(), video.action, name);
-        return;
-    }
                         try {
                             SourceBean bean = ApiConfig.get().getSource(video.sourceKey);
                             Spider sp = ApiConfig.get().getCSP(bean);
