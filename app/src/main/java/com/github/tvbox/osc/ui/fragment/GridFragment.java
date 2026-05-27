@@ -254,15 +254,18 @@ public class GridFragment extends BaseLazyFragment {
                     else{
 if( video.action !=null){
 App.showToastShort(getContext(), video.action);
-return;
 }
-                        if(video.id == null || video.id.isEmpty() || video.id.startsWith("msearch:")){
+                        if(video.action == null || video.action.isEmpty() || video.id == null || video.id.isEmpty() || video.id.startsWith("msearch:")){
                             if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false) && enableFastSearch()){
                                 jumpActivity(FastSearchActivity.class, bundle);
                             }else {
                                 jumpActivity(SearchActivity.class, bundle);
                             }
                         }else {
+if( video.action !=null){
+video.id = video.action;
+bundle.putString("id", video.id);
+}
                             bundle.putString("picture", video.pic);   //xuameng某些网站图片部显示
                             jumpActivity(DetailActivity.class, bundle);
                         }
