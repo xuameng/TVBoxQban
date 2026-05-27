@@ -263,6 +263,21 @@ public class GridFragment extends BaseLazyFragment {
                     }
                     //xuameng 接口action方法判断完
 
+                    if (video.sourceKey.contains("配置中心") 
+                        || video.sourceKey.toLowerCase().contains("config")) {  //xuameng 配置中心判断如是就返回
+                        try {
+                            SourceBean bean = ApiConfig.get().getSource(video.sourceKey);
+                            Spider sp = ApiConfig.get().getCSP(bean);
+                            String result = sp.action(video.id);   // xuameng接收返回值
+                            if (!TextUtils.isEmpty(result)) {
+                                App.showToastShort(getContext(), result);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        return;
+                    }
+
                     Bundle bundle = new Bundle();
                     bundle.putString("id", video.id);
                     bundle.putString("sourceKey", video.sourceKey);
