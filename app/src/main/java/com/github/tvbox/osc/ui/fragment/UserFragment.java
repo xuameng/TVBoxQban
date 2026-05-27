@@ -54,6 +54,9 @@ import java.util.List;
 import com.github.tvbox.osc.util.FileUtils; //xuameng 清缓存
 import java.io.File; //xuameng 清缓存
 
+import android.text.TextUtils;  //xuameng 接口action方法判断
+import com.github.catvod.crawler.Spider;  //xuameng 接口action方法判断
+
 /**
  * @author pj567
  * @date :2021/3/9
@@ -179,6 +182,18 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
                     VodInfo vodInfo = RoomDataManger.getVodInfo(vod.sourceKey, vod.id);
                     RoomDataManger.deleteVodRecord(vod.sourceKey, vodInfo);
                     App.showToastShort(mContext, "已删除当前记录！");
+                } else if (!TextUtils.isEmpty(vod.action)) { //xuameng 接口action方法判断
+                    try {
+                        SourceBean bean = ApiConfig.get().getSource(vod.sourceKey);
+                        Spider sp = ApiConfig.get().getCSP(bean);
+                        String result = sp.action(vod.action);   // xuameng接收返回值
+                        if (!TextUtils.isEmpty(result)) {
+                            App.showToastShort(getContext(), result);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    return;    //xuameng 接口action方法判断完
                 } else if (vod.id != null && !vod.id.isEmpty()) { //xuameng 修复首页聚汇推荐单击不能搜索的问题
                     Bundle bundle = new Bundle();
                     bundle.putString("id", vod.id);
@@ -223,6 +238,18 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
                     VodInfo vodInfo = RoomDataManger.getVodInfo(vod.sourceKey, vod.id);
                     RoomDataManger.deleteVodRecord(vod.sourceKey, vodInfo);
                     App.showToastShort(mContext, "已删除当前记录！");
+                } else if (!TextUtils.isEmpty(vod.action)) { //xuameng 接口action方法判断
+                    try {
+                        SourceBean bean = ApiConfig.get().getSource(vod.sourceKey);
+                        Spider sp = ApiConfig.get().getCSP(bean);
+                        String result = sp.action(vod.action);   // xuameng接收返回值
+                        if (!TextUtils.isEmpty(result)) {
+                            App.showToastShort(getContext(), result);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    return;    //xuameng 接口action方法判断完
                 } else if (vod.id != null && !vod.id.isEmpty()) { //xuameng 修复首页聚汇推荐单击不能搜索的问题
                     Bundle bundle = new Bundle();
                     bundle.putString("id", vod.id);
