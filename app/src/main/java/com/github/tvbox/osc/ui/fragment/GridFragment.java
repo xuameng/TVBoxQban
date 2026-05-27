@@ -273,7 +273,7 @@ public class GridFragment extends BaseLazyFragment {
                             try {
                                 sp.detailContent(ids);
                             } catch (Exception e) {
-                                return "";
+                            e.printStackTrace();
                             }
 
                         return;
