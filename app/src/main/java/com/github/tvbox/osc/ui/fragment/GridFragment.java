@@ -58,6 +58,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.content.IntentFilter;
 
 /**
  * @author xuameng
@@ -501,9 +502,11 @@ private BroadcastReceiver downloadReceiver = new BroadcastReceiver() {
                     c.getColumnIndex(DownloadManager.COLUMN_STATUS));
             String uri = c.getString(
                     c.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
-
+            String name = c.getString(
+                    c.getColumnIndex(DownloadManager.COLUMN_TITLE));
             if (status == DownloadManager.STATUS_SUCCESSFUL) {
-                App.showToastShort(context, "下载完成");
+                String path = "/storage/emulated/0/Download/" + name;
+                App.showToastShort(context, "下载完成至\n" + path);
             }
         }
         c.close();
