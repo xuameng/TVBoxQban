@@ -65,7 +65,7 @@ public class Movie implements Serializable {
         @XStreamAlias("tag")
         public String tag;
         @XStreamAlias("action")
-        public String action; //xuameng
+        public String action; //: xuameng 兼容接口自定义动作
 
         @XStreamAlias("dl")
         public static class UrlBean implements Serializable {
