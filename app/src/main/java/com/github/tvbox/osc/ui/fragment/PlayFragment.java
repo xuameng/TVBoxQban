@@ -692,24 +692,28 @@ public class PlayFragment extends BaseLazyFragment {
                         hideTip();
 
                         //xuameng 修复B站base64视频解析URL为 JSON的情况
-                        boolean isDash = false;
-                        try {
-                            JSONArray array = new JSONArray(url);
-                            for (int i = 0; i < array.length(); i++) {
-                                String s = array.optString(i);
-                                if (s.contains("application/dash+xml;base64,")) {
-                                    PlayerHelper.updateCfg(mVideoView, mVodPlayerCfg, 2);
-                                    String base64 = s.substring(s.indexOf("base64,") + 7)
-                                            .replaceAll("\\s+", "");
-                                    App.getInstance().setDashData(base64);
-									App.showToastShort(mContext, base64);
-                                    isDash = true;
-                                    break;
+                        if (url.startsWith("["){
+                            try {
+                                JSONArray array = new JSONArray(url);
+                                for (int i = 0; i < array.length(); i++) {
+                                    String s = array.optString(i);
+                                    if (s.contains("application/dash+xml;base64,")) {
+                                        PlayerHelper.updateCfg(mVideoView, mVodPlayerCfg, 2);
+                                        String base64 = s.substring(s.indexOf("base64,") + 7)
+                                                .replaceAll("\\s+", "");
+                                        App.getInstance().setDashData(base64);
+                                        url = ControlManager.get().getAddress(true) + "dash/proxy.mpd";
+										App.showToastShort(mContext, url);
+                                        break;
+                                    } else if (s.startsWith("proxy://")) {
+                                        PlayerHelper.updateCfg(mVideoView, mVodPlayerCfg, 2);
+                                        url = ControlManager.get().getAddress(true)
+                                            + "proxy" + s.substring(s.indexOf("?"));
+										App.showToastShort(mContext, url);
+                                        break;
+                                    }
                                 }
-                            }
-                        } catch (Exception ignored) {}
-                        if (isDash) {
-                            url = ControlManager.get().getAddress(true) + "dash/proxy.mpd";
+                            } catch (Exception ignored) {}
                         }
                         //xuameng 修复B站base64视频解析URL为 JSON的情况完
 
