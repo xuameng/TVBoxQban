@@ -255,19 +255,27 @@ public class GridFragment extends BaseLazyFragment {
                 Movie.Video video = gridAdapter.getData().get(position);
                 if (video != null) {
 
-                    //xuameng 接口action方法判断
-                    if (!TextUtils.isEmpty(video.action)) {
+new Thread(() -> {
+    try {
+        SourceBean bean = ApiConfig.get().getSource(video.sourceKey);
+        Spider sp = ApiConfig.get().getCSP(bean);
+        String result = sp.action(video.action);
 
-                        try {
-                            SourceBean bean = ApiConfig.get().getSource(video.sourceKey);
-                            Spider sp = ApiConfig.get().getCSP(bean);
-                            String result = sp.action(video.action);   // xuameng接收返回值
-                            if (!TextUtils.isEmpty(result)) {
-                                App.showToastShort(getContext(), result);
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+        // 切回主线程
+        if (getActivity() != null) {
+            getActivity().runOnUiThread(() -> {
+                if (!TextUtils.isEmpty(result)) {
+                 //   App.showToastShort(getContext(), result);
+                }
+            });
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}).start();
+                    
+                    
+    
                         return;
                     }
                     //xuameng 接口action方法判断完
