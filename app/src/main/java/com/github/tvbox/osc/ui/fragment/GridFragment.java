@@ -51,6 +51,7 @@ import org.json.JSONObject;
 
 import android.text.TextUtils;  //xuameng 接口action方法判断
 import com.github.catvod.crawler.Spider;  //xuameng 接口action方法判断
+import java.util.List;
 
 /**
  * @author xuameng
@@ -265,16 +266,16 @@ public class GridFragment extends BaseLazyFragment {
 
                     if (video.sourceKey.contains("配置中心") 
                         || video.sourceKey.toLowerCase().contains("config")) {  //xuameng 配置中心判断如是就返回
-                        try {
                             SourceBean bean = ApiConfig.get().getSource(video.sourceKey);
                             Spider sp = ApiConfig.get().getCSP(bean);
-                            String result = sp.action(video.id);   // xuameng接收返回值
-                            if (!TextUtils.isEmpty(result)) {
-                                App.showToastShort(getContext(), result);
+                            List<String> ids = new ArrayList<>();
+                            ids.add(video.id);
+                            try {
+                                sp.detailContent(ids);
+                            } catch (Exception e) {
+                                return "";
                             }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+
                         return;
                     }
 
