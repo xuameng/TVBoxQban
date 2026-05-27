@@ -697,16 +697,15 @@ public class PlayFragment extends BaseLazyFragment {
                                 JSONArray array = new JSONArray(url);
                                 for (int i = 0; i < array.length(); i++) {
                                     String s = array.optString(i);
-                                    if (s.contains("application/dash+xml;base64,")) {
+                                    if (s.contains("application/dash+xml;base64,")) {     //xuameng 一种写法
                                         String base64 = s.substring(s.indexOf("base64,") + 7)
                                                 .replaceAll("\\s+", "");
                                         App.getInstance().setDashData(base64);
                                         url = ControlManager.get().getAddress(true) + "dash/proxy.mpd";
                                         break;
-                                    } else if (s.contains("proxy://")) {
+                                    } else if (s.contains("proxy://")) {   //xuameng 另一种写法
                                         String base = ControlManager.get().getAddress(true);
                                         url = base + "proxy?" + s.substring("proxy://".length());
-										App.showToastShort(mContext, url);
                                         break;
                                     }
                                 }
