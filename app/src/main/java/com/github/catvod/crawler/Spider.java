@@ -141,4 +141,11 @@ public class Spider {
     public Object[] proxyLocal(Map< String, String > params) {
         return null;
     }
+
+    /**
+     * xuameng 适配接口action
+     */
+    public String action(String action) throws Exception {
+        return null;
+    }
 }
