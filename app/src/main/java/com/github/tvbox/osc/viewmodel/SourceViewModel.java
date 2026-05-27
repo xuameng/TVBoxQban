@@ -43,10 +43,7 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
 
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONObject;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+
 
 import java.io.IOException;
 
@@ -353,21 +350,6 @@ public class SourceViewModel extends ViewModel {
                         Spider sp = ApiConfig.get().getCSP(homeSourceBean);
                         String json = sp.categoryContent(sortData.id, page + "", true, sortData.filterSelect);
                         LOG.i("echo-categoryContent:"+json);
-try {
-    File dir = new File("/sdcard/Download");
-    if (!dir.exists()) {
-        dir.mkdirs();
-    }
-
-    File file = new File(dir, "spider_raw_" + System.currentTimeMillis() + ".json");
-
-    FileOutputStream fos = new FileOutputStream(file);
-    fos.write(json.getBytes(StandardCharsets.UTF_8));
-    fos.close();
-
-} catch (IOException e) {
-    e.printStackTrace();
-}
                         json(listResult, json,homeSourceBean.getKey());
                     } catch (Throwable th) {
                         th.printStackTrace();
