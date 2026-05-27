@@ -14,7 +14,7 @@ public class DownloadHelper {
     private static long downloadId = -1;
 
     /**
-     * ¿ªÊ¼ÏÂÔØ£¨Ö§³Ö APK / ZIP / RAR / 7Z / TAR µÈ£©
+     * å¼€å§‹ä¸‹è½½ï¼ˆæ”¯æŒ APK / ZIP / RAR / 7Z / TAR ç­‰ï¼‰
      */
     public static void start(Context context, String url, String name) {
         if (context == null || TextUtils.isEmpty(url)) return;
@@ -25,30 +25,30 @@ public class DownloadHelper {
         DownloadManager.Request req =
                 new DownloadManager.Request(Uri.parse(url));
 
-        // ÏÂÔØÍ¨Öª
+        // ä¸‹è½½é€šçŸ¥
         req.setTitle(name);
-        req.setDescription("ÕıÔÚÏÂÔØ");
+        req.setDescription("æ­£åœ¨ä¸‹è½½");
         req.setDestinationInExternalPublicDir(
                 Environment.DIRECTORY_DOWNLOADS, name);
         req.setNotificationVisibility(
                 DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
 
-        // ÍøÂç²ßÂÔ
+        // ç½‘ç»œç­–ç•¥
         req.setAllowedOverMetered(true);
         req.setAllowedOverRoaming(true);
 
-        // MIME ÀàĞÍ£¨·ÀÖ¹ÏµÍ³²»ÖªµÀÔõÃ´´ò¿ª£©
+        // MIME ç±»å‹ï¼ˆé˜²æ­¢ç³»ç»Ÿä¸çŸ¥é“æ€ä¹ˆæ‰“å¼€ï¼‰
         String mime = getMimeType(name);
         if (!TextUtils.isEmpty(mime)) {
             req.setMimeType(mime);
         }
 
         downloadId = dm.enqueue(req);
-        App.showToastShort(context, "¿ªÊ¼ÏÂÔØ£º" + name);
+        App.showToastShort(context, "å¼€å§‹ä¸‹è½½ï¼š" + name);
     }
 
     /**
-     * ¸ù¾İÎÄ¼şÃû»ñÈ¡ MIME ÀàĞÍ
+     * æ ¹æ®æ–‡ä»¶åè·å– MIME ç±»å‹
      */
     private static String getMimeType(String name) {
         int dot = name.lastIndexOf(".");
