@@ -702,11 +702,13 @@ public class PlayFragment extends BaseLazyFragment {
                                                 .replaceAll("\\s+", "");
                                         App.getInstance().setDashData(base64);
                                         url = ControlManager.get().getAddress(true) + "dash/proxy.mpd";
+										App.showToastShort(mContext, url);
                                         break;
-                                    } else if (s.contains("proxy://")) {
+                                    } else if (s.contains("proxy:")) {
+										App.showToastShort(mContext, s);
                                         url = ControlManager.get().getAddress(true)
                                             + "proxy" + s.substring(s.indexOf("?"));
-										App.showToastShort(mContext, url);
+App.showToastShort(mContext, url);
 
                                         break;
                                     }
