@@ -252,23 +252,24 @@ public class GridFragment extends BaseLazyFragment {
                         changeView(video.id);  //xuameng移除多余判断 有folder或cover就进入video.id(文件夹下一级)
                     }
                     else{
-if( video.action !=null){
-App.showToastShort(getContext(), video.action);
-}
-                        if(video.action == null || video.action.isEmpty() || video.id == null || video.id.isEmpty() || video.id.startsWith("msearch:")){
-                            if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false) && enableFastSearch()){
-                                jumpActivity(FastSearchActivity.class, bundle);
+                        if(video.action == null || video.action.isEmpty()){
+                            if(video.id == null || video.id.isEmpty() || video.id.startsWith("msearch:")){
+                                if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false) && enableFastSearch()){
+                                    jumpActivity(FastSearchActivity.class, bundle);
+                                }else {
+                                    jumpActivity(SearchActivity.class, bundle);
+                                }
                             }else {
-                                jumpActivity(SearchActivity.class, bundle);
+                                bundle.putString("picture", video.pic);   //xuameng某些网站图片部显示
+                                jumpActivity(DetailActivity.class, bundle);
                             }
-                        }else {
-if( video.action !=null){
-video.id = video.action;
-bundle.putString("id", video.id);
-}
-                            bundle.putString("picture", video.pic);   //xuameng某些网站图片部显示
+						}else {
+                            video.id = video.action;
+                            bundle.putString("id", video.id);
+							bundle.putString("picture", video.pic);   //xuameng某些网站图片部显示
+                            App.showToastShort(getContext(), video.id);
                             jumpActivity(DetailActivity.class, bundle);
-                        }
+						}
                     }
 
                 }
