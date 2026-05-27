@@ -118,6 +118,7 @@ public class AbsJson implements Serializable {
             video.pic = vod_pic;
             video.lang = vod_lang;
             video.area = vod_area;
+video.action = action;  //: xuameng
             try {
                 video.year = Integer.parseInt(vod_year);
             } catch (Throwable th) {
