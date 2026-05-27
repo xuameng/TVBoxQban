@@ -49,10 +49,13 @@ import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.text.TextUtils;  //xuameng 接口action方法判断
+import com.github.catvod.crawler.Spider;  //xuameng 接口action方法判断
+
 /**
  * @author xuameng
- * @date :2026/05/07
- * @description:  焦点状态全面修复，list判断 folder文件夹判断等修复   mContext判空
+ * @date :2026/05/27
+ * @description:  焦点状态全面修复，list判断 folder文件夹判断等修复   mContext判空  加action判断
  */
 public class GridFragment extends BaseLazyFragment {
     private MovieSort.SortData sortData = null;
@@ -269,7 +272,7 @@ public class GridFragment extends BaseLazyFragment {
                         changeView(video.id);  //xuameng移除多余判断 有folder或cover就进入video.id(文件夹下一级)
                     }
                     else{
-                        if(video.id == null || video.id.isEmpty() || video.id.startsWith("msearch:")){
+                        if(TextUtils.isEmpty(video.id) || video.id.startsWith("msearch:")){
                             if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false) && enableFastSearch()){
                                 jumpActivity(FastSearchActivity.class, bundle);
                             }else {
