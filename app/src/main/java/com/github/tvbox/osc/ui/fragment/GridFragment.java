@@ -266,11 +266,18 @@ public class GridFragment extends BaseLazyFragment {
                             }
 						}else {
 if (!TextUtils.isEmpty(video.action)) {
-    SourceBean bean = ApiConfig.get().getSource(video.sourceKey);
-    Spider sp = ApiConfig.get().getCSP(bean);
-    sp.action(video.action);
+    try {
+        SourceBean bean = ApiConfig.get().getSource(video.sourceKey);
+        Spider sp = ApiConfig.get().getCSP(bean);
+        String result = sp.action(video.action);   // ✅ 接收返回值
+        if (!TextUtils.isEmpty(result)) {
+            App.showToastShort(getContext(), result);
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
     return;
-} 
+}
                             bundle.putString("id", video.id);
 							bundle.putString("picture", video.pic);   //xuameng某些网站图片部显示
                             App.showToastShort(getContext(), video.id);
