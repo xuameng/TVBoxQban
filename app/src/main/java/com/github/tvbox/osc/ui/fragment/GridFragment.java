@@ -254,7 +254,7 @@ public class GridFragment extends BaseLazyFragment {
                 FastClickCheckUtil.check(view);
                 Movie.Video video = gridAdapter.getData().get(position);
                 if (video != null) {
-
+                  if (!TextUtils.isEmpty(video.action)) {
 new Thread(() -> {
     try {
         SourceBean bean = ApiConfig.get().getSource(video.sourceKey);
