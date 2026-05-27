@@ -56,6 +56,7 @@ import java.io.File; //xuameng 清缓存
 
 import android.text.TextUtils;  //xuameng 接口action方法判断
 import com.github.catvod.crawler.Spider;  //xuameng 接口action方法判断
+import com.github.tvbox.osc.bean.SourceBean;  //xuameng 接口action方法判断
 
 /**
  * @author pj567
