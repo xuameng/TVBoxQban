@@ -694,7 +694,7 @@ public class PlayFragment extends BaseLazyFragment {
                         //xuameng 修复B站base64视频解析URL为 JSON的情况
                         boolean isDash = false;
                         try {
-                            JSONArray array = new JSONArray(url.replace("\\/", "/"));
+                            JSONArray array = new JSONArray(url);
                             for (int i = 0; i < array.length(); i++) {
                                 String s = array.optString(i);
                                 if (s.contains("application/dash+xml;base64,")) {
@@ -702,6 +702,7 @@ public class PlayFragment extends BaseLazyFragment {
                                     String base64 = s.substring(s.indexOf("base64,") + 7)
                                             .replaceAll("\\s+", "");
                                     App.getInstance().setDashData(base64);
+									App.showToastShort(mContext, base64);
                                     isDash = true;
                                     break;
                                 }
