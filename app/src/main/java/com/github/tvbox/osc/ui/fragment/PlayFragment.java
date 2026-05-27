@@ -705,7 +705,7 @@ public class PlayFragment extends BaseLazyFragment {
 										App.showToastShort(mContext, url);
                                         break;
                                     } else if (s.contains("proxy:")) {
-										App.showToastShort(mContext, s);
+								
                                         url = ControlManager.get().getAddress(true)
                                             + "proxy" + s.substring(s.indexOf("?"));
 App.showToastShort(mContext, url);
@@ -733,6 +733,7 @@ App.showToastShort(mContext, url);
                             mVideoView.setUrl(url);
                         }
                         mVideoView.start();
+						App.showToastShort(mContext, url);
                         mController.resetSpeed();
                     }
                 }
