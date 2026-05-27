@@ -11,7 +11,6 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import com.github.tvbox.osc.base.App;  //xuameng toast
-import com.github.catvod.crawler.Spider;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.github.tvbox.osc.R;
@@ -49,7 +48,7 @@ import android.widget.TextView;
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
-import android.text.TextUtils;
+
 /**
  * @author xuameng
  * @date :2026/05/07
@@ -244,6 +243,23 @@ public class GridFragment extends BaseLazyFragment {
                 FastClickCheckUtil.check(view);
                 Movie.Video video = gridAdapter.getData().get(position);
                 if (video != null) {
+
+                    //xuameng 接口action方法判断
+                    if (!TextUtils.isEmpty(video.action)) {
+                        try {
+                            SourceBean bean = ApiConfig.get().getSource(video.sourceKey);
+                            Spider sp = ApiConfig.get().getCSP(bean);
+                            String result = sp.action(video.action);   // xuameng接收返回值
+                            if (!TextUtils.isEmpty(result)) {
+                                App.showToastShort(getContext(), result);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        return;
+                    }
+                    //xuameng 接口action方法判断完
+
                     Bundle bundle = new Bundle();
                     bundle.putString("id", video.id);
                     bundle.putString("sourceKey", video.sourceKey);
@@ -253,36 +269,16 @@ public class GridFragment extends BaseLazyFragment {
                         changeView(video.id);  //xuameng移除多余判断 有folder或cover就进入video.id(文件夹下一级)
                     }
                     else{
-                        if(video.action == null || video.action.isEmpty()){
-                            if(video.id == null || video.id.isEmpty() || video.id.startsWith("msearch:")){
-                                if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false) && enableFastSearch()){
-                                    jumpActivity(FastSearchActivity.class, bundle);
-                                }else {
-                                    jumpActivity(SearchActivity.class, bundle);
-                                }
+                        if(video.id == null || video.id.isEmpty() || video.id.startsWith("msearch:")){
+                            if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false) && enableFastSearch()){
+                                jumpActivity(FastSearchActivity.class, bundle);
                             }else {
-                                bundle.putString("picture", video.pic);   //xuameng某些网站图片部显示
-                                jumpActivity(DetailActivity.class, bundle);
+                                jumpActivity(SearchActivity.class, bundle);
                             }
-						}else {
-if (!TextUtils.isEmpty(video.action)) {
-    try {
-        SourceBean bean = ApiConfig.get().getSource(video.sourceKey);
-        Spider sp = ApiConfig.get().getCSP(bean);
-        String result = sp.action(video.action);   // ✅ 接收返回值
-        if (!TextUtils.isEmpty(result)) {
-            App.showToastShort(getContext(), result);
-        }
-    } catch (Exception e) {
-        e.printStackTrace();
-    }
-    return;
-}
-                            bundle.putString("id", video.id);
-							bundle.putString("picture", video.pic);   //xuameng某些网站图片部显示
-                            App.showToastShort(getContext(), video.id);
+                        }else {
+                            bundle.putString("picture", video.pic);   //xuameng某些网站图片部显示
                             jumpActivity(DetailActivity.class, bundle);
-						}
+                        }
                     }
 
                 }
