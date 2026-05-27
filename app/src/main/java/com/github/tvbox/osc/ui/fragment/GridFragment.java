@@ -11,6 +11,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import com.github.tvbox.osc.base.App;  //xuameng toast
+import com.github.catvod.crawler.Spider;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.github.tvbox.osc.R;
@@ -264,7 +265,12 @@ public class GridFragment extends BaseLazyFragment {
                                 jumpActivity(DetailActivity.class, bundle);
                             }
 						}else {
-                            video.id = video.action;
+if (!TextUtils.isEmpty(video.action)) {
+    SourceBean bean = ApiConfig.get().getSource(video.sourceKey);
+    Spider sp = ApiConfig.get().getCSP(bean);
+    sp.action(video.action);
+    return;
+} 
                             bundle.putString("id", video.id);
 							bundle.putString("picture", video.pic);   //xuameng某些网站图片部显示
                             App.showToastShort(getContext(), video.id);
