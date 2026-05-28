@@ -59,9 +59,9 @@ import com.github.catvod.crawler.Spider;  //xuameng 接口action方法判断
 import com.github.tvbox.osc.bean.SourceBean;  //xuameng 接口action方法判断
 
 /**
- * @author pj567
- * @date :2021/3/9
- * @description:
+ * @author xuameng
+ * @date :2026/05/28
+ * @description:   接口action方式支持
  */
 public class UserFragment extends BaseLazyFragment implements View.OnClickListener {
     private LinearLayout tvLive;
