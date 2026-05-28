@@ -178,7 +178,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
                 Movie.Video vod = ((Movie.Video) adapter.getItem(position));
 
                 // takagen99: CHeck if in Delete Mode
-                if ((vod.id != null && !vod.id.isEmpty()) && (Hawk.get(HawkConfig.HOME_REC, 0) == 2) && HawkConfig.hotVodDelete) {
+                if (!TextUtils.isEmpty(vod.id) && Hawk.get(HawkConfig.HOME_REC, 0) == 2 && HawkConfig.hotVodDelete) {
                     homeHotVodAdapter.remove(position);
                     VodInfo vodInfo = RoomDataManger.getVodInfo(vod.sourceKey, vod.id);
                     RoomDataManger.deleteVodRecord(vod.sourceKey, vodInfo);
@@ -194,7 +194,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
                         }
                     }).start();
                     return;   //xuameng 接口action方法判断 必须放在线程中执行完
-                } else if (vod.id != null && !vod.id.isEmpty()) { //xuameng 修复首页聚汇推荐单击不能搜索的问题
+                } else if (!TextUtils.isEmpty(vod.id)) { //xuameng 修复首页聚汇推荐单击不能搜索的问题
                     Bundle bundle = new Bundle();
                     bundle.putString("id", vod.id);
                     bundle.putString("sourceKey", vod.sourceKey);
@@ -233,7 +233,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
                 Movie.Video vod = ((Movie.Video) adapter.getItem(position));
 
                 // takagen99: CHeck if in Delete Mode
-                if ((vod.id != null && !vod.id.isEmpty()) && (Hawk.get(HawkConfig.HOME_REC, 0) == 2) && HawkConfig.hotVodDelete) {
+                if (!TextUtils.isEmpty(vod.id) && Hawk.get(HawkConfig.HOME_REC, 0) == 2 && HawkConfig.hotVodDelete) {
                     homeHotVodAdapterxu.remove(position);
                     VodInfo vodInfo = RoomDataManger.getVodInfo(vod.sourceKey, vod.id);
                     RoomDataManger.deleteVodRecord(vod.sourceKey, vodInfo);
@@ -249,7 +249,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
                         }
                     }).start();
                     return;   //xuameng 接口action方法判断 必须放在线程中执行完
-                } else if (vod.id != null && !vod.id.isEmpty()) { //xuameng 修复首页聚汇推荐单击不能搜索的问题
+                } else if (!TextUtils.isEmpty(vod.id)) { //xuameng 修复首页聚汇推荐单击不能搜索的问题
                     Bundle bundle = new Bundle();
                     bundle.putString("id", vod.id);
                     bundle.putString("sourceKey", vod.sourceKey);
@@ -354,7 +354,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
                 if (ApiConfig.get().getSourceBeanList().isEmpty()) return false;
                 Movie.Video vod = ((Movie.Video) adapter.getItem(position));
                 // Additional Check if : Home Rec 0=豆瓣, 1=推荐, 2=历史
-                if ((vod.id != null && !vod.id.isEmpty()) && (Hawk.get(HawkConfig.HOME_REC, 0) == 2)) {
+                if (!TextUtils.isEmpty(vod.id) && Hawk.get(HawkConfig.HOME_REC, 0) == 2) {
                     HawkConfig.hotVodDelete = !HawkConfig.hotVodDelete;
                     homeHotVodAdapter.notifyDataSetChanged();
                 } else if (!TextUtils.isEmpty(vod.action)) {    //xuameng 接口action方法判断 必须放在线程中执行
@@ -383,7 +383,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
                 if (ApiConfig.get().getSourceBeanList().isEmpty()) return false;
                 Movie.Video vod = ((Movie.Video) adapter.getItem(position));
                 // Additional Check if : Home Rec 0=豆瓣, 1=推荐, 2=历史
-                if ((vod.id != null && !vod.id.isEmpty()) && (Hawk.get(HawkConfig.HOME_REC, 0) == 2)) {
+                if (!TextUtils.isEmpty(vod.id) && Hawk.get(HawkConfig.HOME_REC, 0) == 2) {
                     HawkConfig.hotVodDelete = !HawkConfig.hotVodDelete;
                     homeHotVodAdapterxu.notifyDataSetChanged();
                 } else if (!TextUtils.isEmpty(vod.action)) {    //xuameng 接口action方法判断 必须放在线程中执行
