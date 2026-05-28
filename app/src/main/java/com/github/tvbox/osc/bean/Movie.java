@@ -10,9 +10,9 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * @author pj567
- * @date :2020/12/18
- * @description:
+ * @author xuameng
+ * @date :2026/05/28
+ * @description:   接口action方式支持
  */
 @XStreamAlias("list")
 public class Movie implements Serializable {
