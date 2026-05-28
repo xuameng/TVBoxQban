@@ -270,7 +270,7 @@ public class GridFragment extends BaseLazyFragment {
                                 SourceBean bean = ApiConfig.get().getSource(video.sourceKey);
                                 Spider sp = ApiConfig.get().getCSP(bean);
                                 List<String> ids = new ArrayList<>();
-                                ids.add(vod.id);
+                                ids.add(video.id);
                                 sp.detailContent(ids);
                             } catch (Exception e) {
                                 e.printStackTrace();
