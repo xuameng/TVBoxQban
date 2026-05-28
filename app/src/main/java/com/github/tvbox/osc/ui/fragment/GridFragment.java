@@ -51,14 +51,6 @@ import org.json.JSONObject;
 
 import android.text.TextUtils;  //xuameng 接口action方法判断
 import com.github.catvod.crawler.Spider;  //xuameng 接口action方法判断
-import com.github.tvbox.osc.util.DownloadHelper;
-import android.app.DownloadManager;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
-import android.content.IntentFilter;
 
 /**
  * @author xuameng
@@ -254,31 +246,21 @@ public class GridFragment extends BaseLazyFragment {
                 FastClickCheckUtil.check(view);
                 Movie.Video video = gridAdapter.getData().get(position);
                 if (video != null) {
-                  if (!TextUtils.isEmpty(video.action)) {
-new Thread(() -> {
-    try {
-        SourceBean bean = ApiConfig.get().getSource(video.sourceKey);
-        Spider sp = ApiConfig.get().getCSP(bean);
-        String result = sp.action(video.action);
 
-        // 切回主线程
-        if (getActivity() != null) {
-            getActivity().runOnUiThread(() -> {
-                if (!TextUtils.isEmpty(result)) {
-                 //   App.showToastShort(getContext(), result);
-                }
-            });
-        }
-    } catch (Exception e) {
-        e.printStackTrace();
-    }
-}).start();
-                    
-                    
-    
+                    //xuameng 接口action方法判断 必须放在线程中执行
+                    if (!TextUtils.isEmpty(video.action)) {
+                        new Thread(() -> {
+                            try {
+                                SourceBean bean = ApiConfig.get().getSource(video.sourceKey);
+                                Spider sp = ApiConfig.get().getCSP(bean);
+                                String result = sp.action(video.action);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }).start();
                         return;
                     }
-                    //xuameng 接口action方法判断完
+                    //xuameng 接口action方法判断 必须放在线程中执行完
 
                     Bundle bundle = new Bundle();
                     bundle.putString("id", video.id);
@@ -480,48 +462,5 @@ new Thread(() -> {
         page = 1;
         initData();
     }
-
-private BroadcastReceiver downloadReceiver = new BroadcastReceiver() {
-    @Override
-    public void onReceive(Context context, Intent intent) {
-        long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
-        if (id == -1) return;
-
-        DownloadManager dm =
-                (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
-
-        DownloadManager.Query query = new DownloadManager.Query();
-        query.setFilterById(id);
-        Cursor c = dm.query(query);
-
-        if (c.moveToFirst()) {
-            int status = c.getInt(
-                    c.getColumnIndex(DownloadManager.COLUMN_STATUS));
-            String uri = c.getString(
-                    c.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
-            String name = c.getString(
-                    c.getColumnIndex(DownloadManager.COLUMN_TITLE));
-            if (status == DownloadManager.STATUS_SUCCESSFUL) {
-                String path = "/storage/emulated/0/Download/" + name;
-                App.showToastShort(context, "下载完成至\n" + path);
-            }
-        }
-        c.close();
-    }
-};
-
-@Override
-public void onResume() {
-    super.onResume();
-    requireContext().registerReceiver(
-            downloadReceiver,
-            new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
-    );
-}
-@Override
-public void onPause() {
-    super.onPause();
-    requireContext().unregisterReceiver(downloadReceiver);
-}
 
 }
