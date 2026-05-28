@@ -183,18 +183,17 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
                     VodInfo vodInfo = RoomDataManger.getVodInfo(vod.sourceKey, vod.id);
                     RoomDataManger.deleteVodRecord(vod.sourceKey, vodInfo);
                     App.showToastShort(mContext, "已删除当前记录！");
-                } else if (!TextUtils.isEmpty(vod.action)) { //xuameng 接口action方法判断
-                    try {
-                        SourceBean bean = ApiConfig.get().getSource(vod.sourceKey);
-                        Spider sp = ApiConfig.get().getCSP(bean);
-                        String result = sp.action(vod.action);   // xuameng接收返回值
-                        if (!TextUtils.isEmpty(result)) {
-                            App.showToastShort(getContext(), result);
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    return;    //xuameng 接口action方法判断完
+                } else if (!TextUtils.isEmpty(vod.action)) {    //xuameng 接口action方法判断 必须放在线程中执行
+                        new Thread(() -> {
+                            try {
+                                SourceBean bean = ApiConfig.get().getSource(vod.sourceKey);
+                                Spider sp = ApiConfig.get().getCSP(bean);
+                                String result = sp.action(vod.action);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }).start();
+                        return;   //xuameng 接口action方法判断 必须放在线程中执行完
                 } else if (vod.id != null && !vod.id.isEmpty()) { //xuameng 修复首页聚汇推荐单击不能搜索的问题
                     Bundle bundle = new Bundle();
                     bundle.putString("id", vod.id);
@@ -239,18 +238,17 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
                     VodInfo vodInfo = RoomDataManger.getVodInfo(vod.sourceKey, vod.id);
                     RoomDataManger.deleteVodRecord(vod.sourceKey, vodInfo);
                     App.showToastShort(mContext, "已删除当前记录！");
-                } else if (!TextUtils.isEmpty(vod.action)) { //xuameng 接口action方法判断
-                    try {
-                        SourceBean bean = ApiConfig.get().getSource(vod.sourceKey);
-                        Spider sp = ApiConfig.get().getCSP(bean);
-                        String result = sp.action(vod.action);   // xuameng接收返回值
-                        if (!TextUtils.isEmpty(result)) {
-                            App.showToastShort(getContext(), result);
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    return;    //xuameng 接口action方法判断完
+                } else if (!TextUtils.isEmpty(vod.action)) {    //xuameng 接口action方法判断 必须放在线程中执行
+                        new Thread(() -> {
+                            try {
+                                SourceBean bean = ApiConfig.get().getSource(vod.sourceKey);
+                                Spider sp = ApiConfig.get().getCSP(bean);
+                                String result = sp.action(vod.action);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }).start();
+                        return;   //xuameng 接口action方法判断 必须放在线程中执行完
                 } else if (vod.id != null && !vod.id.isEmpty()) { //xuameng 修复首页聚汇推荐单击不能搜索的问题
                     Bundle bundle = new Bundle();
                     bundle.putString("id", vod.id);
