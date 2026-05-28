@@ -184,16 +184,16 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
                     RoomDataManger.deleteVodRecord(vod.sourceKey, vodInfo);
                     App.showToastShort(mContext, "已删除当前记录！");
                 } else if (!TextUtils.isEmpty(vod.action)) {    //xuameng 接口action方法判断 必须放在线程中执行
-                        new Thread(() -> {
-                            try {
-                                SourceBean bean = ApiConfig.get().getSource(vod.sourceKey);
-                                Spider sp = ApiConfig.get().getCSP(bean);
-                                String result = sp.action(vod.action);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }).start();
-                        return;   //xuameng 接口action方法判断 必须放在线程中执行完
+                    new Thread(() -> {
+                        try {
+                            SourceBean bean = ApiConfig.get().getSource(vod.sourceKey);
+                            Spider sp = ApiConfig.get().getCSP(bean);
+                            sp.action(vod.action);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }).start();
+                    return;   //xuameng 接口action方法判断 必须放在线程中执行完
                 } else if (vod.id != null && !vod.id.isEmpty()) { //xuameng 修复首页聚汇推荐单击不能搜索的问题
                     Bundle bundle = new Bundle();
                     bundle.putString("id", vod.id);
@@ -239,16 +239,16 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
                     RoomDataManger.deleteVodRecord(vod.sourceKey, vodInfo);
                     App.showToastShort(mContext, "已删除当前记录！");
                 } else if (!TextUtils.isEmpty(vod.action)) {    //xuameng 接口action方法判断 必须放在线程中执行
-                        new Thread(() -> {
-                            try {
-                                SourceBean bean = ApiConfig.get().getSource(vod.sourceKey);
-                                Spider sp = ApiConfig.get().getCSP(bean);
-                                String result = sp.action(vod.action);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }).start();
-                        return;   //xuameng 接口action方法判断 必须放在线程中执行完
+                    new Thread(() -> {
+                        try {
+                            SourceBean bean = ApiConfig.get().getSource(vod.sourceKey);
+                            Spider sp = ApiConfig.get().getCSP(bean);
+                            sp.action(vod.action);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }).start();
+                    return;   //xuameng 接口action方法判断 必须放在线程中执行完
                 } else if (vod.id != null && !vod.id.isEmpty()) { //xuameng 修复首页聚汇推荐单击不能搜索的问题
                     Bundle bundle = new Bundle();
                     bundle.putString("id", vod.id);
@@ -357,6 +357,17 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
                 if ((vod.id != null && !vod.id.isEmpty()) && (Hawk.get(HawkConfig.HOME_REC, 0) == 2)) {
                     HawkConfig.hotVodDelete = !HawkConfig.hotVodDelete;
                     homeHotVodAdapter.notifyDataSetChanged();
+                } else if (!TextUtils.isEmpty(vod.action)) {    //xuameng 接口action方法判断 必须放在线程中执行
+                    new Thread(() -> {
+                        try {
+                            SourceBean bean = ApiConfig.get().getSource(vod.sourceKey);
+                            Spider sp = ApiConfig.get().getCSP(bean);
+                            sp.action(vod.action);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }).start();
+                    return true;   //xuameng 接口action方法判断 必须放在线程中执行完
                 } else {
                     Bundle bundle = new Bundle();
                     bundle.putString("title", vod.name);
@@ -375,6 +386,17 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
                 if ((vod.id != null && !vod.id.isEmpty()) && (Hawk.get(HawkConfig.HOME_REC, 0) == 2)) {
                     HawkConfig.hotVodDelete = !HawkConfig.hotVodDelete;
                     homeHotVodAdapterxu.notifyDataSetChanged();
+                } else if (!TextUtils.isEmpty(vod.action)) {    //xuameng 接口action方法判断 必须放在线程中执行
+                    new Thread(() -> {
+                        try {
+                            SourceBean bean = ApiConfig.get().getSource(vod.sourceKey);
+                            Spider sp = ApiConfig.get().getCSP(bean);
+                            sp.action(vod.action);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }).start();
+                    return true;   //xuameng 接口action方法判断 必须放在线程中执行完
                 } else {
                     Bundle bundle = new Bundle();
                     bundle.putString("title", vod.name);
