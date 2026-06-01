@@ -864,7 +864,23 @@ if (backStack.isEmpty()) {
         restorePos = node.lastSelectedPosition;
         if (restorePos >= 0 && restorePos < topSearchCache.size()) {
 mGridView.scrollToPosition(restorePos);
+          // ✅ 正确位置：监听布局完成再拿焦点
+            mGridView.getViewTreeObserver().addOnGlobalLayoutListener(
+                new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        mGridView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
 
+                        RecyclerView.LayoutManager lm = mGridView.getLayoutManager();
+                        if (lm == null) return;
+
+                        View child = lm.findViewByPosition(restorePos);
+                        if (child != null) {
+                            child.requestFocus();
+                        }
+                    }
+                }
+            );
         }
     }
 
@@ -1015,20 +1031,4 @@ mGridView.scrollToPosition(restorePos);
         // 给用户一个提示（如果需要）
          App.showToastShort(SearchActivity.this, "加载热门搜索失败，已显示默认推荐");
     }
-mGridView.getViewTreeObserver().addOnGlobalLayoutListener(
-    new ViewTreeObserver.OnGlobalLayoutListener() {
-        @Override
-        public void onGlobalLayout() {
-            mGridView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-
-            RecyclerView.LayoutManager lm = mGridView.getLayoutManager();
-            if (lm == null) return;
-
-            View child = lm.findViewByPosition(restorePos);
-            if (child != null) {
-                child.requestFocus();
-            }
-        }
-    }
-);
 }
