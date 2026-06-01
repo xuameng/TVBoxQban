@@ -248,11 +248,12 @@ public class SearchActivity extends BaseActivity {
 
                 BackNode node = new BackNode();
                 node.type = TYPE_CATEGORY;
+                currentSortData.id = video.id;
                 node.cid = currentSortData.id;
                 node.sourceKey = video.sourceKey;
                 backStack.push(node);
 
-                currentSortData.id = video.id;
+
 
                 page = 1;
                 searchAdapter.setNewData(new ArrayList<>());
@@ -633,13 +634,10 @@ public class SearchActivity extends BaseActivity {
             return;
         }
         cancel();   
-        backStack.clear();   // ✅ 新搜索清栈
-
-        BackNode node = new BackNode();
-        node.type = TYPE_SEARCH;
-        node.keyword = title;
-        backStack.push(node);
-
+    BackNode node = new BackNode();
+    node.type = TYPE_SEARCH;
+    node.keyword = keyword;
+    backStack.push(node);
         if (remoteDialog != null) {
             remoteDialog.dismiss();
             remoteDialog = null;
@@ -822,30 +820,36 @@ public class SearchActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        if (!backStack.isEmpty()) {
-            BackNode node = backStack.pop();
+    if (!backStack.isEmpty()) {
+        BackNode node = backStack.pop();
 
-            if (node.type == TYPE_SEARCH) {
-                // ✅ 回到搜索结果
-                search(node.keyword);
-                return;
-            }
+        if (node.type == TYPE_SEARCH) {
+            // ✅ 恢复搜索结果（不重新搜索）
+            etSearch.setText(node.keyword);
+            this.searchTitle = node.keyword;
 
-            if (node.type == TYPE_CATEGORY) {
-                // ✅ 回到上一级 folder
-                currentSortData.id = node.cid;
-                page = 1;
-                searchAdapter.setNewData(new ArrayList<>());
-                showLoading();
+            page = 1;
+            searchAdapter.setNewData(new ArrayList<>());
+            showLoading();
 
-                sourceViewModel.getListFromSearch(
-                        currentSortData,
-                        page,
-                        node.sourceKey
-                );
-                return;
-            }
+            searchResult(); // ✅ 只拉数据，不 push
+            return;
         }
+
+        if (node.type == TYPE_CATEGORY) {
+            currentSortData.id = node.cid;
+            page = 1;
+            searchAdapter.setNewData(new ArrayList<>());
+            showLoading();
+
+            sourceViewModel.getListFromSearch(
+                    currentSortData,
+                    page,
+                    node.sourceKey
+            );
+            return;
+        }
+    }
         isActivityDestroyed = true;   //xuameng 退出就不统计搜索成功了
         App.HideToast();  //xuameng HideToast
         cancel();
