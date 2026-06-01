@@ -257,7 +257,7 @@ private final Stack<String> categoryStack = new Stack<>();
                 jumpActivity(DetailActivity.class, bundle);
             }
         });
-    }
+   
         tvSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
