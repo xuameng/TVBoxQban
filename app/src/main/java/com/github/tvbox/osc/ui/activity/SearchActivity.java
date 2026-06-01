@@ -235,13 +235,10 @@ private final Stack<String> sourceKeyStack = new Stack<>();
                     stopSearchExecutor();
 
 cidStack.push(currentSortData.id);
-sourceKeyStack.push(currentSortData.sourceKey);
+sourceKeyStack.push(video.sourceKey); 
 
 currentSortData.id = video.id;
 currentSortData.sourceKey = video.sourceKey;
-    if (!TextUtils.isEmpty(video.name)) {
-        currentSortData.name = video.name;
-    }
 
     page = 1;
     searchAdapter.setNewData(new ArrayList<>());
@@ -805,8 +802,10 @@ currentSortData.sourceKey = video.sourceKey;
     @Override
     public void onBackPressed() {
     if (!cidStack.isEmpty()) {
-        currentSortData.id = cidStack.pop();
-        currentSortData.sourceKey = sourceKeyStack.pop();
+        String lastCid = cidStack.pop();
+        String lastSourceKey = sourceKeyStack.pop();
+
+        currentSortData.id = lastCid;
 
         page = 1;
         searchAdapter.setNewData(new ArrayList<>());
@@ -815,7 +814,7 @@ currentSortData.sourceKey = video.sourceKey;
         sourceViewModel.getListFromSearch(
                 currentSortData,
                 page,
-                currentSortData.sourceKey
+                lastSourceKey   // ✅ 用当时的 sourceKey
         );
         return;
     }
