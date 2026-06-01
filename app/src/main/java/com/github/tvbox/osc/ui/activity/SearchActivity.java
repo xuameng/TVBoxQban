@@ -119,11 +119,13 @@ public class SearchActivity extends BaseActivity {
         String keyword;
         String sourceKey;   // 记录来源站点
         String sortId;      // 记录分类ID
+		int lastSelectedPosition; // ✅ 新增
         // 构造函数
-        public BackNode(String keyword, String sourceKey, String sortId) {
+        public BackNode(String keyword, String sourceKey, String sortId, int lastSelectedPosition) {
             this.keyword = keyword;
             this.sourceKey = sourceKey;
             this.sortId = sortId;
+			this.lastSelectedPosition = lastSelectedPosition;
         }
     }
     private final Stack<BackNode> backStack = new Stack<>();
@@ -255,7 +257,9 @@ private boolean topSearchCompleted = false;
 
                     if (video.tag != null && (video.tag.equals("folder") || video.tag.equals("cover"))) {  //xuameng 如有下一级直接getListFromSearch
                         currentSortData.id = video.id;
-                        BackNode node = new BackNode(searchTitle, video.sourceKey, currentSortData.id);
+    int selectedPos = searchAdapter.getData().isEmpty() ? 0 :
+                      mGridView.getChildAdapterPosition(mGridView.getFocusedChild());
+                        BackNode node = new BackNode(searchTitle, video.sourceKey, currentSortData.id, selectedPos);
                         backStack.push(node);
                         page = 1;
                         searchAdapter.setNewData(new ArrayList<>());
@@ -496,7 +500,8 @@ private boolean topSearchCompleted = false;
     }               //xuameng 搜索历史
 
     private void initViewModel() {
-        sourceViewModel = new ViewModelProvider(this).get(SourceViewModel.class);
+        sourceViewModel = new ViewModelProvider(getApplication())
+        .get(SourceViewModel.class);
         searchPresenter = new SearchPresenter();   //xuameng 搜索历史
 
         /* ========== xuameng：folder / cover 下级 监听返回结果 ========== */
@@ -629,6 +634,8 @@ private boolean topSearchCompleted = false;
         }
         backStack.clear();  //xuameng清空节点数据确保数据初始化状态
 		isTopLevelSearch = true;   // ✅ 明确这是顶层搜索
+    topSearchCompleted = false;
+    topSearchCache.clear();
         cancel();   
         if (remoteDialog != null) {
             remoteDialog.dismiss();
@@ -845,8 +852,6 @@ private boolean topSearchCompleted = false;
         this.searchTitle = node.keyword;
         page = 1;
 
-        // ✅ 不再无脑清空
-        searchAdapter.setNewData(new ArrayList<>());
         showLoading();
 
 if (backStack.isEmpty()) {
@@ -855,6 +860,13 @@ if (backStack.isEmpty()) {
         searchAdapter.setNewData(topSearchCache);
         showSuccess();
         mGridView.setVisibility(View.VISIBLE);
+			        searchAdapter.setNewData(new ArrayList<>());
+        // ✅ 恢复焦点位置
+        int restorePos = node.lastSelectedPosition;
+        if (restorePos >= 0 && restorePos < topSearchCache.size()) {
+mGridView.scrollToPosition(restorePos);
+
+        }
     }
 
     // ✅ 不管有没有结果，只要没跑完就继续
@@ -896,6 +908,7 @@ if (backStack.isEmpty()) {
     }
 } else {
             // ✅ 中间层级（你原来的逻辑）
+
             currentSortData.id = node.sortId;
             sourceViewModel.getListFromSearch(currentSortData, page, node.sourceKey);
         }
