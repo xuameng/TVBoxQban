@@ -238,7 +238,6 @@ cidStack.push(currentSortData.id);
 sourceKeyStack.push(video.sourceKey); 
 
 currentSortData.id = video.id;
-currentSortData.sourceKey = video.sourceKey;
 
     page = 1;
     searchAdapter.setNewData(new ArrayList<>());
