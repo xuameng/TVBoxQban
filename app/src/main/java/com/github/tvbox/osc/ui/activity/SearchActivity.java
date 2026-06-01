@@ -109,6 +109,9 @@ public class SearchActivity extends BaseActivity {
     private static HashMap<String, String> mCheckSources = null;
     private SearchCheckboxDialog mSearchCheckboxDialog = null;
 
+	private String currentCid = "";   // xuameng 当前分类ID
+	public int page = 1;
+
     @Override
     protected int getLayoutResID() {
         return R.layout.activity_search;
@@ -236,10 +239,12 @@ searchAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() 
             hasKeyBoard = false;
             isSearchBack = true;
 
-            // 用新的 id 作为搜索关键词进入下一级
-            Bundle bundle = new Bundle();
-            bundle.putString("title", video.id); // 或自定义 key
-            jumpActivity(SearchActivity.class, bundle);
+    // ✅ 关键：和 GridFragment.changeView(video.id) 等价
+    currentCid = video.id;
+    page = 1;
+    searchAdapter.setNewData(new ArrayList<>());
+    showLoading();
+    sourceViewModel.getList(currentCid, page);
             return;
         }
 
