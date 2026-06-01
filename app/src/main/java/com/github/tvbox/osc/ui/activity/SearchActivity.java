@@ -78,6 +78,8 @@ import java.util.concurrent.ThreadFactory;  //xuameng 线程池
 import java.util.concurrent.LinkedBlockingQueue;   //xuameng 线程池
 import java.util.Locale;   //xuameng 统计进度用
 
+import com.github.tvbox.osc.bean.MovieSort;
+import java.util.Stack;
 /**
  * @author pj567
  * @date :2020/12/23
@@ -111,6 +113,10 @@ public class SearchActivity extends BaseActivity {
 
 	private String currentCid = "";   // xuameng 当前分类ID
 	public int page = 1;
+
+	private MovieSort.SortData currentSortData =
+        new MovieSort.SortData("", "搜索结果");
+private final Stack<String> categoryStack = new Stack<>();
 
     @Override
     protected int getLayoutResID() {
@@ -239,13 +245,15 @@ searchAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() 
             hasKeyBoard = false;
             isSearchBack = true;
 
-    // ✅ 关键：和 GridFragment.changeView(video.id) 等价
-    currentCid = video.id;
+    // ✅ 和 GridFragment.changeView(video.id) 完全一致
+    categoryStack.push(currentSortData.id);
+
+    currentSortData = new MovieSort.SortData(video.id, video.name);
     page = 1;
     searchAdapter.setNewData(new ArrayList<>());
     showLoading();
-    sourceViewModel.getList(currentCid, page);
-            return;
+
+    sourceViewModel.getList(currentSortData, page);
         }
 
         // ===== 普通影片进入详情 =====
