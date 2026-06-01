@@ -864,23 +864,7 @@ if (backStack.isEmpty()) {
         restorePos = node.lastSelectedPosition;
         if (restorePos >= 0 && restorePos < topSearchCache.size()) {
 mGridView.scrollToPosition(restorePos);
-          // ✅ 正确位置：监听布局完成再拿焦点
-            mGridView.getViewTreeObserver().addOnGlobalLayoutListener(
-                new ViewTreeObserver.OnGlobalLayoutListener() {
-                    @Override
-                    public void onGlobalLayout() {
-                        mGridView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
 
-                        RecyclerView.LayoutManager lm = mGridView.getLayoutManager();
-                        if (lm == null) return;
-
-                        View child = lm.findViewByPosition(restorePos);
-                        if (child != null) {
-                            child.requestFocus();
-                        }
-                    }
-                }
-            );
         }
     }
 
@@ -910,15 +894,6 @@ mGridView.scrollToPosition(restorePos);
             }
             pauseRunnable.clear();
             pauseRunnable = null;
-        }
-        if (hasKeyBoard) {
-            tvSearch.requestFocus();
-       //     tvSearch.requestFocusFromTouch();     //xuameng 触碰时不获得焦点
-        }else {
-            if(!isSearchBack){
-                etSearch.requestFocus();
-         //       etSearch.requestFocusFromTouch();  //xuameng 触碰时不获得焦点
-            }
         }
     }
 } else {
