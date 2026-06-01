@@ -111,7 +111,6 @@ public class SearchActivity extends BaseActivity {
     private static HashMap<String, String> mCheckSources = null;
     private SearchCheckboxDialog mSearchCheckboxDialog = null;
 
-	private String currentCid = "";   // xuameng 当前分类ID
 	public int page = 1;
 
 	private MovieSort.SortData currentSortData =
@@ -221,62 +220,44 @@ private final Stack<String> categoryStack = new Stack<>();
             mGridView.setLayoutManager(new V7GridLayoutManager(this.mContext, 3));
         searchAdapter = new SearchAdapter();
         mGridView.setAdapter(searchAdapter);
-searchAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-    @Override
-    public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-        FastClickCheckUtil.check(view);
-        Movie.Video video = searchAdapter.getData().get(position);
-        if (video == null) return;
+        searchAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                FastClickCheckUtil.check(view);
+                Movie.Video video = searchAdapter.getData().get(position);
+                if (video == null) return;
 
-        // ===== xuameng：folder / cover 进入下一级 =====
-        if (video.tag != null &&
-           (video.tag.equals("folder") || video.tag.equals("cover"))) {
+                /* ===== folder / cover ===== */
+                if (video.tag != null &&
+                   (video.tag.equals("folder") || video.tag.equals("cover"))) {
 
-            try {
-                if (searchExecutorService != null) {
-                    pauseRunnable = searchExecutorService.shutdownNow();
-                    searchExecutorService = null;
-                    JsLoader.stopAll();
-                }
-            } catch (Throwable th) {
-                th.printStackTrace();
-            }
+                    stopSearchExecutor();
 
-            hasKeyBoard = false;
-            isSearchBack = true;
+                    categoryStack.push(currentSortData.id);
+    // ✅ 关键：和 GridFragment 完全一致
+    currentSortData.id = video.id;
+    if (!TextUtils.isEmpty(video.name)) {
+        currentSortData.name = video.name;
+    }
 
-    // ✅ 和 GridFragment.changeView(video.id) 完全一致
-    categoryStack.push(currentSortData.id);
-
-    currentSortData = new MovieSort.SortData(video.id, video.name);
     page = 1;
     searchAdapter.setNewData(new ArrayList<>());
-    showLoading();
 
     sourceViewModel.getList(currentSortData, page);
-        }
+                    return;
+                }
 
-        // ===== 普通影片进入详情 =====
-        try {
-            if (searchExecutorService != null) {
-                pauseRunnable = searchExecutorService.shutdownNow();
-                searchExecutorService = null;
-                JsLoader.stopAll();
+                /* ===== 普通影片 ===== */
+                stopSearchExecutor();
+
+                Bundle bundle = new Bundle();
+                bundle.putString("id", video.id);
+                bundle.putString("picture", video.pic);
+                bundle.putString("sourceKey", video.sourceKey);
+                jumpActivity(DetailActivity.class, bundle);
             }
-        } catch (Throwable th) {
-            th.printStackTrace();
-        }
-
-        hasKeyBoard = false;
-        isSearchBack = true;
-
-        Bundle bundle = new Bundle();
-        bundle.putString("id", video.id);
-        bundle.putString("picture", video.pic);
-        bundle.putString("sourceKey", video.sourceKey);
-        jumpActivity(DetailActivity.class, bundle);
+        });
     }
-});
         tvSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -896,4 +877,14 @@ searchAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() 
          App.showToastShort(SearchActivity.this, "加载热门搜索失败，已显示默认推荐");
     }
 
+    /* ===== 停止搜索 ===== */
+    private void stopSearchExecutor() {
+        isActivityDestroyed = true;
+        try {
+            if (searchExecutorService != null) {
+                searchExecutorService.shutdownNow();
+                searchExecutorService = null;
+            }
+        } catch (Throwable ignored) {}
+    }
 }
