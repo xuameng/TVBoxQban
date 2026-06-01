@@ -822,7 +822,6 @@ public class SearchActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-    public void onBackPressed() {
         if (!backStack.isEmpty()) {
             BackNode node = backStack.pop();
 
