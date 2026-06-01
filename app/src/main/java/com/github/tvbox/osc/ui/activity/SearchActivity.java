@@ -127,6 +127,10 @@ public class SearchActivity extends BaseActivity {
         }
     }
     private final Stack<BackNode> backStack = new Stack<>();
+
+// 缓存首次全站搜索结果
+private final List<Movie.Video> topSearchCache = new ArrayList<>();
+private boolean topSearchCompleted = false;
     // xuameng新增：返回栈（核心完成）
 
     @Override
@@ -755,20 +759,33 @@ public class SearchActivity extends BaseActivity {
             for (Movie.Video video : absXml.movie.videoList) {
                 if (matchSearchResult(video.name, searchTitle)) data.add(video);
             }
-            if (searchAdapter.getData().size() > 0) {
-                searchAdapter.addData(data);
-            } else {
-                showSuccess();   //xuameng搜索历史
-                mGridView.setVisibility(View.VISIBLE);
-                searchAdapter.setNewData(data);
+
+        if (searchAdapter.getData().isEmpty()) {
+            showSuccess();
+            mGridView.setVisibility(View.VISIBLE);
+            searchAdapter.setNewData(data);
                 tv_history.setVisibility(View.GONE);    //xuameng搜索历史
                 searchTips.setVisibility(View.GONE);  //xuameng搜索历史
-//                llWord.setVisibility(View.GONE);   //xuameng搜索历史
+
+            // ✅ 只在“顶层搜索”时缓存
+            if (backStack.isEmpty()) {
+                topSearchCache.clear();
+                topSearchCache.addAll(data);
+                topSearchCompleted = false;
             }
+        } else {
+            searchAdapter.addData(data);
+            if (backStack.isEmpty()) {
+                topSearchCache.addAll(data);
+            }
+        }
         }
 
         int count = allRunCount.decrementAndGet();
         if (count <= 0) {
+        if (backStack.isEmpty()) {
+            topSearchCompleted = true; // ✅ 标记完成
+        }
             if (searchAdapter.getData().size() <= 0) {
                 if (searchExecutorService != null) {
                     showEmpty();		//xuameng修复BUG
@@ -806,41 +823,78 @@ public class SearchActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        if (!backStack.isEmpty()) {   //xuameng 如果有上一级
-            App.HideToast();  //xuameng HideToast
-            cancel();
-            try {
-                if (searchExecutorService != null) {
-                    searchExecutorService.shutdownNow();
-                    searchExecutorService = null;
-                    JsLoader.stopAll();
-                }
-            } catch (Throwable th) {
-                th.printStackTrace();
+      if (!backStack.isEmpty()) {
+        App.HideToast();
+        cancel();
+
+        try {
+            if (searchExecutorService != null) {
+                searchExecutorService.shutdownNow();
+                searchExecutorService = null;
+                JsLoader.stopAll();
             }
-            // 1. 先把节点拿出来 也就是上一级的节点
-            BackNode node = backStack.pop();
-            // 2. 恢复关键词
-            this.searchTitle = node.keyword;
-            page = 1;
-            searchAdapter.setNewData(new ArrayList<>());
-            showLoading();
-            // 3. 核心判断：弹出后栈是否为空？
-            if (backStack.isEmpty()) {  //xuameng 如果还有上一级
-                // 【情况A：回到了顶级】
-                // 说明刚才弹出的 node 是最底层的节点，现在要回到最初的搜索状态
-                // 必须使用 searchResult() 进行全站重新搜索
-                search(searchTitle);
-            } else {
-                // 【情况B：回到了中间层级】
-                // 说明栈里还有父级节点，我们需要回到上一层的特定站点列表
-                // 这里需要恢复上一层的分类信息
-                currentSortData.id = node.sortId; 
-                // 调用 getListFromSearch 获取特定站点的数据
-                sourceViewModel.getListFromSearch(currentSortData, page, node.sourceKey);
-            }
-            return;
+        } catch (Throwable th) {
+            th.printStackTrace();
         }
+
+        BackNode node = backStack.pop();
+        this.searchTitle = node.keyword;
+        page = 1;
+
+        // ✅ 不再无脑清空
+        searchAdapter.setNewData(new ArrayList<>());
+        showLoading();
+
+        if (backStack.isEmpty()) {
+            // ✅【回到顶层】
+            if (topSearchCompleted || !topSearchCache.isEmpty()) {
+                // ✅ 直接恢复
+                searchAdapter.setNewData(topSearchCache);
+                showSuccess();
+                mGridView.setVisibility(View.VISIBLE);
+            } else {
+                // ✅ 上次没搜完，继续搜
+        if (pauseRunnable != null && pauseRunnable.size() > 0) {
+            searchExecutorService = new ThreadPoolExecutor(
+            Runtime.getRuntime().availableProcessors(), // 核心线程数=CPU核数
+            Runtime.getRuntime().availableProcessors() * 2, // 最大线程数
+                30L, TimeUnit.SECONDS,
+                new LinkedBlockingQueue<>(1000),  // 队列容量调整为1000
+                new ThreadFactory() {
+                    @Override
+                    public Thread newThread(Runnable r) {
+                        // 关键优化：设置256KB栈大小
+                        Thread t = new Thread(null, r, "search-pool", 256 * 1024);
+                        t.setPriority(Thread.NORM_PRIORITY - 1);
+                        return t;
+                    }
+                },
+                new ThreadPoolExecutor.DiscardOldestPolicy()  // 超限直接丢弃
+            );
+            allRunCount.set(pauseRunnable.size());
+            for (Runnable runnable : pauseRunnable) {
+                searchExecutorService.execute(runnable);
+            }
+            pauseRunnable.clear();
+            pauseRunnable = null;
+        }
+        if (hasKeyBoard) {
+            tvSearch.requestFocus();
+       //     tvSearch.requestFocusFromTouch();     //xuameng 触碰时不获得焦点
+        }else {
+            if(!isSearchBack){
+                etSearch.requestFocus();
+         //       etSearch.requestFocusFromTouch();  //xuameng 触碰时不获得焦点
+            }
+        }
+            }
+        } else {
+            // ✅ 中间层级（你原来的逻辑）
+            currentSortData.id = node.sortId;
+            sourceViewModel.getListFromSearch(currentSortData, page, node.sourceKey);
+        }
+        return;
+    }
 
         isActivityDestroyed = true;   //xuameng 退出就不统计搜索成功了
         App.HideToast();  //xuameng HideToast
