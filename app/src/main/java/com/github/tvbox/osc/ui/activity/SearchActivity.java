@@ -119,15 +119,11 @@ public class SearchActivity extends BaseActivity {
     /* =========================
      * ✅ 新增：返回栈（核心）
      * ========================= */
-    private static final int TYPE_SEARCH = 0;
-    private static final int TYPE_CATEGORY = 1;
 
-    static class BackNode {
-        int type;
-        String cid;
-        String sourceKey;
-        String keyword;
-    }
+static class BackNode {
+    String sourceKey;
+    String keyword;
+}
 
     private final Stack<BackNode> backStack = new Stack<>();
 
@@ -246,12 +242,11 @@ public class SearchActivity extends BaseActivity {
 
  //               stopSearchExecutor();
 
-                BackNode node = new BackNode();
-                node.type = TYPE_CATEGORY;
-                currentSortData.id = video.id;
-                node.cid = currentSortData.id;
-                node.sourceKey = video.sourceKey;
-                backStack.push(node);
+BackNode node = new BackNode();
+currentSortData.id = video.id;
+node.sourceKey = video.sourceKey;
+node.keyword = searchTitle;
+backStack.push(node);
 
 
 
@@ -634,10 +629,6 @@ public class SearchActivity extends BaseActivity {
             return;
         }
         cancel();   
-    BackNode node = new BackNode();
-    node.type = TYPE_SEARCH;
-    node.keyword = keyword;
-    backStack.push(node);
         if (remoteDialog != null) {
             remoteDialog.dismiss();
             remoteDialog = null;
@@ -822,8 +813,6 @@ public class SearchActivity extends BaseActivity {
     public void onBackPressed() {
     if (!backStack.isEmpty()) {
         BackNode node = backStack.pop();
-
-        if (node.type == TYPE_SEARCH) {
             // ✅ 恢复搜索结果（不重新搜索）
             etSearch.setText(node.keyword);
             this.searchTitle = node.keyword;
@@ -834,21 +823,6 @@ public class SearchActivity extends BaseActivity {
 
             searchResult(); // ✅ 只拉数据，不 push
             return;
-        }
-
-        if (node.type == TYPE_CATEGORY) {
-            currentSortData.id = node.cid;
-            page = 1;
-            searchAdapter.setNewData(new ArrayList<>());
-            showLoading();
-
-            sourceViewModel.getListFromSearch(
-                    currentSortData,
-                    page,
-                    node.sourceKey
-            );
-            return;
-        }
     }
         isActivityDestroyed = true;   //xuameng 退出就不统计搜索成功了
         App.HideToast();  //xuameng HideToast
