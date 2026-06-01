@@ -452,106 +452,124 @@ public class SourceViewModel extends ViewModel {
         }
     }
 
-public void getListFromSearch(MovieSort.SortData sortData, int page, String sourceKey) {
-    if (sortData == null) {
-        Log.w("SourceViewModel", "sortData is null, return");
-        listResult.postValue(null);
-        return;
-    }
-
-    SourceBean sourceBean = ApiConfig.get().getSource(sourceKey);
-    if (sourceBean == null) {
-        Log.w("SourceViewModel", "sourceBean not found: " + sourceKey);
-        listResult.postValue(null);
-        return;
-    }
-
-    int type = sourceBean.getType();
-    LOG.i("echo-getList: source=" + sourceKey + ", id=" + sortData.id + ", page=" + page);
-
-    if (type == 3) {
-        spThreadPool.execute(() -> {
-            try {
-                Spider sp = ApiConfig.get().getCSP(sourceBean);
-                String json = sp.categoryContent(
-                        sortData.id,
-                        String.valueOf(page),
-                        true,
-                        sortData.filterSelect
-                );
-                json(listResult, json, sourceBean.getKey());
-            } catch (Throwable th) {
-                th.printStackTrace();
-                listResult.postValue(null);
-            }
-        });
-        return;
-    }
-
-    if (type == 0 || type == 1) {
-        OkGo.<String>get(sourceBean.getApi())
-                .tag(sourceBean.getApi())
-                .params("ac", type == 0 ? "videolist" : "detail")
-                .params("t", sortData.id)
-                .params("pg", page)
-                .params(sortData.filterSelect)
-                .execute(new AbsCallback<String>() {
-                    @Override
-                    public String convertResponse(okhttp3.Response response) throws Throwable {
-                        return response.body().string();
-                    }
-
-                    @Override
-                    public void onSuccess(Response<String> response) {
-                        if (type == 0) xml(listResult, response.body(), sourceBean.getKey());
-                        else json(listResult, response.body(), sourceBean.getKey());
-                    }
-
-                    @Override
-                    public void onError(Response<String> response) {
-                        listResult.postValue(null);
-                    }
-                });
-        return;
-    }
-
-    if (type == 4) {
-        String ext = buildExt(sortData.filterSelect);
-        String extend = getFixUrl(sourceBean.getExt());
-
-        GetRequest<String> req = OkGo.<String>get(sourceBean.getApi())
-                .tag(sourceBean.getApi())
-                .params("ac", "detail")
-                .params("filter", "true")
-                .params("t", sortData.id)
-                .params("pg", page)
-                .params("ext", ext);
-
-        if (!TextUtils.isEmpty(extend)) {
-            req.params("extend", extend);
+    public void getListFromSearch(MovieSort.SortData sortData, int page, String sourceKey) {
+        if (sortData == null) {     //xuameng 判空防止空指针
+            Log.w("SourceViewModel", "sortData is null, return");
+            listResult.postValue(null);
+            return;
         }
+        LOG.i("echo-getList:");
+        SourceBean sourceBean = ApiConfig.get().getSource(sourceKey);
+        int type = sourceBean.getType();
+        if (type == 3) {
+            spThreadPool.execute(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Spider sp = ApiConfig.get().getCSP(sourceBean);
+                        String json = sp.categoryContent(sortData.id, page + "", true, sortData.filterSelect);
+                        LOG.i("echo-categoryContent:"+json);
+                        json(listResult, json,sourceBean.getKey());
+                    } catch (Throwable th) {
+                        th.printStackTrace();
+                    }
+                }
+            });
+        } else if (type == 0 || type == 1) {
+            OkGo.<String>get(sourceBean.getApi())
+                    .tag(sourceBean.getApi())
+                    .params("ac", type == 0 ? "videolist" : "detail")
+                    .params("t", sortData.id)
+                    .params("pg", page)
+                    .params(sortData.filterSelect)
+                    .params("f", (sortData.filterSelect == null || sortData.filterSelect.size() <= 0) ? "" : new JSONObject(sortData.filterSelect).toString())
+                    .execute(new AbsCallback<String>() {
 
-        req.execute(new AbsCallback<String>() {
-            @Override
-            public String convertResponse(okhttp3.Response response) throws Throwable {
-                return response.body().string();
+                        @Override
+                        public String convertResponse(okhttp3.Response response) throws Throwable {
+                            if (response.body() != null) {
+                                return response.body().string();
+                            } else {
+                                throw new IllegalStateException("网络请求错误");
+                            }
+                        }
+
+                        @Override
+                        public void onSuccess(Response<String> response) {
+                            if (type == 0) {
+                                String xml = response.body();
+                                xml(listResult, xml, sourceBean.getKey());
+                            } else {
+                                String json = response.body();
+                                json(listResult, json, sourceBean.getKey());
+                            }
+                        }
+
+                        @Override
+                        public void onError(Response<String> response) {
+                            super.onError(response);
+                            listResult.postValue(null);
+                        }
+                    });
+        }else if (type == 4) {
+            String ext= "";
+            String extend=sourceBean.getExt();
+            extend=getFixUrl(extend);
+            if (sortData.filterSelect != null && sortData.filterSelect.size() > 0) {
+                try {
+                    String selectExt = new JSONObject(sortData.filterSelect).toString();
+                    ext = Base64.encodeToString(selectExt.getBytes("UTF-8"), Base64.DEFAULT |  Base64.NO_WRAP);
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            }else {
+                ext = Base64.encodeToString("{}".getBytes(), Base64.DEFAULT |  Base64.NO_WRAP);
             }
 
-            @Override
-            public void onSuccess(Response<String> response) {
-                json(listResult, response.body(), sourceBean.getKey());
+            GetRequest<String> request = OkGo.<String>get(sourceBean.getApi())
+                    .tag(sourceBean.getApi())
+                    .params("ac", "detail")
+                    .params("filter", "true")
+                    .params("t", sortData.id)
+                    .params("pg", page)
+                    .params("ext", ext);
+            // 当 extend 不为空且非空字符串时添加参数
+            if (extend != null && !extend.isEmpty()) {
+                request.params("extend", extend);
             }
+            request.execute(new AbsCallback<String>() {
+                        @Override
+                        public String convertResponse(okhttp3.Response response) throws Throwable {
+                            try {
+                                if (response.body() != null) {
+                                    return response.body().string();
+                                } else {
+                                    throw new IllegalStateException("网络请求错误，response body 为 null");
+                                }
+                            } catch (Exception e) {
+                                LOG.i("echo-list: convertResponse error"+ e.getMessage());
+                                throw e;  // 重新抛出异常
+                            }
+                        }
 
-            @Override
-            public void onError(Response<String> response) {
-                listResult.postValue(null);
-            }
-        });
-        return;
+                        @Override
+                        public void onSuccess(Response<String> response) {
+                            String json = response.body();
+                            LOG.i("echo-list: " + json);
+                            json(listResult, json, sourceBean.getKey());
+                        }
+
+                        @Override
+                        public void onError(Response<String> response) {
+                            super.onError(response);
+                            listResult.postValue(null);
+                        }
+                    });
+
+        } else {
+            listResult.postValue(null);
+        }
     }
-
-    listResult.postValue(null);
-}
 
     interface HomeRecCallback {
         void done(List<Movie.Video> videos);
