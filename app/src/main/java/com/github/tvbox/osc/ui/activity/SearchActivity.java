@@ -874,7 +874,7 @@ if (backStack.isEmpty()) {
                                     // ✅ 在这里滚
                                     lm.scrollToPosition(restorePos);
                                     mGridView.post(() -> {
-                                        mGridView.setSelection(restorePos)
+                                        mGridView.setSelection(restorePos);
                                     });
                                 }
                             }
