@@ -113,6 +113,7 @@ public class SearchActivity extends BaseActivity {
 
     // xuameng新增：返回栈（核心）
     public int page = 1;
+    public int restorePos = 0;
     private MovieSort.SortData currentSortData =
             new MovieSort.SortData("", "搜索结果");
     static class BackNode {
@@ -860,7 +861,7 @@ if (backStack.isEmpty()) {
         showSuccess();
         mGridView.setVisibility(View.VISIBLE);
         // ✅ 恢复焦点位置
-        int restorePos = node.lastSelectedPosition;
+        restorePos = node.lastSelectedPosition;
         if (restorePos >= 0 && restorePos < topSearchCache.size()) {
 mGridView.scrollToPosition(restorePos);
 
@@ -1014,5 +1015,20 @@ mGridView.scrollToPosition(restorePos);
         // 给用户一个提示（如果需要）
          App.showToastShort(SearchActivity.this, "加载热门搜索失败，已显示默认推荐");
     }
+mGridView.getViewTreeObserver().addOnGlobalLayoutListener(
+    new ViewTreeObserver.OnGlobalLayoutListener() {
+        @Override
+        public void onGlobalLayout() {
+            mGridView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
 
+            RecyclerView.LayoutManager lm = mGridView.getLayoutManager();
+            if (lm == null) return;
+
+            View child = lm.findViewByPosition(restorePos);
+            if (child != null) {
+                child.requestFocus();
+            }
+        }
+    }
+);
 }
