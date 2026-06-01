@@ -500,8 +500,7 @@ private boolean topSearchCompleted = false;
     }               //xuameng 搜索历史
 
     private void initViewModel() {
-        sourceViewModel = new ViewModelProvider(getApplication())
-        .get(SourceViewModel.class);
+        sourceViewModel = new ViewModelProvider(this).get(SourceViewModel.class);
         searchPresenter = new SearchPresenter();   //xuameng 搜索历史
 
         /* ========== xuameng：folder / cover 下级 监听返回结果 ========== */
