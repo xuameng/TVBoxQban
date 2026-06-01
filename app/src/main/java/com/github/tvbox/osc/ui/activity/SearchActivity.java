@@ -242,6 +242,7 @@ private final Stack<String> categoryStack = new Stack<>();
 
     page = 1;
     searchAdapter.setNewData(new ArrayList<>());
+	showLoading();
 
     sourceViewModel.getList(currentSortData, page);
                     return;
@@ -481,6 +482,28 @@ private final Stack<String> categoryStack = new Stack<>();
     private void initViewModel() {
         sourceViewModel = new ViewModelProvider(this).get(SourceViewModel.class);
         searchPresenter = new SearchPresenter();   //xuameng 搜索历史
+
+    /* ========== xuameng：folder / cover 下钻 ========== */
+    sourceViewModel.listResult.observe(this, absXml -> {
+        if (absXml == null || absXml.movie == null) {
+            showEmpty();
+            return;
+        }
+
+        showSuccess();
+        mGridView.setVisibility(View.VISIBLE);
+        tv_history.setVisibility(View.GONE);
+        searchTips.setVisibility(View.GONE);
+
+        if (page == 1) {
+            searchAdapter.setNewData(absXml.movie.videoList);
+        } else {
+            searchAdapter.addData(absXml.movie.videoList);
+        }
+
+        page++;
+    });
+
     }
 
     /**
@@ -593,6 +616,7 @@ private final Stack<String> categoryStack = new Stack<>();
             return;
         }
         cancel();   
+		categoryStack.clear();
         if (remoteDialog != null) {
             remoteDialog.dismiss();
             remoteDialog = null;
@@ -775,18 +799,18 @@ private final Stack<String> categoryStack = new Stack<>();
 
     @Override
     public void onBackPressed() {
+    if (!categoryStack.isEmpty()) {
+        currentSortData.id = categoryStack.pop();
+        page = 1;
+        searchAdapter.setNewData(new ArrayList<>());
+        showLoading();
+        sourceViewModel.getList(currentSortData, page);
+        return;
+    }
         isActivityDestroyed = true;   //xuameng 退出就不统计搜索成功了
         App.HideToast();  //xuameng HideToast
         cancel();
-        try {
-            if (searchExecutorService != null) {
-                searchExecutorService.shutdownNow();
-                searchExecutorService = null;
-                JsLoader.stopAll();
-            }
-        } catch (Throwable th) {
-            th.printStackTrace();
-        }
+stopSearchExecutor();
         super.onBackPressed();
     }
 
