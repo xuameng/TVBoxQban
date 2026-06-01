@@ -209,6 +209,32 @@ public class SearchActivity extends BaseActivity {
         wordAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                keyword = wordAdapter.getItem(position);
+                String[] split = keyword.split("\uFEFF");
+                keyword = split[split.length - 1];
+                etSearch.setText(keyword);
+                if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)){
+                    Bundle bundle = new Bundle();
+                    bundle.putString("title", keyword);
+                    refreshSearchHistory(keyword);  //xuameng搜索历史
+                    jumpActivity(FastSearchActivity.class, bundle);
+                }else {
+                    search(keyword);
+                }
+            }
+        });
+        mGridView.setHasFixedSize(true);
+        // lite
+        if (Hawk.get(HawkConfig.SEARCH_VIEW, 0) == 0)
+            mGridView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
+            // with preview
+        else
+            mGridView.setLayoutManager(new V7GridLayoutManager(this.mContext, 3));
+        searchAdapter = new SearchAdapter();
+        mGridView.setAdapter(searchAdapter);
+        searchAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 FastClickCheckUtil.check(view);
                 Movie.Video video = searchAdapter.getData().get(position);
                 if (video != null) {
@@ -601,8 +627,6 @@ public class SearchActivity extends BaseActivity {
             remoteDialog.dismiss();
             remoteDialog = null;
         }
-    backStack.clear();              // ✅ 关键
-    currentSortData.id = "";         // ✅ 关键
         etSearch.setText(title);
         this.searchTitle = title;
         mGridView.setVisibility(View.GONE); //xuameng 搜索历史
