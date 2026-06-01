@@ -622,6 +622,7 @@ public class SearchActivity extends BaseActivity {
             App.showToastShort(SearchActivity.this, "输入内容不能为空！");
             return;
         }
+        backStack.clear();  //xuameng清空节点数据确保数据初始化状态
         cancel();   
         if (remoteDialog != null) {
             remoteDialog.dismiss();
@@ -805,7 +806,9 @@ public class SearchActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        if (!backStack.isEmpty()) {
+        if (!backStack.isEmpty()) {   //xuameng 如果有上一级
+            App.HideToast();  //xuameng HideToast
+            cancel();
             try {
                 if (searchExecutorService != null) {
                     searchExecutorService.shutdownNow();
@@ -815,24 +818,19 @@ public class SearchActivity extends BaseActivity {
             } catch (Throwable th) {
                 th.printStackTrace();
             }
-    
-            // 1. 先把节点拿出来
+            // 1. 先把节点拿出来 也就是上一级的节点
             BackNode node = backStack.pop();
-    
             // 2. 恢复关键词
-            etSearch.setText(node.keyword);
             this.searchTitle = node.keyword;
-    
             page = 1;
             searchAdapter.setNewData(new ArrayList<>());
             showLoading();
-
             // 3. 核心判断：弹出后栈是否为空？
-            if (backStack.isEmpty()) {
+            if (backStack.isEmpty()) {  //xuameng 如果还有上一级
                 // 【情况A：回到了顶级】
                 // 说明刚才弹出的 node 是最底层的节点，现在要回到最初的搜索状态
                 // 必须使用 searchResult() 进行全站重新搜索
-                searchResult();
+                search(searchTitle);
             } else {
                 // 【情况B：回到了中间层级】
                 // 说明栈里还有父级节点，我们需要回到上一层的特定站点列表
@@ -841,7 +839,6 @@ public class SearchActivity extends BaseActivity {
                 // 调用 getListFromSearch 获取特定站点的数据
                 sourceViewModel.getListFromSearch(currentSortData, page, node.sourceKey);
             }
-    
             return;
         }
 
