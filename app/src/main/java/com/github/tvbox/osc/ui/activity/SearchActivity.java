@@ -850,7 +850,7 @@ private boolean topSearchCompleted = false;
         BackNode node = backStack.pop();
         this.searchTitle = node.keyword;
         page = 1;
-
+searchAdapter.setNewData(new ArrayList<>());
         showLoading();
 
 if (backStack.isEmpty()) {
@@ -859,7 +859,6 @@ if (backStack.isEmpty()) {
         searchAdapter.setNewData(topSearchCache);
         showSuccess();
         mGridView.setVisibility(View.VISIBLE);
-			        searchAdapter.setNewData(new ArrayList<>());
         // ✅ 恢复焦点位置
         int restorePos = node.lastSelectedPosition;
         if (restorePos >= 0 && restorePos < topSearchCache.size()) {
