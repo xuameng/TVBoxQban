@@ -1,926 +1,1510 @@
-package com.github.tvbox.osc.ui.activity;
+package com.github.tvbox.osc.viewmodel;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.KeyEvent;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;   //xuameng搜索历史
-import android.widget.TextView;
-import com.github.tvbox.osc.base.App;
 
-import androidx.lifecycle.ViewModelProvider;
+import android.util.Base64;
 
-import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.github.tvbox.osc.R;
+import androidx.annotation.NonNull;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
+
+import com.github.catvod.crawler.Spider;
 import com.github.tvbox.osc.api.ApiConfig;
-import com.github.tvbox.osc.base.BaseActivity;
+import com.github.tvbox.osc.base.App;
+import com.github.tvbox.osc.bean.AbsJson;
+import com.github.tvbox.osc.bean.AbsSortJson;
+import com.github.tvbox.osc.bean.AbsSortXml;
 import com.github.tvbox.osc.bean.AbsXml;
 import com.github.tvbox.osc.bean.Movie;
+import com.github.tvbox.osc.bean.MovieSort;
 import com.github.tvbox.osc.bean.SourceBean;
 import com.github.tvbox.osc.event.RefreshEvent;
-import com.github.tvbox.osc.event.ServerEvent;
-import com.github.tvbox.osc.server.ControlManager;
-import com.github.tvbox.osc.ui.adapter.PinyinAdapter;
-import com.github.tvbox.osc.ui.adapter.SearchAdapter;
-import com.github.tvbox.osc.ui.dialog.RemoteDialog;
-import com.github.tvbox.osc.ui.dialog.SearchCheckboxDialog;
-import com.github.tvbox.osc.ui.tv.QRCodeGen;
-import com.github.tvbox.osc.ui.tv.widget.SearchKeyboard;
-import com.github.tvbox.osc.util.FastClickCheckUtil;
+import com.github.tvbox.osc.player.thirdparty.RemoteTVBox;
+import com.github.tvbox.osc.util.DefaultConfig;
+import com.github.tvbox.osc.util.FileUtils;
 import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.util.LOG;
-import com.github.tvbox.osc.util.SearchHelper;
-import com.github.catvod.crawler.JsLoader;
-import com.github.tvbox.osc.viewmodel.SourceViewModel;
+import com.github.tvbox.osc.util.MD5;
+import com.github.tvbox.osc.util.thunder.Thunder;
+import com.github.tvbox.osc.util.urlhttp.OkHttpUtil;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.AbsCallback;
 import com.lzy.okgo.model.Response;
+import com.lzy.okgo.request.GetRequest;
 import com.orhanobut.hawk.Hawk;
-import com.owen.tvrecyclerview.widget.TvRecyclerView;
-import com.owen.tvrecyclerview.widget.V7GridLayoutManager;
-import com.owen.tvrecyclerview.widget.V7LinearLayoutManager;
-import com.yang.flowlayoutlibrary.FlowLayout;  //xuameng搜索历史
-import android.text.TextWatcher;  //xuameng搜索历史
-import android.text.Editable;		//xuameng搜索历史
-import com.github.tvbox.osc.data.SearchPresenter;  //xuameng搜索历史
-import com.github.tvbox.osc.cache.SearchHistory;   //xuameng搜索历史
-import java.util.Collections;   //xuameng搜索历史
-import com.google.gson.Gson;  //xuameng热门搜索
-import com.google.gson.JsonArray; //xuameng热门搜索
-import com.google.gson.JsonElement; //xuameng热门搜索
-import com.google.gson.JsonObject; //xuameng热门搜索
-import com.google.gson.JsonParser; //xuameng热门搜索
-import com.google.common.net.HttpHeaders;  //xuameng热门搜索
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
 
+import org.greenrobot.eventbus.EventBus;
+import org.json.JSONObject;
+
+
+import java.io.IOException;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
-
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.ArrayBlockingQueue;   //xuameng 线程池
-import java.util.concurrent.ThreadPoolExecutor;  //xuameng 线程池
-import java.util.concurrent.TimeUnit;   //xuameng 线程池
-import java.util.concurrent.ThreadFactory;  //xuameng 线程池
-import java.util.concurrent.LinkedBlockingQueue;   //xuameng 线程池
-import java.util.Locale;   //xuameng 统计进度用
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import android.util.Log;
 
-import com.github.tvbox.osc.bean.MovieSort;
-import java.util.Stack;
+import okhttp3.Call;
+
 /**
  * @author pj567
- * @date :2020/12/23
+ * @date :2020/12/18
  * @description:
  */
-public class SearchActivity extends BaseActivity {
-    private LinearLayout llLayout;
-    private TvRecyclerView mGridView;
-    private TvRecyclerView mGridViewWord;    //xuameng热搜
-    private SourceViewModel sourceViewModel;   //xuameng
-    private RemoteDialog remoteDialog;
-    private EditText etSearch; //xuameng 请输入要搜索的内容
-    private TextView tvSearch;   //xuameng 搜索
-    private TextView tvClear;  //xuameng清空
-    private SearchKeyboard keyboard;   //xuameng搜索键盘
-    private SearchAdapter searchAdapter;
-    private PinyinAdapter wordAdapter;
-    private String searchTitle = "";
-    private TextView tvSearchCheckboxBtn;  //xuameng指定搜索源
-    private RelativeLayout searchTips;   //xuameng搜索历史
-    private LinearLayout llWord;   //xuameng搜索历史
-    private FlowLayout tv_history;    //xuameng搜索历史
-    public String keyword;  //xuameng搜索历史
-    private ImageView clearHistory;  //xuameng搜索历史
-    private SearchPresenter searchPresenter;  //xuameng搜索历史
-    private TextView tHotSearchText;  //xuameng热门搜索
-    private static ArrayList<String> hots = new ArrayList<>();  //xuameng热门搜索
+public class SourceViewModel extends ViewModel {
+    public MutableLiveData<AbsSortXml> sortResult;
+    public MutableLiveData<AbsXml> listResult;
+    public MutableLiveData<AbsXml> searchResult;
+    public MutableLiveData<AbsXml> quickSearchResult;
+    public MutableLiveData<AbsXml> detailResult;
+    public MutableLiveData<JSONObject> playResult;
+    public Gson gson;
 
-    private static HashMap<String, String> mCheckSources = null;
-    private SearchCheckboxDialog mSearchCheckboxDialog = null;
-
-	public int page = 1;
-
-	private MovieSort.SortData currentSortData =
-        new MovieSort.SortData("", "搜索结果");
-private final Stack<String> cidStack = new Stack<>();
-private final Stack<String> sourceKeyStack = new Stack<>();
-
-    @Override
-    protected int getLayoutResID() {
-        return R.layout.activity_search;
+    public SourceViewModel() {
+        sortResult = new MutableLiveData<>();
+        listResult = new MutableLiveData<>();
+        searchResult = new MutableLiveData<>();
+        quickSearchResult = new MutableLiveData<>();
+        detailResult = new MutableLiveData<>();
+        playResult = new MutableLiveData<>();
+        gson=new Gson();
     }
 
+    public static final ExecutorService spThreadPool = Executors.newSingleThreadExecutor();
 
-    private static Boolean hasKeyBoard;
-    private static Boolean isSearchBack;
-    @Override
-    protected void init() {
-        initView();
-        initViewModel();
-        initData();
-        hasKeyBoard = true;
-        isSearchBack = false;
-    }
-
-
-    private List<Runnable> pauseRunnable = null;
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (pauseRunnable != null && pauseRunnable.size() > 0) {
-            searchExecutorService = new ThreadPoolExecutor(
-            Runtime.getRuntime().availableProcessors(), // 核心线程数=CPU核数
-            Runtime.getRuntime().availableProcessors() * 2, // 最大线程数
-                30L, TimeUnit.SECONDS,
-                new LinkedBlockingQueue<>(1000),  // 队列容量调整为1000
-                new ThreadFactory() {
-                    @Override
-                    public Thread newThread(Runnable r) {
-                        // 关键优化：设置256KB栈大小
-                        Thread t = new Thread(null, r, "search-pool", 256 * 1024);
-                        t.setPriority(Thread.NORM_PRIORITY - 1);
-                        return t;
-                    }
-                },
-                new ThreadPoolExecutor.DiscardOldestPolicy()  // 超限直接丢弃
-            );
-            allRunCount.set(pauseRunnable.size());
-            for (Runnable runnable : pauseRunnable) {
-                searchExecutorService.execute(runnable);
-            }
-            pauseRunnable.clear();
-            pauseRunnable = null;
+    //homeContent缓存，最多存储5个sourceKey的AbsSortXml对象
+    private static final Map<String, AbsSortXml> sortCache = new LinkedHashMap<String, AbsSortXml>(5, 0.75f, true) {
+        @Override
+        protected boolean removeEldestEntry(Entry<String, AbsSortXml> eldest) {
+            return size() > 5;
         }
-        if (hasKeyBoard) {
-            tvSearch.requestFocus();
-       //     tvSearch.requestFocusFromTouch();     //xuameng 触碰时不获得焦点
-        }else {
-            if(!isSearchBack){
-                etSearch.requestFocus();
-         //       etSearch.requestFocusFromTouch();  //xuameng 触碰时不获得焦点
-            }
-        }
-    }
-
-    private void initView() {
-        EventBus.getDefault().register(this);
-        llLayout = findViewById(R.id.llLayout);
-        etSearch = findViewById(R.id.etSearch);
-        tvSearch = findViewById(R.id.tvSearch);
-        tvSearchCheckboxBtn = findViewById(R.id.tvSearchCheckboxBtn);
-        searchTips = findViewById(R.id.search_tips);   //xuameng搜索历史
-        llWord = findViewById(R.id.llWord);	//xuameng搜索历史
-        tv_history = findViewById(R.id.tv_history);  //xuameng搜索历史
-        clearHistory = findViewById(R.id.clear_history);  //xuameng搜索历史
-        tHotSearchText = findViewById(R.id.mHotSearch_text);   //xuameng热门搜索
-        tvClear = findViewById(R.id.tvClear);
-        mGridView = findViewById(R.id.mGridView);
-        keyboard = findViewById(R.id.keyBoardRoot);
-        mGridViewWord = findViewById(R.id.mGridViewWord);
-        mGridViewWord.setHasFixedSize(true);
-        mGridViewWord.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
-        wordAdapter = new PinyinAdapter();
-        mGridViewWord.setAdapter(wordAdapter);
-        wordAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                keyword = wordAdapter.getItem(position);
-                String[] split = keyword.split("\uFEFF");
-                keyword = split[split.length - 1];
-                etSearch.setText(keyword);
-                if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)){
-                    Bundle bundle = new Bundle();
-                    bundle.putString("title", keyword);
-                    refreshSearchHistory(keyword);  //xuameng搜索历史
-                    jumpActivity(FastSearchActivity.class, bundle);
-                }else {
-                    search(keyword);
-                }
-            }
-        });
-        mGridView.setHasFixedSize(true);
-        // lite
-        if (Hawk.get(HawkConfig.SEARCH_VIEW, 0) == 0)
-            mGridView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
-            // with preview
-        else
-            mGridView.setLayoutManager(new V7GridLayoutManager(this.mContext, 3));
-        searchAdapter = new SearchAdapter();
-        mGridView.setAdapter(searchAdapter);
-        searchAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                FastClickCheckUtil.check(view);
-                Movie.Video video = searchAdapter.getData().get(position);
-                if (video == null) return;
-
-                /* ===== folder / cover ===== */
-                if (video.tag != null &&
-                   (video.tag.equals("folder") || video.tag.equals("cover"))) {
-
-                    stopSearchExecutor();
-
-cidStack.push(currentSortData.id);
-sourceKeyStack.push(currentSortData.sourceKey);
-
-currentSortData.id = video.id;
-currentSortData.sourceKey = video.sourceKey;
-    if (!TextUtils.isEmpty(video.name)) {
-        currentSortData.name = video.name;
-    }
-
-    page = 1;
-    searchAdapter.setNewData(new ArrayList<>());
-	showLoading();
-
-    sourceViewModel.getListFromSearch(currentSortData, page, video.sourceKey);
-                    return;
-                }
-
-                /* ===== 普通影片 ===== */
-                stopSearchExecutor();
-
-                Bundle bundle = new Bundle();
-                bundle.putString("id", video.id);
-                bundle.putString("picture", video.pic);
-                bundle.putString("sourceKey", video.sourceKey);
-                jumpActivity(DetailActivity.class, bundle);
-            }
-        });
-   
-        tvSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FastClickCheckUtil.check(v);
-                hasKeyBoard = true;
-                if (!TextUtils.isEmpty(keyword)) {
-                    if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)){
-                        Bundle bundle = new Bundle();
-                        bundle.putString("title", keyword);
-                        refreshSearchHistory(keyword);  //xuameng搜索历史
-                        jumpActivity(FastSearchActivity.class, bundle);
-                    }else {
-                        search(keyword);
-                    }
-                } else {
-                    App.showToastShort(SearchActivity.this, "输入内容不能为空！");
-                }
-            }
-        });
-        // xuameng为搜索按钮设置长按事件监听器
-        tvSearch.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                showHotSearchtext();   //xuameng 刷新搜索热词
-                App.showToastShort(SearchActivity.this, "热门搜索已刷新！");
-                return true;
-            }
-        });
-        tvClear.setOnClickListener(new View.OnClickListener() {     
-            @Override
-            public void onClick(View v) {
-                FastClickCheckUtil.check(v);
-                etSearch.setText("");
-                wordAdapter.setNewData(hots);  //xuameng 热搜不用重复刷新     //xuameng修复清空后热门搜索为空
-                tv_history.setVisibility(View.VISIBLE);   //xuameng修复BUG
-                searchTips.setVisibility(View.VISIBLE);
-                tHotSearchText.setText("热门搜索");          //xuameng修复删除内容后，热门搜索为空
-                showSuccess();  //xuameng修复BUG
-                mGridView.setVisibility(View.GONE);
-                if (searchExecutorService != null) {
-                   searchExecutorService.shutdownNow();
-                   searchExecutorService = null;
-                   JsLoader.stopAll();
-                }
-                cancel();
-            }
-        });
-
-        this.etSearch.addTextChangedListener(new TextWatcher() {   //xuameng搜索历史
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            public void afterTextChanged(Editable s) {         //xuameng清空或删除关闭搜索内容显示搜索历史记录
-                keyword = s.toString().trim();
-                if (TextUtils.isEmpty(keyword)) {
-                    cancel();
-                    tv_history.setVisibility(View.VISIBLE);
-                    searchTips.setVisibility(View.VISIBLE);
-  //                  llWord.setVisibility(View.VISIBLE);
-                    mGridView.setVisibility(View.GONE);
-                }
-            }
-        });
-
-//        etSearch.setOnFocusChangeListener(tvSearchFocusChangeListener);
-
-        clearHistory.setOnClickListener(v -> {
-            searchPresenter.clearSearchHistory();
-            initSearchHistory();
-        });
+    };
 
 
-        keyboard.setOnSearchKeyListener(new SearchKeyboard.OnSearchKeyListener() {
-            @Override
-            public void onSearchKey(int pos, String key) {
-                if (pos > 1) {
-                    String text = etSearch.getText().toString().trim();
-                    text += key;
-                    etSearch.setText(text);
-                    if (text.length() > 0) {
-                        loadRec(text);
-                    }
-                } else if (pos == 1) {
-                    String text = etSearch.getText().toString().trim();
-                    if (text.length() > 0) {
-                        text = text.substring(0, text.length() - 1);
-                        etSearch.setText(text);
-                    }
-                    if (text.length() > 0) {
-                        loadRec(text);
-                    }
-                    if (text.length() == 0) {
-                        wordAdapter.setNewData(hots);  //xuameng 热搜不用重复刷新   //xuameng修复清空后热门搜索为空
-                        tHotSearchText.setText("热门搜索");
-                        showSuccess();  //xuameng修复BUG
-                        tv_history.setVisibility(View.VISIBLE);   //xuameng修复BUG
-                        searchTips.setVisibility(View.VISIBLE);
-                        mGridView.setVisibility(View.GONE);
-                        if (searchExecutorService != null) {
-                            searchExecutorService.shutdownNow();
-                            searchExecutorService = null;
-                            JsLoader.stopAll();
-                            }
-                    }
-                } else if (pos == 0) {
-                    if (remoteDialog == null) {
-                        remoteDialog = new RemoteDialog(mContext); // XUAMENG成员变量    解决远程搜索remoteDialog不关闭的问题
-                    }
-                    remoteDialog.show();
-                }
-            }
-        });
-        setLoadSir(llLayout);
-        tvSearchCheckboxBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                List<SourceBean> searchAbleSource = ApiConfig.get().getSearchSourceBeanList();
-                if (mSearchCheckboxDialog == null) {
-                    mSearchCheckboxDialog = new SearchCheckboxDialog(SearchActivity.this, searchAbleSource, mCheckSources);
-                }else {
-                    if(searchAbleSource.size()!=mSearchCheckboxDialog.mSourceList.size()){
-                        mSearchCheckboxDialog.setMSourceList(searchAbleSource);
-                    }
-                }
-                mSearchCheckboxDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialog) {
-                        dialog.dismiss();
-                    }
-                });
-                mSearchCheckboxDialog.show();
-            }
-        });
-    }
-
-    private void refreshSearchHistory(String keyword2) {         //xuameng 更新搜索历史记录
-        if (!this.searchPresenter.keywordsExist(keyword2)) {
-            this.searchPresenter.addKeyWordsTodb(keyword2);
-            initSearchHistory();
-        }
-    }
-
-    private void initSearchHistory() {
-        ArrayList<SearchHistory> searchHistory = this.searchPresenter.getSearchHistory();
-        List<String> historyList = new ArrayList<>();
-        // xuameng保留原始数据列表的引用，以便通过索引获取对应的 SearchHistory 对象（如果删除需要ID）
-        final List<SearchHistory> originalHistoryList = new ArrayList<>(searchHistory);   //xuameng 用于长按删除
-        for (SearchHistory history : searchHistory) {
-            historyList.add(history.searchKeyWords);
-        }
-        Collections.reverse(historyList);
-        tv_history.setViews(historyList, new FlowLayout.OnItemClickListener() {
-            public void onItemClick(String content) {
-                etSearch.setText(content);
-                if (Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)) {
-                    Bundle bundle = new Bundle();
-                    bundle.putString("title", content);
-                    refreshSearchHistory(content);
-                    jumpActivity(FastSearchActivity.class, bundle);
-                } else {
-                    search(content);
-                    tvSearch.requestFocus();    //xuameng 点击搜索历史文字后的默认焦点
-                }
-            }
-        });
-        // 仅在 Android 5.0 以下版本应用焦点修复       xuameng修复安卓4搜索历史获取不到焦点问题
-        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.LOLLIPOP) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    for (int i = 0; i < tv_history.getChildCount(); i++) {
-                        View child = tv_history.getChildAt(i);
-                        // 关键修复：设置焦点属性，解决 Android 4.x 点击问题
-                        child.setFocusable(true);
-                       // child.setFocusableInTouchMode(true);
-                    }
-                }
-            });
-        }
-
-        // ========== xuameng新增：为每个历史标签添加长按直接删除功能 ==========
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                // 遍历 FlowLayout 中的所有子视图（即每个历史标签）
-                for (int i = 0; i < tv_history.getChildCount(); i++) {
-                    final View child = tv_history.getChildAt(i);
-                    // 根据视图的索引，从已反转的列表中获取对应的关键词和数据对象
-                    final String keywordToDelete = historyList.get(i);
-                    final SearchHistory historyItemToDelete = originalHistoryList.get(i);
-
-                    // 设置长按监听器
-                    child.setOnLongClickListener(new View.OnLongClickListener() {
-                        @Override
-                        public boolean onLongClick(View v) {
-                            // 直接执行删除操作，不弹出对话框
-                            // 1. 从数据库删除数据
-                            boolean success = searchPresenter.deleteKeyWordsFromDb(keywordToDelete);
-
-                            if (success) {
-                                // 2. 从界面移除该标签
-                                tv_history.removeView(child);
-                                // 3. 显示操作成功的 Toast 提示
-                                App.showToastShort(SearchActivity.this, "已删除: " + keywordToDelete);
-                            } else {
-                                App.showToastShort(SearchActivity.this, "删除失败");
-                            }
-                            // 返回 true 表示已消费该长按事件，防止触发其他可能的后续事件
-                            return true;
-                        }
-                    });
-                }
-            }
-        });
-
-    }               //xuameng 搜索历史
-
-    private void initViewModel() {
-        sourceViewModel = new ViewModelProvider(this).get(SourceViewModel.class);
-        searchPresenter = new SearchPresenter();   //xuameng 搜索历史
-
-    /* ========== xuameng：folder / cover 下钻 ========== */
-    sourceViewModel.listResult.observe(this, absXml -> {
-        if (absXml == null || absXml.movie == null) {
-            showEmpty();
+    // homeContent
+    public void getSort(final String sourceKey) {
+        LOG.i("echo--getSort-start");
+        if (sourceKey == null) {
+            sortResult.postValue(null);
             return;
         }
 
-        showSuccess();
-        mGridView.setVisibility(View.VISIBLE);
-        tv_history.setVisibility(View.GONE);
-        searchTips.setVisibility(View.GONE);
-
-        if (page == 1) {
-            searchAdapter.setNewData(absXml.movie.videoList);
-        } else {
-            searchAdapter.addData(absXml.movie.videoList);
+        // 优先检查缓存
+        AbsSortXml cached = sortCache.get(sourceKey);
+        if (cached != null) {
+            LOG.i("echo--getSort-cached--"+sourceKey);
+            int homeRec = Hawk.get(HawkConfig.HOME_REC, 0);
+            boolean shouldUseCache = (homeRec != 1) || (cached.videoList != null && !cached.videoList.isEmpty());
+            if (shouldUseCache) {
+                sortResult.postValue(cached);
+                return;
+            }
         }
 
-        page++;
-    });
+        SourceBean sourceBean = ApiConfig.get().getSource(sourceKey);
+        if(sourceBean.getName().length()<=3 && sourceBean.getName().endsWith("搜")){
+            sortResult.postValue(null);
+            return;
+        }
 
-    }
-
-    /**
-     * 拼音联想
-     */
-    private void loadRec(String key) {
-        OkGo.get("https://tv.aiseet.atianqi.com/i-tvbin/qtv_video/search/get_search_smart_box")
-                .params("format", "json")
-                .params("page_num", 0)
-                .params("page_size", 50) //随便改
-                .params("key", key)
-                .execute(new AbsCallback() {
-                    @Override
-                    public void onSuccess(Response response) {
-                        try {
-                            ArrayList hots = new ArrayList<>();
-                            String result = (String) response.body();
-                            Gson gson = new Gson();
-                            JsonElement json = gson.fromJson(result, JsonElement.class);
-                            JsonArray groupDataArr = json.getAsJsonObject()
-                                    .get("data").getAsJsonObject()
-                                    .get("search_data").getAsJsonObject()
-                                    .get("vecGroupData").getAsJsonArray()
-                                    .get(0).getAsJsonObject()
-                                    .get("group_data").getAsJsonArray();
-                            for (JsonElement groupDataElement : groupDataArr) {
-                                JsonObject groupData = groupDataElement.getAsJsonObject();
-                                String keywordTxt = groupData.getAsJsonObject("dtReportInfo")
-                                        .getAsJsonObject("reportData")
-                                        .get("keyword_txt").getAsString();
-                                hots.add(keywordTxt.trim());
+        final int type = sourceBean.getType();
+        if (type == 3) {
+            Runnable waitResponse = new Runnable() {
+                @Override
+                public void run() {
+                    ExecutorService executor = Executors.newSingleThreadExecutor();
+                    Future<String> future = executor.submit(new Callable<String>() {
+                        @Override
+                        public String call() throws Exception {
+                            Spider sp = ApiConfig.get().getCSP(sourceBean);
+                            String json=sp.homeContent(true);
+                            return json;
+                        }
+                    });
+                    String sortJson = null;
+                    try {
+                        sortJson = future.get(20, TimeUnit.SECONDS);
+                    } catch (TimeoutException e) {
+                        e.printStackTrace();
+                        future.cancel(true);
+                    } catch (InterruptedException | ExecutionException e) {
+                        e.printStackTrace();
+                    } finally {
+                        if (sortJson != null) {
+                            final AbsSortXml sortXml = sortJson(sortResult, sortJson);
+                            if (sortXml != null && Hawk.get(HawkConfig.HOME_REC, 0) == 1) {
+                                AbsXml absXml = json(null, sortJson, sourceBean.getKey());
+                                if (absXml != null && absXml.movie != null && absXml.movie.videoList != null && absXml.movie.videoList.size() > 0) {
+                                    sortXml.videoList = absXml.movie.videoList;
+                                    sortResult.postValue(sortXml);
+                                    sortCache.put(sourceKey, sortXml);
+                                } else {
+                                    getHomeRecList(sourceBean, null, new HomeRecCallback() {
+                                        @Override
+                                        public void done(List<Movie.Video> videos) {
+                                            sortXml.videoList = videos;
+                                            sortResult.postValue(sortXml);
+                                            sortCache.put(sourceKey, sortXml);
+                                        }
+                                    });
+                                }
+                            } else {
+                                sortResult.postValue(sortXml);
+                                sortCache.put(sourceKey, sortXml);
                             }
-                            tHotSearchText.setText("猜你想搜");
-                            wordAdapter.setNewData(hots);
-                            mGridViewWord.smoothScrollToPosition(0);
+                        } else {
+                            sortResult.postValue(null);
+                        }
+                        try {
+                            executor.shutdown();
                         } catch (Throwable th) {
                             th.printStackTrace();
                         }
                     }
+                }
+            };
+            spThreadPool.execute(waitResponse);
+        } else if (type == 0 || type == 1) {
+            OkGo.<String>get(sourceBean.getApi())
+                    .tag(sourceBean.getKey() + "_sort")
+                    .execute(new AbsCallback<String>() {
+                        @Override
+                        public String convertResponse(okhttp3.Response response) throws Throwable {
+                            if (response.body() != null) {
+                                return response.body().string();
+                            } else {
+                                throw new IllegalStateException("网络请求错误");
+                            }
+                        }
 
+                        @Override
+                        public void onSuccess(Response<String> response) {
+                            AbsSortXml sortXml = null;
+                            if (type == 0) {
+                                String xml = response.body();
+                                sortXml = sortXml(sortResult, xml);
+                            } else if (type == 1) {
+                                String json = response.body();
+                                sortXml = sortJson(sortResult, json);
+                            }
+                            if (sortXml != null && Hawk.get(HawkConfig.HOME_REC, 0) == 1 && sortXml.list != null && sortXml.list.videoList != null && sortXml.list.videoList.size() > 0) {
+                                ArrayList<String> ids = new ArrayList<>();
+                                for (Movie.Video vod : sortXml.list.videoList) {
+                                    ids.add(vod.id);
+                                }
+                                final AbsSortXml finalSortXml = sortXml;
+                                getHomeRecList(sourceBean, ids, new HomeRecCallback() {
+                                    @Override
+                                    public void done(List<Movie.Video> videos) {
+                                        finalSortXml.videoList = videos;
+                                        sortResult.postValue(finalSortXml);
+                                        sortCache.put(sourceKey, finalSortXml);
+                                    }
+                                });
+                            } else {
+                                sortResult.postValue(sortXml);
+                                sortCache.put(sourceKey, sortXml);
+                            }
+                        }
+
+                        @Override
+                        public void onError(Response<String> response) {
+                            super.onError(response);
+                            sortResult.postValue(null);
+                        }
+                    });
+        }else if (type == 4) {
+            String extend=sourceBean.getExt();
+            extend=getFixUrl(extend);
+            if(URLEncoder.encode(extend).length()<1000){
+                GetRequest<String> request = OkGo.<String>get(sourceBean.getApi())
+                        .tag(sourceBean.getKey() + "_sort")
+                        .params("filter", "true");
+                // 当 extend 不为空且非空字符串时添加参数
+                if (extend != null && !extend.isEmpty()) {
+                    request.params("extend", extend);
+                }
+                request.execute(new AbsCallback<String>() {
+                            @Override
+                            public String convertResponse(okhttp3.Response response) throws Throwable {
+                                if (response.body() != null) {
+                                    return response.body().string();
+                                } else {
+                                    throw new IllegalStateException("网络请求错误");
+                                }
+                            }
+
+                            @Override
+                            public void onSuccess(Response<String> response) {
+                                String sortJson  = response.body();
+                                if (sortJson != null) {
+                                    final AbsSortXml sortXml = sortJson(sortResult, sortJson);
+                                    if (sortXml != null && Hawk.get(HawkConfig.HOME_REC, 0) == 1) {
+                                        AbsXml absXml = json(null, sortJson, sourceBean.getKey());
+                                        if (absXml != null && absXml.movie != null && absXml.movie.videoList != null && absXml.movie.videoList.size() > 0) {
+                                            sortXml.videoList = absXml.movie.videoList;
+                                            sortResult.postValue(sortXml);
+                                            sortCache.put(sourceKey, sortXml);
+                                        } else {
+                                            getHomeRecList(sourceBean, null, new HomeRecCallback() {
+                                                @Override
+                                                public void done(List<Movie.Video> videos) {
+                                                    sortXml.videoList = videos;
+                                                    sortResult.postValue(sortXml);
+                                                    sortCache.put(sourceKey, sortXml);
+                                                }
+                                            });
+                                        }
+                                    } else {
+                                        sortResult.postValue(sortXml);
+                                        sortCache.put(sourceKey, sortXml);
+                                    }
+                                } else {
+                                    sortResult.postValue(null);
+                                }
+                            }
+
+                            @Override
+                            public void onError(Response<String> response) {
+                                super.onError(response);
+                                sortResult.postValue(null);
+                            }
+                        });
+            }else {
+                try {
+                    Map<String, String> params = new HashMap<>();
+                    params.put("filter","true");
+                    if (extend != null && !extend.isEmpty()) {
+                        params.put("extend",extend);
+                    }
+                    RemoteTVBox.post(sourceBean.getApi(), params, new okhttp3.Callback() {
+                        @Override
+                        public void onFailure(@NonNull Call call, IOException e) {
+                            sortResult.postValue(null);
+                        }
+
+                        @Override
+                        public void onResponse(@NonNull Call call, @NonNull okhttp3.Response response) throws IOException {
+                            assert response.body() != null;
+                            String sortJson = response.body().string();
+                            final AbsSortXml sortXml = sortJson(sortResult, sortJson);
+                            if (sortXml != null && Hawk.get(HawkConfig.HOME_REC, 0) == 1) {
+                                AbsXml absXml = json(null, sortJson, sourceBean.getKey());
+                                if (absXml != null && absXml.movie != null && absXml.movie.videoList != null && absXml.movie.videoList.size() > 0) {
+                                    sortXml.videoList = absXml.movie.videoList;
+                                    sortResult.postValue(sortXml);
+                                    sortCache.put(sourceKey, sortXml);
+                                }
+                            } else {
+                                sortResult.postValue(sortXml);
+                                sortCache.put(sourceKey, sortXml);
+                            }
+                        }
+                    });
+                } catch (Exception ignored) {
+                    sortResult.postValue(null);
+                }
+            }
+        } else {
+            sortResult.postValue(null);
+        }
+    }
+    // categoryContent
+    public void getList(MovieSort.SortData sortData, int page) {
+        if (sortData == null) {     //xuameng 判空防止空指针
+            Log.w("SourceViewModel", "sortData is null, return");
+            listResult.postValue(null);
+            return;
+        }
+        LOG.i("echo-getList:");
+        SourceBean homeSourceBean = ApiConfig.get().getHomeSourceBean();
+        int type = homeSourceBean.getType();
+        if (type == 3) {
+            spThreadPool.execute(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Spider sp = ApiConfig.get().getCSP(homeSourceBean);
+                        String json = sp.categoryContent(sortData.id, page + "", true, sortData.filterSelect);
+                        LOG.i("echo-categoryContent:"+json);
+                        json(listResult, json,homeSourceBean.getKey());
+                    } catch (Throwable th) {
+                        th.printStackTrace();
+                    }
+                }
+            });
+        } else if (type == 0 || type == 1) {
+            OkGo.<String>get(homeSourceBean.getApi())
+                    .tag(homeSourceBean.getApi())
+                    .params("ac", type == 0 ? "videolist" : "detail")
+                    .params("t", sortData.id)
+                    .params("pg", page)
+                    .params(sortData.filterSelect)
+                    .params("f", (sortData.filterSelect == null || sortData.filterSelect.size() <= 0) ? "" : new JSONObject(sortData.filterSelect).toString())
+                    .execute(new AbsCallback<String>() {
+
+                        @Override
+                        public String convertResponse(okhttp3.Response response) throws Throwable {
+                            if (response.body() != null) {
+                                return response.body().string();
+                            } else {
+                                throw new IllegalStateException("网络请求错误");
+                            }
+                        }
+
+                        @Override
+                        public void onSuccess(Response<String> response) {
+                            if (type == 0) {
+                                String xml = response.body();
+                                xml(listResult, xml, homeSourceBean.getKey());
+                            } else {
+                                String json = response.body();
+                                json(listResult, json, homeSourceBean.getKey());
+                            }
+                        }
+
+                        @Override
+                        public void onError(Response<String> response) {
+                            super.onError(response);
+                            listResult.postValue(null);
+                        }
+                    });
+        }else if (type == 4) {
+            String ext= "";
+            String extend=homeSourceBean.getExt();
+            extend=getFixUrl(extend);
+            if (sortData.filterSelect != null && sortData.filterSelect.size() > 0) {
+                try {
+                    String selectExt = new JSONObject(sortData.filterSelect).toString();
+                    ext = Base64.encodeToString(selectExt.getBytes("UTF-8"), Base64.DEFAULT |  Base64.NO_WRAP);
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            }else {
+                ext = Base64.encodeToString("{}".getBytes(), Base64.DEFAULT |  Base64.NO_WRAP);
+            }
+
+            GetRequest<String> request = OkGo.<String>get(homeSourceBean.getApi())
+                    .tag(homeSourceBean.getApi())
+                    .params("ac", "detail")
+                    .params("filter", "true")
+                    .params("t", sortData.id)
+                    .params("pg", page)
+                    .params("ext", ext);
+            // 当 extend 不为空且非空字符串时添加参数
+            if (extend != null && !extend.isEmpty()) {
+                request.params("extend", extend);
+            }
+            request.execute(new AbsCallback<String>() {
+                        @Override
+                        public String convertResponse(okhttp3.Response response) throws Throwable {
+                            try {
+                                if (response.body() != null) {
+                                    return response.body().string();
+                                } else {
+                                    throw new IllegalStateException("网络请求错误，response body 为 null");
+                                }
+                            } catch (Exception e) {
+                                LOG.i("echo-list: convertResponse error"+ e.getMessage());
+                                throw e;  // 重新抛出异常
+                            }
+                        }
+
+                        @Override
+                        public void onSuccess(Response<String> response) {
+                            String json = response.body();
+                            LOG.i("echo-list: " + json);
+                            json(listResult, json, homeSourceBean.getKey());
+                        }
+
+                        @Override
+                        public void onError(Response<String> response) {
+                            super.onError(response);
+                            listResult.postValue(null);
+                        }
+                    });
+
+        } else {
+            listResult.postValue(null);
+        }
+    }
+
+public void getListFromSearch(MovieSort.SortData sortData, int page, String sourceKey) {
+    if (sortData == null) {
+        Log.w("SourceViewModel", "sortData is null, return");
+        listResult.postValue(null);
+        return;
+    }
+
+    SourceBean sourceBean = ApiConfig.get().getSource(sourceKey);
+    if (sourceBean == null) {
+        Log.w("SourceViewModel", "sourceBean not found: " + sourceKey);
+        listResult.postValue(null);
+        return;
+    }
+
+    int type = sourceBean.getType();
+    LOG.i("echo-getList: source=" + sourceKey + ", id=" + sortData.id + ", page=" + page);
+
+    if (type == 3) {
+        spThreadPool.execute(() -> {
+            try {
+                Spider sp = ApiConfig.get().getCSP(sourceBean);
+                String json = sp.categoryContent(
+                        sortData.id,
+                        String.valueOf(page),
+                        true,
+                        sortData.filterSelect
+                );
+                json(listResult, json, sourceBean.getKey());
+            } catch (Throwable th) {
+                th.printStackTrace();
+                listResult.postValue(null);
+            }
+        });
+        return;
+    }
+
+    if (type == 0 || type == 1) {
+        OkGo.<String>get(sourceBean.getApi())
+                .tag(sourceBean.getApi())
+                .params("ac", type == 0 ? "videolist" : "detail")
+                .params("t", sortData.id)
+                .params("pg", page)
+                .params(sortData.filterSelect)
+                .execute(new AbsCallback<String>() {
                     @Override
                     public String convertResponse(okhttp3.Response response) throws Throwable {
                         return response.body().string();
                     }
+
+                    @Override
+                    public void onSuccess(Response<String> response) {
+                        if (type == 0) xml(listResult, response.body(), sourceBean.getKey());
+                        else json(listResult, response.body(), sourceBean.getKey());
+                    }
+
+                    @Override
+                    public void onError(Response<String> response) {
+                        listResult.postValue(null);
+                    }
                 });
-    }
-
-    private void initData() {
-        initCheckedSourcesForSearch();
-        Intent intent = getIntent();
-        initSearchHistory();  //xuameng 搜索历史
-        showSuccess();  //xuameng 搜索历史
-        mGridView.setVisibility(View.GONE);
-        if (intent != null && intent.hasExtra("title")) {
-            String title = intent.getStringExtra("title");
-            if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)){
-                Bundle bundle = new Bundle();
-                bundle.putString("title", title);
-                refreshSearchHistory(title);  //xuameng 搜索历史
-                jumpActivity(FastSearchActivity.class, bundle);
-            }else {
-                search(title);
-            }
-        }
-        // 加载热词
-        if (hots.size() != 0) {
-            wordAdapter.setNewData(hots);  //xuameng 热搜不用重复刷新
-            return;
-        }
-        showHotSearchtext();  //xuameng 热搜
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void server(ServerEvent event) {
-        if (event.type == ServerEvent.SERVER_SEARCH) {
-            String title = (String) event.obj;
-            if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)){
-                Bundle bundle = new Bundle();
-                bundle.putString("title", title);
-                refreshSearchHistory(title);   //xuameng 搜索历史
-                jumpActivity(FastSearchActivity.class, bundle);
-            }else{
-                search(title);
-            }
-        }
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void refresh(RefreshEvent event) {
-        if (event.type == RefreshEvent.TYPE_SEARCH_RESULT) {
-            try {
-                searchData(event.obj == null ? null : (AbsXml) event.obj);
-            } catch (Exception e) {
-                searchData(null);
-            }
-        }
-    }
-
-    private void initCheckedSourcesForSearch() {
-        mCheckSources = SearchHelper.getSourcesForSearch();
-    }
-
-    public static void setCheckedSourcesForSearch(HashMap<String,String> checkedSources) {
-        mCheckSources = checkedSources;
-    }
-
-    private void search(String title) {
-        if (TextUtils.isEmpty(title)){
-            App.showToastShort(SearchActivity.this, "输入内容不能为空！");
-            return;
-        }
-        cancel();   
-		cidStack.clear();
-				sourceKeyStack.clear();
-
-        if (remoteDialog != null) {
-            remoteDialog.dismiss();
-            remoteDialog = null;
-        }
-        etSearch.setText(title);
-        this.searchTitle = title;
-        mGridView.setVisibility(View.GONE); //xuameng 搜索历史
-        searchAdapter.setNewData(new ArrayList<>());
-        refreshSearchHistory(title);  //xuameng 搜索历史
-        searchResult();
-    }
-
-    private ExecutorService searchExecutorService = null;   //xuameng全局声明
-    private AtomicInteger allRunCount = new AtomicInteger(0);
-    private volatile boolean isActivityDestroyed = false; //xuameng 退出就不统计搜索成功了
-
-    private void searchResult() {
-        // 原有清理逻辑保持不变
-        try {
-            if (searchExecutorService != null) {
-                searchExecutorService.shutdownNow();
-                searchExecutorService = null;
-                JsLoader.stopAll();
-            }
-        } catch (Throwable th) {
-            th.printStackTrace();
-        } finally {
-            searchAdapter.setNewData(new ArrayList<>());
-            allRunCount.set(0);
-        }
-        // 优化线程池配置（核心修改点）
-        searchExecutorService = new ThreadPoolExecutor(
-        Runtime.getRuntime().availableProcessors(), // 核心线程数=CPU核数
-        Runtime.getRuntime().availableProcessors() * 2, // 最大线程数
-            30L, TimeUnit.SECONDS,
-            new LinkedBlockingQueue<>(1000),  // 队列容量调整为1000
-            new ThreadFactory() {
-                @Override
-                public Thread newThread(Runnable r) {
-                    // 关键优化：设置256KB栈大小
-                    Thread t = new Thread(null, r, "search-pool", 256 * 1024);
-                    t.setPriority(Thread.NORM_PRIORITY - 1);
-                    return t;
-                }
-            },
-            new ThreadPoolExecutor.DiscardOldestPolicy()  // 超限直接丢弃
-        );
-        // 原有数据准备逻辑（完全保留）
-        List<SourceBean> searchRequestList = new ArrayList<>();
-        searchRequestList.addAll(ApiConfig.get().getSourceBeanList());
-        SourceBean home = ApiConfig.get().getHomeSourceBean();
-        searchRequestList.remove(home);
-        searchRequestList.add(0, home);
-        ArrayList<String> siteKey = new ArrayList<>();
-        // 创建计数器（新增）
-        final AtomicInteger completedCount = new AtomicInteger(0);
-        final int totalTasks = (int) searchRequestList.stream()
-            .filter(bean -> bean.isSearchable() && 
-                   (mCheckSources == null || mCheckSources.containsKey(bean.getKey())))
-            .count();
-        for (SourceBean bean : searchRequestList) {
-            if (!bean.isSearchable()) {
-                continue;
-            }
-            if (mCheckSources != null && !mCheckSources.containsKey(bean.getKey())) {
-                continue;
-            }
-            siteKey.add(bean.getKey());
-            allRunCount.incrementAndGet();
-        }
-        if (siteKey.size() <= 0) {
-            App.showToastShort(SearchActivity.this, "聚汇影视提示：请指定搜索源！");
-            return;
-        }
-        showLoading();
-        // 执行搜索任务（添加完成回调）
-        for (String key : siteKey) {
-            searchExecutorService.execute(() -> {
-                try {
-                    if (!isActivityDestroyed) { //xuameng 退出就不搜索了
-                        sourceViewModel.getSearch(key, searchTitle);
-                    }
-                } finally {
-                    // 实时进度更新（每完成10%或最后一项）
-                    int current = completedCount.incrementAndGet();
-                    if (!isActivityDestroyed && 
-                       (current % Math.max(1, totalTasks/10) == 0 || current == totalTasks)) {
-                        runOnUiThread(() -> updateProgress(current, totalTasks));
-                    }
-                }
-            });
-        }
-    }
-
-    private void updateProgress(int current, int total) {   // xuameng任务完成计数（新增）
-        String message = (current == total) 
-            ? String.format(Locale.getDefault(), 
-                "所有任务已完成！共处理%d个搜索源 (100%%)", total)
-            : String.format(Locale.getDefault(), 
-                "搜索进度: %d/%d (%.1f%%)", current, total, current * 100f / total);
-        // 根据完成状态选择Toast时长
-        if (current == total) {
-            App.showToastLong(SearchActivity.this, message);
-        } else {
-            App.showToastShort(SearchActivity.this, message);
-        }
-    }
-
-    private boolean matchSearchResult(String name, String searchTitle) {
-        if (TextUtils.isEmpty(name) || TextUtils.isEmpty(searchTitle)) return false;
-        searchTitle = searchTitle.trim();
-        String[] arr = searchTitle.split("\\s+");
-        int matchNum = 0;
-        for(String one : arr) {
-            if (name.contains(one)) matchNum++;
-        }
-        return matchNum == arr.length ? true : false;
-    }
-
-    private void searchData(AbsXml absXml) {  //xuameng重要BUG如果快速模式直接返回
-        if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false)){
-            return;
-        }
-        if (searchExecutorService == null) {  //xuameng点击清除或删除所有文字后还继续显示搜索结果
-            return;
-        }
-        if (absXml != null && absXml.movie != null && absXml.movie.videoList != null && absXml.movie.videoList.size() > 0) {
-            List<Movie.Video> data = new ArrayList<>();
-            for (Movie.Video video : absXml.movie.videoList) {
-                if (matchSearchResult(video.name, searchTitle)) data.add(video);
-            }
-            if (searchAdapter.getData().size() > 0) {
-                searchAdapter.addData(data);
-            } else {
-                showSuccess();   //xuameng搜索历史
-                mGridView.setVisibility(View.VISIBLE);
-                searchAdapter.setNewData(data);
-                tv_history.setVisibility(View.GONE);    //xuameng搜索历史
-                searchTips.setVisibility(View.GONE);  //xuameng搜索历史
-//                llWord.setVisibility(View.GONE);   //xuameng搜索历史
-            }
-        }
-
-        int count = allRunCount.decrementAndGet();
-        if (count <= 0) {
-            if (searchAdapter.getData().size() <= 0) {
-                if (searchExecutorService != null) {
-                    showEmpty();		//xuameng修复BUG
-                }else{
-                tv_history.setVisibility(View.VISIBLE);   //xuameng修复BUG
-                searchTips.setVisibility(View.VISIBLE);
-                mGridView.setVisibility(View.GONE); 
-                }
-            }
-            cancel();
-        }
-    }
-
-
-    private void cancel() {
-        OkGo.getInstance().cancelTag("search");
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        isActivityDestroyed = true; //xuameng 退出就不统计搜索成功了
-        cancel();
-        try {
-            if (searchExecutorService != null) {
-                searchExecutorService.shutdownNow();
-                searchExecutorService = null;
-                JsLoader.stopAll();
-            }
-        } catch (Throwable th) {
-            th.printStackTrace();
-        }
-        EventBus.getDefault().unregister(this);
-    }
-
-    @Override
-    public void onBackPressed() {
-    if (!cidStack.isEmpty()) {
-        currentSortData.id = cidStack.pop();
-        currentSortData.sourceKey = sourceKeyStack.pop();
-
-        page = 1;
-        searchAdapter.setNewData(new ArrayList<>());
-        showLoading();
-
-        sourceViewModel.getListFromSearch(
-                currentSortData,
-                page,
-                currentSortData.sourceKey
-        );
         return;
     }
-        isActivityDestroyed = true;   //xuameng 退出就不统计搜索成功了
-        App.HideToast();  //xuameng HideToast
-        cancel();
-stopSearchExecutor();
-        super.onBackPressed();
-    }
 
-    public void showHotSearchtext() { //xuameng 热搜 改成360接口
-        OkGo.<String>get("https://api.web.360kan.com/v1/rank?cat=1")
-        .headers(HttpHeaders.REFERER, "https://www.360kan.com/rank/general")
-        .execute(new AbsCallback<String>() {
-            @Override
-            public void onSuccess(Response<String> response) {
-                try {
-                    String result = response.body();
-                    // 情况1：网络请求成功但返回内容为空
-                    if (TextUtils.isEmpty(result)) {
-                        setDefaultHotWords();
-                        return;
-                    }
-                    hots.clear();
-                    JsonObject jsonObject = JsonParser.parseString(result).getAsJsonObject();
-                    JsonArray dataArray = jsonObject.getAsJsonArray("data");
-                    
-                    // 情况2：返回的JSON结构正确，但data数组为空
-                    if (dataArray != null && dataArray.size() > 0) {
-                        for (JsonElement element : dataArray) {
-                            JsonObject item = element.getAsJsonObject();
-                            // 添加健壮性检查，防止字段缺失
-                            if (item.has("title")) {
-                                String title = item.get("title").getAsString().trim();
-                                hots.add(title);
-                            }
-                        }
-                    }
-                    
-                    // 情况3：data数组为空或解析不出有效数据
-                    if (hots.isEmpty()) {
-                        setDefaultHotWords();
-                    } else {
-                        wordAdapter.setNewData(hots);
-                    }
-                    
-                } catch (Throwable th) {
-                    th.printStackTrace();
-                    // 情况4：JSON解析异常
-                    setDefaultHotWords();
-                }
-            }
+    if (type == 4) {
+        String ext = buildExt(sortData.filterSelect);
+        String extend = getFixUrl(sourceBean.getExt());
 
-            @Override
-            public void onError(Response<String> response) {
-                super.onError(response);
-                // 情况5：网络请求失败
-                Throwable exception = response.getException();
-                if (exception != null) {
-                    exception.printStackTrace();
-                }
-                setDefaultHotWords();
-            }
+        GetRequest<String> req = OkGo.<String>get(sourceBean.getApi())
+                .tag(sourceBean.getApi())
+                .params("ac", "detail")
+                .params("filter", "true")
+                .params("t", sortData.id)
+                .params("pg", page)
+                .params("ext", ext);
 
+        if (!TextUtils.isEmpty(extend)) {
+            req.params("extend", extend);
+        }
+
+        req.execute(new AbsCallback<String>() {
             @Override
             public String convertResponse(okhttp3.Response response) throws Throwable {
                 return response.body().string();
             }
-        });
-    }
 
-
-    /**xuameng
-     * 设置默认的热门搜索词
-     * 当网络请求失败或返回空数据时使用
-     */
-    private void setDefaultHotWords() {
-        hots.clear();
-        // 添加一些通用的热门搜索词作为默认值
-        hots.add("聚汇电影");
-        hots.add("聚汇电视剧");
-        hots.add("聚汇综艺");
-        hots.add("聚汇动漫");
-        hots.add("聚汇纪录片");
-        hots.add("聚汇动作片");
-        hots.add("聚汇喜剧片");
-        hots.add("聚汇爱情片");
-        hots.add("聚汇科幻片");
-        hots.add("聚汇悬疑片");
-
-        // 更新UI
-        wordAdapter.setNewData(hots);
-
-        // 给用户一个提示（如果需要）
-         App.showToastShort(SearchActivity.this, "加载热门搜索失败，已显示默认推荐");
-    }
-
-    /* ===== 停止搜索 ===== */
-    private void stopSearchExecutor() {
-        isActivityDestroyed = true;
-        try {
-            if (searchExecutorService != null) {
-                searchExecutorService.shutdownNow();
-                searchExecutorService = null;
+            @Override
+            public void onSuccess(Response<String> response) {
+                json(listResult, response.body(), sourceBean.getKey());
             }
-        } catch (Throwable ignored) {}
+
+            @Override
+            public void onError(Response<String> response) {
+                listResult.postValue(null);
+            }
+        });
+        return;
+    }
+
+    listResult.postValue(null);
+}
+
+    interface HomeRecCallback {
+        void done(List<Movie.Video> videos);
+    }
+//    homeVideoContent
+    void getHomeRecList(SourceBean sourceBean, ArrayList<String> ids, HomeRecCallback callback) {
+        int type = sourceBean.getType();
+        if (type == 3) {
+            Runnable waitResponse = new Runnable() {
+                @Override
+                public void run() {
+                    ExecutorService executor = Executors.newSingleThreadExecutor();
+                    Future<String> future = executor.submit(new Callable<String>() {
+                        @Override
+                        public String call() throws Exception {
+                            Spider sp = ApiConfig.get().getCSP(sourceBean);
+                            return sp.homeVideoContent();
+                        }
+                    });
+                    String sortJson = null;
+                    try {
+                        sortJson = future.get(10, TimeUnit.SECONDS);
+                    } catch (TimeoutException e) {
+                        e.printStackTrace();
+                        future.cancel(true);
+                    } catch (InterruptedException | ExecutionException e) {
+                        e.printStackTrace();
+                    } finally {
+                        if (sortJson != null) {
+                            AbsXml absXml = json(null, sortJson, sourceBean.getKey());
+                            if (absXml != null && absXml.movie != null && absXml.movie.videoList != null) {
+                                callback.done(absXml.movie.videoList);
+                            } else {
+                                callback.done(null);
+                            }
+                        } else {
+                            callback.done(null);
+                        }
+                        try {
+                            executor.shutdown();
+                        } catch (Throwable th) {
+                            th.printStackTrace();
+                        }
+                    }
+                }
+            };
+            spThreadPool.execute(waitResponse);
+        } else if (type == 0 || type == 1) {
+            OkGo.<String>get(sourceBean.getApi())
+                    .tag("detail")
+                    .params("ac", sourceBean.getType() == 0 ? "videolist" : "detail")
+                    .params("ids", TextUtils.join(",", ids))
+                    .execute(new AbsCallback<String>() {
+
+                        @Override
+                        public String convertResponse(okhttp3.Response response) throws Throwable {
+                            if (response.body() != null) {
+                                return response.body().string();
+                            } else {
+                                throw new IllegalStateException("网络请求错误");
+                            }
+                        }
+
+                        @Override
+                        public void onSuccess(Response<String> response) {
+                            AbsXml absXml;
+                            if (sourceBean.getType() == 0) {
+                                String xml = response.body();
+                                absXml = xml(null, xml, sourceBean.getKey());
+                            } else {
+                                String json = response.body();
+                                absXml = json(null, json, sourceBean.getKey());
+                            }
+                            if (absXml != null && absXml.movie != null && absXml.movie.videoList != null) {
+                                callback.done(absXml.movie.videoList);
+                            } else {
+                                callback.done(null);
+                            }
+                        }
+
+                        @Override
+                        public void onError(Response<String> response) {
+                            super.onError(response);
+                            callback.done(null);
+                        }
+                    });
+        } else {
+            callback.done(null);
+        }
+    }
+    // detailContent
+    public void getDetail(String sourceKey, String urlid) {
+    	if (urlid.startsWith("push://") && ApiConfig.get().getSource("push_agent") != null) {           
+            String pushUrl = urlid.substring(7);
+            if (pushUrl.startsWith("b64:")) {
+                try {
+                    pushUrl = new String(Base64.decode(pushUrl.substring(4), Base64.DEFAULT | Base64.URL_SAFE | Base64.NO_WRAP), "UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                pushUrl = URLDecoder.decode(pushUrl);
+            }
+            sourceKey = "push_agent";
+            urlid = pushUrl;
+        }
+        String id = urlid;
+    
+        SourceBean sourceBean = ApiConfig.get().getSource(sourceKey);
+        if (sourceBean == null) {      //xuameng判断sourceKey为空 远程推送BUG
+            detailResult.postValue(null);
+            Log.e("sourceBean", "get sourceBean got null, this should not be happended, maybe apiconfig get from http failed and use cache, sourceKey is " + sourceKey);
+            return;
+        }
+        int type = sourceBean.getType();
+        if (type == 3) {
+            spThreadPool.execute(new Runnable() {
+                @Override
+                public void run() {
+                    ExecutorService executor = Executors.newSingleThreadExecutor();
+                    Future<String> future = executor.submit(new Callable<String>() {
+                        @Override
+                        public String call() {
+                            Spider sp = ApiConfig.get().getCSP(sourceBean);
+                            List<String> ids = new ArrayList<>();
+                            ids.add(id);
+                            try {
+                                return sp.detailContent(ids);
+                            } catch (Exception e) {
+                                LOG.i("echo--getDetail--error: " + e.getMessage());
+                                return "";
+                            }
+                        }
+                    });
+
+                    String json = null;
+                    try {
+                        json = future.get(15, TimeUnit.SECONDS);
+                        LOG.i("echo--getDetail--result:" + json);
+                    } catch (TimeoutException e) {
+                        LOG.i("echo--getDetail--timeout");
+                        future.cancel(true);
+                    } catch (Exception e) {
+                        LOG.i("echo--getDetail--error: " + e.getMessage());
+                    } finally {
+                        json(detailResult, json, sourceBean.getKey());
+                        executor.shutdown();
+                    }
+                }
+            });
+        } else if (type == 0 || type == 1|| type == 4) {
+            String extend=sourceBean.getExt();
+            extend=getFixUrl(extend);
+
+            GetRequest<String> request = OkGo.<String>get(sourceBean.getApi())
+                    .tag("detail")
+                    .params("ac", type == 0 ? "videolist" : "detail")
+                    .params("ids", id);
+            // 当 extend 不为空且非空字符串时添加参数
+            if (extend != null && !extend.isEmpty()) {
+                request.params("extend", extend);
+            }
+            request.execute(new AbsCallback<String>() {
+
+                        @Override
+                        public String convertResponse(okhttp3.Response response) throws Throwable {
+                            if (response.body() != null) {
+                                return response.body().string();
+                            } else {
+                                throw new IllegalStateException("网络请求错误");
+                            }
+                        }
+
+                        @Override
+                        public void onSuccess(Response<String> response) {
+                            if (type == 0) {
+                                String xml = response.body();
+                                xml(detailResult, xml, sourceBean.getKey());
+                            } else {
+                                String json = response.body();
+                                LOG.i(json);
+                                json(detailResult, json, sourceBean.getKey());
+                            }
+                        }
+
+                        @Override
+                        public void onError(Response<String> response) {
+                            super.onError(response);
+                            json(detailResult, "", sourceBean.getKey());
+                        }
+                    });
+        } else {
+            detailResult.postValue(null);
+        }
+    }
+    // searchContent
+    public void getSearch(String sourceKey, String wd) {
+        SourceBean sourceBean = ApiConfig.get().getSource(sourceKey);
+        int type = sourceBean.getType();
+        if (type == 3) {
+            try {
+                Spider sp = ApiConfig.get().getCSP(sourceBean);
+                String search = sp.searchContent(wd, false);
+                if(!TextUtils.isEmpty(search)){
+                    json(searchResult, search, sourceBean.getKey());
+                } else {
+                    json(searchResult, "", sourceBean.getKey());
+                }
+            } catch (Throwable th) {
+                th.printStackTrace();
+                json(searchResult, "", sourceBean.getKey());
+            }
+        } else if (type == 0 || type == 1) {
+            OkGo.<String>get(sourceBean.getApi())
+                    .params("wd", wd)
+                    .params(type == 1 ? "ac" : null, type == 1 ? "detail" : null)
+                    .tag("search")
+                    .execute(new AbsCallback<String>() {
+                        @Override
+                        public String convertResponse(okhttp3.Response response) throws Throwable {
+                            if (response.body() != null) {
+                                return response.body().string();
+                            } else {
+                                throw new IllegalStateException("网络请求错误");
+                            }
+                        }
+
+                        @Override
+                        public void onSuccess(Response<String> response) {
+                            if (type == 0) {
+                                String xml = response.body();
+                                xml(searchResult, xml, sourceBean.getKey());
+                            } else {
+                                String json = response.body();
+                                json(searchResult, json, sourceBean.getKey());
+                            }
+                        }
+
+                        @Override
+                        public void onError(Response<String> response) {
+                            super.onError(response);
+                            // searchResult.postValue(null);
+                            EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_SEARCH_RESULT, null));
+                        }
+                    });
+        }else if (type == 4) {
+            String extend=sourceBean.getExt();
+            extend=getFixUrl(extend);
+            try {
+                wd=URLEncoder.encode(wd, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+
+            GetRequest<String> request = OkGo.<String>get(sourceBean.getApi())
+                    .tag("search")
+                    .params("wd", wd)
+                    .params("ac" ,"detail")
+                    .params("quick" ,"false");
+            // 当 extend 不为空且非空字符串时添加参数
+            if (extend != null && !extend.isEmpty()) {
+                request.params("extend", extend);
+            }
+            request.execute(new AbsCallback<String>() {
+                    @Override
+                    public String convertResponse(okhttp3.Response response) throws Throwable {
+                        if (response.body() != null) {
+                            return response.body().string();
+                        } else {
+                            LOG.i("echo-t4 search-网络请求错误");
+                            throw new IllegalStateException("网络请求错误");
+                        }
+                    }
+
+                    @Override
+                    public void onSuccess(Response<String> response) {
+                            String json = response.body();
+                            LOG.i("echo-t4 search onSuccess"+json);
+                            json(searchResult, json, sourceBean.getKey());
+                    }
+
+                    @Override
+                    public void onError(Response<String> response) {
+                        LOG.i("echo-t4 search-onError");
+                        super.onError(response);
+                        // searchResult.postValue(null);
+                        EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_SEARCH_RESULT, null));
+                    }
+                });
+        } else {
+            searchResult.postValue(null);
+        }
+    }
+    // searchContent
+    public void getQuickSearch(String sourceKey, String wd) {
+        SourceBean sourceBean = ApiConfig.get().getSource(sourceKey);
+        int type = sourceBean.getType();
+        if (type == 3) {
+            try {
+                Spider sp = ApiConfig.get().getCSP(sourceBean);
+                json(quickSearchResult, sp.searchContent(wd, true), sourceBean.getKey());
+            } catch (Throwable th) {
+                th.printStackTrace();
+            }
+        } else if (type == 0 || type == 1) {
+            OkGo.<String>get(sourceBean.getApi())
+                    .params("wd", wd)
+                    .params(type == 1 ? "ac" : null, type == 1 ? "detail" : null)
+                    .tag("quick_search")
+                    .execute(new AbsCallback<String>() {
+                        @Override
+                        public String convertResponse(okhttp3.Response response) throws Throwable {
+                            if (response.body() != null) {
+                                return response.body().string();
+                            } else {
+                                throw new IllegalStateException("网络请求错误");
+                            }
+                        }
+
+                        @Override
+                        public void onSuccess(Response<String> response) {
+                            if (type == 0) {
+                                String xml = response.body();
+                                xml(quickSearchResult, xml, sourceBean.getKey());
+                            } else {
+                                String json = response.body();
+                                json(quickSearchResult, json, sourceBean.getKey());
+                            }
+                        }
+
+                        @Override
+                        public void onError(Response<String> response) {
+                            super.onError(response);
+                            // quickSearchResult.postValue(null);
+                            EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_QUICK_SEARCH_RESULT, null));
+                        }
+                    });
+        }else if (type == 4) {
+            String extend=sourceBean.getExt();
+            extend=getFixUrl(extend);
+
+            GetRequest<String> request = OkGo.<String>get(sourceBean.getApi())
+                    .tag("search")
+                    .params("wd", wd)
+                    .params("ac" ,"detail")
+                    .params("quick" ,"true");
+            // 当 extend 不为空且非空字符串时添加参数
+            if (extend != null && !extend.isEmpty()) {
+                request.params("extend", extend);
+            }
+            request.execute(new AbsCallback<String>() {
+                    @Override
+                    public String convertResponse(okhttp3.Response response) throws Throwable {
+                        if (response.body() != null) {
+                            return response.body().string();
+                        } else {
+                            throw new IllegalStateException("网络请求错误");
+                        }
+                    }
+
+                    @Override
+                    public void onSuccess(Response<String> response) {
+                        String json = response.body();
+                        LOG.i(json);
+                        json(quickSearchResult, json, sourceBean.getKey());
+                    }
+
+                    @Override
+                    public void onError(Response<String> response) {
+                        super.onError(response);
+                        // searchResult.postValue(null);
+                        EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_SEARCH_RESULT, null));
+                    }
+                });
+        } else {
+            quickSearchResult.postValue(null);
+        }
+    }
+    // playerContent
+    public void getPlay(String sourceKey, String playFlag, String progressKey, String url, String subtitleKey) {
+        SourceBean sourceBean = ApiConfig.get().getSource(sourceKey);
+        int type = sourceBean.getType();
+        if (type == 3) {
+            spThreadPool.execute(new Runnable() {
+                @Override
+                public void run() {
+                    ExecutorService executor = Executors.newSingleThreadExecutor();
+                    Future<String> future = executor.submit(new Callable<String>() {
+                        @Override
+                        public String call() throws Exception {
+                            Spider sp = ApiConfig.get().getCSP(sourceBean);
+                            if (TextUtils.isEmpty(url)) return "";
+                            try {
+                                return sp.playerContent(playFlag, url, ApiConfig.get().getVipParseFlags());
+                            } catch (Exception e) {
+                                LOG.i("echo--getPlay--error: " + e.getMessage());
+                                return "";
+                            }
+                        }
+                    });
+
+                    try {
+                        String json = future.get(10, TimeUnit.SECONDS);
+                        LOG.i("echo--getPlay--result:" + json);
+                        // 处理返回的 JSON
+                        if (!TextUtils.isEmpty(json)) {
+                            JSONObject result = new JSONObject(json);
+                            result.put("key", url);
+                            result.put("proKey", progressKey);
+                            result.put("subtKey", subtitleKey);
+                            if (!result.has("flag"))
+                                result.put("flag", playFlag);
+                            playResult.postValue(result);
+                        } else {
+                            playResult.postValue(null);
+                        }
+                    } catch (TimeoutException e) {
+                        // 如果超时了，处理超时逻辑
+                        LOG.i("echo--getPlay--timeout");
+                        future.cancel(true);
+                        playResult.postValue(null);
+                    } catch (Exception e) {
+                        // 捕获其他异常
+                        LOG.i("echo--getPlay--error: " + e.getMessage());
+                        playResult.postValue(null);
+                    } finally {
+                        executor.shutdown();
+                    }
+                }
+            });
+        } else if (type == 0 || type == 1) {
+            JSONObject result = new JSONObject();
+            try {
+                result.put("key", url);
+                String playUrl = sourceBean.getPlayerUrl().trim();
+                if (DefaultConfig.isVideoFormat(url) && playUrl.isEmpty()) {
+                    result.put("parse", 0);
+                    result.put("url", url);
+                } else {
+                    result.put("parse", 1);
+                    result.put("url", url);
+                }
+                result.put("proKey", progressKey);
+                result.put("subtKey", subtitleKey);
+                result.put("playUrl", playUrl);
+                result.put("flag", playFlag);
+                playResult.postValue(result);
+            } catch (Throwable th) {
+                th.printStackTrace();
+                playResult.postValue(null);
+            }
+        } else if (type == 4) {
+            String extend=sourceBean.getExt();
+            extend=getFixUrl(extend);
+
+            GetRequest<String> request = OkGo.<String>get(sourceBean.getApi())
+                    .tag("play")
+                    .params("play", url)
+                    .params("flag" ,playFlag);
+            // 当 extend 不为空且非空字符串时添加参数
+            if (extend != null && !extend.isEmpty()) {
+                request.params("extend", extend);
+            }
+            request.execute(new AbsCallback<String>() {
+                    @Override
+                    public String convertResponse(okhttp3.Response response) throws Throwable {
+                        if (response.body() != null) {
+                            return response.body().string();
+                        } else {
+                            throw new IllegalStateException("网络请求错误");
+                        }
+                    }
+
+                    @Override
+                    public void onSuccess(Response<String> response) {
+                        String json = response.body();
+                        LOG.i(json);
+                        try {
+                            JSONObject result = new JSONObject(json);
+                            result.put("key", url);
+                            result.put("proKey", progressKey);
+                            result.put("subtKey", subtitleKey);
+                            if (!result.has("flag"))
+                                result.put("flag", playFlag);
+                            playResult.postValue(result);
+                        } catch (Throwable th) {
+                            th.printStackTrace();
+                            playResult.postValue(null);
+                        }
+                    }
+
+                    @Override
+                    public void onError(Response<String> response) {
+                        super.onError(response);
+                        playResult.postValue(null);
+                    }
+                });
+        }else {
+            playResult.postValue(null);
+        }
+    }
+
+    private static final ConcurrentHashMap<String, String> extendCache = new ConcurrentHashMap<>();
+
+    private String getFixUrl(final String extend) {
+        if(extend.isEmpty())return "";
+        if(!extend.startsWith("http"))return extend;
+        final String key = MD5.string2MD5(extend);
+        if (extendCache.containsKey(key)) {
+            LOG.i("echo-getFixUrl Cache");
+            return extendCache.get(key);
+        }
+        Future<String> future = spThreadPool.submit(new Callable<String>() {
+            @Override
+            public String call() {
+                String result = extend;
+                if (extend.startsWith("http://127.0.0.1")) {
+                    String path = extend.replaceAll("^http.+/file/", FileUtils.getRootPath() + "/");
+                    path = path.replaceAll("localhost/", "/");
+                    result = FileUtils.readFileToString(path, "UTF-8");
+                    result = tryMinifyJson(result);
+                    extendCache.putIfAbsent(key, result);
+                } else if (extend.startsWith("http")) {
+                    result = OkHttpUtil.string(extend, null);
+                    if (!result.isEmpty()) {
+                        result = tryMinifyJson(result);
+                        if(result.length()>2500)result = extend;
+                        extendCache.putIfAbsent(key, result);
+                    }
+                }
+                return result;
+            }
+        });
+
+        try {
+            return future.get(5, TimeUnit.SECONDS);
+        } catch (TimeoutException te) {
+            te.printStackTrace();
+            future.cancel(true);
+            return extend;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return extend;
+        }
+    }
+
+    private String tryMinifyJson(String raw) {
+        try {
+            raw = raw.trim();
+            JsonElement jsonElement = JsonParser.parseString(raw);
+            return gson.toJson(jsonElement);
+        } catch (Exception e) {
+            return raw;
+        }
+    }
+
+    private MovieSort.SortFilter getSortFilter(JsonObject obj) {
+        String key = obj.get("key").getAsString();
+        String name = obj.get("name").getAsString();
+        JsonArray kv = obj.getAsJsonArray("value");
+        LinkedHashMap<String, String> values = new LinkedHashMap<>();
+        for (JsonElement ele : kv) {
+            JsonObject ele_obj = ele.getAsJsonObject();
+            String values_key=ele_obj.has("n")?ele_obj.get("n").getAsString():"";
+            String values_value=ele_obj.has("v")?ele_obj.get("v").getAsString():"";
+            values.put(values_key, values_value);
+        }
+        MovieSort.SortFilter filter = new MovieSort.SortFilter();
+        filter.key = key;
+        filter.name = name;
+        filter.values = values;
+        return filter;
+    }
+
+    private AbsSortXml sortJson(MutableLiveData<AbsSortXml> result, String json) {
+        try {
+            JsonObject obj = JsonParser.parseString(json).getAsJsonObject();
+            AbsSortJson sortJson = gson.fromJson(obj, new TypeToken<AbsSortJson>() {
+            }.getType());
+            AbsSortXml data = sortJson.toAbsSortXml();
+            try {
+                if (obj.has("filters")) {
+                    LinkedHashMap<String, ArrayList<MovieSort.SortFilter>> sortFilters = new LinkedHashMap<>();
+                    JsonObject filters = obj.getAsJsonObject("filters");
+                    for (String key : filters.keySet()) {
+                        ArrayList<MovieSort.SortFilter> sortFilter = new ArrayList<>();
+                        JsonElement one = filters.get(key);
+                        if (one.isJsonObject()) {
+                            sortFilter.add(getSortFilter(one.getAsJsonObject()));
+                        } else {
+                            for (JsonElement ele : one.getAsJsonArray()) {
+                                sortFilter.add(getSortFilter(ele.getAsJsonObject()));
+                            }
+                        }
+                        sortFilters.put(key, sortFilter);
+                    }
+                    for (MovieSort.SortData sort : data.classes.sortList) {
+                        if (sortFilters.containsKey(sort.id) && sortFilters.get(sort.id) != null) {
+                            sort.filters = sortFilters.get(sort.id);
+                        }
+                    }
+                }
+            } catch (Throwable th) {
+
+            }
+            return data;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private AbsSortXml sortXml(MutableLiveData<AbsSortXml> result, String xml) {
+        try {
+            XStream xstream = new XStream(new DomDriver());//创建Xstram对象
+            xstream.autodetectAnnotations(true);
+            xstream.processAnnotations(AbsSortXml.class);
+            xstream.ignoreUnknownElements();
+            AbsSortXml data = (AbsSortXml) xstream.fromXML(xml);
+            for (MovieSort.SortData sort : data.classes.sortList) {
+                if (sort.filters == null) {
+                    sort.filters = new ArrayList<>();
+                }
+            }
+            return data;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private void absXml(AbsXml data, String sourceKey) {
+        if (data.movie != null && data.movie.videoList != null) {
+            for (Movie.Video video : data.movie.videoList) {
+                if (video.urlBean != null && video.urlBean.infoList != null) {
+                    for (Movie.Video.UrlBean.UrlInfo urlInfo : video.urlBean.infoList) {
+                        String[] str = null;
+                        if (urlInfo.urls.contains("#")) {
+                            str = urlInfo.urls.split("#");
+                        } else {
+                            str = new String[]{urlInfo.urls};
+                        }
+                        List<Movie.Video.UrlBean.UrlInfo.InfoBean> infoBeanList = new ArrayList<>();
+//                        for (String s : str) {
+//                            if (s.contains("$")) {
+//                                String[] ss = s.split("\\$");
+//                                if (ss.length >= 2) {
+//                                    infoBeanList.add(new Movie.Video.UrlBean.UrlInfo.InfoBean(ss[0], ss[1]));
+//                                }
+//                                //infoBeanList.add(new Movie.Video.UrlBean.UrlInfo.InfoBean(s.substring(0, s.indexOf("$")), s.substring(s.indexOf("$") + 1)));
+//                            }
+//                        }
+                        for (String s : str) {
+                            String[] ss = s.split("\\$");
+                            if (ss.length > 0) {
+                                if (ss.length >= 2) {
+                                    infoBeanList.add(new Movie.Video.UrlBean.UrlInfo.InfoBean(ss[0], ss[1]));
+                                } else {
+                                    infoBeanList.add(new Movie.Video.UrlBean.UrlInfo.InfoBean((infoBeanList.size() + 1) + "", ss[0]));
+                                }
+                            }
+                        }
+                        urlInfo.beanList = infoBeanList;
+                    }
+                }
+                video.sourceKey = sourceKey;
+            }
+        }
+    }
+    
+    private AbsXml checkPush(AbsXml data) {
+        if (data.movie != null && data.movie.videoList != null && data.movie.videoList.size() > 0) {
+            Movie.Video video = data.movie.videoList.get(0);
+            if (video != null && video.urlBean != null && video.urlBean.infoList != null && video.urlBean.infoList.size() > 0) {
+                for (int i = 0; i < video.urlBean.infoList.size(); i++) {
+                    Movie.Video.UrlBean.UrlInfo urlinfo = video.urlBean.infoList.get(i);
+                    if (urlinfo != null && urlinfo.beanList != null && !urlinfo.beanList.isEmpty()) {
+                        for (Movie.Video.UrlBean.UrlInfo.InfoBean infoBean : urlinfo.beanList) {
+                            if (infoBean.url.startsWith("push://")) {
+                                String pushUrl = infoBean.url.substring(7);
+                                if (pushUrl.startsWith("b64:")) {
+                                    try {
+                                        pushUrl = new String(Base64.decode(pushUrl.substring(4), Base64.DEFAULT | Base64.URL_SAFE | Base64.NO_WRAP), "UTF-8");
+                                    } catch (UnsupportedEncodingException e) {
+                                        e.printStackTrace();
+                                    }
+                                } else {
+                                    pushUrl = URLDecoder.decode(pushUrl);
+                                }
+
+                                final AbsXml[] resData = {null};
+
+                                final CountDownLatch countDownLatch = new CountDownLatch(1);
+                                ExecutorService threadPool = Executors.newSingleThreadExecutor();
+                                String finalPushUrl = pushUrl;
+                                threadPool.execute(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        SourceBean sb = ApiConfig.get().getSource("push_agent");
+                                        if (sb == null) {
+                                            countDownLatch.countDown();
+                                            return;
+                                        }
+                                        if (sb.getType() == 4) {
+                                            OkGo.<String>get(sb.getApi())
+                                                    .tag("detail")
+                                                    .params("ac","detail")
+                                                    .params("ids", finalPushUrl)
+                                                    .execute(new AbsCallback<String>() {
+                                                        @Override
+                                                        public String convertResponse(okhttp3.Response response) throws Throwable {
+                                                            if (response.body() != null) {
+                                                                return response.body().string();
+                                                            } else {
+                                                                return "";
+                                                            }
+                                                        }
+
+                                                        @Override
+                                                        public void onSuccess(Response<String> response) {
+                                                            String res = response.body();
+                                                            if (!TextUtils.isEmpty(res)) {
+                                                                try {
+                                                                    AbsJson absJson = gson.fromJson(res, new TypeToken<AbsJson>() {
+                                                                    }.getType());
+                                                                    resData[0] = absJson.toAbsXml();
+                                                                    absXml(resData[0], sb.getKey());
+                                                                } catch (Exception e) {
+                                                                    e.printStackTrace();
+                                                                }
+                                                            }
+                                                            countDownLatch.countDown();
+                                                        }
+
+                                                        @Override
+                                                        public void onError(Response<String> response) {
+                                                            super.onError(response);
+                                                            countDownLatch.countDown();
+                                                        }
+                                                    });
+                                        } else {
+                                            try {
+                                                Spider sp = ApiConfig.get().getCSP(sb);
+                                             //   ApiConfig.get().setPlayJarKey(sb.getJar());
+                                                List<String> ids = new ArrayList<>();
+                                                ids.add(finalPushUrl);
+                                                String res = sp.detailContent(ids);
+                                                if (!TextUtils.isEmpty(res)) {
+                                                    try {
+                                                        AbsJson absJson = gson.fromJson(res, new TypeToken<AbsJson>() {}.getType());
+                                                        resData[0] = absJson.toAbsXml();
+                                                        absXml(resData[0], sb.getKey());
+                                                    } catch (Exception e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                }
+                                            } catch (Throwable th) {
+                                                th.printStackTrace();
+                                            }
+                                            countDownLatch.countDown();
+                                        }
+                                    }
+                                });
+                                try {
+                                    countDownLatch.await(15, TimeUnit.SECONDS);
+                                    threadPool.shutdown();
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                                if (resData[0] != null) {
+                                    AbsXml res = resData[0];
+                                    if (res.movie != null && res.movie.videoList != null && res.movie.videoList.size() > 0) {
+                                        Movie.Video resVideo = res.movie.videoList.get(0);
+                                        if (resVideo != null && resVideo.urlBean != null && resVideo.urlBean.infoList != null && resVideo.urlBean.infoList.size() > 0) {
+                                            if (urlinfo.beanList.size() == 1) {
+                                                video.urlBean.infoList.remove(i);
+                                            } else {
+                                                urlinfo.beanList.remove(infoBean);
+                                            }
+                                            for (Movie.Video.UrlBean.UrlInfo resUrlinfo : resVideo.urlBean.infoList) {
+                                                if (resUrlinfo != null && resUrlinfo.beanList != null && !resUrlinfo.beanList.isEmpty()) {
+                                                    video.urlBean.infoList.add(resUrlinfo);
+                                                }
+                                            }
+                                            video.sourceKey = "push_agent";
+                                            return data;
+                                        }
+                                    }
+                                }
+                                infoBean.name = "解析失败 >>> " + infoBean.name;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return data;
+    }
+
+    public void checkThunder(AbsXml data, int index) {
+        boolean thunderParse = false;
+        if (data.movie != null && data.movie.videoList != null && data.movie.videoList.size() == 1) {
+            Movie.Video video = data.movie.videoList.get(0);
+            if (video != null && video.urlBean != null && video.urlBean.infoList != null) {
+                boolean hasThunder=false;
+                thunderLoop:
+                for (int idx=0;idx<video.urlBean.infoList.size();idx++) {
+                    Movie.Video.UrlBean.UrlInfo urlInfo = video.urlBean.infoList.get(idx);
+                    for (Movie.Video.UrlBean.UrlInfo.InfoBean infoBean : urlInfo.beanList) {
+                        if(Thunder.isSupportUrl(infoBean.url)){
+                            hasThunder=true;
+                            break thunderLoop;
+                        }
+                    }
+                }
+                if (hasThunder) {
+                    thunderParse = true;
+                    Thunder.parse(App.getInstance(), video.urlBean, new Thunder.ThunderCallback() {
+                        @Override
+                        public void status(int code, String info) {
+                            if (code >= 0) {
+                                LOG.i(info);
+                            } else {
+                                video.urlBean.infoList.get(0).beanList.get(0).name = info;
+                                detailResult.postValue(data);
+                            }
+                        }
+
+                        @Override
+                        public void list(Map<Integer, String> urlMap) {
+                            for (int key : urlMap.keySet()) {
+                                String playList=urlMap.get(key);
+                                video.urlBean.infoList.get(key).urls = playList;
+                                String[] str = playList.split("#");
+                                List<Movie.Video.UrlBean.UrlInfo.InfoBean> infoBeanList = new ArrayList<>();
+                                for (String s : str) {
+                                    if (s.contains("$")) {
+                                        String[] ss = s.split("\\$");
+
+                                        if (ss.length > 0) {
+                                            if (ss.length >= 2) {
+                                                infoBeanList.add(new Movie.Video.UrlBean.UrlInfo.InfoBean(ss[0], ss[1]));
+                                            } else {
+                                                infoBeanList.add(new Movie.Video.UrlBean.UrlInfo.InfoBean((infoBeanList.size() + 1) + "", ss[0]));
+                                            }
+                                        }
+                                    }
+                                }
+                                video.urlBean.infoList.get(key).beanList = infoBeanList;
+                            }
+                            detailResult.postValue(data);
+                        }
+
+                        @Override
+                        public void play(String url) {
+
+                        }
+                    });
+                }
+            }
+        }
+        if (!thunderParse && index==0) {
+            detailResult.postValue(data);
+        }
+    }
+
+    private AbsXml xml(MutableLiveData<AbsXml> result, String xml, String sourceKey) {
+        try {
+            XStream xstream = new XStream(new DomDriver());//创建Xstram对象
+            xstream.autodetectAnnotations(true);
+            xstream.processAnnotations(AbsXml.class);
+            xstream.ignoreUnknownElements();
+            if (xml.contains("<year></year>")) {
+                xml = xml.replace("<year></year>", "<year>0</year>");
+            }
+            if (xml.contains("<state></state>")) {
+                xml = xml.replace("<state></state>", "<state>0</state>");
+            }
+            AbsXml data = (AbsXml) xstream.fromXML(xml);
+            absXml(data, sourceKey);
+            if (searchResult == result) {
+                EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_SEARCH_RESULT, data));
+            } else if (quickSearchResult == result) {
+                EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_QUICK_SEARCH_RESULT, data));
+            } else if (result != null) {
+                if (result == detailResult) {
+                	data = checkPush(data);
+                    checkThunder(data,0);
+                }else {
+                    result.postValue(data);
+                }
+            }
+            return data;
+        } catch (Exception e) {
+            if (searchResult == result) {
+                EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_SEARCH_RESULT, null));
+            } else if (quickSearchResult == result) {
+                EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_QUICK_SEARCH_RESULT, null));
+            } else if (result != null) {
+                result.postValue(null);
+            }
+            return null;
+        }
+    }
+
+    private AbsXml json(MutableLiveData<AbsXml> result, String json, String sourceKey) {
+        try {
+            // 测试数据
+//            json = "{\n" +
+//                    "\t\"list\": [{\n" +
+//                    "\t\t\"vod_id\": \"137133\",\n" +
+//                    "\t\t\"vod_name\": \"磁力测试\",\n" +
+//                    "\t\t\"vod_pic\": \"https:/img9.doubanio.com/view/photo/s_ratio_poster/public/p2656327176.webp\",\n" +
+//                    "\t\t\"type_name\": \"剧情 / 爱情 / 古装\",\n" +
+//                    "\t\t\"vod_year\": \"2022\",\n" +
+//                    "\t\t\"vod_area\": \"中国大陆\",\n" +
+//                    "\t\t\"vod_remarks\": \"40集全\",\n" +
+//                    "\t\t\"vod_actor\": \"刘亦菲\",\n" +
+//                    "\t\t\"vod_director\": \"杨阳\",\n" +
+//                    "\t\t\"vod_content\": \"　　在钱塘开茶铺的赵盼儿（刘亦菲 饰）惊闻未婚夫、新科探花欧阳旭（徐海乔 饰）要另娶当朝高官之女，不甘命运的她誓要上京讨个公道。在途中她遇到了出自权门但生性正直的皇城司指挥顾千帆（陈晓 饰），并卷入江南一场大案，两人不打不相识从而结缘。赵盼儿凭借智慧解救了被骗婚而惨遭虐待的“江南第一琵琶高手”宋引章（林允 饰）与被苛刻家人逼得离家出走的豪爽厨娘孙三娘（柳岩 饰），三位姐妹从此结伴同行，终抵汴京，见识世间繁华。为了不被另攀高枝的欧阳旭从东京赶走，赵盼儿与宋引章、孙三娘一起历经艰辛，将小小茶坊一步步发展为汴京最大的酒楼，揭露了负心人的真面目，收获了各自的真挚感情和人生感悟，也为无数平凡女子推开了一扇平等救赎之门。\",\n" +
+//                    "\t\t\"vod_play_from\": \"磁力测试\",\n" +
+//                    "\t\t\"vod_play_url\": \"0$magnet:?xt=urn:btih:e398ca38fb9d64897ed19b4d16efeea11af4d03b\"\n" +
+//                    "\t}]\n" +
+//                    "}";
+            AbsJson absJson = gson.fromJson(json, new TypeToken<AbsJson>() {
+            }.getType());
+            AbsXml data = absJson.toAbsXml();
+            absXml(data, sourceKey);
+            if (searchResult == result) {
+                EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_SEARCH_RESULT, data));
+            } else if (quickSearchResult == result) {
+                EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_QUICK_SEARCH_RESULT, data));
+            } else if (result != null) {
+                if (result == detailResult) {
+                	data = checkPush(data);
+                    checkThunder(data,0);
+                }else {
+                    result.postValue(data);
+                }
+            }
+            return data;
+        } catch (Exception e) {
+            if (searchResult == result) {
+                EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_SEARCH_RESULT, null));
+            } else if (quickSearchResult == result) {
+                EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_QUICK_SEARCH_RESULT, null));
+            } else if (result != null) {
+                result.postValue(null);
+            }
+            return null;
+        }
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
     }
 }
