@@ -111,12 +111,25 @@ public class SearchActivity extends BaseActivity {
     private static HashMap<String, String> mCheckSources = null;
     private SearchCheckboxDialog mSearchCheckboxDialog = null;
 
-	public int page = 1;
+/* ===== xuameng 原有成员 ===== */
+    public int page = 1;
+    private MovieSort.SortData currentSortData =
+            new MovieSort.SortData("", "搜索结果");
 
-	private MovieSort.SortData currentSortData =
-        new MovieSort.SortData("", "搜索结果");
-private final Stack<String> cidStack = new Stack<>();
-private final Stack<String> sourceKeyStack = new Stack<>();
+    /* =========================
+     * ✅ 新增：返回栈（核心）
+     * ========================= */
+    private static final int TYPE_SEARCH = 0;
+    private static final int TYPE_CATEGORY = 1;
+
+    static class BackNode {
+        int type;
+        String cid;
+        String sourceKey;
+        String keyword;
+    }
+
+    private final Stack<BackNode> backStack = new Stack<>();
 
     @Override
     protected int getLayoutResID() {
@@ -223,32 +236,37 @@ private final Stack<String> sourceKeyStack = new Stack<>();
         mGridView.setAdapter(searchAdapter);
         searchAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                FastClickCheckUtil.check(view);
-                Movie.Video video = searchAdapter.getData().get(position);
-                if (video == null) return;
+        public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+            FastClickCheckUtil.check(view);
+            Movie.Video video = searchAdapter.getData().get(position);
+            if (video == null) return;
 
-                /* ===== folder / cover ===== */
-                if (video.tag != null &&
-                   (video.tag.equals("folder") || video.tag.equals("cover"))) {
+            if (video.tag != null &&
+               (video.tag.equals("folder") || video.tag.equals("cover"))) {
 
-                    stopSearchExecutor();
+ //               stopSearchExecutor();
 
-cidStack.push(currentSortData.id);
-sourceKeyStack.push(video.sourceKey); 
+                BackNode node = new BackNode();
+                node.type = TYPE_CATEGORY;
+                node.cid = currentSortData.id;
+                node.sourceKey = video.sourceKey;
+                backStack.push(node);
 
-currentSortData.id = video.id;
+                currentSortData.id = video.id;
 
-    page = 1;
-    searchAdapter.setNewData(new ArrayList<>());
-	showLoading();
+                page = 1;
+                searchAdapter.setNewData(new ArrayList<>());
+                showLoading();
 
-    sourceViewModel.getListFromSearch(currentSortData, page, video.sourceKey);
-                    return;
-                }
+                sourceViewModel.getListFromSearch(
+                        currentSortData,
+                        page,
+                        video.sourceKey
+                );
+                return;
+            }
 
                 /* ===== 普通影片 ===== */
-                stopSearchExecutor();
 
                 Bundle bundle = new Bundle();
                 bundle.putString("id", video.id);
@@ -615,8 +633,12 @@ currentSortData.id = video.id;
             return;
         }
         cancel();   
-		cidStack.clear();
-				sourceKeyStack.clear();
+        backStack.clear();   // ✅ 新搜索清栈
+
+        BackNode node = new BackNode();
+        node.type = TYPE_SEARCH;
+        node.keyword = title;
+        backStack.push(node);
 
         if (remoteDialog != null) {
             remoteDialog.dismiss();
@@ -800,23 +822,31 @@ currentSortData.id = video.id;
 
     @Override
     public void onBackPressed() {
-    if (!cidStack.isEmpty()) {
-        String lastCid = cidStack.pop();
-        String lastSourceKey = sourceKeyStack.pop();
+    public void onBackPressed() {
+        if (!backStack.isEmpty()) {
+            BackNode node = backStack.pop();
 
-        currentSortData.id = lastCid;
+            if (node.type == TYPE_SEARCH) {
+                // ✅ 回到搜索结果
+                search(node.keyword);
+                return;
+            }
 
-        page = 1;
-        searchAdapter.setNewData(new ArrayList<>());
-        showLoading();
+            if (node.type == TYPE_CATEGORY) {
+                // ✅ 回到上一级 folder
+                currentSortData.id = node.cid;
+                page = 1;
+                searchAdapter.setNewData(new ArrayList<>());
+                showLoading();
 
-        sourceViewModel.getListFromSearch(
-                currentSortData,
-                page,
-                lastSourceKey   // ✅ 用当时的 sourceKey
-        );
-        return;
-    }
+                sourceViewModel.getListFromSearch(
+                        currentSortData,
+                        page,
+                        node.sourceKey
+                );
+                return;
+            }
+        }
         isActivityDestroyed = true;   //xuameng 退出就不统计搜索成功了
         App.HideToast();  //xuameng HideToast
         cancel();
