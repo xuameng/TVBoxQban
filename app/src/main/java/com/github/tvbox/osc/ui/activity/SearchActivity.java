@@ -117,14 +117,6 @@ public class SearchActivity extends BaseActivity {
             new MovieSort.SortData("", "搜索结果");
     static class BackNode {
         String keyword;
-        String sourceKey;   // 记录来源站点
-        String sortId;      // 记录分类ID
-        // 构造函数
-        public BackNode(String keyword, String sourceKey, String sortId) {
-            this.keyword = keyword;
-            this.sourceKey = sourceKey;
-            this.sortId = sortId;
-        }
     }
     private final Stack<BackNode> backStack = new Stack<>();
     // xuameng新增：返回栈（核心完成）
@@ -223,8 +215,9 @@ public class SearchActivity extends BaseActivity {
                     }
 
                     if (video.tag != null && (video.tag.equals("folder") || video.tag.equals("cover"))) {  //xuameng 如有下一级直接getListFromSearch
+                        BackNode node = new BackNode();
                         currentSortData.id = video.id;
-                        BackNode node = new BackNode(searchTitle, video.sourceKey, currentSortData.id);
+                        node.keyword = searchTitle;
                         backStack.push(node);
                         page = 1;
                         searchAdapter.setNewData(new ArrayList<>());
@@ -779,7 +772,7 @@ public class SearchActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        if (!backStack.isEmpty()) {
+        if (!backStack.isEmpty()) {  //xuameng 如已有下一级返回上级重新搜索
             try {
                 if (searchExecutorService != null) {
                     searchExecutorService.shutdownNow();
@@ -789,36 +782,15 @@ public class SearchActivity extends BaseActivity {
             } catch (Throwable th) {
                 th.printStackTrace();
             }
-    
-            // 1. 先把节点拿出来
             BackNode node = backStack.pop();
-    
-            // 2. 恢复关键词
             etSearch.setText(node.keyword);
             this.searchTitle = node.keyword;
-    
             page = 1;
             searchAdapter.setNewData(new ArrayList<>());
             showLoading();
-
-            // 3. 核心判断：弹出后栈是否为空？
-            if (backStack.isEmpty()) {
-                // 【情况A：回到了顶级】
-                // 说明刚才弹出的 node 是最底层的节点，现在要回到最初的搜索状态
-                // 必须使用 searchResult() 进行全站重新搜索
-                searchResult();
-            } else {
-                // 【情况B：回到了中间层级】
-                // 说明栈里还有父级节点，我们需要回到上一层的特定站点列表
-                // 这里需要恢复上一层的分类信息
-                currentSortData.id = node.sortId; 
-                // 调用 getListFromSearch 获取特定站点的数据
-                sourceViewModel.getListFromSearch(currentSortData, page, node.sourceKey);
-            }
-    
+            searchResult(); 
             return;
         }
-
         isActivityDestroyed = true;   //xuameng 退出就不统计搜索成功了
         App.HideToast();  //xuameng HideToast
         cancel();
