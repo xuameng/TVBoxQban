@@ -121,7 +121,7 @@ public class SearchActivity extends BaseActivity {
         String sortId;      // 记录分类ID
 		int lastSelectedPosition; // ✅ 新增
         // 构造函数
-        public BackNode(String keyword, String sourceKey, String sortId) {
+        public BackNode(String keyword, String sourceKey, String sortId, int lastSelectedPosition) {
             this.keyword = keyword;
             this.sourceKey = sourceKey;
             this.sortId = sortId;
@@ -633,6 +633,8 @@ private boolean topSearchCompleted = false;
         }
         backStack.clear();  //xuameng清空节点数据确保数据初始化状态
 		isTopLevelSearch = true;   // ✅ 明确这是顶层搜索
+    topSearchCompleted = false;
+    topSearchCache.clear();
         cancel();   
         if (remoteDialog != null) {
             remoteDialog.dismiss();
@@ -849,8 +851,6 @@ private boolean topSearchCompleted = false;
         this.searchTitle = node.keyword;
         page = 1;
 
-        // ✅ 不再无脑清空
-        searchAdapter.setNewData(new ArrayList<>());
         showLoading();
 
 if (backStack.isEmpty()) {
@@ -863,10 +863,14 @@ if (backStack.isEmpty()) {
         // ✅ 恢复焦点位置
         int restorePos = node.lastSelectedPosition;
         if (restorePos >= 0 && restorePos < topSearchCache.size()) {
-            mGridView.scrollToPosition(restorePos);
-            mGridView.post(() ->
-                mGridView.getChildAt(restorePos)?.requestFocus()
-            );
+mGridView.scrollToPosition(restorePos);
+mGridView.post(() -> {
+    View child = mGridView.getLayoutManager()
+                          .findViewByPosition(restorePos);
+    if (child != null) {
+        child.requestFocus();
+    }
+});
         }
     }
 
@@ -909,6 +913,7 @@ if (backStack.isEmpty()) {
     }
 } else {
             // ✅ 中间层级（你原来的逻辑）
+			        searchAdapter.setNewData(new ArrayList<>());
             currentSortData.id = node.sortId;
             sourceViewModel.getListFromSearch(currentSortData, page, node.sourceKey);
         }
