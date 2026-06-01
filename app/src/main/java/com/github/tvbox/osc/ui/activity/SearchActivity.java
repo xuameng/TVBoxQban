@@ -80,6 +80,7 @@ import java.util.Locale;   //xuameng 统计进度用
 
 import com.github.tvbox.osc.bean.MovieSort;   //xuameng 新增搜索结果有folder 就是下一级判断
 import java.util.Stack;  //xuameng 新增搜索结果有folder 就是下一级判断
+import android.view.ViewTreeObserver;
 /**
  * @author xuameng
  * @date :2026/06/01
@@ -851,7 +852,7 @@ private boolean topSearchCompleted = false;
         BackNode node = backStack.pop();
         this.searchTitle = node.keyword;
         page = 1;
-searchAdapter.setNewData(new ArrayList<>());
+        searchAdapter.setNewData(new ArrayList<>());
         showLoading();
 
 if (backStack.isEmpty()) {
@@ -863,26 +864,22 @@ if (backStack.isEmpty()) {
         // ✅ 恢复焦点位置
         restorePos = node.lastSelectedPosition;
         if (restorePos >= 0 && restorePos < topSearchCache.size()) {
-mGridView.getViewTreeObserver().addOnGlobalLayoutListener(
-    new ViewTreeObserver.OnGlobalLayoutListener() {
-        @Override
-        public void onGlobalLayout() {
-            mGridView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-
-            TvRecyclerView.LayoutManager lm = mGridView.getLayoutManager();
-            if (lm == null) return;
-
-            // ✅ 在这里滚
-            lm.scrollToPosition(restorePos);
-
-            View child = lm.findViewByPosition(restorePos);
-            if (child != null) {
-                child.requestFocus();
-            }
-        }
-    }
-);
-
+            mGridView.getViewTreeObserver().addOnGlobalLayoutListener(
+                new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        mGridView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        TvRecyclerView.LayoutManager lm = mGridView.getLayoutManager();
+                        if (lm == null) return;
+                        // ✅ 在这里滚
+                        lm.scrollToPosition(restorePos);
+                        View child = lm.findViewByPosition(restorePos);
+                        if (child != null) {
+                            child.requestFocus();
+                        }
+                    }
+                }
+            );
         }
     }
 
