@@ -115,7 +115,8 @@ public class SearchActivity extends BaseActivity {
 
 	private MovieSort.SortData currentSortData =
         new MovieSort.SortData("", "搜索结果");
-private final Stack<String> categoryStack = new Stack<>();
+private final Stack<String> cidStack = new Stack<>();
+private final Stack<String> sourceKeyStack = new Stack<>();
 
     @Override
     protected int getLayoutResID() {
@@ -233,9 +234,11 @@ private final Stack<String> categoryStack = new Stack<>();
 
                     stopSearchExecutor();
 
-                    categoryStack.push(currentSortData.id);
-    // ✅ 关键：和 GridFragment 完全一致
-    currentSortData.id = video.id;
+cidStack.push(currentSortData.id);
+sourceKeyStack.push(currentSortData.sourceKey);
+
+currentSortData.id = video.id;
+currentSortData.sourceKey = video.sourceKey;
     if (!TextUtils.isEmpty(video.name)) {
         currentSortData.name = video.name;
     }
@@ -244,7 +247,7 @@ private final Stack<String> categoryStack = new Stack<>();
     searchAdapter.setNewData(new ArrayList<>());
 	showLoading();
 
-    sourceViewModel.getList(currentSortData, page);
+    sourceViewModel.getListFromSearch(currentSortData, page, video.sourceKey);
                     return;
                 }
 
@@ -485,23 +488,23 @@ private final Stack<String> categoryStack = new Stack<>();
 
     /* ========== xuameng：folder / cover 下钻 ========== */
     sourceViewModel.listResult.observe(this, absXml -> {
-        if (absXml == null || absXml.movie == null) {
-            showEmpty();
-            return;
-        }
+        if (absXml != null && absXml.movie != null && absXml.movie.videoList != null && absXml.movie.videoList.size() > 0) {
 
-        showSuccess();
-        mGridView.setVisibility(View.VISIBLE);
-        tv_history.setVisibility(View.GONE);
-        searchTips.setVisibility(View.GONE);
+            showSuccess();
+            mGridView.setVisibility(View.VISIBLE);
+            tv_history.setVisibility(View.GONE);
+            searchTips.setVisibility(View.GONE);
 
-        if (page == 1) {
-            searchAdapter.setNewData(absXml.movie.videoList);
+            if (page == 1) {
+                searchAdapter.setNewData(absXml.movie.videoList);
+            } else {
+                searchAdapter.addData(absXml.movie.videoList);
+            }
+
+            page++;
         } else {
-            searchAdapter.addData(absXml.movie.videoList);
+            showEmpty();
         }
-
-        page++;
     });
 
     }
@@ -616,7 +619,9 @@ private final Stack<String> categoryStack = new Stack<>();
             return;
         }
         cancel();   
-		categoryStack.clear();
+		cidStack.clear();
+				sourceKeyStack.clear();
+
         if (remoteDialog != null) {
             remoteDialog.dismiss();
             remoteDialog = null;
@@ -799,12 +804,19 @@ private final Stack<String> categoryStack = new Stack<>();
 
     @Override
     public void onBackPressed() {
-    if (!categoryStack.isEmpty()) {
-        currentSortData.id = categoryStack.pop();
+    if (!cidStack.isEmpty()) {
+        currentSortData.id = cidStack.pop();
+        currentSortData.sourceKey = sourceKeyStack.pop();
+
         page = 1;
         searchAdapter.setNewData(new ArrayList<>());
         showLoading();
-        sourceViewModel.getList(currentSortData, page);
+
+        sourceViewModel.getListFromSearch(
+                currentSortData,
+                page,
+                currentSortData.sourceKey
+        );
         return;
     }
         isActivityDestroyed = true;   //xuameng 退出就不统计搜索成功了
