@@ -119,14 +119,17 @@ public class SearchActivity extends BaseActivity {
         String keyword;
         String sourceKey;   // 记录来源站点
         String sortId;      // 记录分类ID
+		int lastSelectedPosition; // ✅ 新增
         // 构造函数
         public BackNode(String keyword, String sourceKey, String sortId) {
             this.keyword = keyword;
             this.sourceKey = sourceKey;
             this.sortId = sortId;
+			this.lastSelectedPosition = lastSelectedPosition;
         }
     }
     private final Stack<BackNode> backStack = new Stack<>();
+	private boolean isTopLevelSearch = false;
 
 // 缓存首次全站搜索结果
 private final List<Movie.Video> topSearchCache = new ArrayList<>();
@@ -254,7 +257,9 @@ private boolean topSearchCompleted = false;
 
                     if (video.tag != null && (video.tag.equals("folder") || video.tag.equals("cover"))) {  //xuameng 如有下一级直接getListFromSearch
                         currentSortData.id = video.id;
-                        BackNode node = new BackNode(searchTitle, video.sourceKey, currentSortData.id);
+    int selectedPos = searchAdapter.getData().isEmpty() ? 0 :
+                      mGridView.getChildAdapterPosition(mGridView.getFocusedChild());
+                        BackNode node = new BackNode(searchTitle, video.sourceKey, currentSortData.id, selectedPos);
                         backStack.push(node);
                         page = 1;
                         searchAdapter.setNewData(new ArrayList<>());
@@ -627,6 +632,7 @@ private boolean topSearchCompleted = false;
             return;
         }
         backStack.clear();  //xuameng清空节点数据确保数据初始化状态
+		isTopLevelSearch = true;   // ✅ 明确这是顶层搜索
         cancel();   
         if (remoteDialog != null) {
             remoteDialog.dismiss();
@@ -784,7 +790,10 @@ private boolean topSearchCompleted = false;
         int count = allRunCount.decrementAndGet();
         if (count <= 0) {
         if (backStack.isEmpty()) {
-            topSearchCompleted = true; // ✅ 标记完成
+    if (isTopLevelSearch) {      // ✅ 正确
+        topSearchCompleted = true;
+        isTopLevelSearch = false; // ✅ 复位
+    }
         }
             if (searchAdapter.getData().size() <= 0) {
                 if (searchExecutorService != null) {
@@ -825,7 +834,6 @@ private boolean topSearchCompleted = false;
     public void onBackPressed() {
       if (!backStack.isEmpty()) {
         App.HideToast();
-        cancel();
 
         try {
             if (searchExecutorService != null) {
@@ -845,15 +853,26 @@ private boolean topSearchCompleted = false;
         searchAdapter.setNewData(new ArrayList<>());
         showLoading();
 
-        if (backStack.isEmpty()) {
-            // ✅【回到顶层】
-            if (topSearchCompleted || !topSearchCache.isEmpty()) {
-                // ✅ 直接恢复
-                searchAdapter.setNewData(topSearchCache);
-                showSuccess();
-                mGridView.setVisibility(View.VISIBLE);
-            } else {
-                // ✅ 上次没搜完，继续搜
+if (backStack.isEmpty()) {
+    // ✅ 只要有结果，先恢复 UI
+    if (!topSearchCache.isEmpty()) {
+        searchAdapter.setNewData(topSearchCache);
+        showSuccess();
+        mGridView.setVisibility(View.VISIBLE);
+
+        // ✅ 恢复焦点位置
+        int restorePos = node.lastSelectedPosition;
+        if (restorePos >= 0 && restorePos < topSearchCache.size()) {
+            mGridView.scrollToPosition(restorePos);
+            mGridView.post(() ->
+                mGridView.getChildAt(restorePos)?.requestFocus()
+            );
+        }
+    }
+
+    // ✅ 不管有没有结果，只要没跑完就继续
+    if (!topSearchCompleted) {
+ // ✅ 上次没搜完，继续搜
         if (pauseRunnable != null && pauseRunnable.size() > 0) {
             searchExecutorService = new ThreadPoolExecutor(
             Runtime.getRuntime().availableProcessors(), // 核心线程数=CPU核数
@@ -887,8 +906,8 @@ private boolean topSearchCompleted = false;
          //       etSearch.requestFocusFromTouch();  //xuameng 触碰时不获得焦点
             }
         }
-            }
-        } else {
+    }
+} else {
             // ✅ 中间层级（你原来的逻辑）
             currentSortData.id = node.sortId;
             sourceViewModel.getListFromSearch(currentSortData, page, node.sourceKey);
