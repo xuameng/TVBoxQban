@@ -212,31 +212,58 @@ public class SearchActivity extends BaseActivity {
             mGridView.setLayoutManager(new V7GridLayoutManager(this.mContext, 3));
         searchAdapter = new SearchAdapter();
         mGridView.setAdapter(searchAdapter);
-        searchAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                FastClickCheckUtil.check(view);
-                Movie.Video video = searchAdapter.getData().get(position);
-                if (video != null) {
-                    try {
-                        if (searchExecutorService != null) {
-                            pauseRunnable = searchExecutorService.shutdownNow();
-                            searchExecutorService = null;
-                            JsLoader.stopAll();
-                        }
-                    } catch (Throwable th) {
-                        th.printStackTrace();
-                    }
-                    hasKeyBoard = false;
-                    isSearchBack = true;
-                    Bundle bundle = new Bundle();
-                    bundle.putString("id", video.id);
-                    bundle.putString("picture", video.pic);   //xuameng某些网站图片部显示
-                    bundle.putString("sourceKey", video.sourceKey);
-                    jumpActivity(DetailActivity.class, bundle);
+searchAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+    @Override
+    public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+        FastClickCheckUtil.check(view);
+        Movie.Video video = searchAdapter.getData().get(position);
+        if (video == null) return;
+
+        // ===== xuameng：folder / cover 进入下一级 =====
+        if (video.tag != null &&
+           (video.tag.equals("folder") || video.tag.equals("cover"))) {
+
+            try {
+                if (searchExecutorService != null) {
+                    pauseRunnable = searchExecutorService.shutdownNow();
+                    searchExecutorService = null;
+                    JsLoader.stopAll();
                 }
+            } catch (Throwable th) {
+                th.printStackTrace();
             }
-        });
+
+            hasKeyBoard = false;
+            isSearchBack = true;
+
+            // 用新的 id 作为搜索关键词进入下一级
+            Bundle bundle = new Bundle();
+            bundle.putString("title", video.id); // 或自定义 key
+            jumpActivity(SearchActivity.class, bundle);
+            return;
+        }
+
+        // ===== 普通影片进入详情 =====
+        try {
+            if (searchExecutorService != null) {
+                pauseRunnable = searchExecutorService.shutdownNow();
+                searchExecutorService = null;
+                JsLoader.stopAll();
+            }
+        } catch (Throwable th) {
+            th.printStackTrace();
+        }
+
+        hasKeyBoard = false;
+        isSearchBack = true;
+
+        Bundle bundle = new Bundle();
+        bundle.putString("id", video.id);
+        bundle.putString("picture", video.pic);
+        bundle.putString("sourceKey", video.sourceKey);
+        jumpActivity(DetailActivity.class, bundle);
+    }
+});
         tvSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
