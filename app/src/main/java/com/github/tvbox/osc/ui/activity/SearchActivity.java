@@ -873,10 +873,7 @@ public class SearchActivity extends BaseActivity {
                                     // ✅ 在这里滚
                                     lm.scrollToPosition(restorePos);
                                     mGridView.post(() -> {
-                                        View child = lm.findViewByPosition(restorePos);
-                                        if (child != null) {
-                                            child.requestFocus();
-                                        }
+                                        mGridView.setSelectedPosition(restorePos);
                                     });
                                 }
                             }
