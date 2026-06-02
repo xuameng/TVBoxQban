@@ -713,7 +713,6 @@ public void onBackPressed() {
         // ✅ 情况 1：从「筛选列表的下一级」返回到筛选页
         if (node.isFilterMode) {
             isFilterMode = true;
-            searchFilterKey = node.filterKey;
 
             mGridView.setVisibility(View.GONE);
             mGridViewFilter.setVisibility(View.VISIBLE);
@@ -756,6 +755,20 @@ public void onBackPressed() {
         // ✅ 情况 3：中间层级（folder 嵌套）
         getListIng = true;
         currentSortData.id = node.sortId;
+// ✅ 关键：恢复 UI 状态
+if (node.isFilterMode) {
+    isFilterMode = true;
+
+    mGridView.setVisibility(View.GONE);
+    mGridViewFilter.setVisibility(View.GONE);
+    mGridView.setVisibility(View.VISIBLE);   // 下级始终用主 Grid
+} else {
+    isFilterMode = false;
+    searchFilterKey = "";
+
+    mGridViewFilter.setVisibility(View.GONE);
+    mGridView.setVisibility(View.VISIBLE);
+}
         sourceViewModel.getListFromSearch(currentSortData, page, node.sourceKey);
         return;
     }
