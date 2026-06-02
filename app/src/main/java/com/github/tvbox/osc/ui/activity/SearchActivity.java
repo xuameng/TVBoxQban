@@ -134,6 +134,8 @@ public class SearchActivity extends BaseActivity {
     private boolean topSearchCompleted = false;
     // 判断是否正在加载下级列表
     private boolean getListIng = false; 
+    // 是否处于「全局搜索结果阶段」
+    private boolean isTopSearchStage = true;
     // xuameng新增：返回栈（核心完成）
 
     @Override
@@ -234,6 +236,7 @@ public class SearchActivity extends BaseActivity {
 
                     //xuameng 如有下一级直接getListFromSearch 加载列表
                     if (video.tag != null && (video.tag.equals("folder") || video.tag.equals("cover"))) {  
+                        isTopSearchStage = false;   // 关闭全局搜索结果写入
                         currentSortData.id = video.id;
                         int selectedPos = searchAdapter.getData().isEmpty() ? 0 : mGridView.getChildAdapterPosition(mGridView.getFocusedChild());
                         BackNode node = new BackNode(video.sourceKey, currentSortData.id, selectedPos);
@@ -610,6 +613,7 @@ public class SearchActivity extends BaseActivity {
             App.showToastShort(SearchActivity.this, "输入内容不能为空！");
             return;
         }
+        isTopSearchStage = true;   // 开启全局搜索阶段
         backStack.clear();  //xuameng清空节点数据确保数据初始化状态
         topSearchCompleted = false;  // xuameng搜索完成重置
         topSearchCache.clear();  // xuameng搜索缓存重置
@@ -740,6 +744,10 @@ public class SearchActivity extends BaseActivity {
         if (searchExecutorService == null) {  //xuameng点击清除或删除所有文字后还继续显示搜索结果
             return;
         }
+        // 已经进入子级，直接丢弃全局搜索结果
+        if (!isTopSearchStage) {
+            return;
+        }
         if (absXml != null && absXml.movie != null && absXml.movie.videoList != null && absXml.movie.videoList.size() > 0) {
             List<Movie.Video> data = new ArrayList<>();
             for (Movie.Video video : absXml.movie.videoList) {
@@ -825,6 +833,7 @@ public class SearchActivity extends BaseActivity {
                 // xuameng不管有没有结果，只要没跑完就继续
                 if (!topSearchCompleted) {   //xuameng 搜索未完成
                     // xuameng上次没搜完，继续搜
+                    isTopSearchStage = true;   // 全局搜索结果写入
                     ContinueSearchExecutor(); //继续搜索
                 }
             } else {
