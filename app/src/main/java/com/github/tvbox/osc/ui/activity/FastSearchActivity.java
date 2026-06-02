@@ -301,7 +301,7 @@ mGridViewFilter.setVisibility(View.GONE);
                     if (video.tag != null && (video.tag.equals("folder") || video.tag.equals("cover"))) {  
                         currentSortData.id = video.id;
 // ✅ 筛选列表没有“上级列表位置”，统一 0
-int selectedPos = searchAdapter.getData().isEmpty()
+int selectedPos = searchAdapterFilter.getData().isEmpty()
         ? 0
         : mGridViewFilter.getChildAdapterPosition(mGridViewFilter.getFocusedChild());
 
@@ -320,7 +320,7 @@ BackNode node = new BackNode(
 );
                         backStack.push(node); //xuameng保存堆栈
                         page = 1;
-                        searchAdapter.setNewData(new ArrayList<>());
+                        searchAdapterFilter.setNewData(new ArrayList<>());
                         showLoading();
 mGridView.setVisibility(View.VISIBLE);
 mGridViewFilter.setVisibility(View.GONE);
@@ -363,26 +363,29 @@ mGridViewFilter.setVisibility(View.GONE);
             if (!getListIng){ // 判断是否正在加载下级列表
                 return;
             }
-            if (absXml != null && absXml.movie != null && absXml.movie.videoList != null && absXml.movie.videoList.size() > 0) {
-                showSuccess();
-                if (page == 1) {
-                    searchAdapter.setNewData(absXml.movie.videoList);
-                } else {
-                    searchAdapter.addData(absXml.movie.videoList);
-                }
-                page++;
-            } else {
-                showEmpty();
-            }
+    if (absXml != null && absXml.movie != null && absXml.movie.videoList != null && absXml.movie.videoList.size() > 0) {
+        showSuccess();
+
+        if (isFilterMode) {
+            // ✅ 理论上不应该走到这里，兜底
+            searchAdapterFilter.setNewData(absXml.movie.videoList);
+        } else {
+            searchAdapter.setNewData(absXml.movie.videoList);
+        }
+
+        page++;
+    } else {
+        showEmpty();
+    }
         });
         ///xuameng：folder / cover 下级 监听返回结果完
 
     }
 
-private void filterResult(String spName) {
-    if ("全部".equals(spName)) {
-        mGridView.setVisibility(View.VISIBLE);
-        mGridViewFilter.setVisibility(View.GONE);
+    private void filterResult(String spName) {
+        if (spName == "全部") {
+            mGridView.setVisibility(View.VISIBLE);
+            mGridViewFilter.setVisibility(View.GONE);
         searchFilterKey = "";
 		    backStack.clear();
 
@@ -394,20 +397,19 @@ private void filterResult(String spName) {
             searchAdapter.setNewData(new ArrayList<>());
             showEmpty();
         }
-        return;
+            return;
+        }
+        mGridView.setVisibility(View.GONE);
+        mGridViewFilter.setVisibility(View.VISIBLE);
+        String key = spNames.get(spName);
+        if (key.isEmpty()) return;
+
+        if (searchFilterKey == key) return;
+        searchFilterKey = key;
+
+        List<Movie.Video> list = resultVods.get(key);
+        searchAdapterFilter.setNewData(list);
     }
-
-    String key = spNames.get(spName);
-    if (TextUtils.isEmpty(key)) return;
-		    backStack.clear();
-    searchFilterKey = key;
-
-    mGridView.setVisibility(View.GONE);
-    mGridViewFilter.setVisibility(View.VISIBLE);
-
-    List<Movie.Video> list = resultVods.get(key);
-    searchAdapterFilter.setNewData(list);
-}
 
     private void fenci() {
         if (!quickSearchWord.isEmpty()) return; // 如果经有分词了，不再进行二次分词
@@ -739,7 +741,6 @@ public void onBackPressed() {
         // 极端情况兜底
 showEmpty();
     }
-
 
             mGridViewFilter.post(() ->
                 mGridViewFilter.setSelection(node.lastSelectedPosition)
