@@ -678,10 +678,9 @@ public class FastSearchActivity extends BaseActivity {
             }
 
             if (searchAdapter.getData().isEmpty()) {
-if (data != null && !data.isEmpty()){
+                if (data != null && !data.isEmpty()){
 	                showSuccess();   //xuameng 修复loading隐藏BUG只有真正获取到数据才隐藏
-}
-
+                }
                 if (!isFilterMode)
                     mGridView.setVisibility(View.VISIBLE);
                 searchAdapter.setNewData(data);
@@ -690,7 +689,6 @@ if (data != null && !data.isEmpty()){
                 topSearchCompleted = false;  // xuameng搜索完成
                // xuameng 搜索缓存 有下一级时有缓存不用重搜完
             } else {
-				showSuccess();   //xuameng 修复loading隐藏BUG只有真正获取到数据才隐藏
                 searchAdapter.addData(data);
                 topSearchCache.addAll(data);  // xuameng 搜索缓存 有下一级时有缓存不用重搜
             }
