@@ -761,7 +761,6 @@ public class SearchActivity extends BaseActivity {
                 searchTips.setVisibility(View.GONE);  //xuameng搜索历史
                 //  llWord.setVisibility(View.GONE);   //xuameng搜索历史
                 // xuameng 搜索缓存 有下一级时有缓存不用重搜
-                topSearchCache.clear();
                 topSearchCache.addAll(data); //xuameng 增加搜索缓存
                 topSearchCompleted = false;  // xuameng搜索完成
                // xuameng 搜索缓存 有下一级时有缓存不用重搜完
