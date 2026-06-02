@@ -159,7 +159,6 @@ public class SearchActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        stopSearchExecutor();
         ContinueSearchExecutor(); //继续搜索
         if (hasKeyBoard) {
             tvSearch.requestFocus();
@@ -755,7 +754,7 @@ public class SearchActivity extends BaseActivity {
                 //  llWord.setVisibility(View.GONE);   //xuameng搜索历史
                 // xuameng 搜索缓存 有下一级时有缓存不用重搜
                 topSearchCache.clear();
-                topSearchCache.addAll(data);
+                topSearchCache.addAll(data); //xuameng 增加搜索缓存
                 topSearchCompleted = false;  // xuameng搜索完成
                // xuameng 搜索缓存 有下一级时有缓存不用重搜完
             } else {
@@ -853,9 +852,9 @@ public class SearchActivity extends BaseActivity {
         }
 
         isActivityDestroyed = true;   //xuameng 退出就不统计搜索成功了
-        App.HideToast();  //xuameng HideToast
-        cancel();
         stopSearchExecutor();
+        cancel();
+        App.HideToast();  //xuameng HideToast
         super.onBackPressed();
     }
 
