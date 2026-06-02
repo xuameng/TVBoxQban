@@ -43,7 +43,6 @@ import com.github.tvbox.osc.util.HawkConfig; //xuameng 搜索展示用
 import com.github.tvbox.osc.bean.MovieSort;   //xuameng 新增搜索结果有folder 就是下一级判断
 import java.util.Stack;  //xuameng 新增搜索结果有folder 就是下一级判断 堆栈列表
 import android.view.ViewTreeObserver;  //xuameng 新增搜索结果有folder 就是下一级判断 监听选中滚动
-import java.util.Map;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -93,25 +92,24 @@ public class FastSearchActivity extends BaseActivity {
     public int page = 1;
     public int restorePos = 0;
     private MovieSort.SortData currentSortData = new MovieSort.SortData("", "搜索结果");
-static class BackNode {
-    String sourceKey;
-    String sortId;
-    int lastSelectedPosition;
+    static class BackNode {
+        String sourceKey;    // 记录来源站点
+        String sortId;        // 记录分类ID
+        int lastSelectedPosition;  //  选中项
+        boolean isFilterMode;     // 是否来自筛选列表
+        String filterKey;         // 当前筛选 key
+        int filterTabPos;         // 左侧筛选栏位置
 
-    boolean isFilterMode;     // ✅ 是否来自筛选列表
-    String filterKey;         // ✅ 当前筛选 key
-    int filterTabPos;         // ✅ 左侧筛选栏位置
-
-    public BackNode(String sourceKey, String sortId, int lastSelectedPosition,
-                    boolean isFilterMode, String filterKey, int filterTabPos) {
-        this.sourceKey = sourceKey;
-        this.sortId = sortId;
-        this.lastSelectedPosition = lastSelectedPosition;
-        this.isFilterMode = isFilterMode;
-        this.filterKey = filterKey;
-        this.filterTabPos = filterTabPos;
+        public BackNode(String sourceKey, String sortId, int lastSelectedPosition,
+                        boolean isFilterMode, String filterKey, int filterTabPos) {
+            this.sourceKey = sourceKey;
+            this.sortId = sortId;
+            this.lastSelectedPosition = lastSelectedPosition;
+            this.isFilterMode = isFilterMode;
+            this.filterKey = filterKey;
+            this.filterTabPos = filterTabPos;
+        }
     }
-}
     private final Stack<BackNode> backStack = new Stack<>();
     // 缓存首次全站搜索结果
     private final List<Movie.Video> topSearchCache = new ArrayList<>();
@@ -241,25 +239,23 @@ static class BackNode {
                     //xuameng 如有下一级直接getListFromSearch 加载列表
                     if (video.tag != null && (video.tag.equals("folder") || video.tag.equals("cover"))) {  
                         currentSortData.id = video.id;
-int selectedPos = searchAdapter.getData().isEmpty()
-        ? 0
-        : mGridView.getChildAdapterPosition(mGridView.getFocusedChild());
-
-BackNode node = new BackNode(
-        video.sourceKey,
-        currentSortData.id,
-        selectedPos,
-        false,          // ❌ 不是筛选
-        "",             // 无筛选 key
-        -1             // 无筛选 tab
-);
+                        int selectedPos = searchAdapter.getData().isEmpty() ? 0 : mGridView.getChildAdapterPosition(mGridView.getFocusedChild());
+                        BackNode node = new BackNode(
+                            video.sourceKey,
+                            currentSortData.id,
+                            selectedPos,
+                            false,          // 不是筛选
+                            "",             // 无筛选 key
+                            -1             // 无筛选 tab
+                        );
+		            isFilterMode = false;
                         backStack.push(node); //xuameng保存堆栈
                         page = 1;
                         searchAdapter.setNewData(new ArrayList<>());
                         showLoading();
-mGridView.setVisibility(View.VISIBLE);
-mGridViewFilter.setVisibility(View.GONE);
-                        sourceViewModel.getListFromSearch(currentSortData, page, video.sourceKey);
+                        mGridView.setVisibility(View.VISIBLE);
+                        mGridViewFilter.setVisibility(View.GONE);
+                        sourceViewModel.getListFromSearch(currentSortData, page, video.sourceKey);  //xuameng返回列表
                         getListIng = true;   // 判断是否正在加载下级列表
                         return;
                     }  
@@ -318,6 +314,7 @@ BackNode node = new BackNode(
         searchFilterKey,// ✅ 当前筛选 key
         filterTabPos
 );
+		            isFilterMode = true;
                         backStack.push(node); //xuameng保存堆栈
                         page = 1;
                         searchAdapterFilter.setNewData(new ArrayList<>());
@@ -727,7 +724,6 @@ public void onBackPressed() {
 
         // ✅ 情况 1：从「筛选列表的下一级」返回到筛选页
         if (node.isFilterMode) {
-            isFilterMode = true;
 
             mGridView.setVisibility(View.GONE);
             mGridViewFilter.setVisibility(View.VISIBLE);
@@ -749,8 +745,6 @@ showEmpty();
             return;
         }
 
-        // ✅ 情况 2：从「全部列表的下一级」返回
-        isFilterMode = false;
 
         // ✅ 回到首页
         if (backStack.isEmpty()) {
