@@ -383,15 +383,18 @@ public class FastSearchActivity extends BaseActivity {
             searchFilterKey = "";
             backStack.clear();
             isFilterMode = false;
-
-        // ✅ 关键：恢复全部搜索结果
-        if (!topSearchCache.isEmpty()) {
-            searchAdapter.setNewData(topSearchCache);
-            showSuccess();
-        } else {
-            searchAdapter.setNewData(new ArrayList<>());
-            showEmpty();
-        }
+            // 如果搜索还没结束，继续展示 loading
+            if (!topSearchCache.isEmpty()) {
+                searchAdapter.setNewData(topSearchCache);
+                showSuccess();
+            } else {
+                searchAdapter.setNewData(new ArrayList<>());
+                showEmpty();
+            }
+            if (!topSearchCompleted) {
+                isTopSearchStage = true;   // 关闭全局搜索结果写入
+                ContinueSearchExecutor();
+            } 
             return;
         }
         mGridView.setVisibility(View.GONE);
