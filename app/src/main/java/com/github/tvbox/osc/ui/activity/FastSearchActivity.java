@@ -300,7 +300,9 @@ mGridViewFilter.setVisibility(View.GONE);
                     if (video.tag != null && (video.tag.equals("folder") || video.tag.equals("cover"))) {  
                         currentSortData.id = video.id;
 // ✅ 筛选列表没有“上级列表位置”，统一 0
-int selectedPos = 0;
+int selectedPos = searchAdapter.getData().isEmpty()
+        ? 0
+        : mGridViewFilter.getChildAdapterPosition(mGridViewFilter.getFocusedChild());
 
 // ✅ 左侧筛选栏当前选中位置
 int filterTabPos = mGridViewWord.getChildAdapterPosition(
@@ -717,10 +719,10 @@ mGridViewFilter.setVisibility(View.GONE);
 
             filterResult(node.filterKey);
 
-            // ✅ 恢复筛选 Tab 焦点
-            mGridViewWord.post(() ->
-                mGridViewWord.setSelection(node.filterTabPos)
-            );
+        // 筛选列表回到之前位置（✅ 推荐）
+        mGridViewFilter.post(() ->
+            mGridViewFilter.setSelection(node.lastSelectedPosition)
+        );
 
 
         }  
