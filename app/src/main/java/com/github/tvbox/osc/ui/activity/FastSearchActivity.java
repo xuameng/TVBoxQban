@@ -256,6 +256,8 @@ BackNode node = new BackNode(
                         page = 1;
                         searchAdapter.setNewData(new ArrayList<>());
                         showLoading();
+mGridView.setVisibility(View.VISIBLE);
+mGridViewFilter.setVisibility(View.GONE);
                         sourceViewModel.getListFromSearch(currentSortData, page, video.sourceKey);
                         getListIng = true;   // 判断是否正在加载下级列表
                         return;
@@ -317,6 +319,8 @@ BackNode node = new BackNode(
                         page = 1;
                         searchAdapter.setNewData(new ArrayList<>());
                         showLoading();
+mGridView.setVisibility(View.VISIBLE);
+mGridViewFilter.setVisibility(View.GONE);
                         sourceViewModel.getListFromSearch(currentSortData, page, video.sourceKey);
                         getListIng = true;   // 判断是否正在加载下级列表
                         return;
@@ -358,7 +362,6 @@ BackNode node = new BackNode(
             }
             if (absXml != null && absXml.movie != null && absXml.movie.videoList != null && absXml.movie.videoList.size() > 0) {
                 showSuccess();
-//                mGridView.setVisibility(View.VISIBLE);
                 if (page == 1) {
                     searchAdapter.setNewData(absXml.movie.videoList);
                 } else {
@@ -722,6 +725,29 @@ BackNode node = new BackNode(
 
         }  
           else  if (backStack.isEmpty()) {
+   // ✅ 情况 1：从「筛选列表的下一级」退回到筛选页
+    if (node.isFilterMode) {
+        isFilterMode = true;
+        searchFilterKey = node.filterKey;
+
+        mGridView.setVisibility(View.GONE);
+        mGridViewFilter.setVisibility(View.VISIBLE);
+
+        filterResult(node.filterKey);
+
+        // 恢复左侧筛选 Tab
+        mGridViewWord.post(() ->
+            mGridViewWord.setSelection(node.filterTabPos)
+        );
+
+        return; // ✅ 非常重要
+    }
+	    // ✅ 情况 2：真正回到首页「全部结果」
+    isFilterMode = false;
+    searchFilterKey = "";
+
+    mGridViewFilter.setVisibility(View.GONE);
+    mGridView.setVisibility(View.VISIBLE);
                 // xuameng只要有结果，先恢复 UI
                 if (!topSearchCache.isEmpty()) {
                     searchAdapter.setNewData(topSearchCache);
