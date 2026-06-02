@@ -92,7 +92,7 @@ public class FastSearchActivity extends BaseActivity {
     public int page = 1;
     public int restorePos = 0;
     private MovieSort.SortData currentSortData = new MovieSort.SortData("", "搜索结果");
-tatic class BackNode {
+static class BackNode {
     String sourceKey;
     String sortId;
     int lastSelectedPosition;
