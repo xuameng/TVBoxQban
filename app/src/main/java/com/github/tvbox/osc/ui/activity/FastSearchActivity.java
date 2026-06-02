@@ -250,7 +250,7 @@ static class BackNode {
             selectedPos,
             false,              // ✅ 标记：来自筛选
             searchFilterKey,  // ✅ 当前筛选 key
-            filterTabPos
+            0
     );
                         backStack.push(node); //xuameng保存堆栈
                         page = 1;
