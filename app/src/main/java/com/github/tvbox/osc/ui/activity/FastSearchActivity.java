@@ -678,6 +678,7 @@ public class FastSearchActivity extends BaseActivity {
             }
 
             if (searchAdapter.getData().isEmpty()) {
+                showSuccess();   //xuameng 修复loading隐藏BUG只有真正获取到数据才隐藏
                 if (!isFilterMode)
                     mGridView.setVisibility(View.VISIBLE);
                 searchAdapter.setNewData(data);
@@ -686,7 +687,6 @@ public class FastSearchActivity extends BaseActivity {
                 topSearchCompleted = false;  // xuameng搜索完成
                // xuameng 搜索缓存 有下一级时有缓存不用重搜完
             } else {
-                showSuccess();   //xuameng 修复loading隐藏BUG只有真正获取到数据才隐藏
                 searchAdapter.addData(data);
                 topSearchCache.addAll(data);  // xuameng 搜索缓存 有下一级时有缓存不用重搜
             }
