@@ -385,6 +385,15 @@ private void filterResult(String spName) {
         mGridViewFilter.setVisibility(View.GONE);
         searchFilterKey = "";
 		    backStack.clear();
+
+        // ✅ 关键：恢复全部搜索结果
+        if (!topSearchCache.isEmpty()) {
+            searchAdapter.setNewData(topSearchCache);
+            showSuccess();
+        } else {
+            searchAdapter.setNewData(new ArrayList<>());
+            showEmpty();
+        }
         return;
     }
 
@@ -721,19 +730,14 @@ public void onBackPressed() {
             mGridView.setVisibility(View.GONE);
             mGridViewFilter.setVisibility(View.VISIBLE);
 
-            // ✅ 关键：强制刷新，防止被 return 掉
-            searchFilterKey = "";
-    // ✅ 这里必须是“站点名称”，不是 sourceKey
-    String spName = null;
-    for (Map.Entry<String, String> e : spNames.entrySet()) {
-        if (node.filterKey.equals(e.getValue())) {
-            spName = e.getKey();
-            break;
-        }
-    }
-
-       if (spName != null) {
-        filterResult(spName);
+    // ✅ 直接从缓存恢复，不再走 filterResult
+    List<Movie.Video> list = resultVods.get(node.filterKey);
+    if (list != null && !list.isEmpty()) {
+        searchAdapterFilter.setNewData(list);
+        showSuccess();
+    } else {
+        // 极端情况兜底
+showEmpty();
     }
 
 
