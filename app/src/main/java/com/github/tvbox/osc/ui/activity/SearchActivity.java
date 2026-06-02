@@ -123,7 +123,6 @@ public class SearchActivity extends BaseActivity {
 		int lastSelectedPosition; //  选中项
         // 构造函数
         public BackNode(String sourceKey, String sortId, int lastSelectedPosition) {
-            this.keyword = keyword;
             this.sourceKey = sourceKey;
             this.sortId = sortId;
 			this.lastSelectedPosition = lastSelectedPosition;
