@@ -92,17 +92,25 @@ public class FastSearchActivity extends BaseActivity {
     public int page = 1;
     public int restorePos = 0;
     private MovieSort.SortData currentSortData = new MovieSort.SortData("", "搜索结果");
-    static class BackNode {
-        String sourceKey;   // 记录来源站点
-        String sortId;      // 记录分类ID
-        int lastSelectedPosition; //  选中项
-        // 构造函数
-        public BackNode(String sourceKey, String sortId, int lastSelectedPosition) {
-            this.sourceKey = sourceKey;
-            this.sortId = sortId;
-            this.lastSelectedPosition = lastSelectedPosition;
-        }
+static class BackNode {
+    String sourceKey;
+    String sortId;
+    int lastSelectedPosition;
+
+    boolean isFilterMode;     // ✅ 是否来自筛选列表
+    String filterKey;         // ✅ 当前筛选 key
+    int filterTabPos;         // ✅ 左侧筛选栏位置
+
+    public BackNode(String sourceKey, String sortId, int lastSelectedPosition,
+                    boolean isFilterMode, String filterKey, int filterTabPos) {
+        this.sourceKey = sourceKey;
+        this.sortId = sortId;
+        this.lastSelectedPosition = lastSelectedPosition;
+        this.isFilterMode = isFilterMode;
+        this.filterKey = filterKey;
+        this.filterTabPos = filterTabPos;
     }
+}
     private final Stack<BackNode> backStack = new Stack<>();
     // 缓存首次全站搜索结果
     private final List<Movie.Video> topSearchCache = new ArrayList<>();
@@ -232,8 +240,20 @@ public class FastSearchActivity extends BaseActivity {
                     //xuameng 如有下一级直接getListFromSearch 加载列表
                     if (video.tag != null && (video.tag.equals("folder") || video.tag.equals("cover"))) {  
                         currentSortData.id = video.id;
-                        int selectedPos = searchAdapter.getData().isEmpty() ? 0 : mGridView.getChildAdapterPosition(mGridView.getFocusedChild());
-                        BackNode node = new BackNode(video.sourceKey, currentSortData.id, selectedPos);
+    // ✅ 这里一定是 0，因为筛选列表没有“上级列表位置”
+    int selectedPos = 0;
+
+    // ✅ 左侧筛选栏当前选中位置
+    int filterTabPos = mGridViewWord.getChildAdapterPosition(
+            mGridViewWord.getFocusedChild());
+    BackNode node = new BackNode(
+            video.sourceKey,
+            currentSortData.id,
+            selectedPos,
+            true,              // ✅ 标记：来自筛选
+            searchFilterKey,  // ✅ 当前筛选 key
+            filterTabPos
+    );
                         backStack.push(node); //xuameng保存堆栈
                         page = 1;
                         searchAdapter.setNewData(new ArrayList<>());
@@ -328,6 +348,7 @@ public class FastSearchActivity extends BaseActivity {
             }
             if (absXml != null && absXml.movie != null && absXml.movie.videoList != null && absXml.movie.videoList.size() > 0) {
                 showSuccess();
+//                mGridView.setVisibility(View.VISIBLE);
                 if (page == 1) {
                     searchAdapter.setNewData(absXml.movie.videoList);
                 } else {
@@ -673,12 +694,34 @@ public class FastSearchActivity extends BaseActivity {
             page = 1;
             searchAdapter.setNewData(new ArrayList<>());
             showLoading();
+if (node.isFilterMode) {
+    // ===== 从「筛选列表的下一级」返回 =====
+    isFilterMode = true;
+    searchFilterKey = node.filterKey;
 
+    mGridView.setVisibility(View.GONE);
+    mGridViewFilter.setVisibility(View.VISIBLE);
+
+    filterResult(node.filterKey);
+
+    // 恢复左侧选中
+    spListAdapter.setSelectedPosition(node.filterTabPos);
+
+    // 回到筛选列表顶部即可
+    mGridViewFilter.post(() -> mGridViewFilter.setSelection(0));
+
+} else 
             if (backStack.isEmpty()) {
+    isFilterMode = false;
+    searchFilterKey = "";
+
+    mGridViewFilter.setVisibility(View.GONE);
+    mGridView.setVisibility(View.VISIBLE);
                 // xuameng只要有结果，先恢复 UI
                 if (!topSearchCache.isEmpty()) {
                     searchAdapter.setNewData(topSearchCache);
                     showSuccess();
+                    mGridView.setVisibility(View.VISIBLE);
                     // xuameng恢复焦点位置
                     restorePos = node.lastSelectedPosition;
                     if (restorePos >= 0 && restorePos < topSearchCache.size()) {
