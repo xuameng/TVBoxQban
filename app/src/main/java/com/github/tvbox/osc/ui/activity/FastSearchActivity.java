@@ -43,6 +43,7 @@ import com.github.tvbox.osc.util.HawkConfig; //xuameng 搜索展示用
 import com.github.tvbox.osc.bean.MovieSort;   //xuameng 新增搜索结果有folder 就是下一级判断
 import java.util.Stack;  //xuameng 新增搜索结果有folder 就是下一级判断 堆栈列表
 import android.view.ViewTreeObserver;  //xuameng 新增搜索结果有folder 就是下一级判断 监听选中滚动
+import java.util.Map;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -383,12 +384,13 @@ private void filterResult(String spName) {
         mGridView.setVisibility(View.VISIBLE);
         mGridViewFilter.setVisibility(View.GONE);
         searchFilterKey = "";
+		    backStack.clear();
         return;
     }
 
     String key = spNames.get(spName);
     if (TextUtils.isEmpty(key)) return;
-
+		    backStack.clear();
     searchFilterKey = key;
 
     mGridView.setVisibility(View.GONE);
