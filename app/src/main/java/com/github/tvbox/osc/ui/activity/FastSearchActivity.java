@@ -383,10 +383,9 @@ public class FastSearchActivity extends BaseActivity {
             searchFilterKey = "";
             backStack.clear();
             isFilterMode = false;
-            // 直接从 resultVods 取“全部”
-            List<Movie.Video> allList = resultVods.get("全部");
-            if (allList != null && !allList.isEmpty()) {
-                searchAdapter.setNewData(allList);
+            // 如果搜索还没结束，继续展示 loading
+            if (!topSearchCache.isEmpty()) {
+                searchAdapter.setNewData(topSearchCache);
                 showSuccess();
             } else {
                 searchAdapter.setNewData(new ArrayList<>());
@@ -683,7 +682,6 @@ public class FastSearchActivity extends BaseActivity {
                     mGridView.setVisibility(View.VISIBLE);
                 searchAdapter.setNewData(data);
                 // xuameng 搜索缓存 有下一级时有缓存不用重搜
-                topSearchCache.clear();
                 topSearchCache.addAll(data); //xuameng 增加搜索缓存
                 topSearchCompleted = false;  // xuameng搜索完成
                // xuameng 搜索缓存 有下一级时有缓存不用重搜完
