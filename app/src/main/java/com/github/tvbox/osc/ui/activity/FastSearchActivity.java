@@ -150,7 +150,6 @@ public class FastSearchActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        stopSearchExecutor();
         ContinueSearchExecutor(); //继续搜索
     }
 
