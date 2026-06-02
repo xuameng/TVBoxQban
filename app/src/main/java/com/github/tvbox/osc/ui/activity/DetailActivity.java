@@ -148,6 +148,7 @@ public class DetailActivity extends BaseActivity {
     private View currentSeriesGroupView;
     private int GroupCount;
     private Handler mHandler = new Handler();  //xuameng 新增推送
+    private volatile boolean isActivityDestroyed = false;  //xuameng判断页面是否已关闭
 
     @Override
     protected int getLayoutResID() {
@@ -1520,6 +1521,7 @@ public class DetailActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        isActivityDestroyed = true;
         try {
             if (searchExecutorService != null) {
                 searchExecutorService.shutdownNow();
@@ -1527,6 +1529,9 @@ public class DetailActivity extends BaseActivity {
             }
         } catch (Throwable th) {
             th.printStackTrace();
+        }
+        if (mHandler != null) {
+            mHandler.removeCallbacksAndMessages(null);
         }
         OkGo.getInstance().cancelTag("fenci");
         OkGo.getInstance().cancelTag("detail");
@@ -1565,7 +1570,9 @@ public class DetailActivity extends BaseActivity {
         }
         HawkConfig.intVod = false;  //xuameng判断进入播放
         App.HideToast();
-        mHandler.removeCallbacks(mPushUrlRunnable);
+        if (mHandler != null) {
+            mHandler.removeCallbacksAndMessages(null);
+        }
         super.onBackPressed();
     }
 
@@ -1851,6 +1858,7 @@ public class DetailActivity extends BaseActivity {
     private Runnable mPushUrlRunnable = new Runnable() {  //xuameng 推送地址
         @Override
         public void run() {
+            if (isActivityDestroyed) return;
             showSuccess();
             App.showToastShort(DetailActivity.this, "推送地址换源解析成功！");
             isPushUrl = false;
