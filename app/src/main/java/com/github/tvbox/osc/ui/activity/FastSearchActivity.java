@@ -313,9 +313,7 @@ public class FastSearchActivity extends BaseActivity {
             }
             if (absXml != null && absXml.movie != null && absXml.movie.videoList != null && absXml.movie.videoList.size() > 0) {
                 showSuccess();
-                mGridView.setVisibility(View.VISIBLE);
-                tv_history.setVisibility(View.GONE);
-                searchTips.setVisibility(View.GONE);
+//                mGridView.setVisibility(View.VISIBLE);
                 if (page == 1) {
                     searchAdapter.setNewData(absXml.movie.videoList);
                 } else {
