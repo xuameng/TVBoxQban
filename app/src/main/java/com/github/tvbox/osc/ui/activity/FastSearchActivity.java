@@ -378,23 +378,25 @@ mGridViewFilter.setVisibility(View.GONE);
 
     }
 
-    private void filterResult(String spName) {
-        if (spName == "全部") {
-            mGridView.setVisibility(View.VISIBLE);
-            mGridViewFilter.setVisibility(View.GONE);
-            return;
-        }
-        mGridView.setVisibility(View.GONE);
-        mGridViewFilter.setVisibility(View.VISIBLE);
-        String key = spNames.get(spName);
-        if (key.isEmpty()) return;
-
-        if (searchFilterKey == key) return;
-        searchFilterKey = key;
-
-        List<Movie.Video> list = resultVods.get(key);
-        searchAdapterFilter.setNewData(list);
+private void filterResult(String spName) {
+    if ("全部".equals(spName)) {
+        mGridView.setVisibility(View.VISIBLE);
+        mGridViewFilter.setVisibility(View.GONE);
+        searchFilterKey = "";
+        return;
     }
+
+    String key = spNames.get(spName);
+    if (TextUtils.isEmpty(key)) return;
+
+    searchFilterKey = key;
+
+    mGridView.setVisibility(View.GONE);
+    mGridViewFilter.setVisibility(View.VISIBLE);
+
+    List<Movie.Video> list = resultVods.get(key);
+    searchAdapterFilter.setNewData(list);
+}
 
     private void fenci() {
         if (!quickSearchWord.isEmpty()) return; // 如果经有分词了，不再进行二次分词
@@ -719,7 +721,18 @@ public void onBackPressed() {
 
             // ✅ 关键：强制刷新，防止被 return 掉
             searchFilterKey = "";
-         //   filterResult(node.filterKey);
+    // ✅ 这里必须是“站点名称”，不是 sourceKey
+    String spName = null;
+    for (Map.Entry<String, String> e : spNames.entrySet()) {
+        if (node.filterKey.equals(e.getValue())) {
+            spName = e.getKey();
+            break;
+        }
+    }
+
+       if (spName != null) {
+        filterResult(spName);
+    }
 
 
             mGridViewFilter.post(() ->
