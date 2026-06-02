@@ -719,7 +719,7 @@ public void onBackPressed() {
 
             // ✅ 关键：强制刷新，防止被 return 掉
             searchFilterKey = "";
-            filterResult(node.filterKey);
+         //   filterResult(node.filterKey);
 
 
             mGridViewFilter.post(() ->
@@ -740,10 +740,12 @@ public void onBackPressed() {
             if (!topSearchCache.isEmpty()) {
                 searchAdapter.setNewData(topSearchCache);
                 showSuccess();
-
-                mGridView.post(() ->
-                    mGridView.setSelection(node.lastSelectedPosition)
-                );
+                restorePos = node.lastSelectedPosition;
+                if (restorePos >= 0 && restorePos < topSearchCache.size()) {
+                    mGridView.post(() -> {
+                        mGridView.setSelection(restorePos);
+                    });
+                }
             }
 
             if (!topSearchCompleted) {
@@ -758,14 +760,16 @@ public void onBackPressed() {
 // ✅ 关键：恢复 UI 状态
 if (node.isFilterMode) {
     isFilterMode = true;
-
+                searchAdapterFilter.setNewData(new ArrayList<>());
+                showLoading();
     mGridView.setVisibility(View.GONE);
     mGridViewFilter.setVisibility(View.GONE);
     mGridView.setVisibility(View.VISIBLE);   // 下级始终用主 Grid
 } else {
     isFilterMode = false;
     searchFilterKey = "";
-
+                searchAdapter.setNewData(new ArrayList<>());
+                showLoading();
     mGridViewFilter.setVisibility(View.GONE);
     mGridView.setVisibility(View.VISIBLE);
 }
