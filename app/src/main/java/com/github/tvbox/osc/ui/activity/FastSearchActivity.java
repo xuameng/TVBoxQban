@@ -240,17 +240,15 @@ static class BackNode {
                     //xuameng 如有下一级直接getListFromSearch 加载列表
                     if (video.tag != null && (video.tag.equals("folder") || video.tag.equals("cover"))) {  
                         currentSortData.id = video.id;
-    // ✅ 这里一定是 0，因为筛选列表没有“上级列表位置”
-    int selectedPos = 0;
 
-    // ✅ 左侧筛选栏当前选中位置
-    int filterTabPos = mGridViewWord.getChildAdapterPosition(
-            mGridViewWord.getFocusedChild());
+
+
+                        int selectedPos = searchAdapter.getData().isEmpty() ? 0 : mGridView.getChildAdapterPosition(mGridView.getFocusedChild());
     BackNode node = new BackNode(
             video.sourceKey,
             currentSortData.id,
             selectedPos,
-            true,              // ✅ 标记：来自筛选
+            false,              // ✅ 标记：来自筛选
             searchFilterKey,  // ✅ 当前筛选 key
             filterTabPos
     );
@@ -300,8 +298,21 @@ static class BackNode {
                     //xuameng 如有下一级直接getListFromSearch 加载列表
                     if (video.tag != null && (video.tag.equals("folder") || video.tag.equals("cover"))) {  
                         currentSortData.id = video.id;
-                        int selectedPos = searchAdapter.getData().isEmpty() ? 0 : mGridView.getChildAdapterPosition(mGridView.getFocusedChild());
-                        BackNode node = new BackNode(video.sourceKey, currentSortData.id, selectedPos);
+    // ✅ 这里一定是 0，因为筛选列表没有“上级列表位置”
+    int selectedPos = 0;
+
+    // ✅ 左侧筛选栏当前选中位置
+    int filterTabPos = mGridViewWord.getChildAdapterPosition(
+            mGridViewWord.getFocusedChild());
+    BackNode node = new BackNode(
+            video.sourceKey,
+            currentSortData.id,
+            selectedPos,
+            false,              // ✅ 标记：来自筛选
+            searchFilterKey,  // ✅ 当前筛选 key
+            filterTabPos
+    );
+
                         backStack.push(node); //xuameng保存堆栈
                         page = 1;
                         searchAdapter.setNewData(new ArrayList<>());
@@ -704,8 +715,6 @@ if (node.isFilterMode) {
 
     filterResult(node.filterKey);
 
-    // 恢复左侧选中
-    spListAdapter.setSelectedPosition(node.filterTabPos);
 
     // 回到筛选列表顶部即可
     mGridViewFilter.post(() -> mGridViewFilter.setSelection(0));
