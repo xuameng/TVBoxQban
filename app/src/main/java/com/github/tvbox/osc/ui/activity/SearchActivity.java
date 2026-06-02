@@ -755,7 +755,9 @@ public class SearchActivity extends BaseActivity {
             }
 
             if (searchAdapter.getData().isEmpty()) {
-                showSuccess();   //xuameng 修复loading隐藏BUG只有真正获取到数据才隐藏
+                if (data != null && !data.isEmpty()){
+	                showSuccess();   //xuameng 修复loading隐藏BUG只有真正获取到数据才隐藏
+                }
                 mGridView.setVisibility(View.VISIBLE);
                 searchAdapter.setNewData(data);
                 tv_history.setVisibility(View.GONE);    //xuameng搜索历史
