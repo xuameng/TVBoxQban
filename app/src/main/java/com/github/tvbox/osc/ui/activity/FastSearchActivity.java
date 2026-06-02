@@ -699,107 +699,74 @@ mGridViewFilter.setVisibility(View.GONE);
     }
 
     @Override
-    public void onBackPressed() {
-        if (!backStack.isEmpty()) {
-            getListIng = false;  // 判断是否正在加载下级列表
-            App.HideToast();
-            stopSearchExecutor();
+public void onBackPressed() {
+    if (!backStack.isEmpty()) {
+        getListIng = false;
+        App.HideToast();
 
-            BackNode node = backStack.pop();  //xuameng 取出并移除 栈顶元素
-            page = 1;
-            searchAdapter.setNewData(new ArrayList<>());
-            showLoading();
+        BackNode node = backStack.pop();
+
+        page = 1;
+        searchAdapter.setNewData(new ArrayList<>());
+        showLoading();
+
+        // ✅ 情况 1：从「筛选列表的下一级」返回到筛选页
         if (node.isFilterMode) {
-            // ===== 从「筛选列表的下一级」返回 =====
             isFilterMode = true;
             searchFilterKey = node.filterKey;
 
             mGridView.setVisibility(View.GONE);
             mGridViewFilter.setVisibility(View.VISIBLE);
 
+            // ✅ 关键：强制刷新，防止被 return 掉
+            searchFilterKey = "";
             filterResult(node.filterKey);
 
-        // 筛选列表回到之前位置（✅ 推荐）
-        mGridViewFilter.post(() ->
-            mGridViewFilter.setSelection(node.lastSelectedPosition)
-        );
 
+            mGridViewFilter.post(() ->
+                mGridViewFilter.setSelection(node.lastSelectedPosition)
+            );
 
-        }  
-          else  if (backStack.isEmpty()) {
-   // ✅ 情况 1：从「筛选列表的下一级」退回到筛选页
-    if (node.isFilterMode) {
-        isFilterMode = true;
-        searchFilterKey = node.filterKey;
+            return;
+        }
 
-        mGridView.setVisibility(View.GONE);
-        mGridViewFilter.setVisibility(View.VISIBLE);
+        // ✅ 情况 2：从「全部列表的下一级」返回
+        isFilterMode = false;
 
-        filterResult(node.filterKey);
+        // ✅ 回到首页
+        if (backStack.isEmpty()) {
+            mGridViewFilter.setVisibility(View.GONE);
+            mGridView.setVisibility(View.VISIBLE);
 
-        // 恢复左侧筛选 Tab
-        mGridViewWord.post(() ->
-            mGridViewWord.setSelection(node.filterTabPos)
-        );
+            if (!topSearchCache.isEmpty()) {
+                searchAdapter.setNewData(topSearchCache);
+                showSuccess();
 
-        return; // ✅ 非常重要
-    }
-	    // ✅ 情况 2：真正回到首页「全部结果」
-    isFilterMode = false;
-    searchFilterKey = "";
+                mGridView.post(() ->
+                    mGridView.setSelection(node.lastSelectedPosition)
+                );
+            }
 
-    mGridViewFilter.setVisibility(View.GONE);
-    mGridView.setVisibility(View.VISIBLE);
-                // xuameng只要有结果，先恢复 UI
-                if (!topSearchCache.isEmpty()) {
-                    searchAdapter.setNewData(topSearchCache);
-                    showSuccess();
-					            mGridViewFilter.setVisibility(View.GONE);
-                    mGridView.setVisibility(View.VISIBLE);
-                    // xuameng恢复焦点位置
-                    restorePos = node.lastSelectedPosition;
-                    if (restorePos >= 0 && restorePos < topSearchCache.size()) {
-                        mGridView.getViewTreeObserver().addOnGlobalLayoutListener(
-                            new ViewTreeObserver.OnGlobalLayoutListener() {
-                                @Override
-                                public void onGlobalLayout() {
-                                    mGridView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                                    TvRecyclerView.LayoutManager lm = mGridView.getLayoutManager();
-                                    if (lm == null) return;
-                                    // xuameng在这里滚
-                                    lm.scrollToPosition(restorePos);
-                                    // xuameng在这里选中
-                                    mGridView.post(() -> {
-                                        mGridView.setSelection(restorePos);
-                                    });
-                                }
-                            }
-                        );
-                    }
-                }
-
-                // xuameng不管有没有结果，只要没跑完就继续
-                if (!topSearchCompleted) {   //xuameng 搜索未完成
-                    // xuameng上次没搜完，继续搜
-                    ContinueSearchExecutor(); //继续搜索
-                }
-            } else {
-                // xuameng中间层级（加载列表）
-                getListIng = true; // 判断是否正在加载下级列表
-                searchAdapter.setNewData(new ArrayList<>());
-                showLoading();
-                currentSortData.id = node.sortId;
-                sourceViewModel.getListFromSearch(currentSortData, page, node.sourceKey);
+            if (!topSearchCompleted) {
+                ContinueSearchExecutor();
             }
             return;
         }
 
-        isActivityDestroyed = true; //xuameng 退出就不统计搜索成功了
-        stopSearchExecutor();
-        cancel();
-        App.HideToast();  //xuameng HideToast
-        super.onBackPressed();
+        // ✅ 情况 3：中间层级（folder 嵌套）
+        getListIng = true;
+        currentSortData.id = node.sortId;
+        sourceViewModel.getListFromSearch(currentSortData, page, node.sourceKey);
+        return;
     }
+
+    // ✅ 真正退出 Activity
+    isActivityDestroyed = true;
+    stopSearchExecutor();
+    cancel();
+    App.HideToast();
+    super.onBackPressed();
+}
 
     public void stopSearchExecutor() {  //停止搜索
         try {
