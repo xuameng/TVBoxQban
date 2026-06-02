@@ -719,10 +719,6 @@ BackNode node = new BackNode(
                 mGridViewWord.setSelection(node.filterTabPos)
             );
 
-            // ✅ 恢复筛选列表顶部
-            mGridViewFilter.post(() ->
-              //  mGridViewFilter.setSelection(0)
-            );
 
         }  
           else  if (backStack.isEmpty()) {
