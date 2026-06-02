@@ -90,7 +90,7 @@ public class SearchActivity extends BaseActivity {
     private LinearLayout llLayout;
     private TvRecyclerView mGridView;
     private TvRecyclerView mGridViewWord;    //xuameng热搜
-    private SourceViewModel sourceViewModel;   //xuameng
+    private SourceViewModel sourceViewModel;   //xuameng 数据源
     private RemoteDialog remoteDialog;
     private EditText etSearch; //xuameng 请输入要搜索的内容
     private TextView tvSearch;   //xuameng 搜索
@@ -115,17 +115,16 @@ public class SearchActivity extends BaseActivity {
     // xuameng新增：返回栈（核心）
     public int page = 1;
     public int restorePos = 0;
-    private MovieSort.SortData currentSortData =
-            new MovieSort.SortData("", "搜索结果");
+    private MovieSort.SortData currentSortData = new MovieSort.SortData("", "搜索结果");
     static class BackNode {
         String sourceKey;   // 记录来源站点
         String sortId;      // 记录分类ID
-		int lastSelectedPosition; //  选中项
+        int lastSelectedPosition; //  选中项
         // 构造函数
         public BackNode(String sourceKey, String sortId, int lastSelectedPosition) {
             this.sourceKey = sourceKey;
             this.sortId = sortId;
-			this.lastSelectedPosition = lastSelectedPosition;
+            this.lastSelectedPosition = lastSelectedPosition;
         }
     }
     private final Stack<BackNode> backStack = new Stack<>();
@@ -160,6 +159,7 @@ public class SearchActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        stopSearchExecutor();
         ContinueSearchExecutor(); //继续搜索
         if (hasKeyBoard) {
             tvSearch.requestFocus();
@@ -236,8 +236,7 @@ public class SearchActivity extends BaseActivity {
                     //xuameng 如有下一级直接getListFromSearch 加载列表
                     if (video.tag != null && (video.tag.equals("folder") || video.tag.equals("cover"))) {  
                         currentSortData.id = video.id;
-                        int selectedPos = searchAdapter.getData().isEmpty() ? 0 :
-                                mGridView.getChildAdapterPosition(mGridView.getFocusedChild());
+                        int selectedPos = searchAdapter.getData().isEmpty() ? 0 : mGridView.getChildAdapterPosition(mGridView.getFocusedChild());
                         BackNode node = new BackNode(video.sourceKey, currentSortData.id, selectedPos);
                         backStack.push(node); //xuameng保存堆栈
                         page = 1;
@@ -279,6 +278,7 @@ public class SearchActivity extends BaseActivity {
                 }
             }
         });
+
         // xuameng为搜索按钮设置长按事件监听器
         tvSearch.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -288,6 +288,7 @@ public class SearchActivity extends BaseActivity {
                 return true;
             }
         });
+
         tvClear.setOnClickListener(new View.OnClickListener() {     
             @Override
             public void onClick(View v) {
@@ -314,6 +315,7 @@ public class SearchActivity extends BaseActivity {
             public void afterTextChanged(Editable s) {         //xuameng清空或删除关闭搜索内容显示搜索历史记录
                 keyword = s.toString().trim();
                 if (TextUtils.isEmpty(keyword)) {
+                    stopSearchExecutor();
                     cancel();
                     tv_history.setVisibility(View.VISIBLE);
                     searchTips.setVisibility(View.VISIBLE);
@@ -493,10 +495,8 @@ public class SearchActivity extends BaseActivity {
                     searchAdapter.addData(absXml.movie.videoList);
                 }
                 page++;
-                getListIng = false;   // 判断是否正在加载下级列表
             } else {
                 showEmpty();
-                getListIng = false;   // 判断是否正在加载下级列表
             }
         });
         ///xuameng：folder / cover 下级 监听返回结果完
@@ -759,7 +759,7 @@ public class SearchActivity extends BaseActivity {
                 topSearchCompleted = false;  // xuameng搜索完成
                // xuameng 搜索缓存 有下一级时有缓存不用重搜完
             } else {
-                showSuccess();
+                showSuccess();   //xuameng 修复loading隐藏BUG只有真正获取到数据才隐藏
                 searchAdapter.addData(data);
                 topSearchCache.addAll(data);  // xuameng 搜索缓存 有下一级时有缓存不用重搜
             }
@@ -777,6 +777,7 @@ public class SearchActivity extends BaseActivity {
                     mGridView.setVisibility(View.GONE); 
                 }
             }
+            stopSearchExecutor();
             cancel();
         }
     }
@@ -843,6 +844,8 @@ public class SearchActivity extends BaseActivity {
             } else {
                 // xuameng中间层级（加载列表）
                 getListIng = true; // 判断是否正在加载下级列表
+                searchAdapter.setNewData(new ArrayList<>());
+                showLoading();
                 currentSortData.id = node.sortId;
                 sourceViewModel.getListFromSearch(currentSortData, page, node.sourceKey);
             }
@@ -852,15 +855,7 @@ public class SearchActivity extends BaseActivity {
         isActivityDestroyed = true;   //xuameng 退出就不统计搜索成功了
         App.HideToast();  //xuameng HideToast
         cancel();
-        try {
-            if (searchExecutorService != null) {
-                searchExecutorService.shutdownNow();
-                searchExecutorService = null;
-                JsLoader.stopAll();
-            }
-        } catch (Throwable th) {
-            th.printStackTrace();
-        }
+        stopSearchExecutor();
         super.onBackPressed();
     }
 
