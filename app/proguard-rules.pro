@@ -68,6 +68,7 @@
 -keep class com.bea.xml.stream.**
 -dontwarn com.bea.xml.stream.**
 -dontwarn java.awt.**
+-dontwarn javax.swing.plaf.FontUIResource
 # 保留R下面的资源
 -keep class **.R$* {*;}
 
@@ -170,6 +171,19 @@
 -keep class com.thoughtworks.xstream.converters.extended.RegexPatternConverter { *; }
 -keep class com.thoughtworks.xstream.converters.extended.CharsetConverter { *; }
 -keep class com.thoughtworks.xstream.** { *; }
+
+# xuameng新增规则 忽略缺失警告
+-dontwarn java.beans.**
+-dontwarn javax.activation.**
+-dontwarn net.sf.cglib.**
+-dontwarn nu.xom.**
+-dontwarn org.jdom.**
+-dontwarn org.jdom2.**
+-dontwarn org.joda.time.**
+-dontwarn org.w3c.dom.**
+-dontwarn org.codehaus.jettison.**
+
+
 #eventbus
 -keepclassmembers class * {
     @org.greenrobot.eventbus.Subscribe <methods>;
@@ -198,6 +212,7 @@
 
 # 实体类
 #-keep class com.github.tvbox.osc.bean.** { *; }
+-keep class com.github.tvbox.osc.** { *; }
 #CardView
 -keep class com.github.tvbox.osc.ui.tv.widget.card.**{*;}
 #ViewObj
