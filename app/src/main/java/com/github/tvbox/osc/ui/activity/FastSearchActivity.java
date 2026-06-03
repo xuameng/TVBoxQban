@@ -121,7 +121,7 @@ public class FastSearchActivity extends BaseActivity {
     private boolean isTopSearchStage = true;
     // xuameng新增：返回栈（核心完成）
 
-    private View.OnFocusChangeListener focusChangeListener = new View.OnFocusChangeListener() {
+    private View.OnFocusChangeListener focusChangeListener = new View.OnFocusChangeListener() {  //xuameng 左侧菜单焦点监听
         @Override
         public void onFocusChange(View itemView, boolean hasFocus) {
             try {
@@ -187,13 +187,13 @@ public class FastSearchActivity extends BaseActivity {
 //            public void onFocusChange(View itemView, boolean hasFocus) {}
 //        });
 
-        mGridViewWord.addOnChildAttachStateChangeListener(new RecyclerView.OnChildAttachStateChangeListener() {
+        mGridViewWord.addOnChildAttachStateChangeListener(new RecyclerView.OnChildAttachStateChangeListener() {  //xuameng 左侧菜单焦点监听
             @Override
             public void onChildViewAttachedToWindow(@NonNull View child) {
                 child.setFocusable(true);
                 child.setOnFocusChangeListener(focusChangeListener);
                 TextView t = (TextView) child;
-                if (t.getText() == "全部") {
+                if (t.getText() == "全部") {  //默认焦点 全部
                     t.requestFocus();
                 }
 //                if (child.isFocusable() && null == child.getOnFocusChangeListener()) {
@@ -207,7 +207,7 @@ public class FastSearchActivity extends BaseActivity {
             }
         });
 
-        spListAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+        spListAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {  //xuameng 左侧菜单点击监听
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 String spName = spListAdapter.getItem(position);
