@@ -40,13 +40,16 @@ public class GridFilterKVAdapter extends BaseQuickAdapter<String, BaseViewHolder
         if (isSelected) {
             valueTv.getPaint().setFakeBoldText(true);
             // 关键：点击时一定是绿色，只有焦点回来才是白色
-            if (programmaticSelect) {
-                valueTv.setTextColor(selectedColor); // 绿色
-            } else {
-                valueTv.setTextColor(
-                    valueTv.hasFocus() ? defaultColor : selectedColor   // 选中 + 有焦点 → 白色   // 选中 + 无焦点 → 绿色
-                );
-            }
+if (isSelected) {
+    if (programmaticSelect && hasFocus) {
+        programmaticSelect = false;
+    }
+
+    valueTv.setTextColor(
+        programmaticSelect ? selectedColor :
+        hasFocus ? defaultColor : selectedColor
+    );
+}
         } else {
             valueTv.getPaint().setFakeBoldText(false);
             valueTv.setTextColor(defaultColor);
