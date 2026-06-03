@@ -42,9 +42,10 @@ public class LrcView extends View {
      */
 private static class LrcLine {
     long time;                 // 时间戳（毫秒）
-    String text;           // 主歌词（高亮）
+
+    String mainText;           // 主歌词（高亮）
     String translateText = ""; // 翻译（始终灰色）
-    float width;
+    float mainWidth;
     float translateWidth;
 }
 
@@ -65,6 +66,7 @@ private static class LrcLine {
     private boolean mIsInitialPositioning = true;
     // 最大滚动距离（行数）
     private static final int MAX_SCROLL_DISTANCE = 1;
+	private Paint mTranslatePaint;
 
 
 
@@ -120,7 +122,7 @@ private static class LrcLine {
         float pxSize = spToPx(getContext(), textSize);
         mNormalPaint.setTextSize(pxSize);
         // 重新计算所有歌词行的宽度
-        recalculateLineWidths();
+        recalculateMainWidths();
         invalidate();
     }
 
@@ -134,19 +136,18 @@ private static class LrcLine {
         float pxSize = spToPx(getContext(), textSize);
         mHighlightPaint.setTextSize(pxSize);
         // 重新计算所有歌词行的宽度
-        recalculateLineWidths();
+        recalculateMainWidths();
         invalidate();
     }
 
     /**
      * 重新计算所有歌词行的宽度
      */
-    private void recalculateLineWidths() {
-        for (LrcLine line : mLrcLines) {
-            line.width = mNormalPaint.measureText(line.text);
-        }
+private void recalculateMainWidths() {
+    for (LrcLine line : mLrcLines) {
+        line.mainWidth = mNormalPaint.measureText(line.mainText);
     }
-
+}
     /**
      * 设置普通文本颜色
      *
@@ -215,7 +216,7 @@ public void setLrcText(String lrcContent) {
                 // 第一次出现 → 主歌词
                 lrcLine = new LrcLine();
                 lrcLine.time = time;
-                lrcLine.text = text;
+                lrcLine.mainText = text;
                 lrcLine.translateText = "";
                 lineMap.put(time, lrcLine);
             } else {
@@ -229,7 +230,7 @@ public void setLrcText(String lrcContent) {
 
     // 计算宽度
     for (LrcLine line : mLrcLines) {
-        line.width = mNormalPaint.measureText(line.text);
+        line.mainWidth = mNormalPaint.measureText(line.mainText);
         line.translateWidth = mNormalPaint.measureText(line.translateText);
     }
 
@@ -249,27 +250,6 @@ public void setLrcText(String lrcContent) {
     invalidate();
 }
 
-    /**
-     * 移除重复的歌词行
-     */
-    private void removeDuplicateLines() {
-        if (mLrcLines.size() <= 1) return;
-
-        List<LrcLine> uniqueLines = new ArrayList<>();
-        for (LrcLine line : mLrcLines) {
-            boolean isDuplicate = false;
-            for (LrcLine existingLine : uniqueLines) {
-                if (existingLine.time == line.time && existingLine.text.equals(line.text)) {
-                    isDuplicate = true;
-                    break;
-                }
-            }
-            if (!isDuplicate) {
-                uniqueLines.add(line);
-            }
-        }
-        mLrcLines = uniqueLines;
-    }
 
     /**
      * 平滑滚动到指定行
@@ -451,7 +431,7 @@ public void setLrcText(String lrcContent) {
 @Override
 protected void onDraw(Canvas canvas) {
     super.onDraw(canvas);
-
+ensureTranslatePaint();
     if (!mShouldShowLyrics) {
         String hint = "";
         float textWidth = mNormalPaint.measureText(hint);
@@ -504,46 +484,57 @@ protected void onDraw(Canvas canvas) {
             float top = y + fm.top;
             float bottom = y + fm.bottom;
 
-            float x = getWidth() / 2f - line.width / 2f;
+            float x = getWidth() / 2f - line.mainWidth / 2f;
 
             // 背景
-            canvas.drawText(line.text, x, y, mNormalPaint);
+            canvas.drawText(line.mainText, x, y, mNormalPaint);
 
             // 高亮裁剪
             canvas.save();
             canvas.clipRect(
                     x,
                     top,
-                    x + line.width * progress,
+                    x + line.mainWidth * progress,
                     bottom
             );
-            canvas.drawText(line.text, x, y, mHighlightPaint);
+            canvas.drawText(line.mainText, x, y, mHighlightPaint);
             canvas.restore();
 
         } else {
             canvas.drawText(
-                    line.text,
-                    getWidth() / 2f - line.width / 2f,
+                    line.mainText,
+                    getWidth() / 2f - line.mainWidth / 2f,
                     y,
                     mNormalPaint
             );
         }
 
         // ===== 翻译歌词（始终灰色，不高亮）=====
-        if (!line.translateText.isEmpty()) {
-            float translateY = y + lineHeight * 0.85f;
+// ===== 翻译歌词（同步高亮）=====
+if (!line.translateText.isEmpty()) {
+    float translateY = y + lineHeight * 0.85f;
 
-            Paint translatePaint = new Paint(mNormalPaint);
-            translatePaint.setColor(Color.GRAY);
-            translatePaint.setAlpha(180);
+	Paint translatePaint = mTranslatePaint;
 
-            canvas.drawText(
-                    line.translateText,
-                    getWidth() / 2f - line.translateWidth / 2f,
-                    translateY,
-                    translatePaint
-            );
-        }
+
+    float tx = getWidth() / 2f - line.translateWidth / 2f;
+
+    // 背景（未高亮）
+    canvas.drawText(line.translateText, tx, translateY, translatePaint);
+
+    if (isCurrent) {
+        // 副歌词同步高亮
+        canvas.save();
+        canvas.clipRect(
+                tx,
+                translateY + translatePaint.getFontMetrics().top,
+                tx + line.translateWidth * progress,
+                translateY + translatePaint.getFontMetrics().bottom
+        );
+        canvas.drawText(line.translateText, tx, translateY, mHighlightPaint);
+        canvas.restore();
+    }
+}
     }
 }
 
@@ -565,4 +556,13 @@ protected void onDraw(Canvas canvas) {
             mScrollAnimator = null;
         }
     }
+
+	private void ensureTranslatePaint() {
+    if (mTranslatePaint == null) {
+        mTranslatePaint = new Paint(mNormalPaint);
+        mTranslatePaint.setColor(Color.WHITE);
+        mTranslatePaint.setAlpha(140);
+    }
+    mTranslatePaint.setTextSize(mNormalPaint.getTextSize() * 2f / 3f);
+}
 }
