@@ -19,7 +19,6 @@ public class GridFilterKVAdapter extends BaseQuickAdapter<String, BaseViewHolder
     private int lastSelectedPosition = -1; // xuameng记录上次选中
     private int defaultColor;    //xuameng默认颜色
     private int selectedColor;   //xuameng选中颜色
-    private boolean programmaticSelect = false;  //xuameng判断第一次选中
     
     public GridFilterKVAdapter(int defaultColor, int selectedColor) {   //xuameng传入颜色
         super(R.layout.item_grid_filter_value, new ArrayList<>());
@@ -39,17 +38,13 @@ public class GridFilterKVAdapter extends BaseQuickAdapter<String, BaseViewHolder
     
         if (isSelected) {
             valueTv.getPaint().setFakeBoldText(true);
-            // 关键：点击时一定是绿色，只有焦点回来才是白色
-if (isSelected) {
-    if (programmaticSelect && hasFocus) {
-        programmaticSelect = false;
-    }
-
-    valueTv.setTextColor(
-        programmaticSelect ? selectedColor :
-        hasFocus ? defaultColor : selectedColor
-    );
-}
+            if (hasFocus) {
+                // 选中 + 有焦点 → 白色
+                valueTv.setTextColor(defaultColor);
+            } else {
+                // 选中 + 无焦点 → 绿色
+                valueTv.setTextColor(selectedColor);
+            }
         } else {
             valueTv.getPaint().setFakeBoldText(false);
             valueTv.setTextColor(defaultColor);
@@ -62,8 +57,6 @@ if (isSelected) {
                 TextView tv = (TextView) v;
                 if (position == selectedPosition) {
                     if (hasFocus) {
-                        // 焦点真正回到这里，才变白
-                        programmaticSelect = false;
                         // 选中且获取焦点：白色加粗
                         tv.setTextColor(defaultColor); // defaultColor 为白色
                         tv.getPaint().setFakeBoldText(true);
@@ -85,8 +78,6 @@ if (isSelected) {
         // 记录上一次选中的位置
         lastSelectedPosition = selectedPosition;
         this.selectedPosition = position;
-        // 标记这是代码触发的选中（非焦点触发）
-        programmaticSelect = true;
         // 如果存在上一次选中的 item，更新它的状态   刷单个item避免焦点乱跳
         if (lastSelectedPosition != -1) {
             notifyItemChanged(lastSelectedPosition);
