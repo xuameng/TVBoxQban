@@ -446,10 +446,11 @@ public class SearchActivity extends BaseActivity {
             public void run() {
                 // 遍历 FlowLayout 中的所有子视图（即每个历史标签）
                 for (int i = 0; i < tv_history.getChildCount(); i++) {
-                    final View child = tv_history.getChildAt(i);
+                    final int index = i; 
+                    final View child = tv_history.getChildAt(index);
                     // 根据视图的索引，从已反转的列表中获取对应的关键词和数据对象
-                    final String keywordToDelete = historyList.get(i);
-                    final SearchHistory historyItemToDelete = originalHistoryList.get(i);
+                    final String keywordToDelete = historyList.get(index);
+                    final SearchHistory historyItemToDelete = originalHistoryList.get(index);
 
                     // 设置长按监听器
                     child.setOnLongClickListener(new View.OnLongClickListener() {
@@ -465,7 +466,7 @@ public class SearchActivity extends BaseActivity {
                                 // 3. 显示操作成功的 Toast 提示
                                 App.showToastShort(SearchActivity.this, "已删除: " + keywordToDelete);
                                 // 4. 删除成功后，若还有 item，焦点回到附近一个
-                                int nextIndex = Math.min(i, tv_history.getChildCount() - 1);
+                                final int nextIndex = Math.min(i, tv_history.getChildCount() - 1);
                                 if (nextIndex >= 0) {
                                     tv_history.getChildAt(nextIndex).requestFocus();
                                 }
