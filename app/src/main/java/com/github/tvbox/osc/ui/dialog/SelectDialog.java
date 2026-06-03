@@ -60,10 +60,9 @@ public class SelectDialog<T> extends BaseDialog {
 
                         RecyclerView.LayoutManager lm = tvRecyclerView.getLayoutManager();
                         if (lm == null) return;
-                        // 先定位
-                       // lm.scrollToPosition(selectIdx);
                         // 再选中（TvRecyclerView 需要 post）
                         tvRecyclerView.post(() -> {
+                            tvRecyclerView.scrollToPosition(selectIdx);
                             tvRecyclerView.setSelection(selectIdx);
                         });
                     }
