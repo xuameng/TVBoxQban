@@ -132,7 +132,12 @@ public class FastSearchActivity extends BaseActivity {
                     if (ret < 0) return;
                     TextView v = (TextView) itemView;
                     String sb = v.getText().toString();
-                 //   filterResult(sb);
+                    //   filterResult(sb);           xuameng这是TV获取到焦点默认执行筛选菜单数据，因为加了下一级所以需要点击后刷新数据
+                    if (backStack.isEmpty()) {  //xuameng改成如果当前没有下一级，TV获取到焦点默认执行筛选菜单数据
+                        filterResult(sb); 
+                    }else{
+                        App.showToastShort(FastSearchActivity.this, "已有下级数据，请按OK键显示筛选数据！");
+                    }
                 }
             } catch (Exception e) {
                 App.showToastShort(FastSearchActivity.this, e.toString());
@@ -410,6 +415,7 @@ public class FastSearchActivity extends BaseActivity {
 
     private void filterResult(String spName) {
         if (spName == "全部") {
+            showSuccess();
             mGridView.setVisibility(View.VISIBLE);
             mGridViewFilter.setVisibility(View.GONE);
             backStack.clear();
@@ -436,6 +442,7 @@ public class FastSearchActivity extends BaseActivity {
         if (key.isEmpty()) return;
 
         if (searchFilterKey == key) return;
+        showSuccess();
         searchFilterKey = key;
         getListIng = false;
         backStack.clear();
