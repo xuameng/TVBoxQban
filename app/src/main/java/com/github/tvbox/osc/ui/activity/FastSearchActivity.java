@@ -364,8 +364,40 @@ public class FastSearchActivity extends BaseActivity {
                 showSuccess();
                 if (isFilterMode) {
                     searchAdapterFilter.setNewData(absXml.movie.videoList);
+                    mGridViewFilter.getViewTreeObserver().addOnGlobalLayoutListener(
+                        new ViewTreeObserver.OnGlobalLayoutListener() {
+                            @Override
+                            public void onGlobalLayout() {
+                                mGridViewFilter.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                                TvRecyclerView.LayoutManager lm = mGridViewFilter.getLayoutManager();
+                                if (lm == null) return;
+                                // xuameng在这里滚
+                                lm.scrollToPosition(0);
+                                // xuameng在这里选中
+                                mGridViewFilter.post(() -> {
+                                    mGridViewFilter.setSelection(0);
+                                });
+                            }
+                        }
+                    );
                 } else {
                     searchAdapter.setNewData(absXml.movie.videoList);
+                    mGridView.getViewTreeObserver().addOnGlobalLayoutListener(
+                        new ViewTreeObserver.OnGlobalLayoutListener() {
+                            @Override
+                            public void onGlobalLayout() {
+                                mGridView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                                TvRecyclerView.LayoutManager lm = mGridView.getLayoutManager();
+                                if (lm == null) return;
+                                // xuameng在这里滚
+                                lm.scrollToPosition(node.lastSelectedPosition);
+                                // xuameng在这里选中
+                                mGridView.post(() -> {
+                                    mGridView.setSelection(node.lastSelectedPosition);
+                                });
+                            }
+                        }
+                    );
                 }
                 page++;
             } else {
@@ -380,9 +412,9 @@ public class FastSearchActivity extends BaseActivity {
         if (spName == "全部") {
             mGridView.setVisibility(View.VISIBLE);
             mGridViewFilter.setVisibility(View.GONE);
-            searchFilterKey = "";
             backStack.clear();
             isFilterMode = false;
+            getListIng = false;
             // 如果搜索还没结束，继续展示 loading
             if (!topSearchCache.isEmpty()) {
                 searchAdapter.setNewData(topSearchCache);
@@ -405,7 +437,8 @@ public class FastSearchActivity extends BaseActivity {
 
         if (searchFilterKey == key) return;
         searchFilterKey = key;
-
+        getListIng = false;
+        backStack.clear();
         List<Movie.Video> list = resultVods.get(key);
         searchAdapterFilter.setNewData(list);
     }
@@ -743,8 +776,21 @@ public class FastSearchActivity extends BaseActivity {
                     // 极端情况兜底
                     showEmpty();
                 }
-                mGridViewFilter.post(() ->
-                    mGridViewFilter.setSelection(node.lastSelectedPosition)
+                mGridViewFilter.getViewTreeObserver().addOnGlobalLayoutListener(
+                    new ViewTreeObserver.OnGlobalLayoutListener() {
+                        @Override
+                        public void onGlobalLayout() {
+                            mGridViewFilter.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                            TvRecyclerView.LayoutManager lm = mGridViewFilter.getLayoutManager();
+                            if (lm == null) return;
+                            // xuameng在这里滚
+                            lm.scrollToPosition(node.lastSelectedPosition);
+                            // xuameng在这里选中
+                            mGridViewFilter.post(() -> {
+                                mGridViewFilter.setSelection(node.lastSelectedPosition);
+                            });
+                        }
+                    }
                 );
                 if (!topSearchCompleted) {
                     isTopSearchStage = true;   // 关闭全局搜索结果写入
@@ -763,9 +809,22 @@ public class FastSearchActivity extends BaseActivity {
                     showSuccess();
                     restorePos = node.lastSelectedPosition;
                     if (restorePos >= 0 && restorePos < topSearchCache.size()) {
-                        mGridView.post(() -> {
-                            mGridView.setSelection(restorePos);
-                        });
+                        mGridView.getViewTreeObserver().addOnGlobalLayoutListener(
+                            new ViewTreeObserver.OnGlobalLayoutListener() {
+                                @Override
+                                public void onGlobalLayout() {
+                                    mGridView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                                    TvRecyclerView.LayoutManager lm = mGridView.getLayoutManager();
+                                    if (lm == null) return;
+                                    // xuameng在这里滚
+                                    lm.scrollToPosition(restorePos);
+                                    // xuameng在这里选中
+                                    mGridView.post(() -> {
+                                        mGridView.setSelection(restorePos);
+                                    });
+                                }
+                            }
+                        );
                     }
                 }
 
