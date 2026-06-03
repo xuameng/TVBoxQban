@@ -452,7 +452,7 @@ public class LrcView extends View {
 
             // ===== 翻译歌词（同步高亮）=====
             if (!line.translateText.isEmpty()) {
-                float translateY = y + lineHeight;
+                float translateY = y + lineHeight + mTranslatePaint.getTextSize() * 0.3f;
                 Paint translatePaint = mTranslatePaint;
                 float tx = getWidth() / 2f - line.translateWidth / 2f;
                 // 背景（未高亮）
@@ -462,8 +462,13 @@ public class LrcView extends View {
                 if (isCurrent) {
                     // 副歌词同步高亮
                     canvas.save();
-                    canvas.clipRect(tx, translateY + translatePaint.getFontMetrics().top, tx + line.translateWidth * progress, translateY + translatePaint.getFontMetrics().bottom);
-                    canvas.drawText(line.translateText, tx, translateY, mTranslatePaint);
+                    canvas.clipRect(
+                        tx,
+                        translateY + highlightTranslatePaint.getFontMetrics().top,
+                        tx + line.translateWidth * progress,
+                        translateY + highlightTranslatePaint.getFontMetrics().bottom
+                    );
+                    canvas.drawText(line.translateText, tx, translateY, highlightTranslatePaint);
                     canvas.restore();
                 }
             }
