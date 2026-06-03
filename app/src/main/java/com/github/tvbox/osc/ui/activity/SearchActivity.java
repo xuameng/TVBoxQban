@@ -639,6 +639,7 @@ public class SearchActivity extends BaseActivity {
         backStack.clear();  //xuameng清空节点数据确保数据初始化状态
         topSearchCompleted = false;  // xuameng搜索完成重置
         topSearchCache.clear();  // xuameng搜索缓存重置
+        getListIng = false;
         cancel();   
         if (remoteDialog != null) {
             remoteDialog.dismiss();
