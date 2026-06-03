@@ -235,8 +235,22 @@ public void setHighlightTextSize(float textSize) {
         calculateLineHeight();
 
         int visibleLines = Math.min(mLrcLines.size(), 7);
-        float totalHeight = mTotalLineHeight * visibleLines;
+float totalHeight = 0;
+for (int i = 0; i < visibleLines; i++) {
+    int index = start + i;
+    if (index < 0 || index >= mLrcLines.size()) break;
 
+    LrcLine line = mLrcLines.get(index);
+    totalHeight += line.translateText.isEmpty()
+            ? mainLineHeight
+            : mainLineHeight + translateLineHeight;
+}
+float mainLineHeight = mNormalPaint.getTextSize() * 1.5f;
+float translateLineHeight = mTranslatePaint.getTextSize() * 1.6f;
+
+float lineHeight = line.translateText.isEmpty()
+        ? mainLineHeight
+        : mainLineHeight + translateLineHeight;
         Paint.FontMetrics fm = mNormalPaint.getFontMetrics();
         float startY = (getHeight() - totalHeight) / 2f - fm.ascent;
 
@@ -247,19 +261,29 @@ public void setHighlightTextSize(float textSize) {
             if (index < 0 || index >= mLrcLines.size()) continue;
 
             LrcLine line = mLrcLines.get(index);
-float y = startY
-        + i * mTotalLineHeight
-        - mScrollOffset * mTotalLineHeight; // ✅ 关键
+float y = startY;
+for (int i = 0; i < visibleLines; i++) {
+    int index = start + i;
+    if (index < 0 || index >= mLrcLines.size()) continue;
 
-            boolean current = index == mCurrentLine;
-            float progress = calcProgress(line, current);
+    LrcLine line = mLrcLines.get(index);
 
-            drawMain(canvas, line, y, progress, current);
+    float lineHeight = line.translateText.isEmpty()
+            ? mainLineHeight
+            : mainLineHeight + translateLineHeight;
 
-            if (!line.translateText.isEmpty()) {
-                float ty = y + mMainLineHeight;
-                drawTranslate(canvas, line, ty, progress, current);
-            }
+    boolean current = index == mCurrentLine;
+    float progress = calcProgress(line, current);
+
+    drawMain(canvas, line, y, progress, current);
+
+    if (!line.translateText.isEmpty()) {
+        float ty = y + mainLineHeight;
+        drawTranslate(canvas, line, ty, progress, current);
+    }
+
+    y += lineHeight; // ✅ 关键
+}
         }
     }
 
@@ -310,9 +334,6 @@ private void calculateLineHeight() {
     Paint.FontMetrics tfm = mTranslatePaint.getFontMetrics();
     mTranslateLineHeight = tfm.descent - tfm.ascent; // ✅ 真实副歌词行高
 
-    mTotalLineHeight = mHasTranslate
-            ? mMainLineHeight + mTranslateLineHeight
-            : mMainLineHeight;
 }
 
     private float calcProgress(LrcLine l, boolean cur) {
