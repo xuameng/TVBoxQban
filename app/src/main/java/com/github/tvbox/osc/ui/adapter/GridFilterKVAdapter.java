@@ -84,17 +84,6 @@ public class GridFilterKVAdapter extends BaseQuickAdapter<String, BaseViewHolder
         }
         // 更新当前选中的 item  刷单个item避免焦点乱跳
         notifyItemChanged(selectedPosition);
-
-    RecyclerView rv = getRecyclerView();
-    if (rv == null) return;
-
-    rv.post(() -> {
-        RecyclerView.ViewHolder vh =
-                rv.findViewHolderForAdapterPosition(selectedPosition);
-        if (vh != null) {
-            vh.itemView.requestFocus();
-        }
-    });
     }
     
     public int getSelectedPosition() {    //xuameng新增方法修正多个高亮BUG
