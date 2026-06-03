@@ -409,7 +409,7 @@ public class LrcView extends View {
         if (mLrcLines.isEmpty()) {
             return;
         }
-        float lineHeight = mNormalPaint.getTextSize() * 1.8f;
+        float lineHeight = mNormalPaint.getTextSize() * 1.5f;
         int visibleLines = Math.min(mLrcLines.size(), 7);
         float totalHeight = lineHeight * visibleLines;
         float scrollOffsetPixels = Math.round(mScrollOffset * lineHeight);
@@ -452,11 +452,13 @@ public class LrcView extends View {
 
             // ===== 翻译歌词（同步高亮）=====
             if (!line.translateText.isEmpty()) {
-                float translateY = y + lineHeight * 0.95f;
+                float translateY = y + lineHeight;
                 Paint translatePaint = mTranslatePaint;
                 float tx = getWidth() / 2f - line.translateWidth / 2f;
                 // 背景（未高亮）
-                canvas.drawText(line.translateText, tx, translateY, translatePaint);
+                Paint highlightTranslatePaint = new Paint(mTranslatePaint);
+                highlightTranslatePaint.setColor(mHighlightPaint.getColor());
+                highlightTranslatePaint.setAlpha(200);  // 略低于主歌词
                 if (isCurrent) {
                     // 副歌词同步高亮
                     canvas.save();
@@ -487,11 +489,14 @@ public class LrcView extends View {
         }
     }
 
-    private void ensureTranslatePaint() {
+    /**
+     * 副歌词样式
+     */
+    private void ensureTranslatePaint() {   
         if (mTranslatePaint == null) {
             mTranslatePaint = new Paint(mNormalPaint);
             mTranslatePaint.setColor(Color.WHITE);
-            mTranslatePaint.setAlpha(140);
+            mTranslatePaint.setAlpha(180);  //xuameng 副歌词暗一些
         }
         mTranslatePaint.setTextSize(mNormalPaint.getTextSize() * 2f / 3f);
     }
