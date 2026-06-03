@@ -47,7 +47,7 @@ public class SelectDialog<T> extends BaseDialog {
         adapter.setData(data, select);
         TvRecyclerView tvRecyclerView = findViewById(R.id.list);
         tvRecyclerView.setAdapter(adapter);
-        tvRecyclerView.setSelectedPosition(-1);
+        tvRecyclerView.setSelectedPosition(select);
         if (select<10){
             tvRecyclerView.setSelection(select);
         }
@@ -61,7 +61,7 @@ public class SelectDialog<T> extends BaseDialog {
                         RecyclerView.LayoutManager lm = tvRecyclerView.getLayoutManager();
                         if (lm == null) return;
                         // 先定位
-                        lm.scrollToPosition(selectIdx);
+                       // lm.scrollToPosition(selectIdx);
                         // 再选中（TvRecyclerView 需要 post）
                         tvRecyclerView.post(() -> {
                             tvRecyclerView.setSelection(selectIdx);
