@@ -132,7 +132,7 @@ public class FastSearchActivity extends BaseActivity {
                     if (ret < 0) return;
                     TextView v = (TextView) itemView;
                     String sb = v.getText().toString();
-                    filterResult(sb);
+                 //   filterResult(sb);
                 }
             } catch (Exception e) {
                 App.showToastShort(FastSearchActivity.this, e.toString());
@@ -390,10 +390,10 @@ public class FastSearchActivity extends BaseActivity {
                                 TvRecyclerView.LayoutManager lm = mGridView.getLayoutManager();
                                 if (lm == null) return;
                                 // xuameng在这里滚
-                                lm.scrollToPosition(node.lastSelectedPosition);
+                                lm.scrollToPosition(0);
                                 // xuameng在这里选中
                                 mGridView.post(() -> {
-                                    mGridView.setSelection(node.lastSelectedPosition);
+                                    mGridView.setSelection(0);
                                 });
                             }
                         }
