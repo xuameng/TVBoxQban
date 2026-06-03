@@ -34,14 +34,20 @@ public class GridFilterKVAdapter extends BaseQuickAdapter<String, BaseViewHolder
         // 初始状态设置
         int position = helper.getAdapterPosition();
         boolean isSelected = (position == selectedPosition);
+        boolean hasFocus = valueTv.hasFocus();   // 关键：同步焦点状态
     
         if (isSelected) {
             valueTv.getPaint().setFakeBoldText(true);
-            // 默认选中但未焦点时为绿色
-            valueTv.setTextColor(selectedColor); // selectedColor 原为绿色
+            if (hasFocus) {
+                // 选中 + 有焦点 → 白色
+                valueTv.setTextColor(defaultColor);
+            } else {
+                // 选中 + 无焦点 → 绿色
+                valueTv.setTextColor(selectedColor);
+            }
         } else {
             valueTv.getPaint().setFakeBoldText(false);
-            valueTv.setTextColor(defaultColor); // defaultColor 原为白色
+            valueTv.setTextColor(defaultColor);
         }
     
         // 设置焦点变化监听
@@ -78,6 +84,17 @@ public class GridFilterKVAdapter extends BaseQuickAdapter<String, BaseViewHolder
         }
         // 更新当前选中的 item  刷单个item避免焦点乱跳
         notifyItemChanged(selectedPosition);
+
+    RecyclerView rv = getRecyclerView();
+    if (rv == null) return;
+
+    rv.post(() -> {
+        RecyclerView.ViewHolder vh =
+                rv.findViewHolderForAdapterPosition(selectedPosition);
+        if (vh != null) {
+            vh.itemView.requestFocus();
+        }
+    });
     }
     
     public int getSelectedPosition() {    //xuameng新增方法修正多个高亮BUG
