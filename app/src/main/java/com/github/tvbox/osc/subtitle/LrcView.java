@@ -81,9 +81,7 @@ public class LrcView extends View {
         mTranslatePaint = new Paint(mNormalPaint);
         mTranslatePaint.setColor(Color.WHITE);
         mTranslatePaint.setAlpha(180);
-        mTranslatePaint.setTextSize(
         mTranslatePaint.setTextSize(mNormalPaint.getTextSize() * 0.65f);
-);
     }
 
     /* ===================== 对外接口 ===================== */
