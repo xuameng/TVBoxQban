@@ -40,11 +40,13 @@ public class LrcView extends View {
     /**
      * LRC歌词行数据结构
      */
-    private static class LrcLine {
-        long time; // 时间戳（毫秒）
-        String text; // 歌词文本
-        float width; // 文本宽度（用于绘制）
-    }
+private static class LrcLine {
+    long time;                 // 时间戳（毫秒）
+    String mainText;           // 主歌词（高亮）
+    String translateText = ""; // 翻译（始终灰色）
+    float mainWidth;
+    float translateWidth;
+}
 
     private List<LrcLine> mLrcLines = new ArrayList<>();
     private Paint mNormalPaint, mHighlightPaint;
@@ -170,74 +172,82 @@ public class LrcView extends View {
      *
      * @param lrcContent LRC格式歌词内容
      */
-    public void setLrcText(String lrcContent) {
-        mLrcLines.clear();
-        String[] lines = lrcContent.split("\n");
-        Pattern pattern = Pattern.compile("\\[(\\d{2}):(\\d{2})\\.(\\d{1,3})\\]");
+public void setLrcText(String lrcContent) {
+    mLrcLines.clear();
 
-        for (String line : lines) {
-            // 跳过空行
-            if (line.trim().isEmpty()) {
-                continue;
+    String[] lines = lrcContent.split("\n");
+    Pattern pattern = Pattern.compile("\\[(\\d{2}):(\\d{2})\\.(\\d{1,3})\\]");
+
+    // 临时 Map，用来合并双语
+    java.util.Map<Long, LrcLine> lineMap = new java.util.LinkedHashMap<>();
+
+    for (String line : lines) {
+        if (line.trim().isEmpty()) continue;
+
+        Matcher matcher = pattern.matcher(line);
+        List<Long> times = new ArrayList<>();
+        int lastEnd = 0;
+
+        while (matcher.find()) {
+            int min = Integer.parseInt(matcher.group(1));
+            int sec = Integer.parseInt(matcher.group(2));
+            String msStr = matcher.group(3);
+            long ms;
+
+            if (msStr.length() == 2) {
+                ms = Integer.parseInt(msStr) * 10L;
+            } else if (msStr.length() == 1) {
+                ms = Integer.parseInt(msStr) * 100L;
+            } else {
+                ms = Integer.parseInt(msStr);
             }
 
-            Matcher matcher = pattern.matcher(line);
-            List<Long> times = new ArrayList<>();
-            String text = "";
-            int lastEnd = 0;
-
-            // 查找所有时间标签
-            while (matcher.find()) {
-                int min = Integer.parseInt(matcher.group(1));
-                int sec = Integer.parseInt(matcher.group(2));
-                // 处理毫秒部分
-                String msStr = matcher.group(3);
-                long ms;
-                if (msStr.length() == 2) {
-                    // 2位数字，按百分秒处理
-                    ms = Integer.parseInt(msStr) * 10L; // 百分秒转毫秒
-                } else if (msStr.length() == 1) {
-                    ms = Integer.parseInt(msStr) * 100L; // 如.1 -> 100毫秒
-                } else {
-                    ms = Integer.parseInt(msStr); // 3位数字，直接作为毫秒
-                }
-                times.add((min * 60 + sec) * 1000L + ms);
-                lastEnd = matcher.end();
-            }
-
-            // 提取歌词文本（去除时间标签后的内容）
-            text = line.substring(lastEnd).trim();
-
-            // 只有当文本非空时才添加到歌词列表
-            if (!text.isEmpty()) {
-                for (Long time : times) {
-                    LrcLine lrcLine = new LrcLine();
-                    lrcLine.time = time;
-                    lrcLine.text = text;
-                    lrcLine.width = mNormalPaint.measureText(text);
-                    mLrcLines.add(lrcLine);
-                }
-            }
-            // 注意：这里我们跳过了纯时间标签行（如[00:13.760]），因为它们没有歌词内容
+            times.add((min * 60 + sec) * 1000L + ms);
+            lastEnd = matcher.end();
         }
 
-        // 按时间排序
-        Collections.sort(mLrcLines, (a, b) -> Long.compare(a.time, b.time));
+        String text = line.substring(lastEnd).trim();
+        if (text.isEmpty()) continue;
 
-        // 移除重复的歌词行
-        removeDuplicateLines();
-
-        // 重置所有状态
-        mShouldShowLyrics = false;
-        mCurrentLine = 0; // 总是从第0行开始
-        mScrollOffset = 0f;
-        mCurrentPosition = 0;
-        mIsInitialPositioning = true; // 新增：重置初始定位状态
-        if (mScrollAnimator != null && mScrollAnimator.isRunning()) {
-            mScrollAnimator.cancel();
+        for (Long time : times) {
+            LrcLine lrcLine = lineMap.get(time);
+            if (lrcLine == null) {
+                // 第一次出现 → 主歌词
+                lrcLine = new LrcLine();
+                lrcLine.time = time;
+                lrcLine.mainText = text;
+                lrcLine.translateText = "";
+                lineMap.put(time, lrcLine);
+            } else {
+                // 第二次出现 → 翻译
+                lrcLine.translateText = text;
+            }
         }
-        invalidate(); // 立即重绘
     }
+
+    mLrcLines.addAll(lineMap.values());
+
+    // 计算宽度
+    for (LrcLine line : mLrcLines) {
+        line.mainWidth = mNormalPaint.measureText(line.mainText);
+        line.translateWidth = mNormalPaint.measureText(line.translateText);
+    }
+
+    Collections.sort(mLrcLines, (a, b) -> Long.compare(a.time, b.time));
+
+    // 重置状态
+    mShouldShowLyrics = false;
+    mCurrentLine = 0;
+    mScrollOffset = 0f;
+    mCurrentPosition = 0;
+    mIsInitialPositioning = true;
+
+    if (mScrollAnimator != null && mScrollAnimator.isRunning()) {
+        mScrollAnimator.cancel();
+    }
+
+    invalidate();
+}
 
     /**
      * 移除重复的歌词行
@@ -439,82 +449,104 @@ public class LrcView extends View {
      * 绘制卡拉OK效果
      */
     @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
+@Override
+protected void onDraw(Canvas canvas) {
+    super.onDraw(canvas);
 
-        // 检查是否应该显示歌词
-        if (!mShouldShowLyrics) {
-            // 不显示歌词，显示提示信息
-            String hint = "";   //xuameng 可以加 歌词载入中...
-            float textWidth = mNormalPaint.measureText(hint);
-            float centerX = getWidth() / 2 - textWidth / 2;
-            float centerY = getHeight() / 2;
-            canvas.drawText(hint, centerX, centerY, mNormalPaint);
-            return;
+    if (!mShouldShowLyrics) {
+        String hint = "";
+        float textWidth = mNormalPaint.measureText(hint);
+        canvas.drawText(
+                hint,
+                getWidth() / 2f - textWidth / 2f,
+                getHeight() / 2f,
+                mNormalPaint
+        );
+        return;
+    }
+
+    if (mLrcLines.isEmpty()) return;
+
+    float lineHeight = mNormalPaint.getTextSize() * 1.8f;
+    int visibleLines = Math.min(mLrcLines.size(), 7);
+    float totalHeight = lineHeight * visibleLines;
+
+    float scrollOffsetPixels = Math.round(mScrollOffset * lineHeight);
+    float startY = (getHeight() - totalHeight) / 2f
+            + mNormalPaint.getTextSize()
+            - scrollOffsetPixels;
+
+    int startLineIndex = Math.max(0, mCurrentLine - 3);
+    int endLineIndex = Math.min(mLrcLines.size() - 1, mCurrentLine + 3);
+
+    for (int i = 0; i < visibleLines; i++) {
+        int index = startLineIndex + i;
+        if (index < 0 || index >= mLrcLines.size()) continue;
+
+        LrcLine line = mLrcLines.get(index);
+        float y = startY + i * lineHeight;
+
+        boolean isCurrent = index == mCurrentLine;
+
+        // ===== 主歌词 =====
+        if (isCurrent) {
+            float progress = 0f;
+            long nextTime = (index + 1 < mLrcLines.size())
+                    ? mLrcLines.get(index + 1).time
+                    : line.time + 5000;
+            long duration = nextTime - line.time;
+
+            if (duration > 0 && mCurrentPosition >= line.time) {
+                progress = (float) (mCurrentPosition - line.time) / duration;
+            }
+            progress = Math.max(0, Math.min(1, progress));
+
+            Paint.FontMetrics fm = mHighlightPaint.getFontMetrics();
+            float top = y + fm.top;
+            float bottom = y + fm.bottom;
+
+            float x = getWidth() / 2f - line.mainWidth / 2f;
+
+            // 背景
+            canvas.drawText(line.mainText, x, y, mNormalPaint);
+
+            // 高亮裁剪
+            canvas.save();
+            canvas.clipRect(
+                    x,
+                    top,
+                    x + line.mainWidth * progress,
+                    bottom
+            );
+            canvas.drawText(line.mainText, x, y, mHighlightPaint);
+            canvas.restore();
+
+        } else {
+            canvas.drawText(
+                    line.mainText,
+                    getWidth() / 2f - line.mainWidth / 2f,
+                    y,
+                    mNormalPaint
+            );
         }
 
-        if (mLrcLines.isEmpty()) {
-            return;
-        }
+        // ===== 翻译歌词（始终灰色，不高亮）=====
+        if (!line.translateText.isEmpty()) {
+            float translateY = y + lineHeight * 0.85f;
 
-        // 计算总高度和起始Y位置，实现垂直居中
-        float lineHeight = mNormalPaint.getTextSize() * 1.5f;
-        int visibleLines = Math.min(mLrcLines.size(), 7); // 显示最多7行歌词
-        float totalHeight = lineHeight * visibleLines;
-		// 将浮点数偏移转换为整数像素，避免亚像素渲染问题
-        float scrollOffsetPixels = Math.round(mScrollOffset * lineHeight);  //滚动偏移像素
-        float startY = (getHeight() - totalHeight) / 2 + mNormalPaint.getTextSize() - scrollOffsetPixels;  // 计算起始Y位置，使当前行居中显示  并滚动
-        // 计算实际可见的行范围，确保不会超出歌词列表边界
-        int startLineIndex = Math.max(0, mCurrentLine - 3);
-        int endLineIndex = Math.min(mLrcLines.size() - 1, mCurrentLine + 3);
+            Paint translatePaint = new Paint(mNormalPaint);
+            translatePaint.setColor(Color.GRAY);
+            translatePaint.setAlpha(180);
 
-        // 绘制当前行及前后行
-        for (int i = 0; i < visibleLines; i++) {
-            int actualIndex = startLineIndex + i;
-            if (actualIndex < 0 || actualIndex >= mLrcLines.size()) {
-                continue;
-            }
-
-            LrcLine line = mLrcLines.get(actualIndex);
-            float y = startY + i * lineHeight;
-
-            if (actualIndex == mCurrentLine) {
-                // 当前行：卡拉OK高亮效果
-                float progress = 0f;
-                if (mCurrentPosition >= line.time) {
-                    long nextTime = (actualIndex + 1 < mLrcLines.size()) ? 
-                                   mLrcLines.get(actualIndex + 1).time : line.time + 5000;
-                    long duration = nextTime - line.time;
-                    if (duration > 0) {
-                        progress = (float) (mCurrentPosition - line.time) / duration;
-                    }
-                }
-                progress = Math.max(0, Math.min(1, progress));
-
-                // 获取字体度量信息
-                Paint.FontMetrics fm = mHighlightPaint.getFontMetrics();
-                float textTop = y + fm.top;
-                float textBottom = y + fm.bottom;
-
-                // 绘制背景文本（完整）
-                canvas.drawText(line.text, getWidth() / 2 - line.width / 2, y, mNormalPaint);
-
-                // 绘制高亮部分（渐变填充）
-                float highlightWidth = line.width * progress;
-                canvas.save();
-                // 使用精确的裁剪区域
-                canvas.clipRect(getWidth() / 2 - line.width / 2, 
-                                textTop,
-                                getWidth() / 2 - line.width / 2 + highlightWidth, 
-                                textBottom);
-                canvas.drawText(line.text, getWidth() / 2 - line.width / 2, y, mHighlightPaint);
-                canvas.restore();
-            }else {
-                // 非当前行：普通显示
-                canvas.drawText(line.text, getWidth() / 2 - line.width / 2, y, mNormalPaint);
-            }
+            canvas.drawText(
+                    line.translateText,
+                    getWidth() / 2f - line.translateWidth / 2f,
+                    translateY,
+                    translatePaint
+            );
         }
     }
+}
 
     /**
      * 将 sp 值转换为 px 值  以便与字幕的字体大小一致
