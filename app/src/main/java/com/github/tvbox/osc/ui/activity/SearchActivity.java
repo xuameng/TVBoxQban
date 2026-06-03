@@ -496,6 +496,22 @@ public class SearchActivity extends BaseActivity {
                 } else {
                     searchAdapter.addData(absXml.movie.videoList);
                 }
+                mGridView.getViewTreeObserver().addOnGlobalLayoutListener(
+                    new ViewTreeObserver.OnGlobalLayoutListener() {
+                        @Override
+                        public void onGlobalLayout() {
+                            mGridView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                            TvRecyclerView.LayoutManager lm = mGridView.getLayoutManager();
+                            if (lm == null) return;
+                            // xuameng在这里滚
+                            lm.scrollToPosition(node.lastSelectedPosition);
+                            // xuameng在这里选中
+                            mGridView.post(() -> {
+                                mGridView.setSelection(node.lastSelectedPosition);
+                            });
+                        }
+                    }
+                );
                 page++;
             } else {
                 showEmpty();
@@ -825,9 +841,22 @@ public class SearchActivity extends BaseActivity {
                     // xuameng恢复焦点位置
                     restorePos = node.lastSelectedPosition;
                     if (restorePos >= 0 && restorePos < topSearchCache.size()) {
-                        mGridView.post(() -> {
-                            mGridView.setSelection(restorePos);
-                        });
+                        mGridView.getViewTreeObserver().addOnGlobalLayoutListener(
+                            new ViewTreeObserver.OnGlobalLayoutListener() {
+                                @Override
+                                public void onGlobalLayout() {
+                                    mGridView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                                    TvRecyclerView.LayoutManager lm = mGridView.getLayoutManager();
+                                    if (lm == null) return;
+                                    // xuameng在这里滚
+                                    lm.scrollToPosition(restorePos);
+                                    // xuameng在这里选中
+                                    mGridView.post(() -> {
+                                        mGridView.setSelection(restorePos);
+                                    });
+                                }
+                            }
+                        );
                     }
                 }
 
