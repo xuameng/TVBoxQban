@@ -86,45 +86,47 @@ public class LrcView extends View {
 
     /* ===================== 对外接口 ===================== */
 
-/**
- * xuameng
- * 设置普通歌词字体大小（sp）
- */
+    /**
+     * xuameng
+     * 设置普通歌词字体大小（sp）
+     */
 public void setNormalTextSize(float textSize) {
-    float pxSize = spToPx(getContext(), textSize);
-    mNormalPaint.setTextSize(pxSize);
-    recalculateLineWidths();
+    mNormalPaint.setTextSize(spToPx(textSize));
+    for (LrcLine l : mLrcLines) {
+        l.mainWidth = mNormalPaint.measureText(l.mainText);
+    }
     invalidate();
 }
 
-/**
- * xuameng
- * 设置高亮歌词字体大小（sp）
- */
+    /**
+     * xuameng
+     * 设置高亮歌词字体大小（sp）
+     */
 public void setHighlightTextSize(float textSize) {
-    float pxSize = spToPx(getContext(), textSize);
-    mHighlightPaint.setTextSize(pxSize);
-    recalculateLineWidths();
+    mHighlightPaint.setTextSize(spToPx(textSize));
+    for (LrcLine l : mLrcLines) {
+        l.mainWidth = mNormalPaint.measureText(l.mainText);
+    }
     invalidate();
 }
 
-/**
- * xuameng
- * 设置普通歌词颜色
- */
-public void setNormalColor(int color) {
-    mNormalPaint.setColor(color);
-    invalidate();
-}
+    /**
+     * xuameng
+     * 设置普通歌词颜色
+     */
+    public void setNormalColor(int color) {
+        mNormalPaint.setColor(color);
+        invalidate();
+    }
 
-/**
- * xuameng
- * 设置高亮歌词颜色
- */
-public void setHighlightColor(int color) {
-    mHighlightPaint.setColor(color);
-    invalidate();
-}
+    /**
+     * xuameng
+     * 设置高亮歌词颜色
+     */
+    public void setHighlightColor(int color) {
+        mHighlightPaint.setColor(color);
+        invalidate();
+    }
 
     public void setLrcText(String lrc) {
         mLrcLines.clear();
