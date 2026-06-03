@@ -64,6 +64,7 @@ public class LrcView extends View {
     // 最大滚动距离（行数）
     private static final int MAX_SCROLL_DISTANCE = 1;
     private Paint mTranslatePaint;
+    private float mTranslateLineHeight;
 
     public LrcView(Context context) {
         super(context);
@@ -410,8 +411,10 @@ public class LrcView extends View {
             return;
         }
         float lineHeight = mNormalPaint.getTextSize() * 1.5f;
-        int visibleLines = Math.min(mLrcLines.size(), 7);
-        float totalHeight = lineHeight * visibleLines;
+int visibleLines = Math.min(mLrcLines.size(), 7);
+float totalHeight =
+        lineHeight * visibleLines
+      + mTranslateLineHeight * visibleLines;
         float scrollOffsetPixels = Math.round(mScrollOffset * lineHeight);
         float startY = (getHeight() - totalHeight) / 2f + mNormalPaint.getTextSize() - scrollOffsetPixels;
         int startLineIndex = Math.max(0, mCurrentLine - 3);
@@ -452,7 +455,7 @@ public class LrcView extends View {
 
             // ===== 翻译歌词（同步高亮）=====
             if (!line.translateText.isEmpty()) {
-                float translateY = y + lineHeight + mTranslatePaint.getTextSize() * 0.3f;
+                float translateY = y + mTranslateLineHeight;
                 Paint translatePaint = mTranslatePaint;
                 float tx = getWidth() / 2f - line.translateWidth / 2f;
                 // 背景（未高亮）
@@ -497,12 +500,15 @@ public class LrcView extends View {
     /**
      * 副歌词样式
      */
-    private void ensureTranslatePaint() {   
-        if (mTranslatePaint == null) {
-            mTranslatePaint = new Paint(mNormalPaint);
-            mTranslatePaint.setColor(Color.WHITE);
-            mTranslatePaint.setAlpha(180);  //xuameng 副歌词暗一些
-        }
-        mTranslatePaint.setTextSize(mNormalPaint.getTextSize() * 2f / 3f);
+private void ensureTranslatePaint() {
+    if (mTranslatePaint == null) {
+        mTranslatePaint = new Paint(mNormalPaint);
+        mTranslatePaint.setColor(Color.WHITE);
+        mTranslatePaint.setAlpha(180);
     }
+    mTranslatePaint.setTextSize(mNormalPaint.getTextSize() * 2f / 3f);
+
+    // ✅ 关键：副歌词自己的行高
+    mTranslateLineHeight = mTranslatePaint.getTextSize() * 1.6f;
+}
 }
