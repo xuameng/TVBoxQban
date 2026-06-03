@@ -42,11 +42,10 @@ public class LrcView extends View {
      */
 private static class LrcLine {
     long time;                 // 时间戳（毫秒）
-
     String mainText;           // 主歌词（高亮）
     String translateText = ""; // 翻译（始终灰色）
-    float mainWidth;
-    float translateWidth;
+    float mainWidth;  //文本宽度（用于绘制）
+    float translateWidth;  //翻译宽度
 }
 
     private List<LrcLine> mLrcLines = new ArrayList<>();
@@ -466,7 +465,7 @@ ensureTranslatePaint();
         float y = startY + i * lineHeight;
 
         boolean isCurrent = index == mCurrentLine;
-
+float progress = 0f; 
         // ===== 主歌词 =====
         if (isCurrent) {
             float progress = 0f;
@@ -509,7 +508,6 @@ ensureTranslatePaint();
             );
         }
 
-        // ===== 翻译歌词（始终灰色，不高亮）=====
 // ===== 翻译歌词（同步高亮）=====
 if (!line.translateText.isEmpty()) {
     float translateY = y + lineHeight * 0.85f;
@@ -557,7 +555,7 @@ if (!line.translateText.isEmpty()) {
         }
     }
 
-	private void ensureTranslatePaint() {
+private void ensureTranslatePaint() {
     if (mTranslatePaint == null) {
         mTranslatePaint = new Paint(mNormalPaint);
         mTranslatePaint.setColor(Color.WHITE);
