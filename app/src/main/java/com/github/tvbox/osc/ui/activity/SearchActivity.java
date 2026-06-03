@@ -466,7 +466,7 @@ public class SearchActivity extends BaseActivity {
                                 // 3. 显示操作成功的 Toast 提示
                                 App.showToastShort(SearchActivity.this, "已删除: " + keywordToDelete);
                                 // 4. 删除成功后，若还有 item，焦点回到附近一个
-                                final int nextIndex = Math.min(i, tv_history.getChildCount() - 1);
+                                final int nextIndex = Math.min(index, tv_history.getChildCount() - 1);
                                 if (nextIndex >= 0) {
                                     tv_history.getChildAt(nextIndex).requestFocus();
                                 }
