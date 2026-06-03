@@ -81,7 +81,9 @@ public class LrcView extends View {
         mTranslatePaint = new Paint(mNormalPaint);
         mTranslatePaint.setColor(Color.WHITE);
         mTranslatePaint.setAlpha(180);
-        mTranslatePaint.setTextSize(mNormalPaint.getTextSize() * 2f / 3f);
+        mTranslatePaint.setTextSize(
+        mTranslatePaint.setTextSize(mNormalPaint.getTextSize() * 0.65f);
+);
     }
 
     /* ===================== 对外接口 ===================== */
@@ -247,7 +249,9 @@ public void setHighlightTextSize(float textSize) {
             if (index < 0 || index >= mLrcLines.size()) continue;
 
             LrcLine line = mLrcLines.get(index);
-            float y = startY + i * mTotalLineHeight;
+float y = startY
+        + i * mTotalLineHeight
+        - mScrollOffset * mTotalLineHeight; // ✅ 关键
 
             boolean current = index == mCurrentLine;
             float progress = calcProgress(line, current);
@@ -301,13 +305,17 @@ public void setHighlightTextSize(float textSize) {
 
     /* ===================== 工具方法 ===================== */
 
-    private void calculateLineHeight() {
-        mMainLineHeight = mNormalPaint.getTextSize() * 1.5f;
-        mTranslateLineHeight = mTranslatePaint.getTextSize() * 1.6f;
-        mTotalLineHeight = mHasTranslate
-                ? mMainLineHeight + mTranslateLineHeight
-                : mMainLineHeight;
-    }
+private void calculateLineHeight() {
+    Paint.FontMetrics fm = mNormalPaint.getFontMetrics();
+    mMainLineHeight = fm.descent - fm.ascent;   // ✅ 真实主歌词行高
+
+    Paint.FontMetrics tfm = mTranslatePaint.getFontMetrics();
+    mTranslateLineHeight = tfm.descent - tfm.ascent; // ✅ 真实副歌词行高
+
+    mTotalLineHeight = mHasTranslate
+            ? mMainLineHeight + mTranslateLineHeight
+            : mMainLineHeight;
+}
 
     private float calcProgress(LrcLine l, boolean cur) {
         if (!cur) return 0f;
