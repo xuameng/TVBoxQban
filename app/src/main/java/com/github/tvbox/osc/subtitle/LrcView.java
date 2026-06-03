@@ -63,8 +63,12 @@ public class LrcView extends View {
     private boolean mIsInitialPositioning = true;
     // 最大滚动距离（行数）
     private static final int MAX_SCROLL_DISTANCE = 1;
+    // 副歌词怎么画（字号 / 颜色 / 样式）
     private Paint mTranslatePaint;
+    // 副歌词在哪里（布局 / 层级 / 不重叠）
     private float mTranslateLineHeight;
+// 一行的总高度（主 + 副 + 间距）
+private float mTotalLineHeight;
 
     public LrcView(Context context) {
         super(context);
@@ -397,86 +401,96 @@ public class LrcView extends View {
     /**
      * 绘制卡拉OK效果
      */
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-        ensureTranslatePaint();
-        if (!mShouldShowLyrics) {
-            String hint = "";
-            float textWidth = mNormalPaint.measureText(hint);
-            canvas.drawText(hint, getWidth() / 2f - textWidth / 2f, getHeight() / 2f, mNormalPaint);
-            return;
-        }
-        if (mLrcLines.isEmpty()) {
-            return;
-        }
-        float lineHeight = mNormalPaint.getTextSize() * 1.5f;
-int visibleLines = Math.min(mLrcLines.size(), 7);
-float totalHeight =
-        lineHeight * visibleLines
-      + mTranslateLineHeight * visibleLines;
-        float scrollOffsetPixels = Math.round(mScrollOffset * lineHeight);
-        float startY = (getHeight() - totalHeight) / 2f + mNormalPaint.getTextSize() - scrollOffsetPixels;
-        int startLineIndex = Math.max(0, mCurrentLine - 3);
-        int endLineIndex = Math.min(mLrcLines.size() - 1, mCurrentLine + 3);
 
-        for (int i = 0; i < visibleLines; i++) {
-            int index = startLineIndex + i;
-            if (index < 0 || index >= mLrcLines.size()) {
-                continue;
+@Override
+protected void onDraw(Canvas canvas) {
+    super.onDraw(canvas);
+    ensureTranslatePaint();
+
+    if (!mShouldShowLyrics) {
+        return;
+    }
+    if (mLrcLines.isEmpty()) {
+        return;
+    }
+
+    int visibleLines = Math.min(mLrcLines.size(), 7);
+    float totalHeight = mTotalLineHeight * visibleLines;
+    float startY = (getHeight() - totalHeight) / 2f + mNormalPaint.getTextSize();
+
+    int startLineIndex = Math.max(0, mCurrentLine - 3);
+    int endLineIndex = Math.min(mLrcLines.size() - 1, mCurrentLine + 3);
+
+    for (int i = 0; i < visibleLines; i++) {
+        int index = startLineIndex + i;
+        if (index < 0 || index >= mLrcLines.size()) continue;
+
+        LrcLine line = mLrcLines.get(index);
+
+        // ✅ 主歌词 Y
+        float y = startY + i * mTotalLineHeight;
+
+        // ✅ 副歌词 Y
+        float translateY = y + mNormalPaint.getTextSize() * 1.5f;
+
+        boolean isCurrent = index == mCurrentLine;
+        float progress = 0f;
+
+        if (isCurrent) {
+            long nextTime = (index + 1 < mLrcLines.size())
+                    ? mLrcLines.get(index + 1).time
+                    : line.time + 5000;
+            long duration = nextTime - line.time;
+            if (duration > 0 && mCurrentPosition >= line.time) {
+                progress = (float) (mCurrentPosition - line.time) / duration;
             }
-            LrcLine line = mLrcLines.get(index);
-            float y = startY + i * lineHeight;
-            boolean isCurrent = index == mCurrentLine;
-            float progress = 0f;
+            progress = Math.max(0, Math.min(1, progress));
 
-            // ===== 主歌词 =====
+            Paint.FontMetrics fm = mHighlightPaint.getFontMetrics();
+            float top = y + fm.top;
+            float bottom = y + fm.bottom;
+            float x = getWidth() / 2f - line.mainWidth / 2f;
+
+            canvas.drawText(line.mainText, x, y, mNormalPaint);
+
+            canvas.save();
+            canvas.clipRect(x, top, x + line.mainWidth * progress, bottom);
+            canvas.drawText(line.mainText, x, y, mHighlightPaint);
+            canvas.restore();
+        } else {
+            canvas.drawText(
+                    line.mainText,
+                    getWidth() / 2f - line.mainWidth / 2f,
+                    y,
+                    mNormalPaint
+            );
+        }
+
+        // ===== 副歌词 =====
+        if (!line.translateText.isEmpty()) {
+            float tx = getWidth() / 2f - line.translateWidth / 2f;
+
+            Paint highlightTranslatePaint = new Paint(mTranslatePaint);
+            highlightTranslatePaint.setColor(mHighlightPaint.getColor());
+            highlightTranslatePaint.setAlpha(200);
+
             if (isCurrent) {
-                long nextTime = (index + 1 < mLrcLines.size()) ? mLrcLines.get(index + 1).time : line.time + 5000;
-                long duration = nextTime - line.time;
-                if (duration > 0 && mCurrentPosition >= line.time) {
-                    progress = (float) (mCurrentPosition - line.time) / duration;
-                }
-                progress = Math.max(0, Math.min(1, progress));
-                Paint.FontMetrics fm = mHighlightPaint.getFontMetrics();
-                float top = y + fm.top;
-                float bottom = y + fm.bottom;
-                float x = getWidth() / 2f - line.mainWidth / 2f;
-                // 背景
-                canvas.drawText(line.mainText, x, y, mNormalPaint);
-                // 高亮裁剪
+                Paint.FontMetrics tfm = highlightTranslatePaint.getFontMetrics();
                 canvas.save();
-                canvas.clipRect(x, top, x + line.mainWidth * progress, bottom);
-                canvas.drawText(line.mainText, x, y, mHighlightPaint);
+                canvas.clipRect(
+                        tx,
+                        translateY + tfm.top,
+                        tx + line.translateWidth * progress,
+                        translateY + tfm.bottom
+                );
+                canvas.drawText(line.translateText, tx, translateY, highlightTranslatePaint);
                 canvas.restore();
             } else {
-                canvas.drawText(line.mainText, getWidth() / 2f - line.mainWidth / 2f, y, mNormalPaint);
-            }
-
-            // ===== 翻译歌词（同步高亮）=====
-            if (!line.translateText.isEmpty()) {
-                float translateY = y + mTranslateLineHeight;
-                Paint translatePaint = mTranslatePaint;
-                float tx = getWidth() / 2f - line.translateWidth / 2f;
-                // 背景（未高亮）
-                Paint highlightTranslatePaint = new Paint(mTranslatePaint);
-                highlightTranslatePaint.setColor(mHighlightPaint.getColor());
-                highlightTranslatePaint.setAlpha(200);  // 略低于主歌词
-                if (isCurrent) {
-                    // 副歌词同步高亮
-                    canvas.save();
-                    canvas.clipRect(
-                        tx,
-                        translateY + highlightTranslatePaint.getFontMetrics().top,
-                        tx + line.translateWidth * progress,
-                        translateY + highlightTranslatePaint.getFontMetrics().bottom
-                    );
-                    canvas.drawText(line.translateText, tx, translateY, highlightTranslatePaint);
-                    canvas.restore();
-                }
+                canvas.drawText(line.translateText, tx, translateY, mTranslatePaint);
             }
         }
     }
+}
 
     /**
      * 将 sp 值转换为 px 值 以便与字幕的字体大小一致
@@ -508,7 +522,10 @@ private void ensureTranslatePaint() {
     }
     mTranslatePaint.setTextSize(mNormalPaint.getTextSize() * 2f / 3f);
 
-    // ✅ 关键：副歌词自己的行高
-    mTranslateLineHeight = mTranslatePaint.getTextSize() * 1.6f;
+    float translateLineHeight = mTranslatePaint.getTextSize() * 1.6f;
+    float mainLineHeight = mNormalPaint.getTextSize() * 1.5f;
+
+    // ✅ 关键：真实行高 = 主 + 副
+    mTotalLineHeight = mainLineHeight + translateLineHeight;
 }
 }
