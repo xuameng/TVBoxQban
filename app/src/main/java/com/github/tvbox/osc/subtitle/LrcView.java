@@ -42,9 +42,9 @@ public class LrcView extends View {
      */
 private static class LrcLine {
     long time;                 // 时间戳（毫秒）
-    String mainText;           // 主歌词（高亮）
+    String text;           // 主歌词（高亮）
     String translateText = ""; // 翻译（始终灰色）
-    float mainWidth;
+    float width;
     float translateWidth;
 }
 
@@ -215,7 +215,7 @@ public void setLrcText(String lrcContent) {
                 // 第一次出现 → 主歌词
                 lrcLine = new LrcLine();
                 lrcLine.time = time;
-                lrcLine.mainText = text;
+                lrcLine.text = text;
                 lrcLine.translateText = "";
                 lineMap.put(time, lrcLine);
             } else {
@@ -229,7 +229,7 @@ public void setLrcText(String lrcContent) {
 
     // 计算宽度
     for (LrcLine line : mLrcLines) {
-        line.mainWidth = mNormalPaint.measureText(line.mainText);
+        line.width = mNormalPaint.measureText(line.text);
         line.translateWidth = mNormalPaint.measureText(line.translateText);
     }
 
@@ -448,7 +448,6 @@ public void setLrcText(String lrcContent) {
     /**
      * 绘制卡拉OK效果
      */
-    @Override
 @Override
 protected void onDraw(Canvas canvas) {
     super.onDraw(canvas);
@@ -505,26 +504,26 @@ protected void onDraw(Canvas canvas) {
             float top = y + fm.top;
             float bottom = y + fm.bottom;
 
-            float x = getWidth() / 2f - line.mainWidth / 2f;
+            float x = getWidth() / 2f - line.width / 2f;
 
             // 背景
-            canvas.drawText(line.mainText, x, y, mNormalPaint);
+            canvas.drawText(line.text, x, y, mNormalPaint);
 
             // 高亮裁剪
             canvas.save();
             canvas.clipRect(
                     x,
                     top,
-                    x + line.mainWidth * progress,
+                    x + line.width * progress,
                     bottom
             );
-            canvas.drawText(line.mainText, x, y, mHighlightPaint);
+            canvas.drawText(line.text, x, y, mHighlightPaint);
             canvas.restore();
 
         } else {
             canvas.drawText(
-                    line.mainText,
-                    getWidth() / 2f - line.mainWidth / 2f,
+                    line.text,
+                    getWidth() / 2f - line.width / 2f,
                     y,
                     mNormalPaint
             );
