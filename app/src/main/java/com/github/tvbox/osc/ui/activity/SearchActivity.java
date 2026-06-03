@@ -504,10 +504,10 @@ public class SearchActivity extends BaseActivity {
                             TvRecyclerView.LayoutManager lm = mGridView.getLayoutManager();
                             if (lm == null) return;
                             // xuameng在这里滚
-                            lm.scrollToPosition(node.lastSelectedPosition);
+                            lm.scrollToPosition(0);
                             // xuameng在这里选中
                             mGridView.post(() -> {
-                                mGridView.setSelection(node.lastSelectedPosition);
+                                mGridView.setSelection(0);
                             });
                         }
                     }
