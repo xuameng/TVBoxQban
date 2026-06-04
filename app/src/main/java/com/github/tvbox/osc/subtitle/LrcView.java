@@ -10,7 +10,6 @@ import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.View;
 import androidx.annotation.Nullable;
-// 修复错误2：添加缺失的导入
 import android.view.animation.AccelerateDecelerateInterpolator;
 
 import java.util.ArrayList;
@@ -132,7 +131,6 @@ public class LrcView extends View {
     }
 
     /**
-     * 修复错误1：重命名方法以匹配调用处 (原 setHighlightTextUpSize -> setHighlightTextSize)
      * 设置高亮文本大小 (主歌词)
      * 副歌词大小会自动跟随
      */
@@ -246,7 +244,7 @@ public class LrcView extends View {
         // 策略：如果当前行和下一行时间接近(小于2秒)，且文本内容看起来像互为翻译，则合并
         for (int i = 0; i < tempLines.size() - 1; i++) {
             LrcLine current = tempLines.get(i);
-            LrcLine next = tempLines.get(i + 误1);
+            LrcLine next = tempLines.get(i + 1);
 
             // 时间间隔小于2秒
             if (next.time - current.time < 2000) {
@@ -325,7 +323,6 @@ public class LrcView extends View {
 
         mScrollAnimator = ValueAnimator.ofFloat(0f, (float) lineDiff);
         mScrollAnimator.setDuration(mScrollDuration);
-        // 修复错误2：确保使用全限定类名或已导入
         mScrollAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
         mScrollAnimator.addUpdateListener(animation -> {
             mScrollOffset = (float) animation.getAnimatedValue();
@@ -429,7 +426,16 @@ public class LrcView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if (!mShouldShowLyrics) return;
+        // 检查是否应该显示歌词
+        if (!mShouldShowLyrics) {
+            // 不显示歌词，显示提示信息
+            String hint = "";   //xuameng 可以加 歌词载入中...
+            float textWidth = mNormalPaint.measureText(hint);
+            float centerX = getWidth() / 2 - textWidth / 2;
+            float centerY = getHeight() / 2;
+            canvas.drawText(hint, centerX, centerY, mNormalPaint);
+            return;
+        }
         if (mLrcLines.isEmpty()) return;
 
         // 计算行高
@@ -495,7 +501,7 @@ public class LrcView extends View {
                 float subX = getWidth() / 2 - line.subWidth / 2;
                 float subY = y + mainLineHeight * 0.8f; // 调整副歌词垂直位置
 
-                // 修复错误3：将 progress 的计算移到此处，确保副歌词也能使用
+                // 将 progress 的计算移到此处，确保副歌词也能使用
                 float progress = 0f;
                 if (lineNum == mCurrentLine) {
                     long duration = (lineNum + 1 < mLrcLines.size()) ? mLrcLines.get(lineNum + 1).time - line.time : 5000;
@@ -546,6 +552,9 @@ public class LrcView extends View {
         return sp * context.getResources().getDisplayMetrics().scaledDensity;
     }
 
+    /**
+     * 清理资源
+     */
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
