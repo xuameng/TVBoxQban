@@ -10,6 +10,8 @@ import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.View;
 import androidx.annotation.Nullable;
+// 修复错误2：添加缺失的导入
+import android.view.animation.AccelerateDecelerateInterpolator;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,7 +23,7 @@ import java.util.regex.Pattern;
  * xuameng
  * LRC歌词显示控件
  * 支持卡拉OK效果的歌词同步显示
- * 新增：双语歌词支持
+ * 修复：双语歌词支持及编译错误
  */
 public class LrcView extends View {
 
@@ -130,10 +132,11 @@ public class LrcView extends View {
     }
 
     /**
+     * 修复错误1：重命名方法以匹配调用处 (原 setHighlightTextUpSize -> setHighlightTextSize)
      * 设置高亮文本大小 (主歌词)
      * 副歌词大小会自动跟随
      */
-    public void setHighlightTextUpSize(float textSize) {
+    public void setHighlightTextSize(float textSize) {
         float pxSize = spToPx(getContext(), textSize);
         mHighlightPaint.setTextSize(pxSize);
         // 副歌词大小为主歌词的 2/3
@@ -243,8 +246,8 @@ public class LrcView extends View {
         // 策略：如果当前行和下一行时间接近(小于2秒)，且文本内容看起来像互为翻译，则合并
         for (int i = 0; i < tempLines.size() - 1; i++) {
             LrcLine current = tempLines.get(i);
-            LrcLine next = tempLines.get(i + 1);
-            
+            LrcLine next = tempLines.get(i + 误1);
+
             // 时间间隔小于2秒
             if (next.time - current.time < 2000) {
                 // 简单判断：一行包含中文，另一行包含英文/拼音特征
@@ -262,9 +265,7 @@ public class LrcView extends View {
                         current.mainText = current.mainText;
                         current.subText = next.mainText;
                     } else {
-                        current.mainText = next.mainText;
-                        current.subText = current.mainText; // 这里逻辑修正
-                        // 实际上应该交换
+                        // 修正逻辑：交换文本
                         String temp = current.mainText;
                         current.mainText = next.mainText;
                         current.subText = temp;
@@ -280,18 +281,10 @@ public class LrcView extends View {
                 }
             }
             // 如果不满足双语条件，则保持单行
-            LrcLine single = new LrcLine();
-            single.time = current.time;
-            single.mainText = current.mainText;
-            single.subText = "";
-            single.isDual = false;
-            single.mainWidth = mNormalPaint.measureText(single.mainText);
-            mLrcLines.add(single);
+            // (注：此处逻辑已在最后统一处理，避免重复添加)
         }
 
-        // 如果上面的循环没有覆盖到最后一个元素（或者逻辑有遗漏），补充剩余的
-        // 这里简化处理，直接将 tempLines 赋值给 mLrcLines (在去重后)
-        // 重新构建 mLrcLines 以确保逻辑清晰
+        // 重新构建 mLrcLines
         mLrcLines.clear();
         mLrcLines.addAll(tempLines);
 
@@ -332,6 +325,7 @@ public class LrcView extends View {
 
         mScrollAnimator = ValueAnimator.ofFloat(0f, (float) lineDiff);
         mScrollAnimator.setDuration(mScrollDuration);
+        // 修复错误2：确保使用全限定类名或已导入
         mScrollAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
         mScrollAnimator.addUpdateListener(animation -> {
             mScrollOffset = (float) animation.getAnimatedValue();
@@ -396,7 +390,6 @@ public class LrcView extends View {
         if (targetLine != mCurrentLine) {
             int lineDiff = targetLine - mCurrentLine;
             int lineDistance = Math.abs(lineDiff);
-
             if (lineDistance > MAX_SCROLL_DISTANCE) {
                 if (mScrollAnimator != null && mScrollAnimator.isRunning()) mScrollAnimator.cancel();
                 mCurrentLine = targetLine;
@@ -436,7 +429,6 @@ public class LrcView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-
         if (!mShouldShowLyrics) return;
         if (mLrcLines.isEmpty()) return;
 
@@ -446,7 +438,7 @@ public class LrcView extends View {
 
         // 可见行数计算 (考虑双语会占用更多空间)
         // 这里简单处理：双语算作1.5行的高度
-        int visibleLines = 7; 
+        int visibleLines = 7;
         float totalHeight = 0;
         // 粗略计算总高度
         for (int i = 0; i < visibleLines && (mCurrentLine + i) < mLrcLines.size(); i++) {
@@ -462,10 +454,9 @@ public class LrcView extends View {
         int index = 0;
         int lineNum = mCurrentLine;
         float currentY = startY;
-
         while (index < visibleLines && lineNum < mLrcLines.size()) {
             LrcLine line = mLrcLines.get(lineNum);
-            
+
             // 计算当前行的垂直偏移
             float offsetY = 0;
             if (lineNum == mCurrentLine) {
@@ -474,11 +465,11 @@ public class LrcView extends View {
                 float lineHeight = line.isDual ? (mainLineHeight + subLineHeight) * 0.7f : mainLineHeight;
                 offsetY = mScrollOffset * lineHeight;
             }
-
             float y = currentY - offsetY;
 
             if (line.isDual) {
                 // 绘制双语
+
                 // 主歌词
                 float mainX = getWidth() / 2 - line.mainWidth / 2;
                 if (lineNum == mCurrentLine) {
@@ -486,9 +477,10 @@ public class LrcView extends View {
                     long duration = (lineNum + 1 < mLrcLines.size()) ? mLrcLines.get(lineNum + 1).time - line.time : 5000;
                     float progress = (float) (mCurrentPosition - line.time) / duration;
                     progress = Math.max(0, Math.min(1, progress));
-                    
+
                     // 绘制主歌词背景
                     canvas.drawText(line.mainText, mainX, y, mNormalPaint);
+                    
                     // 高亮裁剪
                     float highlightWidth = line.mainWidth * progress;
                     canvas.save();
@@ -502,6 +494,15 @@ public class LrcView extends View {
                 // 副歌词 (位置在主歌词下方)
                 float subX = getWidth() / 2 - line.subWidth / 2;
                 float subY = y + mainLineHeight * 0.8f; // 调整副歌词垂直位置
+
+                // 修复错误3：将 progress 的计算移到此处，确保副歌词也能使用
+                float progress = 0f;
+                if (lineNum == mCurrentLine) {
+                    long duration = (lineNum + 1 < mLrcLines.size()) ? mLrcLines.get(lineNum + 1).time - line.time : 5000;
+                    progress = (float) (mCurrentPosition - line.time) / duration;
+                    progress = Math.max(0, Math.min(1, progress));
+                }
+
                 if (lineNum == mCurrentLine) {
                     // 副歌词高亮跟随主歌词
                     canvas.drawText(line.subText, subX, subY, mSubNormalPaint);
@@ -522,7 +523,6 @@ public class LrcView extends View {
                     long duration = (lineNum + 1 < mLrcLines.size()) ? mLrcLines.get(lineNum + 1).time - line.time : 5000;
                     float progress = (float) (mCurrentPosition - line.time) / duration;
                     progress = Math.max(0, Math.min(1, progress));
-                    
                     canvas.drawText(line.mainText, x, y, mNormalPaint);
                     float highlightWidth = line.mainWidth * progress;
                     canvas.save();
@@ -534,7 +534,6 @@ public class LrcView extends View {
                 }
                 currentY += mainLineHeight; // 单语行间距
             }
-
             index++;
             lineNum++;
         }
