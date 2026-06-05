@@ -119,6 +119,8 @@ public class FastSearchActivity extends BaseActivity {
     private boolean getListIng = false; 
     // 是否处于「全局搜索结果阶段」
     private boolean isTopSearchStage = true;
+    // 是否进入过下一级
+    private boolean isNextLevel = false;
     // xuameng新增：返回栈（核心完成）
 
     private View.OnFocusChangeListener focusChangeListener = new View.OnFocusChangeListener() {  //xuameng 左侧菜单焦点监听
@@ -246,6 +248,7 @@ public class FastSearchActivity extends BaseActivity {
                     //xuameng 如有下一级直接getListFromSearch 加载列表
                     if (video.tag != null && (video.tag.equals("folder") || video.tag.equals("cover"))) {  
                         isTopSearchStage = false;   // 关闭全局搜索结果写入
+                        isNextLevel = true;  //进入过下一级
                         currentSortData.id = video.id;
                         int selectedPos = searchAdapter.getData().isEmpty() ? 0 : mGridView.getChildAdapterPosition(mGridView.getFocusedChild());
                         BackNode node = new BackNode(
@@ -304,6 +307,7 @@ public class FastSearchActivity extends BaseActivity {
                     //xuameng 如有下一级直接getListFromSearch 加载列表
                     if (video.tag != null && (video.tag.equals("folder") || video.tag.equals("cover"))) {  
                         isTopSearchStage = false;   // 关闭全局搜索结果写入
+                        isNextLevel = true;  //进入过下一级
                         currentSortData.id = video.id;
                         int selectedPos = searchAdapterFilter.getData().isEmpty() ? 0 : mGridViewFilter.getChildAdapterPosition(mGridViewFilter.getFocusedChild());
                         //  左侧筛选栏当前选中位置
@@ -419,7 +423,7 @@ public class FastSearchActivity extends BaseActivity {
             mGridViewFilter.setVisibility(View.GONE);
             getListIng = false;
             searchFilterKey = "";
-            if (!backStack.isEmpty() || !isTopSearchStage){  //xuameng backStack不为空 或有下一级
+            if (isNextLevel){  //xuameng 进入过下一级
                 backStack.clear();
                 isTopSearchStage = true;   // 打开全局搜索结果写入
                 showSuccess();
