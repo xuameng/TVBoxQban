@@ -445,7 +445,6 @@ public class FastSearchActivity extends BaseActivity {
         showSuccess();
         searchFilterKey = key;
         getListIng = false;
-        isFilterMode = false;
         backStack.clear();
         List<Movie.Video> list = resultVods.get(key);
         searchAdapterFilter.setNewData(list);
@@ -775,7 +774,6 @@ public class FastSearchActivity extends BaseActivity {
             if (node.isFilterMode  && remainLevel == 0) {
                 mGridView.setVisibility(View.GONE);
                 mGridViewFilter.setVisibility(View.VISIBLE);
-                isFilterMode = false;
 
                 // 直接从缓存恢复，
                 List<Movie.Video> list = resultVods.get(node.filterKey);
