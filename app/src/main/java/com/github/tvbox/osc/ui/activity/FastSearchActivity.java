@@ -415,30 +415,29 @@ public class FastSearchActivity extends BaseActivity {
 
     private void filterResult(String spName) {
         if (spName == "全部") {
-            showSuccess();
             mGridView.setVisibility(View.VISIBLE);
             mGridViewFilter.setVisibility(View.GONE);
             backStack.clear();
-            isFilterMode = false;
             getListIng = false;
             searchFilterKey = "";
-            // 如果搜索还没结束，继续展示 loading
-            if (!topSearchCache.isEmpty()) {
-                searchAdapter.setNewData(topSearchCache);
+            if (isFilterMode){
                 showSuccess();
-            } else {
-                searchAdapter.setNewData(new ArrayList<>());
-                showEmpty();
+                isFilterMode = false;
+                if (!topSearchCache.isEmpty()) {
+                    searchAdapter.setNewData(topSearchCache);
+                } else {
+                    searchAdapter.setNewData(new ArrayList<>());
+                }
+                // 如果搜索还没结束，继续展示
+                if (!topSearchCompleted) {
+                    isTopSearchStage = true;   // 关闭全局搜索结果写入
+                    ContinueSearchExecutor();
+                } 
             }
-            if (!topSearchCompleted) {
-                isTopSearchStage = true;   // 关闭全局搜索结果写入
-                ContinueSearchExecutor();
-            } 
             return;
         }
         mGridView.setVisibility(View.GONE);
         mGridViewFilter.setVisibility(View.VISIBLE);
-        isFilterMode = true;
         String key = spNames.get(spName);
         if (key.isEmpty()) return;
 
@@ -446,6 +445,7 @@ public class FastSearchActivity extends BaseActivity {
         showSuccess();
         searchFilterKey = key;
         getListIng = false;
+        isFilterMode = false;
         backStack.clear();
         List<Movie.Video> list = resultVods.get(key);
         searchAdapterFilter.setNewData(list);
@@ -766,14 +766,16 @@ public class FastSearchActivity extends BaseActivity {
             getListIng = false;
             App.HideToast();
             BackNode node = backStack.pop();
+            int remainLevel = backStack.size();
             page = 1;
             searchAdapter.setNewData(new ArrayList<>());
             showLoading();
 
             // 情况 1：从「筛选列表的下一级」返回到筛选页
-            if (node.isFilterMode) {
+            if (node.isFilterMode  && remainLevel == 0) {
                 mGridView.setVisibility(View.GONE);
                 mGridViewFilter.setVisibility(View.VISIBLE);
+                isFilterMode = false;
 
                 // 直接从缓存恢复，
                 List<Movie.Video> list = resultVods.get(node.filterKey);
@@ -853,7 +855,7 @@ public class FastSearchActivity extends BaseActivity {
                 searchAdapterFilter.setNewData(new ArrayList<>());
                 showLoading();
                 mGridViewFilter.setVisibility(View.VISIBLE);
-                mGridView.setVisibility(View.GONE);   // 下级始终用主 Grid
+                mGridView.setVisibility(View.GONE);   
             } else {
                 isFilterMode = false;
                 searchFilterKey = "";
