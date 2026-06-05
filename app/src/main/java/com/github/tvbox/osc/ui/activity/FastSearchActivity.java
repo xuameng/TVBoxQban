@@ -413,7 +413,7 @@ public class FastSearchActivity extends BaseActivity {
 
     }
 
-    private void filterResult(String spName) {
+    private void filterResult(String spName) {   //xuameng 左侧列表执行逻辑
         if (spName == "全部") {
             mGridView.setVisibility(View.VISIBLE);
             mGridViewFilter.setVisibility(View.GONE);
@@ -421,6 +421,7 @@ public class FastSearchActivity extends BaseActivity {
             searchFilterKey = "";
             if (!backStack.isEmpty() || !isTopSearchStage){  //xuameng backStack不为空 或有下一级
                 backStack.clear();
+                isTopSearchStage = true;   // 打开全局搜索结果写入
                 showSuccess();
                 if (!topSearchCache.isEmpty()) {
                     searchAdapter.setNewData(topSearchCache);
@@ -429,7 +430,6 @@ public class FastSearchActivity extends BaseActivity {
                 }
                 // 如果搜索还没结束，继续展示
                 if (!topSearchCompleted) {
-                    isTopSearchStage = true;   // 打开全局搜索结果写入
                     ContinueSearchExecutor();
                 } 
             }
@@ -445,11 +445,11 @@ public class FastSearchActivity extends BaseActivity {
         searchFilterKey = key;
         getListIng = false;
         backStack.clear();
+        isTopSearchStage = true;   // 打开全局搜索结果写入
         List<Movie.Video> list = resultVods.get(key);
         searchAdapterFilter.setNewData(list);
         // 如果搜索还没结束，继续展示
         if (!topSearchCompleted) {
-            isTopSearchStage = true;   // 打开全局搜索结果写入
             ContinueSearchExecutor();
         } 
     }
