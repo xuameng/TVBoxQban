@@ -417,12 +417,11 @@ public class FastSearchActivity extends BaseActivity {
         if (spName == "全部") {
             mGridView.setVisibility(View.VISIBLE);
             mGridViewFilter.setVisibility(View.GONE);
-            backStack.clear();
             getListIng = false;
             searchFilterKey = "";
-            if (isFilterMode){
+            if (!backStack.isEmpty()){
+                backStack.clear();
                 showSuccess();
-                isFilterMode = false;
                 if (!topSearchCache.isEmpty()) {
                     searchAdapter.setNewData(topSearchCache);
                 } else {
