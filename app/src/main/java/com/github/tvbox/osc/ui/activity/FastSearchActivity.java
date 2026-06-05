@@ -136,7 +136,7 @@ public class FastSearchActivity extends BaseActivity {
                     if (backStack.isEmpty()) {  //xuameng改成如果当前没有下一级，TV获取到焦点默认执行筛选菜单数据
                         filterResult(sb); 
                     }else{
-                        App.showToastShort(FastSearchActivity.this, "已有下级数据，请按OK键显示筛选数据！");
+                        App.showToastShort(FastSearchActivity.this, "请按OK键显示筛选数据！");
                     }
                 }
             } catch (Exception e) {
@@ -439,7 +439,10 @@ public class FastSearchActivity extends BaseActivity {
         mGridViewFilter.setVisibility(View.VISIBLE);
         String key = spNames.get(spName);
         if (key.isEmpty()) return;
-
+        // 如果搜索还没结束，继续展示
+        if (!topSearchCompleted) {
+            ContinueSearchExecutor();
+        }
         if (searchFilterKey == key) return;
         showSuccess();
         searchFilterKey = key;
@@ -447,11 +450,7 @@ public class FastSearchActivity extends BaseActivity {
         backStack.clear();
         isTopSearchStage = true;   // 打开全局搜索结果写入
         List<Movie.Video> list = resultVods.get(key);
-        searchAdapterFilter.setNewData(list);
-        // 如果搜索还没结束，继续展示
-        if (!topSearchCompleted) {
-            ContinueSearchExecutor();
-        } 
+        searchAdapterFilter.setNewData(list); 
     }
 
     private void fenci() {
