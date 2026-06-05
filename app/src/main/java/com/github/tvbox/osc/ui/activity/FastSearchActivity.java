@@ -419,7 +419,7 @@ public class FastSearchActivity extends BaseActivity {
             mGridViewFilter.setVisibility(View.GONE);
             getListIng = false;
             searchFilterKey = "";
-            if (!backStack.isEmpty()){
+            if (!backStack.isEmpty() || !isTopSearchStage){  //xuameng backStack不为空 或有下一级
                 backStack.clear();
                 showSuccess();
                 if (!topSearchCache.isEmpty()) {
@@ -429,7 +429,7 @@ public class FastSearchActivity extends BaseActivity {
                 }
                 // 如果搜索还没结束，继续展示
                 if (!topSearchCompleted) {
-                    isTopSearchStage = true;   // 关闭全局搜索结果写入
+                    isTopSearchStage = true;   // 打开全局搜索结果写入
                     ContinueSearchExecutor();
                 } 
             }
@@ -447,6 +447,11 @@ public class FastSearchActivity extends BaseActivity {
         backStack.clear();
         List<Movie.Video> list = resultVods.get(key);
         searchAdapterFilter.setNewData(list);
+        // 如果搜索还没结束，继续展示
+        if (!topSearchCompleted) {
+            isTopSearchStage = true;   // 打开全局搜索结果写入
+            ContinueSearchExecutor();
+        } 
     }
 
     private void fenci() {
@@ -800,7 +805,7 @@ public class FastSearchActivity extends BaseActivity {
                     }
                 );
                 if (!topSearchCompleted) {
-                    isTopSearchStage = true;   // 关闭全局搜索结果写入
+                    isTopSearchStage = true;   // 打开全局搜索结果写入
                     ContinueSearchExecutor();
                 }
                 return;
@@ -836,7 +841,7 @@ public class FastSearchActivity extends BaseActivity {
                 }
 
                 if (!topSearchCompleted) {
-                    isTopSearchStage = true;   // 关闭全局搜索结果写入
+                    isTopSearchStage = true;   // 打开全局搜索结果写入
                     ContinueSearchExecutor();
                 }
                 return;
@@ -887,6 +892,11 @@ public class FastSearchActivity extends BaseActivity {
     }
 
     public void ContinueSearchExecutor() {  //继续搜索
+        if (searchExecutorService != null) {
+            // 已经在搜索中，不允许重复启动
+            return;
+        }
+
         if (pauseRunnable != null && pauseRunnable.size() > 0) {
             searchExecutorService = new ThreadPoolExecutor(
             Runtime.getRuntime().availableProcessors(), // 核心线程数=CPU核数
