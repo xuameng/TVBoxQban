@@ -97,16 +97,14 @@ public class FastSearchActivity extends BaseActivity {
         int lastSelectedPosition;  //  选中项
         boolean isFilterMode;     // 是否来自筛选列表
         String filterKey;         // 当前筛选 key
-        int filterTabPos;         // 左侧筛选栏位置
 
         private BackNode(String sourceKey, String sortId, int lastSelectedPosition,
-                        boolean isFilterMode, String filterKey, int filterTabPos) {
+                        boolean isFilterMode, String filterKey) {
             this.sourceKey = sourceKey;
             this.sortId = sortId;
             this.lastSelectedPosition = lastSelectedPosition;
             this.isFilterMode = isFilterMode;
             this.filterKey = filterKey;
-            this.filterTabPos = filterTabPos;
         }
     }
     private final Stack<BackNode> backStack = new Stack<>();
@@ -259,8 +257,7 @@ public class FastSearchActivity extends BaseActivity {
                             currentSortData.id,
                             selectedPos,
                             false,          // 不是筛选
-                            "",             // 无筛选 key
-                            -1             // 无筛选 tab
+                            ""             // 无筛选 key
                         );
 		                isFilterMode = false; //来自筛选列表
                         backStack.push(node); //xuameng保存堆栈
@@ -313,18 +310,13 @@ public class FastSearchActivity extends BaseActivity {
                         isNextLevelFilter = true;  //进入过下一级分类
                         currentSortData.id = video.id;
                         int selectedPosFilter = searchAdapterFilter.getData().isEmpty() ? 0 : mGridViewFilter.getChildAdapterPosition(mGridViewFilter.getFocusedChild());
-                        //  左侧筛选栏当前选中位置
-                        int filterTabPos = mGridViewWord.getChildAdapterPosition(
-                                mGridViewWord.getFocusedChild()
-                        );
 
                         BackNode node = new BackNode(
                             video.sourceKey,
                             currentSortData.id,
                             selectedPosFilter,
                             true,           // 来自筛选
-                            searchFilterKey,// 当前筛选 key
-                            filterTabPos
+                            searchFilterKey// 当前筛选 key
                         );
 		                isFilterMode = true; //来自筛选列表
                         backStack.push(node); //xuameng保存堆栈
