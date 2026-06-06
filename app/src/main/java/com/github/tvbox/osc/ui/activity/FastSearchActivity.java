@@ -447,10 +447,10 @@ public class FastSearchActivity extends BaseActivity {
                                 TvRecyclerView.LayoutManager lm = mGridView.getLayoutManager();
                                 if (lm == null) return;
                                 // xuameng在这里滚
-                                lm.scrollToPosition(restorePos);
+                                lm.scrollToPosition(selectedPos);
                                 // xuameng在这里选中
                                 mGridView.post(() -> {
-                                    mGridView.setSelectedPosition(restorePos);
+                                    mGridView.setSelectedPosition(selectedPos);
                                 });
                             }
                         }
