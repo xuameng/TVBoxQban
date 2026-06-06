@@ -108,8 +108,7 @@ public class SearchActivity extends BaseActivity {
     private SearchPresenter searchPresenter;  //xuameng搜索历史
     private TextView tHotSearchText;  //xuameng热门搜索
     private static ArrayList<String> hots = new ArrayList<>();  //xuameng热门搜索
-    // 是否可以加载猜你想搜
-    private boolean isLoadRec = true;
+    private boolean isLoadRec = true;      // xuameng是否可以加载猜你想搜
 
     private static HashMap<String, String> mCheckSources = null;
     private SearchCheckboxDialog mSearchCheckboxDialog = null;
@@ -341,7 +340,7 @@ public class SearchActivity extends BaseActivity {
                     cancel();
                     showSuccess();  //xuameng修复BUG
                 }else{
-                    isLoadRec = true;
+                    isLoadRec = true;  //是否可以加载猜你想搜
                     loadRec(keyword);
                 }
             }
@@ -359,11 +358,14 @@ public class SearchActivity extends BaseActivity {
             @Override
             public void onSearchKey(int pos, String key) {
                 if (pos > 1) {
-                    etSearch.getText().append(key);
+                    String text = etSearch.getText().toString().trim();
+                    text += key;
+                    etSearch.setText(text);
                 } else if (pos == 1) {
-                    Editable editable = etSearch.getText();
-                    if (editable.length() > 0) {
-                        editable.delete(editable.length() - 1, editable.length());
+                    String text = etSearch.getText().toString().trim();
+                    if (text.length() > 0) {
+                        text = text.substring(0, text.length() - 1);
+                        etSearch.setText(text);
                     }
                 } else if (pos == 0) {
                     if (remoteDialog == null) {
@@ -540,7 +542,7 @@ public class SearchActivity extends BaseActivity {
                 .execute(new AbsCallback() {
                     @Override
                     public void onSuccess(Response response) {
-                        if (!isLoadRec){
+                        if (!isLoadRec){  //是否可以加载猜你想搜
                             return;
                         }
                         try {
@@ -581,6 +583,12 @@ public class SearchActivity extends BaseActivity {
         Intent intent = getIntent();
         initSearchHistory();  //xuameng 搜索历史
         showSuccess();  //xuameng 搜索历史
+        // 加载热词
+        if (hots.size() != 0) {
+            wordAdapter.setNewData(hots);  //xuameng 热搜不用重复刷新
+        }else{
+            showHotSearchtext();  //xuameng 热搜
+		}
         mGridView.setVisibility(View.GONE);
         if (intent != null && intent.hasExtra("title")) {
             String title = intent.getStringExtra("title");
@@ -593,12 +601,6 @@ public class SearchActivity extends BaseActivity {
                 search(title);
             }
         }
-        // 加载热词
-        if (hots.size() != 0) {
-            wordAdapter.setNewData(hots);  //xuameng 热搜不用重复刷新
-            return;
-        }
-        showHotSearchtext();  //xuameng 热搜
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
