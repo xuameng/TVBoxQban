@@ -324,7 +324,6 @@ public class SearchActivity extends BaseActivity {
             public void afterTextChanged(Editable s) {         //xuameng清空或删除关闭搜索内容显示搜索历史记录
                 keyword = s.toString().replace("\uFEFF", "").trim();
                 if (TextUtils.isEmpty(keyword)) {
-					App.showToastShort(SearchActivity.this, "11111111111");
                     isLoadRec = false;  //是否可以加载猜你想搜
                     OkGo.getInstance().cancelTag("loadRec");
                     wordAdapter.setNewData(hots);  //xuameng 热搜不用重复刷新   //xuameng修复清空后热门搜索为空
@@ -341,7 +340,6 @@ public class SearchActivity extends BaseActivity {
                     cancel();
                     showSuccess();  //xuameng修复BUG
                 }else{
-					App.showToastShort(SearchActivity.this, "222222");
                     isLoadRec = true;  //是否可以加载猜你想搜
                     loadRec(keyword);
                 }
