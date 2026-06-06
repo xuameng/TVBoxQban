@@ -90,7 +90,6 @@ public class FastSearchActivity extends BaseActivity {
 
     // xuameng新增：返回栈（核心）
     public int page = 1;
-    public int restorePos = 0;
     private MovieSort.SortData currentSortData = new MovieSort.SortData("", "搜索结果");
     static class BackNode {
         String sourceKey;    // 记录来源站点
@@ -123,8 +122,6 @@ public class FastSearchActivity extends BaseActivity {
     private boolean isNextLevel = false;
     // 当前选中项全部
     public int selectedPos = 0;
-    // 当前选中项分类
-    public int selectedPosFilter = 0;
     // xuameng新增：返回栈（核心完成）
 
     private View.OnFocusChangeListener focusChangeListener = new View.OnFocusChangeListener() {  //xuameng 左侧菜单焦点监听
@@ -433,7 +430,7 @@ public class FastSearchActivity extends BaseActivity {
                 ContinueSearchExecutor();
             } 
             if (isNextLevel){  //xuameng 进入过下一级
-                isNextLevel = false;  //进入过下一级
+                isNextLevel = false;  //进入过下一级重置
                 backStack.clear();
                 if (!topSearchCache.isEmpty()) {
                     searchAdapter.setNewData(topSearchCache);
@@ -838,8 +835,7 @@ public class FastSearchActivity extends BaseActivity {
                 if (!topSearchCache.isEmpty()) {
                     searchAdapter.setNewData(topSearchCache);
                     showSuccess();
-                    restorePos = node.lastSelectedPosition;
-                    if (restorePos >= 0 && restorePos < topSearchCache.size()) {
+                    if (node.lastSelectedPosition >= 0 && node.lastSelectedPosition < topSearchCache.size()) {
                         mGridView.getViewTreeObserver().addOnGlobalLayoutListener(
                             new ViewTreeObserver.OnGlobalLayoutListener() {
                                 @Override
@@ -848,10 +844,10 @@ public class FastSearchActivity extends BaseActivity {
                                     TvRecyclerView.LayoutManager lm = mGridView.getLayoutManager();
                                     if (lm == null) return;
                                     // xuameng在这里滚
-                                    lm.scrollToPosition(restorePos);
+                                    lm.scrollToPosition(node.lastSelectedPosition);
                                     // xuameng在这里选中
                                     mGridView.post(() -> {
-                                        mGridView.setSelection(restorePos);
+                                        mGridView.setSelection(node.lastSelectedPosition);
                                     });
                                 }
                             }
