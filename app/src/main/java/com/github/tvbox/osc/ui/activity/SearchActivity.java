@@ -297,6 +297,7 @@ public class SearchActivity extends BaseActivity {
             public void onClick(View v) {
                 FastClickCheckUtil.check(v);
                 isLoadRec = false;  //是否可以加载猜你想搜
+                OkGo.getInstance().cancelTag("loadRec");
                 etSearch.setText("");
                 wordAdapter.setNewData(hots);  //xuameng 热搜不用重复刷新     //xuameng修复清空后热门搜索为空
                 mGridView.setVisibility(View.GONE);
@@ -325,6 +326,7 @@ public class SearchActivity extends BaseActivity {
                 keyword = s.toString().trim();
                 if (TextUtils.isEmpty(keyword)) {
                     isLoadRec = false;  //是否可以加载猜你想搜
+                    OkGo.getInstance().cancelTag("loadRec");
                     wordAdapter.setNewData(hots);  //xuameng 热搜不用重复刷新   //xuameng修复清空后热门搜索为空
                     tHotSearchText.setText("热门搜索");
                     mGridView.setVisibility(View.GONE);
@@ -529,6 +531,7 @@ public class SearchActivity extends BaseActivity {
      */
     private void loadRec(String key) {
         OkGo.get("https://tv.aiseet.atianqi.com/i-tvbin/qtv_video/search/get_search_smart_box")
+                .tag("loadRec")
                 .params("format", "json")
                 .params("page_num", 0)
                 .params("page_size", 50) //随便改
@@ -536,8 +539,8 @@ public class SearchActivity extends BaseActivity {
                 .execute(new AbsCallback() {
                     @Override
                     public void onSuccess(Response response) {
-                        if (!isloadRec){
-                            isloadRec = true;
+                        if (!isLoadRec){
+                            isLoadRec = true;
                             return;
                         }
                         try {
