@@ -418,6 +418,7 @@ public class FastSearchActivity extends BaseActivity {
             mGridViewFilter.setVisibility(View.GONE);
             getListIng = false;
             searchFilterKey = "";
+            backStack.clear();
             if (isNextLevelFilter){
                 showSuccess();
                 isNextLevelFilter = false;
@@ -430,7 +431,6 @@ public class FastSearchActivity extends BaseActivity {
             if (isNextLevel){  //xuameng 进入过下一级
                 showSuccess();
                 isNextLevel = false;  //进入过下一级重置
-                backStack.clear();
                 if (!topSearchCache.isEmpty()) {
                     searchAdapter.setNewData(topSearchCache);
                 }
