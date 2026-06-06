@@ -285,6 +285,7 @@ public class SearchActivity extends BaseActivity {
         tvSearch.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
+                FastClickCheckUtil.check(view);
                 showHotSearchtext();   //xuameng 刷新搜索热词
                 App.showToastShort(SearchActivity.this, "热门搜索已刷新！");
                 return true;
@@ -459,6 +460,7 @@ public class SearchActivity extends BaseActivity {
                     child.setOnLongClickListener(new View.OnLongClickListener() {
                         @Override
                         public boolean onLongClick(View v) {
+                            FastClickCheckUtil.check(view);
                             // 直接执行删除操作，不弹出对话框
                             // 1. 从数据库删除数据
                             boolean success = searchPresenter.deleteKeyWordsFromDb(keywordToDelete);
