@@ -418,8 +418,8 @@ public class FastSearchActivity extends BaseActivity {
             mGridViewFilter.setVisibility(View.GONE);
             getListIng = false;
             searchFilterKey = "";
-            backStack.clear();
             if (isNextLevelFilter){
+                backStack.clear();
                 showSuccess();
                 isNextLevelFilter = false;
             }
@@ -429,6 +429,7 @@ public class FastSearchActivity extends BaseActivity {
                 ContinueSearchExecutor();
             } 
             if (isNextLevel){  //xuameng 进入过下一级
+                backStack.clear();
                 showSuccess();
                 isNextLevel = false;  //进入过下一级重置
                 if (!topSearchCache.isEmpty()) {
@@ -796,6 +797,7 @@ public class FastSearchActivity extends BaseActivity {
             if (node.isFilterMode  && remainLevel == 0) {
                 mGridView.setVisibility(View.GONE);
                 mGridViewFilter.setVisibility(View.VISIBLE);
+                isNextLevelFilter = false;
                 // 直接从缓存恢复
                 List<Movie.Video> list = resultVods.get(node.filterKey);
                 if (list != null && !list.isEmpty()) {
