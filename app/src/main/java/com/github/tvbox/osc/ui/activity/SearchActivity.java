@@ -583,12 +583,6 @@ public class SearchActivity extends BaseActivity {
         Intent intent = getIntent();
         initSearchHistory();  //xuameng 搜索历史
         showSuccess();  //xuameng 搜索历史
-        // 加载热词
-        if (hots.size() != 0) {
-            wordAdapter.setNewData(hots);  //xuameng 热搜不用重复刷新
-        }else{
-            showHotSearchtext();  //xuameng 热搜
-		}
         mGridView.setVisibility(View.GONE);
         if (intent != null && intent.hasExtra("title")) {
             String title = intent.getStringExtra("title");
@@ -601,6 +595,12 @@ public class SearchActivity extends BaseActivity {
                 search(title);
             }
         }
+        // 加载热词
+        if (hots.size() != 0) {
+          //  wordAdapter.setNewData(hots);  //xuameng 热搜不用重复刷新
+            return;
+        }
+        showHotSearchtext();  //xuameng 热搜
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
