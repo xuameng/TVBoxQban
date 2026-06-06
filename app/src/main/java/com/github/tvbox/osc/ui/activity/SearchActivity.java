@@ -341,6 +341,7 @@ public class SearchActivity extends BaseActivity {
                     cancel();
                     showSuccess();  //xuameng修复BUG
                 }else{
+                    isLoadRec = true;
                     loadRec(keyword);
                 }
             }
@@ -540,7 +541,6 @@ public class SearchActivity extends BaseActivity {
                     @Override
                     public void onSuccess(Response response) {
                         if (!isLoadRec){
-                            isLoadRec = true;
                             return;
                         }
                         try {
