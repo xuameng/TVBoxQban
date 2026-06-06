@@ -327,6 +327,8 @@ public class SearchActivity extends BaseActivity {
                     searchTips.setVisibility(View.VISIBLE);
   //                  llWord.setVisibility(View.VISIBLE);
                     mGridView.setVisibility(View.GONE);
+                }else{
+                    loadRec(keyword);
                 }
             }
         });
@@ -346,17 +348,11 @@ public class SearchActivity extends BaseActivity {
                     String text = etSearch.getText().toString().trim();
                     text += key;
                     etSearch.setText(text);
-                    if (text.length() > 0) {
-                        loadRec(text);
-                    }
                 } else if (pos == 1) {
                     String text = etSearch.getText().toString().trim();
                     if (text.length() > 0) {
                         text = text.substring(0, text.length() - 1);
                         etSearch.setText(text);
-                    }
-                    if (text.length() > 0) {
-                        loadRec(text);
                     }
                     if (text.length() == 0) {
                         wordAdapter.setNewData(hots);  //xuameng 热搜不用重复刷新   //xuameng修复清空后热门搜索为空
