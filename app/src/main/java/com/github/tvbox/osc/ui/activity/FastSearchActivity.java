@@ -425,11 +425,10 @@ public class FastSearchActivity extends BaseActivity {
             mGridViewFilter.setVisibility(View.GONE);
             getListIng = false;
             searchFilterKey = "";
+            showSuccess();
             if (isNextLevel){  //xuameng 进入过下一级
-				App.showToastShort(FastSearchActivity.this, "111111111111111");
                 isNextLevel = false;  //进入过下一级
                 backStack.clear();
-                showSuccess();
                 if (!topSearchCache.isEmpty()) {
                     searchAdapter.setNewData(topSearchCache);
                 }
@@ -447,7 +446,6 @@ public class FastSearchActivity extends BaseActivity {
         if (key.isEmpty()) return;
         // 如果进入了分类下一级并搜索还没结束，继续展示
         if (isNextLevelFilter){
-				App.showToastShort(FastSearchActivity.this, "22222222");
             isNextLevelFilter = false;
             if (!topSearchCompleted) {
                 isTopSearchStage = true;   // 打开全局搜索结果写入
@@ -788,7 +786,6 @@ public class FastSearchActivity extends BaseActivity {
                 mGridViewFilter.setVisibility(View.VISIBLE);
                 isNextLevelFilter = false;  //是否进入过下一级分类
                 // 直接从缓存恢复
-								App.showToastShort(FastSearchActivity.this, "3333333333");
                 List<Movie.Video> list = resultVods.get(node.filterKey);
                 if (list != null && !list.isEmpty()) {
                     searchAdapterFilter.setNewData(list);
@@ -820,7 +817,6 @@ public class FastSearchActivity extends BaseActivity {
 
             // 情况 2：全部列表
             if (backStack.isEmpty()) {
-				App.showToastShort(FastSearchActivity.this, "44444444444");
                 mGridViewFilter.setVisibility(View.GONE);
                 mGridView.setVisibility(View.VISIBLE);
                 isNextLevel = false;  //进入过下一级
@@ -900,7 +896,6 @@ public class FastSearchActivity extends BaseActivity {
     public void ContinueSearchExecutor() {  //继续搜索
         if (searchExecutorService != null) {
             // 已经在搜索中，不允许重复启动
-			App.showToastShort(FastSearchActivity.this, "5555555555555");
             return;
         }
 
