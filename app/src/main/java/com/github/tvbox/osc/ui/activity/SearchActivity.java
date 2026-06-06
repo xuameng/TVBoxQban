@@ -319,7 +319,7 @@ public class SearchActivity extends BaseActivity {
             }
 
             public void afterTextChanged(Editable s) {         //xuameng清空或删除关闭搜索内容显示搜索历史记录
-                keyword = s.toString().trim();
+                keyword = s.toString().replace("\uFEFF", "").trim();
                 if (TextUtils.isEmpty(keyword)) {
                     wordAdapter.setNewData(hots);  //xuameng 热搜不用重复刷新   //xuameng修复清空后热门搜索为空
                     tHotSearchText.setText("热门搜索");
