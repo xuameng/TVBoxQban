@@ -108,6 +108,8 @@ public class SearchActivity extends BaseActivity {
     private SearchPresenter searchPresenter;  //xuameng搜索历史
     private TextView tHotSearchText;  //xuameng热门搜索
     private static ArrayList<String> hots = new ArrayList<>();  //xuameng热门搜索
+    // 是否可以加载猜你想搜
+    private boolean isLoadRec = true;
 
     private static HashMap<String, String> mCheckSources = null;
     private SearchCheckboxDialog mSearchCheckboxDialog = null;
@@ -294,6 +296,7 @@ public class SearchActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 FastClickCheckUtil.check(v);
+                isLoadRec = false;  //是否可以加载猜你想搜
                 etSearch.setText("");
                 wordAdapter.setNewData(hots);  //xuameng 热搜不用重复刷新     //xuameng修复清空后热门搜索为空
                 mGridView.setVisibility(View.GONE);
@@ -319,8 +322,9 @@ public class SearchActivity extends BaseActivity {
             }
 
             public void afterTextChanged(Editable s) {         //xuameng清空或删除关闭搜索内容显示搜索历史记录
-                keyword = s.toString().replace("\uFEFF", "").trim();
+                keyword = s.toString().trim();
                 if (TextUtils.isEmpty(keyword)) {
+                    isLoadRec = false;  //是否可以加载猜你想搜
                     wordAdapter.setNewData(hots);  //xuameng 热搜不用重复刷新   //xuameng修复清空后热门搜索为空
                     tHotSearchText.setText("热门搜索");
                     mGridView.setVisibility(View.GONE);
@@ -352,14 +356,11 @@ public class SearchActivity extends BaseActivity {
             @Override
             public void onSearchKey(int pos, String key) {
                 if (pos > 1) {
-                    String text = etSearch.getText().toString().trim();
-                    text += key;
-                    etSearch.setText(text);
+                    etSearch.getText().append(key);
                 } else if (pos == 1) {
-                    String text = etSearch.getText().toString().trim();
-                    if (text.length() > 0) {
-                        text = text.substring(0, text.length() - 1);
-                        etSearch.setText(text);
+                    Editable editable = etSearch.getText();
+                    if (editable.length() > 0) {
+                        editable.delete(editable.length() - 1, editable.length());
                     }
                 } else if (pos == 0) {
                     if (remoteDialog == null) {
@@ -535,6 +536,10 @@ public class SearchActivity extends BaseActivity {
                 .execute(new AbsCallback() {
                     @Override
                     public void onSuccess(Response response) {
+                        if (!isloadRec){
+                            isloadRec = true;
+                            return;
+                        }
                         try {
                             ArrayList hots = new ArrayList<>();
                             String result = (String) response.body();
