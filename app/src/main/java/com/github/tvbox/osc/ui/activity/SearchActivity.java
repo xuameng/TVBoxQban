@@ -321,12 +321,19 @@ public class SearchActivity extends BaseActivity {
             public void afterTextChanged(Editable s) {         //xuameng清空或删除关闭搜索内容显示搜索历史记录
                 keyword = s.toString().trim();
                 if (TextUtils.isEmpty(keyword)) {
+                    wordAdapter.setNewData(hots);  //xuameng 热搜不用重复刷新   //xuameng修复清空后热门搜索为空
+                    tHotSearchText.setText("热门搜索");
+                    mGridView.setVisibility(View.GONE);
+                    tv_history.setVisibility(View.VISIBLE);   //xuameng修复BUG
+                    searchTips.setVisibility(View.VISIBLE);
+                    isTopSearchStage = true;   // 开启全局搜索阶段
+                    backStack.clear();  //xuameng清空节点数据确保数据初始化状态
+                    topSearchCompleted = false;  // xuameng搜索完成重置
+                    topSearchCache.clear();  // xuameng搜索缓存重置
+                    getListIng = false;
                     stopSearchExecutor();
                     cancel();
-                    tv_history.setVisibility(View.VISIBLE);
-                    searchTips.setVisibility(View.VISIBLE);
-  //                  llWord.setVisibility(View.VISIBLE);
-                    mGridView.setVisibility(View.GONE);
+                    showSuccess();  //xuameng修复BUG
                 }else{
                     loadRec(keyword);
                 }
@@ -353,21 +360,6 @@ public class SearchActivity extends BaseActivity {
                     if (text.length() > 0) {
                         text = text.substring(0, text.length() - 1);
                         etSearch.setText(text);
-                    }
-                    if (text.length() == 0) {
-                        wordAdapter.setNewData(hots);  //xuameng 热搜不用重复刷新   //xuameng修复清空后热门搜索为空
-                        tHotSearchText.setText("热门搜索");
-                        mGridView.setVisibility(View.GONE);
-                        tv_history.setVisibility(View.VISIBLE);   //xuameng修复BUG
-                        searchTips.setVisibility(View.VISIBLE);
-                        isTopSearchStage = true;   // 开启全局搜索阶段
-                        backStack.clear();  //xuameng清空节点数据确保数据初始化状态
-                        topSearchCompleted = false;  // xuameng搜索完成重置
-                        topSearchCache.clear();  // xuameng搜索缓存重置
-                        getListIng = false;
-                        stopSearchExecutor();
-                        cancel();
-                        showSuccess();  //xuameng修复BUG
                     }
                 } else if (pos == 0) {
                     if (remoteDialog == null) {
