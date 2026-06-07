@@ -457,31 +457,40 @@ public class SearchActivity extends BaseActivity {
                     final SearchHistory historyItemToDelete = originalHistoryList.get(index);
 
                     // 设置长按监听器
-                    child.setOnLongClickListener(new View.OnLongClickListener() {
-                        @Override
-                        public boolean onLongClick(View v) {
-                            FastClickCheckUtil.check(v);
-                            // 直接执行删除操作，不弹出对话框
-                            // 1. 从数据库删除数据
-                            boolean success = searchPresenter.deleteKeyWordsFromDb(keywordToDelete);
+child.setOnLongClickListener(v -> {
+    FastClickCheckUtil.check(v);
 
-                            if (success) {
-                                // 2. 从界面移除该标签
-                                tv_history.removeView(child);
-                                // 3. 显示操作成功的 Toast 提示
-                                App.showToastShort(SearchActivity.this, "已删除: " + keywordToDelete);
-                                // 4. 删除成功后，若还有 item，焦点回到附近一个
-                                final int nextIndex = Math.min(index, tv_history.getChildCount() - 1);
-                                if (nextIndex >= 0) {
-                                    tv_history.getChildAt(nextIndex).requestFocus();
-                                }
-                            } else {
-                                App.showToastShort(SearchActivity.this, "删除失败");
-                            }
-                            // 返回 true 表示已消费该长按事件，防止触发其他可能的后续事件
-                            return true;
-                        }
-                    });
+    boolean success = searchPresenter.deleteKeyWordsFromDb(keywordToDelete);
+    if (!success) {
+        App.showToastShort(SearchActivity.this, "删除失败");
+        return true;
+    }
+
+    // 1. 先移除
+    tv_history.removeView(child);
+
+    // 2. 立即提示
+    App.showToastShort(SearchActivity.this, "已删除: " + keywordToDelete);
+
+    // 3. 关键：等一帧再处理焦点（✅ 核心）
+    tv_history.post(() -> {
+        int childCount = tv_history.getChildCount();
+        if (childCount <= 0) {
+            // 没有历史记录了，焦点回到输入框
+            tvSearch.requestFocus();    //xuameng 点击搜索历史文字后的默认焦点
+            return;
+        }
+
+        // 优先给前一个，没有就给第一个
+        int focusIndex = Math.max(index - 1, 0);
+        View next = tv_history.getChildAt(focusIndex);
+        if (next != null) {
+            next.requestFocus();
+        }
+    });
+
+    return true;
+});
                 }
             }
         });
