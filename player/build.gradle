@@ -7,7 +7,7 @@ android {
 
     defaultConfig {
         namespace = 'com.github.tvbox.osc.player'        
-        minSdkVersion 19
+        minSdkVersion 16
         targetSdkVersion 28
     }
 
