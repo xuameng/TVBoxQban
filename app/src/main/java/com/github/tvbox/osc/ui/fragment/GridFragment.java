@@ -10,6 +10,8 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.github.tvbox.osc.base.App;  //xuameng toast
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -92,6 +94,27 @@ public class GridFragment extends BaseLazyFragment {
     @Override
     protected int getLayoutResID() {
         return R.layout.fragment_grid;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        TvRecyclerView gridView = view.findViewById(R.id.mGridView);
+        if (gridView != null && gridView.getLayoutManager() == null) {
+            if(isFolederMode()){
+                gridView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
+            }else{
+                int spanCount = isBaseOnWidth() ? 5 : 6;
+                if (style != null) {
+                    spanCount = ImgUtil.spanCountByStyle(style, spanCount);
+                }
+                if (spanCount == 1) {
+                    gridView.setLayoutManager(new V7LinearLayoutManager(mContext, spanCount, false));
+                } else {
+                    gridView.setLayoutManager(new V7GridLayoutManager(mContext, spanCount));
+                }
+            }
+        }
     }
 
     @Override
@@ -195,7 +218,6 @@ public class GridFragment extends BaseLazyFragment {
 
     private void initView() {
         this.createView();
-        mGridView.setAdapter(gridAdapter);
         if(isFolederMode()){
             mGridView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
         }else{
@@ -209,6 +231,7 @@ public class GridFragment extends BaseLazyFragment {
                 mGridView.setLayoutManager(new V7GridLayoutManager(mContext, spanCount));
             }
         }
+        mGridView.setAdapter(gridAdapter);
 
         gridAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
