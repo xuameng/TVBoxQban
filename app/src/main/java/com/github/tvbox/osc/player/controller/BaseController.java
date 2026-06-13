@@ -334,9 +334,9 @@ public abstract class BaseController extends BaseVideoController implements Gest
     protected void slideToChangePosition(float deltaX) {
         deltaX = -deltaX;
         int width = getMeasuredWidth();
-        int duration = (int) mControlWrapper.getDuration();
+        int duration = PlayerUtils.safeTimeMs(mControlWrapper.getDuration());
         if (duration >= 1000){
-            int currentPosition = (int) mControlWrapper.getCurrentPosition();
+            int currentPosition = PlayerUtils.safeTimeMs(mControlWrapper.getCurrentPosition());
             int position = (int) (deltaX / width * 120000 + currentPosition);
             if (position > duration) position = duration;
             if (position < 0) position = 0;
