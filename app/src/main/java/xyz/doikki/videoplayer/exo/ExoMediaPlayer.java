@@ -231,7 +231,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     public void seekTo(long time) {
         if (mMediaPlayer == null)
             return;
-        mMediaPlayer.seekTo(time);
+        mMediaPlayer.seekTo(PlayerUtils.safeTimeMs(time));
     }
 
     @Override
