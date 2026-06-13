@@ -115,7 +115,6 @@ public class HomeActivity extends BaseActivity {
     public View sortFocusView = null;
     private final Handler mHandler = new Handler();
     private long mExitTime = 0;
-    private boolean eventBusRegistered = false;
     private boolean mGridViewHasFocus = false;  //xuameng 判断 mGridView主页是否拥有焦点
     private static final int REQUEST_CODE_RECORD_AUDIO = 1001; //xuameng获取音频权限
     private static final String TAG = "PermissionHelper";//xuameng获取音频权限
@@ -145,7 +144,6 @@ public class HomeActivity extends BaseActivity {
     protected void init() {
         setupExceptionHandler(); // xuameng异常捕获
         EventBus.getDefault().register(this);
-        eventBusRegistered = true;
         ControlManager.get().startServer();
         initView();
         initViewModel();
@@ -606,7 +604,7 @@ public class HomeActivity extends BaseActivity {
             // 1. 清除所有Activity（增强版）
             AppManager.getInstance().finishAllActivity();
             // 2. 注销事件总线
-            unregisterEventBus();
+            EventBus.getDefault().unregister(this);
             // 3. 停止服务（需确保stopServer()内部释放了所有资源）
             ControlManager.get().stopServer();
             // 4. 强制终止进程（组合方案）
@@ -751,17 +749,9 @@ public class HomeActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         mHandler.removeCallbacksAndMessages(null);
-        unregisterEventBus();
-        if (isFinishing()) {
-            ControlManager.get().stopServer();
-        }
-    }
-
-    private void unregisterEventBus() {
-        if (eventBusRegistered) {
-            EventBus.getDefault().unregister(this);
-            eventBusRegistered = false;
-        }
+        EventBus.getDefault().unregister(this);
+        AppManager.getInstance().appExit(0);
+        ControlManager.get().stopServer();
     }
 
     private SelectDialog<SourceBean> mSiteSwitchDialog;
