@@ -366,7 +366,7 @@ public class LivePlayActivity extends BaseActivity {
                 long duration = safeTimeMs(mVideoView.getDuration());
                 if(duration <= 0) return;
                 long newPosition = (duration * seekBar.getProgress()) / sBar.getMax(); //xuameng停止触碰获取进度条进度
-                mVideoView.seekTo((int) newPosition); //xuameng当前进度播放
+                mVideoView.seekTo(newPosition); //xuameng当前进度播放
                 isKUAIJIN = false;  //xuameng快进判断
             }
             @Override
@@ -3683,7 +3683,7 @@ public class LivePlayActivity extends BaseActivity {
                 long duration = safeTimeMs(mVideoView.getDuration());
                 if(duration <= 0) return;
                 long newPosition = (duration * seekBar.getProgress()) / sBar.getMax(); //xuameng停止触碰获取进度条进度
-                mVideoView.seekTo((int) newPosition); //xuameng当前进度播放
+                mVideoView.seekTo(newPosition); //xuameng当前进度播放
                 isKUAIJIN = false;  //xuameng快进判断
             }
             @Override
