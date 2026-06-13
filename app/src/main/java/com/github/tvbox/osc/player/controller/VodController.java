@@ -704,7 +704,7 @@ public class VodController extends BaseController {
                 if(!fromUser) {
                     return;
                 }
-                long duration = safeTimeMs(mControlWrapper.getDuration())
+                long duration = safeTimeMs(mControlWrapper.getDuration());
                 long newPosition = (duration * progress) / seekBar.getMax();
                 if(mCurrentTime != null) mCurrentTime.setText(stringForTime(safeTimeMs(newPosition)));
             }
@@ -718,7 +718,7 @@ public class VodController extends BaseController {
             public void onStopTrackingTouch(SeekBar seekBar) {
                 myHandle.removeCallbacks(myRunnable);
                 myHandle.postDelayed(myRunnable, myHandleSeconds);
-                long duration = safeTimeMs(mControlWrapper.getDuration())
+                long duration = safeTimeMs(mControlWrapper.getDuration());
                 long newPosition = (duration * seekBar.getProgress()) / seekBar.getMax();
                 mControlWrapper.seekTo(newPosition);
                 mIsDragging = false;
