@@ -3269,7 +3269,7 @@ public class LivePlayActivity extends BaseActivity {
                     }
                     iv_playpause.setText("暂停"); 
                     if(!isKUAIJIN) {   //xuameng快进判断
-                        sBar.setProgress(safeTimeMs(mVideoView.getCurrentPosition());
+                        sBar.setProgress(safeTimeMs(mVideoView.getCurrentPosition()));
                         int percent = mVideoView.getBufferedPercentage();
                         int totalBuffer = percent * duration2;
                         int SecondaryProgress = totalBuffer / 100;
