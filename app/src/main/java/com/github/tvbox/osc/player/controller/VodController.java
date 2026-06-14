@@ -386,11 +386,11 @@ public class VodController extends BaseController {
             String speed = PlayerHelper.getDisplaySpeed(mControlWrapper.getTcpSpeed());
             mPlayLoadNetSpeedRightTop.setText("[ " + speed + " ]");
             mPlayLoadNetSpeed.setText(speed);
-            long duration = safeTimeMs(mControlWrapper.getDuration());
+            int duration = safeTimeMs(mControlWrapper.getDuration());
             if(isInPlaybackState() && duration >= 1000 && duration <= 180000000) {
-                long position = safeTimeMs(mControlWrapper.getCurrentPosition());
+                int position = safeTimeMs(mControlWrapper.getCurrentPosition());
                 if(position < 0) position = 0; //xuameng系统播放器有时会有负进度的BUG
-                long TimeRemaining = safeTimeMs(mControlWrapper.getDuration()) - position;
+                int TimeRemaining = safeTimeMs(mControlWrapper.getDuration()) - position;
                 Calendar dateXu = Calendar.getInstance();
                 long t = dateXu.getTimeInMillis();
                 Date afterAdd = new Date(t + TimeRemaining);
@@ -448,7 +448,7 @@ public class VodController extends BaseController {
                     }
                     FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) iv_circle_bg.getLayoutParams(); //xuameng 新增给vod显示旋转图片用
                     if(mLrcView.getVisibility() == View.VISIBLE) {   //xuameng LRC歌词字幕
-                        long position = safeTimeMs(mControlWrapper.getCurrentPosition());
+                        int position = safeTimeMs(mControlWrapper.getCurrentPosition());
                         if (mLrcView != null) {
                             mLrcView.updateTime(position);  //xuameng 刷新LRC歌词字幕
                         }
@@ -704,7 +704,7 @@ public class VodController extends BaseController {
                 if(!fromUser) {
                     return;
                 }
-                long duration = safeTimeMs(mControlWrapper.getDuration());
+                int duration = safeTimeMs(mControlWrapper.getDuration());
                 long newPosition = (duration * progress) / seekBar.getMax();
                 if(mCurrentTime != null) mCurrentTime.setText(stringForTime(safeTimeMs(newPosition)));
             }
@@ -718,9 +718,9 @@ public class VodController extends BaseController {
             public void onStopTrackingTouch(SeekBar seekBar) {
                 myHandle.removeCallbacks(myRunnable);
                 myHandle.postDelayed(myRunnable, myHandleSeconds);
-                long duration = safeTimeMs(mControlWrapper.getDuration());
+                int duration = safeTimeMs(mControlWrapper.getDuration());
                 long newPosition = (duration * seekBar.getProgress()) / seekBar.getMax();
-                mControlWrapper.seekTo(safeTimeMs(newPosition));
+                mControlWrapper.seekTo(newPosition);
                 mIsDragging = false;
                 mControlWrapper.startProgress();
                 mControlWrapper.startFadeOut();
@@ -1224,8 +1224,8 @@ public class VodController extends BaseController {
                 myHandle.removeCallbacks(myRunnable);
                 myHandle.postDelayed(myRunnable, myHandleSeconds);
                 try {
-                    long current = safeTimeMs(mControlWrapper.getCurrentPosition());
-                    long duration = safeTimeMs(mControlWrapper.getDuration());
+                    int current = safeTimeMs(mControlWrapper.getCurrentPosition());
+                    int duration = safeTimeMs(mControlWrapper.getDuration());
                     if(current > duration / 2) return;
                     mPlayerConfig.put("st", current / 1000);
                     updatePlayerCfgView();
@@ -1254,8 +1254,8 @@ public class VodController extends BaseController {
                 myHandle.removeCallbacks(myRunnable);
                 myHandle.postDelayed(myRunnable, myHandleSeconds);
                 try {
-                    long current = safeTimeMs(mControlWrapper.getCurrentPosition());
-                    long duration = safeTimeMs(mControlWrapper.getDuration());
+                    int current = safeTimeMs(mControlWrapper.getCurrentPosition());
+                    int duration = safeTimeMs(mControlWrapper.getDuration());
                     if(current < duration / 2  || duration <= 1) return;     //xuameng 防止负数BUG
                     mPlayerConfig.put("et", (duration - current) / 1000);
                     updatePlayerCfgView();
@@ -1597,18 +1597,18 @@ public class VodController extends BaseController {
     }
     private boolean simSlideStart = false;
     private boolean simSlideStartXu = false;
-    private long simSeekPosition = 0;
+    private int simSeekPosition = 0;
     private long simSlideOffset = 0;
     private long mSpeedTimeUp = 0; //xuameng上键间隔时间
     public void tvSlideStop() {
-        long duration = safeTimeMs(mControlWrapper.getDuration());
+        int duration = safeTimeMs(mControlWrapper.getDuration());
         if(duration >= 1000 && duration <= 180000000) {
             mIsDragging = false; //xuamengsetProgress监听
             mControlWrapper.startProgress(); //xuameng启动进程
             mControlWrapper.startFadeOut();
             mSpeedTimeUp = 0;
             if(!simSlideStart) return;
-            mControlWrapper.seekTo(safeTimeMs(simSeekPosition));
+            mControlWrapper.seekTo(simSeekPosition);
             //if(!mControlWrapper.isPlaying())
                 //xuameng快进暂停就暂停测试    mControlWrapper.start();    //测试成功，如果想暂停时快进自动播放取消注销
             simSlideStart = false;
@@ -1624,7 +1624,7 @@ public class VodController extends BaseController {
         mSpeedTimeUp = 0;
         if(!simSlideStartXu) return;
         if(isSEEKBAR) {
-            mControlWrapper.seekTo(safeTimeMs(simSeekPosition));
+            mControlWrapper.seekTo(simSeekPosition);
         }
         //if(!mControlWrapper.isPlaying())
             //xuameng快进暂停就暂停测试    mControlWrapper.start();    //测试成功，如果想暂停时快进自动播放取消注销
@@ -1633,7 +1633,7 @@ public class VodController extends BaseController {
         simSlideOffset = 0;
     }
     public void tvSlideStart(int dir) {
-        long duration = safeTimeMs(mControlWrapper.getDuration());
+        int duration = safeTimeMs(mControlWrapper.getDuration());
         if(duration >= 1000 && duration <= 180000000) {
             mIsDragging = true; //xuamengsetProgress不监听
             mControlWrapper.stopProgress(); //xuameng结束进程
@@ -1657,14 +1657,14 @@ public class VodController extends BaseController {
             if(System.currentTimeMillis() - mSpeedTimeUp > 9000) {
                 simSlideOffset += (120000 * dir);
             }
-            long currentPosition = safeTimeMs(mControlWrapper.getCurrentPosition());
-            long position = simSlideOffset + currentPosition;
+            int currentPosition = safeTimeMs(mControlWrapper.getCurrentPosition());
+            int position = simSlideOffset + currentPosition;
             if(position > duration) position = duration;
             if(position < 0) position = 0;
             updateSeekUI(currentPosition, position, duration);
             simSeekPosition = position;
-            mSeekBar.setProgress(safeTimeMs(simSeekPosition)); //xuameng设置SEEKBAR当前进度
-            mCurrentTime.setText(PlayerUtils.stringForTime(safeTimeMs(simSeekPosition))); //xuameng设置SEEKBAR当前进度
+            mSeekBar.setProgress(simSeekPosition); //xuameng设置SEEKBAR当前进度
+            mCurrentTime.setText(PlayerUtils.stringForTime(simSeekPosition)); //xuameng设置SEEKBAR当前进度
         }
     }
     public void tvSlideStartXu(int dir) {
@@ -1672,7 +1672,7 @@ public class VodController extends BaseController {
         mIsDragging = true; //xuamengsetProgress不监听
         mControlWrapper.stopProgress(); //xuameng结束进程
         mControlWrapper.stopFadeOut();
-        long duration = safeTimeMs(mControlWrapper.getDuration());
+        int duration = safeTimeMs(mControlWrapper.getDuration());
         if(!simSlideStartXu) {
             simSlideStartXu = true;
         }
@@ -1692,13 +1692,13 @@ public class VodController extends BaseController {
         if(System.currentTimeMillis() - mSpeedTimeUp > 9000) {
             simSlideOffset += (120000 * dir);
         }
-        long currentPosition = safeTimeMs(mControlWrapper.getCurrentPosition());
-        long position = (int)(simSlideOffset + currentPosition);
+        int currentPosition = safeTimeMs(mControlWrapper.getCurrentPosition());
+        int position = (int)(simSlideOffset + currentPosition);
         if(position > duration) position = duration;
         if(position < 0) position = 0;
         simSeekPosition = position;
-        mSeekBar.setProgress(safeTimeMs(simSeekPosition)); //xuameng设置SEEKBAR当前进度
-        mCurrentTime.setText(PlayerUtils.stringForTime(safeTimeMs(simSeekPosition))); //xuameng设置SEEKBAR当前进度
+        mSeekBar.setProgress(simSeekPosition); //xuameng设置SEEKBAR当前进度
+        mCurrentTime.setText(PlayerUtils.stringForTime(simSeekPosition)); //xuameng设置SEEKBAR当前进度
     }
     @Override
     protected void updateSeekUI(int curr, int seekTo, int duration) { //xuameng手机滑动屏幕快进
