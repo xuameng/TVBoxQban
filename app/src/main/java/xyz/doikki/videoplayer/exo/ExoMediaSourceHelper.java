@@ -115,7 +115,7 @@ public final class ExoMediaSourceHelper {
         fileName = fileName.toLowerCase();
         if (fileName.contains(".mpd") || fileName.contains("type=mpd")) {
             return C.TYPE_DASH;
-        } else if (fileName.contains("m3u8") || uri.contains("type=hls") || uri.contains("format=hls")) {
+        } else if (fileName.contains("m3u8") || fileName.contains("type=hls") || fileName.contains("format=hls")) {
             return C.TYPE_HLS;
         } else {
             return C.TYPE_OTHER;
