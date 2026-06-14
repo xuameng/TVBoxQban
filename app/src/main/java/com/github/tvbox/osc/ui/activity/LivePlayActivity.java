@@ -520,7 +520,10 @@ public class LivePlayActivity extends BaseActivity {
         SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd");
         timeFormat.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
         String[] epgInfo = EpgUtil.getEpgInfo(channelName);
-        String epgTagName = channelName;
+final String finalEpgTagName =
+        (epgInfo != null && !epgInfo[1].isEmpty())
+                ? epgInfo[1]
+                : channelName;
         if(logoUrl == null || logoUrl.isEmpty()) {
             updateChannelIcon(channelName, epgInfo == null ? null : epgInfo[0]); //xuameng自带logo
         } else if(logoUrl.equals("false")) {
@@ -528,9 +531,6 @@ public class LivePlayActivity extends BaseActivity {
         } else {
             String logo = logoUrl.replace("{name}", channelName); //xuameng支持logourl
             updateChannelIcon(channelName, logo);
-        }
-        if(epgInfo != null && !epgInfo[1].isEmpty()) {   //xuameng自定义EPG对应表
-            epgTagName = epgInfo[1];
         }
         epgListAdapter.CanBack(currentLiveChannelItem.getinclude_back());
         //epgListAdapter.updateData(date, new ArrayList<>());
@@ -546,9 +546,9 @@ public class LivePlayActivity extends BaseActivity {
         }
         String url;
         if(epgStringAddress.contains("{name}") && epgStringAddress.contains("{date}")) {
-            url = epgStringAddress.replace("{name}", URLEncoder.encode(epgTagName)).replace("{date}", timeFormat.format(date));
+            url = epgStringAddress.replace("{name}", URLEncoder.encode(finalEpgTagName)).replace("{date}", timeFormat.format(date));
         } else {
-            url = epgStringAddress + "?ch=" + URLEncoder.encode(epgTagName) + "&date=" + timeFormat.format(date);
+            url = epgStringAddress + "?ch=" + URLEncoder.encode(finalEpgTagName) + "&date=" + timeFormat.format(date);
         }
         UrlHttpUtil.get(url, new CallBackUtil.CallBackString() {
             public void onFailure(int i, String str) {    //xuameng如果EPG获取失败启动默认列表
@@ -592,7 +592,7 @@ public class LivePlayActivity extends BaseActivity {
     else if (isXmlEpg(paramString)) {
         arrayList = parseXmlEpg(
                 paramString,
-                epgTagName,
+                finalEpgTagName,
                 date
         );
     }
@@ -657,10 +657,10 @@ public class LivePlayActivity extends BaseActivity {
         SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd");
         timeFormat.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
         String[] epgInfo = EpgUtil.getEpgInfo(channelName);    //xuameng自定义EPG对应表
-        String epgTagName = channelName;
-        if(epgInfo != null && !epgInfo[1].isEmpty()) {  
-            epgTagName = epgInfo[1];
-        }
+final String finalEpgTagName =
+        (epgInfo != null && !epgInfo[1].isEmpty())
+                ? epgInfo[1]
+                : channelName;
         epgListAdapter.CanBack(currentLiveChannelItemXu.getinclude_back()); //xuameng重要EPG滚动菜单检测可不可以回看
         //epgListAdapter.updateData(date, new ArrayList<>());
 		String savedEpgKey = channelName + "_" + Objects.requireNonNull(liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex())).getDatePresented();
@@ -674,9 +674,9 @@ public class LivePlayActivity extends BaseActivity {
         }
         String url;
         if(epgStringAddress.contains("{name}") && epgStringAddress.contains("{date}")) {
-            url = epgStringAddress.replace("{name}", URLEncoder.encode(epgTagName)).replace("{date}", timeFormat.format(date));
+            url = epgStringAddress.replace("{name}", URLEncoder.encode(finalEpgTagName)).replace("{date}", timeFormat.format(date));
         } else {
-            url = epgStringAddress + "?ch=" + URLEncoder.encode(epgTagName) + "&date=" + timeFormat.format(date);
+            url = epgStringAddress + "?ch=" + URLEncoder.encode(finalEpgTagName) + "&date=" + timeFormat.format(date);
         }
         UrlHttpUtil.get(url, new CallBackUtil.CallBackString() {
             public void onFailure(int i, String str) {
@@ -719,7 +719,7 @@ public class LivePlayActivity extends BaseActivity {
     else if (isXmlEpg(paramString)) {
         arrayList = parseXmlEpg(
                 paramString,
-                epgTagName,
+                finalEpgTagName,
                 date
         );
     }
