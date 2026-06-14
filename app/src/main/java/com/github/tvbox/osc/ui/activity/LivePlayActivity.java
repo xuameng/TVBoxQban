@@ -591,23 +591,18 @@ for (int b = 0; b < jSONArray.length(); b++) {
     String title = o.optString("title");
     String startStr = o.optString("start");
     String endStr = o.optString("end");
+try {
     Date startDate = sdf.parse(dateStr + " " + startStr);
     Date endDate   = sdf.parse(dateStr + " " + endStr);
-// ===== 跨天处理 =====
-    if (endDate.before(startDate) || endDate.equals(startDate)) {
 
-        // 只保留今天这一段：强制结束时间为 23:59:59
+    // ===== 跨天处理 =====
+    if (endDate.before(startDate) || endDate.equals(startDate)) {
         Calendar endToday = Calendar.getInstance();
         endToday.setTime(date);
         endToday.set(Calendar.HOUR_OF_DAY, 23);
         endToday.set(Calendar.MINUTE, 59);
         endToday.set(Calendar.SECOND, 59);
         endDate = endToday.getTime();
-
-        /*
-         * ✅ 明天 00:00–04:40 这一段直接丢弃
-         * 不需要再生成第二个 Epginfo
-         */
     }
 
     arrayList.add(new Epginfo(
@@ -615,9 +610,13 @@ for (int b = 0; b < jSONArray.length(); b++) {
             title,
             endDate,
             startStr,
-            "23:59",   // UI 显示成 23:59
+            "23:59",
             b
     ));
+
+} catch (ParseException e) {
+    e.printStackTrace();
+}
                                 //xuameng 空指针   Log.d("EPG信息:", day + "  " + jSONObject.optString("start") + " - " + jSONObject.optString("end") + "  " + jSONObject.optString("title"));
                             }
                         }
@@ -741,23 +740,18 @@ for (int b = 0; b < jSONArray.length(); b++) {
     String title = o.optString("title");
     String startStr = o.optString("start");
     String endStr = o.optString("end");
+try {
     Date startDate = sdf.parse(dateStr + " " + startStr);
     Date endDate   = sdf.parse(dateStr + " " + endStr);
-// ===== 跨天处理 =====
-    if (endDate.before(startDate) || endDate.equals(startDate)) {
 
-        // 只保留今天这一段：强制结束时间为 23:59:59
+    // ===== 跨天处理 =====
+    if (endDate.before(startDate) || endDate.equals(startDate)) {
         Calendar endToday = Calendar.getInstance();
         endToday.setTime(date);
         endToday.set(Calendar.HOUR_OF_DAY, 23);
         endToday.set(Calendar.MINUTE, 59);
         endToday.set(Calendar.SECOND, 59);
         endDate = endToday.getTime();
-
-        /*
-         * ✅ 明天 00:00–04:40 这一段直接丢弃
-         * 不需要再生成第二个 Epginfo
-         */
     }
 
     arrayList.add(new Epginfo(
@@ -765,9 +759,13 @@ for (int b = 0; b < jSONArray.length(); b++) {
             title,
             endDate,
             startStr,
-            "23:59",   // UI 显示成 23:59
+            "23:59",
             b
     ));
+
+} catch (ParseException e) {
+    e.printStackTrace();
+}
                                 //xuameng 空指针   Log.d("EPG信息:", day + "  " + jSONObject.optString("start") + " - " + jSONObject.optString("end") + "  " + jSONObject.optString("title"));
                             }
                         }
