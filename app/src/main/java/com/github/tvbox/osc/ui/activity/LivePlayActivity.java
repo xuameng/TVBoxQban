@@ -363,9 +363,9 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 if(mVideoView == null) return;
-                int duration = safeTimeMs(mVideoView.getDuration());
+                long duration = safeTimeMs(mVideoView.getDuration());
                 if(duration <= 0) return;
-                int newPosition = (duration * seekBar.getProgress()) / sBar.getMax(); //xuameng停止触碰获取进度条进度
+                long newPosition = (duration * seekBar.getProgress()) / sBar.getMax(); //xuameng停止触碰获取进度条进度
                 mVideoView.seekTo(newPosition); //xuameng当前进度播放
                 isKUAIJIN = false;  //xuameng快进判断
             }
@@ -383,9 +383,9 @@ public class LivePlayActivity extends BaseActivity {
                     return;
                 }
                 if(fromuser) {
-                    int duration = safeTimeMs(mVideoView.getDuration());
+                    long duration = safeTimeMs(mVideoView.getDuration());
                     if(duration <= 0) return;
-                    int newPosition = (duration * progress) / sBar.getMax(); //xuameng触碰进度变化获取
+                    long newPosition = (duration * progress) / sBar.getMax(); //xuameng触碰进度变化获取
                     if(tv_currentpos != null) {
                         tv_currentpos.setText(durationToString(safeTimeMs(newPosition))); //xuameng文字显示进度
                     }
@@ -3680,9 +3680,9 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 if(mVideoView == null) return;
-                int duration = safeTimeMs(mVideoView.getDuration());
+                long duration = safeTimeMs(mVideoView.getDuration());
                 if(duration <= 0) return;
-                int newPosition = (duration * seekBar.getProgress()) / sBar.getMax(); //xuameng停止触碰获取进度条进度
+                long newPosition = (duration * seekBar.getProgress()) / sBar.getMax(); //xuameng停止触碰获取进度条进度
                 mVideoView.seekTo(newPosition); //xuameng当前进度播放
                 isKUAIJIN = false;  //xuameng快进判断
             }
@@ -3700,9 +3700,9 @@ public class LivePlayActivity extends BaseActivity {
                     return;
                 }
                 if(fromuser) {
-                    int duration = safeTimeMs(mVideoView.getDuration());
+                    long duration = safeTimeMs(mVideoView.getDuration());
                     if(duration <= 0) return;
-                    int newPosition = (duration * progress) / sBar.getMax(); //xuameng触碰进度变化获取
+                    long newPosition = (duration * progress) / sBar.getMax(); //xuameng触碰进度变化获取
                     if(tv_currentpos != null) {
                         tv_currentpos.setText(durationToString(safeTimeMs(newPosition))); //xuameng文字显示进度
                     }
