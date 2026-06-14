@@ -736,7 +736,6 @@ String dateStr = timeFormat.format(date); // yyyy-MM-dd
                     if(paramString != null && paramString.contains("epg_data")) {   //xuameng 空指针
                         final JSONArray jSONArray = new JSONObject(paramString).optJSONArray("epg_data");
                         if(jSONArray != null){
-                            for(int b = 0; b < jSONArray.length(); b++) {
 for (int b = 0; b < jSONArray.length(); b++) {
     JSONObject o = jSONArray.getJSONObject(b);
     String title = o.optString("title");
