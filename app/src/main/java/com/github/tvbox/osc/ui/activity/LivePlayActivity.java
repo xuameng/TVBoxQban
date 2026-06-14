@@ -574,15 +574,50 @@ public class LivePlayActivity extends BaseActivity {
             }
             public void onResponse(String paramString) {
                 ArrayList arrayList = new ArrayList();
+SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+sdf.setTimeZone(TimeZone.getTimeZone("GMT+8"));
+
+Calendar todayCal = Calendar.getInstance();
+todayCal.setTime(date); // 当前 EPG 日期
+
+String dateStr = timeFormat.format(date); // yyyy-MM-dd
                 //xuameng 空指针   Log.d("返回的EPG信息", paramString != null ? paramString : "暂无当前节目单，聚汇直播欢迎您的观看！");
                 try {
                     if(paramString != null && paramString.contains("epg_data")) {  //xuameng 空指针
                         final JSONArray jSONArray = new JSONObject(paramString).optJSONArray("epg_data");
                         if(jSONArray != null){
-                            for(int b = 0; b < jSONArray.length(); b++) {
-                                JSONObject jSONObject = jSONArray.getJSONObject(b);
-                                Epginfo epgbcinfo = new Epginfo(date, jSONObject.optString("title"), date, jSONObject.optString("start"), jSONObject.optString("end"), b);
-                                arrayList.add(epgbcinfo);
+for (int b = 0; b < jSONArray.length(); b++) {
+    JSONObject o = jSONArray.getJSONObject(b);
+    String title = o.optString("title");
+    String startStr = o.optString("start");
+    String endStr = o.optString("end");
+    Date startDate = sdf.parse(dateStr + " " + startStr);
+    Date endDate   = sdf.parse(dateStr + " " + endStr);
+// ===== 跨天处理 =====
+    if (endDate.before(startDate) || endDate.equals(startDate)) {
+
+        // 只保留今天这一段：强制结束时间为 23:59:59
+        Calendar endToday = Calendar.getInstance();
+        endToday.setTime(date);
+        endToday.set(Calendar.HOUR_OF_DAY, 23);
+        endToday.set(Calendar.MINUTE, 59);
+        endToday.set(Calendar.SECOND, 59);
+        endDate = endToday.getTime();
+
+        /*
+         * ✅ 明天 00:00–04:40 这一段直接丢弃
+         * 不需要再生成第二个 Epginfo
+         */
+    }
+
+    arrayList.add(new Epginfo(
+            startDate,
+            title,
+            endDate,
+            startStr,
+            "23:59",   // UI 显示成 23:59
+            b
+    ));
                                 //xuameng 空指针   Log.d("EPG信息:", day + "  " + jSONObject.optString("start") + " - " + jSONObject.optString("end") + "  " + jSONObject.optString("title"));
                             }
                         }
@@ -689,15 +724,51 @@ public class LivePlayActivity extends BaseActivity {
             }
             public void onResponse(String paramString) {
                 ArrayList arrayList = new ArrayList();
+SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+sdf.setTimeZone(TimeZone.getTimeZone("GMT+8"));
+
+Calendar todayCal = Calendar.getInstance();
+todayCal.setTime(date); // 当前 EPG 日期
+
+String dateStr = timeFormat.format(date); // yyyy-MM-dd
 			    //xuameng 空指针 	Log.d("返回的EPG信息", paramString != null ? paramString : "暂无当前节目单，聚汇直播欢迎您的观看！");
                 try {
                     if(paramString != null && paramString.contains("epg_data")) {   //xuameng 空指针
                         final JSONArray jSONArray = new JSONObject(paramString).optJSONArray("epg_data");
                         if(jSONArray != null){
                             for(int b = 0; b < jSONArray.length(); b++) {
-                                JSONObject jSONObject = jSONArray.getJSONObject(b);
-                                Epginfo epgbcinfo = new Epginfo(date, jSONObject.optString("title"), date, jSONObject.optString("start"), jSONObject.optString("end"), b);
-                                arrayList.add(epgbcinfo);
+for (int b = 0; b < jSONArray.length(); b++) {
+    JSONObject o = jSONArray.getJSONObject(b);
+    String title = o.optString("title");
+    String startStr = o.optString("start");
+    String endStr = o.optString("end");
+    Date startDate = sdf.parse(dateStr + " " + startStr);
+    Date endDate   = sdf.parse(dateStr + " " + endStr);
+// ===== 跨天处理 =====
+    if (endDate.before(startDate) || endDate.equals(startDate)) {
+
+        // 只保留今天这一段：强制结束时间为 23:59:59
+        Calendar endToday = Calendar.getInstance();
+        endToday.setTime(date);
+        endToday.set(Calendar.HOUR_OF_DAY, 23);
+        endToday.set(Calendar.MINUTE, 59);
+        endToday.set(Calendar.SECOND, 59);
+        endDate = endToday.getTime();
+
+        /*
+         * ✅ 明天 00:00–04:40 这一段直接丢弃
+         * 不需要再生成第二个 Epginfo
+         */
+    }
+
+    arrayList.add(new Epginfo(
+            startDate,
+            title,
+            endDate,
+            startStr,
+            "23:59",   // UI 显示成 23:59
+            b
+    ));
                                 //xuameng 空指针   Log.d("EPG信息:", day + "  " + jSONObject.optString("start") + " - " + jSONObject.optString("end") + "  " + jSONObject.optString("title"));
                             }
                         }
