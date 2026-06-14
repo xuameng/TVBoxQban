@@ -3756,7 +3756,7 @@ public class LivePlayActivity extends BaseActivity {
     }
     private boolean simSlideStart = false;
     private int simSeekPosition = 0;   //XUAMENG调整播放进度
-    private long simSlideOffset = 0;   //xuameng快进步长
+    private int simSlideOffset = 0;   //xuameng快进步长
     public void tvSlideStop() {
         if(!simSlideStart || mVideoView == null) return;
         if(isSEEKBAR) {  //xuameng 焦点进入SEEKBAR判断
