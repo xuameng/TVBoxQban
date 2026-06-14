@@ -574,9 +574,21 @@ public class LivePlayActivity extends BaseActivity {
             }
             public void onResponse(String paramString) {
                 ArrayList arrayList = new ArrayList();
+    if (paramString == null) {
+        // 兜底
+    }
+    // ✅ XML EPG
+    else if (isXmlEpg(paramString)) {
+        arrayList = parseXmlEpg(
+                paramString,
+                epgTagName,
+                date
+        );
+    }
+	    // ✅ JSON EPG（你原来的）
+    else if (paramString.contains("epg_data")) {
                 //xuameng 空指针   Log.d("返回的EPG信息", paramString != null ? paramString : "暂无当前节目单，聚汇直播欢迎您的观看！");
                 try {
-                    if(paramString != null && paramString.contains("epg_data")) {  //xuameng 空指针
                         final JSONArray jSONArray = new JSONObject(paramString).optJSONArray("epg_data");
                         if(jSONArray != null){
                             for(int b = 0; b < jSONArray.length(); b++) {
@@ -586,10 +598,10 @@ public class LivePlayActivity extends BaseActivity {
                                 //xuameng 空指针   Log.d("EPG信息:", day + "  " + jSONObject.optString("start") + " - " + jSONObject.optString("end") + "  " + jSONObject.optString("title"));
                             }
                         }
-                    }
                 } catch (JSONException jSONException) {
                     jSONException.printStackTrace();
                 }
+	}
                 if(arrayList != null && arrayList.size() > 0){
                    hsEpg.put(savedEpgKey, arrayList);  //xuameng默认列表存入缓存
                    showEpg(date, arrayList);
@@ -689,9 +701,21 @@ public class LivePlayActivity extends BaseActivity {
             }
             public void onResponse(String paramString) {
                 ArrayList arrayList = new ArrayList();
-			    //xuameng 空指针 	Log.d("返回的EPG信息", paramString != null ? paramString : "暂无当前节目单，聚汇直播欢迎您的观看！");
+    if (paramString == null) {
+        // 兜底
+    }
+    // ✅ XML EPG
+    else if (isXmlEpg(paramString)) {
+        arrayList = parseXmlEpg(
+                paramString,
+                epgTagName,
+                date
+        );
+    }
+	    // ✅ JSON EPG（你原来的）
+    else if (paramString.contains("epg_data")) {
+                //xuameng 空指针   Log.d("返回的EPG信息", paramString != null ? paramString : "暂无当前节目单，聚汇直播欢迎您的观看！");
                 try {
-                    if(paramString != null && paramString.contains("epg_data")) {   //xuameng 空指针
                         final JSONArray jSONArray = new JSONObject(paramString).optJSONArray("epg_data");
                         if(jSONArray != null){
                             for(int b = 0; b < jSONArray.length(); b++) {
@@ -701,10 +725,10 @@ public class LivePlayActivity extends BaseActivity {
                                 //xuameng 空指针   Log.d("EPG信息:", day + "  " + jSONObject.optString("start") + " - " + jSONObject.optString("end") + "  " + jSONObject.optString("title"));
                             }
                         }
-                    }
                 } catch (JSONException jSONException) {
                     jSONException.printStackTrace();
                 }
+	}
                 if(arrayList != null && arrayList.size() > 0){
                    hsEpg.put(savedEpgKey, arrayList);  //xuameng默认列表存入缓存
                    showEpgxu(date, arrayList);
@@ -4265,5 +4289,76 @@ public class LivePlayActivity extends BaseActivity {
             liveChannelItemAdapter.setFocusedChannelIndex(-1);  //xuameng修复频道名称移走焦点变色问题
         }
     }
+
+private boolean isXmlEpg(String xml) {
+    if (xml == null) return false;
+    xml = xml.trim();
+    return xml.startsWith("<?xml")
+            || xml.contains("<tv>")
+            || xml.contains("<programme")
+            || xml.contains("<channel>");
+}
+
+private ArrayList<Epginfo> parseXmlEpg(String xml, String channelName, Date date) {
+    ArrayList<Epginfo> list = new ArrayList<>();
+
+    try {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+        factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        Document doc = builder.parse(new InputSource(new StringReader(xml)));
+
+        // 1️⃣ 找 channel id
+        HashSet<String> channelIds = new HashSet<>();
+        NodeList channels = doc.getElementsByTagName("channel");
+        for (int i = 0; i < channels.getLength(); i++) {
+            Element ch = (Element) channels.item(i);
+            String id = ch.getAttribute("id");
+
+            NodeList names = ch.getElementsByTagName("display-name");
+            for (int j = 0; j < names.getLength(); j++) {
+                String name = names.item(j).getTextContent();
+                if (normalizeEpgChannelName(name).equals(normalizeEpgChannelName(channelName))) {
+                    channelIds.add(id);
+                }
+            }
+        }
+
+        // 2️⃣ 解析 programme
+        NodeList programmes = doc.getElementsByTagName("programme");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss Z", Locale.getDefault());
+
+        int index = 0;
+        for (int i = 0; i < programmes.getLength(); i++) {
+            Element p = (Element) programmes.item(i);
+            String start = p.getAttribute("start");
+            String stop = p.getAttribute("stop");
+
+            NodeList titles = p.getElementsByTagName("title");
+            String title = titles.getLength() > 0 ? titles.item(0).getTextContent() : "未知节目";
+
+            Date startDate = sdf.parse(start);
+            Date endDate = sdf.parse(stop);
+
+            Epginfo info = new Epginfo(
+                    date,
+                    title,
+                    startDate,
+                    start.substring(8, 10) + ":" + start.substring(10, 12),
+                    stop.substring(8, 10) + ":" + stop.substring(10, 12),
+                    index++
+            );
+            info.startdateTime = startDate;
+            info.enddateTime = endDate;
+
+            list.add(info);
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return list;
+}
 
 }
