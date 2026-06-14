@@ -608,14 +608,7 @@ try {
 if (isXmlEpgResponse(paramString)) {
     final String xmlCopy = paramString;
     new Thread(() -> {
-        ArrayList<Epginfo> result = parseXmlEpg(xmlCopy, channelName, date);
-        runOnUiThread(() -> {
-            if (!result.isEmpty()) {
-                hsEpg.put(savedEpgKey, result);
-                showEpg(date, result);
-                showBottomEpgXU();
-            }
-        });
+        arrayList = parseXmlEpg(xmlCopy, channelName, date);
     }).start();
     return;
 } else {
@@ -750,14 +743,7 @@ try {
 if (isXmlEpgResponse(paramString)) {
     final String xmlCopy = paramString;
     new Thread(() -> {
-        ArrayList<Epginfo> result = parseXmlEpg(xmlCopy, channelName, date);
-        runOnUiThread(() -> {
-            if (!result.isEmpty()) {
-                hsEpg.put(savedEpgKey, result);
-                showEpg(date, result);
-                showBottomEpgXU();
-            }
-        });
+        arrayList = parseXmlEpg(xmlCopy, channelName, date);
     }).start();
     return;
 } else {
