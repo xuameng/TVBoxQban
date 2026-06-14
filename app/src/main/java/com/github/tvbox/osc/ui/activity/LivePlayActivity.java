@@ -595,14 +595,14 @@ private boolean isXmlEpgResponse(String resp) {
                 showBottomEpgXU(); //xuameng测试EPG刷新        
             }
             public void onResponse(String paramString) {
-                ArrayList arrayList = new ArrayList();
+                
                 //xuameng 空指针   Log.d("返回的EPG信息", paramString != null ? paramString : "暂无当前节目单，聚汇直播欢迎您的观看！");
 
 if (paramString == null || paramString.trim().isEmpty()) {
     onFailure(0, "empty response");
     return;
 }
-ArrayList<Epginfo> arrayList = new ArrayList<>();
+ArrayList arrayList = new ArrayList();
 
 try {
     if (isXmlEpgResponse(paramString)) {
