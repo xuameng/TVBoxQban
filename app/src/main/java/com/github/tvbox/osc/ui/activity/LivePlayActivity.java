@@ -105,6 +105,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 import xyz.doikki.videoplayer.player.VideoView;
+import static xyz.doikki.videoplayer.util.PlayerUtils.safeTimeMs;
 import java.util.HashSet;  //新增频道收藏
 import java.util.Set;  //新增频道收藏
 import com.github.tvbox.osc.picasso.RoundTransformation; //xuameng 新增给音乐显示旋转图片用
@@ -362,16 +363,16 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 if(mVideoView == null) return;
-                long duration = mVideoView.getDuration();
+                int duration = safeTimeMs(mVideoView.getDuration());
                 if(duration <= 0) return;
-                long newPosition = (duration * seekBar.getProgress()) / sBar.getMax(); //xuameng停止触碰获取进度条进度
-                mVideoView.seekTo((int) newPosition); //xuameng当前进度播放
+                int newPosition = (duration * seekBar.getProgress()) / sBar.getMax(); //xuameng停止触碰获取进度条进度
+                mVideoView.seekTo(newPosition); //xuameng当前进度播放
                 isKUAIJIN = false;  //xuameng快进判断
             }
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
                 if(mVideoView == null) return;
-                long duration = mVideoView.getDuration();
+                int duration = safeTimeMs(mVideoView.getDuration());
                 if(duration <= 0) return;
                 isKUAIJIN = true;   //xuameng快进判断
             }
@@ -382,11 +383,11 @@ public class LivePlayActivity extends BaseActivity {
                     return;
                 }
                 if(fromuser) {
-                    long duration = mVideoView.getDuration();
+                    int duration = safeTimeMs(mVideoView.getDuration());
                     if(duration <= 0) return;
-                    long newPosition = (duration * progress) / sBar.getMax(); //xuameng触碰进度变化获取
+                    int newPosition = (duration * progress) / sBar.getMax(); //xuameng触碰进度变化获取
                     if(tv_currentpos != null) {
-                        tv_currentpos.setText(durationToString((int) newPosition)); //xuameng文字显示进度
+                        tv_currentpos.setText(durationToString(safeTimeMs(newPosition))); //xuameng文字显示进度
                     }
                     HideBottomEpgTimer();  //隐藏底部菜单到计时
                 }
@@ -2191,12 +2192,12 @@ public class LivePlayActivity extends BaseActivity {
                             }
                         }
 
-                        int duration1 = (int) mVideoView.getDuration();
+                        int duration1 = safeTimeMs(mVideoView.getDuration());
                         if(isBack) {
                             sBar = (SeekBar) findViewById(R.id.pb_progressbar); //xuameng回看进度条
                             sBar.setMax(duration1);
-                            sBar.setProgress((int) mVideoView.getCurrentPosition());
-                            tv_currentpos.setText(durationToString((int) mVideoView.getCurrentPosition()));
+                            sBar.setProgress(safeTimeMs(mVideoView.getCurrentPosition()));
+                            tv_currentpos.setText(durationToString(safeTimeMs(mVideoView.getCurrentPosition())));
                             tv_duration.setText(durationToString(duration1));
                             return;
                         }
@@ -2207,8 +2208,8 @@ public class LivePlayActivity extends BaseActivity {
                             }
                             sBar = (SeekBar) findViewById(R.id.pb_progressbar);
                             sBar.setMax(duration1);
-                            sBar.setProgress((int) mVideoView.getCurrentPosition());
-                            tv_currentpos.setText(durationToString((int) mVideoView.getCurrentPosition()));
+                            sBar.setProgress(safeTimeMs(mVideoView.getCurrentPosition()));
+                            tv_currentpos.setText(durationToString(safeTimeMs(mVideoView.getCurrentPosition())));
                             tv_duration.setText(durationToString(duration1));
                             tv_right_top_type.setText("点播中");
                             iv_play_pause.setText("点播暂停中！聚汇直播欢迎您的收看！");
@@ -2226,7 +2227,7 @@ public class LivePlayActivity extends BaseActivity {
                         isVideoplaying = true;
                         isBuffer = false;
                         if(isBack) { //xuameng 回看不成功返回直播
-                            int durationXu = (int) mVideoView.getDuration();
+                            int durationXu = safeTimeMs(mVideoView.getDuration());
                             if(durationXu < 60000) {
                                 if(mVideoView != null) {
                                     mVideoView.release();
@@ -3260,7 +3261,7 @@ public class LivePlayActivity extends BaseActivity {
         @Override
         public void run() {
             if(mVideoView == null) return;
-            int duration2 = (int) mVideoView.getDuration();
+            int duration2 = safeTimeMs(mVideoView.getDuration());
             if(duration2 > 0) {
                 if(mVideoView.isPlaying()) { //xuameng音乐播放时图标判断
                     if(iv_Play_Xu.getVisibility() == View.VISIBLE) {
@@ -3268,11 +3269,11 @@ public class LivePlayActivity extends BaseActivity {
                     }
                     iv_playpause.setText("暂停"); 
                     if(!isKUAIJIN) {   //xuameng快进判断
-                        sBar.setProgress((int) mVideoView.getCurrentPosition());
+                        sBar.setProgress(safeTimeMs(mVideoView.getCurrentPosition()));
                         int percent = mVideoView.getBufferedPercentage();
                         int totalBuffer = percent * duration2;
                         int SecondaryProgress = totalBuffer / 100;
-                        tv_currentpos.setText(durationToString((int) mVideoView.getCurrentPosition()));
+                        tv_currentpos.setText(durationToString(safeTimeMs(mVideoView.getCurrentPosition())));
                         if(percent >= 98) {
                             sBar.setSecondaryProgress(duration2);
                         } else {
@@ -3584,6 +3585,9 @@ public class LivePlayActivity extends BaseActivity {
         return diff;
     }
     private String durationToString(int duration) {   //xuameng时间转换
+        if (duration < 0) {
+            duration = 0;
+        }
         String result = "";
         int dur = duration / 1000;
         int hour = dur / 3600;
@@ -3676,16 +3680,16 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 if(mVideoView == null) return;
-                long duration = mVideoView.getDuration();
+                int duration = safeTimeMs(mVideoView.getDuration());
                 if(duration <= 0) return;
-                long newPosition = (duration * seekBar.getProgress()) / sBar.getMax(); //xuameng停止触碰获取进度条进度
-                mVideoView.seekTo((int) newPosition); //xuameng当前进度播放
+                int newPosition = (duration * seekBar.getProgress()) / sBar.getMax(); //xuameng停止触碰获取进度条进度
+                mVideoView.seekTo(newPosition); //xuameng当前进度播放
                 isKUAIJIN = false;  //xuameng快进判断
             }
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
                 if(mVideoView == null) return;
-                long duration = mVideoView.getDuration();
+                int duration = safeTimeMs(mVideoView.getDuration());
                 if(duration <= 0) return;
                 isKUAIJIN = true;  //xuameng快进判断
             }
@@ -3696,11 +3700,11 @@ public class LivePlayActivity extends BaseActivity {
                     return;
                 }
                 if(fromuser) {
-                    long duration = mVideoView.getDuration();
+                    int duration = safeTimeMs(mVideoView.getDuration());
                     if(duration <= 0) return;
-                    long newPosition = (duration * progress) / sBar.getMax(); //xuameng触碰进度变化获取
+                    int newPosition = (duration * progress) / sBar.getMax(); //xuameng触碰进度变化获取
                     if(tv_currentpos != null) {
-                        tv_currentpos.setText(durationToString((int) newPosition)); //xuameng文字显示进度
+                        tv_currentpos.setText(durationToString(safeTimeMs(newPosition))); //xuameng文字显示进度
                     }
                     HideBottomEpgTimer();  //隐藏底部菜单到计时
                 }
@@ -3752,7 +3756,7 @@ public class LivePlayActivity extends BaseActivity {
     }
     private boolean simSlideStart = false;
     private int simSeekPosition = 0;   //XUAMENG调整播放进度
-    private long simSlideOffset = 0;   //xuameng快进步长
+    private int simSlideOffset = 0;   //xuameng快进步长
     public void tvSlideStop() {
         if(!simSlideStart || mVideoView == null) return;
         if(isSEEKBAR) {  //xuameng 焦点进入SEEKBAR判断
@@ -3768,7 +3772,7 @@ public class LivePlayActivity extends BaseActivity {
     }
 
     public void tvSlideStart(int dir) {
-        int duration = (int) mVideoView.getDuration();
+        int duration = safeTimeMs(mVideoView.getDuration());
         if(duration <= 0) return;
         isSEEKBAR = true;   //xuameng 焦点进入SEEKBAR判断
         isKUAIJIN = true;
@@ -3780,19 +3784,19 @@ public class LivePlayActivity extends BaseActivity {
             mSpeedTimeUp = System.currentTimeMillis();
         }
         if(System.currentTimeMillis() - mSpeedTimeUp < 3000) { //xuameng快进越来越快
-            simSlideOffset += (10000.0f * dir);
+            simSlideOffset += (10000 * dir);
         }
         if(System.currentTimeMillis() - mSpeedTimeUp > 3000 && System.currentTimeMillis() - mSpeedTimeUp < 6000) {
-            simSlideOffset += (30000.0f * dir);
+            simSlideOffset += (30000 * dir);
         }
         if(System.currentTimeMillis() - mSpeedTimeUp > 6000 && System.currentTimeMillis() - mSpeedTimeUp < 9000) {
-            simSlideOffset += (60000.0f * dir);
+            simSlideOffset += (60000 * dir);
         }
         if(System.currentTimeMillis() - mSpeedTimeUp > 9000) {
-            simSlideOffset += (120000.0f * dir);
+            simSlideOffset += (120000 * dir);
         }
-        int currentPosition = (int) mVideoView.getCurrentPosition();
-        int position = (int)(simSlideOffset + currentPosition);
+        int currentPosition = safeTimeMs(mVideoView.getCurrentPosition());
+        int position = simSlideOffset + currentPosition;
         if(position > duration) position = duration;
         if(position < 0) position = 0;
         simSeekPosition = position;
