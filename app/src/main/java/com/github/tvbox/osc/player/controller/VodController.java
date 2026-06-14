@@ -1598,7 +1598,7 @@ public class VodController extends BaseController {
     private boolean simSlideStart = false;
     private boolean simSlideStartXu = false;
     private int simSeekPosition = 0;
-    private long simSlideOffset = 0;
+    private int simSlideOffset = 0;
     private long mSpeedTimeUp = 0; //xuameng上键间隔时间
     public void tvSlideStop() {
         int duration = safeTimeMs(mControlWrapper.getDuration());
