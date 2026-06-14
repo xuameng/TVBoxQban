@@ -117,7 +117,7 @@ public class AndroidMediaPlayer extends AbstractPlayer implements MediaPlayer.On
     @Override
     public void seekTo(long time) {
         try {
-            mMediaPlayer.seekTo(PlayerUtils.safeTimeMs(time));
+            mMediaPlayer.seekTo((int) time);
         } catch (IllegalStateException e) {
             mPlayerEventListener.onError();
         }
