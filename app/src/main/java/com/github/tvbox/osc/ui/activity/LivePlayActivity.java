@@ -609,10 +609,9 @@ final String finalEpgTagName =
                 String start = jSONObject.optString("start", "");
                 String end   = jSONObject.optString("end", "");
 
-                // ✅ 关键：跳过跨天起始（24:00 及以后）
-                if (start.length() >= 5 && start.compareTo("24:00") >= 0) {
-                    continue;
-                }
+        if (start.length() >= 5 && start.compareTo("23:59") > 0) {
+            break;   // ⭐ 关键点：不是 continue，是直接停
+        }
 
                 Epginfo epgbcinfo = new Epginfo(
                         date,
@@ -751,11 +750,10 @@ final String finalEpgTagName =
                 String start = jSONObject.optString("start", "");
                 String end   = jSONObject.optString("end", "");
 
-                // ✅ 关键：跳过跨天起始（24:00 及以后）
-                if (start.length() >= 5 && start.compareTo("24:00") >= 0) {
-                    continue;
-                }
-
+        // ✅ 只要 start 超过 23:59，立刻停止循环
+        if (start.length() >= 5 && start.compareTo("23:59") > 0) {
+            break;   // ⭐ 关键点：不是 continue，是直接停
+        }
                 Epginfo epgbcinfo = new Epginfo(
                         date,
                         jSONObject.optString("title"),
