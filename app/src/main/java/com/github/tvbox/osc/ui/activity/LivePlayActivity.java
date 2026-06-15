@@ -603,12 +603,13 @@ public class LivePlayActivity extends BaseActivity {
      * xuameng
      * 生成“暂无节目信息”的兜底 EPG（全天 24 小时，每 2 小时一段）
      */
-    private ArrayList<Epginfo> createDefaultEpgList(Date date) {
+    private static ArrayList<Epginfo> createDefaultEpgList() {
         ArrayList<Epginfo> list = new ArrayList<>();
+        Date date = new Date(); // ✅ 自己内部 new
 
         int[][] times = {
-            {0,  1}, {2,  3}, {4,  5}, {6,  7},
-            {8,  9}, {10, 11}, {12, 13}, {14, 15},
+            {0, 1}, {2, 3}, {4, 5}, {6, 7},
+            {8, 9}, {10, 11}, {12, 13}, {14, 15},
             {16, 17}, {18, 19}, {20, 21}, {22, 23}
         };
 
