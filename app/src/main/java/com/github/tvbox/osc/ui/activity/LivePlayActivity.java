@@ -553,7 +553,7 @@ final String finalEpgTagName =
         }
         UrlHttpUtil.get(url, new CallBackUtil.CallBackString() {
             public void onFailure(int i, String str) {    //xuameng如果EPG获取失败启动默认列表
-                ArrayList arrayList = new ArrayList();
+                ArrayList<Epginfo> arrayList = new ArrayList<>();
                 Epginfo epgbcinfo = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "00:00", "01:59", 0);   //xuameng最后一项为pos id
                 Epginfo epgbcinfo1 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "02:00", "03:59", 1);
                 Epginfo epgbcinfo2 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "04:00", "05:59", 2);
@@ -585,7 +585,7 @@ final String finalEpgTagName =
                 showBottomEpgXU(); //xuameng测试EPG刷新        
             }
             public void onResponse(String paramString) {
-                ArrayList arrayList = new ArrayList();
+                ArrayList<Epginfo> arrayList = new ArrayList<>();
     if (paramString == null) {
         // 兜底
     }
@@ -596,10 +596,9 @@ final String finalEpgTagName =
                 parseXmlEpg(paramString, finalEpgTagName, date);
 
         runOnUiThread(() -> {
-            arrayList = xmlList;
-	    if(arrayList != null && arrayList.size() > 0){
-                hsEpg.put(savedEpgKey, arrayList);
-                showEpg(date, arrayList);
+	    if(xmlList != null && xmlList.size() > 0){
+                hsEpg.put(savedEpgKey, xmlList);
+                showEpg(date, xmlList);
                 showBottomEpgXU();
         }else{
                    Epginfo epgbcinfo = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "00:00", "01:59", 0);   //xuameng最后一项为pos id
@@ -733,7 +732,7 @@ final String finalEpgTagName =
         }
         UrlHttpUtil.get(url, new CallBackUtil.CallBackString() {
             public void onFailure(int i, String str) {
-                ArrayList arrayList = new ArrayList();
+                ArrayList<Epginfo> arrayList = new ArrayList<>();
                 Epginfo epgbcinfo = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "00:00", "01:59", 0);   //xuameng最后一项为pos id
                 Epginfo epgbcinfo1 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "02:00", "03:59", 1);
                 Epginfo epgbcinfo2 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "04:00", "05:59", 2);
@@ -764,7 +763,7 @@ final String finalEpgTagName =
                 showEpgxu(date, arrayList);   //xuameng先保存EPG再显示EPG
             }
             public void onResponse(String paramString) {
-                ArrayList arrayList = new ArrayList();
+                ArrayList<Epginfo> arrayList = new ArrayList<>();
     if (paramString == null) {
         // 兜底
     }
@@ -775,10 +774,9 @@ final String finalEpgTagName =
                 parseXmlEpg(paramString, finalEpgTagName, date);
 
         runOnUiThread(() -> {
-            arrayList = xmlList;
-	    if(arrayList != null && arrayList.size() > 0){
-                hsEpg.put(savedEpgKey, arrayList);
-                showEpg(date, arrayList);
+	    if(xmlList != null && xmlList.size() > 0){
+                hsEpg.put(savedEpgKey, xmlList);
+                showEpg(date, xmlList);
                 showBottomEpgXU();
         }else{
                    Epginfo epgbcinfo = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "00:00", "01:59", 0);   //xuameng最后一项为pos id
