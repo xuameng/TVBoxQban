@@ -591,13 +591,51 @@ final String finalEpgTagName =
     }
     // ✅ XML EPG
     else if (isXmlEpgResponse(paramString)) {
-		App.showToastShort(mContext, finalEpgTagName);
-        arrayList = parseXmlEpg(
-                paramString,
-                finalEpgTagName,
-                date
-        );
-    }
+    new Thread(() -> {
+        ArrayList<Epginfo> xmlList =
+                parseXmlEpg(paramString, finalEpgTagName, date);
+
+        runOnUiThread(() -> {
+            arrayList = xmlList;
+	    if(arrayList != null && arrayList.size() > 0){
+                hsEpg.put(savedEpgKey, arrayList);
+                showEpg(date, arrayList);
+                showBottomEpgXU();
+        }else{
+                   Epginfo epgbcinfo = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "00:00", "01:59", 0);   //xuameng最后一项为pos id
+                   Epginfo epgbcinfo1 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "02:00", "03:59", 1);
+                   Epginfo epgbcinfo2 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "04:00", "05:59", 2);
+                   Epginfo epgbcinfo3 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "06:00", "07:59", 3);
+                   Epginfo epgbcinfo4 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "08:00", "09:59", 4);
+                   Epginfo epgbcinfo5 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "10:00", "11:59", 5);
+                   Epginfo epgbcinfo6 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "12:00", "13:59", 6);
+                   Epginfo epgbcinfo7 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "14:00", "15:59", 7);
+                   Epginfo epgbcinfo8 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "16:00", "17:59", 8);
+                   Epginfo epgbcinfo9 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "18:00", "19:59", 9);
+                   Epginfo epgbcinfo10 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "20:00", "21:59", 10);
+                   Epginfo epgbcinfo11 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "22:00", "23:59", 11);
+                   arrayList.add(epgbcinfo);
+                   arrayList.add(epgbcinfo1);
+                   arrayList.add(epgbcinfo2);
+                   arrayList.add(epgbcinfo3);
+                   arrayList.add(epgbcinfo4);
+                   arrayList.add(epgbcinfo5);
+                   arrayList.add(epgbcinfo6);
+                   arrayList.add(epgbcinfo7);
+                   arrayList.add(epgbcinfo8);
+                   arrayList.add(epgbcinfo9);
+                   arrayList.add(epgbcinfo10);
+                   arrayList.add(epgbcinfo11);
+                   epgdata = arrayList;
+                   epgListAdapter.setNewData(epgdata);
+                   hsEpg.put(savedEpgKey, arrayList);   //xuameng默认列表存入缓存
+                   showEpg(date, arrayList);
+                   showBottomEpgXU(); //xuameng测试EPG刷新
+		}
+        });
+    }).start();
+    return;
+}
 	    // ✅ JSON EPG（你原来的）
     else if (paramString.contains("epg_data")) {
                 //xuameng 空指针   Log.d("返回的EPG信息", paramString != null ? paramString : "暂无当前节目单，聚汇直播欢迎您的观看！");
@@ -612,10 +650,6 @@ final String finalEpgTagName =
         if (start.length() >= 5 && start.compareTo("23:59") > 0) {
             break;   // ⭐ 关键点：不是 continue，是直接停
         }
-// ✅ end 超过 23:59 也不要
-if (end.length() >= 5 && end.compareTo("23:59") > 0) {
-    break; 
-}
 
                 Epginfo epgbcinfo = new Epginfo(
                         date,
@@ -736,13 +770,51 @@ final String finalEpgTagName =
     }
     // ✅ XML EPG
     else if (isXmlEpgResponse(paramString)) {
-		App.showToastShort(mContext, "333333");
-        arrayList = parseXmlEpg(
-                paramString,
-                finalEpgTagName,
-                date
-        );
-    }
+    new Thread(() -> {
+        ArrayList<Epginfo> xmlList =
+                parseXmlEpg(paramString, finalEpgTagName, date);
+
+        runOnUiThread(() -> {
+            arrayList = xmlList;
+	    if(arrayList != null && arrayList.size() > 0){
+                hsEpg.put(savedEpgKey, arrayList);
+                showEpg(date, arrayList);
+                showBottomEpgXU();
+        }else{
+                   Epginfo epgbcinfo = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "00:00", "01:59", 0);   //xuameng最后一项为pos id
+                   Epginfo epgbcinfo1 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "02:00", "03:59", 1);
+                   Epginfo epgbcinfo2 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "04:00", "05:59", 2);
+                   Epginfo epgbcinfo3 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "06:00", "07:59", 3);
+                   Epginfo epgbcinfo4 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "08:00", "09:59", 4);
+                   Epginfo epgbcinfo5 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "10:00", "11:59", 5);
+                   Epginfo epgbcinfo6 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "12:00", "13:59", 6);
+                   Epginfo epgbcinfo7 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "14:00", "15:59", 7);
+                   Epginfo epgbcinfo8 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "16:00", "17:59", 8);
+                   Epginfo epgbcinfo9 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "18:00", "19:59", 9);
+                   Epginfo epgbcinfo10 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "20:00", "21:59", 10);
+                   Epginfo epgbcinfo11 = new Epginfo(date, "聚汇直播提示您：暂无节目信息！", date, "22:00", "23:59", 11);
+                   arrayList.add(epgbcinfo);
+                   arrayList.add(epgbcinfo1);
+                   arrayList.add(epgbcinfo2);
+                   arrayList.add(epgbcinfo3);
+                   arrayList.add(epgbcinfo4);
+                   arrayList.add(epgbcinfo5);
+                   arrayList.add(epgbcinfo6);
+                   arrayList.add(epgbcinfo7);
+                   arrayList.add(epgbcinfo8);
+                   arrayList.add(epgbcinfo9);
+                   arrayList.add(epgbcinfo10);
+                   arrayList.add(epgbcinfo11);
+                   epgdata = arrayList;
+                   epgListAdapter.setNewData(epgdata);
+                   hsEpg.put(savedEpgKey, arrayList);   //xuameng默认列表存入缓存
+                   showEpg(date, arrayList);
+                   showBottomEpgXU(); //xuameng测试EPG刷新
+		}
+        });
+    }).start();
+    return;
+}
 	    // ✅ JSON EPG（你原来的）
     else if (paramString.contains("epg_data")) {
                 //xuameng 空指针   Log.d("返回的EPG信息", paramString != null ? paramString : "暂无当前节目单，聚汇直播欢迎您的观看！");
@@ -758,10 +830,6 @@ final String finalEpgTagName =
         if (start.length() >= 5 && start.compareTo("23:59") > 0) {
             break;   // ⭐ 关键点：不是 continue，是直接停
         }
-// ✅ end 超过 23:59 也不要
-if (end.length() >= 5 && end.compareTo("23:59") > 0) {
-    break; 
-}
                 Epginfo epgbcinfo = new Epginfo(
                         date,
                         jSONObject.optString("title"),
