@@ -590,7 +590,7 @@ final String finalEpgTagName =
     }
     // ✅ XML EPG
     else if (isXmlEpgResponse(paramString)) {
-		App.showToastShort(mContext, "222222");
+		App.showToastShort(mContext, finalEpgTagName);
         arrayList = parseXmlEpg(
                 paramString,
                 finalEpgTagName,
@@ -4311,67 +4311,82 @@ final String finalEpgTagName =
         return trimResponse.startsWith("<?xml") || trimResponse.startsWith("<tv") || trimResponse.contains("<programme");
     }
 
-private ArrayList<Epginfo> parseXmlEpg(String xml, String channelName, Date date) {
-    ArrayList<Epginfo> list = new ArrayList<>();
+    private ArrayList<Epginfo> parseXmlEpg(String xml, String channelName, Date date) {
+        ArrayList<Epginfo> epgList = new ArrayList<>();
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            factory.setIgnoringComments(true);
+            factory.setCoalescing(true);
+            try {
+                factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+                factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+                factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+            } catch (Exception ignored) {
+            }
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            builder.setEntityResolver((publicId, systemId) -> new InputSource(new StringReader("")));
+            Document document = builder.parse(new InputSource(new StringReader(xml)));
+            document.getDocumentElement().normalize();
 
-    try {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-        factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
-
-        DocumentBuilder builder = factory.newDocumentBuilder();
-        Document doc = builder.parse(new InputSource(new StringReader(xml)));
-
-        // 1️⃣ 找 channel id
-        HashSet<String> channelIds = new HashSet<>();
-        NodeList channels = doc.getElementsByTagName("channel");
-        for (int i = 0; i < channels.getLength(); i++) {
-            Element ch = (Element) channels.item(i);
-            String id = ch.getAttribute("id");
-
-            NodeList names = ch.getElementsByTagName("display-name");
-            for (int j = 0; j < names.getLength(); j++) {
-                String name = names.item(j).getTextContent();
-                if (normalizeEpgChannelName(name).equals(normalizeEpgChannelName(channelName))) {
-                    channelIds.add(id);
+            String targetName = normalizeEpgChannelName(channelName);
+            ArrayList<String> channelIds = new ArrayList<>();
+            NodeList channelNodes = document.getElementsByTagName("channel");
+            for (int i = 0; i < channelNodes.getLength(); i++) {
+                Node channelNode = channelNodes.item(i);
+                if (channelNode.getNodeType() != Node.ELEMENT_NODE) {
+                    continue;
+                }
+                Element channelElement = (Element) channelNode;
+                String channelId = channelElement.getAttribute("id");
+                if (targetName.equals(normalizeEpgChannelName(channelId))) {
+                    channelIds.add(channelId);
+                    continue;
+                }
+                NodeList displayNameNodes = channelElement.getElementsByTagName("display-name");
+                for (int j = 0; j < displayNameNodes.getLength(); j++) {
+                    String displayName = displayNameNodes.item(j).getTextContent();
+                    if (targetName.equals(normalizeEpgChannelName(displayName))) {
+                        channelIds.add(channelId);
+                        break;
+                    }
                 }
             }
+
+            Date dayStart = getDayStart(date);
+            Date dayEnd = new Date(dayStart.getTime() + TimeUnit.DAYS.toMillis(1));
+            NodeList programmeNodes = document.getElementsByTagName("programme");
+            for (int i = 0; i < programmeNodes.getLength(); i++) {
+                Node programmeNode = programmeNodes.item(i);
+                if (programmeNode.getNodeType() != Node.ELEMENT_NODE) {
+                    continue;
+                }
+                Element programmeElement = (Element) programmeNode;
+                String programmeChannel = programmeElement.getAttribute("channel");
+                if (!channelIds.contains(programmeChannel) && !targetName.equals(normalizeEpgChannelName(programmeChannel))) {
+                    continue;
+                }
+
+                Date startDate = parseXmlTvDate(programmeElement.getAttribute("start"));
+                Date endDate = parseXmlTvDate(programmeElement.getAttribute("stop"));
+                if (startDate == null || endDate == null || !endDate.after(startDate)) {
+                    continue;
+                }
+                if (!startDate.before(dayEnd) || !endDate.after(dayStart)) {
+                    continue;
+                }
+
+                String title = "";
+                NodeList titleNodes = programmeElement.getElementsByTagName("title");
+                if (titleNodes.getLength() > 0) {
+                    title = titleNodes.item(0).getTextContent();
+                }
+                epgList.add(createXmlEpgInfo(date, title, startDate, endDate, epgList.size()));
+            }
+        } catch (Exception exception) {
+            exception.printStackTrace();
         }
-
-        // 2️⃣ 解析 programme
-        NodeList programmes = doc.getElementsByTagName("programme");
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss Z", Locale.getDefault());
-
-        int index = 0;
-        for (int i = 0; i < programmes.getLength(); i++) {
-            Element p = (Element) programmes.item(i);
-            String start = p.getAttribute("start");
-            String stop = p.getAttribute("stop");
-
-            NodeList titles = p.getElementsByTagName("title");
-            String title = titles.getLength() > 0 ? titles.item(0).getTextContent() : "未知节目";
-
-            Date startDate = sdf.parse(start);
-            Date endDate = sdf.parse(stop);
-
-            Epginfo info = new Epginfo(
-                    date,
-                    title,
-                    startDate,
-                    start.substring(8, 10) + ":" + start.substring(10, 12),
-                    stop.substring(8, 10) + ":" + stop.substring(10, 12),
-                    index++
-            );
-            info.startdateTime = startDate;
-            info.enddateTime = endDate;
-
-            list.add(info);
-        }
-    } catch (Exception e) {
-        e.printStackTrace();
+        return epgList;
     }
-    return list;
-}
 
     private String normalizeEpgChannelName(String channelName) {
         if (channelName == null) {
