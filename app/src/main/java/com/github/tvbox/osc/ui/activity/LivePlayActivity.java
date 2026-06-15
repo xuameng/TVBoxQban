@@ -723,6 +723,7 @@ public class LivePlayActivity extends BaseActivity {
                 showBottomEpgXU(); //xuameng测试EPG刷新        
             }
             public void onResponse(String paramString) {
+                ArrayList<Epginfo> arrayList = new ArrayList<>();
                 if (paramString == null || paramString.isEmpty()) {
                     ArrayList<Epginfo> arrayList = createDefaultEpgList(date);
                     hsEpg.put(savedEpgKey, arrayList);   //xuameng默认列表存入缓存
@@ -749,7 +750,6 @@ public class LivePlayActivity extends BaseActivity {
                     return;
                 }
 	            // xuameng JSON EPG
-                ArrayList<Epginfo> arrayList = new ArrayList<>();
                 else if (paramString.contains("epg_data")) {
                     //xuameng 空指针   Log.d("返回的EPG信息", paramString != null ? paramString : "暂无当前节目单，聚汇直播欢迎您的观看！");
                     try {
@@ -814,6 +814,7 @@ public class LivePlayActivity extends BaseActivity {
                 showEpgxu(date, arrayList);   //xuameng先保存EPG再显示EPG
             }
             public void onResponse(String paramString) {
+                ArrayList<Epginfo> arrayList = new ArrayList<>();
                 if (paramString == null || paramString.isEmpty()) {
                     ArrayList<Epginfo> arrayList = createDefaultEpgList(date);
                     hsEpg.put(savedEpgKey, arrayList);   //xuameng默认列表存入缓存
@@ -838,7 +839,6 @@ public class LivePlayActivity extends BaseActivity {
                     return;
                 }
 	            // xuameng JSON EPG
-                ArrayList<Epginfo> arrayList = new ArrayList<>();
                 else if (paramString.contains("epg_data")) {
                     //xuameng 空指针   Log.d("返回的EPG信息", paramString != null ? paramString : "暂无当前节目单，聚汇直播欢迎您的观看！");
                     try {
