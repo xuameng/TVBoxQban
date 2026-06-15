@@ -123,6 +123,8 @@ import java.io.StringReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class LivePlayActivity extends BaseActivity {
     public static Context context;
@@ -591,12 +593,8 @@ final String finalEpgTagName =
     }
     // ✅ XML EPG
     else if (isXmlEpgResponse(paramString)) {
-		App.showToastShort(mContext, finalEpgTagName);
-        arrayList = parseXmlEpg(
-                paramString,
-                finalEpgTagName,
-                date
-        );
+    parseXmlEpgAsync(paramString, finalEpgTagName, date, () -> {
+    });
     }
 	    // ✅ JSON EPG（你原来的）
     else if (paramString.contains("epg_data")) {
@@ -604,26 +602,26 @@ final String finalEpgTagName =
                 try {
                         final JSONArray jSONArray = new JSONObject(paramString).optJSONArray("epg_data");
                         if(jSONArray != null){
-for (int b = 0; b < jSONArray.length(); b++) {
-    JSONObject jSONObject = jSONArray.getJSONObject(b);
-    String start = jSONObject.optString("start");
-    String end = jSONObject.optString("end");
+           for (int b = 0; b < jSONArray.length(); b++) {
+                JSONObject jSONObject = jSONArray.getJSONObject(b);
+                String start = jSONObject.optString("start", "");
+                String end   = jSONObject.optString("end", "");
 
-    // ✅ 关键：过滤掉跨天的 24:xx / 25:xx / 01:xx
-    if (start.compareTo("24:00") >= 0) {
-        continue;
-    }
+                // ✅ 关键：跳过跨天起始（24:00 及以后）
+                if (start.length() >= 5 && start.compareTo("24:00") >= 0) {
+                    continue;
+                }
 
-    Epginfo epgbcinfo = new Epginfo(
-        date,
-        jSONObject.optString("title"),
-        date,
-        start,
-        end,
-        b
-    );
-    arrayList.add(epgbcinfo);
-}
+                Epginfo epgbcinfo = new Epginfo(
+                        date,
+                        jSONObject.optString("title"),
+                        date,
+                        start,
+                        end,
+                        b
+                );
+                arrayList.add(epgbcinfo);
+            }
                         }
                 } catch (JSONException jSONException) {
                     jSONException.printStackTrace();
@@ -733,12 +731,8 @@ final String finalEpgTagName =
     }
     // ✅ XML EPG
     else if (isXmlEpgResponse(paramString)) {
-		App.showToastShort(mContext, "333333");
-        arrayList = parseXmlEpg(
-                paramString,
-                finalEpgTagName,
-                date
-        );
+    parseXmlEpgAsync(paramString, finalEpgTagName, date, () -> {
+    });
     }
 	    // ✅ JSON EPG（你原来的）
     else if (paramString.contains("epg_data")) {
@@ -746,26 +740,26 @@ final String finalEpgTagName =
                 try {
                         final JSONArray jSONArray = new JSONObject(paramString).optJSONArray("epg_data");
                         if(jSONArray != null){
-for (int b = 0; b < jSONArray.length(); b++) {
-    JSONObject jSONObject = jSONArray.getJSONObject(b);
-    String start = jSONObject.optString("start");
-    String end = jSONObject.optString("end");
+           for (int b = 0; b < jSONArray.length(); b++) {
+                JSONObject jSONObject = jSONArray.getJSONObject(b);
+                String start = jSONObject.optString("start", "");
+                String end   = jSONObject.optString("end", "");
 
-    // ✅ 关键：过滤掉跨天的 24:xx / 25:xx / 01:xx
-    if (start.compareTo("24:00") >= 0) {
-        continue;
-    }
+                // ✅ 关键：跳过跨天起始（24:00 及以后）
+                if (start.length() >= 5 && start.compareTo("24:00") >= 0) {
+                    continue;
+                }
 
-    Epginfo epgbcinfo = new Epginfo(
-        date,
-        jSONObject.optString("title"),
-        date,
-        start,
-        end,
-        b
-    );
-    arrayList.add(epgbcinfo);
-}
+                Epginfo epgbcinfo = new Epginfo(
+                        date,
+                        jSONObject.optString("title"),
+                        date,
+                        start,
+                        end,
+                        b
+                );
+                arrayList.add(epgbcinfo);
+            }
                         }
                 } catch (JSONException jSONException) {
                     jSONException.printStackTrace();
@@ -1365,6 +1359,9 @@ for (int b = 0; b < jSONArray.length(); b++) {
         if(mVideoView != null) {
             mVideoView.release();
             mVideoView = null;
+        }
+        if (epgParseExecutor != null) {
+            epgParseExecutor.shutdownNow();
         }
     }
     private void showChannelList() {
@@ -4470,4 +4467,20 @@ for (int b = 0; b < jSONArray.length(); b++) {
         epgInfo.dateend = Integer.parseInt(epgInfo.end.replace(":", ""));
         return epgInfo;
     }
+
+
+private ExecutorService epgParseExecutor = Executors.newSingleThreadExecutor();
+
+private void parseXmlEpgAsync(String xml, String channelName, Date date, Runnable onComplete) {
+    epgParseExecutor.execute(() -> {
+        ArrayList<Epginfo> list = parseXmlEpg(xml, channelName, date);
+
+        runOnUiThread(() -> {
+            arrayList = list;
+            if (onComplete != null) {
+                onComplete.run();
+            }
+        });
+    });
+}
 }
