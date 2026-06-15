@@ -589,7 +589,8 @@ final String finalEpgTagName =
         // 兜底
     }
     // ✅ XML EPG
-    else if (isXmlEpg(paramString)) {
+    else if (isXmlEpgResponse(paramString)) {
+		App.showToastShort(mContext, "222222");
         arrayList = parseXmlEpg(
                 paramString,
                 finalEpgTagName,
@@ -716,7 +717,8 @@ final String finalEpgTagName =
         // 兜底
     }
     // ✅ XML EPG
-    else if (isXmlEpg(paramString)) {
+    else if (isXmlEpgResponse(paramString)) {
+		App.showToastShort(mContext, "333333");
         arrayList = parseXmlEpg(
                 paramString,
                 finalEpgTagName,
@@ -4301,14 +4303,13 @@ final String finalEpgTagName =
         }
     }
 
-private boolean isXmlEpg(String xml) {
-    if (xml == null) return false;
-    xml = xml.trim();
-    return xml.startsWith("<?xml")
-            || xml.contains("<tv>")
-            || xml.contains("<programme")
-            || xml.contains("<channel>");
-}
+    private boolean isXmlEpgResponse(String response) {
+        if (response == null) {
+            return false;
+        }
+        String trimResponse = response.trim();
+        return trimResponse.startsWith("<?xml") || trimResponse.startsWith("<tv") || trimResponse.contains("<programme");
+    }
 
 private ArrayList<Epginfo> parseXmlEpg(String xml, String channelName, Date date) {
     ArrayList<Epginfo> list = new ArrayList<>();
