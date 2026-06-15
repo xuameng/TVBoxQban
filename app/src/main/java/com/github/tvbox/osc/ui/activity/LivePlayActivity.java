@@ -740,9 +740,9 @@ public class LivePlayActivity extends BaseActivity {
                                 showEpg(date, xmlList);
                                 showBottomEpgXU();
                             }else{
-                                arrayList = createDefaultEpgList(date);
-                                hsEpg.put(savedEpgKey, arrayList);   //xuameng默认列表存入缓存
-                                showEpg(date, arrayList);
+                                ArrayList<Epginfo> defaultList = createDefaultEpgList(date);
+                                hsEpg.put(savedEpgKey, defaultList);   //xuameng默认列表存入缓存
+                                showEpg(date, defaultList);
                                 showBottomEpgXU(); //xuameng测试EPG刷新
 		                    }
                         });
@@ -830,9 +830,9 @@ public class LivePlayActivity extends BaseActivity {
                                 showEpgxu(date, xmlList);
                                 showBottomEpgXU();
                             }else{
-                                arrayList = createDefaultEpgList(date);
-                                hsEpg.put(savedEpgKey, arrayList);   //xuameng默认列表存入缓存
-                                showEpgxu(date, arrayList);
+                                ArrayList<Epginfo> defaultList = createDefaultEpgList(date);
+                                hsEpg.put(savedEpgKey, defaultList);   //xuameng默认列表存入缓存
+                                showEpgxu(date, defaultList);
 		                    }
                         });
                     }).start();
