@@ -570,11 +570,16 @@ private ArrayList<Epginfo> parseXmlEpg(String xml, String channelName, Date date
         return trimName;
     }
 
-    private Date getDayStart(Date date) throws ParseException {  //xuameng XML EPG
-        SimpleDateFormat dayFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-        dayFormat.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
+private Date getDayStart(Date date) {
+    SimpleDateFormat dayFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+    dayFormat.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
+    try {
         return dayFormat.parse(dayFormat.format(date));
+    } catch (ParseException e) {
+        e.printStackTrace();
+        return date; // 兜底返回原日期，防止 NPE
     }
+}
 
     private Date parseXmlTvDate(String dateText) {  //xuameng XML EPG
         if (dateText == null || dateText.trim().isEmpty()) {
