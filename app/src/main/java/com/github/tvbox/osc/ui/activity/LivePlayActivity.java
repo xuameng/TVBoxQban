@@ -748,9 +748,9 @@ public class LivePlayActivity extends BaseActivity {
                     }).start();
                     return;
                 }
-	            // xuameng JSON EPG（
+	            // xuameng JSON EPG
+                ArrayList<Epginfo> arrayList = new ArrayList<>();
                 else if (paramString.contains("epg_data")) {
-                    ArrayList<Epginfo> arrayList = new ArrayList<>();
                     //xuameng 空指针   Log.d("返回的EPG信息", paramString != null ? paramString : "暂无当前节目单，聚汇直播欢迎您的观看！");
                     try {
                         final JSONArray jSONArray = new JSONObject(paramString).optJSONArray("epg_data");
@@ -837,9 +837,9 @@ public class LivePlayActivity extends BaseActivity {
                     }).start();
                     return;
                 }
-	            // xuameng JSON EPG（
+	            // xuameng JSON EPG
+                ArrayList<Epginfo> arrayList = new ArrayList<>();
                 else if (paramString.contains("epg_data")) {
-                    ArrayList<Epginfo> arrayList = new ArrayList<>();
                     //xuameng 空指针   Log.d("返回的EPG信息", paramString != null ? paramString : "暂无当前节目单，聚汇直播欢迎您的观看！");
                     try {
                         final JSONArray jSONArray = new JSONObject(paramString).optJSONArray("epg_data");
