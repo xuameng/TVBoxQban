@@ -627,6 +627,8 @@ public class LivePlayActivity extends BaseActivity {
         return list;
     }
 
+    private static final ArrayList<Epginfo> EMPTY_EPG = createDefaultEpgList();
+
     //获取EPG并存储 // 百川epg  DIYP epg   51zmt epg ------- 自建EPG格式输出格式请参考 51zmt
     private List < Epginfo > epgdata = new ArrayList < > ();
     private void showEpg(Date date, ArrayList < Epginfo > arrayList) {
@@ -717,18 +719,17 @@ public class LivePlayActivity extends BaseActivity {
         }
         UrlHttpUtil.get(url, new CallBackUtil.CallBackString() {
             public void onFailure(int i, String str) {    //xuameng如果EPG获取失败启动默认列表
-                ArrayList<Epginfo> arrayList = createDefaultEpgList(date);
-                hsEpg.put(savedEpgKey, arrayList);   //xuameng默认列表存入缓存
-                showEpg(date, arrayList);
+                hsEpg.put(savedEpgKey, EMPTY_EPG);   //xuameng默认列表存入缓存
+                showEpg(date, EMPTY_EPG);
                 showBottomEpgXU(); //xuameng测试EPG刷新        
             }
             public void onResponse(String paramString) {
                 ArrayList<Epginfo> arrayList = new ArrayList<>();
                 if (paramString == null || paramString.isEmpty()) {
-                    arrayList = createDefaultEpgList(date);
-                    hsEpg.put(savedEpgKey, arrayList);   //xuameng默认列表存入缓存
-                    showEpg(date, arrayList);
+                    hsEpg.put(savedEpgKey, EMPTY_EPG);   //xuameng默认列表存入缓存
+                    showEpg(date, EMPTY_EPG);
                     showBottomEpgXU(); //xuameng测试EPG刷新  
+                    return;
                 }
                 // xuameng XML EPG
                 else if (isXmlEpgResponse(paramString)) {
@@ -740,9 +741,8 @@ public class LivePlayActivity extends BaseActivity {
                                 showEpg(date, xmlList);
                                 showBottomEpgXU();
                             }else{
-                                ArrayList<Epginfo> defaultList = createDefaultEpgList(date);
-                                hsEpg.put(savedEpgKey, defaultList);   //xuameng默认列表存入缓存
-                                showEpg(date, defaultList);
+                                hsEpg.put(savedEpgKey, EMPTY_EPG);   //xuameng默认列表存入缓存
+                                showEpg(date, EMPTY_EPG);
                                 showBottomEpgXU(); //xuameng测试EPG刷新
 		                    }
                         });
@@ -775,9 +775,8 @@ public class LivePlayActivity extends BaseActivity {
                    showEpg(date, arrayList);
                    showBottomEpgXU(); //xuameng测试EPG刷新
                 }else{
-                   arrayList = createDefaultEpgList(date);
-                   hsEpg.put(savedEpgKey, arrayList);   //xuameng默认列表存入缓存
-                   showEpg(date, arrayList);
+                   hsEpg.put(savedEpgKey, EMPTY_EPG);   //xuameng默认列表存入缓存
+                   showEpg(date, EMPTY_EPG);
                    showBottomEpgXU(); //xuameng测试EPG刷新
                 }
             }
@@ -809,16 +808,15 @@ public class LivePlayActivity extends BaseActivity {
         }
         UrlHttpUtil.get(url, new CallBackUtil.CallBackString() {
             public void onFailure(int i, String str) {
-                ArrayList<Epginfo> arrayList = createDefaultEpgList(date);
-                hsEpg.put(savedEpgKey, arrayList);  //xuameng默认列表存入缓存
-                showEpgxu(date, arrayList);   //xuameng先保存EPG再显示EPG
+                hsEpg.put(savedEpgKey, EMPTY_EPG);  //xuameng默认列表存入缓存
+                showEpgxu(date, EMPTY_EPG);   //xuameng先保存EPG再显示EPG
             }
             public void onResponse(String paramString) {
                 ArrayList<Epginfo> arrayList = new ArrayList<>();
                 if (paramString == null || paramString.isEmpty()) {
-                    arrayList = createDefaultEpgList(date);
-                    hsEpg.put(savedEpgKey, arrayList);   //xuameng默认列表存入缓存
-                    showEpgxu(date, arrayList);
+                    hsEpg.put(savedEpgKey, EMPTY_EPG);   //xuameng默认列表存入缓存
+                    showEpgxu(date, EMPTY_EPG);
+                    return;
                 }
                 // xuameng XML EPG
                 else if (isXmlEpgResponse(paramString)) {
@@ -830,9 +828,8 @@ public class LivePlayActivity extends BaseActivity {
                                 showEpgxu(date, xmlList);
                                 showBottomEpgXU();
                             }else{
-                                ArrayList<Epginfo> defaultList = createDefaultEpgList(date);
-                                hsEpg.put(savedEpgKey, defaultList);   //xuameng默认列表存入缓存
-                                showEpgxu(date, defaultList);
+                                hsEpg.put(savedEpgKey, EMPTY_EPG);   //xuameng默认列表存入缓存
+                                showEpgxu(date, EMPTY_EPG);
 		                    }
                         });
                     }).start();
@@ -863,9 +860,8 @@ public class LivePlayActivity extends BaseActivity {
                    hsEpg.put(savedEpgKey, arrayList);  //xuameng默认列表存入缓存
                    showEpgxu(date, arrayList);
                 }else{
-                   arrayList = createDefaultEpgList(date);
-                   hsEpg.put(savedEpgKey, arrayList);   //xuameng默认列表存入缓存
-                   showEpgxu(date, arrayList);
+                   hsEpg.put(savedEpgKey, EMPTY_EPG);   //xuameng默认列表存入缓存
+                   showEpgxu(date, EMPTY_EPG);
                 }
             }
         });
