@@ -122,6 +122,7 @@ import org.xml.sax.InputSource;
 import java.io.StringReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.concurrent.TimeUnit;
 
 public class LivePlayActivity extends BaseActivity {
     public static Context context;
@@ -603,12 +604,26 @@ final String finalEpgTagName =
                 try {
                         final JSONArray jSONArray = new JSONObject(paramString).optJSONArray("epg_data");
                         if(jSONArray != null){
-                            for(int b = 0; b < jSONArray.length(); b++) {
-                                JSONObject jSONObject = jSONArray.getJSONObject(b);
-                                Epginfo epgbcinfo = new Epginfo(date, jSONObject.optString("title"), date, jSONObject.optString("start"), jSONObject.optString("end"), b);
-                                arrayList.add(epgbcinfo);
-                                //xuameng 空指针   Log.d("EPG信息:", day + "  " + jSONObject.optString("start") + " - " + jSONObject.optString("end") + "  " + jSONObject.optString("title"));
-                            }
+for (int b = 0; b < jSONArray.length(); b++) {
+    JSONObject jSONObject = jSONArray.getJSONObject(b);
+    String start = jSONObject.optString("start");
+    String end = jSONObject.optString("end");
+
+    // ✅ 关键：过滤掉跨天的 24:xx / 25:xx / 01:xx
+    if (start.compareTo("24:00") >= 0) {
+        continue;
+    }
+
+    Epginfo epgbcinfo = new Epginfo(
+        date,
+        jSONObject.optString("title"),
+        date,
+        start,
+        end,
+        b
+    );
+    arrayList.add(epgbcinfo);
+}
                         }
                 } catch (JSONException jSONException) {
                     jSONException.printStackTrace();
@@ -731,12 +746,26 @@ final String finalEpgTagName =
                 try {
                         final JSONArray jSONArray = new JSONObject(paramString).optJSONArray("epg_data");
                         if(jSONArray != null){
-                            for(int b = 0; b < jSONArray.length(); b++) {
-                                JSONObject jSONObject = jSONArray.getJSONObject(b);
-                                Epginfo epgbcinfo = new Epginfo(date, jSONObject.optString("title"), date, jSONObject.optString("start"), jSONObject.optString("end"), b);
-                                arrayList.add(epgbcinfo);
-                                //xuameng 空指针   Log.d("EPG信息:", day + "  " + jSONObject.optString("start") + " - " + jSONObject.optString("end") + "  " + jSONObject.optString("title"));
-                            }
+for (int b = 0; b < jSONArray.length(); b++) {
+    JSONObject jSONObject = jSONArray.getJSONObject(b);
+    String start = jSONObject.optString("start");
+    String end = jSONObject.optString("end");
+
+    // ✅ 关键：过滤掉跨天的 24:xx / 25:xx / 01:xx
+    if (start.compareTo("24:00") >= 0) {
+        continue;
+    }
+
+    Epginfo epgbcinfo = new Epginfo(
+        date,
+        jSONObject.optString("title"),
+        date,
+        start,
+        end,
+        b
+    );
+    arrayList.add(epgbcinfo);
+}
                         }
                 } catch (JSONException jSONException) {
                     jSONException.printStackTrace();
@@ -4402,5 +4431,43 @@ final String finalEpgTagName =
             return compactName.toUpperCase(Locale.ROOT);
         }
         return trimName;
+    }
+
+    private Date getDayStart(Date date) throws ParseException {
+        SimpleDateFormat dayFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        dayFormat.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
+        return dayFormat.parse(dayFormat.format(date));
+    }
+
+    private Date parseXmlTvDate(String dateText) {
+        if (dateText == null || dateText.trim().isEmpty()) {
+            return null;
+        }
+        String trimDate = dateText.trim();
+        try {
+            return new SimpleDateFormat("yyyyMMddHHmmss Z", Locale.getDefault()).parse(trimDate);
+        } catch (ParseException ignored) {
+        }
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault());
+            dateFormat.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
+            return dateFormat.parse(trimDate);
+        } catch (ParseException ignored) {
+        }
+        return null;
+    }
+
+    private Epginfo createXmlEpgInfo(Date epgDate, String title, Date startDate, Date endDate, int index) {
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+        Epginfo epgInfo = new Epginfo(epgDate, title, epgDate, timeFormat.format(startDate), timeFormat.format(endDate), index);
+        epgInfo.startdateTime = startDate;
+        epgInfo.enddateTime = endDate;
+        epgInfo.start = timeFormat.format(startDate);
+        epgInfo.end = timeFormat.format(endDate);
+        epgInfo.originStart = epgInfo.start;
+        epgInfo.originEnd = epgInfo.end;
+        epgInfo.datestart = Integer.parseInt(epgInfo.start.replace(":", ""));
+        epgInfo.dateend = Integer.parseInt(epgInfo.end.replace(":", ""));
+        return epgInfo;
     }
 }
