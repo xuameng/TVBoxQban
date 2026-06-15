@@ -682,7 +682,7 @@ public class LivePlayActivity extends BaseActivity {
         } 
     }
 
-private volatile boolean parsingEpg = false;
+    private volatile boolean parsingEpg = false;   //xuameng XML EPG不允许并行，容易卡死
 
     public void getEpg(Date date) {
         if(!isCurrentLiveChannelValidXu()) return;    //xuameng 空指针修复
@@ -735,35 +735,35 @@ private volatile boolean parsingEpg = false;
                 }
                 // xuameng XML EPG
                 else if (isXmlEpgResponse(paramString)) {
-new Thread(() -> {
-    if (parsingEpg) return;
+                    new Thread(() -> {
+                        if (parsingEpg) return;      //xuameng XML EPG不允许并行，容易卡死
 
-    synchronized (this) {
-        if (parsingEpg) return; // 双重保险
-        parsingEpg = true;
-    }
+                        synchronized (this) {
+                            if (parsingEpg) return; // 双重保险
+                            parsingEpg = true;
+                        }
 
-    try {
-        ArrayList<Epginfo> xmlList =
-                parseXmlEpg(paramString, finalEpgTagName, date);
+                        try {
+                            ArrayList<Epginfo> xmlList =
+                                    parseXmlEpg(paramString, finalEpgTagName, date);
 
-        runOnUiThread(() -> {
-            if (xmlList != null && xmlList.size() > 0) {
-                hsEpg.put(savedEpgKey, xmlList);
-                showEpg(date, xmlList);
-                showBottomEpgXU();
-            } else {
-                ArrayList<Epginfo> defaultList = createDefaultEpgList(date);
-                hsEpg.put(savedEpgKey, defaultList);
-                showEpg(date, defaultList);
-                showBottomEpgXU();
-            }
-        });
+                            runOnUiThread(() -> {
+                                if (xmlList != null && xmlList.size() > 0) {
+                                    hsEpg.put(savedEpgKey, xmlList);
+                                    showEpg(date, xmlList);
+                                    showBottomEpgXU();
+                                } else {
+                                    ArrayList<Epginfo> defaultList = createDefaultEpgList(date);
+                                    hsEpg.put(savedEpgKey, defaultList);
+                                    showEpg(date, defaultList);
+                                    showBottomEpgXU();
+                                }
+                            });
 
-    } finally {
-        parsingEpg = false;
-    }
-}).start();
+                        } finally {
+                            parsingEpg = false;
+                        }
+                    }).start();
                     return;
                 }
 	            // xuameng JSON EPG
@@ -840,35 +840,33 @@ new Thread(() -> {
                 }
                 // xuameng XML EPG
                 else if (isXmlEpgResponse(paramString)) {
-new Thread(() -> {
-    if (parsingEpg) return;
+                    new Thread(() -> {
+                        if (parsingEpg) return;
 
-    synchronized (this) {
-        if (parsingEpg) return; // 双重保险
-        parsingEpg = true;
-    }
+                        synchronized (this) {
+                            if (parsingEpg) return; // 双重保险
+                            parsingEpg = true;
+                        }
 
-    try {
-        ArrayList<Epginfo> xmlList =
-                parseXmlEpg(paramString, finalEpgTagName, date);
+                        try {
+                            ArrayList<Epginfo> xmlList =
+                                    parseXmlEpg(paramString, finalEpgTagName, date);
 
-        runOnUiThread(() -> {
-            if (xmlList != null && xmlList.size() > 0) {
-                hsEpg.put(savedEpgKey, xmlList);
-                showEpg(date, xmlList);
-                showBottomEpgXU();
-            } else {
-                ArrayList<Epginfo> defaultList = createDefaultEpgList(date);
-                hsEpg.put(savedEpgKey, defaultList);
-                showEpg(date, defaultList);
-                showBottomEpgXU();
-            }
-        });
+                            runOnUiThread(() -> {
+                                if (xmlList != null && xmlList.size() > 0) {
+                                    hsEpg.put(savedEpgKey, xmlList);
+                                    showEpgxu(date, xmlList);
+                                } else {
+                                    ArrayList<Epginfo> defaultList = createDefaultEpgList(date);
+                                    hsEpg.put(savedEpgKey, defaultList);
+                                    showEpgxu(date, defaultList);
+                                }
+                            });
 
-    } finally {
-        parsingEpg = false;
-    }
-}).start();
+                        } finally {
+                            parsingEpg = false;
+                        }
+                    }).start();
                     return;
                 }
 	            // xuameng JSON EPG
