@@ -112,15 +112,17 @@ import com.github.tvbox.osc.picasso.RoundTransformation; //xuameng 新增给音�
 import me.jessyan.autosize.utils.AutoSizeUtils; //xuameng 新增给音乐显示旋转图片用
 import com.github.tvbox.osc.util.MD5; //xuameng 新增给音乐显示旋转图片用
 
+import javax.xml.parsers.DocumentBuilder;   //xuameng 支持XML EPG用
+import javax.xml.parsers.DocumentBuilderFactory; //xuameng 支持XML EPG用
+import org.w3c.dom.Document; //xuameng 支持XML EPG用
+import org.w3c.dom.Element; //xuameng 支持XML EPG用
+import org.w3c.dom.Node; //xuameng 支持XML EPG用
+import org.w3c.dom.NodeList; //xuameng 支持XML EPG用
+import org.xml.sax.InputSource; //xuameng 支持XML EPG用
 import java.io.StringReader; //xuameng 支持XML EPG用
 import java.util.regex.Matcher; //xuameng 支持XML EPG用
 import java.util.regex.Pattern; //xuameng 支持XML EPG用
 import java.util.concurrent.TimeUnit; //xuameng 支持XML EPG用
-
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserFactory;
-import org.xmlpull.v1.XmlPullParserException;
-import java.io.IOException;
 
 public class LivePlayActivity extends BaseActivity {
     public static Context context;
@@ -466,93 +468,82 @@ public class LivePlayActivity extends BaseActivity {
         return trimResponse.startsWith("<?xml") || trimResponse.startsWith("<tv") || trimResponse.contains("<programme");
     }
 
-private ArrayList<Epginfo> parseXmlEpg(String xml, String channelName, Date date) {
-    ArrayList<Epginfo> epgList = new ArrayList<>();
+    private ArrayList<Epginfo> parseXmlEpg(String xml, String channelName, Date date) {  //xuameng XML EPG
+        ArrayList<Epginfo> epgList = new ArrayList<>();
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            factory.setIgnoringComments(true);
+            factory.setCoalescing(true);
+            try {
+                factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+                factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+                factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+            } catch (Exception ignored) {
+            }
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            builder.setEntityResolver((publicId, systemId) -> new InputSource(new StringReader("")));
+            Document document = builder.parse(new InputSource(new StringReader(xml)));
+            document.getDocumentElement().normalize();
 
-    if (xml == null || xml.trim().isEmpty()) {
+            String targetName = normalizeEpgChannelName(channelName);
+            ArrayList<String> channelIds = new ArrayList<>();
+            NodeList channelNodes = document.getElementsByTagName("channel");
+            for (int i = 0; i < channelNodes.getLength(); i++) {
+                Node channelNode = channelNodes.item(i);
+                if (channelNode.getNodeType() != Node.ELEMENT_NODE) {
+                    continue;
+                }
+                Element channelElement = (Element) channelNode;
+                String channelId = channelElement.getAttribute("id");
+                if (targetName.equals(normalizeEpgChannelName(channelId))) {
+                    channelIds.add(channelId);
+                    continue;
+                }
+                NodeList displayNameNodes = channelElement.getElementsByTagName("display-name");
+                for (int j = 0; j < displayNameNodes.getLength(); j++) {
+                    String displayName = displayNameNodes.item(j).getTextContent();
+                    if (targetName.equals(normalizeEpgChannelName(displayName))) {
+                        channelIds.add(channelId);
+                        break;
+                    }
+                }
+            }
+
+            Date dayStart = getDayStart(date);
+            Date dayEnd = new Date(dayStart.getTime() + TimeUnit.DAYS.toMillis(1));
+            NodeList programmeNodes = document.getElementsByTagName("programme");
+            for (int i = 0; i < programmeNodes.getLength(); i++) {
+                Node programmeNode = programmeNodes.item(i);
+                if (programmeNode.getNodeType() != Node.ELEMENT_NODE) {
+                    continue;
+                }
+                Element programmeElement = (Element) programmeNode;
+                String programmeChannel = programmeElement.getAttribute("channel");
+                if (!channelIds.contains(programmeChannel) && !targetName.equals(normalizeEpgChannelName(programmeChannel))) {
+                    continue;
+                }
+
+                Date startDate = parseXmlTvDate(programmeElement.getAttribute("start"));
+                Date endDate = parseXmlTvDate(programmeElement.getAttribute("stop"));
+                if (startDate == null || endDate == null || !endDate.after(startDate)) {
+                    continue;
+                }
+                if (!startDate.before(dayEnd) || !endDate.after(dayStart)) {
+                    continue;
+                }
+
+                String title = "";
+                NodeList titleNodes = programmeElement.getElementsByTagName("title");
+                if (titleNodes.getLength() > 0) {
+                    title = titleNodes.item(0).getTextContent();
+                }
+                epgList.add(createXmlEpgInfo(date, title, startDate, endDate, epgList.size()));
+            }
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
         return epgList;
     }
-
-    String targetName = normalizeEpgChannelName(channelName);
-    HashSet<String> channelIds = new HashSet<>();
-
-    try {
-        XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
-        factory.setNamespaceAware(false);
-        XmlPullParser parser = factory.newPullParser();
-        parser.setInput(new StringReader(xml));
-
-        int eventType = parser.getEventType();
-        String currentChannelId = null;
-        String currentDisplayName = null;
-
-        // ===== 第一次遍历：找 channel id =====
-        while (eventType != XmlPullParser.END_DOCUMENT) {
-            if (eventType == XmlPullParser.START_TAG) {
-                if ("channel".equals(parser.getName())) {
-                    currentChannelId = parser.getAttributeValue(null, "id");
-                } else if ("display-name".equals(parser.getName())) {
-                    currentDisplayName = parser.nextText();
-                    if (currentChannelId != null &&
-                        targetName.equals(normalizeEpgChannelName(currentDisplayName))) {
-                        channelIds.add(currentChannelId);
-                    }
-                }
-            }
-            eventType = parser.next();
-        }
-
-        // 如果没匹配到 display-name，用 id 兜底
-        if (channelIds.isEmpty()) {
-            channelIds.add(targetName);
-        }
-
-        // ===== 第二次遍历：解析 programme =====
-        parser.setInput(new StringReader(xml));
-        eventType = parser.getEventType();
-
-        String start = null;
-        String stop = null;
-        String title = null;
-
-        while (eventType != XmlPullParser.END_DOCUMENT) {
-            if (eventType == XmlPullParser.START_TAG) {
-                if ("programme".equals(parser.getName())) {
-                    start = parser.getAttributeValue(null, "start");
-                    stop = parser.getAttributeValue(null, "stop");
-                    title = null;
-                } else if ("title".equals(parser.getName())) {
-                    title = parser.nextText();
-                }
-            } else if (eventType == XmlPullParser.END_TAG) {
-                if ("programme".equals(parser.getName())) {
-                    if (start != null && stop != null && title != null) {
-                        Date startDate = parseXmlTvDate(start);
-                        Date endDate = parseXmlTvDate(stop);
-
-                        if (startDate == null || endDate == null) continue;
-                        if (!endDate.after(startDate)) continue;
-
-                        Date dayStart = getDayStart(date);
-                        Date dayEnd = new Date(dayStart.getTime() + TimeUnit.DAYS.toMillis(1));
-
-                        if (startDate.before(dayEnd) && endDate.after(dayStart)) {
-                            epgList.add(createXmlEpgInfo(
-                                    date, title, startDate, endDate, epgList.size()));
-                        }
-                    }
-                    start = stop = title = null;
-                }
-            }
-            eventType = parser.next();
-        }
-
-    } catch (XmlPullParserException | IOException e) {
-        e.printStackTrace();
-    }
-
-    return epgList;
-}
 
     private String normalizeEpgChannelName(String channelName) {  //xuameng XML EPG
         if (channelName == null) {
@@ -570,16 +561,11 @@ private ArrayList<Epginfo> parseXmlEpg(String xml, String channelName, Date date
         return trimName;
     }
 
-private Date getDayStart(Date date) {
-    SimpleDateFormat dayFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-    dayFormat.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
-    try {
+    private Date getDayStart(Date date) throws ParseException {  //xuameng XML EPG
+        SimpleDateFormat dayFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        dayFormat.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
         return dayFormat.parse(dayFormat.format(date));
-    } catch (ParseException e) {
-        e.printStackTrace();
-        return date; // 兜底返回原日期，防止 NPE
     }
-}
 
     private Date parseXmlTvDate(String dateText) {  //xuameng XML EPG
         if (dateText == null || dateText.trim().isEmpty()) {
@@ -696,6 +682,8 @@ private Date getDayStart(Date date) {
         } 
     }
 
+private volatile boolean parsingEpg = false;
+
     public void getEpg(Date date) {
         if(!isCurrentLiveChannelValidXu()) return;    //xuameng 空指针修复
         String channelName = channel_Name.getChannelName();
@@ -747,21 +735,35 @@ private Date getDayStart(Date date) {
                 }
                 // xuameng XML EPG
                 else if (isXmlEpgResponse(paramString)) {
-                    new Thread(() -> {
-                        ArrayList<Epginfo> xmlList = parseXmlEpg(paramString, finalEpgTagName, date);
-                        runOnUiThread(() -> {
-	                        if(xmlList != null && xmlList.size() > 0){
-                                hsEpg.put(savedEpgKey, xmlList);
-                                showEpg(date, xmlList);
-                                showBottomEpgXU();
-                            }else{
-                                ArrayList<Epginfo> defaultList = createDefaultEpgList(date);
-                                hsEpg.put(savedEpgKey, defaultList);   //xuameng默认列表存入缓存
-                                showEpg(date, defaultList);
-                                showBottomEpgXU(); //xuameng测试EPG刷新
-		                    }
-                        });
-                    }).start();
+new Thread(() -> {
+    if (parsingEpg) return;
+
+    synchronized (this) {
+        if (parsingEpg) return; // 双重保险
+        parsingEpg = true;
+    }
+
+    try {
+        ArrayList<Epginfo> xmlList =
+                parseXmlEpg(paramString, finalEpgTagName, date);
+
+        runOnUiThread(() -> {
+            if (xmlList != null && xmlList.size() > 0) {
+                hsEpg.put(savedEpgKey, xmlList);
+                showEpg(date, xmlList);
+                showBottomEpgXU();
+            } else {
+                ArrayList<Epginfo> defaultList = createDefaultEpgList(date);
+                hsEpg.put(savedEpgKey, defaultList);
+                showEpg(date, defaultList);
+                showBottomEpgXU();
+            }
+        });
+
+    } finally {
+        parsingEpg = false;
+    }
+}).start();
                     return;
                 }
 	            // xuameng JSON EPG
@@ -838,20 +840,35 @@ private Date getDayStart(Date date) {
                 }
                 // xuameng XML EPG
                 else if (isXmlEpgResponse(paramString)) {
-                    new Thread(() -> {
-                        ArrayList<Epginfo> xmlList = parseXmlEpg(paramString, finalEpgTagName, date);
-                        runOnUiThread(() -> {
-	                        if(xmlList != null && xmlList.size() > 0){
-                                hsEpg.put(savedEpgKey, xmlList);
-                                showEpgxu(date, xmlList);
-                                showBottomEpgXU();
-                            }else{
-                                ArrayList<Epginfo> defaultList = createDefaultEpgList(date);
-                                hsEpg.put(savedEpgKey, defaultList);   //xuameng默认列表存入缓存
-                                showEpgxu(date, defaultList);
-		                    }
-                        });
-                    }).start();
+new Thread(() -> {
+    if (parsingEpg) return;
+
+    synchronized (this) {
+        if (parsingEpg) return; // 双重保险
+        parsingEpg = true;
+    }
+
+    try {
+        ArrayList<Epginfo> xmlList =
+                parseXmlEpg(paramString, finalEpgTagName, date);
+
+        runOnUiThread(() -> {
+            if (xmlList != null && xmlList.size() > 0) {
+                hsEpg.put(savedEpgKey, xmlList);
+                showEpg(date, xmlList);
+                showBottomEpgXU();
+            } else {
+                ArrayList<Epginfo> defaultList = createDefaultEpgList(date);
+                hsEpg.put(savedEpgKey, defaultList);
+                showEpg(date, defaultList);
+                showBottomEpgXU();
+            }
+        });
+
+    } finally {
+        parsingEpg = false;
+    }
+}).start();
                     return;
                 }
 	            // xuameng JSON EPG
