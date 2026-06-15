@@ -120,6 +120,7 @@ import java.util.concurrent.TimeUnit; //xuameng 支持XML EPG用
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
 import org.xmlpull.v1.XmlPullParserException;
+import java.io.IOException;
 
 public class LivePlayActivity extends BaseActivity {
     public static Context context;
