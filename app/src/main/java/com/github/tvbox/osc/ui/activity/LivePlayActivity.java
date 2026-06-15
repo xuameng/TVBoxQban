@@ -123,8 +123,6 @@ import java.io.StringReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class LivePlayActivity extends BaseActivity {
     public static Context context;
@@ -593,8 +591,12 @@ final String finalEpgTagName =
     }
     // ✅ XML EPG
     else if (isXmlEpgResponse(paramString)) {
-    parseXmlEpgAsync(paramString, finalEpgTagName, date, () -> {
-    });
+		App.showToastShort(mContext, finalEpgTagName);
+        arrayList = parseXmlEpg(
+                paramString,
+                finalEpgTagName,
+                date
+        );
     }
 	    // ✅ JSON EPG（你原来的）
     else if (paramString.contains("epg_data")) {
@@ -731,8 +733,12 @@ final String finalEpgTagName =
     }
     // ✅ XML EPG
     else if (isXmlEpgResponse(paramString)) {
-    parseXmlEpgAsync(paramString, finalEpgTagName, date, () -> {
-    });
+		App.showToastShort(mContext, "333333");
+        arrayList = parseXmlEpg(
+                paramString,
+                finalEpgTagName,
+                date
+        );
     }
 	    // ✅ JSON EPG（你原来的）
     else if (paramString.contains("epg_data")) {
@@ -1359,9 +1365,6 @@ final String finalEpgTagName =
         if(mVideoView != null) {
             mVideoView.release();
             mVideoView = null;
-        }
-        if (epgParseExecutor != null) {
-            epgParseExecutor.shutdownNow();
         }
     }
     private void showChannelList() {
@@ -4467,20 +4470,4 @@ final String finalEpgTagName =
         epgInfo.dateend = Integer.parseInt(epgInfo.end.replace(":", ""));
         return epgInfo;
     }
-
-
-private ExecutorService epgParseExecutor = Executors.newSingleThreadExecutor();
-
-private void parseXmlEpgAsync(String xml, String channelName, Date date, Runnable onComplete) {
-    epgParseExecutor.execute(() -> {
-        ArrayList<Epginfo> list = parseXmlEpg(xml, channelName, date);
-
-        runOnUiThread(() -> {
-            arrayList = list;
-            if (onComplete != null) {
-                onComplete.run();
-            }
-        });
-    });
-}
 }
