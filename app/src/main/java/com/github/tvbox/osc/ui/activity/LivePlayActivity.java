@@ -614,7 +614,7 @@ final String finalEpgTagName =
         }
 // ✅ end 超过 23:59 也不要
 if (end.length() >= 5 && end.compareTo("23:59") > 0) {
-    continue; 
+    break; 
 }
 
                 Epginfo epgbcinfo = new Epginfo(
@@ -760,7 +760,7 @@ final String finalEpgTagName =
         }
 // ✅ end 超过 23:59 也不要
 if (end.length() >= 5 && end.compareTo("23:59") > 0) {
-    continue; 
+    break; 
 }
                 Epginfo epgbcinfo = new Epginfo(
                         date,
