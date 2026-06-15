@@ -612,6 +612,10 @@ final String finalEpgTagName =
         if (start.length() >= 5 && start.compareTo("23:59") > 0) {
             break;   // ⭐ 关键点：不是 continue，是直接停
         }
+// ✅ end 超过 23:59 也不要
+if (end.length() >= 5 && end.compareTo("23:59") > 0) {
+    continue; 
+}
 
                 Epginfo epgbcinfo = new Epginfo(
                         date,
@@ -754,6 +758,10 @@ final String finalEpgTagName =
         if (start.length() >= 5 && start.compareTo("23:59") > 0) {
             break;   // ⭐ 关键点：不是 continue，是直接停
         }
+// ✅ end 超过 23:59 也不要
+if (end.length() >= 5 && end.compareTo("23:59") > 0) {
+    continue; 
+}
                 Epginfo epgbcinfo = new Epginfo(
                         date,
                         jSONObject.optString("title"),
