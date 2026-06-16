@@ -727,7 +727,7 @@ public class LivePlayActivity extends BaseActivity {
             }
             public void onResponse(String paramString) {
                 ArrayList<Epginfo> arrayList = new ArrayList<>();
-                if (paramString == null || paramString.isEmpty()) {
+                if (paramString == null || paramString.trim().isEmpty()) {
                     arrayList = createDefaultEpgList(date);
                     hsEpg.put(savedEpgKey, arrayList);   //xuameng默认列表存入缓存
                     showEpg(date, arrayList);
@@ -832,7 +832,7 @@ public class LivePlayActivity extends BaseActivity {
             }
             public void onResponse(String paramString) {
                 ArrayList<Epginfo> arrayList = new ArrayList<>();
-                if (paramString == null || paramString.isEmpty()) {
+                if (paramString == null || paramString.trim().isEmpty()) {
                     arrayList = createDefaultEpgList(date);
                     hsEpg.put(savedEpgKey, arrayList);   //xuameng默认列表存入缓存
                     showEpgxu(date, arrayList);
