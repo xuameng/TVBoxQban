@@ -94,28 +94,6 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
 
     @Override
     protected void onFragmentResume() {
-        if (Hawk.get(HawkConfig.HOME_REC_STYLE, false)) {
-            tvHotList1.setVisibility(View.VISIBLE);
-            tvHotList2.setVisibility(View.GONE);
-            tvHotList1.setHasFixedSize(true);
-            int spanCount = 5;
-            if(isFolederMode()){  //xuameng 增加判断如果style 为 list 就显示文件夹样式
-                tvHotList1.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
-            }else{
-                if (style != null && Hawk.get(HawkConfig.HOME_REC, 0) == 1) {
-                    spanCount = ImgUtilHot.spanCountByStyle(style, spanCount);
-                }
-                tvHotList1.setLayoutManager(new V7GridLayoutManager(this.mContext, spanCount));
-            }
-        } else {
-            tvHotList1.setVisibility(View.GONE);
-            tvHotList2.setVisibility(View.VISIBLE);
-            if(isFolederMode()){  //xuameng 增加判断如果style 为 list 就显示文件夹样式
-                tvHotList2.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
-            }
-            //	tvHotList2.setHasFixedSize(true);      //xuameng不想显示单行
-            //    tvHotList2.setLayoutManager(new V7GridLayoutManager(this.mContext, 5));
-        }
         super.onFragmentResume();
         if (Hawk.get(HawkConfig.HOME_REC, 0) == 2) {
             List<VodInfo> allVodRecord = RoomDataManger.getAllVodRecord(100); //xuameng首页历史条数   //xuameng 历史记录返回条数
@@ -199,7 +177,28 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
         if (Hawk.get(HawkConfig.HOME_REC, 0) == 1) {  //xuameng 无论推荐有没有数据
             style = ImgUtilHot.initStyle();
         }
-
+        if (Hawk.get(HawkConfig.HOME_REC_STYLE, false)) {
+            tvHotList1.setVisibility(View.VISIBLE);
+            tvHotList2.setVisibility(View.GONE);
+            tvHotList1.setHasFixedSize(true);
+            int spanCount = 5;
+            if(isFolederMode()){  //xuameng 增加判断如果style 为 list 就显示文件夹样式
+                tvHotList1.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
+            }else{
+                if (style != null && Hawk.get(HawkConfig.HOME_REC, 0) == 1) {
+                    spanCount = ImgUtilHot.spanCountByStyle(style, spanCount);
+                }
+                tvHotList1.setLayoutManager(new V7GridLayoutManager(this.mContext, spanCount));
+            }
+        } else {
+            tvHotList1.setVisibility(View.GONE);
+            tvHotList2.setVisibility(View.VISIBLE);
+            if(isFolederMode()){  //xuameng 增加判断如果style 为 list 就显示文件夹样式
+                tvHotList2.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
+            }
+            //	tvHotList2.setHasFixedSize(true);      //xuameng不想显示单行
+            //    tvHotList2.setLayoutManager(new V7GridLayoutManager(this.mContext, 5));
+        }
         homeHotVodAdapter = new HomeHotVodAdapter(isFolederMode(), style);   //xuameng 增加传入isFolederMode style为list为true
         homeHotVodAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
