@@ -59,9 +59,9 @@ import java.util.Locale;   //xuameng 统计进度用
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.Collections;
-
-
-
+import java.util.Set;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.Executors;
 /**
  * @author xuameng
  * @date :2026/06/01
@@ -984,4 +984,29 @@ private void scheduleSearchTimeout(String sourceKey) {
         }
     }, SEARCH_SITE_TIMEOUT_SECONDS, TimeUnit.SECONDS);
 }
+
+    private boolean isCurrentSearchToken(String searchToken) {
+        return !TextUtils.isEmpty(searchToken) && searchToken.equals(currentSearchToken);
+    }
+
+	    private boolean isSearchPending(String sourceKey, String searchToken) {
+        if (!isCurrentSearchToken(searchToken) || TextUtils.isEmpty(sourceKey)) return false;
+        synchronized (pendingSearchKeys) {
+            return pendingSearchKeys.contains(sourceKey);
+        }
+    }
+
+	    private boolean markSearchFinished(String sourceKey, String searchToken) {
+        if (!isCurrentSearchToken(searchToken)) return false;
+        synchronized (pendingSearchKeys) {
+            if (TextUtils.isEmpty(sourceKey)) {
+                return false;
+            }
+            if (!pendingSearchKeys.remove(sourceKey)) {
+                return false;
+            }
+            allRunCount.set(pendingSearchKeys.size());
+            return true;
+        }
+    }
 }
