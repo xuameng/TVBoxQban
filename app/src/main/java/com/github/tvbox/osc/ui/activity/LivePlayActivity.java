@@ -847,7 +847,6 @@ public class LivePlayActivity extends BaseActivity {
                             if (parsingEpg) return; // 双重保险
                             parsingEpg = true;
                         }
-App.showToastShort(mContext, "2222222222222222222");
                         try {
                             ArrayList<Epginfo> xmlList =
                                     parseXmlEpg(paramString, finalEpgTagName, date);
@@ -867,6 +866,10 @@ App.showToastShort(mContext, "2222222222222222222");
                             parsingEpg = false;
                         }
                     }).start();
+					if (!parsingEpg){
+											App.showToastShort(mContext, "2222222222222222222");
+					}
+
                     return;
                 }
 	            // xuameng JSON EPG
