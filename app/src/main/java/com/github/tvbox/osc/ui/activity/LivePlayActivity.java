@@ -123,13 +123,6 @@ import java.io.StringReader; //xuameng 支持XML EPG用
 import java.util.regex.Matcher; //xuameng 支持XML EPG用
 import java.util.regex.Pattern; //xuameng 支持XML EPG用
 import java.util.concurrent.TimeUnit; //xuameng 支持XML EPG用
-import java.util.zip.GZIPInputStream;
-import java.nio.charset.StandardCharsets;
-import android.text.TextUtils;
-import java.io.ByteArrayInputStream;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-
 
 public class LivePlayActivity extends BaseActivity {
     public static Context context;
@@ -691,160 +684,128 @@ public class LivePlayActivity extends BaseActivity {
 
     private volatile boolean parsingEpg = false;   //xuameng XML EPG不允许并行，容易卡死
 
-public void getEpg(Date date) {
-    if (!isCurrentLiveChannelValidXu()) return;
-
-    String channelName = channel_Name.getChannelName();
-    SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-    timeFormat.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
-
-    String[] epgInfo = EpgUtil.getEpgInfo(channelName);
-    final String finalEpgTagName =
-            (epgInfo != null && !epgInfo[1].isEmpty()) ? epgInfo[1] : channelName;
-
-    if (logoUrl == null || logoUrl.isEmpty()) {
-        updateChannelIcon(channelName, epgInfo == null ? null : epgInfo[0]);
-    } else if ("false".equals(logoUrl)) {
-        updateChannelIcon(channelName, null);
-    } else {
-        updateChannelIcon(channelName, logoUrl.replace("{name}", channelName));
-    }
-
-    epgListAdapter.CanBack(currentLiveChannelItem.getinclude_back());
-
-    String savedEpgKey = channelName + "_" +
-            Objects.requireNonNull(
-                    liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex())
-            ).getDatePresented();
-
-    // ===== 缓存命中 =====
-    if (hsEpg.containsKey(savedEpgKey)) {
-        showEpg(date, hsEpg.get(savedEpgKey));
-        showBottomEpgXU();
-        return;
-    }
-
-    if (parsingEpg) return;
-
-    // ===== 构造请求地址 =====
-    String url;
-    if (epgStringAddress.contains("{name}") && epgStringAddress.contains("{date}")) {
-        url = epgStringAddress
-                .replace("{name}", URLEncoder.encode(finalEpgTagName, StandardCharsets.UTF_8))
-                .replace("{date}", timeFormat.format(date));
-    }else if (epgStringAddress.endsWith(".gz")) {
-        url = epgStringAddress;
-	} else {
-        url = epgStringAddress +
-                "?ch=" + URLEncoder.encode(finalEpgTagName, StandardCharsets.UTF_8) +
-                "&date=" + timeFormat.format(date);
-    }
-
-    // ===== 关键：用 OkGo 拿原始字节（支持 .gz）=====
-    OkGo.<byte[]>get(url)
-            .tag("xuameng")
-            .execute(new AbsCallback<byte[]>() {
-
-                @Override
-                public byte[] convertResponse(okhttp3.Response response) throws Throwable {
-                    if (response.body() == null) return new byte[0];
-                    return response.body().bytes();
+    public void getEpg(Date date) {
+        if(!isCurrentLiveChannelValidXu()) return;    //xuameng 空指针修复
+        String channelName = channel_Name.getChannelName();
+        SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd");
+        timeFormat.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
+        String[] epgInfo = EpgUtil.getEpgInfo(channelName); //解析频道名
+        final String finalEpgTagName = (epgInfo != null && !epgInfo[1].isEmpty()) ? epgInfo[1] : channelName; //xuameng JSON中的频道名
+        if(logoUrl == null || logoUrl.isEmpty()) {
+            updateChannelIcon(channelName, epgInfo == null ? null : epgInfo[0]); //xuameng自带logo
+        } else if(logoUrl.equals("false")) {
+            updateChannelIcon(channelName, null);
+        } else {
+            String logo = logoUrl.replace("{name}", channelName); //xuameng支持logourl
+            updateChannelIcon(channelName, logo);
+        }
+        epgListAdapter.CanBack(currentLiveChannelItem.getinclude_back());
+        //epgListAdapter.updateData(date, new ArrayList<>());
+		String savedEpgKey = channelName + "_" + Objects.requireNonNull(liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex())).getDatePresented();
+        if(hsEpg.containsKey(savedEpgKey)) {   //xuameng如果有缓存EPG
+   //        ArrayList<Epginfo> arrayListJudge = (ArrayList<Epginfo>) hsEpg.get(savedEpgKey);
+   //        String title = arrayListJudge.get(0).title;      //0中EPG第一行的名称
+   //        if (!title.contains("聚汇直播")) {   //xuameng再次判断如果缓存EPG中有聚汇直播字样说明是在线获取EPG失败则继续重试
+              showEpg(date, hsEpg.get(savedEpgKey));   //xuameng如果成功就直接显示缓存EPG   
+              showBottomEpgXU(); //xuameng测试EPG刷新 
+              return;
+   //        }
+        }
+        if (parsingEpg) return; //xuameng XML EPG不允许并行，容易卡死
+        String url;
+        if(epgStringAddress.contains("{name}") && epgStringAddress.contains("{date}")) {
+            url = epgStringAddress.replace("{name}", URLEncoder.encode(finalEpgTagName)).replace("{date}", timeFormat.format(date));
+        } else {
+            url = epgStringAddress + "?ch=" + URLEncoder.encode(finalEpgTagName) + "&date=" + timeFormat.format(date);
+        }
+        UrlHttpUtil.get(url, new CallBackUtil.CallBackString() {
+            public void onFailure(int i, String str) {    //xuameng如果EPG获取失败启动默认列表
+                ArrayList<Epginfo> arrayList = createDefaultEpgList(date);
+                hsEpg.put(savedEpgKey, arrayList);   //xuameng默认列表存入缓存
+                showEpg(date, arrayList);
+                showBottomEpgXU(); //xuameng测试EPG刷新        
+            }
+            public void onResponse(String paramString) {
+                ArrayList<Epginfo> arrayList = new ArrayList<>();
+                if (paramString == null || paramString.trim().isEmpty()) {
+                    arrayList = createDefaultEpgList(date);
+                    hsEpg.put(savedEpgKey, arrayList);   //xuameng默认列表存入缓存
+                    showEpg(date, arrayList);
+                    showBottomEpgXU(); //xuameng测试EPG刷新  
+                    return;
                 }
+                // xuameng XML EPG
+                else if (isXmlEpgResponse(paramString)) {
+                    new Thread(() -> {
 
-                @Override
-                public void onSuccess(Response<byte[]> response) {
-                    byte[] data = response.body();
-                    if (data == null || data.length == 0) {
-						App.showToastShort(mContext, "11111111111111");
-                        fallbackDefaultEpg(date, savedEpgKey);
-                        return;
-                    }
+                        synchronized (this) {
+                            parsingEpg = true;
+                        }
 
-                    String xml;
-                    if (url.endsWith(".gz")) {
-						App.showToastShort(mContext, "22222222");
-                        xml = readGzipBytes(data);
-                    } else {
-                        xml = new String(data, StandardCharsets.UTF_8);
-                    }
-
-                    if (TextUtils.isEmpty(xml)) {
-						App.showToastShort(mContext, "33333333");
-                        fallbackDefaultEpg(date, savedEpgKey);
-                        return;
-                    }
-
-                    // ===== XML EPG =====
-                    if (isXmlEpgResponse(xml)) {
-                        new Thread(() -> {
-                            synchronized (LivePlayActivity.this) {
-                                parsingEpg = true;
-                            }
-                            try {
-                                ArrayList<Epginfo> xmlList =
-                                        parseXmlEpg(xml, finalEpgTagName, date);
-                                runOnUiThread(() -> {
-                                    if (xmlList != null && !xmlList.isEmpty()) {
-                                        hsEpg.put(savedEpgKey, xmlList);
-                                        showEpg(date, xmlList);
-                                        showBottomEpgXU();
-                                    } else {
-                                        fallbackDefaultEpg(date, savedEpgKey);
-                                    }
-                                });
-                            } finally {
-                                parsingEpg = false;
-                            }
-                        }).start();
-                        return;
-                    }
-
-                    // ===== JSON EPG =====
-                    if (xml.contains("epg_data")) {
-                        ArrayList<Epginfo> arrayList = new ArrayList<>();
                         try {
-                            JSONArray epgArray =
-                                    new JSONObject(xml).optJSONArray("epg_data");
-                            if (epgArray != null) {
-                                for (int i = 0; i < epgArray.length(); i++) {
-                                    JSONObject obj = epgArray.getJSONObject(i);
-                                    String start = obj.optString("start", "");
-                                    String end = obj.optString("end", "");
-                                    if (start.length() >= 5 &&
-                                            start.compareTo("23:59") > 0) break;
+                            ArrayList<Epginfo> xmlList =
+                                    parseXmlEpg(paramString, finalEpgTagName, date);
 
-                                    arrayList.add(
-                                            new Epginfo(date,
-                                                    obj.optString("title"),
-                                                    date,
-                                                    start,
-                                                    end,
-                                                    i)
-                                    );
+                            runOnUiThread(() -> {
+                                if (xmlList != null && xmlList.size() > 0) {
+                                    hsEpg.put(savedEpgKey, xmlList);
+                                    showEpg(date, xmlList);
+                                    showBottomEpgXU();
+                                } else {
+                                    ArrayList<Epginfo> defaultList = createDefaultEpgList(date);
+                                    hsEpg.put(savedEpgKey, defaultList);
+                                    showEpg(date, defaultList);
+                                    showBottomEpgXU();
                                 }
-                            }
+                            });
+
                         } catch (Exception e) {
                             e.printStackTrace();
-                        }
-
-                        if (!arrayList.isEmpty()) {
-                            hsEpg.put(savedEpgKey, arrayList);
-                            showEpg(date, arrayList);
+                            ArrayList<Epginfo> defaultList = createDefaultEpgList(date);
+                            hsEpg.put(savedEpgKey, defaultList);
+                            showEpg(date, defaultList);
                             showBottomEpgXU();
-                        } else {
-                            fallbackDefaultEpg(date, savedEpgKey);
+                            parsingEpg = false;
+                        } finally {
+                            parsingEpg = false;
                         }
-                        return;
+                    }).start();
+                    return;
+                }
+	            // xuameng JSON EPG
+                else if (paramString.contains("epg_data")) {
+                    //xuameng 空指针   Log.d("返回的EPG信息", paramString != null ? paramString : "暂无当前节目单，聚汇直播欢迎您的观看！");
+                    try {
+                        final JSONArray jSONArray = new JSONObject(paramString).optJSONArray("epg_data");
+                        if(jSONArray != null){
+                            for (int b = 0; b < jSONArray.length(); b++) {
+                                JSONObject jSONObject = jSONArray.getJSONObject(b);
+                                String start = jSONObject.optString("start", "");
+                                String end = jSONObject.optString("end", "");
+                                if (start.length() >= 5 && start.compareTo("23:59") > 0) {
+                                    break;   // xuameng 关键点：超过时间是直接停
+                                }
+                                Epginfo epgbcinfo = new Epginfo(date, jSONObject.optString("title"), date, start, end, b);
+                                arrayList.add(epgbcinfo);
+                            }
+                        }
+                    } catch (JSONException jSONException) {
+                        jSONException.printStackTrace();
                     }
+	            }
+                if(arrayList != null && arrayList.size() > 0){
+                   hsEpg.put(savedEpgKey, arrayList);  //xuameng默认列表存入缓存
+                   showEpg(date, arrayList);
+                   showBottomEpgXU(); //xuameng测试EPG刷新
+                }else{
+                   arrayList = createDefaultEpgList(date);
+                   hsEpg.put(savedEpgKey, arrayList);   //xuameng默认列表存入缓存
+                   showEpg(date, arrayList);
+                   showBottomEpgXU(); //xuameng测试EPG刷新
                 }
-
-                @Override
-                public void onError(Response<byte[]> response) {
-					App.showToastShort(mContext, "4444444444444");
-                    fallbackDefaultEpg(date, savedEpgKey);
-                }
-            });
-}
+            }
+        });
+    }
     public void getEpgxu(Date date) {
         if(!isCurrentLiveChannelValidXu()) return;    //xuameng 空指针修复
         String channelName = channel_NameXu.getChannelName();    //xuameng频道名称在移动item中选中
@@ -907,6 +868,12 @@ public void getEpg(Date date) {
                                 }
                             });
 
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            ArrayList<Epginfo> defaultList = createDefaultEpgList(date);
+                            hsEpg.put(savedEpgKey, defaultList);
+                            showEpgxu(date, defaultList);
+                            parsingEpg = false;
                         } finally {
                             parsingEpg = false;
                         }
@@ -4466,34 +4433,4 @@ public void getEpg(Date date) {
             liveChannelItemAdapter.setFocusedChannelIndex(-1);  //xuameng修复频道名称移走焦点变色问题
         }
     }
-
-
-/**
- * xuameng
- * 解压 gzip 字节流为字符串（用于 e2.xml.gz 等）
- */
-private String readGzipBytes(byte[] data) {
-    try {
-        GZIPInputStream gis = new GZIPInputStream(new ByteArrayInputStream(data));
-        BufferedReader reader = new BufferedReader(new InputStreamReader(gis, StandardCharsets.UTF_8));
-        StringBuilder sb = new StringBuilder();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            sb.append(line);
-        }
-        reader.close();
-        return sb.toString();
-    } catch (Exception e) {
-        e.printStackTrace();
-        return null;
-    }
-}
-
-private void fallbackDefaultEpg(Date date, String cacheKey) {
-    ArrayList<Epginfo> defaultEpg = createDefaultEpgList(date);
-    hsEpg.put(cacheKey, defaultEpg);
-    showEpg(date, defaultEpg);
-    showBottomEpgXU();
-}
-
 }
