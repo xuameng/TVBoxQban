@@ -637,7 +637,12 @@ private void searchResult() {
         );
         pendingSearchKeys.add(bean.getKey());
         spNames.put(bean.getName(), bean.getKey());
-    }
+
+if (waitingSearchTasks.isEmpty()) {
+  App.showToastShort(FastSearchActivity.this, "聚汇影视提示：请指定搜索源！");
+ return;
+ }
+   }
 
     allRunCount.set(waitingSearchTasks.size());
 
@@ -995,17 +1000,21 @@ private void scheduleSearchTimeout(String sourceKey) {
         }
     }
 
-	    private boolean markSearchFinished(String sourceKey, String searchToken) {
-        if (!isCurrentSearchToken(searchToken)) return false;
-        synchronized (pendingSearchKeys) {
-            if (TextUtils.isEmpty(sourceKey)) {
-                return false;
-            }
-            if (!pendingSearchKeys.remove(sourceKey)) {
-                return false;
-            }
-            allRunCount.set(pendingSearchKeys.size());
-            return true;
-        }
+private boolean markSearchFinished(String sourceKey, String searchToken) {
+    if (!isCurrentSearchToken(searchToken)) return false;
+
+    synchronized (pendingSearchKeys) {
+        if (TextUtils.isEmpty(sourceKey)) return false;
+        if (!pendingSearchKeys.remove(sourceKey)) return false;
+
+        int finished = allRunCount.get() - pendingSearchKeys.size();
+        int total = allRunCount.get();
+
+if (!isActivityDestroyed) {
+    runOnUiThread(() -> updateProgress(finished, total));
+}
+
+        return true;
     }
+}
 }
