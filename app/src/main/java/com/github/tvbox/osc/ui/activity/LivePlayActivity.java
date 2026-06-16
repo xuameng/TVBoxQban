@@ -753,18 +753,21 @@ public void getEpg(Date date) {
                 public void onSuccess(Response<byte[]> response) {
                     byte[] data = response.body();
                     if (data == null || data.length == 0) {
+						App.showToastShort(mContext, "11111111111111");
                         fallbackDefaultEpg(date, savedEpgKey);
                         return;
                     }
 
                     String xml;
                     if (url.endsWith(".gz")) {
+						App.showToastShort(mContext, "22222222");
                         xml = readGzipBytes(data);
                     } else {
                         xml = new String(data, StandardCharsets.UTF_8);
                     }
 
                     if (TextUtils.isEmpty(xml)) {
+						App.showToastShort(mContext, "33333333");
                         fallbackDefaultEpg(date, savedEpgKey);
                         return;
                     }
@@ -831,12 +834,11 @@ public void getEpg(Date date) {
                         }
                         return;
                     }
-
-                    fallbackDefaultEpg(date, savedEpgKey);
                 }
 
                 @Override
                 public void onError(Response<byte[]> response) {
+					App.showToastShort(mContext, "4444444444444");
                     fallbackDefaultEpg(date, savedEpgKey);
                 }
             });
