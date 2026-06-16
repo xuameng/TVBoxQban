@@ -610,7 +610,6 @@ private String currentSearchToken = "";
         searchResult();
     }
 
-    private ExecutorService searchExecutorService = null;   //xuameng全局声明
     private volatile boolean isActivityDestroyed = false; //xuameng 退出就不统计搜索成功了
 
 
