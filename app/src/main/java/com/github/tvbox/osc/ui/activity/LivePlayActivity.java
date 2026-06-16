@@ -732,7 +732,9 @@ public void getEpg(Date date) {
         url = epgStringAddress
                 .replace("{name}", URLEncoder.encode(finalEpgTagName, StandardCharsets.UTF_8))
                 .replace("{date}", timeFormat.format(date));
-    } else {
+    }else if (url.endsWith(".gz")) {
+        url = epgStringAddress;
+	} else {
         url = epgStringAddress +
                 "?ch=" + URLEncoder.encode(finalEpgTagName, StandardCharsets.UTF_8) +
                 "&date=" + timeFormat.format(date);
