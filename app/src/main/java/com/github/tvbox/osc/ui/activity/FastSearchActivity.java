@@ -56,6 +56,9 @@ import java.util.concurrent.TimeUnit;   //xuameng 线程池
 import java.util.concurrent.ThreadFactory;   //xuameng 线程池
 import java.util.concurrent.LinkedBlockingQueue;   //xuameng 线程池
 import java.util.Locale;   //xuameng 统计进度用
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.Collections;
 
 
 
@@ -608,7 +611,6 @@ private String currentSearchToken = "";
     }
 
     private ExecutorService searchExecutorService = null;   //xuameng全局声明
-    private AtomicInteger allRunCount = new AtomicInteger(0);
     private volatile boolean isActivityDestroyed = false; //xuameng 退出就不统计搜索成功了
 
 
