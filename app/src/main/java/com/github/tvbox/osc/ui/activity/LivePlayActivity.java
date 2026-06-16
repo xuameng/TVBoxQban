@@ -686,7 +686,6 @@ public class LivePlayActivity extends BaseActivity {
 
     public void getEpg(Date date) {
         if(!isCurrentLiveChannelValidXu()) return;    //xuameng 空指针修复
-        if (parsingEpg) return;
         String channelName = channel_Name.getChannelName();
         SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd");
         timeFormat.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
@@ -712,6 +711,7 @@ public class LivePlayActivity extends BaseActivity {
               return;
    //        }
         }
+        if (parsingEpg) return; //xuameng XML EPG不允许并行，容易卡死
         String url;
         if(epgStringAddress.contains("{name}") && epgStringAddress.contains("{date}")) {
             url = epgStringAddress.replace("{name}", URLEncoder.encode(finalEpgTagName)).replace("{date}", timeFormat.format(date));
@@ -801,7 +801,6 @@ public class LivePlayActivity extends BaseActivity {
     }
     public void getEpgxu(Date date) {
         if(!isCurrentLiveChannelValidXu()) return;    //xuameng 空指针修复
-        if (parsingEpg) return;
         String channelName = channel_NameXu.getChannelName();    //xuameng频道名称在移动item中选中
         SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd");
         timeFormat.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
@@ -818,6 +817,7 @@ public class LivePlayActivity extends BaseActivity {
               return;
       //     }
         }
+        if (parsingEpg) return; //xuameng XML EPG不允许并行，容易卡死
         String url;
         if(epgStringAddress.contains("{name}") && epgStringAddress.contains("{date}")) {
             url = epgStringAddress.replace("{name}", URLEncoder.encode(finalEpgTagName)).replace("{date}", timeFormat.format(date));
