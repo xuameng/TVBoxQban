@@ -734,6 +734,8 @@ public class LivePlayActivity extends BaseActivity {
                 }
                 // xuameng XML EPG
                 else if (isXmlEpgResponse(paramString)) {
+                            ArrayList<Epginfo> xmlList =
+                                    parseXmlEpg(paramString, finalEpgTagName, date);
                                 if (xmlList != null && xmlList.size() > 0) {
                                     hsEpg.put(savedEpgKey, xmlList);
                                     showEpg(date, xmlList);
@@ -820,6 +822,8 @@ public class LivePlayActivity extends BaseActivity {
                 }
                 // xuameng XML EPG
                 else if (isXmlEpgResponse(paramString)) {
+                            ArrayList<Epginfo> xmlList =
+                                    parseXmlEpg(paramString, finalEpgTagName, date);
                                 if (xmlList != null && xmlList.size() > 0) {
                                     hsEpg.put(savedEpgKey, xmlList);
                                     showEpgxu(date, xmlList);
