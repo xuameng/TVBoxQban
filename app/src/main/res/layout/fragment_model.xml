@@ -138,7 +138,7 @@
             android:layout_width="@dimen/vs_0"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:ellipsize="middle"
+            android:ellipsize="end"
             android:gravity="right"
             android:singleLine="true"
             android:textColor="@android:color/white"
