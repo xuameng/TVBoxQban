@@ -78,7 +78,7 @@ public class ApiHistoryDialogAdapter extends ListAdapter<String, ApiHistoryDialo
         String value = data.get(position);
         String name = value;
         if (HistoryHelper.wasApiLineSource(value))   //xuameng 多仓 永久标记  
-            name = "[仓] " + name;
+            name = "[多仓] " + name;
         if (select.equals(value))
             name = "√ " + name;
         ((TextView) holder.itemView.findViewById(R.id.tvName)).setText(name);
