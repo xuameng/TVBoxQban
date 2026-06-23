@@ -2,6 +2,7 @@ package com.github.tvbox.osc.util;
 
 import java.util.ArrayList;
 import com.orhanobut.hawk.Hawk;
+import java.util.HashSet;
 
 public class HistoryHelper {
     private static Integer[] hisNumArray = {30,50,70,100};
@@ -96,7 +97,7 @@ public class HistoryHelper {
 
     /** xuameng标记某条 URL 曾经是多仓源 */
     public static void markAsApiLineSource(String url) {
-        if (url == null) return;
+        if (url == null || url.trim().isEmpty()) return;
         HashSet<String> set = Hawk.get(HawkConfig.API_LINE_TAG_SET, new HashSet<String>());
         set.add(url.trim());
         Hawk.put(HawkConfig.API_LINE_TAG_SET, set);
@@ -104,7 +105,7 @@ public class HistoryHelper {
 
     /** xuameng判断是否曾经是多仓源（永久有效） */
     public static boolean wasApiLineSource(String url) {
-        if (url == null) return false;
+        if (url == null || url.trim().isEmpty()) return false;
         HashSet<String> set = Hawk.get(HawkConfig.API_LINE_TAG_SET, new HashSet<String>());
         return set.contains(url.trim());
     }
