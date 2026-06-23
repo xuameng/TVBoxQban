@@ -30,7 +30,7 @@
                 android:focusable="true"
                 android:visibility="gone"
                 android:layout_width="fill_parent"
-                android:layout_height="@dimen/vs_50"
+                android:layout_height="@dimen/vs_60"
                 android:layout_marginBottom="@dimen/vs_10">
                 <TextView
                     android:textSize="@dimen/ts_24"
@@ -74,7 +74,7 @@
                     android:focusable="true"
                     android:layout_marginRight="@dimen/vs_5"
                     android:layout_width="@dimen/vs_0"
-                    android:layout_height="@dimen/vs_60"
+                    android:layout_height="fill_parent"
                     android:layout_marginBottom="@dimen/vs_10">
                     <TextView
                         android:textSize="@dimen/ts_24"
@@ -1224,7 +1224,7 @@
                     android:orientation="horizontal"
                     android:focusable="false"
                     android:layout_width="@dimen/vs_0"
-                    android:layout_height="@dimen/vs_60"
+                    android:layout_height="fill_parent"
                     android:layout_marginLeft="@dimen/vs_5"
                     android:layout_marginBottom="@dimen/vs_10"
                     android:layout_weight="1.0">
