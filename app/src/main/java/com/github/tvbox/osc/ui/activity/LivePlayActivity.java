@@ -751,16 +751,18 @@ public class LivePlayActivity extends BaseActivity {
                                     hsEpg.put(savedEpgKey, xmlList);
                                   //  showEpg(date, xmlList);
                                     showBottomEpgXU();
+									parsingEpg = false;
                                 } else {
                                     ArrayList<Epginfo> defaultList = createDefaultEpgList(date);
                                     hsEpg.put(savedEpgKey, defaultList);
                                   //  showEpg(date, defaultList);
                                     showBottomEpgXU();
+									parsingEpg = false;
                                 }
                             });
 
                         } finally {
-                            parsingEpg = false;
+                       
                         }
                     }).start();
                     return;
@@ -854,15 +856,17 @@ public class LivePlayActivity extends BaseActivity {
                                 if (xmlList != null && xmlList.size() > 0) {
                                     hsEpg.put(savedEpgKey, xmlList);
                                     showEpgxu(date, xmlList);
+									parsingEpg = false;
                                 } else {
                                     ArrayList<Epginfo> defaultList = createDefaultEpgList(date);
                                     hsEpg.put(savedEpgKey, defaultList);
                                     showEpgxu(date, defaultList);
+									parsingEpg = false;
                                 }
                             });
 
                         } finally {
-                            parsingEpg = false;
+                            
                         }
                     }).start();
                     return;
