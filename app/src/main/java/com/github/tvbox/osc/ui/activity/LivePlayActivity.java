@@ -738,7 +738,8 @@ public class LivePlayActivity extends BaseActivity {
                 ArrayList<Epginfo> arrayList = createDefaultEpgList(date);
                 hsEpg.put(savedEpgKey, arrayList);   //xuameng默认列表存入缓存
                 showEpg(date, arrayList);
-                showBottomEpgXU(); //xuameng测试EPG刷新        
+                showBottomEpgXU(); //xuameng测试EPG刷新   
+                parsingEpg = false;
             }
             public void onResponse(String paramString) {
                 ArrayList<Epginfo> arrayList = new ArrayList<>();
@@ -747,6 +748,7 @@ public class LivePlayActivity extends BaseActivity {
                     hsEpg.put(savedEpgKey, arrayList);   //xuameng默认列表存入缓存
                     showEpg(date, arrayList);
                     showBottomEpgXU(); //xuameng测试EPG刷新  
+                    parsingEpg = false;
                     return;
                 }
                 // xuameng XML EPG
@@ -854,6 +856,7 @@ public class LivePlayActivity extends BaseActivity {
                 ArrayList<Epginfo> arrayList = createDefaultEpgList(date);
                 hsEpg.put(savedEpgKey, arrayList);  //xuameng默认列表存入缓存
                 showEpgxu(date, arrayList);   //xuameng先保存EPG再显示EPG
+				parsingEpg = false;
             }
             public void onResponse(String paramString) {
                 ArrayList<Epginfo> arrayList = new ArrayList<>();
@@ -861,6 +864,7 @@ public class LivePlayActivity extends BaseActivity {
                     arrayList = createDefaultEpgList(date);
                     hsEpg.put(savedEpgKey, arrayList);   //xuameng默认列表存入缓存
                     showEpgxu(date, arrayList);
+                    parsingEpg = false;
                     return;
                 }
                 // xuameng XML EPG
@@ -941,7 +945,7 @@ public class LivePlayActivity extends BaseActivity {
         if(channel_Name.getChannelName() != null) {
             ((TextView) findViewById(R.id.tv_channel_bar_name)).setText(channel_Name.getChannelName());
             ((TextView) findViewById(R.id.tv_channel_bottom_number)).setText("" + channel_Name.getChannelNum());
-            ((TextView) findViewById(R.id.tv_current_program_time)).setText("暂无当前节目单，聚汇直播欢迎您的观看！");
+            ((TextView) findViewById(R.id.tv_current_program_time)).setText("暂无当前时段节目单，聚汇直播欢迎您的观看！");
             ((TextView) findViewById(R.id.tv_current_program_name)).setText("");
             ((TextView) findViewById(R.id.tv_next_program_time)).setText("许大师开发制作，请勿商用以及播放违法内容！");
             ((TextView) findViewById(R.id.tv_next_program_name)).setText("");
@@ -1006,7 +1010,7 @@ public class LivePlayActivity extends BaseActivity {
         if(channel_Name.getChannelName() != null) {
             ((TextView) findViewById(R.id.tv_channel_bar_name)).setText(channel_Name.getChannelName());
             ((TextView) findViewById(R.id.tv_channel_bottom_number)).setText("" + channel_Name.getChannelNum());
-            ((TextView) findViewById(R.id.tv_current_program_time)).setText("暂无当前节目单，聚汇直播欢迎您的观看！");
+            ((TextView) findViewById(R.id.tv_current_program_time)).setText("暂无当前时段节目单，聚汇直播欢迎您的观看！");
             ((TextView) findViewById(R.id.tv_current_program_name)).setText("");
             ((TextView) findViewById(R.id.tv_next_program_time)).setText("许大师开发制作，请勿商用以及播放违法内容！");
             ((TextView) findViewById(R.id.tv_next_program_name)).setText("");
