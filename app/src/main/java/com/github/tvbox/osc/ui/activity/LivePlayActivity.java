@@ -599,18 +599,6 @@ public class LivePlayActivity extends BaseActivity {
         return epgInfo;
     }
 
-    private boolean isXmlEpgAddress(String address) {
-        if (address == null) {
-            return false;
-        }
-        String lowerAddress = address.toLowerCase(Locale.ROOT);
-        int queryIndex = lowerAddress.indexOf("?");
-        if (queryIndex >= 0) {
-            lowerAddress = lowerAddress.substring(0, queryIndex);
-        }
-        return lowerAddress.endsWith(".xml");
-    }
-
     /**
      * xuameng
      * 生成“暂无节目信息”的兜底 EPG（全天 24 小时，每 2 小时一段）
@@ -637,6 +625,18 @@ public class LivePlayActivity extends BaseActivity {
             ));
         }
         return list;
+    }
+
+    private boolean isXmlEpgAddress(String address) {  //xuameng XML EPG
+        if (address == null) {
+            return false;
+        }
+        String lowerAddress = address.toLowerCase(Locale.ROOT);
+        int queryIndex = lowerAddress.indexOf("?");
+        if (queryIndex >= 0) {
+            lowerAddress = lowerAddress.substring(0, queryIndex);
+        }
+        return lowerAddress.endsWith(".xml");
     }
 
     //获取EPG并存储 // 百川epg  DIYP epg   51zmt epg ------- 自建EPG格式输出格式请参考 51zmt
@@ -718,24 +718,26 @@ public class LivePlayActivity extends BaseActivity {
    //        ArrayList<Epginfo> arrayListJudge = (ArrayList<Epginfo>) hsEpg.get(savedEpgKey);
    //        String title = arrayListJudge.get(0).title;      //0中EPG第一行的名称
    //        if (!title.contains("聚汇直播")) {   //xuameng再次判断如果缓存EPG中有聚汇直播字样说明是在线获取EPG失败则继续重试
+              showEpg(date, hsEpg.get(savedEpgKey));   //xuameng如果成功就直接显示缓存EPG   
               showBottomEpgXU(); //xuameng测试EPG刷新 
               return;
    //        }
         }
         if (parsingEpg) return; //xuameng XML EPG不允许并行，容易卡死
+        if(isXmlEpgAddress(epgStringAddress)){
+            parsingEpg = true;
+        }
         String url;
         if(epgStringAddress.contains("{name}") && epgStringAddress.contains("{date}")) {
             url = epgStringAddress.replace("{name}", URLEncoder.encode(finalEpgTagName)).replace("{date}", timeFormat.format(date));
         } else {
-            if(isXmlEpgAddress(epgStringAddress)){
-                parsingEpg = true;
-            }
             url = epgStringAddress + "?ch=" + URLEncoder.encode(finalEpgTagName) + "&date=" + timeFormat.format(date);
         }
         UrlHttpUtil.get(url, new CallBackUtil.CallBackString() {
             public void onFailure(int i, String str) {    //xuameng如果EPG获取失败启动默认列表
                 ArrayList<Epginfo> arrayList = createDefaultEpgList(date);
                 hsEpg.put(savedEpgKey, arrayList);   //xuameng默认列表存入缓存
+                showEpg(date, arrayList);
                 showBottomEpgXU(); //xuameng测试EPG刷新        
             }
             public void onResponse(String paramString) {
@@ -743,6 +745,7 @@ public class LivePlayActivity extends BaseActivity {
                 if (paramString == null || paramString.trim().isEmpty()) {
                     arrayList = createDefaultEpgList(date);
                     hsEpg.put(savedEpgKey, arrayList);   //xuameng默认列表存入缓存
+                    showEpg(date, arrayList);
                     showBottomEpgXU(); //xuameng测试EPG刷新  
                     return;
                 }
@@ -761,10 +764,12 @@ public class LivePlayActivity extends BaseActivity {
                             runOnUiThread(() -> {
                                 if (xmlList != null && xmlList.size() > 0) {
                                     hsEpg.put(savedEpgKey, xmlList);
+                                    showEpg(date, xmlList);
                                     showBottomEpgXU();
                                 } else {
                                     ArrayList<Epginfo> defaultList = createDefaultEpgList(date);
                                     hsEpg.put(savedEpgKey, defaultList);
+                                    showEpg(date, defaultList);
                                     showBottomEpgXU();
                                 }
                             });
@@ -773,6 +778,7 @@ public class LivePlayActivity extends BaseActivity {
                             e.printStackTrace();
                             ArrayList<Epginfo> defaultList = createDefaultEpgList(date);
                             hsEpg.put(savedEpgKey, defaultList);
+                            showEpg(date, defaultList);
                             showBottomEpgXU();
                             parsingEpg = false;
                         } finally {
@@ -804,10 +810,12 @@ public class LivePlayActivity extends BaseActivity {
 	            }
                 if(arrayList != null && arrayList.size() > 0){
                    hsEpg.put(savedEpgKey, arrayList);  //xuameng默认列表存入缓存
+                   showEpg(date, arrayList);
                    showBottomEpgXU(); //xuameng测试EPG刷新
                 }else{
                    arrayList = createDefaultEpgList(date);
                    hsEpg.put(savedEpgKey, arrayList);   //xuameng默认列表存入缓存
+                   showEpg(date, arrayList);
                    showBottomEpgXU(); //xuameng测试EPG刷新
                 }
             }
@@ -832,13 +840,13 @@ public class LivePlayActivity extends BaseActivity {
       //     }
         }
         if (parsingEpg) return; //xuameng XML EPG不允许并行，容易卡死
+        if(isXmlEpgAddress(epgStringAddress)){
+            parsingEpg = true;
+        }
         String url;
         if(epgStringAddress.contains("{name}") && epgStringAddress.contains("{date}")) {
             url = epgStringAddress.replace("{name}", URLEncoder.encode(finalEpgTagName)).replace("{date}", timeFormat.format(date));
         } else {
-            if(isXmlEpgAddress(epgStringAddress)){
-                parsingEpg = true;
-            }
             url = epgStringAddress + "?ch=" + URLEncoder.encode(finalEpgTagName) + "&date=" + timeFormat.format(date);
         }
         UrlHttpUtil.get(url, new CallBackUtil.CallBackString() {
