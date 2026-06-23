@@ -403,7 +403,6 @@ public class ApiConfig {
                                     callback.error("JAR数据为空");
                                     return null;
                                 }
-                                }
                                 fos.write(imgJar);
                             } else {
                                 // 使用流式传输避免内存溢出
