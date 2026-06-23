@@ -1,5 +1,8 @@
 package com.github.tvbox.osc.util;
 
+import java.util.ArrayList;
+import com.orhanobut.hawk.Hawk;
+
 public class HistoryHelper {
     private static Integer[] hisNumArray = {30,50,70,100};
     private static final String API_LINE_SPLIT = "\t";
@@ -67,5 +70,16 @@ public class HistoryHelper {
     public static void clearApiLineList() {
         Hawk.put(HawkConfig.API_LINE_LIST, new ArrayList<String>());
         Hawk.put(HawkConfig.API_LINE_SOURCE, "");
+    }
+
+    public static void setApiHistory(String value){
+        ArrayList<String> history = Hawk.get(HawkConfig.API_HISTORY, new ArrayList<String>());
+        if (!history.contains(value)) {
+            history.add(0, value);
+        }
+        if (history.size() > 30) {
+            history.remove(30);
+        }
+        Hawk.put(HawkConfig.API_HISTORY, history);
     }
 }
