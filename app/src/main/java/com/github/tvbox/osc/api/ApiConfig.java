@@ -448,7 +448,7 @@ public class ApiConfig {
         return sb.toString();
     }
 
-    private boolean switchApiCollectionIfNeeded(String apiUrl, String jsonStr) {
+    private boolean switchApiCollectionIfNeeded(String apiUrl, String jsonStr) {  //xuameng 多仓
         ArrayList<String> apiLines = parseApiCollection(jsonStr);
         if (apiLines.isEmpty()) {
             return false;
@@ -461,6 +461,7 @@ public class ApiConfig {
         Hawk.put(HawkConfig.API_LINE_SOURCE, apiUrl);
         Hawk.put(HawkConfig.API_URL, firstApi);
         HistoryHelper.setApiHistory(apiUrl);
+        HistoryHelper.markAsApiLineSource(apiUrl);   //xuameng 多仓 永久标记  
         String liveApiUrl = Hawk.get(HawkConfig.LIVE_API_URL, "");
         if (TextUtils.isEmpty(liveApiUrl) || liveApiUrl.equals(apiUrl)) {
             Hawk.put(HawkConfig.LIVE_API_URL, firstApi);
@@ -469,7 +470,7 @@ public class ApiConfig {
         return true;
     }
 
-    private ArrayList<String> parseApiCollection(String jsonStr) {
+    private ArrayList<String> parseApiCollection(String jsonStr) {  //xuameng 多仓
         ArrayList<String> apiLines = new ArrayList<>();
         try {
             String json = trimJsonObject(jsonStr);
@@ -503,7 +504,7 @@ public class ApiConfig {
         return apiLines;
     }
 
-    private String trimJsonObject(String content) {
+    private String trimJsonObject(String content) { //xuameng 多仓
         if (content == null) {
             return "";
         }
@@ -516,7 +517,7 @@ public class ApiConfig {
         return trimContent;
     }
 
-    private void clearApiLinesIfUnmatched(String apiUrl) {
+    private void clearApiLinesIfUnmatched(String apiUrl) {  //xuameng 多仓
         ArrayList<String> apiLines = Hawk.get(HawkConfig.API_LINE_LIST, new ArrayList<String>());
         if (apiLines.isEmpty()) {
             return;
