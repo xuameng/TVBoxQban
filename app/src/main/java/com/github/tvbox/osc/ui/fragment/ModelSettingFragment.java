@@ -95,7 +95,6 @@ public class ModelSettingFragment extends BaseLazyFragment {
     private SelectDialog<SourceBean> mSiteSwitchDialog;  //xuameng点播源切换
     private TextView tvApiLine;
     private View llApi;
-    private View llApiHistory;
     private View llApiLine;
 
 
@@ -146,7 +145,6 @@ public class ModelSettingFragment extends BaseLazyFragment {
         tvSearchView = findViewById(R.id.tvSearchView);
         tvIjkCachePlay = findViewById(R.id.tvIjkCachePlay);
         llApi = findViewById(R.id.llApi);
-        llApiHistory = findViewById(R.id.llApiHistory);
         llApiLine = findViewById(R.id.llApiLine);
         tvApiLine = findViewById(R.id.tvApiLine);
         tvMediaCodec.setText(Hawk.get(HawkConfig.IJK_CODEC, ""));
@@ -404,7 +402,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
             public void onClick(View v) {
                 ArrayList<String> apiLines = Hawk.get(HawkConfig.API_LINE_LIST, new ArrayList<String>());
                 if (apiLines.isEmpty()) {
-                    Toast.makeText(mContext, "线路列表为空", Toast.LENGTH_SHORT).show();
+                    App.showToastShort(getContext(), "线路列表为空！");
                     return;
                 }
                 String current = Hawk.get(HawkConfig.API_URL, "");
@@ -431,9 +429,6 @@ public class ModelSettingFragment extends BaseLazyFragment {
                         tvApi.setText(newApi);
                         refreshApiLineText();
                         dialog.dismiss();
-                        if (!oldApi.equals(newApi)) {
-                            restartAppAfterConfigChanged();
-                        }
                     }
 
                     @Override
@@ -949,12 +944,5 @@ public class ModelSettingFragment extends BaseLazyFragment {
         LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) llApi.getLayoutParams();
         params.weight = showLine ? 1.0f : 3.08f;
         llApi.setLayoutParams(params);
-        if (llApiHistory != null) {
-            LinearLayout.LayoutParams historyParams = (LinearLayout.LayoutParams) llApiHistory.getLayoutParams();
-            int margin = showLine ? getResources().getDimensionPixelSize(R.dimen.vs_5) : 0;
-            historyParams.rightMargin = margin;
-            historyParams.setMarginEnd(margin);
-            llApiHistory.setLayoutParams(historyParams);
-        }
     }
 }
