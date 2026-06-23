@@ -3,6 +3,7 @@ package com.github.tvbox.osc.viewmodel;
 import android.text.TextUtils;
 
 import android.util.Base64;
+import android.util.Log;
 import android.os.Handler;
 import android.os.Looper;
 
