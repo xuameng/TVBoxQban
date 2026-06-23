@@ -425,6 +425,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
                         }
                         Hawk.put(HawkConfig.API_URL, newApi);
                         Hawk.put(HawkConfig.LIVE_API_URL, newApi);
+                        HistoryHelper.setApiHistory(newApi);
                         HistoryHelper.setLiveApiHistory(newApi);
                         tvApi.setText(newApi);
                         refreshApiLineText();
@@ -925,8 +926,10 @@ public class ModelSettingFragment extends BaseLazyFragment {
         boolean showLine = HistoryHelper.isApiLineUrl(current);
         if (llApiLine != null) {
             llApiLine.setVisibility(showLine ? View.VISIBLE : View.GONE);
+            int maxEms = showLine ? 11 : 22;
+            tvApi.setMaxEms(maxEms);
+            tvApiLine.setMaxEms(maxEms);
         }
-        updateApiRowWeight(showLine);
         String lineName = "";
         if (showLine) {
             for (String apiLine : apiLines) {
@@ -939,10 +942,4 @@ public class ModelSettingFragment extends BaseLazyFragment {
         tvApiLine.setText(lineName);
     }
 
-    private void updateApiRowWeight(boolean showLine) {  //xuameng 多仓
-        if (llApi == null) return;
-        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) llApi.getLayoutParams();
-        params.weight = showLine ? 1.0f : 3.08f;
-        llApi.setLayoutParams(params);
-    }
 }
