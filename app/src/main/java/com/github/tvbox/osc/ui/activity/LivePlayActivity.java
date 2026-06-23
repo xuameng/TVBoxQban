@@ -682,7 +682,6 @@ public class LivePlayActivity extends BaseActivity {
         } 
     }
 
-    private volatile boolean parsingEpg = false;   //xuameng XML EPG不允许并行，容易卡死
 
     public void getEpg(Date date) {
         if(!isCurrentLiveChannelValidXu()) return;    //xuameng 空指针修复
@@ -706,12 +705,11 @@ public class LivePlayActivity extends BaseActivity {
    //        ArrayList<Epginfo> arrayListJudge = (ArrayList<Epginfo>) hsEpg.get(savedEpgKey);
    //        String title = arrayListJudge.get(0).title;      //0中EPG第一行的名称
    //        if (!title.contains("聚汇直播")) {   //xuameng再次判断如果缓存EPG中有聚汇直播字样说明是在线获取EPG失败则继续重试
-            //  showEpg(date, hsEpg.get(savedEpgKey));   //xuameng如果成功就直接显示缓存EPG   
+              showEpg(date, hsEpg.get(savedEpgKey));   //xuameng如果成功就直接显示缓存EPG   
               showBottomEpgXU(); //xuameng测试EPG刷新 
               return;
    //        }
         }
-        if (parsingEpg) return; //xuameng XML EPG不允许并行，容易卡死
         String url;
         if(epgStringAddress.contains("{name}") && epgStringAddress.contains("{date}")) {
             url = epgStringAddress.replace("{name}", URLEncoder.encode(finalEpgTagName)).replace("{date}", timeFormat.format(date));
@@ -722,7 +720,7 @@ public class LivePlayActivity extends BaseActivity {
             public void onFailure(int i, String str) {    //xuameng如果EPG获取失败启动默认列表
                 ArrayList<Epginfo> arrayList = createDefaultEpgList(date);
                 hsEpg.put(savedEpgKey, arrayList);   //xuameng默认列表存入缓存
-              //  showEpg(date, arrayList);
+                showEpg(date, arrayList);
                 showBottomEpgXU(); //xuameng测试EPG刷新        
             }
             public void onResponse(String paramString) {
@@ -730,41 +728,22 @@ public class LivePlayActivity extends BaseActivity {
                 if (paramString == null || paramString.trim().isEmpty()) {
                     arrayList = createDefaultEpgList(date);
                     hsEpg.put(savedEpgKey, arrayList);   //xuameng默认列表存入缓存
-                   // showEpg(date, arrayList);
+                    showEpg(date, arrayList);
                     showBottomEpgXU(); //xuameng测试EPG刷新  
                     return;
                 }
                 // xuameng XML EPG
                 else if (isXmlEpgResponse(paramString)) {
-                    new Thread(() -> {
-
-                        synchronized (this) {
-                            parsingEpg = true;
-                        }
-
-                        try {
-                            ArrayList<Epginfo> xmlList =
-                                    parseXmlEpg(paramString, finalEpgTagName, date);
-
-                            runOnUiThread(() -> {
                                 if (xmlList != null && xmlList.size() > 0) {
                                     hsEpg.put(savedEpgKey, xmlList);
-                                  //  showEpg(date, xmlList);
+                                    showEpg(date, xmlList);
                                     showBottomEpgXU();
-									parsingEpg = false;
                                 } else {
                                     ArrayList<Epginfo> defaultList = createDefaultEpgList(date);
                                     hsEpg.put(savedEpgKey, defaultList);
-                                  //  showEpg(date, defaultList);
+                                    showEpg(date, defaultList);
                                     showBottomEpgXU();
-									parsingEpg = false;
                                 }
-                            });
-
-                        } finally {
-                       
-                        }
-                    }).start();
                     return;
                 }
 	            // xuameng JSON EPG
@@ -790,12 +769,12 @@ public class LivePlayActivity extends BaseActivity {
 	            }
                 if(arrayList != null && arrayList.size() > 0){
                    hsEpg.put(savedEpgKey, arrayList);  //xuameng默认列表存入缓存
-                  // showEpg(date, arrayList);
+                   showEpg(date, arrayList);
                    showBottomEpgXU(); //xuameng测试EPG刷新
                 }else{
                    arrayList = createDefaultEpgList(date);
                    hsEpg.put(savedEpgKey, arrayList);   //xuameng默认列表存入缓存
-                 //  showEpg(date, arrayList);
+                   showEpg(date, arrayList);
                    showBottomEpgXU(); //xuameng测试EPG刷新
                 }
             }
@@ -819,7 +798,6 @@ public class LivePlayActivity extends BaseActivity {
               return;
       //     }
         }
-        if (parsingEpg) return; //xuameng XML EPG不允许并行，容易卡死
         String url;
         if(epgStringAddress.contains("{name}") && epgStringAddress.contains("{date}")) {
             url = epgStringAddress.replace("{name}", URLEncoder.encode(finalEpgTagName)).replace("{date}", timeFormat.format(date));
@@ -842,33 +820,14 @@ public class LivePlayActivity extends BaseActivity {
                 }
                 // xuameng XML EPG
                 else if (isXmlEpgResponse(paramString)) {
-                    new Thread(() -> {
-
-                        synchronized (this) {
-                            parsingEpg = true;
-                        }
-
-                        try {
-                            ArrayList<Epginfo> xmlList =
-                                    parseXmlEpg(paramString, finalEpgTagName, date);
-
-                            runOnUiThread(() -> {
                                 if (xmlList != null && xmlList.size() > 0) {
                                     hsEpg.put(savedEpgKey, xmlList);
                                     showEpgxu(date, xmlList);
-									parsingEpg = false;
                                 } else {
                                     ArrayList<Epginfo> defaultList = createDefaultEpgList(date);
                                     hsEpg.put(savedEpgKey, defaultList);
                                     showEpgxu(date, defaultList);
-									parsingEpg = false;
                                 }
-                            });
-
-                        } finally {
-                            
-                        }
-                    }).start();
                     return;
                 }
 	            // xuameng JSON EPG
