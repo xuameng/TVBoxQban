@@ -77,7 +77,7 @@ public class ApiHistoryDialogAdapter extends ListAdapter<String, ApiHistoryDialo
     public void onBindViewHolder(@NonNull @NotNull ApiHistoryDialogAdapter.SelectViewHolder holder, int position) {
         String value = data.get(position);
         String name = value;
-        if (HistoryHelper.isApiLineSource(value))
+        if (HistoryHelper.wasApiLineSource(value))   //xuameng 多仓 永久标记  
             name = "[仓] " + name;
         if (select.equals(value))
             name = "√ " + name;
