@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
@@ -92,6 +93,10 @@ public class ModelSettingFragment extends BaseLazyFragment {
     private TextView tvRecStyleText;
     private TextView tvIjkCachePlay;
     private SelectDialog<SourceBean> mSiteSwitchDialog;  //xuameng点播源切换
+    private TextView tvApiLine;
+    private View llApi;
+    private View llApiHistory;
+    private View llApiLine;
 
 
     public static ModelSettingFragment newInstance() {
@@ -140,11 +145,15 @@ public class ModelSettingFragment extends BaseLazyFragment {
         tvHistoryNum = findViewById(R.id.tvHistoryNum);
         tvSearchView = findViewById(R.id.tvSearchView);
         tvIjkCachePlay = findViewById(R.id.tvIjkCachePlay);
+        llApi = findViewById(R.id.llApi);
+        llApiHistory = findViewById(R.id.llApiHistory);
+        llApiLine = findViewById(R.id.llApiLine);
+        tvApiLine = findViewById(R.id.tvApiLine);
         tvMediaCodec.setText(Hawk.get(HawkConfig.IJK_CODEC, ""));
         tvDebugOpen.setText(Hawk.get(HawkConfig.DEBUG_OPEN, false) ? "已打开" : "已关闭");
         tvParseWebView.setText(Hawk.get(HawkConfig.PARSE_WEBVIEW, true) ? "系统自带" : "XWalkView");
         tvApi.setText(Hawk.get(HawkConfig.API_URL, ""));
-
+        refreshApiLineText();
         tvDns.setText(OkGoHelper.dnsHttpsList.get(Hawk.get(HawkConfig.DOH_URL, 0)));
         tvHomeRec.setText(getHomeRecName(Hawk.get(HawkConfig.HOME_REC, 0)));
         tvHistoryNum.setText(HistoryHelper.getHistoryNumName(Hawk.get(HawkConfig.HISTORY_NUM, 0)));
@@ -372,7 +381,11 @@ public class ModelSettingFragment extends BaseLazyFragment {
                     @Override
                     public void onchange(String api) {
                         Hawk.put(HawkConfig.API_URL, api);
+                        if (!HistoryHelper.isApiLineHistory(api)) {
+                            HistoryHelper.clearApiLineList();
+                        }
                         tvApi.setText(api);
+                        refreshApiLineText();
                     }
                 });
                 dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
@@ -386,7 +399,51 @@ public class ModelSettingFragment extends BaseLazyFragment {
             }
         });
 
+        findViewById(R.id.llApiLine).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ArrayList<String> apiLines = Hawk.get(HawkConfig.API_LINE_LIST, new ArrayList<String>());
+                if (apiLines.isEmpty()) {
+                    Toast.makeText(mContext, "线路列表为空", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                String current = Hawk.get(HawkConfig.API_URL, "");
+                int idx = 0;
+                for (int i = 0; i < apiLines.size(); i++) {
+                    if (current.equals(HistoryHelper.getApiLineUrl(apiLines.get(i)))) {
+                        idx = i;
+                        break;
+                    }
+                }
+                SelectDialog<String> dialog = new SelectDialog<>(mActivity);
+                dialog.setTip("线路选择");
+                dialog.setAdapter(new SelectDialogAdapter.SelectDialogInterface<String>() {
+                    @Override
+                    public void click(String value, int pos) {
+                        String newApi = HistoryHelper.getApiLineUrl(value);
+                        String oldApi = Hawk.get(HawkConfig.API_URL, "");
+                        if (newApi.isEmpty()) {
+                            return;
+                        }
+                        Hawk.put(HawkConfig.API_URL, newApi);
+                        Hawk.put(HawkConfig.LIVE_API_URL, newApi);
+                        HistoryHelper.setLiveApiHistory(newApi);
+                        tvApi.setText(newApi);
+                        refreshApiLineText();
+                        dialog.dismiss();
+                        if (!oldApi.equals(newApi)) {
+                            restartAppAfterConfigChanged();
+                        }
+                    }
 
+                    @Override
+                    public String getDisplay(String val) {
+                        return HistoryHelper.getApiLineName(val);
+                    }
+                }, SelectDialogAdapter.stringDiff, apiLines, idx);
+                dialog.show();
+            }
+        });
 
         findViewById(R.id.llMediaCodec).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -863,6 +920,41 @@ public class ModelSettingFragment extends BaseLazyFragment {
             return "文字列表";
         } else {
             return "缩略图";
+        }
+    }
+
+    private void refreshApiLineText() {  //xuameng 多仓
+        if (tvApiLine == null) return;
+        ArrayList<String> apiLines = Hawk.get(HawkConfig.API_LINE_LIST, new ArrayList<String>());
+        String current = Hawk.get(HawkConfig.API_URL, "");
+        boolean showLine = HistoryHelper.isApiLineUrl(current);
+        if (llApiLine != null) {
+            llApiLine.setVisibility(showLine ? View.VISIBLE : View.GONE);
+        }
+        updateApiRowWeight(showLine);
+        String lineName = "";
+        if (showLine) {
+            for (String apiLine : apiLines) {
+                if (current.equals(HistoryHelper.getApiLineUrl(apiLine))) {
+                    lineName = HistoryHelper.getApiLineName(apiLine);
+                    break;
+                }
+            }
+        }
+        tvApiLine.setText(lineName);
+    }
+
+    private void updateApiRowWeight(boolean showLine) {  //xuameng 多仓
+        if (llApi == null) return;
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) llApi.getLayoutParams();
+        params.weight = showLine ? 1.0f : 3.08f;
+        llApi.setLayoutParams(params);
+        if (llApiHistory != null) {
+            LinearLayout.LayoutParams historyParams = (LinearLayout.LayoutParams) llApiHistory.getLayoutParams();
+            int margin = showLine ? getResources().getDimensionPixelSize(R.dimen.vs_5) : 0;
+            historyParams.rightMargin = margin;
+            historyParams.setMarginEnd(margin);
+            llApiHistory.setLayoutParams(historyParams);
         }
     }
 }
