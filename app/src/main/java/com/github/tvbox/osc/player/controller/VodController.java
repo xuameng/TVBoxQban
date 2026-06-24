@@ -1528,6 +1528,15 @@ public class VodController extends BaseController {
         mHandler.removeMessages(1004);
         mHandler.sendEmptyMessageDelayed(1004, 100);
     }
+    public void setHasDanmu(boolean hasDanmu) {
+        this.hasDanmu = hasDanmu;
+     //   updateDanmuBtn();
+    }
+
+ //   public void updateDanmuBtn() {
+ //       if (mDanmuSettingBtn == null) return;
+        mDanmuSettingBtn.setVisibility(hasDanmu ? VISIBLE : GONE);
+ //   }
     public interface VodControlListener {
         void playNext(boolean rmProgress);
         void playPre();
