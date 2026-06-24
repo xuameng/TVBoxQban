@@ -57,8 +57,9 @@ import com.github.tvbox.osc.util.FileUtils; //xuameng 清缓存
 import java.io.File; //xuameng 清缓存
 
 import android.text.TextUtils;  //xuameng 接口action方法判断
-import com.github.catvod.crawler.Spider;  //xuameng 接口action方法判断
-import com.github.tvbox.osc.bean.SourceBean;  //xuameng 接口action方法判断
+import com.github.tvbox.osc.viewmodel.SourceViewModel;  //xuameng 接口action方法判断
+import androidx.lifecycle.Observer; //xuameng 接口action方法判断
+import androidx.lifecycle.ViewModelProvider; //xuameng 接口action方法判断
 
 /**
  * @author xuameng
@@ -74,6 +75,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
     private LinearLayout tvPush;
     public static HomeHotVodAdapter homeHotVodAdapter;
     public static HomeHotVodAdapterXu homeHotVodAdapterxu; //xuameng首页单行
+    private SourceViewModel sourceViewModel;  //xuameng 接口action方法判断
     private List<Movie.Video> homeSourceRec;
     public static TvRecyclerView tvHotList1;
     public static TvRecyclerView tvHotList2; //xuameng首页单行
@@ -175,6 +177,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
     @Override
     protected void init() {
         EventBus.getDefault().register(this);
+        sourceViewModel = new ViewModelProvider(this).get(SourceViewModel.class);
         tvLive = findViewById(R.id.tvLive);
         tvSearch = findViewById(R.id.tvSearch);
         tvSetting = findViewById(R.id.tvSetting);
@@ -208,23 +211,16 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
                     return;
                 Movie.Video vod = ((Movie.Video) adapter.getItem(position));
 
+                if (Hawk.get(HawkConfig.HOME_REC, 0) == 1 && homeSourceRec != null && !TextUtils.isEmpty(vod.action)) {  //xuameng 接口action方法判断
+                    sourceViewModel.action(vod.sourceKey, vod.action);
+                    return;
+                }
                 // takagen99: CHeck if in Delete Mode
                 if (!TextUtils.isEmpty(vod.id) && Hawk.get(HawkConfig.HOME_REC, 0) == 2 && HawkConfig.hotVodDelete) {
                     homeHotVodAdapter.remove(position);
                     VodInfo vodInfo = RoomDataManger.getVodInfo(vod.sourceKey, vod.id);
                     RoomDataManger.deleteVodRecord(vod.sourceKey, vodInfo);
                     App.showToastShort(mContext, "已删除当前记录！");
-                } else if (!TextUtils.isEmpty(vod.action)) {    //xuameng 接口action方法判断 必须放在线程中执行
-                    new Thread(() -> {
-                        try {
-                            SourceBean bean = ApiConfig.get().getSource(vod.sourceKey);
-                            Spider sp = ApiConfig.get().getCSP(bean);
-                            sp.action(vod.action);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }).start();
-                    return;   //xuameng 接口action方法判断 必须放在线程中执行完
                 } else if (!TextUtils.isEmpty(vod.id)) { //xuameng 修复首页聚汇推荐单击不能搜索的问题
                     Bundle bundle = new Bundle();
                     bundle.putString("id", vod.id);
@@ -263,23 +259,16 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
                     return;
                 Movie.Video vod = ((Movie.Video) adapter.getItem(position));
 
+                if (Hawk.get(HawkConfig.HOME_REC, 0) == 1 && homeSourceRec != null && !TextUtils.isEmpty(vod.action)) {  //xuameng 接口action方法判断
+                    sourceViewModel.action(vod.sourceKey, vod.action);
+                    return;
+                }
                 // takagen99: CHeck if in Delete Mode
                 if (!TextUtils.isEmpty(vod.id) && Hawk.get(HawkConfig.HOME_REC, 0) == 2 && HawkConfig.hotVodDelete) {
                     homeHotVodAdapterxu.remove(position);
                     VodInfo vodInfo = RoomDataManger.getVodInfo(vod.sourceKey, vod.id);
                     RoomDataManger.deleteVodRecord(vod.sourceKey, vodInfo);
                     App.showToastShort(mContext, "已删除当前记录！");
-                } else if (!TextUtils.isEmpty(vod.action)) {    //xuameng 接口action方法判断 必须放在线程中执行
-                    new Thread(() -> {
-                        try {
-                            SourceBean bean = ApiConfig.get().getSource(vod.sourceKey);
-                            Spider sp = ApiConfig.get().getCSP(bean);
-                            sp.action(vod.action);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }).start();
-                    return;   //xuameng 接口action方法判断 必须放在线程中执行完
                 } else if (!TextUtils.isEmpty(vod.id)) { //xuameng 修复首页聚汇推荐单击不能搜索的问题
                     Bundle bundle = new Bundle();
                     bundle.putString("id", vod.id);
@@ -384,21 +373,15 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
             public boolean onItemLongClick(BaseQuickAdapter adapter, View view, int position) {
                 if (ApiConfig.get().getSourceBeanList().isEmpty()) return false;
                 Movie.Video vod = ((Movie.Video) adapter.getItem(position));
+
+                if (Hawk.get(HawkConfig.HOME_REC, 0) == 1 && homeSourceRec != null && !TextUtils.isEmpty(vod.action)) {  //xuameng 接口action方法判断
+                    sourceViewModel.action(vod.sourceKey, vod.action);
+                    return true;
+                }
                 // Additional Check if : Home Rec 0=豆瓣, 1=推荐, 2=历史
                 if (!TextUtils.isEmpty(vod.id) && Hawk.get(HawkConfig.HOME_REC, 0) == 2) {
                     HawkConfig.hotVodDelete = !HawkConfig.hotVodDelete;
                     homeHotVodAdapter.notifyDataSetChanged();
-                } else if (!TextUtils.isEmpty(vod.action)) {    //xuameng 接口action方法判断 必须放在线程中执行
-                    new Thread(() -> {
-                        try {
-                            SourceBean bean = ApiConfig.get().getSource(vod.sourceKey);
-                            Spider sp = ApiConfig.get().getCSP(bean);
-                            sp.action(vod.action);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }).start();
-                    return true;   //xuameng 接口action方法判断 必须放在线程中执行完
                 } else {
                     Bundle bundle = new Bundle();
                     bundle.putString("title", vod.name);
@@ -413,21 +396,15 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
             public boolean onItemLongClick(BaseQuickAdapter adapter, View view, int position) {
                 if (ApiConfig.get().getSourceBeanList().isEmpty()) return false;
                 Movie.Video vod = ((Movie.Video) adapter.getItem(position));
+
+                if (Hawk.get(HawkConfig.HOME_REC, 0) == 1 && homeSourceRec != null && !TextUtils.isEmpty(vod.action)) {  //xuameng 接口action方法判断
+                    sourceViewModel.action(vod.sourceKey, vod.action);
+                    return true;
+                }
                 // Additional Check if : Home Rec 0=豆瓣, 1=推荐, 2=历史
                 if (!TextUtils.isEmpty(vod.id) && Hawk.get(HawkConfig.HOME_REC, 0) == 2) {
                     HawkConfig.hotVodDelete = !HawkConfig.hotVodDelete;
                     homeHotVodAdapterxu.notifyDataSetChanged();
-                } else if (!TextUtils.isEmpty(vod.action)) {    //xuameng 接口action方法判断 必须放在线程中执行
-                    new Thread(() -> {
-                        try {
-                            SourceBean bean = ApiConfig.get().getSource(vod.sourceKey);
-                            Spider sp = ApiConfig.get().getCSP(bean);
-                            sp.action(vod.action);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }).start();
-                    return true;   //xuameng 接口action方法判断 必须放在线程中执行完
                 } else {
                     Bundle bundle = new Bundle();
                     bundle.putString("title", vod.name);
@@ -475,6 +452,15 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
         initHomeHotVodXu(homeHotVodAdapterxu); //xuameng首页单行
 
         initHomeHotVod(homeHotVodAdapter);
+
+        sourceViewModel.actionResult.observe(this, new Observer<JSONObject>() {
+            @Override
+            public void onChanged(JSONObject jsonObject) {
+                if (jsonObject == null) return;
+                String msg = jsonObject.optString("msg");
+                if (!msg.isEmpty()) App.showToastLong(mContext, msg);
+            }
+        });
 
     }
 
