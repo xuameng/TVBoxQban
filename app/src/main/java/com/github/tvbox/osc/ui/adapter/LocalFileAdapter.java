@@ -35,7 +35,7 @@ public class LocalFileAdapter extends BaseQuickAdapter<File, BaseViewHolder> {
         helper.itemView.setOnFocusChangeListener((v, hasFocus) -> {
             if (hasFocus) {
                 v.animate()
-                        .scaleX(1.03f)
+                        .scaleX(1.05f)
                         .scaleY(1.05f)
                         .setDuration(300)
                         .setInterpolator(new android.view.animation.BounceInterpolator())
