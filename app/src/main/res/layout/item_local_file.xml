@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/vs_60"
     android:layout_marginBottom="@dimen/vs_8"
-    android:background="@drawable/shape_setting_model_focus"
+    android:background="@drawable/shape_user_focus"
     android:clickable="true"
     android:focusable="true"
     android:focusableInTouchMode="true"
