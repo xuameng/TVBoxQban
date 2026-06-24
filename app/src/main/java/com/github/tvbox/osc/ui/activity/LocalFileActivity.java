@@ -8,6 +8,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.view.animation.BounceInterpolator;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.github.tvbox.osc.R;
@@ -57,6 +58,16 @@ public class LocalFileActivity extends BaseActivity {
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 File item = (File) adapter.getItem(position);
                 if (item != null) open(item);
+            }
+        });
+        adapter.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override //xuameng许大师制作焦点变大
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    v.animate().scaleX(1.03f).scaleY(1.05f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
+                } else {
+                    v.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
+                }
             }
         });
         initRoot();
