@@ -235,6 +235,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
                             jumpActivity(SearchActivity.class, bundle);
                         }
                     } else {
+                        bundle.putString("title", vod.name);
                         bundle.putString("picture", vod.pic);
                         jumpActivity(DetailActivity.class, bundle);
                     } //xuameng 修复首页聚汇推荐单击不能搜索的问题结束
