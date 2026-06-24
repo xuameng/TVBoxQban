@@ -111,6 +111,20 @@ public class ApiDialog extends BaseDialog {
                 dismiss();
             }
         });
+
+        findViewById(R.id.localapi).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listener != null) listener.onLocalConfig(false);
+            }
+        });
+        findViewById(R.id.localliveapi).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listener != null) listener.onLocalConfig(true);
+            }
+        });
+
         findViewById(R.id.apiHistory_live).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -195,9 +209,19 @@ public class ApiDialog extends BaseDialog {
         this.listener = listener;
     }
 
+    public void setLocalApi(String api, boolean live) {
+        if (live) {
+            inputApiLive.setText(api);
+        } else {
+            inputApi.setText(api);
+        }
+    }
+
     OnListener listener = null;
 
     public interface OnListener {
         void onchange(String api);
+
+        void onLocalConfig(boolean live);
     }
 }
