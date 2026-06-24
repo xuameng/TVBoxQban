@@ -2,7 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="@dimen/vs_60"
-    android:layout_marginBottom="@dimen/vs_8"
     android:background="@drawable/shape_user_focus"
     android:clickable="true"
     android:focusable="true"
@@ -14,12 +13,10 @@
 
     <ImageView
         android:id="@+id/tvType"
-        android:layout_width="@dimen/vs_80"
-        android:layout_height="match_parent"
-        android:gravity="center_vertical"
-        android:singleLine="true"
-        android:textColor="@android:color/white"
-        android:textSize="@dimen/ts_22" />
+        android:paddingRight="@dimen/vs_10"
+        android:layout_width="@dimen/vs_54"
+        android:layout_height="@dimen/vs_54"
+        android:gravity="center_vertical" />
 
     <TextView
         android:id="@+id/tvName"
