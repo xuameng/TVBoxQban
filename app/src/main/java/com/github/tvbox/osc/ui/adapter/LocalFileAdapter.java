@@ -25,7 +25,7 @@ public class LocalFileAdapter extends BaseQuickAdapter<File, BaseViewHolder> {
     if (item.isDirectory()) {
         iconRes = R.drawable.ic_folder;      // 文件夹
     } else {
-        iconRes = R.drawable.ic_file;        // 文件
+        iconRes = R.drawable.ic_file_xu;        // 文件
     }
     helper.setImageResource(R.id.tvType, iconRes);
         helper.setText(R.id.tvName, isParent ? ".." : item.getName());
