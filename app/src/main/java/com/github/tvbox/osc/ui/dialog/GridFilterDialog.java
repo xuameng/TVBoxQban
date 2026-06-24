@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.MotionEvent;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.core.content.ContextCompat;
@@ -39,6 +40,7 @@ public class GridFilterDialog extends BaseDialog {
         setCancelable(true);
         setContentView(R.layout.dialog_grid_filter);
         filterRoot = findViewById(R.id.filterRoot);
+        bindOutsideTouchDismiss(); //xuameng点击外部关闭
     }
 
     public interface Callback {
@@ -111,4 +113,31 @@ public class GridFilterDialog extends BaseDialog {
         getWindow().getDecorView().setPadding(0, 0, 0, 0);
         getWindow().setAttributes(layoutParams);
     }
+
+    private void bindOutsideTouchDismiss() {  //xuameng点击外部关闭
+        View rootView = findViewById(R.id.root);
+        rootView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (isTouchInsideFilter(event)) {
+                    return false;
+                }
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    dismiss();
+                    return true;
+                }
+                return event.getAction() == MotionEvent.ACTION_DOWN
+                        || event.getAction() == MotionEvent.ACTION_MOVE
+                        || event.getAction() == MotionEvent.ACTION_CANCEL;
+            }
+        });
+    }
+
+    private boolean isTouchInsideFilter(MotionEvent event) {
+        return event.getX() >= filterRoot.getLeft()
+                && event.getX() <= filterRoot.getRight()
+                && event.getY() >= filterRoot.getTop()
+                && event.getY() <= filterRoot.getBottom();
+    }
+
 }
