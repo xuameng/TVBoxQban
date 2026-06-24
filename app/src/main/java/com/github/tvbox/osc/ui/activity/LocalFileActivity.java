@@ -15,6 +15,7 @@ import com.github.tvbox.osc.base.BaseActivity;
 import com.github.tvbox.osc.ui.adapter.LocalFileAdapter;
 import com.owen.tvrecyclerview.widget.TvRecyclerView;
 import com.owen.tvrecyclerview.widget.V7LinearLayoutManager;
+import com.github.tvbox.osc.base.App;  //xuameng showtoast
 
 import java.io.File;
 import java.util.ArrayList;
@@ -50,7 +51,7 @@ public class LocalFileActivity extends BaseActivity {
         adapter = new LocalFileAdapter();
         fileList.setAdapter(adapter);
         fileList.setLayoutManager(new V7LinearLayoutManager(this, 1, false));
-        fileList.setSpacingWithMargins(0, AutoSizeUtils.mm2px(this, 8));
+//        fileList.setSpacingWithMargins(0, AutoSizeUtils.mm2px(this, 8));
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
@@ -66,14 +67,14 @@ public class LocalFileActivity extends BaseActivity {
 
     private void initRoot() {
         File storage = Environment.getExternalStorageDirectory();
-        File tvBox = new File(storage, "TVBox");
-        if (!tvBox.exists()) tvBox.mkdirs();
-        rootDir = tvBox.exists() && tvBox.isDirectory() ? tvBox : storage;
+        File jvHuiys = new File(storage, "jvhuiys");
+        if (!jvHuiys.exists()) jvHuiys.mkdirs();
+        rootDir = jvHuiys.exists() && jvHuiys.isDirectory() ? jvHuiys : storage;
     }
 
     private void loadDir(File dir) {
         if (dir == null || !dir.exists() || !dir.isDirectory()) {
-            Toast.makeText(this, "无法打开目录", Toast.LENGTH_SHORT).show();
+            App.showToastShort(this, "无法打开目录！");
             return;
         }
         currentDir = dir;
