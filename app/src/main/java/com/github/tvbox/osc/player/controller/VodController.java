@@ -1535,7 +1535,7 @@ public class VodController extends BaseController {
 
  //   public void updateDanmuBtn() {
  //       if (mDanmuSettingBtn == null) return;
-        mDanmuSettingBtn.setVisibility(hasDanmu ? VISIBLE : GONE);
+  //      mDanmuSettingBtn.setVisibility(hasDanmu ? VISIBLE : GONE);
  //   }
     public interface VodControlListener {
         void playNext(boolean rmProgress);
