@@ -117,12 +117,12 @@ public class CollectActivity extends BaseActivity {
                         collectAdapter.remove(position);
                         RoomDataManger.deleteVodCollect(vodInfo.getId());
                     } else {
-                        Bundle bundle = new Bundle();
-                        bundle.putString("id", vodInfo.vodId);
-                        bundle.putString("sourceKey", vodInfo.sourceKey);
-                        SourceBean sourceBean = ApiConfig.get().getSource(vodInfo.sourceKey);
-                        if(sourceBean!=null){
-						    bundle.putString("picture", vodInfo.pic);   //xuameng某些网站图片部显示
+                        if (ApiConfig.get().getSource(vodInfo.sourceKey) != null) {
+                            Bundle bundle = new Bundle();
+                            bundle.putString("id", vodInfo.vodId);
+                            bundle.putString("sourceKey", vodInfo.sourceKey);
+                            bundle.putString("title", vodInfo.name);
+                            bundle.putString("picture", vodInfo.pic);
                             jumpActivity(DetailActivity.class, bundle);
                         }else {
                             bundle.putString("title", vodInfo.name);
