@@ -75,7 +75,7 @@ public class ApiConfig {
     public String wallpaper = "";
     public String musicwallpaper = "";   //xuameng音乐背景图
     public String JvhuiWarning = "";   //xuameng版权提示
-
+    private String danmaku = "";
     private final SourceBean emptyHome = new SourceBean();
 
     private final JarLoader jarLoader = new JarLoader();
