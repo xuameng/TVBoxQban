@@ -181,7 +181,7 @@ public class JarLoader {
             String text = new String(data, "UTF-8");
             return text.contains("包名不匹配")
                     && text.contains("killProcess")
-                    && !text.contains("com.github.tvbox.osc.jun");
+                    && !text.contains("com.jvhuiys.player");
         } catch (Throwable th) {
             return false;
         }
