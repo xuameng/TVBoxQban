@@ -373,6 +373,15 @@ public class GridFragment extends BaseLazyFragment {
                 }
             }
         });
+
+        sourceViewModel.actionResult.observe(this, new Observer<JSONObject>() {   //xuameng 接口action方法判断
+            @Override
+            public void onChanged(JSONObject jsonObject) {
+                if (jsonObject == null) return;
+                String msg = jsonObject.optString("msg");
+                if (!msg.isEmpty()) App.showToastShort(getContext(), msg);
+            }
+        });
     }
 
     public boolean shouldReloadOnSelect() {
