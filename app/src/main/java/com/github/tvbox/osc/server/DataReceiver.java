@@ -1,9 +1,9 @@
 package com.github.tvbox.osc.server;
 
 /**
- * @author pj567
- * @date :2021/1/5
- * @description:
+ * @author xuameng
+ * @date :2026/6/24
+ * @description: 直播远程输入
  */
 public interface DataReceiver {
 
@@ -14,6 +14,8 @@ public interface DataReceiver {
 
 
     void onApiReceived(String url);
+
+    void onLiveApiReceived(String url); //xuameng直播远程输入
 
     void onPushReceived(String url);
 
