@@ -930,7 +930,7 @@ public class DetailActivity extends BaseActivity {
                         showConfig();
                         return;
                     }
-
+                    if (TextUtils.isEmpty(mVideo.name))mVideo.name = vod_name;
                     if (TextUtils.isEmpty(mVideo.name))mVideo.name = "🥇聚汇影视";
                     vodInfo = new VodInfo();
                     if((mVideo.pic==null || mVideo.pic.isEmpty()) && !vod_picture.isEmpty()){    //xuameng某些网站图片部显示
@@ -1144,11 +1144,13 @@ public class DetailActivity extends BaseActivity {
     }
 
     private String  vod_picture="";
+    private String  vod_name="";
     private void initData() {
         Intent intent = getIntent();
         if (intent != null && intent.getExtras() != null) {
             Bundle bundle = intent.getExtras();
             vod_picture=bundle.getString("picture", "");
+            vod_name=bundle.getString("title", "");
             loadDetail(bundle.getString("id", null), bundle.getString("sourceKey", ""));
         }
     }
@@ -1325,6 +1327,8 @@ public class DetailActivity extends BaseActivity {
             } else if (event.type == RefreshEvent.TYPE_QUICK_SEARCH_SELECT) {
                 if (event.obj != null) {
                     Movie.Video video = (Movie.Video) event.obj;
+                    vod_name = video.name;
+                    vod_picture = video.pic;
                     loadDetailXu(video.id, video.sourceKey);
                 }
             } else if (event.type == RefreshEvent.TYPE_QUICK_SEARCH_WORD_CHANGE) {
