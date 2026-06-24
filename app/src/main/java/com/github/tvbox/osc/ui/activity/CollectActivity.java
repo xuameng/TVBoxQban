@@ -117,10 +117,10 @@ public class CollectActivity extends BaseActivity {
                         collectAdapter.remove(position);
                         RoomDataManger.deleteVodCollect(vodInfo.getId());
                     } else {
+                        Bundle bundle = new Bundle();
+                        bundle.putString("id", vodInfo.vodId);
+                        bundle.putString("sourceKey", vodInfo.sourceKey);
                         if (ApiConfig.get().getSource(vodInfo.sourceKey) != null) {
-                            Bundle bundle = new Bundle();
-                            bundle.putString("id", vodInfo.vodId);
-                            bundle.putString("sourceKey", vodInfo.sourceKey);
                             bundle.putString("title", vodInfo.name);
                             bundle.putString("picture", vodInfo.pic);
                             jumpActivity(DetailActivity.class, bundle);
