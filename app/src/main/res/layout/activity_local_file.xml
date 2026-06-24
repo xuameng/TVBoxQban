@@ -37,6 +37,8 @@
             android:id="@+id/fileList"
             android:paddingLeft="@dimen/ts_43"
             android:paddingRight="@dimen/ts_43"
+            android:paddingTop="@dimen/vs_10"
+            android:paddingBottom="@dimen/vs_10"
             android:focusable="true"
             android:scrollbars="none"
             android:clipChildren="false"
