@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import com.github.tvbox.osc.event.RefreshEvent;
 import com.github.tvbox.osc.receiver.SearchReceiver;
 import com.github.tvbox.osc.receiver.DetailReceiver;  //xuameng推送
+import com.github.tvbox.osc.util.HistoryHelper;
 import com.github.tvbox.osc.util.HawkConfig;
 import com.orhanobut.hawk.Hawk;
 
@@ -21,9 +22,9 @@ import java.util.regex.Pattern;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
 /**
- * @author pj567
- * @date :2021/1/4
- * @description:
+ * @author xuameng
+ * @date :2026/6/24   
+ * @description:  远程输入直播地址
  */
 public class ControlManager {
     private static ControlManager instance;
@@ -77,6 +78,15 @@ public class ControlManager {
                 @Override
                 public void onApiReceived(String url) {
                     EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_API_URL_CHANGE, url));
+                }
+
+                @Override
+                public void onLiveApiReceived(String url) {  //xuameng 远程输入直播地址
+                    if (!TextUtils.isEmpty(url)) {
+                        Hawk.put(HawkConfig.LIVE_API_URL, url);
+                        HistoryHelper.setLiveApiHistory(url);
+                    }
+                    EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_LIVE_API_URL_CHANGE, url));
                 }
 
                 @Override
