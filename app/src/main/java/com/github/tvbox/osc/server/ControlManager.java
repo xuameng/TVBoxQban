@@ -51,11 +51,17 @@ public class ControlManager {
     }
 
     public String getAddress(boolean local) {
+        if (mServer == null || !mServer.isStarting()) {
+            startServer();
+        }
+        if (mServer == null || !mServer.isStarting()) {
+            return "";
+        }
         return local ? mServer.getLoadAddress() : mServer.getServerAddress();
     }
 
     public void startServer() {
-        if (mServer != null) {
+        if (mServer != null && mServer.isStarting()) {
             return;
         }
         do {
@@ -123,5 +129,6 @@ public class ControlManager {
         if (mServer != null && mServer.isStarting()) {
             mServer.stop();
         }
+        mServer = null;
     }
 }
