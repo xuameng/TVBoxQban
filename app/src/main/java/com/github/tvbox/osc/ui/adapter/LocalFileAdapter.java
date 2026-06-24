@@ -19,7 +19,13 @@ public class LocalFileAdapter extends BaseQuickAdapter<File, BaseViewHolder> {
     @Override
     protected void convert(BaseViewHolder helper, File item) {
         boolean isParent = parentDir != null && parentDir.equals(item);
-        helper.setText(R.id.tvType, item.isDirectory() ? "目录" : "文件");
+    int iconRes;
+    if (item.isDirectory()) {
+        iconRes = R.drawable.ic_folder;      // 文件夹
+    } else {
+        iconRes = R.drawable.ic_file;        // 文件
+    }
+	helper.setImageResource(R.id.imgType, tvType);
         helper.setText(R.id.tvName, isParent ? ".." : item.getName());
         helper.setText(R.id.tvInfo, item.isDirectory() ? "进入" : formatSize(item.length()));
     }
