@@ -49,7 +49,7 @@
             app:tv_layoutManager="V7GridLayoutManager"
             app:tv_selectedItemIsCentered="true"
             app:tv_verticalSpacingWithMargins="@dimen/vs_10"
-            android:layout_marginTop="@dimen/vs_20"/>
+            android:layout_marginTop="@dimen/vs_10"/>
         <TextView
             android:textSize="@dimen/ts_22"
             android:textColor="@color/color_CCFFFFFF"
