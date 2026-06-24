@@ -270,8 +270,8 @@ public class ApiConfig {
         }
         String configUrl=configUrl(apiUrl);
         // 使用内部存储，将当前配置地址写入到应用的私有目录中
-        File configUrlFile = new File(App.getInstance().getFilesDir().getAbsolutePath() + "/config_url");
-        FileUtils.saveCache(configUrlFile,configUrl);
+        //File configUrlFile = new File(App.getInstance().getFilesDir().getAbsolutePath() + "/config_url");
+        //FileUtils.saveCache(configUrlFile,configUrl);
         OkGo.<String>get(configUrl)
                 .headers("User-Agent", userAgent)
                 .headers("Accept", requestAccept)
