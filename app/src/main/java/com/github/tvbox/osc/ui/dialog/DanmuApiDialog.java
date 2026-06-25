@@ -53,6 +53,16 @@ public class DanmuApiDialog extends BaseDialog {
                 return false;
             }
         });
+
+        input.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) { // 失去焦点
+                String text = input.getText().toString().trim();
+                if (TextUtils.isEmpty(text)) {
+                    input.setText("");
+                    input.setHint("请输入弹幕搜索地址");
+                }
+            }
+        });
     }
 
     private String getDefaultApi() {
