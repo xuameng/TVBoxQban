@@ -48,7 +48,7 @@ public class DanmuApiDialog extends BaseDialog {
     private void save(String api) {
         DanmakuApi.setCustomApi(api);
         if (listener != null) listener.onChange(api);
-        dismiss();
+        //dismiss();
     }
 
     private void saveDefault() {
