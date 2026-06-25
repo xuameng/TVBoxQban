@@ -61,6 +61,7 @@ public class DanmuApiDialog extends BaseDialog {
     private void saveDefault() {
         DanmakuApi.setUseDefault(true);
         if (listener != null) listener.onChange("");
+            input.setHint(getDefaultApi());
         //dismiss();
     }
 
