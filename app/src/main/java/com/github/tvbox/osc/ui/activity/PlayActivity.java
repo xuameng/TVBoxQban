@@ -183,7 +183,7 @@ public class PlayActivity extends BaseActivity {
     }
 
     private void initDanmuView() {
-        mDanmuView = findViewById(R.id.danmaku);
+        mDanmuView = mController.getDanmuView();
         danmuLoadController = new DanmuLoadController(mVideoView, mController, mDanmuView);
     }
 
