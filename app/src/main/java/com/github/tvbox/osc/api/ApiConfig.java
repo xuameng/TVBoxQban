@@ -566,6 +566,7 @@ public class ApiConfig {
         // spider
         spider = DefaultConfig.safeJsonString(infoJson, "spider", "");
         jarCache = DefaultConfig.safeJsonString(infoJson, "jarCache", "true");
+        danmaku = DefaultConfig.safeJsonString(infoJson, "danmaku", "");
         // wallpaper
         wallpaper = DefaultConfig.safeJsonString(infoJson, "wallpaper", "");
         musicwallpaper = DefaultConfig.safeJsonString(infoJson, "musicwallpaper", "");    //xuameng音乐背景图
@@ -1118,7 +1119,9 @@ public class ApiConfig {
     public String getSpider() {
         return spider;
     }
-
+    public String getDanmaku() {
+        return danmaku == null ? "" : danmaku;
+    }
     public String getDanmaku() {
         return danmaku == null ? "" : danmaku;
     }
