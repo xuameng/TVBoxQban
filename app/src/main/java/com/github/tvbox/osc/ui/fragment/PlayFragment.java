@@ -168,6 +168,8 @@ public class PlayFragment extends BaseLazyFragment {
             mController.mPauseIngXu();   //xuameng 全屏时如果是暂停状态就显示暂停图标
         }else if (event.type == RefreshEvent.TYPE_SET_DANMU_SETTINGS) {
             setDanmuViewSettings(event.obj instanceof Boolean && (Boolean) event.obj);
+        }else if (event.type == RefreshEvent.TYPE_DANMU_REFRESH) {
+            checkDanmu(event.obj instanceof String ? (String) event.obj : "");
         }
     }
 
