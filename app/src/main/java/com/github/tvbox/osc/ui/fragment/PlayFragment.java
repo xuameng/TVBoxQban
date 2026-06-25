@@ -168,6 +168,7 @@ public class PlayFragment extends BaseLazyFragment {
 
     @Override
     protected void init() {
+        EventBus.getDefault().register(this);
         initView();
         initDanmuView();
         initViewModel();
@@ -228,7 +229,6 @@ public class PlayFragment extends BaseLazyFragment {
     }
 
     private void initView() {
-        EventBus.getDefault().register(this);
         mHandler = new Handler(new Handler.Callback() {
             @Override
             public boolean handleMessage(@NonNull Message msg) {
