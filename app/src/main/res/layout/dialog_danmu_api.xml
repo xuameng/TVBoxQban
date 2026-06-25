@@ -29,7 +29,6 @@
             android:imeOptions="actionDone"
             android:inputType="textUri"
             android:hint="请输入弹幕搜索地址"
-            android:saveEnabled="false"
             android:maxLines="1"
             android:paddingLeft="@dimen/vs_2"
             android:paddingTop="@dimen/vs_10"
