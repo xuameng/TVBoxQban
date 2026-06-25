@@ -347,6 +347,7 @@ public class VodController extends BaseController {
     public SimpleSubtitleView mSubtitleView;
     TextView mZimuBtn;
     TextView mAudioTrackBtn;
+    TextView mDanmuSettingBtn;
     public TextView mLandscapePortraitBtn;
     private View backBtn; //返回键
     private boolean isClickBackBtn;
@@ -594,6 +595,7 @@ public class VodController extends BaseController {
         mSubtitleView = findViewById(R.id.subtitle_view);
         mZimuBtn = findViewById(R.id.zimu_select);
         mAudioTrackBtn = findViewById(R.id.audio_track_select);
+        mDanmuSettingBtn = findViewById(R.id.danmu_setting);
         mLandscapePortraitBtn = findViewById(R.id.landscape_portrait);
         backBtn = findViewById(R.id.tv_back);
         mxuPlay = findViewById(R.id.mxuplay); //xuameng  低菜单播放
@@ -1348,6 +1350,13 @@ public class VodController extends BaseController {
                 }
             }
         });
+        mDanmuSettingBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FastClickCheckUtil.check(view);
+                listener.showDanmuSetting();
+            }
+        });
         mLandscapePortraitBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -1531,13 +1540,13 @@ public class VodController extends BaseController {
     }
     public void setHasDanmu(boolean hasDanmu) {
         this.hasDanmu = hasDanmu;
-     //   updateDanmuBtn();
+        updateDanmuBtn();
     }
 
- //   public void updateDanmuBtn() {
- //       if (mDanmuSettingBtn == null) return;
-  //      mDanmuSettingBtn.setVisibility(hasDanmu ? VISIBLE : GONE);
- //   }
+    public void updateDanmuBtn() {
+        if (mDanmuSettingBtn == null) return;
+        mDanmuSettingBtn.setVisibility(hasDanmu ? VISIBLE : GONE);
+    }
     public interface VodControlListener {
         void playNext(boolean rmProgress);
         void playPre();
@@ -1548,6 +1557,7 @@ public class VodController extends BaseController {
         void errReplay();
         void selectSubtitle();
         void selectAudioTrack();
+        void showDanmuSetting();
         void hideTipXu(); //xuameng隐藏错误信息
         void startPlayUrl(String url, HashMap < String, String > headers); //xuameng广告过滤
     }
