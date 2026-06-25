@@ -28,6 +28,7 @@
             android:textColorHint="@color/color_6C3D3D3D"
             android:imeOptions="actionDone"
             android:inputType="textUri"
+            android:hint="请输入弹幕搜索地址"
             android:maxLines="1"
             android:paddingLeft="@dimen/vs_2"
             android:paddingTop="@dimen/vs_10"
