@@ -127,6 +127,7 @@ import master.flame.danmaku.danmaku.model.BaseDanmaku;
 import master.flame.danmaku.danmaku.model.IDisplayer;
 import master.flame.danmaku.danmaku.model.android.DanmakuContext;
 import master.flame.danmaku.ui.widget.DanmakuView;
+import com.github.tvbox.osc.api.DanmakuApi;
 
 public class PlayFragment extends BaseLazyFragment {
     public MyVideoView mVideoView;  //xuameng 改成public以便被调用
@@ -268,6 +269,7 @@ public class PlayFragment extends BaseLazyFragment {
     }
 
     private void resetDanmuState() {
+        DanmakuApi.cancel();
         danmuText = "";
         danmuLoadSeq.incrementAndGet();
         if (mController != null) mController.setHasDanmu(false);
@@ -1143,6 +1145,7 @@ public class PlayFragment extends BaseLazyFragment {
                             playUrl(playUrl + url, headers);
                         }
                         checkDanmu(danmaku);
+                        searchDanmu(danmaku);
                     } catch (Throwable th) {
 //                        errorWithRetry("获取播放信息错误", true);
 //                        Toast.makeText(mContext, "获取播放信息错误1", Toast.LENGTH_SHORT).show();
@@ -1152,6 +1155,19 @@ public class PlayFragment extends BaseLazyFragment {
                     errorWithRetry("获取播放信息错误", true);
 //                    Toast.makeText(mContext, "获取播放信息错误", Toast.LENGTH_SHORT).show();
                 }
+            }
+        });
+    }
+
+    private void searchDanmu(String danmaku) {
+        if (!TextUtils.isEmpty(danmaku) || !DanmakuApi.canSearch() || mVodInfo == null) return;
+        VodInfo.VodSeries series = getCurrentSeries(mVodInfo.playFlag, mVodInfo.playIndex);
+        String key = progressKey;
+        DanmakuApi.search(mVodInfo.name, series == null ? "" : series.name, new DanmakuApi.SearchCallback() {
+            @Override
+            public void onFound(String url) {
+                if (!TextUtils.equals(key, progressKey)) return;
+                checkDanmu(url);
             }
         });
     }
