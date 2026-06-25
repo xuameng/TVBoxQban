@@ -16,7 +16,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/vs_20"
             android:text="弹幕地址"
-            android:textColor="@color/dialog_text_primary"
+            android:textColor="@color/color_CC000000"
             android:textSize="@dimen/ts_26" />
 
         <EditText
