@@ -1084,6 +1084,12 @@ public class PlayFragment extends BaseLazyFragment {
                 if (!TextUtils.equals(key, progressKey)) return;
                 checkDanmu(url);
             }
+
+            @Override
+            public void onNotFound() {
+                if (!TextUtils.equals(key, progressKey)) return;
+                checkDanmu("");
+            }
         });
     }
     private VodInfo.VodSeries getCurrentSeries(String flag, int index) {
