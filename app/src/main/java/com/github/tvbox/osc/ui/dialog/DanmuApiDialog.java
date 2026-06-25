@@ -14,6 +14,7 @@ import com.github.tvbox.osc.util.HawkConfig;
 import com.orhanobut.hawk.Hawk;
 
 import org.jetbrains.annotations.NotNull;
+import android.view.inputmethod.InputMethodManager;
 
 public class DanmuApiDialog extends BaseDialog {
     private EditText input;
