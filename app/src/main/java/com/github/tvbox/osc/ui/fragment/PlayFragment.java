@@ -1171,6 +1171,17 @@ public class PlayFragment extends BaseLazyFragment {
             }
         });
     }
+    private VodInfo.VodSeries getCurrentSeries(String flag, int index) {
+        if (flag == null || mVodInfo == null || mVodInfo.seriesMap == null) {
+            return null;
+        }
+        List<VodInfo.VodSeries> currentList = mVodInfo.seriesMap.get(flag);
+        if (currentList == null || currentList.isEmpty()) {
+            return null;
+        }
+        int safeIndex = Math.max(0, Math.min(index, currentList.size() - 1));
+        return currentList.get(safeIndex);
+    }
 
     public void setData(Bundle bundle) {
 //        mVodInfo = (VodInfo) bundle.getSerializable("VodInfo");
