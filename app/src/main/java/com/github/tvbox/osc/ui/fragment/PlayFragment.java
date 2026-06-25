@@ -178,7 +178,7 @@ public class PlayFragment extends BaseLazyFragment {
     }
 
     private void initDanmuView() {
-        mDanmuView = findViewById(R.id.danmaku);
+        mDanmuView = mController.getDanmuView();
         danmuLoadController = new DanmuLoadController(mVideoView, mController, mDanmuView);
     }
 
