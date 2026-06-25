@@ -74,6 +74,9 @@ import com.hjq.permissions.OnPermissionCallback;
 import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
 
+import com.github.tvbox.osc.ui.dialog.DanmuApiDialog;
+import com.github.tvbox.osc.util.DanmuHelper;
+
 /**
  * @author pj567
  * @date :2020/12/23
@@ -110,6 +113,8 @@ public class ModelSettingFragment extends BaseLazyFragment {
     private View llApiLine; //xuameng 多仓
     private ApiDialog apiDialog;
     private boolean selectLocalLive;
+    private TextView tvDanmuOpenText;
+    private TextView tvDanmuApiText;
 
 
     public static ModelSettingFragment newInstance() {
@@ -138,6 +143,10 @@ public class ModelSettingFragment extends BaseLazyFragment {
         tvShowMusicDb.setText(Hawk.get(HawkConfig.VOD_MUSIC_ANIMATION, false) ? "已开启" : "已关闭");
         tvExodecode.setText(Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false) ? "软解码" : "硬解码");
         tvm3u8AdText.setText(Hawk.get(HawkConfig.M3U8_PURIFY, false) ? "已开启" : "已关闭"); //xuameng去广告
+        tvDanmuOpenText = findViewById(R.id.danmuOpenText);
+        tvDanmuOpenText.setText(DanmuHelper.isOpen() ? "已开启" : "已关闭");
+        tvDanmuApiText = findViewById(R.id.danmuApiText);
+        refreshDanmuApiText();
         tvSwitchDecode.setText(Hawk.get(HawkConfig.VOD_SWITCHDECODE, false) ? "已开启" : "已关闭"); //xuameng解码切换
         tvSwitchPlayer.setText(Hawk.get(HawkConfig.VOD_SWITCHPLAYER, true) ? "已开启" : "已关闭"); //xuameng播放器切换
         tvFastSearchText.setText(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false) ? "已开启" : "已关闭");
@@ -784,6 +793,29 @@ public class ModelSettingFragment extends BaseLazyFragment {
                 tvm3u8AdText.setText(!is_purify ? "已开启" : "已关闭");
             }
         });
+        findViewById(R.id.danmuOpen).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FastClickCheckUtil.check(v);
+                boolean open = !DanmuHelper.isOpen();
+                DanmuHelper.setOpen(open);
+                tvDanmuOpenText.setText(open ? "已开启" : "已关闭");
+            }
+        });
+        findViewById(R.id.danmuApi).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FastClickCheckUtil.check(v);
+                DanmuApiDialog dialog = new DanmuApiDialog(mActivity);
+                dialog.setOnListener(new DanmuApiDialog.OnListener() {
+                    @Override
+                    public void onChange(String api) {
+                        refreshDanmuApiText();
+                    }
+                });
+                dialog.show();
+            }
+        });
         findViewById(R.id.llMusicdb).setOnClickListener(new View.OnClickListener() {   //xuameng点播动画
             @Override
             public void onClick(View v) {
@@ -1105,6 +1137,21 @@ public class ModelSettingFragment extends BaseLazyFragment {
             if (cursor != null) cursor.close();
         }
         return name;
+    }
+
+    private void refreshDanmuApiText() {
+        if (tvDanmuApiText == null) return;
+        if (DanmakuApi.isUseDefault()) {
+            tvDanmuApiText.setText("默认");
+            return;
+        }
+        String custom = Hawk.get(HawkConfig.DANMU_API, "");
+        if (!custom.isEmpty()) {
+            tvDanmuApiText.setText("自定义");
+            return;
+        }
+        String config = ApiConfig.get().getDanmaku();
+        tvDanmuApiText.setText(config.isEmpty() ? "默认" : "接口");
     }
 
 }
