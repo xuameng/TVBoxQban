@@ -80,7 +80,7 @@ public class DanmuLoadController {
         boolean hasDanmu = !TextUtils.isEmpty(danmuText);
         if (controller != null) controller.setHasDanmu(hasDanmu);
         if (!hasDanmu || !DanmuHelper.isOpen()) {
-            if (danmuView != null) danmuView.setVisibility(View.VISIBLE);
+            if (danmuView != null) danmuView.setVisibility(View.GONE);
             return;
         }
         if (danmuView != null) danmuView.setVisibility(View.VISIBLE);
@@ -142,7 +142,7 @@ public class DanmuLoadController {
                     if (videoView != null) videoView.setDanmuView(danmuView);
                     if (danmuCount <= 0) {
                         LOG.e("echo-danmu empty after parse");
-                        danmuView.setVisibility(View.VISIBLE);
+                        danmuView.setVisibility(View.GONE);
                         return;
                     }
                     danmuView.prepare(parser, danmakuContext);
@@ -152,7 +152,7 @@ public class DanmuLoadController {
                     danmuView.postDelayed(() -> startIfReady(seq), 1000);
                 } catch (Throwable th) {
                     LOG.e("echo-danmu prepare error: " + th.getMessage());
-                    danmuView.setVisibility(View.VISIBLE);
+                    danmuView.setVisibility(View.GONE);
                 }
             });
         });
