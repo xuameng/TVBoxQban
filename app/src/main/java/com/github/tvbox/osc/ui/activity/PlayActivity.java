@@ -121,6 +121,16 @@ import xyz.doikki.videoplayer.player.AbstractPlayer;
 import xyz.doikki.videoplayer.player.ProgressManager;
 import com.github.tvbox.osc.util.SubtitleHelper; //xuameng 保存字幕颜色信息用
 
+import com.github.tvbox.osc.player.danmu.Parser;
+import com.github.tvbox.osc.ui.dialog.DanmuSettingDialog;
+import com.github.tvbox.osc.util.DanmuHelper;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+import master.flame.danmaku.danmaku.model.BaseDanmaku;
+import master.flame.danmaku.danmaku.model.IDisplayer;
+import master.flame.danmaku.danmaku.model.android.DanmakuContext;
+import master.flame.danmaku.ui.widget.DanmakuView;
+
 public class PlayActivity extends BaseActivity {
     private MyVideoView mVideoView;
     private TextView mPlayLoadTip;
@@ -140,6 +150,12 @@ public class PlayActivity extends BaseActivity {
     private boolean isChineseSubtitle = false;   //xuameng 判断中文字幕
 	private int currentSubtitleStyle = 0; // xuameng当前字幕颜色索引
 
+    private ExecutorService danmuExecutor;
+    private DanmakuView mDanmuView;
+    private DanmakuContext mDanmakuContext;
+    private String danmuText;
+    private final AtomicInteger danmuLoadSeq = new AtomicInteger();
+
     @Override
     protected int getLayoutResID() {
         return R.layout.activity_play;
@@ -154,6 +170,8 @@ public class PlayActivity extends BaseActivity {
         } else if (event.type == RefreshEvent.TYPE_CLOSE_PLAY_ACTIVITY) {  //xuameng 远程关闭playactivity 用于push推送解析刷新
             // 收到指令，执行关闭
             finish(); 
+        } else if (event.type == RefreshEvent.TYPE_SET_DANMU_SETTINGS) {
+            setDanmuViewSettings(event.obj instanceof Boolean && (Boolean) event.obj);
         } 
     }
 
@@ -162,8 +180,111 @@ public class PlayActivity extends BaseActivity {
         initView();
         initViewModel();
         initData();
+        initDanmuView();
         Hawk.put(HawkConfig.PLAYER_IS_LIVE,false);  //xuameng新增
         HawkConfig.exoSubtitle = false;  //xuameng 判断当前是否播放EXO内置字幕
+    }
+
+    private void initDanmuView() {
+        mDanmuView = findViewById(R.id.danmaku);
+        mDanmakuContext = DanmakuContext.create();
+        mVideoView.setDanmuView(mDanmuView);
+        setDanmuViewSettings(false);
+    }
+
+    private void setDanmuViewSettings(boolean reload) {
+        if (mDanmuView == null || mDanmakuContext == null) return;
+        if (!DanmuHelper.isOpen()) {
+            releaseDanmuView();
+            if (mController != null) mController.setHasDanmu(!TextUtils.isEmpty(danmuText));
+            return;
+        }
+        HashMap<Integer, Integer> maxLines = new HashMap<>();
+        int maxLine = DanmuHelper.getMaxLine();
+        maxLines.put(BaseDanmaku.TYPE_FIX_TOP, maxLine);
+        maxLines.put(BaseDanmaku.TYPE_SCROLL_RL, maxLine);
+        maxLines.put(BaseDanmaku.TYPE_SCROLL_LR, maxLine);
+        maxLines.put(BaseDanmaku.TYPE_FIX_BOTTOM, maxLine);
+        mDanmakuContext.setMaximumLines(maxLines)
+                .setScrollSpeedFactor(DanmuHelper.getSpeed())
+                .setDanmakuTransparency(DanmuHelper.getAlpha())
+                .setScaleTextSize(DanmuHelper.getSizeScale());
+        mDanmakuContext.setDanmakuStyle(IDisplayer.DANMAKU_STYLE_STROKEN, 3)
+                .setDanmakuMargin(8);
+        if (reload && !TextUtils.isEmpty(danmuText) && DanmuHelper.isOpen()) {
+            prepareDanmu(danmuText);
+        }
+    }
+
+    private void checkDanmu(String danmu) {
+        danmuText = TextUtils.isEmpty(danmu) ? "" : danmu.trim();
+        releaseDanmuView();
+        boolean hasDanmu = !TextUtils.isEmpty(danmuText);
+        mController.setHasDanmu(hasDanmu);
+        if (!hasDanmu || !DanmuHelper.isOpen()) {
+            if (mDanmuView != null) mDanmuView.setVisibility(View.GONE);
+            return;
+        }
+        if (mDanmuView != null) mDanmuView.setVisibility(View.VISIBLE);
+        prepareDanmu(danmuText);
+    }
+
+    private void prepareDanmu(String danmu) {
+        if (TextUtils.isEmpty(danmu)) return;
+        int seq = danmuLoadSeq.incrementAndGet();
+        if (danmuExecutor == null || danmuExecutor.isShutdown()) {
+            danmuExecutor = Executors.newSingleThreadExecutor();
+        }
+        danmuExecutor.execute(() -> {
+            Parser parser = new Parser(danmu);
+            int danmuCount = parser.getDanmuCount();
+            LOG.i("echo-danmu parsed count: " + danmuCount);
+            runOnUiThread(() -> {
+                if (seq != danmuLoadSeq.get() || mDanmuView == null || mDanmakuContext == null) return;
+                try {
+                    mDanmuView.release();
+                    if (mVideoView != null) mVideoView.setDanmuView(mDanmuView);
+                    if (danmuCount <= 0) {
+                        LOG.e("echo-danmu empty after parse");
+                        mDanmuView.setVisibility(View.GONE);
+                        return;
+                    }
+                    mDanmuView.prepare(parser, mDanmakuContext);
+                    mDanmuView.setVisibility(DanmuHelper.isOpen() ? View.VISIBLE : View.GONE);
+                    if (mVideoView != null && mVideoView.isPlaying()) {
+                        mDanmuView.seekTo(mVideoView.getCurrentPosition());
+                    }
+                    mDanmuView.postDelayed(() -> {
+                        if (seq == danmuLoadSeq.get()
+                                && mVideoView != null
+                                && mVideoView.isPlaying()
+                                && mDanmuView != null
+                                && mDanmuView.isPrepared()) {
+                            mDanmuView.start(mVideoView.getCurrentPosition());
+                        }
+                    }, 300);
+                } catch (Throwable th) {
+                    LOG.e("echo-danmu prepare error: " + th.getMessage());
+                    mDanmuView.setVisibility(View.GONE);
+                }
+            });
+        });
+    }
+
+    private void resetDanmuState() {
+        danmuText = "";
+        danmuLoadSeq.incrementAndGet();
+        if (mController != null) mController.setHasDanmu(false);
+        releaseDanmuView();
+    }
+
+    private void releaseDanmuView() {
+        if (mDanmuView == null) return;
+        try {
+            mDanmuView.release();
+        } catch (Throwable ignored) {
+        }
+        mDanmuView.setVisibility(View.GONE);
     }
 
     public long getSavedProgress(String url) {
@@ -219,6 +340,11 @@ public class PlayActivity extends BaseActivity {
         };
         mVideoView.setProgressManager(progressManager);
         mController.setListener(new VodController.VodControlListener() {
+            @Override
+            public void showDanmuSetting() {
+                DanmuSettingDialog dialog = new DanmuSettingDialog(PlayActivity.this, mDanmuView);
+                dialog.show();
+            }
             @Override
             public void playNext(boolean rmProgress) {
                 String preProgressKey = progressKey;
@@ -968,6 +1094,7 @@ public class PlayActivity extends BaseActivity {
                         }
                         String flag = info.optString("flag");
                         String url = info.getString("url");
+                        String danmaku = info.optString("danmaku", "");
                         if(url.startsWith("[")){
                             url=mController.firstUrlByArray(url);
                         }
@@ -1000,6 +1127,7 @@ public class PlayActivity extends BaseActivity {
                             mController.showParse(false);
                             playUrl(playUrl + url, headers);
                         }
+                      checkDanmu(danmaku);
                     } catch (Throwable th) {
                     }
                 } else {
@@ -1125,6 +1253,11 @@ public class PlayActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
+        resetDanmuState();
+        if (danmuExecutor != null) {
+            danmuExecutor.shutdownNow();
+            danmuExecutor = null;
+        }
         if (mVideoView != null) {
             mVideoView.release();
             mVideoView = null;
@@ -1364,6 +1497,7 @@ public class PlayActivity extends BaseActivity {
         }
         stopParse();
         initParseLoadFound();
+        resetDanmuState();
 //xuameng某些设备有问题        mController.stopOther();
         if(mVideoView!= null) mVideoView.release();
         subtitleCacheKey = mVodInfo.sourceKey + "-" + mVodInfo.id + "-" + mVodInfo.playFlag + "-" + mVodInfo.playIndex+ "-" + vs.name + "-subt";
