@@ -7,7 +7,7 @@
         android:layout_width="@dimen/vs_720"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:background="@drawable/shape_danmu_setting_bg"
+        android:background="@drawable/shape_dialog_bg_main"
         android:orientation="vertical"
         android:padding="@dimen/vs_30">
 
@@ -23,7 +23,9 @@
             android:id="@+id/input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/input_dialog_api_input"
+            android:background="@drawable/input_dialog_api_input" 
+			android:textColor="@color/color_CC000000"
+            android:textColorHint="@color/color_6C3D3D3D"
             android:imeOptions="actionDone"
             android:inputType="textUri"
             android:maxLines="1"
@@ -32,8 +34,6 @@
             android:paddingRight="@dimen/vs_2"
             android:paddingBottom="@dimen/vs_10"
             android:singleLine="true"
-            android:textColor="@color/dialog_text_primary"
-            android:textColorHint="@color/dialog_text_hint"
             android:textSize="@dimen/ts_24" />
 
         <LinearLayout
@@ -48,7 +48,7 @@
                 android:layout_width="@dimen/vs_120"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="@dimen/vs_10"
-                android:background="@drawable/button_danmu_setting"
+                android:background="@drawable/button_dialog_main"
                 android:focusable="true"
                 android:gravity="center"
                 android:padding="@dimen/vs_10"
@@ -60,7 +60,7 @@
                 android:id="@+id/inputSubmit"
                 android:layout_width="@dimen/vs_120"
                 android:layout_height="wrap_content"
-                android:background="@drawable/button_danmu_setting"
+                android:background="@drawable/button_dialog_main"
                 android:focusable="true"
                 android:gravity="center"
                 android:padding="@dimen/vs_10"
