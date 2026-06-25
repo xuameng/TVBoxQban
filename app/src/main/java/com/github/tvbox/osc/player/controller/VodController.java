@@ -374,6 +374,7 @@ public class VodController extends BaseController {
     private String mLrcContent = "";  //xuameng LRC歌词字幕
 	private String videoPicUrl; //xuameng 新增给vod显示旋转图片用
     private boolean hasDanmu = false;
+    private DanmakuView mDanmuView;
 
     Handler myHandle;
     Runnable myRunnable;
