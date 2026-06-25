@@ -33,26 +33,6 @@ public class DanmuApiDialog extends BaseDialog {
             save(input.getText().toString().trim());
             dismiss();
         });
-        input.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
-
-                    String text = v.getText().toString().trim();
-                    // ✅ 输入为空，恢复默认提示
-                    if (TextUtils.isEmpty(text)) {
-				        input.setText(null);
-                        input.setHint("请输入弹幕搜索地址");
-                    }
-                    // ✅ 关闭软键盘
-                    InputMethodManager imm =
-                        (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                    return false;
-                }
-                return false;
-            }
-        });
     }
 
     private String getDefaultApi() {
