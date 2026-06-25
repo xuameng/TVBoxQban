@@ -8,11 +8,6 @@
         android:id="@+id/mVideoView"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"/>
-    <master.flame.danmaku.ui.widget.DanmakuView
-        android:id="@+id/danmaku"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone" />
     <ProgressBar
         android:layout_gravity="center"
         android:id="@+id/play_loading"
@@ -40,4 +35,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="65.0mm"
         android:text=" 1111111111111"/>
+    <master.flame.danmaku.ui.widget.DanmakuView
+        android:id="@+id/danmaku"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
 </FrameLayout>
