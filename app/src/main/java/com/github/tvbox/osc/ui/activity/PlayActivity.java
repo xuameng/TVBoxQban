@@ -87,7 +87,6 @@ import com.github.tvbox.osc.bean.IJKCode;  //xuamengIJK切换用
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
 import org.greenrobot.eventbus.EventBus;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
@@ -174,6 +173,7 @@ public class PlayActivity extends BaseActivity {
 
     @Override
     protected void init() {
+        EventBus.getDefault().register(this);
         initView();
         initViewModel();
         initData();
@@ -224,7 +224,6 @@ public class PlayActivity extends BaseActivity {
     }
 
     private void initView() {
-        EventBus.getDefault().register(this);
         mHandler = new Handler(new Handler.Callback() {
             @Override
             public boolean handleMessage(@NonNull Message msg) {
