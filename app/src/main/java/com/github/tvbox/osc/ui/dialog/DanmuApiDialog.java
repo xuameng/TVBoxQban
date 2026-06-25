@@ -27,12 +27,18 @@ public class DanmuApiDialog extends BaseDialog {
         input.setText(Hawk.get(HawkConfig.DANMU_API, ""));
         input.setHint(getDefaultApi());
         findViewById(R.id.inputDefault).setOnClickListener(v -> saveDefault());
-        findViewById(R.id.inputSubmit).setOnClickListener(v -> save(input.getText().toString().trim()));
+        findViewById(R.id.inputSubmit).setOnClickListener(v -> {
+            save(input.getText().toString().trim());
+            dismiss();
+        });
         input.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
-                    save(input.getText().toString().trim());
+                    // ✅ 关闭软键盘
+                    InputMethodManager imm =
+                        (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
                     return true;
                 }
                 return false;
@@ -54,7 +60,7 @@ public class DanmuApiDialog extends BaseDialog {
     private void saveDefault() {
         DanmakuApi.setUseDefault(true);
         if (listener != null) listener.onChange("");
-        dismiss();
+        //dismiss();
     }
 
     public void setOnListener(OnListener listener) {
