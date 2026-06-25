@@ -1122,9 +1122,6 @@ public class ApiConfig {
     public String getDanmaku() {
         return danmaku == null ? "" : danmaku;
     }
-    public String getDanmaku() {
-        return danmaku == null ? "" : danmaku;
-    }
 
     public Spider getCSP(SourceBean sourceBean) {
         boolean js = sourceBean.getApi().endsWith(".js") || sourceBean.getApi().contains(".js?");
