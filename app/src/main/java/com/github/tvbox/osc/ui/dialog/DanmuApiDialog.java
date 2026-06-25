@@ -41,14 +41,14 @@ public class DanmuApiDialog extends BaseDialog {
                     String text = v.getText().toString().trim();
                     // ✅ 输入为空，恢复默认提示
                     if (TextUtils.isEmpty(text)) {
-				        input.setText("");
+				        input.setText(null);
                         input.setHint("请输入弹幕搜索地址");
                     }
                     // ✅ 关闭软键盘
                     InputMethodManager imm =
                         (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                    return true;
+                    return false;
                 }
                 return false;
             }
