@@ -120,6 +120,7 @@ import xyz.doikki.videoplayer.player.ProgressManager;
 
 import com.github.tvbox.osc.util.SubtitleHelper;  //xuameng 保存字幕颜色信息用
 
+import com.github.tvbox.osc.ui.dialog.DanmuSettingDialog;
 import com.github.tvbox.osc.player.danmu.DanmuLoadController;
 import master.flame.danmaku.ui.widget.DanmakuView;
 import com.github.tvbox.osc.api.DanmakuApi;
@@ -1230,9 +1231,9 @@ public class PlayFragment extends BaseLazyFragment {
     public void onDestroyView() {
         super.onDestroyView();
         EventBus.getDefault().unregister(this);
-        if (danmuExecutor != null) {
-            danmuExecutor.shutdownNow();
-            danmuExecutor = null;
+        if (danmuLoadController != null) {
+            danmuLoadController.destroy();
+            danmuLoadController = null;
         }
         if (mVideoView != null) {
             mVideoView.release();
