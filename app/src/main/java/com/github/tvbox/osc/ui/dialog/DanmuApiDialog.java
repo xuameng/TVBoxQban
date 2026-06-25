@@ -60,9 +60,12 @@ public class DanmuApiDialog extends BaseDialog {
 
     private void saveDefault() {
         DanmakuApi.setUseDefault(true);
-        if (listener != null) listener.onChange("");
-            input.setText("");    
-            input.setHint(getDefaultApi());
+        if (listener != null){
+            listener.onChange("");
+        }
+        input.setText("");   
+        input.setHint("请输入弹幕搜索地址"); 
+        input.setHint(getDefaultApi());
         //dismiss();
     }
 
