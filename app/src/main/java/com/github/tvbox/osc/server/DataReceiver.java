@@ -19,5 +19,7 @@ public interface DataReceiver {
 
     void onPushReceived(String url);
 
+    void onDanmuApiReceived(String url);  //xuameng 弹幕远程输入
+
 	void onMirrorReceived(String id, String sourceKey);      //xuameng推送
 }
