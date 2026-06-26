@@ -1155,4 +1155,14 @@ public class ModelSettingFragment extends BaseLazyFragment {
         tvDanmuApiText.setText(config.isEmpty() ? "默认" : "接口");
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (llApi != null) {
+            llApi.post(() -> {   
+                llApi.requestFocus();   //xuameng 默认焦点
+            }); 
+        }
+    }
+
 }
