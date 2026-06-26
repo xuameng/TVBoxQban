@@ -84,7 +84,7 @@ public class LiveChannelItem {
     }
 
     public String getChannelLogo() {
-        return channelLogo == null ? "" : channelLogo;
+        return channelLogo == null ? "http://localhost/" : channelLogo;
     }
 
     public void setChannelEpg(String channelEpg) {
