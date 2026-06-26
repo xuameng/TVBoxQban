@@ -956,14 +956,14 @@ public class LivePlayActivity extends BaseActivity {
                 String[] epgInfo = EpgUtil.getEpgInfo(channel_Name.getChannelName());
                 if (!channel_Name.getChannelLogo().isEmpty()) {
                     logoUrl = channel_Name.getChannelLogo();
-                    updateChannelIcon(channelName, logoUrl);
+                    updateChannelIcon(channel_Name.getChannelName(), logoUrl);
                 } else if(logoUrl == null || logoUrl.isEmpty()) {
-                    updateChannelIcon(channelName, epgInfo == null ? null : epgInfo[0]); //xuameng自带logo
+                    updateChannelIcon(channel_Name.getChannelName(), epgInfo == null ? null : epgInfo[0]); //xuameng自带logo
                 } else if(logoUrl.equals("false")) {
-                    updateChannelIcon(channelName, null);
+                    updateChannelIcon(channel_Name.getChannelName(), null);
                 } else {
                     String logo = logoUrl.replace("{name}", channelName); //xuameng支持logourl
-                    updateChannelIcon(channelName, logo);
+                    updateChannelIcon(channel_Name.getChannelName(), logo);
                 }
                 ArrayList arrayList = (ArrayList) hsEpg.get(savedEpgKey);
                 if(arrayList != null && arrayList.size() > 0) {
@@ -1024,14 +1024,14 @@ public class LivePlayActivity extends BaseActivity {
                 String[] epgInfo = EpgUtil.getEpgInfo(channel_Name.getChannelName());
                 if (!channel_Name.getChannelLogo().isEmpty()) {
                     logoUrl = channel_Name.getChannelLogo();
-                    updateChannelIcon(channelName, logoUrl);
+                    updateChannelIcon(channel_Name.getChannelName(), logoUrl);
                 } else if(logoUrl == null || logoUrl.isEmpty()) {
-                    updateChannelIcon(channelName, epgInfo == null ? null : epgInfo[0]); //xuameng自带logo
+                    updateChannelIcon(channel_Name.getChannelName(), epgInfo == null ? null : epgInfo[0]); //xuameng自带logo
                 } else if(logoUrl.equals("false")) {
-                    updateChannelIcon(channelName, null);
+                    updateChannelIcon(channel_Name.getChannelName(), null);
                 } else {
                     String logo = logoUrl.replace("{name}", channelName); //xuameng支持logourl
-                    updateChannelIcon(channelName, logo);
+                    updateChannelIcon(channel_Name.getChannelName(), logo);
                 }
                 ArrayList arrayList = (ArrayList) hsEpg.get(savedEpgKey);
                 if(arrayList != null && arrayList.size() > 0) {
