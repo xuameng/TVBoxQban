@@ -51,7 +51,8 @@ input.addTextChangedListener(new TextWatcher() {
     @Override
     public void afterTextChanged(Editable s) {
         if (TextUtils.isEmpty(s.toString())) {
-            saveDefault();
+            Hawk.put(HawkConfig.DANMU_API, "");
+        input.setHint("请输入弹幕搜索地址"); 
         }
     }
 });
