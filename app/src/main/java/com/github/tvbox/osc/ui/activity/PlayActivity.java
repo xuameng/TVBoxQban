@@ -126,6 +126,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import com.github.tvbox.osc.ui.dialog.DanmuSettingDialog;  //xuameng 弹幕
 import com.github.tvbox.osc.player.danmu.DanmuLoadController; //xuameng 弹幕
 import com.github.tvbox.osc.api.DanmakuApi; //xuameng 弹幕
+import master.flame.danmaku.ui.widget.DanmakuView; //xuameng弹幕
 
 public class PlayActivity extends BaseActivity {
     private MyVideoView mVideoView;
