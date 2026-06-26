@@ -91,6 +91,7 @@ import android.view.Gravity; //xuameng 新增给vod显示旋转图片用
 import android.util.TypedValue; //xuameng 新增给vod显示旋转图片用
 import master.flame.danmaku.ui.widget.DanmakuView;
 import org.greenrobot.eventbus.EventBus;
+import com.github.tvbox.osc.event.RefreshEvent;
 
 import com.google.android.exoplayer2.ui.SubtitleView;   // 用于显示ExoPlayer内置字幕
 
