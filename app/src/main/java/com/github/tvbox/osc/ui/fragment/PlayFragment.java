@@ -122,8 +122,8 @@ import com.github.tvbox.osc.util.SubtitleHelper;  //xuameng 保存字幕颜色�
 
 import com.github.tvbox.osc.ui.dialog.DanmuSettingDialog;
 import com.github.tvbox.osc.player.danmu.DanmuLoadController;
-import master.flame.danmaku.ui.widget.DanmakuView;
 import com.github.tvbox.osc.api.DanmakuApi;
+import master.flame.danmaku.ui.widget.DanmakuView; //xuameng弹幕
 
 public class PlayFragment extends BaseLazyFragment {
     public MyVideoView mVideoView;  //xuameng 改成public以便被调用
