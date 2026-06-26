@@ -961,7 +961,7 @@ public class LivePlayActivity extends BaseActivity {
             } else {
                 initLiveObj(); //xuameng 直播配置里有没有logo配置
             }
-            if(logoUrl == null || logoUrl.isEmpty() || logoUrl.equals("false") {
+            if(logoUrl == null || logoUrl.isEmpty() || logoUrl.equals("false")) {
                 updateChannelIcon(channel_Name.getChannelName(), epgInfo == null ? null : epgInfo[0]); //xuameng自带logo
             } else {
                 String logo = logoUrl.replace("{name}", finalEpgTagName); //xuameng支持logourl
