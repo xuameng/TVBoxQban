@@ -89,10 +89,10 @@ import com.github.tvbox.osc.util.MD5; //xuameng 新增给vod显示旋转图片�
 import android.widget.FrameLayout.LayoutParams; //xuameng 新增给vod显示旋转图片用
 import android.view.Gravity; //xuameng 新增给vod显示旋转图片用
 import android.util.TypedValue; //xuameng 新增给vod显示旋转图片用
-import master.flame.danmaku.ui.widget.DanmakuView;
-import org.greenrobot.eventbus.EventBus;
-import com.github.tvbox.osc.event.RefreshEvent;
-import com.github.tvbox.osc.util.DanmuHelper;
+import master.flame.danmaku.ui.widget.DanmakuView; //xuameng弹幕
+import org.greenrobot.eventbus.EventBus; //xuameng弹幕
+import com.github.tvbox.osc.event.RefreshEvent; //xuameng弹幕
+import com.github.tvbox.osc.util.DanmuHelper; //xuameng弹幕
 
 import com.google.android.exoplayer2.ui.SubtitleView;   // 用于显示ExoPlayer内置字幕
 
@@ -351,7 +351,7 @@ public class VodController extends BaseController {
     public SimpleSubtitleView mSubtitleView;
     TextView mZimuBtn;
     TextView mAudioTrackBtn;
-    TextView mDanmuSettingBtn;
+    TextView mDanmuSettingBtn;  //xuameng弹幕
     public TextView mLandscapePortraitBtn;
     private View backBtn; //返回键
     private boolean isClickBackBtn;
@@ -376,8 +376,8 @@ public class VodController extends BaseController {
     public LrcView mLrcView;   //xuameng LRC歌词字幕
     private String mLrcContent = "";  //xuameng LRC歌词字幕
 	private String videoPicUrl; //xuameng 新增给vod显示旋转图片用
-    private boolean hasDanmu = false;
-    private DanmakuView mDanmuView;
+    private boolean hasDanmu = false; //xuameng弹幕
+    private DanmakuView mDanmuView; //xuameng弹幕
 
     Handler myHandle;
     Runnable myRunnable;
@@ -600,7 +600,7 @@ public class VodController extends BaseController {
         mSubtitleView = findViewById(R.id.subtitle_view);
         mZimuBtn = findViewById(R.id.zimu_select);
         mAudioTrackBtn = findViewById(R.id.audio_track_select);
-        mDanmuSettingBtn = findViewById(R.id.danmu_setting);
+        mDanmuSettingBtn = findViewById(R.id.danmu_setting); //xuameng弹幕
         mLandscapePortraitBtn = findViewById(R.id.landscape_portrait);
         backBtn = findViewById(R.id.tv_back);
         mxuPlay = findViewById(R.id.mxuplay); //xuameng  低菜单播放
@@ -608,7 +608,7 @@ public class VodController extends BaseController {
         mPlayanimation = findViewById(R.id.play_animation);  //xuameng音柱动画
         mExoSubtitleView = findViewById(R.id.exo_subtitle_view); // 用于显示ExoPlayer内置字幕
         mLrcView = findViewById(R.id.lrc_view);  //xuameng LRC歌词字幕
-        mDanmuView = findViewById(R.id.danmaku);
+        mDanmuView = findViewById(R.id.danmaku); //xuameng弹幕
 
         //xuameng音乐播放时图标
         ObjectAnimator animator20 = ObjectAnimator.ofFloat(iv_circle_bg, "rotation", 360.0f);
@@ -1356,14 +1356,14 @@ public class VodController extends BaseController {
                 }
             }
         });
-        mDanmuSettingBtn.setOnClickListener(new OnClickListener() {
+        mDanmuSettingBtn.setOnClickListener(new OnClickListener() {   //xuameng弹幕
             @Override
             public void onClick(View view) {
                 FastClickCheckUtil.check(view);
                 listener.showDanmuSetting();
             }
         });
-        mDanmuSettingBtn.setOnLongClickListener(new OnLongClickListener() {
+        mDanmuSettingBtn.setOnLongClickListener(new OnLongClickListener() { //xuameng弹幕
             @Override
             public boolean onLongClick(View view) {
                 FastClickCheckUtil.check(view); //xuameng 防播放打断动画
@@ -1562,14 +1562,14 @@ public class VodController extends BaseController {
         mHandler.removeMessages(1004);
         mHandler.sendEmptyMessageDelayed(1004, 100);
     }
-    public void setHasDanmu(boolean hasDanmu) {
+    public void setHasDanmu(boolean hasDanmu) {  //xuameng弹幕
         this.hasDanmu = hasDanmu;
         updateDanmuBtn();
     }
 
     public void updateDanmuBtn() {
         if (mDanmuSettingBtn == null) return;
-        mDanmuSettingBtn.setVisibility(hasDanmu ? VISIBLE : GONE);
+        mDanmuSettingBtn.setVisibility(hasDanmu ? VISIBLE : GONE);  //xuameng弹幕
     }
     public interface VodControlListener {
         void playNext(boolean rmProgress);
@@ -1581,7 +1581,7 @@ public class VodController extends BaseController {
         void errReplay();
         void selectSubtitle();
         void selectAudioTrack();
-        void showDanmuSetting();
+        void showDanmuSetting(); //xuameng弹幕
         void hideTipXu(); //xuameng隐藏错误信息
         void startPlayUrl(String url, HashMap < String, String > headers); //xuameng广告过滤
     }
@@ -2610,7 +2610,7 @@ public class VodController extends BaseController {
         }
     }
 
-    public DanmakuView getDanmuView() {
+    public DanmakuView getDanmuView() { //xuameng弹幕
         return mDanmuView;
     }
 
