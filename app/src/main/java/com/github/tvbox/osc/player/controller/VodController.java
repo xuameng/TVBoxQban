@@ -1365,6 +1365,7 @@ public class VodController extends BaseController {
         mDanmuSettingBtn.setOnLongClickListener(new OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
+                FastClickCheckUtil.check(view); //xuameng 防播放打断动画
                 if(mDanmuView.getVisibility() == View.VISIBLE) {
                     mDanmuView.hide();
                     EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_SET_DANMU_SETTINGS, false));
