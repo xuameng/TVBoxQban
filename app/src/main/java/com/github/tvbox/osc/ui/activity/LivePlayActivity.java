@@ -1598,7 +1598,7 @@ public class LivePlayActivity extends BaseActivity {
     private HashMap < String, String > liveWebHeader() { //xuameng自定义UA
         return Hawk.get(HawkConfig.LIVE_WEB_HEADER);
     }
-    private HashMap<String, String> liveChannelHeader() {
+    private HashMap<String, String> liveChannelHeader() {  //xuameng自定义UA  如M3U里有用M3U的
         if (currentLiveChannelItem == null) return liveWebHeader();
         HashMap<String, String> header = new HashMap<>();
         HashMap<String, String> liveHeader = liveWebHeader();
