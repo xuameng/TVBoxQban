@@ -23,11 +23,6 @@
         android:layout_width="@dimen/vs_100"
         android:layout_height="@dimen/vs_100"
         android:src="@drawable/app_logo"/>
-    <master.flame.danmaku.ui.widget.DanmakuView
-        android:id="@+id/danmaku"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone" />
     <com.github.tvbox.osc.ui.tv.widget.MusicVisualizerView
         android:id="@+id/visualizer_view"
         android:layout_width="400mm"
@@ -36,6 +31,11 @@
         android:visibility="gone"
         android:layout_margin="16dp"
         android:background="@android:color/transparent"/>
+    <master.flame.danmaku.ui.widget.DanmakuView
+        android:id="@+id/danmaku"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
     <com.github.tvbox.osc.subtitle.LrcView
         android:id="@+id/lrc_view"
         android:textSize="16.0mm"
