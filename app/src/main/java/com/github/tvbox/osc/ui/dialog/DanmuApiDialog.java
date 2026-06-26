@@ -37,14 +37,25 @@ public class DanmuApiDialog extends BaseDialog {
             dismiss();
         });
 
-        input.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (TextUtils.isEmpty(s.toString())) {
-                    saveDefault();
-                }
-            }
-        });
+input.addTextChangedListener(new TextWatcher() {
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        // 文本改变前的回调，可以留空或添加需要的逻辑
+    }
+    
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+        // 文本正在改变时的回调，可以留空或添加需要的逻辑
+    }
+    
+    @Override
+    public void afterTextChanged(Editable s) {
+        if (TextUtils.isEmpty(s.toString())) {
+            saveDefault();
+        }
+    }
+});
+
 
     }
 
