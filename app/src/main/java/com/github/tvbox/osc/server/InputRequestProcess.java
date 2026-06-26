@@ -39,16 +39,20 @@ public class InputRequestProcess implements RequestProcess {
                     String action = params.get("do");
 
                     switch (action) {
-                        case "search": {
+                        case "search": {  //xuameng搜索远程输入
                             mDataReceiver.onTextReceived(params.get("word").trim());
                             break;
                         }
-                        case "api": {
+                        case "api": {  //xuameng接口远程输入
                             mDataReceiver.onApiReceived(params.get("url").trim());
                             break;
                         }
-                        case "liveApi": {
+                        case "liveApi": {   //xuameng直播远程输入
                             mDataReceiver.onLiveApiReceived(params.get("url").trim());
+                            break;
+                        }
+                        case "danmuApi": {  //xuameng 弹幕远程输入
+                            mDataReceiver.onDanmuApiReceived(params.get("url").trim());
                             break;
                         }
                         case "push": {
