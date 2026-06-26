@@ -1030,7 +1030,7 @@ public class LivePlayActivity extends BaseActivity {
                 } else if(logoUrl.equals("false")) {
                     updateChannelIcon(channel_Name.getChannelName(), null);
                 } else {
-                    String logo = logoUrl.replace("{name}", channelName); //xuameng支持logourl
+                    String logo = logoUrl.replace("{name}", channel_Name.getChannelName()); //xuameng支持logourl
                     updateChannelIcon(channel_Name.getChannelName(), logo);
                 }
                 ArrayList arrayList = (ArrayList) hsEpg.get(savedEpgKey);
