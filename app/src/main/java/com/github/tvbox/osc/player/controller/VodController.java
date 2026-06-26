@@ -92,6 +92,7 @@ import android.util.TypedValue; //xuameng 新增给vod显示旋转图片用
 import master.flame.danmaku.ui.widget.DanmakuView;
 import org.greenrobot.eventbus.EventBus;
 import com.github.tvbox.osc.event.RefreshEvent;
+import com.github.tvbox.osc.util.DanmuHelper;
 
 import com.google.android.exoplayer2.ui.SubtitleView;   // 用于显示ExoPlayer内置字幕
 
@@ -1367,12 +1368,14 @@ public class VodController extends BaseController {
             public boolean onLongClick(View view) {
                 FastClickCheckUtil.check(view); //xuameng 防播放打断动画
                 if(mDanmuView.getVisibility() == View.VISIBLE) {
-                    mDanmuView.setVisibility(View.GONE);  
+                    DanmuHelper.setOpen(false);
                     EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_SET_DANMU_SETTINGS, false));
+                    mDanmuView.setVisibility(View.GONE);  
                     App.showToastShort(getContext(), "弹幕已关闭");
                 } else {
-                    mDanmuView.setVisibility(View.VISIBLE);  
+                    DanmuHelper.setOpen(true);
                     EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_SET_DANMU_SETTINGS, true));
+                    mDanmuView.setVisibility(View.VISIBLE);  
                     App.showToastShort(getContext(), "弹幕已开启");
                 }
                 return true;
