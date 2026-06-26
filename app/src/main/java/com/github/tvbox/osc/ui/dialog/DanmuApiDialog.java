@@ -27,7 +27,7 @@ public class DanmuApiDialog extends BaseDialog {
     public DanmuApiDialog(@NonNull @NotNull Context context) {
         super(context);
         setContentView(R.layout.dialog_danmu_api);
-        setCanceledOnTouchOutside(false);
+        setCanceledOnTouchOutside(false);  //xuameng 禁止点击外部关闭
         input = findViewById(R.id.input);
         input.setText(Hawk.get(HawkConfig.DANMU_API, ""));
         input.setHint(getDefaultApi());
@@ -37,26 +37,25 @@ public class DanmuApiDialog extends BaseDialog {
             dismiss();
         });
 
-input.addTextChangedListener(new TextWatcher() {
-    @Override
-    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-        // 文本改变前的回调，可以留空或添加需要的逻辑
-    }
+        input.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // 文本改变前的回调，可以留空或添加需要的逻辑
+            }
     
-    @Override
-    public void onTextChanged(CharSequence s, int start, int before, int count) {
-        // 文本正在改变时的回调，可以留空或添加需要的逻辑
-    }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // 文本正在改变时的回调，可以留空或添加需要的逻辑
+            }
     
-    @Override
-    public void afterTextChanged(Editable s) {
-        if (TextUtils.isEmpty(s.toString())) {
-            Hawk.put(HawkConfig.DANMU_API, "");
-        input.setHint("请输入弹幕搜索地址"); 
-        }
-    }
-});
-
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (TextUtils.isEmpty(s.toString())) {
+                    Hawk.put(HawkConfig.DANMU_API, "");
+                    input.setHint("请输入弹幕搜索地址"); 
+                }
+            }
+        });
 
     }
 
