@@ -962,7 +962,7 @@ public class LivePlayActivity extends BaseActivity {
                 } else if(logoUrl.equals("false")) {
                     updateChannelIcon(channel_Name.getChannelName(), null);
                 } else {
-                    String logo = logoUrl.replace("{name}", channelName); //xuameng支持logourl
+                    String logo = logoUrl.replace("{name}", channel_Name.getChannelName()); //xuameng支持logourl
                     updateChannelIcon(channel_Name.getChannelName(), logo);
                 }
                 ArrayList arrayList = (ArrayList) hsEpg.get(savedEpgKey);
@@ -1633,9 +1633,6 @@ public class LivePlayActivity extends BaseActivity {
         if (liveHeader != null) header.putAll(liveHeader);
         if (currentLiveChannelItem.getHeaders() != null) {
             header.putAll(currentLiveChannelItem.getHeaders());
-        }
-        if (!currentLiveChannelItem.getChannelFormat().isEmpty()) {
-            header.put(ExoMediaSourceHelper.HEADER_FORMAT, currentLiveChannelItem.getChannelFormat());
         }
         if (header.isEmpty()) return null;
         return header;
