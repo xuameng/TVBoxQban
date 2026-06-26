@@ -99,7 +99,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
@@ -3170,9 +3169,7 @@ public class LivePlayActivity extends BaseActivity {
             }
             @Override
             public void onSuccess(Response < String > response) {
-                LinkedHashMap < String, LinkedHashMap < String, ArrayList < String >>> linkedHashMap = new LinkedHashMap < > ();
-                TxtSubscribe.parse(linkedHashMap, response.body());
-                JsonArray livesArray = TxtSubscribe.live2JsonArray(linkedHashMap);
+                JsonArray livesArray = TxtSubscribe.parseToJsonArray(response.body());
                 JsonArray live_groups = Hawk.get(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
                 ApiConfig.get().loadLives(livesArray);
                 List < LiveChannelGroup > list = ApiConfig.get().getChannelGroupList();
