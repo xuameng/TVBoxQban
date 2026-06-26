@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TextView
-    android:textSize="@dimen/ts_20"
+    android:textSize="@dimen/ts_22"
     android:textColor="@color/color_CC000000"
     android:gravity="center"
     android:id="@+id/tvName"
@@ -10,6 +10,6 @@
     android:clickable="true"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:minWidth="@dimen/vs_70"
+    android:minWidth="75mm"
     android:minHeight="@dimen/vs_50"
-    xmlns:android="http://schemas.android.com/apk/res/android"/>
+    xmlns:android="http://schemas.android.com/apk/res/android" />
