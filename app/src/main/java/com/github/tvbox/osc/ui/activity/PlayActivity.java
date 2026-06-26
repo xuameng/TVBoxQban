@@ -123,10 +123,9 @@ import com.github.tvbox.osc.util.SubtitleHelper; //xuameng 保存字幕颜色信
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import com.github.tvbox.osc.ui.dialog.DanmuSettingDialog;
-import com.github.tvbox.osc.player.danmu.DanmuLoadController;
-import master.flame.danmaku.ui.widget.DanmakuView;
-import com.github.tvbox.osc.api.DanmakuApi;
+import com.github.tvbox.osc.ui.dialog.DanmuSettingDialog;  //xuameng 弹幕
+import com.github.tvbox.osc.player.danmu.DanmuLoadController; //xuameng 弹幕
+import com.github.tvbox.osc.api.DanmakuApi; //xuameng 弹幕
 
 public class PlayActivity extends BaseActivity {
     private MyVideoView mVideoView;
@@ -147,8 +146,8 @@ public class PlayActivity extends BaseActivity {
     private boolean isChineseSubtitle = false;   //xuameng 判断中文字幕
 	private int currentSubtitleStyle = 0; // xuameng当前字幕颜色索引
 
-    private DanmakuView mDanmuView;
-    private DanmuLoadController danmuLoadController;
+    private DanmakuView mDanmuView;  //xuameng 弹幕
+    private DanmuLoadController danmuLoadController;  //xuameng 弹幕
 
     @Override
     protected int getLayoutResID() {
@@ -164,9 +163,9 @@ public class PlayActivity extends BaseActivity {
         } else if (event.type == RefreshEvent.TYPE_CLOSE_PLAY_ACTIVITY) {  //xuameng 远程关闭playactivity 用于push推送解析刷新
             // 收到指令，执行关闭
             finish(); 
-        } else if (event.type == RefreshEvent.TYPE_SET_DANMU_SETTINGS) {
+        } else if (event.type == RefreshEvent.TYPE_SET_DANMU_SETTINGS) {  //xuameng 弹幕
             setDanmuViewSettings(event.obj instanceof Boolean && (Boolean) event.obj);
-        } else if (event.type == RefreshEvent.TYPE_DANMU_REFRESH) {
+        } else if (event.type == RefreshEvent.TYPE_DANMU_REFRESH) {  //xuameng 弹幕
             checkDanmu(event.obj instanceof String ? (String) event.obj : "");
         }
     }
@@ -177,32 +176,32 @@ public class PlayActivity extends BaseActivity {
         initView();
         initViewModel();
         initData();
-        initDanmuView();
+        initDanmuView();  //xuameng 弹幕
         Hawk.put(HawkConfig.PLAYER_IS_LIVE,false);  //xuameng新增
         HawkConfig.exoSubtitle = false;  //xuameng 判断当前是否播放EXO内置字幕
     }
 
-    private void initDanmuView() {
+    private void initDanmuView() {  //xuameng 弹幕
         mDanmuView = mController.getDanmuView();
         danmuLoadController = new DanmuLoadController(mVideoView, mController, mDanmuView);
     }
 
-    private void setDanmuViewSettings(boolean reload) {
+    private void setDanmuViewSettings(boolean reload) {  //xuameng 弹幕
         if (danmuLoadController != null) danmuLoadController.applySettings(reload);
     }
 
-    private void checkDanmu(String danmu) {
+    private void checkDanmu(String danmu) { //xuameng 弹幕
         if (danmuLoadController != null) {
             VodInfo.VodSeries series = mVodInfo == null ? null : getCurrentSeries(mVodInfo.playFlag, mVodInfo.playIndex);
             danmuLoadController.check(danmu, mVodInfo == null ? "" : mVodInfo.name, series == null ? "" : series.name);
         }
     }
 
-    private void startDanmuIfReady() {
+    private void startDanmuIfReady() { //xuameng 弹幕
         if (danmuLoadController != null) danmuLoadController.startIfReady();
     }
 
-    private void resetDanmuState() {
+    private void resetDanmuState() { //xuameng 弹幕
         if (danmuLoadController != null) danmuLoadController.reset();
     }
 
@@ -259,7 +258,7 @@ public class PlayActivity extends BaseActivity {
         mVideoView.setProgressManager(progressManager);
         mController.setListener(new VodController.VodControlListener() {
             @Override
-            public void showDanmuSetting() {
+            public void showDanmuSetting() { //xuameng 弹幕
                 DanmuSettingDialog dialog = new DanmuSettingDialog(PlayActivity.this, mDanmuView);
                 dialog.show();
             }
@@ -338,7 +337,7 @@ public class PlayActivity extends BaseActivity {
             @Override
             public void prepared() {
                 initSubtitleView();
-                startDanmuIfReady();
+                startDanmuIfReady(); //xuameng 弹幕
             }
             @Override
             public void startPlayUrl(String url, HashMap<String, String> headers) {
@@ -1046,8 +1045,8 @@ public class PlayActivity extends BaseActivity {
                             mController.showParse(false);
                             playUrl(playUrl + url, headers);
                         }
-                      checkDanmu(danmaku);
-                      searchDanmu(danmaku);
+                      checkDanmu(danmaku); //xuameng 弹幕
+                      searchDanmu(danmaku); //xuameng 弹幕
                     } catch (Throwable th) {
                     }
                 } else {
@@ -1057,7 +1056,7 @@ public class PlayActivity extends BaseActivity {
         });
     }
 
-    private void searchDanmu(String danmaku) {
+    private void searchDanmu(String danmaku) { //xuameng 弹幕
         if (!TextUtils.isEmpty(danmaku) || !DanmakuApi.canSearch() || mVodInfo == null) return;
         VodInfo.VodSeries series = getCurrentSeries(mVodInfo.playFlag, mVodInfo.playIndex);
         String key = progressKey;
@@ -1203,7 +1202,7 @@ public class PlayActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
-        if (danmuLoadController != null) {
+        if (danmuLoadController != null) { //xuameng 弹幕
             danmuLoadController.destroy();
             danmuLoadController = null;
         }
@@ -1446,7 +1445,7 @@ public class PlayActivity extends BaseActivity {
         }
         stopParse();
         initParseLoadFound();
-        resetDanmuState();
+        resetDanmuState(); //xuameng 弹幕
 //xuameng某些设备有问题        mController.stopOther();
         if(mVideoView!= null) mVideoView.release();
         subtitleCacheKey = mVodInfo.sourceKey + "-" + mVodInfo.id + "-" + mVodInfo.playFlag + "-" + mVodInfo.playIndex+ "-" + vs.name + "-subt";
