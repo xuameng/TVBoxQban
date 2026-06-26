@@ -6,6 +6,9 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.text.Editable;
+
 
 import androidx.annotation.NonNull;
 
@@ -33,6 +36,16 @@ public class DanmuApiDialog extends BaseDialog {
             save(input.getText().toString().trim());
             dismiss();
         });
+
+        input.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (TextUtils.isEmpty(s.toString())) {
+                    saveDefault();
+                }
+            }
+        });
+
     }
 
     private String getDefaultApi() {
