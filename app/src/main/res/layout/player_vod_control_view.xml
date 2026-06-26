@@ -13,11 +13,6 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:scaleType="fitXY"/>
-    <master.flame.danmaku.ui.widget.DanmakuView
-        android:id="@+id/danmaku"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone" />
     <ImageView
         android:layout_gravity="center"
         android:id="@+id/iv_circle_bg"
@@ -28,6 +23,11 @@
         android:layout_width="@dimen/vs_100"
         android:layout_height="@dimen/vs_100"
         android:src="@drawable/app_logo"/>
+    <master.flame.danmaku.ui.widget.DanmakuView
+        android:id="@+id/danmaku"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
     <com.github.tvbox.osc.ui.tv.widget.MusicVisualizerView
         android:id="@+id/visualizer_view"
         android:layout_width="400mm"
