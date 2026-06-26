@@ -1367,11 +1367,11 @@ public class VodController extends BaseController {
             public boolean onLongClick(View view) {
                 FastClickCheckUtil.check(view); //xuameng 防播放打断动画
                 if(mDanmuView.getVisibility() == View.VISIBLE) {
-                    mDanmuView.hide();
+                    mDanmuView.setVisibility(View.GONE);  
                     EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_SET_DANMU_SETTINGS, false));
                     App.showToastShort(getContext(), "弹幕已关闭");
                 } else {
-                    mDanmuView.show();
+                    mDanmuView.setVisibility(View.VISIBLE);  
                     EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_SET_DANMU_SETTINGS, true));
                     App.showToastShort(getContext(), "弹幕已开启");
                 }
