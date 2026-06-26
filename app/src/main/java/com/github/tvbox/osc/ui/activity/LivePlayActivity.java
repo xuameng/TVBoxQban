@@ -1022,18 +1022,6 @@ public class LivePlayActivity extends BaseActivity {
             ((TextView) findViewById(R.id.tv_next_program_name)).setText("");
             String savedEpgKey = channel_Name.getChannelName() + "_" + Objects.requireNonNull(liveEpgDateAdapter.getItem(liveEpgDateAdapter.getSelectedIndex())).getDatePresented();
             if(hsEpg.containsKey(savedEpgKey)) {
-                String[] epgInfo = EpgUtil.getEpgInfo(channel_Name.getChannelName());
-                if (!channel_Name.getChannelLogo().isEmpty()) {
-                    logoUrl = channel_Name.getChannelLogo();
-                    updateChannelIcon(channel_Name.getChannelName(), logoUrl);
-                } else if(logoUrl == null || logoUrl.isEmpty()) {
-                    updateChannelIcon(channel_Name.getChannelName(), epgInfo == null ? null : epgInfo[0]); //xuameng自带logo
-                } else if(logoUrl.equals("false")) {
-                    updateChannelIcon(channel_Name.getChannelName(), null);
-                } else {
-                    String logo = logoUrl.replace("{name}", channel_Name.getChannelName()); //xuameng支持logourl
-                    updateChannelIcon(channel_Name.getChannelName(), logo);
-                }
                 ArrayList arrayList = (ArrayList) hsEpg.get(savedEpgKey);
                 if(arrayList != null && arrayList.size() > 0) {
                     Date date = new Date();
@@ -1068,7 +1056,6 @@ public class LivePlayActivity extends BaseActivity {
     }
     private void updateChannelIcon(String channelName, String logoUrl) {
         if(StringUtils.isEmpty(logoUrl)) {
-            logoUrl = "http://localhost";
             Picasso.get() //xuameng 音乐旋转图标 台标
                    .load(logoUrl)
 				   .resize(120,120)
