@@ -2364,10 +2364,11 @@ public class LivePlayActivity extends BaseActivity {
                     case VideoView.STATE_PAUSED:
                         break;
                     case VideoView.STATE_PREPARED:
+                        if(mVideoView == null) return;
                         String width = Integer.toString(mVideoView.getVideoSize()[0]);
                         String height = Integer.toString(mVideoView.getVideoSize()[1]);
                         tv_size.setText("[" + width + " X " + height + "]");
-
+  
                         musicAnimation = livePlayerManager.getLivePlaymusic();
                         if (musicAnimation){
                             int newSessionId = mVideoView.getAudioSessionId();   //xuameng音乐播放动画
@@ -2410,6 +2411,7 @@ public class LivePlayActivity extends BaseActivity {
                         mHandler.removeCallbacks(mConnectTimeoutChangeSourceRunBuffer);
                         isVideoplaying = true;
                         isBuffer = false;
+						if(mVideoView == null) return;
                         if(isBack) { //xuameng 回看不成功返回直播
                             int durationXu = safeTimeMs(mVideoView.getDuration());
                             if(durationXu < 60000) {
