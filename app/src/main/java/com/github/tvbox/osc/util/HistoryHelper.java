@@ -4,6 +4,12 @@ import java.util.ArrayList;
 import com.orhanobut.hawk.Hawk;
 import java.util.HashSet;
 
+/**
+ * @author xuameng
+ * @date :2026/06/27
+ * @description:   支持多仓并持久化显示
+ */
+
 public class HistoryHelper {
     private static Integer[] hisNumArray = {30,50,70,100};
     private static final String API_LINE_SPLIT = "\t";
