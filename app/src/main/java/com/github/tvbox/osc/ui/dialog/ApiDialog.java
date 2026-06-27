@@ -8,7 +8,6 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 import com.github.tvbox.osc.base.App;  //xuameng toast
 
 import androidx.annotation.NonNull;
@@ -112,13 +111,13 @@ public class ApiDialog extends BaseDialog {
             }
         });
 
-        findViewById(R.id.localapi).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.localapi).setOnClickListener(new View.OnClickListener() {  //xuameng 本地配置
             @Override
             public void onClick(View v) {
                 if (listener != null) listener.onLocalConfig(false);
             }
         });
-        findViewById(R.id.localliveapi).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.localliveapi).setOnClickListener(new View.OnClickListener() {  //xuameng 本地配置直播
             @Override
             public void onClick(View v) {
                 if (listener != null) listener.onLocalConfig(true);
@@ -209,7 +208,7 @@ public class ApiDialog extends BaseDialog {
         this.listener = listener;
     }
 
-    public void setLocalApi(String api, boolean live) {
+    public void setLocalApi(String api, boolean live) {  //xuameng 本地配置
         if (live) {
             inputApiLive.setText(api);
         } else {
