@@ -20,6 +20,12 @@ import com.orhanobut.hawk.Hawk;
 import org.jetbrains.annotations.NotNull;
 import android.view.inputmethod.InputMethodManager;
 
+/**
+ * @author xuameng
+ * @date :2026/06/27
+ * @description:   弹幕地址设置
+ */
+
 public class DanmuApiDialog extends BaseDialog {
     private EditText input;
     private OnListener listener;
