@@ -4017,7 +4017,7 @@ public class LivePlayActivity extends BaseActivity {
         // 3. xuameng添加默认分组到列表
         liveChannelGroupList.add(defaultGroup); 
         // xuameng 关键写入
-        Hawk.put(HawkConfig.LIVE_GROUP_LIST, defaultGroupArray);
+        Hawk.put(HawkConfig.LIVE_GROUP_LIST, defaultGroup);
         Hawk.put(HawkConfig.LIVE_GROUP_INDEX, 0);
         showSuccess();
         initLiveState();
