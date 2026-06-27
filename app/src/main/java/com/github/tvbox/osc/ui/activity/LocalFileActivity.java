@@ -7,7 +7,6 @@ import android.os.Environment;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.github.tvbox.osc.R;
@@ -94,7 +93,10 @@ public class LocalFileActivity extends BaseActivity {
             }
         });
         adapter.setNewData(files);
-        tvEmpty.setVisibility(files.isEmpty() ? View.VISIBLE : View.GONE);
+        if (files.isEmpty()){
+            showEmpty();
+        }
+        //tvEmpty.setVisibility(files.isEmpty() ? View.VISIBLE : View.GONE);
         fileList.postDelayed(new Runnable() {
             @Override
             public void run() {
