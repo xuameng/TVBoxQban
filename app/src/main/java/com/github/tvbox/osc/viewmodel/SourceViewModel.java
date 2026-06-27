@@ -3,7 +3,6 @@ package com.github.tvbox.osc.viewmodel;
 import android.text.TextUtils;
 
 import android.util.Base64;
-import android.util.Log;
 import android.os.Handler;
 import android.os.Looper;
 
@@ -45,6 +44,7 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
 import org.greenrobot.eventbus.EventBus;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 
@@ -204,7 +204,7 @@ public class SourceViewModel extends ViewModel {
                     });
                     String sortJson = null;
                     try {
-                        sortJson = future.get(20, TimeUnit.SECONDS);
+                        sortJson = future.get(30, TimeUnit.SECONDS);
                     } catch (TimeoutException e) {
                         LOG.i("echo--getSort-timeout--" + sourceBean.getKey());
                         e.printStackTrace();
@@ -407,13 +407,33 @@ public class SourceViewModel extends ViewModel {
             spThreadPool.execute(new Runnable() {
                 @Override
                 public void run() {
+                    ExecutorService executor = Executors.newSingleThreadExecutor();
+                    Future<String> future = executor.submit(new Callable<String>() {
+                        @Override
+                        public String call() throws Exception {
+                            Spider sp = ApiConfig.get().getCSP(homeSourceBean);
+                            return sp.categoryContent(sortData.id, page + "", true, sortData.filterSelect);
+                        }
+                    });
+                    String json = null;
                     try {
-                        Spider sp = ApiConfig.get().getCSP(homeSourceBean);
-                        String json = sp.categoryContent(sortData.id, page + "", true, sortData.filterSelect);
+                        json = future.get(homeSourceBean.getPlayTimeoutSeconds(), TimeUnit.SECONDS);
 //                        LOG.i("echo-categoryContent:"+json);
-                        json(listResult, json,homeSourceBean.getKey());
-                    } catch (Throwable th) {
-                        th.printStackTrace();
+                    } catch (TimeoutException e) {
+                        LOG.i("echo--getList-timeout--" + homeSourceBean.getKey());
+                        e.printStackTrace();
+                        future.cancel(true);
+                    } catch (InterruptedException | ExecutionException e) {
+                        Throwable cause = e.getCause();
+                        LOG.i("echo--getList-error--" + homeSourceBean.getKey() + "--" + e.getClass().getSimpleName() + "--" + (cause != null ? cause.getClass().getSimpleName() + ":" + cause.getMessage() : e.getMessage()));
+                        e.printStackTrace();
+                    } finally {
+                        executor.shutdown();
+                        if (json != null) {
+                            json(listResult, json,homeSourceBean.getKey());
+                        } else {
+                            listResult.postValue(null);
+                        }
                     }
                 }
             });
@@ -1088,11 +1108,11 @@ public class SourceViewModel extends ViewModel {
                     });
 
                     try {
-                        String json = future.get(10, TimeUnit.SECONDS);
+                        String json = future.get(sourceBean.getPlayTimeoutSeconds(), TimeUnit.SECONDS);
                         LOG.i("echo--getPlay--result:" + json);
                         // 处理返回的 JSON
                         if (!TextUtils.isEmpty(json)) {
-                            JSONObject result = new JSONObject(json);
+                            JSONObject result = normalizePlayerResult(new JSONObject(json));
                             result.put("key", url);
                             result.put("proKey", progressKey);
                             result.put("subtKey", subtitleKey);
@@ -1164,7 +1184,7 @@ public class SourceViewModel extends ViewModel {
                         String json = response.body();
                         LOG.i(json);
                         try {
-                            JSONObject result = new JSONObject(json);
+                            JSONObject result = normalizePlayerResult(new JSONObject(json));
                             result.put("key", url);
                             result.put("proKey", progressKey);
                             result.put("subtKey", subtitleKey);
@@ -1190,6 +1210,51 @@ public class SourceViewModel extends ViewModel {
 
     public void cancelPlayRequest() {
         playRequestSeq.incrementAndGet();
+    }
+
+    private JSONObject normalizePlayerResult(JSONObject result) {
+        if (result == null) return null;
+        try {
+            String playUrl = result.optString("playUrl", "");
+            String url = result.optString("url", "");
+            if (TextUtils.isEmpty(url)) return result;
+            if (url.startsWith("[") && url.endsWith("]")) {
+                JSONArray array = new JSONArray(url);
+                for (int i = 0; i < array.length(); i++) {
+                    Object item = array.get(i);
+                    if (item instanceof String) {
+                        String str = (String) item;
+                        if (str.startsWith("proxy://")) {
+                            str = DefaultConfig.checkReplaceProxy(str);
+                            array.put(i, str);
+                        } else if (str.startsWith("video://")) {
+                            str = str.substring(8);
+                            array.put(i, str);
+                        }
+                    }
+                }
+                result.put("url", array.toString());
+                result.put("parse", 0);
+                return result;
+            }
+            if (url.startsWith("video://")) {
+                url = url.substring(8);
+                result.put("url", url);
+                result.put("parse", 1);
+            } else if (url.startsWith("proxy://")) {
+                url = DefaultConfig.checkReplaceProxy(url);
+                result.put("url", url);
+                result.put("parse", 0);
+            } else if (playUrl.length() == 0
+                    && DefaultConfig.isVideoFormat(url)
+                    && !result.has("parse")
+                    && !result.has("jx")) {
+                result.put("parse", 0);
+            }
+        } catch (Throwable th) {
+            th.printStackTrace();
+        }
+        return result;
     }
 
     private void postPlayResult(int requestSeq, JSONObject result) {
