@@ -4,6 +4,12 @@ import android.graphics.Color;
 
 import com.orhanobut.hawk.Hawk;
 
+/**
+ * @author xuameng
+ * @date :2026/06/27
+ * @description:   保存弹幕设置
+ */
+
 public class DanmuHelper {
     private static final String[] PALETTE = new String[]{
             "#ffffff", "#70f3ff", "#44cef6", "#3eede7", "#00e079", "#2edfa3",
