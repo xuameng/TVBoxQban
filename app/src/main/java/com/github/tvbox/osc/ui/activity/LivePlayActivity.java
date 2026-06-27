@@ -3984,44 +3984,68 @@ public class LivePlayActivity extends BaseActivity {
         tv_currentpos.setText(durationToString(simSeekPosition));
     }
 
-    private void setDefaultLiveChannelList() {      //xuameng 加载失败默认频道列表
-        liveChannelGroupList.clear();
-    
-        // 1. xuameng先添加收藏组（即使为空）
-        LiveChannelGroup favoriteGroup = LiveChannelItem.createFavoriteChannelGroup();
-        favoriteGroup.setGroupIndex(0); // 收藏组索引为0
-        liveChannelGroupList.add(favoriteGroup);
-    
-        // 2. xuameng创建默认直播分组（索引从1开始）
-        LiveChannelGroup defaultGroup = new LiveChannelGroup();
-        defaultGroup.setGroupIndex(1); // xuameng改为1，避免与收藏组冲突
-        defaultGroup.setGroupName("聚汇直播");
-        defaultGroup.setGroupPassword("");
-    
-        LiveChannelItem defaultChannel = new LiveChannelItem();
-        defaultChannel.setChannelName("暂无频道");
-        defaultChannel.setChannelIndex(0);
-        defaultChannel.setChannelNum(1);
-    
-        ArrayList<String> defaultSourceNames = new ArrayList<>();
-        ArrayList<String> defaultSourceUrls = new ArrayList<>();
-        defaultSourceNames.add("默认源1");
-        defaultSourceUrls.add("http://default.play.url/stream");
-        defaultChannel.setChannelSourceNames(defaultSourceNames);
-        defaultChannel.setChannelUrls(defaultSourceUrls);
-    
-        ArrayList<LiveChannelItem> channels = new ArrayList<>();
-        channels.add(defaultChannel);
-        defaultGroup.setLiveChannels(channels);
-    
-        // 3. xuameng添加默认分组到列表
-        liveChannelGroupList.add(defaultGroup); 
-        // xuameng 关键写入
-        Hawk.put(HawkConfig.LIVE_GROUP_LIST, defaultGroup);
-        Hawk.put(HawkConfig.LIVE_GROUP_INDEX, 0);
-        showSuccess();
-        initLiveState();
-    }
+private void setDefaultLiveChannelList() {
+    // 1. 清空 UI 列表
+    liveChannelGroupList.clear();
+
+    // 2. 收藏组（UI 用）
+    LiveChannelGroup favoriteGroup = LiveChannelItem.createFavoriteChannelGroup();
+    favoriteGroup.setGroupIndex(0);
+    liveChannelGroupList.add(favoriteGroup);
+
+    // 3. 默认分组（UI 用）
+    LiveChannelGroup defaultGroup = new LiveChannelGroup();
+    defaultGroup.setGroupIndex(1);
+    defaultGroup.setGroupName("聚汇直播");
+    defaultGroup.setGroupPassword("");
+
+    LiveChannelItem defaultChannel = new LiveChannelItem();
+    defaultChannel.setChannelName("暂无频道");
+    defaultChannel.setChannelIndex(0);
+    defaultChannel.setChannelNum(1);
+
+    ArrayList<String> defaultSourceNames = new ArrayList<>();
+    ArrayList<String> defaultSourceUrls = new ArrayList<>();
+    defaultSourceNames.add("默认源1");
+    defaultSourceUrls.add("http://default.play.url/stream");
+    defaultChannel.setChannelSourceNames(defaultSourceNames);
+    defaultChannel.setChannelUrls(defaultSourceUrls);
+
+    ArrayList<LiveChannelItem> channels = new ArrayList<>();
+    channels.add(defaultChannel);
+    defaultGroup.setLiveChannels(channels);
+
+    liveChannelGroupList.add(defaultGroup);
+
+    // ✅ 4. 构造【标准 JsonArray】（和线上直播源结构一致）
+    JsonArray defaultGroupArray = new JsonArray();
+
+    JsonObject groupObj = new JsonObject();
+    groupObj.addProperty("name", "聚汇直播");
+    groupObj.addProperty("logo", "");
+
+    JsonArray channelArray = new JsonArray();
+    JsonObject channelObj = new JsonObject();
+    channelObj.addProperty("name", "暂无频道");
+    channelObj.addProperty("type", "tv");
+
+    JsonArray urlArray = new JsonArray();
+    urlArray.add("http://default.play.url/stream");
+    channelObj.add("urls", urlArray);
+
+    channelArray.add(channelObj);
+    groupObj.add("channels", channelArray);
+
+    defaultGroupArray.add(groupObj);
+
+    // ✅ 5. 先删旧数据（非常重要）
+    Hawk.delete(HawkConfig.LIVE_GROUP_LIST);
+    Hawk.put(HawkConfig.LIVE_GROUP_LIST, defaultGroupArray);
+    Hawk.put(HawkConfig.LIVE_GROUP_INDEX, 0);
+
+    showSuccess();
+    initLiveState();
+}
 
     private void initLiveObj(){   //xuameng 直播配置里有没有logo配置
         int position=Hawk.get(HawkConfig.LIVE_GROUP_INDEX, 0);
