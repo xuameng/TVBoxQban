@@ -192,24 +192,7 @@ public class SettingActivity extends BaseActivity {
             App.showToastShort(mContext, "壁纸更换已被打断！壁纸已重置！");
 			return;
 		}
-        if (currentApi.equals(Hawk.get(HawkConfig.API_URL, ""))) {   //xuameng 如何配置地址没变
-            if(dnsOpt != Hawk.get(HawkConfig.DOH_URL, 0)){  //xuameng DNS更改重启
-                AppManager.getInstance().finishAllActivity();
-                jumpActivity(HomeActivity.class);
-            }else if (!currentLiveApi.equals(Hawk.get(HawkConfig.LIVE_API_URL, ""))){    //xuameng修复直播API不刷新问题   重启
-                AppManager.getInstance().finishAllActivity();
-                jumpActivity(HomeActivity.class);
-            }else if (HawkConfig.ISrestore){     //xuameng 恢复重启
-                AppManager.getInstance().finishAllActivity();
-                jumpActivity(HomeActivity.class);
-                HawkConfig.ISrestore = false;  //xuameng恢复成功,请重启应用
-            }else if ((homeSourceKey != null && !homeSourceKey.equals(Hawk.get(HawkConfig.HOME_API, "")))  || homeRec != Hawk.get(HawkConfig.HOME_REC, 0)) { //xuameng 更改数据源或首页推荐
-                jumpActivity(HomeActivity.class, createBundle());
-            }
-        } else {
-            AppManager.getInstance().finishAllActivity();
-            jumpActivity(HomeActivity.class);
-        }
+
         App.HideToast();  //xuameng HideToast
         super.onBackPressed();
     }
