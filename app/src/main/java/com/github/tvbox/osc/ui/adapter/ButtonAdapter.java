@@ -20,6 +20,12 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author xuameng
+ * @date :2026/06/28
+ * @description:   弹幕设置
+ */
+
 public class ButtonAdapter<T> extends ListAdapter<T, ButtonAdapter.SelectViewHolder> {
 
     public interface SelectDialogInterface<T> {
