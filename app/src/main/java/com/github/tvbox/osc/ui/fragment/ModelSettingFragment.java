@@ -113,9 +113,9 @@ public class ModelSettingFragment extends BaseLazyFragment {
     private View llApi;  //xuameng 多仓
     private View llApiLine; //xuameng 多仓
     private ApiDialog apiDialog;
-    private boolean selectLocalLive;
-    private TextView tvDanmuOpenText;
-    private TextView tvDanmuApiText;
+    private boolean selectLocalLive;  //xuameng 本地配置
+    private TextView tvDanmuOpenText; //xuameng 弹幕
+    private TextView tvDanmuApiText;  //xuameng 弹幕
 
 
     public static ModelSettingFragment newInstance() {
@@ -144,10 +144,10 @@ public class ModelSettingFragment extends BaseLazyFragment {
         tvShowMusicDb.setText(Hawk.get(HawkConfig.VOD_MUSIC_ANIMATION, false) ? "已开启" : "已关闭");
         tvExodecode.setText(Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false) ? "软解码" : "硬解码");
         tvm3u8AdText.setText(Hawk.get(HawkConfig.M3U8_PURIFY, false) ? "已开启" : "已关闭"); //xuameng去广告
-        tvDanmuOpenText = findViewById(R.id.danmuOpenText);
+        tvDanmuOpenText = findViewById(R.id.danmuOpenText);   //xuameng 弹幕
         tvDanmuOpenText.setText(DanmuHelper.isOpen() ? "已开启" : "已关闭");
         tvDanmuApiText = findViewById(R.id.danmuApiText);
-        refreshDanmuApiText();
+        refreshDanmuApiText();  //xuameng 弹幕
         tvSwitchDecode.setText(Hawk.get(HawkConfig.VOD_SWITCHDECODE, false) ? "已开启" : "已关闭"); //xuameng解码切换
         tvSwitchPlayer.setText(Hawk.get(HawkConfig.VOD_SWITCHPLAYER, true) ? "已开启" : "已关闭"); //xuameng播放器切换
         tvFastSearchText.setText(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false) ? "已开启" : "已关闭");
@@ -794,7 +794,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
                 tvm3u8AdText.setText(!is_purify ? "已开启" : "已关闭");
             }
         });
-        findViewById(R.id.danmuOpen).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.danmuOpen).setOnClickListener(new View.OnClickListener() {  //xuameng 弹幕
             @Override
             public void onClick(View v) {
                 FastClickCheckUtil.check(v);
@@ -803,7 +803,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
                 tvDanmuOpenText.setText(open ? "已开启" : "已关闭");
             }
         });
-        findViewById(R.id.danmuApi).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.danmuApi).setOnClickListener(new View.OnClickListener() {  //xuameng 弹幕
             @Override
             public void onClick(View v) {
                 FastClickCheckUtil.check(v);
@@ -995,7 +995,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
         tvApiLine.setText(lineName);
     }
 
-    private void openLocalConfig(boolean live) {
+    private void openLocalConfig(boolean live) {  //xuameng 本地配置
         selectLocalLive = live;
         if (!XXPermissions.isGranted(mContext, Permission.Group.STORAGE)) {
             App.showToastShort(getContext(), "请选择文件前需要先授予存储权限！");
@@ -1140,7 +1140,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
         return name;
     }
 
-    private void refreshDanmuApiText() {
+    private void refreshDanmuApiText() {  //xuameng 弹幕
         if (tvDanmuApiText == null) return;
         if (DanmakuApi.isUseDefault()) {
             tvDanmuApiText.setText("默认");
