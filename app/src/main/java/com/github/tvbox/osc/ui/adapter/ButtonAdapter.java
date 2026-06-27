@@ -30,11 +30,13 @@ public class ButtonAdapter<T> extends ListAdapter<T, ButtonAdapter.SelectViewHol
 
     public interface SelectDialogInterface<T> {
         void click(T value, int pos);
-
         String getDisplay(T val);
     }
 
     static class SelectViewHolder extends RecyclerView.ViewHolder {
+        // 记录当前 ViewHolder 绑定的 position，防止焦点监听回调时 position 错乱
+        int currentPosition;
+
         SelectViewHolder(@NonNull @NotNull View itemView) {
             super(itemView);
         }
@@ -74,16 +76,21 @@ public class ButtonAdapter<T> extends ListAdapter<T, ButtonAdapter.SelectViewHol
         TextView item = holder.itemView.findViewById(R.id.tvName);
         item.setText(dialogInterface.getDisplay(value));
 
-        // 1. 提取样式更新逻辑，方便复用
-        // 在进入页面、数据刷新、焦点变化时都会调用，确保状态立即更新
-        updateItemStyle(item, position);
+        // 1. 绑定当前真实的 position
+        holder.currentPosition = position;
 
-        // 2. 设置焦点监听，处理获得/失去焦点时的样式切换
+        // 2. 进入页面及刷新时，立即更新样式
+        updateItemStyle(holder, item);
+
+        // 3. 设置焦点监听，处理获得/失去焦点时的样式切换
         holder.itemView.setOnFocusChangeListener((v, hasFocus) -> {
-            updateItemStyle(item, position);
+            // 防止 RecyclerView 复用导致回调的 position 与当前 View 不匹配
+            if (holder.currentPosition == position) {
+                updateItemStyle(holder, item);
+            }
         });
 
-        // 3. 点击事件处理
+        // 4. 点击事件处理
         holder.itemView.setOnClickListener(v -> {
             if (position == select) return;
             int oldSelect = select;
@@ -96,15 +103,13 @@ public class ButtonAdapter<T> extends ListAdapter<T, ButtonAdapter.SelectViewHol
 
     /**
      * 统一处理 Item 的样式更新
-     * 规则：
-     * - 选中项 + 有焦点：白色加粗
-     * - 选中项 + 无焦点：0xff02f8e1 加粗
-     * - 非选中项：白色不加粗
      */
-    private void updateItemStyle(TextView item, int position) {
+    private void updateItemStyle(SelectViewHolder holder, TextView item) {
+        int position = holder.currentPosition;
         if (position == select) {
-            // 选中状态：根据是否拥有焦点决定颜色
-            if (item.hasFocus() || item.getParent() != null && ((View) item.getParent()).hasFocus()) {
+            // 选中状态：严格判断当前 itemView 是否拥有焦点
+            // 去掉了 getParent().hasFocus() 的判断，避免 TV 端焦点流转导致误判
+            if (holder.itemView.hasFocus()) {
                 // 拥有焦点：白色加粗
                 item.setTextColor(Color.WHITE);
             } else {
