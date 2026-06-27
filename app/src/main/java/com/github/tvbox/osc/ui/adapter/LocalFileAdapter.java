@@ -10,6 +10,13 @@ import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
+/**
+ * @author xuameng
+ * @date :2026/6/27
+ * @description: 选择本地配置文件
+   弹幕远程输入
+ */
+
 public class LocalFileAdapter extends BaseQuickAdapter<File, BaseViewHolder> {
     private static final DecimalFormat SIZE_FORMAT = new DecimalFormat("0.#");
     private File parentDir;
