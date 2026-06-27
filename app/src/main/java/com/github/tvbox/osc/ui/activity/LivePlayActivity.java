@@ -706,7 +706,7 @@ public class LivePlayActivity extends BaseActivity {
             logoUrl = channel_Name.getChannelLogo();
             updateChannelIcon(channelName, logoUrl);
         } else {
-          //  initLiveObj(); //xuameng 直播配置里有没有logo配置
+            initLiveObj(); //xuameng 直播配置里有没有logo配置
         }
         if(logoUrl == null || logoUrl.isEmpty() || logoUrl.equals("false")) {
             updateChannelIcon(channelName, epgInfo == null ? null : epgInfo[0]); //xuameng自带logo
@@ -959,7 +959,7 @@ public class LivePlayActivity extends BaseActivity {
                 logoUrl = channel_Name.getChannelLogo();
                 updateChannelIcon(channel_Name.getChannelName(), logoUrl);
             } else {
-             //   initLiveObj(); //xuameng 直播配置里有没有logo配置
+                initLiveObj(); //xuameng 直播配置里有没有logo配置
             }
             if(logoUrl == null || logoUrl.isEmpty() || logoUrl.equals("false")) {
                 updateChannelIcon(channel_Name.getChannelName(), epgInfo == null ? null : epgInfo[0]); //xuameng自带logo
@@ -4016,6 +4016,9 @@ public class LivePlayActivity extends BaseActivity {
     
         // 3. xuameng添加默认分组到列表
         liveChannelGroupList.add(defaultGroup); 
+        // xuameng 关键写入
+        Hawk.put(HawkConfig.LIVE_GROUP_LIST, defaultGroupArray);
+        Hawk.put(HawkConfig.LIVE_GROUP_INDEX, 0);
         showSuccess();
         initLiveState();
     }
