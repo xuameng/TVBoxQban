@@ -13,9 +13,10 @@ import com.github.tvbox.osc.util.HawkConfig;  //xuameng 新增我的收藏
 import java.util.HashMap;
 import java.util.Map;
 /**
- * @author pj567
- * @date :2021/1/12
- * @description:
+ * @author xuameng
+ * @date :2026/6/27
+ * @description:  支持收藏
+ M3U补全
  */
 public class LiveChannelItem {
     /**
@@ -84,7 +85,7 @@ public class LiveChannelItem {
     }
 
     public String getChannelLogo() {
-        return channelLogo == null ? "http://localhost/" : channelLogo;
+        return channelLogo == null ? "" : channelLogo;
     }
 
     public void setChannelEpg(String channelEpg) {
