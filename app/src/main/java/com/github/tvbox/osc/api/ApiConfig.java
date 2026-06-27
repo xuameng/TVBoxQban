@@ -17,6 +17,7 @@ import com.github.tvbox.osc.bean.LiveSettingGroup;
 import com.github.tvbox.osc.bean.LiveSettingItem;
 import com.github.tvbox.osc.bean.ParseBean;
 import com.github.tvbox.osc.bean.SourceBean;
+import com.github.tvbox.osc.bean.ProxyRule;
 import com.github.tvbox.osc.server.ControlManager;
 import com.github.tvbox.osc.util.AES;
 import com.github.tvbox.osc.util.AdBlocker;
@@ -335,12 +336,7 @@ public class ApiConfig {
                 });
     }
 
-    private static final int LOAD_JAR_MAX_RETRY = 1;
     public void loadJar(boolean useCache, String spider, LoadConfigCallback callback) {
-        loadJar(useCache, spider, callback, 0);
-    }
-
-    private void loadJar(boolean useCache, String spider, LoadConfigCallback callback, int retryCount) {
         String[] urls = spider.split(";md5;");
         String jarUrl = urls[0];
         String md5 = urls.length > 1 ? urls[1].trim() : "";
@@ -357,32 +353,20 @@ public class ApiConfig {
             }
         }else {
             if (Boolean.parseBoolean(jarCache) && cache.exists() && !FileUtils.isWeekAgo(cache)) {
-                LOG.i("echo-load jar jarCache:"+jarUrl);
                 if (jarLoader.load(cache.getAbsolutePath())) {
                     callback.success();
                     return;
-                }
+                } 
             }
         }
 
         boolean isJarInImg = jarUrl.startsWith("img+");
         jarUrl = jarUrl.replace("img+", "");
-        final String requestUrl = jarUrl;
         OkGo.<File>get(jarUrl)
                 .headers("User-Agent", userAgent)
                 .headers("Accept", requestAccept)
                 .tag("loadjar")           //xuameng打断加载
                 .execute(new AbsCallback<File>() {
-
-                    private boolean retryLoad(String reason) {
-                        if (retryCount >= LOAD_JAR_MAX_RETRY) return false;
-                        if (cache.exists() && !cache.delete()) {
-                            LOG.i("echo---delete bad jar cache failed:" + cache.getAbsolutePath());
-                        }
-                        LOG.i("echo---retry load jar reason:" + reason + " url:" + requestUrl + " retry:" + (retryCount + 1));
-                        loadJar(false, spider, callback, retryCount + 1);
-                        return true;
-                    }
 
                     @Override
                     public File convertResponse(okhttp3.Response response){
@@ -399,9 +383,7 @@ public class ApiConfig {
                                 byte[] imgJar = getImgJar(respData);
                                 if (imgJar == null || imgJar.length == 0) {
                                     LOG.e("echo---Generated JAR data is empty");
-                                    if (retryLoad("empty_img_jar")) return null;
                                     callback.error("JAR数据为空");
-                                    return null;
                                 }
                                 fos.write(imgJar);
                             } else {
@@ -430,17 +412,14 @@ public class ApiConfig {
                                     callback.success();
                                 } else {
                                     LOG.e("echo---jar Loader returned false");
-                                    if (retryLoad("loader_false")) return;
                                     callback.error("JAR加载失败！");
                                 }
                             } catch (Exception e) {
                                 LOG.e("echo---jar Loader threw exception: " + e.getMessage());
-                                if (retryLoad("loader_exception")) return;
                                 callback.error("JAR加载异常！");
                             }
                         } else {
                             LOG.e("echo---jar File not found");
-                            if (retryLoad("file_missing")) return;
                             callback.error("JAR文件不存在！");
                         }
                     }
@@ -451,11 +430,6 @@ public class ApiConfig {
                         if (ex != null) {
                             LOG.i("echo---jar Request failed: " + ex.getMessage());
                         }
-                        if (cache.exists() && jarLoader.load(cache.getAbsolutePath())) {
-                            callback.success();
-                            return;
-                        }
-                        if (retryLoad("request_error")) return;
                         if(cache.exists())jarLoader.load(cache.getAbsolutePath());
                         callback.error("网络错误");
                     }
@@ -715,6 +689,8 @@ public class ApiConfig {
                  }
              }
          }
+
+        loadProxyRules(infoJson);
 
         //video parse rule for host
         if (infoJson.has("rules")) {
@@ -1355,6 +1331,18 @@ public class ApiConfig {
 
     public Map<String,String> getMyHost() {
         return myHosts;
+    }
+    private void loadProxyRules(JsonObject infoJson) {
+        if (!infoJson.has("proxy")) {
+            OkGoHelper.setProxyList(null);
+            return;
+        }
+        try {
+            OkGoHelper.setProxyList(ProxyRule.arrayFrom(infoJson.get("proxy")));
+        } catch (Throwable th) {
+            th.printStackTrace();
+            OkGoHelper.setProxyList(null);
+        }
     }
     public void clearJarLoader(){
         jarLoader.clear();
