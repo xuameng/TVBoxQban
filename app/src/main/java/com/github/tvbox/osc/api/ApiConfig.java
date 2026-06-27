@@ -17,7 +17,6 @@ import com.github.tvbox.osc.bean.LiveSettingGroup;
 import com.github.tvbox.osc.bean.LiveSettingItem;
 import com.github.tvbox.osc.bean.ParseBean;
 import com.github.tvbox.osc.bean.SourceBean;
-import com.github.tvbox.osc.bean.ProxyRule;
 import com.github.tvbox.osc.server.ControlManager;
 import com.github.tvbox.osc.util.AES;
 import com.github.tvbox.osc.util.AdBlocker;
@@ -29,7 +28,6 @@ import com.github.tvbox.osc.util.M3u8;
 import com.github.tvbox.osc.util.MD5;
 import com.github.tvbox.osc.util.OkGoHelper;
 import com.github.tvbox.osc.util.VideoParseRuler;
-import com.github.tvbox.osc.util.HistoryHelper;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -76,7 +74,7 @@ public class ApiConfig {
     public String wallpaper = "";
     public String musicwallpaper = "";   //xuameng音乐背景图
     public String JvhuiWarning = "";   //xuameng版权提示
-    private String danmaku = ""; //xuameng 弹幕
+
     private final SourceBean emptyHome = new SourceBean();
 
     private final JarLoader jarLoader = new JarLoader();
@@ -115,15 +113,13 @@ public class ApiConfig {
         String content = json;
         try {
             if (AES.isJson(content)) return content;
-            Pattern pattern = getPattern("[A-Za-z0-9]{8}\\*\\*");
+            Pattern pattern = getPattern("[A-Za-z0]{8}\\*\\*");
             Matcher matcher = pattern.matcher(content);
             if(matcher.find()){
                 content=content.substring(content.indexOf(matcher.group()) + 10);
                 content = new String(Base64.decode(content, Base64.DEFAULT));
             }
-            content = content.trim();
             if (content.startsWith("2423")) {
-                content = content.replaceAll("\\s+", "");
                 String data = content.substring(content.indexOf("2324") + 4, content.length() - 26);
                 content = new String(AES.toBytes(content)).toLowerCase();
                 String key = AES.rightPadding(content.substring(content.indexOf("$#") + 2, content.indexOf("#$")), "0", 16);
@@ -142,7 +138,7 @@ public class ApiConfig {
     }
 
     private static byte[] getImgJar(String body){
-        Pattern pattern = getPattern("[A-Za-z0-9]{8}\\*\\*");
+        Pattern pattern = getPattern("[A-Za-z0]{8}\\*\\*");
         Matcher matcher = pattern.matcher(body);
         if(matcher.find()){
             body = body.substring(body.indexOf(matcher.group()) + 10);
@@ -256,13 +252,7 @@ public class ApiConfig {
         File cache = new File(App.getInstance().getFilesDir().getAbsolutePath() + "/" + MD5.encode(apiUrl));
         if (useCache && cache.exists()) {
             try {
-                String json = readConfigFile(cache);
-                if (switchApiCollectionIfNeeded(apiUrl, json)) {
-                    loadConfig(false, callback, activity);
-                    return;
-                }
-                clearApiLinesIfUnmatched(apiUrl);
-                parseJson(apiUrl, json);
+                parseJson(apiUrl, cache);
                 callback.success();
                 return;
             } catch (Throwable th) {
@@ -271,8 +261,8 @@ public class ApiConfig {
         }
         String configUrl=configUrl(apiUrl);
         // 使用内部存储，将当前配置地址写入到应用的私有目录中
-        //File configUrlFile = new File(App.getInstance().getFilesDir().getAbsolutePath() + "/config_url");
-        //FileUtils.saveCache(configUrlFile,configUrl);
+        File configUrlFile = new File(App.getInstance().getFilesDir().getAbsolutePath() + "/config_url");
+        FileUtils.saveCache(configUrlFile,configUrl);
         OkGo.<String>get(configUrl)
                 .headers("User-Agent", userAgent)
                 .headers("Accept", requestAccept)
@@ -282,12 +272,6 @@ public class ApiConfig {
                     public void onSuccess(Response<String> response) {
                         try {
                             String json = response.body();
-                            if (switchApiCollectionIfNeeded(apiUrl, json)) {
-                                FileUtils.saveCache(cache,json);
-                                loadConfig(false, callback, activity);
-                                return;
-                            }
-                            clearApiLinesIfUnmatched(apiUrl);
                             parseJson(apiUrl, json);
                             FileUtils.saveCache(cache,json);
                             callback.success();
@@ -302,13 +286,7 @@ public class ApiConfig {
                         super.onError(response);
                         if (cache.exists()) {
                             try {
-                                String json = readConfigFile(cache);
-                                if (switchApiCollectionIfNeeded(apiUrl, json)) {
-                                    loadConfig(false, callback, activity);
-                                    return;
-                                }
-                                clearApiLinesIfUnmatched(apiUrl);
-                                parseJson(apiUrl, json);
+                                parseJson(apiUrl, cache);
                                 callback.success();
                                 return;
                             } catch (Throwable th) {
@@ -437,10 +415,6 @@ public class ApiConfig {
     }
 
     private void parseJson(String apiUrl, File f) throws Throwable {
-        parseJson(apiUrl, readConfigFile(f));
-    }
-
-    private String readConfigFile(File f) throws Throwable {
         BufferedReader bReader = new BufferedReader(new InputStreamReader(new FileInputStream(f), "UTF-8"));
         StringBuilder sb = new StringBuilder();
         String s = "";
@@ -448,91 +422,8 @@ public class ApiConfig {
             sb.append(s + "\n");
         }
         bReader.close();
-        return sb.toString();
+        parseJson(apiUrl, sb.toString());
     }
-
-    private boolean switchApiCollectionIfNeeded(String apiUrl, String jsonStr) {  //xuameng 多仓
-        ArrayList<String> apiLines = parseApiCollection(jsonStr);
-        if (apiLines.isEmpty()) {
-            return false;
-        }
-        String firstApi = HistoryHelper.getApiLineUrl(apiLines.get(0));
-        if (TextUtils.isEmpty(firstApi) || firstApi.equals(apiUrl)) {
-            return false;
-        }
-        Hawk.put(HawkConfig.API_LINE_LIST, apiLines);
-        Hawk.put(HawkConfig.API_LINE_SOURCE, apiUrl);
-        Hawk.put(HawkConfig.API_URL, firstApi);
-        HistoryHelper.setApiHistory(apiUrl);
-        HistoryHelper.markAsApiLineSource(apiUrl);   //xuameng 多仓 永久标记  
-        String liveApiUrl = Hawk.get(HawkConfig.LIVE_API_URL, "");
-        if (TextUtils.isEmpty(liveApiUrl) || liveApiUrl.equals(apiUrl)) {
-            Hawk.put(HawkConfig.LIVE_API_URL, firstApi);
-            HistoryHelper.setLiveApiHistory(firstApi);
-        }
-        return true;
-    }
-
-    private ArrayList<String> parseApiCollection(String jsonStr) {  //xuameng 多仓
-        ArrayList<String> apiLines = new ArrayList<>();
-        try {
-            String json = trimJsonObject(jsonStr);
-            if (TextUtils.isEmpty(json)) {
-                return apiLines;
-            }
-            JsonObject infoJson = gson.fromJson(json, JsonObject.class);
-            if (infoJson == null || infoJson.has("sites") || !infoJson.has("urls") || !infoJson.get("urls").isJsonArray()) {
-                return apiLines;
-            }
-            JsonArray urls = infoJson.get("urls").getAsJsonArray();
-            for (JsonElement element : urls) {
-                String name = "";
-                String url = "";
-                if (element.isJsonObject()) {
-                    JsonObject item = element.getAsJsonObject();
-                    name = DefaultConfig.safeJsonString(item, "name", "");
-                    url = DefaultConfig.safeJsonString(item, "url", "");
-                    if (TextUtils.isEmpty(url)) {
-                        url = DefaultConfig.safeJsonString(item, "api", "");
-                    }
-                } else if (element.isJsonPrimitive()) {
-                    url = element.getAsString();
-                }
-                if (!TextUtils.isEmpty(url)) {
-                    apiLines.add(HistoryHelper.buildApiLine(name, url));
-                }
-            }
-        } catch (Throwable ignored) {
-        }
-        return apiLines;
-    }
-
-    private String trimJsonObject(String content) { //xuameng 多仓
-        if (content == null) {
-            return "";
-        }
-        String trimContent = content.trim();
-        int start = trimContent.indexOf("{");
-        int end = trimContent.lastIndexOf("}");
-        if (start >= 0 && end > start) {
-            return trimContent.substring(start, end + 1);
-        }
-        return trimContent;
-    }
-
-    private void clearApiLinesIfUnmatched(String apiUrl) {  //xuameng 多仓
-        ArrayList<String> apiLines = Hawk.get(HawkConfig.API_LINE_LIST, new ArrayList<String>());
-        if (apiLines.isEmpty()) {
-            return;
-        }
-        for (String apiLine : apiLines) {
-            if (apiUrl.equals(HistoryHelper.getApiLineUrl(apiLine))) {
-                return;
-            }
-        }
-        HistoryHelper.clearApiLineList();
-    }
-
     private static String jarCache ="true";
     private void parseJson(String apiUrl, String jsonStr) {
 		LOG.i("echo-parseJson"+jsonStr);
@@ -540,7 +431,6 @@ public class ApiConfig {
         // spider
         spider = DefaultConfig.safeJsonString(infoJson, "spider", "");
         jarCache = DefaultConfig.safeJsonString(infoJson, "jarCache", "true");
-        danmaku = DefaultConfig.safeJsonString(infoJson, "danmaku", "");  //xuameng 弹幕
         // wallpaper
         wallpaper = DefaultConfig.safeJsonString(infoJson, "wallpaper", "");
         musicwallpaper = DefaultConfig.safeJsonString(infoJson, "musicwallpaper", "");    //xuameng音乐背景图
@@ -566,7 +456,8 @@ public class ApiConfig {
             sb.setCategories(DefaultConfig.safeJsonStringList(obj, "categories"));
             sb.setClickSelector(DefaultConfig.safeJsonString(obj, "click", ""));
             sb.setStyle(DefaultConfig.safeJsonString(obj, "style", ""));
-            if (firstSite == null) firstSite = sb;
+            if (firstSite == null && sb.getFilterable()==1)
+                firstSite = sb;
             sourceBeanList.put(siteKey, sb);
         }
         if (sourceBeanList != null && sourceBeanList.size() > 0) {
@@ -689,8 +580,6 @@ public class ApiConfig {
                  }
              }
          }
-
-        loadProxyRules(infoJson);
 
         //video parse rule for host
         if (infoJson.has("rules")) {
@@ -986,40 +875,8 @@ public class ApiConfig {
                 JsonObject obj = (JsonObject) channelElement;
                 LiveChannelItem liveChannelItem = new LiveChannelItem();
                 liveChannelItem.setChannelName(obj.get("name").getAsString().trim());
-                liveChannelItem.setChannelLogo(DefaultConfig.safeJsonString(obj, "logo", ""));
-                liveChannelItem.setChannelEpg(DefaultConfig.safeJsonString(obj, "epg", ""));
-                liveChannelItem.setChannelUa(DefaultConfig.safeJsonString(obj, "ua", ""));
-                liveChannelItem.setChannelClick(DefaultConfig.safeJsonString(obj, "click", ""));
-                liveChannelItem.setChannelFormat(DefaultConfig.safeJsonString(obj, "format", ""));
-                liveChannelItem.setChannelOrigin(DefaultConfig.safeJsonString(obj, "origin", ""));
-                liveChannelItem.setChannelReferer(DefaultConfig.safeJsonString(obj, "referer", ""));
-                liveChannelItem.setChannelTvgId(DefaultConfig.safeJsonString(obj, "tvg-id", ""));
-                liveChannelItem.setChannelTvgName(DefaultConfig.safeJsonString(obj, "tvg-name", ""));
-                if (obj.has("parse")) {
-                    try {
-                        liveChannelItem.setChannelParse(obj.get("parse").getAsInt());
-                    } catch (Throwable ignored) {
-                    }
-                }
-                if (obj.has("catchup")) {
-                    JsonObject catchupObj = new JsonObject();
-                    if (obj.get("catchup").isJsonObject()) {
-                        catchupObj = obj.getAsJsonObject("catchup");
-                    } else {
-                        catchupObj.addProperty("type", obj.get("catchup").getAsString());
-                        if (obj.has("catchup-source")) catchupObj.addProperty("source", obj.get("catchup-source").getAsString());
-                        if (obj.has("catchup-replace")) catchupObj.addProperty("replace", obj.get("catchup-replace").getAsString());
-                    }
-                    liveChannelItem.setChannelCatchup(catchupObj);
-                }
-                if (obj.has("header") && obj.get("header").isJsonObject()) {
-                    JsonObject headerObj = obj.getAsJsonObject("header");
-                    HashMap<String, String> channelHeader = new HashMap<>();
-                    for (Map.Entry<String, JsonElement> entry : headerObj.entrySet()) {
-                        channelHeader.put(entry.getKey(), entry.getValue().getAsString());
-                    }
-                    liveChannelItem.setChannelHeader(channelHeader);
-                }
+                liveChannelItem.setChannelIndex(channelIndex++);
+                liveChannelItem.setChannelNum(++channelNum);
                 ArrayList<String> urls = DefaultConfig.safeJsonStringList(obj, "urls");
                 ArrayList<String> sourceNames = new ArrayList<>();
                 ArrayList<String> sourceUrls = new ArrayList<>();
@@ -1035,61 +892,10 @@ public class ApiConfig {
                 }
                 liveChannelItem.setChannelSourceNames(sourceNames);
                 liveChannelItem.setChannelUrls(sourceUrls);
-                if (mergeLiveChannel(liveChannelGroup.getLiveChannels(), liveChannelItem)) {
-                    liveChannelItem.setChannelIndex(channelIndex++);
-                    liveChannelItem.setChannelNum(++channelNum);
-                }
+                liveChannelGroup.getLiveChannels().add(liveChannelItem);
             }
             liveChannelGroupList.add(liveChannelGroup);
         }
-    }
-
-    private boolean mergeLiveChannel(ArrayList<LiveChannelItem> channelItems, LiveChannelItem newItem) {
-        LiveChannelItem oldItem = findLiveChannel(channelItems, newItem.getChannelName());
-        if (oldItem == null) {
-            channelItems.add(newItem);
-            return true;
-        }
-        mergeLiveChannelUrls(oldItem, newItem);
-        return false;
-    }
-
-    private LiveChannelItem findLiveChannel(ArrayList<LiveChannelItem> channelItems, String channelName) {
-        for (LiveChannelItem item : channelItems) {
-            if (channelName != null && channelName.equals(item.getChannelName())) return item;
-        }
-        return null;
-    }
-
-    private void mergeLiveChannelUrls(LiveChannelItem oldItem, LiveChannelItem newItem) {
-        ArrayList<String> oldUrls = oldItem.getChannelUrls();
-        ArrayList<String> oldSourceNames = oldItem.getChannelSourceNames();
-        if (oldUrls == null) {
-            oldUrls = new ArrayList<>();
-            oldItem.setChannelUrls(oldUrls);
-        }
-        if (oldSourceNames == null) {
-            oldSourceNames = new ArrayList<>();
-            oldItem.setChannelSourceNames(oldSourceNames);
-        }
-        while (oldSourceNames.size() < oldUrls.size()) {
-            oldSourceNames.add("源" + Integer.toString(oldSourceNames.size() + 1));
-        }
-        ArrayList<String> newUrls = newItem.getChannelUrls();
-        ArrayList<String> newSourceNames = newItem.getChannelSourceNames();
-        if (newUrls == null) return;
-        for (int i = 0; i < newUrls.size(); i++) {
-            String url = newUrls.get(i);
-            if (oldUrls.contains(url)) continue;
-            oldUrls.add(url);
-            if (newSourceNames != null && i < newSourceNames.size()) {
-                oldSourceNames.add(newSourceNames.get(i));
-            } else {
-                oldSourceNames.add("源" + Integer.toString(oldSourceNames.size() + 1));
-            }
-        }
-        oldItem.setChannelUrls(oldUrls);
-        oldItem.setChannelSourceNames(oldSourceNames);
     }
 
     public void loadLiveApi(JsonObject livesOBJ) {
@@ -1177,9 +983,6 @@ public class ApiConfig {
 
     public String getSpider() {
         return spider;
-    }
-    public String getDanmaku() {  //xuameng 弹幕
-        return danmaku == null ? "" : danmaku;
     }
 
     public Spider getCSP(SourceBean sourceBean) {
@@ -1313,36 +1116,19 @@ public class ApiConfig {
     }
 
     String fixContentPath(String url, String content) {
-        if (content.contains("\"./") || content.contains("\"../")) {
+        if (content.contains("\"./")) {
             url=url.replace("file://","clan://localhost/");
             if(!url.startsWith("http") && !url.startsWith("clan://")){
                 url = "http://" + url;
             }
             if(url.startsWith("clan://"))url=clanToAddress(url);
-            String base = url.substring(0,url.lastIndexOf("/") + 1);
-            String parent = base.endsWith("/") ? base.substring(0, base.length() - 1) : base;
-            int parentEnd = parent.lastIndexOf("/");
-            if (parentEnd >= 0) parent = parent.substring(0, parentEnd + 1);
-            content = content.replace("../", parent);
-            content = content.replace("./", base);
+            content = content.replace("./", url.substring(0,url.lastIndexOf("/") + 1));
         }
         return content;
     }
 
     public Map<String,String> getMyHost() {
         return myHosts;
-    }
-    private void loadProxyRules(JsonObject infoJson) {
-        if (!infoJson.has("proxy")) {
-            OkGoHelper.setProxyList(null);
-            return;
-        }
-        try {
-            OkGoHelper.setProxyList(ProxyRule.arrayFrom(infoJson.get("proxy")));
-        } catch (Throwable th) {
-            th.printStackTrace();
-            OkGoHelper.setProxyList(null);
-        }
     }
     public void clearJarLoader(){
         jarLoader.clear();
