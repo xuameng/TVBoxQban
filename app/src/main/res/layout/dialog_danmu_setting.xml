@@ -44,7 +44,7 @@
                 android:layout_width="0.0dip"
                 android:layout_height="@dimen/vs_50"
                 android:layout_weight="1.0"
-                app:tv_horizontalSpacingWithMargins="210mm"
+                app:tv_horizontalSpacingWithMargins="@dimen/vs_20"
                 app:tv_layoutManager="V7LinearLayoutManager"
                 app:tv_selectedItemIsCentered="true"
                 app:tv_verticalSpacingWithMargins="@dimen/vs_10"/>
@@ -70,7 +70,7 @@
                 android:layout_width="0.0dip"
                 android:layout_height="@dimen/vs_50"
                 android:layout_weight="1.0"
-                app:tv_horizontalSpacingWithMargins="210mm"
+                app:tv_horizontalSpacingWithMargins="@dimen/vs_20"
                 app:tv_layoutManager="V7LinearLayoutManager"
                 app:tv_selectedItemIsCentered="true"
                 app:tv_verticalSpacingWithMargins="@dimen/vs_10"/>
