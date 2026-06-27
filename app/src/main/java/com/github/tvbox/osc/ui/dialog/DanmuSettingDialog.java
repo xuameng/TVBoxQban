@@ -22,6 +22,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import master.flame.danmaku.ui.widget.DanmakuView;
 
+/**
+ * @author xuameng
+ * @date :2026/06/27
+ * @description:   弹幕设置窗口
+ */
+
 public class DanmuSettingDialog extends BaseDialog {
     private final DanmakuView danmakuView;
 
