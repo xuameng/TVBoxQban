@@ -8,8 +8,9 @@ import fi.iki.elonen.NanoHTTPD;
 
 /**
  * @author xuameng
- * @date :2026/4/17
+ * @date :2026/6/27
  * @description: 响应按键和输入 增加响应主机名
+   弹幕远程输入
  */
 
 public class InputRequestProcess implements RequestProcess {
