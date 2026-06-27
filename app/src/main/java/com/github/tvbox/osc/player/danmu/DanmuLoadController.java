@@ -20,6 +20,12 @@ import master.flame.danmaku.danmaku.model.android.DanmakuContext;
 import master.flame.danmaku.ui.widget.DanmakuView;
 import xyz.doikki.videoplayer.player.VideoView;
 
+/**
+ * @author xuameng
+ * @date :2026/06/27
+ * @description:   弹幕控制器
+ */
+
 public class DanmuLoadController {
     private final MyVideoView videoView;
     private final VodController controller;
