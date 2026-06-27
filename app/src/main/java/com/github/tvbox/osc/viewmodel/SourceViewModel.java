@@ -534,26 +534,46 @@ public class SourceViewModel extends ViewModel {
         }
     }
 
-    public void getListFromSearch(MovieSort.SortData sortData, int page, String sourceKey) {   //xuameng 新增搜索中返回下一级列表
+    public void getListFromSearch(MovieSort.SortData sortData, int page) {   //xuameng 新增搜索中返回下一级列表
         if (sortData == null) {     //xuameng 判空防止空指针
             Log.w("SourceViewModel", "sortData is null, return");
             listResult.postValue(null);
             return;
         }
         LOG.i("echo-getList:");
-        SourceBean sourceBean = ApiConfig.get().getSource(sourceKey);
+        SourceBean sourceBean = ApiConfig.get().getsourceBean();
         int type = sourceBean.getType();
         if (type == 3) {
             spThreadPool.execute(new Runnable() {
                 @Override
                 public void run() {
+                    ExecutorService executor = Executors.newSingleThreadExecutor();
+                    Future<String> future = executor.submit(new Callable<String>() {
+                        @Override
+                        public String call() throws Exception {
+                            Spider sp = ApiConfig.get().getCSP(sourceBean);
+                            return sp.categoryContent(sortData.id, page + "", true, sortData.filterSelect);
+                        }
+                    });
+                    String json = null;
                     try {
-                        Spider sp = ApiConfig.get().getCSP(sourceBean);
-                        String json = sp.categoryContent(sortData.id, page + "", true, sortData.filterSelect);
-                        LOG.i("echo-categoryContent:"+json);
-                        json(listResult, json,sourceBean.getKey());
-                    } catch (Throwable th) {
-                        th.printStackTrace();
+                        json = future.get(sourceBean.getPlayTimeoutSeconds(), TimeUnit.SECONDS);
+//                        LOG.i("echo-categoryContent:"+json);
+                    } catch (TimeoutException e) {
+                        LOG.i("echo--getList-timeout--" + sourceBean.getKey());
+                        e.printStackTrace();
+                        future.cancel(true);
+                    } catch (InterruptedException | ExecutionException e) {
+                        Throwable cause = e.getCause();
+                        LOG.i("echo--getList-error--" + sourceBean.getKey() + "--" + e.getClass().getSimpleName() + "--" + (cause != null ? cause.getClass().getSimpleName() + ":" + cause.getMessage() : e.getMessage()));
+                        e.printStackTrace();
+                    } finally {
+                        executor.shutdown();
+                        if (json != null) {
+                            json(listResult, json,sourceBean.getKey());
+                        } else {
+                            listResult.postValue(null);
+                        }
                     }
                 }
             });
@@ -637,7 +657,7 @@ public class SourceViewModel extends ViewModel {
                         @Override
                         public void onSuccess(Response<String> response) {
                             String json = response.body();
-                            LOG.i("echo-list: " + json);
+//                            LOG.i("echo-list: " + json);
                             json(listResult, json, sourceBean.getKey());
                         }
 
