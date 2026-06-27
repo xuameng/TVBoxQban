@@ -75,7 +75,7 @@ public class ApiConfig {
     public String wallpaper = "";
     public String musicwallpaper = "";   //xuameng音乐背景图
     public String JvhuiWarning = "";   //xuameng版权提示
-    private String danmaku = "";
+    private String danmaku = ""; //xuameng 弹幕
     private final SourceBean emptyHome = new SourceBean();
 
     private final JarLoader jarLoader = new JarLoader();
@@ -566,7 +566,7 @@ public class ApiConfig {
         // spider
         spider = DefaultConfig.safeJsonString(infoJson, "spider", "");
         jarCache = DefaultConfig.safeJsonString(infoJson, "jarCache", "true");
-        danmaku = DefaultConfig.safeJsonString(infoJson, "danmaku", "");
+        danmaku = DefaultConfig.safeJsonString(infoJson, "danmaku", "");  //xuameng 弹幕
         // wallpaper
         wallpaper = DefaultConfig.safeJsonString(infoJson, "wallpaper", "");
         musicwallpaper = DefaultConfig.safeJsonString(infoJson, "musicwallpaper", "");    //xuameng音乐背景图
@@ -1202,7 +1202,7 @@ public class ApiConfig {
     public String getSpider() {
         return spider;
     }
-    public String getDanmaku() {
+    public String getDanmaku() {  //xuameng 弹幕
         return danmaku == null ? "" : danmaku;
     }
 
