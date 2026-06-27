@@ -541,7 +541,7 @@ public class SourceViewModel extends ViewModel {
             return;
         }
         LOG.i("echo-getList:");
-        SourceBean sourceBean = ApiConfig.get().getsourceBean();
+        SourceBean sourceBean = ApiConfig.get().getSource(sourceKey);
         int type = sourceBean.getType();
         if (type == 3) {
             spThreadPool.execute(new Runnable() {
