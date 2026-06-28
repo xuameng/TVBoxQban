@@ -3173,59 +3173,49 @@ public class LivePlayActivity extends BaseActivity {
             }
             @Override
             public void onSuccess(Response < String > response) {
+                new Thread(() -> {
+                    try {
+                        JsonArray livesArray = TxtSubscribe.parseToJsonArray(response.body());
+                        runOnUiThread(() -> {
+                            JsonArray live_groups = Hawk.get(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
+                            ApiConfig.get().loadLives(livesArray);
+                            List < LiveChannelGroup > list = ApiConfig.get().getChannelGroupList();
 
-                   new Thread(() -> {
+                            // xuameng排除"我的收藏"组，检查剩余组是否为空
+                            boolean hasValidGroups = false;
+                            for (LiveChannelGroup group : list) {
+                                if (group != null && !"我的收藏".equals(group.getGroupName())) {
+                                    hasValidGroups = true;
+                                    break;
+                                }
+                            }
 
-                        synchronized (this) {
-                            
-                        }
+                            // xuameng如果原列表为空，或排除收藏组后没有其他组，则显示默认列表
+                            if (list.isEmpty() || !hasValidGroups) {
+                                if(live_groups.size() > 1) {
+                                    setDefaultLiveChannelList();
+                                    showSuccess();
+                                    App.showToastShort(mContext, "聚汇直播提示您：直播列表为空！请切换线路！");
+                                } else {
+                                    setDefaultLiveChannelList();
+                                    showSuccess();
+                                    App.showToastShort(mContext, "聚汇直播提示您：频道列表为空！");
+                                }
+                                return;
+                            }
+                            liveChannelGroupList.clear();
+                            liveChannelGroupList.addAll(list);
+				            LivePlayActivity.this.showSuccess();
+                            initLiveState();
+                        });
 
-                        try {
-JsonArray livesArray = TxtSubscribe.parseToJsonArray(response.body());
-                            runOnUiThread(() -> {
-
-                JsonArray live_groups = Hawk.get(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
-                ApiConfig.get().loadLives(livesArray);
-                List < LiveChannelGroup > list = ApiConfig.get().getChannelGroupList();
-
-                // xuameng排除"我的收藏"组，检查剩余组是否为空
-                boolean hasValidGroups = false;
-                for (LiveChannelGroup group : list) {
-                    if (group != null && !"我的收藏".equals(group.getGroupName())) {
-                        hasValidGroups = true;
-                        break;
-                    }
-                }
-
-                // xuameng如果原列表为空，或排除收藏组后没有其他组，则显示默认列表
-                if (list.isEmpty() || !hasValidGroups) {
-                    if(live_groups.size() > 1) {
-                        setDefaultLiveChannelList();
-                        showSuccess();
-                        App.showToastShort(mContext, "聚汇直播提示您：直播列表为空！请切换线路！");
-                    } else {
+                    } catch (Exception e) {
+                        e.printStackTrace();
                         setDefaultLiveChannelList();
                         showSuccess();
                         App.showToastShort(mContext, "聚汇直播提示您：频道列表为空！");
                     }
-                    return;
-                }
-                liveChannelGroupList.clear();
-                liveChannelGroupList.addAll(list);
-				                        LivePlayActivity.this.showSuccess();
-                        initLiveState();
-
-                                
-                            });
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        } finally {
-
-
- 
-                        }
-                    }).start();
+                }).start();
             }
             @Override
             public void onError(Response < String > response) {
