@@ -217,10 +217,10 @@ public class SettingActivity extends BaseActivity {
             }
         } else {
 			App.showToastShort(mContext, "5555555555555555");
-			
+			            jumpActivity(HomeActivity.class);
             AppManager.getInstance().finishAllActivity();
 			return;
-            jumpActivity(HomeActivity.class);
+
         }
         App.HideToast();  //xuameng HideToast
         super.onBackPressed();
