@@ -1296,7 +1296,7 @@ public class ApiConfig {
             liveSettingItem.setItemName(history.get(i));
             liveSettingItemList.add(liveSettingItem);
         }
-        liveSettingGroupList.get(7).setLiveSettingItems(liveSettingItemList);
+        liveSettingGroupList.get(6).setLiveSettingItems(liveSettingItemList);
     }
 
     public void loadLives(JsonArray livesArray) {
