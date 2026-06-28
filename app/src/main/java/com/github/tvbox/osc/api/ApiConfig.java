@@ -1913,9 +1913,8 @@ public class ApiConfig {
         clearLoader();
     }
 
-    /**
-     * xuameng
-     * 创建默认设置（原代码9个，接口失败时兜底）
+	 /**xuameng
+     * 创建默认设置组（覆盖原业务中所有9个组，接口失败时兜底）
      */
     public List<LiveSettingGroup> createDefaultLiveSettingGroupList() {
         List<LiveSettingGroup> defaultList = new ArrayList<>();
@@ -1924,101 +1923,117 @@ public class ApiConfig {
         LiveSettingGroup lineGroup = new LiveSettingGroup();
         lineGroup.setGroupIndex(0);
         lineGroup.setGroupName("线路选择");
-        lineGroup.setLiveSettingItems(new ArrayList<>());
+        lineGroup.setLiveSettingItems(new ArrayList<>()); // 已经是ArrayList，无需转换
 
-        // ==================== 2. 比例（索引1） ====================
+        // ==================== 2. 画面比例（索引1） ====================
         LiveSettingGroup scaleGroup = new LiveSettingGroup();
         scaleGroup.setGroupIndex(1);
-        scaleGroup.setGroupName("");
+        scaleGroup.setGroupName("画面比例");
         List<LiveSettingItem> scaleItems = new ArrayList<>();
-        scaleItems.add(createLiveSettingItem(0, "默认比"));
-        scaleItems.add(createLiveSettingItem(1, "16:9"));
-        scaleItems.add(createLiveSettingItem(2, "4:3 "));
-        scaleItems.add(createLiveSettingItem(3, ""));
-        scaleItems.add(createLiveSettingItem(4, "原始"));
-        scaleItems.add(createLiveSettingItem(5, "裁剪"));
+        scaleItems.add(createLiveSettingItem(0, "默认比例"));
+        scaleItems.add(createLiveSettingItem(1, "16:9比例"));
+        scaleItems.add(createLiveSettingItem(2, "4:3 比例"));
+        scaleItems.add(createLiveSettingItem(3, "填充比例"));
+        scaleItems.add(createLiveSettingItem(4, "原始比例"));
+        scaleItems.add(createLiveSettingItem(5, "裁剪比例"));
+        // 关键修改：强制转换为ArrayList
         scaleGroup.setLiveSettingItems((ArrayList<LiveSettingItem>) (List<?>) scaleItems);
 
-        // ==================== 3. 解码（索引2） ====================
+        // ==================== 3. 播放解码（索引2） ====================
         LiveSettingGroup decoderGroup = new LiveSettingGroup();
         decoderGroup.setGroupIndex(2);
-        decoderGroup.setGroupName("解码");
+        decoderGroup.setGroupName("播放解码");
         List<LiveSettingItem> decoderItems = new ArrayList<>();
-        decoderItems.add(createLiveSettingItem(0, "系统"));
-        decoderItems.add(createLiveSettingItem(1, "IJK 软解"));
-        decoderItems.add(createLiveSettingItem(2, "IJK 硬解"));
-        decoderItems.add(createLiveSettingItem(3, "EXO软解"));
-        decoderItems.add(createLiveSettingItem(4, "EXO硬解"));
+        decoderItems.add(createLiveSettingItem(0, "系统解码"));
+        decoderItems.add(createLiveSettingItem(1, "IJK  硬解"));
+        decoderItems.add(createLiveSettingItem(2, "IJK  软解"));
+        decoderItems.add(createLiveSettingItem(3, "EXO硬解"));
+        decoderItems.add(createLiveSettingItem(4, "EXO软解"));
+        // 关键修改：强制转换
         decoderGroup.setLiveSettingItems((ArrayList<LiveSettingItem>) (List<?>) decoderItems);
 
-        // ==================== 4. 超时源（索引3） ====================
+        // ==================== 4. 超时换源（索引3） ====================
         LiveSettingGroup timeoutGroup = new LiveSettingGroup();
         timeoutGroup.setGroupIndex(3);
-        timeoutGroup.setGroupName("超时源");
+        timeoutGroup.setGroupName("超时换源");
         List<LiveSettingItem> timeoutItems = new ArrayList<>();
-        timeoutItems.add(createLiveSettingItem(0, "超时05"));
-        timeoutItems.add(createLiveSettingItem(1, "超时10"));
-        timeoutItems.add(createLiveSettingItem(2, "超时15"));
-        timeoutItems.add(createLiveSettingItem(3, "超时20"));
-        timeoutItems.add(createLiveSettingItem(4, "超时25"));
-        timeoutItems.add(createLiveSettingItem(5, "超时30"));
+        timeoutItems.add(createLiveSettingItem(0, "超时05秒"));
+        timeoutItems.add(createLiveSettingItem(1, "超时10秒"));
+        timeoutItems.add(createLiveSettingItem(2, "超时15秒"));
+        timeoutItems.add(createLiveSettingItem(3, "超时20秒"));
+        timeoutItems.add(createLiveSettingItem(4, "超时25秒"));
+        timeoutItems.add(createLiveSettingItem(5, "超时30秒"));
+        // 关键修改：强制转换
         timeoutGroup.setLiveSettingItems((ArrayList<LiveSettingItem>) (List<?>) timeoutItems);
 
-        // ==================== 5. 偏好（索引4） ====================
+        // ==================== 5. 偏好设置（索引4） ====================
         LiveSettingGroup personalGroup = new LiveSettingGroup();
         personalGroup.setGroupIndex(4);
-        personalGroup.setGroupName("偏好");
+        personalGroup.setGroupName("偏好设置");
         List<LiveSettingItem> personalItems = new ArrayList<>();
         personalItems.add(createLiveSettingItem(0, "显示时间"));
         personalItems.add(createLiveSettingItem(1, "显示网速"));
-        personalItems.add(createLiveSettingItem(2, "后台播放"));
-        personalItems.add(createLiveSettingItem(3, "选集"));
+        personalItems.add(createLiveSettingItem(2, "换台反转"));
+        personalItems.add(createLiveSettingItem(3, "跨选分类"));
+        // 关键修改：强制转换
         personalGroup.setLiveSettingItems((ArrayList<LiveSettingItem>) (List<?>) personalItems);
 
-        // ==================== 6. 源切换（索引5） ====================
+        // ==================== 6. 多源切换（索引5） ====================
         LiveSettingGroup yumGroup = new LiveSettingGroup();
         yumGroup.setGroupIndex(5);
-        yumGroup.setGroupName("源切换");
+        yumGroup.setGroupName("多源切换");
         List<LiveSettingItem> yumItems = new ArrayList<>();
         yumItems.add(createLiveSettingItem(0, "聚汇直播"));
+        // 关键修改：强制转换
         yumGroup.setLiveSettingItems((ArrayList<LiveSettingItem>) (List<?>) yumItems);
 
-        // ==================== 7. 渲染方式（索引6） ====================
+        // ==================== 8. 配置切换（索引6）====================
+        // 注意：这个组的索引必须是 6，以匹配 refreshLiveApiHistoryItems 中的硬编码逻辑
+        LiveSettingGroup historyGroup = new LiveSettingGroup();
+        historyGroup.setGroupIndex(6); 
+        historyGroup.setGroupName("配置切换");
+        // 初始化一个空的列表，等待后续填充历史记录
+        historyGroup.setLiveSettingItems(new ArrayList<LiveSettingItem>());
+
+        // ==================== 7. 渲染方式（索引7） ====================
         LiveSettingGroup renderGroup = new LiveSettingGroup();
-        renderGroup.setGroupIndex(6);
+        renderGroup.setGroupIndex(7);
         renderGroup.setGroupName("渲染方式");
         List<LiveSettingItem> renderItems = new ArrayList<>();
         renderItems.add(createLiveSettingItem(0, "Texture渲染"));
         renderItems.add(createLiveSettingItem(1, "Surface渲染"));
+        // 关键修改：强制转换
         renderGroup.setLiveSettingItems((ArrayList<LiveSettingItem>) (List<?>) renderItems);
 
-        // ==================== 8. 直播（索引7） ====================
+        // ==================== 8. 音柱动画（索引8） ====================
         LiveSettingGroup musicGroup = new LiveSettingGroup();
-        musicGroup.setGroupIndex(7);
-        musicGroup.setGroupName("直播");
+        musicGroup.setGroupIndex(8);
+        musicGroup.setGroupName("直播音柱");
         List<LiveSettingItem> musicItems = new ArrayList<>();
-        musicItems.add(createLiveSettingItem(0, ""));
-        musicItems.add(createLiveSettingItem(1, "关闭"));
+        musicItems.add(createLiveSettingItem(0, "音柱开启"));
+        musicItems.add(createLiveSettingItem(1, "音柱关闭"));
+        // 关键修改：强制转换
         musicGroup.setLiveSettingItems((ArrayList<LiveSettingItem>) (List<?>) musicItems);
 
-        // ==================== 9. 退出直播（索引8） ====================
+        // ==================== 9. 退出直播（索引9） ====================
         LiveSettingGroup exitGroup = new LiveSettingGroup();
-        exitGroup.setGroupIndex(8);
+        exitGroup.setGroupIndex(9);
         exitGroup.setGroupName("退出直播");
         List<LiveSettingItem> exitItems = new ArrayList<>();
         exitItems.add(createLiveSettingItem(0, "确认退出"));
+        // 关键修改：强制转换
         exitGroup.setLiveSettingItems((ArrayList<LiveSettingItem>) (List<?>) exitItems);
 
-        // ==================== 组装默认列表 ====================
-        defaultList.add(lineGroup);     // 0
-        defaultList.add(scaleGroup);   // 1
-        defaultList.add(decoderGroup);  // 2
-        defaultList.add(timeoutGroup);  // 3
-        defaultList.add(personalGroup); // 4
-        defaultList.add(yumGroup);     // 5
-        defaultList.add(renderGroup);  // 6
-        defaultList.add(musicGroup);   // 7
-        defaultList.add(exitGroup);    // 8
+        // ==================== 将所有组加入默认列表 ====================
+        defaultList.add(lineGroup);     // 索引0
+        defaultList.add(scaleGroup);   // 索引1
+        defaultList.add(decoderGroup);  // 索引2
+        defaultList.add(timeoutGroup);  // 索引3
+        defaultList.add(personalGroup); // 索引4
+        defaultList.add(yumGroup);     // 索引5
+        defaultList.add(renderGroup);  // 索引6
+        defaultList.add(musicGroup);   // 索引7
+        defaultList.add(exitGroup);    // 索引8
 
         return defaultList;
     }
