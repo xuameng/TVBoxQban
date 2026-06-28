@@ -1238,17 +1238,17 @@ public class ApiConfig {
     private final List<LiveSettingGroup> liveSettingGroupList = new ArrayList<>();
 
     private void initLiveSettings() {
-        ArrayList<String> groupNames = new ArrayList<>(Arrays.asList("线路选择", "", "解码", "超时源", "偏好", "源切换", "渲染方式", "直播", "退出直播"));  // xuameng 源
-        ArrayList<ArrayList<String>> itemsArrayList = new ArrayList<>();
-        ArrayList<String> sourceItems = new ArrayList<>();
-        ArrayList<String> scaleItems = new ArrayList<>(Arrays.asList("默认比", "16:9", "4:3 ", "", "原始", "裁剪"));
-        ArrayList<String> playerDecoderItems = new ArrayList<>(Arrays.asList("系统", "IJK 软解", "IJK 硬解", "EXO软解", "EXO硬解"));   // xuameng exo硬解
-        ArrayList<String> timeoutItems = new ArrayList<>(Arrays.asList("超时05", "超时10", "超时15", "超时20", "超时25", "超时30"));
-        ArrayList<String> personalSettingItems = new ArrayList<>(Arrays.asList("显示时间", "显示网速", "后台播放", "选集"));
-        ArrayList<String> yumItems = new ArrayList<>(Arrays.asList("聚汇直播"));   // xuameng 源
-        ArrayList<String> playRenderSettingItems = new ArrayList<>(Arrays.asList("Texture渲染", "Surface渲染"));   // xuameng渲染方式
-        ArrayList<String> liveMusicAnimationItems = new ArrayList<>(Arrays.asList("", "关闭"));   // xuameng
-        ArrayList<String> exitSettingItems = new ArrayList<>(Arrays.asList("确认退出"));   // xuameng退出直播
+		ArrayList<String> groupNames = new ArrayList<>(Arrays.asList("线路选择", "画面比例", "播放解码", "超时换源", "偏好设置", "多源切换", "渲染方式", "直播音柱", "退出直播"));  //xuameng 换源
+        ArrayList < ArrayList < String >> itemsArrayList = new ArrayList < > ();
+        ArrayList < String > sourceItems = new ArrayList < > ();
+        ArrayList < String > scaleItems = new ArrayList < > (Arrays.asList("默认比例", "16:9比例", "4:3 比例", "填充比例", "原始比例", "裁剪比例"));
+        ArrayList < String > playerDecoderItems = new ArrayList < > (Arrays.asList("系统解码", "IJK  硬解", "IJK  软解", "EXO硬解", "EXO软解"));   //xuameng增加exo软硬解
+        ArrayList < String > timeoutItems = new ArrayList < > (Arrays.asList("超时05秒", "超时10秒", "超时15秒", "超时20秒", "超时25秒", "超时30秒"));
+        ArrayList < String > personalSettingItems = new ArrayList < > (Arrays.asList("显示时间", "显示网速", "换台反转", "跨选分类"));
+        ArrayList < String > yumItems = new ArrayList<>(Arrays.asList("聚汇直播"));   //xuameng新增 换源
+        ArrayList < String > PlayrenderSettingItems = new ArrayList < > (Arrays.asList("Texture渲染", "Surface渲染"));   //xuameng渲染方式
+        ArrayList < String > LiveMusicAnimationItems = new ArrayList < > (Arrays.asList("音柱开启", "音柱关闭"));   //xuameng音柱动画
+        ArrayList < String > ExitSettingItems = new ArrayList < > (Arrays.asList("确认退出"));   //xuameng退出直播
 
         itemsArrayList.add(sourceItems);
         itemsArrayList.add(scaleItems);
