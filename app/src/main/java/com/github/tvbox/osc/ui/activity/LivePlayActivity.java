@@ -3213,7 +3213,7 @@ JsonArray livesArray = TxtSubscribe.parseToJsonArray(response.body());
                 liveChannelGroupList.clear();
                 liveChannelGroupList.addAll(list);
 
-                                }
+                                
                             });
 
                         } catch (Exception e) {
