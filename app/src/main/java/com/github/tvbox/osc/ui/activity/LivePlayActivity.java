@@ -123,16 +123,6 @@ import java.util.regex.Matcher; //xuameng 支持XML EPG用
 import java.util.regex.Pattern; //xuameng 支持XML EPG用
 import java.util.concurrent.TimeUnit; //xuameng 支持XML EPG用
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import com.github.catvod.crawler.Spider;
-import android.Manifest;
-
 public class LivePlayActivity extends BaseActivity {
     public static Context context;
     private VideoView mVideoView;
@@ -3176,84 +3166,6 @@ public class LivePlayActivity extends BaseActivity {
         }
         showLoading();
         LOG.i("echo-live-url:" + url);
-        if(url.contains(".js")){
-            if ((url.contains(".js")) && !hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                // 权限不足时，直接设置默认播放列表
-                                    setDefaultLiveChannelList();
-                                    showSuccess();
-                                    App.showToastShort(mContext, "该源需要存储权限！");
-                return;
-            }
-            String finalUrl = url;
-            Runnable waitResponse = new Runnable() {
-                @Override
-                public void run() {
-                    ExecutorService executor = Executors.newSingleThreadExecutor();
-                    Future<String> future = executor.submit(new Callable<String>() {
-                        @Override
-                        public String call() {
-                            Spider sp = ApiConfig.get().getLiveCSP(finalUrl);
-                            String json=sp.liveContent(finalUrl);
-//                            LOG.i("echo--loadProxyLives-json--"+json);
-                            return json;
-                        }
-                    });
-                    String sortJson = null;
-                    try {
-                        sortJson = future.get(ApiConfig.get().getLiveConnectTimeoutSeconds(), TimeUnit.SECONDS);
-                    } catch (TimeoutException e) {
-                        e.printStackTrace();
-                        future.cancel(true);
-                    } catch (InterruptedException | ExecutionException e) {
-                        e.printStackTrace();
-                    } finally {
-                        if (sortJson==null || sortJson.isEmpty()) {
-                            // 频道列表为空时，使用默认播放列表
-                            mHandler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    setDefaultLiveChannelList();
-                                    showSuccess();
-                                    App.showToastShort(mContext, "聚汇直播提示您：频道列表为空！");
-                                }
-                            });
-                            return;
-                        }
-                        JsonArray livesArray = TxtSubscribe.parseToJsonArray(sortJson);
-
-                        ApiConfig.get().loadLives(livesArray);
-                        List<LiveChannelGroup> list = ApiConfig.get().getChannelGroupList();
-                        if (list.isEmpty()) {
-                            mHandler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    setDefaultLiveChannelList();
-                                    showSuccess();
-                                    App.showToastShort(mContext, "聚汇直播提示您：频道列表为空！");
-                                }
-                            });
-                            return;
-                        }
-                        liveChannelGroupList.clear();
-                        liveChannelGroupList.addAll(list);
-
-                        mHandler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                LivePlayActivity.this.showSuccess();
-                                initLiveState();
-                            }
-                        });
-                        try {
-                            executor.shutdown();
-                        } catch (Throwable th) {
-                            th.printStackTrace();
-                        }
-                    }
-                }
-            };
-            Executors.newSingleThreadExecutor().execute(waitResponse);
-        }else {
         OkGo. < String > get(url).tag("xuameng").execute(new AbsCallback < String > () {
             @Override
             public String convertResponse(okhttp3.Response response) throws Throwable {
@@ -3325,7 +3237,6 @@ public class LivePlayActivity extends BaseActivity {
                 });
             }
         });
-		}
     }
 
     private void initLiveState() {
