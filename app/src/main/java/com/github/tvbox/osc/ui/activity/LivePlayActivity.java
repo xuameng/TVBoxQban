@@ -2969,6 +2969,7 @@ public class LivePlayActivity extends BaseActivity {
                 if(!isCurrentLiveChannelValid()) { //xuameng 未选择频道空指针问题
                     return;
                 }
+                if (position < 0 || position >= currentLiveChannelItem.getSourceNum()) return;
                 if(position == liveSettingItemAdapter.getSelectedItemIndex()) return;
                 liveSettingItemAdapter.selectItem(position, true, true);
                 currentLiveChannelItem.setSourceIndex(position);
