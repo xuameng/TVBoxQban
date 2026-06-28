@@ -4485,4 +4485,12 @@ public class LivePlayActivity extends BaseActivity {
             liveChannelItemAdapter.setFocusedChannelIndex(-1);  //xuameng修复频道名称移走焦点变色问题
         }
     }
+
+    private int getCurrentLiveApiHistoryIndex() {  //xuameng历史配置
+        ArrayList<String> history = Hawk.get(HawkConfig.LIVE_API_HISTORY, new ArrayList<String>());
+        if (history.isEmpty()) return -1;
+        String current = Hawk.get(HawkConfig.LIVE_API_URL, "");
+        int idx = history.indexOf(current);
+        return idx >= 0 ? idx : -1;
+    }
 }
