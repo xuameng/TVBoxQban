@@ -210,7 +210,7 @@ public class SettingActivity extends BaseActivity {
                 HawkConfig.ISrestore = false;  //xuameng恢复成功,请重启应用
 				App.showToastShort(mContext, "3333333333333333");
 				return;
-            }else if ((homeSourceKey != null && !homeSourceKey.equals(Hawk.get(HawkConfig.HOME_API, "")))  || homeRec != Hawk.get(HawkConfig.HOME_REC, 0)) { //xuameng 更改数据源或首页推荐
+            }else if (homeRec != Hawk.get(HawkConfig.HOME_REC, 0)) { //xuameng 更改数据源或首页推荐
                 jumpActivity(HomeActivity.class, createBundle());
 				App.showToastShort(mContext, "44444444444444");
 				return;
