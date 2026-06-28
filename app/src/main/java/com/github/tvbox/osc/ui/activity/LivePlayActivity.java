@@ -4476,10 +4476,12 @@ private LiveChannelItem createPlaceholderChannel(String groupName) {
     item.setChannelIndex(-1); // 占位标识
     item.setChannelNum(0);
 
-    List<String> names = new ArrayList<>();
-    List<String> urls = new ArrayList<>();
+    ArrayList<String> names = new ArrayList<>();
+    ArrayList<String> urls = new ArrayList<>();
+
     names.add("默认源");
     urls.add("");
+
     item.setChannelSourceNames(names);
     item.setChannelUrls(urls);
     return item;
