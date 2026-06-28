@@ -82,7 +82,7 @@ public class ApiConfig {
     private String currentPlaySourceKey = "";
     private String loadedLiveConfigUrl = "";
     public String wallpaper = "";
-    private String danmaku = "";
+    private String danmaku = ""; //xuameng 弹幕
 	    public String musicwallpaper = "";   //xuameng音乐背景图
     public String JvhuiWarning = "";   //xuameng版权提示
 
@@ -186,7 +186,7 @@ public class ApiConfig {
         return configUrl;
     }
     public void loadConfig(boolean useCache, LoadConfigCallback callback, Activity activity) {
-        String apiUrl = Hawk.get(HawkConfig.API_URL, "");
+        String apiUrl = Hawk.get(HawkConfig.API_URL, "http://xuameng.vicp.net:8082/jvhuiys/1/xu.json");
         if (apiUrl.isEmpty()) {
             callback.error("-1");
             return;
@@ -256,7 +256,7 @@ public class ApiConfig {
     public void loadLiveConfig(boolean useCache, LoadConfigCallback callback) {
         String apiUrl = Hawk.get(HawkConfig.LIVE_API_URL, "");
         if (apiUrl.isEmpty()) {
-            apiUrl = Hawk.get(HawkConfig.API_URL, "");
+            apiUrl = Hawk.get(HawkConfig.API_URL, "http://xuameng.vicp.net:8082/jvhuiys/1/xu.json");
         }
         if (apiUrl.isEmpty()) {
             callback.error("-1");
@@ -285,7 +285,10 @@ public class ApiConfig {
                 try {
                     parseLiveConfigContent(liveApiUrl, json);
                     if (!hasLiveConfigResult()) {
-                        callback.error("直播配置解析失败");
+                                        callback.error("聚汇影视提示您：解析直播配置失败！");
+                                        initLiveSettings();
+                                        Hawk.put(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
+                                        Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
                         return;
                     }
                     loadedLiveConfigUrl = liveApiUrl;
@@ -293,7 +296,10 @@ public class ApiConfig {
                     callback.success();
                 } catch (Throwable th) {
                     th.printStackTrace();
-                    callback.error("直播配置解析失败");
+                                        callback.error("聚汇影视提示您：解析直播配置失败！");
+                                        initLiveSettings();
+                                        Hawk.put(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
+                                        Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
                 }
             }
 
@@ -311,7 +317,10 @@ public class ApiConfig {
                         th.printStackTrace();
                     }
                 }
-                callback.error("直播配置拉取失败");
+                                        callback.error("聚汇影视提示您：直播配置拉取失败！");
+                                        initLiveSettings();
+                                        Hawk.put(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
+                                        Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
             }
         });
     }
@@ -642,7 +651,7 @@ public class ApiConfig {
         return sb.toString();
     }
 
-    private boolean switchApiCollectionIfNeeded(String apiUrl, String jsonStr) {
+    private boolean switchApiCollectionIfNeeded(String apiUrl, String jsonStr) { //xuameng 多仓
         ArrayList<String> apiLines = parseApiCollection(jsonStr);
         if (apiLines.isEmpty()) {
             return false;
@@ -664,7 +673,7 @@ public class ApiConfig {
         return true;
     }
 
-    private ArrayList<String> parseApiCollection(String jsonStr) {
+    private ArrayList<String> parseApiCollection(String jsonStr) { //xuameng 多仓
         ArrayList<String> apiLines = new ArrayList<>();
         try {
             String json = trimJsonObject(jsonStr);
@@ -698,7 +707,7 @@ public class ApiConfig {
         return apiLines;
     }
 
-    private String trimJsonObject(String content) {
+    private String trimJsonObject(String content) { //xuameng 多仓
         if (content == null) {
             return "";
         }
@@ -711,7 +720,7 @@ public class ApiConfig {
         return trimContent;
     }
 
-    private void clearApiLinesIfUnmatched(String apiUrl) {
+    private void clearApiLinesIfUnmatched(String apiUrl) { //xuameng 多仓
         ArrayList<String> apiLines = Hawk.get(HawkConfig.API_LINE_LIST, new ArrayList<String>());
         if (apiLines.isEmpty()) {
             return;
@@ -731,7 +740,7 @@ public class ApiConfig {
         // spider
         spider = DefaultConfig.safeJsonString(infoJson, "spider", "");
         jarCache = DefaultConfig.safeJsonString(infoJson, "jarCache", "true");
-        danmaku = DefaultConfig.safeJsonString(infoJson, "danmaku", "");
+        danmaku = DefaultConfig.safeJsonString(infoJson, "danmaku", ""); //xuameng 弹幕
         // wallpaper
         wallpaper = DefaultConfig.safeJsonString(infoJson, "wallpaper", "");
 		        musicwallpaper = DefaultConfig.safeJsonString(infoJson, "musicwallpaper", "");    //xuameng音乐背景图
@@ -803,36 +812,75 @@ public class ApiConfig {
                 setDefaultParse(parseBeanList.get(0));
         }
 
+ 
         // 直播源
         String live_api_url=Hawk.get(HawkConfig.LIVE_API_URL,"");
         if(live_api_url.isEmpty() || apiUrl.equals(live_api_url)){
-            LOG.i("echo-load-config_live");
             initLiveSettings();
+            LOG.i("echo-load-config_live");
             if(infoJson.has("lives")){
                 JsonArray lives_groups=infoJson.get("lives").getAsJsonArray();
-                int live_group_index=getLiveGroupIndex();
-                if(live_group_index>lives_groups.size()-1)live_group_index=0;
-                Hawk.put(HawkConfig.LIVE_GROUP_LIST,lives_groups);
-                //加载多源配置
-                try {
-                    ArrayList<LiveSettingItem> liveSettingItemList = new ArrayList<>();
-                    for (int i=0; i< lives_groups.size();i++) {
-                        JsonObject jsonObject = lives_groups.get(i).getAsJsonObject();
-                        String name = jsonObject.has("name")?jsonObject.get("name").getAsString():"线路"+(i+1);
-                        LiveSettingItem liveSettingItem = new LiveSettingItem();
-                        liveSettingItem.setItemIndex(i);
-                        liveSettingItem.setItemName(name);
-                        liveSettingItemList.add(liveSettingItem);
-                    }
-                    liveSettingGroupList.get(5).setLiveSettingItems(liveSettingItemList);
-                } catch (Exception e) {
-                    // 捕获任何可能发生的异常
-                    e.printStackTrace();
-                }
-
-                JsonObject livesOBJ = lives_groups.get(live_group_index).getAsJsonObject();
-                loadLiveApi(livesOBJ);
-            }
+				if (lives_groups.size() > 0) {  
+					int live_group_index=Hawk.get(HawkConfig.LIVE_GROUP_INDEX,0);
+					if(live_group_index>lives_groups.size()-1){           //xuameng 重要BUG
+						Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
+						Hawk.put(HawkConfig.LIVE_GROUP_LIST,lives_groups);
+						//加载多源配置
+						try {
+						ArrayList<LiveSettingItem> liveSettingItemList = new ArrayList<>();
+						for (int i=0; i< lives_groups.size();i++) {
+							JsonObject jsonObject = lives_groups.get(i).getAsJsonObject();
+							String name = jsonObject.has("name")?jsonObject.get("name").getAsString():"聚汇直播"+(i+1);
+							if(name == null || name.isEmpty()){
+								name = "聚汇直播";
+							}
+							LiveSettingItem liveSettingItem = new LiveSettingItem();
+							liveSettingItem.setItemIndex(i);
+							liveSettingItem.setItemName(name);
+							liveSettingItemList.add(liveSettingItem);
+						}
+						liveSettingGroupList.get(5).setLiveSettingItems(liveSettingItemList);
+					} catch (Exception e) {
+						// 捕获任何可能发生的异常
+						e.printStackTrace();
+					}
+					int live_group_index_xu=Hawk.get(HawkConfig.LIVE_GROUP_INDEX,0);
+					JsonObject livesOBJ_xu = lives_groups.get(live_group_index_xu).getAsJsonObject();
+					loadLiveApi(livesOBJ_xu);
+					}else{
+						Hawk.put(HawkConfig.LIVE_GROUP_LIST,lives_groups);
+						//加载多源配置
+						try {
+							ArrayList<LiveSettingItem> liveSettingItemList = new ArrayList<>();
+							for (int i=0; i< lives_groups.size();i++) {
+							JsonObject jsonObject = lives_groups.get(i).getAsJsonObject();
+							String name = jsonObject.has("name")?jsonObject.get("name").getAsString():"聚汇直播"+(i+1);
+							if(name == null || name.isEmpty()){
+								name = "聚汇直播";
+							}
+							LiveSettingItem liveSettingItem = new LiveSettingItem();
+							liveSettingItem.setItemIndex(i);
+							liveSettingItem.setItemName(name);
+							liveSettingItemList.add(liveSettingItem);
+							}
+							liveSettingGroupList.get(5).setLiveSettingItems(liveSettingItemList);
+						} catch (Exception e) {
+						// 捕获任何可能发生的异常
+							e.printStackTrace();
+					}
+					JsonObject livesOBJ = lives_groups.get(live_group_index).getAsJsonObject();
+					loadLiveApi(livesOBJ);
+					}
+				}else{
+					initLiveSettings();
+					Hawk.put(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
+					Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
+				}
+			}else{
+				initLiveSettings();
+				Hawk.put(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
+				Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
+			}
         }
 
         myHosts = new HashMap<>();
@@ -1048,38 +1096,72 @@ public class ApiConfig {
 
     private String liveSpider="";
     private void parseLiveJson(String apiUrl, String jsonStr) {
-        liveChannelGroupList.clear();
         JsonObject infoJson = gson.fromJson(jsonStr, JsonObject.class);
-        // spider
-        liveSpider = DefaultConfig.safeJsonString(infoJson, "spider", "");
+		initLiveSettings();
         // 直播源
-        initLiveSettings();
         if(infoJson.has("lives")){
             JsonArray lives_groups=infoJson.get("lives").getAsJsonArray();
-
-            int live_group_index=getLiveGroupIndex();
-            if(live_group_index>lives_groups.size()-1)live_group_index=0;
-            Hawk.put(HawkConfig.LIVE_GROUP_LIST,lives_groups);
-            //加载多源配置
-            try {
-                ArrayList<LiveSettingItem> liveSettingItemList = new ArrayList<>();
-                for (int i=0; i< lives_groups.size();i++) {
-                    JsonObject jsonObject = lives_groups.get(i).getAsJsonObject();
-                    String name = jsonObject.has("name")?jsonObject.get("name").getAsString():"线路"+(i+1);
-                    LiveSettingItem liveSettingItem = new LiveSettingItem();
-                    liveSettingItem.setItemIndex(i);
-                    liveSettingItem.setItemName(name);
-                    liveSettingItemList.add(liveSettingItem);
-                }
-                liveSettingGroupList.get(5).setLiveSettingItems(liveSettingItemList);
-            } catch (Exception e) {
-                // 捕获任何可能发生的异常
-                e.printStackTrace();
-            }
-
-            JsonObject livesOBJ = lives_groups.get(live_group_index).getAsJsonObject();
-            loadLiveApi(livesOBJ);
-        }
+				if (lives_groups.size() > 0) { 
+				int live_group_index=Hawk.get(HawkConfig.LIVE_GROUP_INDEX,0);
+					if(live_group_index>lives_groups.size()-1){           //xuameng 重要BUG
+						Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
+						Hawk.put(HawkConfig.LIVE_GROUP_LIST,lives_groups);
+				   		//加载多源配置
+						try {
+						ArrayList<LiveSettingItem> liveSettingItemList = new ArrayList<>();
+						for (int i=0; i< lives_groups.size();i++) {
+							JsonObject jsonObject = lives_groups.get(i).getAsJsonObject();
+							String name = jsonObject.has("name")?jsonObject.get("name").getAsString():"聚汇直播"+(i+1);
+							if(name == null || name.isEmpty()){
+								name = "聚汇直播";
+							}
+							LiveSettingItem liveSettingItem = new LiveSettingItem();
+							liveSettingItem.setItemIndex(i);
+							liveSettingItem.setItemName(name);
+							liveSettingItemList.add(liveSettingItem);
+						}
+						liveSettingGroupList.get(5).setLiveSettingItems(liveSettingItemList);
+					} catch (Exception e) {
+						// 捕获任何可能发生的异常
+						e.printStackTrace();
+					}
+					int live_group_index_xu=Hawk.get(HawkConfig.LIVE_GROUP_INDEX,0);
+					JsonObject livesOBJ_xu = lives_groups.get(live_group_index_xu).getAsJsonObject();
+					loadLiveApi(livesOBJ_xu);
+					}else{
+						Hawk.put(HawkConfig.LIVE_GROUP_LIST,lives_groups);
+						//加载多源配置
+					try {
+						ArrayList<LiveSettingItem> liveSettingItemList = new ArrayList<>();
+						for (int i=0; i< lives_groups.size();i++) {
+							JsonObject jsonObject = lives_groups.get(i).getAsJsonObject();
+							String name = jsonObject.has("name")?jsonObject.get("name").getAsString():"聚汇直播"+(i+1);
+							if(name == null || name.isEmpty()){
+								name = "聚汇直播";
+							}
+							LiveSettingItem liveSettingItem = new LiveSettingItem();
+							liveSettingItem.setItemIndex(i);
+							liveSettingItem.setItemName(name);
+							liveSettingItemList.add(liveSettingItem);
+						}
+						liveSettingGroupList.get(5).setLiveSettingItems(liveSettingItemList);
+					} catch (Exception e) {
+					// 捕获任何可能发生的异常
+						e.printStackTrace();
+					}
+					JsonObject livesOBJ = lives_groups.get(live_group_index).getAsJsonObject();
+					loadLiveApi(livesOBJ);
+					}
+				}else{
+					initLiveSettings();
+					Hawk.put(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
+					Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
+				}
+			}else{
+				initLiveSettings();
+				Hawk.put(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
+				Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
+		}
 
         myHosts = new HashMap<>();
         if (infoJson.has("hosts")) {
@@ -1134,7 +1216,7 @@ public class ApiConfig {
             liveSettingGroup.setLiveSettingItems(liveSettingItemList);
             liveSettingGroupList.add(liveSettingGroup);
         }
-		refreshLiveApiHistoryItems();
+		//refreshLiveApiHistoryItems();
     }
 
     public List<LiveSettingGroup> getLiveSettingGroupList() {
@@ -1142,7 +1224,7 @@ public class ApiConfig {
     }
 
     public void refreshLiveApiHistoryItems() {
-        if (liveSettingGroupList.size() < 7) return;
+        if (liveSettingGroupList.size() < 10) return;
         ArrayList<LiveSettingItem> liveSettingItemList = new ArrayList<>();
         ArrayList<String> history = Hawk.get(HawkConfig.LIVE_API_HISTORY, new ArrayList<String>());
         for (int i = 0; i < history.size(); i++) {
@@ -1375,6 +1457,7 @@ if (api.contains(".js")) {
                 int timeout = Math.max(5, Math.min(30, livesOBJ.get("timeout").getAsInt()));
                 Hawk.put(HawkConfig.LIVE_CONNECT_TIMEOUT, (timeout + 4) / 5 - 1);
             }
+            //xuameng设置UA信息
             if(livesOBJ.has("header")) {
                 JsonObject headerObj = livesOBJ.getAsJsonObject("header");
                 HashMap<String, String> liveHeader = new HashMap<>();
@@ -1415,7 +1498,7 @@ if (api.contains(".js")) {
         return spider;
     }
 
-    public String getDanmaku() {
+    public String getDanmaku() {  //xuameng 弹幕
         return danmaku == null ? "" : danmaku;
     }
 
