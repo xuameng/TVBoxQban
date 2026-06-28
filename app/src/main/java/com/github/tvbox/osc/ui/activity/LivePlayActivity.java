@@ -3174,6 +3174,16 @@ public class LivePlayActivity extends BaseActivity {
             @Override
             public void onSuccess(Response < String > response) {
                 JsonArray livesArray = TxtSubscribe.parseToJsonArray(response.body());
+                   new Thread(() -> {
+
+                        synchronized (this) {
+                            
+                        }
+
+                        try {
+JsonArray livesArray = TxtSubscribe.parseToJsonArray(response.body());
+
+                            runOnUiThread(() -> {
                 JsonArray live_groups = Hawk.get(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
                 ApiConfig.get().loadLives(livesArray);
                 List < LiveChannelGroup > list = ApiConfig.get().getChannelGroupList();
@@ -3202,13 +3212,19 @@ public class LivePlayActivity extends BaseActivity {
                 }
                 liveChannelGroupList.clear();
                 liveChannelGroupList.addAll(list);
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
+
+                                }
+                            });
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        } finally {
+
                         LivePlayActivity.this.showSuccess();
                         initLiveState();
-                    }
-                });
+ 
+                        }
+                    }).start();
             }
             @Override
             public void onError(Response < String > response) {
