@@ -224,18 +224,21 @@ public class TxtSubscribe {
         return wrapper;
     }
 
-    private static JsonObject findOrCreateGroup(JsonArray result, String name) {
-        name = normalizeGroupName(name);
-        for (JsonElement element : result) {
-            JsonObject group = element.getAsJsonObject();
-            if (name.equals(group.get("group").getAsString())) return group;
+private static JsonObject findOrCreateGroup(JsonArray result, String name) {
+    name = normalizeGroupName(name);
+    for (JsonElement element : result) {
+        JsonObject group = element.getAsJsonObject();
+        if (name.equals(group.get("group").getAsString())) {
+            return group;
         }
-        JsonObject group = new JsonObject();
-        group.addProperty("group", name);
-        group.add("channels", new JsonArray());
-        result.add(group);
-        return group;
     }
+    // ❌ 不再直接加入 result
+    JsonObject group = new JsonObject();
+    group.addProperty("group", name);
+    group.add("channels", new JsonArray());
+    result.add(group);
+    return group;
+}
 
     public static String normalizeGroupName(String name) {
         if (name == null) return DEFAULT_GROUP_NAME;
