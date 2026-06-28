@@ -1238,7 +1238,7 @@ public class ApiConfig {
     private final List<LiveSettingGroup> liveSettingGroupList = new ArrayList<>();
 
     private void initLiveSettings() {
-		ArrayList<String> groupNames = new ArrayList<>(Arrays.asList("线路选择", "画面比例", "播放解码", "超时换源", "偏好设置", "多源切换", "配置切换", "渲染方式", "直播音柱", "退出直播"));  //xuameng 换源
+		ArrayList<String> groupNames = new ArrayList<>(Arrays.asList("线路选择", "画面比例", "播放解码", "超时换源", "偏好设置", "多源切换", "渲染方式", "直播音柱", "退出直播"));  //xuameng 换源
         ArrayList < ArrayList < String >> itemsArrayList = new ArrayList < > ();
         ArrayList < String > sourceItems = new ArrayList < > ();
         ArrayList < String > scaleItems = new ArrayList < > (Arrays.asList("默认比例", "16:9比例", "4:3 比例", "填充比例", "原始比例", "裁剪比例"));
@@ -1246,7 +1246,6 @@ public class ApiConfig {
         ArrayList < String > timeoutItems = new ArrayList < > (Arrays.asList("超时05秒", "超时10秒", "超时15秒", "超时20秒", "超时25秒", "超时30秒"));
         ArrayList < String > personalSettingItems = new ArrayList < > (Arrays.asList("显示时间", "显示网速", "换台反转", "跨选分类"));
         ArrayList < String > yumItems = new ArrayList<>(Arrays.asList("聚汇直播"));   //xuameng新增 换源
-        ArrayList < String > liveApiHistoryItems = new ArrayList<>();  //配置切换
         ArrayList < String > PlayrenderSettingItems = new ArrayList < > (Arrays.asList("Texture渲染", "Surface渲染"));   //xuameng渲染方式
         ArrayList < String > LiveMusicAnimationItems = new ArrayList < > (Arrays.asList("音柱开启", "音柱关闭"));   //xuameng音柱动画
         ArrayList < String > ExitSettingItems = new ArrayList < > (Arrays.asList("确认退出"));   //xuameng退出直播
@@ -1256,11 +1255,10 @@ public class ApiConfig {
         itemsArrayList.add(playerDecoderItems);
         itemsArrayList.add(timeoutItems);
         itemsArrayList.add(personalSettingItems);
-        itemsArrayList.add(yumItems);   //xuameng新增 换源
-        itemsArrayList.add(liveApiHistoryItems); //配置切换
-        itemsArrayList.add(PlayrenderSettingItems);   // xuameng渲染方式
-        itemsArrayList.add(LiveMusicAnimationItems);   // xuameng
-        itemsArrayList.add(ExitSettingItems);   // xuameng退出直播
+        itemsArrayList.add(yumItems);
+        itemsArrayList.add(playRenderSettingItems);   // xuameng渲染方式
+        itemsArrayList.add(liveMusicAnimationItems);   // xuameng
+        itemsArrayList.add(exitSettingItems);   // xuameng退出直播
 
         liveSettingGroupList.clear();
         for (int i = 0; i < groupNames.size(); i++) {
@@ -1277,7 +1275,7 @@ public class ApiConfig {
             liveSettingGroup.setLiveSettingItems(liveSettingItemList);
             liveSettingGroupList.add(liveSettingGroup);
         }
-         refreshLiveApiHistoryItems();
+        // refreshLiveApiHistoryItems();
     }
 
     public List<LiveSettingGroup> getLiveSettingGroupList() {
@@ -1987,17 +1985,9 @@ public class ApiConfig {
         // 关键修改：强制转换
         yumGroup.setLiveSettingItems((ArrayList<LiveSettingItem>) (List<?>) yumItems);
 
-        // ==================== 8. 配置切换（索引6）====================
-        // 注意：这个组的索引必须是 6，以匹配 refreshLiveApiHistoryItems 中的硬编码逻辑
-        LiveSettingGroup historyGroup = new LiveSettingGroup();
-        historyGroup.setGroupIndex(6); 
-        historyGroup.setGroupName("配置切换");
-        // 初始化一个空的列表，等待后续填充历史记录
-        historyGroup.setLiveSettingItems(new ArrayList<LiveSettingItem>());
-
-        // ==================== 7. 渲染方式（索引7） ====================
+        // ==================== 7. 渲染方式（索引6） ====================
         LiveSettingGroup renderGroup = new LiveSettingGroup();
-        renderGroup.setGroupIndex(7);
+        renderGroup.setGroupIndex(6);
         renderGroup.setGroupName("渲染方式");
         List<LiveSettingItem> renderItems = new ArrayList<>();
         renderItems.add(createLiveSettingItem(0, "Texture渲染"));
@@ -2005,9 +1995,9 @@ public class ApiConfig {
         // 关键修改：强制转换
         renderGroup.setLiveSettingItems((ArrayList<LiveSettingItem>) (List<?>) renderItems);
 
-        // ==================== 8. 音柱动画（索引8） ====================
+        // ==================== 8. 音柱动画（索引7） ====================
         LiveSettingGroup musicGroup = new LiveSettingGroup();
-        musicGroup.setGroupIndex(8);
+        musicGroup.setGroupIndex(7);
         musicGroup.setGroupName("直播音柱");
         List<LiveSettingItem> musicItems = new ArrayList<>();
         musicItems.add(createLiveSettingItem(0, "音柱开启"));
@@ -2015,9 +2005,9 @@ public class ApiConfig {
         // 关键修改：强制转换
         musicGroup.setLiveSettingItems((ArrayList<LiveSettingItem>) (List<?>) musicItems);
 
-        // ==================== 9. 退出直播（索引9） ====================
+        // ==================== 9. 退出直播（索引8） ====================
         LiveSettingGroup exitGroup = new LiveSettingGroup();
-        exitGroup.setGroupIndex(9);
+        exitGroup.setGroupIndex(8);
         exitGroup.setGroupName("退出直播");
         List<LiveSettingItem> exitItems = new ArrayList<>();
         exitItems.add(createLiveSettingItem(0, "确认退出"));
@@ -2031,10 +2021,9 @@ public class ApiConfig {
         defaultList.add(timeoutGroup);  // 索引3
         defaultList.add(personalGroup); // 索引4
         defaultList.add(yumGroup);     // 索引5
-        defaultList.add(historyGroup); // 索引6
-        defaultList.add(renderGroup);  // 索引7
-        defaultList.add(musicGroup);   // 索引8
-        defaultList.add(exitGroup);    // 索引9
+        defaultList.add(renderGroup);  // 索引6
+        defaultList.add(musicGroup);   // 索引7
+        defaultList.add(exitGroup);    // 索引8
 
         return defaultList;
     }
