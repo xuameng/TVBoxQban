@@ -1302,12 +1302,12 @@ public class ApiConfig {
         int groupIndex = 0;
         int channelIndex = 0;
         int channelNum = 0;
-        // ========== xuameng "我的收藏"频道 ==========
-        // 收藏频道组（始终放在第一个位置）
+        // ========== xuameng：新增首先添加"我的收藏"频道组 ==========
+        // 创建收藏频道组（始终放在第一个位置）
         LiveChannelGroup favoriteGroup = LiveChannelItem.createFavoriteChannelGroup();
         favoriteGroup.setGroupIndex(groupIndex++);
         liveChannelGroupList.add(favoriteGroup);
-        // ========== xuameng "我的收藏" ==========
+        // ========== xuameng：新增"我的收藏"结束 ==========
         for (JsonElement groupElement : livesArray) {
             LiveChannelGroup liveChannelGroup = new LiveChannelGroup();
             liveChannelGroup.setLiveChannels(new ArrayList<LiveChannelItem>());
@@ -1315,54 +1315,17 @@ public class ApiConfig {
             String groupName = ((JsonObject) groupElement).get("group").getAsString().trim();
             String[] splitGroupName = groupName.split("_", 2);
             liveChannelGroup.setGroupName(splitGroupName[0]);
-            if (splitGroupName.length > 1) {
+            if (splitGroupName.length > 1)
                 liveChannelGroup.setGroupPassword(splitGroupName[1]);
-            } else {
+            else
                 liveChannelGroup.setGroupPassword("");
-            }
             channelIndex = 0;
             for (JsonElement channelElement : ((JsonObject) groupElement).get("channels").getAsJsonArray()) {
                 JsonObject obj = (JsonObject) channelElement;
                 LiveChannelItem liveChannelItem = new LiveChannelItem();
                 liveChannelItem.setChannelName(obj.get("name").getAsString().trim());
-                liveChannelItem.setChannelLogo(DefaultConfig.safeJsonString(obj, "logo", ""));
-                liveChannelItem.setChannelEpg(DefaultConfig.safeJsonString(obj, "epg", ""));
-                liveChannelItem.setChannelUa(DefaultConfig.safeJsonString(obj, "ua", ""));
-                liveChannelItem.setChannelClick(DefaultConfig.safeJsonString(obj, "click", ""));
-                liveChannelItem.setChannelFormat(DefaultConfig.safeJsonString(obj, "format", ""));
-                liveChannelItem.setChannelOrigin(DefaultConfig.safeJsonString(obj, "origin", ""));
-                liveChannelItem.setChannelReferer(DefaultConfig.safeJsonString(obj, "referer", ""));
-                liveChannelItem.setChannelTvgId(DefaultConfig.safeJsonString(obj, "tvg-id", ""));
-                liveChannelItem.setChannelTvgName(DefaultConfig.safeJsonString(obj, "tvg-name", ""));
-                if (obj.has("parse")) {
-                    try {
-                        liveChannelItem.setChannelParse(obj.get("parse").getAsInt());
-                    } catch (Throwable ignored) {
-                    }
-                }
-                if (obj.has("catchup")) {
-                    JsonObject catchupObj = new JsonObject();
-                    if (obj.get("catchup").isJsonObject()) {
-                        catchupObj = obj.getAsJsonObject("catchup");
-                    } else {
-                        catchupObj.addProperty("type", obj.get("catchup").getAsString());
-                        if (obj.has("catchup-source")) {
-                            catchupObj.addProperty("source", obj.get("catchup-source").getAsString());
-                        }
-                        if (obj.has("catchup-replace")) {
-                            catchupObj.addProperty("replace", obj.get("catchup-replace").getAsString());
-                        }
-                    }
-                    liveChannelItem.setChannelCatchup(catchupObj);
-                }
-                if (obj.has("header") && obj.get("header").isJsonObject()) {
-                    JsonObject headerObj = obj.getAsJsonObject("header");
-                    HashMap<String, String> channelHeader = new HashMap<>();
-                    for (Map.Entry<String, JsonElement> entry : headerObj.entrySet()) {
-                        channelHeader.put(entry.getKey(), entry.getValue().getAsString());
-                    }
-                    liveChannelItem.setChannelHeader(channelHeader);
-                }
+                liveChannelItem.setChannelIndex(channelIndex++);
+                liveChannelItem.setChannelNum(++channelNum);
                 ArrayList<String> urls = DefaultConfig.safeJsonStringList(obj, "urls");
                 ArrayList<String> sourceNames = new ArrayList<>();
                 ArrayList<String> sourceUrls = new ArrayList<>();
@@ -1370,19 +1333,15 @@ public class ApiConfig {
                 for (String url : urls) {
                     String[] splitText = url.split("\\$", 2);
                     sourceUrls.add(splitText[0]);
-                    if (splitText.length > 1) {
+                    if (splitText.length > 1)
                         sourceNames.add(splitText[1]);
-                    } else {
+                    else
                         sourceNames.add("源" + Integer.toString(sourceIndex));
-                    }
                     sourceIndex++;
                 }
                 liveChannelItem.setChannelSourceNames(sourceNames);
                 liveChannelItem.setChannelUrls(sourceUrls);
-                if (mergeLiveChannel(liveChannelGroup.getLiveChannels(), liveChannelItem)) {
-                    liveChannelItem.setChannelIndex(channelIndex++);
-                    liveChannelItem.setChannelNum(++channelNum);
-                }
+                liveChannelGroup.getLiveChannels().add(liveChannelItem);
             }
             liveChannelGroupList.add(liveChannelGroup);
         }
