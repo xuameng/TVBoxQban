@@ -3112,15 +3112,6 @@ public class LivePlayActivity extends BaseActivity {
 
     private void initLiveChannelList() {
         List < LiveChannelGroup > list = ApiConfig.get().getChannelGroupList();
-    // ====== ✅ 在这里加 START ======
-    for (LiveChannelGroup group : list) {
-        ArrayList<LiveChannelItem> channels = group.getLiveChannels();
-        if (channels == null || channels.isEmpty()) {
-            channels = new ArrayList<>();
-            channels.add(createPlaceholderChannel(group.getGroupName()));
-            group.setLiveChannels(channels);
-        }
-    }
         // xuameng排除"我的收藏"组，检查剩余组是否为空
         boolean hasValidGroups = false;
         for (LiveChannelGroup group : list) {
@@ -3214,6 +3205,15 @@ public class LivePlayActivity extends BaseActivity {
                             }
                             liveChannelGroupList.clear();
                             liveChannelGroupList.addAll(list);
+							    // ====== ✅ 在这里加 START ======
+    for (LiveChannelGroup group : list) {
+        ArrayList<LiveChannelItem> channels = group.getLiveChannels();
+        if (channels == null || channels.isEmpty()) {
+            channels = new ArrayList<>();
+            channels.add(createPlaceholderChannel(group.getGroupName()));
+            group.setLiveChannels(channels);
+        }
+    }
 				            LivePlayActivity.this.showSuccess();
                             initLiveState();
                         });
@@ -4473,14 +4473,14 @@ public class LivePlayActivity extends BaseActivity {
 private LiveChannelItem createPlaceholderChannel(String groupName) {
     LiveChannelItem item = new LiveChannelItem();
     item.setChannelName("暂无频道");
-    item.setChannelIndex(-1); // 占位标识
-    item.setChannelNum(0);
+    item.setChannelIndex(1000000); // 占位标识
+    item.setChannelNum(10000000);
 
     ArrayList<String> names = new ArrayList<>();
     ArrayList<String> urls = new ArrayList<>();
 
     names.add("默认源");
-    urls.add("");
+    urls.add("http://default.play.url/stream");
 
     item.setChannelSourceNames(names);
     item.setChannelUrls(urls);
