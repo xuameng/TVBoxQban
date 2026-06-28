@@ -288,7 +288,7 @@ public class ApiConfig {
                 try {
                     parseLiveConfigContent(liveApiUrl, json);
                     if (!hasLiveConfigResult()) {
-                        callback.notice("聚汇影视提示您：解析直播配置失败！");
+                        callback.error("聚汇影视提示您：解析直播配置失败！");
                         initLiveSettings();
                         Hawk.put(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
                         Hawk.put(HawkConfig.LIVE_GROUP_INDEX, 0);
@@ -299,7 +299,7 @@ public class ApiConfig {
                     callback.success();
                 } catch (Throwable th) {
                     th.printStackTrace();
-                    callback.notice("聚汇影视提示您：解析直播配置失败！");
+                    callback.error("聚汇影视提示您：解析直播配置失败！");
                     initLiveSettings();
                     Hawk.put(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
                     Hawk.put(HawkConfig.LIVE_GROUP_INDEX, 0);
@@ -320,7 +320,7 @@ public class ApiConfig {
                         th.printStackTrace();
                     }
                 }
-                callback.notice("聚汇影视提示您：直播配置拉取失败！");
+                callback.error("聚汇影视提示您：直播配置拉取失败！");
                 initLiveSettings();
                 Hawk.put(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
                 Hawk.put(HawkConfig.LIVE_GROUP_INDEX, 0);
@@ -1246,7 +1246,7 @@ public class ApiConfig {
         ArrayList < String > timeoutItems = new ArrayList < > (Arrays.asList("超时05秒", "超时10秒", "超时15秒", "超时20秒", "超时25秒", "超时30秒"));
         ArrayList < String > personalSettingItems = new ArrayList < > (Arrays.asList("显示时间", "显示网速", "换台反转", "跨选分类"));
         ArrayList < String > yumItems = new ArrayList<>(Arrays.asList("聚汇直播"));   //xuameng新增 换源
-        ArrayList<String> liveApiHistoryItems = new ArrayList<>();  //配置切换
+        ArrayList < String > liveApiHistoryItems = new ArrayList<>();  //配置切换
         ArrayList < String > PlayrenderSettingItems = new ArrayList < > (Arrays.asList("Texture渲染", "Surface渲染"));   //xuameng渲染方式
         ArrayList < String > LiveMusicAnimationItems = new ArrayList < > (Arrays.asList("音柱开启", "音柱关闭"));   //xuameng音柱动画
         ArrayList < String > ExitSettingItems = new ArrayList < > (Arrays.asList("确认退出"));   //xuameng退出直播
@@ -1259,8 +1259,8 @@ public class ApiConfig {
         itemsArrayList.add(yumItems);   //xuameng新增 换源
         itemsArrayList.add(liveApiHistoryItems); //配置切换
         itemsArrayList.add(playRenderSettingItems);   // xuameng渲染方式
-        itemsArrayList.add(liveMusicAnimationItems);   // xuameng
-        itemsArrayList.add(exitSettingItems);   // xuameng退出直播
+        itemsArrayList.add(LiveMusicAnimationItems);   // xuameng
+        itemsArrayList.add(ExitSettingItems);   // xuameng退出直播
 
         liveSettingGroupList.clear();
         for (int i = 0; i < groupNames.size(); i++) {
