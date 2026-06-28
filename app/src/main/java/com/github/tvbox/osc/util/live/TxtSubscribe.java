@@ -61,7 +61,7 @@ public class TxtSubscribe {
         if (str.isEmpty()) return new JsonArray();
         try {
             JsonElement element = JsonParser.parseString(str);
-            if (element.isJsonArray()) return normalizeJsonArray(element.getAsJsonArray());
+            if (element.isJsonArray()) return removeEmptyGroups(normalizeJsonArray(element.getAsJsonArray()));
         } catch (Throwable ignored) {
         }
         if (str.startsWith("#EXTM3U")) return parseM3uToJsonArray(str);
@@ -109,7 +109,7 @@ public class TxtSubscribe {
             if (!outGroup.has("channels")) outGroup.add("channels", new JsonArray());
             result.add(outGroup);
         }
-        return result;
+        return removeEmptyGroups(result);
     }
 
     private static void copyIfExists(JsonObject src, JsonObject dst, String key) {
@@ -164,8 +164,18 @@ public class TxtSubscribe {
             reader.close();
         } catch (Throwable ignored) {
         }
-        return result;
+        return removeEmptyGroups(result);
     }
+
+private static JsonArray removeEmptyGroups(JsonArray result) {
+    JsonArray out = new JsonArray();
+    for (JsonElement e : result) {
+        JsonObject g = e.getAsJsonObject();
+        JsonArray c = g.getAsJsonArray("channels");
+        if (c != null && c.size() > 0) out.add(g);
+    }
+    return out;
+}
 
     private static JsonArray parseTxtToJsonArray(String str) {
         JsonArray result = new JsonArray();
@@ -208,7 +218,7 @@ public class TxtSubscribe {
             reader.close();
         } catch (Throwable ignored) {
         }
-        return result;
+        return removeEmptyGroups(result);
     }
 
     private static JsonObject parseHeaderString(String text) {
@@ -224,21 +234,18 @@ public class TxtSubscribe {
         return wrapper;
     }
 
-private static JsonObject findOrCreateGroup(JsonArray result, String name) {
-    name = normalizeGroupName(name);
-    for (JsonElement element : result) {
-        JsonObject group = element.getAsJsonObject();
-        if (name.equals(group.get("group").getAsString())) {
-            return group;
+    private static JsonObject findOrCreateGroup(JsonArray result, String name) {
+        name = normalizeGroupName(name);
+        for (JsonElement element : result) {
+            JsonObject group = element.getAsJsonObject();
+            if (name.equals(group.get("group").getAsString())) return group;
         }
+        JsonObject group = new JsonObject();
+        group.addProperty("group", name);
+        group.add("channels", new JsonArray());
+        result.add(group);
+        return group;
     }
-    // ❌ 不再直接加入 result
-    JsonObject group = new JsonObject();
-    group.addProperty("group", name);
-    group.add("channels", new JsonArray());
-    result.add(group);
-    return group;
-}
 
     public static String normalizeGroupName(String name) {
         if (name == null) return DEFAULT_GROUP_NAME;
