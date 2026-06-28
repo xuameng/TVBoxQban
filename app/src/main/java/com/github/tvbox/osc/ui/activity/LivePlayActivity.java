@@ -79,7 +79,6 @@ import com.github.tvbox.osc.util.PlayerHelper;
 import com.github.tvbox.osc.util.live.TxtSubscribe;
 import com.github.tvbox.osc.util.urlhttp.CallBackUtil;
 import com.github.tvbox.osc.util.urlhttp.UrlHttpUtil;
-import com.github.tvbox.osc.util.HistoryHelper;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject; //xuameng新增
 import com.google.gson.JsonElement; //xuameng新增
@@ -123,6 +122,14 @@ import java.io.StringReader; //xuameng 支持XML EPG用
 import java.util.regex.Matcher; //xuameng 支持XML EPG用
 import java.util.regex.Pattern; //xuameng 支持XML EPG用
 import java.util.concurrent.TimeUnit; //xuameng 支持XML EPG用
+
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class LivePlayActivity extends BaseActivity {
     public static Context context;
@@ -2898,12 +2905,9 @@ public class LivePlayActivity extends BaseActivity {
                 liveSettingItemAdapter.selectItem(livePlayerManager.getLivePlayerType(), true, true);
                 break;
             case 6:
-                liveSettingItemAdapter.selectItem(getCurrentLiveApiHistoryIndex(), true, true);
-                break;
-            case 7:
                 liveSettingItemAdapter.selectItem(livePlayerManager.getLivePlayrender(), true, true); //xuameng 获取渲染方式
                 break;
-            case 8:
+            case 7:
                 musicAnimation = livePlayerManager.getLivePlaymusic();
                 if (musicAnimation){
                     liveSettingItemAdapter.selectItem(0, true, true);  //xuameng 音柱动画开
@@ -3077,55 +3081,7 @@ public class LivePlayActivity extends BaseActivity {
 				useDefaultLiveChannelList = false;
                 recreate();
                 return;
-            case 6: {//配置切换
-                ArrayList<String> history = Hawk.get(HawkConfig.LIVE_API_HISTORY, new ArrayList<String>());
-                if (history.isEmpty() || position < 0 || position >= history.size()) break;
-                String value = history.get(position);
-                String oldLiveApi = Hawk.get(HawkConfig.LIVE_API_URL, "");
-                String configChannelName = getPreferredLiveRefreshChannelName();
-                int configSourceIndex = getPreferredLiveRefreshSourceIndex();
-                liveSettingItemAdapter.selectItem(position, true, true);
-                if (value.equals(oldLiveApi)) break;
-                Hawk.put(HawkConfig.LIVE_API_URL, value);
-                HistoryHelper.setLiveApiHistory(value);
-                ApiConfig.get().refreshLiveApiHistoryItems();
-                ApiConfig.get().loadLiveConfig(false, new ApiConfig.LoadConfigCallback() {
-                    @Override
-                    public void success() {
-                        mHandler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                refreshLiveChannelListAndPlay(configChannelName, configSourceIndex);
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void error(String msg) {
-                        mHandler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (mVideoView != null) mVideoView.release();
-                                ApiConfig.get().refreshLiveApiHistoryItems();
-                                setDefaultLiveChannelList();
-                                Toast.makeText(LivePlayActivity.this, msg, Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void notice(String msg) {
-                        mHandler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(LivePlayActivity.this, msg, Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    }
-                });
-            }
-                break;
-            case 7: //xuameng渲染方式
+            case 6: //xuameng渲染方式
                 if(mVideoView == null) return;
                 if(!isCurrentLiveChannelValid()) { //xuameng 未选择频道空指针问题
                     return;
@@ -3140,7 +3096,7 @@ public class LivePlayActivity extends BaseActivity {
                     iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
                 }
                 break;
-            case 8: //xuameng音柱动画 点击
+            case 7: //xuameng音柱动画 点击
                 if(mVideoView == null) return;
                 if(!isCurrentLiveChannelValid()) { //xuameng 未选择频道空指针问题
                     return;
@@ -3154,7 +3110,7 @@ public class LivePlayActivity extends BaseActivity {
                 }
                 liveSettingItemAdapter.selectItem(position, true, true);
                 break;
-            case 9: //xuameng退出直播
+            case 8: //xuameng退出直播
                 mHideSettingLayoutRun();
                 ExitLiveOnSetting();
                 break;
@@ -3218,6 +3174,84 @@ public class LivePlayActivity extends BaseActivity {
         }
         showLoading();
         LOG.i("echo-live-url:" + url);
+        if(url.contains(".js")){
+            if ((url.contains(".py") || url.contains(".js")) && !hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                // 权限不足时，直接设置默认播放列表
+                                    setDefaultLiveChannelList();
+                                    showSuccess();
+                                    App.showToastShort(mContext, "该源需要存储权限！");
+                return;
+            }
+            String finalUrl = url;
+            Runnable waitResponse = new Runnable() {
+                @Override
+                public void run() {
+                    ExecutorService executor = Executors.newSingleThreadExecutor();
+                    Future<String> future = executor.submit(new Callable<String>() {
+                        @Override
+                        public String call() {
+                            Spider sp = ApiConfig.get().getLiveCSP(finalUrl);
+                            String json=sp.liveContent(finalUrl);
+//                            LOG.i("echo--loadProxyLives-json--"+json);
+                            return json;
+                        }
+                    });
+                    String sortJson = null;
+                    try {
+                        sortJson = future.get(ApiConfig.get().getLiveConnectTimeoutSeconds(), TimeUnit.SECONDS);
+                    } catch (TimeoutException e) {
+                        e.printStackTrace();
+                        future.cancel(true);
+                    } catch (InterruptedException | ExecutionException e) {
+                        e.printStackTrace();
+                    } finally {
+                        if (sortJson==null || sortJson.isEmpty()) {
+                            // 频道列表为空时，使用默认播放列表
+                            mHandler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    setDefaultLiveChannelList();
+                                    showSuccess();
+                                    App.showToastShort(mContext, "聚汇直播提示您：频道列表为空！");
+                                }
+                            });
+                            return;
+                        }
+                        JsonArray livesArray = TxtSubscribe.parseToJsonArray(sortJson);
+
+                        ApiConfig.get().loadLives(livesArray);
+                        List<LiveChannelGroup> list = ApiConfig.get().getChannelGroupList();
+                        if (list.isEmpty()) {
+                            mHandler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    setDefaultLiveChannelList();
+                                    showSuccess();
+                                    App.showToastShort(mContext, "聚汇直播提示您：频道列表为空！");
+                                }
+                            });
+                            return;
+                        }
+                        liveChannelGroupList.clear();
+                        liveChannelGroupList.addAll(list);
+
+                        mHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                LivePlayActivity.this.showSuccess();
+                                initLiveState();
+                            }
+                        });
+                        try {
+                            executor.shutdown();
+                        } catch (Throwable th) {
+                            th.printStackTrace();
+                        }
+                    }
+                }
+            };
+            Executors.newSingleThreadExecutor().execute(waitResponse);
+        }else {
         OkGo. < String > get(url).tag("xuameng").execute(new AbsCallback < String > () {
             @Override
             public String convertResponse(okhttp3.Response response) throws Throwable {
@@ -4512,29 +4546,5 @@ public class LivePlayActivity extends BaseActivity {
         if (liveChannelItemAdapter != null) {
             liveChannelItemAdapter.setFocusedChannelIndex(-1);  //xuameng修复频道名称移走焦点变色问题
         }
-    }
-
-    private int getCurrentLiveApiHistoryIndex() {  //xuameng历史配置
-        ArrayList<String> history = Hawk.get(HawkConfig.LIVE_API_HISTORY, new ArrayList<String>());
-        if (history.isEmpty()) return -1;
-        String current = Hawk.get(HawkConfig.LIVE_API_URL, "");
-        int idx = history.indexOf(current);
-        return idx >= 0 ? idx : -1;
-    }
-
-
-	    private void refreshLiveChannelListAndPlay(String channelName, int sourceIndex) {
-
-        initLiveChannelList();
-        initLiveSettingGroupList();
-    }
-    private String getPreferredLiveRefreshChannelName() {
-        if (currentLiveChannelItem != null) return currentLiveChannelItem.getChannelName();
-        return Hawk.get(HawkConfig.LIVE_CHANNEL, "");
-    }
-
-    private int getPreferredLiveRefreshSourceIndex() {
-        if (currentLiveChannelItem != null) return currentLiveChannelItem.getSourceIndex();
-        return -1;
     }
 }
