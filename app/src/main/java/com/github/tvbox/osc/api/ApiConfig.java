@@ -99,7 +99,7 @@ public class ApiConfig {
     private final String userAgent = "okhttp/3.15";
 
     private ApiConfig() {
-		3	LoadapiUrlXu(); //xuameng 如果点播源url为空，清除API_URL键值。回复内置接口
+		LoadapiUrlXu(); //xuameng 如果点播源url为空，清除API_URL键值。回复内置接口
         clearLoader();
         sourceBeanList = new LinkedHashMap<>();
         liveChannelGroupList = new ArrayList<>();
@@ -1478,7 +1478,7 @@ if (api.contains(".js")) {
                 && source.getType() == 3
                 && !isJs
                 && !isLive
-                && !isApiJs
+                && !isApiJs;
 
         if (canUseType3) {
             try {
