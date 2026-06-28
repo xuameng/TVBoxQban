@@ -3181,9 +3181,9 @@ public class LivePlayActivity extends BaseActivity {
                         }
 
                         try {
-
-                            runOnUiThread(() -> {
 JsonArray livesArray = TxtSubscribe.parseToJsonArray(response.body());
+                            runOnUiThread(() -> {
+
                 JsonArray live_groups = Hawk.get(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
                 ApiConfig.get().loadLives(livesArray);
                 List < LiveChannelGroup > list = ApiConfig.get().getChannelGroupList();
