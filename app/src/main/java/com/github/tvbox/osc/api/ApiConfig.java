@@ -1238,7 +1238,7 @@ public class ApiConfig {
     private final List<LiveSettingGroup> liveSettingGroupList = new ArrayList<>();
 
     private void initLiveSettings() {
-		ArrayList<String> groupNames = new ArrayList<>(Arrays.asList("线路选择", "画面比例", "播放解码", "超时换源", "偏好设置", "多源切换", "渲染方式", "直播音柱", "退出直播"));  //xuameng 换源
+		ArrayList<String> groupNames = new ArrayList<>(Arrays.asList("线路选择", "画面比例", "播放解码", "超时换源", "偏好设置", "多源切换", "配置切换", "渲染方式", "直播音柱", "退出直播"));  //xuameng 换源
         ArrayList < ArrayList < String >> itemsArrayList = new ArrayList < > ();
         ArrayList < String > sourceItems = new ArrayList < > ();
         ArrayList < String > scaleItems = new ArrayList < > (Arrays.asList("默认比例", "16:9比例", "4:3 比例", "填充比例", "原始比例", "裁剪比例"));
@@ -1246,6 +1246,7 @@ public class ApiConfig {
         ArrayList < String > timeoutItems = new ArrayList < > (Arrays.asList("超时05秒", "超时10秒", "超时15秒", "超时20秒", "超时25秒", "超时30秒"));
         ArrayList < String > personalSettingItems = new ArrayList < > (Arrays.asList("显示时间", "显示网速", "换台反转", "跨选分类"));
         ArrayList < String > yumItems = new ArrayList<>(Arrays.asList("聚汇直播"));   //xuameng新增 换源
+        ArrayList<String> liveApiHistoryItems = new ArrayList<>();  //配置切换
         ArrayList < String > PlayrenderSettingItems = new ArrayList < > (Arrays.asList("Texture渲染", "Surface渲染"));   //xuameng渲染方式
         ArrayList < String > LiveMusicAnimationItems = new ArrayList < > (Arrays.asList("音柱开启", "音柱关闭"));   //xuameng音柱动画
         ArrayList < String > ExitSettingItems = new ArrayList < > (Arrays.asList("确认退出"));   //xuameng退出直播
@@ -1255,7 +1256,8 @@ public class ApiConfig {
         itemsArrayList.add(playerDecoderItems);
         itemsArrayList.add(timeoutItems);
         itemsArrayList.add(personalSettingItems);
-        itemsArrayList.add(yumItems);
+        itemsArrayList.add(yumItems);   //xuameng新增 换源
+        itemsArrayList.add(liveApiHistoryItems); //配置切换
         itemsArrayList.add(playRenderSettingItems);   // xuameng渲染方式
         itemsArrayList.add(liveMusicAnimationItems);   // xuameng
         itemsArrayList.add(exitSettingItems);   // xuameng退出直播
@@ -1275,7 +1277,7 @@ public class ApiConfig {
             liveSettingGroup.setLiveSettingItems(liveSettingItemList);
             liveSettingGroupList.add(liveSettingGroup);
         }
-        // refreshLiveApiHistoryItems();
+         refreshLiveApiHistoryItems();
     }
 
     public List<LiveSettingGroup> getLiveSettingGroupList() {
@@ -1294,7 +1296,7 @@ public class ApiConfig {
             liveSettingItem.setItemName(history.get(i));
             liveSettingItemList.add(liveSettingItem);
         }
-        liveSettingGroupList.get(6).setLiveSettingItems(liveSettingItemList);
+        liveSettingGroupList.get(7).setLiveSettingItems(liveSettingItemList);
     }
 
     public void loadLives(JsonArray livesArray) {
