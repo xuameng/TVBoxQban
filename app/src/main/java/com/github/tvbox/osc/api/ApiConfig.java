@@ -2031,9 +2031,10 @@ public class ApiConfig {
         defaultList.add(timeoutGroup);  // 索引3
         defaultList.add(personalGroup); // 索引4
         defaultList.add(yumGroup);     // 索引5
-        defaultList.add(renderGroup);  // 索引6
-        defaultList.add(musicGroup);   // 索引7
-        defaultList.add(exitGroup);    // 索引8
+        defaultList.add(historyGroup); // 索引6
+        defaultList.add(renderGroup);  // 索引7
+        defaultList.add(musicGroup);   // 索引8
+        defaultList.add(exitGroup);    // 索引9
 
         return defaultList;
     }
