@@ -28,6 +28,7 @@ import com.lzy.okgo.OkGo;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import com.github.tvbox.osc.base.App; 
 
 /**
  * @author pj567
@@ -196,17 +197,22 @@ public class SettingActivity extends BaseActivity {
             if(dnsOpt != Hawk.get(HawkConfig.DOH_URL, 0)){  //xuameng DNS更改重启
                 AppManager.getInstance().finishAllActivity();
                 jumpActivity(HomeActivity.class);
+				App.showToastShort(SettingActivity.this, "111111111111111111");
             }else if (!currentLiveApi.equals(Hawk.get(HawkConfig.LIVE_API_URL, ""))){    //xuameng修复直播API不刷新问题   重启
                 AppManager.getInstance().finishAllActivity();
                 jumpActivity(HomeActivity.class);
+				App.showToastShort(SettingActivity.this, "2222222222222222222");
             }else if (HawkConfig.ISrestore){     //xuameng 恢复重启
                 AppManager.getInstance().finishAllActivity();
                 jumpActivity(HomeActivity.class);
                 HawkConfig.ISrestore = false;  //xuameng恢复成功,请重启应用
+				App.showToastShort(SettingActivity.this, "3333333333333333");
             }else if ((homeSourceKey != null && !homeSourceKey.equals(Hawk.get(HawkConfig.HOME_API, "")))  || homeRec != Hawk.get(HawkConfig.HOME_REC, 0)) { //xuameng 更改数据源或首页推荐
                 jumpActivity(HomeActivity.class, createBundle());
+				App.showToastShort(SettingActivity.this, "44444444444444");
             }
         } else {
+			App.showToastShort(SettingActivity.this, "5555555555555555");
             AppManager.getInstance().finishAllActivity();
             jumpActivity(HomeActivity.class);
         }
