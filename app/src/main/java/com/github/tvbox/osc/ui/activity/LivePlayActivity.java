@@ -3173,7 +3173,7 @@ public class LivePlayActivity extends BaseActivity {
             }
             @Override
             public void onSuccess(Response < String > response) {
-                JsonArray livesArray = TxtSubscribe.parseToJsonArray(response.body());
+
                    new Thread(() -> {
 
                         synchronized (this) {
