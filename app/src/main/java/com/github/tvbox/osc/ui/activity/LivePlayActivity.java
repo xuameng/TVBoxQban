@@ -3323,6 +3323,7 @@ public class LivePlayActivity extends BaseActivity {
                 });
             }
         });
+		}
     }
 
     private void initLiveState() {
