@@ -1258,7 +1258,7 @@ public class ApiConfig {
         itemsArrayList.add(personalSettingItems);
         itemsArrayList.add(yumItems);   //xuameng新增 换源
         itemsArrayList.add(liveApiHistoryItems); //配置切换
-        itemsArrayList.add(playRenderSettingItems);   // xuameng渲染方式
+        itemsArrayList.add(PlayrenderSettingItems);   // xuameng渲染方式
         itemsArrayList.add(LiveMusicAnimationItems);   // xuameng
         itemsArrayList.add(ExitSettingItems);   // xuameng退出直播
 
