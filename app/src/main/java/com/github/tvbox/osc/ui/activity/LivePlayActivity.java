@@ -79,6 +79,7 @@ import com.github.tvbox.osc.util.PlayerHelper;
 import com.github.tvbox.osc.util.live.TxtSubscribe;
 import com.github.tvbox.osc.util.urlhttp.CallBackUtil;
 import com.github.tvbox.osc.util.urlhttp.UrlHttpUtil;
+import com.github.tvbox.osc.util.HistoryHelper;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject; //xuameng新增
 import com.google.gson.JsonElement; //xuameng新增
@@ -2897,9 +2898,12 @@ public class LivePlayActivity extends BaseActivity {
                 liveSettingItemAdapter.selectItem(livePlayerManager.getLivePlayerType(), true, true);
                 break;
             case 6:
-                liveSettingItemAdapter.selectItem(livePlayerManager.getLivePlayrender(), true, true); //xuameng 获取渲染方式
+                liveSettingItemAdapter.selectItem(getCurrentLiveApiHistoryIndex(), true, true);
                 break;
             case 7:
+                liveSettingItemAdapter.selectItem(livePlayerManager.getLivePlayrender(), true, true); //xuameng 获取渲染方式
+                break;
+            case 8:
                 musicAnimation = livePlayerManager.getLivePlaymusic();
                 if (musicAnimation){
                     liveSettingItemAdapter.selectItem(0, true, true);  //xuameng 音柱动画开
@@ -3072,7 +3076,28 @@ public class LivePlayActivity extends BaseActivity {
 				useDefaultLiveChannelList = false;
                 recreate();
                 return;
-            case 6: //xuameng渲染方式
+            case 6: {//配置切换
+                ArrayList<String> history = Hawk.get(HawkConfig.LIVE_API_HISTORY, new ArrayList<String>());
+                if (history.isEmpty() || position < 0 || position >= history.size()) break;
+                String value = history.get(position);
+                String oldLiveApi = Hawk.get(HawkConfig.LIVE_API_URL, "");
+                liveSettingItemAdapter.selectItem(position, true, true);
+                if (value.equals(oldLiveApi)) break;
+                Hawk.put(HawkConfig.LIVE_API_URL, value);
+                HistoryHelper.setLiveApiHistory(value);
+                ApiConfig.get().refreshLiveApiHistoryItems();
+                if(mVideoView != null) {
+                    mVideoView.release();
+                    mVideoView = null;
+                }
+                mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);  //xuameng BUG
+                mHandler.removeCallbacks(mConnectTimeoutChangeSourceRunBack);  //xuameng BUG
+                mHandler.removeCallbacks(mConnectTimeoutChangeSourceRunBuffer);  //xuameng BUG
+				useDefaultLiveChannelList = false;
+                recreate();
+                return;
+            }
+            case 7: //xuameng渲染方式
                 if(mVideoView == null) return;
                 if(!isCurrentLiveChannelValid()) { //xuameng 未选择频道空指针问题
                     return;
@@ -3087,7 +3112,7 @@ public class LivePlayActivity extends BaseActivity {
                     iv_Play_Xu.setVisibility(View.GONE); //回看暂停图标
                 }
                 break;
-            case 7: //xuameng音柱动画 点击
+            case 8: //xuameng音柱动画 点击
                 if(mVideoView == null) return;
                 if(!isCurrentLiveChannelValid()) { //xuameng 未选择频道空指针问题
                     return;
@@ -3101,7 +3126,7 @@ public class LivePlayActivity extends BaseActivity {
                 }
                 liveSettingItemAdapter.selectItem(position, true, true);
                 break;
-            case 8: //xuameng退出直播
+            case 9: //xuameng退出直播
                 mHideSettingLayoutRun();
                 ExitLiveOnSetting();
                 break;
