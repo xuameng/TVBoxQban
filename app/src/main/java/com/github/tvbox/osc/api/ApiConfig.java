@@ -986,9 +986,7 @@ public class ApiConfig {
     public String getSpider() {
         return spider;
     }
-    public String getSpider() {
-        return spider;
-    }
+
     public String getDanmaku() {  //xuameng 弹幕
         return danmaku == null ? "" : danmaku;
     }
