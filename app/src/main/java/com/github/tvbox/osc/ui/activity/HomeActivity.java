@@ -468,12 +468,10 @@ public class HomeActivity extends BaseActivity {
 
                                 @Override
                                 public void right() {
-                                    dataInitOk = true;
-                                    jarInitOk = true;
+                                    refreshEmpty();
                                     mHandler.post(new Runnable() {
                                         @Override
                                         public void run() {
-                                            initData();
                                             //dialog.hide();
                                             dialog.dismiss();  //xuameng显示BUG
                                         }
@@ -482,12 +480,10 @@ public class HomeActivity extends BaseActivity {
 
                                 @Override
                                 public void cancel() {
-                                    dataInitOk = true;
-                                    jarInitOk = true;
+                                    refreshEmpty();
                                     mHandler.post(new Runnable() {
                                         @Override
                                         public void run() {
-                                            initData();
                                             //dialog.hide();
                                             dialog.dismiss();  //xuameng显示BUG
                                         }
