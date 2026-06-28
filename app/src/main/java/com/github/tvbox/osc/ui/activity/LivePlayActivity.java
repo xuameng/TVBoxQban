@@ -130,6 +130,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import com.github.catvod.crawler.Spider;
+import android.Manifest;
 
 public class LivePlayActivity extends BaseActivity {
     public static Context context;
@@ -3175,7 +3177,7 @@ public class LivePlayActivity extends BaseActivity {
         showLoading();
         LOG.i("echo-live-url:" + url);
         if(url.contains(".js")){
-            if ((url.contains(".py") || url.contains(".js")) && !hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            if ((url.contains(".js")) && !hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                 // 权限不足时，直接设置默认播放列表
                                     setDefaultLiveChannelList();
                                     showSuccess();
