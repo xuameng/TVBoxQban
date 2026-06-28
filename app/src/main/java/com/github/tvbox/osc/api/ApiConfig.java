@@ -431,6 +431,7 @@ public class ApiConfig {
         // spider
         spider = DefaultConfig.safeJsonString(infoJson, "spider", "");
         jarCache = DefaultConfig.safeJsonString(infoJson, "jarCache", "true");
+		danmaku = DefaultConfig.safeJsonString(infoJson, "danmaku", "");  //xuameng 弹幕
         // wallpaper
         wallpaper = DefaultConfig.safeJsonString(infoJson, "wallpaper", "");
         musicwallpaper = DefaultConfig.safeJsonString(infoJson, "musicwallpaper", "");    //xuameng音乐背景图
@@ -984,7 +985,12 @@ public class ApiConfig {
     public String getSpider() {
         return spider;
     }
-
+    public String getSpider() {
+        return spider;
+    }
+    public String getDanmaku() {  //xuameng 弹幕
+        return danmaku == null ? "" : danmaku;
+    }
     public Spider getCSP(SourceBean sourceBean) {
         boolean js = sourceBean.getApi().endsWith(".js") || sourceBean.getApi().contains(".js?");
         if (js) return jsLoader.getSpider(sourceBean.getKey(), sourceBean.getApi(), sourceBean.getExt(), sourceBean.getJar());
