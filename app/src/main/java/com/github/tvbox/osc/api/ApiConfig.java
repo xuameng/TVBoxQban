@@ -1256,9 +1256,9 @@ public class ApiConfig {
         itemsArrayList.add(timeoutItems);
         itemsArrayList.add(personalSettingItems);
         itemsArrayList.add(yumItems);
-        itemsArrayList.add(playRenderSettingItems);   // xuameng渲染方式
-        itemsArrayList.add(liveMusicAnimationItems);   // xuameng
-        itemsArrayList.add(exitSettingItems);   // xuameng退出直播
+        itemsArrayList.add(PlayrenderSettingItems);   // xuameng渲染方式
+        itemsArrayList.add(LiveMusicAnimationItems);   // xuameng
+        itemsArrayList.add(ExitSettingItems);   // xuameng退出直播
 
         liveSettingGroupList.clear();
         for (int i = 0; i < groupNames.size(); i++) {
