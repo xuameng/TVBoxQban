@@ -3123,6 +3123,7 @@ public class LivePlayActivity extends BaseActivity {
                         });
                     }
                 });
+            }
                 break;
             case 7: //xuameng渲染方式
                 if(mVideoView == null) return;
@@ -3157,7 +3158,6 @@ public class LivePlayActivity extends BaseActivity {
                 mHideSettingLayoutRun();
                 ExitLiveOnSetting();
                 break;
-            }
         }
         mHideSettingLayoutRunXu();
     }
