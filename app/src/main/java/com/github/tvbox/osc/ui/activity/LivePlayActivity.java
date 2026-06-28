@@ -3082,22 +3082,48 @@ public class LivePlayActivity extends BaseActivity {
                 if (history.isEmpty() || position < 0 || position >= history.size()) break;
                 String value = history.get(position);
                 String oldLiveApi = Hawk.get(HawkConfig.LIVE_API_URL, "");
+                String configChannelName = getPreferredLiveRefreshChannelName();
+                int configSourceIndex = getPreferredLiveRefreshSourceIndex();
                 liveSettingItemAdapter.selectItem(position, true, true);
                 if (value.equals(oldLiveApi)) break;
                 Hawk.put(HawkConfig.LIVE_API_URL, value);
                 HistoryHelper.setLiveApiHistory(value);
                 ApiConfig.get().refreshLiveApiHistoryItems();
-                if(mVideoView != null) {
-                    mVideoView.release();
-                    mVideoView = null;
-                }
-                mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);  //xuameng BUG
-                mHandler.removeCallbacks(mConnectTimeoutChangeSourceRunBack);  //xuameng BUG
-                mHandler.removeCallbacks(mConnectTimeoutChangeSourceRunBuffer);  //xuameng BUG
-				useDefaultLiveChannelList = false;
-                recreate();
-                return;
-            }
+                ApiConfig.get().loadLiveConfig(false, new ApiConfig.LoadConfigCallback() {
+                    @Override
+                    public void success() {
+                        mHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                refreshLiveChannelListAndPlay(configChannelName, configSourceIndex);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void error(String msg) {
+                        mHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (mVideoView != null) mVideoView.release();
+                                ApiConfig.get().refreshLiveApiHistoryItems();
+                                setDefaultLiveChannelList();
+                                Toast.makeText(LivePlayActivity.this, msg, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void notice(String msg) {
+                        mHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(LivePlayActivity.this, msg, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                });
+                break;
             case 7: //xuameng渲染方式
                 if(mVideoView == null) return;
                 if(!isCurrentLiveChannelValid()) { //xuameng 未选择频道空指针问题
@@ -4494,4 +4520,12 @@ public class LivePlayActivity extends BaseActivity {
         int idx = history.indexOf(current);
         return idx >= 0 ? idx : -1;
     }
+
+
+	    private void refreshLiveChannelListAndPlay(String channelName, int sourceIndex) {
+
+        initLiveChannelList();
+        initLiveSettingGroupList();
+    }
+
 }
