@@ -3157,6 +3157,7 @@ public class LivePlayActivity extends BaseActivity {
                 mHideSettingLayoutRun();
                 ExitLiveOnSetting();
                 break;
+            }
         }
         mHideSettingLayoutRunXu();
     }
@@ -4527,5 +4528,13 @@ public class LivePlayActivity extends BaseActivity {
         initLiveChannelList();
         initLiveSettingGroupList();
     }
+    private String getPreferredLiveRefreshChannelName() {
+        if (currentLiveChannelItem != null) return currentLiveChannelItem.getChannelName();
+        return Hawk.get(HawkConfig.LIVE_CHANNEL, "");
+    }
 
+    private int getPreferredLiveRefreshSourceIndex() {
+        if (currentLiveChannelItem != null) return currentLiveChannelItem.getSourceIndex();
+        return -1;
+    }
 }
