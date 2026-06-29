@@ -459,9 +459,9 @@ public class HomeActivity extends BaseActivity {
                                     mHandler.post(new Runnable() {
                                         @Override
                                         public void run() {
-                                            dialog.dismiss();   //xuameng显示BUG
                                             initData();
                                             //dialog.hide();
+                                            dialog.dismiss();   //xuameng显示BUG
                                         }
                                     });
                                 }
@@ -473,9 +473,9 @@ public class HomeActivity extends BaseActivity {
                                     mHandler.post(new Runnable() {
                                         @Override
                                         public void run() {
-                                            dialog.dismiss();  //xuameng显示BUG
                                             initData();
                                             //dialog.hide();
+                                            dialog.dismiss();  //xuameng显示BUG
                                         }
                                     });
                                 }
@@ -487,9 +487,9 @@ public class HomeActivity extends BaseActivity {
                                     mHandler.post(new Runnable() {
                                         @Override
                                         public void run() {
-                                            dialog.dismiss();  //xuameng显示BUG
                                             initData();
                                             //dialog.hide();
+                                            dialog.dismiss();  //xuameng显示BUG
                                         }
                                     });
                                 }
