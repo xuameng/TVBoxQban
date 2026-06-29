@@ -174,9 +174,6 @@ public class IjkMediaPlayer extends IjkPlayer {
                 if (TextUtils.isEmpty(key) || TextUtils.isEmpty(value)) {
                     continue;
                 }
-                if (ExoMediaSourceHelper.HEADER_FORMAT.equalsIgnoreCase(key)) {
-                    continue;
-                }
                 if ("User-Agent".equalsIgnoreCase(key)) {
                     userAgent = value.trim();
                 } else {
