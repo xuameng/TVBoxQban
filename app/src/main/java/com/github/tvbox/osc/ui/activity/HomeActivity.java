@@ -143,6 +143,16 @@ public class HomeActivity extends BaseActivity {
 
     @Override
     protected void init() {
+    public static void obtainPermission() { 
+        if (!XXPermissions.isGranted(mContext, Permission.Group.STORAGE)) {
+            App.showToastShort(getContext(), "请先授予存储权限！");
+            XXPermissions.with(mActivity)
+                    .permission(Permission.Group.STORAGE)
+                    .request(new OnPermissionCallback() {
+                        @Override
+                        public void onGranted(List<String> permissions, boolean all) {
+                            if (all) {
+                                App.showToastShort(getContext(), "已获得存储权限！");
 //        setupExceptionHandler(); // xuameng异常捕获
         EventBus.getDefault().register(this);
         ControlManager.get().startServer();
@@ -155,6 +165,34 @@ public class HomeActivity extends BaseActivity {
             useCacheConfig = bundle.getBoolean("useCache", false);
         }
         initData();
+                            }
+                        }
+
+                        @Override
+                        public void onDenied(List<String> permissions, boolean never) {
+                            if (never) {
+                                App.showToastShort(getContext(), "获取存储权限失败,请在系统设置中开启！");
+                                XXPermissions.startPermissionActivity(mActivity, permissions);
+                            } else {
+                                App.showToastShort(getContext(), "获取存储权限失败！");
+                            }
+                        }
+                    });
+            return;
+        }
+//        setupExceptionHandler(); // xuameng异常捕获
+        EventBus.getDefault().register(this);
+        ControlManager.get().startServer();
+        initView();
+        initViewModel();
+        useCacheConfig = false;
+        Intent intent = getIntent();
+        if (intent != null && intent.getExtras() != null) {
+            Bundle bundle = intent.getExtras();
+            useCacheConfig = bundle.getBoolean("useCache", false);
+        }
+        initData();
+    }
     }
 
     private void initView() {
