@@ -931,6 +931,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
         File cacheDir = new File(cachePath);
         String cspCachePath = FileUtils.getFilePath()+"/csp/";
         File cspCacheDir = new File(cspCachePath);
+        ApiConfig.get().clearSpiderCache();
         if (!cacheDir.exists() && !cspCacheDir.exists()) return;
         new Thread(() -> {
             try {
