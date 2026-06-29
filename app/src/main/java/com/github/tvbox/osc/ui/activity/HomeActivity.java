@@ -474,6 +474,7 @@ public class HomeActivity extends BaseActivity {
                                         @Override
                                         public void run() {
                                             initData();
+											ApiConfig.get().setSourceBean(null);
                                             //dialog.hide();
                                             dialog.dismiss();  //xuameng显示BUG
                                         }
@@ -488,6 +489,7 @@ public class HomeActivity extends BaseActivity {
                                         @Override
                                         public void run() {
                                             initData();
+											ApiConfig.get().setSourceBean(null);
                                             //dialog.hide();
                                             dialog.dismiss();  //xuameng显示BUG
                                         }
