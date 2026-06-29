@@ -111,12 +111,14 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.net.URLEncoder;
 
 import me.jessyan.autosize.AutoSize;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkTimedText;
 import xyz.doikki.videoplayer.player.AbstractPlayer;
 import xyz.doikki.videoplayer.player.ProgressManager;
+import xyz.doikki.videoplayer.player.VideoView;
 
 import com.github.tvbox.osc.util.SubtitleHelper;  //xuameng 保存字幕颜色信息用
 
@@ -1859,17 +1861,16 @@ public class PlayFragment extends BaseLazyFragment {
         LOG.i("echo-resolvePlayUrl timeout, try next line");
         if (sourceViewModel != null) sourceViewModel.cancelPlayRequest();
         stopParse();
-        if (!tryNextLineIfEnabled()) setTip("获取播放地址超时", false, true);
+        setTip("获取播放地址超时", false, true);
     }
 
     void handleResolvePlayUrlFailed(String err, boolean finish) {
         LOG.i("echo-resolvePlayUrl failed, try next line: " + err);
         if (sourceViewModel != null) sourceViewModel.cancelPlayRequest();
         stopParse();
-        if (tryNextLineIfEnabled()) return;
         if (finish) {
             setTip(err, false, true);
-            Toast.makeText(mContext, err, Toast.LENGTH_SHORT).show();
+            App.showToastShort(mContext, err);
         } else {
             setTip(err, false, true);
         }
@@ -1886,7 +1887,7 @@ public class PlayFragment extends BaseLazyFragment {
         LOG.i("echo-switchLinePlay timeout, try next line");
         stopParse();
         if (hasAutoSwitchedPlayer) {
-            if (!tryNextLineIfEnabled()) setTip("播放超时", false, true);
+            setTip("播放超时", false, true);
             return;
         }
         if (!autoRetry()) setTip("播放超时", false, true);
@@ -2024,7 +2025,7 @@ public class PlayFragment extends BaseLazyFragment {
                             requireActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    Toast.makeText(mContext, "解析来自:" + rs.optString("jxFrom"), Toast.LENGTH_SHORT).show();
+                                    App.showToastShort(mContext, "解析来自:" + rs.optString("jxFrom");
                                 }
                             });
                         }
@@ -2142,7 +2143,7 @@ public class PlayFragment extends BaseLazyFragment {
             requireActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(mContext, "解析来自:" + rs.optString("jxFrom"), Toast.LENGTH_SHORT).show();
+                    App.showToastShort(mContext, "解析来自:" + rs.optString("jxFrom");
                 }
             });
         }
