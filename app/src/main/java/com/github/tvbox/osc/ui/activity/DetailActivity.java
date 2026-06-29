@@ -217,9 +217,7 @@ public class DetailActivity extends BaseActivity {
         mGridViewFlag.setAdapter(seriesFlagAdapter);
         preFlag = "";
         if (showPreview) {
-            playFragment = new PlayFragment();
-            getSupportFragmentManager().beginTransaction().add(R.id.previewPlayer, playFragment).commit();
-            getSupportFragmentManager().beginTransaction().show(playFragment).commitAllowingStateLoss();
+            ensurePlayFragment();
             tvPlay.setText("全屏");
         }
 
@@ -259,7 +257,7 @@ public class DetailActivity extends BaseActivity {
         tvPlayUrl.setFocusable(false);
 
         llPlayerFragmentContainerBlock.setOnClickListener(v -> {
-            toggleFullPreview();
+            enterFullPreview();
         });
 
         tvSort.setOnClickListener(new View.OnClickListener() {
@@ -339,7 +337,7 @@ public class DetailActivity extends BaseActivity {
             public void onClick(View v) {
                 FastClickCheckUtil.check(v);
                 if (showPreview) {
-                    toggleFullPreview();
+                    enterFullPreview();
                 } else {
                     jumpToPlay();
                 }
@@ -610,7 +608,7 @@ public class DetailActivity extends BaseActivity {
                     seriesAdapter.notifyItemChanged(vodInfo.playIndex);
                     //选集全屏 想选集不全屏的注释下面一行
                     if (showPreview && !fullWindows){
-                        toggleFullPreview();
+                        enterFullPreview();
                     }
                     if (!showPreview || reload) {
                         jumpToPlay();
@@ -725,6 +723,7 @@ public class DetailActivity extends BaseActivity {
 //            bundle.putSerializable("VodInfo", vodInfo);
             App.getInstance().setVodInfo(vodInfo);
             if (showPreview) {
+                ensurePlayFragment();
                 if (previewVodInfo == null) {
                     try {
                         ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -746,9 +745,11 @@ public class DetailActivity extends BaseActivity {
 //                    bundle.putSerializable("VodInfo", previewVodInfo);
                     App.getInstance().setVodInfo(previewVodInfo);
                 }
-                playFragment.setData(bundle);
+                 if (playFragment != null) playFragment.setData(bundle);
             } else {
-                jumpActivity(PlayActivity.class, bundle);
+                ensurePlayFragment();
+                if (playFragment != null) playFragment.setData(bundle);
+                enterFullPreview();
             }
         }
     }
@@ -1100,7 +1101,7 @@ public class DetailActivity extends BaseActivity {
                         App.showToastShort(DetailActivity.this, "接收推送数据失败！");
                     }
                     if (fullWindows) {
-                        toggleFullPreview();
+                        enterFullPreview();
                     }
                     if (isShowConfig){ //xuameng 配置中心判断
                         showConfig();
@@ -1394,6 +1395,7 @@ public class DetailActivity extends BaseActivity {
 
     private void switchSearchWord(String word) {
         OkGo.getInstance().cancelTag("quick_search");
+        releasePlayFragment();
         quickSearchData.clear();
         searchTitle = word;
         searchResult();
@@ -1551,11 +1553,8 @@ public class DetailActivity extends BaseActivity {
         if (fullWindows) {
             if (playFragment.onBackPressed())  //xuameng上一级交给VODController控制
                 return;
-            toggleFullPreview();
+            exitFullPreview();
             switchToPlayingSourceAndScroll();   //xuameng滚动到当前剧集
-//            mGridView.requestFocus(); 没用了
-            List<VodInfo.VodSeries> list = vodInfo.seriesMap.get(vodInfo.playFlag);
-            mSeriesGroupView.setVisibility(list.size()>GroupCount ? View.VISIBLE : View.GONE);
             return;
         }
         else if (seriesSelect) {
@@ -1569,8 +1568,13 @@ public class DetailActivity extends BaseActivity {
             }
         }
         else if (showPreview && playFragment!=null) {    //xuameng如果显示小窗口播放就释放视频，修复退出还显示暂停图标等图标的BUG
-            playFragment.setPlayTitle(false);
-            playFragment.mVideoView.release();
+            try {
+                playFragment.setPlayTitle(false);
+                playFragment.setExitingPreview(true);
+                playFragment.mVideoView.release();
+            } catch (Throwable th) {
+                th.printStackTrace();
+            }
         }
         HawkConfig.intVod = false;  //xuameng判断进入播放
         App.HideToast();
@@ -1618,15 +1622,30 @@ public class DetailActivity extends BaseActivity {
     ViewGroup.LayoutParams windowsFull = null;
 
     void toggleFullPreview() {
+        setFullPreview(!fullWindows);
+    }
+
+    void enterFullPreview() {
+        setFullPreview(true);
+    }
+
+    void exitFullPreview() {
+        setFullPreview(false);
+    }
+
+    void setFullPreview() {
         if (windowsPreview == null) {
             windowsPreview = llPlayerFragmentContainer.getLayoutParams();
         }
         if (windowsFull == null) {
             windowsFull = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         }
-        fullWindows = !fullWindows;
-        llPlayerFragmentContainer.setLayoutParams(fullWindows ? windowsFull : windowsPreview);
-        llPlayerFragmentContainerBlock.setVisibility(fullWindows ? View.GONE : View.VISIBLE);
+        fullWindows = full;
+        if (playFragment != null) {
+            playFragment.setAutoSwitchLineEnabled(!fullWindows);
+        }
+        llPlayerFragmentContainer.setVisibility(fullWindows || showPreview ? View.VISIBLE : View.GONE);
+        llPlayerFragmentContainerBlock.setVisibility(!fullWindows && showPreview ? View.VISIBLE : View.GONE);
         mGridView.setVisibility(fullWindows ? View.GONE : View.VISIBLE);
         mGridViewFlag.setVisibility(fullWindows ? View.GONE : View.VISIBLE);
         mSeriesGroupView.setVisibility(fullWindows ? View.GONE : View.VISIBLE);
@@ -1639,7 +1658,30 @@ public class DetailActivity extends BaseActivity {
         tvDesc.setFocusable(!fullWindows);      //xuameng 内容简介
         tvPush.setFocusable(!fullWindows);    //xuameng 远程推送
         llPlayerFragmentContainerBlock.setFocusable(!fullWindows);
+        if (fullWindows) {
+            tvSeriesGroup.setVisibility(View.GONE);
+        } else {
+            List<VodInfo.VodSeries> list = vodInfo == null || vodInfo.seriesMap == null || TextUtils.isEmpty(vodInfo.playFlag) ? null : vodInfo.seriesMap.get(vodInfo.playFlag);
+            tvSeriesGroup.setVisibility(list != null && list.size() > 1 ? View.VISIBLE : View.GONE);
+            if (showPreview) mGridView.requestFocus();
+            else {
+                if (playFragment != null) playFragment.pauseForHidden();
+                mGridView.requestFocus();
+            }
+        }
         toggleSubtitleTextSize();
+    }
+
+    void ensurePlayFragment() {
+        if (playFragment != null) return;
+        playFragment = new PlayFragment();
+        getSupportFragmentManager().beginTransaction().add(R.id.previewPlayer, playFragment).commitNowAllowingStateLoss();
+    }
+
+    void releasePlayFragment() {
+        if (playFragment == null) return;
+        getSupportFragmentManager().beginTransaction().remove(playFragment).commitNowAllowingStateLoss();
+        playFragment = null;
     }
 
     void toggleSubtitleTextSize() {
