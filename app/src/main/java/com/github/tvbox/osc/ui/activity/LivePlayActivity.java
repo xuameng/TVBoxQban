@@ -3177,7 +3177,7 @@ public class LivePlayActivity extends BaseActivity {
         showLoading();
         LOG.i("echo-live-url:" + url);
         if(url.contains(".js")){
-            if ((!hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            if ((!hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE))) {
                 // 权限不足时，直接设置默认播放列表
                 setDefaultLiveChannelList();
                 showSuccess();
