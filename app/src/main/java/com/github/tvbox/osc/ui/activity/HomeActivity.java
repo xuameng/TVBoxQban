@@ -258,7 +258,6 @@ public class HomeActivity extends BaseActivity {
                     File cspCacheDir = new File(cspCachePath);
                     File jarCacheDir = new File(jarCachePath);
                     File cacheDir = new File(cachePath);
-                    if (!cacheDir.exists() && !cspCacheDir.exists() && !jarCacheDir.exists()) return;
                     new Thread(() -> {
                         try {
                             if(cacheDir.exists()) FileUtils.cleanDirectory(cacheDir);
