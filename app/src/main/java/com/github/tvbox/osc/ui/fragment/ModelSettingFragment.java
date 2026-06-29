@@ -944,7 +944,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
                     e.printStackTrace();
                 }
         }).start();
-        App.showToastShort(HomeActivity.this, "缓存已清空！");
+        App.showToastShort(getContext(), "缓存已清空！");
         return;
     }
 
