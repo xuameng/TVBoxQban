@@ -1633,7 +1633,7 @@ public class DetailActivity extends BaseActivity {
         setFullPreview(false);
     }
 
-    void setFullPreview() {
+    void setFullPreview(boolean full) {
         if (windowsPreview == null) {
             windowsPreview = llPlayerFragmentContainer.getLayoutParams();
         }
@@ -1658,17 +1658,6 @@ public class DetailActivity extends BaseActivity {
         tvDesc.setFocusable(!fullWindows);      //xuameng 内容简介
         tvPush.setFocusable(!fullWindows);    //xuameng 远程推送
         llPlayerFragmentContainerBlock.setFocusable(!fullWindows);
-        if (fullWindows) {
-            tvSeriesGroup.setVisibility(View.GONE);
-        } else {
-            List<VodInfo.VodSeries> list = vodInfo == null || vodInfo.seriesMap == null || TextUtils.isEmpty(vodInfo.playFlag) ? null : vodInfo.seriesMap.get(vodInfo.playFlag);
-            tvSeriesGroup.setVisibility(list != null && list.size() > 1 ? View.VISIBLE : View.GONE);
-            if (showPreview) mGridView.requestFocus();
-            else {
-                if (playFragment != null) playFragment.pauseForHidden();
-                mGridView.requestFocus();
-            }
-        }
         toggleSubtitleTextSize();
     }
 
