@@ -143,7 +143,6 @@ public class HomeActivity extends BaseActivity {
 
     @Override
     protected void init() {
-    public static void obtainPermission() { 
         if (!XXPermissions.isGranted(mContext, Permission.Group.STORAGE)) {
             App.showToastShort(getContext(), "请先授予存储权限！");
             XXPermissions.with(mActivity)
@@ -192,7 +191,6 @@ public class HomeActivity extends BaseActivity {
             useCacheConfig = bundle.getBoolean("useCache", false);
         }
         initData();
-    }
     }
 
     private void initView() {
