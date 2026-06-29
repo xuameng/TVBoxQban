@@ -169,7 +169,7 @@ public class PlayFragment extends BaseLazyFragment {
             mController.mPauseIngXu();   //xuameng 全屏时如果是暂停状态就显示暂停图标
         } else if (event.type == RefreshEvent.TYPE_CLOSE_PLAY_ACTIVITY) {  //xuameng 远程关闭playactivity 用于push推送解析刷新
             // 收到指令，执行关闭
-            finish(); 
+            requireActivity().onBackPressed();
         } else if (event.type == RefreshEvent.TYPE_SET_DANMU_SETTINGS) { //xuameng 弹幕
             setDanmuViewSettings(event.obj instanceof Boolean && (Boolean) event.obj);
         } else if (event.type == RefreshEvent.TYPE_DANMU_REFRESH) { //xuameng 弹幕
