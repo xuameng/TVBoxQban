@@ -1730,11 +1730,15 @@ public class ApiConfig {
         return sourceBeanList.get(key);
     }
 
-    public void setSourceBean(SourceBean sourceBean) {
-        this.mHomeSource = sourceBean;
+public void setSourceBean(SourceBean sourceBean) {
+    this.mHomeSource = sourceBean;
+    if (sourceBean != null) {
         Hawk.put(HawkConfig.HOME_API, sourceBean.getKey());
+    } else {
+        // ✅ JAR 加载失败：真正清空
+        Hawk.delete(HawkConfig.HOME_API);
     }
-
+}
     public void setDefaultParse(ParseBean parseBean) {
         if (this.mDefaultParse != null) {
             this.mDefaultParse.setDefault(false);
