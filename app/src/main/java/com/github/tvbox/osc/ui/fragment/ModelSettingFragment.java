@@ -927,24 +927,24 @@ public class ModelSettingFragment extends BaseLazyFragment {
 
     private void onClickClearCache(View v) {
         FastClickCheckUtil.check(v);
-        String cachePath = FileUtils.getCachePath();
-        File cacheDir = new File(cachePath);
+        String cachePath = FileUtils.getCachePath();          //xuameng点击清空缓存
         String cspCachePath = FileUtils.getFilePath()+"/csp/";
+        String jarCachePath = FileUtils.getFilePath()+"/jar/";
         File cspCacheDir = new File(cspCachePath);
-        ApiConfig.get().clearSpiderCache();
-        if (!cacheDir.exists() && !cspCacheDir.exists()) return;
+        File jarCacheDir = new File(jarCachePath);
+        File cacheDir = new File(cachePath);
+        if (!cacheDir.exists() && !cspCacheDir.exists() && !jarCacheDir.exists()) return;
         new Thread(() -> {
             try {
-                if(cacheDir.exists())FileUtils.cleanDirectory(cacheDir);
-                if(cspCacheDir.exists()){
-                    FileUtils.cleanDirectory(cspCacheDir);
-                    //ApiConfig.get().clearJarLoader();
+                if(cacheDir.exists()) FileUtils.cleanDirectory(cacheDir);
+                if(cspCacheDir.exists()) FileUtils.cleanDirectory(cspCacheDir);
+                if(cspCacheDir.exists()) FileUtils.cleanDirectory(jarCacheDir);
+                    // ApiConfig.get().clearJarLoader();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
         }).start();
-        App.showToastShort(getContext(), "缓存已清空！");
+        App.showToastShort(HomeActivity.this, "缓存已清空！");
         return;
     }
 
