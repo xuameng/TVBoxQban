@@ -342,6 +342,7 @@ public class HomeActivity extends BaseActivity {
     private boolean jarInitOk = false;
 
     private void initData() {
+        Hawk.put(HawkConfig.API_INIT_OK, true);
         refreshEmpty = false;	//xuameng打断加载判断
         SourceBean home = ApiConfig.get().getHomeSourceBean();
         if (home != null && home.getName() != null && !home.getName().isEmpty())
@@ -474,8 +475,8 @@ public class HomeActivity extends BaseActivity {
                                         @Override
                                         public void run() {
                                             initData();
-											ApiConfig.get().setSourceBean(null);
                                             //dialog.hide();
+                                            Hawk.put(HawkConfig.API_INIT_OK, false);  //判断API加载成功
                                             dialog.dismiss();  //xuameng显示BUG
                                         }
                                     });
@@ -489,8 +490,8 @@ public class HomeActivity extends BaseActivity {
                                         @Override
                                         public void run() {
                                             initData();
-											ApiConfig.get().setSourceBean(null);
                                             //dialog.hide();
+                                            Hawk.put(HawkConfig.API_INIT_OK, false);  //判断API加载成功
                                             dialog.dismiss();  //xuameng显示BUG
                                         }
                                     });
