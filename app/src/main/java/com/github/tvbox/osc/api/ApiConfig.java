@@ -2028,18 +2028,23 @@ public class ApiConfig {
      * 重新生成收藏组
      */
     public void rebuildFavoriteGroup() {
+        List<LiveChannelGroup> groups = getChannelGroupList();
+        if (groups == null) return;
         // 重新生成收藏组
         LiveChannelGroup favoriteGroup =
                 LiveChannelItem.createFavoriteChannelGroup();
 
-        // 找到收藏组位置（通常是 0）
-        for (int i = 0; i < channelGroupList.size(); i++) {
-            if ("我的收藏".equals(channelGroupList.get(i).getGroupName())) {
+        for (int i = 0; i < groups.size(); i++) {
+            if ("我的收藏".equals(groups.get(i).getGroupName())) {
                 favoriteGroup.setGroupIndex(i);
-                channelGroupList.set(i, favoriteGroup);
-                break;
+                groups.set(i, favoriteGroup);
+                return;
             }
         }
+
+        // 如果还没创建过“我的收藏”分组，则追加
+        //favoriteGroup.setGroupIndex(groups.size());
+        //groups.add(favoriteGroup);
     }
 
 }
