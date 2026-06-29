@@ -230,7 +230,7 @@ public class ApiConfig {
                     callback.success();
                 } catch (Throwable th) {
                     th.printStackTrace();
-                    callback.error("解析失败");
+                    callback.error("聚汇影视提示您：解析配置失败！");
                 }
             }
 
@@ -251,7 +251,7 @@ public class ApiConfig {
                         th.printStackTrace();
                     }
                 }
-                callback.error("获取失败\n" + error);
+                callback.error("聚汇影视提示您：拉取配置失败！\n" + error);
             }
         });
     }
