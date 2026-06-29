@@ -1529,7 +1529,7 @@ public class PlayActivity extends BaseActivity {
             mController.setTitle(playTitleInfo);
         }
         stopParse();
-		        playbackStarted = false;
+		playbackStarted = false;
         playTimeoutBasePosition = 0;
         webPlayUrl = null;
         webHeaderMap = null;
@@ -1612,7 +1612,7 @@ public class PlayActivity extends BaseActivity {
     private String webUrl;
     private String webUserAgent;
     private HashMap<String, String > webHeaderMap;
-	private String webPlayUrl;
+    private String webPlayUrl;
 
     private void initParse(String flag, boolean useParse, String playUrl, final String url) {
         parseFlag = flag;
@@ -1701,7 +1701,7 @@ public class PlayActivity extends BaseActivity {
         return headers.isEmpty() ? null : headers;
     }
 
-	    private void appendHeaders(HashMap<String, String> headers, Object rawHeaders) {
+    private void appendHeaders(HashMap<String, String> headers, Object rawHeaders) {
         if (rawHeaders == null || rawHeaders == JSONObject.NULL) return;
         try {
             JSONObject json = null;
@@ -1973,7 +1973,6 @@ public class PlayActivity extends BaseActivity {
                     } else {
                         HashMap<String, String> headers = getHeaders(rs);
                         if (rs.has("jxFrom")) {
-                            if(!isAdded())return;
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -2031,7 +2030,6 @@ public class PlayActivity extends BaseActivity {
                             }
                             setTip("聚汇超级解析中", true, false);
 
-                            if(!isAdded())return;
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -2063,7 +2061,6 @@ public class PlayActivity extends BaseActivity {
                             if (rs.has("ua")) {
                                 webUserAgent = rs.optString("ua").trim();
                             }
-                            if(!isAdded())return;
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -2091,7 +2088,6 @@ public class PlayActivity extends BaseActivity {
         }
         HashMap<String, String> headers = getHeaders(rs);
         if (rs.has("jxFrom")) {
-            if(!isAdded())return;
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
