@@ -149,6 +149,7 @@ public class DetailActivity extends BaseActivity {
     private int GroupCount;
     private Handler mHandler = new Handler();  //xuameng 新增推送
     private volatile boolean isActivityDestroyed = false;  //xuameng判断页面是否已关闭
+    boolean showPreview = Hawk.get(HawkConfig.SHOW_PREVIEW, true);  //xuameng true是显示小窗口,false是不显示小窗口
 
     @Override
     protected int getLayoutResID() {
@@ -745,7 +746,7 @@ public class DetailActivity extends BaseActivity {
 //                    bundle.putSerializable("VodInfo", previewVodInfo);
                     App.getInstance().setVodInfo(previewVodInfo);
                 }
-                 if (playFragment != null) playFragment.setData(bundle);
+                if (playFragment != null) playFragment.setData(bundle);
             } else {
                 ensurePlayFragment();
                 if (playFragment != null) playFragment.setData(bundle);
@@ -1549,7 +1550,6 @@ public class DetailActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        boolean showPreview = Hawk.get(HawkConfig.SHOW_PREVIEW, true);  //xuameng true是显示小窗口,false是不显示小窗口
         if (fullWindows) {
             if (playFragment.onBackPressed())  //xuameng上一级交给VODController控制
                 return;
@@ -1616,7 +1616,6 @@ public class DetailActivity extends BaseActivity {
 
     // preview
     VodInfo previewVodInfo = null;
-    boolean showPreview = Hawk.get(HawkConfig.SHOW_PREVIEW, true); // true 开启 false 关闭
     boolean fullWindows = false;
     ViewGroup.LayoutParams windowsPreview = null;
     ViewGroup.LayoutParams windowsFull = null;
@@ -1658,6 +1657,14 @@ public class DetailActivity extends BaseActivity {
         tvDesc.setFocusable(!fullWindows);      //xuameng 内容简介
         tvPush.setFocusable(!fullWindows);    //xuameng 远程推送
         llPlayerFragmentContainerBlock.setFocusable(!fullWindows);
+        if (!showPreview && !fullWindows && playFragment!=null) {    //xuameng如果显示小窗口播放就释放视频，修复退出还显示暂停图标等图标的BUG
+            try {
+                playFragment.pauseForHidden();
+            } catch (Throwable th) {
+                th.printStackTrace();
+            }
+            return;
+        }
         toggleSubtitleTextSize();
     }
 
