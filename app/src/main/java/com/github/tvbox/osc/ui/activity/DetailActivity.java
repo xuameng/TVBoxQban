@@ -137,6 +137,7 @@ public class DetailActivity extends BaseActivity {
     public String vodId;
     public String sourceKey;
     public String firstsourceKey;
+    private String url;
     boolean seriesSelect = false;
     boolean isPushUrl = false;   //xuameng 判断推送内容
     boolean isShowConfig = false;  //xuameng 配置中心判断
@@ -608,7 +609,7 @@ public class DetailActivity extends BaseActivity {
                         reload = true;
                     }
                     //解决当前集不刷新的BUG
-                    if (!preFlag.isEmpty() && !vodInfo.playFlag.equals(preFlag)) {
+                    if (!TextUtils.isEmpty(preFlag) && !vodInfo.playFlag.equals(preFlag)) {
                         reload = true;
                     }
 
@@ -718,14 +719,9 @@ public class DetailActivity extends BaseActivity {
             vodInfo.currentPlayFlag = vodInfo.playFlag;
             vodInfo.currentPlayIndex = vodInfo.playIndex;
             Bundle bundle = new Bundle();
-            //保存历史 - 关键修改：使用当前播放的源进行保存
-        //    String saveSourceKey = vodInfo.currentPlayFlag != null ? vodInfo.currentPlayFlag : sourceKey;
-        //    insertVod(saveSourceKey, vodInfo);
-            // 同时保存一份到初始源，用于兼容性
-          //  if (!saveSourceKey.equals(firstsourceKey)) {
-                insertVod(firstsourceKey, vodInfo);
-          //  }
-        //   insertVod(sourceKey, vodInfo);
+            if (!TextUtils.isEmpty(url) && !url.startsWith("push://")) {  //xuameng 判断推送内容 如是 不执行保存 播放成功后会自动保存
+                insertVod(firstsourceKey, vodInfo); 
+            }  
             bundle.putString("sourceKey", sourceKey);
             bundle.putString("videoPic", mVideo.pic);   //xuameng 新增给vod显示旋转图片用
 //            bundle.putSerializable("VodInfo", vodInfo);
@@ -769,13 +765,9 @@ public class DetailActivity extends BaseActivity {
             vodInfo.currentPlayFlag = vodInfo.playFlag;
             vodInfo.currentPlayIndex = vodInfo.playIndex;
             Bundle bundle = new Bundle();
-            //保存历史 - 关键修改：使用当前播放的源进行保存
-         //   String saveSourceKey = vodInfo.currentPlayFlag != null ? vodInfo.currentPlayFlag : sourceKey;
-          //  insertVod(saveSourceKey, vodInfo);
-            // 同时保存一份到初始源，用于兼容性
-           // if (!saveSourceKey.equals(firstsourceKey)) {
-                insertVod(firstsourceKey, vodInfo);
-           // }
+            if (!TextUtils.isEmpty(url) && !url.startsWith("push://")) {  //xuameng 判断推送内容 如是 不执行保存 播放成功后会自动保存
+                insertVod(firstsourceKey, vodInfo); 
+            } 
             bundle.putString("sourceKey", sourceKey);
             App.getInstance().setVodInfo(vodInfo);
             if (showPreview) {
@@ -905,7 +897,7 @@ public class DetailActivity extends BaseActivity {
     }
 
     private void setTextShow(TextView view, String tag, String info) {
-        if (info == null || info.trim().isEmpty()) {
+        if (TextUtils.isEmpty(info)) {
             view.setVisibility(View.GONE);
             return;
         }
@@ -942,7 +934,7 @@ public class DetailActivity extends BaseActivity {
                     if (TextUtils.isEmpty(mVideo.name))mVideo.name = vod_name;  //xuameng 视频名称
                     if (TextUtils.isEmpty(mVideo.name))mVideo.name = "🥇聚汇影视";
                     vodInfo = new VodInfo();
-                    if((mVideo.pic==null || mVideo.pic.isEmpty()) && !vod_picture.isEmpty()){    //xuameng某些网站图片部显示
+                    if(TextUtils.isEmpty(mVideo.pic) && !TextUtils.isEmpty(vod_picture)){    //xuameng某些网站图片部显示
                         mVideo.pic=vod_picture;  //xuameng 视频图片
                     }
                     vodInfo.setVideo(mVideo);
@@ -1258,7 +1250,7 @@ public class DetailActivity extends BaseActivity {
                                         if (displaySafeIndex >= displaySeriesList.size() || displaySafeIndex < 0) {
                                             displaySafeIndex = 0;
                                         }
-                                        if (!displaySeriesList.isEmpty()) {
+                                        if (!TextUtils.isEmpty(displaySeriesList)) {
                                             displaySeriesList.get(displaySafeIndex).selected = true;
                                             vodInfo.playIndex = displaySafeIndex;
                                         }
@@ -1294,26 +1286,19 @@ public class DetailActivity extends BaseActivity {
                                 e.printStackTrace();
                                 saveVodInfo = vodInfo;
                             }
-                    
                             if (isPushUrl) {  //xuameng 判断推送内容 如是 不执行保存 播放成功后会自动保存
-                                mHandler.postDelayed(mPushUrlRunnable, 300); //xuameng 推送地址解析成功
-                                return; 
+                                mHandler.postDelayed(mPushUrlRunnable); //xuameng 推送地址解析成功
                             }
-                            insertVod(firstsourceKey, saveVodInfo);
-
+                            if (!TextUtils.isEmpty(url) && !url.startsWith("push://")) {  //xuameng 判断推送内容 如是 不执行保存 播放成功后会自动保存
+                                insertVod(firstsourceKey, saveVodInfo);
+                            }                 
                         }
-                        //xuameng解决焦点丢失		if (!fullWindows){
-                        //              mGridView.setSelection(index);
-                        //             insertVod(sourceKey, vodInfo);}
-                
                     } else if (event.obj instanceof JSONObject) {    //xuameng保存播放器配置
                         vodInfo.playerCfg = ((JSONObject) event.obj).toString();
                         //保存历史
-                        if (isPushUrl) {  //xuameng 判断推送内容 如是 不执行保存 播放成功后会自动保存
-                            return; 
-                        }
-                        insertVod(firstsourceKey, vodInfo);
-                        //        insertVod(sourceKey, vodInfo);
+                        if (!TextUtils.isEmpty(url) && !url.startsWith("push://")) {  //xuameng 判断推送内容 如是 不执行保存 播放成功后会自动保存
+                            insertVod(firstsourceKey, saveVodInfo);
+                        } 
                     } else if (event.obj instanceof String) {
                         String url = event.obj.toString();
                         //设置更新播放地址
@@ -1321,7 +1306,7 @@ public class DetailActivity extends BaseActivity {
 
                         if (url.startsWith("push://") && ApiConfig.get().getSource("push_agent") != null) {  //xuameng 如果是推送链接 通过sourceViewModel 改成"push_agent"源重新解析
                             App.showToastShort(DetailActivity.this, "正在解析推送地址！");
-                            deleteOldSourceHistoryIfNeeded(firstsourceKey, "push_agent", vodInfo);  //xuameng 删除firstsourceKey存储历史因为源变成 push_agent了
+                          //  deleteOldSourceHistoryIfNeeded(firstsourceKey, "push_agent", vodInfo);  //xuameng 删除firstsourceKey存储历史因为源变成 push_agent了
                             loadDetailXu(url, "push_agent");  //通过sourceViewModel.getDetail方法去push头并更改源为push_agent 因为type 4源不支持解析
                             isPushUrl = true;
                         }
@@ -1689,7 +1674,7 @@ public class DetailActivity extends BaseActivity {
     }
 
     private void setTvPlayUrl(String url){
-      if (url == null || url.isEmpty()) {
+      if (TextUtils.isEmpty(url)) {
           url = "聚汇影视提示您：播放地址为空！";
       }	
       setTextShow(tvPlayUrl, "播放地址：", url);
