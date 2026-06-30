@@ -730,6 +730,7 @@ public class PlayFragment extends BaseLazyFragment {
     }
 
     void playUrl(String url, HashMap<String, String> headers) {
+        startSwitchLinePlayTimeout();
         url = attachProxySiteKey(url);
         if(!url.startsWith("data:application"))EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_REFRESH, url));//更新播放地址
         if (!Hawk.get(HawkConfig.M3U8_PURIFY, false)) {       //xuameng广告过滤
@@ -819,6 +820,7 @@ public class PlayFragment extends BaseLazyFragment {
                         } else {
                             mVideoView.setUrl(url);
                         }
+                        startSwitchLinePlayTimeout();
                         mVideoView.start();
                         mController.resetSpeed();
                     }
@@ -1788,6 +1790,12 @@ public class PlayFragment extends BaseLazyFragment {
     private long getResolvePlayUrlTimeoutMs() {
         if (sourceBean == null) return RESOLVE_PLAY_URL_TIMEOUT_MS;
         return Math.max(RESOLVE_PLAY_URL_TIMEOUT_MS, (sourceBean.getPlayTimeoutSeconds() + 1L) * 1000L);
+    }
+
+    void startSwitchLinePlayTimeout() {
+        cancelPlayTimeout();
+        LOG.i("start timeout");
+        mHandler.sendEmptyMessageDelayed(MSG_SWITCH_LINE_PLAY_TIMEOUT, SWITCH_LINE_PLAY_TIMEOUT_MS);
     }
 
     void cancelPlayTimeout() {
