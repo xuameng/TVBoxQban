@@ -332,30 +332,6 @@ public class ApiConfig {
         return liveChannelGroupList != null && !liveChannelGroupList.isEmpty();
     }
 
-    public boolean shouldReloadLiveConfig() {
-        String apiUrl = Hawk.get(HawkConfig.LIVE_API_URL, "");
-        if (apiUrl.isEmpty()) {
-            apiUrl = Hawk.get(HawkConfig.API_URL, "http://xuameng.vicp.net:8082/jvhuiys/1/xu.json");
-        }
-        return liveChannelGroupList == null || liveChannelGroupList.isEmpty() || !apiUrl.equals(loadedLiveConfigUrl);
-    }
-
-    public static String getLiveGroupIndexKey() {
-        String liveApiUrl = Hawk.get(HawkConfig.LIVE_API_URL, "");
-        if (liveApiUrl == null || liveApiUrl.length() == 0) {
-            return HawkConfig.LIVE_GROUP_INDEX;
-        }
-        return HawkConfig.LIVE_GROUP_INDEX + "_" + liveApiUrl;
-    }
-
-    public static int getLiveGroupIndex() {
-        return Hawk.get(getLiveGroupIndexKey(), 0);
-    }
-
-    public static void setLiveGroupIndex(int index) {
-        Hawk.put(getLiveGroupIndexKey(), index);
-    }
-
     private static final int LOAD_JAR_MAX_RETRY = 1;
 
     public void loadJar(boolean useCache, String spider, LoadConfigCallback callback) {
