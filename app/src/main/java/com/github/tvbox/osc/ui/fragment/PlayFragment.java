@@ -1749,6 +1749,9 @@ public class PlayFragment extends BaseLazyFragment {
 
     public void pauseForHidden() {
         stopParse();
+        if (mVideoView != null) {
+            mVideoView.stop();
+        }
         mController.stopOther();
         resetDanmuState();
         webHeaderMap = null;
