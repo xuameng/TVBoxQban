@@ -142,6 +142,7 @@ public class PlayFragment extends BaseLazyFragment {
     private static final int MAX_RETRIES = 2;  //xuameng播放出错切换2次
     private int currentSubtitleStyle = 0; // xuameng当前字幕颜色索引
     private boolean exitingPreview = false;
+	private boolean playUrlXu = false;   //xuameng 非小窗口模式返回后播放BUG
 
     private DanmakuView mDanmuView; //xuameng 弹幕
     private DanmuLoadController danmuLoadController; //xuameng 弹幕
@@ -157,12 +158,14 @@ public class PlayFragment extends BaseLazyFragment {
             mController.mSubtitleView.setTextSize((int) event.obj);
             mController.mLrcView.setNormalTextSize((int) event.obj);   //xuameng 设置LRC歌词 全屏非全屏状态同步
             mController.mLrcView.setHighlightTextSize((int) event.obj);  //xuameng 设置LRC歌词 全屏非全屏状态同步
-        }else if (event.type == RefreshEvent.TYPE_PAUSE_VOD) {
+        } else if (event.type == RefreshEvent.TYPE_PAUSE_VOD) {
             mController.mPauseIngXu();   //xuameng 全屏时如果是暂停状态就显示暂停图标
-        }else if (event.type == RefreshEvent.TYPE_SET_DANMU_SETTINGS) { //xuameng 弹幕
+        } else if (event.type == RefreshEvent.TYPE_SET_DANMU_SETTINGS) { //xuameng 弹幕
             setDanmuViewSettings(event.obj instanceof Boolean && (Boolean) event.obj);
-        }else if (event.type == RefreshEvent.TYPE_DANMU_REFRESH) { //xuameng 弹幕
+        } else if (event.type == RefreshEvent.TYPE_DANMU_REFRESH) { //xuameng 弹幕
             checkDanmu(event.obj instanceof String ? (String) event.obj : "");
+        } else if (event.type == RefreshEvent.TYPE_CLOSE_PLAY_ACTIVITY) {  //xuameng 远程关闭playactivity 用于push推送解析刷新
+            playUrlXu = true;   //xuameng 非小窗口模式返回后播放BUG
         }
     }
 
@@ -781,6 +784,11 @@ public class PlayFragment extends BaseLazyFragment {
                             mVideoView.setUrl(url, headers);
                         } else {
                             mVideoView.setUrl(url);
+                        }
+                        if (playUrlXu){
+                            playUrlXu = false;
+                            if (mVideoView != null) mVideoView.release();
+							return;  //xuameng 非小窗口模式返回后播放BUG
                         }
                         mVideoView.start();
                         mController.resetSpeed();
