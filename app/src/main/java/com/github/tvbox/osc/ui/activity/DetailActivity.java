@@ -1250,7 +1250,7 @@ public class DetailActivity extends BaseActivity {
                                         if (displaySafeIndex >= displaySeriesList.size() || displaySafeIndex < 0) {
                                             displaySafeIndex = 0;
                                         }
-                                        if (!TextUtils.isEmpty(displaySeriesList)) {
+                                        if (!displaySeriesList.isEmpty()) {
                                             displaySeriesList.get(displaySafeIndex).selected = true;
                                             vodInfo.playIndex = displaySafeIndex;
                                         }
@@ -1287,7 +1287,7 @@ public class DetailActivity extends BaseActivity {
                                 saveVodInfo = vodInfo;
                             }
                             if (isPushUrl) {  //xuameng 判断推送内容 如是 不执行保存 播放成功后会自动保存
-                                mHandler.postDelayed(mPushUrlRunnable); //xuameng 推送地址解析成功
+                                mHandler.post(mPushUrlRunnable); //xuameng 推送地址解析成功
                             }
                             if (!TextUtils.isEmpty(url) && !url.startsWith("push://")) {  //xuameng 判断推送内容 如是 不执行保存 播放成功后会自动保存
                                 insertVod(firstsourceKey, saveVodInfo);
@@ -1297,10 +1297,10 @@ public class DetailActivity extends BaseActivity {
                         vodInfo.playerCfg = ((JSONObject) event.obj).toString();
                         //保存历史
                         if (!TextUtils.isEmpty(url) && !url.startsWith("push://")) {  //xuameng 判断推送内容 如是 不执行保存 播放成功后会自动保存
-                            insertVod(firstsourceKey, saveVodInfo);
+                            insertVod(firstsourceKey, vodInfo);
                         } 
                     } else if (event.obj instanceof String) {
-                        String url = event.obj.toString();
+                        url = event.obj.toString();
                         //设置更新播放地址
                         setTvPlayUrl(url);
 
