@@ -1390,7 +1390,6 @@ public class DetailActivity extends BaseActivity {
 
     private void switchSearchWord(String word) {
         OkGo.getInstance().cancelTag("quick_search");
-        releasePlayFragment();
         quickSearchData.clear();
         searchTitle = word;
         searchResult();
@@ -1539,13 +1538,14 @@ public class DetailActivity extends BaseActivity {
         OkGo.getInstance().cancelTag("quick_search");
         OkGo.getInstance().cancelTag("pushVod");      //XUAMENG远程推送
         OkGo.getInstance().cancelTag("lrc_load");  //xuameng 歌词加载
+        releasePlayFragment();
         EventBus.getDefault().unregister(this);
     }
 
     @Override
     public void onBackPressed() {
         if (fullWindows) {
-            if (playFragment.onBackPressed()) return;//xuameng上一级交给VODController控制
+            if (playFragment != null && playFragment.onBackPressed()) return;//xuameng上一级交给VODController控制
             exitFullPreview();
             switchToPlayingSourceAndScroll();   //xuameng滚动到当前剧集
             return;
@@ -1560,7 +1560,7 @@ public class DetailActivity extends BaseActivity {
                 return;
             }
         }
-        else if (showPreview && playFragment!=null) {    //xuameng如果显示小窗口播放就释放视频，修复退出还显示暂停图标等图标的BUG
+        else if (showPreview && playFragment != null) {    //xuameng如果显示小窗口播放就释放视频，修复退出还显示暂停图标等图标的BUG
             try {
                 playFragment.setPlayTitle(false);
                 playFragment.setExitingPreview(true);
@@ -1647,7 +1647,7 @@ public class DetailActivity extends BaseActivity {
         tvDesc.setFocusable(!fullWindows);      //xuameng 内容简介
         tvPush.setFocusable(!fullWindows);    //xuameng 远程推送
         llPlayerFragmentContainerBlock.setFocusable(!fullWindows);
-        if (!showPreview && !fullWindows && playFragment!=null) {    //xuameng如果显示小窗口播放就释放视频，修复退出还显示暂停图标等图标的BUG
+        if (!showPreview && !fullWindows && playFragment != null) {    //xuameng如果显示小窗口播放就释放视频，修复退出还显示暂停图标等图标的BUG
             try {
                 playFragment.pauseForHidden();
                 isPushUrl = false;
