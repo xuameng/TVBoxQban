@@ -1795,7 +1795,7 @@ public class PlayFragment extends BaseLazyFragment {
     void startSwitchLinePlayTimeout() {
         cancelPlayTimeout();
         LOG.i("start timeout");
-        mHandler.sendEmptyMessageDelayed(MSG_SWITCH_LINE_PLAY_TIMEOUT, SWITCH_LINE_PLAY_TIMEOUT_MS);
+        mHandler.sendEmptyMessageDelayed(MSG_SWITCH_LINE_PLAY_TIMEOUT, MSG_RESOLVE_PLAY_URL_TIMEOUT);
     }
 
     void cancelPlayTimeout() {
