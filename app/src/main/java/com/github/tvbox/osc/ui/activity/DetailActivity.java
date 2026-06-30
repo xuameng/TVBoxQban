@@ -265,6 +265,7 @@ public class DetailActivity extends BaseActivity {
             @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onClick(View v) {
+                FastClickCheckUtil.check(v);
                 if (vodInfo != null && vodInfo.seriesMap.size() > 0) {
                     if (isPushUrl) {
                         App.showToastShort(DetailActivity.this, "正在解析推送地址，请稍后再试！");
@@ -316,6 +317,7 @@ public class DetailActivity extends BaseActivity {
         tvPush.setOnClickListener(new View.OnClickListener() {  //xuameng播放窗口中的远程推送
             @Override
             public void onClick(View v) {
+                FastClickCheckUtil.check(v);
                 PushDialog pushDialog = new PushDialog(mContext);
                 pushDialog.show();
             }
@@ -360,6 +362,7 @@ public class DetailActivity extends BaseActivity {
         tvPush.setOnLongClickListener(new View.OnLongClickListener() {  
             @Override
             public boolean onLongClick(View v) {
+                FastClickCheckUtil.check(v);
                 //获取剪切板管理器
                 ClipboardManager cm = (ClipboardManager)getSystemService(mContext.CLIPBOARD_SERVICE);
                 //设置内容到剪切板
@@ -384,6 +387,7 @@ public class DetailActivity extends BaseActivity {
         tvQuickSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                FastClickCheckUtil.check(v);
                 startQuickSearch();
                 QuickSearchDialog quickSearchDialog = new QuickSearchDialog(DetailActivity.this);
                 EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_QUICK_SEARCH, quickSearchData));
@@ -428,6 +432,7 @@ public class DetailActivity extends BaseActivity {
         tvCollect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                FastClickCheckUtil.check(v);
                 if (isPushUrl) {
                     App.showToastShort(DetailActivity.this, "正在解析推送地址，请稍后再试！");
                     return;
@@ -460,6 +465,7 @@ public class DetailActivity extends BaseActivity {
         tvPlayUrl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                FastClickCheckUtil.check(v);
                 //获取剪切板管理器
                 ClipboardManager cm = (ClipboardManager)getSystemService(mContext.CLIPBOARD_SERVICE);
                 //设置内容到剪切板
@@ -471,10 +477,10 @@ public class DetailActivity extends BaseActivity {
         tvDesc.setOnClickListener(new View.OnClickListener() {      //xuameng内容简介
             @Override
             public void onClick(View v) {
+                FastClickCheckUtil.check(v);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        FastClickCheckUtil.check(v);
                         DescDialog dialog = new DescDialog(mContext);
                         //  dialog.setTip("内容简介");
                         dialog.setDescribe(removeHtmlTag(mVideo.des));
@@ -499,6 +505,7 @@ public class DetailActivity extends BaseActivity {
         tvDesc.setOnLongClickListener(new View.OnLongClickListener() {  //xuameng内容简介长按复制
             @Override
             public boolean onLongClick(View v) {
+                FastClickCheckUtil.check(v);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
