@@ -127,7 +127,6 @@ import com.github.tvbox.osc.api.DanmakuApi; //xuameng 弹幕
 import master.flame.danmaku.ui.widget.DanmakuView; //xuameng弹幕
 
 public class PlayFragment extends BaseLazyFragment {
-    private static final int MSG_PARSE_TIMEOUT = 100;
     public MyVideoView mVideoView;  //xuameng 改成public以便被调用
     private TextView mPlayLoadTip;
     private ImageView mPlayLoadErr;
@@ -233,7 +232,7 @@ public class PlayFragment extends BaseLazyFragment {
             @Override
             public boolean handleMessage(@NonNull Message msg) {
                 switch (msg.what) {
-                    case MSG_PARSE_TIMEOUT:
+                    case 100:
                         stopParse();
                         errorWithRetry("嗅探此源错误", false);
                         break;
@@ -1802,7 +1801,7 @@ public class PlayFragment extends BaseLazyFragment {
     }
 
     void stopParse() {
-        mHandler.removeMessages(MSG_PARSE_TIMEOUT);
+        mHandler.removeMessages(100);
         stopLoadWebView(false);
         OkGo.getInstance().cancelTag("play");
         OkGo.getInstance().cancelTag("json_jx");
@@ -1828,8 +1827,8 @@ public class PlayFragment extends BaseLazyFragment {
         }
         else if (pb.getType() == 0) {
             setTip("正在嗅探播放地址", true, false);
-            mHandler.removeMessages(MSG_PARSE_TIMEOUT);
-            mHandler.sendEmptyMessageDelayed(MSG_PARSE_TIMEOUT, 20 * 1000);
+            mHandler.removeMessages(100);
+            mHandler.sendEmptyMessageDelayed(100, 20 * 1000);
             if(pb.getExt()!=null){
                 // 解析ext
                 try {
@@ -1993,8 +1992,8 @@ public class PlayFragment extends BaseLazyFragment {
                                 public void run() {
                                     String mixParseUrl = DefaultConfig.checkReplaceProxy(rs.optString("url", ""));
                                     stopParse();
-                                    mHandler.removeMessages(MSG_PARSE_TIMEOUT);
-                                    mHandler.sendEmptyMessageDelayed(MSG_PARSE_TIMEOUT, 20 * 1000);
+                                    mHandler.removeMessages(100);
+                                    mHandler.sendEmptyMessageDelayed(100, 20 * 1000);
                                     loadWebView(mixParseUrl);
                                 }
                             });
@@ -2026,8 +2025,8 @@ public class PlayFragment extends BaseLazyFragment {
                                     String mixParseUrl = DefaultConfig.checkReplaceProxy(rs.optString("url", ""));
                                     stopParse();
                                     setTip("正在嗅探播放地址", true, false);
-                                    mHandler.removeMessages(MSG_PARSE_TIMEOUT);
-                                    mHandler.sendEmptyMessageDelayed(MSG_PARSE_TIMEOUT, 20 * 1000);
+                                    mHandler.removeMessages(100);
+                                    mHandler.sendEmptyMessageDelayed(100, 20 * 1000);
                                     loadWebView(mixParseUrl);
                                 }
                             });
@@ -2370,7 +2369,7 @@ public class PlayFragment extends BaseLazyFragment {
                         stopLoadWebView(false);
                         SuperParse.stopJsonJx();
                         url = loadFoundVideoUrls.poll();
-                        mHandler.removeMessages(MSG_PARSE_TIMEOUT);
+                        mHandler.removeMessages(100);
                         String cookie = CookieManager.getInstance().getCookie(url);
                         if(!TextUtils.isEmpty(cookie))headers.put("Cookie", " " + cookie);//携带cookie
                         playUrl(url, headers);
@@ -2560,7 +2559,7 @@ public class PlayFragment extends BaseLazyFragment {
                     if (loadFoundCount.incrementAndGet() == 1) {
                         stopLoadWebView(false);
                         SuperParse.stopJsonJx();
-                        mHandler.removeMessages(MSG_PARSE_TIMEOUT);
+                        mHandler.removeMessages(100);
                         url = loadFoundVideoUrls.poll();
                         String cookie = CookieManager.getInstance().getCookie(url);
                         if(!TextUtils.isEmpty(cookie))webHeaders.put("Cookie", " " + cookie);//携带cookie
