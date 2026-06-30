@@ -130,6 +130,7 @@ public class PlayFragment extends BaseLazyFragment {
     private static final int MSG_PARSE_TIMEOUT = 100;
     private static final int MSG_RESOLVE_PLAY_URL_TIMEOUT = 101;
     private static final int MSG_SWITCH_LINE_PLAY_TIMEOUT = 102;
+    private static final long SWITCH_LINE_PLAY_TIMEOUT_MS = 15 * 1000L;
     private static final long RESOLVE_PLAY_URL_TIMEOUT_MS = 12 * 1000L;
     public MyVideoView mVideoView;  //xuameng 改成public以便被调用
     private TextView mPlayLoadTip;
@@ -1358,6 +1359,8 @@ public class PlayFragment extends BaseLazyFragment {
     private int autoRetryCount = 0;
     private long lastRetryTime = 0; // 记录上次调用时间（毫秒）  //xuameng新增
     private boolean playbackStarted = false;
+    private boolean hasAutoSwitchedPlayer = false;
+    private boolean allowAutoSwitchLine = true;
     private long playTimeoutBasePosition = 0;
 
     boolean autoRetry() {
@@ -1793,9 +1796,13 @@ public class PlayFragment extends BaseLazyFragment {
     }
 
     void startSwitchLinePlayTimeout() {
+        if (!allowAutoSwitchLine) {
+            cancelPlayTimeout();
+            return;
+        }
         cancelPlayTimeout();
-        LOG.i("start timeout");
-        mHandler.sendEmptyMessageDelayed(MSG_SWITCH_LINE_PLAY_TIMEOUT, MSG_RESOLVE_PLAY_URL_TIMEOUT);
+        LOG.i("echo-switchLinePlay start timeout");
+        mHandler.sendEmptyMessageDelayed(MSG_SWITCH_LINE_PLAY_TIMEOUT, SWITCH_LINE_PLAY_TIMEOUT_MS);
     }
 
     void cancelPlayTimeout() {
