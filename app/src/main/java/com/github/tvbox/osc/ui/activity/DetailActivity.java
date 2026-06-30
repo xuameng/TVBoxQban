@@ -1640,6 +1640,7 @@ public class DetailActivity extends BaseActivity {
             try {
                 playFragment.pauseForHidden();
 				App.showToastShort(DetailActivity.this, "22222222222222222");
+                EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_CLOSE_PLAY_ACTIVITY, null));
                 isPushUrl = false;
             } catch (Throwable th) {
                 th.printStackTrace();
