@@ -143,6 +143,7 @@ public class PlayFragment extends BaseLazyFragment {
     private int currentSubtitleStyle = 0; // xuameng当前字幕颜色索引
     private boolean exitingPreview = false;
     private boolean fullPreview  = false;  //xuameng 非小窗口模式返回后播放BUG
+    boolean showPreview = Hawk.get(HawkConfig.SHOW_PREVIEW, true);  //xuameng true是显示小窗口,false是不显示小窗口
 
     private DanmakuView mDanmuView; //xuameng 弹幕
     private DanmuLoadController danmuLoadController; //xuameng 弹幕
@@ -783,7 +784,7 @@ public class PlayFragment extends BaseLazyFragment {
                         } else {
                             mVideoView.setUrl(url);
                         }
-                        if (!fullPreview){
+                        if (!fullPreview && !showPreview){
 							return;  //xuameng 非小窗口模式返回后播放BUG
                         }
                         mVideoView.start();
