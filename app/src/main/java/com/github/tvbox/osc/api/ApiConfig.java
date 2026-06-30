@@ -1035,7 +1035,7 @@ public class ApiConfig {
         if (ijkCodes == null) {
             ijkCodes = new ArrayList<>();
             boolean foundOldSelect = false;
-            String ijkCodec = Hawk.get(HawkConfig.IJK_CODEC, "硬解");
+            String ijkCodec = Hawk.get(HawkConfig.IJK_CODEC, "硬解码");
             JsonArray ijkJsonArray = defaultJson.get("ijk").getAsJsonArray();
             for (JsonElement opt : ijkJsonArray) {
                 JsonObject obj = (JsonObject) opt;
