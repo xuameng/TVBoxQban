@@ -1639,6 +1639,7 @@ public class DetailActivity extends BaseActivity {
         if (!showPreview && !fullWindows && playFragment != null) {    //xuameng如果显示小窗口播放就释放视频，修复退出还显示暂停图标等图标的BUG
             try {
                 playFragment.pauseForHidden();
+				App.showToastShort(DetailActivity.this, "22222222222222222");
                 isPushUrl = false;
             } catch (Throwable th) {
                 th.printStackTrace();
