@@ -253,10 +253,6 @@ public class PlayFragment extends BaseLazyFragment {
             public void saveProgress(String url, long progress) {
                 if (progress == 0) return;    //xuameng 不save
                 CacheManager.save(MD5.string2MD5(url), progress);
-                if (webPlayUrl != null && progress > 0) {
-                    markPlaybackStarted();
-                    hideTipOnUiThread();
-                }
             }
 
             @Override
@@ -268,10 +264,6 @@ public class PlayFragment extends BaseLazyFragment {
         mVideoView.addOnStateChangeListener(new VideoView.SimpleOnStateChangeListener() {
             @Override
             public void onPlayStateChanged(int playState) {
-                if (webPlayUrl != null && isStartedPlayState(playState)) {
-                    markPlaybackStarted();
-                    hideTipOnUiThread();
-                }
                 startDanmuIfReady();
             }
         });
@@ -315,23 +307,16 @@ public class PlayFragment extends BaseLazyFragment {
                 mRetryCountExo = 0;  //xuameng播放出错计数器重置
                 mRetryCountIjk = 0;
                 mRetryCountJP = 0;
-                if(replay){
+                if(replay){  //xuameng新增
                     play(true);
                 }else {
-                    if(webPlayUrl!=null && !webPlayUrl.isEmpty()) {
-                        stopParse();
-                        initParseLoadFound();
-                        if(mVideoView!=null) mVideoView.release();
-                        goPlayUrl(webPlayUrl,webHeaderMap);
-                    }else {
-                        play(false);
-                    }
-                }
+                    play(false);
+                }  //xuameng新增完
             }
 
             @Override
             public void errReplay() {
-                errorWithRetry("播放此源错误！", false);
+                errorWithRetry("播放此源错误", false);
             }
 
             public void hideTipXu() {        //xuameng隐藏错误信息
@@ -687,19 +672,9 @@ public class PlayFragment extends BaseLazyFragment {
         mPlayLoadErr.setVisibility(View.GONE);
     }
 
-    void hideTipOnUiThread() {
-        if (!isAdded()) return;
-        requireActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                hideTip();
-            }
-        });
-    }
-
     void errorWithRetry(String err, boolean finish) {
-        if (isPlaybackStarted()) {
-            hideTipOnUiThread();
+        if (mVodPlayerCfg == null || mVodInfo == null) {
+            LOG.i("errorWithRetry skipped: not initialized");
             return;
         }
         if (!autoRetry()) {
@@ -738,7 +713,6 @@ public class PlayFragment extends BaseLazyFragment {
     }
     public void goPlayUrl(String url, HashMap<String, String> headers) {
         LOG.i("echo-goPlayUrl:" + url);
-        if(autoRetryCount==0)webPlayUrl=url;
         if (mActivity == null) return;
         if (!isAdded()) return;
         LOG.i("playUrl:" + url);
@@ -1006,7 +980,6 @@ public class PlayFragment extends BaseLazyFragment {
                             LOG.i("echo-ignore stale play result");
                             return;
                         }
-                        webPlayUrl = null;
                         progressKey = info.optString("proKey", null);
                         boolean parse = info.optString("parse", "1").equals("1");
                         boolean jx = info.optString("jx", "0").equals("1");
@@ -1343,10 +1316,13 @@ public class PlayFragment extends BaseLazyFragment {
 
     private int autoRetryCount = 0;
     private long lastRetryTime = 0; // 记录上次调用时间（毫秒）  //xuameng新增
-    private boolean playbackStarted = false;
     private long playTimeoutBasePosition = 0;
 
     boolean autoRetry() {
+    if (mVodPlayerCfg == null || mVodInfo == null) {
+		LOG.i("autoRetry skipped: mVodPlayerCfg or mVodInfo is null");
+        return false;
+    }
         boolean exoCode=Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false); //xuameng EXO默认设置解码
         boolean switchCode=Hawk.get(HawkConfig.VOD_SWITCHDECODE, false); //xuameng 解码切换
         boolean switchPlayer=Hawk.get(HawkConfig.VOD_SWITCHPLAYER, true); //xuameng 播放器切换
@@ -1556,9 +1532,7 @@ public class PlayFragment extends BaseLazyFragment {
             mController.setTitle(playTitleInfo);
         }
         stopParse();
-        playbackStarted = false;
         playTimeoutBasePosition = 0;
-        webPlayUrl = null;
         webHeaderMap = null;
         initParseLoadFound();
         resetDanmuState(); //xuameng 弹幕
@@ -1637,7 +1611,6 @@ public class PlayFragment extends BaseLazyFragment {
     private String webUrl;
     private String webUserAgent;
     private HashMap<String, String > webHeaderMap;
-    private String webPlayUrl;
 
     private void initParse(String flag, boolean useParse, String playUrl, final String url) {
         parseFlag = flag;
@@ -1769,35 +1742,14 @@ public class PlayFragment extends BaseLazyFragment {
 
     public void pauseForHidden() {
         stopParse();
-        playbackStarted = false;
         if (mVideoView != null) {
             mVideoView.pause();
             mVideoView.release();
         }
         mController.stopOther();
         resetDanmuState();
-        webPlayUrl = null;
         webHeaderMap = null;
         initParseLoadFound();
-    }
-
-    void markPlaybackStarted() {
-        playbackStarted = true;
-    }
-
-    boolean isPlaybackStarted() {
-        if (playbackStarted) return true;
-        if (mVideoView == null) return false;
-        int state = mVideoView.getCurrentPlayState();
-        return isStartedPlayState(state) || hasPlaybackProgress(mVideoView.getCurrentPosition()) || mVideoView.isPlaying();
-    }
-
-    boolean isStartedPlayState(int state) {
-        return state == VideoView.STATE_PREPARED || state == VideoView.STATE_BUFFERED || state == VideoView.STATE_PLAYING;
-    }
-
-    boolean hasPlaybackProgress(long progress) {
-        return progress > Math.max(playTimeoutBasePosition, 0) + 1000;
     }
 
     void stopParse() {
@@ -1897,7 +1849,7 @@ public class PlayFragment extends BaseLazyFragment {
                                 }
                             } catch (Throwable e) {
                                 e.printStackTrace();
-                                errorWithRetry("解析地址错误！", false);
+                                errorWithRetry("解析地址错误", false);
 //                                setTip("解析错误", false, true);
                             }
                         }
@@ -1905,7 +1857,7 @@ public class PlayFragment extends BaseLazyFragment {
                         @Override
                         public void onError(Response<String> response) {
                             super.onError(response);
-                            errorWithRetry("解析地址错误！", false);
+                            errorWithRetry("解析地址错误", false);
 //                            setTip("解析错误", false, true);
                         }
                     });
@@ -1924,7 +1876,7 @@ public class PlayFragment extends BaseLazyFragment {
                     JSONObject rs = ApiConfig.get().jsonExt(pb.getUrl(), jxs, webUrl);
                     if (rs == null || !rs.has("url") || rs.optString("url").isEmpty()) {
 //                        errorWithRetry("解析错误", false);
-                        setTip("解析地址错误！", false, true);
+                        setTip("解析地址错误", false, true);
                     } else {
                         HashMap<String, String> headers = getHeaders(rs);
                         if (rs.has("jxFrom")) {
@@ -1978,7 +1930,7 @@ public class PlayFragment extends BaseLazyFragment {
                     //并发执行 嗅探和json
                     JSONObject rs = SuperParse.parse(jxs, parseFlag+"123", webUrl);
                     if (!rs.has("url") || rs.optString("url").isEmpty()) {
-                        setTip("解析地址错误！", false, true);
+                        setTip("解析地址错误", false, true);
                     } else {
                         if (rs.has("parse") && rs.optInt("parse", 0) == 1) {
                             if (rs.has("ua")) {
@@ -2012,7 +1964,7 @@ public class PlayFragment extends BaseLazyFragment {
                     JSONObject rs = ApiConfig.get().jsonExtMix(parseFlag + "111", pb.getUrl(), finalExtendName, jxs, webUrl);
                     if (rs == null || !rs.has("url") || rs.optString("url").isEmpty()) {
 //                        errorWithRetry("解析错误", false);
-                        setTip("嗅探地址错误！", false, true);
+                        setTip("嗅探地址错误", false, true);
                     } else {
                         if (rs.has("parse") && rs.optInt("parse", 0) == 1) {
                             if (rs.has("ua")) {
