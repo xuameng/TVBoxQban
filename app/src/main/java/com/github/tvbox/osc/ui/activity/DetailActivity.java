@@ -1608,10 +1608,12 @@ public class DetailActivity extends BaseActivity {
 
     void enterFullPreview() {
         setFullPreview(true);
+        playFragment.isFullPreview(true);   //xuameng 非小窗口模式返回后播放BUG
     }
 
     void exitFullPreview() {
         setFullPreview(false);
+        playFragment.isFullPreview(false);   //xuameng 非小窗口模式返回后播放BUG
     }
 
     void setFullPreview(boolean full) {
@@ -1638,7 +1640,6 @@ public class DetailActivity extends BaseActivity {
         llPlayerFragmentContainerBlock.setFocusable(!fullWindows);
         if (!showPreview && !fullWindows && playFragment != null) {    //xuameng如果显示小窗口播放就释放视频，修复退出还显示暂停图标等图标的BUG
             try {
-                EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_CLOSE_PLAY_ACTIVITY, null));
                 playFragment.pauseForHidden();
                 isPushUrl = false;
             } catch (Throwable th) {
