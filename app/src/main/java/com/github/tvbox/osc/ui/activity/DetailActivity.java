@@ -137,7 +137,6 @@ public class DetailActivity extends BaseActivity {
     public String vodId;
     public String sourceKey;
     public String firstsourceKey;
-    private String url;
     boolean seriesSelect = false;
     boolean isPushUrl = false;   //xuameng 判断推送内容
     boolean isShowConfig = false;  //xuameng 配置中心判断
@@ -719,9 +718,7 @@ public class DetailActivity extends BaseActivity {
             vodInfo.currentPlayFlag = vodInfo.playFlag;
             vodInfo.currentPlayIndex = vodInfo.playIndex;
             Bundle bundle = new Bundle();
-            if (!TextUtils.isEmpty(url) && !url.startsWith("push://")) {  //xuameng 判断推送内容 如是 不执行保存 播放成功后会自动保存
-                insertVod(firstsourceKey, vodInfo); 
-            }  
+            insertVod(firstsourceKey, vodInfo);
             bundle.putString("sourceKey", sourceKey);
             bundle.putString("videoPic", mVideo.pic);   //xuameng 新增给vod显示旋转图片用
 //            bundle.putSerializable("VodInfo", vodInfo);
@@ -765,9 +762,7 @@ public class DetailActivity extends BaseActivity {
             vodInfo.currentPlayFlag = vodInfo.playFlag;
             vodInfo.currentPlayIndex = vodInfo.playIndex;
             Bundle bundle = new Bundle();
-            if (!TextUtils.isEmpty(url) && !url.startsWith("push://")) {  //xuameng 判断推送内容 如是 不执行保存 播放成功后会自动保存
-                insertVod(firstsourceKey, vodInfo); 
-            } 
+            insertVod(firstsourceKey, vodInfo);
             bundle.putString("sourceKey", sourceKey);
             App.getInstance().setVodInfo(vodInfo);
             if (showPreview) {
@@ -934,7 +929,7 @@ public class DetailActivity extends BaseActivity {
                     if (TextUtils.isEmpty(mVideo.name))mVideo.name = vod_name;  //xuameng 视频名称
                     if (TextUtils.isEmpty(mVideo.name))mVideo.name = "🥇聚汇影视";
                     vodInfo = new VodInfo();
-                    if(TextUtils.isEmpty(mVideo.pic) && !TextUtils.isEmpty(vod_picture)){    //xuameng某些网站图片部显示
+                    if(TextUtils.isEmpty(mVideo.pic) && !vod_picture.isEmpty()){    //xuameng某些网站图片部显示
                         mVideo.pic=vod_picture;  //xuameng 视频图片
                     }
                     vodInfo.setVideo(mVideo);
@@ -1286,27 +1281,29 @@ public class DetailActivity extends BaseActivity {
                                 e.printStackTrace();
                                 saveVodInfo = vodInfo;
                             }
+                    
                             if (isPushUrl) {  //xuameng 判断推送内容 如是 不执行保存 播放成功后会自动保存
                                 mHandler.post(mPushUrlRunnable); //xuameng 推送地址解析成功
+                                return; 
                             }
-                            if (!TextUtils.isEmpty(url) && !url.startsWith("push://")) {  //xuameng 判断推送内容 如是 不执行保存 播放成功后会自动保存
-                                insertVod(firstsourceKey, saveVodInfo);
-                            }                 
+                            insertVod(firstsourceKey, saveVodInfo);
+
                         }
                     } else if (event.obj instanceof JSONObject) {    //xuameng保存播放器配置
                         vodInfo.playerCfg = ((JSONObject) event.obj).toString();
                         //保存历史
-                        if (!TextUtils.isEmpty(url) && !url.startsWith("push://")) {  //xuameng 判断推送内容 如是 不执行保存 播放成功后会自动保存
-                            insertVod(firstsourceKey, vodInfo);
-                        } 
+                        if (isPushUrl) {  //xuameng 判断推送内容 如是 不执行保存 播放成功后会自动保存
+                            return; 
+                        }
+                        insertVod(firstsourceKey, vodInfo);
                     } else if (event.obj instanceof String) {
-                        url = event.obj.toString();
+                        String url = event.obj.toString();
                         //设置更新播放地址
                         setTvPlayUrl(url);
 
                         if (url.startsWith("push://") && ApiConfig.get().getSource("push_agent") != null) {  //xuameng 如果是推送链接 通过sourceViewModel 改成"push_agent"源重新解析
                             App.showToastShort(DetailActivity.this, "正在解析推送地址！");
-                          //  deleteOldSourceHistoryIfNeeded(firstsourceKey, "push_agent", vodInfo);  //xuameng 删除firstsourceKey存储历史因为源变成 push_agent了
+                            deleteOldSourceHistoryIfNeeded(firstsourceKey, "push_agent", vodInfo);  //xuameng 删除firstsourceKey存储历史因为源变成 push_agent了
                             loadDetailXu(url, "push_agent");  //通过sourceViewModel.getDetail方法去push头并更改源为push_agent 因为type 4源不支持解析
                             isPushUrl = true;
                         }
