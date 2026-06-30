@@ -341,7 +341,7 @@ public class PlayFragment extends BaseLazyFragment {
 
             @Override
             public void errReplay() {
-                errorWithRetry("播放彼此源错误！", false);
+                errorWithRetry("播放此源错误！", false);
             }
 
             public void hideTipXu() {        //xuameng隐藏错误信息
