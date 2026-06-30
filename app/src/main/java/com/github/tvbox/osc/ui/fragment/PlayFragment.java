@@ -734,7 +734,6 @@ public class PlayFragment extends BaseLazyFragment {
     }
 
     void playUrl(String url, HashMap<String, String> headers) {
-        startSwitchLinePlayTimeout();
         url = attachProxySiteKey(url);
         if(!url.startsWith("data:application"))EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_REFRESH, url));//更新播放地址
         if (!Hawk.get(HawkConfig.M3U8_PURIFY, false)) {       //xuameng广告过滤
@@ -824,7 +823,6 @@ public class PlayFragment extends BaseLazyFragment {
                         } else {
                             mVideoView.setUrl(url);
                         }
-                        startSwitchLinePlayTimeout();
                         mVideoView.start();
                         mController.resetSpeed();
                     }
@@ -1148,17 +1146,6 @@ public class PlayFragment extends BaseLazyFragment {
             }
         });
     }
-    private VodInfo.VodSeries getCurrentSeries(String flag, int index) {
-        if (flag == null || mVodInfo == null || mVodInfo.seriesMap == null) {
-            return null;
-        }
-        List<VodInfo.VodSeries> currentList = mVodInfo.seriesMap.get(flag);
-        if (currentList == null || currentList.isEmpty()) {
-            return null;
-        }
-        int safeIndex = Math.max(0, Math.min(index, currentList.size() - 1));
-        return currentList.get(safeIndex);
-    }
 
     boolean isStalePlayResult(JSONObject info) {
         if (mVodInfo == null || mVodInfo.seriesMap == null || TextUtils.isEmpty(progressKey)) return false;
@@ -1372,9 +1359,6 @@ public class PlayFragment extends BaseLazyFragment {
 
     private int autoRetryCount = 0;
     private long lastRetryTime = 0; // 记录上次调用时间（毫秒）  //xuameng新增
-    private boolean allowSwitchPlayer = true;
-    private boolean hasAutoSwitchedPlayer = false;
-    private boolean allowAutoSwitchLine = true;
     private boolean playbackStarted = false;
     private long playTimeoutBasePosition = 0;
 
@@ -1533,6 +1517,18 @@ public class PlayFragment extends BaseLazyFragment {
         }
     }
 
+    private VodInfo.VodSeries getCurrentSeries(String flag, int index) {
+        if (flag == null || mVodInfo == null || mVodInfo.seriesMap == null) {
+            return null;
+        }
+        List<VodInfo.VodSeries> currentList = mVodInfo.seriesMap.get(flag);
+        if (currentList == null || currentList.isEmpty()) {
+            return null;
+        }
+        int safeIndex = Math.max(0, Math.min(index, currentList.size() - 1));
+        return currentList.get(safeIndex);
+    }
+
     void autoRetryFromLoadFoundVideoUrls() {
         String videoUrl = loadFoundVideoUrls.poll();
         HashMap<String,String> header = loadFoundVideoUrlsHeader.get(videoUrl);
@@ -1581,8 +1577,6 @@ public class PlayFragment extends BaseLazyFragment {
         webPlayUrl = null;
         webHeaderMap = null;
         initParseLoadFound();
-        allowSwitchPlayer=true;
-        hasAutoSwitchedPlayer=false;
         initParseLoadFound();
         resetDanmuState(); //xuameng 弹幕
         mController.stopOther();
@@ -1801,26 +1795,9 @@ public class PlayFragment extends BaseLazyFragment {
         return Math.max(RESOLVE_PLAY_URL_TIMEOUT_MS, (sourceBean.getPlayTimeoutSeconds() + 1L) * 1000L);
     }
 
-    void startSwitchLinePlayTimeout() {
-        if (!allowAutoSwitchLine) {
-            cancelPlayTimeout();
-            return;
-        }
-        cancelPlayTimeout();
-        LOG.i("echo-switchLinePlay start timeout");
-        mHandler.sendEmptyMessageDelayed(MSG_SWITCH_LINE_PLAY_TIMEOUT, SWITCH_LINE_PLAY_TIMEOUT_MS);
-    }
-
     void cancelPlayTimeout() {
         mHandler.removeMessages(MSG_RESOLVE_PLAY_URL_TIMEOUT);
         mHandler.removeMessages(MSG_SWITCH_LINE_PLAY_TIMEOUT);
-    }
-
-    public void setAutoSwitchLineEnabled(boolean enabled) {
-        allowAutoSwitchLine = enabled;
-        if (!enabled) {
-            cancelPlayTimeout();
-        }
     }
 
     public void pauseForHidden() {
@@ -1859,14 +1836,14 @@ public class PlayFragment extends BaseLazyFragment {
     }
 
     void handleResolvePlayUrlTimeout() {
-        LOG.i("echo-resolvePlayUrl timeout, try next line");
+        LOG.i("echo-resolvePlayUrl timeout");
         if (sourceViewModel != null) sourceViewModel.cancelPlayRequest();
         stopParse();
         setTip("获取播放地址超时", false, true);
     }
 
     void handleResolvePlayUrlFailed(String err, boolean finish) {
-        LOG.i("echo-resolvePlayUrl failed, try next line: " + err);
+        LOG.i("echo-resolvePlayUrl failed" + err);
         if (sourceViewModel != null) sourceViewModel.cancelPlayRequest();
         stopParse();
         if (finish) {
@@ -1885,12 +1862,8 @@ public class PlayFragment extends BaseLazyFragment {
             hideTipOnUiThread();
             return;
         }
-        LOG.i("echo-switchLinePlay timeout, try next line");
+        LOG.i("echo-switchLinePlay timeout");
         stopParse();
-        if (hasAutoSwitchedPlayer) {
-            setTip("播放超时", false, true);
-            return;
-        }
         if (!autoRetry()) setTip("播放超时", false, true);
     }
 
