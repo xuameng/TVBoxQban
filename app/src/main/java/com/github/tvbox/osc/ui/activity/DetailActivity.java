@@ -1073,6 +1073,7 @@ public class DetailActivity extends BaseActivity {
                         }else{
                             if (isPushUrl) {  //xuameng 判断推送内容 如是 不执行保存 播放成功后会自动保存
                                 mHandler.postDelayed(mPushUrlRunnable, 300); //xuameng 推送地址解析成功
+								jumpToPlay();
                             }
                         }
                         // startQuickSearch();
@@ -1288,7 +1289,7 @@ public class DetailActivity extends BaseActivity {
                     
                             if (isPushUrl) {  //xuameng 判断推送内容 如是 不执行保存 播放成功后会自动保存
                                 if (!showPreview){
-                                    EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_CLOSE_PLAY_ACTIVITY, null));  //xuameng 远程关闭playactivity 用于push推送解析刷新
+                                  //  EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_CLOSE_PLAY_ACTIVITY, null));  //xuameng 远程关闭playactivity 用于push推送解析刷新
                                     showLoading();
                                     App.showToastShort(DetailActivity.this, "推送地址需换源解析，请稍后！");
                                     return; 
