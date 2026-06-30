@@ -128,10 +128,6 @@ import master.flame.danmaku.ui.widget.DanmakuView; //xuameng弹幕
 
 public class PlayFragment extends BaseLazyFragment {
     private static final int MSG_PARSE_TIMEOUT = 100;
-    private static final int MSG_RESOLVE_PLAY_URL_TIMEOUT = 101;
-    private static final int MSG_SWITCH_LINE_PLAY_TIMEOUT = 102;
-    private static final long SWITCH_LINE_PLAY_TIMEOUT_MS = 15 * 1000L;
-    private static final long RESOLVE_PLAY_URL_TIMEOUT_MS = 12 * 1000L;
     public MyVideoView mVideoView;  //xuameng 改成public以便被调用
     private TextView mPlayLoadTip;
     private ImageView mPlayLoadErr;
@@ -239,13 +235,7 @@ public class PlayFragment extends BaseLazyFragment {
                 switch (msg.what) {
                     case MSG_PARSE_TIMEOUT:
                         stopParse();
-                        errorWithRetry("嗅探地址错误！", false);
-                        break;
-                    case MSG_RESOLVE_PLAY_URL_TIMEOUT:
-                        handleResolvePlayUrlTimeout();
-                        break;
-                    case MSG_SWITCH_LINE_PLAY_TIMEOUT:
-                        handleSwitchLinePlayTimeout();
+                        errorWithRetry("嗅探此源错误", false);
                         break;
                 }
                 return false;
@@ -710,7 +700,6 @@ public class PlayFragment extends BaseLazyFragment {
 
     void errorWithRetry(String err, boolean finish) {
         if (isPlaybackStarted()) {
-            cancelPlayTimeout();
             hideTipOnUiThread();
             return;
         }
@@ -1117,11 +1106,11 @@ public class PlayFragment extends BaseLazyFragment {
                         checkDanmu(danmaku); //xuameng 弹幕
                         searchDanmu(danmaku); //xuameng 弹幕
                     } catch (Throwable th) {
-                        handleResolvePlayUrlFailed("获取播放信息错误！", true);
+                        errorWithRetry("获取播放信息错误", true);
                     }
                 } else {
                     //   获取播放信息错误后只需再重试一次
-                    handleResolvePlayUrlFailed("获取播放信息错误！", true);
+                    errorWithRetry("获取播放信息错误", true);
                 }
             }
         });
@@ -1299,7 +1288,6 @@ public class PlayFragment extends BaseLazyFragment {
     public void onDestroyView() {
         super.onDestroyView();
         ApiConfig.get().setCurrentPlaySourceKey("");
-        cancelPlayTimeout();
         EventBus.getDefault().unregister(this);
         if (danmuLoadController != null) { //xuameng 弹幕
             danmuLoadController.destroy();
@@ -1359,8 +1347,6 @@ public class PlayFragment extends BaseLazyFragment {
     private int autoRetryCount = 0;
     private long lastRetryTime = 0; // 记录上次调用时间（毫秒）  //xuameng新增
     private boolean playbackStarted = false;
-    private boolean hasAutoSwitchedPlayer = false;
-    private boolean allowAutoSwitchLine = true;
     private long playTimeoutBasePosition = 0;
 
     boolean autoRetry() {
@@ -1583,7 +1569,6 @@ public class PlayFragment extends BaseLazyFragment {
         if(mVideoView!= null) mVideoView.release();
         subtitleCacheKey = mVodInfo.sourceKey + "-" + mVodInfo.id + "-" + mVodInfo.playFlag + "-" + mVodInfo.playIndex+ "-" + vs.name + "-subt";
         progressKey = mVodInfo.sourceKey + mVodInfo.id + mVodInfo.playFlag + mVodInfo.playIndex + vs.name;
-        startResolvePlayUrlTimeout();
         //重新播放清除现有进度
         if (reset) {
             CacheManager.delete(MD5.string2MD5(progressKey), 0);
@@ -1785,33 +1770,7 @@ public class PlayFragment extends BaseLazyFragment {
         return null;
     }
 
-    void startResolvePlayUrlTimeout() {
-        cancelPlayTimeout();
-        mHandler.sendEmptyMessageDelayed(MSG_RESOLVE_PLAY_URL_TIMEOUT, getResolvePlayUrlTimeoutMs());
-    }
-
-    private long getResolvePlayUrlTimeoutMs() {
-        if (sourceBean == null) return RESOLVE_PLAY_URL_TIMEOUT_MS;
-        return Math.max(RESOLVE_PLAY_URL_TIMEOUT_MS, (sourceBean.getPlayTimeoutSeconds() + 1L) * 1000L);
-    }
-
-    void startSwitchLinePlayTimeout() {
-        if (!allowAutoSwitchLine) {
-            cancelPlayTimeout();
-            return;
-        }
-        cancelPlayTimeout();
-        LOG.i("echo-switchLinePlay start timeout");
-        mHandler.sendEmptyMessageDelayed(MSG_SWITCH_LINE_PLAY_TIMEOUT, SWITCH_LINE_PLAY_TIMEOUT_MS);
-    }
-
-    void cancelPlayTimeout() {
-        mHandler.removeMessages(MSG_RESOLVE_PLAY_URL_TIMEOUT);
-        mHandler.removeMessages(MSG_SWITCH_LINE_PLAY_TIMEOUT);
-    }
-
     public void pauseForHidden() {
-        cancelPlayTimeout();
         stopParse();
         playbackStarted = false;
         if (mVideoView != null) {
@@ -1827,7 +1786,6 @@ public class PlayFragment extends BaseLazyFragment {
 
     void markPlaybackStarted() {
         playbackStarted = true;
-        cancelPlayTimeout();
     }
 
     boolean isPlaybackStarted() {
@@ -1843,38 +1801,6 @@ public class PlayFragment extends BaseLazyFragment {
 
     boolean hasPlaybackProgress(long progress) {
         return progress > Math.max(playTimeoutBasePosition, 0) + 1000;
-    }
-
-    void handleResolvePlayUrlTimeout() {
-        LOG.i("echo-resolvePlayUrl timeout");
-        if (sourceViewModel != null) sourceViewModel.cancelPlayRequest();
-        stopParse();
-        setTip("获取播放地址超时！", false, true);
-    }
-
-    void handleResolvePlayUrlFailed(String err, boolean finish) {
-        LOG.i("echo-resolvePlayUrl failed" + err);
-        if (sourceViewModel != null) sourceViewModel.cancelPlayRequest();
-        stopParse();
-        if (finish) {
-            setTip(err, false, true);
-            App.showToastShort(mContext, err);
-        } else {
-            setTip(err, false, true);
-        }
-    }
-
-    void handleSwitchLinePlayTimeout() {
-        int state = mVideoView == null ? -1 : mVideoView.getCurrentPlayState();
-        LOG.i("echo-switchLinePlay timeout state: " + state + ", started: " + playbackStarted);
-        if (isPlaybackStarted()) {
-            cancelPlayTimeout();
-            hideTipOnUiThread();
-            return;
-        }
-        LOG.i("echo-switchLinePlay timeout");
-        stopParse();
-        if (!autoRetry()) setTip("播放此源超时", false, true);
     }
 
     void stopParse() {
