@@ -142,6 +142,7 @@ public class PlayFragment extends BaseLazyFragment {
     private static final int MAX_RETRIES = 2;  //xuameng播放出错切换2次
     private int currentSubtitleStyle = 0; // xuameng当前字幕颜色索引
     private boolean exitingPreview = false;
+    private boolean fullPreview  = false;
 	private boolean playUrlXu = false;   //xuameng 非小窗口模式返回后播放BUG
 
     private DanmakuView mDanmuView; //xuameng 弹幕
@@ -164,8 +165,6 @@ public class PlayFragment extends BaseLazyFragment {
             setDanmuViewSettings(event.obj instanceof Boolean && (Boolean) event.obj);
         } else if (event.type == RefreshEvent.TYPE_DANMU_REFRESH) { //xuameng 弹幕
             checkDanmu(event.obj instanceof String ? (String) event.obj : "");
-        } else if (event.type == RefreshEvent.TYPE_CLOSE_PLAY_ACTIVITY) {  //xuameng 远程关闭playactivity 用于push推送解析刷新
-            playUrlXu = true;   //xuameng 非小窗口模式返回后播放BUG
         }
     }
 
@@ -785,8 +784,7 @@ public class PlayFragment extends BaseLazyFragment {
                         } else {
                             mVideoView.setUrl(url);
                         }
-                        if (playUrlXu){
-                            playUrlXu = false;
+                        if (!fullPreview){
 							return;  //xuameng 非小窗口模式返回后播放BUG
                         }
                         mVideoView.start();
@@ -1197,6 +1195,10 @@ public class PlayFragment extends BaseLazyFragment {
             return true;
         }
         return false;
+    }
+
+    public void isFullPreview(boolean fullPreview) {
+        this.fullPreview = fullPreview;
     }
 
     public void setExitingPreview(boolean exitingPreview) {
@@ -1750,7 +1752,8 @@ public class PlayFragment extends BaseLazyFragment {
     public void pauseForHidden() {
         stopParse();
         if (mVideoView != null) {
-            mVideoView.stop();
+            mVideoView.pause();
+            mVideoView.release();
         }
         mController.stopOther();
         resetDanmuState();
