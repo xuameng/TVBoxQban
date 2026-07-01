@@ -508,6 +508,12 @@ public class HomeActivity extends BaseActivity {
         }, this);
     }
 
+    private void warmSearchSpidersOnce() {
+        if (searchSpiderWarmStarted) return;
+        searchSpiderWarmStarted = true;
+        ApiConfig.get().warmSearchSpiders();
+    }
+
     private void initViewPager(AbsSortXml absXml) {
         if (sortAdapter.getData().size() > 0) {
             for (MovieSort.SortData data : sortAdapter.getData()) {
