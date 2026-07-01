@@ -268,10 +268,6 @@ public class DetailActivity extends BaseActivity {
             public void onClick(View v) {
                 FastClickCheckUtil.check(v);
                 if (vodInfo != null && vodInfo.seriesMap.size() > 0) {
-                    if (isPushUrl) {
-                        App.showToastShort(DetailActivity.this, "正在解析推送地址，请稍后再试！");
-                        return;
-                    }
                     // xuameng检查当前选中的源是否是正在播放的源
                     if (vodInfo.currentPlayFlag != null && !vodInfo.playFlag.equals(vodInfo.currentPlayFlag)) {
                         // xuameng当前选中的源不是正在播放的源，禁止倒序操作
@@ -1123,7 +1119,7 @@ public class DetailActivity extends BaseActivity {
                             llPlayerFragmentContainerBlock.setVisibility(View.VISIBLE);
                             toggleSubtitleTextSize();
                         }else{
-                            if (isPushUrl) {  //xuameng 判断推送内容 如是 不执行保存 播放成功后会自动保存
+                            if (isPushUrl && fullWindows) {  //xuameng 判断推送内容 如是 不执行保存 播放成功后会自动保存
                                 jumpToPlay();
                             }
                         }
