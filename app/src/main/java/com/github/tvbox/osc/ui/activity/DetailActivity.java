@@ -536,38 +536,40 @@ public class DetailActivity extends BaseActivity {
 
         mGridViewFlag.setOnItemListener(new TvRecyclerView.OnItemListener() {
             private void refresh(View itemView, int position) {
-                String newFlag = seriesFlagAdapter.getData().get(position).name;
-                if (vodInfo != null) {
-                    // 保存旧的显示源
-                    String oldFlag = vodInfo.playFlag;
-        
-                    // 重要：只更新显示源，绝对不更新 currentPlayFlag
-                    // currentPlayFlag 应该只在用户点击播放时更新（在 jumpToPlay() 中）
-                    vodInfo.playFlag = newFlag;
-        
-                    // 清除旧显示源的高亮状态
-                    if (vodInfo.seriesMap.containsKey(oldFlag) && vodInfo.playIndex < vodInfo.seriesMap.get(oldFlag).size()) {
-                        vodInfo.seriesMap.get(oldFlag).get(vodInfo.playIndex).selected = false;
-                    }
-        
-                    // 更新选中状态
-                    for (int i = 0; i < vodInfo.seriesFlags.size(); i++) {
-                        VodInfo.VodSeriesFlag flag = vodInfo.seriesFlags.get(i);
-                        if (flag.name.equals(oldFlag)) {
-                            flag.selected = false;
-                            seriesFlagAdapter.notifyItemChanged(i);
-                            break;
-                        }
-                    }
-                    VodInfo.VodSeriesFlag flag = vodInfo.seriesFlags.get(position);
-                    flag.selected = true;
-                    seriesFlagAdapter.notifyItemChanged(position);
-        
-                    // 重要：不再检查是否切换播放源，因为用户只是查看，不是播放
-                    // 播放源的切换应该在 jumpToPlay() 中处理
-                    // 刷新列表，这会根据当前显示源和播放源的关系设置正确的高亮
-                    safeRefreshList(); 
+                if (vodInfo == null || vodInfo.seriesMap == null || vodInfo.playFlag == null) {  //XUAMENG 防空
+                    return;
                 }
+                String newFlag = seriesFlagAdapter.getData().get(position).name;
+                // 保存旧的显示源
+                String oldFlag = vodInfo.playFlag;
+        
+                // 重要：只更新显示源，绝对不更新 currentPlayFlag
+                // currentPlayFlag 应该只在用户点击播放时更新（在 jumpToPlay() 中）
+                vodInfo.playFlag = newFlag;
+        
+                // 清除旧显示源的高亮状态
+                if (vodInfo.seriesMap.containsKey(oldFlag) && vodInfo.playIndex < vodInfo.seriesMap.get(oldFlag).size()) {
+                    vodInfo.seriesMap.get(oldFlag).get(vodInfo.playIndex).selected = false;
+                }
+        
+                // 更新选中状态
+                for (int i = 0; i < vodInfo.seriesFlags.size(); i++) {
+                    VodInfo.VodSeriesFlag flag = vodInfo.seriesFlags.get(i);
+                    if (flag.name.equals(oldFlag)) {
+                        flag.selected = false;
+                        seriesFlagAdapter.notifyItemChanged(i);
+                        break;
+                    }
+                }
+                VodInfo.VodSeriesFlag flag = vodInfo.seriesFlags.get(position);
+                flag.selected = true;
+                seriesFlagAdapter.notifyItemChanged(position);
+        
+                // 重要：不再检查是否切换播放源，因为用户只是查看，不是播放
+                // 播放源的切换应该在 jumpToPlay() 中处理
+                // 刷新列表，这会根据当前显示源和播放源的关系设置正确的高亮
+                safeRefreshList(); 
+
                 seriesFlagFocus = itemView;
             }
 
@@ -1086,7 +1088,7 @@ public class DetailActivity extends BaseActivity {
                         }
                         //设置播放地址
                         setTextShow(tvPlayUrl, "播放地址：", vodInfo.seriesMap.get(vodInfo.playFlag).get(0).url);
-                        realUrl = vodInfo.seriesMap.get(vodInfo.playFlag).get(0).url);
+                        realUrl = vodInfo.seriesMap.get(vodInfo.playFlag).get(0).url;
                         seriesFlagAdapter.setNewData(vodInfo.seriesFlags);
                         mGridViewFlag.scrollToPosition(flagScrollTo);
 
