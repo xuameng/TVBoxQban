@@ -1578,14 +1578,11 @@ public class DetailActivity extends BaseActivity {
         if (fullWindows) {
             if (playFragment != null && playFragment.onBackPressed()) return;//xuameng上一级交给VODController控制
             exitFullPreview();
-
             if (vodInfo != null && vodInfo.seriesMap != null) {
                 List<VodInfo.VodSeries> list = vodInfo.seriesMap.get(vodInfo.playFlag);
                 mSeriesGroupView.setVisibility(list.size()>GroupCount ? View.VISIBLE : View.GONE);
             }
-						                mGridView.post(() -> {   // xuameng没有成功保存历史记录的刚才选那个现在选那个
             switchToPlayingSourceAndScroll();   //xuameng滚动到当前剧集
-                }); 
             return;
         }
         else if (seriesSelect) {
