@@ -795,12 +795,27 @@ public class DetailActivity extends BaseActivity {
     @SuppressLint("NotifyDataSetChanged")
     void refreshList() {     //xuameng 不同源选集不准确及 自动播放源不对等问题 切换回正在播放的源可以恢复到正确状态等BUG
 
-        if (isPushUrl) {  //xuameng 推送解析时返回防UBG
-	        return;
+    if (isPushUrl || vodInfo == null || vodInfo.seriesMap == null) {
+        return;
+    }
+
+    // ★ 关键修复：playFlag 不在 map 中或 value 为 null 时直接 return
+    List<VodInfo.VodSeries> currentSeries = vodInfo.seriesMap.get(vodInfo.playFlag);
+    if (currentSeries == null) {
+        // 尝试切回第一个可用源
+        if (!vodInfo.seriesMap.isEmpty()) {
+            for (String k : vodInfo.seriesMap.keySet()) {
+                if (vodInfo.seriesMap.get(k) != null && !vodInfo.seriesMap.get(k).isEmpty()) {
+                    vodInfo.playFlag = k;
+                    currentSeries = vodInfo.seriesMap.get(k);
+                    break;
+                }
+            }
         }
-        if (vodInfo == null || vodInfo.seriesMap == null || vodInfo.playFlag == null) {  //XUAMENG 防空
-            return;
+        if (currentSeries == null) {
+            return; // 仍然无数据，放弃刷新
         }
+    }
 
         if (vodInfo.seriesMap.get(vodInfo.playFlag).size() <= vodInfo.playIndex) {
             vodInfo.playIndex = 0;
