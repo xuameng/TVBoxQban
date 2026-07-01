@@ -810,7 +810,7 @@ public class DetailActivity extends BaseActivity {
             }
             if (seriesList == null) return;
         }
-
+App.showToastShort(DetailActivity.this, "222222222222222");
         if (vodInfo.seriesMap.get(vodInfo.playFlag).size() <= vodInfo.playIndex) {
             vodInfo.playIndex = 0;
         }
