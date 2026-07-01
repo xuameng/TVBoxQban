@@ -569,7 +569,7 @@ public class DetailActivity extends BaseActivity {
                     // 重要：不再检查是否切换播放源，因为用户只是查看，不是播放
                     // 播放源的切换应该在 jumpToPlay() 中处理
                     // 刷新列表，这会根据当前显示源和播放源的关系设置正确的高亮
-                    refreshList();
+                    safeRefreshList();
                 }
                 seriesFlagFocus = itemView;
             }
@@ -788,34 +788,34 @@ public class DetailActivity extends BaseActivity {
                 }  
             }
             // xuameng刷新列表，这会根据当前显示源和播放源的关系设置正确的高亮
-            refreshList();
+            safeRefreshList();
         }
     }
 
     @SuppressLint("NotifyDataSetChanged")
     void refreshList() {     //xuameng 不同源选集不准确及 自动播放源不对等问题 切换回正在播放的源可以恢复到正确状态等BUG
 
-    if (isPushUrl || vodInfo == null || vodInfo.seriesMap == null) {
-        return;
-    }
+        if (vodInfo == null || vodInfo.seriesMap == null || vodInfo.playFlag == null) {  //XUAMENG 防空
+            return;
+        }
 
-    // ★ 关键修复：playFlag 不在 map 中或 value 为 null 时直接 return
-    List<VodInfo.VodSeries> currentSeries = vodInfo.seriesMap.get(vodInfo.playFlag);
-    if (currentSeries == null) {
-        // 尝试切回第一个可用源
-        if (!vodInfo.seriesMap.isEmpty()) {
-            for (String k : vodInfo.seriesMap.keySet()) {
-                if (vodInfo.seriesMap.get(k) != null && !vodInfo.seriesMap.get(k).isEmpty()) {
-                    vodInfo.playFlag = k;
-                    currentSeries = vodInfo.seriesMap.get(k);
-                    break;
+        // ★ 关键修复：playFlag 不在 map 中或 value 为 null 时直接 return
+        List<VodInfo.VodSeries> currentSeries = vodInfo.seriesMap.get(vodInfo.playFlag);
+        if (currentSeries == null) {
+            // 尝试切回第一个可用源
+            if (!vodInfo.seriesMap.isEmpty()) {
+                for (String k : vodInfo.seriesMap.keySet()) {
+                    if (vodInfo.seriesMap.get(k) != null && !vodInfo.seriesMap.get(k).isEmpty()) {
+                        vodInfo.playFlag = k;
+                        currentSeries = vodInfo.seriesMap.get(k);
+                        break;
+                    }
                 }
             }
+            if (currentSeries == null) {
+                return; // 仍然无数据，放弃刷新
+            }
         }
-        if (currentSeries == null) {
-            return; // 仍然无数据，放弃刷新
-        }
-    }
 
         if (vodInfo.seriesMap.get(vodInfo.playFlag).size() <= vodInfo.playIndex) {
             vodInfo.playIndex = 0;
@@ -876,6 +876,21 @@ public class DetailActivity extends BaseActivity {
         setSeriesGroupOptions();
 
         customSeriesScrollPos(vodInfo.playIndex);  //xuameng 直接滚动
+    }
+
+    private void safeRefreshList() {     //xuameng 修复我的收藏滚动闪退   频道高亮
+        // 检查 RecyclerView 是否处于安全状态
+        if (mGridView.isComputingLayout() || mGridView.isScrolling()) {
+            // 延迟执行，避免在布局计算或滚动过程中操作
+            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    safeRefreshList(); 
+                }
+            }, 20);
+            return;
+        }
+        refreshList(); 
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -1057,7 +1072,7 @@ public class DetailActivity extends BaseActivity {
                         seriesFlagAdapter.setNewData(vodInfo.seriesFlags);
                         mGridViewFlag.scrollToPosition(flagScrollTo);
 
-                        refreshList();   //xuameng返回键、长按播放刷新滚动到剧集
+                        safeRefreshList();   //xuameng返回键、长按播放刷新滚动到剧集
                         mGridView.addOnScrollListener(new RecyclerView.OnScrollListener() {
                             @Override
                                 public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
@@ -1778,7 +1793,7 @@ public class DetailActivity extends BaseActivity {
         }
     
         // 2. 刷新列表显示
-        refreshList();
+        safeRefreshList();
     
         // 3. 确保即使不滚动也能执行选择操作
         // 添加滚动监听器确保在任何情况下都能执行选择
