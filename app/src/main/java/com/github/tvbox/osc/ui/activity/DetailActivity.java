@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -882,14 +883,14 @@ public class DetailActivity extends BaseActivity {
         refreshList(); 
     }
 
-    private void safeSelectMGridView(String i) {     //xuameng 修复我的收藏滚动闪退   频道高亮
+    private void safeSelectMGridView(int i) {     //xuameng 修复我的收藏滚动闪退   频道高亮
         // 检查 RecyclerView 是否处于安全状态
         if (mGridView.isComputingLayout() || mGridView.isScrolling()) {
             // 延迟执行，避免在布局计算或滚动过程中操作
             new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    safeSelectMGridView(); 
+                    safeSelectMGridView(i); 
                 }
             }, 20);
             return;
@@ -897,7 +898,7 @@ public class DetailActivity extends BaseActivity {
         mGridView.setSelection(i);
     }
 
-    private void safeSelectMGridViewFlag(String i) {     //xuameng 修复我的收藏滚动闪退   频道高亮
+    private void safeSelectMGridViewFlag(int i) {     //xuameng 修复我的收藏滚动闪退   频道高亮
         // 检查 RecyclerView 是否处于安全状态
         if (mGridView.isComputingLayout() || mGridView.isScrolling()) {
             // 延迟执行，避免在布局计算或滚动过程中操作
