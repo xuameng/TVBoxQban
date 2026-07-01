@@ -2263,6 +2263,7 @@ public class VodController extends BaseController {
         mLockView.setVisibility(GONE); //xuameng隐藏屏幕锁
 		if (!showPreview && isLock){  //xuameng 如果不是小窗口播放开锁
             isLock = false;
+            mLockView.setImageResource(isLock ? R.drawable.icon_lock : R.drawable.icon_unlock);
         }
         return false;
     }
