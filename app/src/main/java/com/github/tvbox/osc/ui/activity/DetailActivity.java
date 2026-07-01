@@ -1094,6 +1094,9 @@ public class DetailActivity extends BaseActivity {
                             isPushUrl = false;
                             App.showToastShort(DetailActivity.this, "接收到推送数据为空！");
                         }
+                        if (fullWindows) {
+                            exitFullPreview();
+                        }
                         mGridViewFlag.setVisibility(View.GONE);
                         mGridView.setVisibility(View.GONE);
                         mSeriesGroupView.setVisibility(View.GONE);
