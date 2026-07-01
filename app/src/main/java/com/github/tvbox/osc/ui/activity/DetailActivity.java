@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -143,6 +142,7 @@ public class DetailActivity extends BaseActivity {
     boolean isShowConfig = false;  //xuameng 配置中心判断
     private View seriesFlagFocus = null;
     private String preFlag="";
+    private String realUrl="";
     private V7GridLayoutManager mGridViewLayoutMgr = null;
     private HashMap<String, String> mCheckSources = null;
     private final ArrayList<String> seriesGroupOptions = new ArrayList<>();
@@ -570,7 +570,7 @@ public class DetailActivity extends BaseActivity {
                     // 重要：不再检查是否切换播放源，因为用户只是查看，不是播放
                     // 播放源的切换应该在 jumpToPlay() 中处理
                     // 刷新列表，这会根据当前显示源和播放源的关系设置正确的高亮
-                    safeRefreshList();
+                    safeRefreshList(); 
                 }
                 seriesFlagFocus = itemView;
             }
@@ -719,7 +719,9 @@ public class DetailActivity extends BaseActivity {
             vodInfo.currentPlayFlag = vodInfo.playFlag;
             vodInfo.currentPlayIndex = vodInfo.playIndex;
             Bundle bundle = new Bundle();
-            insertVod(firstsourceKey, vodInfo);
+            if (!TextUtils.isEmpty(realUrl) && !realUrl.startsWith("push://")) {
+                insertVod(firstsourceKey, vodInfo);
+            }
             bundle.putString("sourceKey", sourceKey);
             bundle.putString("videoPic", mVideo.pic);   //xuameng 新增给vod显示旋转图片用
 //            bundle.putSerializable("VodInfo", vodInfo);
@@ -763,7 +765,9 @@ public class DetailActivity extends BaseActivity {
             vodInfo.currentPlayFlag = vodInfo.playFlag;
             vodInfo.currentPlayIndex = vodInfo.playIndex;
             Bundle bundle = new Bundle();
-            insertVod(firstsourceKey, vodInfo);
+            if (!TextUtils.isEmpty(realUrl) && !realUrl.startsWith("push://")) {
+                insertVod(firstsourceKey, vodInfo);
+            }
             bundle.putString("sourceKey", sourceKey);
             App.getInstance().setVodInfo(vodInfo);
             if (showPreview) {
@@ -789,7 +793,7 @@ public class DetailActivity extends BaseActivity {
                 }  
             }
             // xuameng刷新列表，这会根据当前显示源和播放源的关系设置正确的高亮
-            safeRefreshList();
+            safeRefreshList(); 
         }
     }
 
@@ -800,23 +804,9 @@ public class DetailActivity extends BaseActivity {
             return;
         }
 
-        // ★ 关键修复：playFlag 不在 map 中或 value 为 null 时直接 return
-        List<VodInfo.VodSeries> currentSeries = vodInfo.seriesMap.get(vodInfo.playFlag);
-        if (currentSeries == null) {
-            // 尝试切回第一个可用源
-            if (!vodInfo.seriesMap.isEmpty()) {
-                for (String k : vodInfo.seriesMap.keySet()) {
-                    if (vodInfo.seriesMap.get(k) != null && !vodInfo.seriesMap.get(k).isEmpty()) {
-                        vodInfo.playFlag = k;
-                        currentSeries = vodInfo.seriesMap.get(k);
-                        break;
-                    }
-                }
-            }
-            if (currentSeries == null) {
-                return; // 仍然无数据，放弃刷新
-            }
-        }
+        if (!TextUtils.isEmpty(realUrl) && realUrl.startsWith("push://") && ApiConfig.get().getSource("push_agent") != null) {
+            vodInfo.playIndex = 0;
+        }	
 
         if (vodInfo.seriesMap.get(vodInfo.playFlag).size() <= vodInfo.playIndex) {
             vodInfo.playIndex = 0;
@@ -892,6 +882,36 @@ public class DetailActivity extends BaseActivity {
             return;
         }
         refreshList(); 
+    }
+
+    private void safeSelectMGridView(String i) {     //xuameng 修复我的收藏滚动闪退   频道高亮
+        // 检查 RecyclerView 是否处于安全状态
+        if (mGridView.isComputingLayout() || mGridView.isScrolling()) {
+            // 延迟执行，避免在布局计算或滚动过程中操作
+            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    safeSelectMGridView(); 
+                }
+            }, 20);
+            return;
+        }
+        mGridView.setSelection(i);
+    }
+
+    private void safeSelectMGridViewFlag(String i) {     //xuameng 修复我的收藏滚动闪退   频道高亮
+        // 检查 RecyclerView 是否处于安全状态
+        if (mGridView.isComputingLayout() || mGridView.isScrolling()) {
+            // 延迟执行，避免在布局计算或滚动过程中操作
+            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    safeSelectMGridViewFlag(i); 
+                }
+            }, 20);
+            return;
+        }
+        mGridViewFlag.setSelection(i);
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -1070,6 +1090,7 @@ public class DetailActivity extends BaseActivity {
                         }
                         //设置播放地址
                         setTextShow(tvPlayUrl, "播放地址：", vodInfo.seriesMap.get(vodInfo.playFlag).get(0).url);
+                        realUrl = vodInfo.seriesMap.get(vodInfo.playFlag).get(0).url);
                         seriesFlagAdapter.setNewData(vodInfo.seriesFlags);
                         mGridViewFlag.scrollToPosition(flagScrollTo);
 
@@ -1081,16 +1102,12 @@ public class DetailActivity extends BaseActivity {
                                     if (newState == mGridView.SCROLL_STATE_IDLE) {   //xuameng剧集滚动完成后焦点选择为剧集
                                         // 滚动已经停止，执行你需要的操作
                                         //	mGridView.requestFocus();
-                                        mGridView.setSelection(vodInfo.playIndex);
+                                        safeSelectMGridView(vodInfo.playIndex);
                                         mGridView.removeOnScrollListener(this);    //xuameng删除滚动监听
                                     }
                                 }
                        });
-                       if(mGridView.isScrolling() || mGridView.isComputingLayout()) {
-                       }else{
-                           //mGridView.requestFocus();  //xuameng如果不满足滚动条件直接获得焦点
-                           mGridView.setSelection(vodInfo.playIndex);
-                       }
+                       safeSelectMGridView(vodInfo.playIndex);
 
                        tvPlay.setNextFocusUpId(R.id.mGridView);   //xuameng上面焦点是选剧集
                        tvQuickSearch.setNextFocusUpId(R.id.mGridView); 
@@ -1326,23 +1343,22 @@ public class DetailActivity extends BaseActivity {
                     
                             if (isPushUrl) {  //xuameng 判断推送内容 如是 不执行保存 播放成功后会自动保存
                                 mHandler.post(mPushUrlRunnable); //xuameng 推送地址解析成功
-                                return; 
                             }
-                            insertVod(firstsourceKey, saveVodInfo);
-
+                            if (!TextUtils.isEmpty(realUrl) && !realUrl.startsWith("push://")) {
+                                insertVod(firstsourceKey, saveVodInfo);
+                            }
                         }
                     } else if (event.obj instanceof JSONObject) {    //xuameng保存播放器配置
                         vodInfo.playerCfg = ((JSONObject) event.obj).toString();
                         //保存历史
-                        if (isPushUrl) {  //xuameng 判断推送内容 如是 不执行保存 播放成功后会自动保存
-                            return; 
+                        if (!TextUtils.isEmpty(realUrl) && !realUrl.startsWith("push://")) {
+                            insertVod(firstsourceKey, vodInfo);
                         }
-                        insertVod(firstsourceKey, vodInfo);
                     } else if (event.obj instanceof String) {
                         String url = event.obj.toString();
                         //设置更新播放地址
                         setTvPlayUrl(url);
-
+                        realUrl = url;
                         if (url.startsWith("push://") && ApiConfig.get().getSource("push_agent") != null) {  //xuameng 如果是推送链接 通过sourceViewModel 改成"push_agent"源重新解析
                             App.showToastShort(DetailActivity.this, "正在解析推送地址！");
                             deleteOldSourceHistoryIfNeeded(firstsourceKey, "push_agent", vodInfo);  //xuameng 删除firstsourceKey存储历史因为源变成 push_agent了
@@ -1578,10 +1594,6 @@ public class DetailActivity extends BaseActivity {
         if (fullWindows) {
             if (playFragment != null && playFragment.onBackPressed()) return;//xuameng上一级交给VODController控制
             exitFullPreview();
-            if (vodInfo != null && vodInfo.seriesMap != null) {
-                List<VodInfo.VodSeries> list = vodInfo.seriesMap.get(vodInfo.playFlag);
-                mSeriesGroupView.setVisibility(list.size()>GroupCount ? View.VISIBLE : View.GONE);
-            }
             switchToPlayingSourceAndScroll();   //xuameng滚动到当前剧集
             return;
         }
@@ -1795,7 +1807,7 @@ public class DetailActivity extends BaseActivity {
         }
     
         // 2. 刷新列表显示
-        safeRefreshList();
+        safeRefreshList(); 
     
         // 3. 确保即使不滚动也能执行选择操作
         // 添加滚动监听器确保在任何情况下都能执行选择
@@ -1804,20 +1816,14 @@ public class DetailActivity extends BaseActivity {
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 if (newState == mGridView.SCROLL_STATE_IDLE) {
-                    mGridView.setSelection(vodInfo.playIndex);
+                    safeSelectMGridView(vodInfo.playIndex);
                     mGridView.removeOnScrollListener(this);
                 }
             }
         });
     
         // 4. 立即检查是否需要直接执行选择（避免滚动不触发）
-        if (!mGridView.isScrolling() && !mGridView.isComputingLayout()) {
-            // 如果当前没有滚动且没有计算布局，则直接执行选择
-            mGridView.setSelection(vodInfo.playIndex);
-        } else {
-            // 如果正在滚动或计算布局，则等待滚动完成后再执行
-            // 上面的监听器会处理这种情况
-        }    
+        safeSelectMGridView(vodInfo.playIndex); 
         App.showToastShort(DetailActivity.this, "已滚动到当前播放剧集！");
     }
 
@@ -1867,11 +1873,8 @@ public class DetailActivity extends BaseActivity {
                             }
                         }
                     });
-    
-                    if (!mGridViewFlag.isScrolling() && !mGridViewFlag.isComputingLayout()) {
-                        // 如果当前没有滚动且没有计算布局，则直接执行选择
-                        mGridViewFlag.setSelection(i);
-                    } 
+                    // 如果当前没有滚动且没有计算布局，则直接执行选择
+                    mGridViewFlag.setSelection(finalScrollPosition);
                     break;
                 }
             }
@@ -1889,16 +1892,14 @@ public class DetailActivity extends BaseActivity {
                         public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                             super.onScrollStateChanged(recyclerView, newState);
                             if (newState == mGridViewFlag.SCROLL_STATE_IDLE) {
-                                mGridViewFlag.setSelection(finalScrollPosition);
+                                safeSelectMGridViewFlag(finalScrollPosition);
                                 mGridViewFlag.removeOnScrollListener(this);
                             }
                         }
                     });
     
-                    if (!mGridViewFlag.isScrolling() && !mGridViewFlag.isComputingLayout()) {
-                        // 如果当前没有滚动且没有计算布局，则直接执行选择
-                        mGridViewFlag.setSelection(i);
-                    }
+                    // 如果当前没有滚动且没有计算布局，则直接执行选择
+                    safeSelectMGridViewFlag(finalScrollPosition);
                     break;
                 }
             }
