@@ -802,15 +802,6 @@ public class DetailActivity extends BaseActivity {
             return;
         }
 
-        List<VodInfo.VodSeries> seriesList = vodInfo.seriesMap.get(vodInfo.playFlag);
-        if (seriesList == null || seriesList.isEmpty()) {   //XUAMENG 防空
-            if (!vodInfo.seriesMap.isEmpty()) {
-                vodInfo.playFlag = (String) vodInfo.seriesMap.keySet().toArray()[0];
-                seriesList = vodInfo.seriesMap.get(vodInfo.playFlag);
-            }
-            if (seriesList == null) return;
-        }
-App.showToastShort(DetailActivity.this, "222222222222222");
         if (vodInfo.seriesMap.get(vodInfo.playFlag).size() <= vodInfo.playIndex) {
             vodInfo.playIndex = 0;
         }
