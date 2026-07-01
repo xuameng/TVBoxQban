@@ -1113,7 +1113,7 @@ public class DetailActivity extends BaseActivity {
                         App.showToastShort(DetailActivity.this, "接收推送数据失败！");
                     }
                     if (fullWindows) {
-                        enterFullPreview();
+                        exitFullPreview();
                     }
                     if (isShowConfig){ //xuameng 配置中心判断
                         showConfig();
