@@ -1536,7 +1536,7 @@ public class DetailActivity extends BaseActivity {
         if (fullWindows) {
             if (playFragment != null && playFragment.onBackPressed()) return;//xuameng上一级交给VODController控制
             exitFullPreview();
-mHandler.postDelayed(switchToPlayingSourceAndScroll, 300);
+mHandler.postDelayed(switchToPlayingSourceAndScroll(), 300);
               //xuameng滚动到当前剧集
             List<VodInfo.VodSeries> list = vodInfo.seriesMap.get(vodInfo.playFlag);
             mSeriesGroupView.setVisibility(list.size()>GroupCount ? View.VISIBLE : View.GONE);
