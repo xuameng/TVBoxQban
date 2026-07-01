@@ -794,6 +794,21 @@ public class DetailActivity extends BaseActivity {
 
     @SuppressLint("NotifyDataSetChanged")
     void refreshList() {     //xuameng 不同源选集不准确及 自动播放源不对等问题 切换回正在播放的源可以恢复到正确状态等BUG
+if (isPushUrl) {
+	return;
+}
+    if (vodInfo == null || vodInfo.seriesMap == null || vodInfo.playFlag == null) {
+        return;
+    }
+
+    List<VodInfo.VodSeries> seriesList = vodInfo.seriesMap.get(vodInfo.playFlag);
+    if (seriesList == null || seriesList.isEmpty()) {
+        if (!vodInfo.seriesMap.isEmpty()) {
+            vodInfo.playFlag = (String) vodInfo.seriesMap.keySet().toArray()[0];
+            seriesList = vodInfo.seriesMap.get(vodInfo.playFlag);
+        }
+        if (seriesList == null) return;
+    }
         if (vodInfo.seriesMap.get(vodInfo.playFlag).size() <= vodInfo.playIndex) {
             vodInfo.playIndex = 0;
         }
@@ -1536,8 +1551,7 @@ public class DetailActivity extends BaseActivity {
         if (fullWindows) {
             if (playFragment != null && playFragment.onBackPressed()) return;//xuameng上一级交给VODController控制
             exitFullPreview();
-mHandler.postDelayed(mPushUrlRunnableXu, 300);
-           // switchToPlayingSourceAndScroll();   //xuameng滚动到当前剧集
+            switchToPlayingSourceAndScroll();   //xuameng滚动到当前剧集
             List<VodInfo.VodSeries> list = vodInfo.seriesMap.get(vodInfo.playFlag);
             mSeriesGroupView.setVisibility(list.size()>GroupCount ? View.VISIBLE : View.GONE);
             return;
@@ -1889,14 +1903,6 @@ mHandler.postDelayed(mPushUrlRunnableXu, 300);
             showSuccess();
             App.showToastShort(DetailActivity.this, "推送地址换源解析成功！");
             isPushUrl = false;
-        }
-    };
-
-    private Runnable mPushUrlRunnableXu = new Runnable() {  //xuameng 推送地址
-        @Override
-        public void run() {
-            if (isActivityDestroyed) return;
-switchToPlayingSourceAndScroll();  
         }
     };
 
