@@ -796,11 +796,27 @@ public class DetailActivity extends BaseActivity {
     @SuppressLint("NotifyDataSetChanged")
     void refreshList() {     //xuameng 不同源选集不准确及 自动播放源不对等问题 切换回正在播放的源可以恢复到正确状态等BUG
 
-        if (vodInfo == null || vodInfo.seriesMap == null) {  //XUAMENG 防空
+        if (vodInfo == null || vodInfo.seriesMap == null || vodInfo.playFlag == null) {  //XUAMENG 防空
             return;
         }
 
-
+        // ★ 关键修复：playFlag 不在 map 中或 value 为 null 时直接 return
+        List<VodInfo.VodSeries> currentSeries = vodInfo.seriesMap.get(vodInfo.playFlag);
+        if (currentSeries == null) {
+            // 尝试切回第一个可用源
+            if (!vodInfo.seriesMap.isEmpty()) {
+                for (String k : vodInfo.seriesMap.keySet()) {
+                    if (vodInfo.seriesMap.get(k) != null && !vodInfo.seriesMap.get(k).isEmpty()) {
+                        vodInfo.playFlag = k;
+                        currentSeries = vodInfo.seriesMap.get(k);
+                        break;
+                    }
+                }
+            }
+            if (currentSeries == null) {
+                return; // 仍然无数据，放弃刷新
+            }
+        }
 
         if (vodInfo.seriesMap.get(vodInfo.playFlag).size() <= vodInfo.playIndex) {
             vodInfo.playIndex = 0;
@@ -1065,8 +1081,10 @@ public class DetailActivity extends BaseActivity {
                                     if (newState == mGridView.SCROLL_STATE_IDLE) {   //xuameng剧集滚动完成后焦点选择为剧集
                                         // 滚动已经停止，执行你需要的操作
                                         //	mGridView.requestFocus();
-                                        mGridView.setSelection(vodInfo.playIndex);
-                                        mGridView.removeOnScrollListener(this);    //xuameng删除滚动监听
+                                        mGridView.post(() -> {   // xuameng没有成功保存历史记录的刚才选那个现在选那个
+                                            mGridView.setSelection(vodInfo.playIndex);
+                                            mGridView.removeOnScrollListener(this);    //xuameng删除滚动监听
+                                        }); 
                                     }
                                 }
                        });
@@ -1787,8 +1805,10 @@ public class DetailActivity extends BaseActivity {
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 if (newState == mGridView.SCROLL_STATE_IDLE) {
-                    mGridView.setSelection(vodInfo.playIndex);
-                    mGridView.removeOnScrollListener(this);
+                    mGridView.post(() -> {   // xuameng没有成功保存历史记录的刚才选那个现在选那个
+                        mGridView.setSelection(vodInfo.playIndex);
+                        mGridView.removeOnScrollListener(this);    //xuameng删除滚动监听
+                    }); 
                 }
             }
         });
