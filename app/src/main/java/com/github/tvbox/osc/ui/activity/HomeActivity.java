@@ -339,6 +339,7 @@ public class HomeActivity extends BaseActivity {
 
     private boolean dataInitOk = false;
     private boolean jarInitOk = false;
+    private boolean searchSpiderWarmStarted = false;
 
     private void initData() {
         Hawk.put(HawkConfig.API_INIT_OK, true);
@@ -347,6 +348,7 @@ public class HomeActivity extends BaseActivity {
         if (home != null && home.getName() != null && !home.getName().isEmpty())
             tvName.setText(home.getName());
         if (dataInitOk && jarInitOk) {
+            warmSearchSpidersOnce();
             //showLoading();
             sourceViewModel.getSort(ApiConfig.get().getHomeSourceBean().getKey());
             if (hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
