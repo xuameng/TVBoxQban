@@ -2261,8 +2261,8 @@ public class VodController extends BaseController {
         backBtn.setVisibility(GONE); //返回键隐藏菜单
         mTvPausexu.setVisibility(GONE); //隐藏暂停菜单
         mLockView.setVisibility(GONE); //xuameng隐藏屏幕锁
-		if (!showPreview){  //xuameng 如果不是小窗口播放开锁
-            isLock = !isLock;
+		if (!showPreview && isLock){  //xuameng 如果不是小窗口播放开锁
+            isLock = false;
         }
         return false;
     }
