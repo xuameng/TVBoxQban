@@ -1,444 +1,981 @@
-package com.github.tvbox.osc.util;
+package com.github.tvbox.osc.ui.activity;
 
-import android.os.Environment;
-import android.text.TextUtils;
-import android.util.Base64;
+import android.Manifest;
+import android.animation.Animator;
+import android.animation.AnimatorSet;
+import android.animation.IntEvaluator;
+import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.view.KeyEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.BounceInterpolator;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.view.Gravity;							//xuameng
+import android.widget.ImageView;						//xuameng
+import android.graphics.Color;                          //xuameng获取颜色值
+import android.util.TypedValue;              //xuameng TypedValue依赖
+import android.view.LayoutInflater;			//xuameng LayoutInflater依赖
+import com.lzy.okgo.OkGo;   //xuameng 打断加载用
+import java.util.Objects;   //xuameng主页默认焦点
+import com.github.tvbox.osc.util.FastClickCheckUtil;   //xuameng cache
+import com.github.tvbox.osc.util.MD5;  //xuameng cache
+import android.util.Log; //xuameng音乐权限
+import android.os.Build; //xuameng音乐权限
+import android.content.pm.PackageManager; //xuameng音乐权限
+import android.provider.Settings; //xuameng音乐权限
+import android.net.Uri; //xuameng音乐权限
+import androidx.appcompat.app.AlertDialog; //xuameng音乐权限
+import android.Manifest;  //xuameng音乐权限
+import androidx.core.app.ActivityCompat;  //xuameng音乐权限
+import android.content.SharedPreferences;  //xuameng音乐权限
+import android.content.Context; //xuameng音乐权限
 
 import com.github.tvbox.osc.base.App;
+import android.widget.Toast;
+import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.viewpager.widget.ViewPager;
 
+import com.github.tvbox.osc.R;
+import com.github.tvbox.osc.api.ApiConfig;
+import com.github.tvbox.osc.base.BaseActivity;
+import com.github.tvbox.osc.base.BaseLazyFragment;
+import com.github.tvbox.osc.bean.AbsSortXml;
+import com.github.tvbox.osc.bean.MovieSort;
+import com.github.tvbox.osc.bean.SourceBean;
+import com.github.tvbox.osc.event.RefreshEvent;
 import com.github.tvbox.osc.server.ControlManager;
-import com.github.catvod.net.OkHttp;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
+import com.github.tvbox.osc.ui.adapter.HomePageAdapter;
+import com.github.tvbox.osc.ui.adapter.SelectDialogAdapter;
+import com.github.tvbox.osc.ui.adapter.SortAdapter;
+import com.github.tvbox.osc.ui.dialog.SelectDialog;
+import com.github.tvbox.osc.ui.dialog.TipDialog;
+import com.github.tvbox.osc.ui.fragment.GridFragment;
+import com.github.tvbox.osc.ui.fragment.UserFragment;
+import com.github.tvbox.osc.ui.tv.widget.DefaultTransformer;
+import com.github.tvbox.osc.ui.tv.widget.FixedSpeedScroller;
+import com.github.tvbox.osc.ui.tv.widget.NoScrollViewPager;
+import com.github.tvbox.osc.ui.tv.widget.ViewObj;
+import com.github.tvbox.osc.util.AppManager;
+import com.github.tvbox.osc.util.DefaultConfig;
+import com.github.tvbox.osc.util.HawkConfig;
+import com.github.tvbox.osc.util.LOG;
+import com.github.tvbox.osc.viewmodel.SourceViewModel;
 import com.orhanobut.hawk.Hawk;
- 
- import org.json.JSONObject;
+import com.owen.tvrecyclerview.widget.TvRecyclerView;
+import com.owen.tvrecyclerview.widget.V7GridLayoutManager;
+import com.owen.tvrecyclerview.widget.V7LinearLayoutManager;
+import com.github.tvbox.osc.util.FileUtils;  //xuameng 清缓存
+import java.io.File;   //xuameng 清缓存
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+import org.jetbrains.annotations.NotNull;
 
-public class FileUtils {
+import java.lang.reflect.Field;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
-    public static boolean writeSimple(byte[] data, File dst) {
-        try {
-            if (dst.exists())
-                dst.delete();
-            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(dst));
-            bos.write(data);
-            bos.close();
-            return true;
-        } catch (IOException e) {
-            e.printStackTrace();
+import me.jessyan.autosize.utils.AutoSizeUtils;
+/**
+ * @author xuameng
+ * @date :2026/05/08
+ * @description:  焦点状态全面修复
+ */
+public class HomeActivity extends BaseActivity {
+    private LinearLayout topLayout;
+    private LinearLayout contentLayout;
+    private TextView tvDate;
+    private TextView tvName;
+    private TvRecyclerView mGridView;
+    private NoScrollViewPager mViewPager;
+    private SourceViewModel sourceViewModel;
+    private SortAdapter sortAdapter;
+    private HomePageAdapter pageAdapter;
+    private View currentView;
+    private final List<BaseLazyFragment> fragments = new ArrayList<>();
+    private boolean sortChange = false;
+    private boolean refreshEmpty = false;	//xuameng打断加载判断
+    private int currentSelected = 0;
+    private int sortFocused = 0;
+    private int PositionXu = 0;  //xuameng 记忆当前Position
+    public View sortFocusView = null;
+    private final Handler mHandler = new Handler();
+    private long mExitTime = 0;
+    private boolean mGridViewHasFocus = false;  //xuameng 判断 mGridView主页是否拥有焦点
+    private static final int REQUEST_CODE_RECORD_AUDIO = 1001; //xuameng获取音频权限
+    private static final String TAG = "PermissionHelper";//xuameng获取音频权限
+    private static final int MARSHMALLOW = Build.VERSION_CODES.M;  //xuameng获取音频权限
+    private static final String PREF_PERMISSION_DIALOG = "permission_prefs";   //xuameng获取音频权限
+    private static final String KEY_DIALOG_SHOWN = "dialog_shown";  //xuameng获取音频权限
+    private final Runnable mRunnable = new Runnable() {
+        @SuppressLint("SetTextI18n")
+        @Override
+        public void run() {
+            Date date = new Date();
+            @SuppressLint("SimpleDateFormat")
+            SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy/MM/dd E HH:mm", Locale.CHINA);
+            tvDate.setText(timeFormat.format(date));
+            mHandler.postDelayed(this, 1000);
         }
-        return false;
+    };
+
+    @Override
+    protected int getLayoutResID() {
+        return R.layout.activity_home;
     }
 
-    public static byte[] readSimple(File src) {
-        try {
-            BufferedInputStream bis = new BufferedInputStream(new FileInputStream(src));
-            int len = bis.available();
-            byte[] data = new byte[len];
-            bis.read(data);
-            bis.close();
-            return data;
-        } catch (IOException e) {
-            e.printStackTrace();
+    boolean useCacheConfig = false;
+
+    @Override
+    protected void init() {
+//        setupExceptionHandler(); // xuameng异常捕获
+        EventBus.getDefault().register(this);
+        ControlManager.get().startServer();
+        initView();
+        initViewModel();
+        useCacheConfig = false;
+        Intent intent = getIntent();
+        if (intent != null && intent.getExtras() != null) {
+            Bundle bundle = intent.getExtras();
+            useCacheConfig = bundle.getBoolean("useCache", false);
         }
-        return null;
+        initData();
     }
 
-    public static void copyFile(File source, File dest) throws IOException {
-        InputStream is = null;
-        OutputStream os = null;
-        try {
-            is = new FileInputStream(source);
-            os = new FileOutputStream(dest);
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = is.read(buffer)) > 0) {
-                os.write(buffer, 0, length);
-            }
-        } finally {
-            is.close();
-            os.close();
-        }
-    }
-
-    public static void recursiveDelete(File file) {
-        if (!file.exists())
-            return;
-        if (file.isDirectory()) {
-            for (File f : file.listFiles()) {
-                recursiveDelete(f);
-            }
-        }
-        file.delete();
-    }
-
-    public static String readFileToString(String path, String charsetName) {
-        // 定义返回结果
-        String jsonString = "";
-
-        BufferedReader in = null;
-        try {
-            in = new BufferedReader(new InputStreamReader(new FileInputStream(new File(path)), charsetName));// 读取文件
-            String thisLine = null;
-            while ((thisLine = in.readLine()) != null) {
-                jsonString += thisLine;
-            }
-            in.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException el) {
+    private void initView() {
+        this.topLayout = findViewById(R.id.topLayout);
+        this.tvDate = findViewById(R.id.tvDate);
+        this.tvName = findViewById(R.id.tvName);
+        this.contentLayout = findViewById(R.id.contentLayout);
+        this.mGridView = findViewById(R.id.mGridView);
+        this.mViewPager = findViewById(R.id.mViewPager);
+        this.mGridView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 0, false));
+        this.sortAdapter = new SortAdapter();
+        this.mGridView.setSpacingWithMargins(0, AutoSizeUtils.dp2px(this.mContext, 10.0f));
+        this.mGridView.setAdapter(this.sortAdapter);
+        this.mGridView.setItemAnimator(null);   //xuameng 取消Item动画 闹腾
+        sortAdapter.registerAdapterDataObserver(new TvRecyclerView.AdapterDataObserver() {
+            @Override
+            public void onChanged() {
+                if (!mGridViewHasFocus) {  //xuameng主页没有拥有焦点时执行
+                    mGridView.setSelection(0);   //xuameng setSelectedPosition不能获取焦点
                 }
             }
-        }
-        // 返回拼接好的JSON String
-        return jsonString;
-    }
+        });
 
-    public static String getAssetFile(String assetName) throws IOException {
-        InputStream is = App.getInstance().getAssets().open(assetName);
-        byte[] data = new byte[is.available()];
-        is.read(data);
-        return new String(data, "UTF-8");
-    }
-
-    public static boolean isAssetFile(String name, String path) {
-        try {
-            for(String one : App.getInstance().getAssets().list(path)) {
-                if (one.equals(name)) return true;
+        // mGridView焦点监听
+        mGridView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    mGridViewHasFocus = false;
+                    return;
+                }
+        
+                // 获取当前焦点item
+                int focusedPosition = mGridView.getSelectedPosition();
+                if (focusedPosition == 0) {
+                    mGridViewHasFocus = true;
+                }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
+        });
 
-    public static String getRootPath() {
-        return Environment.getExternalStorageDirectory().getAbsolutePath();
-    }
-
-    public static File getLocal(String path) {
-        return new File(path.replace("file:/", getRootPath()));
-    }
-
-    public static File getCacheDir() {
-        return App.getInstance().getCacheDir();
-    }
-    public static String getCachePath() {
-        return getCacheDir().getAbsolutePath();
-    }
-    public static String getFilePath() {
-        return App.getInstance().getFilesDir().getAbsolutePath();
-    }
-
-    public static void cleanDirectory(File dir) {
-        if (!dir.exists()) return;
-        File[] files = dir.listFiles();
-        if (files == null || files.length == 0) return;
-        for(File one : files) {
-            try {
-                deleteFile(one);
-            } catch (Exception e) {
-                e.printStackTrace();
+        this.mGridView.setOnItemListener(new TvRecyclerView.OnItemListener() {       //xuameng移除  mHandler.postDelayed
+            public void onItemPreSelected(TvRecyclerView tvRecyclerView, View view, int position) {
+                //  xuameng统一由onItemSelected处理焦点变化
             }
-        }
+
+            public void onItemSelected(TvRecyclerView tvRecyclerView, View view, int position) {
+                if (view != null && position >= 0) {
+                    HomeActivity.this.currentView = view;
+                    HomeActivity.this.sortChange = true;
+                    PositionXu = position;  //xuameng 记忆当前Position
+                    HomeActivity.this.sortFocusView = view;
+                    HomeActivity.this.sortFocused = position;
+                    //xuameng 安全地更新Adapter选中状态   完全交给sortAdapter维护
+                    safeUpdateSortAdapterSelection(position, tvRecyclerView);
+                    mHandler.removeCallbacks(mDataRunnable);
+                    mHandler.postDelayed(mDataRunnable, 200); //xuameng 延迟到下一个主线程周期执行
+                }
+            }
+
+            @Override
+            public void onItemClick(TvRecyclerView parent, View itemView, int position) {
+                if (itemView != null && currentSelected == position) {
+                    BaseLazyFragment baseLazyFragment = fragments.get(currentSelected);
+                    if ((baseLazyFragment instanceof GridFragment) && !sortAdapter.getItem(position).filters.isEmpty()) {// 弹出筛选
+                        ((GridFragment) baseLazyFragment).showFilter();
+                    } else if (baseLazyFragment instanceof UserFragment) {
+                        showSiteSwitch();
+                    }
+                }
+            }
+        });
+
+        this.mGridView.setOnInBorderKeyEventListener(new TvRecyclerView.OnInBorderKeyEventListener() {
+            public boolean onInBorderKeyEvent(int direction, View view) {
+                if (direction == View.FOCUS_UP) {   //XUAMENG上键刷新完
+                    BaseLazyFragment baseLazyFragment = fragments.get(sortFocused);
+                    if ((baseLazyFragment instanceof GridFragment)) {
+                        ((GridFragment) baseLazyFragment).forceRefresh();
+                        App.showToastShort(HomeActivity.this, "页面刷新成功！");	
+                    }
+                }
+                if (direction != View.FOCUS_DOWN) {
+                    return false;
+                }
+                BaseLazyFragment baseLazyFragment = fragments.get(sortFocused);
+                if (!(baseLazyFragment instanceof GridFragment)) {
+                    return false;
+                }
+                return !((GridFragment) baseLazyFragment).isLoad();      //XUAMENG上键刷新完
+            }
+        });
+
+        tvName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FastClickCheckUtil.check(v);
+                if(dataInitOk && jarInitOk){
+                    String cachePath = FileUtils.getCachePath();          //xuameng点击清空缓存
+                    String cspCachePath = FileUtils.getFilePath()+"/csp/";
+                    String jarCachePath = FileUtils.getFilePath()+"/jar/";
+                    File cspCacheDir = new File(cspCachePath);
+                    File jarCacheDir = new File(jarCachePath);
+                    File cacheDir = new File(cachePath);
+                    new Thread(() -> {
+                        try {
+                            if(cacheDir.exists()) FileUtils.cleanDirectory(cacheDir);
+                            if(cspCacheDir.exists()) FileUtils.cleanDirectory(cspCacheDir);
+                            if(cspCacheDir.exists()) FileUtils.cleanDirectory(jarCacheDir);
+                                // ApiConfig.get().clearJarLoader();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                    }).start();
+                    App.showToastShort(HomeActivity.this, "缓存已清空！");
+                }else {
+                    jumpActivity(SettingActivity.class);		//xuameng加载慢跳转设置
+                }
+            }
+        });
+
+        tvName.setOnLongClickListener(new View.OnLongClickListener() {      //xuameng长按重新加载
+            @Override
+            public boolean onLongClick(View v) {
+                if(dataInitOk && jarInitOk){
+                    Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    Bundle bundle = new Bundle();
+                    bundle.putBoolean("useCache", true);
+                    intent.putExtras(bundle);
+                    HomeActivity.this.startActivity(intent);
+                    App.showToastShort(HomeActivity.this, "重新加载主页数据！");
+                }else {
+                    jumpActivity(SettingActivity.class);   //xuameng加载慢跳转设置
+                }
+                return true;
+            }
+        });
+
+        tvDate.setOnClickListener(new View.OnClickListener() {    //xuameng点击系统时间跳转设置
+            @Override
+            public void onClick(View v) {
+                if(dataInitOk && jarInitOk){           //xuameng MENU键显示主页源
+                    showSiteSwitch(); 
+                }else{
+                    jumpActivity(SettingActivity.class);		//xuameng加载慢跳转设置 
+                }
+            }
+        });
+
+        tvDate.setOnLongClickListener(new View.OnLongClickListener() {      //xuameng长按重新加载
+            @Override
+            public boolean onLongClick(View v) {
+                jumpActivity(SettingActivity.class);		//xuameng加载慢跳转设置   
+                return true;
+            }
+        });
+        setLoadSir(this.contentLayout);
+        //mHandler.postDelayed(mFindFocus, 500);
     }
 
-    public static boolean isWeekAgo(File file)
-    {
-        long oneWeekMillis = 3L * 24 * 60 * 60 * 1000;
-        long timeDiff = System.currentTimeMillis() - file.lastModified();
-        return timeDiff > oneWeekMillis;
+    private boolean skipNextUpdate = false;
+
+    private void initViewModel() {
+        sourceViewModel = new ViewModelProvider(this).get(SourceViewModel.class);
+        sourceViewModel.sortResult.observe(this, new Observer<AbsSortXml>() {
+            @Override
+            public void onChanged(AbsSortXml absXml) {
+                if (skipNextUpdate) {
+                    skipNextUpdate = false;
+                    return;
+                }
+                showSuccess();
+                if (absXml != null && absXml.classes != null && absXml.classes.sortList != null) {
+                    sortAdapter.setNewData(DefaultConfig.adjustSort(ApiConfig.get().getHomeSourceBean().getKey(), absXml.classes.sortList, true));
+                } else {
+                    sortAdapter.setNewData(DefaultConfig.adjustSort(ApiConfig.get().getHomeSourceBean().getKey(), new ArrayList<>(), true));
+                }
+                initViewPager(absXml);
+            }
+        });
     }
 
-    public static void deleteFile(File file) {
-        if (!file.exists()) return;
-        if (file.isFile()) {
-            if (file.canWrite()) file.delete();
+    private boolean dataInitOk = false;
+    private boolean jarInitOk = false;
+    private boolean searchSpiderWarmStarted = false;
+
+    private void initData() {
+        Hawk.put(HawkConfig.API_INIT_OK, true);
+        refreshEmpty = false;	//xuameng打断加载判断
+        SourceBean home = ApiConfig.get().getHomeSourceBean();
+        if (home != null && home.getName() != null && !home.getName().isEmpty())
+            tvName.setText(home.getName());
+        if (dataInitOk && jarInitOk) {
+            warmSearchSpidersOnce();
+            //showLoading();
+            sourceViewModel.getSort(ApiConfig.get().getHomeSourceBean().getKey());
+            if (hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                LOG.e("有");
+            } else {
+                LOG.e("无");
+            }
             return;
         }
-        if (file.isDirectory()) {
-            File[] files = file.listFiles();
-            if (files == null || files.length == 0) {
-                if (file.canWrite()) file.delete();
-                return;
+        showLoading();
+        if (dataInitOk && !jarInitOk) {
+            if (!ApiConfig.get().getSpider().isEmpty()) {
+                ApiConfig.get().loadJar(useCacheConfig, ApiConfig.get().getSpider(), new ApiConfig.LoadConfigCallback() {
+                    @Override
+                    public void success() {
+                        jarInitOk = true;
+                        mHandler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (!useCacheConfig) {
+                                    if (Hawk.get(HawkConfig.HOME_DEFAULT_SHOW, false)) {         //xuameng直接进入直播
+                                        jumpActivity(LivePlayActivity.class);
+                                    }
+                                if (!ApiConfig.get().JvhuiWarning.isEmpty()){
+                                    String JvhuiWarning = ApiConfig.get().JvhuiWarning;
+                                    App.showToastShort(HomeActivity.this, (JvhuiWarning));
+                                }else{
+                                    App.showToastShort(HomeActivity.this, "聚汇影视提示：jar加载成功！");									}
+                                }
+                                initData();
+                                checkMicrophonePermission();  //xuameng音频权限
+                            }
+                        }, 50);
+                    }
+
+                    @Override
+                    public void notice(String msg) {
+                        mHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                App.showToastShort(HomeActivity.this, msg);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void error(String msg) {
+                        jarInitOk = true;
+                        dataInitOk = true;
+                        mHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                App.showToastShort(HomeActivity.this, "聚汇影视提示：jar加载失败！");
+                                initData();
+                                checkMicrophonePermission();  //xuameng音频权限
+                            }
+                        });
+                    }
+                });
             }
-            for(File one : files) {
-                deleteFile(one);
+            return;
+        }
+        ApiConfig.get().loadConfig(useCacheConfig, new ApiConfig.LoadConfigCallback() {
+            TipDialog dialog = null;
+
+            @Override
+            public void notice(String msg) {
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        App.showToastShort(HomeActivity.this, msg);
+                    }
+                });
             }
-        }
-        return;
-    }
 
-    public static void cleanPlayerCache() {
-        String ijkCachePath = getCachePath() + "ijkcaches";
-        String thunderCachePath = getCachePath() + "thunder";
-		String exoCachePath = getCachePath() + "exo-video-cache";     //xuameng exo缓存
-		String jpaCachePath = getCachePath() + "jpali";     //xuameng jp缓存
-        File ijkCacheDir = new File(ijkCachePath);
-        File thunderCacheDir = new File(thunderCachePath);
-		File exoCachePathDir = new File(exoCachePath);       //xuameng exo缓存
-		File jpaCachePathDir = new File(jpaCachePath + File.separator + "Downloads");       //xuameng jp缓存
-
-        try {
-            if (ijkCacheDir.exists()) cleanDirectory(ijkCacheDir);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        try {
-            if (thunderCacheDir.exists()) cleanDirectory(thunderCacheDir);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        try {
-            if (exoCachePathDir.exists()) cleanDirectory(exoCachePathDir);    //xuameng exo缓存
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-		try {
-            if (jpaCachePathDir.exists()) cleanDirectory(jpaCachePathDir);    //xuameng jp缓存
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static String read(String path) {
-        try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(getLocal(path))));
-            StringBuilder sb = new StringBuilder();
-            String text;
-            while ((text = br.readLine()) != null) sb.append(text).append("\n");
-            br.close();
-            return sb.toString();
-        } catch (Exception e) {
-            return "";
-        }
-    }
-
-    public static String getFileName(String filePath){
-        if(TextUtils.isEmpty(filePath)) return "";
-        String fileName = filePath;
-        int p = fileName.lastIndexOf(File.separatorChar);
-        if(p != -1){
-            fileName = fileName.substring(p + 1);
-        }
-        return fileName;
-    }
-
-    public static String getFileNameWithoutExt(String filePath){
-        if(TextUtils.isEmpty(filePath)) return "";
-        String fileName = filePath;
-        int p = fileName.lastIndexOf(File.separatorChar);
-        if(p != -1){
-            fileName = fileName.substring(p + 1);
-        }
-        p = fileName.indexOf('.');
-        if(p != -1){
-            fileName = fileName.substring(0, p);
-        }
-        return fileName;
-    }
-
-    public static String getFileExt(String fileName){
-        if(TextUtils.isEmpty(fileName)) return "";
-        int p = fileName.lastIndexOf('.');
-        if(p != -1) {
-            return fileName.substring(p).toLowerCase();
-        }
-        return "";
-    }
-
-    public static boolean hasExtension(String path) {
-        int lastDotIndex = path.lastIndexOf(".");
-        int lastSlashIndex = Math.max(path.lastIndexOf("/"), path.lastIndexOf("\\"));
-        // 如果路径中有点号，并且点号在最后一个斜杠之后，认为有后缀
-        return lastDotIndex > lastSlashIndex && lastDotIndex < path.length() - 1;
-    }
-    public static void saveCache(File cache,String json){
-        try {
-            File cacheDir = cache.getParentFile();
-            if (!cacheDir.exists())
-                cacheDir.mkdirs();
-            if (cache.exists())
-                cache.delete();
-            FileOutputStream fos = new FileOutputStream(cache);
-            fos.write(json.getBytes("UTF-8"));
-            fos.flush();
-            fos.close();
-        } catch (Throwable th) {
-            th.printStackTrace();
-        }
-    }
-
-    //JS  工具方法
-    private static final Pattern URL_JOIN = Pattern.compile("^http.*\\.(js|txt|json)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
-    public static String loadModule(String name) {
-        String rel = null;
-        try {
-            if (name.contains("gbk.js")) {
-                name = "gbk.js";
-            } else if (name.contains("模板.js")) {
-                name = "模板.js";
-            } else if (name.contains("cat.js")) {
-                name = "cat.js";
+            @Override
+            public void success() {
+                dataInitOk = true;
+                if (ApiConfig.get().getSpider().isEmpty()) {
+                    jarInitOk = true;
+                }
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        initData();
+                    }
+                }, 50);
             }
-            LOG.i("echo-loadModule "+name);
-            Matcher m = URL_JOIN.matcher(name);
-            if (m.find()) {
-                if (!Hawk.get(HawkConfig.DEBUG_OPEN, false)) {
-                    String cache = getCache(MD5.encode(name));
-                    rel= cache;
-                    if (StringUtils.isEmpty(cache)) {
-                        String netStr = get(name);
-                        if (!TextUtils.isEmpty(netStr)) {
-                            setCache(604800, MD5.encode(name), netStr);
+
+            @Override
+            public void error(String msg) {
+                if (msg.equalsIgnoreCase("-1")) {
+                    mHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            dataInitOk = true;
+                            jarInitOk = true;
+                            initData();
                         }
-                        rel= netStr;
+                    });
+                    return;
+                }
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (dialog == null)
+                            dialog = new TipDialog(HomeActivity.this, msg, "重试", "取消", new TipDialog.OnListener() {
+                                @Override
+                                public void left() {
+                                    mHandler.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            initData();
+                                            //dialog.hide();
+                                            dialog.dismiss();   //xuameng显示BUG
+                                        }
+                                    });
+                                }
+
+                                @Override
+                                public void right() {
+                                    dataInitOk = true;
+                                    jarInitOk = true;
+                                    mHandler.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            initData();
+                                            //dialog.hide();
+                                            Hawk.put(HawkConfig.API_INIT_OK, false);  //判断API加载成功
+                                            dialog.dismiss();  //xuameng显示BUG
+                                        }
+                                    });
+                                }
+
+                                @Override
+                                public void cancel() {
+                                    dataInitOk = true;
+                                    jarInitOk = true;
+                                    mHandler.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            initData();
+                                            //dialog.hide();
+                                            Hawk.put(HawkConfig.API_INIT_OK, false);  //判断API加载成功
+                                            dialog.dismiss();  //xuameng显示BUG
+                                        }
+                                    });
+                                }
+                            });
+                        if (!dialog.isShowing() && !refreshEmpty){   //xuameng只要打断加载就不显示错误对话框
+                            showSuccess();  //xuameng显示BUG
+                            dialog.show();
+                        }
+                    }
+                });
+            }
+        }, this);
+    }
+
+    private void initViewPager(AbsSortXml absXml) {
+        if (sortAdapter.getData().size() > 0) {
+            for (MovieSort.SortData data : sortAdapter.getData()) {
+                if (data.id.equals("my0")) {
+                    if (Hawk.get(HawkConfig.HOME_REC, 0) == 1 && absXml != null && absXml.videoList != null && absXml.videoList.size() > 0) {
+                        fragments.add(UserFragment.newInstance(absXml.videoList));
+                    } else {
+                        fragments.add(UserFragment.newInstance(null));
                     }
                 } else {
-                    rel= get(name);
+                    fragments.add(GridFragment.newInstance(data));
                 }
-            } else if (name.startsWith("assets://")) {
-                rel= getAsOpen(name.substring(9));
-            } else if (isAsFile(name, "js/lib")) {
-                rel=getAsOpen("js/lib/" + name);
-            } else if (name.startsWith("file://")) {
-                rel=get(ControlManager.get()
-                        .getAddress(true) + "file/" + name.replace("file:///", "")
-                        .replace("file://", ""));
-            } else if (name.startsWith("clan://localhost/")) {
-                rel=get(ControlManager.get()
-                        .getAddress(true) + "file/" + name.replace("clan://localhost/", ""));
-            } else if (name.startsWith("clan://")) {
-                String substring = name.substring(7);
-                int indexOf = substring.indexOf(47);
-                rel=get("http://" + substring.substring(0, indexOf) + "/file/" + substring.substring(indexOf + 1));
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return rel;
-    }
-
-
-    private static final Map<String, Set<String>> cachedDirFiles = new HashMap<>();
-    public static boolean isAsFile(String name,String dir) {
-        // 1. 先从缓存里取目录列表
-        Set<String> files = cachedDirFiles.get(dir);
-        if (files == null) {
-            LOG.i("echo-读取AssetsList");
+            pageAdapter = new HomePageAdapter(getSupportFragmentManager(), fragments);
             try {
-                String[] list = App.getInstance().getAssets().list(dir);
-                files = new HashSet<>(Arrays.asList(list));
-            } catch (IOException e) {
-                files = Collections.emptySet();
+                Field field = ViewPager.class.getDeclaredField("mScroller");
+                field.setAccessible(true);
+                FixedSpeedScroller scroller = new FixedSpeedScroller(mContext, new AccelerateInterpolator());
+                field.set(mViewPager, scroller);
+                scroller.setmDuration(300);
+            } catch (Exception e) {
             }
-            cachedDirFiles.put(dir, files);
+            mViewPager.setPageTransformer(true, new DefaultTransformer());
+            mViewPager.setAdapter(pageAdapter);
+            mViewPager.setCurrentItem(currentSelected, false);  
         }
-        // 2. 内存查找
-        return files.contains(name.trim());
     }
 
-    public static String getAsOpen(String name) {
+    @SuppressLint("NotifyDataSetChanged")
+    @Override
+    public void onBackPressed() {
+        if(isLoading()){
+            refreshEmpty();     //xuameng打断加载优化
+            return;
+        }
+
+         // 如果处于 VOD 删除模式，则退出该模式并刷新界面
+        if (HawkConfig.hotVodDelete) {
+            HawkConfig.hotVodDelete = false;
+            if(!Hawk.get(HawkConfig.HOME_REC_STYLE, false)){   //xuameng首页单行
+                UserFragment.homeHotVodAdapterxu.notifyDataSetChanged();
+            }else{
+                UserFragment.homeHotVodAdapter.notifyDataSetChanged();
+            }
+            return;
+        } 
+		
+        // 检查 fragments 状态
+        if (this.fragments.size() <= 0 || this.sortFocused >= this.fragments.size() || this.sortFocused < 0) {
+            exit();
+            return;
+        }
+
+        BaseLazyFragment baseLazyFragment = this.fragments.get(this.sortFocused);
+        if (baseLazyFragment instanceof GridFragment) {
+            GridFragment grid = (GridFragment) baseLazyFragment;
+            // 如果当前 Fragment 能恢复之前保存的 UI 状态，则直接返回
+            if (grid.restoreView()) {
+                return;
+            }
+            // 如果 sortFocusView 存在且没有获取焦点，则请求焦点
+            if (this.sortFocusView != null && !this.sortFocusView.isFocused()) {
+                if (currentView != null && PositionXu !=0) {   // xuameng防止空指针
+                    //this.sortFocusView.requestFocus(); //xuameng这段代码手机使用时菜单失去焦点会闪退   
+                    mGridView.setSelection(PositionXu);   //xuameng处理手机滑动主页菜单失去焦点时按返回键闪退
+                }
+            }
+            // 如果当前不是第一个界面，则将列表设置到第一项
+            else if (this.sortFocused != 0) {
+                mGridView.setSelection(0);  
+            } else {
+                exit();
+            }
+        } else if (baseLazyFragment instanceof UserFragment && UserFragment.tvHotList1.canScrollVertically(-1)) {
+            // 如果 UserFragment 列表可以向上滚动，则滚动到顶部
+            UserFragment.tvHotList1.scrollToPosition(0);
+            mGridView.setSelection(0);  
+        } else {
+            exit();
+        }
+    }
+
+    public void showExitXu(){
+        App.HideToast();
+        LayoutInflater inflater = getLayoutInflater();
+        View customToastView = inflater.inflate(R.layout.exit_toast, null);
+        ImageView imageView = customToastView.findViewById(R.id.toastImage);
+        Toast toast = new Toast(getApplicationContext());
+        toast.setDuration(Toast.LENGTH_SHORT);
+        toast.setView(customToastView);
+        toast.setGravity(Gravity.CENTER, 0, 0);      //xuameng 20为左右，0是上下
+        toast.show();
+    }
+
+    private void exit() {
+        if (System.currentTimeMillis() - mExitTime < 2000) {
+            //这一段借鉴来自 q群老哥 IDCardWeb
+            App.HideToast();
+            // 1. 清除所有Activity（增强版）
+            AppManager.getInstance().finishAllActivity();
+            // 2. 注销事件总线
+            EventBus.getDefault().unregister(this);
+            // 3. 停止服务（需确保stopServer()内部释放了所有资源）
+            ControlManager.get().stopServer();
+            // 4. 强制终止进程（组合方案）
+            android.os.Process.killProcess(android.os.Process.myPid());
+            System.exit(0);  // 0状态码
+        } else {
+            mExitTime = System.currentTimeMillis();
+            showExitXu();        
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mHandler.post(mRunnable);
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mHandler.removeCallbacksAndMessages(null);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void refresh(RefreshEvent event) {
+        if (event.type == RefreshEvent.TYPE_PUSH_URL) {
+            if (ApiConfig.get().getSource("push_agent") != null) {
+                Intent newIntent = new Intent(mContext, DetailActivity.class);
+                newIntent.putExtra("id", (String) event.obj);
+                newIntent.putExtra("sourceKey", "push_agent");
+                newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                HomeActivity.this.startActivity(newIntent);
+            }
+        } else if (event.type == RefreshEvent.TYPE_FILTER_CHANGE) {
+            // xuameng 只刷新当前选中 item
+            int pos = sortAdapter.getSelectedPosition();
+            if (pos > 0) {  //xuameng 主页为0不参与
+                MovieSort.SortData sortData = sortAdapter.getItem(pos);
+                if (sortData != null) {
+                    sortAdapter.notifyItemChanged(pos);
+                }
+            }
+        }
+    }
+
+    private Runnable mDataRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (sortChange) {
+                sortChange = false;
+                BaseLazyFragment baseLazyFragment = fragments.get(sortFocused);
+                if (sortFocused != currentSelected) {
+                    currentSelected = sortFocused;
+                    mViewPager.setCurrentItem(sortFocused, false); 
+                    changeTop(sortFocused != 0);
+                    if (baseLazyFragment instanceof GridFragment && ((GridFragment) baseLazyFragment).shouldReloadOnSelect()) {
+                        ((GridFragment) baseLazyFragment).forceRefresh();
+                    }
+                } else if (baseLazyFragment instanceof GridFragment && ((GridFragment) baseLazyFragment).shouldReloadOnSelect()) {
+                    ((GridFragment) baseLazyFragment).forceRefresh();
+                }
+            }
+        }
+    };
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (topHide < 0)
+            return false;
+        int keyCode = event.getKeyCode();
+        if (event.getAction() == KeyEvent.ACTION_DOWN) {
+            if (keyCode == KeyEvent.KEYCODE_MENU) {
+                if(dataInitOk && jarInitOk){           //xuameng MENU键显示主页源
+                    showSiteSwitch(); 
+                }else {
+                    jumpActivity(SettingActivity.class);   //xuameng主页加载缓慢时跳转到设置页面
+                }
+            }
+        } else if (event.getAction() == KeyEvent.ACTION_UP) {
+
+        }
+        return super.dispatchKeyEvent(event);
+    }
+
+    byte topHide = 0;
+
+    private void changeTop(boolean hide) {
+        ViewObj viewObj = new ViewObj(topLayout, (ViewGroup.MarginLayoutParams) topLayout.getLayoutParams());
+        AnimatorSet animatorSet = new AnimatorSet();
+        animatorSet.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                topHide = (byte) (hide ? 1 : 0);
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
+        if (hide && topHide == 0) {
+            animatorSet.playTogether(new Animator[]{
+                    ObjectAnimator.ofObject(viewObj, "marginTop", new IntEvaluator(),
+                            new Object[]{
+                                    Integer.valueOf(AutoSizeUtils.mm2px(this.mContext, 10.0f)),
+                                    Integer.valueOf(AutoSizeUtils.mm2px(this.mContext, 0.0f))
+                            }),
+                    ObjectAnimator.ofObject(viewObj, "height", new IntEvaluator(),
+                            new Object[]{
+                                    Integer.valueOf(AutoSizeUtils.mm2px(this.mContext, 50.0f)),
+                                    Integer.valueOf(AutoSizeUtils.mm2px(this.mContext, 1.0f))
+                            }),
+                    ObjectAnimator.ofFloat(this.topLayout, "alpha", new float[]{1.0f, 0.0f})});
+            animatorSet.setDuration(250);
+            animatorSet.start();
+            return;
+        }
+        if (!hide && topHide == 1) {
+            animatorSet.playTogether(new Animator[]{
+                    ObjectAnimator.ofObject(viewObj, "marginTop", new IntEvaluator(),
+                            new Object[]{
+                                    Integer.valueOf(AutoSizeUtils.mm2px(this.mContext, 0.0f)),
+                                    Integer.valueOf(AutoSizeUtils.mm2px(this.mContext, 10.0f))
+                            }),
+                    ObjectAnimator.ofObject(viewObj, "height", new IntEvaluator(),
+                            new Object[]{
+                                    Integer.valueOf(AutoSizeUtils.mm2px(this.mContext, 1.0f)),
+                                    Integer.valueOf(AutoSizeUtils.mm2px(this.mContext, 50.0f))
+                            }),
+                    ObjectAnimator.ofFloat(this.topLayout, "alpha", new float[]{0.0f, 1.0f})});
+            animatorSet.setDuration(250);
+            animatorSet.start();
+            return;
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mHandler.removeCallbacksAndMessages(null);
+        EventBus.getDefault().unregister(this);
+        AppManager.getInstance().appExit(0);
+        ControlManager.get().stopServer();
+    }
+
+    private SelectDialog<SourceBean> mSiteSwitchDialog;
+
+    void showSiteSwitch() {
+        List<SourceBean> sites = ApiConfig.get().getSwitchSourceBeanList();
+        if (!sites.isEmpty()){
+            int select = sites.indexOf(ApiConfig.get().getHomeSourceBean());
+            if (select < 0 || select >= sites.size()) select = 0;
+            if (mSiteSwitchDialog == null) {
+                mSiteSwitchDialog = new SelectDialog<>(HomeActivity.this);
+                TvRecyclerView tvRecyclerView = mSiteSwitchDialog.findViewById(R.id.list);
+                // 根据 sites 数量动态计算列数
+                int spanCount = (int) Math.floor(sites.size() / 20.0);
+                spanCount = Math.min(spanCount, 2);
+                tvRecyclerView.setLayoutManager(new V7GridLayoutManager(mSiteSwitchDialog.getContext(), spanCount + 1));
+                // 设置对话框宽度
+                ConstraintLayout cl_root = mSiteSwitchDialog.findViewById(R.id.cl_root);
+                ViewGroup.LayoutParams clp = cl_root.getLayoutParams();
+                clp.width = AutoSizeUtils.mm2px(mSiteSwitchDialog.getContext(), 380 + 200 * spanCount);
+                mSiteSwitchDialog.setTip("请选择首页数据源");
+            }
+            mSiteSwitchDialog.setAdapter(new SelectDialogAdapter.SelectDialogInterface<SourceBean>() {
+            @Override
+                public void click(SourceBean value, int pos) {
+                    // xuameng清空所有主页菜单过滤器  处理切换主页数据还存在的BUG 如电线杆变色，过滤内容还在等
+                    for (int i = 0; i < sortAdapter.getItemCount(); i++) {
+                        MovieSort.SortData sortData = sortAdapter.getItem(i);
+                        if (sortData != null && sortData.filterSelect != null) {
+                            sortData.filterSelect.clear();
+                        }
+                    }
+                    ApiConfig.get().setSourceBean(value);
+                    Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    Bundle bundle = new Bundle();
+                    bundle.putBoolean("useCache", true);
+                    intent.putExtras(bundle);
+                    HomeActivity.this.startActivity(intent);
+                }
+                @Override
+                public String getDisplay(SourceBean val) {
+                    return val.getName();
+                }
+            }, new DiffUtil.ItemCallback<SourceBean>() {
+                @Override
+                public boolean areItemsTheSame(@NonNull SourceBean oldItem, @NonNull SourceBean newItem) {
+                    return oldItem == newItem;
+                }
+                @Override
+                public boolean areContentsTheSame(@NonNull SourceBean oldItem, @NonNull SourceBean newItem) {
+                    return oldItem.getKey().equals(newItem.getKey());
+                }
+            }, sites, select);
+            mSiteSwitchDialog.show();
+        }else {
+            App.showToastLong(HomeActivity.this, "主页暂无数据！联系许大师吧！");
+        }
+    }
+
+    private void refreshEmpty(){   //xuameng打断加载优化
+        refreshEmpty = true;	//xuameng打断加载判断
+        OkGo.getInstance().cancelTag("loadjar");    //xuameng打断加载
+        OkGo.getInstance().cancelTag("loadUrl");    //xuameng打断加载
+        jarInitOk = true;
+        dataInitOk = true;
+        skipNextUpdate=true;
+        showSuccess();
+        sortAdapter.setNewData(DefaultConfig.adjustSort(ApiConfig.get().getHomeSourceBean().getKey(), new ArrayList<>(), true));
+        initViewPager(null);
+        App.showToastShort(HomeActivity.this, "聚汇影视提示：已打断当前源加载！");
+    }
+
+    // 触发权限检查的入口方法
+    public void checkMicrophonePermission() {
+        if (Build.VERSION.SDK_INT >= MARSHMALLOW) {
+            if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) 
+                != PackageManager.PERMISSION_GRANTED) {
+                
+                if (shouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO)) {
+                    // 用户已拒绝过权限，显示解释弹窗
+                    showPermissionDeniedDialog();
+                } else {
+                    // 首次请求或永久拒绝时发起标准权限请求
+                    requestRecordAudioPermission();
+                }
+            } else {
+                Log.d(TAG, "麦克风权限已授予");
+            }
+        } else {
+            // 6.0以下版本默认视为已授权
+        }
+    }
+
+    /**
+     * 标准权限请求方法
+     */
+    private void requestRecordAudioPermission() {
+        ActivityCompat.requestPermissions(
+            this,
+            new String[]{Manifest.permission.RECORD_AUDIO},
+            REQUEST_CODE_RECORD_AUDIO
+        );
+    }
+
+    /**
+     * 权限请求结果回调
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, 
+            String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        
+        if (requestCode == REQUEST_CODE_RECORD_AUDIO) {
+            if (grantResults.length > 0 && 
+                grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            } else {
+                if (!shouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO)) {
+                    // 用户勾选"不再询问"后的处理
+                    showPermanentDenialDialog();
+                }
+            }
+        }
+    }
+
+    /**
+     * 权限被永久拒绝时的提示
+     */
+    private void showPermanentDenialDialog() {
+        SharedPreferences prefs = getSharedPreferences(PREF_PERMISSION_DIALOG, MODE_PRIVATE);
+    
+        // 检查是否已经显示过
+        if (prefs.getBoolean(KEY_DIALOG_SHOWN, false)) {
+            return;
+        }
+
+        new AlertDialog.Builder(this)
+            .setTitle("权限被永久禁用")
+            .setMessage("聚汇影视提示您：您已永久拒绝麦克风权限，请前往设置手动开启！\n\n如点击取消后将不再提示，音频柱状图功能也将无法使用！")
+            .setPositiveButton("去设置", (dialog, which) -> launchSystemSettings())
+            .setNegativeButton("取消", (dialog, which) -> {
+                // 用户点击取消时记录状态
+                prefs.edit().putBoolean(KEY_DIALOG_SHOWN, true).apply();
+            })
+            .setCancelable(false)
+            .show();
+    }
+
+    /**
+     * 权限拒绝后的解释弹窗
+     */
+    private void showPermissionDeniedDialog() {
+        new AlertDialog.Builder(this)
+            .setTitle("功能需要权限")
+            .setMessage("聚汇影视提示您：音频柱状图功能需要访问麦克风！请授权！")
+            .setPositiveButton("再次请求", (dialog, which) -> requestRecordAudioPermission())
+            .setNegativeButton("取消", null)
+            .show();
+    }
+
+    /**
+     * 跳转应用设置页面
+     */
+    private void launchSystemSettings() {
         try {
-            InputStream is = App.getInstance().getAssets().open(name);
-            byte[] data = new byte[is.available()];
-            is.read(data);
-            return new String(data, "UTF-8");
+            Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                .setData(Uri.fromParts("package", getPackageName(), null))
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, "跳转设置失败: " + e.getMessage());
+            // 备用方案：跳转到应用列表
+            startActivity(new Intent(Settings.ACTION_APPLICATION_SETTINGS));
         }
-        return "";
     }
 
-    public static String getCache(String name) {
-        try {
-            String code = "";
-            File file = open(name);
-            if (file.exists()) {
-                code = new String(readSimple(file));
+    /**
+     * xuameng安全更新SortAdapter的选中位置
+     * 核心：避免在RecyclerView.isComputingLayout()时调用notifyItemChanged()
+     */
+    private void safeUpdateSortAdapterSelection(int position, TvRecyclerView recyclerView) {
+        if (recyclerView.isComputingLayout() || recyclerView.isScrolling()) {
+            recyclerView.post(() -> {
+                sortAdapter.setSelectedPosition(position);
+            });
+        } else {
+            sortAdapter.setSelectedPosition(position);
+        }
+    }
+
+/*    // xuameng添加全局异常处理器
+    private void setupExceptionHandler() {
+        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+            @Override
+            public void uncaughtException(Thread thread, Throwable throwable) {
+                LOG.e("HomeActivity未捕获异常: ");
+                throwable.printStackTrace();
+            
+                // 如果是LayoutManager相关的空指针异常，重启
+                if (throwable instanceof NullPointerException) {
+                    String stackTrace = Log.getStackTraceString(throwable);
+                    if (stackTrace.contains("findViewByPosition") || 
+                        stackTrace.contains("LayoutManager")) {
+                        Intent intent = new Intent(App.getInstance(), HomeActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                        // 强制停止当前进程
+                        android.os.Process.killProcess(android.os.Process.myPid());
+                        System.exit(0);
+                    }
+                }            
             }
-            if (TextUtils.isEmpty(code)) {
-                return "";
-            }
-            JsonObject asJsonObject = (new Gson().fromJson(code, JsonObject.class)).getAsJsonObject();
-            if (((long) asJsonObject.get("expires").getAsInt()) <= System.currentTimeMillis() / 1000) {
-                recursiveDelete(open(name));
-            }
-            return asJsonObject.get("data").getAsString();
-        } catch (Exception e4) {
-            return "";
-        }
+        });
     }
-
-    public static void setCache(int time, String name, String data) {
-        try {
-            JSONObject jSONObject = new JSONObject();
-            jSONObject.put("expires", (int) (time + (System.currentTimeMillis() / 1000)));
-            jSONObject.put("data", data);
-            writeSimple(jSONObject.toString().getBytes(), open(name));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void setCacheByte(String name, byte[] data) {
-        try {
-            writeSimple(byteMerger("//DRPY".getBytes(), Base64.encode(data, Base64.URL_SAFE)), open("B_" + name));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static byte[] byteMerger(byte[] bt1, byte[] bt2){
-        byte[] bt3 = new byte[bt1.length+bt2.length];
-        System.arraycopy(bt1, 0, bt3, 0, bt1.length);
-        System.arraycopy(bt2, 0, bt3, bt1.length, bt2.length);
-        return bt3;
-    }
-
-    public static String get(String str) {
-        return get(str, null);
-    }
-
-    public static String get(String str, Map<String, String> headerMap) {
-        if (headerMap == null) {
-            headerMap=new HashMap<>();
-            headerMap.put("User-Agent",str.startsWith("https://gitcode.net/") ? UA.random() : "okhttp/3.15");
-        }
-        return OkHttp.string(str, headerMap);
-    }
-
-    public static File open(String str) {
-        return new File(getExternalCachePath() + "/qjscache_" + str + ".js");
-    }
-    public static String getExternalCachePath() {
-        File externalCacheDir = App.getInstance().getExternalCacheDir();
-        if (externalCacheDir == null){
-            return getCachePath();
-        }
-        return externalCacheDir.getAbsolutePath();
-    }
+*/
 }
