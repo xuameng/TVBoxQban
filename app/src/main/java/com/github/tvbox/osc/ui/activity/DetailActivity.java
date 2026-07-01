@@ -794,21 +794,23 @@ public class DetailActivity extends BaseActivity {
 
     @SuppressLint("NotifyDataSetChanged")
     void refreshList() {     //xuameng 不同源选集不准确及 自动播放源不对等问题 切换回正在播放的源可以恢复到正确状态等BUG
-if (isPushUrl) {
-	return;
-}
-    if (vodInfo == null || vodInfo.seriesMap == null || vodInfo.playFlag == null) {
-        return;
-    }
 
-    List<VodInfo.VodSeries> seriesList = vodInfo.seriesMap.get(vodInfo.playFlag);
-    if (seriesList == null || seriesList.isEmpty()) {
-        if (!vodInfo.seriesMap.isEmpty()) {
-            vodInfo.playFlag = (String) vodInfo.seriesMap.keySet().toArray()[0];
-            seriesList = vodInfo.seriesMap.get(vodInfo.playFlag);
+        if (isPushUrl) {  //xuameng 推送解析时返回防UBG
+	        return;
         }
-        if (seriesList == null) return;
-    }
+        if (vodInfo == null || vodInfo.seriesMap == null || vodInfo.playFlag == null) {  //XUAMENG 防空
+            return;
+        }
+
+        List<VodInfo.VodSeries> seriesList = vodInfo.seriesMap.get(vodInfo.playFlag);
+        if (seriesList == null || seriesList.isEmpty()) {   //XUAMENG 防空
+            if (!vodInfo.seriesMap.isEmpty()) {
+                vodInfo.playFlag = (String) vodInfo.seriesMap.keySet().toArray()[0];
+                seriesList = vodInfo.seriesMap.get(vodInfo.playFlag);
+            }
+            if (seriesList == null) return;
+        }
+
         if (vodInfo.seriesMap.get(vodInfo.playFlag).size() <= vodInfo.playIndex) {
             vodInfo.playIndex = 0;
         }
@@ -1552,8 +1554,10 @@ if (isPushUrl) {
             if (playFragment != null && playFragment.onBackPressed()) return;//xuameng上一级交给VODController控制
             exitFullPreview();
             switchToPlayingSourceAndScroll();   //xuameng滚动到当前剧集
-            List<VodInfo.VodSeries> list = vodInfo.seriesMap.get(vodInfo.playFlag);
-            mSeriesGroupView.setVisibility(list.size()>GroupCount ? View.VISIBLE : View.GONE);
+            if (vodInfo != null && vodInfo.seriesMap != null) {
+                List<VodInfo.VodSeries> list = vodInfo.seriesMap.get(vodInfo.playFlag);
+                mSeriesGroupView.setVisibility(list.size()>GroupCount ? View.VISIBLE : View.GONE);
+            }
             return;
         }
         else if (seriesSelect) {
