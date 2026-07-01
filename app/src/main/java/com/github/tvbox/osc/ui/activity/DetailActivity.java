@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -150,7 +149,6 @@ public class DetailActivity extends BaseActivity {
     private int GroupCount;
     private Handler mHandler = new Handler();  //xuameng 新增推送
     private volatile boolean isActivityDestroyed = false;  //xuameng判断页面是否已关闭
-    boolean showPreview = Hawk.get(HawkConfig.SHOW_PREVIEW, true);  //xuameng true是显示小窗口,false是不显示小窗口
 
     @Override
     protected int getLayoutResID() {
@@ -219,7 +217,9 @@ public class DetailActivity extends BaseActivity {
         mGridViewFlag.setAdapter(seriesFlagAdapter);
         preFlag = "";
         if (showPreview) {
-            ensurePlayFragment();
+            playFragment = new PlayFragment();
+            getSupportFragmentManager().beginTransaction().add(R.id.previewPlayer, playFragment).commit();
+            getSupportFragmentManager().beginTransaction().show(playFragment).commitAllowingStateLoss();
             tvPlay.setText("全屏");
         }
 
@@ -259,14 +259,13 @@ public class DetailActivity extends BaseActivity {
         tvPlayUrl.setFocusable(false);
 
         llPlayerFragmentContainerBlock.setOnClickListener(v -> {
-            enterFullPreview();
+            toggleFullPreview();
         });
 
         tvSort.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onClick(View v) {
-                FastClickCheckUtil.check(v);
                 if (vodInfo != null && vodInfo.seriesMap.size() > 0) {
                     if (isPushUrl) {
                         App.showToastShort(DetailActivity.this, "正在解析推送地址，请稍后再试！");
@@ -318,7 +317,6 @@ public class DetailActivity extends BaseActivity {
         tvPush.setOnClickListener(new View.OnClickListener() {  //xuameng播放窗口中的远程推送
             @Override
             public void onClick(View v) {
-                FastClickCheckUtil.check(v);
                 PushDialog pushDialog = new PushDialog(mContext);
                 pushDialog.show();
             }
@@ -341,7 +339,7 @@ public class DetailActivity extends BaseActivity {
             public void onClick(View v) {
                 FastClickCheckUtil.check(v);
                 if (showPreview) {
-                    enterFullPreview();
+                    toggleFullPreview();
                 } else {
                     jumpToPlay();
                 }
@@ -363,7 +361,6 @@ public class DetailActivity extends BaseActivity {
         tvPush.setOnLongClickListener(new View.OnLongClickListener() {  
             @Override
             public boolean onLongClick(View v) {
-                FastClickCheckUtil.check(v);
                 //获取剪切板管理器
                 ClipboardManager cm = (ClipboardManager)getSystemService(mContext.CLIPBOARD_SERVICE);
                 //设置内容到剪切板
@@ -388,7 +385,6 @@ public class DetailActivity extends BaseActivity {
         tvQuickSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FastClickCheckUtil.check(v);
                 startQuickSearch();
                 QuickSearchDialog quickSearchDialog = new QuickSearchDialog(DetailActivity.this);
                 EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_QUICK_SEARCH, quickSearchData));
@@ -433,7 +429,6 @@ public class DetailActivity extends BaseActivity {
         tvCollect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FastClickCheckUtil.check(v);
                 if (isPushUrl) {
                     App.showToastShort(DetailActivity.this, "正在解析推送地址，请稍后再试！");
                     return;
@@ -466,7 +461,6 @@ public class DetailActivity extends BaseActivity {
         tvPlayUrl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FastClickCheckUtil.check(v);
                 //获取剪切板管理器
                 ClipboardManager cm = (ClipboardManager)getSystemService(mContext.CLIPBOARD_SERVICE);
                 //设置内容到剪切板
@@ -478,10 +472,10 @@ public class DetailActivity extends BaseActivity {
         tvDesc.setOnClickListener(new View.OnClickListener() {      //xuameng内容简介
             @Override
             public void onClick(View v) {
-                FastClickCheckUtil.check(v);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        FastClickCheckUtil.check(v);
                         DescDialog dialog = new DescDialog(mContext);
                         //  dialog.setTip("内容简介");
                         dialog.setDescribe(removeHtmlTag(mVideo.des));
@@ -506,7 +500,6 @@ public class DetailActivity extends BaseActivity {
         tvDesc.setOnLongClickListener(new View.OnLongClickListener() {  //xuameng内容简介长按复制
             @Override
             public boolean onLongClick(View v) {
-                FastClickCheckUtil.check(v);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -570,7 +563,7 @@ public class DetailActivity extends BaseActivity {
                     // 重要：不再检查是否切换播放源，因为用户只是查看，不是播放
                     // 播放源的切换应该在 jumpToPlay() 中处理
                     // 刷新列表，这会根据当前显示源和播放源的关系设置正确的高亮
-                    safeRefreshList();
+                    refreshList();
                 }
                 seriesFlagFocus = itemView;
             }
@@ -609,7 +602,7 @@ public class DetailActivity extends BaseActivity {
                         reload = true;
                     }
                     //解决当前集不刷新的BUG
-                    if (!TextUtils.isEmpty(preFlag) && !vodInfo.playFlag.equals(preFlag)) {
+                    if (!preFlag.isEmpty() && !vodInfo.playFlag.equals(preFlag)) {
                         reload = true;
                     }
 
@@ -617,7 +610,7 @@ public class DetailActivity extends BaseActivity {
                     seriesAdapter.notifyItemChanged(vodInfo.playIndex);
                     //选集全屏 想选集不全屏的注释下面一行
                     if (showPreview && !fullWindows){
-                        enterFullPreview();
+                        toggleFullPreview();
                     }
                     if (!showPreview || reload) {
                         jumpToPlay();
@@ -719,13 +712,19 @@ public class DetailActivity extends BaseActivity {
             vodInfo.currentPlayFlag = vodInfo.playFlag;
             vodInfo.currentPlayIndex = vodInfo.playIndex;
             Bundle bundle = new Bundle();
-            insertVod(firstsourceKey, vodInfo);
+            //保存历史 - 关键修改：使用当前播放的源进行保存
+        //    String saveSourceKey = vodInfo.currentPlayFlag != null ? vodInfo.currentPlayFlag : sourceKey;
+        //    insertVod(saveSourceKey, vodInfo);
+            // 同时保存一份到初始源，用于兼容性
+          //  if (!saveSourceKey.equals(firstsourceKey)) {
+                insertVod(firstsourceKey, vodInfo);
+          //  }
+        //   insertVod(sourceKey, vodInfo);
             bundle.putString("sourceKey", sourceKey);
             bundle.putString("videoPic", mVideo.pic);   //xuameng 新增给vod显示旋转图片用
 //            bundle.putSerializable("VodInfo", vodInfo);
             App.getInstance().setVodInfo(vodInfo);
             if (showPreview) {
-                ensurePlayFragment();
                 if (previewVodInfo == null) {
                     try {
                         ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -747,11 +746,9 @@ public class DetailActivity extends BaseActivity {
 //                    bundle.putSerializable("VodInfo", previewVodInfo);
                     App.getInstance().setVodInfo(previewVodInfo);
                 }
-                if (playFragment != null) playFragment.setData(bundle);
+                playFragment.setData(bundle);
             } else {
-                ensurePlayFragment();
-                if (playFragment != null) playFragment.setData(bundle);
-                enterFullPreview();
+                jumpActivity(PlayActivity.class, bundle);
             }
         }
     }
@@ -763,7 +760,13 @@ public class DetailActivity extends BaseActivity {
             vodInfo.currentPlayFlag = vodInfo.playFlag;
             vodInfo.currentPlayIndex = vodInfo.playIndex;
             Bundle bundle = new Bundle();
-            insertVod(firstsourceKey, vodInfo);
+            //保存历史 - 关键修改：使用当前播放的源进行保存
+         //   String saveSourceKey = vodInfo.currentPlayFlag != null ? vodInfo.currentPlayFlag : sourceKey;
+          //  insertVod(saveSourceKey, vodInfo);
+            // 同时保存一份到初始源，用于兼容性
+           // if (!saveSourceKey.equals(firstsourceKey)) {
+                insertVod(firstsourceKey, vodInfo);
+           // }
             bundle.putString("sourceKey", sourceKey);
             App.getInstance().setVodInfo(vodInfo);
             if (showPreview) {
@@ -789,35 +792,12 @@ public class DetailActivity extends BaseActivity {
                 }  
             }
             // xuameng刷新列表，这会根据当前显示源和播放源的关系设置正确的高亮
-            safeRefreshList();
+            refreshList();
         }
     }
 
     @SuppressLint("NotifyDataSetChanged")
     void refreshList() {     //xuameng 不同源选集不准确及 自动播放源不对等问题 切换回正在播放的源可以恢复到正确状态等BUG
-
-        if (vodInfo == null || vodInfo.seriesMap == null || vodInfo.playFlag == null) {  //XUAMENG 防空
-            return;
-        }
-
-        // ★ 关键修复：playFlag 不在 map 中或 value 为 null 时直接 return
-        List<VodInfo.VodSeries> currentSeries = vodInfo.seriesMap.get(vodInfo.playFlag);
-        if (currentSeries == null) {
-            // 尝试切回第一个可用源
-            if (!vodInfo.seriesMap.isEmpty()) {
-                for (String k : vodInfo.seriesMap.keySet()) {
-                    if (vodInfo.seriesMap.get(k) != null && !vodInfo.seriesMap.get(k).isEmpty()) {
-                        vodInfo.playFlag = k;
-                        currentSeries = vodInfo.seriesMap.get(k);
-                        break;
-                    }
-                }
-            }
-            if (currentSeries == null) {
-                return; // 仍然无数据，放弃刷新
-            }
-        }
-
         if (vodInfo.seriesMap.get(vodInfo.playFlag).size() <= vodInfo.playIndex) {
             vodInfo.playIndex = 0;
         }
@@ -879,21 +859,6 @@ public class DetailActivity extends BaseActivity {
         customSeriesScrollPos(vodInfo.playIndex);  //xuameng 直接滚动
     }
 
-    private void safeRefreshList() {     //xuameng 修复我的收藏滚动闪退   频道高亮
-        // 检查 RecyclerView 是否处于安全状态
-        if (mGridView.isComputingLayout() || mGridView.isScrolling()) {
-            // 延迟执行，避免在布局计算或滚动过程中操作
-            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    safeRefreshList(); 
-                }
-            }, 20);
-            return;
-        }
-        refreshList(); 
-    }
-
     @SuppressLint("NotifyDataSetChanged")
     private void setSeriesGroupOptions(){
         List<VodInfo.VodSeries> list = vodInfo.seriesMap.get(vodInfo.playFlag);
@@ -931,7 +896,7 @@ public class DetailActivity extends BaseActivity {
     }
 
     private void setTextShow(TextView view, String tag, String info) {
-        if (TextUtils.isEmpty(info)) {
+        if (info == null || info.trim().isEmpty()) {
             view.setVisibility(View.GONE);
             return;
         }
@@ -965,11 +930,11 @@ public class DetailActivity extends BaseActivity {
                         showConfig();
                         return;
                     }
-                    if (TextUtils.isEmpty(mVideo.name))mVideo.name = vod_name;  //xuameng 视频名称
+
                     if (TextUtils.isEmpty(mVideo.name))mVideo.name = "🥇聚汇影视";
                     vodInfo = new VodInfo();
-                    if(TextUtils.isEmpty(mVideo.pic) && !vod_picture.isEmpty()){    //xuameng某些网站图片部显示
-                        mVideo.pic=vod_picture;  //xuameng 视频图片
+                    if((mVideo.pic==null || mVideo.pic.isEmpty()) && !vod_picture.isEmpty()){    //xuameng某些网站图片部显示
+                        mVideo.pic=vod_picture;
                     }
                     vodInfo.setVideo(mVideo);
                     vodInfo.sourceKey = mVideo.sourceKey;
@@ -1073,7 +1038,7 @@ public class DetailActivity extends BaseActivity {
                         seriesFlagAdapter.setNewData(vodInfo.seriesFlags);
                         mGridViewFlag.scrollToPosition(flagScrollTo);
 
-                        safeRefreshList();   //xuameng返回键、长按播放刷新滚动到剧集
+                        refreshList();   //xuameng返回键、长按播放刷新滚动到剧集
                         mGridView.addOnScrollListener(new RecyclerView.OnScrollListener() {
                             @Override
                                 public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
@@ -1081,10 +1046,8 @@ public class DetailActivity extends BaseActivity {
                                     if (newState == mGridView.SCROLL_STATE_IDLE) {   //xuameng剧集滚动完成后焦点选择为剧集
                                         // 滚动已经停止，执行你需要的操作
                                         //	mGridView.requestFocus();
-                                        mGridView.post(() -> {   // xuameng没有成功保存历史记录的刚才选那个现在选那个
-                                            mGridView.setSelection(vodInfo.playIndex);
-                                            mGridView.removeOnScrollListener(this);    //xuameng删除滚动监听
-                                        }); 
+                                        mGridView.setSelection(vodInfo.playIndex);
+                                        mGridView.removeOnScrollListener(this);    //xuameng删除滚动监听
                                     }
                                 }
                        });
@@ -1109,7 +1072,7 @@ public class DetailActivity extends BaseActivity {
                             toggleSubtitleTextSize();
                         }else{
                             if (isPushUrl) {  //xuameng 判断推送内容 如是 不执行保存 播放成功后会自动保存
-                                jumpToPlay();
+                                mHandler.postDelayed(mPushUrlRunnable, 300); //xuameng 推送地址解析成功
                             }
                         }
                         // startQuickSearch();
@@ -1117,9 +1080,6 @@ public class DetailActivity extends BaseActivity {
                         if (isPushUrl) {  //xuameng 判断推送恢复初始
                             isPushUrl = false;
                             App.showToastShort(DetailActivity.this, "接收到推送数据为空！");
-                        }
-                        if (fullWindows) {
-                            exitFullPreview();
                         }
                         mGridViewFlag.setVisibility(View.GONE);
                         mGridView.setVisibility(View.GONE);
@@ -1140,7 +1100,7 @@ public class DetailActivity extends BaseActivity {
                         App.showToastShort(DetailActivity.this, "接收推送数据失败！");
                     }
                     if (fullWindows) {
-                        exitFullPreview();
+                        toggleFullPreview();
                     }
                     if (isShowConfig){ //xuameng 配置中心判断
                         showConfig();
@@ -1183,14 +1143,12 @@ public class DetailActivity extends BaseActivity {
         return label + "<font color=\"#FFFFFF\">" + content + "</font>";
     }
 
-    private String  vod_picture="";    //xuameng 视频图片
-    private String  vod_name="";  //xuameng 视频名称
+    private String  vod_picture="";
     private void initData() {
         Intent intent = getIntent();
         if (intent != null && intent.getExtras() != null) {
             Bundle bundle = intent.getExtras();
-            vod_picture=bundle.getString("picture", ""); //xuameng 视频图片
-            vod_name=bundle.getString("title", "");  //xuameng 视频名称
+            vod_picture=bundle.getString("picture", "");
             loadDetail(bundle.getString("id", null), bundle.getString("sourceKey", ""));
         }
     }
@@ -1327,12 +1285,22 @@ public class DetailActivity extends BaseActivity {
                             }
                     
                             if (isPushUrl) {  //xuameng 判断推送内容 如是 不执行保存 播放成功后会自动保存
-                                mHandler.post(mPushUrlRunnable); //xuameng 推送地址解析成功
+                                if (!showPreview){
+                                    EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_CLOSE_PLAY_ACTIVITY, null));  //xuameng 远程关闭playactivity 用于push推送解析刷新
+                                    showLoading();
+                                    App.showToastShort(DetailActivity.this, "推送地址需换源解析，请稍后！");
+                                    return; 
+								}
+                                mHandler.postDelayed(mPushUrlRunnable, 300); //xuameng 推送地址解析成功
                                 return; 
                             }
                             insertVod(firstsourceKey, saveVodInfo);
 
                         }
+                        //xuameng解决焦点丢失		if (!fullWindows){
+                        //              mGridView.setSelection(index);
+                        //             insertVod(sourceKey, vodInfo);}
+                
                     } else if (event.obj instanceof JSONObject) {    //xuameng保存播放器配置
                         vodInfo.playerCfg = ((JSONObject) event.obj).toString();
                         //保存历史
@@ -1340,6 +1308,7 @@ public class DetailActivity extends BaseActivity {
                             return; 
                         }
                         insertVod(firstsourceKey, vodInfo);
+                        //        insertVod(sourceKey, vodInfo);
                     } else if (event.obj instanceof String) {
                         String url = event.obj.toString();
                         //设置更新播放地址
@@ -1356,8 +1325,6 @@ public class DetailActivity extends BaseActivity {
             } else if (event.type == RefreshEvent.TYPE_QUICK_SEARCH_SELECT) {
                 if (event.obj != null) {
                     Movie.Video video = (Movie.Video) event.obj;
-                    vod_name = video.name; //xuameng 视频名称
-                    vod_picture = video.pic; //xuameng 视频图片
                     loadDetailXu(video.id, video.sourceKey);
                 }
             } else if (event.type == RefreshEvent.TYPE_QUICK_SEARCH_WORD_CHANGE) {
@@ -1571,40 +1538,38 @@ public class DetailActivity extends BaseActivity {
         OkGo.getInstance().cancelTag("quick_search");
         OkGo.getInstance().cancelTag("pushVod");      //XUAMENG远程推送
         OkGo.getInstance().cancelTag("lrc_load");  //xuameng 歌词加载
-        releasePlayFragment();
         EventBus.getDefault().unregister(this);
     }
 
     @Override
     public void onBackPressed() {
+        boolean showPreview = Hawk.get(HawkConfig.SHOW_PREVIEW, true);  //xuameng true是显示小窗口,false是不显示小窗口
         if (fullWindows) {
-            if (playFragment != null && playFragment.onBackPressed()) return;//xuameng上一级交给VODController控制
-            exitFullPreview();
+            if (playFragment.onBackPressed())  //xuameng上一级交给VODController控制
+                return;
+            toggleFullPreview();
+
+//            mGridView.requestFocus(); 没用了
+            List<VodInfo.VodSeries> list = vodInfo.seriesMap.get(vodInfo.playFlag);
+            mSeriesGroupView.setVisibility(list.size()>GroupCount ? View.VISIBLE : View.GONE);
+			                mGridView.post(() -> {   // xuameng没有成功保存历史记录的刚才选那个现在选那个
             switchToPlayingSourceAndScroll();   //xuameng滚动到当前剧集
-            if (vodInfo != null && vodInfo.seriesMap != null) {
-                List<VodInfo.VodSeries> list = vodInfo.seriesMap.get(vodInfo.playFlag);
-                mSeriesGroupView.setVisibility(list.size()>GroupCount ? View.VISIBLE : View.GONE);
-            }
+                }); 
             return;
         }
         else if (seriesSelect) {
             if (seriesFlagFocus != null && !seriesFlagFocus.isFocused()) {
                // seriesFlagFocus.requestFocus();
-                switchTomGridViewFlag();  //xuameng 自动滚动到当前播放源
+               switchTomGridViewFlag();  //xuameng 自动滚动到当前播放源
                 return;
             }else {
                 tvPlay.requestFocus();        //xuameng修复播放退出到小窗口后再按返回键直接退出的问题，跳转到播放
                 return;
             }
         }
-        else if (showPreview && playFragment != null) {    //xuameng如果显示小窗口播放就释放视频，修复退出还显示暂停图标等图标的BUG
-            try {
-                playFragment.setPlayTitle(false);
-                playFragment.setExitingPreview(true);
-                playFragment.mVideoView.release();
-            } catch (Throwable th) {
-                th.printStackTrace();
-            }
+        else if (showPreview && playFragment!=null) {    //xuameng如果显示小窗口播放就释放视频，修复退出还显示暂停图标等图标的BUG
+            playFragment.setPlayTitle(false);
+            playFragment.mVideoView.release();
         }
         HawkConfig.intVod = false;  //xuameng判断进入播放
         App.HideToast();
@@ -1646,37 +1611,24 @@ public class DetailActivity extends BaseActivity {
 
     // preview
     VodInfo previewVodInfo = null;
+    boolean showPreview = Hawk.get(HawkConfig.SHOW_PREVIEW, true); // true 开启 false 关闭
     boolean fullWindows = false;
     ViewGroup.LayoutParams windowsPreview = null;
     ViewGroup.LayoutParams windowsFull = null;
 
     void toggleFullPreview() {
-        setFullPreview(!fullWindows);
-    }
-
-    void enterFullPreview() {
-        setFullPreview(true);
-        playFragment.isFullPreview(true);   //xuameng 非小窗口模式返回后播放BUG
-    }
-
-    void exitFullPreview() {
-        setFullPreview(false);
-        playFragment.isFullPreview(false);   //xuameng 非小窗口模式返回后播放BUG
-    }
-
-    void setFullPreview(boolean full) {
         if (windowsPreview == null) {
             windowsPreview = llPlayerFragmentContainer.getLayoutParams();
         }
         if (windowsFull == null) {
             windowsFull = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         }
-        fullWindows = full;
-        llPlayerFragmentContainer.setVisibility(fullWindows || showPreview ? View.VISIBLE : View.GONE);
+        fullWindows = !fullWindows;
         llPlayerFragmentContainer.setLayoutParams(fullWindows ? windowsFull : windowsPreview);
-        llPlayerFragmentContainerBlock.setVisibility(!fullWindows && showPreview ? View.VISIBLE : View.GONE);
+        llPlayerFragmentContainerBlock.setVisibility(fullWindows ? View.GONE : View.VISIBLE);
         mGridView.setVisibility(fullWindows ? View.GONE : View.VISIBLE);
         mGridViewFlag.setVisibility(fullWindows ? View.GONE : View.VISIBLE);
+        mSeriesGroupView.setVisibility(fullWindows ? View.GONE : View.VISIBLE);
 
         //全屏下禁用详情页几个按键的焦点 防止上键跑过来
         tvPlay.setFocusable(!fullWindows);
@@ -1686,28 +1638,7 @@ public class DetailActivity extends BaseActivity {
         tvDesc.setFocusable(!fullWindows);      //xuameng 内容简介
         tvPush.setFocusable(!fullWindows);    //xuameng 远程推送
         llPlayerFragmentContainerBlock.setFocusable(!fullWindows);
-        if (!showPreview && !fullWindows && playFragment != null) {    //xuameng如果显示小窗口播放就释放视频，修复退出还显示暂停图标等图标的BUG
-            try {
-                playFragment.pauseForHidden();
-                isPushUrl = false;
-            } catch (Throwable th) {
-                th.printStackTrace();
-            }
-            return;
-        }
         toggleSubtitleTextSize();
-    }
-
-    void ensurePlayFragment() {
-        if (playFragment != null) return;
-        playFragment = new PlayFragment();
-        getSupportFragmentManager().beginTransaction().add(R.id.previewPlayer, playFragment).commitNowAllowingStateLoss();
-    }
-
-    void releasePlayFragment() {
-        if (playFragment == null) return;
-        getSupportFragmentManager().beginTransaction().remove(playFragment).commitNowAllowingStateLoss();
-        playFragment = null;
     }
 
     void toggleSubtitleTextSize() {
@@ -1721,7 +1652,7 @@ public class DetailActivity extends BaseActivity {
     }
 
     private void setTvPlayUrl(String url){
-      if (TextUtils.isEmpty(url)) {
+      if (url == null || url.isEmpty()) {
           url = "聚汇影视提示您：播放地址为空！";
       }	
       setTextShow(tvPlayUrl, "播放地址：", url);
@@ -1796,7 +1727,7 @@ public class DetailActivity extends BaseActivity {
         }
     
         // 2. 刷新列表显示
-        safeRefreshList();
+        refreshList();
     
         // 3. 确保即使不滚动也能执行选择操作
         // 添加滚动监听器确保在任何情况下都能执行选择
@@ -1805,10 +1736,8 @@ public class DetailActivity extends BaseActivity {
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 if (newState == mGridView.SCROLL_STATE_IDLE) {
-                    mGridView.post(() -> {   // xuameng没有成功保存历史记录的刚才选那个现在选那个
-                        mGridView.setSelection(vodInfo.playIndex);
-                        mGridView.removeOnScrollListener(this);    //xuameng删除滚动监听
-                    }); 
+                    mGridView.setSelection(vodInfo.playIndex);
+                    mGridView.removeOnScrollListener(this);
                 }
             }
         });
