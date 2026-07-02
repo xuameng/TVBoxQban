@@ -348,7 +348,6 @@ public class HomeActivity extends BaseActivity {
         if (home != null && home.getName() != null && !home.getName().isEmpty())
             tvName.setText(home.getName());
         if (dataInitOk && jarInitOk) {
-            warmSearchSpidersOnce();
             //showLoading();
             sourceViewModel.getSort(ApiConfig.get().getHomeSourceBean().getKey());
             if (hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
@@ -356,6 +355,7 @@ public class HomeActivity extends BaseActivity {
             } else {
                 LOG.e("无");
             }
+            if(!useCacheConfig)warmSearchSpidersOnce();  //xuameng搜索预热
             return;
         }
         showLoading();
