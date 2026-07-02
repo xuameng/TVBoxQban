@@ -153,34 +153,35 @@ public class FileUtils {
         return App.getInstance().getFilesDir().getAbsolutePath();
     }
 
-public static void cleanDirectory(File dir) {
-    if (!dir.exists() || !dir.isDirectory()) {
-        return;
-    }
+    public static void cleanDirectory(File dir) {  //xuameng 删除目录下的文件及目录
+        if (!dir.exists() || !dir.isDirectory()) {
+            return;
+        }
 
-    File[] files = dir.listFiles();
-    if (files == null) {
-        return;
-    }
+        File[] files = dir.listFiles();
+        if (files == null) {
+            return;
+        }
 
-    for (File file : files) {
-        deleteRecursively(file);
-    }
-}
-
-private static void deleteRecursively(File file) {
-    if (file.isDirectory()) {
-        File[] children = file.listFiles();
-        if (children != null) {
-            for (File child : children) {
-                deleteRecursively(child);
-            }
+        for (File file : files) {
+            deleteRecursively(file);
         }
     }
-    if (!file.delete()) {
-        System.err.println("删除失败: " + file.getAbsolutePath());
+
+    private static void deleteRecursively(File file) {  //xuameng 目录文件全删除
+        if (file.isDirectory()) {
+            File[] children = file.listFiles();
+            if (children != null) {
+                for (File child : children) {
+                    deleteRecursively(child);
+                }
+            }
+        }
+        if (!file.delete()) {
+            System.err.println("删除失败: " + file.getAbsolutePath());
+        }
     }
-}
+
     public static boolean isWeekAgo(File file)
     {
         long oneWeekMillis = 3L * 24 * 60 * 60 * 1000;
