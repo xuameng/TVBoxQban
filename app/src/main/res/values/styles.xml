@@ -1604,4 +1604,12 @@
         <item name="android:minWidth">1dp</item>
     </style>
 
+<style name="AppTheme.LivePlay" parent="AppTheme.NoActionBar">
+    <!-- 关键 -->
+    <item name="android:windowBackground">@android:color/black</item>
+    <item name="android:windowFullscreen">true</item>
+    <item name="android:windowContentOverlay">@null</item>
+	<item name="android:windowAnimationStyle">@null</item>
+</style>
+
 </resources>
