@@ -125,10 +125,8 @@ private static class RequestContext {
     }
 }
 private RequestContext currentRequest = null;
+private final HashMap<String, List<Movie.Video>> levelCache = new HashMap<>();
 
-boolean isRequesting() {
-    return currentRequest != null;
-}
 
 
     private final Stack<BackNode> backStack = new Stack<>();
