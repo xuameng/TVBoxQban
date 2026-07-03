@@ -259,6 +259,7 @@ public class FastSearchActivity extends BaseActivity {
                             false,          // 不是筛选
                             ""             // 无筛选 key
                         );
+App.showToastShort(FastSearchActivity.this, currentSortData.id);
 		                isFilterMode = false; //来自筛选列表
                         backStack.push(node); //xuameng保存堆栈
                         page = 1;
@@ -794,7 +795,6 @@ public class FastSearchActivity extends BaseActivity {
             int remainLevel = backStack.size();
             page = 1;
             showLoading();
-App.showToastShort(FastSearchActivity.this, node.sortId);
             // 情况 1：从「筛选列表的下一级」返回到筛选页
             if (node.isFilterMode  && remainLevel == 0) {
                 mGridView.setVisibility(View.GONE);
