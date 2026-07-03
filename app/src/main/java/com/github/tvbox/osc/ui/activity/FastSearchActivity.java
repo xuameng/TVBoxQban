@@ -87,6 +87,7 @@ public class FastSearchActivity extends BaseActivity {
     private HashMap<String, ArrayList<Movie.Video>> resultVods; // 搜索结果
     private List<String> quickSearchWord = new ArrayList<>();
     private HashMap<String, String> mCheckSources = null;
+	private final HashMap<String, List<Movie.Video>> folderCache = new HashMap<>();
 
     // xuameng新增：返回栈（核心）
     private int page = 1;
@@ -376,6 +377,9 @@ public class FastSearchActivity extends BaseActivity {
                 return;
             }
             if (absXml != null && absXml.movie != null && absXml.movie.videoList != null && absXml.movie.videoList.size() > 0) {
+        // ✅ 写缓存（核心）
+        String cacheKey = currentSortData.sourceKey + "_" + currentSortData.id;
+        folderCache.put(cacheKey, absXml.movie.videoList);
                 showSuccess();
                 if (isFilterMode) {
                     searchAdapterFilter.setNewData(absXml.movie.videoList);
@@ -572,6 +576,7 @@ public class FastSearchActivity extends BaseActivity {
             App.showToastShort(FastSearchActivity.this, "输入内容不能为空！");
 			return;
 		}
+		folderCache.clear(); // ✅ 防止旧 folder 数据串台
         isTopSearchStage = true;   // 开启全局搜索阶段
         backStack.clear();  //xuameng清空节点数据确保数据初始化状态
         topSearchCompleted = false;  // xuameng搜索完成重置
@@ -878,6 +883,9 @@ public class FastSearchActivity extends BaseActivity {
             getListIng = true;
             currentSortData.id = node.parentSortId; 
 
+			// 缓存 key
+String cacheKey = node.sourceKey + "_" + node.parentSortId;
+
             // 关键：恢复 UI 状态
             if (node.isFilterMode) {
                 searchAdapterFilter.setNewData(new ArrayList<>());
@@ -891,9 +899,28 @@ public class FastSearchActivity extends BaseActivity {
                 mGridViewFilter.setVisibility(View.GONE);
                 mGridView.setVisibility(View.VISIBLE);
             }
+// ✅ 优先读缓存
+List<Movie.Video> cachedList = folderCache.get(cacheKey);
+if (cachedList != null && !cachedList.isEmpty()) {
+    // ✅ 有缓存：直接用，不请求网络
+    getListIng = false;
+    showSuccess();
 
-            sourceViewModel.getListFromSearch(currentSortData, page, node.sourceKey);
-            return;
+    if (node.isFilterMode) {
+        searchAdapterFilter.setNewData(cachedList);
+        mGridViewFilter.post(() -> mGridViewFilter.setSelection(node.lastSelectedPosition));
+    } else {
+        searchAdapter.setNewData(cachedList);
+        mGridView.post(() -> mGridView.setSelection(node.lastSelectedPosition));
+    }
+    return;
+}
+
+// ❌ 无缓存：再走网络
+showLoading();
+sourceViewModel.getListFromSearch(currentSortData, page, node.sourceKey);
+return;
+
         }
 
         //  真正退出 Activity
