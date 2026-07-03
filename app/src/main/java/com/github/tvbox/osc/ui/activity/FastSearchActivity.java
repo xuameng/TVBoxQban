@@ -87,6 +87,7 @@ public class FastSearchActivity extends BaseActivity {
     private HashMap<String, ArrayList<Movie.Video>> resultVods; // 搜索结果
     private List<String> quickSearchWord = new ArrayList<>();
     private HashMap<String, String> mCheckSources = null;
+private final HashMap<String, List<Movie.Video>> levelCache = new HashMap<>();
 
     // xuameng新增：返回栈（核心）
     private int page = 1;
@@ -368,6 +369,9 @@ public class FastSearchActivity extends BaseActivity {
             }
             if (absXml != null && absXml.movie != null && absXml.movie.videoList != null && absXml.movie.videoList.size() > 0) {
                 showSuccess();
+    // 用 sortId + sourceKey 作为 cache key
+    String cacheKey = currentSortData.id + "_" + node.sourceKey;
+    levelCache.put(cacheKey, new ArrayList<>(list));
                 if (isFilterMode) {
                     searchAdapterFilter.setNewData(absXml.movie.videoList);
                     mGridViewFilter.getViewTreeObserver().addOnGlobalLayoutListener(
@@ -869,23 +873,29 @@ public class FastSearchActivity extends BaseActivity {
             getListIng = true;
             currentSortData.id = node.sortId;
 
+// 情况 3
+String cacheKey = node.sortId + "_" + node.sourceKey;
+List<Movie.Video> cached = levelCache.get(cacheKey);
             // 关键：恢复 UI 状态
-            if (node.isFilterMode) {
-                searchAdapterFilter.setNewData(new ArrayList<>());
-                showLoading();
-                mGridViewFilter.setVisibility(View.VISIBLE);
-                mGridView.setVisibility(View.GONE);   
-            } else {
-                searchFilterKey = "";
-                searchAdapter.setNewData(new ArrayList<>());
-                showLoading();
-                mGridViewFilter.setVisibility(View.GONE);
-                mGridView.setVisibility(View.VISIBLE);
-            }
+if (cached != null) {
+    showSuccess();
+    if (node.isFilterMode) {
+        searchAdapterFilter.setNewData(cached);
+        mGridViewFilter.setVisibility(View.VISIBLE);
+        mGridView.setVisibility(View.GONE);
+    } else {
+        searchAdapter.setNewData(cached);
+        mGridView.setVisibility(View.VISIBLE);
+        mGridViewFilter.setVisibility(View.GONE);
+    }
 
-            sourceViewModel.getListFromSearch(currentSortData, page, node.sourceKey);
-            return;
-        }
+    mGridView.post(() -> {
+        TvRecyclerView grid = node.isFilterMode ? mGridViewFilter : mGridView;
+        grid.setSelection(node.lastSelectedPosition);
+    });
+
+    return; // ✅ 不再请求
+}
 
         //  真正退出 Activity
         isActivityDestroyed = true;
