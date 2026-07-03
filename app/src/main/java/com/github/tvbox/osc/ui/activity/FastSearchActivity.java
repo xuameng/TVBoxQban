@@ -107,28 +107,6 @@ public class FastSearchActivity extends BaseActivity {
             this.filterKey = filterKey;
         }
     }
-
-/** 一次 getListFromSearch 的不可变快照 */
-private static class RequestContext {
-    final String sortId;
-    final String sourceKey;
-    final boolean isFilterMode;
-
-    RequestContext(String sortId, String sourceKey, boolean isFilterMode) {
-        this.sortId = sortId;
-        this.sourceKey = sourceKey;
-        this.isFilterMode = isFilterMode;
-    }
-
-    String cacheKey() {
-        return sortId + "_" + sourceKey;
-    }
-}
-private RequestContext currentRequest = null;
-private final HashMap<String, List<Movie.Video>> levelCache = new HashMap<>();
-
-
-
     private final Stack<BackNode> backStack = new Stack<>();
     // 缓存首次全站搜索结果
     private final List<Movie.Video> topSearchCache = new ArrayList<>();
@@ -273,11 +251,6 @@ private final HashMap<String, List<Movie.Video>> levelCache = new HashMap<>();
                         isTopSearchStage = false;   // 关闭全局搜索结果写入
                         isNextLevel = true;  //进入过下一级
                         currentSortData.id = video.id;
-currentRequest = new RequestContext(
-        video.id,
-        video.sourceKey,
-        false
-);
                         selectedPos = searchAdapter.getData().isEmpty() ? 0 : mGridView.getChildAdapterPosition(mGridView.getFocusedChild());
                         BackNode node = new BackNode(
                             video.sourceKey,
@@ -337,11 +310,6 @@ currentRequest = new RequestContext(
                         isTopSearchStage = false;   // 关闭全局搜索结果写入
                         isNextLevelFilter = true;  //进入过下一级分类
                         currentSortData.id = video.id;
-currentRequest = new RequestContext(
-        video.id,
-        video.sourceKey,
-        true
-);
                         int selectedPosFilter = searchAdapterFilter.getData().isEmpty() ? 0 : mGridViewFilter.getChildAdapterPosition(mGridViewFilter.getFocusedChild());
 
                         BackNode node = new BackNode(
@@ -394,30 +362,32 @@ currentRequest = new RequestContext(
         sourceViewModel = new ViewModelProvider(this).get(SourceViewModel.class);
 
         ///xuameng：folder / cover 下级 监听返回结果
-sourceViewModel.listResult.observe(this, absXml -> {
-    if (!getListIng) return;
-
-    // ✅ 返回阶段 / 无请求上下文：直接丢弃
-    if (currentRequest == null) {
-        getListIng = false;
-        return;
-    }
-
-    if (absXml == null || absXml.movie == null || absXml.movie.videoList == null) {
-        showEmpty();
-        currentRequest = null;
-        getListIng = false;
-        return;
-    }
-
-    List<Movie.Video> data = absXml.movie.videoList;
-
-    // ✅ 唯一可信 cacheKey
-    levelCache.put(currentRequest.cacheKey(), new ArrayList<>(data));
-
-    showSuccess();
-    if (currentRequest.isFilterMode) {
-        searchAdapterFilter.setNewData(data);
+        sourceViewModel.listResult.observe(this, absXml -> {
+            if (!getListIng){ // 判断是否正在加载下级列表
+                return;
+            }
+            if (absXml != null && absXml.movie != null && absXml.movie.videoList != null && absXml.movie.videoList.size() > 0) {
+                showSuccess();
+                if (isFilterMode) {
+                    searchAdapterFilter.setNewData(absXml.movie.videoList);
+                    mGridViewFilter.getViewTreeObserver().addOnGlobalLayoutListener(
+                        new ViewTreeObserver.OnGlobalLayoutListener() {
+                            @Override
+                            public void onGlobalLayout() {
+                                mGridViewFilter.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                                TvRecyclerView.LayoutManager lm = mGridViewFilter.getLayoutManager();
+                                if (lm == null) return;
+                                // xuameng在这里滚
+                                lm.scrollToPosition(0);
+                                // xuameng在这里选中
+                                mGridViewFilter.post(() -> {
+                                    mGridViewFilter.setSelection(0);
+                                });
+                            }
+                        }
+                    );
+                } else {
+                    searchAdapter.setNewData(absXml.movie.videoList);
                     mGridView.getViewTreeObserver().addOnGlobalLayoutListener(
                         new ViewTreeObserver.OnGlobalLayoutListener() {
                             @Override
@@ -434,30 +404,12 @@ sourceViewModel.listResult.observe(this, absXml -> {
                             }
                         }
                     );
-    } else {
-        searchAdapter.setNewData(data);
-                    mGridView.getViewTreeObserver().addOnGlobalLayoutListener(
-                        new ViewTreeObserver.OnGlobalLayoutListener() {
-                            @Override
-                            public void onGlobalLayout() {
-                                mGridView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                                TvRecyclerView.LayoutManager lm = mGridView.getLayoutManager();
-                                if (lm == null) return;
-                                // xuameng在这里滚
-                                lm.scrollToPosition(0);
-                                // xuameng在这里选中
-                                mGridView.post(() -> {
-                                    mGridView.setSelection(0);
-                                });
-                            }
-                        }
-                    );
-    }
-
-    page++;
-    currentRequest = null; // ✅ 请求结束，清空快照
-    getListIng = false;
-});
+                }
+                page++;
+            } else {
+                showEmpty();
+            }
+        });
         ///xuameng：folder / cover 下级 监听返回结果完
 
     }
@@ -519,7 +471,6 @@ sourceViewModel.listResult.observe(this, absXml -> {
         showSuccess();
         searchFilterKey = key;
         getListIng = false;
-		currentRequest = null; // ✅ 筛选不是 folder 请求
         backStack.clear();
         List<Movie.Video> list = resultVods.get(key);
         searchAdapterFilter.setNewData(list); 
@@ -628,7 +579,6 @@ sourceViewModel.listResult.observe(this, absXml -> {
         searchFilterKey = "";
         isFilterMode = false;
         getListIng = false;
-currentRequest = null; // ✅ 全局搜索不是 folder 请求
         spNames.clear();
         searchResult();
     }
@@ -844,7 +794,7 @@ currentRequest = null; // ✅ 全局搜索不是 folder 请求
             int remainLevel = backStack.size();
             page = 1;
             showLoading();
-
+App.showToastShort(FastSearchActivity.this, node.sortId);
             // 情况 1：从「筛选列表的下一级」返回到筛选页
             if (node.isFilterMode  && remainLevel == 0) {
                 mGridView.setVisibility(View.GONE);
@@ -917,30 +867,25 @@ currentRequest = null; // ✅ 全局搜索不是 folder 请求
 
             //  情况 3：中间层级（folder 嵌套）
             getListIng = true;
-			currentRequest = null; // ✅ 明确：这是返回，不是新请求
             currentSortData.id = node.sortId;
-String cacheKey = node.sortId + "_" + node.sourceKey;
-List<Movie.Video> cached = levelCache.get(cacheKey);
 
-if (cached != null) {
-    showSuccess();
-    if (node.isFilterMode) {
-		App.showToastShort(FastSearchActivity.this, "11111111111111111");
-        searchAdapterFilter.setNewData(cached);
-        mGridViewFilter.setVisibility(View.VISIBLE);
-        mGridView.setVisibility(View.GONE);
-    } else {
-		App.showToastShort(FastSearchActivity.this, "2222222222222222222");
-        searchAdapter.setNewData(cached);
-        mGridView.setVisibility(View.VISIBLE);
-        mGridViewFilter.setVisibility(View.GONE);
-    }
+            // 关键：恢复 UI 状态
+            if (node.isFilterMode) {
+                searchAdapterFilter.setNewData(new ArrayList<>());
+                mGridViewFilter.setVisibility(View.VISIBLE);
+                mGridView.setVisibility(View.GONE);
+				showLoading();
+            } else {
+                searchFilterKey = "";
+                searchAdapter.setNewData(new ArrayList<>());
+                mGridViewFilter.setVisibility(View.GONE);
+                mGridView.setVisibility(View.VISIBLE);
+                showLoading();
+            }
 
-    TvRecyclerView grid = node.isFilterMode ? mGridViewFilter : mGridView;
-    grid.post(() -> grid.setSelection(node.lastSelectedPosition));
-}
-return;
-		}
+            sourceViewModel.getListFromSearch(currentSortData, page, node.sourceKey);
+            return;
+        }
 
         //  真正退出 Activity
         isActivityDestroyed = true;
