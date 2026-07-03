@@ -137,7 +137,12 @@ public class FastSearchActivity extends BaseActivity {
                     if (ret < 0) return;
                     TextView v = (TextView) itemView;
                     String sb = v.getText().toString();
-                    filterResult(sb);          // xuameng这是TV获取到焦点默认执行筛选菜单数据
+                    //   filterResult(sb);           xuameng这是TV获取到焦点默认执行筛选菜单数据，因为加了下一级所以需要点击后刷新数据
+                    if (backStack.isEmpty()) {  //xuameng改成如果当前没有下一级，TV获取到焦点默认执行筛选菜单数据
+                        filterResult(sb); 
+                    }else{
+                        App.showToastShort(FastSearchActivity.this, "请按OK键显示筛选数据！");
+                    }
                 }
             } catch (Exception e) {
                 App.showToastShort(FastSearchActivity.this, e.toString());
@@ -231,7 +236,6 @@ public class FastSearchActivity extends BaseActivity {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 FastClickCheckUtil.check(view);
-                mGridView.setFocusableInTouchMode(true);
                 Movie.Video video = searchAdapter.getData().get(position);
                 if (video != null) {
                     try {
@@ -418,6 +422,7 @@ public class FastSearchActivity extends BaseActivity {
                 if (!topSearchCache.isEmpty()) {
                     searchAdapter.setNewData(topSearchCache);
                 }
+                mGridViewWordFenci.requestFocus();
                 mGridView.getViewTreeObserver().addOnGlobalLayoutListener(
                     new ViewTreeObserver.OnGlobalLayoutListener() {
                         @Override
@@ -433,8 +438,7 @@ public class FastSearchActivity extends BaseActivity {
                             });
                         }
                     }
-                );
-                mGridView.setFocusableInTouchMode(false);
+                );				
                 // 如果搜索还没结束，继续展示
                 if (!topSearchCompleted) {
                     isTopSearchStage = true;   // 打开全局搜索结果写入
