@@ -911,7 +911,22 @@ public class SearchActivity extends BaseActivity {
                     getListIng = false;
                     showSuccess();
                     searchAdapter.setNewData(cachedList);
-                    mGridView.post(() -> mGridView.setSelection(node.lastSelectedPosition));
+                    mGridView.getViewTreeObserver().addOnGlobalLayoutListener(
+                        new ViewTreeObserver.OnGlobalLayoutListener() {
+                            @Override
+                            public void onGlobalLayout() {
+                                mGridView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                                TvRecyclerView.LayoutManager lm = mGridView.getLayoutManager();
+                                if (lm == null) return;
+                                // xuameng在这里滚
+                                lm.scrollToPosition(node.lastSelectedPosition);
+                                // xuameng在这里选中
+                                mGridView.post(() -> {
+                                    mGridView.setSelection(node.lastSelectedPosition);
+                                });
+                            }
+                        }
+                    );
                     return;
                 }
                 getListIng = true;
