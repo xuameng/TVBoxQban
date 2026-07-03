@@ -422,7 +422,7 @@ public class FastSearchActivity extends BaseActivity {
                 if (!topSearchCache.isEmpty()) {
                     searchAdapter.setNewData(topSearchCache);
                 }
-                mGridViewWordFenci.requestFocus();
+                mGridViewWordFenci.requestFocus();    //xuameng 指定分词为焦点 防止系统乱分配焦点 防止下面滚动位置不对的BUG
                 mGridView.getViewTreeObserver().addOnGlobalLayoutListener(
                     new ViewTreeObserver.OnGlobalLayoutListener() {
                         @Override
