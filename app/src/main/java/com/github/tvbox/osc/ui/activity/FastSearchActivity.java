@@ -429,12 +429,8 @@ public class FastSearchActivity extends BaseActivity {
                             mGridView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                             TvRecyclerView.LayoutManager lm = mGridView.getLayoutManager();
                             if (lm == null) return;
-                            // xuameng在这里滚
+                            // xuameng在这里滚  不选中
                             lm.scrollToPosition(firstSelectedPos);
-                            // xuameng在这里只滚动不选中焦点
-                            mGridView.post(() -> {
-                                mGridView.setSelectedPosition(firstSelectedPos);
-                            });
                         }
                     }
                 );
@@ -450,11 +446,6 @@ public class FastSearchActivity extends BaseActivity {
         mGridViewFilter.setVisibility(View.VISIBLE);
         String key = spNames.get(spName);
         if (key.isEmpty()) return;
-        // 搜索还没结束，继续展示
-        if (!topSearchCompleted) {
-            isTopSearchStage = true;   // 打开全局搜索结果写入
-            ContinueSearchExecutor();
-        }
         if (searchFilterKey == key) return;
         showSuccess();
         searchFilterKey = key;
@@ -463,6 +454,11 @@ public class FastSearchActivity extends BaseActivity {
         backStack.clear();
         List<Movie.Video> list = resultVods.get(key);
         searchAdapterFilter.setNewData(list); 
+        // 搜索还没结束，继续展示
+        if (!topSearchCompleted) {
+            isTopSearchStage = true;   // 打开全局搜索结果写入
+            ContinueSearchExecutor();
+        }
     }
 
     private void fenci() {
