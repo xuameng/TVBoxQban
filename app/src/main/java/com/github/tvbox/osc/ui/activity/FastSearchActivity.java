@@ -369,9 +369,12 @@ private final HashMap<String, List<Movie.Video>> levelCache = new HashMap<>();
             }
             if (absXml != null && absXml.movie != null && absXml.movie.videoList != null && absXml.movie.videoList.size() > 0) {
                 showSuccess();
-    // 用 sortId + sourceKey 作为 cache key
-    String cacheKey = currentSortData.id + "_" + node.sourceKey;
-    levelCache.put(cacheKey, new ArrayList<>(list));
+        // ✅ 用当前 sortId + sourceKey 做缓存 key
+        String sourceKey = data.get(0).sourceKey;
+        String cacheKey = currentSortData.id + "_" + sourceKey;
+
+        // ✅ 缓存这一层的数据
+        levelCache.put(cacheKey, new ArrayList<>(data));
                 if (isFilterMode) {
                     searchAdapterFilter.setNewData(absXml.movie.videoList);
                     mGridViewFilter.getViewTreeObserver().addOnGlobalLayoutListener(
