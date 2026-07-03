@@ -87,7 +87,7 @@ public class FastSearchActivity extends BaseActivity {
     private HashMap<String, ArrayList<Movie.Video>> resultVods; // 搜索结果
     private List<String> quickSearchWord = new ArrayList<>();
     private HashMap<String, String> mCheckSources = null;
-	private final HashMap<String, List<Movie.Video>> folderCache = new HashMap<>();
+    private final HashMap<String, List<Movie.Video>> folderCache = new HashMap<>();  //xuameng 搜索中间层缓存
 
     // xuameng新增：返回栈（核心）
     private int page = 1;
@@ -95,19 +95,19 @@ public class FastSearchActivity extends BaseActivity {
     static class BackNode {
         String sourceKey;    // 记录来源站点
         String sortId;        // 当前节点（下一级）的 ID
-        String parentSortId; // 【新增】父节点（上一层）的 ID
+        String parentSortId; // 父节点（上一层）的 ID
         int lastSelectedPosition;  //  选中项
         boolean isFilterMode;     // 是否来自筛选列表
         String filterKey;         // 当前筛选 key
 
-    private BackNode(String sourceKey, String sortId, String parentSortId, int lastSelectedPosition, boolean isFilterMode, String filterKey) {
-        this.sourceKey = sourceKey;
-        this.sortId = sortId;
-        this.parentSortId = parentSortId;
-        this.lastSelectedPosition = lastSelectedPosition;
-        this.isFilterMode = isFilterMode;
-        this.filterKey = filterKey;
-    }
+        private BackNode(String sourceKey, String sortId, String parentSortId, int lastSelectedPosition, boolean isFilterMode, String filterKey) {
+            this.sourceKey = sourceKey;
+            this.sortId = sortId;
+            this.parentSortId = parentSortId;
+            this.lastSelectedPosition = lastSelectedPosition;
+            this.isFilterMode = isFilterMode;
+            this.filterKey = filterKey;
+        }
     }
     private final Stack<BackNode> backStack = new Stack<>();
     // 缓存首次全站搜索结果
@@ -252,19 +252,19 @@ public class FastSearchActivity extends BaseActivity {
                     if (video.tag != null && (video.tag.equals("folder") || video.tag.equals("cover"))) {  
                         isTopSearchStage = false;   // 关闭全局搜索结果写入
                         isNextLevel = true;  //进入过下一级
-    // 【关键】在修改 currentSortData.id 之前，先把当前的 ID 保存下来，它就是父级 ID
-    String currentParentId = currentSortData.id; 
+                        // 【关键】在修改 currentSortData.id 之前，先把当前的 ID 保存下来，它就是父级 ID
+                        String currentParentId = currentSortData.id; 
                         currentSortData.id = video.id;
                         selectedPos = searchAdapter.getData().isEmpty() ? 0 : mGridView.getChildAdapterPosition(mGridView.getFocusedChild());
-    // 【关键】把父级 ID 传入 BackNode
-    BackNode node = new BackNode(
-        video.sourceKey,
-        currentSortData.id, // 当前层级（下一级）的 ID
-        currentParentId,    // 【传入】上一层的 ID
-        selectedPos, 
-        false, 
-        ""
-    );
+                        // 【关键】把父级 ID 传入 BackNode
+                        BackNode node = new BackNode(
+                            video.sourceKey,
+                            currentSortData.id, // 当前层级（下一级）的 ID
+                            currentParentId,    // 【传入】上一层的 ID
+                            selectedPos, 
+                            false,  // 不是筛选
+                            ""     // 无筛选 key
+                        );
 		                isFilterMode = false; //来自筛选列表
                         backStack.push(node); //xuameng保存堆栈
                         page = 1;
@@ -282,7 +282,7 @@ public class FastSearchActivity extends BaseActivity {
                     bundle.putString("id", video.id);
                     bundle.putString("sourceKey", video.sourceKey);
                     bundle.putString("title", video.name);
-					bundle.putString("picture", video.pic);   //xuameng某些网站图片部显示
+                    bundle.putString("picture", video.pic);   //xuameng某些网站图片部显示
                     jumpActivity(DetailActivity.class, bundle);
                 }
             }
@@ -315,20 +315,20 @@ public class FastSearchActivity extends BaseActivity {
                     if (video.tag != null && (video.tag.equals("folder") || video.tag.equals("cover"))) {  
                         isTopSearchStage = false;   // 关闭全局搜索结果写入
                         isNextLevelFilter = true;  //进入过下一级分类
-    // 【关键】在修改 currentSortData.id 之前，先把当前的 ID 保存下来，它就是父级 ID
-    String currentParentId = currentSortData.id; 
+                        // 【关键】在修改 currentSortData.id 之前，先把当前的 ID 保存下来，它就是父级 ID
+                        String currentParentId = currentSortData.id; 
                         currentSortData.id = video.id;
                         int selectedPosFilter = searchAdapterFilter.getData().isEmpty() ? 0 : mGridViewFilter.getChildAdapterPosition(mGridViewFilter.getFocusedChild());
 
-    // 【关键】把父级 ID 传入 BackNode
-    BackNode node = new BackNode(
-        video.sourceKey,
-        currentSortData.id, // 当前层级（下一级）的 ID
-        currentParentId,    // 【传入】上一层的 ID
-        selectedPos, 
-        false, 
-        ""
-    );
+                        // 【关键】把父级 ID 传入 BackNode
+                        BackNode node = new BackNode(
+                            video.sourceKey,
+                            currentSortData.id, // 当前层级（下一级）的 ID
+                            currentParentId,    // 【传入】上一层的 ID
+                            selectedPos, 
+                            true,           // 来自筛选
+                            searchFilterKey// 当前筛选 key
+                        );
 		                isFilterMode = true; //来自筛选列表
                         backStack.push(node); //xuameng保存堆栈
                         page = 1;
@@ -345,7 +345,7 @@ public class FastSearchActivity extends BaseActivity {
                     bundle.putString("id", video.id);
                     bundle.putString("sourceKey", video.sourceKey);
                     bundle.putString("title", video.name);
-					bundle.putString("picture", video.pic);   //xuameng某些网站图片部显示
+                    bundle.putString("picture", video.pic);   //xuameng某些网站图片部显示
                     jumpActivity(DetailActivity.class, bundle);
                 }
             }
@@ -377,14 +377,15 @@ public class FastSearchActivity extends BaseActivity {
                 return;
             }
             if (absXml != null && absXml.movie != null && absXml.movie.videoList != null && absXml.movie.videoList.size() > 0) {
-        // ✅ 写缓存（核心）
-        // ✅ 从返回栈中取当前 node
-        if (!backStack.isEmpty()) {
-            BackNode node = backStack.peek();
-            // ✅ 正确 cacheKey
-            String cacheKey = node.sourceKey + "_" + currentSortData.id;
-            folderCache.put(cacheKey, absXml.movie.videoList);
-        }
+                // ✅ 写缓存（核心）
+                // ✅ 从返回栈中取当前 node
+                int remainLevel = backStack.size();
+                if (remainLevel > 0) {
+                    BackNode node = backStack.peek();
+                    // ✅ 正确 cacheKey
+                    String cacheKey = node.sourceKey + "_" + currentSortData.id;
+                    folderCache.put(cacheKey, absXml.movie.videoList);
+                }
                 showSuccess();
                 if (isFilterMode) {
                     searchAdapterFilter.setNewData(absXml.movie.videoList);
@@ -440,6 +441,7 @@ public class FastSearchActivity extends BaseActivity {
             searchFilterKey = "";
             if (isNextLevelFilter){
                 backStack.clear();
+                folderCache.clear(); // xuameng 清空中间层缓存数据
                 showSuccess();
                 isNextLevelFilter = false;
             }
@@ -450,6 +452,7 @@ public class FastSearchActivity extends BaseActivity {
             } 
             if (isNextLevel){  //xuameng 进入过下一级
                 backStack.clear();
+                folderCache.clear(); // xuameng 清空中间层缓存数据
                 showSuccess();
                 isNextLevel = false;  //进入过下一级重置
                 if (!topSearchCache.isEmpty()) {
@@ -489,6 +492,7 @@ public class FastSearchActivity extends BaseActivity {
         showSuccess();
         searchFilterKey = key;
         getListIng = false;
+        folderCache.clear(); // xuameng 清空中间层缓存数据
         backStack.clear();
         List<Movie.Video> list = resultVods.get(key);
         searchAdapterFilter.setNewData(list); 
@@ -581,7 +585,7 @@ public class FastSearchActivity extends BaseActivity {
             App.showToastShort(FastSearchActivity.this, "输入内容不能为空！");
 			return;
 		}
-		folderCache.clear(); // ✅ 防止旧 folder 数据串台
+        folderCache.clear(); // xuameng 清空中间层缓存数据
         isTopSearchStage = true;   // 开启全局搜索阶段
         backStack.clear();  //xuameng清空节点数据确保数据初始化状态
         topSearchCompleted = false;  // xuameng搜索完成重置
@@ -885,11 +889,10 @@ public class FastSearchActivity extends BaseActivity {
             }
 
             //  情况 3：中间层级（folder 嵌套）
-            getListIng = true;
-            currentSortData.id = node.parentSortId; 
+            currentSortData.id = node.parentSortId;   //xuameng 变成上级ID
 
 			// 缓存 key
-String cacheKey = node.sourceKey + "_" + node.parentSortId;
+            String cacheKey = node.sourceKey + "_" + node.parentSortId;
 
             // 关键：恢复 UI 状态
             if (node.isFilterMode) {
@@ -904,28 +907,29 @@ String cacheKey = node.sourceKey + "_" + node.parentSortId;
                 mGridViewFilter.setVisibility(View.GONE);
                 mGridView.setVisibility(View.VISIBLE);
             }
-// ✅ 优先读缓存
-List<Movie.Video> cachedList = folderCache.get(cacheKey);
-if (cachedList != null && !cachedList.isEmpty()) {
-    // ✅ 有缓存：直接用，不请求网络
-    getListIng = false;
-    showSuccess();
 
-    if (node.isFilterMode) {
-        searchAdapterFilter.setNewData(cachedList);
-        mGridViewFilter.post(() -> mGridViewFilter.setSelection(node.lastSelectedPosition));
-    } else {
-        searchAdapter.setNewData(cachedList);
-        mGridView.post(() -> mGridView.setSelection(node.lastSelectedPosition));
-    }
-    return;
-}
+            // ✅ 优先读缓存
+            List<Movie.Video> cachedList = folderCache.get(cacheKey);
+            if (cachedList != null && !cachedList.isEmpty()) {
+                // ✅ 有缓存：直接用，不请求网络
+                getListIng = false;
+                showSuccess();
 
-// ❌ 无缓存：再走网络
-showLoading();
-sourceViewModel.getListFromSearch(currentSortData, page, node.sourceKey);
-return;
+               if (node.isFilterMode) {
+                   searchAdapterFilter.setNewData(cachedList);
+                   mGridViewFilter.post(() -> mGridViewFilter.setSelection(node.lastSelectedPosition));
+               } else {
+                   searchAdapter.setNewData(cachedList);
+                   mGridView.post(() -> mGridView.setSelection(node.lastSelectedPosition));
+               }
+               return;
+           }
 
+           // ❌ 无缓存：再走网络
+           getListIng = true;
+           showLoading();
+           sourceViewModel.getListFromSearch(currentSortData, page, node.sourceKey);
+           return;
         }
 
         //  真正退出 Activity
