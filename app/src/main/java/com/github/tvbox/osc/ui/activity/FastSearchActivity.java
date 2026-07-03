@@ -88,6 +88,7 @@ public class FastSearchActivity extends BaseActivity {
     private List<String> quickSearchWord = new ArrayList<>();
     private HashMap<String, String> mCheckSources = null;
 private final HashMap<String, List<Movie.Video>> levelCache = new HashMap<>();
+private boolean isBacking = false;
 
     // xuameng新增：返回栈（核心）
     private int page = 1;
@@ -363,39 +364,33 @@ private final HashMap<String, List<Movie.Video>> levelCache = new HashMap<>();
         sourceViewModel = new ViewModelProvider(this).get(SourceViewModel.class);
 
         ///xuameng：folder / cover 下级 监听返回结果
-        sourceViewModel.listResult.observe(this, absXml -> {
-            if (!getListIng){ // 判断是否正在加载下级列表
-                return;
-            }
-            if (absXml != null && absXml.movie != null && absXml.movie.videoList != null && absXml.movie.videoList.size() > 0) {
-                showSuccess();
-				List<Movie.Video> data = absXml.movie.videoList;
-        // ✅ 用当前 sortId + sourceKey 做缓存 key
-        String sourceKey = data.get(0).sourceKey;
-        String cacheKey = currentSortData.id + "_" + sourceKey;
+sourceViewModel.listResult.observe(this, absXml -> {
+    if (!getListIng) return;
 
-        // ✅ 缓存这一层的数据
+    // ✅ 返回阶段：只标记完成，不做任何事
+    if (isBacking) {
+        getListIng = false;
+        return;
+    }
+
+    if (absXml == null || absXml.movie == null || absXml.movie.videoList == null) {
+        showEmpty();
+        return;
+    }
+
+    List<Movie.Video> data = absXml.movie.videoList;
+    String sourceKey = data.get(0).sourceKey;
+
+    // ✅ 用 node 里的 sortId，而不是 currentSortData.id
+    if (!backStack.isEmpty()) {
+        BackNode node = backStack.peek();
+        String cacheKey = node.sortId + "_" + sourceKey;
         levelCache.put(cacheKey, new ArrayList<>(data));
-                if (isFilterMode) {
-                    searchAdapterFilter.setNewData(absXml.movie.videoList);
-                    mGridViewFilter.getViewTreeObserver().addOnGlobalLayoutListener(
-                        new ViewTreeObserver.OnGlobalLayoutListener() {
-                            @Override
-                            public void onGlobalLayout() {
-                                mGridViewFilter.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                                TvRecyclerView.LayoutManager lm = mGridViewFilter.getLayoutManager();
-                                if (lm == null) return;
-                                // xuameng在这里滚
-                                lm.scrollToPosition(0);
-                                // xuameng在这里选中
-                                mGridViewFilter.post(() -> {
-                                    mGridViewFilter.setSelection(0);
-                                });
-                            }
-                        }
-                    );
-                } else {
-                    searchAdapter.setNewData(absXml.movie.videoList);
+    }
+
+    showSuccess();
+    if (isFilterMode) {
+        searchAdapterFilter.setNewData(data);
                     mGridView.getViewTreeObserver().addOnGlobalLayoutListener(
                         new ViewTreeObserver.OnGlobalLayoutListener() {
                             @Override
@@ -412,12 +407,28 @@ private final HashMap<String, List<Movie.Video>> levelCache = new HashMap<>();
                             }
                         }
                     );
-                }
-                page++;
-            } else {
-                showEmpty();
-            }
-        });
+    } else {
+        searchAdapter.setNewData(data);
+                    mGridView.getViewTreeObserver().addOnGlobalLayoutListener(
+                        new ViewTreeObserver.OnGlobalLayoutListener() {
+                            @Override
+                            public void onGlobalLayout() {
+                                mGridView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                                TvRecyclerView.LayoutManager lm = mGridView.getLayoutManager();
+                                if (lm == null) return;
+                                // xuameng在这里滚
+                                lm.scrollToPosition(0);
+                                // xuameng在这里选中
+                                mGridView.post(() -> {
+                                    mGridView.setSelection(0);
+                                });
+                            }
+                        }
+                    );
+    }
+    page++;
+    getListIng = false;
+});
         ///xuameng：folder / cover 下级 监听返回结果完
 
     }
@@ -875,12 +886,12 @@ private final HashMap<String, List<Movie.Video>> levelCache = new HashMap<>();
 
             //  情况 3：中间层级（folder 嵌套）
             getListIng = true;
-            currentSortData.id = node.sortId;
+			isBacking = true;
+currentSortData.id = node.sortId;
 
-// 情况 3
 String cacheKey = node.sortId + "_" + node.sourceKey;
 List<Movie.Video> cached = levelCache.get(cacheKey);
-            // 关键：恢复 UI 状态
+
 if (cached != null) {
     showSuccess();
     if (node.isFilterMode) {
@@ -893,13 +904,13 @@ if (cached != null) {
         mGridViewFilter.setVisibility(View.GONE);
     }
 
-    mGridView.post(() -> {
-        TvRecyclerView grid = node.isFilterMode ? mGridViewFilter : mGridView;
-        grid.setSelection(node.lastSelectedPosition);
-    });
-
-    return; // ✅ 不再请求
+    TvRecyclerView grid = node.isFilterMode ? mGridViewFilter : mGridView;
+    grid.post(() -> grid.setSelection(node.lastSelectedPosition));
 }
+
+// ✅ 必须重置
+isBacking = false;
+return;
 		}
 
         //  真正退出 Activity
