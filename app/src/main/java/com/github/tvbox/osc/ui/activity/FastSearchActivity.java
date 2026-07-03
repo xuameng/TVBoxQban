@@ -896,6 +896,7 @@ if (cached != null) {
 
     return; // ✅ 不再请求
 }
+		}
 
         //  真正退出 Activity
         isActivityDestroyed = true;
