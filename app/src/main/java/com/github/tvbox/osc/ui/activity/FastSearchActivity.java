@@ -378,8 +378,13 @@ public class FastSearchActivity extends BaseActivity {
             }
             if (absXml != null && absXml.movie != null && absXml.movie.videoList != null && absXml.movie.videoList.size() > 0) {
         // ✅ 写缓存（核心）
-        String cacheKey = currentSortData.sourceKey + "_" + currentSortData.id;
-        folderCache.put(cacheKey, absXml.movie.videoList);
+        // ✅ 从返回栈中取当前 node
+        if (!backStack.isEmpty()) {
+            BackNode node = backStack.peek();
+            // ✅ 正确 cacheKey
+            String cacheKey = node.sourceKey + "_" + currentSortData.id;
+            folderCache.put(cacheKey, absXml.movie.videoList);
+        }
                 showSuccess();
                 if (isFilterMode) {
                     searchAdapterFilter.setNewData(absXml.movie.videoList);
