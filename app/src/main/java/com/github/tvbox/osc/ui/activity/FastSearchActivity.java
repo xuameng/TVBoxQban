@@ -369,6 +369,7 @@ private final HashMap<String, List<Movie.Video>> levelCache = new HashMap<>();
             }
             if (absXml != null && absXml.movie != null && absXml.movie.videoList != null && absXml.movie.videoList.size() > 0) {
                 showSuccess();
+				List<Movie.Video> data = absXml.movie.videoList;
         // ✅ 用当前 sortId + sourceKey 做缓存 key
         String sourceKey = data.get(0).sourceKey;
         String cacheKey = currentSortData.id + "_" + sourceKey;
