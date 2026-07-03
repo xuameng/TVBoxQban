@@ -882,7 +882,7 @@ App.showToastShort(FastSearchActivity.this, node.sortId);
                 mGridView.setVisibility(View.VISIBLE);
                 showLoading();
             }
-
+App.showToastShort(FastSearchActivity.this, node.sortId);
             sourceViewModel.getListFromSearch(currentSortData, page, node.sourceKey);
             return;
         }
