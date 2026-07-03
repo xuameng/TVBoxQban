@@ -414,11 +414,6 @@ public class FastSearchActivity extends BaseActivity {
                 showSuccess();
                 isNextLevelFilter = false;
             }
-            // 如果搜索还没结束，继续展示
-            if (!topSearchCompleted) {
-                isTopSearchStage = true;   // 打开全局搜索结果写入
-                ContinueSearchExecutor();
-            } 
             if (isNextLevel){  //xuameng 进入过下一级
                 backStack.clear();
                 folderCache.clear(); // xuameng 清空中间层缓存数据
@@ -427,10 +422,27 @@ public class FastSearchActivity extends BaseActivity {
                 if (!topSearchCache.isEmpty()) {
                     searchAdapter.setNewData(topSearchCache);
                 }
-       
-                    scrollAndSelectAfterLayout(mGridView, firstSelectedPos);
-					App.showToastShort(FastSearchActivity.this, "1111111111111111");
-
+                mGridView.getViewTreeObserver().addOnGlobalLayoutListener(
+                    new ViewTreeObserver.OnGlobalLayoutListener() {
+                        @Override
+                        public void onGlobalLayout() {
+                            mGridView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                            TvRecyclerView.LayoutManager lm = mGridView.getLayoutManager();
+                            if (lm == null) return;
+                            // xuameng在这里滚
+                            lm.scrollToPosition(selectedPos);
+                            // xuameng在这里只滚动不选中焦点
+                            mGridView.post(() -> {
+                                mGridView.setSelectedPosition(firstSelectedPos);
+                            });
+                        }
+                    }
+                );
+                // 如果搜索还没结束，继续展示
+                if (!topSearchCompleted) {
+                    isTopSearchStage = true;   // 打开全局搜索结果写入
+                    ContinueSearchExecutor();
+                } 
             }
             return;
         }
