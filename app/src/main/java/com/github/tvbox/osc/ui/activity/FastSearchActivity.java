@@ -87,8 +87,6 @@ public class FastSearchActivity extends BaseActivity {
     private HashMap<String, ArrayList<Movie.Video>> resultVods; // 搜索结果
     private List<String> quickSearchWord = new ArrayList<>();
     private HashMap<String, String> mCheckSources = null;
-private final HashMap<String, List<Movie.Video>> levelCache = new HashMap<>();
-private boolean isBacking = false;
 
     // xuameng新增：返回栈（核心）
     private int page = 1;
@@ -109,6 +107,30 @@ private boolean isBacking = false;
             this.filterKey = filterKey;
         }
     }
+
+/** 一次 getListFromSearch 的不可变快照 */
+private static class RequestContext {
+    final String sortId;
+    final String sourceKey;
+    final boolean isFilterMode;
+
+    RequestContext(String sortId, String sourceKey, boolean isFilterMode) {
+        this.sortId = sortId;
+        this.sourceKey = sourceKey;
+        this.isFilterMode = isFilterMode;
+    }
+
+    String cacheKey() {
+        return sortId + "_" + sourceKey;
+    }
+}
+private RequestContext currentRequest = null;
+
+boolean isRequesting() {
+    return currentRequest != null;
+}
+
+
     private final Stack<BackNode> backStack = new Stack<>();
     // 缓存首次全站搜索结果
     private final List<Movie.Video> topSearchCache = new ArrayList<>();
@@ -253,6 +275,11 @@ private boolean isBacking = false;
                         isTopSearchStage = false;   // 关闭全局搜索结果写入
                         isNextLevel = true;  //进入过下一级
                         currentSortData.id = video.id;
+currentRequest = new RequestContext(
+        video.id,
+        video.sourceKey,
+        false
+);
                         selectedPos = searchAdapter.getData().isEmpty() ? 0 : mGridView.getChildAdapterPosition(mGridView.getFocusedChild());
                         BackNode node = new BackNode(
                             video.sourceKey,
@@ -312,6 +339,11 @@ private boolean isBacking = false;
                         isTopSearchStage = false;   // 关闭全局搜索结果写入
                         isNextLevelFilter = true;  //进入过下一级分类
                         currentSortData.id = video.id;
+currentRequest = new RequestContext(
+        video.id,
+        video.sourceKey,
+        true
+);
                         int selectedPosFilter = searchAdapterFilter.getData().isEmpty() ? 0 : mGridViewFilter.getChildAdapterPosition(mGridViewFilter.getFocusedChild());
 
                         BackNode node = new BackNode(
@@ -367,29 +399,26 @@ private boolean isBacking = false;
 sourceViewModel.listResult.observe(this, absXml -> {
     if (!getListIng) return;
 
-    // ✅ 返回阶段：只标记完成，不做任何事
-    if (isBacking) {
+    // ✅ 返回阶段 / 无请求上下文：直接丢弃
+    if (currentRequest == null) {
         getListIng = false;
         return;
     }
 
     if (absXml == null || absXml.movie == null || absXml.movie.videoList == null) {
         showEmpty();
+        currentRequest = null;
+        getListIng = false;
         return;
     }
 
     List<Movie.Video> data = absXml.movie.videoList;
-    String sourceKey = data.get(0).sourceKey;
 
-    // ✅ 用 node 里的 sortId，而不是 currentSortData.id
-    if (!backStack.isEmpty()) {
-        BackNode node = backStack.peek();
-        String cacheKey = node.sortId + "_" + sourceKey;
-        levelCache.put(cacheKey, new ArrayList<>(data));
-    }
+    // ✅ 唯一可信 cacheKey
+    levelCache.put(currentRequest.cacheKey(), new ArrayList<>(data));
 
     showSuccess();
-    if (isFilterMode) {
+    if (currentRequest.isFilterMode) {
         searchAdapterFilter.setNewData(data);
                     mGridView.getViewTreeObserver().addOnGlobalLayoutListener(
                         new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -426,7 +455,9 @@ sourceViewModel.listResult.observe(this, absXml -> {
                         }
                     );
     }
+
     page++;
+    currentRequest = null; // ✅ 请求结束，清空快照
     getListIng = false;
 });
         ///xuameng：folder / cover 下级 监听返回结果完
@@ -490,6 +521,7 @@ sourceViewModel.listResult.observe(this, absXml -> {
         showSuccess();
         searchFilterKey = key;
         getListIng = false;
+		currentRequest = null; // ✅ 筛选不是 folder 请求
         backStack.clear();
         List<Movie.Video> list = resultVods.get(key);
         searchAdapterFilter.setNewData(list); 
@@ -598,6 +630,7 @@ sourceViewModel.listResult.observe(this, absXml -> {
         searchFilterKey = "";
         isFilterMode = false;
         getListIng = false;
+currentRequest = null; // ✅ 全局搜索不是 folder 请求
         spNames.clear();
         searchResult();
     }
@@ -886,9 +919,8 @@ sourceViewModel.listResult.observe(this, absXml -> {
 
             //  情况 3：中间层级（folder 嵌套）
             getListIng = true;
-			isBacking = true;
-currentSortData.id = node.sortId;
-
+			currentRequest = null; // ✅ 明确：这是返回，不是新请求
+            currentSortData.id = node.sortId;
 String cacheKey = node.sortId + "_" + node.sourceKey;
 List<Movie.Video> cached = levelCache.get(cacheKey);
 
@@ -907,9 +939,6 @@ if (cached != null) {
     TvRecyclerView grid = node.isFilterMode ? mGridViewFilter : mGridView;
     grid.post(() -> grid.setSelection(node.lastSelectedPosition));
 }
-
-// ✅ 必须重置
-isBacking = false;
 return;
 		}
 
