@@ -507,8 +507,7 @@ public class SearchActivity extends BaseActivity {
             if (absXml != null && absXml.movie != null && absXml.movie.videoList != null && absXml.movie.videoList.size() > 0) {
                 // ✅ 写缓存（核心）
                 // ✅ 从返回栈中取当前 node
-                int remainLevel = backStack.size();
-                if (remainLevel > 0) {
+                 if (!backStack.isEmpty()) {
                     BackNode node = backStack.peek();
                     // ✅ 正确 cacheKey
                     String cacheKey = node.sourceKey + "_" + currentSortData.id;
