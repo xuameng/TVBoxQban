@@ -517,7 +517,6 @@ public class SearchActivity extends BaseActivity {
                 tv_history.setVisibility(View.GONE);
                 searchTips.setVisibility(View.GONE);
                 searchAdapter.setNewData(absXml.movie.videoList);
-                mGridView.getViewTreeObserver().addOnGlobalLayoutListener(
                 scrollAndSelectAfterLayout(mGridView, 0);
             } else {
                 showEmpty();
