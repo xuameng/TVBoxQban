@@ -430,7 +430,7 @@ public class FastSearchActivity extends BaseActivity {
                             TvRecyclerView.LayoutManager lm = mGridView.getLayoutManager();
                             if (lm == null) return;
                             // xuameng在这里滚
-                            lm.scrollToPosition(selectedPos);
+                            lm.scrollToPosition(firstSelectedPos);
                             // xuameng在这里只滚动不选中焦点
                             mGridView.post(() -> {
                                 mGridView.setSelectedPosition(firstSelectedPos);
