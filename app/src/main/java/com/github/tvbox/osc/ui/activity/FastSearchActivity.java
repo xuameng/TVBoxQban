@@ -925,10 +925,12 @@ List<Movie.Video> cached = levelCache.get(cacheKey);
 if (cached != null) {
     showSuccess();
     if (node.isFilterMode) {
+		App.showToastShort(FastSearchActivity.this, "11111111111111111");
         searchAdapterFilter.setNewData(cached);
         mGridViewFilter.setVisibility(View.VISIBLE);
         mGridView.setVisibility(View.GONE);
     } else {
+		App.showToastShort(FastSearchActivity.this, "2222222222222222222");
         searchAdapter.setNewData(cached);
         mGridView.setVisibility(View.VISIBLE);
         mGridViewFilter.setVisibility(View.GONE);
