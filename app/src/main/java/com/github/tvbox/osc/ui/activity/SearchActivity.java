@@ -243,7 +243,7 @@ public class SearchActivity extends BaseActivity {
                         // 【关键】在修改 currentSortData.id 之前，先把当前的 ID 保存下来，它就是父级 ID
                         String currentParentId = currentSortData.id; 
                         currentSortData.id = video.id;
-                        int selectedPos = searchAdapter.getData().isEmpty() ? 0 : mGridView.getChildAdapterPosition(mGridView.getFocusedChild());
+                        int selectedPos = position;
                         // 【关键】把父级 ID 传入 BackNode
                         BackNode node = new BackNode(video.sourceKey, currentSortData.id, currentParentId, selectedPos);
                         backStack.push(node); //xuameng保存堆栈
