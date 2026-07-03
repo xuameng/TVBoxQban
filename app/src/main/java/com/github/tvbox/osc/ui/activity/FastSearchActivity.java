@@ -122,8 +122,6 @@ public class FastSearchActivity extends BaseActivity {
     private boolean isNextLevel = false;
     // 是否进入过下一级分类
     private boolean isNextLevelFilter = false;
-    // 当前选中项全部
-    private int selectedPos = 0;
     // 首页选中项全部
     private int firstSelectedPos = 0;
     // xuameng新增：返回栈（核心完成）
@@ -257,7 +255,7 @@ public class FastSearchActivity extends BaseActivity {
                         // 【关键】在修改 currentSortData.id 之前，先把当前的 ID 保存下来，它就是父级 ID
                         String currentParentId = currentSortData.id; 
                         currentSortData.id = video.id;
-                        selectedPos = searchAdapter.getData().isEmpty() ? 0 : mGridView.getChildAdapterPosition(mGridView.getFocusedChild());
+                        int selectedPos = position;
                         if (selectedPos > 0 && firstSelectedPos == 0){  //首页选中项全部只赋值一次
 	                        firstSelectedPos = selectedPos;
                         }
@@ -322,14 +320,14 @@ public class FastSearchActivity extends BaseActivity {
                         // 【关键】在修改 currentSortData.id 之前，先把当前的 ID 保存下来，它就是父级 ID
                         String currentParentId = currentSortData.id; 
                         currentSortData.id = video.id;
-                        int selectedPosFilter = searchAdapterFilter.getData().isEmpty() ? 0 : mGridViewFilter.getChildAdapterPosition(mGridViewFilter.getFocusedChild());
+                        int selectedPosFilter =  = position;
 
                         // 【关键】把父级 ID 传入 BackNode
                         BackNode node = new BackNode(
                             video.sourceKey,
                             currentSortData.id, // 当前层级（下一级）的 ID
                             currentParentId,    // 【传入】上一层的 ID
-                            selectedPos, 
+                            selectedPosFilter, 
                             true,           // 来自筛选
                             searchFilterKey// 当前筛选 key
                         );
