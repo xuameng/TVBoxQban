@@ -917,10 +917,40 @@ public class FastSearchActivity extends BaseActivity {
 
                if (node.isFilterMode) {
                    searchAdapterFilter.setNewData(cachedList);
-                   mGridViewFilter.post(() -> mGridViewFilter.setSelection(node.lastSelectedPosition));
+                   mGridViewFilter.getViewTreeObserver().addOnGlobalLayoutListener(
+                       new ViewTreeObserver.OnGlobalLayoutListener() {
+                           @Override
+                           public void onGlobalLayout() {
+                               mGridViewFilter.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                               TvRecyclerView.LayoutManager lm = mGridViewFilter.getLayoutManager();
+                               if (lm == null) return;
+                               // xuameng在这里滚
+                               lm.scrollToPosition(node.lastSelectedPosition);
+                               // xuameng在这里选中
+                               mGridViewFilter.post(() -> {
+                                   mGridViewFilter.setSelection(node.lastSelectedPosition);
+                               });
+                           }
+                       }
+                   );
                } else {
                    searchAdapter.setNewData(cachedList);
-                   mGridView.post(() -> mGridView.setSelection(node.lastSelectedPosition));
+                   mGridView.getViewTreeObserver().addOnGlobalLayoutListener(
+                       new ViewTreeObserver.OnGlobalLayoutListener() {
+                           @Override
+                           public void onGlobalLayout() {
+                               mGridView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                               TvRecyclerView.LayoutManager lm = mGridView.getLayoutManager();
+                               if (lm == null) return;
+                               // xuameng在这里滚
+                               lm.scrollToPosition(node.lastSelectedPosition);
+                               // xuameng在这里选中
+                               mGridView.post(() -> {
+                                   mGridView.setSelection(node.lastSelectedPosition);
+                               });
+                           }
+                       }
+                   );
                }
                return;
            }
