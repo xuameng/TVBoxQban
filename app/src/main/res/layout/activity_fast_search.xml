@@ -24,8 +24,6 @@
 			android:ellipsize="end"
             android:textAlignment="center"/>
         <com.owen.tvrecyclerview.widget.TvRecyclerView
-            android:focusable="true"
-            android:focusableInTouchMode="true"
             android:id="@+id/mGridViewWordFenci"
             android:clipChildren="false"
             android:clipToPadding="false"
