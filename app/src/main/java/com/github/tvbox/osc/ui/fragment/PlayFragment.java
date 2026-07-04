@@ -717,8 +717,9 @@ public class PlayFragment extends BaseLazyFragment {
         LOG.i("echo-goPlayUrl:" + url);
         if (mActivity == null) return;
         if (!isAdded()) return;
-        if (TextUtils.isEmpty(url)) {
+        if (TextUtils.isEmpty(url)) {   //xuameng 地址为空
 	        pauseForHidden();
+            mController.imageHide();  //xuameng隐藏图片
             errorWithRetry("播放地址为空", false);
             return;
         }
