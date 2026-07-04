@@ -1791,10 +1791,6 @@ public class VodController extends BaseController {
             case VideoView.STATE_PAUSED:
                 isVideoPlay = false;
                 mxuPlay.setText("播放"); //xuameng底部菜单显示播放
-                if (mTvPausexu.getVisibility() == View.VISIBLE){
-                    return;
-		        }
-			    pauseIngXu();
                 break;
             case VideoView.STATE_ERROR:
                 imageHide();  //xuameng 隐藏图片
