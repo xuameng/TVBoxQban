@@ -7,7 +7,6 @@
     android:background="@drawable/shape_user_focus"
     android:ellipsize="marquee"
     android:focusable="true"
-    android:focusableInTouchMode="true"
     android:marqueeRepeatLimit="marquee_forever"
     android:padding="@dimen/vs_10"
     android:singleLine="true"
