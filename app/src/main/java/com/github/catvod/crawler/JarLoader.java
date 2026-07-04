@@ -47,7 +47,7 @@ public class JarLoader {
     private final ConcurrentHashMap<String, String> siteJarKeys = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, String> aliases = new ConcurrentHashMap<>();
 
-    // ===== PROTECTED JAR SUPPORT =====
+    // ===== PROTECTED JAR SUPPORT xuameng加固 jar 会自动识别不用注销掉=====
     private final ConcurrentHashMap<String, Boolean> protectedInitJars = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, String> jarPaths = new ConcurrentHashMap<>();
 
@@ -112,7 +112,7 @@ public class JarLoader {
             invokeProxy(key, loader);
             invokeDanmaku(key, loader);
             injectProxyPort(loader);
-            injectProtectedClassLoader(loader); // ===== PROTECTED JAR SUPPORT =====
+            injectProtectedClassLoader(loader); // ===== PROTECTED JAR SUPPORT xuameng加固 jar 会自动识别不用注销掉=====
 
             loaders.put(key, loader);
             Log.i(TAG, "load success key=" + key + ", file=" + file.getAbsolutePath());
@@ -487,7 +487,7 @@ public class JarLoader {
         }
     }
 
-    /* ====================== PROTECTED JAR SUPPORT 加固 jar 会自动识别不用注销掉====================== */
+    /* ====================== PROTECTED JAR SUPPORT xuameng加固 jar 会自动识别不用注销掉====================== */
 
     private boolean isProtectedInitJar(String jar) {
         if (TextUtils.isEmpty(jar)) return false;
@@ -558,7 +558,7 @@ public class JarLoader {
         }
     }
 
-    private void injectProtectedClassLoader(DexClassLoader classLoader) {
+    private void injectProtectedClassLoader(DexClassLoader classLoader) {    // ===== PROTECTED JAR SUPPORT xuameng加固 jar 会自动识别不用注销掉=====
         if (classLoader == null) return;
         injectClassLoaderFields(classLoader, "com.github.catvod.spider.Init");
         injectClassLoaderFields(classLoader, "com.github.catvod.spider.DexNative");
