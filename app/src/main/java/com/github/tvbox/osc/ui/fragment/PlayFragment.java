@@ -1243,6 +1243,14 @@ public class PlayFragment extends BaseLazyFragment {
         super.onPause();
         if (mVideoView != null && !exitingPreview) {
             mVideoView.pause();
+            if (fullPreview){
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mController.pauseIngXu();   //xuameng 全屏时如果是暂停状态就显示暂停图标
+                    }
+                }, 300);
+            }
         }
     }
 
