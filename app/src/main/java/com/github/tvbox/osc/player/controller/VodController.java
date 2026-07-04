@@ -1862,7 +1862,7 @@ public class VodController extends BaseController {
         }
     }
 
-    private void imageHide() {   //xuameng 隐藏图片
+    public void imageHide() {   //xuameng 隐藏图片
         mLandscapePortraitBtn.setVisibility(View.GONE);  //xuameng 横屏竖屏
         MxuamengMusic.setVisibility(GONE);  //xuameng播放音乐背景
         iv_circle_bg.setVisibility(GONE); //xuameng音乐播放时图标
