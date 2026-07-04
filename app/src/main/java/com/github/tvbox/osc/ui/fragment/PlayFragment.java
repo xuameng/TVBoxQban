@@ -717,6 +717,11 @@ public class PlayFragment extends BaseLazyFragment {
         LOG.i("echo-goPlayUrl:" + url);
         if (mActivity == null) return;
         if (!isAdded()) return;
+        if (TextUtils.isEmpty(url)) {
+	        pauseForHidden();
+            errorWithRetry("播放地址为空", false);
+            return;
+        }
         LOG.i("playUrl:" + url);
         final String finalUrl = url;
         requireActivity().runOnUiThread(new Runnable() {
