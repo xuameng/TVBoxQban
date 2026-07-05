@@ -702,13 +702,12 @@ public class VodController extends BaseController {
                 parseAdapter.notifyItemChanged(currentDefault);
                 ApiConfig.get().setDefaultParse(parseBean);
                 parseAdapter.notifyItemChanged(position);
-                resetDanmuState();  //xuameng 弹幕重置
                 listener.changeParse(parseBean);
                 if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
                     myHandle.removeCallbacks(myRunnable);
                     hideBottomXu();
                 }
-                setDanmuViewSettings(true);
+                EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_SET_DANMU_SETTINGS, true));
             }
         });
         mGridView.setAdapter(parseAdapter);
@@ -1396,12 +1395,12 @@ public class VodController extends BaseController {
                 }
                 if(mDanmuView.getVisibility() == View.VISIBLE) {
                     DanmuHelper.setOpen(false);
-                    setDanmuViewSettings(false);
+                    EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_SET_DANMU_SETTINGS, false));
                     mDanmuView.setVisibility(View.GONE);  
                     App.showToastShort(getContext(), "弹幕已关闭");
                 } else {
                     DanmuHelper.setOpen(true);
-                    setDanmuViewSettings(true);
+                    EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_SET_DANMU_SETTINGS, true));
                     mDanmuView.setVisibility(View.VISIBLE);  
                     App.showToastShort(getContext(), "弹幕已开启");
                 }
@@ -1799,7 +1798,6 @@ public class VodController extends BaseController {
                 imageHide();  //xuameng 隐藏图片
                 mHidePauseIng(); //xuameng 隐藏暂停图标
                 releaseVisualizer();  //xuameng播放音乐背景
-                resetDanmuState();  //xuameng 弹幕重置
                 clearSubtitleCache();  //xuameng清除字幕缓存
                 if(isBottomVisible() && mSeekBarhasFocus) { //xuameng假如焦点在SeekBar
                     mxuPlay.requestFocus(); //底部菜单默认焦点为播放
@@ -1824,7 +1822,6 @@ public class VodController extends BaseController {
                 imageHide();  //xuameng 隐藏图片
                 mHidePauseIng(); //xuameng 隐藏暂停图标
                 releaseVisualizer();  //xuameng播放音乐背景
-                resetDanmuState();  //xuameng 弹幕重置
                 clearSubtitleCache();  //xuameng清除字幕缓存
                 isVideoPlay = false;
                 isBufferIng = false; //xuameng 判断是否进在缓冲视频
@@ -1874,7 +1871,6 @@ public class VodController extends BaseController {
                 mHidePauseIng(); //xuameng 隐藏暂停图标
                 clearSubtitleCache();
                 releaseVisualizer();  //xuameng播放音乐背景
-                resetDanmuState();  //xuameng 弹幕重置
                 clearSubtitleCache();  //xuameng清除字幕缓存
                 isVideoPlay = false;
                 isBufferIng = false; //xuameng 判断是否进在缓冲视频
@@ -2659,11 +2655,4 @@ public class VodController extends BaseController {
         return mDanmuView;
     }
 
-    private void resetDanmuState() {  //xuameng 弹幕重置
-        if (danmuLoadController != null) danmuLoadController.reset();
-    }
-
-    private void setDanmuViewSettings(boolean reload) { //xuameng 弹幕重新读取
-        if (danmuLoadController != null) danmuLoadController.applySettings(reload);
-    }
 }
