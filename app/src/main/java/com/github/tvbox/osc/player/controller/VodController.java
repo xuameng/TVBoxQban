@@ -707,7 +707,6 @@ public class VodController extends BaseController {
                     myHandle.removeCallbacks(myRunnable);
                     hideBottomXu();
                 }
-                EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_SET_DANMU_SETTINGS, true));
             }
         });
         mGridView.setAdapter(parseAdapter);
