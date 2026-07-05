@@ -708,6 +708,7 @@ public class VodController extends BaseController {
                     myHandle.removeCallbacks(myRunnable);
                     hideBottomXu();
                 }
+                setDanmuViewSettings(true);
             }
         });
         mGridView.setAdapter(parseAdapter);
@@ -1395,12 +1396,12 @@ public class VodController extends BaseController {
                 }
                 if(mDanmuView.getVisibility() == View.VISIBLE) {
                     DanmuHelper.setOpen(false);
-                    EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_SET_DANMU_SETTINGS, false));
+                    setDanmuViewSettings(false);
                     mDanmuView.setVisibility(View.GONE);  
                     App.showToastShort(getContext(), "弹幕已关闭");
                 } else {
                     DanmuHelper.setOpen(true);
-                    EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_SET_DANMU_SETTINGS, true));
+                    setDanmuViewSettings(true);
                     mDanmuView.setVisibility(View.VISIBLE);  
                     App.showToastShort(getContext(), "弹幕已开启");
                 }
@@ -2660,5 +2661,9 @@ public class VodController extends BaseController {
 
     private void resetDanmuState() {  //xuameng 弹幕重置
         if (danmuLoadController != null) danmuLoadController.reset();
+    }
+
+    private void setDanmuViewSettings(boolean reload) { //xuameng 弹幕重新读取
+        if (danmuLoadController != null) danmuLoadController.applySettings(reload);
     }
 }
