@@ -702,6 +702,7 @@ public class VodController extends BaseController {
                 parseAdapter.notifyItemChanged(currentDefault);
                 ApiConfig.get().setDefaultParse(parseBean);
                 parseAdapter.notifyItemChanged(position);
+                resetDanmuState();  //xuameng 弹幕重置
                 listener.changeParse(parseBean);
                 if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
                     myHandle.removeCallbacks(myRunnable);
