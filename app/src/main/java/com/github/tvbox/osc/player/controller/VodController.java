@@ -1029,7 +1029,7 @@ public class VodController extends BaseController {
                 listener.playPre();
             }
         });
-        mPlayerScaleBtn.setOnClickListener(new OnClickListener() {
+        mPlayerScaleBtn.setOnClickListener(new OnClickListener() {  //xuameng 画面比例
             @Override
             public void onClick(View view) {
                 myHandle.removeCallbacks(myRunnable);
@@ -1047,7 +1047,7 @@ public class VodController extends BaseController {
                 }
             }
         });
-        mPlayerSpeedBtn.setOnClickListener(new OnClickListener() {
+        mPlayerSpeedBtn.setOnClickListener(new OnClickListener() {   //xuameng 倍速播放
             @Override
             public void onClick(View view) {
                 myHandle.removeCallbacks(myRunnable);
@@ -1096,8 +1096,6 @@ public class VodController extends BaseController {
                     myHandle.removeCallbacks(myRunnable);
                     hideBottomXu();
                 }
-                myHandle.removeCallbacks(myRunnable);
-                myHandle.postDelayed(myRunnable, myHandleSeconds);
                 try {
                     int playerType = mPlayerConfig.getInt("pl");
                     ArrayList < Integer > exsitPlayerTypes = PlayerHelper.getExistPlayerTypes();
@@ -1202,8 +1200,6 @@ public class VodController extends BaseController {
                     myHandle.removeCallbacks(myRunnable);
                     hideBottomXu();
                 }
-                myHandle.removeCallbacks(myRunnable);
-                myHandle.postDelayed(myRunnable, myHandleSeconds);
                 try {
                     String ijk = mPlayerConfig.getString("ijk");
                     List < IJKCode > codecs = ApiConfig.get().getIjkCodes();
@@ -1227,8 +1223,8 @@ public class VodController extends BaseController {
                 mPlayerIJKBtn.requestFocusFromTouch();
             }
         });
-        //        增加播放页面片头片尾时间重置
-        mPlayerTimeResetBtn.setOnClickListener(new OnClickListener() {
+       
+        mPlayerTimeResetBtn.setOnClickListener(new OnClickListener() {    //xuameng播放页面片头片尾时间重置
             @Override
             public void onClick(View v) {
                 FastClickCheckUtil.check(v);
@@ -1244,7 +1240,7 @@ public class VodController extends BaseController {
                 }
             }
         });
-        mPlayerTimeStartBtn.setOnClickListener(new OnClickListener() {
+        mPlayerTimeStartBtn.setOnClickListener(new OnClickListener() {   //xuameng 设置片头开始时间
             @Override
             public void onClick(View view) {
                 myHandle.removeCallbacks(myRunnable);
@@ -1277,7 +1273,7 @@ public class VodController extends BaseController {
                 return true;
             }
         });
-        mPlayerTimeSkipBtn.setOnClickListener(new OnClickListener() {
+        mPlayerTimeSkipBtn.setOnClickListener(new OnClickListener() {  //xuameng 设置片尾结束时间
             @Override
             public void onClick(View view) {
                 myHandle.removeCallbacks(myRunnable);
@@ -1942,6 +1938,7 @@ public class VodController extends BaseController {
         mPauseContainer.setVisibility(GONE); // xuameng播放标题、暂停时间
         if(mBottomRoot.getVisibility() == View.GONE && !isDisplay) { //xuameng如果没显示菜单就显示
             showBottom();
+            myHandle.removeCallbacks(myRunnable);
             myHandle.postDelayed(myRunnable, myHandleSeconds);
         }
         ObjectAnimator animator8 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", 700, 0); //xuameng动画暂停菜单开始
@@ -2050,6 +2047,7 @@ public class VodController extends BaseController {
                 DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
                 if(mBottomRoot.getVisibility() == View.GONE && !isDisplay) {
                     showBottom();
+                    myHandle.removeCallbacks(myRunnable);
                     myHandle.postDelayed(myRunnable, myHandleSeconds);
                     return true;
                 }
