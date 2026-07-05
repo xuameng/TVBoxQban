@@ -290,7 +290,6 @@ public class PlayFragment extends BaseLazyFragment {
 
             @Override
             public void changeParse(ParseBean pb) {
-                pauseForHidden();
                 autoRetryCount = 0;
                 mRetryCountExo = 0;  //xuameng播放出错计数器重置
                 mRetryCountIjk = 0;
