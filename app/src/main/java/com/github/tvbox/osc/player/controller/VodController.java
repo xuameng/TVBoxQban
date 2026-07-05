@@ -1260,7 +1260,7 @@ public class VodController extends BaseController {
         mPlayerTimeStartBtn.setOnLongClickListener(new OnLongClickListener() {   //xuameng 长按重置播放开始时间
             @Override
             public boolean onLongClick(View view) {
-                FastClickCheckUtil.check(v);
+                FastClickCheckUtil.check(view);
                 myHandle.removeCallbacks(myRunnable);
                 myHandle.postDelayed(myRunnable, myHandleSeconds);
                 try {
@@ -1293,7 +1293,7 @@ public class VodController extends BaseController {
         mPlayerTimeSkipBtn.setOnLongClickListener(new OnLongClickListener() {  //xuameng 长按重置播放结束时间
             @Override
             public boolean onLongClick(View view) {
-                FastClickCheckUtil.check(v);
+                FastClickCheckUtil.check(view);
                 myHandle.removeCallbacks(myRunnable);
                 myHandle.postDelayed(myRunnable, myHandleSeconds);
                 try {
