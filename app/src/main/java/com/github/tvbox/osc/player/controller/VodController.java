@@ -93,6 +93,7 @@ import master.flame.danmaku.ui.widget.DanmakuView; //xuameng弹幕
 import org.greenrobot.eventbus.EventBus; //xuameng弹幕
 import com.github.tvbox.osc.event.RefreshEvent; //xuameng弹幕
 import com.github.tvbox.osc.util.DanmuHelper; //xuameng弹幕
+import com.github.tvbox.osc.player.danmu.DanmuLoadController; //xuameng 弹幕
 
 import com.google.android.exoplayer2.ui.SubtitleView;   // 用于显示ExoPlayer内置字幕
 
@@ -378,6 +379,8 @@ public class VodController extends BaseController {
 	private String videoPicUrl; //xuameng 新增给vod显示旋转图片用
     private boolean hasDanmu = false; //xuameng弹幕
     private DanmakuView mDanmuView; //xuameng弹幕
+    private DanmuLoadController danmuLoadController; //xuameng 弹幕
+
     boolean showPreview = Hawk.get(HawkConfig.SHOW_PREVIEW, true);  //xuameng true是显示小窗口,false是不显示小窗口
 
     Handler myHandle;
@@ -1794,6 +1797,7 @@ public class VodController extends BaseController {
                 imageHide();  //xuameng 隐藏图片
                 mHidePauseIng(); //xuameng 隐藏暂停图标
                 releaseVisualizer();  //xuameng播放音乐背景
+                resetDanmuState();  //xuameng 弹幕重置
                 clearSubtitleCache();  //xuameng清除字幕缓存
                 if(isBottomVisible() && mSeekBarhasFocus) { //xuameng假如焦点在SeekBar
                     mxuPlay.requestFocus(); //底部菜单默认焦点为播放
@@ -1817,6 +1821,9 @@ public class VodController extends BaseController {
             case VideoView.STATE_ERROR:
                 imageHide();  //xuameng 隐藏图片
                 mHidePauseIng(); //xuameng 隐藏暂停图标
+                releaseVisualizer();  //xuameng播放音乐背景
+                resetDanmuState();  //xuameng 弹幕重置
+                clearSubtitleCache();  //xuameng清除字幕缓存
                 isVideoPlay = false;
                 isBufferIng = false; //xuameng 判断是否进在缓冲视频
                 if(isBottomVisible() && mSeekBarhasFocus) { //xuameng假如焦点在SeekBar
@@ -1862,7 +1869,11 @@ public class VodController extends BaseController {
                 break;
             case VideoView.STATE_PLAYBACK_COMPLETED:
                 imageHide();  //xuameng 隐藏图片
+                mHidePauseIng(); //xuameng 隐藏暂停图标
                 clearSubtitleCache();
+                releaseVisualizer();  //xuameng播放音乐背景
+                resetDanmuState();  //xuameng 弹幕重置
+                clearSubtitleCache();  //xuameng清除字幕缓存
                 isVideoPlay = false;
                 isBufferIng = false; //xuameng 判断是否进在缓冲视频
                 listener.playNext(true);
@@ -2646,4 +2657,7 @@ public class VodController extends BaseController {
         return mDanmuView;
     }
 
+    private void resetDanmuState() {  //xuameng 弹幕重置
+        if (danmuLoadController != null) danmuLoadController.reset();
+    }
 }
