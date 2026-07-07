@@ -270,7 +270,6 @@ public class PlayFragment extends BaseLazyFragment {
                 startDanmuIfReady();
                 if (reLoadDanmu){
                     setDanmuViewSettings(true);
-                    reLoadDanmu  = false;  //xuameng 如果是解析嗅探地址重新下载弹幕
 				}
             }
         });
@@ -358,6 +357,9 @@ public class PlayFragment extends BaseLazyFragment {
                 initSubtitleView();
                 if (mVideoView != null) mVideoView.prepared();
                 startDanmuIfReady(); //xuameng 弹幕
+                if (reLoadDanmu){
+                    setDanmuViewSettings(true);
+				}
             }
             @Override
             public void startPlayUrl(String url, HashMap<String, String> headers) {
