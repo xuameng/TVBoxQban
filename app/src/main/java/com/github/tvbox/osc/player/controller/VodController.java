@@ -352,7 +352,8 @@ public class VodController extends BaseController {
     public SimpleSubtitleView mSubtitleView;
     TextView mZimuBtn;
     TextView mAudioTrackBtn;
-    TextView mDanmuSettingBtn;  //xuameng弹幕
+    TextView mDanmuSettingBtn;  //xuameng弹幕设置
+    TextView mDanmuSearchUiBtn;  //xuameng 弹幕搜索
     public TextView mLandscapePortraitBtn;
     private View backBtn; //返回键
     private boolean isClickBackBtn;
@@ -604,7 +605,8 @@ public class VodController extends BaseController {
         mSubtitleView = findViewById(R.id.subtitle_view);
         mZimuBtn = findViewById(R.id.zimu_select);
         mAudioTrackBtn = findViewById(R.id.audio_track_select);
-        mDanmuSettingBtn = findViewById(R.id.danmu_setting); //xuameng弹幕
+        mDanmuSettingBtn = findViewById(R.id.danmu_setting); //xuameng弹幕设置
+        mDanmuSearchUiBtn = findViewById(R.id.danmu_search_ui);  //xuameng弹幕搜索
         mLandscapePortraitBtn = findViewById(R.id.landscape_portrait);
         backBtn = findViewById(R.id.tv_back);
         mxuPlay = findViewById(R.id.mxuplay); //xuameng  低菜单播放
@@ -1406,6 +1408,27 @@ public class VodController extends BaseController {
                 return true;
             }
         });
+        mDanmuSearchUiBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                listener.searchDanmuUi(false);
+                if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
+                    myHandle.removeCallbacks(myRunnable);
+                    hideBottom();
+                }
+            }
+        });
+        mDanmuSearchUiBtn.setOnLongClickListener(new OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                listener.searchDanmuUi(true);
+                if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
+                    myHandle.removeCallbacks(myRunnable);
+                    hideBottom();
+                }
+                return true;
+            }
+        });
         mLandscapePortraitBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -1607,7 +1630,8 @@ public class VodController extends BaseController {
         void errReplay();
         void selectSubtitle();
         void selectAudioTrack();
-        void showDanmuSetting(); //xuameng弹幕
+        void showDanmuSetting(); //xuameng弹幕设置
+        void searchDanmuUi(boolean longClick);  //xuameng弹幕搜索
         void hideTipXu(); //xuameng隐藏错误信息
         void startPlayUrl(String url, HashMap < String, String > headers); //xuameng广告过滤
     }
