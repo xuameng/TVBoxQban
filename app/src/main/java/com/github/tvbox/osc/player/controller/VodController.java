@@ -1930,6 +1930,8 @@ public class VodController extends BaseController {
         iv_circle_bg.setVisibility(GONE); //xuameng音乐播放时图标
         customVisualizer.setVisibility(GONE); //xuameng播放音乐柱状图
         mPlayLoadNetSpeed.setVisibility(View.GONE); //xuameng 网速显示
+        mDanmuSettingBtn.setVisibility(GONE);  //xuameng弹幕设置
+        mDanmuSearchUiBtn.setVisibility(GONE); //xuameng弹幕搜索
     }
 
     boolean isBottomVisible() { //xuameng底部菜单是否显示
