@@ -487,7 +487,6 @@
                     android:background="@@drawable/button_dialog_main_1"
                     android:focusable="true"
                     android:padding="@dimen/vs_10"
-                    android:visibility="gone"
                     android:text="弹幕搜索"
                     android:textColor="@android:color/white"
                     android:textSize="@dimen/ts_20"
