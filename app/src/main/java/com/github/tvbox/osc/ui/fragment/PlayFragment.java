@@ -1785,7 +1785,7 @@ public class PlayFragment extends BaseLazyFragment {
         stopLoadWebView(false);
         OkGo.getInstance().cancelTag("play");
         OkGo.getInstance().cancelTag("json_jx");
-        OkGo.getInstance().cancelTag("lrc_load");
+      //  OkGo.getInstance().cancelTag("lrc_load");
         if (parseThreadPool != null) {
             try {
                 parseThreadPool.shutdown();
