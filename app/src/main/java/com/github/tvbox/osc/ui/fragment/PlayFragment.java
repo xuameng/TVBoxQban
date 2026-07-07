@@ -1799,9 +1799,9 @@ public class PlayFragment extends BaseLazyFragment {
     ExecutorService parseThreadPool;
 
     private void doParse(ParseBean pb) {
+        if(mVideoView!= null) mVideoView.release();  //XUAMENG修复嗅探换源闪退
         stopParse();
-        initParseLoadFound();
-        mVideoView.release();            //XUAMENG修复嗅探换源闪退
+        initParseLoadFound();           
         if (pb.getType() == 4) {
             parseMix(pb,true);
         }
