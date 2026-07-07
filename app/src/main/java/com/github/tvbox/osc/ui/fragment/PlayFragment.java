@@ -275,10 +275,17 @@ public class PlayFragment extends BaseLazyFragment {
         });
         mController.setListener(new VodController.VodControlListener() {
             @Override
-            public void showDanmuSetting() { //xuameng 弹幕
+            public void showDanmuSetting() { //xuameng 弹幕设置
                 DanmuSettingDialog dialog = new DanmuSettingDialog(requireContext(), mDanmuView);
                 dialog.show();
             }
+
+            @Override
+            public void searchDanmuUi(boolean longClick) {  //xuameng 弹幕搜索
+                VodInfo.VodSeries series = mVodInfo == null ? null : getCurrentSeries(mVodInfo.playFlag, mVodInfo.playIndex);
+                ApiConfig.get().searchDanmuUi(mVodInfo == null ? "" : mVodInfo.name, series == null ? "" : series.name, longClick);
+            }
+
             @Override
             public void playNext(boolean rmProgress) {
                 String preProgressKey = progressKey;
