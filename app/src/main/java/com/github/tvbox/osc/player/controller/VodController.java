@@ -178,6 +178,7 @@ public class VodController extends BaseController {
                     }
                     case 1002: { // 显示底部菜单
                         // xuameng底部视图动画
+                        updateDanmuSearchUiBtn();  //xuameng弹幕搜索
                         mBottomRoot.setVisibility(VISIBLE);
                         mBottomRoot.setAlpha(0.0f);
                         mBottomRoot.setTranslationY(230);
@@ -607,6 +608,7 @@ public class VodController extends BaseController {
         mAudioTrackBtn = findViewById(R.id.audio_track_select);
         mDanmuSettingBtn = findViewById(R.id.danmu_setting); //xuameng弹幕设置
         mDanmuSearchUiBtn = findViewById(R.id.danmu_search_ui);  //xuameng弹幕搜索
+        updateDanmuSearchUiBtn();  //xuameng弹幕搜索
         mLandscapePortraitBtn = findViewById(R.id.landscape_portrait);
         backBtn = findViewById(R.id.tv_back);
         mxuPlay = findViewById(R.id.mxuplay); //xuameng  低菜单播放
@@ -1618,8 +1620,14 @@ public class VodController extends BaseController {
 
     public void updateDanmuBtn() {
         if (mDanmuSettingBtn == null) return;
-        mDanmuSettingBtn.setVisibility(hasDanmu ? VISIBLE : GONE);  //xuameng弹幕
+        mDanmuSettingBtn.setVisibility(hasDanmu ? VISIBLE : GONE);  //xuameng弹幕设置
     }
+
+    public void updateDanmuSearchUiBtn() {   //xuameng弹幕搜索
+        if (mDanmuSearchUiBtn == null) return;
+        mDanmuSearchUiBtn.setVisibility(ApiConfig.get().hasDanmuSearchUi() ? VISIBLE : GONE);
+    }
+
     public interface VodControlListener {
         void playNext(boolean rmProgress);
         void playPre();
