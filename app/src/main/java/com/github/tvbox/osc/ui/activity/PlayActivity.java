@@ -290,6 +290,13 @@ public class PlayActivity extends BaseActivity {
                 DanmuSettingDialog dialog = new DanmuSettingDialog(PlayActivity.this, mDanmuView);
                 dialog.show();
             }
+
+            @Override
+            public void searchDanmuUi(boolean longClick) {  //xuameng 弹幕搜索
+                VodInfo.VodSeries series = mVodInfo == null ? null : getCurrentSeries(mVodInfo.playFlag, mVodInfo.playIndex);
+                ApiConfig.get().searchDanmuUi(mVodInfo == null ? "" : mVodInfo.name, series == null ? "" : series.name, longClick);
+            }
+
             @Override
             public void playNext(boolean rmProgress) {
                 String preProgressKey = progressKey;
@@ -1765,28 +1772,6 @@ public class PlayActivity extends BaseActivity {
     void cancelPlayTimeout() {
         mHandler.removeMessages(MSG_RESOLVE_PLAY_URL_TIMEOUT);
         mHandler.removeMessages(MSG_SWITCH_LINE_PLAY_TIMEOUT);
-    }
-
-    public void setAutoSwitchLineEnabled(boolean enabled) {
-        allowAutoSwitchLine = enabled;
-        if (!enabled) {
-            cancelPlayTimeout();
-        }
-    }
-
-    public void pauseForHidden() {
-        cancelPlayTimeout();
-        stopParse();
-        playbackStarted = false;
-        if (mVideoView != null) {
-            mVideoView.pause();
-            mVideoView.release();
-        }
-        mController.stopOther();
-        resetDanmuState();
-        webPlayUrl = null;
-        webHeaderMap = null;
-        initParseLoadFound();
     }
 
     void markPlaybackStarted() {
