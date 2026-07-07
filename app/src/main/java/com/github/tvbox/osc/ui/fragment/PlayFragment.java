@@ -141,12 +141,13 @@ public class PlayFragment extends BaseLazyFragment {
     private int mRetryCountJP = 0;  //xuameng播放出错计数器
     private static final int MAX_RETRIES = 2;  //xuameng播放出错切换2次
     private int currentSubtitleStyle = 0; // xuameng当前字幕颜色索引
-    private boolean exitingPreview = false;
+    private boolean exitingPreview = false;  //xuameng是否彻底退出页面
     private boolean fullPreview  = false;  //xuameng 非小窗口模式返回后播放BUG
     boolean showPreview = Hawk.get(HawkConfig.SHOW_PREVIEW, true);  //xuameng true是显示小窗口,false是不显示小窗口
 
     private DanmakuView mDanmuView; //xuameng 弹幕
     private DanmuLoadController danmuLoadController; //xuameng 弹幕
+    private boolean reLoadDanmu  = false;  //xuameng 如果是解析嗅探地址重新下载弹幕
 
     @Override
     protected int getLayoutResID() {
@@ -267,6 +268,10 @@ public class PlayFragment extends BaseLazyFragment {
             @Override
             public void onPlayStateChanged(int playState) {
                 startDanmuIfReady();
+                if (reLoadDanmu){
+                    setDanmuViewSettings(true);
+                    reLoadDanmu  = false;  //xuameng 如果是解析嗅探地址重新下载弹幕
+				}
             }
         });
         mController.setListener(new VodController.VodControlListener() {
@@ -294,6 +299,7 @@ public class PlayFragment extends BaseLazyFragment {
                 mRetryCountExo = 0;  //xuameng播放出错计数器重置
                 mRetryCountIjk = 0;
                 mRetryCountJP = 0;
+                reLoadDanmu  = true;  //xuameng 如果是解析嗅探地址重新下载弹幕
                 doParse(pb);
             }
 
@@ -752,7 +758,6 @@ public class PlayFragment extends BaseLazyFragment {
                             e.printStackTrace();
                         }
                         hideTip();
-                        playTimeoutBasePosition = getSavedProgress(progressKey);
                         //xuameng 修复B站base64视频解析URL为 JSON的情况
                         if (url.startsWith("[")){
                             try {
@@ -1207,7 +1212,7 @@ public class PlayFragment extends BaseLazyFragment {
         this.fullPreview = fullPreview;
     }
 
-    public void setExitingPreview(boolean exitingPreview) {
+    public void setExitingPreview(boolean exitingPreview) {  //xuameng是否彻底退出页面
         this.exitingPreview = exitingPreview;
     }
 
@@ -1331,7 +1336,6 @@ public class PlayFragment extends BaseLazyFragment {
 
     private int autoRetryCount = 0;
     private long lastRetryTime = 0; // 记录上次调用时间（毫秒）  //xuameng新增
-    private long playTimeoutBasePosition = 0;
 
     boolean autoRetry() {
     if (mVodPlayerCfg == null || mVodInfo == null) {
@@ -1532,6 +1536,7 @@ public class PlayFragment extends BaseLazyFragment {
         if(mVodInfo==null)return;
         exitingPreview = false;
         isJianpian = false;
+        reLoadDanmu  = false;  //xuameng 如果是解析嗅探地址重新下载弹幕
         VodInfo.VodSeries vs = mVodInfo.seriesMap.get(mVodInfo.playFlag).get(mVodInfo.playIndex);
         EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_REFRESH, mVodInfo.playIndex));
         setTip("正在获取播放信息", true, false);
@@ -1547,7 +1552,6 @@ public class PlayFragment extends BaseLazyFragment {
             mController.setTitle(playTitleInfo);
         }
         stopParse();
-        playTimeoutBasePosition = 0;
         webHeaderMap = null;
         initParseLoadFound();
         resetDanmuState(); //xuameng 弹幕
