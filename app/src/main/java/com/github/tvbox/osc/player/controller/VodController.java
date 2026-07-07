@@ -707,8 +707,6 @@ public class VodController extends BaseController {
                 ApiConfig.get().setDefaultParse(parseBean);
                 parseAdapter.notifyItemChanged(position);
                 listener.changeParse(parseBean);
-                mDanmuSettingBtn.setVisibility(GONE);  //xuameng弹幕设置
-                mDanmuSearchUiBtn.setVisibility(GONE); //xuameng弹幕搜索
                 if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
                     myHandle.removeCallbacks(myRunnable);
                     hideBottomXu();
