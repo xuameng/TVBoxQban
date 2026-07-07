@@ -1573,8 +1573,6 @@ public class PlayFragment extends BaseLazyFragment {
         if (reset) {
             CacheManager.delete(MD5.string2MD5(progressKey), 0);
             CacheManager.delete(MD5.string2MD5(subtitleCacheKey), 0);
-        }else{
-            inheritProgressIfNeeded();
         }
 
         if(Jianpian.isJpUrl(vs.url)){//荐片地址特殊判断
@@ -1616,26 +1614,9 @@ public class PlayFragment extends BaseLazyFragment {
         sourceViewModel.getPlay(sourceKey, mVodInfo.playFlag, progressKey, vs.url, subtitleCacheKey);
     }
 
-    private void inheritProgressIfNeeded() {
-        try {
-            if (TextUtils.isEmpty(inheritProgressKey) || TextUtils.isEmpty(progressKey)) return;
-            if (TextUtils.equals(inheritProgressKey, progressKey)) return;
-            if (inheritProgress <= 0) return;
-            Object targetCache = CacheManager.getCache(MD5.string2MD5(progressKey));
-            if (targetCache == null) {
-                CacheManager.save(MD5.string2MD5(progressKey), inheritProgress);
-            }
-        } finally {
-            inheritProgressKey = null;
-            inheritProgress = 0;
-        }
-    }
-
     private String playSubtitle;
     private String subtitleCacheKey;
     private String progressKey;
-    private String inheritProgressKey;
-    private long inheritProgress;
     private String parseFlag;
     private String webUrl;
     private String webUserAgent;
