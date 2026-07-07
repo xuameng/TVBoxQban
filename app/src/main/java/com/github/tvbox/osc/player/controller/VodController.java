@@ -1336,7 +1336,7 @@ public class VodController extends BaseController {
                 if (HawkConfig.exoSubtitle){      //xuameng 打开关闭exo内置方法字幕
                     if(mExoSubtitleView.getVisibility() == View.GONE  && mLrcView.getVisibility() == View.GONE) {
                         mExoSubtitleView.setVisibility(VISIBLE);
-                        if (!TextUtils.isEmpty(mLrcContent) && mLrcContent.length() > 0) {
+                        if (!TextUtils.isEmpty(mLrcContent) && mLrcContent.length() > 10) {
                             mLrcView.setVisibility(View.VISIBLE);  //xuameng LRC歌词字幕
                         }
                         App.showToastShort(getContext(), "字幕已开启！");
@@ -1350,7 +1350,7 @@ public class VodController extends BaseController {
 
                 if(mSubtitleView.getVisibility() == View.GONE && mLrcView.getVisibility() == View.GONE) {  //xuameng 打开关闭外置方法字幕
                     mSubtitleView.setVisibility(VISIBLE);
-                    if (!TextUtils.isEmpty(mLrcContent) && mLrcContent.length() > 0) {
+                    if (!TextUtils.isEmpty(mLrcContent) && mLrcContent.length() > 10) {
                         mLrcView.setVisibility(View.VISIBLE);  //xuameng LRC歌词字幕
                     }
                     App.showToastShort(getContext(), "字幕已开启！");
