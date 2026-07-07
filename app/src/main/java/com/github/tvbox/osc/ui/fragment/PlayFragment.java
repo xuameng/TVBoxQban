@@ -1299,6 +1299,7 @@ public class PlayFragment extends BaseLazyFragment {
         ClearOtherCache();
         stopLoadWebView(true);
         stopParse();
+        OkGo.getInstance().cancelTag("lrc_load");
         mController.stopOther();
     }
 
@@ -1778,6 +1779,7 @@ public class PlayFragment extends BaseLazyFragment {
         resetDanmuState();
         webHeaderMap = null;
         initParseLoadFound();
+        OkGo.getInstance().cancelTag("lrc_load");
     }
 
     void stopParse() {
