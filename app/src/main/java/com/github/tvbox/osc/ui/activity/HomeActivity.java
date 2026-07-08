@@ -361,11 +361,12 @@ public class HomeActivity extends BaseActivity {
                                     if (Hawk.get(HawkConfig.HOME_DEFAULT_SHOW, false)) {         //xuameng直接进入直播
                                         jumpActivity(LivePlayActivity.class);
                                     }
-                                if (!ApiConfig.get().JvhuiWarning.isEmpty()){
-                                    String JvhuiWarning = ApiConfig.get().JvhuiWarning;
-                                    App.showToastShort(HomeActivity.this, (JvhuiWarning));
-                                }else{
-                                    App.showToastShort(HomeActivity.this, "聚汇影视提示：jar加载成功！");									}
+                                    if (!ApiConfig.get().JvhuiWarning.isEmpty()){
+                                        String JvhuiWarning = ApiConfig.get().JvhuiWarning;
+                                        App.showToastShort(HomeActivity.this, (JvhuiWarning));
+                                    }else{
+                                        App.showToastShort(HomeActivity.this, "聚汇影视提示：jar加载成功！");									
+                                    }
                                 }
                                 initData();
                                 checkMicrophonePermission();  //xuameng音频权限
