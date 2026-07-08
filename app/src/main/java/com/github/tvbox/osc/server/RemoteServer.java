@@ -314,7 +314,8 @@ public class RemoteServer extends NanoHTTPD {
         Map<String, String> params = session.getParms();
         params.putAll(session.getHeaders());
         if (params.containsKey("do")) {
-            boolean isDanmuProxy = "danmu".equals(params.get("do"));
+String doVal = params.get("do");
+boolean isDanmuProxy = doVal != null && doVal.contains("danmu");
             if (isDanmuProxy) normalizeDanmuParams(params);
             if (isDanmuProxy) LOG.i("echo-proxy-danmu params: " + params.toString());
             Object[] rs = ApiConfig.get().proxyLocal(params);
