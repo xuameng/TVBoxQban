@@ -264,6 +264,7 @@ public class HomeActivity extends BaseActivity {
         tvName.setOnLongClickListener(new View.OnLongClickListener() {      //xuameng长按重新加载
             @Override
             public boolean onLongClick(View v) {
+                FastClickCheckUtil.check(v);
                 if(dataInitOk && jarInitOk){
                     Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -282,6 +283,7 @@ public class HomeActivity extends BaseActivity {
         tvDate.setOnClickListener(new View.OnClickListener() {    //xuameng点击系统时间跳转设置
             @Override
             public void onClick(View v) {
+                FastClickCheckUtil.check(v);
                 if(dataInitOk && jarInitOk){           //xuameng MENU键显示主页源
                     showSiteSwitch(); 
                 }else{
@@ -293,6 +295,7 @@ public class HomeActivity extends BaseActivity {
         tvDate.setOnLongClickListener(new View.OnLongClickListener() {      //xuameng长按重新加载
             @Override
             public boolean onLongClick(View v) {
+                FastClickCheckUtil.check(v);
                 jumpActivity(SettingActivity.class);		//xuameng加载慢跳转设置   
                 return true;
             }
