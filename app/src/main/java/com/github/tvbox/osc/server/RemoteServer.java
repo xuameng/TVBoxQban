@@ -147,15 +147,27 @@ public class RemoteServer extends NanoHTTPD {
                 fileName = fileName.substring(0, fileName.indexOf('?'));
             }
             if (session.getMethod() == Method.GET) {
-                if (isProxyRequest(fileName, session.getParms())) {
-                    return handleProxy(session);
-                }
                 for (RequestProcess process : getRequestList) {
                     if (process.isRequest(session, fileName)) {
                         return process.doResponse(session, fileName, session.getParms(), null);
                     }
                 }
-                if (fileName.startsWith("/file/")) {
+                if (fileName.equals("/proxy")) {
+                    Map<String, String> params = session.getParms();
+                    params.putAll(session.getHeaders());
+                    if (params.containsKey("do")) {
+String doVal = params.get("do");
+boolean isDanmuProxy = doVal != null && doVal.contains("danmu");
+                        if (isDanmuProxy) normalizeDanmuParams(params);
+                        if (isDanmuProxy) LOG.i("echo-proxy-danmu params: " + params.toString());
+                        Object[] rs = ApiConfig.get().proxyLocal(params);
+                        return getProxy(rs);
+                    }
+                    if (params.containsKey("go")) {
+                        Object[] rs = Proxy.proxy(params);
+                        return getProxy(rs);
+                    }
+                } else if (fileName.startsWith("/file/")) {
                     try {
                         String f = fileName.substring(6);
                         String root = Environment.getExternalStorageDirectory().getAbsolutePath();
@@ -303,40 +315,6 @@ public class RemoteServer extends NanoHTTPD {
         //default page: index.html
         return getRequestList.get(0).doResponse(session, "", null, null);
     }
-
-    private boolean isProxyRequest(String fileName, Map<String, String> params) {
-        if (params == null) return false;
-        if (!params.containsKey("do") && !params.containsKey("go")) return false;
-        return fileName.equals("/proxy") || fileName.equals("/");
-    }
-
-private Response handleProxy(IHTTPSession session) {
-    Map<String, String> params = session.getParms();
-    params.putAll(session.getHeaders());
-
-    if (params.containsKey("do")) {
-        String doVal = params.get("do");
-        boolean isDanmuProxy = doVal != null
-                && doVal.toLowerCase().contains("danmu");
-
-        if (isDanmuProxy) {
-            // ✅ 归一化，保证下游逻辑一致
-            params.put("do", "danmu");
-            normalizeDanmuParams(params);
-            LOG.i("echo-proxy-danmu params: " + params.toString());
-        }
-
-        Object[] rs = ApiConfig.get().proxyLocal(params);
-        return getProxy(rs);
-    }
-
-    if (params.containsKey("go")) {
-        Object[] rs = Proxy.proxy(params);
-        return getProxy(rs);
-    }
-
-    return getProxy(null);
-}
 
     private Response handleAction(Map<String, String> params) {
         if (params == null) return createPlainTextResponse(Response.Status.OK, "ok");
