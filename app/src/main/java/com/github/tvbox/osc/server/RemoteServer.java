@@ -310,23 +310,33 @@ public class RemoteServer extends NanoHTTPD {
         return fileName.equals("/proxy") || fileName.equals("/");
     }
 
-    private Response handleProxy(IHTTPSession session) {
-        Map<String, String> params = session.getParms();
-        params.putAll(session.getHeaders());
-        if (params.containsKey("do")) {
-String doVal = params.get("do");
-boolean isDanmuProxy = doVal != null && doVal.contains("danmu");
-            if (isDanmuProxy) normalizeDanmuParams(params);
-            if (isDanmuProxy) LOG.i("echo-proxy-danmu params: " + params.toString());
-            Object[] rs = ApiConfig.get().proxyLocal(params);
-            return getProxy(rs);
+private Response handleProxy(IHTTPSession session) {
+    Map<String, String> params = session.getParms();
+    params.putAll(session.getHeaders());
+
+    if (params.containsKey("do")) {
+        String doVal = params.get("do");
+        boolean isDanmuProxy = doVal != null
+                && doVal.toLowerCase().contains("danmu");
+
+        if (isDanmuProxy) {
+            // ✅ 归一化，保证下游逻辑一致
+            params.put("do", "danmu");
+            normalizeDanmuParams(params);
+            LOG.i("echo-proxy-danmu params: " + params.toString());
         }
-        if (params.containsKey("go")) {
-            Object[] rs = Proxy.proxy(params);
-            return getProxy(rs);
-        }
-        return getProxy(null);
+
+        Object[] rs = ApiConfig.get().proxyLocal(params);
+        return getProxy(rs);
     }
+
+    if (params.containsKey("go")) {
+        Object[] rs = Proxy.proxy(params);
+        return getProxy(rs);
+    }
+
+    return getProxy(null);
+}
 
     private Response handleAction(Map<String, String> params) {
         if (params == null) return createPlainTextResponse(Response.Status.OK, "ok");
