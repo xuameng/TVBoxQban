@@ -221,6 +221,7 @@ public class HomeActivity extends BaseActivity {
                     if ((baseLazyFragment instanceof GridFragment) && !sortAdapter.getItem(position).filters.isEmpty()) {// 弹出筛选
                         ((GridFragment) baseLazyFragment).showFilter();
                     } else if (baseLazyFragment instanceof UserFragment) {
+                        FastClickCheckUtil.check(itemView);
                         showSiteSwitch();
                     }
                 }
@@ -252,22 +253,7 @@ public class HomeActivity extends BaseActivity {
             public void onClick(View v) {
                 FastClickCheckUtil.check(v);
                 if(dataInitOk && jarInitOk){
-                    String cachePath = FileUtils.getCachePath();          //xuameng点击清空缓存
-                    String cspCachePath = FileUtils.getFilePath()+"/csp/";
-                    String jarCachePath = FileUtils.getFilePath()+"/jar/";
-                    File cspCacheDir = new File(cspCachePath);
-                    File jarCacheDir = new File(jarCachePath);
-                    File cacheDir = new File(cachePath);
-                    new Thread(() -> {
-                        try {
-                            if(cacheDir.exists()) FileUtils.cleanDirectory(cacheDir);
-                            if(cspCacheDir.exists()) FileUtils.cleanDirectory(cspCacheDir);
-                            if(jarCacheDir.exists()) FileUtils.cleanDirectory(jarCacheDir);
-                                // ApiConfig.get().clearJarLoader();
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                    }).start();
+                    FileUtils.clearSpiderCacheFiles();
                     App.showToastShort(HomeActivity.this, "缓存已清空！");
                 }else {
                     jumpActivity(SettingActivity.class);		//xuameng加载慢跳转设置
