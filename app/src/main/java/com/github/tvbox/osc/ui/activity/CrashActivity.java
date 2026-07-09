@@ -202,7 +202,7 @@ public class CrashActivity extends BaseActivity {
             return;
         }
 
-                if (XXPermissions.isGranted(getContext(), Permission.Group.STORAGE)) {
+                if (XXPermissions.isGranted(CrashActivity.this, Permission.Group.STORAGE)) {
                     App.showToastShort(CrashActivity.this, "已获得存储权限！");
                 } else {
                     XXPermissions.with(CrashActivity.this)
@@ -219,7 +219,7 @@ public class CrashActivity extends BaseActivity {
                                 public void onDenied(List<String> permissions, boolean never) {
                                     if (never) {
                                         App.showToastShort(CrashActivity.this, "获取存储权限失败,请在系统设置中开启！");
-                                        XXPermissions.startPermissionActivity(this, permissions);      
+                                        XXPermissions.startPermissionActivity(CrashActivity.this, permissions);      
                                     } else {
                                         App.showToastShort(CrashActivity.this, "获取存储权限失败！");
                                     }
