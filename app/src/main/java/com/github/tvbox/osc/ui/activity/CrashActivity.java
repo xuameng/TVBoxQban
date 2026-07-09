@@ -202,47 +202,79 @@ public class CrashActivity extends BaseActivity {
             return;
         }
 
-                if (XXPermissions.isGranted(CrashActivity.this, Permission.Group.STORAGE)) {
-                    App.showToastShort(CrashActivity.this, "已获得存储权限！");
-                } else {
-                    XXPermissions.with(CrashActivity.this)
-                            .permission(Permission.Group.STORAGE)
-                            .request(new OnPermissionCallback() {
-                                @Override
-                                public void onGranted(List<String> permissions, boolean all) {
-                                    if (all) {
-                                        App.showToastShort(CrashActivity.this, "已获得存储权限！");
-                                    }
-                                }
+        if (XXPermissions.isGranted(CrashActivity.this, Permission.Group.STORAGE)) {
+            doCopyAndSave();
+        } else {
+            XXPermissions.with(CrashActivity.this)
+                    .permission(Permission.Group.STORAGE)
+                    .request(new OnPermissionCallback() {
+                        @Override
+                        public void onGranted(List<String> permissions, boolean all) {
+                            if (all) {
+                                doCopyAndSave();
+                            }
+                        }
 
-                                @Override
-                                public void onDenied(List<String> permissions, boolean never) {
-                                    if (never) {
-                                        App.showToastShort(CrashActivity.this, "获取存储权限失败,请在系统设置中开启！");
-                                        XXPermissions.startPermissionActivity(CrashActivity.this, permissions);      
-                                    } else {
-                                        App.showToastShort(CrashActivity.this, "获取存储权限失败！");
-                                    }
-                                }
-                            });
+                        @Override
+                        public void onDenied(List<String> permissions, boolean never) {
+                            if (never) {
+                                App.showToastShort(CrashActivity.this, "获取存储权限失败,请在系统设置中开启！");
+                                XXPermissions.startPermissionActivity(CrashActivity.this, permissions);
+                                doCopyAndSave();
+                            } else {
+                                App.showToastShort(CrashActivity.this, "获取存储权限失败！");
+                                doCopyAndSave();
+                            }
+                        }
+                    });
                 }
-        // 1️⃣ 复制到剪切板（主线程）
-        try {
-            android.content.ClipboardManager clipboard =
-                    (android.content.ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+    }
 
-            android.content.ClipData clip =
-                    android.content.ClipData.newPlainText("Crash Log", crashLog);
-
-            clipboard.setPrimaryClip(clip);
-            App.showToastShort(this, "崩溃日志已复制到剪切板");
-        } catch (Exception e) {
-            e.printStackTrace();
-            App.showToastShort(this, "崩溃日志复制失败：" + e.getMessage());
-            return;
+    /**
+     * 一定执行：复制崩溃日志到剪贴板
+     * 仅在有权限时：异步保存到 jvhuiys_backup 目录
+     */
+    private void doCopyAndSave() {
+        // ===== 制到剪贴板（主线程）=====
+        boolean copySuccess = copyToClipboard();
+        if (!copySuccess) {
+            return; // 复制失败就不再继续
         }
 
-        // 2️⃣ 异步保存到jvhuiys_backup目录
+        // =====  判断是否有权限再保存文件 =====
+        if (XXPermissions.isGranted(CrashActivity.this, Permission.Group.STORAGE)) {
+            saveCrashLogToFileAsync();
+        }
+    }
+
+    /**
+     * 复制崩溃日志到系统剪贴板
+     * @return 是否成功
+     */
+    private boolean copyToClipboard() {
+        try {
+            ClipboardManager clipboard =
+                    (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+
+            ClipData clip =
+                    ClipData.newPlainText("Crash Log", crashLog);
+
+            clipboard.setPrimaryClip(clip);
+            App.showToastShort(CrashActivity.this, "崩溃日志已复制到剪切板");
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            App.showToastShort(CrashActivity.this, "崩溃日志复制失败：" + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * 异步保存崩溃日志到 jvhuiys_backup 目录
+     * 前提：已获得存储权限
+     */
+    private void saveCrashLogToFileAsync() {
+        //异步保存到jvhuiys_backup目录
         new Thread(() -> {
             try {
                 File root = Environment.getExternalStorageDirectory();
@@ -252,7 +284,7 @@ public class CrashActivity extends BaseActivity {
                     dir.mkdirs();
                 }
 
-                // ✅ 按时间生成文件名
+                // 按时间生成文件名
                 String time = new java.text.SimpleDateFormat(
                         "yyyy-MM-dd_HH-mm",
                         java.util.Locale.getDefault()
