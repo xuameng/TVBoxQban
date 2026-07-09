@@ -55,6 +55,8 @@ import java.util.zip.ZipFile;
 
 import fi.iki.elonen.NanoHTTPD;
 
+import com.github.tvbox.osc.base.App;
+
 /**
  * @author pj567
  * @date :2021/1/5
@@ -314,7 +316,13 @@ public class RemoteServer extends NanoHTTPD {
         Map<String, String> params = session.getParms();
         params.putAll(session.getHeaders());
         if (params.containsKey("do")) {
-            boolean isDanmuProxy = "danmu".equals(params.get("do"));
+boolean isDanmuProxy =
+        "danmu".equals(params.get("do"))
+     || "wexdanmu".equals(params.get("do")
+     || "autodanmu".equals(params.get("do"));
+if (isDanmuProxy){
+	App.showToastShort(App.getInstance(), "2222222222222222222222222222222");
+}
             if (isDanmuProxy) normalizeDanmuParams(params);
             if (isDanmuProxy) LOG.i("echo-proxy-danmu params: " + params.toString());
             Object[] rs = ApiConfig.get().proxyLocal(params);
