@@ -30,6 +30,7 @@ import java.io.FileWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.List;
 
 /**
  * xuameng
@@ -197,30 +198,30 @@ public class CrashActivity extends BaseActivity {
      */
     private void copyCrashLogToClipboard() {
         if (crashLog == null || crashLog.isEmpty()) {
-            App.showToastShort(this, "没有可复制的日志");
+            App.showToastShort(CrashActivity.this, "没有可复制的日志");
             return;
         }
 
                 if (XXPermissions.isGranted(getContext(), Permission.Group.STORAGE)) {
-                    App.showToastShort(this, "已获得存储权限！");
+                    App.showToastShort(CrashActivity.this, "已获得存储权限！");
                 } else {
-                    XXPermissions.with(getContext())
+                    XXPermissions.with(CrashActivity.this)
                             .permission(Permission.Group.STORAGE)
                             .request(new OnPermissionCallback() {
                                 @Override
                                 public void onGranted(List<String> permissions, boolean all) {
                                     if (all) {
-                                        App.showToastShort(this, "已获得存储权限！");
+                                        App.showToastShort(CrashActivity.this, "已获得存储权限！");
                                     }
                                 }
 
                                 @Override
                                 public void onDenied(List<String> permissions, boolean never) {
                                     if (never) {
-                                        App.showToastShort(this, "获取存储权限失败,请在系统设置中开启！");
+                                        App.showToastShort(CrashActivity.this, "获取存储权限失败,请在系统设置中开启！");
                                         XXPermissions.startPermissionActivity(this, permissions);      
                                     } else {
-                                        App.showToastShort(this, "获取存储权限失败！");
+                                        App.showToastShort(CrashActivity.this, "获取存储权限失败！");
                                     }
                                 }
                             });
