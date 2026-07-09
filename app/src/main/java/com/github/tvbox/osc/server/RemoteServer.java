@@ -318,7 +318,7 @@ public class RemoteServer extends NanoHTTPD {
         if (params.containsKey("do")) {
 boolean isDanmuProxy =
         "danmu".equals(params.get("do"))
-     || "wexdanmu".equals(params.get("do")
+     || "wexdanmu".equals(params.get("do"))
      || "autodanmu".equals(params.get("do"));
 if (isDanmuProxy){
 	App.showToastShort(App.getInstance(), "2222222222222222222222222222222");
