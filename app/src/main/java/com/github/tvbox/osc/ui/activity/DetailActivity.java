@@ -1133,9 +1133,6 @@ public class DetailActivity extends BaseActivity {
                             App.showToastShort(DetailActivity.this, "接收到推送数据为空！");
                             EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_PLAY_PUSH_ERROR, null));   //xuameng远程推送解析数据为空判断
                         }
-                        if (fullWindows) {
-                            exitFullPreview();
-                        }
                         mGridViewFlag.setVisibility(View.GONE);
                         mGridView.setVisibility(View.GONE);
                         mSeriesGroupView.setVisibility(View.GONE);
@@ -1152,10 +1149,8 @@ public class DetailActivity extends BaseActivity {
                 } else {
                     if (isPushUrl) {  //xuameng 判断推送恢复初始
                         isPushUrl = false;
-                        App.showToastShort(DetailActivity.this, "接收推送数据失败！");
-                    }
-                    if (fullWindows) {
-                        exitFullPreview();
+                        App.showToastShort(DetailActivity.this, "接收到推送数据为空！");
+                        EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_PLAY_PUSH_ERROR, null));   //xuameng远程推送解析数据为空判断
                     }
                     if (isShowConfig){ //xuameng 配置中心判断
                         showConfig();
