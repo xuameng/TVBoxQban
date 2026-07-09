@@ -134,6 +134,13 @@ public class HomeActivity extends BaseActivity {
         }
     };
 
+    private final Runnable refreshTopInfoTextSizeRunnable = new Runnable() {
+        @Override
+        public void run() {
+            refreshTopInfoTextSize();
+        }
+    };
+
     @Override
     protected int getLayoutResID() {
         return R.layout.activity_home;
@@ -620,6 +627,9 @@ public class HomeActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        refreshTopInfoTextSize();
+        mHandler.removeCallbacks(refreshTopInfoTextSizeRunnable);
+        mHandler.postDelayed(refreshTopInfoTextSizeRunnable, 350);
         mHandler.post(mRunnable);
     }
 
@@ -627,7 +637,16 @@ public class HomeActivity extends BaseActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        mHandler.removeCallbacksAndMessages(null);
+        mHandler.removeCallbacks(refreshTopInfoTextSizeRunnable);
+        mHandler.removeCallbacks(mRunnable);
+    }
+
+    private void refreshTopInfoTextSize() {
+        if (tvName == null || tvDate == null) {
+            return;
+        }
+        tvName.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.ts_30));
+        tvDate.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.ts_28));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
