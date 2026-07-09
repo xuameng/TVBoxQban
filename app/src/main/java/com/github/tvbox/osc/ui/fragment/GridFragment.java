@@ -517,7 +517,10 @@ public class GridFragment extends BaseLazyFragment {
 
     public void forceRefresh() {
         if (mGridView == null || gridAdapter == null || sourceViewModel == null) return;
-        if (isRequesting) return;
+        if (isRequesting) {
+            App.showToastShort(getContext(), "数据加载中，请稍候！");
+            return;
+        }
         page = 1;
         initData();
     }
