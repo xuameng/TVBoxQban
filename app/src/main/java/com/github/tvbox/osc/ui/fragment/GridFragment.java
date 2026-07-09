@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 import com.github.tvbox.osc.base.App;  //xuameng toast
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
