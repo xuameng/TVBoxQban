@@ -829,12 +829,12 @@ public class HomeActivity extends BaseActivity {
     }
 
     private void restartHomeWithCache() {  //xuameng 重启主页
-        Intent intent = new Intent(this, HomeActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         Bundle bundle = new Bundle();
         intent.putExtra("useCache", true);
         intent.putExtras(bundle);
-        startActivity(intent);
+        HomeActivity.this.startActivity(intent);
     }
 
     private void refreshEmpty(){   //xuameng打断加载优化
