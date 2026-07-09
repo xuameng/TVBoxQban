@@ -20,6 +20,10 @@ import com.github.tvbox.osc.base.App;
 import com.github.tvbox.osc.ui.activity.HomeActivity;
 import com.github.tvbox.osc.util.ScreenUtils;
 
+import com.hjq.permissions.OnPermissionCallback;
+import com.hjq.permissions.Permission;
+import com.hjq.permissions.XXPermissions;
+
 import java.io.File;
 import java.io.FileWriter;
 
@@ -197,6 +201,30 @@ public class CrashActivity extends BaseActivity {
             return;
         }
 
+                if (XXPermissions.isGranted(getContext(), Permission.Group.STORAGE)) {
+                    App.showToastShort(this, "已获得存储权限！");
+                } else {
+                    XXPermissions.with(getContext())
+                            .permission(Permission.Group.STORAGE)
+                            .request(new OnPermissionCallback() {
+                                @Override
+                                public void onGranted(List<String> permissions, boolean all) {
+                                    if (all) {
+                                        App.showToastShort(this, "已获得存储权限！");
+                                    }
+                                }
+
+                                @Override
+                                public void onDenied(List<String> permissions, boolean never) {
+                                    if (never) {
+                                        App.showToastShort(this, "获取存储权限失败,请在系统设置中开启！");
+                                        XXPermissions.startPermissionActivity(this, permissions);      
+                                    } else {
+                                        App.showToastShort(this, "获取存储权限失败！");
+                                    }
+                                }
+                            });
+                }
         // 1️⃣ 复制到剪切板（主线程）
         try {
             android.content.ClipboardManager clipboard =
