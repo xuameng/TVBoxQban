@@ -253,11 +253,11 @@ public class CrashActivity extends BaseActivity {
      */
     private boolean copyToClipboard() {
         try {
-            ClipboardManager clipboard =
-                    (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+            android.content.ClipboardManager clipboard =
+                    (android.content.ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
 
-            ClipData clip =
-                    ClipData.newPlainText("Crash Log", crashLog);
+            android.content.ClipData clip =
+                    android.content.ClipData.newPlainText("Crash Log", crashLog);
 
             clipboard.setPrimaryClip(clip);
             App.showToastShort(CrashActivity.this, "崩溃日志已复制到剪切板");
