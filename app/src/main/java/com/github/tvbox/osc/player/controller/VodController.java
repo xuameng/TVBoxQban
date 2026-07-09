@@ -276,9 +276,7 @@ public class VodController extends BaseController {
                         backBtn.setVisibility(GONE);
 
                         // xuameng播放控制视图处理
-                        if (mControlWrapper.isPlaying()) {
-                            // xuameng播放状态处理
-                        } else {
+                        if (isInPlaybackState() && !mControlWrapper.isPlaying()) {
                             // xuameng显示播放标题、暂停时间动画
                             mPauseContainer.setVisibility(VISIBLE);
                             mPauseContainer.setTranslationY(-120);
