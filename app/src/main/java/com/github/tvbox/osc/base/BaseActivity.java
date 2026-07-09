@@ -52,6 +52,13 @@ public abstract class BaseActivity extends AppCompatActivity implements CustomAd
         }
     };
 
+    private final Runnable hideSysBarRunnable = new Runnable() {
+        @Override
+        public void run() {
+            hideSysBar();
+        }
+    };
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         try {
@@ -66,6 +73,7 @@ public abstract class BaseActivity extends AppCompatActivity implements CustomAd
         super.onCreate(savedInstanceState);
         setContentView(getLayoutResID());
         mContext = this;
+        initSystemUiListener();
         CutoutUtil.adaptCutoutAboveAndroidP(mContext, true);//设置刘海
         AppManager.getInstance().addActivity(this);
         init();
@@ -93,10 +101,26 @@ public abstract class BaseActivity extends AppCompatActivity implements CustomAd
         }
     }
 
+    private void initSystemUiListener() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            final View decorView = getWindow().getDecorView();
+            decorView.setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
+                @Override
+                public void onSystemUiVisibilityChange(int visibility) {
+                    if ((visibility & View.SYSTEM_UI_FLAG_HIDE_NAVIGATION) == 0) {
+                        decorView.removeCallbacks(hideSysBarRunnable);
+                        decorView.postDelayed(hideSysBarRunnable, 300);
+                    }
+                }
+            });
+        }
+    }
+
     @Override
     protected void onPause() {
         super.onPause();
         getWindow().getDecorView().removeCallbacks(refreshAutoSizeRunnable);
+		getWindow().getDecorView().removeCallbacks(hideSysBarRunnable);
     }
 
     @Override
