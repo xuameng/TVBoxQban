@@ -943,7 +943,7 @@ public class HomeActivity extends BaseActivity {
         UserFragment.homeHotVodAdapter.setNewData(absXml.videoList);
     }
 
-    private void refreshHome(final boolean restart)
+    public void refreshHome(final boolean restart)
     {
         if (Thread.currentThread() != android.os.Looper.getMainLooper().getThread()) {
             mHandler.post(new Runnable() {
