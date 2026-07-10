@@ -53,6 +53,7 @@ import com.github.tvbox.osc.api.ApiConfig;
 import com.github.tvbox.osc.base.BaseActivity;
 import com.github.tvbox.osc.base.BaseLazyFragment;
 import com.github.tvbox.osc.bean.AbsSortXml;
+import com.github.tvbox.osc.bean.Movie;
 import com.github.tvbox.osc.bean.MovieSort;
 import com.github.tvbox.osc.bean.SourceBean;
 import com.github.tvbox.osc.event.RefreshEvent;
@@ -111,7 +112,6 @@ public class HomeActivity extends BaseActivity {
     private View currentView;
     private final List<BaseLazyFragment> fragments = new ArrayList<>();
     private boolean sortChange = false;
-    private boolean refreshEmpty = false;	//xuameng打断加载判断
     private int currentSelected = 0;
     private int sortFocused = 0;
     private int PositionXu = 0;  //xuameng 记忆当前Position
@@ -358,15 +358,11 @@ public class HomeActivity extends BaseActivity {
     private TipDialog mConfigErrorDialog;
 
     private void initData() {
-        Hawk.put(HawkConfig.API_INIT_OK, true);
-        refreshEmpty = false;	//xuameng打断加载判断
         SourceBean home = ApiConfig.get().getHomeSourceBean();
         if (home != null && home.getName() != null && !home.getName().isEmpty())
             tvName.setText(home.getName());
         if (dataInitOk && jarInitOk) {
             loadHomeSort(false);
-            //showLoading();
-            sourceViewModel.getSort(ApiConfig.get().getHomeSourceBean().getKey());
             if (hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                 LOG.e("有");
             } else {
@@ -553,7 +549,7 @@ public class HomeActivity extends BaseActivity {
         if (sortAdapter.getData().size() > 0) {
             for (MovieSort.SortData data : sortAdapter.getData()) {
                 if (data.id.equals("my0")) {
-                    if (Hawk.get(HawkConfig.HOME_REC, 0) == 1 && absXml != null && absXml.videoList != null && absXml.videoList.size() > 0) {
+                    if (Hawk.get(HawkConfig.HOME_REC, HawkConfig.DEFAULT_HOME_REC) == 1 && absXml != null && absXml.videoList != null && absXml.videoList.size() > 0) {
                         fragments.add(UserFragment.newInstance(absXml.videoList));
                     } else {
                         fragments.add(UserFragment.newInstance(null));
@@ -593,7 +589,7 @@ public class HomeActivity extends BaseActivity {
         }
     }
 
-	    private void updateSortData(List<MovieSort.SortData> newSortData) {
+    private void updateSortData(List<MovieSort.SortData> newSortData) {
         if (newSortData == null) {
             newSortData = new ArrayList<>();
         }
@@ -802,11 +798,11 @@ public class HomeActivity extends BaseActivity {
         animatorSet.addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
-                topHide = (byte) (hide ? 1 : 0);
             }
 
             @Override
             public void onAnimationEnd(Animator animation) {
+                topHide = (byte) (hide ? 1 : 0);
             }
 
             @Override
@@ -868,6 +864,7 @@ public class HomeActivity extends BaseActivity {
     private SelectDialog<SourceBean> mSiteSwitchDialog;
 
     void showSiteSwitch() {
+        if (isActivityUnavailable()) return;
         List<SourceBean> sites = ApiConfig.get().getSwitchSourceBeanList();
         if (!sites.isEmpty()){
             int select = sites.indexOf(ApiConfig.get().getHomeSourceBean());
@@ -1009,15 +1006,17 @@ public class HomeActivity extends BaseActivity {
     }
 
     private void refreshEmpty(){   //xuameng打断加载优化
-        refreshEmpty = true;	//xuameng打断加载判断
         OkGo.getInstance().cancelTag("loadjar");    //xuameng打断加载
         OkGo.getInstance().cancelTag("loadUrl");    //xuameng打断加载
         jarInitOk = true;
         dataInitOk = true;
         skipNextUpdate=true;
+        cancelHomeSortLoading();
+        clearHomePages();
         showSuccess();
         sortAdapter.setNewData(DefaultConfig.adjustSort(ApiConfig.get().getHomeSourceBean().getKey(), new ArrayList<>(), true));
         initViewPager(null);
+        tvName.clearAnimation();
         App.showToastShort(HomeActivity.this, "聚汇影视提示：已打断当前源加载！");
     }
 
