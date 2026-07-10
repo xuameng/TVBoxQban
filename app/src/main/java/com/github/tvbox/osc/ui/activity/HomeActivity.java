@@ -929,22 +929,37 @@ public class HomeActivity extends BaseActivity {
 
     private void refreshHomeSort() {
         refreshHomeRec = true;
-        if (UserFragment.homeHotVodAdapter != null) {
-            UserFragment.homeHotVodAdapter.setNewData(new ArrayList<Movie.Video>());
+        if (Hawk.get(HawkConfig.HOME_REC_STYLE, false)) {
+            if (UserFragment.homeHotVodAdapter != null) {
+                UserFragment.homeHotVodAdapter.setNewData(new ArrayList<Movie.Video>());
+            }
+            SourceBean home = ApiConfig.get().getHomeSourceBean();
+            if (home != null) {
+                SourceViewModel.clearSortCache(home.getKey());
+            }
+            refreshHome(false);
+        } else {
+            if (UserFragment.homeHotVodAdapterXu != null) {
+                UserFragment.homeHotVodAdapterXu.setNewData(new ArrayList<Movie.Video>());
+            }
+            SourceBean home = ApiConfig.get().getHomeSourceBean();
+            if (home != null) {
+                SourceViewModel.clearSortCache(home.getKey());
+            }
         }
-        SourceBean home = ApiConfig.get().getHomeSourceBean();
-        if (home != null) {
-            SourceViewModel.clearSortCache(home.getKey());
-        }
-        refreshHome(false);
+
     }
 
     private void updateHomeRec(AbsSortXml absXml) {
         if (!refreshHomeRec) return;
         refreshHomeRec = false;
         if (Hawk.get(HawkConfig.HOME_REC, HawkConfig.DEFAULT_HOME_REC) != 1) return;
-        if (absXml == null || absXml.videoList == null || UserFragment.homeHotVodAdapter == null) return;
-        UserFragment.homeHotVodAdapter.setNewData(absXml.videoList);
+        if (absXml == null || absXml.videoList == null || UserFragment.homeHotVodAdapter == null || UserFragment.homeHotVodAdapterXu == null) return;
+        if (Hawk.get(HawkConfig.HOME_REC_STYLE, false)) {
+            UserFragment.homeHotVodAdapter.setNewData(absXml.videoList);
+        } else { 
+            UserFragment.homeHotVodAdapterXu.setNewData(absXml.videoList);
+        }
     }
 
     public void refreshHome(final boolean restart) {
