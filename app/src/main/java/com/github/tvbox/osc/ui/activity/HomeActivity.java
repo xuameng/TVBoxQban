@@ -948,6 +948,7 @@ public class HomeActivity extends BaseActivity {
             if (home != null) {
                 SourceViewModel.clearSortCache(home.getKey());
             }
+            refreshHome(false);
         }
 
     }
