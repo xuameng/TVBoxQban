@@ -45,7 +45,9 @@ public abstract class BaseController extends BaseVideoController implements Gest
     private boolean mCanSlide;
     private int mCurPlayState;
 
-    private boolean playspeed = false;  //xuameng 判断快进是否显示
+    public void setPlayspeed(boolean playspeed) {  //xuameng 判断快进是否显示
+        this.playspeed = playspeed;
+    }
 
     protected Handler mHandler;
 
@@ -334,7 +336,7 @@ public abstract class BaseController extends BaseVideoController implements Gest
     }
 
     protected void slideToChangePosition(float deltaX) {
-		if (playspeed){  //xuameng 判断快进显示就返回
+		if (setPlayspeed){  //xuameng 判断快进显示就返回
             return;
         }
         deltaX = -deltaX;
