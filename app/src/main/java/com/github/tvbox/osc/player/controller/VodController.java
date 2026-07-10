@@ -2121,7 +2121,7 @@ public class VodController extends BaseController {
                     mProgressRoot.setVisibility(GONE);
                 }
                 findViewById(R.id.play_speed_3_container).setVisibility(View.VISIBLE);
-                playspeed = true;  //xuameng 判断快进是否显示
+                setPlayspeed(true);  //xuameng 判断快进是否显示
             } catch (JSONException f) {
                 f.printStackTrace();
             }
@@ -2140,7 +2140,7 @@ public class VodController extends BaseController {
                 f.printStackTrace();
             }
             findViewById(R.id.play_speed_3_container).setVisibility(View.GONE);
-            playspeed = false;  //xuameng 判断快进是否显示
+            setPlayspeed(false);   //xuameng 判断快进是否显示
         }
     }
     @Override
