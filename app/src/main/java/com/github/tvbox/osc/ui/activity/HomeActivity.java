@@ -275,6 +275,7 @@ public class HomeActivity extends BaseActivity {
                 if(dataInitOk && jarInitOk){
                     FileUtils.clearSpiderCacheFiles();
                     App.showToastShort(HomeActivity.this, "缓存已清空！");
+                    refreshHome();
                 }else {
                     jumpActivity(SettingActivity.class);		//xuameng加载慢跳转设置
                 }
@@ -375,6 +376,7 @@ public class HomeActivity extends BaseActivity {
             if(!useCacheConfig)warmSearchSpidersOnce();  //xuameng搜索预热
             return;
         }
+        tvNameAnimation();
         showLoading();
         if (dataInitOk && !jarInitOk) {
             if (!ApiConfig.get().getSpider().isEmpty()) {
