@@ -1079,6 +1079,7 @@ public class PlayFragment extends BaseLazyFragment {
                         String flag = info.optString("flag");
                         String url = info.getString("url");
                         String danmaku = info.optString("danmaku", ""); //xuameng 弹幕
+						App.showToastShort(mContext, danmaku);
                         if(url.startsWith("[")){
                             url=mController.firstUrlByArray(url);
                         }
