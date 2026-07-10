@@ -411,14 +411,14 @@ public class HomeActivity extends BaseActivity {
                     public void error(String msg) {
                         jarInitOk = true;
                         dataInitOk = true;
-                        mHandler.post(new Runnable() {
+                        mHandler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
                                 App.showToastShort(HomeActivity.this, "聚汇影视提示：jar加载失败！");
                                 initData();
                                 checkMicrophonePermission();  //xuameng音频权限
                             }
-                        });
+                        },50);
                     }
                 });
             }
@@ -918,8 +918,7 @@ public class HomeActivity extends BaseActivity {
         }
     }
 
-    private void refreshHome()
-    {
+    private void refreshHome() {
         refreshHome(true);
     }
 
@@ -943,8 +942,7 @@ public class HomeActivity extends BaseActivity {
         UserFragment.homeHotVodAdapter.setNewData(absXml.videoList);
     }
 
-    public void refreshHome(final boolean restart)
-    {
+    public void refreshHome(final boolean restart) {
         if (Thread.currentThread() != android.os.Looper.getMainLooper().getThread()) {
             mHandler.post(new Runnable() {
                 @Override
