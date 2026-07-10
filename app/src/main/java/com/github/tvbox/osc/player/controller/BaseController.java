@@ -332,9 +332,6 @@ public abstract class BaseController extends BaseVideoController implements Gest
     }
 
     protected void slideToChangePosition(float deltaX) {
-        if (mProgressroot.getVisibility() == View.VISIBLE){  //xuameng进程显示不执行滑动进程
-            return;
-        }
         deltaX = -deltaX;
         int width = getMeasuredWidth();
         int duration = PlayerUtils.safeTimeMs(mControlWrapper.getDuration());
