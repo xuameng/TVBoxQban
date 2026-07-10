@@ -1803,9 +1803,6 @@ public class VodController extends BaseController {
     @Override
     protected void updateSeekUI(int curr, int seekTo, int duration) { //xuameng手机滑动屏幕快进
         super.updateSeekUI(curr, seekTo, duration);
-        if (play_speed_3.getVisibility() == View.VISIBLE){  //xuameng进程显示不执行滑动进程
-            return;
-        }
         if(seekTo > curr) {
             mProgressIcon.setImageResource(R.drawable.icon_prexu); //xuameng快进图标更换
         } else {
@@ -2124,6 +2121,7 @@ public class VodController extends BaseController {
                     mProgressRoot.setVisibility(GONE);
                 }
                 findViewById(R.id.play_speed_3_container).setVisibility(View.VISIBLE);
+                playspeed = true;  //xuameng 判断快进是否显示
             } catch (JSONException f) {
                 f.printStackTrace();
             }
@@ -2142,6 +2140,7 @@ public class VodController extends BaseController {
                 f.printStackTrace();
             }
             findViewById(R.id.play_speed_3_container).setVisibility(View.GONE);
+            playspeed = false;  //xuameng 判断快进是否显示
         }
     }
     @Override
