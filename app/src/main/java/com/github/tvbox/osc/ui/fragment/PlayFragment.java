@@ -1079,7 +1079,11 @@ public class PlayFragment extends BaseLazyFragment {
                         String flag = info.optString("flag");
                         String url = info.getString("url");
                         String danmaku = info.optString("danmaku", ""); //xuameng 弹幕
-						App.showToastShort(mContext, danmaku);
+						
+                                if (danmaku.startsWith("http://") || danmaku.startsWith("https://")) {
+                                    // 异步加载网络歌词
+                                    loadLrcFromUrl(danmaku);
+                                }
                         if(url.startsWith("[")){
                             url=mController.firstUrlByArray(url);
                         }
@@ -2588,6 +2592,7 @@ public class PlayFragment extends BaseLazyFragment {
                 @Override
                 public void onSuccess(Response<String> response) {
                     String lrcText = response.body();
+					App.showToastShort(mContext, lrcText);
                     if (!TextUtils.isEmpty(lrcText) && lrcText.length() > 10) {
                         // 切换到主线程更新 UI
                         requireActivity().runOnUiThread(() -> {
