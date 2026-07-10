@@ -214,6 +214,13 @@ public class IjkMediaPlayer extends IjkPlayer {
         int index = 0;
         for (IjkTrackInfo info : trackInfo) {
             if (info.getTrackType() == ITrackInfo.MEDIA_TRACK_TYPE_AUDIO) {//音轨信息
+            String infoInline = info.getInfoInline();
+            if (!TextUtils.isEmpty(infoInline)
+                    && infoInline.toLowerCase().contains("av3a")) {
+                // ❌ 跳过 av3a 音轨
+                index++;
+                continue;
+            }
 				String trackName = (data.getAudio().size() + 1) + "：" + info.getInfoInline();       //xuameng 音轨信息
                 TrackInfoBean a = new TrackInfoBean();
                 a.name = trackName;
