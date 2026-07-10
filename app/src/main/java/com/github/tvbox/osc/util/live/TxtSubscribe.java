@@ -61,7 +61,7 @@ public class TxtSubscribe {
         if (str.isEmpty()) return new JsonArray();
         try {
             JsonElement element = JsonParser.parseString(str);
-            if (element.isJsonArray()) return removeEmptyGroups(normalizeJsonArray(element.getAsJsonArray()));
+            if (element.isJsonArray()) return removeEmptyGroups(normalizeJsonArray(element.getAsJsonArray()));  //xuameng 移除空频道组
         } catch (Throwable ignored) {
         }
         if (str.startsWith("#EXTM3U")) return parseM3uToJsonArray(str);
@@ -109,7 +109,7 @@ public class TxtSubscribe {
             if (!outGroup.has("channels")) outGroup.add("channels", new JsonArray());
             result.add(outGroup);
         }
-        return removeEmptyGroups(result);
+        return removeEmptyGroups(result);  //xuameng 移除空频道组
     }
 
     private static void copyIfExists(JsonObject src, JsonObject dst, String key) {
@@ -158,24 +158,23 @@ public class TxtSubscribe {
                 if (!containsUrl(urls, url)) urls.add(url);
                 pendingChannel.add("urls", urls);
                 addChannel(currentGroup, pendingChannel);
-                pendingChannel = null;
                 pendingMeta = new JsonObject();
             }
             reader.close();
         } catch (Throwable ignored) {
         }
-        return removeEmptyGroups(result);
+        return removeEmptyGroups(result);  //xuameng 移除空频道组
     }
 
-private static JsonArray removeEmptyGroups(JsonArray result) {
-    JsonArray out = new JsonArray();
-    for (JsonElement e : result) {
-        JsonObject g = e.getAsJsonObject();
-        JsonArray c = g.getAsJsonArray("channels");
-        if (c != null && c.size() > 0) out.add(g);
+    private static JsonArray removeEmptyGroups(JsonArray result) {    //xuameng 移除空频道组
+        JsonArray out = new JsonArray();
+        for (JsonElement e : result) {
+            JsonObject g = e.getAsJsonObject();
+            JsonArray c = g.getAsJsonArray("channels");
+            if (c != null && c.size() > 0) out.add(g);
+        }
+        return out;
     }
-    return out;
-}
 
     private static JsonArray parseTxtToJsonArray(String str) {
         JsonArray result = new JsonArray();
@@ -218,7 +217,7 @@ private static JsonArray removeEmptyGroups(JsonArray result) {
             reader.close();
         } catch (Throwable ignored) {
         }
-        return removeEmptyGroups(result);
+        return removeEmptyGroups(result);  //xuameng 移除空频道组
     }
 
     private static JsonObject parseHeaderString(String text) {
