@@ -939,8 +939,8 @@ public class HomeActivity extends BaseActivity {
             }
             refreshHome(false);
         } else {
-            if (UserFragment.homeHotVodAdapterXu != null) {
-                UserFragment.homeHotVodAdapterXu.setNewData(new ArrayList<Movie.Video>());
+            if (UserFragment.homeHotVodAdapterxu != null) {
+                UserFragment.homeHotVodAdapterxu.setNewData(new ArrayList<Movie.Video>());
             }
             SourceBean home = ApiConfig.get().getHomeSourceBean();
             if (home != null) {
@@ -954,11 +954,11 @@ public class HomeActivity extends BaseActivity {
         if (!refreshHomeRec) return;
         refreshHomeRec = false;
         if (Hawk.get(HawkConfig.HOME_REC, HawkConfig.DEFAULT_HOME_REC) != 1) return;
-        if (absXml == null || absXml.videoList == null || UserFragment.homeHotVodAdapter == null || UserFragment.homeHotVodAdapterXu == null) return;
+        if (absXml == null || absXml.videoList == null || UserFragment.homeHotVodAdapter == null || UserFragment.homeHotVodAdapterxu == null) return;
         if (Hawk.get(HawkConfig.HOME_REC_STYLE, false)) {
             UserFragment.homeHotVodAdapter.setNewData(absXml.videoList);
         } else { 
-            UserFragment.homeHotVodAdapterXu.setNewData(absXml.videoList);
+            UserFragment.homeHotVodAdapterxu.setNewData(absXml.videoList);
         }
     }
 
