@@ -35,6 +35,20 @@ public class HomePageAdapter extends FragmentPagerAdapter {
         notifyDataSetChanged();
     }
 
+    public void removeAll() {
+        if (list == null || fragmentManager == null) return;
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        for (BaseLazyFragment fragment : list) {
+            if (fragment != null && fragment.isAdded()) {
+                transaction.remove(fragment);
+            }
+        }
+        transaction.commitAllowingStateLoss();
+        fragmentManager.executePendingTransactions();
+        list.clear();
+        notifyDataSetChanged();
+    }
+
     @Override
     public Fragment getItem(int position) {
         return list.get(position);
