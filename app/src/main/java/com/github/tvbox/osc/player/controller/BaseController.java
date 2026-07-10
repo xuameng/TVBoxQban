@@ -336,7 +336,7 @@ public abstract class BaseController extends BaseVideoController implements Gest
     }
 
     protected void slideToChangePosition(float deltaX) {
-		if (setPlayspeed){  //xuameng 判断快进显示就返回
+		if (playspeed){  //xuameng 判断快进显示就返回
             return;
         }
         deltaX = -deltaX;
