@@ -36,7 +36,7 @@ public class HomePageAdapter extends FragmentPagerAdapter {
         notifyDataSetChanged();
     }
 
-    public void removeAll() {
+    public void removeAll() {  //xuameng 清空
         if (list == null || fragmentManager == null) return;
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         for (BaseLazyFragment fragment : list) {
