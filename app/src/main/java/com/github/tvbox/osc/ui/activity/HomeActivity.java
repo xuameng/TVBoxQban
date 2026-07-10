@@ -112,6 +112,7 @@ public class HomeActivity extends BaseActivity {
     private View currentView;
     private final List<BaseLazyFragment> fragments = new ArrayList<>();
     private boolean sortChange = false;
+    private boolean refreshEmpty = false;	//xuameng打断加载判断
     private int currentSelected = 0;
     private int sortFocused = 0;
     private int PositionXu = 0;  //xuameng 记忆当前Position
@@ -280,7 +281,7 @@ public class HomeActivity extends BaseActivity {
             public boolean onLongClick(View v) {
                 FastClickCheckUtil.check(v);
                 if(dataInitOk && jarInitOk){
-                    restartHomeWithCache();
+                    refreshHome(false);
                     App.showToastShort(HomeActivity.this, "重新加载主页数据！");
                 }else {
                     jumpActivity(SettingActivity.class);   //xuameng加载慢跳转设置
@@ -358,9 +359,7 @@ public class HomeActivity extends BaseActivity {
     private TipDialog mConfigErrorDialog;
 
     private void initData() {
-        SourceBean home = ApiConfig.get().getHomeSourceBean();
-        if (home != null && home.getName() != null && !home.getName().isEmpty())
-            tvName.setText(home.getName());
+        refreshEmpty = false;	//xuameng打断加载判断
         if (dataInitOk && jarInitOk) {
             loadHomeSort(false);
             if (hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
@@ -509,7 +508,7 @@ public class HomeActivity extends BaseActivity {
                                     });
                                 }
                             });
-                        if (!mConfigErrorDialog.isShowing()){
+                        if (!mConfigErrorDialog.isShowing() && !refreshEmpty){
                             mConfigErrorDialog.show();
                         }
                     }
@@ -748,6 +747,8 @@ public class HomeActivity extends BaseActivity {
                     sortAdapter.notifyItemChanged(pos);
                 }
             }
+        } else if (event.type == RefreshEvent.TYPE_HOME_SOURCE_CHANGE) {
+            refreshHome(false);
         }
     }
 
@@ -996,16 +997,8 @@ public class HomeActivity extends BaseActivity {
         }
     }
 
-    private void restartHomeWithCache() {  //xuameng 重启主页
-        Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        Bundle bundle = new Bundle();
-        intent.putExtra("useCache", true);
-        intent.putExtras(bundle);
-        HomeActivity.this.startActivity(intent);
-    }
-
     private void refreshEmpty(){   //xuameng打断加载优化
+        refreshEmpty = true;	//xuameng打断加载判断
         OkGo.getInstance().cancelTag("loadjar");    //xuameng打断加载
         OkGo.getInstance().cancelTag("loadUrl");    //xuameng打断加载
         jarInitOk = true;
