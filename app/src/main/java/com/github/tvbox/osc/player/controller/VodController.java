@@ -1803,6 +1803,9 @@ public class VodController extends BaseController {
     @Override
     protected void updateSeekUI(int curr, int seekTo, int duration) { //xuameng手机滑动屏幕快进
         super.updateSeekUI(curr, seekTo, duration);
+        if (play_speed_3.getVisibility() == View.VISIBLE){  //xuameng进程显示不执行滑动进程
+            return;
+        }
         if(seekTo > curr) {
             mProgressIcon.setImageResource(R.drawable.icon_prexu); //xuameng快进图标更换
         } else {
