@@ -325,7 +325,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
                     mSiteSwitchDialog.setAdapter(new SelectDialogAdapter.SelectDialogInterface<SourceBean>() {
                         @Override
                         public void click(SourceBean value, int pos) {
-                            dialog.dismiss();
+                            mSiteSwitchDialog.dismiss();
                             ApiConfig.get().setSourceBean(value);
                             tvHomeApi.setText(ApiConfig.get().getHomeSourceBean().getName());
                             EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_HOME_SOURCE_CHANGE));
