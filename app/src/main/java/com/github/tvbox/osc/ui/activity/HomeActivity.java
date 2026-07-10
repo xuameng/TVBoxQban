@@ -15,6 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.BounceInterpolator;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.view.Gravity;							//xuameng
@@ -114,6 +116,9 @@ public class HomeActivity extends BaseActivity {
     private int sortFocused = 0;
     private int PositionXu = 0;  //xuameng 记忆当前Position
     public View sortFocusView = null;
+    private String loadingSourceKey;
+    private String previousHomeName;
+    private boolean homeSortLoading = false;
     private final Handler mHandler = new Handler();
     private long mExitTime = 0;
     private boolean mGridViewHasFocus = false;  //xuameng 判断 mGridView主页是否拥有焦点
@@ -317,13 +322,30 @@ public class HomeActivity extends BaseActivity {
                     skipNextUpdate = false;
                     return;
                 }
-                showSuccess();
-                if (absXml != null && absXml.classes != null && absXml.classes.sortList != null) {
-                    sortAdapter.setNewData(DefaultConfig.adjustSort(ApiConfig.get().getHomeSourceBean().getKey(), absXml.classes.sortList, true));
-                } else {
-                    sortAdapter.setNewData(DefaultConfig.adjustSort(ApiConfig.get().getHomeSourceBean().getKey(), new ArrayList<>(), true));
+                if (!homeSortLoading && loadingSourceKey == null) {
+                    return;
                 }
+                if (absXml != null && absXml.sourceKey != null && loadingSourceKey != null && !loadingSourceKey.equals(absXml.sourceKey)) {
+                    return;
+                }
+                SourceBean home = ApiConfig.get().getHomeSourceBean();
+                showSuccess();
+                clearHomePages();
+                List<MovieSort.SortData> newSortData;
+                if (absXml != null && absXml.classes != null && absXml.classes.sortList != null) {
+                    newSortData = DefaultConfig.adjustSort(ApiConfig.get().getHomeSourceBean().getKey(), absXml.classes.sortList, true);
+                } else {
+                    newSortData = DefaultConfig.adjustSort(ApiConfig.get().getHomeSourceBean().getKey(), new ArrayList<>(), true);
+                }
+                updateSortData(newSortData);
                 initViewPager(absXml);
+                updateHomeRec(absXml);
+                if (home != null && home.getName() != null && !home.getName().isEmpty()) tvName.setText(home.getName());
+                tvName.clearAnimation();
+                homeSortLoading = false;
+                loadingSourceKey = null;
+                previousHomeName = null;
+                previousHomeSource = null;
             }
         });
     }
@@ -339,6 +361,7 @@ public class HomeActivity extends BaseActivity {
         if (home != null && home.getName() != null && !home.getName().isEmpty())
             tvName.setText(home.getName());
         if (dataInitOk && jarInitOk) {
+            loadHomeSort(false);
             //showLoading();
             sourceViewModel.getSort(ApiConfig.get().getHomeSourceBean().getKey());
             if (hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
@@ -506,6 +529,27 @@ public class HomeActivity extends BaseActivity {
         ApiConfig.get().warmSearchSpiders();
     }
 
+    private void loadHomeSort(boolean keepCurrentContent) {
+        SourceBean home = ApiConfig.get().getHomeSourceBean();
+        homeSortLoading = keepCurrentContent;
+        if (keepCurrentContent && home != null && home.getName() != null && !home.getName().isEmpty()) {
+            previousHomeName = tvName.getText() == null ? null : tvName.getText().toString();
+            tvName.setText(home.getName());
+        }
+        tvNameAnimation();
+        if (home == null) {
+            loadingSourceKey = null;
+            if (!keepCurrentContent) showLoading();
+            sourceViewModel.getSort(null);
+            return;
+        }
+        loadingSourceKey = home.getKey();
+        if (!keepCurrentContent) {
+            showLoading();
+        }
+        sourceViewModel.getSort(loadingSourceKey);
+    }
+
     private void initViewPager(AbsSortXml absXml) {
         if (sortAdapter.getData().size() > 0) {
             for (MovieSort.SortData data : sortAdapter.getData()) {
@@ -534,9 +578,55 @@ public class HomeActivity extends BaseActivity {
         }
     }
 
+    private void clearHomePages() {
+        mHandler.removeCallbacks(mDataRunnable);
+        currentSelected = 0;
+        sortFocused = 0;
+        sortChange = false;
+        sortFocusView = null;
+        currentView = null;
+        if (pageAdapter != null) {
+            mViewPager.setAdapter(null);
+            pageAdapter.removeAll();
+            pageAdapter = null;
+        } else if (!fragments.isEmpty()) {
+            fragments.clear();
+        }
+    }
+
+	    private void updateSortData(List<MovieSort.SortData> newSortData) {
+        if (newSortData == null) {
+            newSortData = new ArrayList<>();
+        }
+        List<MovieSort.SortData> oldSortData = sortAdapter.getData();
+        if (oldSortData.isEmpty()
+                || newSortData.isEmpty()
+                || oldSortData.get(0) == null
+                || newSortData.get(0) == null
+                || !"my0".equals(oldSortData.get(0).id)
+                || !"my0".equals(newSortData.get(0).id)) {
+            sortAdapter.setNewData(newSortData);
+            return;
+        }
+        int oldTailCount = oldSortData.size() - 1;
+        if (oldTailCount > 0) {
+            oldSortData.subList(1, oldSortData.size()).clear();
+            sortAdapter.notifyItemRangeRemoved(1, oldTailCount);
+        }
+        if (newSortData.size() > 1) {
+            oldSortData.addAll(newSortData.subList(1, newSortData.size()));
+            sortAdapter.notifyItemRangeInserted(1, newSortData.size() - 1);
+        }
+    }
+
     @SuppressLint("NotifyDataSetChanged")
     @Override
     public void onBackPressed() {
+        // 打断加载
+        if (homeSortLoading) {
+            cancelHomeSortLoading();
+            return;
+        }
         if(isLoading()){
             refreshEmpty();     //xuameng打断加载优化
             return;
@@ -806,7 +896,7 @@ public class HomeActivity extends BaseActivity {
                         }
                     }
                     ApiConfig.get().setSourceBean(value);
-                    restartHomeWithCache();
+                    refreshHome(false);
                 }
                 @Override
                 public String getDisplay(SourceBean val) {
@@ -826,6 +916,58 @@ public class HomeActivity extends BaseActivity {
         }else {
             App.showToastLong(HomeActivity.this, "主页暂无数据！联系许大师吧！");
         }
+    }
+
+    private void refreshHome()
+    {
+        refreshHome(true);
+    }
+
+    private void refreshHomeSort() {
+        refreshHomeRec = true;
+        if (UserFragment.homeHotVodAdapter != null) {
+            UserFragment.homeHotVodAdapter.setNewData(new ArrayList<Movie.Video>());
+        }
+        SourceBean home = ApiConfig.get().getHomeSourceBean();
+        if (home != null) {
+            SourceViewModel.clearSortCache(home.getKey());
+        }
+        refreshHome(false);
+    }
+
+    private void updateHomeRec(AbsSortXml absXml) {
+        if (!refreshHomeRec) return;
+        refreshHomeRec = false;
+        if (Hawk.get(HawkConfig.HOME_REC, HawkConfig.DEFAULT_HOME_REC) != 1) return;
+        if (absXml == null || absXml.videoList == null || UserFragment.homeHotVodAdapter == null) return;
+        UserFragment.homeHotVodAdapter.setNewData(absXml.videoList);
+    }
+
+    private void refreshHome(final boolean restart)
+    {
+        if (Thread.currentThread() != android.os.Looper.getMainLooper().getThread()) {
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    refreshHome(restart);
+                }
+            });
+            return;
+        }
+        if (isActivityUnavailable()) {
+            return;
+        }
+        dismissHomeDialogs();
+        if (!restart) {
+            loadHomeSort(true);
+            return;
+        }
+        Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        Bundle bundle = new Bundle();
+        bundle.putBoolean("useCache", true);
+        intent.putExtras(bundle);
+        HomeActivity.this.startActivity(intent);
     }
 
     private void restartHomeWithCache() {  //xuameng 重启主页
@@ -850,6 +992,30 @@ public class HomeActivity extends BaseActivity {
         App.showToastShort(HomeActivity.this, "聚汇影视提示：已打断当前源加载！");
     }
 
+    private void cancelHomeSortLoading() {
+        homeSortLoading = false;
+        loadingSourceKey = null;
+        tvName.clearAnimation();
+        if (previousHomeSource != null) {
+            ApiConfig.get().setSourceBean(previousHomeSource);
+        }
+        if (previousHomeName != null && !previousHomeName.isEmpty()) {
+            tvName.setText(previousHomeName);
+        }
+        previousHomeSource = null;
+        previousHomeName = null;
+    }
+
+    private void tvNameAnimation()
+    {
+        tvName.clearAnimation();
+        AlphaAnimation blinkAnimation = new AlphaAnimation(0.0f, 1.0f);
+        blinkAnimation.setDuration(500);
+        blinkAnimation.setStartOffset(20);
+        blinkAnimation.setRepeatMode(Animation.REVERSE);
+        blinkAnimation.setRepeatCount(Animation.INFINITE);
+        tvName.startAnimation(blinkAnimation);
+    }
     // 触发权限检查的入口方法
     public void checkMicrophonePermission() {
         if (Build.VERSION.SDK_INT >= MARSHMALLOW) {
