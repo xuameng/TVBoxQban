@@ -275,7 +275,6 @@ public class HomeActivity extends BaseActivity {
                 if(dataInitOk && jarInitOk){
                     FileUtils.clearSpiderCacheFiles();
                     App.showToastShort(HomeActivity.this, "缓存已清空！");
-                    refreshHome();
                 }else {
                     jumpActivity(SettingActivity.class);		//xuameng加载慢跳转设置
                 }
@@ -983,7 +982,7 @@ public class HomeActivity extends BaseActivity {
             return;
         }
         Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         Bundle bundle = new Bundle();
         bundle.putBoolean("useCache", true);
         intent.putExtras(bundle);
@@ -1045,13 +1044,14 @@ public class HomeActivity extends BaseActivity {
         }
         previousHomeSource = null;
         previousHomeName = null;
+        App.showToastShort(HomeActivity.this, "聚汇影视提示：已打断当前源加载！");
     }
 
     private void tvNameAnimation()
     {
         tvName.clearAnimation();
         AlphaAnimation blinkAnimation = new AlphaAnimation(0.0f, 1.0f);
-        blinkAnimation.setDuration(500);
+        blinkAnimation.setDuration(400);
         blinkAnimation.setStartOffset(20);
         blinkAnimation.setRepeatMode(Animation.REVERSE);
         blinkAnimation.setRepeatCount(Animation.INFINITE);
