@@ -72,7 +72,6 @@ public class HawkConfig {
     public static final String DANMU_SIZE_SCALE = "danmu_size_scale"; //xuameng 弹幕大小
     public static final String DANMU_RANDOM_COLOR = "danmu_random_color"; //xuameng 弹幕颜色
     public static final String DANMU_API = "danmu_api"; //xuameng 弹幕接口
-    public static final String API_INIT_OK = "api_init_ok"; //判断API加载成功
     public static final int DEFAULT_HOME_REC = 1;
 
 	public static boolean intLIVEPLAYTYPE = false;  //xuameng是否有直播默认播放器
