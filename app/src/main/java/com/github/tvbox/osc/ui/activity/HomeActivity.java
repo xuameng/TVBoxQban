@@ -247,6 +247,11 @@ public class HomeActivity extends BaseActivity {
             public boolean onInBorderKeyEvent(int direction, View view) {
                 if (direction == View.FOCUS_UP) {   //XUAMENG上键刷新完
                     BaseLazyFragment baseLazyFragment = fragments.get(sortFocused);
+                    if (baseLazyFragment instanceof UserFragment) {
+                        refreshHomeSort();
+                        App.showToastShort(HomeActivity.this, "主页刷新成功！");	
+                        return true;
+                    }
                     if ((baseLazyFragment instanceof GridFragment)) {
                         ((GridFragment) baseLazyFragment).forceRefresh();
                         App.showToastShort(HomeActivity.this, "页面刷新成功！");	
