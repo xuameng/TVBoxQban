@@ -118,7 +118,9 @@ public class HomeActivity extends BaseActivity {
     public View sortFocusView = null;
     private String loadingSourceKey;
     private String previousHomeName;
+    private SourceBean previousHomeSource;
     private boolean homeSortLoading = false;
+    private boolean refreshHomeRec = false;
     private final Handler mHandler = new Handler();
     private long mExitTime = 0;
     private boolean mGridViewHasFocus = false;  //xuameng 判断 mGridView主页是否拥有焦点
@@ -353,6 +355,7 @@ public class HomeActivity extends BaseActivity {
     private boolean dataInitOk = false;
     private boolean jarInitOk = false;
     private boolean searchSpiderWarmStarted = false;
+    private TipDialog mConfigErrorDialog;
 
     private void initData() {
         Hawk.put(HawkConfig.API_INIT_OK, true);
@@ -427,7 +430,6 @@ public class HomeActivity extends BaseActivity {
             return;
         }
         ApiConfig.get().loadConfig(useCacheConfig, new ApiConfig.LoadConfigCallback() {
-            TipDialog dialog = null;
 
             @Override
             public void notice(String msg) {
@@ -469,16 +471,18 @@ public class HomeActivity extends BaseActivity {
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {
-                        if (dialog == null)
-                            dialog = new TipDialog(HomeActivity.this, msg, "重试", "取消", new TipDialog.OnListener() {
+                        if (isActivityUnavailable()) {
+                            return;
+                        }
+                        if (mConfigErrorDialog == null)
+                            mConfigErrorDialog = new TipDialog(HomeActivity.this, msg, "重试", "取消", new TipDialog.OnListener() {
                                 @Override
                                 public void left() {
                                     mHandler.post(new Runnable() {
                                         @Override
                                         public void run() {
+                                            dismissConfigErrorDialog();
                                             initData();
-                                            //dialog.hide();
-                                            dialog.dismiss();   //xuameng显示BUG
                                         }
                                     });
                                 }
@@ -490,10 +494,8 @@ public class HomeActivity extends BaseActivity {
                                     mHandler.post(new Runnable() {
                                         @Override
                                         public void run() {
+                                            dismissConfigErrorDialog();
                                             initData();
-                                            //dialog.hide();
-                                            Hawk.put(HawkConfig.API_INIT_OK, false);  //判断API加载成功
-                                            dialog.dismiss();  //xuameng显示BUG
                                         }
                                     });
                                 }
@@ -505,17 +507,14 @@ public class HomeActivity extends BaseActivity {
                                     mHandler.post(new Runnable() {
                                         @Override
                                         public void run() {
+                                            dismissConfigErrorDialog();
                                             initData();
-                                            //dialog.hide();
-                                            Hawk.put(HawkConfig.API_INIT_OK, false);  //判断API加载成功
-                                            dialog.dismiss();  //xuameng显示BUG
                                         }
                                     });
                                 }
                             });
-                        if (!dialog.isShowing() && !refreshEmpty){   //xuameng只要打断加载就不显示错误对话框
-                            showSuccess();  //xuameng显示BUG
-                            dialog.show();
+                        if (!mConfigErrorDialog.isShowing())
+                            mConfigErrorDialog.show();
                         }
                     }
                 });
@@ -859,6 +858,7 @@ public class HomeActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        dismissHomeDialogs();
         mHandler.removeCallbacksAndMessages(null);
         EventBus.getDefault().unregister(this);
         AppManager.getInstance().appExit(0);
@@ -895,6 +895,8 @@ public class HomeActivity extends BaseActivity {
                             sortData.filterSelect.clear();
                         }
                     }
+                    dismissSiteSwitchDialog();
+                    previousHomeSource = ApiConfig.get().getHomeSourceBean();
                     ApiConfig.get().setSourceBean(value);
                     refreshHome(false);
                 }
@@ -968,6 +970,33 @@ public class HomeActivity extends BaseActivity {
         bundle.putBoolean("useCache", true);
         intent.putExtras(bundle);
         HomeActivity.this.startActivity(intent);
+    }
+
+    private boolean isActivityUnavailable() {
+        return isFinishing() || (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR1 && isDestroyed());
+    }
+
+    private void dismissHomeDialogs() {
+        dismissConfigErrorDialog();
+        dismissSiteSwitchDialog();
+    }
+
+    private void dismissConfigErrorDialog() {
+        if (mConfigErrorDialog != null) {
+            if (mConfigErrorDialog.isShowing()) {
+                mConfigErrorDialog.dismiss();
+            }
+            mConfigErrorDialog = null;
+        }
+    }
+
+    private void dismissSiteSwitchDialog() {
+        if (mSiteSwitchDialog != null) {
+            if (mSiteSwitchDialog.isShowing()) {
+                mSiteSwitchDialog.dismiss();
+            }
+            mSiteSwitchDialog = null;
+        }
     }
 
     private void restartHomeWithCache() {  //xuameng 重启主页
