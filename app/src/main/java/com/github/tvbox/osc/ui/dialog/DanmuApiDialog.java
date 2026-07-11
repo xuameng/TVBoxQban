@@ -2,7 +2,6 @@ package com.github.tvbox.osc.ui.dialog;
 
 import android.content.Context;
 import android.view.KeyEvent;
-import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.text.TextUtils;
@@ -18,7 +17,6 @@ import com.github.tvbox.osc.util.HawkConfig;
 import com.orhanobut.hawk.Hawk;
 
 import org.jetbrains.annotations.NotNull;
-import android.view.inputmethod.InputMethodManager;
 
 import org.greenrobot.eventbus.EventBus;  //xuameng 接收接口变更通知
 
