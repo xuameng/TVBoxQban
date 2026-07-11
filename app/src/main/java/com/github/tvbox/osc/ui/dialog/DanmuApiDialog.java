@@ -20,10 +20,12 @@ import com.orhanobut.hawk.Hawk;
 import org.jetbrains.annotations.NotNull;
 import android.view.inputmethod.InputMethodManager;
 
+import org.greenrobot.eventbus.EventBus;  //xuameng 接收接口变更通知
+
 /**
  * @author xuameng
- * @date :2026/06/27
- * @description:   弹幕地址设置
+ * @date :2026/7/11
+ * @description:   弹幕地址设置  接收接口变更通知
  */
 
 public class DanmuApiDialog extends BaseDialog {
@@ -63,6 +65,27 @@ public class DanmuApiDialog extends BaseDialog {
             }
         });
 
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onRefreshEvent(RefreshEvent event) {    //xuameng 接收接口变更通知
+        if (event.type == RefreshEvent.TYPE_SET_DANMU_SETTINGS) {
+            String api = Hawk.get(HawkConfig.DANMU_API, "");
+            input.setText(api);   //xuameng 接收接口变更通知直接显示
+            input.setHint(getDefaultApi());
+        }
     }
 
     private String getDefaultApi() {
