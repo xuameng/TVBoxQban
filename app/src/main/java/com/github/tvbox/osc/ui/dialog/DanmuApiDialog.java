@@ -7,18 +7,21 @@ import android.widget.TextView;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.Editable;
-
+import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.api.DanmakuApi;
 import com.github.tvbox.osc.util.HawkConfig;
+import com.github.tvbox.osc.event.RefreshEvent;
 import com.orhanobut.hawk.Hawk;
 
 import org.jetbrains.annotations.NotNull;
 
 import org.greenrobot.eventbus.EventBus;  //xuameng 接收接口变更通知
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 /**
  * @author xuameng
