@@ -1045,6 +1045,7 @@ public class PlayFragment extends BaseLazyFragment {
                                 JSONObject obj = info.getJSONArray("subs").optJSONObject(0);
                                 String url = obj.optString("url", "");
                                 if (!TextUtils.isEmpty(url) && !FileUtils.hasExtension(url)) {
+									App.showToastShort(mContext, url);
                                     String format = obj.optString("format", "");
                                     String name = obj.optString("name", "字幕");
                                     String ext = ".srt";
