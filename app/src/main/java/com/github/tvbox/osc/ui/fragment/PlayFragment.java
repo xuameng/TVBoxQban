@@ -1070,9 +1070,9 @@ public class PlayFragment extends BaseLazyFragment {
                                                 ext = ".lrc";
                                                 break;
                                         }
-								    }
-                                    String filename = name + (name.toLowerCase().endsWith(ext) ? "" : ext);
-                                    url += "#" + mController.encodeUrl(filename);
+                                        String filename = name + (name.toLowerCase().endsWith(ext) ? "" : ext);
+                                        url += "#" + mController.encodeUrl(filename);
+									}
                                 }
                                  playSubtitle = url;
                              } catch (Throwable th) {
