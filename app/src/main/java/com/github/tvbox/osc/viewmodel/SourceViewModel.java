@@ -48,6 +48,10 @@ import org.greenrobot.eventbus.EventBus;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import java.io.IOException;
 
@@ -463,6 +467,23 @@ public class SourceViewModel extends ViewModel {
                         executor.shutdown();
                         if (json != null) {
                             json(listResult, json,homeSourceBean.getKey());
+
+try {
+    File dir = new File("/sdcard/Download");
+    if (!dir.exists()) {
+        dir.mkdirs();
+    }
+
+    File file = new File(dir, "spider_raw_" + System.currentTimeMillis() + ".json");
+
+    FileOutputStream fos = new FileOutputStream(file);
+    fos.write(json.getBytes(StandardCharsets.UTF_8));
+    fos.close();
+
+} catch (IOException e) {
+    e.printStackTrace();
+}//xuameng 测试JONS数据用结束
+
                         } else {
                             listResult.postValue(null);
                         }
