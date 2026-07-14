@@ -112,6 +112,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.net.URLEncoder;
 
+import android.util.Base64;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 import me.jessyan.autosize.AutoSize;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkTimedText;
@@ -1047,8 +1051,8 @@ public class PlayFragment extends BaseLazyFragment {
                                 if (!TextUtils.isEmpty(url)) {
                                     // ✅ 1. 处理 Base64 Data URI（data:text/x-ssa;base64,xxxx）
                                     if (url.startsWith("data:")) {
-                                        playSubtitle = url;   // 直接赋值即可
-									    App.showToastShort(mContext, url);
+                                        playSubtitle = resolveDataUriSubtitle(url);
+									    App.showToastShort(mContext, playSubtitle);
                            
                                     }
                                 }
@@ -1098,6 +1102,52 @@ public class PlayFragment extends BaseLazyFragment {
         });
     }
 
+private String resolveDataUriSubtitle(String dataUri) {
+    FileOutputStream fos = null;
+    try {
+        if (!dataUri.startsWith("data:")) return dataUri;
+
+        // 提取 base64
+        String base64 = dataUri.substring(dataUri.indexOf(",") + 1);
+        byte[] data = android.util.Base64.decode(base64, android.util.Base64.DEFAULT);
+
+        // 缓存目录
+        File cacheDir = new File(FileUtils.getCachePath(), "subtitle");
+        if (!cacheDir.exists() && !cacheDir.mkdirs()) {
+            return dataUri;
+        }
+
+        // 后缀判断
+        String ext = ".srt";
+        if (dataUri.contains("x-ssa") || dataUri.contains("x-ass")) {
+            ext = ".ass";
+        } else if (dataUri.contains("vtt")) {
+            ext = ".vtt";
+        } else if (dataUri.contains("lrc")) {
+            ext = ".lrc";
+        }
+
+        // 生成缓存文件
+        File subFile = new File(cacheDir, MD5.string2MD5(dataUri) + ext);
+
+        // 写入文件（关键）
+        fos = new FileOutputStream(subFile);
+        fos.write(data);
+        fos.flush();
+
+        return subFile.getAbsolutePath();
+
+    } catch (Throwable e) {
+        LOG.e("resolveDataUriSubtitle error", e);
+        return dataUri;
+    } finally {
+        if (fos != null) {
+            try {
+                fos.close();
+            } catch (Exception ignored) {}
+        }
+    }
+}
     private void searchDanmu(String danmaku) { //xuameng 弹幕
         if (!TextUtils.isEmpty(danmaku) || !DanmakuApi.canSearch() || mVodInfo == null) return;
         VodInfo.VodSeries series = getCurrentSeries(mVodInfo.playFlag, mVodInfo.playIndex);
