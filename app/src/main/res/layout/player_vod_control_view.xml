@@ -131,7 +131,7 @@
         android:textStyle="bold"
         android:textColor="#ffffffff"
         android:gravity="center"
-        android:layout_gravity="center"
+        android:layout_gravity="bottom"
         android:id="@+id/subtitle_view"
         android:visibility="visible"
         android:paddingLeft="@dimen/vs_20"
