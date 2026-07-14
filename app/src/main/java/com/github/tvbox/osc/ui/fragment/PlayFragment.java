@@ -1045,9 +1045,8 @@ public class PlayFragment extends BaseLazyFragment {
                                 JSONObject obj = info.getJSONArray("subs").optJSONObject(0);
                                 String url = obj.optString("url", "");
                                 if (url.contains("base64,")) {
-                                    String base64 = url.substring(url.indexOf(",") + 1);
-                                    byte[] data = android.util.Base64.decode(base64, android.util.Base64.DEFAULT);
-                                    url = new String(data, "UTF-8");
+                                    url = resolveDataUriSubtitle(url);  //xuameng base64字幕转换并缓存
+                                    playSubtitle = url;
                                 }
                                 if (!TextUtils.isEmpty(url) && !FileUtils.hasExtension(url)) {
                                     String format = obj.optString("format", "");
@@ -1114,6 +1113,53 @@ public class PlayFragment extends BaseLazyFragment {
                 }
             }
         });
+    }
+
+    private String resolveDataUriSubtitle(String dataUri) {   //xuameng base64字幕转换并缓存
+        FileOutputStream fos = null;
+        try {
+            if (!dataUri.startsWith("data:")) return dataUri;
+
+            // 提取 base64
+            String base64 = dataUri.substring(dataUri.indexOf(",") + 1);
+            byte[] data = android.util.Base64.decode(base64, android.util.Base64.DEFAULT);
+
+            // 缓存目录
+            File cacheDir = new File(FileUtils.getCachePath(), "subtitle");
+            if (!cacheDir.exists() && !cacheDir.mkdirs()) {
+                return dataUri;
+            }
+
+            // 后缀判断
+            String ext = ".srt";
+            if (dataUri.contains("x-ssa") || dataUri.contains("x-ass")) {
+                ext = ".ass";
+            } else if (dataUri.contains("vtt")) {
+                ext = ".vtt";
+            } else if (dataUri.contains("lrc")) {
+                ext = ".lrc";
+            }
+
+            // 生成缓存文件
+            File subFile = new File(cacheDir, MD5.string2MD5(dataUri) + ext);
+
+            // 写入文件（关键）
+            fos = new FileOutputStream(subFile);
+            fos.write(data);
+            fos.flush();
+
+            return subFile.getAbsolutePath();
+
+        } catch (Throwable e) {
+           e.printStackTrace();
+            return dataUri;
+        } finally {
+            if (fos != null) {
+                try {
+                    fos.close();
+                } catch (Exception ignored) {}
+            }
+        }
     }
 
     private void searchDanmu(String danmaku) { //xuameng 弹幕
