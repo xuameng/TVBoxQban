@@ -1049,32 +1049,10 @@ public class PlayFragment extends BaseLazyFragment {
                                     if (url.startsWith("data:")) {
                                         playSubtitle = url;   // 直接赋值即可
 									    App.showToastShort(mContext, url);
-                                        return;
+                           
                                     }
-                                    // ✅ 2. 普通 HTTP(S) 字幕
-                                    if (!FileUtils.hasExtension(url)) {
-                                        String format = obj.optString("format", "");
-                                        String name = obj.optString("name", "字幕");
-                                        String ext = ".srt";
-                                        switch (format) {
-                                            case "text/x-ssa":
-                                                ext = ".ass";
-                                                break;
-                                            case "text/vtt":
-                                                ext = ".vtt";
-                                                break;
-                                            case "application/x-subrip":
-                                                ext = ".srt";
-                                                break;
-                                            case "text/lrc":
-                                                ext = ".lrc";
-                                                break;
-                                        }
-                                        String filename = name + (name.toLowerCase().endsWith(ext) ? "" : ext);
-                                        url += "#" + mController.encodeUrl(filename);
-									}
                                 }
-                                 playSubtitle = url;
+                              
                              } catch (Throwable th) {
                                  // 异常处理
                              }
