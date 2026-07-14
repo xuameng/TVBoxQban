@@ -1051,7 +1051,7 @@ public class PlayFragment extends BaseLazyFragment {
                                 if (!TextUtils.isEmpty(url)) {
                                     // ✅ 1. 处理 Base64 Data URI（data:text/x-ssa;base64,xxxx）
                                     if (url.startsWith("data:")) {
-        String base64 = dataUri.substring(url.indexOf(",") + 1);
+        String base64 = url.substring(url.indexOf(",") + 1);
         byte[] data = android.util.Base64.decode(base64, android.util.Base64.DEFAULT);
 String content = new String(data, "UTF-8");
 App.showToastShort(mContext, content);
