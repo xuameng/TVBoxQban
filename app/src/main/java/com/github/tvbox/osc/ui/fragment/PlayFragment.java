@@ -1138,7 +1138,7 @@ private String resolveDataUriSubtitle(String dataUri) {
         return subFile.getAbsolutePath();
 
     } catch (Throwable e) {
-        LOG.e("resolveDataUriSubtitle error", e);
+       
         return dataUri;
     } finally {
         if (fos != null) {
