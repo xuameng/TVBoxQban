@@ -112,10 +112,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.net.URLEncoder;
 
-import android.util.Base64;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
 import me.jessyan.autosize.AutoSize;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkTimedText;
@@ -448,7 +444,7 @@ public class PlayFragment extends BaseLazyFragment {
                                 LOG.i("echo-Remote Subtitle Url: " + zimuUrl);
                                 setSubtitle(zimuUrl);//设置字幕
                                 if (mController.mExoSubtitleView.getVisibility() == View.VISIBLE){  //xuameng 使用搜索字幕隐藏EXO PGS字幕
-                                    mController.mExoSubtitleView.setVisibility(View.VISIBLE);
+                                    mController.mExoSubtitleView.setVisibility(View.GONE);
                                 }
                                 HawkConfig.exoSubtitle = false;  //xuameng 判断当前是否播放EXO内置字幕 
                                 if (searchSubtitleDialog != null) {
@@ -479,7 +475,7 @@ public class PlayFragment extends BaseLazyFragment {
                                 LOG.i("echo-Local Subtitle Path: " + path);
                                 setSubtitle(path);//设置字幕
                                 if (mController.mExoSubtitleView.getVisibility() == View.VISIBLE){  //xuameng 使用搜索字幕隐藏EXO PGS字幕
-                                   mController.mExoSubtitleView.setVisibility(View.VISIBLE);
+                                    mController.mExoSubtitleView.setVisibility(View.GONE);
                                 }
                                 HawkConfig.exoSubtitle = false;  //xuameng 判断当前是否播放EXO内置字幕
                             }
@@ -634,7 +630,7 @@ public class PlayFragment extends BaseLazyFragment {
                             HawkConfig.exoSubtitle = true;  //xuameng 判断当前是否播放EXO内置字幕
                         } else {
                             // xuameng选中的是其他字幕：使用外部视图
-                           mController.mExoSubtitleView.setVisibility(View.VISIBLE);
+                            mController.mExoSubtitleView.setVisibility(View.GONE);
                             mController.mSubtitleView.setVisibility(View.VISIBLE);
                             mController.mSubtitleView.destroy();
                             mController.mSubtitleView.clearSubtitleCache();
@@ -900,7 +896,7 @@ public class PlayFragment extends BaseLazyFragment {
                     HawkConfig.exoSubtitle = true;  //xuameng 判断当前是否播放EXO内置字幕
                 } else {
                     // 当前选中的是其他格式字幕，使用外部视图
-                   mController.mExoSubtitleView.setVisibility(View.VISIBLE);
+                    mController.mExoSubtitleView.setVisibility(View.GONE);
                     mController.mSubtitleView.setVisibility(View.VISIBLE);
                     HawkConfig.exoSubtitle = false;  //xuameng 判断当前是否播放EXO内置字幕
                 }
@@ -1048,21 +1044,33 @@ public class PlayFragment extends BaseLazyFragment {
                             try {
                                 JSONObject obj = info.getJSONArray("subs").optJSONObject(0);
                                 String url = obj.optString("url", "");
-                                if (!TextUtils.isEmpty(url)) {
-                                    // ✅ 1. 处理 Base64 Data URI（data:text/x-ssa;base64,xxxx）
-                                    if (url.startsWith("data:")) {
-        String base64 = url.substring(url.indexOf(",") + 1);
-        byte[] data = android.util.Base64.decode(base64, android.util.Base64.DEFAULT);
-String content = new String(data, "UTF-8");
-App.showToastShort(mContext, content);
-                                        playSubtitle = content;
-							
-										                                    mController.setLrcContent(playSubtitle);
-                                    mController.mLrcView.setVisibility(View.VISIBLE);
-                           
-                                    }
+                                if (url.contains("base64,")) {
+                                    String base64 = url.substring(url.indexOf(",") + 1);
+                                    byte[] data = android.util.Base64.decode(base64, android.util.Base64.DEFAULT);
+                                    url = new String(data, "UTF-8");
                                 }
-                              
+                                if (!TextUtils.isEmpty(url) && !FileUtils.hasExtension(url)) {
+                                    String format = obj.optString("format", "");
+                                    String name = obj.optString("name", "字幕");
+                                    String ext = ".srt";
+                                    switch (format) {
+                                        case "text/x-ssa":
+                                            ext = ".ass";
+                                            break;
+                                        case "text/vtt":
+                                            ext = ".vtt";
+                                            break;
+                                        case "application/x-subrip":
+                                            ext = ".srt";
+                                            break;
+                                        case "text/lrc":
+                                            ext = ".lrc";
+                                            break;
+                                    }
+                                    String filename = name + (name.toLowerCase().endsWith(ext) ? "" : ext);
+                                    url += "#" + mController.encodeUrl(filename);
+                                }
+                                 playSubtitle = url;
                              } catch (Throwable th) {
                                  // 异常处理
                              }
@@ -1107,53 +1115,7 @@ App.showToastShort(mContext, content);
             }
         });
     }
-private String resolveDataUriSubtitle(String dataUri) {
-    FileOutputStream fos = null;
-    try {
-        if (!dataUri.startsWith("data:")) return dataUri;
 
-        // 提取 base64
-        String base64 = dataUri.substring(dataUri.indexOf(",") + 1);
-        byte[] data = android.util.Base64.decode(base64, android.util.Base64.DEFAULT);
-String content = new String(data, "UTF-8");
-App.showToastShort(mContext, content);
-        // 缓存目录
-        File cacheDir = new File(FileUtils.getCachePath(), "subtitle");
-        if (!cacheDir.exists() && !cacheDir.mkdirs()) {
-            return dataUri;
-        }
-
-        // 后缀判断
-        String ext = ".srt";
-        if (dataUri.contains("x-ssa") || dataUri.contains("x-ass")) {
-            ext = ".ass";
-        } else if (dataUri.contains("vtt")) {
-            ext = ".vtt";
-        } else if (dataUri.contains("lrc")) {
-            ext = ".lrc";
-        }
-
-        // 生成缓存文件
-        File subFile = new File(cacheDir, MD5.string2MD5(dataUri) + ext);
-
-        // 写入文件（关键）
-        fos = new FileOutputStream(subFile);
-        fos.write(data);
-        fos.flush();
-
-        return subFile.getAbsolutePath();
-
-    } catch (Throwable e) {
-       
-        return dataUri;
-    } finally {
-        if (fos != null) {
-            try {
-                fos.close();
-            } catch (Exception ignored) {}
-        }
-    }
-}
     private void searchDanmu(String danmaku) { //xuameng 弹幕
         if (!TextUtils.isEmpty(danmaku) || !DanmakuApi.canSearch() || mVodInfo == null) return;
         VodInfo.VodSeries series = getCurrentSeries(mVodInfo.playFlag, mVodInfo.playIndex);
