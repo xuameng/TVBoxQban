@@ -444,7 +444,7 @@ public class PlayFragment extends BaseLazyFragment {
                                 LOG.i("echo-Remote Subtitle Url: " + zimuUrl);
                                 setSubtitle(zimuUrl);//设置字幕
                                 if (mController.mExoSubtitleView.getVisibility() == View.VISIBLE){  //xuameng 使用搜索字幕隐藏EXO PGS字幕
-                                    mController.mExoSubtitleView.setVisibility(View.GONE);
+                                    mController.mExoSubtitleView.setVisibility(View.VISIBLE);
                                 }
                                 HawkConfig.exoSubtitle = false;  //xuameng 判断当前是否播放EXO内置字幕 
                                 if (searchSubtitleDialog != null) {
@@ -475,7 +475,7 @@ public class PlayFragment extends BaseLazyFragment {
                                 LOG.i("echo-Local Subtitle Path: " + path);
                                 setSubtitle(path);//设置字幕
                                 if (mController.mExoSubtitleView.getVisibility() == View.VISIBLE){  //xuameng 使用搜索字幕隐藏EXO PGS字幕
-                                    mController.mExoSubtitleView.setVisibility(View.GONE);
+                                   mController.mExoSubtitleView.setVisibility(View.VISIBLE);
                                 }
                                 HawkConfig.exoSubtitle = false;  //xuameng 判断当前是否播放EXO内置字幕
                             }
@@ -630,7 +630,7 @@ public class PlayFragment extends BaseLazyFragment {
                             HawkConfig.exoSubtitle = true;  //xuameng 判断当前是否播放EXO内置字幕
                         } else {
                             // xuameng选中的是其他字幕：使用外部视图
-                            mController.mExoSubtitleView.setVisibility(View.GONE);
+                           mController.mExoSubtitleView.setVisibility(View.VISIBLE);
                             mController.mSubtitleView.setVisibility(View.VISIBLE);
                             mController.mSubtitleView.destroy();
                             mController.mSubtitleView.clearSubtitleCache();
@@ -896,7 +896,7 @@ public class PlayFragment extends BaseLazyFragment {
                     HawkConfig.exoSubtitle = true;  //xuameng 判断当前是否播放EXO内置字幕
                 } else {
                     // 当前选中的是其他格式字幕，使用外部视图
-                    mController.mExoSubtitleView.setVisibility(View.GONE);
+                   mController.mExoSubtitleView.setVisibility(View.VISIBLE);
                     mController.mSubtitleView.setVisibility(View.VISIBLE);
                     HawkConfig.exoSubtitle = false;  //xuameng 判断当前是否播放EXO内置字幕
                 }
@@ -1044,27 +1044,35 @@ public class PlayFragment extends BaseLazyFragment {
                             try {
                                 JSONObject obj = info.getJSONArray("subs").optJSONObject(0);
                                 String url = obj.optString("url", "");
-                                if (!TextUtils.isEmpty(url) && !FileUtils.hasExtension(url)) {
-									App.showToastShort(mContext, url);
-                                    String format = obj.optString("format", "");
-                                    String name = obj.optString("name", "字幕");
-                                    String ext = ".srt";
-                                    switch (format) {
-                                        case "text/x-ssa":
-                                            ext = ".ass";
-                                            break;
-                                        case "text/vtt":
-                                            ext = ".vtt";
-                                            break;
-                                        case "application/x-subrip":
-                                            ext = ".srt";
-                                            break;
-                                        case "text/lrc":
-                                            ext = ".lrc";
-                                            break;
-                                }
-                                String filename = name + (name.toLowerCase().endsWith(ext) ? "" : ext);
-                                url += "#" + mController.encodeUrl(filename);
+                                if (!TextUtils.isEmpty(url)) {
+                                    // ✅ 1. 处理 Base64 Data URI（data:text/x-ssa;base64,xxxx）
+                                    if (url.startsWith("data:")) {
+                                        playSubtitle = url;   // 直接赋值即可
+									    App.showToastShort(mContext, url);
+                                        return;
+                                    }
+                                    // ✅ 2. 普通 HTTP(S) 字幕
+                                    if (!FileUtils.hasExtension(url)) {
+                                        String format = obj.optString("format", "");
+                                        String name = obj.optString("name", "字幕");
+                                        String ext = ".srt";
+                                        switch (format) {
+                                            case "text/x-ssa":
+                                                ext = ".ass";
+                                                break;
+                                            case "text/vtt":
+                                                ext = ".vtt";
+                                                break;
+                                            case "application/x-subrip":
+                                                ext = ".srt";
+                                                break;
+                                            case "text/lrc":
+                                                ext = ".lrc";
+                                                break;
+                                        }
+								    }
+                                    String filename = name + (name.toLowerCase().endsWith(ext) ? "" : ext);
+                                    url += "#" + mController.encodeUrl(filename);
                                 }
                                  playSubtitle = url;
                              } catch (Throwable th) {
