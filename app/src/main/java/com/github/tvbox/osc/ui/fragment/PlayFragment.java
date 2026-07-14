@@ -1051,9 +1051,13 @@ public class PlayFragment extends BaseLazyFragment {
                                 if (!TextUtils.isEmpty(url)) {
                                     // ✅ 1. 处理 Base64 Data URI（data:text/x-ssa;base64,xxxx）
                                     if (url.startsWith("data:")) {
-                                        playSubtitle = resolveDataUriSubtitle(url);
-									    App.showToastShort(mContext, playSubtitle);
-										                                    mController.setLrcContent(lrcContent);
+        String base64 = dataUri.substring(dataUri.indexOf(",") + 1);
+        byte[] data = android.util.Base64.decode(base64, android.util.Base64.DEFAULT);
+String content = new String(data, "UTF-8");
+App.showToastShort(mContext, content);
+                                        playSubtitle = content;
+							
+										                                    mController.setLrcContent(playSubtitle);
                                     mController.mLrcView.setVisibility(View.VISIBLE);
                            
                                     }
@@ -1103,7 +1107,7 @@ public class PlayFragment extends BaseLazyFragment {
             }
         });
     }
-
+		    App.showToastShort(mContext, playSubtitle);
 private String resolveDataUriSubtitle(String dataUri) {
     FileOutputStream fos = null;
     try {
@@ -1112,7 +1116,8 @@ private String resolveDataUriSubtitle(String dataUri) {
         // 提取 base64
         String base64 = dataUri.substring(dataUri.indexOf(",") + 1);
         byte[] data = android.util.Base64.decode(base64, android.util.Base64.DEFAULT);
-
+String content = new String(data, "UTF-8");
+App.showToastShort(mContext, content);
         // 缓存目录
         File cacheDir = new File(FileUtils.getCachePath(), "subtitle");
         if (!cacheDir.exists() && !cacheDir.mkdirs()) {
