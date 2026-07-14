@@ -1119,7 +1119,6 @@ public class PlayFragment extends BaseLazyFragment {
     private String resolveDataUriSubtitle(String dataUri) {   //xuameng base64字幕转换并缓存
         FileOutputStream fos = null;
         try {
-            if (!dataUri.startsWith("data:")) return dataUri;
 
             // 提取 base64
             String base64 = dataUri.substring(dataUri.indexOf(",") + 1);
