@@ -1107,7 +1107,6 @@ App.showToastShort(mContext, content);
             }
         });
     }
-		    App.showToastShort(mContext, playSubtitle);
 private String resolveDataUriSubtitle(String dataUri) {
     FileOutputStream fos = null;
     try {
