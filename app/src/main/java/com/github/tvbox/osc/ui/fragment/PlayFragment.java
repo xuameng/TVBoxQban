@@ -1053,6 +1053,8 @@ public class PlayFragment extends BaseLazyFragment {
                                     if (url.startsWith("data:")) {
                                         playSubtitle = resolveDataUriSubtitle(url);
 									    App.showToastShort(mContext, playSubtitle);
+										                                    mController.setLrcContent(lrcContent);
+                                    mController.mLrcView.setVisibility(View.VISIBLE);
                            
                                     }
                                 }
