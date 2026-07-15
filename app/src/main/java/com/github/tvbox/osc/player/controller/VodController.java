@@ -607,7 +607,6 @@ public class VodController extends BaseController {
         mAudioTrackBtn = findViewById(R.id.audio_track_select);
         mDanmuSettingBtn = findViewById(R.id.danmu_setting); //xuameng弹幕设置
         mDanmuSearchUiBtn = findViewById(R.id.danmu_search_ui);  //xuameng弹幕搜索
-        updateDanmuSearchUiBtn();  //xuameng弹幕搜索
         mLandscapePortraitBtn = findViewById(R.id.landscape_portrait);
         backBtn = findViewById(R.id.tv_back);
         mCastBtn = findViewById(R.id.play_cast);   //xuameng 投屏
@@ -617,6 +616,7 @@ public class VodController extends BaseController {
         mExoSubtitleView = findViewById(R.id.exo_subtitle_view); // 用于显示ExoPlayer内置字幕
         mLrcView = findViewById(R.id.lrc_view);  //xuameng LRC歌词字幕
         mDanmuView = findViewById(R.id.danmaku); //xuameng弹幕
+        updateDanmuSearchUiBtn();  //xuameng弹幕搜索
 
         //xuameng音乐播放时图标
         ObjectAnimator animator20 = ObjectAnimator.ofFloat(iv_circle_bg, "rotation", 360.0f);
