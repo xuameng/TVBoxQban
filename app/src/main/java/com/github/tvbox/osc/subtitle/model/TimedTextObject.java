@@ -60,9 +60,6 @@ public class TimedTextObject {
 	//list of captions (begin time, reference)
 	//represented by a tree map to maintain order
 	public TreeMap<Integer, Subtitle> captions;
-
-//list of merged lyric captions (begin time, reference)
-public TreeMap<Integer, Subtitle> lyricCaptions;
 	
 	//to store non fatal errors produced during parsing
 	public String warnings;
@@ -85,7 +82,6 @@ public TreeMap<Integer, Subtitle> lyricCaptions;
 		styling = new Hashtable<String, Style>();
 		layout = new Hashtable<String, Region>();
 		captions = new TreeMap<Integer, Subtitle>();
-lyricCaptions = new TreeMap<>();
 		
 		warnings = "List of non fatal errors produced during parsing:\n\n";
 		
