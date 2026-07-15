@@ -39,6 +39,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.TreeMap;
 
 public class FormatASS implements TimedTextFileFormat {
 
@@ -520,7 +521,7 @@ private Subtitle parseDialogueForASS(String[] line, String[] dialogueFormat,
 
     // ✅ 用一个新的 Map 专门存歌词合并结果
     if (tto.lyricCaptions == null) {
-        tto.lyricCaptions = new java.util.HashMap<>();
+        tto.lyricCaptions = new java.util.TreeMap<>();
     }
 
     if (isLyricStyle) {
