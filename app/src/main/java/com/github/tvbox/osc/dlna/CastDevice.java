@@ -48,7 +48,7 @@ public class CastDevice {
     }
 
     public String getDisplayName() {
-        return (type == TYPE_DLNA ? "DLNA  " : "TVBox  ") + name;
+        return (type == TYPE_DLNA ? "DLNA  " : "聚汇影视  ") + name;
     }
 
     @Override
