@@ -1884,7 +1884,9 @@ public class VodController extends BaseController {
             case VideoView.STATE_PAUSED:
                 isVideoPlay = false;
                 mxuPlay.setText("播放"); //xuameng底部菜单显示播放
-				mPauseIngXu();
+				if (fullPreview){
+				    mPauseIngXu();
+                }
                 break;
             case VideoView.STATE_ERROR:
                 imageHide();  //xuameng 隐藏图片
@@ -2043,6 +2045,12 @@ public class VodController extends BaseController {
                 mHandler.postDelayed(mUpdatePauseLayout, 50);   // Workaround Fix : SurfaceView
             }
         }
+    }
+
+    private boolean fullPreview = false;   //xuameng 判断当前是否全屏
+
+    public void setFullPreview(boolean fullPreview) {  //xuameng 判断当前是否全屏
+        this.fullPreview = fullPreview;
     }
 
 	public void mHidePauseIng() { //xuameng 隐藏暂停图标
