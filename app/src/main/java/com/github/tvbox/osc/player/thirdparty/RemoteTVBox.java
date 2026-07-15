@@ -92,36 +92,35 @@ public class RemoteTVBox {
                         notifySearchFail(callback, foundNum, finishedNum, total);
                     }
 
-@Override
-public void onResponse(Call call, Response response) throws IOException {
-    try {
-		// 1. xuameng获取远端返回的内容，例如 "ok|Xiaomi Box"  result包包含远端主机名
-        String result = response.body() == null ? "" : response.body().string();
-        boolean end = finishedNum.incrementAndGet() == total;
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        try {
+		                    // 1. xuameng获取远端返回的内容，例如 "ok|Xiaomi Box"  result包包含远端主机名
+                            String result = response.body() == null ? "" : response.body().string();
+                            boolean end = finishedNum.incrementAndGet() == total;
 
-        // 2. xuameng判断是否成功（只要以 ok 开头就算成功）
-        if (result.startsWith("ok")) {
-            String deviceName = "聚汇影视"; // 默认名字
+                            // 2. xuameng判断是否成功（只要以 ok 开头就算成功）
+                            if (result.startsWith("ok")) {
+                                String deviceName = "聚汇影视"; // 默认名字
+                                // 3. xuameng解析设备名：如果包含 "|"，就分割取第二部分  因为result返回的是 "ok|" + App.deviceName);
+                                if (result.contains("|")) {
+                                    deviceName = result.split("\\|")[1];
+                                }
 
-                            // 3. xuameng解析设备名：如果包含 "|"，就分割取第二部分  因为result返回的是 "ok|" + App.deviceName);
-                            if (result.contains("|")) {
-                                deviceName = result.split("\\|")[1];
+                                // 4. xuameng找到设备，数量+1
+                                foundNum.incrementAndGet();
+
+                                // 5. xuameng传给回调
+                                callback.found(viewHost, deviceName, end);
+                            } else {
+                                callback.fail(foundNum.get() == 0 && end, end);
                             }
+                            // ===== xuameng结束 =====
 
-            // 4. xuameng找到设备，数量+1
-            foundNum.incrementAndGet();
-
-            // 5. xuameng传给回调
-            callback.found(viewHost, deviceName, end);
-        } else {
-            callback.fail(foundNum.get() == 0 && end, end);
-        }
-        // ===== 迁移结束 =====
-
-    } finally {
-        response.close();
-    }
-}
+                        } finally {
+                            response.close();
+                        }
+                    }
                 });
             } catch (Exception e) {
                 notifySearchFail(callback, foundNum, finishedNum, total);
