@@ -120,11 +120,11 @@ public class CastDeviceDialog extends BaseDialog {
                 RemoteTVBox tv = new RemoteTVBox();
                 RemoteTVBox.searchAvalible(tv.new Callback() {
                     @Override
-                    public void found(final String viewHost, boolean end) {
+                    public void found(String viewHost, String deviceName, boolean end) {
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
-                                addDevice(CastDevice.tvbox(viewHost));
+                                addDevice(CastDevice.tvbox(viewHost, deviceName))
                             }
                         });
                     }
