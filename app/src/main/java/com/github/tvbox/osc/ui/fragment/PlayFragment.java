@@ -817,6 +817,7 @@ public class PlayFragment extends BaseLazyFragment {
             errorWithRetry("播放地址为空", false);
             return;
         }
+        webPlayUrl=url;
         LOG.i("playUrl:" + url);
         final String finalUrl = url;
         requireActivity().runOnUiThread(new Runnable() {
@@ -1084,6 +1085,7 @@ public class PlayFragment extends BaseLazyFragment {
                             LOG.i("echo-ignore stale play result");
                             return;
                         }
+                        webPlayUrl = null;
                         progressKey = info.optString("proKey", null);
                         boolean parse = info.optString("parse", "1").equals("1");
                         boolean jx = info.optString("jx", "0").equals("1");
@@ -1697,6 +1699,7 @@ public class PlayFragment extends BaseLazyFragment {
             mController.setTitle(playTitleInfo);
         }
         stopParse();
+        webPlayUrl = null;
         webHeaderMap = null;
         initParseLoadFound();
         resetDanmuState(); //xuameng 弹幕
@@ -1756,6 +1759,9 @@ public class PlayFragment extends BaseLazyFragment {
     private String webUrl;
     private String webUserAgent;
     private HashMap<String, String > webHeaderMap;
+    private String webPlayUrl;
+    private String m3u8ProxyUrl;
+    private String m3u8SourceUrl;
 
     private void initParse(String flag, boolean useParse, String playUrl, final String url) {
         parseFlag = flag;
@@ -1893,6 +1899,7 @@ public class PlayFragment extends BaseLazyFragment {
         }
         mController.stopOther();
         resetDanmuState();
+        webPlayUrl = null;
         webHeaderMap = null;
         initParseLoadFound();
     }
