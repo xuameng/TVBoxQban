@@ -1469,10 +1469,10 @@ public class VodController extends BaseController {
         mLandscapePortraitBtn.setNextFocusUpId(R.id.mxuplay);
 
         // xuameng防止上键乱跳
-        mxuplay.setNextFocusUpId(View.NO_ID);
+        mxuPlay.setNextFocusUpId(View.NO_ID);
 
         // xuameng强制拦截上键
-        mxuplay.setOnKeyListener((v, keyCode, event) -> {
+        mxuPlay.setOnKeyListener((v, keyCode, event) -> {
             if (keyCode == KeyEvent.KEYCODE_DPAD_UP
                     && event.getAction() == KeyEvent.ACTION_DOWN) {
                 return true;
