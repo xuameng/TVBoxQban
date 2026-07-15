@@ -1462,6 +1462,11 @@ public class VodController extends BaseController {
         mAudioTrackBtn.setNextFocusRightId(R.id.play_next);
         mAudioTrackBtn.setNextFocusUpId(R.id.mxuplay); //xuameng底部菜单所有键上键都是播放完
         mPlayrender.setNextFocusUpId(R.id.mxuplay);
+		mPlayanimation.setNextFocusUpId(R.id.mxuplay);
+		mPlayerEXOBtn.setNextFocusUpId(R.id.mxuplay);
+        mDanmuSettingBtn.setNextFocusUpId(R.id.mxuplay);
+        mDanmuSearchUiBtn.setNextFocusUpId(R.id.mxuplay);
+        mLandscapePortraitBtn.setNextFocusUpId(R.id.mxuplay);
     }
     private void hideLiveAboutBtn() {
         if(mControlWrapper != null && mControlWrapper.getDuration() <= 1) {
