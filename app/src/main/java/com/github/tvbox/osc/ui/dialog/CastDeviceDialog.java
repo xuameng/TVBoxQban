@@ -124,7 +124,7 @@ public class CastDeviceDialog extends BaseDialog {
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
-                                addDevice(CastDevice.tvbox(viewHost, deviceName))
+                                addDevice(CastDevice.tvbox(viewHost, deviceName));
                             }
                         });
                     }
@@ -207,7 +207,7 @@ public class CastDeviceDialog extends BaseDialog {
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            handleCastResult(false, "TVBox投屏失败");
+                            handleCastResult(false, "聚汇影视投屏失败");
                         }
                     });
                 }
@@ -223,13 +223,13 @@ public class CastDeviceDialog extends BaseDialog {
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            handleCastResult(ok, ok ? "" : "TVBox投屏失败");
+                            handleCastResult(ok, ok ? "" : "聚汇影视投屏失败");
                         }
                     });
                 }
             });
         } catch (Exception e) {
-            handleCastResult(false, "TVBox投屏失败");
+            handleCastResult(false, "聚汇影视投屏失败");
         }
     }
 
@@ -277,7 +277,7 @@ public class CastDeviceDialog extends BaseDialog {
             TextView name = holder.itemView.findViewById(R.id.tvDeviceName);
             TextView ip = holder.itemView.findViewById(R.id.tvDeviceIp);
             name.setText(device.getName());
-            ip.setText((device.getType() == CastDevice.TYPE_DLNA ? "DLNA  " : "TVBox  ") + device.getId());
+            ip.setText((device.getType() == CastDevice.TYPE_DLNA ? "DLNA  " : "聚汇影视  ") + device.getId());
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
