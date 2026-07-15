@@ -214,9 +214,10 @@ public class CastDeviceDialog extends BaseDialog {
 
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {
+                    final boolean ok;
                     try {
                         String body = response.body() == null ? "" : response.body().string().trim();
-                        final boolean ok = body.toLowerCase().startsWith("ok");
+                        ok = body.toLowerCase().startsWith("ok");
                     } finally {
                         response.close();
                     }
