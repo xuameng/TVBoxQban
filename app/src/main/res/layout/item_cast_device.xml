@@ -29,7 +29,7 @@
             android:ellipsize="marquee"
             android:marqueeRepeatLimit="marquee_forever"
             android:singleLine="true"
-            android:textColor="@color/dialog_text_primary"
+            android:textColor="@color/color_CC000000"
             android:textSize="@dimen/ts_20"
             android:textStyle="bold" />
 
@@ -39,7 +39,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/vs_5"
             android:singleLine="true"
-            android:textColor="@color/dialog_text_hint"
+            android:textColor="@color/color_CC000000"
             android:textSize="@dimen/ts_16" />
     </LinearLayout>
 
