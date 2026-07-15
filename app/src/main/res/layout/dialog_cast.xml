@@ -15,12 +15,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:shadowColor="@color/color_000000_60"
+        android:shadowColor="#ff000000"
         android:shadowDx="0"
         android:shadowDy="0"
         android:shadowRadius="5"
         android:text="投屏到设备"
-        android:textColor="@color/color_80000000"
+        android:textColor="@color/color_CC000000"
         android:textSize="@dimen/ts_26"
         android:textStyle="bold" />
 
@@ -32,8 +32,8 @@
         android:gravity="center"
         android:lineSpacingExtra="@dimen/vs_4"
         android:text="确认电视/盒子已安装TVBox或已打开DLNA投屏\n电视/盒子与手机连接在同一Wi-Fi下"
-        android:textColor="@color/dialog_text_hint"
-        android:textSize="@dimen/ts_18" />
+        android:textColor="@color/color_CC000000"
+        android:textSize="@dimen/ts_20" />
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -64,7 +64,7 @@
             android:layout_gravity="center"
             android:layout_marginTop="@dimen/vs_60"
             android:text="正在搜索设备..."
-            android:textColor="@color/dialog_text_hint"
+            android:textColor="@color/color_CC000000"
             android:textSize="@dimen/ts_20" />
 
         <TextView
@@ -73,7 +73,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="未找到可用设备"
-            android:textColor="@color/dialog_text_hint"
+            android:textColor="@color/color_CC000000"
             android:textSize="@dimen/ts_20"
             android:visibility="gone" />
     </FrameLayout>
@@ -95,7 +95,7 @@
             android:focusable="true"
             android:gravity="center"
             android:text="刷新"
-            android:textColor="@color/dialog_text_primary"
+            android:textColor="@color/color_CC000000"
             android:textSize="@dimen/ts_20"
             android:textStyle="bold" />
 
@@ -109,7 +109,7 @@
             android:focusable="true"
             android:gravity="center"
             android:text="取消"
-            android:textColor="@color/dialog_text_primary"
+            android:textColor="@color/color_CC000000"
             android:textSize="@dimen/ts_20"
             android:textStyle="bold" />
     </LinearLayout>
