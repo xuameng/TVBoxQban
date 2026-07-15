@@ -1885,7 +1885,7 @@ public class VodController extends BaseController {
                 isVideoPlay = false;
                 mxuPlay.setText("播放"); //xuameng底部菜单显示播放
 				if (fullPreview){
-				    mPauseIngXuFullPreview();
+				    pauseIngXu();
                 }
                 break;
             case VideoView.STATE_ERROR:
@@ -2043,16 +2043,6 @@ public class VodController extends BaseController {
                 mPauseContainer.setVisibility(VISIBLE);  // xuameng播放标题、暂停时间
                 mxuPlay.setText("播放"); //xuameng底部菜单显示播放
                 mHandler.postDelayed(mUpdatePauseLayout, 50);   // Workaround Fix : SurfaceView
-            }
-        }
-    }
-
-    public void mPauseIngXuFullPreview() {        //xuameng 全屏时如果是暂停状态就显示暂停图标
-		if(isInPlaybackState()){
-            if (!mControlWrapper.isPlaying() && mTvPausexu.getVisibility() == View.GONE){
-                mTvPausexu.setVisibility(VISIBLE);
-                mPauseContainer.setVisibility(VISIBLE);  // xuameng播放标题、暂停时间
-                mxuPlay.setText("播放"); //xuameng底部菜单显示播放
             }
         }
     }
