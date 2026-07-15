@@ -49,6 +49,7 @@ import com.github.tvbox.osc.bean.SourceBean;
 import com.github.tvbox.osc.bean.Subtitle;
 import com.github.tvbox.osc.bean.VodInfo;
 import com.github.tvbox.osc.cache.CacheManager;
+import com.github.tvbox.osc.dlna.CastVideo;
 import com.github.tvbox.osc.event.RefreshEvent;
 import com.github.tvbox.osc.player.IjkMediaPlayer;
 import com.github.tvbox.osc.player.EXOmPlayer;
@@ -58,6 +59,7 @@ import com.github.tvbox.osc.player.TrackInfoBean;
 import com.github.tvbox.osc.player.controller.VodController;
 import com.github.tvbox.osc.server.ControlManager;
 import com.github.tvbox.osc.ui.adapter.SelectDialogAdapter;
+import com.github.tvbox.osc.ui.dialog.CastDeviceDialog;
 import com.github.tvbox.osc.ui.dialog.SearchSubtitleDialog;
 import com.github.tvbox.osc.ui.dialog.SelectDialog;
 import com.github.tvbox.osc.ui.dialog.SubtitleDialog;
@@ -377,12 +379,84 @@ public class PlayFragment extends BaseLazyFragment {
                     setDanmuViewSettings(true);
 				}
             }
+
             @Override
-            public void startPlayUrl(String url, HashMap<String, String> headers) {
+            public void startPlayUrl(String url, HashMap<String, String> headers) {  //xuameng广告过滤
+                if (!TextUtils.isEmpty(m3u8SourceUrl) && !isM3u8ProxyUrl(url)) clearM3u8ProxyUrl();
                 goPlayUrl(url, headers);
+            }
+
+            @Override
+            public void onM3u8ProxyUrl(String proxyUrl, String sourceUrl) {  //xuameng广告过滤
+                m3u8ProxyUrl = proxyUrl;
+                m3u8SourceUrl = sourceUrl;
+            }
+
+            @Override
+            public void clickCast() {   //xuameng 投屏
+                showCastDialog();
             }
         });
         mVideoView.setVideoController(mController);
+    }
+
+    private void showCastDialog() {
+        if (TextUtils.isEmpty(webPlayUrl)) {
+            App.showToastShort(mContext, "播放地址为空！无法投屏！");
+            return;
+        }
+        HashMap<String, String> headers = webHeaderMap == null ? null : new HashMap<>(webHeaderMap);
+        CastVideo video = new CastVideo(getCastUrl(webPlayUrl), getCastTitle(), headers, getCastPosition());
+        CastDeviceDialog dialog = new CastDeviceDialog(requireActivity(), video);
+        dialog.setOnCastListener(new CastDeviceDialog.OnCastListener() {
+            @Override
+            public void onCastSuccess() {
+                if (mVideoView != null) mVideoView.pause();
+            }
+
+            @Override
+            public void onCastFailed() {
+            }
+        });
+        dialog.show();
+    }
+
+	    private String getCastTitle() {
+        if (mVodInfo == null) return "TVBox";
+        try {
+            VodInfo.VodSeries series = mVodInfo.seriesMap.get(mVodInfo.playFlag).get(mVodInfo.playIndex);
+            return mVodInfo.name + " " + series.name;
+        } catch (Exception e) {
+            return TextUtils.isEmpty(mVodInfo.name) ? "TVBox" : mVodInfo.name;
+        }
+    }
+
+    private long getCastPosition() {
+        try {
+            return mVideoView == null ? 0 : mVideoView.getCurrentPosition();
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    private String getCastUrl(String url) {
+        if (TextUtils.isEmpty(url)) return url;
+        if (isM3u8ProxyUrl(url) && !TextUtils.isEmpty(m3u8SourceUrl)) return m3u8SourceUrl;
+        String local = ControlManager.get().getAddress(true);
+        String server = ControlManager.get().getAddress(false);
+        if (!TextUtils.isEmpty(local) && !TextUtils.isEmpty(server) && url.startsWith(local)) {
+            return server + url.substring(local.length());
+        }
+        return url;
+    }
+
+    private boolean isM3u8ProxyUrl(String url) {
+        return !TextUtils.isEmpty(m3u8ProxyUrl) && url.equals(m3u8ProxyUrl);
+    }
+
+    private void clearM3u8ProxyUrl() {
+        m3u8ProxyUrl = null;
+        m3u8SourceUrl = null;
     }
 
     //设置字幕
