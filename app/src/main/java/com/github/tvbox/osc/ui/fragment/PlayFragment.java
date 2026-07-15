@@ -1395,9 +1395,6 @@ public class PlayFragment extends BaseLazyFragment {
         super.onPause();
         if (mVideoView != null && !exitingPreview) {
             mVideoView.pause();
-            if (fullPreview){
-                mController.mPauseIngXu();
-            }
         }
     }
 
