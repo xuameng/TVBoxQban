@@ -524,20 +524,22 @@ private Subtitle parseDialogueForASS(String[] line, String[] dialogueFormat,
         tto.lyricCaptions = new java.util.TreeMap<>();
     }
 
-    if (isLyricStyle) {
-        Integer lyricKey = baseKey;
-        Subtitle merged = tto.lyricCaptions.get(lyricKey);
+if (isLyricStyle) {
+    Integer lyricKey = baseKey;
+    Subtitle merged = tto.lyricCaptions.get(lyricKey);
 
-        if (merged != null) {
-            merged.content += "\n" + captionText;
-            if (newCaption.end.mseconds > merged.end.mseconds) {
-                merged.end.mseconds = newCaption.end.mseconds;
-            }
-        } else {
-            tto.lyricCaptions.put(lyricKey, newCaption);
+    if (merged != null) {
+        merged.content += "\n" + captionText;
+        if (newCaption.end.mseconds > merged.end.mseconds) {
+            merged.end.mseconds = newCaption.end.mseconds;
         }
-        return null;
+    } else {
+        tto.lyricCaptions.put(lyricKey, newCaption);
+        // ✅ 同时放入 captions，供渲染使用
+        tto.captions.put(lyricKey, newCaption);
     }
+    return null;
+}
 
     // ===== 非歌词字幕（影视字幕）=====
     int key = baseKey;
