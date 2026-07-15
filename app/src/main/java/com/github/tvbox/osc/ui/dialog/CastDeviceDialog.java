@@ -214,9 +214,9 @@ public class CastDeviceDialog extends BaseDialog {
 
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {
-                    final boolean ok;
                     try {
-                        ok = response.body() != null && "ok".equals(response.body().string());
+                        String body = response.body() == null ? "" : response.body().string().trim();
+                        final boolean ok = body.toLowerCase().startsWith("ok");
                     } finally {
                         response.close();
                     }
@@ -241,11 +241,11 @@ public class CastDeviceDialog extends BaseDialog {
 
     private void handleCastResult(boolean success, String msg) {
         if (success) {
-            App.showToastShort(getContext(), "投屏成功！");
+            App.showToastShort(getContext(), "聚汇影视投屏成功！");
             if (onCastListener != null) onCastListener.onCastSuccess();
             dismiss();
         } else {
-			App.showToastShort(getContext(), msg == null || msg.length() == 0 ? "投屏失败" : msg);
+			App.showToastShort(getContext(), msg == null || msg.length() == 0 ? "聚汇影视投屏失败" : msg);
             if (onCastListener != null) onCastListener.onCastFailed();
         }
     }
