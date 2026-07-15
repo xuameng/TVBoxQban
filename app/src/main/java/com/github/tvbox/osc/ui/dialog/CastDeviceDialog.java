@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
+import com.github.tvbox.osc.base.App;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -241,11 +241,11 @@ public class CastDeviceDialog extends BaseDialog {
 
     private void handleCastResult(boolean success, String msg) {
         if (success) {
-            Toast.makeText(getContext(), "投屏成功", Toast.LENGTH_SHORT).show();
+            App.showToastShort(getContext(), "投屏成功！");
             if (onCastListener != null) onCastListener.onCastSuccess();
             dismiss();
         } else {
-            Toast.makeText(getContext(), msg == null || msg.length() == 0 ? "投屏失败" : msg, Toast.LENGTH_SHORT).show();
+			App.showToastShort(getContext(), msg == null || msg.length() == 0 ? "投屏失败" : msg);
             if (onCastListener != null) onCastListener.onCastFailed();
         }
     }
