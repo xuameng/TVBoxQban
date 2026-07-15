@@ -1478,6 +1478,7 @@ public class VodController extends BaseController {
         mZimuBtn.setNextFocusUpId(R.id.mxuplay);
         mAudioTrackBtn.setNextFocusRightId(R.id.play_next);
         mAudioTrackBtn.setNextFocusUpId(R.id.mxuplay); //xuameng底部菜单所有键上键都是播放完
+		mCastBtn.setNextFocusUpId(R.id.mxuplay);
         mPlayrender.setNextFocusUpId(R.id.mxuplay);
 		mPlayanimation.setNextFocusUpId(R.id.mxuplay);
 		mPlayerEXOBtn.setNextFocusUpId(R.id.mxuplay);
