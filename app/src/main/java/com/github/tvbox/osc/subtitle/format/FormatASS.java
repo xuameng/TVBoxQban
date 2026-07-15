@@ -194,6 +194,14 @@ if (caption == null) {
 			}
 			// parsed styles that are not used should be eliminated
 			tto.cleanUnusedStyles();
+		// 把合并好的歌词一次性写进 captions
+if (tto.lyricCaptions != null) {
+    for (Subtitle s : tto.lyricCaptions.values()) {
+        int key = s.start.mseconds;
+        while (tto.captions.containsKey(key)) key++;
+        tto.captions.put(key, s);
+    }
+}
 
 		}  catch (NullPointerException e){
 			tto.warnings+= "unexpected end of file, maybe last caption is not complete.\n\n";
@@ -517,43 +525,29 @@ private Subtitle parseDialogueForASS(String[] line, String[] dialogueFormat,
 
     int baseKey = newCaption.start.mseconds;
 
-    // ✅ 歌词：合并成一行
+    // ✅ 歌词：用 TreeMap 暂存，确保只合并一次
+    if (tto.lyricCaptions == null) {
+        tto.lyricCaptions = new TreeMap<>();
+    }
+
     if (isLyricStyle) {
-        // 用时间作为 key 分组
-        Integer lyricKey = baseKey;
-        
-        // 查找是否已有同一时间的字幕
-        Subtitle existingSub = null;
-        for (Subtitle s : tto.captions.values()) {
-            if (s.start.mseconds == baseKey && s.content.contains("\n")) {
-                existingSub = s;
-                break;
-            }
-        }
-        
-        if (existingSub != null) {
-            // 追加一行
-            existingSub.content += "\n" + captionText;
-            if (newCaption.end.mseconds > existingSub.end.mseconds) {
-                existingSub.end.mseconds = newCaption.end.mseconds;
-            }
+        Subtitle merged = tto.lyricCaptions.get(baseKey);
+        if (merged == null) {
+            // 第一条：直接存
+            tto.lyricCaptions.put(baseKey, newCaption);
         } else {
-            // 第一条：直接放入 captions
-            newCaption.content = captionText;
-            int key = baseKey;
-            while (tto.captions.containsKey(key)) {
-                key++;
+            // 后续：追加
+            merged.content += "\\N" + captionText;
+            if (newCaption.end.mseconds > merged.end.mseconds) {
+                merged.end.mseconds = newCaption.end.mseconds;
             }
-            tto.captions.put(key, newCaption);
         }
         return null;
     }
 
     // 影视字幕
     int key = baseKey;
-    while (tto.captions.containsKey(key)) {
-        key++;
-    }
+    while (tto.captions.containsKey(key)) key++;
     tto.captions.put(key, newCaption);
 
     return newCaption;
