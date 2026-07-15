@@ -1357,6 +1357,9 @@ public class PlayFragment extends BaseLazyFragment {
 
     public void isFullPreview(boolean fullPreview) {  //xuameng 非小窗口模式返回后播放BUG
         this.fullPreview = fullPreview;
+        if (mController != null) {
+            mController.setFullPreview(fullPreview);   //xuameng 判断当前是否全屏
+        }
     }
 
     public void setExitingPreview(boolean exitingPreview) {  //xuameng是否彻底退出页面
