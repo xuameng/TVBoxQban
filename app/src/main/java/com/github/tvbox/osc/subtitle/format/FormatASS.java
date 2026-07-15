@@ -488,7 +488,6 @@ private Subtitle parseDialogueForASS(String[] line, String[] dialogueFormat,
 
     for (int i = 0; i < dialogueFormat.length; i++) {
         String field = dialogueFormat[i].trim();
-
         if (field.equalsIgnoreCase("Style")) {
             styleName = line[i].trim();
         } else if (field.equalsIgnoreCase("Start")) {
@@ -519,31 +518,37 @@ private Subtitle parseDialogueForASS(String[] line, String[] dialogueFormat,
 
     int baseKey = newCaption.start.mseconds;
 
-    // ✅ 用一个新的 Map 专门存歌词合并结果
+    // ✅ 初始化 lyricCaptions
     if (tto.lyricCaptions == null) {
-        tto.lyricCaptions = new java.util.TreeMap<>();
+        tto.lyricCaptions = new TreeMap<>();
     }
 
-if (isLyricStyle) {
-    Integer lyricKey = baseKey;
-    Subtitle merged = tto.lyricCaptions.get(lyricKey);
+    if (isLyricStyle) {
+        Subtitle merged = tto.lyricCaptions.get(baseKey);
 
-    if (merged != null) {
-        merged.content += "\n" + captionText;
-        if (newCaption.end.mseconds > merged.end.mseconds) {
-            merged.end.mseconds = newCaption.end.mseconds;
+        if (merged != null) {
+            // 合并内容
+            merged.content += "\n" + captionText;
+            // 延长结束时间
+            if (newCaption.end.mseconds > merged.end.mseconds) {
+                merged.end.mseconds = newCaption.end.mseconds;
+            }
+        } else {
+            // ✅ 第一次：同时放入两个 Map
+            tto.lyricCaptions.put(baseKey, newCaption);
+            tto.captions.put(baseKey, newCaption);
         }
-    } else {
-        tto.lyricCaptions.put(lyricKey, newCaption);
-        // ✅ 同时放入 captions，供渲染使用
-        tto.captions.put(lyricKey, newCaption);
+
+        // ✅ 关键：告诉外层“我已经处理完了”
+        return null;
     }
-    return null;
-}
 
     // ===== 非歌词字幕（影视字幕）=====
+    // ✅ 必须重新算 key，避免和歌词冲突
     int key = baseKey;
-    while (tto.captions.containsKey(key)) key++;
+    while (tto.captions.containsKey(key)) {
+        key++;
+    }
     tto.captions.put(key, newCaption);
 
     return newCaption;
