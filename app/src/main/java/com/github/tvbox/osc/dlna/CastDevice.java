@@ -13,7 +13,14 @@ public class CastDevice {
     private final String name;
 
     public static CastDevice tvbox(String host) {
-        return new CastDevice(TYPE_TVBOX, host, "TVBox " + host);
+        return new CastDevice(TYPE_TVBOX, host, "聚汇影视 " + host);
+    }
+
+    public static CastDevice tvbox(String host, String deviceName) {
+        if (TextUtils.isEmpty(deviceName)) {
+            deviceName = "聚汇影视 " + host;
+        }
+        return new CastDevice(TYPE_TVBOX, host, deviceName);
     }
 
     public static CastDevice dlna(RemoteDevice device) {
