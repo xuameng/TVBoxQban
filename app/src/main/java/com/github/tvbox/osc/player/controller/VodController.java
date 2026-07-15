@@ -1467,6 +1467,19 @@ public class VodController extends BaseController {
         mDanmuSettingBtn.setNextFocusUpId(R.id.mxuplay);
         mDanmuSearchUiBtn.setNextFocusUpId(R.id.mxuplay);
         mLandscapePortraitBtn.setNextFocusUpId(R.id.mxuplay);
+
+        // xuameng防止上键乱跳
+        mxuplay.setNextFocusUpId(View.NO_ID);
+
+        // xuameng强制拦截上键
+        mxuplay.setOnKeyListener((v, keyCode, event) -> {
+            if (keyCode == KeyEvent.KEYCODE_DPAD_UP
+                    && event.getAction() == KeyEvent.ACTION_DOWN) {
+                return true;
+            }
+            return false;
+        });
+
     }
     private void hideLiveAboutBtn() {
         if(mControlWrapper != null && mControlWrapper.getDuration() <= 1) {
