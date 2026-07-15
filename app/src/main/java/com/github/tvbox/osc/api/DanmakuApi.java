@@ -26,6 +26,12 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
+/**
+ * @author xuameng
+ * @date :2026/06/27
+ * @description:   弹幕接口
+ */
+
 public class DanmakuApi {
     private static final String TAG = DanmakuApi.class.getSimpleName();
   //  private static final String BUILTIN_API = "https://saas-oa.shyeguang.cn";
