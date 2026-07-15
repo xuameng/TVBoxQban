@@ -518,33 +518,17 @@ private Subtitle parseDialogueForASS(String[] line, String[] dialogueFormat,
 
     int baseKey = newCaption.start.mseconds;
 
-    // ✅ 初始化 lyricCaptions
-    if (tto.lyricCaptions == null) {
-        tto.lyricCaptions = new TreeMap<>();
-    }
-
+    // ✅ 歌词：不合并，但避免 key 冲突
     if (isLyricStyle) {
-        Subtitle merged = tto.lyricCaptions.get(baseKey);
-
-        if (merged != null) {
-            // 合并内容
-            merged.content += "\n" + captionText;
-            // 延长结束时间
-            if (newCaption.end.mseconds > merged.end.mseconds) {
-                merged.end.mseconds = newCaption.end.mseconds;
-            }
-        } else {
-            // ✅ 第一次：同时放入两个 Map
-            tto.lyricCaptions.put(baseKey, newCaption);
-            tto.captions.put(baseKey, newCaption);
+        int key = baseKey;
+        while (tto.captions.containsKey(key)) {
+            key++; // 毫秒级避让
         }
-
-        // ✅ 关键：告诉外层“我已经处理完了”
+        tto.captions.put(key, newCaption);
         return null;
     }
 
-    // ===== 非歌词字幕（影视字幕）=====
-    // ✅ 必须重新算 key，避免和歌词冲突
+    // 影视字幕
     int key = baseKey;
     while (tto.captions.containsKey(key)) {
         key++;
