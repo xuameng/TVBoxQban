@@ -39,7 +39,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.TreeMap;
 
 public class FormatASS implements TimedTextFileFormat {
 
@@ -167,10 +166,6 @@ public class FormatASS implements TimedTextFileFormat {
 								//we parse the dialogue
 								caption = parseDialogueForASS(line.split(":",2)[1].trim().split(",",10),dialogueFormat,timer, tto);
 								//and save the caption
-if (caption == null) {
-    // 被合并的歌词，跳过
-    continue;
-}
 								int key = caption.start.mseconds;
 								//in case the key is already there, we increase it by a millisecond, since no duplicates are allowed
 								while (tto.captions.containsKey(key)) key++;
@@ -194,14 +189,6 @@ if (caption == null) {
 			}
 			// parsed styles that are not used should be eliminated
 			tto.cleanUnusedStyles();
-		// 把合并好的歌词一次性写进 captions
-if (tto.lyricCaptions != null) {
-    for (Subtitle s : tto.lyricCaptions.values()) {
-        int key = s.start.mseconds;
-        while (tto.captions.containsKey(key)) key++;
-        tto.captions.put(key, s);
-    }
-}
 
 		}  catch (NullPointerException e){
 			tto.warnings+= "unexpected end of file, maybe last caption is not complete.\n\n";
@@ -484,74 +471,40 @@ if (tto.lyricCaptions != null) {
 	 * @param timer % to speed or slow the clock, above 100% span of the subtitles is reduced.
 	 * @return a new Caption object
 	 */
-private Subtitle parseDialogueForASS(String[] line, String[] dialogueFormat,
-                                     float timer, TimedTextObject tto) {
+	private Subtitle parseDialogueForASS(String[] line, String[] dialogueFormat, float timer, TimedTextObject tto) {
 
-    Subtitle newCaption = new Subtitle();
+		Subtitle newCaption = new Subtitle();
 
-    String styleName = null;
-    String startTimeStr = null;
-    String endTimeStr = null;
-    String captionText = null;
+		//all information from fields 10 onwards are the caption text therefore needn't be split
+		String captionText = line[9];
+		//text is cleaned before being inserted into the caption
+		newCaption.content = captionText.replaceAll("\\{.*?\\}", "").replace("\n", "<br />").replace("\\N", "<br />");
 
-    for (int i = 0; i < dialogueFormat.length; i++) {
-        String field = dialogueFormat[i].trim();
-        if (field.equalsIgnoreCase("Style")) {
-            styleName = line[i].trim();
-        } else if (field.equalsIgnoreCase("Start")) {
-            startTimeStr = line[i].trim();
-        } else if (field.equalsIgnoreCase("End")) {
-            endTimeStr = line[i].trim();
-        } else if (field.equalsIgnoreCase("Text")) {
-            captionText = line[i];
-        }
-    }
+		for (int i = 0; i < dialogueFormat.length; i++) {
+			//we go through every format parameter and save the interesting values
+			if (dialogueFormat[i].trim().equalsIgnoreCase("Style")){
+				//we save the style
+				Style s =  tto.styling.get(line[i].trim());
+				if (s!=null)
+					newCaption.style= s;
+				else
+					tto.warnings+="undefined style: "+line[i].trim()+"\n\n";
+			} else if (dialogueFormat[i].trim().equalsIgnoreCase("Start")){
+				//we save the starting time
+				newCaption.start=new Time("h:mm:ss.cs",line[i].trim());
+			} else if (dialogueFormat[i].trim().equalsIgnoreCase("End")){
+				//we save the starting time
+				newCaption.end=new Time("h:mm:ss.cs",line[i].trim());
+			}
+		}
 
-    if (startTimeStr == null || endTimeStr == null || captionText == null) {
-        return newCaption;
-    }
-
-    captionText = captionText.replaceAll("\\{.*?\\}", "");
-
-    newCaption.start = new Time("h:mm:ss.cs", startTimeStr);
-    newCaption.end   = new Time("h:mm:ss.cs", endTimeStr);
-    newCaption.content = captionText;
-
-    boolean isLyricStyle =
-            styleName != null &&
-            (styleName.startsWith("WAITING_")
-          || styleName.startsWith("PLAYING_")
-          || styleName.startsWith("PLAYED_"));
-
-    int baseKey = newCaption.start.mseconds;
-
-    // ✅ 歌词：用 TreeMap 暂存，确保只合并一次
-    if (tto.lyricCaptions == null) {
-        tto.lyricCaptions = new TreeMap<>();
-    }
-
-    if (isLyricStyle) {
-        Subtitle merged = tto.lyricCaptions.get(baseKey);
-        if (merged == null) {
-            // 第一条：直接存
-            tto.lyricCaptions.put(baseKey, newCaption);
-        } else {
-            // 后续：追加
-            merged.content += "\\N" + captionText;
-            if (newCaption.end.mseconds > merged.end.mseconds) {
-                merged.end.mseconds = newCaption.end.mseconds;
-            }
-        }
-        return null;
-    }
-
-    // 影视字幕
-    int key = baseKey;
-    while (tto.captions.containsKey(key)) key++;
-    tto.captions.put(key, newCaption);
-
-    return newCaption;
-}
+		//timer is applied
+		if (timer != 100){
+			newCaption.start.mseconds /= (timer/100);
+			newCaption.end.mseconds /= (timer/100);
+		}
+		return newCaption;
+	}
 
 	/**
 	 * returns a string with the correctly formated colors
