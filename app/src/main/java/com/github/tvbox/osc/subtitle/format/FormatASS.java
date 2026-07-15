@@ -518,9 +518,14 @@ private Subtitle parseDialogueForASS(String[] line, String[] dialogueFormat,
 
     int baseKey = newCaption.start.mseconds;
 
+    // ✅ 用一个新的 Map 专门存歌词合并结果
+    if (tto.lyricCaptions == null) {
+        tto.lyricCaptions = new java.util.HashMap<>();
+    }
+
     if (isLyricStyle) {
-        String key = "LYRIC_" + baseKey;
-        Subtitle merged = tto.captions.get(key);
+        Integer lyricKey = baseKey;
+        Subtitle merged = tto.lyricCaptions.get(lyricKey);
 
         if (merged != null) {
             merged.content += "\n" + captionText;
@@ -528,15 +533,15 @@ private Subtitle parseDialogueForASS(String[] line, String[] dialogueFormat,
                 merged.end.mseconds = newCaption.end.mseconds;
             }
         } else {
-            tto.captions.put(key, newCaption);
+            tto.lyricCaptions.put(lyricKey, newCaption);
         }
         return null;
     }
 
     // ===== 非歌词字幕（影视字幕）=====
     int key = baseKey;
-    while (tto.captions.containsKey(String.valueOf(key))) key++;
-    tto.captions.put(String.valueOf(key), newCaption);
+    while (tto.captions.containsKey(key)) key++;
+    tto.captions.put(key, newCaption);
 
     return newCaption;
 }
