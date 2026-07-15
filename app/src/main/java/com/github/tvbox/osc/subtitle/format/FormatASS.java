@@ -166,6 +166,10 @@ public class FormatASS implements TimedTextFileFormat {
 								//we parse the dialogue
 								caption = parseDialogueForASS(line.split(":",2)[1].trim().split(",",10),dialogueFormat,timer, tto);
 								//and save the caption
+if (caption == null) {
+    // 被合并的歌词，跳过
+    continue;
+}
 								int key = caption.start.mseconds;
 								//in case the key is already there, we increase it by a millisecond, since no duplicates are allowed
 								while (tto.captions.containsKey(key)) key++;
@@ -471,40 +475,71 @@ public class FormatASS implements TimedTextFileFormat {
 	 * @param timer % to speed or slow the clock, above 100% span of the subtitles is reduced.
 	 * @return a new Caption object
 	 */
-	private Subtitle parseDialogueForASS(String[] line, String[] dialogueFormat, float timer, TimedTextObject tto) {
+private Subtitle parseDialogueForASS(String[] line, String[] dialogueFormat,
+                                     float timer, TimedTextObject tto) {
 
-		Subtitle newCaption = new Subtitle();
+    Subtitle newCaption = new Subtitle();
 
-		//all information from fields 10 onwards are the caption text therefore needn't be split
-		String captionText = line[9];
-		//text is cleaned before being inserted into the caption
-		newCaption.content = captionText.replaceAll("\\{.*?\\}", "").replace("\n", "<br />").replace("\\N", "<br />");
+    String styleName = null;
+    String startTimeStr = null;
+    String endTimeStr = null;
+    String captionText = null;
 
-		for (int i = 0; i < dialogueFormat.length; i++) {
-			//we go through every format parameter and save the interesting values
-			if (dialogueFormat[i].trim().equalsIgnoreCase("Style")){
-				//we save the style
-				Style s =  tto.styling.get(line[i].trim());
-				if (s!=null)
-					newCaption.style= s;
-				else
-					tto.warnings+="undefined style: "+line[i].trim()+"\n\n";
-			} else if (dialogueFormat[i].trim().equalsIgnoreCase("Start")){
-				//we save the starting time
-				newCaption.start=new Time("h:mm:ss.cs",line[i].trim());
-			} else if (dialogueFormat[i].trim().equalsIgnoreCase("End")){
-				//we save the starting time
-				newCaption.end=new Time("h:mm:ss.cs",line[i].trim());
-			}
-		}
+    for (int i = 0; i < dialogueFormat.length; i++) {
+        String field = dialogueFormat[i].trim();
 
-		//timer is applied
-		if (timer != 100){
-			newCaption.start.mseconds /= (timer/100);
-			newCaption.end.mseconds /= (timer/100);
-		}
-		return newCaption;
-	}
+        if (field.equalsIgnoreCase("Style")) {
+            styleName = line[i].trim();
+        } else if (field.equalsIgnoreCase("Start")) {
+            startTimeStr = line[i].trim();
+        } else if (field.equalsIgnoreCase("End")) {
+            endTimeStr = line[i].trim();
+        } else if (field.equalsIgnoreCase("Text")) {
+            captionText = line[i];
+        }
+    }
+
+    if (startTimeStr == null || endTimeStr == null || captionText == null) {
+        return newCaption;
+    }
+
+    captionText = captionText.replaceAll("\\{.*?\\}", "")
+                             .replace("\\N", "\n");
+
+    newCaption.start = new Time("h:mm:ss.cs", startTimeStr);
+    newCaption.end   = new Time("h:mm:ss.cs", endTimeStr);
+    newCaption.content = captionText;
+
+    boolean isLyricStyle =
+            styleName != null &&
+            (styleName.startsWith("WAITING_")
+          || styleName.startsWith("PLAYING_")
+          || styleName.startsWith("PLAYED_"));
+
+    int baseKey = newCaption.start.mseconds;
+
+    if (isLyricStyle) {
+        String key = "LYRIC_" + baseKey;
+        Subtitle merged = tto.captions.get(key);
+
+        if (merged != null) {
+            merged.content += "\n" + captionText;
+            if (newCaption.end.mseconds > merged.end.mseconds) {
+                merged.end.mseconds = newCaption.end.mseconds;
+            }
+        } else {
+            tto.captions.put(key, newCaption);
+        }
+        return null;
+    }
+
+    // ===== 非歌词字幕（影视字幕）=====
+    int key = baseKey;
+    while (tto.captions.containsKey(String.valueOf(key))) key++;
+    tto.captions.put(String.valueOf(key), newCaption);
+
+    return newCaption;
+}
 
 	/**
 	 * returns a string with the correctly formated colors
