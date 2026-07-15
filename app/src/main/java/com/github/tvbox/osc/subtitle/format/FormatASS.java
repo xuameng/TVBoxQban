@@ -503,8 +503,7 @@ private Subtitle parseDialogueForASS(String[] line, String[] dialogueFormat,
         return newCaption;
     }
 
-    captionText = captionText.replaceAll("\\{.*?\\}", "")
-                             .replace("\\N", "\n");
+    captionText = captionText.replaceAll("\\{.*?\\}", "");
 
     newCaption.start = new Time("h:mm:ss.cs", startTimeStr);
     newCaption.end   = new Time("h:mm:ss.cs", endTimeStr);
@@ -518,13 +517,35 @@ private Subtitle parseDialogueForASS(String[] line, String[] dialogueFormat,
 
     int baseKey = newCaption.start.mseconds;
 
-    // ✅ 歌词：不合并，但避免 key 冲突
+    // ✅ 歌词：合并成一行
     if (isLyricStyle) {
-        int key = baseKey;
-        while (tto.captions.containsKey(key)) {
-            key++; // 毫秒级避让
+        // 用时间作为 key 分组
+        Integer lyricKey = baseKey;
+        
+        // 查找是否已有同一时间的字幕
+        Subtitle existingSub = null;
+        for (Subtitle s : tto.captions.values()) {
+            if (s.start.mseconds == baseKey && s.content.contains("\n")) {
+                existingSub = s;
+                break;
+            }
         }
-        tto.captions.put(key, newCaption);
+        
+        if (existingSub != null) {
+            // 追加一行
+            existingSub.content += "\n" + captionText;
+            if (newCaption.end.mseconds > existingSub.end.mseconds) {
+                existingSub.end.mseconds = newCaption.end.mseconds;
+            }
+        } else {
+            // 第一条：直接放入 captions
+            newCaption.content = captionText;
+            int key = baseKey;
+            while (tto.captions.containsKey(key)) {
+                key++;
+            }
+            tto.captions.put(key, newCaption);
+        }
         return null;
     }
 
