@@ -6,23 +6,18 @@
     android:background="@drawable/shape_dialog_bg_main"
     android:orientation="vertical"
     android:paddingLeft="@dimen/vs_30"
-    android:paddingTop="@dimen/vs_24"
+    android:paddingTop="@dimen/vs_25"
     android:paddingRight="@dimen/vs_30"
-    android:paddingBottom="@dimen/vs_24">
+    android:paddingBottom="@dimen/vs_30">
 
     <TextView
         android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:shadowColor="#ff000000"
-        android:shadowDx="0"
-        android:shadowDy="0"
-        android:shadowRadius="5"
         android:text="投屏到设备"
         android:textColor="@color/color_CC000000"
-        android:textSize="@dimen/ts_26"
-        android:textStyle="bold" />
+        android:textSize="@dimen/ts_26"/>
 
      <TextView
         android:id="@+id/tvCastTip"
@@ -95,9 +90,8 @@
             android:focusable="true"
             android:gravity="center"
             android:text="刷新"
-            android:textColor="@color/color_CC000000"
-            android:textSize="@dimen/ts_20"
-            android:textStyle="bold" />
+            android:textColor="@color/color_FFFFFF"
+            android:textSize="@dimen/ts_22"/>
 
         <TextView
             android:id="@+id/btnCancel"
@@ -109,9 +103,8 @@
             android:focusable="true"
             android:gravity="center"
             android:text="取消"
-            android:textColor="@color/color_CC000000"
-            android:textSize="@dimen/ts_20"
-            android:textStyle="bold" />
+            android:textColor="@color/color_FFFFFF"
+            android:textSize="@dimen/ts_22"/>
     </LinearLayout>
 
 </LinearLayout>
