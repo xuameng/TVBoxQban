@@ -45,22 +45,28 @@
             app:tv_selectedItemIsCentered="true"
             app:tv_verticalSpacingWithMargins="@dimen/vs_10" />
 
-        <ProgressBar
-            android:id="@+id/progressBar"
-            android:layout_width="@dimen/vs_40"
-            android:layout_height="@dimen/vs_40"
-            android:layout_gravity="center"
-            android:indeterminateDrawable="@drawable/anim_loading" />
-
-        <TextView
-            android:id="@+id/tvScanning"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="@dimen/vs_60"
-            android:text="正在搜索设备..."
-            android:textColor="@color/color_CC000000"
-            android:textSize="@dimen/ts_20" />
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="@dimen/vs_40"
+                android:layout_height="@dimen/vs_40"
+                android:indeterminateDrawable="@drawable/anim_loading" />
+
+            <TextView
+                android:id="@+id/tvScanning"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vs_12"
+                android:text="正在搜索设备..."
+                android:textColor="@color/color_CC000000"
+                android:textSize="@dimen/ts_20" />
+        </LinearLayout>
 
         <TextView
             android:id="@+id/tvEmpty"
