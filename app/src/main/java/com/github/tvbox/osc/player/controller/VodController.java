@@ -2042,7 +2042,7 @@ public class VodController extends BaseController {
                 mTvPausexu.setVisibility(VISIBLE);
                 mPauseContainer.setVisibility(VISIBLE);  // xuameng播放标题、暂停时间
                 mxuPlay.setText("播放"); //xuameng底部菜单显示播放
-                mHandler.postDelayed(mUpdatePauseLayout, 50);   // Workaround Fix : SurfaceView
+                mHandler.postDelayed(mUpdatePauseLayout, 100);   // Workaround Fix : SurfaceView
             }
         }
     }
@@ -2080,7 +2080,9 @@ public class VodController extends BaseController {
         @Override
         public void run() {
             mTvPausexu.requestLayout();  //xuameng暂停图标
+            mTvPausexu.invalidate(); 
             mPauseContainer.requestLayout();  // xuameng播放标题、暂停时间
+            mPauseContainer.invalidate();
         }
     };
 
