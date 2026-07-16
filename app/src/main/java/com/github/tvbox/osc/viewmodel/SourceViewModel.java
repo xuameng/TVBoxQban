@@ -828,6 +828,11 @@ public class SourceViewModel extends ViewModel {
             detailResult.postValue(createPushDetail(urlid, sourceKey));
             return;
         }
+        if (sourceBean == null) {      //xuameng判断sourceKey为空 远程推送BUG
+            detailResult.postValue(null);
+            LOG.i("sourceBean", "get sourceBean got null, this should not be happended, maybe apiconfig get from http failed and use cache, sourceKey is " + sourceKey);
+            return;
+        }
         int type = sourceBean.getType();
         if (type == 3) {
             spThreadPool.execute(new Runnable() {
