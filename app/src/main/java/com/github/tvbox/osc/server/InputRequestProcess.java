@@ -57,15 +57,11 @@ public class InputRequestProcess implements RequestProcess {
                             break;
                         }
                         case "push": {
-                            String url = params.get("url");   //xuameng远程推送兜底
+                            String url = params.get("url");
                             if (url != null && url.trim().length() > 0) {
                                 mDataReceiver.onPushReceived(url.trim());
+                            }
                             break;
-                        }
-                        case "mirror": {
-                            //推送当前电影、电视剧……
-                            mDataReceiver.onMirrorReceived(params.get("id").trim(), params.get("sourceKey").trim());
-                            return RemoteServer.createPlainTextResponse(NanoHTTPD.Response.Status.OK, "mirrored");
                         }
                     }
                 }
