@@ -57,8 +57,9 @@ public class InputRequestProcess implements RequestProcess {
                             break;
                         }
                         case "push": {
-                            // 暂未实现
-                            mDataReceiver.onPushReceived(params.get("url").trim());
+                            String url = params.get("url");   //xuameng远程推送兜底
+                            if (url != null && url.trim().length() > 0) {
+                                mDataReceiver.onPushReceived(url.trim());
                             break;
                         }
                         case "mirror": {
