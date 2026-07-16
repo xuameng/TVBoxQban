@@ -38,7 +38,7 @@ public class RemoteTVBox {
                 url = url + "|";
                 int idx = 0;
                 for (String hk : headers.keySet()) {
-                    url += hk + "=" + URLEncoder.encode(headers.get(hk), "UTF-8");
+                    url += URLEncoder.encode(hk, "UTF-8") + "=" + URLEncoder.encode(headers.get(hk), "UTF-8");
                     if (idx < headers.keySet().size() -1) {
                         url += "&";
                     }
