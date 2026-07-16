@@ -1,10 +1,10 @@
-package com.github.catvod.crawler.js;
+package com.github.tvbox.osc.util.js;
 
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 
 import com.github.catvod.Proxy;
-import com.github.catvod.crawler.js.rsa.RSAEncrypt;
+import com.github.tvbox.osc.util.js.rsa.RSAEncrypt;
 import com.whl.quickjs.wrapper.ContextSetter;
 import com.whl.quickjs.wrapper.Function;
 import com.whl.quickjs.wrapper.JSArray;
