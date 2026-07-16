@@ -521,6 +521,9 @@ public class PlayFragment extends BaseLazyFragment {
                             public void run() {
                                 String zimuUrl = subtitle.getUrl();
                                 LOG.i("echo-Remote Subtitle Url: " + zimuUrl);
+                                mController.mSubtitleView.destroy();
+                                mController.mSubtitleView.clearSubtitleCache();
+                                mController.mSubtitleView.isInternal = true;
                                 setSubtitle(zimuUrl);//设置字幕
                                 if (mController.mExoSubtitleView.getVisibility() == View.VISIBLE){  //xuameng 使用搜索字幕隐藏EXO PGS字幕
                                     mController.mExoSubtitleView.setVisibility(View.GONE);
@@ -552,6 +555,9 @@ public class PlayFragment extends BaseLazyFragment {
                             @Override
                             public void onChoosePath(String path, File pathFile) {
                                 LOG.i("echo-Local Subtitle Path: " + path);
+                                mController.mSubtitleView.destroy();
+                                mController.mSubtitleView.clearSubtitleCache();
+                                mController.mSubtitleView.isInternal = true;
                                 setSubtitle(path);//设置字幕
                                 if (mController.mExoSubtitleView.getVisibility() == View.VISIBLE){  //xuameng 使用搜索字幕隐藏EXO PGS字幕
                                     mController.mExoSubtitleView.setVisibility(View.GONE);
