@@ -437,7 +437,7 @@ public class SourceViewModel extends ViewModel {
     // categoryContent
     public void getList(MovieSort.SortData sortData, int page) {
         if (sortData == null) {     //xuameng 判空防止空指针
-            Log.w("SourceViewModel", "sortData is null, return");
+			LOG.i("sortData is null, return");
             listResult.postValue(null);
             return;
         }
@@ -575,7 +575,7 @@ public class SourceViewModel extends ViewModel {
 
     public void getListFromSearch(MovieSort.SortData sortData, int page, String sourceKey) { //xuameng 新增搜索中返回下一级列表
         if (sortData == null) {     //xuameng 判空防止空指针
-            Log.w("SourceViewModel", "sortData is null, return");
+            LOG.i("sortData is null, return");
             listResult.postValue(null);
             return;
         }
