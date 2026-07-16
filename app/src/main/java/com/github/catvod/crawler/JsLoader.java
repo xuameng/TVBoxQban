@@ -9,7 +9,7 @@ import com.github.tvbox.osc.util.FileUtils;
 import com.github.tvbox.osc.util.LOG;
 import com.github.tvbox.osc.util.MD5;
 
-import com.github.catvod.crawler.js.JsSpider;
+import com.github.tvbox.osc.util.js.JsSpider;
 import com.lzy.okgo.OkGo;
 
 import java.io.File;
