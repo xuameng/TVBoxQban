@@ -991,7 +991,9 @@ public class DetailActivity extends BaseActivity {
                     sourceKey = mVideo.sourceKey;
 
                     tvName.setText(mVideo.name);
-                    setTextShow(tvSite, "来源：", ApiConfig.get().getSource(firstsourceKey).getName());
+SourceBean sourceBean = ApiConfig.get().getSource(firstsourceKey);
+String sourceName = sourceBean != null ? sourceBean.getName() : "未知来源";
+setTextShow(tvSite, "来源：", sourceName);
                     setTextShow(tvYear, "年份：", mVideo.year == 0 ? "" : String.valueOf(mVideo.year));
                     setTextShow(tvArea, "地区：", mVideo.area);
                     setTextShow(tvLang, "语言：", mVideo.lang);
