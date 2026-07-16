@@ -9,7 +9,7 @@ android {
     defaultConfig {
         namespace = 'com.github.tvbox.osc'
         applicationId 'com.jvhuiys.player'
-        minSdkVersion 16
+        minSdkVersion 18
         targetSdkVersion 28
         versionCode 1
         versionName '20260710-2222'
