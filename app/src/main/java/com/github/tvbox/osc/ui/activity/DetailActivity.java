@@ -997,11 +997,13 @@ setTextShow(tvSite, "来源：", sourceName);
                     setTextShow(tvYear, "年份：", mVideo.year == 0 ? "" : String.valueOf(mVideo.year));
                     setTextShow(tvArea, "地区：", mVideo.area);
                     setTextShow(tvLang, "语言：", mVideo.lang);
-                    if (!firstsourceKey.equals(sourceKey)) {
-                    	setTextShow(tvType, "类型：", "[" + ApiConfig.get().getSource(sourceKey).getName() + "] 解析");
-                    } else {
-                    	setTextShow(tvType, "类型：", mVideo.type);
-                    }
+if (!firstsourceKey.equals(sourceKey)) {
+    SourceBean typeBean = ApiConfig.get().getSource(sourceKey);
+    String typeName = typeBean != null ? typeBean.getName() : "未知源";
+    setTextShow(tvType, "类型：", "[" + typeName + "] 解析");
+} else {
+    setTextShow(tvType, "类型：", mVideo.type);
+}
                     setTextShow(tvActor, "演员：", mVideo.actor);
                     setTextShow(tvDirector, "导演：", mVideo.director);
                     setTextShow(tvDes, "内容简介：", removeHtmlTag(mVideo.des));
