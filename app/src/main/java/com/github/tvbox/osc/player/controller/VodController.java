@@ -2039,10 +2039,16 @@ public class VodController extends BaseController {
     public void mPauseIngXu() {        //xuameng 全屏时如果是暂停状态就显示暂停图标
 		if(isInPlaybackState()){
             if (!mControlWrapper.isPlaying() && mTvPausexu.getVisibility() == View.GONE){
-                if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
+                if(mBottomRoot.getVisibility() == View.VISIBLE) {
                     myHandle.removeCallbacks(myRunnable);
-                    hideBottom();
+                    mBottomRoot.setVisibility(GONE);   //动画结束后隐藏下菜单
+                    mTopRoot1.setVisibility(GONE);    //动画结束后隐藏上菜单
+                    mTopRoot2.setVisibility(GONE);   //动画结束后隐藏上菜单
                 }
+                mTvPausexu.setTranslationX(0f);
+                mTvPausexu.setTranslationY(0f);
+                mPauseContainer.setTranslationX(0f);
+                mPauseContainer.setTranslationY(0f);
                 mTvPausexu.setVisibility(VISIBLE);
                 mPauseContainer.setVisibility(VISIBLE);  // xuameng播放标题、暂停时间
                 mxuPlay.setText("播放"); //xuameng底部菜单显示播放
@@ -2083,8 +2089,6 @@ public class VodController extends BaseController {
     private final Runnable mUpdatePauseLayout = new Runnable() {  //解决surfaceview不显示问题
         @Override
         public void run() {
-            mTvPausexu.setTranslationX(0f);
-            mTvPausexu.setTranslationY(0f);
             mTvPausexu.requestLayout();  //xuameng暂停图标
             mTvPausexu.invalidate(); 
             mPauseContainer.requestLayout();  // xuameng播放标题、暂停时间
