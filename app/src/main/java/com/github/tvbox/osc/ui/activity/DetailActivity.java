@@ -991,19 +991,17 @@ public class DetailActivity extends BaseActivity {
                     sourceKey = mVideo.sourceKey;
 
                     tvName.setText(mVideo.name);
-SourceBean sourceBean = ApiConfig.get().getSource(firstsourceKey);
-String sourceName = sourceBean != null ? sourceBean.getName() : "未知来源";
-setTextShow(tvSite, "来源：", sourceName);
+                    setTextShow(tvSite, "来源：", ApiConfig.get().getSource(firstsourceKey).getName());
                     setTextShow(tvYear, "年份：", mVideo.year == 0 ? "" : String.valueOf(mVideo.year));
                     setTextShow(tvArea, "地区：", mVideo.area);
                     setTextShow(tvLang, "语言：", mVideo.lang);
-if (!firstsourceKey.equals(sourceKey)) {
-    SourceBean typeBean = ApiConfig.get().getSource(sourceKey);
-    String typeName = typeBean != null ? typeBean.getName() : "未知源";
-    setTextShow(tvType, "类型：", "[" + typeName + "] 解析");
-} else {
-    setTextShow(tvType, "类型：", mVideo.type);
-}
+                    if (!firstsourceKey.equals(sourceKey)) {
+                        SourceBean typeBean = ApiConfig.get().getSource(sourceKey);
+                        String typeName = typeBean != null ? typeBean.getName() : "🥇聚汇影视";  //xuameng 防空指针
+                        setTextShow(tvType, "类型：", "[" + typeName + "] 解析");
+                    } else {
+                        setTextShow(tvType, "类型：", mVideo.type);
+                    }
                     setTextShow(tvActor, "演员：", mVideo.actor);
                     setTextShow(tvDirector, "导演：", mVideo.director);
                     setTextShow(tvDes, "内容简介：", removeHtmlTag(mVideo.des));
