@@ -30,13 +30,10 @@ public class BaseDialog extends Dialog {
 
     @Override
     public void show() {
-        // ✅ 延迟一帧再隐藏系统栏（防止 ROM 抢布局）
-        getWindow().getDecorView().postDelayed(() -> {
-            getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
-            super.show();
-            hideSysBar();
-            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
-        }, 300);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+        super.show();
+        hideSysBar();
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
     }
 
     @Override
@@ -56,5 +53,4 @@ public class BaseDialog extends Dialog {
             getWindow().getDecorView().setSystemUiVisibility(uiOptions);
         }
     }
-
 }
