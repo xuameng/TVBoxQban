@@ -90,13 +90,13 @@ private void hideSysBarSafe() {
     View decorView = window.getDecorView();
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            controller.hide(
-                    android.view.WindowInsets.Type.statusBars()
-                            | android.view.WindowInsets.Type.navigationBars()
-            );
-            controller.setSystemBarsBehavior(
-                    android.view.WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-            );
+         window.getInsetsController().hide(
+                android.view.WindowInsets.Type.statusBars()
+                        | android.view.WindowInsets.Type.navigationBars()
+        );
+         window.getInsetsController().setSystemBarsBehavior(
+                android.view.WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        );
     } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
         decorView.setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE
