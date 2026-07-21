@@ -623,7 +623,7 @@ public class HomeActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         // 打断加载
-        if (homeSortLoading) {
+        if (homeSortLoading && dataInitOk && jarInitOk) {
             cancelHomeSortLoading();
             return;
         }
@@ -1020,11 +1020,13 @@ public class HomeActivity extends BaseActivity {
     }
 
     private void refreshEmpty(){   //xuameng打断加载优化
+        if(dataInitOk && jarInitOk){   
+            cancelHomeSortLoading();
+        }
         refreshEmpty = true;	//xuameng打断加载判断
         jarInitOk = true;
         dataInitOk = true;
         skipNextUpdate=true;
-        cancelHomeSortLoading();
         clearHomePages();
         showSuccess();
         sortAdapter.setNewData(DefaultConfig.adjustSort(ApiConfig.get().getHomeSourceBean().getKey(), new ArrayList<>(), true));
