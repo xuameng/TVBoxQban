@@ -721,7 +721,7 @@ mGridView.setOnKeyListener((v, keyCode, event) -> {
     if (event.getAction() == KeyEvent.ACTION_DOWN
             && keyCode == KeyEvent.KEYCODE_DPAD_UP) {
 
-        View target = getActivity().findViewById(R.id.play_next);
+        View target = getContext().findViewById(R.id.play_next);
         if (target != null && target.isShown()) {
             target.requestFocus();
             return true; // 消费事件
@@ -730,7 +730,7 @@ mGridView.setOnKeyListener((v, keyCode, event) -> {
     if (event.getAction() == KeyEvent.ACTION_DOWN
             && keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
 
-        View target = getActivity().findViewById(R.id.mxuPlay);
+        View target = getContext().findViewById(R.id.mxuplay);
         if (target != null && target.isShown()) {
             target.requestFocus();
             return true; // 消费事件
