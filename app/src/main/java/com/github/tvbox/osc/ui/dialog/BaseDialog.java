@@ -25,21 +25,27 @@ public class BaseDialog extends Dialog {
         init();
     }
 
-    private void init() {
-        Window window = getWindow();
-        if (window == null) return;
+private void init() {
+    Window window = getWindow();
+    if (window == null) return;
 
-        // ✅ 统一：允许内容延伸到系统栏区域
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            window.setDecorFitsSystemWindows(false);
-        } else {
-            // ✅ 关键：低版本必须配对使用
-            window.setFlags(
-                    WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-                    WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
-            );
-        }
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        // ✅ Android 11+：提前声明“我不想要系统栏”
+        window.setDecorFitsSystemWindows(false);
+        window.getInsetsController().hide(
+                android.view.WindowInsets.Type.statusBars()
+                        | android.view.WindowInsets.Type.navigationBars()
+        );
+        window.getInsetsController().setSystemBarsBehavior(
+                android.view.WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        );
+    } else {
+        window.setFlags(
+                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+        );
     }
+}
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,16 +63,19 @@ public class BaseDialog extends Dialog {
         applyStableImmersiveMode();
     }
 
-    @Override
-    public void show() {
-        super.show();
+@Override
+public void show() {
+    super.show();
 
-        // ✅ 延迟一帧再隐藏系统栏（防止 ROM 抢布局）
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+        // ✅ 只有低版本需要延迟补刀
         getWindow().getDecorView().post(() -> {
             hideSysBarSafe();
             forceRelayoutIfNeeded();
         });
     }
+    // ✅ Android 11+：什么都不做
+}
 
     @Override
     public void dismiss() {
