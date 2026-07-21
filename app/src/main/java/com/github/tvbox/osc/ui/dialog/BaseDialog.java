@@ -5,73 +5,112 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
 
 import com.github.tvbox.osc.R;
-
 import xyz.doikki.videoplayer.util.CutoutUtil;
 
 public class BaseDialog extends Dialog {
+
     public BaseDialog(@NonNull Context context) {
         super(context, R.style.CustomDialogStyle);
+        init();
     }
 
-    public BaseDialog(Context context, int customDialogStyle) {
-        super(context, customDialogStyle);
+    public BaseDialog(Context context, int themeResId) {
+        super(context, themeResId);
+        init();
+    }
+
+    private void init() {
+        Window window = getWindow();
+        if (window != null) {
+            window.setFlags(
+                    WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+                    WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+            );
+        }
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        CutoutUtil.adaptCutoutAboveAndroidP(this, true);//设置刘海
         super.onCreate(savedInstanceState);
+
+        Window window = getWindow();
+        if (window == null) return;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            CutoutUtil.adaptCutoutAboveAndroidP(this, true);
+        }
+
+        fixDialogSize(); // ✅ 初始化时锁定尺寸
+        hideSysBarSafe();
     }
 
     @Override
     public void show() {
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
         super.show();
-        hideSysBar();
-        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+        fixDialogSize(); // ✅ 显示时锁定尺寸
+        hideSysBarSafe();
     }
 
     @Override
     public void dismiss() {
-        super.dismiss(); // XUAMENG必须调用父类方法
+        super.dismiss();
     }
 
-    private void hideSysBar() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            int uiOptions = getWindow().getDecorView().getSystemUiVisibility();
-            uiOptions |= View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
-            uiOptions |= View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
-            uiOptions |= View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
-            uiOptions |= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
-            uiOptions |= View.SYSTEM_UI_FLAG_FULLSCREEN;
-            uiOptions |= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-            getWindow().getDecorView().setSystemUiVisibility(uiOptions);
+    /**
+     * ✅ 修复切前台尺寸变形
+     */
+    private void fixDialogSize() {
+        Window window = getWindow();
+        if (window == null) return;
+        WindowManager.LayoutParams layoutParams = window.getAttributes();
+        layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
+        layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT;
+        window.setAttributes(layoutParams);
+    }
+
+    private void hideSysBarSafe() {
+        Window window = getWindow();
+        if (window == null) return;
+        View decorView = window.getDecorView();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            window.setDecorFitsSystemWindows(false);
+            window.getInsetsController().hide(
+                    android.view.WindowInsets.Type.statusBars()
+
+                            | android.view.WindowInsets.Type.navigationBars()
+            );
+            window.getInsetsController().setSystemBarsBehavior(
+                    android.view.WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            );
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            int uiOptions =
+                    View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+
+                            | View.SYSTEM_UI_FLAG_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+            decorView.setSystemUiVisibility(uiOptions);
+        } else {
+            int uiOptions =
+                    View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+
+                            | View.SYSTEM_UI_FLAG_FULLSCREEN;
+            decorView.setSystemUiVisibility(uiOptions);
         }
     }
 
     @Override
-    public void onWindowFocusChanged(boolean hasFocus) {  //xuameng 重新布局
+    public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         if (hasFocus) {
-            // 切回前台
-            refreshUI();
+            fixDialogSize(); // ✅ 切前台时锁定尺寸
+            hideSysBarSafe();
         }
     }
-
-    private void refreshUI() {  //xuameng 重新布局
-        if (getWindow() != null) {
-            hideSysBar(); // 重新隐藏状态栏/导航栏
-            getWindow().getDecorView().post(() -> {
-                // 强制重新布局
-                getWindow().getDecorView().requestLayout();
-                getWindow().getDecorView().invalidate();
-            });
-        }
-    }
-
 }
