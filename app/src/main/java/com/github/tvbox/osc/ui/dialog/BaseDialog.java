@@ -13,6 +13,12 @@ import androidx.annotation.NonNull;
 import com.github.tvbox.osc.R;
 import xyz.doikki.videoplayer.util.CutoutUtil;
 
+/**
+ * @author xuameng
+ * @date :2026/07/21
+ * @description:  尝试修复手机画面变形
+ */
+
 public class BaseDialog extends Dialog {
 
     public BaseDialog(@NonNull Context context) {
@@ -46,14 +52,14 @@ public class BaseDialog extends Dialog {
             CutoutUtil.adaptCutoutAboveAndroidP(this, true);
         }
 
-        fixDialogSize(); // ✅ 初始化时锁定尺寸
+        fixDialogSize(); // xuameng初始化时锁定尺寸
         hideSysBarSafe();
     }
 
     @Override
     public void show() {
         super.show();
-        fixDialogSize(); // ✅ 显示时锁定尺寸
+        fixDialogSize(); // xuameng显示时锁定尺寸
         hideSysBarSafe();
     }
 
@@ -63,7 +69,7 @@ public class BaseDialog extends Dialog {
     }
 
     /**
-     * ✅ 修复切前台尺寸变形
+     * xuameng修复切前台尺寸变形
      */
     private void fixDialogSize() {
         Window window = getWindow();
@@ -79,7 +85,7 @@ public class BaseDialog extends Dialog {
         if (window == null) return;
         View decorView = window.getDecorView();
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {  //xuameng 安卓11
             window.setDecorFitsSystemWindows(false);
             window.getInsetsController().hide(
                     android.view.WindowInsets.Type.statusBars()
@@ -89,14 +95,14 @@ public class BaseDialog extends Dialog {
             window.getInsetsController().setSystemBarsBehavior(
                     android.view.WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
             );
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {  //xuameng 安卓4.4及以上
             int uiOptions =
                     View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
 
                             | View.SYSTEM_UI_FLAG_FULLSCREEN
                             | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
             decorView.setSystemUiVisibility(uiOptions);
-        } else {
+        } else {      //xuameng 安卓4.4以下
             int uiOptions =
                     View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
 
@@ -109,7 +115,7 @@ public class BaseDialog extends Dialog {
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         if (hasFocus) {
-            fixDialogSize(); // ✅ 切前台时锁定尺寸
+            fixDialogSize(); // xuameng切前台时锁定尺寸
             hideSysBarSafe();
         }
     }
