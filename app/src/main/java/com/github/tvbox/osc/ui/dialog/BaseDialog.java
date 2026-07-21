@@ -67,6 +67,12 @@ protected void onCreate(Bundle savedInstanceState) {
 @Override
 public void show() {
     super.show();
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        getWindow().getDecorView().post(() -> {
+            dismiss();
+            super.show();
+        });
+    }
 }
 
     @Override
@@ -84,8 +90,6 @@ private void hideSysBarSafe() {
     View decorView = window.getDecorView();
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-        var controller = window.getInsetsController();
-        if (controller != null) {
             controller.hide(
                     android.view.WindowInsets.Type.statusBars()
                             | android.view.WindowInsets.Type.navigationBars()
@@ -93,7 +97,6 @@ private void hideSysBarSafe() {
             controller.setSystemBarsBehavior(
                     android.view.WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
             );
-        }
     } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
         decorView.setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE
