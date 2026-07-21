@@ -366,7 +366,7 @@ public class HomeActivity extends BaseActivity {
     private void initData() {
         refreshEmpty = false;	//xuameng打断加载判断
         if (dataInitOk && jarInitOk) {
-            loadHomeSort(false);
+            loadHomeSort(true);
             if (hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                 LOG.e("有");
             } else {
@@ -623,7 +623,7 @@ public class HomeActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         // 打断加载
-        if (homeSortLoading && dataInitOk && jarInitOk) {
+        if (homeSortLoading) {
             cancelHomeSortLoading();
             return;
         }
@@ -1020,13 +1020,11 @@ public class HomeActivity extends BaseActivity {
     }
 
     private void refreshEmpty(){   //xuameng打断加载优化
-        if(dataInitOk && jarInitOk){   
-            cancelHomeSortLoading();
-        }
         refreshEmpty = true;	//xuameng打断加载判断
         jarInitOk = true;
         dataInitOk = true;
         skipNextUpdate=true;
+        cancelHomeSortLoading();
         clearHomePages();
         showSuccess();
         sortAdapter.setNewData(DefaultConfig.adjustSort(ApiConfig.get().getHomeSourceBean().getKey(), new ArrayList<>(), true));
