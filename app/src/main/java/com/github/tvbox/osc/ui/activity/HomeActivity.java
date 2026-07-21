@@ -366,7 +366,7 @@ public class HomeActivity extends BaseActivity {
     private void initData() {
         refreshEmpty = false;	//xuameng打断加载判断
         if (dataInitOk && jarInitOk) {
-            loadHomeSort(true);
+            loadHomeSort(false);
             if (hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                 LOG.e("有");
             } else {
@@ -536,17 +536,15 @@ public class HomeActivity extends BaseActivity {
             previousHomeName = tvName.getText() == null ? null : tvName.getText().toString();
             tvName.setText(home.getName());
         }
-        tvNameAnimation();
+		if (keepCurrentContent){
+            tvNameAnimation();
+		}
         if (home == null) {
             loadingSourceKey = null;
-            if (!keepCurrentContent) showLoading();
             sourceViewModel.getSort(null);
             return;
         }
         loadingSourceKey = home.getKey();
-        if (!keepCurrentContent) {
-            showLoading();
-        }
         sourceViewModel.getSort(loadingSourceKey);
     }
 
