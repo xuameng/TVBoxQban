@@ -375,7 +375,6 @@ public class HomeActivity extends BaseActivity {
             if(!useCacheConfig)warmSearchSpidersOnce();  //xuameng搜索预热
             return;
         }
-        tvNameAnimation();
         showLoading();
         if (dataInitOk && !jarInitOk) {
             if (!ApiConfig.get().getSpider().isEmpty()) {
@@ -536,17 +535,13 @@ public class HomeActivity extends BaseActivity {
             previousHomeName = tvName.getText() == null ? null : tvName.getText().toString();
             tvName.setText(home.getName());
         }
-        tvNameAnimation();
+        showLoading();
         if (home == null) {
             loadingSourceKey = null;
-            if (!keepCurrentContent) showLoading();
             sourceViewModel.getSort(null);
             return;
         }
         loadingSourceKey = home.getKey();
-        if (!keepCurrentContent) {
-            showLoading();
-        }
         sourceViewModel.getSort(loadingSourceKey);
     }
 
