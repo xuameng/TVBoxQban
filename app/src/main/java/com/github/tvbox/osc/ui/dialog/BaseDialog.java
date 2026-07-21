@@ -30,16 +30,10 @@ private void init() {
     if (window == null) return;
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-        // ✅ Android 11+：提前声明“我不想要系统栏”
+        // ✅ Android 11+：只做这一件事
         window.setDecorFitsSystemWindows(false);
-        window.getInsetsController().hide(
-                android.view.WindowInsets.Type.statusBars()
-                        | android.view.WindowInsets.Type.navigationBars()
-        );
-        window.getInsetsController().setSystemBarsBehavior(
-                android.view.WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-        );
     } else {
+        // ✅ 低版本：提前占满屏幕
         window.setFlags(
                 WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
                 WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
@@ -47,35 +41,44 @@ private void init() {
     }
 }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        Window window = getWindow();
-        if (window == null) return;
-
-        // 刘海适配
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            CutoutUtil.adaptCutoutAboveAndroidP(this, true);
-        }
-
-        // ✅ 只在 onCreate 做一次
-        applyStableImmersiveMode();
-    }
-
 @Override
-public void show() {
-    super.show();
+protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
 
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
-        // ✅ 只有低版本需要延迟补刀
-        getWindow().getDecorView().post(() -> {
-            hideSysBarSafe();
-            forceRelayoutIfNeeded();
-        });
+    Window window = getWindow();
+    if (window == null) return;
+
+    // 刘海适配
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+        CutoutUtil.adaptCutoutAboveAndroidP(this, true);
     }
-    // ✅ Android 11+：什么都不做
+
+    // ✅ Android 11+：此时 getInsetsController() 一定非空
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        window.getInsetsController().hide(
+                android.view.WindowInsets.Type.statusBars()
+                        | android.view.WindowInsets.Type.navigationBars()
+        );
+        window.getInsetsController().setSystemBarsBehavior(
+                android.view.WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        );
+    }
+
 }
+
+    @Override
+    public void show() {
+        super.show();
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+            // ✅ 只有低版本需要延迟补刀
+            getWindow().getDecorView().post(() -> {
+                hideSysBarSafe();
+                forceRelayoutIfNeeded();
+            });
+        }
+        // ✅ Android 11+：什么都不做
+    }
 
     @Override
     public void dismiss() {
@@ -119,15 +122,6 @@ public void show() {
     }
 
     /**
-     * ✅ 只设一次，防止抖动
-     */
-    private void applyStableImmersiveMode() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-            hideSysBarSafe();
-        }
-    }
-
-    /**
      * ✅ 强制重新 layout（只在必要时）
      */
     private void forceRelayoutIfNeeded() {
@@ -144,6 +138,5 @@ public void show() {
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        // ❌ 什么都不做
     }
 }
