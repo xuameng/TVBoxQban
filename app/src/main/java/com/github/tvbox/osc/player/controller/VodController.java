@@ -695,7 +695,28 @@ public class VodController extends BaseController {
                 mHandler.post(xuRunnable);
             }
         });
-        mGridView.setLayoutManager(new V7LinearLayoutManager(getContext(), 0, false));
+mGridView.setLayoutManager(new V7LinearLayoutManager(getContext(), 0, false) {
+    @Override
+    public View onInterceptFocusSearch(View focused, int direction) {
+        View root = focused.getRootView();
+
+        if (direction == View.FOCUS_UP) {
+            View target = root.findViewById(R.id.play_next);
+            if (target != null && target.isShown() && target.isFocusable()) {
+                return target;
+            }
+        }
+
+        if (direction == View.FOCUS_DOWN) {
+            View target = root.findViewById(R.id.mxuplay);
+            if (target != null && target.isShown() && target.isFocusable()) {
+                return target;
+            }
+        }
+
+        return super.onInterceptFocusSearch(focused, direction);
+    }
+});
         ParseAdapter parseAdapter = new ParseAdapter();
         parseAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
@@ -717,24 +738,7 @@ public class VodController extends BaseController {
         parseAdapter.setNewData(ApiConfig.get().getParseBeanList());
         //     mParseRoot.setVisibility(VISIBLE);
 
-parseAdapter.setOnItemKeyListener((v, keyCode, event) -> {
-    if (event.getAction() == KeyEvent.ACTION_DOWN) {
-        if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
-            View target = getRootView().findViewById(R.id.play_next);
-            if (target != null && target.isShown()) {
-                target.requestFocus();
-                return true;
-            }
-        } else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
-            View target = getRootView().findViewById(R.id.mxuplay);
-            if (target != null && target.isShown()) {
-                target.requestFocus();
-                return true;
-            }
-        }
-    }
-    return false;
-});
+
 
         mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
