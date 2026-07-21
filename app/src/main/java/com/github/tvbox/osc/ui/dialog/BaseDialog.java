@@ -31,17 +31,20 @@ private void init() {
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
         window.setDecorFitsSystemWindows(false);
+    }
 
-        // ✅ 关键：强制窗口认为系统栏不存在
-        window.setFlags(
-                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
-        );
-    } else {
-        window.setFlags(
-                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
-        );
+    // ✅ 所有版本都要
+    window.setFlags(
+            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+    );
+
+    // ✅ Android 11+：防止 cutout / 系统栏动画期间 re-inset
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+        WindowManager.LayoutParams lp = window.getAttributes();
+        lp.layoutInDisplayCutoutMode =
+                WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+        window.setAttributes(lp);
     }
 }
 
@@ -52,31 +55,18 @@ protected void onCreate(Bundle savedInstanceState) {
     Window window = getWindow();
     if (window == null) return;
 
+    // ✅ 刘海适配（Android P+）
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
         CutoutUtil.adaptCutoutAboveAndroidP(this, true);
     }
 
-    // ✅ Android 11+：立即隐藏
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-        window.getInsetsController().hide(
-                android.view.WindowInsets.Type.statusBars()
-                        | android.view.WindowInsets.Type.navigationBars()
-        );
-        window.getInsetsController().setSystemBarsBehavior(
-                android.view.WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-        );
-    }
-
-    // ✅ 低版本兜底
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-        hideSysBarSafe();
-    }
+    // ✅ 立即隐藏（只影响显示，不影响 measure）
+    hideSysBarSafe();
 }
 
 @Override
 public void show() {
     super.show();
-    // ✅ Android 11+：绝对不要 hide / requestLayout
 }
 
     @Override
@@ -87,35 +77,41 @@ public void show() {
     /**
      * ✅ 横屏非全屏：只隐藏，不影响测量基准
      */
-    private void hideSysBarSafe() {
-        Window window = getWindow();
-        if (window == null) return;
+private void hideSysBarSafe() {
+    Window window = getWindow();
+    if (window == null) return;
 
-        View decorView = window.getDecorView();
+    View decorView = window.getDecorView();
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            window.getInsetsController().hide(
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        var controller = window.getInsetsController();
+        if (controller != null) {
+            controller.hide(
                     android.view.WindowInsets.Type.statusBars()
                             | android.view.WindowInsets.Type.navigationBars()
             );
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            int uiOptions =
-                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                  | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                  | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                  | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                  | View.SYSTEM_UI_FLAG_FULLSCREEN
-                  | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-            decorView.setSystemUiVisibility(uiOptions);
-        } else {
-            int uiOptions =
-                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                  | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                  | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                  | View.SYSTEM_UI_FLAG_FULLSCREEN;
-            decorView.setSystemUiVisibility(uiOptions);
+            controller.setSystemBarsBehavior(
+                    android.view.WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            );
         }
+    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        decorView.setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+        );
+    } else {
+        decorView.setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN
+        );
     }
+}
 
     /**
      * ✅ 不再依赖 focus 变化
