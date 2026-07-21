@@ -717,8 +717,24 @@ public class VodController extends BaseController {
         parseAdapter.setNewData(ApiConfig.get().getParseBeanList());
         //     mParseRoot.setVisibility(VISIBLE);
 
-mGridView.setNextFocusUpId(R.id.play_next);
-mGridView.setNextFocusDownId(R.id.mxuplay);
+parseAdapter.setOnItemKeyListener((v, keyCode, event) -> {
+    if (event.getAction() == KeyEvent.ACTION_DOWN) {
+        if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
+            View target = getRootView().findViewById(R.id.play_next);
+            if (target != null && target.isShown()) {
+                target.requestFocus();
+                return true;
+            }
+        } else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
+            View target = getRootView().findViewById(R.id.mxuplay);
+            if (target != null && target.isShown()) {
+                target.requestFocus();
+                return true;
+            }
+        }
+    }
+    return false;
+});
 
         mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
