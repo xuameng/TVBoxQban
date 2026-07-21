@@ -31,12 +31,12 @@ public class BaseDialog extends Dialog {
     @Override
     public void show() {
         // ✅ 延迟一帧再隐藏系统栏（防止 ROM 抢布局）
-        getWindow().getDecorView().post(() -> {
+        getWindow().getDecorView().postDelayed(() -> {
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
             super.show();
             hideSysBar();
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
-        });
+        }, 300);
     }
 
     @Override
