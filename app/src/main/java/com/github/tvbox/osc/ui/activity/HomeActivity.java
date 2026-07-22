@@ -536,7 +536,7 @@ public class HomeActivity extends BaseActivity {
             previousHomeName = tvName.getText() == null ? null : tvName.getText().toString();
             tvName.setText(home.getName());
         }
-		if (keepCurrentContent){
+		if (keepCurrentContent && !refreshHomeRec){
             tvNameAnimation();
 		}
         if (home == null) {
