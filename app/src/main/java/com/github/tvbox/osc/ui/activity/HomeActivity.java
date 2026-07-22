@@ -382,7 +382,6 @@ public class HomeActivity extends BaseActivity {
             if(!useCacheConfig)warmSearchSpidersOnce();  //xuameng搜索预热
             return;
         }
-        tvNameAnimation();
         showLoading();
         if (dataInitOk && !jarInitOk) {
             if (!ApiConfig.get().getSpider().isEmpty()) {
@@ -537,15 +536,14 @@ public class HomeActivity extends BaseActivity {
     }
 
     private void loadHomeSort(boolean keepCurrentContent) { //xuameng 获取主页分类数据
+        showLoading();
         SourceBean home = ApiConfig.get().getHomeSourceBean();
         homeSortLoading = keepCurrentContent;
         if (keepCurrentContent && home != null && home.getName() != null && !home.getName().isEmpty()) {
             previousHomeName = tvName.getText() == null ? null : tvName.getText().toString();
             tvName.setText(home.getName());
         }
-		if (keepCurrentContent && !refreshHomeRec){
-            tvNameAnimation();
-		}
+
         if (home == null) {
             loadingSourceKey = null;
             sourceViewModel.getSort(null);
@@ -936,7 +934,6 @@ public class HomeActivity extends BaseActivity {
 
     public void refreshHomeSort() {  //xuameng 刷新 主页默认数据 热播 推荐
         refreshHomeRec = true;
-        showLoading();
         if (Hawk.get(HawkConfig.HOME_REC_STYLE, false)) {
             if (UserFragment.homeHotVodAdapter != null) {
                 UserFragment.homeHotVodAdapter.setNewData(new ArrayList<Movie.Video>());
