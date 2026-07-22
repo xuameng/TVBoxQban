@@ -28,13 +28,46 @@ public class BaseDialog extends Dialog {
         super.onCreate(savedInstanceState);
     }
 
-    @Override
-    public void show() {
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
-        super.show();
-        hideSysBar();
-        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
-    }
+@Override
+public void show() {
+    // 防止重复触发
+    if (isShowing()) return;
+
+    // 先清焦点标记，防止输入法/焦点抢窗口
+    getWindow().setFlags(
+            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+    );
+
+    // 先隐藏系统栏
+    hideSysBar();
+
+    // 监听系统 UI 是否真正隐藏
+    getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(
+            new View.OnSystemUiVisibilityChangeListener() {
+                @Override
+                public void onSystemUiVisibilityChange(int visibility) {
+                    boolean fullscreen =
+                            (visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) != 0;
+                    boolean navHidden =
+                            (visibility & View.SYSTEM_UI_FLAG_HIDE_NAVIGATION) != 0;
+
+                    if (fullscreen && navHidden) {
+                        // ✅ 系统栏已完全隐藏
+                        getWindow().getDecorView()
+                                .setOnSystemUiVisibilityChangeListener(null);
+
+                        // ✅ 再真正显示 Dialog
+                        BaseDialog.super.show();
+                        getWindow().clearFlags(
+                                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+                        );
+                    }
+                }
+            }
+    );
+
+}
 
     @Override
     public void dismiss() {
