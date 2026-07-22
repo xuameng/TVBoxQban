@@ -746,8 +746,11 @@ public class HomeActivity extends BaseActivity {
                     sortAdapter.notifyItemChanged(pos);
                 }
             }
-        } else if (event.type == RefreshEvent.TYPE_HOME_SOURCE_CHANGE) {
+        } else if (event.type == RefreshEvent.TYPE_HOME_SOURCE_CHANGE) {  //xuameng 换源刷新数据
             refreshHome(false);
+        } else if (event.type == RefreshEvent.TYPE_SET_PREVIOUS_HOME_SOURCE) {  //xuameng 上次的主页源
+            SourceBean bean = (SourceBean) event.obj;
+            this.previousHomeSource = bean;  //xuameng 上次的主页源
         }
     }
 
