@@ -26,6 +26,7 @@ public class RefreshEvent {
     public static final int TYPE_SET_DANMU_SETTINGS = 18; //xuameng 弹幕
     public static final int TYPE_DANMU_REFRESH = 19;  //xuameng 弹幕
     public static final int TYPE_HOME_SOURCE_CHANGE = 20;  //xuameng 更改主页源
+    public static final int TYPE_SET_PREVIOUS_HOME_SOURCE = 21;  //xuameng 上次的主页源
     public int type;
     public Object obj;
 
