@@ -30,43 +30,42 @@ public class BaseDialog extends Dialog {
 
 @Override
 public void show() {
-    // 防止重复触发
     if (isShowing()) return;
 
-    // 先清焦点标记，防止输入法/焦点抢窗口
+    // 1️⃣ 先让 Activity 进入稳定全屏（关键）
+    if (getContext() instanceof Activity) {
+        ((Activity) getContext()).getWindow()
+                .getDecorView()
+                .setSystemUiVisibility(getFullscreenFlags());
+    }
+
+    // 2️⃣ 防止 Dialog 抢焦点导致输入法/闪动
     getWindow().setFlags(
             WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
             WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
     );
 
-    // 先隐藏系统栏
+    // 3️⃣ 真正 show（此时 Window insets 已稳定）
+    super.show();
+
+    // 4️⃣ Dialog 自己再补一刀
     hideSysBar();
 
-    // 监听系统 UI 是否真正隐藏
-    getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(
-            new View.OnSystemUiVisibilityChangeListener() {
-                @Override
-                public void onSystemUiVisibilityChange(int visibility) {
-                    boolean fullscreen =
-                            (visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) != 0;
-                    boolean navHidden =
-                            (visibility & View.SYSTEM_UI_FLAG_HIDE_NAVIGATION) != 0;
-
-                    if (fullscreen && navHidden) {
-                        // ✅ 系统栏已完全隐藏
-                        getWindow().getDecorView()
-                                .setOnSystemUiVisibilityChangeListener(null);
-
-                        // ✅ 再真正显示 Dialog
-                        BaseDialog.super.show();
-                        getWindow().clearFlags(
-                                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-                        );
-                    }
-                }
-            }
+    // 5️⃣ 延迟一帧再恢复焦点，确保布局不再变化
+    getWindow().getDecorView().post(() ->
+        getWindow().clearFlags(
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+        )
     );
+}
 
+private int getFullscreenFlags() {
+    return View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+         | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+         | View.SYSTEM_UI_FLAG_FULLSCREEN
+         | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
 }
 
     @Override
