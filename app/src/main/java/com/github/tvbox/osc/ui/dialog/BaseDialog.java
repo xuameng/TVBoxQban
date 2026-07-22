@@ -28,24 +28,13 @@ public class BaseDialog extends Dialog {
         super.onCreate(savedInstanceState);
     }
 
-@Override
-public void show() {
-    getWindow().setFlags(
-            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-    );
-
-    hideSysBar();
-
-    getWindow().getDecorView().postDelayed(() -> {
-        if (!isShowing()) {
-            BaseDialog.super.show();
-            getWindow().clearFlags(
-                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-            );
-        }
-    }, 300); // 经验值：30~80ms
-}
+    @Override
+    public void show() {
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+        super.show();
+        hideSysBar();
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+    }
 
     @Override
     public void dismiss() {
