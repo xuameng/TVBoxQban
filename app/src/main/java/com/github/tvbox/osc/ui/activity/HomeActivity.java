@@ -250,12 +250,12 @@ public class HomeActivity extends BaseActivity {
                     BaseLazyFragment baseLazyFragment = fragments.get(sortFocused);
                     if (baseLazyFragment instanceof UserFragment) {
                         refreshHomeSort();
-                        App.showToastShort(HomeActivity.this, "主页刷新成功！");	
+                        App.showToastShort(HomeActivity.this, "主页刷新！");	
                         return true;
                     }
                     if ((baseLazyFragment instanceof GridFragment)) {
                         ((GridFragment) baseLazyFragment).forceRefresh();
-                        App.showToastShort(HomeActivity.this, "页面刷新成功！");	
+                        App.showToastShort(HomeActivity.this, "页面刷新！");	
                     }
                 }
                 if (direction != View.FOCUS_DOWN) {
@@ -927,7 +927,6 @@ public class HomeActivity extends BaseActivity {
 
     public void refreshHome() {
         FileUtils.clearSpiderCacheFiles();
-        App.showToastShort(HomeActivity.this, "缓存已清空，并重载主页！");
         refreshHome(true);
     }
 
