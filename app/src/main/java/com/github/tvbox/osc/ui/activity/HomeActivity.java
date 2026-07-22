@@ -187,9 +187,11 @@ public class HomeActivity extends BaseActivity {
         sortAdapter.registerAdapterDataObserver(new TvRecyclerView.AdapterDataObserver() {
             @Override
             public void onChanged() {
-                if (!mGridViewHasFocus) {  //xuameng主页没有拥有焦点时执行
-                    mGridView.setSelection(0);   //xuameng setSelectedPosition不能获取焦点
-                }
+                mGridView.post(() -> {
+                    if (!mGridViewHasFocus) {  //xuameng主页没有拥有焦点时执行
+                        mGridView.setSelection(0); //xuameng setSelectedPosition不能获取焦点
+                    }
+                });
             }
         });
 
@@ -354,9 +356,11 @@ public class HomeActivity extends BaseActivity {
                 loadingSourceKey = null;
                 previousHomeName = null;
                 previousHomeSource = null;
-                if (!mGridViewHasFocus) {  //xuameng主页没有拥有焦点时执行
-                    mGridView.setSelection(0);   //xuameng setSelectedPosition不能获取焦点
-                }
+                mGridView.post(() -> {
+                    if (!mGridViewHasFocus) {  //xuameng主页没有拥有焦点时执行
+                        mGridView.setSelection(0); //xuameng setSelectedPosition不能获取焦点
+                    }
+                });
             }
         });
     }
