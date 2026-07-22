@@ -158,7 +158,6 @@ public class HomeActivity extends BaseActivity {
 
     @Override
     protected void init() {
-//        setupExceptionHandler(); // xuameng异常捕获
         EventBus.getDefault().register(this);
         ControlManager.get().startServer();
         initView();
@@ -318,7 +317,6 @@ public class HomeActivity extends BaseActivity {
             }
         });
         setLoadSir(this.contentLayout);
-        //mHandler.postDelayed(mFindFocus, 500);
     }
 
     private boolean skipNextUpdate = false;
@@ -351,7 +349,6 @@ public class HomeActivity extends BaseActivity {
                 initViewPager(absXml);
                 updateHomeRec(absXml);
                 if (home != null && home.getName() != null && !home.getName().isEmpty()) tvName.setText(home.getName());
-                tvName.clearAnimation();
                 homeSortLoading = false;
                 loadingSourceKey = null;
                 previousHomeName = null;
@@ -928,7 +925,9 @@ public class HomeActivity extends BaseActivity {
         }
     }
 
-    private void refreshHome() {
+    public void refreshHome() {
+        FileUtils.clearSpiderCacheFiles();
+        App.showToastShort(HomeActivity.this, "缓存已清空，并重载主页！");
         refreshHome(true);
     }
 
@@ -1031,14 +1030,12 @@ public class HomeActivity extends BaseActivity {
         showSuccess();
         sortAdapter.setNewData(DefaultConfig.adjustSort(ApiConfig.get().getHomeSourceBean().getKey(), new ArrayList<>(), true));
         initViewPager(null);
-        tvName.clearAnimation();
         App.showToastShort(HomeActivity.this, "聚汇影视提示：已打断当前源加载！");
     }
 
     private void cancelHomeSortLoading() {  //xuameng打断切换源加载
         homeSortLoading = false;
         loadingSourceKey = null;
-        tvName.clearAnimation();
         if (previousHomeSource != null) {
             ApiConfig.get().setSourceBean(previousHomeSource);
         }
@@ -1048,16 +1045,6 @@ public class HomeActivity extends BaseActivity {
         previousHomeSource = null;
         previousHomeName = null;
         App.showToastShort(HomeActivity.this, "聚汇影视提示：已打断当前源加载！");
-    }
-
-    private void tvNameAnimation(){  //xuameng 源名称动画
-        tvName.clearAnimation();
-        AlphaAnimation blinkAnimation = new AlphaAnimation(0.0f, 1.0f);
-        blinkAnimation.setDuration(400);
-        blinkAnimation.setStartOffset(20);
-        blinkAnimation.setRepeatMode(Animation.REVERSE);
-        blinkAnimation.setRepeatCount(Animation.INFINITE);
-        tvName.startAnimation(blinkAnimation);
     }
 	
     // 触发权限检查的入口方法
@@ -1177,29 +1164,4 @@ public class HomeActivity extends BaseActivity {
         }
     }
 
-/*    // xuameng添加全局异常处理器
-    private void setupExceptionHandler() {
-        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-            @Override
-            public void uncaughtException(Thread thread, Throwable throwable) {
-                LOG.e("HomeActivity未捕获异常: ");
-                throwable.printStackTrace();
-            
-                // 如果是LayoutManager相关的空指针异常，重启
-                if (throwable instanceof NullPointerException) {
-                    String stackTrace = Log.getStackTraceString(throwable);
-                    if (stackTrace.contains("findViewByPosition") || 
-                        stackTrace.contains("LayoutManager")) {
-                        Intent intent = new Intent(App.getInstance(), HomeActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        startActivity(intent);
-                        // 强制停止当前进程
-                        android.os.Process.killProcess(android.os.Process.myPid());
-                        System.exit(0);
-                    }
-                }            
-            }
-        });
-    }
-*/
 }
