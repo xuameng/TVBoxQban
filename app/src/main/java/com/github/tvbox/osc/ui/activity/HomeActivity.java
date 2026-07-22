@@ -186,11 +186,7 @@ public class HomeActivity extends BaseActivity {
         sortAdapter.registerAdapterDataObserver(new TvRecyclerView.AdapterDataObserver() {
             @Override
             public void onChanged() {
-                mGridView.post(() -> {
-                    if (!mGridViewHasFocus) {  //xuameng主页没有拥有焦点时执行
-                        mGridView.setSelection(0); //xuameng setSelectedPosition不能获取焦点
-                    }
-                });
+                selectGridViewHome(); //xuameng主页焦点
             }
         });
 
@@ -353,11 +349,7 @@ public class HomeActivity extends BaseActivity {
                 loadingSourceKey = null;
                 previousHomeName = null;
                 previousHomeSource = null;
-                mGridView.post(() -> {
-                    if (!mGridViewHasFocus) {  //xuameng主页没有拥有焦点时执行
-                        mGridView.setSelection(0); //xuameng setSelectedPosition不能获取焦点
-                    }
-                });
+                selectGridViewHome(); //xuameng主页焦点
             }
         });
     }
@@ -1045,8 +1037,17 @@ public class HomeActivity extends BaseActivity {
         previousHomeSource = null;
         previousHomeName = null;
         App.showToastShort(HomeActivity.this, "聚汇影视提示：已打断当前源加载！");
+        selectGridViewHome(); //xuameng主页焦点
     }
 	
+    private void selectGridViewHome() {  //xuameng主页焦点
+        mGridView.post(() -> {
+            if (!mGridViewHasFocus) {  //xuameng主页没有拥有焦点时执行
+                mGridView.setSelection(0); //xuameng setSelectedPosition不能获取焦点
+            }
+        });
+    }
+
     // 触发权限检查的入口方法
     public void checkMicrophonePermission() {
         if (Build.VERSION.SDK_INT >= MARSHMALLOW) {
