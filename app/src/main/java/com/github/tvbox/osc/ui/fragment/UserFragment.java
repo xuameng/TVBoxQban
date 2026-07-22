@@ -312,6 +312,18 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
             }
         });
 
+        findViewById(R.id.tvSearch).setOnLongClickListener(new View.OnLongClickListener() { //xuameng长按搜索键刷新主页数据
+            @Override
+            public boolean onLongClick(View v) {
+                FastClickCheckUtil.check(v);
+                if (mActivity instanceof HomeActivity) {
+                    ((HomeActivity) mActivity).refreshHomeSort();
+                    App.showToastShort(mContext, "刷新主页数据！");
+                }
+                return true;
+            }
+        });
+
         findViewById(R.id.tvxuameng).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
