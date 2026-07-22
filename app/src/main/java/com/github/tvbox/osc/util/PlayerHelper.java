@@ -316,6 +316,10 @@ public class PlayerHelper {
             // 直接操作静态变量，将其置空
             mPlayersExistInfo = null; // 这个变量存储了远程TV Box是否存在
             mPlayersInfo = null;      // 这个变量存储了播放器名称映射
+            // xuameng如果当前选的是远程聚汇影视，就切回系统播放器 防止显示BUG
+            if (Hawk.get(HawkConfig.PLAY_TYPE, 0) == 13) {
+                Hawk.put(HawkConfig.PLAY_TYPE, 0);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
