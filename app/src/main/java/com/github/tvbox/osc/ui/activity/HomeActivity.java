@@ -326,7 +326,7 @@ public class HomeActivity extends BaseActivity {
                     skipNextUpdate = false;
                     return;
                 }
-                if (!homeSortLoading && loadingSourceKey == null) {
+                if (!homeSortLoading && loadingSourceKey == null && !refreshHomeRec) {
                     return;
                 }
                 if (absXml != null && absXml.sourceKey != null && loadingSourceKey != null && !loadingSourceKey.equals(absXml.sourceKey)) {
