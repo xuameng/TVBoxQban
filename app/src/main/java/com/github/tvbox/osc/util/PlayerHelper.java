@@ -165,14 +165,22 @@ public class PlayerHelper {
         }
     }
 
-    public static String getPlayerName(int playType) {
-        HashMap<Integer, String> playersInfo = getPlayersInfo();
-        if (playersInfo.containsKey(playType)) {
-            return playersInfo.get(playType);
-        } else {
-            return "系统播放器";
+public static String getPlayerName(int playType) {
+    if (playType == 13) {
+        // 远端聚汇影视：优先显示当前选中的设备
+        String selected = Hawk.get(HawkConfig.REMOTE_TVBOX, null);
+        if (selected != null && !selected.isEmpty()) {
+            return selected; // 例如：redmi(1.1.1.1:2222)
         }
+        return "附近聚汇影视";
     }
+
+    HashMap<Integer, String> playersInfo = getPlayersInfo();
+    if (playersInfo.containsKey(playType)) {
+        return playersInfo.get(playType);
+    }
+    return "系统播放器";
+}
 
     private static HashMap<Integer, String> mPlayersInfo = null;
     public static HashMap<Integer, String> getPlayersInfo() {
