@@ -306,7 +306,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
                 FastClickCheckUtil.check(v);
                 if (mActivity instanceof HomeActivity) {
                     ((HomeActivity) mActivity).refreshHome(false);
-                    App.showToastShort(mContext, "重新加载主页数据！");
+                    App.showToastShort(mContext, "重载数据！");
                 }
                 return true;
             }
