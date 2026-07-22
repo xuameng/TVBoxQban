@@ -318,7 +318,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
                 FastClickCheckUtil.check(v);
                 if (mActivity instanceof HomeActivity) {
                     ((HomeActivity) mActivity).refreshHomeSort();
-                    App.showToastShort(mContext, "刷新主页数据！");
+                    App.showToastShort(mContext, "主页刷新！");
                 }
                 return true;
             }
@@ -330,6 +330,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
                 FastClickCheckUtil.check(v);
                 if (mActivity instanceof HomeActivity) {
                     ((HomeActivity) mActivity).refreshHome();
+                    App.showToastShort(mContext, "缓存已清空，并重载主页！");
                 }
                 return true;
             }
