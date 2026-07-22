@@ -326,8 +326,10 @@ public class ModelSettingFragment extends BaseLazyFragment {
                         @Override
                         public void click(SourceBean value, int pos) {
                             mSiteSwitchDialog.dismiss();
+                            SourceBean targetSource = ApiConfig.get().getHomeSourceBean(); //xuameng 上次的主页源
                             ApiConfig.get().setSourceBean(value);
                             tvHomeApi.setText(ApiConfig.get().getHomeSourceBean().getName());
+                            EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_SET_PREVIOUS_HOME_SOURCE, targetSource)); //xuameng告诉HOME上次的主页源以便恢复
                             EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_HOME_SOURCE_CHANGE));
                         }
                         @Override
