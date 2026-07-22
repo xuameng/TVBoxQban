@@ -1142,7 +1142,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void refresh(RefreshEvent event) {     //xuameng 远程聚汇影视变更后更新UI
         if (event.type == RefreshEvent.TYPE_REMOTE_TVBOX_CHANGE) {
-            refreshPlayName()
+            refreshPlayName();
         }
     }
 
