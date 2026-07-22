@@ -288,7 +288,7 @@ public class HomeActivity extends BaseActivity {
                 FastClickCheckUtil.check(v);
                 if(dataInitOk && jarInitOk){
                     refreshHome(false);
-                    App.showToastShort(HomeActivity.this, "重新加载主页数据！");
+                    App.showToastShort(HomeActivity.this, "重载数据！");
                 }else {
                     jumpActivity(SettingActivity.class);   //xuameng加载慢跳转设置
                 }
@@ -1033,6 +1033,7 @@ public class HomeActivity extends BaseActivity {
     }
 
     private void cancelHomeSortLoading() {  //xuameng打断切换源加载
+        showSuccess();
         homeSortLoading = false;
         loadingSourceKey = null;
         if (previousHomeSource != null) {
