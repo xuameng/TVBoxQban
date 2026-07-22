@@ -927,7 +927,7 @@ public class HomeActivity extends BaseActivity {
         refreshHome(true);
     }
 
-    private void refreshHomeSort() {  //xuameng 刷新 主页默认数据 热播 推荐
+    public void refreshHomeSort() {  //xuameng 刷新 主页默认数据 热播 推荐
         refreshHomeRec = true;
         showLoading();
         if (Hawk.get(HawkConfig.HOME_REC_STYLE, false)) {
