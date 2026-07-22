@@ -324,6 +324,17 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
             }
         });
 
+        findViewById(R.id.tvPush).setOnLongClickListener(new View.OnLongClickListener() { //xuameng长按推送键清空缓存并重载主页数据
+            @Override
+            public boolean onLongClick(View v) {
+                FastClickCheckUtil.check(v);
+                if (mActivity instanceof HomeActivity) {
+                    ((HomeActivity) mActivity).refreshHome();
+                }
+                return true;
+            }
+        });
+
         findViewById(R.id.tvxuameng).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
