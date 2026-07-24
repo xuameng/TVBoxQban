@@ -170,9 +170,8 @@ public class ApiConfig {
 
     private String configUrl(String apiUrl) {
         TempKey = null;
-        String configUrl = "";
-        String pk = ";pk;";
-        apiUrl = apiUrl.replace("file://", "clan://localhost/");
+        String configUrl = "", pk = ";pk;";
+        apiUrl=apiUrl.replace("file://", "clan://localhost/");
         if (apiUrl.contains(pk)) {
             String[] a = apiUrl.split(pk);
             TempKey = a[1];
@@ -271,11 +270,11 @@ public class ApiConfig {
         final String liveApiUrl = apiUrl;
         String liveApiConfigUrl = configUrl(liveApiUrl);
         final String liveConfigKey = TempKey;
-        File liveCache = new File(App.getInstance().getFilesDir().getAbsolutePath() + "/" + MD5.encode(liveApiUrl));
+        File live_cache = new File(App.getInstance().getFilesDir().getAbsolutePath() + "/" + MD5.encode(liveApiUrl));
         LOG.i("echo-load live config " + liveApiUrl);
-        if (useCache && liveCache.exists()) {
+        if (useCache && live_cache.exists()) {
             try {
-                parseLiveConfigContent(liveApiUrl, liveCache);
+                parseLiveConfigContent(liveApiUrl, live_cache);
                 if (hasLiveConfigResult()) {
                     loadedLiveConfigUrl = liveApiUrl;
                     callback.success();
@@ -298,7 +297,7 @@ public class ApiConfig {
                         return;
                     }
                     loadedLiveConfigUrl = liveApiUrl;
-                    FileUtils.saveCache(liveCache, json);
+                    FileUtils.saveCache(live_cache, json);
                     callback.success();
                 } catch (Throwable th) {
                     th.printStackTrace();
@@ -311,9 +310,9 @@ public class ApiConfig {
 
             @Override
             public void error(String error) {
-                if (liveCache.exists()) {
+                if (live_cache.exists()) {
                     try {
-                        parseLiveConfigContent(liveApiUrl, liveCache);
+                        parseLiveConfigContent(liveApiUrl, live_cache);
                         if (hasLiveConfigResult()) {
                             loadedLiveConfigUrl = liveApiUrl;
                             callback.success();
@@ -546,7 +545,7 @@ public class ApiConfig {
                             if (success) {
                                 callback.success();
                             } else {
-                                callback.error("md5失效");
+                                callback.error("md5缓存失效");
                             }
                         }
                     });
@@ -555,7 +554,7 @@ public class ApiConfig {
                 if (jarLoader.load(cache.getAbsolutePath())) {
                     callback.success();
                 } else {
-                    callback.error("md5失效");
+                    callback.error("md5缓存失效");
                 }
                 return;
             }
@@ -632,7 +631,7 @@ public class ApiConfig {
                                 if (retryLoad("request_error")) {
                                     return;
                                 }
-                                callback.error("");
+                                callback.error("网络错误");
                             }
                         }
                     });
@@ -641,7 +640,7 @@ public class ApiConfig {
                 if (retryLoad("request_error")) {
                     return;
                 }
-                callback.error("");
+                callback.error("网络错误");
             }
         });
     }
@@ -653,9 +652,9 @@ public class ApiConfig {
     private String readConfigFile(File f) throws Throwable {
         BufferedReader bReader = new BufferedReader(new InputStreamReader(new FileInputStream(f), "UTF-8"));
         StringBuilder sb = new StringBuilder();
-        String s;
+        String s = "";
         while ((s = bReader.readLine()) != null) {
-            sb.append(s).append("\n");
+            sb.append(s + "\n");
         }
         bReader.close();
         return sb.toString();
@@ -803,9 +802,9 @@ public class ApiConfig {
                 setSourceBean(sh);
             }
         }
-        // 需要使用vipflag
+        // 需要使用vip解析的flag
         vipParseFlags = DefaultConfig.safeJsonStringList(infoJson, "flags");
-        // 解析
+        // 解析地址
         parseBeanList.clear();
         if (infoJson.has("parses")) {
             JsonArray parses = infoJson.get("parses").getAsJsonArray();
@@ -823,7 +822,7 @@ public class ApiConfig {
                 addSuperParse();
             }
         }
-        // 获取默认解
+        // 获取默认解析
         if (parseBeanList != null && parseBeanList.size() > 0) {
             String defaultParse = Hawk.get(HawkConfig.DEFAULT_PARSE, "");
             if (!TextUtils.isEmpty(defaultParse)) {
@@ -839,10 +838,10 @@ public class ApiConfig {
         }
 
         // 直播源
-        String liveApiUrl = Hawk.get(HawkConfig.LIVE_API_URL, "");
-        if (liveApiUrl.isEmpty() || apiUrl.equals(liveApiUrl)) {
-            initLiveSettings();
+        String live_api_url=Hawk.get(HawkConfig.LIVE_API_URL,"");
+        if(live_api_url.isEmpty() || apiUrl.equals(live_api_url)){
             LOG.i("echo-load-config_live");
+            initLiveSettings();
             if (infoJson.has("lives")) {
                 JsonArray livesGroups = infoJson.get("lives").getAsJsonArray();
                 if (livesGroups.size() > 0) {
@@ -927,7 +926,7 @@ public class ApiConfig {
             VideoParseRuler.clearRule();
             for (JsonElement oneHostRule : infoJson.getAsJsonArray("rules")) {
                 JsonObject obj = (JsonObject) oneHostRule;
-                // 单域名规则
+                //嗅探过滤规则
                 if (obj.has("host")) {
                     String host = obj.get("host").getAsString();
                     if (obj.has("rule")) {
@@ -953,7 +952,7 @@ public class ApiConfig {
                         }
                     }
                 }
-                // 多域名规则
+                //广告过滤规则
                 if (obj.has("hosts") && obj.has("regex")) {
                     ArrayList<String> rule = new ArrayList<>();
                     ArrayList<String> ads = new ArrayList<>();
@@ -973,7 +972,7 @@ public class ApiConfig {
                         VideoParseRuler.addHostRegex(host, ads);
                     }
                 }
-                // 单域名脚本 click
+                //嗅探脚本规则 如 click
                 if (obj.has("hosts") && obj.has("script")) {
                     ArrayList<String> scripts = new ArrayList<>();
                     JsonArray scriptArray = obj.getAsJsonArray("script");
@@ -991,10 +990,10 @@ public class ApiConfig {
         }
 
         if (infoJson.has("doh")) {
-            String dohJson = infoJson.getAsJsonArray("doh").toString();
-            if (!Hawk.get(HawkConfig.DOH_JSON, "").equals(dohJson)) {
+            String doh_json = infoJson.getAsJsonArray("doh").toString();
+            if(!Hawk.get(HawkConfig.DOH_JSON, "").equals(doh_json)){
                 Hawk.put(HawkConfig.DOH_URL, 0);
-                Hawk.put(HawkConfig.DOH_JSON, dohJson);
+                Hawk.put(HawkConfig.DOH_JSON,doh_json);
             }
         } else {
             Hawk.put(HawkConfig.DOH_JSON, "");
@@ -1014,14 +1013,14 @@ public class ApiConfig {
     private void loadDefaultConfig() {
         String defaultIJKADS="{\"ijk\":[{\"options\":[{\"name\":\"opensles\",\"category\":4,\"value\":\"0\"},{\"name\":\"framedrop\",\"category\":4,\"value\":\"1\"},{\"name\":\"soundtouch\",\"category\":4,\"value\":\"1\"},{\"name\":\"start-on-prepared\",\"category\":4,\"value\":\"1\"},{\"name\":\"http-detect-rangeupport\",\"category\":1,\"value\":\"0\"},{\"name\":\"fflags\",\"category\":1,\"value\":\"fastseek\"},{\"name\":\"skip_loop_filter\",\"category\":2,\"value\":\"48\"},{\"name\":\"reconnect\",\"category\":4,\"value\":\"1\"},{\"name\":\"enable-accurate-seek\",\"category\":4,\"value\":\"0\"},{\"name\":\"mediacodec\",\"category\":4,\"value\":\"0\"},{\"name\":\"mediacodec-all-videos\",\"category\":4,\"value\":\"0\"},{\"name\":\"mediacodec-auto-rotate\",\"category\":4,\"value\":\"0\"},{\"name\":\"mediacodec-handle-resolution-change\",\"category\":4,\"value\":\"0\"},{\"name\":\"mediacodec-hevc\",\"category\":4,\"value\":\"0\"},{\"name\":\"max-buffer-size\",\"category\":4,\"value\":\"15728640\"}],\"group\":\"软解码\"},{\"options\":[{\"name\":\"opensles\",\"category\":4,\"value\":\"0\"},{\"name\":\"framedrop\",\"category\":4,\"value\":\"1\"},{\"name\":\"soundtouch\",\"category\":4,\"value\":\"1\"},{\"name\":\"start-on-prepared\",\"category\":4,\"value\":\"1\"},{\"name\":\"http-detect-rangeupport\",\"category\":1,\"value\":\"0\"},{\"name\":\"fflags\",\"category\":1,\"value\":\"fastseek\"},{\"name\":\"skip_loop_filter\",\"category\":2,\"value\":\"48\"},{\"name\":\"reconnect\",\"category\":4,\"value\":\"1\"},{\"name\":\"enable-accurate-seek\",\"category\":4,\"value\":\"0\"},{\"name\":\"mediacodec\",\"category\":4,\"value\":\"1\"},{\"name\":\"mediacodec-all-videos\",\"category\":4,\"value\":\"1\"},{\"name\":\"mediacodec-auto-rotate\",\"category\":4,\"value\":\"1\"},{\"name\":\"mediacodec-handle-resolution-change\",\"category\":4,\"value\":\"1\"},{\"name\":\"mediacodec-hevc\",\"category\":4,\"value\":\"1\"},{\"name\":\"max-buffer-size\",\"category\":4,\"value\":\"15728640\"}],\"group\":\"硬解码\"}],\"ads\":[\"mimg.0c1q0l.cn\",\"www.googletagmanager.com\",\"www.google-analytics.com\",\"mc.usihnbcq.cn\",\"mg.g1mm3d.cn\",\"mscs.svaeuzh.cn\",\"cnzz.hhttm.top\",\"tp.vinuxhome.com\",\"cnzz.mmstat.com\",\"www.baihuillq.com\",\"s23.cnzz.com\",\"z3.cnzz.com\",\"c.cnzz.com\",\"stj.v1vo.top\",\"z12.cnzz.com\",\"img.mosflower.cn\",\"tips.gamevvip.com\",\"ehwe.yhdtns.com\",\"xdn.cqqc3.com\",\"www.jixunkyy.cn\",\"sp.chemacid.cn\",\"hm.baidu.com\",\"s9.cnzz.com\",\"z6.cnzz.com\",\"um.cavuc.com\",\"mav.mavuz.com\",\"wofwk.aoidf3.com\",\"z5.cnzz.com\",\"xc.hubeijieshikj.cn\",\"tj.tianwenhu.com\",\"xg.gars57.cn\",\"k.jinxiuzhilv.com\",\"cdn.bootcss.com\",\"ppl.xunzhuo123.com\",\"xomk.jiangjunmh.top\",\"img.xunzhuo123.com\",\"z1.cnzz.com\",\"s13.cnzz.com\",\"xg.huataisangao.cn\",\"z7.cnzz.com\",\"xg.huataisangao.cn\",\"z2.cnzz.com\",\"s96.cnzz.com\",\"q11.cnzz.com\",\"thy.dacedsfa.cn\",\"xg.whsbpw.cn\",\"s19.cnzz.com\",\"z8.cnzz.com\",\"s4.cnzz.com\",\"f5w.as12df.top\",\"ae01.alicdn.com\",\"www.92424.cn\",\"k.wudejia.com\",\"vivovip.mmszxc.top\",\"qiu.xixiqiu.com\",\"cdnjs.hnfenxun.com\",\"cms.qdwght.com\"]}";
         JsonObject defaultJson = gson.fromJson(defaultIJKADS, JsonObject.class);
-        // 广告
+        // 广告地址
         if (AdBlocker.isEmpty()) {
-            // 默认广告
+            //默认广告拦截
             for (JsonElement host : defaultJson.getAsJsonArray("ads")) {
                 AdBlocker.addAdHost(host.getAsString());
             }
         }
-        // IJK
+        // IJK解码配置
         if (ijkCodes == null) {
             ijkCodes = new ArrayList<>();
             boolean foundOldSelect = false;
@@ -1059,30 +1058,37 @@ public class ApiConfig {
     private void parseLiveConfigContent(String apiUrl, File f) throws Throwable {
         BufferedReader bReader = new BufferedReader(new InputStreamReader(new FileInputStream(f), "UTF-8"));
         StringBuilder sb = new StringBuilder();
-        String s;
+        String s = "";
         while ((s = bReader.readLine()) != null) {
-            sb.append(s).append("\n");
+            sb.append(s + "\n");
         }
         bReader.close();
         parseLiveConfigContent(apiUrl, sb.toString());
     }
 
     private void parseLiveConfigContent(String apiUrl, String content) {
+        String jsonContent = trimJsonObject(content);
+        if (!TextUtils.isEmpty(jsonContent)) {
+            try {
+                JsonObject infoJson = gson.fromJson(jsonContent, JsonObject.class);
+                if (infoJson != null && infoJson.has("lives")) {
+                    parseLiveJson(apiUrl, jsonContent);
+                    return;
+                }
+            } catch (Throwable ignored) {
+            }
+        }
         if (isLiveJsonContent(content)) {
-            parseLiveJson(apiUrl, content);
+            parseLiveJson(apiUrl, jsonContent);
         } else {
             parseLiveText(apiUrl, content);
         }
     }
 
     private boolean isLiveJsonContent(String content) {
-        if (content == null) {
-            return false;
-        }
+        if (content == null) return false;
         String text = content.trim();
-        if (text.startsWith("\ufeff")) {
-            text = text.substring(1).trim();
-        }
+        if (text.startsWith("\ufeff")) text = text.substring(1).trim();
         return text.startsWith("{");
     }
 
@@ -1102,26 +1108,16 @@ public class ApiConfig {
     }
 
     private String extractLiveTextEpg(String content) {
-        if (content == null) {
-            return "";
-        }
+        if (content == null) return "";
         String text = content.replace("\r\n", "\n").replace('\r', '\n');
         String[] lines = text.split("\n");
         for (String line : lines) {
             line = line.trim();
-            if (line.startsWith("\ufeff")) {
-                line = line.substring(1).trim();
-            }
-            if (!line.startsWith("#EXTM3U")) {
-                continue;
-            }
+            if (line.startsWith("\ufeff")) line = line.substring(1).trim();
+            if (!line.startsWith("#EXTM3U")) continue;
             String epg = extractQuotedAttr(line, "x-tvg-url");
-            if (epg.isEmpty()) {
-                epg = extractQuotedAttr(line, "tvg-url");
-            }
-            if (epg.isEmpty()) {
-                epg = extractQuotedAttr(line, "url-tvg");
-            }
+            if (epg.isEmpty()) epg = extractQuotedAttr(line, "tvg-url");
+            if (epg.isEmpty()) epg = extractQuotedAttr(line, "url-tvg");
             return epg;
         }
         return "";
@@ -1130,20 +1126,17 @@ public class ApiConfig {
     private String extractQuotedAttr(String line, String key) {
         String token = key + "=\"";
         int start = line.indexOf(token);
-        if (start < 0) {
-            return "";
-        }
+        if (start < 0) return "";
         start += token.length();
         int end = line.indexOf("\"", start);
-        if (end < 0) {
-            return "";
-        }
+        if (end < 0) return "";
         return line.substring(start, end).trim();
     }
 
     private String liveSpider = "";
 
     private void parseLiveJson(String apiUrl, String jsonStr) {
+        liveChannelGroupList.clear();
         JsonObject infoJson = gson.fromJson(jsonStr, JsonObject.class);
         initLiveSettings();
         // 直播源
@@ -1485,14 +1478,14 @@ public class ApiConfig {
                     return;
                 }
             }
-            // epg
+            //设置epg
             if (livesObj.has("epg")) {
                 String epg = livesObj.get("epg").getAsString();
                 Hawk.put(HawkConfig.EPG_URL, epg);
             } else {
                 Hawk.put(HawkConfig.EPG_URL, "");
             }
-            // 直播
+            //直播播放器类型
             if (livesObj.has("playerType")) {
                 String livePlayType = livesObj.get("playerType").getAsString();
                 Hawk.put(HawkConfig.LIVE_PLAY_TYPE, livePlayType);
