@@ -261,7 +261,7 @@ public class ApiConfig {
     public void loadLiveConfig(boolean useCache, LoadConfigCallback callback) {
         String apiUrl = Hawk.get(HawkConfig.LIVE_API_URL, "");
         if (apiUrl.isEmpty()) {
-            apiUrl = Hawk.get(HawkConfig.API_URL, "http://xuameng.vicp.net:8082/jvhuiys/1/xu.json");
+            apiUrl = Hawk.get(HawkConfig.API_URL, "");
         }
         if (apiUrl.isEmpty()) {
             callback.error("-1");
@@ -335,9 +335,9 @@ public class ApiConfig {
     }
 
     public boolean shouldReloadLiveConfig() {
-        String apiUrl = Hawk.get(HawkConfig.API_URL, "http://xuameng.vicp.net:8082/jvhuiys/1/xu.json");
+        String apiUrl = Hawk.get(HawkConfig.API_URL, "");
         String liveApiUrl = Hawk.get(HawkConfig.LIVE_API_URL, "");
-        if (liveApiUrl.isEmpty()) liveApiUrl = Hawk.get(HawkConfig.API_URL, "http://xuameng.vicp.net:8082/jvhuiys/1/xu.json");
+        if (liveApiUrl.isEmpty()) liveApiUrl = Hawk.get(HawkConfig.API_URL, "");
         return !liveApiUrl.isEmpty() && !liveApiUrl.equals(apiUrl);
     }
 
