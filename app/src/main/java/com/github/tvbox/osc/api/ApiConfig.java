@@ -170,8 +170,9 @@ public class ApiConfig {
 
     private String configUrl(String apiUrl) {
         TempKey = null;
-        String configUrl = "", pk = ";pk;";
-        apiUrl=apiUrl.replace("file://", "clan://localhost/");
+        String configUrl = "";
+        String pk = ";pk;";
+        apiUrl = apiUrl.replace("file://", "clan://localhost/");
         if (apiUrl.contains(pk)) {
             String[] a = apiUrl.split(pk);
             TempKey = a[1];
@@ -193,6 +194,75 @@ public class ApiConfig {
     }
 
     public void loadConfig(boolean useCache, LoadConfigCallback callback, Activity activity) {
+        String apiliveUrl = Hawk.get(HawkConfig.LIVE_API_URL, "");
+        if (apiliveUrl.isEmpty()) {
+            apiliveUrl = Hawk.get(HawkConfig.API_URL, "http://xuameng.vicp.net:8082/jvhuiys/1/xu.json");
+        }
+        if (apiliveUrl.isEmpty()) {
+            callback.error("-1");
+            return;
+        }
+        final String liveApiUrl = apiliveUrl;
+        String liveApiConfigUrl = configUrl(liveApiUrl);
+        final String liveConfigKey = TempKey;
+        File liveCache = new File(App.getInstance().getFilesDir().getAbsolutePath() + "/" + MD5.encode(liveApiUrl));
+        LOG.i("echo-load live config " + liveApiUrl);
+        if (useCache && liveCache.exists()) {
+            try {
+                parseLiveConfigContent(liveApiUrl, liveCache);
+                if (hasLiveConfigResult()) {
+                    loadedLiveConfigUrl = liveApiUrl;
+                    callback.success();
+                    return;
+                }
+            } catch (Throwable th) {
+                th.printStackTrace();
+            }
+        }
+        fetchConfigAsync(liveApiUrl, liveApiConfigUrl, liveConfigKey, new ConfigFetchCallback() {
+            @Override
+            public void success(String json) {
+                try {
+                    parseLiveConfigContent(liveApiUrl, json);
+                    if (!hasLiveConfigResult()) {
+                        callback.error("聚汇影视提示您：解析直播配置失败！");
+                        initLiveSettings();
+                        Hawk.put(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
+                        Hawk.put(HawkConfig.LIVE_GROUP_INDEX, 0);
+                        return;
+                    }
+                    loadedLiveConfigUrl = liveApiUrl;
+                    FileUtils.saveCache(liveCache, json);
+                    callback.success();
+                } catch (Throwable th) {
+                    th.printStackTrace();
+                    callback.error("聚汇影视提示您：解析直播配置失败！");
+                    initLiveSettings();
+                    Hawk.put(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
+                    Hawk.put(HawkConfig.LIVE_GROUP_INDEX, 0);
+                }
+            }
+
+            @Override
+            public void error(String error) {
+                if (liveCache.exists()) {
+                    try {
+                        parseLiveConfigContent(liveApiUrl, liveCache);
+                        if (hasLiveConfigResult()) {
+                            loadedLiveConfigUrl = liveApiUrl;
+                            callback.success();
+                            return;
+                        }
+                    } catch (Throwable th) {
+                        th.printStackTrace();
+                    }
+                }
+                callback.error("聚汇影视提示您：直播配置拉取失败！");
+                initLiveSettings();
+                Hawk.put(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
+                Hawk.put(HawkConfig.LIVE_GROUP_INDEX, 0);
+            }
+        });
         String apiUrl = Hawk.get(HawkConfig.API_URL, "http://xuameng.vicp.net:8082/jvhuiys/1/xu.json");
         if (apiUrl.isEmpty()) {
             callback.error("-1");
@@ -261,7 +331,7 @@ public class ApiConfig {
     public void loadLiveConfig(boolean useCache, LoadConfigCallback callback) {
         String apiUrl = Hawk.get(HawkConfig.LIVE_API_URL, "");
         if (apiUrl.isEmpty()) {
-            apiUrl = Hawk.get(HawkConfig.API_URL, "");
+            apiUrl = Hawk.get(HawkConfig.API_URL, "http://xuameng.vicp.net:8082/jvhuiys/1/xu.json");
         }
         if (apiUrl.isEmpty()) {
             callback.error("-1");
@@ -270,11 +340,11 @@ public class ApiConfig {
         final String liveApiUrl = apiUrl;
         String liveApiConfigUrl = configUrl(liveApiUrl);
         final String liveConfigKey = TempKey;
-        File live_cache = new File(App.getInstance().getFilesDir().getAbsolutePath() + "/" + MD5.encode(liveApiUrl));
-        LOG.i("echo-load live config "+liveApiUrl);
-        if (useCache && live_cache.exists()) {
+        File liveCache = new File(App.getInstance().getFilesDir().getAbsolutePath() + "/" + MD5.encode(liveApiUrl));
+        LOG.i("echo-load live config " + liveApiUrl);
+        if (useCache && liveCache.exists()) {
             try {
-                parseLiveConfigContent(liveApiUrl, live_cache);
+                parseLiveConfigContent(liveApiUrl, liveCache);
                 if (hasLiveConfigResult()) {
                     loadedLiveConfigUrl = liveApiUrl;
                     callback.success();
@@ -290,23 +360,29 @@ public class ApiConfig {
                 try {
                     parseLiveConfigContent(liveApiUrl, json);
                     if (!hasLiveConfigResult()) {
-                        callback.error("直播配置解析失败");
+                        callback.error("聚汇影视提示您：解析直播配置失败！");
+                        initLiveSettings();
+                        Hawk.put(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
+                        Hawk.put(HawkConfig.LIVE_GROUP_INDEX, 0);
                         return;
                     }
                     loadedLiveConfigUrl = liveApiUrl;
-                    FileUtils.saveCache(live_cache, json);
+                    FileUtils.saveCache(liveCache, json);
                     callback.success();
                 } catch (Throwable th) {
                     th.printStackTrace();
-                    callback.error("直播配置解析失败");
+                    callback.error("聚汇影视提示您：解析直播配置失败！");
+                    initLiveSettings();
+                    Hawk.put(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
+                    Hawk.put(HawkConfig.LIVE_GROUP_INDEX, 0);
                 }
             }
 
             @Override
             public void error(String error) {
-                if (live_cache.exists()) {
+                if (liveCache.exists()) {
                     try {
-                        parseLiveConfigContent(liveApiUrl, live_cache);
+                        parseLiveConfigContent(liveApiUrl, liveCache);
                         if (hasLiveConfigResult()) {
                             loadedLiveConfigUrl = liveApiUrl;
                             callback.success();
@@ -316,36 +392,16 @@ public class ApiConfig {
                         th.printStackTrace();
                     }
                 }
-                callback.error("直播配置拉取失败");
+                callback.error("聚汇影视提示您：直播配置拉取失败！");
+                initLiveSettings();
+                Hawk.put(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
+                Hawk.put(HawkConfig.LIVE_GROUP_INDEX, 0);
             }
         });
     }
 
-
     private boolean hasLiveConfigResult() {
         return liveChannelGroupList != null && !liveChannelGroupList.isEmpty();
-    }
-
-    public boolean shouldReloadLiveConfig() {
-        String apiUrl = Hawk.get(HawkConfig.LIVE_API_URL, "");
-        if (apiUrl.isEmpty()) apiUrl = Hawk.get(HawkConfig.API_URL, "");
-        return liveChannelGroupList == null || liveChannelGroupList.isEmpty() || !apiUrl.equals(loadedLiveConfigUrl);
-    }
-
-    public static String getLiveGroupIndexKey() {
-        String liveApiUrl = Hawk.get(HawkConfig.LIVE_API_URL, "");
-        if (liveApiUrl == null || liveApiUrl.length() == 0) {
-            return HawkConfig.LIVE_GROUP_INDEX;
-        }
-        return HawkConfig.LIVE_GROUP_INDEX + "_" + liveApiUrl;
-    }
-
-    public static int getLiveGroupIndex() {
-        return Hawk.get(getLiveGroupIndexKey(), 0);
-    }
-
-    public static void setLiveGroupIndex(int index) {
-        Hawk.put(getLiveGroupIndexKey(), index);
     }
 
     private static final int LOAD_JAR_MAX_RETRY = 1;
@@ -559,7 +615,7 @@ public class ApiConfig {
                             if (success) {
                                 callback.success();
                             } else {
-                                callback.error("md5缓存失效");
+                                callback.error("md5失效");
                             }
                         }
                     });
@@ -568,7 +624,7 @@ public class ApiConfig {
                 if (jarLoader.load(cache.getAbsolutePath())) {
                     callback.success();
                 } else {
-                    callback.error("md5缓存失效");
+                    callback.error("md5失效");
                 }
                 return;
             }
@@ -645,7 +701,7 @@ public class ApiConfig {
                                 if (retryLoad("request_error")) {
                                     return;
                                 }
-                                callback.error("网络错误");
+                                callback.error("");
                             }
                         }
                     });
@@ -654,7 +710,7 @@ public class ApiConfig {
                 if (retryLoad("request_error")) {
                     return;
                 }
-                callback.error("网络错误");
+                callback.error("");
             }
         });
     }
@@ -666,9 +722,9 @@ public class ApiConfig {
     private String readConfigFile(File f) throws Throwable {
         BufferedReader bReader = new BufferedReader(new InputStreamReader(new FileInputStream(f), "UTF-8"));
         StringBuilder sb = new StringBuilder();
-        String s = "";
+        String s;
         while ((s = bReader.readLine()) != null) {
-            sb.append(s + "\n");
+            sb.append(s).append("\n");
         }
         bReader.close();
         return sb.toString();
@@ -816,9 +872,9 @@ public class ApiConfig {
                 setSourceBean(sh);
             }
         }
-        // 需要使用vip解析的flag
+        // 需要使用vipflag
         vipParseFlags = DefaultConfig.safeJsonStringList(infoJson, "flags");
-        // 解析地址
+        // 解析
         parseBeanList.clear();
         if (infoJson.has("parses")) {
             JsonArray parses = infoJson.get("parses").getAsJsonArray();
@@ -836,7 +892,7 @@ public class ApiConfig {
                 addSuperParse();
             }
         }
-        // 获取默认解析
+        // 获取默认解
         if (parseBeanList != null && parseBeanList.size() > 0) {
             String defaultParse = Hawk.get(HawkConfig.DEFAULT_PARSE, "");
             if (!TextUtils.isEmpty(defaultParse)) {
@@ -852,34 +908,72 @@ public class ApiConfig {
         }
 
         // 直播源
-        String live_api_url=Hawk.get(HawkConfig.LIVE_API_URL,"");
-        if(live_api_url.isEmpty() || apiUrl.equals(live_api_url)){
-            LOG.i("echo-load-config_live");
+        String liveApiUrl = Hawk.get(HawkConfig.LIVE_API_URL, "");
+        if (liveApiUrl.isEmpty() || apiUrl.equals(liveApiUrl)) {
             initLiveSettings();
-            if(infoJson.has("lives")){
-                JsonArray lives_groups=infoJson.get("lives").getAsJsonArray();
-                int live_group_index=getLiveGroupIndex();
-                if(live_group_index>lives_groups.size()-1)live_group_index=0;
-                Hawk.put(HawkConfig.LIVE_GROUP_LIST,lives_groups);
-                //加载多源配置
-                try {
-                    ArrayList<LiveSettingItem> liveSettingItemList = new ArrayList<>();
-                    for (int i=0; i< lives_groups.size();i++) {
-                        JsonObject jsonObject = lives_groups.get(i).getAsJsonObject();
-                        String name = jsonObject.has("name")?jsonObject.get("name").getAsString():"线路"+(i+1);
-                        LiveSettingItem liveSettingItem = new LiveSettingItem();
-                        liveSettingItem.setItemIndex(i);
-                        liveSettingItem.setItemName(name);
-                        liveSettingItemList.add(liveSettingItem);
+            LOG.i("echo-load-config_live");
+            if (infoJson.has("lives")) {
+                JsonArray livesGroups = infoJson.get("lives").getAsJsonArray();
+                if (livesGroups.size() > 0) {
+                    int liveGroupIndex = Hawk.get(HawkConfig.LIVE_GROUP_INDEX, 0);
+                    if (liveGroupIndex > livesGroups.size() - 1) {           // xuameng 修复BUG
+                        Hawk.put(HawkConfig.LIVE_GROUP_INDEX, 0);
+                        Hawk.put(HawkConfig.LIVE_GROUP_LIST, livesGroups);
+                        // 刷新源
+                        try {
+                            ArrayList<LiveSettingItem> liveSettingItemList = new ArrayList<>();
+                            for (int i = 0; i < livesGroups.size(); i++) {
+                                JsonObject jsonObject = livesGroups.get(i).getAsJsonObject();
+                                String name = jsonObject.has("name") ? jsonObject.get("name").getAsString() : "聚汇直播";
+                                if (name == null || name.isEmpty()) {
+                                    name = "聚汇直播";
+                                }
+                                LiveSettingItem liveSettingItem = new LiveSettingItem();
+                                liveSettingItem.setItemIndex(i);
+                                liveSettingItem.setItemName(name);
+                                liveSettingItemList.add(liveSettingItem);
+                            }
+                            liveSettingGroupList.get(5).setLiveSettingItems(liveSettingItemList);
+                        } catch (Exception e) {
+                            // 任何可能抛出的异常
+                            e.printStackTrace();
+                        }
+                        int liveGroupIndexXu = Hawk.get(HawkConfig.LIVE_GROUP_INDEX, 0);
+                        JsonObject livesObjXu = livesGroups.get(liveGroupIndexXu).getAsJsonObject();
+                        loadLiveApi(livesObjXu);
+                    } else {
+                        Hawk.put(HawkConfig.LIVE_GROUP_LIST, livesGroups);
+                        // 刷新源
+                        try {
+                            ArrayList<LiveSettingItem> liveSettingItemList = new ArrayList<>();
+                            for (int i = 0; i < livesGroups.size(); i++) {
+                                JsonObject jsonObject = livesGroups.get(i).getAsJsonObject();
+                                String name = jsonObject.has("name") ? jsonObject.get("name").getAsString() : "聚汇直播";
+                                if (name == null || name.isEmpty()) {
+                                    name = "聚汇直播";
+                                }
+                                LiveSettingItem liveSettingItem = new LiveSettingItem();
+                                liveSettingItem.setItemIndex(i);
+                                liveSettingItem.setItemName(name);
+                                liveSettingItemList.add(liveSettingItem);
+                            }
+                            liveSettingGroupList.get(5).setLiveSettingItems(liveSettingItemList);
+                        } catch (Exception e) {
+                            // 任何可能抛出的异常
+                            e.printStackTrace();
+                        }
+                        JsonObject livesObj = livesGroups.get(liveGroupIndex).getAsJsonObject();
+                        loadLiveApi(livesObj);
                     }
-                    liveSettingGroupList.get(5).setLiveSettingItems(liveSettingItemList);
-                } catch (Exception e) {
-                    // 捕获任何可能发生的异常
-                    e.printStackTrace();
+                } else {
+                    initLiveSettings();
+                    Hawk.put(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
+                    Hawk.put(HawkConfig.LIVE_GROUP_INDEX, 0);
                 }
-
-                JsonObject livesOBJ = lives_groups.get(live_group_index).getAsJsonObject();
-                loadLiveApi(livesOBJ);
+            } else {
+                initLiveSettings();
+                Hawk.put(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
+                Hawk.put(HawkConfig.LIVE_GROUP_INDEX, 0);
             }
         }
 
@@ -902,7 +996,7 @@ public class ApiConfig {
             VideoParseRuler.clearRule();
             for (JsonElement oneHostRule : infoJson.getAsJsonArray("rules")) {
                 JsonObject obj = (JsonObject) oneHostRule;
-                //嗅探过滤规则
+                // 单域名规则
                 if (obj.has("host")) {
                     String host = obj.get("host").getAsString();
                     if (obj.has("rule")) {
@@ -928,7 +1022,7 @@ public class ApiConfig {
                         }
                     }
                 }
-                //广告过滤规则
+                // 多域名规则
                 if (obj.has("hosts") && obj.has("regex")) {
                     ArrayList<String> rule = new ArrayList<>();
                     ArrayList<String> ads = new ArrayList<>();
@@ -948,7 +1042,7 @@ public class ApiConfig {
                         VideoParseRuler.addHostRegex(host, ads);
                     }
                 }
-                //嗅探脚本规则 如 click
+                // 单域名脚本 click
                 if (obj.has("hosts") && obj.has("script")) {
                     ArrayList<String> scripts = new ArrayList<>();
                     JsonArray scriptArray = obj.getAsJsonArray("script");
@@ -966,10 +1060,10 @@ public class ApiConfig {
         }
 
         if (infoJson.has("doh")) {
-            String doh_json = infoJson.getAsJsonArray("doh").toString();
-            if(!Hawk.get(HawkConfig.DOH_JSON, "").equals(doh_json)){
+            String dohJson = infoJson.getAsJsonArray("doh").toString();
+            if (!Hawk.get(HawkConfig.DOH_JSON, "").equals(dohJson)) {
                 Hawk.put(HawkConfig.DOH_URL, 0);
-                Hawk.put(HawkConfig.DOH_JSON,doh_json);
+                Hawk.put(HawkConfig.DOH_JSON, dohJson);
             }
         } else {
             Hawk.put(HawkConfig.DOH_JSON, "");
@@ -989,14 +1083,14 @@ public class ApiConfig {
     private void loadDefaultConfig() {
         String defaultIJKADS="{\"ijk\":[{\"options\":[{\"name\":\"opensles\",\"category\":4,\"value\":\"0\"},{\"name\":\"framedrop\",\"category\":4,\"value\":\"1\"},{\"name\":\"soundtouch\",\"category\":4,\"value\":\"1\"},{\"name\":\"start-on-prepared\",\"category\":4,\"value\":\"1\"},{\"name\":\"http-detect-rangeupport\",\"category\":1,\"value\":\"0\"},{\"name\":\"fflags\",\"category\":1,\"value\":\"fastseek\"},{\"name\":\"skip_loop_filter\",\"category\":2,\"value\":\"48\"},{\"name\":\"reconnect\",\"category\":4,\"value\":\"1\"},{\"name\":\"enable-accurate-seek\",\"category\":4,\"value\":\"0\"},{\"name\":\"mediacodec\",\"category\":4,\"value\":\"0\"},{\"name\":\"mediacodec-all-videos\",\"category\":4,\"value\":\"0\"},{\"name\":\"mediacodec-auto-rotate\",\"category\":4,\"value\":\"0\"},{\"name\":\"mediacodec-handle-resolution-change\",\"category\":4,\"value\":\"0\"},{\"name\":\"mediacodec-hevc\",\"category\":4,\"value\":\"0\"},{\"name\":\"max-buffer-size\",\"category\":4,\"value\":\"15728640\"}],\"group\":\"软解码\"},{\"options\":[{\"name\":\"opensles\",\"category\":4,\"value\":\"0\"},{\"name\":\"framedrop\",\"category\":4,\"value\":\"1\"},{\"name\":\"soundtouch\",\"category\":4,\"value\":\"1\"},{\"name\":\"start-on-prepared\",\"category\":4,\"value\":\"1\"},{\"name\":\"http-detect-rangeupport\",\"category\":1,\"value\":\"0\"},{\"name\":\"fflags\",\"category\":1,\"value\":\"fastseek\"},{\"name\":\"skip_loop_filter\",\"category\":2,\"value\":\"48\"},{\"name\":\"reconnect\",\"category\":4,\"value\":\"1\"},{\"name\":\"enable-accurate-seek\",\"category\":4,\"value\":\"0\"},{\"name\":\"mediacodec\",\"category\":4,\"value\":\"1\"},{\"name\":\"mediacodec-all-videos\",\"category\":4,\"value\":\"1\"},{\"name\":\"mediacodec-auto-rotate\",\"category\":4,\"value\":\"1\"},{\"name\":\"mediacodec-handle-resolution-change\",\"category\":4,\"value\":\"1\"},{\"name\":\"mediacodec-hevc\",\"category\":4,\"value\":\"1\"},{\"name\":\"max-buffer-size\",\"category\":4,\"value\":\"15728640\"}],\"group\":\"硬解码\"}],\"ads\":[\"mimg.0c1q0l.cn\",\"www.googletagmanager.com\",\"www.google-analytics.com\",\"mc.usihnbcq.cn\",\"mg.g1mm3d.cn\",\"mscs.svaeuzh.cn\",\"cnzz.hhttm.top\",\"tp.vinuxhome.com\",\"cnzz.mmstat.com\",\"www.baihuillq.com\",\"s23.cnzz.com\",\"z3.cnzz.com\",\"c.cnzz.com\",\"stj.v1vo.top\",\"z12.cnzz.com\",\"img.mosflower.cn\",\"tips.gamevvip.com\",\"ehwe.yhdtns.com\",\"xdn.cqqc3.com\",\"www.jixunkyy.cn\",\"sp.chemacid.cn\",\"hm.baidu.com\",\"s9.cnzz.com\",\"z6.cnzz.com\",\"um.cavuc.com\",\"mav.mavuz.com\",\"wofwk.aoidf3.com\",\"z5.cnzz.com\",\"xc.hubeijieshikj.cn\",\"tj.tianwenhu.com\",\"xg.gars57.cn\",\"k.jinxiuzhilv.com\",\"cdn.bootcss.com\",\"ppl.xunzhuo123.com\",\"xomk.jiangjunmh.top\",\"img.xunzhuo123.com\",\"z1.cnzz.com\",\"s13.cnzz.com\",\"xg.huataisangao.cn\",\"z7.cnzz.com\",\"xg.huataisangao.cn\",\"z2.cnzz.com\",\"s96.cnzz.com\",\"q11.cnzz.com\",\"thy.dacedsfa.cn\",\"xg.whsbpw.cn\",\"s19.cnzz.com\",\"z8.cnzz.com\",\"s4.cnzz.com\",\"f5w.as12df.top\",\"ae01.alicdn.com\",\"www.92424.cn\",\"k.wudejia.com\",\"vivovip.mmszxc.top\",\"qiu.xixiqiu.com\",\"cdnjs.hnfenxun.com\",\"cms.qdwght.com\"]}";
         JsonObject defaultJson = gson.fromJson(defaultIJKADS, JsonObject.class);
-        // 广告地址
+        // 广告
         if (AdBlocker.isEmpty()) {
-            //默认广告拦截
+            // 默认广告
             for (JsonElement host : defaultJson.getAsJsonArray("ads")) {
                 AdBlocker.addAdHost(host.getAsString());
             }
         }
-        // IJK解码配置
+        // IJK
         if (ijkCodes == null) {
             ijkCodes = new ArrayList<>();
             boolean foundOldSelect = false;
@@ -1034,37 +1128,30 @@ public class ApiConfig {
     private void parseLiveConfigContent(String apiUrl, File f) throws Throwable {
         BufferedReader bReader = new BufferedReader(new InputStreamReader(new FileInputStream(f), "UTF-8"));
         StringBuilder sb = new StringBuilder();
-        String s = "";
+        String s;
         while ((s = bReader.readLine()) != null) {
-            sb.append(s + "\n");
+            sb.append(s).append("\n");
         }
         bReader.close();
         parseLiveConfigContent(apiUrl, sb.toString());
     }
 
     private void parseLiveConfigContent(String apiUrl, String content) {
-        String jsonContent = trimJsonObject(content);
-        if (!TextUtils.isEmpty(jsonContent)) {
-            try {
-                JsonObject infoJson = gson.fromJson(jsonContent, JsonObject.class);
-                if (infoJson != null && infoJson.has("lives")) {
-                    parseLiveJson(apiUrl, jsonContent);
-                    return;
-                }
-            } catch (Throwable ignored) {
-            }
-        }
         if (isLiveJsonContent(content)) {
-            parseLiveJson(apiUrl, jsonContent);
+            parseLiveJson(apiUrl, content);
         } else {
             parseLiveText(apiUrl, content);
         }
     }
 
     private boolean isLiveJsonContent(String content) {
-        if (content == null) return false;
+        if (content == null) {
+            return false;
+        }
         String text = content.trim();
-        if (text.startsWith("\ufeff")) text = text.substring(1).trim();
+        if (text.startsWith("\ufeff")) {
+            text = text.substring(1).trim();
+        }
         return text.startsWith("{");
     }
 
@@ -1084,16 +1171,26 @@ public class ApiConfig {
     }
 
     private String extractLiveTextEpg(String content) {
-        if (content == null) return "";
+        if (content == null) {
+            return "";
+        }
         String text = content.replace("\r\n", "\n").replace('\r', '\n');
         String[] lines = text.split("\n");
         for (String line : lines) {
             line = line.trim();
-            if (line.startsWith("\ufeff")) line = line.substring(1).trim();
-            if (!line.startsWith("#EXTM3U")) continue;
+            if (line.startsWith("\ufeff")) {
+                line = line.substring(1).trim();
+            }
+            if (!line.startsWith("#EXTM3U")) {
+                continue;
+            }
             String epg = extractQuotedAttr(line, "x-tvg-url");
-            if (epg.isEmpty()) epg = extractQuotedAttr(line, "tvg-url");
-            if (epg.isEmpty()) epg = extractQuotedAttr(line, "url-tvg");
+            if (epg.isEmpty()) {
+                epg = extractQuotedAttr(line, "tvg-url");
+            }
+            if (epg.isEmpty()) {
+                epg = extractQuotedAttr(line, "url-tvg");
+            }
             return epg;
         }
         return "";
@@ -1102,45 +1199,85 @@ public class ApiConfig {
     private String extractQuotedAttr(String line, String key) {
         String token = key + "=\"";
         int start = line.indexOf(token);
-        if (start < 0) return "";
+        if (start < 0) {
+            return "";
+        }
         start += token.length();
         int end = line.indexOf("\"", start);
-        if (end < 0) return "";
+        if (end < 0) {
+            return "";
+        }
         return line.substring(start, end).trim();
     }
 
     private String liveSpider = "";
 
     private void parseLiveJson(String apiUrl, String jsonStr) {
-        liveChannelGroupList.clear();
         JsonObject infoJson = gson.fromJson(jsonStr, JsonObject.class);
-        // 直播源
         initLiveSettings();
-        if(infoJson.has("lives")){
-            JsonArray lives_groups=infoJson.get("lives").getAsJsonArray();
-
-            int live_group_index=getLiveGroupIndex();
-            if(live_group_index>lives_groups.size()-1)live_group_index=0;
-            Hawk.put(HawkConfig.LIVE_GROUP_LIST,lives_groups);
-            //加载多源配置
-            try {
-                ArrayList<LiveSettingItem> liveSettingItemList = new ArrayList<>();
-                for (int i=0; i< lives_groups.size();i++) {
-                    JsonObject jsonObject = lives_groups.get(i).getAsJsonObject();
-                    String name = jsonObject.has("name")?jsonObject.get("name").getAsString():"线路"+(i+1);
-                    LiveSettingItem liveSettingItem = new LiveSettingItem();
-                    liveSettingItem.setItemIndex(i);
-                    liveSettingItem.setItemName(name);
-                    liveSettingItemList.add(liveSettingItem);
+        // 直播源
+        if (infoJson.has("lives")) {
+            JsonArray livesGroups = infoJson.get("lives").getAsJsonArray();
+            if (livesGroups.size() > 0) {
+                int liveGroupIndex = Hawk.get(HawkConfig.LIVE_GROUP_INDEX, 0);
+                if (liveGroupIndex > livesGroups.size() - 1) {           // xuameng 修复BUG
+                    Hawk.put(HawkConfig.LIVE_GROUP_INDEX, 0);
+                    Hawk.put(HawkConfig.LIVE_GROUP_LIST, livesGroups);
+                    // 刷新源
+                    try {
+                        ArrayList<LiveSettingItem> liveSettingItemList = new ArrayList<>();
+                        for (int i = 0; i < livesGroups.size(); i++) {
+                            JsonObject jsonObject = livesGroups.get(i).getAsJsonObject();
+                            String name = jsonObject.has("name") ? jsonObject.get("name").getAsString() : "聚汇直播";
+                            if (name == null || name.isEmpty()) {
+                                name = "聚汇直播";
+                            }
+                            LiveSettingItem liveSettingItem = new LiveSettingItem();
+                            liveSettingItem.setItemIndex(i);
+                            liveSettingItem.setItemName(name);
+                            liveSettingItemList.add(liveSettingItem);
+                        }
+                        liveSettingGroupList.get(5).setLiveSettingItems(liveSettingItemList);
+                    } catch (Exception e) {
+                        // 任何可能抛出的异常
+                        e.printStackTrace();
+                    }
+                    int liveGroupIndexXu = Hawk.get(HawkConfig.LIVE_GROUP_INDEX, 0);
+                    JsonObject livesObjXu = livesGroups.get(liveGroupIndexXu).getAsJsonObject();
+                    loadLiveApi(livesObjXu);
+                } else {
+                    Hawk.put(HawkConfig.LIVE_GROUP_LIST, livesGroups);
+                    // 刷新源
+                    try {
+                        ArrayList<LiveSettingItem> liveSettingItemList = new ArrayList<>();
+                        for (int i = 0; i < livesGroups.size(); i++) {
+                            JsonObject jsonObject = livesGroups.get(i).getAsJsonObject();
+                            String name = jsonObject.has("name") ? jsonObject.get("name").getAsString() : "聚汇直播";
+                            if (name == null || name.isEmpty()) {
+                                name = "聚汇直播";
+                            }
+                            LiveSettingItem liveSettingItem = new LiveSettingItem();
+                            liveSettingItem.setItemIndex(i);
+                            liveSettingItem.setItemName(name);
+                            liveSettingItemList.add(liveSettingItem);
+                        }
+                        liveSettingGroupList.get(5).setLiveSettingItems(liveSettingItemList);
+                    } catch (Exception e) {
+                        // 任何可能抛出的异常
+                        e.printStackTrace();
+                    }
+                    JsonObject livesObj = livesGroups.get(liveGroupIndex).getAsJsonObject();
+                    loadLiveApi(livesObj);
                 }
-                liveSettingGroupList.get(5).setLiveSettingItems(liveSettingItemList);
-            } catch (Exception e) {
-                // 捕获任何可能发生的异常
-                e.printStackTrace();
+            } else {
+                initLiveSettings();
+                Hawk.put(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
+                Hawk.put(HawkConfig.LIVE_GROUP_INDEX, 0);
             }
-
-            JsonObject livesOBJ = lives_groups.get(live_group_index).getAsJsonObject();
-            loadLiveApi(livesOBJ);
+        } else {
+            initLiveSettings();
+            Hawk.put(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
+            Hawk.put(HawkConfig.LIVE_GROUP_INDEX, 0);
         }
 
         myHosts = new HashMap<>();
@@ -1417,14 +1554,14 @@ public class ApiConfig {
                     return;
                 }
             }
-            //设置epg
+            // epg
             if (livesObj.has("epg")) {
                 String epg = livesObj.get("epg").getAsString();
                 Hawk.put(HawkConfig.EPG_URL, epg);
             } else {
                 Hawk.put(HawkConfig.EPG_URL, "");
             }
-            //直播播放器类型
+            // 直播
             if (livesObj.has("playerType")) {
                 String livePlayType = livesObj.get("playerType").getAsString();
                 Hawk.put(HawkConfig.LIVE_PLAY_TYPE, livePlayType);
