@@ -270,10 +270,7 @@ public class ApiConfig {
         final String liveApiUrl = apiUrl;
         String liveApiConfigUrl = configUrl(liveApiUrl);
         final String liveConfigKey = TempKey;
-        File liveCache = new File(App.getInstance().getCacheDir(), "live_config");
-        if (!liveCache.exists()) {
-            liveCache.mkdirs();
-        }
+        File liveCache = new File(App.getInstance().getFilesDir().getAbsolutePath() + "/" + MD5.encode(liveApiUrl));
         LOG.i("echo-load live config " + liveApiUrl);
         if (useCache && liveCache.exists()) {
             try {
