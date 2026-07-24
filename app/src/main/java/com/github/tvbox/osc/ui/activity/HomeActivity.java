@@ -524,8 +524,8 @@ public class HomeActivity extends BaseActivity {
     }
 
     private void loadHomeSort(boolean keepCurrentContent) { //xuameng 获取主页分类数据
-        skipNextUpdate = false;
-        if (keepCurrentContent){
+        skipNextUpdate = false;  //xuameng 重置打断
+        if (keepCurrentContent){ //xuameng 重载时才显示showloading
             showLoading();
         }
         SourceBean home = ApiConfig.get().getHomeSourceBean();
