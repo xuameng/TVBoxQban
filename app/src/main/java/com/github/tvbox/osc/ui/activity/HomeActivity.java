@@ -524,6 +524,7 @@ public class HomeActivity extends BaseActivity {
     }
 
     private void loadHomeSort(boolean keepCurrentContent) { //xuameng 获取主页分类数据
+        skipNextUpdate = false;
         if (keepCurrentContent){
             showLoading();
         }
