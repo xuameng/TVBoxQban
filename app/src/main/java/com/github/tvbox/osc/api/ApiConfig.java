@@ -194,75 +194,6 @@ public class ApiConfig {
     }
 
     public void loadConfig(boolean useCache, LoadConfigCallback callback, Activity activity) {
-        String apiliveUrl = Hawk.get(HawkConfig.LIVE_API_URL, "");
-        if (apiliveUrl.isEmpty()) {
-            apiliveUrl = Hawk.get(HawkConfig.API_URL, "http://xuameng.vicp.net:8082/jvhuiys/1/xu.json");
-        }
-        if (apiliveUrl.isEmpty()) {
-            callback.error("-1");
-            return;
-        }
-        final String liveApiUrl = apiliveUrl;
-        String liveApiConfigUrl = configUrl(liveApiUrl);
-        final String liveConfigKey = TempKey;
-        File liveCache = new File(App.getInstance().getFilesDir().getAbsolutePath() + "/" + MD5.encode(liveApiUrl));
-        LOG.i("echo-load live config " + liveApiUrl);
-        if (useCache && liveCache.exists()) {
-            try {
-                parseLiveConfigContent(liveApiUrl, liveCache);
-                if (hasLiveConfigResult()) {
-                    loadedLiveConfigUrl = liveApiUrl;
-                    callback.success();
-                    return;
-                }
-            } catch (Throwable th) {
-                th.printStackTrace();
-            }
-        }
-        fetchConfigAsync(liveApiUrl, liveApiConfigUrl, liveConfigKey, new ConfigFetchCallback() {
-            @Override
-            public void success(String json) {
-                try {
-                    parseLiveConfigContent(liveApiUrl, json);
-                    if (!hasLiveConfigResult()) {
-                        callback.error("聚汇影视提示您：解析直播配置失败！");
-                        initLiveSettings();
-                        Hawk.put(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
-                        Hawk.put(HawkConfig.LIVE_GROUP_INDEX, 0);
-                        return;
-                    }
-                    loadedLiveConfigUrl = liveApiUrl;
-                    FileUtils.saveCache(liveCache, json);
-                    callback.success();
-                } catch (Throwable th) {
-                    th.printStackTrace();
-                    callback.error("聚汇影视提示您：解析直播配置失败！");
-                    initLiveSettings();
-                    Hawk.put(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
-                    Hawk.put(HawkConfig.LIVE_GROUP_INDEX, 0);
-                }
-            }
-
-            @Override
-            public void error(String error) {
-                if (liveCache.exists()) {
-                    try {
-                        parseLiveConfigContent(liveApiUrl, liveCache);
-                        if (hasLiveConfigResult()) {
-                            loadedLiveConfigUrl = liveApiUrl;
-                            callback.success();
-                            return;
-                        }
-                    } catch (Throwable th) {
-                        th.printStackTrace();
-                    }
-                }
-                callback.error("聚汇影视提示您：直播配置拉取失败！");
-                initLiveSettings();
-                Hawk.put(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
-                Hawk.put(HawkConfig.LIVE_GROUP_INDEX, 0);
-            }
-        });
         String apiUrl = Hawk.get(HawkConfig.API_URL, "http://xuameng.vicp.net:8082/jvhuiys/1/xu.json");
         if (apiUrl.isEmpty()) {
             callback.error("-1");
@@ -402,6 +333,12 @@ public class ApiConfig {
 
     private boolean hasLiveConfigResult() {
         return liveChannelGroupList != null && !liveChannelGroupList.isEmpty();
+    }
+
+    public boolean shouldReloadLiveConfig() {
+        String apiUrl = Hawk.get(HawkConfig.LIVE_API_URL, "");
+        if (apiUrl.isEmpty()) apiUrl = Hawk.get(HawkConfig.API_URL, "http://xuameng.vicp.net:8082/jvhuiys/1/xu.json");
+        return liveChannelGroupList == null || liveChannelGroupList.isEmpty() || !apiUrl.equals(loadedLiveConfigUrl);
     }
 
     private static final int LOAD_JAR_MAX_RETRY = 1;
