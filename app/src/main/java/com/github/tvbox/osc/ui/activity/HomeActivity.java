@@ -360,6 +360,7 @@ public class HomeActivity extends BaseActivity {
     private TipDialog mConfigErrorDialog;
 
     private void initData() {
+        checkMicrophonePermission();  //xuameng音频权限
         refreshEmpty = false;	//xuameng打断加载判断
         if (dataInitOk && jarInitOk) {
             loadHomeSort(false);
@@ -393,7 +394,6 @@ public class HomeActivity extends BaseActivity {
                                     }
                                 }
                                 initData();
-                                checkMicrophonePermission();  //xuameng音频权限
                             }
                         }, 50);
                     }
@@ -417,7 +417,6 @@ public class HomeActivity extends BaseActivity {
                             public void run() {
                                 App.showToastShort(HomeActivity.this, "聚汇影视提示：jar加载失败！");
                                 initData();
-                                checkMicrophonePermission();  //xuameng音频权限
                             }
                         },50);
                     }
@@ -1021,7 +1020,6 @@ public class HomeActivity extends BaseActivity {
         jarInitOk = true;
         dataInitOk = true;
         skipNextUpdate=true;
-        cancelHomeSortLoading();
         clearHomePages();
         showSuccess();
         sortAdapter.setNewData(DefaultConfig.adjustSort(ApiConfig.get().getHomeSourceBean().getKey(), new ArrayList<>(), true));
