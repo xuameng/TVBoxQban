@@ -525,7 +525,9 @@ public class HomeActivity extends BaseActivity {
     }
 
     private void loadHomeSort(boolean keepCurrentContent) { //xuameng 获取主页分类数据
-        showLoading();
+        if (keepCurrentContent){
+            showLoading();
+        }
         SourceBean home = ApiConfig.get().getHomeSourceBean();
         homeSortLoading = keepCurrentContent;
         if (keepCurrentContent && home != null && home.getName() != null && !home.getName().isEmpty()) {
