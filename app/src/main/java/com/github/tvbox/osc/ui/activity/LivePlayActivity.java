@@ -3137,12 +3137,6 @@ public class LivePlayActivity extends BaseActivity {
             }
         }
 
-        if (list.isEmpty()) {
-            loadLiveConfigOnEnter();
-            return;
-        }
-        List < LiveChannelGroup > list = ApiConfig.get().getChannelGroupList();
-
         // xuameng如果原列表为空，或排除收藏组后没有其他组，则显示默认列表
         if (list.isEmpty() || !hasValidGroups) {
             JsonArray live_groups = Hawk.get(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
@@ -3167,7 +3161,7 @@ public class LivePlayActivity extends BaseActivity {
         }
     }
 
-	    private boolean loadingLiveConfigOnEnter = false;
+    private boolean loadingLiveConfigOnEnter = false;
 
     private void loadLiveConfigOnEnter() {
         if (loadingLiveConfigOnEnter) return;
@@ -3181,7 +3175,6 @@ public class LivePlayActivity extends BaseActivity {
                     public void run() {
                         loadingLiveConfigOnEnter = false;
                         initLiveChannelList();
-                        initLiveSettingGroupList();
                     }
                 });
             }
