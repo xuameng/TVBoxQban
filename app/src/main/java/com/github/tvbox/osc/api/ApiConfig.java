@@ -262,7 +262,7 @@ public class ApiConfig {
     public void loadLiveConfig(boolean useCache, LoadConfigCallback callback) {
         String apiUrl = Hawk.get(HawkConfig.LIVE_API_URL, "");
         if (apiUrl.isEmpty()) {
-            apiUrl = Hawk.get(HawkConfig.API_URL, "http://xuameng.vicp.net:8082/jvhuiys/1/xu.json");
+            apiUrl = Hawk.get(HawkConfig.API_URL, "");
         }
         if (apiUrl.isEmpty()) {
             callback.error("-1");
