@@ -3122,8 +3122,12 @@ public class LivePlayActivity extends BaseActivity {
     }
 
     private void initLiveChannelList() {
-        List < LiveChannelGroup > list = ApiConfig.get().getChannelGroupList();
+        if (ApiConfig.get().shouldReloadLiveConfig()) {
+            loadLiveConfigOnEnter();
+            return;
+        }
 
+        List<LiveChannelGroup> list = ApiConfig.get().getChannelGroupList();
         // xuameng排除"我的收藏"组，检查剩余组是否为空
         boolean hasValidGroups = false;
         for (LiveChannelGroup group : list) {
@@ -3132,6 +3136,12 @@ public class LivePlayActivity extends BaseActivity {
                 break;
             }
         }
+
+        if (list.isEmpty()) {
+            loadLiveConfigOnEnter();
+            return;
+        }
+        List < LiveChannelGroup > list = ApiConfig.get().getChannelGroupList();
 
         // xuameng如果原列表为空，或排除收藏组后没有其他组，则显示默认列表
         if (list.isEmpty() || !hasValidGroups) {
@@ -3156,6 +3166,49 @@ public class LivePlayActivity extends BaseActivity {
             initLiveState();
         }
     }
+
+	    private boolean loadingLiveConfigOnEnter = false;
+
+    private void loadLiveConfigOnEnter() {
+        if (loadingLiveConfigOnEnter) return;
+        loadingLiveConfigOnEnter = true;
+        showLoading();
+        ApiConfig.get().loadLiveConfig(true, new ApiConfig.LoadConfigCallback() {
+            @Override
+            public void success() {
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        loadingLiveConfigOnEnter = false;
+                        initLiveChannelList();
+                        initLiveSettingGroupList();
+                    }
+                });
+            }
+
+            @Override
+            public void error(String msg) {
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        loadingLiveConfigOnEnter = false;
+                        setDefaultLiveChannelList();
+                    }
+                });
+            }
+
+            @Override
+            public void notice(String msg) {
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        App.showToastShort(mContext, msg);
+                    }
+                });
+            }
+        });
+    }
+
     public void loadProxyLives(String url) {
         try {
             Uri parsedUrl = Uri.parse(url);
