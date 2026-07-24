@@ -322,6 +322,7 @@ public class HomeActivity extends BaseActivity {
         sourceViewModel.sortResult.observe(this, new Observer<AbsSortXml>() {
             @Override
             public void onChanged(AbsSortXml absXml) {
+                showSuccess();
                 if (skipNextUpdate) {
                     skipNextUpdate = false;
                     return;
@@ -333,7 +334,6 @@ public class HomeActivity extends BaseActivity {
                     return;
                 }
                 SourceBean home = ApiConfig.get().getHomeSourceBean();
-                showSuccess();
                 clearHomePages();
                 List<MovieSort.SortData> newSortData;
                 if (absXml != null && absXml.classes != null && absXml.classes.sortList != null) {
@@ -1020,6 +1020,7 @@ public class HomeActivity extends BaseActivity {
         jarInitOk = true;
         dataInitOk = true;
         skipNextUpdate=true;
+        cancelHomeSortLoading();
         clearHomePages();
         showSuccess();
         sortAdapter.setNewData(DefaultConfig.adjustSort(ApiConfig.get().getHomeSourceBean().getKey(), new ArrayList<>(), true));
