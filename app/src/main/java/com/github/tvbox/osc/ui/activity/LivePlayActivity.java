@@ -222,7 +222,6 @@ public class LivePlayActivity extends BaseActivity {
     private boolean isVideoplaying = false; //xuameng判断视频开始播放
     private boolean XuSource = false; //xuameng退出回看
     private boolean TimeoutChangeSource = false; //xuameng是否自动换源
-    private boolean useDefaultLiveChannelList = false; //xuameng 使用默认判断列表
     private int selectedChannelNumber = 0; // xuameng遥控器数字键输入的要切换的频道号码
     private TextView tvSelectedChannel; //xuameng频道编号
     private ImageView iv_circle_bg_xu; //xuameng音乐播放时图标
@@ -3081,7 +3080,6 @@ public class LivePlayActivity extends BaseActivity {
                 mHandler.removeCallbacks(mConnectTimeoutChangeSourceRun);  //xuameng BUG
                 mHandler.removeCallbacks(mConnectTimeoutChangeSourceRunBack);  //xuameng BUG
                 mHandler.removeCallbacks(mConnectTimeoutChangeSourceRunBuffer);  //xuameng BUG
-				useDefaultLiveChannelList = false;
                 recreate();
                 return;
             case 6: //xuameng渲染方式
@@ -3186,6 +3184,7 @@ public class LivePlayActivity extends BaseActivity {
                     public void run() {
                         loadingLiveConfigOnEnter = false;
                         setDefaultLiveChannelList();
+                        App.showToastShort(mContext, "聚汇直播提示您：直播列表获取错误！");
                     }
                 });
             }
@@ -4133,7 +4132,6 @@ public class LivePlayActivity extends BaseActivity {
     }
 
     private void setDefaultLiveChannelList() {      //xuameng 加载失败默认频道列表
-        useDefaultLiveChannelList = true;
         liveChannelGroupList.clear();
     
         // 1. xuameng先添加收藏组（即使为空）
@@ -4170,11 +4168,11 @@ public class LivePlayActivity extends BaseActivity {
     }
 
     private void initLiveObj(){   //xuameng 直播配置里有没有logo配置
-		if (useDefaultLiveChannelList){
-            return;
-		}
         int position=Hawk.get(HawkConfig.LIVE_GROUP_INDEX, 0);
         JsonArray live_groups=Hawk.get(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
+        if (live_groups == null || live_groups.size() == 0 || position < 0 || position >= live_groups.size()) {
+            return;
+        }
         JsonObject livesOBJ = live_groups.get(position).getAsJsonObject();
         if(livesOBJ.has("logo")){
             logoUrl = livesOBJ.get("logo").getAsString();    //xuameng 直播配置里有没有logo配置
