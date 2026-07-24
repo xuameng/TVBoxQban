@@ -856,68 +856,30 @@ public class ApiConfig {
         if(live_api_url.isEmpty() || apiUrl.equals(live_api_url)){
             LOG.i("echo-load-config_live");
             initLiveSettings();
-            if (infoJson.has("lives")) {
-                JsonArray livesGroups = infoJson.get("lives").getAsJsonArray();
-                if (livesGroups.size() > 0) {
-                    int liveGroupIndex = Hawk.get(HawkConfig.LIVE_GROUP_INDEX, 0);
-                    if (liveGroupIndex > livesGroups.size() - 1) {           // xuameng 修复BUG
-                        Hawk.put(HawkConfig.LIVE_GROUP_INDEX, 0);
-                        Hawk.put(HawkConfig.LIVE_GROUP_LIST, livesGroups);
-                        // 刷新源
-                        try {
-                            ArrayList<LiveSettingItem> liveSettingItemList = new ArrayList<>();
-                            for (int i = 0; i < livesGroups.size(); i++) {
-                                JsonObject jsonObject = livesGroups.get(i).getAsJsonObject();
-                                String name = jsonObject.has("name") ? jsonObject.get("name").getAsString() : "聚汇直播";
-                                if (name == null || name.isEmpty()) {
-                                    name = "聚汇直播";
-                                }
-                                LiveSettingItem liveSettingItem = new LiveSettingItem();
-                                liveSettingItem.setItemIndex(i);
-                                liveSettingItem.setItemName(name);
-                                liveSettingItemList.add(liveSettingItem);
-                            }
-                            liveSettingGroupList.get(5).setLiveSettingItems(liveSettingItemList);
-                        } catch (Exception e) {
-                            // 任何可能抛出的异常
-                            e.printStackTrace();
-                        }
-                        int liveGroupIndexXu = Hawk.get(HawkConfig.LIVE_GROUP_INDEX, 0);
-                        JsonObject livesObjXu = livesGroups.get(liveGroupIndexXu).getAsJsonObject();
-                        loadLiveApi(livesObjXu);
-                    } else {
-                        Hawk.put(HawkConfig.LIVE_GROUP_LIST, livesGroups);
-                        // 刷新源
-                        try {
-                            ArrayList<LiveSettingItem> liveSettingItemList = new ArrayList<>();
-                            for (int i = 0; i < livesGroups.size(); i++) {
-                                JsonObject jsonObject = livesGroups.get(i).getAsJsonObject();
-                                String name = jsonObject.has("name") ? jsonObject.get("name").getAsString() : "聚汇直播";
-                                if (name == null || name.isEmpty()) {
-                                    name = "聚汇直播";
-                                }
-                                LiveSettingItem liveSettingItem = new LiveSettingItem();
-                                liveSettingItem.setItemIndex(i);
-                                liveSettingItem.setItemName(name);
-                                liveSettingItemList.add(liveSettingItem);
-                            }
-                            liveSettingGroupList.get(5).setLiveSettingItems(liveSettingItemList);
-                        } catch (Exception e) {
-                            // 任何可能抛出的异常
-                            e.printStackTrace();
-                        }
-                        JsonObject livesObj = livesGroups.get(liveGroupIndex).getAsJsonObject();
-                        loadLiveApi(livesObj);
+            if(infoJson.has("lives")){
+                JsonArray lives_groups=infoJson.get("lives").getAsJsonArray();
+                int live_group_index=getLiveGroupIndex();
+                if(live_group_index>lives_groups.size()-1)live_group_index=0;
+                Hawk.put(HawkConfig.LIVE_GROUP_LIST,lives_groups);
+                //加载多源配置
+                try {
+                    ArrayList<LiveSettingItem> liveSettingItemList = new ArrayList<>();
+                    for (int i=0; i< lives_groups.size();i++) {
+                        JsonObject jsonObject = lives_groups.get(i).getAsJsonObject();
+                        String name = jsonObject.has("name")?jsonObject.get("name").getAsString():"线路"+(i+1);
+                        LiveSettingItem liveSettingItem = new LiveSettingItem();
+                        liveSettingItem.setItemIndex(i);
+                        liveSettingItem.setItemName(name);
+                        liveSettingItemList.add(liveSettingItem);
                     }
-                } else {
-                    initLiveSettings();
-                    Hawk.put(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
-                    Hawk.put(HawkConfig.LIVE_GROUP_INDEX, 0);
+                    liveSettingGroupList.get(5).setLiveSettingItems(liveSettingItemList);
+                } catch (Exception e) {
+                    // 捕获任何可能发生的异常
+                    e.printStackTrace();
                 }
-            } else {
-                initLiveSettings();
-                Hawk.put(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
-                Hawk.put(HawkConfig.LIVE_GROUP_INDEX, 0);
+
+                JsonObject livesOBJ = lives_groups.get(live_group_index).getAsJsonObject();
+                loadLiveApi(livesOBJ);
             }
         }
 
