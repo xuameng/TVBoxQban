@@ -3042,27 +3042,23 @@ public class LivePlayActivity extends BaseActivity {
                 // 1. 从Hawk获取直播组列表（关键：确保不为null）
                 JsonArray live_groups = Hawk.get(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
                 if (live_groups == null) {
-                    App.showToastShort(mContext, "聚汇直播提示您：直播源为空！");
                     return;
                 }
     
                 // 2. 检查position是否在有效范围内（避免索引越界）
                 if (position < 0 || position >= live_groups.size()) {
-                    App.showToastShort(mContext, "聚汇直播提示您：直播源为空！");
                     return;
                 }
     
                 // 3. 检查JsonElement是否为null或JsonNull（避免解析错误）
                 JsonElement element = live_groups.get(position);
                 if (element == null || element.isJsonNull()) {
-                    App.showToastShort(mContext, "聚汇直播提示您：直播源为空！");
                     return;
                 }
     
                 // 4. 解析为JsonObject（此时已确保安全）
                 JsonObject livesOBJxU = element.getAsJsonObject();
                 if (livesOBJxU == null || livesOBJxU.isJsonNull()) {
-                    App.showToastShort(mContext, "聚汇直播提示您：直播源为空！");
                     return;
                 }
                 if(position == liveSettingItemAdapter.getSelectedItemIndex()) return;
@@ -3072,7 +3068,6 @@ public class LivePlayActivity extends BaseActivity {
                     mVideoView.release();
                     mVideoView = null;
                 }
-              //  JsonArray live_groups = Hawk.get(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
                 JsonObject livesOBJ = live_groups.get(position).getAsJsonObject();
                 liveSettingItemAdapter.selectItem(position, true, true);
                 Hawk.put(HawkConfig.LIVE_GROUP_INDEX, position);
