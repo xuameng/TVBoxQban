@@ -3445,14 +3445,24 @@ public class LivePlayActivity extends BaseActivity {
             ? apiSettingGroups 
             : ApiConfig.get().createDefaultLiveSettingGroupList(); // 接口失败，用默认数据
         if(!listxu.isEmpty()) {
-          //  if(liveChannelGroupList.size() - 1 < 2) { //xuameng 只有两个频道组跨选分类BUG
-          //      Hawk.put(HawkConfig.LIVE_CROSS_GROUP, false);
-          //  }
             liveSettingGroupList.get(3).getLiveSettingItems().get(Hawk.get(HawkConfig.LIVE_CONNECT_TIMEOUT, 1)).setItemSelected(true);
             liveSettingGroupList.get(4).getLiveSettingItems().get(0).setItemSelected(Hawk.get(HawkConfig.LIVE_SHOW_TIME, false));
             liveSettingGroupList.get(4).getLiveSettingItems().get(1).setItemSelected(Hawk.get(HawkConfig.LIVE_SHOW_NET_SPEED, false));
             liveSettingGroupList.get(4).getLiveSettingItems().get(2).setItemSelected(Hawk.get(HawkConfig.LIVE_CHANNEL_REVERSE, false));
             liveSettingGroupList.get(4).getLiveSettingItems().get(3).setItemSelected(Hawk.get(HawkConfig.LIVE_CROSS_GROUP, false));
+
+            // ===== xuameng：换源设置，防止旧索引大于新列表长度 =====
+            List<LiveSettingItem> sourceItems = liveSettingGroupList.get(5).getLiveSettingItems();
+            if (sourceItems != null && !sourceItems.isEmpty()) {
+                int savedIndex = Hawk.get(HawkConfig.LIVE_GROUP_INDEX, 0);
+                // 关键：旧索引超出新列表长度时自动纠正
+                if (savedIndex >= sourceItems.size()) {
+                    savedIndex = 0;
+                    Hawk.put(HawkConfig.LIVE_GROUP_INDEX, 0); // 回写，防止下次再炸
+                }
+                sourceItems.get(savedIndex).setItemSelected(true);   //xuameng新增 换源
+            }
+
             if(live_groups != null) {
                 for(JsonElement element: live_groups) {
                     if(element.isJsonNull()) {
@@ -3461,7 +3471,6 @@ public class LivePlayActivity extends BaseActivity {
                     }
                 }
             }
-            liveSettingGroupList.get(5).getLiveSettingItems().get(Hawk.get(HawkConfig.LIVE_GROUP_INDEX, 0)).setItemSelected(true); //xuameng新增 换源
         }
     }
 
