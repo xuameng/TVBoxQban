@@ -1036,20 +1036,9 @@ public class ApiConfig {
         parseLiveConfigContent(apiUrl, sb.toString());
     }
 
-    private void parseLiveConfigContent(String apiUrl, String content) {
-        String jsonContent = trimJsonObject(content);
-        if (!TextUtils.isEmpty(jsonContent)) {
-            try {
-                JsonObject infoJson = gson.fromJson(jsonContent, JsonObject.class);
-                if (infoJson != null && infoJson.has("lives")) {
-                    parseLiveJson(apiUrl, jsonContent);
-                    return;
-                }
-            } catch (Throwable ignored) {
-            }
-        }
+    private void parseLiveConfigContent(String apiUrl, String content) {  //xuameng 简单判断够用了
         if (isLiveJsonContent(content)) {
-            parseLiveJson(apiUrl, jsonContent);
+            parseLiveJson(apiUrl, content);
         } else {
             parseLiveText(apiUrl, content);
         }
@@ -1106,6 +1095,7 @@ public class ApiConfig {
     private String liveSpider = "";
 
     private void parseLiveJson(String apiUrl, String jsonStr) {
+        liveChannelGroupList.clear();
         JsonObject infoJson = gson.fromJson(jsonStr, JsonObject.class);
         initLiveSettings();
         // 直播源
