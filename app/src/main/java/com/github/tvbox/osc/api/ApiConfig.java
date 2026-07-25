@@ -1117,6 +1117,16 @@ public class ApiConfig {
 
     private String liveSpider = "";
 
+    private void parseLiveJson(String apiUrl, File f) throws Throwable {
+        BufferedReader bReader = new BufferedReader(new InputStreamReader(new FileInputStream(f), "UTF-8"));
+        StringBuilder sb = new StringBuilder();
+        String s = "";
+        while ((s = bReader.readLine()) != null) {
+            sb.append(s + "\n");
+        }
+        bReader.close();
+        parseLiveJson(apiUrl, sb.toString());
+    }
     private void parseLiveJson(String apiUrl, String jsonStr) {
         JsonObject infoJson = gson.fromJson(jsonStr, JsonObject.class);
         initLiveSettings();
@@ -1184,6 +1194,20 @@ public class ApiConfig {
             Hawk.put(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
             Hawk.put(HawkConfig.LIVE_GROUP_INDEX, 0);
         }
+
+        myHosts = new HashMap<>();
+        if (infoJson.has("hosts")) {
+            JsonArray hostsArray = infoJson.getAsJsonArray("hosts");
+            for (int i = 0; i < hostsArray.size(); i++) {
+                String entry = hostsArray.get(i).getAsString();
+                String[] parts = entry.split("=", 2); // 只分割一次，防止 value 里有 =
+                if (parts.length == 2) {
+                    myHosts.put(parts[0], parts[1]);
+                }
+            }
+        }
+        LOG.i("echo-api-live-config-----------load");
+    }
 
         myHosts = new HashMap<>();
         if (infoJson.has("hosts")) {
