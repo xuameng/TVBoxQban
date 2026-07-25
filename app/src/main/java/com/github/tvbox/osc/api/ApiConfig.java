@@ -39,6 +39,9 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.lzy.okgo.OkGo;
+import com.lzy.okgo.callback.AbsCallback;
+import com.lzy.okgo.model.Response;
 import com.orhanobut.hawk.Hawk;
 
 import org.json.JSONObject;
