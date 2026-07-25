@@ -1209,20 +1209,6 @@ public class ApiConfig {
         LOG.i("echo-api-live-config-----------load");
     }
 
-        myHosts = new HashMap<>();
-        if (infoJson.has("hosts")) {
-            JsonArray hostsArray = infoJson.getAsJsonArray("hosts");
-            for (int i = 0; i < hostsArray.size(); i++) {
-                String entry = hostsArray.get(i).getAsString();
-                String[] parts = entry.split("=", 2); // 只分割一次，防止 value 中包含 =
-                if (parts.length == 2) {
-                    myHosts.put(parts[0], parts[1]);
-                }
-            }
-        }
-        LOG.i("echo-api-live-config-----------load");
-    }
-
     private final List<LiveSettingGroup> liveSettingGroupList = new ArrayList<>();
     private void initLiveSettings() {
 		ArrayList<String> groupNames = new ArrayList<>(Arrays.asList("线路选择", "画面比例", "播放解码", "超时换源", "偏好设置", "多源切换", "渲染方式", "直播音柱", "退出直播"));  //xuameng 换源
