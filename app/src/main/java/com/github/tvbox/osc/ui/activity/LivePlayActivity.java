@@ -3120,12 +3120,8 @@ public class LivePlayActivity extends BaseActivity {
     }
 
     private void initLiveChannelList() {
-        if (ApiConfig.get().shouldReloadLiveConfig()) {
-            loadLiveConfigOnEnter();
-            return;
-        }
+        List < LiveChannelGroup > list = ApiConfig.get().getChannelGroupList();
 
-        List<LiveChannelGroup> list = ApiConfig.get().getChannelGroupList();
         // xuameng排除"我的收藏"组，检查剩余组是否为空
         boolean hasValidGroups = false;
         for (LiveChannelGroup group : list) {
@@ -3158,49 +3154,6 @@ public class LivePlayActivity extends BaseActivity {
             initLiveState();
         }
     }
-
-    private boolean loadingLiveConfigOnEnter = false;
-
-    private void loadLiveConfigOnEnter() {
-        if (loadingLiveConfigOnEnter) return;
-        loadingLiveConfigOnEnter = true;
-        showLoading();
-        ApiConfig.get().loadLiveConfig(false, new ApiConfig.LoadConfigCallback() {
-            @Override
-            public void success() {
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        loadingLiveConfigOnEnter = false;
-                        initLiveChannelList();
-                    }
-                });
-            }
-
-            @Override
-            public void error(String msg) {
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        loadingLiveConfigOnEnter = false;
-                        setDefaultLiveChannelList();
-                        App.showToastShort(mContext, "聚汇直播提示您：直播列表获取错误！");
-                    }
-                });
-            }
-
-            @Override
-            public void notice(String msg) {
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        App.showToastShort(mContext, msg);
-                    }
-                });
-            }
-        });
-    }
-
     public void loadProxyLives(String url) {
         try {
             Uri parsedUrl = Uri.parse(url);
