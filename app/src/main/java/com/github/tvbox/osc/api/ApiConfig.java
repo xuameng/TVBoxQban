@@ -102,6 +102,10 @@ public class ApiConfig {
 
     private final String userAgent = "okhttp/3.15";
 
+    private final String requestAccept = "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9";
+
+    private String defaultLiveObjString="{\"lives\":[{\"name\":\"txt_m3u\",\"type\":0,\"url\":\"txt_m3u_url\"}]}";
+
     private ApiConfig() {
         LoadapiUrlXu(); // xuameng 若接口url为空，将API_URL重置为接口
         clearLoader();
