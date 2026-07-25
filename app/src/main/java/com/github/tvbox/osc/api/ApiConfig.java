@@ -39,9 +39,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.lzy.okgo.OkGo;
-import com.lzy.okgo.callback.AbsCallback;
-import com.lzy.okgo.model.Response;
 import com.orhanobut.hawk.Hawk;
 
 import org.json.JSONObject;
@@ -104,10 +101,6 @@ public class ApiConfig {
     private final Set<String> warmedSearchSpiderKeys = new HashSet<>();
 
     private final String userAgent = "okhttp/3.15";
-
-    private final String requestAccept = "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9";
-
-    private String defaultLiveObjString="{\"lives\":[{\"name\":\"txt_m3u\",\"type\":0,\"url\":\"txt_m3u_url\"}]}";
 
     private ApiConfig() {
         LoadapiUrlXu(); // xuameng 若接口url为空，将API_URL重置为接口
@@ -202,79 +195,6 @@ public class ApiConfig {
 
     public void loadConfig(boolean useCache, LoadConfigCallback callback, Activity activity) {
         String apiUrl = Hawk.get(HawkConfig.API_URL, "http://xuameng.vicp.net:8082/jvhuiys/1/xu.json");
-        //独立加载直播配置
-        String liveApiUrl = Hawk.get(HawkConfig.LIVE_API_URL, "");
-        String liveApiConfigUrl=configUrl(liveApiUrl);
-        if(!liveApiUrl.isEmpty() && !liveApiUrl.equals(apiUrl)){
-            if(liveApiUrl.contains(".txt") || liveApiUrl.contains(".m3u") || liveApiUrl.contains("=txt") || liveApiUrl.contains("=m3u")){
-                initLiveSettings();
-                defaultLiveObjString = defaultLiveObjString.replace("txt_m3u_url",liveApiConfigUrl);
-                parseLiveJson(liveApiUrl,defaultLiveObjString);
-            }else {
-                File live_cache = new File(App.getInstance().getFilesDir().getAbsolutePath() + "/" + MD5.encode(liveApiUrl));
-                if (useCache && live_cache.exists()) {
-                    try {
-                        parseLiveJson(liveApiUrl, live_cache);
-                    } catch (Throwable th) {
-                        th.printStackTrace();
-                    }
-                }else {
-                    OkGo.<String>get(liveApiConfigUrl)
-                            .headers("User-Agent", userAgent)
-                            .headers("Accept", requestAccept)
-                            .execute(new AbsCallback<String>() {
-                                @Override
-                                public void onSuccess(Response<String> response) {
-                                    try {
-                                        String json = response.body();
-                                        parseLiveJson(liveApiUrl, json);
-                                        FileUtils.saveCache(live_cache,json);
-                                    } catch (Throwable th) {
-                                        th.printStackTrace();
-                                        callback.notice("聚汇影视提示您：解析直播配置失败！");
-                                        initLiveSettings();
-                                        Hawk.put(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
-                                        Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
-                                    }
-                                }
-
-                                @Override
-                                public void onError(Response<String> response) {
-                                    super.onError(response);
-                                    if (live_cache.exists()) {
-                                        try {
-                                            parseLiveJson(liveApiUrl, live_cache);
-                                            callback.success();
-                                            return;
-                                        } catch (Throwable th) {
-                                            th.printStackTrace();
-                                        }
-                                    }
-                                    callback.notice("聚汇影视提示您：直播配置拉取失败！");
-                                    initLiveSettings();
-                                    Hawk.put(HawkConfig.LIVE_GROUP_LIST,new JsonArray());
-                                    Hawk.put(HawkConfig.LIVE_GROUP_INDEX,0);
-                                }
-
-                                public String convertResponse(okhttp3.Response response) throws Throwable {
-                                    String result = "";
-                                    if (response.body() == null) {
-                                        result = "";
-                                    }else {
-                                        result = FindResult(response.body().string(), TempKey);
-                                        if (liveApiUrl.startsWith("clan")) {
-                                            result = clanContentFix(clanToAddress(liveApiUrl), result);
-                                        }
-                                        //假相對路徑
-                                        result = fixContentPath(liveApiUrl,result);
-                                    }
-                                    return result;
-                                }
-                            });
-                }
-            }
-        }
-
         if (apiUrl.isEmpty()) {
             callback.error("-1");
             return;
@@ -295,71 +215,130 @@ public class ApiConfig {
                 th.printStackTrace();
             }
         }
-        String configUrl=configUrl(apiUrl);
-        // 使用内部存储，将当前配置地址写入到应用的私有目录中
-        //File configUrlFile = new File(App.getInstance().getFilesDir().getAbsolutePath() + "/config_url");
-        //FileUtils.saveCache(configUrlFile,configUrl);
-        OkGo.<String>get(configUrl)
-                .headers("User-Agent", userAgent)
-                .headers("Accept", requestAccept)
-                .tag("loadUrl")           //xuameng打断加载
-                .execute(new AbsCallback<String>() {
-                    @Override
-                    public void onSuccess(Response<String> response) {
-                        try {
-                            String json = response.body();
-                            if (switchApiCollectionIfNeeded(apiUrl, json)) {
-                                FileUtils.saveCache(cache,json);
-                                loadConfig(false, callback, activity);
-                                return;
-                            }
-                            clearApiLinesIfUnmatched(apiUrl);
-                            parseJson(apiUrl, json);
-                            FileUtils.saveCache(cache,json);
+        String configUrl = configUrl(apiUrl);
+        final String configKey = TempKey;
+
+        fetchConfigAsync(apiUrl, configUrl, configKey, new ConfigFetchCallback() {
+            @Override
+            public void success(String json) {
+                try {
+                    if (switchApiCollectionIfNeeded(apiUrl, json)) {
+                        FileUtils.saveCache(cache, json);
+                        loadConfig(false, callback, activity);
+                        return;
+                    }
+                    clearApiLinesIfUnmatched(apiUrl);
+                    parseJson(apiUrl, json);
+                    FileUtils.saveCache(cache, json);
+                    callback.success();
+                } catch (Throwable th) {
+                    th.printStackTrace();
+                    callback.error("聚汇影视提示您：解析配置失败！");
+                }
+            }
+
+            @Override
+            public void error(String error) {
+                if (cache.exists()) {
+                    try {
+                        String json = readConfigFile(cache);
+                        if (switchApiCollectionIfNeeded(apiUrl, json)) {
+                            loadConfig(false, callback, activity);
+                            return;
+                        }
+                        clearApiLinesIfUnmatched(apiUrl);
+                        parseJson(apiUrl, json);
+                        callback.success();
+                        return;
+                    } catch (Throwable th) {
+                        th.printStackTrace();
+                    }
+                }
+                callback.error("聚汇影视提示您：拉取配置失败！\n" + error);
+            }
+        });
+    }
+
+    public void loadLiveConfig(boolean useCache, LoadConfigCallback callback) {
+        String apiUrl = Hawk.get(HawkConfig.LIVE_API_URL, "");
+        if (apiUrl.isEmpty()) {
+            apiUrl = Hawk.get(HawkConfig.API_URL, "");
+        }
+        if (apiUrl.isEmpty()) {
+            callback.error("-1");
+            return;
+        }
+        final String liveApiUrl = apiUrl;
+        String liveApiConfigUrl = configUrl(liveApiUrl);
+        final String liveConfigKey = TempKey;
+        File liveCache = new File(App.getInstance().getFilesDir().getAbsolutePath() + "/" + MD5.encode(liveApiUrl));
+        LOG.i("echo-load live config " + liveApiUrl);
+        if (useCache && liveCache.exists()) {
+            try {
+                parseLiveConfigContent(liveApiUrl, liveCache);
+                if (hasLiveConfigResult()) {
+                    loadedLiveConfigUrl = liveApiUrl;
+                    callback.success();
+                    return;
+                }
+            } catch (Throwable th) {
+                th.printStackTrace();
+            }
+        }
+        fetchConfigAsync(liveApiUrl, liveApiConfigUrl, liveConfigKey, new ConfigFetchCallback() {
+            @Override
+            public void success(String json) {
+                try {
+                    parseLiveConfigContent(liveApiUrl, json);
+                    if (!hasLiveConfigResult()) {
+                        callback.error("聚汇影视提示您：解析直播配置失败！");
+                        initLiveSettings();
+                        Hawk.put(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
+                        Hawk.put(HawkConfig.LIVE_GROUP_INDEX, 0);
+                        return;
+                    }
+                    loadedLiveConfigUrl = liveApiUrl;
+                    FileUtils.saveCache(liveCache, json);
+                    callback.success();
+                } catch (Throwable th) {
+                    th.printStackTrace();
+                    callback.error("聚汇影视提示您：解析直播配置失败！");
+                    initLiveSettings();
+                    Hawk.put(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
+                    Hawk.put(HawkConfig.LIVE_GROUP_INDEX, 0);
+                }
+            }
+
+            @Override
+            public void error(String error) {
+                if (liveCache.exists()) {
+                    try {
+                        parseLiveConfigContent(liveApiUrl, liveCache);
+                        if (hasLiveConfigResult()) {
+                            loadedLiveConfigUrl = liveApiUrl;
                             callback.success();
-                        } catch (Throwable th) {
-                            th.printStackTrace();
-                            callback.error("聚汇影视提示您：解析配置失败！");
+                            return;
                         }
+                    } catch (Throwable th) {
+                        th.printStackTrace();
                     }
+                }
+                callback.error("聚汇影视提示您：直播配置拉取失败！");
+                initLiveSettings();
+                Hawk.put(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
+                Hawk.put(HawkConfig.LIVE_GROUP_INDEX, 0);
+            }
+        });
+    }
 
-                    @Override
-                    public void onError(Response<String> response) {
-                        super.onError(response);
-                        if (cache.exists()) {
-                            try {
-                                String json = readConfigFile(cache);
-                                if (switchApiCollectionIfNeeded(apiUrl, json)) {
-                                    loadConfig(false, callback, activity);
-                                    return;
-                                }
-                                clearApiLinesIfUnmatched(apiUrl);
-                                parseJson(apiUrl, json);
-                                callback.success();
-                                return;
-                            } catch (Throwable th) {
-                                th.printStackTrace();
-                            }
-                        }
-                        callback.error("聚汇影视提示您：拉取配置失败！\n" + (response.getException() != null ? response.getException().getMessage() : ""));
-                    }
+    private boolean hasLiveConfigResult() {
+        return liveChannelGroupList != null && !liveChannelGroupList.isEmpty();
+    }
 
-                    public String convertResponse(okhttp3.Response response) throws Throwable {
-                        String result = "";
-                        if (response.body() == null) {
-                            result = "";
-                        } else {
-                            result = FindResult(response.body().string(), TempKey);
-                        }
-
-                        if (apiUrl.startsWith("clan")) {
-                            result = clanContentFix(clanToAddress(apiUrl), result);
-                        }
-                        //假相對路徑
-                        result = fixContentPath(apiUrl,result);
-                        return result;
-                    }
-                });
+    public boolean shouldReloadLiveConfig() {
+        String apiUrl = Hawk.get(HawkConfig.LIVE_API_URL, "");
+        if (apiUrl.isEmpty()) apiUrl = Hawk.get(HawkConfig.API_URL, "");
+        return liveChannelGroupList == null || liveChannelGroupList.isEmpty() || !apiUrl.equals(loadedLiveConfigUrl);
     }
 
     private static final int LOAD_JAR_MAX_RETRY = 1;
@@ -380,6 +359,59 @@ public class ApiConfig {
         void success(String body);
 
         void error(String error);
+    }
+
+    private void fetchConfigAsync(final String apiUrl, final String requestUrl, final String configKey, final ConfigFetchCallback callback) {
+        configLoadExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                String result = "";
+                String error = "";
+                okhttp3.Response response = null;
+                try {
+                    okhttp3.Request request = new okhttp3.Request.Builder()
+                            .url(requestUrl)
+                            .build();
+                    okhttp3.OkHttpClient client = OkGoHelper.getDefaultClient();
+                    if (client == null) {
+                        client = com.github.catvod.net.OkHttp.client();
+                    }
+                    response = client.newCall(request).execute();
+                    if (!response.isSuccessful()) {
+                        error = "HTTP " + response.code();
+                    } else if (response.body() == null) {
+                        error = "empty body";
+                    } else {
+                        result = FindResult(response.body().string(), configKey);
+                        if (apiUrl.startsWith("clan")) {
+                            result = clanContentFix(clanToAddress(apiUrl), result);
+                        }
+                        result = fixContentPath(apiUrl, result);
+                    }
+                } catch (Throwable th) {
+                    error = th.getMessage();
+                    if (TextUtils.isEmpty(error)) {
+                        error = th.toString();
+                    }
+                } finally {
+                    if (response != null) {
+                        closeQuietly(response.body());
+                    }
+                }
+                final String finalResult = result;
+                final String finalError = error;
+                mainHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (TextUtils.isEmpty(finalError)) {
+                            callback.success(finalResult);
+                        } else {
+                            callback.error(finalError);
+                        }
+                    }
+                });
+            }
+        });
     }
 
     private void loadJarAsync(File file, JarLoadCallback callback) {
@@ -1117,16 +1149,6 @@ public class ApiConfig {
 
     private String liveSpider = "";
 
-    private void parseLiveJson(String apiUrl, File f) throws Throwable {
-        BufferedReader bReader = new BufferedReader(new InputStreamReader(new FileInputStream(f), "UTF-8"));
-        StringBuilder sb = new StringBuilder();
-        String s = "";
-        while ((s = bReader.readLine()) != null) {
-            sb.append(s + "\n");
-        }
-        bReader.close();
-        parseLiveJson(apiUrl, sb.toString());
-    }
     private void parseLiveJson(String apiUrl, String jsonStr) {
         JsonObject infoJson = gson.fromJson(jsonStr, JsonObject.class);
         initLiveSettings();
@@ -1200,7 +1222,7 @@ public class ApiConfig {
             JsonArray hostsArray = infoJson.getAsJsonArray("hosts");
             for (int i = 0; i < hostsArray.size(); i++) {
                 String entry = hostsArray.get(i).getAsString();
-                String[] parts = entry.split("=", 2); // 只分割一次，防止 value 里有 =
+                String[] parts = entry.split("=", 2); // 只分割一次，防止 value 中包含 =
                 if (parts.length == 2) {
                     myHosts.put(parts[0], parts[1]);
                 }
