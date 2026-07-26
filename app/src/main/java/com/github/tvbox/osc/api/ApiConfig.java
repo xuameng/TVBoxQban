@@ -332,9 +332,13 @@ public class ApiConfig {
     }
 
     public boolean shouldReloadLiveConfig() {
-        String apiUrl = Hawk.get(HawkConfig.LIVE_API_URL, "");
-        if (apiUrl.isEmpty()) apiUrl = Hawk.get(HawkConfig.API_URL, "");
-        return  !apiUrl.equals(loadedLiveConfigUrl);
+
+
+        String apiUrl = Hawk.get(HawkConfig.API_URL, "http://xuameng.vicp.net:8082/jvhuiys/1/xu.json");
+        //独立加载直播配置
+        String liveApiUrl = Hawk.get(HawkConfig.LIVE_API_URL, "");
+        if (liveApiUrl.isEmpty()) liveApiUrl = apiUrl;
+        return !liveApiUrl.equals(apiUrl);
     }
 
     private static final int LOAD_JAR_MAX_RETRY = 1;
