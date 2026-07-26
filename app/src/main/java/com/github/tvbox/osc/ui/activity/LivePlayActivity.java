@@ -3114,12 +3114,8 @@ public class LivePlayActivity extends BaseActivity {
         mHideSettingLayoutRunXu();
     }
 
-    private boolean hasLiveConfigResult() {
-        return liveChannelGroupList != null && !liveChannelGroupList.isEmpty();
-    }
-
     private void initLiveChannelList() {
-        if (ApiConfig.get().shouldReloadLiveConfig() && !hasLiveConfigResult() && !loadingLiveSuccess) {   //xuameng 直播配置单独加载
+        if (ApiConfig.get().shouldReloadLiveConfig() && !loadingLiveSuccess) {   //xuameng 直播配置单独加载
             loadLiveConfigOnEnter();
 			App.showToastShort(mContext, "222222222222222222222222222222");
             return;
