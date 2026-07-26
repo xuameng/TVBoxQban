@@ -3162,7 +3162,7 @@ public class LivePlayActivity extends BaseActivity {
         if (loadingLiveConfigOnEnter) return;
         loadingLiveConfigOnEnter = true;
         showLoading();
-        ApiConfig.get().loadLiveConfig(false, new ApiConfig.LoadConfigCallback() {
+        ApiConfig.get().loadLiveConfig(true, new ApiConfig.LoadConfigCallback() {
             @Override
             public void success() {
                 mHandler.post(new Runnable() {
