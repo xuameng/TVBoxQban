@@ -82,12 +82,11 @@ public class ApiConfig {
     private List<IJKCode> ijkCodes;
     private String spider = null;
     private String currentPlaySourceKey = "";
-    private String loadedLiveConfigUrl = "";
+    private String loadedLiveConfigUrl = "";  //xuameng直播默认地址等于API地址
     public String wallpaper = "";
     private String danmaku = ""; // xuameng 弹幕
     public String musicwallpaper = "";   // xuameng背景图
     public String JvhuiWarning = "";   // xuameng版权提示
-
     private final SourceBean emptyHome = new SourceBean();
 
     private final JarLoader jarLoader = new JarLoader();
@@ -190,6 +189,7 @@ public class ApiConfig {
 
     public void loadConfig(boolean useCache, LoadConfigCallback callback, Activity activity) {
         String apiUrl = Hawk.get(HawkConfig.API_URL, "http://xuameng.vicp.net:8082/jvhuiys/1/xu.json");
+        loadedLiveConfigUrl = apiUrl;
         if (apiUrl.isEmpty()) {
             callback.error("-1");
             return;
@@ -273,7 +273,6 @@ public class ApiConfig {
             try {
                 parseLiveConfigContent(liveApiUrl, live_cache);
                 if (hasLiveConfigResult()) {
-                    loadedLiveConfigUrl = liveApiUrl;
                     callback.success();
                     return;
                 }
@@ -293,7 +292,6 @@ public class ApiConfig {
                         Hawk.put(HawkConfig.LIVE_GROUP_INDEX, 0);
                         return;
                     }
-                    loadedLiveConfigUrl = liveApiUrl;
                     FileUtils.saveCache(live_cache, json);
                     callback.success();
                 } catch (Throwable th) {
@@ -311,7 +309,6 @@ public class ApiConfig {
                     try {
                         parseLiveConfigContent(liveApiUrl, live_cache);
                         if (hasLiveConfigResult()) {
-                            loadedLiveConfigUrl = liveApiUrl;
                             callback.success();
                             return;
                         }
@@ -332,13 +329,9 @@ public class ApiConfig {
     }
 
     public boolean shouldReloadLiveConfig() {
-
-
-        String apiUrl = Hawk.get(HawkConfig.API_URL, "http://xuameng.vicp.net:8082/jvhuiys/1/xu.json");
-        //独立加载直播配置
         String liveApiUrl = Hawk.get(HawkConfig.LIVE_API_URL, "");
-        if (liveApiUrl.isEmpty()) liveApiUrl = apiUrl;
-        return !liveApiUrl.equals(apiUrl);
+        if (liveApiUrl.isEmpty()) liveApiUrl = loadedLiveConfigUrl;
+        return !liveApiUrl.equals(loadedLiveConfigUrl);
     }
 
     private static final int LOAD_JAR_MAX_RETRY = 1;
@@ -817,6 +810,7 @@ public class ApiConfig {
         // 直播源
         String live_api_url = Hawk.get(HawkConfig.LIVE_API_URL, "");
         if (live_api_url.isEmpty() || apiUrl.equals(live_api_url)) {
+            loadingApiToLiveApi = true;  //xuameng 是否需要单独载入直播配置地址
             LOG.i("echo-load-config_live");
             initLiveSettings();
             if (infoJson.has("lives")) {
