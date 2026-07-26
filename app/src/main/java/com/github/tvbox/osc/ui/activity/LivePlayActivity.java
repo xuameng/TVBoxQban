@@ -3119,7 +3119,7 @@ public class LivePlayActivity extends BaseActivity {
     }
 
     private void initLiveChannelList() {
-        if (ApiConfig.get().shouldReloadLiveConfig() && !hasLiveConfigResult()) {   //xuameng 直播配置单独加载
+        if (ApiConfig.get().shouldReloadLiveConfig() && !hasLiveConfigResult() && !loadingLiveSuccess) {   //xuameng 直播配置单独加载
             loadLiveConfigOnEnter();
 			App.showToastShort(mContext, "222222222222222222222222222222");
             return;
