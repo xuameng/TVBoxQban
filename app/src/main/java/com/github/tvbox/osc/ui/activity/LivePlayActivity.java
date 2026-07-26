@@ -330,7 +330,7 @@ public class LivePlayActivity extends BaseActivity {
         liveIconNullBg = findViewById(R.id.live_icon_null_bg);
         liveIconNullText = findViewById(R.id.live_icon_null_text);
         imgLiveIcon.setVisibility(View.GONE);
-        imgLiveIconXu.setVisibility(View.GONE); //XUAMENG无频道信息显示
+        imgLiveIconXu.setVisibility(View.VISIBLE); //XUAMENG无频道信息显示
         liveIconNullText.setVisibility(View.VISIBLE);
         liveIconNullBg.setVisibility(View.INVISIBLE);
         sBar = (SeekBar) findViewById(R.id.pb_progressbar);
@@ -339,7 +339,6 @@ public class LivePlayActivity extends BaseActivity {
         tv_duration = (TextView) findViewById(R.id.tv_duration);
         iv_playpause = (TextView) findViewById(R.id.iv_playpause);
         iv_play = findViewById(R.id.iv_play);
-        HideBottomEpg();  //隐藏底部菜单
         if(show) {
             ll_right_top_loading.setVisibility(View.GONE); //xuameng右上菜单隐藏
             view_line_XU.setVisibility(View.INVISIBLE); //xuamengEPG中的横线
@@ -3115,8 +3114,12 @@ public class LivePlayActivity extends BaseActivity {
         mHideSettingLayoutRunXu();
     }
 
+    private boolean hasLiveConfigResult() {
+        return liveChannelGroupList != null && !liveChannelGroupList.isEmpty();
+    }
+
     private void initLiveChannelList() {
-        if (ApiConfig.get().shouldReloadLiveConfig()) {   //xuameng 直播配置单独加载
+        if (ApiConfig.get().shouldReloadLiveConfig() && !hasLiveConfigResult()) {   //xuameng 直播配置单独加载
             loadLiveConfigOnEnter();
 			App.showToastShort(mContext, "222222222222222222222222222222");
             return;
@@ -3157,6 +3160,7 @@ public class LivePlayActivity extends BaseActivity {
     }
 
     private boolean loadingLiveConfigOnEnter = false;
+    private boolean loadingLiveSuccess = false;
 
     private void loadLiveConfigOnEnter() {    //xuameng 直播配置单独加载
         if (loadingLiveConfigOnEnter) return;
@@ -3169,6 +3173,7 @@ public class LivePlayActivity extends BaseActivity {
                     @Override
                     public void run() {
                         loadingLiveConfigOnEnter = false;
+                        loadingLiveSuccess = true;
                         initLiveChannelList();
                         initLiveSettingGroupList();
                     }
