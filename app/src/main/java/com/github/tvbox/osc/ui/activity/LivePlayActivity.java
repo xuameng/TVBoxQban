@@ -3115,7 +3115,7 @@ public class LivePlayActivity extends BaseActivity {
     }
 
     private void initLiveChannelList() {
-        if (ApiConfig.get().shouldReloadLiveConfig()) {   //xuameng 直播配置单独加载
+        if (ApiConfig.get().shouldReloadLiveConfig() && !loadingLiveSuccess) {   //xuameng 直播配置单独加载
             loadLiveConfigOnEnter();
 			App.showToastShort(mContext, "222222222222222222222222222222");
             return;
@@ -3156,6 +3156,7 @@ public class LivePlayActivity extends BaseActivity {
     }
 
     private boolean loadingLiveConfigOnEnter = false;
+    private boolean loadingLiveSuccess = false;
 
     private void loadLiveConfigOnEnter() {    //xuameng 直播配置单独加载
         if (loadingLiveConfigOnEnter) return;
@@ -3168,6 +3169,7 @@ public class LivePlayActivity extends BaseActivity {
                     @Override
                     public void run() {
                         loadingLiveConfigOnEnter = false;
+                        loadingLiveSuccess = true;
                         initLiveChannelList();
                         initLiveSettingGroupList();
                     }
