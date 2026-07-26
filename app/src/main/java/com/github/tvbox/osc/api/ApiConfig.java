@@ -810,7 +810,6 @@ public class ApiConfig {
         // 直播源
         String live_api_url = Hawk.get(HawkConfig.LIVE_API_URL, "");
         if (live_api_url.isEmpty() || apiUrl.equals(live_api_url)) {
-            loadingApiToLiveApi = true;  //xuameng 是否需要单独载入直播配置地址
             LOG.i("echo-load-config_live");
             initLiveSettings();
             if (infoJson.has("lives")) {
