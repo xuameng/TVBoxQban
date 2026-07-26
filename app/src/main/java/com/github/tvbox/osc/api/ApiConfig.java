@@ -267,13 +267,7 @@ public class ApiConfig {
         final String liveApiUrl = apiUrl;
         String liveApiConfigUrl = configUrl(liveApiUrl);
         final String liveConfigKey = TempKey;
-        // xuameng创建（或获取）子目录
-        File cacheDir = new File(App.getInstance().getCacheDir(), "live_cache");
-        if (!cacheDir.exists()) {
-            cacheDir.mkdirs(); // 确保目录存在，不存在就建
-        }
-        // xuameng在子目录下生成缓存文件
-        File live_cache = new File(cacheDir, MD5.encode(liveApiUrl));
+        File live_cache = new File(App.getInstance().getFilesDir().getAbsolutePath() + "/" + MD5.encode(liveApiUrl));
         LOG.i("echo-load live config " + liveApiUrl);
         if (useCache && live_cache.exists()) {
             try {
