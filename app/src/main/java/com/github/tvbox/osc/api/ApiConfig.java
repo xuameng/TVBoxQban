@@ -331,7 +331,7 @@ public class ApiConfig {
     public boolean shouldReloadLiveConfig() {
         String liveApiUrl = Hawk.get(HawkConfig.LIVE_API_URL, "");
         if (liveApiUrl.isEmpty()) liveApiUrl = loadedLiveConfigUrl;
-        return !liveApiUrl.equals(loadedLiveConfigUrl);
+        return liveChannelGroupList == null || liveChannelGroupList.isEmpty() || !liveApiUrl.equals(loadedLiveConfigUrl);
     }
 
     private static final int LOAD_JAR_MAX_RETRY = 1;
