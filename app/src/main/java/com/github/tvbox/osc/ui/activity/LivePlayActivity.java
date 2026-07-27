@@ -3257,9 +3257,7 @@ public class LivePlayActivity extends BaseActivity {
                             });
                             return;
                         }
-                        JsonArray livesArray = TxtSubscribe.parseToJsonArray(sortJson);
 
-                        ApiConfig.get().loadLives(livesArray);
                         List<LiveChannelGroup> list = ApiConfig.get().getChannelGroupList();
                         if (list.isEmpty()) {
                             mHandler.post(new Runnable() {
@@ -3302,10 +3300,10 @@ public class LivePlayActivity extends BaseActivity {
                 public void onSuccess(Response < String > response) {
                     new Thread(() -> {
                         try {
-                            JsonArray livesArray = TxtSubscribe.parseToJsonArray(response.body());
+            
                             runOnUiThread(() -> {
                                 JsonArray live_groups = Hawk.get(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
-                                ApiConfig.get().loadLives(livesArray);
+                 
                                 List < LiveChannelGroup > list = ApiConfig.get().getChannelGroupList();
 
                                 // xuameng排除"我的收藏"组，检查剩余组是否为空
