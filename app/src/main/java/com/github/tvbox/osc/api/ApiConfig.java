@@ -93,11 +93,11 @@ public class ApiConfig {
     private final JsLoader jsLoader = new JsLoader();
     private final Gson gson;
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
-    private final ExecutorService configLoadExecutor = Executors.newSingleThreadExecutor();
-    private final ExecutorService configLoadLiveExecutor = Executors.newSingleThreadExecutor();
-    private final ExecutorService warmSearchSpidersExecutor = Executors.newSingleThreadExecutor();
-    private final ExecutorService jarLoadExecutor = Executors.newSingleThreadExecutor();
-    private final ExecutorService danmuSearchExecutor = Executors.newSingleThreadExecutor();
+    private final ExecutorService configLoadExecutor = Executors.newSingleThreadExecutor();  //xuameng配置线程池
+    private final ExecutorService configLoadLiveExecutor = Executors.newSingleThreadExecutor(); //xuameng直播线程池
+    private final ExecutorService warmSearchSpiders = Executors.newSingleThreadExecutor();  //xuameng预热搜索线程池
+    private final ExecutorService jarLoadExecutor = Executors.newSingleThreadExecutor();  //xuameng loadjar线程池
+    private final ExecutorService danmuSearchExecutor = Executors.newSingleThreadExecutor();  //xuameng 弹幕线程池
     private final Set<String> warmedSearchSpiderKeys = new HashSet<>();
 
     private final String userAgent = "okhttp/3.15";
@@ -196,7 +196,7 @@ public class ApiConfig {
             callback.error("-1");
             return;
         }
-        File cache = new File(App.getInstance().getFilesDir().getAbsolutePath() + "/" + MD5.encode(apiUrl));
+        File cache = new File(FileUtils.getLiveCacheDir(),MD5.encode(apiUrl));
         if (useCache && cache.exists()) {
             try {
                 String json = readConfigFile(cache);
@@ -403,7 +403,7 @@ public class ApiConfig {
         });
     }
 
-    private void fetchConfigLiveAsync(final String apiUrl, final String requestUrl, final String configKey, final ConfigFetchCallback callback) {
+    private void fetchConfigLiveAsync(final String apiUrl, final String requestUrl, final String configKey, final ConfigFetchCallback callback) {  //xuameng 主要防止与配置的线程池冲突
         configLoadLiveExecutor.execute(new Runnable() {
             @Override
             public void run() {
@@ -1556,7 +1556,7 @@ public class ApiConfig {
             String spiderApiKey = source.getJar() + "|" + source.getApi();
             if (!spiderApis.add(spiderApiKey)) sharedSpiderApis.add(spiderApiKey);
         }
-        warmSearchSpidersExecutor.execute(new Runnable() {
+        configLoadExecutor.execute(new Runnable() {
             @Override
             public void run() {
                 LOG.i("echo-warm-spider start");
