@@ -3163,7 +3163,7 @@ public class LivePlayActivity extends BaseActivity {
         showLoading();
 
         // xuameng放进子线程
-        new Thread(() -> ApiConfig.get().loadLiveConfig(false, new ApiConfig.LoadConfigCallback() {
+        new Thread(() -> ApiConfig.get().loadLiveConfig(true, new ApiConfig.LoadConfigCallback() {
 
             @Override
             public void success() {
