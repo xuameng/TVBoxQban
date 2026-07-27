@@ -12,27 +12,34 @@ object JavaUtil {
     fun findLiveLastChannel(liveChannelGroupList: List<LiveChannelGroup>): Pair<Int, Int> {
         val lastChannelName = HawkUtils.getLastLiveChannel()
         val lastChannelGroupName = HawkUtils.getLastLiveChannelGroup()
-        return liveChannelGroupList.find { it.groupName == lastChannelGroupName }?.let {
-            val channelItem =
-                it.liveChannels.find { channelItem -> channelItem.channelName == lastChannelName }
-            //如果该分组未查询到那么 走全局搜索
-            if (channelItem == null) null else it.groupIndex to channelItem.channelIndex
-        } ?: let {
-            var noPassWordGroupIndex = -1
-            liveChannelGroupList.forEach {
-                it.liveChannels.forEach { liceChannel ->
-                    if (liceChannel.channelName == lastChannelName) {
-                        return it.groupIndex to liceChannel.channelIndex
+
+        return liveChannelGroupList
+            .find { it.groupName == lastChannelGroupName }
+            ?.let { group ->
+                // ✅ 关键修复：liveChannels 可能为 null
+                group.liveChannels?.find { it.channelName == lastChannelName }
+                    ?.let { channel ->
+                        group.groupIndex to channel.channelIndex
                     }
-                    if (noPassWordGroupIndex == -1 && it.groupPassword.isEmpty()) {
-                        noPassWordGroupIndex = it.groupIndex
+            }
+            ?: run {
+                var noPassWordGroupIndex = -1
+
+                liveChannelGroupList.forEach { group ->
+                    // ✅ 关键修复：安全调用 + 空列表兜底
+                    group.liveChannels?.forEach { channel ->
+                        if (channel.channelName == lastChannelName) {
+                            return group.groupIndex to channel.channelIndex
+                        }
+                    }
+
+                    if (noPassWordGroupIndex == -1 && group.groupPassword.isEmpty()) {
+                        noPassWordGroupIndex = group.groupIndex
                     }
                 }
+
+                if (noPassWordGroupIndex == -1) noPassWordGroupIndex = 0
+                noPassWordGroupIndex to 0
             }
-            if (noPassWordGroupIndex == -1) noPassWordGroupIndex = 0
-            noPassWordGroupIndex to 0
-        }
     }
-
-
 }
