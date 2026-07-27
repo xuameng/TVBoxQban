@@ -3124,19 +3124,19 @@ public class LivePlayActivity extends BaseActivity {
                 break;
             }
         }
-    boolean liveListInvalid = list.isEmpty() || !hasValidGroups;
 
-    // ✅ 两个条件同时满足才重新加载
-    if (ApiConfig.get().shouldReloadLiveConfig()
-            && !loadingLiveSuccess
-            && liveListInvalid) {
-        loadLiveConfigOnEnter();
-App.showToastShort(mContext, "222222222222222222");
-        return;
-    }
+        boolean liveListInvalid = list.isEmpty() || !hasValidGroups;
+
+        // xuameng两个条件同时满足才重新加载
+        if (ApiConfig.get().shouldReloadLiveConfig()
+                && !loadingLiveSuccess
+                && liveListInvalid) {
+            loadLiveConfigOnEnter();
+            return;
+        }
 
         // xuameng如果原列表为空，或排除收藏组后没有其他组，则显示默认列表
-        if (list.isEmpty() || !hasValidGroups) {
+        if (liveListInvalid) {
             JsonArray live_groups = Hawk.get(HawkConfig.LIVE_GROUP_LIST, new JsonArray());
             if(live_groups.size() > 1) {
                 setDefaultLiveChannelList();
