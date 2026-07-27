@@ -3146,9 +3146,7 @@ public class LivePlayActivity extends BaseActivity {
         }
         if(list.size() == 1 && list.get(0).getGroupName().startsWith("http://127.0.0.1")) {
             loadProxyLives(list.get(0).getGroupName());
-			App.showToastShort(mContext, "2222222222222222222222");
         } else {
-			App.showToastShort(mContext, "111111111111111111");
             liveChannelGroupList.clear();
             liveChannelGroupList.addAll(list);
             showSuccess();
@@ -3165,7 +3163,7 @@ public class LivePlayActivity extends BaseActivity {
         showLoading();
 
         // xuameng放进子线程
-        new Thread(() -> ApiConfig.get().loadLiveConfig(true, new ApiConfig.LoadConfigCallback() {
+        new Thread(() -> ApiConfig.get().loadLiveConfig(false, new ApiConfig.LoadConfigCallback() {
 
             @Override
             public void success() {
