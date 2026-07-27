@@ -4,8 +4,8 @@ import com.github.tvbox.osc.bean.LiveChannelGroup
 
 /**
  *Automatic generated
- *@author Created by
- *@date 18/6/2024 19:11
+ *@author Created by  xuameng
+ *@date 27/7/2026 22:22
  */
 object JavaUtil {
     @JvmStatic
@@ -16,7 +16,7 @@ object JavaUtil {
         return liveChannelGroupList
             .find { it.groupName == lastChannelGroupName }
             ?.let { group ->
-                // ✅ 关键修复：liveChannels 可能为 null
+                // xuameng 关键修复：liveChannels 可能为 null
                 group.liveChannels?.find { it.channelName == lastChannelName }
                     ?.let { channel ->
                         group.groupIndex to channel.channelIndex
@@ -26,7 +26,7 @@ object JavaUtil {
                 var noPassWordGroupIndex = -1
 
                 liveChannelGroupList.forEach { group ->
-                    // ✅ 关键修复：安全调用 + 空列表兜底
+                    // xuameng 关键修复：安全调用 + 空列表兜底
                     group.liveChannels?.forEach { channel ->
                         if (channel.channelName == lastChannelName) {
                             return group.groupIndex to channel.channelIndex
