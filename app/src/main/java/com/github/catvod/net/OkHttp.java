@@ -120,18 +120,18 @@ public class OkHttp {
     /**
      * xuameng 兼容旧 spider：
      */
-public static Call newCallCall(String url) {
-    return client().newCall(new Request.Builder().url(url).build());
+    public static Response newCall(Request request) throws IOException {
+        return client().newCall(request).execute();
+    }
+
+@Deprecated
+public static Response newCall(String url) throws IOException {
+    return newCallResponse(url);
 }
 
-/**
- * 兼容旧 spider.jar（merge 包）
- * 字节码依赖：
- *   OkHttp.newCall(Ljava/lang/String;)Lokhttp3/Response;
- */
-public static Response newCall(String url) throws IOException {
-    return client().newCall(new Request.Builder().url(url).build()).execute();
-}
+    public static Call newCall(String url, String tag) {
+        return client().newCall(new Request.Builder().url(url).tag(tag).build());
+    }
 
     public static Call newCall(OkHttpClient client, String url) {
         return client.newCall(new Request.Builder().url(url).build());
