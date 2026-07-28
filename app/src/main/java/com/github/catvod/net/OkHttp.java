@@ -147,37 +147,50 @@ public class OkHttp {
         cancel(client(), tag);
     }
 
-public static okhttp3.Response newCallDownload(String url) throws IOException {
+/** 兼容旧 spider */
+public static Response newCallDownload(String url) throws IOException {
     return newCall(url).execute();
 }
 
-public static okhttp3.Response newCallDownload(String url, okhttp3.Headers headers) throws IOException {
-    return newCall(url, headers).execute();
+/** 兼容旧 spider */
+public static Response newCallDownload(String url, Headers headers) throws IOException {
+    return client().newCall(
+            new Request.Builder()
+                    .url(url)
+                    .headers(headers)
+                    .build()
+    ).execute();
 }
 
-// 老 spider 常见写法：直接传保存路径
+/** 兼容旧 spider：下载到本地文件 */
 public static void newCallDownload(String url, String path) throws IOException {
     try (Response res = newCall(url).execute()) {
-        File out = new File(path);
-        out.getParentFile().mkdirs();
-        try (InputStream is = res.body().byteStream();
-             FileOutputStream fos = new FileOutputStream(out)) {
-            byte[] buf = new byte[8192];
-            int len;
-            while ((len = is.read(buf)) != -1) fos.write(buf, 0, len);
-        }
+        writeToFile(res, path);
     }
 }
 
-public static void newCallDownload(String url, okhttp3.Headers headers, String path) throws IOException {
-    try (Response res = newCall(url, headers).execute()) {
-        File out = new File(path);
-        out.getParentFile().mkdirs();
-        try (InputStream is = res.body().byteStream();
-             FileOutputStream fos = new FileOutputStream(out)) {
-            byte[] buf = new byte[8192];
-            int len;
-            while ((len = is.read(buf)) != -1) fos.write(buf, 0, len);
+/** 兼容旧 spider：带 header 下载 */
+public static void newCallDownload(String url, Headers headers, String path) throws IOException {
+    try (Response res = client().newCall(
+            new Request.Builder()
+                    .url(url)
+                    .headers(headers)
+                    .build()
+    ).execute()) {
+        writeToFile(res, path);
+    }
+}
+
+/** 公共写文件逻辑 */
+private static void writeToFile(Response res, String path) throws IOException {
+    File out = new File(path);
+    out.getParentFile().mkdirs();
+    try (InputStream is = res.body().byteStream();
+         FileOutputStream fos = new FileOutputStream(out)) {
+        byte[] buf = new byte[8192];
+        int len;
+        while ((len = is.read(buf)) != -1) {
+            fos.write(buf, 0, len);
         }
     }
 }
