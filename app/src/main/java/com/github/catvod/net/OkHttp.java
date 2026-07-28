@@ -181,7 +181,7 @@ public class OkHttp {
 
     /** xuameng兼容旧 spider */
     public static void newCallDownload(String url, String path) throws IOException {
-        try (Response res = newCall(url).execute()) {
+        try (Response res = client().newCall(new Request.Builder().url(url).build()).execute()) {
         writeToFile(res, path);
         }
     }
