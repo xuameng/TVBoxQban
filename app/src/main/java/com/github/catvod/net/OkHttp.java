@@ -124,9 +124,13 @@ public class OkHttp {
         return client().newCall(request).execute();
     }
 
+    public static Call newCall(String url, String tag) {
+        return client().newCall(new Request.Builder().url(url).tag(tag).build());
+    }
+
 @Deprecated
-public static Response newCall(Object url) throws IOException {
-    return newCallResponse((String) url);
+public static okhttp3.Response newCall(java.lang.String url) throws java.io.IOException {
+    return newCallResponse(url);
 }
 
     public static Call newCall(OkHttpClient client, String url) {
