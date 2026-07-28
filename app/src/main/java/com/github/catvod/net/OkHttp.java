@@ -19,7 +19,6 @@ import okhttp3.Response;
 import java.io.IOException;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 
 public class OkHttp {
@@ -119,7 +118,8 @@ public class OkHttp {
      */
     @Deprecated
     public static Response newCall(String url) throws IOException {
-        return newCallInternal(url).execute();
+        Call call = newCallInternal(url);
+        return call.execute();
     }
 
     /**
@@ -127,7 +127,8 @@ public class OkHttp {
      */
     @Deprecated
     public static Response newCall(Request request) throws IOException {
-        return client().newCall(request).execute();
+        Call call = client().newCall(request);
+        return call.execute();
     }
 
     public static Call newCall(String url, String tag) {
