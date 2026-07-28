@@ -159,7 +159,7 @@ public static Response newCall(String url) throws IOException {
 
     /** xuameng兼容旧 spider */
     public static Response newCallDownload(String url) throws IOException {
-        return newCall(url).execute();
+        return newCallInternal(url).execute();
     }
 
     /** xuameng兼容旧 spider */
@@ -174,7 +174,7 @@ public static Response newCall(String url) throws IOException {
 
     /** xuameng兼容旧 spider：下载到本地文件 */
     public static void newCallDownload(String url, String path) throws IOException {
-        try (Response res = newCall(url).execute()) {
+        try (Response res = newCallInternal(url).execute()) {
             writeToFile(res, path);
         }
     }
