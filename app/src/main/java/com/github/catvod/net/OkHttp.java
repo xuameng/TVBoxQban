@@ -118,8 +118,7 @@ public class OkHttp {
      */
     @Deprecated
     public static Response newCall(String url) throws IOException {
-        Call call = newCallInternal(url);
-        return call.execute();
+        return newCallInternal(url).execute();
     }
 
     /**
@@ -127,8 +126,7 @@ public class OkHttp {
      */
     @Deprecated
     public static Response newCall(Request request) throws IOException {
-        Call call = client().newCall(request);
-        return call.execute();
+        return client().newCall(request).execute();
     }
 
     public static Call newCall(String url, String tag) {
@@ -173,7 +171,7 @@ public class OkHttp {
 
     /** xuameng兼容旧 spider */
     public static Response newCallDownload(String url) throws IOException {
-        return newCall(url).execute();
+        return client().newCall(new Request.Builder().url(url).build()).execute();
     }
 
     /** xuameng兼容旧 spider */
