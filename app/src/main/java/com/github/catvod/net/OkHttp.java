@@ -149,9 +149,15 @@ public class OkHttp {
         return client.newCall(new Request.Builder().url(url).tag(tag).build());
     }
 
-    public static Call newCall(String url, Map<String, String> headers) {
-        return client().newCall(new Request.Builder().url(url).headers(headers(headers)).build());
-    }
+public static Call newCallForResult(String url, Map<String, String> headers) {
+    return client().newCall(new Request.Builder().url(url).headers(headers(headers)).build());
+}
+
+@Deprecated
+public static Response newCall(String url, Map<String, String> headers) throws IOException {
+    return newCallForResult(url, headers).execute();
+}
+
 
     public static Call newCall(String url, Headers headers) {
         return client().newCall(new Request.Builder().url(url).headers(headers).build());
