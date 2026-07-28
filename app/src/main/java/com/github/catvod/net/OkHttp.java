@@ -192,41 +192,48 @@ public class OkHttp {
                 .build());
     }
 
-    /* ===================== Response（仅给老 spider 用） ===================== */
+    /* =====================  xuameng 兼容旧spider  Response（仅给老 spider 用） ===================== */
 
-    /**
-     * xuameng 兼容旧 spider：返回 Response
-     */
     @Deprecated
     public static Response newCallResp(String url) throws IOException {
         return newCallInternal(url).execute();
     }
 
-    /**
-     * xuameng 兼容旧 spider：返回 Response
-     */
     @Deprecated
     public static Response newCallResp(Request request) throws IOException {
         return client().newCall(request).execute();
     }
 
-    /**
-     * xuameng 兼容旧 spider：返回 Response
-     */
+    @Deprecated
+    public static Response newCallResp(String url, Headers headers) throws IOException {
+        return newCall(url, headers).execute();
+    }
+
+    @Deprecated
+    public static Response newCallResp(String url, Map<String, String> headers, RequestBody body) throws IOException {
+        return newCall(url, headers, body).execute();
+    }
+
+    @Deprecated
+    public static Response newCall(String url, Map<String, String> headers) throws IOException {
+        return newCallResp(url, headers);
+    }
+    @Deprecated
+    public static Response newCallResp(String url, RequestBody body, String tag) throws IOException {
+        return newCall(url, body, tag).execute();
+    }
+
     @Deprecated
     public static Response newCallResp(String url, Map<String, String> headers) throws IOException {
         return newCall(url, headers).execute();
     }
 
-    /**
-     * xuameng 兼容旧 spider：带自定义 client
-     */
     @Deprecated
     public static Response newCallResp(OkHttpClient client, String url) throws IOException {
         return client.newCall(new Request.Builder().url(url).build()).execute();
     }
 
-    /* ===================== 下载相关 ===================== */
+    /* =====================  xuameng 兼容旧spider  Response（仅给老 spider 用）下载相关 ===================== */
 
     public static Response newCallDownload(String url) throws IOException {
         return newCallResp(url);
