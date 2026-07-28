@@ -107,9 +107,21 @@ public class OkHttp {
         return client().newCall(new Request.Builder().url(url).build());
     }
 
+    /**
+     * 兼容旧 spider：
+     */
     public static Response newCallResponse(String url) throws IOException {
         return newCall(url).execute();
     }
+
+    /**
+     * 兼容旧 spider：
+     */
+    public static Response newCall(Request request) throws IOException {
+        return client().newCall(request).execute();
+    }
+
+
 
     public static Call newCall(String url, String tag) {
         return client().newCall(new Request.Builder().url(url).tag(tag).build());
