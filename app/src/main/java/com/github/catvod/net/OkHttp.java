@@ -16,6 +16,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import java.io.IOException;
 
 public class OkHttp {
 
@@ -98,9 +99,9 @@ public class OkHttp {
         }
     }
 
-    public static Call newCall(String url) {
-        return client().newCall(new Request.Builder().url(url).build());
-    }
+public static okhttp3.Response newCall(String url) throws IOException {
+    return client().newCall(new Request.Builder().url(url).build()).execute();
+}
 
     public static Call newCall(String url, String tag) {
         return client().newCall(new Request.Builder().url(url).tag(tag).build());
@@ -133,14 +134,6 @@ public class OkHttp {
     public static Call newCall(OkHttpClient client, String url, RequestBody body) {
         return client.newCall(new Request.Builder().url(url).post(body).build());
     }
-
-public static okhttp3.Response newCall(String url) throws IOException {
-    return client().newCall(new Request.Builder().url(url).build()).execute();
-}
-
-public static okhttp3.Response newCallResponse(String url) throws java.io.IOException {
-    return newCall(url).execute();
-}
 
     public static void cancel(String tag) {
         cancel(client(), tag);
