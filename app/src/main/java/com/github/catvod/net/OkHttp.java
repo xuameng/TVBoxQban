@@ -17,6 +17,10 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import java.io.IOException;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 public class OkHttp {
 
@@ -69,15 +73,15 @@ public class OkHttp {
         return redirect ? client(timeout) : noRedirect(timeout);
     }
 
-public static String string(String url) {
-    if (url == null || !url.startsWith("http")) return "";
-    try (Response res = client().newCall(new Request.Builder().url(url).build()).execute()) {
-        return res.body() != null ? res.body().string() : "";
-    } catch (Exception e) {
-        e.printStackTrace();
-        return "";
+    public static String string(String url) {
+        if (url == null || !url.startsWith("http")) return "";
+        try (Response res = client().newCall(new Request.Builder().url(url).build()).execute()) {
+            return res.body() != null ? res.body().string() : "";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "";
+        }
     }
-}
 
     public static String string(String url, long timeout) {
         if (url == null || !url.startsWith("http")) return "";
@@ -103,9 +107,9 @@ public static String string(String url) {
         return client().newCall(new Request.Builder().url(url).build());
     }
 
-public static Response newCallResponse(String url) throws IOException {
-    return newCall(url).execute();
-}
+    public static Response newCallResponse(String url) throws IOException {
+        return newCall(url).execute();
+    }
 
     public static Call newCall(String url, String tag) {
         return client().newCall(new Request.Builder().url(url).tag(tag).build());
@@ -142,6 +146,41 @@ public static Response newCallResponse(String url) throws IOException {
     public static void cancel(String tag) {
         cancel(client(), tag);
     }
+
+public static okhttp3.Response newCallDownload(String url) throws IOException {
+    return newCall(url).execute();
+}
+
+public static okhttp3.Response newCallDownload(String url, okhttp3.Headers headers) throws IOException {
+    return newCall(url, headers).execute();
+}
+
+// 老 spider 常见写法：直接传保存路径
+public static void newCallDownload(String url, String path) throws IOException {
+    try (Response res = newCall(url).execute()) {
+        File out = new File(path);
+        out.getParentFile().mkdirs();
+        try (InputStream is = res.body().byteStream();
+             FileOutputStream fos = new FileOutputStream(out)) {
+            byte[] buf = new byte[8192];
+            int len;
+            while ((len = is.read(buf)) != -1) fos.write(buf, 0, len);
+        }
+    }
+}
+
+public static void newCallDownload(String url, okhttp3.Headers headers, String path) throws IOException {
+    try (Response res = newCall(url, headers).execute()) {
+        File out = new File(path);
+        out.getParentFile().mkdirs();
+        try (InputStream is = res.body().byteStream();
+             FileOutputStream fos = new FileOutputStream(out)) {
+            byte[] buf = new byte[8192];
+            int len;
+            while ((len = is.read(buf)) != -1) fos.write(buf, 0, len);
+        }
+    }
+}
 
     public static void cancel(OkHttpClient client, String tag) {
         if (client == null || tag == null) return;
