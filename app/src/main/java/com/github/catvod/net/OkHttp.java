@@ -106,10 +106,9 @@ public class OkHttp {
         }
     }
 
-    public static Call newCall(String url) {
-        return client().newCall(new Request.Builder().url(url).build());
-    }
-
+public static Response newCall(String url) throws IOException {
+    return client().newCall(new Request.Builder().url(url).build()).execute();
+}
     /**
      * xuameng 兼容旧 spider：
      */
@@ -124,9 +123,9 @@ public class OkHttp {
         return client().newCall(request).execute();
     }
 
-public static Response newCall(String url) throws IOException {
-    return client().newCall(new Request.Builder().url(url).build()).execute();
-}
+    public static Call newCall(String url, String tag) {
+        return client().newCall(new Request.Builder().url(url).tag(tag).build());
+    }
 
     public static Call newCall(OkHttpClient client, String url) {
         return client.newCall(new Request.Builder().url(url).build());
