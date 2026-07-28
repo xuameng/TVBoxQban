@@ -97,7 +97,7 @@ public class OkHttp {
 
     public static String string(String url, Map<String, String> headers) {
         if (url == null || !url.startsWith("http")) return "";
-        try (Response res = newCall(url, headers).execute()) {
+        try (Response res = newCall(url, headers)) {
             return res.body() != null ? res.body().string() : "";
         } catch (Exception e) {
             e.printStackTrace();
@@ -129,11 +129,10 @@ public class OkHttp {
         return client().newCall(request).execute();
     }
 
-@Deprecated
-public static Response newCall(String url, Map<String, String> headers) throws IOException {
-    return newCallForResult(url, headers).execute();
-}
-
+    @Deprecated
+    public static Response newCall(String url, Map<String, String> headers) throws IOException {
+        return newCallForResult(url, headers).execute();
+    }
 
     public static Call newCall(String url, String tag) {
         return client().newCall(new Request.Builder().url(url).tag(tag).build());
@@ -147,10 +146,9 @@ public static Response newCall(String url, Map<String, String> headers) throws I
         return client.newCall(new Request.Builder().url(url).tag(tag).build());
     }
 
-public static Call newCallForResult(String url, Map<String, String> headers) {
-    return client().newCall(new Request.Builder().url(url).headers(headers(headers)).build());
-}
-
+    public static Call newCallForResult(String url, Map<String, String> headers) {
+        return client().newCall(new Request.Builder().url(url).headers(headers(headers)).build());
+    }
 
     public static Call newCall(String url, Headers headers) {
         return client().newCall(new Request.Builder().url(url).headers(headers).build());
@@ -204,7 +202,7 @@ public static Call newCallForResult(String url, Map<String, String> headers) {
      * xuameng兼容旧 spider：newCallDownload(String url, Map headers) -> Response
      */
     public static Response newCallDownload(String url, Map<String, String> headersMap) throws IOException {
-        return newCall(url, headersMap).execute();
+        return newCall(url, headersMap);
     }
 
     /** xuameng公共写文件逻辑 */
