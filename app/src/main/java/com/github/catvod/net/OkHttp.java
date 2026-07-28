@@ -106,20 +106,29 @@ public class OkHttp {
         }
     }
 
-// 原有返回Call的方法改名，兼容项目内所有原本调用该方法的其他代码
-public static Call newCallInternal(String url) {
-    return client().newCall(new Request.Builder().url(url).build());
-}
+    /**
+     * xuameng 原有返回Call的方法改名，兼容项目内所有原本调用该方法的其他代码
+     */
+    @Deprecated
+    public static Call newCallInternal(String url) {
+        return client().newCall(new Request.Builder().url(url).build());
+    }
 
-// 第三方Spider正好需要的方法签名，完全匹配硬编码调用
-@Deprecated
-public static Response newCall(String url) throws IOException {
-    return newCallInternal(url).execute();
-}
     /**
      * xuameng 兼容旧 spider：
      */
+    @Deprecated
+    public static Response newCall(String url) throws IOException {
+        return newCallInternal(url).execute();
+    }
 
+    /**
+     * xuameng 兼容旧 spider：
+     */
+    @Deprecated
+    public static Response newCall(Request request) throws IOException {
+        return client().newCall(request).execute();
+    }
 
     public static Call newCall(String url, String tag) {
         return client().newCall(new Request.Builder().url(url).tag(tag).build());
