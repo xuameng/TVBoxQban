@@ -134,6 +134,14 @@ public class OkHttp {
         return client.newCall(new Request.Builder().url(url).post(body).build());
     }
 
+public static okhttp3.Response newCall(String url) throws IOException {
+    return client().newCall(new Request.Builder().url(url).build()).execute();
+}
+
+public static okhttp3.Response newCallResponse(String url) throws java.io.IOException {
+    return newCall(url).execute();
+}
+
     public static void cancel(String tag) {
         cancel(client(), tag);
     }
