@@ -181,6 +181,21 @@ public static void newCallDownload(String url, Headers headers, String path) thr
     }
 }
 
+/**
+ * 兼容旧 spider：newCallDownload(String url, Map headers) -> Response
+ */
+
+public static Response newCallDownload(String url, Map<String, String> headersMap) throws IOException {
+    Request.Builder builder = new Request.Builder().url(url);
+    if (headersMap != null) {
+        Headers.Builder hb = new Headers.Builder();
+        for (Map.Entry<String, String> e : headersMap.entrySet()) {
+            hb.add(e.getKey(), e.getValue());
+        }
+        builder.headers(hb.build());
+    }
+    return client().newCall(builder.build()).execute();
+}
 /** 公共写文件逻辑 */
 private static void writeToFile(Response res, String path) throws IOException {
     File out = new File(path);
