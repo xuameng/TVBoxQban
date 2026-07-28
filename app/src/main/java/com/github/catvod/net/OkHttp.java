@@ -69,15 +69,15 @@ public class OkHttp {
         return redirect ? client(timeout) : noRedirect(timeout);
     }
 
-    public static String string(String url) {
-        if (url == null || !url.startsWith("http")) return "";
-        try (Response res = newCall(url).execute()) {
-            return res.body() != null ? res.body().string() : "";
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "";
-        }
+public static String string(String url) {
+    if (url == null || !url.startsWith("http")) return "";
+    try (Response res = client().newCall(new Request.Builder().url(url).build()).execute()) {
+        return res.body() != null ? res.body().string() : "";
+    } catch (Exception e) {
+        e.printStackTrace();
+        return "";
     }
+}
 
     public static String string(String url, long timeout) {
         if (url == null || !url.startsWith("http")) return "";
@@ -99,8 +99,12 @@ public class OkHttp {
         }
     }
 
-public static okhttp3.Response newCall(String url) throws IOException {
-    return client().newCall(new Request.Builder().url(url).build()).execute();
+    public static Call newCall(String url) {
+        return client().newCall(new Request.Builder().url(url).build());
+    }
+
+public static Response newCallResponse(String url) throws IOException {
+    return newCall(url).execute();
 }
 
     public static Call newCall(String url, String tag) {
