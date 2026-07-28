@@ -120,8 +120,8 @@ public class OkHttp {
     /**
      * xuameng 兼容旧 spider：
      */
-    public static Response newCall(Request request) throws IOException {
-        return client().newCall(request).execute();
+    public static Response newCall(String url) throws IOException {
+        return client().newCall(new Request.Builder().url(url).build()).execute();
     }
 
     public static Call newCall(String url, String tag) {
