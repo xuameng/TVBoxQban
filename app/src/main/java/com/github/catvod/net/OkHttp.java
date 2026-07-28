@@ -97,7 +97,7 @@ public class OkHttp {
 
     public static String string(String url, Map<String, String> headers) {
         if (url == null || !url.startsWith("http")) return "";
-        try (Response res = newCallMap(url, headers).execute()) {
+        try (Response res = newCallMap(url, headers)) {
             return res.body() != null ? res.body().string() : "";
         } catch (Exception e) {
             e.printStackTrace();
@@ -134,7 +134,7 @@ public class OkHttp {
      */
     @Deprecated
     public static Response newCallMap(String url, Map<String, String> headers) throws IOException {
-        return newCallMap(url, headers).execute();
+       return newCall(url, headers).execute();
     }
 
     public static Call newCall(String url, String tag) {
@@ -205,7 +205,7 @@ public class OkHttp {
      * xuameng兼容旧 spider：newCallDownload(String url, Map headers) -> Response
      */
     public static Response newCallDownload(String url, Map<String, String> headersMap) throws IOException {
-        return newCallMap(url, headersMap).execute();
+        return newCallMap(url, headersMap);
     }
 
     /** xuameng公共写文件逻辑 */
