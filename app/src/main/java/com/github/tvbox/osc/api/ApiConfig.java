@@ -282,7 +282,7 @@ public class ApiConfig {
                 th.printStackTrace();
             }
         }
-        fetchConfigLiveAsync(liveApiUrl, liveApiConfigUrl, liveConfigKey, new ConfigFetchCallback() {
+        fetchConfigAsync(liveApiUrl, liveApiConfigUrl, liveConfigKey, new ConfigFetchCallback() {
             @Override
             public void success(String json) {
                 try {
