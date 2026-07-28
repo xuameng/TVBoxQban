@@ -16,6 +16,11 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import java.io.IOException;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 public class OkHttp {
 
@@ -68,9 +73,12 @@ public class OkHttp {
         return redirect ? client(timeout) : noRedirect(timeout);
     }
 
-    public static String string(String url) {
+    /**
+     * xuameng 兼容旧 spider：
+     */
+    public static String string(String url) { 
         if (url == null || !url.startsWith("http")) return "";
-        try (Response res = newCall(url).execute()) {
+        try (Response res = client().newCall(new Request.Builder().url(url).build()).execute()) {
             return res.body() != null ? res.body().string() : "";
         } catch (Exception e) {
             e.printStackTrace();
@@ -98,28 +106,47 @@ public class OkHttp {
         }
     }
 
-    public static Call newCall(String url) {
-        return client().newCall(new Request.Builder().url(url).build());
+// 原有返回Call的方法改名，兼容项目内所有原本调用该方法的其他代码
+public static Call newCallInternal(String url) {
+    return client().newCall(new Request.Builder().url(url).build());
+}
+
+// 第三方Spider正好需要的方法签名，完全匹配硬编码调用
+@Deprecated
+public static Response newCall(String url) throws IOException {
+    return newCallInternal(url).execute();
+}
+    /**
+     * xuameng 兼容旧 spider：
+     */
+
+
+    public static Call newCall(String url, String tag) {
+        return client().newCall(new Request.Builder().url(url).tag(tag).build());
     }
 
     public static Call newCall(OkHttpClient client, String url) {
         return client.newCall(new Request.Builder().url(url).build());
     }
 
-    public static Call newCall(OkHttpClient client, String url, Headers headers) {
-        return client.newCall(new Request.Builder().url(url).headers(headers).build());
+    public static Call newCall(OkHttpClient client, String url, String tag) {
+        return client.newCall(new Request.Builder().url(url).tag(tag).build());
     }
 
-    public static Call newCall(String url, Headers headers) {
-        return client().newCall(new Request.Builder().url(url).headers(headers).build());
+    public static Call newCall(String url, Map<String, String> headers) {
+        return client().newCall(new Request.Builder().url(url).headers(headers(headers)).build());
     }
 
-    public static Call newCall(String url, Headers headers, ArrayMap<String, String> params) {
-        return client().newCall(new Request.Builder().url(buildUrl(url, params)).headers(headers).build());
+    public static Call newCall(String url, Map<String, String> headers, ArrayMap<String, String> params) {
+        return client().newCall(new Request.Builder().url(buildUrl(url, params)).headers(headers(headers)).build());
     }
 
-    public static Call newCall(String url, Headers headers, RequestBody body) {
-        return client().newCall(new Request.Builder().url(url).headers(headers).post(body).build());
+    public static Call newCall(String url, Map<String, String> headers, RequestBody body) {
+        return client().newCall(new Request.Builder().url(url).headers(headers(headers)).post(body).build());
+    }
+
+    public static Call newCall(String url, RequestBody body, String tag) {
+        return client().newCall(new Request.Builder().url(url).post(body).tag(tag).build());
     }
 
     public static Call newCall(OkHttpClient client, String url, RequestBody body) {
@@ -128,6 +155,69 @@ public class OkHttp {
 
     public static void cancel(String tag) {
         cancel(client(), tag);
+    }
+
+    /** xuameng兼容旧 spider */
+    public static Response newCallDownload(String url) throws IOException {
+        return newCall(url).execute();
+    }
+
+    /** xuameng兼容旧 spider */
+    public static Response newCallDownload(String url, Headers headers) throws IOException {
+        return client().newCall(
+                new Request.Builder()
+                        .url(url)
+                        .headers(headers)
+                        .build()
+        ).execute();
+    }
+
+    /** xuameng兼容旧 spider：下载到本地文件 */
+    public static void newCallDownload(String url, String path) throws IOException {
+        try (Response res = newCall(url).execute()) {
+            writeToFile(res, path);
+        }
+    }
+
+    /** xuameng兼容旧 spider：带 header 下载 */
+    public static void newCallDownload(String url, Headers headers, String path) throws IOException {
+        try (Response res = client().newCall(
+                new Request.Builder()
+                        .url(url)
+                        .headers(headers)
+                        .build()
+        ).execute()) {
+            writeToFile(res, path);
+        }
+    }
+
+    /**
+     * xuameng兼容旧 spider：newCallDownload(String url, Map headers) -> Response
+     */
+
+    public static Response newCallDownload(String url, Map<String, String> headersMap) throws IOException {
+        Request.Builder builder = new Request.Builder().url(url);
+        if (headersMap != null) {
+            Headers.Builder hb = new Headers.Builder();
+            for (Map.Entry<String, String> e : headersMap.entrySet()) {
+                hb.add(e.getKey(), e.getValue());
+            }
+            builder.headers(hb.build());
+        }
+        return client().newCall(builder.build()).execute();
+    }
+    /** xuameng公共写文件逻辑 */
+    private static void writeToFile(Response res, String path) throws IOException {
+        File out = new File(path);
+        out.getParentFile().mkdirs();
+        try (InputStream is = res.body().byteStream();
+             FileOutputStream fos = new FileOutputStream(out)) {
+            byte[] buf = new byte[8192];
+            int len;
+            while ((len = is.read(buf)) != -1) {
+                fos.write(buf, 0, len);
+            }
+        }
     }
 
     public static void cancel(OkHttpClient client, String tag) {
