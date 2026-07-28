@@ -168,34 +168,24 @@ public class OkHttp {
 
     /** xuameng兼容旧 spider */
     public static Response newCallDownload(String url) throws IOException {
-        return newCallInternal(url).execute();
+        return newCall(url).execute();
     }
 
     /** xuameng兼容旧 spider */
     public static Response newCallDownload(String url, Headers headers) throws IOException {
-        return client().newCall(
-                new Request.Builder()
-                        .url(url)
-                        .headers(headers)
-                        .build()
-        ).execute();
+        return newCall(url, headers).execute();
     }
 
-    /** xuameng兼容旧 spider：下载到本地文件 */
+    /** xuameng兼容旧 spider */
     public static void newCallDownload(String url, String path) throws IOException {
-        try (Response res = newCallInternal(url).execute()) {
-            writeToFile(res, path);
+        try (Response res = newCall(url).execute()) {
+        writeToFile(res, path);
         }
     }
 
     /** xuameng兼容旧 spider：带 header 下载 */
     public static void newCallDownload(String url, Headers headers, String path) throws IOException {
-        try (Response res = client().newCall(
-                new Request.Builder()
-                        .url(url)
-                        .headers(headers)
-                        .build()
-        ).execute()) {
+        try (Response res = newCall(url, headers).execute()) {
             writeToFile(res, path);
         }
     }
@@ -203,18 +193,10 @@ public class OkHttp {
     /**
      * xuameng兼容旧 spider：newCallDownload(String url, Map headers) -> Response
      */
-
     public static Response newCallDownload(String url, Map<String, String> headersMap) throws IOException {
-        Request.Builder builder = new Request.Builder().url(url);
-        if (headersMap != null) {
-            Headers.Builder hb = new Headers.Builder();
-            for (Map.Entry<String, String> e : headersMap.entrySet()) {
-                hb.add(e.getKey(), e.getValue());
-            }
-            builder.headers(hb.build());
-        }
-        return client().newCall(builder.build()).execute();
+        return newCall(url, headersMap).execute();
     }
+
     /** xuameng公共写文件逻辑 */
     private static void writeToFile(Response res, String path) throws IOException {
         File out = new File(path);
