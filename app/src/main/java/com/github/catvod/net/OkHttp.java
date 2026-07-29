@@ -113,10 +113,10 @@ public class OkHttp {
             Response response = newCall(url, headers);
             int code = response.code();
             String body = response.body() != null ? response.body().string() : "";
-            return new OkResult(code, body);
+            return new OkResult(code, body, response.headers().toMultimap());
         } catch (Exception e) {
             e.printStackTrace();
-            return new OkResult(500, "");
+            return new OkResult(500, "", Collections.emptyMap());
         }
     }
 
