@@ -1199,15 +1199,86 @@ public class VideoActivity extends BaseActivity {
 
     private String  vod_picture="";    //xuameng 视频图片
     private String  vod_name="";  //xuameng 视频名称
-    private void initData() {
-        Intent intent = getIntent();
-        if (intent != null && intent.getExtras() != null) {
-            Bundle bundle = intent.getExtras();
-            vod_picture=bundle.getString("picture", ""); //xuameng 视频图片
-            vod_name=bundle.getString("title", "");  //xuameng 视频名称
-            loadDetail(bundle.getString("id", null), bundle.getString("sourceKey", ""));
-        }
+private void initData() {
+    Intent intent = getIntent();
+    if (intent == null) return;
+
+    Bundle bundle = intent.getExtras();
+    if (bundle == null) {
+        showEmpty();
+        return;
     }
+
+    vod_picture = bundle.getString("picture", "");
+    vod_name = bundle.getString("title", "");
+
+    String url = bundle.getString("url", null);   // ✅ WebHome 传的直链
+    String id = bundle.getString("id", null);
+    String key = bundle.getString("sourceKey", "");
+
+    // ✅ 直链播放（WebHome fm.play）
+    if (!TextUtils.isEmpty(url) &&
+        (url.startsWith("http") || url.startsWith("push://"))) {
+
+        playDirectUrl(url, vod_name, vod_picture, bundle);
+        return;
+    }
+
+    // ✅ 原有 CSP 播放逻辑
+    if (!TextUtils.isEmpty(id)) {
+        loadDetail(id, key);
+    } else {
+        showEmpty();
+    }
+}
+
+private void playDirectUrl(String url, String title, String pic, Bundle extraOpts) {
+    showLoading();
+
+    vodInfo = new VodInfo();
+    vodInfo.sourceKey = "webhome";
+    vodInfo.playFlag = "webhome";
+
+    Movie.Video v = new Movie.Video();
+    v.name = TextUtils.isEmpty(title) ? "WebHome" : title;
+    v.pic = pic;
+    v.id = MD5.string2MD5(url); // 随便一个唯一 id
+    vodInfo.setVideo(v);
+
+    VodInfo.VodSeries s = new VodInfo.VodSeries();
+    s.name = "正片";
+    s.url = url;
+
+    vodInfo.seriesMap.put("webhome", new ArrayList<>());
+    vodInfo.seriesMap.get("webhome").add(s);
+    vodInfo.playIndex = 0;
+    vodInfo.currentPlayFlag = "webhome";
+    vodInfo.currentPlayIndex = 0;
+
+    tvName.setText(v.name);
+
+    if (!TextUtils.isEmpty(pic)) {
+        Picasso.get()
+                .load(DefaultConfig.checkReplaceProxy(pic))
+                .placeholder(R.drawable.img_loading_placeholder)
+                .into(ivThumb);
+    }
+
+    mGridViewFlag.setVisibility(View.GONE);
+    mGridView.setVisibility(View.GONE);
+    mSeriesGroupView.setVisibility(View.GONE);
+    tvPlay.setVisibility(View.VISIBLE);
+    tvSort.setVisibility(View.GONE);
+    mEmptyPlayList.setVisibility(View.GONE);
+
+    setTextShow(tvPlayUrl, "播放地址：", url);
+    realUrl = url;
+
+    showSuccess();
+
+    // ✅ 直接播
+    jumpToPlay();
+}
 
     private void loadDetail(String vid, String key) {
         if (vid != null) {
