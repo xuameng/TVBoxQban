@@ -106,6 +106,21 @@ public class OkHttp {
     }
 
     /**
+     * 兼容旧版 spider 调用的 get 方法
+     */
+    public static OkResult get(String url, Map<String, String> headers) {
+        try {
+            Response response = newCall(url, headers);
+            int code = response.code();
+            String body = response.body() != null ? response.body().string() : "";
+            return new OkResult(code, body);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new OkResult(500, "");
+        }
+    }
+
+    /**
      * xuameng 原有返回Call的方法改名，兼容项目内所有原本调用该方法的其他代码
      */
     @Deprecated
@@ -129,6 +144,9 @@ public class OkHttp {
         return client().newCall(request).execute();
     }
 
+    /**
+     * xuameng 兼容旧 spider：
+     */
     @Deprecated
     public static Response newCall(String url, Map<String, String> headers) throws IOException {
         return newCallForResult(url, headers).execute();
@@ -146,6 +164,9 @@ public class OkHttp {
         return client.newCall(new Request.Builder().url(url).tag(tag).build());
     }
 
+    /**
+     * xuameng 原有返回Call的方法改名，兼容项目内所有原本调用该方法的其他代码
+     */
     public static Call newCallForResult(String url, Map<String, String> headers) {
         return client().newCall(new Request.Builder().url(url).headers(headers(headers)).build());
     }
