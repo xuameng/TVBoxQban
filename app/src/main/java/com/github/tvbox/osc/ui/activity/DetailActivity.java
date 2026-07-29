@@ -101,7 +101,7 @@ import com.github.tvbox.osc.util.ImgUtilDetail;   //xuameng base64图片
  * @description:
  */
 
-public class DetailActivity extends BaseActivity {
+public class VideoActivity extends BaseActivity {
     private LinearLayout llLayout;
     private FragmentContainerView llPlayerFragmentContainer;
     private View llPlayerFragmentContainerBlock;
@@ -272,7 +272,7 @@ public class DetailActivity extends BaseActivity {
                     // xuameng检查当前选中的源是否是正在播放的源
                     if (vodInfo.currentPlayFlag != null && !vodInfo.playFlag.equals(vodInfo.currentPlayFlag)) {
                         // xuameng当前选中的源不是正在播放的源，禁止倒序操作
-                        App.showToastShort(DetailActivity.this, "倒叙操作只可在当前正在播放的节目所在的列表中操作");
+                        App.showToastShort(VideoActivity.this, "倒叙操作只可在当前正在播放的节目所在的列表中操作");
                         return;
                     }
 
@@ -365,7 +365,7 @@ public class DetailActivity extends BaseActivity {
                 ClipboardManager cm = (ClipboardManager)getSystemService(mContext.CLIPBOARD_SERVICE);
                 //设置内容到剪切板
                 cm.setPrimaryClip(ClipData.newPlainText(null, tvPlayUrl.getText().toString().replace("播放地址：","")));
-                App.showToastShort(DetailActivity.this, "播放地址已复制！");
+                App.showToastShort(VideoActivity.this, "播放地址已复制！");
                 return true;
             }
         });
@@ -387,7 +387,7 @@ public class DetailActivity extends BaseActivity {
             public void onClick(View v) {
                 FastClickCheckUtil.check(v);
                 startQuickSearch();
-                QuickSearchDialog quickSearchDialog = new QuickSearchDialog(DetailActivity.this);
+                QuickSearchDialog quickSearchDialog = new QuickSearchDialog(VideoActivity.this);
                 EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_QUICK_SEARCH, quickSearchData));
                 EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_QUICK_SEARCH_WORD, quickSearchWord));
                 quickSearchDialog.show();
@@ -434,11 +434,11 @@ public class DetailActivity extends BaseActivity {
                 String text = tvCollect.getText().toString();
                 if ("☆收藏".equals(text)) {
                     RoomDataManger.insertVodCollect(sourceKey, vodInfo);
-                    App.showToastShort(DetailActivity.this, "已加入收藏夹");
+                    App.showToastShort(VideoActivity.this, "已加入收藏夹");
                     tvCollect.setText("★收藏");
                 } else {
                     RoomDataManger.deleteVodCollect(sourceKey, vodInfo);
-                    App.showToastShort(DetailActivity.this, "已移除收藏夹");
+                    App.showToastShort(VideoActivity.this, "已移除收藏夹");
                     tvCollect.setText("☆收藏");
                 }
             }
@@ -464,7 +464,7 @@ public class DetailActivity extends BaseActivity {
                 ClipboardManager cm = (ClipboardManager)getSystemService(mContext.CLIPBOARD_SERVICE);
                 //设置内容到剪切板
                 cm.setPrimaryClip(ClipData.newPlainText(null, tvPlayUrl.getText().toString().replace("播放地址：","")));
-                App.showToastShort(DetailActivity.this, "播放地址已复制！");
+                App.showToastShort(VideoActivity.this, "播放地址已复制！");
             }
         });
 
@@ -508,7 +508,7 @@ public class DetailActivity extends BaseActivity {
                         String cpContent = removeHtmlTag(mVideo.des);
                         ClipData clipData = ClipData.newPlainText(null, cpContent);
                         clipprofile.setPrimaryClip(clipData);
-                        App.showToastShort(DetailActivity.this, "简介内容已复制：" + cpContent);
+                        App.showToastShort(VideoActivity.this, "简介内容已复制：" + cpContent);
                     }
                 });
                 return true;
@@ -968,7 +968,7 @@ public class DetailActivity extends BaseActivity {
                 if (absXml != null && absXml.movie != null && absXml.movie.videoList != null && absXml.movie.videoList.size() > 0) {
                     showSuccess();
                     if(!TextUtils.isEmpty(absXml.msg) && !absXml.msg.equals("数据列表")){
-                        App.showToastShort(DetailActivity.this, absXml.msg);
+                        App.showToastShort(VideoActivity.this, absXml.msg);
                         showEmpty();
                         return;
                     }
@@ -1128,7 +1128,7 @@ public class DetailActivity extends BaseActivity {
                     } else {
                         if (isPushUrl) {  //xuameng 判断推送恢复初始
                             isPushUrl = false;
-                            App.showToastShort(DetailActivity.this, "接收到推送数据错误！");
+                            App.showToastShort(VideoActivity.this, "接收到推送数据错误！");
                             EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_PLAY_PUSH_ERROR, null));   //xuameng远程推送解析数据为空判断
                         }
                         if (fullWindows) {
@@ -1150,7 +1150,7 @@ public class DetailActivity extends BaseActivity {
                 } else {
                     if (isPushUrl) {  //xuameng 判断推送恢复初始
                         isPushUrl = false;
-                        App.showToastShort(DetailActivity.this, "接收到推送数据为空！");
+                        App.showToastShort(VideoActivity.this, "接收到推送数据为空！");
                         EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_PLAY_PUSH_ERROR, null));   //xuameng远程推送解析数据为空判断
                     }
                     if (fullWindows) {
@@ -1199,15 +1199,86 @@ public class DetailActivity extends BaseActivity {
 
     private String  vod_picture="";    //xuameng 视频图片
     private String  vod_name="";  //xuameng 视频名称
-    private void initData() {
-        Intent intent = getIntent();
-        if (intent != null && intent.getExtras() != null) {
-            Bundle bundle = intent.getExtras();
-            vod_picture=bundle.getString("picture", ""); //xuameng 视频图片
-            vod_name=bundle.getString("title", "");  //xuameng 视频名称
-            loadDetail(bundle.getString("id", null), bundle.getString("sourceKey", ""));
-        }
+private void initData() {
+    Intent intent = getIntent();
+    if (intent == null) return;
+
+    Bundle bundle = intent.getExtras();
+    if (bundle == null) {
+        showEmpty();
+        return;
     }
+
+    vod_picture = bundle.getString("picture", "");
+    vod_name = bundle.getString("title", "");
+
+    String url = bundle.getString("url", null);   // ✅ WebHome 传的直链
+    String id = bundle.getString("id", null);
+    String key = bundle.getString("sourceKey", "");
+
+    // ✅ 直链播放（WebHome fm.play）
+    if (!TextUtils.isEmpty(url) &&
+        (url.startsWith("http") || url.startsWith("push://"))) {
+
+        playDirectUrl(url, vod_name, vod_picture, bundle);
+        return;
+    }
+
+    // ✅ 原有 CSP 播放逻辑
+    if (!TextUtils.isEmpty(id)) {
+        loadDetail(id, key);
+    } else {
+        showEmpty();
+    }
+}
+
+private void playDirectUrl(String url, String title, String pic, Bundle extraOpts) {
+    showLoading();
+
+    vodInfo = new VodInfo();
+    vodInfo.sourceKey = "webhome";
+    vodInfo.playFlag = "webhome";
+
+    Movie.Video v = new Movie.Video();
+    v.name = TextUtils.isEmpty(title) ? "WebHome" : title;
+    v.pic = pic;
+    v.id = MD5.string2MD5(url); // 随便一个唯一 id
+    vodInfo.setVideo(v);
+
+    VodInfo.VodSeries s = new VodInfo.VodSeries();
+    s.name = "正片";
+    s.url = url;
+
+    vodInfo.seriesMap.put("webhome", new ArrayList<>());
+    vodInfo.seriesMap.get("webhome").add(s);
+    vodInfo.playIndex = 0;
+    vodInfo.currentPlayFlag = "webhome";
+    vodInfo.currentPlayIndex = 0;
+
+    tvName.setText(v.name);
+
+    if (!TextUtils.isEmpty(pic)) {
+        Picasso.get()
+                .load(DefaultConfig.checkReplaceProxy(pic))
+                .placeholder(R.drawable.img_loading_placeholder)
+                .into(ivThumb);
+    }
+
+    mGridViewFlag.setVisibility(View.GONE);
+    mGridView.setVisibility(View.GONE);
+    mSeriesGroupView.setVisibility(View.GONE);
+    tvPlay.setVisibility(View.VISIBLE);
+    tvSort.setVisibility(View.GONE);
+    mEmptyPlayList.setVisibility(View.GONE);
+
+    setTextShow(tvPlayUrl, "播放地址：", url);
+    realUrl = url;
+
+    showSuccess();
+
+    // ✅ 直接播
+    jumpToPlay();
+}
 
     private void loadDetail(String vid, String key) {
         if (vid != null) {
@@ -1359,7 +1430,7 @@ public class DetailActivity extends BaseActivity {
                         setTvPlayUrl(url);
                         realUrl = url;
                         if (url.startsWith("push://") && ApiConfig.get().getSource("push_agent") != null) {  //xuameng 如果是推送链接 通过sourceViewModel 改成"push_agent"源重新解析
-                            App.showToastShort(DetailActivity.this, "正在解析推送地址！");
+                            App.showToastShort(VideoActivity.this, "正在解析推送地址！");
                             deleteOldSourceHistoryIfNeeded(firstsourceKey, "push_agent", vodInfo);  //xuameng 删除firstsourceKey存储历史因为源变成 push_agent了
                             loadDetailXu(url, "push_agent");  //通过sourceViewModel.getDetail方法去push头并更改源为push_agent 因为type 4源不支持解析
                             isPushUrl = true;
@@ -1404,7 +1475,7 @@ public class DetailActivity extends BaseActivity {
                                 if (response.body() != null) {
                                     return response.body().string();
                                 } else {
-                                    App.showToastShort(DetailActivity.this, "推送失败，地址可能填写错误！");
+                                    App.showToastShort(VideoActivity.this, "推送失败，地址可能填写错误！");
                                     throw new IllegalStateException("网络请求错误");
                                 }
                             }
@@ -1413,15 +1484,15 @@ public class DetailActivity extends BaseActivity {
                             public void onSuccess(Response<String> response) {
                                 String r = response.body();
                                 if ("mirrored".equals(r))
-                                    App.showToastShort(DetailActivity.this, "推送成功！");
+                                    App.showToastShort(VideoActivity.this, "推送成功！");
                                 else
-                                    App.showToastShort(DetailActivity.this, "推送失败，远端聚汇影视版本不支持！");
+                                    App.showToastShort(VideoActivity.this, "推送失败，远端聚汇影视版本不支持！");
                             }
 
                             @Override
                             public void onError(Response<String> response) {
                                 super.onError(response);
-                                App.showToastShort(DetailActivity.this, "推送失败，地址可能填写错误！");
+                                App.showToastShort(VideoActivity.this, "推送失败，地址可能填写错误！");
                             }
                         });
             }
@@ -1823,7 +1894,7 @@ public class DetailActivity extends BaseActivity {
     
         // 4. 立即检查是否需要直接执行选择（避免滚动不触发）
         safeSelectMGridView(vodInfo.playIndex); 
-        App.showToastShort(DetailActivity.this, "已滚动到当前播放剧集！");
+        App.showToastShort(VideoActivity.this, "已滚动到当前播放剧集！");
     }
 
     private void switchTomGridViewFlag() {  //xuameng 自动滚动到当前播放源
@@ -1931,7 +2002,7 @@ public class DetailActivity extends BaseActivity {
         public void run() {
             if (isActivityDestroyed) return;
             showSuccess();
-            App.showToastShort(DetailActivity.this, "推送地址换源解析成功！");
+            App.showToastShort(VideoActivity.this, "推送地址换源解析成功！");
             isPushUrl = false;
         }
     };
