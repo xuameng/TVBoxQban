@@ -1205,31 +1205,27 @@ private void initData() {
     Bundle bundle = intent.getExtras();
     if (bundle == null) return;
 
-    vod_picture = bundle.getString("picture", "");
+    vod_picture = bundle.getString("pic", "");
     vod_name = bundle.getString("title", "");
 
-    String url = bundle.getString("url", null);
-	App.showToastShort(VideoActivity.this, url);
-    // ✅ 兼容 webhtv fm.play：有 url 且无 id → 直链播放
-    if (!TextUtils.isEmpty(url) && TextUtils.isEmpty(bundle.getString("id"))) {
-        playDirectFromWebHome(url, vod_name, vod_picture, bundle);
-        return;
-    }
+    String id = bundle.getString("id", null);
+    String key = bundle.getString("key", "");
+	App.showToastShort(VideoActivity.this, id);
 
-    // 原 CSP 逻辑不动
-    loadDetail(bundle.getString("id", null), bundle.getString("sourceKey", ""));
+
+    // ✅ 原有 CSP 逻辑
+    loadDetail(id, key);
 }
 
 
-@SuppressLint("NotifyDataSetChanged")
-private void playDirectFromWebHome(String url, String title, String pic, Bundle bundle) {
+private void playDirectFromWebHome(String gatewayUrl, String title, String pic, Bundle bundle) {
     showSuccess();
 
     String realTitle = TextUtils.isEmpty(title) ? "WebHome" : title;
     tvName.setText(realTitle);
     setTextShow(tvSite, "来源：", "WebHome");
-    setTextShow(tvPlayUrl, "播放地址：", url);
-    realUrl = url;
+    setTextShow(tvPlayUrl, "播放地址：", gatewayUrl);
+    realUrl = gatewayUrl;
 
     if (!TextUtils.isEmpty(pic)) {
         Picasso.get()
@@ -1241,12 +1237,12 @@ private void playDirectFromWebHome(String url, String title, String pic, Bundle 
     Movie.Video v = new Movie.Video();
     v.name = realTitle;
     v.pic = pic;
-    v.id = MD5.string2MD5(url);
-    v.sourceKey = "push";   // ✅ 不用 SiteApi.PUSH
+    v.id = MD5.string2MD5(gatewayUrl);
+    v.sourceKey = "push_agent";
 
     vodInfo = new VodInfo();
     vodInfo.setVideo(v);
-    vodInfo.sourceKey = "push";
+    vodInfo.sourceKey = "push_agent";
     vodInfo.playFlag = "push";
     vodInfo.currentPlayFlag = "push";
     vodInfo.playIndex = 0;
@@ -1254,8 +1250,7 @@ private void playDirectFromWebHome(String url, String title, String pic, Bundle 
 
     VodInfo.VodSeries s = new VodInfo.VodSeries();
     s.name = "正片";
-    s.url = url;
-    // ✅ 不碰 s.headers（你工程里没有这个字段）
+    s.url = gatewayUrl; // ✅ 网关地址，ExoPlayer 能播
 
     vodInfo.seriesMap.put("push", new ArrayList<>());
     vodInfo.seriesMap.get("push").add(s);
@@ -1265,20 +1260,13 @@ private void playDirectFromWebHome(String url, String title, String pic, Bundle 
     flag.selected = true;
     vodInfo.seriesFlags.add(flag);
 
-    // UI 显隐（完全照抄你 detail 成功分支）
                         mGridViewFlag.setVisibility(View.VISIBLE);
                         mGridView.setVisibility(View.VISIBLE);
                         tvPlay.setVisibility(View.VISIBLE);
                         tvSort.setVisibility(View.VISIBLE);  //xuameng修复无播放数据倒序空指针
                         mEmptyPlayList.setVisibility(View.GONE);
 
-    if (showPreview) {
-        jumpToPlay();
-        llPlayerFragmentContainer.setVisibility(View.VISIBLE);
-        llPlayerFragmentContainerBlock.setVisibility(View.VISIBLE);
-    } else {
-        jumpToPlay();
-    }
+    jumpToPlay();
 }
 
     private void loadDetail(String vid, String key) {
