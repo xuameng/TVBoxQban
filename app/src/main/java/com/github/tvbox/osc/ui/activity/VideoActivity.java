@@ -1202,68 +1202,72 @@ public class VideoActivity extends BaseActivity {
 private void initData() {
     Intent intent = getIntent();
     if (intent == null) return;
-
     Bundle bundle = intent.getExtras();
-    if (bundle == null) {
-        showEmpty();
-        return;
-    }
+    if (bundle == null) return;
 
     vod_picture = bundle.getString("picture", "");
     vod_name = bundle.getString("title", "");
 
-    String url = bundle.getString("url", null);   // ✅ WebHome 传的直链
-    String id = bundle.getString("id", null);
-    String key = bundle.getString("sourceKey", "");
-
-    // ✅ 直链播放（WebHome fm.play）
-    if (!TextUtils.isEmpty(url) &&
-        (url.startsWith("http") || url.startsWith("push://"))) {
-
-        playDirectUrl(url, vod_name, vod_picture, bundle);
+    String url = bundle.getString("url", null);
+	App.showToastShort(VideoActivity.this, url);
+    // ✅ 兼容 webhtv fm.play：有 url 且无 id → 直链播放
+    if (!TextUtils.isEmpty(url) && TextUtils.isEmpty(bundle.getString("id"))) {
+        playDirectFromWebHome(url, vod_name, vod_picture, bundle);
         return;
     }
 
-    // ✅ 原有 CSP 播放逻辑
-    if (!TextUtils.isEmpty(id)) {
-        loadDetail(id, key);
-    } else {
-        showEmpty();
-    }
+    // 原 CSP 逻辑不动
+    loadDetail(bundle.getString("id", null), bundle.getString("sourceKey", ""));
 }
 
-private void playDirectUrl(String url, String title, String pic, Bundle extraOpts) {
-    showLoading();
 
-    vodInfo = new VodInfo();
-    vodInfo.sourceKey = "webhome";
-    vodInfo.playFlag = "webhome";
+@SuppressLint("NotifyDataSetChanged")
+private void playDirectFromWebHome(String url, String title, String pic, Bundle bundle) {
+    showSuccess();
 
-    Movie.Video v = new Movie.Video();
-    v.name = TextUtils.isEmpty(title) ? "WebHome" : title;
-    v.pic = pic;
-    v.id = MD5.string2MD5(url); // 随便一个唯一 id
-    vodInfo.setVideo(v);
-
-    VodInfo.VodSeries s = new VodInfo.VodSeries();
-    s.name = "正片";
-    s.url = url;
-
-    vodInfo.seriesMap.put("webhome", new ArrayList<>());
-    vodInfo.seriesMap.get("webhome").add(s);
-    vodInfo.playIndex = 0;
-    vodInfo.currentPlayFlag = "webhome";
-    vodInfo.currentPlayIndex = 0;
-
-    tvName.setText(v.name);
+    String realTitle = TextUtils.isEmpty(title) ? "WebHome" : title;
+    tvName.setText(realTitle);
+    setTextShow(tvSite, "来源：", "WebHome");
+    setTextShow(tvPlayUrl, "播放地址：", url);
+    realUrl = url;
 
     if (!TextUtils.isEmpty(pic)) {
-        Picasso.get()
-                .load(DefaultConfig.checkReplaceProxy(pic))
+        Picasso.get().load(DefaultConfig.checkReplaceProxy(pic))
                 .placeholder(R.drawable.img_loading_placeholder)
                 .into(ivThumb);
     }
 
+    Movie.Video v = new Movie.Video();
+    v.name = realTitle;
+    v.pic = pic;
+    v.id = MD5.string2MD5(url);
+    v.sourceKey = SiteApi.PUSH;
+
+    vodInfo = new VodInfo();
+    vodInfo.setVideo(v);
+    vodInfo.sourceKey = SiteApi.PUSH;
+    vodInfo.playFlag = "push";
+    vodInfo.currentPlayFlag = "push";
+    vodInfo.playIndex = 0;
+    vodInfo.currentPlayIndex = 0;
+
+    VodInfo.VodSeries s = new VodInfo.VodSeries();
+    s.name = "正片";
+    s.url = url;
+    // 若 bridge 传了 headers，可塞进 series 的 header 字段（你 VodSeries 有就加）
+    if (bundle != null && bundle.containsKey("headers")) {
+        s.headers = bundle.getString("headers", "");
+    }
+
+    vodInfo.seriesMap.put("push", new ArrayList<>());
+    vodInfo.seriesMap.get("push").add(s);
+
+    VodInfo.VodSeriesFlag flag = new VodInfo.VodSeriesFlag();
+    flag.name = "push";
+    flag.selected = true;
+    vodInfo.seriesFlags.add(flag);
+
+    // UI 显隐（照抄你 detail 成功分支）
     mGridViewFlag.setVisibility(View.GONE);
     mGridView.setVisibility(View.GONE);
     mSeriesGroupView.setVisibility(View.GONE);
@@ -1271,13 +1275,13 @@ private void playDirectUrl(String url, String title, String pic, Bundle extraOpt
     tvSort.setVisibility(View.GONE);
     mEmptyPlayList.setVisibility(View.GONE);
 
-    setTextShow(tvPlayUrl, "播放地址：", url);
-    realUrl = url;
-
-    showSuccess();
-
-    // ✅ 直接播
-    jumpToPlay();
+    if (showPreview) {
+        jumpToPlay();
+        llPlayerFragmentContainer.setVisibility(View.VISIBLE);
+        llPlayerFragmentContainerBlock.setVisibility(View.VISIBLE);
+    } else {
+        jumpToPlay();
+    }
 }
 
     private void loadDetail(String vid, String key) {
