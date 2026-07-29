@@ -1205,7 +1205,9 @@ public class VideoActivity extends BaseActivity {
             Bundle bundle = intent.getExtras();
             vod_picture=bundle.getString("pic", ""); //xuameng 视频图片
             vod_name=bundle.getString("name", "");  //xuameng 视频名称
-            loadDetail(bundle.getString("name", null), bundle.getString("key", ""));
+            loadDetail(bundle.getString("id", null), bundle.getString("key", ""));
+
+			App.showToastShort(VideoActivity.this, bundle.getString("id", null);
         }
     }
 
