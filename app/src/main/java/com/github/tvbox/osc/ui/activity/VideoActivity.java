@@ -1232,7 +1232,8 @@ private void playDirectFromWebHome(String url, String title, String pic, Bundle 
     realUrl = url;
 
     if (!TextUtils.isEmpty(pic)) {
-        Picasso.get().load(DefaultConfig.checkReplaceProxy(pic))
+        Picasso.get()
+                .load(DefaultConfig.checkReplaceProxy(pic))
                 .placeholder(R.drawable.img_loading_placeholder)
                 .into(ivThumb);
     }
@@ -1241,11 +1242,11 @@ private void playDirectFromWebHome(String url, String title, String pic, Bundle 
     v.name = realTitle;
     v.pic = pic;
     v.id = MD5.string2MD5(url);
-    v.sourceKey = SiteApi.PUSH;
+    v.sourceKey = "push";   // ✅ 不用 SiteApi.PUSH
 
     vodInfo = new VodInfo();
     vodInfo.setVideo(v);
-    vodInfo.sourceKey = SiteApi.PUSH;
+    vodInfo.sourceKey = "push";
     vodInfo.playFlag = "push";
     vodInfo.currentPlayFlag = "push";
     vodInfo.playIndex = 0;
@@ -1254,10 +1255,7 @@ private void playDirectFromWebHome(String url, String title, String pic, Bundle 
     VodInfo.VodSeries s = new VodInfo.VodSeries();
     s.name = "正片";
     s.url = url;
-    // 若 bridge 传了 headers，可塞进 series 的 header 字段（你 VodSeries 有就加）
-    if (bundle != null && bundle.containsKey("headers")) {
-        s.headers = bundle.getString("headers", "");
-    }
+    // ✅ 不碰 s.headers（你工程里没有这个字段）
 
     vodInfo.seriesMap.put("push", new ArrayList<>());
     vodInfo.seriesMap.get("push").add(s);
@@ -1267,13 +1265,12 @@ private void playDirectFromWebHome(String url, String title, String pic, Bundle 
     flag.selected = true;
     vodInfo.seriesFlags.add(flag);
 
-    // UI 显隐（照抄你 detail 成功分支）
-    mGridViewFlag.setVisibility(View.GONE);
-    mGridView.setVisibility(View.GONE);
-    mSeriesGroupView.setVisibility(View.GONE);
-    tvPlay.setVisibility(View.VISIBLE);
-    tvSort.setVisibility(View.GONE);
-    mEmptyPlayList.setVisibility(View.GONE);
+    // UI 显隐（完全照抄你 detail 成功分支）
+                        mGridViewFlag.setVisibility(View.VISIBLE);
+                        mGridView.setVisibility(View.VISIBLE);
+                        tvPlay.setVisibility(View.VISIBLE);
+                        tvSort.setVisibility(View.VISIBLE);  //xuameng修复无播放数据倒序空指针
+                        mEmptyPlayList.setVisibility(View.GONE);
 
     if (showPreview) {
         jumpToPlay();
