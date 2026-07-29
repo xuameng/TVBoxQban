@@ -1199,75 +1199,15 @@ public class VideoActivity extends BaseActivity {
 
     private String  vod_picture="";    //xuameng 视频图片
     private String  vod_name="";  //xuameng 视频名称
-private void initData() {
-    Intent intent = getIntent();
-    if (intent == null) return;
-    Bundle bundle = intent.getExtras();
-    if (bundle == null) return;
-
-    vod_picture = bundle.getString("pic", "");
-    vod_name = bundle.getString("title", "");
-
-    String id = bundle.getString("id", null);
-    String key = bundle.getString("key", "");
-	App.showToastShort(VideoActivity.this, id);
-
-
-    // ✅ 原有 CSP 逻辑
-    loadDetail(id, key);
-}
-
-
-private void playDirectFromWebHome(String gatewayUrl, String title, String pic, Bundle bundle) {
-    showSuccess();
-
-    String realTitle = TextUtils.isEmpty(title) ? "WebHome" : title;
-    tvName.setText(realTitle);
-    setTextShow(tvSite, "来源：", "WebHome");
-    setTextShow(tvPlayUrl, "播放地址：", gatewayUrl);
-    realUrl = gatewayUrl;
-
-    if (!TextUtils.isEmpty(pic)) {
-        Picasso.get()
-                .load(DefaultConfig.checkReplaceProxy(pic))
-                .placeholder(R.drawable.img_loading_placeholder)
-                .into(ivThumb);
+    private void initData() {
+        Intent intent = getIntent();
+        if (intent != null && intent.getExtras() != null) {
+            Bundle bundle = intent.getExtras();
+            vod_picture=bundle.getString("pic", ""); //xuameng 视频图片
+            vod_name=bundle.getString("name", "");  //xuameng 视频名称
+            loadDetail(bundle.getString("id", null), bundle.getString("key", ""));
+        }
     }
-
-    Movie.Video v = new Movie.Video();
-    v.name = realTitle;
-    v.pic = pic;
-    v.id = MD5.string2MD5(gatewayUrl);
-    v.sourceKey = "push_agent";
-
-    vodInfo = new VodInfo();
-    vodInfo.setVideo(v);
-    vodInfo.sourceKey = "push_agent";
-    vodInfo.playFlag = "push";
-    vodInfo.currentPlayFlag = "push";
-    vodInfo.playIndex = 0;
-    vodInfo.currentPlayIndex = 0;
-
-    VodInfo.VodSeries s = new VodInfo.VodSeries();
-    s.name = "正片";
-    s.url = gatewayUrl; // ✅ 网关地址，ExoPlayer 能播
-
-    vodInfo.seriesMap.put("push", new ArrayList<>());
-    vodInfo.seriesMap.get("push").add(s);
-
-    VodInfo.VodSeriesFlag flag = new VodInfo.VodSeriesFlag();
-    flag.name = "push";
-    flag.selected = true;
-    vodInfo.seriesFlags.add(flag);
-
-                        mGridViewFlag.setVisibility(View.VISIBLE);
-                        mGridView.setVisibility(View.VISIBLE);
-                        tvPlay.setVisibility(View.VISIBLE);
-                        tvSort.setVisibility(View.VISIBLE);  //xuameng修复无播放数据倒序空指针
-                        mEmptyPlayList.setVisibility(View.GONE);
-
-    jumpToPlay();
-}
 
     private void loadDetail(String vid, String key) {
         if (vid != null) {
