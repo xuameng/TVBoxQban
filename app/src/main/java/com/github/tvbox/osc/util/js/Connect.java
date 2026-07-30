@@ -25,11 +25,6 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.zip.GZIPInputStream;
-
 public class Connect {
     static OkHttpClient client;
     
@@ -38,49 +33,25 @@ public class Connect {
         return client.newCall(getRequest(url, req, Headers.of(req.getHeader())));
     }    
 
-public static JSObject success(QuickJSContext ctx, Req req, Response res) {
-    try {
-        JSObject jsObject = ctx.createNewJSObject();
-        JSObject jsHeader = ctx.createNewJSObject();
-        setHeader(ctx, res, jsHeader);
-        ctx.setProperty(jsObject, "headers", jsHeader);
-
-        byte[] bytes = res.body().bytes();
-
-        // ✅ 1. 解 gzip
-        String encoding = res.header("Content-Encoding", "");
-        if ("gzip".equalsIgnoreCase(encoding)) {
-            bytes = gunzip(bytes);
+    public static JSObject success(QuickJSContext ctx, Req req, Response res) {
+        try {
+            JSObject jsObject = ctx.createNewJSObject();
+            JSObject jsHeader = ctx.createNewJSObject();
+            setHeader(ctx, res, jsHeader);
+            ctx.setProperty(jsObject, "headers", jsHeader);
+            if (req.getBuffer() == 0) ctx.setProperty(jsObject, "content", new String(res.body().bytes(), req.getCharset()));
+            if (req.getBuffer() == 1) {
+                JSArray array = ctx.createNewJSArray();
+                byte[] bytes = res.body().bytes();
+                for (int i = 0; i < bytes.length; i++) array.set((int) bytes[i], i);
+                ctx.setProperty(jsObject, "content", array);
+            }
+            if (req.getBuffer() == 2) ctx.setProperty(jsObject, "content", Base64.encodeToString(res.body().bytes(), Base64.DEFAULT | Base64.NO_WRAP));
+            return jsObject;
+        } catch (Exception e) {
+            return error(ctx);
         }
-
-        // ✅ 2. 智能判断 charset
-        String charset = parseCharset(res.header("Content-Type", ""));
-        if (charset == null) {
-            // 没有声明 charset → 默认 UTF-8（解决 pomo 乱码）
-            charset = "UTF-8";
-        }
-
-        // ✅ 3. 转字符串
-        String content = new String(bytes, charset);
-
-        if (req.getBuffer() == 0) {
-            ctx.setProperty(jsObject, "content", content);
-        } else if (req.getBuffer() == 1) {
-            JSArray array = ctx.createNewJSArray();
-            byte[] finalBytes = content.getBytes(charset);
-            for (int i = 0; i < finalBytes.length; i++) array.set(finalBytes[i], i);
-            ctx.setProperty(jsObject, "content", array);
-        } else if (req.getBuffer() == 2) {
-            ctx.setProperty(jsObject, "content",
-                    Base64.encodeToString(content.getBytes(charset), Base64.DEFAULT | Base64.NO_WRAP));
-        }
-
-        return jsObject;
-    } catch (Exception e) {
-        LOG.i("Connect.success error: " + e.getMessage());
-        return error(ctx);
     }
-}
 
     public static JSObject error(QuickJSContext ctx) {
         JSObject jsObject = ctx.createNewJSObject();
@@ -167,31 +138,4 @@ public static JSObject success(QuickJSContext ctx, Req req, Response res) {
             }
         }
     }
-
-private static byte[] gunzip(byte[] compressed) {
-    try (java.io.ByteArrayInputStream bais = new java.io.ByteArrayInputStream(compressed);
-         java.util.zip.GZIPInputStream gis = new java.util.zip.GZIPInputStream(bais);
-         java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream()) {
-        byte[] buf = new byte[8192];
-        int len;
-        while ((len = gis.read(buf)) != -1) baos.write(buf, 0, len);
-        return baos.toByteArray();
-    } catch (Exception e) {
-        return compressed; // 解压失败就原样返回
-    }
-}
-
-
-
-private static String parseCharset(String contentType) {
-    if (contentType == null) return null;
-    for (String part : contentType.split(";")) {
-        part = part.trim();
-        if (part.toLowerCase().startsWith("charset=")) {
-            return part.substring(8).trim();
-        }
-    }
-    return null;
-}
-
 }
