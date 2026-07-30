@@ -602,10 +602,40 @@ public class GridFragment extends BaseLazyFragment {
         }
     }
 
+protected boolean isLoadingCallback = false;
+
+@Override
+protected void showLoading() {
+    if (!isAdded() || isDetached()) return;
+    if (mLoadService == null) return;
+
+    // ✅ 防止连续 showLoading
+    if (isLoadingCallback) {
+        return;
+    }
+
+    isLoadingCallback = true;
+    mLoadService.showCallback(LoadingCallback.class);
+}
+
+@Override
+protected void showSuccess() {
+    if (mLoadService == null) return;
+    isLoadingCallback = false;
+    mLoadService.showSuccess();
+}
+
+@Override
+protected void showEmpty() {
+    if (mLoadService == null) return;
+    isLoadingCallback = false;
+    mLoadService.showCallback(EmptyCallback.class);
+}
+
     public void forceRefresh() {
         if (!isAdded() || isDetached()) return;
         if (mGridView == null || gridAdapter == null || sourceViewModel == null) return;
-        if (isRequesting) {
+        if (isRequesting || isLoadingCallback) {
             App.showToastShort(getContext(), "数据加载中，请稍候！");
             return;
         }
