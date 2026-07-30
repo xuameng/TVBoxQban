@@ -306,7 +306,7 @@ if (wp.startsWith("proxy://")) {
 
         } catch (Throwable e) {
             e.printStackTrace();
-            App.showToastShort(getContext(), "壁纸更换失败！");
+            showWallpaperFail("壁纸加载失败");
         }
     }).start();
 
