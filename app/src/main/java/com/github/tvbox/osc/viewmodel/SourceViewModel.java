@@ -1498,7 +1498,7 @@ public class SourceViewModel extends ViewModel {
                     result = tryMinifyJson(result);
                     extendCache.putIfAbsent(key, result);
                 } else if (extend.startsWith("http")) {
-                    result = OkHttp.bytesToString(extend); 
+                    result = OkHttp.string(extend, null);
                     if (!result.isEmpty()) {
                         result = tryMinifyJson(result);
                         if(result.length()>2500)result = extend;
@@ -1957,7 +1957,7 @@ public class SourceViewModel extends ViewModel {
                 result = tryMinifyJson(result);
                 extendCache.putIfAbsent(key, result);
             } else {
-                result = OkHttp.bytesToString(extend); 
+                result = OkHttp.string(extend, null);
                 if (!TextUtils.isEmpty(result)) {
                     result = tryMinifyJson(result);
                     if (result.length() > 2500) result = extend;
