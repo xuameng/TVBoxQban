@@ -602,20 +602,11 @@ public class GridFragment extends BaseLazyFragment {
         }
     }
 
-    private boolean isLoadingCallback() {
-        if (mLoadService == null) return false;
-        Callback cb = mLoadService.getCurrentCallback();
-        return cb != null && cb instanceof LoadingCallback;
-    }
-
     public void forceRefresh() {
         if (!isAdded() || isDetached()) return;
         if (mGridView == null || gridAdapter == null || sourceViewModel == null) return;
         if (isRequesting) {
             App.showToastShort(getContext(), "数据加载中，请稍候！");
-            return;
-        }
-        if (isLoadingCallback()) {
             return;
         }
         page = 1;
