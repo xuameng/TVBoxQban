@@ -287,7 +287,7 @@ if (wp.startsWith("proxy://")) {
         try {
             Object[] result = ApiConfig.get().proxyLocal(param);
             if (result == null || !(result[0] instanceof byte[])) {
-                App.showToastShort(getContext(), "壁纸更换失败！");
+                showWallpaperFail("壁纸加载失败（代理异常）");
                 return;
             }
 
@@ -1228,5 +1228,12 @@ OkGo.<File>get(wp)
             }); 
         }
     }
+
+	private void showWallpaperFail(String msg) {
+    requireActivity().runOnUiThread(() -> {
+        HawkConfig.isGetWp = false;
+        App.showToastShort(getContext(), msg);
+    });
+}
 
 }
