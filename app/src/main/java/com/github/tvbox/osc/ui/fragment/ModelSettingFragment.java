@@ -68,6 +68,8 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import okhttp3.HttpUrl;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
@@ -255,39 +257,101 @@ public class ModelSettingFragment extends BaseLazyFragment {
             public void onClick(View v) {
                 FastClickCheckUtil.check(v);  //xuameng 2秒
                 if (!ApiConfig.get().wallpaper.isEmpty()){
-                    HawkConfig.isGetWp = true;  //xuameng下载壁纸
-                    App.showToastShort(getContext(), "壁纸更换中！");
-                    OkGo.<File>get(ApiConfig.get().wallpaper).tag("wallpaperDown").execute(new FileCallback(requireActivity().getFilesDir().getAbsolutePath(), "wp") {  //xuameng增加tag以便打断下载
-                        @Override
-                        public void onSuccess(Response<File> response) {
-                            if (HawkConfig.isGetWp){
-                                String mimeType = response.headers().get("Content-Type");
-                                if (mimeType != null && mimeType.startsWith("image/")) {   // 确认是图片文件
-                                   ((BaseActivity) requireActivity()).changeWallpaper(true);      
-                                   HawkConfig.isGetWp = false;  //xuameng下载壁纸 
-                                   App.showToastShort(getContext(), "壁纸更换成功！");
-                                }else{
-                                   File wp = new File(requireActivity().getFilesDir().getAbsolutePath() + "/wp");
-                                   if (wp.exists()) wp.delete();
-                                   ((BaseActivity) requireActivity()).changeWallpaper(true);
-                                   HawkConfig.isGetWp = false;  //xuameng下载壁纸
-                                   App.showToastShort(getContext(), "壁纸文件类型错误！已重置壁纸！");
-                                }
-                            }
-                        }
+String wp = ApiConfig.get().wallpaper;
+if (TextUtils.isEmpty(wp)) return;
 
-                        @Override
-                        public void onError(Response<File> response) {
-                            HawkConfig.isGetWp = false;  //xuameng下载壁纸
-                            App.showToastShort(getContext(), "壁纸更换失败！");
-                            super.onError(response);
-                        }
+// 已经在下载中，防止重复触发
+if (HawkConfig.isGetWp) return;
 
-                        @Override
-                        public void downloadProgress(Progress progress) {
-                            super.downloadProgress(progress);
-                        }
-                    });
+HawkConfig.isGetWp = true;
+App.showToastShort(getContext(), "壁纸更换中！");
+
+/* =======================
+ * 1️⃣ proxy:// 壁纸（JS / Jar 返回）
+ * ======================= */
+if (wp.startsWith("proxy://")) {
+
+    Map<String, String> param = new HashMap<>();
+    param.put("do", "wallpaper");
+
+    // 如果是 proxy://do=wallpaper&type=js 之类，可自动兼容
+    Uri uri = Uri.parse(wp);
+    for (String key : uri.getQueryParameterNames()) {
+        param.put(key, uri.getQueryParameter(key));
+    }
+
+    // 放到线程，防止阻塞 UI
+    new Thread(() -> {
+        try {
+            Object[] result = ApiConfig.get().proxyLocal(param);
+            if (result == null || !(result[0] instanceof byte[])) {
+                App.showToastShort(getContext(), "壁纸更换失败！");
+                return;
+            }
+
+            byte[] data = (byte[]) result[0];
+            File wpFile = new File(requireActivity().getFilesDir(), "wp");
+
+            try (FileOutputStream fos = new FileOutputStream(wpFile)) {
+                fos.write(data);
+            }
+
+            requireActivity().runOnUiThread(() -> {
+                ((BaseActivity) requireActivity()).changeWallpaper(true);
+                HawkConfig.isGetWp = false;
+                App.showToastShort(getContext(), "壁纸更换成功！");
+            });
+
+        } catch (Throwable e) {
+            e.printStackTrace();
+            App.showToastShort(getContext(), "壁纸更换失败！");
+        }
+    }).start();
+
+    return;
+}
+
+/* =======================
+ * 2️⃣ http / https 壁纸
+ * ======================= */
+OkGo.<File>get(wp)
+    .tag("wallpaperDown")
+    .execute(new FileCallback(
+        requireActivity().getFilesDir().getAbsolutePath(),
+        "wp"
+    ) {
+
+        @Override
+        public void onSuccess(Response<File> response) {
+            if (!HawkConfig.isGetWp) return;
+
+            String mimeType = response.headers().get("Content-Type");
+            if (mimeType != null && mimeType.startsWith("image/")) {
+                ((BaseActivity) requireActivity()).changeWallpaper(true);
+                HawkConfig.isGetWp = false;
+                App.showToastShort(getContext(), "壁纸更换成功！");
+            } else {
+                File wp = new File(requireActivity().getFilesDir(), "wp");
+                if (wp.exists()) wp.delete();
+
+                ((BaseActivity) requireActivity()).changeWallpaper(true);
+                HawkConfig.isGetWp = false;
+                App.showToastShort(getContext(), "壁纸文件类型错误！已重置壁纸！");
+            }
+        }
+
+        @Override
+        public void onError(Response<File> response) {
+            HawkConfig.isGetWp = false;
+            App.showToastShort(getContext(), "壁纸更换失败！");
+            super.onError(response);
+        }
+
+        @Override
+        public void downloadProgress(Progress progress) {
+            super.downloadProgress(progress);
+        }
+    });
                 }else{
                     App.showToastShort(getContext(), "壁纸站点未配置！");
                 }
