@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.github.tvbox.osc.util.urlhttp.OkHttp;
+import com.github.catvod.net.OkHttp;
 import com.github.catvod.crawler.Spider;
 import com.github.tvbox.osc.api.ApiConfig;
 import com.github.tvbox.osc.base.App;
@@ -1498,7 +1498,7 @@ public class SourceViewModel extends ViewModel {
                     result = tryMinifyJson(result);
                     extendCache.putIfAbsent(key, result);
                 } else if (extend.startsWith("http")) {
-                    result = OkHttp.string(extend, null);
+                    result = OkHttp.bytesToString(extend); 
                     if (!result.isEmpty()) {
                         result = tryMinifyJson(result);
                         if(result.length()>2500)result = extend;
@@ -1957,7 +1957,7 @@ public class SourceViewModel extends ViewModel {
                 result = tryMinifyJson(result);
                 extendCache.putIfAbsent(key, result);
             } else {
-                result = OkHttp.string(extend, null);
+                result = OkHttp.bytesToString(extend); 
                 if (!TextUtils.isEmpty(result)) {
                     result = tryMinifyJson(result);
                     if (result.length() > 2500) result = extend;
