@@ -98,6 +98,16 @@ public class OkHttp {
         }
     }
 
+public static String bytesToString(String url) {
+    if (!url.startsWith("http")) return "";
+    try (Response res = newCall(url).execute()) {
+        if (res.body() == null) return "";
+        return new String(res.body().bytes(), StandardCharsets.UTF_8);
+    } catch (Exception e) {
+        return "";
+    }
+}
+
     public static Call newCall(String url) {
         return client().newCall(new Request.Builder().url(url).build());
     }
