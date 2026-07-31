@@ -25,11 +25,6 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.zip.GZIPInputStream;
-
 public class Connect {
     static OkHttpClient client;
     
@@ -38,63 +33,25 @@ public class Connect {
         return client.newCall(getRequest(url, req, Headers.of(req.getHeader())));
     }    
 
-public static JSObject success(QuickJSContext ctx, Req req, Response res) {
-    try {
-        JSObject jsObject = ctx.createNewJSObject();
-        JSObject jsHeader = ctx.createNewJSObject();
-        setHeader(ctx, res, jsHeader);
-        ctx.setProperty(jsObject, "headers", jsHeader);
-
-        // ✅ 只读一次 bytes
-        byte[] bytes = res.body().bytes();
-
-        // ✅ 不信任头，只看 gzip 魔数
-        if (bytes.length >= 3
-                && (bytes[0] & 0xFF) == 0x1F
-                && (bytes[1] & 0xFF) == 0x8B
-                && (bytes[2] & 0xFF) == 0x08) {
-            bytes = gunzip(bytes);
+    public static JSObject success(QuickJSContext ctx, Req req, Response res) {
+        try {
+            JSObject jsObject = ctx.createNewJSObject();
+            JSObject jsHeader = ctx.createNewJSObject();
+            setHeader(ctx, res, jsHeader);
+            ctx.setProperty(jsObject, "headers", jsHeader);
+            if (req.getBuffer() == 0) ctx.setProperty(jsObject, "content", new String(res.body().bytes(), req.getCharset()));
+            if (req.getBuffer() == 1) {
+                JSArray array = ctx.createNewJSArray();
+                byte[] bytes = res.body().bytes();
+                for (int i = 0; i < bytes.length; i++) array.set((int) bytes[i], i);
+                ctx.setProperty(jsObject, "content", array);
+            }
+            if (req.getBuffer() == 2) ctx.setProperty(jsObject, "content", Base64.encodeToString(res.body().bytes(), Base64.DEFAULT | Base64.NO_WRAP));
+            return jsObject;
+        } catch (Exception e) {
+            return error(ctx);
         }
-
-        String ct = res.header("Content-Type", "");
-        String charset = parseCharset(ct);
-        boolean isText = ct.contains("text") || ct.contains("html")
-                || ct.contains("json") || ct.contains("javascript");
-        if (charset == null && isText) charset = "UTF-8";
-
-        if (req.getBuffer() == 0) {
-            ctx.setProperty(jsObject, "content",
-                    isText ? new String(bytes, charset) : new String(bytes));
-        } else if (req.getBuffer() == 1) {
-            byte[] out = isText ? new String(bytes, charset).getBytes(charset) : bytes;
-            JSArray array = ctx.createNewJSArray();
-            for (int i = 0; i < out.length; i++) array.set(out[i], i);
-            ctx.setProperty(jsObject, "content", array);
-        } else if (req.getBuffer() == 2) {
-            byte[] out = isText ? new String(bytes, charset).getBytes(charset) : bytes;
-            ctx.setProperty(jsObject, "content",
-                    Base64.encodeToString(out, Base64.DEFAULT | Base64.NO_WRAP));
-        }
-
-String preview;
-try {
-    preview = new String(bytes, charset);
-} catch (Exception e) {
-    preview = "DECODE_FAIL";
-}
-
-LOG.i("xuameng_pomo-fix buffer=" + req.getBuffer()
-        + " gzipMagic=" + (bytes.length >= 3
-            && (bytes[0] & 0xFF) == 0x1F
-            && (bytes[1] & 0xFF) == 0x8B)
-        + " preview=" + preview.substring(0, Math.min(120, preview.length())));
-
-        return jsObject;
-    } catch (Exception e) {
-        LOG.i("xuameng_Connect.success error: " + e.getMessage());
-        return error(ctx);
     }
-}
 
     public static JSObject error(QuickJSContext ctx) {
         JSObject jsObject = ctx.createNewJSObject();
@@ -181,31 +138,4 @@ LOG.i("xuameng_pomo-fix buffer=" + req.getBuffer()
             }
         }
     }
-
-private static byte[] gunzip(byte[] compressed) {
-    try (java.io.ByteArrayInputStream bais = new java.io.ByteArrayInputStream(compressed);
-         java.util.zip.GZIPInputStream gis = new java.util.zip.GZIPInputStream(bais);
-         java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream()) {
-        byte[] buf = new byte[8192];
-        int len;
-        while ((len = gis.read(buf)) != -1) baos.write(buf, 0, len);
-        return baos.toByteArray();
-    } catch (Exception e) {
-        return compressed; // 解压失败就原样返回
-    }
-}
-
-
-
-private static String parseCharset(String contentType) {
-    if (contentType == null) return null;
-    for (String part : contentType.split(";")) {
-        part = part.trim();
-        if (part.toLowerCase().startsWith("charset=")) {
-            return part.substring(8).trim();
-        }
-    }
-    return null;
-}
-
 }
