@@ -68,7 +68,7 @@ public static JSObject success(QuickJSContext ctx, Req req, Response res) {
         } else if (req.getBuffer() == 1) {
             byte[] out = isText ? new String(bytes, charset).getBytes(charset) : bytes;
             JSArray array = ctx.createNewJSArray();
-            for (int i = 0; i < out.length; i++) array.set(out[i], &i);
+            for (int i = 0; i < out.length; i++) array.set(out[i], i);
             ctx.setProperty(jsObject, "content", array);
         } else if (req.getBuffer() == 2) {
             byte[] out = isText ? new String(bytes, charset).getBytes(charset) : bytes;
