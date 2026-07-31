@@ -76,11 +76,18 @@ public static JSObject success(QuickJSContext ctx, Req req, Response res) {
                     Base64.encodeToString(out, Base64.DEFAULT | Base64.NO_WRAP));
         }
 
-        // ✅ 调试日志（确认解码结果）
-        String preview = new String(bytes, charset);
-        LOG.i("xuameng_pomo-fix url=" + req.getUrl()
-            + " xuameng_buf=" + req.getBuffer()
-            + " xuameng_preview=" + preview.substring(0, Math.min(120, preview.length())));
+String preview;
+try {
+    preview = new String(bytes, charset);
+} catch (Exception e) {
+    preview = "DECODE_FAIL";
+}
+
+LOG.i("xuameng_pomo-fix buffer=" + req.getBuffer()
+        + " gzipMagic=" + (bytes.length >= 3
+            && (bytes[0] & 0xFF) == 0x1F
+            && (bytes[1] & 0xFF) == 0x8B)
+        + " preview=" + preview.substring(0, Math.min(120, preview.length())));
 
         return jsObject;
     } catch (Exception e) {
