@@ -13,12 +13,6 @@ import com.whl.quickjs.wrapper.JSObject;
 import com.whl.quickjs.wrapper.JSUtils;
 import com.whl.quickjs.wrapper.QuickJSContext;
 
-import android.util.Log;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.util.zip.GZIPInputStream;
-
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -278,48 +272,15 @@ public class Global {
         }
     }
 
-private JSObject req(String url, JSObject options) {
-    try {
-        Req req = Req.objectFrom(JSUtils.toJsonObject(options).toString());
-
-        Response res = Connect.to(url, req).execute();
-
-        byte[] bytes = res.body().bytes();
-
-        // ✅ 不信任头，直接判断 gzip 魔数
-        if (bytes.length >= 3
-                && (bytes[0] & 0xFF) == 0x1F
-                && (bytes[1] & 0xFF) == 0x8B
-                && (bytes[2] & 0xFF) == 0x08) {
-            bytes = gunzip(bytes);
+    private JSObject req(String url, JSObject options) {
+        try {
+            Req req = Req.objectFrom(JSUtils.toJsonObject(options).toString());
+            Response res = Connect.to(url, req).execute();
+            return Connect.success(runtime, req, res);
+        } catch (Exception e) {
+            return Connect.error(runtime);
         }
-
-        // ✅ pomo 强制 UTF-8
-        if (url.contains("pomo.920410.xyz") || url.contains("pomo.mom")) {
-            String html = new String(bytes, "UTF-8");
-
-            // ✅ 日志验证（必出）
-            android.util.Log.e("xuameng_POMO_FIX",
-                "url=" + url +
-                ", len=" + html.length() +
-                ", start=" + html.substring(0, Math.min(120, html.length())));
-
-            // ✅ 直接构造 JSObject 返回（绕过 Connect.success）
-            JSObject obj = runtime.createNewJSObject();
-            JSObject headers = runtime.createNewJSObject();
-            obj.setProperty("headers", headers);
-            obj.setProperty("content", html);
-            return obj;
-        }
-
-        // ✅ 其它站点走原逻辑
-        return Connect.success(runtime, req, res);
-
-    } catch (Exception e) {
-        android.util.Log.e("xuameng_POMO_FIX", "error", e);
-        return Connect.error(runtime);
     }
-}
 
     @Keep
     @Function
@@ -366,19 +327,5 @@ private JSObject req(String url, JSObject options) {
     public void setJSContext(QuickJSContext runtime) {
         this.runtime = runtime;
     }
-
-private byte[] gunzip(byte[] compressed) {
-    if (compressed == null || compressed.length < 3) return compressed;
-    try (java.io.ByteArrayInputStream bais = new java.io.ByteArrayInputStream(compressed);
-         java.util.zip.GZIPInputStream gis = new java.util.zip.GZIPInputStream(bais);
-         java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream()) {
-        byte[] buf = new byte[8192];
-        int len;
-        while ((len = gis.read(buf)) != -1) baos.write(buf, 0, len);
-        return baos.toByteArray();
-    } catch (Exception e) {
-        return compressed;
-    }
-}
 
 }
