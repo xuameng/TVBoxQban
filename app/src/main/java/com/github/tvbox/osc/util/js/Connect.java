@@ -78,13 +78,13 @@ public static JSObject success(QuickJSContext ctx, Req req, Response res) {
 
         // ✅ 调试日志（确认解码结果）
         String preview = new String(bytes, charset);
-        LOG.i("pomo-fix url=" + req.getUrl()
-            + " buf=" + req.getBuffer()
-            + " preview=" + preview.substring(0, Math.min(120, preview.length())));
+        LOG.i("xuameng_pomo-fix url=" + req.getUrl()
+            + " xuameng_buf=" + req.getBuffer()
+            + " xuameng_preview=" + preview.substring(0, Math.min(120, preview.length())));
 
         return jsObject;
     } catch (Exception e) {
-        LOG.i("Connect.success error: " + e.getMessage());
+        LOG.i("xuameng_Connect.success error: " + e.getMessage());
         return error(ctx);
     }
 }
