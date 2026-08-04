@@ -696,7 +696,6 @@ public class HomeActivity extends BaseActivity {
             // 3. 停止服务（需确保stopServer()内部释放了所有资源）
             ControlManager.get().stopServer();
             // 4. 强制终止进程（组合方案）
-			FileUtils.clearCacheFiles();        //xuameng清除缓存
             android.os.Process.killProcess(android.os.Process.myPid());
             System.exit(0);  // 0状态码
         } else {
@@ -861,7 +860,6 @@ public class HomeActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         dismissHomeDialogs();
-					FileUtils.clearCacheFiles();        //xuameng清除缓存
         mHandler.removeCallbacksAndMessages(null);
         EventBus.getDefault().unregister(this);
         AppManager.getInstance().appExit(0);
