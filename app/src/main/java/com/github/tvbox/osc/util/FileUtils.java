@@ -234,6 +234,7 @@ public class FileUtils {
     public static void clearCacheFiles() {  //xuameng点击清空缓存
         String cachePath = getCachePath();   
         File cacheDir = new File(cachePath);
+        File webViewDir = getAppWebviewDir();  // xuameng webview缓存目录
         new Thread(() -> {
             try {
                 if(cacheDir.exists()) cleanDirectory(cacheDir);  //xuameng 缓存目录
