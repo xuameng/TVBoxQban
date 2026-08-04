@@ -68,7 +68,7 @@ public class App extends MultiDexApplication {
                 .setSupportSubunits(Subunits.MM);
         PlayerHelper.init();
         QuickJSLoader.init();
-        FileUtils.cleanPlayerCache();        //xuameng清除缓存
+        FileUtils.clearCacheFiles();        //xuameng清除缓存
 					
         // --- xuameng获取设备名称逻辑 ---
         new Thread(() -> {
