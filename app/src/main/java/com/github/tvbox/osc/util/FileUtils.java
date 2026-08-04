@@ -217,24 +217,15 @@ public class FileUtils {
         File thunderCacheDir = new File(thunderCachePath);
 		File exoCachePathDir = new File(exoCachePath);       //xuameng exo缓存
 		File jpaCachePathDir = new File(jpaCachePath + File.separator + "Downloads");       //xuameng jp缓存
+        File webViewDir = getAppWebviewDir();  // xuameng webview缓存目录
 
         try {
             if (ijkCacheDir.exists()) cleanDirectory(ijkCacheDir);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        try {
             if (thunderCacheDir.exists()) cleanDirectory(thunderCacheDir);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        try {
             if (exoCachePathDir.exists()) cleanDirectory(exoCachePathDir);    //xuameng exo缓存
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-		try {
             if (jpaCachePathDir.exists()) cleanDirectory(jpaCachePathDir);    //xuameng jp缓存
+            if (webViewDir.exists()) cleanDirectory(webViewDir);    //xuameng WEBVIEW缓存
+            clearWebViewCache();  //xuameng WEBVIEW缓存
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -274,8 +265,8 @@ public class FileUtils {
     }
 
     public static void clearSpiderCacheFiles() {  //xuameng点击清空缓存
-        String cachePath = FileUtils.getCachePath();          
-        String cspCachePath = FileUtils.getFilePath()+"/csp/";
+        String cachePath = getCachePath();          
+        String cspCachePath = getFilePath()+"/csp/";
         File cspCacheDir = new File(cspCachePath);
         File cacheDir = new File(cachePath);
         File liveCacheDir = getLiveCacheDir();  // xuameng直播缓存目录
@@ -283,11 +274,12 @@ public class FileUtils {
         File webViewDir = getAppWebviewDir();  // xuameng webview缓存目录
         new Thread(() -> {
             try {
-                if(cacheDir.exists()) FileUtils.cleanDirectory(cacheDir);
-                if(cspCacheDir.exists()) FileUtils.cleanDirectory(cspCacheDir);
-                if (liveCacheDir.exists()) FileUtils.cleanDirectory(liveCacheDir);
-                if (configCacheDir.exists()) FileUtils.cleanDirectory(configCacheDir);
-                if (webViewDir.exists()) FileUtils.cleanDirectory(webViewDir);
+                if(cacheDir.exists()) cleanDirectory(cacheDir);
+                if(cspCacheDir.exists()) cleanDirectory(cspCacheDir);
+                if (liveCacheDir.exists()) cleanDirectory(liveCacheDir);
+                if (configCacheDir.exists()) cleanDirectory(configCacheDir);
+                if (webViewDir.exists()) cleanDirectory(webViewDir);
+                clearWebViewCache();  //xuameng WEBVIEW缓存
                 clearJsModuleCache();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -307,6 +299,12 @@ public class FileUtils {
                 deleteFile(file);
             }
         }
+    }
+
+    private static void clearWebViewCache() {   //xuameng 删除WEBVIEW缓存
+        File f = new File(App.getInstance().getFilesDir().getParentFile(),
+                "shared_prefs/WebViewChromiumPrefs.xml");
+        if (f.exists()) f.delete();
     }
 
     public static String read(String path) {
