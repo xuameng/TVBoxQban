@@ -231,6 +231,20 @@ public class FileUtils {
         }
     }
 
+    public static void clearCacheFiles() {  //xuameng点击清空缓存
+        String cachePath = getCachePath();   
+        File cacheDir = new File(cachePath);
+        new Thread(() -> {
+            try {
+                if(cacheDir.exists()) cleanDirectory(cacheDir);  //xuameng 缓存目录
+                if (webViewDir.exists()) cleanDirectory(webViewDir);  //xuameng WEBVIEW缓存
+                clearWebViewCache();  //xuameng WEBVIEW缓存
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
     public static File getLiveCacheDir() {   // xuameng直播缓存目录
         File dir = new File(
                 App.getInstance().getFilesDir(),
@@ -265,8 +279,8 @@ public class FileUtils {
     }
 
     public static void clearSpiderCacheFiles() {  //xuameng点击清空缓存
-        String cachePath = getCachePath();          
-        String cspCachePath = getFilePath()+"/csp/";
+        String cachePath = getCachePath();    // xuameng缓存目录      
+        String cspCachePath = getFilePath()+"/csp/";  // xuamengJAR缓存目录
         File cspCacheDir = new File(cspCachePath);
         File cacheDir = new File(cachePath);
         File liveCacheDir = getLiveCacheDir();  // xuameng直播缓存目录
@@ -278,16 +292,16 @@ public class FileUtils {
                 if(cspCacheDir.exists()) cleanDirectory(cspCacheDir);
                 if (liveCacheDir.exists()) cleanDirectory(liveCacheDir);
                 if (configCacheDir.exists()) cleanDirectory(configCacheDir);
-                if (webViewDir.exists()) cleanDirectory(webViewDir);
+                if (webViewDir.exists()) cleanDirectory(webViewDir);  //xuameng WEBVIEW缓存
                 clearWebViewCache();  //xuameng WEBVIEW缓存
-                clearJsModuleCache();
+                clearJsModuleCache(); //xuameng JS CACHE
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }).start();
     }
 
-    private static void clearJsModuleCache() {   //xuameng JS CACHE
+    private static void clearJsModuleCache() {   //xuameng JS 缓存
         File externalCacheDir = new File(getExternalCachePath());
         if (!externalCacheDir.exists() && !externalCacheDir.mkdirs()) {
             return;
