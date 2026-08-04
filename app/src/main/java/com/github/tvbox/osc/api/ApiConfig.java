@@ -792,6 +792,10 @@ public class ApiConfig {
         SourceBean firstSite = null;
         for (JsonElement opt : infoJson.get("sites").getAsJsonArray()) {
             JsonObject obj = (JsonObject) opt;
+            if (!obj.has("key") || !obj.has("type") || !obj.has("api")) {
+                LOG.i("echo-skip incomplete site config: " + obj);
+                continue;
+            }
             SourceBean sb = new SourceBean();
             String siteKey = obj.get("key").getAsString().trim();
             sb.setKey(siteKey);
@@ -1854,14 +1858,8 @@ public class ApiConfig {
             if (url.startsWith("clan://")) {
                 url = clanToAddress(url);
             }
-            String base = url.substring(0, url.lastIndexOf("/") + 1);
-            String parent = base.endsWith("/") ? base.substring(0, base.length() - 1) : base;
-            int parentEnd = parent.lastIndexOf("/");
-            if (parentEnd >= 0) {
-                parent = parent.substring(0, parentEnd + 1);
-            }
-            content = content.replace("../", parent);
-            content = content.replace("./", base);
+            content = content.replace("../", UriUtil.resolve(url, "../"));
+            content = content.replace("./", UriUtil.resolve(url, "./"));
         }
         return content;
     }
