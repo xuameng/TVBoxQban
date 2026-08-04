@@ -217,6 +217,32 @@ if (root != null) {
             handlePullRefreshTouch(v, event));
 }
 
+tvHotList1.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+    @Override
+    public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+        return handlePullRefreshTouch(rv, e);
+    }
+
+    @Override
+    public void onTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {}
+
+    @Override
+    public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {}
+});
+
+tvHotList2.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+    @Override
+    public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+        return handlePullRefreshTouch(rv, e);
+    }
+
+    @Override
+    public void onTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {}
+
+    @Override
+    public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {}
+});
+
         homeHotVodAdapter = new HomeHotVodAdapter(isFolederMode(), style);   //xuameng 增加传入isFolederMode style为list为true
         homeHotVodAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
@@ -709,31 +735,5 @@ private boolean handlePullRefreshTouch(View view, MotionEvent event) {
 private void initPullRefresh() {
     pullRefreshThreshold = ViewConfiguration.get(mContext).getScaledTouchSlop() * 6;
 }
-
-tvHotList1.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
-    @Override
-    public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
-        return handlePullRefreshTouch(rv, e);
-    }
-
-    @Override
-    public void onTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {}
-
-    @Override
-    public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {}
-});
-
-tvHotList2.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
-    @Override
-    public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
-        return handlePullRefreshTouch(rv, e);
-    }
-
-    @Override
-    public void onTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {}
-
-    @Override
-    public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {}
-});
 
 }
