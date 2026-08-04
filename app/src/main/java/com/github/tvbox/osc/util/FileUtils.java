@@ -218,7 +218,6 @@ public class FileUtils {
 		File exoCachePathDir = new File(exoCachePath);       //xuameng exo缓存
 		File jpaCachePathDir = new File(jpaCachePath + File.separator + "Downloads");       //xuameng jp缓存
         File webViewDir = getAppWebviewDir();  // xuameng webview缓存目录
-
         try {
             if (ijkCacheDir.exists()) cleanDirectory(ijkCacheDir);
             if (thunderCacheDir.exists()) cleanDirectory(thunderCacheDir);
