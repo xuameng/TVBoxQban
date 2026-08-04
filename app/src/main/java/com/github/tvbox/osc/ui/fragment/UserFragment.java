@@ -9,7 +9,7 @@ import android.view.ViewConfiguration;
 import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;   //xuameng 手机滑动刷新页面
 import com.github.tvbox.osc.base.App; //xuameng toast
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.github.tvbox.osc.R;
@@ -85,11 +85,11 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
     public static TvRecyclerView tvHotList2; //xuameng首页单行
     private ImgUtilHot.Style style; //xuameng 图片样式
 
-private float pullRefreshStartX;
-private float pullRefreshStartY;
-private boolean pullRefreshStartAtTop = false;
-private boolean pullRefreshReady = false;
-private int pullRefreshThreshold = 0;
+    private float pullRefreshStartX;   //xuameng 手机滑动刷新页面
+    private float pullRefreshStartY;  //xuameng 手机滑动刷新页面
+    private boolean pullRefreshStartAtTop = false;  //xuameng 手机滑动刷新页面
+    private boolean pullRefreshReady = false;  //xuameng 手机滑动刷新页面
+    private int pullRefreshThreshold = 0;  //xuameng 手机滑动刷新页面
 
     public static UserFragment newInstance() {
         return new UserFragment();
@@ -213,38 +213,38 @@ private int pullRefreshThreshold = 0;
             style = ImgUtilHot.initStyle();
         }
 
-initPullRefresh();
-View root = getView();
-if (root != null) {
-    root.setOnTouchListener((v, event) ->
-            handlePullRefreshTouch(v, event));
-}
+        initPullRefresh();  //xuameng 手机滑动刷新页面
+        View root = getView();
+        if (root != null) {
+            root.setOnTouchListener((v, event) ->
+                    handlePullRefreshTouch(v, event));
+        }
 
-tvHotList1.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
-    @Override
-    public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
-        return handlePullRefreshTouch(rv, e);
-    }
+        tvHotList1.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {   //xuameng 手机滑动刷新页面
+            @Override
+            public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+                return handlePullRefreshTouch(rv, e);
+            }
 
-    @Override
-    public void onTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {}
+            @Override
+            public void onTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {}
 
-    @Override
-    public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {}
-});
+            @Override
+            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {}
+        });
 
-tvHotList2.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
-    @Override
-    public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
-        return handlePullRefreshTouch(rv, e);
-    }
+        tvHotList2.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {   //xuameng 手机滑动刷新页面
+            @Override
+            public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+                return handlePullRefreshTouch(rv, e);
+            }
 
-    @Override
-    public void onTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {}
+            @Override
+            public void onTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {}
 
-    @Override
-    public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {}
-});
+            @Override
+            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {}
+        });
 
         homeHotVodAdapter = new HomeHotVodAdapter(isFolederMode(), style);   //xuameng 增加传入isFolederMode style为list为true
         homeHotVodAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
@@ -699,44 +699,44 @@ tvHotList2.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
         return false;
     }
 
-private boolean handlePullRefreshTouch(View view, MotionEvent event) {
-    switch (event.getActionMasked()) {
-        case MotionEvent.ACTION_DOWN:
-            pullRefreshStartX = event.getX();
-            pullRefreshStartY = event.getY();
-            pullRefreshStartAtTop = !view.canScrollVertically(-1);
-            pullRefreshReady = false;
-            break;
-
-        case MotionEvent.ACTION_MOVE:
-            float diffX = Math.abs(event.getX() - pullRefreshStartX);
-            float diffY = event.getY() - pullRefreshStartY;
-            pullRefreshReady =
-                    pullRefreshStartAtTop &&
-                    diffY > pullRefreshThreshold &&
-                    diffY > diffX;
-            break;
-
-        case MotionEvent.ACTION_UP:
-            if (pullRefreshReady) {
+    private boolean handlePullRefreshTouch(View view, MotionEvent event) {   //xuameng 手机滑动刷新页面
+        switch (event.getActionMasked()) {
+            case MotionEvent.ACTION_DOWN:
+                pullRefreshStartX = event.getX();
+                pullRefreshStartY = event.getY();
+                pullRefreshStartAtTop = !view.canScrollVertically(-1);
                 pullRefreshReady = false;
-                if (mActivity instanceof HomeActivity) {
-                    ((HomeActivity) mActivity).refreshHomeSort();
-                    App.showToastShort(mContext, "主页刷新！");
+                break;
+
+            case MotionEvent.ACTION_MOVE:
+                float diffX = Math.abs(event.getX() - pullRefreshStartX);
+                float diffY = event.getY() - pullRefreshStartY;
+                pullRefreshReady =
+                        pullRefreshStartAtTop &&
+                        diffY > pullRefreshThreshold &&
+                        diffY > diffX;
+                break;
+
+            case MotionEvent.ACTION_UP:
+                if (pullRefreshReady) {
+                    pullRefreshReady = false;
+                    if (mActivity instanceof HomeActivity) {
+                        ((HomeActivity) mActivity).refreshHomeSort();
+                        App.showToastShort(mContext, "主页刷新！");
+                    }
+                    return true;
                 }
-                return true;
-            }
-            break;
+                break;
 
-        case MotionEvent.ACTION_CANCEL:
-            pullRefreshReady = false;
-            break;
+            case MotionEvent.ACTION_CANCEL:
+                pullRefreshReady = false;
+                break;
+        }
+        return false;
     }
-    return false;
-}
 
-private void initPullRefresh() {
-    pullRefreshThreshold = ViewConfiguration.get(mContext).getScaledTouchSlop() * 6;
-}
+    private void initPullRefresh() {  //xuameng 手机滑动刷新页面
+        pullRefreshThreshold = ViewConfiguration.get(mContext).getScaledTouchSlop() * 6;
+    }
 
 }
