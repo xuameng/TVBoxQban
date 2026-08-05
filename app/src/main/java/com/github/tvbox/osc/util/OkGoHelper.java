@@ -47,6 +47,7 @@ import okhttp3.Dns;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.dnsoverhttps.DnsOverHttps;
+import okhttp3.internal.Version;
 import xyz.doikki.videoplayer.exo.ExoMediaSourceHelper;
 
 
@@ -159,13 +160,6 @@ public class OkGoHelper {
             }
         }
         return inetAddresses;
-    }
-
-    private static String getUserAgent() {  //xuameng 获取okhttp版本号
-        String version = OkHttpClient.class
-                .getPackage()
-                .getImplementationVersion();
-        return "OkHttp/" + (version != null ? version : "4.12.0");
     }
 
     static void initDnsOverHttps() {
@@ -345,7 +339,7 @@ public class OkGoHelper {
             th.printStackTrace();
         }
 
-        HttpHeaders.setUserAgent(getUserAgent());  //xuameng 获取okhttp版本号
+        HttpHeaders.setUserAgent(Version.userAgent());
 
         OkHttpClient okHttpClient = builder.build();
         OkGo.getInstance().setOkHttpClient(okHttpClient);
@@ -389,7 +383,7 @@ public class OkGoHelper {
             th.printStackTrace();
         }
 
-        HttpHeaders.setUserAgent(getUserAgent());
+        HttpHeaders.setUserAgent(Version.userAgent());
 
         OkHttpClient okHttpClient = builder.build();
         OkGo.getInstance().setOkHttpClient(okHttpClient);
