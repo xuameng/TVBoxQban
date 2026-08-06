@@ -169,6 +169,7 @@ public class HomeActivity extends BaseActivity {
             useCacheConfig = bundle.getBoolean("useCache", false);
         }
         initData();
+        checkMicrophonePermission();  //xuameng音频权限
     }
 
     private void initView() {
@@ -360,7 +361,6 @@ public class HomeActivity extends BaseActivity {
     private TipDialog mConfigErrorDialog;
 
     private void initData() {
-        checkMicrophonePermission();  //xuameng音频权限
         refreshEmpty = false;	//xuameng打断加载判断
         if (dataInitOk && jarInitOk) {
             loadHomeSort(false);
@@ -1103,21 +1103,18 @@ public class HomeActivity extends BaseActivity {
      * 权限请求结果回调
      */
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, 
+            String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        
         if (requestCode == REQUEST_CODE_RECORD_AUDIO) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // 权限被授予
-                Log.d(TAG, "麦克风权限已授予");
+            if (grantResults.length > 0 && 
+                grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             } else {
-                // 权限被拒绝
-                // 关键修改：增加 shouldShowRequestPermissionRationale 的判断
-                // 只有当 shouldShowRequestPermissionRationale 返回 false 时，才表示用户勾选了“不再询问”
                 if (!shouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO)) {
+                    // 用户勾选"不再询问"后的处理
                     showPermanentDenialDialog();
                 }
-                // 如果 shouldShowRequestPermissionRationale 返回 true，说明只是普通拒绝，
-                // 此时不需要做任何操作，因为 checkMicrophonePermission 中已经处理了普通拒绝的情况（弹出解释弹窗）
             }
         }
     }
