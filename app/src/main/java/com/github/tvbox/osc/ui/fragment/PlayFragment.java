@@ -865,7 +865,7 @@ public class PlayFragment extends BaseLazyFragment {
                                         App.getInstance().setDashData(base64);
                                         url = ControlManager.get().getAddress(true) + "dash/proxy.mpd";
                                         break;
-                                    } else if (s.contains("proxy://")) {   //xuameng 另一种写法
+                                    } else if (s.startsWith("proxy://")) {   //xuameng 另一种写法
                                         String base = ControlManager.get().getAddress(true);
                                         url = base + "proxy?" + s.substring("proxy://".length());
                                         break;
