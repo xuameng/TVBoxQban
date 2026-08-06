@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.OpenableColumns;
+import android.graphics.BitmapFactory;  //xuameng 判断壁纸大小用
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 
@@ -265,16 +266,29 @@ public class ModelSettingFragment extends BaseLazyFragment {
                         public void onSuccess(Response<File> response) {
                             if (HawkConfig.isGetWp){
                                 String mimeType = response.headers().get("Content-Type");
-                                if (mimeType != null && mimeType.startsWith("image/")) {   // 确认是图片文件
-                                   ((BaseActivity) requireActivity()).changeWallpaper(true);      
-                                   HawkConfig.isGetWp = false;  //xuameng下载壁纸 
-                                   App.showToastShort(getContext(), "壁纸更换成功！");
+                                File file = response.body();
+                                if (file == null || !file.exists()) {
+                                    App.showToastShort(getContext(), "壁纸文件下载失败！");
+                                    HawkConfig.isGetWp = false;
+                                    return;
+                                }
+                                BitmapFactory.Options opts = new BitmapFactory.Options();
+                                opts.inJustDecodeBounds = true;
+                                BitmapFactory.decodeFile(file.getAbsolutePath(), opts);
+                                // 从Options中获取图片的分辨率
+                                int imageHeight = opts.outHeight;
+                                int imageWidth = opts.outWidth;
+                                if (mimeType != null && mimeType.startsWith("image/") && imageWidth >= 200 && imageHeight >= 200) {  // xuameng确认是图片文件并且宽高都正常
+                                    ((BaseActivity) requireActivity()).changeWallpaper(true);      
+                                    HawkConfig.isGetWp = false;  //xuameng下载壁纸 
+                                    App.showToastShort(getContext(), "壁纸更换成功！");
                                 }else{
-                                   File wp = new File(requireActivity().getFilesDir().getAbsolutePath() + "/wp");
-                                   if (wp.exists()) wp.delete();
-                                   ((BaseActivity) requireActivity()).changeWallpaper(true);
-                                   HawkConfig.isGetWp = false;  //xuameng下载壁纸
-                                   App.showToastShort(getContext(), "壁纸文件类型错误！已重置壁纸！");
+                                    if (file.exists()) {
+                                        file.delete(); // 删除的就是 /data/data/包名/files/wp
+                                    }
+                                    ((BaseActivity) requireActivity()).changeWallpaper(true);
+                                    HawkConfig.isGetWp = false;  //xuameng下载壁纸
+                                    App.showToastShort(getContext(), "壁纸文件类型错误！已重置壁纸！");
                                 }
                             }
                         }
