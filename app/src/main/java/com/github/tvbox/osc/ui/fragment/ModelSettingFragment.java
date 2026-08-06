@@ -254,7 +254,10 @@ public class ModelSettingFragment extends BaseLazyFragment {
             @Override
             public void onClick(View v) {
                 FastClickCheckUtil.check(v);  //xuameng 2秒
-                if (!ApiConfig.get().wallpaper.isEmpty()){
+String wpUrl = ApiConfig.get().wallpaper;
+if (!wpUrl.isEmpty()) {
+            // ✅ 关键：proxy:// → http://ip:port/proxy?
+            wpUrl = ApiConfig.checkReplaceProxy(wpUrl);
                     HawkConfig.isGetWp = true;  //xuameng下载壁纸
                     App.showToastShort(getContext(), "壁纸更换中！");
                     OkGo.<File>get(ApiConfig.get().wallpaper).tag("wallpaperDown").execute(new FileCallback(requireActivity().getFilesDir().getAbsolutePath(), "wp") {  //xuameng增加tag以便打断下载
