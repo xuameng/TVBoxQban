@@ -128,8 +128,8 @@ public class HomeActivity extends BaseActivity {
     private static final int REQUEST_CODE_RECORD_AUDIO = 1001; //xuameng获取音频权限
     private static final String TAG = "PermissionHelper";//xuameng获取音频权限
     private static final int MARSHMALLOW = Build.VERSION_CODES.M;  //xuameng获取音频权限
-    private static final String PREF_PERMISSION_DIALOG = "permission_prefs";   //xuameng获取音频权限
-    private static final String KEY_DIALOG_SHOWN = "dialog_shown";  //xuameng获取音频权限
+    private static final String PREF_PERMISSION = "permission";   //xuameng获取音频权限
+    private static final String KEY_REQUESTED_ONCE = "permission_requested_once";   //xuameng获取音频权限
     private final Runnable mRunnable = new Runnable() {
         @SuppressLint("SetTextI18n")
         @Override
@@ -1054,56 +1054,77 @@ public class HomeActivity extends BaseActivity {
     }
 
     // 触发权限检查的入口方法
-    public void checkMicrophonePermission() {
-        if (Build.VERSION.SDK_INT >= MARSHMALLOW) {
-            if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) 
-                != PackageManager.PERMISSION_GRANTED) {
-                
-                if (shouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO)) {
-                    // 用户已拒绝过权限，显示解释弹窗
-                    showPermissionDeniedDialog();
-                } else {
-                    // 首次请求或永久拒绝时发起标准权限请求
-                    requestRecordAudioPermission();
-                }
-            } else {
-                Log.d(TAG, "麦克风权限已授予");
-            }
+public void checkMicrophonePermission() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        if (checkSelfPermission(Manifest.permission.RECORD_AUDIO)
+                == PackageManager.PERMISSION_GRANTED) {
+            Log.d(TAG, "麦克风权限已授予");
+            return;
+        }
+
+        boolean requestedBefore = getSharedPreferences(PREF_PERMISSION, MODE_PRIVATE)
+                .getBoolean(KEY_REQUESTED_ONCE, false);
+
+        if (shouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO)) {
+            // 用户已拒绝过权限，显示解释弹窗
+            showPermissionDeniedDialog();
+        } else if (!requestedBefore) {
+            // 首次请求或永久拒绝时发起标准权限请求
+            requestRecordAudioPermission();
         } else {
-            // 6.0以下版本默认视为已授权
+            // 已请求过，但不是“拒绝+不再询问”的情况
+            showPermissionDeniedDialog();
         }
     }
+}
 
     /**
      * 标准权限请求方法
      */
-    private void requestRecordAudioPermission() {
-        ActivityCompat.requestPermissions(
+private void requestRecordAudioPermission() {
+    getSharedPreferences(PREF_PERMISSION, MODE_PRIVATE)
+            .edit()
+            .putBoolean(KEY_REQUESTED_ONCE, true)
+            .apply();
+
+    ActivityCompat.requestPermissions(
             this,
             new String[]{Manifest.permission.RECORD_AUDIO},
             REQUEST_CODE_RECORD_AUDIO
-        );
-    }
+    );
+}
 
     /**
      * 权限请求结果回调
      */
-    @Override
-    public void onRequestPermissionsResult(int requestCode, 
-            String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        
-        if (requestCode == REQUEST_CODE_RECORD_AUDIO) {
-            if (grantResults.length > 0 && 
-                grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+@Override
+public void onRequestPermissionsResult(int requestCode,
+                                       String[] permissions,
+                                       int[] grantResults) {
+    super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+    if (requestCode == REQUEST_CODE_RECORD_AUDIO) {
+        if (grantResults.length > 0
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            Log.d(TAG, "麦克风权限已授予");
+        } else {
+            boolean requestedBefore = getSharedPreferences(PREF_PERMISSION, MODE_PRIVATE)
+                    .getBoolean(KEY_REQUESTED_ONCE, false);
+
+            boolean permanentlyDenied =
+                    !shouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO)
+                            && requestedBefore;
+
+            if (permanentlyDenied) {
+                // 用户勾选"不再询问"后的处理
+                showPermanentDenialDialog();
             } else {
-                if (!shouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO)) {
-                    // 用户勾选"不再询问"后的处理
-                    showPermanentDenialDialog();
-                }
+                // 用户已拒绝过权限，显示解释弹窗
+                showPermissionDeniedDialog();
             }
         }
     }
+}
 
     /**
      * 权限被永久拒绝时的提示
