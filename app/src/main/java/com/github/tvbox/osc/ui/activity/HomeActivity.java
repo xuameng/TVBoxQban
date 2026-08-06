@@ -130,6 +130,8 @@ public class HomeActivity extends BaseActivity {
     private static final int MARSHMALLOW = Build.VERSION_CODES.M;  //xuameng获取音频权限
     private static final String PREF_PERMISSION = "permission";   //xuameng获取音频权限
     private static final String KEY_REQUESTED_ONCE = "permission_requested_once";   //xuameng获取音频权限
+    private static final String PREF_PERMISSION_DIALOG = "permission_prefs";   //xuameng获取音频权限
+    private static final String KEY_DIALOG_SHOWN = "dialog_shown";  //xuameng获取音频权限
     private final Runnable mRunnable = new Runnable() {
         @SuppressLint("SetTextI18n")
         @Override
@@ -1053,30 +1055,44 @@ public class HomeActivity extends BaseActivity {
         });
     }
 
-    // 触发权限检查的入口方法
-public void checkMicrophonePermission() {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-        if (checkSelfPermission(Manifest.permission.RECORD_AUDIO)
-                == PackageManager.PERMISSION_GRANTED) {
-            Log.d(TAG, "麦克风权限已授予");
-            return;
-        }
-
-        boolean requestedBefore = getSharedPreferences(PREF_PERMISSION, MODE_PRIVATE)
-                .getBoolean(KEY_REQUESTED_ONCE, false);
-
-        if (shouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO)) {
-            // 用户已拒绝过权限，显示解释弹窗
-            showPermissionDeniedDialog();
-        } else if (!requestedBefore) {
-            // 首次请求或永久拒绝时发起标准权限请求
-            requestRecordAudioPermission();
+    /**
+     * xuameng安全更新SortAdapter的选中位置
+     * 核心：避免在RecyclerView.isComputingLayout()时调用notifyItemChanged()
+     */
+    private void safeUpdateSortAdapterSelection(int position, TvRecyclerView recyclerView) {
+        if (recyclerView.isComputingLayout() || recyclerView.isScrolling()) {
+            recyclerView.post(() -> {
+                sortAdapter.setSelectedPosition(position);
+            });
         } else {
-            // 已请求过，但不是“拒绝+不再询问”的情况
-            showPermissionDeniedDialog();
+            sortAdapter.setSelectedPosition(position);
         }
     }
-}
+
+    // 触发权限检查的入口方法
+    public void checkMicrophonePermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.RECORD_AUDIO)
+                    == PackageManager.PERMISSION_GRANTED) {
+                Log.d(TAG, "麦克风权限已授予");
+                return;
+            }
+
+            boolean requestedBefore = getSharedPreferences(PREF_PERMISSION, MODE_PRIVATE)
+                    .getBoolean(KEY_REQUESTED_ONCE, false);
+
+            if (shouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO)) {
+                // 用户已拒绝过权限，显示解释弹窗
+                showPermissionDeniedDialog();
+            } else if (!requestedBefore) {
+                // 首次请求或永久拒绝时发起标准权限请求
+                requestRecordAudioPermission();
+            } else {
+                // 已请求过，但不是“拒绝+不再询问”的情况
+                showPermissionDeniedDialog();
+            }
+        }
+    }
 
     /**
      * 标准权限请求方法
@@ -1174,20 +1190,6 @@ public void onRequestPermissionsResult(int requestCode,
             Log.e(TAG, "跳转设置失败: " + e.getMessage());
             // 备用方案：跳转到应用列表
             startActivity(new Intent(Settings.ACTION_APPLICATION_SETTINGS));
-        }
-    }
-
-    /**
-     * xuameng安全更新SortAdapter的选中位置
-     * 核心：避免在RecyclerView.isComputingLayout()时调用notifyItemChanged()
-     */
-    private void safeUpdateSortAdapterSelection(int position, TvRecyclerView recyclerView) {
-        if (recyclerView.isComputingLayout() || recyclerView.isScrolling()) {
-            recyclerView.post(() -> {
-                sortAdapter.setSelectedPosition(position);
-            });
-        } else {
-            sortAdapter.setSelectedPosition(position);
         }
     }
 
