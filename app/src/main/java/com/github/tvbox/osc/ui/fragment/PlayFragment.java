@@ -292,7 +292,7 @@ public class PlayFragment extends BaseLazyFragment {
                 dialog.setDanmuSearchListener(new DanmuSettingDialog.DanmuSearchListener() {
                     @Override
                     public void openSearchDanmuDialog() {
-                        SearchDanmuDialog searchDanmuDialog = new SearchDanmuDialog(requireContext());
+                        SearchDanmuDialog searchDanmuDialog = new SearchDanmuDialog(requireContext(), mDanmuView);
                         searchDanmuDialog.setDanmuLoader(new SearchDanmuDialog.DanmuLoader() {
                             @Override
                             public void loadDanmu(String danmu) {
