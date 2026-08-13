@@ -7,7 +7,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -17,6 +16,7 @@ import com.github.tvbox.osc.api.DanmakuApi;
 import com.github.tvbox.osc.bean.DanmuSearchResult;
 import com.github.tvbox.osc.ui.adapter.SearchDanmuAdapter;
 import com.github.tvbox.osc.util.FastClickCheckUtil;
+import com.github.tvbox.osc.base.App;
 import com.owen.tvrecyclerview.widget.TvRecyclerView;
 import com.owen.tvrecyclerview.widget.V7LinearLayoutManager;
 
@@ -87,7 +87,7 @@ public class SearchDanmuDialog extends BaseDialog {
     private void search(String word) {
         searchAdapter.setNewData(new ArrayList<DanmuSearchResult>());
         if (TextUtils.isEmpty(word)) {
-            Toast.makeText(getContext(), "输入内容不能为空", Toast.LENGTH_SHORT).show();
+            App.showToastShort(getContext(), "输入内容不能为空！");
             return;
         }
         showLoading();
@@ -100,7 +100,7 @@ public class SearchDanmuDialog extends BaseDialog {
             @Override
             public void onError(String message) {
                 showResults(new ArrayList<DanmuSearchResult>());
-                Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+                App.showToastShort(getContext(), message);
             }
         });
     }
@@ -118,7 +118,8 @@ public class SearchDanmuDialog extends BaseDialog {
             public void onError(String message) {
                 loadingBar.setVisibility(View.GONE);
                 gridView.setVisibility(View.VISIBLE);
-                Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+                App.showToastShort(getContext(), message);
+
             }
         });
     }
@@ -134,7 +135,7 @@ public class SearchDanmuDialog extends BaseDialog {
         gridView.setVisibility(View.VISIBLE);
         searchAdapter.setNewData(results);
         if (results.isEmpty()) {
-            Toast.makeText(getContext(), "未查询到匹配弹幕", Toast.LENGTH_SHORT).show();
+            App.showToastShort(getContext(), "未查询到匹配弹幕！");
             return;
         }
         gridView.requestFocus();
