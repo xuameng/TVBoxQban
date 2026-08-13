@@ -179,6 +179,7 @@ public class VodController extends BaseController {
                     case 1002: { // 显示底部菜单
                         // xuameng底部视图动画
                         updateDanmuSearchUiBtn();  //xuameng弹幕搜索
+                        updateDanmuBtn();
                         mBottomRoot.setVisibility(VISIBLE);
                         mBottomRoot.setAlpha(0.0f);
                         mBottomRoot.setTranslationY(230);
@@ -617,6 +618,7 @@ public class VodController extends BaseController {
         mLrcView = findViewById(R.id.lrc_view);  //xuameng LRC歌词字幕
         mDanmuView = findViewById(R.id.danmaku); //xuameng弹幕
         updateDanmuSearchUiBtn();  //xuameng弹幕搜索
+        updateDanmuBtn(); //xuameng弹幕
 
         //xuameng音乐播放时图标
         ObjectAnimator animator20 = ObjectAnimator.ofFloat(iv_circle_bg, "rotation", 360.0f);
