@@ -21,6 +21,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import master.flame.danmaku.ui.widget.DanmakuView;
+
 /**
  * @author xuameng
  * @date :2026/08/13
