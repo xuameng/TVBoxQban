@@ -11,10 +11,10 @@ import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.source.TrackGroup;
 import com.google.android.exoplayer2.source.TrackGroupArray;
+import com.google.android.exoplayer2.Tracks;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
-import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.util.MimeTypes;
 import xyz.doikki.videoplayer.exo.ExoMediaPlayer;
 import android.util.Pair;      //xuameng记忆选择音轨
@@ -36,7 +36,7 @@ public class EXOmPlayer extends ExoMediaPlayer {
         TrackInfo data = new TrackInfo();
         MappingTrackSelector.MappedTrackInfo trackInfo = getTrackSelector().getCurrentMappedTrackInfo();
         if (trackInfo != null) {
-            getExoSelectedTrack(mTrackSelections);
+            getExoSelectedTrack();
             for (int groupArrayIndex = 0; groupArrayIndex < trackInfo.getRendererCount(); groupArrayIndex++) {
                 TrackGroupArray groupArray = trackInfo.getTrackGroups(groupArrayIndex);
                 for (int groupIndex = 0; groupIndex < groupArray.length; groupIndex++) {
@@ -190,18 +190,22 @@ public class EXOmPlayer extends ExoMediaPlayer {
     }
 
     @SuppressLint("UnsafeOptInUsageError")
-    private void getExoSelectedTrack(TrackSelectionArray trackSelections) {
+    private void getExoSelectedTrack() {
         audioId = "";
         subtitleId = "";
+        Tracks tracks = mMediaPlayer.getCurrentTracks();
         for (TrackSelection selection : trackSelections.getAll()) {
             if (selection == null) continue;
-            for(int trackIndex = 0; trackIndex < selection.length(); trackIndex++) {
-                Format format = selection.getFormat(trackIndex);
-                if (MimeTypes.isAudio(format.sampleMimeType)) {
-                    audioId = format.id;
-                }
-                if (MimeTypes.isText(format.sampleMimeType)) {
-                    subtitleId = format.id;
+            for (Tracks.Group group : tracks.getGroups()) {
+                for (int i = 0; i < group.length; i++) {
+                    if (group.isTrackSelected(i)) {
+                        Format format = group.getTrackFormat(i);
+                        if (MimeTypes.isAudio(format.sampleMimeType)) {
+                            audioId = format.id;
+                        } else if (MimeTypes.isText(format.sampleMimeType)) {
+                            subtitleId = format.id;
+                        }
+                    }
                 }
             }
         }
@@ -245,7 +249,7 @@ public class EXOmPlayer extends ExoMediaPlayer {
             } else {
                 TrackGroupArray trackGroupArray = trackInfo.getTrackGroups(videoTrackBean.renderId);
                 DefaultTrackSelector.SelectionOverride override = new DefaultTrackSelector.SelectionOverride(videoTrackBean.trackGroupId, videoTrackBean.trackId);
-                DefaultTrackSelector.ParametersBuilder parametersBuilder = getTrackSelector().buildUponParameters();
+                DefaultTrackSelector.Parameters.Builder parametersBuilder = getTrackSelector().buildUponParameters();
                 parametersBuilder.setRendererDisabled(videoTrackBean.renderId, false);
                 parametersBuilder.setSelectionOverride(videoTrackBean.renderId, trackGroupArray, override);
                 getTrackSelector().setParameters(parametersBuilder);
@@ -276,9 +280,9 @@ public class EXOmPlayer extends ExoMediaPlayer {
         DefaultTrackSelector.SelectionOverride override = new DefaultTrackSelector.SelectionOverride(groupIndex, trackIndex);
 
         DefaultTrackSelector.Parameters.Builder parametersBuilder = getTrackSelector().buildUponParameters();
-        builder.clearSelectionOverrides(audioRendererIndex);
-        builder.setSelectionOverride(audioRendererIndex, audioGroups, override);
-        getTrackSelector().setParameters(builder.build());
+        parametersBuilder.clearSelectionOverrides(audioRendererIndex);
+        parametersBuilder.setSelectionOverride(audioRendererIndex, audioGroups, override);
+        getTrackSelector().setParameters(parametersBuilder.build());
     }
     
     /**
