@@ -31,6 +31,7 @@ import master.flame.danmaku.ui.widget.DanmakuView;
 
 public class DanmuSettingDialog extends BaseDialog {
     private DanmuSearchListener danmuSearchListener;
+    private final DanmakuView danmakuView;
 
     public DanmuSettingDialog(@NonNull @NotNull Context context) {
         super(context);
