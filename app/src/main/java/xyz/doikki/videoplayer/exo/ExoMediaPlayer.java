@@ -21,7 +21,6 @@ import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.Tracks;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.util.Clock;
 import com.google.android.exoplayer2.util.EventLogger;
@@ -55,7 +54,6 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     private DefaultRenderersFactory mRenderersFactory;
     private DefaultTrackSelector mTrackSelector;
     protected ExoTrackNameProvider trackNameProvider;
-    protected TrackSelectionArray mTrackSelections;
     private static AudioTrackMemory memory;    //xuameng记忆选择音轨
     private SubtitleView mExoSubtitleView; // 用于显示ExoPlayer内置字幕
 
@@ -150,11 +148,11 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     public DefaultTrackSelector getTrackSelector() {
         return mTrackSelector;
     }
+
     @Override
-    public void onTracksChanged(Tracks tracks) {
+    public void onTracksChanged(@NonNull Tracks tracks) {
         Player.Listener.super.onTracksChanged(tracks);
         trackNameProvider = new ExoTrackNameProvider(mAppContext.getResources());
-        mTrackSelections = tracks.getCurrentTrackSelections();
     }
 
     @Override
