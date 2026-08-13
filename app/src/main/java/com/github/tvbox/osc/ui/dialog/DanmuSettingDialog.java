@@ -33,9 +33,10 @@ public class DanmuSettingDialog extends BaseDialog {
     private DanmuSearchListener danmuSearchListener;
     private final DanmakuView danmakuView;
 
-    public DanmuSettingDialog(@NonNull @NotNull Context context) {
+    public DanmuSettingDialog(@NonNull @NotNull Context context, DanmakuView danmakuView) {
         super(context);
         setContentView(R.layout.dialog_danmu_setting);
+        this.danmakuView = danmakuView;
         initOnOff();
         initDanmuSearch();
         initColor();
