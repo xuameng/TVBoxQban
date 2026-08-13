@@ -1674,14 +1674,15 @@ public class VodController extends BaseController {
         updateDanmuBtn();
     }
 
-    public void updateDanmuBtn() {
+    public void updateDanmuBtn() {   //xuameng弹幕设置
         if (mDanmuSettingBtn == null) return;
-        mDanmuSettingBtn.setVisibility(hasDanmu ? VISIBLE : GONE);  //xuameng弹幕设置
+        mDanmuSettingBtn.setVisibility(DanmuHelper.isOpen() ? VISIBLE : GONE);
     }
 
-    public void updateDanmuSearchUiBtn() {   //xuameng弹幕搜索
+    public void updateDanmuSearchUiBtn() {  //xuameng弹幕搜索
         if (mDanmuSearchUiBtn == null) return;
-        mDanmuSearchUiBtn.setVisibility(ApiConfig.get().hasDanmuSearchUi() ? VISIBLE : GONE);
+        boolean hasDanmuSearchUi = ApiConfig.get().hasDanmuSearchUi();
+        mDanmuSearchUiBtn.setVisibility(hasDanmuSearchUi ? VISIBLE : GONE);
     }
 
     public interface VodControlListener {
