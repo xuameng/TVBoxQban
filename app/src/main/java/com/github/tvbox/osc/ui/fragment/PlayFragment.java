@@ -288,11 +288,11 @@ public class PlayFragment extends BaseLazyFragment {
         mController.setListener(new VodController.VodControlListener() {
             @Override
             public void showDanmuSetting() {   //xuameng 弹幕设置
-                DanmuSettingDialog dialog = new DanmuSettingDialog(requireContext());
+                DanmuSettingDialog dialog = new DanmuSettingDialog(requireContext(), mDanmuView);
                 dialog.setDanmuSearchListener(new DanmuSettingDialog.DanmuSearchListener() {
                     @Override
                     public void openSearchDanmuDialog() {
-                        SearchDanmuDialog searchDanmuDialog = new SearchDanmuDialog(requireContext(), mDanmuView);
+                        SearchDanmuDialog searchDanmuDialog = new SearchDanmuDialog(requireContext());
                         searchDanmuDialog.setDanmuLoader(new SearchDanmuDialog.DanmuLoader() {
                             @Override
                             public void loadDanmu(String danmu) {
