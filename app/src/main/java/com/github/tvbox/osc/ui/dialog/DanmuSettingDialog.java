@@ -33,6 +33,7 @@ public class DanmuSettingDialog extends BaseDialog {
     public DanmuSettingDialog(@NonNull @NotNull Context context) {
         super(context);
         setContentView(R.layout.dialog_danmu_setting);
+        initOnOff();
         initDanmuSearch();
         initColor();
         initSpeed();
@@ -50,6 +51,29 @@ public class DanmuSettingDialog extends BaseDialog {
             danmuSearchListener.openSearchDanmuDialog();
         });
         danmuSearch.post(danmuSearch::requestFocus);
+    }
+
+    private void initOnOff() {
+        List<Boolean> data = Arrays.asList(true, false);
+        setButtonAdapter(R.id.trv_onoff, data, DanmuHelper.isOpen() ? 0 : 1, new ButtonAdapter.SelectDialogInterface<Boolean>() {
+            @Override
+            public void click(Boolean value, int pos) {
+                DanmuHelper.setOpen(value);
+                if (danmakuView != null) {
+                    if (value) {
+                        danmakuView.show();
+                    } else {
+                        danmakuView.hide();
+                    }
+                }
+                EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_SET_DANMU_SETTINGS, value));
+            }
+
+            @Override
+            public String getDisplay(Boolean val) {
+                return val ? "开" : "关";
+            }
+        });
     }
 
     private void initColor() {
