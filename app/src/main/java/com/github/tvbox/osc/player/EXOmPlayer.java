@@ -194,17 +194,15 @@ public class EXOmPlayer extends ExoMediaPlayer {
         audioId = "";
         subtitleId = "";
         Tracks tracks = mMediaPlayer.getCurrentTracks();
-        for (TrackSelection selection : trackSelections.getAll()) {
-            if (selection == null) continue;
-            for (Tracks.Group group : tracks.getGroups()) {
-                for (int i = 0; i < group.length; i++) {
-                    if (group.isTrackSelected(i)) {
-                        Format format = group.getTrackFormat(i);
-                        if (MimeTypes.isAudio(format.sampleMimeType)) {
-                            audioId = format.id;
-                        } else if (MimeTypes.isText(format.sampleMimeType)) {
-                            subtitleId = format.id;
-                        }
+        if (tracks == null) return;
+        for (Tracks.Group group : tracks.getGroups()) {
+            for (int i = 0; i < group.length; i++) {
+                if (group.isTrackSelected(i)) {
+                    Format format = group.getTrackFormat(i);
+                    if (MimeTypes.isAudio(format.sampleMimeType)) {
+                        audioId = format.id;
+                    } else if (MimeTypes.isText(format.sampleMimeType)) {
+                        subtitleId = format.id;
                     }
                 }
             }
