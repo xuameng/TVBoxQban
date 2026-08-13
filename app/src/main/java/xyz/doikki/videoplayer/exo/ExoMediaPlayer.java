@@ -53,6 +53,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     private DefaultLoadControl mLoadControl;
     private DefaultRenderersFactory mRenderersFactory;
     private DefaultTrackSelector mTrackSelector;
+    protected ExoTrackNameProvider trackNameProvider;
     private static AudioTrackMemory memory;    //xuameng记忆选择音轨
     private SubtitleView mExoSubtitleView; // 用于显示ExoPlayer内置字幕
 
