@@ -426,7 +426,7 @@ public class VodController extends BaseController {
                 mHandler.postDelayed(this, 100);
                 return;
             }
-            if(mControlWrapper.isPlaying()) { //xuameng音乐播放时图标判断
+            if(isInPlaybackState() && mControlWrapper.isPlaying()) { //xuameng音乐播放时图标判断
                 if(!mIsDragging) {
                     mControlWrapper.startProgress(); //xuameng启动进程
                     mControlWrapper.startFadeOut();
