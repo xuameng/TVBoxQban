@@ -1535,7 +1535,6 @@ public class PlayFragment extends BaseLazyFragment {
             @Override
             public void selectEpisode(int position) {
                 if (position < 0 || position >= episodes.size() || position == mVodInfo.playIndex) return;
-                triedLineFlags.clear();
                 mVodInfo.playIndex = position;
                 play(false);
             }
