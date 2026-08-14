@@ -33,11 +33,38 @@
             <TextView
                 android:textSize="@dimen/ts_24"
                 android:textColor="@color/color_CC000000"
-                android:gravity="center_vertical|left"
+                android:gravity="center|left"
                 android:layout_gravity="center"
                 android:layout_width="@dimen/vs_120"
                 android:layout_height="@dimen/vs_50"
-                android:text="弹幕开关"/>
+                android:text="弹幕搜索"/>
+            <TextView
+                android:textSize="@dimen/ts_22"
+                android:textColor="@color/color_FFFFFF"
+                android:gravity="center"
+                android:id="@+id/danmuSearch"
+                android:background="@drawable/button_dialog_main"
+                android:focusable="true"
+                android:layout_width="0.0dip"
+                android:layout_height="@dimen/vs_50"
+                android:text="立即搜索"
+                android:layout_weight="1.0"/>
+        </LinearLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:paddingTop="@dimen/vs_5"
+            android:paddingBottom="@dimen/vs_5"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/vs_8">
+            <TextView
+                android:textSize="@dimen/ts_24"
+                android:textColor="@color/color_CC000000"
+                android:gravity="center|left"
+                android:layout_gravity="center"
+                android:layout_width="@dimen/vs_120"
+                android:layout_height="@dimen/vs_50"
+                android:text="弹幕状态"/>
             <com.owen.tvrecyclerview.widget.TvRecyclerView
                 android:orientation="horizontal"
                 android:id="@+id/trv_onoff"
@@ -48,51 +75,6 @@
                 app:tv_layoutManager="V7LinearLayoutManager"
                 app:tv_selectedItemIsCentered="true"
                 app:tv_verticalSpacingWithMargins="@dimen/vs_10"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/vs_8"
-            android:orientation="horizontal"
-            android:paddingTop="@dimen/vs_5"
-            android:paddingBottom="@dimen/vs_5">
-
-            <TextView
-                android:layout_width="@dimen/vs_120"
-                android:layout_height="@dimen/vs_50"
-                android:gravity="center_vertical|left"
-                android:layout_gravity="center"
-                android:text="在线弹幕"
-                android:textColor="@color/color_CC000000"
-                android:textSize="@dimen/ts_24" />
-
-            <TextView
-                android:id="@+id/danmuSearch"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/vs_50"
-                android:layout_weight="1"
-                android:background="@drawable/button_dialog_main"
-                android:focusable="true"
-                android:gravity="center"
-                android:text="搜索"
-                android:textColor="@color/color_FFFFFF"
-                android:textSize="@dimen/ts_22" />
-        </LinearLayout>
-        <LinearLayout
-            android:orientation="horizontal"
-            android:paddingTop="@dimen/vs_5"
-            android:paddingBottom="@dimen/vs_5"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/vs_8">
-            <TextView
-                android:textSize="@dimen/ts_24"
-                android:textColor="@color/color_CC000000"
-                android:gravity="center_vertical|left"
-                android:layout_gravity="center"
-                android:layout_width="@dimen/vs_120"
-                android:layout_height="@dimen/vs_50"
-                android:text="弹幕颜色"/>
             <com.owen.tvrecyclerview.widget.TvRecyclerView
                 android:orientation="horizontal"
                 android:id="@+id/trv_color"
@@ -102,6 +84,7 @@
                 app:tv_horizontalSpacingWithMargins="@dimen/vs_20"
                 app:tv_layoutManager="V7LinearLayoutManager"
                 app:tv_selectedItemIsCentered="true"
+                android:layout_marginStart="@dimen/vs_20"
                 app:tv_verticalSpacingWithMargins="@dimen/vs_10"/>
         </LinearLayout>
         <LinearLayout
@@ -114,7 +97,7 @@
             <TextView
                 android:textSize="@dimen/ts_24"
                 android:textColor="@color/color_CC000000"
-                android:gravity="center_vertical|left"
+                android:gravity="center|left"
                 android:layout_gravity="center"
                 android:layout_width="@dimen/vs_120"
                 android:layout_height="@dimen/vs_50"
@@ -140,7 +123,7 @@
             <TextView
                 android:textSize="@dimen/ts_24"
                 android:textColor="@color/color_CC000000"
-                android:gravity="center_vertical|left"
+                android:gravity="center|left"
                 android:layout_gravity="center"
                 android:layout_width="@dimen/vs_120"
                 android:layout_height="@dimen/vs_50"
@@ -192,7 +175,7 @@
             <TextView
                 android:textSize="@dimen/ts_24"
                 android:textColor="@color/color_CC000000"
-                android:gravity="center_vertical|left"
+                android:gravity="center|left"
                 android:layout_gravity="center"
                 android:layout_width="@dimen/vs_120"
                 android:layout_height="@dimen/vs_50"
@@ -243,7 +226,7 @@
             <TextView
                 android:textSize="@dimen/ts_24"
                 android:textColor="@color/color_CC000000"
-                android:gravity="center_vertical|left"
+                android:gravity="center|left"
                 android:layout_gravity="center"
                 android:layout_width="@dimen/vs_120"
                 android:layout_height="@dimen/vs_50"
