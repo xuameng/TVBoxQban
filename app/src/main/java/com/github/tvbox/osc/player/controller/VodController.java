@@ -1428,7 +1428,7 @@ public class VodController extends BaseController {
                 } else {
                     EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_SET_DANMU_SETTINGS, true));
                     mDanmuView.setVisibility(View.VISIBLE);  
-                    App.showToastShort(getContext(), "弹幕已显示");
+                    App.showToastShort(getContext(), "弹幕已重载");
                 }
                 return true;
             }
