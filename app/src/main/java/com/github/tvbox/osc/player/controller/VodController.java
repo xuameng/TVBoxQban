@@ -1670,9 +1670,9 @@ public class VodController extends BaseController {
                     mLandscapePortraitBtn.setText("横屏");
                 }
             } else {
-                int requestedOrientation = requireActivity().getRequestedOrientation();
+                int requestedOrientation = mActivity.getRequestedOrientation();
                 if (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT) {
-                    mController.mLandscapePortraitBtn.setText("横屏");
+                    mLandscapePortraitBtn.mLandscapePortraitBtn.setText("横屏");
                     mLandscapePortraitBtn.setVisibility(View.VISIBLE);
                     mAudioTrackBtn.setNextFocusRightId(R.id.landscape_portrait);
 					return;
