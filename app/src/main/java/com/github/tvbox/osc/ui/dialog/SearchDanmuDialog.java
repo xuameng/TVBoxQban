@@ -25,6 +25,12 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author xuameng
+ * @date :2026/08/14
+ * @description:   弹幕在线搜索
+ */
+
 public class SearchDanmuDialog extends BaseDialog {
 
     // ============ 缓存（static，不持有 Dialog 引用） ============
