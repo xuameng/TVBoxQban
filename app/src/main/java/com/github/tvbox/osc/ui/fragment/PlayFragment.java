@@ -310,6 +310,11 @@ public class PlayFragment extends BaseLazyFragment {
             }
 
             @Override
+            public void closeDanmu() {
+                if (danmuLoadController != null) danmuLoadController.close();
+            }
+
+            @Override
             public void searchDanmuUi(boolean longClick) {  //xuameng 弹幕搜索
                 VodInfo.VodSeries series = mVodInfo == null ? null : getCurrentSeries(mVodInfo.playFlag, mVodInfo.playIndex);
                 ApiConfig.get().searchDanmuUi(mVodInfo == null ? "" : mVodInfo.name, series == null ? "" : series.name, longClick);
