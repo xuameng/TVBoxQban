@@ -2247,12 +2247,16 @@ public class VodController extends BaseController {
         int keyCode = event.getKeyCode();
         int action = event.getAction();
         if (action == KeyEvent.ACTION_DOWN && event.getRepeatCount() == 0 && keyCode == KeyEvent.KEYCODE_MENU) {
+            myHandle.removeCallbacks(myRunnable);
+            if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
+                hideBottom();
+            }
             listener.showEpisodeDialog();
-            hideBottom();
             return true;
         }
         if(isBottomVisible()) {
-            myHandle.removeCallbacks(myRunnable);
+            mHandler.removeMessages(1002);
+            mHandler.removeMessages(1003); 
             myHandle.postDelayed(myRunnable, myHandleSeconds);
             return super.dispatchKeyEvent(event);
         }
