@@ -61,28 +61,6 @@ public class EpisodeDialog extends BaseDialog {
         episodeList.setLayoutManager(layoutManager);
         episodeList.setAdapter(adapter);
         adapter.setNewData(episodes);
-
-        // xuameng关键：通过 OnChildAttachStateChangeListener 给每个 item 绑定焦点监听
-        episodeList.addOnChildAttachStateChangeListener(new androidx.recyclerview.widget.RecyclerView.OnChildAttachStateChangeListener() {
-            @Override
-            public void onChildViewAttachedToWindow(@NonNull View view) {
-                view.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-                    @Override
-                    public void onFocusChange(View v, boolean hasFocus) {
-                        int position = episodeList.getChildLayoutPosition(v);
-                        if (position >= 0) {
-                            adapter.setFocusedPosition(position, hasFocus);
-                        }
-                    }
-                });
-            }
-
-            @Override
-            public void onChildViewDetachedFromWindow(@NonNull View view) {
-                // 不需要处理
-            }
-        });
-
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
@@ -130,45 +108,19 @@ public class EpisodeDialog extends BaseDialog {
 
     private static class EpisodeAdapter extends BaseQuickAdapter<VodInfo.VodSeries, BaseViewHolder> {
         private final int selectedPosition;
-        private int focusedPosition = -1;   // xuameng新增
 
         EpisodeAdapter(int selectedPosition) {
             super(R.layout.item_series, new ArrayList<VodInfo.VodSeries>());
             this.selectedPosition = selectedPosition;
         }
 
-        // xuameng新增：供外部更新焦点位置
-        public void setFocusedPosition(int position) {
-            int old = focusedPosition;
-            focusedPosition = position;
-            if (old != position) {
-                if (old >= 0) notifyItemChanged(old);
-                if (position >= 0) notifyItemChanged(position);
-            }
-        }
-
         @Override
         protected void convert(BaseViewHolder helper, VodInfo.VodSeries item) {
             TextView series = helper.getView(R.id.tvSeries);
             series.setText(item == null ? "" : item.name);
-
-            int pos = helper.getLayoutPosition();
-            boolean isSelected = (pos == selectedPosition);
-            boolean hasFocus = (pos == focusedPosition);
-
-            if (isSelected && hasFocus) {
-                // 选中 + 有焦点 → 白色 + 加粗
-                series.setTextColor(Color.WHITE);
-                series.setTypeface(null, android.graphics.Typeface.BOLD);
-            } else if (isSelected) {
-                // 选中 + 无焦点 → 青色 + 加粗
-                series.setTextColor(mContext.getResources().getColor(R.color.color_02F8E1));
-                series.setTypeface(null, android.graphics.Typeface.BOLD);
-            } else {
-                // 其他项 → 白色 + 正常
-                series.setTextColor(Color.WHITE);
-                series.setTypeface(null, android.graphics.Typeface.NORMAL);
-            }
+            series.setTextColor(helper.getLayoutPosition() == selectedPosition
+                    ? mContext.getResources().getColor(R.color.color_02F8E1)
+                    : Color.WHITE);
         }
     }
 }
