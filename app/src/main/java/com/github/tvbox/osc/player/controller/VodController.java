@@ -1421,15 +1421,14 @@ public class VodController extends BaseController {
                     hideBottom();
                 }
                 if(mDanmuView.getVisibility() == View.VISIBLE) {
-                    DanmuHelper.setOpen(false);
+                    listener.closeDanmu();
                     EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_SET_DANMU_SETTINGS, false));
                     mDanmuView.setVisibility(View.GONE);  
-                    App.showToastShort(getContext(), "弹幕已关闭");
+                    App.showToastShort(getContext(), "弹幕已隐藏");
                 } else {
-                    DanmuHelper.setOpen(true);
                     EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_SET_DANMU_SETTINGS, true));
                     mDanmuView.setVisibility(View.VISIBLE);  
-                    App.showToastShort(getContext(), "弹幕已开启");
+                    App.showToastShort(getContext(), "弹幕已显示");
                 }
                 return true;
             }
@@ -1687,6 +1686,10 @@ public class VodController extends BaseController {
         mDanmuSearchUiBtn.setVisibility(hasDanmuSearchUi ? VISIBLE : GONE);
     }
 
+    public DanmakuView getDanmuView() { //xuameng弹幕
+        return mDanmuView;
+    }
+
     public interface VodControlListener {
         void playNext(boolean rmProgress);
         void playPre();
@@ -1698,6 +1701,7 @@ public class VodController extends BaseController {
         void selectSubtitle();
         void selectAudioTrack();
         void showDanmuSetting(); //xuameng弹幕设置
+        void closeDanmu();  //xuameng 临时关闭弹幕
         void searchDanmuUi(boolean longClick);  //xuameng弹幕搜索
         void hideTipXu(); //xuameng隐藏错误信息
         void startPlayUrl(String url, HashMap < String, String > headers); //xuameng广告过滤
@@ -2784,10 +2788,6 @@ public class VodController extends BaseController {
                    .error(R.drawable.app_logo)
                    .into(iv_circle_bg);
         }
-    }
-
-    public DanmakuView getDanmuView() { //xuameng弹幕
-        return mDanmuView;
     }
 
 }
