@@ -82,7 +82,7 @@ public class EpisodeDialog extends BaseDialog {
 
     private int getSpanCount(int gridWidth) {
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paint.setTextSize(getContext().getResources().getDimension(R.dimen.ts_20));
+        paint.setTextSize(getContext().getResources().getDimension(R.dimen.ts_22));
         Rect bounds = new Rect();
         int maxTextWidth = 1;
         for (VodInfo.VodSeries episode : episodes) {
