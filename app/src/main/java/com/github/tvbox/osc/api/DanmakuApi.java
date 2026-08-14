@@ -188,7 +188,7 @@ public class DanmakuApi {
         OkHttp.cancel(TAG);
         int seq = searchSeq.incrementAndGet();
         if (result == null || TextUtils.isEmpty(result.getUrl())) {
-            notifySearchResultError(callback, seq, "弹幕地址为空");
+            notifySearchResultError(callback, seq, "弹幕地址为空！");
             return;
         }
         if (!result.isBuiltIn()) {
@@ -207,7 +207,7 @@ public class DanmakuApi {
                     if (!response.isSuccessful()) throw new IOException("HTTP " + response.code());
                     String body = response.body() == null ? "" : response.body().string();
                     String danmu = commentJsonToXml(body);
-                    if (TextUtils.isEmpty(danmu)) throw new IOException("未获取到弹幕内容");
+                    if (TextUtils.isEmpty(danmu)) throw new IOException("弹幕内容为空！");
                     notifySearchResultSuccess(callback, seq, danmu);
                 } catch (Throwable th) {
                     notifySearchResultError(callback, seq, getErrorMessage(th));
