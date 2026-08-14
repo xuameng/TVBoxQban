@@ -77,7 +77,7 @@ public class SearchDanmuDialog extends BaseDialog {
         searchInput.setText(searchWord);
         searchInput.setSelection(searchWord.length());
         searchInput.requestFocus();
-        search(searchWord);
+      //  search(searchWord);
     }
 
     public void setDanmuLoader(DanmuLoader danmuLoader) {
