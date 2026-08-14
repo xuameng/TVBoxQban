@@ -867,7 +867,7 @@ public class VodController extends BaseController {
         mNextBtn.setOnClickListener(new OnClickListener() {    //xuameng 播放下一集
             @Override
             public void onClick(View view) {
-                FastClickCheckUtil.check(v);
+                FastClickCheckUtil.check(view);
                 if((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 300 || isAnimation || isDisplay) { //xuameng 防播放打断动画
                     return;
                 }
