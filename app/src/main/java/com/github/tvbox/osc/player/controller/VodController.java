@@ -1065,7 +1065,6 @@ public class VodController extends BaseController {
                     return;
                 }
                 DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
-                FastClickCheckUtil.check(view);
                 if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
                     myHandle.removeCallbacks(myRunnable);
                     hideBottomXu();
