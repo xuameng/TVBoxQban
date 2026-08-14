@@ -341,7 +341,6 @@ public class VodController extends BaseController {
     private TextView tv_slide_progress_text;  //xuameng 旧的亮度调节框已作废
     ImageView MxuamengMusic; //xuameng播放音乐背景
     private ProgressBar XuLoading; //xuameng  loading
-    public TextView mPlayerTimeStartEndText;
     public TextView mPlayerTimeStartBtn;
     public TextView mPlayerTimeSkipBtn;
     public TextView mPlayerTimeResetBtn;
@@ -588,7 +587,6 @@ public class VodController extends BaseController {
         mPlayerBtn = findViewById(R.id.play_player);
         mPlayerIJKBtn = findViewById(R.id.play_ijk);
         mPlayerEXOBtn = findViewById(R.id.play_exo);  //exo解码
-        mPlayerTimeStartEndText = findViewById(R.id.play_time_start_end_text);
         mPlayerTimeStartBtn = findViewById(R.id.play_time_start);
         mPlayerTimeSkipBtn = findViewById(R.id.play_time_end);
         mPlayerTimeResetBtn = findViewById(R.id.play_time_reset);
@@ -872,7 +870,6 @@ public class VodController extends BaseController {
                     return;
                 }
                 DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
-                FastClickCheckUtil.check(view);
                 if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
                     myHandle.removeCallbacks(myRunnable);
                     hideBottomXu();
@@ -884,7 +881,6 @@ public class VodController extends BaseController {
             @Override
             public boolean onLongClick(View view) {
                 FastClickCheckUtil.check(view);
-                myHandle.removeCallbacks(myRunnable);
                 if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
                     myHandle.removeCallbacks(myRunnable);
                     hideBottom();
@@ -1081,7 +1077,6 @@ public class VodController extends BaseController {
             @Override
             public boolean onLongClick(View view) {
                 FastClickCheckUtil.check(view);
-                myHandle.removeCallbacks(myRunnable);
                 if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
                     myHandle.removeCallbacks(myRunnable);
                     hideBottom();
@@ -1108,6 +1103,56 @@ public class VodController extends BaseController {
                 }
             }
         });
+        mPlayerScaleBtn.setOnLongClickListener(new OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                FastClickCheckUtil.check(view);
+                if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
+                    myHandle.removeCallbacks(myRunnable);
+                    hideBottom();
+                }
+                try {
+                    int scaleType = mPlayerConfig.getInt("sc");
+                    ArrayList<Integer> scales = new ArrayList<>();
+                    for (int i = 0; i <= 5; i++) scales.add(i);
+                    SelectDialog<Integer> dialog = new SelectDialog<>(mActivity);
+                    dialog.setTip("请选择画面尺寸");
+                    dialog.setAdapter(new SelectDialogAdapter.SelectDialogInterface<Integer>() {
+                        @Override
+                        public void click(Integer value, int pos) {
+                            try {
+                                dialog.cancel();
+                                mPlayerConfig.put("sc", value);
+                                updatePlayerCfgView();
+                                listener.updatePlayerCfg();
+                                mControlWrapper.setScreenScaleType(value);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        @Override
+                        public String getDisplay(Integer value) {
+                            return PlayerHelper.getScaleName(value);
+                        }
+                    }, new DiffUtil.ItemCallback<Integer>() {
+                        @Override
+                        public boolean areItemsTheSame(@NonNull @NotNull Integer oldItem, @NonNull @NotNull Integer newItem) {
+                            return oldItem.intValue() == newItem.intValue();
+                        }
+
+                        @Override
+                        public boolean areContentsTheSame(@NonNull @NotNull Integer oldItem, @NonNull @NotNull Integer newItem) {
+                            return oldItem.intValue() == newItem.intValue();
+                        }
+                    }, scales, scaleType);
+                    dialog.show();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                return true;
+            }
+        });
         mPlayerSpeedBtn.setOnClickListener(new OnClickListener() {   //xuameng 倍速播放
             @Override
             public void onClick(View view) {
@@ -1131,14 +1176,49 @@ public class VodController extends BaseController {
             @Override
             public boolean onLongClick(View view) {
                 FastClickCheckUtil.check(view);
-                myHandle.removeCallbacks(myRunnable);
-                myHandle.postDelayed(myRunnable, myHandleSeconds);
+                if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
+                    myHandle.removeCallbacks(myRunnable);
+                    hideBottom();
+                }
                 try {
-                    mPlayerConfig.put("sp", 1.0f);
-                    updatePlayerCfgView();
-                    listener.updatePlayerCfg();
-                    speed_old = 1.0f;
-                    mControlWrapper.setSpeed(1.0f);
+                    float speed = (float) mPlayerConfig.getDouble("sp");
+                    ArrayList<Float> speeds = new ArrayList<>();
+                    float[] speedOptions = {0.75f, 1.0f, 1.25f, 1.5f, 1.75f, 2.0f, 3.0f};
+                    for (float value : speedOptions) speeds.add(value);
+                    int defaultPos = speeds.indexOf(speed);
+                    SelectDialog<Float> dialog = new SelectDialog<>(mActivity);
+                    dialog.setTip("请选择播放倍速");
+                    dialog.setAdapter(new SelectDialogAdapter.SelectDialogInterface<Float>() {
+                        @Override
+                        public void click(Float value, int pos) {
+                            try {
+                                dialog.cancel();
+                                mPlayerConfig.put("sp", value);
+                                updatePlayerCfgView();
+                                listener.updatePlayerCfg();
+                                speed_old = value;
+                                mControlWrapper.setSpeed(value);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        @Override
+                        public String getDisplay(Float value) {
+                            return value + "x";
+                        }
+                    }, new DiffUtil.ItemCallback<Float>() {
+                        @Override
+                        public boolean areItemsTheSame(@NonNull @NotNull Float oldItem, @NonNull @NotNull Float newItem) {
+                            return oldItem.equals(newItem);
+                        }
+
+                        @Override
+                        public boolean areContentsTheSame(@NonNull @NotNull Float oldItem, @NonNull @NotNull Float newItem) {
+                            return oldItem.equals(newItem);
+                        }
+                    }, speeds, defaultPos < 0 ? 1 : defaultPos);
+                    dialog.show();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -1153,7 +1233,6 @@ public class VodController extends BaseController {
                     return;
                 }
                 DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
-                FastClickCheckUtil.check(view);
                 if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
                     myHandle.removeCallbacks(myRunnable);
                     hideBottomXu();
@@ -1188,7 +1267,6 @@ public class VodController extends BaseController {
             @Override
             public boolean onLongClick(View view) {
                 FastClickCheckUtil.check(view);
-                myHandle.removeCallbacks(myRunnable);
                 if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
                     myHandle.removeCallbacks(myRunnable);
                     hideBottom();
@@ -1527,7 +1605,6 @@ public class VodController extends BaseController {
         mPlayerSpeedBtn.setNextFocusUpId(R.id.mxuplay);
         mPlayerBtn.setNextFocusUpId(R.id.mxuplay);
         mPlayerIJKBtn.setNextFocusUpId(R.id.mxuplay);
-        mPlayerTimeStartEndText.setNextFocusUpId(R.id.mxuplay);
         mPlayerTimeStartBtn.setNextFocusUpId(R.id.mxuplay);
         mPlayerTimeSkipBtn.setNextFocusUpId(R.id.mxuplay);
         mPlayerTimeResetBtn.setNextFocusUpId(R.id.mxuplay);
@@ -1558,14 +1635,12 @@ public class VodController extends BaseController {
     private void hideLiveAboutBtn() {
         if(mControlWrapper != null && mControlWrapper.getDuration() <= 1) {
             mPlayerSpeedBtn.setVisibility(GONE);
-            mPlayerTimeStartEndText.setVisibility(GONE);
             mPlayerTimeStartBtn.setVisibility(GONE);
             mPlayerTimeSkipBtn.setVisibility(GONE);
             mPlayerTimeResetBtn.setVisibility(GONE);
             mNextBtn.setNextFocusLeftId(R.id.audio_track_select); //xuameng底部菜单下一集左键是音轨
         } else {
             mPlayerSpeedBtn.setVisibility(View.VISIBLE);
-            mPlayerTimeStartEndText.setVisibility(View.VISIBLE);
             mPlayerTimeStartBtn.setVisibility(View.VISIBLE);
             mPlayerTimeSkipBtn.setVisibility(View.VISIBLE);
             mPlayerTimeResetBtn.setVisibility(View.VISIBLE);
@@ -1668,9 +1743,11 @@ public class VodController extends BaseController {
             mPlayerIJKBtn.setText(mPlayerConfig.getString("ijk"));
             mPlayerIJKBtn.setVisibility(playerType == 1 ? VISIBLE : GONE);
             mPlayerScaleBtn.setText(PlayerHelper.getScaleName(mPlayerConfig.getInt("sc")));
-            mPlayerSpeedBtn.setText("x" + mPlayerConfig.getDouble("sp"));
-            mPlayerTimeStartBtn.setText(PlayerUtils.stringForTime(mPlayerConfig.getInt("st") * 1000));
-            mPlayerTimeSkipBtn.setText(PlayerUtils.stringForTime(mPlayerConfig.getInt("et") * 1000));
+            mPlayerSpeedBtn.setText(mPlayerConfig.getDouble("sp") + "x");
+            int start = mPlayerConfig.getInt("st");
+            int end = mPlayerConfig.getInt("et");
+            mPlayerTimeStartBtn.setText(start == 0 ? "片头" : stringForTime(start * 1000));
+            mPlayerTimeSkipBtn.setText(end == 0 ? "片尾" : stringForTime(end * 1000));
   //          mAudioTrackBtn.setVisibility((playerType == 1 || playerType == 2) ? VISIBLE : GONE);     //xuameng不判断音轨了全部显示
             mAudioTrackBtn.setVisibility(View.VISIBLE);
             mPlayrender.setText((pr == 0) ? "T渲染" : "S渲染"); //xuameng 渲染
