@@ -2131,7 +2131,6 @@ public class VodController extends BaseController {
     void hideBottom() {
         isSEEKBAR = false; //XUAMENG隐藏菜单时修复进度条BUG
         mHandler.removeMessages(1002);
-        mHandler.sendEmptyMessage(1003);
     }
     void hideBottomXu() {
         isSEEKBAR = false; //XUAMENG隐藏菜单时修复进度条BUG
