@@ -75,7 +75,7 @@ public class DanmuSettingDialog extends BaseDialog {
 
             @Override
             public String getDisplay(Boolean val) {
-                return val ? "开" : "关";
+                return val ? "开启" : "关闭";
             }
         });
     }
