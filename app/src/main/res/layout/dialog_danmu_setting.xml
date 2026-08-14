@@ -47,7 +47,7 @@
                 android:focusable="true"
                 android:layout_width="0.0dip"
                 android:layout_height="@dimen/vs_50"
-                android:text="立即搜索"
+                android:text="进入搜索"
                 android:layout_weight="1.0"/>
         </LinearLayout>
         <LinearLayout
