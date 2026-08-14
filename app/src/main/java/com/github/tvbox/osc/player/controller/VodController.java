@@ -1670,6 +1670,13 @@ public class VodController extends BaseController {
                     mLandscapePortraitBtn.setText("横屏");
                 }
             } else {
+                int requestedOrientation = requireActivity().getRequestedOrientation();
+                if (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT) {
+                    mController.mLandscapePortraitBtn.setText("横屏");
+                    mLandscapePortraitBtn.setVisibility(View.VISIBLE);
+                    mAudioTrackBtn.setNextFocusRightId(R.id.landscape_portrait);
+					return;
+                }
                 mLandscapePortraitBtn.setVisibility(View.GONE);
                 mAudioTrackBtn.setNextFocusRightId(R.id.play_next); //xuameng底部菜音轨右键是下一集
             }
@@ -2026,8 +2033,8 @@ public class VodController extends BaseController {
             case VideoView.STATE_PAUSED:
                 isVideoPlay = false;
                 mxuPlay.setText("播放"); //xuameng底部菜单显示播放
-				if (fullPreview){   //xuameng 全屏时自动暂停时调用
-				    mPauseIngXu();
+                if (fullPreview){   //xuameng 全屏时自动暂停时调用
+                    mPauseIngXu();
                 }
                 break;
             case VideoView.STATE_ERROR:
@@ -2068,7 +2075,7 @@ public class VodController extends BaseController {
                 isVideoPlay = false;
                 isBufferIng = false; //xuameng 判断是否进在缓冲视频
             case VideoView.STATE_BUFFERING:
-			    if(mProgressRoot.getVisibility() == View.GONE) { //xuameng进程图标
+                if(mProgressRoot.getVisibility() == View.GONE) { //xuameng进程图标
                     mPlayLoadNetSpeed.setVisibility(View.VISIBLE);
                 }
                 if(mLrcView.getVisibility() == View.GONE) { //xuameng音乐播放时图标
@@ -2536,7 +2543,7 @@ public class VodController extends BaseController {
         backBtn.setVisibility(GONE); //返回键隐藏菜单
         mTvPausexu.setVisibility(GONE); //隐藏暂停菜单
         mLockView.setVisibility(GONE); //xuameng隐藏屏幕锁
-		if (!showPreview && isLock){  //xuameng 如果不是小窗口播放开锁
+        if (!showPreview && isLock){  //xuameng 如果不是小窗口播放开锁
             isLock = false;
             mLockView.setImageResource(isLock ? R.drawable.icon_lock : R.drawable.icon_unlock);
         }
@@ -2884,7 +2891,7 @@ public class VodController extends BaseController {
         return (float) Math.round(volumePercent * 100) / 100.0f;
     }
 
-	// xuameng 设置LRC歌词内容
+    // xuameng 设置LRC歌词内容
     public void setLrcContent(String lrcContent) {
         mLrcContent = lrcContent;
         if (mLrcView != null) {
@@ -2900,7 +2907,7 @@ public class VodController extends BaseController {
         if (videoPicUrl != null && !videoPicUrl.isEmpty() && iv_circle_bg != null) {
             Picasso.get()
                    .load(videoPicUrl)
-				   .resize(120,120)
+                   .resize(120,120)
                    .transform(new RoundTransformation(MD5.string2MD5(videoPicUrl))
                    .centerCorp(true)
                    .roundRadius(AutoSizeUtils.mm2px(getContext(), 50), RoundTransformation.RoundType.ALL))
