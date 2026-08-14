@@ -723,8 +723,11 @@ public class PlayFragment extends BaseLazyFragment {
                         }, 300);
                     }
 
-                    // xuameng判断选中的字幕是否为 PGS 格式
-                    boolean isPgsSubtitle = value.language != null && value.language.toLowerCase().contains("pgs");
+                    // xuameng判断选中的字幕是否为 PGS 格式 或图形字幕
+                    boolean isPgsSubtitle = value.language != null 
+                        && (value.language.toLowerCase().contains("pgs")
+                        || value.language.toLowerCase().contains("vobsub")
+                        || value.language.toLowerCase().contains("dvb"));
                     if (mediaPlayer instanceof EXOmPlayer) {
 
                         if (isPgsSubtitle) {
@@ -986,11 +989,12 @@ public class PlayFragment extends BaseLazyFragment {
                     }
                 }
 
-                // 判断当前选中的字幕是否为 PGS
+                // 判断当前选中的字幕是否为 PGS或图形字幕
                 boolean isPgsSelected = false;
                 if (selectedSubtitleTrack != null && selectedSubtitleTrack.language != null) {
                     try {
-                        isPgsSelected = selectedSubtitleTrack.language.toLowerCase().contains("pgs");
+                        String lang = selectedSubtitleTrack.language.toLowerCase();
+                        isPgsSelected = lang.contains("pgs") || lang.contains("vobsub") || lang.contains("dvb");
                     } catch (Exception e) {
                     // 处理可能的异常情况
                         isPgsSelected = false;
