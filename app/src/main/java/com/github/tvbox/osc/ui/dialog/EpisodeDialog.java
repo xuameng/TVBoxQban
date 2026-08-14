@@ -61,6 +61,20 @@ public class EpisodeDialog extends BaseDialog {
         episodeList.setLayoutManager(layoutManager);
         episodeList.setAdapter(adapter);
         adapter.setNewData(episodes);
+
+    // xuameng监听焦点变化
+    episodeList.setOnChildViewHolderSelectedListener(
+        new com.owen.tvrecyclerview.TvRecyclerView.OnChildViewHolderSelectedListener() {
+            @Override
+            public void onChildViewHolderSelected(
+                    androidx.recyclerview.widget.RecyclerView parent,
+                    androidx.recyclerview.widget.RecyclerView.ViewHolder child,
+                    int position, int subPosition) {
+                adapter.setFocusedPosition(position);
+            }
+        }
+    );
+
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
@@ -108,19 +122,45 @@ public class EpisodeDialog extends BaseDialog {
 
     private static class EpisodeAdapter extends BaseQuickAdapter<VodInfo.VodSeries, BaseViewHolder> {
         private final int selectedPosition;
+        private int focusedPosition = -1;   // xuameng新增
 
         EpisodeAdapter(int selectedPosition) {
             super(R.layout.item_series, new ArrayList<VodInfo.VodSeries>());
             this.selectedPosition = selectedPosition;
         }
 
+        // xuameng新增：供外部更新焦点位置
+        public void setFocusedPosition(int position) {
+            int old = focusedPosition;
+            focusedPosition = position;
+            if (old != position) {
+                if (old >= 0) notifyItemChanged(old);
+                if (position >= 0) notifyItemChanged(position);
+            }
+        }
+
         @Override
         protected void convert(BaseViewHolder helper, VodInfo.VodSeries item) {
             TextView series = helper.getView(R.id.tvSeries);
             series.setText(item == null ? "" : item.name);
-            series.setTextColor(helper.getLayoutPosition() == selectedPosition
-                    ? mContext.getResources().getColor(R.color.color_02F8E1)
-                    : Color.WHITE);
+
+            int pos = helper.getLayoutPosition();
+            boolean isSelected = (pos == selectedPosition);
+            boolean hasFocus = (pos == focusedPosition);
+
+            if (isSelected && hasFocus) {
+                // 选中 + 有焦点 → 白色 + 加粗
+                series.setTextColor(Color.WHITE);
+                series.setTypeface(null, android.graphics.Typeface.BOLD);
+            } else if (isSelected) {
+                // 选中 + 无焦点 → 青色 + 加粗
+                series.setTextColor(mContext.getResources().getColor(R.color.color_02F8E1));
+                series.setTypeface(null, android.graphics.Typeface.BOLD);
+            } else {
+                // 其他项 → 白色 + 正常
+                series.setTextColor(Color.WHITE);
+                series.setTypeface(null, android.graphics.Typeface.NORMAL);
+            }
         }
     }
 }
