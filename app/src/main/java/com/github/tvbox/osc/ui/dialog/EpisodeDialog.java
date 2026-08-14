@@ -62,18 +62,26 @@ public class EpisodeDialog extends BaseDialog {
         episodeList.setAdapter(adapter);
         adapter.setNewData(episodes);
 
-    // xuameng监听焦点变化
-    episodeList.setOnChildViewHolderSelectedListener(
-        new com.owen.tvrecyclerview.TvRecyclerView.OnChildViewHolderSelectedListener() {
+        // xuameng关键：通过 OnChildAttachStateChangeListener 给每个 item 绑定焦点监听
+        episodeList.addOnChildAttachStateChangeListener(new androidx.recyclerview.widget.RecyclerView.OnChildAttachStateChangeListener() {
             @Override
-            public void onChildViewHolderSelected(
-                    androidx.recyclerview.widget.RecyclerView parent,
-                    androidx.recyclerview.widget.RecyclerView.ViewHolder child,
-                    int position, int subPosition) {
-                adapter.setFocusedPosition(position);
+            public void onChildViewAttachedToWindow(@NonNull View view) {
+                view.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                    @Override
+                    public void onFocusChange(View v, boolean hasFocus) {
+                        int position = episodeList.getChildLayoutPosition(v);
+                        if (position >= 0) {
+                            adapter.setFocusedPosition(position, hasFocus);
+                        }
+                    }
+                });
             }
-        }
-    );
+
+            @Override
+            public void onChildViewDetachedFromWindow(@NonNull View view) {
+                // 不需要处理
+            }
+        });
 
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
