@@ -341,6 +341,7 @@ public class VodController extends BaseController {
     private TextView tv_slide_progress_text;  //xuameng 旧的亮度调节框已作废
     ImageView MxuamengMusic; //xuameng播放音乐背景
     private ProgressBar XuLoading; //xuameng  loading
+    public TextView mPlayerTimeStartEndText;
     public TextView mPlayerTimeStartBtn;
     public TextView mPlayerTimeSkipBtn;
     public TextView mPlayerTimeResetBtn;
@@ -587,6 +588,7 @@ public class VodController extends BaseController {
         mPlayerBtn = findViewById(R.id.play_player);
         mPlayerIJKBtn = findViewById(R.id.play_ijk);
         mPlayerEXOBtn = findViewById(R.id.play_exo);  //exo解码
+        mPlayerTimeStartEndText = findViewById(R.id.play_time_start_end_text);
         mPlayerTimeStartBtn = findViewById(R.id.play_time_start);
         mPlayerTimeSkipBtn = findViewById(R.id.play_time_end);
         mPlayerTimeResetBtn = findViewById(R.id.play_time_reset);
@@ -1635,12 +1637,14 @@ public class VodController extends BaseController {
     private void hideLiveAboutBtn() {
         if(mControlWrapper != null && mControlWrapper.getDuration() <= 1) {
             mPlayerSpeedBtn.setVisibility(GONE);
+            mPlayerTimeStartEndText.setVisibility(GONE);
             mPlayerTimeStartBtn.setVisibility(GONE);
             mPlayerTimeSkipBtn.setVisibility(GONE);
             mPlayerTimeResetBtn.setVisibility(GONE);
             mNextBtn.setNextFocusLeftId(R.id.audio_track_select); //xuameng底部菜单下一集左键是音轨
         } else {
             mPlayerSpeedBtn.setVisibility(View.VISIBLE);
+            mPlayerTimeStartEndText.setVisibility(View.VISIBLE);
             mPlayerTimeStartBtn.setVisibility(View.VISIBLE);
             mPlayerTimeSkipBtn.setVisibility(View.VISIBLE);
             mPlayerTimeResetBtn.setVisibility(View.VISIBLE);
@@ -1744,10 +1748,8 @@ public class VodController extends BaseController {
             mPlayerIJKBtn.setVisibility(playerType == 1 ? VISIBLE : GONE);
             mPlayerScaleBtn.setText(PlayerHelper.getScaleName(mPlayerConfig.getInt("sc")));
             mPlayerSpeedBtn.setText(mPlayerConfig.getDouble("sp") + "x");
-            int start = mPlayerConfig.getInt("st");
-            int end = mPlayerConfig.getInt("et");
-            mPlayerTimeStartBtn.setText(start == 0 ? "片头" : stringForTime(start * 1000));
-            mPlayerTimeSkipBtn.setText(end == 0 ? "片尾" : stringForTime(end * 1000));
+            mPlayerTimeStartBtn.setText(PlayerUtils.stringForTime(mPlayerConfig.getInt("st") * 1000));
+            mPlayerTimeSkipBtn.setText(PlayerUtils.stringForTime(mPlayerConfig.getInt("et") * 1000));
   //          mAudioTrackBtn.setVisibility((playerType == 1 || playerType == 2) ? VISIBLE : GONE);     //xuameng不判断音轨了全部显示
             mAudioTrackBtn.setVisibility(View.VISIBLE);
             mPlayrender.setText((pr == 0) ? "T渲染" : "S渲染"); //xuameng 渲染
