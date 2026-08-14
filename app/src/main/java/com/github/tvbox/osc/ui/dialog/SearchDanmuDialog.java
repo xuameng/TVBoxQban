@@ -26,6 +26,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SearchDanmuDialog extends BaseDialog {
+
+    // ============ 缓存（static，不持有 Dialog 引用） ============
+    public static class DanmuCache {
+        public static final List<DanmuSearchResult> lastResults = new ArrayList<>();
+        public static String lastSearchWord = "";
+        public static String lastEpisode = "";
+    }
+
+    // ============ 成员变量 ============
     private TvRecyclerView gridView;
     private SearchDanmuAdapter searchAdapter;
     private EditText searchInput;
@@ -33,7 +42,7 @@ public class SearchDanmuDialog extends BaseDialog {
     private DanmuLoader danmuLoader;
     private String episode = "";
 
-    public SearchDanmuDialog(@NonNull @NotNull Context context) {
+    public SearchDanmuDialog(@NonNull Context context) {
         super(context);
         if (context instanceof Activity) {
             setOwnerActivity((Activity) context);
@@ -47,29 +56,33 @@ public class SearchDanmuDialog extends BaseDialog {
         gridView = findViewById(R.id.mGridView);
         searchInput = findViewById(R.id.input);
         TextView searchButton = findViewById(R.id.inputSubmit);
+
         searchAdapter = new SearchDanmuAdapter();
         gridView.setHasFixedSize(true);
         gridView.setLayoutManager(new V7LinearLayoutManager(getContext(), 1, false));
         gridView.setAdapter(searchAdapter);
-        searchAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                FastClickCheckUtil.check(view);
-                loadDanmu(searchAdapter.getData().get(position));
-            }
+
+        // 点击条目加载弹幕
+        searchAdapter.setOnItemClickListener((adapter, view, position) -> {
+            FastClickCheckUtil.check(view);
+            loadDanmu(searchAdapter.getData().get(position));
         });
-        searchButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FastClickCheckUtil.check(view);
-                search(searchInput.getText().toString().trim());
-            }
+
+        // 点击搜索按钮
+        searchButton.setOnClickListener(v -> {
+            FastClickCheckUtil.check(v);
+            search(searchInput.getText().toString().trim());
         });
-        searchAdapter.setNewData(new ArrayList<DanmuSearchResult>());
+
+        // 初始空数据（不触发清空动画）
+        searchAdapter.setNewData(new ArrayList<>());
     }
+
+    // ============ 对外方法 ============
 
     public void setEpisode(String episode) {
         this.episode = episode == null ? "" : episode;
+        DanmuCache.lastEpisode = this.episode;
     }
 
     public void setSearchWord(String word) {
@@ -77,40 +90,58 @@ public class SearchDanmuDialog extends BaseDialog {
         searchInput.setText(searchWord);
         searchInput.setSelection(searchWord.length());
         searchInput.requestFocus();
-      //  search(searchWord);
+        // 注意：这里不自动搜索，让用户自己按回车/点击
+        // 如果一定要自动搜，取消下面注释：
+        // if (!searchWord.isEmpty()) search(searchWord);
     }
 
     public void setDanmuLoader(DanmuLoader danmuLoader) {
         this.danmuLoader = danmuLoader;
     }
 
+    // ============ 搜索 ============
+
     private void search(String word) {
-        searchAdapter.setNewData(new ArrayList<DanmuSearchResult>());
         if (TextUtils.isEmpty(word)) {
             App.showToastShort(getContext(), "输入内容不能为空！");
             return;
         }
+
+        // 保存搜索词，方便下次恢复
+        DanmuCache.lastSearchWord = word;
+
         showLoading();
+
         DanmakuApi.searchList(word, episode, new DanmakuApi.SearchListCallback() {
             @Override
             public void onSuccess(List<DanmuSearchResult> results) {
-                showResults(results);
+                // 缓存结果
+                DanmuCache.lastResults.clear();
+                if (results != null) {
+                    DanmuCache.lastResults.addAll(results);
+                }
+                showResults(DanmuCache.lastResults);
             }
 
             @Override
             public void onError(String message) {
-                showResults(new ArrayList<DanmuSearchResult>());
+                DanmuCache.lastResults.clear();
+                showResults(new ArrayList<>());
                 App.showToastShort(getContext(), message);
             }
         });
     }
+
+    // ============ 加载弹幕 ============
 
     private void loadDanmu(DanmuSearchResult result) {
         showLoading();
         DanmakuApi.loadSearchResult(result, new DanmakuApi.SearchResultCallback() {
             @Override
             public void onSuccess(String danmu) {
-                if (danmuLoader != null) danmuLoader.loadDanmu(danmu);
+                if (danmuLoader != null) {
+                    danmuLoader.loadDanmu(danmu);
+                }
                 dismiss();
             }
 
@@ -119,10 +150,11 @@ public class SearchDanmuDialog extends BaseDialog {
                 loadingBar.setVisibility(View.GONE);
                 gridView.setVisibility(View.VISIBLE);
                 App.showToastShort(getContext(), message);
-
             }
         });
     }
+
+    // ============ UI 状态 ============
 
     private void showLoading() {
         loadingBar.setVisibility(View.VISIBLE);
@@ -131,9 +163,11 @@ public class SearchDanmuDialog extends BaseDialog {
 
     private void showResults(List<DanmuSearchResult> results) {
         if (results == null) results = new ArrayList<>();
+
         loadingBar.setVisibility(View.GONE);
         gridView.setVisibility(View.VISIBLE);
         searchAdapter.setNewData(results);
+
         if (results.isEmpty()) {
             App.showToastShort(getContext(), "未查询到匹配弹幕！");
             return;
@@ -141,11 +175,41 @@ public class SearchDanmuDialog extends BaseDialog {
         gridView.requestFocus();
     }
 
+    // ============ 关键：show() 时恢复缓存 ============
+
+    @Override
+    public void show() {
+        super.show();
+
+        // 恢复搜索词到输入框
+        if (!DanmuCache.lastSearchWord.isEmpty()) {
+            searchInput.setText(DanmuCache.lastSearchWord);
+            searchInput.setSelection(DanmuCache.lastSearchWord.length());
+        }
+
+        // 恢复 episode
+        if (!DanmuCache.lastEpisode.isEmpty()) {
+            episode = DanmuCache.lastEpisode;
+        }
+
+        // 恢复搜索结果
+        if (!DanmuCache.lastResults.isEmpty()) {
+            showResults(DanmuCache.lastResults);
+        } else {
+            // 没有缓存 → 输入框获取焦点，等用户搜索
+            searchInput.requestFocus();
+        }
+    }
+
+    // ============ 返回键 ============
+
     @Override
     public void onBackPressed() {
         DanmakuApi.cancel();
         dismiss();
     }
+
+    // ============ 接口 ============
 
     public interface DanmuLoader {
         void loadDanmu(String danmu);
