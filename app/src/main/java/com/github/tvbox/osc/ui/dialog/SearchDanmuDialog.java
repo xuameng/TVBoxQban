@@ -81,18 +81,38 @@ public class SearchDanmuDialog extends BaseDialog {
     // ============ 对外方法 ============
 
     public void setEpisode(String episode) {
-        this.episode = episode == null ? "" : episode;
-        DanmuCache.lastEpisode = this.episode;
+        String newEpisode = episode == null ? "" : episode;
+        if (!newEpisode.equals(this.episode)) {
+            DanmuCache.lastResults.clear();
+        }
+        this.episode = newEpisode;
+        DanmuCache.lastEpisode = newEpisode;
     }
 
     public void setSearchWord(String word) {
         String searchWord = word == null ? "" : word.trim();
+    
+        // ===== 核心判断：剧集名称变了没 =====
+        boolean nameChanged = !searchWord.equals(DanmuCache.lastSearchWord);
+    
+        if (nameChanged) {
+            // 名称变了 → 清空旧缓存，写入新名称
+            DanmuCache.lastResults.clear();
+            DanmuCache.lastSearchWord = searchWord;
+        }
+    
+        // 输入框始终显示当前名称
         searchInput.setText(searchWord);
         searchInput.setSelection(searchWord.length());
         searchInput.requestFocus();
-        // 注意：这里不自动搜索，让用户自己按回车/点击
-        // 如果一定要自动搜，取消下面注释：
-        // if (!searchWord.isEmpty()) search(searchWord);
+    
+        if (nameChanged && !searchWord.isEmpty()) {
+            // 名称变了 → 自动搜索新剧集
+            // 注意：这里不自动搜索，让用户自己按回车/点击
+            // 如果一定要自动搜，取消下面注释：
+            //search(searchWord);
+        }
+        // 没变 → 不自动搜，等 show() 恢复缓存
     }
 
     public void setDanmuLoader(DanmuLoader danmuLoader) {
@@ -181,22 +201,16 @@ public class SearchDanmuDialog extends BaseDialog {
     public void show() {
         super.show();
 
-        // 恢复搜索词到输入框
-        if (!DanmuCache.lastSearchWord.isEmpty()) {
-            searchInput.setText(DanmuCache.lastSearchWord);
-            searchInput.setSelection(DanmuCache.lastSearchWord.length());
-        }
-
         // 恢复 episode
         if (!DanmuCache.lastEpisode.isEmpty()) {
             episode = DanmuCache.lastEpisode;
         }
 
-        // 恢复搜索结果
+        // 有缓存 → 恢复列表（名称没变的情况）
         if (!DanmuCache.lastResults.isEmpty()) {
             showResults(DanmuCache.lastResults);
         } else {
-            // 没有缓存 → 输入框获取焦点，等用户搜索
+            // 没缓存 → 输入框获取焦点（名称变了已自动搜索，这里兜底）
             searchInput.requestFocus();
         }
     }
