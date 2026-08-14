@@ -729,8 +729,8 @@ public class VodController extends BaseController {
                 ApiConfig.get().setDefaultParse(parseBean);
                 parseAdapter.notifyItemChanged(position);
                 listener.changeParse(parseBean);
+                myHandle.removeCallbacks(myRunnable);
                 if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
-                    myHandle.removeCallbacks(myRunnable);
                     hideBottomXu();
                 }
             }
@@ -839,8 +839,8 @@ public class VodController extends BaseController {
                     return;
                 }
                 DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
+                myHandle.removeCallbacks(myRunnable);
                 if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
-                    myHandle.removeCallbacks(myRunnable);
                     hideBottomXu();
                 }
                 listener.replay(true);
@@ -855,8 +855,8 @@ public class VodController extends BaseController {
                 }
                 DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
                 FastClickCheckUtil.check(v);
+                myHandle.removeCallbacks(myRunnable);
                 if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
-                    myHandle.removeCallbacks(myRunnable);
                     hideBottomXu();
                 }
                 listener.replay(false);
@@ -870,8 +870,8 @@ public class VodController extends BaseController {
                     return;
                 }
                 DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
+                myHandle.removeCallbacks(myRunnable);
                 if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
-                    myHandle.removeCallbacks(myRunnable);
                     hideBottomXu();
                 }
                 listener.playNext(false);
@@ -881,8 +881,8 @@ public class VodController extends BaseController {
             @Override
             public boolean onLongClick(View view) {
                 FastClickCheckUtil.check(view);
+                myHandle.removeCallbacks(myRunnable);
                 if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
-                    myHandle.removeCallbacks(myRunnable);
                     hideBottom();
                 }
                 listener.showEpisodeDialog();
@@ -921,8 +921,8 @@ public class VodController extends BaseController {
                 if((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 300 || isAnimation || isDisplay) { //xuameng 防播放打断动画
                     return;
                 }
+                myHandle.removeCallbacks(myRunnable);
                 if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
-                    myHandle.removeCallbacks(myRunnable);
                     hideBottomXu();
                 }
                 DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
@@ -961,8 +961,8 @@ public class VodController extends BaseController {
                 if((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 300 || isAnimation || isDisplay) { //xuameng 防播放打断动画
                     return;
                 }
+                myHandle.removeCallbacks(myRunnable);
                 if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
-                    myHandle.removeCallbacks(myRunnable);
                     hideBottom();
                 }
                 DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
@@ -1000,8 +1000,8 @@ public class VodController extends BaseController {
                 if((System.currentTimeMillis() - DOUBLE_CLICK_TIME_2) < 300 || isAnimation || isDisplay) { //xuameng 防播放打断动画
                     return;
                 }
+                myHandle.removeCallbacks(myRunnable);
                 if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
-                    myHandle.removeCallbacks(myRunnable);
                     hideBottomXu();
                 }
                 DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
@@ -1065,8 +1065,8 @@ public class VodController extends BaseController {
                     return;
                 }
                 DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
+                myHandle.removeCallbacks(myRunnable);
                 if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
-                    myHandle.removeCallbacks(myRunnable);
                     hideBottomXu();
                 }
                 listener.playPre();
@@ -1076,8 +1076,8 @@ public class VodController extends BaseController {
             @Override
             public boolean onLongClick(View view) {
                 FastClickCheckUtil.check(view);
+                myHandle.removeCallbacks(myRunnable);
                 if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
-                    myHandle.removeCallbacks(myRunnable);
                     hideBottom();
                 }
                 listener.showEpisodeDialog();
@@ -1102,12 +1102,12 @@ public class VodController extends BaseController {
                 }
             }
         });
-        mPlayerScaleBtn.setOnLongClickListener(new OnLongClickListener() {
+        mPlayerScaleBtn.setOnLongClickListener(new OnLongClickListener() {   //xuameng 长按画面尺寸
             @Override
             public boolean onLongClick(View view) {
                 FastClickCheckUtil.check(view);
+                myHandle.removeCallbacks(myRunnable);
                 if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
-                    myHandle.removeCallbacks(myRunnable);
                     hideBottom();
                 }
                 try {
@@ -1175,8 +1175,8 @@ public class VodController extends BaseController {
             @Override
             public boolean onLongClick(View view) {
                 FastClickCheckUtil.check(view);
+                myHandle.removeCallbacks(myRunnable);
                 if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
-                    myHandle.removeCallbacks(myRunnable);
                     hideBottom();
                 }
                 try {
@@ -1232,8 +1232,8 @@ public class VodController extends BaseController {
                     return;
                 }
                 DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
+                myHandle.removeCallbacks(myRunnable);
                 if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
-                    myHandle.removeCallbacks(myRunnable);
                     hideBottomXu();
                 }
                 try {
@@ -1266,8 +1266,8 @@ public class VodController extends BaseController {
             @Override
             public boolean onLongClick(View view) {
                 FastClickCheckUtil.check(view);
+                myHandle.removeCallbacks(myRunnable);
                 if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
-                    myHandle.removeCallbacks(myRunnable);
                     hideBottom();
                 }
                 try {
@@ -1290,8 +1290,8 @@ public class VodController extends BaseController {
                                 dialog.cancel();
                                 int thisPlayType = players.get(pos);
                                 if(thisPlayType != playerType) {
+                                    myHandle.removeCallbacks(myRunnable);
                                     if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
-                                        myHandle.removeCallbacks(myRunnable);
                                         hideBottomXu();
                                     }
                                     mPlayerConfig.put("pl", thisPlayType);
@@ -1335,8 +1335,8 @@ public class VodController extends BaseController {
                     return;
                 }
                 DOUBLE_CLICK_TIME_2 = System.currentTimeMillis();
+                myHandle.removeCallbacks(myRunnable);
                 if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
-                    myHandle.removeCallbacks(myRunnable);
                     hideBottomXu();
                 }
                 try {
@@ -1449,19 +1449,19 @@ public class VodController extends BaseController {
             @Override
             public void onClick(View view) {
                 FastClickCheckUtil.check(view);
-                listener.selectSubtitle();
+                myHandle.removeCallbacks(myRunnable);
                 if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
-                    myHandle.removeCallbacks(myRunnable);
                     hideBottom();
                 }
+                listener.selectSubtitle();
             }
         });
         mZimuBtn.setOnLongClickListener(new OnLongClickListener() {    //xuameng 长按开启关闭字幕
             @Override
             public boolean onLongClick(View view) {
                 FastClickCheckUtil.check(view); //xuameng 防播放打断动画
+                myHandle.removeCallbacks(myRunnable);
                 if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
-                    myHandle.removeCallbacks(myRunnable);
                     hideBottom();
                 }
                 isLongClick = true;
@@ -1501,19 +1501,19 @@ public class VodController extends BaseController {
             @Override
             public void onClick(View view) {
                 FastClickCheckUtil.check(view);
-                listener.selectAudioTrack();
+                myHandle.removeCallbacks(myRunnable);
                 if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
-                    myHandle.removeCallbacks(myRunnable);
                     hideBottom();
                 }
+                listener.selectAudioTrack();
             }
         });
         mDanmuSettingBtn.setOnClickListener(new OnClickListener() {   //xuameng弹幕
             @Override
             public void onClick(View view) {
                 FastClickCheckUtil.check(view);
+                myHandle.removeCallbacks(myRunnable);
                 if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
-                    myHandle.removeCallbacks(myRunnable);
                     hideBottom();
                 }
                 listener.showDanmuSetting();
@@ -1523,8 +1523,9 @@ public class VodController extends BaseController {
             @Override
             public boolean onLongClick(View view) {
                 FastClickCheckUtil.check(view); //xuameng 防播放打断动画
+                myHandle.removeCallbacks(myRunnable);
+                isLongClick = true;
                 if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
-                    myHandle.removeCallbacks(myRunnable);
                     hideBottom();
                 }
                 if(mDanmuView.getVisibility() == View.VISIBLE) {
@@ -1544,22 +1545,22 @@ public class VodController extends BaseController {
             @Override
             public void onClick(View view) {
                 FastClickCheckUtil.check(view);
-                listener.searchDanmuUi(false);
+                myHandle.removeCallbacks(myRunnable);
                 if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
-                    myHandle.removeCallbacks(myRunnable);
                     hideBottom();
                 }
+                listener.searchDanmuUi(false);
             }
         });
         mDanmuSearchUiBtn.setOnLongClickListener(new OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
                 FastClickCheckUtil.check(view);
-                listener.searchDanmuUi(true);
+                myHandle.removeCallbacks(myRunnable);
                 if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
-                    myHandle.removeCallbacks(myRunnable);
                     hideBottom();
                 }
+                listener.searchDanmuUi(true);
                 return true;
             }
         });
@@ -1567,11 +1568,11 @@ public class VodController extends BaseController {
             @Override
             public void onClick(View view) {
                 FastClickCheckUtil.check(view);
-                if (listener != null) listener.clickCast();
+                myHandle.removeCallbacks(myRunnable);
                 if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
-                    myHandle.removeCallbacks(myRunnable);
                     hideBottom();
                 }
+                if (listener != null) listener.clickCast();
             }
         });
         if (Build.VERSION.SDK_INT < 30) {
@@ -1583,11 +1584,11 @@ public class VodController extends BaseController {
             @Override
             public void onClick(View view) {
                 FastClickCheckUtil.check(view);
-                setLandscapePortrait();
+                myHandle.removeCallbacks(myRunnable);
                 if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
-                    myHandle.removeCallbacks(myRunnable);
                     hideBottom();
                 }
+                setLandscapePortrait();
             }
         });
         mxuPlay.setNextFocusRightId(R.id.seekBar); //xuameng底部菜单播放右键是进度条
@@ -2130,8 +2131,8 @@ public class VodController extends BaseController {
     }
     public void playIngXu() {
         mxuPlay.setText("暂停"); //xuameng底部菜单显示暂停
+        myHandle.removeCallbacks(myRunnable);
         if(!isAnimation && mBottomRoot.getVisibility() == View.VISIBLE) {
-            myHandle.removeCallbacks(myRunnable);
             hideBottom();
         }
         ObjectAnimator animator9 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", -0, 700); //xuameng动画暂停菜单开始
@@ -2154,9 +2155,9 @@ public class VodController extends BaseController {
         mTvPausexu.setVisibility(VISIBLE);
         mxuPlay.setText("播放"); //xuameng底部菜单显示播放
         mPauseContainer.setVisibility(GONE); // xuameng播放标题、暂停时间
+        myHandle.removeCallbacks(myRunnable);
         if(mBottomRoot.getVisibility() == View.GONE && !isDisplay) { //xuameng如果没显示菜单就显示
             showBottom();
-            myHandle.removeCallbacks(myRunnable);
             myHandle.postDelayed(myRunnable, myHandleSeconds);
         }
         ObjectAnimator animator8 = ObjectAnimator.ofFloat(mTvPausexu, "translationX", 700, 0); //xuameng动画暂停菜单开始
@@ -2249,8 +2250,7 @@ public class VodController extends BaseController {
             return true;
         }
         if(isBottomVisible()) {
-            mHandler.removeMessages(1002);
-            mHandler.removeMessages(1003);
+            myHandle.removeCallbacks(myRunnable);
             myHandle.postDelayed(myRunnable, myHandleSeconds);
             return super.dispatchKeyEvent(event);
         }
@@ -2442,7 +2442,6 @@ public class VodController extends BaseController {
         if(isClickBackBtn) { //xuameng 罕见BUG  防止180ms内点击BackBtn键，又会弹击菜单	
             return false;
         }
-        myHandle.removeCallbacks(myRunnable);
         if(mBottomRoot.getVisibility() == View.GONE && !isDisplay) {
             showBottom();
             // 闲置计时关闭
