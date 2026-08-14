@@ -81,12 +81,8 @@ public class SearchDanmuDialog extends BaseDialog {
     // ============ 对外方法 ============
 
     public void setEpisode(String episode) {
-        String newEpisode = episode == null ? "" : episode;
-        if (!newEpisode.equals(this.episode)) {
-            DanmuCache.lastResults.clear();
-        }
-        this.episode = newEpisode;
-        DanmuCache.lastEpisode = newEpisode;
+        this.episode = episode == null ? "" : episode;
+        DanmuCache.lastEpisode = this.episode;
     }
 
     public void setSearchWord(String word) {
