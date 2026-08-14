@@ -158,6 +158,7 @@ public class SearchDanmuDialog extends BaseDialog {
                 if (danmuLoader != null) {
                     danmuLoader.loadDanmu(danmu);
                 }
+                App.showToastShort(getContext(), "弹幕加载成功！");
                 dismiss();
             }
 
