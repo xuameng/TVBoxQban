@@ -5,12 +5,12 @@ import java.util.List;
 
 public class TrackInfo {
     private List<TrackInfoBean> audio;
-    private List<TrackInfoBean> video;
+    private List<TrackInfoBean> video; //xuameng视轨信息
     private List<TrackInfoBean> subtitle;
 
     public TrackInfo() {
         audio = new ArrayList<>();
-        video = new ArrayList<>();
+        video = new ArrayList<>();  //xuameng视轨信息
         subtitle = new ArrayList<>();
     }
 
@@ -56,15 +56,15 @@ public class TrackInfo {
         this.subtitle.add(subtitle);
     }
 
-    public List<TrackInfoBean> getVideo() {
+    public List<TrackInfoBean> getVideo() { //xuameng视轨信息
         return video;
     }
 
-    public int getVideoSelected(boolean track) {
+    public int getVideoSelected(boolean track) { //xuameng视轨信息
         return getSelected(video, track);
     }
 
-    public void addVideo(TrackInfoBean video) {
+    public void addVideo(TrackInfoBean video) { //xuameng视轨信息
         this.video.add(video);
     }
 
